@@ -13,7 +13,9 @@ import exiledsector.charts.objective.ChartObjectiveIntel;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.skills.skilleffect.render.SpriteCache;
+import exiledsector.ui.CampaignOverlay;
 import exiledsector.ui.SkillTreePanelStyle;
+import exiledsector.ui.atlas.OfficerRewardPicker;
 import exiledsector.ui.util.BorderedPanel;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.HoloFrame;
@@ -103,6 +105,9 @@ public final class ChartInfoTab implements CampaignUIRenderingListener, Campaign
             if (event.isLMBDownEvent() && overTab(eventX, eventY)) {
                 toggle();
                 event.consume();
+            } else if (event.isLMBDownEvent() && frame.isVisible() && window.rewardButtonAt(eventX, eventY)) {
+                OfficerRewardPicker.openUnchosen(Global.getSector());
+                event.consume();
             } else if (frame.isVisible() && overWindow(eventX, eventY)) {
                 if (event.isMouseScrollEvent()) {
                     window.scroll(event.getEventValue(), windowHeight());
@@ -121,7 +126,7 @@ public final class ChartInfoTab implements CampaignUIRenderingListener, Campaign
     static ChartRun shownRun(SectorAPI sector) {
         CampaignUIAPI campaignUI = sector == null ? null : sector.getCampaignUI();
         if (campaignUI == null || campaignUI.isShowingDialog() || campaignUI.isShowingMenu() || campaignUI.getCurrentCoreTab() != null
-                || campaignUI.isHideUI()) {
+                || campaignUI.isHideUI() || CampaignOverlay.isOpenOver(campaignUI)) {
             return null;
         }
         CampaignFleetAPI playerFleet = sector.getPlayerFleet();

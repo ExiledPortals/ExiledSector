@@ -42,6 +42,9 @@ final class ChartInfoWindow {
     private static final float SCROLL_STEP = 40f;
     private static final float WRAP_HEIGHT = 10000f;
     private static final float TOOLTIP_MAX_TEXT_HEIGHT = 800f;
+    private static final float REWARD_BUTTON_PAD = 8f;
+    private static final float REWARD_BUTTON_GLOW_ALPHA = 0.35f;
+    private static final float REWARD_BUTTON_EDGE_ALPHA = 0.6f;
     private static final Color ACCENT = SkillTreePanelStyle.GLOW_COLOR;
 
     private interface Block {
@@ -116,6 +119,47 @@ final class ChartInfoWindow {
         }
     }
 
+    private final class RewardButton implements Block {
+
+        private final TextLabel label;
+
+        private RewardButton(TextLabel label) {
+            this.label = label;
+        }
+
+        @Override
+        public float gapBefore() {
+            return SECTION_GAP;
+        }
+
+        @Override
+        public float height() {
+            return label.height() + REWARD_BUTTON_PAD * 2f;
+        }
+
+        @Override
+        public void draw(float left, float top, float alphaMult) {
+            float buttonWidth = WIDTH - PAD * 2f;
+            float buttonHeight = height();
+            float buttonBottom = top - buttonHeight;
+            rewardButtonLeft = left;
+            rewardButtonBottom = buttonBottom;
+            rewardButtonHeight = buttonHeight;
+            boolean hovered = hoverable && Rects.contains(left, buttonBottom, buttonWidth, buttonHeight, mouseX, mouseY);
+            GLDraw.fillQuad(left, buttonBottom, buttonWidth, buttonHeight, BorderedPanel.BACKGROUND_COLOR, alphaMult);
+            if (hovered) {
+                GLDraw.innerGlow(left, buttonBottom, buttonWidth, buttonHeight, ANOMALY_HOVER_GLOW_WIDTH, ACCENT, REWARD_BUTTON_GLOW_ALPHA * alphaMult);
+            }
+            GLDraw.strokeQuad(left, buttonBottom, buttonWidth, buttonHeight, ACCENT, 1f, (hovered ? 1f : REWARD_BUTTON_EDGE_ALPHA) * alphaMult);
+            label.setAlpha(alphaMult).draw(left + (buttonWidth - label.width()) / 2f, top - REWARD_BUTTON_PAD);
+        }
+
+        @Override
+        public void dispose() {
+            label.dispose();
+        }
+    }
+
     private record AnomalySlot(Entry entry, boolean hasIcon) {
     }
 
@@ -182,6 +226,15 @@ final class ChartInfoWindow {
     private float mouseX;
     private float mouseY;
     private boolean hoverable;
+    private float clipAreaLeft;
+    private float clipAreaBottom;
+    private float clipAreaWidth;
+    private float clipAreaHeight;
+    private boolean hasRewardButton;
+    private boolean rewardButtonShown;
+    private float rewardButtonLeft;
+    private float rewardButtonBottom;
+    private float rewardButtonHeight;
     private Entry hoveredEntry;
     private Entry tooltipEntry;
 
@@ -191,6 +244,7 @@ final class ChartInfoWindow {
         Color grayColor = Misc.getGrayColor();
         float fullWidth = WIDTH - PAD * 2f;
         addTitle(content.chartName(), content.summary(), fullWidth, grayColor);
+        addRewardButton(content.rewardButtonLabel(), fullWidth);
         addAnomalies(content.anomalies(), fullWidth, grayColor);
         addObjective(content.objective(), fullWidth, textColor);
         addLines("chart.panel.rewards", content.rewardLines(), fullWidth, textColor);
@@ -220,6 +274,11 @@ final class ChartInfoWindow {
         mouseY = pointerY;
         hoverable = fullyOpen && Rects.contains(left, clipBottom, width, clipHeight, pointerX, pointerY);
         hoveredEntry = null;
+        clipAreaLeft = left;
+        clipAreaBottom = clipBottom;
+        clipAreaWidth = width;
+        clipAreaHeight = clipHeight;
+        rewardButtonShown = fullyOpen && hasRewardButton;
         try (GlScope clip = fullyOpen ? clipTo(left, clipBottom, width, clipHeight) : null) {
             float top = bottom + height - PAD + scrollOffset;
             for (Block block : blocks) {
@@ -228,6 +287,11 @@ final class ChartInfoWindow {
                 top -= block.height();
             }
         }
+    }
+
+    boolean rewardButtonAt(float x, float y) {
+        return rewardButtonShown && Rects.contains(clipAreaLeft, clipAreaBottom, clipAreaWidth, clipAreaHeight, x, y)
+                && Rects.contains(rewardButtonLeft, rewardButtonBottom, WIDTH - PAD * 2f, rewardButtonHeight, x, y);
     }
 
     void renderTooltip(float alphaMult) {
@@ -258,6 +322,15 @@ final class ChartInfoWindow {
         subtitle.add(StyledText.of(summary));
         TextLabel titleLabel = new TextLabel(TITLE_FONT, titleColor).setWrapped(title, fullWidth, WRAP_HEIGHT);
         blocks.add(new TextBlock(titleLabel, paragraph(StyledText.join(StyledText.of("\n"), subtitle), fullWidth, grayColor), 0f));
+    }
+
+    private void addRewardButton(String buttonLabel, float fullWidth) {
+        hasRewardButton = buttonLabel != null;
+        if (buttonLabel == null) {
+            return;
+        }
+        TextLabel label = new TextLabel(BODY_FONT, Misc.getButtonTextColor()).setWrapped(buttonLabel, fullWidth - REWARD_BUTTON_PAD * 2f, WRAP_HEIGHT);
+        blocks.add(new RewardButton(label));
     }
 
     private void addAnomalies(List<Entry> anomalies, float fullWidth, Color grayColor) {

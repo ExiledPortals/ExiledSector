@@ -3,9 +3,13 @@ package exiledsector.ui.chart;
 import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.atlas.AtlasNames;
+import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.content.ChartBossType;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.loot.ChartLootTotals;
+import exiledsector.charts.officer.AtlasOfficer;
+import exiledsector.charts.officer.reward.CarriedItem;
+import exiledsector.charts.officer.reward.RewardKind;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.i18n.StyledText;
@@ -69,6 +73,21 @@ class ChartInfoTextTest {
         assertFalse(key.matches(run(List.of("black_hole"))));
         run.markObjectiveComplete();
         assertFalse(key.matches(run));
+    }
+
+    @Test
+    void theKeyChangesWhenAnOfficerRewardIsLeftUndecidedOrDecided() {
+        ChartRun run = run(List.of());
+        ChartInfoText.Key key = ChartInfoText.Key.of(run);
+        AtlasState state = AtlasState.get(mockSector.sector);
+        AtlasOfficer officer = AtlasOfficer.waiting(4, "hegemony", "commander", "steady", new AtlasOfficer.OfficerSeeds(1L, 2L, 3L, 4L), null);
+
+        state.putOfficer(officer.withPendingOffers(List.of(CarriedItem.of(RewardKind.ENGRAM, "engram_a"))));
+        assertFalse(key.matches(run));
+        ChartInfoText.Key undecidedKey = ChartInfoText.Key.of(run);
+        assertTrue(undecidedKey.matches(run));
+        state.putOfficer(officer);
+        assertFalse(undecidedKey.matches(run));
     }
 
     @Test

@@ -14,7 +14,6 @@ import exiledsector.charts.loot.ChartStorageTransfer;
 import exiledsector.charts.loot.StarChartLootSource;
 import exiledsector.charts.objective.ChartRewardLootSource;
 import exiledsector.charts.objective.GatewayUpgradeRewards;
-import exiledsector.charts.officer.OfficerDefeat;
 import exiledsector.charts.officer.scar.ScarEffectSource;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.run.ChartTransverseJump;
@@ -172,7 +171,6 @@ public final class StarChartsDomain implements ExiledSectorDomain {
         if (enabled()) {
             LimboBlueprintCache.onGameLoad(Global.getSector());
             GatewayUpgradeRewards.onGameLoad(Global.getSector());
-            OfficerDefeat.onGameLoad(Global.getSector());
         }
         ColonyFreeAtlas.onGameLoad(Global.getSector());
     }

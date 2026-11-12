@@ -42,8 +42,9 @@ public final class OfficerBoardGenerator {
         return board;
     }
 
-    public static AtlasOfficer replacement(long seed, int recordId, String factionId, List<OfficerRank> ranks, FlagshipCatalogue catalogue) {
-        return officer(seed, recordId, factionId, 0, ranks, catalogue, StartingItemRoll.NONE);
+    public static AtlasOfficer replacement(long seed, int recordId, String factionId, List<OfficerRank> ranks, FlagshipCatalogue catalogue,
+                                           StartingItemRoll startingItems) {
+        return officer(seed, recordId, factionId, 0, ranks, catalogue, startingItems);
     }
 
     public static AtlasOfficer atRank(long seed, int recordId, String factionId, String rankId, List<OfficerRank> ranks, FlagshipCatalogue catalogue) {

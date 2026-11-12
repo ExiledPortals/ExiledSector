@@ -9,6 +9,11 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
+import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import exiledsector.charts.atlas.AtlasState;
+import exiledsector.charts.officer.AtlasOfficer;
+import exiledsector.charts.officer.OfficerDefeat;
+import exiledsector.charts.officer.OfficerText;
 import exiledsector.charts.officer.reward.CarriedItem;
 import exiledsector.charts.officer.reward.OfficerRewardDrop;
 import exiledsector.charts.officer.reward.OfficerRewardPool;
@@ -25,6 +30,7 @@ import exiledsector.items.MaterialItemPlugin;
 import exiledsector.items.MaterialItems;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.CampaignOverlay;
+import exiledsector.ui.ChromeMetrics;
 import exiledsector.ui.OverlayFade;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeSounds;
@@ -42,6 +48,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implements CampaignOverlay.Screen {
 
@@ -49,6 +56,8 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
     private static final float CHROME_PAD = AtlasScreen.CHROME_PAD;
     private static final float OPEN_SECONDS = AtlasScreen.OPEN_SECONDS;
     private static final float BACKDROP_ALPHA = AtlasScreen.BACKDROP_ALPHA;
+    private static final float LATER_WIDTH = 140f;
+    private static final Object LATER_BUTTON = new Object();
     private static final float CARD_WIDTH = 200f;
     private static final float CARD_HEIGHT = 250f;
     private static final float CARD_GAP = 40f;
@@ -71,6 +80,7 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
     private final CampaignOverlay.Host host;
     private final String officerName;
     private final Consumer<CarriedItem> onPick;
+    private final Function<CampaignOverlay.Host, CampaignOverlay.Screen> returnTo;
     private final List<Card> cards = new ArrayList<>();
     private final Random random = new Random();
     private final OverlayFade fade = new OverlayFade(OPEN_SECONDS);
@@ -86,10 +96,12 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
     private float mouseY;
     private boolean mouseKnown;
 
-    private OfficerRewardPicker(CampaignOverlay.Host host, String officerName, List<CarriedItem> offers, Consumer<CarriedItem> onPick) {
+    private OfficerRewardPicker(CampaignOverlay.Host host, String officerName, List<CarriedItem> offers, Consumer<CarriedItem> onPick,
+                                Function<CampaignOverlay.Host, CampaignOverlay.Screen> returnTo) {
         this.host = host;
         this.officerName = officerName;
         this.onPick = onPick;
+        this.returnTo = returnTo;
         for (CarriedItem offer : offers) {
             cards.add(card(offer));
         }
@@ -100,13 +112,31 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
             return false;
         }
         boolean wasPaused = sector.isPaused();
-        boolean opened = CampaignOverlay.open(sector.getCampaignUI(), host -> new OfficerRewardPicker(host, officerName, offers, onPick),
+        boolean opened = CampaignOverlay.open(sector.getCampaignUI(), host -> new OfficerRewardPicker(host, officerName, offers, onPick, null),
                 () -> sector.setPaused(wasPaused));
         if (opened) {
             sector.setPaused(true);
             SkillTreeSounds.panelOpened();
         }
         return opened;
+    }
+
+    public static boolean openUnchosen(SectorAPI sector) {
+        AtlasOfficer holder = OfficerDefeat.nextUnchosen(AtlasState.getIfCreated(sector));
+        return holder != null && open(sector, OfficerText.title(holder), holder.pendingOffers(), answering(holder));
+    }
+
+    static Function<CampaignOverlay.Host, CampaignOverlay.Screen> unchosenScreen(AtlasOfficer holder,
+                                                                               Function<CampaignOverlay.Host, CampaignOverlay.Screen> returnTo) {
+        String officerName = OfficerText.title(holder);
+        List<CarriedItem> offers = holder.pendingOffers();
+        Consumer<CarriedItem> onPick = answering(holder);
+        return host -> new OfficerRewardPicker(host, officerName, offers, onPick, returnTo);
+    }
+
+    private static Consumer<CarriedItem> answering(AtlasOfficer holder) {
+        List<String> choice = holder.pendingChoice();
+        return pick -> OfficerDefeat.answer(choice, pick);
     }
 
     public static void openWhenClear(SectorAPI sector, String officerName, List<CarriedItem> offers, Consumer<CarriedItem> onPick) {
@@ -155,6 +185,10 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
             hintLabel.set(Translation.text("chart.officer.reward.hint"));
         });
         PositionAPI position = panel.getPosition();
+        TooltipMakerAPI laterElement = panel.createUIElement(LATER_WIDTH, ChromeMetrics.CONTROL_HEIGHT, false);
+        I18n.forGameText(() -> laterElement.addButton(Translation.text("chart.officer.reward.later"), LATER_BUTTON, LATER_WIDTH,
+                ChromeMetrics.CONTROL_HEIGHT, 0f));
+        panel.addUIElement(laterElement).inTL(position.getWidth() - PANEL_MARGIN - CHROME_PAD - LATER_WIDTH, PANEL_MARGIN + CHROME_PAD);
         float rowWidth = rowWidth();
         float firstLeft = (position.getWidth() - rowWidth) / 2f;
         float top = (position.getHeight() - CARD_HEIGHT) / 2f;
@@ -175,6 +209,13 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
     }
 
     @Override
+    public void buttonPressed(Object buttonId) {
+        if (buttonId == LATER_BUTTON) {
+            decideLater();
+        }
+    }
+
+    @Override
     public void processInput(List<InputEventAPI> events) {
         if (panelPosition == null) {
             return;
@@ -192,10 +233,16 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
                 if (clicked != null) {
                     pick(clicked);
                 }
-            } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE && event.isKeyUpEvent() && !fade.closing()) {
-                SkillTreeSounds.refused();
+            } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE && event.isKeyUpEvent()) {
+                decideLater();
             }
             event.consume();
+        }
+    }
+
+    private void decideLater() {
+        if (!fade.closing() && !picked) {
+            fade.close();
         }
     }
 
@@ -224,7 +271,11 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
         }
         if (fade.advance(amount)) {
             hoverTooltip.hide();
-            host.close();
+            if (returnTo != null) {
+                host.switchTo(returnTo);
+            } else {
+                host.close();
+            }
             return;
         }
         hoveredCard = mouseKnown && !fade.closing() ? cardAt(mouseX, mouseY) : null;

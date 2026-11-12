@@ -9,6 +9,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasRuntime;
 import exiledsector.charts.officer.AtlasOfficer;
+import exiledsector.charts.officer.OfficerDefeat;
 import exiledsector.charts.officer.OfficerFleets;
 import exiledsector.charts.officer.OfficerText;
 import exiledsector.i18n.I18n;
@@ -33,6 +34,7 @@ public final class ExiledSectorOfficerGreeting extends BaseCommandPlugin {
         if (dialog == null) {
             return false;
         }
+        List<OfficerDefeat.RandomPick> randomPicks = OfficerDefeat.pickUnchosenAtRandom(Global.getSector());
         AtlasOfficer officer = dialog.getInteractionTarget() instanceof CampaignFleetAPI fleet ? OfficerFleets.officerOf(fleet.getMemoryWithoutUpdate()) : null;
         if (officer == null) {
             VanillaText.plainPara(dialog.getTextPanel(), Translation.gameText(GREETING_KEY_PREFIX + "static"));
@@ -40,6 +42,9 @@ public final class ExiledSectorOfficerGreeting extends BaseCommandPlugin {
             AtlasGenerator generator = AtlasRuntime.generator(Global.getSector());
             VanillaText.plainPara(dialog.getTextPanel(), I18n.forGameText(() -> greeting(generator, officer)));
             VanillaText.plainPara(dialog.getTextPanel(), Translation.gameText(GREETING_KEY_PREFIX + "closed"));
+        }
+        for (OfficerDefeat.RandomPick randomPick : randomPicks) {
+            VanillaText.plainPara(dialog.getTextPanel(), randomPick.line());
         }
         dialog.getOptionPanel().clearOptions();
         dialog.getOptionPanel().addOption(Translation.gameText(GREETING_KEY_PREFIX + "cut"), CUT_COMM_LINK);

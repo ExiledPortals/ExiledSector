@@ -317,6 +317,30 @@ class OfficerTurnTest {
     }
 
     @Test
+    void aRecruitInheritsTheFallenOfficersUndecidedReward() {
+        AtlasState state = borderingTerritories();
+        List<CarriedItem> offers = List.of(CarriedItem.of(RewardKind.ENGRAM, "engram_a"), CarriedItem.of(RewardKind.UNIQUE, "u_x"));
+        update(state, PIRATE_OFFICER, officer -> officer.withLastChance(true).withPendingOffers(offers));
+        declare(state, Intent.challenge(HEGEMONY_OFFICER, PIRATE_OFFICER));
+
+        TurnResult result = take(state, TurnCause.forced(), setup(ATTACKER_WINS));
+
+        assertEquals(offers, state.officer(result.replacements().get(0).replacementRecordId()).pendingOffers());
+    }
+
+    @Test
+    void aRecruitStartsWithARolledItem() {
+        AtlasState state = borderingTerritories();
+        CarriedItem startingItem = CarriedItem.of(RewardKind.ENGRAM, "engram_start");
+        update(state, PIRATE_OFFICER, officer -> officer.withLastChance(true));
+        declare(state, Intent.challenge(HEGEMONY_OFFICER, PIRATE_OFFICER));
+
+        TurnResult result = take(state, TurnCause.forced(), setup(ATTACKER_WINS, (officer, random) -> startingItem));
+
+        assertTrue(state.officer(result.replacements().get(0).replacementRecordId()).carried().contains(startingItem));
+    }
+
+    @Test
     void anOfficerBeatenByThePlayerFleesTheTerritoryBreaksUpAndTheyDropARank() {
         AtlasState state = borderingTerritories();
         place(state, 3, "hegemony", "lieutenant", new AtlasCell(-4, 0));

@@ -96,7 +96,7 @@ class OfficerDefeatTest {
     }
 
     @Test
-    void aChoiceFollowsTheOfficerWhoInheritedItAndEndsWithADeath() {
+    void aChoiceFollowsTheOfficerWhoInheritedItUntilNobodyHoldsIt() {
         AtlasState state = new AtlasState(9L);
         AtlasOfficer beaten = officer(4).withPendingOffers(List.of(ENGRAM, UNIQUE));
         state.putOfficer(beaten);
@@ -111,6 +111,42 @@ class OfficerDefeatTest {
         state.removeOfficer(7);
         assertNull(OfficerDefeat.holderOf(state, choice));
         assertNull(OfficerDefeat.holderOf(null, choice));
+    }
+
+    @Test
+    void anUndecidedChoiceIsPickedAtRandomAndTheSameWayEveryTime() {
+        AtlasState state = undecidedBoard();
+
+        List<OfficerDefeat.RandomPick> randomPicks = OfficerDefeat.pickUnchosenAtRandom(state);
+
+        assertEquals(1, randomPicks.size());
+        assertEquals(4, randomPicks.get(0).officer().recordId());
+        CarriedItem pick = randomPicks.get(0).pick();
+        assertTrue(List.of(ENGRAM, UNIQUE).contains(pick));
+        assertEquals(List.of(KERNELS, pick), state.officer(4).carried());
+        assertFalse(state.officer(4).hasPendingChoice());
+        assertEquals(List.of(KERNELS), state.officer(1).carried());
+        assertEquals(pick, OfficerDefeat.pickUnchosenAtRandom(undecidedBoard()).get(0).pick());
+        assertTrue(OfficerDefeat.pickUnchosenAtRandom(state).isEmpty());
+        assertTrue(OfficerDefeat.pickUnchosenAtRandom((AtlasState) null).isEmpty());
+    }
+
+    @Test
+    void theNextUndecidedChoiceBelongsToTheOfficerHoldingIt() {
+        AtlasState state = undecidedBoard();
+
+        assertEquals(4, OfficerDefeat.nextUnchosen(state).recordId());
+
+        OfficerDefeat.pickUnchosenAtRandom(state);
+        assertNull(OfficerDefeat.nextUnchosen(state));
+        assertNull(OfficerDefeat.nextUnchosen(null));
+    }
+
+    private static AtlasState undecidedBoard() {
+        AtlasState state = new AtlasState(9L);
+        state.putOfficer(officer(1).withCarried(List.of(KERNELS)));
+        state.putOfficer(officer(4).withCarried(List.of(KERNELS)).withPendingOffers(List.of(ENGRAM, UNIQUE)));
+        return state;
     }
 
     @Test

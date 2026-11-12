@@ -139,7 +139,7 @@ public final class OfficerTurn {
         fallen.put(officer.recordId(), officer);
         state.removeOfficer(officer.recordId());
         AtlasOfficer replacement = OfficerBoardGenerator.replacement(state.seed(), state.newOfficerRecordId(), officer.factionId(), setup.ranks(),
-                setup.catalogue());
+                setup.catalogue(), setup.startingItems()).withPendingOffers(officer.pendingOffers());
         if (officer.isActive()) {
             replacement = state.withLeftBehindItems(replacement.takingCommand(officer.commandCentre(),
                     AtlasTerritoryPlacer.history(AtlasTerritoryPlacer.ARRIVED_HISTORY, officer.commandCentre())));

@@ -10,6 +10,9 @@ import exiledsector.effects.TransientScripts;
 import exiledsector.ui.refit.UiReflection;
 import org.apache.log4j.Logger;
 
+import java.util.Collections;
+import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.function.Function;
 
 public final class CampaignOverlay {
@@ -32,6 +35,7 @@ public final class CampaignOverlay {
 
     private static final Logger LOG = Logger.getLogger(CampaignOverlay.class);
     private static final String CLICK_SOUND = "ui_button_pressed";
+    private static final Set<OverlayHost> OPEN_HOSTS = Collections.newSetFromMap(new WeakHashMap<>());
 
     private CampaignOverlay() {
     }
@@ -61,11 +65,27 @@ public final class CampaignOverlay {
             CustomPanelAPI panel = Global.getSettings().createCustom(Global.getSettings().getScreenWidth(), Global.getSettings().getScreenHeight(), screen);
             host.overlayPanel = panel;
             hostPanel.addComponent(panel).inTL(0f, 0f);
+            OPEN_HOSTS.add(host);
             screen.attach(panel);
             SkillTreeSounds.play(CLICK_SOUND);
             return true;
         } catch (Throwable e) {
             LOG.error("[ExiledSector] Could not open a full-screen window over the campaign screens", e);
+            return false;
+        }
+    }
+
+    // java:S1181: UiReflection declares Throwable, and a changed engine may only cost this check, never the game
+    @SuppressWarnings("java:S1181")
+    public static boolean isOpenOver(CampaignUIAPI campaignUI) {
+        if (OPEN_HOSTS.isEmpty()) return false;
+        try {
+            UIPanelAPI hostPanel = hostPanel(campaignUI);
+            for (OverlayHost host : OPEN_HOSTS) {
+                if (host.hostPanel == hostPanel) return true;
+            }
+            return false;
+        } catch (Throwable e) {
             return false;
         }
     }
@@ -111,6 +131,7 @@ public final class CampaignOverlay {
                     hostPanel.removeComponent(overlayPanel);
                     overlayPanel = null;
                 }
+                OPEN_HOSTS.remove(this);
                 if (!openOver(hostPanel, nextScreen, afterClose) && afterClose != null) {
                     afterClose.run();
                 }
@@ -121,6 +142,7 @@ public final class CampaignOverlay {
             if (overlayPanel != null) {
                 hostPanel.removeComponent(overlayPanel);
             }
+            OPEN_HOSTS.remove(this);
             if (afterClose != null) {
                 afterClose.run();
             }

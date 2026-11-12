@@ -92,7 +92,7 @@ public final class OfficerTurns {
                 : List.of();
         AtlasCell openRunCell = context.openRunCell();
         TurnSetup setup = new TurnSetup(OfficerTurnTables.rules(), OfficerRanks.all(), resolvers, openRunCell, openRunOfficerId(state, cause,
-                openRunCell), context.catalogue());
+                openRunCell), context.catalogue(), context.startingItems());
         TurnResult result = OfficerTurn.take(TurnTerrain.of(generator, state, openRunCell), state, cause, setup);
         if (!handovers.isEmpty()) {
             result = result.withHandovers(handovers);

@@ -30,6 +30,7 @@ import exiledsector.charts.atlas.AtlasLine;
 import exiledsector.charts.atlas.AtlasNames;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.layout.sketch.SectorSystemSketcher;
+import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.OfficerDefeat;
 import exiledsector.charts.wormhole.WormholeGateway;
 import exiledsector.charts.anomaly.ChartAnomalies;
@@ -107,8 +108,9 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
 
     static final float OFFICERS_WIDTH = 120f;
     static final float REPLAY_WIDTH = 100f;
+    static final float REWARD_WIDTH = 150f;
 
-    private enum Control { CLOSE, BORDERS, BIOMES, CATALYSTS, TREE, FOCUS_SWITCH, DEBUG_COMPLETE, OFFICERS, OFFICERS_REPLAY }
+    private enum Control { CLOSE, BORDERS, BIOMES, CATALYSTS, TREE, FOCUS_SWITCH, DEBUG_COMPLETE, OFFICERS, OFFICERS_REPLAY, OFFICERS_REWARD }
 
     enum Overlay { NONE, FACTIONS, BIOMES }
 
@@ -145,6 +147,10 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     private ButtonAPI officersButton;
     private TooltipMakerAPI replayElement;
     private ButtonAPI replayButton;
+    private TooltipMakerAPI rewardElement;
+    private ButtonAPI rewardButton;
+    private AtlasOfficer unchosenRewardHolder;
+    private boolean openBoardWhenPlaced;
     private AtlasCell focusedCell;
     private boolean focusing;
     private boolean focusOpenedCatalysts;
@@ -167,6 +173,12 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
 
     static AtlasScreen create(CampaignOverlay.Host host) {
         return new AtlasScreen(host);
+    }
+
+    static AtlasScreen withOfficerBoard(CampaignOverlay.Host host) {
+        AtlasScreen screen = new AtlasScreen(host);
+        screen.openBoardWhenPlaced = true;
+        return screen;
     }
 
     public static boolean open(CampaignUIAPI campaignUI) {
@@ -197,7 +209,6 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             camera.centreOn(map.gatewayX(), map.gatewayY());
         }
         I18n.forGameText(this::buildChrome);
-        OfficerDefeat.reopenPendingChoices(sector);
     }
 
     private void buildChrome() {
@@ -236,6 +247,12 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         panelRoot.addUIElement(replayElement).inTL(officersLeft - BUTTON_GAP - REPLAY_WIDTH, bottomRowTop);
         replayElement.setOpacity(0f);
         replayButton.setEnabled(false);
+        rewardElement = panelRoot.createUIElement(REWARD_WIDTH, ChromeMetrics.CONTROL_HEIGHT, false);
+        rewardButton = rewardElement.addButton(Translation.text("chart.atlas.officers.reward"), Control.OFFICERS_REWARD, REWARD_WIDTH,
+                ChromeMetrics.CONTROL_HEIGHT, 0f);
+        panelRoot.addUIElement(rewardElement).inTL(officersLeft - BUTTON_GAP * 2f - REPLAY_WIDTH - REWARD_WIDTH, bottomRowTop);
+        rewardElement.setOpacity(0f);
+        rewardButton.setEnabled(false);
     }
 
     private void addCatalystToggle() {
@@ -738,6 +755,10 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             }
             return;
         }
+        if (buttonId == Control.OFFICERS_REWARD) {
+            chooseUnchosenReward();
+            return;
+        }
         if (officerBoard.isOpen()) {
             officerBoard.close();
         }
@@ -779,8 +800,18 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         hoveredCell = null;
         hoveredAnomaly = null;
         officerBoard.open(map.generator(), map.state());
+        unchosenRewardHolder = OfficerDefeat.nextUnchosen(map.state());
         placeOfficerBoard();
         SkillTreeSounds.panelOpened();
+    }
+
+    private void chooseUnchosenReward() {
+        if (!officerBoard.isOpen() || unchosenRewardHolder == null || fade.closing()) {
+            return;
+        }
+        AtlasCameraMemory.remember(Global.getSector(), camera.centreTreeX(), camera.centreTreeY());
+        host.switchTo(OfficerRewardPicker.unchosenScreen(unchosenRewardHolder, AtlasScreen::withOfficerBoard));
+        unchosenRewardHolder = null;
     }
 
     private void placeOfficerBoard() {
@@ -947,6 +978,10 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             return;
         }
         boolean finishedClosing = fade.advance(amount);
+        if (openBoardWhenPlaced && panelPosition != null) {
+            openBoardWhenPlaced = false;
+            toggleOfficers();
+        }
         focusLevel = Fade.step(focusLevel, focusing, amount / FOCUS_SECONDS);
         chartLevel = Fade.step(chartLevel, chartMode, amount / FOCUS_SECONDS);
         if (!focusing && focusLevel <= 0f) {
@@ -996,6 +1031,11 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             boolean replayShown = officerBoard.isOpen() && officerBoard.canReplay();
             replayElement.setOpacity(replayShown ? officersOpacity : 0f);
             replayButton.setEnabled(replayShown);
+        }
+        if (rewardElement != null) {
+            boolean rewardShown = officerBoard.isOpen() && unchosenRewardHolder != null;
+            rewardElement.setOpacity(rewardShown ? officersOpacity : 0f);
+            rewardButton.setEnabled(rewardShown);
         }
     }
 

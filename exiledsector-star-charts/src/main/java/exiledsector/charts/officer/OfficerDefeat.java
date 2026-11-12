@@ -7,25 +7,34 @@ import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.officer.reward.CarriedItem;
 import exiledsector.charts.officer.reward.OfficerRewardDrop;
 import exiledsector.charts.officer.reward.OfficerRewardPool;
+import exiledsector.charts.officer.reward.OfficerRewardText;
 import exiledsector.charts.officer.reward.RewardContext;
 import exiledsector.charts.officer.scar.HullFacts;
 import exiledsector.charts.officer.scar.Scars;
 import exiledsector.charts.run.ChartRun;
+import exiledsector.i18n.I18n;
+import exiledsector.i18n.Translation;
 import exiledsector.items.ItemDrops;
 import exiledsector.ui.atlas.OfficerRewardPicker;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 public final class OfficerDefeat {
 
     static final String SEED_PREFIX = "officerDefeat|";
+    static final String UNCHOSEN_SEED_PREFIX = "officerUnchosen|";
     private static final Logger LOG = Logger.getLogger(OfficerDefeat.class);
-    private static final Set<List<String>> PROMPTED_CHOICES = new HashSet<>();
+
+    public record RandomPick(AtlasOfficer officer, CarriedItem pick) {
+
+        public String line() {
+            return I18n.forGameText(() -> Translation.msg("chart.officer.reward.randomPick").arg("officer", OfficerText.title(officer))
+                    .arg("item", OfficerRewardText.name(pick)).text());
+        }
+    }
 
     private OfficerDefeat() {
     }
@@ -41,6 +50,7 @@ public final class OfficerDefeat {
 
     private static ItemDrops.SiteLoot defeated(SectorAPI sector, ChartRun run) {
         AtlasState state = AtlasState.getIfCreated(sector);
+        announce(sector, pickUnchosenAtRandom(state));
         AtlasOfficer officer = state == null || run == null ? null : OfficerFleets.officerOf(run.atlasNode());
         if (officer == null) {
             return ItemDrops.SiteLoot.NONE;
@@ -69,22 +79,54 @@ public final class OfficerDefeat {
         return scarred;
     }
 
-    public static void onGameLoad(SectorAPI sector) {
-        PROMPTED_CHOICES.clear();
-        reopenPendingChoices(sector);
+    public static List<RandomPick> pickUnchosenAtRandom(SectorAPI sector) {
+        try {
+            return pickUnchosenAtRandom(AtlasState.getIfCreated(sector));
+        } catch (RuntimeException | LinkageError e) {
+            LOG.error("[ExiledSector] Picking the unchosen Atlas officer rewards failed", e);
+            return List.of();
+        }
     }
 
-    public static void reopenPendingChoices(SectorAPI sector) {
-        try {
-            AtlasState state = AtlasState.getIfCreated(sector);
-            if (state == null) {
-                return;
+    static List<RandomPick> pickUnchosenAtRandom(AtlasState state) {
+        List<RandomPick> randomPicks = new ArrayList<>();
+        if (state == null) {
+            return randomPicks;
+        }
+        for (AtlasOfficer officer : state.officers()) {
+            if (!officer.hasPendingChoice()) {
+                continue;
             }
-            for (AtlasOfficer officer : state.officers()) {
-                prompt(sector, officer);
+            Random random = Seeds.random(UNCHOSEN_SEED_PREFIX + officer.recordId() + "|" + String.join(",", officer.pendingChoice()));
+            List<CarriedItem> offers = officer.pendingOffers();
+            CarriedItem pick = OfficerRewardPool.picked(offers.get(random.nextInt(offers.size())), random);
+            state.putOfficer(picked(officer, pick));
+            randomPicks.add(new RandomPick(officer, pick));
+        }
+        return randomPicks;
+    }
+
+    public static AtlasOfficer nextUnchosen(AtlasState state) {
+        if (state == null) {
+            return null;
+        }
+        for (AtlasOfficer officer : state.officers()) {
+            if (officer.hasPendingChoice()) {
+                return officer;
             }
-        } catch (RuntimeException | LinkageError e) {
-            LOG.error("[ExiledSector] Reopening the pending Atlas officer reward choices failed", e);
+        }
+        return null;
+    }
+
+    public static boolean stillUnchosen(List<String> choice) {
+        return holderOf(AtlasState.getIfCreated(Global.getSector()), choice) != null;
+    }
+
+    public static void answer(List<String> choice, CarriedItem pick) {
+        AtlasState state = AtlasState.getIfCreated(Global.getSector());
+        AtlasOfficer holder = holderOf(state, choice);
+        if (holder != null) {
+            state.putOfficer(picked(holder, pick));
         }
     }
 
@@ -113,24 +155,22 @@ public final class OfficerDefeat {
         return hull == null ? null : Scars.dModFor(scarId, officer.dmodIds(), hull, random);
     }
 
+    private static void announce(SectorAPI sector, List<RandomPick> randomPicks) {
+        if (sector == null || sector.getCampaignUI() == null) {
+            return;
+        }
+        for (RandomPick randomPick : randomPicks) {
+            sector.getCampaignUI().addMessage(randomPick.line());
+        }
+    }
+
     private static void prompt(SectorAPI sector, AtlasOfficer officer) {
         if (sector == null || !officer.hasPendingChoice()) {
             return;
         }
         List<String> choice = officer.pendingChoice();
-        if (!PROMPTED_CHOICES.add(choice)) {
-            return;
-        }
-        OfficerRewardPicker.openWhenClear(sector, OfficerText.title(officer), officer.pendingOffers(), () -> stillOffered(choice),
-                pick -> answered(choice, pick));
-    }
-
-    private static boolean stillOffered(List<String> choice) {
-        if (holderOf(AtlasState.getIfCreated(Global.getSector()), choice) != null) {
-            return true;
-        }
-        PROMPTED_CHOICES.remove(choice);
-        return false;
+        OfficerRewardPicker.openWhenClear(sector, OfficerText.title(officer), officer.pendingOffers(), () -> stillUnchosen(choice),
+                pick -> answer(choice, pick));
     }
 
     static AtlasOfficer holderOf(AtlasState state, List<String> choice) {
@@ -143,14 +183,5 @@ public final class OfficerDefeat {
             }
         }
         return null;
-    }
-
-    private static void answered(List<String> choice, CarriedItem pick) {
-        PROMPTED_CHOICES.remove(choice);
-        AtlasState state = AtlasState.getIfCreated(Global.getSector());
-        AtlasOfficer holder = holderOf(state, choice);
-        if (holder != null) {
-            state.putOfficer(picked(holder, pick));
-        }
     }
 }

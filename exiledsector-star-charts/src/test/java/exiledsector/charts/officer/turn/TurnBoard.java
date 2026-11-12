@@ -6,6 +6,7 @@ import exiledsector.charts.atlas.AtlasTerritoryPlacer;
 import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.FlagshipCatalogue;
 import exiledsector.charts.officer.OfficerRanks;
+import exiledsector.charts.officer.StartingItemRoll;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -66,6 +67,10 @@ final class TurnBoard {
 
     static TurnSetup setup(TurnRules rules, IntentResolvers resolvers, AtlasCell openRunCell, int openRunOfficerId) {
         return new TurnSetup(rules, OfficerRanks.all(), resolvers, openRunCell, openRunOfficerId, FlagshipCatalogue.NONE);
+    }
+
+    static TurnSetup setup(TurnRules rules, StartingItemRoll startingItems) {
+        return new TurnSetup(rules, OfficerRanks.all(), IntentResolvers.ABSTRACT, null, Intent.NO_OFFICER, FlagshipCatalogue.NONE, startingItems);
     }
 
     static TurnResult take(AtlasState state, TurnCause cause, TurnSetup setup) {
