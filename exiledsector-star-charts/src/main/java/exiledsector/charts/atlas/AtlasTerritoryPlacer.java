@@ -257,7 +257,7 @@ public final class AtlasTerritoryPlacer {
         AtlasOfficer furthest = null;
         double furthestDistance = -1;
         for (AtlasOfficer officer : officers) {
-            if (!officer.isActive() || !allowed.containsKey(officer.factionId()) || holdsOpenRun(officer)) {
+            if (!officer.isActive() || !allowed.containsKey(officer.factionId()) || context.takesPartInOpenRun(state, officer)) {
                 continue;
             }
             double distance = distanceToReach(officer.commandCentre());
@@ -267,11 +267,6 @@ public final class AtlasTerritoryPlacer {
             }
         }
         return furthest;
-    }
-
-    private boolean holdsOpenRun(AtlasOfficer officer) {
-        AtlasCell openRunCell = context.openRunCell();
-        return openRunCell != null && (officer.commandCentre().equals(openRunCell) || officer.commandCentre().equals(state.commandCentreOf(openRunCell)));
     }
 
     private double distanceToReach(AtlasCell cell) {

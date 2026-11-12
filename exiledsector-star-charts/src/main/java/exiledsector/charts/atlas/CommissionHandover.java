@@ -55,16 +55,11 @@ public final class CommissionHandover {
             }
         }
         for (AtlasOfficer officer : state.officers()) {
-            if (officer.factionId().equals(commissionFactionId) && officer.isActive() && !holdsOpenRun(officer)) {
+            if (officer.factionId().equals(commissionFactionId) && officer.isActive() && !context.takesPartInOpenRun(state, officer)) {
                 addIfReplaced(handovers, handOverTerritory(officer));
             }
         }
         return handovers;
-    }
-
-    private boolean holdsOpenRun(AtlasOfficer officer) {
-        AtlasCell openRunCell = context.openRunCell();
-        return openRunCell != null && (officer.commandCentre().equals(openRunCell) || officer.commandCentre().equals(state.commandCentreOf(openRunCell)));
     }
 
     private static void addIfReplaced(List<Handover> handovers, Handover handover) {

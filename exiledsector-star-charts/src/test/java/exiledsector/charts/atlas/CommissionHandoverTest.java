@@ -160,6 +160,20 @@ class CommissionHandoverTest {
     }
 
     @Test
+    void theOpenRunsOfficerIsHandedOverOnceTheRunClosesEvenWhenTheRunIsOutsideTheirTerritory() {
+        Board board = revealedBoard();
+        AtlasCell centre = board.centres().get(0);
+        AtlasOfficer predecessor = commissionOfficer(board, centre, "lieutenant", List.of(), false);
+        TerritoryContext duringRun = COMMISSIONED.withOpenRun(board.centres().get(1), predecessor.recordId());
+
+        assertTrue(CommissionHandover.handOver(board.generator(), board.state(), board.visible(), duringRun).isEmpty());
+        assertEquals(predecessor, board.state().officerAt(centre));
+
+        CommissionHandover.handOver(board.generator(), board.state(), board.visible(), duringRun.withoutOpenRun());
+        assertNotEquals(COMMISSION, board.state().officerAt(centre).factionId());
+    }
+
+    @Test
     void aHandOverOutsideATurnJoinsTheLastTurnResultAndShowsAgain() {
         Board board = revealedBoard();
         AtlasCell centre = board.centres().get(0);
