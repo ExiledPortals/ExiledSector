@@ -45,16 +45,14 @@ class InfusedCraftCostsTest {
     }
 
     @Test
-    void aCraftCostsItsTagsFeedstockAndUnofferedCraftsCostNothing() {
+    void aCraftCostsItsTagsFeedstockAndUnofferedTagsCostNothing() {
         assertEquals(new InfusedCraftCosts.Cost(List.of(SHROUD), 100), InfusedCraft.REFORGE_WITH_TAG.cost("defence"));
         assertEquals(new InfusedCraftCosts.Cost(List.of(THREAT, SHROUD, PHASE), 1000), InfusedCraft.ADD_AND_REMOVE.cost("affinity"));
         assertEquals(List.of(PHASE), InfusedCraftCosts.feedstocksFor("flux"));
         assertEquals(List.of(), InfusedCraftCosts.feedstocksFor("front_shield"));
         assertNull(InfusedCraft.REFORGE_WITH_TAG.cost("front_shield"));
-        assertNull(InfusedCraft.SWAP_DAMAGE_TYPE.cost("kinetic"));
         assertNull(InfusedCraft.REFORGE_WITH_TAG.cost("weapon"));
         assertNull(InfusedCraft.REFORGE_WITH_TAG.cost("kinetic"));
-        assertNull(InfusedCraft.REROLL_TAG_VALUES.cost("flux"));
         assertNull(InfusedCraft.REFORGE_WITH_TAG.cost(null));
     }
 
@@ -104,6 +102,6 @@ class InfusedCraftCostsTest {
                 .put(new JSONObject().put("tag", "phase").put("feedstock", PHASE).put("reforge_with_tag", "10")));
 
         assertEquals(List.of("phase"), InfusedCraft.REFORGE_WITH_TAG.tags());
-        assertEquals(List.of(), InfusedCraft.REROLL_TAG_VALUES.tags());
+        assertEquals(List.of(), InfusedCraft.ADD_AND_REMOVE.tags());
     }
 }

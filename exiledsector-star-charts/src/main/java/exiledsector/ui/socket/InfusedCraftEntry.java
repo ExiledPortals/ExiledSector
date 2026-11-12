@@ -6,7 +6,6 @@ import exiledsector.i18n.Message;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.items.CraftingInhibitor;
-import exiledsector.items.ForgeChoice;
 import exiledsector.items.InfusedCraft;
 import exiledsector.items.InfusedCraftCosts;
 import exiledsector.items.Item;
@@ -133,8 +132,7 @@ record InfusedCraftEntry(InfusedCraft craft, String tag) implements InfusedCraft
         }
         Item item = context.loaded();
         String nameBefore = item == null ? "" : item.name();
-        Optional<Set<CraftingInhibitor>> spent = craft.use(item, tag, ForgeChoice.WHOLE_ITEM, context.materials(), inhibitors(context),
-                context.random());
+        Optional<Set<CraftingInhibitor>> spent = craft.use(item, tag, context.materials(), inhibitors(context), context.random());
         if (spent.isEmpty()) {
             UseVerdict verdict = craft.verdict(item, tag, inhibitors(context));
             context.notice(verdict.allowed() ? costText(context, "ui.infusedCraft.notice.notEnough") : refusalText(verdict, item));

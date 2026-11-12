@@ -25,7 +25,6 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith({ThemeTagsExtension.class, EnglishCatalogueExtension.class})
@@ -45,12 +44,9 @@ class InfusedCraftTest {
     private static final String FEEDSTOCK = "test_feedstock";
     private static final int COST = 10;
     private static final String RESHAPING = InfusedCraft.reshapingId();
-    private static final String ALL_CRAFTS = FEEDSTOCK + ",10,10,10,10,10,10";
-    private static final String ALL_BUT_SWAP = FEEDSTOCK + ",10,10,10,10,,10";
-    private static final String COSTS = String.join("\n",
-            "tag,feedstock,reforge_with_tag,reforge_more_alike,reforge_less_alike,reroll_tag_values,swap_damage_type,add_and_remove",
-            "weapon," + ALL_BUT_SWAP, "flux," + ALL_BUT_SWAP, "armour," + ALL_BUT_SWAP, "front_shield," + ALL_BUT_SWAP,
-            "kinetic," + ALL_CRAFTS, "high_explosive," + ALL_CRAFTS, "fragmentation," + ALL_CRAFTS);
+    private static final String BOTH_CRAFTS = FEEDSTOCK + ",10,10";
+    private static final String COSTS = String.join("\n", "tag,feedstock,reforge_with_tag,add_and_remove",
+            "weapon," + BOTH_CRAFTS, "flux," + BOTH_CRAFTS, "armour," + BOTH_CRAFTS, "front_shield," + BOTH_CRAFTS);
 
     @BeforeEach
     void setUp() throws Exception {
@@ -113,7 +109,7 @@ class InfusedCraftTest {
     }
 
     private static boolean craft(InfusedCraft craft, Item item, String tag, Set<CraftingInhibitor> inhibitors, long seed) {
-        return craft.apply(item, tag, ForgeChoice.WHOLE_ITEM, inhibitors, new Random(seed));
+        return craft.apply(item, tag, inhibitors, new Random(seed));
     }
 
     private static List<RolledModifier> slot(Item item, ModifierSlot side) {
@@ -135,82 +131,23 @@ class InfusedCraftTest {
     }
 
     @Test
-    void reforgesKeepImmutableAndReservedModifiers() {
-        for (InfusedCraft craft : List.of(InfusedCraft.REFORGE_WITH_TAG, InfusedCraft.REFORGE_MORE_ALIKE, InfusedCraft.REFORGE_LESS_ALIKE)) {
-            for (long seed = 0; seed < SEEDS; seed++) {
-                Item item = plate(rolled(FLUX, 5f).asImmutable(), rolled(HULL, 5f), rolled(BIOME, -5f));
-                assertTrue(craft(craft, item, "armour", seed), craft + " seed " + seed);
-                assertTrue(item.explicits().contains(rolled(FLUX, 5f).asImmutable()), craft + " seed " + seed);
-                assertTrue(item.explicits().contains(rolled(BIOME, -5f)), craft + " seed " + seed);
-                assertTrue(item.explicits().size() >= 3, craft + " seed " + seed);
-            }
+    void theReforgeKeepsImmutableAndReservedModifiers() {
+        for (long seed = 0; seed < SEEDS; seed++) {
+            Item item = plate(rolled(FLUX, 5f).asImmutable(), rolled(HULL, 5f), rolled(BIOME, -5f));
+            assertTrue(craft(InfusedCraft.REFORGE_WITH_TAG, item, "armour", seed), "seed " + seed);
+            assertTrue(item.explicits().contains(rolled(FLUX, 5f).asImmutable()), "seed " + seed);
+            assertTrue(item.explicits().contains(rolled(BIOME, -5f)), "seed " + seed);
+            assertTrue(item.explicits().size() >= 3, "seed " + seed);
         }
     }
 
     @Test
-    void theAlikeReforgesShiftTheChanceOfRollingThePreviousModifiers() {
-        int moreAlikeKept = 0;
-        int lessAlikeKept = 0;
-        for (long seed = 0; seed < 200; seed++) {
-            moreAlikeKept += keptAfter(InfusedCraft.REFORGE_MORE_ALIKE, seed);
-            lessAlikeKept += keptAfter(InfusedCraft.REFORGE_LESS_ALIKE, seed);
-        }
-        assertTrue(moreAlikeKept > lessAlikeKept * 2, moreAlikeKept + " against " + lessAlikeKept);
-    }
-
-    private static int keptAfter(InfusedCraft craft, long seed) {
-        Item item = plate(rolled(FLUX, 5f), rolled(KINETIC, -5f));
-        assertTrue(craft(craft, item, "flux", seed));
-        return (int) ids(item).stream().filter(id -> id.equals(FLUX) || id.equals(KINETIC)).count();
-    }
-
-    @Test
-    void theTagRerollChangesOnlyModifiersWithItsTag() {
-        Item item = plate(rolled(FLUX, 5f), rolled(KINETIC, -5f), rolled(HIGH_EXPLOSIVE, -10f));
-
-        assertTrue(craft(InfusedCraft.REROLL_TAG_VALUES, item, "kinetic", 3L));
-        assertEquals(rolled(FLUX, 5f), item.explicits().get(0));
-        assertNotEquals(rolled(KINETIC, -5f), item.explicits().get(1));
-        assertEquals(rolled(HIGH_EXPLOSIVE, -10f), item.explicits().get(2));
-
-        assertEquals(InfusedCraft.REFUSAL_PREFIX + "reroll_tag_values", refusal(InfusedCraft.REROLL_TAG_VALUES, item, "armour"));
-        assertFalse(craft(InfusedCraft.REROLL_TAG_VALUES, item, "armour", 3L));
-    }
-
-    @Test
-    void uniquesTakeOnlyTheTagReroll() {
+    void uniquesRefuseEveryCraft() {
         Item relic = Item.create("relic", RELIC, 1L, List.of());
 
-        assertTrue(InfusedCraft.REROLL_TAG_VALUES.verdict(relic, "flux", Set.of()).allowed());
-        for (InfusedCraft craft : List.of(InfusedCraft.REFORGE_WITH_TAG, InfusedCraft.REFORGE_MORE_ALIKE, InfusedCraft.ADD_AND_REMOVE)) {
+        for (InfusedCraft craft : InfusedCraft.values()) {
             assertEquals(InfusedCraft.REFUSAL_PREFIX + "unique", refusal(craft, relic, "flux"), craft.id());
         }
-        assertEquals(InfusedCraft.REFUSAL_PREFIX + "unique", refusal(InfusedCraft.SWAP_DAMAGE_TYPE, relic, "high_explosive"));
-    }
-
-    @Test
-    void theDamageSwapTurnsAModifierIntoItsSiblingAtTheSameRollPosition() {
-        RolledModifier kinetic = rolled(KINETIC, -5f);
-        Item item = plate(rolled(FLUX, 5f), kinetic, rolled(BIOME, -5f));
-
-        assertTrue(InfusedCraft.SWAP_DAMAGE_TYPE.picksAChoice());
-        assertEquals(List.of(ForgeChoice.modifier(kinetic)), InfusedCraft.SWAP_DAMAGE_TYPE.choices(item, "high_explosive", Set.of()));
-        assertTrue(InfusedCraft.SWAP_DAMAGE_TYPE.apply(item, "high_explosive", ForgeChoice.modifier(kinetic), Set.of(), new Random(1L)));
-
-        assertEquals(List.of(FLUX, BIOME, HIGH_EXPLOSIVE), ids(item));
-        RolledLine swapped = item.explicits().get(2).lines().get(0);
-        assertEquals("HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT", swapped.effectName());
-        assertEquals(-10f, swapped.magnitude(), 1e-4f);
-    }
-
-    @Test
-    void theDamageSwapRefusesWithoutASiblingAndLeavesReservedModifiersAlone() {
-        Item item = plate(rolled(HIGH_EXPLOSIVE, -10f), rolled(BIOME, -5f));
-
-        assertEquals(InfusedCraft.REFUSAL_PREFIX + "swap_damage_type", refusal(InfusedCraft.SWAP_DAMAGE_TYPE, item, "fragmentation"));
-        assertEquals(List.of(), InfusedCraft.SWAP_DAMAGE_TYPE.choices(item, "kinetic", Set.of()).stream()
-                .filter(choice -> choice.modifier().modifierId().equals(BIOME)).toList());
-        assertEquals(InfusedCraft.REFUSAL_PREFIX + "tag", refusal(InfusedCraft.SWAP_DAMAGE_TYPE, item, "flux"));
     }
 
     @Test
@@ -284,7 +221,7 @@ class InfusedCraftTest {
 
     private static Optional<Set<CraftingInhibitor>> use(InfusedCraft craft, Item item, String tag, CraftingMaterials materials,
                                                         Set<CraftingInhibitor> inhibitors) {
-        return craft.use(item, tag, ForgeChoice.WHOLE_ITEM, materials, inhibitors, new Random(1L));
+        return craft.use(item, tag, materials, inhibitors, new Random(1L));
     }
 
     @Test

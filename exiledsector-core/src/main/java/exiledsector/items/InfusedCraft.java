@@ -15,12 +15,12 @@ import java.util.Set;
 public enum InfusedCraft {
     REFORGE_WITH_TAG(1) {
         @Override
-        List<ForgeChoice> offeredChoices(Item item, String tag, Set<ModifierSlot> inhibited) {
-            return wholeItemIf(InfusedCrafting.canReforge(item, tag, inhibited));
+        boolean offered(Item item, String tag, Set<ModifierSlot> inhibited) {
+            return InfusedCrafting.canReforge(item, tag, inhibited);
         }
 
         @Override
-        boolean run(Item item, String tag, ForgeChoice choice, Set<ModifierSlot> inhibited, Random random) {
+        boolean run(Item item, String tag, Set<ModifierSlot> inhibited, Random random) {
             return InfusedCrafting.reforgeWithTag(item, tag, inhibited, random);
         }
 
@@ -29,88 +29,14 @@ public enum InfusedCraft {
             return InfusedCrafting.changedByReforge(item);
         }
     },
-    REFORGE_MORE_ALIKE(0) {
-        @Override
-        List<ForgeChoice> offeredChoices(Item item, String tag, Set<ModifierSlot> inhibited) {
-            return wholeItemIf(InfusedCrafting.canReforge(item, null, inhibited));
-        }
-
-        @Override
-        boolean run(Item item, String tag, ForgeChoice choice, Set<ModifierSlot> inhibited, Random random) {
-            return InfusedCrafting.reforgeAlike(item, InfusedCrafting.MORE_ALIKE_WEIGHT, inhibited, random);
-        }
-
-        @Override
-        List<RolledModifier> changeable(Item item, String tag) {
-            return InfusedCrafting.changedByReforge(item);
-        }
-    },
-    REFORGE_LESS_ALIKE(0) {
-        @Override
-        List<ForgeChoice> offeredChoices(Item item, String tag, Set<ModifierSlot> inhibited) {
-            return wholeItemIf(InfusedCrafting.canReforge(item, null, inhibited));
-        }
-
-        @Override
-        boolean run(Item item, String tag, ForgeChoice choice, Set<ModifierSlot> inhibited, Random random) {
-            return InfusedCrafting.reforgeAlike(item, InfusedCrafting.LESS_ALIKE_WEIGHT, inhibited, random);
-        }
-
-        @Override
-        List<RolledModifier> changeable(Item item, String tag) {
-            return InfusedCrafting.changedByReforge(item);
-        }
-    },
-    REROLL_TAG_VALUES(0) {
-        @Override
-        List<ForgeChoice> offeredChoices(Item item, String tag, Set<ModifierSlot> inhibited) {
-            return wholeItemIf(!InfusedCrafting.rerollableWithTag(item, tag, inhibited).isEmpty());
-        }
-
-        @Override
-        boolean run(Item item, String tag, ForgeChoice choice, Set<ModifierSlot> inhibited, Random random) {
-            return InfusedCrafting.rerollTagValues(item, tag, inhibited, random);
-        }
-
-        @Override
-        List<RolledModifier> changeable(Item item, String tag) {
-            return InfusedCrafting.rerollableWithTag(item, tag, Set.of());
-        }
-
-        @Override
-        boolean refusesUniques() {
-            return false;
-        }
-    },
-    SWAP_DAMAGE_TYPE(0) {
-        @Override
-        List<ForgeChoice> offeredChoices(Item item, String tag, Set<ModifierSlot> inhibited) {
-            return InfusedCrafting.swappable(item, tag, damageTypes(), inhibited).stream().map(ForgeChoice::modifier).toList();
-        }
-
-        @Override
-        boolean run(Item item, String tag, ForgeChoice choice, Set<ModifierSlot> inhibited, Random random) {
-            return InfusedCrafting.swapDamageType(item, choice.modifier(), tag, damageTypes(), inhibited);
-        }
-
-        @Override
-        List<RolledModifier> changeable(Item item, String tag) {
-            return InfusedCrafting.swappable(item, tag, damageTypes(), Set.of());
-        }
-
-        @Override
-        public boolean picksAChoice() {
-            return true;
-        }
-    },
     ADD_AND_REMOVE(2) {
         @Override
-        List<ForgeChoice> offeredChoices(Item item, String tag, Set<ModifierSlot> inhibited) {
-            return wholeItemIf(!InfusedCrafting.removableForTag(item, tag, inhibited).isEmpty());
+        boolean offered(Item item, String tag, Set<ModifierSlot> inhibited) {
+            return !InfusedCrafting.removableForTag(item, tag, inhibited).isEmpty();
         }
 
         @Override
-        boolean run(Item item, String tag, ForgeChoice choice, Set<ModifierSlot> inhibited, Random random) {
+        boolean run(Item item, String tag, Set<ModifierSlot> inhibited, Random random) {
             return InfusedCrafting.addAndRemove(item, tag, inhibited, random);
         }
 
@@ -157,31 +83,11 @@ public enum InfusedCraft {
         return InfusedCraftCosts.cost(this, tag);
     }
 
-    public List<ForgeChoice> choices(Item item, String tag, Collection<CraftingInhibitor> inhibitors) {
-        return offeredChoices(item, tag, CraftingInhibitor.inhibitedSlots(inhibitors));
-    }
+    abstract boolean offered(Item item, String tag, Set<ModifierSlot> inhibited);
 
-    abstract List<ForgeChoice> offeredChoices(Item item, String tag, Set<ModifierSlot> inhibited);
-
-    abstract boolean run(Item item, String tag, ForgeChoice choice, Set<ModifierSlot> inhibited, Random random);
+    abstract boolean run(Item item, String tag, Set<ModifierSlot> inhibited, Random random);
 
     abstract List<RolledModifier> changeable(Item item, String tag);
-
-    boolean refusesUniques() {
-        return true;
-    }
-
-    public boolean picksAChoice() {
-        return false;
-    }
-
-    private static List<ForgeChoice> wholeItemIf(boolean offered) {
-        return offered ? List.of(ForgeChoice.WHOLE_ITEM) : List.of();
-    }
-
-    private static Set<String> damageTypes() {
-        return Set.copyOf(InfusedCraftCosts.tags(SWAP_DAMAGE_TYPE));
-    }
 
     public UseVerdict verdict(Item item, String tag, Collection<CraftingInhibitor> inhibitors) {
         UseVerdict verdict = refusal(item, tag, CraftingInhibitor.inhibitedSlots(inhibitors));
@@ -213,14 +119,13 @@ public enum InfusedCraft {
         if (cost(tag) == null) {
             return UseVerdict.refused(REFUSAL_PREFIX + "tag");
         }
-        if (refusesUniques() && item.definition() != null && item.definition().unique()) {
+        if (item.definition() != null && item.definition().unique()) {
             return UseVerdict.refused(REFUSAL_PREFIX + "unique");
         }
-        if (!offeredChoices(item, tag, inhibited).isEmpty()) {
+        if (offered(item, tag, inhibited)) {
             return UseVerdict.ALLOW;
         }
-        return offeredChoices(item, tag, Set.of()).isEmpty() ? UseVerdict.refused(REFUSAL_PREFIX + id())
-                : UseVerdict.refused(REFUSAL_PREFIX + "inhibited");
+        return offered(item, tag, Set.of()) ? UseVerdict.refused(REFUSAL_PREFIX + "inhibited") : UseVerdict.refused(REFUSAL_PREFIX + id());
     }
 
     public Set<CraftingInhibitor> inhibitorsSpent(Item item, String tag, Collection<CraftingInhibitor> inhibitors) {
@@ -243,19 +148,17 @@ public enum InfusedCraft {
                 && materials.count(reshapingId()) >= reshapingCost;
     }
 
-    public boolean apply(Item item, String tag, ForgeChoice choice, Collection<CraftingInhibitor> inhibitors, Random random) {
-        Set<ModifierSlot> inhibited = CraftingInhibitor.inhibitedSlots(inhibitors);
-        return verdict(item, tag, inhibitors).allowed() && choice != null && offeredChoices(item, tag, inhibited).contains(choice)
-                && run(item, tag, choice, inhibited, random);
+    public boolean apply(Item item, String tag, Collection<CraftingInhibitor> inhibitors, Random random) {
+        return verdict(item, tag, inhibitors).allowed() && run(item, tag, CraftingInhibitor.inhibitedSlots(inhibitors), random);
     }
 
-    public Optional<Set<CraftingInhibitor>> use(Item item, String tag, ForgeChoice choice, CraftingMaterials materials,
+    public Optional<Set<CraftingInhibitor>> use(Item item, String tag, CraftingMaterials materials,
                                                 Collection<CraftingInhibitor> inhibitors, Random random) {
         if (!canAfford(tag, materials) || inhibitors.stream().anyMatch(inhibitor -> materials.count(inhibitor.itemId()) < 1)) {
             return Optional.empty();
         }
         Set<CraftingInhibitor> spent = inhibitorsSpent(item, tag, inhibitors);
-        if (!apply(item, tag, choice, inhibitors, random)) {
+        if (!apply(item, tag, inhibitors, random)) {
             return Optional.empty();
         }
         InfusedCraftCosts.Cost cost = cost(tag);
