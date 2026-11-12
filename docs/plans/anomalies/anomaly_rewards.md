@@ -41,9 +41,9 @@ The convoy's cargo pods (`ConvoyCargo`, by share of freighter fleet points lost)
 
 | Feedstock (placeholder names) | Item id | Tags it crafts |
 |---|---|---|
-| Threat-infused Feedstock | `exiledSector_threat_feedstock` | `ballistic`, `non_beam_energy`, `beam`, `missile`, `range`, `rate_of_fire`, `ammo`, `damage_type` |
-| Shroud-infused Feedstock | `exiledSector_shroud_feedstock` | `defence`, `combat_readiness` |
-| Phase-infused Feedstock | `exiledSector_phase_feedstock` | `flux`, `phase`, `ship_system`, `mobility`, `strikecraft`, `logistics` (with `sensors`) |
+| Threat-infused Feedstock | `exiledSector_threat_feedstock` | `ballistic`, `non_beam_energy`, `beam`, `missile`, `damage_type`, `strikecraft` |
+| Shroud-infused Feedstock | `exiledSector_shroud_feedstock` | `defence`, `combat_readiness`, `range`, `ammo`, `logistics` (with `sensors`) |
+| Phase-infused Feedstock | `exiledSector_phase_feedstock` | `flux`, `rate_of_fire`, `phase`, `ship_system`, `mobility` |
 
 The crafts are offered for parent tags only, except the weapon tags named above, and never for `weapon`, `repair`, `d_mods`, `fleet`, `conditional` or the star chart tags; `affinity` (low tech, midline, high tech) costs the same amount of all three.
 

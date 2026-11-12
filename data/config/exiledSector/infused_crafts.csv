@@ -3,9 +3,9 @@ ballistic,exiledSector_threat_feedstock,100,,,,,1000
 non_beam_energy,exiledSector_threat_feedstock,100,,,,,1000
 beam,exiledSector_threat_feedstock,100,,,,,1000
 missile,exiledSector_threat_feedstock,100,,,,,1000
-range,exiledSector_threat_feedstock,100,,,,,1000
-rate_of_fire,exiledSector_threat_feedstock,100,,,,,1000
-ammo,exiledSector_threat_feedstock,100,,,,,1000
+range,exiledSector_shroud_feedstock,100,,,,,1000
+rate_of_fire,exiledSector_phase_feedstock,100,,,,,1000
+ammo,exiledSector_shroud_feedstock,100,,,,,1000
 damage_type,exiledSector_threat_feedstock,100,,,,,1000
 defence,exiledSector_shroud_feedstock,100,,,,,1000
 flux,exiledSector_phase_feedstock,100,,,,,1000
@@ -13,6 +13,6 @@ phase,exiledSector_phase_feedstock,100,,,,,1000
 ship_system,exiledSector_phase_feedstock,100,,,,,1000
 mobility,exiledSector_phase_feedstock,100,,,,,1000
 combat_readiness,exiledSector_shroud_feedstock,100,,,,,1000
-strikecraft,exiledSector_phase_feedstock,100,,,,,1000
-logistics,exiledSector_phase_feedstock,100,,,,,1000
+strikecraft,exiledSector_threat_feedstock,100,,,,,1000
+logistics,exiledSector_shroud_feedstock,100,,,,,1000
 affinity,exiledSector_threat_feedstock;exiledSector_shroud_feedstock;exiledSector_phase_feedstock,100,,,,,1000

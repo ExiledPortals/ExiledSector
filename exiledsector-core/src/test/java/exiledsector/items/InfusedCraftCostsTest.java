@@ -15,7 +15,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,8 +30,8 @@ class InfusedCraftCostsTest {
     private static final Set<String> CHILD_TAGS_WITH_THEIR_OWN_CRAFTS = Set.of("ballistic", "non_beam_energy", "beam", "missile", "range",
             "rate_of_fire", "ammo");
     private static final Set<String> ROOT_TAGS_WITHOUT_CRAFTS = Set.of("weapon", "repair", "d_mods", "fleet", "conditional");
-    private static final Map<String, List<String>> FEEDSTOCKS_BY_ROOT = Map.of("weapon", List.of(THREAT), "damage_type", List.of(THREAT),
-            "defence", List.of(SHROUD), "combat_readiness", List.of(SHROUD), "affinity", List.of(THREAT, SHROUD, PHASE));
+    private static final Set<String> THREAT_TAGS = Set.of("ballistic", "non_beam_energy", "beam", "missile", "damage_type", "strikecraft");
+    private static final Set<String> SHROUD_TAGS = Set.of("defence", "combat_readiness", "range", "ammo", "logistics");
 
     @BeforeEach
     void setUp() throws Exception {
@@ -83,9 +82,18 @@ class InfusedCraftCostsTest {
     void everyTagUsesTheFeedstockOfItsFamily() {
         for (String tag : InfusedCraft.REFORGE_WITH_TAG.tags()) {
             assertTrue(ThemeTags.isThemeTag(tag), tag);
-            String root = ThemeTags.withAncestors(tag).get(ThemeTags.withAncestors(tag).size() - 1);
-            assertEquals(FEEDSTOCKS_BY_ROOT.getOrDefault(root, List.of(PHASE)), InfusedCraftCosts.feedstocksFor(tag), tag);
+            assertEquals(expectedFeedstocks(tag), InfusedCraftCosts.feedstocksFor(tag), tag);
         }
+    }
+
+    private static List<String> expectedFeedstocks(String tag) {
+        if ("affinity".equals(tag)) {
+            return List.of(THREAT, SHROUD, PHASE);
+        }
+        if (THREAT_TAGS.contains(tag)) {
+            return List.of(THREAT);
+        }
+        return List.of(SHROUD_TAGS.contains(tag) ? SHROUD : PHASE);
     }
 
     @Test
