@@ -40,7 +40,7 @@ public final class SkirmishFactions {
         return factionId != null && !factionId.isEmpty() && !neutral.contains(factionId);
     }
 
-    static void useForTests(Set<String> factionIds) {
+    public static void useForTests(Set<String> factionIds) {
         neutral = Set.copyOf(factionIds);
     }
 }

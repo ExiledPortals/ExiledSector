@@ -12,6 +12,9 @@ import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.content.ChartFactions;
+import exiledsector.charts.officer.AtlasOfficer;
+import exiledsector.charts.officer.OfficerFleets;
+import exiledsector.charts.officer.OfficerText;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunBound;
 import exiledsector.charts.run.ChartRuns;
@@ -103,6 +106,11 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
         info.addPara(safe(Translation.gameText(descriptionKey(run))), 0f);
         info.addPara(safe(I18n.forGameText(() -> Translation.msg("chart.intel.tier").arg("tier", tier).arg("faction", faction).text())),
                 PARAGRAPH_PAD);
+        AtlasOfficer officer = OfficerFleets.officerOf(run.atlasNode());
+        if (officer != null) {
+            info.addPara(safe(I18n.forGameText(() -> Translation.msg("chart.intel.officer").arg("title", OfficerText.title(officer))
+                    .arg("faction", ChartFactions.displayName(officer.factionId())).text())), PARAGRAPH_PAD);
+        }
         String progress = progressText(run);
         if (progress != null) {
             info.addPara(safe(progress), PARAGRAPH_PAD);

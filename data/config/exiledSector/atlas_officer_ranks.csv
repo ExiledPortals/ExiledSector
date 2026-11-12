@@ -1,0 +1,6 @@
+id,boss_size,fleet_strength,actions,places,note
+lieutenant,10,0,1,16,"Placeholder magnitudes; ranks run lowest first"
+commander,20,10,1,12,
+captain,30,20,2,8,
+commodore,45,35,2,6,
+admiral,60,50,3,3,

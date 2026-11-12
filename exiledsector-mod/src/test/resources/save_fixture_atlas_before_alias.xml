@@ -30,12 +30,6 @@
           <string>fixture_unlock</string>
         </entry>
       </chunkUnlocks>
-      <territoryFactions>
-        <entry>
-          <string>0:0</string>
-          <string>pirates</string>
-        </entry>
-      </territoryFactions>
       <clearedTiers>
         <int>1</int>
         <int>2</int>
@@ -47,12 +41,6 @@
         </entry>
       </anomalyRecords>
       <nextAnomalyRecord>1</nextAnomalyRecord>
-      <capturedSystems>
-        <entry>
-          <long>4294967296</long>
-          <string>hegemony</string>
-        </entry>
-      </capturedSystems>
       <atlasPoints>5</atlasPoints>
       <keyFragments>1</keyFragments>
     </exiledsector.charts.atlas.AtlasState>

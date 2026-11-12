@@ -107,6 +107,10 @@ public final class LootSources {
         return DIFFICULTIES.first(difficulty -> difficulty.levelSeed(fleetMemory));
     }
 
+    public static String memberLevelSeed(MemoryAPI fleetMemory, FleetMemberAPI member) {
+        return DIFFICULTIES.first(difficulty -> difficulty.memberLevelSeed(fleetMemory, member));
+    }
+
     public static List<String> grantedNodeIds(MemoryAPI fleetMemory) {
         return DIFFICULTIES.firstOr(difficulty -> difficulty.grantedNodeIds(fleetMemory), List.of());
     }

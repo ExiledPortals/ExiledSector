@@ -15,9 +15,10 @@ import exiledsector.charts.atlas.AtlasNames;
 import exiledsector.charts.atlas.AtlasNode;
 import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.charts.atlas.AtlasReach;
-import exiledsector.charts.atlas.AtlasRegion;
 import exiledsector.charts.atlas.AtlasSpecial;
 import exiledsector.charts.atlas.AtlasState;
+import exiledsector.charts.officer.AtlasOfficer;
+import exiledsector.charts.officer.OfficerText;
 import exiledsector.ui.socket.BenchModeSupport;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public final class AtlasNodeText {
     }
 
     public static String regionName(String regionId) {
-        return AtlasRegion.NORMAL.equals(regionId) ? Translation.text("chart.atlas.normalSpace") : AtlasNames.name("region", regionId);
+        return AtlasNames.region(regionId);
     }
 
     public static List<AtlasLine> describe(AtlasGenerator generator, AtlasState state, AtlasCell cell, boolean reachable) {
@@ -43,8 +44,27 @@ public final class AtlasNodeText {
         lines.add(new AtlasLine(Translation.msg("chart.atlas.node.faction")
                 .arg("faction", ChartFactions.displayName(AtlasOpening.factionFor(generator, state, cell, node))).text(), Tone.PLAIN));
         lines.add(new AtlasLine(Translation.msg("chart.atlas.node.layout").arg("layout", AtlasNames.name("layout", node.layoutId())).text(), Tone.PLAIN));
+        lines.addAll(officerLines(generator, state, cell));
         lines.addAll(markers(generator, state, cell, node));
         lines.addAll(stateLines(generator, state, cell, reachable));
+        return lines;
+    }
+
+    static List<AtlasLine> officerLines(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
+        AtlasCell centre = state.commandCentreOf(cell);
+        AtlasOfficer officer = centre == null ? null : state.officerAt(centre);
+        if (officer == null) {
+            return List.of();
+        }
+        if (!centre.equals(cell)) {
+            return List.of(new AtlasLine(Translation.msg("chart.officer.tooltip.territory").arg("title", OfficerText.title(officer)).text(), Tone.PLAIN));
+        }
+        List<AtlasLine> lines = new ArrayList<>();
+        lines.add(new AtlasLine(Translation.msg("chart.officer.tooltip.commandCentre").arg("title", OfficerText.title(officer)).text(), Tone.MARKER));
+        String history = OfficerText.latestHistory(generator, officer);
+        if (!history.isEmpty()) {
+            lines.add(new AtlasLine(history, Tone.HINT));
+        }
         return lines;
     }
 

@@ -17,6 +17,7 @@ import exiledsector.charts.effect.ChartEnemyShipEffects;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.LootShaper;
+import exiledsector.charts.officer.OfficerFleets;
 import exiledsector.effects.ItemLootListener;
 import exiledsector.effects.TechMiningItemListener;
 import exiledsector.items.ItemChances;
@@ -299,6 +300,11 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
     @Override
     public String levelSeed(MemoryAPI fleetMemory) {
         return ChartIds.fleetSeed(fleetMemory);
+    }
+
+    @Override
+    public String memberLevelSeed(MemoryAPI fleetMemory, FleetMemberAPI member) {
+        return OfficerFleets.flagshipTreeSeed(fleetMemory, member);
     }
 
     @Override

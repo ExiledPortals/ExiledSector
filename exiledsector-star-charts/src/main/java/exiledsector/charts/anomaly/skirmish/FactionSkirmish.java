@@ -19,7 +19,9 @@ import exiledsector.charts.atlas.AtlasRunChoice;
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.atlas.AtlasRuntime;
 import exiledsector.charts.atlas.AtlasState;
+import exiledsector.charts.atlas.AtlasTerritoryTransfer;
 import exiledsector.charts.atlas.AtlasTraits;
+import exiledsector.charts.atlas.TerritoryFactions;
 import exiledsector.charts.atlas.RedeploymentCatalystUse;
 import exiledsector.charts.content.ChartContentPlan;
 import exiledsector.charts.content.ChartFactions;
@@ -88,7 +90,7 @@ public final class FactionSkirmish implements AtlasRule, RunParticipant, Content
         if (traits.specialId() != null || traits.infestationId() != null || !SkirmishFactions.takesSides(traits.factionId())) {
             return false;
         }
-        return traits.neighbourFactionIds().stream().anyMatch(neighbour -> !neighbour.equals(traits.factionId()) && SkirmishFactions.takesSides(neighbour));
+        return traits.neighbourFactionIds().stream().anyMatch(neighbour -> !neighbour.equals(traits.factionId()) && TerritoryFactions.canHoldTerritory(neighbour));
     }
 
     @Override
@@ -157,7 +159,7 @@ public final class FactionSkirmish implements AtlasRule, RunParticipant, Content
 
     static void captureForWinner(AtlasGenerator generator, AtlasState state, AtlasCell cell, SkirmishJoin join) {
         if (join.side() == SkirmishSide.ATTACKER && join.attackerId() != null) {
-            state.capture(generator, cell, join.attackerId());
+            AtlasTerritoryTransfer.transfer(generator, state, cell, join.attackerId());
         }
     }
 
@@ -170,7 +172,7 @@ public final class FactionSkirmish implements AtlasRule, RunParticipant, Content
     }
 
     public static String attacker(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
-        return AtlasBorders.attacker(generator, state, cell, SkirmishFactions::takesSides);
+        return AtlasBorders.attacker(generator, state, cell, TerritoryFactions::canHoldTerritory);
     }
 
     public static boolean isIn(AtlasGenerator generator, AtlasState state, AtlasCell cell) {

@@ -11,7 +11,11 @@ public interface AtlasMemory {
         return null;
     }
 
-    default String recordedFaction(String territoryKey) {
+    default String claimedFaction(AtlasCell cell) {
+        return null;
+    }
+
+    default String territoryAt(AtlasCell cell) {
         return null;
     }
 }

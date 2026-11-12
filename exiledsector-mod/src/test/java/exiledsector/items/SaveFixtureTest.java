@@ -135,8 +135,6 @@ class SaveFixtureTest {
         assertEquals(1, atlas.keyFragments());
         assertEquals("fixture_region", atlas.recordedRegion(77L));
         assertEquals(Boolean.TRUE, atlas.unlockedAtReveal(0L, "fixture_unlock"));
-        assertEquals("pirates", atlas.recordedFaction("0:0"));
-        assertEquals("hegemony", atlas.capturedBy(new AtlasCell(1, 0)));
         assertEquals(List.of("spatial_breach"), atlas.anomalyRecords(new AtlasCell(2, -1)).stream().map(AtlasAnomalyRecord::anomalyId).toList());
 
         String resaved = xstream().toXML(saved);

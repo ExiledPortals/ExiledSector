@@ -27,6 +27,10 @@ public interface FleetDifficulty {
         return null;
     }
 
+    default String memberLevelSeed(MemoryAPI fleetMemory, FleetMemberAPI member) {
+        return null;
+    }
+
     default List<String> grantedNodeIds(MemoryAPI fleetMemory) {
         return null;
     }

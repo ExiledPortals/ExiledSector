@@ -83,8 +83,10 @@ public final class NpcFleetLeveller {
                     levelLimit = NpcLevelCaps.limitFor(npcFleet);
                 }
                 String memberSeedKey = chartSeed != null ? String.valueOf(memberIndex) : member.getId();
+                String fixedMemberSeed = LootSources.memberLevelSeed(npcFleet.getMemoryWithoutUpdate(), member);
                 memberRecord = decide(member, playerShipPowers, chartLevels, chartTreeShare, levelLimit, fleetFactionId, factionVolume,
-                        grantedNodeIds, NpcIntegratedNodes.averageSModsBeforeInflation(npcFleet), Seeds.random(seedPrefix + memberSeedKey));
+                        grantedNodeIds, NpcIntegratedNodes.averageSModsBeforeInflation(npcFleet),
+                        Seeds.random(fixedMemberSeed != null ? CHART_SEED_PREFIX + fixedMemberSeed : seedPrefix + memberSeedKey));
                 recordsByMemberId.put(member.getId(), memberRecord);
             }
             if (NpcTreeRecords.isLevelled(memberRecord)) {

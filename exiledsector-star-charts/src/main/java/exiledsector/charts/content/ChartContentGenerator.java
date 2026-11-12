@@ -32,6 +32,7 @@ import exiledsector.charts.content.ChartContentPlan.PlannedStation;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.anomaly.ContentPlacer;
+import exiledsector.charts.officer.OfficerFleets;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.loot.ChartFleetLoot;
 import exiledsector.charts.loot.ChartVanillaLoot;
@@ -502,7 +503,8 @@ public final class ChartContentGenerator {
             }
             FleetRole role = built.role();
             SectorEntityToken holdPoint = guarded;
-            CampaignFleetAPI fleet = launchBuilt(plan, built, guarded, fleetSeed, oneFleetRandom, () -> spawnLocation(role, holdPoint, oneFleetRandom));
+            CampaignFleetAPI fleet = launchBuilt(plan, built, guarded, fleetSeed, oneFleetRandom, () -> spawnLocation(role, holdPoint, oneFleetRandom),
+                    role == FleetRole.BOSS);
             if (fleet == null) {
                 return;
             }
@@ -521,7 +523,7 @@ public final class ChartContentGenerator {
         }
 
         private CampaignFleetAPI launchBuilt(ChartContentPlan plan, PlannedFleet built, SectorEntityToken guarded, long fleetSeed,
-                                             Random buildRandom, Supplier<Vector2f> spawnPoint) {
+                                             Random buildRandom, Supplier<Vector2f> spawnPoint, boolean officerFlagship) {
             FleetRole role = built.role();
             CampaignFleetAPI fleet = engine.createFleet(fleetParams(plan.faction().factionId(), built, buildRandom));
             if (fleet == null || fleet.isEmpty()) {
@@ -531,6 +533,9 @@ public final class ChartContentGenerator {
             if (plan.alliedStation()) {
                 joinPlayer(fleet, allyFactionId);
             } else {
+                if (officerFlagship) {
+                    dressOfficer(fleet);
+                }
                 arm(fleet, role);
             }
             Vector2f spawnAt = spawnPoint.get();
@@ -546,12 +551,20 @@ public final class ChartContentGenerator {
             Vector2f twinAt = ChartSites.pointAround(originalAt, twinRandom.nextDouble() * Math.PI * 2d, TWIN_OFFSET);
             long twinSeed = twinRandom.nextLong();
             try {
-                CampaignFleetAPI twin = launchBuilt(plan, built, guarded, twinSeed, new Random(twinSeed), () -> twinAt);
+                CampaignFleetAPI twin = launchBuilt(plan, built, guarded, twinSeed, new Random(twinSeed), () -> twinAt, false);
                 if (twin != null && built.role() == FleetRole.BOSS) {
                     revealBoss(twin);
                 }
             } catch (RuntimeException | LinkageError e) {
                 report("spawn a twinned boss fleet", seed, e);
+            }
+        }
+
+        private void dressOfficer(CampaignFleetAPI fleet) {
+            try {
+                OfficerFleets.dress(fleet, chartContext);
+            } catch (RuntimeException | LinkageError e) {
+                report("dress the officer's flagship", seed, e);
             }
         }
 

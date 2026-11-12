@@ -1,6 +1,7 @@
 package exiledsector.charts.atlas;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
+import exiledsector.charts.officer.AtlasOfficer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,14 +35,18 @@ public final class AtlasState implements AtlasMemory {
     private Map<Long, Integer> cellFlags = new HashMap<>();
     private Map<Long, String> siteRegions = new HashMap<>();
     private Map<Long, String> chunkUnlocks = new HashMap<>();
-    private Map<String, String> territoryFactions = new HashMap<>();
     private Set<Integer> clearedTiers = new HashSet<>();
     private Map<Integer, String> anomalyRecords = new TreeMap<>();
     private int nextAnomalyRecord;
-    private Map<Long, String> capturedSystems = new HashMap<>();
+    private Map<Long, Long> territoryClaims = new HashMap<>();
+    private Set<Long> decidedChunks = new HashSet<>();
+    private Map<Integer, String> officerRecords = new TreeMap<>();
     private int atlasPoints;
     private Set<String> atlasTreeNodeIds = new TreeSet<>();
     private int keyFragments;
+    private transient Map<Integer, AtlasOfficer> decodedOfficers;
+    private transient Map<Long, AtlasOfficer> activeOfficersByCentre;
+    private transient long fillFingerprint;
 
     public AtlasState(long seed) {
         this.seed = seed;
@@ -72,17 +77,20 @@ public final class AtlasState implements AtlasMemory {
         if (chunkUnlocks == null) {
             chunkUnlocks = new HashMap<>();
         }
-        if (territoryFactions == null) {
-            territoryFactions = new HashMap<>();
-        }
         if (clearedTiers == null) {
             clearedTiers = new HashSet<>();
         }
         if (anomalyRecords == null) {
             anomalyRecords = new TreeMap<>();
         }
-        if (capturedSystems == null) {
-            capturedSystems = new HashMap<>();
+        if (territoryClaims == null) {
+            territoryClaims = new HashMap<>();
+        }
+        if (decidedChunks == null) {
+            decidedChunks = new HashSet<>();
+        }
+        if (officerRecords == null) {
+            officerRecords = new TreeMap<>();
         }
         if (atlasTreeNodeIds == null) {
             atlasTreeNodeIds = new TreeSet<>();
@@ -149,8 +157,20 @@ public final class AtlasState implements AtlasMemory {
     }
 
     @Override
-    public String recordedFaction(String territoryKey) {
-        return territoryFactions.get(territoryKey);
+    public String claimedFaction(AtlasCell cell) {
+        AtlasOfficer holder = holderOf(cell);
+        return holder == null ? null : holder.factionId();
+    }
+
+    @Override
+    public String territoryAt(AtlasCell cell) {
+        AtlasOfficer holder = holderOf(cell);
+        return holder == null ? null : TerritoryFactions.territoryId(holder.factionId(), holder.commandCentre());
+    }
+
+    private AtlasOfficer holderOf(AtlasCell cell) {
+        Long centre = territoryClaims.get(cell.pack());
+        return centre == null ? null : activeOfficersByCentre().get(centre);
     }
 
     public void recordReveal(AtlasGenerator generator, Collection<AtlasCell> revealed) {
@@ -167,7 +187,6 @@ public final class AtlasState implements AtlasMemory {
                 }
             }
         }
-        generator.factionDecisions(revealed).forEach(territoryFactions::putIfAbsent);
     }
 
     private void recordChunkSites(AtlasGenerator generator, int chunkX, int chunkY) {
@@ -273,25 +292,101 @@ public final class AtlasState implements AtlasMemory {
         anomalyRecords(cell).stream().filter(record -> record.chain() == null).forEach(record -> anomalyRecords.remove(record.recordId()));
     }
 
-    public String capturedBy(AtlasCell cell) {
-        return capturedSystems.get(cell.pack());
+    public List<AtlasOfficer> officers() {
+        return List.copyOf(decodedOfficers().values());
     }
 
-    public Map<AtlasCell, String> captures() {
-        Map<AtlasCell, String> captures = new LinkedHashMap<>();
-        new TreeMap<>(capturedSystems).forEach((packed, factionId) -> captures.put(AtlasCell.unpack(packed), factionId));
-        return captures;
+    public AtlasOfficer officer(int recordId) {
+        return decodedOfficers().get(recordId);
     }
 
-    public void capture(AtlasGenerator generator, AtlasCell cell, String factionId) {
-        if (factionId.equals(generator.factionAt(cell))) {
-            capturedSystems.remove(cell.pack());
-        } else {
-            capturedSystems.put(cell.pack(), factionId);
+    public AtlasOfficer officerAt(AtlasCell commandCentre) {
+        return activeOfficersByCentre().get(commandCentre.pack());
+    }
+
+    public void putOfficer(AtlasOfficer officer) {
+        officerRecords.put(officer.recordId(), officer.encode());
+        forgetDecodedOfficers();
+    }
+
+    private Map<Integer, AtlasOfficer> decodedOfficers() {
+        if (decodedOfficers == null) {
+            Map<Integer, AtlasOfficer> decoded = new LinkedHashMap<>();
+            officerRecords.forEach((recordId, text) -> {
+                AtlasOfficer officer = AtlasOfficer.decode(recordId, text);
+                if (officer != null) {
+                    decoded.put(recordId, officer);
+                }
+            });
+            decodedOfficers = decoded;
         }
+        return decodedOfficers;
+    }
+
+    private Map<Long, AtlasOfficer> activeOfficersByCentre() {
+        if (activeOfficersByCentre == null) {
+            Map<Long, AtlasOfficer> byCentre = new HashMap<>();
+            for (AtlasOfficer officer : decodedOfficers().values()) {
+                if (officer.isActive()) {
+                    byCentre.putIfAbsent(officer.commandCentre().pack(), officer);
+                }
+            }
+            activeOfficersByCentre = byCentre;
+        }
+        return activeOfficersByCentre;
+    }
+
+    private void forgetDecodedOfficers() {
+        decodedOfficers = null;
+        activeOfficersByCentre = null;
+    }
+
+    public AtlasCell commandCentreOf(AtlasCell cell) {
+        AtlasOfficer holder = holderOf(cell);
+        return holder == null ? null : holder.commandCentre();
+    }
+
+    public boolean isClaimed(AtlasCell cell) {
+        return holderOf(cell) != null;
+    }
+
+    public void claim(AtlasCell cell, AtlasCell commandCentre) {
+        territoryClaims.put(cell.pack(), commandCentre.pack());
     }
 
     public boolean release(AtlasCell cell) {
-        return capturedSystems.remove(cell.pack()) != null;
+        return territoryClaims.remove(cell.pack()) != null;
+    }
+
+    public Set<AtlasCell> claimsOf(AtlasCell commandCentre) {
+        Set<AtlasCell> claims = new LinkedHashSet<>();
+        new TreeMap<>(territoryClaims).forEach((packed, centre) -> {
+            if (centre == commandCentre.pack()) {
+                claims.add(AtlasCell.unpack(packed));
+            }
+        });
+        return claims;
+    }
+
+    public Map<AtlasCell, AtlasCell> claims() {
+        Map<AtlasCell, AtlasCell> claims = new LinkedHashMap<>();
+        new TreeMap<>(territoryClaims).forEach((packed, centre) -> claims.put(AtlasCell.unpack(packed), AtlasCell.unpack(centre)));
+        return claims;
+    }
+
+    public void breakUp(AtlasCell commandCentre) {
+        territoryClaims.values().removeIf(centre -> centre == commandCentre.pack());
+    }
+
+    boolean decideChunk(long chunkKey) {
+        return decidedChunks.add(chunkKey);
+    }
+
+    boolean fillFingerprintChanged(long fingerprint) {
+        if (fingerprint == fillFingerprint) {
+            return false;
+        }
+        fillFingerprint = fingerprint;
+        return true;
     }
 }
