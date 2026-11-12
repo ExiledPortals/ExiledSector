@@ -906,5 +906,12 @@
     "chart.anomaly.derelict_forge.choose.excise": "Pick the modifier to remove.",
     "chart.anomaly.derelict_forge.choose.perfect": "Pick the modifier to perfect.",
     "chart.anomaly.derelict_forge.choose.anchor_reroll": "Pick the modifier that stays. Every other modifier is rerolled.",
-    "chart.anomaly.derelict_forge.keep": "Keep {modifier}"
+    "chart.anomaly.derelict_forge.keep": "Keep {modifier}",
+    "chart.officer.reward.title": "Choose an item for the officer to carry",
+    "chart.officer.reward.titleNamed": "Choose an item for {officer} to carry",
+    "chart.officer.reward.hint": "It drops the next time you defeat them, on top of their usual boss drops.",
+    "chart.officer.reward.carries": "Carries {items}",
+    "chart.officer.reward.sep": ", ",
+    "chart.officer.reward.and": "{rest} and {last}",
+    "chart.officer.reward.biomeItem": "{item} ({biome})"
 }

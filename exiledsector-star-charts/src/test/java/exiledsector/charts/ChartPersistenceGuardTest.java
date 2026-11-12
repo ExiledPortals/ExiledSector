@@ -59,7 +59,8 @@ class ChartPersistenceGuardTest {
             "exiledsector.charts.run.ChartTransverseJumpAbility", "swapped back to the vanilla ability before every save",
             "exiledsector.charts.run.diagnostics.ChartSoakScript", "added as a transient sector script",
             "exiledsector.charts.objective.GatewayUpgradeNotice", "added as a transient sector script",
-            "exiledsector.charts.wormhole.LimboBlueprintCache$Watch", "added as a transient sector script");
+            "exiledsector.charts.wormhole.LimboBlueprintCache$Watch", "added as a transient sector script",
+            "exiledsector.ui.atlas.OfficerRewardPicker$WhenClear", "added as a transient sector script");
     private static final Set<Class<?>> FORBIDDEN_TYPES = Set.of(StarSystemAPI.class, SectorEntityToken.class, CampaignFleetAPI.class,
             LocationAPI.class);
 

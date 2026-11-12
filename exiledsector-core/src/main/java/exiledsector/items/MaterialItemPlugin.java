@@ -2,6 +2,7 @@ package exiledsector.items;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoTransferHandlerAPI;
+import com.fs.starfarer.api.campaign.SpecialItemSpecAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.StyledText;
@@ -24,9 +25,18 @@ public class MaterialItemPlugin extends AnimatedCargoItemPlugin {
 
     @Override
     public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, CargoTransferHandlerAPI transferHandler, Object stackSource) {
-        tooltip.addTitle(getName(), MaterialItems.color(itemId));
+        writeTooltip(tooltip, itemId, getName());
+        addCostLabel(tooltip, TOOLTIP_PAD, transferHandler, stackSource);
+    }
+
+    public static void writeTooltip(TooltipMakerAPI tooltip, String itemId) {
+        writeTooltip(tooltip, itemId, MaterialItems.displayName(itemId));
+    }
+
+    private static void writeTooltip(TooltipMakerAPI tooltip, String itemId, String name) {
+        tooltip.addTitle(name, MaterialItems.color(itemId));
         CraftingMaterialFamily craftingItem = CraftingMaterialFamilies.byItemId(itemId);
-        StyledText description = description(craftingItem);
+        StyledText description = description(craftingItem, itemId);
         if (description != null && !description.isEmpty()) {
             VanillaText.addPara(tooltip, description, TOOLTIP_PAD, Misc.getTextColor());
         }
@@ -38,10 +48,9 @@ public class MaterialItemPlugin extends AnimatedCargoItemPlugin {
         if (alsoWorksOnStarCharts(itemId)) {
             VanillaText.plainPara(tooltip, Translation.text("chart.ui.craftingItem.alsoStarCharts"), TOOLTIP_PAD, Misc.getGrayColor());
         }
-        addCostLabel(tooltip, TOOLTIP_PAD, transferHandler, stackSource);
     }
 
-    private StyledText description(CraftingMaterialFamily craftingItem) {
+    private static StyledText description(CraftingMaterialFamily craftingItem, String itemId) {
         if (craftingItem != null) {
             return craftingItem.description();
         }
@@ -49,7 +58,8 @@ public class MaterialItemPlugin extends AnimatedCargoItemPlugin {
         if (Translation.has(key)) {
             return Translation.styled(key);
         }
-        String specDescription = spec == null ? null : spec.getDesc();
+        SpecialItemSpecAPI itemSpec = MaterialItems.spec(itemId);
+        String specDescription = itemSpec == null ? null : itemSpec.getDesc();
         return specDescription == null ? null : StyledText.of(specDescription);
     }
 

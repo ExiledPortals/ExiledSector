@@ -18,6 +18,7 @@ import exiledsector.charts.layout.feature.ChartFeatures;
 import exiledsector.charts.loot.ChartDrops;
 import exiledsector.charts.loot.ChartLoot;
 import exiledsector.charts.loot.ChartMaterials;
+import exiledsector.charts.officer.reward.OfficerRewardTable;
 import exiledsector.charts.run.ChartBlockedAbilities;
 import exiledsector.charts.run.ChartCampaignPlugin;
 import exiledsector.charts.run.ChartContentListener;
@@ -80,6 +81,7 @@ public final class StarCharts {
         ChartTiers.load();
         ChartDrops.load();
         ChartMaterials.load();
+        OfficerRewardTable.load();
         ChartPois.load();
         ChartLoot.load();
         ChartColonyItems.load();
