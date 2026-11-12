@@ -2,10 +2,14 @@ package exiledsector.charts.atlas;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.layout.ChartLayoutGenerator;
 import exiledsector.charts.layout.ChartLayoutRequest;
 import exiledsector.charts.generation.ChartTiers;
+import exiledsector.charts.officer.AtlasOfficer;
+import exiledsector.charts.officer.OfficerRank;
+import exiledsector.charts.officer.OfficerRanks;
 import exiledsector.charts.wormhole.GatewayTierLimit;
 import exiledsector.items.StarChart;
 import exiledsector.modifiers.ModifierSlot;
@@ -71,13 +75,13 @@ public final class AtlasOpening {
     }
 
     public static AtlasRunNode runNode(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
-        return runNode(generator, state, cell, AtlasAnomalies.effective(generator, state, cell));
+        return withOfficer(state, cell, runNode(generator, state, cell, AtlasAnomalies.effective(generator, state, cell)));
     }
 
     public static AtlasRunNode openedRunNode(AtlasGenerator generator, AtlasState state, AtlasCell cell, long chartSeed) {
         List<String> anomalyIds = new ArrayList<>(AtlasAnomalies.effective(generator, state, cell));
         anomalyIds.addAll(OpeningAnomalies.rolled(generator, state, cell, chartSeed, anomalyIds));
-        return runNode(generator, state, cell, anomalyIds);
+        return withOfficer(state, cell, runNode(generator, state, cell, anomalyIds));
     }
 
     private static AtlasRunNode runNode(AtlasGenerator generator, AtlasState state, AtlasCell cell, List<String> anomalyIds) {
@@ -93,25 +97,31 @@ public final class AtlasOpening {
         return new AtlasRunNode(cell.pack(), factionFor(generator, state, cell, node), effects, anomalyIds);
     }
 
+    private static AtlasRunNode withOfficer(AtlasState state, AtlasCell cell, AtlasRunNode runNode) {
+        AtlasOfficer officer = state.officerAt(cell);
+        if (officer == null) {
+            return runNode;
+        }
+        OfficerRank rank = OfficerRanks.rank(officer.rankId());
+        return runNode.withExtraEffects(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_BOSS_SIZE_PERCENT, rank.bossSizePercent())), false)
+                .withAnomalyData(AtlasOfficer.RUN_DATA_KEY, Integer.toString(officer.recordId()));
+    }
+
     public static String factionFor(AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasNode node) {
-        return owner(generator, state, cell, node.factionId(), node.infestationId());
+        return owner(generator, state, cell, node.infestationId());
     }
 
     public static String ownerOf(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
-        return owner(generator, state, cell, generator.factionAt(cell), generator.infestationAt(cell));
+        return owner(generator, state, cell, generator.infestationAt(cell));
     }
 
     public static String territoryOwnerOf(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
-        return held(state, cell, generator.factionAt(cell));
+        String claimed = state.claimedFaction(cell);
+        return claimed != null ? claimed : generator.unclaimedFactionAt(cell);
     }
 
-    private static String held(AtlasState state, AtlasCell cell, String factionId) {
-        String captor = state.capturedBy(cell);
-        return captor == null ? factionId : captor;
-    }
-
-    private static String owner(AtlasGenerator generator, AtlasState state, AtlasCell cell, String factionId, String infestationId) {
-        String holder = held(state, cell, factionId);
+    private static String owner(AtlasGenerator generator, AtlasState state, AtlasCell cell, String infestationId) {
+        String holder = territoryOwnerOf(generator, state, cell);
         if (infestationId == null || state.has(cell, AtlasState.INFESTATION_CLEARED)) {
             return holder;
         }

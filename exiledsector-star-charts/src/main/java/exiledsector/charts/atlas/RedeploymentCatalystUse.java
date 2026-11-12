@@ -16,6 +16,7 @@ public record RedeploymentCatalystUse(AtlasCatalysts.Catalyst catalyst, AtlasGen
     public static final String INFESTED_KEY = "catalyst.refused.infested";
     public static final String NO_FACTION_KEY = "catalyst.refused.no_faction";
     public static final String OPEN_RUN_KEY = "catalyst.refused.redeploy_open_run";
+    public static final String COMMAND_CENTRE_KEY = "catalyst.refused.command_centre";
 
     public RedeploymentCatalystUse {
         revealed = Set.copyOf(revealed);
@@ -40,6 +41,9 @@ public record RedeploymentCatalystUse(AtlasCatalysts.Catalyst catalyst, AtlasGen
         if (holder != null && !holder.equals(AtlasOpening.territoryOwnerOf(generator, state, cell))) {
             return UseVerdict.refused(INFESTED_KEY).with("faction", ChartFactions.displayName(holder));
         }
+        if (state.officerAt(cell) != null) {
+            return UseVerdict.refused(COMMAND_CENTRE_KEY).with("faction", ChartFactions.displayName(state.claimedFaction(cell)));
+        }
         return newOwner(cell) == null ? UseVerdict.refused(NO_FACTION_KEY) : UseVerdict.ALLOW;
     }
 
@@ -49,13 +53,14 @@ public record RedeploymentCatalystUse(AtlasCatalysts.Catalyst catalyst, AtlasGen
         if (newOwner == null) {
             return null;
         }
-        state.capture(generator, cell, newOwner);
+        AtlasTerritoryTransfer.transfer(generator, state, cell, newOwner);
         return new Outcome("catalyst.window.redeployed", Map.of("faction", ChartFactions.displayName(newOwner)));
     }
 
     String newOwner(AtlasCell cell) {
         String owner = AtlasOpening.territoryOwnerOf(generator, state, cell);
-        Map<String, Float> candidates = new LinkedHashMap<>(generator.factionPool(cell));
+        Map<String, Float> candidates = new LinkedHashMap<>();
+        AtlasTerritoryTransfer.neighbouringCentres(generator, state, cell).keySet().forEach(factionId -> candidates.put(factionId, 1f));
         candidates.remove(owner);
         long salt = REDEPLOY_SALT ^ AtlasHash.idSalt(owner == null ? "" : owner);
         return AtlasHash.race(generator.seed(), salt, cell.gridX(), cell.gridY(), candidates);

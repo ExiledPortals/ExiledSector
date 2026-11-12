@@ -3,8 +3,10 @@ package exiledsector.charts.atlas;
 import exiledsector.charts.content.ChartFactions;
 import exiledsector.items.Consumables;
 import exiledsector.items.CraftingMaterials;
+import exiledsector.items.UseVerdict;
 import org.junit.jupiter.api.Test;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +42,25 @@ class RedeploymentCatalystUseTest {
         throw new AssertionError("no system");
     }
 
+    private static AtlasCell systemWithTwoLanes(AtlasGenerator generator) {
+        for (AtlasCell cell : AtlasCell.ORIGIN.around(6)) {
+            if (!cell.equals(AtlasCell.ORIGIN) && !generator.isVoid(cell) && generator.lanes(cell).size() >= 2) {
+                return cell;
+            }
+        }
+        throw new AssertionError("no system with two lanes");
+    }
+
+    private static List<AtlasCell> neighbours(AtlasGenerator generator, AtlasCell cell) {
+        return generator.lanes(cell).stream().sorted(Comparator.comparingLong(AtlasCell::pack)).toList();
+    }
+
+    private static void borderedByHegemonyAndTritachyon(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
+        List<AtlasCell> neighbours = neighbours(generator, cell);
+        TestTerritories.establish(state, neighbours.get(0), "hegemony");
+        TestTerritories.establish(state, neighbours.get(1), "tritachyon");
+    }
+
     private static CraftingMaterials holding(int orders) {
         return CraftingMaterials.storedForTests(new HashMap<>(Map.of(REDEPLOYMENT.itemId(), orders)));
     }
@@ -49,23 +70,27 @@ class RedeploymentCatalystUseTest {
     }
 
     @Test
-    void anOrderHandsTheSystemToAnotherFactionOfItsRegionPickedTheSameWayEveryTime() {
+    void anOrderJoinsTheSystemToANeighbouringTerritoryOfAnotherFactionPickedTheSameWayEveryTime() {
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = generator(state, THREE_FACTIONS);
-        AtlasCell cell = system(generator, 0);
+        AtlasCell cell = systemWithTwoLanes(generator);
+        borderedByHegemonyAndTritachyon(generator, state, cell);
         String owner = AtlasOpening.territoryOwnerOf(generator, state, cell);
         RedeploymentCatalystUse use = use(generator, state, null, Set.of(cell));
         String expected = use.newOwner(cell);
         AtlasState reloaded = new AtlasState(SEED);
-        assertEquals(expected, use(generator(reloaded, THREE_FACTIONS), reloaded, null, Set.of(cell)).newOwner(cell));
+        AtlasGenerator reloadedGenerator = generator(reloaded, THREE_FACTIONS);
+        borderedByHegemonyAndTritachyon(reloadedGenerator, reloaded, cell);
+        assertEquals(expected, use(reloadedGenerator, reloaded, null, Set.of(cell)).newOwner(cell));
         CraftingMaterials materials = holding(2);
 
         AtlasCatalystUse.Outcome outcome = Consumables.use(use, cell, materials);
 
         assertNotNull(outcome);
         assertNotEquals(owner, expected);
-        assertTrue(THREE_FACTIONS.containsKey(expected), expected);
+        assertTrue(Set.of("hegemony", "tritachyon").contains(expected), expected);
         assertEquals(expected, AtlasOpening.territoryOwnerOf(generator, state, cell));
+        assertTrue(neighbours(generator, cell).contains(state.commandCentreOf(cell)));
         assertEquals(expected, AtlasOpening.ownerOf(generator, state, cell));
         assertEquals(Map.of("faction", ChartFactions.displayName(expected)), outcome.args());
         assertEquals(1, materials.count(REDEPLOYMENT.itemId()));
@@ -90,15 +115,29 @@ class RedeploymentCatalystUseTest {
         assertEquals("catalyst.refused.no_system", use.check(AtlasCell.ORIGIN).refusalKey());
         assertNull(Consumables.use(use, open, materials));
         assertEquals(1, materials.count(REDEPLOYMENT.itemId()));
-        assertNull(state.capturedBy(open));
+        assertNull(state.commandCentreOf(open));
     }
 
     @Test
-    void aRegionWithNoOtherFactionRefusesTheOrder() {
+    void aSystemWithNoNeighbouringTerritoryOfAnotherFactionRefusesTheOrder() {
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = generator(state, Map.of("pirates", 1f));
         AtlasCell cell = system(generator, 0);
 
         assertEquals(RedeploymentCatalystUse.NO_FACTION_KEY, use(generator, state, null, Set.of(cell)).check(cell).refusalKey());
+    }
+
+    @Test
+    void aCommandCentreRefusesTheOrder() {
+        AtlasState state = new AtlasState(SEED);
+        AtlasGenerator generator = generator(state, THREE_FACTIONS);
+        AtlasCell cell = systemWithTwoLanes(generator);
+        borderedByHegemonyAndTritachyon(generator, state, cell);
+        TestTerritories.establish(state, cell, "pirates");
+
+        UseVerdict verdict = use(generator, state, null, Set.of(cell)).check(cell);
+
+        assertEquals(RedeploymentCatalystUse.COMMAND_CENTRE_KEY, verdict.refusalKey());
+        assertEquals(ChartFactions.displayName("pirates"), verdict.args().get("faction"));
     }
 }

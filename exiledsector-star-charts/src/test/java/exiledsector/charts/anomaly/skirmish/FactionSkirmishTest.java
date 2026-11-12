@@ -16,6 +16,8 @@ import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.charts.atlas.AtlasRegion;
 import exiledsector.charts.atlas.AtlasRules;
 import exiledsector.charts.atlas.AtlasState;
+import exiledsector.charts.atlas.AtlasTerritoryTransfer;
+import exiledsector.charts.atlas.TestTerritories;
 import exiledsector.charts.atlas.AtlasTraits;
 import exiledsector.charts.atlas.AtlasUnlocks;
 import exiledsector.charts.content.ChartFactions;
@@ -33,6 +35,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FactionSkirmishTest {
@@ -50,10 +53,16 @@ class FactionSkirmishTest {
 
     private static AtlasCell borderSystem(AtlasGenerator generator, AtlasState state) {
         for (AtlasCell cell : AtlasCell.ORIGIN.around(20)) {
-            if (!cell.equals(AtlasCell.ORIGIN) && !generator.isVoid(cell) && FactionSkirmish.INSTANCE.fitsAt(generator.traits(cell))
-                    && FactionSkirmish.INSTANCE.holdsAt(generator, state, cell)) {
+            AtlasCell neighbour = cell.equals(AtlasCell.ORIGIN) || generator.isVoid(cell) ? null
+                    : generator.lanes(cell).stream().filter(lane -> !lane.equals(AtlasCell.ORIGIN)).findFirst().orElse(null);
+            if (neighbour == null) {
+                continue;
+            }
+            TestTerritories.establish(state, neighbour, "hegemony");
+            if (FactionSkirmish.INSTANCE.fitsAt(generator.traits(cell)) && FactionSkirmish.INSTANCE.holdsAt(generator, state, cell)) {
                 return cell;
             }
+            AtlasTerritoryTransfer.vacate(generator, state, neighbour);
         }
         throw new AssertionError("no border system");
     }
@@ -130,12 +139,13 @@ class FactionSkirmishTest {
         assertTrue(use.check(cell).allowed());
         String owner = FactionSkirmish.defender(generator, state, cell);
 
-        state.capture(generator, cell, NEUTRAL);
+        TestTerritories.establish(state, cell, NEUTRAL);
         UseVerdict neutralOwner = use.check(cell);
         assertEquals(FactionSkirmish.NO_SIDE_KEY, neutralOwner.refusalKey());
         assertEquals(ChartFactions.displayName(NEUTRAL), neutralOwner.args().get("faction"));
 
-        state.capture(generator, cell, owner);
+        AtlasTerritoryTransfer.vacate(generator, state, cell);
+        assertEquals(owner, FactionSkirmish.defender(generator, state, cell));
         Set<String> neutral = new HashSet<>(laneOwners(generator, state, cell));
         neutral.remove(FactionSkirmish.defender(generator, state, cell));
         SkirmishFactions.useForTests(neutral);
@@ -161,18 +171,20 @@ class FactionSkirmishTest {
     }
 
     @Test
-    void onlyWinningOnTheAttackersSideCapturesTheSystem() {
+    void onlyWinningOnTheAttackersSideJoinsTheSystemToTheAttackersNeighbouringTerritory() {
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = new AtlasGenerator(SEED, RULES, AtlasUnlocks.NONE, state);
-        AtlasCell cell = new AtlasCell(3, 2);
+        AtlasCell cell = borderSystem(generator, state);
+        AtlasCell neighbour = generator.lanes(cell).stream().filter(lane -> state.officerAt(lane) != null).findFirst().orElseThrow();
 
         FactionSkirmish.captureForWinner(generator, state, cell, new SkirmishJoin(SkirmishSide.DEFENDER, "hegemony"));
         FactionSkirmish.captureForWinner(generator, state, cell, new SkirmishJoin(SkirmishSide.NEITHER, "hegemony"));
         FactionSkirmish.captureForWinner(generator, state, cell, new SkirmishJoin(SkirmishSide.ATTACKER, null));
-        assertEquals(Map.of(), state.captures());
+        assertNull(state.commandCentreOf(cell));
 
         FactionSkirmish.captureForWinner(generator, state, cell, new SkirmishJoin(SkirmishSide.ATTACKER, "hegemony"));
-        assertEquals(Map.of(cell, "hegemony"), state.captures());
+        assertEquals(neighbour, state.commandCentreOf(cell));
+        assertEquals("hegemony", AtlasOpening.territoryOwnerOf(generator, state, cell));
     }
 
     @Test

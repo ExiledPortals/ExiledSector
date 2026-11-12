@@ -86,8 +86,13 @@ public final class AtlasReach {
     }
 
     public static Set<AtlasCell> refreshReveal(AtlasGenerator generator, AtlasState state) {
+        return refreshReveal(generator, state, TerritoryContext.current());
+    }
+
+    public static Set<AtlasCell> refreshReveal(AtlasGenerator generator, AtlasState state, TerritoryContext territoryContext) {
         Set<AtlasCell> visible = visible(generator, state);
         state.recordReveal(generator, visible);
+        AtlasTerritoryPlacer.place(generator, state, visible, territoryContext);
         return visible;
     }
 }

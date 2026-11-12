@@ -7,8 +7,8 @@ import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasData;
 import exiledsector.charts.atlas.AtlasDecoration;
 import exiledsector.charts.atlas.AtlasNode;
-import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.charts.atlas.AtlasRegion;
+import exiledsector.charts.atlas.TerritoryFactions;
 import exiledsector.charts.content.ChartFactions;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.decoration.FactionStarColours;
@@ -16,7 +16,9 @@ import exiledsector.ui.decoration.HyperspaceClouds;
 
 import java.awt.Color;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.Function;
 
 final class AtlasScenery {
@@ -24,6 +26,8 @@ final class AtlasScenery {
     static final float CLOUD_TILE = AtlasMapCanvas.CELL_PIXELS / 4f;
     static final float CLOUD_ALPHA = 0.35f;
     static final float KNOWN_SAMPLE_REACH = 0.5f;
+    static final int VOID_JOIN_SIDES = 2;
+    private static final int[][] SIDES = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 
     private final Function<String, AtlasAmbience> ambiences;
     private final Function<String, AtlasDecoration> decorationLookup;
@@ -44,7 +48,8 @@ final class AtlasScenery {
         this.ambiences = ambiences;
         this.decorationLookup = decorationLookup;
         clouds = new HyperspaceClouds(CLOUD_TILE, seed, CLOUD_ALPHA);
-        borders = new AtlasTerritoryBorders(seed, AtlasScenery::factionColour, ChartFactions::displayName);
+        borders = new AtlasTerritoryBorders(seed, territoryId -> factionColour(TerritoryFactions.factionOfTerritory(territoryId)),
+                territoryId -> ChartFactions.displayName(TerritoryFactions.factionOfTerritory(territoryId)));
         biomes = new AtlasTerritoryBorders(seed, AtlasData::regionTint, AtlasNodeText::regionName);
     }
 
@@ -125,7 +130,26 @@ final class AtlasScenery {
     }
 
     String territoryAt(AtlasCell cell) {
-        return AtlasOpening.territoryOwnerOf(canvas.generator(), canvas.state(), cell);
+        if (hasSystem(cell)) {
+            return canvas.state().territoryAt(cell);
+        }
+        Map<String, Integer> sidesByTerritory = new TreeMap<>();
+        for (int[] side : SIDES) {
+            AtlasCell neighbour = new AtlasCell(cell.gridX() + side[0], cell.gridY() + side[1]);
+            String territoryId = hasSystem(neighbour) ? canvas.state().territoryAt(neighbour) : null;
+            if (territoryId != null) {
+                sidesByTerritory.merge(territoryId, 1, Integer::sum);
+            }
+        }
+        String joined = null;
+        int joinedSides = VOID_JOIN_SIDES - 1;
+        for (Map.Entry<String, Integer> entry : sidesByTerritory.entrySet()) {
+            if (entry.getValue() > joinedSides) {
+                joined = entry.getKey();
+                joinedSides = entry.getValue();
+            }
+        }
+        return joined;
     }
 
     private static Color factionColour(String factionId) {

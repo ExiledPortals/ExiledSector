@@ -9,6 +9,8 @@ import exiledsector.charts.atlas.AtlasRegion;
 import exiledsector.charts.atlas.AtlasRules;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.atlas.AtlasUnlocks;
+import exiledsector.charts.atlas.TerritoryFactions;
+import exiledsector.charts.atlas.TestTerritories;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.decoration.LaneFleetTraffic;
 import exiledsector.ui.node.NodeMetrics;
@@ -108,22 +110,28 @@ class AtlasSceneryTest {
     }
 
     @Test
-    void factionTerritoriesCoverEveryKnownCellWithItsFaction() {
+    void territoriesOutlineEveryClaimedSystemWithItsCommandCentresFaction() {
         AtlasMapCanvas canvas = canvas();
-        Set<Long> known = new HashSet<>();
+        Set<Long> inTerritory = new HashSet<>();
         for (AtlasCell visible : canvas.visibleCells()) {
             for (AtlasCell cell : visible.around(1)) {
-                known.add(cell.pack());
-                assertEquals(canvas.generator().factionAt(cell), canvas.scenery().territoryAt(cell), cell.toString());
+                String territoryId = canvas.scenery().territoryAt(cell);
+                if (canvas.visibleCells().contains(cell) && !canvas.generator().isVoid(cell)) {
+                    assertEquals(canvas.state().territoryAt(cell), territoryId, cell.toString());
+                }
+                if (territoryId != null) {
+                    inTerritory.add(cell.pack());
+                }
             }
         }
         int territoryCells = 0;
         for (AtlasTerritoryBorders.Region territory : canvas.scenery().borders().regions()) {
             territoryCells += territory.cells();
-            assertEquals("pirates", territory.groupId());
+            assertEquals("pirates", TerritoryFactions.factionOfTerritory(territory.groupId()));
         }
 
-        assertEquals(known.size(), territoryCells);
+        assertFalse(inTerritory.isEmpty());
+        assertEquals(inTerritory.size(), territoryCells);
     }
 
     @Test
@@ -160,18 +168,17 @@ class AtlasSceneryTest {
     }
 
     @Test
-    void aCapturedSystemJoinsItsCaptorsTerritoryAndTraffic() {
+    void aNewCommandCentreDrawsItsFactionsTerritoryAndTraffic() {
         AtlasState state = new AtlasState(SEED);
         AtlasMapCanvas before = canvas(state);
         AtlasCell captured = before.visibleCells().stream().filter(cell -> !before.generator().isVoid(cell) && !cell.equals(AtlasCell.ORIGIN))
                 .findFirst().orElseThrow();
-        state.capture(before.generator(), captured, "hegemony");
+        TestTerritories.establish(state, captured, "hegemony");
 
         AtlasMapCanvas canvas = canvas(state);
 
-        assertEquals("hegemony", canvas.scenery().territoryAt(captured));
-        assertEquals("pirates", canvas.scenery().territoryAt(AtlasCell.ORIGIN));
-        assertTrue(canvas.scenery().borders().regions().stream().anyMatch(region -> "hegemony".equals(region.groupId())));
+        assertEquals(TerritoryFactions.territoryId("hegemony", captured), canvas.scenery().territoryAt(captured));
+        assertTrue(canvas.scenery().borders().regions().stream().anyMatch(region -> "hegemony".equals(TerritoryFactions.factionOfTerritory(region.groupId()))));
         assertTrue(AtlasFleetTraffic.ports(canvas).stream().anyMatch(port -> port.id() == captured.pack() && "hegemony".equals(port.factionId())));
     }
 

@@ -106,28 +106,25 @@ class AtlasOpeningTest {
     }
 
     @Test
-    void aCaptureHandsTheSystemToItsCaptorButAnInfestationHoldsItUntilCleared() {
+    void aTerritoryClaimOwnsTheSystemButAnInfestationHoldsItUntilCleared() {
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = new AtlasGenerator(SEED, rules(), AtlasUnlocks.NONE, state);
         AtlasCell infested = findInfested(generator, false);
 
-        state.capture(generator, infested, "hegemony");
+        TestTerritories.establish(state, infested, "hegemony");
 
-        assertEquals(Map.of(infested, "hegemony"), state.captures());
+        assertEquals(infested, state.commandCentreOf(infested));
         assertEquals("hegemony", AtlasOpening.territoryOwnerOf(generator, state, infested));
         assertEquals("remnant", AtlasOpening.ownerOf(generator, state, infested));
         state.add(infested, AtlasState.INFESTATION_CLEARED);
         assertEquals("hegemony", AtlasOpening.ownerOf(generator, state, infested));
         assertEquals("hegemony", AtlasOpening.runNode(generator, state, infested).factionId());
 
-        state.capture(generator, infested, "pirates");
+        AtlasTerritoryTransfer.vacate(generator, state, infested);
 
-        assertEquals(Map.of(), state.captures());
-        assertEquals("pirates", AtlasOpening.ownerOf(generator, state, infested));
-        state.capture(generator, infested, "tritachyon");
-        assertTrue(state.release(infested));
+        assertNull(state.commandCentreOf(infested));
         assertFalse(state.release(infested));
-        assertEquals("pirates", AtlasOpening.territoryOwnerOf(generator, state, infested));
+        assertEquals(generator.unclaimedFactionAt(infested), AtlasOpening.territoryOwnerOf(generator, state, infested));
     }
 
     @Test

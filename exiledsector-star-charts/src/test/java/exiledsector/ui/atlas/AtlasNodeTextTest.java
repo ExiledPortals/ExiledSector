@@ -22,6 +22,7 @@ import exiledsector.charts.atlas.AtlasRules;
 import exiledsector.charts.atlas.AtlasSpecial;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.atlas.AtlasUnlocks;
+import exiledsector.charts.atlas.TestTerritories;
 import exiledsector.ui.socket.BenchModeSupport;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -76,6 +77,9 @@ class AtlasNodeTextTest {
             List<AtlasRegion> regions = List.of(new AtlasRegion(AtlasRegion.NORMAL, 1f, 0, "", "", Map.of(), Map.of(), Map.of()));
             AtlasGenerator generator = new AtlasGenerator(SEED, new AtlasRules(regions, Map.of("compact", 1f), Map.of("hegemony", 1f, "tritachyon", 1f),
                     AtlasAnomalyChance.NEVER, AtlasAnomalyChance.NEVER, List.of(), List.of()), AtlasUnlocks.NONE, state);
+            AtlasCell held = AtlasCell.ORIGIN.around(3).stream().filter(candidate -> !candidate.equals(AtlasCell.ORIGIN) && !generator.isVoid(candidate))
+                    .findFirst().orElseThrow();
+            TestTerritories.establish(state, held, "hegemony");
             AtlasCell cell = AtlasCell.ORIGIN.around(20).stream()
                     .filter(candidate -> AtlasAnomalies.insert(generator, state, candidate, FactionSkirmish.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD, null)
                             .check().allows())

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-final class FleetHulls {
+public final class FleetHulls {
 
     static final int MIN_SHIPS_PER_FLEET = 3;
     static final int MAX_SHIPS_PER_FLEET = 5;
@@ -22,7 +22,7 @@ final class FleetHulls {
     private FleetHulls() {
     }
 
-    static boolean roams(ShipHullSpecAPI hullSpec) {
+    public static boolean roams(ShipHullSpecAPI hullSpec) {
         if (hullSpec == null || hullSpec.getSpriteName() == null || hullSpec.isCivilianNonCarrier()) {
             return false;
         }

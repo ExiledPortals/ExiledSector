@@ -4,3 +4,5 @@ exiledSector_gatewayViewAtlasOption,PopulateOptions,"$hasMarket
 $menuState == main
 $faction.id == player",ExiledSectorAtlasOption,,,
 exiledSector_gatewayViewAtlasSel,DialogOptionSelected,$option == exiledSector_viewAtlas,ExiledSectorAtlasOption open,,,
+exiledSector_officerGreeting,OpenCommLink,$entity.exiledSector_officerFleet score:20000,"ShowDefaultVisual
+ExiledSectorOfficerGreeting",,,"An atlas officer greets the player with their latest history, then cuts the link, since chart fleets ignore comms"

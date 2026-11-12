@@ -3,10 +3,9 @@ package exiledsector.charts.atlas;
 import exiledsector.charts.content.ChartThreatFleets;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,7 +29,7 @@ public final class AtlasGenerator {
     private final AtlasPositions positions;
     private final AtlasSpecialPlacer specials;
     private final AtlasBiomes biomes;
-    private final AtlasTerritories territories;
+    private final AtlasMemory memory;
     private final AtlasTerrain terrain;
     private final AtlasBiomeAnomalies biomeAnomalies;
     private final Map<Long, List<AtlasCell>> laneCache = AtlasPositions.boundedCache(CACHE_LIMIT_CELLS);
@@ -48,7 +47,7 @@ public final class AtlasGenerator {
         positions = new AtlasPositions(seed);
         specials = new AtlasSpecialPlacer(seed, rules, unlocks, memory, positions, this::isVoid);
         biomes = new AtlasBiomes(seed, rules, unlocks, memory, positions);
-        territories = new AtlasTerritories(seed, rules, positions, memory);
+        this.memory = memory;
         terrain = new AtlasTerrain(seed, rules, biomes, positions, specials.fixedCells());
         biomeAnomalies = new AtlasBiomeAnomalies(seed,
                 rules.anomalies().stream().filter(candidate -> unlocks.allows(candidate.requiredMod(), "")).toList(), biomes::biomeOf,
@@ -150,29 +149,17 @@ public final class AtlasGenerator {
         return source == null ? null : source.cell();
     }
 
-    String territoryAt(AtlasCell cell) {
-        return territories.territoryAt(cell);
-    }
-
     public String factionAt(AtlasCell cell) {
-        return territories.factionAt(cell, regionOf(cell));
+        String claimed = memory.claimedFaction(cell);
+        return claimed != null ? claimed : unclaimedFactionAt(cell);
     }
 
-    Map<String, Float> factionPool(AtlasCell cell) {
-        return territories.factionPool(regionOf(cell));
+    public String unclaimedFactionAt(AtlasCell cell) {
+        return TerritoryFactions.unclaimedFaction(seed, rules, regionOf(cell), cell);
     }
 
-    public Map<String, String> factionDecisions(Collection<AtlasCell> revealed) {
-        Set<AtlasCell> shown = new LinkedHashSet<>();
-        for (AtlasCell cell : revealed) {
-            shown.addAll(cell.around(1));
-            shown.addAll(lanes(cell));
-        }
-        Map<String, String> decisions = new HashMap<>();
-        for (AtlasCell cell : shown) {
-            territories.recordFactions(cell, regionOf(cell), decisions::putIfAbsent);
-        }
-        return decisions;
+    public Map<String, Float> territoryWeights(AtlasCell cell) {
+        return TerritoryFactions.territoryWeights(rules, regionOf(cell));
     }
 
     private boolean computeVoid(AtlasCell cell) {
@@ -194,7 +181,7 @@ public final class AtlasGenerator {
         float y = mapY(cell);
         float distance = (float) Math.hypot(x, y);
         AtlasRegion region = regionOf(cell);
-        String factionId = territories.factionAt(cell, region);
+        String factionId = factionAt(cell);
         boolean origin = cell.equals(AtlasCell.ORIGIN);
         if (origin || isVoid(cell)) {
             return new AtlasNode(cell, x, y, !origin, region.id(), factionId, null, List.of(), null, null, lanes(cell));
@@ -347,7 +334,7 @@ public final class AtlasGenerator {
 
     public AtlasTraits traits(AtlasCell cell) {
         AtlasRegion region = regionOf(cell);
-        return traits(cell, (float) Math.hypot(mapX(cell), mapY(cell)), region, territories.factionAt(cell, region), lanes(cell),
+        return traits(cell, (float) Math.hypot(mapX(cell), mapY(cell)), region, factionAt(cell), lanes(cell),
                 specials.specialsAround(cell.chunkX(), cell.chunkY()));
     }
 
@@ -357,8 +344,19 @@ public final class AtlasGenerator {
                 region.layoutWeights().isEmpty() ? rules.layoutWeights() : region.layoutWeights());
         AtlasSpecialPlacer.PlacedSpecial special = placed.get(cell.pack());
         AtlasSpecialPlacer.PlacedSpecial infestation = infestationOf(cell, region, placed);
-        return new AtlasTraits(cell, distance, region.id(), factionId, territories.territoryAt(cell), layoutId, territories.laneTerritories(lanes),
+        return new AtlasTraits(cell, distance, region.id(), factionId, memory.territoryAt(cell), layoutId, laneTerritories(lanes),
                 laneFactions(lanes), special == null ? null : special.special().id(), infestation == null ? null : infestation.special().id());
+    }
+
+    private Set<String> laneTerritories(List<AtlasCell> lanes) {
+        Set<String> territoryIds = new HashSet<>();
+        for (AtlasCell neighbour : lanes) {
+            String territoryId = memory.territoryAt(neighbour);
+            if (territoryId != null) {
+                territoryIds.add(territoryId);
+            }
+        }
+        return territoryIds;
     }
 
     private List<String> laneFactions(List<AtlasCell> lanes) {

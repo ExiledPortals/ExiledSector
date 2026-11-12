@@ -18,6 +18,7 @@ import exiledsector.charts.layout.feature.ChartFeatures;
 import exiledsector.charts.loot.ChartDrops;
 import exiledsector.charts.loot.ChartLoot;
 import exiledsector.charts.loot.ChartMaterials;
+import exiledsector.charts.officer.OfficerRanks;
 import exiledsector.charts.officer.reward.OfficerRewardTable;
 import exiledsector.charts.run.ChartBlockedAbilities;
 import exiledsector.charts.run.ChartCampaignPlugin;
@@ -92,6 +93,7 @@ public final class StarCharts {
         ChartAnomalies.all().forEach(ChartAnomaly::loadData);
         ChartFeatures.load();
         AtlasData.load();
+        OfficerRanks.load();
         AtlasTreeData.load();
     }
 }
