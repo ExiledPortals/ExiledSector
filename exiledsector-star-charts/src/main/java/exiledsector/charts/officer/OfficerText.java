@@ -1,9 +1,11 @@
 package exiledsector.charts.officer;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
+import com.fs.starfarer.api.characters.PersonalityAPI;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasLine;
@@ -25,6 +27,7 @@ public final class OfficerText {
 
     static final String HISTORY_KEY_PREFIX = "chart.officer.history.";
     private static final Map<String, String> FULL_NAMES = new HashMap<>();
+    private static final Map<String, String> PORTRAITS = new HashMap<>();
 
     private OfficerText() {
     }
@@ -33,13 +36,36 @@ public final class OfficerText {
         return faction.createRandomPerson(new Random(officer.nameSeed()));
     }
 
-    public static String fullName(AtlasOfficer officer) {
+    public static FactionAPI faction(AtlasOfficer officer) {
         SectorAPI sector = Global.getSector();
-        FactionAPI faction = sector == null ? null : sector.getFaction(officer.factionId());
+        return sector == null ? null : sector.getFaction(officer.factionId());
+    }
+
+    public static String fullName(AtlasOfficer officer) {
+        FactionAPI faction = faction(officer);
         if (faction == null) {
             return "";
         }
         return FULL_NAMES.computeIfAbsent(officer.factionId() + "|" + officer.nameSeed(), key -> namedPerson(faction, officer).getNameString());
+    }
+
+    public static String portraitPath(AtlasOfficer officer) {
+        FactionAPI faction = faction(officer);
+        if (faction == null) {
+            return null;
+        }
+        return PORTRAITS.computeIfAbsent(officer.factionId() + "|" + officer.nameSeed() + "|" + officer.portraitSeed(),
+                key -> portraitPath(faction, namedPerson(faction, officer), officer));
+    }
+
+    static String portraitPath(FactionAPI faction, PersonAPI named, AtlasOfficer officer) {
+        return faction.createRandomPerson(named.getGender(), new Random(officer.portraitSeed())).getPortraitSprite();
+    }
+
+    public static String traitName(AtlasOfficer officer) {
+        SettingsAPI settings = Global.getSettings();
+        PersonalityAPI personality = settings == null ? null : settings.getPersonaltySpec(officer.traitId());
+        return personality == null ? officer.traitId() : personality.getDisplayName();
     }
 
     public static String title(AtlasOfficer officer) {

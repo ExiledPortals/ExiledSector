@@ -8,6 +8,7 @@ import com.fs.starfarer.api.campaign.listeners.FleetEventListener;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.objective.ChartObjectives;
+import exiledsector.charts.officer.OfficerSightings;
 import exiledsector.charts.officer.turn.OfficerTurns;
 import org.apache.log4j.Logger;
 
@@ -38,6 +39,7 @@ public class ChartContentListener implements FleetEventListener {
             return;
         }
         try {
+            OfficerSightings.battleOccurred(battle);
             OfficerTurns.battleOccurred(battle, primaryWinner);
         } catch (RuntimeException | LinkageError e) {
             reportFailure(e);

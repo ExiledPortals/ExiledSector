@@ -123,15 +123,23 @@ public final class OfficerFleets {
     }
 
     static HullFacts flagshipHull(AtlasOfficer officer) {
+        return HullFacts.of(flagshipVariant(officer));
+    }
+
+    public static ShipVariantAPI flagshipVariant(AtlasOfficer officer) {
         SettingsAPI settings = Global.getSettings();
         if (settings == null || !officer.hasFlagship()) {
             return null;
         }
         try {
-            return HullFacts.of(settings.getVariant(officer.flagshipVariantId()));
+            return settings.getVariant(officer.flagshipVariantId());
         } catch (RuntimeException e) {
             return null;
         }
+    }
+
+    public static String flagshipName(AtlasOfficer officer, FactionAPI faction) {
+        return faction.pickRandomShipName(new Random(officer.shipNameSeed()));
     }
 
     private static FactionAPI factionOf(AtlasOfficer officer, CampaignFleetAPI fleet) {
@@ -154,7 +162,7 @@ public final class OfficerFleets {
             flagship.setCaptain(commander);
             fleet.setCommander(commander);
         }
-        flagship.setShipName(faction.pickRandomShipName(new Random(officer.shipNameSeed())));
+        flagship.setShipName(flagshipName(officer, faction));
         ShipVariantAPI variant = flagship.getVariant().clone();
         variant.setSource(VariantSource.REFIT);
         variant.addTag(Tags.VARIANT_UNBOARDABLE);
@@ -169,7 +177,7 @@ public final class OfficerFleets {
         PersonAPI named = OfficerText.namedPerson(faction, officer);
         commander.setName(named.getName());
         commander.setGender(named.getGender());
-        commander.setPortraitSprite(faction.createRandomPerson(named.getGender(), new Random(officer.portraitSeed())).getPortraitSprite());
+        commander.setPortraitSprite(OfficerText.portraitPath(faction, named, officer));
         if (FIGHTING_TRAITS.contains(officer.traitId())) {
             commander.setPersonality(officer.traitId());
         }

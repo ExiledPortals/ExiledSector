@@ -105,7 +105,10 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     static final float TOOLTIP_MAX_TEXT_HEIGHT = 800f;
     static final Color HINT_COLOUR = new Color(150, 150, 150);
 
-    private enum Control { CLOSE, BORDERS, BIOMES, CATALYSTS, TREE, FOCUS_SWITCH, DEBUG_COMPLETE }
+    static final float OFFICERS_WIDTH = 120f;
+    static final float REPLAY_WIDTH = 100f;
+
+    private enum Control { CLOSE, BORDERS, BIOMES, CATALYSTS, TREE, FOCUS_SWITCH, DEBUG_COMPLETE, OFFICERS, OFFICERS_REPLAY }
 
     enum Overlay { NONE, FACTIONS, BIOMES }
 
@@ -137,6 +140,11 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     private BenchModeSupport.PickerSession chartPicker;
     private TooltipMakerAPI debugElement;
     private BenchLayout chartLayout;
+    private final OfficerBoard officerBoard = new OfficerBoard();
+    private TooltipMakerAPI officersElement;
+    private ButtonAPI officersButton;
+    private TooltipMakerAPI replayElement;
+    private ButtonAPI replayButton;
     private AtlasCell focusedCell;
     private boolean focusing;
     private boolean focusOpenedCatalysts;
@@ -216,6 +224,18 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         float treeLeft = position.getWidth() - PANEL_MARGIN - CHROME_PAD - CLOSE_WIDTH - BORDERS_WIDTH - BIOMES_WIDTH - CATALYSTS_WIDTH - TREE_WIDTH
                 - BUTTON_GAP * 4f;
         panelRoot.addUIElement(treeElement).inTL(treeLeft, PANEL_MARGIN + CHROME_PAD);
+        float bottomRowTop = position.getHeight() - PANEL_MARGIN - CHROME_PAD - ChromeMetrics.CONTROL_HEIGHT;
+        float officersLeft = position.getWidth() - PANEL_MARGIN - CHROME_PAD - OFFICERS_WIDTH;
+        officersElement = panelRoot.createUIElement(OFFICERS_WIDTH, ChromeMetrics.CONTROL_HEIGHT, false);
+        officersButton = officersElement.addButton(Translation.text("chart.atlas.officers"), Control.OFFICERS, OFFICERS_WIDTH,
+                ChromeMetrics.CONTROL_HEIGHT, 0f);
+        panelRoot.addUIElement(officersElement).inTL(officersLeft, bottomRowTop);
+        replayElement = panelRoot.createUIElement(REPLAY_WIDTH, ChromeMetrics.CONTROL_HEIGHT, false);
+        replayButton = replayElement.addButton(Translation.text("chart.atlas.officers.replay"), Control.OFFICERS_REPLAY, REPLAY_WIDTH,
+                ChromeMetrics.CONTROL_HEIGHT, 0f);
+        panelRoot.addUIElement(replayElement).inTL(officersLeft - BUTTON_GAP - REPLAY_WIDTH, bottomRowTop);
+        replayElement.setOpacity(0f);
+        replayButton.setEnabled(false);
     }
 
     private void addCatalystToggle() {
@@ -253,6 +273,10 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         return panelRoot.getPosition().getHeight() - sidePanelTop() - PANEL_MARGIN - CHROME_PAD;
     }
 
+    private float catalystPanelHeight() {
+        return sidePanelHeight() - ChromeMetrics.CONTROL_HEIGHT - BUTTON_GAP;
+    }
+
     private float chooseTop() {
         return panelRoot.getPosition().getHeight() - PANEL_MARGIN - CHROME_PAD - CHOOSE_HEIGHT;
     }
@@ -264,7 +288,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         }
         PositionAPI position = panelRoot.getPosition();
         float left = position.getWidth() - PANEL_MARGIN - CHROME_PAD - AtlasCatalystPanel.PANEL_WIDTH;
-        catalystPanel = AtlasCatalystPanel.open(panelRoot, left, sidePanelTop(), sidePanelHeight(), new AtlasCatalystPanel.Listener() {
+        catalystPanel = AtlasCatalystPanel.open(panelRoot, left, sidePanelTop(), catalystPanelHeight(), new AtlasCatalystPanel.Listener() {
             @Override
             public void selected(AtlasCatalysts.Catalyst catalyst) {
                 selectedCatalyst = catalyst;
@@ -704,6 +728,19 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
 
     @Override
     public void buttonPressed(Object buttonId) {
+        if (buttonId == Control.OFFICERS) {
+            toggleOfficers();
+            return;
+        }
+        if (buttonId == Control.OFFICERS_REPLAY) {
+            if (officerBoard.isOpen()) {
+                officerBoard.replay();
+            }
+            return;
+        }
+        if (officerBoard.isOpen()) {
+            officerBoard.close();
+        }
         if (buttonId == Control.CLOSE) {
             close();
         } else if (buttonId == Control.BORDERS && bordersButton != null) {
@@ -726,6 +763,62 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         }
     }
 
+    private void toggleOfficers() {
+        if (officerBoard.isOpen()) {
+            officerBoard.close();
+            return;
+        }
+        if (focusing || fade.closing()) {
+            return;
+        }
+        if (catalystPanel != null) {
+            catalystPanel.close();
+        }
+        gesture.clear();
+        camera.stopDrag();
+        hoveredCell = null;
+        hoveredAnomaly = null;
+        officerBoard.open(map.generator(), map.state());
+        placeOfficerBoard();
+        SkillTreeSounds.panelOpened();
+    }
+
+    private void placeOfficerBoard() {
+        float boardBottom = panelPosition.getY() + PANEL_MARGIN + CHROME_PAD + ChromeMetrics.CONTROL_HEIGHT + BUTTON_GAP;
+        float boardTop = panelPosition.getY() + panelPosition.getHeight() - sidePanelTop();
+        officerBoard.place(innerLeft() + CHROME_PAD, boardBottom, innerWidth() - CHROME_PAD * 2f, boardTop - boardBottom);
+    }
+
+    private void officerBoardInput(InputEventAPI event) {
+        if (event.isMouseMoveEvent()) {
+            mouseX = event.getX();
+            mouseY = event.getY();
+        } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
+            if (event.isKeyUpEvent()) {
+                officerBoard.close();
+            }
+        } else if (event.isMouseUpEvent() && event.isLMBUpEvent()) {
+            officerBoardClicked(event.getX(), event.getY());
+        }
+        event.consume();
+    }
+
+    private void officerBoardClicked(float x, float y) {
+        if (!officerBoard.contains(x, y)) {
+            officerBoard.close();
+            return;
+        }
+        AtlasCell commandCentre = officerBoard.clickedCommandCentre(x, y);
+        if (commandCentre != null) {
+            officerBoard.close();
+            camera.panTo(map.displayX(commandCentre), map.displayY(commandCentre));
+            map.pulse(commandCentre);
+            SkillTreeSounds.panelOpened();
+        } else if (officerBoard.clickedOfficer(x, y)) {
+            SkillTreeSounds.refused();
+        }
+    }
+
     private void openAtlasTree() {
         if (catalystPanel != null) {
             catalystPanel.close();
@@ -736,6 +829,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
 
     private void close() {
         fade.close();
+        officerBoard.close();
         leaveFocus();
         if (catalystPanel != null) {
             catalystPanel.close();
@@ -753,6 +847,8 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             }
             if (fade.closing()) {
                 event.consume();
+            } else if (officerBoard.isOpen()) {
+                officerBoardInput(event);
             } else if (focusedCell != null) {
                 focusInput(event);
             } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
@@ -873,14 +969,33 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         map.advance(amount);
         camera.advanceZoom(amount);
         camera.advancePan(amount);
+        advanceOfficerBoard(amount);
         if (panelPosition != null) {
-            boolean hovering = focusedCell == null && !camera.isDragging() && (catalystPanel == null || !catalystPanel.contains(mouseX, mouseY));
+            boolean hovering = focusedCell == null && !officerBoard.isShowing() && !camera.isDragging()
+                    && (catalystPanel == null || !catalystPanel.contains(mouseX, mouseY));
             hoveredAnomaly = hovering ? map.anomalyAt(viewport(), mouseX, mouseY) : null;
             AtlasCell hovered = hovering && hoveredAnomaly == null ? map.cellAt(viewport(), mouseX, mouseY) : null;
             if (hovered != null && !hovered.equals(hoveredCell)) {
                 map.pulse(hovered);
             }
             hoveredCell = hovered;
+        }
+    }
+
+    private void advanceOfficerBoard(float amount) {
+        if (panelPosition != null && officerBoard.isShowing()) {
+            placeOfficerBoard();
+        }
+        officerBoard.advance(amount, mouseX, mouseY);
+        float officersOpacity = 1f - Fade.smooth(focusLevel);
+        if (officersElement != null) {
+            officersElement.setOpacity(officersOpacity);
+            officersButton.setEnabled(!focusing);
+        }
+        if (replayElement != null) {
+            boolean replayShown = officerBoard.isOpen() && officerBoard.canReplay();
+            replayElement.setOpacity(replayShown ? officersOpacity : 0f);
+            replayButton.setEnabled(replayShown);
         }
     }
 
@@ -909,6 +1024,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             }
         }
         drawChrome(alpha);
+        officerBoard.render(alpha, mouseX, mouseY, panelStyle.getAccentColor());
         if (hoveredAnomaly != null && !gesture.isPanning()) {
             drawTooltip(hoveredAnomaly, this::writeAnomalyTooltip, alpha);
         } else if (hoveredCell != null && !gesture.isPanning()) {
