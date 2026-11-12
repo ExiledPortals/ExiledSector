@@ -7,6 +7,8 @@ import exiledsector.charts.generation.ChartTiers;
 import exiledsector.data.CsvRows;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierSlot;
+import exiledsector.i18n.StyledText;
+import exiledsector.ui.inspect.CodexModifierTable;
 import exiledsector.ui.util.ColorUtil;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -29,6 +31,7 @@ public final class Engrams {
     static final String ID_COLUMN = "id";
     static final Set<ModifierScope> TAKEN_SCOPES = Set.of(ModifierScope.HULL_ITEM, ModifierScope.SUBROUTINE);
     private static final Logger LOG = Logger.getLogger(Engrams.class);
+    public static final CodexModifierTable CODEX_TABLE = new CodexModifierTable("chart.codex.engramModifiers", Engrams::codexRows);
     private static volatile List<Engram> loaded = List.of();
 
     private Engrams() {
@@ -100,6 +103,12 @@ public final class Engrams {
 
     public static List<Engram> all() {
         return loaded;
+    }
+
+    static List<CodexModifierTable.Row> codexRows(ItemKind kind) {
+        return loaded.stream().filter(craftingItem -> craftingItem.appliesTo(kind.type()))
+                .map(craftingItem -> new CodexModifierTable.Row(craftingItem.modifierId(), StyledText.of(MaterialItems.displayName(craftingItem.itemId()))))
+                .toList();
     }
 
     public static Engram pick(int tier, Random random) {

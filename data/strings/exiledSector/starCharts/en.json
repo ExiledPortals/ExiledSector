@@ -350,6 +350,8 @@
     "chart.biomeModifier.header.collapsed_reach": "<muted>Collapsed</muted>",
     "chart.biomeModifier.header.abyssal_rift": "<muted>Abyssal</muted>",
     "chart.biomeModifier.header.threat_expanse": "<muted>Threat</muted>",
+    "chart.codex.biomeModifiers": "Biome Modifiers",
+    "chart.codex.engramModifiers": "Engram Modifiers",
     "chart.atlas.layout.compact": "Compact system",
     "chart.atlas.layout.sprawling": "Sprawling system",
     "chart.atlas.layout.ringed_giant": "Ringed giant",

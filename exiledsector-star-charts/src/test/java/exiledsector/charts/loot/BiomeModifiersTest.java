@@ -12,6 +12,7 @@ import exiledsector.items.ModifierSources;
 import exiledsector.items.PoolEntry;
 import exiledsector.items.RolledModifier;
 import exiledsector.modifiers.ModifierSlot;
+import exiledsector.ui.inspect.CodexModifierTable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -75,6 +76,14 @@ class BiomeModifiersTest {
 
     private static boolean carries(ItemData item, String modifierId) {
         return item.explicits().stream().map(RolledModifier::modifierId).anyMatch(modifierId::equals);
+    }
+
+    @Test
+    void theCodexTableListsEachBiomesModifierForItsPartOnly() throws Exception {
+        BiomeModifiers.register(new JSONArray().put(biomeRow(PLASMATIC, "storm_belt", "bridge")).put(biomeRow(CHRONAL, RIFT, "bridge")));
+
+        assertEquals(List.of(CHRONAL, PLASMATIC), BiomeModifiers.CODEX_TABLE.rows(ItemKind.BRIDGE).stream().map(CodexModifierTable.Row::modifierId).toList());
+        assertEquals(List.of(), BiomeModifiers.CODEX_TABLE.rows(ItemKind.REACTOR));
     }
 
     @Test

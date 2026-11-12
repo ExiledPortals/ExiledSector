@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import exiledsector.modifiers.ModifierSlot;
+import exiledsector.ui.inspect.CodexModifierTable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -67,6 +68,13 @@ class EngramTest {
     private static JSONObject craftingItemRow(String id, String modifier, String itemTypes, int minTier) throws JSONException {
         return new JSONObject().put("id", id).put("name", id).put("modifier", modifier).put("item_types", itemTypes)
                 .put("min_tier", String.valueOf(minTier)).put("weight", "1");
+    }
+
+    @Test
+    void theCodexTableListsEveryEngramModifierForEachHullItemPart() {
+        for (ItemKind kind : List.of(ItemKind.BRIDGE, ItemKind.REACTOR)) {
+            assertEquals(List.of(GRANTED_PREFIX, GRANTED_SUFFIX), Engrams.CODEX_TABLE.rows(kind).stream().map(CodexModifierTable.Row::modifierId).toList());
+        }
     }
 
     private Item common() {

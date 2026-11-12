@@ -7,6 +7,7 @@ import exiledsector.charts.atlas.AtlasRuntime;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.data.CsvRows;
+import exiledsector.i18n.Translation;
 import exiledsector.items.AffixLayout;
 import exiledsector.items.GrantedModifiers;
 import exiledsector.items.Item;
@@ -20,12 +21,14 @@ import exiledsector.items.ModifierSources;
 import exiledsector.items.RolledModifier;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierSlot;
+import exiledsector.ui.inspect.CodexModifierTable;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -43,6 +46,7 @@ public final class BiomeModifiers {
     public static final int MAX_PER_ITEM = 2;
     private static final long GRANT_SEED_SALT = 0x62696F6D65L;
     private static final Logger LOG = Logger.getLogger(BiomeModifiers.class);
+    public static final CodexModifierTable CODEX_TABLE = new CodexModifierTable("chart.codex.biomeModifiers", BiomeModifiers::codexRows);
 
     private record Key(String biomeId, ItemKind kind) {
     }
@@ -127,6 +131,13 @@ public final class BiomeModifiers {
         });
         modifiers.sort(null);
         return modifiers;
+    }
+
+    static List<CodexModifierTable.Row> codexRows(ItemKind kind) {
+        return modifiersByKey.entrySet().stream().filter(entry -> entry.getKey().kind() == kind)
+                .sorted(Comparator.comparing(entry -> entry.getKey().biomeId()))
+                .map(entry -> new CodexModifierTable.Row(entry.getValue(), Translation.styled(headerKey(entry.getKey().biomeId()))))
+                .toList();
     }
 
     public static boolean isBiomeModifier(String modifierId) {

@@ -47,6 +47,7 @@ import exiledsector.loot.LootTakenListener;
 import exiledsector.ui.cargo.BiomeItemIconLooks;
 import exiledsector.ui.cargo.CatalystIconFx;
 import exiledsector.ui.cargo.ItemIconLooks;
+import exiledsector.ui.inspect.CodexModifierTable;
 import exiledsector.ui.chart.ForgeCraftingBench;
 import exiledsector.ui.chart.StarChartCraftingBench;
 import exiledsector.ui.chart.WormholeGatewayOption;
@@ -185,6 +186,11 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     @Override
     public List<BenchTray> hullCraftingBenchTrays() {
         return List.of(EngramTray.INSTANCE, InfusedCraftingTray.INSTANCE);
+    }
+
+    @Override
+    public List<CodexModifierTable> codexModifierTables() {
+        return List.of(BiomeModifiers.CODEX_TABLE, Engrams.CODEX_TABLE);
     }
 
     @Override

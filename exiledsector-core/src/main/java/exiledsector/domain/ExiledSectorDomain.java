@@ -23,6 +23,7 @@ import exiledsector.loot.MarketStock;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.ui.cargo.ItemIconLooks;
+import exiledsector.ui.inspect.CodexModifierTable;
 import exiledsector.ui.inspect.ShipSummaryPart;
 import exiledsector.ui.refit.RefitButtonColumn;
 import exiledsector.ui.socket.BenchModeSupport;
@@ -57,6 +58,10 @@ public interface ExiledSectorDomain {
     }
 
     default void addCodexEntries() {
+    }
+
+    default List<CodexModifierTable> codexModifierTables() {
+        return List.of();
     }
 
     default void configureXStream(XStream xstream) {

@@ -1,16 +1,21 @@
 package exiledsector.ui.inspect;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ModSpecAPI;
 import com.fs.starfarer.api.ui.Alignment;
+import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.domain.DomainContributions;
+import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.NumberText;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-import exiledsector.items.ItemImplicits;
+import exiledsector.items.ItemModifiers;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierLine;
+import exiledsector.modifiers.ModifierSlot;
 import exiledsector.items.PoolEntry;
 import exiledsector.items.RolledLine;
 import exiledsector.items.ItemDefinition;
@@ -26,12 +31,14 @@ import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
+import exiledsector.skills.tags.ThemeTagLine;
 import exiledsector.ui.VanillaText;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public class ItemCodexEntry extends BoxedCodexEntry {
 
@@ -39,6 +46,8 @@ public class ItemCodexEntry extends BoxedCodexEntry {
     private static final float ICON_SIZE = 64f;
     private static final float CHANCE_COLUMN_WIDTH = 60f;
     private static final float COLUMN_GAP = 10f;
+    private static final float SOURCE_COLUMN_WIDTH = 90f;
+    private static final DomainContributions<CodexModifierTable> DOMAIN_TABLES = new DomainContributions<>(ExiledSectorDomain::codexModifierTables);
 
     private final ItemDefinition definition;
 
@@ -167,10 +176,84 @@ public class ItemCodexEntry extends BoxedCodexEntry {
         }
     }
 
+    private record TableEntry(Modifier modifier, StyledText lead) {
+    }
+
     private void writeAffixes(TooltipMakerAPI info, float textWidth) {
         Map<String, Double> weightShares = ItemRollOdds.weightShares(definition);
-        writePool(info, "codex.socketables.prefixes", definition.prefixes(), weightShares, textWidth);
-        writePool(info, "codex.socketables.suffixes", definition.suffixes(), weightShares, textWidth);
+        writeTable(info, "codex.socketables.effects", poolEntries(definition.prefixes(), weightShares), poolEntries(definition.suffixes(), weightShares),
+                CHANCE_COLUMN_WIDTH, textWidth);
+        for (CodexModifierTable table : DOMAIN_TABLES.all()) {
+            List<TableEntry> prefixes = new ArrayList<>();
+            List<TableEntry> suffixes = new ArrayList<>();
+            for (CodexModifierTable.Row row : table.rows(definition.kind())) {
+                Modifier modifier = ItemModifiers.get(row.modifierId());
+                if (modifier != null && modifier.slot() != ModifierSlot.IMPLICIT) {
+                    (modifier.slot() == ModifierSlot.PREFIX ? prefixes : suffixes).add(new TableEntry(modifier, row.source()));
+                }
+            }
+            writeTable(info, table.headingKey(), prefixes, suffixes, SOURCE_COLUMN_WIDTH, textWidth);
+        }
+    }
+
+    private static List<TableEntry> poolEntries(List<PoolEntry> pool, Map<String, Double> weightShares) {
+        return pool.stream().map(entry -> new TableEntry(entry.modifier(), Translation.msg("codex.socketables.chance")
+                .arg("chance", percentText(weightShares.getOrDefault(entry.modifier().id(), 0.0))).styled())).toList();
+    }
+
+    private void writeTable(TooltipMakerAPI info, String headingKey, List<TableEntry> prefixes, List<TableEntry> suffixes, float leadWidth,
+                            float textWidth) {
+        if (prefixes.isEmpty() && suffixes.isEmpty()) {
+            return;
+        }
+        info.addSectionHeading(Translation.text(headingKey), Alignment.MID, PAD);
+        float columnWidth = (textWidth - COLUMN_GAP) / 2f;
+        CustomPanelAPI tablePanel = Global.getSettings().createCustom(textWidth, 0f, null);
+        float prefixHeight = writeColumn(tablePanel, "codex.socketables.prefixes", prefixes, 0f, columnWidth, leadWidth);
+        float suffixHeight = writeColumn(tablePanel, "codex.socketables.suffixes", suffixes, columnWidth + COLUMN_GAP, columnWidth, leadWidth);
+        tablePanel.getPosition().setSize(textWidth, Math.max(prefixHeight, suffixHeight));
+        info.addCustom(tablePanel, PAD);
+    }
+
+    private float writeColumn(CustomPanelAPI tablePanel, String headingKey, List<TableEntry> entries, float columnLeft, float columnWidth,
+                              float leadWidth) {
+        float cursorY = addCell(tablePanel, columnLeft, 0f, columnWidth,
+                cell -> VanillaText.plainPara(cell, Translation.text(headingKey), 0f, Misc.getBasePlayerColor()).setAlignment(Alignment.MID));
+        float effectLeft = columnLeft + leadWidth + COLUMN_GAP;
+        float effectWidth = columnWidth - leadWidth - COLUMN_GAP;
+        for (TableEntry entry : entries) {
+            List<StyledText> effectTexts = effectTexts(entry.modifier());
+            if (effectTexts.isEmpty()) {
+                continue;
+            }
+            float rowTop = cursorY + PAD;
+            float leadHeight = addCell(tablePanel, columnLeft, rowTop, leadWidth,
+                    cell -> VanillaText.addPara(cell, entry.lead(), 0f, Misc.getTextColor()).setAlignment(Alignment.RMID));
+            float effectHeight = addCell(tablePanel, effectLeft, rowTop, effectWidth, cell -> {
+                float linePad = 0f;
+                for (StyledText effectText : effectTexts) {
+                    VanillaText.addPara(cell, effectText, linePad, Misc.getTextColor());
+                    linePad = LINE_PAD;
+                }
+            });
+            cursorY = rowTop + Math.max(leadHeight, effectHeight);
+            StyledText tagLine = ThemeTagLine.of(entry.modifier().tags());
+            if (tagLine != null) {
+                float tagTop = cursorY + LINE_PAD;
+                cursorY = tagTop + addCell(tablePanel, effectLeft, tagTop, effectWidth,
+                        cell -> VanillaText.addPara(cell, tagLine, 0f, Misc.getGrayColor()).setAlignment(Alignment.RMID));
+            }
+        }
+        return cursorY;
+    }
+
+    private static float addCell(CustomPanelAPI tablePanel, float cellLeft, float cellTop, float cellWidth, Consumer<TooltipMakerAPI> writer) {
+        TooltipMakerAPI cell = tablePanel.createUIElement(cellWidth, 0f, false);
+        writer.accept(cell);
+        float cellHeight = cell.getHeightSoFar();
+        cell.getPosition().setSize(cellWidth, cellHeight);
+        tablePanel.addUIElement(cell).inTL(cellLeft, cellTop);
+        return cellHeight;
     }
 
     private void writePool(TooltipMakerAPI info, String headingKey, List<PoolEntry> pool, Map<String, Double> weightShares,

@@ -343,6 +343,8 @@
     "chart.biomeModifier.header.collapsed_reach": "<muted>坍缩</muted>",
     "chart.biomeModifier.header.abyssal_rift": "<muted>深渊</muted>",
     "chart.biomeModifier.header.threat_expanse": "<muted>威胁</muted>",
+    "chart.codex.biomeModifiers": "星域修正",
+    "chart.codex.engramModifiers": "印痕修正",
     "chart.atlas.layout.compact": "紧凑星系",
     "chart.atlas.layout.sprawling": "辽阔星系",
     "chart.atlas.layout.ringed_giant": "环带巨行星",
