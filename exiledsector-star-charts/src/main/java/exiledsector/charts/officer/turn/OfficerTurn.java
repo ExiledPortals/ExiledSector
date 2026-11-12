@@ -65,7 +65,7 @@ public final class OfficerTurn {
     public static TurnResult take(TurnTerrain terrain, AtlasState state, TurnCause cause, TurnSetup setup) {
         int turn = state.advanceOfficerTurn();
         OfficerTurn officerTurn = new OfficerTurn(terrain, state, setup, Seeds.derived(state.seed(), TURN_SALT + turn * Seeds.GOLDEN_GAMMA));
-        state.officers().forEach(officer -> officerTurn.standingsBefore.put(officer.recordId(), standing(officer)));
+        state.officers().forEach(officer -> officerTurn.standingsBefore.put(officer.recordId(), Standing.of(officer)));
         officerTurn.applyCause(cause);
         officerTurn.resolveDeclared(decodeIntents(state.declaredIntents()));
         officerTurn.earnHoldingsRenown();
@@ -140,8 +140,8 @@ public final class OfficerTurn {
         AtlasOfficer replacement = OfficerBoardGenerator.replacement(state.seed(), state.newOfficerRecordId(), officer.factionId(), setup.ranks(),
                 setup.catalogue());
         if (officer.isActive()) {
-            replacement = replacement.takingCommand(officer.commandCentre(),
-                    AtlasTerritoryPlacer.history(AtlasTerritoryPlacer.ARRIVED_HISTORY, officer.commandCentre()));
+            replacement = state.withLeftBehindItems(replacement.takingCommand(officer.commandCentre(),
+                    AtlasTerritoryPlacer.history(AtlasTerritoryPlacer.ARRIVED_HISTORY, officer.commandCentre())));
         }
         state.putOfficer(replacement);
         replacements.add(new Replacement(officer.recordId(), replacement.recordId()));
@@ -477,13 +477,9 @@ public final class OfficerTurn {
         return officers.stream().sorted(Comparator.comparingInt(AtlasOfficer::recordId)).toList();
     }
 
-    private static Standing standing(AtlasOfficer officer) {
-        return new Standing(officer.rankId(), officer.renown());
-    }
-
     private TurnResult result(int turn, TurnCause cause) {
         Map<Integer, Standing> standingsAfter = new HashMap<>();
-        state.officers().forEach(officer -> standingsAfter.put(officer.recordId(), standing(officer)));
+        state.officers().forEach(officer -> standingsAfter.put(officer.recordId(), Standing.of(officer)));
         Set<Integer> recordIds = new TreeSet<>(standingsBefore.keySet());
         recordIds.addAll(standingsAfter.keySet());
         List<StandingChange> changes = new ArrayList<>();

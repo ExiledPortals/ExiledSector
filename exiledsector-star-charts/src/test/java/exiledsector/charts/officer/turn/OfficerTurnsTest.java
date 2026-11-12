@@ -9,6 +9,8 @@ import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.atlas.AtlasUnlocks;
 import exiledsector.charts.atlas.TerritoryContext;
 import exiledsector.charts.atlas.TestTerritories;
+import exiledsector.charts.officer.AtlasOfficer;
+import exiledsector.charts.officer.FlagshipCatalogue;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -117,6 +119,25 @@ class OfficerTurnsTest {
         }
         OfficerTurns.take(generator, state, TurnCause.forced(), TerritoryContext.NONE);
         assertEquals(1, heard.size());
+    }
+
+    @Test
+    void aTurnFirstHandsOverTheCommissionFactionsTerritoriesAndShowsTheReplacements() {
+        AtlasState state = new AtlasState(SEED);
+        AtlasGenerator generator = generator(state);
+        AtlasCell centre = new AtlasCell(4, 0);
+        AtlasOfficer predecessor = TestTerritories.establish(state, centre, "pirates");
+
+        TurnResult result = OfficerTurns.take(generator, state, TurnCause.forced(), new TerritoryContext("pirates", null, FlagshipCatalogue.NONE));
+
+        AtlasOfficer successor = state.officerAt(centre);
+        assertEquals("hegemony", successor.factionId());
+        assertEquals(predecessor.rankId(), successor.rankId());
+        assertTrue(result.replacements().contains(new TurnResult.Replacement(predecessor.recordId(), successor.recordId())));
+        assertEquals(predecessor, result.fallen().get(predecessor.recordId()));
+        assertNull(result.standingChange(predecessor.recordId()).after());
+        assertNull(result.standingChange(successor.recordId()).before());
+        assertEquals(result, OfficerTurns.lastTurn(state));
     }
 
     @Test

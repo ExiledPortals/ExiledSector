@@ -68,6 +68,18 @@ public record AtlasOfficer(int recordId, String factionId, long nameSeed, long p
                 appended(historyEntry), renown, identified);
     }
 
+    public AtlasOfficer takingOverFrom(AtlasOfficer predecessor, String historyEntry) {
+        return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, predecessor.rankId, predecessor.commandCentre, traitId, flagshipHullId,
+                flagshipVariantId, shipNameSeed, treeSeed, dmodIds, scars, predecessor.carriedItems, predecessor.pendingChoice, defeats, lastChance,
+                Status.ACTIVE, true, appended(historyEntry), predecessor.renown, predecessor.identified);
+    }
+
+    public AtlasOfficer waitingInPlaceOf(AtlasOfficer predecessor) {
+        return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, predecessor.rankId, null, traitId, flagshipHullId, flagshipVariantId,
+                shipNameSeed, treeSeed, dmodIds, scars, carriedItems, predecessor.pendingChoice, defeats, lastChance, Status.WAITING, false, history,
+                predecessor.renown, predecessor.identified);
+    }
+
     public AtlasOfficer losingCommand(String historyEntry) {
         return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, rankId, null, traitId, flagshipHullId, flagshipVariantId,
                 shipNameSeed, treeSeed, dmodIds, scars, carriedItems, pendingChoice, defeats, lastChance, Status.WAITING, heldCommand,

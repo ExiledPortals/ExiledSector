@@ -166,7 +166,7 @@ public final class AtlasTerritoryPlacer {
         } else if (OfficerText.fledFrom(officer) != null) {
             officer = officer.takingCommand(centre, history(MOVED_HISTORY, OfficerText.fledFrom(officer), centre));
         } else {
-            officer = officer.takingCommand(centre, history(ARRIVED_HISTORY, centre));
+            officer = state.withLeftBehindItems(officer.takingCommand(centre, history(ARRIVED_HISTORY, centre)));
         }
         state.putOfficer(officer);
         claimStartingTerritory(centre);
@@ -193,13 +193,8 @@ public final class AtlasTerritoryPlacer {
     }
 
     private AtlasOfficer pickOfficer(AtlasCell centre) {
-        Map<String, Integer> visibleTerritories = visibleTerritoryCounts();
-        Map<String, Float> allowed = new LinkedHashMap<>();
-        generator.territoryWeights(centre).forEach((factionId, weight) -> {
-            if (!factionId.equals(context.excludedFactionId()) && visibleTerritories.getOrDefault(factionId, 0) < MAX_VISIBLE_TERRITORIES) {
-                allowed.put(factionId, weight);
-            }
-        });
+        Map<String, Integer> visibleTerritories = visibleTerritoryCounts(state, visible);
+        Map<String, Float> allowed = openFactions(generator.territoryWeights(centre), context.excludedFactionId(), visibleTerritories);
         if (allowed.isEmpty()) {
             return null;
         }
@@ -215,13 +210,26 @@ public final class AtlasTerritoryPlacer {
                 weights.put(factionId, FLED_WEIGHT);
                 pickable.put(factionId, fled.get(factionId));
             } else if (arriving.containsKey(factionId)) {
-                int held = visibleTerritories.getOrDefault(factionId, 0);
-                weights.put(factionId, regionWeight * (held == 0 ? ABSENT_WEIGHT : 1f / (1 + held)));
+                weights.put(factionId, absenceWeight(regionWeight, visibleTerritories.getOrDefault(factionId, 0)));
                 pickable.put(factionId, arriving.get(factionId));
             }
         });
         String factionId = AtlasHash.race(generator.seed(), OFFICER_SALT, centre.gridX(), centre.gridY(), weights);
         return factionId != null ? pickable.get(factionId) : furthestActiveOfficer(officers, allowed);
+    }
+
+    static Map<String, Float> openFactions(Map<String, Float> regionWeights, String excludedFactionId, Map<String, Integer> visibleTerritories) {
+        Map<String, Float> open = new LinkedHashMap<>();
+        regionWeights.forEach((factionId, weight) -> {
+            if (!factionId.equals(excludedFactionId) && visibleTerritories.getOrDefault(factionId, 0) < MAX_VISIBLE_TERRITORIES) {
+                open.put(factionId, weight);
+            }
+        });
+        return open;
+    }
+
+    static float absenceWeight(float regionWeight, int heldTerritories) {
+        return regionWeight * (heldTerritories == 0 ? ABSENT_WEIGHT : 1f / (1 + heldTerritories));
     }
 
     private static String lowestWaitingRank(List<AtlasOfficer> officers, Map<String, Float> allowed) {
@@ -273,7 +281,7 @@ public final class AtlasTerritoryPlacer {
         return withinLanes(centre, FLED_REACH_LANES).stream().anyMatch(reachable::contains);
     }
 
-    private Map<String, Integer> visibleTerritoryCounts() {
+    static Map<String, Integer> visibleTerritoryCounts(AtlasState state, Set<AtlasCell> visible) {
         Map<String, Set<AtlasCell>> centresByFaction = new HashMap<>();
         for (AtlasCell cell : visible) {
             AtlasCell centre = state.commandCentreOf(cell);

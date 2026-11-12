@@ -1,5 +1,7 @@
 package exiledsector.charts.atlas;
 
+import exiledsector.charts.officer.turn.OfficerTurns;
+
 import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -92,6 +94,9 @@ public final class AtlasReach {
     public static Set<AtlasCell> refreshReveal(AtlasGenerator generator, AtlasState state, TerritoryContext territoryContext) {
         Set<AtlasCell> visible = visible(generator, state);
         state.recordReveal(generator, visible);
+        if (CommissionHandover.isNeeded(state, territoryContext.excludedFactionId())) {
+            OfficerTurns.handOverCommission(generator, state, visible, territoryContext);
+        }
         AtlasTerritoryPlacer.place(generator, state, visible, territoryContext);
         return visible;
     }

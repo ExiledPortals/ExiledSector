@@ -17,6 +17,7 @@ import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -205,6 +206,20 @@ class AtlasTerritoryPlacerTest {
 
         assertFalse(centres(state).isEmpty());
         assertTrue(state.officers().stream().filter(officer -> "pirates".equals(officer.factionId())).allMatch(AtlasOfficer::neverPlaced));
+    }
+
+    @Test
+    void aNewCommissionLeavesTheCommissionFactionNoTerritoryAfterTheNextReveal() {
+        AtlasState state = new AtlasState(SEED);
+        AtlasGenerator generator = generator(state);
+        grow(generator, state, TerritoryContext.NONE, visible -> { });
+        assertTrue(state.claims().keySet().stream().anyMatch(cell -> "pirates".equals(state.claimedFaction(cell))));
+
+        grow(generator, state, new TerritoryContext("pirates", null, FlagshipCatalogue.NONE), visible -> {
+            state.claims().keySet().forEach(cell -> assertNotEquals("pirates", state.claimedFaction(cell), cell.toString()));
+            assertTrue(state.officers().stream().filter(officer -> "pirates".equals(officer.factionId()))
+                    .noneMatch(officer -> officer.isActive() || officer.hasFled()));
+        });
     }
 
     @Test
