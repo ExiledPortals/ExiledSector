@@ -524,7 +524,7 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
         countLabel.autoSizeToWidth(countWidth).inTR(countRight, FEEDSTOCK_TEXT_TOP);
         float pairWidth = countWidth;
         if (iconPath != null) {
-            element.addImage(iconPath, FEEDSTOCK_ICON_SIZE, FEEDSTOCK_ICON_SIZE, 0f);
+            element.addCustom(Global.getSettings().createCustom(FEEDSTOCK_ICON_SIZE, FEEDSTOCK_ICON_SIZE, new MaterialCountIcon(itemId, iconPath)), 0f);
             element.getPrev().getPosition().inTR(countRight + countWidth + LINE_PAD, 0f);
             pairWidth += LINE_PAD + FEEDSTOCK_ICON_SIZE;
         }

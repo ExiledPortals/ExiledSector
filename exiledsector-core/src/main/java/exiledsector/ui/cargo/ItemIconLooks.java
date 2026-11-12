@@ -18,4 +18,8 @@ public interface ItemIconLooks {
     default Color kindColor(ItemKind kind) {
         return null;
     }
+
+    default CargoIconLook materialLook(String itemId) {
+        return null;
+    }
 }

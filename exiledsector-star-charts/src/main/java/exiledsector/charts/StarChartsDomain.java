@@ -46,6 +46,7 @@ import exiledsector.loot.LootSource;
 import exiledsector.loot.LootTakenListener;
 import exiledsector.ui.cargo.BiomeItemIconLooks;
 import exiledsector.ui.cargo.CatalystIconFx;
+import exiledsector.ui.cargo.InfusedFeedstockIconLooks;
 import exiledsector.ui.cargo.ItemIconLooks;
 import exiledsector.ui.inspect.CodexModifierTable;
 import exiledsector.ui.chart.ForgeCraftingBench;
@@ -75,7 +76,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
 
     @Override
     public List<ItemIconLooks> itemIconLooks() {
-        return List.of(BiomeItemIconLooks.INSTANCE);
+        return List.of(BiomeItemIconLooks.INSTANCE, InfusedFeedstockIconLooks.INSTANCE);
     }
 
     @Override

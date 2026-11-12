@@ -7,6 +7,7 @@ import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.CraftingMaterialFamilies;
 import exiledsector.items.CraftingMaterialFamily;
 import exiledsector.items.Item;
+import exiledsector.items.ItemDisassembly;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemRarity;
 import exiledsector.items.MaterialItems;
@@ -23,7 +24,15 @@ public final class CargoIconLooks {
     }
 
     public static CargoIconLook forMaterial(String itemId) {
-        return forMaterial(MaterialItems.tier(itemId), MaterialItems.color(itemId)).withSwarm(swarmFor(itemId));
+        CargoIconLook domainLook = ITEM_LOOKS.first(itemLooks -> itemLooks.materialLook(itemId));
+        if (domainLook != null) {
+            return domainLook;
+        }
+        return forMaterial(lookTier(itemId), MaterialItems.color(itemId)).withSwarm(swarmFor(itemId));
+    }
+
+    private static MaterialTier lookTier(String itemId) {
+        return ItemDisassembly.FEEDSTOCK_ITEM_ID.equals(itemId) ? Nanoswarm.AUGMENTATION.tier() : MaterialItems.tier(itemId);
     }
 
     static SwarmMotion swarmFor(String itemId) {
@@ -32,7 +41,7 @@ public final class CargoIconLooks {
         }
         CraftingMaterialFamily craftingItem = CraftingMaterialFamilies.byItemId(itemId);
         if (craftingItem == null) {
-            return SwarmMotion.SLURRY;
+            return ItemDisassembly.FEEDSTOCK_ITEM_ID.equals(itemId) ? SwarmMotion.ORBIT : SwarmMotion.SLURRY;
         }
         if (craftingItem == Nanoswarm.CORRUPTION) {
             return SwarmMotion.FERAL;
@@ -40,7 +49,7 @@ public final class CargoIconLooks {
         return craftingItem == Nanoswarm.REPLICATION ? SwarmMotion.REPLICATING : SwarmMotion.ORBIT;
     }
 
-    static CargoIconLook forMaterial(MaterialTier tier, Color color) {
+    public static CargoIconLook forMaterial(MaterialTier tier, Color color) {
         return switch (tier) {
             case BASIC -> CargoIconLook.plain(color);
             case MINOR -> CargoIconLook.glowing(color, 0.45f);

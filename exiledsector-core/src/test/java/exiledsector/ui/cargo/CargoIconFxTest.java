@@ -3,6 +3,7 @@ package exiledsector.ui.cargo;
 import exiledsector.items.Nanoswarm;
 import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.ItemDisassembly;
+import exiledsector.items.MaterialItems;
 import exiledsector.items.MaterialTier;
 import org.junit.jupiter.api.Test;
 
@@ -82,8 +83,21 @@ class CargoIconFxTest {
     }
 
     @Test
+    void feedstockAnimatesLikeAugmentationInItsOwnColour() {
+        CargoIconLook feedstock = CargoIconLooks.forMaterial(ItemDisassembly.FEEDSTOCK_ITEM_ID);
+        CargoIconLook augmentation = CargoIconLooks.forMaterial(Nanoswarm.AUGMENTATION.itemId());
+
+        assertEquals(augmentation.glow(), feedstock.glow());
+        assertEquals(augmentation.swarm(), feedstock.swarm());
+        assertEquals(augmentation.rings(), feedstock.rings());
+        assertEquals(augmentation.prismatic(), feedstock.prismatic());
+        assertEquals(MaterialItems.color(ItemDisassembly.FEEDSTOCK_ITEM_ID), feedstock.color());
+    }
+
+    @Test
     void eachMaterialGetsItsOwnSwarmMotion() {
-        assertEquals(SwarmMotion.SLURRY, CargoIconLooks.swarmFor(ItemDisassembly.FEEDSTOCK_ITEM_ID));
+        assertEquals(SwarmMotion.ORBIT, CargoIconLooks.swarmFor(ItemDisassembly.FEEDSTOCK_ITEM_ID));
+        assertEquals(SwarmMotion.SLURRY, CargoIconLooks.swarmFor("unknown_material"));
         assertEquals(SwarmMotion.ORBIT, CargoIconLooks.swarmFor(Nanoswarm.AUGMENTATION.itemId()));
         assertEquals(SwarmMotion.FERAL, CargoIconLooks.swarmFor(Nanoswarm.CORRUPTION.itemId()));
         assertEquals(SwarmMotion.REPLICATING, CargoIconLooks.swarmFor(Nanoswarm.REPLICATION.itemId()));
