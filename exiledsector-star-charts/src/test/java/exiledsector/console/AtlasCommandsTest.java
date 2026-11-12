@@ -1,9 +1,16 @@
 package exiledsector.console;
 
 import exiledsector.charts.atlas.AtlasCell;
+import exiledsector.charts.atlas.AtlasState;
+import exiledsector.charts.atlas.TestTerritories;
+import exiledsector.charts.officer.turn.Intent;
+import exiledsector.charts.officer.turn.IntentKind;
+import exiledsector.charts.officer.turn.TurnCause;
+import exiledsector.charts.officer.turn.TurnResult;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -40,5 +47,25 @@ class AtlasCommandsTest {
         assertEquals(new AtlasResetCommand.ResetArguments(-5L, false, null), AtlasResetCommand.ResetArguments.parse("-5"));
         assertEquals(new AtlasResetCommand.ResetArguments(null, true, null), AtlasResetCommand.ResetArguments.parse("SAME"));
         assertNotNull(AtlasResetCommand.ResetArguments.parse("new").problem());
+    }
+
+    @Test
+    void theTurnCommandsDescribeIntentsAndResultsByOfficer() {
+        AtlasState state = new AtlasState(1L);
+        TestTerritories.establish(state, new AtlasCell(0, 0), "hegemony");
+        TestTerritories.establish(state, new AtlasCell(3, 0), "pirates");
+        state.setDeclaredIntents(List.of(Intent.challenge(1, 2).encode(), Intent.defend(2).encode()));
+
+        assertEquals("Intents declared for the next officer turn: 2\n#1 hegemony lieutenant challenge against #2 pirates lieutenant"
+                + "\n#2 pirates lieutenant defend", AtlasIntentsCommand.describe(state));
+
+        TurnResult result = new TurnResult(3, TurnCause.officerDefeated(2), List.of(),
+                List.of(new TurnResult.ResolvedIntent(IntentKind.CHALLENGE, 1, 2, null, false, true)),
+                List.of(new TurnResult.OfficerLoss(2, TurnResult.LossKind.BEATEN_BY_PLAYER, Intent.NO_OFFICER, new AtlasCell(3, 0), true, false)),
+                List.of(), Map.of());
+        assertEquals("Officer turn 3, caused by officer defeated (#2 pirates lieutenant)"
+                + "\n#1 hegemony lieutenant challenge against #2 pirates lieutenant (defended): failed"
+                + "\nLoss: #2 beaten by player, fled", AtlasLastTurnCommand.describe(state, result));
+        assertEquals("No officer turn has been taken yet.", AtlasLastTurnCommand.describe(state, TurnResult.NONE));
     }
 }

@@ -31,9 +31,9 @@ class OfficerFleetsTest {
 
     @Test
     void aRunNodeNamesItsOfficerByRecordId() {
-        assertEquals(12, OfficerFleets.recordIdOf("12"));
-        assertNull(OfficerFleets.recordIdOf(null));
-        assertNull(OfficerFleets.recordIdOf("officer twelve"));
+        assertEquals(12, OfficerFleets.recordIdOfRunData("12"));
+        assertNull(OfficerFleets.recordIdOfRunData(null));
+        assertNull(OfficerFleets.recordIdOfRunData("officer twelve"));
     }
 
     @Test

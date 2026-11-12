@@ -52,7 +52,7 @@ public final class OfficerFleets {
     }
 
     private static AtlasOfficer officerOf(String runData) {
-        Integer recordId = recordIdOf(runData);
+        Integer recordId = recordIdOfRunData(runData);
         return recordId == null ? null : record(recordId);
     }
 
@@ -61,7 +61,11 @@ public final class OfficerFleets {
         return state == null ? null : state.officer(recordId);
     }
 
-    static Integer recordIdOf(String runData) {
+    public static Integer recordIdOf(AtlasRunNode node) {
+        return recordIdOfRunData(node == null ? null : node.anomalyData(AtlasOfficer.RUN_DATA_KEY));
+    }
+
+    static Integer recordIdOfRunData(String runData) {
         if (runData == null) {
             return null;
         }

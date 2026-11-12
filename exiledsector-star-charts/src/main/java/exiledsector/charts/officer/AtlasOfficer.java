@@ -86,6 +86,30 @@ public record AtlasOfficer(int recordId, String factionId, long nameSeed, long p
                 heldCommand, history, renown, true);
     }
 
+    public AtlasOfficer withRenown(int newRenown) {
+        return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, rankId, commandCentre, traitId, flagshipHullId,
+                flagshipVariantId, shipNameSeed, treeSeed, dmodIds, scars, carriedItems, pendingChoice, defeats, lastChance, status,
+                heldCommand, history, Math.max(0, newRenown), identified);
+    }
+
+    public AtlasOfficer withLastChance(boolean marked) {
+        return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, rankId, commandCentre, traitId, flagshipHullId,
+                flagshipVariantId, shipNameSeed, treeSeed, dmodIds, scars, carriedItems, pendingChoice, defeats, marked, status,
+                heldCommand, history, renown, identified);
+    }
+
+    public AtlasOfficer withDefeats(int defeatCount) {
+        return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, rankId, commandCentre, traitId, flagshipHullId,
+                flagshipVariantId, shipNameSeed, treeSeed, dmodIds, scars, carriedItems, pendingChoice, defeatCount, lastChance, status,
+                heldCommand, history, renown, identified);
+    }
+
+    public AtlasOfficer withHistory(String historyEntry) {
+        return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, rankId, commandCentre, traitId, flagshipHullId,
+                flagshipVariantId, shipNameSeed, treeSeed, dmodIds, scars, carriedItems, pendingChoice, defeats, lastChance, status,
+                heldCommand, appended(historyEntry), renown, identified);
+    }
+
     public AtlasOfficer withScars(Map<String, Integer> newScars) {
         return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, rankId, commandCentre, traitId, flagshipHullId,
                 flagshipVariantId, shipNameSeed, treeSeed, dmodIds, newScars, carriedItems, pendingChoice, defeats, lastChance, status,

@@ -78,6 +78,29 @@ public final class OfficerText {
                 .arg("from", regionOf(generator, entry.earliest())).text();
     }
 
+    public static AtlasCell fledFrom(AtlasOfficer officer) {
+        HistoryEntry latest = latestEntry(officer);
+        return officer.hasFled() && latest != null && AtlasTerritoryPlacer.FLED_HISTORY.equals(latest.event()) ? latest.latest() : null;
+    }
+
+    public static boolean fledFrom(AtlasOfficer officer, AtlasCell cell) {
+        for (String entry : officer.history()) {
+            HistoryEntry parsed = HistoryEntry.parse(entry);
+            if (parsed != null && AtlasTerritoryPlacer.FLED_HISTORY.equals(parsed.event()) && parsed.latest().equals(cell)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static String fledLine(AtlasGenerator generator, AtlasOfficer officer) {
+        if (officer.isActive()) {
+            return Translation.msg("chart.officer.tooltip.fledTo").arg("title", title(officer))
+                    .arg("region", regionOf(generator, officer.commandCentre())).text();
+        }
+        return Translation.msg("chart.officer.tooltip.fledFrontier").arg("title", title(officer)).text();
+    }
+
     public static String regionOf(AtlasGenerator generator, AtlasCell cell) {
         return AtlasNames.region(generator.node(cell).regionId());
     }

@@ -13,10 +13,12 @@ import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.atlas.AtlasLine;
+import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.content.ChartFactions;
 import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.OfficerFleets;
 import exiledsector.charts.officer.OfficerText;
+import exiledsector.charts.officer.turn.OfficerTurns;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunBound;
 import exiledsector.charts.run.ChartRuns;
@@ -60,6 +62,32 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
 
     public static String objectiveName(ChartRun run) {
         return run.hasBoss() ? Translation.gameText("chart.objective.boss.name") : "";
+    }
+
+    private static void addOfficerParas(TooltipMakerAPI info, ChartRun run) {
+        Integer officerRecordId = OfficerFleets.recordIdOf(run.atlasNode());
+        if (officerRecordId == null) {
+            return;
+        }
+        AtlasOfficer officer = OfficerFleets.officerOf(run.atlasNode());
+        if (officer == null) {
+            AtlasState state = AtlasState.getIfCreated(Global.getSector());
+            AtlasOfficer fallen = state == null ? null : OfficerTurns.fallenOfficer(state, officerRecordId);
+            if (fallen != null) {
+                info.addPara(safe(I18n.forGameText(() -> Translation.msg("chart.intel.officerDied").arg("title", OfficerText.title(fallen)).text())),
+                        PARAGRAPH_PAD);
+            }
+            return;
+        }
+        info.addPara(safe(I18n.forGameText(() -> Translation.msg("chart.intel.officer").arg("title", OfficerText.title(officer))
+                .arg("faction", ChartFactions.displayName(officer.factionId())).text())), PARAGRAPH_PAD);
+        for (AtlasLine line : I18n.forGameText(() -> OfficerText.detailLines(officer))) {
+            VanillaText.addPara(info, line.styled(), PARAGRAPH_PAD, Misc.getTextColor());
+        }
+        if (!officer.isActive() || officer.commandCentre().pack() != run.atlasNode().cell()) {
+            info.addPara(safe(I18n.forGameText(() -> Translation.msg("chart.intel.officerFled").arg("title", OfficerText.title(officer)).text())),
+                    PARAGRAPH_PAD);
+        }
     }
 
     public static String descriptionKey(ChartRun run) {
@@ -109,14 +137,7 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
         info.addPara(safe(Translation.gameText(descriptionKey(run))), 0f);
         info.addPara(safe(I18n.forGameText(() -> Translation.msg("chart.intel.tier").arg("tier", tier).arg("faction", faction).text())),
                 PARAGRAPH_PAD);
-        AtlasOfficer officer = OfficerFleets.officerOf(run.atlasNode());
-        if (officer != null) {
-            info.addPara(safe(I18n.forGameText(() -> Translation.msg("chart.intel.officer").arg("title", OfficerText.title(officer))
-                    .arg("faction", ChartFactions.displayName(officer.factionId())).text())), PARAGRAPH_PAD);
-            for (AtlasLine line : I18n.forGameText(() -> OfficerText.detailLines(officer))) {
-                VanillaText.addPara(info, line.styled(), PARAGRAPH_PAD, Misc.getTextColor());
-            }
-        }
+        addOfficerParas(info, run);
         String progress = progressText(run);
         if (progress != null) {
             info.addPara(safe(progress), PARAGRAPH_PAD);

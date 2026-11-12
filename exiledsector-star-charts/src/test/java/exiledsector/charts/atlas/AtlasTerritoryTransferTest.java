@@ -154,4 +154,40 @@ class AtlasTerritoryTransferTest {
         assertFalse(state.isClaimed(border.beyondCell()));
         assertTrue(state.officerAt(border.hegemonyCentre()).isActive());
     }
+
+    private static List<AtlasCell> rowLanes(AtlasCell cell) {
+        return List.of(new AtlasCell(cell.gridX() - 1, cell.gridY()), new AtlasCell(cell.gridX() + 1, cell.gridY()));
+    }
+
+    @Test
+    void aSystemTakenByAnotherCommandCentreLeavesTheCutOffSystemsBehindItFree() {
+        AtlasState state = new AtlasState(SEED);
+        AtlasCell hegemonyCentre = new AtlasCell(0, 0);
+        AtlasCell takenCell = new AtlasCell(1, 0);
+        AtlasCell cutOffCell = new AtlasCell(2, 0);
+        AtlasCell pirateCentre = new AtlasCell(4, 0);
+        TestTerritories.establish(state, hegemonyCentre, "hegemony");
+        TestTerritories.establish(state, pirateCentre, "pirates");
+        state.claim(takenCell, hegemonyCentre);
+        state.claim(cutOffCell, hegemonyCentre);
+
+        assertTrue(AtlasTerritoryTransfer.transferTo(AtlasTerritoryTransferTest::rowLanes, state, takenCell, pirateCentre));
+        assertEquals(pirateCentre, state.commandCentreOf(takenCell));
+        assertFalse(state.isClaimed(cutOffCell));
+        assertEquals(hegemonyCentre, state.commandCentreOf(hegemonyCentre));
+    }
+
+    @Test
+    void aTransferNeverTakesACommandCentreOrJoinsAnEmptyCentre() {
+        AtlasState state = new AtlasState(SEED);
+        AtlasCell hegemonyCentre = new AtlasCell(0, 0);
+        AtlasCell pirateCentre = new AtlasCell(1, 0);
+        TestTerritories.establish(state, hegemonyCentre, "hegemony");
+        TestTerritories.establish(state, pirateCentre, "pirates");
+
+        assertFalse(AtlasTerritoryTransfer.transferTo(AtlasTerritoryTransferTest::rowLanes, state, hegemonyCentre, pirateCentre));
+        assertFalse(AtlasTerritoryTransfer.transferTo(AtlasTerritoryTransferTest::rowLanes, state, new AtlasCell(-1, 0), new AtlasCell(5, 0)));
+        assertEquals(hegemonyCentre, state.commandCentreOf(hegemonyCentre));
+        assertFalse(state.isClaimed(new AtlasCell(-1, 0)));
+    }
 }

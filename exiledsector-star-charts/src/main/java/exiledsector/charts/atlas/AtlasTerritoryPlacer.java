@@ -4,6 +4,7 @@ import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.OfficerBoardGenerator;
 import exiledsector.charts.officer.OfficerRank;
 import exiledsector.charts.officer.OfficerRanks;
+import exiledsector.charts.officer.OfficerText;
 
 import java.util.ArrayDeque;
 import java.util.Comparator;
@@ -114,7 +115,11 @@ public final class AtlasTerritoryPlacer {
     }
 
     private boolean canHoldTerritory(AtlasCell cell) {
-        if (cell.equals(AtlasCell.ORIGIN) || cell.equals(context.openRunCell()) || generator.isVoid(cell) || state.isCompleted(cell)
+        return canHoldTerritory(generator, state, cell, context.openRunCell());
+    }
+
+    public static boolean canHoldTerritory(AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasCell openRunCell) {
+        if (cell.equals(AtlasCell.ORIGIN) || cell.equals(openRunCell) || generator.isVoid(cell) || state.isCompleted(cell)
                 || state.isClaimed(cell) || generator.specialAt(cell) != null) {
             return false;
         }
@@ -158,6 +163,8 @@ public final class AtlasTerritoryPlacer {
             AtlasCell previous = officer.commandCentre();
             state.breakUp(previous);
             officer = officer.takingCommand(centre, history(MOVED_HISTORY, previous, centre));
+        } else if (OfficerText.fledFrom(officer) != null) {
+            officer = officer.takingCommand(centre, history(MOVED_HISTORY, OfficerText.fledFrom(officer), centre));
         } else {
             officer = officer.takingCommand(centre, history(ARRIVED_HISTORY, centre));
         }

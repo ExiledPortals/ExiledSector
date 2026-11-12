@@ -22,6 +22,8 @@ import exiledsector.charts.officer.OfficerRanks;
 import exiledsector.charts.officer.reward.OfficerRewardTable;
 import exiledsector.charts.officer.scar.ScarChallengePick;
 import exiledsector.charts.officer.scar.ScarTable;
+import exiledsector.charts.officer.turn.ChallengeLossScars;
+import exiledsector.charts.officer.turn.OfficerTurnTables;
 import exiledsector.charts.run.ChartBlockedAbilities;
 import exiledsector.charts.run.ChartCampaignPlugin;
 import exiledsector.charts.run.ChartContentListener;
@@ -96,6 +98,8 @@ public final class StarCharts {
         ChartFeatures.load();
         AtlasData.load();
         OfficerRanks.load();
+        OfficerTurnTables.load();
+        ChallengeLossScars.register();
         AtlasTreeData.load();
         ScarTable.load();
         ScarChallengePick.load();

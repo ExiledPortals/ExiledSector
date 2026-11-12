@@ -2,6 +2,7 @@ package exiledsector.charts.atlas;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.officer.turn.OfficerTurns;
 import exiledsector.charts.run.ChartRun;
 import org.apache.log4j.Logger;
 
@@ -21,11 +22,23 @@ public final class AtlasProgress {
             AtlasState state = AtlasState.get(sector);
             AtlasGenerator generator = AtlasRuntime.generator(sector);
             AtlasCell cell = AtlasCell.unpack(node.cell());
+            boolean newlyCompleted = !state.isCompleted(cell);
             complete(generator, state, cell, run.tier());
             ChartAnomalies.runCompleted(sector, run);
+            if (newlyCompleted) {
+                takeOfficerTurn(generator, state, run);
+            }
             AtlasReach.refreshReveal(generator, state);
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Recording the completed atlas system for run " + run.runId() + " failed", e);
+        }
+    }
+
+    private static void takeOfficerTurn(AtlasGenerator generator, AtlasState state, ChartRun run) {
+        try {
+            OfficerTurns.bossKilled(generator, state, run);
+        } catch (RuntimeException e) {
+            LOG.error("[ExiledSector] Taking the Atlas officer turn for run " + run.runId() + " failed", e);
         }
     }
 

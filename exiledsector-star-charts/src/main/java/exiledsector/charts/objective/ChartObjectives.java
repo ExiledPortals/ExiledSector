@@ -155,6 +155,7 @@ public final class ChartObjectives {
         if (!run.markObjectiveComplete()) {
             return ItemDrops.SiteLoot.NONE;
         }
+        ItemDrops.SiteLoot officerLoot = OfficerDefeat.bossDefeated(sector, run);
         AtlasProgress.completed(sector, run);
         ItemDrops.SiteLoot rewardLoot = ItemDrops.SiteLoot.NONE;
         try {
@@ -170,7 +171,7 @@ public final class ChartObjectives {
         } catch (RuntimeException | LinkageError e) {
             LOG.error("[ExiledSector] Granting the Wormhole Gateway upgrade for run " + run.runId() + " failed", e);
         }
-        rewardLoot = rewardLoot.plus(OfficerDefeat.bossDefeated(sector, run));
+        rewardLoot = rewardLoot.plus(officerLoot);
         updateIntel(sector, run);
         return rewardLoot;
     }

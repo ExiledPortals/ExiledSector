@@ -1,0 +1,12 @@
+id,value,note
+other_boss_kills_per_turn,4,"Placeholder magnitudes; Atlas boss kills without an officer before a turn runs"
+expand_brake_size,6,"Expand weight scales by brake / (brake + systems held)"
+even_chance,50,"Attacker chance in percent between equal ranks"
+chance_per_rank,6.25,"Attacker chance in percent per rank above the defender"
+defend_bonus,10,"Attacker chance in percent lost when the defender declared Defend"
+renown_per_claim,1,
+renown_per_challenge_won,3,
+renown_per_defend_held,2,
+systems_per_renown,4,"Each turn an officer gains one renown per this many systems held"
+renown_kept_on_loss,50,"Percent of renown kept after losing a fight"
+max_conflicts_per_turn,6,"Pushes plus challenges declared across the whole board"

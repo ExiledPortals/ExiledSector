@@ -12,6 +12,7 @@ import exiledsector.charts.atlas.AtlasTerritoryPlacer;
 import exiledsector.charts.atlas.AtlasUnlocks;
 import exiledsector.charts.officer.reward.CarriedItem;
 import exiledsector.charts.officer.reward.RewardKind;
+import exiledsector.charts.officer.turn.OfficerTurn;
 import exiledsector.i18n.Translation;
 import org.junit.jupiter.api.Test;
 
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -84,5 +86,29 @@ class OfficerTextTest {
                 OfficerText.historyLine(generator, new OfficerText.HistoryEntry(AtlasTerritoryPlacer.MOVED_HISTORY, FROM, TO)));
         assertEquals("", OfficerText.historyLine(generator, new OfficerText.HistoryEntry("unknown_event", FROM, TO)));
         assertEquals("", OfficerText.historyLine(generator, null));
+    }
+
+    @Test
+    void aFledOfficerNamesTheSystemTheyFledFrom() {
+        AtlasOfficer officer = AtlasOfficer.waiting(1, "pirates", "lieutenant", "steady", new AtlasOfficer.OfficerSeeds(1L, 2L, 3L, 4L), null)
+                .takingCommand(FROM, AtlasTerritoryPlacer.history(AtlasTerritoryPlacer.ARRIVED_HISTORY, FROM));
+        assertNull(OfficerText.fledFrom(officer));
+        assertFalse(OfficerText.fledFrom(officer, FROM));
+
+        AtlasOfficer fled = officer.losingCommand(AtlasTerritoryPlacer.history(AtlasTerritoryPlacer.FLED_HISTORY, FROM));
+        assertEquals(FROM, OfficerText.fledFrom(fled));
+        assertTrue(OfficerText.fledFrom(fled, FROM));
+        assertFalse(OfficerText.fledFrom(fled, TO));
+
+        AtlasOfficer placedAgain = fled.takingCommand(TO, AtlasTerritoryPlacer.history(AtlasTerritoryPlacer.MOVED_HISTORY, FROM, TO));
+        assertNull(OfficerText.fledFrom(placedAgain));
+        assertTrue(OfficerText.fledFrom(placedAgain, FROM));
+    }
+
+    @Test
+    void challengeHistoryEntriesHaveLines() {
+        assertTrue(Translation.has(OfficerText.HISTORY_KEY_PREFIX + OfficerTurn.CHALLENGE_WON_HISTORY));
+        assertTrue(Translation.has(OfficerText.HISTORY_KEY_PREFIX + OfficerTurn.CHALLENGE_LOST_HISTORY));
+        assertTrue(Translation.has(OfficerText.HISTORY_KEY_PREFIX + AtlasTerritoryPlacer.FLED_HISTORY));
     }
 }

@@ -3,12 +3,14 @@ package exiledsector.charts.atlas;
 import exiledsector.charts.officer.AtlasOfficer;
 
 import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Function;
 
 public final class AtlasTerritoryTransfer {
 
@@ -32,8 +34,19 @@ public final class AtlasTerritoryTransfer {
         } else {
             state.claim(cell, centre);
         }
-        releaseCutOff(generator, state, formerCentre);
+        releaseCutOff(generator::lanes, state, formerCentre);
         return centre == null ? Result.RELEASED : Result.JOINED;
+    }
+
+    public static boolean transferTo(Function<AtlasCell, ? extends Collection<AtlasCell>> lanes, AtlasState state, AtlasCell cell,
+                                     AtlasCell commandCentre) {
+        if (state.officerAt(cell) != null || state.officerAt(commandCentre) == null) {
+            return false;
+        }
+        AtlasCell formerCentre = state.commandCentreOf(cell);
+        state.claim(cell, commandCentre);
+        releaseCutOff(lanes, state, formerCentre);
+        return true;
     }
 
     public static void vacate(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
@@ -43,7 +56,7 @@ public final class AtlasTerritoryTransfer {
         }
         AtlasCell formerCentre = state.commandCentreOf(cell);
         state.release(cell);
-        releaseCutOff(generator, state, formerCentre);
+        releaseCutOff(generator::lanes, state, formerCentre);
     }
 
     public static void dismissOfficer(AtlasState state, AtlasCell commandCentre) {
@@ -68,14 +81,14 @@ public final class AtlasTerritoryTransfer {
         return centres;
     }
 
-    private static void releaseCutOff(AtlasGenerator generator, AtlasState state, AtlasCell commandCentre) {
+    private static void releaseCutOff(Function<AtlasCell, ? extends Collection<AtlasCell>> lanes, AtlasState state, AtlasCell commandCentre) {
         if (commandCentre == null || state.officerAt(commandCentre) == null) {
             return;
         }
         Set<AtlasCell> connected = new HashSet<>(Set.of(commandCentre));
         ArrayDeque<AtlasCell> frontier = new ArrayDeque<>(connected);
         while (!frontier.isEmpty()) {
-            for (AtlasCell neighbour : generator.lanes(frontier.poll())) {
+            for (AtlasCell neighbour : lanes.apply(frontier.poll())) {
                 if (commandCentre.equals(state.commandCentreOf(neighbour)) && connected.add(neighbour)) {
                     frontier.add(neighbour);
                 }

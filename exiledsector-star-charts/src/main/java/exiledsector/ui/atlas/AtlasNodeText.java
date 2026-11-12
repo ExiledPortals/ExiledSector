@@ -54,7 +54,7 @@ public final class AtlasNodeText {
         AtlasCell centre = state.commandCentreOf(cell);
         AtlasOfficer officer = centre == null ? null : state.officerAt(centre);
         if (officer == null) {
-            return List.of();
+            return fledOfficerLines(generator, state, cell);
         }
         if (!centre.equals(cell)) {
             return List.of(new AtlasLine(Translation.msg("chart.officer.tooltip.territory").arg("title", OfficerText.title(officer)).text(), Tone.PLAIN));
@@ -66,6 +66,16 @@ public final class AtlasNodeText {
             lines.add(new AtlasLine(history, Tone.HINT));
         }
         lines.addAll(OfficerText.detailLines(officer));
+        return lines;
+    }
+
+    static List<AtlasLine> fledOfficerLines(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
+        List<AtlasLine> lines = new ArrayList<>();
+        for (AtlasOfficer fled : state.officers()) {
+            if (OfficerText.fledFrom(fled, cell)) {
+                lines.add(new AtlasLine(OfficerText.fledLine(generator, fled), Tone.HINT));
+            }
+        }
         return lines;
     }
 
