@@ -915,8 +915,8 @@ system (`AtlasBiomes`). Normal space wins most sites and chains into the volumes
 never sits beside another site of its own type, so it stays a small pocket. Each biome lists the only factions it holds
 (the derelict graveyard holds only derelicts), and normal space's list is the pool every faction territory draws from.
 Its `modded_factions` entry adds every installed faction Nexerelin would count as playable: listed in a mod's
-`exerelinFactionConfig/mod_factions.csv` and not set `playableFaction: false` (`ModdedChartFactions`). Revealed
-territories keep their faction (`AtlasState.recordReveal`), so a faction added mid-save only claims space revealed later.
+`exerelinFactionConfig/mod_factions.csv` and not set `playableFaction: false` (`ModdedChartFactions`). A command
+centre's faction is fixed when its space is revealed (see Atlas officers), so a faction added mid-save only claims space revealed later.
 The Threat Expanse holds only the Threat, and no other faction's infestation reaches it (`AtlasGenerator`). Its systems use the starless `DEEP_SPACE` layout, one world at the centre
 under vanilla's abyssal light (`ChartStarSystemGenerator`). Abyssal Rift systems have no star or planets and copy only
 the look of Random Assortment of Things' Abyss: Colossal Photospheres sized as in its Sea of Harmony, which fleets fly
@@ -1089,9 +1089,9 @@ never reach a chart: their totals are an input of the atlas generator, rebuilt w
 Atlas Catalysts are special items listed in `atlas_catalysts.csv` (`AtlasCatalysts`) and used on a revealed atlas system.
 Most insert their anomaly as a player record through `AtlasAnomalies.canInsert` and `insert` (`AnomalyCatalystUse`), so
 an anomaly they add takes the system's own faction. Whether it fits is the anomaly's `insertVerdict` (its `fitsAt` and
-`holdsAt` by default; the Faction Skirmish checks the current owner, captures included). Redeployment Orders instead hand the system to another faction from its
-biome's list, raced on the atlas seed, the system and its current owner so a reload never changes the pick, and stored
-as a capture (`RedeploymentCatalystUse`). A row with the `star` effect may insert a star anomaly through
+`holdsAt` by default; the Faction Skirmish needs an officer of another faction bordering the system). Redeployment Orders
+instead hand a claimed system, never a command centre, to a neighbouring territory of another faction, raced on the atlas
+seed, the system and its current owner so a reload never changes the pick (`RedeploymentCatalystUse`, `AtlasTerritoryTransfer`). A row with the `star` effect may insert a star anomaly through
 `AtlasAnomalies.canInsert` and `insert` with `forcingStar`, which skip only the insertable check, so it never replaces a star
 anomaly already there; it never drops. Both go through core `Consumables.use`, which spends the item only once the change has taken.
 
@@ -1119,6 +1119,39 @@ is the boss and carries the boss loot. Station rows whose variant the game has n
 at load, and a station that still fails to spawn is replaced by a full-size fleet boss (`ChartContentGenerator`).
 Either kind is detected by the player from anywhere in the system, so it always shows on the radar
 (`ChartContentGenerator.revealBoss`).
+
+### Atlas officers
+
+Factions hold small connected territories, each claimed from a command centre system held by a named officer. As space
+is revealed, `AtlasTerritoryPlacer` spaces command centres apart by lanes, gives each a faction weighted against what the
+visible atlas already holds (`TerritoryFactions`, never the commission faction) and seats a waiting officer, a fled one
+first; unclaimed gaps go to independents and mercenaries. The board of officers, its places per rank in
+`atlas_officer_ranks.csv`, is dealt full when the atlas is created (`OfficerBoardGenerator`), and each record in
+`AtlasState` keeps a flagship for life that `OfficerFleets` puts into the command centre's boss fleet, unrecoverable, at
+the rank's boss size and Fleet Strength. On a new or switched commission, that faction's officers hand their territories
+and items to officers of other factions (`CommissionHandover`), and battling a non-hostile faction's chart fleets with the
+transponder on costs vanilla's aggressive-combat reputation once per faction (`ChartTransponderReputation`).
+
+The atlas takes a turn when the player beats an officer, every fourth other chart boss and when an officer's fleet beats
+the player (`OfficerTurns`, from `ChartObjectives.completed` and `ChartContentListener`). `OfficerTurn` is a pure function
+of the state, seed and turn counter: it applies the player's result, resolves the intents declared last turn by rank
+odds and Defend, adds renown and swaps neighbouring ranks, then declares the next intents, never touching the open run's
+system (`atlas_officer_turns.csv`, `atlas_officer_intents.csv`). A beaten officer drops a rank and flees, their territory
+breaks up and they wait for a new command centre near the player's reach (`AtlasTerritoryTransfer`); a Lieutenant is marked
+by a first loss and dies on the next, replaced by a new Lieutenant. The result is saved as a `TurnResult` for the board.
+
+### Officer rewards and scars
+
+Each officer carries items, starting with one rolled by rank when the board is dealt (`OfficerStartingItems`). Beating
+an officer drops what they carry with the boss reward, crafting item counts scaled by the run's item and crafting item
+percents, and offers three items from `atlas_officer_rewards.csv` (`OfficerRewardPool`); the pick becomes what they carry
+next time, and an unanswered offer reopens on load and when the atlas opens (`OfficerDefeat`, `OfficerRewardDrop`).
+
+`ScarCombatPlugin` tallies how the player's fleet fought an officer's flagship, and each defeat adds the scar whose
+`atlas_officer_scars.csv` detector scores highest, else Battle-Hardened, plus its themed d-mod, up to five (`Scars`,
+`ScarDMods`). A challenge lost to another officer adds a scar from the winner's faction focus (`ChallengeLossScars`,
+`ScarChallengePick`). Scars are core `ScarSkillEffect` stacks on the flagship (`ScarEffectSource`) that also raise its
+level, and the most stacked one names the officer's epithet (`ScarText.epithet`).
 
 ### Chart system rules
 
@@ -1196,20 +1229,21 @@ orbits once the layout's orbit limit is reached, then further out. Every neutron
 
 ### Faction Skirmish
 
-The anomaly rolls only on atlas border systems whose owner and a lane neighbour of another faction both take sides
-(`FactionSkirmish.fitsAt`, never in special or infested systems; `chart_skirmish_factions.csv` lists the factions that
-don't). The attacker is raced from the neighbours' current owners, weighted by lanes (`AtlasBorders.attacker`), and the
-player picks a side before the wormhole opens, kept on the `AtlasRunNode`. The defender always has a station, and the
-attacker matches the defender's ordinary fleets plus a commander that pushes on the station once the rest have fallen
-(`SkirmishPlanner` through `adjustPlan`, `SkirmishBattle`, `ChartSkirmishes`). The joined side is 30% weaker, drops nothing
-and flies as the run-only faction `exiledSector_skirmish_ally`, which is friendly to the player (`RunFactionDress`);
-per-fleet `$cfai_makeHostile_<faction>` flags set the two sides against each other. Fighting beside or into allies
-changes no reputation: inside a chart, `ChartAllyReputation` cancels vanilla's ally help and friendly-fire changes.
+The atlas never rolls a skirmish itself. After each officer turn, every declared Push or Challenge between factions
+that take sides (`chart_skirmish_factions.csv` lists those that don't) puts a world record on the contested border
+system, removed once the intent is gone unless a run is open there (`SkirmishContests`, `SkirmishRecords`). The player
+picks a side before the wormhole opens, kept with the contest on the `AtlasRunNode` (`SkirmishJoin`). The defender always
+has a station, and the attacker matches the defender's ordinary fleets plus the attacking officer in their flagship as
+commander, who pushes on the station once the rest have fallen (`SkirmishPlanner` through `adjustPlan`, `SkirmishBattle`,
+`ChartSkirmishes`). The joined side is 30% weaker, drops nothing and flies as the run-only faction
+`exiledSector_skirmish_ally`, friendly to the player (`RunFactionDress`); per-fleet `$cfai_makeHostile_<faction>` flags set
+the sides against each other, and `ChartAllyReputation` cancels vanilla's ally help and friendly-fire reputation changes.
 
-Siding with the attacker or staying out makes the station the boss, counted whoever destroys it. Siding with the
-defender makes the commander the boss and protects the station: losing it loses the run (`ChartRun.objectiveLost`).
-Completing a run on the attacker's side records the system as captured in `AtlasState`, and captures feed the owner
-reader that opening, tooltips, borders and atlas traffic use (`AtlasOpening.ownerOf`, `territoryOwnerOf`).
+Siding with the attacker or staying out makes the station the boss, counted whoever destroys it; siding with the defender
+makes the attacking officer the boss and protects the station, whose loss loses the run (`ChartRun.objectiveLost`).
+Winning on the attacker's side settles the contest for the attacker, killing the officer on the defender's side counts as
+beating that officer, and staying out settles it on its abstract roll when the run closes (`FactionSkirmish`,
+`ContestOutcomes`). A decided challenge waits in `AtlasState` for the next turn; a failed run leaves the intent to that turn.
 
 ### Relay Network
 
