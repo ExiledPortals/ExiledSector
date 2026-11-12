@@ -29,9 +29,11 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 final class OfficerBoard {
@@ -71,6 +73,21 @@ final class OfficerBoard {
     }
 
     private record ArrowShape(OfficerBoardArrows.Arrow arrow, float[] points, Color colour) {
+
+        @Override
+        public boolean equals(Object other) {
+            return other instanceof ArrowShape shape && arrow.equals(shape.arrow) && Arrays.equals(points, shape.points) && colour.equals(shape.colour);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(arrow, Arrays.hashCode(points), colour);
+        }
+
+        @Override
+        public String toString() {
+            return "ArrowShape[arrow=" + arrow + ", points=" + Arrays.toString(points) + ", colour=" + colour + "]";
+        }
     }
 
     private final SpriteCache sprites = new SpriteCache(OfficerBoard.class);

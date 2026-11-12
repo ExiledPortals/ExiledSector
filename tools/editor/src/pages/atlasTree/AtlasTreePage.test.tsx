@@ -117,7 +117,7 @@ describe('atlas tree page', () => {
     expect(within(editor).getByText(/^Type tags/)).toBeTruthy();
     expect(within(editor).getByPlaceholderText('Theme: none')).toBeTruthy();
     expect(atlasVocabulary().themeTags).toContain('loot');
-    expect(atlasVocabulary().themeTags).not.toContain('logistics');
+    expect(atlasVocabulary().themeTags).not.toContain('cargo');
 
     fireEvent.click(within(editor).getByText('Add effect'));
     fireEvent.click(within(editor).getByText('Save type'));

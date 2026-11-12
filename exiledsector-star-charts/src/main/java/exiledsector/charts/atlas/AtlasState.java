@@ -329,7 +329,7 @@ public final class AtlasState implements AtlasMemory {
     }
 
     public AtlasOfficer officerAt(AtlasCell commandCentre) {
-        return activeOfficersByCentre().get(commandCentre.pack());
+        return commandCentre == null ? null : activeOfficersByCentre().get(commandCentre.pack());
     }
 
     public void putOfficer(AtlasOfficer officer) {

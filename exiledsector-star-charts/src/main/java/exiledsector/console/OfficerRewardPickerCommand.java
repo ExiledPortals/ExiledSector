@@ -23,6 +23,16 @@ public class OfficerRewardPickerCommand extends PlayerFleetCommand {
 
     static final int DEFAULT_TIER = ChartTiers.LOWEST_TIER;
 
+    private final Random random;
+
+    public OfficerRewardPickerCommand() {
+        this(new Random());
+    }
+
+    OfficerRewardPickerCommand(Random random) {
+        this.random = random;
+    }
+
     static Integer tier(String args) {
         List<String> tokens = ConsoleArgs.tokens(args);
         if (tokens.isEmpty()) {
@@ -39,7 +49,6 @@ public class OfficerRewardPickerCommand extends PlayerFleetCommand {
             return CommandResult.BAD_SYNTAX;
         }
         SectorAPI sector = Global.getSector();
-        Random random = new Random();
         List<CarriedItem> offers = OfficerRewardPool.offers(RewardContext.forSector(sector, tier, null, null), random);
         if (offers.isEmpty()) {
             Console.showMessage("No reward can be offered at tier " + tier + ".");
