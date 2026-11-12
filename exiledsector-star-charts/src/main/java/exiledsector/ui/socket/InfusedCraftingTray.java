@@ -23,6 +23,11 @@ public final class InfusedCraftingTray implements BenchTray {
         int feedstockAmount();
 
         Action action();
+
+        @Override
+        default boolean hasTooltip() {
+            return false;
+        }
     }
 
     static final Comparator<CraftRow> ROW_ORDER = Comparator.comparingInt(CraftRow::feedstockAmount).thenComparing(CraftRow::action);

@@ -1,10 +1,13 @@
 package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
+import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.Fonts;
 import com.fs.starfarer.api.ui.LabelAPI;
+import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TextFieldAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -25,6 +28,26 @@ final class BenchTrayList {
     }
 
     private record PlacedRow(CustomPanelAPI rowPanel, float rowHeight) {
+    }
+
+    private static final class MaterialIconHover extends BaseCustomUIPanelPlugin {
+
+        private final TileInput iconInput;
+        private PositionAPI iconPosition;
+
+        MaterialIconHover(TileInput.Handler iconHandler) {
+            this.iconInput = new TileInput(iconHandler, true);
+        }
+
+        @Override
+        public void positionChanged(PositionAPI iconPosition) {
+            this.iconPosition = iconPosition;
+        }
+
+        @Override
+        public void processInput(List<InputEventAPI> events) {
+            iconInput.process(events, iconPosition);
+        }
     }
 
     static final float FILTER_HEIGHT = 26f;
@@ -56,7 +79,8 @@ final class BenchTrayList {
     }
 
     static TooltipMakerAPI rows(CustomPanelAPI panelRoot, float listWidth, float listHeight, BenchTray tray, BenchTrayContext context,
-                                Function<BenchTrayEntry, TileInput.Handler> handlerFor, String filterText) {
+                                Function<BenchTrayEntry, TileInput.Handler> handlerFor, Function<String, TileInput.Handler> materialHandlerFor,
+                                String filterText) {
         TooltipMakerAPI element = panelRoot.createUIElement(listWidth, listHeight, true);
         element.setParaFont(Fonts.ORBITRON_12);
         VanillaText.plainPara(element, Translation.text(tray.titleKey()), 0f, Misc.getBasePlayerColor());
@@ -71,11 +95,11 @@ final class BenchTrayList {
         if (columns.size() == 1) {
             float rowWidth = columnWidth(listWidth, 1);
             for (BenchTrayEntry entry : columns.get(0).entries()) {
-                element.addCustom(row(entry, context, rowWidth, false, handlerFor.apply(entry)).rowPanel(), HoloPanel.GAP);
+                element.addCustom(row(entry, context, rowWidth, false, handlerFor.apply(entry), materialHandlerFor).rowPanel(), HoloPanel.GAP);
             }
             return element;
         }
-        element.addCustom(columnsPanel(columns, context, listWidth, handlerFor), HoloPanel.GAP);
+        element.addCustom(columnsPanel(columns, context, listWidth, handlerFor, materialHandlerFor), HoloPanel.GAP);
         return element;
     }
 
@@ -146,7 +170,8 @@ final class BenchTrayList {
     }
 
     private static CustomPanelAPI columnsPanel(List<BenchTray.Column> columns, BenchTrayContext context, float listWidth,
-                                               Function<BenchTrayEntry, TileInput.Handler> handlerFor) {
+                                               Function<BenchTrayEntry, TileInput.Handler> handlerFor,
+                                               Function<String, TileInput.Handler> materialHandlerFor) {
         float columnWidth = columnWidth(listWidth, columns.size());
         CustomPanelAPI columnsPanel = Global.getSettings().createCustom(listWidth - ItemGrid.SCROLLBAR_ROOM, 0f, null);
         float tallestColumn = 0f;
@@ -165,7 +190,7 @@ final class BenchTrayList {
             }
             List<PlacedRow> placedRows = new ArrayList<>();
             for (BenchTrayEntry entry : column.entries()) {
-                placedRows.add(row(entry, context, columnWidth, true, handlerFor.apply(entry)));
+                placedRows.add(row(entry, context, columnWidth, true, handlerFor.apply(entry), materialHandlerFor));
             }
             for (PlacedRow placed : placedRows) {
                 columnsPanel.addComponent(placed.rowPanel()).inTL(columnLeft, cursorY);
@@ -177,7 +202,8 @@ final class BenchTrayList {
         return columnsPanel;
     }
 
-    private static PlacedRow row(BenchTrayEntry entry, BenchTrayContext context, float rowWidth, boolean compact, TileInput.Handler rowHandler) {
+    private static PlacedRow row(BenchTrayEntry entry, BenchTrayContext context, float rowWidth, boolean compact, TileInput.Handler rowHandler,
+                                 Function<String, TileInput.Handler> materialHandlerFor) {
         boolean available = entry.available(context);
         List<BenchTrayEntry.RowIcon> icons = entry.rowIcons(context);
         CustomPanelAPI rowPanel = Global.getSettings().createCustom(rowWidth, ROW_MIN_HEIGHT,
@@ -198,6 +224,12 @@ final class BenchTrayList {
         for (int i = 0; i < icons.size(); i++) {
             String badge = icons.get(i).badge();
             float iconTop = stackTop + i * (ICON_SIZE + ICON_GAP);
+            String materialId = icons.get(i).materialId();
+            if (materialId != null) {
+                CustomPanelAPI hoverPanel = Global.getSettings().createCustom(ICON_SIZE, ICON_SIZE,
+                        new MaterialIconHover(materialHandlerFor.apply(materialId)));
+                rowPanel.addComponent(hoverPanel).inTL(ROW_INSET, iconTop);
+            }
             if (compact) {
                 TooltipMakerAPI costElement = costBadge(rowPanel, badge, ICON_SIZE, Alignment.RMID);
                 rowPanel.addUIElement(costElement).inTL(ROW_INSET, iconTop + ICON_SIZE - costElement.getPosition().getHeight());

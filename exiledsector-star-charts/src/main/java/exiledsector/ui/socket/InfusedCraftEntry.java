@@ -1,7 +1,5 @@
 package exiledsector.ui.socket;
 
-import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.Message;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
@@ -13,8 +11,6 @@ import exiledsector.items.MaterialItems;
 import exiledsector.items.SocketCustody;
 import exiledsector.items.UseVerdict;
 import exiledsector.skills.tags.ThemeTags;
-import exiledsector.ui.TooltipTextSize;
-import exiledsector.ui.VanillaText;
 import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.cargo.CargoIconLooks;
 
@@ -61,12 +57,10 @@ record InfusedCraftEntry(InfusedCraft craft, String tag) implements InfusedCraft
     public List<RowIcon> rowIcons(BenchTrayContext context) {
         String badge = badge(context);
         List<RowIcon> icons = new ArrayList<>(cost().feedstockIds().stream()
-                .map(feedstockId -> new RowIcon(CraftingItemTrayEntry.iconPath(feedstockId), CargoIconLooks.forMaterial(feedstockId), badge))
-                .toList());
+                .map(feedstockId -> RowIcon.material(feedstockId, badge)).toList());
         if (craft.reshapingCost() > 0) {
             String reshapingId = InfusedCraft.reshapingId();
-            icons.add(new RowIcon(CraftingItemTrayEntry.iconPath(reshapingId), CargoIconLooks.forMaterial(reshapingId),
-                    String.valueOf(craft.reshapingCost())));
+            icons.add(RowIcon.material(reshapingId, String.valueOf(craft.reshapingCost())));
         }
         return List.copyOf(icons);
     }
@@ -86,19 +80,6 @@ record InfusedCraftEntry(InfusedCraft craft, String tag) implements InfusedCraft
     @Override
     public boolean available(BenchTrayContext context) {
         return craft.verdict(context.loaded(), tag, inhibitors(context)).allowed() && craft.canAfford(tag, context.materials());
-    }
-
-    @Override
-    public void writeTooltip(TooltipMakerAPI tooltip, BenchTrayContext context) {
-        TooltipTextSize.applyNameFont(tooltip);
-        VanillaText.plainPara(tooltip, craftName(), 0f, Misc.getBasePlayerColor());
-        TooltipTextSize.applyBodyFont(tooltip);
-        VanillaText.addPara(tooltip, rowText(context), HoloPanel.LINE_PAD * 2f, Misc.getTextColor());
-        VanillaText.plainPara(tooltip, costText(context, "ui.infusedCraft.cost"), HoloPanel.LINE_PAD * 2f, Misc.getTextColor());
-        UseVerdict verdict = craft.verdict(context.loaded(), tag, inhibitors(context));
-        if (!verdict.allowed()) {
-            VanillaText.plainPara(tooltip, refusalText(verdict, context.loaded()), HoloPanel.LINE_PAD * 2f, Misc.getNegativeHighlightColor());
-        }
     }
 
     @Override

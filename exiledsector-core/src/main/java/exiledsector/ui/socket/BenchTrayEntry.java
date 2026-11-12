@@ -5,12 +5,17 @@ import exiledsector.i18n.StyledText;
 import exiledsector.items.CraftingMaterialFamily;
 import exiledsector.items.ItemDefinition;
 import exiledsector.ui.cargo.CargoIconLook;
+import exiledsector.ui.cargo.CargoIconLooks;
 
 import java.util.List;
 
 public interface BenchTrayEntry {
 
-    record RowIcon(String iconPath, CargoIconLook look, String badge) {
+    record RowIcon(String iconPath, CargoIconLook look, String badge, String materialId) {
+
+        public static RowIcon material(String materialId, String badge) {
+            return new RowIcon(CraftingItemTrayEntry.iconPath(materialId), CargoIconLooks.forMaterial(materialId), badge, materialId);
+        }
     }
 
     List<String> iconPaths();
@@ -20,7 +25,7 @@ public interface BenchTrayEntry {
     String badge(BenchTrayContext context);
 
     default List<RowIcon> rowIcons(BenchTrayContext context) {
-        return List.of(new RowIcon(shownIcons(iconPaths()).get(0), look(), badge(context)));
+        return List.of(new RowIcon(shownIcons(iconPaths()).get(0), look(), badge(context), null));
     }
 
     static List<String> shownIcons(List<String> iconPaths) {
@@ -43,7 +48,12 @@ public interface BenchTrayEntry {
         return false;
     }
 
-    void writeTooltip(TooltipMakerAPI tooltip, BenchTrayContext context);
+    default boolean hasTooltip() {
+        return true;
+    }
+
+    default void writeTooltip(TooltipMakerAPI tooltip, BenchTrayContext context) {
+    }
 
     void use(BenchTrayContext context, boolean skipConfirm);
 

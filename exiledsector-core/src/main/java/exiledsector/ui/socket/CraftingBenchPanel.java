@@ -14,6 +14,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.items.MaterialItemPlugin;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.GrowableMaterial;
@@ -1174,7 +1175,7 @@ public final class CraftingBenchPanel extends HoloPanel {
                 ? trayElement.getExternalScroller().getYOffset() : 0f;
         float listHeight = trayHeight() - PAD * 2f - BenchTrayList.FILTER_HEIGHT - GAP;
         TooltipMakerAPI element = BenchTrayList.rows(panelRoot, trayListWidth(), listHeight, openTray, trayContext,
-                this::trayEntryHandler, trayFilterText);
+                this::trayEntryHandler, this::trayMaterialHandler, trayFilterText);
         trayElement = replaceElement(placedComponent(trayElement), element, trayLeft(), trayTop() + BenchTrayList.FILTER_HEIGHT + GAP);
         if (restoredScroll > 0f && element.getExternalScroller() != null) {
             element.getExternalScroller().setYOffset(Math.min(restoredScroll, Math.max(0f, element.getHeightSoFar() - listHeight)));
@@ -1205,6 +1206,24 @@ public final class CraftingBenchPanel extends HoloPanel {
                 skipConfirm -> useTrayEntry(entry, skipConfirm, true));
     }
 
+    private TileInput.Handler trayMaterialHandler(String materialId) {
+        Object tooltipKey = new Object();
+        return TileInput.Handler.of(anchor -> queue(() -> showMaterialTooltip(tooltipKey, materialId, anchor)), () -> queue(() -> {
+            if (hoverTooltip.isShowing(tooltipKey)) {
+                hoverTooltip.hide();
+            }
+        }), () -> false, () -> false);
+    }
+
+    private void showMaterialTooltip(Object tooltipKey, String materialId, PositionAPI anchor) {
+        if (isClosing()) {
+            hoverTooltip.hide();
+            return;
+        }
+        hoverTooltip.show(tooltipKey, itemTooltipWidth(), (element, expanded) -> MaterialItemPlugin.writeTooltip(element, materialId), anchor,
+                ItemHoverTooltip.Placement.BELOW, PAD);
+    }
+
     private void useTrayEntry(BenchTrayEntry entry, boolean skipConfirm, boolean alternate) {
         hoverTooltip.hide();
         if (trayContext.busy()) {
@@ -1220,6 +1239,9 @@ public final class CraftingBenchPanel extends HoloPanel {
     private void showTrayEntryTooltip(BenchTrayEntry entry, PositionAPI anchor) {
         if (isClosing()) {
             hoverTooltip.hide();
+            return;
+        }
+        if (!entry.hasTooltip()) {
             return;
         }
         hoverTooltip.show(entry, itemTooltipWidth(), (element, expanded) -> entry.writeTooltip(element, trayContext), anchor,
