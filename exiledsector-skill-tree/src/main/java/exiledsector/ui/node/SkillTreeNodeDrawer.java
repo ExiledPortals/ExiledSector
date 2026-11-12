@@ -20,6 +20,7 @@ import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.TreeLayers;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.UiFonts;
+import exiledsector.ui.decoration.SensorGhostRenderer;
 import exiledsector.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;
 
@@ -48,6 +49,9 @@ public final class SkillTreeNodeDrawer {
     private static final float ROOT_ICON_ALPHA = 0.3f;
     private static final float SOCKET_WORMHOLE_START_SCALE = 0.3f;
     private static final float UNALLOCATED_CIRCUIT_ALPHA = 0.35f;
+    private static final int NODE_GHOST_COUNT = 3;
+    private static final float NODE_GHOST_SIZE_RATIO = 0.4f;
+    private static final float NODE_GHOST_SCATTER_RATIO = 0.3f;
 
     private final TreeAllocationSession session;
     private final SkillTreePanelStyle panelStyle;
@@ -62,7 +66,7 @@ public final class SkillTreeNodeDrawer {
     private final SkillTreeSocketRenderer socketRenderer = new SkillTreeSocketRenderer();
     private SkillTreeTopology socketTopology;
     private List<SkillNode> socketNodesCache = List.of();
-    private final SkillTreeNodeGhostRenderer ghostRenderer = new SkillTreeNodeGhostRenderer();
+    private final SensorGhostRenderer ghostRenderer = new SensorGhostRenderer(NODE_GHOST_COUNT, NODE_GHOST_SIZE_RATIO, NODE_GHOST_SCATTER_RATIO);
     private final SkillTreeWormholeGhostFlights wormholeGhostFlights = new SkillTreeWormholeGhostFlights(new Random());
     private final SkillTreeNodeConnectorRenderer connectorRenderer;
     private final SkillTreeNodeTooltipRenderer tooltipRenderer;

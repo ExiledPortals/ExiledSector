@@ -18,6 +18,7 @@ import exiledsector.charts.atlas.AtlasNode;
 import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.charts.atlas.AtlasReach;
 import exiledsector.charts.atlas.AtlasState;
+import exiledsector.charts.officer.OfficerSightings;
 import exiledsector.items.UseVerdict;
 import exiledsector.ui.SmoothZoom;
 import exiledsector.ui.TreeViewport;
@@ -32,6 +33,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -98,6 +100,7 @@ final class AtlasMapCanvas {
     private final AtlasState state;
     private final Map<AtlasCell, AtlasNode> nodes = new LinkedHashMap<>();
     private final Set<AtlasCell> visible;
+    private final Set<AtlasCell> shown;
     private final Set<AtlasCell> reachable;
     private final Map<AtlasCell, String> nodeKeys = new HashMap<>();
     private final Map<AtlasCell, AtlasSystemPreview.Prepared> sketches = new HashMap<>();
@@ -139,7 +142,9 @@ final class AtlasMapCanvas {
         this.beams = new NodeBeams(ringArt);
         this.visible = AtlasReach.refreshReveal(generator, state);
         this.reachable = AtlasReach.reachable(generator, state);
-        for (AtlasCell cell : visible) {
+        OfficerSightings.identifyInView(state, visible);
+        this.shown = shownCells(visible, OfficerSightings.shownSystems(state));
+        for (AtlasCell cell : shown) {
             nodes.put(cell, generator.node(cell));
         }
         for (AtlasCell cell : visible) {
@@ -148,7 +153,7 @@ final class AtlasMapCanvas {
             }
         }
         ChartSketchPalette palette = ChartSketchPalette.get();
-        for (AtlasCell cell : visible) {
+        for (AtlasCell cell : shown) {
             AtlasNode node = nodes.get(cell);
             if (!node.isVoid() && !node.isOrigin()) {
                 List<String> anomalyIds = AtlasAnomalies.effective(generator, state, cell);
@@ -169,6 +174,12 @@ final class AtlasMapCanvas {
         scenery.attach(this);
     }
 
+    private static Set<AtlasCell> shownCells(Set<AtlasCell> visibleCells, Set<AtlasCell> officerSystems) {
+        Set<AtlasCell> cells = new LinkedHashSet<>(visibleCells);
+        cells.addAll(officerSystems);
+        return cells;
+    }
+
     float elapsedSeconds() {
         return ringArt.elapsedSeconds();
     }
@@ -186,7 +197,7 @@ final class AtlasMapCanvas {
             if (chain.from() != null && !chain.from().equals(record.cell())) {
                 traces.add(new Trace(chain.from(), record.cell()));
             }
-            if (!visible.contains(record.cell())) {
+            if (!shown.contains(record.cell())) {
                 nodes.computeIfAbsent(record.cell(), generator::node);
                 ChartAnomalies.Definition definition = ChartAnomalies.definition(record.anomalyId());
                 anomalyIcons.add(new AnomalyIcon(record.cell(), record.anomalyId(), definition == null ? "" : definition.icon(), 0, true, chain));
@@ -209,6 +220,10 @@ final class AtlasMapCanvas {
 
     Set<AtlasCell> visibleCells() {
         return visible;
+    }
+
+    boolean isShown(AtlasCell cell) {
+        return shown.contains(cell);
     }
 
     AtlasNode nodeAt(AtlasCell cell) {
@@ -320,7 +335,7 @@ final class AtlasMapCanvas {
         float hitRadius = footprint(view) * HIT_SHARE;
         AtlasCell nearest = null;
         float nearestDistance = hitRadius * hitRadius;
-        for (AtlasCell cell : visible) {
+        for (AtlasCell cell : shown) {
             if (generator.isVoid(cell)) {
                 continue;
             }
@@ -490,7 +505,7 @@ final class AtlasMapCanvas {
             if (!view.isVisible(x, y, NodeRingArt.portalReach(NodeMetrics.donutRadius(footprint)))) {
                 continue;
             }
-            if (!visible.contains(cell)) {
+            if (!shown.contains(cell)) {
                 beams.ring(x, y, NodeMetrics.donutRadius(footprint * FOG_SIZE_SHARE), null, DULL_LOOK, FOG_RING_ALPHA * alphaMult, widthScale);
                 continue;
             }
