@@ -83,6 +83,13 @@ public final class OfficerFleets {
         }
     }
 
+    public static void dress(CampaignFleetAPI fleet, int officerRecordId) {
+        AtlasOfficer officer = record(officerRecordId);
+        if (fleet != null && officer != null) {
+            dress(fleet, officer, factionOf(officer, fleet));
+        }
+    }
+
     static void dress(CampaignFleetAPI fleet, AtlasOfficer officer, FactionAPI faction) {
         PersonAPI commander = fleet.getCommander();
         FleetMemberAPI flagship = officer.hasFlagship() ? addFlagship(fleet, officer, commander, faction) : fleet.getFlagship();

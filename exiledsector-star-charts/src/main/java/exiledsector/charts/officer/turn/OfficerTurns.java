@@ -100,7 +100,7 @@ public final class OfficerTurns {
         }
         for (OfficerTurnListener listener : LISTENERS) {
             try {
-                listener.turnTaken(state, result);
+                listener.turnTaken(generator, state, result, openRunCell);
             } catch (RuntimeException e) {
                 LOG.error("[ExiledSector] An Atlas officer turn listener failed", e);
             }

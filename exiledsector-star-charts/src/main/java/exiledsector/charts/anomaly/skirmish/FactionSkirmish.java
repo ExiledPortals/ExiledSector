@@ -11,26 +11,29 @@ import exiledsector.charts.anomaly.ContentPlanSite;
 import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasCell;
+import exiledsector.charts.atlas.AtlasEntry;
 import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasLine;
 import exiledsector.charts.atlas.AtlasOpening;
-import exiledsector.charts.atlas.AtlasEntry;
 import exiledsector.charts.atlas.AtlasRunChoice;
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.atlas.AtlasRuntime;
 import exiledsector.charts.atlas.AtlasState;
-import exiledsector.charts.atlas.AtlasTerritoryTransfer;
 import exiledsector.charts.atlas.AtlasTraits;
-import exiledsector.charts.atlas.TerritoryFactions;
 import exiledsector.charts.atlas.RedeploymentCatalystUse;
 import exiledsector.charts.content.ChartContentPlan;
 import exiledsector.charts.content.ChartFactions;
 import exiledsector.charts.layout.ChartLayoutRequest;
+import exiledsector.charts.officer.AtlasOfficer;
+import exiledsector.charts.officer.OfficerText;
+import exiledsector.charts.officer.turn.ContestOutcomes;
+import exiledsector.charts.officer.turn.Intent;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.i18n.Translation;
 import exiledsector.items.UseVerdict;
 import exiledsector.ui.socket.BenchModeSupport;
 
+import java.util.Comparator;
 import java.util.List;
 
 public final class FactionSkirmish implements AtlasRule, RunParticipant, ContentPlacer {
@@ -38,6 +41,8 @@ public final class FactionSkirmish implements AtlasRule, RunParticipant, Content
     public static final String ANOMALY_ID = "faction_skirmish";
     public static final FactionSkirmish INSTANCE = new FactionSkirmish();
     public static final String NO_SIDE_KEY = "catalyst.refused.skirmish.no_side";
+    public static final String UNCLAIMED_KEY = "catalyst.refused.skirmish.unclaimed";
+    public static final String COMMAND_CENTRE_KEY = "catalyst.refused.skirmish.command_centre";
     public static final String NO_ATTACKER_KEY = "catalyst.refused.skirmish.no_attacker";
 
     private FactionSkirmish() {
@@ -86,16 +91,13 @@ public final class FactionSkirmish implements AtlasRule, RunParticipant, Content
     }
 
     @Override
-    public boolean fitsAt(AtlasTraits traits) {
-        if (traits.specialId() != null || traits.infestationId() != null || !SkirmishFactions.takesSides(traits.factionId())) {
-            return false;
-        }
-        return traits.neighbourFactionIds().stream().anyMatch(neighbour -> !neighbour.equals(traits.factionId()) && TerritoryFactions.canHoldTerritory(neighbour));
+    public float atlasWeight(AtlasTraits traits, float weight) {
+        return 0f;
     }
 
     @Override
     public boolean holdsAt(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
-        return SkirmishFactions.takesSides(defender(generator, state, cell)) && attacker(generator, state, cell) != null;
+        return SkirmishContests.at(generator, state, cell) != null;
     }
 
     @Override
@@ -110,14 +112,26 @@ public final class FactionSkirmish implements AtlasRule, RunParticipant, Content
         if (!SkirmishFactions.takesSides(defender)) {
             return UseVerdict.refused(NO_SIDE_KEY).with("faction", ChartFactions.displayName(defender));
         }
-        return attacker(generator, state, cell) == null ? UseVerdict.refused(NO_ATTACKER_KEY) : UseVerdict.ALLOW;
+        AtlasCell centre = state.commandCentreOf(cell);
+        if (centre == null || state.officerAt(centre) == null) {
+            return UseVerdict.refused(UNCLAIMED_KEY);
+        }
+        if (centre.equals(cell)) {
+            return UseVerdict.refused(COMMAND_CENTRE_KEY);
+        }
+        return SkirmishContests.canBeAttacked(generator, state, cell) ? UseVerdict.ALLOW : UseVerdict.refused(NO_ATTACKER_KEY);
     }
 
     @Override
     public List<AtlasLine> atlasLines(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
+        SkirmishContest contest = SkirmishContests.at(generator, state, cell);
+        if (contest == null) {
+            return List.of();
+        }
         return List.of(new AtlasLine(Translation.msg("chart.atlas.node.skirmish")
-                .arg("attacker", ChartFactions.displayName(attacker(generator, state, cell)))
-                .arg("defender", ChartFactions.displayName(defender(generator, state, cell))).text(), AtlasLine.Tone.PLAIN));
+                .arg("officer", OfficerText.title(contest.attacker()))
+                .arg("attacker", ChartFactions.displayName(contest.attacker().factionId()))
+                .arg("defender", ChartFactions.displayName(contest.defender().factionId())).text(), AtlasLine.Tone.PLAIN));
     }
 
     @Override
@@ -127,44 +141,63 @@ public final class FactionSkirmish implements AtlasRule, RunParticipant, Content
 
     @Override
     public List<BenchModeSupport.OpenChoice> entryChoices(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
-        String defender = ChartFactions.displayName(defender(generator, state, cell));
-        String attacker = ChartFactions.displayName(attacker(generator, state, cell));
+        SkirmishContest contest = SkirmishContests.at(generator, state, cell);
+        if (contest == null) {
+            return List.of();
+        }
+        String defender = ChartFactions.displayName(contest.defender().factionId());
+        String attacker = ChartFactions.displayName(contest.attacker().factionId());
+        String officer = OfficerText.title(contest.attacker());
         return List.of(
                 new BenchModeSupport.OpenChoice(Translation.msg("chart.atlas.skirmish.join").arg("faction", defender).text(),
-                        Translation.msg("chart.atlas.skirmish.defender").arg("defender", defender).text(), new AtlasEntry(cell, SkirmishSide.DEFENDER)),
+                        Translation.msg("chart.atlas.skirmish.defender").arg("defender", defender).arg("officer", officer).text(),
+                        new AtlasEntry(cell, SkirmishSide.DEFENDER)),
                 new BenchModeSupport.OpenChoice(Translation.msg("chart.atlas.skirmish.join").arg("faction", attacker).text(),
                         Translation.msg("chart.atlas.skirmish.attacker").arg("attacker", attacker).arg("defender", defender).text(),
                         new AtlasEntry(cell, SkirmishSide.ATTACKER)),
                 new BenchModeSupport.OpenChoice(Translation.text("chart.atlas.skirmish.stayOut"),
-                        Translation.msg("chart.atlas.skirmish.neither").arg("defender", defender).text(), new AtlasEntry(cell, SkirmishSide.NEITHER)));
+                        Translation.text("chart.atlas.skirmish.neither"), new AtlasEntry(cell, SkirmishSide.NEITHER)));
     }
 
     @Override
     public AtlasRunNode joinRunNode(AtlasRunNode node, AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasRunChoice choice) {
-        String attackerId = attacker(generator, state, cell);
-        if (attackerId == null) {
+        SkirmishContest contest = SkirmishContests.at(generator, state, cell);
+        if (contest == null) {
             return node;
         }
         SkirmishSide side = choice instanceof SkirmishSide chosen ? chosen : SkirmishSide.NEITHER;
-        return node.withAnomalyData(ANOMALY_ID, new SkirmishJoin(side, attackerId).encode());
+        AtlasRunNode joined = node.withAnomalyData(ANOMALY_ID, new SkirmishJoin(side, contest.attacker().factionId(), contest.intent()).encode());
+        return side == SkirmishSide.DEFENDER ? joined.withAnomalyData(AtlasOfficer.RUN_DATA_KEY, Integer.toString(contest.attacker().recordId())) : joined;
     }
 
     @Override
     public void runCompleted(SectorAPI sector, ChartRun run) {
         SkirmishJoin join = SkirmishJoin.of(run.atlasNode());
-        if (join != null && join.attackerId() != null && sector.getFaction(join.attackerId()) != null) {
-            captureForWinner(AtlasRuntime.generator(sector), AtlasState.get(sector), AtlasCell.unpack(run.atlasNode().cell()), join);
+        if (join != null && join.side() == SkirmishSide.ATTACKER && join.contest() != null) {
+            ContestOutcomes.settle(AtlasRuntime.generator(sector), AtlasState.get(sector), join.contest(), AtlasCell.unpack(run.atlasNode().cell()), true);
         }
     }
 
-    static void captureForWinner(AtlasGenerator generator, AtlasState state, AtlasCell cell, SkirmishJoin join) {
-        if (join.side() == SkirmishSide.ATTACKER && join.attackerId() != null) {
-            AtlasTerritoryTransfer.transfer(generator, state, cell, join.attackerId());
+    @Override
+    public void runClosed(SectorAPI sector, ChartRun run) {
+        SkirmishJoin join = SkirmishJoin.of(run.atlasNode());
+        if (join != null && join.side() == SkirmishSide.NEITHER && join.contest() != null) {
+            stayedOut(AtlasRuntime.generator(sector), AtlasState.get(sector), AtlasCell.unpack(run.atlasNode().cell()), join.contest());
         }
     }
 
-    public static ChartLayoutRequest joinedOn(ChartLayoutRequest request, SkirmishSide side) {
-        return request.withAnomalies(List.of(ANOMALY_ID)).withAnomalyData(ANOMALY_ID, new SkirmishJoin(side, null).encode());
+    static boolean stayedOut(AtlasGenerator generator, AtlasState state, AtlasCell cell, Intent contest) {
+        return ContestOutcomes.settle(generator, state, contest, cell, ContestOutcomes.abstractAttackerWins(state, contest, cell));
+    }
+
+    public static ChartLayoutRequest joinedOn(ChartLayoutRequest request, SkirmishSide side, AtlasOfficer attacker) {
+        SkirmishJoin join = new SkirmishJoin(side, attacker.factionId(), Intent.push(attacker.recordId(), null, Intent.NO_OFFICER));
+        return request.withAnomalies(List.of(ANOMALY_ID)).withAnomalyData(ANOMALY_ID, join.encode());
+    }
+
+    public static AtlasOfficer anyAttacker(AtlasState state) {
+        return state.officers().stream().filter(officer -> officer.isActive() && SkirmishFactions.takesSides(officer.factionId()))
+                .min(Comparator.comparingInt(AtlasOfficer::recordId)).orElse(null);
     }
 
     public static String defender(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
@@ -172,7 +205,8 @@ public final class FactionSkirmish implements AtlasRule, RunParticipant, Content
     }
 
     public static String attacker(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
-        return AtlasBorders.attacker(generator, state, cell, TerritoryFactions::canHoldTerritory);
+        SkirmishContest contest = SkirmishContests.at(generator, state, cell);
+        return contest == null ? null : contest.attacker().factionId();
     }
 
     public static boolean isIn(AtlasGenerator generator, AtlasState state, AtlasCell cell) {

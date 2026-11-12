@@ -23,6 +23,7 @@ import exiledsector.charts.officer.reward.OfficerRewardTable;
 import exiledsector.charts.officer.scar.ScarChallengePick;
 import exiledsector.charts.officer.scar.ScarTable;
 import exiledsector.charts.officer.turn.ChallengeLossScars;
+import exiledsector.charts.anomaly.skirmish.SkirmishRecords;
 import exiledsector.charts.officer.turn.OfficerTurnTables;
 import exiledsector.charts.run.ChartBlockedAbilities;
 import exiledsector.charts.run.ChartCampaignPlugin;
@@ -100,6 +101,7 @@ public final class StarCharts {
         OfficerRanks.load();
         OfficerTurnTables.load();
         ChallengeLossScars.register();
+        SkirmishRecords.register();
         AtlasTreeData.load();
         ScarTable.load();
         ScarChallengePick.load();

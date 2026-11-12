@@ -12,6 +12,7 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.anomaly.skirmish.SkirmishJoin;
 import exiledsector.charts.atlas.AtlasLine;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.content.ChartFactions;
@@ -79,12 +80,13 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
             }
             return;
         }
-        info.addPara(safe(I18n.forGameText(() -> Translation.msg("chart.intel.officer").arg("title", OfficerText.title(officer))
+        boolean attacks = SkirmishJoin.of(run.atlasNode()) != null;
+        info.addPara(safe(I18n.forGameText(() -> Translation.msg(attacks ? "chart.intel.officerAttacks" : "chart.intel.officer").arg("title", OfficerText.title(officer))
                 .arg("faction", ChartFactions.displayName(officer.factionId())).text())), PARAGRAPH_PAD);
         for (AtlasLine line : I18n.forGameText(() -> OfficerText.detailLines(officer))) {
             VanillaText.addPara(info, line.styled(), PARAGRAPH_PAD, Misc.getTextColor());
         }
-        if (!officer.isActive() || officer.commandCentre().pack() != run.atlasNode().cell()) {
+        if (!officer.isActive() || (!attacks && officer.commandCentre().pack() != run.atlasNode().cell())) {
             info.addPara(safe(I18n.forGameText(() -> Translation.msg("chart.intel.officerFled").arg("title", OfficerText.title(officer)).text())),
                     PARAGRAPH_PAD);
         }

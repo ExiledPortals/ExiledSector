@@ -104,8 +104,8 @@ class OfficerTurnsTest {
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = generator(state);
         List<TurnResult> heard = new ArrayList<>();
-        OfficerTurnListener recorder = (turnState, result) -> heard.add(result);
-        OfficerTurnListener failing = (turnState, result) -> {
+        OfficerTurnListener recorder = (turnGenerator, turnState, result, openRunCell) -> heard.add(result);
+        OfficerTurnListener failing = (turnGenerator, turnState, result, openRunCell) -> {
             throw new IllegalStateException("listener failed");
         };
         OfficerTurns.addListener(failing);

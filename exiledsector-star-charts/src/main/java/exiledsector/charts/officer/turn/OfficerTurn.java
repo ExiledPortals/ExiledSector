@@ -68,6 +68,7 @@ public final class OfficerTurn {
         state.officers().forEach(officer -> officerTurn.standingsBefore.put(officer.recordId(), Standing.of(officer)));
         officerTurn.applyCause(cause);
         officerTurn.resolveDeclared(decodeIntents(state.declaredIntents()));
+        state.clearDecidedContests();
         officerTurn.earnHoldingsRenown();
         officerTurn.swapByRenown();
         List<Intent> declared = officerTurn.declare();
@@ -189,7 +190,7 @@ public final class OfficerTurn {
             }
         }
         for (Intent intent : intents) {
-            if (!takesPart(intent.officerRecordId())) {
+            if (!takesPart(intent.officerRecordId()) && !settledInRun(intent)) {
                 continue;
             }
             switch (intent.kind()) {
@@ -200,6 +201,12 @@ public final class OfficerTurn {
                 }
             }
         }
+    }
+
+    private boolean settledInRun(Intent intent) {
+        AtlasOfficer attacker = state.officer(intent.officerRecordId());
+        return intent.kind() == IntentKind.CHALLENGE && state.decidedContest(intent.encode()) != null && attacker != null && attacker.isActive()
+                && !beatenThisTurn.contains(attacker.recordId());
     }
 
     private boolean takesPart(int recordId) {
@@ -280,7 +287,8 @@ public final class OfficerTurn {
     private boolean attackerWins(Intent intent, AtlasOfficer attacker, AtlasOfficer defender, boolean defended) {
         float chance = rules.attackerChancePercent(setup.rankOrder(attacker.rankId()), setup.rankOrder(defender.rankId()), defended);
         Contest contest = new Contest(intent, attacker, defender, defended, chance, random.nextFloat());
-        return setup.resolvers().forKind(intent.kind()).attackerWins(contest);
+        Boolean decided = state.decidedContest(intent.encode());
+        return decided != null ? decided : setup.resolvers().forKind(intent.kind()).attackerWins(contest);
     }
 
     private boolean borders(AtlasCell commandCentre, AtlasCell cell) {

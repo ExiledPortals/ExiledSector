@@ -22,7 +22,10 @@ import exiledsector.charts.atlas.AtlasRules;
 import exiledsector.charts.atlas.AtlasSpecial;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.atlas.AtlasUnlocks;
-import exiledsector.charts.atlas.TestTerritories;
+import exiledsector.charts.atlas.TestBorders;
+import exiledsector.charts.atlas.TestBorders.Border;
+import exiledsector.charts.officer.OfficerText;
+import exiledsector.charts.officer.turn.Intent;
 import exiledsector.ui.socket.BenchModeSupport;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -73,22 +76,17 @@ class AtlasNodeTextTest {
         ChartTables.useAnomalies(List.of(FactionSkirmish.INSTANCE),
                 List.of(new ChartAnomalies.Definition(FactionSkirmish.ANOMALY_ID, 1f, 1, 15, "", "", true, Set.of(), false)));
         try {
-            AtlasState state = new AtlasState(SEED);
-            List<AtlasRegion> regions = List.of(new AtlasRegion(AtlasRegion.NORMAL, 1f, 0, "", "", Map.of(), Map.of(), Map.of()));
-            AtlasGenerator generator = new AtlasGenerator(SEED, new AtlasRules(regions, Map.of("compact", 1f), Map.of("hegemony", 1f, "tritachyon", 1f),
-                    AtlasAnomalyChance.NEVER, AtlasAnomalyChance.NEVER, List.of(), List.of()), AtlasUnlocks.NONE, state);
-            AtlasCell held = AtlasCell.ORIGIN.around(3).stream().filter(candidate -> !candidate.equals(AtlasCell.ORIGIN) && !generator.isVoid(candidate))
-                    .findFirst().orElseThrow();
-            TestTerritories.establish(state, held, "hegemony");
-            AtlasCell cell = AtlasCell.ORIGIN.around(20).stream()
-                    .filter(candidate -> AtlasAnomalies.insert(generator, state, candidate, FactionSkirmish.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD, null)
-                            .check().allows())
-                    .findFirst().orElseThrow();
+            AtlasState state = new AtlasState(TestBorders.SEED);
+            AtlasGenerator generator = TestBorders.generator(state);
+            Border border = TestBorders.border(generator, state, "tritachyon", "hegemony");
+            AtlasCell cell = border.contested();
+            state.setDeclaredIntents(List.of(Intent.push(border.attacker().recordId(), cell, border.defender().recordId()).encode()));
+            assertTrue(AtlasAnomalies.insert(generator, state, cell, FactionSkirmish.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD, null).check().allows());
             String defender = ChartFactions.displayName(FactionSkirmish.defender(generator, state, cell));
             String attacker = ChartFactions.displayName(FactionSkirmish.attacker(generator, state, cell));
 
             assertTrue(AtlasNodeText.markers(generator, state, cell, generator.node(cell))
-                    .contains(new AtlasLine(attacker + " attacks " + defender, AtlasLine.Tone.PLAIN)));
+                    .contains(new AtlasLine(OfficerText.title(border.attacker()) + " of " + attacker + " attacks " + defender, AtlasLine.Tone.PLAIN)));
             assertTrue(AtlasNodeText.confirmLines(generator, state, cell).contains("Completing the system ends the fight permanently."));
             List<BenchModeSupport.OpenChoice> choices = AtlasNodeText.entryChoices(generator, state, cell);
             assertEquals(List.of("Side with " + defender, "Side with " + attacker, "Stay out"),
