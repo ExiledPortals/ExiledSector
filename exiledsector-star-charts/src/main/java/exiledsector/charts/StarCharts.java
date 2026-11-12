@@ -18,6 +18,8 @@ import exiledsector.charts.layout.feature.ChartFeatures;
 import exiledsector.charts.loot.ChartDrops;
 import exiledsector.charts.loot.ChartLoot;
 import exiledsector.charts.loot.ChartMaterials;
+import exiledsector.charts.officer.scar.ScarChallengePick;
+import exiledsector.charts.officer.scar.ScarTable;
 import exiledsector.charts.run.ChartBlockedAbilities;
 import exiledsector.charts.run.ChartCampaignPlugin;
 import exiledsector.charts.run.ChartContentListener;
@@ -91,5 +93,7 @@ public final class StarCharts {
         ChartFeatures.load();
         AtlasData.load();
         AtlasTreeData.load();
+        ScarTable.load();
+        ScarChallengePick.load();
     }
 }
