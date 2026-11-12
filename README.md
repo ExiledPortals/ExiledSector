@@ -164,7 +164,7 @@ Open the wormhole, fly in, kill whoever lives there and take everything that isn
 
 ## Requirements
 
-- Starsector 0.98a-RC8
+- Starsector 0.98.5a (0.98a-RC8 also works)
 - [LazyLib](https://fractalsoftworks.com/forum/index.php?topic=5444.0)
 - [MagicLib](https://fractalsoftworks.com/forum/index.php?topic=25868.0)
 - [LunaLib](https://fractalsoftworks.com/forum/index.php?topic=25658.0)

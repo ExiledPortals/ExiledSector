@@ -1105,6 +1105,57 @@ class SkillEffectTest {
     }
 
     @Test
+    void recoveredHullAndCombatReadinessSpanTwentyPointsAboveTheMagnitude() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
+        when(stats.getDynamic()).thenReturn(dynamic);
+        Map<String, StatBonus> mods = new HashMap<>();
+        for (String key : List.of("ship_recovery_hull_min", "ship_recovery_hull_max", "ship_recovery_cr_min", "ship_recovery_cr_max")) {
+            mods.put(key, mock(StatBonus.class));
+            when(dynamic.getMod(key)).thenReturn(mods.get(key));
+        }
+
+        DefenseSkillEffect.RECOVERED_HULL_AND_CR_FLAT.apply(stats, "mod_id", 40f);
+
+        verify(mods.get("ship_recovery_hull_min")).modifyFlat(eq("mod_id"), org.mockito.AdditionalMatchers.eq(0.4f, 0.0001f));
+        verify(mods.get("ship_recovery_hull_max")).modifyFlat(eq("mod_id"), org.mockito.AdditionalMatchers.eq(0.6f, 0.0001f));
+        verify(mods.get("ship_recovery_cr_min")).modifyFlat(eq("mod_id"), org.mockito.AdditionalMatchers.eq(0.4f, 0.0001f));
+        verify(mods.get("ship_recovery_cr_max")).modifyFlat(eq("mod_id"), org.mockito.AdditionalMatchers.eq(0.6f, 0.0001f));
+        assertFalse(DefenseSkillEffect.RECOVERED_HULL_AND_CR_FLAT.appliesToNpcShips());
+    }
+
+    @Test
+    void recoveredPilotsAddToTheFleetWidePilotRecoveryMod() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
+        when(stats.getDynamic()).thenReturn(dynamic);
+        StatBonus pilotsRecovered = mock(StatBonus.class);
+        when(dynamic.getMod("fighter_pilots_recovered_mod")).thenReturn(pilotsRecovered);
+
+        FighterSkillEffect.FIGHTER_PILOTS_RECOVERED_FLAT.apply(stats, "mod_id", 40f);
+
+        verify(pilotsRecovered).modifyFlat("mod_id", 40f);
+        assertFalse(FighterSkillEffect.FIGHTER_PILOTS_RECOVERED_FLAT.appliesToNpcShips());
+    }
+
+    @Test
+    void safetyOverridesCrewLossAndSalaryUseTheVanillaStats() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
+        when(stats.getDynamic()).thenReturn(dynamic);
+        StatBonus crewLoss = mock(StatBonus.class);
+        MutableStat salary = mock(MutableStat.class);
+        when(dynamic.getMod("so_crew_loss_mod")).thenReturn(crewLoss);
+        when(dynamic.getStat("ship_crew_salary_mult")).thenReturn(salary);
+
+        LogisticsSkillEffect.PEAK_TIME_CREW_LOSS_FLAT.apply(stats, "mod_id", 40f);
+        LogisticsSkillEffect.CREW_SALARY_MULT.apply(stats, "mod_id", 100f);
+
+        verify(crewLoss).modifyFlat(eq("mod_id"), org.mockito.AdditionalMatchers.eq(0.4f, 0.0001f));
+        verify(salary).modifyMult("mod_id", 2f);
+    }
+
+    @Test
     void fighterReplacementDecayMultModifiesTheDecreaseMultStat() {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);

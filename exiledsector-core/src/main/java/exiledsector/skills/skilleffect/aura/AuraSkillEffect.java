@@ -1,7 +1,5 @@
 package exiledsector.skills.skilleffect.aura;
 
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
-import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.i18n.StyledText;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.DescribeContext;
@@ -35,17 +33,10 @@ public enum AuraSkillEffect implements BackedSkillEffect {
             return escortDescription(this, magnitude);
         }
     },
-    ESCORT_DESTROYER_SHIELD_DAMAGE_TAKEN_PERCENT(listener(EscortListener.SHIELD_DAMAGE_TAKEN_KEY, EscortListener.class, EscortListener::new)) {
+    ESCORT_SHIELD_AND_ARMOR_DAMAGE_TAKEN_PERCENT(listener(EscortListener.DAMAGE_TAKEN_KEY, EscortListener.class, EscortListener::new)) {
         @Override
         public boolean lowerIsBetter() {
             return true;
-        }
-
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            if (stats.getVariant() != null && stats.getVariant().getHullSize() == HullSize.DESTROYER) {
-                backing().apply(stats, modId, magnitude);
-            }
         }
 
         @Override

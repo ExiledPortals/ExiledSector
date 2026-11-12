@@ -52,6 +52,27 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
             return false;
         }
     },
+    RECOVERED_HULL_AND_CR_FLAT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            float minimum = magnitude * 0.01f;
+            float maximum = (magnitude + RecoveredCondition.SPREAD) * 0.01f;
+            stats.getDynamic().getMod(RecoveredCondition.HULL_MIN).modifyFlat(modId, minimum);
+            stats.getDynamic().getMod(RecoveredCondition.HULL_MAX).modifyFlat(modId, maximum);
+            stats.getDynamic().getMod(RecoveredCondition.CR_MIN).modifyFlat(modId, minimum);
+            stats.getDynamic().getMod(RecoveredCondition.CR_MAX).modifyFlat(modId, maximum);
+        }
+
+        @Override
+        public boolean appliesToNpcShips() {
+            return false;
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("min", magnitude).arg("max", magnitude + RecoveredCondition.SPREAD).styled();
+        }
+    },
     BREAK_PROBABILITY_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getBreakProb), "stat.breakApartChance", true)),
     ARMOR_PERCENT(statEffect(PERCENT, bonus(MutableShipStatsAPI::getArmorBonus), "stat.armor", false)),
     ARMOR_MULT(statEffect(MULT, bonus(MutableShipStatsAPI::getArmorBonus), "stat.armor", false)),

@@ -74,6 +74,12 @@ public final class PhantomHullModEffect extends BaseHullMod implements WrappingH
         }
     }
 
+    public void applyEffectsAfterShipCreation2ndPass(ShipAPI ship, String id) {
+        if (!isPhantom(ship)) {
+            HullModSecondPass.apply(originalEffect, ship, id);
+        }
+    }
+
     @Override
     public void applyEffectsToFighterSpawnedByShip(ShipAPI fighter, ShipAPI ship, String id) {
         if (!isPhantom(ship)) {

@@ -3,9 +3,9 @@
   "name": "Exiled Sector",
   "author": "Portals",
   "utility": false,
-  "version": {"major":0, "minor":12, "patch":5},
+  "version": {"major":0, "minor":12, "patch":6},
   "description": "Gives each ship its own skill tree.",
-  "gameVersion": "0.98a-RC8",
+  "gameVersion": "0.98.5a",
   "dependencies": [
     {"id": "lw_lazylib", "name": "LazyLib"},
     {"id": "MagicLib", "name": "MagicLib"},

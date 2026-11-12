@@ -109,6 +109,7 @@ class EscortListenerTest {
         when(stats.getBallisticWeaponRangeBonus()).thenReturn(escort.ballisticRange());
         when(stats.getEnergyWeaponRangeBonus()).thenReturn(escort.energyRange());
         when(stats.getShieldDamageTakenMult()).thenReturn(mock(MutableStat.class));
+        when(stats.getArmorDamageTakenMult()).thenReturn(mock(MutableStat.class));
         return escort;
     }
 
@@ -272,5 +273,26 @@ class EscortListenerTest {
 
         assertPercents(List.of(12f, 9f, 6f, 3f), percents);
         verify(stats.energyRange(), times(1)).unmodify(ESCORT_BONUS_MOD_ID);
+    }
+
+    @Test
+    void anyEscortHullSizeTakesLessDamageOnItsShieldsAndArmor() {
+        ShipAPI escort = ship(0f, 0f, Map.of(EscortListener.DAMAGE_TAKEN_KEY, -10f));
+        when(escort.getHullSize()).thenReturn(HullSize.FRIGATE);
+        when(escort.getShieldCenterEvenIfNoShield()).thenReturn(new Vector2f(0f, 0f));
+        when(escort.getShieldRadiusEvenIfNoShield()).thenReturn(100f);
+        escortStats(escort);
+        MutableShipStatsAPI stats = escort.getMutableStats();
+        MutableStat shieldDamageTaken = mock(MutableStat.class);
+        MutableStat armorDamageTaken = mock(MutableStat.class);
+        when(stats.getShieldDamageTakenMult()).thenReturn(shieldDamageTaken);
+        when(stats.getArmorDamageTakenMult()).thenReturn(armorDamageTaken);
+        deploy(escort, friendlyAt(500f, HullSize.CRUISER));
+        AdvanceableListener listener = attachedListener(AuraSkillEffect.ESCORT_SHIELD_AND_ARMOR_DAMAGE_TAKEN_PERCENT, escort, AdvanceableListener.class);
+
+        listener.advance(2f);
+
+        verify(shieldDamageTaken).modifyPercent(ESCORT_BONUS_MOD_ID, -10f);
+        verify(armorDamageTaken).modifyPercent(ESCORT_BONUS_MOD_ID, -10f);
     }
 }

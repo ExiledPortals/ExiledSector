@@ -72,7 +72,8 @@ damage taken depends only on the other ship's, so it raises ram damage without m
 
 A node that recreates a vanilla hull mod also places the real one as a zero-OP perma mod tagged
 `exiledSector_installed_<id>`, so other mods' `hasHullMod` checks see it. `PhantomHullMods.install` wraps
-each such hull mod's effect in `PhantomHullModEffect`, which forwards to the original except on tree-placed
+each such hull mod's effect in `PhantomHullModEffect`, which forwards to the original (its second after-creation pass
+through `HullModSecondPass`, on game versions that have one) except on tree-placed
 copies, where it does nothing, can't be removed and is hidden from refit and Codex. Fleet-wide hull mods
 (High Resolution Sensors, Phase Field) are never phantoms.
 
@@ -190,6 +191,13 @@ Where the engine lacks a stat: NON_BEAM_ENERGY damage and range write the energy
 cancelling beam entry, and beam or non-beam energy ammo is written per weapon at ship creation (right in
 combat, missing from refit tooltips, not usable on temporary nodes). Turn rate exists only for all weapons
 and for beams. Tooltips merge identical child effects on one node into the parent line.
+
+### Vanilla campaign stats
+
+`FIGHTER_PILOTS_RECOVERED_FLAT`, `RECOVERED_HULL_AND_CR_FLAT`, `PEAK_TIME_CREW_LOSS_FLAT` and `CREW_SALARY_MULT` write the
+dynamic stats vanilla's Recovery Shuttles, Reinforced Bulkheads and Safety Overrides use, so the game's own post-battle
+and monthly code reads them; game versions before 0.98.5a never read them. Recovered hull and combat readiness range
+from the magnitude to 20 points above it.
 
 ### Weapon range cap
 

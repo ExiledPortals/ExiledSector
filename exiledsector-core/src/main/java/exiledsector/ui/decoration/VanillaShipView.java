@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.ui.refit.UiReflection;
 import exiledsector.ui.util.GlScope;
 import org.apache.log4j.Logger;
 import org.lwjgl.opengl.GL11;
@@ -20,7 +21,7 @@ final class VanillaShipView {
     }
 
     private static final Logger LOG = Logger.getLogger(VanillaShipView.class);
-    private static final String VIEW_CLASS = "com.fs.starfarer.title.Object.do";
+    private static final String KEEP_THIS_FRAME = "doNotCleanupThisFrame";
     private static final String FLEET_MEMBER_CLASS = "com.fs.starfarer.campaign.fleet.FleetMember";
     private static final String MEMBER_STATUS_CLASS = "com.fs.starfarer.campaign.fleet.FleetMemberStatus";
     private static final String VARIANT_CLASS = "com.fs.starfarer.loading.specs.HullVariantSpec";
@@ -135,14 +136,14 @@ final class VanillaShipView {
         return handles;
     }
 
-    private static Handles loadHandles() throws ReflectiveOperationException {
+    private static Handles loadHandles() throws Throwable {
         ClassLoader gameLoader = Global.class.getClassLoader();
-        Class<?> viewClass = Class.forName(VIEW_CLASS, true, gameLoader);
         Class<?> memberClass = Class.forName(FLEET_MEMBER_CLASS, true, gameLoader);
         Class<?> statusClass = Class.forName(MEMBER_STATUS_CLASS, true, gameLoader);
         Class<?> variantClass = Class.forName(VARIANT_CLASS, true, gameLoader);
         Class<?> engineClass = Class.forName(ENGINE_CLASS, true, gameLoader);
         Class<?> shipClass = Class.forName(SHIP_CLASS, true, gameLoader);
+        Class<?> viewClass = keptViewClass(engineClass);
         MethodHandles.Lookup lookup = MethodHandles.publicLookup();
         return new Handles(
                 lookup.findConstructor(viewClass, MethodType.methodType(void.class, memberClass)),
@@ -154,7 +155,15 @@ final class VanillaShipView {
                 lookup.findVirtual(viewClass, "getShips", MethodType.methodType(shipClass.arrayType())),
                 lookup.findVirtual(viewClass, "cleanup", MethodType.methodType(void.class)),
                 lookup.findStatic(engineClass, "getInstance", MethodType.methodType(engineClass)),
-                lookup.findVirtual(engineClass, "doNotCleanupThisFrame", MethodType.methodType(void.class, viewClass)));
+                lookup.findVirtual(engineClass, KEEP_THIS_FRAME, MethodType.methodType(void.class, viewClass)));
+    }
+
+    static Class<?> keptViewClass(Class<?> engineClass) throws Throwable {
+        Class<?>[] parameterTypes = UiReflection.onlyOverloadParameterTypes(engineClass, KEEP_THIS_FRAME, 1);
+        if (parameterTypes == null) {
+            throw new NoSuchMethodException("No single " + engineClass.getName() + "." + KEEP_THIS_FRAME + " overload");
+        }
+        return parameterTypes[0];
     }
 
     private static void disable(String message, Throwable cause) {

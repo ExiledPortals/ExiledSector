@@ -803,6 +803,14 @@
 				{
 					"effect": "WEAPON_RANGE_FALLOFF_MULT",
 					"magnitude": -75
+				},
+				{
+					"effect": "PEAK_TIME_CREW_LOSS_FLAT",
+					"magnitude": 40
+				},
+				{
+					"effect": "CREW_SALARY_MULT",
+					"magnitude": 100
 				}
 			],
 			"hullSizeEffects": [
@@ -2150,7 +2158,7 @@
 						"magnitude": 15
 					},
 					{
-						"effect": "ESCORT_DESTROYER_SHIELD_DAMAGE_TAKEN_PERCENT",
+						"effect": "ESCORT_SHIELD_AND_ARMOR_DAMAGE_TAKEN_PERCENT",
 						"magnitude": -10
 					}
 				]
@@ -2483,10 +2491,6 @@
 			"icon": "graphics/icons/frontshield.png",
 			"tier": "KEYSTONE",
 			"effects": [
-				{
-					"effect": "TOP_SPEED_MULT",
-					"magnitude": -20
-				},
 				{
 					"effect": "CREATE_FRONT_SHIELD_IF_NONE"
 				}
@@ -3581,17 +3585,23 @@
 			"name": "Recovery Shuttles",
 			"icon": "graphics/icons/recovery_shuttles.png",
 			"tier": "NOTABLE",
-			"effects": [
+			"hullSizeEffects": [
 				{
-					"effect": "FIGHTER_CREW_LOSS_MULT",
-					"magnitude": -75
+					"effect": "FIGHTER_PILOTS_RECOVERED_FLAT",
+					"frigate": 10,
+					"destroyer": 20,
+					"cruiser": 40,
+					"capitalShip": 80
 				}
 			],
 			"integrated": {
-				"effects": [
+				"hullSizeEffects": [
 					{
-						"effect": "FIGHTER_CREW_LOSS_MULT",
-						"magnitude": -95
+						"effect": "FIGHTER_PILOTS_RECOVERED_FLAT",
+						"frigate": 15,
+						"destroyer": 30,
+						"cruiser": 60,
+						"capitalShip": 120
 					}
 				]
 			},
@@ -3608,8 +3618,9 @@
 			"tags": [
 				"strikecraft",
 				"crew",
-				"req_strikecraft_bays",
-				"campaign_only"
+				"req_crewed",
+				"campaign_only",
+				"logistics_cap"
 			]
 		},
 		{
@@ -3627,6 +3638,10 @@
 					"magnitude": 1000
 				},
 				{
+					"effect": "RECOVERED_HULL_AND_CR_FLAT",
+					"magnitude": 40
+				},
+				{
 					"effect": "BREAK_PROBABILITY_PERCENT",
 					"magnitude": -100
 				}
@@ -3640,6 +3655,10 @@
 					{
 						"effect": "SHIP_RECOVERY_CHANCE_BONUS",
 						"magnitude": 1000
+					},
+					{
+						"effect": "RECOVERED_HULL_AND_CR_FLAT",
+						"magnitude": 40
 					},
 					{
 						"effect": "BREAK_PROBABILITY_PERCENT",

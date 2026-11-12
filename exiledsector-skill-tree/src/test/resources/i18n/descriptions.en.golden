@@ -694,6 +694,12 @@ effect|CREW_LOSS_PERCENT|12.5	1	<good>12.5%</good> increased crew casualties.
 effect|CREW_LOSS_PERCENT|100.0	1	<good>100%</good> increased crew casualties.
 effect|CREW_LOSS_PERCENT|-10.0	1	<bad>10%</bad> reduced crew casualties.
 effect|CREW_LOSS_PERCENT|-12.5	1	<bad>12.5%</bad> reduced crew casualties.
+effect|CREW_SALARY_MULT|1.0	1	<good>1%</good> more monthly crew salaries.
+effect|CREW_SALARY_MULT|10.0	1	<good>10%</good> more monthly crew salaries.
+effect|CREW_SALARY_MULT|12.5	1	<good>12.5%</good> more monthly crew salaries.
+effect|CREW_SALARY_MULT|100.0	1	<good>100%</good> more monthly crew salaries.
+effect|CREW_SALARY_MULT|-10.0	1	<bad>10%</bad> less monthly crew salaries.
+effect|CREW_SALARY_MULT|-12.5	1	<bad>12.5%</bad> less monthly crew salaries.
 effect|CREW_STEAL_RANGE_FLAT|1.0	0	Enemy ships destroyed within <good>1</good> su of this ship have their survivors pressed into service. Each wreck is only claimed once.
 effect|CREW_STEAL_RANGE_FLAT|10.0	0	Enemy ships destroyed within <good>10</good> su of this ship have their survivors pressed into service. Each wreck is only claimed once.
 effect|CREW_STEAL_RANGE_FLAT|12.5	0	Enemy ships destroyed within <good>12.5</good> su of this ship have their survivors pressed into service. Each wreck is only claimed once.
@@ -1084,18 +1090,18 @@ effect|ENGINE_DURABILITY_PERCENT|12.5	0	<good>12.5%</good> increased engine dura
 effect|ENGINE_DURABILITY_PERCENT|100.0	0	<good>100%</good> increased engine durability.
 effect|ENGINE_DURABILITY_PERCENT|-10.0	0	<bad>10%</bad> reduced engine durability.
 effect|ENGINE_DURABILITY_PERCENT|-12.5	0	<bad>12.5%</bad> reduced engine durability.
-effect|ESCORT_DESTROYER_SHIELD_DAMAGE_TAKEN_PERCENT|1.0	1	While within <hl>700</hl> su of a larger friendly ship, a destroyer has up to <good>-1%</good> reduced damage taken by shields, fading out over a further <hl>500</hl> su. Doubled when escorting a capital ship.
-effect|ESCORT_DESTROYER_SHIELD_DAMAGE_TAKEN_PERCENT|10.0	1	While within <hl>700</hl> su of a larger friendly ship, a destroyer has up to <good>-10%</good> reduced damage taken by shields, fading out over a further <hl>500</hl> su. Doubled when escorting a capital ship.
-effect|ESCORT_DESTROYER_SHIELD_DAMAGE_TAKEN_PERCENT|12.5	1	While within <hl>700</hl> su of a larger friendly ship, a destroyer has up to <good>-12.5%</good> reduced damage taken by shields, fading out over a further <hl>500</hl> su. Doubled when escorting a capital ship.
-effect|ESCORT_DESTROYER_SHIELD_DAMAGE_TAKEN_PERCENT|100.0	1	While within <hl>700</hl> su of a larger friendly ship, a destroyer has up to <good>-100%</good> reduced damage taken by shields, fading out over a further <hl>500</hl> su. Doubled when escorting a capital ship.
-effect|ESCORT_DESTROYER_SHIELD_DAMAGE_TAKEN_PERCENT|-10.0	1	While within <hl>700</hl> su of a larger friendly ship, a destroyer has up to <good>10%</good> reduced damage taken by shields, fading out over a further <hl>500</hl> su. Doubled when escorting a capital ship.
-effect|ESCORT_DESTROYER_SHIELD_DAMAGE_TAKEN_PERCENT|-12.5	1	While within <hl>700</hl> su of a larger friendly ship, a destroyer has up to <good>12.5%</good> reduced damage taken by shields, fading out over a further <hl>500</hl> su. Doubled when escorting a capital ship.
 effect|ESCORT_MANEUVER_BONUS_PERCENT|1.0	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>1%</good> increased maneuverability, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 effect|ESCORT_MANEUVER_BONUS_PERCENT|10.0	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>10%</good> increased maneuverability, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 effect|ESCORT_MANEUVER_BONUS_PERCENT|12.5	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>12.5%</good> increased maneuverability, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 effect|ESCORT_MANEUVER_BONUS_PERCENT|100.0	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>100%</good> increased maneuverability, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 effect|ESCORT_MANEUVER_BONUS_PERCENT|-10.0	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>-10%</good> increased maneuverability, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 effect|ESCORT_MANEUVER_BONUS_PERCENT|-12.5	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>-12.5%</good> increased maneuverability, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
+effect|ESCORT_SHIELD_AND_ARMOR_DAMAGE_TAKEN_PERCENT|1.0	1	While within <hl>700</hl> su of a larger friendly ship, up to <good>-1%</good> reduced damage taken by shields and armor, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
+effect|ESCORT_SHIELD_AND_ARMOR_DAMAGE_TAKEN_PERCENT|10.0	1	While within <hl>700</hl> su of a larger friendly ship, up to <good>-10%</good> reduced damage taken by shields and armor, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
+effect|ESCORT_SHIELD_AND_ARMOR_DAMAGE_TAKEN_PERCENT|12.5	1	While within <hl>700</hl> su of a larger friendly ship, up to <good>-12.5%</good> reduced damage taken by shields and armor, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
+effect|ESCORT_SHIELD_AND_ARMOR_DAMAGE_TAKEN_PERCENT|100.0	1	While within <hl>700</hl> su of a larger friendly ship, up to <good>-100%</good> reduced damage taken by shields and armor, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
+effect|ESCORT_SHIELD_AND_ARMOR_DAMAGE_TAKEN_PERCENT|-10.0	1	While within <hl>700</hl> su of a larger friendly ship, up to <good>10%</good> reduced damage taken by shields and armor, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
+effect|ESCORT_SHIELD_AND_ARMOR_DAMAGE_TAKEN_PERCENT|-12.5	1	While within <hl>700</hl> su of a larger friendly ship, up to <good>12.5%</good> reduced damage taken by shields and armor, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 effect|ESCORT_SPEED_BONUS_PERCENT|1.0	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>1%</good> increased top speed, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 effect|ESCORT_SPEED_BONUS_PERCENT|10.0	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>10%</good> increased top speed, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 effect|ESCORT_SPEED_BONUS_PERCENT|12.5	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>12.5%</good> increased top speed, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
@@ -1186,6 +1192,12 @@ effect|FIGHTER_PD_DAMAGE_BONUS_PERCENT|12.5	0	Strikecraft launched from this shi
 effect|FIGHTER_PD_DAMAGE_BONUS_PERCENT|100.0	0	Strikecraft launched from this ship have <good>100%</good> increased damage to other strikecraft and missiles.
 effect|FIGHTER_PD_DAMAGE_BONUS_PERCENT|-10.0	0	Strikecraft launched from this ship have <bad>10%</bad> reduced damage to other strikecraft and missiles.
 effect|FIGHTER_PD_DAMAGE_BONUS_PERCENT|-12.5	0	Strikecraft launched from this ship have <bad>12.5%</bad> reduced damage to other strikecraft and missiles.
+effect|FIGHTER_PILOTS_RECOVERED_FLAT|1.0	0	Up to <good>1</good> additional strikecraft pilots are recovered after combat.
+effect|FIGHTER_PILOTS_RECOVERED_FLAT|10.0	0	Up to <good>10</good> additional strikecraft pilots are recovered after combat.
+effect|FIGHTER_PILOTS_RECOVERED_FLAT|12.5	0	Up to <good>12.5</good> additional strikecraft pilots are recovered after combat.
+effect|FIGHTER_PILOTS_RECOVERED_FLAT|100.0	0	Up to <good>100</good> additional strikecraft pilots are recovered after combat.
+effect|FIGHTER_PILOTS_RECOVERED_FLAT|-10.0	0	Up to <good>-10</good> additional strikecraft pilots are recovered after combat.
+effect|FIGHTER_PILOTS_RECOVERED_FLAT|-12.5	0	Up to <good>-12.5</good> additional strikecraft pilots are recovered after combat.
 effect|FIGHTER_RATE_OF_FIRE_PERCENT|1.0	0	Strikecraft launched from this ship have <good>1%</good> increased weapon rate of fire.
 effect|FIGHTER_RATE_OF_FIRE_PERCENT|10.0	0	Strikecraft launched from this ship have <good>10%</good> increased weapon rate of fire.
 effect|FIGHTER_RATE_OF_FIRE_PERCENT|12.5	0	Strikecraft launched from this ship have <good>12.5%</good> increased weapon rate of fire.
@@ -2362,6 +2374,12 @@ effect|PEAK_CR_DURATION_PERCENT|12.5	0	<good>12.5%</good> increased peak perform
 effect|PEAK_CR_DURATION_PERCENT|100.0	0	<good>100%</good> increased peak performance time.
 effect|PEAK_CR_DURATION_PERCENT|-10.0	0	<bad>10%</bad> reduced peak performance time.
 effect|PEAK_CR_DURATION_PERCENT|-12.5	0	<bad>12.5%</bad> reduced peak performance time.
+effect|PEAK_TIME_CREW_LOSS_FLAT|1.0	1	Loses up to <good>1%</good> of its crew over a full peak performance time in combat, even without taking hull damage.
+effect|PEAK_TIME_CREW_LOSS_FLAT|10.0	1	Loses up to <good>10%</good> of its crew over a full peak performance time in combat, even without taking hull damage.
+effect|PEAK_TIME_CREW_LOSS_FLAT|12.5	1	Loses up to <good>12.5%</good> of its crew over a full peak performance time in combat, even without taking hull damage.
+effect|PEAK_TIME_CREW_LOSS_FLAT|100.0	1	Loses up to <good>100%</good> of its crew over a full peak performance time in combat, even without taking hull damage.
+effect|PEAK_TIME_CREW_LOSS_FLAT|-10.0	1	Loses up to <good>-10%</good> of its crew over a full peak performance time in combat, even without taking hull damage.
+effect|PEAK_TIME_CREW_LOSS_FLAT|-12.5	1	Loses up to <good>-12.5%</good> of its crew over a full peak performance time in combat, even without taking hull damage.
 effect|PEAK_TIME_PAUSED_WHILE_PHASED|1.0	0	The peak performance timer pauses while phased.
 effect|PEAK_TIME_PAUSED_WHILE_PHASED|10.0	0	The peak performance timer pauses while phased.
 effect|PEAK_TIME_PAUSED_WHILE_PHASED|12.5	0	The peak performance timer pauses while phased.
@@ -2518,6 +2536,12 @@ effect|RATE_OF_FIRE_AURA_MULT|12.5	0	Enemy ships within <hl>1000</hl> su have <g
 effect|RATE_OF_FIRE_AURA_MULT|100.0	0	Enemy ships within <hl>1000</hl> su have <good>100%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
 effect|RATE_OF_FIRE_AURA_MULT|-10.0	0	Enemy ships within <hl>1000</hl> su have <good>-10%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
 effect|RATE_OF_FIRE_AURA_MULT|-12.5	0	Enemy ships within <hl>1000</hl> su have <good>-12.5%</good> less weapon rate of fire. Only the strongest debuff of this effect applies at any one time.
+effect|RECOVERED_HULL_AND_CR_FLAT|1.0	0	When recovered after the battle, starts with <good>1%</good> to <good>21%</good> hull integrity and combat readiness.
+effect|RECOVERED_HULL_AND_CR_FLAT|10.0	0	When recovered after the battle, starts with <good>10%</good> to <good>30%</good> hull integrity and combat readiness.
+effect|RECOVERED_HULL_AND_CR_FLAT|12.5	0	When recovered after the battle, starts with <good>12.5%</good> to <good>32.5%</good> hull integrity and combat readiness.
+effect|RECOVERED_HULL_AND_CR_FLAT|100.0	0	When recovered after the battle, starts with <good>100%</good> to <good>120%</good> hull integrity and combat readiness.
+effect|RECOVERED_HULL_AND_CR_FLAT|-10.0	0	When recovered after the battle, starts with <good>-10%</good> to <good>10%</good> hull integrity and combat readiness.
+effect|RECOVERED_HULL_AND_CR_FLAT|-12.5	0	When recovered after the battle, starts with <good>-12.5%</good> to <good>7.5%</good> hull integrity and combat readiness.
 effect|RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT|1.0	0	Your fleet has a <good>1%</good> chance for each ship it recovers after a battle to gain no d-mods, up to a maximum of <hl>30%</hl>.
 effect|RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT|10.0	0	Your fleet has a <good>10%</good> chance for each ship it recovers after a battle to gain no d-mods, up to a maximum of <hl>30%</hl>.
 effect|RECOVERED_SHIP_DMOD_AVOID_CHANCE_PERCENT|12.5	0	Your fleet has a <good>12.5%</good> chance for each ship it recovers after a battle to gain no d-mods, up to a maximum of <hl>30%</hl>.
@@ -7149,56 +7173,56 @@ integrable|escort_package|null|1	0	While within <hl>700</hl> su of a larger frie
 integrable|escort_package|null|2	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>15%</good> increased ballistic and energy weapon range, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrable|escort_package|null|3	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|escort_package|null|4	0	<muted>When integrated, for 2 story points:</muted>
-integrable|escort_package|null|5	0	In addition, grants: While within <hl>700</hl> su of a larger friendly ship, a destroyer has up to <builtIn>10%</builtIn> reduced damage taken by shields, fading out over a further <hl>500</hl> su. Doubled when escorting a capital ship.
+integrable|escort_package|null|5	0	In addition, grants: While within <hl>700</hl> su of a larger friendly ship, up to <builtIn>10%</builtIn> reduced damage taken by shields and armor, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrable|escort_package|FRIGATE|0	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>25%</good> increased maneuverability, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrable|escort_package|FRIGATE|1	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>10%</good> increased top speed, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrable|escort_package|FRIGATE|2	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>15%</good> increased ballistic and energy weapon range, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrable|escort_package|FRIGATE|3	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|escort_package|FRIGATE|4	0	<muted>When integrated, for 2 story points:</muted>
-integrable|escort_package|FRIGATE|5	0	In addition, grants: While within <hl>700</hl> su of a larger friendly ship, a destroyer has up to <builtIn>10%</builtIn> reduced damage taken by shields, fading out over a further <hl>500</hl> su. Doubled when escorting a capital ship.
+integrable|escort_package|FRIGATE|5	0	In addition, grants: While within <hl>700</hl> su of a larger friendly ship, up to <builtIn>10%</builtIn> reduced damage taken by shields and armor, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrable|escort_package|DESTROYER|0	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>25%</good> increased maneuverability, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrable|escort_package|DESTROYER|1	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>10%</good> increased top speed, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrable|escort_package|DESTROYER|2	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>15%</good> increased ballistic and energy weapon range, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrable|escort_package|DESTROYER|3	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|escort_package|DESTROYER|4	0	<muted>When integrated, for 2 story points:</muted>
-integrable|escort_package|DESTROYER|5	0	In addition, grants: While within <hl>700</hl> su of a larger friendly ship, a destroyer has up to <builtIn>10%</builtIn> reduced damage taken by shields, fading out over a further <hl>500</hl> su. Doubled when escorting a capital ship.
+integrable|escort_package|DESTROYER|5	0	In addition, grants: While within <hl>700</hl> su of a larger friendly ship, up to <builtIn>10%</builtIn> reduced damage taken by shields and armor, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrable|escort_package|CRUISER|0	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>25%</good> increased maneuverability, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrable|escort_package|CRUISER|1	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>10%</good> increased top speed, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrable|escort_package|CRUISER|2	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>15%</good> increased ballistic and energy weapon range, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrable|escort_package|CRUISER|3	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|escort_package|CRUISER|4	0	<muted>When integrated, for 2 story points:</muted>
-integrable|escort_package|CRUISER|5	0	In addition, grants: While within <hl>700</hl> su of a larger friendly ship, a destroyer has up to <builtIn>10%</builtIn> reduced damage taken by shields, fading out over a further <hl>500</hl> su. Doubled when escorting a capital ship.
+integrable|escort_package|CRUISER|5	0	In addition, grants: While within <hl>700</hl> su of a larger friendly ship, up to <builtIn>10%</builtIn> reduced damage taken by shields and armor, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrable|escort_package|CAPITAL_SHIP|0	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>25%</good> increased maneuverability, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrable|escort_package|CAPITAL_SHIP|1	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>10%</good> increased top speed, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrable|escort_package|CAPITAL_SHIP|2	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>15%</good> increased ballistic and energy weapon range, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrable|escort_package|CAPITAL_SHIP|3	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|escort_package|CAPITAL_SHIP|4	0	<muted>When integrated, for 2 story points:</muted>
-integrable|escort_package|CAPITAL_SHIP|5	0	In addition, grants: While within <hl>700</hl> su of a larger friendly ship, a destroyer has up to <builtIn>10%</builtIn> reduced damage taken by shields, fading out over a further <hl>500</hl> su. Doubled when escorting a capital ship.
+integrable|escort_package|CAPITAL_SHIP|5	0	In addition, grants: While within <hl>700</hl> su of a larger friendly ship, up to <builtIn>10%</builtIn> reduced damage taken by shields and armor, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrated|escort_package|null|0	0	<builtIn>Integrated</builtIn>
 integrated|escort_package|null|1	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>25%</good> increased maneuverability, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrated|escort_package|null|2	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>10%</good> increased top speed, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrated|escort_package|null|3	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>15%</good> increased ballistic and energy weapon range, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
-integrated|escort_package|null|4	0	While within <hl>700</hl> su of a larger friendly ship, a destroyer has up to <builtIn>10%</builtIn> reduced damage taken by shields, fading out over a further <hl>500</hl> su. Doubled when escorting a capital ship.
+integrated|escort_package|null|4	0	While within <hl>700</hl> su of a larger friendly ship, up to <builtIn>10%</builtIn> reduced damage taken by shields and armor, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrated|escort_package|FRIGATE|0	0	<builtIn>Integrated</builtIn>
 integrated|escort_package|FRIGATE|1	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>25%</good> increased maneuverability, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrated|escort_package|FRIGATE|2	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>10%</good> increased top speed, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrated|escort_package|FRIGATE|3	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>15%</good> increased ballistic and energy weapon range, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
-integrated|escort_package|FRIGATE|4	0	While within <hl>700</hl> su of a larger friendly ship, a destroyer has up to <builtIn>10%</builtIn> reduced damage taken by shields, fading out over a further <hl>500</hl> su. Doubled when escorting a capital ship.
+integrated|escort_package|FRIGATE|4	0	While within <hl>700</hl> su of a larger friendly ship, up to <builtIn>10%</builtIn> reduced damage taken by shields and armor, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrated|escort_package|DESTROYER|0	0	<builtIn>Integrated</builtIn>
 integrated|escort_package|DESTROYER|1	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>25%</good> increased maneuverability, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrated|escort_package|DESTROYER|2	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>10%</good> increased top speed, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrated|escort_package|DESTROYER|3	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>15%</good> increased ballistic and energy weapon range, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
-integrated|escort_package|DESTROYER|4	0	While within <hl>700</hl> su of a larger friendly ship, a destroyer has up to <builtIn>10%</builtIn> reduced damage taken by shields, fading out over a further <hl>500</hl> su. Doubled when escorting a capital ship.
+integrated|escort_package|DESTROYER|4	0	While within <hl>700</hl> su of a larger friendly ship, up to <builtIn>10%</builtIn> reduced damage taken by shields and armor, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrated|escort_package|CRUISER|0	0	<builtIn>Integrated</builtIn>
 integrated|escort_package|CRUISER|1	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>25%</good> increased maneuverability, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrated|escort_package|CRUISER|2	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>10%</good> increased top speed, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrated|escort_package|CRUISER|3	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>15%</good> increased ballistic and energy weapon range, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
-integrated|escort_package|CRUISER|4	0	While within <hl>700</hl> su of a larger friendly ship, a destroyer has up to <builtIn>10%</builtIn> reduced damage taken by shields, fading out over a further <hl>500</hl> su. Doubled when escorting a capital ship.
+integrated|escort_package|CRUISER|4	0	While within <hl>700</hl> su of a larger friendly ship, up to <builtIn>10%</builtIn> reduced damage taken by shields and armor, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrated|escort_package|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|escort_package|CAPITAL_SHIP|1	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>25%</good> increased maneuverability, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrated|escort_package|CAPITAL_SHIP|2	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>10%</good> increased top speed, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 integrated|escort_package|CAPITAL_SHIP|3	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>15%</good> increased ballistic and energy weapon range, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
-integrated|escort_package|CAPITAL_SHIP|4	0	While within <hl>700</hl> su of a larger friendly ship, a destroyer has up to <builtIn>10%</builtIn> reduced damage taken by shields, fading out over a further <hl>500</hl> su. Doubled when escorting a capital ship.
+integrated|escort_package|CAPITAL_SHIP|4	0	While within <hl>700</hl> su of a larger friendly ship, up to <builtIn>10%</builtIn> reduced damage taken by shields and armor, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 flavour|executors_decree	0	A standing decree of the Supreme Executor names retreat as treason. It has no provision for appeal.
 type|executors_decree|null|0	0	This ship can't retreat.
 type|executors_decree|null|1	0	<good>15%</good> increased weapon damage.
@@ -10103,61 +10127,41 @@ integrated|machine_precision|CAPITAL_SHIP|1	0	<good>100%</good> increased target
 integrated|machine_precision|CAPITAL_SHIP|2	0	<builtIn>10%</builtIn> increased energy weapon range.
 integrated|machine_precision|CAPITAL_SHIP|3	0	<builtIn>10%</builtIn> increased ballistic weapon range.
 integrated|machine_precision|CAPITAL_SHIP|4	0	<builtIn>10%</builtIn> increased beam weapon range.
-type|makeshift_shield_generator|null|0	0	<bad>20%</bad> less top speed.
-type|makeshift_shield_generator|null|1	0	Installs a makeshift, front-facing shield if this ship has none.
+type|makeshift_shield_generator|null|0	0	Installs a makeshift, front-facing shield if this ship has none.
 type-detail|makeshift_shield_generator|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Shield Shunt</hullmod>\n• <hullmod>Amorphous Alloy Armor</hullmod>\n• <hullmod>Blessed Halo</hullmod>\n• <hullmod>Navarchy Armor Plate</hullmod>\n• <hullmod>Lostech Engineering</hullmod>\n• <hullmod>Makeshift Shield Generator</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Shield Shunt</node>
-type|makeshift_shield_generator|FRIGATE|0	0	<bad>20%</bad> less top speed.
-type|makeshift_shield_generator|FRIGATE|1	0	Installs a makeshift, front-facing shield if this ship has none.
+type|makeshift_shield_generator|FRIGATE|0	0	Installs a makeshift, front-facing shield if this ship has none.
 type-detail|makeshift_shield_generator|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Shield Shunt</hullmod>\n• <hullmod>Amorphous Alloy Armor</hullmod>\n• <hullmod>Blessed Halo</hullmod>\n• <hullmod>Navarchy Armor Plate</hullmod>\n• <hullmod>Lostech Engineering</hullmod>\n• <hullmod>Makeshift Shield Generator</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Shield Shunt</node>
-type|makeshift_shield_generator|DESTROYER|0	0	<bad>20%</bad> less top speed.
-type|makeshift_shield_generator|DESTROYER|1	0	Installs a makeshift, front-facing shield if this ship has none.
+type|makeshift_shield_generator|DESTROYER|0	0	Installs a makeshift, front-facing shield if this ship has none.
 type-detail|makeshift_shield_generator|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Shield Shunt</hullmod>\n• <hullmod>Amorphous Alloy Armor</hullmod>\n• <hullmod>Blessed Halo</hullmod>\n• <hullmod>Navarchy Armor Plate</hullmod>\n• <hullmod>Lostech Engineering</hullmod>\n• <hullmod>Makeshift Shield Generator</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Shield Shunt</node>
-type|makeshift_shield_generator|CRUISER|0	0	<bad>20%</bad> less top speed.
-type|makeshift_shield_generator|CRUISER|1	0	Installs a makeshift, front-facing shield if this ship has none.
+type|makeshift_shield_generator|CRUISER|0	0	Installs a makeshift, front-facing shield if this ship has none.
 type-detail|makeshift_shield_generator|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Shield Shunt</hullmod>\n• <hullmod>Amorphous Alloy Armor</hullmod>\n• <hullmod>Blessed Halo</hullmod>\n• <hullmod>Navarchy Armor Plate</hullmod>\n• <hullmod>Lostech Engineering</hullmod>\n• <hullmod>Makeshift Shield Generator</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Shield Shunt</node>
-type|makeshift_shield_generator|CAPITAL_SHIP|0	0	<bad>20%</bad> less top speed.
-type|makeshift_shield_generator|CAPITAL_SHIP|1	0	Installs a makeshift, front-facing shield if this ship has none.
+type|makeshift_shield_generator|CAPITAL_SHIP|0	0	Installs a makeshift, front-facing shield if this ship has none.
 type-detail|makeshift_shield_generator|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Shield Shunt</hullmod>\n• <hullmod>Amorphous Alloy Armor</hullmod>\n• <hullmod>Blessed Halo</hullmod>\n• <hullmod>Navarchy Armor Plate</hullmod>\n• <hullmod>Lostech Engineering</hullmod>\n• <hullmod>Makeshift Shield Generator</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Shield Shunt</node>
-integrable|makeshift_shield_generator|null|0	0	<bad>20%</bad> less top speed.
-integrable|makeshift_shield_generator|null|1	0	Installs a makeshift, front-facing shield if this ship has none.
-integrable|makeshift_shield_generator|null|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
-integrable|makeshift_shield_generator|null|3	0	<muted>When integrated, for 2 story points:</muted>
-integrable|makeshift_shield_generator|null|4	0	No longer grants <bad>20%</bad> less top speed.
-integrable|makeshift_shield_generator|FRIGATE|0	0	<bad>20%</bad> less top speed.
-integrable|makeshift_shield_generator|FRIGATE|1	0	Installs a makeshift, front-facing shield if this ship has none.
-integrable|makeshift_shield_generator|FRIGATE|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
-integrable|makeshift_shield_generator|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
-integrable|makeshift_shield_generator|FRIGATE|4	0	No longer grants <bad>20%</bad> less top speed.
-integrable|makeshift_shield_generator|DESTROYER|0	0	<bad>20%</bad> less top speed.
-integrable|makeshift_shield_generator|DESTROYER|1	0	Installs a makeshift, front-facing shield if this ship has none.
-integrable|makeshift_shield_generator|DESTROYER|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
-integrable|makeshift_shield_generator|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
-integrable|makeshift_shield_generator|DESTROYER|4	0	No longer grants <bad>20%</bad> less top speed.
-integrable|makeshift_shield_generator|CRUISER|0	0	<bad>20%</bad> less top speed.
-integrable|makeshift_shield_generator|CRUISER|1	0	Installs a makeshift, front-facing shield if this ship has none.
-integrable|makeshift_shield_generator|CRUISER|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
-integrable|makeshift_shield_generator|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
-integrable|makeshift_shield_generator|CRUISER|4	0	No longer grants <bad>20%</bad> less top speed.
-integrable|makeshift_shield_generator|CAPITAL_SHIP|0	0	<bad>20%</bad> less top speed.
-integrable|makeshift_shield_generator|CAPITAL_SHIP|1	0	Installs a makeshift, front-facing shield if this ship has none.
-integrable|makeshift_shield_generator|CAPITAL_SHIP|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
-integrable|makeshift_shield_generator|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
-integrable|makeshift_shield_generator|CAPITAL_SHIP|4	0	No longer grants <bad>20%</bad> less top speed.
+integrable|makeshift_shield_generator|null|0	0	Installs a makeshift, front-facing shield if this ship has none.
+integrable|makeshift_shield_generator|null|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|makeshift_shield_generator|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|makeshift_shield_generator|FRIGATE|0	0	Installs a makeshift, front-facing shield if this ship has none.
+integrable|makeshift_shield_generator|FRIGATE|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|makeshift_shield_generator|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|makeshift_shield_generator|DESTROYER|0	0	Installs a makeshift, front-facing shield if this ship has none.
+integrable|makeshift_shield_generator|DESTROYER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|makeshift_shield_generator|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|makeshift_shield_generator|CRUISER|0	0	Installs a makeshift, front-facing shield if this ship has none.
+integrable|makeshift_shield_generator|CRUISER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|makeshift_shield_generator|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|makeshift_shield_generator|CAPITAL_SHIP|0	0	Installs a makeshift, front-facing shield if this ship has none.
+integrable|makeshift_shield_generator|CAPITAL_SHIP|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|makeshift_shield_generator|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
 integrated|makeshift_shield_generator|null|0	0	<builtIn>Integrated</builtIn>
 integrated|makeshift_shield_generator|null|1	0	Installs a makeshift, front-facing shield if this ship has none.
-integrated|makeshift_shield_generator|null|2	0	No longer grants <bad>20%</bad> less top speed.
 integrated|makeshift_shield_generator|FRIGATE|0	0	<builtIn>Integrated</builtIn>
 integrated|makeshift_shield_generator|FRIGATE|1	0	Installs a makeshift, front-facing shield if this ship has none.
-integrated|makeshift_shield_generator|FRIGATE|2	0	No longer grants <bad>20%</bad> less top speed.
 integrated|makeshift_shield_generator|DESTROYER|0	0	<builtIn>Integrated</builtIn>
 integrated|makeshift_shield_generator|DESTROYER|1	0	Installs a makeshift, front-facing shield if this ship has none.
-integrated|makeshift_shield_generator|DESTROYER|2	0	No longer grants <bad>20%</bad> less top speed.
 integrated|makeshift_shield_generator|CRUISER|0	0	<builtIn>Integrated</builtIn>
 integrated|makeshift_shield_generator|CRUISER|1	0	Installs a makeshift, front-facing shield if this ship has none.
-integrated|makeshift_shield_generator|CRUISER|2	0	No longer grants <bad>20%</bad> less top speed.
 integrated|makeshift_shield_generator|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|makeshift_shield_generator|CAPITAL_SHIP|1	0	Installs a makeshift, front-facing shield if this ship has none.
-integrated|makeshift_shield_generator|CAPITAL_SHIP|2	0	No longer grants <bad>20%</bad> less top speed.
 type|maneuverability|null|0	0	<good>25%</good> increased maneuverability.
 type|maneuverability|FRIGATE|0	0	<good>25%</good> increased maneuverability.
 type|maneuverability|DESTROYER|0	0	<good>25%</good> increased maneuverability.
@@ -11500,46 +11504,42 @@ integrated|rationing|CRUISER|2	1	<builtIn>15%</builtIn> less fuel consumption ra
 integrated|rationing|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|rationing|CAPITAL_SHIP|1	1	<builtIn>15%</builtIn> less supply use for maintenance.
 integrated|rationing|CAPITAL_SHIP|2	1	<builtIn>15%</builtIn> less fuel consumption rate.
-type|recovery_shuttles|null|0	1	Strikecraft launched from this ship have <bad>75%</bad> less pilot casualties.
 type-detail|recovery_shuttles|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>Cataphract LSM</hullmod>\n• <hullmod>Cataphract S-II</hullmod>\n• <hullmod>Recovery Shuttles</hullmod>
-type|recovery_shuttles|FRIGATE|0	1	Strikecraft launched from this ship have <bad>75%</bad> less pilot casualties.
+type|recovery_shuttles|FRIGATE|0	0	Up to <good>10</good> additional strikecraft pilots are recovered after combat.
 type-detail|recovery_shuttles|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>Cataphract LSM</hullmod>\n• <hullmod>Cataphract S-II</hullmod>\n• <hullmod>Recovery Shuttles</hullmod>
-type|recovery_shuttles|DESTROYER|0	1	Strikecraft launched from this ship have <bad>75%</bad> less pilot casualties.
+type|recovery_shuttles|DESTROYER|0	0	Up to <good>20</good> additional strikecraft pilots are recovered after combat.
 type-detail|recovery_shuttles|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>Cataphract LSM</hullmod>\n• <hullmod>Cataphract S-II</hullmod>\n• <hullmod>Recovery Shuttles</hullmod>
-type|recovery_shuttles|CRUISER|0	1	Strikecraft launched from this ship have <bad>75%</bad> less pilot casualties.
+type|recovery_shuttles|CRUISER|0	0	Up to <good>40</good> additional strikecraft pilots are recovered after combat.
 type-detail|recovery_shuttles|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>Cataphract LSM</hullmod>\n• <hullmod>Cataphract S-II</hullmod>\n• <hullmod>Recovery Shuttles</hullmod>
-type|recovery_shuttles|CAPITAL_SHIP|0	1	Strikecraft launched from this ship have <bad>75%</bad> less pilot casualties.
+type|recovery_shuttles|CAPITAL_SHIP|0	0	Up to <good>80</good> additional strikecraft pilots are recovered after combat.
 type-detail|recovery_shuttles|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>Cataphract LSM</hullmod>\n• <hullmod>Cataphract S-II</hullmod>\n• <hullmod>Recovery Shuttles</hullmod>
-integrable|recovery_shuttles|null|0	1	Strikecraft launched from this ship have <bad>75%</bad> less pilot casualties.
-integrable|recovery_shuttles|null|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
-integrable|recovery_shuttles|null|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|recovery_shuttles|null|3	1	Instead grants: Strikecraft launched from this ship have <builtIn>95%</builtIn> less pilot casualties.
-integrable|recovery_shuttles|FRIGATE|0	1	Strikecraft launched from this ship have <bad>75%</bad> less pilot casualties.
+integrable|recovery_shuttles|null|0	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|recovery_shuttles|null|1	0	<muted>When integrated, for 2 story points:</muted>
+integrable|recovery_shuttles|FRIGATE|0	0	Up to <good>10</good> additional strikecraft pilots are recovered after combat.
 integrable|recovery_shuttles|FRIGATE|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|recovery_shuttles|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|recovery_shuttles|FRIGATE|3	1	Instead grants: Strikecraft launched from this ship have <builtIn>95%</builtIn> less pilot casualties.
-integrable|recovery_shuttles|DESTROYER|0	1	Strikecraft launched from this ship have <bad>75%</bad> less pilot casualties.
+integrable|recovery_shuttles|FRIGATE|3	0	Instead grants: Up to <builtIn>15</builtIn> additional strikecraft pilots are recovered after combat.
+integrable|recovery_shuttles|DESTROYER|0	0	Up to <good>20</good> additional strikecraft pilots are recovered after combat.
 integrable|recovery_shuttles|DESTROYER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|recovery_shuttles|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|recovery_shuttles|DESTROYER|3	1	Instead grants: Strikecraft launched from this ship have <builtIn>95%</builtIn> less pilot casualties.
-integrable|recovery_shuttles|CRUISER|0	1	Strikecraft launched from this ship have <bad>75%</bad> less pilot casualties.
+integrable|recovery_shuttles|DESTROYER|3	0	Instead grants: Up to <builtIn>30</builtIn> additional strikecraft pilots are recovered after combat.
+integrable|recovery_shuttles|CRUISER|0	0	Up to <good>40</good> additional strikecraft pilots are recovered after combat.
 integrable|recovery_shuttles|CRUISER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|recovery_shuttles|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|recovery_shuttles|CRUISER|3	1	Instead grants: Strikecraft launched from this ship have <builtIn>95%</builtIn> less pilot casualties.
-integrable|recovery_shuttles|CAPITAL_SHIP|0	1	Strikecraft launched from this ship have <bad>75%</bad> less pilot casualties.
+integrable|recovery_shuttles|CRUISER|3	0	Instead grants: Up to <builtIn>60</builtIn> additional strikecraft pilots are recovered after combat.
+integrable|recovery_shuttles|CAPITAL_SHIP|0	0	Up to <good>80</good> additional strikecraft pilots are recovered after combat.
 integrable|recovery_shuttles|CAPITAL_SHIP|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|recovery_shuttles|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|recovery_shuttles|CAPITAL_SHIP|3	1	Instead grants: Strikecraft launched from this ship have <builtIn>95%</builtIn> less pilot casualties.
+integrable|recovery_shuttles|CAPITAL_SHIP|3	0	Instead grants: Up to <builtIn>120</builtIn> additional strikecraft pilots are recovered after combat.
 integrated|recovery_shuttles|null|0	0	<builtIn>Integrated</builtIn>
-integrated|recovery_shuttles|null|1	1	Strikecraft launched from this ship have <builtIn>95%</builtIn> less pilot casualties.
 integrated|recovery_shuttles|FRIGATE|0	0	<builtIn>Integrated</builtIn>
-integrated|recovery_shuttles|FRIGATE|1	1	Strikecraft launched from this ship have <builtIn>95%</builtIn> less pilot casualties.
+integrated|recovery_shuttles|FRIGATE|1	0	Up to <builtIn>15</builtIn> additional strikecraft pilots are recovered after combat.
 integrated|recovery_shuttles|DESTROYER|0	0	<builtIn>Integrated</builtIn>
-integrated|recovery_shuttles|DESTROYER|1	1	Strikecraft launched from this ship have <builtIn>95%</builtIn> less pilot casualties.
+integrated|recovery_shuttles|DESTROYER|1	0	Up to <builtIn>30</builtIn> additional strikecraft pilots are recovered after combat.
 integrated|recovery_shuttles|CRUISER|0	0	<builtIn>Integrated</builtIn>
-integrated|recovery_shuttles|CRUISER|1	1	Strikecraft launched from this ship have <builtIn>95%</builtIn> less pilot casualties.
+integrated|recovery_shuttles|CRUISER|1	0	Up to <builtIn>60</builtIn> additional strikecraft pilots are recovered after combat.
 integrated|recovery_shuttles|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
-integrated|recovery_shuttles|CAPITAL_SHIP|1	1	Strikecraft launched from this ship have <builtIn>95%</builtIn> less pilot casualties.
+integrated|recovery_shuttles|CAPITAL_SHIP|1	0	Up to <builtIn>120</builtIn> additional strikecraft pilots are recovered after combat.
 type|reduced_d_mod_effect|null|0	1	<bad>4%</bad> less negative effects from d-mods.
 type|reduced_d_mod_effect|FRIGATE|0	1	<bad>4%</bad> less negative effects from d-mods.
 type|reduced_d_mod_effect|DESTROYER|0	1	<bad>4%</bad> less negative effects from d-mods.
@@ -11609,79 +11609,94 @@ integrated|refracting_projectiles|CAPITAL_SHIP|2	0	Non-beam energy weapons have 
 integrated|refracting_projectiles|CAPITAL_SHIP|3	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 type|reinforced_bulkheads|null|0	0	<good>40%</good> increased hull points.
 type|reinforced_bulkheads|null|1	0	If disabled, this ship is almost always recoverable after the battle.
-type|reinforced_bulkheads|null|2	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
+type|reinforced_bulkheads|null|2	0	When recovered after the battle, starts with <good>40%</good> to <good>60%</good> hull integrity and combat readiness.
+type|reinforced_bulkheads|null|3	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 type-detail|reinforced_bulkheads|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Reinforced Bulkheads</hullmod>
 type|reinforced_bulkheads|FRIGATE|0	0	<good>40%</good> increased hull points.
 type|reinforced_bulkheads|FRIGATE|1	0	If disabled, this ship is almost always recoverable after the battle.
-type|reinforced_bulkheads|FRIGATE|2	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
+type|reinforced_bulkheads|FRIGATE|2	0	When recovered after the battle, starts with <good>40%</good> to <good>60%</good> hull integrity and combat readiness.
+type|reinforced_bulkheads|FRIGATE|3	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 type-detail|reinforced_bulkheads|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Reinforced Bulkheads</hullmod>
 type|reinforced_bulkheads|DESTROYER|0	0	<good>40%</good> increased hull points.
 type|reinforced_bulkheads|DESTROYER|1	0	If disabled, this ship is almost always recoverable after the battle.
-type|reinforced_bulkheads|DESTROYER|2	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
+type|reinforced_bulkheads|DESTROYER|2	0	When recovered after the battle, starts with <good>40%</good> to <good>60%</good> hull integrity and combat readiness.
+type|reinforced_bulkheads|DESTROYER|3	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 type-detail|reinforced_bulkheads|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Reinforced Bulkheads</hullmod>
 type|reinforced_bulkheads|CRUISER|0	0	<good>40%</good> increased hull points.
 type|reinforced_bulkheads|CRUISER|1	0	If disabled, this ship is almost always recoverable after the battle.
-type|reinforced_bulkheads|CRUISER|2	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
+type|reinforced_bulkheads|CRUISER|2	0	When recovered after the battle, starts with <good>40%</good> to <good>60%</good> hull integrity and combat readiness.
+type|reinforced_bulkheads|CRUISER|3	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 type-detail|reinforced_bulkheads|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Reinforced Bulkheads</hullmod>
 type|reinforced_bulkheads|CAPITAL_SHIP|0	0	<good>40%</good> increased hull points.
 type|reinforced_bulkheads|CAPITAL_SHIP|1	0	If disabled, this ship is almost always recoverable after the battle.
-type|reinforced_bulkheads|CAPITAL_SHIP|2	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
+type|reinforced_bulkheads|CAPITAL_SHIP|2	0	When recovered after the battle, starts with <good>40%</good> to <good>60%</good> hull integrity and combat readiness.
+type|reinforced_bulkheads|CAPITAL_SHIP|3	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 type-detail|reinforced_bulkheads|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Reinforced Bulkheads</hullmod>
 integrable|reinforced_bulkheads|null|0	0	<good>40%</good> increased hull points.
 integrable|reinforced_bulkheads|null|1	0	If disabled, this ship is almost always recoverable after the battle.
-integrable|reinforced_bulkheads|null|2	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
-integrable|reinforced_bulkheads|null|3	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
-integrable|reinforced_bulkheads|null|4	0	<muted>When integrated, for 2 story points:</muted>
-integrable|reinforced_bulkheads|null|5	0	In addition, grants <builtIn>10%</builtIn> increased armor.
+integrable|reinforced_bulkheads|null|2	0	When recovered after the battle, starts with <good>40%</good> to <good>60%</good> hull integrity and combat readiness.
+integrable|reinforced_bulkheads|null|3	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
+integrable|reinforced_bulkheads|null|4	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|reinforced_bulkheads|null|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|reinforced_bulkheads|null|6	0	In addition, grants <builtIn>10%</builtIn> increased armor.
 integrable|reinforced_bulkheads|FRIGATE|0	0	<good>40%</good> increased hull points.
 integrable|reinforced_bulkheads|FRIGATE|1	0	If disabled, this ship is almost always recoverable after the battle.
-integrable|reinforced_bulkheads|FRIGATE|2	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
-integrable|reinforced_bulkheads|FRIGATE|3	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
-integrable|reinforced_bulkheads|FRIGATE|4	0	<muted>When integrated, for 2 story points:</muted>
-integrable|reinforced_bulkheads|FRIGATE|5	0	In addition, grants <builtIn>10%</builtIn> increased armor.
+integrable|reinforced_bulkheads|FRIGATE|2	0	When recovered after the battle, starts with <good>40%</good> to <good>60%</good> hull integrity and combat readiness.
+integrable|reinforced_bulkheads|FRIGATE|3	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
+integrable|reinforced_bulkheads|FRIGATE|4	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|reinforced_bulkheads|FRIGATE|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|reinforced_bulkheads|FRIGATE|6	0	In addition, grants <builtIn>10%</builtIn> increased armor.
 integrable|reinforced_bulkheads|DESTROYER|0	0	<good>40%</good> increased hull points.
 integrable|reinforced_bulkheads|DESTROYER|1	0	If disabled, this ship is almost always recoverable after the battle.
-integrable|reinforced_bulkheads|DESTROYER|2	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
-integrable|reinforced_bulkheads|DESTROYER|3	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
-integrable|reinforced_bulkheads|DESTROYER|4	0	<muted>When integrated, for 2 story points:</muted>
-integrable|reinforced_bulkheads|DESTROYER|5	0	In addition, grants <builtIn>10%</builtIn> increased armor.
+integrable|reinforced_bulkheads|DESTROYER|2	0	When recovered after the battle, starts with <good>40%</good> to <good>60%</good> hull integrity and combat readiness.
+integrable|reinforced_bulkheads|DESTROYER|3	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
+integrable|reinforced_bulkheads|DESTROYER|4	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|reinforced_bulkheads|DESTROYER|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|reinforced_bulkheads|DESTROYER|6	0	In addition, grants <builtIn>10%</builtIn> increased armor.
 integrable|reinforced_bulkheads|CRUISER|0	0	<good>40%</good> increased hull points.
 integrable|reinforced_bulkheads|CRUISER|1	0	If disabled, this ship is almost always recoverable after the battle.
-integrable|reinforced_bulkheads|CRUISER|2	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
-integrable|reinforced_bulkheads|CRUISER|3	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
-integrable|reinforced_bulkheads|CRUISER|4	0	<muted>When integrated, for 2 story points:</muted>
-integrable|reinforced_bulkheads|CRUISER|5	0	In addition, grants <builtIn>10%</builtIn> increased armor.
+integrable|reinforced_bulkheads|CRUISER|2	0	When recovered after the battle, starts with <good>40%</good> to <good>60%</good> hull integrity and combat readiness.
+integrable|reinforced_bulkheads|CRUISER|3	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
+integrable|reinforced_bulkheads|CRUISER|4	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|reinforced_bulkheads|CRUISER|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|reinforced_bulkheads|CRUISER|6	0	In addition, grants <builtIn>10%</builtIn> increased armor.
 integrable|reinforced_bulkheads|CAPITAL_SHIP|0	0	<good>40%</good> increased hull points.
 integrable|reinforced_bulkheads|CAPITAL_SHIP|1	0	If disabled, this ship is almost always recoverable after the battle.
-integrable|reinforced_bulkheads|CAPITAL_SHIP|2	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
-integrable|reinforced_bulkheads|CAPITAL_SHIP|3	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
-integrable|reinforced_bulkheads|CAPITAL_SHIP|4	0	<muted>When integrated, for 2 story points:</muted>
-integrable|reinforced_bulkheads|CAPITAL_SHIP|5	0	In addition, grants <builtIn>10%</builtIn> increased armor.
+integrable|reinforced_bulkheads|CAPITAL_SHIP|2	0	When recovered after the battle, starts with <good>40%</good> to <good>60%</good> hull integrity and combat readiness.
+integrable|reinforced_bulkheads|CAPITAL_SHIP|3	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
+integrable|reinforced_bulkheads|CAPITAL_SHIP|4	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|reinforced_bulkheads|CAPITAL_SHIP|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|reinforced_bulkheads|CAPITAL_SHIP|6	0	In addition, grants <builtIn>10%</builtIn> increased armor.
 integrated|reinforced_bulkheads|null|0	0	<builtIn>Integrated</builtIn>
 integrated|reinforced_bulkheads|null|1	0	<good>40%</good> increased hull points.
 integrated|reinforced_bulkheads|null|2	0	If disabled, this ship is almost always recoverable after the battle.
-integrated|reinforced_bulkheads|null|3	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
-integrated|reinforced_bulkheads|null|4	0	<builtIn>10%</builtIn> increased armor.
+integrated|reinforced_bulkheads|null|3	0	When recovered after the battle, starts with <good>40%</good> to <good>60%</good> hull integrity and combat readiness.
+integrated|reinforced_bulkheads|null|4	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
+integrated|reinforced_bulkheads|null|5	0	<builtIn>10%</builtIn> increased armor.
 integrated|reinforced_bulkheads|FRIGATE|0	0	<builtIn>Integrated</builtIn>
 integrated|reinforced_bulkheads|FRIGATE|1	0	<good>40%</good> increased hull points.
 integrated|reinforced_bulkheads|FRIGATE|2	0	If disabled, this ship is almost always recoverable after the battle.
-integrated|reinforced_bulkheads|FRIGATE|3	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
-integrated|reinforced_bulkheads|FRIGATE|4	0	<builtIn>10%</builtIn> increased armor.
+integrated|reinforced_bulkheads|FRIGATE|3	0	When recovered after the battle, starts with <good>40%</good> to <good>60%</good> hull integrity and combat readiness.
+integrated|reinforced_bulkheads|FRIGATE|4	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
+integrated|reinforced_bulkheads|FRIGATE|5	0	<builtIn>10%</builtIn> increased armor.
 integrated|reinforced_bulkheads|DESTROYER|0	0	<builtIn>Integrated</builtIn>
 integrated|reinforced_bulkheads|DESTROYER|1	0	<good>40%</good> increased hull points.
 integrated|reinforced_bulkheads|DESTROYER|2	0	If disabled, this ship is almost always recoverable after the battle.
-integrated|reinforced_bulkheads|DESTROYER|3	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
-integrated|reinforced_bulkheads|DESTROYER|4	0	<builtIn>10%</builtIn> increased armor.
+integrated|reinforced_bulkheads|DESTROYER|3	0	When recovered after the battle, starts with <good>40%</good> to <good>60%</good> hull integrity and combat readiness.
+integrated|reinforced_bulkheads|DESTROYER|4	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
+integrated|reinforced_bulkheads|DESTROYER|5	0	<builtIn>10%</builtIn> increased armor.
 integrated|reinforced_bulkheads|CRUISER|0	0	<builtIn>Integrated</builtIn>
 integrated|reinforced_bulkheads|CRUISER|1	0	<good>40%</good> increased hull points.
 integrated|reinforced_bulkheads|CRUISER|2	0	If disabled, this ship is almost always recoverable after the battle.
-integrated|reinforced_bulkheads|CRUISER|3	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
-integrated|reinforced_bulkheads|CRUISER|4	0	<builtIn>10%</builtIn> increased armor.
+integrated|reinforced_bulkheads|CRUISER|3	0	When recovered after the battle, starts with <good>40%</good> to <good>60%</good> hull integrity and combat readiness.
+integrated|reinforced_bulkheads|CRUISER|4	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
+integrated|reinforced_bulkheads|CRUISER|5	0	<builtIn>10%</builtIn> increased armor.
 integrated|reinforced_bulkheads|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|reinforced_bulkheads|CAPITAL_SHIP|1	0	<good>40%</good> increased hull points.
 integrated|reinforced_bulkheads|CAPITAL_SHIP|2	0	If disabled, this ship is almost always recoverable after the battle.
-integrated|reinforced_bulkheads|CAPITAL_SHIP|3	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
-integrated|reinforced_bulkheads|CAPITAL_SHIP|4	0	<builtIn>10%</builtIn> increased armor.
+integrated|reinforced_bulkheads|CAPITAL_SHIP|3	0	When recovered after the battle, starts with <good>40%</good> to <good>60%</good> hull integrity and combat readiness.
+integrated|reinforced_bulkheads|CAPITAL_SHIP|4	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
+integrated|reinforced_bulkheads|CAPITAL_SHIP|5	0	<builtIn>10%</builtIn> increased armor.
 flavour|relay_protocols	0	Remnant battlegroups keep station through relay protocols that are only dimly understood. The recovered fragment has never stopped transmitting.
 type|relay_protocols|null|0	0	<good>+10</good> to High Tech Affinity.
 type|relay_protocols|null|1	0	Your fleet has <good>+1</good> to nav rating for every <hl>50</hl> High Tech Affinity.
@@ -12087,6 +12102,8 @@ type|safety_overrides|null|2	0	<bad>67%</bad> less peak performance time.
 type|safety_overrides|null|3	0	<bad>100%</bad> less venting speed.
 type|safety_overrides|null|4	0	<good>+450</good> to range before falloff effectiveness applies.
 type|safety_overrides|null|5	0	<bad>75%</bad> less weapon range beyond the range threshold.
+type|safety_overrides|null|6	1	Loses up to <good>40%</good> of its crew over a full peak performance time in combat, even without taking hull damage.
+type|safety_overrides|null|7	1	<good>100%</good> more monthly crew salaries.
 type-detail|safety_overrides|null|0	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
 type-detail|safety_overrides|null|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Probability Space Hypervessel</hullmod>\n• <hullmod>Domain Machinery</hullmod>\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>SILVERSWORD [Type A]</hullmod>\n• <hullmod>Cetan Frame</hullmod>\n• <hullmod>Ultimate Design</hullmod>\n• <hullmod>Invasive Timefield</hullmod>\n• <hullmod>PD Specialization</hullmod>\n• <hullmod>Aquila Reactor Protocol</hullmod>\n• <hullmod>(Consumable) Aquila Reactor Protocol</hullmod>\n• <hullmod>Avaritia Capacity Overhaul</hullmod>\n• <hullmod>Volatile Flux Injector</hullmod>\n• <hullmod>Ancient Frame</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Exogrid Overload</hullmod>\n• <hullmod>Extra Propulsion Systems</hullmod>\n• <hullmod>Prototype Core</hullmod>\n• <hullmod>Pristine Condition</hullmod>\n• <hullmod>Robust Flux Reactor</hullmod>\n• <hullmod>Repulse-Field</hullmod>\n• <hullmod>Guerrilla Overhaul</hullmod>\n• <hullmod>Necro Scavenger</hullmod>\n• <hullmod>Quantum Damper</hullmod>\n• <hullmod>Illusia Resonance</hullmod>\n• <hullmod>Safety Protocols</hullmod>\n• <hullmod>Singularity Hullmod</hullmod>\n• <hullmod>Silberherz Core</hullmod>\n• <hullmod>Silberherz Subcore</hullmod>\n• <hullmod>Edge Capacitors Retrofit</hullmod>\n• <hullmod>Anti-Terminal Reactive Breakers</hullmod>\n• <hullmod>Safety Overrides</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Volatile Flux Tuning</node>
 type|safety_overrides|FRIGATE|0	0	The zero-flux speed boost works at any flux level.
@@ -12095,9 +12112,11 @@ type|safety_overrides|FRIGATE|2	0	<bad>67%</bad> less peak performance time.
 type|safety_overrides|FRIGATE|3	0	<bad>100%</bad> less venting speed.
 type|safety_overrides|FRIGATE|4	0	<good>+450</good> to range before falloff effectiveness applies.
 type|safety_overrides|FRIGATE|5	0	<bad>75%</bad> less weapon range beyond the range threshold.
-type|safety_overrides|FRIGATE|6	0	<good>+50</good> to top speed.
-type|safety_overrides|FRIGATE|7	0	<good>+100</good> to acceleration.
-type|safety_overrides|FRIGATE|8	0	<good>+100</good> to deceleration.
+type|safety_overrides|FRIGATE|6	1	Loses up to <good>40%</good> of its crew over a full peak performance time in combat, even without taking hull damage.
+type|safety_overrides|FRIGATE|7	1	<good>100%</good> more monthly crew salaries.
+type|safety_overrides|FRIGATE|8	0	<good>+50</good> to top speed.
+type|safety_overrides|FRIGATE|9	0	<good>+100</good> to acceleration.
+type|safety_overrides|FRIGATE|10	0	<good>+100</good> to deceleration.
 type-detail|safety_overrides|FRIGATE|0	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
 type-detail|safety_overrides|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Probability Space Hypervessel</hullmod>\n• <hullmod>Domain Machinery</hullmod>\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>SILVERSWORD [Type A]</hullmod>\n• <hullmod>Cetan Frame</hullmod>\n• <hullmod>Ultimate Design</hullmod>\n• <hullmod>Invasive Timefield</hullmod>\n• <hullmod>PD Specialization</hullmod>\n• <hullmod>Aquila Reactor Protocol</hullmod>\n• <hullmod>(Consumable) Aquila Reactor Protocol</hullmod>\n• <hullmod>Avaritia Capacity Overhaul</hullmod>\n• <hullmod>Volatile Flux Injector</hullmod>\n• <hullmod>Ancient Frame</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Exogrid Overload</hullmod>\n• <hullmod>Extra Propulsion Systems</hullmod>\n• <hullmod>Prototype Core</hullmod>\n• <hullmod>Pristine Condition</hullmod>\n• <hullmod>Robust Flux Reactor</hullmod>\n• <hullmod>Repulse-Field</hullmod>\n• <hullmod>Guerrilla Overhaul</hullmod>\n• <hullmod>Necro Scavenger</hullmod>\n• <hullmod>Quantum Damper</hullmod>\n• <hullmod>Illusia Resonance</hullmod>\n• <hullmod>Safety Protocols</hullmod>\n• <hullmod>Singularity Hullmod</hullmod>\n• <hullmod>Silberherz Core</hullmod>\n• <hullmod>Silberherz Subcore</hullmod>\n• <hullmod>Edge Capacitors Retrofit</hullmod>\n• <hullmod>Anti-Terminal Reactive Breakers</hullmod>\n• <hullmod>Safety Overrides</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Volatile Flux Tuning</node>
 type|safety_overrides|DESTROYER|0	0	The zero-flux speed boost works at any flux level.
@@ -12106,9 +12125,11 @@ type|safety_overrides|DESTROYER|2	0	<bad>67%</bad> less peak performance time.
 type|safety_overrides|DESTROYER|3	0	<bad>100%</bad> less venting speed.
 type|safety_overrides|DESTROYER|4	0	<good>+450</good> to range before falloff effectiveness applies.
 type|safety_overrides|DESTROYER|5	0	<bad>75%</bad> less weapon range beyond the range threshold.
-type|safety_overrides|DESTROYER|6	0	<good>+30</good> to top speed.
-type|safety_overrides|DESTROYER|7	0	<good>+60</good> to acceleration.
-type|safety_overrides|DESTROYER|8	0	<good>+60</good> to deceleration.
+type|safety_overrides|DESTROYER|6	1	Loses up to <good>40%</good> of its crew over a full peak performance time in combat, even without taking hull damage.
+type|safety_overrides|DESTROYER|7	1	<good>100%</good> more monthly crew salaries.
+type|safety_overrides|DESTROYER|8	0	<good>+30</good> to top speed.
+type|safety_overrides|DESTROYER|9	0	<good>+60</good> to acceleration.
+type|safety_overrides|DESTROYER|10	0	<good>+60</good> to deceleration.
 type-detail|safety_overrides|DESTROYER|0	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
 type-detail|safety_overrides|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Probability Space Hypervessel</hullmod>\n• <hullmod>Domain Machinery</hullmod>\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>SILVERSWORD [Type A]</hullmod>\n• <hullmod>Cetan Frame</hullmod>\n• <hullmod>Ultimate Design</hullmod>\n• <hullmod>Invasive Timefield</hullmod>\n• <hullmod>PD Specialization</hullmod>\n• <hullmod>Aquila Reactor Protocol</hullmod>\n• <hullmod>(Consumable) Aquila Reactor Protocol</hullmod>\n• <hullmod>Avaritia Capacity Overhaul</hullmod>\n• <hullmod>Volatile Flux Injector</hullmod>\n• <hullmod>Ancient Frame</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Exogrid Overload</hullmod>\n• <hullmod>Extra Propulsion Systems</hullmod>\n• <hullmod>Prototype Core</hullmod>\n• <hullmod>Pristine Condition</hullmod>\n• <hullmod>Robust Flux Reactor</hullmod>\n• <hullmod>Repulse-Field</hullmod>\n• <hullmod>Guerrilla Overhaul</hullmod>\n• <hullmod>Necro Scavenger</hullmod>\n• <hullmod>Quantum Damper</hullmod>\n• <hullmod>Illusia Resonance</hullmod>\n• <hullmod>Safety Protocols</hullmod>\n• <hullmod>Singularity Hullmod</hullmod>\n• <hullmod>Silberherz Core</hullmod>\n• <hullmod>Silberherz Subcore</hullmod>\n• <hullmod>Edge Capacitors Retrofit</hullmod>\n• <hullmod>Anti-Terminal Reactive Breakers</hullmod>\n• <hullmod>Safety Overrides</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Volatile Flux Tuning</node>
 type|safety_overrides|CRUISER|0	0	The zero-flux speed boost works at any flux level.
@@ -12117,9 +12138,11 @@ type|safety_overrides|CRUISER|2	0	<bad>67%</bad> less peak performance time.
 type|safety_overrides|CRUISER|3	0	<bad>100%</bad> less venting speed.
 type|safety_overrides|CRUISER|4	0	<good>+450</good> to range before falloff effectiveness applies.
 type|safety_overrides|CRUISER|5	0	<bad>75%</bad> less weapon range beyond the range threshold.
-type|safety_overrides|CRUISER|6	0	<good>+20</good> to top speed.
-type|safety_overrides|CRUISER|7	0	<good>+40</good> to acceleration.
-type|safety_overrides|CRUISER|8	0	<good>+40</good> to deceleration.
+type|safety_overrides|CRUISER|6	1	Loses up to <good>40%</good> of its crew over a full peak performance time in combat, even without taking hull damage.
+type|safety_overrides|CRUISER|7	1	<good>100%</good> more monthly crew salaries.
+type|safety_overrides|CRUISER|8	0	<good>+20</good> to top speed.
+type|safety_overrides|CRUISER|9	0	<good>+40</good> to acceleration.
+type|safety_overrides|CRUISER|10	0	<good>+40</good> to deceleration.
 type-detail|safety_overrides|CRUISER|0	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
 type-detail|safety_overrides|CRUISER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Probability Space Hypervessel</hullmod>\n• <hullmod>Domain Machinery</hullmod>\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>SILVERSWORD [Type A]</hullmod>\n• <hullmod>Cetan Frame</hullmod>\n• <hullmod>Ultimate Design</hullmod>\n• <hullmod>Invasive Timefield</hullmod>\n• <hullmod>PD Specialization</hullmod>\n• <hullmod>Aquila Reactor Protocol</hullmod>\n• <hullmod>(Consumable) Aquila Reactor Protocol</hullmod>\n• <hullmod>Avaritia Capacity Overhaul</hullmod>\n• <hullmod>Volatile Flux Injector</hullmod>\n• <hullmod>Ancient Frame</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Exogrid Overload</hullmod>\n• <hullmod>Extra Propulsion Systems</hullmod>\n• <hullmod>Prototype Core</hullmod>\n• <hullmod>Pristine Condition</hullmod>\n• <hullmod>Robust Flux Reactor</hullmod>\n• <hullmod>Repulse-Field</hullmod>\n• <hullmod>Guerrilla Overhaul</hullmod>\n• <hullmod>Necro Scavenger</hullmod>\n• <hullmod>Quantum Damper</hullmod>\n• <hullmod>Illusia Resonance</hullmod>\n• <hullmod>Safety Protocols</hullmod>\n• <hullmod>Singularity Hullmod</hullmod>\n• <hullmod>Silberherz Core</hullmod>\n• <hullmod>Silberherz Subcore</hullmod>\n• <hullmod>Edge Capacitors Retrofit</hullmod>\n• <hullmod>Anti-Terminal Reactive Breakers</hullmod>\n• <hullmod>Safety Overrides</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Volatile Flux Tuning</node>
 type|safety_overrides|CAPITAL_SHIP|0	0	The zero-flux speed boost works at any flux level.
@@ -12128,9 +12151,11 @@ type|safety_overrides|CAPITAL_SHIP|2	0	<bad>67%</bad> less peak performance time
 type|safety_overrides|CAPITAL_SHIP|3	0	<bad>100%</bad> less venting speed.
 type|safety_overrides|CAPITAL_SHIP|4	0	<good>+450</good> to range before falloff effectiveness applies.
 type|safety_overrides|CAPITAL_SHIP|5	0	<bad>75%</bad> less weapon range beyond the range threshold.
-type|safety_overrides|CAPITAL_SHIP|6	0	<good>+10</good> to top speed.
-type|safety_overrides|CAPITAL_SHIP|7	0	<good>+20</good> to acceleration.
-type|safety_overrides|CAPITAL_SHIP|8	0	<good>+20</good> to deceleration.
+type|safety_overrides|CAPITAL_SHIP|6	1	Loses up to <good>40%</good> of its crew over a full peak performance time in combat, even without taking hull damage.
+type|safety_overrides|CAPITAL_SHIP|7	1	<good>100%</good> more monthly crew salaries.
+type|safety_overrides|CAPITAL_SHIP|8	0	<good>+10</good> to top speed.
+type|safety_overrides|CAPITAL_SHIP|9	0	<good>+20</good> to acceleration.
+type|safety_overrides|CAPITAL_SHIP|10	0	<good>+20</good> to deceleration.
 type-detail|safety_overrides|CAPITAL_SHIP|0	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
 type-detail|safety_overrides|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Probability Space Hypervessel</hullmod>\n• <hullmod>Domain Machinery</hullmod>\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>SILVERSWORD [Type A]</hullmod>\n• <hullmod>Cetan Frame</hullmod>\n• <hullmod>Ultimate Design</hullmod>\n• <hullmod>Invasive Timefield</hullmod>\n• <hullmod>PD Specialization</hullmod>\n• <hullmod>Aquila Reactor Protocol</hullmod>\n• <hullmod>(Consumable) Aquila Reactor Protocol</hullmod>\n• <hullmod>Avaritia Capacity Overhaul</hullmod>\n• <hullmod>Volatile Flux Injector</hullmod>\n• <hullmod>Ancient Frame</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Exogrid Overload</hullmod>\n• <hullmod>Extra Propulsion Systems</hullmod>\n• <hullmod>Prototype Core</hullmod>\n• <hullmod>Pristine Condition</hullmod>\n• <hullmod>Robust Flux Reactor</hullmod>\n• <hullmod>Repulse-Field</hullmod>\n• <hullmod>Guerrilla Overhaul</hullmod>\n• <hullmod>Necro Scavenger</hullmod>\n• <hullmod>Quantum Damper</hullmod>\n• <hullmod>Illusia Resonance</hullmod>\n• <hullmod>Safety Protocols</hullmod>\n• <hullmod>Singularity Hullmod</hullmod>\n• <hullmod>Silberherz Core</hullmod>\n• <hullmod>Silberherz Subcore</hullmod>\n• <hullmod>Edge Capacitors Retrofit</hullmod>\n• <hullmod>Anti-Terminal Reactive Breakers</hullmod>\n• <hullmod>Safety Overrides</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Volatile Flux Tuning</node>
 flavour|salvaged_abyssal_grid	0	Picking apart the power grids of abyssal drone wrecks, the crew works out how their couplings survive the storms of abyssal hyperspace and rebuilds the ship's energy mounts to match.

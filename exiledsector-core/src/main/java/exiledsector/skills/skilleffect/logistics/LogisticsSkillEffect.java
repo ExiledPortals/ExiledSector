@@ -21,6 +21,7 @@ import static exiledsector.skills.skilleffect.StatTarget.all;
 import static exiledsector.skills.skilleffect.StatTarget.bonus;
 import static exiledsector.skills.skilleffect.StatTarget.dynamicMod;
 import static exiledsector.skills.skilleffect.StatTarget.dynamicStat;
+import static exiledsector.skills.skilleffect.StatTarget.scaled;
 import static exiledsector.skills.skilleffect.StatTarget.stat;
 import static exiledsector.skills.skilleffect.logistics.FleetContributionEffect.anyFleetContribution;
 import static exiledsector.skills.skilleffect.logistics.FleetContributionEffect.playerFleetContribution;
@@ -189,6 +190,13 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
     },
     CREW_LOSS_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getCrewLossMult), "stat.crewCasualties", true)),
     CREW_LOSS_MULT(statEffect(MULT, stat(MutableShipStatsAPI::getCrewLossMult), "stat.crewCasualties", true)),
+    PEAK_TIME_CREW_LOSS_FLAT(statEffect(FLAT, scaled(dynamicMod("so_crew_loss_mod"), 0.01f), "stat.crewCasualties", true)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.templated(this, magnitude);
+        }
+    },
+    CREW_SALARY_MULT(statEffect(MULT, dynamicStat("ship_crew_salary_mult"), "stat.crewSalaries", true)),
     SURVEY_COST_REDUCTION_HEAVY_MACHINERY(statEffect(FLAT, dynamicMod("survey_cost_reduction_heavy_machinery"),
             "stat.surveyHeavyMachinery", true)) {
         @Override
