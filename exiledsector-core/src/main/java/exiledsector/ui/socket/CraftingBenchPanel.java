@@ -824,7 +824,7 @@ public final class CraftingBenchPanel extends HoloPanel {
                     .getPosition().inTR(feedstockRight, 0f);
             feedstockRight += PICK_BUTTON_WIDTH + GAP * 2f;
         }
-        addFeedstockCount(element, feedstockRight);
+        addCraftingBenchFeedstockCounts(element, feedstockRight);
         headerElement = finishHeader(element, headerElement);
     }
 

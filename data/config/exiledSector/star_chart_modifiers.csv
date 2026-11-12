@@ -37,8 +37,8 @@ CHART_ENEMY_SENSOR_RANGE_FLAT,prefix,star_chart,CHART_ENEMY_SENSOR_RANGE_FLAT:lo
 CHART_SMALLER_BATTLES_FLAT,prefix,star_chart,CHART_SMALLER_BATTLES_FLAT:low=20-50/mid=20-50/high=20-50,Contained,,battle_rules
 CHART_LARGER_BATTLES_FLAT,prefix,star_chart,CHART_LARGER_BATTLES_FLAT:low=20-50/mid=20-50/high=20-50,Sprawling,,battle_rules
 CHART_TWINNED_BOSS,prefix,star_chart,CHART_TWINNED_BOSS:mid=1/high=1,Twinned,,enemy;boss
-CHART_ENEMY_LIONS_GAZE,prefix,star_chart,CHART_ENEMY_LIONS_GAZE:mid=1/high=1,Prismatic,,enemy;energy;beam;on_hit
-CHART_ENEMY_REFRACTING_PROJECTILES,prefix,star_chart,CHART_ENEMY_REFRACTING_PROJECTILES:mid=1/high=1,Refracting,,enemy;energy;shield;on_hit
+CHART_ENEMY_LIONS_GAZE,prefix,star_chart,CHART_ENEMY_LIONS_GAZE:mid=1/high=1,Prismatic,,enemy;beam;on_hit
+CHART_ENEMY_REFRACTING_PROJECTILES,prefix,star_chart,CHART_ENEMY_REFRACTING_PROJECTILES:mid=1/high=1,Refracting,,enemy;non_beam_energy;shield;on_hit
 CHART_ENEMY_HULLBREACHER_ROUNDS,prefix,star_chart,CHART_ENEMY_HULLBREACHER_ROUNDS:mid=1/high=1,Piercing,,enemy;ballistic;on_hit
 CHART_ENEMY_FREEBOOTERS_CHARGE,prefix,star_chart,CHART_ENEMY_FREEBOOTERS_CHARGE:mid=1/high=1,Freebooting,,enemy;damage
 CHART_ENEMY_RISE_FROM_THE_ASHES,prefix,star_chart,CHART_ENEMY_RISE_FROM_THE_ASHES:low=1/mid=1/high=1,Undying,,enemy;hull;armour;low_hull

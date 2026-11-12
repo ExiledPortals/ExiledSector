@@ -239,7 +239,8 @@ public enum InfusedCraft {
 
     public boolean canAfford(String tag, CraftingMaterials materials) {
         InfusedCraftCosts.Cost cost = cost(tag);
-        return cost != null && materials.count(cost.feedstockId()) >= cost.amount() && materials.count(reshapingId()) >= reshapingCost;
+        return cost != null && cost.feedstockIds().stream().allMatch(feedstockId -> materials.count(feedstockId) >= cost.amount())
+                && materials.count(reshapingId()) >= reshapingCost;
     }
 
     public boolean apply(Item item, String tag, ForgeChoice choice, Collection<CraftingInhibitor> inhibitors, Random random) {
@@ -258,7 +259,7 @@ public enum InfusedCraft {
             return Optional.empty();
         }
         InfusedCraftCosts.Cost cost = cost(tag);
-        materials.take(cost.feedstockId(), cost.amount());
+        cost.feedstockIds().forEach(feedstockId -> materials.take(feedstockId, cost.amount()));
         if (reshapingCost > 0) {
             materials.take(reshapingId(), reshapingCost);
         }

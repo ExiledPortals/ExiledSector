@@ -19,10 +19,13 @@ import exiledsector.ui.VanillaText;
 import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.cargo.CargoIconLooks;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 record InfusedCraftEntry(InfusedCraft craft, String tag) implements InfusedCraftingTray.CraftRow {
 
@@ -42,12 +45,12 @@ record InfusedCraftEntry(InfusedCraft craft, String tag) implements InfusedCraft
 
     @Override
     public List<String> iconPaths() {
-        return List.of(CraftingItemTrayEntry.iconPath(cost().feedstockId()));
+        return cost().feedstockIds().stream().map(CraftingItemTrayEntry::iconPath).toList();
     }
 
     @Override
     public CargoIconLook look() {
-        return CargoIconLooks.forMaterial(cost().feedstockId());
+        return CargoIconLooks.forMaterial(cost().feedstockIds().get(0));
     }
 
     @Override
@@ -57,13 +60,16 @@ record InfusedCraftEntry(InfusedCraft craft, String tag) implements InfusedCraft
 
     @Override
     public List<RowIcon> rowIcons(BenchTrayContext context) {
-        RowIcon feedstock = new RowIcon(iconPaths().get(0), look(), badge(context));
-        if (craft.reshapingCost() <= 0) {
-            return List.of(feedstock);
+        String badge = badge(context);
+        List<RowIcon> icons = new ArrayList<>(cost().feedstockIds().stream()
+                .map(feedstockId -> new RowIcon(CraftingItemTrayEntry.iconPath(feedstockId), CargoIconLooks.forMaterial(feedstockId), badge))
+                .toList());
+        if (craft.reshapingCost() > 0) {
+            String reshapingId = InfusedCraft.reshapingId();
+            icons.add(new RowIcon(CraftingItemTrayEntry.iconPath(reshapingId), CargoIconLooks.forMaterial(reshapingId),
+                    String.valueOf(craft.reshapingCost())));
         }
-        String reshapingId = InfusedCraft.reshapingId();
-        return List.of(feedstock, new RowIcon(CraftingItemTrayEntry.iconPath(reshapingId), CargoIconLooks.forMaterial(reshapingId),
-                String.valueOf(craft.reshapingCost())));
+        return List.copyOf(icons);
     }
 
     @Override
@@ -74,7 +80,8 @@ record InfusedCraftEntry(InfusedCraft craft, String tag) implements InfusedCraft
 
     @Override
     public String searchText(BenchTrayContext context) {
-        return rowText(context).plain() + " " + feedstockName();
+        String feedstockNames = cost().feedstockIds().stream().map(MaterialItems::displayName).collect(Collectors.joining(" "));
+        return rowText(context).plain() + " " + feedstockNames;
     }
 
     @Override
@@ -147,16 +154,34 @@ record InfusedCraftEntry(InfusedCraft craft, String tag) implements InfusedCraft
         return Translation.text("ui.infusedCraft." + craft.id() + ".name");
     }
 
-    private String feedstockName() {
-        return MaterialItems.displayName(cost().feedstockId());
+    private String costText(BenchTrayContext context, String key) {
+        List<String> feedstockIds = cost().feedstockIds();
+        return feedstockIds.size() > 1 ? multiFeedstockCostText(context, key + "Each", feedstockIds) : singleFeedstockCostText(context, key, feedstockIds.get(0));
     }
 
-    private String costText(BenchTrayContext context, String key) {
+    private String singleFeedstockCostText(BenchTrayContext context, String key, String feedstockId) {
         int reshapingCost = craft.reshapingCost();
         Message message = reshapingCost <= 0 ? Translation.msg(key) : Translation.msg(key + "WithSwarms").count(reshapingCost)
                 .arg("swarmsHeld", context.materials().count(InfusedCraft.reshapingId()));
-        return message.arg("cost", cost().amount()).arg("feedstock", feedstockName())
-                .arg("held", context.materials().count(cost().feedstockId())).text();
+        return message.arg("cost", cost().amount()).arg("feedstock", MaterialItems.displayName(feedstockId))
+                .arg("held", context.materials().count(feedstockId)).text();
+    }
+
+    private String multiFeedstockCostText(BenchTrayContext context, String key, List<String> feedstockIds) {
+        int reshapingCost = craft.reshapingCost();
+        List<String> heldIds = new ArrayList<>(feedstockIds);
+        if (reshapingCost > 0) {
+            heldIds.add(InfusedCraft.reshapingId());
+        }
+        Message message = reshapingCost <= 0 ? Translation.msg(key) : Translation.msg(key + "WithSwarms").count(reshapingCost);
+        return message.arg("cost", cost().amount()).arg("feedstock", listText(feedstockIds, MaterialItems::displayName))
+                .arg("held", listText(heldIds, materialId -> Translation.msg("ui.infusedCraft.heldMaterial")
+                        .arg("held", context.materials().count(materialId)).arg("name", MaterialItems.displayName(materialId)).text()))
+                .text();
+    }
+
+    private static String listText(List<String> materialIds, Function<String, String> partText) {
+        return Translation.list(materialIds.stream().map(materialId -> StyledText.of(partText.apply(materialId))).toList()).plain();
     }
 
     private String refusalText(UseVerdict verdict, Item item) {

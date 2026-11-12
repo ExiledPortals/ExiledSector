@@ -26,8 +26,8 @@ final class NpcRelevance {
             Map.entry("repair", 0.6f), Map.entry("ammo", 0.6f), Map.entry("point_defense", 0.6f),
             Map.entry("kinetic", 0.5f), Map.entry("high_explosive", 0.5f),
             Map.entry("fragmentation", 0.5f), Map.entry("energy_damage", 0.5f),
-            Map.entry("ballistic", 0.1f), Map.entry("energy", 0.1f), Map.entry("beam", 0.1f), Map.entry("missile", 0.1f),
-            Map.entry("fighter", 0.1f), Map.entry("phase", 0.1f), Map.entry("shield", 0.1f),
+            Map.entry("ballistic", 0.1f), Map.entry("energy", 0.1f), Map.entry("non_beam_energy", 0.1f), Map.entry("beam", 0.1f),
+            Map.entry("missile", 0.1f), Map.entry("fighter", 0.1f), Map.entry("phase", 0.1f), Map.entry("shield", 0.1f),
             Map.entry("front_shield", 0.1f), Map.entry("omni_shield", 0.1f), Map.entry("shieldless", 0.1f),
             Map.entry("logistics", 0.15f), Map.entry("fleet_support", 0.2f), Map.entry("d_mods", 0.2f));
     static final float LIGHT_ARMOUR_WEIGHT = 0.3f;
@@ -53,6 +53,7 @@ final class NpcRelevance {
         Set<WeaponKind> weaponKinds = profile.weaponKinds();
         focus(weightsByTag, "ballistic", weaponKinds.contains(WeaponKind.BALLISTIC));
         focus(weightsByTag, "energy", weaponKinds.contains(WeaponKind.ENERGY));
+        focus(weightsByTag, "non_beam_energy", weaponKinds.contains(WeaponKind.NON_BEAM_ENERGY));
         focus(weightsByTag, "beam", weaponKinds.contains(WeaponKind.BEAM));
         focus(weightsByTag, "missile", weaponKinds.contains(WeaponKind.MISSILE));
         focus(weightsByTag, "fighter", profile.fighterBays() > 0);

@@ -247,7 +247,6 @@
 			"todo": "Needs an icon.",
 			"tags": [
 				"sensors",
-				"logistics",
 				"campaign_only",
 				"logistics_cap"
 			]
@@ -624,7 +623,7 @@
 				}
 			],
 			"tags": [
-				"energy",
+				"non_beam_energy",
 				"damage",
 				"req_non_beam_energy"
 			]
@@ -641,7 +640,6 @@
 			],
 			"tags": [
 				"beam",
-				"energy",
 				"damage",
 				"req_beam"
 			]
@@ -728,7 +726,6 @@
 			"flavourAutomated": "Diktat propaganda insists that the Lion's gaze falls on every citizen at once, and the engineer-technicians of the Lion's Guard took the slogan literally. The ship's core records how a Lion's Guard Executor divides its beams across a target and the ships around it, and splits its own the same way. It does not record the slogan.",
 			"tags": [
 				"beam",
-				"energy",
 				"req_beam"
 			]
 		},
@@ -939,7 +936,7 @@
 			"flavour": "Pulling apart the energy converters of wrecked Tri-Tachyon warships shows the crew how to tune this ship's energy bolts to glance off an enemy shield and carry on to another target. Tri-Tachyon sales literature calls this efficiency.",
 			"flavourAutomated": "Pulling apart the energy converters of wrecked Tri-Tachyon warships shows the refit crew how to tune this ship's energy bolts to glance off an enemy shield and carry on to another target. Tri-Tachyon sales literature calls this efficiency.",
 			"tags": [
-				"energy",
+				"non_beam_energy",
 				"on_hit",
 				"req_non_beam_energy"
 			]
@@ -1483,7 +1480,6 @@
 			],
 			"tags": [
 				"beam",
-				"energy",
 				"range",
 				"req_beam"
 			]
@@ -3260,7 +3256,6 @@
 			"todo": "Placeholder magnitudes (50% hard flux, -25% range) pending real balance numbers. Reimplemented as a scalable percentage instead of vanilla's all-or-nothing forced-hard-flux-on-every-beam-hit, and the range reduction is a flat percentage instead of vanilla's reduce-only-the-portion-past-200-units logic - deliberate simplifications, not oversights.",
 			"tags": [
 				"beam",
-				"energy",
 				"damage",
 				"req_beam"
 			]
@@ -5496,7 +5491,6 @@
 			],
 			"tags": [
 				"beam",
-				"energy",
 				"req_beam"
 			]
 		},
@@ -5948,7 +5942,7 @@
 			"flavour": "The NCA Vendor sells Ion Bolters to any well-funded mercenary, and taking one apart shows the crew how to overdrive this ship's energy shots the same way. The terms of sale forbid exactly this, in very small print.",
 			"flavourAutomated": "The NCA Vendor sells Ion Bolters to any well-funded mercenary, and taking one apart shows the refit crew how to overdrive this ship's energy shots the same way. The terms of sale forbid exactly this, in very small print.",
 			"tags": [
-				"energy",
+				"non_beam_energy",
 				"emp",
 				"on_hit",
 				"req_non_beam_energy"
@@ -6247,7 +6241,6 @@
 			"flavourAutomated": "A corrosion emitter salvaged from a Stargazer wreck still drags stardust through whatever it touches, and the refit crew tunes this ship's beams to do the same.",
 			"tags": [
 				"beam",
-				"energy",
 				"on_hit",
 				"req_beam"
 			]
@@ -7154,7 +7147,6 @@
 			"flavourAutomated": "A Tri-Tachyon commission hands its captains a binder of licensed beam calibration tables, each page watermarked. The ship's core scans every page once.",
 			"tags": [
 				"beam",
-				"energy",
 				"damage",
 				"range",
 				"req_beam"
@@ -8170,7 +8162,7 @@
 			"flavour": "Emitter coils salvaged from Remnant wrecks can be wound for a steady beam or a hard pulse, but not both. Remnant drones never seem to need the choice.",
 			"tags": [
 				"beam",
-				"energy",
+				"non_beam_energy",
 				"damage"
 			]
 		},

@@ -31,6 +31,7 @@ import exiledsector.i18n.SpecLocalisation;
 import exiledsector.i18n.Translation;
 import exiledsector.items.Engrams;
 import exiledsector.items.AtlasCatalystItems;
+import exiledsector.items.BiomeCraft;
 import exiledsector.items.InfusedFeedstock;
 import exiledsector.items.ItemDataRules;
 import exiledsector.items.ItemTypeSupport;
@@ -184,6 +185,11 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     @Override
     public List<BenchTray> hullCraftingBenchTrays() {
         return List.of(EngramTray.INSTANCE, InfusedCraftingTray.INSTANCE);
+    }
+
+    @Override
+    public List<String> craftingBenchFeedstockIds() {
+        return BiomeCraft.feedstockIds();
     }
 
     @Override

@@ -50,17 +50,33 @@ class ThemeTagsTest {
     }
 
     @Test
-    void damageTypesHaveNoParent() {
+    void damageTypesShareTheDamageTypeParentOutsideWeapons() {
         for (String damageType : List.of("kinetic", "high_explosive", "fragmentation", "energy_damage", "emp")) {
-            assertNull(ThemeTags.parent(damageType), damageType);
-            assertEquals(List.of(damageType), ThemeTags.withAncestors(damageType));
+            assertEquals(List.of(damageType, "damage_type"), ThemeTags.withAncestors(damageType), damageType);
         }
+    }
+
+    @Test
+    void beamAndNonBeamEnergyAreBothEnergyAndTheTechLevelsAreAffinities() {
+        assertEquals(List.of("beam", "energy", "weapon"), ThemeTags.withAncestors("beam"));
+        assertEquals(List.of("non_beam_energy", "energy", "weapon"), ThemeTags.withAncestors("non_beam_energy"));
+        for (String techLevel : List.of("low_tech", "midline", "high_tech")) {
+            assertEquals("affinity", ThemeTags.parent(techLevel), techLevel);
+        }
+    }
+
+    @Test
+    void sensorsAreLogisticsAndFleetSupportAndElectronicWarfareAreFleet() {
+        assertEquals(List.of("sensors", "logistics"), ThemeTags.withAncestors("sensors"));
+        assertEquals(List.of("fleet_support", "fleet"), ThemeTags.withAncestors("fleet_support"));
+        assertEquals(List.of("electronic_warfare", "fleet"), ThemeTags.withAncestors("electronic_warfare"));
+        assertNull(ThemeTags.parent("strikecraft"));
     }
 
     @Test
     void scopesSayWhatMayCarryATag() {
         assertEquals(Set.of(ThemeTagScope.SHIP, ThemeTagScope.STAR_CHART), ThemeTags.scopes("weapon"));
-        assertEquals(Set.of(ThemeTagScope.SHIP), ThemeTags.scopes("logistics"));
+        assertEquals(Set.of(ThemeTagScope.SHIP), ThemeTags.scopes("cargo"));
         assertEquals(Set.of(ThemeTagScope.STAR_CHART), ThemeTags.scopes("enemy"));
         assertTrue(ThemeTags.ids(ThemeTagScope.SHIP).contains("salvage"));
         assertFalse(ThemeTags.ids(ThemeTagScope.SHIP).contains("boss"));

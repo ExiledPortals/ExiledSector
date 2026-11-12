@@ -28,11 +28,11 @@ class InfusedCraftCostsTest {
     private static final String THREAT = "exiledSector_threat_feedstock";
     private static final String SHROUD = "exiledSector_shroud_feedstock";
     private static final String PHASE = "exiledSector_phase_feedstock";
-    private static final Set<String> DAMAGE_TYPES = Set.of("kinetic", "high_explosive", "fragmentation", "energy_damage", "emp");
-    private static final Map<String, String> FEEDSTOCK_BY_ROOT = Map.of("weapon", THREAT, "defence", SHROUD, "repair", SHROUD,
-            "combat_readiness", SHROUD, "logistics", PHASE);
-    private static final Map<String, String> FEEDSTOCK_BY_TAG = Map.of("d_mods", SHROUD, "low_tech", SHROUD, "low_hull", SHROUD,
-            "midline", THREAT, "on_hit", THREAT, "on_kill", THREAT);
+    private static final Set<String> CHILD_TAGS_WITH_THEIR_OWN_CRAFTS = Set.of("ballistic", "non_beam_energy", "beam", "missile", "range",
+            "rate_of_fire", "ammo");
+    private static final Set<String> ROOT_TAGS_WITHOUT_CRAFTS = Set.of("weapon", "repair", "d_mods", "fleet", "conditional");
+    private static final Map<String, List<String>> FEEDSTOCKS_BY_ROOT = Map.of("weapon", List.of(THREAT), "damage_type", List.of(THREAT),
+            "defence", List.of(SHROUD), "combat_readiness", List.of(SHROUD), "affinity", List.of(THREAT, SHROUD, PHASE));
 
     @BeforeEach
     void setUp() throws Exception {
@@ -47,19 +47,25 @@ class InfusedCraftCostsTest {
 
     @Test
     void aCraftCostsItsTagsFeedstockAndUnofferedCraftsCostNothing() {
-        assertEquals(new InfusedCraftCosts.Cost(SHROUD, 100), InfusedCraft.REFORGE_WITH_TAG.cost("front_shield"));
-        assertEquals(new InfusedCraftCosts.Cost(SHROUD, 1000), InfusedCraft.ADD_AND_REMOVE.cost("low_tech"));
-        assertEquals(PHASE, InfusedCraftCosts.feedstockFor("flux"));
+        assertEquals(new InfusedCraftCosts.Cost(List.of(SHROUD), 100), InfusedCraft.REFORGE_WITH_TAG.cost("defence"));
+        assertEquals(new InfusedCraftCosts.Cost(List.of(THREAT, SHROUD, PHASE), 1000), InfusedCraft.ADD_AND_REMOVE.cost("affinity"));
+        assertEquals(List.of(PHASE), InfusedCraftCosts.feedstocksFor("flux"));
+        assertEquals(List.of(), InfusedCraftCosts.feedstocksFor("front_shield"));
+        assertNull(InfusedCraft.REFORGE_WITH_TAG.cost("front_shield"));
         assertNull(InfusedCraft.SWAP_DAMAGE_TYPE.cost("kinetic"));
+        assertNull(InfusedCraft.REFORGE_WITH_TAG.cost("weapon"));
+        assertNull(InfusedCraft.REFORGE_WITH_TAG.cost("kinetic"));
         assertNull(InfusedCraft.REROLL_TAG_VALUES.cost("flux"));
         assertNull(InfusedCraft.REFORGE_WITH_TAG.cost(null));
     }
 
     @Test
-    void everyShipTagOffersTheTaggedReforgeAndTheExchange() {
-        List<String> shipTags = ThemeTags.ids(ThemeTagScope.SHIP);
-        assertEquals(shipTags, InfusedCraft.REFORGE_WITH_TAG.tags());
-        assertEquals(shipTags, InfusedCraft.ADD_AND_REMOVE.tags());
+    void theOfferedParentAndWeaponTagsOfferTheTaggedReforgeAndTheExchange() {
+        List<String> offeredTags = ThemeTags.ids(ThemeTagScope.SHIP).stream()
+                .filter(tag -> ThemeTags.parent(tag) == null ? !ROOT_TAGS_WITHOUT_CRAFTS.contains(tag) : CHILD_TAGS_WITH_THEIR_OWN_CRAFTS.contains(tag))
+                .toList();
+        assertEquals(offeredTags, InfusedCraft.REFORGE_WITH_TAG.tags());
+        assertEquals(offeredTags, InfusedCraft.ADD_AND_REMOVE.tags());
     }
 
     @Test
@@ -78,8 +84,7 @@ class InfusedCraftCostsTest {
         for (String tag : InfusedCraft.REFORGE_WITH_TAG.tags()) {
             assertTrue(ThemeTags.isThemeTag(tag), tag);
             String root = ThemeTags.withAncestors(tag).get(ThemeTags.withAncestors(tag).size() - 1);
-            String expected = DAMAGE_TYPES.contains(tag) ? THREAT : FEEDSTOCK_BY_TAG.getOrDefault(tag, FEEDSTOCK_BY_ROOT.getOrDefault(root, PHASE));
-            assertEquals(expected, InfusedCraftCosts.feedstockFor(tag), tag);
+            assertEquals(FEEDSTOCKS_BY_ROOT.getOrDefault(root, List.of(PHASE)), InfusedCraftCosts.feedstocksFor(tag), tag);
         }
     }
 

@@ -41,9 +41,11 @@ The convoy's cargo pods (`ConvoyCargo`, by share of freighter fleet points lost)
 
 | Feedstock (placeholder names) | Item id | Tags it crafts |
 |---|---|---|
-| Threat-infused Feedstock | `exiledSector_threat_feedstock` | `weapon` and its children, the damage types, `midline`, `on_hit`, `on_kill` |
-| Shroud-infused Feedstock | `exiledSector_shroud_feedstock` | `defence` and its children, `repair`, `combat_readiness`, `d_mods`, `low_tech`, `low_hull` |
-| Phase-infused Feedstock | `exiledSector_phase_feedstock` | `flux`, `phase`, `ship_system`, `mobility`, `strikecraft`, `sensors`, `electronic_warfare`, `fleet_support`, `logistics`, `high_tech`, `conditional`, `while_phased`, `flux_level`, `nearby_ships` |
+| Threat-infused Feedstock | `exiledSector_threat_feedstock` | `ballistic`, `non_beam_energy`, `beam`, `missile`, `range`, `rate_of_fire`, `ammo`, `damage_type` |
+| Shroud-infused Feedstock | `exiledSector_shroud_feedstock` | `defence`, `combat_readiness` |
+| Phase-infused Feedstock | `exiledSector_phase_feedstock` | `flux`, `phase`, `ship_system`, `mobility`, `strikecraft`, `logistics` (with `sensors`) |
+
+The crafts are offered for parent tags only, except the weapon tags named above, and never for `weapon`, `repair`, `d_mods`, `fleet`, `conditional` or the star chart tags; `affinity` (low tech, midline, high tech) costs the same amount of all three.
 
 A convoy carries roughly equal amounts of all three: each feedstock's amount is a shared amount rolled at random up or down by as much as 15%, so they are never quite even. The shared amount uses the quantity mechanics chart crafting items already have: a row per feedstock in `chart_materials.csv` style, 150 at tier 1 and 1000 at tier 15 and linear between (placeholders), the same for all three, then scaled by the run's crafting item and item quantity lines. It is split over the freighters by fleet points, so the cargo pods and the delivered cache take their usual shares.
 

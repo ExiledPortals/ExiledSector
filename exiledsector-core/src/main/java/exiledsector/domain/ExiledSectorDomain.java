@@ -94,6 +94,10 @@ public interface ExiledSectorDomain {
         return List.of();
     }
 
+    default List<String> craftingBenchFeedstockIds() {
+        return List.of();
+    }
+
     default List<ItemDataRules> itemDataRules() {
         return List.of();
     }

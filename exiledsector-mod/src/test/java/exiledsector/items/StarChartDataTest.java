@@ -139,12 +139,12 @@ class StarChartDataTest {
                 .put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:low=1/mid=2/high=2", "Discovery")
                         .put(ItemModifiers.TAGS_COLUMN, "loot;encounter"))
                 .put(chartModifier("CHART_ITEM_PERCENT", "suffix", "CHART_ITEM_PERCENT:low=1/mid=2/high=2", "Plunder")
-                        .put(ItemModifiers.TAGS_COLUMN, "logistics"));
+                        .put(ItemModifiers.TAGS_COLUMN, "cargo"));
 
         List<String> errors = chartErrors(new JSONArray(), chartModifiers, new JSONArray(), new JSONArray()).stream()
                 .filter(error -> error.contains("tag")).toList();
 
-        assertEquals(List.of("CHART_ITEM_PERCENT lists the tag \"logistics\", which is not a star_chart tag in " + ThemeTags.PATH), errors);
+        assertEquals(List.of("CHART_ITEM_PERCENT lists the tag \"cargo\", which is not a star_chart tag in " + ThemeTags.PATH), errors);
     }
 
     @Test

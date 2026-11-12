@@ -24,10 +24,10 @@ public final class InfusedCraftCosts {
     private static final Logger LOG = Logger.getLogger(InfusedCraftCosts.class);
     private static final AtomicReference<Map<String, TagCosts>> COSTS_BY_TAG = new AtomicReference<>(Map.of());
 
-    public record Cost(String feedstockId, int amount) {
+    public record Cost(List<String> feedstockIds, int amount) {
     }
 
-    private record TagCosts(String feedstockId, Map<InfusedCraft, Integer> amounts) {
+    private record TagCosts(List<String> feedstockIds, Map<InfusedCraft, Integer> amounts) {
     }
 
     private InfusedCraftCosts() {
@@ -59,8 +59,8 @@ public final class InfusedCraftCosts {
             csv.skipRow(tag, "it is not a theme tag in " + ThemeTags.PATH);
             return null;
         }
-        String feedstockId = ModCsv.text(row, FEEDSTOCK_COLUMN);
-        if (feedstockId.isEmpty()) {
+        List<String> feedstockIds = CsvRows.entries(ModCsv.text(row, FEEDSTOCK_COLUMN));
+        if (feedstockIds.isEmpty()) {
             csv.skipRow(tag, "it names no feedstock");
             return null;
         }
@@ -71,22 +71,22 @@ public final class InfusedCraftCosts {
                 amounts.put(craft, amount);
             }
         }
-        return new TagCosts(feedstockId, Map.copyOf(amounts));
+        return new TagCosts(List.copyOf(feedstockIds), Map.copyOf(amounts));
     }
 
     public static Cost cost(InfusedCraft craft, String tag) {
         TagCosts costs = tag == null ? null : COSTS_BY_TAG.get().get(tag);
         Integer amount = costs == null ? null : costs.amounts().get(craft);
-        return amount == null ? null : new Cost(costs.feedstockId(), amount);
+        return amount == null ? null : new Cost(costs.feedstockIds(), amount);
     }
 
     public static List<String> tags(InfusedCraft craft) {
         return COSTS_BY_TAG.get().entrySet().stream().filter(entry -> entry.getValue().amounts().containsKey(craft)).map(Map.Entry::getKey).toList();
     }
 
-    public static String feedstockFor(String tag) {
+    public static List<String> feedstocksFor(String tag) {
         TagCosts costs = tag == null ? null : COSTS_BY_TAG.get().get(tag);
-        return costs == null ? null : costs.feedstockId();
+        return costs == null ? List.of() : costs.feedstockIds();
     }
 
     public static void clear() {

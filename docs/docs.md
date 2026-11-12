@@ -806,11 +806,11 @@ Chart drops, the Cartography Cipher and combining stop at 15, and a tier 16 clea
 
 ### Infused crafts
 
-Infused crafts work on hull items and each is bought for one theme tag, at a cost in that tag's feedstock from
+Infused crafts work on hull items and each is bought for one theme tag, at a cost in that tag's feedstocks from
 `infused_crafts.csv` (`InfusedCraft`, `InfusedCraftCosts`, logic in `InfusedCrafting`, all core); a craft with no
-cost column is not offered. The tagged reforge also takes one Reshaping Nanoswarm and the add-and-remove two
-(`InfusedCraft.reshapingCost`). The Star Charts `InfusedCraftingTray` lists one row per tag and offered craft. A tag counts
-its children. Crafts refuse mirrored, corrupted and locked items and items with no room for the tag, spending nothing.
+cost column is not offered. The table lists the parent tags except Weapon, Repair, D-mods, Fleet and Conditional, plus
+ballistic, beam, non-beam energy, missile, range, rate of fire and ammo; a tag with several feedstocks (Affinity) costs the amount of each. The tagged reforge also takes one Reshaping Nanoswarm and
+the add-and-remove two (`InfusedCraft.reshapingCost`). A tag counts its children. Crafts refuse mirrored, corrupted and locked items and items with no room for the tag, spending nothing.
 They keep immutable and reserved modifiers and roll through `AffixLayout.openSides`, so exclusive groups, side limits
 and the biome limit hold.
 
