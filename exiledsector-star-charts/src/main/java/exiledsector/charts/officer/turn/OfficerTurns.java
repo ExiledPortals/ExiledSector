@@ -6,8 +6,11 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
+import exiledsector.charts.atlas.AtlasReach;
 import exiledsector.charts.atlas.AtlasRuntime;
 import exiledsector.charts.atlas.AtlasState;
+import exiledsector.charts.atlas.CommissionHandover;
+import exiledsector.charts.atlas.CommissionHandover.Handover;
 import exiledsector.charts.atlas.TerritoryContext;
 import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.OfficerFleets;
@@ -17,6 +20,7 @@ import exiledsector.charts.run.ChartRuns;
 import org.apache.log4j.Logger;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class OfficerTurns {
@@ -83,10 +87,17 @@ public final class OfficerTurns {
     }
 
     public static TurnResult take(AtlasGenerator generator, AtlasState state, TurnCause cause, TerritoryContext context) {
+        List<Handover> handovers = CommissionHandover.isNeeded(state, context.excludedFactionId())
+                ? CommissionHandover.handOver(generator, state, AtlasReach.visible(generator, state), context)
+                : List.of();
         AtlasCell openRunCell = context.openRunCell();
         TurnSetup setup = new TurnSetup(OfficerTurnTables.rules(), OfficerRanks.all(), resolvers, openRunCell, openRunOfficerId(state, cause,
                 openRunCell), context.catalogue());
         TurnResult result = OfficerTurn.take(TurnTerrain.of(generator, state, openRunCell), state, cause, setup);
+        if (!handovers.isEmpty()) {
+            result = result.withHandovers(handovers);
+            state.setLastTurnResult(result.encode());
+        }
         for (OfficerTurnListener listener : LISTENERS) {
             try {
                 listener.turnTaken(state, result);
@@ -95,6 +106,15 @@ public final class OfficerTurns {
             }
         }
         return result;
+    }
+
+    public static void handOverCommission(AtlasGenerator generator, AtlasState state, Set<AtlasCell> visible, TerritoryContext context) {
+        List<Handover> handovers = CommissionHandover.handOver(generator, state, visible, context);
+        if (handovers.isEmpty()) {
+            return;
+        }
+        state.setLastTurnResult(lastTurn(state).withHandovers(handovers).encode());
+        state.markOfficerTurnUnseen();
     }
 
     static int openRunOfficerId(AtlasState state, TurnCause cause, AtlasCell openRunCell) {

@@ -38,6 +38,11 @@ public class ChartContentListener implements FleetEventListener {
             return;
         }
         try {
+            ChartTransponderReputation.battleOccurred(battle);
+        } catch (RuntimeException | LinkageError e) {
+            reportFailure(e);
+        }
+        try {
             OfficerTurns.battleOccurred(battle, primaryWinner);
         } catch (RuntimeException | LinkageError e) {
             reportFailure(e);

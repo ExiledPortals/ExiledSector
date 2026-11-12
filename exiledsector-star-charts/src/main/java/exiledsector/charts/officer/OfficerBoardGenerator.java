@@ -46,6 +46,16 @@ public final class OfficerBoardGenerator {
         return officer(seed, recordId, factionId, 0, ranks, catalogue, StartingItemRoll.NONE);
     }
 
+    public static AtlasOfficer atRank(long seed, int recordId, String factionId, String rankId, List<OfficerRank> ranks, FlagshipCatalogue catalogue) {
+        int rankOrder = 0;
+        for (int index = 0; index < ranks.size(); index++) {
+            if (ranks.get(index).id().equals(rankId)) {
+                rankOrder = index;
+            }
+        }
+        return officer(seed, recordId, factionId, rankOrder, ranks, catalogue, StartingItemRoll.NONE);
+    }
+
     private static AtlasOfficer officer(long seed, int recordId, String factionId, int rankOrder, List<OfficerRank> ranks,
                                         FlagshipCatalogue catalogue, StartingItemRoll startingItems) {
         Map<String, Float> traitWeights = new LinkedHashMap<>();

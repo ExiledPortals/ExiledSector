@@ -1,12 +1,15 @@
 package exiledsector.charts.officer.turn;
 
 import exiledsector.charts.atlas.AtlasCell;
+import exiledsector.charts.atlas.CommissionHandover.Handover;
 import exiledsector.charts.officer.AtlasOfficer;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
 
 public record TurnResult(int turn, TurnCause cause, List<StandingChange> standingChanges, List<ResolvedIntent> resolvedIntents,
                          List<OfficerLoss> losses, List<Replacement> replacements, Map<Integer, AtlasOfficer> fallen) {
@@ -29,6 +32,10 @@ public record TurnResult(int turn, TurnCause cause, List<StandingChange> standin
     }
 
     public record Standing(String rankId, int renown) {
+
+        public static Standing of(AtlasOfficer officer) {
+            return new Standing(officer.rankId(), officer.renown());
+        }
     }
 
     public record StandingChange(int recordId, Standing before, Standing after) {
@@ -51,6 +58,27 @@ public record TurnResult(int turn, TurnCause cause, List<StandingChange> standin
     }
 
     public record Replacement(int fallenRecordId, int replacementRecordId) {
+    }
+
+    public TurnResult withHandovers(List<Handover> handovers) {
+        Map<Integer, StandingChange> changes = new TreeMap<>();
+        standingChanges.forEach(change -> changes.put(change.recordId(), change));
+        List<Replacement> mergedReplacements = new ArrayList<>(replacements);
+        Map<Integer, AtlasOfficer> mergedFallen = new LinkedHashMap<>(fallen);
+        for (Handover handover : handovers) {
+            AtlasOfficer predecessor = handover.predecessor();
+            AtlasOfficer successor = handover.successor();
+            StandingChange leaving = changes.get(predecessor.recordId());
+            changes.put(predecessor.recordId(), new StandingChange(predecessor.recordId(),
+                    leaving != null ? leaving.before() : Standing.of(predecessor), null));
+            StandingChange joining = changes.get(successor.recordId());
+            changes.put(successor.recordId(), new StandingChange(successor.recordId(), null,
+                    joining != null ? joining.after() : Standing.of(successor)));
+            mergedReplacements.add(new Replacement(predecessor.recordId(), successor.recordId()));
+            mergedFallen.put(predecessor.recordId(), predecessor);
+        }
+        List<StandingChange> mergedChanges = changes.values().stream().filter(change -> !Objects.equals(change.before(), change.after())).toList();
+        return new TurnResult(turn, cause, mergedChanges, resolvedIntents, losses, mergedReplacements, mergedFallen);
     }
 
     public List<StandingChange> rankChanges() {

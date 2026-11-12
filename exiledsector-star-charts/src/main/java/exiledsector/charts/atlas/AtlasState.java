@@ -2,6 +2,7 @@ package exiledsector.charts.atlas;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.officer.AtlasOfficer;
+import exiledsector.charts.officer.reward.CarriedItem;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
@@ -48,6 +50,7 @@ public final class AtlasState implements AtlasMemory {
     private int otherBossKills;
     private List<String> declaredIntents = new ArrayList<>();
     private List<String> lastTurnResult = new ArrayList<>();
+    private List<String> leftBehindItems = new ArrayList<>();
     private int atlasPoints;
     private Set<String> atlasTreeNodeIds = new TreeSet<>();
     private int keyFragments;
@@ -105,6 +108,9 @@ public final class AtlasState implements AtlasMemory {
         }
         if (lastTurnResult == null) {
             lastTurnResult = new ArrayList<>();
+        }
+        if (leftBehindItems == null) {
+            leftBehindItems = new ArrayList<>();
         }
         if (atlasTreeNodeIds == null) {
             atlasTreeNodeIds = new TreeSet<>();
@@ -354,6 +360,28 @@ public final class AtlasState implements AtlasMemory {
 
     public void markOfficerTurnSeen() {
         seenOfficerTurn = officerTurn;
+    }
+
+    public void markOfficerTurnUnseen() {
+        seenOfficerTurn = Math.min(seenOfficerTurn, officerTurn - 1);
+    }
+
+    public void leaveBehind(List<CarriedItem> items) {
+        List<CarriedItem> stacked = CarriedItem.stack(leftBehind(), items);
+        leftBehindItems = new ArrayList<>(stacked.stream().map(CarriedItem::toToken).toList());
+    }
+
+    public List<CarriedItem> leftBehind() {
+        return leftBehindItems.stream().map(CarriedItem::fromToken).filter(Objects::nonNull).toList();
+    }
+
+    public AtlasOfficer withLeftBehindItems(AtlasOfficer newcomer) {
+        if (leftBehindItems.isEmpty()) {
+            return newcomer;
+        }
+        AtlasOfficer carrying = newcomer.withCarried(CarriedItem.stack(newcomer.carried(), leftBehind()));
+        leftBehindItems = new ArrayList<>();
+        return carrying;
     }
 
     public int otherBossKills() {

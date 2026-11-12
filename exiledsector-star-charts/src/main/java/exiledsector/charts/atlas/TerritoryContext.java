@@ -20,6 +20,10 @@ public record TerritoryContext(String excludedFactionId, AtlasCell openRunCell, 
                 OfficerStartingItems.forSector(Global.getSector()));
     }
 
+    public TerritoryContext withoutOpenRun() {
+        return new TerritoryContext(excludedFactionId, null, catalogue, startingItems);
+    }
+
     private static String commissionFactionId() {
         try {
             return Misc.getCommissionFactionId();

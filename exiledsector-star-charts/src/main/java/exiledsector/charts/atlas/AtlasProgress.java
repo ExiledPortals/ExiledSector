@@ -87,10 +87,27 @@ public final class AtlasProgress {
     }
 
     public static void closed(SectorAPI sector, ChartRun run) {
-        if (sector != null && run != null && run.atlasNode() != null) {
+        boolean atlasRun = sector != null && run != null && run.atlasNode() != null;
+        if (atlasRun) {
             ChartAnomalies.runClosed(sector, run);
         }
         closedWithoutObjective(sector, run);
+        if (atlasRun) {
+            handOverCommission(sector, run);
+        }
+    }
+
+    private static void handOverCommission(SectorAPI sector, ChartRun run) {
+        try {
+            AtlasState state = AtlasState.get(sector);
+            TerritoryContext context = TerritoryContext.current().withoutOpenRun();
+            if (CommissionHandover.isNeeded(state, context.excludedFactionId())) {
+                AtlasGenerator generator = AtlasRuntime.generator(sector);
+                OfficerTurns.handOverCommission(generator, state, AtlasReach.visible(generator, state), context);
+            }
+        } catch (RuntimeException e) {
+            LOG.error("[ExiledSector] Handing over the commission faction's Atlas territories after run " + run.runId() + " failed", e);
+        }
     }
 
     public static void closedWithoutObjective(SectorAPI sector, ChartRun run) {
