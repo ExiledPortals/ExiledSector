@@ -115,4 +115,18 @@ class ContestOutcomesTest {
         assertTrue(OfficerTurns.declaredIntents(state).isEmpty());
         assertEquals(renownBefore, renownOf(border.attacker().recordId()));
     }
+
+    @Test
+    void aCompletedSystemIsNeverClaimedButThePushStillCounts() {
+        declare(state, push());
+        state.add(border.contested(), AtlasState.COMPLETED);
+        state.release(border.contested());
+        int renownBefore = renownOf(border.attacker().recordId());
+
+        assertFalse(ContestOutcomes.settle(generator, state, push(), border.contested(), true));
+
+        assertNull(state.commandCentreOf(border.contested()));
+        assertTrue(OfficerTurns.declaredIntents(state).isEmpty());
+        assertEquals(renownBefore + OfficerTurnTables.rules().renownPerClaim(), renownOf(border.attacker().recordId()));
+    }
 }

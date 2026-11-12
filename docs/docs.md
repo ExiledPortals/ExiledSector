@@ -1145,7 +1145,8 @@ by a first loss and dies on the next, replaced by a new Lieutenant. The result i
 Each officer carries items, starting with one rolled by rank when the board is dealt (`OfficerStartingItems`). Beating
 an officer drops what they carry with the boss reward, crafting item counts scaled by the run's item and crafting item
 percents, and offers three items from `atlas_officer_rewards.csv` (`OfficerRewardPool`); the pick becomes what they carry
-next time, and an unanswered offer reopens on load and when the atlas opens (`OfficerDefeat`, `OfficerRewardDrop`).
+next time. An unanswered offer reopens on load and when the atlas opens, passes to a commission successor and lapses
+if the officer dies first (`OfficerDefeat`, `OfficerRewardDrop`).
 
 `ScarCombatPlugin` tallies how the player's fleet fought an officer's flagship, and each defeat adds the scar whose
 `atlas_officer_scars.csv` detector scores highest, else Battle-Hardened, plus its themed d-mod, up to five (`Scars`,
@@ -1241,7 +1242,7 @@ the sides against each other, and `ChartAllyReputation` cancels vanilla's ally h
 
 Siding with the attacker or staying out makes the station the boss, counted whoever destroys it; siding with the defender
 makes the attacking officer the boss and protects the station, whose loss loses the run (`ChartRun.objectiveLost`).
-Winning on the attacker's side settles the contest for the attacker, killing the officer on the defender's side counts as
+Winning on the attacker's side settles the contest for the attacker (a completed system is never claimed), killing the officer on the defender's side counts as
 beating that officer, and staying out settles it on its abstract roll when the run closes (`FactionSkirmish`,
 `ContestOutcomes`). A decided challenge waits in `AtlasState` for the next turn; a failed run leaves the intent to that turn.
 

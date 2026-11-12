@@ -25,7 +25,7 @@ public final class OfficerDefeat {
 
     static final String SEED_PREFIX = "officerDefeat|";
     private static final Logger LOG = Logger.getLogger(OfficerDefeat.class);
-    private static final Set<Integer> PROMPTED_RECORD_IDS = new HashSet<>();
+    private static final Set<List<String>> PROMPTED_CHOICES = new HashSet<>();
 
     private OfficerDefeat() {
     }
@@ -70,7 +70,7 @@ public final class OfficerDefeat {
     }
 
     public static void onGameLoad(SectorAPI sector) {
-        PROMPTED_RECORD_IDS.clear();
+        PROMPTED_CHOICES.clear();
         reopenPendingChoices(sector);
     }
 
@@ -117,19 +117,40 @@ public final class OfficerDefeat {
         if (sector == null || !officer.hasPendingChoice()) {
             return;
         }
-        int recordId = officer.recordId();
-        if (!PROMPTED_RECORD_IDS.add(recordId)) {
+        List<String> choice = officer.pendingChoice();
+        if (!PROMPTED_CHOICES.add(choice)) {
             return;
         }
-        OfficerRewardPicker.openWhenClear(sector, OfficerText.title(officer), officer.pendingOffers(), pick -> answered(recordId, pick));
+        OfficerRewardPicker.openWhenClear(sector, OfficerText.title(officer), officer.pendingOffers(), () -> stillOffered(choice),
+                pick -> answered(choice, pick));
     }
 
-    private static void answered(int recordId, CarriedItem pick) {
-        PROMPTED_RECORD_IDS.remove(recordId);
+    private static boolean stillOffered(List<String> choice) {
+        if (holderOf(AtlasState.getIfCreated(Global.getSector()), choice) != null) {
+            return true;
+        }
+        PROMPTED_CHOICES.remove(choice);
+        return false;
+    }
+
+    static AtlasOfficer holderOf(AtlasState state, List<String> choice) {
+        if (state == null) {
+            return null;
+        }
+        for (AtlasOfficer officer : state.officers()) {
+            if (officer.pendingChoice().equals(choice)) {
+                return officer;
+            }
+        }
+        return null;
+    }
+
+    private static void answered(List<String> choice, CarriedItem pick) {
+        PROMPTED_CHOICES.remove(choice);
         AtlasState state = AtlasState.getIfCreated(Global.getSector());
-        AtlasOfficer officer = state == null ? null : state.officer(recordId);
-        if (officer != null) {
-            state.putOfficer(picked(officer, pick));
+        AtlasOfficer holder = holderOf(state, choice);
+        if (holder != null) {
+            state.putOfficer(picked(holder, pick));
         }
     }
 }

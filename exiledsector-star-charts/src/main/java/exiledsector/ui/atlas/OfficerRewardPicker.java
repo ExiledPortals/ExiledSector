@@ -40,6 +40,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implements CampaignOverlay.Screen {
@@ -94,20 +95,28 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
         }
     }
 
-    public static boolean open(CampaignUIAPI campaignUI, String officerName, List<CarriedItem> offers, Consumer<CarriedItem> onPick) {
+    static boolean open(SectorAPI sector, String officerName, List<CarriedItem> offers, Consumer<CarriedItem> onPick) {
         if (offers.isEmpty()) {
             return false;
         }
-        boolean opened = CampaignOverlay.open(campaignUI, host -> new OfficerRewardPicker(host, officerName, offers, onPick), () -> { });
+        boolean wasPaused = sector.isPaused();
+        boolean opened = CampaignOverlay.open(sector.getCampaignUI(), host -> new OfficerRewardPicker(host, officerName, offers, onPick),
+                () -> sector.setPaused(wasPaused));
         if (opened) {
+            sector.setPaused(true);
             SkillTreeSounds.panelOpened();
         }
         return opened;
     }
 
     public static void openWhenClear(SectorAPI sector, String officerName, List<CarriedItem> offers, Consumer<CarriedItem> onPick) {
+        openWhenClear(sector, officerName, offers, () -> true, onPick);
+    }
+
+    public static void openWhenClear(SectorAPI sector, String officerName, List<CarriedItem> offers, BooleanSupplier stillOffered,
+                                     Consumer<CarriedItem> onPick) {
         if (!offers.isEmpty()) {
-            sector.addTransientScript(new WhenClear(officerName, List.copyOf(offers), onPick));
+            sector.addTransientScript(new WhenClear(officerName, List.copyOf(offers), stillOffered, onPick));
         }
     }
 
@@ -290,13 +299,15 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
 
         private final String officerName;
         private final List<CarriedItem> offers;
+        private final BooleanSupplier stillOffered;
         private final Consumer<CarriedItem> onPick;
         private float sinceCheck;
         private boolean done;
 
-        WhenClear(String officerName, List<CarriedItem> offers, Consumer<CarriedItem> onPick) {
+        WhenClear(String officerName, List<CarriedItem> offers, BooleanSupplier stillOffered, Consumer<CarriedItem> onPick) {
             this.officerName = officerName;
             this.offers = offers;
+            this.stillOffered = stillOffered;
             this.onPick = onPick;
         }
 
@@ -318,7 +329,10 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
             }
             sinceCheck = 0f;
             SectorAPI sector = Global.getSector();
-            if (sector != null && campaignClear(sector) && open(sector.getCampaignUI(), officerName, offers, onPick)) {
+            if (sector == null || !campaignClear(sector)) {
+                return;
+            }
+            if (!stillOffered.getAsBoolean() || open(sector, officerName, offers, onPick)) {
                 done = true;
             }
         }

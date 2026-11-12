@@ -43,7 +43,7 @@ final class ScarDamageTally implements DamageTakenModifier, DamageDealtModifier 
             return null;
         }
         ScarEvidence evidence = tracker.evidence();
-        if (CollisionDamageListener.isCollisionDamage(param, damage)) {
+        if (CollisionDamageListener.isCollisionDamage(param, damage) && CollisionDamageListener.touchesAnything(flagship)) {
             evidence.addFired(amount, EnumSet.of(FiredAs.COLLISION));
             return null;
         }

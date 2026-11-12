@@ -38,7 +38,7 @@ public final class ContestOutcomes {
                 && AtlasTerritoryTransfer.transferTo(generator::lanes, state, contestedCell, attacker.commandCentre());
         TurnRules rules = OfficerTurnTables.rules();
         if (intent.kind() == IntentKind.PUSH) {
-            if (moved) {
+            if (moved || attackerWins && attacker != null && state.isCompleted(contestedCell)) {
                 addRenown(state, attacker, rules.renownPerClaim());
             } else if (!attackerWins && defender != null && declared.contains(Intent.defend(defender.recordId()))) {
                 addRenown(state, defender, rules.renownPerDefendHeld());
@@ -53,7 +53,7 @@ public final class ContestOutcomes {
     }
 
     private static boolean canTake(AtlasGenerator generator, AtlasState state, AtlasOfficer attacker, AtlasOfficer defender, AtlasCell cell) {
-        if (attacker == null || !attacker.isActive() || state.officerAt(cell) != null) {
+        if (attacker == null || !attacker.isActive() || state.isCompleted(cell) || state.officerAt(cell) != null) {
             return false;
         }
         AtlasCell holder = state.commandCentreOf(cell);

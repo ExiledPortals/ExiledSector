@@ -96,6 +96,24 @@ class OfficerDefeatTest {
     }
 
     @Test
+    void aChoiceFollowsTheOfficerWhoInheritedItAndEndsWithADeath() {
+        AtlasState state = new AtlasState(9L);
+        AtlasOfficer beaten = officer(4).withPendingOffers(List.of(ENGRAM, UNIQUE));
+        state.putOfficer(beaten);
+        List<String> choice = beaten.pendingChoice();
+
+        assertEquals(4, OfficerDefeat.holderOf(state, choice).recordId());
+
+        state.removeOfficer(4);
+        state.putOfficer(officer(7).waitingInPlaceOf(beaten));
+        assertEquals(7, OfficerDefeat.holderOf(state, choice).recordId());
+
+        state.removeOfficer(7);
+        assertNull(OfficerDefeat.holderOf(state, choice));
+        assertNull(OfficerDefeat.holderOf(null, choice));
+    }
+
+    @Test
     void anOfficerWithoutACustomFlagshipHasNoHullFacts() {
         assertNull(OfficerFleets.flagshipHull(officer(1)));
     }

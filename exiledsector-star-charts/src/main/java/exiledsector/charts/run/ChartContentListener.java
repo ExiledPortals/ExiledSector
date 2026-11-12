@@ -58,7 +58,7 @@ public class ChartContentListener implements FleetEventListener {
     private void reportFailure(Throwable cause) {
         if (!failureReported) {
             failureReported = true;
-            LOG.error("[ExiledSector] Tracking a Star Chart objective failed; the objective is checked again every second while inside", cause);
+            LOG.error("[ExiledSector] Handling a Star Chart fleet or battle report failed; the objective is checked again every second while inside", cause);
         }
     }
 }
