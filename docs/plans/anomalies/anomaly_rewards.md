@@ -66,7 +66,7 @@ There is no separate Requisition bench. The Crafting Bench (core `ui/socket`: `C
 
 Only one tray is open at a time. While one is open, the central arc of crafting items, the socket and the details window move further left to make room. Everything on the bench can still be used together: closing a tray keeps the active inhibitors, and opening another keeps them too. Engrams and infused crafts change the item as soon as they are used; inhibitors are the only items that wait, changing the next crafting item used. Each active inhibitor's icon orbits the item in the socket, in the central window, until that crafting item is used.
 
-The Prefix and Suffix Inhibitors join the new inhibitors: their tiles beside the socket go, and they are picked in the Inhibitors tray like the rest, counting toward the four. They keep their battle and chart drops, made as rare as the Immutable Nanoswarm's (its `battle_loot.csv` and `chart_materials.csv` rows). Since they are core items that work without Star Charts, the tray and the inhibitor framework sit in core, and Star Charts adds the new inhibitors and the excavation drops. Each tray is a content hook, so the Engrams and Infused Crafting trays appear only while Star Charts is on.
+The Prefix and Suffix Inhibitors join the new inhibitors: their tiles beside the socket go, and they are picked in the Inhibitors tray like the rest, counting toward the four. They keep their battle and chart drops, made as rare as the Immutable Nanoswarm's (its `battle_loot.csv` and `chart_materials.csv` rows). Since they are core items that work without Star Charts, the tray, the inhibitor framework and the new inhibitors sit in core, and Star Charts adds the excavation drops. Each tray is a content hook, so the Engrams and Infused Crafting trays appear only while Star Charts is on.
 
 ## 3. The other anomalies
 
@@ -85,7 +85,7 @@ Today: a planet's items leaning toward one drop type, behind a frigate fight or 
 The shafts are the main source of the new inhibitors, which can drop elsewhere too. They are never used on an item themselves: the player activates up to four in the bench's Inhibitors tray (section 2, Crafting Bench rework), and like Path of Exile's fossils they change how the next crafting item used behaves. The set:
 
 - Prefix Inhibitor and Suffix Inhibitor, the existing two, working as today.
-- Seven tag inhibitors, each making the next crafting item used that adds modifiers more likely to add modifiers of its kind: beam, non-beam energy, ballistic, missile, shield, armour and phase. They weight by theme tag (`theme_tags.csv`: `beam`, `energy` without `beam`, `ballistic`, `missile`, `shield`, `armour`, `phase`); how much more likely is a placeholder.
+- Seven tag inhibitors, each making the next crafting item used that adds modifiers more likely to add modifiers of its kind: beam, non-beam energy, ballistic, missile, shield, armour and phase. They weight by theme tag (`theme_tags.csv`: `beam`, `non_beam_energy`, `ballistic`, `missile`, `shield`, `armour`, `phase`); how much more likely is a placeholder.
 
 ### Spatial Breach (decided)
 
@@ -136,7 +136,6 @@ The Coronal Hypershunt is its own reward, as are the Derelict Forge, the Pre-Col
 - Supply Convoy: whether infused feedstock should also be bought in the main sector, or stay chart-only.
 - Faction Skirmish: whether staying out earns the training (from the attacker, left standing once the station falls) or nothing.
 - Faction Skirmish: one skill for every faction, or one per faction; whether it counts against the officer's skill limit; what a run grants an officer who already has it.
-- Inhibitors: whether the same inhibitor can fill more than one of the four active slots (two Beam Inhibitors at once), and if so whether its weighting adds up.
 - Dense Nebula: whether settling dust replaces today's flat +50% star charts or adds to it, and the per-stack amount and cap.
 - Domain-era Mothership: whether it gets a reward of its own.
 
@@ -150,6 +149,6 @@ The Coronal Hypershunt is its own reward, as are the Derelict Forge, the Pre-Col
 6. [ ] Stellar Flares lucky rolls, Black Hole immutable drops and Dense Nebula settling dust.
 7. [ ] Remnant Nexus overcharged drops.
 8. [ ] Spatial Breach warped items, after the part pool check.
-9. [ ] The seven tag inhibitors, their `special_items.csv` rows, icons (placeholders), strings (en and zh_CN), the weighting in the modifier roll, and excavation shaft drops, with tests.
+9. [x] The seven tag inhibitors, their `special_items.csv` rows, icons (placeholders), strings (en and zh_CN), the weighting in the modifier roll, and excavation shaft drops, with tests. Built: the inhibitors are core `CraftingInhibitor` values with no slot, a favoured tag and battle drop weight 0; each kind can be active once (decided: no duplicates, so weights never stack), and a modifier matching several active ones gets one 5x weight (`CraftingInhibitor.favouredTags`). `CraftingContext` carries the weights to Augmentation and Reshaping (`ItemCrafting`), the infused crafts (`InfusedCraft`, `InfusedCrafting`), Star Charts `Engram` and Adaptive Reforge (`BiomeCraft`); crafts that add modifiers spend them (`CraftingMaterialFamily.addsModifiers`), Biome Graft stays unweighted. Shafts drop one per full raid and guardian fleets half that, scaled by the site quantity (`ExcavationLoot`, `ExcavationRules.INHIBITORS_PER_RAID`), with chart rows in `chart_materials.csv`. The icons reuse the Prefix and Suffix Inhibitors' icons. Tested in core `TagInhibitorWeightsTest`, mod `CraftingInhibitorTest`, hull-upgrades `InfusedCraftTest`, Star Charts `BiomeCraftTest` and `ExcavationRulesTest`.
 10. [ ] Relay Network choices, once the user details them.
 11. [ ] Faction Skirmish officer training: the skill, the end-of-run officer pick, strings (en and zh_CN), tests, once the user details the skill.

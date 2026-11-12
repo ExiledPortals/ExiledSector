@@ -29,6 +29,7 @@ import exiledsector.items.ItemUnlock;
 import exiledsector.items.SlottedLine;
 import exiledsector.items.SlottedRows;
 import exiledsector.items.UseVerdict;
+import exiledsector.skills.tags.ThemeTags;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.TooltipExpansion;
@@ -1297,9 +1298,14 @@ public final class CraftingBenchPanel extends HoloPanel {
             case OFF -> "ui.craftingBench.notice.inhibitorOff";
             case NONE_OWNED -> inhibitor.growable() ? "ui.craftingBench.notice.noneOwned" : "ui.craftingBench.notice.noneFound";
             case FULL -> "ui.craftingBench.notice.inhibitorsFull";
-            case ON -> "ui.craftingBench.notice.inhibitorOn." + inhibitor.name().toLowerCase(Locale.ROOT);
+            case ON -> inhibitorOnKey(inhibitor);
         };
-        showNotice(Translation.msg(noticeKey).arg("name", inhibitorName).arg("count", activeInhibitors.maxActive()).text());
+        String favouredTagName = inhibitor.favoursTag() ? ThemeTags.displayName(inhibitor.favouredTag()).toLowerCase(Locale.ROOT) : "";
+        showNotice(Translation.msg(noticeKey).arg("name", inhibitorName).arg("count", activeInhibitors.maxActive()).arg("tag", favouredTagName).text());
+    }
+
+    static String inhibitorOnKey(CraftingInhibitor inhibitor) {
+        return "ui.craftingBench.notice.inhibitorOn." + (inhibitor.favoursTag() ? "tag" : inhibitor.name().toLowerCase(Locale.ROOT));
     }
 
     private static float itemTooltipWidth() {

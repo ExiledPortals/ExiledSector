@@ -28,6 +28,10 @@ public interface CraftingMaterialFamily extends GrowableMaterial {
         return false;
     }
 
+    default boolean addsModifiers() {
+        return false;
+    }
+
     default boolean wouldChange(Item item, RolledModifier rolled) {
         return false;
     }

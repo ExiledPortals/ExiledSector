@@ -26,6 +26,8 @@ public final class ExcavationRules {
     static final float LEAN_PERCENT = 200f;
     static final float FULL_LOOT_EFFECTIVENESS = 0.75f;
     static final float MIN_RAID_SHARE = 0.25f;
+    static final float INHIBITORS_PER_RAID = 1f;
+    static final float INHIBITORS_PER_GUARDIAN_FLEET = 0.5f;
     static final List<DropType> LEANS = List.of(DropType.WEAPON, DropType.BLUEPRINT, DropType.AI_CORE, DropType.RESOURCE, DropType.CRAFTING_ITEM,
             DropType.FEEDSTOCK, DropType.SUBROUTINE, DropType.STAR_CHART);
 

@@ -15,7 +15,12 @@ public enum Nanoswarm implements CraftingMaterialFamily {
 
         @Override
         public Item use(Item item, CraftingContext context, Random random) {
-            return ItemCrafting.augment(item, random) == null ? null : item;
+            return ItemCrafting.augment(item, random, context.favouredTags()) == null ? null : item;
+        }
+
+        @Override
+        public boolean addsModifiers() {
+            return true;
         }
     },
     FUNDAMENTAL("exiledSector_fundamental_nanoswarm", 15, 4, MaterialTier.MINOR, new Color(185, 125, 255)) {
@@ -37,7 +42,12 @@ public enum Nanoswarm implements CraftingMaterialFamily {
 
         @Override
         public Item use(Item item, CraftingContext context, Random random) {
-            return ItemCrafting.reshape(item, random, context.inhibitedSlots());
+            return ItemCrafting.reshape(item, random, context.inhibitedSlots(), context.favouredTags());
+        }
+
+        @Override
+        public boolean addsModifiers() {
+            return true;
         }
 
         @Override

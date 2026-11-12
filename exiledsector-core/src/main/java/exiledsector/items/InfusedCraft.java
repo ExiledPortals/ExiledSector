@@ -2,6 +2,7 @@ package exiledsector.items;
 
 import exiledsector.i18n.Translation;
 import exiledsector.modifiers.ModifierSlot;
+import exiledsector.skills.tags.TagWeights;
 import exiledsector.skills.tags.ThemeTags;
 
 import java.util.Collection;
@@ -20,8 +21,8 @@ public enum InfusedCraft {
         }
 
         @Override
-        boolean run(Item item, String tag, Set<ModifierSlot> inhibited, Random random) {
-            return InfusedCrafting.reforgeWithTag(item, tag, inhibited, random);
+        boolean run(Item item, String tag, Set<ModifierSlot> inhibited, TagWeights favouredTags, Random random) {
+            return InfusedCrafting.reforgeWithTag(item, tag, inhibited, favouredTags, random);
         }
 
         @Override
@@ -36,8 +37,8 @@ public enum InfusedCraft {
         }
 
         @Override
-        boolean run(Item item, String tag, Set<ModifierSlot> inhibited, Random random) {
-            return InfusedCrafting.addAndRemove(item, tag, inhibited, random);
+        boolean run(Item item, String tag, Set<ModifierSlot> inhibited, TagWeights favouredTags, Random random) {
+            return InfusedCrafting.addAndRemove(item, tag, inhibited, favouredTags, random);
         }
 
         @Override
@@ -85,7 +86,7 @@ public enum InfusedCraft {
 
     abstract boolean offered(Item item, String tag, Set<ModifierSlot> inhibited);
 
-    abstract boolean run(Item item, String tag, Set<ModifierSlot> inhibited, Random random);
+    abstract boolean run(Item item, String tag, Set<ModifierSlot> inhibited, TagWeights favouredTags, Random random);
 
     abstract List<RolledModifier> changeable(Item item, String tag);
 
@@ -133,9 +134,10 @@ public enum InfusedCraft {
         if (item == null || item.definition() == null || inhibitors.isEmpty()) {
             return spent;
         }
+        spent.addAll(CraftingInhibitor.favouring(inhibitors));
         List<RolledModifier> changeable = changeable(item, tag);
         for (CraftingInhibitor inhibitor : inhibitors) {
-            if (changeable.stream().anyMatch(rolled -> rolled.slot() == inhibitor.inhibitedSlot())) {
+            if (inhibitor.inhibitedSlot() != null && changeable.stream().anyMatch(rolled -> rolled.slot() == inhibitor.inhibitedSlot())) {
                 spent.add(inhibitor);
             }
         }
@@ -149,7 +151,8 @@ public enum InfusedCraft {
     }
 
     public boolean apply(Item item, String tag, Collection<CraftingInhibitor> inhibitors, Random random) {
-        return verdict(item, tag, inhibitors).allowed() && run(item, tag, CraftingInhibitor.inhibitedSlots(inhibitors), random);
+        return verdict(item, tag, inhibitors).allowed()
+                && run(item, tag, CraftingInhibitor.inhibitedSlots(inhibitors), CraftingInhibitor.favouredTags(inhibitors), random);
     }
 
     public Optional<Set<CraftingInhibitor>> use(Item item, String tag, CraftingMaterials materials,

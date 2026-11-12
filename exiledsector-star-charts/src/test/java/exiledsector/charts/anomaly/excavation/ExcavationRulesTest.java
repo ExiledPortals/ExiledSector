@@ -8,14 +8,21 @@ import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.DropType;
 import exiledsector.charts.anomaly.RaidDangerLevels;
+import exiledsector.items.CraftingInhibitor;
+import exiledsector.items.ItemDrops;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -65,6 +72,27 @@ class ExcavationRulesTest {
         assertEquals(3, Math.round(context.anomalyPercent(ExcavationSites.EXTRA_KEY)));
         assertEquals(1.5f, ExcavationLoot.LOOT.quantityMult(context), 0.0001f);
         assertEquals(1f, ExcavationLoot.LOOT.quantityMult(ChartGenContext.none()), 0.0001f);
+    }
+
+    @Test
+    void shaftsDropTagInhibitorsScaledByTheirShareAndTheSiteQuantity() {
+        ChartGenContext context = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_EXCAVATION_LOOT_QUANTITY_PERCENT, 100f)));
+        String beam = CraftingInhibitor.BEAM.itemId();
+        String phase = CraftingInhibitor.PHASE.itemId();
+
+        float perShaft = ExcavationRules.INHIBITORS_PER_RAID * ExcavationRules.ITEM_MULT;
+        assertEquals(perShaft, ExcavationLoot.expectedInhibitors(ExcavationRules.INHIBITORS_PER_RAID, context, 0.5f), 0.0001f);
+        assertEquals(perShaft * 0.5f, ExcavationLoot.expectedInhibitors(ExcavationRules.INHIBITORS_PER_RAID, ChartGenContext.none(), 0.5f), 0.0001f);
+        assertEquals(0f, ExcavationLoot.expectedInhibitors(ExcavationRules.INHIBITORS_PER_RAID, context, -1f), 0.0001f);
+        Map<String, Integer> found = ExcavationLoot.tagInhibitors(40f, new Random(1L));
+        Set<String> tagInhibitorIds = CraftingInhibitor.tagInhibitors().stream().map(CraftingInhibitor::itemId).collect(Collectors.toSet());
+        assertEquals(40, found.values().stream().mapToInt(Integer::intValue).sum());
+        assertTrue(tagInhibitorIds.containsAll(found.keySet()) && found.size() > 1, found.toString());
+        assertTrue(ExcavationLoot.tagInhibitors(0f, new Random(1L)).isEmpty());
+
+        ItemDrops.SiteLoot merged = ExcavationLoot.withInhibitors(new ItemDrops.SiteLoot(List.of(), List.of(), Map.of(beam, 1)), Map.of(beam, 2, phase, 1));
+        assertEquals(Map.of(beam, 3, phase, 1), merged.materials());
+        assertNull(ExcavationLoot.withInhibitors(null, Map.of()));
     }
 
     @Test

@@ -2,6 +2,7 @@ package exiledsector.items;
 
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierSlot;
+import exiledsector.skills.tags.TagWeights;
 import exiledsector.skills.tags.ThemeTags;
 
 import java.util.ArrayList;
@@ -57,20 +58,20 @@ final class InfusedCrafting {
         return !sidesWhere(definition, keptOnReforge(item, inhibited), item.tier(), tagged(tag)).isEmpty();
     }
 
-    static boolean reforgeWithTag(Item item, String tag, Set<ModifierSlot> inhibited, Random random) {
+    static boolean reforgeWithTag(Item item, String tag, Set<ModifierSlot> inhibited, TagWeights favouredTags, Random random) {
         if (!canReforge(item, tag, inhibited)) {
             return false;
         }
         ItemDefinition definition = item.definition();
         List<RolledModifier> modifiers = new ArrayList<>(keptOnReforge(item, inhibited));
         int modifierCount = Math.max(AffixLayout.rolledModifierCount(AffixLayout.limits(definition.type()), random.nextFloat()), modifiers.size() + 1);
-        AffixLayout.insert(modifiers, AffixLayout.rollFrom(sidesWhere(definition, modifiers, item.tier(), tagged(tag)), random, PoolEntry::weight));
+        AffixLayout.insert(modifiers, AffixLayout.rollFrom(sidesWhere(definition, modifiers, item.tier(), tagged(tag)), random, favouredTags));
         while (modifiers.size() < modifierCount) {
             List<List<PoolEntry>> openSides = AffixLayout.openSides(definition, modifiers, item.tier());
             if (openSides.isEmpty()) {
                 break;
             }
-            AffixLayout.insert(modifiers, AffixLayout.rollFrom(openSides, random, PoolEntry::weight));
+            AffixLayout.insert(modifiers, AffixLayout.rollFrom(openSides, random, favouredTags));
         }
         item.replaceExplicits(modifiers);
         item.refreezeName();
@@ -86,14 +87,14 @@ final class InfusedCrafting {
                 && !sidesWhere(definition, without(item.explicits(), rolled), item.tier(), tagged(tag)).isEmpty()).toList();
     }
 
-    static boolean addAndRemove(Item item, String tag, Set<ModifierSlot> inhibited, Random random) {
+    static boolean addAndRemove(Item item, String tag, Set<ModifierSlot> inhibited, TagWeights favouredTags, Random random) {
         List<RolledModifier> removable = removableForTag(item, tag, inhibited);
         if (removable.isEmpty()) {
             return false;
         }
         RolledModifier removed = removable.get(random.nextInt(removable.size()));
         List<List<PoolEntry>> taggedSides = sidesWhere(item.definition(), without(item.explicits(), removed), item.tier(), tagged(tag));
-        item.swapExplicit(removed, AffixLayout.rollFrom(taggedSides, random, PoolEntry::weight));
+        item.swapExplicit(removed, AffixLayout.rollFrom(taggedSides, random, favouredTags));
         return true;
     }
 

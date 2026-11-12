@@ -79,8 +79,11 @@ public enum BiomeCraft {
         if (item == null || item.definition() == null) {
             return spent;
         }
+        if (this == ADAPTIVE) {
+            spent.addAll(CraftingInhibitor.favouring(inhibitors));
+        }
         for (CraftingInhibitor inhibitor : inhibitors) {
-            if (item.explicits().stream().anyMatch(rolled -> rolled.slot() == inhibitor.inhibitedSlot() && !rolled.immutable()
+            if (inhibitor.inhibitedSlot() != null && item.explicits().stream().anyMatch(rolled -> rolled.slot() == inhibitor.inhibitedSlot() && !rolled.immutable()
                     && wouldChange(item, rolled))) {
                 spent.add(inhibitor);
             }
@@ -101,7 +104,7 @@ public enum BiomeCraft {
         Set<CraftingInhibitor> spent = inhibitorsSpent(item, inhibitors);
         Set<ModifierSlot> inhibited = CraftingInhibitor.inhibitedSlots(inhibitors);
         List<RolledModifier> replacement = switch (this) {
-            case ADAPTIVE -> adapt(item, inhibited, random);
+            case ADAPTIVE -> adapt(item, inhibited, CraftingInhibitor.favouredTags(inhibitors), random);
             case GRAFTING -> graft(item, inhibited, random);
         };
         item.replaceExplicits(replacement);
@@ -140,6 +143,10 @@ public enum BiomeCraft {
     }
 
     static List<RolledModifier> adapt(Item item, Set<ModifierSlot> inhibited, Random random) {
+        return adapt(item, inhibited, TagWeights.NONE, random);
+    }
+
+    static List<RolledModifier> adapt(Item item, Set<ModifierSlot> inhibited, TagWeights favouredTags, Random random) {
         ItemDefinition definition = item.definition();
         List<String> grants = adaptiveGrants(item, inhibited);
         Modifier granted = ItemModifiers.get(grants.get(random.nextInt(grants.size())));
@@ -155,7 +162,7 @@ public enum BiomeCraft {
                 break;
             }
             List<PoolEntry> side = openSides.get(random.nextInt(openSides.size()));
-            PoolEntry entry = side.get(WeightedPick.index(side, candidate -> candidate.biasedWeight(TagWeights.NONE), random.nextFloat()));
+            PoolEntry entry = side.get(WeightedPick.index(side, candidate -> candidate.biasedWeight(favouredTags), random.nextFloat()));
             AffixLayout.insert(modifiers, RolledModifier.roll(entry.modifier(), random));
         }
         return modifiers;

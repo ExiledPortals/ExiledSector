@@ -228,6 +228,14 @@ class BiomeCraftTest {
     }
 
     @Test
+    void onlyTheAdaptiveReforgeSpendsATagInhibitor() {
+        Item item = withModifiers(rolled(ModifierSlot.PREFIX, "FLUX_CAPACITY_MULT", 5f), rolled(ModifierSlot.SUFFIX, "ARMOR_PERCENT", 5f));
+
+        assertEquals(Set.of(CraftingInhibitor.SHIELD), BiomeCraft.ADAPTIVE.inhibitorsSpent(item, List.of(CraftingInhibitor.SHIELD)));
+        assertEquals(Set.of(), BiomeCraft.GRAFTING.inhibitorsSpent(item, List.of(CraftingInhibitor.SHIELD)));
+    }
+
+    @Test
     void bothCraftsNeedANonUniqueHullItemWithBiomeModifiersForItsPart() {
         Item relic = store.add(new ItemData(RELIC, 1L));
         Item item = withModifiers(rolled(ModifierSlot.PREFIX, "FLUX_CAPACITY_MULT", 5f));

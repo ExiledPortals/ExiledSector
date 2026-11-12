@@ -48,7 +48,7 @@ public final class ItemCrafting {
                 || !CraftingMaterialFamilies.appliesTo(craftingItem, definition.type())) {
             return false;
         }
-        return craftingItem.canUse(item, new CraftingContext(null, allowedUniques, CraftingInhibitor.inhibitedSlots(inhibitors)));
+        return craftingItem.canUse(item, CraftingContext.withInhibitors(null, allowedUniques, inhibitors));
     }
 
     public static UseVerdict verdict(CraftingMaterialFamily craftingItem, Item item, Predicate<ItemDefinition> allowedUniques, Collection<CraftingInhibitor> inhibitors) {
@@ -93,7 +93,13 @@ public final class ItemCrafting {
     public static Set<CraftingInhibitor> inhibitorsSpentBy(CraftingMaterialFamily craftingItem, Item item, Collection<CraftingInhibitor> inhibitors) {
         Set<CraftingInhibitor> spent = EnumSet.noneOf(CraftingInhibitor.class);
         ItemDefinition definition = item == null ? null : item.definition();
-        if (definition == null || !craftingItem.respectsInhibitors()) {
+        if (definition == null) {
+            return spent;
+        }
+        if (craftingItem.addsModifiers()) {
+            spent.addAll(CraftingInhibitor.favouring(inhibitors));
+        }
+        if (!craftingItem.respectsInhibitors()) {
             return spent;
         }
         for (CraftingInhibitor inhibitor : inhibitors) {
@@ -136,7 +142,7 @@ public final class ItemCrafting {
 
         @Override
         public Item apply(Item item) {
-            return craftingItem.use(item, new CraftingContext(store, allowedUniques, CraftingInhibitor.inhibitedSlots(inhibitors)), random);
+            return craftingItem.use(item, CraftingContext.withInhibitors(store, allowedUniques, inhibitors), random);
         }
 
         @Override
@@ -160,12 +166,16 @@ public final class ItemCrafting {
     }
 
     static RolledModifier augment(Item item, Random random) {
+        return augment(item, random, TagWeights.NONE);
+    }
+
+    static RolledModifier augment(Item item, Random random, TagWeights favouredTags) {
         ItemDefinition definition = item.definition();
         List<List<PoolEntry>> openSides = definition == null ? List.of() : AffixLayout.openSides(definition, item.explicits(), item.tier());
         if (definition == null || openSides.isEmpty()) {
             return null;
         }
-        RolledModifier addedModifier = AffixLayout.rollFrom(openSides, random, TagWeights.NONE);
+        RolledModifier addedModifier = AffixLayout.rollFrom(openSides, random, favouredTags);
         item.addExplicit(addedModifier);
         return addedModifier;
     }
@@ -252,6 +262,10 @@ public final class ItemCrafting {
     }
 
     static Item reshape(Item item, Random random, Set<ModifierSlot> inhibited) {
+        return reshape(item, random, inhibited, TagWeights.NONE);
+    }
+
+    static Item reshape(Item item, Random random, Set<ModifierSlot> inhibited, TagWeights favouredTags) {
         ItemDefinition definition = item.definition();
         if (definition == null || definition.unique()) {
             return null;
@@ -262,7 +276,7 @@ public final class ItemCrafting {
         }
         RolledModifier removed = removable.get(random.nextInt(removable.size()));
         List<List<PoolEntry>> openSides = replacementSides(definition, item.explicits(), removed, item.tier());
-        item.swapExplicit(removed, AffixLayout.rollFrom(openSides, random, TagWeights.NONE));
+        item.swapExplicit(removed, AffixLayout.rollFrom(openSides, random, favouredTags));
         return item;
     }
 

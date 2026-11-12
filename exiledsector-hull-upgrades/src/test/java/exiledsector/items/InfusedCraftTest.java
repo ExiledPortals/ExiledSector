@@ -238,6 +238,16 @@ class InfusedCraftTest {
     }
 
     @Test
+    void aTagInhibitorIsSpentByEveryInfusedCraftAndLeavesTheCraftWorking() {
+        Item item = plate(rolled(FLUX, 5f), rolled(KINETIC, -5f));
+
+        assertEquals(Set.of(CraftingInhibitor.PHASE), InfusedCraft.REFORGE_WITH_TAG.inhibitorsSpent(item, "front_shield", Set.of(CraftingInhibitor.PHASE)));
+        assertEquals(Set.of(CraftingInhibitor.PHASE), InfusedCraft.ADD_AND_REMOVE.inhibitorsSpent(item, "weapon", Set.of(CraftingInhibitor.PHASE)));
+        assertTrue(craft(InfusedCraft.REFORGE_WITH_TAG, item, "front_shield", Set.of(CraftingInhibitor.PHASE), 1L));
+        assertTrue(ids(item).contains(SHIELD));
+    }
+
+    @Test
     void anInhibitorIsSpentOnlyWhenItsSideHoldsSomethingTheCraftCouldChange() {
         Item suffixOnly = plate(rolled(KINETIC, -5f));
         Item reservedSuffix = plate(rolled(FLUX, 5f), rolled(BIOME, -5f));

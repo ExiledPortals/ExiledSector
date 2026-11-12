@@ -119,6 +119,18 @@ class CraftingInhibitorTest {
     }
 
     @Test
+    void aTagInhibitorIsSpentOnlyByCraftsThatAddModifiers() {
+        Item item = rare();
+        List<CraftingInhibitor> beamAndPrefix = List.of(CraftingInhibitor.BEAM, CraftingInhibitor.PREFIX);
+
+        assertEquals(Set.of(CraftingInhibitor.BEAM), ItemCrafting.inhibitorsSpentBy(Nanoswarm.AUGMENTATION, item, beamAndPrefix));
+        assertEquals(Set.of(CraftingInhibitor.BEAM, CraftingInhibitor.PREFIX), ItemCrafting.inhibitorsSpentBy(Nanoswarm.RESHAPING, item, beamAndPrefix));
+        assertEquals(Set.of(CraftingInhibitor.PREFIX), ItemCrafting.inhibitorsSpentBy(Nanoswarm.TUNING, item, beamAndPrefix));
+        assertTrue(ItemCrafting.inhibitorsSpentBy(Nanoswarm.CORRUPTION, item, List.of(CraftingInhibitor.BEAM)).isEmpty());
+        assertTrue(ItemCrafting.canUse(Nanoswarm.TUNING, item, definition -> true, List.of(CraftingInhibitor.BEAM)));
+    }
+
+    @Test
     void aWardGuardingOnlyAFixedEffectIsNotSpent() throws Exception {
         ItemDefinitions.register(new JSONArray().put(HullItemRows.row("lean", "bridge", "HULL_MULT:4:6", "ARMOR_PERCENT:6:9")));
         Item item = store.add(HullItemRows.data("lean", 1L, List.of(new RolledLine("HULL_MULT", 5f), new RolledLine("ARMOR_PERCENT", 7f)), null));
