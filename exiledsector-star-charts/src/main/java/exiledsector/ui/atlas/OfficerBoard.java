@@ -1,10 +1,8 @@
 package exiledsector.ui.atlas;
 
 import com.fs.starfarer.api.campaign.FactionAPI;
-import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.charts.atlas.AtlasCell;
-import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.OfficerRank;
@@ -41,13 +39,12 @@ final class OfficerBoard {
     static final float OPEN_SECONDS = 0.2f;
     static final float INSET = 16f;
     static final float HEADER_HEIGHT = 40f;
-    static final float FOOTER_HEIGHT = 28f;
-    static final float LABEL_COLUMN_WIDTH = 120f;
+    static final float MAX_LABEL_WIDTH = 104f;
+    static final float BACKGROUND_ALPHA = 0.5f;
     static final int GHOST_COUNT = 7;
     static final float GHOST_SIZE_RATIO = 0.3f;
     static final float GHOST_SCATTER_RATIO = 0.35f;
     static final String GHOST_SEED_PREFIX = "officer_";
-    static final float FLAG_SHARE = 0.45f;
     static final float DIMMED_ALPHA = 0.4f;
     static final float FRAME_WIDTH = 1.5f;
     static final float HOVERED_FRAME_WIDTH = 3f;
@@ -68,8 +65,7 @@ final class OfficerBoard {
     static final Color SHIELD_COLOUR = SkillTreePanelStyle.GLOW_COLOR;
     static final Color FALLBACK_FRAME_COLOUR = new Color(150, 150, 150);
 
-    private record Face(boolean identified, boolean dimmed, String portraitPath, String logoPath, float logoAspect, Color frameColour,
-                        AtlasCell commandCentre) {
+    private record Face(boolean identified, boolean dimmed, String portraitPath, Color frameColour, AtlasCell commandCentre) {
     }
 
     private record ArrowShape(OfficerBoardArrows.Arrow arrow, float[] points, Color colour) {
@@ -95,11 +91,9 @@ final class OfficerBoard {
     private final LineBatch arrowLines = new LineBatch(ARROW_WIDTH);
     private final OfficerBoardTooltip tooltip = new OfficerBoardTooltip(sprites);
     private final TextLabel titleLabel = new TextLabel(UiFonts.TITLE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
-    private final TextLabel hintLabel = new TextLabel(UiFonts.HINT, AtlasScreen.HINT_COLOUR);
     private final List<TextLabel> rankLabels = new ArrayList<>();
     private final Map<Integer, AtlasOfficer> records = new HashMap<>();
     private final Map<Integer, Face> faces = new HashMap<>();
-    private AtlasGenerator generator;
     private OfficerBoardShuffle shuffle;
     private List<OfficerBoardArrows.Arrow> arrows = List.of();
     private Set<Integer> shields = Set.of();
@@ -113,10 +107,14 @@ final class OfficerBoard {
     private float regionBottom;
     private float regionWidth;
     private float regionHeight;
+    private float availableLeft;
+    private float availableBottom;
+    private float availableWidth;
+    private float availableHeight;
+    private float labelColumnWidth;
     private OfficerBoardGeometry geometry;
 
-    void open(AtlasGenerator atlasGenerator, AtlasState state) {
-        generator = atlasGenerator;
+    void open(AtlasState state) {
         TurnResult lastTurn = OfficerTurns.lastTurn(state);
         records.clear();
         faces.clear();
@@ -153,28 +151,33 @@ final class OfficerBoard {
 
     private Face face(AtlasOfficer officer) {
         FactionAPI faction = OfficerText.faction(officer);
-        String logoPath = faction == null ? null : faction.getLogo();
-        SpriteAPI logo = logoPath == null || logoPath.isEmpty() ? null : sprites.texture(logoPath);
-        float aspect = logo == null || logo.getWidth() <= 0f ? 0f : logo.getHeight() / logo.getWidth();
         return new Face(officer.identified(), !officer.isActive(), officer.identified() ? OfficerText.portraitPath(officer) : null,
-                aspect > 0f ? logoPath : null, aspect, faction == null ? FALLBACK_FRAME_COLOUR : faction.getBaseUIColor(),
-                officer.isActive() ? officer.commandCentre() : null);
+                faction == null ? FALLBACK_FRAME_COLOUR : faction.getBaseUIColor(), officer.isActive() ? officer.commandCentre() : null);
     }
 
     private void writeLabels(OfficerBoardLayout layout) {
         titleLabel.set(Translation.text("chart.officer.board.title"));
-        hintLabel.set(Translation.text("chart.officer.board.hint"));
         rankLabels.clear();
+        float widestLabel = 0f;
         for (int row = 0; row < layout.rowCount(); row++) {
             TextLabel label = new TextLabel(UiFonts.BODY, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
-            label.setWrapped(OfficerRanks.rank(layout.rankIdOfRow(row)).displayName(), LABEL_COLUMN_WIDTH - INSET, HEADER_HEIGHT);
+            label.setWrapped(OfficerRanks.rank(layout.rankIdOfRow(row)).displayName(), MAX_LABEL_WIDTH, HEADER_HEIGHT);
             rankLabels.add(label);
+            widestLabel = Math.max(widestLabel, label.width());
         }
+        labelColumnWidth = (float) Math.ceil(widestLabel) + INSET;
     }
 
     void close() {
         open = false;
         hoveredRecordId = null;
+        tooltip.cleanup();
+    }
+
+    void openHoveredCodex() {
+        if (open && hoveredRecordId != null) {
+            tooltip.openCodex(hoveredRecordId);
+        }
     }
 
     boolean isOpen() {
@@ -194,31 +197,37 @@ final class OfficerBoard {
     }
 
     void place(float left, float bottom, float width, float height) {
-        if (geometry != null && left == regionLeft && bottom == regionBottom && width == regionWidth && height == regionHeight) {
+        if (geometry != null && left == availableLeft && bottom == availableBottom && width == availableWidth && height == availableHeight) {
             return;
         }
-        regionLeft = left;
+        availableLeft = left;
+        availableBottom = bottom;
+        availableWidth = width;
+        availableHeight = height;
+        float rowsPreferredWidth = OfficerBoardGeometry.preferredRowsWidth(shuffle.widestRow());
+        float contentWidth = Math.max(titleLabel.width(), labelColumnWidth + rowsPreferredWidth);
+        regionWidth = Math.min(width, contentWidth + INSET * 2f);
+        regionHeight = Math.min(height, OfficerBoardGeometry.preferredRowsHeight(shuffle.after().rowCount()) + INSET * 2f + HEADER_HEIGHT);
+        regionLeft = left + width - regionWidth;
         regionBottom = bottom;
-        regionWidth = width;
-        regionHeight = height;
         geometry = OfficerBoardGeometry.fit(rowsLeft(), rowsBottom(), rowsWidth(), rowsHeight(), shuffle.after().rowCount(), shuffle.widestRow());
         arrowShapes = arrowShapes();
     }
 
     private float rowsLeft() {
-        return regionLeft + INSET + LABEL_COLUMN_WIDTH;
+        return regionLeft + INSET + labelColumnWidth;
     }
 
     private float rowsBottom() {
-        return regionBottom + INSET + FOOTER_HEIGHT;
+        return regionBottom + INSET;
     }
 
     private float rowsWidth() {
-        return regionWidth - INSET * 2f - LABEL_COLUMN_WIDTH;
+        return regionWidth - INSET * 2f - labelColumnWidth;
     }
 
     private float rowsHeight() {
-        return regionHeight - INSET * 2f - HEADER_HEIGHT - FOOTER_HEIGHT;
+        return regionHeight - INSET * 2f - HEADER_HEIGHT;
     }
 
     boolean contains(float x, float y) {
@@ -314,10 +323,9 @@ final class OfficerBoard {
         if (alpha <= 0f || geometry == null) {
             return;
         }
-        GLDraw.fillQuad(regionLeft, regionBottom, regionWidth, regionHeight, Color.BLACK, alpha);
-        BorderedPanel.draw(regionLeft, regionBottom, regionWidth, regionHeight, alpha);
+        GLDraw.fillQuad(regionLeft, regionBottom, regionWidth, regionHeight, Color.BLACK, BACKGROUND_ALPHA * alpha);
+        BorderedPanel.drawEdges(regionLeft, regionBottom, regionWidth, regionHeight, alpha);
         titleLabel.setAlpha(alpha).draw(regionLeft + INSET, regionBottom + regionHeight - INSET);
-        hintLabel.setAlpha(alpha).draw(regionLeft + INSET, regionBottom + INSET + hintLabel.height());
         drawRows(alpha);
         drawArrows(alpha * OfficerBoardShuffle.arrowAlpha(shuffleSeconds));
         for (OfficerBoardShuffle.Mover mover : shuffle.movers()) {
@@ -330,7 +338,7 @@ final class OfficerBoard {
         drawRankMarks(alpha * OfficerBoardShuffle.markAlpha(shuffleSeconds));
         if (open && hoveredRecordId != null) {
             AtlasOfficer hovered = records.get(hoveredRecordId);
-            tooltip.show(hovered, generator);
+            tooltip.show(hovered);
             tooltip.draw(accent, mouseX, mouseY, alpha);
         }
     }
@@ -363,11 +371,6 @@ final class OfficerBoard {
         GLDraw.fillQuad(left, bottom, size, size, SLOT_FILL, alpha);
         if (face.portraitPath() != null) {
             SpriteDraw.drawAtCenter(sprites, face.portraitPath(), centreX, centreY, size, size, tint, shown);
-        }
-        if (face.logoPath() != null) {
-            float flagWidth = size * FLAG_SHARE;
-            float flagHeight = flagWidth * face.logoAspect();
-            SpriteDraw.drawAtCenter(sprites, face.logoPath(), left + size - flagWidth / 2f, bottom + flagHeight / 2f, flagWidth, flagHeight, tint, shown);
         }
         boolean hovered = Integer.valueOf(recordId).equals(hoveredRecordId);
         GLDraw.strokeQuad(left, bottom, size, size, face.frameColour(), hovered ? HOVERED_FRAME_WIDTH : FRAME_WIDTH, shown);

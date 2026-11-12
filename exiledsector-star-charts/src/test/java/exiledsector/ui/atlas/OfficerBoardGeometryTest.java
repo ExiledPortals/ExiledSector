@@ -40,4 +40,12 @@ class OfficerBoardGeometryTest {
         assertTrue(geometry.portraitSize() * 16 <= 1040f);
         assertTrue(geometry.rowPitch() * 5 <= 504f);
     }
+
+    @Test
+    void thePreferredSizeHoldsFullSizePortraits() {
+        OfficerBoardGeometry geometry = OfficerBoardGeometry.fit(0f, 0f, OfficerBoardGeometry.preferredRowsWidth(4),
+                OfficerBoardGeometry.preferredRowsHeight(5), 5, 4);
+        assertEquals(OfficerBoardGeometry.MAX_PORTRAIT_SIZE, geometry.portraitSize(), 1e-4f);
+        assertEquals(OfficerBoardGeometry.MAX_PORTRAIT_SIZE * OfficerBoardGeometry.PREFERRED_ROW_PITCH_PER_PORTRAIT, geometry.rowPitch(), 1e-4f);
+    }
 }

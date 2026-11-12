@@ -82,8 +82,6 @@ public final class AnchorIconFx {
     private static final float BADGE_CENTRE_X = 63f;
     private static final float BADGE_CENTRE_Y = 17f;
     private static final float BADGE_RADIUS = 13f;
-    private static final int BADGE_SEGMENTS = 32;
-    private static final UnitCircle BADGE_CIRCLE = UnitCircle.of(BADGE_SEGMENTS);
     private static final Color BADGE_RIM = new Color(20, 22, 28);
     private static final Logger LOG = Logger.getLogger(AnchorIconFx.class);
     private static final Map<String, String> CREST_PATHS = new HashMap<>();
@@ -349,25 +347,7 @@ public final class AnchorIconFx {
             return;
         }
         float radius = BADGE_RADIUS * unit;
-        float textureLeft = crest.getTexX();
-        float textureBottom = crest.getTexY();
-        float textureWidth = crest.getTexWidth();
-        float textureHeight = crest.getTexHeight();
-        try (GlScope scope = GlScope.textured(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)) {
-            crest.bindTexture();
-            GL11.glColor4f(1f, 1f, 1f, alphaMult);
-            GL11.glBegin(GL11.GL_TRIANGLE_FAN);
-            GL11.glTexCoord2f(textureLeft + textureWidth / 2f, textureBottom + textureHeight / 2f);
-            GL11.glVertex2f(badgeX, badgeY);
-            for (int segment = 0; segment <= BADGE_SEGMENTS; segment++) {
-                int index = segment % BADGE_SEGMENTS;
-                float cos = BADGE_CIRCLE.cos(index);
-                float sin = BADGE_CIRCLE.sin(index);
-                GL11.glTexCoord2f(textureLeft + textureWidth * (0.5f + 0.5f * cos), textureBottom + textureHeight * (0.5f + 0.5f * sin));
-                GL11.glVertex2f(badgeX + cos * radius, badgeY + sin * radius);
-            }
-            GL11.glEnd();
-        }
+        SpriteDraw.drawDiscAtCenter(crest, badgeX, badgeY, radius, alphaMult);
         try (GlScope scope = GlScope.flat()) {
             HoloShapes.circle(badgeX, badgeY, radius, BADGE_RIM, Math.max(1f, 2f * unit), 0.95f * alphaMult);
             if (framed) {

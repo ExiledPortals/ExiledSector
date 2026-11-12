@@ -30,7 +30,10 @@ public final class BorderedPanel {
 
     public static void draw(float x, float y, float width, float height, float alphaMult) {
         GLDraw.fillQuad(x, y, width, height, BACKGROUND_COLOR, alphaMult);
+        drawEdges(x, y, width, height, alphaMult);
+    }
 
+    public static void drawEdges(float x, float y, float width, float height, float alphaMult) {
         float edgeWidth = Math.min(BORDER_EDGE_WIDTH, width / 2f);
         float capHeight = Math.min(BORDER_CAP_HEIGHT, height / 2f);
         float midHeight = Math.max(0f, height - capHeight * 2f);

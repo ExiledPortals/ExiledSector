@@ -18,7 +18,10 @@ import exiledsector.charts.atlas.AtlasNode;
 import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.charts.atlas.AtlasReach;
 import exiledsector.charts.atlas.AtlasState;
+import com.fs.starfarer.api.campaign.FactionAPI;
+import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.OfficerSightings;
+import exiledsector.charts.officer.OfficerText;
 import exiledsector.items.UseVerdict;
 import exiledsector.ui.SmoothZoom;
 import exiledsector.ui.TreeViewport;
@@ -86,10 +89,26 @@ final class AtlasMapCanvas {
     static final float FINAL_HALO_SPEED = 2.5f;
     static final Color FINAL_STAGE_COLOUR = new Color(255, 200, 90);
 
-    record AnomalyIcon(AtlasCell cell, String anomalyId, String iconPath, int slot, boolean fogged, AtlasAnomalyRecord.Chain chain) {
+    record AnomalyIcon(AtlasCell cell, String anomalyId, String iconPath, int slot, boolean fogged, AtlasAnomalyRecord.Chain chain,
+                       AtlasOfficer officer, Color ringColour) {
+
+        AnomalyIcon(AtlasCell cell, String anomalyId, String iconPath, int slot, boolean fogged, AtlasAnomalyRecord.Chain chain) {
+            this(cell, anomalyId, iconPath, slot, fogged, chain, null, null);
+        }
 
         AnomalyIcon(AtlasCell cell, String anomalyId, String iconPath, int slot) {
             this(cell, anomalyId, iconPath, slot, false, null);
+        }
+
+        static AnomalyIcon officer(AtlasCell cell, AtlasOfficer officer, int slot) {
+            FactionAPI faction = OfficerText.faction(officer);
+            String portraitPath = OfficerText.portraitPath(officer);
+            Color ringColour = faction == null ? OfficerBoard.FALLBACK_FRAME_COLOUR : faction.getBaseUIColor();
+            return new AnomalyIcon(cell, null, portraitPath == null ? "" : portraitPath, slot, false, null, officer, ringColour);
+        }
+
+        boolean isOfficer() {
+            return officer != null;
         }
     }
 
@@ -165,6 +184,10 @@ final class AtlasMapCanvas {
                     ChartAnomalies.Definition definition = ChartAnomalies.definition(anomalyId);
                     anomalyIcons.add(new AnomalyIcon(cell, anomalyId, definition == null ? "" : definition.icon(), slot, false, chainAt(cell, anomalyId)));
                 }
+                AtlasOfficer officer = shownOfficerAt(cell);
+                if (officer != null) {
+                    anomalyIcons.add(AnomalyIcon.officer(cell, officer, anomalyIds.size()));
+                }
             }
         }
         if (gatewaySketch != null && visible.contains(AtlasCell.ORIGIN)) {
@@ -172,6 +195,11 @@ final class AtlasMapCanvas {
         }
         addChains();
         scenery.attach(this);
+    }
+
+    AtlasOfficer shownOfficerAt(AtlasCell cell) {
+        AtlasOfficer officer = state.officerAt(cell);
+        return officer != null && officer.identified() ? officer : null;
     }
 
     private static Set<AtlasCell> shownCells(Set<AtlasCell> visibleCells, Set<AtlasCell> officerSystems) {
@@ -552,7 +580,6 @@ final class AtlasMapCanvas {
     private void drawAnomalies(TreeViewport view, float alphaMult) {
         float footprint = footprint(view);
         float ringWidthScale = beamWidthScale(view) * ANOMALY_RING_WIDTH_SHARE;
-        BeamStroke.Look ringLook = beams.lit(Misc.getNegativeHighlightColor());
         for (AnomalyIcon icon : anomalyIcons) {
             float openness = openness(icon.cell());
             float scale = nodeScale(icon.cell());
@@ -563,15 +590,24 @@ final class AtlasMapCanvas {
                 continue;
             }
             float alpha = openness * alphaMult;
-            if (!icon.iconPath().isEmpty()) {
-                SpriteDraw.drawAtCenter(spriteCache, icon.iconPath(), x, y, radius * 2f, radius * 2f, Color.WHITE, alpha);
-            }
-            beams.ring(x, y, NodeBeams.huggingRingRadius(radius, ringWidthScale), null, ringLook, alpha, ringWidthScale);
+            drawIconFace(icon, x, y, radius, alpha);
+            beams.ring(x, y, NodeBeams.huggingRingRadius(radius, ringWidthScale), null, beams.lit(icon.ringColour() == null ? Misc.getNegativeHighlightColor() : icon.ringColour()), alpha, ringWidthScale);
             if (icon.chain() != null) {
                 addChainPings(icon.chain(), x, y, radius, alpha, ringWidthScale);
             }
         }
         beams.flush();
+    }
+
+    private void drawIconFace(AnomalyIcon icon, float x, float y, float radius, float alpha) {
+        if (icon.iconPath().isEmpty()) {
+            return;
+        }
+        if (icon.isOfficer()) {
+            SpriteDraw.drawDiscAtCenter(spriteCache.texture(icon.iconPath()), x, y, radius, alpha);
+        } else {
+            SpriteDraw.drawAtCenter(spriteCache, icon.iconPath(), x, y, radius * 2f, radius * 2f, Color.WHITE, alpha);
+        }
     }
 
     private void addChainPings(AtlasAnomalyRecord.Chain chain, float x, float y, float radius, float alpha, float ringWidthScale) {

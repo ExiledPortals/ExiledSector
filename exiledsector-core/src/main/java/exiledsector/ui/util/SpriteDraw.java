@@ -2,10 +2,14 @@ package exiledsector.ui.util;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import exiledsector.skills.skilleffect.render.SpriteCache;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 
 public final class SpriteDraw {
+
+    private static final int DISC_SEGMENTS = 48;
+    private static final UnitCircle DISC_CIRCLE = UnitCircle.of(DISC_SEGMENTS);
 
     private SpriteDraw() {
     }
@@ -23,6 +27,29 @@ public final class SpriteDraw {
     public static void drawAtCenter(SpriteAPI sprite, float cx, float cy, float width, float height,
                                     Color tint, float alphaMult, float angleDeg) {
         draw(sprite, cx, cy, width, height, tint, alphaMult, angleDeg, false);
+    }
+
+    public static void drawDiscAtCenter(SpriteAPI texture, float cx, float cy, float radius, float alphaMult) {
+        if (texture == null) return;
+        float textureLeft = texture.getTexX();
+        float textureBottom = texture.getTexY();
+        float textureWidth = texture.getTexWidth();
+        float textureHeight = texture.getTexHeight();
+        try (GlScope scope = GlScope.textured(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)) {
+            texture.bindTexture();
+            GL11.glColor4f(1f, 1f, 1f, alphaMult);
+            GL11.glBegin(GL11.GL_TRIANGLE_FAN);
+            GL11.glTexCoord2f(textureLeft + textureWidth / 2f, textureBottom + textureHeight / 2f);
+            GL11.glVertex2f(cx, cy);
+            for (int segment = 0; segment <= DISC_SEGMENTS; segment++) {
+                int index = segment % DISC_SEGMENTS;
+                float cos = DISC_CIRCLE.cos(index);
+                float sin = DISC_CIRCLE.sin(index);
+                GL11.glTexCoord2f(textureLeft + textureWidth * (0.5f + 0.5f * cos), textureBottom + textureHeight * (0.5f + 0.5f * sin));
+                GL11.glVertex2f(cx + cos * radius, cy + sin * radius);
+            }
+            GL11.glEnd();
+        }
     }
 
     public static void drawAtPivot(SpriteCache cache, String path, float pivotScreenX, float pivotScreenY, float width, float height,

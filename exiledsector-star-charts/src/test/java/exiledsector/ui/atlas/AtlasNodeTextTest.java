@@ -57,8 +57,7 @@ class AtlasNodeTextTest {
         AtlasGenerator generator = generator(state);
         AtlasCell bastion = AtlasDevTools.nearestOpenSite(generator, state, "bastion");
 
-        assertEquals(List.of(new AtlasLine("Out of reach. Complete a system joined to it by a lane first.", AtlasLine.Tone.HINT)),
-                AtlasNodeText.stateLines(generator, state, bastion, false));
+        assertEquals(List.of(), AtlasNodeText.stateLines(generator, state, bastion, false));
 
         AtlasDevTools.reach(generator, state, bastion);
 
@@ -121,6 +120,7 @@ class AtlasNodeTextTest {
                     "50% increased quantity of items found in the system, and 50% increased completion reward"), styledLines);
             assertTrue(AtlasNodeText.confirmLines(generator, state, cell).stream().noneMatch(line -> line.contains("<")));
             assertTrue(AtlasNodeText.anomalyBody(generator, state, cell, RelayNetwork.ANOMALY_ID).plain().contains("Stage 3 of 3"));
+            assertEquals(List.of(), AtlasNodeText.card(generator, state, cell, true).notes());
             assertEquals(StyledText.parse("<bad>40%</bad> x"), new AtlasLine("<bad>40%</bad> x", AtlasLine.Tone.STYLED).styled());
         } finally {
             AtlasData.registerNodeEffects(new JSONArray());

@@ -9,6 +9,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.fleet.FleetMemberType;
 import com.fs.starfarer.api.impl.campaign.ids.Personalities;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.loading.VariantSource;
@@ -143,6 +144,24 @@ public final class OfficerFleets {
         } catch (RuntimeException e) {
             return null;
         }
+    }
+
+    public static FleetMemberAPI previewFlagship(AtlasOfficer officer) {
+        ShipVariantAPI base = flagshipVariant(officer);
+        if (base == null) {
+            return null;
+        }
+        ShipVariantAPI variant = base.clone();
+        variant.setSource(VariantSource.REFIT);
+        for (String dmodId : officer.dmodIds()) {
+            variant.addPermaMod(dmodId, false);
+        }
+        FleetMemberAPI member = Global.getFactory().createFleetMember(FleetMemberType.SHIP, variant);
+        FactionAPI faction = OfficerText.faction(officer);
+        if (faction != null) {
+            member.setShipName(flagshipName(officer, faction));
+        }
+        return member;
     }
 
     public static String flagshipName(AtlasOfficer officer, FactionAPI faction) {

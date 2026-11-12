@@ -19,6 +19,7 @@ import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.skilleffect.render.Fade;
+import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.OverlayFade;
 import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasCatalystUse;
@@ -26,12 +27,12 @@ import exiledsector.charts.atlas.AtlasCatalysts;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasRuntime;
 import exiledsector.charts.atlas.AtlasGenerator;
-import exiledsector.charts.atlas.AtlasLine;
 import exiledsector.charts.atlas.AtlasNames;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.layout.sketch.SectorSystemSketcher;
 import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.OfficerDefeat;
+import exiledsector.charts.officer.OfficerText;
 import exiledsector.charts.wormhole.WormholeGateway;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.items.AtlasCatalystItems;
@@ -162,6 +163,9 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     private Object tooltipSubject;
     private AtlasCell hoveredCell;
     private AtlasMapCanvas.AnomalyIcon hoveredAnomaly;
+    private final SpriteCache spriteCache = new SpriteCache(AtlasScreen.class);
+    private final OfficerBoardTooltip officerTooltip = new OfficerBoardTooltip(spriteCache);
+    private final AtlasSystemCard systemCard = new AtlasSystemCard(spriteCache);
     private String wormholeMessage;
     private float mouseX;
     private float mouseY;
@@ -644,6 +648,11 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             entries.add(new AtlasAnomalyPanel.Entry(AtlasNames.anomaly(anomalyId), definition == null ? "" : definition.icon(),
                     AtlasNodeText.anomalyBody(map.generator(), map.state(), focusedCell, anomalyId)));
         }
+        AtlasOfficer officer = map.shownOfficerAt(focusedCell);
+        if (officer != null) {
+            String portraitPath = OfficerText.portraitPath(officer);
+            entries.add(new AtlasAnomalyPanel.Entry(OfficerText.title(officer), portraitPath == null ? "" : portraitPath, AtlasNodeText.officerBody(officer)));
+        }
         return entries;
     }
 
@@ -684,8 +693,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     }
 
     private String systemName(AtlasCell cell) {
-        List<AtlasLine> lines = AtlasNodeText.describe(map.generator(), map.state(), cell, map.isReachable(cell));
-        return lines.isEmpty() ? "" : lines.get(0).text();
+        return AtlasNodeText.title(map.generator(), cell);
     }
 
     private void targetPicked(AtlasCell cell) {
@@ -799,7 +807,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         camera.stopDrag();
         hoveredCell = null;
         hoveredAnomaly = null;
-        officerBoard.open(map.generator(), map.state());
+        officerBoard.open(map.state());
         unchosenRewardHolder = OfficerDefeat.nextUnchosen(map.state());
         placeOfficerBoard();
         SkillTreeSounds.panelOpened();
@@ -810,6 +818,8 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             return;
         }
         AtlasCameraMemory.remember(Global.getSector(), camera.centreTreeX(), camera.centreTreeY());
+        officerBoard.close();
+        officerTooltip.cleanup();
         host.switchTo(OfficerRewardPicker.unchosenScreen(unchosenRewardHolder, AtlasScreen::withOfficerBoard));
         unchosenRewardHolder = null;
     }
@@ -827,6 +837,10 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
             if (event.isKeyUpEvent()) {
                 officerBoard.close();
+            }
+        } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_F2) {
+            if (event.isKeyDownEvent()) {
+                officerBoard.openHoveredCodex();
             }
         } else if (event.isMouseUpEvent() && event.isLMBUpEvent()) {
             officerBoardClicked(event.getX(), event.getY());
@@ -855,12 +869,15 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             catalystPanel.close();
         }
         AtlasCameraMemory.remember(Global.getSector(), camera.centreTreeX(), camera.centreTreeY());
+        officerBoard.close();
+        officerTooltip.cleanup();
         host.switchTo(AtlasTreeScreen::new);
     }
 
     private void close() {
         fade.close();
         officerBoard.close();
+        officerTooltip.cleanup();
         leaveFocus();
         if (catalystPanel != null) {
             catalystPanel.close();
@@ -885,6 +902,11 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
                 if (event.isKeyUpEvent()) {
                     escape();
+                }
+                event.consume();
+            } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_F2) {
+                if (event.isKeyDownEvent() && hoveredAnomaly != null && hoveredAnomaly.isOfficer()) {
+                    officerTooltip.openCodex(hoveredAnomaly.officer().recordId());
                 }
                 event.consume();
             } else if (event.isMouseEvent()) {
@@ -1009,6 +1031,9 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             boolean hovering = focusedCell == null && !officerBoard.isShowing() && !camera.isDragging()
                     && (catalystPanel == null || !catalystPanel.contains(mouseX, mouseY));
             hoveredAnomaly = hovering ? map.anomalyAt(viewport(), mouseX, mouseY) : null;
+            if (hoveredAnomaly == null || !hoveredAnomaly.isOfficer()) {
+                officerTooltip.cleanup();
+            }
             AtlasCell hovered = hovering && hoveredAnomaly == null ? map.cellAt(viewport(), mouseX, mouseY) : null;
             if (hovered != null && !hovered.equals(hoveredCell)) {
                 map.pulse(hovered);
@@ -1065,10 +1090,17 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         }
         drawChrome(alpha);
         officerBoard.render(alpha, mouseX, mouseY, panelStyle.getAccentColor());
-        if (hoveredAnomaly != null && !gesture.isPanning()) {
+        if (hoveredAnomaly != null && hoveredAnomaly.isOfficer() && !gesture.isPanning()) {
+            officerTooltip.show(hoveredAnomaly.officer());
+            officerTooltip.draw(panelStyle.getAccentColor(), mouseX, mouseY, alpha);
+        } else if (hoveredAnomaly != null && !gesture.isPanning()) {
             drawTooltip(hoveredAnomaly, this::writeAnomalyTooltip, alpha);
         } else if (hoveredCell != null && !gesture.isPanning()) {
-            drawTooltip(hoveredCell, this::writeTooltip, alpha);
+            if (!hoveredCell.equals(tooltipSubject)) {
+                tooltipSubject = hoveredCell;
+                I18n.forGameText(this::writeSystemCard);
+            }
+            systemCard.draw(mouseX, mouseY, alpha);
         }
     }
 
@@ -1098,19 +1130,15 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
                 SkillTreePanelStyle::standardHighlightColor);
     }
 
-    private void writeTooltip() {
-        List<AtlasLine> lines = AtlasNodeText.describe(map.generator(), map.state(), hoveredCell, map.isReachable(hoveredCell));
-        String title = lines.isEmpty() ? "" : lines.get(0).text();
-        List<StyledText> body = new ArrayList<>();
-        for (AtlasLine line : lines.subList(Math.min(1, lines.size()), lines.size())) {
-            body.add(line.styled());
-        }
+    private void writeSystemCard() {
+        AtlasNodeText.SystemCard card = AtlasNodeText.card(map.generator(), map.state(), hoveredCell, map.isReachable(hoveredCell));
         UseVerdict verdict = map.targetVerdict(hoveredCell);
         AtlasCatalystUse use = catalystUse();
+        StyledText verdictLine = null;
         if (verdict != null && use != null) {
-            body.add(0, verdict.allowed() ? StyledText.styled(use.usableText(), Style.GOOD)
-                    : StyledText.styled(verdict.text(MaterialItems.displayName(use.itemId()), title), Style.BAD));
+            verdictLine = verdict.allowed() ? StyledText.styled(use.usableText(), Style.GOOD)
+                    : StyledText.styled(verdict.text(MaterialItems.displayName(use.itemId()), card.title()), Style.BAD);
         }
-        writeTooltipText(title, StyledText.join(StyledText.of("\n"), body));
+        systemCard.write(card, verdictLine);
     }
 }

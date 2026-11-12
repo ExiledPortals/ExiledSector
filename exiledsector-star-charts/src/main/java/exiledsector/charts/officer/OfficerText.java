@@ -92,10 +92,6 @@ public final class OfficerText {
         return officer.history().isEmpty() ? null : HistoryEntry.parse(officer.history().get(officer.history().size() - 1));
     }
 
-    public static String latestHistory(AtlasGenerator generator, AtlasOfficer officer) {
-        return historyLine(generator, latestEntry(officer));
-    }
-
     public static String historyLine(AtlasGenerator generator, HistoryEntry entry) {
         if (entry == null || !Translation.has(HISTORY_KEY_PREFIX + entry.event())) {
             return "";

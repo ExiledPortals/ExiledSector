@@ -33,40 +33,34 @@ public final class AtlasNodeText {
         return AtlasNames.region(regionId);
     }
 
-    public static List<AtlasLine> describe(AtlasGenerator generator, AtlasState state, AtlasCell cell, boolean reachable) {
-        AtlasNode node = generator.node(cell);
-        List<AtlasLine> lines = new ArrayList<>();
-        if (node.isOrigin()) {
-            lines.add(new AtlasLine(Translation.text("chart.atlas.node.gateway"), Tone.TITLE));
-            return lines;
-        }
-        lines.add(new AtlasLine(regionName(node.regionId()), Tone.TITLE));
-        lines.add(new AtlasLine(Translation.msg("chart.atlas.node.faction")
-                .arg("faction", ChartFactions.displayName(AtlasOpening.factionFor(generator, state, cell, node))).text(), Tone.PLAIN));
-        lines.add(new AtlasLine(Translation.msg("chart.atlas.node.layout").arg("layout", AtlasNames.name("layout", node.layoutId())).text(), Tone.PLAIN));
-        lines.addAll(officerLines(generator, state, cell));
-        lines.addAll(markers(generator, state, cell, node));
-        lines.addAll(stateLines(generator, state, cell, reachable));
-        return lines;
+    public record SystemCard(String title, String layout, String factionId, AtlasOfficer officer, boolean commandCentre,
+                             List<AtlasLine> notes, List<AtlasLine> status) {
     }
 
-    static List<AtlasLine> officerLines(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
+    public static String title(AtlasGenerator generator, AtlasCell cell) {
+        AtlasNode node = generator.node(cell);
+        return node.isOrigin() ? Translation.text("chart.atlas.node.gateway") : regionName(node.regionId());
+    }
+
+    public static SystemCard card(AtlasGenerator generator, AtlasState state, AtlasCell cell, boolean reachable) {
+        AtlasNode node = generator.node(cell);
+        if (node.isOrigin()) {
+            return new SystemCard(title(generator, cell), "", null, null, false, List.of(), List.of());
+        }
         AtlasCell centre = state.commandCentreOf(cell);
         AtlasOfficer officer = centre == null ? null : state.officerAt(centre);
+        List<AtlasLine> notes = new ArrayList<>(notes(generator, state, cell, node));
         if (officer == null) {
-            return fledOfficerLines(generator, state, cell);
+            notes.addAll(fledOfficerLines(generator, state, cell));
         }
-        if (!centre.equals(cell)) {
-            return List.of(new AtlasLine(Translation.msg("chart.officer.tooltip.territory").arg("title", OfficerText.title(officer)).text(), Tone.PLAIN));
-        }
-        List<AtlasLine> lines = new ArrayList<>();
-        lines.add(new AtlasLine(Translation.msg("chart.officer.tooltip.commandCentre").arg("title", OfficerText.title(officer)).text(), Tone.MARKER));
-        String history = OfficerText.latestHistory(generator, officer);
-        if (!history.isEmpty()) {
-            lines.add(new AtlasLine(history, Tone.HINT));
-        }
-        lines.addAll(OfficerText.detailLines(officer));
-        return lines;
+        return new SystemCard(title(generator, cell), AtlasNames.name("layout", node.layoutId()), AtlasOpening.factionFor(generator, state, cell, node),
+                officer, officer != null && centre.equals(cell), notes, stateLines(generator, state, cell, reachable));
+    }
+
+    public static StyledText officerBody(AtlasOfficer officer) {
+        List<StyledText> lines = new ArrayList<>(OfficerBoardTooltip.detailLines(officer, OfficerText.faction(officer)));
+        OfficerText.detailLines(officer).forEach(line -> lines.add(line.styled()));
+        return StyledText.join(StyledText.of("\n"), lines);
     }
 
     static List<AtlasLine> fledOfficerLines(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
@@ -80,20 +74,26 @@ public final class AtlasNodeText {
     }
 
     static List<AtlasLine> markers(AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasNode node) {
+        List<AtlasLine> lines = new ArrayList<>(notes(generator, state, cell, node));
+        List<AtlasLine> anomalies = new ArrayList<>();
+        for (String anomalyId : AtlasAnomalies.effective(generator, state, cell)) {
+            anomalies.add(new AtlasLine(Translation.msg("chart.atlas.node.anomaly").arg("anomaly", AtlasNames.name("anomaly", anomalyId)).text(), Tone.MARKER));
+            anomalies.addAll(anomalyLines(generator, state, cell, anomalyId));
+        }
+        lines.addAll(generator.specialAt(cell) == null ? 0 : 1, anomalies);
+        return lines;
+    }
+
+    static List<AtlasLine> notes(AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasNode node) {
         List<AtlasLine> lines = new ArrayList<>();
-        boolean spent = state.has(cell, AtlasState.ANOMALIES_SPENT);
         AtlasSpecial special = generator.specialAt(cell);
         if (special != null) {
             lines.add(new AtlasLine(AtlasNames.name("special", special.id()), Tone.MARKER));
         }
-        for (String anomalyId : AtlasAnomalies.effective(generator, state, cell)) {
-            lines.add(new AtlasLine(Translation.msg("chart.atlas.node.anomaly").arg("anomaly", AtlasNames.name("anomaly", anomalyId)).text(), Tone.MARKER));
-            lines.addAll(anomalyLines(generator, state, cell, anomalyId));
-        }
         if (node.infestationId() != null && !state.has(cell, AtlasState.INFESTATION_CLEARED)) {
             lines.add(new AtlasLine(Translation.msg("chart.atlas.node.infested").arg("infestation", AtlasNames.name("special", node.infestationId())).text(), Tone.BAD));
         }
-        if (spent) {
+        if (state.has(cell, AtlasState.ANOMALIES_SPENT)) {
             lines.add(new AtlasLine(Translation.text("chart.atlas.node.spent"), Tone.BAD));
         }
         return lines;
@@ -133,7 +133,7 @@ public final class AtlasNodeText {
             return List.of(new AtlasLine(Translation.text("chart.atlas.node.attempted"), Tone.BAD));
         }
         if (!reachable) {
-            return List.of(new AtlasLine(Translation.text("chart.atlas.blocked.not_reachable"), Tone.HINT));
+            return List.of();
         }
         AtlasOpening.Blocker requirement = AtlasOpening.check(generator, state, cell, null);
         AtlasLine open = new AtlasLine(Translation.text("chart.atlas.node.open"), Tone.GOOD);

@@ -15,19 +15,12 @@ import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.OfficerDefeat;
 import exiledsector.charts.officer.OfficerText;
 import exiledsector.charts.officer.reward.CarriedItem;
-import exiledsector.charts.officer.reward.OfficerRewardDrop;
 import exiledsector.charts.officer.reward.OfficerRewardPool;
 import exiledsector.charts.officer.reward.OfficerRewardText;
-import exiledsector.charts.officer.reward.RewardKind;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
-import exiledsector.items.Item;
-import exiledsector.items.ItemData;
-import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemTooltip;
 import exiledsector.items.MaterialItemPlugin;
-import exiledsector.items.MaterialItems;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.CampaignOverlay;
 import exiledsector.ui.ChromeMetrics;
@@ -70,11 +63,9 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
     private static final float BORDER_WIDTH = 1.5f;
     private static final float HOVER_BORDER_WIDTH = 3f;
     private static final Color CARD_FILL = new Color(10, 14, 20);
-    private static final Color MATERIAL_FRAME = new Color(170, 170, 170);
-    private static final long PREVIEW_SEED = 0L;
     private static final SpriteCache ICONS = new SpriteCache(OfficerRewardPicker.class);
 
-    private record Card(CarriedItem offer, Item preview, String iconPath, Color frameColor, TextLabel nameLabel) {
+    private record Card(CarriedItem offer, RewardFace face, TextLabel nameLabel) {
     }
 
     private final CampaignOverlay.Host host;
@@ -153,27 +144,7 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
     private static Card card(CarriedItem offer) {
         TextLabel nameLabel = new TextLabel(UiFonts.BODY, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
         I18n.forGameText(() -> nameLabel.setWrapped(OfficerRewardText.name(offer), CARD_WIDTH - CARD_PAD * 2f, NAME_MAX_HEIGHT));
-        if (offer.kind().craftingItem()) {
-            Color materialColor = MaterialItems.color(offer.id());
-            return new Card(offer, null, MaterialItems.loadedIconPath(offer.id()), materialColor == null ? MATERIAL_FRAME : materialColor, nameLabel);
-        }
-        Item preview = preview(offer);
-        return new Card(offer, preview, preview == null ? null : preview.iconPath(), preview == null ? MATERIAL_FRAME : preview.frameColor(), nameLabel);
-    }
-
-    private static Item preview(CarriedItem offer) {
-        ItemDefinition definition = ItemDefinitions.get(offer.id());
-        if (definition == null) {
-            return null;
-        }
-        if (offer.kind() == RewardKind.UNIQUE) {
-            return ItemData.rolled(definition, PREVIEW_SEED).preview();
-        }
-        ItemData base = new ItemData(definition.id(), PREVIEW_SEED, List.of(), null);
-        if (offer.kind() == RewardKind.BIOME_HULL_ITEM) {
-            base = OfficerRewardDrop.withBiomeModifier(base, definition, offer.variant(), new Random(PREVIEW_SEED));
-        }
-        return base.preview();
+        return new Card(offer, RewardFace.of(offer), nameLabel);
     }
 
     @Override
@@ -293,8 +264,8 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
             return;
         }
         PositionAPI anchor = cardAnchors.get(cards.indexOf(card)).getPosition();
-        if (card.preview() != null) {
-            hoverTooltip.show(card, card.preview(), expanded -> List.of(), anchor);
+        if (card.face().preview() != null) {
+            hoverTooltip.show(card, card.face().preview(), expanded -> List.of(), anchor);
         } else if (card.offer().kind().craftingItem()) {
             hoverTooltip.show(card, ItemTooltip.width(), (tooltip, expanded) -> MaterialItemPlugin.writeTooltip(tooltip, card.offer().id()), anchor);
         } else {
@@ -333,13 +304,13 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
         boolean hovered = card == hoveredCard;
         GLDraw.fillQuad(left, bottom, CARD_WIDTH, CARD_HEIGHT, CARD_FILL, alpha);
         if (hovered) {
-            GLDraw.fillQuad(left, bottom, CARD_WIDTH, CARD_HEIGHT, card.frameColor(), HOVER_FILL_ALPHA * alpha);
+            GLDraw.fillQuad(left, bottom, CARD_WIDTH, CARD_HEIGHT, card.face().frameColour(), HOVER_FILL_ALPHA * alpha);
         }
-        GLDraw.strokeQuad(left, bottom, CARD_WIDTH, CARD_HEIGHT, card.frameColor(), hovered ? HOVER_BORDER_WIDTH : BORDER_WIDTH,
+        GLDraw.strokeQuad(left, bottom, CARD_WIDTH, CARD_HEIGHT, card.face().frameColour(), hovered ? HOVER_BORDER_WIDTH : BORDER_WIDTH,
                 (hovered ? 1f : IDLE_BORDER_ALPHA) * alpha);
         float iconCentreY = bottom + CARD_HEIGHT - CARD_PAD - ICON_SIZE / 2f;
-        if (card.iconPath() != null) {
-            SpriteDraw.drawAtCenter(ICONS, card.iconPath(), left + CARD_WIDTH / 2f, iconCentreY, ICON_SIZE, ICON_SIZE, Color.WHITE, alpha);
+        if (card.face().iconPath() != null) {
+            SpriteDraw.drawAtCenter(ICONS, card.face().iconPath(), left + CARD_WIDTH / 2f, iconCentreY, ICON_SIZE, ICON_SIZE, Color.WHITE, alpha);
         }
         card.nameLabel().setAlpha(alpha).draw(left + CARD_PAD, iconCentreY - ICON_SIZE / 2f - CARD_PAD);
     }

@@ -5,6 +5,15 @@ record OfficerBoardGeometry(float rowsCentreX, float blockTop, float rowPitch, f
     static final float MAX_PORTRAIT_SIZE = 64f;
     static final float PORTRAIT_SHARE_OF_SLOT = 0.8f;
     static final float MAX_ROW_PITCH_PER_PORTRAIT = 1.9f;
+    static final float PREFERRED_ROW_PITCH_PER_PORTRAIT = 1.5f;
+
+    static float preferredRowsWidth(int widestRow) {
+        return Math.max(1, widestRow) * MAX_PORTRAIT_SIZE / PORTRAIT_SHARE_OF_SLOT;
+    }
+
+    static float preferredRowsHeight(int rowCount) {
+        return Math.max(1, rowCount) * MAX_PORTRAIT_SIZE * PREFERRED_ROW_PITCH_PER_PORTRAIT;
+    }
 
     static OfficerBoardGeometry fit(float rowsLeft, float rowsBottom, float rowsWidth, float rowsHeight, int rowCount, int widestRow) {
         int rows = Math.max(1, rowCount);
