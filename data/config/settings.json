@@ -6,6 +6,7 @@
 		"exiledSector_chartMisfirePlugin":"exiledsector.charts.effect.ChartMisfirePlugin",
 		"exiledSector_stormFrontBattlePlugin":"exiledsector.charts.anomaly.stormfront.StormBattlePlugin",
 		"exiledSector_shaftBattlePlugin":"exiledsector.charts.anomaly.excavation.ExcavationBattlePlugin",
+		"exiledSector_scarCombatPlugin":"exiledsector.charts.officer.scar.ScarCombatPlugin",
 	},
 	"ruleCommandPackages":[
 		"exiledsector.charts.run",

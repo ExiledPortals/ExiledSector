@@ -14,6 +14,7 @@ import exiledsector.charts.loot.ChartStorageTransfer;
 import exiledsector.charts.loot.StarChartLootSource;
 import exiledsector.charts.objective.ChartRewardLootSource;
 import exiledsector.charts.objective.GatewayUpgradeRewards;
+import exiledsector.charts.officer.scar.ScarEffectSource;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.run.ChartTransverseJump;
 import exiledsector.charts.wormhole.ColonyFreeAtlas;
@@ -71,7 +72,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
 
     @Override
     public List<ShipEffectSource> shipEffectSources() {
-        return List.of(ChartPlayerModifierSource.INSTANCE, ChartEnemyShipEffects.INSTANCE);
+        return List.of(ChartPlayerModifierSource.INSTANCE, ChartEnemyShipEffects.INSTANCE, ScarEffectSource.INSTANCE);
     }
 
     @Override

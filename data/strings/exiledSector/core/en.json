@@ -1031,5 +1031,19 @@
     "tag.subroutine": "Subroutines",
     "tag.star_chart": "Star Charts",
     "tag.crafting_item": "Crafting Items",
-    "tag.vanilla_loot": "Standard Loot"
+    "tag.vanilla_loot": "Standard Loot",
+    "stat.missileDamageTaken": "damage taken from missiles",
+    "stat.beamDamageTaken": "damage taken from beams",
+    "stat.damageToShields": "damage to shields",
+    "stat.damageToYourFlagship": "damage to your flagship",
+    "stat.damageToDModdedShips": "damage to ships with d-mods",
+    "effect.SCAR_MINE_DAMAGE_TAKEN_MULT": "<good>{value}%</good> less damage taken from mines.",
+    "effect.SCAR_COLLISION_DAMAGE_TAKEN_MULT": "<good>{value}%</good> less collision damage taken.",
+    "effect.SCAR_SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_MULT": "<good>{value}%</good> less damage taken by shields from automated ships.",
+    "effect.SCAR_DAMAGE_TAKEN_NEAR_ALLIES_PERCENT": "<good>{value}%</good> reduced damage taken while an allied ship is within <hl>{range}</hl> su.",
+    "effect.SCAR_DAMAGE_TAKEN_AT_LOW_HULL_PERCENT": "<good>{value}%</good> reduced damage taken while below <hl>{hull}%</hl> hull.",
+    "effect.SCAR_DAMAGE_AND_SPEED_WHILE_ALONE_PERCENT": "<good>{value}%</good> increased weapon damage and top speed while no allied ship is within <hl>{range}</hl> su.",
+    "effect.SCAR_HARD_FLUX_DISSIPATION_PERCENT": "<good>{value}%</good> hard flux dissipation while shields are active.",
+    "effect.SCAR_WING_DAMAGE_TO_FIGHTERS_PERCENT": "Strikecraft launched from this ship deal <good>{value}%</good> increased damage to fighters.",
+    "effect.SCAR_HIGH_EXPLOSIVE_CONVERSION_CHANCE_PERCENT": "<good>{value}%</good> chance for each kinetic or energy weapon hit on an enemy ship to deal high explosive damage instead."
 }

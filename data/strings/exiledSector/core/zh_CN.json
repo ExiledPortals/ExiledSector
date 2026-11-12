@@ -1497,5 +1497,19 @@
     "tag.subroutine": "子程序",
     "tag.star_chart": "星图",
     "tag.crafting_item": "制作物品",
-    "tag.vanilla_loot": "常规战利品"
+    "tag.vanilla_loot": "常规战利品",
+    "stat.missileDamageTaken": "受到的导弹伤害",
+    "stat.beamDamageTaken": "受到的光束伤害",
+    "stat.damageToShields": "对护盾造成的伤害",
+    "stat.damageToYourFlagship": "对你的旗舰造成的伤害",
+    "stat.damageToDModdedShips": "对带有D插的舰船造成的伤害",
+    "effect.SCAR_MINE_DAMAGE_TAKEN_MULT": "受到的水雷伤害降低<good>{value}%</good>（乘算）。",
+    "effect.SCAR_COLLISION_DAMAGE_TAKEN_MULT": "受到的碰撞伤害降低<good>{value}%</good>（乘算）。",
+    "effect.SCAR_SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_MULT": "护盾受到自动化舰船的伤害降低<good>{value}%</good>（乘算）。",
+    "effect.SCAR_DAMAGE_TAKEN_NEAR_ALLIES_PERCENT": "有友方舰船位于<hl>{range}</hl> su内时，受到的伤害降低<good>{value}%</good>。",
+    "effect.SCAR_DAMAGE_TAKEN_AT_LOW_HULL_PERCENT": "结构低于<hl>{hull}%</hl>时，受到的伤害降低<good>{value}%</good>。",
+    "effect.SCAR_DAMAGE_AND_SPEED_WHILE_ALONE_PERCENT": "<hl>{range}</hl> su内没有友方舰船时，武器伤害和最高航速提高<good>{value}%</good>。",
+    "effect.SCAR_HARD_FLUX_DISSIPATION_PERCENT": "护盾开启时<good>{value}%</good>硬幅能耗散。",
+    "effect.SCAR_WING_DAMAGE_TO_FIGHTERS_PERCENT": "本舰放出的舰载机对战机造成的伤害提高<good>{value}%</good>。",
+    "effect.SCAR_HIGH_EXPLOSIVE_CONVERSION_CHANCE_PERCENT": "每次动能或能量武器命中敌舰时，有<good>{value}%</good>几率改为造成高爆伤害。"
 }
