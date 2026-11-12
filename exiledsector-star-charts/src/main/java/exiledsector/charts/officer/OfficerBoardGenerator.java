@@ -23,25 +23,33 @@ public final class OfficerBoardGenerator {
 
     public static List<AtlasOfficer> generate(long seed, List<OfficerRank> ranks, Map<String, Float> factionWeights, FlagshipCatalogue catalogue) {
         List<AtlasOfficer> board = new ArrayList<>();
-        Map<String, Float> traitWeights = new LinkedHashMap<>();
-        TRAIT_IDS.forEach(traitId -> traitWeights.put(traitId, 1f));
         int recordId = 0;
         for (int rankOrder = 0; rankOrder < ranks.size(); rankOrder++) {
-            OfficerRank rank = ranks.get(rankOrder);
-            for (int place = 0; place < rank.places(); place++) {
+            for (int place = 0; place < ranks.get(rankOrder).places(); place++) {
                 recordId++;
                 String factionId = AtlasHash.race(seed, FACTION_SALT, recordId, rankOrder, factionWeights);
                 if (factionId == null) {
                     return board;
                 }
-                String traitId = AtlasHash.race(seed, TRAIT_SALT, recordId, rankOrder, traitWeights);
-                Random random = Seeds.derived(seed, SEEDS_SALT ^ recordId);
-                AtlasOfficer.OfficerSeeds seeds = new AtlasOfficer.OfficerSeeds(random.nextLong(), random.nextLong(), random.nextLong(),
-                        random.nextLong());
-                FlagshipCatalogue.Flagship flagship = catalogue.pick(factionId, rankOrder, ranks.size(), random);
-                board.add(AtlasOfficer.waiting(recordId, factionId, rank.id(), traitId, seeds, flagship));
+                board.add(officer(seed, recordId, factionId, rankOrder, ranks, catalogue));
             }
         }
         return board;
+    }
+
+    public static AtlasOfficer replacement(long seed, int recordId, String factionId, List<OfficerRank> ranks, FlagshipCatalogue catalogue) {
+        return officer(seed, recordId, factionId, 0, ranks, catalogue);
+    }
+
+    private static AtlasOfficer officer(long seed, int recordId, String factionId, int rankOrder, List<OfficerRank> ranks,
+                                        FlagshipCatalogue catalogue) {
+        Map<String, Float> traitWeights = new LinkedHashMap<>();
+        TRAIT_IDS.forEach(traitId -> traitWeights.put(traitId, 1f));
+        String traitId = AtlasHash.race(seed, TRAIT_SALT, recordId, rankOrder, traitWeights);
+        Random random = Seeds.derived(seed, SEEDS_SALT ^ recordId);
+        AtlasOfficer.OfficerSeeds seeds = new AtlasOfficer.OfficerSeeds(random.nextLong(), random.nextLong(), random.nextLong(),
+                random.nextLong());
+        FlagshipCatalogue.Flagship flagship = catalogue.pick(factionId, rankOrder, ranks.size(), random);
+        return AtlasOfficer.waiting(recordId, factionId, ranks.get(rankOrder).id(), traitId, seeds, flagship);
     }
 }

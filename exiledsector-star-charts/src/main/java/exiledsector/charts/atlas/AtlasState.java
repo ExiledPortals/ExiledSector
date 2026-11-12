@@ -42,6 +42,12 @@ public final class AtlasState implements AtlasMemory {
     private Map<Long, Long> territoryClaims = new HashMap<>();
     private Set<Long> decidedChunks = new HashSet<>();
     private Map<Integer, String> officerRecords = new TreeMap<>();
+    private int lastOfficerRecordId;
+    private int officerTurn;
+    private int seenOfficerTurn;
+    private int otherBossKills;
+    private List<String> declaredIntents = new ArrayList<>();
+    private List<String> lastTurnResult = new ArrayList<>();
     private int atlasPoints;
     private Set<String> atlasTreeNodeIds = new TreeSet<>();
     private int keyFragments;
@@ -93,6 +99,12 @@ public final class AtlasState implements AtlasMemory {
         }
         if (officerRecords == null) {
             officerRecords = new TreeMap<>();
+        }
+        if (declaredIntents == null) {
+            declaredIntents = new ArrayList<>();
+        }
+        if (lastTurnResult == null) {
+            lastTurnResult = new ArrayList<>();
         }
         if (atlasTreeNodeIds == null) {
             atlasTreeNodeIds = new TreeSet<>();
@@ -312,7 +324,64 @@ public final class AtlasState implements AtlasMemory {
 
     public void putOfficer(AtlasOfficer officer) {
         officerRecords.put(officer.recordId(), officer.encode());
+        lastOfficerRecordId = Math.max(lastOfficerRecordId, officer.recordId());
         forgetDecodedOfficers();
+    }
+
+    public boolean removeOfficer(int recordId) {
+        boolean removed = officerRecords.remove(recordId) != null;
+        forgetDecodedOfficers();
+        return removed;
+    }
+
+    public int newOfficerRecordId() {
+        int highestHeld = officerRecords.keySet().stream().mapToInt(Integer::intValue).max().orElse(0);
+        lastOfficerRecordId = Math.max(lastOfficerRecordId, highestHeld) + 1;
+        return lastOfficerRecordId;
+    }
+
+    public int officerTurn() {
+        return officerTurn;
+    }
+
+    public int advanceOfficerTurn() {
+        return ++officerTurn;
+    }
+
+    public int seenOfficerTurn() {
+        return seenOfficerTurn;
+    }
+
+    public void markOfficerTurnSeen() {
+        seenOfficerTurn = officerTurn;
+    }
+
+    public int otherBossKills() {
+        return otherBossKills;
+    }
+
+    public int addOtherBossKill() {
+        return ++otherBossKills;
+    }
+
+    public void clearOtherBossKills() {
+        otherBossKills = 0;
+    }
+
+    public List<String> declaredIntents() {
+        return List.copyOf(declaredIntents);
+    }
+
+    public void setDeclaredIntents(List<String> intentLines) {
+        declaredIntents = new ArrayList<>(intentLines);
+    }
+
+    public List<String> lastTurnResult() {
+        return List.copyOf(lastTurnResult);
+    }
+
+    public void setLastTurnResult(List<String> resultLines) {
+        lastTurnResult = new ArrayList<>(resultLines);
     }
 
     private Map<Integer, AtlasOfficer> decodedOfficers() {

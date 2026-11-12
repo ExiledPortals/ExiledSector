@@ -20,6 +20,7 @@ import exiledsector.charts.loot.ChartLoot;
 import exiledsector.charts.loot.ChartMaterials;
 import exiledsector.charts.officer.OfficerRanks;
 import exiledsector.charts.officer.reward.OfficerRewardTable;
+import exiledsector.charts.officer.turn.OfficerTurnTables;
 import exiledsector.charts.run.ChartBlockedAbilities;
 import exiledsector.charts.run.ChartCampaignPlugin;
 import exiledsector.charts.run.ChartContentListener;
@@ -94,6 +95,7 @@ public final class StarCharts {
         ChartFeatures.load();
         AtlasData.load();
         OfficerRanks.load();
+        OfficerTurnTables.load();
         AtlasTreeData.load();
     }
 }
