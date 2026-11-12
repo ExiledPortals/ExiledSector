@@ -13,7 +13,7 @@ public enum SubroutineKind {
     DOCTRINE(false, false, 1, false, true),
     BYPASS(true, true, 1, false, false),
     UNIQUE(false, false, SubroutineKind.UNLIMITED_PER_SHIP, true, true),
-    ROOT_CONDUIT(true, false, 1, false, false);
+    ROOT_CONDUIT(true, false, 1, false, true);
 
     public static final int UNLIMITED_PER_SHIP = Integer.MAX_VALUE;
 

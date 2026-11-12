@@ -51,8 +51,8 @@ class ItemTagLineTest {
         List<String> expanded = item().slottedEffectLines(true, null).stream().map(line -> line.text().toMarkup()).toList();
 
         assertEquals(7, expanded.size(), expanded.toString());
-        assertEquals("<muted>Tags: Armor, Hull</muted>", expanded.get(3));
-        assertEquals("<muted>Tags: Front Shield</muted>", expanded.get(5));
+        assertEquals("<muted>Armor, Hull</muted>", expanded.get(3));
+        assertEquals("<muted>Front Shield</muted>", expanded.get(5));
         assertTrue(expanded.get(6).contains("(4%-6%)"), expanded.get(6));
     }
 

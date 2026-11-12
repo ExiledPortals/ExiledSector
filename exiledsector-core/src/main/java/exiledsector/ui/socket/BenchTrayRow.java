@@ -14,7 +14,6 @@ final class BenchTrayRow extends BaseCustomUIPanelPlugin {
     record Layout(float iconSize, float iconInset, float iconGap) {
     }
 
-    private static final float DULL_ICON_ALPHA = 0.3f;
     private static final SpriteCache ICONS = new SpriteCache(BenchTrayRow.class);
 
     private final List<String> iconPaths;
@@ -62,12 +61,8 @@ final class BenchTrayRow extends BaseCustomUIPanelPlugin {
         float hoverShare = rowInput.isHovered() ? 1f : 0f;
         for (int i = 0; i < iconPaths.size(); i++) {
             float iconCentreY = topCentreY - i * (iconSize + layout.iconGap());
-            if (available) {
-                TileChrome.drawIcon(ICONS, iconPaths.get(i), iconLooks.get(i), iconCentreX, iconCentreY, iconSize, alphaMult, hoverShare,
-                        System.identityHashCode(this) + i);
-            } else {
-                TileChrome.drawIcon(ICONS, iconPaths.get(i), null, iconCentreX, iconCentreY, iconSize, alphaMult * DULL_ICON_ALPHA, 0f, 0);
-            }
+            TileChrome.drawIcon(ICONS, iconPaths.get(i), iconLooks.get(i), iconCentreX, iconCentreY, iconSize, alphaMult, hoverShare,
+                    System.identityHashCode(this) + i);
         }
     }
 

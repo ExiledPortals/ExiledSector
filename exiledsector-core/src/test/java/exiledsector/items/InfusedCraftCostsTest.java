@@ -29,9 +29,10 @@ class InfusedCraftCostsTest {
     private static final String PHASE = "exiledSector_phase_feedstock";
     private static final Set<String> CHILD_TAGS_WITH_THEIR_OWN_CRAFTS = Set.of("ballistic", "non_beam_energy", "beam", "missile", "range",
             "rate_of_fire", "ammo");
-    private static final Set<String> ROOT_TAGS_WITHOUT_CRAFTS = Set.of("weapon", "repair", "d_mods", "fleet", "conditional");
-    private static final Set<String> THREAT_TAGS = Set.of("ballistic", "non_beam_energy", "beam", "missile", "damage_type", "strikecraft");
-    private static final Set<String> SHROUD_TAGS = Set.of("defence", "combat_readiness", "range", "ammo", "logistics");
+    private static final Set<String> ROOT_TAGS_WITHOUT_CRAFTS = Set.of("weapon", "repair", "d_mods", "fleet", "conditional",
+            "damage_type", "combat_readiness");
+    private static final Set<String> THREAT_TAGS = Set.of("ballistic", "non_beam_energy", "beam", "missile", "strikecraft");
+    private static final Set<String> SHROUD_TAGS = Set.of("defence", "range", "ammo", "logistics");
 
     @BeforeEach
     void setUp() throws Exception {

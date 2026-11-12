@@ -950,7 +950,7 @@
     "combat.solarisOverdrive": "Solaris Overdrive",
     "combat.solarisOverdrive.status": "weapons cost no flux",
 
-    "themeTags.tooltipLine": "<muted>Tags: {tags}</muted>",
+    "themeTags.tooltipLine": "<muted>{tags}</muted>",
     "tag.weapon": "Weapons",
     "tag.ballistic": "Ballistic",
     "tag.energy": "Energy",

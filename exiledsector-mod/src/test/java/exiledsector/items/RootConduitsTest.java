@@ -86,6 +86,7 @@ class RootConduitsTest {
         RootConduits.Conduit found = RootConduits.of(data);
 
         assertTrue(conduit.corrupted());
+        assertEquals(ItemRarity.UNIQUE, conduit.rarity());
         assertEquals(conduit.conduitAffinity(), found.affinity());
         assertEquals(8, found.path().size());
         assertEquals(6, found.nodesBetween());

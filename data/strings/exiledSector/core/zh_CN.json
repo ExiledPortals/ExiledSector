@@ -1416,7 +1416,7 @@
     "combat.solarisOverdrive": "索拉里斯超载",
     "combat.solarisOverdrive.status": "武器开火不产生幅能",
 
-    "themeTags.tooltipLine": "<muted>标签：{tags}</muted>",
+    "themeTags.tooltipLine": "<muted>{tags}</muted>",
     "tag.weapon": "武器",
     "tag.ballistic": "实弹",
     "tag.energy": "能量",

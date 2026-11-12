@@ -123,7 +123,7 @@ class SkillTreeNodeTooltipRendererTest {
         List<DescriptionLine> details = SkillTreeNodeTooltipRenderer.withThemeTagLine(description, tagged).details();
 
         assertEquals(1, details.size());
-        assertEquals("<muted>Tags: Armor, Front Shield</muted>", details.get(0).text().toMarkup());
+        assertEquals("<muted>Armor, Front Shield</muted>", details.get(0).text().toMarkup());
         assertSame(description, SkillTreeNodeTooltipRenderer.withThemeTagLine(description, untagged));
     }
 }
