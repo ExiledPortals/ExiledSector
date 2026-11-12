@@ -3,6 +3,7 @@ package exiledsector.charts;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
+import exiledsector.DockedStorage;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.atlas.AtlasCatalysts;
@@ -62,8 +63,11 @@ public final class StarCharts {
             if (existing != null) {
                 existing.freezeNames();
             }
-            CargoAPI cargo = playerFleet == null ? null : playerFleet.getCargo();
-            return ItemStore.carriesStarCharts(cargo) ? ItemStore.starCharts().absorbFrom(cargo) : 0;
+            int movedCount = 0;
+            for (CargoAPI cargo : DockedStorage.withPlayerCargo(playerFleet == null ? null : playerFleet.getCargo())) {
+                movedCount += ItemStore.carriesStarCharts(cargo) ? ItemStore.starCharts().absorbFrom(cargo) : 0;
+            }
+            return movedCount;
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Moving Star Charts from cargo into storage failed", e);
             return 0;

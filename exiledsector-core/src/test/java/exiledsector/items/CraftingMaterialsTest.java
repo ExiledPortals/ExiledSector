@@ -45,6 +45,22 @@ class CraftingMaterialsTest {
     }
 
     @Test
+    void dockedMarketStorageCountsTooAndIsSpentLast() {
+        CargoAPI cargo = cargoHolding(FEEDSTOCK, 2f);
+        CargoAPI dockedStorage = cargoHolding(FEEDSTOCK, 10f);
+        Map<String, Integer> stored = new HashMap<>(Map.of(FEEDSTOCK, 1));
+        CraftingMaterials materials = new CraftingMaterials(cargo, dockedStorage, stored, false);
+
+        assertEquals(13, materials.count(FEEDSTOCK));
+        assertFalse(materials.take(FEEDSTOCK, 14));
+
+        assertTrue(materials.take(FEEDSTOCK, 7));
+        assertFalse(stored.containsKey(FEEDSTOCK));
+        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(FEEDSTOCK), 2f);
+        verify(dockedStorage).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(FEEDSTOCK), 4f);
+    }
+
+    @Test
     void newMaterialsGoToStorageOnlyWhileStoringIsOn() {
         CargoAPI cargo = mock(CargoAPI.class);
         Map<String, Integer> stored = new HashMap<>();

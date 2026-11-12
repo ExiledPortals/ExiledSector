@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
+import exiledsector.DockedStorage;
 import exiledsector.ModSettings;
 import exiledsector.persistence.SaveData;
 
@@ -14,17 +15,23 @@ public final class CraftingMaterials {
     static final String STORED_KEY = "exiledSector_storedSocketMaterials";
 
     private final CargoAPI cargo;
+    private final CargoAPI dockedStorageCargo;
     private final Map<String, Integer> storedCounts;
     private final boolean storing;
 
     CraftingMaterials(CargoAPI cargo, Map<String, Integer> storedCounts, boolean storing) {
+        this(cargo, null, storedCounts, storing);
+    }
+
+    CraftingMaterials(CargoAPI cargo, CargoAPI dockedStorageCargo, Map<String, Integer> storedCounts, boolean storing) {
         this.cargo = cargo;
+        this.dockedStorageCargo = dockedStorageCargo;
         this.storedCounts = storedCounts;
         this.storing = storing;
     }
 
     public static CraftingMaterials forPlayer(CargoAPI cargo) {
-        return new CraftingMaterials(cargo, storedCounts(), ModSettings.booleanOr(STORE_FIELD_ID, DEFAULT_STORE));
+        return new CraftingMaterials(cargo, DockedStorage.cargoOrNull(), storedCounts(), ModSettings.booleanOr(STORE_FIELD_ID, DEFAULT_STORE));
     }
 
     public static CraftingMaterials storedForTests(Map<String, Integer> storedCounts) {
@@ -44,7 +51,7 @@ public final class CraftingMaterials {
     }
 
     public int count(String itemId) {
-        return stored(itemId) + inCargo(itemId);
+        return stored(itemId) + inCargo(itemId) + inDockedStorage(itemId);
     }
 
     public int stored(String itemId) {
@@ -60,9 +67,9 @@ public final class CraftingMaterials {
         }
         int fromStore = Math.min(stored(itemId), quantity);
         setStored(itemId, stored(itemId) - fromStore);
-        if (quantity > fromStore && cargo != null) {
-            MaterialItems.remove(cargo, itemId, quantity - fromStore);
-        }
+        int fromCargo = Math.min(inCargo(itemId), quantity - fromStore);
+        MaterialItems.remove(cargo, itemId, fromCargo);
+        MaterialItems.remove(dockedStorageCargo, itemId, quantity - fromStore - fromCargo);
         return true;
     }
 
@@ -123,6 +130,10 @@ public final class CraftingMaterials {
 
     private int inCargo(String itemId) {
         return MaterialItems.count(cargo, itemId);
+    }
+
+    private int inDockedStorage(String itemId) {
+        return MaterialItems.count(dockedStorageCargo, itemId);
     }
 
     private void setStored(String itemId, int quantity) {

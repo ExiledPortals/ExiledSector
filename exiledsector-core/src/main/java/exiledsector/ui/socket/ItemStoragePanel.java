@@ -10,6 +10,7 @@ import com.fs.starfarer.api.ui.TextFieldAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.DockedStorage;
 import exiledsector.PlayerFleet;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
@@ -186,8 +187,11 @@ public final class ItemStoragePanel extends HoloPanel {
     }
 
     private static int absorbPlayerCargo() {
-        CargoAPI cargo = PlayerFleet.cargoOrNull();
-        return cargo == null ? 0 : ItemStore.get().absorbFrom(cargo);
+        int movedCount = 0;
+        for (CargoAPI cargo : DockedStorage.withPlayerCargo(PlayerFleet.cargoOrNull())) {
+            movedCount += ItemStore.get().absorbFrom(cargo);
+        }
+        return movedCount;
     }
 
     private String cargoNotice() {
