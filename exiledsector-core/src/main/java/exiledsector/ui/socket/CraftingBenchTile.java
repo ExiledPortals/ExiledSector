@@ -45,9 +45,13 @@ final class CraftingBenchTile extends BaseCustomUIPanelPlugin {
         this.iconLook = iconLook;
         this.available = available;
         this.toggledOn = toggledOn;
-        Color onAccent = iconLook != null ? iconLook.color() : SkillTreePanelStyle.GLOW_COLOR;
-        this.onFrame = new TileChrome.Frame(onAccent, GLOW_WIDTH, style.onGlowAlpha(), style.onBorderWidth(), 1f);
+        this.onFrame = onFrame(iconLook, style);
         this.tileInput = new TileInput(tileHandler, style.scrollClearsHover());
+    }
+
+    static TileChrome.Frame onFrame(CargoIconLook iconLook, Style style) {
+        Color onAccent = iconLook != null ? iconLook.color() : SkillTreePanelStyle.GLOW_COLOR;
+        return new TileChrome.Frame(onAccent, GLOW_WIDTH, style.onGlowAlpha(), style.onBorderWidth(), 1f);
     }
 
     static CraftingBenchTile usable(List<String> iconPaths, CargoIconLook iconLook, BooleanSupplier available, TileInput.Handler tileHandler) {

@@ -182,7 +182,6 @@ class BiomeModifiersTest {
 
         assertFalse(ModifierSources.isReserved(CHRONAL));
         assertNull(BiomeModifiers.modifierFor(RIFT, ItemKind.BRIDGE));
-        assertFalse(BiomeModifiers.hasModifiers(RIFT));
     }
 
     @Test
@@ -193,9 +192,5 @@ class BiomeModifiersTest {
         assertEquals(List.of(PLASMATIC, CHRONAL), BiomeModifiers.modifiersFor(ItemKind.BRIDGE));
         assertEquals(List.of(CHRONAL), BiomeModifiers.modifiersFor(ItemKind.SHIELD_GENERATOR));
         assertEquals(List.of(), BiomeModifiers.modifiersFor(ItemKind.REACTOR));
-        assertTrue(BiomeModifiers.hasModifiers(RIFT));
-        assertTrue(BiomeModifiers.hasModifiers("test_nebula"));
-        assertFalse(BiomeModifiers.hasModifiers("normal"));
-        assertFalse(BiomeModifiers.hasModifiers(null));
     }
 }

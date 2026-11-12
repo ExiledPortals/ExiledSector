@@ -5,12 +5,14 @@ import exiledsector.items.CraftingMaterials;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 
-final class ExcavationInhibitorTray implements BenchTray {
+final class InhibitorTray implements BenchTray {
 
-    static final ExcavationInhibitorTray INSTANCE = new ExcavationInhibitorTray();
+    static final InhibitorTray INSTANCE = new InhibitorTray();
+    static final int COLUMN_COUNT = 2;
 
-    private ExcavationInhibitorTray() {
+    private InhibitorTray() {
     }
 
     @Override
@@ -31,6 +33,16 @@ final class ExcavationInhibitorTray implements BenchTray {
     @Override
     public List<BenchTrayEntry> entries(BenchTrayContext context) {
         return held(context.materials());
+    }
+
+    @Override
+    public int iconColumns() {
+        return COLUMN_COUNT;
+    }
+
+    @Override
+    public List<Column> columns(BenchTrayContext context, Predicate<BenchTrayEntry> shown) {
+        return Column.dealt(entries(context).stream().filter(shown).toList(), COLUMN_COUNT);
     }
 
     static List<BenchTrayEntry> held(CraftingMaterials materials) {

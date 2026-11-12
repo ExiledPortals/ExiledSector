@@ -37,6 +37,7 @@ import exiledsector.ui.VanillaText;
 import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.cargo.CargoIconLooks;
 import exiledsector.ui.decoration.StarfieldRenderer;
+import exiledsector.ui.util.BorderedPanel;
 import exiledsector.ui.util.GLDraw;
 import com.fs.starfarer.api.input.InputEventAPI;
 
@@ -89,6 +90,7 @@ public final class CraftingBenchPanel extends HoloPanel {
     }
 
     static final float FRAME_INSET = 8f;
+    static final float TRAY_SIDE_INSET = 20f;
     static final float PLATE_PAD = 6f;
     private static final float COUNT_INSET = 4f;
     private static final float PLATE_ALPHA = 0.62f;
@@ -144,11 +146,15 @@ public final class CraftingBenchPanel extends HoloPanel {
     private final BenchTrayContext trayContext = new TrayContext();
     private TooltipMakerAPI trayElement;
     private float trayProgress;
+    private float trayFromWidth;
+    private float trayToWidth;
+    private float trayResizeProgress = 1f;
     private Runnable pendingTrayConfirm;
     private BenchTrayList.FilterBar trayFilterBar;
     private String trayFilterText = "";
     private String typedTrayFilter = "";
     private float trayFilterDelay;
+    private boolean trayBuiltWithLargeText;
     private final WormholeButtonFx openFx = new WormholeButtonFx();
     private BenchLayout embeddedLayout;
     private BenchMaterialsPanel materialsPanel;
@@ -297,7 +303,18 @@ public final class CraftingBenchPanel extends HoloPanel {
     private BenchSpread currentSpread() {
         BenchSpread full = BenchSpread.full(benchMode, sceneScale, spreadContents);
         BenchSpread contracted = full.towards(BenchSpread.contracted(benchMode, sceneScale, spreadContents), BenchSpread.eased(contractProgress));
-        return contracted.towards(BenchSpread.trayOpen(benchMode, sceneScale, spreadContents), BenchSpread.eased(trayProgress));
+        return contracted.towards(BenchSpread.trayOpen(benchMode, sceneScale, spreadContents, shownTrayWidth()), BenchSpread.eased(trayProgress));
+    }
+
+    private float shownTrayWidth() {
+        return trayFromWidth + (trayToWidth - trayFromWidth) * BenchSpread.eased(trayResizeProgress);
+    }
+
+    private float wantedTrayWidth(BenchTray tray) {
+        if (tray.iconColumns() > 0) {
+            return TRAY_SIDE_INSET * 2f + BenchTrayList.tileColumnsWidth(tray.iconColumns(), tileSize());
+        }
+        return BenchSpread.maxTrayWidth(benchMode, sceneScale, spreadContents);
     }
 
     private float contractTarget() {
@@ -309,7 +326,7 @@ public final class CraftingBenchPanel extends HoloPanel {
     }
 
     private boolean reshaping() {
-        return contractProgress != contractTarget() || trayProgress != trayTarget();
+        return contractProgress != contractTarget() || trayProgress != trayTarget() || trayResizeProgress < 1f;
     }
 
     private boolean traysUsable() {
@@ -318,17 +335,20 @@ public final class CraftingBenchPanel extends HoloPanel {
 
     private void advanceTray(float amount) {
         float target = trayTarget();
-        if (trayProgress == target) {
+        if (trayProgress == target && trayResizeProgress == 1f) {
             return;
         }
         float step = amount / TRAY_SECONDS;
         trayProgress = target > trayProgress ? Math.min(target, trayProgress + step) : Math.max(target, trayProgress - step);
+        trayResizeProgress = Math.min(1f, trayResizeProgress + step);
         I18n.forGameText(this::applySpread);
-        if (trayProgress == 1f) {
+        if (trayProgress == 1f && trayResizeProgress == 1f) {
             I18n.forGameText(() -> {
                 rebuildTray();
                 refreshOpacity();
             });
+        } else if (trayProgress == 0f) {
+            I18n.forGameText(this::rebuildNotice);
         }
     }
 
@@ -424,7 +444,7 @@ public final class CraftingBenchPanel extends HoloPanel {
 
     @Override
     protected UIComponentAPI[] contentComponents() {
-        return new UIComponentAPI[]{recipesElement, detailsElement, noticeElement, openElement, trayElement,
+        return new UIComponentAPI[]{recipesElement, detailsElement, noticeElement, openElement, placedComponent(trayElement),
                 trayFilterBar == null ? null : trayFilterBar.element()};
     }
 
@@ -466,13 +486,12 @@ public final class CraftingBenchPanel extends HoloPanel {
     }
 
     private void drawTrayPlate(float alpha) {
-        float trayWidth = spread.trayWidth(sceneScale);
+        float trayWidth = spread.trayWidth();
         if (trayWidth <= 0f) {
             return;
         }
-        float trayHeight = (BenchScene.TRAY_BOTTOM - BenchScene.TRAY_TOP) * sceneScale;
-        float trayBottom = panelPosition.getY() + panelHeight - artY(BenchScene.TRAY_TOP) - trayHeight;
-        GLDraw.fillQuad(panelPosition.getX() + FRAME_INSET + spread.trayLeft(), trayBottom, trayWidth, trayHeight, PLATE_COLOR, PLATE_ALPHA * alpha);
+        float trayBottom = panelPosition.getY() + panelHeight - trayPlateTop() - trayHeight();
+        BorderedPanel.draw(panelPosition.getX() + FRAME_INSET + spread.trayLeft(), trayBottom, trayWidth, trayHeight(), alpha);
     }
 
     private void renderEmbedded(float alpha) {
@@ -534,6 +553,9 @@ public final class CraftingBenchPanel extends HoloPanel {
         advanceContraction(amount);
         advanceTray(amount);
         advanceTrayFilter(amount);
+        if (trayElement != null && trayBuiltWithLargeText != TooltipTextSize.large()) {
+            I18n.forGameText(this::rebuildTray);
+        }
         hoverTooltip.refreshIfExpansionChanged();
         if (detailsShowRollRanges != TooltipExpansion.isExpandedOrHeld()) {
             rebuildDetails();
@@ -1042,7 +1064,7 @@ public final class CraftingBenchPanel extends HoloPanel {
     }
 
     private void addTrayControl(TooltipMakerAPI element, BenchTray tray, float tileTop, float tileSize) {
-        CraftingBenchTile control = CraftingBenchTile.entry(BenchTrayElement.shownIcons(tray.iconPaths()), null, this::traysUsable,
+        CraftingBenchTile control = CraftingBenchTile.entry(BenchTrayEntry.shownIcons(tray.iconPaths()), null, this::traysUsable,
                 () -> trays.isOpen(tray), tileHandler(tray, anchor -> showTrayControlTooltip(tray, anchor), skipConfirm -> toggleTray(tray),
                         skipConfirm -> {
                         }));
@@ -1056,12 +1078,19 @@ public final class CraftingBenchPanel extends HoloPanel {
         if (wormholeOpened || isConfirmOpen() || isClosing() || !traysUsable()) {
             return;
         }
+        float shownWidth = shownTrayWidth();
         trays.toggle(tray);
         if (trays.isOpen()) {
+            float wantedWidth = wantedTrayWidth(trays.open());
+            trayFromWidth = trayProgress > 0f ? shownWidth : wantedWidth;
+            trayToWidth = wantedWidth;
+            trayResizeProgress = trayFromWidth == trayToWidth ? 1f : 0f;
+            removeTrayElement();
             rebuildTray();
         } else {
             removeTrayElement();
         }
+        rebuildNotice();
         refreshOpacity();
     }
 
@@ -1072,7 +1101,7 @@ public final class CraftingBenchPanel extends HoloPanel {
 
     private void removeTrayElement() {
         if (trayElement != null) {
-            panelRoot.removeComponent(trayElement);
+            panelRoot.removeComponent(placedComponent(trayElement));
             trayElement = null;
         }
         removeTrayFilter();
@@ -1088,31 +1117,40 @@ public final class CraftingBenchPanel extends HoloPanel {
 
     private void rebuildTray() {
         BenchTray openTray = trays.open();
-        if (openTray == null || trayProgress < 1f || embeddedLayout != null || isClosing()) {
+        if (openTray == null || trayProgress < 1f || trayResizeProgress < 1f || embeddedLayout != null || isClosing()) {
             removeTrayElement();
             return;
         }
-        if (!openTray.listed()) {
+        trayBuiltWithLargeText = TooltipTextSize.large();
+        if (openTray.iconColumns() > 0) {
             removeTrayFilter();
-            TooltipMakerAPI element = BenchTrayElement.build(panelRoot, spread.trayWidth(sceneScale), trayHeight(), openTray, trayContext,
-                    this::trayEntryHandler);
-            trayElement = replaceElement(trayElement, element, trayLeft(), trayTop());
+            TooltipMakerAPI element = BenchTrayList.tiles(panelRoot, trayListWidth(), trayHeight() - PAD * 2f, openTray, trayContext,
+                    this::trayEntryHandler, tileSize());
+            trayElement = replaceElement(placedComponent(trayElement), element, trayLeft(), trayTop());
             return;
         }
         rebuildTrayFilter();
         rebuildTrayList(openTray, true);
     }
 
-    private float trayLeft() {
-        return FRAME_INSET + spread.trayLeft() + PAD;
-    }
-
-    private float trayTop() {
-        return artY(BenchScene.TRAY_TOP) + PAD;
+    private float trayPlateTop() {
+        return PAD + HEADER_HEIGHT + GAP;
     }
 
     private float trayHeight() {
-        return (BenchScene.TRAY_BOTTOM - BenchScene.TRAY_TOP) * sceneScale;
+        return artY(BenchScene.TRAY_BOTTOM) - trayPlateTop();
+    }
+
+    private float trayLeft() {
+        return FRAME_INSET + spread.trayLeft() + TRAY_SIDE_INSET;
+    }
+
+    private float trayTop() {
+        return trayPlateTop() + PAD;
+    }
+
+    private float trayListWidth() {
+        return spread.trayWidth() - TRAY_SIDE_INSET * 2f;
     }
 
     private void rebuildTrayFilter() {
@@ -1123,7 +1161,7 @@ public final class CraftingBenchPanel extends HoloPanel {
         }
         typedTrayFilter = trayFilterText;
         trayFilterDelay = 0f;
-        trayFilterBar = BenchTrayList.filterBar(panelRoot, spread.trayWidth(sceneScale), trayFilterText);
+        trayFilterBar = BenchTrayList.filterBar(panelRoot, trayListWidth(), trayFilterText);
         panelRoot.addUIElement(trayFilterBar.element()).inTL(trayLeft(), trayTop());
         if (focused) {
             trayFilterBar.field().grabFocus();
@@ -1134,9 +1172,9 @@ public final class CraftingBenchPanel extends HoloPanel {
         float restoredScroll = keepScroll && trayElement != null && trayElement.getExternalScroller() != null
                 ? trayElement.getExternalScroller().getYOffset() : 0f;
         float listHeight = trayHeight() - PAD * 2f - BenchTrayList.FILTER_HEIGHT - GAP;
-        TooltipMakerAPI element = BenchTrayList.rows(panelRoot, spread.trayWidth(sceneScale), listHeight, openTray, trayContext,
+        TooltipMakerAPI element = BenchTrayList.rows(panelRoot, trayListWidth(), listHeight, openTray, trayContext,
                 this::trayEntryHandler, trayFilterText);
-        trayElement = replaceElement(trayElement, element, trayLeft(), trayTop() + BenchTrayList.FILTER_HEIGHT + GAP);
+        trayElement = replaceElement(placedComponent(trayElement), element, trayLeft(), trayTop() + BenchTrayList.FILTER_HEIGHT + GAP);
         if (restoredScroll > 0f && element.getExternalScroller() != null) {
             element.getExternalScroller().setYOffset(Math.min(restoredScroll, Math.max(0f, element.getHeightSoFar() - listHeight)));
         }
@@ -1153,7 +1191,7 @@ public final class CraftingBenchPanel extends HoloPanel {
         } else if (trayFilterDelay > 0f) {
             trayFilterDelay -= amount;
             BenchTray openTray = trays.open();
-            if (trayFilterDelay <= 0f && openTray != null && openTray.listed()) {
+            if (trayFilterDelay <= 0f && openTray != null) {
                 trayFilterText = typed;
                 hoverTooltip.hide();
                 I18n.forGameText(() -> rebuildTrayList(openTray, false));
@@ -1461,14 +1499,22 @@ public final class CraftingBenchPanel extends HoloPanel {
     }
 
     private void rebuildNotice() {
-        BenchLayout.Rect notice = embeddedLayout != null ? embeddedLayout.notice()
-                : new BenchLayout.Rect(PAD, artY(BenchScene.NOTICE_TOP), innerWidth(), BenchScene.NOTICE_HEIGHT * sceneScale);
+        BenchLayout.Rect notice = embeddedLayout != null ? embeddedLayout.notice() : benchNotice();
         TooltipMakerAPI element = panelRoot.createUIElement(notice.width(), notice.height(), false);
         if (noticeText != null) {
             Color noticeColor = noticeIsWarning ? Misc.getNegativeHighlightColor() : Misc.getPositiveHighlightColor();
             centred(VanillaText.plainPara(element, noticeText, 0f, noticeColor));
         }
         noticeElement = replaceElement(noticeElement, element, notice.left(), notice.top());
+    }
+
+    private BenchLayout.Rect benchNotice() {
+        float noticeLeft = PAD;
+        float noticeRight = PAD + innerWidth();
+        if (trays.isOpen() || trayProgress > 0f) {
+            noticeRight = FRAME_INSET + BenchSpread.trayOpen(benchMode, sceneScale, spreadContents, trayToWidth).trayLeft() - GAP;
+        }
+        return new BenchLayout.Rect(noticeLeft, artY(BenchScene.NOTICE_TOP), noticeRight - noticeLeft, BenchScene.NOTICE_HEIGHT * sceneScale);
     }
 
     private final class TrayContext implements BenchTrayContext {

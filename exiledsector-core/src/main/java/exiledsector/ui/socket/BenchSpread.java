@@ -1,6 +1,6 @@
 package exiledsector.ui.socket;
 
-record BenchSpread(float artWidth, float socketX, float columnLeft, float controlsLeft, float trayLeft, float artShift) {
+record BenchSpread(float artWidth, float socketX, float columnLeft, float controlsLeft, float trayLeft, float trayWidth, float artShift) {
 
     record Contents(boolean orbit, boolean column, boolean trays) {
     }
@@ -9,9 +9,9 @@ record BenchSpread(float artWidth, float socketX, float columnLeft, float contro
         float artWidth = BenchScene.ART_WIDTH * scale;
         float tileSize = BenchScene.tileSize(scale);
         float gap = BenchScene.COLUMN_GAP * scale;
-        float rightTileLeft = artWidth - BenchScene.COLUMN_RIGHT_MARGIN * scale - tileSize;
-        float columnLeft = contents.trays() ? rightTileLeft - gap - tileSize : rightTileLeft;
-        return new BenchSpread(artWidth, mode.socketX() * scale, columnLeft, rightTileLeft, rightTileLeft - gap, 0f);
+        float controlsLeft = artWidth - tileSize;
+        float columnLeft = contents.trays() ? controlsLeft - gap - tileSize : artWidth - BenchScene.COLUMN_RIGHT_MARGIN * scale - tileSize;
+        return new BenchSpread(artWidth, mode.socketX() * scale, columnLeft, controlsLeft, controlsLeft - gap, 0f, 0f);
     }
 
     static BenchSpread contracted(BenchMode mode, float scale, Contents contents) {
@@ -21,21 +21,34 @@ record BenchSpread(float artWidth, float socketX, float columnLeft, float contro
         float socketX = gap + sideReach;
         float columnLeft = socketX + sideReach + gap;
         float contentRight = contents.column() ? columnLeft + tileSize : socketX + sideReach;
-        float controlsLeft = contentRight + gap;
-        float right = contents.trays() ? controlsLeft + tileSize : contentRight;
-        float artWidth = Math.min(BenchScene.ART_WIDTH * scale, right + gap);
-        return new BenchSpread(artWidth, socketX, columnLeft, controlsLeft, controlsLeft - gap, socketX - mode.socketX() * scale);
+        float right = contents.trays() ? contentRight + gap + tileSize : contentRight + gap;
+        float artWidth = Math.min(BenchScene.ART_WIDTH * scale, right);
+        float controlsLeft = contents.trays() ? artWidth - tileSize : contentRight + gap;
+        return new BenchSpread(artWidth, socketX, columnLeft, controlsLeft, controlsLeft - gap, 0f, socketX - mode.socketX() * scale);
     }
 
-    static BenchSpread trayOpen(BenchMode mode, float scale, Contents contents) {
+    static BenchSpread trayOpen(BenchMode mode, float scale, Contents contents, float wantedTrayWidth) {
         BenchSpread full = full(mode, scale, contents);
         float tileSize = BenchScene.tileSize(scale);
         float gap = BenchScene.COLUMN_GAP * scale;
         float sideReach = sideReach(mode, scale, contents);
-        float socketX = gap + sideReach;
-        float columnLeft = socketX + sideReach + gap;
-        float contentRight = contents.column() ? columnLeft + tileSize : socketX + sideReach;
-        return new BenchSpread(full.artWidth(), socketX, columnLeft, full.controlsLeft(), contentRight + gap, 0f);
+        float trayRight = full.controlsLeft() - gap;
+        float trayWidth = Math.max(0f, Math.min(wantedTrayWidth, maxTrayWidth(mode, scale, contents)));
+        float trayLeft = trayRight - trayWidth;
+        float contentRight = trayLeft - gap;
+        float socketRight = contents.column() ? contentRight - tileSize - gap : contentRight;
+        float socketX = Math.min(full.socketX(), socketRight - sideReach);
+        float columnLeft = contents.column() ? contentRight - tileSize : socketX + sideReach + gap;
+        return new BenchSpread(full.artWidth(), socketX, columnLeft, full.controlsLeft(), trayLeft, trayWidth, 0f);
+    }
+
+    static float maxTrayWidth(BenchMode mode, float scale, Contents contents) {
+        float tileSize = BenchScene.tileSize(scale);
+        float gap = BenchScene.COLUMN_GAP * scale;
+        float sideReach = sideReach(mode, scale, contents);
+        float packedSocketRight = gap + sideReach * 2f;
+        float packedContentRight = contents.column() ? packedSocketRight + gap + tileSize : packedSocketRight;
+        return Math.max(0f, full(mode, scale, contents).controlsLeft() - gap - packedContentRight - gap);
     }
 
     private static float sideReach(BenchMode mode, float scale, Contents contents) {
@@ -47,14 +60,6 @@ record BenchSpread(float artWidth, float socketX, float columnLeft, float contro
         return Math.max(plateHalf, orbitHalf);
     }
 
-    float trayRight(float scale) {
-        return controlsLeft - BenchScene.COLUMN_GAP * scale;
-    }
-
-    float trayWidth(float scale) {
-        return Math.max(0f, trayRight(scale) - trayLeft);
-    }
-
     BenchSpread towards(BenchSpread target, float share) {
         if (share <= 0f) {
             return this;
@@ -63,7 +68,8 @@ record BenchSpread(float artWidth, float socketX, float columnLeft, float contro
             return target;
         }
         return new BenchSpread(lerp(artWidth, target.artWidth, share), lerp(socketX, target.socketX, share), lerp(columnLeft, target.columnLeft, share),
-                lerp(controlsLeft, target.controlsLeft, share), lerp(trayLeft, target.trayLeft, share), lerp(artShift, target.artShift, share));
+                lerp(controlsLeft, target.controlsLeft, share), lerp(trayLeft, target.trayLeft, share), lerp(trayWidth, target.trayWidth, share),
+                lerp(artShift, target.artShift, share));
     }
 
     static float eased(float progress) {

@@ -31,8 +31,6 @@ import exiledsector.i18n.SpecLocalisation;
 import exiledsector.i18n.Translation;
 import exiledsector.items.Engrams;
 import exiledsector.items.AtlasCatalystItems;
-import exiledsector.items.BiomeNanoswarm;
-import exiledsector.items.CraftingMaterialFamily;
 import exiledsector.items.InfusedFeedstock;
 import exiledsector.items.ItemDataRules;
 import exiledsector.items.ItemTypeSupport;
@@ -96,15 +94,11 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     @Override
     public void onApplicationLoad() {
         StarChartCipher.registerAll();
-        BiomeNanoswarm.registerAll();
         ChartAnomalies.all().forEach(ChartAnomaly::preloadTextures);
         AbyssArt.preload();
         CatalystIconFx.preload();
         I18n.forGameText(() -> {
             for (StarChartCipher craftingItem : StarChartCipher.values()) {
-                MaterialItems.localise(craftingItem.itemId());
-            }
-            for (BiomeNanoswarm craftingItem : BiomeNanoswarm.values()) {
                 MaterialItems.localise(craftingItem.itemId());
             }
             for (InfusedFeedstock craftingItem : InfusedFeedstock.values()) {
@@ -185,11 +179,6 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     @Override
     public List<ItemTypeSupport> itemTypes() {
         return List.of(StarChart.SUPPORT);
-    }
-
-    @Override
-    public List<CraftingMaterialFamily> hullCraftingBenchCraftingItems() {
-        return List.of(BiomeNanoswarm.values());
     }
 
     @Override

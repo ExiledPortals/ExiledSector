@@ -808,7 +808,8 @@ Chart drops, the Cartography Cipher and combining stop at 15, and a tier 16 clea
 
 Infused crafts work on hull items and each is bought for one theme tag, at a cost in that tag's feedstock from
 `infused_crafts.csv` (`InfusedCraft`, `InfusedCraftCosts`, logic in `InfusedCrafting`, all core); a craft with no
-cost column is not offered. The Star Charts `InfusedCraftingTray` lists one row per tag and offered craft. A tag counts
+cost column is not offered. The tagged reforge also takes one Reshaping Nanoswarm and the add-and-remove two
+(`InfusedCraft.reshapingCost`). The Star Charts `InfusedCraftingTray` lists one row per tag and offered craft. A tag counts
 its children. Crafts refuse mirrored, corrupted and locked items and items with no room for the tag, spending nothing.
 They keep immutable and reserved modifiers and roll through `AffixLayout.openSides`, so exclusive groups, side limits
 and the biome limit hold.
@@ -923,11 +924,12 @@ A biome can own one modifier per hull item part (`biome_modifiers.csv`), reserve
 (`BiomeModifiers`). A non-unique hull item dropped while the player is in a run system of that biome has a 30% chance,
 fixed by its seed, to gain its part's modifier: `LootSources.shapeDrops` passes each drop through every loot source's `shapeDrop`, called from the
 drop helpers in `ItemLootListener` and from the hull item battle drops. The item keeps its other modifiers, except one
-sharing the added effect; on a full side a random modifier makes way (`GrantedModifiers.add`). Chart fleets in a region
-with biome modifiers also drop the Adaptive and Grafting Nanoswarms (`BiomeNanoswarm`, `chart_materials.csv`): one
-rerolls a hull item around a random biome modifier of its part plus one to three others, the other swaps a random
-modifier for one. Neither leaves an item with more than two biome modifiers (`BiomeModifiers.hasRoomFor`), so Grafting
-on an item that has two always replaces one of them.
+sharing the added effect; on a full side a random modifier makes way (`GrantedModifiers.add`). The Infused Crafting
+tray also offers two biome crafts costing 100 and 1000 of each infused feedstock and one and two Reshaping Nanoswarms
+(`BiomeCraft`, `BiomeCraftEntry`):
+Adaptive Reforge rerolls a hull item around a random biome modifier of its part plus one to three others, keeping
+immutable and inhibited modifiers, and Biome Graft swaps a random modifier for one. Neither leaves an item with more than
+two biome modifiers (`BiomeModifiers.hasRoomFor`), so a graft on an item that has two always replaces one of them.
 
 Of the Abyssal Rift's, the moving-slowly burn level adds up over the fleet's active ships, capped at +6, onto vanilla's
 `move_slow_speed_bonus_mod` at each fleet sync (`FleetWideEffects.applyMoveSlowBurnLevel`). The phase-entry repair

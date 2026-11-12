@@ -13,5 +13,3 @@ exiledSector_suffix_inhibitor,0.069,0.781,0,
 exiledSector_reforge_cipher,1.47,9.15,0,"Chart ciphers drop only inside Star Charts"
 exiledSector_erasure_cipher,1,6,0,
 exiledSector_cartographer_cipher,0.075,1.34,0,
-exiledSector_adaptive_nanoswarm,0.069,0.781,0,"Biome nanoswarms drop only inside Star Charts whose region has biome modifiers, as rarely as the Immutable Nanoswarm"
-exiledSector_grafting_nanoswarm,0.069,0.781,0,

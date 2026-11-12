@@ -52,11 +52,42 @@ class EngramTrayTest {
     }
 
     @Test
+    void theEngramTraySplitsHeldEngramsIntoAPrefixAndASuffixColumn() {
+        CraftingMaterials materials = CraftingMaterials.storedForTests(Map.of(VIGIL.itemId(), 3, REVENANT.itemId(), 1));
+        BenchTrayEntry vigil = new CraftingItemTrayEntry(VIGIL);
+
+        List<BenchTray.Column> columns = EngramTray.sided(List.of(REVENANT, VIGIL), materials, vigil::equals);
+
+        assertEquals(List.of(EngramTray.PREFIXES_KEY, EngramTray.SUFFIXES_KEY), columns.stream().map(BenchTray.Column::headingKey).toList());
+        assertEquals(List.of(vigil), columns.stream().flatMap(column -> column.entries().stream()).toList());
+    }
+
+    @Test
+    void theInfusedTrayOrdersRowsByFeedstockCostThenByAction() {
+        InfusedCraftingTray.CraftRow cheapExchange = row(100, InfusedCraftingTray.Action.EXCHANGE);
+        InfusedCraftingTray.CraftRow cheapReforge = row(100, InfusedCraftingTray.Action.REFORGE);
+        InfusedCraftingTray.CraftRow dearReforge = row(1000, InfusedCraftingTray.Action.REFORGE);
+        InfusedCraftingTray.CraftRow cheapBiomeReforge = row(100, InfusedCraftingTray.Action.BIOME_REFORGE);
+        List<InfusedCraftingTray.CraftRow> rows = new java.util.ArrayList<>(List.of(dearReforge, cheapExchange, cheapReforge, cheapBiomeReforge));
+
+        rows.sort(InfusedCraftingTray.ROW_ORDER);
+
+        assertEquals(List.of(cheapReforge, cheapBiomeReforge, cheapExchange, dearReforge), rows);
+    }
+
+    private static InfusedCraftingTray.CraftRow row(int feedstockAmount, InfusedCraftingTray.Action action) {
+        InfusedCraftingTray.CraftRow row = mock(InfusedCraftingTray.CraftRow.class);
+        when(row.feedstockAmount()).thenReturn(feedstockAmount);
+        when(row.action()).thenReturn(action);
+        return row;
+    }
+
+    @Test
     void theHullCraftingBenchOffersTheChartTraysOnlyWhileStarChartsAreOn() {
-        assertEquals(List.of(ExcavationInhibitorTray.INSTANCE, EngramTray.INSTANCE, InfusedCraftingTray.INSTANCE), HullCraftingBench.INSTANCE.trays());
+        assertEquals(List.of(InhibitorTray.INSTANCE, EngramTray.INSTANCE, InfusedCraftingTray.INSTANCE), HullCraftingBench.INSTANCE.trays());
 
         StarChartSettings.setEnabledForTests(false);
 
-        assertEquals(List.of(ExcavationInhibitorTray.INSTANCE), HullCraftingBench.INSTANCE.trays());
+        assertEquals(List.of(InhibitorTray.INSTANCE), HullCraftingBench.INSTANCE.trays());
     }
 }

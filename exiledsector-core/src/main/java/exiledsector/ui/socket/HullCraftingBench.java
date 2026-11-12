@@ -93,7 +93,7 @@ public final class HullCraftingBench implements BenchModeSupport {
 
     static List<BenchTray> hullCraftingBenchTrays(List<BenchTray> domainTrays) {
         List<BenchTray> trays = new ArrayList<>();
-        trays.add(ExcavationInhibitorTray.INSTANCE);
+        trays.add(InhibitorTray.INSTANCE);
         trays.addAll(domainTrays);
         return trays;
     }

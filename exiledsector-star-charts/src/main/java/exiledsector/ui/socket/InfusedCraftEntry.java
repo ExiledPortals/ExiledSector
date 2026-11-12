@@ -2,6 +2,7 @@ package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.i18n.Message;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.items.CraftingInhibitor;
@@ -13,6 +14,7 @@ import exiledsector.items.MaterialItems;
 import exiledsector.items.SocketCustody;
 import exiledsector.items.UseVerdict;
 import exiledsector.skills.tags.ThemeTags;
+import exiledsector.ui.TooltipTextSize;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.cargo.CargoIconLooks;
@@ -22,10 +24,20 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-record InfusedCraftEntry(InfusedCraft craft, String tag) implements BenchTrayEntry {
+record InfusedCraftEntry(InfusedCraft craft, String tag) implements InfusedCraftingTray.CraftRow {
 
     InfusedCraftCosts.Cost cost() {
         return craft.cost(tag);
+    }
+
+    @Override
+    public int feedstockAmount() {
+        return cost().amount();
+    }
+
+    @Override
+    public InfusedCraftingTray.Action action() {
+        return craft == InfusedCraft.ADD_AND_REMOVE ? InfusedCraftingTray.Action.EXCHANGE : InfusedCraftingTray.Action.REFORGE;
     }
 
     @Override
@@ -41,6 +53,17 @@ record InfusedCraftEntry(InfusedCraft craft, String tag) implements BenchTrayEnt
     @Override
     public String badge(BenchTrayContext context) {
         return String.valueOf(cost().amount());
+    }
+
+    @Override
+    public List<RowIcon> rowIcons(BenchTrayContext context) {
+        RowIcon feedstock = new RowIcon(iconPaths().get(0), look(), badge(context));
+        if (craft.reshapingCost() <= 0) {
+            return List.of(feedstock);
+        }
+        String reshapingId = InfusedCraft.reshapingId();
+        return List.of(feedstock, new RowIcon(CraftingItemTrayEntry.iconPath(reshapingId), CargoIconLooks.forMaterial(reshapingId),
+                String.valueOf(craft.reshapingCost())));
     }
 
     @Override
@@ -61,9 +84,11 @@ record InfusedCraftEntry(InfusedCraft craft, String tag) implements BenchTrayEnt
 
     @Override
     public void writeTooltip(TooltipMakerAPI tooltip, BenchTrayContext context) {
+        TooltipTextSize.applyNameFont(tooltip);
         VanillaText.plainPara(tooltip, craftName(), 0f, Misc.getBasePlayerColor());
+        TooltipTextSize.applyBodyFont(tooltip);
         VanillaText.addPara(tooltip, rowText(context), HoloPanel.LINE_PAD * 2f, Misc.getTextColor());
-        VanillaText.plainPara(tooltip, costText(context, "ui.infusedCraft.cost"), HoloPanel.LINE_PAD * 2f, Misc.getGrayColor());
+        VanillaText.plainPara(tooltip, costText(context, "ui.infusedCraft.cost"), HoloPanel.LINE_PAD * 2f, Misc.getTextColor());
         UseVerdict verdict = craft.verdict(context.loaded(), tag, inhibitors(context));
         if (!verdict.allowed()) {
             VanillaText.plainPara(tooltip, refusalText(verdict, context.loaded()), HoloPanel.LINE_PAD * 2f, Misc.getNegativeHighlightColor());
@@ -127,7 +152,10 @@ record InfusedCraftEntry(InfusedCraft craft, String tag) implements BenchTrayEnt
     }
 
     private String costText(BenchTrayContext context, String key) {
-        return Translation.msg(key).arg("cost", cost().amount()).arg("feedstock", feedstockName())
+        int reshapingCost = craft.reshapingCost();
+        Message message = reshapingCost <= 0 ? Translation.msg(key) : Translation.msg(key + "WithSwarms").count(reshapingCost)
+                .arg("swarmsHeld", context.materials().count(InfusedCraft.reshapingId()));
+        return message.arg("cost", cost().amount()).arg("feedstock", feedstockName())
                 .arg("held", context.materials().count(cost().feedstockId())).text();
     }
 

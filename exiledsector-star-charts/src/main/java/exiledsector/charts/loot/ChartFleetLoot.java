@@ -10,7 +10,6 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.anomaly.ChartAnomalies;
-import exiledsector.charts.atlas.AtlasRuntime;
 import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.content.ChartContentPlanner;
 import exiledsector.charts.content.ChartFleetSpread;
@@ -234,8 +233,7 @@ public final class ChartFleetLoot {
         ItemDrops.SiteLoot fleetLoot = subroutines(context, lootDeploymentPoints, battle, random)
                 .plus(List.of(), List.of(), BattleMaterials.roll(lootDeploymentPoints, battle.deploymentPoints(), battle.difficultyMultiplier(),
                         FleetLootRules.full(context.lootMultipliers(1f)), drop -> !ChartMaterials.covers(drop), random))
-                .plus(List.of(), List.of(), ChartMaterials.roll(run.tier(), materialShare, battle.difficultyMultiplier(),
-                        AtlasRuntime.regionOf(sector, run.atlasNode()), random))
+                .plus(List.of(), List.of(), ChartMaterials.roll(run.tier(), materialShare, battle.difficultyMultiplier(), random))
                 .plus(chartDrops(run, context, boss, chartShare, random));
         for (LootShaper anomaly : ChartAnomalies.inRun(run, LootShaper.class)) {
             ItemDrops.SiteLoot anomalyItems = anomaly.fleetItems(sector, fleet, run, context, share, random);

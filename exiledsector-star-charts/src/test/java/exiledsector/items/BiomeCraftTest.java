@@ -9,18 +9,19 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class BiomeNanoswarmTest {
+class BiomeCraftTest {
 
     private static final String CHRONAL = "TIMEFLOW_PERCENT_ABYSSAL_RIFT";
     private static final String AMBUSHERS = "OPENING_WEAPON_DAMAGE_PERCENT_PIRATE_BADLANDS";
@@ -28,8 +29,8 @@ class BiomeNanoswarmTest {
     private static final Set<String> BIOME_MODIFIERS = Set.of(CHRONAL, AMBUSHERS);
     private static final String BASE = "test_bridge";
     private static final String RELIC = "test_relic";
+    private static final int PLENTY = 1_000_000;
     private final ItemStore store = new ItemStore();
-    private final CraftingContext openContext = new CraftingContext(store, definition -> true, Set.of());
 
     @BeforeEach
     void setUp() throws Exception {
@@ -82,6 +83,24 @@ class BiomeNanoswarmTest {
         return store.add(new ItemData(BASE, 11L, List.of(modifiers), null));
     }
 
+    private static CraftingMaterials materials(int feedstockEach, int inhibitorsEach) {
+        return materials(feedstockEach, inhibitorsEach, PLENTY);
+    }
+
+    private static CraftingMaterials materials(int feedstockEach, int inhibitorsEach, int reshapingCount) {
+        Map<String, Integer> counts = new HashMap<>();
+        counts.put(InfusedCraft.reshapingId(), reshapingCount);
+        BiomeCraft.feedstockIds().forEach(feedstockId -> counts.put(feedstockId, feedstockEach));
+        for (CraftingInhibitor inhibitor : CraftingInhibitor.values()) {
+            counts.put(inhibitor.itemId(), inhibitorsEach);
+        }
+        return CraftingMaterials.storedForTests(counts);
+    }
+
+    private static CraftingMaterials plenty() {
+        return materials(PLENTY, PLENTY);
+    }
+
     private static long biomeModifierCount(Item item) {
         return item.explicits().stream().map(RolledModifier::modifierId).filter(BiomeModifiers::isBiomeModifier).count();
     }
@@ -101,14 +120,15 @@ class BiomeNanoswarmTest {
     }
 
     @Test
-    void theAdaptiveNanoswarmRerollsWithOneBiomeModifierAndOneToThreeOthers() {
+    void theAdaptiveReforgeRerollsWithOneBiomeModifierAndOneToThreeOthers() {
         Set<Integer> counts = new HashSet<>();
         Set<String> grantedIds = new HashSet<>();
         Random random = new Random(7L);
+        CraftingMaterials materials = plenty();
         for (int use = 0; use < 80; use++) {
             Item item = withModifiers(rolled(ModifierSlot.SUFFIX, "ARMOR_PERCENT", 5f));
 
-            assertSame(item, BiomeNanoswarm.ADAPTIVE.use(item, openContext, random));
+            assertEquals(Optional.of(Set.of()), BiomeCraft.ADAPTIVE.use(item, materials, Set.of(), random));
 
             int count = item.explicits().size();
             assertTrue(count >= 2 && count <= 4, "count " + count);
@@ -122,14 +142,13 @@ class BiomeNanoswarmTest {
     }
 
     @Test
-    void theAdaptiveNanoswarmKeepsLockedAndInhibitedModifiers() {
+    void theAdaptiveReforgeKeepsLockedAndInhibitedModifiers() {
         for (long seed = 0; seed < 40; seed++) {
             RolledModifier locked = rolled(ModifierSlot.PREFIX, "FLUX_CAPACITY_MULT", 5f).asImmutable();
             RolledModifier armor = rolled(ModifierSlot.SUFFIX, "ARMOR_PERCENT", 5f);
             Item item = withModifiers(locked, armor, rolled(ModifierSlot.PREFIX, "HULL_PERCENT", 5f));
-            CraftingContext suffixInhibitor = new CraftingContext(store, definition -> true, Set.of(ModifierSlot.SUFFIX));
 
-            BiomeNanoswarm.ADAPTIVE.use(item, suffixInhibitor, new Random(seed));
+            BiomeCraft.ADAPTIVE.use(item, plenty(), Set.of(CraftingInhibitor.SUFFIX), new Random(seed));
 
             assertTrue(item.explicits().contains(locked));
             assertTrue(item.explicits().contains(armor));
@@ -139,14 +158,14 @@ class BiomeNanoswarmTest {
     }
 
     @Test
-    void theGraftingNanoswarmSwapsOneModifierForABiomeModifier() {
+    void theBiomeGraftSwapsOneModifierForABiomeModifier() {
         for (long seed = 0; seed < 40; seed++) {
             RolledModifier capacity = rolled(ModifierSlot.PREFIX, "FLUX_CAPACITY_MULT", 5f);
             RolledModifier dissipation = rolled(ModifierSlot.PREFIX, "FLUX_DISSIPATION_MULT", 5f);
             RolledModifier armor = rolled(ModifierSlot.SUFFIX, "ARMOR_PERCENT", 5f);
             Item item = withModifiers(capacity, dissipation, armor);
 
-            assertSame(item, BiomeNanoswarm.GRAFTING.use(item, openContext, new Random(seed)));
+            assertTrue(BiomeCraft.GRAFTING.use(item, plenty(), Set.of(), new Random(seed)).isPresent());
 
             assertEquals(3, item.explicits().size());
             assertEquals(1, biomeModifierCount(item));
@@ -157,13 +176,13 @@ class BiomeNanoswarmTest {
     }
 
     @Test
-    void theGraftingNanoswarmReplacesABiomeModifierOnAnItemWithTwo() throws Exception {
+    void theBiomeGraftReplacesABiomeModifierOnAnItemWithTwo() throws Exception {
         registerThreeBiomes();
         for (long seed = 0; seed < 40; seed++) {
             RolledModifier armor = rolled(ModifierSlot.SUFFIX, "ARMOR_PERCENT", 5f);
             Item item = withModifiers(biome(CHRONAL), biome(AMBUSHERS), armor);
 
-            BiomeNanoswarm.GRAFTING.use(item, openContext, new Random(seed));
+            BiomeCraft.GRAFTING.use(item, plenty(), Set.of(), new Random(seed));
 
             assertEquals(BiomeModifiers.MAX_PER_ITEM, biomeModifierCount(item));
             assertTrue(item.explicits().contains(armor));
@@ -172,13 +191,12 @@ class BiomeNanoswarmTest {
     }
 
     @Test
-    void theAdaptiveNanoswarmAddsNoThirdBiomeModifier() throws Exception {
+    void theAdaptiveReforgeAddsNoThirdBiomeModifier() throws Exception {
         registerThreeBiomes();
-        CraftingContext prefixInhibitor = new CraftingContext(store, definition -> true, Set.of(ModifierSlot.PREFIX));
         for (long seed = 0; seed < 40; seed++) {
             Item item = withModifiers(biome(CHRONAL), biome(AMBUSHERS));
 
-            BiomeNanoswarm.ADAPTIVE.use(item, prefixInhibitor, new Random(seed));
+            BiomeCraft.ADAPTIVE.use(item, plenty(), Set.of(CraftingInhibitor.PREFIX), new Random(seed));
 
             assertEquals(BiomeModifiers.MAX_PER_ITEM, biomeModifierCount(item));
             assertFalse(item.explicits().stream().anyMatch(rolled -> rolled.modifierId().equals(PLASMATIC)));
@@ -186,17 +204,16 @@ class BiomeNanoswarmTest {
     }
 
     @Test
-    void theGraftingNanoswarmNeedsAModifierItCanReplace() {
+    void theBiomeGraftNeedsAModifierItCanReplace() {
         Item empty = withModifiers();
         Item locked = withModifiers(rolled(ModifierSlot.PREFIX, "FLUX_CAPACITY_MULT", 5f).asImmutable());
         Item open = withModifiers(rolled(ModifierSlot.PREFIX, "FLUX_CAPACITY_MULT", 5f));
-        CraftingContext prefixInhibitor = new CraftingContext(store, definition -> true, Set.of(ModifierSlot.PREFIX));
 
-        assertFalse(BiomeNanoswarm.GRAFTING.canUse(empty, openContext));
-        assertFalse(BiomeNanoswarm.GRAFTING.canUse(locked, openContext));
-        assertTrue(BiomeNanoswarm.GRAFTING.canUse(open, openContext));
-        assertFalse(BiomeNanoswarm.GRAFTING.canUse(open, prefixInhibitor));
-        assertNull(BiomeNanoswarm.GRAFTING.use(locked, openContext, new Random(1L)));
+        assertEquals("chart.biomeCraft.refused.grafting", BiomeCraft.GRAFTING.verdict(empty, Set.of()).refusalKey());
+        assertFalse(BiomeCraft.GRAFTING.verdict(locked, Set.of()).allowed());
+        assertTrue(BiomeCraft.GRAFTING.verdict(open, Set.of()).allowed());
+        assertEquals("ui.infusedCraft.refused.inhibited", BiomeCraft.GRAFTING.verdict(open, Set.of(CraftingInhibitor.PREFIX)).refusalKey());
+        assertEquals(Optional.empty(), BiomeCraft.GRAFTING.use(locked, plenty(), Set.of(), new Random(1L)));
     }
 
     @Test
@@ -205,34 +222,78 @@ class BiomeNanoswarmTest {
         Item item = withModifiers(rolled(ModifierSlot.PREFIX, "FLUX_CAPACITY_MULT", 5f), rolled(ModifierSlot.PREFIX, "FLUX_DISSIPATION_MULT", 5f),
                 armor);
 
-        assertFalse(BiomeNanoswarm.GRAFTING.wouldChange(item, armor));
-        assertEquals(Set.of(), ItemCrafting.inhibitorsSpentBy(BiomeNanoswarm.GRAFTING, item, List.of(CraftingInhibitor.SUFFIX)));
-        assertEquals(Set.of(CraftingInhibitor.PREFIX), ItemCrafting.inhibitorsSpentBy(BiomeNanoswarm.GRAFTING, item,
-                List.of(CraftingInhibitor.PREFIX)));
+        assertFalse(BiomeCraft.GRAFTING.wouldChange(item, armor));
+        assertEquals(Set.of(), BiomeCraft.GRAFTING.inhibitorsSpent(item, List.of(CraftingInhibitor.SUFFIX)));
+        assertEquals(Set.of(CraftingInhibitor.PREFIX), BiomeCraft.GRAFTING.inhibitorsSpent(item, List.of(CraftingInhibitor.PREFIX)));
     }
 
     @Test
-    void bothNanoswarmsNeedANonUniqueHullItemWithBiomeModifiersForItsPart() {
+    void bothCraftsNeedANonUniqueHullItemWithBiomeModifiersForItsPart() {
         Item relic = store.add(new ItemData(RELIC, 1L));
         Item item = withModifiers(rolled(ModifierSlot.PREFIX, "FLUX_CAPACITY_MULT", 5f));
 
-        for (BiomeNanoswarm craftingItem : BiomeNanoswarm.values()) {
-            assertFalse(craftingItem.canUse(relic, openContext));
-            assertTrue(craftingItem.canUse(item, openContext));
-            assertFalse(craftingItem.appliesTo(ItemType.STAR_CHART));
-            assertFalse(craftingItem.dropsFromShipLoot());
-            assertFalse(craftingItem.growable());
+        for (BiomeCraft craft : BiomeCraft.values()) {
+            assertFalse(craft.verdict(relic, Set.of()).allowed(), craft.id());
+            assertTrue(craft.verdict(item, Set.of()).allowed(), craft.id());
+            assertFalse(craft.verdict(null, Set.of()).allowed(), craft.id());
         }
         BiomeModifiers.unregisterAll();
-        for (BiomeNanoswarm craftingItem : BiomeNanoswarm.values()) {
-            assertFalse(craftingItem.canUse(item, openContext));
+        for (BiomeCraft craft : BiomeCraft.values()) {
+            assertFalse(craft.verdict(item, Set.of()).allowed(), craft.id());
         }
     }
 
     @Test
-    void theNanoswarmsAreFoundByItemId() {
-        assertSame(BiomeNanoswarm.ADAPTIVE, BiomeNanoswarm.byItemId("exiledSector_adaptive_nanoswarm"));
-        assertSame(BiomeNanoswarm.GRAFTING, BiomeNanoswarm.byItemId("exiledSector_grafting_nanoswarm"));
-        assertNull(BiomeNanoswarm.byItemId("exiledSector_immutable_nanoswarm"));
+    void eachCraftCostsItsAmountOfEveryInfusedFeedstockAndOfReshapingNanoswarms() {
+        assertEquals(100, BiomeCraft.ADAPTIVE.feedstockCost());
+        assertEquals(1000, BiomeCraft.GRAFTING.feedstockCost());
+        assertEquals(1, BiomeCraft.ADAPTIVE.reshapingCost());
+        assertEquals(2, BiomeCraft.GRAFTING.reshapingCost());
+        assertEquals(List.of("exiledSector_threat_feedstock", "exiledSector_shroud_feedstock", "exiledSector_phase_feedstock"), BiomeCraft.feedstockIds());
+        for (BiomeCraft craft : BiomeCraft.values()) {
+            int cost = craft.feedstockCost();
+            CraftingMaterials materials = materials(cost + 5, 3, craft.reshapingCost() + 1);
+            Item item = withModifiers(rolled(ModifierSlot.PREFIX, "FLUX_CAPACITY_MULT", 5f), rolled(ModifierSlot.SUFFIX, "ARMOR_PERCENT", 5f));
+
+            assertTrue(craft.canAfford(materials), craft.id());
+            assertTrue(craft.use(item, materials, Set.of(), new Random(3L)).isPresent(), craft.id());
+
+            BiomeCraft.feedstockIds().forEach(feedstockId -> assertEquals(5, materials.count(feedstockId), craft.id() + " " + feedstockId));
+            assertEquals(1, materials.count(InfusedCraft.reshapingId()), craft.id());
+            assertFalse(craft.canAfford(materials(PLENTY, 3, craft.reshapingCost() - 1)), craft.id());
+            assertFalse(craft.canAfford(materials), craft.id());
+        }
+    }
+
+    @Test
+    void aRefusedOrUnaffordableCraftSpendsNothing() {
+        for (BiomeCraft craft : BiomeCraft.values()) {
+            int cost = craft.feedstockCost();
+            Map<String, Integer> counts = new HashMap<>(Map.of("exiledSector_threat_feedstock", cost, "exiledSector_shroud_feedstock", cost,
+                    "exiledSector_phase_feedstock", cost - 1, CraftingInhibitor.PREFIX.itemId(), 1));
+            CraftingMaterials shortOfPhase = CraftingMaterials.storedForTests(counts);
+            Item item = withModifiers(rolled(ModifierSlot.PREFIX, "FLUX_CAPACITY_MULT", 5f), rolled(ModifierSlot.SUFFIX, "ARMOR_PERCENT", 5f));
+            List<RolledModifier> before = List.copyOf(item.explicits());
+
+            assertFalse(craft.canAfford(shortOfPhase), craft.id());
+            assertEquals(Optional.empty(), craft.use(item, shortOfPhase, Set.of(CraftingInhibitor.PREFIX), new Random(3L)), craft.id());
+
+            assertEquals(before, item.explicits(), craft.id());
+            assertEquals(cost, shortOfPhase.count("exiledSector_threat_feedstock"), craft.id());
+            assertEquals(cost - 1, shortOfPhase.count("exiledSector_phase_feedstock"), craft.id());
+            assertEquals(1, shortOfPhase.count(CraftingInhibitor.PREFIX.itemId()), craft.id());
+        }
+    }
+
+    @Test
+    void anInhibitorIsSpentOnlyWhenItProtectedAModifierTheCraftWouldChange() {
+        CraftingMaterials materials = materials(PLENTY, 2);
+        Item item = withModifiers(rolled(ModifierSlot.PREFIX, "FLUX_CAPACITY_MULT", 5f), rolled(ModifierSlot.SUFFIX, "ARMOR_PERCENT", 5f));
+
+        Optional<Set<CraftingInhibitor>> spent = BiomeCraft.ADAPTIVE.use(item, materials, Set.of(CraftingInhibitor.SUFFIX), new Random(5L));
+
+        assertEquals(Optional.of(Set.of(CraftingInhibitor.SUFFIX)), spent);
+        assertEquals(1, materials.count(CraftingInhibitor.SUFFIX.itemId()));
+        assertEquals(2, materials.count(CraftingInhibitor.PREFIX.itemId()));
     }
 }

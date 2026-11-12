@@ -193,12 +193,6 @@ class EngramTest {
     }
 
     @Test
-    void theStarChartsDomainOffersOnlyItsBiomeNanoswarmsAsHullCraftingBenchCraftingItems() {
-        assertEquals(Set.of(BiomeNanoswarm.ADAPTIVE.itemId(), BiomeNanoswarm.GRAFTING.itemId()), new HashSet<>(new exiledsector.charts.StarChartsDomain().hullCraftingBenchCraftingItems().stream()
-                .map(CraftingMaterialFamily::itemId).toList()));
-    }
-
-    @Test
     void theStarChartsDomainOffersItsEngramsThroughTheEngramTray() {
         assertTrue(new exiledsector.charts.StarChartsDomain().hullCraftingBenchTrays().contains(exiledsector.ui.socket.EngramTray.INSTANCE));
     }

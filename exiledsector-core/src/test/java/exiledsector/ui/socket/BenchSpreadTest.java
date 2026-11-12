@@ -13,7 +13,6 @@ class BenchSpreadTest {
     private static final BenchSpread.Contents FORGE = new BenchSpread.Contents(false, false, false);
     private static final float[] SCALES = {3f, 4f, 5f, 6f};
     private static final float SMALLEST_SCALE = 3f;
-    private static final int TRAY_COLUMNS_AT_SMALLEST_SCALE = 4;
     private static final float SCREEN_WIDTH = 1280f;
 
     private static float orbitTileLeft(BenchMode mode, BenchSpread spread, float scale) {
@@ -37,7 +36,7 @@ class BenchSpreadTest {
             assertEquals(gap, socketLeft, TOLERANCE, "scale " + scale + " margin before the socket");
             assertEquals(gap, contracted.columnLeft() - socketRight, TOLERANCE, "scale " + scale + " socket to the column");
             assertEquals(gap, contracted.controlsLeft() - (contracted.columnLeft() + tileSize), TOLERANCE, "scale " + scale + " column to the tray controls");
-            assertEquals(contracted.artWidth(), contracted.controlsLeft() + tileSize + gap, TOLERANCE, "scale " + scale + " margin after the tray controls");
+            assertEquals(contracted.artWidth(), contracted.controlsLeft() + tileSize, TOLERANCE, "scale " + scale + " tray controls reach the right edge");
         }
     }
 
@@ -66,45 +65,63 @@ class BenchSpreadTest {
     }
 
     @Test
-    void theTrayControlsTakeTheRightmostColumnAndPushTheCraftingItemsLeft() {
+    void theTrayControlsHugTheRightEdgeAndTheCraftingItemsSitBesideThem() {
         for (float scale : SCALES) {
             BenchSpread withTrays = BenchSpread.full(BenchMode.HULL_ITEMS, scale, HULL_BENCH);
-            BenchSpread withoutTrays = BenchSpread.full(BenchMode.HULL_ITEMS, scale, new BenchSpread.Contents(true, true, false));
             float tileSize = BenchScene.tileSize(scale);
             float gap = BenchScene.COLUMN_GAP * scale;
 
-            assertEquals(withoutTrays.columnLeft(), withTrays.controlsLeft(), TOLERANCE, "scale " + scale);
+            assertEquals(withTrays.artWidth(), withTrays.controlsLeft() + tileSize, TOLERANCE, "scale " + scale);
             assertEquals(gap, withTrays.controlsLeft() - (withTrays.columnLeft() + tileSize), TOLERANCE, "scale " + scale);
         }
     }
 
     @Test
-    void openingATrayMovesTheSocketAndColumnLeftAndKeepsTheBenchWidth() {
+    void aWideTrayOpensBesideTheTrayControlsAndPushesTheColumnAndSocketLeft() {
         BenchMode mode = BenchMode.HULL_ITEMS;
         for (float scale : SCALES) {
             BenchSpread full = BenchSpread.full(mode, scale, HULL_BENCH);
-            BenchSpread trayOpen = BenchSpread.trayOpen(mode, scale, HULL_BENCH);
+            float widestTray = BenchSpread.maxTrayWidth(mode, scale, HULL_BENCH);
+            BenchSpread trayOpen = BenchSpread.trayOpen(mode, scale, HULL_BENCH, widestTray * 2f);
             float tileSize = BenchScene.tileSize(scale);
             float gap = BenchScene.COLUMN_GAP * scale;
+            float socketLeft = Math.min(orbitTileLeft(mode, trayOpen, scale), trayOpen.socketX() - plateHalf(scale));
+            float socketRight = trayOpen.socketX() * 2f - socketLeft;
 
             assertEquals(full.artWidth(), trayOpen.artWidth(), TOLERANCE, "scale " + scale + " bench width");
             assertEquals(full.controlsLeft(), trayOpen.controlsLeft(), TOLERANCE, "scale " + scale + " tray controls stay put");
-            assertTrue(trayOpen.socketX() < full.socketX(), "scale " + scale + " socket moves left");
-            assertTrue(trayOpen.columnLeft() < full.columnLeft(), "scale " + scale + " column moves left");
-            assertTrue(trayOpen.socketX() - plateHalf(scale) >= 0f, "scale " + scale + " details plate stays on the bench");
+            assertEquals(widestTray, trayOpen.trayWidth(), TOLERANCE, "scale " + scale + " the tray is capped");
+            assertEquals(gap, trayOpen.controlsLeft() - (trayOpen.trayLeft() + trayOpen.trayWidth()), TOLERANCE, "scale " + scale + " tray to the controls");
             assertEquals(gap, trayOpen.trayLeft() - (trayOpen.columnLeft() + tileSize), TOLERANCE, "scale " + scale + " column to the tray");
-            assertEquals(gap, trayOpen.controlsLeft() - trayOpen.trayRight(scale), TOLERANCE, "scale " + scale + " tray to the controls");
-            assertTrue(trayOpen.trayWidth(scale) > 0f, "scale " + scale + " tray has room");
-            assertEquals(0f, full.trayWidth(scale), TOLERANCE, "scale " + scale + " a closed tray has no width");
+            assertEquals(gap, trayOpen.columnLeft() - socketRight, TOLERANCE, "scale " + scale + " socket to the column");
+            assertEquals(gap, socketLeft, TOLERANCE, "scale " + scale + " margin before the socket");
+            assertEquals(0f, full.trayWidth(), TOLERANCE, "scale " + scale + " a closed tray has no width");
+            assertEquals(full.controlsLeft() - gap, full.trayLeft(), TOLERANCE, "scale " + scale + " a closed tray sits at the controls");
         }
     }
 
     @Test
-    void anOpenTrayFitsTheSmallestScreen() {
-        BenchSpread trayOpen = BenchSpread.trayOpen(BenchMode.HULL_ITEMS, SMALLEST_SCALE, HULL_BENCH);
+    void aNarrowTrayKeepsTheSocketWhereItWas() {
+        BenchMode mode = BenchMode.HULL_ITEMS;
+        for (float scale : SCALES) {
+            BenchSpread full = BenchSpread.full(mode, scale, HULL_BENCH);
+            float narrowWidth = BenchScene.tileSize(scale);
+            BenchSpread trayOpen = BenchSpread.trayOpen(mode, scale, HULL_BENCH, narrowWidth);
+
+            assertEquals(narrowWidth, trayOpen.trayWidth(), TOLERANCE, "scale " + scale + " the wanted width is kept");
+            assertEquals(full.socketX(), trayOpen.socketX(), TOLERANCE, "scale " + scale + " the socket stays put");
+            assertTrue(trayOpen.columnLeft() < full.columnLeft(), "scale " + scale + " the column moves aside");
+        }
+    }
+
+    @Test
+    void anOpenTrayFitsTwoListColumnsOnTheSmallestScreen() {
+        BenchSpread trayOpen = BenchSpread.trayOpen(BenchMode.HULL_ITEMS, SMALLEST_SCALE, HULL_BENCH,
+                BenchSpread.maxTrayWidth(BenchMode.HULL_ITEMS, SMALLEST_SCALE, HULL_BENCH));
+        float listWidth = trayOpen.trayWidth() - CraftingBenchPanel.TRAY_SIDE_INSET * 2f;
 
         assertTrue(trayOpen.artWidth() + CraftingBenchPanel.FRAME_INSET * 2f <= SCREEN_WIDTH);
-        assertTrue(ItemGrid.columnsFor(trayOpen.trayWidth(SMALLEST_SCALE)) >= TRAY_COLUMNS_AT_SMALLEST_SCALE);
+        assertTrue(BenchTrayList.columnWidth(listWidth, 2) >= BenchTrayList.MIN_COLUMN_WIDTH);
     }
 
     @Test
@@ -136,16 +153,19 @@ class BenchSpreadTest {
     }
 
     @Test
-    void openingATrayMovesTheSocketSteadilyLeft() {
+    void openingATrayGrowsItSteadilyLeftwards() {
         BenchMode mode = BenchMode.HULL_ITEMS;
         BenchSpread full = BenchSpread.full(mode, 4f, HULL_BENCH);
-        BenchSpread trayOpen = BenchSpread.trayOpen(mode, 4f, HULL_BENCH);
+        BenchSpread trayOpen = BenchSpread.trayOpen(mode, 4f, HULL_BENCH, BenchSpread.maxTrayWidth(mode, 4f, HULL_BENCH));
 
+        float previousTrayLeft = full.trayLeft();
         float previousSocket = full.socketX();
         for (int step = 1; step <= 20; step++) {
-            float socketX = full.towards(trayOpen, BenchSpread.eased(step / 20f)).socketX();
-            assertTrue(socketX <= previousSocket, "step " + step);
-            previousSocket = socketX;
+            BenchSpread shown = full.towards(trayOpen, BenchSpread.eased(step / 20f));
+            assertTrue(shown.trayLeft() <= previousTrayLeft, "step " + step + " tray edge");
+            assertTrue(shown.socketX() <= previousSocket, "step " + step + " socket");
+            previousTrayLeft = shown.trayLeft();
+            previousSocket = shown.socketX();
         }
     }
 }

@@ -51,7 +51,7 @@ class BenchTraysTest {
     void activeInhibitorsStayOnAcrossTraySwitchesAndCloses() {
         BenchTrays trays = new BenchTrays();
         ActiveInhibitors inhibitors = new ActiveInhibitors();
-        trays.toggle(ExcavationInhibitorTray.INSTANCE);
+        trays.toggle(InhibitorTray.INSTANCE);
         inhibitors.toggle(CraftingInhibitor.PREFIX, 1);
 
         trays.toggle(first);
@@ -92,16 +92,31 @@ class BenchTraysTest {
     void theInhibitorTrayListsOnlyTheInhibitorsYouHold() {
         CraftingMaterials materials = CraftingMaterials.storedForTests(Map.of(CraftingInhibitor.SUFFIX.itemId(), 2));
 
-        List<BenchTrayEntry> entries = ExcavationInhibitorTray.held(materials);
+        List<BenchTrayEntry> entries = InhibitorTray.held(materials);
 
         assertEquals(List.of(new InhibitorTrayEntry(CraftingInhibitor.SUFFIX)), entries);
-        assertEquals(List.of(), ExcavationInhibitorTray.held(CraftingMaterials.storedForTests(Map.of())));
+        assertEquals(List.of(), InhibitorTray.held(CraftingMaterials.storedForTests(Map.of())));
+    }
+
+    @Test
+    void theInhibitorTrayDealsItsShownEntriesIntoTwoHeadinglessColumns() {
+        CraftingMaterials materials = CraftingMaterials.storedForTests(Map.of(CraftingInhibitor.PREFIX.itemId(), 1,
+                CraftingInhibitor.SUFFIX.itemId(), 2));
+        BenchTrayContext context = mock(BenchTrayContext.class);
+        org.mockito.Mockito.when(context.materials()).thenReturn(materials);
+        BenchTrayEntry prefix = new InhibitorTrayEntry(CraftingInhibitor.PREFIX);
+        BenchTrayEntry suffix = new InhibitorTrayEntry(CraftingInhibitor.SUFFIX);
+
+        assertEquals(List.of(new BenchTray.Column(null, List.of(prefix)), new BenchTray.Column(null, List.of(suffix))),
+                InhibitorTray.INSTANCE.columns(context, entry -> true));
+        assertEquals(List.of(new BenchTray.Column(null, List.of(suffix)), new BenchTray.Column(null, List.of())),
+                InhibitorTray.INSTANCE.columns(context, suffix::equals));
     }
 
     @Test
     void theHullCraftingBenchOffersTheInhibitorTrayFirstThenEveryDomainTray() {
-        assertEquals(List.of(ExcavationInhibitorTray.INSTANCE, first), HullCraftingBench.hullCraftingBenchTrays(List.of(first)));
-        assertEquals(List.of(ExcavationInhibitorTray.INSTANCE), HullCraftingBench.hullCraftingBenchTrays(List.of()));
+        assertEquals(List.of(InhibitorTray.INSTANCE, first), HullCraftingBench.hullCraftingBenchTrays(List.of(first)));
+        assertEquals(List.of(InhibitorTray.INSTANCE), HullCraftingBench.hullCraftingBenchTrays(List.of()));
     }
 
     @Test

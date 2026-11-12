@@ -3,17 +3,29 @@ package exiledsector.ui.socket;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.i18n.StyledText;
 import exiledsector.items.CraftingMaterialFamily;
+import exiledsector.items.ItemDefinition;
 import exiledsector.ui.cargo.CargoIconLook;
 
 import java.util.List;
 
 public interface BenchTrayEntry {
 
+    record RowIcon(String iconPath, CargoIconLook look, String badge) {
+    }
+
     List<String> iconPaths();
 
     CargoIconLook look();
 
     String badge(BenchTrayContext context);
+
+    default List<RowIcon> rowIcons(BenchTrayContext context) {
+        return List.of(new RowIcon(shownIcons(iconPaths()).get(0), look(), badge(context)));
+    }
+
+    static List<String> shownIcons(List<String> iconPaths) {
+        return iconPaths == null || iconPaths.isEmpty() ? List.of(ItemDefinition.FALLBACK_ICON) : iconPaths;
+    }
 
     default StyledText rowText(BenchTrayContext context) {
         return StyledText.EMPTY;

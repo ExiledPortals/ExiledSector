@@ -59,19 +59,19 @@ The crafts are `ForgeOperation`s in core like the Derelict Forge's, refusing mir
 
 ### Crafting Bench rework
 
-There is no separate Requisition bench. The Crafting Bench (core `ui/socket`: `CraftingBench`, `CraftingBenchPanel`, `BenchSideBySide`) gains three expanding trays on its right side in Hull Items mode, acting on the hull item in the socket. The Star Charts mode gets none of them and loses its inhibitors, so charts are crafted without any (its `usesInhibitors` turns false, as the forges' already is):
+There is no separate Requisition bench. The Crafting Bench (core `ui/socket`: `CraftingBench`, `CraftingBenchPanel`, `BenchSideBySide`) gains three expanding trays in Hull Items mode, each opening leftwards from its icon at the bench's right side, acting on the hull item in the socket. The Star Charts mode gets none of them and loses its inhibitors, so charts are crafted without any (its `usesInhibitors` turns false, as the forges' already is):
 
 - Engrams: every engram the player holds, moved out of the bench's crafting items (`StarChartsDomain.hullCraftingBenchCraftingItems`).
 - Infused Crafting: the feedstock crafts above, each with its cost and the player's count of that feedstock.
-- Excavation Inhibitors: the inhibitors the player holds, of which up to four can be active (section 3, Excavation Sites).
+- Inhibitors: the inhibitors the player holds, of which up to four can be active (section 3, Excavation Sites).
 
 Only one tray is open at a time. While one is open, the central arc of crafting items, the socket and the details window move further left to make room. Everything on the bench can still be used together: closing a tray keeps the active inhibitors, and opening another keeps them too. Engrams and infused crafts change the item as soon as they are used; inhibitors are the only items that wait, changing the next crafting item used. Each active inhibitor's icon orbits the item in the socket, in the central window, until that crafting item is used.
 
-The Prefix and Suffix Inhibitors become excavation inhibitors: their tiles beside the socket go, and they are picked in the Excavation Inhibitors tray like the rest, counting toward the four. They keep their battle and chart drops, made as rare as the Immutable Nanoswarm's (its `battle_loot.csv` and `chart_materials.csv` rows). Since they are core items that work without Star Charts, the tray and the inhibitor framework sit in core, and Star Charts adds the new inhibitors and the excavation drops. Each tray is a content hook, so the Engrams and Infused Crafting trays appear only while Star Charts is on.
+The Prefix and Suffix Inhibitors join the new inhibitors: their tiles beside the socket go, and they are picked in the Inhibitors tray like the rest, counting toward the four. They keep their battle and chart drops, made as rare as the Immutable Nanoswarm's (its `battle_loot.csv` and `chart_materials.csv` rows). Since they are core items that work without Star Charts, the tray and the inhibitor framework sit in core, and Star Charts adds the new inhibitors and the excavation drops. Each tray is a content hook, so the Engrams and Infused Crafting trays appear only while Star Charts is on.
 
 ## 3. The other anomalies
 
-Each entry names the anomaly, its reward today, and its new reward. Entries marked decided are the user's picks; the user details the excavation inhibitors and the relay choices when their step starts. The rest wait on review.
+Each entry names the anomaly, its reward today, and its new reward. Entries marked decided are the user's picks; the user details the new inhibitors and the relay choices when their step starts. The rest wait on review.
 
 ### Depot (decided)
 
@@ -83,7 +83,7 @@ After Heist's experimented bases, the vault holds prototype hull items: non-uniq
 
 Today: a planet's items leaning toward one drop type, behind a frigate fight or a raid.
 
-The shafts drop excavation inhibitors. They are never used on an item themselves: the player activates up to four in the bench's Excavation Inhibitors tray (section 2, Crafting Bench rework), and like Path of Exile's fossils they change how the next crafting item used behaves. The set:
+The shafts are the main source of the new inhibitors, which can drop elsewhere too. They are never used on an item themselves: the player activates up to four in the bench's Inhibitors tray (section 2, Crafting Bench rework), and like Path of Exile's fossils they change how the next crafting item used behaves. The set:
 
 - Prefix Inhibitor and Suffix Inhibitor, the existing two, working as today.
 - Seven tag inhibitors, each making the next crafting item used that adds modifiers more likely to add modifiers of its kind: beam, non-beam energy, ballistic, missile, shield, armour and phase. They weight by theme tag (`theme_tags.csv`: `beam`, `energy` without `beam`, `ballistic`, `missile`, `shield`, `armour`, `phase`); how much more likely is a placeholder.
@@ -128,7 +128,7 @@ Settling dust: each battle won in the nebula adds a stack for the rest of the ru
 
 ### Unchanged
 
-The Coronal Hypershunt is its own reward, as are the Derelict Forge, the Pre-Collapse Facility and the abyssal landmarks (the forge programs, VoK databanks, RAT drop groups and Abyssal Infusion). Magnetic Storm, Asteroid Storm and Neutron Star have no new reward yet; the Asteroid Storm's belt caches could hold the excavation inhibitors once those exist.
+The Coronal Hypershunt is its own reward, as are the Derelict Forge, the Pre-Collapse Facility and the abyssal landmarks (the forge programs, VoK databanks, RAT drop groups and Abyssal Infusion). Magnetic Storm, Asteroid Storm and Neutron Star have no new reward yet; the Asteroid Storm's belt caches could hold the new inhibitors once those exist.
 
 ## Open questions
 
@@ -137,7 +137,7 @@ The Coronal Hypershunt is its own reward, as are the Derelict Forge, the Pre-Col
 - Supply Convoy: whether infused feedstock should also be bought in the main sector, or stay chart-only.
 - Faction Skirmish: whether staying out earns the training (from the attacker, left standing once the station falls) or nothing.
 - Faction Skirmish: one skill for every faction, or one per faction; whether it counts against the officer's skill limit; what a run grants an officer who already has it.
-- Excavation inhibitors: whether the same inhibitor can fill more than one of the four active slots (two Beam Inhibitors at once), and if so whether its weighting adds up.
+- Inhibitors: whether the same inhibitor can fill more than one of the four active slots (two Beam Inhibitors at once), and if so whether its weighting adds up.
 - Dense Nebula: whether settling dust replaces today's flat +50% star charts or adds to it, and the per-stack amount and cap.
 - Domain-era Mothership: whether it gets a reward of its own.
 
@@ -145,8 +145,8 @@ The Coronal Hypershunt is its own reward, as are the Derelict Forge, the Pre-Col
 
 1. [x] Storm Front change: the guaranteed biome grant, removal or move of the storm modifiers, strings (en and zh_CN), `docs/docs.md`, tests.
 2. [x] The three infused feedstock items, their `special_items.csv` rows, icons (placeholders), their tier rows, the ±15% roll per feedstock and the convoy cargo split. Built: `items.InfusedFeedstock`, `anomaly.convoy.ConvoyFeedstock` with `convoy_feedstock.csv`, rolled in `ConvoyFleets.spawn` and shared into the pods and cache by `ConvoyCargo`; the icons reuse Nanite Feedstock's.
-3. [x] The Crafting Bench rework: the right-side tray framework and content hook, the bench moving left while a tray is open, the Excavation Inhibitors tray with the Prefix and Suffix Inhibitors moved into it and active inhibitors orbiting the socket, inhibitors removed from the Star Charts mode, the two inhibitors' drop rates lowered to the Immutable Nanoswarm's, then the Engrams tray (engrams moved out of the crafting items), with tests. Built: `BenchTray`, `BenchTrayEntry` and `BenchTrayContext` in core `ui.socket`, offered through `ExiledSectorDomain.hullCraftingBenchTrays()` and `BenchModeSupport.trays()`; `ExcavationInhibitorTray`, `ActiveInhibitors` and `InhibitorOrbit` in core; `EngramTray` in Star Charts' `ui.socket`; the layout in `BenchSpread.trayOpen`.
-4. [x] The Infused Crafting tray and its crafts as core `ForgeOperation`s, with tests per craft. Built: the crafts are core `InfusedCraft` (logic in `InfusedCrafting`, costs and feedstock per tag in `infused_crafts.csv` read by `InfusedCraftCosts`), tested in hull-upgrades `InfusedCraftTest` and core `InfusedCraftCostsTest`. The tray is a filtered list (core `BenchTrayList` and `BenchTrayRow`, a tray opts in with `BenchTray.listed()`), filled by Star Charts' `InfusedCraftingTray` with an `InfusedCraftEntry` per tag for the tagged reforge (100) and add-and-remove (1000); click confirms, ctrl-click crafts at once. The other four crafts have no costs, so they are not offered until the user picks which to keep.
+3. [x] The Crafting Bench rework: the right-side tray framework and content hook, the bench moving left while a tray is open, the Inhibitors tray with the Prefix and Suffix Inhibitors moved into it and active inhibitors orbiting the socket, inhibitors removed from the Star Charts mode, the two inhibitors' drop rates lowered to the Immutable Nanoswarm's, then the Engrams tray (engrams moved out of the crafting items), with tests. Built: `BenchTray`, `BenchTrayEntry` and `BenchTrayContext` in core `ui.socket`, offered through `ExiledSectorDomain.hullCraftingBenchTrays()` and `BenchModeSupport.trays()`; `InhibitorTray`, `ActiveInhibitors` and `InhibitorOrbit` in core; `EngramTray` in Star Charts' `ui.socket`; the layout in `BenchSpread.trayOpen`.
+4. [x] The Infused Crafting tray and its crafts as core `ForgeOperation`s, with tests per craft. Built: the crafts are core `InfusedCraft` (logic in `InfusedCrafting`, costs and feedstock per tag in `infused_crafts.csv` read by `InfusedCraftCosts`), tested in hull-upgrades `InfusedCraftTest` and core `InfusedCraftCostsTest`. The tray is a filtered list (core `BenchTrayList` and `BenchTrayRow`, split into columns by `BenchTray.columns`), filled by Star Charts' `InfusedCraftingTray` with an `InfusedCraftEntry` per tag for the tagged reforge (100) and add-and-remove (1000); click confirms, ctrl-click crafts at once. The other four crafts have no costs, so they are not offered until the user picks which to keep. The Adaptive and Grafting Nanoswarms became rows of the same tray, Adaptive Reforge and Biome Graft at 100 and 1000 of each feedstock (Star Charts `items.BiomeCraft` and `ui.socket.BiomeCraftEntry`, tested in `BiomeCraftTest`); their items and chart drops are gone. A row can show several icons, one cost beside each (`BenchTrayEntry.rowIcons`). The tagged reforge and Adaptive Reforge also take one Reshaping Nanoswarm, add-and-remove and Biome Graft two (`InfusedCraft.reshapingCost`, `BiomeCraft.reshapingCost`), each shown as its own cost row. Rows sort by feedstock cost, then by action (`InfusedCraftingTray.ROW_ORDER`). The Engrams tray shows its icons in a prefix and a suffix column (`EngramTray.sided`), the Inhibitors tray in two unsorted columns, both sized to their icons (`BenchTray.iconColumns`, `BenchTrayList.tiles`); each tray opens leftwards from the tray icons inside the stat panel border (`BorderedPanel`, `BenchSpread.trayOpen`).
 5. [ ] Depot prototypes: `prototype_implicits.csv`, the vault's pick of three, strings, tests.
 6. [ ] Stellar Flares lucky rolls, Black Hole immutable drops and Dense Nebula settling dust.
 7. [ ] Remnant Nexus overcharged drops.

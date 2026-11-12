@@ -129,10 +129,6 @@ public final class BiomeModifiers {
         return modifiers;
     }
 
-    public static boolean hasModifiers(String biomeId) {
-        return biomeId != null && biomeIds.contains(biomeId);
-    }
-
     public static boolean isBiomeModifier(String modifierId) {
         return biomeOfModifier(modifierId) != null;
     }

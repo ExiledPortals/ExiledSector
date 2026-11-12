@@ -44,6 +44,7 @@ class InfusedCraftTest {
     private static final int SEEDS = 60;
     private static final String FEEDSTOCK = "test_feedstock";
     private static final int COST = 10;
+    private static final String RESHAPING = InfusedCraft.reshapingId();
     private static final String ALL_CRAFTS = FEEDSTOCK + ",10,10,10,10,10,10";
     private static final String ALL_BUT_SWAP = FEEDSTOCK + ",10,10,10,10,,10";
     private static final String COSTS = String.join("\n",
@@ -249,15 +250,36 @@ class InfusedCraftTest {
 
     @Test
     void usingACraftTakesItsFeedstockOnlyWhenItRuns() {
-        CraftingMaterials materials = CraftingMaterials.storedForTests(new HashMap<>(Map.of(FEEDSTOCK, COST + 5)));
+        CraftingMaterials materials = CraftingMaterials.storedForTests(new HashMap<>(Map.of(FEEDSTOCK, COST + 5, RESHAPING, 3)));
 
         assertEquals(Optional.empty(), use(InfusedCraft.REFORGE_WITH_TAG, null, "weapon", materials, Set.of()));
         assertEquals(COST + 5, materials.count(FEEDSTOCK));
+        assertEquals(3, materials.count(RESHAPING));
 
         assertEquals(Optional.of(Set.of()), use(InfusedCraft.REFORGE_WITH_TAG, plate(rolled(FLUX, 5f)), "weapon", materials, Set.of()));
         assertEquals(5, materials.count(FEEDSTOCK));
+        assertEquals(2, materials.count(RESHAPING));
         assertFalse(InfusedCraft.REFORGE_WITH_TAG.canAfford("weapon", materials));
         assertEquals(Optional.empty(), use(InfusedCraft.REFORGE_WITH_TAG, plate(rolled(FLUX, 5f)), "weapon", materials, Set.of()));
+    }
+
+    @Test
+    void theReforgeNeedsOneReshapingNanoswarmAndTheExchangeTwo() {
+        assertEquals(1, InfusedCraft.REFORGE_WITH_TAG.reshapingCost());
+        assertEquals(2, InfusedCraft.ADD_AND_REMOVE.reshapingCost());
+        CraftingMaterials oneSwarm = CraftingMaterials.storedForTests(new HashMap<>(Map.of(FEEDSTOCK, COST, RESHAPING, 1)));
+        Item item = plate(rolled(HULL, 5f), rolled(KINETIC, -5f));
+
+        assertFalse(InfusedCraft.ADD_AND_REMOVE.canAfford("weapon", oneSwarm));
+        assertEquals(Optional.empty(), use(InfusedCraft.ADD_AND_REMOVE, item, "weapon", oneSwarm, Set.of()));
+        assertEquals(List.of(HULL, KINETIC), ids(item));
+        assertEquals(COST, oneSwarm.count(FEEDSTOCK));
+        assertEquals(1, oneSwarm.count(RESHAPING));
+
+        CraftingMaterials twoSwarms = CraftingMaterials.storedForTests(new HashMap<>(Map.of(FEEDSTOCK, COST, RESHAPING, 2)));
+        assertTrue(use(InfusedCraft.ADD_AND_REMOVE, item, "weapon", twoSwarms, Set.of()).isPresent());
+        assertEquals(0, twoSwarms.count(FEEDSTOCK));
+        assertEquals(0, twoSwarms.count(RESHAPING));
     }
 
     private static Optional<Set<CraftingInhibitor>> use(InfusedCraft craft, Item item, String tag, CraftingMaterials materials,
@@ -317,7 +339,7 @@ class InfusedCraftTest {
 
     @Test
     void usingACraftConsumesOneOfEachSpentInhibitor() {
-        CraftingMaterials materials = CraftingMaterials.storedForTests(new HashMap<>(Map.of(FEEDSTOCK, COST,
+        CraftingMaterials materials = CraftingMaterials.storedForTests(new HashMap<>(Map.of(FEEDSTOCK, COST, RESHAPING, 1,
                 CraftingInhibitor.PREFIX.itemId(), 2, CraftingInhibitor.SUFFIX.itemId(), 1)));
         Set<CraftingInhibitor> both = Set.of(CraftingInhibitor.PREFIX, CraftingInhibitor.SUFFIX);
 

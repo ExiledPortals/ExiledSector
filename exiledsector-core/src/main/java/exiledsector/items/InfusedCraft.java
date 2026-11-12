@@ -13,7 +13,7 @@ import java.util.Random;
 import java.util.Set;
 
 public enum InfusedCraft {
-    REFORGE_WITH_TAG {
+    REFORGE_WITH_TAG(1) {
         @Override
         List<ForgeChoice> offeredChoices(Item item, String tag, Set<ModifierSlot> inhibited) {
             return wholeItemIf(InfusedCrafting.canReforge(item, tag, inhibited));
@@ -29,7 +29,7 @@ public enum InfusedCraft {
             return InfusedCrafting.changedByReforge(item);
         }
     },
-    REFORGE_MORE_ALIKE {
+    REFORGE_MORE_ALIKE(0) {
         @Override
         List<ForgeChoice> offeredChoices(Item item, String tag, Set<ModifierSlot> inhibited) {
             return wholeItemIf(InfusedCrafting.canReforge(item, null, inhibited));
@@ -45,7 +45,7 @@ public enum InfusedCraft {
             return InfusedCrafting.changedByReforge(item);
         }
     },
-    REFORGE_LESS_ALIKE {
+    REFORGE_LESS_ALIKE(0) {
         @Override
         List<ForgeChoice> offeredChoices(Item item, String tag, Set<ModifierSlot> inhibited) {
             return wholeItemIf(InfusedCrafting.canReforge(item, null, inhibited));
@@ -61,7 +61,7 @@ public enum InfusedCraft {
             return InfusedCrafting.changedByReforge(item);
         }
     },
-    REROLL_TAG_VALUES {
+    REROLL_TAG_VALUES(0) {
         @Override
         List<ForgeChoice> offeredChoices(Item item, String tag, Set<ModifierSlot> inhibited) {
             return wholeItemIf(!InfusedCrafting.rerollableWithTag(item, tag, inhibited).isEmpty());
@@ -82,7 +82,7 @@ public enum InfusedCraft {
             return false;
         }
     },
-    SWAP_DAMAGE_TYPE {
+    SWAP_DAMAGE_TYPE(0) {
         @Override
         List<ForgeChoice> offeredChoices(Item item, String tag, Set<ModifierSlot> inhibited) {
             return InfusedCrafting.swappable(item, tag, damageTypes(), inhibited).stream().map(ForgeChoice::modifier).toList();
@@ -103,7 +103,7 @@ public enum InfusedCraft {
             return true;
         }
     },
-    ADD_AND_REMOVE {
+    ADD_AND_REMOVE(2) {
         @Override
         List<ForgeChoice> offeredChoices(Item item, String tag, Set<ModifierSlot> inhibited) {
             return wholeItemIf(!InfusedCrafting.removableForTag(item, tag, inhibited).isEmpty());
@@ -121,6 +121,20 @@ public enum InfusedCraft {
     };
 
     static final String REFUSAL_PREFIX = "ui.infusedCraft.refused.";
+
+    private final int reshapingCost;
+
+    InfusedCraft(int reshapingCost) {
+        this.reshapingCost = reshapingCost;
+    }
+
+    public int reshapingCost() {
+        return reshapingCost;
+    }
+
+    public static String reshapingId() {
+        return Nanoswarm.RESHAPING.itemId();
+    }
 
     public String id() {
         return name().toLowerCase(Locale.ROOT);
@@ -225,7 +239,7 @@ public enum InfusedCraft {
 
     public boolean canAfford(String tag, CraftingMaterials materials) {
         InfusedCraftCosts.Cost cost = cost(tag);
-        return cost != null && materials.count(cost.feedstockId()) >= cost.amount();
+        return cost != null && materials.count(cost.feedstockId()) >= cost.amount() && materials.count(reshapingId()) >= reshapingCost;
     }
 
     public boolean apply(Item item, String tag, ForgeChoice choice, Collection<CraftingInhibitor> inhibitors, Random random) {
@@ -245,6 +259,9 @@ public enum InfusedCraft {
         }
         InfusedCraftCosts.Cost cost = cost(tag);
         materials.take(cost.feedstockId(), cost.amount());
+        if (reshapingCost > 0) {
+            materials.take(reshapingId(), reshapingCost);
+        }
         spent.forEach(inhibitor -> materials.take(inhibitor.itemId(), 1));
         return Optional.of(spent);
     }

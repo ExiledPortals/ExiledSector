@@ -7,26 +7,32 @@ import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.cargo.CargoIconLook;
 
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 final class BenchTrayRow extends BaseCustomUIPanelPlugin {
+
+    record Layout(float iconSize, float iconInset, float iconGap) {
+    }
 
     private static final float DULL_ICON_ALPHA = 0.3f;
     private static final SpriteCache ICONS = new SpriteCache(BenchTrayRow.class);
 
-    private final String iconPath;
-    private final CargoIconLook iconLook;
+    private final List<String> iconPaths;
+    private final List<CargoIconLook> iconLooks;
     private final boolean available;
-    private final float iconSize;
-    private final float iconInset;
+    private final BooleanSupplier lit;
+    private final TileChrome.Frame litFrame;
+    private final Layout layout;
     private final TileInput rowInput;
     private PositionAPI rowPosition;
 
-    BenchTrayRow(List<String> iconPaths, CargoIconLook iconLook, boolean available, float iconSize, float iconInset, TileInput.Handler rowHandler) {
-        this.iconPath = BenchTrayElement.shownIcons(iconPaths).get(0);
-        this.iconLook = iconLook == null ? null : iconLook.unframed();
+    BenchTrayRow(List<BenchTrayEntry.RowIcon> icons, boolean available, BooleanSupplier lit, Layout layout, TileInput.Handler rowHandler) {
+        this.iconPaths = icons.stream().map(BenchTrayEntry.RowIcon::iconPath).toList();
+        this.iconLooks = icons.stream().map(icon -> icon.look() == null ? null : icon.look().unframed()).toList();
         this.available = available;
-        this.iconSize = iconSize;
-        this.iconInset = iconInset;
+        this.lit = lit;
+        this.litFrame = CraftingBenchTile.onFrame(iconLooks.isEmpty() ? null : iconLooks.get(0), CraftingBenchTile.TOGGLE_STYLE);
+        this.layout = layout;
         this.rowInput = new TileInput(rowHandler, true);
     }
 
@@ -41,7 +47,8 @@ final class BenchTrayRow extends BaseCustomUIPanelPlugin {
             return;
         }
         TileChrome.Frame idleFrame = available ? CraftingBenchTile.IDLE_FRAME : CraftingBenchTile.DULL_FRAME;
-        TileChrome.draw(rowPosition, rowInput.isHovered() ? CraftingBenchTile.HOVER_FRAME : idleFrame, alphaMult);
+        TileChrome.Frame frame = lit.getAsBoolean() ? litFrame : rowInput.isHovered() ? CraftingBenchTile.HOVER_FRAME : idleFrame;
+        TileChrome.draw(rowPosition, frame, alphaMult);
     }
 
     @Override
@@ -49,14 +56,23 @@ final class BenchTrayRow extends BaseCustomUIPanelPlugin {
         if (rowPosition == null) {
             return;
         }
-        float iconCentreX = rowPosition.getX() + iconInset + iconSize / 2f;
-        float iconCentreY = rowPosition.getCenterY();
-        if (!available) {
-            TileChrome.drawIcon(ICONS, iconPath, null, iconCentreX, iconCentreY, iconSize, alphaMult * DULL_ICON_ALPHA, 0f, 0);
-            return;
+        float iconSize = layout.iconSize();
+        float iconCentreX = rowPosition.getX() + layout.iconInset() + iconSize / 2f;
+        float topCentreY = rowPosition.getCenterY() + stackHeight(iconPaths.size(), iconSize, layout.iconGap()) / 2f - iconSize / 2f;
+        float hoverShare = rowInput.isHovered() ? 1f : 0f;
+        for (int i = 0; i < iconPaths.size(); i++) {
+            float iconCentreY = topCentreY - i * (iconSize + layout.iconGap());
+            if (available) {
+                TileChrome.drawIcon(ICONS, iconPaths.get(i), iconLooks.get(i), iconCentreX, iconCentreY, iconSize, alphaMult, hoverShare,
+                        System.identityHashCode(this) + i);
+            } else {
+                TileChrome.drawIcon(ICONS, iconPaths.get(i), null, iconCentreX, iconCentreY, iconSize, alphaMult * DULL_ICON_ALPHA, 0f, 0);
+            }
         }
-        TileChrome.drawIcon(ICONS, iconPath, iconLook, iconCentreX, iconCentreY, iconSize, alphaMult, rowInput.isHovered() ? 1f : 0f,
-                System.identityHashCode(this));
+    }
+
+    static float stackHeight(int iconCount, float iconSize, float iconGap) {
+        return iconCount * iconSize + Math.max(0, iconCount - 1) * iconGap;
     }
 
     @Override

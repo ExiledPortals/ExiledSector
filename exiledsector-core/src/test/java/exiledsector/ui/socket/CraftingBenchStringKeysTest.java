@@ -46,8 +46,8 @@ class CraftingBenchStringKeysTest {
             require(catalogue, InhibitorTrayEntry.descriptionKey(inhibitor), missing);
             require(catalogue, "ui.craftingBench.notice.inhibitorOn." + inhibitor.name().toLowerCase(java.util.Locale.ROOT), missing);
         }
-        require(catalogue, ExcavationInhibitorTray.INSTANCE.titleKey(), missing);
-        require(catalogue, ExcavationInhibitorTray.INSTANCE.emptyKey(), missing);
+        require(catalogue, InhibitorTray.INSTANCE.titleKey(), missing);
+        require(catalogue, InhibitorTray.INSTANCE.emptyKey(), missing);
         for (ModifierSlot slot : List.of(ModifierSlot.PREFIX, ModifierSlot.SUFFIX)) {
             require(catalogue, SlottedRows.slotTagKey(slot), missing);
         }
