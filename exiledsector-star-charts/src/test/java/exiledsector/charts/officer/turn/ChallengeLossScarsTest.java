@@ -27,9 +27,9 @@ class ChallengeLossScarsTest {
         place(state, 2, "pirates", "lieutenant", LOSER_CENTRE);
         place(state, 3, "tritachyon", "lieutenant", BEATEN_CENTRE);
 
-        ChallengeLossScars.INSTANCE.turnTaken(state, result(
+        ChallengeLossScars.INSTANCE.turnTaken(null, state, result(
                 new OfficerLoss(2, LossKind.LOST_CHALLENGE, 1, LOSER_CENTRE, false, false),
-                new OfficerLoss(3, LossKind.BEATEN_BY_PLAYER, 0, BEATEN_CENTRE, false, false)));
+                new OfficerLoss(3, LossKind.BEATEN_BY_PLAYER, 0, BEATEN_CENTRE, false, false)), null);
 
         assertEquals(Map.of(ScarTable.FALLBACK_SCAR_ID, 1), state.officer(2).scars());
         assertTrue(state.officer(1).scars().isEmpty());
@@ -42,7 +42,7 @@ class ChallengeLossScarsTest {
         place(state, 1, "hegemony", "captain", WINNER_CENTRE);
         place(state, 2, "pirates", "lieutenant", LOSER_CENTRE);
 
-        ChallengeLossScars.INSTANCE.turnTaken(state, result(new OfficerLoss(2, LossKind.LOST_CHALLENGE, 1, LOSER_CENTRE, false, true)));
+        ChallengeLossScars.INSTANCE.turnTaken(null, state, result(new OfficerLoss(2, LossKind.LOST_CHALLENGE, 1, LOSER_CENTRE, false, true)), null);
 
         assertTrue(state.officer(2).scars().isEmpty());
     }

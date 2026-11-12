@@ -11,19 +11,17 @@ import exiledsector.charts.content.ChartContentPlan;
 import exiledsector.charts.content.ChartContentPlan.FleetRole;
 import exiledsector.charts.content.ChartContentPlan.PlannedFleet;
 import exiledsector.charts.content.ChartContentPlanner;
-import exiledsector.charts.content.ChartFaction;
 import exiledsector.charts.content.ChartFactions;
 import exiledsector.charts.content.ChartPois;
+import exiledsector.charts.officer.turn.Intent;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -31,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class SkirmishPlannerTest {
 
     private static final int TIER = 8;
+    private static final int ATTACKING_OFFICER = 7;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -48,8 +47,12 @@ class SkirmishPlannerTest {
     }
 
     private static ChartGenContext joined(SkirmishSide side) {
+        return joined(new SkirmishJoin(side, "tritachyon", Intent.push(ATTACKING_OFFICER, null, Intent.NO_OFFICER)));
+    }
+
+    private static ChartGenContext joined(SkirmishJoin join) {
         return ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of(FactionSkirmish.ANOMALY_ID))
-                .withAnomalyData(FactionSkirmish.ANOMALY_ID, new SkirmishJoin(side, "tritachyon").encode()));
+                .withAnomalyData(FactionSkirmish.ANOMALY_ID, join.encode()));
     }
 
     private static ChartContentPlan plan(ChartGenContext context) {
@@ -77,6 +80,7 @@ class SkirmishPlannerTest {
         assertNull(skirmishOf(plain));
         assertEquals("hegemony", plan.faction().factionId());
         assertEquals("tritachyon", skirmishOf(plan).attackerFactionId());
+        assertEquals(ATTACKING_OFFICER, skirmishOf(plan).attackerOfficerId());
         assertEquals(SkirmishSide.NEITHER, skirmishOf(plan).side());
         List<PlannedFleet> attackers = skirmishOf(plan).attackerFleets();
         long ordinaryDefenders = plan.fleets().stream().filter(fleet -> !fleet.role().bossFleet()).count();
@@ -105,18 +109,14 @@ class SkirmishPlannerTest {
     }
 
     @Test
-    void aMissingOrInvalidAttackerIsPickedFromFactionsThatTakeSides() {
-        List<ChartFaction> factions = List.of(new ChartFaction("hegemony", 5f), new ChartFaction("pirates", 5f), new ChartFaction("remnant", 0f));
+    void aSkirmishWithoutAnAttackingOfficerPlansNoAttackers() {
+        Intent ledPush = Intent.push(ATTACKING_OFFICER, null, Intent.NO_OFFICER);
 
-        assertEquals("pirates", SkirmishPlanner.attacker("pirates", "hegemony", factions, id -> true, new Random(1)));
-        assertEquals("pirates", SkirmishPlanner.attacker(null, "hegemony", factions, id -> true, new Random(1)));
-        assertEquals("pirates", SkirmishPlanner.attacker("hegemony", "hegemony", factions, id -> true, new Random(1)));
-        assertEquals("pirates", SkirmishPlanner.attacker("unloaded", "hegemony", factions, id -> !id.equals("unloaded"), new Random(1)));
-        assertNull(SkirmishPlanner.attacker(null, "hegemony", factions, id -> !id.equals("pirates"), new Random(1)));
-
-        ChartGenContext consoleRun = ChartGenContext.none().withAnomalyData(FactionSkirmish.ANOMALY_ID, new SkirmishJoin(SkirmishSide.ATTACKER, null).encode());
-        ChartContentPlan picked = plan(consoleRun);
-        assertNotEquals(picked.faction().factionId(), skirmishOf(picked).attackerFactionId());
-        assertEquals(SkirmishSide.ATTACKER, skirmishOf(picked).side());
+        assertNull(skirmishOf(plan(joined(new SkirmishJoin(SkirmishSide.ATTACKER, "tritachyon", null)))));
+        assertNull(skirmishOf(plan(joined(new SkirmishJoin(SkirmishSide.ATTACKER, "tritachyon", Intent.push(Intent.NO_OFFICER, null, Intent.NO_OFFICER))))));
+        assertNull(skirmishOf(plan(joined(new SkirmishJoin(SkirmishSide.ATTACKER, null, ledPush)))));
+        assertNull(skirmishOf(plan(joined(new SkirmishJoin(SkirmishSide.ATTACKER, "hegemony", ledPush)))));
+        assertNull(skirmishOf(plan(ChartGenContext.none())));
+        assertNotNull(skirmishOf(plan(joined(new SkirmishJoin(SkirmishSide.ATTACKER, "tritachyon", ledPush)))));
     }
 }

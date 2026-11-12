@@ -218,6 +218,36 @@ class OfficerTurnTest {
     }
 
     @Test
+    void aChallengeDecidedInASkirmishReplacesTheRollAndIsForgottenAfterTheTurn() {
+        AtlasState state = borderingTerritories();
+        Intent challenge = Intent.challenge(HEGEMONY_OFFICER, PIRATE_OFFICER);
+        declare(state, challenge);
+        state.decideContest(challenge.encode(), true);
+
+        TurnResult result = take(state, TurnCause.forced(), setup(DEFENDER_WINS));
+
+        assertTrue(resolved(result, IntentKind.CHALLENGE).succeeded());
+        assertEquals(OfficerTurn.CHALLENGE_WON_HISTORY, OfficerText.latestEntry(state.officer(HEGEMONY_OFFICER)).event());
+        assertNull(state.decidedContest(challenge.encode()));
+    }
+
+    @Test
+    void aChallengerLeadingTheOpenRunStillSettlesAChallengeDecidedThere() {
+        AtlasState decided = borderingTerritories();
+        Intent challenge = Intent.challenge(HEGEMONY_OFFICER, PIRATE_OFFICER);
+        declare(decided, challenge);
+        decided.decideContest(challenge.encode(), true);
+        AtlasState undecided = borderingTerritories();
+        declare(undecided, challenge);
+
+        TurnResult decidedResult = take(decided, TurnCause.forced(), setup(DEFENDER_WINS, IntentResolvers.ABSTRACT, PIRATE_BORDER, HEGEMONY_OFFICER));
+        TurnResult undecidedResult = take(undecided, TurnCause.forced(), setup(DEFENDER_WINS, IntentResolvers.ABSTRACT, PIRATE_BORDER, HEGEMONY_OFFICER));
+
+        assertTrue(resolved(decidedResult, IntentKind.CHALLENGE).succeeded());
+        assertNull(resolved(undecidedResult, IntentKind.CHALLENGE));
+    }
+
+    @Test
     void aChallengeWinnerTakesRenownAndTheLosersItems() {
         AtlasState state = borderingTerritories();
         update(state, HEGEMONY_OFFICER, officer -> officer.withRenown(4).withCarried(List.of(kernels(1))));

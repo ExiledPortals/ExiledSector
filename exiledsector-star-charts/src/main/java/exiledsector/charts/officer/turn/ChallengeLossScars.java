@@ -1,6 +1,8 @@
 package exiledsector.charts.officer.turn;
 
 import exiledsector.Seeds;
+import exiledsector.charts.atlas.AtlasCell;
+import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.OfficerDefeat;
@@ -21,7 +23,7 @@ public final class ChallengeLossScars implements OfficerTurnListener {
     }
 
     @Override
-    public void turnTaken(AtlasState state, TurnResult result) {
+    public void turnTaken(AtlasGenerator generator, AtlasState state, TurnResult result, AtlasCell openRunCell) {
         for (OfficerLoss loss : result.losses()) {
             if (loss.kind() != LossKind.LOST_CHALLENGE || loss.died()) {
                 continue;

@@ -48,6 +48,7 @@ public final class AtlasState implements AtlasMemory {
     private int otherBossKills;
     private List<String> declaredIntents = new ArrayList<>();
     private List<String> lastTurnResult = new ArrayList<>();
+    private Map<String, Boolean> decidedContests = new HashMap<>();
     private int atlasPoints;
     private Set<String> atlasTreeNodeIds = new TreeSet<>();
     private int keyFragments;
@@ -105,6 +106,9 @@ public final class AtlasState implements AtlasMemory {
         }
         if (lastTurnResult == null) {
             lastTurnResult = new ArrayList<>();
+        }
+        if (decidedContests == null) {
+            decidedContests = new HashMap<>();
         }
         if (atlasTreeNodeIds == null) {
             atlasTreeNodeIds = new TreeSet<>();
@@ -374,6 +378,18 @@ public final class AtlasState implements AtlasMemory {
 
     public void setDeclaredIntents(List<String> intentLines) {
         declaredIntents = new ArrayList<>(intentLines);
+    }
+
+    public Boolean decidedContest(String intentLine) {
+        return decidedContests.get(intentLine);
+    }
+
+    public void decideContest(String intentLine, boolean attackerWins) {
+        decidedContests.put(intentLine, attackerWins);
+    }
+
+    public void clearDecidedContests() {
+        decidedContests.clear();
     }
 
     public List<String> lastTurnResult() {

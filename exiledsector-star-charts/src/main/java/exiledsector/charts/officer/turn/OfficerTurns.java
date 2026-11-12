@@ -89,7 +89,7 @@ public final class OfficerTurns {
         TurnResult result = OfficerTurn.take(TurnTerrain.of(generator, state, openRunCell), state, cause, setup);
         for (OfficerTurnListener listener : LISTENERS) {
             try {
-                listener.turnTaken(state, result);
+                listener.turnTaken(generator, state, result, openRunCell);
             } catch (RuntimeException e) {
                 LOG.error("[ExiledSector] An Atlas officer turn listener failed", e);
             }

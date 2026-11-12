@@ -15,6 +15,7 @@ import exiledsector.charts.content.ChartSites;
 import exiledsector.charts.content.ChartSpot;
 import exiledsector.charts.content.ContentForces;
 import exiledsector.charts.content.SettledObjective;
+import exiledsector.charts.officer.OfficerFleets;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -97,6 +98,7 @@ final class SkirmishBattle {
         takeSide(fleet, SkirmishSide.ATTACKER, site.factionId());
         if (leads) {
             fleet.getMemoryWithoutUpdate().set(ChartIds.SKIRMISH_COMMANDER_MEMORY_KEY, true);
+            dressOfficer(fleet);
         }
         if (plan.alliedWith(SkirmishSide.ATTACKER)) {
             ChartAnomalyFleets.joinPlayer(fleet, allyFactionId);
@@ -115,6 +117,14 @@ final class SkirmishBattle {
         }
         if (leads) {
             commander = fleet;
+        }
+    }
+
+    private void dressOfficer(CampaignFleetAPI fleet) {
+        try {
+            OfficerFleets.dress(fleet, plan.attackerOfficerId());
+        } catch (RuntimeException | LinkageError e) {
+            LOG.error("[ExiledSector] The Faction Skirmish commander could not take the attacking officer's flagship", e);
         }
     }
 

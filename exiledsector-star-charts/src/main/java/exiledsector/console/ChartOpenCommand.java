@@ -17,6 +17,8 @@ import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.charts.atlas.AtlasData;
+import exiledsector.charts.atlas.AtlasState;
+import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.items.StarChart;
 import org.lazywizard.console.Console;
 
@@ -51,7 +53,7 @@ public class ChartOpenCommand extends CampaignCommand {
             Console.showMessage(arguments.problem() + "\nUsage: ExiledSectorChartOpen [seed] [type] [tier] [breach], where type is one of "
                     + ChartLayoutGenerator.ALLOWED_TYPES + ", tier is " + ChartTiers.LOWEST_TIER + " to " + ChartTiers.CORRUPTED_TIER
                     + " (default " + DEFAULT_TIER + "), breach adds a Spatial Breach, region=ID and layout=ID build the system from the"
-                    + " atlas tables, each anomaly=ID adds that anomaly, and side=defender|attacker|neither adds a Faction Skirmish joined on that side."
+                    + " atlas tables, each anomaly=ID adds that anomaly, and side=defender|attacker|neither adds a Faction Skirmish joined on that side and led by an Atlas officer."
                     + " All are optional and can come in any order; write the tier as tier=N when the seed is also a"
                     + " small number.");
             return CommandResult.BAD_SYNTAX;
@@ -66,7 +68,12 @@ public class ChartOpenCommand extends CampaignCommand {
             layoutRequest = layoutRequest.withAnomalies(anomalyIds);
         }
         if (arguments.side() != null) {
-            layoutRequest = FactionSkirmish.joinedOn(layoutRequest, arguments.side());
+            AtlasOfficer attacker = FactionSkirmish.anyAttacker(AtlasState.get(Global.getSector()));
+            if (attacker == null) {
+                Console.showMessage("No Atlas officer can lead a Faction Skirmish attack, so the system opens without one.");
+            } else {
+                layoutRequest = FactionSkirmish.joinedOn(layoutRequest, arguments.side(), attacker);
+            }
         }
         int entries = StarChartSettings.wormholeEntries(arguments.tierOrDefault());
         OpenResult result = ChartRunActions.openBesidePlayer(Global.getSector(), entries, random, layoutRequest);

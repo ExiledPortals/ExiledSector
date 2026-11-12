@@ -47,7 +47,8 @@ class StarChartUiStringKeysTest {
             }
         }
         for (String key : List.of(AtlasCatalystUse.FOGGED_KEY, RedeploymentCatalystUse.SPECIAL_KEY, RedeploymentCatalystUse.INFESTED_KEY,
-                RedeploymentCatalystUse.NO_FACTION_KEY, FactionSkirmish.NO_SIDE_KEY, FactionSkirmish.NO_ATTACKER_KEY, CoronalHypershunt.TOO_CLOSE_KEY, "catalyst.redeploys", "catalyst.target.redeploy", "catalyst.confirm.redeploy",
+                RedeploymentCatalystUse.NO_FACTION_KEY, FactionSkirmish.NO_SIDE_KEY, FactionSkirmish.UNCLAIMED_KEY, FactionSkirmish.COMMAND_CENTRE_KEY,
+                FactionSkirmish.NO_ATTACKER_KEY, "chart.intel.officerAttacks", CoronalHypershunt.TOO_CLOSE_KEY, "catalyst.redeploys", "catalyst.target.redeploy", "catalyst.confirm.redeploy",
                 "catalyst.window.redeployed")) {
             require(catalogue, key, missing);
         }
