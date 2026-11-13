@@ -617,7 +617,11 @@ public final class ChartGenContext {
     }
 
     public float bossStarChartMult() {
-        return multiplier(totalDropPercent(DropType.STAR_CHART) + bossStarChartPercent);
+        return bossStarChartMult(0f);
+    }
+
+    public float bossStarChartMult(float extraPercent) {
+        return multiplier(totalDropPercent(DropType.STAR_CHART) + bossStarChartPercent + extraPercent);
     }
 
     public ItemChances itemChances() {

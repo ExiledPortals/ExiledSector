@@ -127,13 +127,14 @@ public class ChartAnomaliesTest {
         assertTrue(breach.allowedAt(ChartTiers.LOWEST_TIER) && breach.allowedAt(ChartTiers.HIGHEST_TIER));
         assertFalse(ChartAnomalies.definition("black_hole").insertable());
         Set<DropType> lootKinds = new HashSet<>();
-        for (String id : List.of("dense_nebula", MagneticStorm.ANOMALY_ID, StellarFlares.ANOMALY_ID)) {
+        for (String id : List.of(MagneticStorm.ANOMALY_ID, StellarFlares.ANOMALY_ID)) {
             List<ChartGenContext.AppliedEffect> effects = ChartAnomalies.definition(id).effects();
             assertEquals(1, effects.size(), id);
             assertNotNull(effects.get(0).effect().dropType(), id);
             lootKinds.add(effects.get(0).effect().dropType());
         }
-        assertEquals(3, lootKinds.size());
+        assertEquals(2, lootKinds.size());
+        assertTrue(ChartAnomalies.definition(DenseNebula.ANOMALY_ID).effects().isEmpty());
     }
 
     @Test

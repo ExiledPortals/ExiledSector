@@ -97,6 +97,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         }
         Pending pendingLoot = new Pending(new BattleLoot(random, new Random(random.nextLong())));
         pendingLoot.battleLoot.setPlayerWon(true);
+        pendingLoot.battleLoot.markUnfought();
         pendingLoot.battleLoot.setEncounterSalvage(EncounterSalvage.NO_WRECKS);
         record(pendingLoot, BattleEngagement.unfought(fleet, fleet.getFleetData().getMembersListCopy()));
         addEncounterLoot(pendingLoot, loot, random);

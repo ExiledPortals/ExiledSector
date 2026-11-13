@@ -166,7 +166,19 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
                 LOG.error("[ExiledSector] Rolling Star Chart fleet loot failed for fleet " + fleetLosses.getKey().getId(), e);
             }
         }
+        recordWin(battle, playerFleet.getContainingLocation());
         return chartLoot;
+    }
+
+    static void recordWin(BattleLoot battle, LocationAPI location) {
+        if (!battle.playerWon() || battle.unfought()) {
+            return;
+        }
+        try {
+            ChartAnomalies.battleWon(location);
+        } catch (RuntimeException e) {
+            LOG.error("[ExiledSector] Recording a won battle for the run's anomalies failed", e);
+        }
     }
 
     @Override

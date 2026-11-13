@@ -3,6 +3,7 @@ package exiledsector.charts.anomaly;
 import com.fs.starfarer.api.campaign.BattleCreationPlugin;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
+import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import exiledsector.ModCsv;
@@ -54,7 +55,7 @@ public final class ChartAnomalies {
 
     public static final String PATH = "data/config/exiledSector/chart_anomalies.csv";
     static final String ID_COLUMN = "id";
-    static final List<ChartAnomaly> BUILT_IN = List.of(StarAnomalies.BLACK_HOLE, StarAnomalies.NEUTRON_STAR, StarAnomalies.DENSE_NEBULA,
+    static final List<ChartAnomaly> BUILT_IN = List.of(StarAnomalies.BLACK_HOLE, StarAnomalies.NEUTRON_STAR, DenseNebula.INSTANCE,
             AsteroidStorm.INSTANCE, MagneticStorm.INSTANCE, StellarFlares.INSTANCE, SpatialBreach.INSTANCE, FactionSkirmish.INSTANCE,
             RelayNetwork.INSTANCE, ExcavationSites.INSTANCE, SupplyConvoy.INSTANCE, AnomalousDebris.INSTANCE,
             StormFront.INSTANCE,
@@ -291,6 +292,25 @@ public final class ChartAnomalies {
         for (RunParticipant anomaly : with(RunParticipant.class)) {
             runSafely(anomaly, "cleanup", () -> anomaly.clearFrom(fleet));
         }
+    }
+
+    public static void battleWon(LocationAPI location) {
+        AnomalyRun run = AnomalyRun.in(location);
+        if (run == null) {
+            return;
+        }
+        for (LootShaper anomaly : inRun(run.run(), LootShaper.class)) {
+            runSafely(anomaly, "battle won", () -> anomaly.battleWon(run));
+        }
+    }
+
+    public static float bossStarChartPercent(ChartRun run) {
+        float percent = 0f;
+        for (LootShaper anomaly : inRun(run, LootShaper.class)) {
+            Float added = askSafely(anomaly, "boss star charts", () -> anomaly.bossStarChartPercent(run));
+            percent += added == null ? 0f : added;
+        }
+        return percent;
     }
 
     public static List<LootShaper> holdingPlayerBattle() {

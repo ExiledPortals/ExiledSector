@@ -1255,6 +1255,13 @@ orbits once the layout's orbit limit is reached, then further out. Every neutron
 `ChartCoronaTerrainPlugin` and `ChartPulsarBeamTerrainPlugin` in place of vanilla's corona and beam
 (`setPulsarIfNeutron`). They push and drain only the player fleet, so the system's other fleets stay where they are.
 
+### Dense Nebula
+
+A Dense Nebula is a starless nebula system (`DenseNebula`). Each battle won in it adds a Settling Dust stack, kept in the
+run's anomaly state up to `MAX_DUST`, and each stack adds `STAR_CHART_PERCENT_PER_DUST` increased quantity of star charts
+to the Star Chart Boss's drop, summed with the boss star chart lines. `StarChartLootSource.recordWin` counts the win after
+rolling the battle's loot, skipping unfought loot such as a convoy's delivery (`ChartAnomalies.battleWon`), and `ChartFleetLoot` reads `ChartAnomalies.bossStarChartPercent`.
+
 ### Faction Skirmish
 
 The atlas never rolls a skirmish itself. After each officer turn, every declared Push or Challenge between factions

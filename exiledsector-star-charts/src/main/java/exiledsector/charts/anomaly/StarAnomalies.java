@@ -15,8 +15,6 @@ public final class StarAnomalies {
     public static final ForcedStar BLACK_HOLE = new ForcedStar("black_hole", "black_hole", StarSystemType.SINGLE, 0, StarAnomalies::scatterDerelicts);
     public static final ForcedStar NEUTRON_STAR = new ForcedStar("neutron_star", "star_neutron", StarSystemType.SINGLE, NEUTRON_STAR_MIN_PLANETS,
             StarAnomalies::placeResearchStation);
-    public static final ForcedStar DENSE_NEBULA = new ForcedStar("dense_nebula", null, StarSystemType.NEBULA, 0, site -> {
-    });
     public static final String RESEARCH_STATION = "research_station";
     static final long DERELICT_SALT = 0x424c4b44524c43L;
     static final long STATION_SALT = 0x4e5452535441L;
