@@ -8,6 +8,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class OfficerBoardLayoutTest {
@@ -32,6 +33,8 @@ class OfficerBoardLayoutTest {
         assertEquals(new OfficerBoardLayout.Seat(2, 3, 4), layout.seat(4));
         assertEquals(new OfficerBoardLayout.Seat(2, 0, 4), layout.seat(2));
         assertEquals(List.of(2, 4), layout.row(2));
+        assertEquals(Integer.valueOf(4), layout.recordIdAt(new OfficerBoardLayout.Seat(2, 3, 4)));
+        assertNull(layout.recordIdAt(new OfficerBoardLayout.Seat(2, 1, 4)));
     }
 
     @Test

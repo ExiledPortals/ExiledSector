@@ -333,7 +333,6 @@
     "chart.officer.board.legend.unknown": "Not yet identified",
     "chart.officer.board.legend.rose": "Gained a rank last turn",
     "chart.officer.board.legend.fell": "Lost a rank last turn",
-    "chart.officer.board.legend.hint": "Click an officer to show their command centre, and drag the map to pan it.",
     "atlasTree.title": "Atlas Tree",
     "atlasTree.hint": "Click a node beside an allocated one to allocate it, and click it again to refund it. Ctrl+Shift+click allocates the whole path. Right-click a wormhole to travel through it. Scroll out to see every volume. Esc returns to the atlas.",
     "atlasTree.back": "Back to Atlas",

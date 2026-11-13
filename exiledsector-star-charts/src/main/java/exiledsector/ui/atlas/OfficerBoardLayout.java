@@ -108,6 +108,15 @@ final class OfficerBoardLayout {
         return seats.get(recordId);
     }
 
+    Integer recordIdAt(Seat seat) {
+        for (Map.Entry<Integer, Seat> entry : seats.entrySet()) {
+            if (entry.getValue().equals(seat)) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
     boolean contains(int recordId) {
         return seats.containsKey(recordId);
     }

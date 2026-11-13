@@ -46,7 +46,6 @@ final class OfficerBoard {
     static final float DIMMED_ALPHA = 0.4f;
     static final float FRAME_WIDTH = 1.5f;
     static final float HOVERED_FRAME_WIDTH = 3f;
-    static final float DIVIDER_ALPHA = 0.08f;
     static final float ARROW_TRIM_SHARE = 0.6f;
     static final float SOLID_BULGE = 0.1f;
     static final float DASHED_BULGE = 0.2f;
@@ -54,7 +53,8 @@ final class OfficerBoard {
     static final float ARROWHEAD_SHARE = 0.18f;
     static final float MARK_SHARE = 0.25f;
     static final float SHIELD_SHARE = 0.28f;
-    static final float LEGEND_GAP = 16f;
+    static final String HELP_ICON_PATH = "graphics/ui/icons/fleettab/more_info.png";
+    static final float HELP_ICON_SIZE = 24f;
     static final Color SLOT_FILL = new Color(20, 24, 30);
     static final Color DIMMED_TINT = new Color(150, 150, 150);
     static final Color ROSE_COLOUR = SkillTreePanelStyle.POSITIVE_STAT_COLOR;
@@ -93,6 +93,7 @@ final class OfficerBoard {
     private final Map<Integer, AtlasOfficer> records = new HashMap<>();
     private final Map<Integer, Face> faces = new HashMap<>();
     private OfficerBoardShuffle shuffle;
+    private List<OfficerBoardLayout.Link> shownLinks = List.of();
     private List<OfficerBoardArrows.Arrow> arrows = List.of();
     private Set<Integer> shields = Set.of();
     private List<ArrowShape> arrowShapes = List.of();
@@ -101,6 +102,7 @@ final class OfficerBoard {
     private float openLevel;
     private float shuffleSeconds = OfficerBoardShuffle.DURATION_SECONDS;
     private Integer hoveredRecordId;
+    private boolean helpHovered;
     private float regionLeft;
     private float regionBottom;
     private float regionWidth;
@@ -124,6 +126,7 @@ final class OfficerBoard {
         lastTurn.fallen().forEach(records::putIfAbsent);
         shuffle = OfficerBoardShuffle.of(OfficerRanks.all(), entries, lastTurn.standingChanges());
         records.forEach((recordId, officer) -> faces.put(recordId, face(officer)));
+        shownLinks = linksBetweenIdentified(shuffle.after());
         arrows = OfficerBoardArrows.arrows(lastTurn.resolvedIntents(), OfficerTurns.declaredIntents(state), this::settledAndIdentified);
         shields = OfficerBoardArrows.shields(OfficerTurns.declaredIntents(state), this::settledAndIdentified);
         replayable = lastTurn.turn() > 0;
@@ -135,7 +138,23 @@ final class OfficerBoard {
         I18n.forGameText(() -> writeLabels(shuffle.after()));
         geometry = null;
         hoveredRecordId = null;
+        helpHovered = false;
         open = true;
+    }
+
+    private List<OfficerBoardLayout.Link> linksBetweenIdentified(OfficerBoardLayout layout) {
+        List<OfficerBoardLayout.Link> links = new ArrayList<>();
+        for (OfficerBoardLayout.Link link : layout.links()) {
+            if (identified(layout.recordIdAt(link.subordinate())) && identified(layout.recordIdAt(link.superior()))) {
+                links.add(link);
+            }
+        }
+        return List.copyOf(links);
+    }
+
+    private boolean identified(Integer recordId) {
+        Face face = recordId == null ? null : faces.get(recordId);
+        return face != null && face.identified();
     }
 
     private boolean settledAndIdentified(int recordId) {
@@ -166,6 +185,7 @@ final class OfficerBoard {
     void close() {
         open = false;
         hoveredRecordId = null;
+        helpHovered = false;
         tooltip.cleanup();
     }
 
@@ -200,18 +220,13 @@ final class OfficerBoard {
         availableWidth = width;
         availableHeight = height;
         float rowsPreferredWidth = OfficerBoardGeometry.preferredRowsWidth(shuffle.widestRow());
-        float contentWidth = Math.max(Math.max(titleLabel.width(), OfficerBoardLegend.width()), labelColumnWidth + rowsPreferredWidth);
+        float contentWidth = Math.max(titleLabel.width() + INSET + HELP_ICON_SIZE, labelColumnWidth + rowsPreferredWidth);
         regionWidth = Math.min(width, contentWidth + INSET * 2f);
-        regionHeight = Math.min(height, OfficerBoardGeometry.preferredRowsHeight(shuffle.after().rowCount()) + INSET * 2f + HEADER_HEIGHT
-                + legendBlockHeight());
+        regionHeight = Math.min(height, OfficerBoardGeometry.preferredRowsHeight(shuffle.after().rowCount()) + INSET * 2f + HEADER_HEIGHT);
         regionLeft = left + width - regionWidth;
         regionBottom = bottom;
         geometry = OfficerBoardGeometry.fit(rowsLeft(), rowsBottom(), rowsWidth(), rowsHeight(), shuffle.after().rowCount(), shuffle.widestRow());
         arrowShapes = arrowShapes();
-    }
-
-    private float legendBlockHeight() {
-        return legend.height() + LEGEND_GAP;
     }
 
     float left() {
@@ -223,7 +238,7 @@ final class OfficerBoard {
     }
 
     private float rowsBottom() {
-        return regionBottom + INSET + legendBlockHeight();
+        return regionBottom + INSET;
     }
 
     private float rowsWidth() {
@@ -231,7 +246,7 @@ final class OfficerBoard {
     }
 
     private float rowsHeight() {
-        return regionHeight - INSET * 2f - HEADER_HEIGHT - legendBlockHeight();
+        return regionHeight - INSET * 2f - HEADER_HEIGHT;
     }
 
     boolean contains(float x, float y) {
@@ -265,6 +280,16 @@ final class OfficerBoard {
             shuffleSeconds = Math.min(OfficerBoardShuffle.DURATION_SECONDS, shuffleSeconds + amount);
         }
         hoveredRecordId = open && geometry != null ? officerAt(mouseX, mouseY) : null;
+        helpHovered = open && geometry != null && Math.abs(mouseX - helpIconCentreX()) <= HELP_ICON_SIZE / 2f
+                && Math.abs(mouseY - helpIconCentreY()) <= HELP_ICON_SIZE / 2f;
+    }
+
+    private float helpIconCentreX() {
+        return regionLeft + regionWidth - INSET - HELP_ICON_SIZE / 2f;
+    }
+
+    private float helpIconCentreY() {
+        return regionBottom + regionHeight - INSET - titleLabel.height() / 2f;
     }
 
     private Integer officerAt(float x, float y) {
@@ -331,8 +356,8 @@ final class OfficerBoard {
         GLDraw.fillQuad(regionLeft, regionBottom, regionWidth, regionHeight, Color.BLACK, BACKGROUND_ALPHA * alpha);
         BorderedPanel.drawEdges(regionLeft, regionBottom, regionWidth, regionHeight, alpha);
         titleLabel.setAlpha(alpha).draw(regionLeft + INSET, regionBottom + regionHeight - INSET);
+        SpriteDraw.drawAtCenter(sprites, HELP_ICON_PATH, helpIconCentreX(), helpIconCentreY(), HELP_ICON_SIZE, HELP_ICON_SIZE, Color.WHITE, alpha);
         drawRows(alpha);
-        drawLegend(alpha);
         drawLinks(alpha);
         drawArrows(alpha * OfficerBoardShuffle.arrowAlpha(shuffleSeconds));
         for (OfficerBoardShuffle.Mover mover : shuffle.movers()) {
@@ -347,6 +372,8 @@ final class OfficerBoard {
             AtlasOfficer hovered = records.get(hoveredRecordId);
             tooltip.show(hovered);
             tooltip.draw(accent, mouseX, mouseY, alpha);
+        } else if (helpHovered) {
+            legend.drawTooltip(accent, mouseX, mouseY, alpha);
         }
     }
 
@@ -358,16 +385,10 @@ final class OfficerBoard {
         }
     }
 
-    private void drawLegend(float alpha) {
-        float legendTop = regionBottom + INSET + legend.height();
-        GLDraw.fillQuad(regionLeft + INSET, legendTop + LEGEND_GAP / 2f, regionWidth - INSET * 2f, 1f, Color.WHITE, DIVIDER_ALPHA * alpha);
-        legend.draw(regionLeft + INSET, legendTop, alpha);
-    }
-
     private void drawLinks(float alpha) {
         float half = geometry.portraitSize() / 2f;
         OfficerBoardLayout.Seat hoveredSeat = hoveredRecordId == null ? null : shuffle.after().seat(hoveredRecordId);
-        for (OfficerBoardLayout.Link link : shuffle.after().links()) {
+        for (OfficerBoardLayout.Link link : shownLinks) {
             beams.link(geometry.centreX(link.subordinate()), geometry.centreY(link.subordinate()) + half, geometry.centreX(link.superior()),
                     geometry.centreY(link.superior()) - half, hoveredSeat != null && link.touches(hoveredSeat), alpha);
         }

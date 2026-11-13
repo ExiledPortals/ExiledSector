@@ -1,5 +1,6 @@
 package exiledsector.ui.atlas;
 
+import com.fs.starfarer.api.Global;
 import exiledsector.i18n.Translation;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.UiFonts;
@@ -20,7 +21,7 @@ final class OfficerBoardLegend {
     static final float TEXT_WIDTH = 180f;
     static final float COLUMN_GAP = 16f;
     static final float ROW_GAP = 6f;
-    static final float HINT_GAP = 10f;
+    static final float PADDING = 10f;
     static final int COLUMNS = 2;
     static final int ARROW_SEGMENTS = 13;
     static final float ARROWHEAD_LENGTH = 7f;
@@ -29,7 +30,6 @@ final class OfficerBoardLegend {
     static final float SLOT_SIZE = 18f;
     static final float GHOST_FOOTPRINT = 30f;
     static final String GHOST_SEED = "officer_legend";
-    static final Color HINT_COLOUR = AtlasScreen.HINT_COLOUR;
 
     enum Glyph {
         LINK("chart.officer.board.legend.link"),
@@ -51,7 +51,6 @@ final class OfficerBoardLegend {
     private final SensorGhostRenderer ghosts;
     private final OfficerBoardBeams beams;
     private final Map<Glyph, TextLabel> labels = new EnumMap<>(Glyph.class);
-    private final TextLabel hintLabel = new TextLabel(UiFonts.HINT, HINT_COLOUR);
 
     OfficerBoardLegend(SensorGhostRenderer ghosts, OfficerBoardBeams beams) {
         this.ghosts = ghosts;
@@ -63,7 +62,6 @@ final class OfficerBoardLegend {
             labels.computeIfAbsent(glyph, unused -> new TextLabel(UiFonts.BODY, SkillTreePanelStyle.TOOLTIP_BODY_COLOR))
                     .setWrapped(Translation.text(glyph.key), TEXT_WIDTH, Float.MAX_VALUE);
         }
-        hintLabel.setWrapped(Translation.text("chart.officer.board.legend.hint"), width(), Float.MAX_VALUE);
     }
 
     static float columnWidth() {
@@ -94,7 +92,7 @@ final class OfficerBoardLegend {
         for (int row = 0; row < rowCount(); row++) {
             height += rowHeight(row) + ROW_GAP;
         }
-        return height - ROW_GAP + HINT_GAP + hintLabel.height();
+        return height - ROW_GAP;
     }
 
     void draw(float left, float top, float alpha) {
@@ -116,7 +114,16 @@ final class OfficerBoardLegend {
             rowTop -= height + ROW_GAP;
         }
         beams.flush();
-        hintLabel.setAlpha(alpha).draw(left, rowTop + ROW_GAP - HINT_GAP);
+    }
+
+    void drawTooltip(Color accent, float mouseX, float mouseY, float alpha) {
+        float boxWidth = (float) Math.ceil(width() + PADDING * 2f);
+        float boxHeight = (float) Math.ceil(height() + PADDING * 2f);
+        float boxX = Math.round(OfficerBoardTooltip.boxLeft(mouseX, boxWidth, Global.getSettings().getScreenWidth()));
+        float boxY = Math.round(OfficerBoardTooltip.boxBottom(mouseY, boxHeight, Global.getSettings().getScreenHeight()));
+        GLDraw.fillQuad(boxX, boxY, boxWidth, boxHeight, SkillTreePanelStyle.TOOLTIP_BACKGROUND_COLOR, alpha);
+        GLDraw.strokeQuad(boxX, boxY, boxWidth, boxHeight, accent, SkillTreePanelStyle.TOOLTIP_BORDER_THICKNESS, alpha);
+        draw(boxX + PADDING, boxY + boxHeight - PADDING, alpha);
     }
 
     private void drawGlyph(Glyph glyph, float left, float centreY, float alpha) {

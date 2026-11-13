@@ -8,13 +8,14 @@ import java.awt.Color;
 
 final class OfficerBoardBeams {
 
-    static final Color LINK_COLOUR = new Color(140, 140, 140);
+    static final Color LINK_COLOUR = Color.WHITE;
     static final Color BATTLE_COLOUR = new Color(255, 64, 56);
     static final Color IMPENDING_COLOUR = new Color(70, 150, 255);
     static final float LINK_WIDTH_SCALE = 0.3f;
     static final float ARROW_WIDTH_SCALE = 0.45f;
     static final float HELIX_ALPHA = 0.9f;
-    static final float HIGHLIGHTED_LINK_ALPHA = 0.8f;
+    static final float RESTING_LINK_ALPHA = 0.6f;
+    static final float HIGHLIGHTED_LINK_ALPHA = 1f;
     static final float ARROWHEAD_SPREAD = 0.5f;
 
     private final NodeRingArt ringArt = new NodeRingArt();
@@ -25,9 +26,8 @@ final class OfficerBoardBeams {
     }
 
     void link(float fromX, float fromY, float toX, float toY, boolean highlighted, float alpha) {
-        BeamStroke.Look look = highlighted ? beams.lit(LINK_COLOUR) : NodeBeams.DULL_LOOK;
-        float linkAlpha = (highlighted ? HIGHLIGHTED_LINK_ALPHA : NodeBeams.DULL_ALPHA) * alpha;
-        beams.lane(fromX, fromY, toX, toY, 0f, look, linkAlpha, linkAlpha, LINK_WIDTH_SCALE);
+        float linkAlpha = (highlighted ? HIGHLIGHTED_LINK_ALPHA : RESTING_LINK_ALPHA) * alpha;
+        beams.lane(fromX, fromY, toX, toY, 0f, beams.lit(LINK_COLOUR), linkAlpha, linkAlpha, LINK_WIDTH_SCALE);
     }
 
     void arrow(float[] points, OfficerBoardArrows.Style style, float headLength, float alpha) {
