@@ -16,6 +16,7 @@ import exiledsector.ui.decoration.HyperspaceClouds;
 
 import java.awt.Color;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -38,6 +39,8 @@ final class AtlasScenery {
     private final AtlasTerritoryBorders borders;
     private final AtlasTerritoryBorders biomes;
     private final Set<Long> known = new HashSet<>();
+    private final Set<Long> territoryCells = new HashSet<>();
+    private AtlasTerritoryBridges.Bridges bridges = new AtlasTerritoryBridges.Bridges(Map.of(), Map.of());
     private AtlasMapCanvas canvas;
 
     AtlasScenery(long seed) {
@@ -81,7 +84,13 @@ final class AtlasScenery {
         clouds.setCover(new Cover());
         decorations.attach(canvas, known);
         fleets.attach(canvas);
-        borders.attach(known, this::territoryAt, this::hasSystem);
+        List<AtlasCell> knownSystems = known.stream().map(AtlasCell::unpack).filter(this::hasSystem).toList();
+        bridges = AtlasTerritoryBridges.bridges(knownSystems, canvas.state()::territoryAt, canvas.generator()::lanes,
+                cell -> !canvas.generator().isVoid(cell));
+        territoryCells.clear();
+        territoryCells.addAll(known);
+        territoryCells.addAll(bridges.cells().keySet());
+        borders.attach(territoryCells, this::territoryAt, this::hasSystem, bridges.corners());
         biomes.attach(known, this::biomeAt, this::hasSystem);
     }
 
@@ -111,6 +120,10 @@ final class AtlasScenery {
         clouds.renderFlashOver(view, alphaMult);
     }
 
+    Set<Long> territoryCells() {
+        return territoryCells;
+    }
+
     boolean isKnown(AtlasCell cell) {
         return known.contains(cell.pack());
     }
@@ -132,6 +145,10 @@ final class AtlasScenery {
     String territoryAt(AtlasCell cell) {
         if (hasSystem(cell)) {
             return canvas.state().territoryAt(cell);
+        }
+        String bridged = bridges.cells().get(cell.pack());
+        if (bridged != null) {
+            return bridged;
         }
         Map<String, Integer> sidesByTerritory = new TreeMap<>();
         for (int[] side : SIDES) {

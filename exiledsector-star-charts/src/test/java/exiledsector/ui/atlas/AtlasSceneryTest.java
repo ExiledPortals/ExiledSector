@@ -16,6 +16,7 @@ import exiledsector.ui.decoration.LaneFleetTraffic;
 import exiledsector.ui.node.NodeMetrics;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class AtlasSceneryTest {
 
     private static final long SEED = 0x5ce4eL;
+    private static final int SEEDS = 30;
     private static final Map<String, AtlasDecoration> DECORATIONS = Map.of(
             "probe", new AtlasDecoration("probe", List.of("graphics/stations/survey_probe.png"), "", 1, 1, 0.05f, 0.2f, 1, 0f, 4f, 0.02f, null, null, 0.9f,
                     0f, 0f, List.of("debris")),
@@ -44,8 +46,8 @@ class AtlasSceneryTest {
         AtlasRules rules = new AtlasRules(List.of(new AtlasRegion("graveyard", 1f, 0, "", "", Map.of(), Map.of(), Map.of())), Map.of("compact", 1f),
                 Map.of("pirates", 1f), new AtlasAnomalyChance(0.5f, 0f, 0.5f), AtlasAnomalyChance.NEVER,
                 List.of(), List.of());
-        AtlasGenerator generator = new AtlasGenerator(SEED, rules, AtlasUnlocks.NONE, state);
-        AtlasScenery scenery = new AtlasScenery(SEED, id -> "graveyard".equals(id) ? GRAVEYARD : AtlasAmbience.BARE, DECORATIONS::get);
+        AtlasGenerator generator = new AtlasGenerator(state.seed(), rules, AtlasUnlocks.NONE, state);
+        AtlasScenery scenery = new AtlasScenery(state.seed(), id -> "graveyard".equals(id) ? GRAVEYARD : AtlasAmbience.BARE, DECORATIONS::get);
         return new AtlasMapCanvas(generator, state, scenery);
     }
 
@@ -113,15 +115,14 @@ class AtlasSceneryTest {
     void territoriesOutlineEveryClaimedSystemWithItsCommandCentresFaction() {
         AtlasMapCanvas canvas = canvas();
         Set<Long> inTerritory = new HashSet<>();
-        for (AtlasCell visible : canvas.visibleCells()) {
-            for (AtlasCell cell : visible.around(1)) {
-                String territoryId = canvas.scenery().territoryAt(cell);
-                if (canvas.visibleCells().contains(cell) && !canvas.generator().isVoid(cell)) {
-                    assertEquals(canvas.state().territoryAt(cell), territoryId, cell.toString());
-                }
-                if (territoryId != null) {
-                    inTerritory.add(cell.pack());
-                }
+        for (long packed : canvas.scenery().territoryCells()) {
+            AtlasCell cell = AtlasCell.unpack(packed);
+            String territoryId = canvas.scenery().territoryAt(cell);
+            if (canvas.visibleCells().contains(cell) && !canvas.generator().isVoid(cell)) {
+                assertEquals(canvas.state().territoryAt(cell), territoryId, cell.toString());
+            }
+            if (territoryId != null) {
+                inTerritory.add(packed);
             }
         }
         int territoryCells = 0;
@@ -132,6 +133,45 @@ class AtlasSceneryTest {
 
         assertFalse(inTerritory.isEmpty());
         assertEquals(inTerritory.size(), territoryCells);
+    }
+
+    @Test
+    void systemsJoinedByLanesWithinOneTerritoryShareOneOutline() {
+        for (long seed = 1; seed <= SEEDS; seed++) {
+            assertLaneGroupsShareOutlines(canvas(new AtlasState(seed)), seed);
+        }
+    }
+
+    private static void assertLaneGroupsShareOutlines(AtlasMapCanvas canvas, long seed) {
+        Map<String, Integer> laneGroups = new HashMap<>();
+        Set<AtlasCell> grouped = new HashSet<>();
+        for (long packed : canvas.scenery().territoryCells()) {
+            AtlasCell start = AtlasCell.unpack(packed);
+            String territoryId = knownSystem(canvas, start) ? canvas.state().territoryAt(start) : null;
+            if (territoryId == null || !grouped.add(start)) {
+                continue;
+            }
+            laneGroups.merge(territoryId, 1, Integer::sum);
+            ArrayDeque<AtlasCell> frontier = new ArrayDeque<>(List.of(start));
+            while (!frontier.isEmpty()) {
+                for (AtlasCell next : canvas.generator().lanes(frontier.poll())) {
+                    if (knownSystem(canvas, next) && territoryId.equals(canvas.state().territoryAt(next)) && grouped.add(next)) {
+                        frontier.add(next);
+                    }
+                }
+            }
+        }
+        Map<String, Integer> outlines = new HashMap<>();
+        for (AtlasTerritoryBorders.Region territory : canvas.scenery().borders().regions()) {
+            outlines.merge(territory.groupId(), 1, Integer::sum);
+        }
+
+        laneGroups.forEach((territoryId, groups) -> assertTrue(outlines.getOrDefault(territoryId, 0) <= groups,
+                "seed " + seed + ": " + territoryId + " has " + groups + " lane groups but " + outlines.get(territoryId) + " outlines"));
+    }
+
+    private static boolean knownSystem(AtlasMapCanvas canvas, AtlasCell cell) {
+        return canvas.scenery().isKnown(cell) && canvas.nodeAt(cell) != null && !canvas.nodeAt(cell).isVoid();
     }
 
     @Test

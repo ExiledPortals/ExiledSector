@@ -52,6 +52,7 @@ final class AtlasTerritoryBorders {
     static final float LABEL_ROOM_SHARE = 1.2f;
     static final float FADE_SECONDS = 0.25f;
     private static final int[][] SIDES = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
+    private static final int[][] DIAGONALS = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 
     record Loop(float[] outline, float[] inner, float minX, float minY, float maxX, float maxY) {
 
@@ -97,13 +98,17 @@ final class AtlasTerritoryBorders {
     }
 
     void attach(Set<Long> known, Function<AtlasCell, String> groupAt, Predicate<AtlasCell> hasSystem) {
+        attach(known, groupAt, hasSystem, Map.of());
+    }
+
+    void attach(Set<Long> known, Function<AtlasCell, String> groupAt, Predicate<AtlasCell> hasSystem, Map<Long, String> joinedCorners) {
         for (TextLabel label : labels) {
             if (label != null) {
                 label.dispose();
             }
         }
         labels.clear();
-        regions = build(seed, known, groupAt, hasSystem);
+        regions = build(seed, known, groupAt, hasSystem, joinedCorners);
         tints = regions.stream().map(this::colour).toList();
         outlines = tints.stream().map(tint -> towardWhite(tint, OUTLINE_WHITENESS)).toList();
         for (int index = 0; index < regions.size(); index++) {
@@ -225,7 +230,16 @@ final class AtlasTerritoryBorders {
                 Math.round(colour.getBlue() + (255 - colour.getBlue()) * share));
     }
 
+    static long cornerBetween(AtlasCell cell, AtlasCell diagonal) {
+        return point(cell.gridX() + diagonal.gridX(), cell.gridY() + diagonal.gridY());
+    }
+
     static List<Region> build(long seed, Set<Long> known, Function<AtlasCell, String> groupAt, Predicate<AtlasCell> hasSystem) {
+        return build(seed, known, groupAt, hasSystem, Map.of());
+    }
+
+    static List<Region> build(long seed, Set<Long> known, Function<AtlasCell, String> groupAt, Predicate<AtlasCell> hasSystem,
+                              Map<Long, String> joinedCorners) {
         Map<Long, String> groupOf = new HashMap<>();
         List<Long> ordered = new ArrayList<>(known);
         ordered.sort(Comparator.naturalOrder());
@@ -255,21 +269,34 @@ final class AtlasTerritoryBorders {
                         queue.add(AtlasCell.unpack(next));
                     }
                 }
+                for (int[] diagonal : DIAGONALS) {
+                    AtlasCell next = new AtlasCell(cell.gridX() + diagonal[0], cell.gridY() + diagonal[1]);
+                    if (groupId.equals(joinedCorners.get(cornerBetween(cell, next))) && groupId.equals(groupOf.get(next.pack())) && claimed.add(next.pack())) {
+                        patch.add(next.pack());
+                        queue.add(next);
+                    }
+                }
             }
             if (holdsSystem) {
-                built.add(region(seed, groupId, patch));
+                Set<Long> corners = new HashSet<>();
+                joinedCorners.forEach((corner, cornerGroupId) -> {
+                    if (groupId.equals(cornerGroupId)) {
+                        corners.add(corner);
+                    }
+                });
+                built.add(region(seed, groupId, patch, corners));
             }
         }
         return List.copyOf(built);
     }
 
-    private static Region region(long seed, String groupId, Set<Long> patch) {
+    private static Region region(long seed, String groupId, Set<Long> patch, Set<Long> joinedCorners) {
         List<Loop> loops = new ArrayList<>();
         float minX = Float.MAX_VALUE;
         float minY = Float.MAX_VALUE;
         float maxX = -Float.MAX_VALUE;
         float maxY = -Float.MAX_VALUE;
-        for (List<float[]> corners : trace(patch)) {
+        for (List<float[]> corners : trace(patch, joinedCorners)) {
             Loop loop = loop(roughen(seed, smooth(corners)));
             loops.add(loop);
             minX = Math.min(minX, loop.minX());
@@ -283,6 +310,10 @@ final class AtlasTerritoryBorders {
     }
 
     static List<List<float[]>> trace(Set<Long> patch) {
+        return trace(patch, Set.of());
+    }
+
+    static List<List<float[]>> trace(Set<Long> patch, Set<Long> joinedCorners) {
         Map<Long, List<Edge>> outgoing = new HashMap<>();
         List<Edge> edges = new ArrayList<>();
         List<Long> ordered = new ArrayList<>(patch);
@@ -313,13 +344,18 @@ final class AtlasTerritoryBorders {
             List<float[]> corners = new ArrayList<>();
             Edge current = start;
             corners.add(new float[] {start.fromX() / 2f, start.fromY() / 2f});
-            while (current.toX() != start.fromX() || current.toY() != start.fromY()) {
-                corners.add(new float[] {current.toX() / 2f, current.toY() / 2f});
+            while (true) {
+                long corner = point(current.toX(), current.toY());
+                boolean joined = joinedCorners.contains(corner);
+                if (!joined && current.toX() == start.fromX() && current.toY() == start.fromY()) {
+                    break;
+                }
                 Edge next = null;
+                int turnSign = joined ? -1 : 1;
                 int bestTurn = Integer.MIN_VALUE;
-                for (Edge candidate : outgoing.getOrDefault(point(current.toX(), current.toY()), List.of())) {
-                    int turn = (current.toX() - current.fromX()) * (candidate.toY() - candidate.fromY())
-                            - (current.toY() - current.fromY()) * (candidate.toX() - candidate.fromX());
+                for (Edge candidate : outgoing.getOrDefault(corner, List.of())) {
+                    int turn = turnSign * ((current.toX() - current.fromX()) * (candidate.toY() - candidate.fromY())
+                            - (current.toY() - current.fromY()) * (candidate.toX() - candidate.fromX()));
                     if (!used.contains(candidate) && turn > bestTurn) {
                         bestTurn = turn;
                         next = candidate;
@@ -328,6 +364,7 @@ final class AtlasTerritoryBorders {
                 if (next == null) {
                     break;
                 }
+                corners.add(new float[] {current.toX() / 2f, current.toY() / 2f});
                 used.add(next);
                 current = next;
             }
