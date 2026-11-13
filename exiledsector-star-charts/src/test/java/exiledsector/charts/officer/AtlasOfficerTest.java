@@ -28,7 +28,7 @@ class AtlasOfficerTest {
                 List.of("degraded_engines", "faulty_grid"), Map.of("scar_a", 2, "scar_b", 1),
                 List.of("hull_item:1:bridge_relay:abyssal_rift", "crafting_item:4:kernel"), List.of("engram:1:engram_a", "unique:1:u_x"), 3, true,
                 AtlasOfficer.Status.ACTIVE, true, List.of("arrived:1", "moved:1:2"), 40, true, 5,
-                "graphics/portraits/portrait_mercenary01.png");
+                "graphics/portraits/portrait_mercenary01.png", Map.of("faulty_grid", "scar_a"));
 
         assertEquals(officer, AtlasOfficer.decode(12, officer.encode()));
     }
@@ -122,6 +122,30 @@ class AtlasOfficerTest {
     }
 
     @Test
+    void aRecordWrittenBeforeDModOriginsStillDecodes() {
+        String oldRecord = "o3|hegemony|1|2|commander||steady|onslaught|onslaught_Elite|3|4|faulty_grid|humbled=1|||0|0|WAITING|0||0|0|4|portrait.png";
+
+        AtlasOfficer officer = AtlasOfficer.decode(5, oldRecord);
+
+        assertEquals(List.of("faulty_grid"), officer.dmodIds());
+        assertEquals("portrait.png", officer.portraitPath());
+        assertEquals(Map.of(), officer.dmodScars());
+    }
+
+    @Test
+    void eachScarDModRemembersItsScarUntilTheDModIsLost() {
+        AtlasOfficer scarred = waiting().withScarDMod("faulty_grid", "humbled").withScarDMod("comp_armor", "rammed");
+
+        assertEquals(List.of("faulty_grid", "comp_armor"), scarred.dmodIds());
+        assertEquals(Map.of("faulty_grid", "humbled", "comp_armor", "rammed"), scarred.dmodScars());
+        assertEquals(scarred, AtlasOfficer.decode(scarred.recordId(), scarred.encode()));
+        assertEquals(scarred, scarred.withScarDMod("faulty_grid", "rammed"));
+        assertEquals(Map.of("comp_armor", "rammed"), scarred.withDModIds(List.of("comp_armor")).dmodScars());
+        assertEquals(Map.of("faulty_grid", "humbled"),
+                scarred.flying(new FlagshipCatalogue.Flagship("eagle", "eagle_Assault"), List.of("faulty_grid")).dmodScars());
+    }
+
+    @Test
     void aPortraitStaysWithTheOfficerThroughCommandChanges() {
         AtlasOfficer portrayed = waiting().withPortrait("graphics/portraits/portrait_hegemony01.png");
 
@@ -136,7 +160,7 @@ class AtlasOfficerTest {
     void unreadableItemTokensAreSkipped() {
         AtlasOfficer officer = new AtlasOfficer(3, "hegemony", 1L, 2L, "commander", null, "steady", "", "", 3L, 4L, List.of(), Map.of(),
                 List.of("item_x=5", "crafting_item:2:kernel"), List.of("rank_swap"), 0, false, AtlasOfficer.Status.WAITING, false,
-                List.of(), 0, false, AtlasOfficer.UNSEATED, "");
+                List.of(), 0, false, AtlasOfficer.UNSEATED, "", Map.of());
 
         assertEquals(List.of(new CarriedItem(RewardKind.CRAFTING_ITEM, "kernel", null, 2)), officer.carried());
         assertFalse(officer.hasPendingChoice());

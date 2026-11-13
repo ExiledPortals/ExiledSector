@@ -131,13 +131,7 @@ public final class OfficerDefeat {
     }
 
     static AtlasOfficer scarred(AtlasOfficer officer, String scarId, String dModId) {
-        AtlasOfficer scarred = officer.withScars(Scars.withScar(officer.scars(), scarId));
-        if (dModId == null || officer.dmodIds().contains(dModId)) {
-            return scarred;
-        }
-        List<String> dModIds = new ArrayList<>(officer.dmodIds());
-        dModIds.add(dModId);
-        return scarred.withDModIds(dModIds);
+        return officer.withScars(Scars.withScar(officer.scars(), scarId)).withScarDMod(dModId, scarId);
     }
 
     static AtlasOfficer rewarded(AtlasOfficer officer, List<CarriedItem> offers) {

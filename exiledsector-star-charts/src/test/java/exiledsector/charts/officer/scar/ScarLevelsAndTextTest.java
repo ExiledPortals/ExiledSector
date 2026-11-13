@@ -62,11 +62,23 @@ class ScarLevelsAndTextTest {
         Map<String, Integer> scars = new LinkedHashMap<>();
         scars.put("kinetic_scarred", 2);
         scars.put("humbled", 1);
-        List<StyledText> lines = ScarText.tooltipLines(scars, ScarFixtures.UNSHIELDED_WARSHIP);
+        List<StyledText> lines = ScarText.tooltipLines(scars, Map.of("humbled", List.of("faulty_grid")), ScarFixtures.UNSHIELDED_WARSHIP);
         assertEquals(2, lines.size());
         assertTrue(lines.get(0).plain().startsWith("Kinetic-Scarred x2: "), lines.get(0).plain());
-        assertTrue(lines.get(0).plain().contains("20"), lines.get(0).plain());
-        assertEquals("Humbled", lines.get(1).plain());
+        assertEquals("Kinetic-Scarred x2: 20% reduced kinetic damage taken, +2 to flagship level", lines.get(0).plain());
+        assertEquals("Humbled: +5 to flagship level, faulty_grid", lines.get(1).plain());
+    }
+
+    @Test
+    void scarEffectsReadAsListItemsWithoutNamingTheShip() {
+        HullFacts everyFeature = new HullFacts(true, true, true, true, true, true, true, true, true, true);
+        for (ScarRow row : ScarTable.rows()) {
+            String line = ScarText.tooltipLines(Map.of(row.id(), 1), Map.of(), everyFeature).get(0).plain();
+            assertTrue(!line.replace("strikecraft launched from this ship", "").contains("this ship") &&!line.contains(".,") && !line.contains(", I") && !line.contains(", T"), line);
+        }
+        StyledText item = ScarText.listItem(StyledText.parse("Strikecraft launched from this ship deal <good>15%</good> increased damage."));
+        assertEquals("strikecraft launched from this ship deal <good>15%</good> increased damage", item.toMarkup());
+        assertEquals("<good>15%</good> reduced EMP damage taken", ScarText.listItem(StyledText.parse("<good>15%</good> reduced EMP damage taken.")).toMarkup());
     }
 
     @Test

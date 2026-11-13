@@ -13,6 +13,8 @@ import exiledsector.charts.atlas.AtlasLine;
 import exiledsector.charts.atlas.AtlasNames;
 import exiledsector.charts.atlas.AtlasTerritoryPlacer;
 import exiledsector.charts.officer.reward.OfficerRewardText;
+import exiledsector.charts.officer.scar.HullFacts;
+import exiledsector.charts.officer.scar.ScarDModOrigins;
 import exiledsector.charts.officer.scar.ScarText;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
@@ -98,10 +100,15 @@ public final class OfficerText {
         if (carriedLine != null) {
             lines.add(carriedLine);
         }
-        for (StyledText scarLine : ScarText.tooltipLines(new TreeMap<>(officer.scars()), OfficerFleets.flagshipHull(officer))) {
+        for (StyledText scarLine : scarLines(officer, OfficerFleets.flagshipHull(officer))) {
             lines.add(new AtlasLine(scarLine.toMarkup(), AtlasLine.Tone.STYLED));
         }
         return lines;
+    }
+
+    public static List<StyledText> scarLines(AtlasOfficer officer, HullFacts hull) {
+        return ScarText.tooltipLines(new TreeMap<>(officer.scars()), ScarDModOrigins.byScar(new TreeMap<>(officer.scars()), officer.dmodIds(),
+                officer.dmodScars()), hull);
     }
 
     static String title(String rankName, String fullName) {

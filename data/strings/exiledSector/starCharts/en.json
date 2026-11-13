@@ -971,6 +971,8 @@
     "chart.officer.scar.epithet": "{name} the {scar}",
     "chart.officer.scar.stacked": "{scar} x{stacks}",
     "chart.officer.scar.effects": "{scar}: {effects}",
+    "chart.officer.scar.levels": "<bad>+{levels}</bad> to flagship level",
+    "chart.officer.scar.dmod": "<good>{dmod}</good>",
     "chart.officer.scar.name.flak_scarred": "Flak-Scarred",
     "chart.officer.scar.name.torpedo_burned": "Torpedo-Burned",
     "chart.officer.scar.name.mine_torn": "Mine-Torn",

@@ -5,7 +5,6 @@ import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
-import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.OfficerFleets;
@@ -28,7 +27,6 @@ import exiledsector.ui.util.TextLabel;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeMap;
 
 final class OfficerBoardTooltip {
 
@@ -151,7 +149,7 @@ final class OfficerBoardTooltip {
         flagshipHeading.set(Translation.text("chart.officer.board.flagshipHeading"));
         writeRewards(officer.carried());
         ShipVariantAPI variant = OfficerFleets.flagshipVariant(officer);
-        List<StyledText> scarLines = ScarText.tooltipLines(new TreeMap<>(officer.scars()), HullFacts.of(variant));
+        List<StyledText> scarLines = OfficerText.scarLines(officer, HullFacts.of(variant));
         hasScars = !scarLines.isEmpty();
         scarsLabel.setParagraphs(List.of(StyledText.join(LINE_BREAK, scarLines)), contentWidth(), MAX_TEXT_HEIGHT,
                 SkillTreePanelStyle::standardHighlightColor);
@@ -260,8 +258,7 @@ final class OfficerBoardTooltip {
     private static List<StyledText> dmodNames(List<String> dmodIds) {
         List<StyledText> names = new ArrayList<>();
         for (String dmodId : dmodIds) {
-            HullModSpecAPI spec = Global.getSettings().getHullModSpec(dmodId);
-            names.add(StyledText.of(spec == null ? dmodId : spec.getDisplayName()));
+            names.add(StyledText.of(ScarText.dModName(dmodId)));
         }
         return names;
     }

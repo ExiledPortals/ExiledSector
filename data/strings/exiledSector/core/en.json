@@ -1044,6 +1044,16 @@
     "effect.SCAR_DAMAGE_TAKEN_AT_LOW_HULL_PERCENT": "<good>{value}%</good> reduced damage taken while below <hl>{hull}%</hl> hull.",
     "effect.SCAR_DAMAGE_AND_SPEED_WHILE_ALONE_PERCENT": "<good>{value}%</good> increased weapon damage and top speed while no allied ship is within <hl>{range}</hl> su.",
     "effect.SCAR_HARD_FLUX_DISSIPATION_PERCENT": "<good>{value}%</good> hard flux dissipation while shields are active.",
-    "effect.SCAR_WING_DAMAGE_TO_FIGHTERS_PERCENT": "Strikecraft launched from this ship deal <good>{value}%</good> increased damage to fighters.",
-    "effect.SCAR_HIGH_EXPLOSIVE_CONVERSION_CHANCE_PERCENT": "<good>{value}%</good> chance for each kinetic or energy weapon hit on an enemy ship to deal high explosive damage instead."
+    "effect.SCAR_WING_DAMAGE_TO_FIGHTERS_PERCENT": "Strikecraft launched from this ship deal <good>{value}%</good> increased damage to strikecraft.",
+    "effect.SCAR_HIGH_EXPLOSIVE_CONVERSION_CHANCE_PERCENT": "<good>{value}%</good> chance for each kinetic or energy weapon hit on an enemy ship to deal high-explosive damage instead.",
+    "effect.SCAR_NAV_RATING_PERCENT.more": "The officer's fleet has <good>+{value}%</good> to nav rating.",
+    "effect.SCAR_NAV_RATING_PERCENT.less": "The officer's fleet has <bad>-{value}%</bad> to nav rating.",
+    "effect.SCAR_MAX_COMBAT_READINESS_PERCENT.more": "<good>+{value}%</good> to maximum combat readiness.",
+    "effect.SCAR_MAX_COMBAT_READINESS_PERCENT.less": "<bad>-{value}%</bad> to maximum combat readiness.",
+    "effect.SCAR_WEAPON_MALFUNCTION_PERCENT.more": "<bad>+{value}%</bad> to weapon malfunction chance.",
+    "effect.SCAR_WEAPON_MALFUNCTION_PERCENT.less": "<good>-{value}%</good> to weapon malfunction chance.",
+    "stat.scar.sensorStrength": "sensor strength",
+    "stat.scar.ecmRangePenalty": "weapon range penalty from enemy ECM",
+    "stat.scar.zeroFluxSpeedBoost": "0-flux speed boost",
+    "stat.scar.damageToStrikecraft": "damage to strikecraft"
 }

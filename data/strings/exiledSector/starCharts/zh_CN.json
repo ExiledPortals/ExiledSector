@@ -942,6 +942,8 @@
     "chart.officer.scar.epithet": "「{scar}」{name}",
     "chart.officer.scar.stacked": "{scar} ×{stacks}",
     "chart.officer.scar.effects": "{scar}：{effects}",
+    "chart.officer.scar.levels": "旗舰等级<bad>+{levels}</bad>",
+    "chart.officer.scar.dmod": "<good>{dmod}</good>",
     "chart.officer.scar.name.flak_scarred": "弹幕之痕",
     "chart.officer.scar.name.torpedo_burned": "鱼雷灼伤",
     "chart.officer.scar.name.mine_torn": "雷撕",

@@ -72,7 +72,7 @@ public enum ScarSkillEffect implements BackedSkillEffect {
     },
     SCAR_VENT_RATE_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getVentRateMult), "stat.ventingSpeed", false)),
     SCAR_OVERLOAD_DURATION_PERCENT(statEffect(PERCENT, bonus(MutableShipStatsAPI::getOverloadTimeMod), "stat.overloadDuration", true)),
-    SCAR_ZERO_FLUX_SPEED_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getZeroFluxSpeedBoost), "stat.zeroFluxSpeedBoost", false)),
+    SCAR_ZERO_FLUX_SPEED_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getZeroFluxSpeedBoost), "stat.scar.zeroFluxSpeedBoost", false)),
     SCAR_TOP_SPEED_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getMaxSpeed), "stat.topSpeed", false)),
     SCAR_MANEUVERABILITY_PERCENT(statEffect(PERCENT, Maneuverability.target(), "stat.maneuverability", false)),
     SCAR_PEAK_CR_DURATION_PERCENT(statEffect(PERCENT, liveBonus(MutableShipStatsAPI::getPeakCRDuration), "stat.peakCombatReadinessDuration",
@@ -85,18 +85,28 @@ public enum ScarSkillEffect implements BackedSkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return ReadinessSkillEffect.MAX_COMBAT_READINESS_PERCENT.description(magnitude);
+            return EffectText.signed(this, magnitude).styled();
         }
     },
     SCAR_WEAPON_MALFUNCTION_PERCENT(statEffect(PERCENT, new StatTarget.PercentagePoints(MutableShipStatsAPI::getWeaponMalfunctionChance),
-            "stat.weaponMalfunctionChance", true)),
+            "stat.weaponMalfunctionChance", true)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.signed(this, magnitude).styled();
+        }
+
+        @Override
+        public boolean invertsDescriptionColours() {
+            return false;
+        }
+    },
     SCAR_SYSTEM_COOLDOWN_PERCENT(statEffect(PERCENT, bonus(MutableShipStatsAPI::getSystemCooldownBonus), "stat.shipSystemCooldown", true)),
-    SCAR_SENSOR_STRENGTH_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getSensorStrength), "stat.sensorStrength", false)),
-    SCAR_ELECTRONIC_WARFARE_PENALTY_PERCENT(statEffect(PERCENT, dynamicMod(Stats.ELECTRONIC_WARFARE_PENALTY_MOD), "stat.ewarRangePenalty", true)),
+    SCAR_SENSOR_STRENGTH_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getSensorStrength), "stat.scar.sensorStrength", false)),
+    SCAR_ELECTRONIC_WARFARE_PENALTY_PERCENT(statEffect(PERCENT, dynamicMod(Stats.ELECTRONIC_WARFARE_PENALTY_MOD), "stat.scar.ecmRangePenalty", true)),
     SCAR_NAV_RATING_PERCENT(statEffect(FLAT, dynamicMod("coord_maneuvers_flat"), "stat.fleetNavRating", false)) {
         @Override
         public StyledText description(float magnitude) {
-            return FLAT.describeStat(magnitude, "subject.yourFleet", "stat.fleetNavRating");
+            return EffectText.signed(this, magnitude).styled();
         }
     },
     SCAR_OBJECTIVE_CAPTURE_RANGE_PERCENT(statEffect(PERCENT, dynamicMod(Stats.SHIP_OBJECTIVE_CAP_RANGE_MOD), "stat.objectiveCaptureRange", false)),
@@ -105,7 +115,7 @@ public enum ScarSkillEffect implements BackedSkillEffect {
     SCAR_AUTOFIRE_ACCURACY_PERCENT(new ScarWeaponStat(WeaponStatFamily.AUTOFIRE_ACCURACY)),
     SCAR_PD_DAMAGE_TO_MISSILES_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getDamageToMissiles), "stat.pointDefenseDamageToMissiles",
             false)),
-    SCAR_DAMAGE_TO_FIGHTERS_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getDamageToFighters), "stat.damageToFighters", false)),
+    SCAR_DAMAGE_TO_FIGHTERS_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getDamageToFighters), "stat.scar.damageToStrikecraft", false)),
     SCAR_WING_DAMAGE_TO_FIGHTERS_PERCENT {
         @Override
         public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {

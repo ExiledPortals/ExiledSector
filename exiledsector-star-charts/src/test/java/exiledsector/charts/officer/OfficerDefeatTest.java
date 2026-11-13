@@ -34,6 +34,7 @@ class OfficerDefeatTest {
 
         assertEquals(Map.of("veteran", 2), scarred.scars());
         assertEquals(List.of("faulty_grid", "degraded_engines"), scarred.dmodIds());
+        assertEquals(Map.of("degraded_engines", "veteran"), scarred.dmodScars());
     }
 
     @Test

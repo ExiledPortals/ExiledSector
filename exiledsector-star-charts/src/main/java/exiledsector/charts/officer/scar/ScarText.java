@@ -1,5 +1,8 @@
 package exiledsector.charts.officer.scar;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.SettingsAPI;
+import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
@@ -49,7 +52,7 @@ public final class ScarText {
         return best;
     }
 
-    public static List<StyledText> tooltipLines(Map<String, Integer> scars, HullFacts hull) {
+    public static List<StyledText> tooltipLines(Map<String, Integer> scars, Map<String, List<String>> dModsByScar, HullFacts hull) {
         if (scars == null || scars.isEmpty()) {
             return List.of();
         }
@@ -57,14 +60,14 @@ public final class ScarText {
             List<StyledText> lines = new ArrayList<>();
             scars.forEach((scarId, stacks) -> {
                 if (stacks != null && stacks > 0) {
-                    lines.add(line(scarId, stacks, hull));
+                    lines.add(line(scarId, stacks, dModsByScar.getOrDefault(scarId, List.of()), hull));
                 }
             });
             return lines;
         });
     }
 
-    private static StyledText line(String scarId, int stacks, HullFacts hull) {
+    private static StyledText line(String scarId, int stacks, List<String> dModIds, HullFacts hull) {
         StyledText title = stacks > 1
                 ? Translation.msg("chart.officer.scar.stacked").arg("scar", nameText(scarId)).arg("stacks", stacks).styled()
                 : StyledText.of(nameText(scarId));
@@ -72,13 +75,37 @@ public final class ScarText {
         ScarRow row = ScarTable.row(scarId);
         if (row != null) {
             for (ScarRow.Effect effect : row.fittingEffects(hull)) {
-                effects.add(playerView(effect.effect(), effect.magnitudePerStack() * stacks));
+                effects.add(listItem(playerView(effect.effect(), effect.magnitudePerStack() * stacks)));
             }
         }
-        if (effects.isEmpty()) {
-            return title;
+        effects.add(Translation.msg("chart.officer.scar.levels").arg("levels", ScarLevels.extraLevels(Map.of(scarId, stacks))).styled());
+        for (String dModId : dModIds) {
+            effects.add(Translation.msg("chart.officer.scar.dmod").arg("dmod", dModName(dModId)).styled());
         }
         return Translation.msg("chart.officer.scar.effects").arg("scar", title).arg("effects", Translation.list(effects)).styled();
+    }
+
+    public static String dModName(String dModId) {
+        SettingsAPI settings = Global.getSettings();
+        HullModSpecAPI spec = settings == null ? null : settings.getHullModSpec(dModId);
+        return spec == null ? dModId : spec.getDisplayName();
+    }
+
+    static StyledText listItem(StyledText sentence) {
+        String plain = sentence.plain();
+        int end = plain.endsWith(".") || plain.endsWith("。") ? plain.length() - 1 : plain.length();
+        String item = startsWithCapitalisedWord(plain) ? Character.toLowerCase(plain.charAt(0)) + plain.substring(1, end) : plain.substring(0, end);
+        List<StyledText.Span> spans = new ArrayList<>();
+        for (StyledText.Span span : sentence.spans()) {
+            if (span.start() < end) {
+                spans.add(new StyledText.Span(span.start(), Math.min(span.end(), end), span.style()));
+            }
+        }
+        return new StyledText(item, spans);
+    }
+
+    private static boolean startsWithCapitalisedWord(String plain) {
+        return plain.length() > 1 && Character.isUpperCase(plain.charAt(0)) && Character.isLowerCase(plain.charAt(1));
     }
 
     static StyledText playerView(SkillEffect effect, float magnitude) {

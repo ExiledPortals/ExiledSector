@@ -1510,6 +1510,16 @@
     "effect.SCAR_DAMAGE_TAKEN_AT_LOW_HULL_PERCENT": "结构低于<hl>{hull}%</hl>时，受到的伤害降低<good>{value}%</good>。",
     "effect.SCAR_DAMAGE_AND_SPEED_WHILE_ALONE_PERCENT": "<hl>{range}</hl> su内没有友方舰船时，武器伤害和最高航速提高<good>{value}%</good>。",
     "effect.SCAR_HARD_FLUX_DISSIPATION_PERCENT": "护盾开启时<good>{value}%</good>硬幅能耗散。",
-    "effect.SCAR_WING_DAMAGE_TO_FIGHTERS_PERCENT": "本舰放出的舰载机对战机造成的伤害提高<good>{value}%</good>。",
-    "effect.SCAR_HIGH_EXPLOSIVE_CONVERSION_CHANCE_PERCENT": "每次动能或能量武器命中敌舰时，有<good>{value}%</good>几率改为造成高爆伤害。"
+    "effect.SCAR_WING_DAMAGE_TO_FIGHTERS_PERCENT": "本舰放出的战机对战机造成的伤害提高<good>{value}%</good>。",
+    "effect.SCAR_HIGH_EXPLOSIVE_CONVERSION_CHANCE_PERCENT": "每次动能或能量武器命中敌舰时，有<good>{value}%</good>几率改为造成高爆伤害。",
+    "effect.SCAR_NAV_RATING_PERCENT.more": "该军官的舰队导航评级<good>+{value}%</good>。",
+    "effect.SCAR_NAV_RATING_PERCENT.less": "该军官的舰队导航评级<bad>-{value}%</bad>。",
+    "effect.SCAR_MAX_COMBAT_READINESS_PERCENT.more": "最大战备值<good>+{value}%</good>。",
+    "effect.SCAR_MAX_COMBAT_READINESS_PERCENT.less": "最大战备值<bad>-{value}%</bad>。",
+    "effect.SCAR_WEAPON_MALFUNCTION_PERCENT.more": "武器故障几率<bad>+{value}%</bad>。",
+    "effect.SCAR_WEAPON_MALFUNCTION_PERCENT.less": "武器故障几率<good>-{value}%</good>。",
+    "stat.scar.sensorStrength": "传感器强度",
+    "stat.scar.ecmRangePenalty": "敌方ECM造成的武器射程惩罚",
+    "stat.scar.zeroFluxSpeedBoost": "零幅能速度加成",
+    "stat.scar.damageToStrikecraft": "对战机造成的伤害"
 }

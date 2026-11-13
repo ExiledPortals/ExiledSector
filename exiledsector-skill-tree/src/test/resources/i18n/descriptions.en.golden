@@ -2698,12 +2698,12 @@ effect|SCAR_DAMAGE_TO_DMODDED_SHIPS_PERCENT|12.5	0	<good>12.5%</good> increased 
 effect|SCAR_DAMAGE_TO_DMODDED_SHIPS_PERCENT|100.0	0	<good>100%</good> increased damage to ships with d-mods.
 effect|SCAR_DAMAGE_TO_DMODDED_SHIPS_PERCENT|-10.0	0	<bad>10%</bad> reduced damage to ships with d-mods.
 effect|SCAR_DAMAGE_TO_DMODDED_SHIPS_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage to ships with d-mods.
-effect|SCAR_DAMAGE_TO_FIGHTERS_PERCENT|1.0	0	<good>1%</good> increased damage to fighters.
-effect|SCAR_DAMAGE_TO_FIGHTERS_PERCENT|10.0	0	<good>10%</good> increased damage to fighters.
-effect|SCAR_DAMAGE_TO_FIGHTERS_PERCENT|12.5	0	<good>12.5%</good> increased damage to fighters.
-effect|SCAR_DAMAGE_TO_FIGHTERS_PERCENT|100.0	0	<good>100%</good> increased damage to fighters.
-effect|SCAR_DAMAGE_TO_FIGHTERS_PERCENT|-10.0	0	<bad>10%</bad> reduced damage to fighters.
-effect|SCAR_DAMAGE_TO_FIGHTERS_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage to fighters.
+effect|SCAR_DAMAGE_TO_FIGHTERS_PERCENT|1.0	0	<good>1%</good> increased damage to strikecraft.
+effect|SCAR_DAMAGE_TO_FIGHTERS_PERCENT|10.0	0	<good>10%</good> increased damage to strikecraft.
+effect|SCAR_DAMAGE_TO_FIGHTERS_PERCENT|12.5	0	<good>12.5%</good> increased damage to strikecraft.
+effect|SCAR_DAMAGE_TO_FIGHTERS_PERCENT|100.0	0	<good>100%</good> increased damage to strikecraft.
+effect|SCAR_DAMAGE_TO_FIGHTERS_PERCENT|-10.0	0	<bad>10%</bad> reduced damage to strikecraft.
+effect|SCAR_DAMAGE_TO_FIGHTERS_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage to strikecraft.
 effect|SCAR_DAMAGE_TO_FRIGATES_PERCENT|1.0	0	<good>1%</good> increased damage to frigates.
 effect|SCAR_DAMAGE_TO_FRIGATES_PERCENT|10.0	0	<good>10%</good> increased damage to frigates.
 effect|SCAR_DAMAGE_TO_FRIGATES_PERCENT|12.5	0	<good>12.5%</good> increased damage to frigates.
@@ -2728,12 +2728,12 @@ effect|SCAR_DAMAGE_TO_SHIELDS_PERCENT|12.5	0	<good>12.5%</good> increased damage
 effect|SCAR_DAMAGE_TO_SHIELDS_PERCENT|100.0	0	<good>100%</good> increased damage to shields.
 effect|SCAR_DAMAGE_TO_SHIELDS_PERCENT|-10.0	0	<bad>10%</bad> reduced damage to shields.
 effect|SCAR_DAMAGE_TO_SHIELDS_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage to shields.
-effect|SCAR_ELECTRONIC_WARFARE_PENALTY_PERCENT|1.0	1	<good>1%</good> increased electronic warfare penalty against this ship's weapon range.
-effect|SCAR_ELECTRONIC_WARFARE_PENALTY_PERCENT|10.0	1	<good>10%</good> increased electronic warfare penalty against this ship's weapon range.
-effect|SCAR_ELECTRONIC_WARFARE_PENALTY_PERCENT|12.5	1	<good>12.5%</good> increased electronic warfare penalty against this ship's weapon range.
-effect|SCAR_ELECTRONIC_WARFARE_PENALTY_PERCENT|100.0	1	<good>100%</good> increased electronic warfare penalty against this ship's weapon range.
-effect|SCAR_ELECTRONIC_WARFARE_PENALTY_PERCENT|-10.0	1	<bad>10%</bad> reduced electronic warfare penalty against this ship's weapon range.
-effect|SCAR_ELECTRONIC_WARFARE_PENALTY_PERCENT|-12.5	1	<bad>12.5%</bad> reduced electronic warfare penalty against this ship's weapon range.
+effect|SCAR_ELECTRONIC_WARFARE_PENALTY_PERCENT|1.0	1	<good>1%</good> increased weapon range penalty from enemy ECM.
+effect|SCAR_ELECTRONIC_WARFARE_PENALTY_PERCENT|10.0	1	<good>10%</good> increased weapon range penalty from enemy ECM.
+effect|SCAR_ELECTRONIC_WARFARE_PENALTY_PERCENT|12.5	1	<good>12.5%</good> increased weapon range penalty from enemy ECM.
+effect|SCAR_ELECTRONIC_WARFARE_PENALTY_PERCENT|100.0	1	<good>100%</good> increased weapon range penalty from enemy ECM.
+effect|SCAR_ELECTRONIC_WARFARE_PENALTY_PERCENT|-10.0	1	<bad>10%</bad> reduced weapon range penalty from enemy ECM.
+effect|SCAR_ELECTRONIC_WARFARE_PENALTY_PERCENT|-12.5	1	<bad>12.5%</bad> reduced weapon range penalty from enemy ECM.
 effect|SCAR_EMP_DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased EMP damage taken.
 effect|SCAR_EMP_DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased EMP damage taken.
 effect|SCAR_EMP_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased EMP damage taken.
@@ -2776,12 +2776,12 @@ effect|SCAR_HARD_FLUX_DISSIPATION_PERCENT|12.5	0	<good>12.5%</good> hard flux di
 effect|SCAR_HARD_FLUX_DISSIPATION_PERCENT|100.0	0	<good>100%</good> hard flux dissipation while shields are active.
 effect|SCAR_HARD_FLUX_DISSIPATION_PERCENT|-10.0	0	<good>-10%</good> hard flux dissipation while shields are active.
 effect|SCAR_HARD_FLUX_DISSIPATION_PERCENT|-12.5	0	<good>-12.5%</good> hard flux dissipation while shields are active.
-effect|SCAR_HIGH_EXPLOSIVE_CONVERSION_CHANCE_PERCENT|1.0	0	<good>1%</good> chance for each kinetic or energy weapon hit on an enemy ship to deal high explosive damage instead.
-effect|SCAR_HIGH_EXPLOSIVE_CONVERSION_CHANCE_PERCENT|10.0	0	<good>10%</good> chance for each kinetic or energy weapon hit on an enemy ship to deal high explosive damage instead.
-effect|SCAR_HIGH_EXPLOSIVE_CONVERSION_CHANCE_PERCENT|12.5	0	<good>12.5%</good> chance for each kinetic or energy weapon hit on an enemy ship to deal high explosive damage instead.
-effect|SCAR_HIGH_EXPLOSIVE_CONVERSION_CHANCE_PERCENT|100.0	0	<good>100%</good> chance for each kinetic or energy weapon hit on an enemy ship to deal high explosive damage instead.
-effect|SCAR_HIGH_EXPLOSIVE_CONVERSION_CHANCE_PERCENT|-10.0	0	<good>-10%</good> chance for each kinetic or energy weapon hit on an enemy ship to deal high explosive damage instead.
-effect|SCAR_HIGH_EXPLOSIVE_CONVERSION_CHANCE_PERCENT|-12.5	0	<good>-12.5%</good> chance for each kinetic or energy weapon hit on an enemy ship to deal high explosive damage instead.
+effect|SCAR_HIGH_EXPLOSIVE_CONVERSION_CHANCE_PERCENT|1.0	0	<good>1%</good> chance for each kinetic or energy weapon hit on an enemy ship to deal high-explosive damage instead.
+effect|SCAR_HIGH_EXPLOSIVE_CONVERSION_CHANCE_PERCENT|10.0	0	<good>10%</good> chance for each kinetic or energy weapon hit on an enemy ship to deal high-explosive damage instead.
+effect|SCAR_HIGH_EXPLOSIVE_CONVERSION_CHANCE_PERCENT|12.5	0	<good>12.5%</good> chance for each kinetic or energy weapon hit on an enemy ship to deal high-explosive damage instead.
+effect|SCAR_HIGH_EXPLOSIVE_CONVERSION_CHANCE_PERCENT|100.0	0	<good>100%</good> chance for each kinetic or energy weapon hit on an enemy ship to deal high-explosive damage instead.
+effect|SCAR_HIGH_EXPLOSIVE_CONVERSION_CHANCE_PERCENT|-10.0	0	<good>-10%</good> chance for each kinetic or energy weapon hit on an enemy ship to deal high-explosive damage instead.
+effect|SCAR_HIGH_EXPLOSIVE_CONVERSION_CHANCE_PERCENT|-12.5	0	<good>-12.5%</good> chance for each kinetic or energy weapon hit on an enemy ship to deal high-explosive damage instead.
 effect|SCAR_HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased high-explosive damage taken.
 effect|SCAR_HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased high-explosive damage taken.
 effect|SCAR_HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased high-explosive damage taken.
@@ -2806,12 +2806,12 @@ effect|SCAR_MANEUVERABILITY_PERCENT|12.5	0	<good>12.5%</good> increased maneuver
 effect|SCAR_MANEUVERABILITY_PERCENT|100.0	0	<good>100%</good> increased maneuverability.
 effect|SCAR_MANEUVERABILITY_PERCENT|-10.0	0	<bad>10%</bad> reduced maneuverability.
 effect|SCAR_MANEUVERABILITY_PERCENT|-12.5	0	<bad>12.5%</bad> reduced maneuverability.
-effect|SCAR_MAX_COMBAT_READINESS_PERCENT|1.0	0	<good>1%</good> increased maximum combat readiness.
-effect|SCAR_MAX_COMBAT_READINESS_PERCENT|10.0	0	<good>10%</good> increased maximum combat readiness.
-effect|SCAR_MAX_COMBAT_READINESS_PERCENT|12.5	0	<good>12.5%</good> increased maximum combat readiness.
-effect|SCAR_MAX_COMBAT_READINESS_PERCENT|100.0	0	<good>100%</good> increased maximum combat readiness.
-effect|SCAR_MAX_COMBAT_READINESS_PERCENT|-10.0	0	<bad>10%</bad> reduced maximum combat readiness.
-effect|SCAR_MAX_COMBAT_READINESS_PERCENT|-12.5	0	<bad>12.5%</bad> reduced maximum combat readiness.
+effect|SCAR_MAX_COMBAT_READINESS_PERCENT|1.0	0	<good>+1%</good> to maximum combat readiness.
+effect|SCAR_MAX_COMBAT_READINESS_PERCENT|10.0	0	<good>+10%</good> to maximum combat readiness.
+effect|SCAR_MAX_COMBAT_READINESS_PERCENT|12.5	0	<good>+12.5%</good> to maximum combat readiness.
+effect|SCAR_MAX_COMBAT_READINESS_PERCENT|100.0	0	<good>+100%</good> to maximum combat readiness.
+effect|SCAR_MAX_COMBAT_READINESS_PERCENT|-10.0	0	<bad>-10%</bad> to maximum combat readiness.
+effect|SCAR_MAX_COMBAT_READINESS_PERCENT|-12.5	0	<bad>-12.5%</bad> to maximum combat readiness.
 effect|SCAR_MINE_DAMAGE_TAKEN_MULT|1.0	0	<good>1%</good> less damage taken from mines.
 effect|SCAR_MINE_DAMAGE_TAKEN_MULT|10.0	0	<good>10%</good> less damage taken from mines.
 effect|SCAR_MINE_DAMAGE_TAKEN_MULT|12.5	0	<good>12.5%</good> less damage taken from mines.
@@ -2824,12 +2824,12 @@ effect|SCAR_MISSILE_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased dam
 effect|SCAR_MISSILE_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased damage taken from missiles.
 effect|SCAR_MISSILE_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced damage taken from missiles.
 effect|SCAR_MISSILE_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced damage taken from missiles.
-effect|SCAR_NAV_RATING_PERCENT|1.0	0	Your fleet has <good>+1</good> to nav rating.
-effect|SCAR_NAV_RATING_PERCENT|10.0	0	Your fleet has <good>+10</good> to nav rating.
-effect|SCAR_NAV_RATING_PERCENT|12.5	0	Your fleet has <good>+12.5</good> to nav rating.
-effect|SCAR_NAV_RATING_PERCENT|100.0	0	Your fleet has <good>+100</good> to nav rating.
-effect|SCAR_NAV_RATING_PERCENT|-10.0	0	Your fleet has <bad>-10</bad> to nav rating.
-effect|SCAR_NAV_RATING_PERCENT|-12.5	0	Your fleet has <bad>-12.5</bad> to nav rating.
+effect|SCAR_NAV_RATING_PERCENT|1.0	0	The officer's fleet has <good>+1%</good> to nav rating.
+effect|SCAR_NAV_RATING_PERCENT|10.0	0	The officer's fleet has <good>+10%</good> to nav rating.
+effect|SCAR_NAV_RATING_PERCENT|12.5	0	The officer's fleet has <good>+12.5%</good> to nav rating.
+effect|SCAR_NAV_RATING_PERCENT|100.0	0	The officer's fleet has <good>+100%</good> to nav rating.
+effect|SCAR_NAV_RATING_PERCENT|-10.0	0	The officer's fleet has <bad>-10%</bad> to nav rating.
+effect|SCAR_NAV_RATING_PERCENT|-12.5	0	The officer's fleet has <bad>-12.5%</bad> to nav rating.
 effect|SCAR_OBJECTIVE_CAPTURE_RANGE_PERCENT|1.0	0	<good>1%</good> increased range from which combat objectives can be captured.
 effect|SCAR_OBJECTIVE_CAPTURE_RANGE_PERCENT|10.0	0	<good>10%</good> increased range from which combat objectives can be captured.
 effect|SCAR_OBJECTIVE_CAPTURE_RANGE_PERCENT|12.5	0	<good>12.5%</good> increased range from which combat objectives can be captured.
@@ -2860,12 +2860,12 @@ effect|SCAR_PROJECTILE_SPEED_PERCENT|12.5	0	<good>12.5%</good> increased weapon 
 effect|SCAR_PROJECTILE_SPEED_PERCENT|100.0	0	<good>100%</good> increased weapon projectile speed.
 effect|SCAR_PROJECTILE_SPEED_PERCENT|-10.0	0	<bad>10%</bad> reduced weapon projectile speed.
 effect|SCAR_PROJECTILE_SPEED_PERCENT|-12.5	0	<bad>12.5%</bad> reduced weapon projectile speed.
-effect|SCAR_SENSOR_STRENGTH_PERCENT|1.0	0	<good>1%</good> increased this ship's sensor strength.
-effect|SCAR_SENSOR_STRENGTH_PERCENT|10.0	0	<good>10%</good> increased this ship's sensor strength.
-effect|SCAR_SENSOR_STRENGTH_PERCENT|12.5	0	<good>12.5%</good> increased this ship's sensor strength.
-effect|SCAR_SENSOR_STRENGTH_PERCENT|100.0	0	<good>100%</good> increased this ship's sensor strength.
-effect|SCAR_SENSOR_STRENGTH_PERCENT|-10.0	0	<bad>10%</bad> reduced this ship's sensor strength.
-effect|SCAR_SENSOR_STRENGTH_PERCENT|-12.5	0	<bad>12.5%</bad> reduced this ship's sensor strength.
+effect|SCAR_SENSOR_STRENGTH_PERCENT|1.0	0	<good>1%</good> increased sensor strength.
+effect|SCAR_SENSOR_STRENGTH_PERCENT|10.0	0	<good>10%</good> increased sensor strength.
+effect|SCAR_SENSOR_STRENGTH_PERCENT|12.5	0	<good>12.5%</good> increased sensor strength.
+effect|SCAR_SENSOR_STRENGTH_PERCENT|100.0	0	<good>100%</good> increased sensor strength.
+effect|SCAR_SENSOR_STRENGTH_PERCENT|-10.0	0	<bad>10%</bad> reduced sensor strength.
+effect|SCAR_SENSOR_STRENGTH_PERCENT|-12.5	0	<bad>12.5%</bad> reduced sensor strength.
 effect|SCAR_SHIELD_ARC_PERCENT|1.0	0	<good>1%</good> increased shield arc.
 effect|SCAR_SHIELD_ARC_PERCENT|10.0	0	<good>10%</good> increased shield arc.
 effect|SCAR_SHIELD_ARC_PERCENT|12.5	0	<good>12.5%</good> increased shield arc.
@@ -2914,30 +2914,30 @@ effect|SCAR_WEAPON_DURABILITY_PERCENT|12.5	0	<good>12.5%</good> increased weapon
 effect|SCAR_WEAPON_DURABILITY_PERCENT|100.0	0	<good>100%</good> increased weapon durability.
 effect|SCAR_WEAPON_DURABILITY_PERCENT|-10.0	0	<bad>10%</bad> reduced weapon durability.
 effect|SCAR_WEAPON_DURABILITY_PERCENT|-12.5	0	<bad>12.5%</bad> reduced weapon durability.
-effect|SCAR_WEAPON_MALFUNCTION_PERCENT|1.0	1	<good>1%</good> increased weapon malfunction chance.
-effect|SCAR_WEAPON_MALFUNCTION_PERCENT|10.0	1	<good>10%</good> increased weapon malfunction chance.
-effect|SCAR_WEAPON_MALFUNCTION_PERCENT|12.5	1	<good>12.5%</good> increased weapon malfunction chance.
-effect|SCAR_WEAPON_MALFUNCTION_PERCENT|100.0	1	<good>100%</good> increased weapon malfunction chance.
-effect|SCAR_WEAPON_MALFUNCTION_PERCENT|-10.0	1	<bad>10%</bad> reduced weapon malfunction chance.
-effect|SCAR_WEAPON_MALFUNCTION_PERCENT|-12.5	1	<bad>12.5%</bad> reduced weapon malfunction chance.
+effect|SCAR_WEAPON_MALFUNCTION_PERCENT|1.0	0	<bad>+1%</bad> to weapon malfunction chance.
+effect|SCAR_WEAPON_MALFUNCTION_PERCENT|10.0	0	<bad>+10%</bad> to weapon malfunction chance.
+effect|SCAR_WEAPON_MALFUNCTION_PERCENT|12.5	0	<bad>+12.5%</bad> to weapon malfunction chance.
+effect|SCAR_WEAPON_MALFUNCTION_PERCENT|100.0	0	<bad>+100%</bad> to weapon malfunction chance.
+effect|SCAR_WEAPON_MALFUNCTION_PERCENT|-10.0	0	<good>-10%</good> to weapon malfunction chance.
+effect|SCAR_WEAPON_MALFUNCTION_PERCENT|-12.5	0	<good>-12.5%</good> to weapon malfunction chance.
 effect|SCAR_WEAPON_RANGE_PERCENT|1.0	0	<good>1%</good> increased weapon range.
 effect|SCAR_WEAPON_RANGE_PERCENT|10.0	0	<good>10%</good> increased weapon range.
 effect|SCAR_WEAPON_RANGE_PERCENT|12.5	0	<good>12.5%</good> increased weapon range.
 effect|SCAR_WEAPON_RANGE_PERCENT|100.0	0	<good>100%</good> increased weapon range.
 effect|SCAR_WEAPON_RANGE_PERCENT|-10.0	0	<bad>10%</bad> reduced weapon range.
 effect|SCAR_WEAPON_RANGE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced weapon range.
-effect|SCAR_WING_DAMAGE_TO_FIGHTERS_PERCENT|1.0	0	Strikecraft launched from this ship deal <good>1%</good> increased damage to fighters.
-effect|SCAR_WING_DAMAGE_TO_FIGHTERS_PERCENT|10.0	0	Strikecraft launched from this ship deal <good>10%</good> increased damage to fighters.
-effect|SCAR_WING_DAMAGE_TO_FIGHTERS_PERCENT|12.5	0	Strikecraft launched from this ship deal <good>12.5%</good> increased damage to fighters.
-effect|SCAR_WING_DAMAGE_TO_FIGHTERS_PERCENT|100.0	0	Strikecraft launched from this ship deal <good>100%</good> increased damage to fighters.
-effect|SCAR_WING_DAMAGE_TO_FIGHTERS_PERCENT|-10.0	0	Strikecraft launched from this ship deal <good>-10%</good> increased damage to fighters.
-effect|SCAR_WING_DAMAGE_TO_FIGHTERS_PERCENT|-12.5	0	Strikecraft launched from this ship deal <good>-12.5%</good> increased damage to fighters.
-effect|SCAR_ZERO_FLUX_SPEED_PERCENT|1.0	0	<good>1%</good> increased zero-flux speed bonus.
-effect|SCAR_ZERO_FLUX_SPEED_PERCENT|10.0	0	<good>10%</good> increased zero-flux speed bonus.
-effect|SCAR_ZERO_FLUX_SPEED_PERCENT|12.5	0	<good>12.5%</good> increased zero-flux speed bonus.
-effect|SCAR_ZERO_FLUX_SPEED_PERCENT|100.0	0	<good>100%</good> increased zero-flux speed bonus.
-effect|SCAR_ZERO_FLUX_SPEED_PERCENT|-10.0	0	<bad>10%</bad> reduced zero-flux speed bonus.
-effect|SCAR_ZERO_FLUX_SPEED_PERCENT|-12.5	0	<bad>12.5%</bad> reduced zero-flux speed bonus.
+effect|SCAR_WING_DAMAGE_TO_FIGHTERS_PERCENT|1.0	0	Strikecraft launched from this ship deal <good>1%</good> increased damage to strikecraft.
+effect|SCAR_WING_DAMAGE_TO_FIGHTERS_PERCENT|10.0	0	Strikecraft launched from this ship deal <good>10%</good> increased damage to strikecraft.
+effect|SCAR_WING_DAMAGE_TO_FIGHTERS_PERCENT|12.5	0	Strikecraft launched from this ship deal <good>12.5%</good> increased damage to strikecraft.
+effect|SCAR_WING_DAMAGE_TO_FIGHTERS_PERCENT|100.0	0	Strikecraft launched from this ship deal <good>100%</good> increased damage to strikecraft.
+effect|SCAR_WING_DAMAGE_TO_FIGHTERS_PERCENT|-10.0	0	Strikecraft launched from this ship deal <good>-10%</good> increased damage to strikecraft.
+effect|SCAR_WING_DAMAGE_TO_FIGHTERS_PERCENT|-12.5	0	Strikecraft launched from this ship deal <good>-12.5%</good> increased damage to strikecraft.
+effect|SCAR_ZERO_FLUX_SPEED_PERCENT|1.0	0	<good>1%</good> increased 0-flux speed boost.
+effect|SCAR_ZERO_FLUX_SPEED_PERCENT|10.0	0	<good>10%</good> increased 0-flux speed boost.
+effect|SCAR_ZERO_FLUX_SPEED_PERCENT|12.5	0	<good>12.5%</good> increased 0-flux speed boost.
+effect|SCAR_ZERO_FLUX_SPEED_PERCENT|100.0	0	<good>100%</good> increased 0-flux speed boost.
+effect|SCAR_ZERO_FLUX_SPEED_PERCENT|-10.0	0	<bad>10%</bad> reduced 0-flux speed boost.
+effect|SCAR_ZERO_FLUX_SPEED_PERCENT|-12.5	0	<bad>12.5%</bad> reduced 0-flux speed boost.
 effect|SENSOR_PROFILE_MULT|1.0	1	<good>1%</good> more sensor profile.
 effect|SENSOR_PROFILE_MULT|10.0	1	<good>10%</good> more sensor profile.
 effect|SENSOR_PROFILE_MULT|12.5	1	<good>12.5%</good> more sensor profile.
