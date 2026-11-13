@@ -25,15 +25,15 @@ class OfficerBoardGeneratorTest {
     }
 
     @Test
-    void theDefaultBoardIsAPyramidOfFortyFiveWaitingOfficers() {
+    void theDefaultBoardIsAPyramidOfThirtyOneWaitingOfficers() {
         List<AtlasOfficer> board = board(SEED);
 
-        assertEquals(45, board.size());
+        assertEquals(31, board.size());
         Map<String, Long> perRank = board.stream().collect(Collectors.groupingBy(AtlasOfficer::rankId, LinkedHashMap::new, Collectors.counting()));
-        assertEquals(Map.of("lieutenant", 16L, "commander", 12L, "captain", 8L, "commodore", 6L, "admiral", 3L), perRank);
+        assertEquals(Map.of("lieutenant", 16L, "commander", 8L, "captain", 4L, "commodore", 2L, "admiral", 1L), perRank);
         assertEquals(List.of("lieutenant", "commander", "captain", "commodore", "admiral"), new ArrayList<>(perRank.keySet()));
         assertTrue(board.stream().allMatch(AtlasOfficer::neverPlaced));
-        assertEquals(IntStream.rangeClosed(1, 45).boxed().toList(), board.stream().map(AtlasOfficer::recordId).toList());
+        assertEquals(IntStream.rangeClosed(1, 31).boxed().toList(), board.stream().map(AtlasOfficer::recordId).toList());
     }
 
     @Test

@@ -5,7 +5,6 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.officer.AtlasOfficer;
-import exiledsector.charts.officer.OfficerRank;
 import exiledsector.charts.officer.OfficerRanks;
 import exiledsector.charts.officer.OfficerText;
 import exiledsector.charts.officer.turn.OfficerTurns;
@@ -49,6 +48,9 @@ final class OfficerBoard {
     static final float FRAME_WIDTH = 1.5f;
     static final float HOVERED_FRAME_WIDTH = 3f;
     static final float ROW_LINE_ALPHA = 0.08f;
+    static final float LINK_WIDTH = 1f;
+    static final float LINK_ALPHA = 0.12f;
+    static final float HOVERED_LINK_ALPHA = 0.5f;
     static final float ARROW_WIDTH = 2f;
     static final float ARROW_TRIM_SHARE = 0.6f;
     static final float SOLID_BULGE = 0.1f;
@@ -89,6 +91,7 @@ final class OfficerBoard {
     private final SpriteCache sprites = new SpriteCache(OfficerBoard.class);
     private final SensorGhostRenderer ghosts = new SensorGhostRenderer(GHOST_COUNT, GHOST_SIZE_RATIO, GHOST_SCATTER_RATIO);
     private final LineBatch arrowLines = new LineBatch(ARROW_WIDTH);
+    private final LineBatch linkLines = new LineBatch(LINK_WIDTH);
     private final OfficerBoardTooltip tooltip = new OfficerBoardTooltip(sprites);
     private final TextLabel titleLabel = new TextLabel(UiFonts.TITLE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
     private final List<TextLabel> rankLabels = new ArrayList<>();
@@ -121,14 +124,10 @@ final class OfficerBoard {
         List<OfficerBoardLayout.Entry> entries = new ArrayList<>();
         for (AtlasOfficer officer : state.officers()) {
             records.put(officer.recordId(), officer);
-            entries.add(new OfficerBoardLayout.Entry(officer.recordId(), officer.rankId(), officer.renown()));
+            entries.add(new OfficerBoardLayout.Entry(officer.recordId(), officer.rankId(), officer.renown(), officer.seat()));
         }
         lastTurn.fallen().forEach(records::putIfAbsent);
-        List<String> rankIds = new ArrayList<>();
-        for (OfficerRank rank : OfficerRanks.all()) {
-            rankIds.add(rank.id());
-        }
-        shuffle = OfficerBoardShuffle.of(rankIds, entries, lastTurn.standingChanges());
+        shuffle = OfficerBoardShuffle.of(OfficerRanks.all(), entries, lastTurn.standingChanges());
         records.forEach((recordId, officer) -> faces.put(recordId, face(officer)));
         arrows = OfficerBoardArrows.arrows(lastTurn.resolvedIntents(), OfficerTurns.declaredIntents(state), this::settledAndIdentified);
         shields = OfficerBoardArrows.shields(OfficerTurns.declaredIntents(state), this::settledAndIdentified);
@@ -327,6 +326,7 @@ final class OfficerBoard {
         BorderedPanel.drawEdges(regionLeft, regionBottom, regionWidth, regionHeight, alpha);
         titleLabel.setAlpha(alpha).draw(regionLeft + INSET, regionBottom + regionHeight - INSET);
         drawRows(alpha);
+        drawLinks(alpha);
         drawArrows(alpha * OfficerBoardShuffle.arrowAlpha(shuffleSeconds));
         for (OfficerBoardShuffle.Mover mover : shuffle.movers()) {
             float moverAlpha = moverAlpha(mover) * alpha;
@@ -354,6 +354,20 @@ final class OfficerBoard {
                 GLDraw.fillQuad(lineLeft, centreY + geometry.rowPitch() / 2f, lineWidth, 1f, Color.WHITE, ROW_LINE_ALPHA * alpha);
             }
         }
+    }
+
+    private void drawLinks(float alpha) {
+        float half = geometry.portraitSize() / 2f;
+        OfficerBoardLayout.Seat hoveredSeat = hoveredRecordId == null ? null : shuffle.after().seat(hoveredRecordId);
+        for (OfficerBoardLayout.Link link : shuffle.after().links()) {
+            float linkAlpha = (hoveredSeat != null && link.touches(hoveredSeat) ? HOVERED_LINK_ALPHA : LINK_ALPHA) * alpha;
+            linkLines.add(geometry.centreX(link.subordinate()), geometry.centreY(link.subordinate()) + half, geometry.centreX(link.superior()),
+                    geometry.centreY(link.superior()) - half, Color.WHITE, linkAlpha);
+        }
+        try (GlScope scope = GlScope.flat()) {
+            linkLines.flush();
+        }
+        linkLines.clear();
     }
 
     private void drawOfficer(int recordId, float centreX, float centreY, float alpha) {

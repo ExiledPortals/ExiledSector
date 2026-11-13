@@ -34,6 +34,16 @@ class OfficerBoardGeometryTest {
     }
 
     @Test
+    void aSuperiorSitsCentredOverItsTwoSubordinates() {
+        OfficerBoardGeometry geometry = OfficerBoardGeometry.fit(0f, 0f, 1600f, 500f, 5, 16);
+
+        float superiorX = geometry.centreX(new OfficerBoardLayout.Seat(3, 3, 8));
+        float firstX = geometry.centreX(new OfficerBoardLayout.Seat(4, 6, 16));
+        float secondX = geometry.centreX(new OfficerBoardLayout.Seat(4, 7, 16));
+        assertEquals((firstX + secondX) / 2f, superiorX, 1e-4f);
+    }
+
+    @Test
     void theBoardFitsTheSmallestScreen() {
         OfficerBoardGeometry geometry = OfficerBoardGeometry.fit(0f, 0f, 1040f, 504f, 5, 16);
 

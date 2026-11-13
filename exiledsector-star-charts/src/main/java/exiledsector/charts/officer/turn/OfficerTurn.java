@@ -7,6 +7,7 @@ import exiledsector.charts.atlas.AtlasTerritoryPlacer;
 import exiledsector.charts.atlas.AtlasTerritoryTransfer;
 import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.OfficerBoardGenerator;
+import exiledsector.charts.officer.OfficerSeats;
 import exiledsector.charts.officer.OfficerText;
 import exiledsector.charts.officer.reward.CarriedItem;
 import exiledsector.charts.officer.turn.TurnResult.LossKind;
@@ -104,7 +105,7 @@ public final class OfficerTurn {
         state.putOfficer(escaped.withDefeats(escaped.defeats() + 1));
         boolean died = loseFight(escaped.recordId(), wasLowestRank);
         if (!wasLowestRank) {
-            AtlasOfficer partner = swapPartner(setup.rankOrder(escaped.rankId()) - 1, true, escaped.recordId());
+            AtlasOfficer partner = mostRenownedSwappable(OfficerSeats.subordinates(setup.ranks(), state.officers(), state.officer(escaped.recordId())));
             if (partner != null) {
                 swapRanks(escaped.recordId(), partner.recordId());
             }
@@ -114,12 +115,9 @@ public final class OfficerTurn {
 
     private void beatPlayer(AtlasOfficer officer) {
         state.putOfficer(officer.withLastChance(false));
-        int rankOrder = setup.rankOrder(officer.rankId());
-        if (rankOrder + 1 < setup.ranks().size()) {
-            AtlasOfficer partner = swapPartner(rankOrder + 1, false, officer.recordId());
-            if (partner != null) {
-                swapRanks(officer.recordId(), partner.recordId());
-            }
+        AtlasOfficer superior = OfficerSeats.superior(setup.ranks(), state.officers(), officer);
+        if (superior != null && canSwap(superior)) {
+            swapRanks(officer.recordId(), superior.recordId());
         }
     }
 
@@ -138,7 +136,7 @@ public final class OfficerTurn {
     private void die(AtlasOfficer officer) {
         fallen.put(officer.recordId(), officer);
         state.removeOfficer(officer.recordId());
-        AtlasOfficer replacement = OfficerBoardGenerator.replacement(state.seed(), state.newOfficerRecordId(), officer.factionId(), setup.ranks(),
+        AtlasOfficer replacement = OfficerBoardGenerator.replacement(state.seed(), state.newOfficerRecordId(), officer.factionId(), officer.seat(), setup.ranks(),
                 setup.catalogue(), setup.startingItems()).withPendingOffers(officer.pendingOffers());
         if (officer.isActive()) {
             replacement = state.withLeftBehindItems(replacement.takingCommand(officer.commandCentre(),
@@ -148,18 +146,15 @@ public final class OfficerTurn {
         replacements.add(new Replacement(officer.recordId(), replacement.recordId()));
     }
 
-    private AtlasOfficer swapPartner(int rankOrder, boolean mostRenowned, int excludedRecordId) {
-        if (rankOrder < 0 || rankOrder >= setup.ranks().size()) {
-            return null;
-        }
-        String rankId = setup.ranks().get(rankOrder).id();
+    private boolean canSwap(AtlasOfficer officer) {
+        return officer.heldCommand() && officer.recordId() != setup.openRunOfficerId() && !changedRankThisTurn.contains(officer.recordId());
+    }
+
+    private AtlasOfficer mostRenownedSwappable(List<AtlasOfficer> candidates) {
         AtlasOfficer partner = null;
-        for (AtlasOfficer officer : byRecordId(state.officers())) {
-            if (!officer.heldCommand() || !officer.rankId().equals(rankId) || officer.recordId() == excludedRecordId
-                    || officer.recordId() == setup.openRunOfficerId() || changedRankThisTurn.contains(officer.recordId())) {
-                continue;
-            }
-            if (partner == null || (mostRenowned ? officer.renown() > partner.renown() : officer.renown() < partner.renown())) {
+        for (AtlasOfficer officer : candidates) {
+            if (canSwap(officer) && (partner == null || officer.renown() > partner.renown()
+                    || officer.renown() == partner.renown() && officer.recordId() < partner.recordId())) {
                 partner = officer;
             }
         }
@@ -169,8 +164,8 @@ public final class OfficerTurn {
     private void swapRanks(int firstRecordId, int secondRecordId) {
         AtlasOfficer first = state.officer(firstRecordId);
         AtlasOfficer second = state.officer(secondRecordId);
-        state.putOfficer(first.withRank(second.rankId()));
-        state.putOfficer(second.withRank(first.rankId()));
+        state.putOfficer(first.seatedAt(second.rankId(), second.seat()));
+        state.putOfficer(second.seatedAt(first.rankId(), first.seat()));
         changedRankThisTurn.add(firstRecordId);
         changedRankThisTurn.add(secondRecordId);
     }
@@ -260,8 +255,8 @@ public final class OfficerTurn {
     private void resolveChallenge(Intent intent, Set<Integer> defending) {
         AtlasOfficer attacker = state.officer(intent.officerRecordId());
         AtlasOfficer defender = state.officer(intent.targetRecordId());
-        if (defender == null || !takesPart(defender.recordId()) || attacker.factionId().equals(defender.factionId())
-                || !neighbours(attacker, defender)) {
+        if (defender == null || !takesPart(defender.recordId())
+                || state.decidedContest(intent.encode()) == null && !OfficerSeats.adjacent(setup.ranks(), state.officers(), attacker, defender)) {
             return;
         }
         boolean defended = defending.contains(defender.recordId());
@@ -300,15 +295,6 @@ public final class OfficerTurn {
         return false;
     }
 
-    private boolean neighbours(AtlasOfficer first, AtlasOfficer second) {
-        for (AtlasCell cell : state.claimsOf(first.commandCentre())) {
-            if (borders(second.commandCentre(), cell)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private void earnHoldingsRenown() {
         for (AtlasOfficer officer : byRecordId(state.officers())) {
             if (officer.isActive()) {
@@ -318,11 +304,17 @@ public final class OfficerTurn {
     }
 
     private void swapByRenown() {
-        for (int rankOrder = setup.ranks().size() - 2; rankOrder >= 0; rankOrder--) {
-            AtlasOfficer rising = swapPartner(rankOrder, true, Intent.NO_OFFICER);
-            AtlasOfficer falling = swapPartner(rankOrder + 1, false, Intent.NO_OFFICER);
-            if (rising != null && falling != null && rising.renown() > falling.renown()) {
-                swapRanks(rising.recordId(), falling.recordId());
+        for (int rankOrder = setup.ranks().size() - 1; rankOrder > 0; rankOrder--) {
+            String rankId = setup.ranks().get(rankOrder).id();
+            for (int seat = 0; seat < setup.ranks().get(rankOrder).places(); seat++) {
+                AtlasOfficer superior = OfficerSeats.seated(state.officers(), rankId, seat);
+                if (superior == null || !canSwap(superior)) {
+                    continue;
+                }
+                AtlasOfficer rising = mostRenownedSwappable(OfficerSeats.subordinates(setup.ranks(), state.officers(), superior));
+                if (rising != null && rising.renown() > superior.renown()) {
+                    swapRanks(rising.recordId(), superior.recordId());
+                }
             }
         }
     }
@@ -349,7 +341,7 @@ public final class OfficerTurn {
             boolean underConflictCap = declaredConflicts < rules.maxConflictsPerTurn();
             List<Intent> pushes = underConflictCap ? pushCandidates(officer, territory) : List.of();
             List<Intent> challenges = underConflictCap && !declaredChallengers.contains(officer.recordId())
-                    ? challengeCandidates(officer, territory) : List.of();
+                    ? challengeCandidates(officer) : List.of();
             Map<IntentKind, Float> weights = new EnumMap<>(IntentKind.class);
             if (!expandCells.isEmpty()) {
                 weights.put(IntentKind.EXPAND, rules.expandWeight(officer.rankId(), officer.traitId(), territory.size()));
@@ -412,14 +404,16 @@ public final class OfficerTurn {
         return List.copyOf(candidates.values());
     }
 
-    private List<Intent> challengeCandidates(AtlasOfficer officer, Set<AtlasCell> territory) {
+    private List<Intent> challengeCandidates(AtlasOfficer officer) {
+        List<AtlasOfficer> linked = new ArrayList<>(OfficerSeats.subordinates(setup.ranks(), state.officers(), officer));
+        AtlasOfficer superior = OfficerSeats.superior(setup.ranks(), state.officers(), officer);
+        if (superior != null) {
+            linked.add(superior);
+        }
         Map<Integer, Intent> candidates = new TreeMap<>();
-        for (AtlasCell cell : territory) {
-            for (AtlasCell lane : terrain.lanes(cell)) {
-                AtlasOfficer defender = targetableNeighbour(officer, lane);
-                if (defender != null && !declaredChallengers.contains(defender.recordId())) {
-                    candidates.put(defender.recordId(), Intent.challenge(officer.recordId(), defender.recordId()));
-                }
+        for (AtlasOfficer defender : linked) {
+            if (canDeclare(defender) && !declaredChallengers.contains(defender.recordId())) {
+                candidates.put(defender.recordId(), Intent.challenge(officer.recordId(), defender.recordId()));
             }
         }
         return List.copyOf(candidates.values());

@@ -379,7 +379,7 @@ class OfficerTurnTest {
     }
 
     @Test
-    void anOfficerWhoBeatsThePlayerClearsTheMarkAndRisesARank() {
+    void anOfficerWhoBeatsThePlayerClearsTheMarkAndSwapsWithTheirSuperior() {
         AtlasState state = borderingTerritories();
         place(state, 5, "pirates", "commander", new AtlasCell(-4, 4));
         update(state, PIRATE_OFFICER, officer -> officer.withLastChance(true));
@@ -390,8 +390,8 @@ class OfficerTurnTest {
 
         assertFalse(state.officer(PIRATE_OFFICER).lastChance());
         assertEquals("commander", state.officer(PIRATE_OFFICER).rankId());
-        assertEquals("lieutenant", state.officer(5).rankId());
-        assertEquals("commander", state.officer(HEGEMONY_OFFICER).rankId());
+        assertEquals("lieutenant", state.officer(HEGEMONY_OFFICER).rankId());
+        assertEquals("commander", state.officer(5).rankId());
     }
 
     @Test
@@ -405,6 +405,52 @@ class OfficerTurnTest {
         assertEquals("commander", state.officer(PIRATE_OFFICER).rankId());
         assertEquals("lieutenant", state.officer(HEGEMONY_OFFICER).rankId());
         assertTrue(result.standingChange(PIRATE_OFFICER).rankChanged());
+    }
+
+    @Test
+    void renownLiftsAnOfficerOnlyPastTheirOwnSuperior() {
+        AtlasState state = borderingTerritories();
+        place(state, 6, "tritachyon", "commander", new AtlasCell(-6, 0));
+        place(state, 7, "tritachyon", "lieutenant", new AtlasCell(-6, 6));
+        place(state, 8, "pirates", "lieutenant", new AtlasCell(6, 6));
+        update(state, HEGEMONY_OFFICER, officer -> officer.withRenown(5));
+        update(state, PIRATE_OFFICER, officer -> officer.withRenown(3));
+
+        take(state, TurnCause.forced(), setup(ATTACKER_WINS));
+
+        assertEquals("lieutenant", state.officer(PIRATE_OFFICER).rankId());
+        assertEquals("commander", state.officer(6).rankId());
+        assertEquals("lieutenant", state.officer(8).rankId());
+    }
+
+    @Test
+    void aChallengeBetweenOfficersWhoAreNotSuperiorAndSubordinateIsDropped() {
+        AtlasState state = borderingTerritories();
+        place(state, 6, "pirates", "lieutenant", new AtlasCell(-6, 6));
+        place(state, 7, "pirates", "lieutenant", new AtlasCell(6, 6), new AtlasCell(1, 1));
+        declare(state, Intent.challenge(7, HEGEMONY_OFFICER), Intent.challenge(6, PIRATE_OFFICER));
+
+        TurnResult result = take(state, TurnCause.forced(), setup(ATTACKER_WINS));
+
+        assertNull(resolved(result, IntentKind.CHALLENGE));
+        assertEquals("commander", state.officer(HEGEMONY_OFFICER).rankId());
+        assertEquals("lieutenant", state.officer(7).rankId());
+    }
+
+    @Test
+    void aChallengeDecidedInASkirmishStandsEvenWhenTheOfficersNoLongerAnswerToEachOther() {
+        AtlasState state = borderingTerritories();
+        place(state, 6, "pirates", "lieutenant", new AtlasCell(-6, 6));
+        place(state, 7, "pirates", "lieutenant", new AtlasCell(6, 6));
+        Intent challenge = Intent.challenge(7, HEGEMONY_OFFICER);
+        declare(state, challenge);
+        state.decideContest(challenge.encode(), true);
+
+        TurnResult result = take(state, TurnCause.forced(), setup(DEFENDER_WINS));
+
+        assertTrue(resolved(result, IntentKind.CHALLENGE).succeeded());
+        assertEquals("commander", state.officer(7).rankId());
+        assertEquals("lieutenant", state.officer(HEGEMONY_OFFICER).rankId());
     }
 
     @Test

@@ -1,5 +1,6 @@
 package exiledsector.ui.atlas;
 
+import exiledsector.charts.officer.OfficerRank;
 import exiledsector.charts.officer.turn.TurnResult;
 
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ final class OfficerBoardShuffle {
         this.movers = movers;
     }
 
-    static OfficerBoardShuffle of(List<String> rankIdsLowestFirst, List<OfficerBoardLayout.Entry> current, List<TurnResult.StandingChange> changes) {
+    static OfficerBoardShuffle of(List<OfficerRank> ranksLowestFirst, List<OfficerBoardLayout.Entry> current, List<TurnResult.StandingChange> changes) {
         Map<Integer, TurnResult.StandingChange> changeById = new HashMap<>();
         for (TurnResult.StandingChange change : changes) {
             changeById.put(change.recordId(), change);
@@ -58,16 +59,18 @@ final class OfficerBoardShuffle {
             if (change == null) {
                 previous.add(entry);
             } else if (change.before() != null) {
-                previous.add(new OfficerBoardLayout.Entry(entry.recordId(), change.before().rankId(), change.before().renown()));
+                previous.add(new OfficerBoardLayout.Entry(entry.recordId(), change.before().rankId(), change.before().renown(),
+                        change.before().seat()));
             }
         }
         for (TurnResult.StandingChange change : changes) {
             if (!currentIds.contains(change.recordId()) && change.before() != null) {
-                previous.add(new OfficerBoardLayout.Entry(change.recordId(), change.before().rankId(), change.before().renown()));
+                previous.add(new OfficerBoardLayout.Entry(change.recordId(), change.before().rankId(), change.before().renown(),
+                        change.before().seat()));
             }
         }
-        OfficerBoardLayout before = OfficerBoardLayout.of(rankIdsLowestFirst, previous);
-        OfficerBoardLayout after = OfficerBoardLayout.of(rankIdsLowestFirst, current);
+        OfficerBoardLayout before = OfficerBoardLayout.of(ranksLowestFirst, previous);
+        OfficerBoardLayout after = OfficerBoardLayout.of(ranksLowestFirst, current);
         List<Mover> movers = new ArrayList<>();
         for (OfficerBoardLayout.Entry entry : previous) {
             movers.add(new Mover(entry.recordId(), before.seat(entry.recordId()), after.seat(entry.recordId()),

@@ -31,10 +31,10 @@ public record TurnResult(int turn, TurnCause cause, List<StandingChange> standin
         fallen = Map.copyOf(fallen);
     }
 
-    public record Standing(String rankId, int renown) {
+    public record Standing(String rankId, int renown, int seat) {
 
         public static Standing of(AtlasOfficer officer) {
-            return new Standing(officer.rankId(), officer.renown());
+            return new Standing(officer.rankId(), officer.renown(), officer.seat());
         }
     }
 
@@ -98,7 +98,7 @@ public record TurnResult(int turn, TurnCause cause, List<StandingChange> standin
         lines.add(join(TURN_LINE, Integer.toString(turn), cause.kind().name(), Integer.toString(cause.officerRecordId())));
         for (StandingChange change : standingChanges) {
             lines.add(join(STANDING_LINE, Integer.toString(change.recordId()), rankOf(change.before()), renownOf(change.before()),
-                    rankOf(change.after()), renownOf(change.after())));
+                    rankOf(change.after()), renownOf(change.after()), seatOf(change.before()), seatOf(change.after())));
         }
         for (ResolvedIntent intent : resolvedIntents) {
             lines.add(join(INTENT_LINE, intent.kind().id(), Integer.toString(intent.attackerRecordId()), Integer.toString(intent.defenderRecordId()),
@@ -152,8 +152,8 @@ public record TurnResult(int turn, TurnCause cause, List<StandingChange> standin
         }
         String[] fields = line.split(SEPARATOR, -1);
         switch (fields[0]) {
-            case STANDING_LINE -> standings.add(new StandingChange(Integer.parseInt(fields[1]), standing(fields[2], fields[3]),
-                    standing(fields[4], fields[5])));
+            case STANDING_LINE -> standings.add(new StandingChange(Integer.parseInt(fields[1]), standing(fields[2], fields[3], seatField(fields, 6)),
+                    standing(fields[4], fields[5], seatField(fields, 7))));
             case INTENT_LINE -> intents.add(new ResolvedIntent(kind(fields[1]),
                     Integer.parseInt(fields[2]), Integer.parseInt(fields[3]), uncell(fields[4]), unflag(fields[5]), unflag(fields[6])));
             case LOSS_LINE -> losses.add(new OfficerLoss(Integer.parseInt(fields[1]), LossKind.valueOf(fields[2]), Integer.parseInt(fields[3]),
@@ -184,8 +184,16 @@ public record TurnResult(int turn, TurnCause cause, List<StandingChange> standin
         return standing == null ? "" : Integer.toString(standing.renown());
     }
 
-    private static Standing standing(String rankId, String renown) {
-        return rankId.isEmpty() ? null : new Standing(rankId, Integer.parseInt(renown));
+    private static String seatOf(Standing standing) {
+        return standing == null ? "" : Integer.toString(standing.seat());
+    }
+
+    private static Standing standing(String rankId, String renown, int seat) {
+        return rankId.isEmpty() ? null : new Standing(rankId, Integer.parseInt(renown), seat);
+    }
+
+    private static int seatField(String[] fields, int index) {
+        return index < fields.length && !fields[index].isEmpty() ? Integer.parseInt(fields[index]) : AtlasOfficer.UNSEATED;
     }
 
     private static String cell(AtlasCell cell) {

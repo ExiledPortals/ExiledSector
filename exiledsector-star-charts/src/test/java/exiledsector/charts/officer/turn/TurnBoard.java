@@ -6,6 +6,7 @@ import exiledsector.charts.atlas.AtlasTerritoryPlacer;
 import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.FlagshipCatalogue;
 import exiledsector.charts.officer.OfficerRanks;
+import exiledsector.charts.officer.OfficerSeats;
 import exiledsector.charts.officer.StartingItemRoll;
 
 import java.util.ArrayList;
@@ -52,6 +53,7 @@ final class TurnBoard {
     static AtlasOfficer place(AtlasState state, int recordId, String factionId, String rankId, AtlasCell centre, AtlasCell... claims) {
         AtlasOfficer officer = AtlasOfficer.waiting(recordId, factionId, rankId, "steady",
                         new AtlasOfficer.OfficerSeeds(recordId, recordId + 1L, recordId + 2L, recordId + 3L), null)
+                .seatedAt(rankId, freeSeat(state, rankId))
                 .takingCommand(centre, AtlasTerritoryPlacer.history(AtlasTerritoryPlacer.ARRIVED_HISTORY, centre));
         state.putOfficer(officer);
         state.claim(centre, centre);
@@ -59,6 +61,14 @@ final class TurnBoard {
             state.claim(claim, centre);
         }
         return officer;
+    }
+
+    static int freeSeat(AtlasState state, String rankId) {
+        int seat = 0;
+        while (OfficerSeats.seated(state.officers(), rankId, seat) != null) {
+            seat++;
+        }
+        return seat;
     }
 
     static TurnSetup setup(TurnRules rules) {

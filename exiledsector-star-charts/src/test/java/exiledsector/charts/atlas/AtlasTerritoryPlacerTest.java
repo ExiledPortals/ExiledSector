@@ -92,7 +92,7 @@ class AtlasTerritoryPlacerTest {
         List<Integer> recordIds = state.officers().stream().map(AtlasOfficer::recordId).toList();
         AtlasReach.refreshReveal(generator, state, TerritoryContext.NONE);
 
-        assertEquals(45, state.officers().size());
+        assertEquals(31, state.officers().size());
         assertEquals(recordIds, state.officers().stream().map(AtlasOfficer::recordId).toList());
         assertFalse(centres(state).isEmpty());
     }

@@ -53,6 +53,7 @@ public final class AtlasTerritoryPlacer {
 
     public static void place(AtlasGenerator generator, AtlasState state, Set<AtlasCell> visible, TerritoryContext context) {
         fillBoard(generator, state, context);
+        OfficerSeatRepair.repair(generator, state, OfficerRanks.all(), context);
         AtlasTerritoryPlacer placer = new AtlasTerritoryPlacer(generator, state, visible, context);
         placer.placeInNewChunks();
         if (state.fillFingerprintChanged(fillFingerprint(visible, state))) {

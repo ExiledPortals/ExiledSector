@@ -1,6 +1,6 @@
 id,boss_size,fleet_strength,actions,places,unique_share,craft_low,craft_mid,craft_high,note
-lieutenant,10,0,1,16,2,70,25,5,"Placeholder magnitudes; ranks run lowest first"
-commander,20,10,1,12,5.25,55,30,15,
-captain,30,20,2,8,8.5,40,35,25,
-commodore,45,35,2,6,11.75,25,40,35,
-admiral,60,50,3,3,15,10,45,45,
+lieutenant,10,0,1,16,2,70,25,5,"Placeholder magnitudes; ranks run lowest first; places halve per rank so each seat has two subordinates"
+commander,20,10,1,8,5.25,55,30,15,
+captain,30,20,2,4,8.5,40,35,25,
+commodore,45,35,2,2,11.75,25,40,35,
+admiral,60,50,3,1,15,10,45,45,

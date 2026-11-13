@@ -1126,7 +1126,9 @@ Factions hold small connected territories, each claimed from a command centre sy
 is revealed, `AtlasTerritoryPlacer` spaces command centres apart by lanes, gives each a faction weighted against what the
 visible atlas already holds (`TerritoryFactions`, never the commission faction) and seats a waiting officer, a fled one
 first; unclaimed gaps go to independents and mercenaries. The board of officers, its places per rank in
-`atlas_officer_ranks.csv`, is dealt full when the atlas is created (`OfficerBoardGenerator`), and each record in
+`atlas_officer_ranks.csv`, is dealt full when the atlas is created (`OfficerBoardGenerator`). Places are seats in a fixed
+tree where each seat answers to one seat of the rank above (`OfficerSeats`); a board saved before seats is reseated from
+the top once, with leftovers dismissed (`OfficerSeatRepair`). Each record in
 `AtlasState` keeps a flagship for life that `OfficerFleets` puts into the command centre's boss fleet, unrecoverable, at
 the rank's boss size and Fleet Strength. On a new or switched commission, that faction's officers hand their territories
 and items to officers of other factions (`CommissionHandover`), and battling a non-hostile faction's chart fleets with the
@@ -1135,8 +1137,9 @@ transponder on costs vanilla's aggressive-combat reputation once per faction (`C
 The atlas takes a turn when the player beats an officer, every fourth other chart boss and when an officer's fleet beats
 the player (`OfficerTurns`, from `ChartObjectives.completed` and `ChartContentListener`). `OfficerTurn` is a pure function
 of the state, seed and turn counter: it applies the player's result, resolves the intents declared last turn by rank
-odds and Defend, adds renown and swaps neighbouring ranks, then declares the next intents, never touching the open run's
-system (`atlas_officer_turns.csv`, `atlas_officer_intents.csv`). A beaten officer drops a rank and flees, their territory
+odds and Defend, adds renown and swaps an officer with their superior when more renowned, then declares the next intents, never touching the open run's
+system (`atlas_officer_turns.csv`, `atlas_officer_intents.csv`). Challenges and every rank swap run only between an
+officer and their superior or subordinate. A beaten officer drops a rank and flees, their territory
 breaks up and they wait for a new command centre near the player's reach (`AtlasTerritoryTransfer`); a Lieutenant is marked
 by a first loss and dies on the next, replaced by a new Lieutenant. The result is saved as a `TurnResult` for the board.
 
@@ -1231,8 +1234,8 @@ orbits once the layout's orbit limit is reached, then further out. Every neutron
 ### Faction Skirmish
 
 The atlas never rolls a skirmish itself. After each officer turn, every declared Push or Challenge between factions
-that take sides (`chart_skirmish_factions.csv` lists those that don't) puts a world record on the contested border
-system, removed once the intent is gone unless a run is open there (`SkirmishContests`, `SkirmishRecords`). The player
+that take sides (`chart_skirmish_factions.csv` lists those that don't) puts a world record on the contested system: the
+pushed border system, or for a challenge the defender's free system nearest the challenger, removed once the intent is gone unless a run is open there (`SkirmishContests`, `SkirmishRecords`). The player
 picks a side before the wormhole opens, kept with the contest on the `AtlasRunNode` (`SkirmishJoin`). The defender always
 has a station, and the attacker matches the defender's ordinary fleets plus the attacking officer in their flagship as
 commander, who pushes on the station once the rest have fallen (`SkirmishPlanner` through `adjustPlan`, `SkirmishBattle`,

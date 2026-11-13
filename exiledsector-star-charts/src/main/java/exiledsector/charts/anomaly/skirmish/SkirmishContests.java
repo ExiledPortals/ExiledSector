@@ -107,23 +107,42 @@ public final class SkirmishContests {
     }
 
     static AtlasCell challengeCell(AtlasGenerator generator, AtlasState state, AtlasOfficer attacker, AtlasOfficer defender, List<Intent> declared) {
+        AtlasCell nearest = null;
+        long nearestDistance = Long.MAX_VALUE;
         for (AtlasCell claim : state.claimsOf(defender.commandCentre())) {
-            if (state.officerAt(claim) == null && generator.node(claim).specialId() == null && !pushedAt(declared, claim)
-                    && borders(generator, state, attacker.commandCentre(), claim)) {
-                return claim;
+            long distance = squaredDistance(attacker.commandCentre(), claim);
+            if (distance < nearestDistance && state.officerAt(claim) == null && generator.node(claim).specialId() == null
+                    && !pushedAt(declared, claim)) {
+                nearest = claim;
+                nearestDistance = distance;
             }
         }
-        return null;
+        return nearest;
+    }
+
+    private static long squaredDistance(AtlasCell from, AtlasCell to) {
+        if (from == null) {
+            return 0;
+        }
+        long dx = (long) from.gridX() - to.gridX();
+        long dy = (long) from.gridY() - to.gridY();
+        return dx * dx + dy * dy;
     }
 
     private static SkirmishContest contest(AtlasGenerator generator, AtlasState state, Intent intent, AtlasOfficer defender, AtlasCell cell) {
         AtlasOfficer attacker = state.officer(intent.officerRecordId());
-        return canAttack(generator, state, attacker, defender, cell) ? new SkirmishContest(intent, attacker, defender) : null;
+        boolean possible = intent.kind() == IntentKind.CHALLENGE ? canChallenge(attacker, defender)
+                : canAttack(generator, state, attacker, defender, cell);
+        return possible ? new SkirmishContest(intent, attacker, defender) : null;
     }
 
     private static boolean canAttack(AtlasGenerator generator, AtlasState state, AtlasOfficer attacker, AtlasOfficer defender, AtlasCell cell) {
+        return canChallenge(attacker, defender) && borders(generator, state, attacker.commandCentre(), cell);
+    }
+
+    private static boolean canChallenge(AtlasOfficer attacker, AtlasOfficer defender) {
         return attacker != null && attacker.isActive() && SkirmishFactions.takesSides(attacker.factionId())
-                && !attacker.factionId().equals(defender.factionId()) && borders(generator, state, attacker.commandCentre(), cell);
+                && !attacker.factionId().equals(defender.factionId());
     }
 
     private static Map<String, Float> lanesFromAttackers(AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasOfficer defender) {

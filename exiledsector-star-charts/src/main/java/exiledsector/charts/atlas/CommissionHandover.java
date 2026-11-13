@@ -3,6 +3,7 @@ package exiledsector.charts.atlas;
 import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.OfficerBoardGenerator;
 import exiledsector.charts.officer.OfficerRanks;
+import exiledsector.charts.officer.StartingItemRoll;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -96,8 +97,8 @@ public final class CommissionHandover {
     }
 
     private AtlasOfficer newOfficer(String factionId, AtlasOfficer predecessor) {
-        return OfficerBoardGenerator.atRank(state.seed(), state.newOfficerRecordId(), factionId, predecessor.rankId(), OfficerRanks.all(),
-                context.catalogue());
+        return OfficerBoardGenerator.atRank(state.seed(), state.newOfficerRecordId(), factionId, predecessor.rankId(), predecessor.seat(),
+                OfficerRanks.all(), context.catalogue(), StartingItemRoll.NONE);
     }
 
     private String territoryFaction(AtlasCell centre) {

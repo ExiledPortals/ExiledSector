@@ -27,7 +27,7 @@ class AtlasOfficerTest {
         AtlasOfficer officer = new AtlasOfficer(12, "tritachyon", 1L, -2L, "admiral", CENTRE, "reckless", "paragon", "paragon_Elite", 3L, -4L,
                 List.of("degraded_engines", "faulty_grid"), Map.of("scar_a", 2, "scar_b", 1),
                 List.of("hull_item:1:bridge_relay:abyssal_rift", "crafting_item:4:kernel"), List.of("engram:1:engram_a", "unique:1:u_x"), 3, true,
-                AtlasOfficer.Status.ACTIVE, true, List.of("arrived:1", "moved:1:2"), 40, true);
+                AtlasOfficer.Status.ACTIVE, true, List.of("arrived:1", "moved:1:2"), 40, true, 5);
 
         assertEquals(officer, AtlasOfficer.decode(12, officer.encode()));
     }
@@ -45,7 +45,7 @@ class AtlasOfficerTest {
 
         assertNull(AtlasOfficer.decode(1, null));
         assertNull(AtlasOfficer.decode(1, ""));
-        assertNull(AtlasOfficer.decode(1, encoded.replaceFirst("o1", "o9")));
+        assertNull(AtlasOfficer.decode(1, encoded.replaceFirst("o2", "o9")));
         assertNull(AtlasOfficer.decode(1, encoded + "|extra"));
         assertNull(AtlasOfficer.decode(1, encoded.replace("WAITING", "LOST")));
     }
@@ -83,8 +83,9 @@ class AtlasOfficerTest {
     void rankAndIdentificationChangeOnlyThemselves() {
         AtlasOfficer officer = waiting().takingCommand(CENTRE, "arrived:1");
 
-        AtlasOfficer promoted = officer.withRank("captain");
+        AtlasOfficer promoted = officer.seatedAt("captain", 3);
         assertEquals("captain", promoted.rankId());
+        assertEquals(3, promoted.seat());
         assertEquals(officer.history(), promoted.history());
         assertEquals(CENTRE, promoted.commandCentre());
 
@@ -104,13 +105,15 @@ class AtlasOfficerTest {
         assertEquals(Map.of(), officer.scars());
         assertEquals(List.of(), officer.dmodIds());
         assertFalse(officer.hasPendingChoice());
+        assertEquals(AtlasOfficer.UNSEATED, officer.seat());
+        assertFalse(officer.isSeated());
     }
 
     @Test
     void unreadableItemTokensAreSkipped() {
         AtlasOfficer officer = new AtlasOfficer(3, "hegemony", 1L, 2L, "commander", null, "steady", "", "", 3L, 4L, List.of(), Map.of(),
                 List.of("item_x=5", "crafting_item:2:kernel"), List.of("rank_swap"), 0, false, AtlasOfficer.Status.WAITING, false,
-                List.of(), 0, false);
+                List.of(), 0, false, AtlasOfficer.UNSEATED);
 
         assertEquals(List.of(new CarriedItem(RewardKind.CRAFTING_ITEM, "kernel", null, 2)), officer.carried());
         assertFalse(officer.hasPendingChoice());

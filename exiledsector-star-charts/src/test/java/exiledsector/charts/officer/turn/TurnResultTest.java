@@ -31,9 +31,9 @@ class TurnResultTest {
                 .withLastChance(true)
                 .withCarried(List.of(new CarriedItem(RewardKind.CRAFTING_ITEM, "kernel", null, 2)));
         return new TurnResult(7, TurnCause.officerDefeated(4),
-                List.of(new StandingChange(1, new Standing("commander", 4), new Standing("captain", 6)),
-                        new StandingChange(9, null, new Standing("lieutenant", 0)),
-                        new StandingChange(4, new Standing("lieutenant", 3), null)),
+                List.of(new StandingChange(1, new Standing("commander", 4, 2), new Standing("captain", 6, 1)),
+                        new StandingChange(9, null, new Standing("lieutenant", 0, 7)),
+                        new StandingChange(4, new Standing("lieutenant", 3, 7), null)),
                 List.of(new ResolvedIntent(IntentKind.PUSH, 1, 2, new AtlasCell(-1, 5), true, false),
                         new ResolvedIntent(IntentKind.CHALLENGE, 3, 1, null, false, true)),
                 List.of(new OfficerLoss(4, LossKind.BEATEN_BY_PLAYER, Intent.NO_OFFICER, centre, false, true),
@@ -56,6 +56,14 @@ class TurnResultTest {
         assertEquals(TurnResult.NONE, TurnResult.decode(List.of("turn,1,UNKNOWN_CAUSE,0")));
         assertEquals(TurnResult.NONE, TurnResult.decode(List.of("turn,1,FORCED,0", "intent,raid,1,2,,0,0")));
         assertEquals(TurnResult.NONE, TurnResult.decode(List.of("turn,1,FORCED,0", "loss,1")));
+    }
+
+    @Test
+    void aStandingWrittenBeforeSeatsDecodesUnseated() {
+        TurnResult result = TurnResult.decode(List.of("turn,1,FORCED,0", "standing,1,commander,4,captain,6"));
+
+        assertEquals(new Standing("commander", 4, AtlasOfficer.UNSEATED), result.standingChange(1).before());
+        assertEquals(new Standing("captain", 6, AtlasOfficer.UNSEATED), result.standingChange(1).after());
     }
 
     @Test

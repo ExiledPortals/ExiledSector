@@ -30,14 +30,14 @@ final class OfficerBoardArrows {
     static List<Arrow> arrows(List<TurnResult.ResolvedIntent> lastTurn, List<Intent> declared, IntPredicate shown) {
         Set<Arrow> arrows = new LinkedHashSet<>();
         for (TurnResult.ResolvedIntent resolved : lastTurn) {
-            if (resolved.kind().isConflict() && resolved.defenderRecordId() != Intent.NO_OFFICER) {
+            if (resolved.kind() == IntentKind.CHALLENGE && resolved.defenderRecordId() != Intent.NO_OFFICER) {
                 int winner = resolved.succeeded() ? resolved.attackerRecordId() : resolved.defenderRecordId();
                 int loser = resolved.succeeded() ? resolved.defenderRecordId() : resolved.attackerRecordId();
                 addIfShown(arrows, new Arrow(winner, loser, Style.SOLID), shown);
             }
         }
         for (Intent intent : declared) {
-            if (intent.kind().isConflict() && intent.targetRecordId() != Intent.NO_OFFICER) {
+            if (intent.kind() == IntentKind.CHALLENGE && intent.targetRecordId() != Intent.NO_OFFICER) {
                 addIfShown(arrows, new Arrow(intent.officerRecordId(), intent.targetRecordId(), Style.DASHED), shown);
             }
         }

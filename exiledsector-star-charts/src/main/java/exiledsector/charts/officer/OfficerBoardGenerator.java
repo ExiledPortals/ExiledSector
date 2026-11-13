@@ -36,28 +36,23 @@ public final class OfficerBoardGenerator {
                 if (factionId == null) {
                     return board;
                 }
-                board.add(officer(seed, recordId, factionId, rankOrder, ranks, catalogue, startingItems));
+                board.add(officer(seed, recordId, factionId, rankOrder, place, ranks, catalogue, startingItems));
             }
         }
         return board;
     }
 
-    public static AtlasOfficer replacement(long seed, int recordId, String factionId, List<OfficerRank> ranks, FlagshipCatalogue catalogue,
+    public static AtlasOfficer replacement(long seed, int recordId, String factionId, int seat, List<OfficerRank> ranks, FlagshipCatalogue catalogue,
                                            StartingItemRoll startingItems) {
-        return officer(seed, recordId, factionId, 0, ranks, catalogue, startingItems);
+        return officer(seed, recordId, factionId, 0, seat, ranks, catalogue, startingItems);
     }
 
-    public static AtlasOfficer atRank(long seed, int recordId, String factionId, String rankId, List<OfficerRank> ranks, FlagshipCatalogue catalogue) {
-        int rankOrder = 0;
-        for (int index = 0; index < ranks.size(); index++) {
-            if (ranks.get(index).id().equals(rankId)) {
-                rankOrder = index;
-            }
-        }
-        return officer(seed, recordId, factionId, rankOrder, ranks, catalogue, StartingItemRoll.NONE);
+    public static AtlasOfficer atRank(long seed, int recordId, String factionId, String rankId, int seat, List<OfficerRank> ranks,
+                                      FlagshipCatalogue catalogue, StartingItemRoll startingItems) {
+        return officer(seed, recordId, factionId, OfficerSeats.order(ranks, rankId), seat, ranks, catalogue, startingItems);
     }
 
-    private static AtlasOfficer officer(long seed, int recordId, String factionId, int rankOrder, List<OfficerRank> ranks,
+    private static AtlasOfficer officer(long seed, int recordId, String factionId, int rankOrder, int seat, List<OfficerRank> ranks,
                                         FlagshipCatalogue catalogue, StartingItemRoll startingItems) {
         Map<String, Float> traitWeights = new LinkedHashMap<>();
         TRAIT_IDS.forEach(traitId -> traitWeights.put(traitId, 1f));
@@ -66,7 +61,8 @@ public final class OfficerBoardGenerator {
         AtlasOfficer.OfficerSeeds seeds = new AtlasOfficer.OfficerSeeds(random.nextLong(), random.nextLong(), random.nextLong(),
                 random.nextLong());
         FlagshipCatalogue.Flagship flagship = catalogue.pick(factionId, rankOrder, ranks.size(), random);
-        AtlasOfficer officer = AtlasOfficer.waiting(recordId, factionId, ranks.get(rankOrder).id(), traitId, seeds, flagship);
+        AtlasOfficer officer = AtlasOfficer.waiting(recordId, factionId, ranks.get(rankOrder).id(), traitId, seeds, flagship)
+                .seatedAt(ranks.get(rankOrder).id(), seat);
         return OfficerStartingItems.dealt(officer, startingItems, random);
     }
 }

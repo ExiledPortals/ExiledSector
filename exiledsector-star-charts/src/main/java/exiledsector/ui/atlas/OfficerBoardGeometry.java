@@ -1,6 +1,6 @@
 package exiledsector.ui.atlas;
 
-record OfficerBoardGeometry(float rowsCentreX, float blockTop, float rowPitch, float slotWidth, float portraitSize) {
+record OfficerBoardGeometry(float rowsCentreX, float blockTop, float rowPitch, float slotWidth, float portraitSize, int columns) {
 
     static final float MAX_PORTRAIT_SIZE = 64f;
     static final float PORTRAIT_SHARE_OF_SLOT = 0.8f;
@@ -22,11 +22,12 @@ record OfficerBoardGeometry(float rowsCentreX, float blockTop, float rowPitch, f
         float portraitSize = Math.min(slotWidth * PORTRAIT_SHARE_OF_SLOT, rowsHeight / rows * PORTRAIT_SHARE_OF_SLOT);
         float rowPitch = Math.min(rowsHeight / rows, portraitSize * MAX_ROW_PITCH_PER_PORTRAIT);
         float blockTop = rowsBottom + rowsHeight / 2f + rowPitch * rows / 2f;
-        return new OfficerBoardGeometry(rowsLeft + rowsWidth / 2f, blockTop, rowPitch, slotWidth, portraitSize);
+        return new OfficerBoardGeometry(rowsLeft + rowsWidth / 2f, blockTop, rowPitch, slotWidth, portraitSize, columns);
     }
 
     float centreX(OfficerBoardLayout.Seat seat) {
-        return rowsCentreX + (seat.column() - (seat.rowSize() - 1) / 2f) * slotWidth;
+        float slotsPerSeat = columns / (float) Math.max(1, seat.rowSize());
+        return rowsCentreX + ((seat.column() + 0.5f) * slotsPerSeat - columns / 2f) * slotWidth;
     }
 
     float centreY(OfficerBoardLayout.Seat seat) {

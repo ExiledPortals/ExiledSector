@@ -55,7 +55,9 @@ The comms greeting and the system tooltip refer to that history ("You ran me out
 
 ## Ranks
 
-Ranks measure an officer's influence across the whole frontier, not a faction's chain of command. Five military ranks, lowest first: Lieutenant, Commander, Captain, Commodore, Admiral. Each rank row in a new `atlas_officer_ranks.csv` sets boss size, Fleet Strength (tree size), how often the officer acts each turn, and how many places it has. The ranks form a pyramid with a fixed number of places (placeholder: 3 Admirals, 6 Commodores, 8 Captains, 12 Commanders, 16 Lieutenants, 45 officers in all). A higher rank pushes harder and wins more.
+Ranks measure an officer's influence across the whole frontier, not a faction's chain of command. Five military ranks, lowest first: Lieutenant, Commander, Captain, Commodore, Admiral. Each rank row in a new `atlas_officer_ranks.csv` sets boss size, Fleet Strength (tree size), how often the officer acts each turn, and how many places it has. The ranks form a pyramid with a fixed number of places that halves at each rank (1 Admiral, 2 Commodores, 4 Captains, 8 Commanders, 16 Lieutenants, 31 officers in all). A higher rank pushes harder and wins more.
+
+Places are seats in a fixed tree: each seat answers to one seat of the rank above, so every officer has one superior and two subordinates (`OfficerSeats`). Challenges and every rank swap follow only these superior and subordinate edges, so an Admiral never deals with a Lieutenant. Expand, Push and Defend stay geographic, between neighbouring territories. Saves from before seats are repaired once when the atlas loads (`OfficerSeatRepair`): officers are seated rank by rank from the top, an empty seat takes the next unseated officer from the rank below or a new officer, and any officers left over are dismissed.
 
 The board is generated full when the atlas is created: every place gets an officer, with factions drawn from those that can hold territories (placeholder). Officers without a command centre wait beyond the frontier, and take command centres as space is revealed, lowest rank first (see Factions coming and going). Only officers who have held a command centre take part in turns, so an officer still beyond the frontier keeps their starting rank until they arrive.
 
@@ -63,10 +65,10 @@ Each officer has renown, a number that measures how they are doing and decides t
 
 The player almost never loses, so most rank changes come from the officers themselves. Ranks change in four ways, and each change shows in the board's shuffle:
 
-- At the end of each turn, for each pair of neighbouring ranks, if the lower rank's most renowned officer has more renown than the higher rank's least renowned, they swap. At most one swap per pair each turn, and an officer who already changed rank that turn is skipped. Being pushed down this way is not a loss and adds no scar.
-- A challenge won by the lower-rank officer swaps the two officers' ranks. A challenge won by the higher-rank officer, or between equal ranks, changes no rank.
-- An officer beaten by the player drops a rank, swapping with the most renowned officer of the rank below (see Officers losing).
-- An officer whose fleet defeats the player (the player loses or retreats from the battle) moves up a rank, swapping with the least renowned officer of the rank above, and gains nothing else. An Admiral stays an Admiral.
+- At the end of each turn, for each seat from the top rank down, if its most renowned subordinate has more renown than the seat's officer, they swap seats. An officer who already changed rank that turn is skipped. Being pushed down this way is not a loss and adds no scar.
+- A challenge won by the subordinate swaps the two officers' seats. A challenge won by the superior changes no rank.
+- An officer beaten by the player drops a rank, swapping with their most renowned subordinate (see Officers losing).
+- An officer whose fleet defeats the player (the player loses or retreats from the battle) moves up a rank, swapping with their superior, and gains nothing else. An Admiral stays an Admiral.
 
 Officers above Lieutenant never die. Every loss, to the player or in a challenge, adds a scar, and a loss to the player or to a lower-rank officer also pushes them down the pyramid, so a much-beaten officer sinks and grows more scarred. A Lieutenant can't drop a rank, so their first loss only marks them: beaten by the player they flee as usual, beaten in a challenge they keep their command centre. A marked Lieutenant who loses again before winning a fight dies for good; their replacement takes their command centre if they held one, or waits beyond the frontier, with no scars or carried items. Winning a fight, against an officer or the player, clears the mark.
 
@@ -82,13 +84,13 @@ Officers declare their next action one turn ahead, so the board can show what ea
 
 - Expand: claim an unclaimed system on the territory's border, less likely the larger the territory.
 - Push: attack a border system of a neighbouring territory of another faction.
-- Challenge: attack the neighbouring officer directly.
+- Challenge: attack their superior or a subordinate directly, wherever they are on the atlas. A challenge between factions that take sides is fought in the defender's territory, in the free system nearest the challenger; within one faction it only rolls.
 - Defend: an officer who is the target of a push or challenge may defend instead, adding to their roll against it.
 - Hold: nothing.
 
 A turn first applies the player's kill (if the boss was an officer, see Officers losing), then resolves the declared intents, dropping any whose officer or target was beaten or whose territory broke up, then declares the next intents.
 
-A declared Push or Challenge appears on the map as a Faction Skirmish inserted into the contested system (an inserted anomaly record from the world, as `atlas.md` planned). If the player runs it before the next turn, the skirmish's existing side choice decides it. If not, it resolves abstractly on the next turn: equal ranks win half the time each, and each rank between them adds 6.25 points to the higher rank's chance, so an Admiral beats a Lieutenant 75% of the time. A declared Defend adds 10 points to the defender (placeholders). A won push moves the system; a won challenge also swaps ranks when the challenger was the lower rank (see Ranks).
+A declared Push or Challenge appears on the map as a Faction Skirmish inserted into the contested system (an inserted anomaly record from the world, as `atlas.md` planned). If the player runs it before the next turn, the skirmish's existing side choice decides it. If not, it resolves abstractly on the next turn: equal ranks win half the time each, and each rank between them adds 6.25 points to the higher rank's chance. A declared Defend adds 10 points to the defender (placeholders). A won push moves the system; a won challenge also swaps seats when the challenger was the subordinate (see Ranks).
 
 Completing a system inside a territory removes it from the territory, since the player cleared its garrison, and officers may claim it again on later turns. So territories shrink where the player plays and refill from their neighbours, and the war follows the frontier.
 
@@ -137,9 +139,9 @@ Each option shows its icon, name and normal item tooltip, and the officer's tool
 
 ## Officers board
 
-An Officers button at the bottom right of the atlas screen opens the officers board: one flowchart of every live officer, never split by faction. Ranks are rows, Admiral at the top, so the board narrows towards the few most powerful officers. Within a row, officers sort by renown (see Ranks). Each officer is their portrait, picked from their faction's vanilla portrait set, with their faction's flag (`FactionAPI.getLogo`) in miniature at its bottom right; everything else is in the tooltip. Fled officers waiting for a territory sit in their rank row with a dimmed portrait.
+An Officers button at the bottom right of the atlas screen opens the officers board: one flowchart of every live officer, never split by faction. Ranks are rows, Admiral at the top, so the board narrows towards the few most powerful officers. Each officer sits in their seat's column, centred over their two subordinates, with faint lines tracing the seat tree. Each officer is their portrait, picked from their faction's vanilla portrait set, with their faction's flag (`FactionAPI.getLogo`) in miniature at its bottom right; everything else is in the tooltip. Fled officers waiting for a territory sit in their rank row with a dimmed portrait.
 
-Arrows between portraits show the war. Plans to claim unclaimed space never show on the board, only on the atlas. Solid arrows run from each winner to the officer they beat on the last turn. Dashed arrows run from each officer to the target of their declared Push or Challenge for the next turn, and a shield mark on a target shows it has declared Defend. Hovering a portrait brightens its own arrows and fades the rest.
+Arrows between portraits show challenges only; Expand and Push are geographic and show only on the atlas. Solid arrows run from each challenge winner to the officer they beat on the last turn. Dashed arrows run from each officer to the target of their declared Challenge for the next turn, and a shield mark on a target shows it has declared Defend. Hovering a portrait brightens its own arrows and fades the rest.
 
 The first time the board opens after a turn, it plays a four-second shuffle: portraits start where they stood before the turn and slide to their new places, with a rising mark on those who ranked up, a falling mark on those who ranked down, a fade to nothing for those who died and a fade in for new officers. A Replay button plays it again until the next turn. The pre-turn positions come from the saved turn results, and a seen-turn counter in `AtlasState` makes it play once.
 

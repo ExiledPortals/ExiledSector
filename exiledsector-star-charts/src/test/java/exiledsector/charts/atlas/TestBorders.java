@@ -39,7 +39,7 @@ public final class TestBorders {
         throw new AssertionError("no border system");
     }
 
-    private static boolean open(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
+    public static boolean open(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
         return !cell.equals(AtlasCell.ORIGIN) && !generator.isVoid(cell) && !state.isClaimed(cell) && generator.infestationAt(cell) == null
                 && generator.specialAt(cell) == null;
     }

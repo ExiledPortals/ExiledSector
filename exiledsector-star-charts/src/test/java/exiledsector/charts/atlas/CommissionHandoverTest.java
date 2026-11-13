@@ -53,7 +53,7 @@ class CommissionHandoverTest {
     }
 
     private static AtlasOfficer commissionOfficer(Board board, AtlasCell centre, String rankId, List<CarriedItem> carried, boolean identified) {
-        AtlasOfficer officer = TestTerritories.establish(board.state(), centre, COMMISSION).withRank(rankId).withCarried(carried)
+        AtlasOfficer officer = TestTerritories.establish(board.state(), centre, COMMISSION).seatedAt(rankId, 0).withCarried(carried)
                 .withRenown(7);
         officer = identified ? officer.identifiedNow() : officer;
         board.state().putOfficer(officer);
@@ -186,9 +186,9 @@ class CommissionHandoverTest {
         TurnResult result = OfficerTurns.lastTurn(board.state());
         assertTrue(result.replacements().contains(new TurnResult.Replacement(predecessor.recordId(), successor.recordId())));
         assertEquals(predecessor, result.fallen().get(predecessor.recordId()));
-        assertEquals(new TurnResult.Standing("commander", 7), result.standingChange(predecessor.recordId()).before());
+        assertEquals(new TurnResult.Standing("commander", 7, 0), result.standingChange(predecessor.recordId()).before());
         assertNull(result.standingChange(predecessor.recordId()).after());
-        assertEquals(new TurnResult.Standing("commander", 7), result.standingChange(successor.recordId()).after());
+        assertEquals(new TurnResult.Standing("commander", 7, 0), result.standingChange(successor.recordId()).after());
         assertTrue(OfficerTurns.hasUnseenTurn(board.state()));
     }
 

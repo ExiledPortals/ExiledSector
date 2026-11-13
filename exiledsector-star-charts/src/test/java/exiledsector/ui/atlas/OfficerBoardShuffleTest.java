@@ -1,5 +1,6 @@
 package exiledsector.ui.atlas;
 
+import exiledsector.charts.officer.OfficerRank;
 import exiledsector.charts.officer.turn.TurnResult;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class OfficerBoardShuffleTest {
 
-    private static final List<String> RANKS = List.of("lieutenant", "commander", "admiral");
+    private static final List<OfficerRank> RANKS = OfficerBoardLayoutTest.RANKS;
 
     private static Map<Integer, OfficerBoardShuffle.Mover> movers(OfficerBoardShuffle shuffle) {
         return shuffle.movers().stream().collect(Collectors.toMap(OfficerBoardShuffle.Mover::recordId, Function.identity()));
@@ -22,8 +23,8 @@ class OfficerBoardShuffleTest {
 
     @Test
     void aPromotedOfficerSlidesUpARowWithARisingMark() {
-        OfficerBoardShuffle shuffle = OfficerBoardShuffle.of(RANKS, List.of(new OfficerBoardLayout.Entry(1, "commander", 3)),
-                List.of(new TurnResult.StandingChange(1, new TurnResult.Standing("lieutenant", 2), new TurnResult.Standing("commander", 3))));
+        OfficerBoardShuffle shuffle = OfficerBoardShuffle.of(RANKS, List.of(new OfficerBoardLayout.Entry(1, "commander", 3, 1)),
+                List.of(new TurnResult.StandingChange(1, new TurnResult.Standing("lieutenant", 2, 3), new TurnResult.Standing("commander", 3, 1))));
 
         OfficerBoardShuffle.Mover mover = movers(shuffle).get(1);
         assertEquals(2, mover.from().row());
@@ -33,29 +34,31 @@ class OfficerBoardShuffleTest {
 
     @Test
     void aDemotedOfficerGetsAFallingMark() {
-        OfficerBoardShuffle shuffle = OfficerBoardShuffle.of(RANKS, List.of(new OfficerBoardLayout.Entry(1, "commander", 0)),
-                List.of(new TurnResult.StandingChange(1, new TurnResult.Standing("admiral", 9), new TurnResult.Standing("commander", 0))));
+        OfficerBoardShuffle shuffle = OfficerBoardShuffle.of(RANKS, List.of(new OfficerBoardLayout.Entry(1, "commander", 0, 0)),
+                List.of(new TurnResult.StandingChange(1, new TurnResult.Standing("admiral", 9, 0), new TurnResult.Standing("commander", 0, 0))));
 
         assertEquals(OfficerBoardShuffle.RankMark.FELL, movers(shuffle).get(1).mark());
     }
 
     @Test
-    void aRenownSwapWithinARowMovesColumnsWithoutAMark() {
+    void aSwapMovesBothOfficersToEachOthersSeat() {
         OfficerBoardShuffle shuffle = OfficerBoardShuffle.of(RANKS,
-                List.of(new OfficerBoardLayout.Entry(1, "commander", 5), new OfficerBoardLayout.Entry(2, "commander", 3)),
-                List.of(new TurnResult.StandingChange(1, new TurnResult.Standing("commander", 1), new TurnResult.Standing("commander", 5))));
+                List.of(new OfficerBoardLayout.Entry(1, "commander", 5, 1), new OfficerBoardLayout.Entry(2, "lieutenant", 3, 2)),
+                List.of(new TurnResult.StandingChange(1, new TurnResult.Standing("lieutenant", 5, 2), new TurnResult.Standing("commander", 5, 1)),
+                        new TurnResult.StandingChange(2, new TurnResult.Standing("commander", 3, 1), new TurnResult.Standing("lieutenant", 3, 2))));
 
-        OfficerBoardShuffle.Mover mover = movers(shuffle).get(1);
-        assertEquals(1, mover.from().column());
-        assertEquals(0, mover.to().column());
-        assertEquals(OfficerBoardShuffle.RankMark.NONE, mover.mark());
+        Map<Integer, OfficerBoardShuffle.Mover> movers = movers(shuffle);
+        assertEquals(movers.get(1).from(), movers.get(2).to());
+        assertEquals(movers.get(2).from(), movers.get(1).to());
+        assertEquals(OfficerBoardShuffle.RankMark.ROSE, movers.get(1).mark());
+        assertEquals(OfficerBoardShuffle.RankMark.FELL, movers.get(2).mark());
     }
 
     @Test
     void theFallenDepartAndTheirReplacementsArrive() {
-        OfficerBoardShuffle shuffle = OfficerBoardShuffle.of(RANKS, List.of(new OfficerBoardLayout.Entry(2, "lieutenant", 0)),
-                List.of(new TurnResult.StandingChange(1, new TurnResult.Standing("lieutenant", 4), null),
-                        new TurnResult.StandingChange(2, null, new TurnResult.Standing("lieutenant", 0))));
+        OfficerBoardShuffle shuffle = OfficerBoardShuffle.of(RANKS, List.of(new OfficerBoardLayout.Entry(2, "lieutenant", 0, 1)),
+                List.of(new TurnResult.StandingChange(1, new TurnResult.Standing("lieutenant", 4, 1), null),
+                        new TurnResult.StandingChange(2, null, new TurnResult.Standing("lieutenant", 0, 1))));
 
         Map<Integer, OfficerBoardShuffle.Mover> movers = movers(shuffle);
         assertTrue(movers.get(1).departs());
@@ -66,7 +69,7 @@ class OfficerBoardShuffleTest {
 
     @Test
     void anUnchangedOfficerStaysPut() {
-        OfficerBoardShuffle shuffle = OfficerBoardShuffle.of(RANKS, List.of(new OfficerBoardLayout.Entry(3, "admiral", 1)), List.of());
+        OfficerBoardShuffle shuffle = OfficerBoardShuffle.of(RANKS, List.of(new OfficerBoardLayout.Entry(3, "admiral", 1, 0)), List.of());
 
         OfficerBoardShuffle.Mover mover = movers(shuffle).get(3);
         assertEquals(mover.from(), mover.to());

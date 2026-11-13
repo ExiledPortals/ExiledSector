@@ -87,6 +87,33 @@ class SkirmishContestsTest {
     }
 
     @Test
+    void aChallengeAcrossTheAtlasIsFoughtInTheDefendersFreeSystemNearestTheChallenger() {
+        List<AtlasCell> open = AtlasCell.ORIGIN.around(20).stream()
+                .filter(cell -> TestBorders.open(generator, state, cell) && generator.node(cell).specialId() == null).toList();
+        AtlasCell challengerCentre = open.get(0);
+        AtlasCell nearClaim = open.stream().filter(cell -> squaredDistance(challengerCentre, cell) > 9 && squaredDistance(challengerCentre, cell) <= 25
+                && !generator.lanes(challengerCentre).contains(cell)).findFirst().orElseThrow();
+        List<AtlasCell> farCells = open.stream().filter(cell -> squaredDistance(challengerCentre, cell) > 100).toList();
+        AtlasOfficer defender = TestTerritories.establish(state, farCells.get(0), "hegemony");
+        state.claim(farCells.get(1), defender.commandCentre());
+        state.claim(nearClaim, defender.commandCentre());
+        AtlasOfficer challenger = TestTerritories.establish(state, challengerCentre, "tritachyon");
+        Intent challenge = Intent.challenge(challenger.recordId(), defender.recordId());
+        declare(state, challenge);
+
+        SkirmishRecords.sync(generator, state, null);
+
+        assertEquals(Set.of(nearClaim), SkirmishContests.declaredCells(generator, state));
+        assertEquals(challenge, SkirmishContests.at(generator, state, nearClaim).intent());
+    }
+
+    private static long squaredDistance(AtlasCell from, AtlasCell to) {
+        long dx = (long) from.gridX() - to.gridX();
+        long dy = (long) from.gridY() - to.gridY();
+        return dx * dx + dy * dy;
+    }
+
+    @Test
     void theSkirmishLeavesWhenTheIntentIsGoneButStaysWhileItsRunIsOpen() {
         Border border = TestBorders.border(generator, state, "tritachyon", "hegemony");
         declare(state, Intent.push(border.attacker().recordId(), border.contested(), border.defender().recordId()));

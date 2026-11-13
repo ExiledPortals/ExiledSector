@@ -1,5 +1,7 @@
 package exiledsector.ui.atlas;
 
+import exiledsector.charts.officer.OfficerRank;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -7,30 +9,41 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 final class OfficerBoardLayout {
 
-    record Entry(int recordId, String rankId, int renown) {
+    record Entry(int recordId, String rankId, int renown, int seat) {
     }
 
     record Seat(int row, int column, int rowSize) {
     }
 
-    private static final Comparator<Entry> ROW_ORDER = Comparator.comparingInt(Entry::renown).reversed().thenComparingInt(Entry::recordId);
+    record Link(Seat subordinate, Seat superior) {
+
+        boolean touches(Seat seat) {
+            return subordinate.equals(seat) || superior.equals(seat);
+        }
+    }
+
+    private static final Comparator<Entry> UNSEATED_ORDER = Comparator.comparingInt(Entry::renown).reversed().thenComparingInt(Entry::recordId);
 
     private final List<String> rankIdsTopFirst;
     private final List<List<Integer>> rows;
+    private final List<Integer> rowSizes;
     private final Map<Integer, Seat> seats;
 
-    private OfficerBoardLayout(List<String> rankIdsTopFirst, List<List<Integer>> rows, Map<Integer, Seat> seats) {
+    private OfficerBoardLayout(List<String> rankIdsTopFirst, List<List<Integer>> rows, List<Integer> rowSizes, Map<Integer, Seat> seats) {
         this.rankIdsTopFirst = rankIdsTopFirst;
         this.rows = rows;
+        this.rowSizes = rowSizes;
         this.seats = seats;
     }
 
-    static OfficerBoardLayout of(List<String> rankIdsLowestFirst, Collection<Entry> entries) {
-        List<String> rankIdsTopFirst = new ArrayList<>(rankIdsLowestFirst);
-        Collections.reverse(rankIdsTopFirst);
+    static OfficerBoardLayout of(List<OfficerRank> ranksLowestFirst, Collection<Entry> entries) {
+        List<OfficerRank> ranksTopFirst = new ArrayList<>(ranksLowestFirst);
+        Collections.reverse(ranksTopFirst);
+        List<String> rankIdsTopFirst = ranksTopFirst.stream().map(OfficerRank::id).toList();
         List<List<Entry>> entriesByRow = new ArrayList<>();
         for (int row = 0; row < rankIdsTopFirst.size(); row++) {
             entriesByRow.add(new ArrayList<>());
@@ -40,19 +53,38 @@ final class OfficerBoardLayout {
             entriesByRow.get(row < 0 ? rankIdsTopFirst.size() - 1 : row).add(entry);
         }
         List<List<Integer>> rows = new ArrayList<>();
+        List<Integer> rowSizes = new ArrayList<>();
         Map<Integer, Seat> seats = new HashMap<>();
         for (int row = 0; row < entriesByRow.size(); row++) {
-            List<Entry> rowEntries = entriesByRow.get(row);
-            rowEntries.sort(ROW_ORDER);
-            List<Integer> recordIds = new ArrayList<>();
-            for (int column = 0; column < rowEntries.size(); column++) {
-                int recordId = rowEntries.get(column).recordId();
-                recordIds.add(recordId);
-                seats.put(recordId, new Seat(row, column, rowEntries.size()));
-            }
-            rows.add(List.copyOf(recordIds));
+            TreeMap<Integer, Integer> recordIdByColumn = columns(entriesByRow.get(row), ranksTopFirst.get(row).places());
+            int rowSize = Math.max(ranksTopFirst.get(row).places(), recordIdByColumn.isEmpty() ? 0 : recordIdByColumn.lastKey() + 1);
+            recordIdByColumn.forEach((column, recordId) -> seats.put(recordId, new Seat(rowSizes.size(), column, rowSize)));
+            rows.add(List.copyOf(recordIdByColumn.values()));
+            rowSizes.add(rowSize);
         }
-        return new OfficerBoardLayout(List.copyOf(rankIdsTopFirst), List.copyOf(rows), Map.copyOf(seats));
+        return new OfficerBoardLayout(rankIdsTopFirst, List.copyOf(rows), List.copyOf(rowSizes), Map.copyOf(seats));
+    }
+
+    private static TreeMap<Integer, Integer> columns(List<Entry> rowEntries, int places) {
+        TreeMap<Integer, Integer> recordIdByColumn = new TreeMap<>();
+        List<Entry> unseated = new ArrayList<>();
+        rowEntries.sort(Comparator.comparingInt(Entry::recordId));
+        for (Entry entry : rowEntries) {
+            if (entry.seat() >= 0 && entry.seat() < places && !recordIdByColumn.containsKey(entry.seat())) {
+                recordIdByColumn.put(entry.seat(), entry.recordId());
+            } else {
+                unseated.add(entry);
+            }
+        }
+        unseated.sort(UNSEATED_ORDER);
+        int column = 0;
+        for (Entry entry : unseated) {
+            while (recordIdByColumn.containsKey(column)) {
+                column++;
+            }
+            recordIdByColumn.put(column, entry.recordId());
+        }
+        return recordIdByColumn;
     }
 
     int rowCount() {
@@ -82,9 +114,24 @@ final class OfficerBoardLayout {
 
     int widestRow() {
         int widest = 0;
-        for (List<Integer> row : rows) {
-            widest = Math.max(widest, row.size());
+        for (int rowSize : rowSizes) {
+            widest = Math.max(widest, rowSize);
         }
         return widest;
+    }
+
+    List<Link> links() {
+        List<Link> links = new ArrayList<>();
+        for (int row = 1; row < rowSizes.size(); row++) {
+            int rowSize = rowSizes.get(row);
+            int superiorRowSize = rowSizes.get(row - 1);
+            if (rowSize <= 0 || superiorRowSize <= 0) {
+                continue;
+            }
+            for (int column = 0; column < rowSize; column++) {
+                links.add(new Link(new Seat(row, column, rowSize), new Seat(row - 1, column * superiorRowSize / rowSize, superiorRowSize)));
+            }
+        }
+        return List.copyOf(links);
     }
 }
