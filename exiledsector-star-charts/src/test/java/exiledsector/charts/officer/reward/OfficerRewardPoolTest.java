@@ -2,12 +2,15 @@ package exiledsector.charts.officer.reward;
 
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.loot.BiomeModifiers;
+import exiledsector.charts.loot.ChartMaterials;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemModifiers;
 import exiledsector.items.ModifierSources;
 import exiledsector.items.PoolEntry;
+import exiledsector.items.StarChartCipher;
+import exiledsector.items.StarChartFixtures;
 import exiledsector.modifiers.ModifierSlot;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -45,6 +48,8 @@ class OfficerRewardPoolTest {
         ModifierSources.clear();
         ItemDefinitions.clear();
         ItemModifiers.clear();
+        ChartMaterials.clear();
+        StarChartFixtures.unregisterCraftingItems();
     }
 
     private static RewardCandidate candidate(RewardKind kind, String id, float weight) {
@@ -96,6 +101,80 @@ class OfficerRewardPoolTest {
             assertEquals(List.of(CarriedItem.of(RewardKind.HULL_ITEM, "a")),
                     OfficerRewardPool.offers(candidates, shares, OfficerRewardPool.OFFER_COUNT, new Random(seed)));
         }
+    }
+
+    private static void registerCraftingTiers() throws Exception {
+        OfficerRewardTable.register(new JSONArray()
+                .put(new JSONObject().put("id", "low_a").put("category", "crafting_item").put("tier", "low"))
+                .put(new JSONObject().put("id", "low_b").put("category", "crafting_item").put("tier", "low"))
+                .put(new JSONObject().put("id", "mid_a").put("category", "crafting_item").put("tier", "mid"))
+                .put(new JSONObject().put("id", "high_a").put("category", "crafting_item").put("tier", "high")));
+    }
+
+    @Test
+    void aCategorysShareSplitsOverItsGroupsByTheirItemWeights() throws Exception {
+        registerCraftingTiers();
+        Map<RewardKind, List<RewardCandidate>> candidates = Map.of(
+                RewardKind.CRAFTING_ITEM, List.of(candidate(RewardKind.CRAFTING_ITEM, "low_a", 4f), candidate(RewardKind.CRAFTING_ITEM, "low_b", 2f),
+                        candidate(RewardKind.CRAFTING_ITEM, "mid_a", 3f), candidate(RewardKind.CRAFTING_ITEM, "high_a", 1f)),
+                RewardKind.ENGRAM, List.of(candidate(RewardKind.ENGRAM, "engram_a", 50f)));
+
+        Map<RewardGroup, Float> shares = OfficerRewardPool.groupShares(OfficerRewardPool.grouped(candidates),
+                Map.of(RewardKind.CRAFTING_ITEM, 30f, RewardKind.ENGRAM, 8f));
+
+        assertEquals(Map.of(RewardGroup.LOW_CRAFTING, 18f, RewardGroup.MID_CRAFTING, 9f, RewardGroup.HIGH_CRAFTING, 3f, RewardGroup.ENGRAM, 8f),
+                shares);
+    }
+
+    @Test
+    void theThreeOffersAreThreeDifferentGroups() throws Exception {
+        registerCraftingTiers();
+        Map<RewardKind, List<RewardCandidate>> candidates = Map.of(
+                RewardKind.CRAFTING_ITEM, List.of(candidate(RewardKind.CRAFTING_ITEM, "low_a", 90f), candidate(RewardKind.CRAFTING_ITEM, "low_b", 90f),
+                        candidate(RewardKind.CRAFTING_ITEM, "mid_a", 5f), candidate(RewardKind.CRAFTING_ITEM, "high_a", 5f)),
+                RewardKind.HULL_ITEM, List.of(candidate(RewardKind.HULL_ITEM, "a", 1f), candidate(RewardKind.HULL_ITEM, "b", 1f)));
+        Map<RewardKind, Float> shares = Map.of(RewardKind.CRAFTING_ITEM, 90f, RewardKind.HULL_ITEM, 10f);
+        Random random = new Random(11L);
+        for (int draw = 0; draw < 500; draw++) {
+            List<CarriedItem> offers = OfficerRewardPool.offers(candidates, shares, OfficerRewardPool.OFFER_COUNT, random);
+
+            assertEquals(OfficerRewardPool.OFFER_COUNT, offers.stream().map(RewardGroup::of).distinct().count(), offers.toString());
+        }
+    }
+
+    @Test
+    void theShippedTablesOfferRarerCraftingTiersLessOften() throws Exception {
+        OfficerRewardTable.register(ChartTables.csvRows(OfficerRewardTable.PATH));
+        StarChartCipher.registerAll();
+        ChartMaterials.register(ChartTables.csvRows(ChartMaterials.PATH));
+        for (int tier : new int[]{1, 8, 15}) {
+            RewardContext context = new RewardContext(tier, null, null, biomeId -> false, definition -> true, itemId -> true);
+
+            Map<RewardGroup, Float> shares = OfficerRewardPool.groupShares(OfficerRewardPool.grouped(OfficerRewardPool.candidates(context,
+                    new Random(1L))), OfficerRewardTable.shares());
+
+            float low = shares.get(RewardGroup.LOW_CRAFTING);
+            float mid = shares.get(RewardGroup.MID_CRAFTING);
+            float high = shares.get(RewardGroup.HIGH_CRAFTING);
+            assertTrue(low > mid && mid > high && high > 0f, tier + ": " + shares);
+            assertEquals(30f, low + mid + high, 0.001f);
+            assertEquals(8f, shares.get(RewardGroup.FEEDSTOCK), 0.001f);
+            assertEquals(7f, shares.get(RewardGroup.INHIBITOR), 0.001f);
+        }
+    }
+
+    @Test
+    void pickingAFeedstockRollsItsCountFromItsRow() throws Exception {
+        OfficerRewardTable.register(ChartTables.csvRows(OfficerRewardTable.PATH));
+        Random random = new Random(23L);
+        TreeSet<Integer> counts = new TreeSet<>();
+        for (int pick = 0; pick < 2000; pick++) {
+            counts.add(OfficerRewardPool.picked(CarriedItem.of(RewardKind.FEEDSTOCK, "exiledSector_nanite_feedstock"), random).baseCount());
+        }
+
+        assertEquals(30, counts.first());
+        assertEquals(90, counts.last());
+        assertEquals(1, OfficerRewardPool.picked(CarriedItem.of(RewardKind.STAR_CHART, "some_chart").withCount(3), random).baseCount());
     }
 
     @Test

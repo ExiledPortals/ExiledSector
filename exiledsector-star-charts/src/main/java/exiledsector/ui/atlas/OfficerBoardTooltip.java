@@ -11,6 +11,7 @@ import exiledsector.charts.officer.OfficerFleets;
 import exiledsector.charts.officer.OfficerText;
 import exiledsector.charts.officer.reward.CarriedItem;
 import exiledsector.charts.officer.reward.OfficerRewardText;
+import exiledsector.charts.officer.reward.RewardGroup;
 import exiledsector.charts.officer.scar.HullFacts;
 import exiledsector.charts.officer.scar.ScarText;
 import exiledsector.i18n.I18n;
@@ -19,6 +20,8 @@ import exiledsector.i18n.Translation;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.TooltipText;
+import exiledsector.ui.cargo.CargoIconFx;
+import exiledsector.ui.cargo.IconCrossFade;
 import exiledsector.ui.decoration.RefitShipPortrait;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.SpriteDraw;
@@ -53,11 +56,10 @@ final class OfficerBoardTooltip {
     static final Color FALLBACK_HEADING_BAR = new Color(40, 44, 50);
     private static final StyledText LINE_BREAK = StyledText.of("\n");
 
-    private record RewardRow(RewardFace face, TextLabel nameLabel, TextLabel descriptionLabel) {
+    private record RewardRow(RewardFace face, TextLabel label) {
 
         float height() {
-            float textHeight = nameLabel.height() + (descriptionLabel.isEmpty() ? 0f : LINE_GAP + descriptionLabel.height());
-            return Math.max(ICON_SIZE, textHeight);
+            return Math.max(ICON_SIZE, label.height());
         }
     }
 
@@ -163,10 +165,6 @@ final class OfficerBoardTooltip {
         if (overflow > 0f && shipHeight > 0f) {
             float fitted = fittedShipHeight(shipHeight, overflow);
             shipZoom *= fitted / shipHeight;
-            overflow -= shipHeight - fitted;
-        }
-        if (overflow > 0f) {
-            rewardRows.forEach(row -> row.descriptionLabel().set(""));
         }
     }
 
@@ -207,19 +205,11 @@ final class OfficerBoardTooltip {
     private void writeRewards(List<CarriedItem> carried) {
         rewardRows.clear();
         float textWidth = contentWidth() - ICON_SIZE - ICON_GAP;
-        for (CarriedItem item : carried) {
-            TextLabel nameLabel = new TextLabel(tooltipText.body(), SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
-            String name = OfficerRewardText.name(item);
-            nameLabel.setWrapped(item.baseCount() > 1
-                    ? Translation.msg("chart.officer.board.rewardCount").arg("item", name).arg("count", item.baseCount()).text()
-                    : name, textWidth, MAX_TEXT_HEIGHT);
-            TextLabel descriptionLabel = new TextLabel(tooltipText.body(), SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
-            StyledText description = RewardFace.description(item);
-            if (description != null) {
-                descriptionLabel.setParagraphs(List.of(description), textWidth, MAX_TEXT_HEIGHT, SkillTreePanelStyle::standardHighlightColor);
-            }
-            rewardRows.add(new RewardRow(RewardFace.of(item), nameLabel, descriptionLabel));
-        }
+        RewardGroup.entryCounts(carried).forEach((group, count) -> {
+            TextLabel label = new TextLabel(tooltipText.body(), SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
+            label.setWrapped(OfficerRewardText.groupCount(group, count), textWidth, MAX_TEXT_HEIGHT);
+            rewardRows.add(new RewardRow(RewardFace.of(group), label));
+        });
     }
 
     private void writeFlagship(AtlasOfficer officer, FactionAPI faction, ShipVariantAPI variant) {
@@ -363,15 +353,11 @@ final class OfficerBoardTooltip {
     private float drawReward(RewardRow row, float left, float top, float alphaMult) {
         RewardFace face = row.face();
         GLDraw.fillQuad(left, top - ICON_SIZE, ICON_SIZE, ICON_SIZE, SLOT_FILL, alphaMult);
-        if (face.iconPath() != null) {
-            SpriteDraw.drawAtCenter(sprites, face.iconPath(), left + ICON_SIZE / 2f, top - ICON_SIZE / 2f, ICON_SIZE, ICON_SIZE, Color.WHITE, alphaMult);
-        }
+        IconCrossFade.drawAtCenter(sprites, face.iconPaths(), CargoIconFx.seconds(), left + ICON_SIZE / 2f, top - ICON_SIZE / 2f, ICON_SIZE,
+                ICON_SIZE, alphaMult);
         GLDraw.strokeQuad(left, top - ICON_SIZE, ICON_SIZE, ICON_SIZE, face.frameColour(), FRAME_WIDTH, alphaMult);
-        float textLeft = left + ICON_SIZE + ICON_GAP;
-        row.nameLabel().setAlpha(alphaMult).draw(textLeft, top);
-        if (!row.descriptionLabel().isEmpty()) {
-            row.descriptionLabel().setAlpha(alphaMult).draw(textLeft, top - row.nameLabel().height() - LINE_GAP);
-        }
+        float labelTop = top - Math.max(0f, ICON_SIZE - row.label().height()) / 2f;
+        row.label().setAlpha(alphaMult).draw(left + ICON_SIZE + ICON_GAP, labelTop);
         return top - row.height();
     }
 

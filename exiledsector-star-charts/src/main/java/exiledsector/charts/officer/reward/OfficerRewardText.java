@@ -1,18 +1,14 @@
 package exiledsector.charts.officer.reward;
 
 import exiledsector.charts.atlas.AtlasLine;
-import exiledsector.charts.atlas.AtlasNames;
 import exiledsector.i18n.Translation;
-import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemDefinitions;
-import exiledsector.items.MaterialItems;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class OfficerRewardText {
 
     private static final String KEY_PREFIX = "chart.officer.reward.";
-    private static final String REGION_CATEGORY = "region";
 
     private OfficerRewardText() {
     }
@@ -21,20 +17,21 @@ public final class OfficerRewardText {
         if (carried == null || carried.isEmpty()) {
             return null;
         }
-        String items = joined(carried.stream().map(OfficerRewardText::name).toList());
-        return new AtlasLine(Translation.msg(KEY_PREFIX + "carries").arg("items", items).text(), AtlasLine.Tone.MARKER);
+        List<String> groups = new ArrayList<>();
+        RewardGroup.entryCounts(carried).forEach((group, count) -> groups.add(groupCount(group, count)));
+        return new AtlasLine(Translation.msg(KEY_PREFIX + "carries").arg("items", joined(groups)).text(), AtlasLine.Tone.MARKER);
     }
 
-    public static String name(CarriedItem item) {
-        if (item.kind().craftingItem()) {
-            return MaterialItems.displayName(item.id());
-        }
-        ItemDefinition definition = ItemDefinitions.get(item.id());
-        String itemName = definition == null ? item.id() : definition.displayName();
-        if (item.kind() != RewardKind.BIOME_HULL_ITEM || item.variant() == null) {
-            return itemName;
-        }
-        return Translation.msg(KEY_PREFIX + "biomeItem").arg("item", itemName).arg("biome", AtlasNames.name(REGION_CATEGORY, item.variant())).text();
+    public static String groupName(RewardGroup group) {
+        return Translation.text(group.labelKey());
+    }
+
+    public static String groupName(CarriedItem item) {
+        return groupName(RewardGroup.of(item));
+    }
+
+    public static String groupCount(RewardGroup group, int count) {
+        return Translation.msg(KEY_PREFIX + "groupCount").arg("count", count).arg("group", groupName(group)).text();
     }
 
     static String joined(List<String> names) {

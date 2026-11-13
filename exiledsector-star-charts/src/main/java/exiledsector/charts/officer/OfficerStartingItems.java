@@ -23,7 +23,7 @@ public final class OfficerStartingItems {
 
     public static AtlasOfficer dealt(AtlasOfficer officer, StartingItemRoll roll, Random random) {
         CarriedItem startingItem = roll.roll(officer, random);
-        return startingItem == null ? officer : officer.withCarried(CarriedItem.stack(officer.carried(), List.of(startingItem)));
+        return startingItem == null ? officer : officer.withCarried(CarriedItem.joined(officer.carried(), List.of(startingItem)));
     }
 
     static int tierFor(String rankId) {

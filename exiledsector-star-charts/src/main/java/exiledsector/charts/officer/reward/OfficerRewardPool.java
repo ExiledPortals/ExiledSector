@@ -9,6 +9,7 @@ import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemType;
+import exiledsector.items.ItemTypes;
 import exiledsector.items.WeightedPick;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.function.Predicate;
 
 public final class OfficerRewardPool {
 
@@ -34,11 +36,8 @@ public final class OfficerRewardPool {
     }
 
     public static CarriedItem picked(CarriedItem offer, Random random) {
-        if (offer.kind() != RewardKind.CRAFTING_ITEM && offer.kind() != RewardKind.INHIBITOR) {
-            return offer.withCount(1);
-        }
-        CraftingTier tier = OfficerRewardTable.tierOf(offer.id());
-        return offer.withCount(tier == null ? 1 : tier.rollCount(random));
+        boolean counted = OfficerRewardTable.categoryOf(offer.id()) == offer.kind();
+        return offer.withCount(counted ? OfficerRewardTable.rollCount(offer.id(), random) : 1);
     }
 
     static CarriedItem startingItem(Map<RewardKind, List<RewardCandidate>> candidates, Map<RewardKind, Float> poolShares,
@@ -49,43 +48,90 @@ public final class OfficerRewardPool {
 
     static List<CarriedItem> offers(Map<RewardKind, List<RewardCandidate>> candidates, Map<RewardKind, Float> shares, int count,
                                     Random random) {
-        Map<RewardKind, List<RewardCandidate>> remaining = new EnumMap<>(RewardKind.class);
-        candidates.forEach((kind, kindCandidates) -> remaining.put(kind,
-                new ArrayList<>(kindCandidates.stream().filter(candidate -> candidate.weight() > 0f).toList())));
+        Map<RewardGroup, List<RewardCandidate>> grouped = grouped(candidates);
+        Map<RewardGroup, Float> openShares = groupShares(grouped, shares);
         List<CarriedItem> offers = new ArrayList<>();
         while (offers.size() < count) {
-            Map<RewardKind, Float> openShares = new EnumMap<>(RewardKind.class);
-            remaining.forEach((kind, kindCandidates) -> {
-                if (!kindCandidates.isEmpty()) {
-                    openShares.put(kind, shares.getOrDefault(kind, 0f));
-                }
-            });
-            RewardKind kind = WeightedPick.pick(openShares, random);
-            if (kind == null) {
+            RewardGroup group = WeightedPick.pick(openShares, random);
+            if (group == null) {
                 break;
             }
-            List<RewardCandidate> kindCandidates = remaining.get(kind);
-            offers.add(kindCandidates.remove(WeightedPick.index(kindCandidates, RewardCandidate::weight, random.nextFloat())).item());
+            openShares.remove(group);
+            offers.add(WeightedPick.pick(grouped.get(group), RewardCandidate::weight, random).item());
         }
         return List.copyOf(offers);
     }
 
+    static Map<RewardGroup, List<RewardCandidate>> grouped(Map<RewardKind, List<RewardCandidate>> candidates) {
+        Map<RewardGroup, List<RewardCandidate>> grouped = new EnumMap<>(RewardGroup.class);
+        candidates.values().forEach(kindCandidates -> {
+            for (RewardCandidate candidate : kindCandidates) {
+                RewardGroup group = candidate.weight() > 0f ? RewardGroup.of(candidate.item()) : null;
+                if (group != null) {
+                    grouped.computeIfAbsent(group, unused -> new ArrayList<>()).add(candidate);
+                }
+            }
+        });
+        return grouped;
+    }
+
+    static Map<RewardGroup, Float> groupShares(Map<RewardGroup, List<RewardCandidate>> grouped, Map<RewardKind, Float> shares) {
+        Map<RewardKind, Float> kindWeights = new EnumMap<>(RewardKind.class);
+        grouped.forEach((group, groupCandidates) -> kindWeights.merge(group.kind(), totalWeight(groupCandidates), Float::sum));
+        Map<RewardGroup, Float> groupShares = new EnumMap<>(RewardGroup.class);
+        grouped.forEach((group, groupCandidates) -> {
+            float share = Math.max(0f, shares.getOrDefault(group.kind(), 0f)) * totalWeight(groupCandidates) / kindWeights.get(group.kind());
+            if (share > 0f) {
+                groupShares.put(group, share);
+            }
+        });
+        return groupShares;
+    }
+
+    private static float totalWeight(List<RewardCandidate> candidates) {
+        float total = 0f;
+        for (RewardCandidate candidate : candidates) {
+            total += candidate.weight();
+        }
+        return total;
+    }
+
     public static Map<RewardKind, List<RewardCandidate>> candidates(RewardContext context, Random random) {
         Map<RewardKind, List<RewardCandidate>> candidates = new EnumMap<>(RewardKind.class);
-        List<ItemDefinition> baseTypes = baseTypes(context);
+        List<ItemDefinition> baseTypes = definitions(ItemType.HULL_ITEM, false, context.itemAllowed());
         candidates.put(RewardKind.HULL_ITEM, baseTypes.stream()
                 .map(definition -> new RewardCandidate(CarriedItem.of(RewardKind.HULL_ITEM, definition.id()), definition.rarity())).toList());
         candidates.put(RewardKind.BIOME_HULL_ITEM, biomeItems(baseTypes, context, random));
         candidates.put(RewardKind.CRAFTING_ITEM, craftingItems(RewardKind.CRAFTING_ITEM, context));
         candidates.put(RewardKind.INHIBITOR, craftingItems(RewardKind.INHIBITOR, context));
         candidates.put(RewardKind.ENGRAM, engrams(context));
+        candidates.put(RewardKind.FEEDSTOCK, feedstock(context));
+        candidates.put(RewardKind.STAR_CHART, starCharts(context));
         candidates.put(RewardKind.UNIQUE, uniques(context));
         return candidates;
     }
 
-    private static List<ItemDefinition> baseTypes(RewardContext context) {
-        return ItemDefinitions.ofType(ItemType.HULL_ITEM).stream()
-                .filter(definition -> !definition.unique() && ItemDrops.isDroppable(definition) && context.itemAllowed().test(definition))
+    public static List<CarriedItem> possible(RewardGroup group, Predicate<ItemDefinition> available) {
+        return switch (group.kind()) {
+            case CRAFTING_ITEM, INHIBITOR, FEEDSTOCK -> OfficerRewardTable.itemsIn(group.kind()).stream()
+                    .map(itemId -> CarriedItem.of(group.kind(), itemId))
+                    .filter(item -> RewardGroup.of(item) == group)
+                    .toList();
+            case ENGRAM -> Engrams.all().stream().map(Engram::itemId).filter(CarriedItem::isSafeId)
+                    .map(itemId -> CarriedItem.of(RewardKind.ENGRAM, itemId)).toList();
+            case STAR_CHART -> ItemDefinitions.ofType(ItemType.STAR_CHART).stream()
+                    .filter(definition -> ItemDrops.isDroppable(definition) && available.test(definition))
+                    .map(definition -> CarriedItem.of(RewardKind.STAR_CHART, definition.id())).toList();
+            case HULL_ITEM, BIOME_HULL_ITEM -> definitions(ItemType.HULL_ITEM, false, available).stream()
+                    .map(definition -> CarriedItem.of(group.kind(), definition.id())).toList();
+            case UNIQUE -> UNIQUE_TYPES.stream().flatMap(type -> definitions(type, true, available).stream())
+                    .map(definition -> CarriedItem.of(RewardKind.UNIQUE, definition.id())).toList();
+        };
+    }
+
+    private static List<ItemDefinition> definitions(ItemType type, boolean unique, Predicate<ItemDefinition> allowed) {
+        return ItemDefinitions.ofType(type).stream()
+                .filter(definition -> definition.unique() == unique && ItemDrops.isDroppable(definition) && allowed.test(definition))
                 .toList();
     }
 
@@ -136,14 +182,30 @@ public final class OfficerRewardPool {
         return engrams;
     }
 
+    private static List<RewardCandidate> feedstock(RewardContext context) {
+        List<RewardCandidate> feedstock = new ArrayList<>();
+        for (String itemId : OfficerRewardTable.itemsIn(RewardKind.FEEDSTOCK)) {
+            if (context.craftingItemAllowed().test(itemId)) {
+                feedstock.add(new RewardCandidate(CarriedItem.of(RewardKind.FEEDSTOCK, itemId), OfficerRewardTable.weightOf(itemId)));
+            }
+        }
+        return feedstock;
+    }
+
+    private static List<RewardCandidate> starCharts(RewardContext context) {
+        return ItemDefinitions.ofType(ItemType.STAR_CHART).stream()
+                .filter(definition -> ItemDrops.isDroppable(definition) && ItemTypes.rollsAtTier(definition, context.tier())
+                        && context.itemAllowed().test(definition))
+                .map(definition -> new RewardCandidate(CarriedItem.of(RewardKind.STAR_CHART, definition.id()), definition.rarity()))
+                .toList();
+    }
+
     private static List<RewardCandidate> uniques(RewardContext context) {
         List<RewardCandidate> uniques = new ArrayList<>();
         for (ItemType type : UNIQUE_TYPES) {
-            for (ItemDefinition definition : ItemDefinitions.ofType(type)) {
-                if (definition.unique() && ItemDrops.isDroppable(definition) && context.itemAllowed().test(definition)) {
-                    uniques.add(new RewardCandidate(CarriedItem.of(RewardKind.UNIQUE, definition.id()),
-                            (float) ItemDrops.factionWeight(definition, context.factionId())));
-                }
+            for (ItemDefinition definition : definitions(type, true, context.itemAllowed())) {
+                uniques.add(new RewardCandidate(CarriedItem.of(RewardKind.UNIQUE, definition.id()),
+                        (float) ItemDrops.factionWeight(definition, context.factionId())));
             }
         }
         return uniques;

@@ -69,29 +69,17 @@ public record CarriedItem(RewardKind kind, String id, String variant, int baseCo
         return new CarriedItem(kind, id, variant, count);
     }
 
-    public boolean stacksWith(CarriedItem other) {
+    public boolean sameItemAs(CarriedItem other) {
         return other != null && kind == other.kind && id.equals(other.id) && Objects.equals(variant, other.variant);
     }
 
-    public static List<CarriedItem> stack(List<CarriedItem> carried, Collection<CarriedItem> added) {
-        List<CarriedItem> stacked = new ArrayList<>(carried);
-        for (CarriedItem item : added) {
-            int index = indexOfStack(stacked, item);
-            if (index < 0) {
-                stacked.add(item);
-            } else {
-                stacked.set(index, stacked.get(index).withCount(stacked.get(index).baseCount() + item.baseCount()));
-            }
-        }
-        return List.copyOf(stacked);
+    public int entries() {
+        return kind.craftingItem() ? 1 : baseCount;
     }
 
-    private static int indexOfStack(List<CarriedItem> carried, CarriedItem item) {
-        for (int index = 0; index < carried.size(); index++) {
-            if (carried.get(index).stacksWith(item)) {
-                return index;
-            }
-        }
-        return -1;
+    public static List<CarriedItem> joined(List<CarriedItem> carried, Collection<CarriedItem> added) {
+        List<CarriedItem> joined = new ArrayList<>(carried);
+        joined.addAll(added);
+        return List.copyOf(joined);
     }
 }

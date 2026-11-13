@@ -11,6 +11,8 @@ import exiledsector.charts.atlas.AtlasRules;
 import exiledsector.charts.atlas.AtlasTerritoryPlacer;
 import exiledsector.charts.atlas.AtlasUnlocks;
 import exiledsector.charts.officer.reward.CarriedItem;
+import exiledsector.charts.officer.reward.OfficerRewardText;
+import exiledsector.charts.officer.reward.RewardGroup;
 import exiledsector.charts.officer.reward.RewardKind;
 import exiledsector.charts.officer.turn.OfficerTurn;
 import exiledsector.i18n.Translation;
@@ -50,7 +52,7 @@ class OfficerTextTest {
     }
 
     @Test
-    void detailLinesListTheCarriedItemsThenEachScar() {
+    void detailLinesListTheCarriedRewardGroupsThenEachScar() {
         AtlasOfficer officer = AtlasOfficer.waiting(1, "hegemony", "commander", "steady", new AtlasOfficer.OfficerSeeds(1L, 2L, 3L, 4L), null)
                 .withCarried(List.of(new CarriedItem(RewardKind.CRAFTING_ITEM, "kernel", null, 2))).withScars(Map.of("retired_scar", 2));
 
@@ -58,7 +60,8 @@ class OfficerTextTest {
 
         assertEquals(2, lines.size());
         assertEquals(AtlasLine.Tone.MARKER, lines.get(0).tone());
-        assertTrue(lines.get(0).plain().contains("kernel"), lines.get(0).plain());
+        assertTrue(lines.get(0).plain().contains(OfficerRewardText.groupCount(RewardGroup.LOW_CRAFTING, 1)), lines.get(0).plain());
+        assertFalse(lines.get(0).plain().contains("kernel"), lines.get(0).plain());
         assertEquals(AtlasLine.Tone.STYLED, lines.get(1).tone());
         assertTrue(lines.get(1).plain().contains("retired_scar"), lines.get(1).plain());
     }

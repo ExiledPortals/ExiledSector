@@ -1,28 +1,34 @@
-id,category,share,tier,note
-hull_item,,35,,"Rows with no category are the reward pool's categories: each one's share of the three offers an Atlas officer gives on defeat, and of every officer's starting item, before the item weights apply within it. hull_item is the non-unique hull item base types by rarity"
-biome_hull_item,,15,,"A hull item base type that always carries a biome modifier: the command centre biome's, else a random one from the biomes the player has opened"
-crafting_item,,30,,"Crafting items by their chart_materials.csv amount at the run tier"
-inhibitor,,7,,"Prefix and Suffix Inhibitors by their chart_materials.csv amount at the run tier"
-engram,,8,,"Engrams by their engrams.csv weight, from their min_tier"
-unique,,5,,"Unique hull items and subroutines by rarity, leaning to uniques whose source is the officer's faction. A rank's unique_share replaces this for that rank's starting item"
-exiledSector_augmentation_nanoswarm,crafting_item,,low,"Rows with a category are the items in it. tier sets the hidden count rolled when the item is picked or starts carried (low 1 to 7, mid 1 to 3, high 1) and which of a rank's craft_low, craft_mid and craft_high weights apply to its starting item. Every id needs a chart_materials.csv row"
-exiledSector_reshaping_nanoswarm,crafting_item,,low,
-exiledSector_corrupted_nanoswarm,crafting_item,,low,
-exiledSector_reforge_cipher,crafting_item,,low,
-exiledSector_erasure_cipher,crafting_item,,low,
-exiledSector_fundamental_nanoswarm,crafting_item,,mid,
-exiledSector_metamorph_nanoswarm,crafting_item,,mid,
-exiledSector_annulment_nanoswarm,crafting_item,,mid,
-exiledSector_tuning_nanoswarm,crafting_item,,mid,
-exiledSector_immutable_nanoswarm,crafting_item,,mid,
-exiledSector_cartographer_cipher,crafting_item,,mid,
-exiledSector_replicator_nanoseed,crafting_item,,high,
-exiledSector_beam_inhibitor,crafting_item,,high,
-exiledSector_non_beam_energy_inhibitor,crafting_item,,high,
-exiledSector_ballistic_inhibitor,crafting_item,,high,
-exiledSector_missile_inhibitor,crafting_item,,high,
-exiledSector_shield_inhibitor,crafting_item,,high,
-exiledSector_armour_inhibitor,crafting_item,,high,
-exiledSector_phase_inhibitor,crafting_item,,high,
-exiledSector_prefix_inhibitor,inhibitor,,mid,
-exiledSector_suffix_inhibitor,inhibitor,,mid,
+id,category,share,tier,weight,min_count,max_count,note
+hull_item,,35,,,,,"Rows with no category are the reward pool's categories: each one's share of the three offers an Atlas officer gives on defeat, and of every officer's starting item, before the item weights apply within it. A category's share splits over its reward groups (low, mid and high tier crafting items; every other category is one group) by the summed weights of each group's items at the run tier, so a rarer tier is offered less often. The three offers are three different groups, each a hidden item drawn by weight within its group. hull_item is the non-unique hull item base types by rarity"
+biome_hull_item,,15,,,,,"A hull item base type that always carries a biome modifier: the command centre biome's, else a random one from the biomes the player has opened"
+crafting_item,,30,,,,,"Crafting items by their chart_materials.csv amount at the run tier"
+inhibitor,,7,,,,,"Prefix and Suffix Inhibitors by their chart_materials.csv amount at the run tier"
+engram,,8,,,,,"Engrams by their engrams.csv weight, from their min_tier"
+feedstock,,8,,,,,"Placeholder share. Nanite Feedstock and the infused feedstocks by their weight below"
+star_chart,,7,,,,,"Placeholder share. Star Charts that roll at the run tier, by rarity. One drops at the tier of the run the officer is beaten in, swapped for another Star Chart if it can't roll there"
+unique,,5,,,,,"Unique hull items and subroutines by rarity, leaning to uniques whose source is the officer's faction. A rank's unique_share replaces this for that rank's starting item"
+exiledSector_augmentation_nanoswarm,crafting_item,,low,,,,"Rows with a category are the items in it. tier sets the item's reward group, the hidden count rolled when the item is picked or starts carried (low 1 to 7, mid 1 to 3, high 1) and which of a rank's craft_low, craft_mid and craft_high weights apply to its starting item. Every id needs a chart_materials.csv row"
+exiledSector_reshaping_nanoswarm,crafting_item,,low,,,,
+exiledSector_corrupted_nanoswarm,crafting_item,,low,,,,
+exiledSector_reforge_cipher,crafting_item,,low,,,,
+exiledSector_erasure_cipher,crafting_item,,low,,,,
+exiledSector_fundamental_nanoswarm,crafting_item,,mid,,,,
+exiledSector_metamorph_nanoswarm,crafting_item,,mid,,,,
+exiledSector_annulment_nanoswarm,crafting_item,,mid,,,,
+exiledSector_tuning_nanoswarm,crafting_item,,mid,,,,
+exiledSector_immutable_nanoswarm,crafting_item,,mid,,,,
+exiledSector_cartographer_cipher,crafting_item,,mid,,,,
+exiledSector_replicator_nanoseed,crafting_item,,high,,,,
+exiledSector_beam_inhibitor,crafting_item,,high,,,,
+exiledSector_non_beam_energy_inhibitor,crafting_item,,high,,,,
+exiledSector_ballistic_inhibitor,crafting_item,,high,,,,
+exiledSector_missile_inhibitor,crafting_item,,high,,,,
+exiledSector_shield_inhibitor,crafting_item,,high,,,,
+exiledSector_armour_inhibitor,crafting_item,,high,,,,
+exiledSector_phase_inhibitor,crafting_item,,high,,,,
+exiledSector_prefix_inhibitor,inhibitor,,mid,,,,
+exiledSector_suffix_inhibitor,inhibitor,,mid,,,,
+exiledSector_nanite_feedstock,feedstock,,,4,30,90,"Placeholder weights and counts. A feedstock takes no tier: weight is its weight within the feedstock group, and the hidden count rolled when it is picked or starts carried runs from min_count to max_count, then times the run's item and feedstock percents when it drops"
+exiledSector_threat_feedstock,feedstock,,,1,100,300,
+exiledSector_shroud_feedstock,feedstock,,,1,100,300,
+exiledSector_phase_feedstock,feedstock,,,1,100,300,

@@ -2,6 +2,7 @@ package exiledsector.charts.officer.reward;
 
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.loot.BiomeModifiers;
+import exiledsector.charts.loot.ChartDrops;
 import exiledsector.charts.loot.DropType;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
@@ -11,6 +12,7 @@ import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemDrops;
+import exiledsector.items.ItemTypes;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -31,9 +33,11 @@ public final class OfficerRewardDrop {
         List<ItemData> items = new ArrayList<>();
         Map<String, Integer> materials = new LinkedHashMap<>();
         float craftingMult = craftingMult(context);
+        float feedstockMult = feedstockMult(context);
         for (CarriedItem item : carried) {
             if (item.kind().craftingItem()) {
-                materials.merge(item.id(), Math.max(1, ItemDrops.wholeFeedstock(item.baseCount() * craftingMult, random)), Integer::sum);
+                float mult = item.kind() == RewardKind.FEEDSTOCK ? feedstockMult : craftingMult;
+                materials.merge(item.id(), Math.max(1, ItemDrops.wholeFeedstock(item.baseCount() * mult, random)), Integer::sum);
             } else {
                 ItemDefinition definition = ItemDefinitions.get(item.id());
                 for (int copy = 0; definition != null && copy < item.baseCount(); copy++) {
@@ -48,7 +52,15 @@ public final class OfficerRewardDrop {
     }
 
     public static float craftingMult(ChartGenContext context) {
-        float percent = context.itemPercent() + context.dropPercent(DropType.CRAFTING_ITEM);
+        return dropMult(context, DropType.CRAFTING_ITEM);
+    }
+
+    public static float feedstockMult(ChartGenContext context) {
+        return dropMult(context, DropType.FEEDSTOCK);
+    }
+
+    private static float dropMult(ChartGenContext context, DropType dropType) {
+        float percent = context.itemPercent() + context.dropPercent(dropType);
         return Math.max(0f, 1f + percent / ChartGenContext.PERCENT);
     }
 
@@ -57,11 +69,20 @@ public final class OfficerRewardDrop {
         return switch (item.kind()) {
             case UNIQUE -> ItemData.rolled(definition, seed);
             case BIOME_HULL_ITEM -> withBiomeModifier(ItemData.rolledAtTier(definition, seed, runTier), definition, item.variant(), random);
+            case STAR_CHART -> ItemData.rolledAtTier(chartAt(definition, runTier, random), seed, runTier);
             default -> ItemData.rolledAtTier(definition, seed, runTier);
         };
     }
 
-    public static ItemData withBiomeModifier(ItemData item, ItemDefinition definition, String biomeId, Random random) {
+    static ItemDefinition chartAt(ItemDefinition definition, int runTier, Random random) {
+        if (ItemTypes.rollsAtTier(definition, runTier)) {
+            return definition;
+        }
+        ItemDefinition replacement = ChartDrops.pickChartAtTier(random, runTier);
+        return replacement == null ? definition : replacement;
+    }
+
+    private static ItemData withBiomeModifier(ItemData item, ItemDefinition definition, String biomeId, Random random) {
         String modifierId = BiomeModifiers.modifierFor(biomeId, definition.kind());
         if (modifierId == null || !GrantedModifiers.canGrant(definition, modifierId)) {
             return item;

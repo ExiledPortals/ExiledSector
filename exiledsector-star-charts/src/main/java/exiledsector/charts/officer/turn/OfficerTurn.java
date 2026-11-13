@@ -267,7 +267,7 @@ public final class OfficerTurn {
         boolean lowerRankWon = setup.rankOrder(winner.rankId()) < setup.rankOrder(loser.rankId());
         int renownGained = rules.renownPerChallengeWon() + (!attackerWins && defended ? rules.renownPerDefendHeld() : 0);
         state.putOfficer(winner.withRenown(winner.renown() + renownGained).withLastChance(false)
-                .withCarried(CarriedItem.stack(winner.carried(), loser.carried()))
+                .withCarried(CarriedItem.joined(winner.carried(), loser.carried()))
                 .withHistory(AtlasTerritoryPlacer.history(CHALLENGE_WON_HISTORY, loser.commandCentre())));
         state.putOfficer(loser.withCarried(List.of())
                 .withHistory(AtlasTerritoryPlacer.history(CHALLENGE_LOST_HISTORY, winner.commandCentre())));
