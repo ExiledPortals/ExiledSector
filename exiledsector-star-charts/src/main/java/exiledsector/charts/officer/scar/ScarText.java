@@ -3,6 +3,8 @@ package exiledsector.charts.officer.scar;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.DescriptionLine;
+import exiledsector.skills.skilleffect.SkillEffect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,12 +72,17 @@ public final class ScarText {
         ScarRow row = ScarTable.row(scarId);
         if (row != null) {
             for (ScarRow.Effect effect : row.fittingEffects(hull)) {
-                effects.add(effect.effect().description(effect.magnitudePerStack() * stacks));
+                effects.add(playerView(effect.effect(), effect.magnitudePerStack() * stacks));
             }
         }
         if (effects.isEmpty()) {
             return title;
         }
         return Translation.msg("chart.officer.scar.effects").arg("scar", title).arg("effects", Translation.list(effects)).styled();
+    }
+
+    static StyledText playerView(SkillEffect effect, float magnitude) {
+        StyledText shipView = new DescriptionLine(effect.description(magnitude), effect.invertsDescriptionColours()).display();
+        return shipView.inverted();
     }
 }

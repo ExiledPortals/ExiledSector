@@ -1,5 +1,6 @@
 package exiledsector.charts.officer.scar;
 
+import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import org.junit.jupiter.api.BeforeEach;
@@ -66,5 +67,17 @@ class ScarLevelsAndTextTest {
         assertTrue(lines.get(0).plain().startsWith("Kinetic-Scarred x2: "), lines.get(0).plain());
         assertTrue(lines.get(0).plain().contains("20"), lines.get(0).plain());
         assertEquals("Humbled", lines.get(1).plain());
+    }
+
+    @Test
+    void everyScarEffectIsColouredAsBadForThePlayer() {
+        for (ScarRow row : ScarTable.rows()) {
+            for (ScarRow.Effect effect : row.effects()) {
+                StyledText line = ScarText.playerView(effect.effect(), effect.magnitudePerStack());
+                String label = row.id() + " " + effect.effect() + ": " + line.toMarkup();
+                assertTrue(line.spans().stream().noneMatch(span -> span.style() == Style.GOOD), label);
+                assertTrue(line.spans().stream().anyMatch(span -> span.style() == Style.BAD), label);
+            }
+        }
     }
 }
