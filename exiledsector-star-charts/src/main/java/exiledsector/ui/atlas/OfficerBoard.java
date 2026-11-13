@@ -1,7 +1,6 @@
 package exiledsector.ui.atlas;
 
 import com.fs.starfarer.api.campaign.FactionAPI;
-import com.fs.starfarer.api.util.Misc;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.officer.AtlasOfficer;
@@ -18,10 +17,8 @@ import exiledsector.ui.UiFonts;
 import exiledsector.ui.decoration.SensorGhostRenderer;
 import exiledsector.ui.util.BorderedPanel;
 import exiledsector.ui.util.GLDraw;
-import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.SpriteDraw;
 import exiledsector.ui.util.TextLabel;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -52,14 +49,16 @@ final class OfficerBoard {
     static final int ARROW_SEGMENTS = 24;
     static final float ARROWHEAD_SHARE = 0.18f;
     static final float MARK_SHARE = 0.25f;
-    static final float SHIELD_SHARE = 0.28f;
+    static final float DEFEND_MARK_SHARE = 0.28f;
+    static final String RANK_MARK_PATH = "graphics/icons/ranks/rank1.png";
+    static final float RANK_MARK_ASPECT = 11f / 16f;
+    static final String DEFEND_MARK_PATH = "graphics/warroom/taskicons/icon_defend.png";
     static final String HELP_ICON_PATH = "graphics/ui/icons/fleettab/more_info.png";
     static final float HELP_ICON_SIZE = 24f;
     static final Color SLOT_FILL = new Color(20, 24, 30);
     static final Color DIMMED_TINT = new Color(150, 150, 150);
     static final Color ROSE_COLOUR = SkillTreePanelStyle.POSITIVE_STAT_COLOR;
     static final Color FELL_COLOUR = SkillTreePanelStyle.NEGATIVE_STAT_COLOR;
-    static final Color SHIELD_COLOUR = SkillTreePanelStyle.GLOW_COLOR;
     static final Color FALLBACK_FRAME_COLOUR = new Color(150, 150, 150);
 
     private record Face(boolean identified, boolean dimmed, String portraitPath, Color frameColour, AtlasCell commandCentre) {
@@ -86,7 +85,7 @@ final class OfficerBoard {
     private final SpriteCache sprites = new SpriteCache(OfficerBoard.class);
     private final SensorGhostRenderer ghosts = new SensorGhostRenderer(GHOST_COUNT, GHOST_SIZE_RATIO, GHOST_SCATTER_RATIO);
     private final OfficerBoardBeams beams = new OfficerBoardBeams();
-    private final OfficerBoardLegend legend = new OfficerBoardLegend(ghosts, beams);
+    private final OfficerBoardLegend legend = new OfficerBoardLegend(ghosts, beams, sprites);
     private final OfficerBoardTooltip tooltip = new OfficerBoardTooltip(sprites);
     private final TextLabel titleLabel = new TextLabel(UiFonts.TITLE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
     private final List<TextLabel> rankLabels = new ArrayList<>();
@@ -430,34 +429,14 @@ final class OfficerBoard {
             return;
         }
         float size = geometry.portraitSize();
-        float shieldSize = size * SHIELD_SHARE;
-        try (GlScope scope = GlScope.flat()) {
-            for (int recordId : shields) {
-                OfficerBoardLayout.Seat seat = shuffle.after().seat(recordId);
-                float centreX = geometry.centreX(seat) + size / 2f;
-                float centreY = geometry.centreY(seat) + size / 2f;
-                shield(centreX, centreY, shieldSize, SHIELD_COLOUR, alpha);
-            }
+        for (int recordId : shields) {
+            OfficerBoardLayout.Seat seat = shuffle.after().seat(recordId);
+            defendMark(sprites, geometry.centreX(seat) + size / 2f, geometry.centreY(seat) + size / 2f, size * DEFEND_MARK_SHARE, alpha);
         }
     }
 
-    static void shield(float centreX, float centreY, float size, Color colour, float alpha) {
-        float half = size / 2f;
-        float shoulderY = centreY + half * 0.2f;
-        Misc.setColor(Color.BLACK, alpha);
-        shieldOutline(GL11.GL_POLYGON, centreX, centreY, half + 1.5f, shoulderY);
-        Misc.setColor(colour, alpha);
-        shieldOutline(GL11.GL_POLYGON, centreX, centreY, half, shoulderY);
-    }
-
-    private static void shieldOutline(int mode, float centreX, float centreY, float half, float shoulderY) {
-        GL11.glBegin(mode);
-        GL11.glVertex2f(centreX - half, centreY + half);
-        GL11.glVertex2f(centreX + half, centreY + half);
-        GL11.glVertex2f(centreX + half, shoulderY);
-        GL11.glVertex2f(centreX, centreY - half);
-        GL11.glVertex2f(centreX - half, shoulderY);
-        GL11.glEnd();
+    static void defendMark(SpriteCache sprites, float centreX, float centreY, float size, float alpha) {
+        SpriteDraw.drawAtCenter(sprites, DEFEND_MARK_PATH, centreX, centreY, size, size, Color.WHITE, alpha);
     }
 
     private void drawRankMarks(float alpha) {
@@ -465,29 +444,16 @@ final class OfficerBoard {
             return;
         }
         float size = geometry.portraitSize();
-        float markSize = size * MARK_SHARE;
-        try (GlScope scope = GlScope.flat()) {
-            for (OfficerBoardShuffle.Mover mover : shuffle.movers()) {
-                if (mover.mark() == OfficerBoardShuffle.RankMark.NONE) {
-                    continue;
-                }
-                boolean rose = mover.mark() == OfficerBoardShuffle.RankMark.ROSE;
-                float centreX = centreX(mover) - size / 2f;
-                float centreY = centreY(mover) + size / 2f;
-                triangle(centreX, centreY, markSize, rose, rose ? ROSE_COLOUR : FELL_COLOUR, alpha);
+        for (OfficerBoardShuffle.Mover mover : shuffle.movers()) {
+            if (mover.mark() != OfficerBoardShuffle.RankMark.NONE) {
+                rankMark(sprites, centreX(mover) - size / 2f, centreY(mover) + size / 2f, size * MARK_SHARE,
+                        mover.mark() == OfficerBoardShuffle.RankMark.ROSE, alpha);
             }
         }
     }
 
-    static void triangle(float centreX, float centreY, float size, boolean pointsUp, Color colour, float alpha) {
-        float half = size / 2f;
-        float tipY = pointsUp ? centreY + half : centreY - half;
-        float baseY = pointsUp ? centreY - half : centreY + half;
-        Misc.setColor(colour, alpha);
-        GL11.glBegin(GL11.GL_TRIANGLES);
-        GL11.glVertex2f(centreX, tipY);
-        GL11.glVertex2f(centreX - half, baseY);
-        GL11.glVertex2f(centreX + half, baseY);
-        GL11.glEnd();
+    static void rankMark(SpriteCache sprites, float centreX, float centreY, float width, boolean rose, float alpha) {
+        SpriteDraw.drawAtCenter(sprites, RANK_MARK_PATH, centreX, centreY, width, width * RANK_MARK_ASPECT, rose ? ROSE_COLOUR : FELL_COLOUR, alpha,
+                rose ? 0f : 180f);
     }
 }

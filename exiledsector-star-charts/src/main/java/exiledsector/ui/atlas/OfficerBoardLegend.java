@@ -2,11 +2,11 @@ package exiledsector.ui.atlas;
 
 import com.fs.starfarer.api.Global;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.UiFonts;
 import exiledsector.ui.decoration.SensorGhostRenderer;
 import exiledsector.ui.util.GLDraw;
-import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.TextLabel;
 
 import java.awt.Color;
@@ -25,8 +25,8 @@ final class OfficerBoardLegend {
     static final int COLUMNS = 2;
     static final int ARROW_SEGMENTS = 13;
     static final float ARROWHEAD_LENGTH = 7f;
-    static final float SHIELD_SIZE = 14f;
-    static final float MARK_SIZE = 12f;
+    static final float DEFEND_MARK_SIZE = 18f;
+    static final float RANK_MARK_WIDTH = 16f;
     static final float SLOT_SIZE = 18f;
     static final float GHOST_FOOTPRINT = 30f;
     static final String GHOST_SEED = "officer_legend";
@@ -50,11 +50,13 @@ final class OfficerBoardLegend {
 
     private final SensorGhostRenderer ghosts;
     private final OfficerBoardBeams beams;
+    private final SpriteCache sprites;
     private final Map<Glyph, TextLabel> labels = new EnumMap<>(Glyph.class);
 
-    OfficerBoardLegend(SensorGhostRenderer ghosts, OfficerBoardBeams beams) {
+    OfficerBoardLegend(SensorGhostRenderer ghosts, OfficerBoardBeams beams, SpriteCache sprites) {
         this.ghosts = ghosts;
         this.beams = beams;
+        this.sprites = sprites;
     }
 
     void write() {
@@ -134,17 +136,8 @@ final class OfficerBoardLegend {
             case LINK -> beams.link(centreX - half / 2f, centreY - half, centreX + half / 2f, centreY + half, true, alpha);
             case WON -> addArrow(left, right, centreY, OfficerBoardArrows.Style.SOLID, alpha);
             case CHALLENGE -> addArrow(left, right, centreY, OfficerBoardArrows.Style.DASHED, alpha);
-            case DEFEND -> {
-                try (GlScope scope = GlScope.flat()) {
-                    OfficerBoard.shield(centreX, centreY, SHIELD_SIZE, OfficerBoard.SHIELD_COLOUR, alpha);
-                }
-            }
-            case ROSE, FELL -> {
-                boolean rose = glyph == Glyph.ROSE;
-                try (GlScope scope = GlScope.flat()) {
-                    OfficerBoard.triangle(centreX, centreY, MARK_SIZE, rose, rose ? OfficerBoard.ROSE_COLOUR : OfficerBoard.FELL_COLOUR, alpha);
-                }
-            }
+            case DEFEND -> OfficerBoard.defendMark(sprites, centreX, centreY, DEFEND_MARK_SIZE, alpha);
+            case ROSE, FELL -> OfficerBoard.rankMark(sprites, centreX, centreY, RANK_MARK_WIDTH, glyph == Glyph.ROSE, alpha);
             case IDLE -> drawSlot(centreX, centreY, OfficerBoard.DIMMED_TINT, OfficerBoard.DIMMED_ALPHA * alpha);
             case UNKNOWN -> ghosts.draw(centreX, centreY, GHOST_FOOTPRINT, alpha, GHOST_SEED);
         }
