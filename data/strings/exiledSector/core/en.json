@@ -810,7 +810,7 @@
     "effect.DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_PERCENT": "<good>{value}%</good> reduced damage taken while within <hl>{range}</hl> su of a combat objective your side holds.",
     "effect.DAMAGE_TAKEN_NEAR_FLAGSHIP_PERCENT": "<good>{value}%</good> reduced damage taken while within <hl>{range}</hl> su of your flagship.",
     "effect.DAMAGE_TAKEN_WHILE_RETREATING_PERCENT": "<good>{value}%</good> reduced damage taken while retreating.",
-    "effect.TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT": "Additional top speed equal to <good>{value}%</good> of your flagship's base top speed while your flagship is deployed.",
+    "effect.TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT": "Additional top speed equal to <good>{value}%</good> of your flagship's base top speed while your flagship is deployed, up to a maximum of <hl>{cap}</hl> su/s.",
     "effect.RAM_PROW_COLLISION_DAMAGE_MULT": "<good>{value}%</good> more collision damage dealt to enemy ships and <good>{value}%</good> less collision damage taken.",
     "effect.HULL_DAMAGE_TAKEN_PERCENT_PER_CREW_LOST": "<good>{value}%</good> reduced hull damage taken for every <hl>{step}</hl> crew lost this deployment, up to a maximum of <hl>{max}%</hl>.",
     "effect.HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_FLAT": "<good>+{value}%</good> to the maximum reduced hull damage taken from crew lost.",

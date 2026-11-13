@@ -29,6 +29,7 @@ class FlagshipPaceListenerTest {
         when(ship.isAlive()).thenReturn(true);
         when(ship.isHulk()).thenReturn(false);
         when(ship.isFighter()).thenReturn(false);
+        when(ship.getHullSize()).thenReturn(ShipAPI.HullSize.CRUISER);
         when(ship.getHullSpec().getEngineSpec().getMaxSpeed()).thenReturn(hullTopSpeed);
         return ship;
     }
@@ -54,7 +55,7 @@ class FlagshipPaceListenerTest {
         PersonAPI commander = mock(PersonAPI.class);
         MutableStat topSpeed = new MutableStat(60f);
         ShipAPI escort = escort(commander, topSpeed);
-        ShipAPI flagship = ship(0, commander, 100f);
+        ShipAPI flagship = ship(0, commander, 30f);
         List<ShipAPI> ships = new ArrayList<>(List.of(escort, flagship, ship(1, commander, 300f)));
         FlagshipPaceListener listener = new FlagshipPaceListener(escort);
 
@@ -64,11 +65,29 @@ class FlagshipPaceListenerTest {
             global.when(Global::getCombatEngine).thenReturn(engine);
 
             listener.advance(FlagshipPaceListener.SCAN_INTERVAL_SECONDS);
-            assertEquals(110f, topSpeed.getModifiedValue(), EPSILON);
+            assertEquals(75f, topSpeed.getModifiedValue(), EPSILON);
 
             ships.remove(flagship);
             listener.advance(FlagshipPaceListener.SCAN_INTERVAL_SECONDS);
             assertEquals(60f, topSpeed.getModifiedValue(), EPSILON);
+        }
+    }
+
+    @Test
+    void capsTheBonusByTheEscortsHullSize() {
+        PersonAPI commander = mock(PersonAPI.class);
+        MutableStat topSpeed = new MutableStat(60f);
+        ShipAPI escort = escort(commander, topSpeed);
+        when(escort.getHullSize()).thenReturn(ShipAPI.HullSize.CAPITAL_SHIP);
+        ShipAPI flagship = ship(0, commander, 100f);
+
+        CombatEngineAPI engine = engine(List.of(escort, flagship));
+
+        try (MockedStatic<Global> global = mockStatic(Global.class)) {
+            global.when(Global::getCombatEngine).thenReturn(engine);
+
+            new FlagshipPaceListener(escort).advance(FlagshipPaceListener.SCAN_INTERVAL_SECONDS);
+            assertEquals(75f, topSpeed.getModifiedValue(), EPSILON);
         }
     }
 

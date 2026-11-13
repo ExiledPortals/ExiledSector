@@ -1278,7 +1278,7 @@
     "effect.DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_PERCENT": "位于己方占领的战场目标<hl>{range}</hl> su内时，受到的伤害降低<good>{value}%</good>。",
     "effect.DAMAGE_TAKEN_NEAR_FLAGSHIP_PERCENT": "位于你的旗舰<hl>{range}</hl> su内时，受到的伤害降低<good>{value}%</good>。",
     "effect.DAMAGE_TAKEN_WHILE_RETREATING_PERCENT": "撤退时，受到的伤害降低<good>{value}%</good>。",
-    "effect.TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT": "你的旗舰已部署时，额外获得相当于旗舰基础最高速度<good>{value}%</good>的最高速度。",
+    "effect.TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT": "你的旗舰已部署时，额外获得相当于旗舰基础最高速度<good>{value}%</good>的最高速度，最多<hl>{cap}</hl> su/s。",
     "effect.RAM_PROW_COLLISION_DAMAGE_MULT": "对敌舰造成的碰撞伤害提高<good>{value}%</good>（乘算），受到的碰撞伤害降低<good>{value}%</good>（乘算）。",
     "effect.HULL_DAMAGE_TAKEN_PERCENT_PER_CREW_LOST": "本次出击中每损失<hl>{step}</hl>名船员，受到的结构伤害降低<good>{value}%</good>，最多<hl>{max}%</hl>。",
     "effect.HULL_DAMAGE_TAKEN_PER_CREW_LOST_MAX_FLAT": "因船员损失而降低的受到结构伤害上限<good>+{value}%</good>。",

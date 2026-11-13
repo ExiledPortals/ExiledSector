@@ -368,7 +368,8 @@ rechecked every 0.25 seconds. Strike craft don't count, and only the strongest s
 ### Honor Guard
 
 `TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT` adds a flat share of the flagship's hull top speed, before any modifiers, while
-that flagship is alive on the field, rechecked every second. The flagship is the ship captained by this ship's fleet
+that flagship is alive on the field, rechecked every second. The bonus is capped by this ship's hull size (30/25/20/15
+su/s, `SPEED_BONUS_CAPS`). The flagship is the ship captained by this ship's fleet
 commander, so the flagship itself gains nothing (`FlagshipPaceListener`, flagship lookup in `Flagships`).
 
 `DAMAGE_TAKEN_NEAR_FLAGSHIP_PERCENT` (integrated Honor Guard) changes hull, armor and shield damage taken while

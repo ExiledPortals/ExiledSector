@@ -3616,12 +3616,12 @@ effect|TOP_SPEED_PERCENT_PER_NEARBY_ALLY|12.5	0	<good>12.5%</good> increased top
 effect|TOP_SPEED_PERCENT_PER_NEARBY_ALLY|100.0	0	<good>100%</good> increased top speed for every allied ship within <hl>1000</hl> su, up to a maximum of <hl>10%</hl>.
 effect|TOP_SPEED_PERCENT_PER_NEARBY_ALLY|-10.0	0	<good>-10%</good> increased top speed for every allied ship within <hl>1000</hl> su, up to a maximum of <hl>10%</hl>.
 effect|TOP_SPEED_PERCENT_PER_NEARBY_ALLY|-12.5	0	<good>-12.5%</good> increased top speed for every allied ship within <hl>1000</hl> su, up to a maximum of <hl>10%</hl>.
-effect|TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT|1.0	0	Additional top speed equal to <good>1%</good> of your flagship's base top speed while your flagship is deployed.
-effect|TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT|10.0	0	Additional top speed equal to <good>10%</good> of your flagship's base top speed while your flagship is deployed.
-effect|TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT|12.5	0	Additional top speed equal to <good>12.5%</good> of your flagship's base top speed while your flagship is deployed.
-effect|TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT|100.0	0	Additional top speed equal to <good>100%</good> of your flagship's base top speed while your flagship is deployed.
-effect|TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT|-10.0	0	Additional top speed equal to <good>-10%</good> of your flagship's base top speed while your flagship is deployed.
-effect|TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT|-12.5	0	Additional top speed equal to <good>-12.5%</good> of your flagship's base top speed while your flagship is deployed.
+effect|TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT|1.0	0	Additional top speed equal to <good>1%</good> of your flagship's base top speed while your flagship is deployed, up to a maximum of <hl>30/25/20/15</hl> su/s.
+effect|TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT|10.0	0	Additional top speed equal to <good>10%</good> of your flagship's base top speed while your flagship is deployed, up to a maximum of <hl>30/25/20/15</hl> su/s.
+effect|TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT|12.5	0	Additional top speed equal to <good>12.5%</good> of your flagship's base top speed while your flagship is deployed, up to a maximum of <hl>30/25/20/15</hl> su/s.
+effect|TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT|100.0	0	Additional top speed equal to <good>100%</good> of your flagship's base top speed while your flagship is deployed, up to a maximum of <hl>30/25/20/15</hl> su/s.
+effect|TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT|-10.0	0	Additional top speed equal to <good>-10%</good> of your flagship's base top speed while your flagship is deployed, up to a maximum of <hl>30/25/20/15</hl> su/s.
+effect|TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT|-12.5	0	Additional top speed equal to <good>-12.5%</good> of your flagship's base top speed while your flagship is deployed, up to a maximum of <hl>30/25/20/15</hl> su/s.
 effect|TOP_SPEED_WHILE_RETREATING_PERCENT|1.0	0	<good>1%</good> increased top speed while retreating.
 effect|TOP_SPEED_WHILE_RETREATING_PERCENT|10.0	0	<good>10%</good> increased top speed while retreating.
 effect|TOP_SPEED_WHILE_RETREATING_PERCENT|12.5	0	<good>12.5%</good> increased top speed while retreating.
@@ -9196,45 +9196,45 @@ integrated|hold_the_line|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|hold_the_line|CAPITAL_SHIP|1	0	<good>15%</good> reduced armor damage taken while moving slower than <hl>25%</hl> of top speed.
 integrated|hold_the_line|CAPITAL_SHIP|2	0	<builtIn>15%</builtIn> reduced shield flux upkeep while moving slower than <hl>10%</hl> of top speed.
 flavour|honor_guard	0	The Lion's Guard keeps pace with the Supreme Executor's flagship, never the other way round. Most of its recorded maneuvers are parades.
-type|honor_guard|null|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
-type|honor_guard|FRIGATE|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
-type|honor_guard|DESTROYER|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
-type|honor_guard|CRUISER|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
-type|honor_guard|CAPITAL_SHIP|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
-integrable|honor_guard|null|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
+type|honor_guard|null|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed, up to a maximum of <hl>30/25/20/15</hl> su/s.
+type|honor_guard|FRIGATE|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed, up to a maximum of <hl>30</hl> su/s.
+type|honor_guard|DESTROYER|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed, up to a maximum of <hl>25</hl> su/s.
+type|honor_guard|CRUISER|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed, up to a maximum of <hl>20</hl> su/s.
+type|honor_guard|CAPITAL_SHIP|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed, up to a maximum of <hl>15</hl> su/s.
+integrable|honor_guard|null|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed, up to a maximum of <hl>30/25/20/15</hl> su/s.
 integrable|honor_guard|null|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|honor_guard|null|2	0	<muted>When integrated, for 2 story points:</muted>
 integrable|honor_guard|null|3	0	In addition, grants <builtIn>10%</builtIn> reduced damage taken while within <hl>1500</hl> su of your flagship.
-integrable|honor_guard|FRIGATE|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
+integrable|honor_guard|FRIGATE|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed, up to a maximum of <hl>30</hl> su/s.
 integrable|honor_guard|FRIGATE|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|honor_guard|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
 integrable|honor_guard|FRIGATE|3	0	In addition, grants <builtIn>10%</builtIn> reduced damage taken while within <hl>1500</hl> su of your flagship.
-integrable|honor_guard|DESTROYER|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
+integrable|honor_guard|DESTROYER|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed, up to a maximum of <hl>25</hl> su/s.
 integrable|honor_guard|DESTROYER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|honor_guard|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
 integrable|honor_guard|DESTROYER|3	0	In addition, grants <builtIn>10%</builtIn> reduced damage taken while within <hl>1500</hl> su of your flagship.
-integrable|honor_guard|CRUISER|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
+integrable|honor_guard|CRUISER|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed, up to a maximum of <hl>20</hl> su/s.
 integrable|honor_guard|CRUISER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|honor_guard|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
 integrable|honor_guard|CRUISER|3	0	In addition, grants <builtIn>10%</builtIn> reduced damage taken while within <hl>1500</hl> su of your flagship.
-integrable|honor_guard|CAPITAL_SHIP|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
+integrable|honor_guard|CAPITAL_SHIP|0	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed, up to a maximum of <hl>15</hl> su/s.
 integrable|honor_guard|CAPITAL_SHIP|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|honor_guard|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
 integrable|honor_guard|CAPITAL_SHIP|3	0	In addition, grants <builtIn>10%</builtIn> reduced damage taken while within <hl>1500</hl> su of your flagship.
 integrated|honor_guard|null|0	0	<builtIn>Integrated</builtIn>
-integrated|honor_guard|null|1	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
+integrated|honor_guard|null|1	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed, up to a maximum of <hl>30/25/20/15</hl> su/s.
 integrated|honor_guard|null|2	0	<builtIn>10%</builtIn> reduced damage taken while within <hl>1500</hl> su of your flagship.
 integrated|honor_guard|FRIGATE|0	0	<builtIn>Integrated</builtIn>
-integrated|honor_guard|FRIGATE|1	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
+integrated|honor_guard|FRIGATE|1	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed, up to a maximum of <hl>30</hl> su/s.
 integrated|honor_guard|FRIGATE|2	0	<builtIn>10%</builtIn> reduced damage taken while within <hl>1500</hl> su of your flagship.
 integrated|honor_guard|DESTROYER|0	0	<builtIn>Integrated</builtIn>
-integrated|honor_guard|DESTROYER|1	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
+integrated|honor_guard|DESTROYER|1	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed, up to a maximum of <hl>25</hl> su/s.
 integrated|honor_guard|DESTROYER|2	0	<builtIn>10%</builtIn> reduced damage taken while within <hl>1500</hl> su of your flagship.
 integrated|honor_guard|CRUISER|0	0	<builtIn>Integrated</builtIn>
-integrated|honor_guard|CRUISER|1	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
+integrated|honor_guard|CRUISER|1	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed, up to a maximum of <hl>20</hl> su/s.
 integrated|honor_guard|CRUISER|2	0	<builtIn>10%</builtIn> reduced damage taken while within <hl>1500</hl> su of your flagship.
 integrated|honor_guard|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
-integrated|honor_guard|CAPITAL_SHIP|1	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed.
+integrated|honor_guard|CAPITAL_SHIP|1	0	Additional top speed equal to <good>50%</good> of your flagship's base top speed while your flagship is deployed, up to a maximum of <hl>15</hl> su/s.
 integrated|honor_guard|CAPITAL_SHIP|2	0	<builtIn>10%</builtIn> reduced damage taken while within <hl>1500</hl> su of your flagship.
 flavour|hullbreacher_rounds	0	Former Hegemony Navy gunners in the crew remember the breacher loads the Navy keeps for boarding actions, shells hardened to punch through plating instead of bursting on it. The crew sees no reason to save them for boarding.
 flavourAutomated|hullbreacher_rounds	0	The Hegemony Navy keeps breacher loads for boarding actions, shells hardened to punch through plating instead of bursting on it. The ship's core finds their specifications in a seized Navy ordnance manifest and loads them for every fight.
