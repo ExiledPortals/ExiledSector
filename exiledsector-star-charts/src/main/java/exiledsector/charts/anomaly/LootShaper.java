@@ -43,6 +43,10 @@ public interface LootShaper extends ChartAnomaly {
         return item;
     }
 
+    default boolean overchargesHullItems(CampaignFleetAPI fleet) {
+        return false;
+    }
+
     default ItemChances siteChances(MemoryAPI siteMemory, ItemChances chances) {
         return chances;
     }

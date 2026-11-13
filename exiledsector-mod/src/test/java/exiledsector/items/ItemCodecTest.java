@@ -90,6 +90,19 @@ class ItemCodecTest {
     }
 
     @Test
+    void immutableAndOverchargedModifiersCarryTheirFlagsAfterTheSlotLetter() {
+        List<RolledModifier> flagged = List.of(prefix("FIGHTER_ARMOR_PERCENT", 18.75f).asImmutable(),
+                HYBRID.get(0).overchargedWith(List.of(new RolledLine("ARMOR_PERCENT", 6.25f), new RolledLine("HULL_MULT", 3.75f))).asImmutable(),
+                suffix("HULL_MULT", 7.5f).overchargedWith(List.of(new RolledLine("HULL_MULT", 7.5f))));
+
+        String encoded = ItemCodec.modifiers(flagged);
+
+        assertEquals("Pi=FIGHTER_ARMOR_PERCENT:18.75;Pio=plated_frame=ARMOR_PERCENT:6.25+HULL_MULT:3.75;So=HULL_MULT:7.5", encoded);
+        assertEquals(flagged, ItemCodec.decodeModifiers(encoded, "sub"));
+        assertEquals(COMMON, ItemCodec.decodeModifiers(COMMON_TEXT, "sub"));
+    }
+
+    @Test
     void npcIdsAreWrittenWithTheSlotAndIdOfEveryModifier() {
         assertEquals("npc:sub/42/" + COMMON_TEXT, NpcItems.id(COMMON_ITEM));
         assertEquals("npc:sub/42/" + RARE_TEXT, NpcItems.id(RARE_ITEM));

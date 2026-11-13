@@ -524,7 +524,7 @@ public abstract class Item {
             StyledText description = explicitLine(effects, effect, modifier == null ? null : modifier.line(effect.effectName()),
                     withRollRanges, context);
             if (description != null) {
-                StyledText shown = rolledModifier.immutable() ? description.withUnstyledAs(Style.IMMUTABLE) : description;
+                StyledText shown = shownAs(rolledModifier, description);
                 ModifierEffect resolvedEffect = effect.effect(effects);
                 described.add(resolvedEffect == null ? new SlottedLine(rolledModifier.slot(), shown)
                         : new SlottedLine(rolledModifier.slot(), shown, resolvedEffect.detailTitle(), resolvedEffect.detailLines()));
@@ -545,6 +545,13 @@ public abstract class Item {
         }
     }
 
+    private static StyledText shownAs(RolledModifier rolledModifier, StyledText description) {
+        if (rolledModifier.immutable()) {
+            return description.withUnstyledAs(Style.IMMUTABLE);
+        }
+        return rolledModifier.overcharged() ? description.withUnstyledAs(Style.OVERCHARGED) : description;
+    }
+
     private static void addUnderHeaders(List<SlottedLine> lines, ModifierSlot slot, List<String> headerKeys, List<SlottedLine> described) {
         ModifierSlot headerSlot = slot;
         for (String headerKey : headerKeys) {
@@ -562,6 +569,9 @@ public abstract class Item {
         String originHeaderKey = ModifierSources.headerKey(rolledModifier.modifierId());
         if (originHeaderKey != null) {
             headerKeys.add(originHeaderKey);
+        }
+        if (rolledModifier.overcharged()) {
+            headerKeys.add("socketable.tooltip.overcharged");
         }
         if (hybrid) {
             headerKeys.add("socketable.tooltip.hybrid");

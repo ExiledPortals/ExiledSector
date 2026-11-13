@@ -329,6 +329,7 @@
     "item.tooltip.slotTag.prefix": "P",
     "item.tooltip.slotTag.suffix": "S",
     "socketable.tooltip.hybrid": "<muted>Hybrid</muted>",
+    "socketable.tooltip.overcharged": "<overcharged>Overcharged</overcharged>",
     "socketable.tooltip.hybridLine": "<muted>|</muted> {line}",
     "socketable.tooltip.detailLine": "<muted>-</muted> {line}",
     "item.tooltip.implicit": "Implicit",

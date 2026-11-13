@@ -148,6 +148,21 @@ public record ModifierLine(String effectName, float min, float max, ValueScaling
         return isBetter(lowestRoll, highestRoll, context, lowerIsBetter) ? lowestRoll : highestRoll;
     }
 
+    public boolean canOvercharge(boolean lowerIsBetter) {
+        return !isScaled() && canVary() && betterEnd(lowerIsBetter) != 0f;
+    }
+
+    public float overchargedRoll(boolean lowerIsBetter, float fraction) {
+        float betterEnd = betterEnd(lowerIsBetter);
+        float pastBetterEnd = betterEnd + (lowerIsBetter ? -1f : 1f) * Math.abs(betterEnd) * fraction;
+        float stepsPerUnit = (float) Math.pow(10, MAX_DECIMAL_PLACES);
+        return Math.round(pastBetterEnd * stepsPerUnit) / stepsPerUnit + 0f;
+    }
+
+    private float betterEnd(boolean lowerIsBetter) {
+        return lowerIsBetter ? min : max;
+    }
+
     public boolean isBetter(float candidateRoll, float currentRoll, ScaleContext context, boolean lowerIsBetter) {
         float candidateValue = valueFor(candidateRoll, context);
         float currentValue = valueFor(currentRoll, context);

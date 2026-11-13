@@ -221,7 +221,7 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
                 if (resolved == null) {
                     resolved = new ArrayList<>(modifiers);
                 }
-                resolved.set(index, new RolledModifier(currentId, modifier.slot(), modifier.lines(), modifier.immutable()));
+                resolved.set(index, modifier.withModifierId(currentId));
             }
         }
         return resolved == null ? modifiers : resolved;

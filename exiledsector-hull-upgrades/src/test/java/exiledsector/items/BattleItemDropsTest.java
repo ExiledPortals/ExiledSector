@@ -177,6 +177,26 @@ class BattleItemDropsTest {
     }
 
     @Test
+    void onlyTheHullItemsAnOverchargingFleetDropsAreOvercharged() {
+        BattleItemDrops.SourceLoss overcharging = new BattleItemDrops.SourceLoss(1000f, 1f, 1f, rules(ItemChances.BASE, false, 1f).overchargingHullItems());
+
+        List<BattleItemDrops.Planned> planned = plan(battle(source(1000f), overcharging), 1f);
+
+        List<BattleItemDrops.Planned> overchargedItems = planned.stream().filter(BattleItemDrops.Planned::overcharged).toList();
+        assertFalse(overchargedItems.isEmpty());
+        assertEquals(counts(overchargedItems), counts(planned.stream().filter(entry -> !entry.overcharged()).toList()));
+        Random random = new Random(5L);
+        for (int trial = 0; trial < 20; trial++) {
+            for (ItemData item : BattleItemDrops.roll(battle(overcharging), 1f, random, definition -> false, true).items()) {
+                assertEquals(1, item.explicits().stream().filter(RolledModifier::overcharged).count(), item.toString());
+            }
+            for (ItemData item : BattleItemDrops.roll(battle(source(1000f)), 1f, random, definition -> false, true).items()) {
+                assertTrue(item.explicits().stream().noneMatch(RolledModifier::overcharged), item.toString());
+            }
+        }
+    }
+
+    @Test
     void aForcedModifierCountRollsExactlyThatManyModifiersAndSurvivesTheCargoRoundTrip() {
         ItemDefinition fullBridge = ItemDefinitions.get(FULL_BRIDGE);
         for (int modifierCount = 1; modifierCount <= 4; modifierCount++) {

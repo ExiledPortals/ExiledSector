@@ -26,6 +26,7 @@ import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemKind;
+import exiledsector.items.ItemOvercharge;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemTypes;
 import exiledsector.items.ItemUnlock;
@@ -244,6 +245,9 @@ public final class ChartFleetLoot {
         for (LootShaper anomaly : ChartAnomalies.inRun(run, LootShaper.class)) {
             fleetLoot = fleetLoot.plus(anomaly.extraFleetLoot(fleet, run, context, random));
         }
+        if (overchargesHullItems(fleet, run)) {
+            fleetLoot = overcharged(fleetLoot, random);
+        }
         if (boss) {
             fleetLoot = fleetLoot.plus(bossChest(sector, context, share * context.bossSpoilsMult(), random));
             List<ItemData> bossDrops = LootSources.bossDrops(run.tier(), run.contentFaction(), share * context.bossSpoilsMult(), random,
@@ -258,6 +262,15 @@ public final class ChartFleetLoot {
             fleetLoot = withBossGuarantees(sector, run, fleetLoot, random);
         }
         return fleetLoot;
+    }
+
+    public static boolean overchargesHullItems(CampaignFleetAPI fleet, ChartRun run) {
+        return ChartAnomalies.inRun(run, LootShaper.class).stream().anyMatch(anomaly -> anomaly.overchargesHullItems(fleet));
+    }
+
+    private static ItemDrops.SiteLoot overcharged(ItemDrops.SiteLoot fleetLoot, Random random) {
+        List<ItemData> items = fleetLoot.items().stream().map(item -> ItemOvercharge.overchargeHullItem(item, random)).toList();
+        return new ItemDrops.SiteLoot(items, fleetLoot.upgrades(), fleetLoot.materials());
     }
 
     static ItemDrops.SiteLoot withBossGuarantees(SectorAPI sector, ChartRun run, ItemDrops.SiteLoot bossLoot, Random random) {

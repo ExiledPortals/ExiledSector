@@ -198,8 +198,9 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
             ChartGenContext context = ChartRunEffects.contextOf(run);
             float battleLootMult = ChartFleetLoot.battleLootMult(anomaliesHoldingBattle(), context);
             LootMultipliers multipliers = BlackHoleHullItems.withBonusWherePlayerIs(context.lootMultipliers(battleLootMult));
-            return new FleetLootRules(FleetLootRules.Rates.FULL, true, multipliers,
+            FleetLootRules rules = new FleetLootRules(FleetLootRules.Rates.FULL, true, multipliers,
                     ChartFleetLoot.isBoss(fleet, run) ? context.bossSpoilsMult() : ChartFleetLoot.anomalyFleetLoot(fleet, run));
+            return ChartFleetLoot.overchargesHullItems(fleet, run) ? rules.overchargingHullItems() : rules;
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Reading the loot rules of a defeated fleet failed", e);
             return null;

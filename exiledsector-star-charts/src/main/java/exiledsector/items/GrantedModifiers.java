@@ -45,11 +45,17 @@ public final class GrantedModifiers {
                 .filter(rolled -> rolled.lines().stream().noneMatch(line -> grantedEffects.contains(line.effectName())))
                 .filter(rolled -> !ModifierExclusivity.clashes(modifierId, List.of(rolled.modifierId())))
                 .toList());
+        if (present.stream().anyMatch(rolled -> rolled.overcharged() && !kept.contains(rolled))) {
+            return item;
+        }
         List<RolledModifier> sameSide = kept.stream().filter(rolled -> rolled.slot() == granted.slot()).toList();
-        if (sameSide.size() >= limits.maxPerSide()) {
-            kept.remove(makingWay(sameSide, random));
-        } else if (kept.size() >= limits.maxModifiers()) {
-            kept.remove(makingWay(kept, random));
+        List<RolledModifier> full = fullGroup(kept, sameSide, limits);
+        if (!full.isEmpty()) {
+            RolledModifier makingWay = makingWay(full, random);
+            if (makingWay == null) {
+                return item;
+            }
+            kept.remove(makingWay);
         }
         kept.add(RolledModifier.roll(granted, random));
         List<RolledModifier> explicits = new ArrayList<>(kept.stream().filter(rolled -> rolled.slot() == ModifierSlot.PREFIX).toList());
@@ -57,9 +63,20 @@ public final class GrantedModifiers {
         return new ItemData(item.definitionId(), item.seed(), explicits, ItemNames.freeze(definition, item.seed(), explicits), item.traits());
     }
 
+    private static List<RolledModifier> fullGroup(List<RolledModifier> kept, List<RolledModifier> sameSide, AffixLayout.Limits limits) {
+        if (sameSide.size() >= limits.maxPerSide()) {
+            return sameSide;
+        }
+        return kept.size() >= limits.maxModifiers() ? kept : List.of();
+    }
+
     private static RolledModifier makingWay(List<RolledModifier> candidates, Random random) {
-        List<RolledModifier> unreserved = candidates.stream().filter(rolled -> !ModifierSources.isReserved(rolled.modifierId())).toList();
-        List<RolledModifier> pool = unreserved.isEmpty() ? candidates : unreserved;
+        List<RolledModifier> removable = candidates.stream().filter(rolled -> !rolled.overcharged()).toList();
+        if (removable.isEmpty()) {
+            return null;
+        }
+        List<RolledModifier> unreserved = removable.stream().filter(rolled -> !ModifierSources.isReserved(rolled.modifierId())).toList();
+        List<RolledModifier> pool = unreserved.isEmpty() ? removable : unreserved;
         return pool.get(random.nextInt(pool.size()));
     }
 
