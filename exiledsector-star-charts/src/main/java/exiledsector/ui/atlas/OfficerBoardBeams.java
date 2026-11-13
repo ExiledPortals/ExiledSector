@@ -17,6 +17,7 @@ final class OfficerBoardBeams {
     static final float RESTING_LINK_ALPHA = 0.6f;
     static final float HIGHLIGHTED_LINK_ALPHA = 1f;
     static final float ARROWHEAD_SPREAD = 0.5f;
+    static final float FADE_REACH = 0.75f;
 
     private final NodeRingArt ringArt = new NodeRingArt();
     private final NodeBeams beams = new NodeBeams(ringArt);
@@ -26,8 +27,25 @@ final class OfficerBoardBeams {
     }
 
     void link(float fromX, float fromY, float toX, float toY, boolean highlighted, float alpha) {
-        float linkAlpha = (highlighted ? HIGHLIGHTED_LINK_ALPHA : RESTING_LINK_ALPHA) * alpha;
+        float linkAlpha = linkAlpha(highlighted, alpha);
         beams.lane(fromX, fromY, toX, toY, 0f, beams.lit(LINK_COLOUR), linkAlpha, linkAlpha, LINK_WIDTH_SCALE);
+    }
+
+    void fadingLink(float fromX, float fromY, float toX, float toY, boolean fadesTowardEnd, boolean highlighted, float alpha) {
+        float linkAlpha = linkAlpha(highlighted, alpha);
+        float fadeEnd = fadesTowardEnd ? FADE_REACH : 1f - FADE_REACH;
+        float fadeX = fromX + (toX - fromX) * fadeEnd;
+        float fadeY = fromY + (toY - fromY) * fadeEnd;
+        if (fadesTowardEnd) {
+            beams.lane(fromX, fromY, fadeX, fadeY, 0f, beams.lit(LINK_COLOUR), linkAlpha, 0f, LINK_WIDTH_SCALE);
+        } else {
+            float skipped = (float) Math.hypot(fadeX - fromX, fadeY - fromY);
+            beams.lane(fadeX, fadeY, toX, toY, skipped, beams.lit(LINK_COLOUR), 0f, linkAlpha, LINK_WIDTH_SCALE);
+        }
+    }
+
+    private static float linkAlpha(boolean highlighted, float alpha) {
+        return (highlighted ? HIGHLIGHTED_LINK_ALPHA : RESTING_LINK_ALPHA) * alpha;
     }
 
     void arrow(float[] points, OfficerBoardArrows.Style style, float headLength, float alpha) {

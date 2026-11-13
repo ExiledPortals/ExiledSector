@@ -64,6 +64,9 @@ final class OfficerBoard {
     private record Face(boolean identified, boolean dimmed, String portraitPath, Color frameColour, AtlasCell commandCentre) {
     }
 
+    private record ShownLink(OfficerBoardLayout.Link link, boolean subordinateIdentified, boolean superiorIdentified) {
+    }
+
     private record ArrowShape(OfficerBoardArrows.Arrow arrow, float[] points) {
 
         @Override
@@ -92,7 +95,7 @@ final class OfficerBoard {
     private final Map<Integer, AtlasOfficer> records = new HashMap<>();
     private final Map<Integer, Face> faces = new HashMap<>();
     private OfficerBoardShuffle shuffle;
-    private List<OfficerBoardLayout.Link> shownLinks = List.of();
+    private List<ShownLink> shownLinks = List.of();
     private List<OfficerBoardArrows.Arrow> arrows = List.of();
     private Set<Integer> shields = Set.of();
     private List<ArrowShape> arrowShapes = List.of();
@@ -125,7 +128,7 @@ final class OfficerBoard {
         lastTurn.fallen().forEach(records::putIfAbsent);
         shuffle = OfficerBoardShuffle.of(OfficerRanks.all(), entries, lastTurn.standingChanges());
         records.forEach((recordId, officer) -> faces.put(recordId, face(officer)));
-        shownLinks = linksBetweenIdentified(shuffle.after());
+        shownLinks = linksTouchingIdentified(shuffle.after());
         arrows = OfficerBoardArrows.arrows(lastTurn.resolvedIntents(), OfficerTurns.declaredIntents(state), this::settledAndIdentified);
         shields = OfficerBoardArrows.shields(OfficerTurns.declaredIntents(state), this::settledAndIdentified);
         replayable = lastTurn.turn() > 0;
@@ -141,11 +144,13 @@ final class OfficerBoard {
         open = true;
     }
 
-    private List<OfficerBoardLayout.Link> linksBetweenIdentified(OfficerBoardLayout layout) {
-        List<OfficerBoardLayout.Link> links = new ArrayList<>();
+    private List<ShownLink> linksTouchingIdentified(OfficerBoardLayout layout) {
+        List<ShownLink> links = new ArrayList<>();
         for (OfficerBoardLayout.Link link : layout.links()) {
-            if (identified(layout.recordIdAt(link.subordinate())) && identified(layout.recordIdAt(link.superior()))) {
-                links.add(link);
+            boolean subordinateIdentified = identified(layout.recordIdAt(link.subordinate()));
+            boolean superiorIdentified = identified(layout.recordIdAt(link.superior()));
+            if (subordinateIdentified || superiorIdentified) {
+                links.add(new ShownLink(link, subordinateIdentified, superiorIdentified));
             }
         }
         return List.copyOf(links);
@@ -387,9 +392,18 @@ final class OfficerBoard {
     private void drawLinks(float alpha) {
         float half = geometry.portraitSize() / 2f;
         OfficerBoardLayout.Seat hoveredSeat = hoveredRecordId == null ? null : shuffle.after().seat(hoveredRecordId);
-        for (OfficerBoardLayout.Link link : shownLinks) {
-            beams.link(geometry.centreX(link.subordinate()), geometry.centreY(link.subordinate()) + half, geometry.centreX(link.superior()),
-                    geometry.centreY(link.superior()) - half, hoveredSeat != null && link.touches(hoveredSeat), alpha);
+        for (ShownLink shown : shownLinks) {
+            OfficerBoardLayout.Link link = shown.link();
+            float fromX = geometry.centreX(link.subordinate());
+            float fromY = geometry.centreY(link.subordinate()) + half;
+            float toX = geometry.centreX(link.superior());
+            float toY = geometry.centreY(link.superior()) - half;
+            boolean highlighted = hoveredSeat != null && link.touches(hoveredSeat);
+            if (shown.subordinateIdentified() && shown.superiorIdentified()) {
+                beams.link(fromX, fromY, toX, toY, highlighted, alpha);
+            } else {
+                beams.fadingLink(fromX, fromY, toX, toY, shown.subordinateIdentified(), highlighted, alpha);
+            }
         }
         beams.flush();
     }
