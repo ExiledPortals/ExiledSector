@@ -12,6 +12,7 @@ import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.atlas.AtlasTraits;
 import exiledsector.charts.run.ChartRun;
+import exiledsector.i18n.StyledText;
 import exiledsector.items.UseVerdict;
 import exiledsector.ui.socket.BenchModeSupport;
 
@@ -41,6 +42,10 @@ public interface AtlasRule extends ChartAnomaly {
     }
 
     default List<AtlasLine> atlasLines(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
+        return List.of();
+    }
+
+    default List<StyledText> rewardLines() {
         return List.of();
     }
 

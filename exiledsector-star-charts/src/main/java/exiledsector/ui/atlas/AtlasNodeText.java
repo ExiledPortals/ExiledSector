@@ -122,6 +122,10 @@ public final class AtlasNodeText {
                 lines.add(applied.effect().description(applied.value()));
             }
         }
+        AtlasRule rule = ChartAnomalies.role(anomalyId, AtlasRule.class);
+        if (rule != null) {
+            lines.addAll(rule.rewardLines());
+        }
         return StyledText.join(StyledText.of("\n"), lines);
     }
 

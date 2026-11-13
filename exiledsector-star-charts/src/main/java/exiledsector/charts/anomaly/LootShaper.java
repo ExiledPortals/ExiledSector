@@ -51,6 +51,13 @@ public interface LootShaper extends ChartAnomaly {
         return false;
     }
 
+    default void battleWon(AnomalyRun run) {
+    }
+
+    default float bossStarChartPercent(ChartRun run) {
+        return 0f;
+    }
+
     default ItemChances siteChances(MemoryAPI siteMemory, ItemChances chances) {
         return chances;
     }

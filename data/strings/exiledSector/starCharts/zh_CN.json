@@ -381,6 +381,8 @@
     "chart.atlas.anomaly.black_hole.description": "恒星是一个黑洞。你的传感器主管报告说，它周围环绕着残骸；你的打捞主管怀疑，潮汐应力已让其中一些部件彻底定型。",
     "chart.atlas.anomaly.neutron_star.description": "一颗中子星，脉冲星光束不断扫过。你的传感器主管报告说，轨道上发现了一座研究站。",
     "chart.atlas.anomaly.dense_nebula.description": "一个没有恒星、充满浓密星云的星系。",
+    "chart.anomaly.dense_nebula.effect.charts": "每层沉降尘埃使星图首领掉落的星图数量提高<good>{value}%</good>。在星系中每赢得一场战斗增加一层，最多{max}层。",
+    "chart.anomaly.dense_nebula.intel": "沉降尘埃：{count}/{max}层。星图首领掉落的星图数量提高{value}%。",
     "chart.atlas.anomaly.asteroid_storm.description": "额外的小行星带和小行星场，其中的岩石会撞击途经的舰队。你的打捞主管报告说，小行星带里很容易藏着储藏。",
     "chart.atlas.anomaly.magnetic_storm.description": "恒星和数颗行星周围的磁场让你的传感器主管坐立不安。",
     "chart.atlas.anomaly.stellar_flares.description": "星系中的恒星不断抛出耀斑。你的导航组报告说，在耀斑范围内久战可能会招致灾难。",

@@ -19,6 +19,8 @@ import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.generation.ChartGenContext.AppliedEffect;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.anomaly.AnomalyRun;
+import exiledsector.charts.anomaly.DenseNebula;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.charts.run.ChartRuns;
@@ -282,6 +284,26 @@ class ChartFleetLootTest {
                 new Random(1L));
         ItemDrops.SiteLoot bossLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, recovery, 200f,
                 new Random(1L));
+
+        assertEquals(1, chartCount(guardLoot));
+        assertEquals(4, chartCount(bossLoot));
+    }
+
+    @Test
+    void settlingDustScalesOnlyTheBosssStarCharts() throws Exception {
+        ChartDrops.register(new JSONArray().put(rule("chart_fleet", 1f, 6)).put(rule("chart_boss", 1f, 6)));
+        ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
+        run.recordContent(new ChartContent(6, "hegemony", BOSS_ID, 4, 6, List.of(DenseNebula.ANOMALY_ID)));
+        run.recordArrival();
+        ChartRuns.store(run);
+        for (int battle = 0; battle < DenseNebula.MAX_DUST; battle++) {
+            DenseNebula.INSTANCE.battleWon(new AnomalyRun(run, null));
+        }
+
+        ItemDrops.SiteLoot guardLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 100f), run,
+                ChartGenContext.none(), 100f, new Random(1L));
+        ItemDrops.SiteLoot bossLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
+                ChartGenContext.none(), 200f, new Random(1L));
 
         assertEquals(1, chartCount(guardLoot));
         assertEquals(4, chartCount(bossLoot));

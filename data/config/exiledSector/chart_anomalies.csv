@@ -1,7 +1,7 @@
 id,weight,min_tier,max_tier,requires_mod,icon,insertable,excludes,effects,biomes,fleet_loot,opening_chance,note
 black_hole,1,1,16,,graphics/icons/anomalies/black_hole.png,,,,,,,"The primary star is a black hole with an event horizon, ringed by scattered derelicts"
 neutron_star,1,1,16,,graphics/icons/anomalies/neutron_star.png,,,,,,,"The primary star is a neutron star with a sweeping pulsar beam and a research station in orbit"
-dense_nebula,1,1,16,,graphics/icons/anomalies/dense_nebula.png,,,CHART_STAR_CHART_PERCENT:50,,,,"A starless nebula system: thick nebula everywhere, no central star"
+dense_nebula,1,1,16,,graphics/icons/anomalies/dense_nebula.png,,,,,,,"A starless nebula system: thick nebula everywhere, no central star; each battle won adds a Settling Dust stack that raises the boss star charts (DenseNebula)"
 asteroid_storm,1,1,16,,graphics/icons/anomalies/asteroid_storm.png,yes,,,,,0.08,"Extra asteroid belts and fields, whose rocks strike fleets passing through, with caches hidden in the belts"
 magnetic_storm,1,1,16,,graphics/icons/anomalies/magnetic_storm.png,yes,,CHART_CRAFTING_ITEM_PERCENT:50,,,0.08,"Magnetic fields around the star and several worlds that blind sensors"
 stellar_flares,1,1,16,,graphics/icons/anomalies/stellar_flares.png,yes,,CHART_FEEDSTOCK_PERCENT:50,,,0.08,"Every corona throws flares constantly"
