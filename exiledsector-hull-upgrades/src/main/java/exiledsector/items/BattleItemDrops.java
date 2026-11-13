@@ -93,13 +93,18 @@ public final class BattleItemDrops {
 
     public static HullItemDrops.SectionItemLoot roll(Battle battle, float dropMultiplier, Random random, Predicate<ItemDefinition> uniqueAllowed,
                                                  boolean hullItemDropsOpen) {
+        return roll(battle, dropMultiplier, 1f, random, uniqueAllowed, hullItemDropsOpen);
+    }
+
+    public static HullItemDrops.SectionItemLoot roll(Battle battle, float dropMultiplier, float basicItemMult, Random random,
+                                                 Predicate<ItemDefinition> uniqueAllowed, boolean hullItemDropsOpen) {
         if (battle == null || battle.isEmpty() || !(dropMultiplier > 0f)) {
             return HullItemDrops.SectionItemLoot.NONE;
         }
         List<ItemData> items = new ArrayList<>();
         List<ShipSchematic> upgrades = new ArrayList<>();
         List<ItemKind> kindsWithBasics = hullItemDropsOpen ? HullItemDrops.sectionKindsWithBasics() : List.of();
-        for (Planned planned : plan(battle, dropMultiplier, kindsWithBasics, random, hullItemDropsOpen)) {
+        for (Planned planned : plan(battle, dropMultiplier, basicItemMult, kindsWithBasics, random, hullItemDropsOpen)) {
             if (planned.drop() == Drop.REFIT_SCHEMATIC) {
                 upgrades.add(RefitSchematic.roll(random));
             } else if (planned.drop() == Drop.MASTER_SCHEMATIC) {
@@ -124,15 +129,21 @@ public final class BattleItemDrops {
     }
 
     static List<Planned> plan(Battle battle, float dropMultiplier, List<ItemKind> kindsWithBasics, Random random, boolean hullItemDropsOpen) {
+        return plan(battle, dropMultiplier, 1f, kindsWithBasics, random, hullItemDropsOpen);
+    }
+
+    static List<Planned> plan(Battle battle, float dropMultiplier, float basicItemMult, List<ItemKind> kindsWithBasics, Random random,
+                              boolean hullItemDropsOpen) {
         List<Planned> planned = new ArrayList<>();
         float battleDeploymentPoints = battle.deploymentPoints();
         for (Drop drop : Drop.values()) {
             if (!allowed(drop, hullItemDropsOpen)) {
                 continue;
             }
+            float quantityMult = drop.modifierCount() > 0 ? basicItemMult : 1f;
             float expected = 0f;
             for (SourceLoss source : battle.sources()) {
-                expected += expected(source, drop, battleDeploymentPoints, dropMultiplier) * source.chances().general();
+                expected += expected(source, drop, battleDeploymentPoints, dropMultiplier * quantityMult) * source.chances().general();
             }
             addPlanned(planned, drop, null, ItemDrops.wholeFeedstock(expected, random));
         }
@@ -143,7 +154,8 @@ public final class BattleItemDrops {
                 }
                 float expected = 0f;
                 for (SourceLoss source : battle.sources()) {
-                    expected += expected(source, drop, battleDeploymentPoints, dropMultiplier) * source.chances().targeted(kind) / kindsWithBasics.size();
+                    expected += expected(source, drop, battleDeploymentPoints, dropMultiplier * basicItemMult) * source.chances().targeted(kind)
+                            / kindsWithBasics.size();
                 }
                 addPlanned(planned, drop, kind, ItemDrops.wholeFeedstock(expected, random));
             }

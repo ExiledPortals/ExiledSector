@@ -113,6 +113,8 @@ public enum FluxSkillEffect implements BackedSkillEffect {
     },
     EMP_DAMAGE_TAKEN_HARD_FLUX_VENT_PERCENT(listener(EmpHardFluxVentListener.VENT_PERCENT_KEY, EmpHardFluxVentListener.class,
             EmpHardFluxVentListener::new)),
+    EMP_DEALT_HARD_FLUX_VENT_PERCENT(listener(EmpDealtHardFluxVentListener.VENT_PERCENT_KEY, EmpDealtHardFluxVentListener.class,
+            EmpDealtHardFluxVentListener::new)),
     VOLATILE_FLUX_TOP_SPEED_FLAT(listener(VolatileFluxListener.TOP_SPEED_KEY,
             VolatileFluxListener.class, VolatileFluxListener::new)),
     VOLATILE_FLUX_RATE_OF_FIRE_PERCENT(listener(VolatileFluxListener.RATE_OF_FIRE_KEY,

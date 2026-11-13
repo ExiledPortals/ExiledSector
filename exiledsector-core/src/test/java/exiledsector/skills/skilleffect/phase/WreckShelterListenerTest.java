@@ -90,6 +90,30 @@ class WreckShelterListenerTest {
     }
 
     @Test
+    void theCappedShelterLastsFiveSecondsPerPhaseAndResetsOnUnphasing() {
+        ShipAPI phaseShip = phaseShip(0f);
+        when(phaseShip.getMutableStats().getDynamic().getValue(WreckShelterListener.CAPPED_RANGE_KEY, 0f)).thenReturn(500f);
+        when(phaseShip.isPhased()).thenReturn(true);
+        gridShips.addAll(List.of(phaseShip, wreck(400f)));
+        StatBonus upkeep = phaseShip.getMutableStats().getPhaseCloakUpkeepCostBonus();
+        WreckShelterListener listener = new WreckShelterListener(phaseShip);
+        int checksInCap = Math.round(WreckShelterListener.CAPPED_SECONDS / 0.25f);
+
+        for (int check = 0; check < checksInCap; check++) {
+            listener.advance(0.25f);
+        }
+        verify(upkeep, times(1)).modifyMult("exiledSector_noPhaseUpkeepNearWreck_ship0.0", 0f);
+        verify(upkeep, never()).unmodifyMult(anyString());
+
+        listener.advance(0.25f);
+        verify(upkeep).unmodifyMult("exiledSector_noPhaseUpkeepNearWreck_ship0.0");
+
+        when(phaseShip.isPhased()).thenReturn(false);
+        listener.advance(0.25f);
+        verify(upkeep, times(2)).modifyMult("exiledSector_noPhaseUpkeepNearWreck_ship0.0", 0f);
+    }
+
+    @Test
     void livingShipsAndStrikecraftWrecksGiveNoShelter() {
         ShipAPI phaseShip = phaseShip(500f);
         ShipAPI fighterWreck = wreck(100f);

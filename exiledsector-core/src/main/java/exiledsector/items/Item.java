@@ -409,11 +409,16 @@ public abstract class Item {
             return null;
         }
         Modifier ownImplicit = Modifier.byId(type.implicits(), modifierId);
-        return ownImplicit != null ? ownImplicit : ItemImplicits.anyById(modifierId);
+        if (ownImplicit != null) {
+            return ownImplicit;
+        }
+        Modifier prototypeImplicit = PrototypeImplicits.byId(modifierId);
+        return prototypeImplicit != null ? prototypeImplicit : ItemImplicits.anyById(modifierId);
     }
 
     public ModifierLine implicitLine(String effectName) {
-        return ItemImplicits.line(kind(), effectName);
+        ModifierLine ownLine = ItemImplicits.line(kind(), effectName);
+        return ownLine != null ? ownLine : PrototypeImplicits.line(definitionId, effectName);
     }
 
     public List<Modifier> implicitCorruptionPool() {
@@ -472,6 +477,12 @@ public abstract class Item {
             addModifierLines(lines, implicit, implicitModifier(implicit.modifierId()), effects, withRollRanges, context);
         }
         return texts(lines, withRollRanges);
+    }
+
+    public List<StyledText> implicitLines(RolledModifier implicit) {
+        List<SlottedLine> lines = new ArrayList<>();
+        addModifierLines(lines, implicit, implicitModifier(implicit.modifierId()), modifierEffects(), false, scaleContext(null));
+        return texts(lines, false);
     }
 
     public List<StyledText> effectLines() {

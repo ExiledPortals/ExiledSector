@@ -3,6 +3,7 @@ package exiledsector.loot;
 import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.CraftingMaterialFamilies;
 import exiledsector.items.ItemDrops;
+import exiledsector.skills.skilleffect.logistics.FoundItemQuantity;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -74,7 +75,8 @@ public final class BattleMaterials {
     private static float expected(BattleLootRates.Rate rate, float deploymentPoints, float battleDeploymentPoints, float difficultyMultiplier,
                                   FleetLootRules rules) {
         return rate.expected(deploymentPoints * rules.deploymentPointsMult(), battleDeploymentPoints)
-                * rate.difficulty(difficultyMultiplier) * rules.share(rate) * rules.multipliers().craftingItemMult();
+                * rate.difficulty(difficultyMultiplier) * rules.share(rate) * rules.multipliers().craftingItemMult()
+                * FoundItemQuantity.craftingItemMult();
     }
 
     private static void addCount(Map<String, Integer> materials, BattleLootRates.Rate rate, float expected, Random random) {

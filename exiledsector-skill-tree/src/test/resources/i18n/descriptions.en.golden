@@ -172,6 +172,12 @@ effect|BALLISTIC_RANGEFINDER_BONUS_PERCENT|12.5	0	Small and medium ballistic wea
 effect|BALLISTIC_RANGEFINDER_BONUS_PERCENT|100.0	0	Small and medium ballistic weapons and hybrid weapons of every size gain <good>100%</good> of Ballistic Rangefinder's base range bonus, based on this ship's largest ballistic slot.
 effect|BALLISTIC_RANGEFINDER_BONUS_PERCENT|-10.0	0	Small and medium ballistic weapons and hybrid weapons of every size gain <good>-10%</good> of Ballistic Rangefinder's base range bonus, based on this ship's largest ballistic slot.
 effect|BALLISTIC_RANGEFINDER_BONUS_PERCENT|-12.5	0	Small and medium ballistic weapons and hybrid weapons of every size gain <good>-12.5%</good> of Ballistic Rangefinder's base range bonus, based on this ship's largest ballistic slot.
+effect|BALLISTIC_SHIELD_PHASE_THROUGH_CHANCE_PERCENT|1.0	0	<good>1%</good> chance for ballistic projectiles hitting shields to phase through them, dealing no damage.
+effect|BALLISTIC_SHIELD_PHASE_THROUGH_CHANCE_PERCENT|10.0	0	<good>10%</good> chance for ballistic projectiles hitting shields to phase through them, dealing no damage.
+effect|BALLISTIC_SHIELD_PHASE_THROUGH_CHANCE_PERCENT|12.5	0	<good>12.5%</good> chance for ballistic projectiles hitting shields to phase through them, dealing no damage.
+effect|BALLISTIC_SHIELD_PHASE_THROUGH_CHANCE_PERCENT|100.0	0	<good>100%</good> chance for ballistic projectiles hitting shields to phase through them, dealing no damage.
+effect|BALLISTIC_SHIELD_PHASE_THROUGH_CHANCE_PERCENT|-10.0	0	<good>-10%</good> chance for ballistic projectiles hitting shields to phase through them, dealing no damage.
+effect|BALLISTIC_SHIELD_PHASE_THROUGH_CHANCE_PERCENT|-12.5	0	<good>-12.5%</good> chance for ballistic projectiles hitting shields to phase through them, dealing no damage.
 effect|BALLISTIC_SLOTS_ENERGY|1.0	0	Ballistic weapon mounts become energy mounts.
 effect|BALLISTIC_SLOTS_ENERGY|10.0	0	Ballistic weapon mounts become energy mounts.
 effect|BALLISTIC_SLOTS_ENERGY|12.5	0	Ballistic weapon mounts become energy mounts.
@@ -658,6 +664,12 @@ effect|CORONA_RESISTANCE_MULT|12.5	1	<good>12.5%</good> more combat readiness lo
 effect|CORONA_RESISTANCE_MULT|100.0	1	<good>100%</good> more combat readiness loss from being in a solar corona or a deep hyperspace storm.
 effect|CORONA_RESISTANCE_MULT|-10.0	1	<bad>10%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 effect|CORONA_RESISTANCE_MULT|-12.5	1	<bad>12.5%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
+effect|CRAFTING_ITEM_QUANTITY_PERCENT|1.0	0	Your fleet has <good>1%</good> increased quantity of crafting items found.
+effect|CRAFTING_ITEM_QUANTITY_PERCENT|10.0	0	Your fleet has <good>10%</good> increased quantity of crafting items found.
+effect|CRAFTING_ITEM_QUANTITY_PERCENT|12.5	0	Your fleet has <good>12.5%</good> increased quantity of crafting items found.
+effect|CRAFTING_ITEM_QUANTITY_PERCENT|100.0	0	Your fleet has <good>100%</good> increased quantity of crafting items found.
+effect|CRAFTING_ITEM_QUANTITY_PERCENT|-10.0	0	Your fleet has <bad>10%</bad> reduced quantity of crafting items found.
+effect|CRAFTING_ITEM_QUANTITY_PERCENT|-12.5	0	Your fleet has <bad>12.5%</bad> reduced quantity of crafting items found.
 effect|CREATE_FRONT_SHIELD_IF_NONE|1.0	0	Installs a makeshift, front-facing shield if this ship has none.
 effect|CREATE_FRONT_SHIELD_IF_NONE|10.0	0	Installs a makeshift, front-facing shield if this ship has none.
 effect|CREATE_FRONT_SHIELD_IF_NONE|12.5	0	Installs a makeshift, front-facing shield if this ship has none.
@@ -940,6 +952,24 @@ effect|EMP_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased EMP damage t
 effect|EMP_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased EMP damage taken.
 effect|EMP_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced EMP damage taken.
 effect|EMP_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced EMP damage taken.
+effect|EMP_DEALT_HARD_FLUX_VENT_PERCENT|1.0	0	Dealing EMP damage dissipates hard flux equal to <good>1%</good> of that EMP damage.
+effect|EMP_DEALT_HARD_FLUX_VENT_PERCENT|10.0	0	Dealing EMP damage dissipates hard flux equal to <good>10%</good> of that EMP damage.
+effect|EMP_DEALT_HARD_FLUX_VENT_PERCENT|12.5	0	Dealing EMP damage dissipates hard flux equal to <good>12.5%</good> of that EMP damage.
+effect|EMP_DEALT_HARD_FLUX_VENT_PERCENT|100.0	0	Dealing EMP damage dissipates hard flux equal to <good>100%</good> of that EMP damage.
+effect|EMP_DEALT_HARD_FLUX_VENT_PERCENT|-10.0	0	Dealing EMP damage dissipates hard flux equal to <good>-10%</good> of that EMP damage.
+effect|EMP_DEALT_HARD_FLUX_VENT_PERCENT|-12.5	0	Dealing EMP damage dissipates hard flux equal to <good>-12.5%</good> of that EMP damage.
+effect|ENERGY_ARMOR_HULL_DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased energy damage taken by armor and hull.
+effect|ENERGY_ARMOR_HULL_DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased energy damage taken by armor and hull.
+effect|ENERGY_ARMOR_HULL_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased energy damage taken by armor and hull.
+effect|ENERGY_ARMOR_HULL_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased energy damage taken by armor and hull.
+effect|ENERGY_ARMOR_HULL_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced energy damage taken by armor and hull.
+effect|ENERGY_ARMOR_HULL_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced energy damage taken by armor and hull.
+effect|ENERGY_DAMAGE_PERCENT|1.0	0	<good>1%</good> increased energy damage.
+effect|ENERGY_DAMAGE_PERCENT|10.0	0	<good>10%</good> increased energy damage.
+effect|ENERGY_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> increased energy damage.
+effect|ENERGY_DAMAGE_PERCENT|100.0	0	<good>100%</good> increased energy damage.
+effect|ENERGY_DAMAGE_PERCENT|-10.0	0	<bad>10%</bad> reduced energy damage.
+effect|ENERGY_DAMAGE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced energy damage.
 effect|ENERGY_DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased energy damage taken.
 effect|ENERGY_DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased energy damage taken.
 effect|ENERGY_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased energy damage taken.
@@ -958,6 +988,12 @@ effect|ENERGY_HIT_INJUNCTION_VENT_PERCENT|12.5	0	Enemy ships vent <good>12.5%</g
 effect|ENERGY_HIT_INJUNCTION_VENT_PERCENT|100.0	0	Enemy ships vent <good>100%</good> slower for each Injunction stack.
 effect|ENERGY_HIT_INJUNCTION_VENT_PERCENT|-10.0	0	Enemy ships vent <good>-10%</good> slower for each Injunction stack.
 effect|ENERGY_HIT_INJUNCTION_VENT_PERCENT|-12.5	0	Enemy ships vent <good>-12.5%</good> slower for each Injunction stack.
+effect|ENERGY_SHIELD_PHASE_THROUGH_CHANCE_PERCENT|1.0	0	<good>1%</good> chance for energy projectiles hitting shields to phase through them, dealing no damage.
+effect|ENERGY_SHIELD_PHASE_THROUGH_CHANCE_PERCENT|10.0	0	<good>10%</good> chance for energy projectiles hitting shields to phase through them, dealing no damage.
+effect|ENERGY_SHIELD_PHASE_THROUGH_CHANCE_PERCENT|12.5	0	<good>12.5%</good> chance for energy projectiles hitting shields to phase through them, dealing no damage.
+effect|ENERGY_SHIELD_PHASE_THROUGH_CHANCE_PERCENT|100.0	0	<good>100%</good> chance for energy projectiles hitting shields to phase through them, dealing no damage.
+effect|ENERGY_SHIELD_PHASE_THROUGH_CHANCE_PERCENT|-10.0	0	<good>-10%</good> chance for energy projectiles hitting shields to phase through them, dealing no damage.
+effect|ENERGY_SHIELD_PHASE_THROUGH_CHANCE_PERCENT|-12.5	0	<good>-12.5%</good> chance for energy projectiles hitting shields to phase through them, dealing no damage.
 effect|ENERGY_SLOTS_BALLISTIC|1.0	0	Energy weapon mounts become ballistic mounts.
 effect|ENERGY_SLOTS_BALLISTIC|10.0	0	Energy weapon mounts become ballistic mounts.
 effect|ENERGY_SLOTS_BALLISTIC|12.5	0	Energy weapon mounts become ballistic mounts.
@@ -1414,6 +1450,18 @@ effect|FLUX_DISSIPATION_WITHOUT_HARD_FLUX_PERCENT|12.5	0	<good>12.5%</good> incr
 effect|FLUX_DISSIPATION_WITHOUT_HARD_FLUX_PERCENT|100.0	0	<good>100%</good> increased flux dissipation while this ship has no hard flux.
 effect|FLUX_DISSIPATION_WITHOUT_HARD_FLUX_PERCENT|-10.0	0	<bad>10%</bad> reduced flux dissipation while this ship has no hard flux.
 effect|FLUX_DISSIPATION_WITHOUT_HARD_FLUX_PERCENT|-12.5	0	<bad>12.5%</bad> reduced flux dissipation while this ship has no hard flux.
+effect|FRAGMENTATION_ARMOR_HULL_DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased fragmentation damage taken by armor and hull.
+effect|FRAGMENTATION_ARMOR_HULL_DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased fragmentation damage taken by armor and hull.
+effect|FRAGMENTATION_ARMOR_HULL_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased fragmentation damage taken by armor and hull.
+effect|FRAGMENTATION_ARMOR_HULL_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased fragmentation damage taken by armor and hull.
+effect|FRAGMENTATION_ARMOR_HULL_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced fragmentation damage taken by armor and hull.
+effect|FRAGMENTATION_ARMOR_HULL_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced fragmentation damage taken by armor and hull.
+effect|FRAGMENTATION_DAMAGE_PERCENT|1.0	0	<good>1%</good> increased fragmentation damage.
+effect|FRAGMENTATION_DAMAGE_PERCENT|10.0	0	<good>10%</good> increased fragmentation damage.
+effect|FRAGMENTATION_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> increased fragmentation damage.
+effect|FRAGMENTATION_DAMAGE_PERCENT|100.0	0	<good>100%</good> increased fragmentation damage.
+effect|FRAGMENTATION_DAMAGE_PERCENT|-10.0	0	<bad>10%</bad> reduced fragmentation damage.
+effect|FRAGMENTATION_DAMAGE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced fragmentation damage.
 effect|FRAGMENTATION_DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased fragmentation damage taken.
 effect|FRAGMENTATION_DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased fragmentation damage taken.
 effect|FRAGMENTATION_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased fragmentation damage taken.
@@ -1570,6 +1618,12 @@ effect|HEARTLESS_CREW_DEATH_CHANCE_PERCENT_PER_STACK|12.5	0	Each Heartless stack
 effect|HEARTLESS_CREW_DEATH_CHANCE_PERCENT_PER_STACK|100.0	0	Each Heartless stack has a <bad>100%</bad> chance to sacrifice a crew member for each missile fired.
 effect|HEARTLESS_CREW_DEATH_CHANCE_PERCENT_PER_STACK|-10.0	0	Each Heartless stack has a <bad>-10%</bad> chance to sacrifice a crew member for each missile fired.
 effect|HEARTLESS_CREW_DEATH_CHANCE_PERCENT_PER_STACK|-12.5	0	Each Heartless stack has a <bad>-12.5%</bad> chance to sacrifice a crew member for each missile fired.
+effect|HEARTLESS_FLUX_DISSIPATION_PERCENT_PER_STACK|1.0	0	<good>1%</good> increased flux dissipation for each Heartless stack.
+effect|HEARTLESS_FLUX_DISSIPATION_PERCENT_PER_STACK|10.0	0	<good>10%</good> increased flux dissipation for each Heartless stack.
+effect|HEARTLESS_FLUX_DISSIPATION_PERCENT_PER_STACK|12.5	0	<good>12.5%</good> increased flux dissipation for each Heartless stack.
+effect|HEARTLESS_FLUX_DISSIPATION_PERCENT_PER_STACK|100.0	0	<good>100%</good> increased flux dissipation for each Heartless stack.
+effect|HEARTLESS_FLUX_DISSIPATION_PERCENT_PER_STACK|-10.0	0	<good>-10%</good> increased flux dissipation for each Heartless stack.
+effect|HEARTLESS_FLUX_DISSIPATION_PERCENT_PER_STACK|-12.5	0	<good>-12.5%</good> increased flux dissipation for each Heartless stack.
 effect|HEARTLESS_MAX_STACKS_FLAT|1.0	0	<good>+1</good> to maximum Heartless stacks.
 effect|HEARTLESS_MAX_STACKS_FLAT|10.0	0	<good>+10</good> to maximum Heartless stacks.
 effect|HEARTLESS_MAX_STACKS_FLAT|12.5	0	<good>+12.5</good> to maximum Heartless stacks.
@@ -1618,6 +1672,18 @@ effect|HIGHEST_AFFINITY_FLAT_PER_S_MOD|12.5	0	<good>+12.5</good> to your highest
 effect|HIGHEST_AFFINITY_FLAT_PER_S_MOD|100.0	0	<good>+100</good> to your highest affinity for each s-mod on this ship.
 effect|HIGHEST_AFFINITY_FLAT_PER_S_MOD|-10.0	0	<bad>-10</bad> to your highest affinity for each s-mod on this ship.
 effect|HIGHEST_AFFINITY_FLAT_PER_S_MOD|-12.5	0	<bad>-12.5</bad> to your highest affinity for each s-mod on this ship.
+effect|HIGH_EXPLOSIVE_ARMOR_HULL_DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased high-explosive damage taken by armor and hull.
+effect|HIGH_EXPLOSIVE_ARMOR_HULL_DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased high-explosive damage taken by armor and hull.
+effect|HIGH_EXPLOSIVE_ARMOR_HULL_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased high-explosive damage taken by armor and hull.
+effect|HIGH_EXPLOSIVE_ARMOR_HULL_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased high-explosive damage taken by armor and hull.
+effect|HIGH_EXPLOSIVE_ARMOR_HULL_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced high-explosive damage taken by armor and hull.
+effect|HIGH_EXPLOSIVE_ARMOR_HULL_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced high-explosive damage taken by armor and hull.
+effect|HIGH_EXPLOSIVE_DAMAGE_PERCENT|1.0	0	<good>1%</good> increased high-explosive damage.
+effect|HIGH_EXPLOSIVE_DAMAGE_PERCENT|10.0	0	<good>10%</good> increased high-explosive damage.
+effect|HIGH_EXPLOSIVE_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> increased high-explosive damage.
+effect|HIGH_EXPLOSIVE_DAMAGE_PERCENT|100.0	0	<good>100%</good> increased high-explosive damage.
+effect|HIGH_EXPLOSIVE_DAMAGE_PERCENT|-10.0	0	<bad>10%</bad> reduced high-explosive damage.
+effect|HIGH_EXPLOSIVE_DAMAGE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced high-explosive damage.
 effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased high-explosive damage taken.
 effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased high-explosive damage taken.
 effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased high-explosive damage taken.
@@ -1684,6 +1750,12 @@ effect|HULL_FLAT|12.5	0	<good>+12.5</good> to hull points.
 effect|HULL_FLAT|100.0	0	<good>+100</good> to hull points.
 effect|HULL_FLAT|-10.0	0	<bad>-10</bad> to hull points.
 effect|HULL_FLAT|-12.5	0	<bad>-12.5</bad> to hull points.
+effect|HULL_ITEM_QUANTITY_PERCENT|1.0	0	Your fleet has <good>1%</good> increased quantity of hull items found.
+effect|HULL_ITEM_QUANTITY_PERCENT|10.0	0	Your fleet has <good>10%</good> increased quantity of hull items found.
+effect|HULL_ITEM_QUANTITY_PERCENT|12.5	0	Your fleet has <good>12.5%</good> increased quantity of hull items found.
+effect|HULL_ITEM_QUANTITY_PERCENT|100.0	0	Your fleet has <good>100%</good> increased quantity of hull items found.
+effect|HULL_ITEM_QUANTITY_PERCENT|-10.0	0	Your fleet has <bad>10%</bad> reduced quantity of hull items found.
+effect|HULL_ITEM_QUANTITY_PERCENT|-12.5	0	Your fleet has <bad>12.5%</bad> reduced quantity of hull items found.
 effect|HULL_MULT|1.0	0	<good>1%</good> more hull points.
 effect|HULL_MULT|10.0	0	<good>10%</good> more hull points.
 effect|HULL_MULT|12.5	0	<good>12.5%</good> more hull points.
@@ -1750,6 +1822,18 @@ effect|KILL_FLUX_VENT_PERCENT|12.5	0	Destroying an enemy ship removes flux equal
 effect|KILL_FLUX_VENT_PERCENT|100.0	0	Destroying an enemy ship removes flux equal to <good>100%</good> of this ship's maximum flux.
 effect|KILL_FLUX_VENT_PERCENT|-10.0	0	Destroying an enemy ship removes flux equal to <good>-10%</good> of this ship's maximum flux.
 effect|KILL_FLUX_VENT_PERCENT|-12.5	0	Destroying an enemy ship removes flux equal to <good>-12.5%</good> of this ship's maximum flux.
+effect|KINETIC_ARMOR_HULL_DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased kinetic damage taken by armor and hull.
+effect|KINETIC_ARMOR_HULL_DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased kinetic damage taken by armor and hull.
+effect|KINETIC_ARMOR_HULL_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased kinetic damage taken by armor and hull.
+effect|KINETIC_ARMOR_HULL_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased kinetic damage taken by armor and hull.
+effect|KINETIC_ARMOR_HULL_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced kinetic damage taken by armor and hull.
+effect|KINETIC_ARMOR_HULL_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced kinetic damage taken by armor and hull.
+effect|KINETIC_DAMAGE_PERCENT|1.0	0	<good>1%</good> increased kinetic damage.
+effect|KINETIC_DAMAGE_PERCENT|10.0	0	<good>10%</good> increased kinetic damage.
+effect|KINETIC_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> increased kinetic damage.
+effect|KINETIC_DAMAGE_PERCENT|100.0	0	<good>100%</good> increased kinetic damage.
+effect|KINETIC_DAMAGE_PERCENT|-10.0	0	<bad>10%</bad> reduced kinetic damage.
+effect|KINETIC_DAMAGE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced kinetic damage.
 effect|KINETIC_DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased kinetic damage taken.
 effect|KINETIC_DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased kinetic damage taken.
 effect|KINETIC_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased kinetic damage taken.
@@ -2290,6 +2374,12 @@ effect|NON_MISSILE_WEAPON_RANGE_CAP_FLAT|12.5	0	Non-missile weapon range can't e
 effect|NON_MISSILE_WEAPON_RANGE_CAP_FLAT|100.0	0	Non-missile weapon range can't exceed <bad>100</bad> su.
 effect|NON_MISSILE_WEAPON_RANGE_CAP_FLAT|-10.0	0	Non-missile weapon range can't exceed <bad>-10</bad> su.
 effect|NON_MISSILE_WEAPON_RANGE_CAP_FLAT|-12.5	0	Non-missile weapon range can't exceed <bad>-12.5</bad> su.
+effect|NO_PHASE_UPKEEP_NEAR_WRECK_CAPPED_RANGE|1.0	0	No phase cloak flux upkeep while within <good>1</good> su of a wreck, for up to <hl>5</hl> seconds each time this ship phases.
+effect|NO_PHASE_UPKEEP_NEAR_WRECK_CAPPED_RANGE|10.0	0	No phase cloak flux upkeep while within <good>10</good> su of a wreck, for up to <hl>5</hl> seconds each time this ship phases.
+effect|NO_PHASE_UPKEEP_NEAR_WRECK_CAPPED_RANGE|12.5	0	No phase cloak flux upkeep while within <good>12.5</good> su of a wreck, for up to <hl>5</hl> seconds each time this ship phases.
+effect|NO_PHASE_UPKEEP_NEAR_WRECK_CAPPED_RANGE|100.0	0	No phase cloak flux upkeep while within <good>100</good> su of a wreck, for up to <hl>5</hl> seconds each time this ship phases.
+effect|NO_PHASE_UPKEEP_NEAR_WRECK_CAPPED_RANGE|-10.0	0	No phase cloak flux upkeep while within <good>-10</good> su of a wreck, for up to <hl>5</hl> seconds each time this ship phases.
+effect|NO_PHASE_UPKEEP_NEAR_WRECK_CAPPED_RANGE|-12.5	0	No phase cloak flux upkeep while within <good>-12.5</good> su of a wreck, for up to <hl>5</hl> seconds each time this ship phases.
 effect|NO_PHASE_UPKEEP_NEAR_WRECK_RANGE|1.0	0	No phase cloak flux upkeep while within <good>1</good> su of a wreck.
 effect|NO_PHASE_UPKEEP_NEAR_WRECK_RANGE|10.0	0	No phase cloak flux upkeep while within <good>10</good> su of a wreck.
 effect|NO_PHASE_UPKEEP_NEAR_WRECK_RANGE|12.5	0	No phase cloak flux upkeep while within <good>12.5</good> su of a wreck.
@@ -2494,6 +2584,12 @@ effect|PHASE_UPKEEP_COVERED_BY_FRAGMENTS_PERCENT|12.5	0	Fragments from this ship
 effect|PHASE_UPKEEP_COVERED_BY_FRAGMENTS_PERCENT|100.0	0	Fragments from this ship's fragment swarm, or else the nearest allied one within <hl>1000</hl> su, cover <good>90%</good> of phase cloak flux upkeep while phased, spending <hl>1</hl> fragment for every <hl>50</hl> flux covered.
 effect|PHASE_UPKEEP_COVERED_BY_FRAGMENTS_PERCENT|-10.0	0	Fragments from this ship's fragment swarm, or else the nearest allied one within <hl>1000</hl> su, cover <good>-10%</good> of phase cloak flux upkeep while phased, spending <hl>1</hl> fragment for every <hl>50</hl> flux covered.
 effect|PHASE_UPKEEP_COVERED_BY_FRAGMENTS_PERCENT|-12.5	0	Fragments from this ship's fragment swarm, or else the nearest allied one within <hl>1000</hl> su, cover <good>-12.5%</good> of phase cloak flux upkeep while phased, spending <hl>1</hl> fragment for every <hl>50</hl> flux covered.
+effect|PIRATE_FRENZY_FLUX_DISSIPATION_PERCENT_PER_STACK|1.0	0	<good>1%</good> increased flux dissipation for each Pirate Frenzy stack.
+effect|PIRATE_FRENZY_FLUX_DISSIPATION_PERCENT_PER_STACK|10.0	0	<good>10%</good> increased flux dissipation for each Pirate Frenzy stack.
+effect|PIRATE_FRENZY_FLUX_DISSIPATION_PERCENT_PER_STACK|12.5	0	<good>12.5%</good> increased flux dissipation for each Pirate Frenzy stack.
+effect|PIRATE_FRENZY_FLUX_DISSIPATION_PERCENT_PER_STACK|100.0	0	<good>100%</good> increased flux dissipation for each Pirate Frenzy stack.
+effect|PIRATE_FRENZY_FLUX_DISSIPATION_PERCENT_PER_STACK|-10.0	0	<good>-10%</good> increased flux dissipation for each Pirate Frenzy stack.
+effect|PIRATE_FRENZY_FLUX_DISSIPATION_PERCENT_PER_STACK|-12.5	0	<good>-12.5%</good> increased flux dissipation for each Pirate Frenzy stack.
 effect|PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT|1.0	0	Whenever an enemy ship is destroyed within <good>1</good> su, this ship gains a Pirate Frenzy stack for <hl>10</hl> seconds. Ships can hold up to <hl>5</hl> Pirate Frenzy stacks.\n<good>5%</good> increased weapon rate of fire for each Pirate Frenzy stack.\n<good>5%</good> reduced weapon flux cost for each Pirate Frenzy stack.
 effect|PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT|10.0	0	Whenever an enemy ship is destroyed within <good>10</good> su, this ship gains a Pirate Frenzy stack for <hl>10</hl> seconds. Ships can hold up to <hl>5</hl> Pirate Frenzy stacks.\n<good>5%</good> increased weapon rate of fire for each Pirate Frenzy stack.\n<good>5%</good> reduced weapon flux cost for each Pirate Frenzy stack.
 effect|PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT|12.5	0	Whenever an enemy ship is destroyed within <good>12.5</good> su, this ship gains a Pirate Frenzy stack for <hl>10</hl> seconds. Ships can hold up to <hl>5</hl> Pirate Frenzy stacks.\n<good>5%</good> increased weapon rate of fire for each Pirate Frenzy stack.\n<good>5%</good> reduced weapon flux cost for each Pirate Frenzy stack.
@@ -3064,6 +3160,12 @@ effect|SHIELD_DAMAGE_SHARED_PERCENT|12.5	0	Disperses <good>12.5%</good> of damag
 effect|SHIELD_DAMAGE_SHARED_PERCENT|100.0	0	Disperses <good>90%</good> of damage taken by shields to allied ships within <hl>1000</hl> su that aren't overloaded or venting, split evenly between them as hard flux.
 effect|SHIELD_DAMAGE_SHARED_PERCENT|-10.0	0	Disperses <good>-10%</good> of damage taken by shields to allied ships within <hl>1000</hl> su that aren't overloaded or venting, split evenly between them as hard flux.
 effect|SHIELD_DAMAGE_SHARED_PERCENT|-12.5	0	Disperses <good>-12.5%</good> of damage taken by shields to allied ships within <hl>1000</hl> su that aren't overloaded or venting, split evenly between them as hard flux.
+effect|SHIELD_DAMAGE_TAKEN_ARMOR_EFFECTIVENESS_PERCENT|1.0	0	Shield damage taken modifiers also apply to armor damage taken at <good>1%</good> effectiveness.
+effect|SHIELD_DAMAGE_TAKEN_ARMOR_EFFECTIVENESS_PERCENT|10.0	0	Shield damage taken modifiers also apply to armor damage taken at <good>10%</good> effectiveness.
+effect|SHIELD_DAMAGE_TAKEN_ARMOR_EFFECTIVENESS_PERCENT|12.5	0	Shield damage taken modifiers also apply to armor damage taken at <good>12.5%</good> effectiveness.
+effect|SHIELD_DAMAGE_TAKEN_ARMOR_EFFECTIVENESS_PERCENT|100.0	0	Shield damage taken modifiers also apply to armor damage taken at <good>100%</good> effectiveness.
+effect|SHIELD_DAMAGE_TAKEN_ARMOR_EFFECTIVENESS_PERCENT|-10.0	0	Shield damage taken modifiers also apply to armor damage taken at <good>-10%</good> effectiveness.
+effect|SHIELD_DAMAGE_TAKEN_ARMOR_EFFECTIVENESS_PERCENT|-12.5	0	Shield damage taken modifiers also apply to armor damage taken at <good>-12.5%</good> effectiveness.
 effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|1.0	0	<good>1%</good> reduced damage taken by shields while moving faster than <hl>75%</hl> of top speed.
 effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|10.0	0	<good>10%</good> reduced damage taken by shields while moving faster than <hl>75%</hl> of top speed.
 effect|SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT|12.5	0	<good>12.5%</good> reduced damage taken by shields while moving faster than <hl>75%</hl> of top speed.

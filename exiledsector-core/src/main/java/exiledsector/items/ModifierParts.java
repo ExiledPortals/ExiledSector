@@ -17,15 +17,16 @@ public final class ModifierParts {
     private static final AtomicReference<Built> CACHED = new AtomicReference<>();
 
     private record Source(Collection<ItemDefinition> definitions, Collection<Modifier> catalogue, List<Modifier> corruptionPool,
-                          Map<String, ModifierSources.Source> reservations) {
+                          Map<String, ModifierSources.Source> reservations, Map<String, List<Modifier>> prototypePools) {
 
         static Source current() {
-            return new Source(ItemDefinitions.all(), ItemModifiers.all(), ItemImplicits.corruptionPool(), ModifierSources.all());
+            return new Source(ItemDefinitions.all(), ItemModifiers.all(), ItemImplicits.corruptionPool(), ModifierSources.all(),
+                    PrototypeImplicits.byBase());
         }
 
         boolean sameAs(Source other) {
             return definitions == other.definitions && catalogue == other.catalogue && corruptionPool == other.corruptionPool
-                    && reservations == other.reservations;
+                    && reservations == other.reservations && prototypePools == other.prototypePools;
         }
     }
 
@@ -76,6 +77,12 @@ public final class ModifierParts {
                 definition.pool().forEach(entry -> add(modifiersByPart, definition.kind(), entry.modifier()));
             }
         }
+        source.prototypePools().forEach((baseId, pool) -> {
+            ItemDefinition base = ItemDefinitions.get(baseId);
+            if (base != null && base.kind() != null && base.kind().fitsSection()) {
+                pool.forEach(implicit -> add(modifiersByPart, base.kind(), implicit));
+            }
+        });
         for (Modifier implicit : source.corruptionPool()) {
             ItemKind.sectionItemTypes().forEach(part -> add(modifiersByPart, part, implicit));
         }

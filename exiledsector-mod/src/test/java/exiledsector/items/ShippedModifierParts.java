@@ -14,6 +14,7 @@ final class ShippedModifierParts {
         ItemDefinitions.register(HullItemRows.shippedRows(SubroutineDefinitions.dataPath()), HullItemRows.shippedRows(HullItem.definitionsPath()));
         ItemImplicits.register(HullItemRows.shippedRows(ItemImplicits.dataPath()));
         ItemImplicits.registerCorruptionPool(HullItemRows.shippedRows(ItemImplicits.corruptionDataPath()));
+        PrototypeImplicits.register(HullItemRows.shippedRows(PrototypeImplicits.dataPath()));
         Engrams.register(HullItemRows.shippedRows(Engrams.PATH));
         BiomeModifiers.register(HullItemRows.shippedRows(BiomeModifiers.PATH));
     }

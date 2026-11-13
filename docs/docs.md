@@ -391,7 +391,8 @@ fleet's fuel is at least half its total fuel capacity. A transient script rechec
 Pirate Frenzy is a stacking buff any effect can grant through `PirateFrenzy.of(ship).gain()`. Each stack runs its own
 10-second timer, lengthened by `PIRATE_FRENZY_SECONDS_FLAT`, and gives a fixed 5% increased weapon rate of fire and 5%
 reduced weapon flux cost. A ship holds up to 5 stacks, a stack gained at the cap replaces the oldest, and destruction
-clears them all (`PirateFrenzy`).
+clears them all (`PirateFrenzy`). `PIRATE_FRENZY_FLUX_DISSIPATION_PERCENT_PER_STACK` adds that much flux dissipation per
+stack, and `HEARTLESS_FLUX_DISSIPATION_PERCENT_PER_STACK` does the same per Heartless stack (`HeartlessStacks`).
 
 Blood in the Water's `PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT` grants a stack for each enemy ship destroyed
 within its range, checked every 0.25 seconds. Strike craft and station modules don't count
@@ -456,6 +457,14 @@ The engine runs no damage modifiers on a hit that deals EMP but no damage. `EmpO
 those from damage reports and hands them, with their EMP after this ship's bonus, to EMP Damage, Ion Cascade and Ion
 Spill. The public API hides an arc's EMP, so it is read from the engine arc's `empDamAmount` field. EMP Damage deals the missing EMP as a zero-damage hit at the same spot on the ship on the next frame, past
 shields.
+
+`EMP_DEALT_HARD_FLUX_VENT_PERCENT` removes that share of the EMP this ship deals to a living enemy ship from its own hard
+flux, read from each damage report after the hit (`EmpDealtHardFluxVentListener`).
+
+### Damage type bonuses
+
+`KINETIC_DAMAGE_PERCENT` and its high explosive, energy and fragmentation siblings add to each hit of that damage type
+this ship deals, as their own modifier on the hit, so they multiply with weapon damage bonuses (`DamageTypeListener`).
 
 ### Ion Cascade
 
@@ -571,6 +580,17 @@ hierarchy.
 and the Low Arc core. `SHIELD_DAMAGE_PASSED_TO_ALLY_PERCENT` shares Shared Fate's listener and 90% cap, sending its
 share to the nearest qualifying ally with flux room as soft flux; what that ally can't hold returns as hard flux.
 `SHIELD_ARC_FIXED` sets the shield arc to its magnitude in degrees after the ship is built, since arc is only read then.
+
+### Shield to armor share
+
+`SHIELD_DAMAGE_TAKEN_ARMOR_EFFECTIVENESS_PERCENT` gives armor that share of the ship's shield damage taken reduction or
+increase, rechecked every 0.25 seconds (`ShieldArmorShareListener`).
+
+### Shield phase-through
+
+`ENERGY_SHIELD_PHASE_THROUGH_CHANCE_PERCENT` and `BALLISTIC_SHIELD_PHASE_THROUGH_CHANCE_PERCENT` give each projectile of
+that weapon type hitting this ship's shield that chance to deal nothing; a harmless copy flies on through the ship.
+Beams and missiles never pass (`ShieldPhaseThroughListener`).
 
 </details>
 
@@ -716,6 +736,9 @@ chart boss's chest and the chart reward (0) drop only uniques. Battle drops (`ba
 carry their own rates. A dropped non-unique hull item has one or two modifiers
 (`HullItemDrops.DROP_LIMITS` through `ItemTypeSupport.dropLimits`), storm loot included, so it never drops rare;
 crafting can still take it to four.
+
+`HULL_ITEM_QUANTITY_PERCENT` and `CRAFTING_ITEM_QUANTITY_PERCENT` add up over the player fleet and scale the chance or
+expected count of basic hull item and crafting item drops from battles, salvage and Star Charts (`FoundItemQuantity`).
 
 ### Hull item mechanics
 
@@ -1034,7 +1057,8 @@ wing stack gains that share, the fraction rolled (`SalvagedArmaments`, from `Ite
 Each enemy ship destroyed within 1000 su repairs every armor cell by 5% of its maximum, and only armor actually
 restored counts toward the rolled per-deployment cap (`WreckPlatingListener`, through `ArmorCells.repairWithinCap`
 as the Rift's phase-entry repair). Free phase upkeep counts any non-strikecraft hulk on the battlefield
-(`WreckShelterListener`), and the per-d-mod lines count d-mods as `TOP_SPEED_MULT_PER_DMOD` does.
+(`WreckShelterListener`); `NO_PHASE_UPKEEP_NEAR_WRECK_CAPPED_RANGE` gives the same for only 5 seconds of each phase,
+reset by leaving phase. The per-d-mod lines count d-mods as `TOP_SPEED_MULT_PER_DMOD` does.
 
 ### Storm Belt modifiers
 
@@ -1372,6 +1396,10 @@ every living picket at once, so one fight wins the vault. The vault is the `list
 plus the `exiledSector_chart_listening_post` item row, +100% to Star Charts, blueprints and subroutines, times the
 share left (`VaultLoot`). Taking it before the alarm flags the atlas cell `LANES_REVEALED`, which reveals 3 lanes
 around it like a Sensor Array (`AtlasReach`).
+
+The vault also holds a prototype: before the alarm the player picks one of three different hull item bases, after it
+the vault keeps one. A prototype is a normal drop of its base plus one extra implicit from that base's pool in
+`prototype_implicits.csv`, kept through implicit changes and saves (`VaultPrototypes`, `PrototypeImplicits`).
 
 ### Pre-Collapse Facility
 

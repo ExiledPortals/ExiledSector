@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import exiledsector.ModCsv;
 import exiledsector.ModSettings;
 import exiledsector.compat.SalvageSiteCompat;
+import exiledsector.skills.skilleffect.logistics.FoundItemQuantity;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -206,11 +207,12 @@ public final class ItemDrops {
 
     public static void rollEachCraftingItem(List<MaterialDrop> drops, float expectedDrops, Random random, Map<String, Integer> droppedMaterials) {
         double totalWeight = drops.stream().mapToDouble(drop -> Math.max(0f, drop.weight())).sum();
-        if (!(expectedDrops > 0f) || !(totalWeight > 0d)) {
+        float scaledDrops = expectedDrops * FoundItemQuantity.craftingItemMult();
+        if (!(scaledDrops > 0f) || !(totalWeight > 0d)) {
             return;
         }
         for (MaterialDrop drop : drops) {
-            int count = wholeFeedstock((float) (expectedDrops * Math.max(0f, drop.weight()) / totalWeight), random);
+            int count = wholeFeedstock((float) (scaledDrops * Math.max(0f, drop.weight()) / totalWeight), random);
             if (count > 0) {
                 droppedMaterials.merge(drop.itemId(), count, Integer::sum);
             }

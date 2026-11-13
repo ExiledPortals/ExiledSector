@@ -15,6 +15,7 @@ import exiledsector.loot.LootSource;
 import exiledsector.loot.LootSources;
 import exiledsector.loot.MarketStock;
 import exiledsector.loot.SiteFind;
+import exiledsector.skills.skilleffect.logistics.FoundItemQuantity;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -111,7 +112,8 @@ public final class HullUpgradeLootSource implements LootSource, MarketStock {
             return HullItemDrops.SectionItemLoot.NONE;
         }
         try {
-            return BattleItemDrops.roll(losses(battle).battleItems(), BattleItemDropSetting.multiplier(), battle.random(),
+            return BattleItemDrops.roll(losses(battle).battleItems(), BattleItemDropSetting.multiplier(),
+                    FoundItemQuantity.hullItemMult(), battle.random(),
                     definition -> ItemUnlock.canDrop(definition, sector), hullItemDropsOpen);
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Rolling battle hull item drops failed", e);
@@ -122,7 +124,8 @@ public final class HullUpgradeLootSource implements LootSource, MarketStock {
     @Override
     public void addSiteFinds(SiteFind find) {
         if (HullUpgradesSetting.hullItemDropsOpen(find.sector())) {
-            HullItemDrops.SectionItemLoot sectionItemLoot = HullItemDrops.rollSectionItemLoot(find.dropSite(), find.random(), find.chances());
+            HullItemDrops.SectionItemLoot sectionItemLoot = HullItemDrops.rollSectionItemLoot(find.dropSite(), find.random(), find.chances(),
+                    FoundItemQuantity.hullItemMult());
             find.items().addAll(sectionItemLoot.items());
             find.upgrades().addAll(sectionItemLoot.upgrades());
         }

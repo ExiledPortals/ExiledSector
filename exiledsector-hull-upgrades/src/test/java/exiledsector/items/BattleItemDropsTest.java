@@ -107,6 +107,14 @@ class BattleItemDropsTest {
     }
 
     @Test
+    void theHullItemQuantityScalesOnlyTheBasicHullItems() {
+        List<BattleItemDrops.Planned> planned = BattleItemDrops.plan(battle(source(1000f)), 1f, 2f, List.of(), neverLucky(), true);
+
+        assertEquals(Map.of(BattleItemDrops.Drop.MODS_1, 8, BattleItemDrops.Drop.MODS_2, 4, BattleItemDrops.Drop.REFIT_SCHEMATIC, 1),
+                counts(planned));
+    }
+
+    @Test
     void aBiggerEnemyTreeTurnsMoreHullItemsTwoModifierWithoutDroppingMore() {
         FleetLootRules regular = rules(ItemChances.BASE, false, 1f);
         Map<BattleItemDrops.Drop, Integer> doubled = counts(plan(battle(new BattleItemDrops.SourceLoss(1000f, 1f, 2f, regular)), 1f));

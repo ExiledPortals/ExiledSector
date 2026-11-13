@@ -46,6 +46,7 @@ public final class ItemImplicits {
     public static void load() {
         ModCsv.load("section", dataPath(), LOG, ItemImplicits::register);
         CORRUPTION_ONLY_IMPLICITS.load();
+        PrototypeImplicits.load();
     }
 
     public static void registerCorruptionPool(JSONArray rows) throws JSONException {
@@ -121,11 +122,23 @@ public final class ItemImplicits {
 
     public static List<RolledModifier> withCurrentIds(ItemKind kind, List<RolledModifier> savedImplicits, long seed) {
         List<Modifier> implicits = forType(kind);
-        if (implicits.isEmpty() || matchesIds(implicits, savedImplicits)) {
+        if (implicits.isEmpty()) {
+            return savedImplicits;
+        }
+        List<RolledModifier> ownImplicits = new ArrayList<>(savedImplicits.size());
+        List<RolledModifier> prototypeImplicits = new ArrayList<>(1);
+        for (RolledModifier saved : savedImplicits) {
+            if (PrototypeImplicits.isPrototypeImplicit(saved.modifierId())) {
+                prototypeImplicits.add(saved);
+            } else {
+                ownImplicits.add(saved);
+            }
+        }
+        if (matchesIds(implicits, ownImplicits) && savedImplicits.subList(0, ownImplicits.size()).equals(ownImplicits)) {
             return savedImplicits;
         }
         Map<String, RolledLine> savedLines = new HashMap<>();
-        RolledModifier.lines(savedImplicits).forEach(line -> savedLines.putIfAbsent(line.effectName(), line));
+        RolledModifier.lines(ownImplicits).forEach(line -> savedLines.putIfAbsent(line.effectName(), line));
         List<RolledModifier> freshRolls = roll(kind, seed);
         List<RolledModifier> resolved = new ArrayList<>(implicits.size());
         for (int index = 0; index < implicits.size(); index++) {
@@ -140,6 +153,7 @@ public final class ItemImplicits {
             resolved.add(keptLines.size() == implicit.lines().size()
                     ? new RolledModifier(implicit.id(), ModifierSlot.IMPLICIT, keptLines) : freshRolls.get(index));
         }
+        resolved.addAll(prototypeImplicits);
         return resolved;
     }
 
@@ -217,5 +231,6 @@ public final class ItemImplicits {
     public static void clear() {
         BY_TYPE.set(null);
         CORRUPTION_ONLY_IMPLICITS.clear();
+        PrototypeImplicits.clear();
     }
 }

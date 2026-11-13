@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -456,6 +457,50 @@ public final class ItemDataIntegrity {
         List<ModifierRow> implicits = new ArrayList<>();
         ModCsv.forEach(orEmpty(rows), (index, row) -> checkImplicitEntry(file, index + FIRST_DATA_LINE, poolName,
                 ModCsv.text(row, CorruptionImplicitPool.IMPLICIT_COLUMN), implicits, itemType));
+    }
+
+    public void checkPrototypeImplicits(JSONArray rows, String file, JSONArray hullItemRows, JSONArray kindImplicitRows) throws JSONException {
+        Map<String, List<String>> kindImplicitIdsBySection = new HashMap<>();
+        ModCsv.forEach(orEmpty(kindImplicitRows), (index, row) -> kindImplicitIdsBySection.put(ModCsv.text(row, "section"),
+                CsvRows.entries(ModCsv.text(row, "implicits")).stream().map(String::trim).filter(ItemModifiers::isReference)
+                        .map(entry -> ModifierReference.parse(entry).id()).toList()));
+        Map<String, String> sectionsByBase = new HashMap<>();
+        ModCsv.forEach(orEmpty(hullItemRows), (index, row) -> {
+            if (!"true".equalsIgnoreCase(ModCsv.text(row, "unique"))) {
+                sectionsByBase.put(ModCsv.text(row, "id"), ModCsv.text(row, "section"));
+            }
+        });
+        Map<String, Integer> linesByBase = new HashMap<>();
+        Map<String, String> basesByImplicit = new HashMap<>();
+        ModCsv.forEach(orEmpty(rows), (index, row) -> {
+            int line = index + FIRST_DATA_LINE;
+            String baseId = ModCsv.text(row, PrototypeImplicits.BASE_COLUMN);
+            String section = sectionsByBase.get(baseId);
+            if (section == null) {
+                error(file, line, "\"" + baseId + "\" is not a hull item base; prototypes need a non-unique hull item");
+                return;
+            }
+            Integer earlierLine = linesByBase.putIfAbsent(baseId, line);
+            if (earlierLine != null) {
+                error(file, line, baseId + " is already listed on line " + earlierLine);
+            }
+            List<ModifierRow> implicits = new ArrayList<>();
+            kindImplicitIdsBySection.getOrDefault(section, List.of()).stream().map(modifiersById::get)
+                    .filter(Objects::nonNull).forEach(implicits::add);
+            int ownCount = implicits.size();
+            for (String entryText : CsvRows.entries(ModCsv.text(row, PrototypeImplicits.IMPLICITS_COLUMN))) {
+                checkImplicitEntry(file, line, baseId, entryText.trim(), implicits, ItemType.HULL_ITEM);
+            }
+            if (implicits.size() == ownCount) {
+                error(file, line, baseId + " has no prototype implicits");
+            }
+            for (ModifierRow prototype : implicits.subList(ownCount, implicits.size())) {
+                String otherBase = basesByImplicit.putIfAbsent(prototype.id(), baseId);
+                if (otherBase != null && !otherBase.equals(baseId)) {
+                    error(file, line, prototype.id() + " is already a prototype implicit of " + otherBase);
+                }
+            }
+        });
     }
 
     void checkImplicitEntry(String file, int line, String typeId, String entryText, List<ModifierRow> implicits, ItemType itemType) {

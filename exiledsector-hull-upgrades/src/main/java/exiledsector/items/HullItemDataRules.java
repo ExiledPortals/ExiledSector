@@ -45,5 +45,7 @@ public final class HullItemDataRules implements ItemDataRules {
         integrity.checkKindImplicits(ItemDataIntegrity.orEmpty(ModCsv.rows("section", ItemImplicits.dataPath())), ItemImplicits.dataPath());
         integrity.checkCorruptionPool(ModCsv.rows(CorruptionImplicitPool.IMPLICIT_COLUMN, ItemImplicits.corruptionDataPath()),
                 ItemImplicits.corruptionDataPath(), "the hull item corruption pool", ItemType.HULL_ITEM);
+        integrity.checkPrototypeImplicits(ModCsv.rows(PrototypeImplicits.BASE_COLUMN, PrototypeImplicits.dataPath()), PrototypeImplicits.dataPath(),
+                ModCsv.rows("id", HullItem.definitionsPath()), ModCsv.rows("section", ItemImplicits.dataPath()));
     }
 }

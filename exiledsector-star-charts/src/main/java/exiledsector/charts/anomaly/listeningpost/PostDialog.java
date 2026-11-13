@@ -11,6 +11,7 @@ import com.fs.starfarer.api.campaign.TextPanelAPI;
 import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl;
 import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl.BaseFIDDelegate;
 import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl.FIDConfig;
+import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.AnomalyDialog;
@@ -19,8 +20,15 @@ import exiledsector.charts.atlas.AtlasProgress;
 import exiledsector.charts.atlas.AtlasReach;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
+import exiledsector.i18n.StyledText;
+import exiledsector.items.Item;
+import exiledsector.items.ItemData;
+import exiledsector.items.ItemDefinition;
+import exiledsector.items.PrototypeImplicits;
+import exiledsector.items.RolledModifier;
 import exiledsector.ui.VanillaText;
 
+import java.util.List;
 import java.util.Random;
 
 public class PostDialog extends AnomalyDialog {
@@ -38,6 +46,9 @@ public class PostDialog extends AnomalyDialog {
     };
 
     private SectorEntityToken post;
+
+    record PrototypeChoice(int index) {
+    }
 
     @Override
     protected void open() {
@@ -93,6 +104,9 @@ public class PostDialog extends AnomalyDialog {
             infiltrate();
         } else if (OPEN.equals(optionData) && open) {
             openVault(run, state);
+        } else if (optionData instanceof PrototypeChoice choice && state != null && state.quiet()) {
+            List<ItemData> offered = VaultPrototypes.offered(Global.getSector(), state.seed());
+            takeVault(run, state, choice.index() < offered.size() ? offered.get(choice.index()) : null);
         } else if (ENGAGE_OPTION.equals(optionData) && state != null && state.alarm() && !state.taken() && script != null) {
             engage(script.gatherDefenders());
         } else {
@@ -112,6 +126,44 @@ public class PostDialog extends AnomalyDialog {
     }
 
     void openVault(ChartRun run, PostState state) {
+        if (state.quiet()) {
+            List<ItemData> offered = VaultPrototypes.offered(Global.getSector(), state.seed());
+            if (!offered.isEmpty()) {
+                showPrototypes(offered);
+                return;
+            }
+        }
+        takeVault(run, state, state.alarm() ? VaultPrototypes.leftAfterAlarm(Global.getSector(), state.seed()) : null);
+    }
+
+    void showPrototypes(List<ItemData> offered) {
+        TextPanelAPI text = text();
+        OptionPanelAPI options = options();
+        options.clearOptions();
+        VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg("chart.anomaly.listening_post.dialog.prototypes").count(offered.size()).text()));
+        for (int index = 0; index < offered.size(); index++) {
+            ItemData prototype = offered.get(index);
+            String baseName = baseName(prototype);
+            VanillaText.addPara(text, I18n.forGameText(() -> Translation.msg("chart.anomaly.listening_post.dialog.prototype").arg("item", baseName).styled()),
+                    Misc.getTextColor());
+            Item preview = prototype.preview();
+            RolledModifier prototypeImplicit = preview == null ? null : PrototypeImplicits.prototypeImplicit(preview);
+            if (prototypeImplicit != null) {
+                for (StyledText line : preview.implicitLines(prototypeImplicit)) {
+                    VanillaText.addPara(text, line, Misc.getTextColor());
+                }
+            }
+            options.addOption(I18n.forGameText(() -> Translation.msg("chart.anomaly.listening_post.dialog.option.prototype").arg("item", baseName).text()),
+                    new PrototypeChoice(index));
+        }
+    }
+
+    private static String baseName(ItemData prototype) {
+        ItemDefinition definition = prototype.definition();
+        return definition == null ? prototype.definitionId() : definition.displayName();
+    }
+
+    void takeVault(ChartRun run, PostState state, ItemData prototype) {
         PostState taken = state.asTaken();
         PostState.record(run, taken);
         TextPanelAPI text = text();
@@ -119,6 +171,12 @@ public class PostDialog extends AnomalyDialog {
             VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg("chart.anomaly.listening_post.dialog.lanes").count(AtlasReach.LISTENING_POST_LANES).text()));
         }
         CargoAPI vault = VaultLoot.roll(Global.getSector(), run, state.vaultShare(), new Random(state.seed()));
+        if (prototype != null) {
+            if (vault == null) {
+                vault = Global.getFactory().createCargo(true);
+            }
+            vault.addSpecial(prototype.toSpecialItem(), 1f);
+        }
         if (vault == null || vault.isEmpty()) {
             VanillaText.plainPara(text, Translation.gameText("chart.anomaly.listening_post.dialog.empty"));
             showMain();

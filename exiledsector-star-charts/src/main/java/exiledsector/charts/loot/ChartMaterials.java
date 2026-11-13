@@ -7,6 +7,7 @@ import exiledsector.data.CsvRows;
 import exiledsector.items.ItemDrops;
 import exiledsector.loot.BattleLootRates;
 import exiledsector.loot.BattleMaterials;
+import exiledsector.skills.skilleffect.logistics.FoundItemQuantity;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -77,9 +78,10 @@ public final class ChartMaterials {
 
     static Map<String, Integer> roll(int tier, float chartShare, float difficultyMultiplier, Random random) {
         Map<String, Integer> materials = new LinkedHashMap<>();
+        float quantityMult = FoundItemQuantity.craftingItemMult();
         amounts.forEach((drop, amount) -> {
             float difficulty = BattleLootRates.scaledDifficulty(difficultyMultiplier, amount.difficultyScaling());
-            int count = ItemDrops.wholeFeedstock(amount.at(tier) * Math.max(0f, chartShare) * difficulty, random);
+            int count = ItemDrops.wholeFeedstock(amount.at(tier) * Math.max(0f, chartShare) * difficulty * quantityMult, random);
             if (count > 0) {
                 materials.put(drop, count);
             }

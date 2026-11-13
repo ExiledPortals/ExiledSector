@@ -29,6 +29,7 @@ final class HeartlessStacks extends ShipCombatListener {
     static final String ARMOR_RESTORE_PERCENT_KEY = "exiledSector_heartlessArmorRestorePercent";
     static final String ARMOR_PERCENT_PER_STACK_KEY = "exiledSector_heartlessArmorPercentPerStack";
     static final String MOBILITY_PENALTY_PERCENT_PER_STACK_KEY = "exiledSector_heartlessMobilityPenaltyPercentPerStack";
+    static final String FLUX_DISSIPATION_PERCENT_PER_STACK_KEY = "exiledSector_heartlessFluxDissipationPercentPerStack";
     static final String RADIATION_EMP_KEY = "exiledSector_heartlessRadiationEmp";
     static final String MAX_STACKS_KEY = "exiledSector_heartlessMaxStacks";
     static final int DEFAULT_MAX_STACKS = 5;
@@ -43,6 +44,8 @@ final class HeartlessStacks extends ShipCombatListener {
     private static final ScaledBonus MOBILITY_PENALTY = new ScaledBonus(percent(StatTarget.scaled(
             StatTarget.all(liveStat(MutableShipStatsAPI::getMaxSpeed), Maneuverability.target()), -1f),
             MOBILITY_PENALTY_PERCENT_PER_STACK_KEY));
+    private static final ScaledBonus FLUX_DISSIPATION = new ScaledBonus(percent(liveStat(MutableShipStatsAPI::getFluxDissipation),
+            FLUX_DISSIPATION_PERCENT_PER_STACK_KEY));
 
     private final Random random;
     private int stackCount;
@@ -79,6 +82,9 @@ final class HeartlessStacks extends ShipCombatListener {
         }
         if (magnitude(MOBILITY_PENALTY_PERCENT_PER_STACK_KEY) > 0f) {
             MOBILITY_PENALTY.apply(ownerShip.getMutableStats(), modId, stackCount);
+        }
+        if (magnitude(FLUX_DISSIPATION_PERCENT_PER_STACK_KEY) != 0f) {
+            FLUX_DISSIPATION.apply(ownerShip.getMutableStats(), modId, stackCount);
         }
         radiationBurst(magnitude(RADIATION_EMP_KEY));
     }

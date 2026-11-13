@@ -451,6 +451,54 @@ class ItemDataIntegrityTest {
                 messages(violations, Severity.WARNING));
     }
 
+    private static List<Violation> prototypeViolations(JSONArray modifiers, JSONArray hullItems, JSONArray implicits, JSONArray prototypes)
+            throws JSONException {
+        ItemDataIntegrity integrity = new ItemDataIntegrity();
+        integrity.checkModifiers(modifiers, ItemModifiers.dataPath());
+        integrity.checkDefinitions(hullItems, HullItem.definitionsPath(), ItemType.HULL_ITEM);
+        integrity.checkKindImplicits(implicits, ItemImplicits.dataPath());
+        integrity.checkPrototypeImplicits(prototypes, PrototypeImplicits.dataPath(), hullItems, implicits);
+        return integrity.finish();
+    }
+
+    private static JSONObject prototype(String base, String implicits) throws JSONException {
+        return new JSONObject().put(PrototypeImplicits.BASE_COLUMN, base).put(PrototypeImplicits.IMPLICITS_COLUMN, implicits);
+    }
+
+    @Test
+    void theShippedPrototypeImplicitsHaveNoErrorsAndCountAsUsed() throws Exception {
+        List<Violation> violations = prototypeViolations(HullItemRows.shippedRows(ItemModifiers.dataPath()),
+                HullItemRows.shippedRows(HullItem.definitionsPath()), HullItemRows.shippedRows(ItemImplicits.dataPath()),
+                HullItemRows.shippedRows(PrototypeImplicits.dataPath()));
+
+        assertEquals(List.of(), messages(violations, Severity.ERROR));
+        assertTrue(violations.stream().noneMatch(violation -> violation.message().contains("_PROTOTYPE_IMPLICIT")), violations.toString());
+    }
+
+    @Test
+    void prototypeImplicitsNeedARepeatableBaseAndEffectsOfTheirOwn() throws Exception {
+        JSONArray modifiers = validModifiers()
+                .put(modifier("HULL_FLAT_PROTOTYPE_IMPLICIT", "implicit", "HULL_FLAT:10:20", ""))
+                .put(modifier("TOP_SPEED_PERCENT_PROTOTYPE_IMPLICIT", "implicit", "TOP_SPEED_PERCENT:5:10", ""));
+        JSONArray hullItems = validHullItems()
+                .put(hullItem("relic", "armor_plating", "", "").put("unique", "TRUE"))
+                .put(hullItem("bolted_plate", "armor_plating", "", ""));
+        JSONArray prototypes = new JSONArray()
+                .put(prototype("plate", "@TOP_SPEED_PERCENT_PROTOTYPE_IMPLICIT;@HYBRID_ARMOR_HULL"))
+                .put(prototype("plate", "@HULL_FLAT_PROTOTYPE_IMPLICIT"))
+                .put(prototype("relic", "@HULL_FLAT_PROTOTYPE_IMPLICIT"))
+                .put(prototype("bolted_plate", "@TOP_SPEED_PERCENT_PROTOTYPE_IMPLICIT"));
+
+        List<String> errors = prototypeViolations(modifiers, hullItems, validImplicits(), prototypes).stream()
+                .filter(violation -> violation.severity() == Severity.ERROR && violation.file().equals(PrototypeImplicits.dataPath()))
+                .map(Violation::message).toList();
+
+        assertEquals(List.of("plate lists HYBRID_ARMOR_HULL more than once",
+                "plate is already listed on line 2",
+                "\"relic\" is not a hull item base; prototypes need a non-unique hull item",
+                "TOP_SPEED_PERCENT_PROTOTYPE_IMPLICIT is already a prototype implicit of plate"), errors);
+    }
+
     @Test
     void unusedModifiersAreOnlyWarnings() throws Exception {
         JSONArray modifiers = validModifiers().put(modifier("HULL_PERCENT", "prefix", "HULL_PERCENT:1:2", "Sturdy"));

@@ -1,5 +1,6 @@
 package exiledsector.skills.skilleffect.weapon;
 
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import exiledsector.i18n.StyledText;
@@ -13,6 +14,8 @@ import exiledsector.skills.skilleffect.SkillEffectSupport;
 import exiledsector.skills.skilleffect.StatMode;
 
 import static exiledsector.skills.skilleffect.ScaledBonus.fixed;
+import static exiledsector.skills.skilleffect.ScaledBonus.percent;
+import static exiledsector.skills.skilleffect.StatTarget.liveStat;
 import static exiledsector.skills.skilleffect.StatTarget.scaled;
 
 public final class PirateFrenzy extends ShipCombatListener implements AdvanceableListener {
@@ -20,12 +23,14 @@ public final class PirateFrenzy extends ShipCombatListener implements Advanceabl
     public static final int MAX_STACKS = 5;
     public static final float STACK_SECONDS = 10f;
     public static final String EXTRA_SECONDS_KEY = "exiledSector_pirateFrenzyExtraSeconds";
+    static final String FLUX_DISSIPATION_PERCENT_PER_STACK_KEY = "exiledSector_pirateFrenzyFluxDissipationPercentPerStack";
     static final float RATE_OF_FIRE_PERCENT_PER_STACK = 5f;
     static final float FLUX_COST_REDUCTION_PERCENT_PER_STACK = 5f;
     private static final String MOD_ID_PREFIX = "exiledSector_pirateFrenzy_";
     private static final ScaledBonus FRENZY_BONUS = new ScaledBonus(
             fixed(WeaponStatFamily.RATE_OF_FIRE.target(WeaponScope.ALL), StatMode.PERCENT, RATE_OF_FIRE_PERCENT_PER_STACK),
-            fixed(scaled(WeaponStatFamily.FLUX_COST.target(WeaponScope.ALL), -1f), StatMode.PERCENT, FLUX_COST_REDUCTION_PERCENT_PER_STACK));
+            fixed(scaled(WeaponStatFamily.FLUX_COST.target(WeaponScope.ALL), -1f), StatMode.PERCENT, FLUX_COST_REDUCTION_PERCENT_PER_STACK),
+            percent(liveStat(MutableShipStatsAPI::getFluxDissipation), FLUX_DISSIPATION_PERCENT_PER_STACK_KEY));
 
     private final ExpiringStacks<Void> frenzyStacks;
     private final ScaledBonus.Tracker frenzyBonus = FRENZY_BONUS.tracker();
