@@ -956,7 +956,8 @@ public final class TreeAllocationSession {
             return true;
         }
         ShipSkillData skillData = allocator.data();
-        Set<String> released = new LinkedHashSet<>(allocator.previewRelease(change));
+        Set<String> releasedWithNode = allocator.previewRelease(change);
+        Set<String> released = new LinkedHashSet<>(releasedWithNode);
         released.remove(node.getId());
         String partnerId = ShipTreeLinks.anchorPartner(skillData, node.getId());
         if (partnerId != null) {
@@ -967,7 +968,10 @@ public final class TreeAllocationSession {
         if (released.isEmpty()) {
             return true;
         }
-        int returnedOp = ShipTrees.paidNodeCount(skillData, released) * snapshot().opCostPerNode();
+        Set<String> releasedOnRequest = new LinkedHashSet<>(releasedWithNode);
+        releasedOnRequest.removeAll(released);
+        int returnedOpNodes = ShipTrees.opNodesReturnedBy(skillData, releasedWithNode) - ShipTrees.opNodesReturnedBy(skillData, releasedOnRequest);
+        int returnedOp = returnedOpNodes * snapshot().opCostPerNode();
         String warningKey;
         if (holdsDoctrine(skillData, node)) {
             warningKey = "socketable.doctrine.releaseConfirm";

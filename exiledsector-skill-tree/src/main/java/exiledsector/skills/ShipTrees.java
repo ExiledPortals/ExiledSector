@@ -243,15 +243,16 @@ public final class ShipTrees {
         return released;
     }
 
-    public static int paidNodeCount(ShipSkillData data, Collection<String> nodeIds) {
+    public static int opNodesReturnedBy(ShipSkillData data, Collection<String> releasedNodeIds) {
         String startingRoot = resolveStartingRootId(data);
-        int paid = 0;
-        for (String nodeId : nodeIds) {
-            if (data.isAllocated(nodeId) && !data.isFreeNode(nodeId) && !nodeId.equals(startingRoot)) {
-                paid++;
+        int charged = 0;
+        for (String nodeId : releasedNodeIds) {
+            boolean spentFreeAllocationOrOp = !data.isFreeNode(nodeId) || data.freeNodeIds().contains(nodeId);
+            if (data.isAllocated(nodeId) && spentFreeAllocationOrOp && !nodeId.equals(startingRoot)) {
+                charged++;
             }
         }
-        return paid;
+        return Math.min(charged, paidNodeCount(data));
     }
 
     public static Set<String> reachableAllocatedNodeIds(ShipSkillData data, SkillTreeTopology topology, String satisfiedRootId) {
@@ -335,7 +336,7 @@ public final class ShipTrees {
             if (removable == null) {
                 break;
             }
-            deallocate(data, removable);
+            deallocateKeepingFreeAllocations(data, removable);
             removedNodeIds.add(removable.getId());
         }
         return removedNodeIds;
@@ -351,7 +352,7 @@ public final class ShipTrees {
             if (removable == null) {
                 break;
             }
-            deallocate(data, removable);
+            deallocateKeepingFreeAllocations(data, removable);
             data.bankedFreeAllocations = Math.max(0, data.bankedFreeAllocations - 1);
             removedNodeIds.add(removable.getId());
         }
@@ -379,8 +380,11 @@ public final class ShipTrees {
     }
 
     public static boolean convertMostRecentAllocationToFree(ShipSkillData data, Collection<SkillNode> allNodes) {
+        return convertNewestPaidNodeToFree(data, resolveStartingRootId(data, allNodes));
+    }
+
+    private static boolean convertNewestPaidNodeToFree(ShipSkillData data, String startingRoot) {
         data.revision++;
-        String startingRoot = resolveStartingRootId(data, allNodes);
         List<String> order = new ArrayList<>(data.allocatedNodeIds);
         for (int i = order.size() - 1; i >= 0; i--) {
             String nodeId = order.get(i);
@@ -432,6 +436,19 @@ public final class ShipTrees {
     }
 
     public static void deallocate(ShipSkillData data, SkillNode node) {
+        int bankedBefore = data.bankedFreeAllocations;
+        deallocateKeepingFreeAllocations(data, node);
+        moveReturnedFreeAllocationsOntoPaidNodes(data, data.bankedFreeAllocations - bankedBefore);
+    }
+
+    private static void moveReturnedFreeAllocationsOntoPaidNodes(ShipSkillData data, int returnedFreeAllocations) {
+        String startingRoot = resolveStartingRootId(data);
+        for (int i = 0; i < returnedFreeAllocations && convertNewestPaidNodeToFree(data, startingRoot); i++) {
+            data.bankedFreeAllocations--;
+        }
+    }
+
+    private static void deallocateKeepingFreeAllocations(ShipSkillData data, SkillNode node) {
         String pairedId = ShipTreeLinks.wormholePartner(data, node);
         data.revision++;
         ItemCostLedger.ensure(data);
