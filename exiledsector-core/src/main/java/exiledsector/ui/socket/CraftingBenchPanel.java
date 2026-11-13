@@ -162,6 +162,8 @@ public final class CraftingBenchPanel extends HoloPanel {
     private BenchMaterialsPanel materialsPanel;
     private boolean openAllowed;
     private String noticeText;
+    private float headerNoticeLeft;
+    private float headerNoticeRight;
     private boolean noticeIsWarning;
     private final List<TileSpot> tileSpots = new ArrayList<>();
     private BenchSpread.Contents spreadContents;
@@ -826,7 +828,11 @@ public final class CraftingBenchPanel extends HoloPanel {
                     .getPosition().inTR(feedstockRight, 0f);
             feedstockRight += PICK_BUTTON_WIDTH + GAP * 2f;
         }
-        addCraftingBenchFeedstockCounts(element, feedstockRight);
+        float countsReach = addCraftingBenchFeedstockCounts(element, feedstockRight);
+        String titleKey = support().titleKey();
+        float titleWidth = titleKey == null ? 0f : Global.getSettings().computeStringWidth(Translation.text(titleKey), Fonts.ORBITRON_20AABOLD);
+        headerNoticeLeft = PAD + titleWidth + GAP * 2f;
+        headerNoticeRight = Math.max(headerNoticeLeft, PAD + innerWidth() - countsReach);
         headerElement = finishHeader(element, headerElement);
     }
 
@@ -1537,12 +1543,7 @@ public final class CraftingBenchPanel extends HoloPanel {
     }
 
     private BenchLayout.Rect benchNotice() {
-        float noticeLeft = PAD;
-        float noticeRight = PAD + innerWidth();
-        if (trays.isOpen() || trayProgress > 0f) {
-            noticeRight = FRAME_INSET + BenchSpread.trayOpen(benchMode, sceneScale, spreadContents, trayToWidth).trayLeft() - GAP;
-        }
-        return new BenchLayout.Rect(noticeLeft, artY(BenchScene.NOTICE_TOP), noticeRight - noticeLeft, BenchScene.NOTICE_HEIGHT * sceneScale);
+        return new BenchLayout.Rect(headerNoticeLeft, PAD + FEEDSTOCK_TEXT_TOP, headerNoticeRight - headerNoticeLeft, HEADER_HEIGHT - FEEDSTOCK_TEXT_TOP);
     }
 
     private final class TrayContext implements BenchTrayContext {

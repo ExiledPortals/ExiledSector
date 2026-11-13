@@ -500,7 +500,7 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
                         0f, Misc.getTextColor()));
     }
 
-    static void addCraftingBenchFeedstockCounts(TooltipMakerAPI element, float countRight) {
+    static float addCraftingBenchFeedstockCounts(TooltipMakerAPI element, float countRight) {
         float nextRight = addFeedstockCount(element, countRight);
         for (String feedstockId : DOMAIN_FEEDSTOCKS.all()) {
             String feedstockName = MaterialItems.displayName(feedstockId);
@@ -513,6 +513,7 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
                 }
             });
         }
+        return nextRight;
     }
 
     private static float addMaterialCount(TooltipMakerAPI element, String itemId, float countRight, Consumer<TooltipMakerAPI> tooltipBody) {

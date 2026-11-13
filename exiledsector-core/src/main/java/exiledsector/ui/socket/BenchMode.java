@@ -1,7 +1,7 @@
 package exiledsector.ui.socket;
 
 public enum BenchMode {
-    HULL_ITEMS(null, 160f, 83.3f, 58f, 42f),
+    HULL_ITEMS(null, 160f, 60f, 58f, 42f),
     STAR_CHARTS(null, 160f, 70f, 58f, 34f),
     FORGE("graphics/ui/exiledSector/derelict_forge.png", 165f, 88f, 58f, 42f),
     ABYSSAL_FORGE("graphics/ui/exiledSector/abyssal_research_complex.png", 160f, 88f, 58f, 42f);

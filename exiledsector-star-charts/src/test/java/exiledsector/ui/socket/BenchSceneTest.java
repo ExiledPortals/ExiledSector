@@ -49,7 +49,7 @@ class BenchSceneTest {
             centres[index] = new float[]{centreX, centreY};
             String tile = mode + " tile " + index;
             assertTrue(centreY + halfTile < BenchScene.detailsTop(mode), tile + " overlaps the details plate");
-            assertTrue(centreY - halfTile > BenchScene.NOTICE_TOP + BenchScene.NOTICE_HEIGHT, tile + " overlaps the notice");
+            assertTrue(centreY - halfTile >= 0f, tile + " leaves the top of the art");
             assertTrue(centreX - halfTile >= 0f && centreX + halfTile <= BenchScene.ART_WIDTH, tile + " leaves the art");
         }
         for (int index = 1; index < tileCount; index++) {
@@ -61,7 +61,7 @@ class BenchSceneTest {
 
     @Test
     void theDetailsPlateStartsJustUnderTheSocketGraphicInEveryModeAndFitsTheArt() {
-        assertEquals(111f, BenchScene.detailsTop(BenchMode.HULL_ITEMS), 0.1f, "the hull bench plate keeps its place");
+        assertEquals(87.7f, BenchScene.detailsTop(BenchMode.HULL_ITEMS), 0.1f, "the hull bench plate starts high to leave room for long items");
         for (BenchMode mode : BenchMode.values()) {
             float gap = BenchScene.detailsTop(mode) - (mode.socketY() + BenchScene.SLOT_RADIUS * 1.05f);
             assertTrue(gap > 0f && gap < 3f, mode + " plate does not start just under its socket graphic");
