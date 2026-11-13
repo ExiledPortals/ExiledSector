@@ -34,6 +34,7 @@ public final class ItemCodec {
     private static final String CORRUPTED_KEY = "c";
     private static final String IMPLICITS_KEY = "i";
     private static final String MIRRORED_KEY = "m";
+    private static final char WARPED_FLAG = 'w';
 
     private ItemCodec() {
     }
@@ -98,7 +99,11 @@ public final class ItemCodec {
             if (!encoded.isEmpty()) {
                 encoded.append(EFFECT_SEPARATOR);
             }
-            encoded.append(slotCode(modifier.slot())).append(MODIFIER_FIELD_SEPARATOR);
+            encoded.append(slotCode(modifier.slot()));
+            if (modifier.warped()) {
+                encoded.append(WARPED_FLAG);
+            }
+            encoded.append(MODIFIER_FIELD_SEPARATOR);
             if (!isCompact(modifier)) {
                 encoded.append(modifier.modifierId()).append(MODIFIER_FIELD_SEPARATOR);
             }
@@ -167,10 +172,15 @@ public final class ItemCodec {
 
     private static RolledModifier decodeModifier(String entry) {
         String[] fields = entry.split(MODIFIER_FIELD_SEPARATOR, 3);
-        ModifierSlot slot = slotOf(fields[0]);
+        ModifierSlot slot = fields[0].isEmpty() ? null : slotOf(fields[0].substring(0, 1));
         if (slot == null) {
             return null;
         }
+        RolledModifier modifier = decodeModifier(fields, slot);
+        return modifier != null && fields[0].indexOf(WARPED_FLAG, 1) > 0 ? modifier.asWarped() : modifier;
+    }
+
+    private static RolledModifier decodeModifier(String[] fields, ModifierSlot slot) {
         if (fields.length == 2) {
             RolledLine line = decodeEffect(fields[1]);
             return line == null ? null : RolledModifier.single(slot, line);

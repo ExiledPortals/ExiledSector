@@ -80,6 +80,7 @@ The zh_CN catalogue was drafted by Claude and still needs review by a native spe
 | Threat- / Shroud- / Phase-infused Feedstock / infused craft | 威胁 / 幽影 / 相位灌注原料 / 灌注制作 | Supply Convoy cargo spent on infused crafts |
 | Prefix / Suffix Inhibitor | 前缀 / 后缀抑制程序 | Crafting materials that protect one affix side |
 | Erasure Cipher | 抹除密码 | Removes every modifier from a Star Chart |
+| Warped | 扭曲 | A hull item modifier from another section's pool, found in a Spatial Breach |
 | Grow | 培育 | Making a crafting material from Nanite Feedstock |
 | Escort | 护航 | |
 | Refraction / refract | 折射 | Refracting Projectiles' shots, matching its name 折射弹体 |

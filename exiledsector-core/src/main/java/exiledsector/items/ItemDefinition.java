@@ -221,7 +221,7 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
                 if (resolved == null) {
                     resolved = new ArrayList<>(modifiers);
                 }
-                resolved.set(index, new RolledModifier(currentId, modifier.slot(), modifier.lines(), modifier.immutable()));
+                resolved.set(index, modifier.withModifierId(currentId));
             }
         }
         return resolved == null ? modifiers : resolved;
@@ -266,7 +266,8 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
     }
 
     private String currentId(RolledModifier modifier) {
-        if (poolEntryFor(modifier.modifierId()) != null || modifier.lines().size() != 1 || ModifierSources.isReserved(modifier.modifierId())) {
+        if (modifier.warped() || poolEntryFor(modifier.modifierId()) != null || modifier.lines().size() != 1
+                || ModifierSources.isReserved(modifier.modifierId())) {
             return modifier.modifierId();
         }
         PoolEntry entry = singleEntryFor(modifier.lines().get(0).effectName(), modifier.slot());

@@ -17,7 +17,6 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.PlayerFleet;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.generation.ChartGenContext;
-import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.ChartAnomalyTerrain;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
@@ -63,7 +62,6 @@ public class BreachTerrainPlugin extends ChartAnomalyTerrain {
     private long seed;
     private float[] cacheX;
     private float[] cacheY;
-    private float[] cacheDepth;
     private boolean[] cacheFormed;
     private boolean closed;
     private transient boolean coreChecked;
@@ -87,13 +85,11 @@ public class BreachTerrainPlugin extends ChartAnomalyTerrain {
             int count = params.caches() == null ? 0 : params.caches().size();
             cacheX = new float[count];
             cacheY = new float[count];
-            cacheDepth = new float[count];
             cacheFormed = new boolean[count];
             for (int i = 0; i < count; i++) {
                 BreachRules.CacheSite site = params.caches().get(i);
                 cacheX[i] = site.x();
                 cacheY[i] = site.y();
-                cacheDepth[i] = site.depth();
             }
         }
     }
@@ -120,6 +116,10 @@ public class BreachTerrainPlugin extends ChartAnomalyTerrain {
 
     public boolean isOpened() {
         return opened;
+    }
+
+    public boolean holds(CampaignFleetAPI fleet) {
+        return fleet != null && fleet.getLocation() != null && containsPoint(fleet.getLocation(), fleet.getRadius());
     }
 
     float cacheItemMult() {
@@ -210,7 +210,6 @@ public class BreachTerrainPlugin extends ChartAnomalyTerrain {
         if (growth().isCollapsing(secondsOpen)) {
             dissolveCaches(location);
         }
-        touchSites(location);
         BreachCharge.rally(location, entity);
         for (CampaignFleetAPI fleet : location.getFleets()) {
             applyTo(fleet, days);
@@ -240,17 +239,16 @@ public class BreachTerrainPlugin extends ChartAnomalyTerrain {
             Random random = new Random(seed ^ (index * 0x9E3779B97F4A7C15L));
             SectorEntityToken cache = ChartSites.addCache(system, runId, tier, context, new Vector2f(cacheX[index], cacheY[index]), random);
             if (cache != null) {
-                markCache(cache, index);
+                markCache(cache);
             }
         } catch (RuntimeException | LinkageError e) {
             LOG.error("[ExiledSector] A Spatial Breach cache could not form in Star Chart run " + runId, e);
         }
     }
 
-    void markCache(SectorEntityToken cache, int index) {
+    void markCache(SectorEntityToken cache) {
         cache.addTag(SpatialBreach.CACHE_TAG);
         MemoryAPI memory = cache.getMemoryWithoutUpdate();
-        memory.set(SpatialBreach.RARITY_KEY, new BreachRules.CacheSite(cacheX[index], cacheY[index], cacheDepth[index]).rarityPercent());
         if (cacheItemBonus != 0f) {
             memory.set(SpatialBreach.ITEM_MULT_KEY, cacheItemMult());
         }
@@ -262,20 +260,6 @@ public class BreachTerrainPlugin extends ChartAnomalyTerrain {
             if (cache.getLocation() != null && !BreachRules.reached(Misc.getDistance(centre, cache.getLocation()), radius)) {
                 location.removeEntity(cache);
             }
-        }
-    }
-
-    private void touchSites(LocationAPI location) {
-        Vector2f centre = entity.getLocation();
-        for (SectorEntityToken site : location.getEntitiesWithTag(ChartIds.CONTENT_TAG)) {
-            if (site instanceof CampaignFleetAPI || site.hasTag(SpatialBreach.CACHE_TAG) || site.getLocation() == null) {
-                continue;
-            }
-            MemoryAPI memory = site.getMemoryWithoutUpdate();
-            if (memory == null || memory.contains(SpatialBreach.RARITY_KEY) || Misc.getDistance(centre, site.getLocation()) > radius) {
-                continue;
-            }
-            memory.set(SpatialBreach.RARITY_KEY, BreachRules.TOUCHED_RARITY_PERCENT);
         }
     }
 
@@ -414,7 +398,9 @@ public class BreachTerrainPlugin extends ChartAnomalyTerrain {
         VanillaText.addPara(tooltip, Translation.msg("chart.anomaly.spatial_breach.effect.supplies").arg("value", supplyIncrease).styled(), TOOLTIP_PAD, text);
         VanillaText.addPara(tooltip, Translation.msg("chart.anomaly.spatial_breach.effect.fuel").styled(), TOOLTIP_PAD, text);
         VanillaText.plainPara(tooltip, Translation.gameText("chart.anomaly.spatial_breach.effect.charge"), TOOLTIP_PAD, text);
-        VanillaText.plainPara(tooltip, Translation.gameText("chart.anomaly.spatial_breach.effect.depth"), TOOLTIP_PAD, Misc.getGrayColor());
+        int warpedChance = Math.round(BreachRules.WARPED_CHANCE * ChartGenContext.PERCENT);
+        VanillaText.addPara(tooltip, Translation.msg("chart.anomaly.spatial_breach.effect.warped").arg("value", warpedChance).styled(), TOOLTIP_PAD, text);
+        VanillaText.plainPara(tooltip, Translation.gameText("chart.anomaly.spatial_breach.effect.caches"), TOOLTIP_PAD, Misc.getGrayColor());
     }
 
     @Override

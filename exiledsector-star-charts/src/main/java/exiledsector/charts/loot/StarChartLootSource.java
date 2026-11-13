@@ -270,12 +270,21 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
 
     @Override
     public ItemData shapeDrop(ItemData item, LocationAPI location) {
+        SectorAPI sector = Global.getSector();
+        ItemData shaped = item;
         try {
-            return BiomeModifiers.onDrop(Global.getSector(), item, location);
+            shaped = BiomeModifiers.onDrop(sector, item, location);
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Adding a biome modifier to a dropped item failed", e);
-            return item;
         }
+        for (LootShaper anomaly : ChartAnomalies.with(LootShaper.class)) {
+            try {
+                shaped = anomaly.shapeDrop(sector, shaped, location);
+            } catch (RuntimeException e) {
+                LOG.error("[ExiledSector] Shaping a dropped item failed in anomaly " + anomaly.id(), e);
+            }
+        }
+        return shaped;
     }
 
     @Override

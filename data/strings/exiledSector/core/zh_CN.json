@@ -830,6 +830,8 @@
     "socketable.tierBandRange": "{low}-{high}",
     "socketable.tooltip.mirrored": "<hl>镜像</hl>",
     "socketable.tooltip.corrupted": "<bad>已腐化</bad>",
+    "socketable.tooltip.warped": "<warped>已扭曲</warped>",
+    "socketable.tooltip.warpedHeader": "<muted>扭曲</muted>",
     "codex.socketables.range": "{low}至{high}",
     "codex.socketables.rangeGrouped": "（{low}至{high}）",
     "ui.forge.refused.loadFirst": "请先装入一件船体部件。",
