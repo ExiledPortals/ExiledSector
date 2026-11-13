@@ -99,7 +99,7 @@
     "chart.modifier.CHART_FLEET_SIZE_PERCENT":"敌方舰队规模提高<bad>{value}%</bad>",
     "chart.modifier.CHART_BASE_FLEETS.other": "星域内额外出现<bad>{value}</bad>支敌方舰队",
     "chart.modifier.CHART_EXTRA_FLEETS.other": "星域内额外出现<bad>{value}</bad>支敌方舰队",
-    "chart.modifier.CHART_OFFICER_LEVEL_BONUS.other": "敌方军官等级<bad>+{value}</bad>",
+    "chart.modifier.CHART_OFFICER_LEVEL_BONUS.other": "敌方军官额外拥有<bad>{value}</bad>项精英技能",
     "chart.modifier.CHART_EXTRA_OFFICERS.other": "敌方舰队额外拥有<bad>{value}</bad>名军官",
     "chart.modifier.CHART_BOSS_SIZE_PERCENT": "星图首领舰队规模提高<bad>{value}%</bad>",
     "chart.modifier.CHART_FLEET_QUALITY_PERCENT": "敌方舰队质量<bad>+{value}%</bad>",

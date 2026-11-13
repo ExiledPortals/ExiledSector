@@ -33,7 +33,7 @@ public final class ChartContentPlanner {
     static final float SHARE_SPREAD = 0.25f;
     public static final int MAX_OVERFLOW_STRENGTH = 50;
     static final float BOSS_QUALITY_BONUS = 15f;
-    static final int BOSS_OFFICER_LEVEL_BONUS = 2;
+    static final int BOSS_OFFICER_LEVEL_BONUS = 1;
     static final int BOSS_OFFICER_COUNT_BONUS = 2;
     static final int STATION_OFFICER_LEVEL = 5;
     static final float MAX_QUALITY = 300f;
