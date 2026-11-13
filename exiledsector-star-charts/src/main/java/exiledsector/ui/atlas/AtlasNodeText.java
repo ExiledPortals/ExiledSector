@@ -126,6 +126,10 @@ public final class AtlasNodeText {
         if (rule != null) {
             lines.addAll(rule.rewardLines());
         }
+        String rewardKey = "chart.atlas.anomaly." + anomalyId + ".reward";
+        if (Translation.has(rewardKey)) {
+            lines.add(Translation.styled(rewardKey));
+        }
         return StyledText.join(StyledText.of("\n"), lines);
     }
 

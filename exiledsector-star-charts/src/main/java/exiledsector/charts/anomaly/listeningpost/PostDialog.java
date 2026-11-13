@@ -26,6 +26,7 @@ import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.PrototypeImplicits;
 import exiledsector.items.RolledModifier;
+import exiledsector.loot.LootSources;
 import exiledsector.ui.VanillaText;
 
 import java.util.List;
@@ -175,7 +176,7 @@ public class PostDialog extends AnomalyDialog {
             if (vault == null) {
                 vault = Global.getFactory().createCargo(true);
             }
-            vault.addSpecial(prototype.toSpecialItem(), 1f);
+            vault.addSpecial(LootSources.shapeDrops(List.of(prototype)).get(0).toSpecialItem(), 1f);
         }
         if (vault == null || vault.isEmpty()) {
             VanillaText.plainPara(text, Translation.gameText("chart.anomaly.listening_post.dialog.empty"));

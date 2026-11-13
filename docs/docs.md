@@ -1241,6 +1241,12 @@ which leaves out a site whose vanilla loot fails: derelicts around a black hole,
 around a neutron star whatever the tier (`StarAnomalies`), and caches in an Asteroid Storm's belts. Stellar Flares need
 a visible star, so a starless system never holds them, rolled or inserted (`StellarFlares`).
 
+### Stellar Flares
+
+Every hull item dropped in a Stellar Flares system, from salvage, caches or battle, rolls one of its modifiers a second
+time and keeps the better value (`LuckyRolls`). `StarChartLootSource.shapeDrop` hands each drop in a run system to that
+run's anomalies (`LootShaper.shapeDrop`).
+
 ### Spatial Breach
 
 The Spatial Breach (`SpatialBreach`, `BreachTerrainPlugin`, numbers in `BreachRules`) is a terrain field fixed at its
