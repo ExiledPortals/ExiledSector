@@ -3277,7 +3277,8 @@
 					"effect": "PD_BEST_TARGET_LEADING"
 				},
 				{
-					"effect": "PD_RECLASSIFY_SMALL_WEAPONS"
+					"effect": "PD_DAMAGE_TO_MISSILES_PERCENT",
+					"magnitude": 50
 				}
 			],
 			"integrated": {
@@ -3289,11 +3290,11 @@
 						"effect": "PD_BEST_TARGET_LEADING"
 					},
 					{
-						"effect": "PD_RECLASSIFY_SMALL_WEAPONS"
+						"effect": "PD_DAMAGE_TO_MISSILES_PERCENT",
+						"magnitude": 50
 					},
 					{
-						"effect": "PD_DAMAGE_TO_MISSILES_PERCENT",
-						"magnitude": 25
+						"effect": "PD_RECLASSIFY_SMALL_WEAPONS"
 					}
 				]
 			},

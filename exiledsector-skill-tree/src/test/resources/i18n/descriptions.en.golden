@@ -9487,79 +9487,79 @@ integrated|insulated_engine_assembly|CAPITAL_SHIP|3	1	<builtIn>90%</builtIn> les
 integrated|insulated_engine_assembly|CAPITAL_SHIP|4	0	<builtIn>100%</builtIn> increased engine durability.
 type|integrated_point_defense_ai|null|0	0	Point-defense weapons can identify and ignore decoy flares.
 type|integrated_point_defense_ai|null|1	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-type|integrated_point_defense_ai|null|2	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles and are affected by point-defense stat modifiers.
+type|integrated_point_defense_ai|null|2	0	<good>50%</good> increased damage to missiles.
 type-detail|integrated_point_defense_ai|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>SILVERSWORD [Type A]</hullmod>\n• <hullmod>Sentinel Retrofit</hullmod>\n• <hullmod>Sentinel PD Array - Medium</hullmod>\n• <hullmod>Sentinel PD Array - Small</hullmod>\n• <hullmod>Sentinel PD Array</hullmod>\n• <hullmod>Superior Point Defense</hullmod>\n• <hullmod>Improved Point Defense Core</hullmod>\n• <hullmod>Integrated Point Defense AI</hullmod>
 type|integrated_point_defense_ai|FRIGATE|0	0	Point-defense weapons can identify and ignore decoy flares.
 type|integrated_point_defense_ai|FRIGATE|1	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-type|integrated_point_defense_ai|FRIGATE|2	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles and are affected by point-defense stat modifiers.
+type|integrated_point_defense_ai|FRIGATE|2	0	<good>50%</good> increased damage to missiles.
 type-detail|integrated_point_defense_ai|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>SILVERSWORD [Type A]</hullmod>\n• <hullmod>Sentinel Retrofit</hullmod>\n• <hullmod>Sentinel PD Array - Medium</hullmod>\n• <hullmod>Sentinel PD Array - Small</hullmod>\n• <hullmod>Sentinel PD Array</hullmod>\n• <hullmod>Superior Point Defense</hullmod>\n• <hullmod>Improved Point Defense Core</hullmod>\n• <hullmod>Integrated Point Defense AI</hullmod>
 type|integrated_point_defense_ai|DESTROYER|0	0	Point-defense weapons can identify and ignore decoy flares.
 type|integrated_point_defense_ai|DESTROYER|1	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-type|integrated_point_defense_ai|DESTROYER|2	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles and are affected by point-defense stat modifiers.
+type|integrated_point_defense_ai|DESTROYER|2	0	<good>50%</good> increased damage to missiles.
 type-detail|integrated_point_defense_ai|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>SILVERSWORD [Type A]</hullmod>\n• <hullmod>Sentinel Retrofit</hullmod>\n• <hullmod>Sentinel PD Array - Medium</hullmod>\n• <hullmod>Sentinel PD Array - Small</hullmod>\n• <hullmod>Sentinel PD Array</hullmod>\n• <hullmod>Superior Point Defense</hullmod>\n• <hullmod>Improved Point Defense Core</hullmod>\n• <hullmod>Integrated Point Defense AI</hullmod>
 type|integrated_point_defense_ai|CRUISER|0	0	Point-defense weapons can identify and ignore decoy flares.
 type|integrated_point_defense_ai|CRUISER|1	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-type|integrated_point_defense_ai|CRUISER|2	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles and are affected by point-defense stat modifiers.
+type|integrated_point_defense_ai|CRUISER|2	0	<good>50%</good> increased damage to missiles.
 type-detail|integrated_point_defense_ai|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>SILVERSWORD [Type A]</hullmod>\n• <hullmod>Sentinel Retrofit</hullmod>\n• <hullmod>Sentinel PD Array - Medium</hullmod>\n• <hullmod>Sentinel PD Array - Small</hullmod>\n• <hullmod>Sentinel PD Array</hullmod>\n• <hullmod>Superior Point Defense</hullmod>\n• <hullmod>Improved Point Defense Core</hullmod>\n• <hullmod>Integrated Point Defense AI</hullmod>
 type|integrated_point_defense_ai|CAPITAL_SHIP|0	0	Point-defense weapons can identify and ignore decoy flares.
 type|integrated_point_defense_ai|CAPITAL_SHIP|1	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-type|integrated_point_defense_ai|CAPITAL_SHIP|2	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles and are affected by point-defense stat modifiers.
+type|integrated_point_defense_ai|CAPITAL_SHIP|2	0	<good>50%</good> increased damage to missiles.
 type-detail|integrated_point_defense_ai|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>SILVERSWORD</hullmod>\n• <hullmod>SILVERSWORD [Type A]</hullmod>\n• <hullmod>Sentinel Retrofit</hullmod>\n• <hullmod>Sentinel PD Array - Medium</hullmod>\n• <hullmod>Sentinel PD Array - Small</hullmod>\n• <hullmod>Sentinel PD Array</hullmod>\n• <hullmod>Superior Point Defense</hullmod>\n• <hullmod>Improved Point Defense Core</hullmod>\n• <hullmod>Integrated Point Defense AI</hullmod>
 integrable|integrated_point_defense_ai|null|0	0	Point-defense weapons can identify and ignore decoy flares.
 integrable|integrated_point_defense_ai|null|1	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-integrable|integrated_point_defense_ai|null|2	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles and are affected by point-defense stat modifiers.
+integrable|integrated_point_defense_ai|null|2	0	<good>50%</good> increased damage to missiles.
 integrable|integrated_point_defense_ai|null|3	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|integrated_point_defense_ai|null|4	0	<muted>When integrated, for 2 story points:</muted>
-integrable|integrated_point_defense_ai|null|5	0	In addition, grants <builtIn>25%</builtIn> increased damage to missiles.
+integrable|integrated_point_defense_ai|null|5	0	In addition, grants: <builtIn>All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles and are affected by point-defense stat modifiers.</builtIn>
 integrable|integrated_point_defense_ai|FRIGATE|0	0	Point-defense weapons can identify and ignore decoy flares.
 integrable|integrated_point_defense_ai|FRIGATE|1	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-integrable|integrated_point_defense_ai|FRIGATE|2	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles and are affected by point-defense stat modifiers.
+integrable|integrated_point_defense_ai|FRIGATE|2	0	<good>50%</good> increased damage to missiles.
 integrable|integrated_point_defense_ai|FRIGATE|3	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|integrated_point_defense_ai|FRIGATE|4	0	<muted>When integrated, for 2 story points:</muted>
-integrable|integrated_point_defense_ai|FRIGATE|5	0	In addition, grants <builtIn>25%</builtIn> increased damage to missiles.
+integrable|integrated_point_defense_ai|FRIGATE|5	0	In addition, grants: <builtIn>All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles and are affected by point-defense stat modifiers.</builtIn>
 integrable|integrated_point_defense_ai|DESTROYER|0	0	Point-defense weapons can identify and ignore decoy flares.
 integrable|integrated_point_defense_ai|DESTROYER|1	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-integrable|integrated_point_defense_ai|DESTROYER|2	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles and are affected by point-defense stat modifiers.
+integrable|integrated_point_defense_ai|DESTROYER|2	0	<good>50%</good> increased damage to missiles.
 integrable|integrated_point_defense_ai|DESTROYER|3	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|integrated_point_defense_ai|DESTROYER|4	0	<muted>When integrated, for 2 story points:</muted>
-integrable|integrated_point_defense_ai|DESTROYER|5	0	In addition, grants <builtIn>25%</builtIn> increased damage to missiles.
+integrable|integrated_point_defense_ai|DESTROYER|5	0	In addition, grants: <builtIn>All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles and are affected by point-defense stat modifiers.</builtIn>
 integrable|integrated_point_defense_ai|CRUISER|0	0	Point-defense weapons can identify and ignore decoy flares.
 integrable|integrated_point_defense_ai|CRUISER|1	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-integrable|integrated_point_defense_ai|CRUISER|2	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles and are affected by point-defense stat modifiers.
+integrable|integrated_point_defense_ai|CRUISER|2	0	<good>50%</good> increased damage to missiles.
 integrable|integrated_point_defense_ai|CRUISER|3	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|integrated_point_defense_ai|CRUISER|4	0	<muted>When integrated, for 2 story points:</muted>
-integrable|integrated_point_defense_ai|CRUISER|5	0	In addition, grants <builtIn>25%</builtIn> increased damage to missiles.
+integrable|integrated_point_defense_ai|CRUISER|5	0	In addition, grants: <builtIn>All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles and are affected by point-defense stat modifiers.</builtIn>
 integrable|integrated_point_defense_ai|CAPITAL_SHIP|0	0	Point-defense weapons can identify and ignore decoy flares.
 integrable|integrated_point_defense_ai|CAPITAL_SHIP|1	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-integrable|integrated_point_defense_ai|CAPITAL_SHIP|2	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles and are affected by point-defense stat modifiers.
+integrable|integrated_point_defense_ai|CAPITAL_SHIP|2	0	<good>50%</good> increased damage to missiles.
 integrable|integrated_point_defense_ai|CAPITAL_SHIP|3	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|integrated_point_defense_ai|CAPITAL_SHIP|4	0	<muted>When integrated, for 2 story points:</muted>
-integrable|integrated_point_defense_ai|CAPITAL_SHIP|5	0	In addition, grants <builtIn>25%</builtIn> increased damage to missiles.
+integrable|integrated_point_defense_ai|CAPITAL_SHIP|5	0	In addition, grants: <builtIn>All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles and are affected by point-defense stat modifiers.</builtIn>
 integrated|integrated_point_defense_ai|null|0	0	<builtIn>Integrated</builtIn>
 integrated|integrated_point_defense_ai|null|1	0	Point-defense weapons can identify and ignore decoy flares.
 integrated|integrated_point_defense_ai|null|2	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-integrated|integrated_point_defense_ai|null|3	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles and are affected by point-defense stat modifiers.
-integrated|integrated_point_defense_ai|null|4	0	<builtIn>25%</builtIn> increased damage to missiles.
+integrated|integrated_point_defense_ai|null|3	0	<good>50%</good> increased damage to missiles.
+integrated|integrated_point_defense_ai|null|4	0	<builtIn>All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles and are affected by point-defense stat modifiers.</builtIn>
 integrated|integrated_point_defense_ai|FRIGATE|0	0	<builtIn>Integrated</builtIn>
 integrated|integrated_point_defense_ai|FRIGATE|1	0	Point-defense weapons can identify and ignore decoy flares.
 integrated|integrated_point_defense_ai|FRIGATE|2	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-integrated|integrated_point_defense_ai|FRIGATE|3	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles and are affected by point-defense stat modifiers.
-integrated|integrated_point_defense_ai|FRIGATE|4	0	<builtIn>25%</builtIn> increased damage to missiles.
+integrated|integrated_point_defense_ai|FRIGATE|3	0	<good>50%</good> increased damage to missiles.
+integrated|integrated_point_defense_ai|FRIGATE|4	0	<builtIn>All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles and are affected by point-defense stat modifiers.</builtIn>
 integrated|integrated_point_defense_ai|DESTROYER|0	0	<builtIn>Integrated</builtIn>
 integrated|integrated_point_defense_ai|DESTROYER|1	0	Point-defense weapons can identify and ignore decoy flares.
 integrated|integrated_point_defense_ai|DESTROYER|2	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-integrated|integrated_point_defense_ai|DESTROYER|3	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles and are affected by point-defense stat modifiers.
-integrated|integrated_point_defense_ai|DESTROYER|4	0	<builtIn>25%</builtIn> increased damage to missiles.
+integrated|integrated_point_defense_ai|DESTROYER|3	0	<good>50%</good> increased damage to missiles.
+integrated|integrated_point_defense_ai|DESTROYER|4	0	<builtIn>All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles and are affected by point-defense stat modifiers.</builtIn>
 integrated|integrated_point_defense_ai|CRUISER|0	0	<builtIn>Integrated</builtIn>
 integrated|integrated_point_defense_ai|CRUISER|1	0	Point-defense weapons can identify and ignore decoy flares.
 integrated|integrated_point_defense_ai|CRUISER|2	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-integrated|integrated_point_defense_ai|CRUISER|3	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles and are affected by point-defense stat modifiers.
-integrated|integrated_point_defense_ai|CRUISER|4	0	<builtIn>25%</builtIn> increased damage to missiles.
+integrated|integrated_point_defense_ai|CRUISER|3	0	<good>50%</good> increased damage to missiles.
+integrated|integrated_point_defense_ai|CRUISER|4	0	<builtIn>All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles and are affected by point-defense stat modifiers.</builtIn>
 integrated|integrated_point_defense_ai|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|integrated_point_defense_ai|CAPITAL_SHIP|1	0	Point-defense weapons can identify and ignore decoy flares.
 integrated|integrated_point_defense_ai|CAPITAL_SHIP|2	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
-integrated|integrated_point_defense_ai|CAPITAL_SHIP|3	0	All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles and are affected by point-defense stat modifiers.
-integrated|integrated_point_defense_ai|CAPITAL_SHIP|4	0	<builtIn>25%</builtIn> increased damage to missiles.
+integrated|integrated_point_defense_ai|CAPITAL_SHIP|3	0	<good>50%</good> increased damage to missiles.
+integrated|integrated_point_defense_ai|CAPITAL_SHIP|4	0	<builtIn>All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles and are affected by point-defense stat modifiers.</builtIn>
 type-detail|integrated_targeting_unit|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Dedicated Targeting Core</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Thermal Calibration</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Integrated Targeting Unit</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Dedicated Targeting Core</node>
 type|integrated_targeting_unit|FRIGATE|0	0	<good>10%</good> increased ballistic weapon range.
 type|integrated_targeting_unit|FRIGATE|1	0	<good>10%</good> increased energy weapon range.
