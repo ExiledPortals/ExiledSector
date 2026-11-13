@@ -86,6 +86,8 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     static final float OPEN_SECONDS = 0.2f;
     static final float BACKDROP_ALPHA = 0.8f;
     static final float FOCUS_SECONDS = 0.6f;
+    static final int SPOTLIGHT_PULSES = 3;
+    static final float SPOTLIGHT_PULSE_SECONDS = 0.5f;
     static final float FOCUS_DIM_ALPHA = 0.85f;
     static final float CHOOSE_WIDTH = 320f;
     static final float CHOOSE_HEIGHT = 50f;
@@ -164,6 +166,9 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     private float chartLevel;
     private Object tooltipSubject;
     private AtlasCell hoveredCell;
+    private AtlasCell spotlightCell;
+    private int spotlightPulsesLeft;
+    private float spotlightWaitSeconds;
     private AtlasMapCanvas.AnomalyIcon hoveredAnomaly;
     private final SpriteCache spriteCache = new SpriteCache(AtlasScreen.class);
     private final OfficerBoardTooltip officerTooltip = new OfficerBoardTooltip(spriteCache);
@@ -836,6 +841,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         if (event.isMouseMoveEvent()) {
             mouseX = event.getX();
             mouseY = event.getY();
+            dragMapUnderBoard(event);
         } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
             if (escapeKey.released(event)) {
                 officerBoard.close();
@@ -844,22 +850,48 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             if (event.isKeyDownEvent()) {
                 officerBoard.openHoveredCodex();
             }
+        } else if (event.isMouseDownEvent() && event.isLMBEvent()) {
+            if (!officerBoard.contains(event.getX(), event.getY())) {
+                gesture.pressTarget(null, officerBoard, event.getX(), event.getY(), false, false, true);
+            }
         } else if (event.isMouseUpEvent() && event.isLMBUpEvent()) {
-            officerBoardClicked(event.getX(), event.getY());
+            officerBoardReleased(event.getX(), event.getY());
+        } else if (event.isMouseScrollEvent() && !officerBoard.contains(event.getX(), event.getY())) {
+            camera.scrollAt(event.getEventValue() > 0, event.getX(), event.getY(), panelPosition);
         }
         event.consume();
     }
 
-    private void officerBoardClicked(float x, float y) {
-        if (!officerBoard.contains(x, y)) {
-            officerBoard.close();
-            return;
+    private void dragMapUnderBoard(InputEventAPI event) {
+        if (gesture.moveTo(event.getX(), event.getY())) {
+            camera.startDrag();
+            camera.dragBy(event.getX() - gesture.pressX(), event.getY() - gesture.pressY());
+        } else {
+            camera.dragBy(event.getDX(), event.getDY());
         }
+    }
+
+    private void officerBoardReleased(float x, float y) {
+        boolean pressedOutside = gesture.isActive();
+        boolean clickedOutside = gesture.releasedOn(officerBoard) && !officerBoard.contains(x, y);
+        gesture.clear();
+        camera.stopDrag();
+        if (clickedOutside) {
+            officerBoard.close();
+        } else if (!pressedOutside && officerBoard.contains(x, y)) {
+            officerBoardClicked(x, y);
+        }
+    }
+
+    private void officerBoardClicked(float x, float y) {
         AtlasCell commandCentre = officerBoard.clickedCommandCentre(x, y);
         if (commandCentre != null) {
-            officerBoard.close();
-            camera.panTo(map.displayX(commandCentre), map.displayY(commandCentre));
-            map.pulse(commandCentre);
+            float visibleCentreX = (innerLeft() + officerBoard.left()) / 2f;
+            float panelCentreX = panelPosition.getX() + panelPosition.getWidth() / 2f;
+            camera.panTo(map.displayX(commandCentre) + (panelCentreX - visibleCentreX) / camera.zoom(), map.displayY(commandCentre));
+            spotlightCell = commandCentre;
+            spotlightPulsesLeft = SPOTLIGHT_PULSES;
+            spotlightWaitSeconds = 0f;
             SkillTreeSounds.panelOpened();
         } else if (officerBoard.clickedOfficer(x, y)) {
             SkillTreeSounds.refused();
@@ -1028,6 +1060,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         map.advance(amount);
         camera.advanceZoom(amount);
         camera.advancePan(amount);
+        advanceSpotlight(amount);
         advanceOfficerBoard(amount);
         if (panelPosition != null) {
             boolean hovering = focusedCell == null && !officerBoard.isShowing() && !camera.isDragging()
@@ -1041,6 +1074,22 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
                 map.pulse(hovered);
             }
             hoveredCell = hovered;
+        }
+    }
+
+    private void advanceSpotlight(float amount) {
+        if (spotlightCell == null || camera.isPanning()) {
+            return;
+        }
+        spotlightWaitSeconds -= amount;
+        if (spotlightWaitSeconds > 0f) {
+            return;
+        }
+        map.pulse(spotlightCell);
+        spotlightWaitSeconds = SPOTLIGHT_PULSE_SECONDS;
+        spotlightPulsesLeft--;
+        if (spotlightPulsesLeft <= 0) {
+            spotlightCell = null;
         }
     }
 

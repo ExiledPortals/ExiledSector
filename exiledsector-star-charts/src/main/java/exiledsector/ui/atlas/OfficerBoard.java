@@ -60,6 +60,7 @@ final class OfficerBoard {
     static final float ARROWHEAD_SPREAD = 0.5f;
     static final float MARK_SHARE = 0.25f;
     static final float SHIELD_SHARE = 0.28f;
+    static final float LEGEND_GAP = 16f;
     static final Color SLOT_FILL = new Color(20, 24, 30);
     static final Color DIMMED_TINT = new Color(150, 150, 150);
     static final Color ROSE_COLOUR = SkillTreePanelStyle.POSITIVE_STAT_COLOR;
@@ -90,6 +91,7 @@ final class OfficerBoard {
 
     private final SpriteCache sprites = new SpriteCache(OfficerBoard.class);
     private final SensorGhostRenderer ghosts = new SensorGhostRenderer(GHOST_COUNT, GHOST_SIZE_RATIO, GHOST_SCATTER_RATIO);
+    private final OfficerBoardLegend legend = new OfficerBoardLegend(ghosts);
     private final LineBatch arrowLines = new LineBatch(ARROW_WIDTH);
     private final LineBatch linkLines = new LineBatch(LINK_WIDTH);
     private final OfficerBoardTooltip tooltip = new OfficerBoardTooltip(sprites);
@@ -165,6 +167,7 @@ final class OfficerBoard {
             widestLabel = Math.max(widestLabel, label.width());
         }
         labelColumnWidth = (float) Math.ceil(widestLabel) + INSET;
+        legend.write();
     }
 
     void close() {
@@ -204,13 +207,22 @@ final class OfficerBoard {
         availableWidth = width;
         availableHeight = height;
         float rowsPreferredWidth = OfficerBoardGeometry.preferredRowsWidth(shuffle.widestRow());
-        float contentWidth = Math.max(titleLabel.width(), labelColumnWidth + rowsPreferredWidth);
+        float contentWidth = Math.max(Math.max(titleLabel.width(), OfficerBoardLegend.width()), labelColumnWidth + rowsPreferredWidth);
         regionWidth = Math.min(width, contentWidth + INSET * 2f);
-        regionHeight = Math.min(height, OfficerBoardGeometry.preferredRowsHeight(shuffle.after().rowCount()) + INSET * 2f + HEADER_HEIGHT);
+        regionHeight = Math.min(height, OfficerBoardGeometry.preferredRowsHeight(shuffle.after().rowCount()) + INSET * 2f + HEADER_HEIGHT
+                + legendBlockHeight());
         regionLeft = left + width - regionWidth;
         regionBottom = bottom;
         geometry = OfficerBoardGeometry.fit(rowsLeft(), rowsBottom(), rowsWidth(), rowsHeight(), shuffle.after().rowCount(), shuffle.widestRow());
         arrowShapes = arrowShapes();
+    }
+
+    private float legendBlockHeight() {
+        return legend.height() + LEGEND_GAP;
+    }
+
+    float left() {
+        return regionLeft;
     }
 
     private float rowsLeft() {
@@ -218,7 +230,7 @@ final class OfficerBoard {
     }
 
     private float rowsBottom() {
-        return regionBottom + INSET;
+        return regionBottom + INSET + legendBlockHeight();
     }
 
     private float rowsWidth() {
@@ -226,7 +238,7 @@ final class OfficerBoard {
     }
 
     private float rowsHeight() {
-        return regionHeight - INSET * 2f - HEADER_HEIGHT;
+        return regionHeight - INSET * 2f - HEADER_HEIGHT - legendBlockHeight();
     }
 
     boolean contains(float x, float y) {
@@ -326,6 +338,7 @@ final class OfficerBoard {
         BorderedPanel.drawEdges(regionLeft, regionBottom, regionWidth, regionHeight, alpha);
         titleLabel.setAlpha(alpha).draw(regionLeft + INSET, regionBottom + regionHeight - INSET);
         drawRows(alpha);
+        drawLegend(alpha);
         drawLinks(alpha);
         drawArrows(alpha * OfficerBoardShuffle.arrowAlpha(shuffleSeconds));
         for (OfficerBoardShuffle.Mover mover : shuffle.movers()) {
@@ -354,6 +367,12 @@ final class OfficerBoard {
                 GLDraw.fillQuad(lineLeft, centreY + geometry.rowPitch() / 2f, lineWidth, 1f, Color.WHITE, ROW_LINE_ALPHA * alpha);
             }
         }
+    }
+
+    private void drawLegend(float alpha) {
+        float legendTop = regionBottom + INSET + legend.height();
+        GLDraw.fillQuad(regionLeft + INSET, legendTop + LEGEND_GAP / 2f, regionWidth - INSET * 2f, 1f, Color.WHITE, ROW_LINE_ALPHA * alpha);
+        legend.draw(regionLeft + INSET, legendTop, alpha);
     }
 
     private void drawLinks(float alpha) {
@@ -447,7 +466,7 @@ final class OfficerBoard {
         }
     }
 
-    private static void shield(float centreX, float centreY, float size, Color colour, float alpha) {
+    static void shield(float centreX, float centreY, float size, Color colour, float alpha) {
         float half = size / 2f;
         float shoulderY = centreY + half * 0.2f;
         Misc.setColor(Color.BLACK, alpha);
@@ -485,7 +504,7 @@ final class OfficerBoard {
         }
     }
 
-    private static void triangle(float centreX, float centreY, float size, boolean pointsUp, Color colour, float alpha) {
+    static void triangle(float centreX, float centreY, float size, boolean pointsUp, Color colour, float alpha) {
         float half = size / 2f;
         float tipY = pointsUp ? centreY + half : centreY - half;
         float baseY = pointsUp ? centreY - half : centreY + half;
