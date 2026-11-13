@@ -34,7 +34,8 @@ public final class ItemCodec {
     private static final String CORRUPTED_KEY = "c";
     private static final String IMPLICITS_KEY = "i";
     private static final String MIRRORED_KEY = "m";
-    private static final char IMMUTABLE_FLAG = 'i';
+    private static final String IMMUTABLE_FLAG = "i";
+    private static final String OVERCHARGED_FLAG = "o";
 
     private ItemCodec() {
     }
@@ -99,11 +100,7 @@ public final class ItemCodec {
             if (!encoded.isEmpty()) {
                 encoded.append(EFFECT_SEPARATOR);
             }
-            encoded.append(slotCode(modifier.slot()));
-            if (modifier.immutable()) {
-                encoded.append(IMMUTABLE_FLAG);
-            }
-            encoded.append(MODIFIER_FIELD_SEPARATOR);
+            encoded.append(slotCode(modifier.slot())).append(flags(modifier)).append(MODIFIER_FIELD_SEPARATOR);
             if (!isCompact(modifier)) {
                 encoded.append(modifier.modifierId()).append(MODIFIER_FIELD_SEPARATOR);
             }
@@ -117,6 +114,10 @@ public final class ItemCodec {
             }
         }
         return encoded.toString();
+    }
+
+    private static String flags(RolledModifier modifier) {
+        return (modifier.immutable() ? IMMUTABLE_FLAG : "") + (modifier.overcharged() ? OVERCHARGED_FLAG : "");
     }
 
     private static boolean isCompact(RolledModifier modifier) {
@@ -176,10 +177,12 @@ public final class ItemCodec {
         if (slot == null) {
             return null;
         }
-        boolean immutable = fields[0].indexOf(IMMUTABLE_FLAG, 1) > 0;
+        String flags = fields[0].substring(1);
+        boolean immutable = flags.contains(IMMUTABLE_FLAG);
+        boolean overcharged = flags.contains(OVERCHARGED_FLAG);
         if (fields.length == 2) {
             RolledLine line = decodeEffect(fields[1]);
-            return line == null ? null : flagged(RolledModifier.single(slot, line), immutable);
+            return line == null ? null : new RolledModifier(line.effectName(), slot, List.of(line), immutable, overcharged);
         }
         if (!ItemModifiers.ID_PATTERN.matcher(fields[1]).matches()) {
             return null;
@@ -192,11 +195,7 @@ public final class ItemCodec {
             }
             lines.add(line);
         }
-        return flagged(new RolledModifier(RolledLine.currentName(fields[1]), slot, lines), immutable);
-    }
-
-    private static RolledModifier flagged(RolledModifier modifier, boolean immutable) {
-        return immutable ? modifier.asImmutable() : modifier;
+        return new RolledModifier(RolledLine.currentName(fields[1]), slot, lines, immutable, overcharged);
     }
 
     private static RolledLine decodeEffect(String entry) {

@@ -3,8 +3,9 @@ package exiledsector.charts.anomaly.landmark;
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
+import exiledsector.charts.anomaly.LootShaper;
 
-public final class RemnantNexusStation extends LaunchingStation {
+public final class RemnantNexusStation extends LaunchingStation implements LootShaper {
 
     public static final String ANOMALY_ID = "remnant_nexus_station";
     public static final RemnantNexusStation INSTANCE = new RemnantNexusStation();
@@ -35,6 +36,11 @@ public final class RemnantNexusStation extends LaunchingStation {
     @Override
     boolean damaged(int tier) {
         return StationRules.damagedNexus(tier);
+    }
+
+    @Override
+    public boolean overchargesHullItems(CampaignFleetAPI fleet) {
+        return fleet != null && fleet.hasTag(stationTag());
     }
 
     @Override

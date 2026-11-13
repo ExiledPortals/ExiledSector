@@ -805,6 +805,7 @@
     "item.tooltip.slotTag.prefix": "前",
     "item.tooltip.slotTag.suffix": "后",
     "socketable.tooltip.hybrid": "<muted>混合属性</muted>",
+    "socketable.tooltip.overcharged": "<overcharged>超载</overcharged>",
     "socketable.tooltip.hybridLine": "<muted>|</muted> {line}",
     "socketable.tooltip.detailLine": "<muted>-</muted> {line}",
     "item.tooltip.implicit": "固有属性",

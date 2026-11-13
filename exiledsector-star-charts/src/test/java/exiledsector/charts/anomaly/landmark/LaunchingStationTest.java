@@ -24,6 +24,7 @@ import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.FakeChartContentEngine;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTier;
+import exiledsector.charts.loot.ChartFleetLoot;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunBound;
 import exiledsector.charts.run.ChartRuns;
@@ -185,6 +186,20 @@ class LaunchingStationTest {
         assertEquals(1, manager.getTotalLost());
         assertEquals(launchPoints(6, 1), engine.fleetParams.get(1).combatPts, 0.001f);
         assertTrue(engine.fleetParams.get(1).combatPts > params.combatPts);
+    }
+
+    @Test
+    void onlyTheNexusStationItselfOverchargesTheHullItemsItDrops() {
+        ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
+        run.recordContent(new ChartContent(6, "remnant", null, 3, 2, List.of(RemnantNexusStation.ANOMALY_ID, DomainMothership.ANOMALY_ID)));
+        ChartRuns.store(run);
+        CampaignFleetAPI nexus = placed(RemnantNexusStation.INSTANCE, 6);
+        CampaignFleetAPI launched = ((NexusFleetManager) systemScripts.get(0)).spawnFleet();
+        CampaignFleetAPI mothership = placed(DomainMothership.INSTANCE, 6);
+
+        assertTrue(ChartFleetLoot.overchargesHullItems(nexus, run));
+        assertFalse(ChartFleetLoot.overchargesHullItems(launched, run));
+        assertFalse(ChartFleetLoot.overchargesHullItems(mothership, run));
     }
 
     @Test

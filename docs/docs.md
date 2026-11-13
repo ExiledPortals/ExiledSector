@@ -751,6 +751,13 @@ taken out. A modifier whose effect no longer loads is kept.
 A unique whose `mechanic` is `one_of` keeps just one of its listed modifiers, picked from its seed when it is
 rolled (`ItemRoller`), so the choice is frozen with the item.
 
+### Overcharged modifiers
+
+An overcharged hull item has one modifier rolled 25% past the better end of its range (`ItemOvercharge`, plain ranges
+that can vary). The flag sits on the `RolledModifier` and in the cargo codec; a fleet whose `FleetLootRules` overcharge has
+its share of the battle drops planned apart (`BattleItemDrops`). Rerolling the modifier's values clears the flag
+(`RolledModifier.rerolled`), and a modifier granted at drop never pushes it out (`GrantedModifiers.add`).
+
 ### Crewed and automated ships
 
 A ship is automated when vanilla's `Misc.isAutomated` would say so: the `automated` hullmod or the `automated` tag
@@ -1450,7 +1457,7 @@ Each places a station-mode fleet of its faction, marked with the run's tier and 
 clear orbit away from the inner wormhole (package `charts.anomaly.landmark`): a damaged Nexus up to tier 7 and a full
 one after, or the survey mothership. A system script launches up to two or three fleets of 35% of the tier's fleet
 size, 5% more per fleet lost (at most 60%), that patrol the system, drop no chart items and stop once the station
-dies. `NexusFleetManager` is vanilla's `RemnantStationFleetManager` without its hyperspace encounter point;
+dies. Hull items the Nexus station itself drops are overcharged (`RemnantNexusStation.overchargesHullItems`). `NexusFleetManager` is vanilla's `RemnantStationFleetManager` without its hyperspace encounter point;
 `MothershipFleetManager` does the same on `SourceBasedFleetManager` with derelict drones up to cruisers. A Remnant chart
 station is in station mode only while the player is in its chart (`ChartStations`), so other mods that launch raids
 from any station-mode Remnant fleet, such as Nexerelin and AoTD: Virtue of Society, can only pick one while the

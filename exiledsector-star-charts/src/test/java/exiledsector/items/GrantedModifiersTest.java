@@ -107,6 +107,23 @@ class GrantedModifiersTest {
     }
 
     @Test
+    void anOverchargedModifierNeverMakesWay() {
+        for (long seed = 0L; seed < 20L; seed++) {
+            ItemData item = itemWith(prefix("HULL_PERCENT"), prefix("FLUX_CAPACITY_MULT"));
+            RolledModifier overcharged = item.explicits().get(0).overchargedWith(List.of(new RolledLine("HULL_PERCENT", 7.5f)));
+            ItemData overchargedItem = new ItemData(BASE, 7L, List.of(overcharged, item.explicits().get(1)), null);
+
+            List<RolledModifier> added = GrantedModifiers.add(overchargedItem, GROUNDED, LIMITS, new Random(seed)).explicits();
+
+            assertTrue(added.contains(overcharged), added.toString());
+            assertEquals(List.of("HULL_PERCENT", GROUNDED), added.stream().map(RolledModifier::modifierId).toList());
+        }
+        ItemData lone = new ItemData(BASE, 7L, List.of(itemWith(prefix("EMP_DAMAGE_TAKEN_PERCENT")).explicits().get(0)
+                .overchargedWith(List.of(new RolledLine("EMP_DAMAGE_TAKEN_PERCENT", 7.5f)))), null);
+        assertSame(lone, GrantedModifiers.add(lone, GROUNDED, LIMITS, new Random(3L)), "sharing the granted effect would replace it");
+    }
+
+    @Test
     void aModifierSharingTheAddedEffectMakesWayForIt() {
         ItemData item = itemWith(prefix("EMP_DAMAGE_TAKEN_PERCENT"), suffix("ARMOR_PERCENT"));
 

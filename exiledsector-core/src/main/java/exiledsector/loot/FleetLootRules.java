@@ -1,6 +1,7 @@
 package exiledsector.loot;
 
-public record FleetLootRules(Rates rates, boolean sourceRollsMaterials, LootMultipliers multipliers, float deploymentPointsMult) {
+public record FleetLootRules(Rates rates, boolean sourceRollsMaterials, LootMultipliers multipliers, float deploymentPointsMult,
+                             boolean overchargesHullItems) {
 
     public enum Rates {
         REGULAR,
@@ -17,6 +18,14 @@ public record FleetLootRules(Rates rates, boolean sourceRollsMaterials, LootMult
         rates = rates == null ? Rates.REGULAR : rates;
         multipliers = multipliers == null ? LootMultipliers.NONE : multipliers;
         deploymentPointsMult = Math.max(0f, deploymentPointsMult);
+    }
+
+    public FleetLootRules(Rates rates, boolean sourceRollsMaterials, LootMultipliers multipliers, float deploymentPointsMult) {
+        this(rates, sourceRollsMaterials, multipliers, deploymentPointsMult, false);
+    }
+
+    public FleetLootRules overchargingHullItems() {
+        return new FleetLootRules(rates, sourceRollsMaterials, multipliers, deploymentPointsMult, true);
     }
 
     public static FleetLootRules full(LootMultipliers multipliers) {

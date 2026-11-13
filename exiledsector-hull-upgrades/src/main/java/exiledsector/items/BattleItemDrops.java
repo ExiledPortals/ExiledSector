@@ -81,7 +81,16 @@ public final class BattleItemDrops {
         }
     }
 
-    record Planned(Drop drop, ItemKind kind) {
+    record Planned(Drop drop, ItemKind kind, boolean overcharged) {
+    }
+
+    private record Expected(float regular, float overcharged) {
+
+        static final Expected NONE = new Expected(0f, 0f);
+
+        Expected plus(SourceLoss source, float amount) {
+            return source.rules().overchargesHullItems() ? new Expected(regular, overcharged + amount) : new Expected(regular + amount, overcharged);
+        }
     }
 
     private BattleItemDrops() {
@@ -113,7 +122,7 @@ public final class BattleItemDrops {
                 ItemDefinition definition = ItemDrops.pickUniqueFromFaction(battle.uniqueFactionId(), random,
                         candidate -> candidate.type() == ItemType.HULL_ITEM && uniqueAllowed.test(candidate));
                 if (definition != null) {
-                    items.add(ItemData.rolled(definition, random.nextLong()));
+                    items.add(overchargedIfPlanned(planned, ItemData.rolled(definition, random.nextLong()), random));
                 }
             } else {
                 int modifierCount = planned.drop().modifierCount();
@@ -121,11 +130,15 @@ public final class BattleItemDrops {
                 ItemDefinition definition = planned.kind() == null ? HullItemDrops.pickSectionItemBasic(random, holdsCount)
                         : ItemDrops.pickSectionItemBasic(planned.kind(), random, holdsCount);
                 if (definition != null) {
-                    items.add(ItemData.rolledWithModifierCount(definition, random.nextLong(), modifierCount));
+                    items.add(overchargedIfPlanned(planned, ItemData.rolledWithModifierCount(definition, random.nextLong(), modifierCount), random));
                 }
             }
         }
         return new HullItemDrops.SectionItemLoot(items, upgrades);
+    }
+
+    private static ItemData overchargedIfPlanned(Planned planned, ItemData item, Random random) {
+        return planned.overcharged() ? ItemOvercharge.overcharge(item, random) : item;
     }
 
     static List<Planned> plan(Battle battle, float dropMultiplier, List<ItemKind> kindsWithBasics, Random random, boolean hullItemDropsOpen) {
@@ -136,31 +149,39 @@ public final class BattleItemDrops {
                               boolean hullItemDropsOpen) {
         List<Planned> planned = new ArrayList<>();
         float battleDeploymentPoints = battle.deploymentPoints();
+        boolean anyOvercharging = battle.sources().stream().anyMatch(source -> source.rules().overchargesHullItems());
         for (Drop drop : Drop.values()) {
             if (!allowed(drop, hullItemDropsOpen)) {
                 continue;
             }
             float quantityMult = drop.modifierCount() > 0 ? basicItemMult : 1f;
-            float expected = 0f;
+            Expected expected = Expected.NONE;
             for (SourceLoss source : battle.sources()) {
-                expected += expected(source, drop, battleDeploymentPoints, dropMultiplier * quantityMult) * source.chances().general();
+                expected = expected.plus(source, expected(source, drop, battleDeploymentPoints, dropMultiplier * quantityMult) * source.chances().general());
             }
-            addPlanned(planned, drop, null, ItemDrops.wholeFeedstock(expected, random));
+            addPlanned(planned, drop, null, expected, anyOvercharging, random);
         }
         for (ItemKind kind : kindsWithBasics) {
             for (Drop drop : Drop.values()) {
                 if (drop.modifierCount() == 0) {
                     continue;
                 }
-                float expected = 0f;
+                Expected expected = Expected.NONE;
                 for (SourceLoss source : battle.sources()) {
-                    expected += expected(source, drop, battleDeploymentPoints, dropMultiplier * basicItemMult) * source.chances().targeted(kind)
-                            / kindsWithBasics.size();
+                    expected = expected.plus(source, expected(source, drop, battleDeploymentPoints, dropMultiplier * basicItemMult)
+                            * source.chances().targeted(kind) / kindsWithBasics.size());
                 }
-                addPlanned(planned, drop, kind, ItemDrops.wholeFeedstock(expected, random));
+                addPlanned(planned, drop, kind, expected, anyOvercharging, random);
             }
         }
         return planned;
+    }
+
+    private static void addPlanned(List<Planned> planned, Drop drop, ItemKind kind, Expected expected, boolean anyOvercharging, Random random) {
+        addPlanned(planned, drop, kind, false, ItemDrops.wholeFeedstock(expected.regular(), random));
+        if (anyOvercharging) {
+            addPlanned(planned, drop, kind, true, ItemDrops.wholeFeedstock(expected.overcharged(), random));
+        }
     }
 
     static boolean allowed(Drop drop, boolean hullItemDropsOpen) {
@@ -187,9 +208,9 @@ public final class BattleItemDrops {
                 * rate.difficulty(source.difficultyMultiplier()) * rules.share(rate) * modifierShare * dropMultiplier * rarityMult;
     }
 
-    private static void addPlanned(List<Planned> planned, Drop drop, ItemKind kind, int count) {
+    private static void addPlanned(List<Planned> planned, Drop drop, ItemKind kind, boolean overcharged, int count) {
         for (int i = 0; i < count; i++) {
-            planned.add(new Planned(drop, kind));
+            planned.add(new Planned(drop, kind, overcharged));
         }
     }
 }
