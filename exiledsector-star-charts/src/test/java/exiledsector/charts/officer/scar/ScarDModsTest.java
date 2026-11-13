@@ -55,6 +55,13 @@ class ScarDModsTest {
     }
 
     @Test
+    void aNewHullKeepsOnlyTheDModsItCanTake() {
+        List<String> held = List.of("degraded_shields", "comp_structure", "damaged_struts", "comp_armor", "damaged_deck");
+        assertEquals(List.of("comp_structure", "comp_armor"), ScarDMods.suiting(held, ScarFixtures.UNSHIELDED_WARSHIP, TAGS_OF));
+        assertEquals(List.of(), ScarDMods.suiting(held, null, TAGS_OF));
+    }
+
+    @Test
     void onlyOneStructuralDModIsTaken() {
         ScarRow row = dModRow(false, "comp_structure", "comp_hull");
         assertEquals("comp_hull", pick(row, List.of("damaged_struts"), ScarFixtures.SHIELDED_WARSHIP));

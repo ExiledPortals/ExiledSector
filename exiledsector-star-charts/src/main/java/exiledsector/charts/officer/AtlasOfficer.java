@@ -141,6 +141,12 @@ public record AtlasOfficer(int recordId, String factionId, long nameSeed, long p
                 heldCommand, history, renown, identified, seat);
     }
 
+    public AtlasOfficer flying(FlagshipCatalogue.Flagship flagship, List<String> newDModIds) {
+        return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, rankId, commandCentre, traitId, flagship.hullId(),
+                flagship.variantId(), shipNameSeed, treeSeed, newDModIds, scars, carriedItems, pendingChoice, defeats, lastChance, status,
+                heldCommand, history, renown, identified, seat);
+    }
+
     public AtlasOfficer withCarried(List<CarriedItem> newCarried) {
         return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, rankId, commandCentre, traitId, flagshipHullId,
                 flagshipVariantId, shipNameSeed, treeSeed, dmodIds, scars, tokens(newCarried), pendingChoice, defeats, lastChance, status,

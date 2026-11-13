@@ -29,6 +29,7 @@ public final class AtlasState implements AtlasMemory {
     public static final int ATTEMPTED = 16;
     public static final int LANES_REVEALED = 32;
     public static final int MAX_ATLAS_SKILL_POINTS = 100;
+    public static final int FLAGSHIP_ROLL = 1;
     static final String FLAG_SEPARATOR = ",";
     private static final Random SEEDS = new Random();
     private static final Set<String> REMOVED_ANOMALY_IDS = Set.of("powerful_boss");
@@ -55,6 +56,7 @@ public final class AtlasState implements AtlasMemory {
     private int atlasPoints;
     private Set<String> atlasTreeNodeIds = new TreeSet<>();
     private int keyFragments;
+    private int flagshipRoll;
     private transient Map<Integer, AtlasOfficer> decodedOfficers;
     private transient Map<Long, AtlasOfficer> activeOfficersByCentre;
     private transient long fillFingerprint;
@@ -62,6 +64,7 @@ public final class AtlasState implements AtlasMemory {
     public AtlasState(long seed) {
         this.seed = seed;
         this.generatorVersion = AtlasGenerator.VERSION;
+        this.flagshipRoll = FLAGSHIP_ROLL;
     }
 
     public static AtlasState get(SectorAPI sector) {
@@ -348,6 +351,14 @@ public final class AtlasState implements AtlasMemory {
         int highestHeld = officerRecords.keySet().stream().mapToInt(Integer::intValue).max().orElse(0);
         lastOfficerRecordId = Math.max(lastOfficerRecordId, highestHeld) + 1;
         return lastOfficerRecordId;
+    }
+
+    public int flagshipRoll() {
+        return flagshipRoll;
+    }
+
+    void setFlagshipRoll(int roll) {
+        flagshipRoll = roll;
     }
 
     public int officerTurn() {

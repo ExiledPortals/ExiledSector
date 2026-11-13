@@ -69,6 +69,20 @@ public final class ScarDMods {
         return candidates.isEmpty() ? null : candidates.get(random.nextInt(candidates.size()));
     }
 
+    public static List<String> suiting(List<String> dModIds, HullFacts hull) {
+        return suiting(dModIds, hull, ScarDMods::vanillaTags);
+    }
+
+    static List<String> suiting(List<String> dModIds, HullFacts hull, Function<String, Set<String>> tagsOf) {
+        List<String> kept = new ArrayList<>();
+        for (String dModId : dModIds) {
+            if (hull != null && suits(tagsOf.apply(dModId), hull, kept, tagsOf)) {
+                kept.add(dModId);
+            }
+        }
+        return kept;
+    }
+
     static boolean inRandomPool(Set<String> tags, HullFacts hull) {
         return tags != null && (tags.contains(DAMAGE) || tags.contains(DESTROYED_DAMAGE_ALWAYS)
                 || hull.fighterBays() && tags.contains(FIGHTER_BAY_DAMAGE)
