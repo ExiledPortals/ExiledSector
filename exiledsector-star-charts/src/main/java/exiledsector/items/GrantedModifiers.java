@@ -34,6 +34,14 @@ public final class GrantedModifiers {
     }
 
     public static ItemData add(ItemData item, String modifierId, AffixLayout.Limits limits, Random random) {
+        return add(item, modifierId, false, limits, random);
+    }
+
+    public static ItemData addWarped(ItemData item, String modifierId, AffixLayout.Limits limits, Random random) {
+        return add(item, modifierId, true, limits, random);
+    }
+
+    private static ItemData add(ItemData item, String modifierId, boolean warped, AffixLayout.Limits limits, Random random) {
         ItemDefinition definition = item == null ? null : item.definition();
         List<RolledModifier> present = presentModifiers(item);
         if (!canGrant(definition, modifierId) || present.stream().anyMatch(rolled -> rolled.modifierId().equals(modifierId))) {
@@ -41,6 +49,9 @@ public final class GrantedModifiers {
         }
         Modifier granted = ItemModifiers.get(modifierId);
         Set<String> grantedEffects = granted.lines().stream().map(ModifierLine::effectName).collect(Collectors.toSet());
+        if (present.stream().anyMatch(rolled -> rolled.warped() && displaces(rolled, modifierId, grantedEffects))) {
+            return item;
+        }
         List<RolledModifier> kept = new ArrayList<>(present.stream()
                 .filter(rolled -> rolled.lines().stream().noneMatch(line -> grantedEffects.contains(line.effectName())))
                 .filter(rolled -> !ModifierExclusivity.clashes(modifierId, List.of(rolled.modifierId())))
@@ -57,7 +68,8 @@ public final class GrantedModifiers {
             }
             kept.remove(makingWay);
         }
-        kept.add(RolledModifier.roll(granted, random));
+        RolledModifier added = RolledModifier.roll(granted, random);
+        kept.add(warped ? added.asWarped() : added);
         List<RolledModifier> explicits = new ArrayList<>(kept.stream().filter(rolled -> rolled.slot() == ModifierSlot.PREFIX).toList());
         explicits.addAll(kept.stream().filter(rolled -> rolled.slot() != ModifierSlot.PREFIX).toList());
         return new ItemData(item.definitionId(), item.seed(), explicits, ItemNames.freeze(definition, item.seed(), explicits), item.traits());
@@ -70,13 +82,19 @@ public final class GrantedModifiers {
         return kept.size() >= limits.maxModifiers() ? kept : List.of();
     }
 
+    private static boolean displaces(RolledModifier rolled, String modifierId, Set<String> grantedEffects) {
+        return rolled.lines().stream().anyMatch(line -> grantedEffects.contains(line.effectName()))
+                || ModifierExclusivity.clashes(modifierId, List.of(rolled.modifierId()));
+    }
+
     private static RolledModifier makingWay(List<RolledModifier> candidates, Random random) {
         List<RolledModifier> removable = candidates.stream().filter(rolled -> !rolled.overcharged()).toList();
         if (removable.isEmpty()) {
             return null;
         }
-        List<RolledModifier> unreserved = removable.stream().filter(rolled -> !ModifierSources.isReserved(rolled.modifierId())).toList();
-        List<RolledModifier> pool = unreserved.isEmpty() ? removable : unreserved;
+        List<RolledModifier> replaceable = removable.stream()
+                .filter(rolled -> !rolled.warped() && !ModifierSources.isReserved(rolled.modifierId())).toList();
+        List<RolledModifier> pool = replaceable.isEmpty() ? removable : replaceable;
         return pool.get(random.nextInt(pool.size()));
     }
 

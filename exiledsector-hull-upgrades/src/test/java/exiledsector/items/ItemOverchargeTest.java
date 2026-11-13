@@ -98,7 +98,7 @@ class ItemOverchargeTest {
     @Test
     void rerollingTheValuesEndsTheOverchargeWhileOtherChangesKeepIt() {
         RolledModifier overcharged = new RolledModifier("FLUX_CAPACITY_MULT", ModifierSlot.PREFIX, List.of(new RolledLine("FLUX_CAPACITY_MULT", 7.5f)),
-                false, true);
+                false, true, false);
         Item item = Item.withEffects("plate", PLATE, 1L, List.of(new RolledLine("FLUX_CAPACITY_MULT", 5f)));
 
         RolledModifier rerolled = overcharged.rerolled(item.explicitModifier("FLUX_CAPACITY_MULT")::line, new Random(4L));

@@ -31,15 +31,14 @@ class StarChartSiteModifiersTest {
     }
 
     @Test
-    void breachRarityAndCacheQuantityRaiseTheSitesItemChances() {
+    void breachCacheQuantityRaisesOnlyTheSitesItemQuantity() {
         MemoryAPI memory = FakeChartContentEngine.memory();
-        memory.set(SpatialBreach.RARITY_KEY, 50f);
         memory.set(SpatialBreach.ITEM_MULT_KEY, 2f);
 
         LootMultipliers modifiers = StarChartLootSource.INSTANCE.modifiersFor(site(memory));
 
         assertEquals(2f, modifiers.itemChances().general(), 0.001f);
-        assertEquals(1.5f, modifiers.itemChances().rarity(), 0.001f);
+        assertEquals(1f, modifiers.itemChances().rarity(), 0.001f);
     }
 
     @Test

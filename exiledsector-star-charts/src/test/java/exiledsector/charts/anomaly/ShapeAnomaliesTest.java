@@ -108,7 +108,7 @@ class ShapeAnomaliesTest {
     void starAnomaliesForceTheirStarOrSystemTypeAndShapeAnomaliesDoNot() {
         assertEquals("black_hole", StarAnomalies.BLACK_HOLE.primaryStar());
         assertEquals("star_neutron", StarAnomalies.NEUTRON_STAR.primaryStar());
-        assertEquals(com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType.NEBULA, StarAnomalies.DENSE_NEBULA.systemType());
+        assertEquals(com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType.NEBULA, DenseNebula.INSTANCE.systemType());
         assertNull(ChartAnomalies.role(StellarFlares.ANOMALY_ID, StarRule.class));
         assertNull(ChartAnomalies.role(AsteroidStorm.ANOMALY_ID, StarRule.class));
         assertSame(StarAnomalies.BLACK_HOLE, ChartAnomalies.role(StarAnomalies.BLACK_HOLE.id(), StarRule.class));

@@ -47,7 +47,7 @@ public final class ItemForging {
         return parts;
     }
 
-    static boolean lowerIsBetter(Item item, String effectName) {
+    public static boolean lowerIsBetter(Item item, String effectName) {
         ModifierEffect effect = item.modifierEffects().byName(effectName);
         return effect != null && effect.invertsDescriptionColours();
     }

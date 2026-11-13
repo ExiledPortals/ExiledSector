@@ -36,6 +36,7 @@ public final class ItemCodec {
     private static final String MIRRORED_KEY = "m";
     private static final String IMMUTABLE_FLAG = "i";
     private static final String OVERCHARGED_FLAG = "o";
+    private static final String WARPED_FLAG = "w";
 
     private ItemCodec() {
     }
@@ -117,7 +118,8 @@ public final class ItemCodec {
     }
 
     private static String flags(RolledModifier modifier) {
-        return (modifier.immutable() ? IMMUTABLE_FLAG : "") + (modifier.overcharged() ? OVERCHARGED_FLAG : "");
+        return (modifier.immutable() ? IMMUTABLE_FLAG : "") + (modifier.overcharged() ? OVERCHARGED_FLAG : "")
+                + (modifier.warped() ? WARPED_FLAG : "");
     }
 
     private static boolean isCompact(RolledModifier modifier) {
@@ -180,9 +182,10 @@ public final class ItemCodec {
         String flags = fields[0].substring(1);
         boolean immutable = flags.contains(IMMUTABLE_FLAG);
         boolean overcharged = flags.contains(OVERCHARGED_FLAG);
+        boolean warped = flags.contains(WARPED_FLAG);
         if (fields.length == 2) {
             RolledLine line = decodeEffect(fields[1]);
-            return line == null ? null : new RolledModifier(line.effectName(), slot, List.of(line), immutable, overcharged);
+            return line == null ? null : new RolledModifier(line.effectName(), slot, List.of(line), immutable, overcharged, warped);
         }
         if (!ItemModifiers.ID_PATTERN.matcher(fields[1]).matches()) {
             return null;
@@ -195,7 +198,7 @@ public final class ItemCodec {
             }
             lines.add(line);
         }
-        return new RolledModifier(RolledLine.currentName(fields[1]), slot, lines, immutable, overcharged);
+        return new RolledModifier(RolledLine.currentName(fields[1]), slot, lines, immutable, overcharged, warped);
     }
 
     private static RolledLine decodeEffect(String entry) {

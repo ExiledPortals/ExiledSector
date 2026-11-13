@@ -107,8 +107,7 @@ class BreachRulesTest {
     }
 
     @Test
-    void deeperCachesAreRarerAndFormOnlyOnceTheFieldReachesThem() {
-        assertTrue(new BreachRules.CacheSite(0f, 0f, 0.2f).rarityPercent() > new BreachRules.CacheSite(0f, 0f, 0.9f).rarityPercent());
+    void aCacheIsReachedOnlyOnceTheFieldPassesItsMargin() {
         assertTrue(BreachRules.reached(500f, 1000f));
         assertFalse(BreachRules.reached(950f, 1000f));
     }

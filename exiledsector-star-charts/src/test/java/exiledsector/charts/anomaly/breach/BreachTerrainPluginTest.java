@@ -14,7 +14,6 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import exiledsector.MockSector;
-import exiledsector.charts.ChartIds;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,7 +46,6 @@ class BreachTerrainPluginTest {
     private StarSystemAPI system;
     private SectorEntityToken terrainEntity;
     private final List<CampaignFleetAPI> fleets = new ArrayList<>();
-    private final List<SectorEntityToken> contentSites = new ArrayList<>();
     private final List<SectorEntityToken> breachCaches = new ArrayList<>();
 
     @BeforeEach
@@ -55,7 +53,6 @@ class BreachTerrainPluginTest {
         mockSector = new MockSector();
         system = mock(StarSystemAPI.class);
         when(system.getFleets()).thenReturn(fleets);
-        when(system.getEntitiesWithTag(ChartIds.CONTENT_TAG)).thenReturn(contentSites);
         when(system.getEntitiesWithTag(SpatialBreach.CACHE_TAG)).thenReturn(breachCaches);
         terrainEntity = mock(SectorEntityToken.class);
         when(terrainEntity.getLocation()).thenReturn(new Vector2f());
@@ -185,32 +182,20 @@ class BreachTerrainPluginTest {
     }
 
     @Test
-    void sitesTheFieldGrowsOverBecomeBreachTouchedOnce() {
+    void theOpenFieldHoldsOnlyFleetsOverlappingIt() {
         BreachTerrainPlugin plugin = breach(List.of());
-        MemoryAPI nearMemory = memory();
-        SectorEntityToken near = mock(SectorEntityToken.class);
-        when(near.getLocation()).thenReturn(new Vector2f(300f, 0f));
-        when(near.getMemoryWithoutUpdate()).thenReturn(nearMemory);
-        MemoryAPI farMemory = memory();
-        SectorEntityToken far = mock(SectorEntityToken.class);
-        when(far.getLocation()).thenReturn(new Vector2f(1500f, 0f));
-        when(far.getMemoryWithoutUpdate()).thenReturn(farMemory);
-        SectorEntityToken alreadyRare = mock(SectorEntityToken.class);
-        when(alreadyRare.getLocation()).thenReturn(new Vector2f(100f, 0f));
-        MemoryAPI rareMemory = memory();
-        rareMemory.set(SpatialBreach.RARITY_KEY, 90f);
-        when(alreadyRare.getMemoryWithoutUpdate()).thenReturn(rareMemory);
-        contentSites.addAll(List.of(near, far, alreadyRare));
+        CampaignFleetAPI inside = fleetAt(500f, 0f, true);
+        CampaignFleetAPI touching = fleetAt(1050f, 0f, false);
+        when(touching.getRadius()).thenReturn(100f);
+        CampaignFleetAPI outside = fleetAt(1500f, 0f, false);
 
-        plugin.elapse(20f);
-        plugin.tick(BreachTerrainPlugin.TICK_DAYS);
+        assertFalse(plugin.holds(inside));
+        plugin.elapse(30f);
 
-        assertEquals(BreachRules.TOUCHED_RARITY_PERCENT, near.getMemoryWithoutUpdate().getFloat(SpatialBreach.RARITY_KEY));
-        assertFalse(far.getMemoryWithoutUpdate().contains(SpatialBreach.RARITY_KEY));
-        assertEquals(90f, rareMemory.getFloat(SpatialBreach.RARITY_KEY));
-        plugin.elapse(40f);
-        plugin.tick(BreachTerrainPlugin.TICK_DAYS);
-        assertEquals(BreachRules.TOUCHED_RARITY_PERCENT, far.getMemoryWithoutUpdate().getFloat(SpatialBreach.RARITY_KEY));
+        assertTrue(plugin.holds(inside));
+        assertTrue(plugin.holds(touching));
+        assertFalse(plugin.holds(outside));
+        assertFalse(plugin.holds(null));
     }
 
     @Test
@@ -297,12 +282,11 @@ class BreachTerrainPluginTest {
         BreachTerrainPlugin unboosted = new BreachTerrainPlugin();
         unboosted.init(SpatialBreach.TERRAIN_ID, terrainEntity, new BreachTerrainPlugin.Params("run1", 5, GROWTH, sites, 1f, 9L));
 
-        breach(sites).markCache(boosted, 0);
-        unboosted.markCache(plain, 0);
+        breach(sites).markCache(boosted);
+        unboosted.markCache(plain);
 
         verify(boosted).addTag(SpatialBreach.CACHE_TAG);
         assertEquals(1.5f, boosted.getMemoryWithoutUpdate().getFloat(SpatialBreach.ITEM_MULT_KEY));
-        assertTrue(boosted.getMemoryWithoutUpdate().contains(SpatialBreach.RARITY_KEY));
         assertFalse(plain.getMemoryWithoutUpdate().contains(SpatialBreach.ITEM_MULT_KEY));
         assertEquals(1f, new BreachTerrainPlugin().cacheItemMult());
     }

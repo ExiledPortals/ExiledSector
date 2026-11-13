@@ -39,12 +39,23 @@ public interface LootShaper extends ChartAnomaly {
         return 1f;
     }
 
+    default ItemData shapeDrop(SectorAPI sector, ItemData item, LocationAPI location) {
+        return item;
+    }
+
     default ItemData shapeBattleDrop(SectorAPI sector, ItemData item, LocationAPI location) {
         return item;
     }
 
     default boolean overchargesHullItems(CampaignFleetAPI fleet) {
         return false;
+    }
+
+    default void battleWon(AnomalyRun run) {
+    }
+
+    default float bossStarChartPercent(ChartRun run) {
+        return 0f;
     }
 
     default ItemChances siteChances(MemoryAPI siteMemory, ItemChances chances) {

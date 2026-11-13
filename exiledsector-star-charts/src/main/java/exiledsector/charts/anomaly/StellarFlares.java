@@ -1,6 +1,8 @@
 package exiledsector.charts.anomaly;
 
+import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
+import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.impl.campaign.terrain.StarCoronaTerrainPlugin;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.charts.atlas.AtlasCell;
@@ -8,8 +10,10 @@ import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.layout.ChartLayoutGenerator;
+import exiledsector.items.ItemData;
+import exiledsector.items.LuckyRolls;
 
-public final class StellarFlares implements LayoutShaper, AtlasRule {
+public final class StellarFlares implements LayoutShaper, AtlasRule, LootShaper {
 
     public static final String ANOMALY_ID = "stellar_flares";
     public static final StellarFlares INSTANCE = new StellarFlares();
@@ -36,6 +40,11 @@ public final class StellarFlares implements LayoutShaper, AtlasRule {
         for (PlanetAPI star : site.stars()) {
             setFlareChance(star, FLARE_CHANCE);
         }
+    }
+
+    @Override
+    public ItemData shapeDrop(SectorAPI sector, ItemData item, LocationAPI location) {
+        return LuckyRolls.withLuckyModifier(item);
     }
 
     public static void setFlareChance(PlanetAPI star, float chance) {
