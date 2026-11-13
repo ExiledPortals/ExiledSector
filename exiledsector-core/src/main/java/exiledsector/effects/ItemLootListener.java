@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.FleetEncounterContextPlugin;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
+import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.listeners.ShipRecoveryListener;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -155,6 +156,11 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
 
     public static void addSiteLoot(CargoAPI loot, ItemDrops.SiteLoot siteLoot) {
         addItems(loot, siteLoot.items(), siteLoot.upgrades());
+        siteLoot.materials().forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
+    }
+
+    public static void addSalvagedSiteLoot(CargoAPI loot, ItemDrops.SiteLoot siteLoot, SectorEntityToken site) {
+        addShaped(loot, LootSources.shapeSiteDrops(siteLoot.items(), site), siteLoot.upgrades());
         siteLoot.materials().forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
     }
 

@@ -68,4 +68,8 @@ public interface LootSource {
     default ItemData shapeBattleDrop(ItemData item, LocationAPI location) {
         return shapeDrop(item, location);
     }
+
+    default ItemData shapeSiteDrop(ItemData item, SectorEntityToken site) {
+        return item;
+    }
 }

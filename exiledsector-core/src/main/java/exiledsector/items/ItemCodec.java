@@ -34,6 +34,7 @@ public final class ItemCodec {
     private static final String CORRUPTED_KEY = "c";
     private static final String IMPLICITS_KEY = "i";
     private static final String MIRRORED_KEY = "m";
+    private static final char IMMUTABLE_FLAG = 'i';
 
     private ItemCodec() {
     }
@@ -98,7 +99,11 @@ public final class ItemCodec {
             if (!encoded.isEmpty()) {
                 encoded.append(EFFECT_SEPARATOR);
             }
-            encoded.append(slotCode(modifier.slot())).append(MODIFIER_FIELD_SEPARATOR);
+            encoded.append(slotCode(modifier.slot()));
+            if (modifier.immutable()) {
+                encoded.append(IMMUTABLE_FLAG);
+            }
+            encoded.append(MODIFIER_FIELD_SEPARATOR);
             if (!isCompact(modifier)) {
                 encoded.append(modifier.modifierId()).append(MODIFIER_FIELD_SEPARATOR);
             }
@@ -167,13 +172,14 @@ public final class ItemCodec {
 
     private static RolledModifier decodeModifier(String entry) {
         String[] fields = entry.split(MODIFIER_FIELD_SEPARATOR, 3);
-        ModifierSlot slot = slotOf(fields[0]);
+        ModifierSlot slot = fields[0].isEmpty() ? null : slotOf(fields[0].substring(0, 1));
         if (slot == null) {
             return null;
         }
+        boolean immutable = fields[0].indexOf(IMMUTABLE_FLAG, 1) > 0;
         if (fields.length == 2) {
             RolledLine line = decodeEffect(fields[1]);
-            return line == null ? null : RolledModifier.single(slot, line);
+            return line == null ? null : flagged(RolledModifier.single(slot, line), immutable);
         }
         if (!ItemModifiers.ID_PATTERN.matcher(fields[1]).matches()) {
             return null;
@@ -186,7 +192,11 @@ public final class ItemCodec {
             }
             lines.add(line);
         }
-        return new RolledModifier(RolledLine.currentName(fields[1]), slot, lines);
+        return flagged(new RolledModifier(RolledLine.currentName(fields[1]), slot, lines), immutable);
+    }
+
+    private static RolledModifier flagged(RolledModifier modifier, boolean immutable) {
+        return immutable ? modifier.asImmutable() : modifier;
     }
 
     private static RolledLine decodeEffect(String entry) {

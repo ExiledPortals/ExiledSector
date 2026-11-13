@@ -13,6 +13,7 @@ import exiledsector.charts.content.ChartSites;
 import exiledsector.charts.content.ChartSpot;
 import exiledsector.charts.content.FakeChartContentEngine;
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.loot.ImmutableDrops;
 import exiledsector.charts.run.ChartRun;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -100,6 +101,8 @@ class AnomalySitesTest {
         assertTrue(orbitRadii(star).stream().allMatch(radius -> radius > 2000f && radius <= 7000f));
         assertEquals(engine.salvageEntities, site.placed());
         assertTrue(engine.salvageEntities.stream().allMatch(wreck -> wreck.hasTag(ChartIds.runTag("run1"))));
+        assertTrue(engine.salvageEntities.stream().allMatch(wreck ->
+                wreck.getMemoryWithoutUpdate().getFloat(ImmutableDrops.CHANCE_KEY) == StarAnomalies.DERELICT_IMMUTABLE_CHANCE));
     }
 
     @Test

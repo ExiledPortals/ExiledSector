@@ -293,6 +293,16 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
     }
 
     @Override
+    public ItemData shapeSiteDrop(ItemData item, SectorEntityToken site) {
+        try {
+            return ImmutableDrops.onSiteDrop(item, site.getMemoryWithoutUpdate());
+        } catch (RuntimeException e) {
+            LOG.error("[ExiledSector] Making a modifier of a salvaged item immutable failed", e);
+            return item;
+        }
+    }
+
+    @Override
     public FleetLevelRange levelRange(MemoryAPI fleetMemory) {
         return ChartTiers.fleetStrengthRangeFor(fleetMemory);
     }

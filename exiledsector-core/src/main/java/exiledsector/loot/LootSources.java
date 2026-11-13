@@ -66,6 +66,22 @@ public final class LootSources {
         return shape(items, true);
     }
 
+    public static List<ItemData> shapeSiteDrops(List<ItemData> items, SectorEntityToken site) {
+        List<ItemData> shaped = shapeDrops(items);
+        if (site == null || shaped.isEmpty()) {
+            return shaped;
+        }
+        List<ItemData> siteShaped = new ArrayList<>(shaped.size());
+        for (ItemData item : shaped) {
+            ItemData shapedItem = item;
+            for (LootSource source : SOURCES.all()) {
+                shapedItem = source.shapeSiteDrop(shapedItem, site);
+            }
+            siteShaped.add(shapedItem);
+        }
+        return siteShaped;
+    }
+
     private static List<ItemData> shape(List<ItemData> items, boolean fromBattle) {
         CampaignFleetAPI playerFleet = PlayerFleet.orNull();
         LocationAPI location = playerFleet == null ? null : playerFleet.getContainingLocation();

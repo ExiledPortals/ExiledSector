@@ -1,10 +1,12 @@
 package exiledsector.charts.anomaly;
 
 import com.fs.starfarer.api.campaign.PlanetAPI;
+import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
 import exiledsector.charts.content.ChartPoi;
 import exiledsector.charts.content.ChartPois;
 import exiledsector.charts.content.ChartSites;
+import exiledsector.charts.loot.ImmutableDrops;
 
 import java.util.Random;
 import java.util.function.Consumer;
@@ -24,6 +26,7 @@ public final class StarAnomalies {
     static final int EXTRA_DERELICTS = 4;
     static final float DERELICT_GAP = 1000f;
     static final float DERELICT_REACH = 7000f;
+    static final float DERELICT_IMMUTABLE_CHANCE = 0.1f;
     static final float STATION_GAP = 400f;
     static final float STATION_STEP = 250f;
     static final float STATION_REACH = 6000f;
@@ -50,8 +53,9 @@ public final class StarAnomalies {
         for (int i = 0; i < count; i++) {
             ChartPoi derelict = ChartSites.pick(ChartPoi.Kind.DERELICT, site.tier(), random);
             ChartSites.Orbit orbit = site.clearOrbit(star, star.getRadius() + DERELICT_GAP, DERELICT_REACH, random);
-            if (derelict != null && orbit != null) {
-                site.addSite(derelict, orbit, random);
+            SectorEntityToken placed = derelict == null || orbit == null ? null : site.addSite(derelict, orbit, random);
+            if (placed != null) {
+                ImmutableDrops.mark(placed, DERELICT_IMMUTABLE_CHANCE);
             }
         }
     }

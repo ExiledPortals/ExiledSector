@@ -42,7 +42,7 @@ public class ItemSalvageListener implements ShowLootListener {
         Random random = new Random(Misc.getSalvageSeed(salvageEntity) ^ SEED_SALT);
         LootMultipliers modifiers = LootSources.modifiersFor(salvageEntity);
         ItemDrops.SiteLoot siteLoot = LootSources.rollSite(Global.getSector(), siteId, random, modifiers);
-        ItemLootListener.addSiteLoot(loot, siteLoot);
+        ItemLootListener.addSalvagedSiteLoot(loot, siteLoot, salvageEntity);
         MaterialDropAnnouncer.announceOnLootScreen(siteLoot.materials());
         LootSources.all().forEach(source -> source.addSalvageLoot(Global.getSector(), salvageEntity, loot));
         if (entityMemory.getBoolean(SHOWCASE_KEY)) {

@@ -1247,6 +1247,13 @@ While it is open, every fleet in the system that has an AI, isn't a station and 
 attack order on the breach ahead of its own orders (`BreachCharge`, checked each tick so late arrivals join); the
 collapse removes that order and the fleets go back to what they were doing.
 
+### Black Hole
+
+Every derelict placed around a black hole carries a 10% immutable chance in its memory (`StarAnomalies`,
+`ImmutableDrops.mark`). Each hull item its salvage drops rolls that chance from the item's seed and, on a hit, has one
+modifier locked as the Immutable Nanoswarm locks it, after the other drop shaping (`LootSource.shapeSiteDrop`,
+`ImmutableDrops.onSiteDrop`). An item the swarm couldn't lock, with fewer than two modifiers, drops unchanged.
+
 ### Neutron Star charts
 
 A Neutron Star chart has at least 7 planets to hide behind from the pulsar beam (`LayoutShaper.minPlanets`).

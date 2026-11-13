@@ -213,6 +213,19 @@ class ItemCodecTest {
     }
 
     @Test
+    void anImmutableModifierKeepsItsLockThroughCargo() {
+        List<RolledModifier> locked = List.of(prefix("FIGHTER_ARMOR_PERCENT", 12f).asImmutable(), HYBRID.get(0).asImmutable(), suffix("HULL_MULT", 5f));
+        String lockedText = "Pi=FIGHTER_ARMOR_PERCENT:12;Pi=plated_frame=ARMOR_PERCENT:5+HULL_MULT:3;S=HULL_MULT:5";
+        ItemData lockedItem = new ItemData("sub", 42L, locked, new FrozenName("FIGHTER_ARMOR_PERCENT", "HULL_MULT", null, null));
+
+        assertEquals(lockedText, ItemCodec.modifiers(locked));
+        assertEquals(locked, ItemCodec.decodeModifiers(lockedText, "sub"));
+        assertEquals(lockedItem, ItemData.parse(lockedItem.toSpecialItem().getData()));
+        assertEquals(List.of(prefix("FIGHTER_ARMOR_PERCENT", 12f)), ItemCodec.decodeModifiers("Px=FIGHTER_ARMOR_PERCENT:12", "sub"));
+        assertNull(ItemCodec.decodeModifiers("=FIGHTER_ARMOR_PERCENT:12", "sub"));
+    }
+
+    @Test
     void aSavedItemWithARenamedEffectDecodesToTheCurrentName() throws Exception {
         EffectAliases.register(new JSONArray().put(new JSONObject().put("alias", "OLD_HULL_MULT").put("effect", "HULL_MULT")));
         try {
