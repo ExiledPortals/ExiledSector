@@ -852,6 +852,61 @@ class ShipSkillDataTest {
     }
 
     @Test
+    void deallocatingReturnsOpBeforeFreeAllocationsWhicheverNodeIsRemoved() {
+        ShipSkillData data = new ShipSkillData();
+        data.addFreeAllocation();
+        SkillNode a = node("a", List.of());
+        SkillNode b = node("b", List.of());
+        SkillNode c = node("c", List.of());
+        ShipTrees.allocate(data, a, 3);
+        ShipTrees.allocate(data, b, 3);
+        ShipTrees.allocate(data, c, 3);
+
+        ShipTrees.deallocate(data, a);
+
+        assertEquals(0, data.getBankedFreeAllocations());
+        assertEquals(3, ShipTrees.getSpentOp(data, 3));
+
+        ShipTrees.deallocate(data, b);
+
+        assertEquals(0, data.getBankedFreeAllocations());
+        assertEquals(0, ShipTrees.getSpentOp(data, 3));
+
+        ShipTrees.deallocate(data, c);
+
+        assertEquals(1, data.getBankedFreeAllocations());
+        assertEquals(0, ShipTrees.getSpentOp(data, 3));
+    }
+
+    @Test
+    void deallocatingKeepsAFreeAllocationThatWasAlreadyBanked() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode a = node("a", List.of());
+        SkillNode b = node("b", List.of());
+        ShipTrees.allocate(data, a, 3);
+        ShipTrees.allocate(data, b, 3);
+        data.addFreeAllocation();
+
+        ShipTrees.deallocate(data, b);
+
+        assertEquals(1, data.getBankedFreeAllocations());
+        assertEquals(3, ShipTrees.getSpentOp(data, 3));
+    }
+
+    @Test
+    void opNodesReturnedByCountsAFreeNodeAsOpWhilePaidNodesRemain() {
+        ShipSkillData data = new ShipSkillData();
+        data.addFreeAllocation();
+        SkillNode a = node("a", List.of());
+        SkillNode b = node("b", List.of());
+        ShipTrees.allocate(data, a, 3);
+        ShipTrees.allocate(data, b, 3);
+
+        assertEquals(1, ShipTrees.opNodesReturnedBy(data, List.of("a")));
+        assertEquals(1, ShipTrees.opNodesReturnedBy(data, List.of("a", "b")));
+    }
+
+    @Test
     void canAllocateIsFalseOnceTheNodeCapIsReached() {
         ShipSkillData data = new ShipSkillData();
         SkillNode a = node("a", List.of());

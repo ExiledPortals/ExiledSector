@@ -183,8 +183,8 @@ class WormholeAnchorLinksTest {
         assertEquals(Set.of("exit", "vol_a", "vol_b"), Set.copyOf(released.nodeIds()));
         assertEquals(List.of(new SkillItemCost("alpha_core", 1f)), released.charges());
         assertTrue(data.isAllocated("socket") && data.isAllocated("core_a"));
-        assertEquals(1, data.getBankedFreeAllocations());
-        assertEquals(paidBefore - 1, ShipTrees.paidNodeCount(data));
+        assertEquals(0, data.getBankedFreeAllocations());
+        assertEquals(paidBefore - 2, ShipTrees.paidNodeCount(data));
     }
 
     @Test
@@ -231,7 +231,7 @@ class WormholeAnchorLinksTest {
         Set<String> released = ShipTrees.previewRelease(data, topology, "root", planned -> planned.unsocketItem("socket"));
 
         assertEquals(Set.of("exit", "vol_a", "vol_b"), released);
-        assertEquals(2, ShipTrees.paidNodeCount(data, released));
+        assertEquals(2, ShipTrees.opNodesReturnedBy(data, released));
         assertTrue(data.isAllocated("vol_b"));
         assertEquals(ANCHOR, data.getSocketedItem("socket"));
     }
