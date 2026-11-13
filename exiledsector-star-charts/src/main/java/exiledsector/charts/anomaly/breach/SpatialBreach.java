@@ -2,6 +2,7 @@ package exiledsector.charts.anomaly.breach;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
+import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
@@ -18,6 +19,7 @@ import exiledsector.charts.anomaly.ContentPlacer;
 import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.items.ItemChances;
+import exiledsector.items.ItemData;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.List;
@@ -33,7 +35,6 @@ public final class SpatialBreach implements ContentPlacer, RunParticipant, LootS
     public static final String CORE_TYPE = "exiledSector_chart_breach_core";
     public static final String CORE_TAG = ChartIds.PREFIX + "breach_core";
     public static final String CACHE_TAG = ChartIds.PREFIX + "breach_cache";
-    public static final String RARITY_KEY = "$exiledSector_chartBreachRarity";
     public static final String ITEM_MULT_KEY = "$exiledSector_chartBreachItems";
     public static final SpatialBreach INSTANCE = new SpatialBreach();
     static final long CENTRE_SALT = 0x425243454e5452L;
@@ -88,8 +89,13 @@ public final class SpatialBreach implements ContentPlacer, RunParticipant, LootS
 
     @Override
     public ItemChances siteChances(MemoryAPI siteMemory, ItemChances chances) {
-        ItemChances scaled = siteMemory.contains(ITEM_MULT_KEY) ? chances.scaled(siteMemory.getFloat(ITEM_MULT_KEY)) : chances;
-        return siteMemory.contains(RARITY_KEY) ? scaled.withRarity(scaled.rarity() * (1f + siteMemory.getFloat(RARITY_KEY) / ChartGenContext.PERCENT)) : scaled;
+        return siteMemory.contains(ITEM_MULT_KEY) ? chances.scaled(siteMemory.getFloat(ITEM_MULT_KEY)) : chances;
+    }
+
+    @Override
+    public ItemData shapeDrop(SectorAPI sector, ItemData item, LocationAPI location) {
+        BreachTerrainPlugin breach = breachIn(location);
+        return breach != null && sector != null && breach.holds(sector.getPlayerFleet()) ? BreachLoot.warped(item) : item;
     }
 
     public static String coreId(String runId) {

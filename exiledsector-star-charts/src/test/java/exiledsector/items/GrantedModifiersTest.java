@@ -124,6 +124,36 @@ class GrantedModifiersTest {
     }
 
     @Test
+    void aWarpedModifierKeepsItsPlaceOnAFullSide() {
+        for (long seed = 0L; seed < 20L; seed++) {
+            RolledModifier warped = RolledModifier.roll(prefix("HULL_PERCENT").modifier(), new Random(seed)).asWarped();
+            RolledModifier plain = RolledModifier.roll(prefix("FLUX_CAPACITY_MULT").modifier(), new Random(seed));
+            ItemData item = new ItemData(BASE, 7L, List.of(warped, plain), null);
+
+            ItemData added = GrantedModifiers.add(item, GROUNDED, LIMITS, new Random(seed));
+
+            assertEquals(List.of("HULL_PERCENT", GROUNDED), modifierIds(added));
+            assertTrue(added.explicits().get(0).warped());
+            assertFalse(added.explicits().get(1).warped());
+        }
+    }
+
+    @Test
+    void aGrantSharingAWarpedModifiersEffectIsSkipped() {
+        RolledModifier warped = RolledModifier.roll(prefix("EMP_DAMAGE_TAKEN_PERCENT").modifier(), new Random(1L)).asWarped();
+        ItemData item = new ItemData(BASE, 7L, List.of(warped), null);
+
+        assertSame(item, GrantedModifiers.add(item, GROUNDED, LIMITS, new Random(3L)));
+    }
+
+    @Test
+    void addingAWarpedModifierMarksOnlyThatModifier() {
+        ItemData added = GrantedModifiers.addWarped(itemWith(prefix("HULL_PERCENT")), PLAIN_PREFIX, LIMITS, new Random(3L));
+
+        assertEquals(List.of(false, true), added.explicits().stream().map(RolledModifier::warped).toList());
+    }
+
+    @Test
     void aModifierSharingTheAddedEffectMakesWayForIt() {
         ItemData item = itemWith(prefix("EMP_DAMAGE_TAKEN_PERCENT"), suffix("ARMOR_PERCENT"));
 

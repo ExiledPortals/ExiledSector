@@ -1,7 +1,7 @@
 # Rarity drop bands
 
 Item Rarity should change what kind of loot drops; Item Quantity changes how much. Today rarity (`ItemChances.rarity`,
-fed by the chart suffix `CHART_ITEM_RARITY_PERCENT` and Spatial Breach depth) only weights hull item modifier counts
+fed by the chart suffix `CHART_ITEM_RARITY_PERCENT`) only weights hull item modifier counts
 above the common maximum (`AffixLayout.rolledModifierCount`) and scales unique hull item chances (`ItemDrops`,
 `BattleItemDrops.Drop.rare`). Every other row of `battle_loot.csv` ignores it, so a high-rarity boss drops the same
 crafting items as a pirate patrol.

@@ -250,4 +250,19 @@ class ItemCodecTest {
             EffectAliases.clear();
         }
     }
+
+    @Test
+    void aWarpedModifierKeepsItsMarkThroughEveryForm() {
+        List<RolledModifier> warped = List.of(prefix("FIGHTER_ARMOR_PERCENT", 12f).asWarped(), HYBRID.get(0).asWarped(), suffix("HULL_MULT", 5f));
+        ItemData item = new ItemData("sub", 5L, warped, new FrozenName("FIGHTER_ARMOR_PERCENT", "HULL_MULT", null, null));
+        String text = "Pw=FIGHTER_ARMOR_PERCENT:12;Pw=plated_frame=ARMOR_PERCENT:5+HULL_MULT:3;S=HULL_MULT:5";
+
+        assertEquals(text, ItemCodec.modifiers(warped));
+        assertEquals(warped, ItemCodec.decodeModifiers(text, "sub"));
+        assertEquals(item, ItemData.of(item.toSpecialItem()));
+        assertEquals(npcItem(item), NpcItems.item(NpcItems.id(item)));
+        assertTrue(ItemData.of(item.toSpecialItem()).explicits().get(0).warped());
+        assertNull(ItemCodec.decodeModifiers("Xw=FIGHTER_ARMOR_PERCENT:12", "sub"));
+        assertFalse(ItemCodec.decodeModifiers("Pz=FIGHTER_ARMOR_PERCENT:12", "sub").get(0).warped());
+    }
 }

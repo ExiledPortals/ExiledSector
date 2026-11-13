@@ -301,6 +301,14 @@ public abstract class Item {
         return explicits().stream().anyMatch(RolledModifier::immutable);
     }
 
+    public boolean isWarped() {
+        return explicits().stream().anyMatch(RolledModifier::warped);
+    }
+
+    private boolean carriesWarped(String modifierId) {
+        return explicits().stream().anyMatch(rolled -> rolled.warped() && rolled.modifierId().equals(modifierId));
+    }
+
     public void refreezeName() {
         ItemDefinition definition = definition();
         frozenName = definition == null ? null : ItemNames.freeze(definition, seed, explicits());
@@ -364,6 +372,9 @@ public abstract class Item {
         }
         if (corruption != null) {
             lines.add(Translation.styled("socketable.tooltip.corrupted"));
+        }
+        if (isWarped()) {
+            lines.add(Translation.styled("socketable.tooltip.warped"));
         }
         return lines;
     }
@@ -445,9 +456,9 @@ public abstract class Item {
         if (entry != null) {
             return entry.modifier();
         }
-        boolean reservedForType = definition != null && ModifierSources.isReserved(modifierId)
+        boolean resolvableForType = definition != null && (ModifierSources.isReserved(modifierId) || carriesWarped(modifierId))
                 && ItemModifiers.itemTypes(modifierId).contains(definition.type());
-        return reservedForType ? ItemModifiers.get(modifierId) : null;
+        return resolvableForType ? ItemModifiers.get(modifierId) : null;
     }
 
     public List<SlottedRoll> rolls(ModifierCategory category) {
@@ -549,7 +560,10 @@ public abstract class Item {
         if (rolledModifier.immutable()) {
             return description.withUnstyledAs(Style.IMMUTABLE);
         }
-        return rolledModifier.overcharged() ? description.withUnstyledAs(Style.OVERCHARGED) : description;
+        if (rolledModifier.overcharged()) {
+            return description.withUnstyledAs(Style.OVERCHARGED);
+        }
+        return rolledModifier.warped() ? description.withUnstyledAs(Style.WARPED) : description;
     }
 
     private static void addUnderHeaders(List<SlottedLine> lines, ModifierSlot slot, List<String> headerKeys, List<SlottedLine> described) {
@@ -565,7 +579,10 @@ public abstract class Item {
     }
 
     private static List<String> headerKeys(RolledModifier rolledModifier, boolean hybrid) {
-        List<String> headerKeys = new ArrayList<>(2);
+        List<String> headerKeys = new ArrayList<>(3);
+        if (rolledModifier.warped()) {
+            headerKeys.add("socketable.tooltip.warpedHeader");
+        }
         String originHeaderKey = ModifierSources.headerKey(rolledModifier.modifierId());
         if (originHeaderKey != null) {
             headerKeys.add(originHeaderKey);

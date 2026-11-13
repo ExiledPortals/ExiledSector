@@ -1247,12 +1247,18 @@ The Spatial Breach (`SpatialBreach`, `BreachTerrainPlugin`, numbers in `BreachRu
 core that starts closed. Once the player fleet flies over the core it eases open to a tier-based maximum over 60
 seconds (faster with the growth line), then collapses over 60 seconds and removes itself, its core and its unlooted
 caches. The core can't be clicked. Every 0.1 days the player fleet inside burns fuel and its ships use more supplies
-(`BreachSupplyBuff`), both stronger toward the core. Its caches are its only loot: planned at creation, they form once
-the field reaches them and vanish once the collapse passes them, with item rarity raised by depth and item quantity by
-the cache item line, and content sites it covers get a smaller rarity bonus (`StarChartLootSource.modifiersFor`).
-While it is open, every fleet in the system that has an AI, isn't a station and isn't a dormant debris fleet gets an
-attack order on the breach ahead of its own orders (`BreachCharge`, checked each tick so late arrivals join); the
-collapse removes that order and the fleets go back to what they were doing.
+(`BreachSupplyBuff`), both stronger toward the core. Its caches are planned at creation: they form once
+the field reaches them and vanish once the collapse passes them, with item quantity raised by the cache item line
+(`StarChartLootSource.modifiersFor`). While it is open, every fleet in the system that has an AI, isn't a station and
+isn't a dormant debris fleet gets an attack order on the breach ahead of its own orders (`BreachCharge`, checked each
+tick so late arrivals join); the collapse removes that order and the fleets go back to what they were doing.
+
+Every non-unique hull item dropped while the player fleet is inside the open breach, salvaged or won in battle, has a
+30% chance to be warped (`SpatialBreach.shapeDrop`, `BreachLoot`): `WarpedModifiers` adds one modifier from another
+section's non-unique pools, never one sharing an effect with the item's own section or its modifiers, or scaling
+socketed items, flagged `RolledModifier.warped` (kept by the cargo codec). `Item.explicitModifier` resolves it from
+the catalogue, so value rerolls stay within its range; crafts that remove or reforge it lose it for good, and later
+grants never displace it.
 
 ### Black Hole
 

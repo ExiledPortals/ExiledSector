@@ -355,6 +355,8 @@
     "socketable.tierBandRange": "{low}-{high}",
     "socketable.tooltip.mirrored": "<hl>Mirrored</hl>",
     "socketable.tooltip.corrupted": "<bad>Corrupted</bad>",
+    "socketable.tooltip.warped": "<warped>Warped</warped>",
+    "socketable.tooltip.warpedHeader": "<muted>Warped</muted>",
     "codex.socketables.range": "{low} to {high}",
     "codex.socketables.rangeGrouped": "({low} to {high})",
     "ui.forge.refused.loadFirst": "Load a hull item first.",

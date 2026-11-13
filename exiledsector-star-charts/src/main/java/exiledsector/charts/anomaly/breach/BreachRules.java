@@ -28,9 +28,7 @@ public final class BreachRules {
     static final float CACHE_DEPTH_BIAS = 1.5f;
     static final float CACHE_MARGIN = 150f;
     static final int CACHE_PLACEMENT_ATTEMPTS = 8;
-    static final float CACHE_BASE_RARITY_PERCENT = 25f;
-    static final float CACHE_DEEP_RARITY_PERCENT = 75f;
-    static final float TOUCHED_RARITY_PERCENT = 30f;
+    static final float WARPED_CHANCE = 0.3f;
 
     record Growth(float maxRadius, float openSeconds, float collapseSeconds) {
 
@@ -59,10 +57,6 @@ public final class BreachRules {
     }
 
     record CacheSite(float x, float y, float depth) {
-
-        float rarityPercent() {
-            return CACHE_BASE_RARITY_PERCENT + CACHE_DEEP_RARITY_PERCENT * (1f - depth);
-        }
     }
 
     private BreachRules() {

@@ -20,21 +20,24 @@ public final class RolledModifier {
     private final List<RolledLine> lines;
     private final boolean immutable;
     private final boolean overcharged;
+    private final boolean warped;
 
     public RolledModifier(String modifierId, ModifierSlot slot, List<RolledLine> lines) {
         this(modifierId, slot, lines, false);
     }
 
     public RolledModifier(String modifierId, ModifierSlot slot, List<RolledLine> lines, boolean immutable) {
-        this(modifierId, slot, lines, immutable, false);
+        this(modifierId, slot, lines, immutable, false, false);
     }
 
-    public RolledModifier(String modifierId, ModifierSlot slot, List<RolledLine> lines, boolean immutable, boolean overcharged) {
+    public RolledModifier(String modifierId, ModifierSlot slot, List<RolledLine> lines, boolean immutable, boolean overcharged,
+                          boolean warped) {
         this.modifierId = modifierId;
         this.slot = slot;
         this.lines = new ArrayList<>(lines);
         this.immutable = immutable;
         this.overcharged = overcharged;
+        this.warped = warped;
     }
 
     public static RolledModifier single(ModifierSlot slot, RolledLine line) {
@@ -107,7 +110,7 @@ public final class RolledModifier {
     }
 
     public RolledModifier asImmutable() {
-        return new RolledModifier(modifierId, slot, lines(), true, overcharged);
+        return new RolledModifier(modifierId, slot, lines(), true, overcharged, warped);
     }
 
     public boolean overcharged() {
@@ -115,11 +118,19 @@ public final class RolledModifier {
     }
 
     public RolledModifier overchargedWith(List<RolledLine> overchargedLines) {
-        return new RolledModifier(modifierId, slot, overchargedLines, immutable, true);
+        return new RolledModifier(modifierId, slot, overchargedLines, immutable, true, warped);
+    }
+
+    public boolean warped() {
+        return warped;
+    }
+
+    public RolledModifier asWarped() {
+        return new RolledModifier(modifierId, slot, lines(), immutable, overcharged, true);
     }
 
     public RolledModifier withModifierId(String currentId) {
-        return new RolledModifier(currentId, slot, lines(), immutable, overcharged);
+        return new RolledModifier(currentId, slot, lines(), immutable, overcharged, warped);
     }
 
     public boolean isHybrid() {
@@ -127,7 +138,7 @@ public final class RolledModifier {
     }
 
     public RolledModifier withLines(List<RolledLine> replacementLines) {
-        return new RolledModifier(modifierId, slot, replacementLines, immutable, overcharged);
+        return new RolledModifier(modifierId, slot, replacementLines, immutable, overcharged, warped);
     }
 
     public RolledModifier mapLines(UnaryOperator<RolledLine> lineMapper) {
@@ -143,18 +154,19 @@ public final class RolledModifier {
             ModifierLine lineDefinition = lineDefinitions.apply(line.effectName());
             return lineDefinition == null ? line : new RolledLine(line.effectName(), lineDefinition.roll(random));
         });
-        return new RolledModifier(modifierId, slot, rerolled.lines(), immutable, false);
+        return new RolledModifier(modifierId, slot, rerolled.lines(), immutable, false, warped);
     }
 
     @Override
     public boolean equals(Object other) {
         return other instanceof RolledModifier rolled && Objects.equals(modifierId, rolled.modifierId) && slot == rolled.slot
-                && lines().equals(rolled.lines()) && immutable == rolled.immutable && overcharged == rolled.overcharged;
+                && lines().equals(rolled.lines()) && immutable == rolled.immutable && overcharged == rolled.overcharged
+                && warped == rolled.warped;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(modifierId, slot, lines(), immutable, overcharged);
+        return Objects.hash(modifierId, slot, lines(), immutable, overcharged, warped);
     }
 
     @Override
