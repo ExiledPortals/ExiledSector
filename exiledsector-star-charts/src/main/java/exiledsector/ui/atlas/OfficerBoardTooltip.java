@@ -49,6 +49,7 @@ final class OfficerBoardTooltip {
     static final float SHIP_MAX_HEIGHT = 240f;
     static final float SHIP_MIN_HEIGHT = 80f;
     static final float SHIP_GAP = 8f;
+    static final float SHIP_OVERHANG_SHARE = 0.15f;
     static final float MAX_TEXT_HEIGHT = 800f;
     static final Color SLOT_FILL = new Color(20, 24, 30);
     static final Color FALLBACK_HEADING_BAR = new Color(40, 44, 50);
@@ -240,8 +241,13 @@ final class OfficerBoardTooltip {
                 SkillTreePanelStyle::standardHighlightColor);
         flagship = OfficerFleets.previewFlagship(officer);
         shipPortrait = flagship == null ? null : RefitShipPortrait.of(flagship, flagship.getVariant());
-        shipZoom = shipPortrait == null ? 0f : shipZoom(shipPortrait.halfWidthPixels(1f), shipPortrait.halfLengthPixels(1f), contentWidth());
+        shipZoom = shipPortrait == null ? 0f : shipZoom(withOverhang(shipPortrait.halfWidthPixels(1f)),
+                withOverhang(shipPortrait.halfLengthPixels(1f)), contentWidth());
         codexHintLabel.set(flagship == null ? "" : Translation.text("chart.officer.board.codexHint"));
+    }
+
+    static float withOverhang(float hullHalfExtent) {
+        return hullHalfExtent * (1f + SHIP_OVERHANG_SHARE * 2f);
     }
 
     static float shipZoom(float halfWidth, float halfLength, float contentWidth) {
@@ -285,7 +291,7 @@ final class OfficerBoardTooltip {
     }
 
     private float shipHeight() {
-        return shipPortrait == null ? 0f : shipPortrait.halfLengthPixels(shipZoom) * 2f;
+        return shipPortrait == null ? 0f : withOverhang(shipPortrait.halfLengthPixels(shipZoom)) * 2f;
     }
 
     private float flagshipHeight() {

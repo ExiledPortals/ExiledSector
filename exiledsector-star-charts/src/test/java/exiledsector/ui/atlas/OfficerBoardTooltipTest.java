@@ -52,6 +52,11 @@ class OfficerBoardTooltipTest {
     }
 
     @Test
+    void theShipKeepsRoomForWeaponsAtEachEnd() {
+        assertEquals(100f * (1f + OfficerBoardTooltip.SHIP_OVERHANG_SHARE * 2f), OfficerBoardTooltip.withOverhang(100f), 1e-4f);
+    }
+
+    @Test
     void aSmallShipIsDrawnAtFullSize() {
         assertEquals(1f, OfficerBoardTooltip.shipZoom(30f, 50f, 432f));
     }
