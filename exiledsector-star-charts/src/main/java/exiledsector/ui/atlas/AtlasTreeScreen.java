@@ -19,6 +19,7 @@ import exiledsector.skills.layout.TreeTopology;
 import exiledsector.ui.CampaignOverlay;
 import exiledsector.ui.CanvasCamera;
 import exiledsector.ui.ChromeMetrics;
+import exiledsector.ui.EscapeKey;
 import exiledsector.ui.OverlayFade;
 import exiledsector.ui.PointerGesture;
 import exiledsector.ui.SkillTreePanelStyle;
@@ -56,6 +57,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
 
     private enum Control { BACK }
 
+    private final EscapeKey escapeKey = new EscapeKey();
     private final CampaignOverlay.Host host;
     private final AtlasState state;
     private final AtlasTreeData data = AtlasTreeData.get();
@@ -163,7 +165,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
             if (fade.closing()) {
                 event.consume();
             } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
-                if (event.isKeyUpEvent()) {
+                if (escapeKey.released(event)) {
                     fade.close();
                 }
                 event.consume();

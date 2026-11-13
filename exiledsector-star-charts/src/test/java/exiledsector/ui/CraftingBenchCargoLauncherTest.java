@@ -121,10 +121,13 @@ class CraftingBenchCargoLauncherTest {
         AtomicInteger afterCloseRuns = new AtomicInteger();
         CraftingBenchCargoLauncher.open(campaignUI, afterCloseRuns::incrementAndGet);
 
-        InputEventAPI escape = mock(InputEventAPI.class);
-        when(escape.isKeyUpEvent()).thenReturn(true);
-        when(escape.getEventValue()).thenReturn(Keyboard.KEY_ESCAPE);
-        benchPlugin.processInput(List.of(escape));
+        InputEventAPI escapePressed = mock(InputEventAPI.class);
+        when(escapePressed.isKeyDownEvent()).thenReturn(true);
+        when(escapePressed.getEventValue()).thenReturn(Keyboard.KEY_ESCAPE);
+        InputEventAPI escapeReleased = mock(InputEventAPI.class);
+        when(escapeReleased.isKeyUpEvent()).thenReturn(true);
+        when(escapeReleased.getEventValue()).thenReturn(Keyboard.KEY_ESCAPE);
+        benchPlugin.processInput(List.of(escapePressed, escapeReleased));
         benchPlugin.advance(1f);
 
         verify(corePanel, never()).removeComponent(any());

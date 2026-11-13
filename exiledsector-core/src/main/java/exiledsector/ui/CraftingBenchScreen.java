@@ -12,7 +12,6 @@ import exiledsector.ui.socket.CraftingBench;
 import exiledsector.ui.socket.SocketPanelPlacement;
 import exiledsector.ui.util.GLDraw;
 import lunalib.lunaRefit.BaseRefitButton;
-import org.lwjgl.input.Keyboard;
 
 import java.awt.Color;
 import java.util.List;
@@ -37,6 +36,7 @@ final class CraftingBenchScreen extends BaseCustomUIPanelPlugin implements Campa
         }
     }
 
+    private final EscapeKey escapeKey = new EscapeKey();
     private final CampaignOverlay.Host host;
     private final BenchMode benchMode;
     private final BenchModeSupport.OpenTarget openTarget;
@@ -116,7 +116,7 @@ final class CraftingBenchScreen extends BaseCustomUIPanelPlugin implements Campa
             if (event.isConsumed()) {
                 continue;
             }
-            if (event.isKeyUpEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
+            if (escapeKey.released(event)) {
                 if (!fade.closing() && (bay == null || !bay.escape())) {
                     close();
                 }

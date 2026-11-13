@@ -43,6 +43,7 @@ import exiledsector.items.UseVerdict;
 import exiledsector.ui.CampaignOverlay;
 import exiledsector.ui.CanvasCamera;
 import exiledsector.ui.ChromeMetrics;
+import exiledsector.ui.EscapeKey;
 import exiledsector.ui.PointerGesture;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeSounds;
@@ -117,6 +118,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
 
     private static final AtomicReference<Overlay> OVERLAY_SHOWN = new AtomicReference<>(Overlay.FACTIONS);
 
+    private final EscapeKey escapeKey = new EscapeKey();
     private final CampaignOverlay.Host host;
     private final SkillTreePanelStyle panelStyle = new SkillTreePanelStyle();
     private final StarfieldRenderer starfield = new StarfieldRenderer(panelStyle);
@@ -835,7 +837,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             mouseX = event.getX();
             mouseY = event.getY();
         } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
-            if (event.isKeyUpEvent()) {
+            if (escapeKey.released(event)) {
                 officerBoard.close();
             }
         } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_F2) {
@@ -900,7 +902,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             } else if (focusedCell != null) {
                 focusInput(event);
             } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
-                if (event.isKeyUpEvent()) {
+                if (escapeKey.released(event)) {
                     escape();
                 }
                 event.consume();
@@ -930,7 +932,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             mouseX = event.getX();
             mouseY = event.getY();
         }
-        if (event.isKeyUpEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE && focusing) {
+        if (escapeKey.released(event) && focusing) {
             focusEscape();
         }
         event.consume();
