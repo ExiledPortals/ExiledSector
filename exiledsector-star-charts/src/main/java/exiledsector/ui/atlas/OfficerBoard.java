@@ -19,7 +19,6 @@ import exiledsector.ui.decoration.SensorGhostRenderer;
 import exiledsector.ui.util.BorderedPanel;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.GlScope;
-import exiledsector.ui.util.LineBatch;
 import exiledsector.ui.util.SpriteDraw;
 import exiledsector.ui.util.TextLabel;
 import org.lwjgl.opengl.GL11;
@@ -39,7 +38,7 @@ final class OfficerBoard {
     static final float INSET = 16f;
     static final float HEADER_HEIGHT = 40f;
     static final float MAX_LABEL_WIDTH = 104f;
-    static final float BACKGROUND_ALPHA = 0.5f;
+    static final float BACKGROUND_ALPHA = 0.8f;
     static final int GHOST_COUNT = 7;
     static final float GHOST_SIZE_RATIO = 0.3f;
     static final float GHOST_SCATTER_RATIO = 0.35f;
@@ -47,17 +46,12 @@ final class OfficerBoard {
     static final float DIMMED_ALPHA = 0.4f;
     static final float FRAME_WIDTH = 1.5f;
     static final float HOVERED_FRAME_WIDTH = 3f;
-    static final float ROW_LINE_ALPHA = 0.08f;
-    static final float LINK_WIDTH = 1f;
-    static final float LINK_ALPHA = 0.12f;
-    static final float HOVERED_LINK_ALPHA = 0.5f;
-    static final float ARROW_WIDTH = 2f;
+    static final float DIVIDER_ALPHA = 0.08f;
     static final float ARROW_TRIM_SHARE = 0.6f;
     static final float SOLID_BULGE = 0.1f;
     static final float DASHED_BULGE = 0.2f;
     static final int ARROW_SEGMENTS = 24;
     static final float ARROWHEAD_SHARE = 0.18f;
-    static final float ARROWHEAD_SPREAD = 0.5f;
     static final float MARK_SHARE = 0.25f;
     static final float SHIELD_SHARE = 0.28f;
     static final float LEGEND_GAP = 16f;
@@ -71,29 +65,28 @@ final class OfficerBoard {
     private record Face(boolean identified, boolean dimmed, String portraitPath, Color frameColour, AtlasCell commandCentre) {
     }
 
-    private record ArrowShape(OfficerBoardArrows.Arrow arrow, float[] points, Color colour) {
+    private record ArrowShape(OfficerBoardArrows.Arrow arrow, float[] points) {
 
         @Override
         public boolean equals(Object other) {
-            return other instanceof ArrowShape shape && arrow.equals(shape.arrow) && Arrays.equals(points, shape.points) && colour.equals(shape.colour);
+            return other instanceof ArrowShape shape && arrow.equals(shape.arrow) && Arrays.equals(points, shape.points);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(arrow, Arrays.hashCode(points), colour);
+            return Objects.hash(arrow, Arrays.hashCode(points));
         }
 
         @Override
         public String toString() {
-            return "ArrowShape[arrow=" + arrow + ", points=" + Arrays.toString(points) + ", colour=" + colour + "]";
+            return "ArrowShape[arrow=" + arrow + ", points=" + Arrays.toString(points) + "]";
         }
     }
 
     private final SpriteCache sprites = new SpriteCache(OfficerBoard.class);
     private final SensorGhostRenderer ghosts = new SensorGhostRenderer(GHOST_COUNT, GHOST_SIZE_RATIO, GHOST_SCATTER_RATIO);
-    private final OfficerBoardLegend legend = new OfficerBoardLegend(ghosts);
-    private final LineBatch arrowLines = new LineBatch(ARROW_WIDTH);
-    private final LineBatch linkLines = new LineBatch(LINK_WIDTH);
+    private final OfficerBoardBeams beams = new OfficerBoardBeams();
+    private final OfficerBoardLegend legend = new OfficerBoardLegend(ghosts, beams);
     private final OfficerBoardTooltip tooltip = new OfficerBoardTooltip(sprites);
     private final TextLabel titleLabel = new TextLabel(UiFonts.TITLE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
     private final List<TextLabel> rankLabels = new ArrayList<>();
@@ -255,7 +248,7 @@ final class OfficerBoard {
             float[] points = OfficerBoardArrows.curve(geometry.centreX(from), geometry.centreY(from), geometry.centreX(to), geometry.centreY(to), trim,
                     bulge, ARROW_SEGMENTS);
             if (points.length > 0) {
-                shapes.add(new ArrowShape(arrow, points, faces.get(arrow.fromRecordId()).frameColour()));
+                shapes.add(new ArrowShape(arrow, points));
             }
         }
         return List.copyOf(shapes);
@@ -267,6 +260,7 @@ final class OfficerBoard {
             return;
         }
         ghosts.advance(amount);
+        beams.advance(amount);
         if (shuffleSeconds < OfficerBoardShuffle.DURATION_SECONDS) {
             shuffleSeconds = Math.min(OfficerBoardShuffle.DURATION_SECONDS, shuffleSeconds + amount);
         }
@@ -357,21 +351,16 @@ final class OfficerBoard {
     }
 
     private void drawRows(float alpha) {
-        float lineLeft = regionLeft + INSET;
-        float lineWidth = regionWidth - INSET * 2f;
+        float labelLeft = regionLeft + INSET;
         for (int row = 0; row < rankLabels.size(); row++) {
             TextLabel label = rankLabels.get(row);
-            float centreY = geometry.rowCentreY(row);
-            label.setAlpha(alpha).draw(lineLeft, centreY + label.height() / 2f);
-            if (row > 0) {
-                GLDraw.fillQuad(lineLeft, centreY + geometry.rowPitch() / 2f, lineWidth, 1f, Color.WHITE, ROW_LINE_ALPHA * alpha);
-            }
+            label.setAlpha(alpha).draw(labelLeft, geometry.rowCentreY(row) + label.height() / 2f);
         }
     }
 
     private void drawLegend(float alpha) {
         float legendTop = regionBottom + INSET + legend.height();
-        GLDraw.fillQuad(regionLeft + INSET, legendTop + LEGEND_GAP / 2f, regionWidth - INSET * 2f, 1f, Color.WHITE, ROW_LINE_ALPHA * alpha);
+        GLDraw.fillQuad(regionLeft + INSET, legendTop + LEGEND_GAP / 2f, regionWidth - INSET * 2f, 1f, Color.WHITE, DIVIDER_ALPHA * alpha);
         legend.draw(regionLeft + INSET, legendTop, alpha);
     }
 
@@ -379,14 +368,10 @@ final class OfficerBoard {
         float half = geometry.portraitSize() / 2f;
         OfficerBoardLayout.Seat hoveredSeat = hoveredRecordId == null ? null : shuffle.after().seat(hoveredRecordId);
         for (OfficerBoardLayout.Link link : shuffle.after().links()) {
-            float linkAlpha = (hoveredSeat != null && link.touches(hoveredSeat) ? HOVERED_LINK_ALPHA : LINK_ALPHA) * alpha;
-            linkLines.add(geometry.centreX(link.subordinate()), geometry.centreY(link.subordinate()) + half, geometry.centreX(link.superior()),
-                    geometry.centreY(link.superior()) - half, Color.WHITE, linkAlpha);
+            beams.link(geometry.centreX(link.subordinate()), geometry.centreY(link.subordinate()) + half, geometry.centreX(link.superior()),
+                    geometry.centreY(link.superior()) - half, hoveredSeat != null && link.touches(hoveredSeat), alpha);
         }
-        try (GlScope scope = GlScope.flat()) {
-            linkLines.flush();
-        }
-        linkLines.clear();
+        beams.flush();
     }
 
     private void drawOfficer(int recordId, float centreX, float centreY, float alpha) {
@@ -395,7 +380,6 @@ final class OfficerBoard {
         float bottom = centreY - size / 2f;
         Face face = faces.get(recordId);
         if (face == null || !face.identified()) {
-            GLDraw.fillQuad(left, bottom, size, size, SLOT_FILL, alpha * DIMMED_ALPHA);
             ghosts.draw(centreX, centreY, size, alpha, GHOST_SEED_PREFIX + recordId);
             return;
         }
@@ -415,39 +399,9 @@ final class OfficerBoard {
         }
         float headLength = geometry.portraitSize() * ARROWHEAD_SHARE;
         for (ArrowShape shape : arrowShapes) {
-            float arrowAlpha = alpha * OfficerBoardArrows.alpha(shape.arrow(), hoveredRecordId);
-            float[] points = shape.points();
-            int segments = points.length / 2 - 1;
-            boolean dashed = shape.arrow().style() == OfficerBoardArrows.Style.DASHED;
-            for (int segment = 0; segment < segments; segment++) {
-                if (!dashed || segment % 2 == 0) {
-                    arrowLines.add(points[segment * 2], points[segment * 2 + 1], points[segment * 2 + 2], points[segment * 2 + 3], shape.colour(), arrowAlpha);
-                }
-            }
-            addArrowhead(points, headLength, shape.colour(), arrowAlpha);
+            beams.arrow(shape.points(), shape.arrow().style(), headLength, alpha * OfficerBoardArrows.alpha(shape.arrow(), hoveredRecordId));
         }
-        try (GlScope scope = GlScope.flat()) {
-            arrowLines.flush();
-        }
-        arrowLines.clear();
-    }
-
-    private void addArrowhead(float[] points, float headLength, Color colour, float alpha) {
-        int last = points.length - 2;
-        float tipX = points[last];
-        float tipY = points[last + 1];
-        float dx = tipX - points[last - 2];
-        float dy = tipY - points[last - 1];
-        float length = (float) Math.sqrt(dx * dx + dy * dy);
-        if (length <= 0f) {
-            return;
-        }
-        float backX = -dx / length * headLength;
-        float backY = -dy / length * headLength;
-        float sideX = -backY * ARROWHEAD_SPREAD;
-        float sideY = backX * ARROWHEAD_SPREAD;
-        arrowLines.add(tipX, tipY, tipX + backX + sideX, tipY + backY + sideY, colour, alpha);
-        arrowLines.add(tipX, tipY, tipX + backX - sideX, tipY + backY - sideY, colour, alpha);
+        beams.flush();
     }
 
     private void drawShields(float alpha) {

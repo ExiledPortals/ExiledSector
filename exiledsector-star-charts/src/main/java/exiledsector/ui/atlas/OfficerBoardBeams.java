@@ -1,0 +1,86 @@
+package exiledsector.ui.atlas;
+
+import exiledsector.ui.node.BeamStroke;
+import exiledsector.ui.node.NodeBeams;
+import exiledsector.ui.node.NodeRingArt;
+
+import java.awt.Color;
+
+final class OfficerBoardBeams {
+
+    static final Color LINK_COLOUR = new Color(140, 140, 140);
+    static final Color BATTLE_COLOUR = new Color(255, 64, 56);
+    static final Color IMPENDING_COLOUR = new Color(70, 150, 255);
+    static final float LINK_WIDTH_SCALE = 0.3f;
+    static final float ARROW_WIDTH_SCALE = 0.45f;
+    static final float HELIX_ALPHA = 0.9f;
+    static final float HIGHLIGHTED_LINK_ALPHA = 0.8f;
+    static final float ARROWHEAD_SPREAD = 0.5f;
+
+    private final NodeRingArt ringArt = new NodeRingArt();
+    private final NodeBeams beams = new NodeBeams(ringArt);
+
+    void advance(float amount) {
+        ringArt.advance(amount);
+    }
+
+    void link(float fromX, float fromY, float toX, float toY, boolean highlighted, float alpha) {
+        BeamStroke.Look look = highlighted ? beams.lit(LINK_COLOUR) : NodeBeams.DULL_LOOK;
+        float linkAlpha = (highlighted ? HIGHLIGHTED_LINK_ALPHA : NodeBeams.DULL_ALPHA) * alpha;
+        beams.lane(fromX, fromY, toX, toY, 0f, look, linkAlpha, linkAlpha, LINK_WIDTH_SCALE);
+    }
+
+    void arrow(float[] points, OfficerBoardArrows.Style style, float headLength, float alpha) {
+        if (points.length < 4 || alpha <= 0f) {
+            return;
+        }
+        boolean dashed = style == OfficerBoardArrows.Style.DASHED;
+        BeamStroke.Look look = beams.lit(dashed ? IMPENDING_COLOUR : BATTLE_COLOUR);
+        BeamStroke.Helix helix = beams.helix(ARROW_WIDTH_SCALE);
+        float distance = 0f;
+        int segments = points.length / 2 - 1;
+        for (int segment = 0; segment < segments; segment++) {
+            float fromX = points[segment * 2];
+            float fromY = points[segment * 2 + 1];
+            float toX = points[segment * 2 + 2];
+            float toY = points[segment * 2 + 3];
+            if (!dashed || segment % 2 == 0) {
+                beams.lane(fromX, fromY, toX, toY, distance, look, alpha, alpha, ARROW_WIDTH_SCALE);
+                beams.helixLane(fromX, fromY, toX, toY, distance, helix, look, alpha * HELIX_ALPHA, alpha * HELIX_ALPHA, ARROW_WIDTH_SCALE);
+            }
+            distance += (float) Math.hypot(toX - fromX, toY - fromY);
+        }
+        arrowhead(points, headLength, look, alpha);
+    }
+
+    private void arrowhead(float[] points, float headLength, BeamStroke.Look look, float alpha) {
+        int last = points.length - 2;
+        float tipX = points[last];
+        float tipY = points[last + 1];
+        float dx = tipX - points[last - 2];
+        float dy = tipY - points[last - 1];
+        float length = (float) Math.sqrt(dx * dx + dy * dy);
+        if (length <= 0f) {
+            return;
+        }
+        float backX = -dx / length * headLength;
+        float backY = -dy / length * headLength;
+        float sideX = -backY * ARROWHEAD_SPREAD;
+        float sideY = backX * ARROWHEAD_SPREAD;
+        beams.lane(tipX, tipY, tipX + backX + sideX, tipY + backY + sideY, 0f, look, alpha, alpha, ARROW_WIDTH_SCALE);
+        beams.lane(tipX, tipY, tipX + backX - sideX, tipY + backY - sideY, 0f, look, alpha, alpha, ARROW_WIDTH_SCALE);
+    }
+
+    static float[] straightLine(float fromX, float toX, float y, int segments) {
+        float[] points = new float[(segments + 1) * 2];
+        for (int step = 0; step <= segments; step++) {
+            points[step * 2] = fromX + (toX - fromX) * step / segments;
+            points[step * 2 + 1] = y;
+        }
+        return points;
+    }
+
+    void flush() {
+        beams.flush();
+    }
+}

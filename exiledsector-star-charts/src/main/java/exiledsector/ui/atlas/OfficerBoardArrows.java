@@ -12,8 +12,8 @@ import java.util.function.IntPredicate;
 final class OfficerBoardArrows {
 
     static final float HOVERED_ALPHA = 1f;
-    static final float FADED_ALPHA = 0.15f;
-    static final float RESTING_ALPHA = 0.6f;
+    static final float FADED_ALPHA = 0.25f;
+    static final float RESTING_ALPHA = 0.9f;
 
     enum Style { SOLID, DASHED }
 

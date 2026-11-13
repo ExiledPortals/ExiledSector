@@ -6,7 +6,6 @@ import exiledsector.ui.UiFonts;
 import exiledsector.ui.decoration.SensorGhostRenderer;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.GlScope;
-import exiledsector.ui.util.LineBatch;
 import exiledsector.ui.util.TextLabel;
 
 import java.awt.Color;
@@ -23,14 +22,13 @@ final class OfficerBoardLegend {
     static final float ROW_GAP = 6f;
     static final float HINT_GAP = 10f;
     static final int COLUMNS = 2;
-    static final int DASHES = 7;
+    static final int ARROW_SEGMENTS = 13;
     static final float ARROWHEAD_LENGTH = 7f;
     static final float SHIELD_SIZE = 14f;
     static final float MARK_SIZE = 12f;
     static final float SLOT_SIZE = 18f;
     static final float GHOST_FOOTPRINT = 30f;
     static final String GHOST_SEED = "officer_legend";
-    static final Color ARROW_COLOUR = SkillTreePanelStyle.TOOLTIP_BODY_COLOR;
     static final Color HINT_COLOUR = AtlasScreen.HINT_COLOUR;
 
     enum Glyph {
@@ -51,13 +49,13 @@ final class OfficerBoardLegend {
     }
 
     private final SensorGhostRenderer ghosts;
-    private final LineBatch arrowLines = new LineBatch(OfficerBoard.ARROW_WIDTH);
-    private final LineBatch linkLines = new LineBatch(OfficerBoard.LINK_WIDTH);
+    private final OfficerBoardBeams beams;
     private final Map<Glyph, TextLabel> labels = new EnumMap<>(Glyph.class);
     private final TextLabel hintLabel = new TextLabel(UiFonts.HINT, HINT_COLOUR);
 
-    OfficerBoardLegend(SensorGhostRenderer ghosts) {
+    OfficerBoardLegend(SensorGhostRenderer ghosts, OfficerBoardBeams beams) {
         this.ghosts = ghosts;
+        this.beams = beams;
     }
 
     void write() {
@@ -117,12 +115,7 @@ final class OfficerBoardLegend {
             }
             rowTop -= height + ROW_GAP;
         }
-        try (GlScope scope = GlScope.flat()) {
-            linkLines.flush();
-            arrowLines.flush();
-        }
-        linkLines.clear();
-        arrowLines.clear();
+        beams.flush();
         hintLabel.setAlpha(alpha).draw(left, rowTop + ROW_GAP - HINT_GAP);
     }
 
@@ -131,10 +124,9 @@ final class OfficerBoardLegend {
         float right = left + GLYPH_WIDTH;
         float half = GLYPH_HEIGHT / 2f;
         switch (glyph) {
-            case LINK -> linkLines.add(centreX - half / 2f, centreY - half, centreX + half / 2f, centreY + half, Color.WHITE,
-                    OfficerBoard.HOVERED_LINK_ALPHA * alpha);
-            case WON -> addArrow(left, right, centreY, false, alpha);
-            case CHALLENGE -> addArrow(left, right, centreY, true, alpha);
+            case LINK -> beams.link(centreX - half / 2f, centreY - half, centreX + half / 2f, centreY + half, true, alpha);
+            case WON -> addArrow(left, right, centreY, OfficerBoardArrows.Style.SOLID, alpha);
+            case CHALLENGE -> addArrow(left, right, centreY, OfficerBoardArrows.Style.DASHED, alpha);
             case DEFEND -> {
                 try (GlScope scope = GlScope.flat()) {
                     OfficerBoard.shield(centreX, centreY, SHIELD_SIZE, OfficerBoard.SHIELD_COLOUR, alpha);
@@ -147,11 +139,7 @@ final class OfficerBoardLegend {
                 }
             }
             case IDLE -> drawSlot(centreX, centreY, OfficerBoard.DIMMED_TINT, OfficerBoard.DIMMED_ALPHA * alpha);
-            case UNKNOWN -> {
-                GLDraw.fillQuad(centreX - SLOT_SIZE / 2f, centreY - SLOT_SIZE / 2f, SLOT_SIZE, SLOT_SIZE, OfficerBoard.SLOT_FILL,
-                        OfficerBoard.DIMMED_ALPHA * alpha);
-                ghosts.draw(centreX, centreY, GHOST_FOOTPRINT, alpha, GHOST_SEED);
-            }
+            case UNKNOWN -> ghosts.draw(centreX, centreY, GHOST_FOOTPRINT, alpha, GHOST_SEED);
         }
     }
 
@@ -162,20 +150,7 @@ final class OfficerBoardLegend {
         GLDraw.strokeQuad(slotLeft, slotBottom, SLOT_SIZE, SLOT_SIZE, frame, OfficerBoard.FRAME_WIDTH, alpha);
     }
 
-    private void addArrow(float left, float right, float centreY, boolean dashed, float alpha) {
-        float arrowAlpha = OfficerBoardArrows.RESTING_ALPHA * alpha;
-        float tipX = right;
-        if (dashed) {
-            float dash = (right - left) / (DASHES * 2f - 1f);
-            for (int index = 0; index < DASHES; index++) {
-                float dashLeft = left + index * dash * 2f;
-                arrowLines.add(dashLeft, centreY, Math.min(tipX, dashLeft + dash), centreY, ARROW_COLOUR, arrowAlpha);
-            }
-        } else {
-            arrowLines.add(left, centreY, tipX, centreY, ARROW_COLOUR, arrowAlpha);
-        }
-        float spread = ARROWHEAD_LENGTH * OfficerBoard.ARROWHEAD_SPREAD;
-        arrowLines.add(tipX, centreY, tipX - ARROWHEAD_LENGTH, centreY + spread, ARROW_COLOUR, arrowAlpha);
-        arrowLines.add(tipX, centreY, tipX - ARROWHEAD_LENGTH, centreY - spread, ARROW_COLOUR, arrowAlpha);
+    private void addArrow(float left, float right, float centreY, OfficerBoardArrows.Style style, float alpha) {
+        beams.arrow(OfficerBoardBeams.straightLine(left, right, centreY, ARROW_SEGMENTS), style, ARROWHEAD_LENGTH, OfficerBoardArrows.RESTING_ALPHA * alpha);
     }
 }
