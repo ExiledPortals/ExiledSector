@@ -2,6 +2,7 @@ package exiledsector.ui.atlas;
 
 import exiledsector.i18n.StyledText;
 import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.anomaly.StellarFlares;
 import exiledsector.charts.anomaly.relay.RelayStages;
 import exiledsector.charts.anomaly.relay.RelayNetwork;
 import exiledsector.charts.ChartTables;
@@ -93,6 +94,19 @@ class AtlasNodeTextTest {
             assertEquals(List.of(new AtlasEntry(cell, SkirmishSide.DEFENDER), new AtlasEntry(cell, SkirmishSide.ATTACKER),
                     new AtlasEntry(cell, SkirmishSide.NEITHER)), choices.stream().map(BenchModeSupport.OpenChoice::target).toList());
             assertEquals(List.of(), AtlasNodeText.entryChoices(generator, state, AtlasCell.ORIGIN));
+        } finally {
+            ChartTables.resetAnomalies();
+        }
+    }
+
+    @Test
+    void anAnomalysRewardLineFollowsItsDescription() throws Exception {
+        ChartTables.loadAnomalies();
+        try {
+            String flares = AtlasNodeText.anomalyBody(StellarFlares.ANOMALY_ID).plain();
+
+            assertTrue(flares.startsWith("The system's stars throw flares constantly."), flares);
+            assertTrue(flares.endsWith("\nHull items found in the system roll one modifier twice and keep the better value"), flares);
         } finally {
             ChartTables.resetAnomalies();
         }

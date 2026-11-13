@@ -27,6 +27,7 @@ import exiledsector.items.MaterialItems;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
+import exiledsector.charts.run.ChartRuns;
 import exiledsector.loot.BattleLoot;
 import exiledsector.loot.BattleLootRates;
 import exiledsector.loot.FleetDifficulty;
@@ -270,23 +271,47 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
 
     @Override
     public ItemData shapeDrop(ItemData item, LocationAPI location) {
+        SectorAPI sector = Global.getSector();
+        return shapedByRunAnomalies(sector, withBiomeModifier(sector, item, location), location);
+    }
+
+    @Override
+    public ItemData shapeBattleDrop(ItemData item, LocationAPI location) {
+        SectorAPI sector = Global.getSector();
+        ItemData shaped = withBiomeModifier(sector, item, location);
+        for (LootShaper anomaly : anomaliesHoldingBattle()) {
+            try {
+                shaped = anomaly.shapeBattleDrop(sector, shaped, location);
+            } catch (RuntimeException e) {
+                LOG.error("[ExiledSector] Shaping a battle drop failed in anomaly " + anomaly.id(), e);
+            }
+        }
+        return shapedByRunAnomalies(sector, shaped, location);
+    }
+
+    private static ItemData withBiomeModifier(SectorAPI sector, ItemData item, LocationAPI location) {
         try {
-            return BiomeModifiers.onDrop(Global.getSector(), item, location);
+            return BiomeModifiers.onDrop(sector, item, location);
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Adding a biome modifier to a dropped item failed", e);
             return item;
         }
     }
 
-    @Override
-    public ItemData shapeBattleDrop(ItemData item, LocationAPI location) {
-        ItemData shaped = shapeDrop(item, location);
-        SectorAPI sector = Global.getSector();
-        for (LootShaper anomaly : anomaliesHoldingBattle()) {
+    private static ItemData shapedByRunAnomalies(SectorAPI sector, ItemData item, LocationAPI location) {
+        List<LootShaper> anomalies;
+        try {
+            anomalies = ChartAnomalies.inRun(ChartRuns.liveIn(location), LootShaper.class);
+        } catch (RuntimeException e) {
+            LOG.error("[ExiledSector] Checking which anomalies shape a drop failed", e);
+            return item;
+        }
+        ItemData shaped = item;
+        for (LootShaper anomaly : anomalies) {
             try {
-                shaped = anomaly.shapeBattleDrop(sector, shaped, location);
+                shaped = anomaly.shapeDrop(sector, shaped, location);
             } catch (RuntimeException e) {
-                LOG.error("[ExiledSector] Shaping a battle drop failed in anomaly " + anomaly.id(), e);
+                LOG.error("[ExiledSector] Shaping a drop failed in anomaly " + anomaly.id(), e);
             }
         }
         return shaped;

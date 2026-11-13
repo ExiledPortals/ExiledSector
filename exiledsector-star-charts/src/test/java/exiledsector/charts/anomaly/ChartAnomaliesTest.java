@@ -127,13 +127,14 @@ public class ChartAnomaliesTest {
         assertTrue(breach.allowedAt(ChartTiers.LOWEST_TIER) && breach.allowedAt(ChartTiers.HIGHEST_TIER));
         assertFalse(ChartAnomalies.definition("black_hole").insertable());
         Set<DropType> lootKinds = new HashSet<>();
-        for (String id : List.of("dense_nebula", MagneticStorm.ANOMALY_ID, StellarFlares.ANOMALY_ID)) {
+        for (String id : List.of("dense_nebula", MagneticStorm.ANOMALY_ID)) {
             List<ChartGenContext.AppliedEffect> effects = ChartAnomalies.definition(id).effects();
             assertEquals(1, effects.size(), id);
             assertNotNull(effects.get(0).effect().dropType(), id);
             lootKinds.add(effects.get(0).effect().dropType());
         }
-        assertEquals(3, lootKinds.size());
+        assertEquals(2, lootKinds.size());
+        assertEquals(List.of(), ChartAnomalies.definition(StellarFlares.ANOMALY_ID).effects());
     }
 
     @Test
@@ -151,13 +152,13 @@ public class ChartAnomaliesTest {
         ChartAnomalies.useForTests(List.of(
                 new ChartAnomalies.Definition(MagneticStorm.ANOMALY_ID, 1f, 1, 15, "", "", false, Set.of(), false,
                         List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_CRAFTING_ITEM_PERCENT, 50f))),
-                new ChartAnomalies.Definition(StellarFlares.ANOMALY_ID, 1f, 1, 15, "", "", false, Set.of(), false,
+                new ChartAnomalies.Definition(SpatialBreach.ANOMALY_ID, 1f, 1, 15, "", "", false, Set.of(), false,
                         List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_FEEDSTOCK_PERCENT, 30f))),
                 definition(AsteroidStorm.ANOMALY_ID)));
         ChartGenContext chart = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_CRAFTING_ITEM_PERCENT, 20f)))
                 .withAnomalies(List.of(AsteroidStorm.ANOMALY_ID));
 
-        ChartGenContext context = chart.withAnomalyEffects(List.of(MagneticStorm.ANOMALY_ID, StellarFlares.ANOMALY_ID, AsteroidStorm.ANOMALY_ID));
+        ChartGenContext context = chart.withAnomalyEffects(List.of(MagneticStorm.ANOMALY_ID, SpatialBreach.ANOMALY_ID, AsteroidStorm.ANOMALY_ID));
 
         assertEquals(70f, context.dropPercent(DropType.CRAFTING_ITEM), 0.001f);
         assertEquals(30f, context.dropPercent(DropType.FEEDSTOCK), 0.001f);

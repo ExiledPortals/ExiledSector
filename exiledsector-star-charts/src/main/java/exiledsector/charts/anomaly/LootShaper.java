@@ -43,6 +43,10 @@ public interface LootShaper extends ChartAnomaly {
         return item;
     }
 
+    default ItemData shapeDrop(SectorAPI sector, ItemData item, LocationAPI location) {
+        return item;
+    }
+
     default ItemChances siteChances(MemoryAPI siteMemory, ItemChances chances) {
         return chances;
     }

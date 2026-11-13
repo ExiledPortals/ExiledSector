@@ -391,6 +391,7 @@
     "chart.atlas.anomaly.asteroid_storm.description": "Extra asteroid belts and fields whose rocks strike passing fleets. Your salvor chief reports caches could easily hide in the belts.",
     "chart.atlas.anomaly.magnetic_storm.description": "Magnetic fields around the star and several worlds make your sensor chief nervous.",
     "chart.atlas.anomaly.stellar_flares.description": "The system's stars throw flares constantly. Your nav team reports prolonged engagements in range of the flares could be catastrophic.",
+    "chart.atlas.anomaly.stellar_flares.reward": "Hull items found in the system roll one modifier <good>twice</good> and keep the better value",
     "material.exiledSector_revenant_engram.name": "Revenant Engram",
     "material.exiledSector_vigil_engram.name": "Vigil Engram",
     "material.exiledSector_aegis_engram.name": "Aegis Engram",
