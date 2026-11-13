@@ -12,6 +12,7 @@ import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.atlas.CommissionHandover;
 import exiledsector.charts.atlas.CommissionHandover.Handover;
 import exiledsector.charts.atlas.OfficerFlagshipRepair;
+import exiledsector.charts.atlas.OfficerPortraits;
 import exiledsector.charts.atlas.OfficerSeatRepair;
 import exiledsector.charts.atlas.TerritoryContext;
 import exiledsector.charts.officer.AtlasOfficer;
@@ -98,6 +99,7 @@ public final class OfficerTurns {
         TurnSetup setup = new TurnSetup(OfficerTurnTables.rules(), OfficerRanks.all(), resolvers, openRunCell, openRunOfficerId(state, cause,
                 openRunCell), context.catalogue(), context.startingItems());
         TurnResult result = OfficerTurn.take(TurnTerrain.of(generator, state, openRunCell), state, cause, setup);
+        OfficerPortraits.assign(state, context);
         if (!handovers.isEmpty()) {
             result = result.withHandovers(handovers);
             state.setLastTurnResult(result.encode());
@@ -114,6 +116,7 @@ public final class OfficerTurns {
 
     public static void handOverCommission(AtlasGenerator generator, AtlasState state, Set<AtlasCell> visible, TerritoryContext context) {
         List<Handover> handovers = CommissionHandover.handOver(generator, state, visible, context);
+        OfficerPortraits.assign(state, context);
         if (handovers.isEmpty()) {
             return;
         }

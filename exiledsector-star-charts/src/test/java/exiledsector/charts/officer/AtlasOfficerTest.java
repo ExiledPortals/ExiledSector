@@ -27,7 +27,8 @@ class AtlasOfficerTest {
         AtlasOfficer officer = new AtlasOfficer(12, "tritachyon", 1L, -2L, "admiral", CENTRE, "reckless", "paragon", "paragon_Elite", 3L, -4L,
                 List.of("degraded_engines", "faulty_grid"), Map.of("scar_a", 2, "scar_b", 1),
                 List.of("hull_item:1:bridge_relay:abyssal_rift", "crafting_item:4:kernel"), List.of("engram:1:engram_a", "unique:1:u_x"), 3, true,
-                AtlasOfficer.Status.ACTIVE, true, List.of("arrived:1", "moved:1:2"), 40, true, 5);
+                AtlasOfficer.Status.ACTIVE, true, List.of("arrived:1", "moved:1:2"), 40, true, 5,
+                "graphics/portraits/portrait_mercenary01.png");
 
         assertEquals(officer, AtlasOfficer.decode(12, officer.encode()));
     }
@@ -45,7 +46,7 @@ class AtlasOfficerTest {
 
         assertNull(AtlasOfficer.decode(1, null));
         assertNull(AtlasOfficer.decode(1, ""));
-        assertNull(AtlasOfficer.decode(1, encoded.replaceFirst("o2", "o9")));
+        assertNull(AtlasOfficer.decode(1, encoded.replaceFirst(AtlasOfficer.FORMAT, "o9")));
         assertNull(AtlasOfficer.decode(1, encoded + "|extra"));
         assertNull(AtlasOfficer.decode(1, encoded.replace("WAITING", "LOST")));
     }
@@ -107,13 +108,35 @@ class AtlasOfficerTest {
         assertFalse(officer.hasPendingChoice());
         assertEquals(AtlasOfficer.UNSEATED, officer.seat());
         assertFalse(officer.isSeated());
+        assertFalse(officer.hasPortrait());
+    }
+
+    @Test
+    void aRecordWrittenBeforeStoredPortraitsStillDecodes() {
+        String oldRecord = "o2|hegemony|1|2|commander||steady|onslaught|onslaught_Elite|3|4|||||0|0|WAITING|0||0|0|4";
+
+        AtlasOfficer officer = AtlasOfficer.decode(5, oldRecord);
+
+        assertEquals(4, officer.seat());
+        assertFalse(officer.hasPortrait());
+    }
+
+    @Test
+    void aPortraitStaysWithTheOfficerThroughCommandChanges() {
+        AtlasOfficer portrayed = waiting().withPortrait("graphics/portraits/portrait_hegemony01.png");
+
+        AtlasOfficer moved = portrayed.takingCommand(CENTRE, "arrived:1").losingCommand("fled:1").seatedAt("admiral", 2);
+
+        assertEquals("graphics/portraits/portrait_hegemony01.png", moved.portraitPath());
+        assertEquals(moved, AtlasOfficer.decode(moved.recordId(), moved.encode()));
+        assertFalse(waiting().withPortrait("bad|path").hasPortrait());
     }
 
     @Test
     void unreadableItemTokensAreSkipped() {
         AtlasOfficer officer = new AtlasOfficer(3, "hegemony", 1L, 2L, "commander", null, "steady", "", "", 3L, 4L, List.of(), Map.of(),
                 List.of("item_x=5", "crafting_item:2:kernel"), List.of("rank_swap"), 0, false, AtlasOfficer.Status.WAITING, false,
-                List.of(), 0, false, AtlasOfficer.UNSEATED);
+                List.of(), 0, false, AtlasOfficer.UNSEATED, "");
 
         assertEquals(List.of(new CarriedItem(RewardKind.CRAFTING_ITEM, "kernel", null, 2)), officer.carried());
         assertFalse(officer.hasPendingChoice());

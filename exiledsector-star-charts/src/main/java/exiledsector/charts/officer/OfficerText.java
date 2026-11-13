@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.characters.PersonalityAPI;
+import com.fs.starfarer.api.util.WeightedRandomPicker;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasLine;
@@ -50,16 +51,35 @@ public final class OfficerText {
     }
 
     public static String portraitPath(AtlasOfficer officer) {
+        return officer.hasPortrait() ? officer.portraitPath() : seededPortraitPath(officer);
+    }
+
+    public static String seededPortraitPath(AtlasOfficer officer) {
         FactionAPI faction = faction(officer);
         if (faction == null) {
             return null;
         }
         return PORTRAITS.computeIfAbsent(officer.factionId() + "|" + officer.nameSeed() + "|" + officer.portraitSeed(),
-                key -> portraitPath(faction, namedPerson(faction, officer), officer));
+                key -> seededPortraitPath(faction, namedPerson(faction, officer), officer));
     }
 
     static String portraitPath(FactionAPI faction, PersonAPI named, AtlasOfficer officer) {
+        return officer.hasPortrait() ? officer.portraitPath() : seededPortraitPath(faction, named, officer);
+    }
+
+    private static String seededPortraitPath(FactionAPI faction, PersonAPI named, AtlasOfficer officer) {
         return faction.createRandomPerson(named.getGender(), new Random(officer.portraitSeed())).getPortraitSprite();
+    }
+
+    public static List<String> portraitOptions(String factionId, AtlasOfficer officer) {
+        SectorAPI sector = Global.getSector();
+        FactionAPI ownFaction = faction(officer);
+        FactionAPI portraitFaction = sector == null ? null : sector.getFaction(factionId);
+        if (ownFaction == null || portraitFaction == null) {
+            return List.of();
+        }
+        WeightedRandomPicker<String> portraits = portraitFaction.getPortraits(namedPerson(ownFaction, officer).getGender());
+        return portraits == null ? List.of() : List.copyOf(portraits.getItems());
     }
 
     public static String traitName(AtlasOfficer officer) {

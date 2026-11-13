@@ -55,6 +55,7 @@ public final class AtlasTerritoryPlacer {
         fillBoard(generator, state, context);
         OfficerSeatRepair.repair(generator, state, OfficerRanks.all(), context);
         OfficerFlagshipRepair.repair(state, OfficerRanks.all(), context);
+        OfficerPortraits.assign(state, context);
         AtlasTerritoryPlacer placer = new AtlasTerritoryPlacer(generator, state, visible, context);
         placer.placeInNewChunks();
         if (state.fillFingerprintChanged(fillFingerprint(visible, state))) {

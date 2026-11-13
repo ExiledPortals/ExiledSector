@@ -1130,7 +1130,8 @@ first; unclaimed gaps go to independents and mercenaries. The board of officers,
 tree where each seat answers to one seat of the rank above (`OfficerSeats`); a board saved before seats is reseated from
 the top once, with leftovers dismissed (`OfficerSeatRepair`). Each record in
 `AtlasState` keeps a flagship for life that `OfficerFleets` puts into the command centre's boss fleet, unrecoverable, at
-the rank's boss size and Fleet Strength. On a new or switched commission, that faction's officers hand their territories
+the rank's boss size and Fleet Strength, and a portrait no other officer on the board holds, from their faction or else
+the independents (`OfficerPortraits`). On a new or switched commission, that faction's officers hand their territories
 and items to officers of other factions (`CommissionHandover`), and battling a non-hostile faction's chart fleets with the
 transponder on costs vanilla's aggressive-combat reputation once per faction (`ChartTransponderReputation`).
 
