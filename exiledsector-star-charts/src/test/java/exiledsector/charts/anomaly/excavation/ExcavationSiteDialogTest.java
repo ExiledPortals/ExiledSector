@@ -10,14 +10,12 @@ import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.OptionPanelAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
-import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl.OptionId;
 import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.ChartContent;
-import exiledsector.charts.loot.DropType;
 import exiledsector.charts.run.ChartCampaignPlugin;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
@@ -73,8 +71,8 @@ class ExcavationSiteDialogTest {
 
     @Test
     void eachSiteIsScoutedOnce() {
-        ExcavationSite rock = new ExcavationSite(0, "rock", ExcavationSite.Access.OPEN, DropType.WEAPON, 1L, false);
-        ExcavationSite ice = new ExcavationSite(1, "ice", ExcavationSite.Access.COLLAPSED, DropType.AI_CORE, 2L, false);
+        ExcavationSite rock = new ExcavationSite(0, "rock", ExcavationSite.Access.OPEN, 1L, false);
+        ExcavationSite ice = new ExcavationSite(1, "ice", ExcavationSite.Access.COLLAPSED, 2L, false);
         ExcavationStates.record(ExcavationStates.of(run), rock);
         ExcavationStates.record(ExcavationStates.of(run), ice);
 
@@ -86,18 +84,17 @@ class ExcavationSiteDialogTest {
     }
 
     @Test
-    void everyAccessAndLeanHasScoutingText() {
+    void everyAccessHasScoutingText() {
         for (ExcavationSite.Access access : ExcavationSite.Access.values()) {
             assertTrue(Translation.has(ExcavationSiteDialog.scoutedKey(access)), access.name());
         }
-        for (DropType lean : ExcavationRules.LEANS) {
-            assertTrue(Translation.has(ExcavationSiteDialog.storesKey(lean)), lean.name());
-        }
+        assertTrue(Translation.has("chart.anomaly.excavation_sites.dialog.stores"));
+        assertTrue(Translation.has("chart.anomaly.excavation_sites.dialog.findsItems"));
     }
 
     @Test
     void theCampaignPluginOpensTheSiteOnlyWhileItStands() {
-        ExcavationSite site = new ExcavationSite(0, "rock", ExcavationSite.Access.OPEN, DropType.WEAPON, 1L, false);
+        ExcavationSite site = new ExcavationSite(0, "rock", ExcavationSite.Access.OPEN, 1L, false);
         ExcavationStates.record(ExcavationStates.of(run), site);
         PlanetAPI rock = planet("rock", system);
         PlanetAPI bare = planet("bare", system);
@@ -158,7 +155,7 @@ class ExcavationSiteDialogTest {
     }
 
     @Test
-    void theSiteFleetLosesAnyLargeHullAndKeepsItsLean() {
+    void theSiteFleetLosesAnyLargeHull() {
         FleetMemberAPI frigate = ExcavationBattleTest.ship(HullSize.FRIGATE);
         FleetMemberAPI capital = ExcavationBattleTest.ship(HullSize.CAPITAL_SHIP);
         List<FleetMemberAPI> members = new ArrayList<>(List.of(frigate, capital));
@@ -172,12 +169,8 @@ class ExcavationSiteDialogTest {
         assertFalse(ExcavationFleets.dropLargeHulls(fleet));
         assertEquals(List.of(frigate), members);
 
-        MemoryAPI memory = mock(MemoryAPI.class);
-        when(memory.getString(ExcavationFleets.LEAN_KEY)).thenReturn(DropType.AI_CORE.name());
-        when(fleet.getMemoryWithoutUpdate()).thenReturn(memory);
-        assertNull(ExcavationFleets.leanOf(fleet));
+        assertFalse(ExcavationFleets.isExcavationFleet(fleet));
         when(fleet.hasTag(ExcavationFleets.FLEET_TAG)).thenReturn(true);
-        assertEquals(DropType.AI_CORE, ExcavationFleets.leanOf(fleet));
         assertTrue(ExcavationFleets.isExcavationFleet(fleet));
     }
 }

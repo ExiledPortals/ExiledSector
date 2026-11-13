@@ -1,11 +1,11 @@
 package exiledsector.charts.anomaly.excavation;
 
 import exiledsector.charts.anomaly.StateFields;
-import exiledsector.charts.loot.DropType;
 
-public record ExcavationSite(int index, String planetId, Access access, DropType lean, long seed, boolean cleared) {
+public record ExcavationSite(int index, String planetId, Access access, long seed, boolean cleared) {
 
-    static final int FIELDS = 5;
+    static final int FIELDS = 4;
+    static final int FIELDS_WITH_LEAN = 5;
 
     public enum Access {
         OPEN,
@@ -13,16 +13,20 @@ public record ExcavationSite(int index, String planetId, Access access, DropType
     }
 
     public ExcavationSite asCleared() {
-        return new ExcavationSite(index, planetId, access, lean, seed, true);
+        return new ExcavationSite(index, planetId, access, seed, true);
     }
 
     String encode() {
-        return StateFields.join(planetId, access.name(), lean.name(), StateFields.seed(seed), StateFields.flag(cleared));
+        return StateFields.join(planetId, access.name(), StateFields.seed(seed), StateFields.flag(cleared));
     }
 
     static ExcavationSite decode(int index, String encoded) {
-        return StateFields.decode(encoded, FIELDS, fields -> fields.text(0).isEmpty() ? null
-                : new ExcavationSite(index, fields.text(0), fields.enumValue(1, Access.class), fields.enumValue(2, DropType.class), fields.seed(3),
-                fields.flag(4)));
+        ExcavationSite site = StateFields.decode(encoded, FIELDS, fields -> read(index, fields, 2));
+        return site != null ? site : StateFields.decode(encoded, FIELDS_WITH_LEAN, fields -> read(index, fields, 3));
+    }
+
+    private static ExcavationSite read(int index, StateFields fields, int seedField) {
+        return fields.text(0).isEmpty() ? null
+                : new ExcavationSite(index, fields.text(0), fields.enumValue(1, Access.class), fields.seed(seedField), fields.flag(seedField + 1));
     }
 }

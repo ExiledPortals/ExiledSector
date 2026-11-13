@@ -1,12 +1,12 @@
 package exiledsector.charts.anomaly.excavation;
 
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.charts.content.ChartContentPlanner;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.generation.ChartTiers;
-import exiledsector.charts.loot.DropType;
 import exiledsector.charts.anomaly.RaidDangerLevels;
 import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.ItemDrops;
@@ -21,10 +21,10 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class ExcavationRulesTest {
 
@@ -55,32 +55,23 @@ class ExcavationRulesTest {
     }
 
     @Test
-    void theSiteBudgetGrowsWithTierAndTheQuantityLine() {
-        assertEquals(ExcavationRules.LOOT_STEPS, ExcavationLoot.LOOT.steps(1, 1f), 0.0001f);
-        assertTrue(ExcavationLoot.LOOT.steps(10, 1f) > ExcavationLoot.LOOT.steps(1, 1f));
-        assertEquals(ExcavationLoot.LOOT.steps(5, 1f) * 1.5f, ExcavationLoot.LOOT.steps(5, 1.5f), 0.0001f);
-        assertEquals(ExcavationRules.ITEM_MULT * 1.5f, ExcavationLoot.LOOT.items(1.5f), 0.0001f);
-        assertEquals(0f, ExcavationLoot.LOOT.items(-1f), 0.0001f);
-    }
-
-    @Test
     void theTuningLinesAddSitesAndRaiseTheSiteQuantity() {
         ChartGenContext context = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_EXTRA_EXCAVATION_SITES, 2f),
                 new ChartGenContext.AppliedEffect(ChartModifier.CHART_EXTRA_EXCAVATION_SITES, 1f),
                 new ChartGenContext.AppliedEffect(ChartModifier.CHART_EXCAVATION_LOOT_QUANTITY_PERCENT, 50f)));
 
         assertEquals(3, Math.round(context.anomalyPercent(ExcavationSites.EXTRA_KEY)));
-        assertEquals(1.5f, ExcavationLoot.LOOT.quantityMult(context), 0.0001f);
-        assertEquals(1f, ExcavationLoot.LOOT.quantityMult(ChartGenContext.none()), 0.0001f);
+        assertEquals(1.5f, ExcavationLoot.quantityMult(context), 0.0001f);
+        assertEquals(1f, ExcavationLoot.quantityMult(ChartGenContext.none()), 0.0001f);
+        assertEquals(1f, ExcavationLoot.quantityMult(null), 0.0001f);
     }
 
     @Test
     void shaftsDropTagInhibitorsScaledByTheirShareAndTheSiteQuantity() {
         ChartGenContext context = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_EXCAVATION_LOOT_QUANTITY_PERCENT, 100f)));
-        String beam = CraftingInhibitor.BEAM.itemId();
-        String phase = CraftingInhibitor.PHASE.itemId();
-
-        float perShaft = ExcavationRules.INHIBITORS_PER_RAID * ExcavationRules.ITEM_MULT;
+        float perShaft = ExcavationRules.INHIBITORS_PER_RAID;
+        assertEquals(2f, perShaft, 0.0001f);
+        assertEquals(1f, ExcavationRules.INHIBITORS_PER_GUARDIAN_FLEET, 0.0001f);
         assertEquals(perShaft, ExcavationLoot.expectedInhibitors(ExcavationRules.INHIBITORS_PER_RAID, context, 0.5f), 0.0001f);
         assertEquals(perShaft * 0.5f, ExcavationLoot.expectedInhibitors(ExcavationRules.INHIBITORS_PER_RAID, ChartGenContext.none(), 0.5f), 0.0001f);
         assertEquals(0f, ExcavationLoot.expectedInhibitors(ExcavationRules.INHIBITORS_PER_RAID, context, -1f), 0.0001f);
@@ -89,24 +80,14 @@ class ExcavationRulesTest {
         assertEquals(40, found.values().stream().mapToInt(Integer::intValue).sum());
         assertTrue(tagInhibitorIds.containsAll(found.keySet()) && found.size() > 1, found.toString());
         assertTrue(ExcavationLoot.tagInhibitors(0f, new Random(1L)).isEmpty());
+        assertNull(ExcavationLoot.fleetItems(mock(CampaignFleetAPI.class), context, 1f, new Random(1L)));
 
-        ItemDrops.SiteLoot merged = ExcavationLoot.withInhibitors(new ItemDrops.SiteLoot(List.of(), List.of(), Map.of(beam, 1)), Map.of(beam, 2, phase, 1));
-        assertEquals(Map.of(beam, 3, phase, 1), merged.materials());
-        assertNull(ExcavationLoot.withInhibitors(null, Map.of()));
-    }
-
-    @Test
-    void aSiteLeansTowardItsDropType() {
-        ChartGenContext context = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_QUANTITY_PERCENT, 10f)));
-
-        ChartGenContext leaned = ExcavationLoot.LOOT.leaning(context, List.of(DropType.WEAPON));
-
-        float expected = 1f + (10f + ExcavationRules.LEAN_PERCENT) / ChartGenContext.PERCENT;
-        assertEquals(expected, leaned.dropMult(DropType.WEAPON), 0.0001f);
-        assertEquals(context.dropMult(DropType.AI_CORE), leaned.dropMult(DropType.AI_CORE), 0.0001f);
-        assertSame(ChartModifier.CHART_WEAPON_PERCENT, ChartModifier.forDropType(DropType.WEAPON));
-        assertSame(context, ExcavationLoot.LOOT.leaning(context, ExcavationLoot.leaning(null)));
-        ExcavationRules.LEANS.forEach(lean -> assertNotNull(ChartModifier.forDropType(lean), lean.name()));
+        CampaignFleetAPI guardians = mock(CampaignFleetAPI.class);
+        when(guardians.hasTag(ExcavationFleets.FLEET_TAG)).thenReturn(true);
+        ItemDrops.SiteLoot loot = ExcavationLoot.fleetItems(guardians, context, 1f, new Random(1L));
+        assertTrue(loot.items().isEmpty() && loot.upgrades().isEmpty());
+        assertEquals(2, loot.materials().values().stream().mapToInt(Integer::intValue).sum());
+        assertNull(ExcavationLoot.fleetItems(guardians, context, 0f, new Random(1L)));
     }
 
     @Test

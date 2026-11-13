@@ -10,7 +10,6 @@ import exiledsector.charts.anomaly.StateFields;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
-import exiledsector.charts.loot.DropType;
 import exiledsector.charts.run.ChartRun;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -72,7 +71,7 @@ class ExcavationSitesTest {
     }
 
     private List<ExcavationSite> placeIn(ChartRun run, AnomalyContentSite site) {
-        List<ExcavationSite> placed = ExcavationSites.place(site, mockSector.sector);
+        List<ExcavationSite> placed = ExcavationSites.place(site);
         site.commitStates(run);
         return placed;
     }
@@ -105,7 +104,6 @@ class ExcavationSitesTest {
                 assertTrue(site.planetId().startsWith("rock"), site.planetId());
                 assertTrue(planetIds.add(site.planetId()));
                 assertFalse(site.cleared());
-                assertTrue(ExcavationRules.LEANS.contains(site.lean()));
             }
         }
     }
@@ -118,7 +116,7 @@ class ExcavationSitesTest {
             AnomalyContentSite site = site(ChartGenContext.none(), seed);
             site.claim(facility);
 
-            List<ExcavationSite> placed = ExcavationSites.place(site, mockSector.sector);
+            List<ExcavationSite> placed = ExcavationSites.place(site);
 
             assertEquals(List.of("rock"), placed.stream().map(ExcavationSite::planetId).toList());
             assertTrue(site.isClaimed(rock));
@@ -148,7 +146,7 @@ class ExcavationSitesTest {
         assertTrue(placed.size() >= ExcavationRules.MIN_SITES + 2 && placed.size() <= ExcavationRules.MAX_SITES + 2);
         planets.clear();
         planet("only", false, false);
-        assertEquals(1, ExcavationSites.place(site(context, 3L), mockSector.sector).size());
+        assertEquals(1, ExcavationSites.place(site(context, 3L)).size());
     }
 
     @Test
@@ -186,9 +184,9 @@ class ExcavationSitesTest {
     @Test
     void aClearedSiteStaysRecordedButNoLongerStands() {
         ChartRun run = run();
-        ExcavationSite site = new ExcavationSite(0, "rock", ExcavationSite.Access.COLLAPSED, DropType.WEAPON, 42L, false);
+        ExcavationSite site = new ExcavationSite(0, "rock", ExcavationSite.Access.COLLAPSED, 42L, false);
         ExcavationStates.record(ExcavationStates.of(run), site);
-        ExcavationStates.record(ExcavationStates.of(run), new ExcavationSite(1, "stone", ExcavationSite.Access.OPEN, DropType.AI_CORE, -9L, false));
+        ExcavationStates.record(ExcavationStates.of(run), new ExcavationSite(1, "stone", ExcavationSite.Access.OPEN, -9L, false));
 
         assertTrue(ExcavationStates.clear(run, site));
         assertFalse(ExcavationStates.clear(run, site));
@@ -201,10 +199,11 @@ class ExcavationSitesTest {
 
     @Test
     void aSiteSurvivesEncodingAndRejectsBrokenText() {
-        ExcavationSite site = new ExcavationSite(2, "planet_7", ExcavationSite.Access.OPEN, DropType.BLUEPRINT, Long.MIN_VALUE, true);
+        ExcavationSite site = new ExcavationSite(2, "planet_7", ExcavationSite.Access.OPEN, Long.MIN_VALUE, true);
 
         assertEquals(site, ExcavationSite.decode(2, site.encode()));
-        assertNull(ExcavationSite.decode(0, "planet,OPEN,NOT_A_TYPE,1,0"));
+        assertEquals(new ExcavationSite(0, "planet", ExcavationSite.Access.COLLAPSED, 5L, true), ExcavationSite.decode(0, "planet,COLLAPSED,WEAPON,5,1"));
+        assertNull(ExcavationSite.decode(0, "planet,SIDEWAYS,1,0"));
         assertNull(ExcavationSite.decode(0, "planet,SIDEWAYS,WEAPON,1,0"));
         assertNull(ExcavationSite.decode(0, "planet,OPEN,WEAPON"));
         assertFalse(StateFields.fits("a,b"));
@@ -216,9 +215,9 @@ class ExcavationSitesTest {
         planet("rock", false, false);
         planet("stone", false, false);
         ChartRun run = run();
-        ExcavationSite rock = new ExcavationSite(0, "rock", ExcavationSite.Access.OPEN, DropType.WEAPON, 1L, false);
+        ExcavationSite rock = new ExcavationSite(0, "rock", ExcavationSite.Access.OPEN, 1L, false);
         ExcavationStates.record(ExcavationStates.of(run), rock);
-        ExcavationStates.record(ExcavationStates.of(run), new ExcavationSite(1, "stone", ExcavationSite.Access.COLLAPSED, DropType.WEAPON, 2L, false));
+        ExcavationStates.record(ExcavationStates.of(run), new ExcavationSite(1, "stone", ExcavationSite.Access.COLLAPSED, 2L, false));
 
         String both = ExcavationSites.INSTANCE.intelText(new AnomalyRun(run, system));
         assertTrue(both.contains("Planet rock") && both.contains("Planet stone"), both);

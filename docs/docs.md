@@ -1346,19 +1346,19 @@ Crafting that rerolls values (Tuning Nanoswarm, corruption) finds the reserved m
 ### Excavation Sites
 
 The anomaly marks one to three solid planets plus the extra-sites line, each rolled 50/50 as an open or a collapsed
-shaft and leaning toward one drop type, kept on the run record (`ExcavationSites`, `ExcavationStates`, numbers in
-`ExcavationRules`; package `charts.anomaly.excavation`). A site's items are the `excavation` scope of `chart_loot.csv`
-plus the `exiledSector_chart_excavation` item row, sized by tier and the site quantity line, with +200% to its lean
+shaft, kept on the run record (`ExcavationSites`, `ExcavationStates`, numbers in `ExcavationRules`; package
+`charts.anomaly.excavation`). A site's only reward is tag inhibitors of random kinds: two per full raid and one per
+guardian fleet, scaled by the raid's share or the deployment points defeated and by the site quantity line
 (`ExcavationLoot`). `ExcavationSiteDialog` opens on the planet while the site stands, before a convoy cache.
 
 An open shaft starts a fleet of the chart faction, or a derelict picket, at 80% of the chart's boss size (past the boss cap
 as fleet strength), built with `maxShipSize` 2 and kept in the
-planet's memory until beaten, repairing between fights like vanilla's salvage defenders (`HeldGuards`); it carries the site's vanilla drops and rolls its items in `ChartFleetLoot`. The
+planet's memory until beaten, repairing between fights like vanilla's salvage defenders (`HeldGuards`); beyond ordinary chart fleet loot it adds its inhibitors in `ChartFleetLoot`. The
 encounter pulls in no other fleet and allows no AI retreat (`ExcavationEncounters`), and `ChartCampaignPlugin` picks
 `ExcavationBattleCreationPlugin` for it: a small dark map with rock fields along the edges, no objectives, and no cruiser or
 capital ship on either side. `ExcavationBattlePlugin`, a global combat plugin, also removes them from the reserves in any
 battle against a shaft fleet, so the rule holds even when another mod's battle plugin builds the map. A collapsed shaft is a
-`anomaly.ChartRaid` at a tier-based difficulty whose objective yields the site's items scaled by raid effectiveness.
+`anomaly.ChartRaid` at a tier-based difficulty whose objective yields the site's inhibitors scaled by raid effectiveness.
 
 ### Storm Front
 

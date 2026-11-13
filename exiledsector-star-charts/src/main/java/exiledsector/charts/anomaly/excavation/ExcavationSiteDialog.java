@@ -15,7 +15,6 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-import exiledsector.charts.loot.DropType;
 import exiledsector.charts.anomaly.AnomalyDialog;
 import exiledsector.charts.anomaly.AnomalyEncounters;
 import exiledsector.charts.anomaly.ChartRaid;
@@ -32,9 +31,7 @@ public class ExcavationSiteDialog extends AnomalyDialog {
     static final String DESCEND = "exiledSector_excavationDescend";
     static final String RAID_OPTION = "exiledSector_excavationRaid";
     static final String CONTINUE = "exiledSector_excavationContinue";
-    static final String DROP_TYPE_KEY_PREFIX = "chart.dropType.";
     static final String SCOUTED_KEY_PREFIX = "chart.anomaly.excavation_sites.dialog.scouted.";
-    static final String STORES_KEY_PREFIX = "chart.anomaly.excavation_sites.dialog.stores.";
 
     private final ChartRaid.Session raid = new ChartRaid.Session(closedDialog -> showMain());
     private SectorEntityToken planet;
@@ -58,9 +55,9 @@ public class ExcavationSiteDialog extends AnomalyDialog {
         return playerFleet != null && playerFleet.getFleetData() != null && hasExcavationShips(playerFleet.getFleetData().getCombatReadyMembersListCopy());
     }
 
-    static StyledText leanLine(DropType lean) {
-        StyledText items = StyledText.styled(Translation.gameText(DROP_TYPE_KEY_PREFIX + lean.name()), Style.HIGHLIGHT);
-        return I18n.forGameText(() -> Translation.msg("chart.anomaly.excavation_sites.dialog.lean").arg("items", items).styled());
+    static StyledText findsLine() {
+        StyledText items = StyledText.styled(Translation.gameText("chart.anomaly.excavation_sites.dialog.findsItems"), Style.HIGHLIGHT);
+        return I18n.forGameText(() -> Translation.msg("chart.anomaly.excavation_sites.dialog.finds").arg("items", items).styled());
     }
 
     @Override
@@ -93,7 +90,7 @@ public class ExcavationSiteDialog extends AnomalyDialog {
                 String descriptionKey = site.access() == ExcavationSite.Access.OPEN ? "chart.anomaly.excavation_sites.dialog.open" : "chart.anomaly.excavation_sites.dialog.collapsed";
                 VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg(descriptionKey).arg("planet", planetName).text()));
             }
-            VanillaText.addPara(text, leanLine(site.lean()), Misc.getTextColor());
+            VanillaText.addPara(text, findsLine(), Misc.getTextColor());
             if (site.access() == ExcavationSite.Access.OPEN) {
                 options.addOption(Translation.gameText("chart.anomaly.excavation_sites.dialog.option.descend"), DESCEND,
                         Translation.gameText("chart.anomaly.excavation_sites.dialog.descendTooltip"));
@@ -113,15 +110,11 @@ public class ExcavationSiteDialog extends AnomalyDialog {
         return SCOUTED_KEY_PREFIX + access.name().toLowerCase(Locale.ROOT);
     }
 
-    static String storesKey(DropType lean) {
-        return STORES_KEY_PREFIX + lean.name();
-    }
-
     private static void describeFirstSighting(TextPanelAPI text, ExcavationSite site, String planetName) {
         VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg("chart.anomaly.excavation_sites.dialog.found").arg("planet", planetName).text()));
         VanillaText.plainPara(text, Translation.gameText("chart.anomaly.excavation_sites.dialog.identified"));
         VanillaText.plainPara(text, Translation.gameText(scoutedKey(site.access())));
-        VanillaText.plainPara(text, Translation.gameText(storesKey(site.lean())));
+        VanillaText.plainPara(text, Translation.gameText("chart.anomaly.excavation_sites.dialog.stores"));
     }
 
     @Override

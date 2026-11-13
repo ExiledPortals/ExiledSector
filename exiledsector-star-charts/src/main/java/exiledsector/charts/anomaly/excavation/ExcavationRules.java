@@ -1,18 +1,13 @@
 package exiledsector.charts.anomaly.excavation;
 
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.charts.content.ChartContentPlanner;
 import exiledsector.charts.generation.ChartTier;
-import exiledsector.charts.loot.DropType;
 
-import java.util.List;
 import java.util.Random;
 
 public final class ExcavationRules {
 
-    public static final String LOOT_SITE = "exiledSector_chart_excavation";
-    public static final String LOOT_SCOPE = "excavation";
     public static final int MAX_SHIP_SIZE = 2;
     static final int MIN_SITES = 1;
     static final int MAX_SITES = 3;
@@ -20,16 +15,10 @@ public final class ExcavationRules {
     static final float OPEN_SHAFT_CHANCE = 0.5f;
     static final float DERELICT_CHANCE = 0.3f;
     static final float BOSS_SIZE_SHARE = 0.8f;
-    static final float LOOT_STEPS = 1f;
-    static final float LOOT_STEPS_PER_TIER = 0.25f;
-    static final float ITEM_MULT = 1f;
-    static final float LEAN_PERCENT = 200f;
     static final float FULL_LOOT_EFFECTIVENESS = 0.75f;
     static final float MIN_RAID_SHARE = 0.25f;
-    static final float INHIBITORS_PER_RAID = 1f;
-    static final float INHIBITORS_PER_GUARDIAN_FLEET = 0.5f;
-    static final List<DropType> LEANS = List.of(DropType.WEAPON, DropType.BLUEPRINT, DropType.AI_CORE, DropType.RESOURCE, DropType.CRAFTING_ITEM,
-            DropType.FEEDSTOCK, DropType.SUBROUTINE, DropType.STAR_CHART);
+    static final float INHIBITORS_PER_RAID = 2f;
+    static final float INHIBITORS_PER_GUARDIAN_FLEET = 1f;
 
     private ExcavationRules() {
     }
@@ -48,12 +37,6 @@ public final class ExcavationRules {
 
     static int strengthBonus(ChartTier adjustedTier) {
         return ChartContentPlanner.overflowStrength(fleetSize(adjustedTier), ChartContentPlanner.BOSS_SIZE_CAP);
-    }
-
-    public static DropType lean(SectorAPI sector, Random random) {
-        List<DropType> droppable = LEANS.stream().filter(type -> type.canDrop(sector)).toList();
-        List<DropType> choices = droppable.isEmpty() ? List.of(DropType.RESOURCE) : droppable;
-        return choices.get(random.nextInt(choices.size()));
     }
 
     public static float raidShare(float raidEffectiveness) {

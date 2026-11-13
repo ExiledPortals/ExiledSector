@@ -2,7 +2,7 @@
 
 Some of the chart's planets hide bolt-holes: sealed Domain-era caverns under the crust. Each site holds its own loot and one way in, rolled 50/50 when the chart is made: an open shaft with a fleet nesting below, which only frigates and destroyers can follow down, or a collapsed shaft that only marines can get through. Either is optional; you can leave a site alone.
 
-Status: built 2026-10-28 (package `exiledsector.charts.anomaly.excavation`). Reworked 2026-10-28 from the dig-and-scale-the-boss trade: each site now has its own loot and its own encounter, and nothing touches the boss. See `../../anomalies/overview.md` for the shared framework.
+Status: built 2026-10-28 (package `exiledsector.charts.anomaly.excavation`). Reworked 2026-10-28 from the dig-and-scale-the-boss trade: each site now has its own loot and its own encounter, and nothing touches the boss. See `../../anomalies/overview.md` for the shared framework. Since 2026-11-14 a site holds only tag inhibitors (`../../anomalies/anomaly_rewards.md`, Excavation Sites): the loot leaning and site loot below are gone.
 
 ## Lore
 

@@ -15,7 +15,6 @@ import exiledsector.charts.content.ChartContentPlanner;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.loot.ChartFleetLoot;
-import exiledsector.charts.loot.DropType;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
 
@@ -24,7 +23,6 @@ import java.util.Random;
 public final class ExcavationFleets {
 
     public static final String FLEET_TAG = ChartIds.PREFIX + "excavation_fleet";
-    static final String LEAN_KEY = "$exiledSector_excavationLean";
     static final String SITE_FLEET_KEY = "$exiledSector_excavationFleet";
     static final long FLEET_SALT = 0x5348414654464cL;
 
@@ -61,10 +59,8 @@ public final class ExcavationFleets {
         if (strengthBonus > 0) {
             memory.set(ChartIds.STRENGTH_BONUS_MEMORY_KEY, strengthBonus);
         }
-        memory.set(LEAN_KEY, site.lean().name());
         memory.set(MemFlags.MEMORY_KEY_NO_REP_IMPACT, true);
         fleet.addTag(FLEET_TAG);
-        ExcavationLoot.addToFleet(fleet, site.lean(), context, run.tier());
         return fleet;
     }
 
@@ -96,16 +92,5 @@ public final class ExcavationFleets {
 
     public static boolean isExcavationFleet(Object entity) {
         return entity instanceof CampaignFleetAPI fleet && fleet.hasTag(FLEET_TAG);
-    }
-
-    public static DropType leanOf(CampaignFleetAPI fleet) {
-        if (!isExcavationFleet(fleet)) {
-            return null;
-        }
-        try {
-            return DropType.valueOf(fleet.getMemoryWithoutUpdate().getString(LEAN_KEY));
-        } catch (RuntimeException e) {
-            return DropType.RESOURCE;
-        }
     }
 }

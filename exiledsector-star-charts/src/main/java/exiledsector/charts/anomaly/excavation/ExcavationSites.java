@@ -1,6 +1,5 @@
 package exiledsector.charts.anomaly.excavation;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BattleCreationPlugin;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
@@ -47,31 +46,26 @@ public final class ExcavationSites implements LayoutShaper, ContentPlacer, RunPa
     }
 
     @Override
-    public List<String> lootScopes() {
-        return List.of(ExcavationRules.LOOT_SCOPE);
-    }
-
-    @Override
     public int minPlanets() {
         return ExcavationRules.MIN_PLANETS;
     }
 
     @Override
     public void generate(AnomalyContentSite site) {
-        if (place(site, Global.getSector()).isEmpty()) {
+        if (place(site).isEmpty()) {
             throw new IllegalStateException("no planet for an excavation site");
         }
     }
 
-    static List<ExcavationSite> place(AnomalyContentSite site, SectorAPI sector) {
+    static List<ExcavationSite> place(AnomalyContentSite site) {
         Random random = site.random(PLACEMENT_SALT);
         List<PlanetAPI> planets = new ArrayList<>(site.freePlanets(true).stream().filter(planet -> StateFields.fits(planet.getId())).toList());
         Collections.shuffle(planets, random);
         int count = Math.min(planets.size(), ExcavationRules.siteCount(random, Math.round(site.context().anomalyPercent(EXTRA_KEY))));
         List<ExcavationSite> placed = new ArrayList<>();
         for (int index = 0; index < count; index++) {
-            ExcavationSite placedSite = new ExcavationSite(index, planets.get(index).getId(), ExcavationRules.access(random),
-                    ExcavationRules.lean(sector, random), random.nextLong(), false);
+            ExcavationSite placedSite = new ExcavationSite(index, planets.get(index).getId(), ExcavationRules.access(random), random.nextLong(),
+                    false);
             ExcavationStates.record(site.state(ANOMALY_ID), placedSite);
             site.claim(planets.get(index));
             placed.add(placedSite);
@@ -95,7 +89,7 @@ public final class ExcavationSites implements LayoutShaper, ContentPlacer, RunPa
 
     @Override
     public ItemDrops.SiteLoot fleetItems(SectorAPI sector, CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, float share, Random random) {
-        return ExcavationLoot.fleetItems(sector, fleet, run, context, share, random);
+        return ExcavationLoot.fleetItems(fleet, context, share, random);
     }
 
     @Override
