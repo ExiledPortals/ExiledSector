@@ -26,7 +26,7 @@ import {
   snapAngleToTargets,
   snapNodeToAnchor,
 } from './geometry.ts';
-import { serializeUnlockConditions } from './serialization.ts';
+import { serializeUnlockConditions } from './fieldSchema.ts';
 import { replaceGroupTags, tagGroupOf } from './tags.ts';
 import { nameSlug, nodeById, nodeIdStem, type SkillType, type TreeDocument, type TreeNode } from './types.ts';
 import { validateTree } from './validation.ts';

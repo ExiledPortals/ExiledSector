@@ -1,16 +1,11 @@
-import fs from 'node:fs';
-import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { lineEndingOf, withLineEnding, type LineEnding } from '../../../shared/lineEndings.ts';
+import { readRepositoryFile } from '../../../test/testServer.ts';
 import { parseTreeDocument, serializeTreeFiles } from './serialization.ts';
 import { ATLAS_TREE_FILES, SHIP_TREE_FILES } from './treeFiles.ts';
 
-const BYTE_ORDER_MARK = String.fromCharCode(0xfeff);
-const PROJECT_ROOT = path.resolve(import.meta.dirname, '../../../../../..');
-
 function readProjectFile(relativePath: string): string {
-  const text = fs.readFileSync(path.join(PROJECT_ROOT, relativePath), 'utf8');
-  return text.startsWith(BYTE_ORDER_MARK) ? text.slice(1) : text;
+  return readRepositoryFile(relativePath, { stripByteOrderMark: true });
 }
 
 const ATLAS_TYPES_JSON = {

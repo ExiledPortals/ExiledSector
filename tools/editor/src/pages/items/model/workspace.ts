@@ -1,7 +1,7 @@
 import type { DataFiles } from '../../../api/client.ts';
 import type { Vocabulary } from '../../../api/vocabulary.ts';
 import { lineEndingOf, type LineEnding } from '../../../shared/lineEndings.ts';
-import { serializeSkillTypesText } from '../../tree/model/serialization.ts';
+import { parseSkillTypes, serializeSkillTypesText } from '../../tree/model/serialization.ts';
 import type { SkillType } from '../../tree/model/types.ts';
 import {
   markAnchorsSaved,
@@ -122,7 +122,7 @@ export function parseItemsModel(files: DataFiles, vocabulary: Vocabulary): Items
     corruptionPools: CORRUPTION_POOLS.map((pool) => parseCorruptionPoolCsv(files[pool.resource].content, pool)),
     doctrines: parseDoctrineArchivesCsv(files[DOCTRINE_ARCHIVE_RESOURCE].content),
     anchors: parseWormholeAnchorsCsv(files[WORMHOLE_ANCHOR_RESOURCE].content),
-    skillTypes: (JSON.parse(typesText) as { skillTypes: SkillType[] }).skillTypes,
+    skillTypes: parseSkillTypes(typesText, RESOURCE_FILE_NAMES[TYPES_RESOURCE]),
     typesText,
     typesKey: files[TYPES_RESOURCE].hash,
     typesLineEnding: lineEndingOf(typesText),

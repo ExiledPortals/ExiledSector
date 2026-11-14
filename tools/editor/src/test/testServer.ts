@@ -50,6 +50,13 @@ export function startTestServer(copiedFiles: string[], options: Pick<EditorServe
   };
 }
 
-export function readRepositoryFile(relativePath: string): string {
-  return fs.readFileSync(path.join(REPOSITORY_ROOT, relativePath), 'utf8');
+const BYTE_ORDER_MARK = String.fromCharCode(0xfeff);
+
+export interface RepositoryFileOptions {
+  stripByteOrderMark?: boolean;
+}
+
+export function readRepositoryFile(relativePath: string, options: RepositoryFileOptions = {}): string {
+  const text = fs.readFileSync(path.join(REPOSITORY_ROOT, relativePath), 'utf8');
+  return options.stripByteOrderMark && text.startsWith(BYTE_ORDER_MARK) ? text.slice(1) : text;
 }

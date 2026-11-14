@@ -1,29 +1,43 @@
 import { withLineEnding, type LineEnding } from '../../../shared/lineEndings.ts';
 import { linkedEntries, pruneConnectorEntries } from './connectors.ts';
-import { parseDecorations, RETIRED_DECORATION_LISTS, serializeDecoration, sortDecorationsByKind } from './decorations.ts';
+import { parseDecorations, RETIRED_DECORATION_LISTS, serializeDecoration, sortDecorationsByKind, type Decoration } from './decorations.ts';
 import {
-  ANCHOR_RECTANGLE_ASPECT,
-  PARAMETERISED_UNLOCK_CONDITIONS,
-  tierOf,
-  type EffectEntry,
-  type HullSizeEffectEntry,
-  type IntegratedEffects,
-  type OrbitAnchor,
-  type SkillType,
-  type TreeDocument,
-  type TreeNode,
-  type UnlockCondition,
-} from './types.ts';
+  CONNECTOR_CURVE_FIELDS,
+  INTEGRATED_EFFECTS_FIELDS,
+  NODE_PAIR_FIELDS,
+  ORBIT_ANCHOR_FIELDS,
+  refuseUnknownFields,
+  SKILL_TYPE_FIELDS,
+  TREE_NODE_FIELDS,
+  writeFields,
+  type JsonField,
+} from './fieldSchema.ts';
+import type { ConnectorCurve, NodePair, OrbitAnchor, SkillType, TreeDocument, TreeNode } from './types.ts';
 import type { TreeFiles } from './treeFiles.ts';
+
+interface SkillTypesFileJson {
+  skillTypes?: unknown;
+}
 
 interface TreeFileJson {
   volumes?: unknown;
   nodes?: TreeNode[];
-  connectorCurves?: TreeDocument['curves'];
-  hiddenConnectors?: TreeDocument['hiddenConnectors'];
+  connectorCurves?: ConnectorCurve[];
+  hiddenConnectors?: NodePair[];
   orbitAnchors?: OrbitAnchor[];
   decorations?: unknown[];
 }
+
+const SKILL_TYPES_FILE_FIELDS: readonly JsonField<SkillTypesFileJson>[] = [{ key: 'skillTypes' }];
+
+const TREE_FILE_FIELDS: readonly JsonField<TreeFileJson>[] = [
+  { key: 'volumes' },
+  { key: 'nodes' },
+  { key: 'connectorCurves' },
+  { key: 'hiddenConnectors' },
+  { key: 'orbitAnchors' },
+  { key: 'decorations' },
+];
 
 function parseJson<TValue>(text: string, fileName: string): TValue {
   try {
@@ -47,12 +61,63 @@ function parseVolumes(files: TreeFiles, treeJson: TreeFileJson): string[] {
   return volumes.slice() as string[];
 }
 
-export function parseTreeDocument(files: TreeFiles, typesText: string, treeText: string): TreeDocument {
-  const typesJson = parseJson<{ skillTypes?: SkillType[] }>(typesText, files.typesFileName);
-  const treeJson = parseJson<TreeFileJson>(treeText, files.layoutFileName);
+export function parseSkillTypes(typesText: string, typesFileName: string): SkillType[] {
+  const typesJson = parseJson<SkillTypesFileJson>(typesText, typesFileName);
+  refuseUnknownFields(typesJson, SKILL_TYPES_FILE_FIELDS, typesFileName, 'the top level');
   if (!Array.isArray(typesJson.skillTypes) || typesJson.skillTypes.length === 0) {
-    throw new Error(`${files.typesFileName} has no skill types`);
+    throw new Error(`${typesFileName} has no skill types`);
   }
+  const types = typesJson.skillTypes as SkillType[];
+  for (const type of types) {
+    refuseUnknownFields(type, SKILL_TYPE_FIELDS, typesFileName, `skill type "${type.id}"`);
+    refuseUnknownFields(type.integrated, INTEGRATED_EFFECTS_FIELDS, typesFileName, `the integrated block of skill type "${type.id}"`);
+  }
+  return types;
+}
+
+function refuseUnknownTreeFields(treeJson: TreeFileJson, fileName: string): void {
+  refuseUnknownFields(treeJson, TREE_FILE_FIELDS, fileName, 'the top level');
+  for (const node of treeJson.nodes ?? []) {
+    refuseUnknownFields(node, TREE_NODE_FIELDS, fileName, `node "${node.id}"`);
+  }
+  for (const curve of treeJson.connectorCurves ?? []) {
+    refuseUnknownFields(curve, CONNECTOR_CURVE_FIELDS, fileName, `the connector curve between "${curve.a}" and "${curve.b}"`);
+  }
+  for (const pair of treeJson.hiddenConnectors ?? []) {
+    refuseUnknownFields(pair, NODE_PAIR_FIELDS, fileName, `the hidden connector between "${pair.a}" and "${pair.b}"`);
+  }
+  for (const anchor of treeJson.orbitAnchors ?? []) {
+    refuseUnknownFields(anchor, ORBIT_ANCHOR_FIELDS, fileName, `orbit anchor "${anchor.id}"`);
+  }
+}
+
+export interface TreeDocumentContent {
+  types: SkillType[];
+  volumes?: string[];
+  nodes: (Omit<TreeNode, 'connectedTo'> & Partial<Pick<TreeNode, 'connectedTo'>>)[];
+  curves?: ConnectorCurve[];
+  hiddenConnectors?: NodePair[];
+  anchors?: OrbitAnchor[];
+  decorations: Decoration[];
+}
+
+export function normalizeTreeDocument(content: TreeDocumentContent): TreeDocument {
+  const document: TreeDocument = {
+    types: content.types,
+    volumes: content.volumes ?? [],
+    nodes: content.nodes.map((node) => ({ ...node, connectedTo: node.connectedTo ?? [] })),
+    curves: content.curves ?? [],
+    hiddenConnectors: content.hiddenConnectors ?? [],
+    anchors: content.anchors ?? [],
+    decorations: content.decorations,
+  };
+  pruneConnectorEntries(document);
+  return document;
+}
+
+export function parseTreeDocument(files: TreeFiles, typesText: string, treeText: string): TreeDocument {
+  const types = parseSkillTypes(typesText, files.typesFileName);
+  const treeJson = parseJson<TreeFileJson>(treeText, files.layoutFileName);
   if (!Array.isArray(treeJson.nodes) || treeJson.nodes.length === 0) {
     throw new Error(`${files.layoutFileName} has no nodes`);
   }
@@ -62,169 +127,20 @@ export function parseTreeDocument(files: TreeFiles, typesText: string, treeText:
       `${files.layoutFileName} still has ${retiredLists.join(', ')}; move those entries into "decorations" with a kind before editing, or a save would drop them`,
     );
   }
-  const document: TreeDocument = {
-    types: typesJson.skillTypes,
+  refuseUnknownTreeFields(treeJson, files.layoutFileName);
+  return normalizeTreeDocument({
+    types,
     volumes: parseVolumes(files, treeJson),
-    nodes: treeJson.nodes.map((node) => ({ ...node, connectedTo: node.connectedTo ?? [] })),
-    curves: treeJson.connectorCurves ?? [],
-    hiddenConnectors: treeJson.hiddenConnectors ?? [],
-    anchors: treeJson.orbitAnchors ?? [],
+    nodes: treeJson.nodes,
+    curves: treeJson.connectorCurves,
+    hiddenConnectors: treeJson.hiddenConnectors,
+    anchors: treeJson.orbitAnchors,
     decorations: parseDecorations(treeJson.decorations, files.layoutFileName),
-  };
-  pruneConnectorEntries(document);
-  return document;
-}
-
-export function serializeUnlockConditions(conditions: UnlockCondition[] | undefined): UnlockCondition[] {
-  const out: UnlockCondition[] = [];
-  for (const condition of conditions ?? []) {
-    if (condition.type === 'characterStat' && condition.statId) {
-      out.push({ type: 'characterStat', statId: condition.statId });
-    } else if (condition.type === 'minShipLevel' && condition.level) {
-      out.push({ type: 'minShipLevel', level: condition.level });
-    } else if (condition.type === 'memoryFlag' && condition.key) {
-      out.push({ type: 'memoryFlag', key: condition.key });
-    } else if (condition.type === 'anchorFound' && condition.volume) {
-      out.push({ type: 'anchorFound', volume: condition.volume });
-    } else if (condition.type === 'blueprint' && condition.id) {
-      out.push({ type: 'blueprint', category: condition.category || 'hullmod', id: condition.id });
-    } else if (condition.type && !PARAMETERISED_UNLOCK_CONDITIONS.has(condition.type)) {
-      out.push({ type: condition.type });
-    }
-  }
-  return out;
-}
-
-function serializeEffects(entries: EffectEntry[]): Record<string, unknown>[] {
-  return entries.map((entry) => ({ effect: entry.effect, magnitude: entry.magnitude }));
-}
-
-function serializeHullSizeEffects(entries: HullSizeEffectEntry[]): Record<string, unknown>[] {
-  return entries.map((entry) => ({
-    effect: entry.effect,
-    frigate: entry.frigate,
-    destroyer: entry.destroyer,
-    cruiser: entry.cruiser,
-    capitalShip: entry.capitalShip,
-  }));
-}
-
-function serializeIntegrated(integrated: IntegratedEffects): Record<string, unknown> {
-  const out: Record<string, unknown> = {};
-  if (integrated.effects?.length) {
-    out.effects = serializeEffects(integrated.effects);
-  }
-  if (integrated.hullSizeEffects?.length) {
-    out.hullSizeEffects = serializeHullSizeEffects(integrated.hullSizeEffects);
-  }
-  if (integrated.effectText?.length) {
-    out.effectText = integrated.effectText;
-  }
-  return out;
+  });
 }
 
 export function serializeType(type: SkillType): Record<string, unknown> {
-  const out: Record<string, unknown> = { id: type.id, name: type.name, icon: type.icon };
-  if (tierOf(type) !== 'SMALL') {
-    out.tier = tierOf(type);
-  }
-  if (type.effects?.length) {
-    out.effects = serializeEffects(type.effects);
-  }
-  if (type.hullSizeEffects?.length) {
-    out.hullSizeEffects = serializeHullSizeEffects(type.hullSizeEffects);
-  }
-  if (type.integrated) {
-    out.integrated = serializeIntegrated(type.integrated);
-  }
-  if (type.vanillaHullMod) {
-    out.vanillaHullMod = type.vanillaHullMod;
-  }
-  if (type.itemCost?.itemId) {
-    out.itemCost = { itemId: type.itemCost.itemId, quantity: type.itemCost.quantity || 0 };
-  }
-  if (type.temporaryAfterDeploymentSeconds) {
-    out.temporaryAfterDeploymentSeconds = type.temporaryAfterDeploymentSeconds;
-  }
-  if (type.requiredHullSizes?.length) {
-    out.requiredHullSizes = type.requiredHullSizes;
-  }
-  const unlockConditions = serializeUnlockConditions(type.unlockConditions);
-  if (unlockConditions.length) {
-    out.unlockConditions = unlockConditions;
-  }
-  if (type.exclusiveHullMods?.length) {
-    out.exclusiveHullMods = type.exclusiveHullMods;
-  }
-  if (type.phantomHullMods?.length) {
-    out.phantomHullMods = type.phantomHullMods;
-  }
-  if (type.exclusiveSkillTypes?.length) {
-    out.exclusiveSkillTypes = type.exclusiveSkillTypes;
-  }
-  if (type.options?.length) {
-    out.options = type.options;
-  }
-  if (type.flavour) {
-    out.flavour = type.flavour;
-  }
-  if (type.flavourAutomated) {
-    out.flavourAutomated = type.flavourAutomated;
-  }
-  if (type.effectText?.length) {
-    out.effectText = type.effectText;
-  }
-  if (type.todo) {
-    out.todo = type.todo;
-  }
-  if (type.tags?.length) {
-    out.tags = type.tags;
-  }
-  if (type.moduleShare) {
-    out.moduleShare = type.moduleShare;
-  }
-  return out;
-}
-
-function serializeTreeNode(node: TreeNode): Record<string, unknown> {
-  const out: Record<string, unknown> = { id: node.id, type: node.type, connectedTo: node.connectedTo, x: node.x, y: node.y };
-  if (node.orbitAnchorId) {
-    out.orbitAnchorId = node.orbitAnchorId;
-    out.orbitAngle = node.orbitAngle;
-  }
-  if (node.ringBeltPath) {
-    out.ringBeltPath = node.ringBeltPath;
-  }
-  if (node.ringBeltColor) {
-    out.ringBeltColor = node.ringBeltColor;
-  }
-  if (node.ringBeltWidth) {
-    out.ringBeltWidth = node.ringBeltWidth;
-  }
-  if (node.wormholeColor) {
-    out.wormholeColor = node.wormholeColor;
-  }
-  if (node.pairedWith) {
-    out.pairedWith = node.pairedWith;
-  }
-  if (node.tags?.length) {
-    out.tags = node.tags;
-  }
-  return out;
-}
-
-function serializeOrbitAnchor(anchor: OrbitAnchor): Record<string, unknown> {
-  const out: Record<string, unknown> = { id: anchor.id, x: anchor.x, y: anchor.y, radius: anchor.radius };
-  if (anchor.shape && anchor.shape !== 'circle') {
-    out.shape = anchor.shape;
-    if (anchor.shape === 'rectangle') {
-      out.aspectRatio = anchor.aspectRatio || ANCHOR_RECTANGLE_ASPECT;
-    }
-    if (anchor.rotation) {
-      out.rotation = anchor.rotation;
-    }
-  }
-  return out;
+  return writeFields(type, SKILL_TYPE_FIELDS);
 }
 
 export interface SkillTypesFile {
@@ -237,17 +153,17 @@ export function skillTypesFileObject(types: SkillType[]): SkillTypesFile {
 
 function treeFileObject(files: TreeFiles, document: TreeDocument): Record<string, unknown> {
   const out: Record<string, unknown> = files.declaresVolumes ? { volumes: document.volumes.slice() } : {};
-  out.nodes = document.nodes.map(serializeTreeNode);
+  out.nodes = document.nodes.map((node) => writeFields(node, TREE_NODE_FIELDS));
   const curves = linkedEntries(document, document.curves);
   const hiddenConnectors = linkedEntries(document, document.hiddenConnectors);
   if (curves.length) {
-    out.connectorCurves = curves.map((curve) => ({ a: curve.a, b: curve.b, controlX: curve.controlX, controlY: curve.controlY }));
+    out.connectorCurves = curves.map((curve) => writeFields(curve, CONNECTOR_CURVE_FIELDS));
   }
   if (hiddenConnectors.length) {
-    out.hiddenConnectors = hiddenConnectors.map((pair) => ({ a: pair.a, b: pair.b }));
+    out.hiddenConnectors = hiddenConnectors.map((pair) => writeFields(pair, NODE_PAIR_FIELDS));
   }
   if (document.anchors.length) {
-    out.orbitAnchors = document.anchors.map(serializeOrbitAnchor);
+    out.orbitAnchors = document.anchors.map((anchor) => writeFields(anchor, ORBIT_ANCHOR_FIELDS));
   }
   if (document.decorations.length) {
     out.decorations = sortDecorationsByKind(document.decorations).map(serializeDecoration);
