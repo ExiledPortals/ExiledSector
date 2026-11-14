@@ -6,6 +6,7 @@ import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTiers;
+import exiledsector.charts.layout.ChartGeometry;
 import exiledsector.charts.loot.ChartVanillaLoot;
 import exiledsector.data.WeightedPick;
 import exiledsector.i18n.Translation;
@@ -23,15 +24,11 @@ public final class ChartSites {
 
         public Vector2f position() {
             Vector2f centre = focus == null || focus.getLocation() == null ? new Vector2f() : focus.getLocation();
-            return pointAround(centre, Math.toRadians(angle), radius);
+            return ChartGeometry.pointAround(centre, Math.toRadians(angle), radius);
         }
     }
 
     private ChartSites() {
-    }
-
-    public static Vector2f pointAround(Vector2f centre, double radians, float radius) {
-        return new Vector2f(centre.x + (float) Math.cos(radians) * radius, centre.y + (float) Math.sin(radians) * radius);
     }
 
     public static SectorEntityToken centreOf(StarSystemAPI system) {
@@ -85,7 +82,7 @@ public final class ChartSites {
         }
         try {
             ChartVanillaLoot.addToSite(site, poi.kind(), derelict ? ChartVanillaLoot.SiteDrops.NONE : engine.siteDrops(poi.specForSalvage()),
-                    context == null ? ChartGenContext.none() : context, ChartTiers.clamp(tier), lootRandom);
+                    ChartGenContext.orNone(context), ChartTiers.clamp(tier), lootRandom);
         } catch (RuntimeException | LinkageError e) {
             system.removeEntity(site);
             LOG.error("[ExiledSector] Adding loot to a Star Chart " + poi.id() + " site failed; the site is left out", e);

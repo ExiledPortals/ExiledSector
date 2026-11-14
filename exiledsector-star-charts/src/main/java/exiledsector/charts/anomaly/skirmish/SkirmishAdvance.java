@@ -2,10 +2,8 @@ package exiledsector.charts.anomaly.skirmish;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetAssignment;
-import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.charts.content.ChartContentGenerator;
-import exiledsector.charts.content.ChartSites;
 import exiledsector.charts.content.ChartStations;
 
 final class SkirmishAdvance {
@@ -37,10 +35,7 @@ final class SkirmishAdvance {
         if (station != null) {
             attacker.addAssignment(FleetAssignment.ORBIT_AGGRESSIVE, station, ChartContentGenerator.ASSIGNMENT_DAYS);
         }
-        SectorEntityToken patrolCentre = ChartSites.centreOf(system);
-        if (patrolCentre != null) {
-            attacker.addAssignment(FleetAssignment.PATROL_SYSTEM, patrolCentre, ChartContentGenerator.ASSIGNMENT_DAYS);
-        }
+        ChartContentGenerator.patrolSystem(attacker, system);
         return true;
     }
 }

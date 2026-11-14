@@ -117,8 +117,8 @@ class ChartFleetLootTest {
 
         assertEquals(25f, fleetMemory.getFloat(ChartIds.START_DP_MEMORY_KEY));
         assertEquals(30f, fleetMemory.getFloat(ChartIds.START_FP_MEMORY_KEY));
-        assertTrue(ChartFleetLoot.isChartFleet(fleet));
-        assertFalse(ChartFleetLoot.isChartFleet(mock(CampaignFleetAPI.class)));
+        assertTrue(ChartFleetLoot.hasLootLedger(fleet));
+        assertFalse(ChartFleetLoot.hasLootLedger(mock(CampaignFleetAPI.class)));
     }
 
     @Test
@@ -228,7 +228,7 @@ class ChartFleetLootTest {
             StarSystemAPI system = chartSystem(probe);
 
             assertTrue(ChartFleetLoot.adoptDefender(drones, system));
-            assertTrue(ChartFleetLoot.isChartFleet(drones));
+            assertTrue(ChartFleetLoot.hasLootLedger(drones));
             assertEquals(40f, probe.getMemoryWithoutUpdate().getFloat(ChartIds.START_DP_MEMORY_KEY));
             assertEquals(200f, probe.getMemoryWithoutUpdate().getFloat(ChartIds.START_FP_MEMORY_KEY));
             Mockito.verify(drones).addDropRandom(Mockito.<SalvageEntityGenDataSpec.DropData>argThat(drop -> "weapons1".equals(drop.group)));
@@ -253,7 +253,7 @@ class ChartFleetLootTest {
 
         assertFalse(ChartFleetLoot.adoptDefender(stray, system));
         assertFalse(ChartFleetLoot.adoptDefender(defenders(40f), mock(LocationAPI.class)));
-        assertFalse(ChartFleetLoot.isChartFleet(stray));
+        assertFalse(ChartFleetLoot.hasLootLedger(stray));
     }
 
     @Test

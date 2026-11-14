@@ -96,7 +96,7 @@ public final class ChartContentPlanner {
             }
         }
         return new PlannedStation(variantId, STATION_OFFICER_LEVEL + tier.officerLevelBonus() + BOSS_OFFICER_LEVEL_BONUS,
-                plannedBoss(tier, fleetQuality(tier), guardedPoi, ChartBossType.FLEET));
+                plannedBoss(tier, guardedPoi, ChartBossType.FLEET));
     }
 
     public static float fleetQuality(ChartTier tier) {
@@ -203,15 +203,12 @@ public final class ChartContentPlanner {
         List<PlannedPoi> guardedPois = new ArrayList<>(pois);
         List<Integer> guardedIndices = guardedIndices(guardedPois);
         int guardCount = Math.min(fleetCount, guardedIndices.size());
-        float quality = fleetQuality(tier);
         for (int i = 0; i < fleetCount; i++) {
             float sizePercent = Math.max(MIN_FLEET_SIZE, fleetSize * shares[i] * fleetCount / shareTotal);
             boolean guard = i < guardCount;
             int poiIndex = guard && i < guardedIndices.size() ? guardedIndices.get(i) : NO_POI;
-            fleets.add(new PlannedFleet(guard ? FleetRole.GUARD : FleetRole.PATROL, poiIndex, ChartTier.fleetPoints(Math.min(FLEET_SIZE_CAP, sizePercent)),
-                    quality / ChartTier.PERCENT, tier.officerLevelBonus(), tier.officerCountBonus(),
-                    Math.min(MAX_OVERFLOW_STRENGTH, spread.strengthBonus() + overflowStrength(sizePercent, FLEET_SIZE_CAP)),
-                    averageSMods(quality)));
+            fleets.add(new PlannedFleet(guard ? FleetRole.GUARD : FleetRole.PATROL, poiIndex, FleetStrength.regular(tier, sizePercent, FLEET_SIZE_CAP),
+                    Math.min(MAX_OVERFLOW_STRENGTH, spread.strengthBonus() + overflowStrength(sizePercent, FLEET_SIZE_CAP))));
         }
         for (int i = 0; i < guardedPois.size(); i++) {
             PlannedPoi planned = guardedPois.get(i);
@@ -220,25 +217,21 @@ public final class ChartContentPlanner {
             }
         }
         if (tier.boss()) {
-            fleets.add(plannedBoss(tier, quality, mostValuableIndex(guardedPois), bossType));
+            fleets.add(plannedBoss(tier, mostValuableIndex(guardedPois), bossType));
         }
         return guardedPois;
     }
 
-    public static PlannedFleet plannedBoss(ChartTier tier, float fleetQuality, int targetPoi) {
-        return plannedBoss(tier, fleetQuality, targetPoi, ChartBossType.FLEET);
+    public static PlannedFleet plannedBoss(ChartTier tier, int targetPoi) {
+        return plannedBoss(tier, targetPoi, ChartBossType.FLEET);
     }
 
-    public static PlannedFleet plannedBoss(ChartTier tier, float fleetQuality, int targetPoi, ChartBossType bossType) {
+    public static PlannedFleet plannedBoss(ChartTier tier, int targetPoi, ChartBossType bossType) {
         ChartBosses.Definition definition = ChartBosses.definition(bossType);
         float fleetShare = definition == null ? 1f : definition.fleetShare();
         float bossSize = Math.max(MIN_FLEET_SIZE, tier.bossSize() * fleetShare);
-        float bossQuality = bossQuality(fleetQuality);
         FleetRole role = bossType == ChartBossType.STATION ? FleetRole.STATION_GUARD : FleetRole.BOSS;
-        return new PlannedFleet(role, targetPoi, ChartTier.fleetPoints(Math.min(BOSS_SIZE_CAP, bossSize)),
-                bossQuality / ChartTier.PERCENT,
-                tier.officerLevelBonus() + BOSS_OFFICER_LEVEL_BONUS, tier.officerCountBonus() + BOSS_OFFICER_COUNT_BONUS,
-                overflowStrength(bossSize, BOSS_SIZE_CAP), averageSMods(bossQuality));
+        return new PlannedFleet(role, targetPoi, FleetStrength.boss(tier, bossSize), overflowStrength(bossSize, BOSS_SIZE_CAP));
     }
 
     public static float bossQuality(float fleetQuality) {

@@ -9,6 +9,7 @@ import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.ChartPoi;
 import exiledsector.charts.content.ChartSites;
+import exiledsector.charts.layout.ChartGeometry;
 import exiledsector.charts.content.ChartSpot;
 import exiledsector.charts.content.ContentForces;
 import exiledsector.charts.content.SettledObjective;
@@ -81,7 +82,7 @@ public final class AnomalyContentSite {
         this.runId = runId;
         this.tier = tier;
         this.factionId = factionId;
-        this.context = context == null ? ChartGenContext.none() : context;
+        this.context = ChartGenContext.orNone(context);
         this.pois = pois == null ? List.of() : pois.stream().filter(Objects::nonNull).toList();
         this.guardedPois = guardedPois == null ? List.of() : guardedPois.stream().filter(Objects::nonNull).toList();
         this.entry = entry == null ? null : new Vector2f(entry);
@@ -263,8 +264,7 @@ public final class AnomalyContentSite {
     }
 
     private static Vector2f offset(Vector2f from, float distance, Random random) {
-        double angle = random.nextDouble() * Math.PI * 2d;
-        return ChartSites.pointAround(from, angle, distance);
+        return ChartGeometry.pointAtRandomAngle(from, distance, random);
     }
 
     public SectorEntityToken addSite(ChartPoi poi, ChartSites.Orbit orbit, Random random) {

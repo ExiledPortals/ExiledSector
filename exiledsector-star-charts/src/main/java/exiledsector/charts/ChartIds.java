@@ -87,6 +87,11 @@ public final class ChartIds {
         return runId != null && entity.hasTag(runTag(runId));
     }
 
+    public static void tagForRun(SectorEntityToken entity, String runId) {
+        entity.addTag(ENTITY_TAG);
+        entity.addTag(runTag(runId));
+    }
+
     public static String locationIdOf(LocationAPI location) {
         if (location == null || location.isHyperspace()) {
             return HYPERSPACE_LOCATION_ID;

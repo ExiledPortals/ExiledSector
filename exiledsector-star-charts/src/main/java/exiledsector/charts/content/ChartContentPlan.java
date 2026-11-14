@@ -21,11 +21,14 @@ public record ChartContentPlan(int tier, ChartFaction faction, List<PlannedPoi> 
     public record PlannedPoi(ChartPoi poi, boolean guarded) {
     }
 
-    public record PlannedFleet(FleetRole role, int poiIndex, float combatPoints, float quality, int officerLevelBonus, int officerCountBonus,
-                               int strengthBonus, int averageSMods) {
+    public record PlannedFleet(FleetRole role, int poiIndex, FleetStrength strength, int strengthBonus) {
 
         public boolean guardsPoi() {
             return poiIndex >= 0;
+        }
+
+        public PlannedFleet withRole(FleetRole changedRole) {
+            return new PlannedFleet(changedRole, poiIndex, strength, strengthBonus);
         }
     }
 
@@ -71,7 +74,7 @@ public record ChartContentPlan(int tier, ChartFaction faction, List<PlannedPoi> 
         float points = 0f;
         for (PlannedFleet fleet : fleets) {
             if (fleet.role() == role) {
-                points += fleet.combatPoints();
+                points += fleet.strength().combatPoints();
             }
         }
         return points;

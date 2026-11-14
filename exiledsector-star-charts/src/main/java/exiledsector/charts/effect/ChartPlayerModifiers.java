@@ -19,12 +19,7 @@ public final class ChartPlayerModifiers {
 
     private static Map<ChartFleetStat, Float> activeMults = Map.of();
     private static Map<ChartFleetStat, Float> lastSource = Map.of();
-    private static int battleSizeBonus;
-    private static boolean shipSystemsDisabled;
-    private static boolean autopilotForced;
-    private static float arcStrikeEmp;
-    private static float weaponMisfireRate;
-    private static float damagePercentPerSMod;
+    private static ChartBattleRules battleRules = ChartBattleRules.NONE;
 
     private ChartPlayerModifiers() {
     }
@@ -34,56 +29,15 @@ public final class ChartPlayerModifiers {
     }
 
     public static boolean isActive() {
-        return !activeMults.isEmpty() || battleSizeBonus != 0 || shipSystemsDisabled || autopilotForced || arcStrikeEmp > 0f || weaponMisfireRate > 0f
-                || damagePercentPerSMod != 0f;
+        return !activeMults.isEmpty() || battleRules.isActive();
     }
 
-    public static float arcStrikeEmp() {
-        return arcStrikeEmp;
+    public static ChartBattleRules battleRules() {
+        return battleRules;
     }
 
-    public static void setArcStrikeEmp(float emp) {
-        arcStrikeEmp = emp;
-    }
-
-    public static float weaponMisfireRate() {
-        return weaponMisfireRate;
-    }
-
-    public static void setWeaponMisfireRate(float misfiresPerSecond) {
-        weaponMisfireRate = misfiresPerSecond;
-    }
-
-    public static float damagePercentPerSMod() {
-        return damagePercentPerSMod;
-    }
-
-    public static void setDamagePercentPerSMod(float percent) {
-        damagePercentPerSMod = percent;
-    }
-
-    public static boolean autopilotForced() {
-        return autopilotForced;
-    }
-
-    public static void setAutopilotForced(boolean forced) {
-        autopilotForced = forced;
-    }
-
-    public static boolean shipSystemsDisabled() {
-        return shipSystemsDisabled;
-    }
-
-    public static void setShipSystemsDisabled(boolean disabled) {
-        shipSystemsDisabled = disabled;
-    }
-
-    public static int battleSizeBonus() {
-        return battleSizeBonus;
-    }
-
-    public static void setBattleSizeBonus(int points) {
-        battleSizeBonus = points;
+    public static void setBattleRules(ChartBattleRules rules) {
+        battleRules = rules;
     }
 
     public static float mult(ChartFleetStat stat) {
@@ -105,20 +59,16 @@ public final class ChartPlayerModifiers {
     }
 
     public static boolean clear(CampaignFleetAPI playerFleet) {
-        battleSizeBonus = 0;
-        shipSystemsDisabled = false;
-        autopilotForced = false;
-        arcStrikeEmp = 0f;
-        weaponMisfireRate = 0f;
-        damagePercentPerSMod = 0f;
+        battleRules = ChartBattleRules.NONE;
         return set(Map.of(), playerFleet);
     }
 
     public static void afterShipCreation(ShipAPI ship) {
-        if (!shipSystemsDisabled && damagePercentPerSMod == 0f || ship == null || !isPlayerFleetMember(SkillTreeHullMod.memberOf(ship))) {
+        if (!battleRules.shipSystemsDisabled() && battleRules.damagePercentPerSMod() == 0f || ship == null
+                || !isPlayerFleetMember(SkillTreeHullMod.memberOf(ship))) {
             return;
         }
-        if (shipSystemsDisabled) {
+        if (battleRules.shipSystemsDisabled()) {
             ship.setShipSystemDisabled(true);
         }
         addSModDamageListener(ship, ship.getVariant());
@@ -132,7 +82,7 @@ public final class ChartPlayerModifiers {
     }
 
     public static void applyToFighter(ShipAPI fighter, ShipAPI ship) {
-        if (activeMults.isEmpty() && damagePercentPerSMod == 0f || fighter == null || ship == null
+        if (activeMults.isEmpty() && battleRules.damagePercentPerSMod() == 0f || fighter == null || ship == null
                 || !isPlayerFleetMember(ship.getMutableStats().getFleetMember())) {
             return;
         }
@@ -143,7 +93,7 @@ public final class ChartPlayerModifiers {
     }
 
     private static void addSModDamageListener(ShipAPI ship, ShipVariantAPI sModSource) {
-        ChartSModDamageListener listener = ChartSModDamageListener.of(damagePercentPerSMod, sModSource);
+        ChartSModDamageListener listener = ChartSModDamageListener.of(battleRules.damagePercentPerSMod(), sModSource);
         if (listener != null && !ship.hasListenerOfClass(ChartSModDamageListener.class)) {
             ship.addListener(listener);
         }

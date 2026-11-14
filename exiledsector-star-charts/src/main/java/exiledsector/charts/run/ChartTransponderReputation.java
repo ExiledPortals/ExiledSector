@@ -5,12 +5,11 @@ import com.fs.starfarer.api.campaign.BattleAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
-import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.CoreReputationPlugin.RepActionEnvelope;
 import com.fs.starfarer.api.impl.campaign.CoreReputationPlugin.RepActions;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
-import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.RunFactionDress;
+import exiledsector.charts.content.ChartFleetMarks;
 import exiledsector.loot.FleetFactions;
 
 import java.util.HashSet;
@@ -45,7 +44,7 @@ public final class ChartTransponderReputation {
             return penalised;
         }
         for (CampaignFleetAPI fleet : enemyFleets) {
-            String factionId = isChartFleet(fleet) ? realFactionOf(fleet) : null;
+            String factionId = ChartFleetMarks.isRunFleet(fleet) && fleet.getFaction() != null ? realFactionOf(fleet) : null;
             if (factionId != null && !NEVER_PENALISED.contains(factionId) && !hostileToPlayer.test(factionId)) {
                 penalised.add(factionId);
             }
@@ -62,11 +61,6 @@ public final class ChartTransponderReputation {
 
     static String realFactionOf(CampaignFleetAPI fleet) {
         return FleetFactions.realFactionIdOf(fleet);
-    }
-
-    private static boolean isChartFleet(CampaignFleetAPI fleet) {
-        MemoryAPI memory = fleet == null ? null : fleet.getMemoryWithoutUpdate();
-        return memory != null && memory.contains(ChartIds.TIER_MEMORY_KEY) && fleet.getFaction() != null;
     }
 
     private static boolean hostileToPlayer(SectorAPI sector, String factionId) {

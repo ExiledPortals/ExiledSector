@@ -27,6 +27,6 @@ final class SkirmishPlanner {
 
     static PlannedFleet officerFleet(ChartTier tier, String rankId) {
         ChartTier ranked = tier.withExtraBossSize(OfficerRanks.rank(rankId).bossSizePercent());
-        return ChartContentPlanner.plannedBoss(ranked, ChartContentPlanner.fleetQuality(ranked), ChartContentPlanner.NO_POI, ChartBossType.FLEET);
+        return ChartContentPlanner.plannedBoss(ranked, ChartContentPlanner.NO_POI, ChartBossType.FLEET);
     }
 }

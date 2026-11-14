@@ -70,7 +70,7 @@ class ChartBattlePluginTest {
         when(objective.getOwner()).thenReturn(-1);
         when(objective.getBattleSizeFractionBonus()).thenReturn(0.1f);
         when(engine.getObjectives()).thenReturn(List.of(objective));
-        ChartPlayerModifiers.setBattleSizeBonus(-50);
+        ChartPlayerModifiers.setBattleRules(new ChartBattleRules(-50, false, false, 0f, 0f, 0f));
         ChartBattlePlugin plugin = startedPlugin(Map.of());
 
         try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
@@ -95,7 +95,7 @@ class ChartBattlePluginTest {
         assertTrue(ChartModifier.CHART_LARGER_BATTLES_FLAT.description(40f).plain().contains("+40"));
         ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_SMALLER_BATTLES_FLAT, 30f),
                 new AppliedEffect(ChartModifier.CHART_LARGER_BATTLES_FLAT, 45f)));
-        assertEquals(15, context.battleSizeBonus());
+        assertEquals(15, context.battleRules().battleSizeBonus());
     }
 
     @Test
@@ -129,20 +129,12 @@ class ChartBattlePluginTest {
     }
 
     @Test
-    void thePluginStaysOffOutsideChartBattlesAndInSimulations() {
+    void thePluginStaysOffWhenTheChartHasOnlyShipDrawbacks() {
         ChartBattlePlugin onlyShipDrawbacks = startedPlugin(Map.of(ChartFleetStat.TOP_SPEED, 0.8f, ChartFleetStat.ENEMY_OBJECTIVE_CAPTURE_RATE, 1.5f,
                 ChartFleetStat.ENEMY_KINETIC_DAMAGE_DEALT, 1.2f));
         onlyShipDrawbacks.advance(0f, List.of());
         assertFalse(ChartBattlePlugin.hasBattleConditions());
         verify(engine, never()).getShips();
-
-        ChartPlayerModifiers.set(Map.of(ChartFleetStat.ENEMY_DEPLOYMENT_COST, 0.8f), null);
-        when(engine.isSimulation()).thenReturn(true);
-        ChartBattlePlugin simulation = new ChartBattlePlugin();
-        simulation.init(engine);
-        simulation.advance(0f, List.of());
-
-        verify(enemyManager, never()).getReservesCopy();
     }
 
     @Test

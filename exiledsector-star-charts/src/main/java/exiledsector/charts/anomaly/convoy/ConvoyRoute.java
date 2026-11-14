@@ -1,7 +1,7 @@
 package exiledsector.charts.anomaly.convoy;
 
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import exiledsector.charts.content.ChartSites;
+import exiledsector.charts.layout.ChartGeometry;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
@@ -69,7 +69,7 @@ final class ConvoyRoute {
     }
 
     static Vector2f atAngle(double radians, float radius) {
-        return ChartSites.pointAround(new Vector2f(), radians, radius);
+        return ChartGeometry.pointAround(new Vector2f(), radians, radius);
     }
 
     static List<SectorEntityToken> nearestFirst(Vector2f start, List<SectorEntityToken> stops) {

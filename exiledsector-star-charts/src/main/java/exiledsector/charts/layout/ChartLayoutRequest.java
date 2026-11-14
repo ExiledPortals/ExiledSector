@@ -16,7 +16,7 @@ public record ChartLayoutRequest(long seed, StarSystemType systemType, int tier,
             systemType = null;
         }
         tier = ChartTiers.clamp(tier);
-        chartContext = chartContext == null ? ChartGenContext.none() : chartContext;
+        chartContext = ChartGenContext.orNone(chartContext);
         recipe = recipe == null ? ChartLayoutRecipe.ORDINARY : recipe;
     }
 

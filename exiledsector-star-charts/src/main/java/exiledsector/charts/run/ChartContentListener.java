@@ -22,15 +22,13 @@ public class ChartContentListener implements FleetEventListener {
         if (!ChartRuns.hasRun()) {
             return;
         }
-        try {
+        runSafely(() -> {
             ChartObjectives.fleetGone(Global.getSector(), fleet, reason, param);
             AnomalyRun run = AnomalyRun.live(Global.getSector());
             if (run != null) {
                 ChartAnomalies.fleetGone(run, fleet);
             }
-        } catch (RuntimeException | LinkageError e) {
-            reportFailure(e);
-        }
+        });
     }
 
     @Override
@@ -38,27 +36,19 @@ public class ChartContentListener implements FleetEventListener {
         if (!ChartRuns.hasRun()) {
             return;
         }
-        try {
-            ChartTransponderReputation.battleOccurred(battle);
-        } catch (RuntimeException | LinkageError e) {
-            reportFailure(e);
-        }
-        try {
-            OfficerSightings.battleOccurred(battle);
-        } catch (RuntimeException | LinkageError e) {
-            reportFailure(e);
-        }
-        try {
-            OfficerTurns.battleOccurred(battle, primaryWinner);
-        } catch (RuntimeException | LinkageError e) {
-            reportFailure(e);
-        }
+        runSafely(() -> ChartTransponderReputation.battleOccurred(battle));
+        runSafely(() -> OfficerSightings.battleOccurred(battle));
+        runSafely(() -> OfficerTurns.battleOccurred(battle, primaryWinner));
     }
 
-    private void reportFailure(Throwable cause) {
-        if (!failureReported) {
-            failureReported = true;
-            LOG.error("[ExiledSector] Handling a Star Chart fleet or battle report failed; the objective is checked again every second while inside", cause);
+    private void runSafely(Runnable step) {
+        try {
+            step.run();
+        } catch (RuntimeException | LinkageError e) {
+            if (!failureReported) {
+                failureReported = true;
+                LOG.error("[ExiledSector] Handling a Star Chart fleet or battle report failed; the objective is checked again every second while inside", e);
+            }
         }
     }
 }

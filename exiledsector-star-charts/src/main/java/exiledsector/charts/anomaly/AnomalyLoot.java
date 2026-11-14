@@ -32,7 +32,7 @@ public record AnomalyLoot(String scope, String siteId, float baseSteps, float st
     }
 
     public ChartGenContext leaning(ChartGenContext context, List<DropType> leans) {
-        ChartGenContext base = context == null ? ChartGenContext.none() : context;
+        ChartGenContext base = ChartGenContext.orNone(context);
         List<ChartGenContext.AppliedEffect> effects = new ArrayList<>();
         for (DropType lean : leans) {
             ChartModifier effect = ChartModifier.forDropType(lean);

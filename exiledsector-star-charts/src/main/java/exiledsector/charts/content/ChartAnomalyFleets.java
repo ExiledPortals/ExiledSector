@@ -19,18 +19,16 @@ import java.util.Random;
 
 public final class ChartAnomalyFleets {
 
-    public record Spec(String factionId, String fleetType, float combatPoints, float freighterPoints, float tankerPoints, float quality,
-                       int officerLevelBonus, int officerCountBonus, int averageSMods) {
+    public record Spec(String factionId, String fleetType, FleetStrength strength, float freighterPoints, float tankerPoints) {
 
         public Spec atLeast(float minCombatPoints) {
-            return combatPoints >= minCombatPoints ? this
-                    : new Spec(factionId, fleetType, minCombatPoints, freighterPoints, tankerPoints, quality, officerLevelBonus, officerCountBonus,
-                    averageSMods);
+            FleetStrength raised = strength.atLeast(minCombatPoints);
+            return raised == strength ? this : new Spec(factionId, fleetType, raised, freighterPoints, tankerPoints);
         }
 
         public Spec withCargoShips(float addedFreighterPoints, float addedTankerPoints) {
-            return new Spec(factionId, fleetType, combatPoints, freighterPoints + Math.max(0f, addedFreighterPoints),
-                    tankerPoints + Math.max(0f, addedTankerPoints), quality, officerLevelBonus, officerCountBonus, averageSMods);
+            return new Spec(factionId, fleetType, strength, freighterPoints + Math.max(0f, addedFreighterPoints),
+                    tankerPoints + Math.max(0f, addedTankerPoints));
         }
     }
 
@@ -46,33 +44,23 @@ public final class ChartAnomalyFleets {
     }
 
     public static Spec combat(String factionId, String fleetType, ChartTier tier, float sizePercent, float sizeCap) {
-        float quality = ChartContentPlanner.fleetQuality(tier);
-        return new Spec(factionId, fleetType, ChartTier.fleetPoints(Math.min(sizeCap, sizePercent)), 0f, 0f,
-                quality / ChartTier.PERCENT, tier.officerLevelBonus(), tier.officerCountBonus(), ChartContentPlanner.averageSMods(quality));
+        return new Spec(factionId, fleetType, FleetStrength.regular(tier, sizePercent, sizeCap), 0f, 0f);
     }
 
     public static Spec bossCombat(String factionId, String fleetType, ChartTier tier, float sizePercent) {
-        float quality = ChartContentPlanner.bossQuality(ChartContentPlanner.fleetQuality(tier));
-        return new Spec(factionId, fleetType, ChartTier.fleetPoints(Math.min(ChartContentPlanner.BOSS_SIZE_CAP, sizePercent)), 0f, 0f,
-                quality / ChartTier.PERCENT, tier.officerLevelBonus() + ChartContentPlanner.BOSS_OFFICER_LEVEL_BONUS,
-                tier.officerCountBonus() + ChartContentPlanner.BOSS_OFFICER_COUNT_BONUS, ChartContentPlanner.averageSMods(quality));
+        return new Spec(factionId, fleetType, FleetStrength.boss(tier, sizePercent), 0f, 0f);
     }
 
     public static Spec freighters(String factionId, String fleetType, ChartTier tier, float freighterPoints, float tankerPoints, float combatPoints) {
         float quality = ChartContentPlanner.fleetQuality(tier);
-        return new Spec(factionId, fleetType, combatPoints, freighterPoints, tankerPoints, quality / ChartTier.PERCENT, 0, 0, 0);
+        return new Spec(factionId, fleetType, new FleetStrength(combatPoints, quality / ChartTier.PERCENT, 0, 0, 0), freighterPoints, tankerPoints);
     }
 
     static FleetParamsV3 params(Spec spec, Random random) {
-        FleetParamsV3 params = new FleetParamsV3(null, spec.factionId(), spec.quality(), spec.fleetType(), spec.combatPoints(),
-                spec.freighterPoints(), spec.tankerPoints(), 0f, 0f, 0f, 0f);
-        params.random = random;
-        params.ignoreMarketFleetSizeMult = true;
-        params.doNotPrune = true;
-        params.withOfficers = spec.combatPoints() > 0f;
-        params.officerLevelBonus = spec.officerLevelBonus();
-        params.officerNumberBonus = spec.officerCountBonus();
-        params.averageSMods = spec.averageSMods() > 0 ? spec.averageSMods() : null;
+        FleetParamsV3 params = spec.strength().toParams(spec.factionId(), spec.fleetType(), random);
+        params.freighterPts = spec.freighterPoints();
+        params.tankerPts = spec.tankerPoints();
+        params.withOfficers = spec.strength().combatPoints() > 0f;
         return params;
     }
 
@@ -129,7 +117,7 @@ public final class ChartAnomalyFleets {
     }
 
     public static void arm(CampaignFleetAPI fleet, boolean boss, ChartGenContext context, int tier) {
-        ChartContentGenerator.armAgainstPlayer(fleet, boss, context == null ? ChartGenContext.none() : context, ChartTiers.clamp(tier));
+        ChartContentGenerator.armAgainstPlayer(fleet, boss, ChartGenContext.orNone(context), ChartTiers.clamp(tier));
     }
 
     public static void revealBoss(CampaignFleetAPI boss) {

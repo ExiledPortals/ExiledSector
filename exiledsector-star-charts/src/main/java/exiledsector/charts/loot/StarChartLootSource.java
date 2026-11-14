@@ -80,7 +80,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
             List<FleetMemberAPI> members = fleetLosses.getValue();
             float deploymentPoints = BattleEngagement.deploymentPoints(members);
             boolean spent = ChartFleetLoot.lootSpent(sourceFleet);
-            if (ChartFleetLoot.isChartFleet(sourceFleet) || adoptedAsDefender(sourceFleet)) {
+            if (ChartFleetLoot.hasLootLedger(sourceFleet) || adoptedAsDefender(sourceFleet)) {
                 losses.shipSalvage.record(sourceFleet, members);
                 if (!spent) {
                     losses.chartFleetDeploymentPoints.merge(sourceFleet, deploymentPoints, Float::sum);
@@ -205,7 +205,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
             if (fleet.getMemoryWithoutUpdate().getBoolean(ChartIds.FEEDSTOCK_ONLY_MEMORY_KEY)) {
                 return FleetLootRules.FEEDSTOCK_ONLY;
             }
-            if (!ChartFleetLoot.isChartFleet(fleet)) {
+            if (!ChartFleetLoot.hasLootLedger(fleet)) {
                 return null;
             }
             ChartGenContext context = ChartRunEffects.contextOf(run);

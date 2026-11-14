@@ -300,7 +300,7 @@ public class BreachTerrainPlugin extends ChartAnomalyTerrain {
 
     private ChartGenContext runContext() {
         ChartRun run = ChartRuns.live(runId);
-        return run == null ? ChartGenContext.none() : ChartRunEffects.contextOf(run);
+        return ChartRunEffects.contextOf(run);
     }
 
     void collapse() {

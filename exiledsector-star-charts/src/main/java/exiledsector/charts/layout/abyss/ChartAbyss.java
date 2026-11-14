@@ -7,9 +7,9 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.procgen.NebulaEditor;
 import com.fs.starfarer.api.impl.campaign.terrain.BaseTiledTerrain.TileParams;
-import exiledsector.charts.content.ChartSites;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.layout.ChartDeepSpace;
+import exiledsector.charts.layout.ChartGeometry;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
@@ -101,7 +101,7 @@ public final class ChartAbyss {
         List<Vector2f> spots = new ArrayList<>();
         for (int i = 0; i < SITE_SPOTS_PER_PHOTOSPHERE; i++) {
             float distance = coreRadius + MIN_SITE_GAP + (MAX_SITE_GAP - MIN_SITE_GAP) * random.nextFloat();
-            spots.add(ChartSites.pointAround(centre, random.nextDouble() * Math.PI * 2d, distance));
+            spots.add(ChartGeometry.pointAtRandomAngle(centre, distance, random));
         }
         return spots;
     }
@@ -127,7 +127,7 @@ public final class ChartAbyss {
         for (int attempt = 0; attempt < count * PLACEMENT_ATTEMPTS && spots.size() < count; attempt++) {
             double angle = random.nextDouble() * Math.PI * 2d;
             float distance = SATELLITE_SPACING + SATELLITE_SPREAD * random.nextFloat();
-            Vector2f spot = ChartSites.pointAround(new Vector2f(), angle, distance);
+            Vector2f spot = ChartGeometry.pointAround(new Vector2f(), angle, distance);
             if (spots.stream().allMatch(taken -> Vector2f.sub(taken, spot, null).length() >= SATELLITE_SPACING)) {
                 spots.add(spot);
             }

@@ -26,7 +26,7 @@ public final class DormantFleetLoot {
             return ItemDrops.SiteLoot.NONE;
         }
         memory.set(DormantFleets.CRAFTING_ITEM_DROPPED_KEY, true);
-        float quantityMult = (context == null ? ChartGenContext.none() : context).anomalyMult(AnomalousDebris.CRAFTING_ITEM_KEY);
+        float quantityMult = ChartGenContext.orNone(context).anomalyMult(AnomalousDebris.CRAFTING_ITEM_KEY);
         Map<String, Integer> craftingItems = new LinkedHashMap<>();
         for (int drop = DebrisRules.craftingItemCount(quantityMult, random); drop > 0; drop--) {
             Engram craftingItem = Engrams.pick(tier, random);

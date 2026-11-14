@@ -13,9 +13,9 @@ import exiledsector.charts.content.ChartBossType;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.ChartContentPlan.FleetRole;
 import exiledsector.charts.content.ChartContentPlan.PlannedFleet;
-import exiledsector.charts.content.ChartSites;
 import exiledsector.charts.content.ChartSpot;
 import exiledsector.charts.content.SettledObjective;
+import exiledsector.charts.layout.ChartGeometry;
 import exiledsector.charts.objective.ChartObjectives;
 import exiledsector.charts.officer.OfficerFleets;
 import org.apache.log4j.Logger;
@@ -96,7 +96,7 @@ final class SkirmishBattle {
     private void rallyAtStation(CampaignFleetAPI patrol) {
         patrol.clearAssignments();
         patrol.addAssignment(FleetAssignment.ORBIT_AGGRESSIVE, station, ChartContentGenerator.ASSIGNMENT_DAYS);
-        patrolSystem(patrol);
+        ChartContentGenerator.patrolSystem(patrol, site.system());
     }
 
     private CampaignFleetAPI spawnOfficerFleet(FightingSide side, AnomalyState state) {
@@ -123,13 +123,13 @@ final class SkirmishBattle {
         takeSide(fleet, side);
         ChartAnomalyFleets.arm(fleet, true, site.context(), site.tier());
         Vector2f holdPoint = attacking ? stagingPoint() : defendedPoint();
-        site.addFleet(fleet, ChartSites.pointAround(holdPoint, oneFleetRandom.nextDouble() * Math.PI * 2d, ChartContentGenerator.GUARD_OFFSET));
+        site.addFleet(fleet, ChartGeometry.pointAtRandomAngle(holdPoint, ChartContentGenerator.GUARD_OFFSET, oneFleetRandom));
         if (attacking) {
             fleet.addAssignment(FleetAssignment.ORBIT_PASSIVE, site.system().createToken(holdPoint.x, holdPoint.y), ChartContentGenerator.ASSIGNMENT_DAYS);
         } else {
             SectorEntityToken guarded = station != null ? station : site.system().createToken(holdPoint.x, holdPoint.y);
             fleet.addAssignment(FleetAssignment.ORBIT_AGGRESSIVE, guarded, ChartContentGenerator.ASSIGNMENT_DAYS);
-            patrolSystem(fleet);
+            ChartContentGenerator.patrolSystem(fleet, site.system());
         }
         ChartAnomalyFleets.revealBoss(fleet);
         String flagshipId = ChartObjectives.flagshipIdOf(fleet);
@@ -137,13 +137,6 @@ final class SkirmishBattle {
             SkirmishFlagships.record(state, SkirmishFlagship.standing(side, officerRecordId, fleet.getId(), flagshipId));
         }
         return fleet;
-    }
-
-    private void patrolSystem(CampaignFleetAPI fleet) {
-        SectorEntityToken patrolCentre = site.centre();
-        if (patrolCentre != null) {
-            fleet.addAssignment(FleetAssignment.PATROL_SYSTEM, patrolCentre, ChartContentGenerator.ASSIGNMENT_DAYS);
-        }
     }
 
     private Vector2f defendedPoint() {

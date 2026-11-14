@@ -7,6 +7,8 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import exiledsector.ModSounds;
 import exiledsector.compat.CombatGlow;
+import exiledsector.compat.FirstFailureLog;
+import exiledsector.charts.effect.ChartCombatPlugins;
 import exiledsector.charts.run.ChartRun;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
@@ -26,8 +28,7 @@ public class StormBattlePlugin extends BaseEveryFrameCombatPlugin {
     static final float LIGHT_SECONDS = 0.5f;
     static final Color ARC_FRINGE = new Color(110, 130, 255, 255);
     static final Color ARC_CORE = new Color(235, 240, 255, 255);
-    private static final Logger LOG = Logger.getLogger(StormBattlePlugin.class);
-    private static boolean failureReported;
+    private static final FirstFailureLog FAILURES = FirstFailureLog.errors(Logger.getLogger(StormBattlePlugin.class));
 
     private CombatEngineAPI engine;
     private boolean active;
@@ -43,7 +44,7 @@ public class StormBattlePlugin extends BaseEveryFrameCombatPlugin {
         active = false;
         overlay = null;
         try {
-            if (engine == null || !engine.isInCampaign() || engine.isSimulation() || engine.isInCampaignSim()) {
+            if (!ChartCombatPlugins.isCampaignBattle(engine)) {
                 return;
             }
             StormFrontTerrainPlugin front = StormBattles.playerFront();
@@ -99,9 +100,6 @@ public class StormBattlePlugin extends BaseEveryFrameCombatPlugin {
     }
 
     private static void reportFailure(Throwable failure) {
-        if (!failureReported) {
-            failureReported = true;
-            LOG.error("[ExiledSector] The Storm Front's battle strikes failed; they are off for this battle", failure);
-        }
+        FAILURES.report("[ExiledSector] The Storm Front's battle strikes failed; they are off for this battle", failure);
     }
 }

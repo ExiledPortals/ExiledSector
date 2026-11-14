@@ -13,10 +13,10 @@ import com.fs.starfarer.api.fleet.FleetMemberType;
 import com.fs.starfarer.api.impl.campaign.ids.Personalities;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.loading.VariantSource;
-import exiledsector.charts.ChartIds;
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.content.ChartAnomalyFleets;
+import exiledsector.charts.content.ChartFleetMarks;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.officer.scar.HullFacts;
 import exiledsector.charts.officer.scar.ScarMemory;
@@ -136,8 +136,7 @@ public final class OfficerFleets {
         }
         OfficerRank rank = OfficerRanks.rank(officer.rankId());
         if (rank.fleetStrengthPercent() > 0) {
-            int current = memory.get(ChartIds.STRENGTH_BONUS_MEMORY_KEY) instanceof Number stored ? stored.intValue() : 0;
-            memory.set(ChartIds.STRENGTH_BONUS_MEMORY_KEY, current + rank.fleetStrengthPercent());
+            ChartFleetMarks.addStrengthBonus(memory, rank.fleetStrengthPercent());
         }
         String commanderName = commander == null ? "" : commander.getNameString();
         fleet.setName(I18n.forGameText(() -> Translation.msg("chart.officer.fleet.name").arg("rank", rank.displayName())

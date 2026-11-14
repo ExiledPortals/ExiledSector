@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
+import exiledsector.compat.FirstFailureLog;
 import org.apache.log4j.Logger;
 
 public record RefitScreenLayout(float frameX, float frameY, float frameWidth, float frameHeight,
@@ -19,8 +20,7 @@ public record RefitScreenLayout(float frameX, float frameY, float frameWidth, fl
     static final float FLEET_LIST_WIDTH = 210f;
     static final float TAB_INSET = 3f;
     static final int CURRENT_ZOOM_FIELD = 2;
-    private static final Logger LOG = Logger.getLogger(RefitScreenLayout.class);
-    private static boolean measureFailureLogged;
+    private static final FirstFailureLog MEASURE_FAILURES = FirstFailureLog.warnings(Logger.getLogger(RefitScreenLayout.class));
 
     public float shipCentreX() {
         return shipAreaX + shipAreaWidth / 2f;
@@ -49,10 +49,8 @@ public record RefitScreenLayout(float frameX, float frameY, float frameWidth, fl
                 return measured;
             }
         } catch (Throwable e) {
-            if (!measureFailureLogged) {
-                measureFailureLogged = true;
-                LOG.warn("[ExiledSector] Couldn't measure the refit screen; the Hull Upgrades screen uses the vanilla layout sizes instead", e);
-            }
+            MEASURE_FAILURES.report(
+                    "[ExiledSector] Couldn't measure the refit screen; the Hull Upgrades screen uses the vanilla layout sizes instead", e);
         }
         return fallback(Global.getSettings().getScreenWidth(), Global.getSettings().getScreenHeight());
     }

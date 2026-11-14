@@ -11,7 +11,7 @@ public final class LootContexts {
     }
 
     public static ChartGenContext forFleet(CampaignFleetAPI fleet) {
-        ChartRun run = fleet == null || !ChartFleetLoot.isChartFleet(fleet) ? null : ChartFleetLoot.liveRunOf(fleet);
+        ChartRun run = fleet == null || !ChartFleetLoot.hasLootLedger(fleet) ? null : ChartFleetLoot.liveRunOf(fleet);
         return run == null ? global() : ChartRunEffects.contextOf(run);
     }
 

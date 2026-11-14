@@ -32,6 +32,7 @@ import exiledsector.charts.anomaly.RunFactionDress;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.ChartFaction;
 import exiledsector.charts.content.ChartFactions;
+import exiledsector.charts.content.ChartFleetMarks;
 import exiledsector.charts.effect.ChartEnemyShipEffects;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTier;
@@ -83,7 +84,7 @@ public final class DormantFleets {
         }
         prepare(fleet, runId, tier, seed, new Random(seed));
         setStrengthBonus(fleet, tier, context, false);
-        ChartVanillaLoot.addToFleet(fleet, false, context == null ? ChartGenContext.none() : context, tier, WITHHELD_DROPS);
+        ChartVanillaLoot.addToFleet(fleet, false, ChartGenContext.orNone(context), tier, WITHHELD_DROPS);
         ChartEnemyShipEffects.grant(fleet, context);
         return fleet;
     }
@@ -115,12 +116,7 @@ public final class DormantFleets {
     }
 
     static void setStrengthBonus(CampaignFleetAPI fleet, int tier, ChartGenContext context, boolean corrupted) {
-        int strengthBonus = DebrisRules.strengthBonus(adjustedTier(tier, context), corrupted);
-        if (strengthBonus > 0) {
-            fleet.getMemoryWithoutUpdate().set(ChartIds.STRENGTH_BONUS_MEMORY_KEY, strengthBonus);
-        } else {
-            fleet.getMemoryWithoutUpdate().unset(ChartIds.STRENGTH_BONUS_MEMORY_KEY);
-        }
+        ChartFleetMarks.setStrengthBonus(fleet.getMemoryWithoutUpdate(), DebrisRules.strengthBonus(adjustedTier(tier, context), corrupted));
     }
 
     static void populate(CampaignFleetAPI fleet, List<HullFaction> factions, int tier, ChartGenContext context, long seed, boolean corrupted) {
@@ -256,7 +252,7 @@ public final class DormantFleets {
             return false;
         }
         MemoryAPI memory = fleet.getMemoryWithoutUpdate();
-        int tier = memory.get(ChartIds.TIER_MEMORY_KEY) instanceof Number storedTier ? storedTier.intValue() : ChartTiers.LOWEST_TIER;
+        int tier = ChartFleetMarks.tierOf(memory, ChartTiers.LOWEST_TIER);
         long seed = buildSeed(memory);
         for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
             fleet.getFleetData().removeFleetMember(member);

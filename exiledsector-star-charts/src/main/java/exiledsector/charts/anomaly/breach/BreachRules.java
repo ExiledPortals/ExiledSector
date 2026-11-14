@@ -1,6 +1,6 @@
 package exiledsector.charts.anomaly.breach;
 
-import exiledsector.charts.content.ChartSites;
+import exiledsector.charts.layout.ChartGeometry;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
@@ -98,8 +98,7 @@ public final class BreachRules {
             float deepest = Math.max(MIN_CACHE_DEPTH, Math.min(MIN_CACHE_DEPTH + CACHE_DEPTH_RANGE, (maxRadius - CACHE_MARGIN - 1f) / maxRadius));
             float depth = MIN_CACHE_DEPTH + (deepest - MIN_CACHE_DEPTH) * (float) Math.pow(random.nextFloat(), CACHE_DEPTH_BIAS);
             for (int attempt = 0; attempt < CACHE_PLACEMENT_ATTEMPTS; attempt++) {
-                double angle = random.nextDouble() * Math.PI * 2d;
-                Vector2f at = ChartSites.pointAround(centre, angle, depth * maxRadius);
+                Vector2f at = ChartGeometry.pointAtRandomAngle(centre, depth * maxRadius, random);
                 if (clear == null || clear.test(at)) {
                     sites.add(new CacheSite(at.x, at.y, depth));
                     break;

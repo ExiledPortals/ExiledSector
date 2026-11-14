@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.CoreUITabId;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.compat.FirstFailureLog;
 import org.apache.log4j.Logger;
 
 public final class RefitShipDisplay {
@@ -15,8 +16,7 @@ public final class RefitShipDisplay {
     static final String GET_CURRENT_VARIANT = "getCurrentVariant";
     static final String SET_FLEET_MEMBER = "setFleetMember";
     static final String SET_FORCE_SET_MEMBER_NEXT_CALL = "setForceSetMemberNextCall";
-    private static final Logger LOG = Logger.getLogger(RefitShipDisplay.class);
-    private static boolean failureLogged;
+    private static final FirstFailureLog FAILURES = FirstFailureLog.warnings(Logger.getLogger(RefitShipDisplay.class));
 
     private RefitShipDisplay() {
     }
@@ -32,10 +32,7 @@ public final class RefitShipDisplay {
         try {
             rebuildSlots(refitPanelOf(UiReflection.call(UiReflection.coreUI(campaignUI), "getCurrentTab")), member, variant);
         } catch (Throwable e) {
-            if (!failureLogged) {
-                failureLogged = true;
-                LOG.warn("[ExiledSector] Couldn't rebuild the refit screen's weapon slots; they update once the ship is reselected", e);
-            }
+            FAILURES.report("[ExiledSector] Couldn't rebuild the refit screen's weapon slots; they update once the ship is reselected", e);
         }
     }
 

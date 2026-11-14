@@ -19,6 +19,8 @@ import com.fs.starfarer.api.impl.campaign.ids.Personalities;
 import com.fs.starfarer.api.impl.campaign.terrain.BaseRingTerrain;
 import com.fs.starfarer.api.impl.campaign.terrain.StarCoronaTerrainPlugin;
 import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.layout.ChartGeometry;
+import exiledsector.compat.FirstFailureLog;
 import exiledsector.charts.effect.ChartEnemyShipEffects;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
@@ -87,7 +89,7 @@ public final class ChartContentGenerator {
     static final Set<String> MEEK_PERSONALITIES = Set.of(Personalities.TIMID, Personalities.CAUTIOUS, Personalities.STEADY);
     private static final Logger LOG = Logger.getLogger(ChartContentGenerator.class);
     private static final ChartContentEngine VANILLA_ENGINE = new VanillaChartContentEngine();
-    private static final Set<String> REPORTED_FAILURES = new HashSet<>();
+    private static final FirstFailureLog FAILURES = FirstFailureLog.errors(LOG);
     private static ChartContentEngine engine = VANILLA_ENGINE;
 
     public record Hazard(Vector2f centre, float radius) {
@@ -123,7 +125,7 @@ public final class ChartContentGenerator {
             return ChartContent.none(clampedTier);
         }
         Build build = new Build(system, runId, clampedTier, seed, innerWormhole,
-                (chartContext == null ? ChartGenContext.none() : chartContext).withAnomalyEffects(plan.anomalies()), featureAnchor);
+                ChartGenContext.orNone(chartContext).withAnomalyEffects(plan.anomalies()), featureAnchor);
         try {
             build.placePois(plan);
             build.spawnFleets(plan);
@@ -207,15 +209,7 @@ public final class ChartContentGenerator {
     }
 
     static FleetParamsV3 fleetParams(String factionId, PlannedFleet planned, Random fleetRandom) {
-        FleetParamsV3 params = new FleetParamsV3(null, factionId, planned.quality(), fleetType(planned.role()), planned.combatPoints(),
-                0f, 0f, 0f, 0f, 0f, 0f);
-        params.random = fleetRandom;
-        params.ignoreMarketFleetSizeMult = true;
-        params.doNotPrune = true;
-        params.withOfficers = true;
-        params.officerLevelBonus = planned.officerLevelBonus();
-        params.officerNumberBonus = planned.officerCountBonus();
-        params.averageSMods = planned.averageSMods() > 0 ? planned.averageSMods() : null;
+        FleetParamsV3 params = planned.strength().toParams(factionId, fleetType(planned.role()), fleetRandom);
         if (planned.role().bossFleet()) {
             params.forceAllowPhaseShipsEtc = true;
         }
@@ -288,9 +282,7 @@ public final class ChartContentGenerator {
 
     private static void markContent(CampaignFleetAPI fleet, String runId, int tier, int strengthBonus, long fleetSeed, boolean boss) {
         MemoryAPI memory = fleet.getMemoryWithoutUpdate();
-        if (strengthBonus > 0) {
-            memory.set(ChartIds.STRENGTH_BONUS_MEMORY_KEY, strengthBonus);
-        }
+        ChartFleetMarks.setStrengthBonus(memory, strengthBonus);
         for (String flag : HOSTILITY_FLAGS) {
             memory.set(flag, true);
         }
@@ -303,22 +295,21 @@ public final class ChartContentGenerator {
     }
 
     public static void tagContent(SectorEntityToken entity, String runId) {
-        entity.addTag(ChartIds.ENTITY_TAG);
-        entity.addTag(ChartIds.runTag(runId));
+        ChartIds.tagForRun(entity, runId);
         entity.addTag(ChartIds.CONTENT_TAG);
     }
 
+    public static void patrolSystem(CampaignFleetAPI fleet, StarSystemAPI system) {
+        SectorEntityToken patrolCentre = ChartSites.centreOf(system);
+        if (patrolCentre != null) {
+            fleet.addAssignment(FleetAssignment.PATROL_SYSTEM, patrolCentre, ASSIGNMENT_DAYS);
+        }
+    }
+
     private static void report(String what, long seed, Throwable cause) {
-        boolean first;
-        synchronized (REPORTED_FAILURES) {
-            first = REPORTED_FAILURES.add(what);
-        }
-        if (first) {
-            LOG.error("[ExiledSector] A Star Chart system (seed " + seed + ") could not " + what
-                    + "; the system gets less content. Later failures of this kind are logged at debug level", cause);
-        } else {
-            LOG.debug("[ExiledSector] A Star Chart system (seed " + seed + ") could not " + what + " again", cause);
-        }
+        String failure = "[ExiledSector] A Star Chart system (seed " + seed + ") could not " + what;
+        FAILURES.reportThenDebug(what, failure + "; the system gets less content. Later failures of this kind are logged at debug level",
+                failure + " again", cause);
     }
 
     static ChartContentEngine engine() {
@@ -327,12 +318,12 @@ public final class ChartContentGenerator {
 
     static void useEngineForTests(ChartContentEngine testEngine) {
         engine = testEngine;
-        REPORTED_FAILURES.clear();
+        FAILURES.reset();
     }
 
     public static void resetForTests() {
         engine = VANILLA_ENGINE;
-        REPORTED_FAILURES.clear();
+        FAILURES.reset();
     }
 
     private static final class Build {
@@ -514,7 +505,7 @@ public final class ChartContentGenerator {
 
         private void launchTwin(ChartContentPlan plan, PlannedFleet built, SectorEntityToken guarded, long fleetSeed, Vector2f originalAt) {
             Random twinRandom = Seeds.derived(fleetSeed, TWIN_SALT);
-            Vector2f twinAt = ChartSites.pointAround(originalAt, twinRandom.nextDouble() * Math.PI * 2d, TWIN_OFFSET);
+            Vector2f twinAt = ChartGeometry.pointAtRandomAngle(originalAt, TWIN_OFFSET, twinRandom);
             long twinSeed = twinRandom.nextLong();
             try {
                 CampaignFleetAPI twin = launchBuilt(plan, built, guarded, twinSeed, new Random(twinSeed), () -> twinAt, false);
@@ -557,8 +548,7 @@ public final class ChartContentGenerator {
             if (station != null && station.fallbackBoss() != null) {
                 return station.fallbackBoss();
             }
-            return new PlannedFleet(FleetRole.BOSS, guard.poiIndex(), guard.combatPoints(), guard.quality(), guard.officerLevelBonus(),
-                    guard.officerCountBonus(), guard.strengthBonus(), guard.averageSMods());
+            return guard.withRole(FleetRole.BOSS);
         }
 
         private CampaignFleetAPI spawnStation(ChartContentPlan plan, SectorEntityToken anchor, long fleetSeed) {
@@ -607,14 +597,14 @@ public final class ChartContentGenerator {
             }
             float angle = stationRandom.nextFloat() * 360f;
             float orbitRadius = anchor.getRadius() + STATION_ORBIT_GAP;
-            Vector2f at = ChartSites.pointAround(anchor.getLocation(), Math.toRadians(angle), orbitRadius);
+            Vector2f at = ChartGeometry.pointAround(anchor.getLocation(), Math.toRadians(angle), orbitRadius);
             station.setLocation(at.x, at.y);
             station.setCircularOrbitWithSpin(anchor, angle, orbitRadius, STATION_ORBIT_DAYS, STATION_SPIN, STATION_SPIN);
         }
 
         private Vector2f spawnLocation(FleetRole role, SectorEntityToken guarded, Random oneFleetRandom) {
             if (guarded != null && guarded.getLocation() != null) {
-                return ChartSites.pointAround(guarded.getLocation(), oneFleetRandom.nextDouble() * Math.PI * 2d, GUARD_OFFSET);
+                return ChartGeometry.pointAtRandomAngle(guarded.getLocation(), GUARD_OFFSET, oneFleetRandom);
             }
             if (role == FleetRole.PATROL) {
                 List<ChartSpot> clear = clearSpots(engine.spots(system, oneFleetRandom, null, POI_GAP), hazards, innerWormhole,
@@ -637,10 +627,7 @@ public final class ChartContentGenerator {
                 FleetAssignment hold = role == FleetRole.STATION_GUARD ? FleetAssignment.ORBIT_PASSIVE : FleetAssignment.ORBIT_AGGRESSIVE;
                 fleet.addAssignment(hold, holdPoint, ASSIGNMENT_DAYS);
             }
-            SectorEntityToken patrolCentre = ChartSites.centreOf(system);
-            if (patrolCentre != null) {
-                fleet.addAssignment(FleetAssignment.PATROL_SYSTEM, patrolCentre, ASSIGNMENT_DAYS);
-            }
+            patrolSystem(fleet, system);
         }
 
         void generateAnomalies(ChartContentPlan plan) {

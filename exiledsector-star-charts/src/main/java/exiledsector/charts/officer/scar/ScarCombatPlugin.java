@@ -11,6 +11,8 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.input.InputEventAPI;
+import exiledsector.charts.effect.ChartCombatPlugins;
+import exiledsector.compat.FirstFailureLog;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -23,8 +25,7 @@ public class ScarCombatPlugin extends BaseEveryFrameCombatPlugin {
     static final float SAMPLE_SECONDS = 1f;
     static final int PLAYER_OWNER = 0;
     static final int ENEMY_OWNER = 1;
-    private static final Logger LOG = Logger.getLogger(ScarCombatPlugin.class);
-    private static boolean failureReported;
+    private static final FirstFailureLog FAILURES = FirstFailureLog.errors(Logger.getLogger(ScarCombatPlugin.class));
 
     private CombatEngineAPI engine;
     private final List<ScarFlagshipTracker> trackers = new ArrayList<>();
@@ -39,7 +40,7 @@ public class ScarCombatPlugin extends BaseEveryFrameCombatPlugin {
         started = false;
         secondsSinceSample = 0f;
         active = false;
-        if (engine == null || !engine.isInCampaign() || engine.isSimulation() || engine.isInCampaignSim()) {
+        if (!ChartCombatPlugins.isCampaignBattle(engine)) {
             return;
         }
         try {
@@ -167,9 +168,6 @@ public class ScarCombatPlugin extends BaseEveryFrameCombatPlugin {
     }
 
     private static void reportFailure(Throwable failure) {
-        if (!failureReported) {
-            failureReported = true;
-            LOG.error("[ExiledSector] Tallying the Atlas officer flagship's battle for scars failed; no scar is read from this battle", failure);
-        }
+        FAILURES.report("[ExiledSector] Tallying the Atlas officer flagship's battle for scars failed; no scar is read from this battle", failure);
     }
 }
