@@ -2,6 +2,7 @@ package exiledsector.skills.skilleffect.weapon;
 
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import exiledsector.persistence.CombatData;
 import exiledsector.skills.skilleffect.CombatQueries;
 
 import java.util.ArrayList;
@@ -24,12 +25,7 @@ final class AlliedShipTargets {
     }
 
     static AlliedShipTargets forSide(CombatEngineAPI engine, int side) {
-        Map<String, Object> customData = engine.getCustomData();
-        TargetsBySide targetsBySide = customData.get(TARGETS_BY_SIDE_KEY) instanceof TargetsBySide stored ? stored : null;
-        if (targetsBySide == null) {
-            targetsBySide = new TargetsBySide();
-            customData.put(TARGETS_BY_SIDE_KEY, targetsBySide);
-        }
+        TargetsBySide targetsBySide = CombatData.getOrCreate(engine, TARGETS_BY_SIDE_KEY, TargetsBySide.class, TargetsBySide::new);
         AlliedShipTargets targets = targetsBySide.snapshotsBySide.computeIfAbsent(side, AlliedShipTargets::new);
         targets.refreshIfDue(engine);
         return targets;

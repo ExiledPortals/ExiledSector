@@ -2,6 +2,7 @@ package exiledsector.skills.skilleffect.defense;
 
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
+import exiledsector.skills.skilleffect.HullMend;
 import exiledsector.skills.skilleffect.ParameterBonus;
 import exiledsector.skills.skilleffect.ShipCombatListener;
 
@@ -50,10 +51,8 @@ final class NanoforgeMendingListener extends ShipCombatListener implements Advan
         if (hitpoints >= maxHitpoints || regenPercent <= 0f) {
             return hitpoints;
         }
-        float healed = Math.min(maxHitpoints * regenPercent / 100f * amount, Math.min(maxHitpoints - hitpoints, remainingRegen));
+        float healed = HullMend.heal(ownerShip, regenPercent, amount, remainingRegen);
         remainingRegen -= healed;
-        float mended = hitpoints + healed;
-        ownerShip.setHitpoints(mended);
-        return mended;
+        return hitpoints + healed;
     }
 }

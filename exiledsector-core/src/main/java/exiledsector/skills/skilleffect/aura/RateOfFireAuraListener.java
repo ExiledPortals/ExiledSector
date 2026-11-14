@@ -1,9 +1,8 @@
 package exiledsector.skills.skilleffect.aura;
 
 import com.fs.starfarer.api.combat.ShipAPI;
-import exiledsector.skills.skilleffect.ShipCombatListener;
 
-final class RateOfFireAuraListener extends ShipCombatListener implements AuraField.Source {
+final class RateOfFireAuraListener extends AuraSourceListener {
 
     static final String RATE_OF_FIRE_PERCENT_KEY = "exiledSector_rateOfFireAuraPercent";
 
@@ -12,12 +11,7 @@ final class RateOfFireAuraListener extends ShipCombatListener implements AuraFie
         RateOfFireAuraField.register(this);
     }
 
-    @Override
-    public ShipAPI source() {
-        return ownerShip;
-    }
-
     float rateOfFirePenaltyPercent() {
-        return ownerShip.isRetreating() ? 0f : magnitude(RATE_OF_FIRE_PERCENT_KEY);
+        return unlessRetreating(magnitude(RATE_OF_FIRE_PERCENT_KEY));
     }
 }

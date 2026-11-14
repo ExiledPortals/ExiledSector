@@ -5,13 +5,12 @@ import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
-import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import exiledsector.skills.skilleffect.CombatQueries;
-import exiledsector.skills.skilleffect.ShipCombatListener;
+import exiledsector.skills.skilleffect.HitSideEffectListener;
 import exiledsector.skills.skilleffect.weapon.BallisticAsEnergy;
 import org.lwjgl.util.vector.Vector2f;
 
-final class DisintegrationListener extends ShipCombatListener implements DamageDealtModifier {
+final class DisintegrationListener extends HitSideEffectListener {
 
     static final String ARMOR_DAMAGE_PERCENT_KEY = "exiledSector_disintegrationArmorDamagePercent";
     static final String BALLISTIC_ARMOR_DAMAGE_PERCENT_KEY = "exiledSector_ballisticDisintegrationArmorDamagePercent";
@@ -24,12 +23,10 @@ final class DisintegrationListener extends ShipCombatListener implements DamageD
         super(ownerShip);
     }
 
-    // java:S3516: the engine reads a null return as "leave the damage unchanged"; armour is stripped as a side effect instead
-    @SuppressWarnings("java:S3516")
     @Override
-    public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
+    protected void onHit(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
         if (shieldHit || !(target instanceof ShipAPI targetShip)) {
-            return null;
+            return;
         }
         float percent = armorDamagePercent(CombatQueries.weaponBehind(param));
         float armorDamage = CombatQueries.hitDamage(damage) * percent / 100f
@@ -37,7 +34,6 @@ final class DisintegrationListener extends ShipCombatListener implements DamageD
         if (armorDamage > 0f) {
             queueStrip(targetShip, point, armorDamage);
         }
-        return null;
     }
 
     private float armorDamagePercent(WeaponAPI weapon) {

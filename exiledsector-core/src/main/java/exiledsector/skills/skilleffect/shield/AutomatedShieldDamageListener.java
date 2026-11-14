@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.ShipCombatListener;
+import exiledsector.skills.skilleffect.SkillEffectSupport;
 import org.lwjgl.util.vector.Vector2f;
 
 final class AutomatedShieldDamageListener extends ShipCombatListener implements DamageTakenModifier {
@@ -31,7 +32,7 @@ final class AutomatedShieldDamageListener extends ShipCombatListener implements 
         if (reductionPercent <= 0f) {
             return null;
         }
-        damage.getModifier().modifyMult(modId, 1f - reductionPercent / 100f);
+        damage.getModifier().modifyMult(modId, SkillEffectSupport.reductionMult(reductionPercent));
         return modId;
     }
 }

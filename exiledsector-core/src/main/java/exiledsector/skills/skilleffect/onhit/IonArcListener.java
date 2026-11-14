@@ -10,19 +10,18 @@ import com.fs.starfarer.api.combat.EmpArcEntityAPI;
 import com.fs.starfarer.api.combat.FluxTrackerAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
-import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import exiledsector.ModSounds;
 import exiledsector.compat.CombatGlow;
 import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.HitDamageRestorer;
-import exiledsector.skills.skilleffect.ShipCombatListener;
+import exiledsector.skills.skilleffect.HitSideEffectListener;
 import exiledsector.skills.skilleffect.weapon.BallisticAsEnergy;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
 import java.util.Random;
 
-final class IonArcListener extends ShipCombatListener implements DamageDealtModifier {
+final class IonArcListener extends HitSideEffectListener {
 
     static final String CHANCE_AT_FULL_HARD_FLUX_KEY = "exiledSector_ionArcChanceAtFullHardFlux";
     static final float ARC_DAMAGE_FRACTION = 0.25f;
@@ -57,18 +56,16 @@ final class IonArcListener extends ShipCombatListener implements DamageDealtModi
         return chanceAtFullHardFluxPercent / 100f * hardFluxLevel;
     }
 
-    // java:S3516: the engine reads a null return as "leave the damage unchanged"; arcs are spawned as a side effect instead
-    @SuppressWarnings("java:S3516")
     @Override
-    public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
-        if (!shieldHit || !(param instanceof DamagingProjectileAPI projectile) || !(target instanceof ShipAPI hitShip)
-                || !isEnergyProjectile(projectile.getWeapon()) || !CombatQueries.isHostile(ownerShip, hitShip) || !ownerIsAliveNotHulk()) {
-            return null;
+    protected void onHit(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
+        ShipAPI hitShip = CombatQueries.hostileShip(ownerShip, target);
+        if (!shieldHit || !(param instanceof DamagingProjectileAPI projectile) || hitShip == null
+                || !isEnergyProjectile(projectile.getWeapon()) || !ownerIsAliveNotHulk()) {
+            return;
         }
         if (random.nextFloat() < arcChance(magnitude(CHANCE_AT_FULL_HARD_FLUX_KEY), hitShip)) {
             arc(hitShip, point, damage.getDamage());
         }
-        return null;
     }
 
     private static boolean isEnergyProjectile(WeaponAPI weapon) {

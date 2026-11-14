@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
+import exiledsector.skills.skilleffect.SkillEffectSupport;
 import org.lwjgl.util.vector.Vector2f;
 
 final class BeamShieldDisruptionListener implements DamageDealtModifier {
@@ -14,7 +15,7 @@ final class BeamShieldDisruptionListener implements DamageDealtModifier {
     static final String DAMAGE_MOD_ID = "exiledSector_beamShieldDisruption";
     static final float DISRUPTION_SECONDS = 1f;
     static final TimedTargetDebuff.Spec DISRUPTION = new TimedTargetDebuff.Spec(DAMAGE_MOD_ID, DISRUPTION_SECONDS,
-            MutableShipStatsAPI::getShieldDamageTakenMult, percent -> 1f + percent / 100f);
+            MutableShipStatsAPI::getShieldDamageTakenMult, SkillEffectSupport::multFrom);
 
     private final ShipAPI ship;
 

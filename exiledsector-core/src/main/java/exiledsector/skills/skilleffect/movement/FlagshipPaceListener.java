@@ -1,11 +1,16 @@
 package exiledsector.skills.skilleffect.movement;
 
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import exiledsector.i18n.NumberText;
 import exiledsector.skills.skilleffect.Flagships;
+import exiledsector.skills.skilleffect.ScaledBonus;
 import exiledsector.skills.skilleffect.ShipCombatListener;
+import exiledsector.skills.skilleffect.StatMode;
+import exiledsector.skills.skilleffect.StatTarget;
+import exiledsector.skills.skilleffect.TickTimer;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -26,8 +31,11 @@ final class FlagshipPaceListener extends ShipCombatListener implements Advanceab
         SPEED_BONUS_CAPS.put(HullSize.CAPITAL_SHIP, 15f);
     }
 
-    private float secondsSinceScan = SCAN_INTERVAL_SECONDS;
-    private float appliedSpeedBonus;
+    private static final ScaledBonus FLAGSHIP_PACE = new ScaledBonus(
+            ScaledBonus.fixed(StatTarget.liveStat(MutableShipStatsAPI::getMaxSpeed), StatMode.FLAT, 1f));
+
+    private final TickTimer scanTimer = TickTimer.dueOnFirstAdvance(SCAN_INTERVAL_SECONDS);
+    private final ScaledBonus.Tracker flagshipPace = FLAGSHIP_PACE.tracker();
 
     FlagshipPaceListener(ShipAPI ownerShip) {
         super(ownerShip);
@@ -51,20 +59,8 @@ final class FlagshipPaceListener extends ShipCombatListener implements Advanceab
 
     @Override
     public void advance(float amount) {
-        secondsSinceScan += amount;
-        if (secondsSinceScan < SCAN_INTERVAL_SECONDS) {
-            return;
-        }
-        secondsSinceScan = 0f;
-        float speedBonus = ownerIsAliveNotHulk() ? speedBonus() : 0f;
-        if (speedBonus == appliedSpeedBonus) {
-            return;
-        }
-        appliedSpeedBonus = speedBonus;
-        if (speedBonus > 0f) {
-            ownerShip.getMutableStats().getMaxSpeed().modifyFlat(MOD_ID, speedBonus);
-        } else {
-            ownerShip.getMutableStats().getMaxSpeed().unmodifyFlat(MOD_ID);
+        if (scanTimer.advance(amount)) {
+            flagshipPace.apply(ownerShip.getMutableStats(), MOD_ID, ownerIsAliveNotHulk() ? speedBonus() : 0f);
         }
     }
 

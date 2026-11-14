@@ -2,9 +2,8 @@ package exiledsector.skills.skilleffect.aura;
 
 import com.fs.starfarer.api.combat.ShipAPI;
 import exiledsector.skills.skilleffect.ParameterBonus;
-import exiledsector.skills.skilleffect.ShipCombatListener;
 
-final class AuxiliaryScreenListener extends ShipCombatListener implements AuraField.Source {
+final class AuxiliaryScreenListener extends AuraSourceListener {
 
     static final String DAMAGE_TAKEN_PERCENT_KEY = "exiledSector_auxiliaryScreenDamageTakenPercent";
     static final String RANGE_FLAT_KEY = "exiledSector_auxiliaryScreenRangeBonus";
@@ -12,11 +11,6 @@ final class AuxiliaryScreenListener extends ShipCombatListener implements AuraFi
     AuxiliaryScreenListener(ShipAPI ownerShip) {
         super(ownerShip);
         AuxiliaryScreenField.register(this);
-    }
-
-    @Override
-    public ShipAPI source() {
-        return ownerShip;
     }
 
     float range() {
@@ -28,6 +22,6 @@ final class AuxiliaryScreenListener extends ShipCombatListener implements AuraFi
     }
 
     float damageTakenReductionPercent() {
-        return ownerShip.isRetreating() ? 0f : Math.min(AuxiliaryScreenField.MAX_REDUCTION_PERCENT, magnitude(DAMAGE_TAKEN_PERCENT_KEY));
+        return unlessRetreating(Math.min(AuxiliaryScreenField.MAX_REDUCTION_PERCENT, magnitude(DAMAGE_TAKEN_PERCENT_KEY)));
     }
 }

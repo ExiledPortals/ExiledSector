@@ -5,6 +5,8 @@ import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import exiledsector.skills.skilleffect.ShipCombatListener;
+import exiledsector.skills.skilleffect.StatMods;
+import exiledsector.skills.skilleffect.TickTimer;
 
 import java.util.Map;
 
@@ -14,7 +16,7 @@ final class ShieldArmorShareListener extends ShipCombatListener implements Advan
     static final float CHECK_INTERVAL_SECONDS = 0.25f;
     private static final String MOD_ID_PREFIX = "exiledSector_shieldArmorShare_";
 
-    private float secondsSinceCheck = CHECK_INTERVAL_SECONDS;
+    private final TickTimer checkTimer = TickTimer.dueOnFirstAdvance(CHECK_INTERVAL_SECONDS);
     private float appliedMult = 1f;
 
     ShieldArmorShareListener(ShipAPI ownerShip) {
@@ -48,11 +50,9 @@ final class ShieldArmorShareListener extends ShipCombatListener implements Advan
 
     @Override
     public void advance(float amount) {
-        secondsSinceCheck += amount;
-        if (secondsSinceCheck < CHECK_INTERVAL_SECONDS) {
+        if (!checkTimer.advance(amount)) {
             return;
         }
-        secondsSinceCheck = 0f;
         MutableShipStatsAPI stats = ownerShip.getMutableStats();
         float shieldMult = shieldOnlyDamageTakenMult(stats.getShieldDamageTakenMult(), stats.getArmorDamageTakenMult());
         float mult = armorDamageTakenMult(shieldMult, magnitude(EFFECTIVENESS_PERCENT_KEY));
@@ -60,10 +60,6 @@ final class ShieldArmorShareListener extends ShipCombatListener implements Advan
             return;
         }
         appliedMult = mult;
-        if (mult == 1f) {
-            stats.getArmorDamageTakenMult().unmodifyMult(modId);
-        } else {
-            stats.getArmorDamageTakenMult().modifyMult(modId, mult);
-        }
+        StatMods.setMult(stats.getArmorDamageTakenMult(), modId, mult);
     }
 }

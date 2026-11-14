@@ -1,9 +1,8 @@
 package exiledsector.skills.skilleffect.aura;
 
 import com.fs.starfarer.api.combat.ShipAPI;
-import exiledsector.skills.skilleffect.ShipCombatListener;
 
-final class GravityDragListener extends ShipCombatListener implements AuraField.Source {
+final class GravityDragListener extends AuraSourceListener {
 
     static final String TIMEFLOW_PERCENT_KEY = "exiledSector_gravityDragTimeflowPercent";
     static final String PHASED_TIMEFLOW_PERCENT_KEY = "exiledSector_gravityDragPhasedTimeflowPercent";
@@ -12,11 +11,6 @@ final class GravityDragListener extends ShipCombatListener implements AuraField.
     GravityDragListener(ShipAPI ownerShip) {
         super(ownerShip);
         GravityDragField.register(this);
-    }
-
-    @Override
-    public ShipAPI source() {
-        return ownerShip;
     }
 
     float reductionPercentAtPointBlank() {

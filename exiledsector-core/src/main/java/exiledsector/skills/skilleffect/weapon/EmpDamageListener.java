@@ -7,19 +7,18 @@ import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
-import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.EmpOnlyHits;
 import exiledsector.skills.skilleffect.HitDamageRestorer;
-import exiledsector.skills.skilleffect.ShipCombatListener;
+import exiledsector.skills.skilleffect.HitSideEffectListener;
 import exiledsector.skills.skilleffect.ShipFramePoint;
+import exiledsector.skills.skilleffect.SkillEffectSupport;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
 import java.util.List;
 
-final class EmpDamageListener extends ShipCombatListener
-        implements DamageDealtModifier, AdvanceableListener, EmpOnlyHits.Handler, EmpOnlyHits.EmpBonus {
+final class EmpDamageListener extends HitSideEffectListener implements AdvanceableListener, EmpOnlyHits.Handler, EmpOnlyHits.EmpBonus {
 
     static final String EMP_INCREASED_PERCENT_KEY = "exiledSector_empDamageIncreasedPercent";
     static final String EMP_MORE_PERCENT_KEY = "exiledSector_empDamagePercent";
@@ -36,7 +35,7 @@ final class EmpDamageListener extends ShipCombatListener
     }
 
     static float empMult(float increasedPercent, float morePercent) {
-        return Math.max(0f, 1f + increasedPercent / 100f) * Math.max(0f, 1f + morePercent / 100f);
+        return Math.max(0f, SkillEffectSupport.multFrom(increasedPercent)) * Math.max(0f, SkillEffectSupport.multFrom(morePercent));
     }
 
     @Override
@@ -44,18 +43,15 @@ final class EmpDamageListener extends ShipCombatListener
         return empMult(magnitude(EMP_INCREASED_PERCENT_KEY), magnitude(EMP_MORE_PERCENT_KEY));
     }
 
-    // java:S3516: the engine reads a null return as "leave the damage modifier unchanged"; the EMP is rescaled in place instead
-    @SuppressWarnings("java:S3516")
     @Override
-    public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
+    protected void onHit(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
         if (!(target instanceof ShipAPI) || !(damage.getFluxComponent() > 0f)) {
-            return null;
+            return;
         }
         float empMult = empMult();
         if (empMult != 1f) {
             HitDamageRestorer.scaleEmpForThisHit(damage, empMult, target);
         }
-        return null;
     }
 
     @Override

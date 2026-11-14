@@ -6,12 +6,11 @@ import com.fs.starfarer.api.combat.MissileAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
-import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
 import exiledsector.skills.skilleffect.Chance;
 import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.ParameterBonus;
-import exiledsector.skills.skilleffect.ShipCombatListener;
+import exiledsector.skills.skilleffect.HitSideEffectListener;
 import exiledsector.skills.skilleffect.weapon.RiftSeries;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -19,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-final class ResonatorPayloadListener extends ShipCombatListener implements DamageDealtModifier, AdvanceableListener {
+final class ResonatorPayloadListener extends HitSideEffectListener implements AdvanceableListener {
 
     static final String CHANCE_PERCENT_KEY = "exiledSector_resonatorPayloadChancePercent";
     static final String ADDITIONAL_RIFTS_KEY = "exiledSector_resonatorPayloadAdditionalRifts";
@@ -45,20 +44,17 @@ final class ResonatorPayloadListener extends ShipCombatListener implements Damag
         return Math.min(MAX_DAMAGE, missileWeaponSpec.getDerivedStats().getDamagePerShot() * DAMAGE_SHARE_PERCENT / 100f);
     }
 
-    // java:S3516: the engine reads a null return as "leave the damage unchanged"; rifts are queued as a side effect instead
-    @SuppressWarnings("java:S3516")
     @Override
-    public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
+    protected void onHit(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
         if (!(param instanceof MissileAPI missile) || !isOwnMissileWeaponShot(missile) || point == null
                 || CombatQueries.hostileLiveShip(ownerShip, target) == null || !ownerIsAliveNotHulk()) {
-            return null;
+            return;
         }
         if (Chance.roll(random, magnitude(CHANCE_PERCENT_KEY))) {
             Vector2f impactPoint = new Vector2f(point);
             activeSeries.add(new RiftSeries(ownerShip, riftsPerSeries(), SECONDS_BETWEEN_RIFTS, riftDamage(missile.getWeapon().getSpec()),
                     () -> scatteredAround(impactPoint), random));
         }
-        return null;
     }
 
     @Override

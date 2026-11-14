@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import exiledsector.skills.skilleffect.ScaledBonus;
 import exiledsector.skills.skilleffect.ShipCombatListener;
+import exiledsector.skills.skilleffect.TickTimer;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ final class HoldFireShieldListener extends ShipCombatListener implements Advance
             percent(scaled(stat(MutableShipStatsAPI::getShieldDamageTakenMult), -1f), REDUCTION_PERCENT_KEY));
 
     private final ScaledBonus.Tracker shieldDamageReduction = SHIELD_DAMAGE_REDUCTION.tracker();
-    private float secondsSinceCheck;
+    private final TickTimer checkTimer = new TickTimer(CHECK_INTERVAL_SECONDS);
     private float holdFireLevel;
 
     HoldFireShieldListener(ShipAPI ownerShip) {
@@ -41,12 +42,10 @@ final class HoldFireShieldListener extends ShipCombatListener implements Advance
 
     @Override
     public void advance(float amount) {
-        secondsSinceCheck += amount;
-        if (secondsSinceCheck < CHECK_INTERVAL_SECONDS) {
+        if (!checkTimer.advance(amount)) {
             return;
         }
-        holdFireLevel = nextHoldFireLevel(holdFireLevel, ownerIsAliveNotHulk() && !anyWeaponFiring(), secondsSinceCheck);
-        secondsSinceCheck = 0f;
+        holdFireLevel = nextHoldFireLevel(holdFireLevel, ownerIsAliveNotHulk() && !anyWeaponFiring(), checkTimer.elapsed());
         shieldDamageReduction.apply(ownerShip.getMutableStats(), modId, holdFireLevel);
     }
 

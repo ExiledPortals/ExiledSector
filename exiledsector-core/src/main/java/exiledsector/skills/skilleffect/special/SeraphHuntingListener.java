@@ -49,8 +49,8 @@ public final class SeraphHuntingListener extends ShipCombatListener {
     }
 
     void onDamageDealt(CombatEntityAPI target, ApplyDamageResultAPI result) {
-        if (!(target instanceof ShipAPI targetShip) || targetShip.isHulk() || !CombatQueries.isHostile(ownerShip, targetShip)
-                || !ownerIsAliveNotHulk()) {
+        ShipAPI targetShip = CombatQueries.hostileShip(ownerShip, target);
+        if (targetShip == null || targetShip.isHulk() || !ownerIsAliveNotHulk()) {
             return;
         }
         float dealt = result.getDamageToHull() + result.getTotalDamageToArmor();

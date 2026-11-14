@@ -2,6 +2,7 @@ package exiledsector.skills.skilleffect.phase;
 
 import com.fs.starfarer.api.combat.FluxTrackerAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import exiledsector.skills.skilleffect.SkillEffectSupport;
 
 final class PhaseEntryFluxShedListener extends PhaseTransitionListener {
 
@@ -19,7 +20,7 @@ final class PhaseEntryFluxShedListener extends PhaseTransitionListener {
     static void softenHardFlux(FluxTrackerAPI flux, float percent) {
         float hardFlux = flux.getHardFlux();
         if (percent > 0f && hardFlux > 0f) {
-            flux.setHardFlux(hardFlux * Math.max(0f, 1f - percent / 100f));
+            flux.setHardFlux(hardFlux * SkillEffectSupport.reductionMult(percent));
         }
     }
 }

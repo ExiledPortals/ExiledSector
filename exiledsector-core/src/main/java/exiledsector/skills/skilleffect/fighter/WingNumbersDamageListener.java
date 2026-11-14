@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
 import exiledsector.skills.skilleffect.CombatQueries;
+import exiledsector.skills.skilleffect.SkillEffectSupport;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.List;
@@ -28,7 +29,7 @@ final class WingNumbersDamageListener implements DamageTakenModifier {
 
     static float damageTakenMult(float reductionPercentPerFighter, int livingFighters) {
         float reductionPercent = Math.min(MAX_REDUCTION_PERCENT, Math.max(0f, reductionPercentPerFighter * livingFighters));
-        return 1f - reductionPercent / 100f;
+        return SkillEffectSupport.reductionMult(reductionPercent);
     }
 
     @Override

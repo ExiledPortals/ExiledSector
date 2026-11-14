@@ -10,6 +10,6 @@ public final class ParameterBonus {
     }
 
     public static float increasedBy(float base, float increasePercent) {
-        return base * Math.max(0f, 1f + increasePercent / 100f);
+        return base * Math.max(0f, SkillEffectSupport.multFrom(increasePercent));
     }
 }

@@ -4,9 +4,9 @@ import com.fs.starfarer.api.combat.ArmorGridAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.impl.combat.threat.RoilingSwarmEffect;
-import com.fs.starfarer.api.util.IntervalUtil;
 import exiledsector.skills.skilleffect.DeploymentRepairTally;
 import exiledsector.skills.skilleffect.ShipCombatListener;
+import exiledsector.skills.skilleffect.TickTimer;
 import exiledsector.skills.skilleffect.shipsystem.FragmentSwarms;
 
 final class SwarmOverflowRepairListener extends ShipCombatListener implements AdvanceableListener {
@@ -15,7 +15,7 @@ final class SwarmOverflowRepairListener extends ShipCombatListener implements Ad
     static final float DEPLOYMENT_CAP_PERCENT = 10f;
     private static final float CHECK_SECONDS = 1f;
 
-    private final IntervalUtil overflowCheck = new IntervalUtil(CHECK_SECONDS, CHECK_SECONDS);
+    private final TickTimer overflowCheck = new TickTimer(CHECK_SECONDS);
     private final DeploymentRepairTally repairTally = new DeploymentRepairTally();
     private float overflowFragments;
 
@@ -25,8 +25,7 @@ final class SwarmOverflowRepairListener extends ShipCombatListener implements Ad
 
     @Override
     public void advance(float amount) {
-        overflowCheck.advance(amount);
-        if (!overflowCheck.intervalElapsed()) {
+        if (!overflowCheck.advance(amount)) {
             return;
         }
         RoilingSwarmEffect swarm = FragmentSwarms.swarmOf(ownerShip);

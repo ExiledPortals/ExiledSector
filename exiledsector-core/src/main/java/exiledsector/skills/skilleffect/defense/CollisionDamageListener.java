@@ -11,6 +11,7 @@ import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
 import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.ShipCombatListener;
+import exiledsector.skills.skilleffect.SkillEffectSupport;
 import org.lwjgl.util.vector.Vector2f;
 
 public final class CollisionDamageListener extends ShipCombatListener implements DamageDealtModifier, DamageTakenModifier {
@@ -34,25 +35,17 @@ public final class CollisionDamageListener extends ShipCombatListener implements
         return CombatQueries.withinRadius(first.getLocation(), second.getLocation(), contactRadius);
     }
 
-    static float dealtMult(float percent) {
-        return 1f + percent / 100f;
-    }
-
-    public static float takenMult(float percent) {
-        return Math.max(0f, 1f - percent / 100f);
-    }
-
     @Override
     public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
-        if (!(target instanceof ShipAPI targetShip) || !isCollisionDamage(param, damage) || !CombatQueries.isHostile(ownerShip, targetShip)
-                || !isInContact(ownerShip, targetShip)) {
+        ShipAPI targetShip = CombatQueries.hostileShip(ownerShip, target);
+        if (targetShip == null || !isCollisionDamage(param, damage) || !isInContact(ownerShip, targetShip)) {
             return null;
         }
         float percent = magnitude(COLLISION_DAMAGE_PERCENT_KEY);
         if (percent <= 0f) {
             return null;
         }
-        damage.getModifier().modifyMult(modId, dealtMult(percent));
+        damage.getModifier().modifyMult(modId, SkillEffectSupport.multFrom(percent));
         return modId;
     }
 
@@ -65,7 +58,7 @@ public final class CollisionDamageListener extends ShipCombatListener implements
         if (percent <= 0f || !touchesAnything(ownerShip)) {
             return null;
         }
-        damage.getModifier().modifyMult(modId, takenMult(percent));
+        damage.getModifier().modifyMult(modId, SkillEffectSupport.reductionMult(percent));
         return modId;
     }
 

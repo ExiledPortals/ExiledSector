@@ -42,6 +42,10 @@ public final class SkillEffectSupport {
         return 1f + magnitude / 100f;
     }
 
+    public static float reductionMult(float percent) {
+        return Math.max(0f, 1f - percent / 100f);
+    }
+
     public static float inverseMultFrom(float magnitude) {
         return 1f / Math.max(multFrom(magnitude), MIN_INVERTED_MULT);
     }

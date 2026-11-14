@@ -32,8 +32,6 @@ import static org.mockito.Mockito.when;
 
 class CollisionDamageListenerTest {
 
-    private static final float EPSILON = 1e-4f;
-
     private MockedStatic<Global> globalMock;
     private CollisionGridAPI shipGrid;
     private CollisionGridAPI asteroidGrid;
@@ -135,12 +133,5 @@ class CollisionDamageListenerTest {
         assertNull(listener.modifyDamageTaken(null, rammer, highExplosive, new Vector2f(), false));
         verify(hit.getModifier(), never()).modifyMult(anyString(), anyFloat());
         verify(highExplosive.getModifier(), never()).modifyMult(anyString(), anyFloat());
-    }
-
-    @Test
-    void stackedReductionsStopAtNoDamageTaken() {
-        assertEquals(0.25f, CollisionDamageListener.takenMult(75f), EPSILON);
-        assertEquals(0f, CollisionDamageListener.takenMult(150f), EPSILON);
-        assertEquals(2.5f, CollisionDamageListener.dealtMult(150f), EPSILON);
     }
 }

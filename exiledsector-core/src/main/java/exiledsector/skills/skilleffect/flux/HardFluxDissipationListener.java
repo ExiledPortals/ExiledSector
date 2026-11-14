@@ -1,18 +1,22 @@
 package exiledsector.skills.skilleffect.flux;
 
 import com.fs.starfarer.api.combat.FluxTrackerAPI;
-import com.fs.starfarer.api.combat.MutableStat;
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
+import exiledsector.skills.skilleffect.ScaledBonus;
 import exiledsector.skills.skilleffect.ShipCombatListener;
+import exiledsector.skills.skilleffect.StatTarget;
 
 final class HardFluxDissipationListener extends ShipCombatListener implements AdvanceableListener {
 
     static final String PERCENT_PER_STEP_KEY = "exiledSector_fluxDissipationPercentPerHardFluxStep";
     static final float HARD_FLUX_STEP_PERCENT = 5f;
     private static final String MOD_ID_PREFIX = "exiledSector_hardFluxDissipation_";
+    private static final ScaledBonus DISSIPATION_PER_STEP = new ScaledBonus(
+            ScaledBonus.percent(StatTarget.liveStat(MutableShipStatsAPI::getFluxDissipation), PERCENT_PER_STEP_KEY));
 
-    private int appliedSteps;
+    private final ScaledBonus.Tracker dissipationBonus = DISSIPATION_PER_STEP.tracker();
 
     HardFluxDissipationListener(ShipAPI ownerShip) {
         super(ownerShip, MOD_ID_PREFIX);
@@ -30,16 +34,6 @@ final class HardFluxDissipationListener extends ShipCombatListener implements Ad
     @Override
     public void advance(float amount) {
         int steps = ownerIsAliveNotHulk() ? hardFluxSteps(ownerShip.getFluxTracker()) : 0;
-        if (steps == appliedSteps) {
-            return;
-        }
-        appliedSteps = steps;
-        MutableStat dissipation = ownerShip.getMutableStats().getFluxDissipation();
-        float bonusPercent = steps * magnitude(PERCENT_PER_STEP_KEY);
-        if (bonusPercent > 0f) {
-            dissipation.modifyPercent(modId, bonusPercent);
-        } else {
-            dissipation.unmodifyPercent(modId);
-        }
+        dissipationBonus.apply(ownerShip.getMutableStats(), modId, steps);
     }
 }
