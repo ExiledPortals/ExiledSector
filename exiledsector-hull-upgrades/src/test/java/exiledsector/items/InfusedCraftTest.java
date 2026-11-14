@@ -248,6 +248,15 @@ class InfusedCraftTest {
     }
 
     @Test
+    void aTagInhibitorForTheCraftsOwnTagIsKept() {
+        Item item = plate(rolled(FLUX, 5f), rolled(KINETIC, -5f));
+
+        assertEquals(Set.of(), InfusedCraft.ADD_AND_REMOVE.inhibitorsSpent(item, "beam", Set.of(CraftingInhibitor.BEAM)));
+        assertEquals(Set.of(CraftingInhibitor.PHASE), InfusedCraft.ADD_AND_REMOVE.inhibitorsSpent(item, "beam",
+                Set.of(CraftingInhibitor.BEAM, CraftingInhibitor.PHASE)));
+    }
+
+    @Test
     void anInhibitorIsSpentOnlyWhenItsSideHoldsSomethingTheCraftCouldChange() {
         Item suffixOnly = plate(rolled(KINETIC, -5f));
         Item reservedSuffix = plate(rolled(FLUX, 5f), rolled(BIOME, -5f));

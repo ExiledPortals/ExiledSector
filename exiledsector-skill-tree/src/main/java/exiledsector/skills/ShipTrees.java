@@ -442,7 +442,10 @@ public final class ShipTrees {
     }
 
     private static void moveReturnedFreeAllocationsOntoPaidNodes(ShipSkillData data, int returnedFreeAllocations) {
-        String startingRoot = resolveStartingRootId(data);
+        moveReturnedFreeAllocationsOntoPaidNodes(data, returnedFreeAllocations, resolveStartingRootId(data));
+    }
+
+    static void moveReturnedFreeAllocationsOntoPaidNodes(ShipSkillData data, int returnedFreeAllocations, String startingRoot) {
         for (int i = 0; i < returnedFreeAllocations && convertNewestPaidNodeToFree(data, startingRoot); i++) {
             data.bankedFreeAllocations--;
         }
@@ -580,6 +583,7 @@ public final class ShipTrees {
     public static List<String> forgetUnknownNodes(ShipSkillData data, Map<String, SkillNode> tree, Map<String, SkillNode> declaredTree, Map<String, SkillType> types) {
         data.revision++;
         ItemCostLedger.ensure(data);
+        int bankedBefore = data.bankedFreeAllocations;
         List<String> forgotten = new ArrayList<>();
         for (String nodeId : List.copyOf(data.getDormantNodeIds())) {
             SkillNode declaredNode = declaredTree.get(nodeId);
@@ -608,6 +612,7 @@ public final class ShipTrees {
                 }
             }
         }
+        moveReturnedFreeAllocationsOntoPaidNodes(data, data.bankedFreeAllocations - bankedBefore, resolveStartingRootId(data, tree.values()));
         return forgotten;
     }
 

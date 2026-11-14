@@ -139,6 +139,18 @@ class GrantedModifiersTest {
     }
 
     @Test
+    void aWarpNeverDisplacesAReservedModifierWhenNothingElseCanMakeWay() {
+        RolledModifier overcharged = RolledModifier.roll(prefix("HULL_PERCENT").modifier(), new Random(1L))
+                .overchargedWith(List.of(new RolledLine("HULL_PERCENT", 7.5f)));
+        RolledModifier reserved = RolledModifier.roll(ItemModifiers.get(GROUNDED), new Random(1L));
+        ItemData item = new ItemData(BASE, 7L, List.of(overcharged, reserved), null);
+
+        for (long seed = 0L; seed < 20L; seed++) {
+            assertSame(item, GrantedModifiers.addWarped(item, PLAIN_PREFIX, LIMITS, new Random(seed)));
+        }
+    }
+
+    @Test
     void aGrantSharingAWarpedModifiersEffectIsSkipped() {
         RolledModifier warped = RolledModifier.roll(prefix("EMP_DAMAGE_TAKEN_PERCENT").modifier(), new Random(1L)).asWarped();
         ItemData item = new ItemData(BASE, 7L, List.of(warped), null);

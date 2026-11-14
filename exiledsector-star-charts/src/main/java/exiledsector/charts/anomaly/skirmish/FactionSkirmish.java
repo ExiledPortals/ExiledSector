@@ -166,8 +166,10 @@ public final class FactionSkirmish implements AtlasRule, RunParticipant, Content
             return node;
         }
         SkirmishSide side = choice instanceof SkirmishSide chosen ? chosen : SkirmishSide.NEITHER;
-        AtlasRunNode joined = node.withAnomalyData(ANOMALY_ID, new SkirmishJoin(side, contest.attacker().factionId(), contest.intent()).encode());
-        return side == SkirmishSide.DEFENDER ? joined.withAnomalyData(AtlasOfficer.RUN_DATA_KEY, Integer.toString(contest.attacker().recordId())) : joined;
+        String attackerRecordId = Integer.toString(contest.attacker().recordId());
+        AtlasRunNode joined = node.withAnomalyData(ANOMALY_ID, new SkirmishJoin(side, contest.attacker().factionId(), contest.intent()).encode())
+                .withAnomalyData(AtlasOfficer.FIGHTING_DATA_KEY, attackerRecordId);
+        return side == SkirmishSide.DEFENDER ? joined.withAnomalyData(AtlasOfficer.RUN_DATA_KEY, attackerRecordId) : joined;
     }
 
     @Override

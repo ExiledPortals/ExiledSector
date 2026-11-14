@@ -118,14 +118,25 @@ class ChartOfficerLevelsTest {
     }
 
     @Test
-    void stationCommanderStaysAtTheOfficerCapAndTurnsLevelsOverItIntoEliteSkills() {
+    void stationCommanderStaysAtTheBaseStationLevelAndTurnsLevelsOverItIntoEliteSkills() {
         FakeOfficer commander = officerWithCombatSkills(OFFICER_CAP, 10);
 
         ChartOfficerLevels.grantStationEliteSkills(commander.person, 9, new Random(3));
 
-        assertEquals(OFFICER_CAP, ChartOfficerLevels.stationCommanderLevel(9));
+        assertEquals(ChartContentPlanner.STATION_OFFICER_LEVEL, ChartOfficerLevels.stationCommanderLevel(9));
         assertEquals(3, ChartOfficerLevels.stationCommanderLevel(3));
-        assertEquals(9 - OFFICER_CAP, commander.eliteCount());
+        assertEquals(9 - ChartContentPlanner.STATION_OFFICER_LEVEL, commander.eliteCount());
+    }
+
+    @Test
+    void aRaisedOfficerCapKeepsTheStationCommandersWholeTierBonusAsEliteSkills() {
+        when(settings.getInt(ChartOfficerLevels.OFFICER_LEVEL_CAP_SETTING)).thenReturn(8);
+        FakeOfficer commander = officerWithCombatSkills(OFFICER_CAP, 10);
+
+        ChartOfficerLevels.grantStationEliteSkills(commander.person, 9, new Random(3));
+
+        assertEquals(ChartContentPlanner.STATION_OFFICER_LEVEL, ChartOfficerLevels.stationCommanderLevel(9));
+        assertEquals(9 - ChartContentPlanner.STATION_OFFICER_LEVEL, commander.eliteCount());
     }
 
     @Test

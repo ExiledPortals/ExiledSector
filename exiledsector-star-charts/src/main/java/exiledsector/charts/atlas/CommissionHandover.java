@@ -73,8 +73,12 @@ public final class CommissionHandover {
         AtlasCell centre = predecessor.commandCentre();
         String factionId = territoryFaction(centre);
         if (factionId == null) {
+            String waitingFactionId = waitingFaction(predecessor);
+            if (waitingFactionId == null) {
+                return null;
+            }
             state.breakUp(centre);
-            return replaceWaiting(predecessor);
+            return replaceWaiting(predecessor, waitingFactionId);
         }
         state.removeOfficer(predecessor.recordId());
         AtlasOfficer successor = newOfficer(factionId, predecessor)
@@ -86,9 +90,10 @@ public final class CommissionHandover {
 
     private Handover replaceWaiting(AtlasOfficer predecessor) {
         String factionId = waitingFaction(predecessor);
-        if (factionId == null) {
-            return null;
-        }
+        return factionId == null ? null : replaceWaiting(predecessor, factionId);
+    }
+
+    private Handover replaceWaiting(AtlasOfficer predecessor, String factionId) {
         state.removeOfficer(predecessor.recordId());
         state.leaveBehind(predecessor.carried());
         AtlasOfficer successor = newOfficer(factionId, predecessor).waitingInPlaceOf(predecessor);

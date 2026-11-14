@@ -51,6 +51,7 @@ public final class DormantNodes {
             }
         }
         List<String> released = new ArrayList<>();
+        int bankedBefore = data.bankedFreeAllocations;
         SkillTreeTopology topology = null;
         for (String nodeId : List.copyOf(data.dormantNodeIds)) {
             SkillNode node = tree.get(nodeId);
@@ -72,6 +73,7 @@ public final class DormantNodes {
                 }
             }
         }
+        ShipTrees.moveReturnedFreeAllocationsOntoPaidNodes(data, data.bankedFreeAllocations - bankedBefore, satisfiedRootId);
         return released;
     }
 

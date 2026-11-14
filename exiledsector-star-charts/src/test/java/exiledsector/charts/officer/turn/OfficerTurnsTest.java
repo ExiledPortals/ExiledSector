@@ -93,10 +93,12 @@ class OfficerTurnsTest {
         AtlasCell openRunCell = new AtlasCell(4, 0);
         int holderId = TestTerritories.establish(state, openRunCell, "pirates").recordId();
 
-        assertEquals(holderId, OfficerTurns.openRunOfficerId(state, TurnCause.forced(), openRunCell));
-        assertEquals(Intent.NO_OFFICER, OfficerTurns.openRunOfficerId(state, TurnCause.forced(), new AtlasCell(9, 9)));
-        assertEquals(Intent.NO_OFFICER, OfficerTurns.openRunOfficerId(state, TurnCause.forced(), null));
-        assertEquals(7, OfficerTurns.openRunOfficerId(state, TurnCause.officerVictorious(7), openRunCell));
+        assertEquals(holderId, OfficerTurns.openRunOfficerId(state, TurnCause.forced(), openRunCell, Intent.NO_OFFICER));
+        assertEquals(Intent.NO_OFFICER, OfficerTurns.openRunOfficerId(state, TurnCause.forced(), new AtlasCell(9, 9), Intent.NO_OFFICER));
+        assertEquals(Intent.NO_OFFICER, OfficerTurns.openRunOfficerId(state, TurnCause.forced(), null, Intent.NO_OFFICER));
+        assertEquals(7, OfficerTurns.openRunOfficerId(state, TurnCause.officerVictorious(7), openRunCell, Intent.NO_OFFICER));
+        assertEquals(5, OfficerTurns.openRunOfficerId(state, TurnCause.forced(), new AtlasCell(9, 9), 5), "an officer fighting on a cell it doesn't hold");
+        assertEquals(holderId, OfficerTurns.openRunOfficerId(state, TurnCause.forced(), openRunCell, 5));
     }
 
     @Test

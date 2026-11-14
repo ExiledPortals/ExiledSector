@@ -134,7 +134,7 @@ public enum InfusedCraft {
         if (item == null || item.definition() == null || inhibitors.isEmpty()) {
             return spent;
         }
-        spent.addAll(CraftingInhibitor.tagInhibitors(inhibitors));
+        spent.addAll(CraftingInhibitor.tagInhibitors(withoutOwnTagInhibitors(tag, inhibitors)));
         List<RolledModifier> changeable = changeable(item, tag);
         for (CraftingInhibitor inhibitor : inhibitors) {
             if (inhibitor.inhibitedSlot() != null && changeable.stream().anyMatch(rolled -> rolled.slot() == inhibitor.inhibitedSlot())) {
@@ -142,6 +142,11 @@ public enum InfusedCraft {
             }
         }
         return spent;
+    }
+
+    private static List<CraftingInhibitor> withoutOwnTagInhibitors(String tag, Collection<CraftingInhibitor> inhibitors) {
+        List<String> craftTagAndAncestors = ThemeTags.withAncestors(tag);
+        return inhibitors.stream().filter(inhibitor -> !inhibitor.inhibitsTag() || !craftTagAndAncestors.contains(inhibitor.inhibitedTag())).toList();
     }
 
     public boolean canAfford(String tag, CraftingMaterials materials) {
@@ -152,7 +157,7 @@ public enum InfusedCraft {
 
     public boolean apply(Item item, String tag, Collection<CraftingInhibitor> inhibitors, Random random) {
         return verdict(item, tag, inhibitors).allowed()
-                && run(item, tag, CraftingInhibitor.inhibitedSlots(inhibitors), CraftingInhibitor.tagWeights(inhibitors), random);
+                && run(item, tag, CraftingInhibitor.inhibitedSlots(inhibitors), CraftingInhibitor.tagWeights(withoutOwnTagInhibitors(tag, inhibitors)), random);
     }
 
     public Optional<Set<CraftingInhibitor>> use(Item item, String tag, CraftingMaterials materials,

@@ -97,7 +97,7 @@ public final class OfficerTurns {
                 : List.of();
         AtlasCell openRunCell = context.openRunCell();
         TurnSetup setup = new TurnSetup(OfficerTurnTables.rules(), OfficerRanks.all(), resolvers, openRunCell, openRunOfficerId(state, cause,
-                openRunCell), context.catalogue(), context.startingItems());
+                openRunCell, context.openRunOfficerId()), context.catalogue(), context.startingItems());
         TurnResult result = OfficerTurn.take(TurnTerrain.of(generator, state, openRunCell), state, cause, setup);
         OfficerPortraits.assign(state, context);
         if (!handovers.isEmpty()) {
@@ -124,12 +124,12 @@ public final class OfficerTurns {
         state.markOfficerTurnUnseen();
     }
 
-    static int openRunOfficerId(AtlasState state, TurnCause cause, AtlasCell openRunCell) {
+    static int openRunOfficerId(AtlasState state, TurnCause cause, AtlasCell openRunCell, int fightingOfficerId) {
         if (cause.kind() == TurnCause.Kind.OFFICER_DEFEATED || cause.kind() == TurnCause.Kind.OFFICER_VICTORIOUS) {
             return cause.officerRecordId();
         }
         AtlasOfficer holder = openRunCell == null ? null : state.officerAt(openRunCell);
-        return holder == null ? Intent.NO_OFFICER : holder.recordId();
+        return holder == null ? fightingOfficerId : holder.recordId();
     }
 
     public static List<Intent> declaredIntents(AtlasState state) {

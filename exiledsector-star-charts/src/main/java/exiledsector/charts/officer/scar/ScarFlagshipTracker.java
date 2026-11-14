@@ -21,7 +21,7 @@ final class ScarFlagshipTracker {
 
     private final CombatEngineAPI engine;
     private final String flagshipMemberId;
-    private final ScarEvidence evidence = new ScarEvidence();
+    private final ScarEvidence evidence;
     private final Map<ShipAPI, Float> lastHitSecondsByAttacker = new IdentityHashMap<>();
     private final Set<WeaponAPI> disabledWeapons = Collections.newSetFromMap(new IdentityHashMap<>());
     private final Set<ShipAPI> escorts = Collections.newSetFromMap(new IdentityHashMap<>());
@@ -34,6 +34,7 @@ final class ScarFlagshipTracker {
     ScarFlagshipTracker(CombatEngineAPI engine, String flagshipMemberId) {
         this.engine = engine;
         this.flagshipMemberId = flagshipMemberId;
+        this.evidence = ScarBattleResults.pendingOrNew(flagshipMemberId);
     }
 
     String flagshipMemberId() {
@@ -78,7 +79,7 @@ final class ScarFlagshipTracker {
     void recordHit(ShipAPI attacker) {
         float elapsed = elapsedSeconds();
         if (!evidence.hasFirstHit()) {
-            evidence.firstHit(elapsed, escortLossShare());
+            evidence.firstHit(evidence.trackedSeconds(), escortLossShare());
         }
         if (attacker != null) {
             lastAttacker = attacker;
@@ -105,7 +106,7 @@ final class ScarFlagshipTracker {
             return;
         }
         if (!CombatQueries.isAliveNotHulk(flagship)) {
-            evidence.died(elapsedSeconds(), killedByPlayerFlagship());
+            evidence.died(evidence.trackedSeconds(), killedByPlayerFlagship());
             finished = true;
             return;
         }

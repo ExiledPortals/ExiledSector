@@ -53,7 +53,7 @@ public record TerritoryContext(String excludedFactionId, AtlasCell openRunCell, 
     private static int openRunOfficerIdOrNone() {
         try {
             ChartRun run = ChartRuns.currentOrNull();
-            Integer recordId = run == null ? null : OfficerFleets.recordIdOf(run.atlasNode());
+            Integer recordId = run == null ? null : OfficerFleets.fightingRecordIdOf(run.atlasNode());
             return recordId == null ? Intent.NO_OFFICER : recordId;
         } catch (RuntimeException e) {
             return Intent.NO_OFFICER;

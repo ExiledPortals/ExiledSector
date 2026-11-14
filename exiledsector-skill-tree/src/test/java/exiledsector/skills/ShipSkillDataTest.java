@@ -879,6 +879,23 @@ class ShipSkillDataTest {
     }
 
     @Test
+    void forgettingAnUnknownFreeNodeReturnsOpBeforeTheFreeAllocation() {
+        ShipSkillData data = new ShipSkillData();
+        data.addFreeAllocation();
+        SkillNode a = node("a", List.of());
+        SkillNode b = node("b", List.of());
+        SkillNode c = node("c", List.of());
+        ShipTrees.allocate(data, a, 3);
+        ShipTrees.allocate(data, b, 3);
+        ShipTrees.allocate(data, c, 3);
+
+        assertEquals(List.of("a"), ShipTrees.forgetUnknownNodes(data, Map.of("b", b, "c", c), Map.of()));
+
+        assertEquals(0, data.getBankedFreeAllocations());
+        assertEquals(3, ShipTrees.getSpentOp(data, 3));
+    }
+
+    @Test
     void deallocatingKeepsAFreeAllocationThatWasAlreadyBanked() {
         ShipSkillData data = new ShipSkillData();
         SkillNode a = node("a", List.of());
@@ -1196,8 +1213,8 @@ class ShipSkillDataTest {
 
         assertEquals(List.of("gone", "free_gone"), ShipTrees.forgetUnknownNodes(data, tree, Map.of()));
         assertEquals(List.of("root", "kept"), List.copyOf(data.getAllocatedNodeIds()));
-        assertEquals(1, data.getBankedFreeAllocations());
-        assertEquals(3, ShipTrees.getSpentOp(data, 3));
+        assertEquals(0, data.getBankedFreeAllocations());
+        assertEquals(0, ShipTrees.getSpentOp(data, 3));
         assertFalse(ShipTrees.hasLostStartingRoot(data, tree));
         assertEquals(List.of(), ShipTrees.forgetUnknownNodes(data, tree, Map.of()));
     }
@@ -1309,7 +1326,8 @@ class ShipSkillDataTest {
 
         assertEquals(List.of("refused"), DormantNodes.wakeDormantNodes(data, declared, 10, dormantNode -> false));
         assertFalse(data.isAllocated("refused"));
-        assertEquals(1, data.getBankedFreeAllocations());
+        assertTrue(data.isFreeNode("bridge"));
+        assertEquals(0, data.getBankedFreeAllocations());
     }
 
     @Test
@@ -1452,8 +1470,8 @@ class ShipSkillDataTest {
 
         assertEquals(List.of("unchosen", "unlisted", "missing_type"), ShipTrees.forgetUnknownNodes(data, tree, Map.of("hull", hull, "armor", armor)));
         assertEquals(List.of("root", "kept", "plain"), List.copyOf(data.getAllocatedNodeIds()));
-        assertEquals(1, data.getBankedFreeAllocations());
-        assertEquals(6, ShipTrees.getSpentOp(data, 3));
+        assertEquals(0, data.getBankedFreeAllocations());
+        assertEquals(3, ShipTrees.getSpentOp(data, 3));
         assertEquals("hull", data.getChoiceSelection("kept"));
         assertNull(data.getChoiceSelection("plain"));
     }

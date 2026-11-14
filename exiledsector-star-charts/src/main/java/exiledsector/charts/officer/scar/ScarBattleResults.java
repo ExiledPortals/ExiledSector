@@ -22,6 +22,11 @@ public final class ScarBattleResults {
         }
     }
 
+    static synchronized ScarEvidence pendingOrNew(String flagshipMemberId) {
+        ScarEvidence pending = of(flagshipMemberId);
+        return pending == null ? new ScarEvidence() : pending;
+    }
+
     public static synchronized ScarEvidence of(String flagshipMemberId) {
         return flagshipMemberId == null ? null : EVIDENCE_BY_FLAGSHIP_ID.get(flagshipMemberId);
     }

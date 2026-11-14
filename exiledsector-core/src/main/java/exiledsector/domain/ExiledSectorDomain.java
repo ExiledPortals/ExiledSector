@@ -13,6 +13,7 @@ import exiledsector.effects.GrantedNodeEffects;
 import exiledsector.effects.PlayerEngagementPipeline;
 import exiledsector.effects.ShipEffectSource;
 import exiledsector.items.CraftingMaterialFamily;
+import exiledsector.items.DomainMaterial;
 import exiledsector.items.ItemDataRules;
 import exiledsector.items.ItemTypeSupport;
 import exiledsector.items.ShipCustody;
@@ -100,6 +101,10 @@ public interface ExiledSectorDomain {
     }
 
     default List<String> craftingBenchFeedstockIds() {
+        return List.of();
+    }
+
+    default List<DomainMaterial> materialItems() {
         return List.of();
     }
 

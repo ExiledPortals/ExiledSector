@@ -4,6 +4,8 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.SpecialItemSpecAPI;
+import exiledsector.domain.DomainContributions;
+import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.skilleffect.render.SpriteCache;
@@ -17,6 +19,7 @@ public final class MaterialItems {
     private static final String MATERIAL_KEY_PREFIX = "material.";
     private static final SpriteCache SPRITES = new SpriteCache(MaterialItems.class);
     private static final Color FEEDSTOCK_COLOR = new Color(200, 170, 130);
+    private static final DomainContributions<DomainMaterial> DOMAIN_MATERIALS = DomainContributions.fromEveryDomain(ExiledSectorDomain::materialItems);
 
     private MaterialItems() {
     }
@@ -29,6 +32,9 @@ public final class MaterialItems {
         }
         for (CraftingInhibitor inhibitor : CraftingInhibitor.values()) {
             itemIds.add(inhibitor.itemId());
+        }
+        for (DomainMaterial material : DOMAIN_MATERIALS.all()) {
+            itemIds.add(material.itemId());
         }
         return itemIds;
     }
@@ -52,7 +58,15 @@ public final class MaterialItems {
             return craftingItem.color();
         }
         CraftingInhibitor inhibitor = CraftingInhibitor.byItemId(itemId);
-        return inhibitor == null ? FEEDSTOCK_COLOR : inhibitor.color();
+        if (inhibitor != null) {
+            return inhibitor.color();
+        }
+        for (DomainMaterial material : DOMAIN_MATERIALS.all()) {
+            if (material.itemId().equals(itemId)) {
+                return material.color();
+            }
+        }
+        return FEEDSTOCK_COLOR;
     }
 
     public static SpecialItemData data(String itemId) {

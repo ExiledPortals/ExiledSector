@@ -30,8 +30,12 @@ class CommissionHandoverTest {
     private static final CarriedItem UNIQUE = CarriedItem.of(RewardKind.UNIQUE, "u_x");
 
     private static AtlasRules rules() {
+        return rules(Map.of("pirates", 5f, "hegemony", 3f, "tritachyon", 2f));
+    }
+
+    private static AtlasRules rules(Map<String, Float> boardFactions) {
         List<AtlasRegion> regions = List.of(new AtlasRegion(AtlasRegion.NORMAL, 5f, 0, "", "", Map.of(), Map.of(), Map.of()));
-        return new AtlasRules(regions, Map.of("compact", 1f), Map.of("pirates", 5f, "hegemony", 3f, "tritachyon", 2f),
+        return new AtlasRules(regions, Map.of("compact", 1f), boardFactions,
                 new AtlasAnomalyChance(0.5f, 0f, 0.5f), AtlasAnomalyChance.NEVER, List.of(), List.of());
     }
 
@@ -92,6 +96,20 @@ class CommissionHandoverTest {
         assertTrue(successor.identified());
         assertEquals(claims, board.state().claimsOf(centre));
         assertNoCommissionTerritory(board.state());
+    }
+
+    @Test
+    void anOfficerWithNoOtherFactionToHandOverToKeepsTheirTerritory() {
+        AtlasState state = new AtlasState(SEED);
+        AtlasGenerator generator = new AtlasGenerator(SEED, rules(Map.of(COMMISSION, 5f)), AtlasUnlocks.NONE, state);
+        AtlasReach.refreshReveal(generator, state, TerritoryContext.NONE);
+        AtlasOfficer officer = state.officers().stream().filter(AtlasOfficer::isActive).findFirst().orElseThrow();
+        AtlasCell centre = officer.commandCentre();
+        Set<AtlasCell> claims = Set.copyOf(state.claimsOf(centre));
+
+        assertEquals(List.of(), CommissionHandover.handOver(generator, state, AtlasReach.visible(generator, state), COMMISSIONED));
+        assertEquals(officer, state.officerAt(centre));
+        assertEquals(claims, state.claimsOf(centre));
     }
 
     @Test

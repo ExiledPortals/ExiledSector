@@ -14,15 +14,12 @@ import com.fs.starfarer.api.input.InputEventAPI;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class ScarCombatPlugin extends BaseEveryFrameCombatPlugin {
 
-    public static final String CUSTOM_DATA_KEY = "exiledSector_scarEvidence";
     static final float SAMPLE_SECONDS = 1f;
     static final int PLAYER_OWNER = 0;
     static final int ENEMY_OWNER = 1;
@@ -46,16 +43,10 @@ public class ScarCombatPlugin extends BaseEveryFrameCombatPlugin {
             return;
         }
         try {
-            Map<String, ScarEvidence> evidenceByFlagshipId = new LinkedHashMap<>();
             for (String flagshipMemberId : trackedFlagshipIds(engine)) {
-                ScarFlagshipTracker tracker = new ScarFlagshipTracker(engine, flagshipMemberId);
-                trackers.add(tracker);
-                evidenceByFlagshipId.put(flagshipMemberId, tracker.evidence());
+                trackers.add(new ScarFlagshipTracker(engine, flagshipMemberId));
             }
-            if (!trackers.isEmpty()) {
-                engine.getCustomData().put(CUSTOM_DATA_KEY, evidenceByFlagshipId);
-                active = true;
-            }
+            active = !trackers.isEmpty();
         } catch (RuntimeException | LinkageError e) {
             reportFailure(e);
         }
@@ -147,20 +138,27 @@ public class ScarCombatPlugin extends BaseEveryFrameCombatPlugin {
 
     private void noteSighting(ShipAPI ship) {
         for (ScarFlagshipTracker tracker : trackers) {
-            if (tracker.finished() || !tracker.evidence().fleet().firstSighting(ship.getFleetMemberId())) {
+            if (tracker.finished()) {
                 continue;
             }
-            if (ship.getOwner() == PLAYER_OWNER) {
+            boolean firstSighting = tracker.evidence().fleet().firstSighting(ship.getFleetMemberId());
+            if (ship.getOwner() == PLAYER_OWNER && firstSighting) {
                 tracker.evidence().fleet().addPlayerShip(ScarFleetSnapshot.DeployedShip.of(ship));
             } else if (ship.getOwner() == ENEMY_OWNER) {
-                FleetMemberAPI member = ship.getFleetMember();
-                tracker.evidence().fleet().addBossSideDeploymentPoints(member == null ? 0f : member.getDeploymentPointsCost());
-                if (ship.getParentStation() == null && tracker.flagshipMemberId().equals(ship.getFleetMemberId())) {
-                    tracker.attach(ship);
-                } else {
-                    tracker.noteEscort(ship);
-                }
+                noteBossSideShip(tracker, ship, firstSighting);
             }
+        }
+    }
+
+    private static void noteBossSideShip(ScarFlagshipTracker tracker, ShipAPI ship, boolean firstSighting) {
+        if (firstSighting) {
+            FleetMemberAPI member = ship.getFleetMember();
+            tracker.evidence().fleet().addBossSideDeploymentPoints(member == null ? 0f : member.getDeploymentPointsCost());
+        }
+        if (ship.getParentStation() != null || !tracker.flagshipMemberId().equals(ship.getFleetMemberId())) {
+            tracker.noteEscort(ship);
+        } else if (!tracker.found()) {
+            tracker.attach(ship);
         }
     }
 

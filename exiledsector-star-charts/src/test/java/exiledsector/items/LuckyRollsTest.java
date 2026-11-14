@@ -118,14 +118,18 @@ class LuckyRollsTest {
     }
 
     @Test
-    void fixedAndImmutableModifiersAreLeftAlone() {
+    void fixedImmutableAndOverchargedModifiersAreLeftAlone() {
         ItemData fixed = dropped(FIXED, 3L, 1);
         ItemData plate = dropped(PLATE, 3L, 1);
         ItemData immutable = new ItemData(plate.definitionId(), plate.seed(), List.of(plate.explicits().get(0).asImmutable()),
                 plate.frozenName(), plate.traits());
+        RolledModifier rolled = plate.explicits().get(0);
+        ItemData overcharged = new ItemData(plate.definitionId(), plate.seed(), List.of(rolled.overchargedWith(rolled.lines())),
+                plate.frozenName(), plate.traits());
 
         assertSame(fixed, LuckyRolls.withLuckyModifier(fixed));
         assertSame(immutable, LuckyRolls.withLuckyModifier(immutable));
+        assertSame(overcharged, LuckyRolls.withLuckyModifier(overcharged));
         assertNull(LuckyRolls.withLuckyModifier(null));
     }
 }

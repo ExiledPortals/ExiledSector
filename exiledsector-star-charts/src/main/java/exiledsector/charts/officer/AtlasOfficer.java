@@ -16,6 +16,7 @@ public record AtlasOfficer(int recordId, String factionId, long nameSeed, long p
                            boolean identified, int seat, String portraitPath, Map<String, String> dmodScars) {
 
     public static final String RUN_DATA_KEY = "atlas_officer";
+    public static final String FIGHTING_DATA_KEY = "atlas_officer_fighting";
     public static final int HISTORY_LENGTH = 3;
     public static final int UNSEATED = -1;
     static final String FORMAT = "o4";

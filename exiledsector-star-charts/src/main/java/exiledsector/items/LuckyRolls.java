@@ -49,7 +49,7 @@ public final class LuckyRolls {
 
     private static boolean canVary(Item item, RolledModifier rolled) {
         Modifier modifier = item.explicitModifier(rolled.modifierId());
-        return !rolled.immutable() && modifier != null && rolled.lines().stream().anyMatch(line -> {
+        return !rolled.immutable() && !rolled.overcharged() && modifier != null && rolled.lines().stream().anyMatch(line -> {
             ModifierLine lineDefinition = modifier.line(line.effectName());
             return lineDefinition != null && lineDefinition.canVary();
         });

@@ -33,13 +33,17 @@ final class ChartOfficerLevels {
     }
 
     static int stationCommanderLevel(int officerLevel) {
-        return Math.min(officerLevel, officerLevelCap());
+        return Math.min(baseStationLevel(officerLevel), officerLevelCap());
     }
 
     static void grantStationEliteSkills(PersonAPI commander, int officerLevel, Random random) {
         if (commander != null) {
-            grantBonusEliteSkills(commander, officerLevel - officerLevelCap(), random);
+            grantBonusEliteSkills(commander, officerLevel - stationCommanderLevel(officerLevel), random);
         }
+    }
+
+    private static int baseStationLevel(int officerLevel) {
+        return Math.min(officerLevel, ChartContentPlanner.STATION_OFFICER_LEVEL);
     }
 
     static int grantBonusEliteSkills(PersonAPI person, int bonusLevels, Random random) {

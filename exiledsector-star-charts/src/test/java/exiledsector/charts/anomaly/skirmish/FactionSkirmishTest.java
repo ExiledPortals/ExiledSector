@@ -91,6 +91,14 @@ class FactionSkirmishTest {
     }
 
     @Test
+    void theAttackingOfficerFightsInTheRunWhicheverSideThePlayerTakes() {
+        for (SkirmishSide side : SkirmishSide.values()) {
+            assertEquals(border.attacker().recordId(), OfficerFleets.fightingRecordIdOf(joinNode(side)), side.name());
+        }
+        assertNull(OfficerFleets.fightingRecordIdOf(new AtlasRunNode(border.contested().pack(), "hegemony", List.of(), List.of())));
+    }
+
+    @Test
     void theJoinSurvivesTheRunNodeEncodingAndReachesTheChartContext() {
         AtlasRunNode decoded = AtlasRunNode.decode(joinNode(SkirmishSide.DEFENDER).encode());
         SkirmishJoin expected = new SkirmishJoin(SkirmishSide.DEFENDER, "tritachyon", push);

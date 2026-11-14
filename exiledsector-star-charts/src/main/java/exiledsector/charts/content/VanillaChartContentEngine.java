@@ -149,11 +149,22 @@ final class VanillaChartContentEngine implements ChartContentEngine {
 
     @Override
     public CampaignFleetAPI createFleet(FleetParamsV3 params) {
-        CampaignFleetAPI fleet = ChartThreatFleets.builds(params.factionId) ? ChartThreatFleets.create(params)
-                : ChartFleetUpscaler.build(params, startingDoctrine(params), FleetFactoryV3::createFleet);
-        ChartOfficerLevels.grantFleetEliteSkills(fleet, params.officerLevelBonus, params.random != null ? params.random : new Random());
+        int officerLevelBonus = params.officerLevelBonus;
+        CampaignFleetAPI fleet = buildAtVanillaOfficerLevels(params);
+        ChartOfficerLevels.grantFleetEliteSkills(fleet, officerLevelBonus, params.random != null ? params.random : new Random());
         nameIfUnnamed(fleet, params.fleetType);
         return fleet;
+    }
+
+    private static CampaignFleetAPI buildAtVanillaOfficerLevels(FleetParamsV3 params) {
+        int officerLevelBonus = params.officerLevelBonus;
+        params.officerLevelBonus = 0;
+        try {
+            return ChartThreatFleets.builds(params.factionId) ? ChartThreatFleets.create(params)
+                    : ChartFleetUpscaler.build(params, startingDoctrine(params), FleetFactoryV3::createFleet);
+        } finally {
+            params.officerLevelBonus = officerLevelBonus;
+        }
     }
 
     static FactionDoctrineAPI startingDoctrine(FleetParamsV3 params) {

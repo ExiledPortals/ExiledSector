@@ -55,4 +55,14 @@ class MaterialItemPluginTest {
             assertFalse(ItemUnlock.craftingItemUsable(cipher.itemId(), null), cipher.name());
         }
     }
+
+    @Test
+    void infusedFeedstocksAreCraftingMaterialsInTheirOwnColourEvenWithStarChartsOff() {
+        StarChartSettings.setEnabledForTests(false);
+
+        for (InfusedFeedstock feedstock : InfusedFeedstock.values()) {
+            assertTrue(MaterialItems.isMaterial(feedstock.itemId()), feedstock.name());
+            assertEquals(feedstock.color(), MaterialItems.color(feedstock.itemId()), feedstock.name());
+        }
+    }
 }

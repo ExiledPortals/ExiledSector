@@ -27,7 +27,7 @@ final class NpcRelevance {
             Map.entry("kinetic", 0.5f), Map.entry("high_explosive", 0.5f),
             Map.entry("fragmentation", 0.5f), Map.entry("energy_damage", 0.5f),
             Map.entry("ballistic", 0.1f), Map.entry("energy", 0.1f), Map.entry("non_beam_energy", 0.1f), Map.entry("beam", 0.1f),
-            Map.entry("missile", 0.1f), Map.entry("fighter", 0.1f), Map.entry("phase", 0.1f), Map.entry("shield", 0.1f),
+            Map.entry("missile", 0.1f), Map.entry("strikecraft", 0.1f), Map.entry("phase", 0.1f), Map.entry("shield", 0.1f),
             Map.entry("front_shield", 0.1f), Map.entry("omni_shield", 0.1f), Map.entry("shieldless", 0.1f),
             Map.entry("logistics", 0.15f), Map.entry("fleet_support", 0.2f), Map.entry("d_mods", 0.2f));
     static final float LIGHT_ARMOUR_WEIGHT = 0.3f;
@@ -56,7 +56,7 @@ final class NpcRelevance {
         focus(weightsByTag, "non_beam_energy", weaponKinds.contains(WeaponKind.NON_BEAM_ENERGY));
         focus(weightsByTag, "beam", weaponKinds.contains(WeaponKind.BEAM));
         focus(weightsByTag, "missile", weaponKinds.contains(WeaponKind.MISSILE));
-        focus(weightsByTag, "fighter", profile.fighterBays() > 0);
+        focus(weightsByTag, "strikecraft", profile.fighterBays() > 0);
         focus(weightsByTag, "phase", profile.phaseHull() || profile.shieldType() == ShieldType.PHASE);
         boolean shielded = profile.shieldType() == ShieldType.FRONT || profile.shieldType() == ShieldType.OMNI;
         focus(weightsByTag, "shield", shielded);
@@ -108,12 +108,22 @@ final class NpcRelevance {
         float totalWeight = 0f;
         boolean themed = false;
         for (String tag : tags) {
-            Float weight = weightsByTag.get(tag);
+            Float weight = nearestWeight(tag);
             if (weight != null) {
                 totalWeight += weight;
                 themed = true;
             }
         }
         return themed ? totalWeight : UNTHEMED;
+    }
+
+    private Float nearestWeight(String tag) {
+        for (String tagOrAncestor : ThemeTags.withAncestors(tag)) {
+            Float weight = weightsByTag.get(tagOrAncestor);
+            if (weight != null) {
+                return weight;
+            }
+        }
+        return null;
     }
 }

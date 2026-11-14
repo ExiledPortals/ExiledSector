@@ -80,6 +80,7 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
     private final List<CustomPanelAPI> cardAnchors = new ArrayList<>();
     private PositionAPI panelPosition;
     private Card hoveredCard;
+    private Card pressedCard;
     private boolean picked;
     private float mouseX;
     private float mouseY;
@@ -196,11 +197,14 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
                 mouseX = event.getX();
                 mouseY = event.getY();
                 mouseKnown = true;
-            } else if (event.isLMBUpEvent() && !fade.closing() && !picked) {
-                Card clicked = cardAt(event.getX(), event.getY());
-                if (clicked != null) {
-                    pick(clicked);
+            } else if (event.isLMBDownEvent()) {
+                pressedCard = cardAt(event.getX(), event.getY());
+            } else if (event.isLMBUpEvent()) {
+                Card released = cardAt(event.getX(), event.getY());
+                if (released != null && released == pressedCard && !fade.closing() && !picked) {
+                    pick(released);
                 }
+                pressedCard = null;
             } else if (escapeKey.released(event)) {
                 decideLater();
             }

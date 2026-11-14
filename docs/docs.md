@@ -668,7 +668,8 @@ battle chance per 100 enemy deployment points defeated, scaled by battle difficu
 tier instead rises one per `defeated_dp_per_tier` deployment points defeated. Chart fleets are built with
 `doNotPrune`; a fleet built with 50 or more ships is instead rebuilt one doctrine ship size larger until it has fewer or
 reaches the largest size (`ChartFleetUpscaler`). Captains stay within vanilla's level caps; each point
-of a fleet's officer level bonus instead makes one more of every captain's combat skills elite (`ChartOfficerLevels`).
+of a fleet's officer level bonus instead makes one more of every captain's combat skills elite, and a station's
+commander turns every level past the base station level into an elite skill the same way (`ChartOfficerLevels`).
 
 Node-granting lines such as Freebooting store node ids with the fleet's enemy rules. An enemy ship that gets an NPC tree
 has the node placed first as a free grant; the builder avoids nodes that conflict with it and only paths through it
@@ -859,7 +860,7 @@ other side; with both, add-and-remove is refused. An inhibitor is spent only if 
 
 The seven tag inhibitors (Beam, Non-beam Energy, Ballistic, Missile, Shield, Armor, Phase) make every modifier carrying
 their theme tag a fifth as likely in the next roll that adds modifiers (Augmentation, Reshaping, Engram, every infused
-craft and Adaptive Reforge), and that roll spends them. Each kind can be active once, and a modifier matching several
+craft and Adaptive Reforge), and that roll spends them, except an infused craft keeps one matching its own tag. Each kind can be active once, and a modifier matching several
 active ones is still cut only once (core `CraftingInhibitor.tagWeights`, carried by `CraftingContext`). Excavation
 shafts and guardian fleets drop them (Star Charts `ExcavationLoot`); they never drop from battles.
 
@@ -1186,7 +1187,8 @@ carry next time. Rewards show only as groups, counted per reward taken. An undec
 successor or a dead officer's replacement, and is picked at random the next time the player meets or beats an officer
 (`OfficerDefeat`, `OfficerRewardDrop`).
 
-`ScarCombatPlugin` tallies how the player's fleet fought an officer's flagship, and each defeat adds the scar whose
+`ScarCombatPlugin` tallies how the player's fleet fought an officer's flagship over every engagement until it is
+defeated (`ScarBattleResults`), and each defeat adds the scar whose
 `atlas_officer_scars.csv` detector scores highest, else Battle-Hardened, plus its themed d-mod, up to five (`Scars`,
 `ScarDMods`). A challenge lost to another officer adds a scar from the winner's faction focus (`ChallengeLossScars`,
 `ScarChallengePick`). Scars are core `ScarSkillEffect` stacks on the flagship (`ScarEffectSource`) that also raise its

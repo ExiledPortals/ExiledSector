@@ -409,10 +409,10 @@ class NpcSkillTreeBuilderTest {
     @Test
     void focusMultipliesTheShipsOwnTagWeights() {
         NpcRelevance plain = NpcRelevance.of(BALLISTIC_FRIGATE, Set.of());
-        NpcRelevance focused = NpcRelevance.of(BALLISTIC_FRIGATE, Set.of(), List.of(Map.of("ballistic", 2f, "fighter", 3f)));
+        NpcRelevance focused = NpcRelevance.of(BALLISTIC_FRIGATE, Set.of(), List.of(Map.of("ballistic", 2f, "strikecraft", 3f)));
 
         assertEquals(plain.of(List.of("ballistic")) * 2f, focused.of(List.of("ballistic")), 0.001f);
-        assertEquals(plain.of(List.of("fighter")) * 3f, focused.of(List.of("fighter")), 0.001f);
+        assertEquals(plain.of(List.of("strikecraft")) * 3f, focused.of(List.of("strikecraft")), 0.001f);
         assertEquals(plain.of(List.of("flux")), focused.of(List.of("flux")), 0.001f);
     }
 
@@ -477,8 +477,17 @@ class NpcSkillTreeBuilderTest {
         NpcRelevance relevance = NpcRelevance.of(BALLISTIC_FRIGATE, Set.of());
 
         assertTrue(relevance.of(List.of("ballistic")) > relevance.of(List.of("missile")));
-        assertTrue(relevance.of(List.of("shield")) > relevance.of(List.of("fighter")));
+        assertTrue(relevance.of(List.of("shield")) > relevance.of(List.of("strikecraft")));
         assertEquals(NpcRelevance.UNTHEMED, relevance.of(List.of("core")));
+    }
+
+    @Test
+    void aChildTagTakesItsNearestWeightedAncestorsWeight() {
+        NpcRelevance relevance = NpcRelevance.of(BALLISTIC_FRIGATE, Set.of());
+
+        assertEquals(relevance.of(List.of("weapon")), relevance.of(List.of("damage")), 0.001f);
+        assertEquals(relevance.of(List.of("logistics")), relevance.of(List.of("sensors")), 0.001f);
+        assertTrue(relevance.of(List.of("ballistic")) > relevance.of(List.of("weapon")), "a tag with its own weight keeps it");
     }
 
     @Test

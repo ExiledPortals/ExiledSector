@@ -62,7 +62,7 @@ public final class GrantedModifiers {
         List<RolledModifier> sameSide = kept.stream().filter(rolled -> rolled.slot() == granted.slot()).toList();
         List<RolledModifier> full = fullGroup(kept, sameSide, limits);
         if (!full.isEmpty()) {
-            RolledModifier makingWay = makingWay(full, random);
+            RolledModifier makingWay = makingWay(full, warped, random);
             if (makingWay == null) {
                 return item;
             }
@@ -87,13 +87,16 @@ public final class GrantedModifiers {
                 || ModifierExclusivity.clashes(modifierId, List.of(rolled.modifierId()));
     }
 
-    private static RolledModifier makingWay(List<RolledModifier> candidates, Random random) {
+    private static RolledModifier makingWay(List<RolledModifier> candidates, boolean warped, Random random) {
         List<RolledModifier> removable = candidates.stream().filter(rolled -> !rolled.overcharged()).toList();
         if (removable.isEmpty()) {
             return null;
         }
         List<RolledModifier> replaceable = removable.stream()
                 .filter(rolled -> !rolled.warped() && !ModifierSources.isReserved(rolled.modifierId())).toList();
+        if (replaceable.isEmpty() && warped) {
+            return null;
+        }
         List<RolledModifier> pool = replaceable.isEmpty() ? removable : replaceable;
         return pool.get(random.nextInt(pool.size()));
     }

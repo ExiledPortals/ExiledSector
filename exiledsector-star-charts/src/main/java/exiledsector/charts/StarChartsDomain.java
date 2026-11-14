@@ -32,7 +32,9 @@ import exiledsector.i18n.SpecLocalisation;
 import exiledsector.i18n.Translation;
 import exiledsector.items.Engrams;
 import exiledsector.items.AtlasCatalystItems;
+import exiledsector.charts.officer.scar.ScarBattleResults;
 import exiledsector.items.BiomeCraft;
+import exiledsector.items.DomainMaterial;
 import exiledsector.items.InfusedFeedstock;
 import exiledsector.items.ItemDataRules;
 import exiledsector.items.ItemTypeSupport;
@@ -59,6 +61,7 @@ import exiledsector.ui.socket.EngramTray;
 import exiledsector.ui.socket.InfusedCraftingTray;
 import lunalib.lunaSettings.LunaSettings.SettingsCreator;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static exiledsector.ExiledSector.MOD_ID;
@@ -167,6 +170,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
 
     @Override
     public void afterSocketCustody() {
+        ScarBattleResults.clear();
         StarCharts.onGameLoad(Global.getSector());
         if (enabled()) {
             LimboBlueprintCache.onGameLoad(Global.getSector());
@@ -198,6 +202,11 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     @Override
     public List<String> craftingBenchFeedstockIds() {
         return BiomeCraft.feedstockIds();
+    }
+
+    @Override
+    public List<DomainMaterial> materialItems() {
+        return Arrays.stream(InfusedFeedstock.values()).map(feedstock -> new DomainMaterial(feedstock.itemId(), feedstock.color())).toList();
     }
 
     @Override

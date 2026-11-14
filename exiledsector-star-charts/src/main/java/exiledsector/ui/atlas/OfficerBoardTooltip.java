@@ -75,7 +75,7 @@ final class OfficerBoardTooltip {
     private final TextLabel codexHintLabel = new TextLabel(tooltipText.hint(), AtlasScreen.HINT_COLOUR);
     private final List<RewardRow> rewardRows = new ArrayList<>();
     private int shownRecordId = -1;
-    private String shownRecord;
+    private AtlasOfficer shownOfficer;
     private String portraitPath;
     private String flagPath;
     private float flagWidth;
@@ -93,13 +93,12 @@ final class OfficerBoardTooltip {
     }
 
     void show(AtlasOfficer officer) {
-        String record = officer.encode();
-        if (officer.recordId() == shownRecordId && record.equals(shownRecord)) {
+        if (officer.equals(shownOfficer)) {
             return;
         }
         cleanup();
         shownRecordId = officer.recordId();
-        shownRecord = record;
+        shownOfficer = officer;
         I18n.forGameText(() -> write(officer));
     }
 
@@ -121,7 +120,7 @@ final class OfficerBoardTooltip {
         shipPortrait = null;
         flagship = null;
         shownRecordId = -1;
-        shownRecord = null;
+        shownOfficer = null;
     }
 
     private float contentWidth() {

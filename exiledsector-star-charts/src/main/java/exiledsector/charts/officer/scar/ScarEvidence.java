@@ -99,6 +99,10 @@ public final class ScarEvidence {
         }
     }
 
+    float trackedSeconds() {
+        return trackedSeconds;
+    }
+
     public boolean hasFirstHit() {
         return firstHitSeconds >= 0f;
     }

@@ -18,7 +18,9 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -84,6 +86,25 @@ class ScarsTest {
         ScarBattleResults.publish("flagship-id", evidence);
         assertEquals("sun_scorched", Scars.pickAfterBattle("flagship-id", Map.of(), ScarFixtures.SHIELDED_WARSHIP));
         assertEquals(ScarTable.FALLBACK_SCAR_ID, Scars.pickAfterBattle("flagship-id", Map.of(), ScarFixtures.SHIELDED_WARSHIP));
+    }
+
+    @Test
+    void aLaterEngagementAddsToTheEvidenceStillWaitingFromEarlierOnes() {
+        try {
+            ScarEvidence first = ScarBattleResults.pendingOrNew("flagship-id");
+            first.addFired(600f, EnumSet.of(FiredAs.PROJECTILE, FiredAs.ENERGY));
+            ScarBattleResults.publish("flagship-id", first);
+
+            ScarEvidence later = ScarBattleResults.pendingOrNew("flagship-id");
+            later.addFired(400f, EnumSet.of(FiredAs.PROJECTILE, FiredAs.ENERGY));
+
+            assertSame(first, later);
+            assertEquals(1f, later.share(FiredAs.ENERGY));
+            assertSame(later, ScarBattleResults.take("flagship-id"));
+            assertNotSame(later, ScarBattleResults.pendingOrNew("flagship-id"));
+        } finally {
+            ScarBattleResults.clear();
+        }
     }
 
     @Test

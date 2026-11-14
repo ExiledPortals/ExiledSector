@@ -528,7 +528,7 @@
     "effect.SHIP_RECOVERY_CHANCE_BONUS": "If disabled, this ship is almost always recoverable after the battle.",
     "effect.FIGHTER_PILOTS_RECOVERED_FLAT": "Up to <good>{value}</good> additional strikecraft pilots are recovered after combat.",
     "effect.RECOVERED_HULL_AND_CR_FLAT": "When recovered after the battle, starts with <good>{min}%</good> to <good>{max}%</good> hull integrity and combat readiness.",
-    "effect.PEAK_TIME_CREW_LOSS_FLAT": "Loses up to <good>{value}%</good> of its crew over a full peak performance time in combat, even without taking hull damage.",
+    "effect.PEAK_TIME_CREW_LOSS_FLAT": "Loses up to <bad>{value}%</bad> of its crew over a full peak performance time in combat, even without taking hull damage.",
     "stat.armorDamageTakenPerDMod": "armor damage taken for each d-mod, up to a maximum of <hl>5</hl> d-mods",
     "stat.hullDamageTakenPerDMod": "hull damage taken for each d-mod, up to a maximum of <hl>5</hl> d-mods",
     "stat.negativeEffectsFromDMods": "negative effects from d-mods",
