@@ -109,7 +109,7 @@ class LaunchingStationTest {
 
     private static float launchPoints(int tier, int lost) {
         ChartTier chartTier = ChartAnomalyFleets.tier(tier, ChartGenContext.none());
-        return ChartAnomalyFleets.combat(Factions.REMNANTS, "patrol", chartTier, chartTier.fleetSize() * StationRules.fleetShare(lost)).combatPoints();
+        return ChartAnomalyFleets.combat(Factions.REMNANTS, "patrol", chartTier, chartTier.fleetSize() * StationRules.fleetShare(lost)).strength().combatPoints();
     }
 
     @Test

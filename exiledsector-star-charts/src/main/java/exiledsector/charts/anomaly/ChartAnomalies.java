@@ -29,6 +29,7 @@ import exiledsector.charts.atlas.AtlasRunChoice;
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.compat.ChartModGates;
+import exiledsector.compat.FirstFailureLog;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
@@ -65,7 +66,7 @@ public final class ChartAnomalies {
     private static volatile List<ChartAnomaly> anomalies = BUILT_IN;
     private static volatile Map<String, Definition> definitions = Map.of();
     private static final Map<Class<?>, List<?>> ROLES = new ConcurrentHashMap<>();
-    private static final Set<String> REPORTED_FAILURES = ConcurrentHashMap.newKeySet();
+    private static final FirstFailureLog HOOK_FAILURES = FirstFailureLog.errors(LOG);
 
     public record Definition(String id, float weight, int minTier, int maxTier, String requiredMod, String icon, boolean insertable,
                              Set<String> excludes, boolean replacesStar, List<ChartGenContext.AppliedEffect> effects, Set<String> biomes,
@@ -328,9 +329,8 @@ public final class ChartAnomalies {
         try {
             return call.get();
         } catch (RuntimeException | LinkageError e) {
-            if (REPORTED_FAILURES.add(anomaly.id() + ":" + hook)) {
-                LOG.error("[ExiledSector] The " + anomaly.id() + " anomaly's " + hook + " failed; it is skipped until the next try", e);
-            }
+            HOOK_FAILURES.report(anomaly.id() + ":" + hook,
+                    "[ExiledSector] The " + anomaly.id() + " anomaly's " + hook + " failed; it is skipped until the next try", e);
             return null;
         }
     }

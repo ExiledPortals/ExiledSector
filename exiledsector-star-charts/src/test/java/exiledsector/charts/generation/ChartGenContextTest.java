@@ -19,6 +19,7 @@ import exiledsector.charts.content.ChartFactions;
 import exiledsector.charts.content.ChartFleetSpread;
 import exiledsector.charts.content.ChartPoi;
 import exiledsector.charts.content.ChartPois;
+import exiledsector.charts.effect.ChartBattleRules;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.effect.ChartFleetStat;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
@@ -188,7 +189,7 @@ class ChartGenContextTest {
         assertTrue(harderPoints > basePoints, basePoints + " -> " + harderPoints);
         assertTrue(harderPlan.count(FleetRole.GUARD) + harderPlan.count(FleetRole.PATROL)
                 > base.count(FleetRole.GUARD) + base.count(FleetRole.PATROL));
-        assertTrue(harderPlan.fleets().stream().allMatch(fleet -> fleet.officerLevelBonus() >= 2));
+        assertTrue(harderPlan.fleets().stream().allMatch(fleet -> fleet.strength().officerLevelBonus() >= 2));
         ChartContentPlan richerPlan = plan(richer, seed);
         assertTrue(richerPlan.pois().size() >= base.pois().size() + 3, base.pois().size() + " -> " + richerPlan.pois().size());
         assertTrue(richerPlan.lootSpent() > base.lootSpent());
@@ -329,11 +330,13 @@ class ChartGenContextTest {
             assertEquals(700f, gatedChart.bossSizePercent(), TOLERANCE, "tier " + tier);
             for (ChartGenContext context : List.of(ChartGenContext.none(), gatedChart, gatedAndWarded)) {
                 float bossSize = base.bossSize() + context.bossSizePercent();
-                PlannedFleet boss = ChartContentPlanner.plannedBoss(context.adjust(base), 50f, 0);
-                assertEquals(ChartTier.fleetPoints(Math.min(ChartContentPlanner.BOSS_SIZE_CAP, bossSize)), boss.combatPoints(), TOLERANCE,
+                ChartTier adjusted = context.adjust(base);
+                PlannedFleet boss = ChartContentPlanner.plannedBoss(adjusted, 0);
+                assertEquals(ChartTier.fleetPoints(Math.min(ChartContentPlanner.BOSS_SIZE_CAP, bossSize)), boss.strength().combatPoints(), TOLERANCE,
                         "tier " + tier);
                 assertEquals(ChartContentPlanner.overflowStrength(bossSize, ChartContentPlanner.BOSS_SIZE_CAP), boss.strengthBonus(), "tier " + tier);
-                assertEquals(0.65f, boss.quality(), TOLERANCE, "tier " + tier);
+                assertEquals(ChartContentPlanner.bossQuality(ChartContentPlanner.fleetQuality(adjusted)) / ChartTier.PERCENT, boss.strength().quality(),
+                        TOLERANCE, "tier " + tier);
                 if (bossSize > ChartContentPlanner.BOSS_SIZE_CAP) {
                     sawOverflow = true;
                     assertTrue(boss.strengthBonus() > 0, "tier " + tier);
@@ -494,10 +497,10 @@ class ChartGenContextTest {
 
         assertTrue(context.twinnedBoss());
         assertEquals(Set.of(HullSize.CRUISER, HullSize.FRIGATE), context.bannedCombatHullSizes());
-        assertTrue(context.shipSystemsDisabled());
-        assertTrue(context.autopilotForced());
-        assertEquals(800f, context.arcStrikeEmp(), TOLERANCE);
-        assertEquals(1f / 30f, context.weaponMisfireRate(), TOLERANCE);
+        assertTrue(context.battleRules().shipSystemsDisabled());
+        assertTrue(context.battleRules().autopilotForced());
+        assertEquals(800f, context.battleRules().arcStrikeEmp(), TOLERANCE);
+        assertEquals(1f / 30f, context.battleRules().weaponMisfireRate(), TOLERANCE);
         assertEquals(0.6f, context.fleetStatMults().get(ChartFleetStat.WEAPON_AND_ENGINE_REPAIR_SPEED), TOLERANCE);
         assertEquals(2.2f, context.fleetStatMults().get(ChartFleetStat.SHIELD_DAMAGE_TAKEN), TOLERANCE);
         assertEquals(0.1f, context.fleetStatMults().get(ChartFleetStat.ARMOR), TOLERANCE);
@@ -505,9 +508,6 @@ class ChartGenContextTest {
         assertEquals(Set.of("refracting_projectiles_1"), context.enemyGrantedNodeIds());
         assertFalse(ChartGenContext.none().twinnedBoss());
         assertTrue(ChartGenContext.none().bannedCombatHullSizes().isEmpty());
-        assertFalse(ChartGenContext.none().shipSystemsDisabled());
-        assertFalse(ChartGenContext.none().autopilotForced());
-        assertEquals(0f, ChartGenContext.none().arcStrikeEmp(), TOLERANCE);
-        assertEquals(0f, ChartGenContext.none().weaponMisfireRate(), TOLERANCE);
+        assertEquals(ChartBattleRules.NONE, ChartGenContext.none().battleRules());
     }
 }

@@ -65,7 +65,7 @@ class ChartContentPlannerTest {
                     plan.fleetPoints(FleetRole.STATION_GUARD), 0.001f);
             PlannedFleet fallback = plan.bossStation().fallbackBoss();
             assertEquals(FleetRole.BOSS, fallback.role());
-            assertEquals(ChartTier.fleetPoints(Math.min(ChartContentPlanner.BOSS_SIZE_CAP, tier.bossSize())), fallback.combatPoints(), 0.001f);
+            assertEquals(ChartTier.fleetPoints(Math.min(ChartContentPlanner.BOSS_SIZE_CAP, tier.bossSize())), fallback.strength().combatPoints(), 0.001f);
         } finally {
             ChartBosses.resetForTests();
         }
@@ -273,11 +273,11 @@ class ChartContentPlannerTest {
                 }
                 for (PlannedFleet fleet : plan.fleets()) {
                     float cap = ChartTier.fleetPoints(fleet.role() == FleetRole.BOSS ? ChartContentPlanner.BOSS_SIZE_CAP : ChartContentPlanner.FLEET_SIZE_CAP);
-                    assertTrue(fleet.combatPoints() <= cap, fleet.toString());
-                    assertTrue(fleet.combatPoints() >= minimumPoints, fleet.toString());
-                    assertTrue(fleet.quality() <= ChartContentPlanner.MAX_QUALITY / ChartTier.PERCENT);
+                    assertTrue(fleet.strength().combatPoints() <= cap, fleet.toString());
+                    assertTrue(fleet.strength().combatPoints() >= minimumPoints, fleet.toString());
+                    assertTrue(fleet.strength().quality() <= ChartContentPlanner.MAX_QUALITY / ChartTier.PERCENT);
                     if (fleet.strengthBonus() > 0) {
-                        assertEquals(cap, fleet.combatPoints(), 0.01f, fleet.toString());
+                        assertEquals(cap, fleet.strength().combatPoints(), 0.01f, fleet.toString());
                     }
                 }
             }
@@ -293,11 +293,11 @@ class ChartContentPlannerTest {
         assertEquals(2, plan.count(FleetRole.GUARD) + plan.count(FleetRole.PATROL));
         for (PlannedFleet fleet : plan.fleets()) {
             boolean boss = fleet.role() == FleetRole.BOSS;
-            assertEquals(ChartTier.fleetPoints(boss ? ChartContentPlanner.BOSS_SIZE_CAP : ChartContentPlanner.FLEET_SIZE_CAP), fleet.combatPoints(), 0.01f);
+            assertEquals(ChartTier.fleetPoints(boss ? ChartContentPlanner.BOSS_SIZE_CAP : ChartContentPlanner.FLEET_SIZE_CAP), fleet.strength().combatPoints(), 0.01f);
             assertTrue(fleet.strengthBonus() > 0, fleet.toString());
             assertTrue(fleet.strengthBonus() <= ChartContentPlanner.MAX_OVERFLOW_STRENGTH, fleet.toString());
-            assertEquals(boss ? 0.65f : 0.5f, fleet.quality(), 0.001f);
-            assertEquals(boss ? 1 + ChartContentPlanner.BOSS_OFFICER_LEVEL_BONUS : 1, fleet.officerLevelBonus());
+            assertEquals(boss ? 0.65f : 0.5f, fleet.strength().quality(), 0.001f);
+            assertEquals(boss ? 1 + ChartContentPlanner.BOSS_OFFICER_LEVEL_BONUS : 1, fleet.strength().officerLevelBonus());
         }
         assertEquals(ChartContentPlanner.MAX_OVERFLOW_STRENGTH, ChartContentPlanner.overflowStrength(2f * ChartContentPlanner.BOSS_SIZE_CAP, ChartContentPlanner.BOSS_SIZE_CAP));
         assertEquals(25, ChartContentPlanner.overflowStrength(1.25f * ChartContentPlanner.FLEET_SIZE_CAP, ChartContentPlanner.FLEET_SIZE_CAP));

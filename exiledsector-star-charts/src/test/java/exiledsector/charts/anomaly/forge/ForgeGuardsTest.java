@@ -84,7 +84,7 @@ class ForgeGuardsTest {
 
     private static float escortPoints(int tier) {
         ChartTier chartTier = ChartAnomalyFleets.tier(tier, ChartGenContext.none());
-        return ChartAnomalyFleets.combat(Factions.DERELICT, "patrol", chartTier, chartTier.fleetSize() * ForgeRules.ESCORT_SIZE_SHARE).combatPoints();
+        return ChartAnomalyFleets.combat(Factions.DERELICT, "patrol", chartTier, chartTier.fleetSize() * ForgeRules.ESCORT_SIZE_SHARE).strength().combatPoints();
     }
 
     @Test

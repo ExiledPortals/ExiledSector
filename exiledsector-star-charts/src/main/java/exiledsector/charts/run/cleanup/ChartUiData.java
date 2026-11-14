@@ -2,6 +2,7 @@ package exiledsector.charts.run.cleanup;
 
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
+import exiledsector.compat.FirstFailureLog;
 import org.apache.log4j.Logger;
 
 import java.lang.invoke.MethodHandle;
@@ -14,11 +15,11 @@ final class ChartUiData {
     static final String SET_MAP_LOCATION = "setCampaignMapLocation";
     static final String SET_COURSE_TARGET = "setCourseTarget";
     private static final Logger LOG = Logger.getLogger(ChartUiData.class);
+    private static final FirstFailureLog FAILURES = FirstFailureLog.warnings(LOG);
     private static Class<?> resolvedUiDataClass;
     private static MethodHandle mapLocationGetter;
     private static MethodHandle mapLocationSetter;
     private static MethodHandle courseTargetSetter;
-    private static boolean failureReported;
 
     private ChartUiData() {
     }
@@ -103,11 +104,7 @@ final class ChartUiData {
     }
 
     private static void reportFailure(String reason, Throwable cause) {
-        if (failureReported) {
-            return;
-        }
-        failureReported = true;
-        LOG.warn("[ExiledSector] Star Chart cleanup can't reach the campaign UI data (" + reason
+        FAILURES.report("[ExiledSector] Star Chart cleanup can't reach the campaign UI data (" + reason
                 + "); a closed system may stay in the save until the map is viewed elsewhere", cause);
     }
 }

@@ -28,7 +28,7 @@ public final class ExcavationLoot {
     }
 
     static float quantityMult(ChartGenContext context) {
-        return (context == null ? ChartGenContext.none() : context).anomalyMult(ExcavationSites.LOOT_KEY);
+        return ChartGenContext.orNone(context).anomalyMult(ExcavationSites.LOOT_KEY);
     }
 
     static float expectedInhibitors(float perShaft, ChartGenContext context, float share) {

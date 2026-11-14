@@ -7,9 +7,9 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.listeners.FleetEventListener;
 import com.fs.starfarer.api.impl.campaign.ids.FleetTypes;
 import exiledsector.Seeds;
-import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.ChartContentPlanner;
-import exiledsector.charts.content.ChartSites;
+import exiledsector.charts.content.ChartFleetMarks;
+import exiledsector.charts.layout.ChartGeometry;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.content.ChartAnomalyFleets;
@@ -52,13 +52,9 @@ final class ConvoyFleets {
             return false;
         }
         ChartAnomalyFleets.prepare(fleet, site.runId(), site.tier(), fleetSeed, true, context);
-        int strengthBonus = strengthBonus(tier, escortMult);
-        if (strengthBonus > 0) {
-            fleet.getMemoryWithoutUpdate().set(ChartIds.STRENGTH_BONUS_MEMORY_KEY, strengthBonus);
-        }
+        ChartFleetMarks.setStrengthBonus(fleet.getMemoryWithoutUpdate(), strengthBonus(tier, escortMult));
         dress(fleet, convoy, convoyFactionId);
-        double angle = random.nextDouble() * Math.PI * 2d;
-        site.addFleet(fleet, ChartSites.pointAround(new Vector2f(convoy.entryX(), convoy.entryY()), angle, ConvoyRules.SPAWN_SPREAD));
+        site.addFleet(fleet, ChartGeometry.pointAtRandomAngle(new Vector2f(convoy.entryX(), convoy.entryY()), ConvoyRules.SPAWN_SPREAD, random));
         convoy.setFleetId(fleet.getId());
         boolean civilianOnly = ConvoyCargo.freighterPoints(fleet, true) > 0f;
         float freighterPoints = ConvoyCargo.freighterPoints(fleet, civilianOnly);

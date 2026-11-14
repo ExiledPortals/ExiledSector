@@ -62,12 +62,7 @@ public final class ChartRunEffects {
             }
         }
         ChartPlayerModifiers.set(runContext.fleetStatMults(), fleet);
-        ChartPlayerModifiers.setBattleSizeBonus(runContext.battleSizeBonus());
-        ChartPlayerModifiers.setShipSystemsDisabled(runContext.shipSystemsDisabled());
-        ChartPlayerModifiers.setAutopilotForced(runContext.autopilotForced());
-        ChartPlayerModifiers.setArcStrikeEmp(runContext.arcStrikeEmp());
-        ChartPlayerModifiers.setWeaponMisfireRate(runContext.weaponMisfireRate());
-        ChartPlayerModifiers.setDamagePercentPerSMod(runContext.damagePercentPerSMod());
+        ChartPlayerModifiers.setBattleRules(runContext.battleRules());
     }
 
     public static void lift(CampaignFleetAPI fleet) {

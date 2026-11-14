@@ -26,6 +26,6 @@ public final class StormBattles {
     }
 
     static ChartGenContext contextOf(ChartRun run) {
-        return run == null ? ChartGenContext.none() : ChartRunEffects.contextOf(run);
+        return ChartRunEffects.contextOf(run);
     }
 }

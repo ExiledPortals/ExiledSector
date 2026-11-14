@@ -8,7 +8,7 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.terrain.BaseRingTerrain;
 import com.fs.starfarer.api.impl.campaign.terrain.FlareManager.FlareManagerDelegate;
 import com.fs.starfarer.api.impl.campaign.terrain.PulsarBeamTerrainPlugin;
-import exiledsector.charts.content.ChartSites;
+import exiledsector.charts.layout.ChartGeometry;
 import exiledsector.charts.generation.ChartSystemFactory;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -70,7 +70,7 @@ public final class ChartWormholePlacement {
     }
 
     private static Vector2f polar(double angle, float radius) {
-        return ChartSites.pointAround(new Vector2f(), angle, radius);
+        return ChartGeometry.pointAround(new Vector2f(), angle, radius);
     }
 
     static boolean isClear(List<Band> blocked, float distance) {

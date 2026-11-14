@@ -12,6 +12,7 @@ import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.HeldGuards;
 import exiledsector.charts.content.ChartAnomalyFleets;
 import exiledsector.charts.content.ChartContentPlanner;
+import exiledsector.charts.content.ChartFleetMarks;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.loot.ChartFleetLoot;
@@ -55,10 +56,7 @@ public final class ExcavationFleets {
         ChartFleetLoot.recordStart(fleet);
         ChartFleetLoot.tagAnomaly(fleet, ExcavationSites.ANOMALY_ID);
         MemoryAPI memory = fleet.getMemoryWithoutUpdate();
-        int strengthBonus = ExcavationRules.strengthBonus(tier);
-        if (strengthBonus > 0) {
-            memory.set(ChartIds.STRENGTH_BONUS_MEMORY_KEY, strengthBonus);
-        }
+        ChartFleetMarks.setStrengthBonus(memory, ExcavationRules.strengthBonus(tier));
         memory.set(MemFlags.MEMORY_KEY_NO_REP_IMPACT, true);
         fleet.addTag(FLEET_TAG);
         return fleet;

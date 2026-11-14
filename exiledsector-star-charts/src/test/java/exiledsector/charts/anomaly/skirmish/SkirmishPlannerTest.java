@@ -93,7 +93,7 @@ class SkirmishPlannerTest {
         assertEquals(DEFENDING_OFFICER, skirmish.defenderOfficerId());
         assertEquals(SkirmishPlanner.officerFleet(ChartTiers.forTier(TIER), highestRank()), skirmish.attackerFleet());
         assertEquals(SkirmishPlanner.officerFleet(ChartTiers.forTier(TIER), lowestRank()), skirmish.defenderFleet());
-        assertTrue(skirmish.attackerFleet().combatPoints() >= skirmish.defenderFleet().combatPoints());
+        assertTrue(skirmish.attackerFleet().strength().combatPoints() >= skirmish.defenderFleet().strength().combatPoints());
         assertFalse(skirmish.attackerFleet().guardsPoi());
         assertFalse(skirmish.defenderFleet().guardsPoi());
     }

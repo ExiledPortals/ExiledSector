@@ -6,12 +6,12 @@ import com.fs.starfarer.api.characters.AbilityPlugin;
 import com.fs.starfarer.api.impl.campaign.abilities.BaseDurationAbility;
 import com.fs.starfarer.api.impl.campaign.abilities.FractureJumpAbility;
 import com.fs.starfarer.api.impl.campaign.ids.Abilities;
+import exiledsector.compat.FirstFailureLog;
 import org.apache.log4j.Logger;
 
 public final class ChartTransverseJump {
 
-    private static final Logger LOG = Logger.getLogger(ChartTransverseJump.class);
-    private static boolean foreignPluginReported;
+    private static final FirstFailureLog FOREIGN_PLUGIN = FirstFailureLog.warnings(Logger.getLogger(ChartTransverseJump.class));
 
     private ChartTransverseJump() {
     }
@@ -60,11 +60,8 @@ public final class ChartTransverseJump {
     }
 
     private static void reportForeignPlugin(AbilityPlugin current) {
-        if (!foreignPluginReported) {
-            foreignPluginReported = true;
-            LOG.warn("[ExiledSector] Transverse Jump uses " + current.getClass().getName()
-                    + " instead of the vanilla plugin, so it stays blocked inside Star Chart systems");
-        }
+        FOREIGN_PLUGIN.report("[ExiledSector] Transverse Jump uses " + current.getClass().getName()
+                + " instead of the vanilla plugin, so it stays blocked inside Star Chart systems", null);
     }
 
     private static void swap(CampaignFleetAPI fleet, AbilityPlugin from, BaseDurationAbility to) {

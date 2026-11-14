@@ -105,7 +105,7 @@ public final class ChartFleetLoot {
         return fleetMemory != null && fleetMemory.getBoolean(ChartIds.LOOT_SPENT_MEMORY_KEY);
     }
 
-    public static boolean isChartFleet(CampaignFleetAPI fleet) {
+    public static boolean hasLootLedger(CampaignFleetAPI fleet) {
         return ledgerOf(fleet) != null;
     }
 
@@ -121,7 +121,7 @@ public final class ChartFleetLoot {
     }
 
     public static boolean adoptDefender(CampaignFleetAPI fleet, LocationAPI battleLocation) {
-        if (fleet == null || isChartFleet(fleet)) {
+        if (fleet == null || hasLootLedger(fleet)) {
             return fleet != null;
         }
         ChartRun run = ChartRuns.liveIn(battleLocation);
@@ -192,7 +192,7 @@ public final class ChartFleetLoot {
     }
 
     public static ItemDrops.SiteLoot roll(SectorAPI sector, CampaignFleetAPI fleet, float defeatedDeploymentPoints, Battle battle, Random random) {
-        if (!isChartFleet(fleet)) {
+        if (!hasLootLedger(fleet)) {
             return ItemDrops.SiteLoot.NONE;
         }
         ChartRun run = liveRunOf(fleet);

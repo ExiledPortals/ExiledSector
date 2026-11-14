@@ -12,6 +12,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.content.ChartContentGenerator;
+import exiledsector.charts.layout.ChartGeometry;
 import exiledsector.charts.layout.ChartLayout;
 import exiledsector.charts.layout.ChartLayoutGenerator;
 import exiledsector.charts.layout.ChartLayoutRequest;
@@ -89,7 +90,7 @@ public final class ChartSystemFactory {
                 Translation.gameText("chart.wormhole.inner.name"), ChartIds.WORMHOLE_TYPE, Factions.NEUTRAL);
         Vector2f placed = innerWormholeSpot(location);
         inner.setFixedLocation(placed.x, placed.y);
-        tag(inner, runId);
+        ChartIds.tagForRun(inner, runId);
         inner.addTag(ChartIds.INNER_WORMHOLE_TAG);
         return inner;
     }
@@ -108,15 +109,11 @@ public final class ChartSystemFactory {
         if (anchor == null) {
             outer.setFixedLocation(besideHere.x + OUTER_WORMHOLE_OFFSET, besideHere.y);
         } else {
-            outer.setCircularOrbit(anchor, angleFrom(anchor.getLocation(), besideHere), anchor.getRadius() + OUTER_WORMHOLE_OFFSET, OUTER_ORBIT_DAYS);
+            outer.setCircularOrbit(anchor, ChartGeometry.degreesFrom(anchor.getLocation(), besideHere), anchor.getRadius() + OUTER_WORMHOLE_OFFSET, OUTER_ORBIT_DAYS);
         }
-        tag(outer, runId);
+        ChartIds.tagForRun(outer, runId);
         outer.addTag(ChartIds.OUTER_WORMHOLE_TAG);
         return outer;
-    }
-
-    static float angleFrom(Vector2f centre, Vector2f point) {
-        return (float) Math.toDegrees(Math.atan2(point.y - centre.y, point.x - centre.x));
     }
 
     public static SectorEntityToken entryPoint(StarSystemAPI system, SectorEntityToken innerWormhole) {
@@ -147,12 +144,7 @@ public final class ChartSystemFactory {
 
     private static void tagEveryEntity(StarSystemAPI system, String runId) {
         for (SectorEntityToken entity : new ArrayList<>(system.getAllEntities())) {
-            tag(entity, runId);
+            ChartIds.tagForRun(entity, runId);
         }
-    }
-
-    private static void tag(SectorEntityToken entity, String runId) {
-        entity.addTag(ChartIds.ENTITY_TAG);
-        entity.addTag(ChartIds.runTag(runId));
     }
 }

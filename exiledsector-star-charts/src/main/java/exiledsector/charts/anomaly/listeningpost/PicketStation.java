@@ -1,7 +1,7 @@
 package exiledsector.charts.anomaly.listeningpost;
 
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import exiledsector.charts.content.ChartSites;
+import exiledsector.charts.layout.ChartGeometry;
 import org.lwjgl.util.vector.Vector2f;
 
 public final class PicketStation {
@@ -39,7 +39,7 @@ public final class PicketStation {
     }
 
     Vector2f around(Vector2f centre) {
-        return ChartSites.pointAround(centre, Math.toRadians(angle), radius);
+        return ChartGeometry.pointAround(centre, Math.toRadians(angle), radius);
     }
 
     void follow(Vector2f centre) {

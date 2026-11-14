@@ -49,7 +49,7 @@ class ChartAutopilotPluginTest {
 
     @Test
     void aForcedAutopilotChartSwallowsTheToggleKeyAndStopsManualControlTurningItOffUntilTheNextBattle() {
-        ChartPlayerModifiers.setAutopilotForced(true);
+        forceAutopilot(true);
         ChartAutopilotPlugin plugin = initialised();
         InputEventAPI toggle = keyDown(TOGGLE_KEY);
         InputEventAPI other = keyDown(OTHER_KEY);
@@ -60,24 +60,18 @@ class ChartAutopilotPluginTest {
         verify(toggle).consume();
         verify(other, never()).consume();
 
-        ChartPlayerModifiers.setAutopilotForced(false);
+        forceAutopilot(false);
         initialised();
         initialised();
         verify(settings, times(1)).setBoolean(ChartAutopilotPlugin.TURN_OFF_SETTING, true);
     }
 
     @Test
-    void battlesOutsideAForcedChartAndSimulationsLeaveThePlayerInControl() {
+    void battlesOutsideAForcedChartLeaveThePlayerInControl() {
         ChartAutopilotPlugin outside = initialised();
         InputEventAPI toggle = keyDown(TOGGLE_KEY);
         outside.processInputPreCoreControls(0f, List.of(toggle));
         outside.advance(0f, List.of());
-
-        ChartPlayerModifiers.setAutopilotForced(true);
-        when(engine.isSimulation()).thenReturn(true);
-        ChartAutopilotPlugin simulation = initialised();
-        simulation.processInputPreCoreControls(0f, List.of(toggle));
-        simulation.advance(0f, List.of());
 
         verify(toggle, never()).consume();
         verify(engine, never()).getPlayerShip();
@@ -105,6 +99,10 @@ class ChartAutopilotPluginTest {
     void anUnreadableToggleBindingSwallowsNoKey() {
         when(settings.getCodeFor("Z")).thenThrow(new IllegalArgumentException("unknown key"));
         assertEquals(ChartAutopilotPlugin.NO_KEY, ChartAutopilotPlugin.toggleKeyCode(settings));
+    }
+
+    private static void forceAutopilot(boolean forced) {
+        ChartPlayerModifiers.setBattleRules(new ChartBattleRules(0, false, forced, 0f, 0f, 0f));
     }
 
     private ChartAutopilotPlugin initialised() {

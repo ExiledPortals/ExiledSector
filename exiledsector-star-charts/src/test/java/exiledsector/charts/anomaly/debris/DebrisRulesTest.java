@@ -42,12 +42,12 @@ class DebrisRulesTest {
     void aDormantFleetOutgunsTheBossOnEveryTier() {
         for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.CORRUPTED_TIER; tier++) {
             ChartTier chartTier = ChartGenContext.none().adjust(ChartTiers.forTier(tier));
-            PlannedFleet boss = ChartContentPlanner.plannedBoss(chartTier, ChartContentPlanner.fleetQuality(chartTier), ChartContentPlanner.NO_POI);
+            PlannedFleet boss = ChartContentPlanner.plannedBoss(chartTier, ChartContentPlanner.NO_POI);
 
             float points = DebrisRules.fleetPoints(chartTier, false);
-            assertTrue(points >= boss.combatPoints(), "tier " + tier);
-            assertTrue(points > boss.combatPoints() || DebrisRules.strengthBonus(chartTier, false) > boss.strengthBonus(), "tier " + tier);
-            assertTrue(DebrisRules.quality(chartTier, false) >= Math.min(1f, boss.quality()), "tier " + tier);
+            assertTrue(points >= boss.strength().combatPoints(), "tier " + tier);
+            assertTrue(points > boss.strength().combatPoints() || DebrisRules.strengthBonus(chartTier, false) > boss.strengthBonus(), "tier " + tier);
+            assertTrue(DebrisRules.quality(chartTier, false) >= Math.min(1f, boss.strength().quality()), "tier " + tier);
         }
     }
 

@@ -26,6 +26,7 @@ import exiledsector.charts.run.cleanup.ChartUsedNames;
 import exiledsector.Seeds;
 import exiledsector.items.WeightedPick;
 import exiledsector.charts.anomaly.LayoutShaper;
+import exiledsector.compat.FirstFailureLog;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -55,10 +56,9 @@ public final class ChartLayoutGenerator {
     static final long PLACEMENT_SALT = 0x43484152545057L;
     static final long LAYOUT_SALT = 0x4348415254594fL;
     static final long ABYSS_SALT = 0x43484152544142L;
-    private static final Logger LOG = Logger.getLogger(ChartLayoutGenerator.class);
+    private static final FirstFailureLog FAILURES = FirstFailureLog.errors(Logger.getLogger(ChartLayoutGenerator.class));
     private static final ChartLayoutEngine VANILLA_ENGINE = new VanillaChartLayoutEngine();
     private static ChartLayoutEngine engine = VANILLA_ENGINE;
-    private static boolean failureReported;
 
     private ChartLayoutGenerator() {
     }
@@ -167,13 +167,9 @@ public final class ChartLayoutGenerator {
             }
             return new Built(true, result.featureAnchor(), result.unshapedAnomalyIds());
         } catch (RuntimeException | LinkageError e) {
-            if (!failureReported) {
-                failureReported = true;
-                LOG.error("[ExiledSector] Generating a Star Chart layout (seed " + seed + ", " + systemType
-                        + ") failed; using a single star instead. Later failures are logged at debug level", e);
-            } else {
-                LOG.debug("[ExiledSector] Generating a Star Chart layout (seed " + seed + ", " + systemType + ") failed again", e);
-            }
+            String failure = "[ExiledSector] Generating a Star Chart layout (seed " + seed + ", " + systemType + ") failed";
+            FAILURES.reportThenDebug(failure +"; using a single star instead. Later failures are logged at debug level",
+                    failure + " again", e);
             return new Built(false, null, List.of());
         }
     }
@@ -241,11 +237,11 @@ public final class ChartLayoutGenerator {
 
     static void useEngineForTests(ChartLayoutEngine testEngine) {
         engine = testEngine;
-        failureReported = false;
+        FAILURES.reset();
     }
 
     public static void resetForTests() {
         engine = VANILLA_ENGINE;
-        failureReported = false;
+        FAILURES.reset();
     }
 }

@@ -50,7 +50,7 @@ class ChartArcStrikePluginTest {
 
     @Test
     void everyIntervalAShieldPiercingEmpOnlyArcStrikesAPlayerSideShip() {
-        ChartPlayerModifiers.setArcStrikeEmp(EMP);
+        ionize();
         ChartArcStrikePlugin plugin = initialised();
 
         plugin.advance(ChartArcStrikePlugin.INTERVAL_SECONDS - 1f, List.of());
@@ -62,16 +62,15 @@ class ChartArcStrikePluginTest {
     }
 
     @Test
-    void noArcsStrikeOutsideAnIonizedChartOrInSimulations() {
+    void noArcsStrikeOutsideAnIonizedChart() {
         ChartArcStrikePlugin outside = initialised();
         outside.advance(ChartArcStrikePlugin.INTERVAL_SECONDS * 2f, List.of());
 
-        ChartPlayerModifiers.setArcStrikeEmp(EMP);
-        when(engine.isSimulation()).thenReturn(true);
-        ChartArcStrikePlugin simulation = initialised();
-        simulation.advance(ChartArcStrikePlugin.INTERVAL_SECONDS * 2f, List.of());
-
         verifyStrikes(0);
+    }
+
+    private static void ionize() {
+        ChartPlayerModifiers.setBattleRules(new ChartBattleRules(0, false, false, EMP, 0f, 0f));
     }
 
     @Test

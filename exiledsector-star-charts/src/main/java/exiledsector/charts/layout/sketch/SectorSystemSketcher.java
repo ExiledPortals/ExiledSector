@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.RingBandAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
+import exiledsector.charts.layout.ChartGeometry;
 import exiledsector.charts.layout.sketch.ChartSystemSketch.Belt;
 import exiledsector.charts.layout.sketch.ChartSystemSketch.Body;
 import org.lwjgl.util.vector.Vector2f;
@@ -61,7 +62,7 @@ public final class SectorSystemSketcher {
     private static Body body(PlanetAPI planet, Vector2f centreLocation) {
         Vector2f location = planet.getLocation();
         float orbitRadius = distance(centreLocation, location);
-        float angle = orbitRadius > 0f ? (float) Math.toDegrees(Math.atan2(location.y - centreLocation.y, location.x - centreLocation.x)) : 0f;
+        float angle = orbitRadius > 0f ? ChartGeometry.degreesFrom(centreLocation, location) : 0f;
         OrbitAPI orbit = planet.getOrbit();
         float orbitDays = orbit == null || orbitRadius <= 0f ? 0f : orbit.getOrbitalPeriod();
         return new Body(planet.getTypeId(), planet.getRadius(), orbitRadius, orbitDays, angle);

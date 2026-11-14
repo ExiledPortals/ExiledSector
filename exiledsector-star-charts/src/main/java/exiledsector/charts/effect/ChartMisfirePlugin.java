@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
 import com.fs.starfarer.api.input.InputEventAPI;
+import exiledsector.compat.FirstFailureLog;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -20,8 +21,7 @@ public class ChartMisfirePlugin extends BaseEveryFrameCombatPlugin {
     static final float MAX_MISFIRE_SECONDS = 4f;
     static final float FIRE_SECONDS = 0.5f;
     static final float SWING_TURN_RATE_MULT = 3f;
-    private static final Logger LOG = Logger.getLogger(ChartMisfirePlugin.class);
-    private static boolean failureReported;
+    private static final FirstFailureLog FAILURES = FirstFailureLog.errors(Logger.getLogger(ChartMisfirePlugin.class));
 
     private final Random random;
     private final List<Misfire> misfires = new ArrayList<>();
@@ -66,8 +66,7 @@ public class ChartMisfirePlugin extends BaseEveryFrameCombatPlugin {
         armedWeapons = List.of();
         refreshed = false;
         secondsSinceRefresh = 0f;
-        boolean campaignBattle = engine != null && engine.isInCampaign() && !engine.isSimulation() && !engine.isInCampaignSim();
-        misfiresPerWeaponSecond = campaignBattle ? ChartPlayerModifiers.weaponMisfireRate() : 0f;
+        misfiresPerWeaponSecond = ChartCombatPlugins.isCampaignBattle(engine) ? ChartPlayerModifiers.battleRules().weaponMisfireRate() : 0f;
     }
 
     @Override
@@ -96,10 +95,7 @@ public class ChartMisfirePlugin extends BaseEveryFrameCombatPlugin {
         } catch (RuntimeException | LinkageError e) {
             misfiresPerWeaponSecond = 0f;
             endAll();
-            if (!failureReported) {
-                failureReported = true;
-                LOG.error("[ExiledSector] The Star Chart's weapon misfires failed; they are off for this battle", e);
-            }
+            FAILURES.report("[ExiledSector] The Star Chart's weapon misfires failed; they are off for this battle", e);
         }
     }
 

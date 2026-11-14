@@ -4,10 +4,12 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.content.ChartPoi;
+import exiledsector.charts.effect.ChartBattleRules;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.effect.ChartFactionEffect;
 import exiledsector.charts.effect.ChartFleetStat;
 import exiledsector.charts.loot.DropType;
+import exiledsector.compat.FirstFailureLog;
 import exiledsector.items.Item;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemKind;
@@ -32,7 +34,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 public final class ChartGenContext {
 
@@ -41,8 +42,7 @@ public final class ChartGenContext {
     public static final float PERCENT = 100f;
     static final float QUANTITY_PERCENT_PER_QUALITY = 1f;
     static final Map<TierGroup, Float> QUANTITY_PERCENT_PER_PREFIX = Map.of(TierGroup.LOW, 5f, TierGroup.MID, 15f, TierGroup.HIGH, 25f);
-    private static final Logger LOG = Logger.getLogger(ChartGenContext.class);
-    private static final Set<String> REPORTED_UNRESOLVED_ROLLS = ConcurrentHashMap.newKeySet();
+    private static final FirstFailureLog UNRESOLVED_ROLLS = FirstFailureLog.warnings(Logger.getLogger(ChartGenContext.class));
 
     public record AppliedEffect(ChartModifier effect, float value) {
     }
@@ -105,6 +105,10 @@ public final class ChartGenContext {
 
     public static ChartGenContext none() {
         return NONE;
+    }
+
+    public static ChartGenContext orNone(ChartGenContext context) {
+        return context == null ? NONE : context;
     }
 
     public static ChartGenContext of(List<AppliedEffect> applied) {
@@ -180,10 +184,8 @@ public final class ChartGenContext {
     }
 
     private static void reportUnresolved(Item chart, ChartModifier effect) {
-        if (REPORTED_UNRESOLVED_ROLLS.add(chart.definitionId() + "/" + effect.name())) {
-            LOG.warn("[ExiledSector] Star Chart " + chart.definitionId() + " has a " + effect.name()
-                    + " roll whose modifier is no longer defined; the roll is ignored");
-        }
+        UNRESOLVED_ROLLS.report(chart.definitionId() + "/" + effect.name(), "[ExiledSector] Star Chart " + chart.definitionId() + " has a "
+                + effect.name() + " roll whose modifier is no longer defined; the roll is ignored", null);
     }
 
     public List<AppliedEffect> applied() {
@@ -266,24 +268,12 @@ public final class ChartGenContext {
         shipSystemsDisabled = true;
     }
 
-    public boolean shipSystemsDisabled() {
-        return shipSystemsDisabled;
-    }
-
     public void forceAutopilot() {
         autopilotForced = true;
     }
 
-    public boolean autopilotForced() {
-        return autopilotForced;
-    }
-
     public void addArcStrikeEmp(float emp) {
         arcStrikeEmp += emp;
-    }
-
-    public float arcStrikeEmp() {
-        return Math.max(0f, arcStrikeEmp);
     }
 
     public void addWeaponMisfireSeconds(float seconds) {
@@ -292,16 +282,8 @@ public final class ChartGenContext {
         }
     }
 
-    public float weaponMisfireRate() {
-        return weaponMisfireRate;
-    }
-
     public void addDamagePercentPerSMod(float percent) {
         damagePercentPerSMod += percent;
-    }
-
-    public float damagePercentPerSMod() {
-        return damagePercentPerSMod;
     }
 
     public void grantEnemyNode(String nodeId) {
@@ -316,8 +298,9 @@ public final class ChartGenContext {
         battleSizeBonus += value;
     }
 
-    public int battleSizeBonus() {
-        return Math.round(battleSizeBonus);
+    public ChartBattleRules battleRules() {
+        return new ChartBattleRules(Math.round(battleSizeBonus), shipSystemsDisabled, autopilotForced, Math.max(0f, arcStrikeEmp), weaponMisfireRate,
+                damagePercentPerSMod);
     }
 
     public void addQuantityPercent(float value) {
@@ -658,7 +641,7 @@ public final class ChartGenContext {
                 fleetSizePercent, baseFleets, extraFleets, officerLevelBonus, extraOfficers, bossSizePercent,
                 fleetQualityPercent, siteBudgetText(), extraPois(), itemPercent, itemRarityPercent, describeDropPercents(), bossSpoilsMult(), rewardMult(),
                 sensorRangeMult(), quantity, forcedAnomalies.isEmpty() ? "none" : forcedAnomalies.toString(), twinnedBoss,
-                bannedCombatHullSizes.isEmpty() ? "none" : bannedCombatHullSizes.toString(), shipSystemsDisabled, autopilotForced, arcStrikeEmp(), weaponMisfireRate,
+                bannedCombatHullSizes.isEmpty() ? "none" : bannedCombatHullSizes.toString(), shipSystemsDisabled, autopilotForced, battleRules().arcStrikeEmp(), weaponMisfireRate,
                 damagePercentPerSMod, enemyGrantedNodeIds.isEmpty() ? "none" : enemyGrantedNodeIds.toString());
     }
 

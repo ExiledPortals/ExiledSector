@@ -108,7 +108,7 @@ public class DormantFleetDialog extends AnomalyDialog {
 
     private ChartGenContext runContext() {
         ChartRun run = ChartRuns.liveIn(dormantFleet.getContainingLocation());
-        return run == null ? ChartGenContext.none() : ChartRunEffects.contextOf(run);
+        return ChartRunEffects.contextOf(run);
     }
 
     private void fight(boolean straightToEngage) {

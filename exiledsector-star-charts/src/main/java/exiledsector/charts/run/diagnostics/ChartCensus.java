@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.procgen.ProcgenUsedNames;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.content.ChartFleetMarks;
 import exiledsector.charts.run.cleanup.ChartTopographyScans;
 import exiledsector.charts.run.cleanup.ChartUsedNames;
 
@@ -57,7 +58,7 @@ public record ChartCensus(int starSystems, int chartSystems, int hyperspaceEntit
     private static int chartFleetsIn(LocationAPI location) {
         int found = 0;
         for (CampaignFleetAPI fleet : location.getFleets()) {
-            if (fleet.getMemoryWithoutUpdate() != null && fleet.getMemoryWithoutUpdate().contains(ChartIds.TIER_MEMORY_KEY)) {
+            if (ChartFleetMarks.isRunFleet(fleet)) {
                 found++;
             }
         }
