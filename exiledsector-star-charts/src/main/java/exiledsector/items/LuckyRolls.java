@@ -17,8 +17,7 @@ public final class LuckyRolls {
     }
 
     public static ItemData withLuckyModifier(ItemData item) {
-        ItemDefinition definition = item == null ? null : item.definition();
-        if (definition == null || definition.type() != ItemType.HULL_ITEM) {
+        if (item == null || !item.isHullItem()) {
             return item;
         }
         Item preview = item.preview();
@@ -44,7 +43,7 @@ public final class LuckyRolls {
         }
         List<RolledModifier> modifiers = new ArrayList<>(explicits);
         modifiers.set(luckyIndex, lucky);
-        return new ItemData(item.definitionId(), item.seed(), modifiers, preview.frozenName(), item.traits());
+        return item.withExplicits(modifiers, preview.frozenName());
     }
 
     private static boolean canVary(Item item, RolledModifier rolled) {

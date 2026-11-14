@@ -30,7 +30,7 @@ public final class GrantedModifiers {
         }
         List<RolledModifier> explicits = Engram.reroll(definition, ItemModifiers.get(modifierId), List.of(),
                 AffixLayout.dropLimits(definition.type()), random);
-        return new ItemData(item.definitionId(), item.seed(), explicits, ItemNames.freeze(definition, item.seed(), explicits), item.traits());
+        return item.withExplicits(explicits, ItemNames.freeze(definition, item.seed(), explicits));
     }
 
     public static ItemData add(ItemData item, String modifierId, AffixLayout.Limits limits, Random random) {
@@ -72,7 +72,7 @@ public final class GrantedModifiers {
         kept.add(warped ? added.asWarped() : added);
         List<RolledModifier> explicits = new ArrayList<>(kept.stream().filter(rolled -> rolled.slot() == ModifierSlot.PREFIX).toList());
         explicits.addAll(kept.stream().filter(rolled -> rolled.slot() != ModifierSlot.PREFIX).toList());
-        return new ItemData(item.definitionId(), item.seed(), explicits, ItemNames.freeze(definition, item.seed(), explicits), item.traits());
+        return item.withExplicits(explicits, ItemNames.freeze(definition, item.seed(), explicits));
     }
 
     private static List<RolledModifier> fullGroup(List<RolledModifier> kept, List<RolledModifier> sameSide, AffixLayout.Limits limits) {

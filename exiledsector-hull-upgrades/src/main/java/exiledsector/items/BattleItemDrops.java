@@ -120,7 +120,7 @@ public final class BattleItemDrops {
                 upgrades.add(MasterSchematic.INSTANCE);
             } else if (planned.drop() == Drop.UNIQUE) {
                 ItemDefinition definition = ItemDrops.pickUniqueFromFaction(battle.uniqueFactionId(), random,
-                        candidate -> candidate.type() == ItemType.HULL_ITEM && uniqueAllowed.test(candidate));
+                        candidate -> candidate.isHullItem() && uniqueAllowed.test(candidate));
                 if (definition != null) {
                     items.add(overchargedIfPlanned(planned, ItemData.rolled(definition, random.nextLong()), random));
                 }

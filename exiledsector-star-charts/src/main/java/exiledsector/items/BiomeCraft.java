@@ -56,7 +56,7 @@ public enum BiomeCraft {
             return UseVerdict.refused(SHARED_REFUSAL_PREFIX + "loadFirst");
         }
         ItemDefinition definition = item.definition();
-        if (definition == null || definition.type() != ItemType.HULL_ITEM || !ItemTypes.takesCraftingItem(definition.type())) {
+        if (definition == null || !definition.isHullItem() || !ItemTypes.takesCraftingItem(definition.type())) {
             return UseVerdict.refused(SHARED_REFUSAL_PREFIX + "itemType");
         }
         if (item.mirrored()) {

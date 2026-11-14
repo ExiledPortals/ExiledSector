@@ -75,7 +75,7 @@ public final class MarketHullItems {
 
     public static boolean isStock(ItemData itemData) {
         ItemDefinition definition = itemData == null ? null : itemData.definition();
-        return definition != null && definition.type() == ItemType.HULL_ITEM && !definition.unique();
+        return definition != null && definition.isHullItem() && !definition.unique();
     }
 
     public static void clear() {

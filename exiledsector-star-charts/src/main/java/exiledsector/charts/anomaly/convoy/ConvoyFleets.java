@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.listeners.FleetEventListener;
 import com.fs.starfarer.api.impl.campaign.ids.FleetTypes;
+import exiledsector.Seeds;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.ChartContentPlanner;
 import exiledsector.charts.content.ChartSites;
@@ -22,7 +23,7 @@ import java.util.Random;
 
 final class ConvoyFleets {
 
-    private static final long FEEDSTOCK_SALT = 0x5DEECE66DL;
+    private static final long FEEDSTOCK_SALT = 0x6665656473746BL;
 
     private ConvoyFleets() {
     }
@@ -65,7 +66,7 @@ final class ConvoyFleets {
         convoy.loadCargo(freighterPoints, ConvoyRules.cargoSteps(freighterPoints, context.anomalyMult(SupplyConvoy.CARGO_KEY)),
                 ConvoyRules.itemChanceMult(site.tier(), context.anomalyMult(SupplyConvoy.CARGO_KEY)));
         convoy.loadFeedstock(ConvoyFeedstock.roll(site.tier(), context.dropMult(DropType.CRAFTING_ITEM) * context.anomalyMult(SupplyConvoy.CARGO_KEY),
-                new Random(convoy.cargoSeed() ^ FEEDSTOCK_SALT)));
+                Seeds.derived(convoy.cargoSeed(), FEEDSTOCK_SALT)));
         fleet.addAssignment(FleetAssignment.ORBIT_PASSIVE, entry, ChartContentGenerator.ASSIGNMENT_DAYS);
         fleet.addEventListener(convoyListener);
         return true;

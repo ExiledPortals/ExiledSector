@@ -77,6 +77,15 @@ public record ItemData(String definitionId, long seed, List<RolledModifier> expl
         return itemDefinition != null ? itemDefinition.type() == ItemType.STAR_CHART : traits != null;
     }
 
+    public boolean isHullItem() {
+        ItemDefinition itemDefinition = definition();
+        return itemDefinition != null && itemDefinition.isHullItem();
+    }
+
+    public ItemData withExplicits(List<RolledModifier> replacementExplicits, FrozenName replacementName) {
+        return new ItemData(definitionId, seed, replacementExplicits, replacementName, traits);
+    }
+
     public ItemData withTraits(ItemTraits replacementTraits) {
         return new ItemData(definitionId, seed, explicits, frozenName, replacementTraits);
     }

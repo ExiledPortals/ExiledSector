@@ -3,6 +3,7 @@ package exiledsector.charts.loot;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.ModCsv;
+import exiledsector.Seeds;
 import exiledsector.charts.atlas.AtlasRuntime;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
@@ -169,7 +170,7 @@ public final class BiomeModifiers {
     public static ItemData onDrop(ItemData item, String biomeId) {
         ItemDefinition definition = item == null ? null : item.definition();
         String modifierId = definition == null ? null : modifierFor(biomeId, definition.kind());
-        Random random = new Random(item.seed() ^ GRANT_SEED_SALT);
+        Random random = Seeds.derived(item.seed(), GRANT_SEED_SALT);
         if (modifierId == null || random.nextFloat() >= DROP_CHANCE) {
             return item;
         }

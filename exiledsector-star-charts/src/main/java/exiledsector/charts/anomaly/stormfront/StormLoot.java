@@ -2,6 +2,7 @@ package exiledsector.charts.anomaly.stormfront;
 
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
+import exiledsector.Seeds;
 import exiledsector.charts.atlas.AtlasData;
 import exiledsector.charts.atlas.AtlasRuntime;
 import exiledsector.charts.atlas.AtlasUnlocks;
@@ -13,7 +14,6 @@ import exiledsector.items.GrantedModifiers;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemType;
 
 import java.util.List;
 import java.util.Random;
@@ -37,14 +37,14 @@ public final class StormLoot {
 
     static ItemData withBiomeModifier(ItemData item, String systemBiomeId, Predicate<String> biomeOpen) {
         ItemDefinition definition = item == null ? null : item.definition();
-        if (definition == null || definition.type() != ItemType.HULL_ITEM || definition.unique()) {
+        if (definition == null || !definition.isHullItem() || definition.unique()) {
             return item;
         }
         Item preview = item.preview();
         if (preview == null || BiomeModifiers.biomeOf(preview) != null) {
             return item;
         }
-        Random random = new Random(item.seed() ^ GRANT_SEED_SALT);
+        Random random = Seeds.derived(item.seed(), GRANT_SEED_SALT);
         String modifierId = modifierFor(definition, systemBiomeId, biomeOpen, random);
         return modifierId == null ? item : GrantedModifiers.add(item, modifierId, AffixLayout.dropLimits(definition.type()), random);
     }

@@ -19,7 +19,7 @@ public final class WarpedModifiers {
 
     public static ItemData warp(ItemData item, Random random) {
         ItemDefinition definition = item == null ? null : item.definition();
-        if (definition == null || definition.type() != ItemType.HULL_ITEM || definition.unique() || definition.kind() == null) {
+        if (definition == null || !definition.isHullItem() || definition.unique() || definition.kind() == null) {
             return item;
         }
         Item preview = item.preview();
