@@ -18,6 +18,13 @@ public final class ChartFleetVisibility {
         fleet.setExtendedDetectedAtRange(REVEAL_EXTENDED_RANGE);
     }
 
+    public static void conceal(CampaignFleetAPI fleet, String modId) {
+        if (fleet.getStats() != null) {
+            fleet.getStats().getDynamic().getStat(Stats.DETECTED_BY_PLAYER_RANGE_MULT).unmodify(modId);
+        }
+        fleet.setExtendedDetectedAtRange(null);
+    }
+
     public static boolean isRevealed(CampaignFleetAPI fleet) {
         return fleet.getExtendedDetectedAtRange() >= REVEAL_EXTENDED_RANGE;
     }

@@ -57,6 +57,7 @@ final class SkirmishBattle {
             takeSide(defending, FightingSide.DEFENDER);
         }
         if (station != null) {
+            ChartAnomalyFleets.unmarkBossStation(station);
             site.forces().fleets(FleetRole.PATROL).forEach(this::rallyAtStation);
         }
         AnomalyState state = site.state(FactionSkirmish.ANOMALY_ID);

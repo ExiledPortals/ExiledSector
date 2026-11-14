@@ -136,6 +136,10 @@ public final class ChartAnomalyFleets {
         ChartContentGenerator.revealBoss(boss);
     }
 
+    public static void unmarkBossStation(CampaignFleetAPI station) {
+        ChartContentGenerator.unmarkBossStation(station);
+    }
+
     public static String dress(String runFactionId, RunFactionDress dress) {
         return ChartContentGenerator.engine().dress(runFactionId, dress);
     }

@@ -1300,7 +1300,7 @@ The atlas never rolls a skirmish itself. After each officer turn, every declared
 included, puts a world record on the contested system: the pushed border system, or for a challenge the defender's free
 system nearest the challenger, removed once the intent is gone unless a run is open there (`SkirmishContests`,
 `SkirmishRecords`). Both officers bring their flagship fleets at their own rank's boss size: the defender's holds at the
-station with the system's patrols, and the attacker's waits apart until a defender fleet falls, then moves on the station
+station, unmarked here rather than a boss, with the system's patrols, and the attacker's waits apart until a defender fleet falls, then moves on the station
 (`SkirmishPlanner`, `SkirmishBattle`, `SkirmishAdvance`). Both sides fly hidden run-only copies of their factions,
 `exiledSector_skirmish_attacker` and `exiledSector_skirmish_defender`, with the real faction's name and crest, hostile to
 each other and the player (`RunFactionDress`); transponder reputation goes to the real faction (`ChartTransponderReputation`).

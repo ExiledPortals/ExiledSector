@@ -33,6 +33,7 @@ import exiledsector.charts.anomaly.RunFactionDress;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
 import exiledsector.charts.anomaly.skirmish.SkirmishFight;
+import exiledsector.i18n.Translation;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.loot.ChartLoot;
 import exiledsector.charts.loot.ChartVanillaLoot;
@@ -362,6 +363,8 @@ class ChartContentGeneratorTest {
             }
             verify(station).setFaction(RunFactionDress.DEFENDER_FACTION_ID, true);
             assertEquals("defender", sideOf(station));
+            verify(station).setExtendedDetectedAtRange(null);
+            verify(station).setName(Translation.gameText("chart.fleet.unnamed.station"));
             assertEquals(FleetAssignment.ORBIT_AGGRESSIVE, engine.assignments.get(defender).get(0).assignment());
             assertSame(station, engine.assignments.get(defender).get(0).target());
             assertEquals(FleetAssignment.PATROL_SYSTEM, engine.assignments.get(defender).get(1).assignment());

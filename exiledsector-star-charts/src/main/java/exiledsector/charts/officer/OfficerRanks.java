@@ -18,11 +18,11 @@ public final class OfficerRanks {
     static final String PATH = ExiledSector.configPath("atlas_officer_ranks.csv");
     static final String ID_COLUMN = "id";
     static final List<OfficerRank> DEFAULTS = List.of(
-            new OfficerRank("lieutenant", 10, 0, 1, 16),
-            new OfficerRank("commander", 20, 10, 1, 8),
-            new OfficerRank("captain", 30, 20, 2, 4),
-            new OfficerRank("commodore", 45, 35, 2, 2),
-            new OfficerRank("admiral", 60, 50, 3, 1));
+            new OfficerRank("lieutenant", 0, 0, 1, 16),
+            new OfficerRank("commander", 5, 5, 1, 8),
+            new OfficerRank("captain", 10, 10, 2, 4),
+            new OfficerRank("commodore", 15, 15, 2, 2),
+            new OfficerRank("admiral", 20, 20, 3, 1));
     static final StartingItemOdds LIEUTENANT_STARTING_ODDS = new StartingItemOdds(2f, 70f, 25f, 5f);
     static final Map<String, StartingItemOdds> DEFAULT_STARTING_ODDS = Map.of(
             "lieutenant", LIEUTENANT_STARTING_ODDS,

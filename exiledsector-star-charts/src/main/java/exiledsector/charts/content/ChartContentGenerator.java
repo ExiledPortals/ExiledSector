@@ -266,6 +266,11 @@ public final class ChartContentGenerator {
         ChartFleetVisibility.reveal(boss, BOSS_REVEAL_MOD_ID);
     }
 
+    static void unmarkBossStation(CampaignFleetAPI station) {
+        ChartFleetVisibility.conceal(station, BOSS_REVEAL_MOD_ID);
+        station.setName(Translation.gameText("chart.fleet.unnamed.station"));
+    }
+
     static void prepareStation(CampaignFleetAPI station, String runId, int tier, long stationSeed) {
         markContent(station, runId, tier, 0, stationSeed, true);
         station.setName(Translation.gameText("chart.fleet.bossStation.name"));
