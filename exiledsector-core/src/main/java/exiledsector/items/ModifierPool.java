@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import exiledsector.data.WeightedPick;
 import exiledsector.skills.tags.TagWeights;
 
 import java.util.ArrayList;
