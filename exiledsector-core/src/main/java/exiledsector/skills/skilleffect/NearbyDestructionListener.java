@@ -1,40 +1,46 @@
 package exiledsector.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
-import com.fs.starfarer.api.util.IntervalUtil;
+import exiledsector.skills.skilleffect.ShipDestructionWatch.DestroyedShip;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-public abstract class NearbyDestructionListener extends ShipCombatListener implements AdvanceableListener {
+public abstract class NearbyDestructionListener extends ShipCombatListener implements ShipDestructionWatch.Subscriber {
 
-    private static final float CHECK_SECONDS = 0.25f;
+    private final Predicate<DestroyedShip> wreckFilter;
 
-    private final IntervalUtil checkInterval = new IntervalUtil(CHECK_SECONDS, CHECK_SECONDS);
-    private final NearbyWrecks nearbyWrecks;
-
-    protected NearbyDestructionListener(ShipAPI ownerShip, Predicate<ShipAPI> wreckFilter) {
+    protected NearbyDestructionListener(ShipAPI ownerShip, Predicate<DestroyedShip> wreckFilter) {
         super(ownerShip);
-        this.nearbyWrecks = new NearbyWrecks(ownerShip, wreckFilter);
+        this.wreckFilter = wreckFilter;
+        ShipDestructionWatch.subscribe(this);
     }
 
     @Override
-    public final void advance(float amount) {
+    public final ShipAPI watchingShip() {
+        return ownerShip;
+    }
+
+    @Override
+    public final void onShipsDestroyed(List<DestroyedShip> destroyedShips) {
         if (!canReact()) {
-            return;
-        }
-        checkInterval.advance(amount);
-        if (!checkInterval.intervalElapsed()) {
             return;
         }
         float range = activeRange();
         if (range <= 0f) {
             return;
         }
-        List<ShipAPI> destroyed = nearbyWrecks.newWithin(range);
-        if (!destroyed.isEmpty()) {
-            onDestroyed(destroyed);
+        List<ShipAPI> wrecksInRange = new ArrayList<>();
+        for (DestroyedShip destroyed : destroyedShips) {
+            ShipAPI wreck = destroyed.wreck();
+            if (wreck != ownerShip && wreckFilter.test(destroyed)
+                    && CombatQueries.withinRadius(wreck.getLocation(), ownerShip.getLocation(), range)) {
+                wrecksInRange.add(wreck);
+            }
+        }
+        if (!wrecksInRange.isEmpty()) {
+            onDestroyed(wrecksInRange);
         }
     }
 

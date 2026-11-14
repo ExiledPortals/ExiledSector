@@ -40,7 +40,15 @@ public final class CombatQueries {
     }
 
     public static boolean isHostileToSide(int side, ShipAPI other) {
-        return other.getOwner() != side && other.getOwner() != Misc.OWNER_NEUTRAL;
+        return ownersHostile(side, other.getOwner());
+    }
+
+    public static boolean isHostileOwner(ShipAPI source, int otherOwner) {
+        return ownersHostile(source.getOwner(), otherOwner);
+    }
+
+    private static boolean ownersHostile(int side, int otherOwner) {
+        return otherOwner != side && otherOwner != Misc.OWNER_NEUTRAL;
     }
 
     public static ShipAPI hostileLiveShip(ShipAPI source, CombatEntityAPI target) {

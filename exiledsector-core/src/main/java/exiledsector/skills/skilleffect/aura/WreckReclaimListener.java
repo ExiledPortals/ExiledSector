@@ -2,8 +2,8 @@ package exiledsector.skills.skilleffect.aura;
 
 import com.fs.starfarer.api.combat.FighterLaunchBayAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.NearbyDestructionListener;
+import exiledsector.skills.skilleffect.ShipDestructionWatch.DestroyedShip;
 
 import java.util.List;
 
@@ -13,11 +13,12 @@ final class WreckReclaimListener extends NearbyDestructionListener {
     static final float RANGE = 1500f;
 
     WreckReclaimListener(ShipAPI ownerShip) {
-        super(ownerShip, other -> isEnemyShip(ownerShip, other));
+        super(ownerShip, destroyed -> isEnemyShip(ownerShip, destroyed));
     }
 
-    static boolean isEnemyShip(ShipAPI ownerShip, ShipAPI other) {
-        return !other.isFighter() && other.getParentStation() == null && CombatQueries.isHostile(ownerShip, other);
+    static boolean isEnemyShip(ShipAPI ownerShip, DestroyedShip destroyed) {
+        ShipAPI wreck = destroyed.wreck();
+        return !wreck.isFighter() && wreck.getParentStation() == null && destroyed.wasHostileTo(ownerShip);
     }
 
     @Override

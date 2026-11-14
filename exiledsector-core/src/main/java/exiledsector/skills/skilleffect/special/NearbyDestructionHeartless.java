@@ -10,7 +10,7 @@ final class NearbyDestructionHeartless extends NearbyDestructionListener {
     static final String RANGE_KEY = "exiledSector_heartlessNearbyDestructionRange";
 
     NearbyDestructionHeartless(ShipAPI ownerShip) {
-        super(ownerShip, other -> !other.isFighter() && other.getParentStation() == null);
+        super(ownerShip, destroyed -> !destroyed.wreck().isFighter() && destroyed.wreck().getParentStation() == null);
     }
 
     @Override

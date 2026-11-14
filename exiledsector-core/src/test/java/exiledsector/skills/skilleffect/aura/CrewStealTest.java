@@ -1,7 +1,6 @@
 package exiledsector.skills.skilleffect.aura;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -9,6 +8,7 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
 import exiledsector.MockSector;
+import exiledsector.skills.skilleffect.DestructionWatchHarness;
 import exiledsector.skills.skilleffect.logistics.FleetCrewLedger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,13 +16,11 @@ import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -33,21 +31,19 @@ class CrewStealTest {
     private static final int ENEMY = 1;
     private static final int NEUTRAL = 100;
 
-    private final List<Object> gridShips = new ArrayList<>();
+    private final List<Object> battleShips = new ArrayList<>();
     private MockSector mockSector;
     private CombatEngineAPI engine;
+    private DestructionWatchHarness destructionWatch;
 
     @BeforeEach
     void setUp() {
         engine = mock(CombatEngineAPI.class);
-        when(engine.getCustomData()).thenReturn(new HashMap<>());
         when(engine.isInCampaign()).thenReturn(true);
-        CollisionGridAPI shipGrid = mock(CollisionGridAPI.class);
-        when(engine.getShipGrid()).thenReturn(shipGrid);
-        when(shipGrid.getCheckIterator(any(), anyFloat(), anyFloat())).thenAnswer(invocation -> new ArrayList<>(gridShips).iterator());
         mockSector = new MockSector();
         when(mockSector.cargo().getCrew()).thenReturn(2);
         mockSector.global.when(Global::getCombatEngine).thenReturn(engine);
+        destructionWatch = new DestructionWatchHarness(mockSector.global, engine, battleShips);
         FleetCrewLedger.drain();
     }
 
@@ -95,19 +91,20 @@ class CrewStealTest {
         when(ship.getOwner()).thenReturn(NEUTRAL);
     }
 
-    private void fight(List<CrewStealListener> thieves, Runnable between) {
-        thieves.forEach(listener -> listener.advance(0.3f));
+    private void fight(List<ShipAPI> thieves, Runnable between) {
+        thieves.forEach(CrewStealListener::new);
+        destructionWatch.tick();
         between.run();
-        thieves.forEach(listener -> listener.advance(0.3f));
+        destructionWatch.tick();
     }
 
     @Test
     void anEnemyDestroyedInRangeYieldsTenPercentOfItsSkeletonCrewRoundedUp() {
         ShipAPI thief = thief(0f, 10f);
         ShipAPI enemy = enemy(800f, 15f);
-        gridShips.addAll(List.of(thief, enemy));
+        battleShips.addAll(List.of(thief, enemy));
 
-        fight(List.of(new CrewStealListener(thief)), () -> destroy(enemy));
+        fight(List.of(thief), () -> destroy(enemy));
 
         assertEquals(new FleetCrewLedger.CrewChange(2, 0), FleetCrewLedger.drain());
     }
@@ -116,13 +113,13 @@ class CrewStealTest {
     void stolenCrewRefillsTheLiveMunitionsPoolMidCombatAndTheBattleSettlesOnTheNet() {
         ShipAPI thief = thief(0f, 10f);
         ShipAPI enemy = enemy(800f, 30f);
-        gridShips.addAll(List.of(thief, enemy));
+        battleShips.addAll(List.of(thief, enemy));
         FleetCrewLedger ledger = FleetCrewLedger.forCurrentCombat();
         ledger.sacrifice();
         ledger.sacrifice();
         assertFalse(ledger.hasCrew());
 
-        fight(List.of(new CrewStealListener(thief)), () -> destroy(enemy));
+        fight(List.of(thief), () -> destroy(enemy));
 
         assertTrue(ledger.hasCrew());
         ledger.sacrifice();
@@ -139,9 +136,9 @@ class CrewStealTest {
         ShipAPI small = thief(0f, 10f);
         ShipAPI large = thief(200f, 20f);
         ShipAPI enemy = enemy(800f, 30f);
-        gridShips.addAll(List.of(small, large, enemy));
+        battleShips.addAll(List.of(small, large, enemy));
 
-        fight(List.of(new CrewStealListener(small), new CrewStealListener(large)), () -> destroy(enemy));
+        fight(List.of(small, large), () -> destroy(enemy));
 
         assertEquals(6, FleetCrewLedger.drain().stolen());
     }
@@ -158,9 +155,9 @@ class CrewStealTest {
         when(module.isStationModule()).thenReturn(true);
         ShipAPI friend = enemy(700f, 30f);
         when(friend.getOwner()).thenReturn(PLAYER);
-        gridShips.addAll(List.of(thief, retreating, fighter, drone, module, friend));
+        battleShips.addAll(List.of(thief, retreating, fighter, drone, module, friend));
 
-        fight(List.of(new CrewStealListener(thief)), () -> {
+        fight(List.of(thief), () -> {
             when(retreating.isAlive()).thenReturn(false);
             destroy(fighter);
             destroy(drone);
@@ -180,9 +177,9 @@ class CrewStealTest {
         ShipAPI victim = enemy(800f, 30f);
         when(victim.getOwner()).thenReturn(PLAYER);
         ShipAPI enemy = enemy(900f, 30f);
-        gridShips.addAll(List.of(npc, ally, victim, enemy));
+        battleShips.addAll(List.of(npc, ally, victim, enemy));
 
-        fight(List.of(new CrewStealListener(npc), new CrewStealListener(ally)), () -> {
+        fight(List.of(npc, ally), () -> {
             destroy(victim);
             destroy(enemy);
         });
@@ -195,9 +192,9 @@ class CrewStealTest {
         when(engine.isSimulation()).thenReturn(true);
         ShipAPI thief = thief(0f, 10f);
         ShipAPI enemy = enemy(800f, 30f);
-        gridShips.addAll(List.of(thief, enemy));
+        battleShips.addAll(List.of(thief, enemy));
 
-        fight(List.of(new CrewStealListener(thief)), () -> destroy(enemy));
+        fight(List.of(thief), () -> destroy(enemy));
 
         assertEquals(new FleetCrewLedger.CrewChange(0, 0), FleetCrewLedger.drain());
     }
