@@ -36,11 +36,13 @@ public final class OfficerRewardText {
     }
 
     public static String groupCount(RewardGroup group, int count) {
-        return Translation.msg(GROUP_COUNT_KEY).arg("count", count).arg("group", groupName(group)).text();
+        String nameKey = count > 1 ? group.pluralLabelKey() : group.labelKey();
+        return Translation.msg(GROUP_COUNT_KEY).arg("count", count).arg("group", Translation.text(nameKey)).text();
     }
 
     static String groupCountInText(RewardGroup group, int count) {
-        return Translation.msg(GROUP_COUNT_KEY).arg("count", count).arg("group", Translation.text(group.inTextKey())).text();
+        String nameKey = count > 1 ? group.pluralInTextKey() : group.inTextKey();
+        return Translation.msg(GROUP_COUNT_KEY).arg("count", count).arg("group", Translation.text(nameKey)).text();
     }
 
     static String joined(List<String> names) {

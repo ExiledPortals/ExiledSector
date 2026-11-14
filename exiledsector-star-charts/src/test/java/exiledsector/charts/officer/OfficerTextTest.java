@@ -58,7 +58,7 @@ class OfficerTextTest {
 
         assertEquals(2, lines.size());
         assertEquals(AtlasLine.Tone.MARKER, lines.get(0).tone());
-        assertEquals("Carries x1 low tier crafting reward", lines.get(0).plain());
+        assertEquals("Carries x1 low tier crafting item", lines.get(0).plain());
         assertEquals(AtlasLine.Tone.STYLED, lines.get(1).tone());
         assertTrue(lines.get(1).plain().contains("retired_scar"), lines.get(1).plain());
     }

@@ -18,6 +18,8 @@ public enum RewardGroup {
 
     private static final String LABEL_KEY_PREFIX = "chart.officer.reward.group.";
     private static final String IN_TEXT_KEY_PREFIX = "chart.officer.reward.groupInText.";
+    private static final String PLURAL_LABEL_KEY_PREFIX = "chart.officer.reward.groupPlural.";
+    private static final String PLURAL_IN_TEXT_KEY_PREFIX = "chart.officer.reward.groupPluralInText.";
 
     private final String id;
     private final RewardKind kind;
@@ -47,6 +49,14 @@ public enum RewardGroup {
 
     public String inTextKey() {
         return IN_TEXT_KEY_PREFIX + id;
+    }
+
+    public String pluralLabelKey() {
+        return PLURAL_LABEL_KEY_PREFIX + id;
+    }
+
+    public String pluralInTextKey() {
+        return PLURAL_IN_TEXT_KEY_PREFIX + id;
     }
 
     public boolean holds(RewardKind itemKind, CraftingTier itemTier) {

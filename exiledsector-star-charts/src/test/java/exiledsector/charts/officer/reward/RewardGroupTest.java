@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -96,21 +97,33 @@ class RewardGroupTest {
             for (RewardGroup group : RewardGroup.values()) {
                 assertTrue(catalogue.containsKey(group.labelKey()), language + " " + group.labelKey());
                 assertTrue(catalogue.containsKey(group.inTextKey()), language + " " + group.inTextKey());
+                assertTrue(catalogue.containsKey(group.pluralLabelKey()), language + " " + group.pluralLabelKey());
+                assertTrue(catalogue.containsKey(group.pluralInTextKey()), language + " " + group.pluralInTextKey());
             }
             assertTrue(catalogue.containsKey("chart.officer.reward.groupCount"), language);
         }
     }
 
     @Test
-    void labelsStartCapitalisedWhileInTextNamesKeepOnlyProperNamesCapitalised() {
+    void labelsAreTitleCaseWhileInTextNamesKeepOnlyProperNamesCapitalised() {
         Map<String, String> english = RealCatalogue.entries("en");
         for (RewardGroup group : RewardGroup.values()) {
-            String label = english.get(group.labelKey());
-            String inText = english.get(group.inTextKey());
-            assertTrue(Character.isUpperCase(label.charAt(0)), label);
-            assertEquals(group == RewardGroup.STAR_CHART, Character.isUpperCase(inText.charAt(0)), inText);
-            assertEquals(label.substring(1), inText.substring(1), group.name());
+            assertInTextMatchesLabel(group, english.get(group.labelKey()), english.get(group.inTextKey()));
+            assertInTextMatchesLabel(group, english.get(group.pluralLabelKey()), english.get(group.pluralInTextKey()));
         }
+    }
+
+    private static void assertInTextMatchesLabel(RewardGroup group, String label, String inText) {
+        for (String word : label.split(" ")) {
+            assertTrue(Character.isUpperCase(word.charAt(0)), label);
+        }
+        assertEquals(group == RewardGroup.STAR_CHART ? label : label.toLowerCase(Locale.ROOT), inText, group.name());
+    }
+
+    @Test
+    void countsAboveOneUseThePluralLabel() {
+        assertEquals("x1 Feedstock Crate", OfficerRewardText.groupCount(RewardGroup.FEEDSTOCK, 1));
+        assertEquals("x2 Feedstock Crates", OfficerRewardText.groupCount(RewardGroup.FEEDSTOCK, 2));
     }
 
     @Test
@@ -118,7 +131,7 @@ class RewardGroupTest {
         AtlasLine line = OfficerRewardText.carriedLine(List.of(CarriedItem.of(RewardKind.HULL_ITEM, "bridge").withCount(2),
                 CarriedItem.of(RewardKind.STAR_CHART, "chart")));
 
-        assertEquals("Carries x1 Star Chart reward and x2 hull item reward", line.plain());
-        assertEquals("Hull item reward", OfficerRewardText.groupName(RewardGroup.HULL_ITEM));
+        assertEquals("Carries x1 Star Chart and x2 hull items", line.plain());
+        assertEquals("Hull Item", OfficerRewardText.groupName(RewardGroup.HULL_ITEM));
     }
 }
