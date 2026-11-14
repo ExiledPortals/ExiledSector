@@ -6,8 +6,6 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.ai.FleetAssignmentDataAPI;
-import com.fs.starfarer.api.impl.campaign.ids.Tags;
-import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
 import com.fs.starfarer.api.ui.SectorMapAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -15,29 +13,23 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
-import exiledsector.charts.run.ChartRunBound;
+import exiledsector.charts.run.ChartRunIntel;
 import exiledsector.ui.VanillaText;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-public class ConvoyIntel extends BaseIntelPlugin implements ChartRunBound {
+public class ConvoyIntel extends ChartRunIntel {
 
-    static final String ICON_CATEGORY = "intel";
-    static final String ICON_ID = "discovered_entity";
     static final float PARAGRAPH_PAD = 10f;
-    static final float BULLET_PAD = 3f;
-    private static final Color STATUS_COLOUR = new Color(170, 170, 170);
 
-    private final String runId;
     private final int convoyIndex;
     private transient ConvoyScript script;
 
     public ConvoyIntel(String runId, int convoyIndex) {
-        this.runId = runId;
+        super(runId);
         this.convoyIndex = convoyIndex;
     }
 
@@ -51,16 +43,11 @@ public class ConvoyIntel extends BaseIntelPlugin implements ChartRunBound {
         return intel;
     }
 
-    @Override
-    public boolean belongsToRun(String wantedRunId) {
-        return runId != null && runId.equals(wantedRunId);
-    }
-
     private ConvoyState convoy() {
         if (script == null || script.isDone()) {
-            script = ConvoyScript.in(Global.getSector().getStarSystem(ChartIds.systemId(runId)));
+            script = ConvoyScript.in(Global.getSector().getStarSystem(ChartIds.systemId(runId())));
         }
-        return script == null || !script.belongsToRun(runId) ? null : script.convoy(convoyIndex);
+        return script == null || !script.belongsToRun(runId()) ? null : script.convoy(convoyIndex);
     }
 
     private String destinationName(ConvoyState convoy) {
@@ -76,12 +63,9 @@ public class ConvoyIntel extends BaseIntelPlugin implements ChartRunBound {
     }
 
     @Override
-    public void createIntelInfo(TooltipMakerAPI info, ListInfoMode mode) {
-        info.addPara(VanillaText.escapeFormat(getName()), getTitleColor(mode), 0f);
+    protected String listStatus() {
         ConvoyState convoy = convoy();
-        if (convoy != null) {
-            info.addPara(VanillaText.escapeFormat(statusText(convoy)), STATUS_COLOUR, BULLET_PAD);
-        }
+        return convoy == null ? null : statusText(convoy);
     }
 
     @Override
@@ -166,18 +150,6 @@ public class ConvoyIntel extends BaseIntelPlugin implements ChartRunBound {
         SectorEntityToken target = current == null ? null : current.getTarget();
         int index = target == null ? -1 : waypointIds.indexOf(target.getId());
         return index < 0 ? waypointIds.size() : index;
-    }
-
-    @Override
-    public String getIcon() {
-        return Global.getSettings().getSpriteName(ICON_CATEGORY, ICON_ID);
-    }
-
-    @Override
-    public Set<String> getIntelTags(SectorMapAPI map) {
-        Set<String> tags = super.getIntelTags(map);
-        tags.add(Tags.INTEL_EXPLORATION);
-        return tags;
     }
 
     @Override

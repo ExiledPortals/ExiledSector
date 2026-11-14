@@ -207,9 +207,11 @@ class ChartPersistenceGuardTest {
     @Test
     void theObjectiveIntelSavesOnlyItsRunIdSoItNeverHoldsTheSystem() {
         List<String> saved = new ArrayList<>();
-        for (Field field : ChartObjectiveIntel.class.getDeclaredFields()) {
-            if (!Modifier.isStatic(field.getModifiers()) && !Modifier.isTransient(field.getModifiers())) {
-                saved.add(field.getName() + ": " + field.getType().getSimpleName());
+        for (Class<?> declaring = ChartObjectiveIntel.class; declaring.getName().startsWith("exiledsector."); declaring = declaring.getSuperclass()) {
+            for (Field field : declaring.getDeclaredFields()) {
+                if (!Modifier.isStatic(field.getModifiers()) && !Modifier.isTransient(field.getModifiers())) {
+                    saved.add(field.getName() + ": " + field.getType().getSimpleName());
+                }
             }
         }
         assertEquals(List.of("runId: String"), saved);
