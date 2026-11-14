@@ -132,7 +132,7 @@ public final class ChartRelays {
         for (String message : RelayText.wokenMessages(run, relay.getName(), RelayStages.liveStage(Global.getSector(), run))) {
             CampaignMessages.plain(message, MESSAGE_COLOUR);
         }
-        if (RelayChoices.open(run, kind)) {
+        if (!RelayChoices.offers(Global.getSector(), run, kind).isEmpty()) {
             CampaignMessages.plain(RelayText.choiceMessage(relay.getName()), MESSAGE_COLOUR);
         }
         return true;

@@ -23,10 +23,7 @@ public final class ScarEffectSource implements ShipEffectSource {
 
     static Map<String, Integer> scarsOf(FleetMemberAPI member) {
         CampaignFleetAPI fleet = sourceFleetOf(member);
-        if (fleet == null || member.getId() == null || !member.getId().equals(ScarMemory.flagshipId(fleet.getMemoryWithoutUpdate()))) {
-            return Map.of();
-        }
-        return ScarMemory.allScars(fleet.getMemoryWithoutUpdate());
+        return fleet == null ? Map.of() : ScarMemory.scarsOn(fleet.getMemoryWithoutUpdate(), member.getId());
     }
 
     static CampaignFleetAPI sourceFleetOf(FleetMemberAPI member) {

@@ -46,6 +46,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.atLeastOnce;
@@ -187,11 +188,12 @@ class RelayChoicesTest {
         RelayChoices.storeOffers(run, RelayKind.COMM_RELAY, STORED_OFFERS);
 
         RelayChoices.pick(sector, run, RelayKind.NAV_BUOY, 0);
-        assertEquals(Map.of("kited", 1), ScarMemory.allScars(bossMemory));
+        assertEquals(Map.of("kited", 1), ScarMemory.scarsOn(bossMemory, "boss-flagship"));
         RelayChoices.pick(sector, run, RelayKind.COMM_RELAY, 0);
 
-        assertEquals("boss-flagship", Scars.flagshipIdOf(boss));
-        assertEquals(Map.of("kited", 2), ScarMemory.allScars(bossMemory));
+        assertEquals("boss-flagship", ScarMemory.runFlagshipId(bossMemory));
+        assertNull(Scars.flagshipIdOf(boss));
+        assertEquals(Map.of("kited", 2), ScarMemory.scarsOn(bossMemory, "boss-flagship"));
         assertEquals(Map.of(), Scars.scarsOf(boss));
         verify(flagshipVariant, atLeastOnce()).addMod(SkillTreeHullMod.ID);
     }

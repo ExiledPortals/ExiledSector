@@ -69,7 +69,8 @@ public final class ScarText {
 
     public static StyledText effectsLine(String scarId, HullFacts hull) {
         return I18n.forGameText(() -> {
-            List<StyledText> effects = fittingEffects(scarId, 1, hull);
+            ScarRow row = ScarTable.row(scarId);
+            List<StyledText> effects = row == null ? List.of() : effectTexts(hull == null ? row.effects() : row.fittingEffects(hull), 1);
             StyledText title = StyledText.of(nameText(scarId));
             return effects.isEmpty() ? title
                     : Translation.msg("chart.officer.scar.effects").arg("scar", title).arg("effects", Translation.list(effects)).styled();
@@ -89,12 +90,14 @@ public final class ScarText {
     }
 
     private static List<StyledText> fittingEffects(String scarId, int stacks, HullFacts hull) {
-        List<StyledText> effects = new ArrayList<>();
         ScarRow row = ScarTable.row(scarId);
-        if (row != null) {
-            for (ScarRow.Effect effect : row.fittingEffects(hull)) {
-                effects.add(listItem(playerView(effect.effect(), effect.magnitudePerStack() * stacks)));
-            }
+        return row == null ? List.of() : effectTexts(row.fittingEffects(hull), stacks);
+    }
+
+    private static List<StyledText> effectTexts(List<ScarRow.Effect> rowEffects, int stacks) {
+        List<StyledText> effects = new ArrayList<>();
+        for (ScarRow.Effect effect : rowEffects) {
+            effects.add(listItem(playerView(effect.effect(), effect.magnitudePerStack() * stacks)));
         }
         return effects;
     }

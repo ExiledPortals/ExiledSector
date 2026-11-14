@@ -13,6 +13,7 @@ public final class ScarMemory {
     public static final String FLAGSHIP_ID_KEY = "$exiledSector_scarFlagshipId";
     public static final String SCARS_KEY = "$exiledSector_scars";
     public static final String RUN_SCARS_KEY = "$exiledSector_runScars";
+    public static final String RUN_FLAGSHIP_ID_KEY = "$exiledSector_runScarFlagshipId";
     private static final String ENTRY_SEPARATOR = ";";
     private static final String STACK_SEPARATOR = ":";
 
@@ -28,9 +29,7 @@ public final class ScarMemory {
     }
 
     static void writeRunScars(MemoryAPI memory, String flagshipMemberId, Map<String, Integer> runScars) {
-        if (flagshipId(memory) == null) {
-            memory.set(FLAGSHIP_ID_KEY, flagshipMemberId);
-        }
+        memory.set(RUN_FLAGSHIP_ID_KEY, flagshipMemberId);
         writeEncoded(memory, RUN_SCARS_KEY, runScars);
     }
 
@@ -45,6 +44,10 @@ public final class ScarMemory {
 
     public static String flagshipId(MemoryAPI memory) {
         return memory != null && memory.get(FLAGSHIP_ID_KEY) instanceof String flagshipId ? flagshipId : null;
+    }
+
+    public static String runFlagshipId(MemoryAPI memory) {
+        return memory != null && memory.get(RUN_FLAGSHIP_ID_KEY) instanceof String flagshipId ? flagshipId : null;
     }
 
     static String encodedScars(MemoryAPI memory) {
@@ -63,9 +66,12 @@ public final class ScarMemory {
         return decode(encoded(memory, RUN_SCARS_KEY));
     }
 
-    public static Map<String, Integer> allScars(MemoryAPI memory) {
-        Map<String, Integer> officerScars = scars(memory);
-        Map<String, Integer> runScars = runScars(memory);
+    public static Map<String, Integer> scarsOn(MemoryAPI memory, String memberId) {
+        if (memberId == null) {
+            return Map.of();
+        }
+        Map<String, Integer> officerScars = memberId.equals(flagshipId(memory)) ? scars(memory) : Map.of();
+        Map<String, Integer> runScars = memberId.equals(runFlagshipId(memory)) ? runScars(memory) : Map.of();
         if (runScars.isEmpty() || officerScars.isEmpty()) {
             return runScars.isEmpty() ? officerScars : runScars;
         }

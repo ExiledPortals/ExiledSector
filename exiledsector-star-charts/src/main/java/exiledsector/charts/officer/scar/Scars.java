@@ -1,6 +1,7 @@
 package exiledsector.charts.officer.scar;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.VariantSource;
@@ -41,12 +42,12 @@ public final class Scars {
         if (fleet == null || fleet.getFleetData() == null) {
             return;
         }
-        String flagshipMemberId = ScarMemory.flagshipId(fleet.getMemoryWithoutUpdate());
-        if (flagshipMemberId == null || ScarMemory.allScars(fleet.getMemoryWithoutUpdate()).isEmpty()) {
+        MemoryAPI memory = fleet.getMemoryWithoutUpdate();
+        if (ScarMemory.flagshipId(memory) == null && ScarMemory.runFlagshipId(memory) == null) {
             return;
         }
         for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
-            if (flagshipMemberId.equals(member.getId())) {
+            if (!ScarMemory.scarsOn(memory, member.getId()).isEmpty()) {
                 installHullMod(member);
             }
         }

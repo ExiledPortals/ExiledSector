@@ -11,6 +11,7 @@ import exiledsector.charts.officer.reward.OfficerRewardPool;
 import exiledsector.charts.officer.reward.RewardContext;
 import exiledsector.charts.officer.reward.RewardGroup;
 import exiledsector.charts.officer.scar.HullFacts;
+import exiledsector.charts.officer.scar.ScarMemory;
 import exiledsector.charts.officer.scar.Scars;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.items.ItemDrops;
@@ -149,7 +150,7 @@ public final class RelayChoices {
     }
 
     static String scarredFlagshipId(CampaignFleetAPI boss, ChartRun run) {
-        String scarred = Scars.flagshipIdOf(boss);
+        String scarred = Scars.flagshipIdOf(boss) != null ? Scars.flagshipIdOf(boss) : ScarMemory.runFlagshipId(boss.getMemoryWithoutUpdate());
         if (scarred != null) {
             return scarred;
         }
