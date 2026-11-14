@@ -23,7 +23,6 @@ import exiledsector.charts.run.ChartRuns;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemOvercharge;
@@ -278,16 +277,11 @@ public final class ChartFleetLoot {
             return bossLoot;
         }
         run.guaranteeBossLoot();
-        if (!ItemUnlock.available(ItemType.HULL_ITEM, sector) || bossLoot.items().stream().anyMatch(ChartFleetLoot::isHullItem)) {
+        if (!ItemUnlock.available(ItemType.HULL_ITEM, sector) || bossLoot.items().stream().anyMatch(ItemData::isHullItem)) {
             return bossLoot;
         }
         ItemDefinition definition = ItemDrops.pickHullItemBasic(random);
         return definition == null ? bossLoot : bossLoot.plus(List.of(ItemData.rolled(definition, random.nextLong())), List.of(), Map.of());
-    }
-
-    private static boolean isHullItem(ItemData item) {
-        ItemDefinition definition = ItemDefinitions.get(item.definitionId());
-        return definition != null && definition.type() == ItemType.HULL_ITEM;
     }
 
     static ItemData guaranteedUnique(SectorAPI sector, ChartRun run, ChartGenContext context, Random random) {

@@ -15,8 +15,7 @@ public final class ItemOvercharge {
     }
 
     public static ItemData overchargeHullItem(ItemData item, Random random) {
-        ItemDefinition definition = item == null ? null : item.definition();
-        return definition == null || definition.type() != ItemType.HULL_ITEM ? item : overcharge(item, random);
+        return item != null && item.isHullItem() ? overcharge(item, random) : item;
     }
 
     public static ItemData overcharge(ItemData item, Random random) {
@@ -31,7 +30,7 @@ public final class ItemOvercharge {
         RolledModifier chosen = candidates.get(random.nextInt(candidates.size()));
         List<RolledModifier> explicits = new ArrayList<>(preview.explicits());
         explicits.set(explicits.indexOf(chosen), overcharged(preview, chosen));
-        return new ItemData(item.definitionId(), item.seed(), explicits, item.frozenName(), item.traits());
+        return item.withExplicits(explicits, item.frozenName());
     }
 
     static boolean canOvercharge(Item item, RolledModifier rolled) {

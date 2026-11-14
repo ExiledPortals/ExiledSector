@@ -62,6 +62,10 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
         this(id, kind, name, icon, rarity, unique, description, prefixes, suffixes, unlock, null, null, List.of(), NO_SOCKET_LIMIT);
     }
 
+    public boolean isHullItem() {
+        return type == ItemType.HULL_ITEM;
+    }
+
     public boolean keepsOneModifier() {
         return unique && ONE_OF_MECHANIC.equals(mechanic);
     }

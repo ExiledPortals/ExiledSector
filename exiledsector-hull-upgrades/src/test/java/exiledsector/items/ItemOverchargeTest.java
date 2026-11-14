@@ -137,7 +137,7 @@ class ItemOverchargeTest {
     void onlyHullItemsAreOverchargedThroughTheHullItemEntry() {
         ItemData plate = item(PLATE, new RolledLine("FLUX_CAPACITY_MULT", 5f));
 
-        assertEquals(ItemType.HULL_ITEM, plate.definition().type());
+        assertTrue(plate.isHullItem());
         assertEquals(1, overchargedModifiers(ItemOvercharge.overchargeHullItem(plate, new Random(1L))).size());
         ItemData unknown = new ItemData("missing_definition", 1L);
         assertSame(unknown, ItemOvercharge.overchargeHullItem(unknown, new Random(1L)));

@@ -6,8 +6,6 @@ import exiledsector.Seeds;
 import exiledsector.items.CraftingContext;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
-import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemType;
 import exiledsector.items.Nanoswarm;
 
 import java.util.Random;
@@ -31,8 +29,7 @@ public final class ImmutableDrops {
     }
 
     static ItemData withChance(ItemData item, float chance) {
-        ItemDefinition definition = item == null ? null : item.definition();
-        if (definition == null || definition.type() != ItemType.HULL_ITEM) {
+        if (item == null || !item.isHullItem()) {
             return item;
         }
         Random random = Seeds.derived(item.seed(), SEED_SALT);
@@ -48,7 +45,7 @@ public final class ImmutableDrops {
             return item;
         }
         Item locked = Nanoswarm.IMMUTABLE.use(preview, NO_INHIBITORS, random);
-        return locked == null ? item : new ItemData(item.definitionId(), item.seed(), locked.explicits(), locked.frozenName(), item.traits());
+        return locked == null ? item : item.withExplicits(locked.explicits(), locked.frozenName());
     }
 
     private static void fillModifiers(Item item, Random random) {

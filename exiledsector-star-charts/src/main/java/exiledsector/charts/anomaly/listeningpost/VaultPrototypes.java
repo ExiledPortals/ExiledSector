@@ -1,6 +1,7 @@
 package exiledsector.charts.anomaly.listeningpost;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
+import exiledsector.Seeds;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
@@ -37,9 +38,9 @@ public final class VaultPrototypes {
     }
 
     static List<ItemData> roll(int count, long vaultSeed, Predicate<ItemDefinition> canDrop) {
-        Random random = new Random(vaultSeed ^ PROTOTYPE_SEED_SALT);
+        Random random = Seeds.derived(vaultSeed, PROTOTYPE_SEED_SALT);
         List<ItemDefinition> bases = new ArrayList<>(PrototypeImplicits.bases().stream().map(ItemDefinitions::get).filter(Objects::nonNull)
-                .filter(definition -> definition.type() == ItemType.HULL_ITEM && !definition.unique() && canDrop.test(definition)).toList());
+                .filter(definition -> definition.isHullItem() && !definition.unique() && canDrop.test(definition)).toList());
         List<ItemData> prototypes = new ArrayList<>(count);
         while (prototypes.size() < count && !bases.isEmpty()) {
             ItemData prototype = PrototypeImplicits.create(bases.remove(random.nextInt(bases.size())), random.nextLong(), random);
