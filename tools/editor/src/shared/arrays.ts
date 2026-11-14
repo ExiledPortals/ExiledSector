@@ -12,3 +12,12 @@ export function compareText(first: string, second: string): number {
   }
   return first > second ? 1 : 0;
 }
+
+export function withCurrentOptions(options: readonly string[], currentValues: readonly string[]): readonly string[] {
+  const missing = currentValues.filter((value) => value !== '' && !options.includes(value));
+  return missing.length === 0 ? options : [...missing, ...options];
+}
+
+export function withCurrentOption(options: readonly string[], currentValue: string): readonly string[] {
+  return withCurrentOptions(options, [currentValue]);
+}

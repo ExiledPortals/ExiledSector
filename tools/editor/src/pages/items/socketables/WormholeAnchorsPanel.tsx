@@ -1,6 +1,7 @@
 import { Button, Checkbox, ColorInput, Divider, Group, Select, Stack, Text, TextInput } from '@mantine/core';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
 import { useCallback, useState } from 'react';
+import { withCurrentOption } from '../../../shared/arrays.ts';
 import { DecimalInput } from '../../../shared/DecimalInput.tsx';
 import { confirmAction } from '../../../shared/dialogs.tsx';
 import { DescriptionField, IconField, IdField, ItemList, ListDetail, NameAndRarity, type ListedItem } from '../components/ItemFields.tsx';
@@ -8,10 +9,6 @@ import { unlockOptions } from '../itemOptions.ts';
 import type { ItemsPanelProps } from '../itemsDocument.ts';
 import { anchorVolumes, exitCandidates, newWormholeAnchor, type WormholeAnchor } from '../model/anchors.ts';
 import { otherItemIds } from '../model/workspace.ts';
-
-function withCurrent(options: string[], current: string): string[] {
-  return current === '' || options.includes(current) ? options : [current, ...options];
-}
 
 export function WormholeAnchorsPanel({ document, model, vocabulary }: ItemsPanelProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -78,8 +75,8 @@ function AnchorForm({ document, model, vocabulary, anchor, index, onSelect }: An
     }
   };
 
-  const volumes = withCurrent(anchorVolumes(vocabulary), anchor.volume);
-  const exits = withCurrent(exitCandidates(model.nodeFacts, anchor.volume), anchor.exitNode);
+  const volumes = withCurrentOption(anchorVolumes(vocabulary), anchor.volume);
+  const exits = withCurrentOption(exitCandidates(model.nodeFacts, anchor.volume), anchor.exitNode);
 
   return (
     <Stack gap="sm" maw={1100}>

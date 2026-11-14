@@ -3,6 +3,7 @@ import { IconPlus, IconTrash } from '@tabler/icons-react';
 import { useCallback, useState } from 'react';
 import type { Draft } from 'immer';
 import type { Vocabulary } from '../../../api/vocabulary.ts';
+import { withCurrentOption, withCurrentOptions } from '../../../shared/arrays.ts';
 import { splitList } from '../../../shared/csv.ts';
 import { confirmAction } from '../../../shared/dialogs.tsx';
 import { DoctrineReplacementPools, type DoctrineTypeSource } from '../components/DoctrineArchiveView.tsx';
@@ -39,10 +40,6 @@ const POOL_LABELS: Record<DoctrinePoolKey, string> = {
 
 function isDoctrine(definition: ItemDefinition | undefined): definition is ItemDefinition {
   return definition?.kind === SUBROUTINE_KIND && definition.subroutineKind === DOCTRINE_SUBROUTINE_KIND;
-}
-
-function withCurrent(options: string[], current: readonly string[]): string[] {
-  return [...current.filter((value) => !options.includes(value)), ...options];
 }
 
 export function DoctrineArchivesPanel({ document, model, vocabulary }: ItemsPanelProps) {
@@ -240,7 +237,7 @@ function ArchiveFields({ document, model, vocabulary, archive, descriptions, edi
         <Select
           label="Behaviour"
           description="Rewrite swaps nodes for replacements; augment adds lines to every node"
-          data={withCurrent(vocabulary.doctrineBehaviours, archive.behaviour === '' ? [] : [archive.behaviour])}
+          data={withCurrentOption(vocabulary.doctrineBehaviours, archive.behaviour)}
           value={archive.behaviour === '' ? null : archive.behaviour}
           onChange={(value) => editArchive((draft) => void (draft.behaviour = value ?? ''))}
           allowDeselect={false}
@@ -248,7 +245,7 @@ function ArchiveFields({ document, model, vocabulary, archive, descriptions, edi
         <Select
           label="Radius"
           description="Sizes are set in node_radii.json"
-          data={withCurrent(vocabulary.radiusSizes, archive.radius === '' ? [] : [archive.radius])}
+          data={withCurrentOption(vocabulary.radiusSizes, archive.radius)}
           value={archive.radius === '' ? null : archive.radius}
           onChange={(value) => editArchive((draft) => void (draft.radius = value ?? ''))}
           allowDeselect={false}
@@ -272,7 +269,7 @@ function ArchiveFields({ document, model, vocabulary, archive, descriptions, edi
                 key={poolKey}
                 label={POOL_LABELS[poolKey]}
                 description={`${DOCTRINE_POOL_TIERS[poolKey]} skill types, tried in an order the item seed picks`}
-                data={withCurrent(replacementCandidates(model.typeFacts, DOCTRINE_POOL_TIERS[poolKey]), entries)}
+                data={withCurrentOptions(replacementCandidates(model.typeFacts, DOCTRINE_POOL_TIERS[poolKey]), entries)}
                 value={entries}
                 onChange={(values) => editArchive((draft) => void (draft[poolKey] = joinEntries(values)))}
                 searchable

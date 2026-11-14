@@ -1,6 +1,7 @@
 import { Button, Divider, Group, Select, Stack, Text, TextInput } from '@mantine/core';
 import { IconCopy, IconPlus, IconTrash } from '@tabler/icons-react';
 import { useCallback, useState } from 'react';
+import { withCurrentOption } from '../../../shared/arrays.ts';
 import { DecimalInput } from '../../../shared/DecimalInput.tsx';
 import { confirmAction } from '../../../shared/dialogs.tsx';
 import { DescriptionNote } from '../components/GameText.tsx';
@@ -141,11 +142,11 @@ function SubroutineForm({ document, model, vocabulary, definition, index, kinds,
   const updateDocument = document.update;
   const edit = useCallback((recipe: (draft: ItemDefinition) => void) => updateDocument((draft) => recipe(draft.ship.definitions[index])), [updateDocument, index]);
   const subroutineKind = definition.subroutineKind ?? '';
-  const kindOptions = subroutineKind === '' || kinds.includes(subroutineKind) ? kinds : [subroutineKind, ...kinds];
+  const kindOptions = withCurrentOption(kinds, subroutineKind);
   const uniqueLines = definition.lines ?? [];
   const showsUniqueFields = isUniqueSubroutine(definition) || uniqueLines.length > 0 || Boolean(definition.source) || Boolean(definition.radius);
   const radius = definition.radius ?? '';
-  const radiusSizes = radius === '' || vocabulary.radiusSizes.includes(radius) ? vocabulary.radiusSizes : [radius, ...vocabulary.radiusSizes];
+  const radiusSizes = withCurrentOption(vocabulary.radiusSizes, radius);
   const radiusOptions = [{ value: '', label: 'none' }, ...radiusSizes.map((size) => ({ value: size, label: size }))];
 
   const duplicate = () => {

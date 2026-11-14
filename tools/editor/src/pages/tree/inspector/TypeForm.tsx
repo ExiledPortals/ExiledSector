@@ -1,7 +1,7 @@
 import { Button, Checkbox, Group, Input, MultiSelect, Paper, Select, Stack, Text } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 import type { Vocabulary } from '../../../api/vocabulary.ts';
-import { moveItem } from '../../../shared/arrays.ts';
+import { moveItem, withCurrentOption } from '../../../shared/arrays.ts';
 import { CommitNumberInput, CommitTextarea, CommitTextInput } from '../../../shared/CommitInputs.tsx';
 import { EffectSelect } from '../../../shared/EffectSelect.tsx';
 import { ImagePickButton } from '../../../shared/ImagePickButton.tsx';
@@ -307,7 +307,7 @@ function UnlockConditionRows({ type, onEdit, vocabulary }: Pick<TypeFormProps, '
           </Text>
         ) : null}
         {conditions.map((condition, index) => {
-          const types = condition.type && !vocabulary.unlockConditionTypes.includes(condition.type) ? [condition.type, ...vocabulary.unlockConditionTypes] : vocabulary.unlockConditionTypes;
+          const types = withCurrentOption(vocabulary.unlockConditionTypes, condition.type);
           return (
             <Group key={index} gap={6} wrap="nowrap" align="flex-end">
               <Select
