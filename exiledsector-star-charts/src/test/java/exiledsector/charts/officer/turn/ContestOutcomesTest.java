@@ -2,6 +2,7 @@ package exiledsector.charts.officer.turn;
 
 import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasState;
+import exiledsector.charts.atlas.AtlasTerritoryTransfer;
 import exiledsector.charts.atlas.TestBorders;
 import exiledsector.charts.atlas.TestBorders.Border;
 import org.junit.jupiter.api.AfterEach;
@@ -103,6 +104,24 @@ class ContestOutcomesTest {
         assertFalse(ContestOutcomes.abstractAttackerWins(state, push(), border.contested()));
         assertFalse(ContestOutcomes.abstractAttackerWins(state, Intent.push(border.attacker().recordId() + 50, border.contested(),
                 border.defender().recordId()), border.contested()));
+    }
+
+    @Test
+    void aDefenderWhoNoLongerHoldsCommandCannotBeBeatenInTheAbstract() {
+        declare(state, push());
+        OfficerTurnTables.useForTests(ATTACKER_WINS);
+        AtlasTerritoryTransfer.dismissOfficer(state, border.defender().commandCentre());
+
+        assertFalse(ContestOutcomes.abstractAttackerWins(state, push(), border.contested()));
+    }
+
+    @Test
+    void aChallengeAlreadyDecidedKeepsItsVerdictInTheAbstract() {
+        declare(state, challenge());
+        state.decideContest(challenge().encode(), true);
+        OfficerTurnTables.useForTests(DEFENDER_WINS);
+
+        assertTrue(ContestOutcomes.abstractAttackerWins(state, challenge(), border.contested()));
     }
 
     @Test

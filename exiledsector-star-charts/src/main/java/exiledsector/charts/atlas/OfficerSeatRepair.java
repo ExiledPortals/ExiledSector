@@ -3,7 +3,7 @@ package exiledsector.charts.atlas;
 import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.OfficerBoardGenerator;
 import exiledsector.charts.officer.OfficerRank;
-import exiledsector.charts.officer.OfficerSeats;
+import exiledsector.charts.officer.OfficerRanks;
 import exiledsector.charts.officer.turn.Intent;
 import exiledsector.charts.officer.turn.IntentKind;
 import exiledsector.charts.officer.turn.OfficerTurn;
@@ -39,7 +39,7 @@ public final class OfficerSeatRepair {
         for (int rankOrder = ranks.size() - 1; rankOrder >= 0; rankOrder--) {
             OfficerRank rank = ranks.get(rankOrder);
             for (AtlasOfficer officer : officers) {
-                if (!seatedIds.contains(officer.recordId()) && OfficerSeats.order(ranks, officer.rankId()) == rankOrder) {
+                if (!seatedIds.contains(officer.recordId()) && OfficerRanks.order(ranks, officer.rankId()) == rankOrder) {
                     unplaced.add(officer);
                 }
             }

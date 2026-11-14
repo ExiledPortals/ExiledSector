@@ -49,7 +49,7 @@ public final class OfficerBoardGenerator {
 
     public static AtlasOfficer atRank(long seed, int recordId, String factionId, String rankId, int seat, List<OfficerRank> ranks,
                                       FlagshipCatalogue catalogue, StartingItemRoll startingItems) {
-        return officer(seed, recordId, factionId, OfficerSeats.order(ranks, rankId), seat, ranks, catalogue, startingItems);
+        return officer(seed, recordId, factionId, OfficerRanks.order(ranks, rankId), seat, ranks, catalogue, startingItems);
     }
 
     private static AtlasOfficer officer(long seed, int recordId, String factionId, int rankOrder, int seat, List<OfficerRank> ranks,

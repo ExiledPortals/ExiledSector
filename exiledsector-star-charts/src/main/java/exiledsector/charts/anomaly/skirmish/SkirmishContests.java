@@ -6,6 +6,7 @@ import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasHash;
 import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.charts.atlas.AtlasState;
+import exiledsector.charts.atlas.AtlasTerritoryTransfer;
 import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.turn.Intent;
 import exiledsector.charts.officer.turn.IntentKind;
@@ -137,7 +138,7 @@ public final class SkirmishContests {
     }
 
     private static boolean canAttack(AtlasGenerator generator, AtlasState state, AtlasOfficer attacker, AtlasOfficer defender, AtlasCell cell) {
-        return canChallenge(attacker, defender) && borders(generator, state, attacker.commandCentre(), cell);
+        return canChallenge(attacker, defender) && AtlasTerritoryTransfer.territoryBorders(generator::lanes, state, attacker.commandCentre(), cell);
     }
 
     private static boolean canChallenge(AtlasOfficer attacker, AtlasOfficer defender) {
@@ -168,14 +169,5 @@ public final class SkirmishContests {
 
     private static boolean pushedAt(List<Intent> declared, AtlasCell cell) {
         return declared.stream().anyMatch(intent -> intent.kind() == IntentKind.PUSH && cell.equals(intent.target()));
-    }
-
-    private static boolean borders(AtlasGenerator generator, AtlasState state, AtlasCell commandCentre, AtlasCell cell) {
-        for (AtlasCell lane : generator.lanes(cell)) {
-            if (commandCentre.equals(state.commandCentreOf(lane))) {
-                return true;
-            }
-        }
-        return false;
     }
 }

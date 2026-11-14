@@ -16,6 +16,7 @@ import exiledsector.charts.officer.turn.TurnResult.Replacement;
 import exiledsector.charts.officer.turn.TurnResult.ResolvedIntent;
 import exiledsector.charts.officer.turn.TurnResult.Standing;
 import exiledsector.charts.officer.turn.TurnResult.StandingChange;
+import exiledsector.items.WeightedPick;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -206,11 +207,7 @@ public final class OfficerTurn {
 
     private boolean takesPart(int recordId) {
         AtlasOfficer officer = state.officer(recordId);
-        return officer != null && canDeclare(officer) && !beatenThisTurn.contains(recordId);
-    }
-
-    private boolean canDeclare(AtlasOfficer officer) {
-        return officer.isActive() && officer.recordId() != setup.openRunOfficerId() && !officer.commandCentre().equals(setup.openRunCell());
+        return officer != null && setup.canAct(officer) && !beatenThisTurn.contains(recordId);
     }
 
     private boolean holdsOpenRun(AtlasOfficer officer) {
@@ -280,19 +277,11 @@ public final class OfficerTurn {
     }
 
     private boolean attackerWins(Intent intent, AtlasOfficer attacker, AtlasOfficer defender, boolean defended) {
-        float chance = rules.attackerChancePercent(setup.rankOrder(attacker.rankId()), setup.rankOrder(defender.rankId()), defended);
-        Contest contest = new Contest(intent, attacker, defender, defended, chance, random.nextFloat());
-        Boolean decided = state.decidedContest(intent.encode());
-        return decided != null ? decided : setup.resolvers().forKind(intent.kind()).attackerWins(contest);
+        return ContestOutcomes.attackerWins(setup, state, intent, attacker, defender, defended, random.nextFloat());
     }
 
     private boolean borders(AtlasCell commandCentre, AtlasCell cell) {
-        for (AtlasCell lane : terrain.lanes(cell)) {
-            if (commandCentre.equals(state.commandCentreOf(lane))) {
-                return true;
-            }
-        }
-        return false;
+        return AtlasTerritoryTransfer.territoryBorders(terrain::lanes, state, commandCentre, cell);
     }
 
     private void earnHoldingsRenown() {
@@ -320,7 +309,7 @@ public final class OfficerTurn {
     }
 
     private List<Intent> declare() {
-        List<AtlasOfficer> officers = new ArrayList<>(byRecordId(state.officers()).stream().filter(this::canDeclare).toList());
+        List<AtlasOfficer> officers = new ArrayList<>(byRecordId(state.officers()).stream().filter(setup::canAct).toList());
         Collections.shuffle(officers, random);
         Map<Integer, List<Intent>> intentsByOfficer = new LinkedHashMap<>();
         for (AtlasOfficer officer : officers) {
@@ -412,7 +401,7 @@ public final class OfficerTurn {
         }
         Map<Integer, Intent> candidates = new TreeMap<>();
         for (AtlasOfficer defender : linked) {
-            if (canDeclare(defender) && !declaredChallengers.contains(defender.recordId())) {
+            if (setup.canAct(defender) && !declaredChallengers.contains(defender.recordId())) {
                 candidates.put(defender.recordId(), Intent.challenge(officer.recordId(), defender.recordId()));
             }
         }
@@ -425,7 +414,7 @@ public final class OfficerTurn {
             return null;
         }
         AtlasOfficer neighbour = state.officerAt(centre);
-        return neighbour != null && !neighbour.factionId().equals(officer.factionId()) && canDeclare(neighbour) ? neighbour : null;
+        return neighbour != null && !neighbour.factionId().equals(officer.factionId()) && setup.canAct(neighbour) ? neighbour : null;
     }
 
     private void declareDefences(Map<Integer, List<Intent>> intentsByOfficer) {
@@ -454,21 +443,7 @@ public final class OfficerTurn {
     }
 
     private IntentKind pick(Map<IntentKind, Float> weights) {
-        float total = 0f;
-        for (float weight : weights.values()) {
-            total += Math.max(0f, weight);
-        }
-        if (total <= 0f) {
-            return IntentKind.HOLD;
-        }
-        float roll = random.nextFloat() * total;
-        for (Map.Entry<IntentKind, Float> entry : weights.entrySet()) {
-            roll -= Math.max(0f, entry.getValue());
-            if (roll < 0f) {
-                return entry.getKey();
-            }
-        }
-        return IntentKind.HOLD;
+        return Objects.requireNonNullElse(WeightedPick.pick(weights, random), IntentKind.HOLD);
     }
 
     private <T> T pickOne(List<T> options) {

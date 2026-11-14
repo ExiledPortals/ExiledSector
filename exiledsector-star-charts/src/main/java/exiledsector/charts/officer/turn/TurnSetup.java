@@ -1,8 +1,10 @@
 package exiledsector.charts.officer.turn;
 
 import exiledsector.charts.atlas.AtlasCell;
+import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.FlagshipCatalogue;
 import exiledsector.charts.officer.OfficerRank;
+import exiledsector.charts.officer.OfficerRanks;
 import exiledsector.charts.officer.StartingItemRoll;
 
 import java.util.List;
@@ -20,15 +22,14 @@ public record TurnSetup(TurnRules rules, List<OfficerRank> ranks, IntentResolver
     }
 
     public int rankOrder(String rankId) {
-        for (int index = 0; index < ranks.size(); index++) {
-            if (ranks.get(index).id().equals(rankId)) {
-                return index;
-            }
-        }
-        return 0;
+        return OfficerRanks.order(ranks, rankId);
     }
 
     public OfficerRank rank(String rankId) {
         return ranks.get(rankOrder(rankId));
+    }
+
+    public boolean canAct(AtlasOfficer officer) {
+        return officer.isActive() && officer.recordId() != openRunOfficerId && !officer.commandCentre().equals(openRunCell);
     }
 }

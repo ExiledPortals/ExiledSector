@@ -5,7 +5,7 @@ import exiledsector.Seeds;
 import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.FlagshipCatalogue;
 import exiledsector.charts.officer.OfficerRank;
-import exiledsector.charts.officer.OfficerSeats;
+import exiledsector.charts.officer.OfficerRanks;
 import exiledsector.charts.officer.scar.HullFacts;
 import exiledsector.charts.officer.scar.ScarDMods;
 
@@ -36,7 +36,7 @@ public final class OfficerFlagshipRepair {
         boolean changed = false;
         for (AtlasOfficer officer : officers) {
             Random random = Seeds.derived(state.seed(), REROLL_SALT ^ officer.recordId());
-            FlagshipCatalogue.Flagship flagship = context.catalogue().pick(officer.factionId(), OfficerSeats.order(ranks, officer.rankId()),
+            FlagshipCatalogue.Flagship flagship = context.catalogue().pick(officer.factionId(), OfficerRanks.order(ranks, officer.rankId()),
                     ranks.size(), random);
             if (flagship != null) {
                 state.putOfficer(officer.flying(flagship, dModsKept.apply(flagship, officer.dmodIds())));

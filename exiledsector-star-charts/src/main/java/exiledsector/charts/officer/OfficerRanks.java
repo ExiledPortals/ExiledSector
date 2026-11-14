@@ -69,12 +69,8 @@ public final class OfficerRanks {
     }
 
     public static OfficerRank rank(String rankId) {
-        for (OfficerRank rank : ranks) {
-            if (rank.id().equals(rankId)) {
-                return rank;
-            }
-        }
-        return lowest();
+        List<OfficerRank> loadedRanks = ranks;
+        return loadedRanks.get(order(loadedRanks, rankId));
     }
 
     public static StartingItemOdds startingOdds(String rankId) {
@@ -83,8 +79,12 @@ public final class OfficerRanks {
     }
 
     public static int order(String rankId) {
-        for (int index = 0; index < ranks.size(); index++) {
-            if (ranks.get(index).id().equals(rankId)) {
+        return order(ranks, rankId);
+    }
+
+    public static int order(List<OfficerRank> rankList, String rankId) {
+        for (int index = 0; index < rankList.size(); index++) {
+            if (rankList.get(index).id().equals(rankId)) {
                 return index;
             }
         }
