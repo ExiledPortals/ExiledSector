@@ -20,7 +20,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
-public final class EmpOnlyHits implements DamageDealtModifier, DamageListener {
+public final class EmpOnlyHits implements DamageListener {
 
     static final String ENGINE_ARC_CLASS = "com.fs.starfarer.combat.systems.EmpArcEntity";
     static final PrivateField<Object> ARC_EMP = PrivateField.named(ENGINE_ARC_CLASS, "empDamAmount", float.class,
@@ -67,34 +67,33 @@ public final class EmpOnlyHits implements DamageDealtModifier, DamageListener {
     }
 
     void addHandler(ShipAPI dealer, Handler handler) {
-        handlersByDealer.computeIfAbsent(dealer, ignored -> new ArrayList<>()).add(handler);
+        List<Handler> handlers = handlersByDealer.get(dealer);
+        if (handlers == null) {
+            handlers = new ArrayList<>();
+            handlersByDealer.put(dealer, handlers);
+            dealer.addListener(new ModifiedHitRecorder());
+        }
+        handlers.add(handler);
     }
 
     void addEmpBonus(ShipAPI dealer, EmpBonus bonus) {
         bonusByDealer.put(dealer, bonus);
     }
 
-    // java:S3516: the engine reads a null return as "leave the damage modifier unchanged"; this pass only notes which hits it saw
-    @SuppressWarnings("java:S3516")
-    @Override
-    public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
-        if (target instanceof ShipAPI targetShip) {
-            modifiedHitsThisFrame().add(new ModifiedHit(targetShip, param));
-        }
-        return null;
-    }
-
     @Override
     public void reportDamageApplied(Object source, CombatEntityAPI target, ApplyDamageResultAPI result) {
-        if (!(target instanceof ShipAPI targetShip)) {
-            return;
-        }
-        Object param = targetShip.getParamAboutToApplyDamage();
-        if (forgetModifiedHit(targetShip, param) || !(source instanceof ShipAPI dealer)) {
+        if (!(target instanceof ShipAPI targetShip) || !(source instanceof ShipAPI dealer)) {
             return;
         }
         List<Handler> handlers = handlersByDealer.get(dealer);
-        EmpOnlyHit hit = handlers == null ? null : describe(dealer, targetShip, param, result);
+        if (handlers == null) {
+            return;
+        }
+        Object param = targetShip.getParamAboutToApplyDamage();
+        if (forgetModifiedHit(targetShip, param)) {
+            return;
+        }
+        EmpOnlyHit hit = describe(dealer, targetShip, param, result);
         if (hit == null) {
             return;
         }
@@ -177,5 +176,18 @@ public final class EmpOnlyHits implements DamageDealtModifier, DamageListener {
             }
         }
         return false;
+    }
+
+    private final class ModifiedHitRecorder implements DamageDealtModifier {
+
+        // java:S3516: the engine reads a null return as "leave the damage modifier unchanged"; this pass only notes which hits it saw
+        @SuppressWarnings("java:S3516")
+        @Override
+        public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
+            if (target instanceof ShipAPI targetShip) {
+                modifiedHitsThisFrame().add(new ModifiedHit(targetShip, param));
+            }
+            return null;
+        }
     }
 }
