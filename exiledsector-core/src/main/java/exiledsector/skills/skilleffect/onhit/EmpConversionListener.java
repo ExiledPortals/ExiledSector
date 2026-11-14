@@ -6,13 +6,12 @@ import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
-import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.EmpOnlyHits;
-import exiledsector.skills.skilleffect.ShipCombatListener;
+import exiledsector.skills.skilleffect.HitSideEffectListener;
 import org.lwjgl.util.vector.Vector2f;
 
-abstract class EmpConversionListener extends ShipCombatListener implements DamageDealtModifier, AdvanceableListener, EmpOnlyHits.Handler {
+abstract class EmpConversionListener extends HitSideEffectListener implements AdvanceableListener, EmpOnlyHits.Handler {
 
     private final String sharePercentKey;
     private final boolean convertsShieldHits;
@@ -28,14 +27,11 @@ abstract class EmpConversionListener extends ShipCombatListener implements Damag
 
     abstract float convertibleEmp(ShipAPI targetShip, Vector2f point, float emp, MutableShipStatsAPI attackerStats);
 
-    // java:S3516: the engine reads a null return as "leave the damage unchanged"; the converted damage is dealt next frame instead
-    @SuppressWarnings("java:S3516")
     @Override
-    public final String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
+    protected final void onHit(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
         if (shieldHit == convertsShieldHits) {
             convertLater(target, point, damage.computeFluxDealt(damage.getDpsDuration()), damage.getStats());
         }
-        return null;
     }
 
     @Override

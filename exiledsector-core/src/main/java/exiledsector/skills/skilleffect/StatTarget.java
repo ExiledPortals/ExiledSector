@@ -13,6 +13,9 @@ import java.util.function.Function;
 
 public sealed interface StatTarget {
 
+    StatTarget DAMAGE_TAKEN = all(liveStat(MutableShipStatsAPI::getHullDamageTakenMult), liveStat(MutableShipStatsAPI::getArmorDamageTakenMult),
+            liveStat(MutableShipStatsAPI::getShieldDamageTakenMult));
+
     void apply(MutableShipStatsAPI stats, String modId, StatMode mode, float magnitude);
 
     void remove(MutableShipStatsAPI stats, String modId);

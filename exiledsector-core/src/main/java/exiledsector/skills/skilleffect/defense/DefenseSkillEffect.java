@@ -14,6 +14,7 @@ import exiledsector.skills.ShipFacts;
 import exiledsector.skills.skilleffect.ArcDischarge;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.ConditionalStatEffect;
+import exiledsector.skills.skilleffect.ConditionalTemplatedStat;
 import exiledsector.skills.skilleffect.DescribeContext;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
@@ -21,6 +22,7 @@ import exiledsector.skills.skilleffect.PerDModMultEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.SkillEffectSupport;
 import exiledsector.skills.skilleffect.StatMode;
+import exiledsector.skills.skilleffect.StatTarget;
 
 import java.util.Set;
 
@@ -183,9 +185,7 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
             "stat.energyArmorHullDamageTaken", true)),
     FRAGMENTATION_ARMOR_HULL_DAMAGE_TAKEN_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getFragmentationDamageTakenMult),
             "stat.fragmentationArmorHullDamageTaken", true)),
-    DAMAGE_TAKEN_PERCENT(statEffect(PERCENT, all(liveStat(MutableShipStatsAPI::getHullDamageTakenMult),
-            liveStat(MutableShipStatsAPI::getArmorDamageTakenMult), liveStat(MutableShipStatsAPI::getShieldDamageTakenMult)),
-            "stat.damageTaken", true)),
+    DAMAGE_TAKEN_PERCENT(statEffect(PERCENT, StatTarget.DAMAGE_TAKEN, "stat.damageTaken", true)),
     HULL_DAMAGE_TAKEN_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getHullDamageTakenMult), "stat.hullDamageTaken", true)),
     WEAPON_DAMAGE_TAKEN_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getWeaponDamageTakenMult), "stat.damageTakenByWeapons", true)),
     MISSILE_EJECTION_CHANCE_PERCENT(listener(MissileEjectionListener.CHANCE_PERCENT_KEY, MissileEjectionListener.class,
@@ -293,15 +293,16 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", Math.abs(magnitude)).arg("speed", HoldingStation.TOP_SPEED_FRACTION * 100f).styled();
         }
     },
-    DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_PERCENT(DamageTakenWhile.within(HeldObjective::isNearby, DefenseSkillEffect::describedHeldObjectiveRange)),
-    DAMAGE_TAKEN_NEAR_FLAGSHIP_PERCENT(DamageTakenWhile.within(FlagshipGuard::isGuarding, context -> FlagshipGuard.RANGE)),
+    DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_PERCENT(ConditionalTemplatedStat.damageTakenWhile(HeldObjective::isNearby, "range",
+            DefenseSkillEffect::describedHeldObjectiveRange)),
+    DAMAGE_TAKEN_NEAR_FLAGSHIP_PERCENT(ConditionalTemplatedStat.damageTakenWhile(FlagshipGuard::isGuarding, "range", FlagshipGuard.RANGE)),
     DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_RANGE_FLAT(statEffect(FLAT, dynamicMod(HeldObjective.RANGE_BONUS_KEY), "stat.heldObjectiveDamageTakenRange", false)) {
         @Override
         public Set<SkillEffect> refines() {
             return Set.of(DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_PERCENT);
         }
     },
-    DAMAGE_TAKEN_WHILE_RETREATING_PERCENT(DamageTakenWhile.of(ShipAPI::isRetreating)),
+    DAMAGE_TAKEN_WHILE_RETREATING_PERCENT(ConditionalTemplatedStat.damageTakenWhile(ShipAPI::isRetreating)),
     RAM_PROW_COLLISION_DAMAGE_MULT(listener(CollisionDamageListener.COLLISION_DAMAGE_PERCENT_KEY, CollisionDamageListener.class,
             CollisionDamageListener::new)),
     HULL_DAMAGE_TAKEN_PERCENT_PER_CREW_LOST(listener(CrewLossHullDamageListener.PERCENT_PER_STEP_KEY, CrewLossHullDamageListener.class,
@@ -346,17 +347,6 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
 
     DefenseSkillEffect(EffectBacking backing) {
         this.backing = backing;
-    }
-
-    @Override
-    public boolean invertsDescriptionColours() {
-        return !(backing instanceof DamageTakenWhile) && lowerIsBetter();
-    }
-
-    @Override
-    public StyledText description(float magnitude, DescribeContext context) {
-        return backing instanceof DamageTakenWhile damageTaken ? damageTaken.describe(this, magnitude, context)
-                : BackedSkillEffect.super.description(magnitude, context);
     }
 
     private static float describedHeldObjectiveRange(DescribeContext context) {

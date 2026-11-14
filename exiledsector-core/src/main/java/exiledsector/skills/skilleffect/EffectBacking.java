@@ -48,5 +48,17 @@ public interface EffectBacking {
         return null;
     }
 
+    default boolean invertsDescriptionColours() {
+        return true;
+    }
+
+    default boolean describesWithContext() {
+        return false;
+    }
+
     StyledText description(SkillEffect effect, float magnitude);
+
+    default StyledText description(SkillEffect effect, float magnitude, DescribeContext context) {
+        return description(effect, magnitude);
+    }
 }

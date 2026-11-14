@@ -8,6 +8,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.ShipCombatListener;
+import exiledsector.skills.skilleffect.SkillEffectSupport;
 import org.lwjgl.util.vector.Vector2f;
 
 final class MissileSnareListener extends ShipCombatListener implements DamageDealtModifier {
@@ -17,7 +18,7 @@ final class MissileSnareListener extends ShipCombatListener implements DamageDea
     static final float SNARE_SECONDS = 2f;
     static final float MAX_SNARE_PERCENT = 90f;
     static final TimedTargetDebuff.Spec SNARE = new TimedTargetDebuff.Spec(SPEED_MOD_ID, SNARE_SECONDS, MutableShipStatsAPI::getMaxSpeed,
-            percent -> 1f - percent / 100f);
+            SkillEffectSupport::reductionMult);
 
     MissileSnareListener(ShipAPI ownerShip) {
         super(ownerShip);

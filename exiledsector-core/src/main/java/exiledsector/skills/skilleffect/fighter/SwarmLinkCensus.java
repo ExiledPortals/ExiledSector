@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.BaseEveryFrameCombatPlugin;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
+import exiledsector.persistence.CombatData;
 import exiledsector.skills.skilleffect.CombatQueries;
 
 import java.util.ArrayList;
@@ -33,15 +34,7 @@ final class SwarmLinkCensus extends BaseEveryFrameCombatPlugin {
         if (engine == null) {
             return;
         }
-        SwarmLinkCensus census;
-        if (engine.getCustomData().get(CUSTOM_DATA_KEY) instanceof SwarmLinkCensus existing) {
-            census = existing;
-        } else {
-            census = new SwarmLinkCensus();
-            engine.getCustomData().put(CUSTOM_DATA_KEY, census);
-            engine.addPlugin(census);
-        }
-        census.add(listener);
+        CombatData.getOrCreatePlugin(engine, CUSTOM_DATA_KEY, SwarmLinkCensus.class, SwarmLinkCensus::new).add(listener);
     }
 
     void add(SwarmLinkListener listener) {

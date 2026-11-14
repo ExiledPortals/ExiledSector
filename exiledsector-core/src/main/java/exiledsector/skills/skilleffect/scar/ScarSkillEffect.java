@@ -6,6 +6,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import exiledsector.i18n.StyledText;
 import exiledsector.skills.CombatGate;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
+import exiledsector.skills.skilleffect.ConditionalTemplatedStat;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
 import exiledsector.skills.skilleffect.StatMode;
@@ -54,10 +55,10 @@ public enum ScarSkillEffect implements BackedSkillEffect {
     SCAR_SHIELD_ARC_PERCENT(statEffect(PERCENT, bonus(MutableShipStatsAPI::getShieldArcBonus), "stat.shieldArc", false)),
     SCAR_SHIELD_TURN_RATE_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getShieldTurnRateMult), "stat.shieldTurnRate", false)),
     SCAR_SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_MULT(ShieldSkillEffect.SHIELD_DAMAGE_TAKEN_FROM_AUTOMATED_MULT.backing()),
-    SCAR_DAMAGE_TAKEN_NEAR_ALLIES_PERCENT(ConditionalScarStat.damageTakenWhile(AllyProximity::hasAllyNearby, "range", AllyProximity.ALLY_RANGE)),
-    SCAR_DAMAGE_TAKEN_AT_LOW_HULL_PERCENT(ConditionalScarStat.damageTakenWhile(CombatGate.LOW_HULL::holds, "hull",
+    SCAR_DAMAGE_TAKEN_NEAR_ALLIES_PERCENT(ConditionalTemplatedStat.damageTakenWhile(AllyProximity::hasAllyNearby, "range", AllyProximity.ALLY_RANGE)),
+    SCAR_DAMAGE_TAKEN_AT_LOW_HULL_PERCENT(ConditionalTemplatedStat.damageTakenWhile(CombatGate.LOW_HULL::holds, "hull",
             CombatGate.LOW_HULL_LEVEL * 100f)),
-    SCAR_DAMAGE_AND_SPEED_WHILE_ALONE_PERCENT(ConditionalScarStat.raisedWhile(all(WeaponStatFamily.DAMAGE.target(WeaponScope.ALL),
+    SCAR_DAMAGE_AND_SPEED_WHILE_ALONE_PERCENT(ConditionalTemplatedStat.raisedWhile(all(WeaponStatFamily.DAMAGE.target(WeaponScope.ALL),
             liveStat(MutableShipStatsAPI::getMaxSpeed)), ship -> !AllyProximity.hasAllyNearby(ship), "range", AllyProximity.ALLY_RANGE)),
     SCAR_ENGINE_DURABILITY_PERCENT(statEffect(PERCENT, bonus(MutableShipStatsAPI::getEngineHealthBonus), "stat.engineDurability", false)),
     SCAR_WEAPON_DURABILITY_PERCENT(new ScarWeaponStat(WeaponStatFamily.DURABILITY)),
@@ -165,11 +166,6 @@ public enum ScarSkillEffect implements BackedSkillEffect {
 
     ScarSkillEffect(EffectBacking backing) {
         this.backing = backing;
-    }
-
-    @Override
-    public boolean invertsDescriptionColours() {
-        return !(backing instanceof ConditionalScarStat) && lowerIsBetter();
     }
 
     @Override

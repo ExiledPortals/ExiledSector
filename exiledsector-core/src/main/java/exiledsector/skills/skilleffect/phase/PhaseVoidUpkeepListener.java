@@ -5,9 +5,10 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.impl.combat.threat.RoilingSwarmEffect;
-import com.fs.starfarer.api.util.IntervalUtil;
 import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.ShipCombatListener;
+import exiledsector.skills.skilleffect.SkillEffectSupport;
+import exiledsector.skills.skilleffect.TickTimer;
 import exiledsector.skills.skilleffect.shipsystem.FragmentCover;
 import exiledsector.skills.skilleffect.shipsystem.FragmentSwarms;
 
@@ -20,7 +21,7 @@ final class PhaseVoidUpkeepListener extends ShipCombatListener implements Advanc
     private static final String MOD_ID_PREFIX = "exiledSector_phaseVoidUpkeep_";
     private static final float SWARM_CHECK_SECONDS = 0.5f;
 
-    private final IntervalUtil swarmCheck = new IntervalUtil(SWARM_CHECK_SECONDS, SWARM_CHECK_SECONDS);
+    private final TickTimer swarmCheck = new TickTimer(SWARM_CHECK_SECONDS);
     private final FragmentCover upkeepCover = new FragmentCover(FLUX_PER_FRAGMENT);
     private RoilingSwarmEffect coveringSwarm;
     private boolean covering;
@@ -39,8 +40,8 @@ final class PhaseVoidUpkeepListener extends ShipCombatListener implements Advanc
             setCovering(false, coveredPercent);
             return;
         }
-        swarmCheck.advance(amount);
-        if (!wasPhased || swarmCheck.intervalElapsed()) {
+        boolean swarmCheckDue = swarmCheck.advance(amount);
+        if (!wasPhased || swarmCheckDue) {
             wasPhased = true;
             coveringSwarm = nearestSwarmWithFragments();
         }
@@ -83,7 +84,7 @@ final class PhaseVoidUpkeepListener extends ShipCombatListener implements Advanc
         covering = nowCovering;
         StatBonus upkeep = ownerShip.getMutableStats().getPhaseCloakUpkeepCostBonus();
         if (nowCovering) {
-            upkeep.modifyMult(modId, 1f - coveredPercent / 100f);
+            upkeep.modifyMult(modId, SkillEffectSupport.reductionMult(coveredPercent));
         } else {
             upkeep.unmodify(modId);
         }

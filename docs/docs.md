@@ -349,7 +349,7 @@ strongest source applies (`AuxiliaryScreenField`).
 ### Defensive Compact
 
 `DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_PERCENT` reduces hull, armor and shield damage taken while any combat objective
-owned by the ship's side is within 1500 su, checked every frame (`HeldObjective`, `DamageTakenWhile`).
+owned by the ship's side is within 1500 su, checked every frame (`HeldObjective`, `ConditionalTemplatedStat`).
 `DAMAGE_TAKEN_NEAR_HELD_OBJECTIVE_RANGE_FLAT` adds to that range.
 
 ### League Requisitions
@@ -373,7 +373,7 @@ su/s, `SPEED_BONUS_CAPS`). The flagship is the ship captained by this ship's fle
 commander, so the flagship itself gains nothing (`FlagshipPaceListener`, flagship lookup in `Flagships`).
 
 `DAMAGE_TAKEN_NEAR_FLAGSHIP_PERCENT` (integrated Honor Guard) changes hull, armor and shield damage taken while
-within 1500 su of that same flagship, checked every frame like Defensive Compact (`FlagshipGuard`, `DamageTakenWhile`).
+within 1500 su of that same flagship, checked every frame like Defensive Compact (`FlagshipGuard`, `ConditionalTemplatedStat`).
 `Flagships` finds the flagship from a captain lookup it builds once per frame.
 
 ### Executor's Decree

@@ -16,6 +16,8 @@ import exiledsector.i18n.Translation;
 import exiledsector.skills.skilleffect.shipsystem.FragmentSwarms;
 
 import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.skills.skilleffect.SkillEffectSupport;
+import exiledsector.skills.skilleffect.StatMods;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -229,7 +231,7 @@ public final class FleetWideEffects {
         }
         String source = Translation.gameText("fleet.coronaResistance");
         for (FleetMemberAPI member : members) {
-            member.getStats().getDynamic().getStat(Stats.CORONA_EFFECT_MULT).modifyMult(modId, 1f - resistancePercent / 100f, source);
+            member.getStats().getDynamic().getStat(Stats.CORONA_EFFECT_MULT).modifyMult(modId, SkillEffectSupport.reductionMult(resistancePercent), source);
         }
     }
 
@@ -260,12 +262,7 @@ public final class FleetWideEffects {
         String modId = ExiledSector.key(MOVE_SLOW_SUPPLY_USE_MEMBER_MOD);
         String source = percent != 0f ? Translation.gameText("fleet.moveSlowSupplyUse") : null;
         for (FleetMemberAPI member : members) {
-            MutableStat suppliesPerMonth = member.getStats().getSuppliesPerMonth();
-            if (percent != 0f) {
-                suppliesPerMonth.modifyMult(modId, 1f + percent / 100f, source);
-            } else {
-                suppliesPerMonth.unmodifyMult(modId);
-            }
+            StatMods.setMult(member.getStats().getSuppliesPerMonth(), modId, SkillEffectSupport.multFrom(percent), source);
         }
     }
 
@@ -288,7 +285,7 @@ public final class FleetWideEffects {
 
     private static void setSupplyUsePerHullType(List<FleetMemberAPI> members, float reductionPercent) {
         setMemberReduction(members, reductionPercent, SUPPLY_USE_PER_HULL_TYPE_MEMBER_MOD, "fleet.supplyUsePerHullType",
-                (member, modId, percent, source) -> setPercent(member.getStats().getSuppliesPerMonth(), modId, percent, source));
+                (member, modId, percent, source) -> StatMods.setPercent(member.getStats().getSuppliesPerMonth(), modId, percent, source));
     }
 
     static float supplyUsePerHullTypeReduction(List<FleetMemberAPI> members) {
@@ -310,7 +307,7 @@ public final class FleetWideEffects {
 
     private static void setFuelUsePerHullType(List<FleetMemberAPI> members, float reductionPercent) {
         setMemberReduction(members, reductionPercent, FUEL_USE_PER_HULL_TYPE_MEMBER_MOD, "fleet.fuelUsePerHullType",
-                (member, modId, percent, source) -> setPercent(member.getStats().getFuelUseMod(), modId, percent, source));
+                (member, modId, percent, source) -> StatMods.setPercent(member.getStats().getFuelUseMod(), modId, percent, source));
     }
 
     static float fuelUsePerHullTypeReduction(List<FleetMemberAPI> members) {
@@ -327,22 +324,6 @@ public final class FleetWideEffects {
         String source = reductionPercent > 0f ? Translation.gameText(sourceKey) : null;
         for (FleetMemberAPI member : members) {
             stat.set(member, modId, -reductionPercent, source);
-        }
-    }
-
-    private static void setPercent(MutableStat stat, String modId, float percent, String source) {
-        if (percent != 0f) {
-            stat.modifyPercent(modId, percent, source);
-        } else {
-            stat.unmodifyPercent(modId);
-        }
-    }
-
-    private static void setPercent(StatBonus stat, String modId, float percent, String source) {
-        if (percent != 0f) {
-            stat.modifyPercent(modId, percent, source);
-        } else {
-            stat.unmodifyPercent(modId);
         }
     }
 
@@ -376,7 +357,7 @@ public final class FleetWideEffects {
         String source = halfFueled ? Translation.gameText("fleet.halfFueledFuelUse") : null;
         for (FleetMemberAPI member : members) {
             float percent = halfFueled ? member.getStats().getDynamic().getValue(HALF_FUELED_FUEL_USE_KEY, 0f) : 0f;
-            setPercent(member.getStats().getFuelUseMod(), modId, -Math.max(0f, percent), source);
+            StatMods.setPercent(member.getStats().getFuelUseMod(), modId, -Math.max(0f, percent), source);
         }
     }
 

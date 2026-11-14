@@ -37,6 +37,12 @@ class SkillEffectSupportTest {
     }
 
     @Test
+    void reductionMultStopsAtNoDamageTaken() {
+        assertEquals(0.25f, SkillEffectSupport.reductionMult(75f), 0.0001f);
+        assertEquals(0f, SkillEffectSupport.reductionMult(150f), 0.0001f);
+    }
+
+    @Test
     void theInverseMultUndoesAReductionAndStaysFiniteAtAFullOne() {
         assertEquals(2f, SkillEffectSupport.inverseMultFrom(-50f), 0.0001f);
         assertEquals(100f, StatMode.MULT.inverse(-50f), 0.01f);

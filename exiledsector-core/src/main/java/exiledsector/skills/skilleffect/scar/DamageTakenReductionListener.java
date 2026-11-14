@@ -5,7 +5,7 @@ import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
 import exiledsector.skills.skilleffect.ShipCombatListener;
-import exiledsector.skills.skilleffect.defense.CollisionDamageListener;
+import exiledsector.skills.skilleffect.SkillEffectSupport;
 import org.lwjgl.util.vector.Vector2f;
 
 abstract class DamageTakenReductionListener extends ShipCombatListener implements DamageTakenModifier {
@@ -28,7 +28,7 @@ abstract class DamageTakenReductionListener extends ShipCombatListener implement
         if (percent <= 0f || !isReducedHit(param, damage)) {
             return null;
         }
-        damage.getModifier().modifyMult(modId, CollisionDamageListener.takenMult(percent));
+        damage.getModifier().modifyMult(modId, SkillEffectSupport.reductionMult(percent));
         return modId;
     }
 }

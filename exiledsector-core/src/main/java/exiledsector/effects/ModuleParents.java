@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.persistence.CombatData;
 import exiledsector.persistence.ShipRecords;
 
 import java.util.HashMap;
@@ -52,10 +53,7 @@ public final class ModuleParents {
         return null;
     }
 
-    // the registry is only ever stored under this key by this class
-    @SuppressWarnings("unchecked")
     private static Map<String, ModuleParent> combatRegistry(CombatEngineAPI engine) {
-        Map<String, Object> customData = engine.getCustomData();
-        return (Map<String, ModuleParent>) customData.computeIfAbsent(COMBAT_REGISTRY_KEY, key -> new HashMap<String, ModuleParent>());
+        return CombatData.getOrCreate(engine, COMBAT_REGISTRY_KEY, Map.class, HashMap::new);
     }
 }

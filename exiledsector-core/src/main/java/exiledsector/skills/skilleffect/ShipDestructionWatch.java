@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.BaseEveryFrameCombatPlugin;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
+import exiledsector.persistence.CombatData;
 
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
@@ -33,7 +34,7 @@ public final class ShipDestructionWatch extends BaseEveryFrameCombatPlugin {
     private final List<Subscriber> subscribers = new ArrayList<>();
     private Map<ShipAPI, Integer> ownersOfLiveShips = new IdentityHashMap<>();
     private Map<ShipAPI, Integer> ownersSeenAliveThisCheck = new IdentityHashMap<>();
-    private float secondsSinceCheck;
+    private final TickTimer checkTimer = new TickTimer(CHECK_INTERVAL_SECONDS);
 
     public static void subscribe(Subscriber subscriber) {
         if (Global.getSettings() == null || Global.getCurrentState() != GameState.COMBAT) {
@@ -43,15 +44,7 @@ public final class ShipDestructionWatch extends BaseEveryFrameCombatPlugin {
         if (engine == null) {
             return;
         }
-        ShipDestructionWatch watch;
-        if (engine.getCustomData().get(CUSTOM_DATA_KEY) instanceof ShipDestructionWatch existing) {
-            watch = existing;
-        } else {
-            watch = new ShipDestructionWatch();
-            engine.getCustomData().put(CUSTOM_DATA_KEY, watch);
-            engine.addPlugin(watch);
-        }
-        watch.subscribers.add(subscriber);
+        CombatData.getOrCreatePlugin(engine, CUSTOM_DATA_KEY, ShipDestructionWatch.class, ShipDestructionWatch::new).subscribers.add(subscriber);
     }
 
     @Override
@@ -60,11 +53,9 @@ public final class ShipDestructionWatch extends BaseEveryFrameCombatPlugin {
         if (engine == null || engine.isPaused()) {
             return;
         }
-        secondsSinceCheck += amount;
-        if (secondsSinceCheck < CHECK_INTERVAL_SECONDS) {
+        if (!checkTimer.advance(amount)) {
             return;
         }
-        secondsSinceCheck = 0f;
         List<DestroyedShip> destroyedShips = destroyedSinceLastCheck(engine.getShips());
         if (!destroyedShips.isEmpty()) {
             notifySubscribers(destroyedShips);

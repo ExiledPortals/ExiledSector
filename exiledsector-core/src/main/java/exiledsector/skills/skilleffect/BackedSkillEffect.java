@@ -91,7 +91,18 @@ public interface BackedSkillEffect extends SkillEffect {
     }
 
     @Override
+    default boolean invertsDescriptionColours() {
+        return lowerIsBetter() && (backing() == null || backing().invertsDescriptionColours());
+    }
+
+    @Override
     default StyledText description(float magnitude) {
         return backing() != null ? backing().description(this, magnitude) : EffectText.templated(this, magnitude);
+    }
+
+    @Override
+    default StyledText description(float magnitude, DescribeContext context) {
+        return backing() != null && backing().describesWithContext() ? backing().description(this, magnitude, context)
+                : SkillEffect.super.description(magnitude, context);
     }
 }

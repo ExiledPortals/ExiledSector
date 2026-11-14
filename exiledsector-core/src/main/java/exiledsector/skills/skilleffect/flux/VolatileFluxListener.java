@@ -6,13 +6,14 @@ import com.fs.starfarer.api.combat.FluxTrackerAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
-import com.fs.starfarer.api.util.IntervalUtil;
 import exiledsector.compat.LostSectorCompat;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.skilleffect.PlayerStatus;
 import exiledsector.skills.skilleffect.ShipCombatListener;
+import exiledsector.skills.skilleffect.SkillEffectSupport;
 import exiledsector.skills.skilleffect.StatMode;
 import exiledsector.skills.skilleffect.StatTarget;
+import exiledsector.skills.skilleffect.TickTimer;
 import exiledsector.skills.skilleffect.weapon.WeaponScope;
 import exiledsector.skills.skilleffect.weapon.WeaponStatFamily;
 
@@ -36,7 +37,7 @@ final class VolatileFluxListener extends ShipCombatListener implements Advanceab
     private static final Color AFTERIMAGE_COLOR = new Color(100, 42, 201, 160);
     private static final Color ENGINE_COLOR = new Color(100, 42, 201, 255);
 
-    private final IntervalUtil afterimageTimer = new IntervalUtil(AFTERIMAGE_INTERVAL, AFTERIMAGE_INTERVAL);
+    private final TickTimer afterimageTimer = new TickTimer(AFTERIMAGE_INTERVAL);
     private float appliedRatio = Float.NaN;
     private Float penaltyScale;
     private Color afterimageColor = AFTERIMAGE_COLOR;
@@ -95,8 +96,7 @@ final class VolatileFluxListener extends ShipCombatListener implements Advanceab
     }
 
     private void showLowFluxEffects(CombatEngineAPI engine, float ratio) {
-        afterimageTimer.advance(engine.getElapsedInLastFrame());
-        if (afterimageTimer.intervalElapsed()) {
+        if (afterimageTimer.advance(engine.getElapsedInLastFrame())) {
             ownerShip.addAfterimage(afterimageColor, 0f, 0f, ownerShip.getVelocity().x * AFTERIMAGE_DRIFT,
                     ownerShip.getVelocity().y * AFTERIMAGE_DRIFT, 0f, 0f, 0f, AFTERIMAGE_DURATION, true, true, false);
         }
@@ -106,7 +106,7 @@ final class VolatileFluxListener extends ShipCombatListener implements Advanceab
     private float penaltyScale() {
         if (penaltyScale == null) {
             float reduction = LostSectorCompat.hasAugmentedSystems(ownerShip.getVariant()) ? magnitude(AUGMENTED_PENALTY_REDUCTION_KEY) : 0f;
-            penaltyScale = Math.max(0f, 1f - reduction / 100f);
+            penaltyScale = SkillEffectSupport.reductionMult(reduction);
         }
         return penaltyScale;
     }

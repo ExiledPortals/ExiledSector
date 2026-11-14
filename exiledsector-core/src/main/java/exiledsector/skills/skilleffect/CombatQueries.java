@@ -51,6 +51,10 @@ public final class CombatQueries {
         return otherOwner != side && otherOwner != Misc.OWNER_NEUTRAL;
     }
 
+    public static ShipAPI hostileShip(ShipAPI source, CombatEntityAPI target) {
+        return target instanceof ShipAPI targetShip && isHostile(source, targetShip) ? targetShip : null;
+    }
+
     public static ShipAPI hostileLiveShip(ShipAPI source, CombatEntityAPI target) {
         return target instanceof ShipAPI targetShip && isAliveNotHulk(targetShip) && isHostile(source, targetShip) ? targetShip : null;
     }

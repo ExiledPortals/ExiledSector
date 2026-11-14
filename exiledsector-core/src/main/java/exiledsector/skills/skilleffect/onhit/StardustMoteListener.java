@@ -5,13 +5,12 @@ import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
-import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.motes.MoteKind;
 import exiledsector.motes.Motes;
 import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.ParameterBonus;
-import exiledsector.skills.skilleffect.ShipCombatListener;
+import exiledsector.skills.skilleffect.HitSideEffectListener;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.Arrays;
@@ -20,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-final class StardustMoteListener extends ShipCombatListener implements DamageDealtModifier {
+final class StardustMoteListener extends HitSideEffectListener {
 
     static final String MOTE_DAMAGE_KEY = "exiledSector_corrosionMoteDamage";
     static final String EXTRA_MOTES_IN_FLIGHT_KEY = "exiledSector_stardustMoteExtraInFlight";
@@ -66,13 +65,12 @@ final class StardustMoteListener extends ShipCombatListener implements DamageDea
         return contact == null || barrel >= contact.seconds.length ? 0f : contact.seconds[barrel];
     }
 
-    // java:S3516: the engine reads a null return as "leave the damage unchanged"; motes are launched as a side effect instead
-    @SuppressWarnings("java:S3516")
     @Override
-    public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
-        if (shieldHit || !(param instanceof BeamAPI beam) || !(target instanceof ShipAPI targetShip) || targetShip.isHulk() || targetShip.isFighter()
-                || !CombatQueries.isHostile(ownerShip, targetShip) || !ownerIsAliveNotHulk() || beam.getWeapon() == null) {
-            return null;
+    protected void onHit(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
+        ShipAPI targetShip = CombatQueries.hostileShip(ownerShip, target);
+        if (shieldHit || !(param instanceof BeamAPI beam) || targetShip == null || targetShip.isHulk() || targetShip.isFighter()
+                || !ownerIsAliveNotHulk() || beam.getWeapon() == null) {
+            return;
         }
         WeaponAPI weapon = beam.getWeapon();
         BarrelContact barrelContact = contactByWeapon.computeIfAbsent(weapon, ignored -> new BarrelContact());
@@ -83,7 +81,6 @@ final class StardustMoteListener extends ShipCombatListener implements DamageDea
             launchMote(weapon, targetShip);
         }
         barrelContact.seconds[barrel] = contact;
-        return null;
     }
 
     private void launchMote(WeaponAPI weapon, ShipAPI targetShip) {
