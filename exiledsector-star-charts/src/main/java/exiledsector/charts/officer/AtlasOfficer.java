@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.Consumer;
 
 public record AtlasOfficer(int recordId, String factionId, long nameSeed, long portraitSeed, String rankId, AtlasCell commandCentre,
                            String traitId, String flagshipHullId, String flagshipVariantId, long shipNameSeed, long treeSeed,
@@ -76,75 +77,86 @@ public record AtlasOfficer(int recordId, String factionId, long nameSeed, long p
     }
 
     public AtlasOfficer takingCommand(AtlasCell centre, String historyEntry) {
-        return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, rankId, centre, traitId, flagshipHullId, flagshipVariantId,
-                shipNameSeed, treeSeed, dmodIds, scars, carriedItems, pendingChoice, defeats, lastChance, Status.ACTIVE, true,
-                appended(historyEntry), renown, identified, seat, portraitPath, dmodScars);
+        return copyWith(draft -> {
+            draft.commandCentre = centre;
+            draft.status = Status.ACTIVE;
+            draft.heldCommand = true;
+            draft.history = appended(historyEntry);
+        });
     }
 
     public AtlasOfficer takingOverFrom(AtlasOfficer predecessor, String historyEntry) {
-        return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, predecessor.rankId, predecessor.commandCentre, traitId, flagshipHullId,
-                flagshipVariantId, shipNameSeed, treeSeed, dmodIds, scars, predecessor.carriedItems, predecessor.pendingChoice, defeats, lastChance,
-                Status.ACTIVE, true, appended(historyEntry), predecessor.renown, predecessor.identified, predecessor.seat, portraitPath, dmodScars);
+        return copyWith(draft -> {
+            draft.rankId = predecessor.rankId;
+            draft.commandCentre = predecessor.commandCentre;
+            draft.carriedItems = predecessor.carriedItems;
+            draft.pendingChoice = predecessor.pendingChoice;
+            draft.status = Status.ACTIVE;
+            draft.heldCommand = true;
+            draft.history = appended(historyEntry);
+            draft.renown = predecessor.renown;
+            draft.identified = predecessor.identified;
+            draft.seat = predecessor.seat;
+        });
     }
 
     public AtlasOfficer waitingInPlaceOf(AtlasOfficer predecessor) {
-        return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, predecessor.rankId, null, traitId, flagshipHullId, flagshipVariantId,
-                shipNameSeed, treeSeed, dmodIds, scars, carriedItems, predecessor.pendingChoice, defeats, lastChance, Status.WAITING, false, history,
-                predecessor.renown, predecessor.identified, predecessor.seat, portraitPath, dmodScars);
+        return copyWith(draft -> {
+            draft.rankId = predecessor.rankId;
+            draft.commandCentre = null;
+            draft.pendingChoice = predecessor.pendingChoice;
+            draft.status = Status.WAITING;
+            draft.heldCommand = false;
+            draft.renown = predecessor.renown;
+            draft.identified = predecessor.identified;
+            draft.seat = predecessor.seat;
+        });
     }
 
     public AtlasOfficer losingCommand(String historyEntry) {
-        return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, rankId, null, traitId, flagshipHullId, flagshipVariantId,
-                shipNameSeed, treeSeed, dmodIds, scars, carriedItems, pendingChoice, defeats, lastChance, Status.WAITING, heldCommand,
-                appended(historyEntry), renown, identified, seat, portraitPath, dmodScars);
+        return copyWith(draft -> {
+            draft.commandCentre = null;
+            draft.status = Status.WAITING;
+            draft.history = appended(historyEntry);
+        });
     }
 
     public AtlasOfficer seatedAt(String newRankId, int newSeat) {
-        return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, newRankId, commandCentre, traitId, flagshipHullId,
-                flagshipVariantId, shipNameSeed, treeSeed, dmodIds, scars, carriedItems, pendingChoice, defeats, lastChance, status,
-                heldCommand, history, renown, identified, newSeat, portraitPath, dmodScars);
+        return copyWith(draft -> {
+            draft.rankId = newRankId;
+            draft.seat = newSeat;
+        });
     }
 
     public AtlasOfficer identifiedNow() {
-        return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, rankId, commandCentre, traitId, flagshipHullId,
-                flagshipVariantId, shipNameSeed, treeSeed, dmodIds, scars, carriedItems, pendingChoice, defeats, lastChance, status,
-                heldCommand, history, renown, true, seat, portraitPath, dmodScars);
+        return copyWith(draft -> draft.identified = true);
     }
 
     public AtlasOfficer withRenown(int newRenown) {
-        return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, rankId, commandCentre, traitId, flagshipHullId,
-                flagshipVariantId, shipNameSeed, treeSeed, dmodIds, scars, carriedItems, pendingChoice, defeats, lastChance, status,
-                heldCommand, history, Math.max(0, newRenown), identified, seat, portraitPath, dmodScars);
+        return copyWith(draft -> draft.renown = Math.max(0, newRenown));
     }
 
     public AtlasOfficer withLastChance(boolean marked) {
-        return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, rankId, commandCentre, traitId, flagshipHullId,
-                flagshipVariantId, shipNameSeed, treeSeed, dmodIds, scars, carriedItems, pendingChoice, defeats, marked, status,
-                heldCommand, history, renown, identified, seat, portraitPath, dmodScars);
+        return copyWith(draft -> draft.lastChance = marked);
     }
 
     public AtlasOfficer withDefeats(int defeatCount) {
-        return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, rankId, commandCentre, traitId, flagshipHullId,
-                flagshipVariantId, shipNameSeed, treeSeed, dmodIds, scars, carriedItems, pendingChoice, defeatCount, lastChance, status,
-                heldCommand, history, renown, identified, seat, portraitPath, dmodScars);
+        return copyWith(draft -> draft.defeats = defeatCount);
     }
 
     public AtlasOfficer withHistory(String historyEntry) {
-        return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, rankId, commandCentre, traitId, flagshipHullId,
-                flagshipVariantId, shipNameSeed, treeSeed, dmodIds, scars, carriedItems, pendingChoice, defeats, lastChance, status,
-                heldCommand, appended(historyEntry), renown, identified, seat, portraitPath, dmodScars);
+        return copyWith(draft -> draft.history = appended(historyEntry));
     }
 
     public AtlasOfficer withScars(Map<String, Integer> newScars) {
-        return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, rankId, commandCentre, traitId, flagshipHullId,
-                flagshipVariantId, shipNameSeed, treeSeed, dmodIds, newScars, carriedItems, pendingChoice, defeats, lastChance, status,
-                heldCommand, history, renown, identified, seat, portraitPath, dmodScars);
+        return copyWith(draft -> draft.scars = newScars);
     }
 
     public AtlasOfficer withDModIds(List<String> newDModIds) {
-        return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, rankId, commandCentre, traitId, flagshipHullId,
-                flagshipVariantId, shipNameSeed, treeSeed, newDModIds, scars, carriedItems, pendingChoice, defeats, lastChance, status,
-                heldCommand, history, renown, identified, seat, portraitPath, keptOrigins(newDModIds));
+        return copyWith(draft -> {
+            draft.dmodIds = newDModIds;
+            draft.dmodScars = keptOrigins(newDModIds);
+        });
     }
 
     public AtlasOfficer withScarDMod(String dModId, String scarId) {
@@ -157,9 +169,10 @@ public record AtlasOfficer(int recordId, String factionId, long nameSeed, long p
         if (scarId != null) {
             newOrigins.put(dModId, scarId);
         }
-        return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, rankId, commandCentre, traitId, flagshipHullId,
-                flagshipVariantId, shipNameSeed, treeSeed, newDModIds, scars, carriedItems, pendingChoice, defeats, lastChance, status,
-                heldCommand, history, renown, identified, seat, portraitPath, newOrigins);
+        return copyWith(draft -> {
+            draft.dmodIds = newDModIds;
+            draft.dmodScars = newOrigins;
+        });
     }
 
     private Map<String, String> keptOrigins(List<String> keptDModIds) {
@@ -169,15 +182,16 @@ public record AtlasOfficer(int recordId, String factionId, long nameSeed, long p
     }
 
     public AtlasOfficer flying(FlagshipCatalogue.Flagship flagship, List<String> newDModIds) {
-        return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, rankId, commandCentre, traitId, flagship.hullId(),
-                flagship.variantId(), shipNameSeed, treeSeed, newDModIds, scars, carriedItems, pendingChoice, defeats, lastChance, status,
-                heldCommand, history, renown, identified, seat, portraitPath, keptOrigins(newDModIds));
+        return copyWith(draft -> {
+            draft.flagshipHullId = flagship.hullId();
+            draft.flagshipVariantId = flagship.variantId();
+            draft.dmodIds = newDModIds;
+            draft.dmodScars = keptOrigins(newDModIds);
+        });
     }
 
     public AtlasOfficer withCarried(List<CarriedItem> newCarried) {
-        return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, rankId, commandCentre, traitId, flagshipHullId,
-                flagshipVariantId, shipNameSeed, treeSeed, dmodIds, scars, tokens(newCarried), pendingChoice, defeats, lastChance, status,
-                heldCommand, history, renown, identified, seat, portraitPath, dmodScars);
+        return copyWith(draft -> draft.carriedItems = tokens(newCarried));
     }
 
     public boolean hasPortrait() {
@@ -185,15 +199,79 @@ public record AtlasOfficer(int recordId, String factionId, long nameSeed, long p
     }
 
     public AtlasOfficer withPortrait(String newPortraitPath) {
-        return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, rankId, commandCentre, traitId, flagshipHullId,
-                flagshipVariantId, shipNameSeed, treeSeed, dmodIds, scars, carriedItems, pendingChoice, defeats, lastChance, status,
-                heldCommand, history, renown, identified, seat, newPortraitPath, dmodScars);
+        return copyWith(draft -> draft.portraitPath = newPortraitPath);
     }
 
     public AtlasOfficer withPendingOffers(List<CarriedItem> newOffers) {
-        return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, rankId, commandCentre, traitId, flagshipHullId,
-                flagshipVariantId, shipNameSeed, treeSeed, dmodIds, scars, carriedItems, tokens(newOffers), defeats, lastChance, status,
-                heldCommand, history, renown, identified, seat, portraitPath, dmodScars);
+        return copyWith(draft -> draft.pendingChoice = tokens(newOffers));
+    }
+
+    private AtlasOfficer copyWith(Consumer<Draft> change) {
+        Draft draft = new Draft(this);
+        change.accept(draft);
+        return draft.toOfficer();
+    }
+
+    private static final class Draft {
+        private final int recordId;
+        private final String factionId;
+        private final long nameSeed;
+        private final long portraitSeed;
+        private String rankId;
+        private AtlasCell commandCentre;
+        private final String traitId;
+        private String flagshipHullId;
+        private String flagshipVariantId;
+        private final long shipNameSeed;
+        private final long treeSeed;
+        private List<String> dmodIds;
+        private Map<String, Integer> scars;
+        private List<String> carriedItems;
+        private List<String> pendingChoice;
+        private int defeats;
+        private boolean lastChance;
+        private Status status;
+        private boolean heldCommand;
+        private List<String> history;
+        private int renown;
+        private boolean identified;
+        private int seat;
+        private String portraitPath;
+        private Map<String, String> dmodScars;
+
+        private Draft(AtlasOfficer officer) {
+            recordId = officer.recordId;
+            factionId = officer.factionId;
+            nameSeed = officer.nameSeed;
+            portraitSeed = officer.portraitSeed;
+            rankId = officer.rankId;
+            commandCentre = officer.commandCentre;
+            traitId = officer.traitId;
+            flagshipHullId = officer.flagshipHullId;
+            flagshipVariantId = officer.flagshipVariantId;
+            shipNameSeed = officer.shipNameSeed;
+            treeSeed = officer.treeSeed;
+            dmodIds = officer.dmodIds;
+            scars = officer.scars;
+            carriedItems = officer.carriedItems;
+            pendingChoice = officer.pendingChoice;
+            defeats = officer.defeats;
+            lastChance = officer.lastChance;
+            status = officer.status;
+            heldCommand = officer.heldCommand;
+            history = officer.history;
+            renown = officer.renown;
+            identified = officer.identified;
+            seat = officer.seat;
+            portraitPath = officer.portraitPath;
+            dmodScars = officer.dmodScars;
+        }
+
+        private AtlasOfficer toOfficer() {
+            return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, rankId, commandCentre, traitId, flagshipHullId, flagshipVariantId,
+                    shipNameSeed, treeSeed, dmodIds, scars, carriedItems, pendingChoice, defeats, lastChance, status, heldCommand, history, renown,
+                    identified, seat, portraitPath, dmodScars);
+        }
     }
 
     public List<CarriedItem> carried() {
