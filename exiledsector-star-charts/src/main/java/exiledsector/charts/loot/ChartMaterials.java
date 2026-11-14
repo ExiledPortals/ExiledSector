@@ -4,7 +4,7 @@ import exiledsector.ExiledSector;
 import exiledsector.ModCsv;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.data.CsvRows;
-import exiledsector.items.ItemDrops;
+import exiledsector.data.RandomRounding;
 import exiledsector.loot.BattleLootRates;
 import exiledsector.loot.BattleMaterials;
 import exiledsector.skills.skilleffect.logistics.FoundItemQuantity;
@@ -81,7 +81,7 @@ public final class ChartMaterials {
         float quantityMult = FoundItemQuantity.craftingItemMult();
         amounts.forEach((drop, amount) -> {
             float difficulty = BattleLootRates.scaledDifficulty(difficultyMultiplier, amount.difficultyScaling());
-            int count = ItemDrops.wholeFeedstock(amount.at(tier) * Math.max(0f, chartShare) * difficulty * quantityMult, random);
+            int count = RandomRounding.round(amount.at(tier) * Math.max(0f, chartShare) * difficulty * quantityMult, random);
             if (count > 0) {
                 materials.put(drop, count);
             }

@@ -9,6 +9,7 @@ import com.fs.starfarer.api.campaign.listeners.DiscoverEntityListener;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.FleetMembers;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.skills.unlock.GateTriggers;
 import exiledsector.skills.unlock.UnlockConditionType;
@@ -113,10 +114,7 @@ public final class NightcrossUnlocks {
     }
 
     static boolean playerOwnsPrototype(CampaignFleetAPI playerFleet) {
-        if (playerFleet == null || playerFleet.getFleetData() == null) {
-            return false;
-        }
-        for (FleetMemberAPI member : playerFleet.getFleetData().getMembersListCopy()) {
+        for (FleetMemberAPI member : FleetMembers.of(playerFleet)) {
             ShipHullSpecAPI hullSpec = member.getHullSpec();
             if (hullSpec != null && (PROTOTYPE_HULL_IDS.contains(hullSpec.getHullId()) || PROTOTYPE_HULL_IDS.contains(hullSpec.getBaseHullId()))) {
                 return true;

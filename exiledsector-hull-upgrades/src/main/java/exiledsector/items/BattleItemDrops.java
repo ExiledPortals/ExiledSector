@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import exiledsector.data.RandomRounding;
 import exiledsector.loot.BattleLootRates;
 import exiledsector.loot.FleetLootRules;
 
@@ -178,9 +179,9 @@ public final class BattleItemDrops {
     }
 
     private static void addPlanned(List<Planned> planned, Drop drop, ItemKind kind, Expected expected, boolean anyOvercharging, Random random) {
-        addPlanned(planned, drop, kind, false, ItemDrops.wholeFeedstock(expected.regular(), random));
+        addPlanned(planned, drop, kind, false, RandomRounding.round(expected.regular(), random));
         if (anyOvercharging) {
-            addPlanned(planned, drop, kind, true, ItemDrops.wholeFeedstock(expected.overcharged(), random));
+            addPlanned(planned, drop, kind, true, RandomRounding.round(expected.overcharged(), random));
         }
     }
 

@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import exiledsector.ModCsv;
 import exiledsector.ModSettings;
 import exiledsector.compat.SalvageSiteCompat;
+import exiledsector.data.RandomRounding;
 import exiledsector.skills.skilleffect.logistics.FoundItemQuantity;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -155,7 +156,7 @@ public final class ItemDrops {
 
     private static int rollFeedstock(Rule rule, Random random, float feedstockMult) {
         int rolled = rule.feedstockMin() + random.nextInt(rule.feedstockMax() - rule.feedstockMin() + 1);
-        return wholeFeedstock(rolled * feedstockMult, random);
+        return RandomRounding.round(rolled * feedstockMult, random);
     }
 
     private static int rollParts(Rule rule, Random random, float feedstockMult) {
@@ -170,14 +171,6 @@ public final class ItemDrops {
 
     public static float battleFeedstockPerDeploymentPoint() {
         return Math.max(0, ModSettings.intOr(BATTLE_FEEDSTOCK_FIELD_ID, DEFAULT_BATTLE_FEEDSTOCK_PER_100_DP)) / DEPLOYMENT_POINTS_PER_SETTING_STEP;
-    }
-
-    public static int wholeFeedstock(float exactFeedstock, Random random) {
-        if (!(exactFeedstock > 0f)) {
-            return 0;
-        }
-        int wholePartCount = (int) exactFeedstock;
-        return wholePartCount + (random.nextFloat() < exactFeedstock - wholePartCount ? 1 : 0);
     }
 
     static List<MaterialDrop> materialDrops() {
@@ -212,7 +205,7 @@ public final class ItemDrops {
             return;
         }
         for (MaterialDrop drop : drops) {
-            int count = wholeFeedstock((float) (scaledDrops * Math.max(0f, drop.weight()) / totalWeight), random);
+            int count = RandomRounding.round((float) (scaledDrops * Math.max(0f, drop.weight()) / totalWeight), random);
             if (count > 0) {
                 droppedMaterials.merge(drop.itemId(), count, Integer::sum);
             }
@@ -274,7 +267,7 @@ public final class ItemDrops {
         if (!(extraShare > 0f) || !hasDroppableBasic(kind)) {
             return;
         }
-        int extraCount = wholeFeedstock(expectedCascadeCount(rule.chances()) * extraShare / sharedKinds, random);
+        int extraCount = RandomRounding.round(expectedCascadeCount(rule.chances()) * extraShare / sharedKinds, random);
         for (int i = 0; i < extraCount; i++) {
             ItemDefinition definition = pickSectionItemBasic(kind, random);
             if (definition != null) {

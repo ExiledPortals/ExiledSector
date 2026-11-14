@@ -3,6 +3,7 @@ package exiledsector.charts.anomaly.debris;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import exiledsector.charts.content.ChartContentPlanner;
 import exiledsector.charts.generation.ChartTier;
+import exiledsector.data.RandomRounding;
 import exiledsector.items.WeightedPick;
 
 import java.util.List;
@@ -79,9 +80,7 @@ public final class DebrisRules {
     }
 
     public static int craftingItemCount(float quantityMult, Random random) {
-        float expected = CRAFTING_ITEM_PER_FLEET * Math.max(0f, quantityMult);
-        int whole = (int) expected;
-        return whole + (random.nextFloat() < expected - whole ? 1 : 0);
+        return RandomRounding.roundWithOneDraw(CRAFTING_ITEM_PER_FLEET * Math.max(0f, quantityMult), random);
     }
 
     public static int coreLevel(int tier, Random random) {

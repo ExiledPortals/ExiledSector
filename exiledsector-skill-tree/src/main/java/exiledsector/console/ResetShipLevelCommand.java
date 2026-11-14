@@ -1,8 +1,7 @@
 package exiledsector.console;
 
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledsector.PlayerFleet;
+import exiledsector.items.CargoRefund;
 import exiledsector.items.NodeGrantStatus;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ItemCostLedger;
@@ -12,23 +11,15 @@ import org.lazywizard.console.Console;
 
 import java.util.List;
 
-public class ResetShipLevelCommand extends PlayerFleetCommand {
+public class ResetShipLevelCommand extends SingleShipCommand {
 
     @Override
-    protected CommandResult runForFleet(String args, CampaignFleetAPI playerFleet) {
-        if (args.isEmpty()) {
-            return CommandResult.BAD_SYNTAX;
-        }
-        FleetMemberAPI member = ConsoleShips.findOne(playerFleet.getFleetData().getMembersListCopy(), args);
-        if (member == null) {
-            return CommandResult.ERROR;
-        }
-
+    protected CommandResult runForShip(FleetMemberAPI member) {
         ShipSkillData shipData = ShipSkillDataManager.get(member.getId());
         List<String> socketedItemIds = List.copyOf(shipData.getSocketedItems().values());
         List<String> releasedNodeIds = ShipTrees.resetProgress(shipData);
         socketedItemIds.forEach(NodeGrantStatus::forget);
-        ItemCostLedger.takePaidItemCosts(shipData, releasedNodeIds).forEach(charged -> charged.refundTo(PlayerFleet.cargoOrNull()));
+        ItemCostLedger.takePaidItemCosts(shipData, releasedNodeIds).forEach(CargoRefund::refundToPlayer);
         ConsoleShips.treeChanged(member);
 
         String message = "Reset " + ConsoleShips.describe(member) + ": removed " + releasedNodeIds.size()

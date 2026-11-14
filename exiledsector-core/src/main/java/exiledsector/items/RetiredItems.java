@@ -2,10 +2,8 @@ package exiledsector.items;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
-import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.SpecialItemSpecAPI;
@@ -13,7 +11,6 @@ import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -54,12 +51,7 @@ public final class RetiredItems {
             if (retired.isEmpty()) {
                 return;
             }
-            List<CargoAPI> cargoes = new ArrayList<>(savedCargoes);
-            cargoes.addAll(fleetCargoes(sector));
-            int removedCount = 0;
-            for (CargoAPI cargo : cargoes) {
-                removedCount += removeFrom(cargo, retired);
-            }
+            int removedCount = SavedCargo.removeStacks(SavedCargo.withFleets(sector, savedCargoes), retired::holds);
             if (removedCount > 0) {
                 LOG.info("[ExiledSector] Removed " + removedCount + " retired items from saved cargo");
             }
@@ -75,30 +67,7 @@ public final class RetiredItems {
     }
 
     static int removeFrom(CargoAPI cargo, RetiredIds retired) {
-        if (cargo == null) {
-            return 0;
-        }
-        int removedCount = 0;
-        for (CargoStackAPI stack : cargo.getStacksCopy()) {
-            if (retired.holds(stack)) {
-                removedCount += Math.round(stack.getSize());
-                cargo.removeStack(stack);
-            }
-        }
-        return removedCount;
-    }
-
-    private static List<CargoAPI> fleetCargoes(SectorAPI sector) {
-        List<CargoAPI> cargoes = new ArrayList<>();
-        CampaignFleetAPI playerFleet = sector.getPlayerFleet();
-        for (LocationAPI location : sector.getAllLocations()) {
-            for (CampaignFleetAPI fleet : location.getFleets()) {
-                if (fleet != playerFleet && fleet.getCargo() != null) {
-                    cargoes.add(fleet.getCargo());
-                }
-            }
-        }
-        return cargoes;
+        return SavedCargo.removeStacks(cargo, retired::holds);
     }
 
     private static <T> Set<String> taggedIds(List<T> specs, Function<T, Set<String>> tags, Function<T, String> id) {

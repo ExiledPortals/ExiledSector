@@ -1,7 +1,6 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
-import com.fs.starfarer.api.campaign.CargoStackAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import org.apache.log4j.Logger;
@@ -52,25 +51,8 @@ public final class DeletedSubroutines {
     }
 
     static int removeFromCargoes(List<CargoAPI> cargoes) {
-        int removedCount = 0;
-        for (CargoAPI cargo : cargoes) {
-            removedCount += removeFromCargo(cargo);
-        }
-        return removedCount;
-    }
-
-    static int removeFromCargo(CargoAPI cargo) {
-        if (cargo == null) {
-            return 0;
-        }
-        int removedCount = 0;
-        for (CargoStackAPI stack : cargo.getStacksCopy()) {
-            if (isDeleted(ItemData.of(stack.getSpecialDataIfSpecial()))) {
-                removedCount += Math.max(1, Math.round(stack.getSize()));
-                cargo.removeStack(stack);
-            }
-        }
-        return removedCount;
+        return SavedCargo.removeStacks(cargoes, stack -> isDeleted(ItemData.of(stack.getSpecialDataIfSpecial())),
+                stack -> Math.max(1, Math.round(stack.getSize())));
     }
 
     static boolean isDeleted(Item item) {

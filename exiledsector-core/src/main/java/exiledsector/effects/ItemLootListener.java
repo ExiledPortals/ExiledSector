@@ -14,6 +14,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.ExiledSector;
 import exiledsector.PlayerFleet;
 import exiledsector.compat.SecretsOfTheFrontierCompat;
+import exiledsector.data.RandomRounding;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.items.Item;
@@ -125,7 +126,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
 
     private static void addEncounterLoot(Pending pendingLoot, CargoAPI loot, Random random) {
         LootSources.all().forEach(source -> source.addEncounterLoot(pendingLoot.battleLoot, loot));
-        int wholeFeedstock = ItemDrops.wholeFeedstock(pendingLoot.materials.feedstock(), random);
+        int wholeFeedstock = RandomRounding.round(pendingLoot.materials.feedstock(), random);
         if (wholeFeedstock > 0) {
             MaterialItems.add(loot, ItemDisassembly.FEEDSTOCK_ITEM_ID, wholeFeedstock);
         }
@@ -143,7 +144,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         Map<String, Integer> materials = pendingLoot.materials.rollMaterials(lootRandom);
         materials.forEach((itemId, quantity) -> MaterialItems.add(playerFleet.getCargo(), itemId, quantity));
         MaterialDropAnnouncer.announce(materials);
-        int wholeFeedstock = ItemDrops.wholeFeedstock(pendingLoot.materials.feedstock(), lootRandom);
+        int wholeFeedstock = RandomRounding.round(pendingLoot.materials.feedstock(), lootRandom);
         if (wholeFeedstock > 0) {
             MaterialItems.add(playerFleet.getCargo(), ItemDisassembly.FEEDSTOCK_ITEM_ID, wholeFeedstock);
             String feedstockName = MaterialItems.displayName(ItemDisassembly.FEEDSTOCK_ITEM_ID);
@@ -196,12 +197,20 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
     public static void deliverSiteLoot(CargoAPI cargo, ItemDrops.SiteLoot siteLoot, Consumer<Supplier<String>> announceFind,
                                        Consumer<Map<String, Integer>> announceMaterials) {
         deliverItems(cargo, siteLoot.items(), announceFind);
-        for (ShipSchematic upgrade : siteLoot.upgrades()) {
-            cargo.addSpecial(upgrade.toSpecialItem(), 1f);
-            announceFind.accept(upgrade::displayName);
-        }
+        deliverSchematics(cargo, siteLoot.upgrades(), announceFind);
         siteLoot.materials().forEach((itemId, quantity) -> MaterialItems.add(cargo, itemId, quantity));
         announceMaterials.accept(siteLoot.materials());
+    }
+
+    public static void deliverSchematics(CargoAPI cargo, List<ShipSchematic> schematics) {
+        deliverSchematics(cargo, schematics, ItemLootListener::announceSalvaged);
+    }
+
+    private static void deliverSchematics(CargoAPI cargo, List<ShipSchematic> schematics, Consumer<Supplier<String>> announceFind) {
+        for (ShipSchematic schematic : schematics) {
+            cargo.addSpecial(schematic.toSpecialItem(), 1f);
+            announceFind.accept(schematic::displayName);
+        }
     }
 
     public static void deliverItems(CargoAPI cargo, List<ItemData> items) {

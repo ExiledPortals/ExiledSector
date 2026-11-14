@@ -6,6 +6,7 @@ import exiledsector.charts.loot.ChartDrops;
 import exiledsector.charts.loot.DropType;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
+import exiledsector.data.RandomRounding;
 import exiledsector.items.AffixLayout;
 import exiledsector.items.GrantedModifiers;
 import exiledsector.items.ItemData;
@@ -37,7 +38,7 @@ public final class OfficerRewardDrop {
         for (CarriedItem item : carried) {
             if (item.kind().craftingItem()) {
                 float mult = item.kind() == RewardKind.FEEDSTOCK ? feedstockMult : craftingMult;
-                materials.merge(item.id(), Math.max(1, ItemDrops.wholeFeedstock(item.baseCount() * mult, random)), Integer::sum);
+                materials.merge(item.id(), Math.max(1, RandomRounding.round(item.baseCount() * mult, random)), Integer::sum);
             } else {
                 ItemDefinition definition = ItemDefinitions.get(item.id());
                 for (int copy = 0; definition != null && copy < item.baseCount(); copy++) {

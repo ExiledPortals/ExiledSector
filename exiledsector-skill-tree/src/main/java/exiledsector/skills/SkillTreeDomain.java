@@ -51,6 +51,7 @@ import exiledsector.i18n.SpecLocalisation;
 import exiledsector.items.ItemVolumes;
 import exiledsector.items.AnchorFindMigration;
 import exiledsector.items.DeletedSubroutines;
+import exiledsector.items.CargoRefund;
 import exiledsector.items.DoctrineArchives;
 import exiledsector.items.DoctrineOverrides;
 import exiledsector.items.FactionlessAnchors;
@@ -381,7 +382,7 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
         }
         ShipTreeRepairs.replaceRemovedNodes(SkillTree.getDeclaredNodes(), NodeReplacements.all());
         ShipTreeRepairs.forgetUnknownNodes(SkillTree.getAllNodes(), SkillTree.getDeclaredNodes(), SkillTree.getAllTypes(),
-                new OwnedShips(), charged -> charged.refundTo(PlayerFleet.cargoOrNull()), NodeIntegration::refundStoryPoints);
+                new OwnedShips(), CargoRefund::refundToPlayer, NodeIntegration::refundStoryPoints);
     }
 
     private static final class OwnedShips implements Predicate<String> {

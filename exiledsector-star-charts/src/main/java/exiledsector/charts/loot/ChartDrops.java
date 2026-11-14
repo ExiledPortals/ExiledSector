@@ -15,6 +15,7 @@ import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.data.CsvRows;
 import exiledsector.ModCsv;
+import exiledsector.data.RandomRounding;
 import exiledsector.items.CraftingMaterialFamilies;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
@@ -226,7 +227,7 @@ public final class ChartDrops {
         }
         Map<String, Integer> catalysts = new LinkedHashMap<>();
         int catalystCount = source.insideSystem() && !AtlasCatalysts.all().isEmpty()
-                ? ItemDrops.wholeFeedstock(rule.catalystChance() * Math.max(0f, mults.catalyst()), random) : 0;
+                ? RandomRounding.round(rule.catalystChance() * Math.max(0f, mults.catalyst()), random) : 0;
         for (int i = 0; i < catalystCount; i++) {
             AtlasCatalysts.Catalyst catalyst = AtlasCatalysts.pickDrop(baseTier, random);
             if (catalyst != null) {

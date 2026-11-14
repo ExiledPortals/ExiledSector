@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.data.RandomRounding;
 
 import java.util.List;
 import java.util.Random;
@@ -45,8 +46,6 @@ public final class SalvagedArmaments {
     }
 
     static int extraCount(float quantity, float bonusPercent, Random random) {
-        float extra = quantity * bonusPercent / 100f;
-        int whole = (int) extra;
-        return whole + (random.nextFloat() < extra - whole ? 1 : 0);
+        return RandomRounding.roundWithOneDraw(quantity * bonusPercent / 100f, random);
     }
 }

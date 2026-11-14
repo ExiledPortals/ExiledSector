@@ -1,9 +1,9 @@
 package exiledsector.effects;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.FleetMembers;
 import exiledsector.items.MasterSchematic;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
@@ -40,10 +40,7 @@ public final class PlayerTreePower {
         if (snapshot != null && sector.getClock() != null && sector.getClock().getElapsedDaysSince(snapshot.timestamp()) < REFRESH_DAYS) {
             return snapshot.shipPowers();
         }
-        CampaignFleetAPI playerFleet = sector.getPlayerFleet();
-        List<FleetMemberAPI> members = playerFleet == null || playerFleet.getFleetData() == null
-                ? List.of() : playerFleet.getFleetData().getMembersListCopy();
-        List<Integer> shipPowers = of(members, ShipTreeSync.currentLevelFloor());
+        List<Integer> shipPowers = of(FleetMembers.of(sector.getPlayerFleet()), ShipTreeSync.currentLevelFloor());
         if (sector.getClock() != null) {
             SNAPSHOT.set(new Snapshot(shipPowers, sector.getClock().getTimestamp()));
         }

@@ -1,7 +1,6 @@
 package exiledsector.effects;
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledsector.PlayerFleet;
 import exiledsector.items.DoctrineOverrides;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.NodeEligibility;
@@ -35,7 +34,7 @@ public final class DoctrineRevertRelease {
         if (released.nodeIds().isEmpty()) {
             return false;
         }
-        released.refundTo(PlayerFleet.cargoOrNull());
+        released.refundToPlayer();
         LOG.info("[ExiledSector] Released nodes of ship " + member.getId() + " that were allocated as doctrine replacements and whose originals"
                 + " are not allowed on it: " + released.nodeIds());
         return true;
