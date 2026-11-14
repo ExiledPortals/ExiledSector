@@ -26,6 +26,7 @@ final class OfficerBoardLegend {
     static final int ARROW_SEGMENTS = 13;
     static final float ARROWHEAD_LENGTH = 7f;
     static final float DEFEND_MARK_SIZE = 18f;
+    static final float BATTLE_MARK_SIZE = 18f;
     static final float RANK_MARK_WIDTH = 16f;
     static final float SLOT_SIZE = 18f;
     static final float GHOST_FOOTPRINT = 30f;
@@ -36,6 +37,7 @@ final class OfficerBoardLegend {
         IDLE("chart.officer.board.legend.idle"),
         WON("chart.officer.board.legend.won"),
         CHALLENGE("chart.officer.board.legend.challenge"),
+        BATTLE("chart.officer.board.legend.battle"),
         DEFEND("chart.officer.board.legend.defend"),
         UNKNOWN("chart.officer.board.legend.unknown"),
         ROSE("chart.officer.board.legend.rose"),
@@ -135,6 +137,7 @@ final class OfficerBoardLegend {
             case LINK -> beams.link(centreX - half / 2f, centreY - half, centreX + half / 2f, centreY + half, true, alpha);
             case WON -> addArrow(left, right, centreY, OfficerBoardArrows.Style.SOLID, alpha);
             case CHALLENGE -> addArrow(left, right, centreY, OfficerBoardArrows.Style.DASHED, alpha);
+            case BATTLE -> OfficerBoard.battleMark(sprites, centreX, centreY, BATTLE_MARK_SIZE, alpha);
             case DEFEND -> OfficerBoard.defendMark(sprites, centreX, centreY, DEFEND_MARK_SIZE, alpha);
             case ROSE, FELL -> OfficerBoard.rankMark(sprites, centreX, centreY, RANK_MARK_WIDTH, glyph == Glyph.ROSE, alpha);
             case IDLE -> drawSlot(centreX, centreY, OfficerBoard.DIMMED_TINT, OfficerBoard.DIMMED_ALPHA * alpha);

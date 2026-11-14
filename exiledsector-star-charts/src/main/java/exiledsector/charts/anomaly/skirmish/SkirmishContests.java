@@ -66,6 +66,16 @@ public final class SkirmishContests {
         return candidates;
     }
 
+    public static AtlasCell battleCell(AtlasGenerator generator, AtlasState state, Intent challenge) {
+        AtlasOfficer attacker = state.officer(challenge.officerRecordId());
+        AtlasOfficer defender = state.officer(challenge.targetRecordId());
+        if (challenge.kind() != IntentKind.CHALLENGE || attacker == null || defender == null) {
+            return null;
+        }
+        AtlasCell cell = challengeCell(generator, state, attacker, defender, OfficerTurns.declaredIntents(state));
+        return cell != null && at(generator, state, cell) != null ? cell : null;
+    }
+
     public static AtlasOfficer defenderAt(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
         AtlasCell centre = state.commandCentreOf(cell);
         if (centre == null || centre.equals(cell)) {

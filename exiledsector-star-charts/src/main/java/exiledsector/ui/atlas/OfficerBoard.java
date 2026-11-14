@@ -1,7 +1,9 @@
 package exiledsector.ui.atlas;
 
 import com.fs.starfarer.api.campaign.FactionAPI;
+import exiledsector.charts.anomaly.skirmish.SkirmishContests;
 import exiledsector.charts.atlas.AtlasCell;
+import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.OfficerRanks;
@@ -53,6 +55,9 @@ final class OfficerBoard {
     static final String RANK_MARK_PATH = "graphics/icons/ranks/rank1.png";
     static final float RANK_MARK_ASPECT = 11f / 16f;
     static final String DEFEND_MARK_PATH = "graphics/warroom/taskicons/icon_defend.png";
+    static final float BATTLE_MARK_SHARE = 0.3f;
+    static final float HOVERED_BATTLE_MARK_SCALE = 1.3f;
+    static final String BATTLE_MARK_PATH = "graphics/warroom/taskicons/icon_assault.png";
     static final String HELP_ICON_PATH = "graphics/ui/icons/fleettab/more_info.png";
     static final float HELP_ICON_SIZE = 24f;
     static final Color SLOT_FILL = new Color(20, 24, 30);
@@ -65,6 +70,9 @@ final class OfficerBoard {
     }
 
     private record ShownLink(OfficerBoardLayout.Link link, boolean subordinateIdentified, boolean superiorIdentified) {
+    }
+
+    private record BattleMark(OfficerBoardArrows.Arrow arrow, float centreX, float centreY) {
     }
 
     private record ArrowShape(OfficerBoardArrows.Arrow arrow, float[] points) {
@@ -99,6 +107,8 @@ final class OfficerBoard {
     private List<OfficerBoardArrows.Arrow> arrows = List.of();
     private Set<Integer> shields = Set.of();
     private List<ArrowShape> arrowShapes = List.of();
+    private List<BattleMark> battleMarks = List.of();
+    private BattleMark hoveredBattleMark;
     private boolean replayable;
     private boolean open;
     private float openLevel;
@@ -116,7 +126,7 @@ final class OfficerBoard {
     private float labelColumnWidth;
     private OfficerBoardGeometry geometry;
 
-    void open(AtlasState state) {
+    void open(AtlasGenerator generator, AtlasState state) {
         TurnResult lastTurn = OfficerTurns.lastTurn(state);
         records.clear();
         faces.clear();
@@ -129,7 +139,8 @@ final class OfficerBoard {
         shuffle = OfficerBoardShuffle.of(OfficerRanks.all(), entries, lastTurn.standingChanges());
         records.forEach((recordId, officer) -> faces.put(recordId, face(officer)));
         shownLinks = linksTouchingIdentified(shuffle.after());
-        arrows = OfficerBoardArrows.arrows(lastTurn.resolvedIntents(), OfficerTurns.declaredIntents(state), this::settledAndIdentified);
+        arrows = OfficerBoardArrows.arrows(lastTurn.resolvedIntents(), OfficerTurns.declaredIntents(state), this::settledAndIdentified,
+                intent -> SkirmishContests.battleCell(generator, state, intent));
         shields = OfficerBoardArrows.shields(OfficerTurns.declaredIntents(state), this::settledAndIdentified);
         replayable = lastTurn.turn() > 0;
         boolean unseen = OfficerTurns.hasUnseenTurn(state);
@@ -140,6 +151,7 @@ final class OfficerBoard {
         I18n.forGameText(() -> writeLabels(shuffle.after()));
         geometry = null;
         hoveredRecordId = null;
+        hoveredBattleMark = null;
         helpHovered = false;
         open = true;
     }
@@ -189,6 +201,7 @@ final class OfficerBoard {
     void close() {
         open = false;
         hoveredRecordId = null;
+        hoveredBattleMark = null;
         helpHovered = false;
         tooltip.cleanup();
     }
@@ -231,6 +244,7 @@ final class OfficerBoard {
         regionBottom = bottom;
         geometry = OfficerBoardGeometry.fit(rowsLeft(), rowsBottom(), rowsWidth(), rowsHeight(), shuffle.after().rowCount(), shuffle.widestRow());
         arrowShapes = arrowShapes();
+        battleMarks = battleMarks();
     }
 
     float left() {
@@ -273,6 +287,17 @@ final class OfficerBoard {
         return List.copyOf(shapes);
     }
 
+    private List<BattleMark> battleMarks() {
+        List<BattleMark> marks = new ArrayList<>();
+        for (ArrowShape shape : arrowShapes) {
+            if (shape.arrow().battleCell() != null) {
+                int middle = shape.points().length / 4;
+                marks.add(new BattleMark(shape.arrow(), shape.points()[middle * 2], shape.points()[middle * 2 + 1]));
+            }
+        }
+        return List.copyOf(marks);
+    }
+
     void advance(float amount, float mouseX, float mouseY) {
         openLevel = Fade.step(openLevel, open, amount / OPEN_SECONDS);
         if (!isShowing()) {
@@ -283,7 +308,8 @@ final class OfficerBoard {
         if (shuffleSeconds < OfficerBoardShuffle.DURATION_SECONDS) {
             shuffleSeconds = Math.min(OfficerBoardShuffle.DURATION_SECONDS, shuffleSeconds + amount);
         }
-        hoveredRecordId = open && geometry != null ? officerAt(mouseX, mouseY) : null;
+        hoveredBattleMark = open && geometry != null ? battleMarkAt(mouseX, mouseY) : null;
+        hoveredRecordId = open && geometry != null && hoveredBattleMark == null ? officerAt(mouseX, mouseY) : null;
         helpHovered = open && geometry != null && Math.abs(mouseX - helpIconCentreX()) <= HELP_ICON_SIZE / 2f
                 && Math.abs(mouseY - helpIconCentreY()) <= HELP_ICON_SIZE / 2f;
     }
@@ -310,6 +336,21 @@ final class OfficerBoard {
             }
         }
         return null;
+    }
+
+    private BattleMark battleMarkAt(float x, float y) {
+        float half = geometry.portraitSize() * BATTLE_MARK_SHARE / 2f;
+        for (BattleMark mark : battleMarks) {
+            if (Math.abs(x - mark.centreX()) <= half && Math.abs(y - mark.centreY()) <= half) {
+                return mark;
+            }
+        }
+        return null;
+    }
+
+    AtlasCell clickedBattleCell(float x, float y) {
+        BattleMark mark = geometry == null ? null : battleMarkAt(x, y);
+        return mark == null ? null : mark.arrow().battleCell();
     }
 
     AtlasCell clickedCommandCentre(float x, float y) {
@@ -371,6 +412,7 @@ final class OfficerBoard {
             }
         }
         drawShields(alpha * OfficerBoardShuffle.arrowAlpha(shuffleSeconds));
+        drawBattleMarks(alpha * OfficerBoardShuffle.arrowAlpha(shuffleSeconds));
         drawRankMarks(alpha * OfficerBoardShuffle.markAlpha(shuffleSeconds));
         if (open && hoveredRecordId != null) {
             AtlasOfficer hovered = records.get(hoveredRecordId);
@@ -447,6 +489,22 @@ final class OfficerBoard {
             OfficerBoardLayout.Seat seat = shuffle.after().seat(recordId);
             defendMark(sprites, geometry.centreX(seat) + size / 2f, geometry.centreY(seat) + size / 2f, size * DEFEND_MARK_SHARE, alpha);
         }
+    }
+
+    private void drawBattleMarks(float alpha) {
+        if (alpha <= 0f || battleMarks.isEmpty()) {
+            return;
+        }
+        float size = geometry.portraitSize() * BATTLE_MARK_SHARE;
+        for (BattleMark mark : battleMarks) {
+            boolean hovered = mark.equals(hoveredBattleMark);
+            float markAlpha = hovered ? OfficerBoardArrows.HOVERED_ALPHA : OfficerBoardArrows.alpha(mark.arrow(), hoveredRecordId);
+            battleMark(sprites, mark.centreX(), mark.centreY(), hovered ? size * HOVERED_BATTLE_MARK_SCALE : size, alpha * markAlpha);
+        }
+    }
+
+    static void battleMark(SpriteCache sprites, float centreX, float centreY, float size, float alpha) {
+        SpriteDraw.drawAtCenter(sprites, BATTLE_MARK_PATH, centreX, centreY, size, size, Color.WHITE, alpha);
     }
 
     static void defendMark(SpriteCache sprites, float centreX, float centreY, float size, float alpha) {

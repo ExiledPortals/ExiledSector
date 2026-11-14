@@ -1,5 +1,6 @@
 package exiledsector.ui.atlas;
 
+import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.officer.turn.Intent;
 import exiledsector.charts.officer.turn.IntentKind;
 import exiledsector.charts.officer.turn.TurnResult;
@@ -7,6 +8,7 @@ import exiledsector.charts.officer.turn.TurnResult;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.IntPredicate;
 
 final class OfficerBoardArrows {
@@ -17,7 +19,11 @@ final class OfficerBoardArrows {
 
     enum Style { SOLID, DASHED }
 
-    record Arrow(int fromRecordId, int toRecordId, Style style) {
+    record Arrow(int fromRecordId, int toRecordId, Style style, AtlasCell battleCell) {
+
+        Arrow(int fromRecordId, int toRecordId, Style style) {
+            this(fromRecordId, toRecordId, style, null);
+        }
 
         boolean touches(int recordId) {
             return fromRecordId == recordId || toRecordId == recordId;
@@ -27,7 +33,8 @@ final class OfficerBoardArrows {
     private OfficerBoardArrows() {
     }
 
-    static List<Arrow> arrows(List<TurnResult.ResolvedIntent> lastTurn, List<Intent> declared, IntPredicate shown) {
+    static List<Arrow> arrows(List<TurnResult.ResolvedIntent> lastTurn, List<Intent> declared, IntPredicate shown,
+            Function<Intent, AtlasCell> battleCells) {
         Set<Arrow> arrows = new LinkedHashSet<>();
         for (TurnResult.ResolvedIntent resolved : lastTurn) {
             if (resolved.kind() == IntentKind.CHALLENGE && resolved.defenderRecordId() != Intent.NO_OFFICER) {
@@ -38,7 +45,7 @@ final class OfficerBoardArrows {
         }
         for (Intent intent : declared) {
             if (intent.kind() == IntentKind.CHALLENGE && intent.targetRecordId() != Intent.NO_OFFICER) {
-                addIfShown(arrows, new Arrow(intent.officerRecordId(), intent.targetRecordId(), Style.DASHED), shown);
+                addIfShown(arrows, new Arrow(intent.officerRecordId(), intent.targetRecordId(), Style.DASHED, battleCells.apply(intent)), shown);
             }
         }
         return List.copyOf(arrows);

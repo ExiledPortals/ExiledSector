@@ -21,6 +21,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SkirmishContestsTest {
@@ -60,6 +61,7 @@ class SkirmishContestsTest {
         assertTrue(skirmishIn(generator, state, border.contested()));
         SkirmishContest contest = SkirmishContests.at(generator, state, border.contested());
         assertEquals(new SkirmishContest(push, border.attacker(), border.defender()), contest);
+        assertNull(SkirmishContests.battleCell(generator, state, push));
     }
 
     @Test
@@ -94,6 +96,7 @@ class SkirmishContestsTest {
 
         assertEquals(Set.of(nearClaim), SkirmishContests.declaredCells(generator, state));
         assertEquals(challenge, SkirmishContests.at(generator, state, nearClaim).intent());
+        assertEquals(nearClaim, SkirmishContests.battleCell(generator, state, challenge));
     }
 
     private static long squaredDistance(AtlasCell from, AtlasCell to) {

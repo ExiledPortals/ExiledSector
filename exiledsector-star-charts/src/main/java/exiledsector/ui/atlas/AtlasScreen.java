@@ -86,8 +86,6 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     static final float OPEN_SECONDS = 0.2f;
     static final float BACKDROP_ALPHA = 0.8f;
     static final float FOCUS_SECONDS = 0.6f;
-    static final int SPOTLIGHT_PULSES = 3;
-    static final float SPOTLIGHT_PULSE_SECONDS = 0.5f;
     static final float FOCUS_DIM_ALPHA = 0.85f;
     static final float CHOOSE_WIDTH = 320f;
     static final float CHOOSE_HEIGHT = 50f;
@@ -166,9 +164,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     private float chartLevel;
     private Object tooltipSubject;
     private AtlasCell hoveredCell;
-    private AtlasCell spotlightCell;
-    private int spotlightPulsesLeft;
-    private float spotlightWaitSeconds;
+    private final AtlasSpotlight spotlight = new AtlasSpotlight();
     private AtlasMapCanvas.AnomalyIcon hoveredAnomaly;
     private final SpriteCache spriteCache = new SpriteCache(AtlasScreen.class);
     private final OfficerBoardTooltip officerTooltip = new OfficerBoardTooltip(spriteCache);
@@ -814,7 +810,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         camera.stopDrag();
         hoveredCell = null;
         hoveredAnomaly = null;
-        officerBoard.open(map.state());
+        officerBoard.open(map.generator(), map.state());
         unchosenRewardHolder = OfficerDefeat.nextUnchosen(map.state());
         placeOfficerBoard();
         SkillTreeSounds.panelOpened();
@@ -884,18 +880,23 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     }
 
     private void officerBoardClicked(float x, float y) {
+        AtlasCell battleCell = officerBoard.clickedBattleCell(x, y);
         AtlasCell commandCentre = officerBoard.clickedCommandCentre(x, y);
-        if (commandCentre != null) {
-            float visibleCentreX = (innerLeft() + officerBoard.left()) / 2f;
-            float panelCentreX = panelPosition.getX() + panelPosition.getWidth() / 2f;
-            camera.panTo(map.displayX(commandCentre) + (panelCentreX - visibleCentreX) / camera.zoom(), map.displayY(commandCentre));
-            spotlightCell = commandCentre;
-            spotlightPulsesLeft = SPOTLIGHT_PULSES;
-            spotlightWaitSeconds = 0f;
-            SkillTreeSounds.panelOpened();
+        if (battleCell != null) {
+            spotlightFromBoard(battleCell);
+        } else if (commandCentre != null) {
+            spotlightFromBoard(commandCentre);
         } else if (officerBoard.clickedOfficer(x, y)) {
             SkillTreeSounds.refused();
         }
+    }
+
+    private void spotlightFromBoard(AtlasCell cell) {
+        float visibleCentreX = (innerLeft() + officerBoard.left()) / 2f;
+        float panelCentreX = panelPosition.getX() + panelPosition.getWidth() / 2f;
+        camera.panTo(map.displayX(cell) + (panelCentreX - visibleCentreX) / camera.zoom(), map.displayY(cell));
+        spotlight.start(cell);
+        SkillTreeSounds.panelOpened();
     }
 
     private void openAtlasTree() {
@@ -1078,18 +1079,14 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     }
 
     private void advanceSpotlight(float amount) {
-        if (spotlightCell == null || camera.isPanning()) {
-            return;
-        }
-        spotlightWaitSeconds -= amount;
-        if (spotlightWaitSeconds > 0f) {
-            return;
-        }
-        map.pulse(spotlightCell);
-        spotlightWaitSeconds = SPOTLIGHT_PULSE_SECONDS;
-        spotlightPulsesLeft--;
-        if (spotlightPulsesLeft <= 0) {
-            spotlightCell = null;
+        spotlight.advance(amount, camera.isPanning());
+    }
+
+    private void renderSpotlight(float alpha) {
+        AtlasCell cell = spotlight.cell();
+        if (cell != null) {
+            TreeViewport view = viewport();
+            spotlight.render(map.screenX(view, cell), map.screenY(view, cell), AtlasMapCanvas.footprint(view), panelStyle.getAccentColor(), alpha);
         }
     }
 
@@ -1133,6 +1130,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
                 (int) ((innerWidth() - BORDER_INSET * 2f) * screenScale), (int) (innerHeight() * screenScale))) {
             starfield.render(panelPosition, camera.panX(), camera.panY(), alpha);
             map.render(viewport(), panelStyle.getAccentColor(), alpha, focusedCell);
+            renderSpotlight(alpha);
             if (focusedCell != null) {
                 float level = Fade.smooth(focusLevel);
                 GLDraw.fillQuad(innerLeft(), innerBottom(), innerWidth(), innerHeight(), Color.BLACK, FOCUS_DIM_ALPHA * level * alpha);

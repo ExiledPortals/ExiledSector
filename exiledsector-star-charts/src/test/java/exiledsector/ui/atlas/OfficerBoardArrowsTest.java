@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -15,13 +16,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class OfficerBoardArrowsTest {
 
     private static final AtlasCell CELL = new AtlasCell(1, 2);
+    private static final Function<Intent, AtlasCell> NO_BATTLE = intent -> null;
 
     @Test
     void aSolidArrowRunsFromTheChallengeWinnerToTheLoser() {
         List<TurnResult.ResolvedIntent> lastTurn = List.of(new TurnResult.ResolvedIntent(IntentKind.PUSH, 1, 2, CELL, true, false),
                 new TurnResult.ResolvedIntent(IntentKind.CHALLENGE, 3, 4, null, false, true));
 
-        List<OfficerBoardArrows.Arrow> arrows = OfficerBoardArrows.arrows(lastTurn, List.of(), recordId -> true);
+        List<OfficerBoardArrows.Arrow> arrows = OfficerBoardArrows.arrows(lastTurn, List.of(), recordId -> true, NO_BATTLE);
 
         assertEquals(List.of(new OfficerBoardArrows.Arrow(4, 3, OfficerBoardArrows.Style.SOLID)), arrows);
     }
@@ -32,7 +34,7 @@ class OfficerBoardArrowsTest {
                 new TurnResult.ResolvedIntent(IntentKind.PUSH, 1, 2, CELL, true, false));
         List<Intent> declared = List.of(Intent.expand(1, CELL), Intent.hold(2), Intent.push(7, CELL, 8));
 
-        assertTrue(OfficerBoardArrows.arrows(lastTurn, declared, recordId -> true).isEmpty());
+        assertTrue(OfficerBoardArrows.arrows(lastTurn, declared, recordId -> true, NO_BATTLE).isEmpty());
     }
 
     @Test
@@ -40,7 +42,16 @@ class OfficerBoardArrowsTest {
         List<Intent> declared = List.of(Intent.challenge(5, 6));
 
         assertEquals(List.of(new OfficerBoardArrows.Arrow(5, 6, OfficerBoardArrows.Style.DASHED)),
-                OfficerBoardArrows.arrows(List.of(), declared, recordId -> true));
+                OfficerBoardArrows.arrows(List.of(), declared, recordId -> true, NO_BATTLE));
+    }
+
+    @Test
+    void aDeclaredChallengeArrowCarriesItsBattleSystem() {
+        List<Intent> declared = List.of(Intent.challenge(5, 6));
+
+        List<OfficerBoardArrows.Arrow> arrows = OfficerBoardArrows.arrows(List.of(), declared, recordId -> true, intent -> CELL);
+
+        assertEquals(List.of(new OfficerBoardArrows.Arrow(5, 6, OfficerBoardArrows.Style.DASHED, CELL)), arrows);
     }
 
     @Test
@@ -48,7 +59,7 @@ class OfficerBoardArrowsTest {
         List<Intent> declared = List.of(Intent.challenge(5, 6), Intent.challenge(7, 8));
 
         assertEquals(List.of(new OfficerBoardArrows.Arrow(7, 8, OfficerBoardArrows.Style.DASHED)),
-                OfficerBoardArrows.arrows(List.of(), declared, recordId -> recordId != 6));
+                OfficerBoardArrows.arrows(List.of(), declared, recordId -> recordId != 6, NO_BATTLE));
     }
 
     @Test

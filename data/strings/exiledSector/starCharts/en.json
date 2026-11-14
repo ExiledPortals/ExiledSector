@@ -328,6 +328,7 @@
     "chart.officer.board.legend.idle": "Holds no system",
     "chart.officer.board.legend.won": "Indicates a battle between officers last turn",
     "chart.officer.board.legend.challenge": "Indicates an impending battle between officers on the next turn",
+    "chart.officer.board.legend.battle": "Marks where that battle will be fought. Click it to find the system",
     "chart.officer.board.legend.defend": "Indicates this officer is defending an attack next turn",
     "chart.officer.board.legend.unknown": "Not yet identified",
     "chart.officer.board.legend.rose": "Gained a rank last turn",

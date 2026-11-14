@@ -319,6 +319,7 @@
     "chart.officer.board.legend.idle": "未控制星系",
     "chart.officer.board.legend.won": "表示上回合军官之间发生的战斗",
     "chart.officer.board.legend.challenge": "表示下回合军官之间即将发生的战斗",
+    "chart.officer.board.legend.battle": "标示该战斗的发生地点，点击可定位到该星系",
     "chart.officer.board.legend.defend": "表示该军官下回合将抵御进攻",
     "chart.officer.board.legend.unknown": "尚未识别",
     "chart.officer.board.legend.rose": "上回合获得一级军衔",
