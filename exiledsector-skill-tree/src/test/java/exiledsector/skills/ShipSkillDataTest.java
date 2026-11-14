@@ -813,6 +813,47 @@ class ShipSkillDataTest {
     }
 
     @Test
+    void refundBankedFreeAllocationAsOpSpendsTheBankedAllocationOnTheNewestPaidNode() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode a = node("a", List.of());
+        SkillNode b = node("b", List.of());
+        ShipTrees.allocate(data, a, 3);
+        ShipTrees.allocate(data, b, 3);
+        data.addFreeAllocation();
+
+        ShipTrees.refundBankedFreeAllocationAsOp(data, List.of(a, b));
+
+        assertTrue(data.isFreeNode("b"));
+        assertFalse(data.isFreeNode("a"));
+        assertEquals(0, data.getBankedFreeAllocations());
+    }
+
+    @Test
+    void refundBankedFreeAllocationAsOpKeepsTheAllocationBankedWhenNoNodeIsPaid() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode root = rootNode("root_low_tech_1", List.of());
+        ShipTrees.allocate(data, root, 0);
+        data.addFreeAllocation();
+
+        ShipTrees.refundBankedFreeAllocationAsOp(data, List.of(root));
+
+        assertEquals(1, data.getBankedFreeAllocations());
+        assertFalse(data.isFreeNode("root_low_tech_1"));
+    }
+
+    @Test
+    void refundBankedFreeAllocationAsOpDoesNothingWithoutABankedAllocation() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode a = node("a", List.of());
+        ShipTrees.allocate(data, a, 3);
+
+        ShipTrees.refundBankedFreeAllocationAsOp(data, List.of(a));
+
+        assertFalse(data.isFreeNode("a"));
+        assertEquals(0, data.getBankedFreeAllocations());
+    }
+
+    @Test
     void allocateConsumesABankedFreeAllocationInsteadOfSpendingOp() {
         ShipSkillData data = new ShipSkillData();
         data.addFreeAllocation();
