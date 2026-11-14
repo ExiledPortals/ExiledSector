@@ -1032,7 +1032,7 @@ deployed time at its phase-entry value while phased (`PhasedPeakTimeListener`).
 
 ### Collapsed Reach modifiers
 
-The Specialist Crew's black-hole bonus adds up over the fleet's active ships and only works in a Star Chart system
+The Crew Cybernetics' black-hole bonus adds up over the fleet's active ships and only works in a Star Chart system
 with a black hole among its stars. It adds its share to every hull item part's targeted extra rolls, so it sums with
 the chart's item quantity, for fleet battles and salvage sites alike (`BlackHoleSalvage`, `BlackHoleHullItems`). The
 Armor Plate ejects a missile that directly hits armor or hull by zeroing the hit and marking the missile as having

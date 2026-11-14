@@ -48,7 +48,7 @@
     "framework.sectionHint.noPoints": "Apply a Refit Schematic to gain a point for this section.",
     "framework.sectionHint.noPointsCharts": "Clear a higher tier Star Chart to gain a point for this section.",
     "framework.sectionDescription.bridge": "Holds command suites for combat readiness, weapon handling and how hard the ship hits each hull size.",
-    "framework.sectionDescription.crew_quarters": "Holds specialist crews for crew capacity, upkeep, repairs, sensors, electronic warfare and salvage.",
+    "framework.sectionDescription.crew_quarters": "Fits crew cybernetics for crew capacity, upkeep, repairs, sensors, electronic warfare and salvage.",
     "framework.sectionDescription.engine_room": "Holds drive assemblies for speed, maneuverability, burn level and fuel economy.",
     "framework.sectionDescription.reactor": "Holds power regulators for venting, capacitors, EMP resistance and weapon flux costs.",
     "framework.sectionDescription.armor_plating": "Holds bolt-on plating for armor, hull and damage resistance.",
