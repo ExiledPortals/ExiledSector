@@ -3,7 +3,10 @@ package exiledsector.skills.skilleffect.scar;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
+import com.fs.starfarer.api.combat.CollisionClass;
+import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
+import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
@@ -124,6 +127,37 @@ class ScarListenersTest {
         assertNull(listener.modifyDamageTaken(shot("heavymauler"), owner, hit, new Vector2f(), false));
         assertNull(listener.modifyDamageTaken(mine(), ship("other", 1), hit, new Vector2f(), false));
         verify(hit.getModifier(), never()).modifyMult(anyString(), anyFloat());
+    }
+
+    @Test
+    void noReductionMagnitudeLeavesMineHitsAlone() {
+        ShipAPI owner = owner(MineDamageTakenListener.REDUCTION_PERCENT_KEY, 0f);
+        MineDamageTakenListener listener = new MineDamageTakenListener(owner);
+        DamageAPI hit = damage(DamageType.HIGH_EXPLOSIVE);
+
+        assertNull(listener.modifyDamageTaken(mine(), owner, hit, new Vector2f(), false));
+        verify(hit.getModifier(), never()).modifyMult(anyString(), anyFloat());
+    }
+
+    @Test
+    void collisionsWhileTouchingSomethingTakeLessDamage() {
+        ShipAPI owner = owner(CollisionDamageTakenListener.REDUCTION_PERCENT_KEY, 50f);
+        when(owner.getLocation()).thenReturn(new Vector2f());
+        when(owner.getCollisionRadius()).thenReturn(100f);
+        CombatEntityAPI asteroid = mock(CombatEntityAPI.class);
+        when(asteroid.getLocation()).thenReturn(new Vector2f(150f, 0f));
+        when(asteroid.getCollisionRadius()).thenReturn(50f);
+        when(asteroid.getCollisionClass()).thenReturn(CollisionClass.ASTEROID);
+        CollisionGridAPI shipGrid = mock(CollisionGridAPI.class);
+        when(shipGrid.getCheckIterator(any(), anyFloat(), anyFloat())).thenAnswer(invocation -> List.<Object>of(asteroid).iterator());
+        when(Global.getCombatEngine().getShipGrid()).thenReturn(shipGrid);
+        CollisionDamageTakenListener listener = new CollisionDamageTakenListener(owner);
+        DamageAPI hit = damage(DamageType.KINETIC);
+
+        String modId = listener.modifyDamageTaken(null, owner, hit, new Vector2f(), false);
+
+        assertEquals("exiledSector_scarCollisionDamageTaken_boss", modId);
+        verify(hit.getModifier()).modifyMult(modId, 0.5f);
     }
 
     @Test
