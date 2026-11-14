@@ -2,7 +2,7 @@
 
 Most anomalies are interesting to play but reward more of the same: extra quantity, an extra cache, a few reserved modifiers. Anomalous Debris is the exception, since its engrams are a crafting outcome nothing else gives. This plan gives each anomaly a reward that only it grants, the way each Path of Exile league mechanic has its own crafting or item outcome.
 
-Status: proposed 2026-11-11. Sections 1 and 2 are decided; every anomaly in section 3 is decided, some only in outline until the user details them. Section 1, the feedstock drops of section 2 and the Spatial Breach warped items are built. All numbers are placeholders.
+Status: proposed 2026-11-11. Sections 1 and 2 are decided; every anomaly in section 3 is decided, Faction Skirmish only in outline. Build steps 1 to 9 are built; the Relay Network choices (step 10) are detailed and waiting to be built. All numbers are placeholders.
 
 ## 1. Storm Front: biome modifiers on every hull item (built)
 
@@ -76,7 +76,7 @@ Each entry names the anomaly, its reward today, and its new reward. Entries mark
 
 Today: a vault with more charts, blueprints and subroutines, and three revealed lanes if taken unseen.
 
-After Heist's experimented bases, the vault holds prototype hull items: non-unique items with one extra implicit drawn from their base's pool (a new `prototype_implicits.csv` keyed by base), so they can't be crafted anywhere else. Reaching the vault unseen lets the player pick one of three prototypes laid out in its dialog before taking the rest; after the alarm the scuttling leaves one at random. A second, smaller idea: a picket destroyed before its report goes out drops intercepted orders that show the boss's fleet and loot multipliers on the chart tooltip.
+After Heist's experimented bases, the vault holds prototype hull items: non-unique items with one extra implicit drawn from their base's pool (a new `prototype_implicits.csv` keyed by base), so they can't be crafted anywhere else. Reaching the vault unseen lets the player pick one of three prototypes laid out in its dialog before taking the rest; after the alarm the scuttling leaves one at random. A second, smaller idea, a picket destroyed before its report goes out dropping intercepted orders that show the boss's fleet and loot multipliers on the chart tooltip, is won't do (2026-11-14).
 
 Prototype implicits per base, decided 2026-11-13. Each base has three, except where one implicit comes in a version per damage or strike craft type. Effects marked new don't exist yet; values given are the user's, the rest are placeholders.
 
@@ -111,7 +111,9 @@ Every hull item dropped within the breach, from its caches or anything else foun
 
 Today: harder systems down the chain and one unique of any source from the last boss.
 
-After Incursion's room choices: each time the player wakes a relay, its dialog offers a choice of one of three modifiers, and the chosen modifiers change the reward the last stage's boss drops. The user details the modifiers when this step starts.
+After Incursion's room choices, detailed 2026-11-14: each time the player wakes a relay, its dialog offers three choices. Each choice pairs a generic reward group, as the Atlas officers offer them (`RewardGroup` from `atlas_officer_rewards.csv`, such as low tier crafting items, an engram or a biome hull item), with a scar downside from `atlas_officer_scars.csv`. Picking one adds both to the current stage's boss: the boss drops the reward group's item when it dies, and its flagship carries the scar for the rest of the run.
+
+The picks belong to the chart run they were made in. Neither the rewards nor the scars carry to the next stage of the chain or to any other Star Chart, and a scar given to an Atlas officer's flagship this way never joins their record.
 
 ### Faction Skirmish (decided in outline)
 
@@ -123,7 +125,7 @@ When the run completes, the faction left standing trains one of the player's off
 
 Today: chart fleet loot from the station and its launches.
 
-Each hull item the Nexus station itself drops has one modifier rolled 25% past its top roll, rounded down, marked on the item as overcharged (built). Its launched fleets drop no chart items, so they are untouched. The Domain-era Mothership is unchanged for now; the earlier idea of one item with two biome modifiers is open.
+Each hull item the Nexus station itself drops has one modifier rolled 25% past its top roll, rounded down, marked on the item as overcharged (built). Its launched fleets drop no chart items, so they are untouched. The Domain-era Mothership is unchanged; a reward of its own (the idea was one item with two biome modifiers) is won't do (2026-11-14).
 
 ### Stellar Flares (decided)
 
@@ -150,7 +152,6 @@ The Coronal Hypershunt is its own reward, as are the Derelict Forge, the Pre-Col
 - Supply Convoy: whether infused feedstock should also be bought in the main sector, or stay chart-only.
 - Faction Skirmish: whether staying out earns the training (from the attacker, left standing once the station falls) or nothing.
 - Faction Skirmish: one skill for every faction, or one per faction; whether it counts against the officer's skill limit; what a run grants an officer who already has it.
-- Domain-era Mothership: whether it gets a reward of its own.
 
 ## Build order
 
@@ -163,5 +164,5 @@ The Coronal Hypershunt is its own reward, as are the Derelict Forge, the Pre-Col
 7. [x] Remnant Nexus overcharged drops. Built: the Nexus had no reward beyond chart fleet loot, so nothing was removed. Core `items.ItemOvercharge` rolls one plain-range modifier 25% past its better end, rounded down to the range's precision so whole-number ranges stay whole, and skips ranges that would not go past their end, or would reach zero, once rounded (`ModifierLine.overchargedRoll`) and marks it on the `RolledModifier` (`overcharged`, kept in saves and as an `o` after the slot letter in `ItemCodec`, which also writes `i` for immutable); the tooltip colours it and the F1 view heads it Overcharged. Rerolling the modifier's values (Tuning, corrupted value rerolls) clears the flag, Perfect leaves it, and `GrantedModifiers.add` never removes it. Star Charts `RemnantNexusStation` is a `LootShaper` whose `overchargesHullItems` picks the station fleet only; `StarChartLootSource.fleetLootRules` passes it on as `FleetLootRules.overchargesHullItems`, which `BattleItemDrops` plans as its own share, and `ChartFleetLoot.roll` overcharges the station's own hull items. Tested in hull-upgrades `ItemOverchargeTest` and `BattleItemDropsTest`, Star Charts `LaunchingStationTest` and `GrantedModifiersTest`.
 8. [x] Spatial Breach warped items: a static 30% chance on every hull item dropped within the open breach, after the part pool check; the caches' depth rarity goes. Built: the pool check found no part-bound effect in a non-unique pool (the only `SlotItemEffect`-style line, targeted hull item scaling, sits on the unique Extended Warranty Contract), so `items.WarpedModifiers` draws from other sections' non-unique pools, leaving out reserved modifiers, any line with socketed item scaling, any effect the item's own section can roll and anything sharing an effect or clashing with the item's present modifiers, and adds the pick through `GrantedModifiers.addWarped`. `anomaly.breach.BreachLoot` rolls `BreachRules.WARPED_CHANCE` from the item seed and `SpatialBreach.shapeDrop` (a new `LootShaper` hook run by `StarChartLootSource.shapeDrop`) applies it while the player fleet is inside the open field (`BreachTerrainPlugin.holds`). Core `RolledModifier.warped` keeps the mark, saved by `ItemCodec` (flag letter `w` after the slot code); `Item.explicitModifier` resolves it from the catalogue and the tooltip shows it as `Style.WARPED`. Crafts treat it as an ordinary explicit: rerolls keep its range, removal or reforge loses it, the Immutable Nanoswarm can lock it, and later grants that would displace it are skipped. Tested in hull-upgrades `WarpedModifierTest`, mod `ItemCodecTest`, Star Charts `WarpedModifiersTest`, `GrantedModifiersTest`, `BreachLootTest` and `BreachTerrainPluginTest`.
 9. [x] The seven tag inhibitors, their `special_items.csv` rows, icons (placeholders), strings (en and zh_CN), the weighting in the modifier roll, and excavation shaft drops, with tests. Built: the inhibitors are core `CraftingInhibitor` values with no slot, an inhibited tag and battle drop weight 0; each kind can be active once (decided: no duplicates, so weights never stack), and a modifier matching several active ones gets one 0.2x weight (`CraftingInhibitor.tagWeights`). `CraftingContext` carries the weights to Augmentation and Reshaping (`ItemCrafting`), the infused crafts (`InfusedCraft`, `InfusedCrafting`), Star Charts `Engram` and Adaptive Reforge (`BiomeCraft`); crafts that add modifiers spend them (`CraftingMaterialFamily.addsModifiers`), Biome Graft stays unweighted. Shafts drop two per full raid and guardian fleets one, scaled by the site quantity (`ExcavationLoot`, `ExcavationRules.INHIBITORS_PER_RAID`), with chart rows in `chart_materials.csv`. Since 2026-11-14 they are the sites' only reward: the lean, its dialog lines, the `excavation` scope of `chart_loot.csv`, the `exiledSector_chart_excavation` item row and the guardian fleet's extra vanilla drops are gone, and old run records with a lean still load (`ExcavationSite.decode`). The icons are recolours of the Prefix and Suffix Inhibitors' icons (`graphics/icons/cargo/<kind>_inhibitor.png`). Tested in core `TagInhibitorWeightsTest`, mod `CraftingInhibitorTest`, hull-upgrades `InfusedCraftTest`, Star Charts `BiomeCraftTest` and `ExcavationRulesTest`.
-10. [ ] Relay Network choices, once the user details them.
+10. [ ] Relay Network choices: the relay dialog's three reward group and scar pairs, the run-scoped boss rewards and flagship scars, strings (en and zh_CN), `docs/docs.md`, tests.
 11. [ ] Faction Skirmish officer training: the skill, the end-of-run officer pick, strings (en and zh_CN), tests, once the user details the skill.
