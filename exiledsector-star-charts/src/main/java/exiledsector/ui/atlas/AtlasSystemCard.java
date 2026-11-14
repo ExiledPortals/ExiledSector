@@ -156,8 +156,8 @@ final class AtlasSystemCard {
     void draw(float mouseX, float mouseY, float alphaMult) {
         float boxWidth = (float) Math.ceil(contentWidth + PADDING_X * 2f);
         float boxHeight = boxHeight();
-        float boxX = Math.round(OfficerBoardTooltip.boxLeft(mouseX, boxWidth, Global.getSettings().getScreenWidth()));
-        float boxY = Math.round(OfficerBoardTooltip.boxBottom(mouseY, boxHeight, Global.getSettings().getScreenHeight()));
+        float boxX = Math.round(SkillTreePanelStyle.tooltipLeft(mouseX, boxWidth, Global.getSettings().getScreenWidth()));
+        float boxY = Math.round(SkillTreePanelStyle.tooltipBottom(mouseY, boxHeight, Global.getSettings().getScreenHeight()));
         BorderedPanel.draw(boxX, boxY, boxWidth, boxHeight, alphaMult);
         float left = boxX + PADDING_X;
         float top = boxY + boxHeight - PADDING_Y;
@@ -178,7 +178,7 @@ final class AtlasSystemCard {
     }
 
     private float drawHeader(float left, float top, float alphaMult) {
-        titleLabel.setColor(Misc.getTooltipTitleAndLightHighlightColor()).setAlpha(alphaMult).drawWithShadow(left, top, Color.BLACK);
+        SkillTreePanelStyle.drawTooltipTitle(titleLabel, left, top, alphaMult);
         top -= titleLabel.height();
         for (TextLabel label : List.of(layoutLabel, holderLabel)) {
             if (!label.isEmpty()) {

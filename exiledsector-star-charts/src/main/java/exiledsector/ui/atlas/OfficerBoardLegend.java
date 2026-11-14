@@ -121,10 +121,9 @@ final class OfficerBoardLegend {
     void drawTooltip(Color accent, float mouseX, float mouseY, float alpha) {
         float boxWidth = (float) Math.ceil(width() + PADDING * 2f);
         float boxHeight = (float) Math.ceil(height() + PADDING * 2f);
-        float boxX = Math.round(OfficerBoardTooltip.boxLeft(mouseX, boxWidth, Global.getSettings().getScreenWidth()));
-        float boxY = Math.round(OfficerBoardTooltip.boxBottom(mouseY, boxHeight, Global.getSettings().getScreenHeight()));
-        GLDraw.fillQuad(boxX, boxY, boxWidth, boxHeight, SkillTreePanelStyle.TOOLTIP_BACKGROUND_COLOR, alpha);
-        GLDraw.strokeQuad(boxX, boxY, boxWidth, boxHeight, accent, SkillTreePanelStyle.TOOLTIP_BORDER_THICKNESS, alpha);
+        float boxX = Math.round(SkillTreePanelStyle.tooltipLeft(mouseX, boxWidth, Global.getSettings().getScreenWidth()));
+        float boxY = Math.round(SkillTreePanelStyle.tooltipBottom(mouseY, boxHeight, Global.getSettings().getScreenHeight()));
+        SkillTreePanelStyle.drawTooltipBackground(boxX, boxY, boxWidth, boxHeight, alpha, accent);
         draw(boxX + PADDING, boxY + boxHeight - PADDING, alpha);
     }
 
