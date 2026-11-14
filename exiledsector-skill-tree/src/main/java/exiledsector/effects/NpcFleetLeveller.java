@@ -50,7 +50,7 @@ public final class NpcFleetLeveller {
     }
 
     public static void ensure(CampaignFleetAPI npcFleet) {
-        if (!isLevellable(npcFleet) || !NpcTreeConfig.isEnabled()) {
+        if (!appliesTo(npcFleet)) {
             return;
         }
         Map<String, String> recordsByMemberId = NpcTreeRecords.of(npcFleet.getMemoryWithoutUpdate());
@@ -102,6 +102,10 @@ public final class NpcFleetLeveller {
                 }
             }
         }
+    }
+
+    static boolean appliesTo(CampaignFleetAPI fleet) {
+        return isLevellable(fleet) && NpcTreeConfig.isEnabled();
     }
 
     static boolean isLevellable(CampaignFleetAPI fleet) {

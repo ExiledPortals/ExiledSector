@@ -448,6 +448,74 @@ class NpcFleetLevellerTest {
     }
 
     @Test
+    void theSweepSkipsAFleetWhoseMembersAndVariantsAreUnchanged() {
+        FleetMemberAPI near = member("near", statefulVariant(new LinkedHashSet<>(), new ArrayList<>()), true);
+        CampaignFleetAPI nearFleet = fleet("near-fleet", List.of(near), location, new Vector2f(100f, 0f));
+        when(location.getFleets()).thenReturn(List.of(nearFleet));
+        NpcFleetSweepScript script = new NpcFleetSweepScript();
+        script.advance(0f);
+        Mockito.clearInvocations(nearFleet.getMemoryWithoutUpdate());
+
+        script.advance(NpcFleetSweepScript.CHECK_INTERVAL_SECONDS);
+
+        Mockito.verify(nearFleet.getMemoryWithoutUpdate(), Mockito.never()).get(NpcTreeRecords.MEMORY_KEY);
+    }
+
+    @Test
+    void theSweepLevelsAMemberThatJoinedSinceTheLastSweep() {
+        FleetMemberAPI first = member("first", statefulVariant(new LinkedHashSet<>(), new ArrayList<>()), true);
+        List<FleetMemberAPI> members = new ArrayList<>(List.of(first));
+        CampaignFleetAPI nearFleet = fleet("near-fleet", members, location, new Vector2f(100f, 0f));
+        when(location.getFleets()).thenReturn(List.of(nearFleet));
+        NpcFleetSweepScript script = new NpcFleetSweepScript();
+        script.advance(0f);
+        FleetMemberAPI joined = member("joined", statefulVariant(new LinkedHashSet<>(), new ArrayList<>()), true);
+        members.add(joined);
+
+        script.advance(NpcFleetSweepScript.CHECK_INTERVAL_SECONDS);
+
+        assertNotNull(NpcTreeTag.find(joined.getVariant()));
+    }
+
+    @Test
+    void theSweepRetagsAMemberWhoseVariantWasSwappedOrStrippedOfItsTree() {
+        FleetMemberAPI near = member("near", statefulVariant(new LinkedHashSet<>(), new ArrayList<>()), true);
+        CampaignFleetAPI nearFleet = fleet("near-fleet", List.of(near), location, new Vector2f(100f, 0f));
+        when(location.getFleets()).thenReturn(List.of(nearFleet));
+        NpcFleetSweepScript script = new NpcFleetSweepScript();
+        script.advance(0f);
+        String treeTag = NpcTreeTag.find(near.getVariant());
+        ShipVariantAPI swappedVariant = statefulVariant(new LinkedHashSet<>(), new ArrayList<>());
+        when(near.getVariant()).thenReturn(swappedVariant);
+
+        script.advance(NpcFleetSweepScript.CHECK_INTERVAL_SECONDS);
+
+        assertEquals(treeTag, NpcTreeTag.find(swappedVariant));
+        NpcTreeTag.removeAll(swappedVariant);
+        swappedVariant.removeMod(SkillTreeHullMod.ID);
+
+        script.advance(NpcFleetSweepScript.CHECK_INTERVAL_SECONDS);
+
+        assertEquals(treeTag, NpcTreeTag.find(swappedVariant));
+    }
+
+    @Test
+    void theSweepLevelsAFleetOnceNpcTreesAreSwitchedBackOn() {
+        FleetMemberAPI near = member("near", statefulVariant(new LinkedHashSet<>(), new ArrayList<>()), true);
+        CampaignFleetAPI nearFleet = fleet("near-fleet", List.of(near), location, new Vector2f(100f, 0f));
+        when(location.getFleets()).thenReturn(List.of(nearFleet));
+        NpcFleetSweepScript script = new NpcFleetSweepScript();
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", NpcTreeConfig.ENABLED_FIELD_ID)).thenReturn(false);
+        script.advance(0f);
+        assertNull(NpcTreeTag.find(near.getVariant()));
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", NpcTreeConfig.ENABLED_FIELD_ID)).thenReturn(true);
+
+        script.advance(NpcFleetSweepScript.CHECK_INTERVAL_SECONDS);
+
+        assertNotNull(NpcTreeTag.find(near.getVariant()));
+    }
+
+    @Test
     void openingAnEncounterDialogWithAFleetLevelsTheFleetsAroundThePlayer() {
         FleetMemberAPI near = member("near", statefulVariant(new LinkedHashSet<>(), new ArrayList<>()), true);
         CampaignFleetAPI target = fleet("target", List.of(near), location, new Vector2f(50f, 0f));

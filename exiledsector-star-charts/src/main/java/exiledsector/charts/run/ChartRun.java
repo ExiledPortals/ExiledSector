@@ -247,6 +247,10 @@ public final class ChartRun {
         return split(anomalies);
     }
 
+    String anomaliesData() {
+        return anomalies;
+    }
+
     public boolean isObjectiveComplete() {
         return objectiveComplete;
     }

@@ -1,5 +1,8 @@
 package exiledsector.charts.wormhole;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.SettingsAPI;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
@@ -12,11 +15,18 @@ import exiledsector.charts.run.ChartRuns;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.lwjgl.util.vector.Vector2f;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class ChartWormholeVisualTest {
@@ -128,6 +138,58 @@ class ChartWormholeVisualTest {
         ChartWormholeBand band = new ChartWormholeBand(mock(SpriteAPI.class), 90f, 10f, 50f, 5f, 0.5f);
 
         assertEquals(Math.round(Math.PI * 2 * 50f / 10f), band.segmentCount());
+    }
+
+    private ChartWormholeVisual closedVisualOf(SectorEntityToken wormhole) throws Exception {
+        SettingsAPI settings = mock(SettingsAPI.class);
+        when(settings.getSprite(anyString(), anyString())).thenReturn(mock(SpriteAPI.class));
+        when(settings.getSprite(anyString())).thenReturn(mock(SpriteAPI.class));
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
+        return ChartWormholeVisual.create(wormhole, false);
+    }
+
+    private static CampaignFleetAPI fleetHeadingInto(SectorEntityToken wormhole) {
+        CampaignFleetAPI fleet = mock(CampaignFleetAPI.class);
+        when(fleet.getInteractionTarget()).thenReturn(wormhole);
+        when(fleet.getLocation()).thenReturn(new Vector2f(ChartWormholeVisual.OPEN_TRIGGER_RANGE / 2f, 0f));
+        return fleet;
+    }
+
+    private static SectorEntityToken wormholeIn(LocationAPI system) {
+        SectorEntityToken wormhole = wormhole(ChartIds.INNER_WORMHOLE_TAG);
+        when(wormhole.getContainingLocation()).thenReturn(system);
+        when(wormhole.getLocation()).thenReturn(new Vector2f());
+        return wormhole;
+    }
+
+    @Test
+    void anotherFleetHeadingIntoTheWormholeOpensItAtTheNextFleetCheckWithoutScanningInBetween() throws Exception {
+        StarSystemAPI system = mock(StarSystemAPI.class);
+        SectorEntityToken wormhole = wormholeIn(system);
+        ChartWormholeVisual visual = closedVisualOf(wormhole);
+        List<CampaignFleetAPI> fleets = List.of(fleetHeadingInto(wormhole));
+        when(system.getFleets()).thenReturn(fleets);
+
+        visual.updateOpenState(wormhole);
+        visual.updateOpenState(wormhole);
+
+        assertTrue(visual.isOpenOrOpening());
+        verify(system, times(1)).getFleets();
+    }
+
+    @Test
+    void thePlayerHeadingIntoTheWormholeOpensItStraightAway() throws Exception {
+        StarSystemAPI system = mock(StarSystemAPI.class);
+        SectorEntityToken wormhole = wormholeIn(system);
+        ChartWormholeVisual visual = closedVisualOf(wormhole);
+        CampaignFleetAPI playerFleet = fleetHeadingInto(wormhole);
+        when(playerFleet.getContainingLocation()).thenReturn(system);
+        when(sector.getPlayerFleet()).thenReturn(playerFleet);
+
+        visual.updateOpenState(wormhole);
+
+        assertTrue(visual.isOpenOrOpening());
+        verify(system, never()).getFleets();
     }
 
     @Test
