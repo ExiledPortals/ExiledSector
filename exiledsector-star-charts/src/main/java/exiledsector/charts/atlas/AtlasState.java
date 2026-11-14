@@ -200,7 +200,7 @@ public final class AtlasState implements AtlasMemory {
     }
 
     private AtlasOfficer holderOf(AtlasCell cell) {
-        Long centre = territoryClaims.get(cell.pack());
+        Long centre = cell == null ? null : territoryClaims.get(cell.pack());
         return centre == null ? null : activeOfficersByCentre().get(centre);
     }
 

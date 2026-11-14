@@ -149,9 +149,12 @@ public enum BiomeCraft {
     static List<RolledModifier> adapt(Item item, Set<ModifierSlot> inhibited, TagWeights tagWeights, Random random) {
         ItemDefinition definition = item.definition();
         List<String> grants = adaptiveGrants(item, inhibited);
+        if (definition == null || grants.isEmpty()) {
+            return item.explicits();
+        }
         Modifier granted = ItemModifiers.get(grants.get(random.nextInt(grants.size())));
         List<RolledModifier> modifiers = new ArrayList<>(Engram.keptModifiers(item, inhibited));
-        if (modifiers.stream().noneMatch(rolled -> rolled.modifierId().equals(granted.id()))) {
+        if (granted != null && modifiers.stream().noneMatch(rolled -> rolled.modifierId().equals(granted.id()))) {
             AffixLayout.insert(modifiers, RolledModifier.roll(granted, random));
         }
         int otherCount = MIN_OTHER_MODIFIERS + random.nextInt(MAX_OTHER_MODIFIERS - MIN_OTHER_MODIFIERS + 1);
