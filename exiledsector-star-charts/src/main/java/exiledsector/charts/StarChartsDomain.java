@@ -16,6 +16,8 @@ import exiledsector.charts.objective.ChartObjectives;
 import exiledsector.charts.objective.ChartRewardLootSource;
 import exiledsector.charts.objective.GatewayUpgradeRewards;
 import exiledsector.charts.officer.scar.ScarEffectSource;
+import exiledsector.charts.phasing.DisplacementTheorem;
+import exiledsector.charts.phasing.PhaseDisplacementGate;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.run.ChartTransverseJump;
 import exiledsector.charts.wormhole.ColonyFreeAtlas;
@@ -120,6 +122,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
                 MaterialItems.localise(craftingItem.itemId());
             }
             WormholeGateway.INDUSTRY_IDS.forEach(SpecLocalisation::industry);
+            SpecLocalisation.industry(PhaseDisplacementGate.INDUSTRY_ID);
         });
     }
 
@@ -163,6 +166,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
         I18n.forGameText(Engrams::localise);
         I18n.forGameText(AtlasCatalystItems::localise);
         I18n.forGameText(WormholeTechItems::localise);
+        I18n.forGameText(DisplacementTheorem::localise);
     }
 
     @Override

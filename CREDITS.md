@@ -34,6 +34,8 @@ By Kaysaar.
 
 Files: everything prefixed `aotd_` in `graphics/icons`, which is the Pre-Collapse Facility anomaly icon `graphics/icons/anomalies/aotd_pre_collapse_facility.png`, a circular copy of Vaults of Knowledge's Pre-Collapse Facility market condition icon.
 
+The Phase Displacement Gate structure icon `graphics/icons/industry/exiledSector_phase_displacement_gate.png` is the Bifrost megastructure artwork by Jeremy Cohen from Ashes of the Domain: Vaults of Knowledge, used with permission (approved 2026-11-14).
+
 ## Path of Exile
 
 The loot alert sounds are from Path of Exile and are copyright Grinding Gear Games.

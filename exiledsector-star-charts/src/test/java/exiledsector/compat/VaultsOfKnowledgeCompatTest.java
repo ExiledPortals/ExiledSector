@@ -3,6 +3,8 @@ package exiledsector.compat;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ModManagerAPI;
 import com.fs.starfarer.api.SettingsAPI;
+import com.fs.starfarer.api.campaign.SectorEntityToken;
+import data.kaysaar.aotd.vok.campaign.econ.megastructures.impl.scripts.CoronalHypershuntMegastructure;
 import data.kaysaar.aotd.vok.scripts.research.AoTDFactionResearchManager;
 import data.kaysaar.aotd.vok.scripts.research.AoTDMainResearchManager;
 import data.kaysaar.aotd.vok.scripts.research.models.ResearchOption;
@@ -95,7 +97,7 @@ class VaultsOfKnowledgeCompatTest {
     private static AoTDFactionResearchManager factionWithGatewayResearch() {
         AoTDFactionResearchManager faction = new AoTDFactionResearchManager();
         faction.getResearchRepoOfFaction().add(new ResearchOption("aotd_tech_other"));
-        for (String id : VaultsOfKnowledgeCompat.GATEWAY_RESEARCH_IDS) {
+        for (String id : VaultsOfKnowledgeCompat.COLONY_RESEARCH_IDS) {
             ResearchOption option = new ResearchOption(id);
             faction.getResearchRepoOfFaction().add(option);
             faction.getQueueManager().queuedResearchOptions.add(option);
@@ -106,6 +108,35 @@ class VaultsOfKnowledgeCompatTest {
 
     private static List<String> repoIds(AoTDFactionResearchManager faction) {
         return faction.getResearchRepoOfFaction().stream().map(option -> option.Id).toList();
+    }
+
+    @Test
+    void theHypershuntRangeIsReadFromTheMegastructure() {
+        SectorEntityToken inRange = mock(SectorEntityToken.class);
+        when(inRange.getId()).thenReturn("near");
+        SectorEntityToken outOfRange = mock(SectorEntityToken.class);
+        when(outOfRange.getId()).thenReturn("far");
+        CoronalHypershuntMegastructure.IN_RANGE_ENTITY_IDS.add("near");
+        try (MockedStatic<Global> ignored = vaultsInstalled(VaultsOfKnowledgeCompatTest.class.getClassLoader())) {
+            assertTrue(VaultsOfKnowledgeCompat.isWithinHypershuntRange(inRange));
+            assertFalse(VaultsOfKnowledgeCompat.isWithinHypershuntRange(outOfRange));
+            assertFalse(VaultsOfKnowledgeCompat.isWithinHypershuntRange(null));
+        } finally {
+            CoronalHypershuntMegastructure.IN_RANGE_ENTITY_IDS.clear();
+            VaultsOfKnowledgeCompat.clearCachedLookups();
+        }
+    }
+
+    @Test
+    void aMissingHypershuntLookupIsListedAndCountsAsOutOfRange() throws Exception {
+        SectorEntityToken colony = mock(SectorEntityToken.class);
+        try (URLClassLoader empty = new URLClassLoader(new URL[0], null);
+             MockedStatic<Global> ignored = vaultsInstalled(empty)) {
+            assertTrue(VaultsOfKnowledgeCompat.missingFeatures().stream().anyMatch(feature -> feature.contains("isWithinRangeOfAtLeastOneHypershunt")));
+            assertFalse(VaultsOfKnowledgeCompat.isWithinHypershuntRange(colony));
+        } finally {
+            VaultsOfKnowledgeCompat.clearCachedLookups();
+        }
     }
 
     @Test

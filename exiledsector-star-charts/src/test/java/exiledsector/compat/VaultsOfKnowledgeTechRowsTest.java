@@ -1,6 +1,8 @@
 package exiledsector.compat;
 
 import exiledsector.ProjectFiles;
+import exiledsector.charts.phasing.DisplacementTheorem;
+import exiledsector.charts.phasing.PhaseDisplacementGate;
 import exiledsector.items.WormholeTechItems;
 import org.json.CDL;
 import org.json.JSONArray;
@@ -53,7 +55,8 @@ class VaultsOfKnowledgeTechRowsTest {
         List<List<Object>> expected = List.of(
                 List.of(VaultsOfKnowledgeCompat.GATEWAY_RESEARCH_ID, WormholeTechItems.BLUEPRINT, 5),
                 List.of(VaultsOfKnowledgeCompat.GATEWAY_ARRAY_RESEARCH_ID, WormholeTechItems.UPGRADE_ARRAY, 10),
-                List.of(VaultsOfKnowledgeCompat.GATEWAY_NEXUS_RESEARCH_ID, WormholeTechItems.UPGRADE_NEXUS, 15));
+                List.of(VaultsOfKnowledgeCompat.GATEWAY_NEXUS_RESEARCH_ID, WormholeTechItems.UPGRADE_NEXUS, 15),
+                List.of(VaultsOfKnowledgeCompat.PHASE_GATE_RESEARCH_ID, DisplacementTheorem.ITEM_ID, 20));
         for (List<Object> research : expected) {
             JSONObject row = techs.get((String) research.get(0));
             assertTrue(row != null, research.get(0) + " is missing");
@@ -67,5 +70,9 @@ class VaultsOfKnowledgeTechRowsTest {
                 .contains(VaultsOfKnowledgeCompat.GATEWAY_RESEARCH_ID));
         assertTrue(techs.get(VaultsOfKnowledgeCompat.GATEWAY_NEXUS_RESEARCH_ID).getString("reqToResearchFirst")
                 .contains(VaultsOfKnowledgeCompat.GATEWAY_ARRAY_RESEARCH_ID));
+        JSONObject phaseGate = techs.get(VaultsOfKnowledgeCompat.PHASE_GATE_RESEARCH_ID);
+        assertEquals(VaultsOfKnowledgeCompat.GATEWAY_NEXUS_RESEARCH_ID, phaseGate.getString("reqToResearchFirst"));
+        assertEquals(6, phaseGate.getInt("tier"));
+        assertEquals(PhaseDisplacementGate.INDUSTRY_ID + ":industry", phaseGate.getString("rewards"));
     }
 }

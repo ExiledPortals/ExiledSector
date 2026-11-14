@@ -11,6 +11,7 @@ import exiledsector.charts.officer.reward.OfficerRewardText;
 import exiledsector.charts.officer.reward.RewardContext;
 import exiledsector.charts.officer.scar.HullFacts;
 import exiledsector.charts.officer.scar.Scars;
+import exiledsector.charts.phasing.DisplacementTheorem;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
@@ -21,6 +22,7 @@ import org.apache.log4j.Logger;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -46,7 +48,11 @@ public final class OfficerDefeat {
             AtlasState state = AtlasState.getIfCreated(sector);
             announce(sector, pickUnchosenAtRandom(state, Set.of()));
             AtlasOfficer officer = state == null || run == null ? null : OfficerFleets.officerOf(run.atlasNode());
-            return officer == null ? ItemDrops.SiteLoot.NONE : defeated(sector, state, run, officer, run.bossFlagshipId());
+            if (officer == null) {
+                return ItemDrops.SiteLoot.NONE;
+            }
+            Map<String, Integer> theorem = DisplacementTheorem.bossDrop(run, officer.rankId(), officer.recordId());
+            return defeated(sector, state, run, officer, run.bossFlagshipId()).plus(List.of(), List.of(), theorem);
         } catch (RuntimeException | LinkageError e) {
             LOG.error("[ExiledSector] Recording the defeat of the Atlas officer of run " + (run == null ? null : run.runId()) + " failed", e);
             return ItemDrops.SiteLoot.NONE;
