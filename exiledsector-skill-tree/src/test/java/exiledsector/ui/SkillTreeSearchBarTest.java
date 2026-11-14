@@ -96,10 +96,18 @@ class SkillTreeSearchBarTest {
         focus();
         type("armor");
 
-        bar.handleKey(keyDown(Keyboard.KEY_ESCAPE, '\u001b'));
+        assertTrue(bar.escape());
 
         assertEquals("", search.getQuery());
         assertFalse(bar.handleKey(keyDown(Keyboard.KEY_NONE, 'a')));
+    }
+
+    @Test
+    void escapeLeavesAnUnfocusedBarAlone() {
+        search.setQuery("armor");
+
+        assertFalse(bar.escape());
+        assertEquals("armor", search.getQuery());
     }
 
     @Test

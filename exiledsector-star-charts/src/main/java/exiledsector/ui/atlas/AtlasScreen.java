@@ -842,7 +842,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             mouseX = event.getX();
             mouseY = event.getY();
             dragMapUnderBoard(event);
-        } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
+        } else if (EscapeKey.matches(event)) {
             if (escapeKey.released(event)) {
                 officerBoard.close();
             }
@@ -933,7 +933,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
                 officerBoardInput(event);
             } else if (focusedCell != null) {
                 focusInput(event);
-            } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
+            } else if (EscapeKey.matches(event)) {
                 if (escapeKey.released(event)) {
                     escape();
                 }

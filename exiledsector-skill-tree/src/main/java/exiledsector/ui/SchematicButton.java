@@ -124,10 +124,14 @@ abstract class SchematicButton {
                 choose(released);
             }
             pressedChoice = SchematicDialog.Choice.NONE;
-        } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
-            choose(SchematicDialog.Choice.CANCEL);
         } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_RETURN) {
             choose(SchematicDialog.Choice.CONFIRM);
+        }
+    }
+
+    final void escape() {
+        if (dialog.isOpen()) {
+            choose(SchematicDialog.Choice.CANCEL);
         }
     }
 

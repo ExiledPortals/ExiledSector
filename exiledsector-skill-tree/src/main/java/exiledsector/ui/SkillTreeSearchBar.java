@@ -46,16 +46,21 @@ final class SkillTreeSearchBar {
         SkillTreeTextField.KeyResult result = queryField.handleKey(event);
         switch (result) {
             case EDITED -> nodeSearch.setQuery(queryField.text());
-            case CANCEL -> {
-                queryField.setText("");
-                nodeSearch.setQuery("");
-                queryField.focus(false);
-            }
             case SUBMIT -> onSubmit.run();
             default -> {
             }
         }
         return result != SkillTreeTextField.KeyResult.IGNORED;
+    }
+
+    boolean escape() {
+        if (!queryField.isFocused()) {
+            return false;
+        }
+        queryField.setText("");
+        nodeSearch.setQuery("");
+        queryField.focus(false);
+        return true;
     }
 
     void advance(float amount) {
