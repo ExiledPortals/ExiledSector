@@ -255,15 +255,4 @@ class ChartLootTest {
         assertEquals(4000, valueCopies.get(0).value);
         assertEquals(0.25f, valueCopies.get(0).valueMult, 1e-5f);
     }
-
-    @Test
-    void fractionalExtraChancesRoundUpAsOftenAsTheirFraction() {
-        Random random = new Random(7L);
-        int total = 0;
-        for (int i = 0; i < 10000; i++) {
-            total += ChartVanillaLoot.stochasticRound(2.3f, random);
-        }
-        assertEquals(2.3f, total / 10000f, 0.03f);
-        assertEquals(0, ChartVanillaLoot.stochasticRound(-1f, random));
-    }
 }

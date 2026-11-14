@@ -1,10 +1,11 @@
 package exiledsector.skills;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
+import exiledsector.items.CargoRefund;
 
 import java.util.List;
 
-public record ReleasedNodes(List<String> nodeIds, List<SkillItemCost> charges) {
+public record ReleasedNodes(List<String> nodeIds, List<SkillItemCost> charges) implements CargoRefund {
 
     public static final ReleasedNodes NONE = new ReleasedNodes(List.of(), List.of());
 
@@ -17,6 +18,7 @@ public record ReleasedNodes(List<String> nodeIds, List<SkillItemCost> charges) {
         return nodeIds.isEmpty();
     }
 
+    @Override
     public void refundTo(CargoAPI cargo) {
         charges.forEach(charge -> charge.refundTo(cargo));
     }

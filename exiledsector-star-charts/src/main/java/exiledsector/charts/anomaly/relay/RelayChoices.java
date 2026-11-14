@@ -2,7 +2,7 @@ package exiledsector.charts.anomaly.relay;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.FleetMembers;
 import exiledsector.Seeds;
 import exiledsector.charts.anomaly.AnomalyState;
 import exiledsector.charts.objective.ChartObjectives;
@@ -146,7 +146,7 @@ public final class RelayChoices {
 
     static HullFacts bossHull(SectorAPI sector, ChartRun run) {
         CampaignFleetAPI boss = ChartObjectives.bossFleet(sector, run);
-        return boss == null ? null : HullFacts.of(member(boss, scarredFlagshipId(boss, run)));
+        return boss == null ? null : HullFacts.of(FleetMembers.withId(boss, scarredFlagshipId(boss, run)));
     }
 
     static String scarredFlagshipId(CampaignFleetAPI boss, ChartRun run) {
@@ -155,18 +155,6 @@ public final class RelayChoices {
             return scarred;
         }
         return run.bossFlagshipId() != null ? run.bossFlagshipId() : ChartObjectives.flagshipIdOf(boss);
-    }
-
-    private static FleetMemberAPI member(CampaignFleetAPI fleet, String memberId) {
-        if (memberId == null || fleet.getFleetData() == null) {
-            return null;
-        }
-        for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
-            if (memberId.equals(member.getId())) {
-                return member;
-            }
-        }
-        return null;
     }
 
     private static AnomalyState state(ChartRun run) {

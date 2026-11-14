@@ -24,7 +24,7 @@ public final class AnchorFindMigration {
         if (persistentData == null || Boolean.TRUE.equals(persistentData.get(DONE_KEY))) {
             return;
         }
-        recordHeldAnchors(sector, MaterialMigration.savedCargoes(sector), ItemStore.get().owned());
+        recordHeldAnchors(sector, SavedCargo.cargoes(sector), ItemStore.get().owned());
         persistentData.put(DONE_KEY, Boolean.TRUE);
     }
 

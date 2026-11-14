@@ -96,12 +96,7 @@ public final class ItemRoller {
     }
 
     private static void draw(List<PoolEntry> pool, int drawCount, Random random, TagWeights tagWeights, List<RolledModifier> rolledModifiers) {
-        List<PoolEntry> remainingPool = new ArrayList<>(pool);
-        remainingPool.removeIf(entry -> ModifierExclusivity.clashesWithRolled(entry.modifier().id(), rolledModifiers));
-        for (int drawsLeft = Math.min(drawCount, pool.size()); drawsLeft > 0 && !remainingPool.isEmpty(); drawsLeft--) {
-            PoolEntry entry = remainingPool.remove(WeightedPick.index(remainingPool, candidate -> candidate.biasedWeight(tagWeights), random.nextFloat()));
-            rolledModifiers.add(RolledModifier.roll(entry.modifier(), random));
-            remainingPool.removeIf(candidate -> ModifierExclusivity.clashesWithRolled(candidate.modifier().id(), rolledModifiers));
-        }
+        List<String> rolledIds = rolledModifiers.stream().map(RolledModifier::modifierId).toList();
+        ModifierPool.draw(pool, drawCount, rolledIds, tagWeights, random, entry -> rolledModifiers.add(RolledModifier.roll(entry.modifier(), random)));
     }
 }

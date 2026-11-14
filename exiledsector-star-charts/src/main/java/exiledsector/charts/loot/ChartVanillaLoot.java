@@ -6,6 +6,7 @@ import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec.DropD
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.content.ChartPoi;
 
+import exiledsector.data.RandomRounding;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -58,7 +59,7 @@ public final class ChartVanillaLoot {
         for (ChartLoot.Entry entry : ChartLoot.entriesFor(kind.name().toLowerCase(Locale.ROOT), tier)) {
             float mult = context.dropMult(entry.type());
             if (entry.mode() == ChartLoot.Mode.RANDOM) {
-                int chances = stochasticRound(entry.amount() * mult, random);
+                int chances = RandomRounding.round(entry.amount() * mult, random);
                 if (chances > 0) {
                     site.addDropRandom(randomDrop(entry.group(), chances, 1f));
                 }
@@ -78,7 +79,7 @@ public final class ChartVanillaLoot {
         if (existingDrop == null || !(extraShare > 0f) || existingDrop.chances <= 0) {
             return null;
         }
-        int chances = stochasticRound(existingDrop.chances * extraShare, random);
+        int chances = RandomRounding.round(existingDrop.chances * extraShare, random);
         int maxChances = existingDrop.maxChances > existingDrop.chances ? Math.max(chances, Math.round(existingDrop.maxChances * extraShare)) : -1;
         if (chances <= 0 && maxChances <= 0) {
             return null;
@@ -97,14 +98,6 @@ public final class ChartVanillaLoot {
         DropData extraDrop = existingDrop.clone();
         extraDrop.valueMult = existingDrop.valueMult * extraShare;
         return extraDrop;
-    }
-
-    public static int stochasticRound(float expected, Random random) {
-        if (!(expected > 0f)) {
-            return 0;
-        }
-        int whole = (int) expected;
-        return whole + (random.nextFloat() < expected - whole ? 1 : 0);
     }
 
     public static void addToFleet(CampaignFleetAPI fleet, boolean boss, ChartGenContext context, int tier) {

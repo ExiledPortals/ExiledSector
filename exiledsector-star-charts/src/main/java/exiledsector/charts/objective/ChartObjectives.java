@@ -8,6 +8,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.FleetMembers;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.LootShaper;
@@ -119,15 +120,7 @@ public final class ChartObjectives {
     }
 
     private static boolean holdsMember(CampaignFleetAPI fleet, String memberId) {
-        if (memberId == null || fleet.getFleetData() == null) {
-            return true;
-        }
-        for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
-            if (memberId.equals(member.getId())) {
-                return true;
-            }
-        }
-        return false;
+        return memberId == null || fleet.getFleetData() == null || FleetMembers.withId(fleet, memberId) != null;
     }
 
     public static ItemDrops.SiteLoot bossFellInBattle(SectorAPI sector, CampaignFleetAPI sourceFleet, List<FleetMemberAPI> lostMembers) {

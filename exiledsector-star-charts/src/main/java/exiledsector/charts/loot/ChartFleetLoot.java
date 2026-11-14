@@ -20,6 +20,7 @@ import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.charts.run.ChartRuns;
+import exiledsector.data.RandomRounding;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
@@ -328,9 +329,9 @@ public final class ChartFleetLoot {
         float expected = rate.expected(lootDeploymentPoints, battle.deploymentPoints()) * rate.difficulty(battle.difficultyMultiplier());
         ItemChances chances = context.itemChances();
         List<ItemData> items = new ArrayList<>();
-        addRolled(items, ItemDrops.wholeFeedstock(expected * chances.general(), random), ItemDrops::pickBasic, chances.rarity(), random);
+        addRolled(items, RandomRounding.round(expected * chances.general(), random), ItemDrops::pickBasic, chances.rarity(), random);
         if (ItemDrops.hasDroppableBasic(ItemKind.SUBROUTINE)) {
-            addRolled(items, ItemDrops.wholeFeedstock(expected * chances.targeted(ItemKind.SUBROUTINE), random),
+            addRolled(items, RandomRounding.round(expected * chances.targeted(ItemKind.SUBROUTINE), random),
                     picker -> ItemDrops.pickSectionItemBasic(ItemKind.SUBROUTINE, picker), chances.rarity(), random);
         }
         items.addAll(ItemTypes.rollSalvage(random, expected * chances.general()));

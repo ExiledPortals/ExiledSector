@@ -297,7 +297,7 @@ final class NodeAllocator {
         }
         if (refund != null) {
             ItemCostLedger.takePaidItemCost(skillData, node.getId());
-            refund.refundTo(PlayerFleet.cargoOrNull());
+            refund.refundToPlayer();
         }
         ShipTrees.selectOption(skillData, node, option, gate.opCostFor(node));
         chargeItems(skillData, node.getId(), itemCost);
@@ -308,7 +308,7 @@ final class NodeAllocator {
         if (!snapshot.gate().deallocation(node).allowed()) {
             return false;
         }
-        ShipTrees.release(snapshot.skillData(), SkillTree.topology(), satisfiedRootId(), List.of(node)).refundTo(PlayerFleet.cargoOrNull());
+        ShipTrees.release(snapshot.skillData(), SkillTree.topology(), satisfiedRootId(), List.of(node)).refundToPlayer();
         return changed(true);
     }
 
@@ -348,7 +348,7 @@ final class NodeAllocator {
     boolean grantSocketedNodes() {
         ShipSkillData skillData = data();
         ReleasedNodes ungranted = ShipTrees.releaseUngrantedFreeNodes(skillData, SkillTree.topology(), satisfiedRootId());
-        ungranted.refundTo(PlayerFleet.cargoOrNull());
+        ungranted.refundToPlayer();
         boolean changedAny = !ungranted.nodeIds().isEmpty();
         Map<String, List<String>> grantedNodesBySocket = ShipTreeLinks.grantedNodesBySocket(skillData);
         if (grantedNodesBySocket.isEmpty()) {
@@ -400,7 +400,7 @@ final class NodeAllocator {
     }
 
     private void releaseStranded(ShipSkillData skillData, Set<String> reachableBefore) {
-        ShipTrees.releaseNewlyStranded(skillData, SkillTree.topology(), satisfiedRootId(), reachableBefore).refundTo(PlayerFleet.cargoOrNull());
+        ShipTrees.releaseNewlyStranded(skillData, SkillTree.topology(), satisfiedRootId(), reachableBefore).refundToPlayer();
     }
 
     boolean chooseStartingRoot(SkillNode root) {

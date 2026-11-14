@@ -46,6 +46,7 @@ import exiledsector.items.MaterialIdAliases;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.MaterialMigration;
 import exiledsector.items.RetiredItems;
+import exiledsector.items.SavedCargo;
 import exiledsector.items.SocketCustody;
 import exiledsector.items.SocketLossListener;
 import exiledsector.items.SectionFitMigration;
@@ -152,7 +153,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         SectorAPI sector = Global.getSector();
         ResolvedTree.clearCache();
         FleetCrewLedger.discardPending();
-        List<CargoAPI> savedCargoes = MaterialMigration.savedCargoes(sector);
+        List<CargoAPI> savedCargoes = SavedCargo.cargoes(sector);
         DOMAINS.forEach(domain -> domain.onGameLoad(newGame, savedCargoes));
         ItemStore.get().freezeNames();
         MaterialMigration.run(savedCargoes);

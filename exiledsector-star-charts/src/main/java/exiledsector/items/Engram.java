@@ -199,16 +199,10 @@ public record Engram(String itemId, String englishName, String modifierId, Set<I
 
     private static int draw(List<PoolEntry> pool, int count, TagWeights tagWeights, Random random, Set<String> takenIds,
                             List<RolledModifier> drawn) {
-        List<PoolEntry> remaining = new ArrayList<>(pool);
-        int drawCount = 0;
-        for (int left = Math.max(0, count); left > 0 && !remaining.isEmpty(); left--) {
-            PoolEntry entry = remaining.remove(WeightedPick.index(remaining, candidate -> candidate.biasedWeight(tagWeights), random.nextFloat()));
+        return ModifierPool.draw(pool, count, takenIds, tagWeights, random, entry -> {
             drawn.add(RolledModifier.roll(entry.modifier(), random));
             takenIds.add(entry.modifier().id());
-            remaining.removeIf(candidate -> ModifierExclusivity.clashes(candidate.modifier().id(), takenIds));
-            drawCount++;
-        }
-        return drawCount;
+        });
     }
 
     @Override

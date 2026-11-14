@@ -1,13 +1,8 @@
 package exiledsector.items;
 
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
-import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
-import exiledsector.SectorMarkets;
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -56,25 +51,5 @@ public final class MaterialMigration {
             MaterialItems.add(cargo, itemId, legacyQuantity);
         }
         return Math.max(0, legacyQuantity);
-    }
-
-    public static List<CargoAPI> savedCargoes(SectorAPI sector) {
-        List<CargoAPI> cargoes = new ArrayList<>();
-        if (sector == null) {
-            return cargoes;
-        }
-        CampaignFleetAPI playerFleet = sector.getPlayerFleet();
-        if (playerFleet != null) {
-            cargoes.add(playerFleet.getCargo());
-        }
-        SectorMarkets.forEach(sector, market -> {
-            for (SubmarketAPI submarket : market.getSubmarketsCopy()) {
-                CargoAPI submarketCargo = submarket.getCargoNullOk();
-                if (submarketCargo != null) {
-                    cargoes.add(submarketCargo);
-                }
-            }
-        });
-        return cargoes;
     }
 }

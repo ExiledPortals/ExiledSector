@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import exiledsector.data.RandomRounding;
 import exiledsector.loot.BattleLootRates;
 import exiledsector.loot.FleetLootRules;
 
@@ -38,7 +39,7 @@ public enum SkillTreeSchematicDrops {
     }
 
     public int rollBattle(List<SourceLoss> sources, float dropMultiplier, Random random) {
-        return ItemDrops.wholeFeedstock(expectedBattleDrops(sources, BattleLootRates.rate(rateId), dropMultiplier), random);
+        return RandomRounding.round(expectedBattleDrops(sources, BattleLootRates.rate(rateId), dropMultiplier), random);
     }
 
     static float expectedBattleDrops(List<SourceLoss> sources, BattleLootRates.Rate rate, float dropMultiplier) {

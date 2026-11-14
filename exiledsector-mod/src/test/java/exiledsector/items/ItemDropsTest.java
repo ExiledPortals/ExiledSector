@@ -327,18 +327,4 @@ class ItemDropsTest {
         assertTrue(ItemDrops.rollMaterials("nowhere", new Random(1L), 1f, 1f).isEmpty());
         assertTrue(ItemDrops.rollMaterials(null, new Random(1L), 1f, 1f).isEmpty());
     }
-
-    @Test
-    void fractionalBattlePartsRoundUpAsAChance() {
-        Random random = new Random(5L);
-        double total = 0;
-        for (int i = 0; i < TRIALS; i++) {
-            int feedstock = ItemDrops.wholeFeedstock(2.25f, random);
-            assertTrue(feedstock == 2 || feedstock == 3);
-            total += feedstock;
-        }
-        assertEquals(2.25, total / TRIALS, 0.02);
-        assertEquals(0, ItemDrops.wholeFeedstock(0f, random));
-        assertEquals(0, ItemDrops.wholeFeedstock(Float.NaN, random));
-    }
 }

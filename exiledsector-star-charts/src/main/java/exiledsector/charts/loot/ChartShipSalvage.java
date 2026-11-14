@@ -16,6 +16,7 @@ import com.fs.starfarer.api.loading.WeaponSlotAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.data.RandomRounding;
 import exiledsector.loot.EncounterSalvage;
 
 import java.util.ArrayList;
@@ -139,13 +140,13 @@ final class ChartShipSalvage {
     private static void addFittings(CargoAPI loot, LostShip ship, Rates rates, float extraShare, Random random) {
         SettingsAPI settings = Global.getSettings();
         for (String weaponId : ship.weaponIds()) {
-            int extraWeapons = ChartVanillaLoot.stochasticRound(rates.weaponChance() * extraShare, random);
+            int extraWeapons = RandomRounding.round(rates.weaponChance() * extraShare, random);
             if (extraWeapons > 0 && !settings.getWeaponSpec(weaponId).hasTag(Tags.NO_DROP)) {
                 loot.addWeapons(weaponId, extraWeapons);
             }
         }
         for (String wingId : ship.wingIds()) {
-            int extraWings = ChartVanillaLoot.stochasticRound(rates.wingChance() * extraShare, random);
+            int extraWings = RandomRounding.round(rates.wingChance() * extraShare, random);
             if (extraWings > 0 && !settings.getFighterWingSpec(wingId).hasTag(Tags.WING_NO_DROP)) {
                 loot.addFighters(wingId, extraWings);
             }
@@ -168,7 +169,7 @@ final class ChartShipSalvage {
             if (commodity.getKey().equals(Commodities.FUEL)) {
                 units *= Math.max(1f, fuelMult);
             }
-            int wholeUnits = ChartVanillaLoot.stochasticRound(units, random);
+            int wholeUnits = RandomRounding.round(units, random);
             if (wholeUnits > 0) {
                 loot.addCommodity(commodity.getKey(), wholeUnits);
             }
@@ -218,7 +219,7 @@ final class ChartShipSalvage {
         stacksBeforeLoot.forEach((stack, sizeBeforeLoot) -> {
             float lost = sizeBeforeLoot - cargo.getQuantity(stack.itemType(), stack.data());
             float extra = lost * CARGO_TAKEN_SHARE * rates.cargoRecoveryShare() * extraShare(context, stack.dropType());
-            int wholeExtra = ChartVanillaLoot.stochasticRound(extra, random);
+            int wholeExtra = RandomRounding.round(extra, random);
             if (wholeExtra > 0) {
                 loot.addItems(stack.itemType(), stack.data(), wholeExtra);
             }

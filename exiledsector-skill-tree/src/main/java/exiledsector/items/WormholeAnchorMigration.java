@@ -1,7 +1,6 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.Global;
-import exiledsector.PlayerFleet;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ReleasedNodes;
 import exiledsector.skills.ShipSkillData;
@@ -33,7 +32,7 @@ public final class WormholeAnchorMigration {
         }
         WormholeAnchorLinks.refresh();
         Summary summary = runOnce(Global.getSector().getPersistentData(), ShipSkillDataManager.all(), SkillTree.topology(),
-                SocketCustody.ownedShipIds()::contains, charged -> charged.refundTo(PlayerFleet.cargoOrNull()));
+                SocketCustody.ownedShipIds()::contains, CargoRefund::refundToPlayer);
         if (summary != null) {
             LOG.info("[ExiledSector] Wormhole anchor migration: released " + summary.nodeCount() + " faction volume nodes on "
                     + summary.shipCount() + " ships that the removed wormholes used to reach, refunding their OP");

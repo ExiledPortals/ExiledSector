@@ -11,13 +11,13 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.impl.campaign.CargoPodsEntityPlugin;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.data.RandomRounding;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.content.ChartAnomalyFleets;
 import exiledsector.charts.loot.ChartCargoLoot;
 import exiledsector.charts.loot.ChartDrops;
 import exiledsector.charts.loot.ChartLoot;
-import exiledsector.charts.loot.ChartVanillaLoot;
 import exiledsector.charts.loot.DropType;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.effects.ItemLootListener;
@@ -109,7 +109,7 @@ final class ConvoyCargo {
                 continue;
             }
             float size = stack.getSize();
-            int kept = ChartVanillaLoot.stochasticRound(size * share, random);
+            int kept = RandomRounding.round(size * share, random);
             if (kept < size) {
                 cargo.removeItems(stack.getType(), stack.getData(), size - kept);
             }

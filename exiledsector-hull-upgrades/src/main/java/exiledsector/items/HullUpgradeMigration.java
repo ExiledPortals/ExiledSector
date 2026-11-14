@@ -21,10 +21,7 @@ public final class HullUpgradeMigration {
 
     static void run(ItemStore store, List<CargoAPI> savedCargoes) {
         int convertedFromStorage = store == null ? 0 : store.convertLegacyHullUpgrades();
-        int convertedFromCargo = 0;
-        for (CargoAPI cargo : savedCargoes) {
-            convertedFromCargo += convertCargo(cargo);
-        }
+        int convertedFromCargo = SavedCargo.replaceStacks(savedCargoes, HullUpgradeMigration::currentSchematicFor);
         if (convertedFromStorage > 0 || convertedFromCargo > 0) {
             LOG.info("Turned old Hull Upgrades into Standard Refit Schematics: " + convertedFromStorage + " from storage, "
                     + convertedFromCargo + " from cargo");
@@ -32,24 +29,16 @@ public final class HullUpgradeMigration {
     }
 
     static int convertCargo(CargoAPI cargo) {
-        if (cargo == null) {
-            return 0;
+        return SavedCargo.replaceStacks(cargo, HullUpgradeMigration::currentSchematicFor);
+    }
+
+    private static SpecialItemData currentSchematicFor(CargoStackAPI stack) {
+        SpecialItemData special = stack.getSpecialDataIfSpecial();
+        boolean legacyId = special != null && RefitSchematic.LEGACY_ITEM_ID.equals(special.getId());
+        if (special == null || !legacyId && !(RefitSchematic.ITEM_ID.equals(special.getId()) && RefitSchematic.isLegacyData(special.getData()))) {
+            return null;
         }
-        int convertedCount = 0;
-        for (CargoStackAPI stack : cargo.getStacksCopy()) {
-            SpecialItemData special = stack.getSpecialDataIfSpecial();
-            boolean legacyId = special != null && RefitSchematic.LEGACY_ITEM_ID.equals(special.getId());
-            if (special == null || !legacyId && !(RefitSchematic.ITEM_ID.equals(special.getId()) && RefitSchematic.isLegacyData(special.getData()))) {
-                continue;
-            }
-            RefitSchematic schematic = RefitSchematic.of(special);
-            int stackCount = Math.round(stack.getSize());
-            cargo.removeStack(stack);
-            if (stackCount > 0) {
-                cargo.addSpecial((schematic == null ? RefitSchematic.STANDARD : schematic).toSpecialItem(), stackCount);
-                convertedCount += stackCount;
-            }
-        }
-        return convertedCount;
+        RefitSchematic schematic = RefitSchematic.of(special);
+        return (schematic == null ? RefitSchematic.STANDARD : schematic).toSpecialItem();
     }
 }

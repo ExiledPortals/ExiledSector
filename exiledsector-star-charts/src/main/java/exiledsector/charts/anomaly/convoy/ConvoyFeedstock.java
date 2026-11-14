@@ -5,8 +5,8 @@ import exiledsector.ExiledSector;
 import exiledsector.ModCsv;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.data.CsvRows;
+import exiledsector.data.RandomRounding;
 import exiledsector.items.InfusedFeedstock;
-import exiledsector.items.ItemDrops;
 import exiledsector.items.MaterialItems;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -88,7 +88,7 @@ final class ConvoyFeedstock {
 
     static void add(CargoAPI cargo, Map<String, Float> feedstock, float share, Random random) {
         for (Map.Entry<String, Float> entry : feedstock.entrySet()) {
-            MaterialItems.add(cargo, entry.getKey(), ItemDrops.wholeFeedstock(entry.getValue() * share, random));
+            MaterialItems.add(cargo, entry.getKey(), RandomRounding.round(entry.getValue() * share, random));
         }
     }
 }

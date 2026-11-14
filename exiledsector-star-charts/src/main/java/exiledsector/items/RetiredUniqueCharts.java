@@ -10,6 +10,7 @@ import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -24,14 +25,7 @@ public final class RetiredUniqueCharts {
     public static int removeFrom(SectorAPI sector) {
         try {
             int removedCount = removeFrom(ItemStore.starChartsIfCreated());
-            CampaignFleetAPI playerFleet = sector.getPlayerFleet();
-            removedCount += removeFrom(playerFleet == null ? null : playerFleet.getCargo());
-            if (sector.getEconomy() != null) {
-                for (MarketAPI market : sector.getEconomy().getMarketsCopy()) {
-                    SubmarketAPI storage = market.getSubmarket(Submarkets.SUBMARKET_STORAGE);
-                    removedCount += removeFrom(storage == null ? null : storage.getCargo());
-                }
-            }
+            removedCount += SavedCargo.removeStacks(playerAndStorageCargoes(sector), RetiredUniqueCharts::holdsRetiredChart);
             if (removedCount > 0) {
                 LOG.info("[ExiledSector] Removed " + removedCount + " retired unique Star Charts");
             }
@@ -52,19 +46,26 @@ public final class RetiredUniqueCharts {
     }
 
     static int removeFrom(CargoAPI cargo) {
-        if (cargo == null) {
-            return 0;
-        }
-        int removedCount = 0;
-        for (CargoStackAPI stack : cargo.getStacksCopy()) {
-            SpecialItemData special = stack.getSpecialDataIfSpecial();
-            ItemData chart = special == null || !ItemData.STAR_CHART_ITEM_ID.equals(special.getId()) ? null : ItemData.ofStarChart(special);
-            if (chart != null && isRetired(chart.definitionId())) {
-                removedCount += Math.round(stack.getSize());
-                cargo.removeStack(stack);
+        return SavedCargo.removeStacks(cargo, RetiredUniqueCharts::holdsRetiredChart);
+    }
+
+    private static List<CargoAPI> playerAndStorageCargoes(SectorAPI sector) {
+        List<CargoAPI> cargoes = new ArrayList<>();
+        CampaignFleetAPI playerFleet = sector.getPlayerFleet();
+        cargoes.add(playerFleet == null ? null : playerFleet.getCargo());
+        if (sector.getEconomy() != null) {
+            for (MarketAPI market : sector.getEconomy().getMarketsCopy()) {
+                SubmarketAPI storage = market.getSubmarket(Submarkets.SUBMARKET_STORAGE);
+                cargoes.add(storage == null ? null : storage.getCargo());
             }
         }
-        return removedCount;
+        return cargoes;
+    }
+
+    private static boolean holdsRetiredChart(CargoStackAPI stack) {
+        SpecialItemData special = stack.getSpecialDataIfSpecial();
+        ItemData chart = special == null || !ItemData.STAR_CHART_ITEM_ID.equals(special.getId()) ? null : ItemData.ofStarChart(special);
+        return chart != null && isRetired(chart.definitionId());
     }
 
     private static boolean isRetired(String definitionId) {

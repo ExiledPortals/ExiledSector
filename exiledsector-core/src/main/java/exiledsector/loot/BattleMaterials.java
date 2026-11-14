@@ -1,5 +1,6 @@
 package exiledsector.loot;
 
+import exiledsector.data.RandomRounding;
 import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.CraftingMaterialFamilies;
 import exiledsector.items.ItemDrops;
@@ -80,7 +81,7 @@ public final class BattleMaterials {
     }
 
     private static void addCount(Map<String, Integer> materials, BattleLootRates.Rate rate, float expected, Random random) {
-        int count = ItemDrops.wholeFeedstock(expected, random);
+        int count = RandomRounding.round(expected, random);
         if (count > 0) {
             materials.merge(rate.drop(), count, Integer::sum);
         }

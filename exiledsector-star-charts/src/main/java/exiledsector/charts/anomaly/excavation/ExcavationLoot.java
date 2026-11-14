@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.CargoAPI;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
+import exiledsector.data.RandomRounding;
 import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.MaterialItems;
@@ -38,7 +39,7 @@ public final class ExcavationLoot {
     static Map<String, Integer> tagInhibitors(float expectedCount, Random random) {
         List<CraftingInhibitor> kinds = List.copyOf(CraftingInhibitor.tagInhibitors());
         Map<String, Integer> found = new LinkedHashMap<>();
-        for (int left = ItemDrops.wholeFeedstock(expectedCount, random); left > 0; left--) {
+        for (int left = RandomRounding.round(expectedCount, random); left > 0; left--) {
             found.merge(kinds.get(random.nextInt(kinds.size())).itemId(), 1, Integer::sum);
         }
         return found;
