@@ -1,6 +1,7 @@
 package exiledsector.charts.officer.reward;
 
 import exiledsector.charts.ChartTables;
+import exiledsector.charts.atlas.AtlasLine;
 import exiledsector.i18n.RealCatalogue;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -89,13 +90,35 @@ class RewardGroupTest {
     }
 
     @Test
-    void everyGroupHasAnEnglishAndChineseLabel() {
+    void everyGroupHasAnEnglishAndChineseLabelAndInTextName() {
         for (String language : List.of("en", "zh_CN")) {
             Map<String, String> catalogue = RealCatalogue.entries(language);
             for (RewardGroup group : RewardGroup.values()) {
                 assertTrue(catalogue.containsKey(group.labelKey()), language + " " + group.labelKey());
+                assertTrue(catalogue.containsKey(group.inTextKey()), language + " " + group.inTextKey());
             }
             assertTrue(catalogue.containsKey("chart.officer.reward.groupCount"), language);
         }
+    }
+
+    @Test
+    void labelsStartCapitalisedWhileInTextNamesKeepOnlyProperNamesCapitalised() {
+        Map<String, String> english = RealCatalogue.entries("en");
+        for (RewardGroup group : RewardGroup.values()) {
+            String label = english.get(group.labelKey());
+            String inText = english.get(group.inTextKey());
+            assertTrue(Character.isUpperCase(label.charAt(0)), label);
+            assertEquals(group == RewardGroup.STAR_CHART, Character.isUpperCase(inText.charAt(0)), inText);
+            assertEquals(label.substring(1), inText.substring(1), group.name());
+        }
+    }
+
+    @Test
+    void theCarriedLineUsesTheInTextNames() {
+        AtlasLine line = OfficerRewardText.carriedLine(List.of(CarriedItem.of(RewardKind.HULL_ITEM, "bridge").withCount(2),
+                CarriedItem.of(RewardKind.STAR_CHART, "chart")));
+
+        assertEquals("Carries x1 Star Chart reward and x2 hull item reward", line.plain());
+        assertEquals("Hull item reward", OfficerRewardText.groupName(RewardGroup.HULL_ITEM));
     }
 }

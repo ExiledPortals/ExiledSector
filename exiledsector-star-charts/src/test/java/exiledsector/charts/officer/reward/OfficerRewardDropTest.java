@@ -2,6 +2,7 @@ package exiledsector.charts.officer.reward;
 
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.BiomeModifiers;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
@@ -143,6 +144,20 @@ class OfficerRewardDropTest {
                 assertEquals(1, atLowTier.items().size());
                 assertNotEquals(StarChartFixtures.TEST_GATED, atLowTier.items().get(0).definitionId());
             }
+        } finally {
+            StarChartFixtures.clear();
+        }
+    }
+
+    @Test
+    void aStarChartFromACorruptedTierRunDropsAtTheHighestNormalTier() throws Exception {
+        StarChartFixtures.registerShipped();
+        try {
+            ItemDrops.SiteLoot drop = OfficerRewardDrop.roll(List.of(CarriedItem.of(RewardKind.STAR_CHART, StarChartFixtures.TEST_FIXED)),
+                    ChartTiers.CORRUPTED_TIER, ChartGenContext.none(), new Random(4L));
+
+            assertEquals(List.of(StarChartFixtures.TEST_FIXED), drop.items().stream().map(ItemData::definitionId).toList());
+            assertEquals(ChartTiers.HIGHEST_TIER, ((StarChart) drop.items().get(0).preview()).tier());
         } finally {
             StarChartFixtures.clear();
         }

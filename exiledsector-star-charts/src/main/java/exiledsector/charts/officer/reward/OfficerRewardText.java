@@ -9,6 +9,7 @@ import java.util.List;
 public final class OfficerRewardText {
 
     private static final String KEY_PREFIX = "chart.officer.reward.";
+    private static final String GROUP_COUNT_KEY = KEY_PREFIX + "groupCount";
 
     private OfficerRewardText() {
     }
@@ -18,7 +19,7 @@ public final class OfficerRewardText {
             return null;
         }
         List<String> groups = new ArrayList<>();
-        RewardGroup.entryCounts(carried).forEach((group, count) -> groups.add(groupCount(group, count)));
+        RewardGroup.entryCounts(carried).forEach((group, count) -> groups.add(groupCountInText(group, count)));
         return new AtlasLine(Translation.msg(KEY_PREFIX + "carries").arg("items", joined(groups)).text(), AtlasLine.Tone.MARKER);
     }
 
@@ -30,8 +31,16 @@ public final class OfficerRewardText {
         return groupName(RewardGroup.of(item));
     }
 
+    public static String groupNameInText(CarriedItem item) {
+        return Translation.text(RewardGroup.of(item).inTextKey());
+    }
+
     public static String groupCount(RewardGroup group, int count) {
-        return Translation.msg(KEY_PREFIX + "groupCount").arg("count", count).arg("group", groupName(group)).text();
+        return Translation.msg(GROUP_COUNT_KEY).arg("count", count).arg("group", groupName(group)).text();
+    }
+
+    static String groupCountInText(RewardGroup group, int count) {
+        return Translation.msg(GROUP_COUNT_KEY).arg("count", count).arg("group", Translation.text(group.inTextKey())).text();
     }
 
     static String joined(List<String> names) {

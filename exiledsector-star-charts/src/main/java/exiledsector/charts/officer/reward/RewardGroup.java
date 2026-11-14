@@ -17,6 +17,7 @@ public enum RewardGroup {
     UNIQUE("unique", RewardKind.UNIQUE, null);
 
     private static final String LABEL_KEY_PREFIX = "chart.officer.reward.group.";
+    private static final String IN_TEXT_KEY_PREFIX = "chart.officer.reward.groupInText.";
 
     private final String id;
     private final RewardKind kind;
@@ -42,6 +43,10 @@ public enum RewardGroup {
 
     public String labelKey() {
         return LABEL_KEY_PREFIX + id;
+    }
+
+    public String inTextKey() {
+        return IN_TEXT_KEY_PREFIX + id;
     }
 
     public boolean holds(RewardKind itemKind, CraftingTier itemTier) {

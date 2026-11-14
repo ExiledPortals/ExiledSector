@@ -32,7 +32,7 @@ public final class OfficerDefeat {
 
         public String line() {
             return I18n.forGameText(() -> Translation.msg("chart.officer.reward.randomPick").arg("officer", OfficerText.title(officer))
-                    .arg("reward", OfficerRewardText.groupName(pick)).text());
+                    .arg("reward", OfficerRewardText.groupNameInText(pick)).text());
         }
     }
 

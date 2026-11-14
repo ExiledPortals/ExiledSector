@@ -1,12 +1,17 @@
 package exiledsector.charts.officer.reward;
 
+import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import exiledsector.charts.ChartTables;
+import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.BiomeModifiers;
 import exiledsector.charts.loot.ChartMaterials;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemModifiers;
+import exiledsector.items.ItemUnlock;
 import exiledsector.items.ModifierSources;
 import exiledsector.items.PoolEntry;
 import exiledsector.items.StarChartCipher;
@@ -27,8 +32,11 @@ import java.util.TreeSet;
 import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class OfficerRewardPoolTest {
 
@@ -175,6 +183,62 @@ class OfficerRewardPoolTest {
         assertEquals(30, counts.first());
         assertEquals(90, counts.last());
         assertEquals(1, OfficerRewardPool.picked(CarriedItem.of(RewardKind.STAR_CHART, "some_chart").withCount(3), random).baseCount());
+    }
+
+    @Test
+    void theShownPoolLeavesOutUniquesTheSectorHasNotUnlocked() {
+        ItemDefinitions.register(List.of(definition(BRIDGE, ItemKind.BRIDGE), unique("test_planetkiller_core", "found_planetkiller"),
+                unique("test_open_unique", "")));
+        MemoryAPI memory = mock(MemoryAPI.class);
+        MutableCharacterStatsAPI playerStats = mock(MutableCharacterStatsAPI.class);
+        when(playerStats.getLevel()).thenReturn(30);
+        SectorAPI sector = mock(SectorAPI.class);
+        when(sector.getMemoryWithoutUpdate()).thenReturn(memory);
+        when(sector.getPlayerStats()).thenReturn(playerStats);
+        Predicate<ItemDefinition> canDrop = definition -> ItemUnlock.canDrop(definition, sector);
+
+        assertEquals(List.of("test_open_unique"), ids(OfficerRewardPool.possible(RewardGroup.UNIQUE, canDrop, itemId -> true)));
+        assertEquals(List.of(BRIDGE), ids(OfficerRewardPool.possible(RewardGroup.HULL_ITEM, canDrop, itemId -> true)));
+        assertFalse(RewardContext.itemAllowedIn(sector).test(ItemDefinitions.get("test_planetkiller_core")));
+
+        when(memory.getBoolean("$pk_recovered")).thenReturn(true);
+        assertEquals(List.of("test_planetkiller_core", "test_open_unique"),
+                ids(OfficerRewardPool.possible(RewardGroup.UNIQUE, canDrop, itemId -> true)));
+    }
+
+    @Test
+    void theShownCraftingPoolLeavesOutCraftingItemsThatCannotBeUsed() throws Exception {
+        registerCraftingTiers();
+
+        assertEquals(List.of("low_b"), ids(OfficerRewardPool.possible(RewardGroup.LOW_CRAFTING, definition -> true, "low_b"::equals)));
+    }
+
+    @Test
+    void aCorruptedTierRunOffersAndDropsStarChartsOfTheHighestNormalTier() throws Exception {
+        StarChartFixtures.registerShipped();
+        try {
+            int corrupted = ChartTiers.CORRUPTED_TIER;
+            List<CarriedItem> atCorrupted = OfficerRewardPool.candidates(new RewardContext(corrupted, null, null, biomeId -> false,
+                    definition -> true, itemId -> true), new Random(1L)).get(RewardKind.STAR_CHART).stream().map(RewardCandidate::item).toList();
+            List<CarriedItem> atHighest = OfficerRewardPool.candidates(new RewardContext(ChartTiers.HIGHEST_TIER, null, null, biomeId -> false,
+                    definition -> true, itemId -> true), new Random(1L)).get(RewardKind.STAR_CHART).stream().map(RewardCandidate::item).toList();
+
+            assertFalse(atHighest.isEmpty());
+            assertEquals(atHighest, atCorrupted);
+            assertEquals(ChartTiers.HIGHEST_TIER, OfficerRewardPool.chartTier(corrupted));
+            assertEquals(4, OfficerRewardPool.chartTier(4));
+        } finally {
+            StarChartFixtures.clear();
+        }
+    }
+
+    private static ItemDefinition unique(String id, String unlock) {
+        return new ItemDefinition(id, ItemKind.BRIDGE, id, ItemDefinition.FALLBACK_ICON, 1f, true, "",
+                List.of(PoolEntry.of(ModifierSlot.PREFIX, "HULL_PERCENT", 4f, 6f, 1f)), List.of(), unlock);
+    }
+
+    private static List<String> ids(List<CarriedItem> items) {
+        return items.stream().map(CarriedItem::id).toList();
     }
 
     @Test

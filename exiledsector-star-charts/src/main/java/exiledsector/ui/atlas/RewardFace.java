@@ -1,15 +1,16 @@
 package exiledsector.ui.atlas;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.officer.reward.CarriedItem;
 import exiledsector.charts.officer.reward.OfficerRewardPool;
+import exiledsector.charts.officer.reward.RewardContext;
 import exiledsector.charts.officer.reward.RewardGroup;
 import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemDisassembly;
 import exiledsector.items.ItemRarity;
-import exiledsector.items.ItemUnlock;
 import exiledsector.items.MaterialItems;
 
 import java.awt.Color;
@@ -25,7 +26,8 @@ record RewardFace(List<String> iconPaths, Color frameColour) {
     static final Color BIOME_HULL_ITEM_FRAME = new Color(110, 235, 140);
 
     static RewardFace of(RewardGroup group) {
-        List<String> iconPaths = OfficerRewardPool.possible(group, definition -> ItemUnlock.available(definition.type(), Global.getSector()))
+        SectorAPI sector = Global.getSector();
+        List<String> iconPaths = OfficerRewardPool.possible(group, RewardContext.itemAllowedIn(sector), RewardContext.craftingItemAllowedIn(sector))
                 .stream().map(RewardFace::iconPath).filter(Objects::nonNull).distinct().toList();
         return new RewardFace(iconPaths, frameColour(group));
     }

@@ -69,7 +69,10 @@ public final class OfficerRewardDrop {
         return switch (item.kind()) {
             case UNIQUE -> ItemData.rolled(definition, seed);
             case BIOME_HULL_ITEM -> withBiomeModifier(ItemData.rolledAtTier(definition, seed, runTier), definition, item.variant(), random);
-            case STAR_CHART -> ItemData.rolledAtTier(chartAt(definition, runTier, random), seed, runTier);
+            case STAR_CHART -> {
+                int chartTier = OfficerRewardPool.chartTier(runTier);
+                yield ItemData.rolledAtTier(chartAt(definition, chartTier, random), seed, chartTier);
+            }
             default -> ItemData.rolledAtTier(definition, seed, runTier);
         };
     }

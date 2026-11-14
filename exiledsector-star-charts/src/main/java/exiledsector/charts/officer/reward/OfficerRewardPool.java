@@ -1,5 +1,6 @@
 package exiledsector.charts.officer.reward;
 
+import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.BiomeModifiers;
 import exiledsector.charts.loot.ChartMaterials;
 import exiledsector.items.Engram;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Predicate;
+import java.util.stream.IntStream;
 
 public final class OfficerRewardPool {
 
@@ -111,22 +113,32 @@ public final class OfficerRewardPool {
         return candidates;
     }
 
-    public static List<CarriedItem> possible(RewardGroup group, Predicate<ItemDefinition> available) {
+    public static List<CarriedItem> possible(RewardGroup group, Predicate<ItemDefinition> itemAllowed, Predicate<String> craftingItemAllowed) {
         return switch (group.kind()) {
             case CRAFTING_ITEM, INHIBITOR, FEEDSTOCK -> OfficerRewardTable.itemsIn(group.kind()).stream()
+                    .filter(craftingItemAllowed)
                     .map(itemId -> CarriedItem.of(group.kind(), itemId))
                     .filter(item -> RewardGroup.of(item) == group)
                     .toList();
-            case ENGRAM -> Engrams.all().stream().map(Engram::itemId).filter(CarriedItem::isSafeId)
+            case ENGRAM -> Engrams.all().stream().map(Engram::itemId)
+                    .filter(itemId -> CarriedItem.isSafeId(itemId) && craftingItemAllowed.test(itemId))
                     .map(itemId -> CarriedItem.of(RewardKind.ENGRAM, itemId)).toList();
             case STAR_CHART -> ItemDefinitions.ofType(ItemType.STAR_CHART).stream()
-                    .filter(definition -> ItemDrops.isDroppable(definition) && available.test(definition))
+                    .filter(definition -> ItemDrops.isDroppable(definition) && itemAllowed.test(definition) && rollsAtAnyChartTier(definition))
                     .map(definition -> CarriedItem.of(RewardKind.STAR_CHART, definition.id())).toList();
-            case HULL_ITEM, BIOME_HULL_ITEM -> definitions(ItemType.HULL_ITEM, false, available).stream()
+            case HULL_ITEM, BIOME_HULL_ITEM -> definitions(ItemType.HULL_ITEM, false, itemAllowed).stream()
                     .map(definition -> CarriedItem.of(group.kind(), definition.id())).toList();
-            case UNIQUE -> UNIQUE_TYPES.stream().flatMap(type -> definitions(type, true, available).stream())
+            case UNIQUE -> UNIQUE_TYPES.stream().flatMap(type -> definitions(type, true, itemAllowed).stream())
                     .map(definition -> CarriedItem.of(RewardKind.UNIQUE, definition.id())).toList();
         };
+    }
+
+    public static int chartTier(int runTier) {
+        return Math.min(runTier, ChartTiers.HIGHEST_TIER);
+    }
+
+    private static boolean rollsAtAnyChartTier(ItemDefinition definition) {
+        return IntStream.rangeClosed(ChartTiers.LOWEST_TIER, ChartTiers.HIGHEST_TIER).anyMatch(tier -> ItemTypes.rollsAtTier(definition, tier));
     }
 
     private static List<ItemDefinition> definitions(ItemType type, boolean unique, Predicate<ItemDefinition> allowed) {
@@ -194,7 +206,7 @@ public final class OfficerRewardPool {
 
     private static List<RewardCandidate> starCharts(RewardContext context) {
         return ItemDefinitions.ofType(ItemType.STAR_CHART).stream()
-                .filter(definition -> ItemDrops.isDroppable(definition) && ItemTypes.rollsAtTier(definition, context.tier())
+                .filter(definition -> ItemDrops.isDroppable(definition) && ItemTypes.rollsAtTier(definition, chartTier(context.tier()))
                         && context.itemAllowed().test(definition))
                 .map(definition -> new RewardCandidate(CarriedItem.of(RewardKind.STAR_CHART, definition.id()), definition.rarity()))
                 .toList();

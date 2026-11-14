@@ -11,8 +11,6 @@ import exiledsector.charts.atlas.AtlasRules;
 import exiledsector.charts.atlas.AtlasTerritoryPlacer;
 import exiledsector.charts.atlas.AtlasUnlocks;
 import exiledsector.charts.officer.reward.CarriedItem;
-import exiledsector.charts.officer.reward.OfficerRewardText;
-import exiledsector.charts.officer.reward.RewardGroup;
 import exiledsector.charts.officer.reward.RewardKind;
 import exiledsector.charts.officer.turn.OfficerTurn;
 import exiledsector.i18n.Translation;
@@ -60,8 +58,7 @@ class OfficerTextTest {
 
         assertEquals(2, lines.size());
         assertEquals(AtlasLine.Tone.MARKER, lines.get(0).tone());
-        assertTrue(lines.get(0).plain().contains(OfficerRewardText.groupCount(RewardGroup.LOW_CRAFTING, 1)), lines.get(0).plain());
-        assertFalse(lines.get(0).plain().contains("kernel"), lines.get(0).plain());
+        assertEquals("Carries x1 low tier crafting reward", lines.get(0).plain());
         assertEquals(AtlasLine.Tone.STYLED, lines.get(1).tone());
         assertTrue(lines.get(1).plain().contains("retired_scar"), lines.get(1).plain());
     }
