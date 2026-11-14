@@ -241,7 +241,7 @@ class ChartObjectivesTest {
     @Test
     void creditsRiseWithTheTier() {
         int previous = 0;
-        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_TIER; tier++) {
+        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_DROP_TIER; tier++) {
             int credits = ChartRewards.creditsFor(tier);
             assertTrue(credits > previous, "tier " + tier);
             assertEquals(0, credits % 1000);

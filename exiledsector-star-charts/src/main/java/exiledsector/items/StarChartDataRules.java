@@ -117,8 +117,8 @@ public final class StarChartDataRules implements ItemDataRules {
     public void checkTierGate(ItemDataIntegrity integrity, String file, int line, String definitionId, String entryText, String tierText) {
         try {
             TierRange tiers = PoolEntry.parseTierRange(tierText, entryText);
-            if (tiers.minTier() > StarChart.HIGHEST_TIER || tiers.maxTier() != Integer.MAX_VALUE && tiers.maxTier() > StarChart.HIGHEST_TIER) {
-                integrity.error(file, line, definitionId + " entry \"" + entryText + "\" reaches past tier " + StarChart.HIGHEST_TIER);
+            if (tiers.minTier() > StarChart.HIGHEST_DROP_TIER || tiers.maxTier() != Integer.MAX_VALUE && tiers.maxTier() > StarChart.HIGHEST_DROP_TIER) {
+                integrity.error(file, line, definitionId + " entry \"" + entryText + "\" reaches past tier " + StarChart.HIGHEST_DROP_TIER);
             }
         } catch (IllegalArgumentException e) {
             integrity.error(file, line, definitionId + ": " + e.getMessage());

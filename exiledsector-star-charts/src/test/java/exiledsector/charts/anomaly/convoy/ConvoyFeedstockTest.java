@@ -54,7 +54,27 @@ class ConvoyFeedstockTest {
         assertEquals(575f, ConvoyFeedstock.sharedAmount(SHROUD, 8), 0.01f);
         assertEquals(1000f, ConvoyFeedstock.sharedAmount(PHASE, 15), 0.01f);
         assertEquals(150f, ConvoyFeedstock.sharedAmount(THREAT, 0), 0.01f, "tiers outside the table clamp to its ends");
-        assertEquals(ConvoyFeedstock.sharedAmount(THREAT, ChartTiers.CORRUPTED_TIER), ConvoyFeedstock.sharedAmount(THREAT, 20), 0.01f);
+        assertEquals(ConvoyFeedstock.sharedAmount(THREAT, ChartTiers.HIGHEST_TIER), ConvoyFeedstock.sharedAmount(THREAT, 20), 0.01f);
+    }
+
+    @Test
+    void tierSixteenCarriesMoreThanTierFifteenUnlessItsOwnColumnSaysOtherwise() throws Exception {
+        registerAll("150", "1000");
+        assertTrue(ConvoyFeedstock.sharedAmount(THREAT, ChartTiers.HIGHEST_TIER) > ConvoyFeedstock.sharedAmount(THREAT, ChartTiers.HIGHEST_DROP_TIER));
+        assertEquals(150f + 850f / 14f * 15f, ConvoyFeedstock.sharedAmount(THREAT, ChartTiers.HIGHEST_TIER), 0.01f);
+
+        ConvoyFeedstock.register(new JSONArray().put(row(THREAT, "150", "1000").put("tier_16", "2000")));
+        assertEquals(1000f, ConvoyFeedstock.sharedAmount(THREAT, ChartTiers.HIGHEST_DROP_TIER), 0.01f);
+        assertEquals(2000f, ConvoyFeedstock.sharedAmount(THREAT, ChartTiers.HIGHEST_TIER), 0.01f);
+    }
+
+    @Test
+    void theShippedTableRisesFromTierFifteenToTierSixteen() throws Exception {
+        ConvoyFeedstock.register(ChartTables.csvRows(ConvoyFeedstock.PATH));
+        for (InfusedFeedstock feedstock : InfusedFeedstock.values()) {
+            assertTrue(ConvoyFeedstock.sharedAmount(feedstock.itemId(), ChartTiers.HIGHEST_TIER)
+                    > ConvoyFeedstock.sharedAmount(feedstock.itemId(), ChartTiers.HIGHEST_DROP_TIER), feedstock.itemId());
+        }
     }
 
     @Test

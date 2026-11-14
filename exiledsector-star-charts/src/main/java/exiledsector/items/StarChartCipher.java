@@ -102,7 +102,7 @@ public enum StarChartCipher implements CraftingMaterialFamily {
         return switch (this) {
             case REFORGE -> canReforge(chart, context.inhibitedSlots());
             case ERASURE -> !erasable(chart, context.inhibitedSlots()).isEmpty();
-            case CARTOGRAPHY -> chart.tier() < StarChart.HIGHEST_TIER;
+            case CARTOGRAPHY -> chart.tier() < StarChart.HIGHEST_DROP_TIER;
         };
     }
 

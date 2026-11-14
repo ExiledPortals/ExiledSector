@@ -248,6 +248,8 @@ class DoctrineArchiveDataTest {
             assertEquals(0.07f, tierFourteenDrops / 20000f, 0.01f);
             assertEquals(0.01f, tierOneDrops / 20000f, 0.003f);
             assertEquals(DoctrineArchives.bossChance(14), DoctrineArchives.bossChance(15));
+            assertTrue(DoctrineArchives.bossChance(ItemTraits.HIGHEST_TIER) > DoctrineArchives.bossChance(ItemTraits.HIGHEST_DROP_TIER));
+            assertEquals(DoctrineArchives.bossChance(ItemTraits.HIGHEST_TIER), DoctrineArchives.bossChance(ItemTraits.HIGHEST_TIER + 1));
             for (int tier = 1; tier < 14; tier++) {
                 assertTrue(DoctrineArchives.bossChance(tier) > 0f);
                 assertTrue(DoctrineArchives.bossChance(tier) < DoctrineArchives.bossChance(tier + 1));

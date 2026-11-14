@@ -85,10 +85,10 @@ final class EditorVocabulary {
         json.append("  \"itemUnlocks\": ")
                 .append(list(Arrays.stream(ItemUnlock.values()).map(ItemUnlock::id).toList())).append(",\n");
         json.append("  \"clearedChartTierPrefix\": ").append(quote(ItemUnlock.CLEARED_CHART_TIER_PREFIX)).append(",\n");
-        json.append("  \"chartTierRange\": [").append(ChartTiers.LOWEST_TIER).append(", ").append(ChartTiers.HIGHEST_TIER).append("],\n");
+        json.append("  \"chartTierRange\": [").append(ChartTiers.LOWEST_TIER).append(", ").append(ChartTiers.HIGHEST_DROP_TIER).append("],\n");
         json.append("  \"chartTierGroups\": [")
                 .append(Arrays.stream(TierGroup.values()).map(group -> "{\"id\": " + quote(group.id()) + ", \"minTier\": " + group.tiers().minTier()
-                        + ", \"maxTier\": " + Math.min(ChartTiers.CORRUPTED_TIER, group.tiers().maxTier()) + "}").collect(Collectors.joining(", ")))
+                        + ", \"maxTier\": " + Math.min(ChartTiers.HIGHEST_TIER, group.tiers().maxTier()) + "}").collect(Collectors.joining(", ")))
                 .append("],\n");
         json.append("  \"chartEffects\": ").append(list(Arrays.stream(ChartModifier.values()).map(Enum::name).toList())).append(",\n");
         json.append("  \"atlasEffects\": ").append(list(Arrays.stream(AtlasModifier.values()).map(Enum::name).toList())).append(",\n");

@@ -217,15 +217,15 @@ class OfficerRewardPoolTest {
     void aCorruptedTierRunOffersAndDropsStarChartsOfTheHighestNormalTier() throws Exception {
         StarChartFixtures.registerShipped();
         try {
-            int corrupted = ChartTiers.CORRUPTED_TIER;
+            int corrupted = ChartTiers.HIGHEST_TIER;
             List<CarriedItem> atCorrupted = OfficerRewardPool.candidates(new RewardContext(corrupted, null, null, biomeId -> false,
                     definition -> true, itemId -> true), new Random(1L)).get(RewardKind.STAR_CHART).stream().map(RewardCandidate::item).toList();
-            List<CarriedItem> atHighest = OfficerRewardPool.candidates(new RewardContext(ChartTiers.HIGHEST_TIER, null, null, biomeId -> false,
+            List<CarriedItem> atHighest = OfficerRewardPool.candidates(new RewardContext(ChartTiers.HIGHEST_DROP_TIER, null, null, biomeId -> false,
                     definition -> true, itemId -> true), new Random(1L)).get(RewardKind.STAR_CHART).stream().map(RewardCandidate::item).toList();
 
             assertFalse(atHighest.isEmpty());
             assertEquals(atHighest, atCorrupted);
-            assertEquals(ChartTiers.HIGHEST_TIER, OfficerRewardPool.chartTier(corrupted));
+            assertEquals(ChartTiers.HIGHEST_DROP_TIER, OfficerRewardPool.chartTier(corrupted));
             assertEquals(4, OfficerRewardPool.chartTier(4));
         } finally {
             StarChartFixtures.clear();

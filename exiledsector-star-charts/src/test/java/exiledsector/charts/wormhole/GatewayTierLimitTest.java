@@ -42,7 +42,7 @@ class GatewayTierLimitTest {
     @Test
     void withoutVaultsOfKnowledgeEveryTierOpens() {
         try (MockedStatic<VaultsOfKnowledgeCompat> ignored = vaults(false)) {
-            assertEquals(ChartTiers.CORRUPTED_TIER, GatewayTierLimit.maxTier(sectorWithGateway(WormholeGateway.INDUSTRY_ID)));
+            assertEquals(ChartTiers.HIGHEST_TIER, GatewayTierLimit.maxTier(sectorWithGateway(WormholeGateway.INDUSTRY_ID)));
         }
     }
 
@@ -51,7 +51,7 @@ class GatewayTierLimitTest {
         try (MockedStatic<VaultsOfKnowledgeCompat> ignored = vaults(true)) {
             assertEquals(5, GatewayTierLimit.maxTier(sectorWithGateway(WormholeGateway.INDUSTRY_ID)));
             assertEquals(10, GatewayTierLimit.maxTier(sectorWithGateway(WormholeGateway.ARRAY_INDUSTRY_ID)));
-            assertEquals(ChartTiers.CORRUPTED_TIER, GatewayTierLimit.maxTier(sectorWithGateway(WormholeGateway.NEXUS_INDUSTRY_ID)));
+            assertEquals(ChartTiers.HIGHEST_TIER, GatewayTierLimit.maxTier(sectorWithGateway(WormholeGateway.NEXUS_INDUSTRY_ID)));
         }
     }
 
@@ -59,7 +59,7 @@ class GatewayTierLimitTest {
     void withoutAColonyRequirementEveryTierOpensWithVaultsOfKnowledge() {
         StarChartSettings.setNoColonyForTests(true);
         try (MockedStatic<VaultsOfKnowledgeCompat> ignored = vaults(true)) {
-            assertEquals(ChartTiers.CORRUPTED_TIER, GatewayTierLimit.maxTier(sectorWithGateway(WormholeGateway.INDUSTRY_ID)));
+            assertEquals(ChartTiers.HIGHEST_TIER, GatewayTierLimit.maxTier(sectorWithGateway(WormholeGateway.INDUSTRY_ID)));
         } finally {
             StarChartSettings.setNoColonyForTests(StarChartSettings.DEFAULT_NO_COLONY);
         }
@@ -68,7 +68,7 @@ class GatewayTierLimitTest {
     @Test
     void withoutASectorThereIsNoLimit() {
         try (MockedStatic<VaultsOfKnowledgeCompat> ignored = vaults(true)) {
-            assertEquals(ChartTiers.CORRUPTED_TIER, GatewayTierLimit.maxTier(null));
+            assertEquals(ChartTiers.HIGHEST_TIER, GatewayTierLimit.maxTier(null));
         }
     }
 }

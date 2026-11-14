@@ -160,7 +160,7 @@ public class ChartSoakScript implements EveryFrameScript {
     }
 
     static int tierForIteration(int iteration) {
-        int tierCount = ChartTiers.HIGHEST_TIER - ChartTiers.LOWEST_TIER + 1;
+        int tierCount = ChartTiers.HIGHEST_DROP_TIER - ChartTiers.LOWEST_TIER + 1;
         return ChartTiers.LOWEST_TIER + Math.floorMod(iteration, tierCount);
     }
 

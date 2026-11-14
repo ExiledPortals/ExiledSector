@@ -229,7 +229,7 @@ public class WormholeGateway extends BaseIndustry {
         VanillaText.plainPara(tooltip, Translation.gameText("chart.gateway.tooltip.opens"), TOOLTIP_PAD, Misc.getTextColor());
         if (researchGated()) {
             int maxTier = GatewayTierLimit.maxTierFor(getId());
-            VanillaText.plainPara(tooltip, maxTier >= ChartTiers.CORRUPTED_TIER ? Translation.gameText("chart.gateway.tooltip.everyTier")
+            VanillaText.plainPara(tooltip, maxTier >= ChartTiers.HIGHEST_TIER ? Translation.gameText("chart.gateway.tooltip.everyTier")
                     : I18n.forGameText(() -> Translation.msg("chart.gateway.tooltip.tierLimit").arg("tier", maxTier).text()), TOOLTIP_PAD,
                     Misc.getTextColor());
         }

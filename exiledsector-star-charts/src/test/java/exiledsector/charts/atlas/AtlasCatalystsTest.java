@@ -92,7 +92,7 @@ class AtlasCatalystsTest {
             assertEquals(0f, survey.weight());
             Random random = new Random(5L);
             for (int roll = 0; roll < 2000; roll++) {
-                AtlasCatalysts.Catalyst dropped = AtlasCatalysts.pickDrop(ChartTiers.HIGHEST_TIER, random);
+                AtlasCatalysts.Catalyst dropped = AtlasCatalysts.pickDrop(ChartTiers.HIGHEST_DROP_TIER, random);
                 assertTrue(dropped == null || !FACILITY_SURVEY.equals(dropped.itemId()));
             }
         }
@@ -111,7 +111,7 @@ class AtlasCatalystsTest {
         assertEquals(0f, survey.weight());
         Random random = new Random(7L);
         for (int roll = 0; roll < 2000; roll++) {
-            AtlasCatalysts.Catalyst dropped = AtlasCatalysts.pickDrop(ChartTiers.HIGHEST_TIER, random);
+            AtlasCatalysts.Catalyst dropped = AtlasCatalysts.pickDrop(ChartTiers.HIGHEST_DROP_TIER, random);
             assertTrue(dropped == null || !HYPERSHUNT_SURVEY.equals(dropped.itemId()));
         }
     }

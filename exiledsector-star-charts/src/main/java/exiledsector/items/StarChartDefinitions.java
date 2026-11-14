@@ -39,7 +39,7 @@ public final class StarChartDefinitions {
 
     static String minTierProblem(String ownerId, String minTierText) {
         return ownerId + " has minimum tier \"" + minTierText + "\"; expected a whole number from " + StarChart.LOWEST_TIER + " to "
-                + StarChart.HIGHEST_TIER + " or blank";
+                + StarChart.HIGHEST_DROP_TIER + " or blank";
     }
 
     public static void register(JSONArray rows) throws JSONException {
@@ -87,7 +87,7 @@ public final class StarChartDefinitions {
         }
         try {
             int minTier = Integer.parseInt(trimmed);
-            return minTier >= StarChart.LOWEST_TIER && minTier <= StarChart.HIGHEST_TIER ? minTier : null;
+            return minTier >= StarChart.LOWEST_TIER && minTier <= StarChart.HIGHEST_DROP_TIER ? minTier : null;
         } catch (NumberFormatException e) {
             return null;
         }

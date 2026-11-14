@@ -92,7 +92,7 @@ class ExcavationRulesTest {
 
     @Test
     void aShaftFleetIsMostOfTheBossSizeOnEveryTier() {
-        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.CORRUPTED_TIER; tier++) {
+        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_TIER; tier++) {
             ChartTier chartTier = ChartGenContext.none().adjust(ChartTiers.forTier(tier));
             float bossSize = Math.max(chartTier.bossSize(), chartTier.fleetSize());
 

@@ -154,11 +154,11 @@ public final class OfficerRewardPool {
     }
 
     public static int chartTier(int runTier) {
-        return Math.min(runTier, ChartTiers.HIGHEST_TIER);
+        return Math.min(runTier, ChartTiers.HIGHEST_DROP_TIER);
     }
 
     private static boolean rollsAtAnyChartTier(ItemDefinition definition) {
-        return IntStream.rangeClosed(ChartTiers.LOWEST_TIER, ChartTiers.HIGHEST_TIER).anyMatch(tier -> ItemTypes.rollsAtTier(definition, tier));
+        return IntStream.rangeClosed(ChartTiers.LOWEST_TIER, ChartTiers.HIGHEST_DROP_TIER).anyMatch(tier -> ItemTypes.rollsAtTier(definition, tier));
     }
 
     private static List<ItemDefinition> definitions(ItemType type, boolean unique, Predicate<ItemDefinition> allowed) {

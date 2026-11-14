@@ -388,7 +388,7 @@ class StarChartCipherTest {
     void cartographyStopsAtTheHighestTierAndStartsAGatedChartFromItsMinimumTier() {
         StarChart top = stored(SINGLE, 1L, 14);
         assertSame(top, use(StarChartCipher.CARTOGRAPHY, top, 1L));
-        assertEquals(StarChart.HIGHEST_TIER, top.tier());
+        assertEquals(StarChart.HIGHEST_DROP_TIER, top.tier());
         assertFalse(ItemCrafting.canUse(StarChartCipher.CARTOGRAPHY, top, ANY_UNIQUE));
         assertNull(use(StarChartCipher.CARTOGRAPHY, top, 2L));
 

@@ -40,7 +40,7 @@ public final class DoctrineArchives {
     static final String MAX_LINES_COLUMN = "max_lines";
     static final int DEFAULT_LINES = 1;
     private static final float[] BOSS_CHANCE_BY_TIER = {
-            0.010f, 0.013f, 0.017f, 0.020f, 0.023f, 0.027f, 0.030f, 0.033f, 0.037f, 0.040f, 0.045f, 0.050f, 0.060f, 0.070f, 0.070f};
+            0.010f, 0.013f, 0.017f, 0.020f, 0.023f, 0.027f, 0.030f, 0.033f, 0.037f, 0.040f, 0.045f, 0.050f, 0.060f, 0.070f, 0.070f, 0.080f};
     private static final String ENTRY_SEPARATOR = ";";
     private static final Pattern WHOLE_NUMBER = Pattern.compile("\\d{1,4}");
     private static final Logger LOG = Logger.getLogger(DoctrineArchives.class);

@@ -47,7 +47,7 @@ class OfficerStartingItemsTest {
     @Test
     void theRewardTierRunsFromTheLowestForLieutenantsToTheHighestForAdmirals() {
         assertEquals(ChartTiers.LOWEST_TIER, OfficerStartingItems.tierFor("lieutenant"));
-        assertEquals(ChartTiers.HIGHEST_TIER, OfficerStartingItems.tierFor("admiral"));
+        assertEquals(ChartTiers.HIGHEST_DROP_TIER, OfficerStartingItems.tierFor("admiral"));
         int previousTier = 0;
         for (OfficerRank rank : OfficerRanks.all()) {
             int tier = OfficerStartingItems.tierFor(rank.id());

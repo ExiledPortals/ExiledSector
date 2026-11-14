@@ -110,12 +110,8 @@ public final class DormantFleets {
         return factions;
     }
 
-    static ChartTier adjustedTier(int tier, ChartGenContext context) {
-        return (context == null ? ChartGenContext.none() : context).adjust(ChartTiers.forTier(tier));
-    }
-
     static void setStrengthBonus(CampaignFleetAPI fleet, int tier, ChartGenContext context, boolean corrupted) {
-        int strengthBonus = DebrisRules.strengthBonus(adjustedTier(tier, context), corrupted);
+        int strengthBonus = DebrisRules.strengthBonus(ChartTiers.adjusted(tier, context), corrupted);
         if (strengthBonus > 0) {
             fleet.getMemoryWithoutUpdate().set(ChartIds.STRENGTH_BONUS_MEMORY_KEY, strengthBonus);
         } else {
@@ -125,7 +121,7 @@ public final class DormantFleets {
 
     static void populate(CampaignFleetAPI fleet, List<HullFaction> factions, int tier, ChartGenContext context, long seed, boolean corrupted) {
         Random random = new Random(seed);
-        ChartTier adjusted = adjustedTier(tier, context);
+        ChartTier adjusted = ChartTiers.adjusted(tier, context);
         float points = DebrisRules.fleetPoints(adjusted, corrupted);
         float averageDMods = DefaultFleetInflater.getAverageDmodsForQuality(DebrisRules.quality(adjusted, corrupted));
         ShipPickParams pickParams = new ShipPickParams(ShipPickMode.ALL);

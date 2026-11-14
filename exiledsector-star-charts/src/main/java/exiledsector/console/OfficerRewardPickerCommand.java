@@ -38,14 +38,14 @@ public class OfficerRewardPickerCommand extends PlayerFleetCommand {
         if (tokens.isEmpty()) {
             return DEFAULT_TIER;
         }
-        return tokens.size() == 1 ? ConsoleArgs.wholeNumber(tokens.get(0), ChartTiers.LOWEST_TIER, ChartTiers.HIGHEST_TIER) : null;
+        return tokens.size() == 1 ? ConsoleArgs.wholeNumber(tokens.get(0), ChartTiers.LOWEST_TIER, ChartTiers.HIGHEST_DROP_TIER) : null;
     }
 
     @Override
     protected CommandResult runForFleet(String args, CampaignFleetAPI playerFleet) {
         Integer tier = tier(args);
         if (tier == null) {
-            Console.showMessage("Usage: ExiledSectorOfficerRewards [tier], tier " + ChartTiers.LOWEST_TIER + " to " + ChartTiers.HIGHEST_TIER + ".");
+            Console.showMessage("Usage: ExiledSectorOfficerRewards [tier], tier " + ChartTiers.LOWEST_TIER + " to " + ChartTiers.HIGHEST_DROP_TIER + ".");
             return CommandResult.BAD_SYNTAX;
         }
         SectorAPI sector = Global.getSector();

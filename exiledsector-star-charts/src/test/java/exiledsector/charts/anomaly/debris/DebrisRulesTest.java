@@ -40,7 +40,7 @@ class DebrisRulesTest {
 
     @Test
     void aDormantFleetOutgunsTheBossOnEveryTier() {
-        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.CORRUPTED_TIER; tier++) {
+        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_TIER; tier++) {
             ChartTier chartTier = ChartGenContext.none().adjust(ChartTiers.forTier(tier));
             PlannedFleet boss = ChartContentPlanner.plannedBoss(chartTier, ChartContentPlanner.fleetQuality(chartTier), ChartContentPlanner.NO_POI);
 

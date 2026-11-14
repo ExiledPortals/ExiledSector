@@ -20,8 +20,8 @@ import java.util.function.Function;
 public final class StarChart extends Item {
 
     public static final int LOWEST_TIER = ItemTraits.LOWEST_TIER;
+    public static final int HIGHEST_DROP_TIER = ItemTraits.HIGHEST_DROP_TIER;
     public static final int HIGHEST_TIER = ItemTraits.HIGHEST_TIER;
-    public static final int CORRUPTED_TIER = HIGHEST_TIER + 1;
     public static final int LOWEST_QUANTITY = 0;
     public static final int HIGHEST_QUANTITY = 20;
     static final String LOW_TIER_ICON = "graphics/icons/star_charts/star_chart_white.png";
@@ -101,7 +101,7 @@ public final class StarChart extends Item {
     }
 
     public static int clampTier(int tier) {
-        return Math.max(LOWEST_TIER, Math.min(CORRUPTED_TIER, tier));
+        return ItemTraits.clampTier(tier);
     }
 
     public static int clampQuantity(int quantity) {

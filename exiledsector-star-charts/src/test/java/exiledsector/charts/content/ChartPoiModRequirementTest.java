@@ -29,7 +29,7 @@ class ChartPoiModRequirementTest {
     private static final String ARSENAL_ID = "arsenal_station";
     private static final String DERELICTS_FIELD_ID = "IndEvo_Enable_Derelicts";
     private static final String DERELICT_STATIONS_FIELD_ID = "IndEvo_enable_derelict_stations";
-    private static final int HIGHEST_TIER = ChartTiers.HIGHEST_TIER;
+    private static final int HIGHEST_TIER = ChartTiers.HIGHEST_DROP_TIER;
 
     private MockedStatic<Global> globalMock;
     private MockedStatic<LunaSettings> lunaMock;

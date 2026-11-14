@@ -159,7 +159,7 @@ class AbyssalResearchComplexTest {
     void theGuardsAreAGabrielAndSeraphsGrowingWithTier() {
         FakeChartContentEngine engine = FakeChartContentEngine.install(FakeChartContentEngine.offeringNothing());
 
-        CampaignFleetAPI guards = ComplexGuards.create(ChartTiers.HIGHEST_TIER, ChartGenContext.none(), 7L);
+        CampaignFleetAPI guards = ComplexGuards.create(ChartTiers.HIGHEST_DROP_TIER, ChartGenContext.none(), 7L);
 
         assertNotNull(guards);
         assertEquals("rat_gabriel_Attack", engine.flagships.get(0).variantId());

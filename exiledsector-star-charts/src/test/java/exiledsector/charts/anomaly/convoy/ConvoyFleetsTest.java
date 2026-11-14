@@ -15,7 +15,7 @@ class ConvoyFleetsTest {
 
     @Test
     void theConvoyOutgunsTheBossOnEveryTier() {
-        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.CORRUPTED_TIER; tier++) {
+        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_TIER; tier++) {
             ChartTier chartTier = ChartAnomalyFleets.tier(tier, ChartGenContext.none());
             PlannedFleet boss = ChartContentPlanner.plannedBoss(chartTier, ChartContentPlanner.fleetQuality(chartTier), ChartContentPlanner.NO_POI);
             ChartAnomalyFleets.Spec convoy = ConvoyFleets.spec("pirates", chartTier, 1f);

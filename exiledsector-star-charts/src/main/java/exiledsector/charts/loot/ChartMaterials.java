@@ -2,7 +2,7 @@ package exiledsector.charts.loot;
 
 import exiledsector.ExiledSector;
 import exiledsector.ModCsv;
-import exiledsector.charts.generation.ChartTiers;
+import exiledsector.charts.table.TierCurve;
 import exiledsector.data.CsvRows;
 import exiledsector.items.ItemDrops;
 import exiledsector.loot.BattleLootRates;
@@ -23,11 +23,10 @@ public final class ChartMaterials {
     private static final Logger LOG = Logger.getLogger(ChartMaterials.class);
     private static volatile Map<String, Amount> amounts = Map.of();
 
-    record Amount(float lowestTierAmount, float highestTierAmount, float difficultyScaling) {
+    record Amount(TierCurve perTier, float difficultyScaling) {
 
         float at(int tier) {
-            float perTier = (highestTierAmount - lowestTierAmount) / (ChartTiers.HIGHEST_TIER - ChartTiers.LOWEST_TIER);
-            return Math.max(0f, lowestTierAmount + perTier * (tier - ChartTiers.LOWEST_TIER));
+            return perTier.at(tier);
         }
     }
 
@@ -51,8 +50,7 @@ public final class ChartMaterials {
                     csv.skipRow(drop, "not a nanoswarm or inhibitor");
                     return;
                 }
-                loaded.put(drop, new Amount(csv.number(row, "tier_1", 0f, drop), csv.number(row, "tier_15", 0f, drop),
-                        csv.number(row, "difficulty_scaling", 1f, drop)));
+                loaded.put(drop, new Amount(TierCurve.parse(csv, row, drop), csv.number(row, "difficulty_scaling", 1f, drop)));
             });
         }
         csv.report(LOG);
