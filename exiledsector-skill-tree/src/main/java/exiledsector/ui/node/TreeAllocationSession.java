@@ -76,6 +76,7 @@ public final class TreeAllocationSession {
     private final IntegrationHold integrationHold = new IntegrationHold();
     private final IntegrationHold integrationMarkHold = new IntegrationHold(IntegrationHold.MARK_HOLD_SECONDS);
     private final Random pathRandom = new Random();
+    private final DoctrineRemovalWarningCache doctrineRemovalWarnings = new DoctrineRemovalWarningCache(this::buildDoctrineRemovalWarning);
 
     private TreeFeedback feedback = TreeFeedback.NONE;
     private StartingRootChoice rootChoice;
@@ -282,6 +283,10 @@ public final class TreeAllocationSession {
     }
 
     public String doctrineRemovalWarning(SkillNode socket) {
+        return doctrineRemovalWarnings.warningFor(socket, snapshot());
+    }
+
+    private String buildDoctrineRemovalWarning(SkillNode socket) {
         List<String> lostHullModNames = allocator.hullModNamesLostOnDoctrineRemoval(socket);
         return lostHullModNames.isEmpty() ? null
                 : Translation.msg("socketable.doctrine.revertConflict").arg("hullMods", String.join(", ", lostHullModNames)).text();
