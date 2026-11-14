@@ -1,5 +1,16 @@
 import type { Vocabulary } from '../../../api/vocabulary.ts';
-import { csvCell, csvTableFromRows, dropCsvColumn, parseCsvTable, serializeCsvTable, trimmedCsvCells, type CsvTable } from '../../../shared/csv.ts';
+import {
+  blankCsvRow,
+  csvCell,
+  csvTableFromColumns,
+  dropCsvColumn,
+  parseCsvTable,
+  readCsvRow,
+  serializeCsvTable,
+  splitList,
+  type CsvColumn,
+  type CsvTable,
+} from '../../../shared/csv.ts';
 import { isNumberText } from '../../../shared/decimalText.ts';
 import { isUnshippedImagePath } from '../../../shared/imagePaths.ts';
 import { DOCTRINE_TYPE } from './doctrines.ts';
@@ -28,35 +39,11 @@ export const ITEM_TYPE_LABELS: Record<string, string> = {
   [HULL_ITEM_TYPE]: 'Hull item',
   [STAR_CHART_TYPE]: 'Star chart',
 };
-export const SUBROUTINE_COLUMNS = [
-  'id',
-  'name',
-  'icon',
-  'rarity',
-  'unique',
-  'kind',
-  'description',
-  'lines',
-  'source',
-  'socket_limit',
-  'radius',
-  'volume',
-  'unlock',
-  'excluded_nodes',
-  'node_count_chances',
-  'drop_chance',
-  'salvage_chance',
-] as const;
-export const MODSPEC_CACHE_SUBROUTINE_FIELDS: readonly string[] = ['excluded_nodes', 'node_count_chances', 'drop_chance', 'salvage_chance'];
-export const OPTIONAL_SUBROUTINE_FIELDS: readonly string[] = ['lines', 'source', 'socket_limit', 'radius', 'volume', ...MODSPEC_CACHE_SUBROUTINE_FIELDS];
 const NODE_ID_TEXT = /^[A-Za-z0-9_.-]+$/;
 const UNIQUE_SOURCE_ID = /^[A-Za-z0-9_.-]+$/;
 const SOCKET_LIMIT_TEXT = /^\d{1,9}$/;
-export const HULL_ITEM_COLUMNS = ['id', 'section', 'name', 'icon', 'rarity', 'unique', 'description', 'prefixes', 'suffixes', 'unlock', 'source', 'mechanic', 'volume', 'crew'] as const;
-const OPTIONAL_HULL_ITEM_FIELDS: readonly string[] = ['source', 'mechanic', 'volume', 'crew'];
-export const STAR_CHART_COLUMNS = ['id', 'system_type', 'name', 'icon', 'rarity', 'min_tier', 'description', 'prefixes', 'suffixes'] as const;
+const LEGACY_POOL_COLUMN = 'pool';
 const DROPPED_STAR_CHART_COLUMNS = ['unique', 'unlock'];
-const DEFINITION_TEXT_COLUMNS = ['id', 'name', 'icon', 'rarity', 'description'] as const;
 export const UNLOCK_LABELS: Record<string, string> = {
   found_onslaught_mk1: 'Found the Onslaught Mk.I in the Abyss',
   found_gate_hauler: 'Found the Gate Hauler',
@@ -154,13 +141,6 @@ export function hasModspecCacheFields(definition: Pick<ItemDefinition, 'excluded
   return [definition.excludedNodes, definition.nodeCountChances, definition.dropChance, definition.salvageChance].some((value) => (value ?? '').trim() !== '');
 }
 
-export function excludedNodeIds(text: string | undefined): string[] {
-  return String(text ?? '')
-    .split(';')
-    .map((nodeId) => nodeId.trim())
-    .filter((nodeId) => nodeId !== '');
-}
-
 function nodeCountChanceEntries(text: string | undefined): string[] {
   const trimmed = String(text ?? '').trim();
   return trimmed === '' ? [] : trimmed.split(';').map((entry) => entry.trim());
@@ -203,11 +183,7 @@ export function parsePoolEntry(text: string): PoolEntry {
 }
 
 export function parsePool(text: string): PoolEntry[] {
-  return String(text ?? '')
-    .split(';')
-    .map((entry) => entry.trim())
-    .filter(Boolean)
-    .map(parsePoolEntry);
+  return splitList(text).map(parsePoolEntry);
 }
 
 export function formatPoolEntry(entry: PoolEntry): string {
@@ -236,23 +212,79 @@ export function isTrueText(text: string | undefined): boolean {
   return String(text ?? '').trim().toLowerCase() === 'true';
 }
 
-function parseDefinitionRows(table: CsvTable, kindOf: (cells: string[]) => string, readsUniqueColumns = true): ItemDefinition[] {
+type DefinitionColumn = CsvColumn<ItemDefinition>;
+
+function poolColumn(group: PoolGroup): DefinitionColumn {
+  return { column: group, field: group, read: parsePool, write: (definition) => formatPool(poolEntries(definition, group)) };
+}
+
+const SUBROUTINE_COLUMNS: readonly DefinitionColumn[] = [
+  { column: 'id', field: 'id' },
+  { column: 'name', field: 'name' },
+  { column: 'icon', field: 'icon' },
+  { column: 'rarity', field: 'rarity' },
+  { column: 'unique', field: 'unique' },
+  { column: 'kind', field: 'subroutineKind' },
+  { column: 'description', field: 'description' },
+  { ...poolColumn('lines'), optional: true },
+  { column: 'source', field: 'source', optional: true },
+  { column: 'socket_limit', field: 'socketLimit', optional: true },
+  { column: 'radius', field: 'radius', optional: true },
+  { column: 'volume', field: 'volume', optional: true },
+  { column: 'unlock', field: 'unlock' },
+  { column: 'excluded_nodes', field: 'excludedNodes', optional: true },
+  { column: 'node_count_chances', field: 'nodeCountChances', optional: true },
+  { column: 'drop_chance', field: 'dropChance', optional: true },
+  { column: 'salvage_chance', field: 'salvageChance', optional: true },
+  { ...poolColumn('prefixes'), legacy: true },
+  { ...poolColumn('suffixes'), legacy: true },
+];
+
+const HULL_ITEM_COLUMNS: readonly DefinitionColumn[] = [
+  { column: 'id', field: 'id' },
+  { column: 'section', field: 'kind' },
+  { column: 'name', field: 'name' },
+  { column: 'icon', field: 'icon' },
+  { column: 'rarity', field: 'rarity' },
+  { column: 'unique', field: 'unique' },
+  { column: 'description', field: 'description' },
+  poolColumn('prefixes'),
+  poolColumn('suffixes'),
+  { column: 'unlock', field: 'unlock' },
+  { column: 'source', field: 'source', optional: true },
+  { column: 'mechanic', field: 'mechanic', optional: true },
+  { column: 'volume', field: 'volume', optional: true },
+  { column: 'crew', field: 'crew', optional: true },
+];
+
+const STAR_CHART_COLUMNS: readonly DefinitionColumn[] = [
+  { column: 'id', field: 'id' },
+  { column: 'system_type', field: 'systemType' },
+  { column: 'name', field: 'name' },
+  { column: 'icon', field: 'icon' },
+  { column: 'rarity', field: 'rarity' },
+  { column: 'min_tier', field: 'minTier' },
+  { column: 'description', field: 'description' },
+  poolColumn('prefixes'),
+  poolColumn('suffixes'),
+];
+
+function columnsOfItemType(itemType: string): readonly DefinitionColumn[] {
+  if (itemType === SUBROUTINE_TYPE) {
+    return SUBROUTINE_COLUMNS;
+  }
+  return itemType === STAR_CHART_TYPE ? STAR_CHART_COLUMNS : HULL_ITEM_COLUMNS;
+}
+
+function parseDefinitionRows(table: CsvTable, columns: readonly DefinitionColumn[], fixedKind?: string): ItemDefinition[] {
   return table.rows.map((cells): ItemDefinition => {
-    const value = (column: string) => csvCell(table, cells, column);
-    const textColumns = trimmedCsvCells(table, cells, DEFINITION_TEXT_COLUMNS);
-    const definition: ItemDefinition = {
-      cells,
-      ...textColumns,
-      kind: kindOf(cells),
-      prefixes: [...parsePool(value('prefixes')), ...parsePool(value('pool'))],
-      suffixes: parsePool(value('suffixes')),
-      loadedId: textColumns.id,
+    const definition = { cells, ...readCsvRow(table, cells, columns) } as ItemDefinition;
+    return {
+      ...definition,
+      kind: fixedKind ?? definition.kind,
+      prefixes: [...definition.prefixes, ...parsePool(csvCell(table, cells, LEGACY_POOL_COLUMN))],
+      loadedId: definition.id,
     };
-    if (readsUniqueColumns) {
-      definition.unique = value('unique').trim();
-      definition.unlock = value('unlock').trim();
-    }
-    return definition;
   });
 }
 
@@ -262,116 +294,37 @@ export function parseItemDefinitions(subroutinesText: string, hullItemsText: str
   return {
     subroutineTable,
     hullItemTable,
-    definitions: [
-      ...parseDefinitionRows(subroutineTable, () => SUBROUTINE_KIND).map((definition) => ({
-        ...definition,
-        subroutineKind: csvCell(subroutineTable, definition.cells, 'kind').trim(),
-        lines: parsePool(csvCell(subroutineTable, definition.cells, 'lines')),
-        source: csvCell(subroutineTable, definition.cells, 'source').trim(),
-        socketLimit: csvCell(subroutineTable, definition.cells, 'socket_limit').trim(),
-        volume: csvCell(subroutineTable, definition.cells, 'volume').trim(),
-        radius: csvCell(subroutineTable, definition.cells, 'radius').trim(),
-        excludedNodes: csvCell(subroutineTable, definition.cells, 'excluded_nodes').trim(),
-        nodeCountChances: csvCell(subroutineTable, definition.cells, 'node_count_chances').trim(),
-        dropChance: csvCell(subroutineTable, definition.cells, 'drop_chance').trim(),
-        salvageChance: csvCell(subroutineTable, definition.cells, 'salvage_chance').trim(),
-      })),
-      ...parseDefinitionRows(hullItemTable, (cells) => csvCell(hullItemTable, cells, 'section').trim()).map((definition) => ({
-        ...definition,
-        source: csvCell(hullItemTable, definition.cells, 'source').trim(),
-        mechanic: csvCell(hullItemTable, definition.cells, 'mechanic').trim(),
-        volume: csvCell(hullItemTable, definition.cells, 'volume').trim(),
-        crew: csvCell(hullItemTable, definition.cells, 'crew').trim(),
-      })),
-    ],
+    definitions: [...parseDefinitionRows(subroutineTable, SUBROUTINE_COLUMNS, SUBROUTINE_KIND), ...parseDefinitionRows(hullItemTable, HULL_ITEM_COLUMNS)],
   };
 }
 
 export function parseStarChartDefinitions(starChartsText: string): StarChartDefinitionsModel {
   const starChartTable = parseCsvTable(starChartsText);
-  const definitions = parseDefinitionRows(starChartTable, () => STAR_CHART_KIND, false).map((definition) => ({
-    ...definition,
-    systemType: csvCell(starChartTable, definition.cells, 'system_type').trim(),
-    minTier: csvCell(starChartTable, definition.cells, 'min_tier').trim(),
-  }));
-  return { starChartTable, definitions };
+  return { starChartTable, definitions: parseDefinitionRows(starChartTable, STAR_CHART_COLUMNS, STAR_CHART_KIND) };
 }
 
-function definitionColumnValue(definition: ItemDefinition, column: string): unknown {
-  switch (column) {
-    case 'prefixes':
-      return formatPool(definition.prefixes);
-    case 'suffixes':
-      return formatPool(definition.suffixes);
-    case 'kind':
-      return definition.subroutineKind ?? '';
-    case 'lines':
-      return formatPool(definition.lines ?? []);
-    case 'source':
-      return definition.source ?? '';
-    case 'mechanic':
-      return definition.mechanic ?? '';
-    case 'volume':
-      return definition.volume ?? '';
-    case 'crew':
-      return definition.crew ?? '';
-    case 'socket_limit':
-      return definition.socketLimit ?? '';
-    case 'radius':
-      return definition.radius ?? '';
-    case 'excluded_nodes':
-      return definition.excludedNodes ?? '';
-    case 'node_count_chances':
-      return definition.nodeCountChances ?? '';
-    case 'drop_chance':
-      return definition.dropChance ?? '';
-    case 'salvage_chance':
-      return definition.salvageChance ?? '';
-    case 'section':
-      return definition.kind;
-    case 'system_type':
-      return definition.systemType ?? '';
-    case 'min_tier':
-      return definition.minTier ?? '';
-    default:
-      return definition[column as keyof ItemDefinition];
-  }
-}
-
-function serializeDefinitions(table: CsvTable, definitions: ItemDefinition[], columns: readonly string[], droppedColumns: readonly string[] = []): string {
-  const out = csvTableFromRows(table, definitions, (definition) => Object.fromEntries(columns.map((column) => [column, definitionColumnValue(definition, column)])));
-  for (const column of ['pool', ...droppedColumns]) {
+function serializeDefinitions(table: CsvTable, definitions: ItemDefinition[], itemType: string, droppedColumns: readonly string[] = []): string {
+  const out = csvTableFromColumns(
+    table,
+    definitions.filter((definition) => itemTypeOfKind(definition.kind) === itemType),
+    columnsOfItemType(itemType),
+  );
+  for (const column of [LEGACY_POOL_COLUMN, ...droppedColumns]) {
     dropCsvColumn(out, column);
   }
   return serializeCsvTable(out);
 }
 
 export function serializeSubroutinesCsv(model: Pick<ItemDefinitionsModel, 'subroutineTable' | 'definitions'>): string {
-  const subroutines = model.definitions.filter((definition) => itemTypeOfKind(definition.kind) === SUBROUTINE_TYPE);
-  const leftoverPoolColumns = AFFIX_GROUPS.map((group) => group.key).filter((column) => model.subroutineTable.header.includes(column));
-  const writtenColumns = SUBROUTINE_COLUMNS.filter(
-    (column) =>
-      !OPTIONAL_SUBROUTINE_FIELDS.includes(column) ||
-      model.subroutineTable.header.includes(column) ||
-      subroutines.some((definition) => String(definitionColumnValue(definition, column)) !== ''),
-  );
-  return serializeDefinitions(model.subroutineTable, subroutines, [...writtenColumns, ...leftoverPoolColumns]);
+  return serializeDefinitions(model.subroutineTable, model.definitions, SUBROUTINE_TYPE);
 }
 
 export function serializeHullItemsCsv(model: Pick<ItemDefinitionsModel, 'hullItemTable' | 'definitions'>): string {
-  const hullItems = model.definitions.filter((definition) => itemTypeOfKind(definition.kind) === HULL_ITEM_TYPE);
-  const writtenColumns = HULL_ITEM_COLUMNS.filter(
-    (column) =>
-      !OPTIONAL_HULL_ITEM_FIELDS.includes(column) ||
-      model.hullItemTable.header.includes(column) ||
-      hullItems.some((definition) => String(definitionColumnValue(definition, column)) !== ''),
-  );
-  return serializeDefinitions(model.hullItemTable, hullItems, writtenColumns);
+  return serializeDefinitions(model.hullItemTable, model.definitions, HULL_ITEM_TYPE);
 }
 
 export function serializeStarChartsCsv(model: StarChartDefinitionsModel): string {
-  const starCharts = model.definitions.filter((definition) => itemTypeOfKind(definition.kind) === STAR_CHART_TYPE);
-  return serializeDefinitions(model.starChartTable, starCharts, STAR_CHART_COLUMNS, DROPPED_STAR_CHART_COLUMNS);
+  return serializeDefinitions(model.starChartTable, model.definitions, STAR_CHART_TYPE, DROPPED_STAR_CHART_COLUMNS);
 }
 
 export function parseFamilyDefinitions(family: ItemFamily, texts: Record<string, string>): FamilyDefinitions {
@@ -451,52 +404,22 @@ export function newItemDefinition(
 ): ItemDefinition {
   const itemType = itemTypeOfKind(kind);
   const naming = newDefinitionNaming(itemType);
-  if (itemType === SUBROUTINE_TYPE) {
-    return {
-      cells: [],
-      id: uniqueItemId(definitions, naming.id, takenIds),
-      kind,
-      name: naming.name,
-      icon: '',
-      rarity: '10',
-      unique: '',
-      description: '',
-      unlock: '',
-      prefixes: [],
-      suffixes: [],
-      subroutineKind,
-      lines: [],
-      source: '',
-      socketLimit: '',
-      radius: '',
-      volume: '',
-      excludedNodes: '',
-      nodeCountChances: '',
-      dropChance: '',
-      salvageChance: '',
-    };
-  }
-  const definition: ItemDefinition = {
+  const definition = {
+    ...blankCsvRow(columnsOfItemType(itemType)),
     cells: [],
     id: uniqueItemId(definitions, naming.id, takenIds),
     kind,
     name: naming.name,
-    icon: '',
     rarity: '10',
-    description: '',
-    prefixes: firstReference(catalogue, 'prefix', itemType),
-    suffixes: firstReference(catalogue, 'suffix', itemType),
-  };
+  } as ItemDefinition;
+  if (itemType === SUBROUTINE_TYPE) {
+    definition.subroutineKind = subroutineKind;
+    return definition;
+  }
+  definition.prefixes = firstReference(catalogue, 'prefix', itemType);
+  definition.suffixes = firstReference(catalogue, 'suffix', itemType);
   if (itemType === STAR_CHART_TYPE) {
     definition.systemType = 'SINGLE';
-    definition.minTier = '';
-  } else {
-    definition.unique = '';
-    definition.unlock = '';
-    definition.source = '';
-    definition.mechanic = '';
-    definition.volume = '';
-    definition.crew = '';
   }
   return definition;
 }
@@ -700,7 +623,7 @@ function modspecCacheIssues(label: string, definition: ItemDefinition): string[]
   }
   const issues: string[] = [];
   const seenNodeIds = new Set<string>();
-  for (const nodeId of excludedNodeIds(definition.excludedNodes)) {
+  for (const nodeId of splitList(definition.excludedNodes)) {
     if (!NODE_ID_TEXT.test(nodeId)) {
       issues.push(`${label}: excluded node "${nodeId}" is not a node id`);
     } else if (seenNodeIds.has(nodeId)) {

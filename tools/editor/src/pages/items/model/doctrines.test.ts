@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { buildVocabulary } from '../../../api/vocabulary.ts';
+import { splitList } from '../../../shared/csv.ts';
 import {
   doctrineTypeFacts,
   joinEntries,
-  listEntries,
   markDoctrinesSaved,
   newDoctrineArchive,
   parseDoctrineArchivesCsv,
@@ -62,7 +62,7 @@ describe('doctrine archives', () => {
     const model = parseDoctrineArchivesCsv(CSV);
 
     expect(model.archives.map((archive) => archive.id)).toEqual(['doc_transform', 'doc_augment']);
-    expect(listEntries(model.archives[0].notables)).toEqual(['notable_a', 'notable_b']);
+    expect(splitList(model.archives[0].notables)).toEqual(['notable_a', 'notable_b']);
     expect(model.archives[0].smallNodes).toBe('small_a');
     expect(model.archives[1].modifiers).toBe('@ARMOR_PERCENT_DOCTRINE:2');
     expect(serializeDoctrineArchivesCsv(model)).toBe(CSV);

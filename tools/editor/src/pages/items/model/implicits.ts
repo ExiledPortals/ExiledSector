@@ -1,5 +1,5 @@
 import type { Vocabulary } from '../../../api/vocabulary.ts';
-import { csvTableFromRows, parseCsvTable, serializeCsvTable, trimmedCsvCells, type CsvTable } from '../../../shared/csv.ts';
+import { csvTableFromRows, parseCsvTable, serializeCsvTable, splitList, trimmedCsvCells, type CsvTable } from '../../../shared/csv.ts';
 import { ANY_SYSTEM_TYPE, HULL_ITEM_TYPE } from './definitions.ts';
 import type { ItemFamily } from './itemFamily.ts';
 import { MODIFIER_REFERENCE_MARK, SUBROUTINE_TYPE } from './modifiers.ts';
@@ -69,13 +69,9 @@ export function implicitGroups(family: ItemFamily, vocabulary: Vocabulary): stri
 }
 
 export function parseImplicitReferences(text: string): ImplicitReference[] {
-  return String(text ?? '')
-    .split(';')
-    .map((entry) => entry.trim())
-    .filter(Boolean)
-    .map((entry) =>
-      entry.startsWith(MODIFIER_REFERENCE_MARK) ? { modifierId: entry.slice(MODIFIER_REFERENCE_MARK.length).trim() } : { modifierId: '', inlineText: entry },
-    );
+  return splitList(text).map((entry) =>
+    entry.startsWith(MODIFIER_REFERENCE_MARK) ? { modifierId: entry.slice(MODIFIER_REFERENCE_MARK.length).trim() } : { modifierId: '', inlineText: entry },
+  );
 }
 
 export function formatImplicitReferences(references: ImplicitReference[]): string {

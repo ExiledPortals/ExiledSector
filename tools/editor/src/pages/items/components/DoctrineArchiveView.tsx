@@ -2,11 +2,12 @@ import { Avatar, Group, Stack, Text } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { stringsRevision } from '../../../api/describe.ts';
 import { codeRevision, DescribedTypesCache, typeTooltip, type TypeTooltip } from '../../../api/tooltipCode.ts';
+import { splitList } from '../../../shared/csv.ts';
 import { fileUrl } from '../../../shared/imagePaths.ts';
 import { ImagePickButton } from '../../../shared/ImagePickButton.tsx';
 import { TooltipEffects } from '../../../shared/TooltipBody.tsx';
 import { HULL_SIZE_OPTIONS, type SkillType } from '../../tree/model/types.ts';
-import { DOCTRINE_POOL_TIERS, listEntries, type DoctrineArchive, type DoctrinePoolKey } from '../model/doctrines.ts';
+import { DOCTRINE_POOL_TIERS, type DoctrineArchive, type DoctrinePoolKey } from '../model/doctrines.ts';
 
 const RETRY_DELAY_MS = 1500;
 const ICON_SIZE = 56;
@@ -103,7 +104,7 @@ function ReplacementRow({ typeId, source, listedTypes }: { typeId: string; sourc
 
 export function DoctrineReplacementPools({ archive, source }: { archive: DoctrineArchive; source: DoctrineTypeSource }) {
   const pools = (Object.keys(DOCTRINE_POOL_TIERS) as DoctrinePoolKey[])
-    .map((poolKey) => ({ poolKey, typeIds: listEntries(archive[poolKey]) }))
+    .map((poolKey) => ({ poolKey, typeIds: splitList(archive[poolKey]) }))
     .filter(({ typeIds }) => typeIds.length > 0);
   const listedTypes = pools.flatMap(({ typeIds }) => typeIds.map((typeId) => source.typesById.get(typeId))).filter((type): type is SkillType => type !== undefined);
   return (

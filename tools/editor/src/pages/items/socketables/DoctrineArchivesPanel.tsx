@@ -3,6 +3,7 @@ import { IconPlus, IconTrash } from '@tabler/icons-react';
 import { useCallback, useState } from 'react';
 import type { Draft } from 'immer';
 import type { Vocabulary } from '../../../api/vocabulary.ts';
+import { splitList } from '../../../shared/csv.ts';
 import { confirmAction } from '../../../shared/dialogs.tsx';
 import { DoctrineReplacementPools, type DoctrineTypeSource } from '../components/DoctrineArchiveView.tsx';
 import { DescriptionNote } from '../components/GameText.tsx';
@@ -19,7 +20,6 @@ import {
   doctrineModifierReferences,
   formatDoctrineModifiers,
   joinEntries,
-  listEntries,
   newDoctrineArchive,
   renameDoctrineArchive,
   replacementCandidates,
@@ -266,7 +266,7 @@ function ArchiveFields({ document, model, vocabulary, archive, descriptions, edi
       {archive.behaviour !== AUGMENT_BEHAVIOUR && (
         <>
           {(Object.keys(DOCTRINE_POOL_TIERS) as DoctrinePoolKey[]).map((poolKey) => {
-            const entries = listEntries(archive[poolKey]);
+            const entries = splitList(archive[poolKey]);
             return (
               <MultiSelect
                 key={poolKey}
