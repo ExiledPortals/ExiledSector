@@ -6,6 +6,7 @@ import exiledsector.charts.anomaly.AtlasRule;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.content.ChartFactions;
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.atlas.ActiveCatalysts;
 import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
@@ -19,10 +20,12 @@ import exiledsector.charts.atlas.AtlasSpecial;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.OfficerText;
+import exiledsector.items.MaterialItems;
 import exiledsector.ui.socket.BenchModeSupport;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.ToIntFunction;
 
 public final class AtlasNodeText {
 
@@ -148,13 +151,19 @@ public final class AtlasNodeText {
         return requirement.allowsOpening() ? List.of(open) : List.of(new AtlasLine(Translation.text(requirement.reasonKey()), Tone.MARKER), open);
     }
 
-    public static List<String> confirmLines(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
+    public static List<String> confirmLines(AtlasGenerator generator, AtlasState state, AtlasCell cell, ToIntFunction<String> ownedCatalysts) {
         AtlasNode node = generator.node(cell);
         List<String> lines = new ArrayList<>();
         lines.add(Translation.msg("chart.atlas.confirm.system").arg("region", regionName(node.regionId()))
                 .arg("faction", ChartFactions.displayName(AtlasOpening.factionFor(generator, state, cell, node))).text());
         for (AtlasLine marker : markers(generator, state, cell, node)) {
             lines.add(marker.plain());
+        }
+        for (ActiveCatalysts.Planned planned : ActiveCatalysts.plan(generator, state, cell, ownedCatalysts)) {
+            if (planned.applies()) {
+                lines.add(Translation.msg("chart.atlas.confirm.catalyst").arg("name", MaterialItems.displayName(planned.catalyst().itemId()))
+                        .arg("anomaly", AtlasNames.anomaly(planned.catalyst().anomalyId())).text());
+            }
         }
         for (AtlasRule rule : atlasRulesAt(generator, state, cell)) {
             lines.addAll(rule.confirmLines(generator, state, cell));

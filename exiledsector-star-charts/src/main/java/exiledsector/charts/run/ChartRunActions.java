@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
+import exiledsector.charts.atlas.ActiveCatalysts;
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.generation.ChartGenContext;
@@ -15,6 +16,7 @@ import exiledsector.charts.objective.ChartObjectiveIntel;
 import exiledsector.charts.run.cleanup.ChartRunCloser;
 import exiledsector.charts.tree.AtlasTree;
 import exiledsector.compat.DiyPlanetsCompat;
+import exiledsector.items.CraftingMaterials;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemStore;
@@ -83,6 +85,8 @@ public final class ChartRunActions {
         if (playerBlocker != null) {
             return playerBlocker;
         }
+        CraftingMaterials materials = CraftingMaterials.forPlayer(sector.getPlayerFleet().getCargo());
+        List<ActiveCatalysts.Planned> shownCatalysts = ActiveCatalysts.plan(generator, state, cell, materials::count);
         ChartRun previous = ChartRuns.currentOrNull();
         if (previous != null) {
             LOG.info("[ExiledSector] Closing Star Chart run " + previous.runId() + " to open another from the atlas");
@@ -92,12 +96,15 @@ public final class ChartRunActions {
                 return ChartRuns.hasRun() ? OpenResult.RUN_EXISTS : OpenResult.NOT_REACHABLE;
             }
         }
-        AtlasRunNode runNode = ChartAnomalies.joinRunNode(AtlasOpening.openedRunNode(generator, state, cell, chart.seed()), generator, state, cell, choice);
+        List<ActiveCatalysts.Planned> catalysts = ActiveCatalysts.alsoApplyingIn(ActiveCatalysts.plan(generator, state, cell, materials::count), shownCatalysts);
+        AtlasRunNode opened = AtlasOpening.openedRunNode(generator, state, cell, chart.seed(), ActiveCatalysts.anomalyIds(catalysts));
+        AtlasRunNode runNode = ChartAnomalies.joinRunNode(opened, generator, state, cell, choice);
         List<ChartGenContext.AppliedEffect> treeLines = AtlasTree.chartLines(state);
         OpenResult result = openBesidePlayer(sector, entriesAllowed, random, AtlasOpening.request(generator, state, cell, chart, runNode, treeLines),
                 ItemData.of(chart).encode(), runNode, treeLines);
         if (result == OpenResult.OPENED) {
             store.remove(chart);
+            ActiveCatalysts.spend(state, catalysts, materials);
             AtlasProgress.opened(sector, generator, cell);
         }
         return result;

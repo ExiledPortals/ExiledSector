@@ -84,7 +84,7 @@ class AtlasNodeTextTest {
 
             assertTrue(AtlasNodeText.markers(generator, state, cell, generator.node(cell)).contains(new AtlasLine(OfficerText.title(border.attacker()) + " of "
                     + attackerFaction + " attacks " + OfficerText.title(border.defender()) + " of " + defenderFaction, AtlasLine.Tone.PLAIN)));
-            assertTrue(AtlasNodeText.confirmLines(generator, state, cell).contains("Completing the system ends the fight permanently."));
+            assertTrue(AtlasNodeText.confirmLines(generator, state, cell, itemId -> 0).contains("Completing the system ends the fight permanently."));
             assertEquals(List.of(), AtlasNodeText.entryChoices(generator, state, cell));
             assertEquals(List.of(), AtlasNodeText.entryChoices(generator, state, AtlasCell.ORIGIN));
         } finally {
@@ -125,7 +125,7 @@ class AtlasNodeTextTest {
             List<String> styledLines = markers.stream().filter(line -> line.tone() == AtlasLine.Tone.STYLED).map(AtlasLine::plain).toList();
             assertEquals(List.of("40% increased enemy fleet size",
                     "50% increased quantity of items found in the system, and 50% increased completion reward"), styledLines);
-            assertTrue(AtlasNodeText.confirmLines(generator, state, cell).stream().noneMatch(line -> line.contains("<")));
+            assertTrue(AtlasNodeText.confirmLines(generator, state, cell, itemId -> 0).stream().noneMatch(line -> line.contains("<")));
             assertTrue(AtlasNodeText.anomalyBody(generator, state, cell, RelayNetwork.ANOMALY_ID).plain().contains("Stage 3 of 3"));
             assertEquals(List.of(), AtlasNodeText.card(generator, state, cell, true).notes());
             assertEquals(StyledText.parse("<bad>40%</bad> x"), new AtlasLine("<bad>40%</bad> x", AtlasLine.Tone.STYLED).styled());

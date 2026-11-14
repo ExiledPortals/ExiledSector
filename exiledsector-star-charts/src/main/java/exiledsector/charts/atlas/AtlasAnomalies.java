@@ -11,6 +11,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public final class AtlasAnomalies {
@@ -35,6 +36,10 @@ public final class AtlasAnomalies {
 
         public boolean allows() {
             return this == ALLOWED;
+        }
+
+        public String refusalKey() {
+            return "catalyst.refused." + name().toLowerCase(Locale.ROOT);
         }
     }
 

@@ -1126,14 +1126,13 @@ never reach a chart: their totals are an input of the atlas generator, rebuilt w
 
 ### Atlas Catalysts
 
-Atlas Catalysts are special items listed in `atlas_catalysts.csv` (`AtlasCatalysts`) and used on a revealed atlas system.
-Most insert their anomaly as a player record through `AtlasAnomalies.canInsert` and `insert` (`AnomalyCatalystUse`), so
-an anomaly they add takes the system's own faction. Whether it fits is the anomaly's `insertVerdict` (its `fitsAt` and
-`holdsAt` by default). Redeployment Orders
-instead hand a claimed system, never a command centre, to a neighbouring territory of another faction, raced on the atlas
-seed, the system and its current owner so a reload never changes the pick (`RedeploymentCatalystUse`, `AtlasTerritoryTransfer`). A row with the `star` effect may insert a star anomaly through
-`AtlasAnomalies.canInsert` and `insert` with `forcingStar`, which skip only the insertable check, so it never replaces a star
-anomaly already there; it never drops. Both go through core `Consumables.use`, which spends the item only once the change has taken.
+Atlas Catalysts are special items listed in `atlas_catalysts.csv` (`AtlasCatalysts`). They are save-wide toggles kept in
+`AtlasState` (`ActiveCatalysts`); one the player no longer carries turns itself off. Opening a chart from the atlas plans
+each toggled catalyst against the system's anomalies and the ones accepted before it (`AtlasAnomalies.canInsert`, then the
+anomaly's `insertVerdict`), adds the fitting ones to that run only and spends one of each (`ChartRunActions.openFromAtlas`,
+`AtlasOpening.openedRunNode`). A `star` row may add a star anomaly with `forcingStar`, which skips only the insertable
+check, so it never replaces a star anomaly already there; it never drops. The relay stage reads the run's anomalies, so a
+relay a catalyst starts carries on as world records.
 
 Every chart drop source inside a live run rolls its `catalyst_chance` from `chart_drops.csv` as an expected count,
 picking by weight among catalysts whose `min_tier` the run's tier reaches (`ChartDrops.roll`, `AtlasCatalysts.pickDrop`).

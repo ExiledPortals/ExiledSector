@@ -223,8 +223,13 @@ class RelayStagesTest {
 
     @Test
     void aFirstStageAddsNothingAndASystemWithoutTheNetworkIsLeftAlone() {
+        AtlasRunNode plain = new AtlasRunNode(start.pack(), "pirates", List.of(), List.of());
+        assertSame(plain, RelayStages.join(plain, generator, state, start));
+
         AtlasRunNode node = new AtlasRunNode(start.pack(), "pirates", List.of(), List.of(RelayNetwork.ANOMALY_ID));
-        assertSame(node, RelayStages.join(node, generator, state, start));
+        AtlasRunNode added = RelayStages.join(node, generator, state, start);
+        assertEquals(List.of(), added.effects());
+        assertFalse(added.guaranteedBossUnique());
 
         insertAtStart(null);
         AtlasRunNode first = RelayStages.join(node, generator, state, start);

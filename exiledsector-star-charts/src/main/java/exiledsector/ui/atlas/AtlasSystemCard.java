@@ -20,7 +20,6 @@ import exiledsector.ui.util.SpriteDraw;
 import exiledsector.ui.util.TextLabel;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.List;
 
 final class AtlasSystemCard {
@@ -53,19 +52,14 @@ final class AtlasSystemCard {
         this.sprites = sprites;
     }
 
-    void write(AtlasNodeText.SystemCard card, StyledText verdict) {
+    void write(AtlasNodeText.SystemCard card) {
         float maxWidth = tooltipText.maxTextWidth();
         titleLabel.setWrapped(card.title(), maxWidth, MAX_TEXT_HEIGHT);
         layoutLabel.setWrapped(card.layout(), maxWidth, MAX_TEXT_HEIGHT);
         writeHolder(card.factionId(), maxWidth);
         writeOfficer(card);
         setLines(notesLabel, styledLines(card.notes()), maxWidth);
-        List<StyledText> status = new ArrayList<>();
-        if (verdict != null) {
-            status.add(verdict);
-        }
-        status.addAll(styledLines(card.status()));
-        setLines(statusLabel, status, maxWidth);
+        setLines(statusLabel, styledLines(card.status()), maxWidth);
         contentWidth = Math.max(MIN_CONTENT_WIDTH, widestLabel());
     }
 

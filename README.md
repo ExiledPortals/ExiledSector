@@ -142,7 +142,7 @@ If you don't want to build a colony, turn on No Colony Requirement in LunaLib se
 
 </details>
 
-Each atlas system has a faction and a biome, and can have any of 20 anomalies that change what you'll find there. Atlas Catalysts only drop inside charts, and they add anomalies to a system or give it to a different faction. 
+Each atlas system has a faction and a biome, and can have any of 20 anomalies that change what you'll find there. Atlas Catalysts only drop inside charts; turn them on and they add their anomalies to each chart you open. 
 
 Charts roll modifiers too, and the same nanoswarms work on them. The modifiers make fleets bigger and bosses nastier, and the rewards better. You asked for this (I think? Maybe it was me that asked for this).
 

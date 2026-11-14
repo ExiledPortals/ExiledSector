@@ -79,7 +79,12 @@ public final class AtlasOpening {
     }
 
     public static AtlasRunNode openedRunNode(AtlasGenerator generator, AtlasState state, AtlasCell cell, long chartSeed) {
+        return openedRunNode(generator, state, cell, chartSeed, List.of());
+    }
+
+    public static AtlasRunNode openedRunNode(AtlasGenerator generator, AtlasState state, AtlasCell cell, long chartSeed, List<String> catalystAnomalyIds) {
         List<String> anomalyIds = new ArrayList<>(AtlasAnomalies.effective(generator, state, cell));
+        anomalyIds.addAll(catalystAnomalyIds);
         anomalyIds.addAll(OpeningAnomalies.rolled(generator, state, cell, chartSeed, anomalyIds));
         return withOfficer(state, cell, runNode(generator, state, cell, anomalyIds));
     }

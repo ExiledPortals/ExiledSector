@@ -57,6 +57,7 @@ public final class AtlasState implements AtlasMemory {
     private Set<String> atlasTreeNodeIds = new TreeSet<>();
     private int keyFragments;
     private int flagshipRoll;
+    private Set<String> activeCatalystIds = new LinkedHashSet<>();
     private transient Map<Integer, AtlasOfficer> decodedOfficers;
     private transient Map<Long, AtlasOfficer> activeOfficersByCentre;
     private transient long fillFingerprint;
@@ -121,6 +122,9 @@ public final class AtlasState implements AtlasMemory {
         }
         if (atlasTreeNodeIds == null) {
             atlasTreeNodeIds = new TreeSet<>();
+        }
+        if (activeCatalystIds == null) {
+            activeCatalystIds = new LinkedHashSet<>();
         }
         atlasPoints = Math.min(MAX_ATLAS_SKILL_POINTS, atlasPoints);
         return this;
@@ -254,6 +258,18 @@ public final class AtlasState implements AtlasMemory {
 
     public void setAtlasTreeNodeIds(Collection<String> nodeIds) {
         atlasTreeNodeIds = new TreeSet<>(nodeIds);
+    }
+
+    public List<String> activeCatalystIds() {
+        return List.copyOf(activeCatalystIds);
+    }
+
+    public boolean isCatalystOn(String itemId) {
+        return activeCatalystIds.contains(itemId);
+    }
+
+    public boolean setCatalystOn(String itemId, boolean on) {
+        return on ? activeCatalystIds.add(itemId) : activeCatalystIds.remove(itemId);
     }
 
     public void addKeyFragment() {

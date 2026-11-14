@@ -3,7 +3,6 @@ package exiledsector.charts.anomaly;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasAnomalyRecord;
-import exiledsector.charts.atlas.AtlasCatalystUse;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasLine;
@@ -38,7 +37,7 @@ public interface AtlasRule extends ChartAnomaly {
 
     default UseVerdict insertVerdict(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
         return fitsAt(generator.traits(cell)) && holdsAt(generator, state, cell) ? UseVerdict.ALLOW
-                : UseVerdict.refused(AtlasCatalystUse.refusalKey(AtlasAnomalies.InsertCheck.DOES_NOT_FIT));
+                : UseVerdict.refused(AtlasAnomalies.InsertCheck.DOES_NOT_FIT.refusalKey());
     }
 
     default List<AtlasLine> atlasLines(AtlasGenerator generator, AtlasState state, AtlasCell cell) {

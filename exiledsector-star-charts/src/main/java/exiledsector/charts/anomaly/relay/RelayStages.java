@@ -36,10 +36,14 @@ public final class RelayStages {
     }
 
     public static AtlasAnomalyRecord.Chain stageAt(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
-        if (!AtlasAnomalies.effective(generator, state, cell).contains(RelayNetwork.ANOMALY_ID)) {
+        return stageAt(generator, state, cell, AtlasAnomalies.effective(generator, state, cell));
+    }
+
+    private static AtlasAnomalyRecord.Chain stageAt(AtlasGenerator generator, AtlasState state, AtlasCell cell, List<String> anomalyIds) {
+        if (!anomalyIds.contains(RelayNetwork.ANOMALY_ID)) {
             return null;
         }
-        return chainAt(generator, state, cell, recordAt(state, cell));
+        return chainAt(generator, state, cell, recordAt(state, cell), anomalyIds);
     }
 
     public static AtlasAnomalyRecord.Chain liveStage(SectorAPI sector, ChartRun run) {
@@ -50,19 +54,20 @@ public final class RelayStages {
         AtlasGenerator generator = AtlasRuntime.generator(sector);
         AtlasState state = AtlasState.get(sector);
         AtlasCell cell = AtlasCell.unpack(node.cell());
-        return chainAt(generator, state, cell, recordAt(state, cell));
+        return chainAt(generator, state, cell, recordAt(state, cell), node.anomalyIds());
     }
 
-    private static AtlasAnomalyRecord.Chain chainAt(AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasAnomalyRecord record) {
+    private static AtlasAnomalyRecord.Chain chainAt(AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasAnomalyRecord record,
+                                                    List<String> anomalyIds) {
         if (record != null && record.chain() != null) {
             return record.chain();
         }
-        return new AtlasAnomalyRecord.Chain(1, RelayRules.STAGES + atlasExtraStages(generator, state, cell), null);
+        return new AtlasAnomalyRecord.Chain(1, RelayRules.STAGES + atlasExtraStages(generator, state, cell, anomalyIds), null);
     }
 
-    static int atlasExtraStages(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
+    static int atlasExtraStages(AtlasGenerator generator, AtlasState state, AtlasCell cell, List<String> anomalyIds) {
         List<ChartGenContext.AppliedEffect> effects = new ArrayList<>(AtlasOpening.runNode(generator, state, cell).effects());
-        effects.addAll(ChartAnomalies.effectsOf(AtlasAnomalies.effective(generator, state, cell)));
+        effects.addAll(ChartAnomalies.effectsOf(anomalyIds));
         return extraStages(ChartGenContext.of(effects));
     }
 
@@ -83,7 +88,7 @@ public final class RelayStages {
     }
 
     public static AtlasRunNode join(AtlasRunNode node, AtlasGenerator generator, AtlasState state, AtlasCell cell) {
-        AtlasAnomalyRecord.Chain stage = stageAt(generator, state, cell);
+        AtlasAnomalyRecord.Chain stage = stageAt(generator, state, cell, node.anomalyIds());
         if (stage == null) {
             return node;
         }
@@ -112,13 +117,17 @@ public final class RelayStages {
         if (node == null || !RelayStates.markSettled(run)) {
             return;
         }
-        settle(AtlasRuntime.generator(sector), AtlasState.get(sector), AtlasCell.unpack(node.cell()),
+        settle(AtlasRuntime.generator(sector), AtlasState.get(sector), AtlasCell.unpack(node.cell()), node.anomalyIds(),
                 run.anomalyIds().contains(RelayNetwork.ANOMALY_ID), RelayStates.allWoken(run));
     }
 
     static AtlasCell settle(AtlasGenerator generator, AtlasState state, AtlasCell cell, boolean placed, boolean allWoken) {
+        return settle(generator, state, cell, AtlasAnomalies.effective(generator, state, cell), placed, allWoken);
+    }
+
+    static AtlasCell settle(AtlasGenerator generator, AtlasState state, AtlasCell cell, List<String> runAnomalyIds, boolean placed, boolean allWoken) {
         AtlasAnomalyRecord record = recordAt(state, cell);
-        AtlasAnomalyRecord.Chain current = chainAt(generator, state, cell, record);
+        AtlasAnomalyRecord.Chain current = chainAt(generator, state, cell, record, runAnomalyIds);
         AtlasAnomalyRecord.Chain next = null;
         if (!placed) {
             next = new AtlasAnomalyRecord.Chain(current.stage(), current.stages(), cell);

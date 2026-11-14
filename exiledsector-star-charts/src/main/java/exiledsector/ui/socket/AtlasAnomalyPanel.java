@@ -1,5 +1,6 @@
 package exiledsector.ui.socket;
 
+import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.Fonts;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -20,7 +21,19 @@ public final class AtlasAnomalyPanel extends HoloPanel {
         void closed();
     }
 
-    public record Entry(String title, String iconPath, StyledText body) {
+    public record Entry(String title, String iconPath, StyledText body, String refusal) {
+
+        public Entry(String title, String iconPath, StyledText body) {
+            this(title, iconPath, body, null);
+        }
+    }
+
+    public record Listing(List<Entry> system, List<Entry> catalysts) {
+
+        public Listing {
+            system = List.copyOf(system);
+            catalysts = List.copyOf(catalysts);
+        }
     }
 
     public static final float PANEL_WIDTH = 380f;
@@ -28,19 +41,19 @@ public final class AtlasAnomalyPanel extends HoloPanel {
 
     private enum Control {BACK}
 
-    private final Supplier<List<Entry>> entries;
+    private final Supplier<Listing> entries;
     private final Listener anomalyListener;
     private final SpriteCache spriteCache = new SpriteCache(AtlasAnomalyPanel.class);
     private UIComponentAPI headerElement;
     private TooltipMakerAPI listElement;
 
-    private AtlasAnomalyPanel(CustomPanelAPI hostPanel, Supplier<List<Entry>> entries, Listener anomalyListener) {
+    private AtlasAnomalyPanel(CustomPanelAPI hostPanel, Supplier<Listing> entries, Listener anomalyListener) {
         super(hostPanel);
         this.entries = entries;
         this.anomalyListener = anomalyListener;
     }
 
-    public static AtlasAnomalyPanel open(CustomPanelAPI hostPanel, float panelLeft, float panelTop, float panelHeight, Supplier<List<Entry>> entries,
+    public static AtlasAnomalyPanel open(CustomPanelAPI hostPanel, float panelLeft, float panelTop, float panelHeight, Supplier<Listing> entries,
                                          Listener anomalyListener) {
         AtlasAnomalyPanel anomalyPanel = new AtlasAnomalyPanel(hostPanel, entries, anomalyListener);
         anomalyPanel.attach(panelLeft, panelTop, PANEL_WIDTH, panelHeight, false);
@@ -89,23 +102,33 @@ public final class AtlasAnomalyPanel extends HoloPanel {
     private void rebuildList() {
         float listTop = PAD + HEADER_HEIGHT + GAP;
         TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), panelHeight - listTop - PAD, true);
-        List<Entry> shown = entries.get();
-        if (shown.isEmpty()) {
+        Listing shown = entries.get();
+        if (shown.system().isEmpty()) {
             VanillaText.plainPara(element, Translation.text("chart.atlas.focus.empty"), 0f, Misc.getGrayColor());
         }
-        for (Entry entry : shown) {
-            float pad = element.getHeightSoFar() > 0f ? PAD : 0f;
-            boolean withIcon = !entry.iconPath().isEmpty() && spriteCache.ensureLoaded(entry.iconPath());
-            TooltipMakerAPI text = withIcon ? element.beginImageWithText(entry.iconPath(), ICON_SIZE) : element;
-            text.setParaFont(Fonts.ORBITRON_12);
-            VanillaText.plainPara(text, entry.title(), withIcon ? 0f : pad, Misc.getHighlightColor());
-            text.setParaFontDefault();
-            VanillaText.addPara(text, entry.body(), LINE_PAD, Misc.getTextColor());
-            if (withIcon) {
-                element.addImageWithText(pad);
-            }
+        shown.system().forEach(entry -> addEntry(element, entry));
+        if (!shown.catalysts().isEmpty()) {
+            element.addSectionHeading(Translation.text("chart.atlas.focus.catalysts"), Alignment.MID, PAD);
+            shown.catalysts().forEach(entry -> addEntry(element, entry));
         }
         listElement = replaceElement(placedComponent(listElement), element, PAD, listTop);
         refreshOpacity();
+    }
+
+    private void addEntry(TooltipMakerAPI element, Entry entry) {
+        float pad = element.getHeightSoFar() > 0f ? PAD : 0f;
+        boolean refused = entry.refusal() != null;
+        boolean withIcon = !entry.iconPath().isEmpty() && spriteCache.ensureLoaded(entry.iconPath());
+        TooltipMakerAPI text = withIcon ? element.beginImageWithText(entry.iconPath(), ICON_SIZE) : element;
+        text.setParaFont(Fonts.ORBITRON_12);
+        VanillaText.plainPara(text, entry.title(), withIcon ? 0f : pad, refused ? Misc.getGrayColor() : Misc.getHighlightColor());
+        text.setParaFontDefault();
+        if (refused) {
+            VanillaText.plainPara(text, entry.refusal(), LINE_PAD, Misc.getNegativeHighlightColor());
+        }
+        VanillaText.addPara(text, entry.body(), LINE_PAD, refused ? Misc.getGrayColor() : Misc.getTextColor());
+        if (withIcon) {
+            element.addImageWithText(pad);
+        }
     }
 }
