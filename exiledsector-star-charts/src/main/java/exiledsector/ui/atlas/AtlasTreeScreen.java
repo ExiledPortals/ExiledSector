@@ -5,7 +5,6 @@ import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
-import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.tree.AtlasTree;
 import exiledsector.charts.tree.AtlasTreeAllocation;
@@ -18,7 +17,7 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.layout.TreeTopology;
 import exiledsector.ui.CampaignOverlay;
 import exiledsector.ui.CanvasCamera;
-import exiledsector.ui.ChromeMetrics;
+import exiledsector.ui.CanvasDrag;
 import exiledsector.ui.EscapeKey;
 import exiledsector.ui.OverlayFade;
 import exiledsector.ui.PointerGesture;
@@ -32,23 +31,16 @@ import exiledsector.ui.decoration.StarfieldRenderer;
 import exiledsector.ui.decoration.TreeDecorations;
 import exiledsector.ui.hyperspace.HyperspaceMode;
 import exiledsector.ui.node.TreeNodeLayer;
-import exiledsector.ui.util.BorderedPanel;
-import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.TextLabel;
 
-import java.awt.Color;
 import java.util.List;
 import java.util.Set;
 
 public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements CampaignOverlay.Screen {
 
-    private static final float PANEL_MARGIN = AtlasScreen.PANEL_MARGIN;
-    private static final float BORDER_INSET = AtlasScreen.BORDER_INSET;
-    private static final float CHROME_PAD = AtlasScreen.CHROME_PAD;
     private static final float BACK_WIDTH = 160f;
     private static final float OPEN_SECONDS = AtlasScreen.OPEN_SECONDS;
-    private static final float BACKDROP_ALPHA = AtlasScreen.BACKDROP_ALPHA;
     private static final float START_ZOOM = 0.6f;
     private static final float TITLE_GAP = 8f;
     private static final float TOOLTIP_MAX_TEXT_HEIGHT = AtlasScreen.TOOLTIP_MAX_TEXT_HEIGHT;
@@ -63,7 +55,9 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
     private final SkillTreePanelStyle panelStyle = new SkillTreePanelStyle();
     private final StarfieldRenderer starfield = new StarfieldRenderer(panelStyle);
     private final CanvasCamera camera = new CanvasCamera();
-    private final PointerGesture<Void> gesture = new PointerGesture<>();
+    private final CanvasDrag<Void> drag = new CanvasDrag<>(camera);
+    private final PointerGesture<Void> gesture = drag.gesture();
+    private final AtlasOverlayFrame frame = new AtlasOverlayFrame();
     private final TreeDecorations decorations;
     private final TreeNodeLayer<AtlasTreeNode> nodeLayer = new TreeNodeLayer<>(panelStyle);
     private final HyperspaceMode hyperspace;
@@ -125,10 +119,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         titleLabel.set(Translation.text("atlasTree.title"));
         hintLabel.set(Translation.text("atlasTree.hint"));
         refreshPointsLabel();
-        PositionAPI position = panel.getPosition();
-        TooltipMakerAPI element = panel.createUIElement(BACK_WIDTH, ChromeMetrics.CONTROL_HEIGHT, false);
-        element.addButton(Translation.text("atlasTree.back"), Control.BACK, BACK_WIDTH, ChromeMetrics.CONTROL_HEIGHT, 0f);
-        panel.addUIElement(element).inTL(position.getWidth() - PANEL_MARGIN - CHROME_PAD - BACK_WIDTH, PANEL_MARGIN + CHROME_PAD);
+        AtlasOverlayFrame.addTopRightButton(panel, Translation.text("atlasTree.back"), Control.BACK, BACK_WIDTH);
     }
 
     private void refreshAllocation() {
@@ -150,6 +141,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
     @Override
     public void positionChanged(PositionAPI position) {
         panelPosition = position;
+        frame.place(position);
     }
 
     @Override
@@ -185,12 +177,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         mouseX = event.getX();
         mouseY = event.getY();
         mouseKnown = true;
-        if (gesture.moveTo(mouseX, mouseY)) {
-            camera.startDrag();
-            camera.dragBy(mouseX - gesture.pressX(), mouseY - gesture.pressY());
-        } else {
-            camera.dragBy(event.getDX(), event.getDY());
-        }
+        drag.pointerMoved(mouseX, mouseY, event.getDX(), event.getDY());
         event.consume();
     }
 
@@ -203,16 +190,14 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
             if (target != null) {
                 gesture.pressTarget(null, target, x, y, event.isCtrlDown(), event.isShiftDown(), true);
             } else {
-                gesture.pressPan(null, x, y);
-                camera.startDrag();
+                drag.pressPan(null, x, y);
             }
         } else if (event.isLMBUpEvent()) {
             AtlasTreeNode released = nodeLayer.nodeAt(viewport(), data.topology(), x, y);
             if (!gesture.isPanning() && released != null && gesture.releasedOn(released)) {
                 clicked(released, gesture.ctrlDown() && gesture.shiftDown());
             }
-            gesture.clear();
-            camera.stopDrag();
+            drag.release();
         } else if (event.isRMBDownEvent()) {
             travelThroughWormhole(nodeLayer.nodeAt(viewport(), data.topology(), x, y));
         } else if (event.isMouseScrollEvent()) {
@@ -306,13 +291,8 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         if (alpha <= 0f) {
             return;
         }
-        GLDraw.fillQuad(panelPosition.getX(), panelPosition.getY(), panelPosition.getWidth(), panelPosition.getHeight(), Color.BLACK,
-                BACKDROP_ALPHA * alpha);
-        GLDraw.fillQuad(innerLeft(), innerBottom(), innerWidth(), innerHeight(), Color.BLACK, alpha);
-        BorderedPanel.draw(innerLeft(), innerBottom(), innerWidth(), innerHeight(), alpha);
-        float screenScale = Global.getSettings().getScreenScaleMult();
-        try (GlScope clip = GlScope.clip((int) ((innerLeft() + BORDER_INSET) * screenScale), (int) (innerBottom() * screenScale),
-                (int) ((innerWidth() - BORDER_INSET * 2f) * screenScale), (int) (innerHeight() * screenScale))) {
+        frame.drawBackdrop(alpha);
+        try (GlScope clip = frame.clipContent()) {
             renderCanvas(alpha);
         }
         drawChrome(alpha);
@@ -336,11 +316,11 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
     }
 
     private void drawChrome(float alpha) {
-        float left = innerLeft() + CHROME_PAD;
-        float top = innerBottom() + innerHeight() - CHROME_PAD;
+        float left = frame.chromeLeft();
+        float top = frame.chromeTop();
         titleLabel.setAlpha(alpha).draw(left, top);
         pointsLabel.setAlpha(alpha).draw(left, top - titleLabel.height() - TITLE_GAP);
-        hintLabel.setAlpha(alpha).draw(left, innerBottom() + CHROME_PAD + hintLabel.height());
+        frame.drawFooterHint(hintLabel, alpha);
     }
 
     private void drawTooltip(AtlasTreeNode node, float alpha) {
@@ -356,22 +336,6 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         List<StyledText> body = AtlasTreeNodeText.body(node.type(), node.getTier() == SkillTier.ROOT
                 ? Translation.msg("atlasTree.pointsSource").arg("max", AtlasState.MAX_ATLAS_SKILL_POINTS).styled() : null);
         tooltipBody.setParagraphs(body, tooltipText.maxTextWidth(), TOOLTIP_MAX_TEXT_HEIGHT, SkillTreePanelStyle::standardHighlightColor);
-    }
-
-    private float innerLeft() {
-        return panelPosition.getX() + PANEL_MARGIN;
-    }
-
-    private float innerBottom() {
-        return panelPosition.getY() + PANEL_MARGIN;
-    }
-
-    private float innerWidth() {
-        return panelPosition.getWidth() - PANEL_MARGIN * 2f;
-    }
-
-    private float innerHeight() {
-        return panelPosition.getHeight() - PANEL_MARGIN * 2f;
     }
 
     private TreeViewport viewport() {

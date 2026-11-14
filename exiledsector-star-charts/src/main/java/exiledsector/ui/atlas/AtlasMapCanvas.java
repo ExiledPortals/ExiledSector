@@ -1,6 +1,7 @@
 package exiledsector.ui.atlas;
 
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.skills.skilleffect.render.Fade;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.charts.anomaly.AtlasRule;
 import exiledsector.charts.anomaly.ChartAnomalies;
@@ -579,7 +580,7 @@ final class AtlasMapCanvas {
             beams.ring(x, y, lerp(startRadius, endRadius, progress), null, look, PING_ALPHA * fade * alpha, ringWidthScale);
         }
         if (chain.isLast()) {
-            float breath = (float) Math.sin(ringArt.elapsedSeconds() * FINAL_HALO_SPEED) * 0.5f + 0.5f;
+            float breath = Fade.pulse(ringArt.elapsedSeconds() * FINAL_HALO_SPEED);
             beams.ring(x, y, radius * FINAL_HALO_SHARE, null, look, (0.4f + 0.6f * breath) * alpha, ringWidthScale);
         }
     }

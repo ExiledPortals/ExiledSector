@@ -110,7 +110,7 @@ final class SkillTreeUiButton {
             return;
         }
         alphaMult *= fadeAlpha;
-        BorderedPanel.draw(buttonBounds.left(), buttonBounds.bottom(), buttonBounds.width(), buttonBounds.height(), alphaMult);
+        BorderedPanel.draw(buttonBounds, alphaMult);
         float fillAlpha = 0f;
         if (buttonEnabled && buttonBounds.contains(mouseX, mouseY)) {
             fillAlpha = HOVER_ALPHA;

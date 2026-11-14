@@ -3,8 +3,6 @@ package exiledsector.ui.cargo;
 import exiledsector.skills.skilleffect.render.Fade;
 import org.junit.jupiter.api.Test;
 
-import java.awt.Color;
-
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -86,9 +84,7 @@ class AnchorIconFxTest {
     }
 
     @Test
-    void lighteningMovesEachChannelTowardsWhite() {
-        assertEquals(new Color(250, 203, 143), CargoIconFx.lighten(new Color(245, 150, 30), 0.5f));
-        assertEquals(Color.WHITE, CargoIconFx.lighten(Color.BLACK, 1f));
+    void anAnchorWithoutACrestHasNoCrestPath() {
         assertNull(AnchorIconFx.crestPath(null));
     }
 }

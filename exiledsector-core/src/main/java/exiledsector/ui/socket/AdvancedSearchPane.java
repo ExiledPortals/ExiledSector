@@ -636,8 +636,7 @@ final class AdvancedSearchPane extends HoloPanel {
     @Override
     public void renderBelow(float alphaMult) {
         if (panelPosition != null) {
-            GLDraw.fillQuad(panelPosition.getX(), panelPosition.getY(), panelPosition.getWidth(), panelPosition.getHeight(), Color.BLACK,
-                    contentAlpha() * alphaMult);
+            GLDraw.fillQuad(panelPosition, Color.BLACK, contentAlpha() * alphaMult);
         }
         super.renderBelow(alphaMult);
     }

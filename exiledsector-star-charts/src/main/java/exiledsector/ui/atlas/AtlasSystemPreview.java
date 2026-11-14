@@ -1,12 +1,10 @@
 package exiledsector.ui.atlas;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.PlanetSpecAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
-import com.fs.starfarer.api.util.Misc;
 import exiledsector.ui.decoration.PlanetSphere;
 import exiledsector.PlanetSpecs;
+import exiledsector.skills.skilleffect.render.CategorySprite;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.charts.layout.sketch.ChartSystemSketch;
 import exiledsector.charts.layout.sketch.ChartSystemSketch.Belt;
@@ -17,6 +15,7 @@ import exiledsector.ui.decoration.AtmosphereRing;
 import exiledsector.ui.decoration.StarAurora;
 import exiledsector.ui.decoration.UnitSphere;
 import exiledsector.ui.util.GlScope;
+import exiledsector.ui.util.HoloShapes;
 import exiledsector.ui.util.SpriteDraw;
 import exiledsector.ui.util.UnitCircle;
 import org.lwjgl.opengl.GL11;
@@ -96,9 +95,8 @@ final class AtlasSystemPreview {
     private final AtlasSystemArt.Frame frame = new AtlasSystemArt.Frame();
     private final Map<String, StarAurora> auroras = new HashMap<>();
     private final Vector2f bandCentre = new Vector2f();
-    private SpriteAPI auroraTexture;
-    private SpriteAPI atmosphereTexture;
-    private boolean sharedTexturesLoaded;
+    private final CategorySprite auroraTexture = new CategorySprite(StarAurora.TEXTURE_CATEGORY, StarAurora.TEXTURE_ID);
+    private final CategorySprite atmosphereTexture = new CategorySprite(AtmosphereRing.TEXTURE_CATEGORY, AtmosphereRing.TEXTURE_ID);
     private float bodyX;
     private float bodyY;
 
@@ -120,7 +118,6 @@ final class AtlasSystemPreview {
         if (radius <= 0f || alpha <= 0f || outerRadius <= 0f) {
             return;
         }
-        loadSharedTextures();
         ChartSystemSketch sketch = prepared.sketch();
         Fit fit = new Fit(cx, cy, radius, radius * ORBIT_REACH_SHARE, outerRadius, elapsedSeconds);
         float bodyAlpha = alpha * (1f - spotlight.level());
@@ -255,20 +252,22 @@ final class AtlasSystemPreview {
             float halo = Math.min(fit.radius() * MAX_CORONA_SHARE, pixels * Math.max(1f, spec.getCoronaSize()));
             SpriteDraw.drawAdditiveAtCenter(spriteCache, coronaPath, bodyX, bodyY, halo * 2f, halo * 2f, corona, alpha);
         }
-        if (auroraTexture != null && pixels >= AURORA_MIN_PIXELS) {
+        SpriteAPI auroraSprite = auroraTexture.get();
+        if (auroraSprite != null && pixels >= AURORA_MIN_PIXELS) {
             StarAurora aurora = auroras.computeIfAbsent(auroraKey, id -> new StarAurora());
-            aurora.render(auroraTexture, bodyX, bodyY, AURORA_DETAIL_RADIUS, pixels / AURORA_DETAIL_RADIUS, corona, alpha);
+            aurora.render(auroraSprite, bodyX, bodyY, AURORA_DETAIL_RADIUS, pixels / AURORA_DETAIL_RADIUS, corona, alpha);
         }
         drawBody(spec, bodyX, bodyY, pixels, star.startAngle(), fit.elapsedSeconds(), FALLBACK_STAR_COLOUR, alpha, true);
     }
 
     private static void drawPhotosphere(Color colour, float cx, float cy, float radius, float alpha) {
         try (GlScope glow = GlScope.flat().blend(GL11.GL_SRC_ALPHA, GL11.GL_ONE)) {
-            drawGlow(cx, cy, radius * PHOTOSPHERE_GLOW_SHARE, colour, PHOTOSPHERE_GLOW_ALPHA * alpha);
-            drawGlow(cx, cy, radius * PHOTOSPHERE_HEART_SHARE, colour, alpha);
+            HoloShapes.centreGlow(cx, cy, radius * PHOTOSPHERE_GLOW_SHARE, GLOW_CIRCLE, colour, PHOTOSPHERE_GLOW_ALPHA * alpha);
+            HoloShapes.centreGlow(cx, cy, radius * PHOTOSPHERE_HEART_SHARE, GLOW_CIRCLE, colour, alpha);
         }
         try (GlScope flat = GlScope.flat()) {
-            drawDisc(cx, cy, Math.max(MIN_BODY_PIXELS, radius * PHOTOSPHERE_CORE_SHARE), whitened(colour), alpha);
+            float coreRadius = Math.max(MIN_BODY_PIXELS, radius * PHOTOSPHERE_CORE_SHARE);
+            HoloShapes.disc(cx, cy, coreRadius, discSegments(coreRadius), whitened(colour), alpha);
         }
     }
 
@@ -296,11 +295,12 @@ final class AtlasSystemPreview {
                 drawShadow(bodyX, bodyY, pixels, dx / length, dy / length, alpha);
             }
         }
-        if (spec != null && atmosphereTexture != null && pixels >= ATMOSPHERE_MIN_PIXELS && spec.getAtmosphereThickness() > 0f
+        SpriteAPI atmosphere = atmosphereTexture.get();
+        if (spec != null && atmosphere != null && pixels >= ATMOSPHERE_MIN_PIXELS && spec.getAtmosphereThickness() > 0f
                 && spec.getAtmosphereColor() != null) {
             float thickness = pixels * spec.getAtmosphereThickness();
             float inner = pixels - thickness * AtmosphereRing.INNER_INSET_MULT;
-            AtmosphereRing.draw(atmosphereTexture, bodyX, bodyY, inner, inner + thickness, spec.getAtmosphereColor(), alpha);
+            AtmosphereRing.draw(atmosphere, bodyX, bodyY, inner, inner + thickness, spec.getAtmosphereColor(), alpha);
         }
     }
 
@@ -312,25 +312,13 @@ final class AtlasSystemPreview {
         if (texture == null) {
             Color flatColour = spec != null && spec.getIconColor() != null ? spec.getIconColor() : fallback;
             try (GlScope flat = GlScope.flat()) {
-                drawDisc(x, y, pixels, flatColour, alpha);
+                HoloShapes.disc(x, y, pixels, discSegments(pixels), flatColour, alpha);
             }
             return;
         }
         float rotation = startAngle + spec.getRotation() * elapsedSeconds;
         UnitSphere sphere = pixels >= DETAILED_SPHERE_PIXELS ? detailedSphere : unitSphere;
         PlanetSphere.draw(sphere, texture, spec, x, y, pixels, rotation, colour, alpha, rim ? alpha * RIM_ALPHA_MULT : 0f, pixels * 0.03f);
-    }
-
-    private static void drawDisc(float x, float y, float radius, Color colour, float alpha) {
-        UnitCircle circle = UnitCircle.of(discSegments(radius));
-        Misc.setColor(colour, alpha);
-        GL11.glBegin(GL11.GL_TRIANGLE_FAN);
-        GL11.glVertex2f(x, y);
-        for (int i = 0; i <= circle.segments(); i++) {
-            int index = i % circle.segments();
-            GL11.glVertex2f(x + circle.cos(index) * radius, y + circle.sin(index) * radius);
-        }
-        GL11.glEnd();
     }
 
     private static void drawShadow(float x, float y, float radius, float lightX, float lightY, float alpha) {
@@ -346,30 +334,6 @@ final class AtlasSystemPreview {
             GL11.glVertex2f(x + cos * radius, y + sin * radius);
         }
         GL11.glEnd();
-    }
-
-    private static void drawGlow(float x, float y, float radius, Color colour, float alpha) {
-        GL11.glBegin(GL11.GL_TRIANGLE_FAN);
-        Misc.setColor(colour, alpha);
-        GL11.glVertex2f(x, y);
-        Misc.setColor(colour, 0f);
-        for (int i = 0; i <= GLOW_CIRCLE.segments(); i++) {
-            int index = i % GLOW_CIRCLE.segments();
-            GL11.glVertex2f(x + GLOW_CIRCLE.cos(index) * radius, y + GLOW_CIRCLE.sin(index) * radius);
-        }
-        GL11.glEnd();
-    }
-
-    private void loadSharedTextures() {
-        if (sharedTexturesLoaded) {
-            return;
-        }
-        sharedTexturesLoaded = true;
-        SettingsAPI settings = Global.getSettings();
-        if (settings != null) {
-            auroraTexture = settings.getSprite(StarAurora.TEXTURE_CATEGORY, StarAurora.TEXTURE_ID);
-            atmosphereTexture = settings.getSprite(AtmosphereRing.TEXTURE_CATEGORY, AtmosphereRing.TEXTURE_ID);
-        }
     }
 
     private static PlanetSpecAPI spec(String typeId) {

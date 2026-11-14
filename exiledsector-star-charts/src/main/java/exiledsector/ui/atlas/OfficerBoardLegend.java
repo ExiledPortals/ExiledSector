@@ -1,6 +1,5 @@
 package exiledsector.ui.atlas;
 
-import com.fs.starfarer.api.Global;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.SkillTreePanelStyle;
@@ -123,8 +122,8 @@ final class OfficerBoardLegend {
     void drawTooltip(Color accent, float mouseX, float mouseY, float alpha) {
         float boxWidth = (float) Math.ceil(width() + PADDING * 2f);
         float boxHeight = (float) Math.ceil(height() + PADDING * 2f);
-        float boxX = Math.round(SkillTreePanelStyle.tooltipLeft(mouseX, boxWidth, Global.getSettings().getScreenWidth()));
-        float boxY = Math.round(SkillTreePanelStyle.tooltipBottom(mouseY, boxHeight, Global.getSettings().getScreenHeight()));
+        float boxX = SkillTreePanelStyle.cursorBoxLeft(mouseX, boxWidth);
+        float boxY = SkillTreePanelStyle.cursorBoxBottom(mouseY, boxHeight);
         SkillTreePanelStyle.drawTooltipBackground(boxX, boxY, boxWidth, boxHeight, alpha, accent);
         draw(boxX + PADDING, boxY + boxHeight - PADDING, alpha);
     }

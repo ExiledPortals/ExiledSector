@@ -16,22 +16,29 @@ public final class HoloShapes {
     }
 
     public static void circle(float cx, float cy, float radius, Color color, float width, float alpha) {
+        circle(cx, cy, radius, UNIT_CIRCLE, color, width, alpha);
+    }
+
+    public static void circle(float cx, float cy, float radius, UnitCircle circle, Color color, float width, float alpha) {
         GL11.glLineWidth(width);
         Misc.setColor(color, alpha);
         GL11.glBegin(GL11.GL_LINE_LOOP);
-        for (int i = 0; i < CIRCLE_STEPS; i++) {
-            GL11.glVertex2f(cx + UNIT_CIRCLE.cos(i) * radius, cy + UNIT_CIRCLE.sin(i) * radius);
+        for (int i = 0; i < circle.segments(); i++) {
+            GL11.glVertex2f(cx + circle.cos(i) * radius, cy + circle.sin(i) * radius);
         }
         GL11.glEnd();
         GL11.glLineWidth(1f);
     }
 
     public static void disc(float cx, float cy, float radius, Color color, float alpha) {
-        disc(cx, cy, radius, CIRCLE_STEPS, color, alpha);
+        disc(cx, cy, radius, UNIT_CIRCLE, color, alpha);
     }
 
     public static void disc(float cx, float cy, float radius, int segments, Color color, float alpha) {
-        UnitCircle circle = UnitCircle.of(segments);
+        disc(cx, cy, radius, UnitCircle.of(segments), color, alpha);
+    }
+
+    public static void disc(float cx, float cy, float radius, UnitCircle circle, Color color, float alpha) {
         Misc.setColor(color, alpha);
         GL11.glBegin(GL11.GL_TRIANGLE_FAN);
         GL11.glVertex2f(cx, cy);
@@ -72,6 +79,18 @@ public final class HoloShapes {
             float sin = (float) Math.sin(angle);
             GL11.glVertex2f(cx + cos * radius, cy + sin * radius);
             GL11.glVertex2f(cx + cos * (radius - length), cy + sin * (radius - length));
+        }
+        GL11.glEnd();
+    }
+
+    public static void centreGlow(float cx, float cy, float radius, UnitCircle circle, Color color, float alpha) {
+        GL11.glBegin(GL11.GL_TRIANGLE_FAN);
+        Misc.setColor(color, alpha);
+        GL11.glVertex2f(cx, cy);
+        Misc.setColor(color, 0f);
+        for (int i = 0; i <= circle.segments(); i++) {
+            int index = i % circle.segments();
+            GL11.glVertex2f(cx + circle.cos(index) * radius, cy + circle.sin(index) * radius);
         }
         GL11.glEnd();
     }

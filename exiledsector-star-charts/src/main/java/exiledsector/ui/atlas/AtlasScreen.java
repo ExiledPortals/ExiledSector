@@ -38,6 +38,7 @@ import exiledsector.items.Item;
 import exiledsector.items.MaterialItems;
 import exiledsector.ui.CampaignOverlay;
 import exiledsector.ui.CanvasCamera;
+import exiledsector.ui.CanvasDrag;
 import exiledsector.ui.ChromeMetrics;
 import exiledsector.ui.EscapeKey;
 import exiledsector.ui.PointerGesture;
@@ -57,8 +58,6 @@ import exiledsector.ui.socket.BenchModeSupport;
 import exiledsector.ui.socket.GameTextTooltip;
 import exiledsector.ui.socket.SocketPanelPlacement;
 import exiledsector.ui.socket.CraftingBenchPanel;
-import exiledsector.ui.util.BorderedPanel;
-import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.TextLabel;
 import org.lwjgl.input.Keyboard;
@@ -118,7 +117,9 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     private final SkillTreePanelStyle panelStyle = new SkillTreePanelStyle();
     private final StarfieldRenderer starfield = new StarfieldRenderer(panelStyle);
     private final CanvasCamera camera = new CanvasCamera(AtlasMapCanvas.MIN_ZOOM, AtlasMapCanvas.MAX_ZOOM);
-    private final PointerGesture<Void> gesture = new PointerGesture<>();
+    private final CanvasDrag<Void> drag = new CanvasDrag<>(camera);
+    private final PointerGesture<Void> gesture = drag.gesture();
+    private final AtlasOverlayFrame frame = new AtlasOverlayFrame();
     private final TextLabel titleLabel = new TextLabel(UiFonts.TITLE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
     private final TextLabel hintLabel = new TextLabel(UiFonts.HINT, HINT_COLOUR);
     private final TooltipText tooltipText = SkillTreePanelStyle.tooltipText();
@@ -212,9 +213,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         titleLabel.set(Translation.text("chart.atlas.title"));
         hintLabel.set(Translation.text("chart.atlas.hint"));
         PositionAPI position = panelRoot.getPosition();
-        TooltipMakerAPI element = panelRoot.createUIElement(CLOSE_WIDTH, ChromeMetrics.CONTROL_HEIGHT, false);
-        element.addButton(Translation.text("chart.atlas.close"), Control.CLOSE, CLOSE_WIDTH, ChromeMetrics.CONTROL_HEIGHT, 0f);
-        panelRoot.addUIElement(element).inTL(position.getWidth() - PANEL_MARGIN - CHROME_PAD - CLOSE_WIDTH, PANEL_MARGIN + CHROME_PAD);
+        AtlasOverlayFrame.addTopRightButton(panelRoot, Translation.text("chart.atlas.close"), Control.CLOSE, CLOSE_WIDTH);
         TooltipMakerAPI toggles = panelRoot.createUIElement(BORDERS_WIDTH, ChromeMetrics.CONTROL_HEIGHT, false);
         bordersButton = toggles.addAreaCheckbox(Translation.text("chart.atlas.borders"), Control.BORDERS, Misc.getBasePlayerColor(),
                 Misc.getDarkPlayerColor(), Misc.getBrightPlayerColor(), BORDERS_WIDTH, ChromeMetrics.CONTROL_HEIGHT, 0f);
@@ -566,15 +565,15 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     }
 
     private float focusCentreX() {
-        return innerLeft() + innerWidth() / 2f;
+        return frame.innerLeft() + frame.innerWidth() / 2f;
     }
 
     private float focusCentreY() {
-        return innerBottom() + innerHeight() / 2f;
+        return frame.innerBottom() + frame.innerHeight() / 2f;
     }
 
     private float focusReach() {
-        return Math.min(innerWidth() / 2f - BORDER_INSET, innerHeight() / 2f);
+        return Math.min(frame.innerWidth() / 2f - BORDER_INSET, frame.innerHeight() / 2f);
     }
 
     private AtlasMapCanvas.Focus focus() {
@@ -610,22 +609,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     @Override
     public void positionChanged(PositionAPI position) {
         panelPosition = position;
-    }
-
-    private float innerLeft() {
-        return panelPosition.getX() + PANEL_MARGIN;
-    }
-
-    private float innerBottom() {
-        return panelPosition.getY() + PANEL_MARGIN;
-    }
-
-    private float innerWidth() {
-        return panelPosition.getWidth() - PANEL_MARGIN * 2f;
-    }
-
-    private float innerHeight() {
-        return panelPosition.getHeight() - PANEL_MARGIN * 2f;
+        frame.place(position);
     }
 
     private TreeViewport viewport() {
@@ -678,8 +662,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         if (focusing || fade.closing()) {
             return;
         }
-        gesture.clear();
-        camera.stopDrag();
+        drag.release();
         hoveredCell = null;
         hoveredAnomaly = null;
         officerBoard.open(map.generator(), map.state());
@@ -702,7 +685,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     private void placeOfficerBoard() {
         float boardBottom = panelPosition.getY() + PANEL_MARGIN + CHROME_PAD + ChromeMetrics.CONTROL_HEIGHT + BUTTON_GAP;
         float boardTop = panelPosition.getY() + panelPosition.getHeight() - sidePanelTop();
-        officerBoard.place(innerLeft() + CHROME_PAD, boardBottom, innerWidth() - CHROME_PAD * 2f, boardTop - boardBottom);
+        officerBoard.place(frame.innerLeft() + CHROME_PAD, boardBottom, frame.innerWidth() - CHROME_PAD * 2f, boardTop - boardBottom);
     }
 
     private void officerBoardInput(InputEventAPI event) {
@@ -731,19 +714,13 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     }
 
     private void dragMapUnderBoard(InputEventAPI event) {
-        if (gesture.moveTo(event.getX(), event.getY())) {
-            camera.startDrag();
-            camera.dragBy(event.getX() - gesture.pressX(), event.getY() - gesture.pressY());
-        } else {
-            camera.dragBy(event.getDX(), event.getDY());
-        }
+        drag.pointerMoved(event.getX(), event.getY(), event.getDX(), event.getDY());
     }
 
     private void officerBoardReleased(float x, float y) {
         boolean pressedOutside = gesture.isActive();
         boolean clickedOutside = gesture.releasedOn(officerBoard) && !officerBoard.contains(x, y);
-        gesture.clear();
-        camera.stopDrag();
+        drag.release();
         if (clickedOutside) {
             officerBoard.close();
         } else if (!pressedOutside && officerBoard.contains(x, y)) {
@@ -764,7 +741,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     }
 
     private void spotlightFromBoard(AtlasCell cell) {
-        float visibleCentreX = (innerLeft() + officerBoard.left()) / 2f;
+        float visibleCentreX = (frame.innerLeft() + officerBoard.left()) / 2f;
         float panelCentreX = panelPosition.getX() + panelPosition.getWidth() / 2f;
         camera.panTo(map.displayX(cell) + (panelCentreX - visibleCentreX) / camera.zoom(), map.displayY(cell));
         spotlight.start(cell);
@@ -847,27 +824,20 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         if (event.isMouseMoveEvent()) {
             mouseX = x;
             mouseY = y;
-            if (gesture.moveTo(x, y)) {
-                camera.startDrag();
-                camera.dragBy(x - gesture.pressX(), y - gesture.pressY());
-            } else {
-                camera.dragBy(event.getDX(), event.getDY());
-            }
+            drag.pointerMoved(x, y, event.getDX(), event.getDY());
         } else if (event.isMouseDownEvent() && event.isLMBEvent()) {
             AtlasCell target = map.cellAt(viewport(), x, y);
             if (target != null) {
                 gesture.pressTarget(null, target, x, y, event.isCtrlDown(), event.isShiftDown(), true);
             } else {
-                gesture.pressPan(null, x, y);
-                camera.startDrag();
+                drag.pressPan(null, x, y);
             }
         } else if (event.isMouseUpEvent() && event.isLMBUpEvent()) {
             AtlasCell released = map.cellAt(viewport(), x, y);
             if (released != null && gesture.releasedOn(released)) {
                 clicked(released);
             }
-            gesture.clear();
-            camera.stopDrag();
+            drag.release();
         } else if (event.isMouseScrollEvent()) {
             camera.scrollAt(event.getEventValue() > 0, x, y, panelPosition);
         }
@@ -973,19 +943,14 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         if (alpha <= 0f) {
             return;
         }
-        GLDraw.fillQuad(panelPosition.getX(), panelPosition.getY(), panelPosition.getWidth(), panelPosition.getHeight(), Color.BLACK,
-                BACKDROP_ALPHA * alpha);
-        GLDraw.fillQuad(innerLeft(), innerBottom(), innerWidth(), innerHeight(), Color.BLACK, alpha);
-        BorderedPanel.draw(innerLeft(), innerBottom(), innerWidth(), innerHeight(), alpha);
-        float screenScale = Global.getSettings().getScreenScaleMult();
-        try (GlScope clip = GlScope.clip((int) ((innerLeft() + BORDER_INSET) * screenScale), (int) (innerBottom() * screenScale),
-                (int) ((innerWidth() - BORDER_INSET * 2f) * screenScale), (int) (innerHeight() * screenScale))) {
+        frame.drawBackdrop(alpha);
+        try (GlScope clip = frame.clipContent()) {
             starfield.render(panelPosition, camera.panX(), camera.panY(), alpha);
             map.render(viewport(), panelStyle.getAccentColor(), alpha, focusedCell);
             renderSpotlight(alpha);
             if (focusedCell != null) {
                 float level = Fade.smooth(focusLevel);
-                GLDraw.fillQuad(innerLeft(), innerBottom(), innerWidth(), innerHeight(), Color.BLACK, FOCUS_DIM_ALPHA * level * alpha);
+                frame.fillInner(Color.BLACK, FOCUS_DIM_ALPHA * level * alpha);
                 map.renderFocus(viewport(), focusedCell, focus(), alpha);
             }
         }
@@ -1006,10 +971,8 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     }
 
     private void drawChrome(float alpha) {
-        float left = innerLeft() + CHROME_PAD;
-        float top = innerBottom() + innerHeight() - CHROME_PAD;
-        titleLabel.setAlpha(alpha).draw(left, top);
-        hintLabel.setAlpha(alpha).draw(left, innerBottom() + CHROME_PAD + hintLabel.height());
+        titleLabel.setAlpha(alpha).draw(frame.chromeLeft(), frame.chromeTop());
+        frame.drawFooterHint(hintLabel, alpha);
     }
 
     private void drawTooltip(Object subject, Runnable writer, float alpha) {

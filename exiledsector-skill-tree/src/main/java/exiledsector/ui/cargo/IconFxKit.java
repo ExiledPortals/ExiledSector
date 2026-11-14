@@ -3,6 +3,7 @@ package exiledsector.ui.cargo;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.skilleffect.render.SpriteCache;
+import exiledsector.ui.util.ColorUtil;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.SpriteDraw;
 import exiledsector.ui.util.TexturedQuadBatch;
@@ -44,7 +45,7 @@ final class IconFxKit {
     }
 
     static void drawBorder(SpriteCache sprites, Color color, float cx, float cy, float unit, float wave, float flash, float alphaMult) {
-        drawFrame(flash > 0.01f ? CargoIconFx.lighten(color, FLASH_LIGHTEN * flash) : color, cx, cy, unit, alphaMult);
+        drawFrame(flash > 0.01f ? ColorUtil.lighten(color, FLASH_LIGHTEN * flash) : color, cx, cy, unit, alphaMult);
         drawLights(sprites, color, cx, cy, unit, wave, alphaMult);
     }
 
@@ -109,7 +110,7 @@ final class IconFxKit {
         if (texture == null) {
             return;
         }
-        Color tint = CargoIconFx.lighten(color, 0.55f);
+        Color tint = ColorUtil.lighten(color, 0.55f);
         try (TexturedQuadBatch batch = LIGHT_BATCH.beginAdditive(texture)) {
             for (int path = 0; path < 2; path++) {
                 for (int light = 0; light < LIGHTS_PER_SIDE; light++) {

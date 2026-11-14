@@ -83,8 +83,7 @@ public final class HoloFrame {
         if (!holoTransition.isVisible()) {
             return;
         }
-        GLDraw.fillQuad(hostPosition.getX(), hostPosition.getY(), hostPosition.getWidth(), hostPosition.getHeight(), BACKDROP_COLOR,
-                BACKDROP_ALPHA * holoTransition.backdropAlpha() * alphaMult);
+        GLDraw.fillQuad(hostPosition, BACKDROP_COLOR, BACKDROP_ALPHA * holoTransition.backdropAlpha() * alphaMult);
     }
 
     public void render(float left, float bottom, float width, float height, Color accent, float alphaMult, Content content) {

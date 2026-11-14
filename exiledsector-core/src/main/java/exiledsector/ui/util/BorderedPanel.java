@@ -1,7 +1,9 @@
 package exiledsector.ui.util;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
+import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.skills.skilleffect.render.SpriteCache;
+import exiledsector.ui.ScreenRect;
 
 import java.awt.Color;
 import java.util.HashSet;
@@ -26,6 +28,14 @@ public final class BorderedPanel {
     private static final Set<String> INSET_SPRITES = new HashSet<>();
 
     private BorderedPanel() {
+    }
+
+    public static void draw(PositionAPI area, float alphaMult) {
+        draw(area.getX(), area.getY(), area.getWidth(), area.getHeight(), alphaMult);
+    }
+
+    public static void draw(ScreenRect area, float alphaMult) {
+        draw(area.left(), area.bottom(), area.width(), area.height(), alphaMult);
     }
 
     public static void draw(float x, float y, float width, float height, float alphaMult) {

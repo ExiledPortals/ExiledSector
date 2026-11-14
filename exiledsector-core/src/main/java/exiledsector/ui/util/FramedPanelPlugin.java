@@ -31,7 +31,7 @@ public final class FramedPanelPlugin extends BaseCustomUIPanelPlugin {
     @Override
     public void renderBelow(float alphaMult) {
         if (panelPosition != null) {
-            BorderedPanel.draw(panelPosition.getX(), panelPosition.getY(), panelPosition.getWidth(), panelPosition.getHeight(), alphaMult);
+            BorderedPanel.draw(panelPosition, alphaMult);
         }
     }
 

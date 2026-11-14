@@ -4,6 +4,7 @@ import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.cargo.AnimatedItemIcons;
+import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.SpriteDraw;
 import org.lwjgl.opengl.GL11;
 
@@ -83,18 +84,15 @@ final class SkillTreeSocketRenderer {
         SpriteAPI core = spriteCache.texture(ARC_CORE_TEXTURE);
         if (fringe == null || core == null) return;
         float halfSize = frameSize / 2f;
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-        for (SocketArcs.Arc arc : socketArcs.arcs(nodeId)) {
-            float alpha = arc.alpha() * alphaMult;
-            Misc.setColor(accent, alpha);
-            drawArcStrip(fringe, arc, cx, cy, halfSize, frameSize * ARC_FRINGE_WIDTH_RATIO);
-            Misc.setColor(ARC_CORE_COLOR, alpha);
-            drawArcStrip(core, arc, cx, cy, halfSize, frameSize * ARC_CORE_WIDTH_RATIO);
+        try (GlScope scope = GlScope.textured(GL11.GL_SRC_ALPHA, GL11.GL_ONE)) {
+            for (SocketArcs.Arc arc : socketArcs.arcs(nodeId)) {
+                float alpha = arc.alpha() * alphaMult;
+                Misc.setColor(accent, alpha);
+                drawArcStrip(fringe, arc, cx, cy, halfSize, frameSize * ARC_FRINGE_WIDTH_RATIO);
+                Misc.setColor(ARC_CORE_COLOR, alpha);
+                drawArcStrip(core, arc, cx, cy, halfSize, frameSize * ARC_CORE_WIDTH_RATIO);
+            }
         }
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
     }
 
     private static void drawArcStrip(SpriteAPI texture, SocketArcs.Arc arc, float cx, float cy, float halfSize, float stripWidth) {

@@ -19,8 +19,8 @@ import exiledsector.i18n.Translation;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.TooltipText;
-import exiledsector.ui.cargo.CargoIconFx;
 import exiledsector.ui.cargo.IconCrossFade;
+import exiledsector.ui.cargo.IconFxClock;
 import exiledsector.ui.decoration.RefitShipPortrait;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.SpriteDraw;
@@ -295,8 +295,8 @@ final class OfficerBoardTooltip {
         float contentWidth = contentWidth();
         float boxWidth = (float) Math.ceil(contentWidth + PADDING * 2f);
         float boxHeight = boxHeight();
-        float boxX = Math.round(SkillTreePanelStyle.tooltipLeft(mouseX, boxWidth, Global.getSettings().getScreenWidth()));
-        float boxY = Math.round(SkillTreePanelStyle.tooltipBottom(mouseY, boxHeight, Global.getSettings().getScreenHeight()));
+        float boxX = SkillTreePanelStyle.cursorBoxLeft(mouseX, boxWidth);
+        float boxY = SkillTreePanelStyle.cursorBoxBottom(mouseY, boxHeight);
         SkillTreePanelStyle.drawTooltipBackground(boxX, boxY, boxWidth, boxHeight, alphaMult, accent);
         float left = boxX + PADDING;
         float top = boxY + boxHeight - PADDING;
@@ -348,7 +348,7 @@ final class OfficerBoardTooltip {
     private float drawReward(RewardRow row, float left, float top, float alphaMult) {
         RewardFace face = row.face();
         GLDraw.fillQuad(left, top - ICON_SIZE, ICON_SIZE, ICON_SIZE, SLOT_FILL, alphaMult);
-        IconCrossFade.drawAtCenter(sprites, face.iconPaths(), CargoIconFx.seconds(), left + ICON_SIZE / 2f, top - ICON_SIZE / 2f, ICON_SIZE,
+        IconCrossFade.drawAtCenter(sprites, face.iconPaths(), IconFxClock.seconds(), left + ICON_SIZE / 2f, top - ICON_SIZE / 2f, ICON_SIZE,
                 ICON_SIZE, alphaMult);
         GLDraw.strokeQuad(left, top - ICON_SIZE, ICON_SIZE, ICON_SIZE, face.frameColour(), FRAME_WIDTH, alphaMult);
         float labelTop = top - Math.max(0f, ICON_SIZE - row.label().height()) / 2f;

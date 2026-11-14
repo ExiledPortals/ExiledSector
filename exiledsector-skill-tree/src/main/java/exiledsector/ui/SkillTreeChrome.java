@@ -159,7 +159,7 @@ final class SkillTreeChrome {
         schematicButtons.renderButtons(mouseX, mouseY, alphaMult * visibility.alpha(CanvasMode.Chrome.SCHEMATIC_BUTTONS),
                 mode.enables(CanvasMode.Chrome.SCHEMATIC_BUTTONS));
         ScreenRect frame = shipCardFrame(canvasPosition);
-        BorderedPanel.draw(frame.left(), frame.bottom(), frame.width(), frame.height(), alphaMult);
+        BorderedPanel.draw(frame, alphaMult);
         statPanel.renderSheet(canvasPosition, mouseX, mouseY, alphaMult * visibility.alpha(CanvasMode.Chrome.STATS_TOGGLE) * (1f - craftingBenchDim),
                 statsToggleLive(mode));
     }

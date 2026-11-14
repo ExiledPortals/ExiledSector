@@ -1,6 +1,7 @@
 package exiledsector.charts.wormhole;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
+import exiledsector.ui.util.GlScope;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -96,19 +97,18 @@ final class ChartWormholeBand {
         GL11.glPushMatrix();
         GL11.glTranslatef(centreX, centreY, 0f);
         GL11.glRotatef(bandAngle, 0f, 0f, 1f);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        bandTexture.bindTexture();
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-        GL11.glColor4ub((byte) 255, (byte) 255, (byte) 255, (byte) (int) (255f * alphaMult));
-        float textureAlong = 0f;
-        GL11.glBegin(GL11.GL_QUAD_STRIP);
-        for (int segment = 0; segment < segmentCount; segment++) {
-            emitSegment(segment, radiansPerSegment, textureLeft, textureRight, textureAlong);
-            textureAlong += textureStepPerSegment;
+        try (GlScope scope = GlScope.textured(GL11.GL_SRC_ALPHA, GL11.GL_ONE)) {
+            bandTexture.bindTexture();
+            GL11.glColor4ub((byte) 255, (byte) 255, (byte) 255, (byte) (int) (255f * alphaMult));
+            float textureAlong = 0f;
+            GL11.glBegin(GL11.GL_QUAD_STRIP);
+            for (int segment = 0; segment < segmentCount; segment++) {
+                emitSegment(segment, radiansPerSegment, textureLeft, textureRight, textureAlong);
+                textureAlong += textureStepPerSegment;
+            }
+            emitSegment(0, radiansPerSegment, textureLeft, textureRight, textureAlong);
+            GL11.glEnd();
         }
-        emitSegment(0, radiansPerSegment, textureLeft, textureRight, textureAlong);
-        GL11.glEnd();
         GL11.glPopMatrix();
     }
 

@@ -9,7 +9,6 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
-import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.OfficerDefeat;
@@ -22,15 +21,13 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.CampaignOverlay;
-import exiledsector.ui.ChromeMetrics;
 import exiledsector.ui.EscapeKey;
 import exiledsector.ui.OverlayFade;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.UiFonts;
-import exiledsector.ui.cargo.CargoIconFx;
 import exiledsector.ui.cargo.IconCrossFade;
-import exiledsector.ui.util.BorderedPanel;
+import exiledsector.ui.cargo.IconFxClock;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.TextLabel;
 
@@ -44,10 +41,7 @@ import java.util.function.Function;
 
 public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implements CampaignOverlay.Screen {
 
-    private static final float PANEL_MARGIN = AtlasScreen.PANEL_MARGIN;
-    private static final float CHROME_PAD = AtlasScreen.CHROME_PAD;
     private static final float OPEN_SECONDS = AtlasScreen.OPEN_SECONDS;
-    private static final float BACKDROP_ALPHA = AtlasScreen.BACKDROP_ALPHA;
     private static final float LATER_WIDTH = 140f;
     private static final Object LATER_BUTTON = new Object();
     private static final float CARD_WIDTH = 200f;
@@ -73,6 +67,7 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
     private final Consumer<CarriedItem> onPick;
     private final Function<CampaignOverlay.Host, CampaignOverlay.Screen> returnTo;
     private final List<Card> cards = new ArrayList<>();
+    private final AtlasOverlayFrame frame = new AtlasOverlayFrame();
     private final Random random = new Random();
     private final OverlayFade fade = new OverlayFade(OPEN_SECONDS);
     private final TextLabel titleLabel = new TextLabel(UiFonts.TITLE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
@@ -154,10 +149,8 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
             hintLabel.set(Translation.text("chart.officer.reward.hint"));
         });
         PositionAPI position = panel.getPosition();
-        TooltipMakerAPI laterElement = panel.createUIElement(LATER_WIDTH, ChromeMetrics.CONTROL_HEIGHT, false);
-        I18n.forGameText(() -> laterElement.addButton(Translation.text("chart.officer.reward.later"), LATER_BUTTON, LATER_WIDTH,
-                ChromeMetrics.CONTROL_HEIGHT, 0f));
-        panel.addUIElement(laterElement).inTL(position.getWidth() - PANEL_MARGIN - CHROME_PAD - LATER_WIDTH, PANEL_MARGIN + CHROME_PAD);
+        String laterText = I18n.forGameText(() -> Translation.text("chart.officer.reward.later"));
+        AtlasOverlayFrame.addTopRightButton(panel, laterText, LATER_BUTTON, LATER_WIDTH);
         float rowWidth = rowWidth();
         float firstLeft = (position.getWidth() - rowWidth) / 2f;
         float top = (position.getHeight() - CARD_HEIGHT) / 2f;
@@ -175,6 +168,7 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
     @Override
     public void positionChanged(PositionAPI position) {
         panelPosition = position;
+        frame.place(position);
     }
 
     @Override
@@ -261,17 +255,10 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
         if (alpha <= 0f) {
             return;
         }
-        GLDraw.fillQuad(panelPosition.getX(), panelPosition.getY(), panelPosition.getWidth(), panelPosition.getHeight(), Color.BLACK,
-                BACKDROP_ALPHA * alpha);
-        float innerLeft = panelPosition.getX() + PANEL_MARGIN;
-        float innerBottom = panelPosition.getY() + PANEL_MARGIN;
-        float innerWidth = panelPosition.getWidth() - PANEL_MARGIN * 2f;
-        float innerHeight = panelPosition.getHeight() - PANEL_MARGIN * 2f;
-        GLDraw.fillQuad(innerLeft, innerBottom, innerWidth, innerHeight, Color.BLACK, alpha);
-        BorderedPanel.draw(innerLeft, innerBottom, innerWidth, innerHeight, alpha);
-        float top = innerBottom + innerHeight - CHROME_PAD;
-        titleLabel.setAlpha(alpha).draw(innerLeft + CHROME_PAD, top);
-        hintLabel.setAlpha(alpha).draw(innerLeft + CHROME_PAD, top - titleLabel.height() - TITLE_GAP);
+        frame.drawBackdrop(alpha);
+        float top = frame.chromeTop();
+        titleLabel.setAlpha(alpha).draw(frame.chromeLeft(), top);
+        hintLabel.setAlpha(alpha).draw(frame.chromeLeft(), top - titleLabel.height() - TITLE_GAP);
         for (int index = 0; index < cards.size() && index < cardAnchors.size(); index++) {
             drawCard(cards.get(index), cardAnchors.get(index).getPosition(), alpha);
         }
@@ -288,7 +275,7 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
         GLDraw.strokeQuad(left, bottom, CARD_WIDTH, CARD_HEIGHT, card.face().frameColour(), hovered ? HOVER_BORDER_WIDTH : BORDER_WIDTH,
                 (hovered ? 1f : IDLE_BORDER_ALPHA) * alpha);
         float iconCentreY = bottom + CARD_HEIGHT - CARD_PAD - ICON_SIZE / 2f;
-        IconCrossFade.drawAtCenter(ICONS, card.face().iconPaths(), CargoIconFx.seconds(), left + CARD_WIDTH / 2f, iconCentreY, ICON_SIZE,
+        IconCrossFade.drawAtCenter(ICONS, card.face().iconPaths(), IconFxClock.seconds(), left + CARD_WIDTH / 2f, iconCentreY, ICON_SIZE,
                 ICON_SIZE, alpha);
         card.nameLabel().setAlpha(alpha).draw(left + CARD_PAD, iconCentreY - ICON_SIZE / 2f - CARD_PAD);
     }

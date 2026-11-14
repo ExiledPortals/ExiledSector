@@ -1,6 +1,5 @@
 package exiledsector.ui;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
@@ -14,6 +13,7 @@ import exiledsector.ui.stats.StatSheetLayout;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.HoloFrame;
 import exiledsector.ui.util.Rects;
+import exiledsector.ui.util.UiClip;
 import java.util.List;
 import java.util.Set;
 
@@ -282,18 +282,13 @@ final class SkillTreeStatPanel {
 
     private static void renderClipped(StatSheetLayout layout, Viewport viewport, float contentTop, float alphaMult, StatSheetLayout.Region hovered,
                                       float revealed) {
-        float screenScale = Global.getSettings().getScreenScaleMult();
         float clipTop = viewport.bottom() + viewport.height() - PADDING / 2f;
         float revealedBottom = viewport.bottom() + viewport.height() * (1f - Math.min(1f, revealed));
-        float clipBottomY = Math.max(viewport.bottom() + PADDING / 2f, revealedBottom);
-        if (clipBottomY >= clipTop) {
+        float clipBottom = Math.max(viewport.bottom() + PADDING / 2f, revealedBottom);
+        if (clipBottom >= clipTop) {
             return;
         }
-        int clipLeft = (int) Math.floor(viewport.left() * screenScale);
-        int clipBottom = (int) Math.floor(clipBottomY * screenScale);
-        int clipWidth = (int) Math.ceil(viewport.width() * screenScale);
-        int clipHeight = (int) Math.ceil((clipTop - clipBottomY) * screenScale);
-        try (GlScope clip = GlScope.clip(clipLeft, clipBottom, clipWidth, clipHeight)) {
+        try (GlScope clip = UiClip.clipUi(viewport.left(), clipBottom, viewport.width(), clipTop - clipBottom)) {
             layout.render(viewport.contentLeft(), contentTop, alphaMult, hovered);
         }
     }
