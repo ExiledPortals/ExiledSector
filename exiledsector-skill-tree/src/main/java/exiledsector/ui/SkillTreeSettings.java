@@ -17,9 +17,8 @@ import exiledsector.skills.tags.VolumeToggles;
 import exiledsector.skills.unlock.HiddenNodeDisplayConfig;
 import exiledsector.skills.unlock.UnlockConditionOverrides;
 import exiledsector.ui.inspect.NpcInspectConfig;
-import lunalib.lunaSettings.LunaSettings.SettingsCreator;
 
-import static exiledsector.ExiledSector.MOD_ID;
+import static exiledsector.ui.SettingsPage.Label.untipped;
 
 public final class SkillTreeSettings {
 
@@ -42,166 +41,123 @@ public final class SkillTreeSettings {
 
     private static void registerSkillTree() {
         String treeTab = skillTreeTab();
+        SettingsPage treePage = new SettingsPage(treeTab);
         SkillTreeSetting.SWITCH.addSettings("exiledSector_skillTreeHeader", "settings.skillTree.header",
                 "settings.skillTree.enabled.name", "settings.skillTree.enabled.tooltip", treeTab);
 
-        SettingsCreator.addHeader(MOD_ID, "exiledSector_levelHeader", Translation.text("settings.level.header"), treeTab);
-        SettingsCreator.addInt(MOD_ID, ShipLevelConfig.MAX_LEVEL_FIELD_ID,
-                Translation.text("settings.level.maxLevel"), "", ShipLevelConfig.DEFAULT_MAX_LEVEL, 1, 200, treeTab);
-        SettingsCreator.addInt(MOD_ID, ShipLevelConfig.XP_BASE_FIELD_ID,
-                Translation.text("settings.level.xpBase"), "", ShipLevelConfig.DEFAULT_XP_BASE, 1, 10000, treeTab);
-        SettingsCreator.addInt(MOD_ID, ShipLevelConfig.XP_GROWTH_PERCENT_FIELD_ID,
-                Translation.text("settings.level.xpGrowth.name"), Translation.text("settings.level.xpGrowth.tooltip"),
-                ShipLevelConfig.DEFAULT_XP_GROWTH_PERCENT, 0, 200, treeTab);
-        SettingsCreator.addInt(MOD_ID, ShipLevelConfig.XP_GROWTH_CUTOFF_LEVEL_FIELD_ID,
-                Translation.text("settings.level.xpGrowthCutoff.name"), Translation.text("settings.level.xpGrowthCutoff.tooltip"),
-                ShipLevelConfig.DEFAULT_XP_GROWTH_CUTOFF_LEVEL, 0, 200, treeTab);
-        SettingsCreator.addInt(MOD_ID, ShipLevelConfig.XP_GROWTH_RAMP_START_LEVEL_FIELD_ID,
-                Translation.text("settings.level.xpGrowthRampStart.name"), Translation.text("settings.level.xpGrowthRampStart.tooltip"),
-                ShipLevelConfig.DEFAULT_XP_GROWTH_RAMP_START_LEVEL, 1, 200, treeTab);
-        SettingsCreator.addDouble(MOD_ID, ShipLevelConfig.XP_GROWTH_RAMP_PERCENT_FIELD_ID,
-                Translation.text("settings.level.xpGrowthRamp.name"), Translation.text("settings.level.xpGrowthRamp.tooltip"),
-                ShipLevelConfig.DEFAULT_XP_GROWTH_RAMP_PERCENT, 0.0, 10.0, treeTab);
-        SettingsCreator.addDouble(MOD_ID, ShipLevelConfig.XP_PER_DEPLOYMENT_POINT_FIELD_ID,
-                Translation.text("settings.level.xpPerDeploymentPoint"), "", ShipLevelConfig.DEFAULT_XP_PER_DEPLOYMENT_POINT,
-                0.0, 100.0, treeTab);
-        SettingsCreator.addDouble(MOD_ID, ShipLevelConfig.XP_LOSS_MULTIPLIER_FIELD_ID,
-                Translation.text("settings.level.xpLossMultiplier"), "", ShipLevelConfig.DEFAULT_XP_LOSS_MULTIPLIER, 0.0, 1.0, treeTab);
-        SettingsCreator.addDouble(MOD_ID, ShipLevelConfig.XP_DIFFICULTY_STRENGTH_FIELD_ID,
-                Translation.text("settings.level.xpDifficultyStrength.name"), Translation.text("settings.level.xpDifficultyStrength.tooltip"),
-                ShipLevelConfig.DEFAULT_XP_DIFFICULTY_STRENGTH, 0.0, 5.0, treeTab);
-        SettingsCreator.addDouble(MOD_ID, ShipLevelConfig.XP_DIFFICULTY_MAX_MULTIPLIER_FIELD_ID,
-                Translation.text("settings.level.xpDifficultyMaxMultiplier.name"),
-                Translation.text("settings.level.xpDifficultyMaxMultiplier.tooltip"),
-                ShipLevelConfig.DEFAULT_XP_DIFFICULTY_MAX_MULTIPLIER, 1.0, 20.0, treeTab);
-        SettingsCreator.addInt(MOD_ID, ShipLevelConfig.CATCH_UP_PERCENT_PER_LEVEL_FIELD_ID,
-                Translation.text("settings.level.catchUpPerLevel.name"), Translation.text("settings.level.catchUpPerLevel.tooltip"),
-                ShipLevelConfig.DEFAULT_CATCH_UP_PERCENT_PER_LEVEL, 0, 100, treeTab);
-        SettingsCreator.addDouble(MOD_ID, ShipLevelConfig.CATCH_UP_MAX_MULTIPLIER_FIELD_ID,
-                Translation.text("settings.level.catchUpMaxMultiplier.name"), "",
-                ShipLevelConfig.DEFAULT_CATCH_UP_MAX_MULTIPLIER, 1.0, 20.0, treeTab);
-        SettingsCreator.addInt(MOD_ID, ShipLevelConfig.LEVEL_FLOOR_PERCENT_FIELD_ID,
-                Translation.text("settings.level.levelFloorPercent.name"), Translation.text("settings.level.levelFloorPercent.tooltip"),
-                ShipLevelConfig.DEFAULT_LEVEL_FLOOR_PERCENT, 0, 100, treeTab);
+        treePage.header("exiledSector_levelHeader", "settings.level.header");
+        treePage.intSetting(ShipLevelConfig.MAX_LEVEL_FIELD_ID, untipped("settings.level.maxLevel"),
+                ShipLevelConfig.DEFAULT_MAX_LEVEL, 1, 200);
+        treePage.intSetting(ShipLevelConfig.XP_BASE_FIELD_ID, untipped("settings.level.xpBase"),
+                ShipLevelConfig.DEFAULT_XP_BASE, 1, 10000);
+        treePage.intSetting(ShipLevelConfig.XP_GROWTH_PERCENT_FIELD_ID, "settings.level.xpGrowth",
+                ShipLevelConfig.DEFAULT_XP_GROWTH_PERCENT, 0, 200);
+        treePage.intSetting(ShipLevelConfig.XP_GROWTH_CUTOFF_LEVEL_FIELD_ID, "settings.level.xpGrowthCutoff",
+                ShipLevelConfig.DEFAULT_XP_GROWTH_CUTOFF_LEVEL, 0, 200);
+        treePage.intSetting(ShipLevelConfig.XP_GROWTH_RAMP_START_LEVEL_FIELD_ID, "settings.level.xpGrowthRampStart",
+                ShipLevelConfig.DEFAULT_XP_GROWTH_RAMP_START_LEVEL, 1, 200);
+        treePage.doubleSetting(ShipLevelConfig.XP_GROWTH_RAMP_PERCENT_FIELD_ID, "settings.level.xpGrowthRamp",
+                ShipLevelConfig.DEFAULT_XP_GROWTH_RAMP_PERCENT, 0.0, 10.0);
+        treePage.doubleSetting(ShipLevelConfig.XP_PER_DEPLOYMENT_POINT_FIELD_ID, untipped("settings.level.xpPerDeploymentPoint"),
+                ShipLevelConfig.DEFAULT_XP_PER_DEPLOYMENT_POINT, 0.0, 100.0);
+        treePage.doubleSetting(ShipLevelConfig.XP_LOSS_MULTIPLIER_FIELD_ID, untipped("settings.level.xpLossMultiplier"),
+                ShipLevelConfig.DEFAULT_XP_LOSS_MULTIPLIER, 0.0, 1.0);
+        treePage.doubleSetting(ShipLevelConfig.XP_DIFFICULTY_STRENGTH_FIELD_ID, "settings.level.xpDifficultyStrength",
+                ShipLevelConfig.DEFAULT_XP_DIFFICULTY_STRENGTH, 0.0, 5.0);
+        treePage.doubleSetting(ShipLevelConfig.XP_DIFFICULTY_MAX_MULTIPLIER_FIELD_ID, "settings.level.xpDifficultyMaxMultiplier",
+                ShipLevelConfig.DEFAULT_XP_DIFFICULTY_MAX_MULTIPLIER, 1.0, 20.0);
+        treePage.intSetting(ShipLevelConfig.CATCH_UP_PERCENT_PER_LEVEL_FIELD_ID, "settings.level.catchUpPerLevel",
+                ShipLevelConfig.DEFAULT_CATCH_UP_PERCENT_PER_LEVEL, 0, 100);
+        treePage.doubleSetting(ShipLevelConfig.CATCH_UP_MAX_MULTIPLIER_FIELD_ID, untipped("settings.level.catchUpMaxMultiplier.name"),
+                ShipLevelConfig.DEFAULT_CATCH_UP_MAX_MULTIPLIER, 1.0, 20.0);
+        treePage.intSetting(ShipLevelConfig.LEVEL_FLOOR_PERCENT_FIELD_ID, "settings.level.levelFloorPercent",
+                ShipLevelConfig.DEFAULT_LEVEL_FLOOR_PERCENT, 0, 100);
 
-        SettingsCreator.addHeader(MOD_ID, "exiledSector_opCostHeader", Translation.text("settings.opCost.header"), treeTab);
-        SettingsCreator.addInt(MOD_ID, ShipLevelConfig.MAX_ALLOCATED_NODES_FIELD_ID,
-                Translation.text("settings.level.maxAllocatedNodes.name"), Translation.text("settings.level.maxAllocatedNodes.tooltip"),
-                ShipLevelConfig.DEFAULT_MAX_ALLOCATED_NODES, 1, 500, treeTab);
-        SettingsCreator.addInt(MOD_ID, SkillNodeOpCost.FRIGATE_FIELD_ID,
-                Translation.text("settings.opCost.frigate"), "", SkillNodeOpCost.DEFAULT_FRIGATE, 0, 100, treeTab);
-        SettingsCreator.addInt(MOD_ID, SkillNodeOpCost.DESTROYER_FIELD_ID,
-                Translation.text("settings.opCost.destroyer"), "", SkillNodeOpCost.DEFAULT_DESTROYER, 0, 100, treeTab);
-        SettingsCreator.addInt(MOD_ID, SkillNodeOpCost.CRUISER_FIELD_ID,
-                Translation.text("settings.opCost.cruiser"), "", SkillNodeOpCost.DEFAULT_CRUISER, 0, 100, treeTab);
-        SettingsCreator.addInt(MOD_ID, SkillNodeOpCost.CAPITAL_FIELD_ID,
-                Translation.text("settings.opCost.capital"), "", SkillNodeOpCost.DEFAULT_CAPITAL, 0, 100, treeTab);
-        SettingsCreator.addInt(MOD_ID, SkillNodeOpCost.UNDEFINED_FIELD_ID,
-                Translation.text("settings.opCost.other"), "", SkillNodeOpCost.DEFAULT_UNDEFINED, 0, 100, treeTab);
-        SettingsCreator.addRadio(MOD_ID, IntegrationCostSetting.FIELD_ID, Translation.text("settings.integrationCost.name"),
-                Translation.text("settings.integrationCost.tooltip"), IntegrationCostSetting.DEFAULT,
-                String.join(",", IntegrationCostSetting.OPTIONS), treeTab);
+        treePage.header("exiledSector_opCostHeader", "settings.opCost.header");
+        treePage.intSetting(ShipLevelConfig.MAX_ALLOCATED_NODES_FIELD_ID, "settings.level.maxAllocatedNodes",
+                ShipLevelConfig.DEFAULT_MAX_ALLOCATED_NODES, 1, 500);
+        treePage.intSetting(SkillNodeOpCost.FRIGATE_FIELD_ID, untipped("settings.opCost.frigate"), SkillNodeOpCost.DEFAULT_FRIGATE, 0, 100);
+        treePage.intSetting(SkillNodeOpCost.DESTROYER_FIELD_ID, untipped("settings.opCost.destroyer"), SkillNodeOpCost.DEFAULT_DESTROYER, 0, 100);
+        treePage.intSetting(SkillNodeOpCost.CRUISER_FIELD_ID, untipped("settings.opCost.cruiser"), SkillNodeOpCost.DEFAULT_CRUISER, 0, 100);
+        treePage.intSetting(SkillNodeOpCost.CAPITAL_FIELD_ID, untipped("settings.opCost.capital"), SkillNodeOpCost.DEFAULT_CAPITAL, 0, 100);
+        treePage.intSetting(SkillNodeOpCost.UNDEFINED_FIELD_ID, untipped("settings.opCost.other"), SkillNodeOpCost.DEFAULT_UNDEFINED, 0, 100);
+        treePage.radioSetting(IntegrationCostSetting.FIELD_ID, "settings.integrationCost", IntegrationCostSetting.DEFAULT,
+                IntegrationCostSetting.OPTIONS);
 
-        SettingsCreator.addHeader(MOD_ID, "exiledSector_modulesHeader", Translation.text("settings.modules.header"), treeTab);
-        SettingsCreator.addInt(MOD_ID, ModuleShareSetting.FIELD_ID,
-                Translation.text("settings.modules.share.name"), Translation.text("settings.modules.share.tooltip"),
-                ModuleShareSetting.DEFAULT_PERCENT, 0, ModuleShareSetting.MAX_PERCENT, treeTab);
-        SettingsCreator.addInt(MOD_ID, ModuleShareSetting.STATION_FIELD_ID,
-                Translation.text("settings.modules.stationShare.name"), Translation.text("settings.modules.stationShare.tooltip"),
-                ModuleShareSetting.DEFAULT_STATION_PERCENT, 0, ModuleShareSetting.MAX_PERCENT, treeTab);
+        treePage.header("exiledSector_modulesHeader", "settings.modules.header");
+        treePage.intSetting(ModuleShareSetting.FIELD_ID, "settings.modules.share",
+                ModuleShareSetting.DEFAULT_PERCENT, 0, ModuleShareSetting.MAX_PERCENT);
+        treePage.intSetting(ModuleShareSetting.STATION_FIELD_ID, "settings.modules.stationShare",
+                ModuleShareSetting.DEFAULT_STATION_PERCENT, 0, ModuleShareSetting.MAX_PERCENT);
 
-        SettingsCreator.addHeader(MOD_ID, "exiledSector_unlockConditionsHeader", Translation.text("settings.unlock.header"), treeTab);
-        SettingsCreator.addBoolean(MOD_ID, UnlockConditionOverrides.DISABLE_BLUEPRINT_FIELD_ID,
-                Translation.text("settings.unlock.blueprint"), "", UnlockConditionOverrides.DEFAULT_DISABLED, treeTab);
-        SettingsCreator.addBoolean(MOD_ID, UnlockConditionOverrides.DISABLE_CHARACTER_STAT_FIELD_ID,
-                Translation.text("settings.unlock.characterStat"), "", UnlockConditionOverrides.DEFAULT_DISABLED, treeTab);
-        SettingsCreator.addBoolean(MOD_ID, UnlockConditionOverrides.DISABLE_MIN_SHIP_LEVEL_FIELD_ID,
-                Translation.text("settings.unlock.minShipLevel"), "", UnlockConditionOverrides.DEFAULT_DISABLED, treeTab);
-        SettingsCreator.addBoolean(MOD_ID, UnlockConditionOverrides.DISABLE_MEMORY_FLAG_FIELD_ID,
-                Translation.text("settings.unlock.gameState"), "", UnlockConditionOverrides.DEFAULT_DISABLED, treeTab);
-        SettingsCreator.addBoolean(MOD_ID, HiddenNodeDisplayConfig.SHOW_HIDDEN_NODES_FIELD_ID,
-                Translation.text("settings.hiddenNodes.show.name"), Translation.text("settings.hiddenNodes.show.tooltip"),
-                HiddenNodeDisplayConfig.DEFAULT_SHOW_HIDDEN_NODES, treeTab);
+        treePage.header("exiledSector_unlockConditionsHeader", "settings.unlock.header");
+        treePage.booleanSetting(UnlockConditionOverrides.DISABLE_BLUEPRINT_FIELD_ID, untipped("settings.unlock.blueprint"),
+                UnlockConditionOverrides.DEFAULT_DISABLED);
+        treePage.booleanSetting(UnlockConditionOverrides.DISABLE_CHARACTER_STAT_FIELD_ID, untipped("settings.unlock.characterStat"),
+                UnlockConditionOverrides.DEFAULT_DISABLED);
+        treePage.booleanSetting(UnlockConditionOverrides.DISABLE_MIN_SHIP_LEVEL_FIELD_ID, untipped("settings.unlock.minShipLevel"),
+                UnlockConditionOverrides.DEFAULT_DISABLED);
+        treePage.booleanSetting(UnlockConditionOverrides.DISABLE_MEMORY_FLAG_FIELD_ID, untipped("settings.unlock.gameState"),
+                UnlockConditionOverrides.DEFAULT_DISABLED);
+        treePage.booleanSetting(HiddenNodeDisplayConfig.SHOW_HIDDEN_NODES_FIELD_ID, "settings.hiddenNodes.show",
+                HiddenNodeDisplayConfig.DEFAULT_SHOW_HIDDEN_NODES);
 
-        SettingsCreator.addHeader(MOD_ID, "exiledSector_treeItemsHeader", Translation.text("settings.treeItems.header"), treeTab);
-        SettingsCreator.addInt(MOD_ID, UniqueSubroutinesSetting.UNLOCK_LEVEL_FIELD_ID,
-                Translation.text("settings.hullItems.uniqueSubroutinesLevel.name"),
-                Translation.text("settings.hullItems.uniqueSubroutinesLevel.tooltip"),
-                UniqueSubroutinesSetting.DEFAULT_UNLOCK_LEVEL, UniqueSubroutinesSetting.MIN_UNLOCK_LEVEL, UniqueSubroutinesSetting.MAX_UNLOCK_LEVEL,
-                treeTab);
-        SettingsCreator.addBoolean(MOD_ID, AnchorJanusGate.ALLOW_BEFORE_JANUS_FIELD_ID,
-                Translation.text("settings.unlock.anchorsBeforeJanus"), Translation.text("settings.unlock.anchorsBeforeJanus.tooltip"),
-                AnchorJanusGate.DEFAULT_ALLOW_BEFORE_JANUS, treeTab);
+        treePage.header("exiledSector_treeItemsHeader", "settings.treeItems.header");
+        UniqueSubroutinesSetting.UNLOCK_LEVEL.addSetting(treePage, "settings.hullItems.uniqueSubroutinesLevel");
+        treePage.booleanSetting(AnchorJanusGate.ALLOW_BEFORE_JANUS_FIELD_ID,
+                new SettingsPage.Label("settings.unlock.anchorsBeforeJanus", "settings.unlock.anchorsBeforeJanus.tooltip"),
+                AnchorJanusGate.DEFAULT_ALLOW_BEFORE_JANUS);
 
-        SettingsCreator.addHeader(MOD_ID, "exiledSector_areasHeader", Translation.text("settings.volumes.header"), treeTab);
-        SettingsCreator.addText(MOD_ID, "exiledSector_areasAbout", Translation.text("settings.volumes.about"), treeTab);
-        SettingsCreator.addRadio(MOD_ID, VolumeToggles.LOST_SECTOR_FIELD_ID, Translation.text("settings.volumes.lostSector.name"),
-                Translation.text("settings.volumes.lostSector.tooltip"), VolumeToggles.AUTO, String.join(",", VolumeToggles.OPTIONS), treeTab);
-        SettingsCreator.addRadio(MOD_ID, VolumeToggles.RANDOM_ASSORTMENT_FIELD_ID, Translation.text("settings.volumes.randomAssortment.name"),
-                Translation.text("settings.volumes.randomAssortment.tooltip"), VolumeToggles.AUTO, String.join(",", VolumeToggles.REQUIRED_MOD_OPTIONS), treeTab);
-        SettingsCreator.addRadio(MOD_ID, VolumeToggles.NIGHTCROSS_FIELD_ID, Translation.text("settings.volumes.nightcross.name"),
-                Translation.text("settings.volumes.nightcross.tooltip"), VolumeToggles.AUTO, String.join(",", VolumeToggles.OPTIONS), treeTab);
-        SettingsCreator.addRadio(MOD_ID, VolumeToggles.TANIA_FIELD_ID, Translation.text("settings.volumes.tania.name"),
-                Translation.text("settings.volumes.tania.tooltip"), VolumeToggles.AUTO, String.join(",", VolumeToggles.REQUIRED_MOD_OPTIONS), treeTab);
+        treePage.header("exiledSector_areasHeader", "settings.volumes.header");
+        treePage.text("exiledSector_areasAbout", "settings.volumes.about");
+        treePage.radioSetting(VolumeToggles.LOST_SECTOR_FIELD_ID, "settings.volumes.lostSector", VolumeToggles.AUTO, VolumeToggles.OPTIONS);
+        treePage.radioSetting(VolumeToggles.RANDOM_ASSORTMENT_FIELD_ID, "settings.volumes.randomAssortment", VolumeToggles.AUTO,
+                VolumeToggles.REQUIRED_MOD_OPTIONS);
+        treePage.radioSetting(VolumeToggles.NIGHTCROSS_FIELD_ID, "settings.volumes.nightcross", VolumeToggles.AUTO, VolumeToggles.OPTIONS);
+        treePage.radioSetting(VolumeToggles.TANIA_FIELD_ID, "settings.volumes.tania", VolumeToggles.AUTO, VolumeToggles.REQUIRED_MOD_OPTIONS);
     }
 
     private static void registerNpc() {
-        String npcTab = npcTab();
-        SettingsCreator.addHeader(MOD_ID, "exiledSector_npcTreesHeader", Translation.text("settings.npc.header"), npcTab);
-        SettingsCreator.addText(MOD_ID, "exiledSector_npcTreesAbout", Translation.text("settings.npc.about"), npcTab);
-        SettingsCreator.addBoolean(MOD_ID, NpcTreeConfig.ENABLED_FIELD_ID,
-                Translation.text("settings.npc.enabled.name"), "", NpcTreeConfig.DEFAULT_ENABLED, npcTab);
-        SettingsCreator.addBoolean(MOD_ID, NpcTreeConfig.OFFICERED_SHIPS_FIELD_ID,
-                Translation.text("settings.npc.officeredShips.name"), "", NpcTreeConfig.DEFAULT_OFFICERED_SHIPS, npcTab);
-        SettingsCreator.addBoolean(MOD_ID, NpcTreeConfig.FLAGSHIP_FIELD_ID,
-                Translation.text("settings.npc.flagship.name"), "", NpcTreeConfig.DEFAULT_FLAGSHIP, npcTab);
-        SettingsCreator.addInt(MOD_ID, NpcTreeConfig.OTHER_SHIP_CHANCE_FIELD_ID,
-                Translation.text("settings.npc.otherShipChance.name"), Translation.text("settings.npc.otherShipChance.tooltip"),
-                NpcTreeConfig.DEFAULT_OTHER_SHIP_CHANCE_PERCENT, 0, 100, npcTab);
-        SettingsCreator.addBoolean(MOD_ID, NpcTreeConfig.STATIONS_FIELD_ID,
-                Translation.text("settings.npc.stations.name"), Translation.text("settings.npc.stations.tooltip"),
-                NpcTreeConfig.DEFAULT_STATIONS, npcTab);
-        SettingsCreator.addKeybind(MOD_ID, NpcInspectConfig.KEYBIND_FIELD_ID,
-                Translation.text("settings.npc.inspectKey.name"), Translation.text("settings.npc.inspectKey.tooltip"),
-                NpcInspectConfig.DEFAULT_KEY, npcTab);
+        SettingsPage npcPage = new SettingsPage(npcTab());
+        npcPage.header("exiledSector_npcTreesHeader", "settings.npc.header");
+        npcPage.text("exiledSector_npcTreesAbout", "settings.npc.about");
+        npcPage.booleanSetting(NpcTreeConfig.ENABLED_FIELD_ID, untipped("settings.npc.enabled.name"), NpcTreeConfig.DEFAULT_ENABLED);
+        npcPage.booleanSetting(NpcTreeConfig.OFFICERED_SHIPS_FIELD_ID, untipped("settings.npc.officeredShips.name"),
+                NpcTreeConfig.DEFAULT_OFFICERED_SHIPS);
+        npcPage.booleanSetting(NpcTreeConfig.FLAGSHIP_FIELD_ID, untipped("settings.npc.flagship.name"), NpcTreeConfig.DEFAULT_FLAGSHIP);
+        npcPage.intSetting(NpcTreeConfig.OTHER_SHIP_CHANCE_FIELD_ID, "settings.npc.otherShipChance",
+                NpcTreeConfig.DEFAULT_OTHER_SHIP_CHANCE_PERCENT, 0, 100);
+        npcPage.booleanSetting(NpcTreeConfig.STATIONS_FIELD_ID, "settings.npc.stations", NpcTreeConfig.DEFAULT_STATIONS);
+        npcPage.keybindSetting(NpcInspectConfig.KEYBIND_FIELD_ID, "settings.npc.inspectKey", NpcInspectConfig.DEFAULT_KEY);
 
-        SettingsCreator.addHeader(MOD_ID, "exiledSector_npcTreeSizeHeader", Translation.text("settings.npcTreeSize.header"), npcTab);
-        SettingsCreator.addText(MOD_ID, "exiledSector_npcTreeSizeAbout", Translation.text("settings.npcTreeSize.about"), npcTab);
-        SettingsCreator.addInt(MOD_ID, NpcTreeSize.MIN_PERCENT_FIELD_ID,
-                Translation.text("settings.npcTreeSize.min.name"), "",
-                NpcTreeSize.DEFAULT_MIN_PERCENT, NpcTreeSize.LOWEST_PERCENT, NpcTreeSize.HIGHEST_PERCENT, npcTab);
-        SettingsCreator.addInt(MOD_ID, NpcTreeSize.MAX_PERCENT_FIELD_ID,
-                Translation.text("settings.npcTreeSize.max.name"), "",
-                NpcTreeSize.DEFAULT_MAX_PERCENT, NpcTreeSize.LOWEST_PERCENT, NpcTreeSize.HIGHEST_PERCENT, npcTab);
-        SettingsCreator.addRadio(MOD_ID, NpcTreeConfig.LEVEL_MODE_FIELD_ID, Translation.text("settings.npcTreeSize.mode.name"),
-                Translation.text("settings.npcTreeSize.mode.tooltip"), NpcTreeConfig.YOUR_SHIPS,
-                String.join(",", NpcTreeConfig.LEVEL_MODE_OPTIONS), npcTab);
-        SettingsCreator.addInt(MOD_ID, NpcTreeConfig.FIXED_MIN_PERCENT_FIELD_ID,
-                Translation.text("settings.npcTreeSize.fixedMin.name"), Translation.text("settings.npcTreeSize.fixedMin.tooltip"),
-                NpcTreeConfig.DEFAULT_FIXED_MIN_PERCENT, 0, 100, npcTab);
-        SettingsCreator.addBoolean(MOD_ID, NpcTreeConfig.RECOVERED_START_BLANK_FIELD_ID,
-                Translation.text("settings.npcTreeSize.startBlank.name"), Translation.text("settings.npcTreeSize.startBlank.tooltip"),
-                NpcTreeConfig.DEFAULT_RECOVERED_START_BLANK, npcTab);
+        npcPage.header("exiledSector_npcTreeSizeHeader", "settings.npcTreeSize.header");
+        npcPage.text("exiledSector_npcTreeSizeAbout", "settings.npcTreeSize.about");
+        npcPage.intSetting(NpcTreeSize.MIN_PERCENT_FIELD_ID, untipped("settings.npcTreeSize.min.name"),
+                NpcTreeSize.DEFAULT_MIN_PERCENT, NpcTreeSize.LOWEST_PERCENT, NpcTreeSize.HIGHEST_PERCENT);
+        npcPage.intSetting(NpcTreeSize.MAX_PERCENT_FIELD_ID, untipped("settings.npcTreeSize.max.name"),
+                NpcTreeSize.DEFAULT_MAX_PERCENT, NpcTreeSize.LOWEST_PERCENT, NpcTreeSize.HIGHEST_PERCENT);
+        npcPage.radioSetting(NpcTreeConfig.LEVEL_MODE_FIELD_ID, "settings.npcTreeSize.mode", NpcTreeConfig.YOUR_SHIPS,
+                NpcTreeConfig.LEVEL_MODE_OPTIONS);
+        npcPage.intSetting(NpcTreeConfig.FIXED_MIN_PERCENT_FIELD_ID, "settings.npcTreeSize.fixedMin",
+                NpcTreeConfig.DEFAULT_FIXED_MIN_PERCENT, 0, 100);
+        npcPage.booleanSetting(NpcTreeConfig.RECOVERED_START_BLANK_FIELD_ID, "settings.npcTreeSize.startBlank",
+                NpcTreeConfig.DEFAULT_RECOVERED_START_BLANK);
 
-        SettingsCreator.addHeader(MOD_ID, "exiledSector_npcLevelCapsHeader", Translation.text("settings.npcLevelCaps.header"), npcTab);
-        SettingsCreator.addText(MOD_ID, "exiledSector_npcLevelCapsAbout", Translation.text("settings.npcLevelCaps.about"), npcTab);
-        SettingsCreator.addBoolean(MOD_ID, NpcTreeConfig.LEVEL_CAPS_FIELD_ID,
-                Translation.text("settings.npcLevelCaps.enabled.name"), "", NpcTreeConfig.DEFAULT_LEVEL_CAPS, npcTab);
+        npcPage.header("exiledSector_npcLevelCapsHeader", "settings.npcLevelCaps.header");
+        npcPage.text("exiledSector_npcLevelCapsAbout", "settings.npcLevelCaps.about");
+        npcPage.booleanSetting(NpcTreeConfig.LEVEL_CAPS_FIELD_ID, untipped("settings.npcLevelCaps.enabled.name"), NpcTreeConfig.DEFAULT_LEVEL_CAPS);
         for (NpcLevelCategory category : NpcLevelCategory.values()) {
-            SettingsCreator.addInt(MOD_ID, category.capFieldId(), Translation.text("settings.npcLevelCaps." + category.csvId() + ".name"), "",
-                    category.defaultCap(), 0, 200, npcTab);
+            npcPage.intSetting(category.capFieldId(), untipped("settings.npcLevelCaps." + category.csvId() + ".name"),
+                    category.defaultCap(), 0, 200);
         }
 
-        SettingsCreator.addHeader(MOD_ID, "exiledSector_npcBonusScaleHeader", Translation.text("settings.npcBonusScale.header"), npcTab);
-        SettingsCreator.addText(MOD_ID, "exiledSector_npcBonusScaleAbout", Translation.text("settings.npcBonusScale.about"), npcTab);
-        SettingsCreator.addInt(MOD_ID, NpcBonusScale.LOW_TREE_POWER_FIELD_ID,
-                Translation.text("settings.npcBonusScale.lowTreePower.name"), Translation.text("settings.npcBonusScale.lowTreePower.tooltip"),
-                NpcBonusScale.DEFAULT_LOW_TREE_POWER, 0, 300, npcTab);
-        SettingsCreator.addInt(MOD_ID, NpcBonusScale.HIGH_TREE_POWER_FIELD_ID,
-                Translation.text("settings.npcBonusScale.highTreePower.name"), Translation.text("settings.npcBonusScale.highTreePower.tooltip"),
-                NpcBonusScale.DEFAULT_HIGH_TREE_POWER, 1, 300, npcTab);
-        SettingsCreator.addDouble(MOD_ID, NpcBonusScale.MAX_MULTIPLIER_FIELD_ID,
-                Translation.text("settings.npcBonusScale.maxMultiplier.name"), Translation.text("settings.npcBonusScale.maxMultiplier.tooltip"),
-                NpcBonusScale.DEFAULT_MAX_MULTIPLIER, 1.0, 10.0, npcTab);
+        npcPage.header("exiledSector_npcBonusScaleHeader", "settings.npcBonusScale.header");
+        npcPage.text("exiledSector_npcBonusScaleAbout", "settings.npcBonusScale.about");
+        npcPage.intSetting(NpcBonusScale.LOW_TREE_POWER_FIELD_ID, "settings.npcBonusScale.lowTreePower",
+                NpcBonusScale.DEFAULT_LOW_TREE_POWER, 0, 300);
+        npcPage.intSetting(NpcBonusScale.HIGH_TREE_POWER_FIELD_ID, "settings.npcBonusScale.highTreePower",
+                NpcBonusScale.DEFAULT_HIGH_TREE_POWER, 1, 300);
+        npcPage.doubleSetting(NpcBonusScale.MAX_MULTIPLIER_FIELD_ID, "settings.npcBonusScale.maxMultiplier",
+                NpcBonusScale.DEFAULT_MAX_MULTIPLIER, 1.0, 10.0);
     }
 }
