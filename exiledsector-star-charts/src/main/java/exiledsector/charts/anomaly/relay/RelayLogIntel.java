@@ -11,6 +11,8 @@ import com.fs.starfarer.api.ui.SectorMapAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.charts.atlas.AtlasAnomalyRecord;
+import exiledsector.charts.officer.scar.HullFacts;
+import exiledsector.charts.officer.scar.ScarText;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunBound;
 import exiledsector.charts.run.ChartRuns;
@@ -28,7 +30,7 @@ public class RelayLogIntel extends BaseIntelPlugin implements ChartRunBound {
     static final float PARAGRAPH_PAD = 10f;
     static final float LOG_PAD = 3f;
 
-    record Entry(String relayName, String log) {
+    record Entry(String relayName, String log, RelayChoice pick) {
     }
 
     private final String runId;
@@ -62,7 +64,8 @@ public class RelayLogIntel extends BaseIntelPlugin implements ChartRunBound {
         List<Entry> entries = new ArrayList<>();
         for (RelayKind kind : RelayKind.values()) {
             if (RelayStates.isWoken(run, kind)) {
-                entries.add(new Entry(Translation.gameText(RelayText.PREFIX + kind.key() + ".name"), Translation.gameText(RelayText.logKey(kind, stage))));
+                entries.add(new Entry(Translation.gameText(RelayText.PREFIX + kind.key() + ".name"), Translation.gameText(RelayText.logKey(kind, stage)),
+                        RelayChoices.picked(run, kind)));
             }
         }
         return entries;
@@ -87,9 +90,15 @@ public class RelayLogIntel extends BaseIntelPlugin implements ChartRunBound {
         }
         AtlasAnomalyRecord.Chain stage = RelayStages.liveStage(Global.getSector(), run);
         VanillaText.plainPara(info, Translation.gameText(RelayText.trailKey(stage)), 0f, Misc.getTextColor());
-        for (Entry entry : entries(run, stage)) {
+        List<Entry> entries = entries(run, stage);
+        HullFacts bossHull = entries.stream().anyMatch(entry -> entry.pick() != null) ? RelayChoices.bossHull(Global.getSector(), run) : null;
+        for (Entry entry : entries) {
             VanillaText.plainPara(info, entry.relayName(), PARAGRAPH_PAD, Misc.getHighlightColor());
             VanillaText.plainPara(info, entry.log(), LOG_PAD, Misc.getTextColor());
+            if (entry.pick() != null) {
+                VanillaText.addPara(info, RelayText.pickedLine(entry.pick()), LOG_PAD, Misc.getTextColor());
+                VanillaText.addPara(info, ScarText.effectsLine(entry.pick().scarId(), bossHull), LOG_PAD, Misc.getTextColor());
+            }
         }
         VanillaText.plainPara(info, RelayText.status(run, stage), PARAGRAPH_PAD, Misc.getGrayColor());
     }

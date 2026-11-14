@@ -25,6 +25,7 @@ import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.content.ChartSites;
 import exiledsector.charts.run.ChartRun;
+import exiledsector.items.ItemDrops;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
@@ -91,6 +92,11 @@ public final class RelayNetwork implements ContentPlacer, RunParticipant, LootSh
     @Override
     public boolean holdsBackBossUnique(ChartRun run) {
         return !RelayStates.allWoken(run);
+    }
+
+    @Override
+    public ItemDrops.SiteLoot bossDefeatedLoot(SectorAPI sector, ChartRun run) {
+        return RelayChoices.bossReward(sector, run);
     }
 
     @Override

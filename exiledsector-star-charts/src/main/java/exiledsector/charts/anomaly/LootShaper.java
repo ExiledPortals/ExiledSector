@@ -31,6 +31,10 @@ public interface LootShaper extends ChartAnomaly {
         return false;
     }
 
+    default ItemDrops.SiteLoot bossDefeatedLoot(SectorAPI sector, ChartRun run) {
+        return ItemDrops.SiteLoot.NONE;
+    }
+
     default boolean holdsPlayerBattle() {
         return false;
     }

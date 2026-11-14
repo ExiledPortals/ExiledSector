@@ -33,6 +33,26 @@ public final class OfficerRewardPool {
         return offers(candidates(context, random), OfficerRewardTable.shares(), OFFER_COUNT, random);
     }
 
+    public static List<RewardGroup> offeredGroups(RewardContext context, Random random) {
+        return offers(context, random).stream().map(RewardGroup::of).toList();
+    }
+
+    public static List<CarriedItem> drawn(List<RewardGroup> groups, RewardContext context, Random random) {
+        return drawn(groups, candidates(context, random), random);
+    }
+
+    static List<CarriedItem> drawn(List<RewardGroup> groups, Map<RewardKind, List<RewardCandidate>> candidates, Random random) {
+        Map<RewardGroup, List<RewardCandidate>> grouped = grouped(candidates);
+        List<CarriedItem> drawn = new ArrayList<>();
+        for (RewardGroup group : groups) {
+            RewardCandidate candidate = WeightedPick.pick(grouped.getOrDefault(group, List.of()), RewardCandidate::weight, random);
+            if (candidate != null) {
+                drawn.add(picked(candidate.item(), random));
+            }
+        }
+        return List.copyOf(drawn);
+    }
+
     public static CarriedItem startingItem(RewardContext context, StartingItemOdds odds, Random random) {
         return startingItem(candidates(context, random), OfficerRewardTable.shares(), odds, random);
     }

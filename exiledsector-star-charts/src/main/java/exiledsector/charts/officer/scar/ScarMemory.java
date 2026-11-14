@@ -12,6 +12,7 @@ public final class ScarMemory {
 
     public static final String FLAGSHIP_ID_KEY = "$exiledSector_scarFlagshipId";
     public static final String SCARS_KEY = "$exiledSector_scars";
+    public static final String RUN_SCARS_KEY = "$exiledSector_runScars";
     private static final String ENTRY_SEPARATOR = ";";
     private static final String STACK_SEPARATOR = ":";
 
@@ -23,11 +24,22 @@ public final class ScarMemory {
 
     static void write(MemoryAPI memory, String flagshipMemberId, Map<String, Integer> scars) {
         memory.set(FLAGSHIP_ID_KEY, flagshipMemberId);
+        writeEncoded(memory, SCARS_KEY, scars);
+    }
+
+    static void writeRunScars(MemoryAPI memory, String flagshipMemberId, Map<String, Integer> runScars) {
+        if (flagshipId(memory) == null) {
+            memory.set(FLAGSHIP_ID_KEY, flagshipMemberId);
+        }
+        writeEncoded(memory, RUN_SCARS_KEY, runScars);
+    }
+
+    private static void writeEncoded(MemoryAPI memory, String key, Map<String, Integer> scars) {
         String encoded = encode(scars);
         if (encoded.isEmpty()) {
-            memory.unset(SCARS_KEY);
+            memory.unset(key);
         } else {
-            memory.set(SCARS_KEY, encoded);
+            memory.set(key, encoded);
         }
     }
 
@@ -36,11 +48,30 @@ public final class ScarMemory {
     }
 
     static String encodedScars(MemoryAPI memory) {
-        return memory != null && memory.get(SCARS_KEY) instanceof String encoded ? encoded : null;
+        return encoded(memory, SCARS_KEY);
+    }
+
+    private static String encoded(MemoryAPI memory, String key) {
+        return memory != null && memory.get(key) instanceof String encoded ? encoded : null;
     }
 
     public static Map<String, Integer> scars(MemoryAPI memory) {
         return decode(encodedScars(memory));
+    }
+
+    public static Map<String, Integer> runScars(MemoryAPI memory) {
+        return decode(encoded(memory, RUN_SCARS_KEY));
+    }
+
+    public static Map<String, Integer> allScars(MemoryAPI memory) {
+        Map<String, Integer> officerScars = scars(memory);
+        Map<String, Integer> runScars = runScars(memory);
+        if (runScars.isEmpty() || officerScars.isEmpty()) {
+            return runScars.isEmpty() ? officerScars : runScars;
+        }
+        Map<String, Integer> merged = new LinkedHashMap<>(officerScars);
+        runScars.forEach((scarId, stacks) -> merged.merge(scarId, stacks, Integer::sum));
+        return Collections.unmodifiableMap(merged);
     }
 
     static String encode(Map<String, Integer> scars) {
