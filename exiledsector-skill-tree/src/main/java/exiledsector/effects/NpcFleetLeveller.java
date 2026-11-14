@@ -33,6 +33,7 @@ import exiledsector.skills.tags.ShipProfile;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.items.NpcItems;
 import exiledsector.items.MasterSchematic;
+import exiledsector.loot.FleetFactions;
 import exiledsector.loot.FleetLevelRange;
 import exiledsector.loot.LootSources;
 import exiledsector.skills.npc.NpcNodeRange;
@@ -56,7 +57,7 @@ public final class NpcFleetLeveller {
         Map<String, String> recordsByMemberId = NpcTreeRecords.of(npcFleet.getMemoryWithoutUpdate());
         String seedPrefix = null;
         List<Integer> playerShipPowers = List.of();
-        String fleetFactionId = npcFleet.getFaction() == null ? null : npcFleet.getFaction().getId();
+        String fleetFactionId = FleetFactions.realFactionIdOf(npcFleet);
         String factionVolume = fleetFactionId == null ? null : NpcFactionVolumes.volumeFor(fleetFactionId);
         FleetLevelRange chartRange = LootSources.levelRange(npcFleet.getMemoryWithoutUpdate());
         NpcNodeRange chartLevels = NpcNodeRange.of(chartRange, ShipLevelConfig.maxLevel(), ShipLevelConfig.maxAllocatedNodesBesidesRoot());

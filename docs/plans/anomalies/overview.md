@@ -6,7 +6,7 @@ An anomaly is anything a star chart system holds beyond its ordinary layout, fle
 |---|---|---|
 | Relay Network (built) | `../completed/anomalies/relay_network.md` | none, escalates the systems it leads to |
 | Excavation Sites (built) | `../completed/anomalies/excavation_sites.md` | one optional per open shaft, frigates and destroyers only; collapsed shafts are a marine raid |
-| Faction Skirmish (built) | `../completed/anomalies/faction_skirmish.md` | two sides' fleets; you join one or fight both |
+| Faction Skirmish (built) | `../completed/anomalies/faction_skirmish_rework.md` | two officers' flagship fleets, both hostile |
 | Listening Post (built) | `../completed/anomalies/listening_post.md` | zero if you get in unseen, one if the alarm goes up |
 | Derelict Forge (built) | `../completed/anomalies/derelict_forge.md` | one, a Guardian and its drones guarding the forge |
 | Storm Front (built) | `../completed/anomalies/storm_front.md` | none, changes the fights the chart already has |
@@ -38,7 +38,7 @@ Each anomaly is one class behind `ChartAnomaly` (package `exiledsector.charts.an
 
 Run hooks let an anomaly join the shared run code without that code naming it: `dialogFor` and `battleFor` (asked in registry order by `ChartCampaignPlugin`, so an earlier anomaly claims a shared target first), `checkRun` on the run's one-second timer, `fleetGone`, `clearFrom` when the chart's effects leave a fleet, and `loadData`, `loadItems` and `preloadTextures` at game load. Loot hooks: `fleetItems` replaces a chart fleet's item roll, `extraFleetLoot` adds to it, `holdsBackBossUnique` withholds the guaranteed boss unique, `holdsPlayerBattle` with `battleLootMult` and `touchBattleLoot` change the loot of a battle fought inside the anomaly, and `siteChances` scales a salvage site's item chances.
 
-Atlas hooks have defaults: `atlasWeight` leans the node roll from the node's traits, and `fitsAt` says whether the anomaly can exist at a node at all (Faction Skirmish needs a border between two factions). `atlasLines`, `confirmLines` and `entryChoices` add the anomaly's own tooltip lines, confirm lines and entry choices; `joinRunNode` stores what the run needs on the `AtlasRunNode` (its per-anomaly data map holds the Faction Skirmish side and attacker), and `runCompleted` and `runClosed` act on the atlas when the run ends (the skirmish capture, the relay chain moving on). `runFactionIds` lists run-only factions the anomaly dresses through `RunFactionDress`. Rewards go through the loot framework (`ChartLoot`, `ChartRewards`) so chart loot modifiers apply to them.
+Atlas hooks have defaults: `atlasWeight` leans the node roll from the node's traits, and `fitsAt` says whether the anomaly can exist at a node at all. `atlasLines`, `confirmLines` and `entryChoices` add the anomaly's own tooltip lines, confirm lines and entry choices; `joinRunNode` stores what the run needs on the `AtlasRunNode` (its per-anomaly data map holds the Faction Skirmish fight and both officers), and `runCompleted` and `runClosed` act on the atlas when the run ends (the skirmish settling its fight, the relay chain moving on). `runFactionIds` lists run-only factions the anomaly dresses through `RunFactionDress`. Rewards go through the loot framework (`ChartLoot`, `ChartRewards`) so chart loot modifiers apply to them.
 
 `effects` lists chart lines the anomaly adds to the run, such as a loot quantity bonus.
 

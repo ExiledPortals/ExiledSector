@@ -2,3 +2,5 @@ faction
 exiledSector_convoy
 exiledSector_dormant
 exiledSector_skirmish_ally
+exiledSector_skirmish_attacker
+exiledSector_skirmish_defender

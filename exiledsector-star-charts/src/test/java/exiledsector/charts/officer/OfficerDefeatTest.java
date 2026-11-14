@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -118,7 +119,7 @@ class OfficerDefeatTest {
     void anUndecidedChoiceIsPickedAtRandomAndTheSameWayEveryTime() {
         AtlasState state = undecidedBoard();
 
-        List<OfficerDefeat.RandomPick> randomPicks = OfficerDefeat.pickUnchosenAtRandom(state);
+        List<OfficerDefeat.RandomPick> randomPicks = OfficerDefeat.pickUnchosenAtRandom(state, Set.of());
 
         assertEquals(1, randomPicks.size());
         assertEquals(4, randomPicks.get(0).officer().recordId());
@@ -127,9 +128,17 @@ class OfficerDefeatTest {
         assertEquals(List.of(KERNELS, pick), state.officer(4).carried());
         assertFalse(state.officer(4).hasPendingChoice());
         assertEquals(List.of(KERNELS), state.officer(1).carried());
-        assertEquals(pick, OfficerDefeat.pickUnchosenAtRandom(undecidedBoard()).get(0).pick());
-        assertTrue(OfficerDefeat.pickUnchosenAtRandom(state).isEmpty());
-        assertTrue(OfficerDefeat.pickUnchosenAtRandom((AtlasState) null).isEmpty());
+        assertEquals(pick, OfficerDefeat.pickUnchosenAtRandom(undecidedBoard(), Set.of()).get(0).pick());
+        assertTrue(OfficerDefeat.pickUnchosenAtRandom(state, Set.of()).isEmpty());
+        assertTrue(OfficerDefeat.pickUnchosenAtRandom(null, Set.of()).isEmpty());
+    }
+
+    @Test
+    void anOfficerStillFightingInTheRunKeepsItsChoiceOpen() {
+        AtlasState state = undecidedBoard();
+
+        assertTrue(OfficerDefeat.pickUnchosenAtRandom(state, Set.of(4)).isEmpty());
+        assertTrue(state.officer(4).hasPendingChoice());
     }
 
     @Test
@@ -138,7 +147,7 @@ class OfficerDefeatTest {
 
         assertEquals(4, OfficerDefeat.nextUnchosen(state).recordId());
 
-        OfficerDefeat.pickUnchosenAtRandom(state);
+        OfficerDefeat.pickUnchosenAtRandom(state, Set.of());
         assertNull(OfficerDefeat.nextUnchosen(state));
         assertNull(OfficerDefeat.nextUnchosen(null));
     }

@@ -1,5 +1,6 @@
 package exiledsector.charts.anomaly.skirmish;
 
+import exiledsector.charts.anomaly.StateFields;
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartTables;
@@ -9,10 +10,10 @@ import exiledsector.charts.content.ChartBossType;
 import exiledsector.charts.content.ChartBosses;
 import exiledsector.charts.content.ChartContentPlan;
 import exiledsector.charts.content.ChartContentPlan.FleetRole;
-import exiledsector.charts.content.ChartContentPlan.PlannedFleet;
 import exiledsector.charts.content.ChartContentPlanner;
 import exiledsector.charts.content.ChartFactions;
 import exiledsector.charts.content.ChartPois;
+import exiledsector.charts.officer.OfficerRanks;
 import exiledsector.charts.officer.turn.Intent;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -30,6 +32,7 @@ class SkirmishPlannerTest {
 
     private static final int TIER = 8;
     private static final int ATTACKING_OFFICER = 7;
+    private static final int DEFENDING_OFFICER = 9;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -46,13 +49,25 @@ class SkirmishPlannerTest {
         ChartFactions.resetForTests();
     }
 
-    private static ChartGenContext joined(SkirmishSide side) {
-        return joined(new SkirmishJoin(side, "tritachyon", Intent.push(ATTACKING_OFFICER, null, Intent.NO_OFFICER)));
+    private static String lowestRank() {
+        return OfficerRanks.all().get(0).id();
     }
 
-    private static ChartGenContext joined(SkirmishJoin join) {
+    private static String highestRank() {
+        return OfficerRanks.all().get(OfficerRanks.all().size() - 1).id();
+    }
+
+    private static ChartGenContext fought(SkirmishFight fight) {
+        return fought(fight.encode());
+    }
+
+    private static ChartGenContext fought(String anomalyData) {
         return ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of(FactionSkirmish.ANOMALY_ID))
-                .withAnomalyData(FactionSkirmish.ANOMALY_ID, join.encode()));
+                .withAnomalyData(FactionSkirmish.ANOMALY_ID, anomalyData));
+    }
+
+    private static SkirmishFight fight(String attackerFactionId, String attackerRankId, String defenderRankId) {
+        return new SkirmishFight(attackerFactionId, attackerRankId, defenderRankId, Intent.challenge(ATTACKING_OFFICER, DEFENDING_OFFICER));
     }
 
     private static ChartContentPlan plan(ChartGenContext context) {
@@ -64,59 +79,42 @@ class SkirmishPlannerTest {
         return (SkirmishPlan) plan.anomalyPlan(FactionSkirmish.ANOMALY_ID);
     }
 
-    private static float points(List<PlannedFleet> fleets) {
-        return (float) fleets.stream().mapToDouble(PlannedFleet::combatPoints).sum();
-    }
-
     @Test
-    void theDefenderAlwaysHasAStationAndTheAttackerMatchesItsFleetsWithACommander() {
-        ChartContentPlan plan = plan(joined(SkirmishSide.NEITHER));
-        ChartContentPlan plain = ChartContentPlanner.plan(5L, ChartTiers.forTier(TIER), ChartPois.all(), ChartFactions.all(), id -> true,
-                joined(SkirmishSide.NEITHER), StarChartSettings.DEFAULT_FLEET_LIMIT, List.of());
+    void theDefenderKeepsItsStationAndBothOfficersBringAFleetSizedByTheirOwnRank() {
+        ChartContentPlan plan = plan(fought(fight("tritachyon", highestRank(), lowestRank())));
+        SkirmishPlan skirmish = skirmishOf(plan);
 
         assertEquals(ChartBossType.STATION, plan.bossType());
         assertNotNull(plan.bossStation());
-        assertEquals(ChartBossType.FLEET, plain.bossType());
-        assertNull(skirmishOf(plain));
+        assertTrue(plan.fleets().stream().noneMatch(fleet -> fleet.role() == FleetRole.BOSS));
         assertEquals("hegemony", plan.faction().factionId());
-        assertEquals("tritachyon", skirmishOf(plan).attackerFactionId());
-        assertEquals(ATTACKING_OFFICER, skirmishOf(plan).attackerOfficerId());
-        assertEquals(SkirmishSide.NEITHER, skirmishOf(plan).side());
-        List<PlannedFleet> attackers = skirmishOf(plan).attackerFleets();
-        long ordinaryDefenders = plan.fleets().stream().filter(fleet -> !fleet.role().bossFleet()).count();
-        assertEquals(ordinaryDefenders, attackers.stream().filter(fleet -> fleet.role() == FleetRole.PATROL).count());
-        assertEquals(1, attackers.stream().filter(fleet -> fleet.role() == FleetRole.BOSS).count());
-        assertTrue(attackers.stream().noneMatch(PlannedFleet::guardsPoi));
-        assertEquals(plan.fleetPoints(FleetRole.GUARD) + plan.fleetPoints(FleetRole.PATROL),
-                points(attackers.stream().filter(fleet -> fleet.role() == FleetRole.PATROL).toList()), 0.01f);
+        assertEquals("tritachyon", skirmish.attackerFactionId());
+        assertEquals(ATTACKING_OFFICER, skirmish.attackerOfficerId());
+        assertEquals(DEFENDING_OFFICER, skirmish.defenderOfficerId());
+        assertEquals(SkirmishPlanner.officerFleet(ChartTiers.forTier(TIER), highestRank()), skirmish.attackerFleet());
+        assertEquals(SkirmishPlanner.officerFleet(ChartTiers.forTier(TIER), lowestRank()), skirmish.defenderFleet());
+        assertTrue(skirmish.attackerFleet().combatPoints() >= skirmish.defenderFleet().combatPoints());
+        assertFalse(skirmish.attackerFleet().guardsPoi());
+        assertFalse(skirmish.defenderFleet().guardsPoi());
     }
 
     @Test
-    void theAlliedSideIsWeakerByTheDivisorAndTheEnemyKeepsTheNormalBudget() {
-        ChartContentPlan neither = plan(joined(SkirmishSide.NEITHER));
-        ChartContentPlan withDefender = plan(joined(SkirmishSide.DEFENDER));
-        ChartContentPlan withAttacker = plan(joined(SkirmishSide.ATTACKER));
+    void aSameFactionChallengeIsFoughtLikeAnyOther() {
+        SkirmishPlan skirmish = skirmishOf(plan(fought(fight("hegemony", lowestRank(), lowestRank()))));
 
-        assertEquals(points(neither.fleets()) / SkirmishPlanner.ALLY_COMBAT_POINTS_DIVISOR, points(withDefender.fleets()), 0.01f);
-        assertEquals(points(skirmishOf(neither).attackerFleets()), points(skirmishOf(withDefender).attackerFleets()), 0.01f);
-        assertEquals(points(neither.fleets()), points(withAttacker.fleets()), 0.01f);
-        assertEquals(points(skirmishOf(neither).attackerFleets()) / SkirmishPlanner.ALLY_COMBAT_POINTS_DIVISOR,
-                points(skirmishOf(withAttacker).attackerFleets()), 0.01f);
-        assertEquals(neither.bossStation().variantId(), withDefender.bossStation().variantId());
-        assertEquals(neither.bossStation().fallbackBoss().combatPoints() / SkirmishPlanner.ALLY_COMBAT_POINTS_DIVISOR,
-                withDefender.bossStation().fallbackBoss().combatPoints(), 0.01f);
-        assertEquals(neither.bossStation(), withAttacker.bossStation());
+        assertNotNull(skirmish);
+        assertEquals("hegemony", skirmish.attackerFactionId());
+        assertEquals(skirmish.attackerFleet(), skirmish.defenderFleet());
     }
 
     @Test
-    void aSkirmishWithoutAnAttackingOfficerPlansNoAttackers() {
-        Intent ledPush = Intent.push(ATTACKING_OFFICER, null, Intent.NO_OFFICER);
-
-        assertNull(skirmishOf(plan(joined(new SkirmishJoin(SkirmishSide.ATTACKER, "tritachyon", null)))));
-        assertNull(skirmishOf(plan(joined(new SkirmishJoin(SkirmishSide.ATTACKER, "tritachyon", Intent.push(Intent.NO_OFFICER, null, Intent.NO_OFFICER))))));
-        assertNull(skirmishOf(plan(joined(new SkirmishJoin(SkirmishSide.ATTACKER, null, ledPush)))));
-        assertNull(skirmishOf(plan(joined(new SkirmishJoin(SkirmishSide.ATTACKER, "hegemony", ledPush)))));
+    void aSkirmishWithoutBothOfficersOrFromAnOldSavePlansNoFight() {
+        assertNull(skirmishOf(plan(fought(new SkirmishFight("tritachyon", lowestRank(), lowestRank(), null)))));
+        assertNull(skirmishOf(plan(fought(new SkirmishFight("tritachyon", lowestRank(), lowestRank(),
+                Intent.challenge(ATTACKING_OFFICER, Intent.NO_OFFICER))))));
+        assertNull(skirmishOf(plan(fought(fight(null, lowestRank(), lowestRank())))));
+        assertNull(skirmishOf(plan(fought(fight("tritachyon", null, lowestRank())))));
+        assertNull(skirmishOf(plan(fought(StateFields.join("attacker", "tritachyon", Intent.push(ATTACKING_OFFICER, null, DEFENDING_OFFICER).encode())))));
         assertNull(skirmishOf(plan(ChartGenContext.none())));
-        assertNotNull(skirmishOf(plan(joined(new SkirmishJoin(SkirmishSide.ATTACKER, "tritachyon", ledPush)))));
     }
 }

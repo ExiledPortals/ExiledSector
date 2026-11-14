@@ -26,6 +26,7 @@ import exiledsector.i18n.Translation;
 
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeSet;
 
 public final class OfficerFleets {
 
@@ -35,6 +36,7 @@ public final class OfficerFleets {
     public static final String TREE_SEED_MEMORY_KEY = "$exiledSector_officerTreeSeed";
     static final String TREE_SEED_PREFIX = "officer|";
     static final Set<String> FIGHTING_TRAITS = Set.of(Personalities.AGGRESSIVE, Personalities.RECKLESS);
+    static final String FIGHTING_SEPARATOR = ",";
 
     private OfficerFleets() {
     }
@@ -66,9 +68,31 @@ public final class OfficerFleets {
         return recordIdOfRunData(node == null ? null : node.anomalyData(AtlasOfficer.RUN_DATA_KEY));
     }
 
-    public static Integer fightingRecordIdOf(AtlasRunNode node) {
+    public static Set<Integer> fightingRecordIdsOf(AtlasRunNode node) {
+        if (node == null) {
+            return Set.of();
+        }
+        Set<Integer> recordIds = new TreeSet<>();
         Integer runOfficer = recordIdOf(node);
-        return runOfficer != null || node == null ? runOfficer : recordIdOfRunData(node.anomalyData(AtlasOfficer.FIGHTING_DATA_KEY));
+        if (runOfficer != null) {
+            recordIds.add(runOfficer);
+        }
+        String fighting = node.anomalyData(AtlasOfficer.FIGHTING_DATA_KEY);
+        for (String runData : fighting == null ? new String[0] : fighting.split(FIGHTING_SEPARATOR)) {
+            Integer recordId = recordIdOfRunData(runData);
+            if (recordId != null) {
+                recordIds.add(recordId);
+            }
+        }
+        return recordIds;
+    }
+
+    public static String fightingRunData(int... recordIds) {
+        StringBuilder runData = new StringBuilder();
+        for (int recordId : recordIds) {
+            runData.append(runData.isEmpty() ? "" : FIGHTING_SEPARATOR).append(recordId);
+        }
+        return runData.toString();
     }
 
     static Integer recordIdOfRunData(String runData) {
@@ -76,7 +100,7 @@ public final class OfficerFleets {
             return null;
         }
         try {
-            return Integer.valueOf(runData);
+            return Integer.valueOf(runData.trim());
         } catch (NumberFormatException e) {
             return null;
         }

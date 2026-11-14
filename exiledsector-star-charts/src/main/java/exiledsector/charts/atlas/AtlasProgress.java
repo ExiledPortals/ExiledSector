@@ -2,6 +2,7 @@ package exiledsector.charts.atlas;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.officer.OfficerFleets;
 import exiledsector.charts.officer.turn.OfficerTurns;
 import exiledsector.charts.run.ChartRun;
 import org.apache.log4j.Logger;
@@ -14,6 +15,10 @@ public final class AtlasProgress {
     }
 
     public static void completed(SectorAPI sector, ChartRun run) {
+        completed(sector, run, run == null ? null : OfficerFleets.recordIdOf(run.atlasNode()));
+    }
+
+    public static void completed(SectorAPI sector, ChartRun run, Integer beatenOfficerId) {
         AtlasRunNode node = run == null ? null : run.atlasNode();
         if (sector == null || node == null) {
             return;
@@ -23,10 +28,12 @@ public final class AtlasProgress {
             AtlasGenerator generator = AtlasRuntime.generator(sector);
             AtlasCell cell = AtlasCell.unpack(node.cell());
             boolean newlyCompleted = !state.isCompleted(cell);
-            complete(generator, state, cell, run.tier());
+            AtlasCell holderBeforeRunEnd = state.commandCentreOf(cell);
             ChartAnomalies.runCompleted(sector, run);
+            boolean changedHands = changedHands(holderBeforeRunEnd, state.commandCentreOf(cell));
+            complete(generator, state, cell, run.tier(), changedHands);
             if (newlyCompleted) {
-                takeOfficerTurn(generator, state, run);
+                takeOfficerTurn(generator, state, run, beatenOfficerId);
             }
             AtlasReach.refreshReveal(generator, state);
         } catch (RuntimeException e) {
@@ -34,15 +41,23 @@ public final class AtlasProgress {
         }
     }
 
-    private static void takeOfficerTurn(AtlasGenerator generator, AtlasState state, ChartRun run) {
+    static boolean changedHands(AtlasCell holderBefore, AtlasCell holderAfter) {
+        return holderAfter != null && !holderAfter.equals(holderBefore);
+    }
+
+    private static void takeOfficerTurn(AtlasGenerator generator, AtlasState state, ChartRun run, Integer beatenOfficerId) {
         try {
-            OfficerTurns.bossKilled(generator, state, run);
+            OfficerTurns.bossKilled(generator, state, beatenOfficerId);
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Taking the Atlas officer turn for run " + run.runId() + " failed", e);
         }
     }
 
     static void complete(AtlasGenerator generator, AtlasState state, AtlasCell cell, int tier) {
+        complete(generator, state, cell, tier, false);
+    }
+
+    static void complete(AtlasGenerator generator, AtlasState state, AtlasCell cell, int tier, boolean keepsNewClaim) {
         if (state.isCompleted(cell)) {
             return;
         }
@@ -50,7 +65,9 @@ public final class AtlasProgress {
         state.spendUnchainedAnomalies(cell);
         state.clearTier(tier);
         state.addAtlasPoints(1);
-        AtlasTerritoryTransfer.vacate(generator, state, cell);
+        if (!keepsNewClaim) {
+            AtlasTerritoryTransfer.vacate(generator, state, cell);
+        }
         AtlasSpecial special = generator.specialAt(cell);
         if (special != null) {
             special.kind().onCompleted(generator, state, cell, special);

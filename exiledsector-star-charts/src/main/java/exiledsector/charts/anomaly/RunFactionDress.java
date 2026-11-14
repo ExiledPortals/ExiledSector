@@ -5,13 +5,17 @@ import com.fs.starfarer.api.campaign.RepLevel;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 
 import java.util.List;
+import java.util.Set;
 
 public record RunFactionDress(String likenessFactionId, String name, String article, String isOrAre, RepLevel towardsPlayer, boolean neutralToAll) {
 
     public static final String ALLY_FACTION_ID = "exiledSector_skirmish_ally";
+    public static final String ATTACKER_FACTION_ID = "exiledSector_skirmish_attacker";
+    public static final String DEFENDER_FACTION_ID = "exiledSector_skirmish_defender";
+    public static final Set<String> SKIRMISH_FACTION_IDS = Set.of(ALLY_FACTION_ID, ATTACKER_FACTION_ID, DEFENDER_FACTION_ID);
 
-    public static RunFactionDress alliesOf(String factionId) {
-        return new RunFactionDress(factionId, null, null, null, RepLevel.FRIENDLY, false);
+    public static RunFactionDress hostileCopyOf(String factionId) {
+        return new RunFactionDress(factionId, null, null, null, RepLevel.HOSTILE, false);
     }
 
     public void apply(FactionAPI runFaction, FactionAPI likeness, List<FactionAPI> allFactions) {

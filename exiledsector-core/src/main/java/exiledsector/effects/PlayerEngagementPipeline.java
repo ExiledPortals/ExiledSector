@@ -17,6 +17,7 @@ public final class PlayerEngagementPipeline extends BaseCampaignEventListener {
         AWARD_XP,
         SETTLE_CREW,
         HOLD_LOOT,
+        RECORD_OBJECTIVES,
         SALVAGE_BONUS
     }
 

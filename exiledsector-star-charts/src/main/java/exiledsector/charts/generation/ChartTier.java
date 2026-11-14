@@ -43,6 +43,11 @@ public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax,
         boss = boss && bossSize > 0f;
     }
 
+    public ChartTier withExtraBossSize(float extraBossSizePercent) {
+        return new ChartTier(tier, fleetSize, fleetsMin, fleetsMax, officerLevelBonus, officerCountBonus, fleetQuality, levelMin, levelMax, cacheBudget,
+                domainBudget, stationBudget, derelictBudget, boss, bossSize + extraBossSizePercent);
+    }
+
     public static float fleetPoints(float sizePercent) {
         return FLEET_SIZE_BASE_POINTS * Math.max(0f, sizePercent) / PERCENT;
     }

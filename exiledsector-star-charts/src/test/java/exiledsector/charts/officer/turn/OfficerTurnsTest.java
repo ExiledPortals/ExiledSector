@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -88,17 +89,17 @@ class OfficerTurnsTest {
     }
 
     @Test
-    void theOfficerOfTheOpenRunSitsTheTurnOut() {
+    void bothOfficersOfTheOpenRunSitTheTurnOut() {
         AtlasState state = new AtlasState(SEED);
         AtlasCell openRunCell = new AtlasCell(4, 0);
         int holderId = TestTerritories.establish(state, openRunCell, "pirates").recordId();
 
-        assertEquals(holderId, OfficerTurns.openRunOfficerId(state, TurnCause.forced(), openRunCell, Intent.NO_OFFICER));
-        assertEquals(Intent.NO_OFFICER, OfficerTurns.openRunOfficerId(state, TurnCause.forced(), new AtlasCell(9, 9), Intent.NO_OFFICER));
-        assertEquals(Intent.NO_OFFICER, OfficerTurns.openRunOfficerId(state, TurnCause.forced(), null, Intent.NO_OFFICER));
-        assertEquals(7, OfficerTurns.openRunOfficerId(state, TurnCause.officerVictorious(7), openRunCell, Intent.NO_OFFICER));
-        assertEquals(5, OfficerTurns.openRunOfficerId(state, TurnCause.forced(), new AtlasCell(9, 9), 5), "an officer fighting on a cell it doesn't hold");
-        assertEquals(holderId, OfficerTurns.openRunOfficerId(state, TurnCause.forced(), openRunCell, 5));
+        assertEquals(Set.of(holderId), OfficerTurns.openRunOfficerIds(state, TurnCause.forced(), openRunCell, Set.of()));
+        assertEquals(Set.of(), OfficerTurns.openRunOfficerIds(state, TurnCause.forced(), new AtlasCell(9, 9), Set.of()));
+        assertEquals(Set.of(), OfficerTurns.openRunOfficerIds(state, TurnCause.forced(), null, Set.of()));
+        assertEquals(Set.of(7, holderId), OfficerTurns.openRunOfficerIds(state, TurnCause.officerVictorious(7), openRunCell, Set.of()));
+        assertEquals(Set.of(5, 6), OfficerTurns.openRunOfficerIds(state, TurnCause.forced(), new AtlasCell(9, 9), Set.of(5, 6)), "both officers fighting on a cell neither holds");
+        assertEquals(Set.of(5, 6, holderId), OfficerTurns.openRunOfficerIds(state, TurnCause.forced(), openRunCell, Set.of(5, 6)));
     }
 
     @Test

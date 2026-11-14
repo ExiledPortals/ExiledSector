@@ -12,6 +12,7 @@ import exiledsector.charts.effect.ChartPlayerModifierSource;
 import exiledsector.charts.loot.BiomeModifiers;
 import exiledsector.charts.loot.ChartStorageTransfer;
 import exiledsector.charts.loot.StarChartLootSource;
+import exiledsector.charts.objective.ChartObjectives;
 import exiledsector.charts.objective.ChartRewardLootSource;
 import exiledsector.charts.objective.GatewayUpgradeRewards;
 import exiledsector.charts.officer.scar.ScarEffectSource;
@@ -26,6 +27,7 @@ import exiledsector.compat.RuthlessSectorCompat;
 import exiledsector.compat.UnknownSkiesCompat;
 import exiledsector.compat.VaultsOfKnowledgeCompat;
 import exiledsector.domain.ExiledSectorDomain;
+import exiledsector.effects.PlayerEngagementPipeline;
 import exiledsector.effects.ShipEffectSource;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.SpecLocalisation;
@@ -63,6 +65,7 @@ import lunalib.lunaSettings.LunaSettings.SettingsCreator;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static exiledsector.ExiledSector.MOD_ID;
 
@@ -86,6 +89,11 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     @Override
     public List<LootSource> lootSources() {
         return List.of(StarChartLootSource.INSTANCE, ChartRewardLootSource.INSTANCE);
+    }
+
+    @Override
+    public Map<PlayerEngagementPipeline.Stage, PlayerEngagementPipeline.Step> engagementSteps() {
+        return Map.of(PlayerEngagementPipeline.Stage.RECORD_OBJECTIVES, ChartObjectives::afterPlayerEngagement);
     }
 
     @Override

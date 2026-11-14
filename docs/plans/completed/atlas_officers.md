@@ -2,7 +2,7 @@
 
 The Outer Reaches are frontier space the factions are fighting over. Each faction holds small territories that start at 4 to 10 systems, each guarded by a named officer who persists across the save. Every officer the player beats, and every fourth other chart boss, the atlas takes a turn: officers push into unclaimed space and into each other's territories, challenge neighbouring officers, and rise or fall in rank. Beating an officer lets the player pick one of three items that officer will carry the next time they are beaten.
 
-Status: built 2026-11-13. Started 2026-11-12. Inspired by the Nemesis system of Middle-earth: Shadow of Mordor and Shadow of War (named, persistent enemy officers who remember the player, rise in rank and fight each other); never use that name. Builds on `atlas.md`, `completed/anomalies/faction_skirmish.md` and `anomalies/overview.md`.
+Status: built 2026-11-13. Started 2026-11-12. Inspired by the Nemesis system of Middle-earth: Shadow of Mordor and Shadow of War (named, persistent enemy officers who remember the player, rise in rank and fight each other); never use that name. Builds on `atlas.md`, the Faction Skirmish plan (since replaced by `completed/anomalies/faction_skirmish_rework.md`) and `anomalies/overview.md`.
 
 ## Territories
 
@@ -24,7 +24,7 @@ No faction is ever wiped out for good. The atlas is endless, and new territories
 - a faction with no territory on the visible atlas gets weight 4;
 - a faction already on the visible atlas gets weight 1 divided by one more than the number of territories it has there.
 
-All placeholders. The command centre's region must still allow the faction (its faction pool). Remnant, derelict, Threat and Abyssal factions never hold territories (reuse `chart_skirmish_factions.csv`); they stay infestations and biome landmarks. Independents and mercenaries never hold territories either, since they are the unclaimed space.
+All placeholders. The command centre's region must still allow the faction (its faction pool). Remnant, derelict, Threat and Abyssal factions never hold territories (`atlas_territoryless_factions.csv`); they stay infestations and biome landmarks. Independents and mercenaries never hold territories either, since they are the unclaimed space.
 
 Safeguards:
 
@@ -39,7 +39,7 @@ The player's commission faction (`Misc.getCommissionFactionId()`) never holds a 
 
 When the player takes a commission or switches to another one, the commissioned faction's territories are handed over on the next atlas turn or the next atlas opening, whichever comes first, and after the open run closes if it is inside one of them. Each territory gets a new faction from the absence weighting, keeping its command centre and claims. Its officer leaves the board, and a new officer of the new faction takes the command centre with the same rank and every item the old one carried, identified if the old one was. A fled officer of that faction who is waiting for a territory leaves too, and their carried items go to the next new officer to take a command centre. The replacements join the saved turn results, so the board's next opening shows them in the shuffle (old portrait fading out, new one fading in). Nothing is saved for this: the check is whether any territory belongs to the current commission faction. When a commission ends, nothing is handed back; the faction returns through the normal weighting.
 
-Chart fleets stay hostile whatever the player's standing with their faction, and keep ignoring comms, so no tithe, bribe or high-reputation talk turns them (`ChartContentGenerator.HOSTILITY_FLAGS`, as today). Those would let the player pass a system without clearing it, which breaks completion. A territory of a faction the player is not hostile to, such as an ally of their commission faction, plays like any other. The only difference is reputation: if the player's transponder is on when a battle against that faction's fleets starts, they take vanilla's penalty for attacking a non-hostile fleet with the transponder on (`RepActions.COMBAT_AGGRESSIVE`: a large reputation loss and at best Hostile, so it declares war on that faction), and vanilla then decides what that does to the commission. With the transponder off there is no change, which is today's behaviour (`MEMORY_KEY_NO_REP_IMPACT` and `ChartAllyReputation`). Factions hostile to the player never cost reputation.
+Chart fleets stay hostile whatever the player's standing with their faction, and keep ignoring comms, so no tithe, bribe or high-reputation talk turns them (`ChartContentGenerator.HOSTILITY_FLAGS`, as today). Those would let the player pass a system without clearing it, which breaks completion. A territory of a faction the player is not hostile to, such as an ally of their commission faction, plays like any other. The only difference is reputation: if the player's transponder is on when a battle against that faction's fleets starts, they take vanilla's penalty for attacking a non-hostile fleet with the transponder on (`RepActions.COMBAT_AGGRESSIVE`: a large reputation loss and at best Hostile, so it declares war on that faction), and vanilla then decides what that does to the commission. With the transponder off there is no change, which is today's behaviour (`MEMORY_KEY_NO_REP_IMPACT`). Factions hostile to the player never cost reputation.
 
 ## Officers
 

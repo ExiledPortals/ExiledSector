@@ -441,7 +441,7 @@ class ChartRunCloserTest {
         when(systemFleet.getId()).thenReturn("boss");
         when(systemFleet.hasTag(ChartIds.runTag(RUN_ID))).thenReturn(true);
         Mockito.doAnswer(invocation -> {
-            ChartObjectives.fleetGone(sector, systemFleet, FleetDespawnReason.DESTROYED_BY_BATTLE);
+            ChartObjectives.fleetGone(sector, systemFleet, FleetDespawnReason.DESTROYED_BY_BATTLE, null);
             return null;
         }).when(systemFleet).despawn(any(), any());
         run.beginClosing();

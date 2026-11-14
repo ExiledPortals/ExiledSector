@@ -1,5 +1,6 @@
 package exiledsector.charts.anomaly.skirmish;
 
+import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasAnomalyRecord;
 import exiledsector.charts.atlas.AtlasCell;
@@ -28,16 +29,35 @@ public final class SkirmishRecords implements OfficerTurnListener {
         sync(generator, state, openRunCell);
     }
 
+    public static void dropPlayerInserted(SectorAPI sector) {
+        AtlasState state = AtlasState.getIfCreated(sector);
+        if (state != null) {
+            dropPlayerInserted(state, AtlasAnomalies.openRunCell());
+        }
+    }
+
+    static void dropPlayerInserted(AtlasState state, AtlasCell openRunCell) {
+        for (AtlasAnomalyRecord record : state.anomalyRecords()) {
+            if (record.source() == AtlasAnomalyRecord.Source.PLAYER && isSkirmishAwayFrom(record, openRunCell)) {
+                state.removeAnomaly(record.recordId());
+            }
+        }
+    }
+
     static void sync(AtlasGenerator generator, AtlasState state, AtlasCell openRunCell) {
+        dropPlayerInserted(state, openRunCell);
         Set<AtlasCell> contested = SkirmishContests.declaredCells(generator, state);
         for (AtlasAnomalyRecord record : state.anomalyRecords()) {
-            if (record.source() == AtlasAnomalyRecord.Source.WORLD && FactionSkirmish.ANOMALY_ID.equals(record.anomalyId())
-                    && !record.cell().equals(openRunCell) && !contested.contains(record.cell())) {
+            if (record.source() == AtlasAnomalyRecord.Source.WORLD && isSkirmishAwayFrom(record, openRunCell) && !contested.contains(record.cell())) {
                 state.removeAnomaly(record.recordId());
             }
         }
         for (AtlasCell cell : contested) {
             AtlasAnomalies.insert(generator, state, cell, FactionSkirmish.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD, openRunCell);
         }
+    }
+
+    private static boolean isSkirmishAwayFrom(AtlasAnomalyRecord record, AtlasCell openRunCell) {
+        return FactionSkirmish.ANOMALY_ID.equals(record.anomalyId()) && !record.cell().equals(openRunCell);
     }
 }

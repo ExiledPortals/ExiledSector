@@ -1,9 +1,7 @@
 package exiledsector.charts.anomaly.skirmish;
 
-import exiledsector.charts.atlas.AtlasAnomalyRecord;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
-import exiledsector.charts.atlas.AtlasHash;
 import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.atlas.AtlasTerritoryTransfer;
@@ -12,25 +10,16 @@ import exiledsector.charts.officer.turn.Intent;
 import exiledsector.charts.officer.turn.IntentKind;
 import exiledsector.charts.officer.turn.OfficerTurns;
 
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public final class SkirmishContests {
-
-    static final long ORDERED_ATTACKER_SALT = 0x4f5244415454L;
 
     private SkirmishContests() {
     }
 
     public static SkirmishContest at(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
-        SkirmishContest declared = declaredAt(generator, state, cell);
-        return declared != null ? declared : orderedAt(generator, state, cell);
-    }
-
-    public static SkirmishContest declaredAt(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
         AtlasOfficer defender = defenderAt(generator, state, cell);
         if (defender == null) {
             return null;
@@ -73,25 +62,8 @@ public final class SkirmishContests {
                 }
             }
         }
-        candidates.removeIf(cell -> declaredAt(generator, state, cell) == null);
+        candidates.removeIf(cell -> at(generator, state, cell) == null);
         return candidates;
-    }
-
-    static SkirmishContest orderedAt(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
-        AtlasOfficer defender = defenderAt(generator, state, cell);
-        AtlasAnomalyRecord ordered = defender == null ? null : orderedRecord(state, cell);
-        if (ordered == null) {
-            return null;
-        }
-        String raced = AtlasHash.race(state.seed(), ORDERED_ATTACKER_SALT + ordered.recordId(), cell.gridX(), cell.gridY(),
-                lanesFromAttackers(generator, state, cell, defender));
-        AtlasOfficer attacker = raced == null ? null : state.officer(Integer.parseInt(raced));
-        return attacker == null ? null : new SkirmishContest(Intent.push(attacker.recordId(), cell, defender.recordId()), attacker, defender);
-    }
-
-    public static boolean canBeAttacked(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
-        AtlasOfficer defender = defenderAt(generator, state, cell);
-        return defender != null && (declaredAt(generator, state, cell) != null || !lanesFromAttackers(generator, state, cell, defender).isEmpty());
     }
 
     public static AtlasOfficer defenderAt(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
@@ -100,8 +72,7 @@ public final class SkirmishContests {
             return null;
         }
         AtlasOfficer defender = state.officerAt(centre);
-        if (defender == null || !defender.isActive() || !SkirmishFactions.takesSides(defender.factionId())
-                || !defender.factionId().equals(AtlasOpening.ownerOf(generator, state, cell))) {
+        if (defender == null || !defender.isActive() || !defender.factionId().equals(AtlasOpening.ownerOf(generator, state, cell))) {
             return null;
         }
         return defender;
@@ -132,39 +103,18 @@ public final class SkirmishContests {
 
     private static SkirmishContest contest(AtlasGenerator generator, AtlasState state, Intent intent, AtlasOfficer defender, AtlasCell cell) {
         AtlasOfficer attacker = state.officer(intent.officerRecordId());
-        boolean possible = intent.kind() == IntentKind.CHALLENGE ? canChallenge(attacker, defender)
+        boolean possible = intent.kind() == IntentKind.CHALLENGE ? canChallenge(attacker)
                 : canAttack(generator, state, attacker, defender, cell);
         return possible ? new SkirmishContest(intent, attacker, defender) : null;
     }
 
     private static boolean canAttack(AtlasGenerator generator, AtlasState state, AtlasOfficer attacker, AtlasOfficer defender, AtlasCell cell) {
-        return canChallenge(attacker, defender) && AtlasTerritoryTransfer.territoryBorders(generator::lanes, state, attacker.commandCentre(), cell);
+        return canChallenge(attacker) && !attacker.factionId().equals(defender.factionId())
+                && AtlasTerritoryTransfer.territoryBorders(generator::lanes, state, attacker.commandCentre(), cell);
     }
 
-    private static boolean canChallenge(AtlasOfficer attacker, AtlasOfficer defender) {
-        return attacker != null && attacker.isActive() && SkirmishFactions.takesSides(attacker.factionId())
-                && !attacker.factionId().equals(defender.factionId());
-    }
-
-    private static Map<String, Float> lanesFromAttackers(AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasOfficer defender) {
-        Map<String, Float> lanesInto = new LinkedHashMap<>();
-        for (AtlasCell neighbour : generator.lanes(cell)) {
-            AtlasCell centre = state.commandCentreOf(neighbour);
-            AtlasOfficer neighbouring = centre == null ? null : state.officerAt(centre);
-            if (neighbouring != null && canAttack(generator, state, neighbouring, defender, cell)) {
-                lanesInto.merge(Integer.toString(neighbouring.recordId()), 1f, Float::sum);
-            }
-        }
-        return lanesInto;
-    }
-
-    private static AtlasAnomalyRecord orderedRecord(AtlasState state, AtlasCell cell) {
-        for (AtlasAnomalyRecord record : state.anomalyRecords(cell)) {
-            if (record.source() == AtlasAnomalyRecord.Source.PLAYER && FactionSkirmish.ANOMALY_ID.equals(record.anomalyId())) {
-                return record;
-            }
-        }
-        return null;
+    private static boolean canChallenge(AtlasOfficer attacker) {
+        return attacker != null && attacker.isActive();
     }
 
     private static boolean pushedAt(List<Intent> declared, AtlasCell cell) {

@@ -11,7 +11,9 @@ import com.fs.starfarer.api.impl.campaign.CoreReputationPlugin.RepActions;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.RunFactionDress;
+import exiledsector.loot.FleetFactions;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,7 +21,7 @@ import java.util.function.Predicate;
 
 public final class ChartTransponderReputation {
 
-    private static final Set<String> NEVER_PENALISED = Set.of(Factions.PLAYER, Factions.NEUTRAL, RunFactionDress.ALLY_FACTION_ID);
+    private static final Set<String> NEVER_PENALISED = neverPenalised();
 
     private ChartTransponderReputation() {
     }
@@ -43,12 +45,23 @@ public final class ChartTransponderReputation {
             return penalised;
         }
         for (CampaignFleetAPI fleet : enemyFleets) {
-            String factionId = isChartFleet(fleet) ? fleet.getFaction().getId() : null;
+            String factionId = isChartFleet(fleet) ? realFactionOf(fleet) : null;
             if (factionId != null && !NEVER_PENALISED.contains(factionId) && !hostileToPlayer.test(factionId)) {
                 penalised.add(factionId);
             }
         }
         return penalised;
+    }
+
+    private static Set<String> neverPenalised() {
+        Set<String> factionIds = new HashSet<>(RunFactionDress.SKIRMISH_FACTION_IDS);
+        factionIds.add(Factions.PLAYER);
+        factionIds.add(Factions.NEUTRAL);
+        return Set.copyOf(factionIds);
+    }
+
+    static String realFactionOf(CampaignFleetAPI fleet) {
+        return FleetFactions.realFactionIdOf(fleet);
     }
 
     private static boolean isChartFleet(CampaignFleetAPI fleet) {

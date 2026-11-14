@@ -23,7 +23,7 @@ public class ChartContentListener implements FleetEventListener {
             return;
         }
         try {
-            ChartObjectives.fleetGone(Global.getSector(), fleet, reason);
+            ChartObjectives.fleetGone(Global.getSector(), fleet, reason, param);
             AnomalyRun run = AnomalyRun.live(Global.getSector());
             if (run != null) {
                 ChartAnomalies.fleetGone(run, fleet);

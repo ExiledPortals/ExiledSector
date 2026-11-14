@@ -89,7 +89,8 @@ class PlayerEngagementPipelineTest {
 
     @Test
     void theStagesRunInTheirDeclaredOrder() {
-        assertEquals(List.of(Stage.RECORD_LOSSES, Stage.SYNC_TREES, Stage.AWARD_XP, Stage.SETTLE_CREW, Stage.HOLD_LOOT, Stage.SALVAGE_BONUS),
+        assertEquals(List.of(Stage.RECORD_LOSSES, Stage.SYNC_TREES, Stage.AWARD_XP, Stage.SETTLE_CREW, Stage.HOLD_LOOT, Stage.RECORD_OBJECTIVES,
+                        Stage.SALVAGE_BONUS),
                 List.of(Stage.values()));
     }
 

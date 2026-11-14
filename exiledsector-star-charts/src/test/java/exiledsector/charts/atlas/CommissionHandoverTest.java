@@ -182,7 +182,7 @@ class CommissionHandoverTest {
         Board board = revealedBoard();
         AtlasCell centre = board.centres().get(0);
         AtlasOfficer predecessor = commissionOfficer(board, centre, "lieutenant", List.of(), false);
-        TerritoryContext duringRun = COMMISSIONED.withOpenRun(board.centres().get(1), predecessor.recordId());
+        TerritoryContext duringRun = COMMISSIONED.withOpenRun(board.centres().get(1), Set.of(predecessor.recordId()));
 
         assertTrue(CommissionHandover.handOver(board.generator(), board.state(), board.visible(), duringRun).isEmpty());
         assertEquals(predecessor, board.state().officerAt(centre));

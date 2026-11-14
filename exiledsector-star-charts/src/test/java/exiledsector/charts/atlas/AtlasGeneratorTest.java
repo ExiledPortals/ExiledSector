@@ -1,6 +1,5 @@
 package exiledsector.charts.atlas;
 
-import exiledsector.charts.anomaly.skirmish.SkirmishFactions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayDeque;
@@ -556,7 +555,7 @@ class AtlasGeneratorTest {
         int held = 0;
         Set<String> unclaimedFactions = new HashSet<>();
         Set<String> territoryFactions = new HashSet<>();
-        SkirmishFactions.useForTests(Set.of("derelict"));
+        TerritoryExclusions.useForTests(Set.of("derelict"));
         try {
             for (AtlasNode node : scan(generator)) {
                 if (node.isVoid() || node.isOrigin()) {
@@ -572,7 +571,7 @@ class AtlasGeneratorTest {
                 }
             }
         } finally {
-            SkirmishFactions.useForTests(Set.of());
+            TerritoryExclusions.useForTests(Set.of());
         }
 
         assertTrue(held > 20);
@@ -717,7 +716,7 @@ class AtlasGeneratorTest {
     void aRegionWithAFactionPoolWeightsItsTerritoriesToThatPoolWhileItsUnclaimedSystemsStayIndependent() {
         AtlasGenerator generator = generator(rules());
         int graveyardSystems = 0;
-        SkirmishFactions.useForTests(Set.of("derelict", "remnant"));
+        TerritoryExclusions.useForTests(Set.of("derelict", "remnant"));
         try {
             for (AtlasNode node : scan(generator)) {
                 if (node.isVoid() || node.isOrigin()) {
@@ -733,7 +732,7 @@ class AtlasGeneratorTest {
                 }
             }
         } finally {
-            SkirmishFactions.useForTests(Set.of());
+            TerritoryExclusions.useForTests(Set.of());
         }
 
         assertTrue(graveyardSystems > 0);

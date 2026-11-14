@@ -7,11 +7,9 @@ import exiledsector.charts.anomaly.relay.RelayStages;
 import exiledsector.charts.anomaly.relay.RelayNetwork;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
-import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasAnomalyRecord;
 import exiledsector.charts.atlas.AtlasCell;
-import exiledsector.charts.atlas.AtlasEntry;
 import exiledsector.charts.atlas.AtlasLine;
 import exiledsector.charts.content.ChartFactions;
 import exiledsector.charts.atlas.AtlasData;
@@ -27,7 +25,6 @@ import exiledsector.charts.atlas.TestBorders;
 import exiledsector.charts.atlas.TestBorders.Border;
 import exiledsector.charts.officer.OfficerText;
 import exiledsector.charts.officer.turn.Intent;
-import exiledsector.ui.socket.BenchModeSupport;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
@@ -72,7 +69,7 @@ class AtlasNodeTextTest {
     }
 
     @Test
-    void aSkirmishSystemNamesBothSidesAndOffersEachSideToJoin() {
+    void aSkirmishSystemNamesBothOfficersAndOffersNoSideToJoin() {
         ChartTables.useAnomalies(List.of(FactionSkirmish.INSTANCE),
                 List.of(new ChartAnomalies.Definition(FactionSkirmish.ANOMALY_ID, 1f, 1, 15, "", "", true, Set.of(), false)));
         try {
@@ -82,17 +79,13 @@ class AtlasNodeTextTest {
             AtlasCell cell = border.contested();
             state.setDeclaredIntents(List.of(Intent.push(border.attacker().recordId(), cell, border.defender().recordId()).encode()));
             assertTrue(AtlasAnomalies.insert(generator, state, cell, FactionSkirmish.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD, null).check().allows());
-            String defender = ChartFactions.displayName(FactionSkirmish.defender(generator, state, cell));
-            String attacker = ChartFactions.displayName(FactionSkirmish.attacker(generator, state, cell));
+            String attackerFaction = ChartFactions.displayName(border.attacker().factionId());
+            String defenderFaction = ChartFactions.displayName(border.defender().factionId());
 
-            assertTrue(AtlasNodeText.markers(generator, state, cell, generator.node(cell))
-                    .contains(new AtlasLine(OfficerText.title(border.attacker()) + " of " + attacker + " attacks " + defender, AtlasLine.Tone.PLAIN)));
+            assertTrue(AtlasNodeText.markers(generator, state, cell, generator.node(cell)).contains(new AtlasLine(OfficerText.title(border.attacker()) + " of "
+                    + attackerFaction + " attacks " + OfficerText.title(border.defender()) + " of " + defenderFaction, AtlasLine.Tone.PLAIN)));
             assertTrue(AtlasNodeText.confirmLines(generator, state, cell).contains("Completing the system ends the fight permanently."));
-            List<BenchModeSupport.OpenChoice> choices = AtlasNodeText.entryChoices(generator, state, cell);
-            assertEquals(List.of("Side with " + defender, "Side with " + attacker, "Stay out"),
-                    choices.stream().map(BenchModeSupport.OpenChoice::label).toList());
-            assertEquals(List.of(new AtlasEntry(cell, SkirmishSide.DEFENDER), new AtlasEntry(cell, SkirmishSide.ATTACKER),
-                    new AtlasEntry(cell, SkirmishSide.NEITHER)), choices.stream().map(BenchModeSupport.OpenChoice::target).toList());
+            assertEquals(List.of(), AtlasNodeText.entryChoices(generator, state, cell));
             assertEquals(List.of(), AtlasNodeText.entryChoices(generator, state, AtlasCell.ORIGIN));
         } finally {
             ChartTables.resetAnomalies();
