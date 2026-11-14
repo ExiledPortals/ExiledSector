@@ -4,9 +4,18 @@ import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.officer.reward.CarriedItem;
 import exiledsector.charts.officer.reward.RewardKind;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
+import java.lang.reflect.RecordComponent;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.function.UnaryOperator;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -198,5 +207,49 @@ class AtlasOfficerTest {
         assertEquals(CENTRE, changed.commandCentre());
         assertEquals(changed, AtlasOfficer.decode(changed.recordId(), changed.encode()));
         assertFalse(changed.withPendingOffers(List.of()).hasPendingChoice());
+    }
+
+    private static AtlasOfficer fullyFilled() {
+        return new AtlasOfficer(12, "tritachyon", 1L, -2L, "admiral", CENTRE, "reckless", "paragon", "paragon_Elite", 3L, -4L,
+                List.of("degraded_engines", "faulty_grid"), Map.of("scar_a", 2), List.of("crafting_item:4:kernel"), List.of("engram:1:engram_a"),
+                3, false, AtlasOfficer.Status.ACTIVE, true, List.of("arrived:1"), 40, false, 5, "portrait.png", Map.of("faulty_grid", "scar_a"));
+    }
+
+    static Stream<Arguments> copyMethods() {
+        List<CarriedItem> carried = List.of(new CarriedItem(RewardKind.HULL_ITEM, "bridge", null, 2));
+        List<CarriedItem> offers = List.of(CarriedItem.of(RewardKind.UNIQUE, "u_x"));
+        return Stream.of(
+                copy("withRenown", officer -> officer.withRenown(7), "renown"),
+                copy("withLastChance", officer -> officer.withLastChance(true), "lastChance"),
+                copy("withDefeats", officer -> officer.withDefeats(9), "defeats"),
+                copy("withHistory", officer -> officer.withHistory("moved:1:2"), "history"),
+                copy("withScars", officer -> officer.withScars(Map.of("scar_b", 1)), "scars"),
+                copy("withDModIds", officer -> officer.withDModIds(List.of("degraded_engines", "comp_armor")), "dmodIds", "dmodScars"),
+                copy("withScarDMod", officer -> officer.withScarDMod("comp_armor", "rammed"), "dmodIds", "dmodScars"),
+                copy("withCarried", officer -> officer.withCarried(carried), "carriedItems"),
+                copy("withPortrait", officer -> officer.withPortrait("other.png"), "portraitPath"),
+                copy("withPendingOffers", officer -> officer.withPendingOffers(offers), "pendingChoice"),
+                copy("seatedAt", officer -> officer.seatedAt("captain", 2), "rankId", "seat"),
+                copy("identifiedNow", AtlasOfficer::identifiedNow, "identified"));
+    }
+
+    private static Arguments copy(String name, UnaryOperator<AtlasOfficer> method, String... changedComponents) {
+        return Arguments.of(name, method, Set.of(changedComponents));
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("copyMethods")
+    void eachCopyMethodChangesOnlyItsOwnFields(String name, UnaryOperator<AtlasOfficer> method, Set<String> changedComponents) throws Exception {
+        AtlasOfficer before = fullyFilled();
+        AtlasOfficer after = method.apply(before);
+
+        Set<String> actuallyChanged = new TreeSet<>();
+        for (RecordComponent component : AtlasOfficer.class.getRecordComponents()) {
+            if (!Objects.equals(component.getAccessor().invoke(before), component.getAccessor().invoke(after))) {
+                actuallyChanged.add(component.getName());
+            }
+        }
+
+        assertEquals(new TreeSet<>(changedComponents), actuallyChanged);
     }
 }
