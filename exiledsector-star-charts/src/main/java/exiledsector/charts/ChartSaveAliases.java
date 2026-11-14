@@ -27,6 +27,7 @@ import exiledsector.charts.layout.abyss.ChartPhotospherePlugin;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.objective.ChartObjectiveIntel;
 import exiledsector.charts.phasing.PhaseDisplacementGate;
+import exiledsector.charts.phasing.PhaseDisplacementIntel;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunState;
 import exiledsector.charts.wormhole.ChartWormholePlugin;
@@ -71,7 +72,8 @@ public final class ChartSaveAliases {
             Map.entry("exiledSector.MothershipFleetManager", MothershipFleetManager.class),
             Map.entry("exiledSector.NexusFleetManager", NexusFleetManager.class),
             Map.entry("exiledSector.StationLaunches", StationLaunches.class),
-            Map.entry("exiledSector.PhaseDisplacementGate", PhaseDisplacementGate.class));
+            Map.entry("exiledSector.PhaseDisplacementGate", PhaseDisplacementGate.class),
+            Map.entry("exiledSector.PhaseDisplacementIntel", PhaseDisplacementIntel.class));
 
     static final Map<String, Class<?>> MOVED = Map.of(
             "exiledsector.charts.anomaly.ChartCoronaTerrainPlugin", ChartCoronaTerrainPlugin.class,

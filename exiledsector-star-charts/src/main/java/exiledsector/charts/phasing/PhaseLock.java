@@ -122,6 +122,7 @@ public final class PhaseLock {
             return false;
         }
         PhaseGateState.startJob(gateMarket, lock);
+        PhasePull.started(sector, gateMarket);
         return true;
     }
 }

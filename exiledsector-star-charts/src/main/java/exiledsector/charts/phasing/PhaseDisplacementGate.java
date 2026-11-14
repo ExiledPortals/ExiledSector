@@ -1,8 +1,10 @@
 package exiledsector.charts.phasing;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
+import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -16,6 +18,8 @@ public class PhaseDisplacementGate extends BaseIndustry {
 
     public static final String INDUSTRY_ID = "exiledSector_phase_displacement_gate";
     static final float TOOLTIP_PAD = 10f;
+
+    private transient float uncheckedDays;
 
     public static MarketAPI playerGateMarket(SectorAPI sector) {
         if (sector == null || sector.getEconomy() == null) {
@@ -36,11 +40,40 @@ public class PhaseDisplacementGate extends BaseIndustry {
     @Override
     public void apply() {
         super.apply(true);
+        boolean pulling = PhaseGateState.hasJobEntry(market);
+        demand(Commodities.RARE_METALS, pulling ? PhasePull.TRANSPLUTONICS_DEMAND : 0);
+        demand(Commodities.VOLATILES, pulling ? PhasePull.VOLATILES_DEMAND : 0);
     }
 
     @Override
     public void unapply() {
         super.unapply();
+    }
+
+    @Override
+    public void advance(float amount) {
+        super.advance(amount);
+        SectorAPI sector = Global.getSector();
+        if (market == null || sector == null || sector.getClock() == null) {
+            return;
+        }
+        uncheckedDays += sector.getClock().convertToDays(amount);
+        if (uncheckedDays < PhasePull.CHECK_DAYS) {
+            return;
+        }
+        float days = uncheckedDays;
+        uncheckedDays = 0f;
+        if (PhaseGateState.hasJobEntry(market)) {
+            PhasePull.advance(sector, this, days);
+        }
+    }
+
+    @Override
+    public void notifyBeingRemoved(MarketAPI.MarketInteractionMode mode, boolean forUpgrade) {
+        super.notifyBeingRemoved(mode, forUpgrade);
+        if (!forUpgrade) {
+            PhasePull.abandon(Global.getSector(), market);
+        }
     }
 
     @Override
@@ -83,5 +116,16 @@ public class PhaseDisplacementGate extends BaseIndustry {
     protected void addPostDescriptionSection(TooltipMakerAPI tooltip, IndustryTooltipMode mode) {
         VanillaText.plainPara(tooltip, I18n.forGameText(() -> Translation.msg("chart.phasing.tooltip.power")
                 .arg("range", HypershuntPower.rangeLightYears()).text()), TOOLTIP_PAD, Misc.getTextColor());
+        PhasedPlanetRecord job = market == null || mode == IndustryTooltipMode.ADD_INDUSTRY ? null : PhaseGateState.job(market);
+        if (job == null) {
+            return;
+        }
+        PhasePull.Pause pause = PhasePull.pauseFor(this);
+        int daysLeft = (int) Math.ceil(Math.max(0f, PhasePull.PULL_DAYS - PhaseGateState.jobDays(market)));
+        String status = pause == null
+                ? I18n.forGameText(() -> Translation.msg("chart.phasing.tooltip.pulling").arg("planet", job.name()).arg("days", daysLeft).text())
+                : I18n.forGameText(() -> Translation.msg("chart.phasing.tooltip.paused").arg("planet", job.name())
+                .arg("reason", Translation.gameText(PhasePull.pauseKey(pause))).text());
+        VanillaText.plainPara(tooltip, status, TOOLTIP_PAD, Misc.getHighlightColor());
     }
 }

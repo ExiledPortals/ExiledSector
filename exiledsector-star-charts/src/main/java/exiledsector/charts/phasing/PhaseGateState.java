@@ -8,6 +8,7 @@ public final class PhaseGateState {
     static final String LOCK_KEY = "$exiledSector_phaseLock";
     static final String JOB_KEY = "$exiledSector_phaseJob";
     static final String JOB_DAYS_KEY = "$exiledSector_phaseJobDays";
+    static final String JOB_ORBIT_KEY = "$exiledSector_phaseJobOrbit";
 
     private PhaseGateState() {
     }
@@ -45,6 +46,11 @@ public final class PhaseGateState {
         return job(gateMarket) != null;
     }
 
+    public static boolean hasJobEntry(MarketAPI gateMarket) {
+        MemoryAPI memory = memoryOf(gateMarket);
+        return memory != null && memory.contains(JOB_KEY);
+    }
+
     static void startJob(MarketAPI gateMarket, PhasedPlanetRecord job) {
         MemoryAPI memory = memoryOf(gateMarket);
         String encoded = job == null ? null : job.encode();
@@ -66,11 +72,24 @@ public final class PhaseGateState {
         }
     }
 
+    public static float jobOrbit(MarketAPI gateMarket) {
+        MemoryAPI memory = memoryOf(gateMarket);
+        return memory == null ? 0f : memory.getFloat(JOB_ORBIT_KEY);
+    }
+
+    static void setJobOrbit(MarketAPI gateMarket, float orbitRadius) {
+        MemoryAPI memory = memoryOf(gateMarket);
+        if (memory != null) {
+            memory.set(JOB_ORBIT_KEY, orbitRadius);
+        }
+    }
+
     static void clearJob(MarketAPI gateMarket) {
         MemoryAPI memory = memoryOf(gateMarket);
         if (memory != null) {
             memory.unset(JOB_KEY);
             memory.unset(JOB_DAYS_KEY);
+            memory.unset(JOB_ORBIT_KEY);
         }
     }
 }
