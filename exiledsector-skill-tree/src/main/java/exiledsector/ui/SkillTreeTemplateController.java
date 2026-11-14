@@ -15,7 +15,6 @@ import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.TemplateNames;
 import exiledsector.skills.template.TemplateStep;
 import exiledsector.ui.node.TreeAllocationSession;
-import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 import java.util.Map;
@@ -161,18 +160,18 @@ final class SkillTreeTemplateController {
             SkillTreeTextField.KeyResult result = nameDialog.handleKey(event);
             if (result == SkillTreeTextField.KeyResult.SUBMIT) {
                 perform(TemplateAction.of(TemplateAction.Kind.DIALOG_SAVE));
-            } else if (result == SkillTreeTextField.KeyResult.CANCEL) {
-                nameDialog.close();
             }
             return true;
         }
-        if (listOverlay.isOpen()) {
-            if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
-                listOverlay.close();
-            }
-            return true;
+        return listOverlay.isOpen();
+    }
+
+    void escape() {
+        if (nameDialog.isOpen()) {
+            nameDialog.close();
+        } else if (listOverlay.isOpen()) {
+            listOverlay.close();
         }
-        return false;
     }
 
     boolean handleScroll(InputEventAPI event) {

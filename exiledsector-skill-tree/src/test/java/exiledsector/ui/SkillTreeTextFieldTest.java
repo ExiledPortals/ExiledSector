@@ -68,7 +68,7 @@ class SkillTreeTextFieldTest {
     }
 
     @Test
-    void heldKeysRepeatEditsButNeverRepeatSubmitOrCancel() {
+    void heldKeysRepeatEditsButNeverRepeatSubmit() {
         SkillTreeTextField field = focusedField();
         field.setText("abc");
 
@@ -81,13 +81,13 @@ class SkillTreeTextFieldTest {
     }
 
     @Test
-    void enterSubmitsAndEscapeCancelsWithoutChangingTheText() {
+    void enterSubmitsAndEscapeIsNotTypedWithoutChangingTheText() {
         SkillTreeTextField field = focusedField();
         field.setText("Line");
 
         assertEquals(SkillTreeTextField.KeyResult.SUBMIT, field.handleKey(keyDown(Keyboard.KEY_RETURN, '\r')));
         assertEquals(SkillTreeTextField.KeyResult.SUBMIT, field.handleKey(keyDown(Keyboard.KEY_NUMPADENTER, '\r')));
-        assertEquals(SkillTreeTextField.KeyResult.CANCEL, field.handleKey(keyDown(Keyboard.KEY_ESCAPE, '\u001b')));
+        assertEquals(SkillTreeTextField.KeyResult.CONSUMED, field.handleKey(keyDown(Keyboard.KEY_ESCAPE, '\u001b')));
         assertEquals("Line", field.text());
     }
 

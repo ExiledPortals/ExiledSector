@@ -36,7 +36,6 @@ import exiledsector.ui.util.BorderedPanel;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.TextLabel;
-import org.lwjgl.input.Keyboard;
 
 import java.awt.Color;
 import java.util.List;
@@ -164,7 +163,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
             }
             if (fade.closing()) {
                 event.consume();
-            } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
+            } else if (EscapeKey.matches(event)) {
                 if (escapeKey.released(event)) {
                     fade.close();
                 }

@@ -46,6 +46,22 @@ class EscapeKeyTest {
     }
 
     @Test
+    void matchesOnlyKeyboardEventsForEscape() {
+        InputEventAPI escapeKeyEvent = mock(InputEventAPI.class);
+        when(escapeKeyEvent.isKeyboardEvent()).thenReturn(true);
+        when(escapeKeyEvent.getEventValue()).thenReturn(Keyboard.KEY_ESCAPE);
+        InputEventAPI otherKeyEvent = mock(InputEventAPI.class);
+        when(otherKeyEvent.isKeyboardEvent()).thenReturn(true);
+        when(otherKeyEvent.getEventValue()).thenReturn(Keyboard.KEY_RETURN);
+        InputEventAPI rightMouseButton = mock(InputEventAPI.class);
+        when(rightMouseButton.isMouseEvent()).thenReturn(true);
+        when(rightMouseButton.getEventValue()).thenReturn(Keyboard.KEY_ESCAPE);
+        assertTrue(EscapeKey.matches(escapeKeyEvent));
+        assertFalse(EscapeKey.matches(otherKeyEvent));
+        assertFalse(EscapeKey.matches(rightMouseButton));
+    }
+
+    @Test
     void aMouseButtonSharingTheEscapeValueIsIgnored() {
         InputEventAPI mouseDown = mock(InputEventAPI.class);
         when(mouseDown.isMouseDownEvent()).thenReturn(true);

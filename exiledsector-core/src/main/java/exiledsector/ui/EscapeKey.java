@@ -7,6 +7,10 @@ public final class EscapeKey {
 
     private boolean pressSeen;
 
+    public static boolean matches(InputEventAPI event) {
+        return event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE;
+    }
+
     public boolean released(InputEventAPI event) {
         if (event.getEventValue() != Keyboard.KEY_ESCAPE) {
             return false;

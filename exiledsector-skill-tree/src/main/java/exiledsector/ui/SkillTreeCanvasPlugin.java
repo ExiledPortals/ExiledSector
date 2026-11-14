@@ -68,12 +68,12 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final TreeCameraMemory.View cameraMemory;
     private final FleetShipList shipList;
     private final BaseRefitButton refitButton;
+    private final EscapeKey escapeKey = new EscapeKey();
 
     private PositionAPI canvasPosition;
     private float mouseX = 0f;
     private float mouseY = 0f;
     private boolean mouseKnown = false;
-    private boolean swallowEscapeUp;
     private float craftingBenchDimProgress;
     private boolean hoverRingShown;
 
@@ -258,19 +258,10 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private void handleEvent(InputEventAPI event) {
         CanvasMode mode = mode();
         dropStaleGesture(mode);
-        boolean escapeUp = event.isKeyUpEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE;
         if (event.isMouseMoveEvent()) {
             handleMouseMove(event);
-        } else if (escapeUp && (swallowEscapeUp || socketPlacement.isEngaged())) {
-            swallowEscapeUp = false;
-            event.consume();
-        } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE && shipList.isOpen()) {
-            shipList.close();
-            consume(event);
-        } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE && escape(mode)) {
-            consume(event);
-        } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE && mode != CanvasMode.MODAL && statPanel.collapse()) {
-            consume(event);
+        } else if (EscapeKey.matches(event)) {
+            handleEscapeKey(event, mode);
         } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_F2 && openHoveredItemCodex(mode)) {
             event.consume();
         } else if (isOpenShortcut(event) && closesOnOpenShortcut(mode)) {
@@ -315,7 +306,40 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         return socketed != null && ItemCodex.open(socketed.definitionId());
     }
 
-    private boolean escape(CanvasMode mode) {
+    private void handleEscapeKey(InputEventAPI event, CanvasMode mode) {
+        boolean leftForPanelToClose = escapeKey.released(event) && !escapeTopmost(mode);
+        if (!leftForPanelToClose) {
+            event.consume();
+        }
+    }
+
+    private boolean escapeTopmost(CanvasMode mode) {
+        if (shipList.isOpen()) {
+            shipList.close();
+            return true;
+        }
+        if (performEscapeAction(mode)) {
+            return true;
+        }
+        if (mode == CanvasMode.MODAL) {
+            escapeModal();
+            return true;
+        }
+        if (statPanel.collapse()) {
+            return true;
+        }
+        return (mode == CanvasMode.TREE || mode == CanvasMode.EXOSHIP_VIEW) && searchBar.escape();
+    }
+
+    private void escapeModal() {
+        if (schematicButtons.isDialogBlocking()) {
+            schematicButtons.escape();
+        } else {
+            templateUi.escape();
+        }
+    }
+
+    private boolean performEscapeAction(CanvasMode mode) {
         EscapeAction action = EscapeAction.resolve(mode, socketPlacement.isEngaged(), treeSession.isChoicePickerOpen(),
                 templateUi.isPlanning() && !searchBar.isFocused());
         switch (action) {
@@ -375,7 +399,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         } else if (event.isKeyboardEvent()) {
             templateUi.handleKey(event);
         }
-        consume(event);
+        event.consume();
     }
 
     private void handleCraftingBenchEvent(InputEventAPI event, CanvasMode mode) {
@@ -383,7 +407,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             if (event.isLMBDownEvent()) {
                 chrome.press(canvasPosition, mode, event.getX(), event.getY());
             }
-            consume(event);
+            event.consume();
         }
     }
 
@@ -422,15 +446,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         } else if (event.isMouseScrollEvent() && canvasPosition.containsEvent(event)) {
             handleMouseScroll(event, mode);
         } else if (event.isKeyboardEvent() && searchBar.handleKey(event)) {
-            consume(event);
+            event.consume();
         }
-    }
-
-    private void consume(InputEventAPI event) {
-        if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
-            swallowEscapeUp = true;
-        }
-        event.consume();
     }
 
     private boolean travelledThroughWormholeAt(CanvasMode mode, float x, float y) {

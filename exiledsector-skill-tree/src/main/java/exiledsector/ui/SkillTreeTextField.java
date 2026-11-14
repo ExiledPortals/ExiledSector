@@ -12,7 +12,7 @@ import java.util.function.ToDoubleFunction;
 final class SkillTreeTextField {
 
     enum KeyResult {
-        IGNORED, CONSUMED, EDITED, SUBMIT, CANCEL
+        IGNORED, CONSUMED, EDITED, SUBMIT
     }
 
     private static final float CARET_BLINK_SECONDS = 0.5f;
@@ -74,9 +74,6 @@ final class SkillTreeTextField {
             }
             enteredText = withoutLastCodePoint(enteredText);
             return KeyResult.EDITED;
-        }
-        if (keyCode == Keyboard.KEY_ESCAPE) {
-            return repeated ? KeyResult.CONSUMED : KeyResult.CANCEL;
         }
         if (keyCode == Keyboard.KEY_RETURN || keyCode == Keyboard.KEY_NUMPADENTER) {
             return repeated ? KeyResult.CONSUMED : KeyResult.SUBMIT;
