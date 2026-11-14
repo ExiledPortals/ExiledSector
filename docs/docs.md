@@ -1319,8 +1319,11 @@ orbiting a guarded point of interest (package `charts.anomaly.relay`). On the ru
 syncs once the fleet holds station slowly beside the nav buoy, keeps its transponder on near the comm relay, or fires
 an Active Sensor Burst near the sensor array (`ChartRelays.check`), and it wakes once its dialog has also restored power
 for supplies and heavy machinery (`RelayDialog`; flags on the run record in `RelayStates`). A woken nav buoy or sensor
-array turns player-owned, so vanilla's objective plugins give their bonus; a woken comm relay multiplies every other
-fleet's `detected_by_player_range_mult` and raises its extended detection range, so the player sees them at any range.
+array turns player-owned for vanilla's objective bonus; a woken comm relay shows every other fleet at any range. A woken
+relay's dialog then offers three pairs of an officer reward group and a scar fitting the boss flagship, rolled from the
+run seed and kept in the run's anomaly state (`RelayChoices`). A pick makes the boss drop that group's item, drawn as an
+officer's reward at the run tier (`RelayNetwork.bossDefeatedLoot`), and gives its flagship a stack of the scar for that
+run only (`ScarMemory.RUN_SCARS_KEY`, read by `ScarEffectSource`, never written to an officer's record or level).
 
 The stage rides on an inserted record (`AtlasAnomalyRecord.Chain`); a rolled network is stage 1 of 3. When the run
 closes, boss killed or not, `RelayStages.settle` moves the record to an adjacent system further

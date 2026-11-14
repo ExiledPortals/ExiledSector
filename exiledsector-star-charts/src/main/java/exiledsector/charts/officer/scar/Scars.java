@@ -1,11 +1,13 @@
 package exiledsector.charts.officer.scar;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.VariantSource;
 import exiledsector.effects.SkillTreeHullMod;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,16 +26,28 @@ public final class Scars {
         reinstall(fleet);
     }
 
+    public static void grantRunScars(CampaignFleetAPI fleet, String flagshipMemberId, Map<String, Integer> runScars) {
+        if (fleet == null || flagshipMemberId == null) {
+            return;
+        }
+        ScarMemory.writeRunScars(fleet.getMemoryWithoutUpdate(), flagshipMemberId, runScars);
+        reinstall(fleet);
+        if (fleet.getFleetData() != null) {
+            fleet.getFleetData().setSyncNeeded();
+            fleet.getFleetData().syncIfNeeded();
+        }
+    }
+
     public static void reinstall(CampaignFleetAPI fleet) {
         if (fleet == null || fleet.getFleetData() == null) {
             return;
         }
-        String flagshipMemberId = ScarMemory.flagshipId(fleet.getMemoryWithoutUpdate());
-        if (flagshipMemberId == null || ScarMemory.scars(fleet.getMemoryWithoutUpdate()).isEmpty()) {
+        MemoryAPI memory = fleet.getMemoryWithoutUpdate();
+        if (ScarMemory.flagshipId(memory) == null && ScarMemory.runFlagshipId(memory) == null) {
             return;
         }
         for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
-            if (flagshipMemberId.equals(member.getId())) {
+            if (!ScarMemory.scarsOn(memory, member.getId()).isEmpty()) {
                 installHullMod(member);
             }
         }
@@ -58,6 +72,17 @@ public final class Scars {
 
     public static String flagshipIdOf(CampaignFleetAPI fleet) {
         return fleet == null ? null : ScarMemory.flagshipId(fleet.getMemoryWithoutUpdate());
+    }
+
+    public static List<String> withEffectsOn(HullFacts hull) {
+        List<String> scarIds = new ArrayList<>();
+        for (ScarRow row : ScarTable.rows()) {
+            boolean hasEffects = hull == null ? !row.effects().isEmpty() : !row.fittingEffects(hull).isEmpty();
+            if (hasEffects && !ScarTable.FALLBACK_SCAR_ID.equals(row.id())) {
+                scarIds.add(row.id());
+            }
+        }
+        return scarIds;
     }
 
     public static Map<String, Integer> withScar(Map<String, Integer> scars, String scarId) {

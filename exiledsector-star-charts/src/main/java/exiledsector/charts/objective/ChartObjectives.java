@@ -7,6 +7,8 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.atlas.AtlasProgress;
@@ -110,6 +112,19 @@ public final class ChartObjectives {
         return flagship == null ? null : flagship.getId();
     }
 
+    public static CampaignFleetAPI bossFleet(SectorAPI sector, ChartRun run) {
+        StarSystemAPI system = sector == null || run == null || !run.hasBoss() ? null : sector.getStarSystem(run.systemId());
+        if (system == null) {
+            return null;
+        }
+        for (CampaignFleetAPI fleet : system.getFleets()) {
+            if (isBossFleet(run, fleet)) {
+                return fleet;
+            }
+        }
+        return null;
+    }
+
     private static boolean isBossFleet(ChartRun run, CampaignFleetAPI fleet) {
         return run.bossFleetId().equals(fleet.getId());
     }
@@ -156,6 +171,7 @@ public final class ChartObjectives {
             return ItemDrops.SiteLoot.NONE;
         }
         ItemDrops.SiteLoot officerLoot = OfficerDefeat.bossDefeated(sector, run);
+        ItemDrops.SiteLoot anomalyLoot = anomalyBossLoot(sector, run);
         AtlasProgress.completed(sector, run);
         ItemDrops.SiteLoot rewardLoot = ItemDrops.SiteLoot.NONE;
         try {
@@ -171,9 +187,21 @@ public final class ChartObjectives {
         } catch (RuntimeException | LinkageError e) {
             LOG.error("[ExiledSector] Granting the Wormhole Gateway upgrade for run " + run.runId() + " failed", e);
         }
-        rewardLoot = rewardLoot.plus(officerLoot);
+        rewardLoot = rewardLoot.plus(officerLoot).plus(anomalyLoot);
         updateIntel(sector, run);
         return rewardLoot;
+    }
+
+    private static ItemDrops.SiteLoot anomalyBossLoot(SectorAPI sector, ChartRun run) {
+        ItemDrops.SiteLoot anomalyLoot = ItemDrops.SiteLoot.NONE;
+        try {
+            for (LootShaper anomaly : ChartAnomalies.inRun(run, LootShaper.class)) {
+                anomalyLoot = anomalyLoot.plus(anomaly.bossDefeatedLoot(sector, run));
+            }
+        } catch (RuntimeException | LinkageError e) {
+            LOG.error("[ExiledSector] Rolling the anomaly boss drops for run " + run.runId() + " failed", e);
+        }
+        return anomalyLoot;
     }
 
     private static void updateIntel(SectorAPI sector, ChartRun run) {

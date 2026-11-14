@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.charts.MapMemory;
+import exiledsector.charts.officer.OfficerFleets;
 import exiledsector.charts.officer.scar.ScarEvidence.FiredAs;
 import exiledsector.effects.SkillTreeHullMod;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -118,5 +121,54 @@ class ScarsTest {
         } finally {
             ScarBattleResults.clear();
         }
+    }
+
+    @Test
+    void runScarsJoinTheOfficersScarsOnTheirFlagshipWithoutEnteringTheirRecordOrLevel() {
+        Scars.grant(fleet, "flagship-id", Map.of("rammed", 1));
+        int officerLevels = OfficerFleets.flagshipExtraLevels(memory, flagship);
+
+        Scars.grantRunScars(fleet, "flagship-id", Map.of("rammed", 1, "kited", 2));
+
+        assertEquals("flagship-id", Scars.flagshipIdOf(fleet));
+        assertEquals(Map.of("rammed", 1), Scars.scarsOf(fleet));
+        assertEquals(Map.of("rammed", 2, "kited", 2), ScarMemory.scarsOn(memory, "flagship-id"));
+        assertEquals(officerLevels, OfficerFleets.flagshipExtraLevels(memory, flagship));
+        assertEquals(Map.of("rammed", 2, "kited", 2), ScarEffectSource.scarsOf(memberOf(flagship)));
+        assertEquals(Map.of(), ScarEffectSource.scarsOf(memberOf(escort)));
+    }
+
+    @Test
+    void runScarsOnAFleetWithoutAScarredFlagshipLandOnTheGivenOneAndRefreshItsStats() {
+        Scars.grantRunScars(fleet, "flagship-id", Map.of("kited", 1));
+
+        assertNull(Scars.flagshipIdOf(fleet));
+        assertEquals("flagship-id", ScarMemory.runFlagshipId(memory));
+        assertEquals(Map.of(), Scars.scarsOf(fleet));
+        assertEquals(Map.of("kited", 1), ScarEffectSource.scarsOf(memberOf(flagship)));
+        assertEquals(Map.of(), ScarEffectSource.scarsOf(memberOf(escort)));
+        assertEquals(0, OfficerFleets.flagshipExtraLevels(memory, flagship));
+        verify(flagshipVariant).addMod(SkillTreeHullMod.ID);
+        verify(escortVariant, never()).addMod(SkillTreeHullMod.ID);
+        verify(fleet.getFleetData()).setSyncNeeded();
+        verify(fleet.getFleetData()).syncIfNeeded();
+    }
+
+    @Test
+    void scarsWithEffectsLeaveOutTheFallbackAndThoseWithNothingForTheHull() {
+        List<String> shielded = Scars.withEffectsOn(ScarFixtures.SHIELDED_WARSHIP);
+
+        assertFalse(shielded.contains(ScarTable.FALLBACK_SCAR_ID));
+        assertFalse(shielded.contains("humbled"));
+        assertTrue(shielded.contains("flak_scarred"));
+        assertTrue(shielded.stream().allMatch(scarId -> !ScarTable.row(scarId).fittingEffects(ScarFixtures.SHIELDED_WARSHIP).isEmpty()));
+        assertTrue(Scars.withEffectsOn(null).containsAll(shielded));
+    }
+
+    private FleetMemberAPI memberOf(FleetMemberAPI member) {
+        FleetDataAPI fleetData = fleet.getFleetData();
+        when(member.getFleetDataForStats()).thenReturn(fleetData);
+        when(fleetData.getFleet()).thenReturn(fleet);
+        return member;
     }
 }

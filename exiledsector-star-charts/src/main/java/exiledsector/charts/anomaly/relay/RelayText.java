@@ -1,8 +1,11 @@
 package exiledsector.charts.anomaly.relay;
 
 import exiledsector.charts.atlas.AtlasAnomalyRecord;
+import exiledsector.charts.officer.reward.OfficerRewardText;
+import exiledsector.charts.officer.scar.ScarText;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.i18n.I18n;
+import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 
 import java.util.ArrayList;
@@ -76,6 +79,23 @@ final class RelayText {
         }
         String step = nextStep(run, stage);
         return step == null ? Translation.gameText(PREFIX + "intel.allWoken") : stepText(PREFIX + "intel." + step, stage);
+    }
+
+    static StyledText offerLine(RelayChoice choice) {
+        return I18n.forGameText(() -> Translation.msg(PREFIX + "choice.offer").arg("reward", OfficerRewardText.groupName(choice.group())).styled());
+    }
+
+    static StyledText pickedLine(RelayChoice choice) {
+        return I18n.forGameText(() -> Translation.msg(PREFIX + "choice.picked").arg("reward", OfficerRewardText.groupName(choice.group())).styled());
+    }
+
+    static String optionText(RelayChoice choice) {
+        return I18n.forGameText(() -> Translation.msg(PREFIX + "option.choice").arg("reward", OfficerRewardText.groupName(choice.group()))
+                .arg("scar", ScarText.name(choice.scarId())).text());
+    }
+
+    static String choiceMessage(String relayName) {
+        return I18n.forGameText(() -> Translation.msg(PREFIX + "message.choice").arg("relay", relayName).text());
     }
 
     private static String stepText(String key, AtlasAnomalyRecord.Chain stage) {

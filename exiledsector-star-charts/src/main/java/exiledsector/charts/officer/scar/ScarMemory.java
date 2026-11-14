@@ -12,6 +12,8 @@ public final class ScarMemory {
 
     public static final String FLAGSHIP_ID_KEY = "$exiledSector_scarFlagshipId";
     public static final String SCARS_KEY = "$exiledSector_scars";
+    public static final String RUN_SCARS_KEY = "$exiledSector_runScars";
+    public static final String RUN_FLAGSHIP_ID_KEY = "$exiledSector_runScarFlagshipId";
     private static final String ENTRY_SEPARATOR = ";";
     private static final String STACK_SEPARATOR = ":";
 
@@ -23,11 +25,20 @@ public final class ScarMemory {
 
     static void write(MemoryAPI memory, String flagshipMemberId, Map<String, Integer> scars) {
         memory.set(FLAGSHIP_ID_KEY, flagshipMemberId);
+        writeEncoded(memory, SCARS_KEY, scars);
+    }
+
+    static void writeRunScars(MemoryAPI memory, String flagshipMemberId, Map<String, Integer> runScars) {
+        memory.set(RUN_FLAGSHIP_ID_KEY, flagshipMemberId);
+        writeEncoded(memory, RUN_SCARS_KEY, runScars);
+    }
+
+    private static void writeEncoded(MemoryAPI memory, String key, Map<String, Integer> scars) {
         String encoded = encode(scars);
         if (encoded.isEmpty()) {
-            memory.unset(SCARS_KEY);
+            memory.unset(key);
         } else {
-            memory.set(SCARS_KEY, encoded);
+            memory.set(key, encoded);
         }
     }
 
@@ -35,12 +46,38 @@ public final class ScarMemory {
         return memory != null && memory.get(FLAGSHIP_ID_KEY) instanceof String flagshipId ? flagshipId : null;
     }
 
+    public static String runFlagshipId(MemoryAPI memory) {
+        return memory != null && memory.get(RUN_FLAGSHIP_ID_KEY) instanceof String flagshipId ? flagshipId : null;
+    }
+
     static String encodedScars(MemoryAPI memory) {
-        return memory != null && memory.get(SCARS_KEY) instanceof String encoded ? encoded : null;
+        return encoded(memory, SCARS_KEY);
+    }
+
+    private static String encoded(MemoryAPI memory, String key) {
+        return memory != null && memory.get(key) instanceof String encoded ? encoded : null;
     }
 
     public static Map<String, Integer> scars(MemoryAPI memory) {
         return decode(encodedScars(memory));
+    }
+
+    public static Map<String, Integer> runScars(MemoryAPI memory) {
+        return decode(encoded(memory, RUN_SCARS_KEY));
+    }
+
+    public static Map<String, Integer> scarsOn(MemoryAPI memory, String memberId) {
+        if (memberId == null) {
+            return Map.of();
+        }
+        Map<String, Integer> officerScars = memberId.equals(flagshipId(memory)) ? scars(memory) : Map.of();
+        Map<String, Integer> runScars = memberId.equals(runFlagshipId(memory)) ? runScars(memory) : Map.of();
+        if (runScars.isEmpty() || officerScars.isEmpty()) {
+            return runScars.isEmpty() ? officerScars : runScars;
+        }
+        Map<String, Integer> merged = new LinkedHashMap<>(officerScars);
+        runScars.forEach((scarId, stacks) -> merged.merge(scarId, stacks, Integer::sum));
+        return Collections.unmodifiableMap(merged);
     }
 
     static String encode(Map<String, Integer> scars) {

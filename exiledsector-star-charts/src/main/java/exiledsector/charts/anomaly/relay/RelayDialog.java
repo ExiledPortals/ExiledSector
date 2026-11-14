@@ -3,6 +3,7 @@ package exiledsector.charts.anomaly.relay;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.OptionPanelAPI;
+import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.TextPanelAPI;
 import com.fs.starfarer.api.impl.campaign.NavBuoyEntityPlugin;
@@ -15,13 +16,20 @@ import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.AnomalyDialog;
 import exiledsector.charts.atlas.AtlasAnomalyRecord;
+import exiledsector.charts.officer.scar.HullFacts;
+import exiledsector.charts.officer.scar.ScarText;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.ui.VanillaText;
 
+import java.util.List;
+
 public class RelayDialog extends AnomalyDialog {
 
     static final String RESTORE = "exiledSector_relayRestore";
+
+    record ChoiceOption(int index) {
+    }
 
     private SectorEntityToken relay;
     private RelayKind kind;
@@ -54,6 +62,7 @@ public class RelayDialog extends AnomalyDialog {
             VanillaText.plainPara(text, Translation.gameText(RelayText.logKey(kind, stage)));
             VanillaText.addPara(text, wokenEffect(kind), Misc.getTextColor());
             VanillaText.plainPara(text, RelayText.status(run, stage));
+            showChoice(run, text, options);
         } else {
             showDormant(run, text, options);
         }
@@ -74,6 +83,35 @@ public class RelayDialog extends AnomalyDialog {
         options.setEnabled(RESTORE, ChartRelays.canAfford(PlayerFleet.cargoOrNull(), cost));
     }
 
+    private void showChoice(ChartRun run, TextPanelAPI text, OptionPanelAPI options) {
+        SectorAPI sector = Global.getSector();
+        if (RelayChoices.picked(run, kind) != null) {
+            showPicked(sector, run, text);
+            return;
+        }
+        List<RelayChoice> offers = RelayChoices.offers(sector, run, kind);
+        if (offers.isEmpty()) {
+            return;
+        }
+        HullFacts bossHull = RelayChoices.bossHull(sector, run);
+        VanillaText.plainPara(text, Translation.gameText(RelayText.PREFIX + "choice.intro"));
+        VanillaText.plainPara(text, Translation.gameText(RelayText.PREFIX + "choice.rule"));
+        for (int index = 0; index < offers.size(); index++) {
+            RelayChoice offer = offers.get(index);
+            VanillaText.addPara(text, RelayText.offerLine(offer), Misc.getTextColor());
+            VanillaText.addPara(text, ScarText.effectsLine(offer.scarId(), bossHull), Misc.getTextColor());
+            options.addOption(RelayText.optionText(offer), new ChoiceOption(index));
+        }
+    }
+
+    private void showPicked(SectorAPI sector, ChartRun run, TextPanelAPI text) {
+        RelayChoice picked = RelayChoices.picked(run, kind);
+        if (picked != null) {
+            VanillaText.addPara(text, RelayText.pickedLine(picked), Misc.getTextColor());
+            VanillaText.addPara(text, ScarText.effectsLine(picked.scarId(), RelayChoices.bossHull(sector, run)), Misc.getTextColor());
+        }
+    }
+
     static StyledText wokenEffect(RelayKind kind) {
         return I18n.forGameText(() -> switch (kind) {
             case NAV_BUOY -> Translation.msg("chart.anomaly.relay_network.effect.nav_buoy").arg("value", Math.round(NavBuoyEntityPlugin.NAV_BONUS)).styled();
@@ -89,6 +127,11 @@ public class RelayDialog extends AnomalyDialog {
             CargoAPI cargo = PlayerFleet.cargoOrNull();
             ChartRelays.restorePower(run, cargo, relay.getContainingLocation(), relay, kind, ChartRelays.costFor(run));
             showState();
+        } else if (optionData instanceof ChoiceOption choice && run != null && RelayChoices.pick(Global.getSector(), run, kind, choice.index())) {
+            RelayLogIntel.report(Global.getSector(), run);
+            showPicked(Global.getSector(), run, text());
+            options().clearOptions();
+            addLeaveOption();
         } else {
             dialog().dismiss();
         }

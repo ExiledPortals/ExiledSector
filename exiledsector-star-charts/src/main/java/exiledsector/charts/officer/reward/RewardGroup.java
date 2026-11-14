@@ -53,6 +53,15 @@ public enum RewardGroup {
         return kind == itemKind && (tier == null || tier == itemTier);
     }
 
+    public static RewardGroup byId(String id) {
+        for (RewardGroup group : values()) {
+            if (group.id.equals(id)) {
+                return group;
+            }
+        }
+        return null;
+    }
+
     public static RewardGroup of(CarriedItem item) {
         return of(item.kind(), OfficerRewardTable.tierOf(item.id()));
     }

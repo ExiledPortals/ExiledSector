@@ -67,22 +67,39 @@ public final class ScarText {
         });
     }
 
+    public static StyledText effectsLine(String scarId, HullFacts hull) {
+        return I18n.forGameText(() -> {
+            ScarRow row = ScarTable.row(scarId);
+            List<StyledText> effects = row == null ? List.of() : effectTexts(hull == null ? row.effects() : row.fittingEffects(hull), 1);
+            StyledText title = StyledText.of(nameText(scarId));
+            return effects.isEmpty() ? title
+                    : Translation.msg("chart.officer.scar.effects").arg("scar", title).arg("effects", Translation.list(effects)).styled();
+        });
+    }
+
     private static StyledText line(String scarId, int stacks, List<String> dModIds, HullFacts hull) {
         StyledText title = stacks > 1
                 ? Translation.msg("chart.officer.scar.stacked").arg("scar", nameText(scarId)).arg("stacks", stacks).styled()
                 : StyledText.of(nameText(scarId));
-        List<StyledText> effects = new ArrayList<>();
-        ScarRow row = ScarTable.row(scarId);
-        if (row != null) {
-            for (ScarRow.Effect effect : row.fittingEffects(hull)) {
-                effects.add(listItem(playerView(effect.effect(), effect.magnitudePerStack() * stacks)));
-            }
-        }
+        List<StyledText> effects = new ArrayList<>(fittingEffects(scarId, stacks, hull));
         effects.add(Translation.msg("chart.officer.scar.levels").arg("levels", ScarLevels.extraLevels(Map.of(scarId, stacks))).styled());
         for (String dModId : dModIds) {
             effects.add(Translation.msg("chart.officer.scar.dmod").arg("dmod", dModName(dModId)).styled());
         }
         return Translation.msg("chart.officer.scar.effects").arg("scar", title).arg("effects", Translation.list(effects)).styled();
+    }
+
+    private static List<StyledText> fittingEffects(String scarId, int stacks, HullFacts hull) {
+        ScarRow row = ScarTable.row(scarId);
+        return row == null ? List.of() : effectTexts(row.fittingEffects(hull), stacks);
+    }
+
+    private static List<StyledText> effectTexts(List<ScarRow.Effect> rowEffects, int stacks) {
+        List<StyledText> effects = new ArrayList<>();
+        for (ScarRow.Effect effect : rowEffects) {
+            effects.add(listItem(playerView(effect.effect(), effect.magnitudePerStack() * stacks)));
+        }
+        return effects;
     }
 
     public static String dModName(String dModId) {
