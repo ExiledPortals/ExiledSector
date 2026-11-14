@@ -95,6 +95,18 @@ class AtlasTerritoryTransferTest {
     }
 
     @Test
+    void aTerritoryBordersTheSystemsOneLaneFromAnyOfItsClaims() {
+        AtlasState state = new AtlasState(SEED);
+        AtlasGenerator generator = generator(state);
+        Border border = border(generator, state);
+
+        assertTrue(AtlasTerritoryTransfer.territoryBorders(generator::lanes, state, border.hegemonyCentre(), border.borderCell()));
+        assertFalse(AtlasTerritoryTransfer.territoryBorders(generator::lanes, state, border.hegemonyCentre(), border.beyondCell()));
+        state.claim(border.borderCell(), border.hegemonyCentre());
+        assertTrue(AtlasTerritoryTransfer.territoryBorders(generator::lanes, state, border.hegemonyCentre(), border.beyondCell()));
+    }
+
+    @Test
     void vacatingACommandCentreSendsItsOfficerAwayAndBreaksUpItsTerritory() {
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = generator(state);

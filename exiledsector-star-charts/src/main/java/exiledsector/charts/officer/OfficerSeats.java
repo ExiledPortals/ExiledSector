@@ -31,13 +31,13 @@ public final class OfficerSeats {
     }
 
     public static AtlasOfficer superior(List<OfficerRank> ranks, Collection<AtlasOfficer> officers, AtlasOfficer officer) {
-        int rankOrder = order(ranks, officer.rankId());
+        int rankOrder = OfficerRanks.order(ranks, officer.rankId());
         int seat = superiorSeat(ranks, rankOrder, officer.seat());
         return seat < 0 ? null : seated(officers, ranks.get(rankOrder + 1).id(), seat);
     }
 
     public static List<AtlasOfficer> subordinates(List<OfficerRank> ranks, Collection<AtlasOfficer> officers, AtlasOfficer officer) {
-        int rankOrder = order(ranks, officer.rankId());
+        int rankOrder = OfficerRanks.order(ranks, officer.rankId());
         List<AtlasOfficer> found = new ArrayList<>();
         for (int seat : subordinateSeats(ranks, rankOrder, officer.seat())) {
             AtlasOfficer subordinate = seated(officers, ranks.get(rankOrder - 1).id(), seat);
@@ -62,14 +62,5 @@ public final class OfficerSeats {
             }
         }
         return null;
-    }
-
-    public static int order(List<OfficerRank> ranks, String rankId) {
-        for (int index = 0; index < ranks.size(); index++) {
-            if (ranks.get(index).id().equals(rankId)) {
-                return index;
-            }
-        }
-        return 0;
     }
 }

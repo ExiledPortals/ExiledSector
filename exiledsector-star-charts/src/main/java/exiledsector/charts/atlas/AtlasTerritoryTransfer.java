@@ -49,6 +49,16 @@ public final class AtlasTerritoryTransfer {
         return true;
     }
 
+    public static boolean territoryBorders(Function<AtlasCell, ? extends Collection<AtlasCell>> lanes, AtlasState state, AtlasCell commandCentre,
+                                           AtlasCell cell) {
+        for (AtlasCell lane : lanes.apply(cell)) {
+            if (commandCentre.equals(state.commandCentreOf(lane))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static void vacate(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
         if (state.officerAt(cell) != null) {
             dismissOfficer(state, cell);

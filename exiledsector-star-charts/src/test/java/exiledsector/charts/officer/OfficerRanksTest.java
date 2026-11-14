@@ -67,4 +67,13 @@ class OfficerRanksTest {
         assertEquals(0, OfficerRanks.order("grand_marshal"));
         assertEquals(OfficerRanks.lowest(), OfficerRanks.rank("grand_marshal"));
     }
+
+    @Test
+    void anyRankListCanBeOrderedTheSameWay() {
+        List<OfficerRank> ranks = List.of(new OfficerRank("ensign", 0, 0, 1, 2), new OfficerRank("marshal", 0, 0, 1, 1));
+
+        assertEquals(1, OfficerRanks.order(ranks, "marshal"));
+        assertEquals(0, OfficerRanks.order(ranks, "ensign"));
+        assertEquals(0, OfficerRanks.order(ranks, "admiral"));
+    }
 }

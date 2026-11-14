@@ -6,6 +6,7 @@ import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.atlas.AtlasTerritoryTransfer;
 import exiledsector.charts.officer.AtlasOfficer;
+import exiledsector.charts.officer.FlagshipCatalogue;
 import exiledsector.charts.officer.OfficerRanks;
 
 import java.util.List;
@@ -18,16 +19,29 @@ public final class ContestOutcomes {
     }
 
     public static boolean abstractAttackerWins(AtlasState state, Intent intent, AtlasCell contestedCell) {
+        TurnSetup setup = setupWithoutOpenRun();
         AtlasOfficer attacker = state.officer(intent.officerRecordId());
         AtlasOfficer defender = state.officer(intent.targetRecordId());
-        if (attacker == null || defender == null) {
+        if (attacker == null || defender == null || !setup.canAct(defender)) {
             return false;
         }
         boolean defended = OfficerTurns.declaredIntents(state).contains(Intent.defend(defender.recordId()));
-        float chance = OfficerTurnTables.rules().attackerChancePercent(OfficerRanks.order(attacker.rankId()), OfficerRanks.order(defender.rankId()),
-                defended);
         float roll = Seeds.derived(state.seed(), ABSTRACT_ROLL_SALT + contestedCell.pack() * Seeds.GOLDEN_GAMMA + state.officerTurn()).nextFloat();
-        return OfficerTurns.resolvers().forKind(intent.kind()).attackerWins(new Contest(intent, attacker, defender, defended, chance, roll));
+        return attackerWins(setup, state, intent, attacker, defender, defended, roll);
+    }
+
+    static boolean attackerWins(TurnSetup setup, AtlasState state, Intent intent, AtlasOfficer attacker, AtlasOfficer defender, boolean defended,
+                                float roll) {
+        Boolean decided = state.decidedContest(intent.encode());
+        if (decided != null) {
+            return decided;
+        }
+        float chance = setup.rules().attackerChancePercent(setup.rankOrder(attacker.rankId()), setup.rankOrder(defender.rankId()), defended);
+        return setup.resolvers().forKind(intent.kind()).attackerWins(new Contest(intent, attacker, defender, defended, chance, roll));
+    }
+
+    private static TurnSetup setupWithoutOpenRun() {
+        return new TurnSetup(OfficerTurnTables.rules(), OfficerRanks.all(), OfficerTurns.resolvers(), null, Intent.NO_OFFICER, FlagshipCatalogue.NONE);
     }
 
     public static boolean settle(AtlasGenerator generator, AtlasState state, Intent intent, AtlasCell contestedCell, boolean attackerWins) {
@@ -58,16 +72,7 @@ public final class ContestOutcomes {
         }
         AtlasCell holder = state.commandCentreOf(cell);
         boolean stillContested = holder == null || defender != null && defender.isActive() && holder.equals(defender.commandCentre());
-        return stillContested && borders(generator, state, attacker.commandCentre(), cell);
-    }
-
-    private static boolean borders(AtlasGenerator generator, AtlasState state, AtlasCell commandCentre, AtlasCell cell) {
-        for (AtlasCell lane : generator.lanes(cell)) {
-            if (commandCentre.equals(state.commandCentreOf(lane))) {
-                return true;
-            }
-        }
-        return false;
+        return stillContested && AtlasTerritoryTransfer.territoryBorders(generator::lanes, state, attacker.commandCentre(), cell);
     }
 
     private static void addRenown(AtlasState state, AtlasOfficer officer, int gained) {
