@@ -64,7 +64,7 @@ final class SkillTreeNodeChoicePickerRenderer {
 
         ChoicePickerRow topRow = openRows.get(0);
         ChoicePickerRow bottomRow = openRows.get(openRows.size() - 1);
-        panelStyle.drawTooltipBackground(topRow.rowX, bottomRow.rowY, rowsWidth, topRow.rowY + ROW_HEIGHT - bottomRow.rowY, alphaMult,
+        SkillTreePanelStyle.drawTooltipBackground(topRow.rowX, bottomRow.rowY, rowsWidth, topRow.rowY + ROW_HEIGHT - bottomRow.rowY, alphaMult,
                 panelStyle.getAccentColor());
 
         for (int i = 0; i < openRows.size(); i++) {

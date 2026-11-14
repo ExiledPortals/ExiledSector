@@ -26,4 +26,19 @@ class TooltipPlacementTest {
     void aTooltipTooWideForEitherSideStaysOnScreenFromTheLeft() {
         assertEquals(4f, SkillTreePanelStyle.tooltipLeft(300f, 1000f, 1200f));
     }
+
+    @Test
+    void aTooltipThatFitsHangsBelowTheCursor() {
+        assertEquals(282f, SkillTreePanelStyle.tooltipBottom(500f, 200f, 768f));
+    }
+
+    @Test
+    void aTooltipThatWouldCrossTheBottomEdgeStopsOnTheMargin() {
+        assertEquals(SkillTreePanelStyle.TOOLTIP_SCREEN_MARGIN, SkillTreePanelStyle.tooltipBottom(100f, 400f, 768f));
+    }
+
+    @Test
+    void aTooltipTallerThanTheScreenSitsOnTheBottomMargin() {
+        assertEquals(SkillTreePanelStyle.TOOLTIP_SCREEN_MARGIN, SkillTreePanelStyle.tooltipBottom(700f, 900f, 768f));
+    }
 }

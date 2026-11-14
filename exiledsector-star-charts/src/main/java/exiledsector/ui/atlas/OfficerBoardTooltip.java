@@ -5,7 +5,6 @@ import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
-import com.fs.starfarer.api.util.Misc;
 import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.OfficerFleets;
 import exiledsector.charts.officer.OfficerText;
@@ -34,8 +33,6 @@ import java.util.List;
 final class OfficerBoardTooltip {
 
     static final float PADDING = 10f;
-    static final float CURSOR_OFFSET = 18f;
-    static final float SCREEN_MARGIN = 4f;
     static final float PORTRAIT_SHARE = 0.2f;
     static final float FLAG_HEIGHT_SHARE = 0.7f;
     static final float HEADER_GAP = 8f;
@@ -160,7 +157,7 @@ final class OfficerBoardTooltip {
     }
 
     private void fitToScreen(float screenHeight) {
-        float overflow = boxHeight() - (screenHeight - SCREEN_MARGIN * 2f);
+        float overflow = boxHeight() - (screenHeight - SkillTreePanelStyle.TOOLTIP_SCREEN_MARGIN * 2f);
         float shipHeight = shipHeight();
         if (overflow > 0f && shipHeight > 0f) {
             float fitted = fittedShipHeight(shipHeight, overflow);
@@ -299,10 +296,9 @@ final class OfficerBoardTooltip {
         float contentWidth = contentWidth();
         float boxWidth = (float) Math.ceil(contentWidth + PADDING * 2f);
         float boxHeight = boxHeight();
-        float boxX = Math.round(boxLeft(mouseX, boxWidth, Global.getSettings().getScreenWidth()));
-        float boxY = Math.round(boxBottom(mouseY, boxHeight, Global.getSettings().getScreenHeight()));
-        GLDraw.fillQuad(boxX, boxY, boxWidth, boxHeight, SkillTreePanelStyle.TOOLTIP_BACKGROUND_COLOR, alphaMult);
-        GLDraw.strokeQuad(boxX, boxY, boxWidth, boxHeight, accent, SkillTreePanelStyle.TOOLTIP_BORDER_THICKNESS, alphaMult);
+        float boxX = Math.round(SkillTreePanelStyle.tooltipLeft(mouseX, boxWidth, Global.getSettings().getScreenWidth()));
+        float boxY = Math.round(SkillTreePanelStyle.tooltipBottom(mouseY, boxHeight, Global.getSettings().getScreenHeight()));
+        SkillTreePanelStyle.drawTooltipBackground(boxX, boxY, boxWidth, boxHeight, alphaMult, accent);
         float left = boxX + PADDING;
         float top = boxY + boxHeight - PADDING;
         drawHeader(left, top, alphaMult);
@@ -338,7 +334,7 @@ final class OfficerBoardTooltip {
             SpriteDraw.drawAtCenter(sprites, flagPath, flagCentreX, top - flagHeight / 2f, flagWidth, flagHeight, Color.WHITE, alphaMult);
         }
         float textLeft = left + size + HEADER_GAP;
-        titleLabel.setColor(Misc.getTooltipTitleAndLightHighlightColor()).setAlpha(alphaMult).drawWithShadow(textLeft, top, Color.BLACK);
+        SkillTreePanelStyle.drawTooltipTitle(titleLabel, textLeft, top, alphaMult);
         detailsLabel.setAlpha(alphaMult).draw(textLeft, top - titleLabel.height() - LINE_GAP);
     }
 
@@ -374,18 +370,5 @@ final class OfficerBoardTooltip {
             top -= SHIP_GAP;
             codexHintLabel.setAlpha(alphaMult).draw(left + (contentWidth() - codexHintLabel.width()) / 2f, top);
         }
-    }
-
-    static float boxLeft(float mouseX, float boxWidth, float screenWidth) {
-        float rightOfCursor = mouseX + CURSOR_OFFSET;
-        if (rightOfCursor + boxWidth <= screenWidth - SCREEN_MARGIN) {
-            return rightOfCursor;
-        }
-        return Math.max(SCREEN_MARGIN, mouseX - CURSOR_OFFSET - boxWidth);
-    }
-
-    static float boxBottom(float mouseY, float boxHeight, float screenHeight) {
-        float belowCursor = Math.max(SCREEN_MARGIN, mouseY - boxHeight - CURSOR_OFFSET);
-        return Math.max(SCREEN_MARGIN, Math.min(belowCursor, screenHeight - SCREEN_MARGIN - boxHeight));
     }
 }

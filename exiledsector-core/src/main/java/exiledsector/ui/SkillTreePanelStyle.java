@@ -55,7 +55,7 @@ public final class SkillTreePanelStyle {
     private static final float TOOLTIP_CURSOR_OFFSET = 18f;
     private static final float TOOLTIP_TABLE_GAP = 14f;
     private static final float TOOLTIP_SEPARATOR_THICKNESS = 1f;
-    private static final float TOOLTIP_SCREEN_MARGIN = 4f;
+    public static final float TOOLTIP_SCREEN_MARGIN = 4f;
     private static final float TOOLTIP_FLAVOUR_GAP = 8f;
     private static final Color TOOLTIP_TITLE_SHADOW_COLOR = Color.BLACK;
 
@@ -112,9 +112,13 @@ public final class SkillTreePanelStyle {
                 Logger.getLogger(SkillTreePanelStyle.class), "Failed to load font " + path);
     }
 
-    public void drawTooltipBackground(float x, float y, float width, float height, float alphaMult, Color borderColor) {
+    public static void drawTooltipBackground(float x, float y, float width, float height, float alphaMult, Color borderColor) {
         GLDraw.fillQuad(x, y, width, height, TOOLTIP_BACKGROUND_COLOR, alphaMult);
         GLDraw.strokeQuad(x, y, width, height, borderColor, TOOLTIP_BORDER_THICKNESS, alphaMult);
+    }
+
+    public static void drawTooltipTitle(TextLabel title, float left, float top, float alphaMult) {
+        title.setColor(Misc.getTooltipTitleAndLightHighlightColor()).setAlpha(alphaMult).drawWithShadow(left, top, TOOLTIP_TITLE_SHADOW_COLOR);
     }
 
     public void drawTitleBodyTooltip(TextLabel title, TextLabel body, float mouseX, float mouseY, float alphaMult) {
@@ -153,7 +157,7 @@ public final class SkillTreePanelStyle {
         float boxHeight = (float) Math.ceil(title.height() + TOOLTIP_TITLE_BODY_GAP + flavourHeight + body.height() + bodySectionsHeight + tablesHeight
                 + separatedHeight + footerHeight + TOOLTIP_PADDING * 2f);
         float boxX = Math.round(tooltipLeft(mouseX, boxWidth, Global.getSettings().getScreenWidth()));
-        float boxY = Math.round(Math.max(TOOLTIP_SCREEN_MARGIN, mouseY - boxHeight - TOOLTIP_CURSOR_OFFSET));
+        float boxY = Math.round(tooltipBottom(mouseY, boxHeight, Global.getSettings().getScreenHeight()));
 
         Color accent = getAccentColor();
         drawTooltipBackground(boxX, boxY, boxWidth, boxHeight, alphaMult, accent);
@@ -162,7 +166,7 @@ public final class SkillTreePanelStyle {
         float flavourY = titleY - title.height() - TOOLTIP_TITLE_BODY_GAP;
         float bodyY = flavourY - flavourHeight;
         float titleX = boxX + (boxWidth - title.width()) / 2f;
-        title.setColor(Misc.getTooltipTitleAndLightHighlightColor()).setAlpha(alphaMult).drawWithShadow(titleX, titleY, TOOLTIP_TITLE_SHADOW_COLOR);
+        drawTooltipTitle(title, titleX, titleY, alphaMult);
         if (flavour != null) {
             flavour.setAlpha(alphaMult).draw(boxX + TOOLTIP_PADDING, flavourY);
         }
@@ -198,12 +202,17 @@ public final class SkillTreePanelStyle {
         return sectionTop - section.height();
     }
 
-    static float tooltipLeft(float mouseX, float boxWidth, float screenWidth) {
+    public static float tooltipLeft(float mouseX, float boxWidth, float screenWidth) {
         float rightOfCursor = mouseX + TOOLTIP_CURSOR_OFFSET;
         if (rightOfCursor + boxWidth <= screenWidth - TOOLTIP_SCREEN_MARGIN) {
             return rightOfCursor;
         }
         return Math.max(TOOLTIP_SCREEN_MARGIN, mouseX - TOOLTIP_CURSOR_OFFSET - boxWidth);
+    }
+
+    public static float tooltipBottom(float mouseY, float boxHeight, float screenHeight) {
+        float belowCursor = Math.max(TOOLTIP_SCREEN_MARGIN, mouseY - boxHeight - TOOLTIP_CURSOR_OFFSET);
+        return Math.max(TOOLTIP_SCREEN_MARGIN, Math.min(belowCursor, screenHeight - TOOLTIP_SCREEN_MARGIN - boxHeight));
     }
 
     public Color getAccentColor() {
