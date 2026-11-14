@@ -640,7 +640,6 @@ public final class ChartContentGenerator {
 
         void generateAnomalies(ChartContentPlan plan) {
             ContentForces forces = new ContentForces(fleets, bossFleet, bossType);
-
             for (String anomalyId : plan.anomalies()) {
                 ChartAnomaly anomaly = ChartAnomalies.byId(anomalyId);
                 if (anomaly == null) {

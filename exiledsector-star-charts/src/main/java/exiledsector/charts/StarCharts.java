@@ -9,7 +9,6 @@ import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.atlas.AtlasCatalysts;
 import exiledsector.charts.atlas.AtlasData;
 import exiledsector.charts.atlas.TerritoryExclusions;
-
 import exiledsector.charts.content.ChartBosses;
 import exiledsector.charts.content.ChartColonyItems;
 import exiledsector.charts.content.ChartFactions;
@@ -63,7 +62,6 @@ public final class StarCharts {
         }
         RetiredUniqueCharts.removeFrom(sector);
         SkirmishRecords.dropPlayerInserted(sector);
-
         absorbCharts(sector);
     }
 
@@ -103,7 +101,6 @@ public final class StarCharts {
         ChartFeatures.load();
         AtlasData.load();
         TerritoryExclusions.load();
-
         OfficerRanks.load();
         OfficerTurnTables.load();
         ChallengeLossScars.register();

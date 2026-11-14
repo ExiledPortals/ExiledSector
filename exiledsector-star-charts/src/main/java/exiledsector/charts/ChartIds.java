@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import exiledsector.loot.FleetFactions;
 
 public final class ChartIds {
 
@@ -34,8 +35,7 @@ public final class ChartIds {
     public static final String DEFENDER_LOOT_ADDED_MEMORY_KEY = "$exiledSector_chartDefenderLootAdded";
     public static final String VANILLA_DEFENDER_FLEET_MEMORY_KEY = "$defenderFleet";
     public static final String SKIRMISH_SIDE_MEMORY_KEY = "$exiledSector_chartSkirmishSide";
-    public static final String REAL_FACTION_MEMORY_KEY = "$exiledSector_realFaction";
-
+    public static final String REAL_FACTION_MEMORY_KEY = FleetFactions.REAL_FACTION_MEMORY_KEY;
     public static final String BOSS_LOOT_SITE = PREFIX + "boss";
     public static final String CONTENT_TAG = PREFIX + "content";
     public static final String SENSOR_MOD_ID = PREFIX + "sensor_range";

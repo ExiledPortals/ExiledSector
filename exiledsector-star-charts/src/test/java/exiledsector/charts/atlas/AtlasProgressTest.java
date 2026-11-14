@@ -30,4 +30,15 @@ class AtlasProgressTest {
         assertTrue(takenState.isCompleted(taken.contested()));
         assertEquals(taken.attacker().commandCentre(), takenState.commandCentreOf(taken.contested()));
     }
+
+    @Test
+    void aSystemChangesHandsWhenTheRunLeavesItWithANewHolder() {
+        AtlasCell defenderCentre = new AtlasCell(0, 0);
+        AtlasCell attackerCentre = new AtlasCell(4, 0);
+
+        assertTrue(AtlasProgress.changedHands(defenderCentre, attackerCentre));
+        assertTrue(AtlasProgress.changedHands(null, attackerCentre));
+        assertFalse(AtlasProgress.changedHands(defenderCentre, defenderCentre));
+        assertFalse(AtlasProgress.changedHands(defenderCentre, null));
+    }
 }

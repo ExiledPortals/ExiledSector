@@ -86,6 +86,27 @@ class ContestOutcomesTest {
     }
 
     @Test
+    void aDroppedFightLeavesTheOtherDeclaredIntentsAndStoresNoVerdict() {
+        Intent defend = Intent.defend(border.defender().recordId());
+        declare(state, challenge(), defend);
+
+        ContestOutcomes.drop(state, challenge());
+
+        assertEquals(List.of(defend), OfficerTurns.declaredIntents(state));
+        assertNull(state.decidedContest(challenge().encode()));
+    }
+
+    @Test
+    void aDefenderDismissedDuringTheRunStillLosesTheSystemToTheAttacker() {
+        declare(state, push());
+        AtlasTerritoryTransfer.dismissOfficer(state, border.defender().commandCentre());
+
+        assertTrue(ContestOutcomes.settle(generator, state, push(), border.contested(), true));
+
+        assertEquals(border.attacker().commandCentre(), state.commandCentreOf(border.contested()));
+    }
+
+    @Test
     void anUndeclaredChallengeStoresNoVerdict() {
         declare(state);
 

@@ -1,5 +1,6 @@
 package exiledsector.charts.objective;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BattleAPI;
 import com.fs.starfarer.api.campaign.CampaignEventListener.FleetDespawnReason;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
@@ -15,11 +16,14 @@ import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.atlas.AtlasProgress;
 import exiledsector.charts.officer.OfficerDefeat;
 import exiledsector.effects.ItemLootListener;
+import exiledsector.effects.PlayerEngagement;
 import exiledsector.items.ItemDrops;
+import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.LootTaken;
 import org.apache.log4j.Logger;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public final class ChartObjectives {
@@ -122,6 +126,31 @@ public final class ChartObjectives {
             return ItemDrops.SiteLoot.NONE;
         }
         return completed(sector, run);
+    }
+
+    public static void afterPlayerEngagement(PlayerEngagement engagement) {
+        if (engagement.playerWon() || engagement.result() == null) {
+            return;
+        }
+        try {
+            flagshipsLostInLostEngagement(Global.getSector(), engagement.result().getBattle(), engagement.enemyLosses());
+        } catch (RuntimeException | LinkageError e) {
+            LOG.error("[ExiledSector] Checking whether a Faction Skirmish flagship fell in a lost engagement failed", e);
+        }
+    }
+
+    static boolean flagshipsLostInLostEngagement(SectorAPI sector, BattleAPI battle, List<FleetMemberAPI> enemyLosses) {
+        ChartRun run = trackedRun();
+        if (run == null || battle == null || !SkirmishObjective.tracks(run)) {
+            return false;
+        }
+        Map<CampaignFleetAPI, List<FleetMemberAPI>> lostBySourceFleet = new BattleEngagement(battle, 1f, 0f, enemyLosses).lostEnemiesBySourceFleet();
+        boolean anyFell = false;
+        for (Map.Entry<CampaignFleetAPI, List<FleetMemberAPI>> lost : lostBySourceFleet.entrySet()) {
+            SkirmishProgress progress = SkirmishObjective.fellInBattle(sector, run, lost.getKey(), lost.getValue());
+            anyFell |= deliverOutsideBattle(sector, afterSkirmishFall(sector, run, progress));
+        }
+        return anyFell;
     }
 
     private static void completedOutsideBattle(SectorAPI sector, ChartRun run) {

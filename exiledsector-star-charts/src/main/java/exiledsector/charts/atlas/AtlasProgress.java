@@ -30,8 +30,7 @@ public final class AtlasProgress {
             boolean newlyCompleted = !state.isCompleted(cell);
             AtlasCell holderBeforeRunEnd = state.commandCentreOf(cell);
             ChartAnomalies.runCompleted(sector, run);
-            boolean changedHands = holderBeforeRunEnd != null && state.commandCentreOf(cell) != null
-                    && !holderBeforeRunEnd.equals(state.commandCentreOf(cell));
+            boolean changedHands = changedHands(holderBeforeRunEnd, state.commandCentreOf(cell));
             complete(generator, state, cell, run.tier(), changedHands);
             if (newlyCompleted) {
                 takeOfficerTurn(generator, state, run, beatenOfficerId);
@@ -40,6 +39,10 @@ public final class AtlasProgress {
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Recording the completed atlas system for run " + run.runId() + " failed", e);
         }
+    }
+
+    static boolean changedHands(AtlasCell holderBefore, AtlasCell holderAfter) {
+        return holderAfter != null && !holderAfter.equals(holderBefore);
     }
 
     private static void takeOfficerTurn(AtlasGenerator generator, AtlasState state, ChartRun run, Integer beatenOfficerId) {

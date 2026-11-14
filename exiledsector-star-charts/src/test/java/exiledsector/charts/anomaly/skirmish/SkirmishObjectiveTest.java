@@ -9,6 +9,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
+import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.MutableValue;
@@ -22,12 +23,14 @@ import exiledsector.charts.objective.ChartObjectives;
 import exiledsector.charts.objective.ChartRewards;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
+import exiledsector.effects.PlayerEngagement;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -131,6 +134,24 @@ class SkirmishObjectiveTest {
         assertEquals(new SkirmishProgress(true, null, true, ATTACKER.officerRecordId()), second);
         assertEquals(SkirmishResult.DROPPED, SkirmishFlagships.of(run).result());
         assertEquals(SkirmishProgress.NONE, SkirmishObjective.fleetGone(sector, run, fleet(ATTACKER), true));
+    }
+
+    @Test
+    void aFlagshipThePlayerDestroysInALostEngagementStillCountsAsBeaten() {
+        ChartRun run = openSkirmishRun();
+        CampaignFleetAPI defender = fleet(DEFENDER);
+        List<FleetMemberAPI> losses = defender.getFleetData().getMembersListCopy();
+        BattleAPI battle = battle(true);
+        when(battle.getSourceFleet(losses.get(0))).thenReturn(defender);
+        EngagementResultAPI result = mock(EngagementResultAPI.class);
+        when(result.getBattle()).thenReturn(battle);
+
+        ChartObjectives.afterPlayerEngagement(new PlayerEngagement(result, true, losses, 0f, 1f, Set.of()));
+        assertEquals(0, SkirmishFlagships.of(run).fallenCount());
+
+        ChartObjectives.afterPlayerEngagement(new PlayerEngagement(result, false, losses, 0f, 1f, Set.of()));
+        assertEquals(FlagshipFall.BEATEN_BY_PLAYER, SkirmishFlagships.of(run).defender().fall());
+        assertFalse(run.isObjectiveComplete());
     }
 
     @Test

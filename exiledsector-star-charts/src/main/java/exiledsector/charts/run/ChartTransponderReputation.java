@@ -11,6 +11,7 @@ import com.fs.starfarer.api.impl.campaign.CoreReputationPlugin.RepActions;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.RunFactionDress;
+import exiledsector.loot.FleetFactions;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -60,8 +61,7 @@ public final class ChartTransponderReputation {
     }
 
     static String realFactionOf(CampaignFleetAPI fleet) {
-        String realFactionId = fleet.getMemoryWithoutUpdate().getString(ChartIds.REAL_FACTION_MEMORY_KEY);
-        return realFactionId == null || realFactionId.isEmpty() ? fleet.getFaction().getId() : realFactionId;
+        return FleetFactions.realFactionIdOf(fleet);
     }
 
     private static boolean isChartFleet(CampaignFleetAPI fleet) {

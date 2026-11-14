@@ -202,13 +202,8 @@ public final class OfficerTurn {
     }
 
     private boolean settledInRun(Intent intent) {
-        return intent.kind() == IntentKind.CHALLENGE && state.decidedContest(intent.encode()) != null && fightsOn(intent.officerRecordId())
-                && fightsOn(intent.targetRecordId());
-    }
-
-    private boolean fightsOn(int recordId) {
-        AtlasOfficer officer = state.officer(recordId);
-        return officer != null && officer.isActive() && !beatenThisTurn.contains(recordId);
+        return intent.kind() == IntentKind.CHALLENGE && state.decidedContest(intent.encode()) != null && state.officer(intent.officerRecordId()) != null
+                && state.officer(intent.targetRecordId()) != null;
     }
 
     private List<Intent> stillFoughtInOpenRun(List<Intent> intents) {
@@ -274,17 +269,20 @@ public final class OfficerTurn {
         boolean loserWasLowestRank = setup.rankOrder(loser.rankId()) == 0;
         boolean lowerRankWon = setup.rankOrder(winner.rankId()) < setup.rankOrder(loser.rankId());
         int renownGained = rules.renownPerChallengeWon() + (!attackerWins && defended ? rules.renownPerDefendHeld() : 0);
-        state.putOfficer(winner.withRenown(winner.renown() + renownGained).withLastChance(false)
-                .withCarried(CarriedItem.joined(winner.carried(), loser.carried()))
-                .withHistory(AtlasTerritoryPlacer.history(CHALLENGE_WON_HISTORY, loser.commandCentre())));
-        state.putOfficer(loser.withCarried(List.of())
-                .withHistory(AtlasTerritoryPlacer.history(CHALLENGE_LOST_HISTORY, winner.commandCentre())));
-        if (lowerRankWon) {
+        state.putOfficer(withChallengeHistory(winner.withRenown(winner.renown() + renownGained).withLastChance(false)
+                .withCarried(CarriedItem.joined(winner.carried(), loser.carried())), CHALLENGE_WON_HISTORY, loser));
+        state.putOfficer(withChallengeHistory(loser.withCarried(List.of()), CHALLENGE_LOST_HISTORY, winner));
+        if (lowerRankWon && !beatenThisTurn.contains(winner.recordId()) && !beatenThisTurn.contains(loser.recordId())) {
             swapRanks(winner.recordId(), loser.recordId());
         }
         boolean died = loseFight(loser.recordId(), loserWasLowestRank);
         losses.add(new OfficerLoss(loser.recordId(), LossKind.LOST_CHALLENGE, winner.recordId(), loser.commandCentre(), false, died));
         resolvedIntents.add(new ResolvedIntent(IntentKind.CHALLENGE, attacker.recordId(), defender.recordId(), null, attackerWins, defended));
+    }
+
+    private static AtlasOfficer withChallengeHistory(AtlasOfficer officer, String event, AtlasOfficer opponent) {
+        AtlasCell opponentPlace = opponent.isActive() ? opponent.commandCentre() : OfficerText.fledFrom(opponent);
+        return officer.isActive() && opponentPlace != null ? officer.withHistory(AtlasTerritoryPlacer.history(event, opponentPlace)) : officer;
     }
 
     private boolean attackerWins(Intent intent, AtlasOfficer attacker, AtlasOfficer defender, boolean defended) {

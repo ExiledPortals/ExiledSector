@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static exiledsector.charts.officer.turn.TurnBoard.ATTACKER_WINS;
 import static exiledsector.charts.officer.turn.TurnBoard.DEFENDER_WINS;
@@ -451,6 +452,38 @@ class OfficerTurnTest {
         assertTrue(resolved(result, IntentKind.CHALLENGE).succeeded());
         assertEquals("commander", state.officer(7).rankId());
         assertEquals("lieutenant", state.officer(HEGEMONY_OFFICER).rankId());
+    }
+
+    @Test
+    void aChallengeDecidedInASkirmishStandsWhenThePlayerThenBeatsItsWinner() {
+        AtlasState state = borderingTerritories();
+        update(state, HEGEMONY_OFFICER, officer -> officer.withRenown(50));
+        update(state, PIRATE_OFFICER, officer -> officer.withRenown(0));
+        Intent challenge = Intent.challenge(HEGEMONY_OFFICER, PIRATE_OFFICER);
+        declare(state, challenge);
+        state.decideContest(challenge.encode(), false);
+
+        TurnResult result = take(state, TurnCause.officerDefeated(PIRATE_OFFICER), setup(ATTACKER_WINS));
+
+        assertFalse(resolved(result, IntentKind.CHALLENGE).succeeded());
+        assertEquals(LossKind.LOST_CHALLENGE, result.lossOf(HEGEMONY_OFFICER).kind());
+        assertEquals(OfficerTurn.CHALLENGE_LOST_HISTORY, OfficerText.latestEntry(state.officer(HEGEMONY_OFFICER)).event());
+        assertEquals("commander", state.officer(HEGEMONY_OFFICER).rankId());
+        assertEquals(PIRATE_CENTRE, OfficerText.fledFrom(state.officer(PIRATE_OFFICER)));
+        assertNull(state.decidedContest(challenge.encode()));
+    }
+
+    @Test
+    void aFightStillOpenInTheRunStaysDeclaredForTheNextTurn() {
+        AtlasState state = borderingTerritories();
+        Intent challenge = Intent.challenge(HEGEMONY_OFFICER, PIRATE_OFFICER);
+        declare(state, challenge);
+
+        TurnResult result = take(state, TurnCause.forced(),
+                setup(ATTACKER_WINS, IntentResolvers.ABSTRACT, PIRATE_BORDER, Set.of(HEGEMONY_OFFICER, PIRATE_OFFICER)));
+
+        assertNull(resolved(result, IntentKind.CHALLENGE));
+        assertTrue(OfficerTurn.decodeIntents(state.declaredIntents()).contains(challenge));
     }
 
     @Test

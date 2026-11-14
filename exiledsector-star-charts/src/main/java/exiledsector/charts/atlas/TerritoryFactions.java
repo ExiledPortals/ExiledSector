@@ -19,7 +19,7 @@ public final class TerritoryFactions {
 
     public static boolean canHoldTerritory(String factionId) {
         return !TerritoryExclusions.excludes(factionId) && !UNCLAIMED_FACTIONS.contains(factionId)
- && !Factions.PLAYER.equals(factionId);
+                && !Factions.PLAYER.equals(factionId);
     }
 
     public static String territoryId(String factionId, AtlasCell commandCentre) {
