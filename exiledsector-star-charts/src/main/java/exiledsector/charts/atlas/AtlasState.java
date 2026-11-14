@@ -382,8 +382,8 @@ public final class AtlasState implements AtlasMemory {
     }
 
     public void leaveBehind(List<CarriedItem> items) {
-        List<CarriedItem> stacked = CarriedItem.stack(leftBehind(), items);
-        leftBehindItems = new ArrayList<>(stacked.stream().map(CarriedItem::toToken).toList());
+        List<CarriedItem> joined = CarriedItem.joined(leftBehind(), items);
+        leftBehindItems = new ArrayList<>(joined.stream().map(CarriedItem::toToken).toList());
     }
 
     public List<CarriedItem> leftBehind() {
@@ -394,7 +394,7 @@ public final class AtlasState implements AtlasMemory {
         if (leftBehindItems.isEmpty()) {
             return newcomer;
         }
-        AtlasOfficer carrying = newcomer.withCarried(CarriedItem.stack(newcomer.carried(), leftBehind()));
+        AtlasOfficer carrying = newcomer.withCarried(CarriedItem.joined(newcomer.carried(), leftBehind()));
         leftBehindItems = new ArrayList<>();
         return carrying;
     }

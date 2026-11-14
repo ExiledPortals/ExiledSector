@@ -6,6 +6,8 @@ public enum RewardKind {
     CRAFTING_ITEM("crafting_item", true),
     INHIBITOR("inhibitor", true),
     ENGRAM("engram", true),
+    FEEDSTOCK("feedstock", true),
+    STAR_CHART("star_chart", false),
     UNIQUE("unique", false);
 
     private final String id;

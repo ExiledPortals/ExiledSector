@@ -28,13 +28,13 @@ class OfficerStartingItemsTest {
     }
 
     @Test
-    void aRolledItemStacksOntoAMatchingCarriedOne() {
+    void aRolledItemJoinsAMatchingCarriedOneAsItsOwnEntry() {
         CarriedItem kernel = CarriedItem.of(RewardKind.CRAFTING_ITEM, "kernel");
         AtlasOfficer carrying = officer("captain").withCarried(List.of(kernel));
 
         AtlasOfficer dealt = OfficerStartingItems.dealt(carrying, (officer, random) -> kernel, new Random(1L));
 
-        assertEquals(List.of(kernel.withCount(2)), dealt.carried());
+        assertEquals(List.of(kernel, kernel), dealt.carried());
     }
 
     @Test

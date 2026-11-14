@@ -17,10 +17,9 @@ import exiledsector.charts.officer.OfficerText;
 import exiledsector.charts.officer.reward.CarriedItem;
 import exiledsector.charts.officer.reward.OfficerRewardPool;
 import exiledsector.charts.officer.reward.OfficerRewardText;
+import exiledsector.charts.officer.reward.RewardGroup;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
-import exiledsector.items.ItemTooltip;
-import exiledsector.items.MaterialItemPlugin;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.CampaignOverlay;
 import exiledsector.ui.ChromeMetrics;
@@ -29,10 +28,10 @@ import exiledsector.ui.OverlayFade;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.UiFonts;
-import exiledsector.ui.socket.ItemHoverTooltip;
+import exiledsector.ui.cargo.CargoIconFx;
+import exiledsector.ui.cargo.IconCrossFade;
 import exiledsector.ui.util.BorderedPanel;
 import exiledsector.ui.util.GLDraw;
-import exiledsector.ui.util.SpriteDraw;
 import exiledsector.ui.util.TextLabel;
 
 import java.awt.Color;
@@ -78,11 +77,9 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
     private final OverlayFade fade = new OverlayFade(OPEN_SECONDS);
     private final TextLabel titleLabel = new TextLabel(UiFonts.TITLE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
     private final TextLabel hintLabel = new TextLabel(UiFonts.HINT, AtlasScreen.HINT_COLOUR);
-    private ItemHoverTooltip hoverTooltip;
     private final List<CustomPanelAPI> cardAnchors = new ArrayList<>();
     private PositionAPI panelPosition;
     private Card hoveredCard;
-    private Card tooltipCard;
     private boolean picked;
     private float mouseX;
     private float mouseY;
@@ -144,13 +141,12 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
 
     private static Card card(CarriedItem offer) {
         TextLabel nameLabel = new TextLabel(UiFonts.BODY, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
-        I18n.forGameText(() -> nameLabel.setWrapped(OfficerRewardText.name(offer), CARD_WIDTH - CARD_PAD * 2f, NAME_MAX_HEIGHT));
-        return new Card(offer, RewardFace.of(offer), nameLabel);
+        I18n.forGameText(() -> nameLabel.setWrapped(OfficerRewardText.groupName(offer), CARD_WIDTH - CARD_PAD * 2f, NAME_MAX_HEIGHT));
+        return new Card(offer, RewardFace.of(RewardGroup.of(offer)), nameLabel);
     }
 
     @Override
     public void attach(CustomPanelAPI panel) {
-        hoverTooltip = new ItemHoverTooltip(panel);
         I18n.forGameText(() -> {
             titleLabel.set(officerName == null ? Translation.text("chart.officer.reward.title")
                     : Translation.msg("chart.officer.reward.titleNamed").arg("officer", officerName).text());
@@ -242,7 +238,6 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
             return;
         }
         if (fade.advance(amount)) {
-            hoverTooltip.hide();
             if (returnTo != null) {
                 host.switchTo(returnTo);
             } else {
@@ -251,27 +246,6 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
             return;
         }
         hoveredCard = mouseKnown && !fade.closing() ? cardAt(mouseX, mouseY) : null;
-        if (hoveredCard != tooltipCard) {
-            tooltipCard = hoveredCard;
-            showTooltip(hoveredCard);
-        } else {
-            hoverTooltip.refreshIfExpansionChanged();
-        }
-    }
-
-    private void showTooltip(Card card) {
-        if (card == null) {
-            hoverTooltip.hide();
-            return;
-        }
-        PositionAPI anchor = cardAnchors.get(cards.indexOf(card)).getPosition();
-        if (card.face().preview() != null) {
-            hoverTooltip.show(card, card.face().preview(), expanded -> List.of(), anchor);
-        } else if (card.offer().kind().craftingItem()) {
-            hoverTooltip.show(card, ItemTooltip.width(), (tooltip, expanded) -> MaterialItemPlugin.writeTooltip(tooltip, card.offer().id()), anchor);
-        } else {
-            hoverTooltip.hide();
-        }
     }
 
     @Override
@@ -310,9 +284,8 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
         GLDraw.strokeQuad(left, bottom, CARD_WIDTH, CARD_HEIGHT, card.face().frameColour(), hovered ? HOVER_BORDER_WIDTH : BORDER_WIDTH,
                 (hovered ? 1f : IDLE_BORDER_ALPHA) * alpha);
         float iconCentreY = bottom + CARD_HEIGHT - CARD_PAD - ICON_SIZE / 2f;
-        if (card.face().iconPath() != null) {
-            SpriteDraw.drawAtCenter(ICONS, card.face().iconPath(), left + CARD_WIDTH / 2f, iconCentreY, ICON_SIZE, ICON_SIZE, Color.WHITE, alpha);
-        }
+        IconCrossFade.drawAtCenter(ICONS, card.face().iconPaths(), CargoIconFx.seconds(), left + CARD_WIDTH / 2f, iconCentreY, ICON_SIZE,
+                ICON_SIZE, alpha);
         card.nameLabel().setAlpha(alpha).draw(left + CARD_PAD, iconCentreY - ICON_SIZE / 2f - CARD_PAD);
     }
 

@@ -112,6 +112,20 @@ class AtlasOfficerTest {
     }
 
     @Test
+    void carriedRewardsOfAnUnknownKindAreSkippedWhenDecoding() {
+        AtlasOfficer officer = new AtlasOfficer(12, "tritachyon", 1L, -2L, "admiral", CENTRE, "reckless", "paragon", "paragon_Elite", 3L, -4L,
+                List.of(), Map.of(), List.of("crafting_item:7:kernel", "subroutine:1:old_subroutine", "hull_item:2:bridge"),
+                List.of("relic:1:gone", "engram:1:engram_a"), 0, false, AtlasOfficer.Status.ACTIVE, true, List.of(), 40, true, 5,
+                "graphics/portraits/portrait_mercenary01.png", Map.of());
+
+        AtlasOfficer decoded = AtlasOfficer.decode(12, officer.encode());
+
+        assertEquals(List.of(new CarriedItem(RewardKind.CRAFTING_ITEM, "kernel", null, 7), new CarriedItem(RewardKind.HULL_ITEM, "bridge", null, 2)),
+                decoded.carried());
+        assertEquals(List.of(CarriedItem.of(RewardKind.ENGRAM, "engram_a")), decoded.pendingOffers());
+    }
+
+    @Test
     void aRecordWrittenBeforeStoredPortraitsStillDecodes() {
         String oldRecord = "o2|hegemony|1|2|commander||steady|onslaught|onslaught_Elite|3|4|||||0|0|WAITING|0||0|0|4";
 

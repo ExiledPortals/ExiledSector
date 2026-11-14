@@ -65,6 +65,6 @@ public class OfficerRewardPickerCommand extends PlayerFleetCommand {
             playerFleet.getCargo().addSpecial(item.toSpecialItem(), 1f);
         }
         drop.materials().forEach((itemId, quantity) -> MaterialItems.add(playerFleet.getCargo(), itemId, quantity));
-        Global.getSector().getCampaignUI().addMessage("Picked " + OfficerRewardText.name(chosen) + " (" + chosen.toToken() + ").");
+        Global.getSector().getCampaignUI().addMessage("Picked " + OfficerRewardText.groupName(chosen) + " (" + chosen.toToken() + ").");
     }
 }

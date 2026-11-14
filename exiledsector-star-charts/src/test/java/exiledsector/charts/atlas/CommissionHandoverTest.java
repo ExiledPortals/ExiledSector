@@ -141,7 +141,7 @@ class CommissionHandoverTest {
         AtlasOfficer newcomer = board.state().officers().stream().filter(AtlasOfficer::neverPlaced).findFirst().orElseThrow();
         AtlasOfficer arrived = board.state().withLeftBehindItems(newcomer);
 
-        assertEquals(CarriedItem.stack(newcomer.carried(), List.of(KERNELS)), arrived.carried());
+        assertEquals(CarriedItem.joined(newcomer.carried(), List.of(KERNELS)), arrived.carried());
         assertTrue(board.state().leftBehind().isEmpty());
     }
 

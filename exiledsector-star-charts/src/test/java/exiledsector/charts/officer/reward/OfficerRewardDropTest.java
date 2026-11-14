@@ -2,6 +2,7 @@ package exiledsector.charts.officer.reward;
 
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.BiomeModifiers;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
@@ -12,6 +13,8 @@ import exiledsector.items.ItemModifiers;
 import exiledsector.items.ModifierSources;
 import exiledsector.items.PoolEntry;
 import exiledsector.items.RolledModifier;
+import exiledsector.items.StarChart;
+import exiledsector.items.StarChartFixtures;
 import exiledsector.modifiers.ModifierSlot;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -24,6 +27,7 @@ import java.util.Map;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -34,6 +38,7 @@ class OfficerRewardDropTest {
     private static final String BRIDGE = "test_bridge";
     private static final String SWARM = "exiledSector_augmentation_nanoswarm";
     private static final String INHIBITOR = "exiledSector_prefix_inhibitor";
+    private static final String FEEDSTOCK = "exiledSector_nanite_feedstock";
     private static final float EPSILON = 1e-4f;
 
     @BeforeEach
@@ -107,6 +112,54 @@ class OfficerRewardDropTest {
 
             assertEquals(1, drop.items().size());
             assertTrue(drop.items().get(0).explicits().stream().map(RolledModifier::modifierId).anyMatch(CHRONAL::equals));
+        }
+    }
+
+    @Test
+    void carriedFeedstockScalesWithTheItemAndFeedstockPercents() {
+        ChartGenContext context = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_FEEDSTOCK_PERCENT, 100f),
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_CRAFTING_ITEM_PERCENT, 300f)));
+        List<CarriedItem> carried = List.of(new CarriedItem(RewardKind.FEEDSTOCK, FEEDSTOCK, null, 40), new CarriedItem(RewardKind.CRAFTING_ITEM, SWARM, null, 2));
+
+        ItemDrops.SiteLoot drop = OfficerRewardDrop.roll(carried, 5, context, new Random(1L));
+
+        assertEquals(2f, OfficerRewardDrop.feedstockMult(context), EPSILON);
+        assertEquals(Map.of(FEEDSTOCK, 80, SWARM, 8), drop.materials());
+    }
+
+    @Test
+    void aCarriedStarChartDropsAtTheRunTierOrSwapsForOneThatRollsThere() throws Exception {
+        StarChartFixtures.registerShipped();
+        try {
+            CarriedItem gated = CarriedItem.of(RewardKind.STAR_CHART, StarChartFixtures.TEST_GATED);
+            int highTier = StarChartFixtures.TEST_GATED_MIN_TIER + 2;
+
+            ItemDrops.SiteLoot atHighTier = OfficerRewardDrop.roll(List.of(gated), highTier, ChartGenContext.none(), new Random(1L));
+            assertEquals(List.of(StarChartFixtures.TEST_GATED), atHighTier.items().stream().map(ItemData::definitionId).toList());
+            assertEquals(highTier, ((StarChart) atHighTier.items().get(0).preview()).tier());
+
+            Random random = new Random(2L);
+            for (int roll = 0; roll < 20; roll++) {
+                ItemDrops.SiteLoot atLowTier = OfficerRewardDrop.roll(List.of(gated), 1, ChartGenContext.none(), random);
+                assertEquals(1, atLowTier.items().size());
+                assertNotEquals(StarChartFixtures.TEST_GATED, atLowTier.items().get(0).definitionId());
+            }
+        } finally {
+            StarChartFixtures.clear();
+        }
+    }
+
+    @Test
+    void aStarChartFromACorruptedTierRunDropsAtTheHighestNormalTier() throws Exception {
+        StarChartFixtures.registerShipped();
+        try {
+            ItemDrops.SiteLoot drop = OfficerRewardDrop.roll(List.of(CarriedItem.of(RewardKind.STAR_CHART, StarChartFixtures.TEST_FIXED)),
+                    ChartTiers.CORRUPTED_TIER, ChartGenContext.none(), new Random(4L));
+
+            assertEquals(List.of(StarChartFixtures.TEST_FIXED), drop.items().stream().map(ItemData::definitionId).toList());
+            assertEquals(ChartTiers.HIGHEST_TIER, ((StarChart) drop.items().get(0).preview()).tier());
+        } finally {
+            StarChartFixtures.clear();
         }
     }
 

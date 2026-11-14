@@ -1178,10 +1178,13 @@ by a first loss and dies on the next, replaced by a new Lieutenant. The result i
 ### Officer rewards and scars
 
 Each officer carries items, starting with one rolled by rank when the board is dealt or they replace a dead officer (`OfficerStartingItems`). Beating
-an officer drops what they carry with the boss reward, crafting item counts scaled by the run's item and crafting item
-percents, and offers three items from `atlas_officer_rewards.csv` (`OfficerRewardPool`); the pick becomes what they carry
-next time. An undecided offer passes to a commission successor or a dead officer's replacement, and is picked at
-random the next time the player meets or beats an officer (`OfficerDefeat`, `OfficerRewardDrop`).
+an officer drops what they carry with the boss reward, crafting item and feedstock counts scaled by the run's item and
+crafting item or feedstock percents, and offers three different reward groups (`RewardGroup`) from `atlas_officer_rewards.csv`
+(`OfficerRewardPool`). A category's share splits over its groups by their summed item weights at the run tier, so rarer
+crafting tiers come up less, and each offer hides an item already drawn within its group; the pick becomes what they
+carry next time. Rewards show only as groups, counted per reward taken. An undecided offer passes to a commission
+successor or a dead officer's replacement, and is picked at random the next time the player meets or beats an officer
+(`OfficerDefeat`, `OfficerRewardDrop`).
 
 `ScarCombatPlugin` tallies how the player's fleet fought an officer's flagship, and each defeat adds the scar whose
 `atlas_officer_scars.csv` detector scores highest, else Battle-Hardened, plus its themed d-mod, up to five (`Scars`,

@@ -1,7 +1,5 @@
 package exiledsector.charts.officer.reward;
 
-import java.util.Random;
-
 public enum CraftingTier {
     LOW("low", 7),
     MID("mid", 3),
@@ -21,10 +19,6 @@ public enum CraftingTier {
 
     public int maxCount() {
         return maxCount;
-    }
-
-    public int rollCount(Random random) {
-        return 1 + random.nextInt(maxCount);
     }
 
     public static CraftingTier byId(String id) {

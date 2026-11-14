@@ -32,7 +32,7 @@ public final class OfficerDefeat {
 
         public String line() {
             return I18n.forGameText(() -> Translation.msg("chart.officer.reward.randomPick").arg("officer", OfficerText.title(officer))
-                    .arg("item", OfficerRewardText.name(pick)).text());
+                    .arg("reward", OfficerRewardText.groupNameInText(pick)).text());
         }
     }
 
@@ -139,10 +139,10 @@ public final class OfficerDefeat {
     }
 
     static AtlasOfficer picked(AtlasOfficer officer, CarriedItem pick) {
-        if (pick == null || officer.pendingOffers().stream().noneMatch(pick::stacksWith)) {
+        if (pick == null || officer.pendingOffers().stream().noneMatch(pick::sameItemAs)) {
             return officer;
         }
-        return officer.withCarried(CarriedItem.stack(officer.carried(), List.of(pick))).withPendingOffers(List.of());
+        return officer.withCarried(CarriedItem.joined(officer.carried(), List.of(pick))).withPendingOffers(List.of());
     }
 
     private static String dModFor(String scarId, AtlasOfficer officer, HullFacts hull, Random random) {

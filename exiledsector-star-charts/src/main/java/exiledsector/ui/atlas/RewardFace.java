@@ -1,56 +1,57 @@
 package exiledsector.ui.atlas;
 
-import com.fs.starfarer.api.campaign.SpecialItemSpecAPI;
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.officer.reward.CarriedItem;
-import exiledsector.charts.officer.reward.OfficerRewardDrop;
-import exiledsector.charts.officer.reward.RewardKind;
-import exiledsector.i18n.StyledText;
-import exiledsector.items.Item;
-import exiledsector.items.ItemData;
+import exiledsector.charts.officer.reward.OfficerRewardPool;
+import exiledsector.charts.officer.reward.RewardContext;
+import exiledsector.charts.officer.reward.RewardGroup;
+import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
+import exiledsector.items.ItemDisassembly;
+import exiledsector.items.ItemRarity;
 import exiledsector.items.MaterialItems;
 
 import java.awt.Color;
 import java.util.List;
-import java.util.Random;
+import java.util.Objects;
 
-record RewardFace(Item preview, String iconPath, Color frameColour) {
+record RewardFace(List<String> iconPaths, Color frameColour) {
 
-    static final Color MATERIAL_FRAME = new Color(170, 170, 170);
-    private static final long PREVIEW_SEED = 0L;
+    static final Color LOW_CRAFTING_FRAME = new Color(170, 170, 170);
+    static final Color MID_CRAFTING_FRAME = new Color(185, 125, 255);
+    static final Color ENGRAM_FRAME = new Color(230, 80, 175);
+    static final Color STAR_CHART_FRAME = new Color(225, 240, 255);
+    static final Color BIOME_HULL_ITEM_FRAME = new Color(110, 235, 140);
 
-    static RewardFace of(CarriedItem offer) {
-        if (offer.kind().craftingItem()) {
-            Color materialColour = MaterialItems.color(offer.id());
-            return new RewardFace(null, MaterialItems.loadedIconPath(offer.id()), materialColour == null ? MATERIAL_FRAME : materialColour);
-        }
-        Item preview = preview(offer);
-        return new RewardFace(preview, preview == null ? null : preview.iconPath(), preview == null ? MATERIAL_FRAME : preview.frameColor());
+    static RewardFace of(RewardGroup group) {
+        SectorAPI sector = Global.getSector();
+        List<String> iconPaths = OfficerRewardPool.possible(group, RewardContext.itemAllowedIn(sector), RewardContext.craftingItemAllowedIn(sector))
+                .stream().map(RewardFace::iconPath).filter(Objects::nonNull).distinct().toList();
+        return new RewardFace(iconPaths, frameColour(group));
     }
 
-    static StyledText description(CarriedItem offer) {
-        if (offer.kind().craftingItem()) {
-            SpecialItemSpecAPI spec = MaterialItems.spec(offer.id());
-            String description = spec == null ? null : spec.getDesc();
-            return description == null || description.isEmpty() ? null : StyledText.of(description);
-        }
-        ItemDefinition definition = ItemDefinitions.get(offer.id());
-        return definition == null ? null : definition.descriptionText();
+    static Color frameColour(RewardGroup group) {
+        return switch (group) {
+            case LOW_CRAFTING -> LOW_CRAFTING_FRAME;
+            case MID_CRAFTING -> MID_CRAFTING_FRAME;
+            case HIGH_CRAFTING -> ItemRarity.RARE.color();
+            case INHIBITOR -> CraftingInhibitor.PREFIX.color();
+            case ENGRAM -> ENGRAM_FRAME;
+            case FEEDSTOCK -> MaterialItems.color(ItemDisassembly.FEEDSTOCK_ITEM_ID);
+            case STAR_CHART -> STAR_CHART_FRAME;
+            case HULL_ITEM -> ItemRarity.COMMON.color();
+            case BIOME_HULL_ITEM -> BIOME_HULL_ITEM_FRAME;
+            case UNIQUE -> ItemRarity.UNIQUE.color();
+        };
     }
 
-    private static Item preview(CarriedItem offer) {
-        ItemDefinition definition = ItemDefinitions.get(offer.id());
-        if (definition == null) {
-            return null;
+    private static String iconPath(CarriedItem item) {
+        if (item.kind().craftingItem()) {
+            return MaterialItems.loadedIconPath(item.id());
         }
-        if (offer.kind() == RewardKind.UNIQUE) {
-            return ItemData.rolled(definition, PREVIEW_SEED).preview();
-        }
-        ItemData base = new ItemData(definition.id(), PREVIEW_SEED, List.of(), null);
-        if (offer.kind() == RewardKind.BIOME_HULL_ITEM) {
-            base = OfficerRewardDrop.withBiomeModifier(base, definition, offer.variant(), new Random(PREVIEW_SEED));
-        }
-        return base.preview();
+        ItemDefinition definition = ItemDefinitions.get(item.id());
+        return definition == null ? null : definition.icon();
     }
 }

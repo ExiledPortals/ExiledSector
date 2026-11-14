@@ -259,7 +259,7 @@ class OfficerTurnTest {
         AtlasOfficer winner = state.officer(HEGEMONY_OFFICER);
         AtlasOfficer loser = state.officer(PIRATE_OFFICER);
         assertEquals(7, winner.renown());
-        assertEquals(List.of(kernels(3), wards(1)), winner.carried());
+        assertEquals(List.of(kernels(1), kernels(2), wards(1)), winner.carried());
         assertEquals(OfficerTurn.CHALLENGE_WON_HISTORY, OfficerText.latestEntry(winner).event());
         assertEquals(PIRATE_CENTRE, OfficerText.latestEntry(winner).latest());
         assertEquals(3, loser.renown());

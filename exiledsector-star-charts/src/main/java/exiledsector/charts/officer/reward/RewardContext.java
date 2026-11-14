@@ -15,9 +15,16 @@ public record RewardContext(int tier, String factionId, String commandCentreBiom
 
     public static RewardContext forSector(SectorAPI sector, int tier, String factionId, String commandCentreBiomeId) {
         AtlasUnlocks unlocks = AtlasData.unlocksFor(sector);
-        return new RewardContext(tier, factionId, commandCentreBiomeId, biomeId -> AtlasData.regionOpen(biomeId, unlocks),
-                definition -> ItemUnlock.available(definition.type(), sector) && ItemUnlock.canDrop(definition, sector),
-                itemId -> ItemUnlock.craftingItemUsable(itemId, sector));
+        return new RewardContext(tier, factionId, commandCentreBiomeId, biomeId -> AtlasData.regionOpen(biomeId, unlocks), itemAllowedIn(sector),
+                craftingItemAllowedIn(sector));
+    }
+
+    public static Predicate<ItemDefinition> itemAllowedIn(SectorAPI sector) {
+        return definition -> ItemUnlock.available(definition.type(), sector) && ItemUnlock.canDrop(definition, sector);
+    }
+
+    public static Predicate<String> craftingItemAllowedIn(SectorAPI sector) {
+        return itemId -> ItemUnlock.craftingItemUsable(itemId, sector);
     }
 
     public static RewardContext forRun(SectorAPI sector, ChartRun run, String officerFactionId) {
