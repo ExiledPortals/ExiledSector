@@ -40,10 +40,21 @@ public final class ImmutableDrops {
             return item;
         }
         Item preview = item.preview();
-        if (preview == null || !Nanoswarm.IMMUTABLE.canUse(preview, NO_INHIBITORS)) {
+        if (preview == null) {
+            return item;
+        }
+        fillModifiers(preview, random);
+        if (!Nanoswarm.IMMUTABLE.canUse(preview, NO_INHIBITORS)) {
             return item;
         }
         Item locked = Nanoswarm.IMMUTABLE.use(preview, NO_INHIBITORS, random);
         return locked == null ? item : new ItemData(item.definitionId(), item.seed(), locked.explicits(), locked.frozenName(), item.traits());
+    }
+
+    private static void fillModifiers(Item item, Random random) {
+        boolean augmented = true;
+        while (augmented && Nanoswarm.AUGMENTATION.canUse(item, NO_INHIBITORS)) {
+            augmented = Nanoswarm.AUGMENTATION.use(item, NO_INHIBITORS, random) != null;
+        }
     }
 }

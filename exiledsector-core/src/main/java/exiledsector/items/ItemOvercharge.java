@@ -41,7 +41,7 @@ public final class ItemOvercharge {
         }
         for (RolledLine line : rolled.lines()) {
             ModifierLine lineDefinition = modifier.line(line.effectName());
-            if (lineDefinition == null || !lineDefinition.canOvercharge(ItemForging.lowerIsBetter(item, line.effectName()))) {
+            if (lineDefinition == null || !lineDefinition.canOvercharge(ItemForging.lowerIsBetter(item, line.effectName()), PAST_TOP_FRACTION)) {
                 return false;
             }
         }

@@ -44,7 +44,9 @@ class ImmutableDropsTest {
     private static ItemDefinition definition(String id, ItemKind kind) {
         return new ItemDefinition(id, kind, id, ItemDefinition.FALLBACK_ICON, 1f, false, "",
                 List.of(PoolEntry.of(ModifierSlot.PREFIX, "HULL_PERCENT", 4f, 6f, 1f),
-                        PoolEntry.of(ModifierSlot.SUFFIX, "ARMOR_PERCENT", 4f, 6f, 1f)), List.of(), "");
+                        PoolEntry.of(ModifierSlot.PREFIX, "FLUX_CAPACITY_PERCENT", 4f, 6f, 1f)),
+                List.of(PoolEntry.of(ModifierSlot.SUFFIX, "ARMOR_PERCENT", 4f, 6f, 1f),
+                        PoolEntry.of(ModifierSlot.SUFFIX, "FLUX_DISSIPATION_PERCENT", 4f, 6f, 1f)), "");
     }
 
     private static ItemData dropped(String definitionId, long seed, int modifierCount) {
@@ -60,16 +62,16 @@ class ImmutableDropsTest {
     }
 
     @Test
-    void aCertainDropLocksExactlyOneOfItsModifiersAndKeepsTheRest() {
+    void aCertainDropFillsToFourModifiersKeepingItsOwnAndLocksExactlyOne() {
         for (long seed = 0L; seed < 20L; seed++) {
             ItemData item = dropped(BRIDGE, seed, 2);
 
             ItemData locked = ImmutableDrops.withChance(item, 1f);
 
             assertEquals(1L, immutableCount(locked));
-            assertEquals(modifierIds(item), modifierIds(locked));
+            assertEquals(4, locked.explicits().size());
+            assertTrue(modifierIds(locked).containsAll(modifierIds(item)));
             assertEquals(item.seed(), locked.seed());
-            assertEquals(item.frozenName(), locked.frozenName());
             assertSame(item.traits(), locked.traits());
         }
     }
@@ -91,12 +93,29 @@ class ImmutableDropsTest {
     }
 
     @Test
-    void subroutinesAndItemsTheNanoswarmCouldNotLockAreLeftAlone() {
+    void aSingleModifierDropIsFilledToFourAndLocked() {
+        ItemData locked = ImmutableDrops.withChance(dropped(BRIDGE, 3L, 1), 1f);
+
+        assertEquals(4, locked.explicits().size());
+        assertEquals(1L, immutableCount(locked));
+    }
+
+    @Test
+    void anUnlockedDropKeepsItsModifierCount() {
+        for (long seed = 0L; seed < 50L; seed++) {
+            ItemData item = dropped(BRIDGE, seed, 2);
+            ItemData shaped = ImmutableDrops.withChance(item, 0.1f);
+            if (immutableCount(shaped) == 0L) {
+                assertSame(item, shaped);
+            }
+        }
+    }
+
+    @Test
+    void subroutinesAreLeftAlone() {
         ItemData subroutine = dropped(SUBROUTINE, 3L, 2);
-        ItemData single = dropped(BRIDGE, 3L, 1);
 
         assertSame(subroutine, ImmutableDrops.withChance(subroutine, 1f));
-        assertSame(single, ImmutableDrops.withChance(single, 1f));
         assertSame(null, ImmutableDrops.withChance(null, 1f));
     }
 

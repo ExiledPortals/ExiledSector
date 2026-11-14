@@ -22,6 +22,9 @@ class ItemOverchargeTest {
     private static final String DRAWBACK = "overcharge_drawback";
     private static final String SCALED = "overcharge_scaled";
     private static final String FIXED = "overcharge_fixed";
+    private static final String SMALL = "overcharge_small";
+    private static final String BURN = "overcharge_burn";
+    private static final String MILD = "overcharge_mild";
 
     @BeforeEach
     void setUp() throws Exception {
@@ -29,7 +32,10 @@ class ItemOverchargeTest {
                 .put(row(PLATE, "FLUX_CAPACITY_MULT:4:6; HULL_MULT:4:6", "SHIELD_DAMAGE_TAKEN_MULT:-15:-10"))
                 .put(row(DRAWBACK, "WEAPON_DAMAGE_PERCENT:-10:-5", ""))
                 .put(row(SCALED, "HULL_MULT:4/6/8/10", ""))
-                .put(row(FIXED, "BURN_LEVEL_FLAT:1:1", "")));
+                .put(row(FIXED, "BURN_LEVEL_FLAT:1:1", ""))
+                .put(row(SMALL, "BURN_LEVEL_FLAT:1:2", ""))
+                .put(row(BURN, "BURN_LEVEL_FLAT:2:4", ""))
+                .put(row(MILD, "WEAPON_DAMAGE_PERCENT:-2:-1", "")));
     }
 
     @AfterEach
@@ -51,7 +57,7 @@ class ItemOverchargeTest {
     }
 
     @Test
-    void oneModifierRollsAQuarterPastItsBestEndAndIsMarkedOvercharged() {
+    void oneModifierRollsAQuarterPastItsBestEndRoundedDownAndIsMarkedOvercharged() {
         for (long seed = 0; seed < 20; seed++) {
             ItemData item = item(PLATE, new RolledLine("FLUX_CAPACITY_MULT", 5f), new RolledLine("SHIELD_DAMAGE_TAKEN_MULT", -12f));
 
@@ -60,7 +66,7 @@ class ItemOverchargeTest {
             List<RolledModifier> marked = overchargedModifiers(overcharged);
             assertEquals(1, marked.size());
             RolledLine line = marked.get(0).lines().get(0);
-            assertEquals("FLUX_CAPACITY_MULT".equals(line.effectName()) ? 7.5f : -18.75f, line.magnitude(), 1e-4f,
+            assertEquals("FLUX_CAPACITY_MULT".equals(line.effectName()) ? 7f : -18f, line.magnitude(), 1e-4f,
                     "less shield damage taken is better, so it goes past the low end");
         }
     }
@@ -69,7 +75,18 @@ class ItemOverchargeTest {
     void aHarmfulModifierIsOverchargedTowardItsMildEnd() {
         ItemData overcharged = ItemOvercharge.overcharge(item(DRAWBACK, new RolledLine("WEAPON_DAMAGE_PERCENT", -8f)), new Random(1L));
 
-        assertEquals(-3.75f, overchargedModifiers(overcharged).get(0).lines().get(0).magnitude(), 1e-4f);
+        assertEquals(-3f, overchargedModifiers(overcharged).get(0).lines().get(0).magnitude(), 1e-4f);
+    }
+
+    @Test
+    void wholeNumberRangesStayWholeAndOnesThatWouldStallOrVanishAreNeverPicked() {
+        ItemData burn = ItemOvercharge.overcharge(item(BURN, new RolledLine("BURN_LEVEL_FLAT", 3f)), new Random(1L));
+        ItemData small = item(SMALL, new RolledLine("BURN_LEVEL_FLAT", 1f));
+
+        assertEquals(5f, overchargedModifiers(burn).get(0).lines().get(0).magnitude(), 1e-4f);
+        assertSame(small, ItemOvercharge.overcharge(small, new Random(1L)));
+        ItemData mild = item(MILD, new RolledLine("WEAPON_DAMAGE_PERCENT", -2f));
+        assertSame(mild, ItemOvercharge.overcharge(mild, new Random(1L)));
     }
 
     @Test

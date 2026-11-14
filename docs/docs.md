@@ -754,8 +754,8 @@ rolled (`ItemRoller`), so the choice is frozen with the item.
 
 ### Overcharged modifiers
 
-An overcharged hull item has one modifier rolled 25% past the better end of its range (`ItemOvercharge`, plain ranges
-that can vary). The flag sits on the `RolledModifier` and in the cargo codec; a fleet whose `FleetLootRules` overcharge has
+An overcharged hull item has one modifier rolled 25% past the better end of its range, rounded down to the range's own
+precision (`ItemOvercharge`, `ModifierLine.overchargedRoll`; plain ranges that still go past their end, and not to zero, once rounded). The flag sits on the `RolledModifier` and in the cargo codec; a fleet whose `FleetLootRules` overcharge has
 its share of the battle drops planned apart (`BattleItemDrops`). Rerolling the modifier's values clears the flag
 (`RolledModifier.rerolled`), and a modifier granted at drop never pushes it out (`GrantedModifiers.add`).
 
@@ -1273,9 +1273,9 @@ grants never displace it.
 ### Black Hole
 
 Every derelict placed around a black hole carries a 10% immutable chance in its memory (`StarAnomalies`,
-`ImmutableDrops.mark`). Each hull item its salvage drops rolls that chance from the item's seed and, on a hit, has one
-modifier locked as the Immutable Nanoswarm locks it, after the other drop shaping (`LootSource.shapeSiteDrop`,
-`ImmutableDrops.onSiteDrop`). An item the swarm couldn't lock, with fewer than two modifiers, drops unchanged.
+`ImmutableDrops.mark`). Each hull item its salvage drops rolls that chance from the item's seed and, on a hit, is filled
+to four modifiers as Augmentation Nanoswarms would add them, then has one locked as the Immutable Nanoswarm locks it,
+after the other drop shaping (`LootSource.shapeSiteDrop`, `ImmutableDrops.onSiteDrop`).
 
 ### Neutron Star charts
 
