@@ -16,7 +16,7 @@ final class WreckPlatingListener extends NearbyDestructionListener {
     private final DeploymentRepairTally repairTally = new DeploymentRepairTally();
 
     WreckPlatingListener(ShipAPI ownerShip) {
-        super(ownerShip, other -> WreckReclaimListener.isEnemyShip(ownerShip, other));
+        super(ownerShip, destroyed -> WreckReclaimListener.isEnemyShip(ownerShip, destroyed));
     }
 
     @Override

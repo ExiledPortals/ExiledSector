@@ -13,6 +13,7 @@ import com.fs.starfarer.api.combat.ShipEngineControllerAPI.ShipEngineAPI;
 import com.fs.starfarer.api.combat.ShipEngineControllerAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.skills.skilleffect.DestructionWatchHarness;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -231,11 +232,12 @@ class HeartlessTest {
         Armored heart = heartShip(FROZEN_HEART);
         ShipAPI enemy = other(800f, false);
         gridShips.addAll(List.of(heart.ship(), enemy));
-        NearbyDestructionHeartless source = new NearbyDestructionHeartless(heart.ship());
+        DestructionWatchHarness destructionWatch = new DestructionWatchHarness(globalMock, combatEngine, gridShips);
+        new NearbyDestructionHeartless(heart.ship());
 
-        source.advance(0.3f);
+        destructionWatch.tick();
         destroy(enemy);
-        source.advance(0.3f);
+        destructionWatch.tick();
 
         assertEquals(1, heart.stacks().stacks());
     }
@@ -248,12 +250,13 @@ class HeartlessTest {
         ShipAPI alreadyDead = other(300f, false);
         destroy(alreadyDead);
         gridShips.addAll(List.of(heart.ship(), fighter, far, alreadyDead));
-        NearbyDestructionHeartless source = new NearbyDestructionHeartless(heart.ship());
+        DestructionWatchHarness destructionWatch = new DestructionWatchHarness(globalMock, combatEngine, gridShips);
+        new NearbyDestructionHeartless(heart.ship());
 
-        source.advance(0.3f);
+        destructionWatch.tick();
         destroy(fighter);
         destroy(far);
-        source.advance(0.3f);
+        destructionWatch.tick();
 
         assertEquals(0, heart.stacks().stacks());
     }
@@ -265,13 +268,14 @@ class HeartlessTest {
         ShipAPI module = other(500f, false);
         when(module.getParentStation()).thenReturn(mock(ShipAPI.class));
         gridShips.addAll(List.of(heart.ship(), retreating, module));
-        NearbyDestructionHeartless source = new NearbyDestructionHeartless(heart.ship());
+        DestructionWatchHarness destructionWatch = new DestructionWatchHarness(globalMock, combatEngine, gridShips);
+        new NearbyDestructionHeartless(heart.ship());
 
-        source.advance(0.3f);
+        destructionWatch.tick();
         when(retreating.isAlive()).thenReturn(false);
         when(retreating.getHitpoints()).thenReturn(800f);
         destroy(module);
-        source.advance(0.3f);
+        destructionWatch.tick();
 
         assertEquals(0, heart.stacks().stacks());
     }
@@ -281,12 +285,13 @@ class HeartlessTest {
         Armored heart = heartShip(FROZEN_HEART);
         ShipAPI enemy = other(800f, false);
         gridShips.addAll(List.of(heart.ship(), enemy));
-        NearbyDestructionHeartless source = new NearbyDestructionHeartless(heart.ship());
+        DestructionWatchHarness destructionWatch = new DestructionWatchHarness(globalMock, combatEngine, gridShips);
+        new NearbyDestructionHeartless(heart.ship());
 
-        source.advance(0.3f);
+        destructionWatch.tick();
         destroy(heart.ship());
         destroy(enemy);
-        source.advance(0.3f);
+        destructionWatch.tick();
         heart.stacks().gain();
 
         assertEquals(0, heart.stacks().stacks());

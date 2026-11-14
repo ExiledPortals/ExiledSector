@@ -2,13 +2,13 @@ package exiledsector.skills.skilleffect.aura;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ArmorGridAPI;
-import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.FighterLaunchBayAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
 import exiledsector.MockSector;
+import exiledsector.skills.skilleffect.DestructionWatchHarness;
 import exiledsector.skills.skilleffect.weapon.PirateFrenzy;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,17 +34,16 @@ class NearbyDestructionTest {
     private static final int ENEMY = 1;
     private static final int NEUTRAL = 100;
 
-    private final List<Object> gridShips = new ArrayList<>();
+    private final List<Object> battleShips = new ArrayList<>();
     private MockSector mockSector;
+    private DestructionWatchHarness destructionWatch;
 
     @BeforeEach
     void setUp() {
         CombatEngineAPI engine = mock(CombatEngineAPI.class);
-        CollisionGridAPI shipGrid = mock(CollisionGridAPI.class);
-        when(engine.getShipGrid()).thenReturn(shipGrid);
-        when(shipGrid.getCheckIterator(any(), anyFloat(), anyFloat())).thenAnswer(invocation -> new ArrayList<>(gridShips).iterator());
         mockSector = new MockSector();
         mockSector.global.when(Global::getCombatEngine).thenReturn(engine);
+        destructionWatch = new DestructionWatchHarness(mockSector.global, engine, battleShips);
     }
 
     @AfterEach
@@ -99,12 +98,12 @@ class NearbyDestructionTest {
         ShipAPI alsoNear = ship(-1200f, ENEMY);
         ShipAPI far = ship(2400f, ENEMY);
         ShipAPI ally = ship(300f, PLAYER);
-        gridShips.addAll(List.of(carrier, near, alsoNear, far, ally));
-        WreckReclaimListener listener = new WreckReclaimListener(carrier);
+        battleShips.addAll(List.of(carrier, near, alsoNear, far, ally));
+        new WreckReclaimListener(carrier);
 
-        listener.advance(0.3f);
+        destructionWatch.tick();
         List.of(near, alsoNear, far, ally).forEach(NearbyDestructionTest::destroy);
-        listener.advance(0.3f);
+        destructionWatch.tick();
 
         assertEquals(0.7f, wornBay.getCurrRate(), 0.0001f);
         assertEquals(1f, nearlyFullBay.getCurrRate(), 0.0001f);
@@ -118,20 +117,20 @@ class NearbyDestructionTest {
         ArmorGridAPI armorGrid = grid(100f, cells);
         when(plated.getArmorGrid()).thenReturn(armorGrid);
         List<ShipAPI> enemies = List.of(ship(500f, ENEMY), ship(-500f, ENEMY), ship(0f, ENEMY), ship(1500f, ENEMY));
-        gridShips.add(plated);
-        gridShips.addAll(enemies);
-        WreckPlatingListener listener = new WreckPlatingListener(plated);
+        battleShips.add(plated);
+        battleShips.addAll(enemies);
+        new WreckPlatingListener(plated);
 
-        listener.advance(0.3f);
+        destructionWatch.tick();
         destroy(enemies.get(0));
         destroy(enemies.get(3));
-        listener.advance(0.3f);
+        destructionWatch.tick();
         assertArrayEquals(new float[]{5f, 55f}, cells[0], 0.001f);
         assertArrayEquals(new float[]{100f, 5f}, cells[1], 0.001f);
 
         destroy(enemies.get(1));
         destroy(enemies.get(2));
-        listener.advance(0.3f);
+        destructionWatch.tick();
 
         float repaired = cells[0][0] + cells[0][1] + cells[1][0] + cells[1][1] - 150f;
         assertEquals(40f, repaired, 0.001f);
@@ -158,12 +157,12 @@ class NearbyDestructionTest {
         ShipAPI ally = ship(300f, PLAYER);
         ShipAPI fighter = ship(200f, ENEMY);
         when(fighter.isFighter()).thenReturn(true);
-        gridShips.addAll(List.of(raider, near, alsoNear, far, ally, fighter));
-        FrenzyOnNearbyDestructionListener listener = new FrenzyOnNearbyDestructionListener(raider);
+        battleShips.addAll(List.of(raider, near, alsoNear, far, ally, fighter));
+        new FrenzyOnNearbyDestructionListener(raider);
 
-        listener.advance(0.3f);
+        destructionWatch.tick();
         List.of(near, alsoNear, far, ally, fighter).forEach(NearbyDestructionTest::destroy);
-        listener.advance(0.3f);
+        destructionWatch.tick();
 
         assertEquals(2, PirateFrenzy.of(raider).stacks());
     }

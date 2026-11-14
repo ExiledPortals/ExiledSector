@@ -13,7 +13,7 @@ final class FrenzyOnNearbyDestructionListener extends NearbyDestructionListener 
     private final PirateFrenzy frenzy;
 
     FrenzyOnNearbyDestructionListener(ShipAPI ownerShip) {
-        super(ownerShip, other -> WreckReclaimListener.isEnemyShip(ownerShip, other));
+        super(ownerShip, destroyed -> WreckReclaimListener.isEnemyShip(ownerShip, destroyed));
         this.frenzy = PirateFrenzy.of(ownerShip);
     }
 
