@@ -230,13 +230,3 @@ export function nodeIdStem(document: Pick<TreeDocument, 'types'>, typeId: string
   const kept = !slug || type?.tier === 'ROOT' || KEPT_TYPE_ID_PREFIXES.some((prefix) => typeId.startsWith(prefix));
   return kept || (slug !== typeId && typeById(document, slug)) ? typeId : slug;
 }
-
-export function uniqueId(prefix: string, taken: (id: string) => boolean): string {
-  let counter = 1;
-  let id = `${prefix}_${counter}`;
-  while (taken(id)) {
-    counter++;
-    id = `${prefix}_${counter}`;
-  }
-  return id;
-}

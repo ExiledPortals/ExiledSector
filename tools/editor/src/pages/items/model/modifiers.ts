@@ -1,6 +1,7 @@
 import type { Vocabulary } from '../../../api/vocabulary.ts';
 import { csvTableFromColumns, LIST_SEPARATOR, parseCsvTable, readCsvRow, serializeCsvTable, splitList, type CsvColumn, type CsvTable } from '../../../shared/csv.ts';
 import { isNumberText } from '../../../shared/decimalText.ts';
+import { uniqueSuffixedId } from '../../../shared/rowIds.ts';
 import { themeTagIssues } from '../../../shared/themeTags.ts';
 import { WORMHOLE_ANCHOR_TYPE } from './anchors.ts';
 import { DOCTRINE_TYPE } from './doctrines.ts';
@@ -192,12 +193,7 @@ export function suggestedModifierId(lines: ModifierLine[], qualifier = ''): stri
 }
 
 export function uniqueModifierId(modifiers: ItemModifier[], base: string, takenIds: ReadonlySet<string> = new Set()): string {
-  let id = base;
-  let suffix = 2;
-  while (takenIds.has(id) || modifiers.some((modifier) => modifier.id === id)) {
-    id = `${base}_${suffix++}`;
-  }
-  return id;
+  return uniqueSuffixedId(base, (id) => takenIds.has(id) || modifiers.some((modifier) => modifier.id === id));
 }
 
 export function shipItemTypes(vocabulary: Vocabulary): string[] {
@@ -503,13 +499,3 @@ export function setHullValue(values: RolledValues, hullIndex: number, value: str
   }
 }
 
-export function markModifiersSaved(model: ModifiersModel, saved: ModifiersModel): void {
-  for (const modifier of model.modifiers) {
-    const savedModifier = saved.modifiers.find((candidate) =>
-      modifier.loadedId ? candidate.loadedId === modifier.loadedId : !candidate.loadedId && candidate.id === modifier.id,
-    );
-    if (savedModifier) {
-      modifier.loadedId = savedModifier.id;
-    }
-  }
-}

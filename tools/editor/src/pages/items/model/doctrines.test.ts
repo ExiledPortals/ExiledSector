@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { buildVocabulary } from '../../../api/vocabulary.ts';
 import { splitList } from '../../../shared/csv.ts';
+import { markRowsSaved } from '../../../shared/rowIds.ts';
 import {
   doctrineTypeFacts,
   joinEntries,
-  markDoctrinesSaved,
   newDoctrineArchive,
   parseDoctrineArchivesCsv,
   replacementCandidates,
@@ -119,7 +119,7 @@ describe('doctrine archives', () => {
     expect(added.behaviour).toBe('REWRITE');
     expect(added.radius).toBe('medium');
     current.push(added);
-    markDoctrinesSaved({ archives: current }, { archives: current.map((archive) => ({ ...archive })) });
+    markRowsSaved(current, current.map((archive) => ({ ...archive })));
     expect(current[2].loadedId).toBe('doc_missing');
   });
 

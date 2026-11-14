@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { buildVocabulary } from '../../../api/vocabulary.ts';
+import { markRowsSaved } from '../../../shared/rowIds.ts';
 import {
   anchorVolumes,
   exitCandidates,
   isKnownAnchorUnlock,
-  markAnchorsSaved,
   missingVolumes,
   newWormholeAnchor,
   parseWormholeAnchorsCsv,
@@ -218,7 +218,7 @@ describe('wormhole anchors', () => {
     model.anchors.push(anchor({}));
     const saved = structuredClone(model);
 
-    markAnchorsSaved(model, saved);
+    markRowsSaved(model.anchors, saved.anchors);
 
     expect(model.anchors.map((marked) => marked.loadedId)).toEqual(['wormhole_anchor_hegemony', 'wormhole_anchor_exotech', 'wormhole_anchor_pirate']);
   });

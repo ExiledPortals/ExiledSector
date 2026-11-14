@@ -13,6 +13,7 @@ import {
 } from '../../../shared/csv.ts';
 import { isNumberText } from '../../../shared/decimalText.ts';
 import { isUnshippedImagePath } from '../../../shared/imagePaths.ts';
+import { uniqueSuffixedId } from '../../../shared/rowIds.ts';
 import { DOCTRINE_TYPE } from './doctrines.ts';
 import { isFamilyEffect, MODIFIER_FILE_NAMES, type ItemFamily } from './itemFamily.ts';
 import {
@@ -363,24 +364,8 @@ export function setDefinitionKind(definition: ItemDefinition, kind: string): voi
   definition.kind = kind;
 }
 
-export function markDefinitionsSaved(model: Pick<ItemDefinitionsModel, 'definitions'>, saved: Pick<ItemDefinitionsModel, 'definitions'>): void {
-  for (const definition of model.definitions) {
-    const savedDefinition = saved.definitions.find((candidate) =>
-      definition.loadedId ? candidate.loadedId === definition.loadedId : !candidate.loadedId && candidate.id === definition.id,
-    );
-    if (savedDefinition) {
-      definition.loadedId = savedDefinition.id;
-    }
-  }
-}
-
 export function uniqueItemId(definitions: ItemDefinition[], base: string, takenIds: readonly string[] = []): string {
-  let id = base;
-  let suffix = 2;
-  while (takenIds.includes(id) || definitions.some((definition) => definition.id === id)) {
-    id = `${base}_${suffix++}`;
-  }
-  return id;
+  return uniqueSuffixedId(base, (id) => takenIds.includes(id) || definitions.some((definition) => definition.id === id));
 }
 
 function firstReference(catalogue: ItemModifier[], slot: string, itemType: string): PoolEntry[] {
@@ -518,7 +503,7 @@ export function volumeOptions(volumes: readonly string[], current: string): { va
 export function uniqueSourceIssues(sourceText: string, vocabulary: Vocabulary): string[] {
   const issues: string[] = [];
   const seenSources = new Set<string>();
-  for (const part of sourceText.split(';').map((text) => text.trim()).filter(Boolean)) {
+  for (const part of splitList(sourceText)) {
     const separatorIndex = part.indexOf(':');
     const kind = separatorIndex < 0 ? '' : part.slice(0, separatorIndex).trim().toLowerCase();
     const sourceId = separatorIndex < 0 ? '' : part.slice(separatorIndex + 1).trim();

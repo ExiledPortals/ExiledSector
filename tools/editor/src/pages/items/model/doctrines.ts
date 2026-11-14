@@ -108,17 +108,6 @@ export function newDoctrineArchive(archives: DoctrineArchive[], doctrineSubrouti
   };
 }
 
-export function markDoctrinesSaved(model: Pick<DoctrineArchivesModel, 'archives'>, saved: Pick<DoctrineArchivesModel, 'archives'>): void {
-  for (const archive of model.archives) {
-    const savedArchive = saved.archives.find((candidate) =>
-      archive.loadedId ? candidate.loadedId === archive.loadedId : !candidate.loadedId && candidate.id === archive.id,
-    );
-    if (savedArchive) {
-      archive.loadedId = savedArchive.id;
-    }
-  }
-}
-
 function lineCount(text: string): number | null {
   if (text === '') {
     return 1;

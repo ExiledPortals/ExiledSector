@@ -1,6 +1,7 @@
 import type { Vocabulary } from '../../../api/vocabulary.ts';
 import { csvTableFromColumns, LIST_SEPARATOR, parseCsvTable, readCsvRow, serializeCsvTable, splitList, type CsvColumn, type CsvTable } from '../../../shared/csv.ts';
 import { isUnshippedImagePath } from '../../../shared/imagePaths.ts';
+import { uniqueSuffixedId } from '../../../shared/rowIds.ts';
 
 export const WORMHOLE_ANCHOR_TYPE = 'wormhole_anchor';
 export const WORMHOLE_ANCHOR_RESOURCE = 'wormhole-anchors';
@@ -105,14 +106,9 @@ export function newWormholeAnchor(anchors: WormholeAnchor[], vocabulary: Vocabul
   const usedVolumes = new Set(anchors.map((anchor) => anchor.volume));
   const volume = anchorVolumes(vocabulary).find((candidate) => !usedVolumes.has(candidate)) ?? '';
   const base = volume ? `wormhole_anchor_${volume.toLowerCase()}` : 'wormhole_anchor_new';
-  let id = base;
-  let suffix = 2;
-  while (takenIds.includes(id) || anchors.some((anchor) => anchor.id === id)) {
-    id = `${base}_${suffix++}`;
-  }
   return {
     cells: [],
-    id,
+    id: uniqueSuffixedId(base, (id) => takenIds.includes(id) || anchors.some((anchor) => anchor.id === id)),
     volume,
     exitNode: exitCandidates(nodeFacts, volume)[0] ?? '',
     name: 'New Wormhole Anchor',
@@ -128,17 +124,6 @@ export function newWormholeAnchor(anchors: WormholeAnchor[], vocabulary: Vocabul
     marketChance: '',
     price: DEFAULT_ANCHOR_PRICE,
   };
-}
-
-export function markAnchorsSaved(model: Pick<WormholeAnchorsModel, 'anchors'>, saved: Pick<WormholeAnchorsModel, 'anchors'>): void {
-  for (const anchor of model.anchors) {
-    const savedAnchor = saved.anchors.find((candidate) =>
-      anchor.loadedId ? candidate.loadedId === anchor.loadedId : !candidate.loadedId && candidate.id === anchor.id,
-    );
-    if (savedAnchor) {
-      anchor.loadedId = savedAnchor.id;
-    }
-  }
 }
 
 export function isKnownAnchorUnlock(unlock: string, vocabulary: Vocabulary): boolean {

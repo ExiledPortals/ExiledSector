@@ -1,10 +1,10 @@
 import type { DataFiles } from '../../../api/client.ts';
 import type { Vocabulary } from '../../../api/vocabulary.ts';
 import { lineEndingOf, type LineEnding } from '../../../shared/lineEndings.ts';
+import { markRowsSaved } from '../../../shared/rowIds.ts';
 import { parseSkillTypes, serializeSkillTypesText } from '../../tree/model/serialization.ts';
 import type { SkillType } from '../../tree/model/types.ts';
 import {
-  markAnchorsSaved,
   missingVolumes,
   parseWormholeAnchorsCsv,
   serializeWormholeAnchorsCsv,
@@ -18,7 +18,6 @@ import {
   definitionWarnings,
   HULL_ITEM_TYPE,
   itemTypeOfKind,
-  markDefinitionsSaved,
   parseFamilyDefinitions,
   serializeFamilyDefinitions,
   SUBROUTINE_TYPE,
@@ -30,7 +29,6 @@ import {
   DOCTRINE_ARCHIVE_RESOURCE,
   DOCTRINE_SUBROUTINE_KIND,
   doctrineTypeFacts,
-  markDoctrinesSaved,
   parseDoctrineArchivesCsv,
   serializeDoctrineArchivesCsv,
   uncoveredDoctrines,
@@ -52,7 +50,6 @@ import {
 import type { ItemFamily } from './itemFamily.ts';
 import { modifierUsage, referenceIssues } from './modifierUsage.ts';
 import {
-  markModifiersSaved,
   modifierById,
   parseModifiersCsv,
   serializeModifiersCsv,
@@ -252,12 +249,12 @@ export function markItemsSaved(draft: ItemsModel, saved: ItemsModel): void {
       }
     }
   }
-  markDefinitionsSaved(draft.ship, saved.ship);
-  markDefinitionsSaved(draft.charts, saved.charts);
-  markModifiersSaved(draft.shipModifiers, saved.shipModifiers);
-  markModifiersSaved(draft.chartModifiers, saved.chartModifiers);
-  markDoctrinesSaved(draft.doctrines, saved.doctrines);
-  markAnchorsSaved(draft.anchors, saved.anchors);
+  markRowsSaved(draft.ship.definitions, saved.ship.definitions);
+  markRowsSaved(draft.charts.definitions, saved.charts.definitions);
+  markRowsSaved(draft.shipModifiers.modifiers, saved.shipModifiers.modifiers);
+  markRowsSaved(draft.chartModifiers.modifiers, saved.chartModifiers.modifiers);
+  markRowsSaved(draft.doctrines.archives, saved.doctrines.archives);
+  markRowsSaved(draft.anchors.anchors, saved.anchors.anchors);
 }
 
 export function otherItemIds(model: ItemsModel, family: ItemFamily | 'anchor'): string[] {

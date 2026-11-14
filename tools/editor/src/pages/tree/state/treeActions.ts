@@ -1,11 +1,12 @@
 import { produce, type Draft } from 'immer';
 import type { Vocabulary } from '../../../api/vocabulary.ts';
 import { notifyInfo } from '../../../shared/dialogs.tsx';
+import { firstFreeNumberedId } from '../../../shared/rowIds.ts';
 import { connectNodes, deleteNodes, isLinkedPair, unlinkNodes } from '../model/connectors.ts';
 import { deleteAnchor, detachNodeFromAnchor, syncRingArcCurves } from '../model/geometry.ts';
 import { isVolumeTag } from '../model/tags.ts';
 import { decorationById, decorationReach, decorationSpec, type DecorationKind } from '../model/decorations.ts';
-import { ANCHOR_RECTANGLE_ASPECT, anchorById, nodeById, nodeIdStem, uniqueId, type OrbitAnchor, type TreeDocument, type TreeNode } from '../model/types.ts';
+import { ANCHOR_RECTANGLE_ASPECT, anchorById, nodeById, nodeIdStem, type OrbitAnchor, type TreeDocument, type TreeNode } from '../model/types.ts';
 import { addVolume, removeVolume, renameVolume } from '../model/volumes.ts';
 import {
   EMPTY_SELECTION,
@@ -22,7 +23,7 @@ import {
 export type DocumentRecipe = (document: Draft<TreeDocument>) => void;
 
 export function uniqueNodeId(document: TreeDocument, typeId: string, isReserved: (id: string) => boolean = () => false): string {
-  return uniqueId(nodeIdStem(document, typeId), (id) => Boolean(nodeById(document, id)) || isReserved(id));
+  return firstFreeNumberedId(nodeIdStem(document, typeId), (id) => Boolean(nodeById(document, id)) || isReserved(id), 1);
 }
 
 export function clampZoom(zoom: number): number {
@@ -97,7 +98,7 @@ export function createTreeActions(store: TreeStore) {
 
   function addAnchorAt(x: number, y: number): void {
     const { document, pendingAnchorShape } = store.getState();
-    const anchor: OrbitAnchor = { id: uniqueId('anchor', (id) => Boolean(anchorById(document, id))), x, y, radius: 150 };
+    const anchor: OrbitAnchor = { id: firstFreeNumberedId('anchor', (id) => Boolean(anchorById(document, id)), 1), x, y, radius: 150 };
     if (pendingAnchorShape !== 'circle') {
       anchor.shape = pendingAnchorShape;
       if (pendingAnchorShape === 'rectangle') {
@@ -114,7 +115,7 @@ export function createTreeActions(store: TreeStore) {
   function addDecorationAt(kind: DecorationKind, x: number, y: number, vocabulary: Vocabulary | undefined, defaultImagePath: string | null): void {
     const document = store.getState().document;
     const spec = decorationSpec(kind);
-    const id = uniqueId(spec.idPrefix, (taken) => Boolean(decorationById(document, taken)));
+    const id = firstFreeNumberedId(spec.idPrefix, (taken) => Boolean(decorationById(document, taken)), 1);
     const region = vocabulary ? nearestRegionTag(document, vocabulary, x, y) : undefined;
     editDocument((draft) => {
       draft.decorations.push(spec.create(id, { x, y }, { imagePath: defaultImagePath, region }));
