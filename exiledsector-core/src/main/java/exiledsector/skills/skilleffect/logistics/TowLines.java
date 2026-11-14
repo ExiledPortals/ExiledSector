@@ -23,17 +23,25 @@ public final class TowLines {
         if (fleet == null || fleet.getFleetData() == null) {
             return;
         }
-        List<FleetMemberAPI> members = fleet.getFleetData().getMembersListCopy();
-        String modId = ExiledSector.key(TOW_LINE_MEMBER_MOD);
-        for (FleetMemberAPI member : members) {
-            member.getStats().getMaxBurnLevel().unmodifyFlat(modId);
-        }
+        apply(fleet.getFleetData().getMembersListCopy());
+    }
+
+    static void apply(List<FleetMemberAPI> members) {
+        clear(members);
         Map<FleetMemberAPI, Float> bonuses = towBonuses(members);
         if (bonuses.isEmpty()) {
             return;
         }
+        String modId = ExiledSector.key(TOW_LINE_MEMBER_MOD);
         String source = Translation.gameText("fleet.towLine");
         bonuses.forEach((towed, bonus) -> towed.getStats().getMaxBurnLevel().modifyFlat(modId, bonus, source));
+    }
+
+    static void clear(List<FleetMemberAPI> members) {
+        String modId = ExiledSector.key(TOW_LINE_MEMBER_MOD);
+        for (FleetMemberAPI member : members) {
+            member.getStats().getMaxBurnLevel().unmodifyFlat(modId);
+        }
     }
 
     static Map<FleetMemberAPI, Float> towBonuses(List<FleetMemberAPI> members) {

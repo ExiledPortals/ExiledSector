@@ -6,12 +6,15 @@ import com.fs.starfarer.api.campaign.LocationAPI;
 import exiledsector.PlayerFleet;
 import org.lwjgl.util.vector.Vector2f;
 
+import java.util.function.Consumer;
+
 public class NpcFleetSweepScript implements EveryFrameScript {
 
     static final float CHECK_INTERVAL_SECONDS = 1f;
     static final float SWEEP_RANGE = 4000f;
 
     private float timeSinceLastCheck = CHECK_INTERVAL_SECONDS;
+    private final SweptFleetMemberships sweptMemberships = new SweptFleetMemberships();
 
     @Override
     public boolean isDone() {
@@ -29,10 +32,25 @@ public class NpcFleetSweepScript implements EveryFrameScript {
         if (timeSinceLastCheck < CHECK_INTERVAL_SECONDS) return;
         timeSinceLastCheck = 0f;
 
-        sweepAround(PlayerFleet.orNull(), SWEEP_RANGE);
+        forEachFleetAround(PlayerFleet.orNull(), SWEEP_RANGE, this::ensureIfMembershipChanged);
     }
 
     static void sweepAround(CampaignFleetAPI playerFleet, float sweepRange) {
+        forEachFleetAround(playerFleet, sweepRange, NpcFleetLeveller::ensure);
+    }
+
+    private void ensureIfMembershipChanged(CampaignFleetAPI nearbyFleet) {
+        if (!NpcFleetLeveller.appliesTo(nearbyFleet)) {
+            sweptMemberships.forget(nearbyFleet);
+            return;
+        }
+        if (sweptMemberships.changedSinceRemembered(nearbyFleet)) {
+            NpcFleetLeveller.ensure(nearbyFleet);
+            sweptMemberships.remember(nearbyFleet);
+        }
+    }
+
+    private static void forEachFleetAround(CampaignFleetAPI playerFleet, float sweepRange, Consumer<CampaignFleetAPI> fleetAction) {
         if (playerFleet == null) return;
         LocationAPI location = playerFleet.getContainingLocation();
         if (location == null) return;
@@ -43,7 +61,7 @@ public class NpcFleetSweepScript implements EveryFrameScript {
                 continue;
             }
             if (isWithin(origin, nearbyFleet.getLocation(), sweepRange)) {
-                NpcFleetLeveller.ensure(nearbyFleet);
+                fleetAction.accept(nearbyFleet);
             }
         }
     }
