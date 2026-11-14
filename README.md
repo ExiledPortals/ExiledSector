@@ -195,7 +195,7 @@ The mods below have specific compatibility work. The version listed is the last 
 | Nightcross Armory | 2.1.7 | REDACTED |
 | Nexerelin | 0.12.2d | The faction fleets that fly around the skill tree also visit the volumes of factions they're allied with. |
 | [GraphicsLib](https://fractalsoftworks.com/forum/index.php?topic=10982.0) | 1.12.2 | Optional. With its lighting and distortion turned on, a lot of the combat effects get shockwaves, glows, lights and distortion. You can turn almost all of it off in the Exiled Sector settings. |
-| Secrets of the Frontier | 0.15.1 | Its scripted story fights don't drop any salvage, so they don't drop Exiled Sector loot either. |
+| Secrets of the Frontier | 0.15.1 | Its scripted story fights don't drop any salvage, so they don't drop Exiled Sector loot either. Its Concord Shift ships (Pledge, Pact, Vow, Covenant) can take phase nodes even though they also have shields. |
 | DIY Planets | 1.0.30 | Its bar quests won't put their stations inside a Star Chart, where they'd be deleted when the chart closes. |
 
 Some modded weapons break (often hilariously) when their beams get split, their shots chain or their shells pierce. Those weapons are listed in:

@@ -57,7 +57,7 @@ final class NpcRelevance {
         focus(weightsByTag, "beam", weaponKinds.contains(WeaponKind.BEAM));
         focus(weightsByTag, "missile", weaponKinds.contains(WeaponKind.MISSILE));
         focus(weightsByTag, "strikecraft", profile.fighterBays() > 0);
-        focus(weightsByTag, "phase", profile.phaseHull() || profile.shieldType() == ShieldType.PHASE);
+        focus(weightsByTag, "phase", profile.allowsPhaseNodes() || profile.shieldType() == ShieldType.PHASE);
         boolean shielded = profile.shieldType() == ShieldType.FRONT || profile.shieldType() == ShieldType.OMNI;
         focus(weightsByTag, "shield", shielded);
         focus(weightsByTag, "front_shield", profile.shieldType() == ShieldType.FRONT);

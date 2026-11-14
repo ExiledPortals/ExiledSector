@@ -102,6 +102,20 @@ class ShipProfileTest {
     }
 
     @Test
+    void onlyAConcordShiftSystemLetsANonPhaseHullTakePhaseNodes() {
+        FleetMemberAPI concord = member(HullSize.DESTROYER, ShieldType.OMNI, 0, variant(), false);
+        when(concord.getHullSpec().getShipSystemId()).thenReturn("sotf_concordshift");
+        FleetMemberAPI otherSystem = member(HullSize.DESTROYER, ShieldType.OMNI, 0, variant(), false);
+        when(otherSystem.getHullSpec().getShipSystemId()).thenReturn("phaseteleporter");
+
+        ShipProfile concordProfile = ShipProfile.of(concord);
+        assertTrue(concordProfile.concordShift());
+        assertTrue(concordProfile.allowsPhaseNodes());
+        assertFalse(concordProfile.phaseHull());
+        assertFalse(ShipProfile.of(otherSystem).allowsPhaseNodes());
+    }
+
+    @Test
     void aFittedShieldShuntLeavesTheNpcShipWithoutShields() {
         ShipVariantAPI variant = variant();
         when(variant.hasHullMod(HullMods.SHIELD_SHUNT)).thenReturn(true);

@@ -109,6 +109,17 @@ class NodeRequirementsTest {
     }
 
     @Test
+    void concordShiftHullsMeetReqPhaseButStillCountAsNonPhaseHulls() {
+        ShipProfile concordShift = new ShipProfile(HullSize.DESTROYER, ShieldType.OMNI, 0, Set.of(), false, 0f, false, false, false, false,
+                false, false, true);
+
+        assertTrue(met("req_phase", concordShift));
+        assertTrue(met("req_omni_shield", concordShift));
+        assertNull(NodeRequirements.firstUnmetHullRequirement(List.of("req_non_phase_hull"), concordShift.facts(id -> false)));
+        assertTrue(concordShift.facts(id -> false).allowsPhaseNodes());
+    }
+
+    @Test
     void reqFighterBaysNeedsAtLeastOneBay() {
         assertTrue(met("req_strikecraft_bays", bays(1)));
         assertFalse(met("req_strikecraft_bays", bays(0)));

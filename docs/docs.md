@@ -504,6 +504,14 @@ The afterimage costs no deployment points, can't receive transfer of command, sh
 and its variant tag (`CombatQueries.isAfterimage`) keeps it out of every ally, enemy and target pick, Star Chart strikes
 included.
 
+### Concord Shift ships
+
+Secrets of the Frontier's shielded ships with the Concord Shift system (Pledge, Pact, Vow, Covenant) phase through
+their ship system, so the engine doesn't count them as phase hulls. Their `concordShift` flag on `ShipProfile` and
+`ShipFacts` (`SecretsOfTheFrontierCompat.hasConcordShift`) still lets them take `req_phase` nodes and the Phase Anchor
+dive, while `req_non_phase_hull` nodes stay open to them. In combat the phase effects find Concord Shift through
+`PhaseCloak.of`, which falls back to a ship system that is a phase cloak when the ship has no phase defense.
+
 ### Cease and Desist
 
 Each hit from this ship's own energy weapons on an enemy ship, strike craft excepted, adds an Injunction stack for 10

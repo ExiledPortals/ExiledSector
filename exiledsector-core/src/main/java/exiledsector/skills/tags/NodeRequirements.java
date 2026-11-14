@@ -71,7 +71,7 @@ public final class NodeRequirements {
             case "req_no_shields" -> shieldType == ShieldType.NONE;
             case "req_front_shield" -> shieldType == ShieldType.FRONT;
             case "req_omni_shield" -> shieldType == ShieldType.OMNI;
-            case "req_phase" -> profile.phaseHull();
+            case "req_phase" -> profile.allowsPhaseNodes();
             case "req_strikecraft_bays" -> profile.fighterBays() > 0;
             case "req_no_strikecraft_bays" -> profile.fighterBays() <= 0;
             case "req_ballistic" -> profile.weaponKinds().contains(WeaponKind.BALLISTIC);

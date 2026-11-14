@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
+import exiledsector.compat.SecretsOfTheFrontierCompat;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.fighter.FighterSkillEffect;
 import exiledsector.skills.skilleffect.shield.ShieldSkillEffect;
@@ -28,7 +29,7 @@ public final class FittedShipProfile {
         ShieldType shieldType = ShieldSkillEffect.resolveDisplayShieldType(fittedShieldType(hullSpec.getShieldType(), variant), fitEffectsInOrder);
         return new ShipProfile(hullSize, shieldType, fighterBays(hullSpec.getFighterBays(), variant, fitEffects), Set.of(), false,
                 hullSpec.getArmorRating(), hullSpec.isPhase(), ShipSystemCharges.limited(hullSpec), ShipFacts.onlyBuiltInWings(hullSpec), false,
-                ShipProfile.automated(variant), ShipProfile.scriptedHull(hullSpec));
+                ShipProfile.automated(variant), ShipProfile.scriptedHull(hullSpec), SecretsOfTheFrontierCompat.hasConcordShift(hullSpec));
     }
 
     private static List<SkillTypeEffect> fitEffects(ShipSkillData shipData, HullSize hullSize) {

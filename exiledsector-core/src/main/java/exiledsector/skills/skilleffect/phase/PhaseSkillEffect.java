@@ -131,12 +131,12 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
 
         @Override
         public String blockAllocationReason(ShipFacts ship, ShieldAPI.ShieldType currentShieldType) {
-            return ship.phaseHull() ? null : Translation.text("node.block.phaseHull");
+            return ship.allowsPhaseNodes() ? null : Translation.text("node.block.phaseHull");
         }
     };
 
     private static boolean isBoostedByPhase(ShipAPI ship) {
-        ShipSystemAPI phaseCloak = ship.getPhaseCloak();
+        ShipSystemAPI phaseCloak = PhaseCloak.of(ship);
         return ship.isPhased() && (phaseCloak == null || !phaseCloak.isChargedown());
     }
 

@@ -13,6 +13,7 @@ import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
 import com.fs.starfarer.api.loading.WithSourceMod;
+import exiledsector.compat.SecretsOfTheFrontierCompat;
 import exiledsector.skills.FittedShipProfile;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSystemCharges;
@@ -25,10 +26,17 @@ import java.util.function.Predicate;
 public record ShipProfile(HullSize hullSize, ShieldAPI.ShieldType shieldType, int fighterBays,
                           Set<WeaponKind> weaponKinds, boolean flagship, float baseArmor, boolean phaseHull,
                           boolean limitedSystemCharges, boolean onlyBuiltInWings, boolean station, boolean automated,
-                          boolean scriptedHull) {
+                          boolean scriptedHull, boolean concordShift) {
 
     public ShipProfile {
         weaponKinds = weaponKinds == null ? Set.of() : Set.copyOf(weaponKinds);
+    }
+
+    public ShipProfile(HullSize hullSize, ShieldAPI.ShieldType shieldType, int fighterBays, Set<WeaponKind> weaponKinds,
+                       boolean flagship, float baseArmor, boolean phaseHull, boolean limitedSystemCharges, boolean onlyBuiltInWings,
+                       boolean station, boolean automated, boolean scriptedHull) {
+        this(hullSize, shieldType, fighterBays, weaponKinds, flagship, baseArmor, phaseHull, limitedSystemCharges, onlyBuiltInWings, station,
+                automated, scriptedHull, false);
     }
 
     public ShipProfile(HullSize hullSize, ShieldAPI.ShieldType shieldType, int fighterBays, Set<WeaponKind> weaponKinds,
@@ -65,7 +73,11 @@ public record ShipProfile(HullSize hullSize, ShieldAPI.ShieldType shieldType, in
                 fighterBays(member, hullSpec),
                 fittedWeaponKinds(member.getVariant()), member.isFlagship(), hullSpec.getArmorRating(),
                 hullSpec.isPhase(), ShipSystemCharges.limited(hullSpec), ShipFacts.onlyBuiltInWings(hullSpec), member.isStation(),
-                automated(member.getVariant()), scriptedHull(hullSpec));
+                automated(member.getVariant()), scriptedHull(hullSpec), SecretsOfTheFrontierCompat.hasConcordShift(hullSpec));
+    }
+
+    public boolean allowsPhaseNodes() {
+        return phaseHull || concordShift;
     }
 
     public static boolean automated(ShipVariantAPI variant) {
@@ -104,7 +116,7 @@ public record ShipProfile(HullSize hullSize, ShieldAPI.ShieldType shieldType, in
 
     public ShipFacts facts(Predicate<String> hasHullMod, String hullId, Predicate<String> hasFixedHullMod) {
         return new ShipFacts(hullSize, shieldType, phaseHull, baseArmor, limitedSystemCharges, hasHullMod, onlyBuiltInWings, hullId,
-                hasFixedHullMod, ShipFacts.hasModuleSlots(hullId));
+                hasFixedHullMod, ShipFacts.hasModuleSlots(hullId), concordShift);
     }
 
     private static int fighterBays(FleetMemberAPI member, ShipHullSpecAPI hullSpec) {
