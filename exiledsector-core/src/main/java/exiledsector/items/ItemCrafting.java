@@ -6,7 +6,6 @@ import exiledsector.modifiers.ModifierSlot;
 import exiledsector.skills.tags.TagWeights;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -91,24 +90,8 @@ public final class ItemCrafting {
     }
 
     public static Set<CraftingInhibitor> inhibitorsSpentBy(CraftingMaterialFamily craftingItem, Item item, Collection<CraftingInhibitor> inhibitors) {
-        Set<CraftingInhibitor> spent = EnumSet.noneOf(CraftingInhibitor.class);
-        ItemDefinition definition = item == null ? null : item.definition();
-        if (definition == null) {
-            return spent;
-        }
-        if (craftingItem.addsModifiers()) {
-            spent.addAll(CraftingInhibitor.tagInhibitors(inhibitors));
-        }
-        if (!craftingItem.respectsInhibitors()) {
-            return spent;
-        }
-        for (CraftingInhibitor inhibitor : inhibitors) {
-            if (item.explicits().stream().anyMatch(rolled -> rolled.slot() == inhibitor.inhibitedSlot()
-                    && !rolled.immutable() && craftingItem.wouldChange(item, rolled))) {
-                spent.add(inhibitor);
-            }
-        }
-        return spent;
+        return CraftingInhibitor.spentOn(item, inhibitors, craftingItem.addsModifiers(),
+                rolled -> craftingItem.respectsInhibitors() && craftingItem.wouldChange(item, rolled));
     }
 
     static boolean canVary(Item item, RolledModifier rolled) {

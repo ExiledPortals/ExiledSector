@@ -131,6 +131,17 @@ class CraftingInhibitorTest {
     }
 
     @Test
+    void tagInhibitorsAreSpentByAddingCraftsAndSideInhibitorsWhereTheCraftWouldChangeTheirSide() {
+        Item item = rare();
+        List<CraftingInhibitor> beamAndBothSides = List.of(CraftingInhibitor.BEAM, CraftingInhibitor.PREFIX, CraftingInhibitor.SUFFIX);
+
+        assertEquals(Set.copyOf(beamAndBothSides), CraftingInhibitor.spentOn(item, beamAndBothSides, true, rolled -> true));
+        assertEquals(Set.of(CraftingInhibitor.PREFIX), CraftingInhibitor.spentOn(item, beamAndBothSides, false, rolled -> rolled.slot() == ModifierSlot.PREFIX));
+        assertEquals(Set.of(CraftingInhibitor.BEAM), CraftingInhibitor.spentOn(item, beamAndBothSides, true, rolled -> false));
+        assertTrue(CraftingInhibitor.spentOn(null, beamAndBothSides, true, rolled -> true).isEmpty());
+    }
+
+    @Test
     void aWardGuardingOnlyAFixedEffectIsNotSpent() throws Exception {
         ItemDefinitions.register(new JSONArray().put(HullItemRows.row("lean", "bridge", "HULL_MULT:4:6", "ARMOR_PERCENT:6:9")));
         Item item = store.add(HullItemRows.data("lean", 1L, List.of(new RolledLine("HULL_MULT", 5f), new RolledLine("ARMOR_PERCENT", 7f)), null));

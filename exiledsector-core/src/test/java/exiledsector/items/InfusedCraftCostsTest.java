@@ -47,8 +47,8 @@ class InfusedCraftCostsTest {
 
     @Test
     void aCraftCostsItsTagsFeedstockAndUnofferedTagsCostNothing() {
-        assertEquals(new InfusedCraftCosts.Cost(List.of(SHROUD), 100), InfusedCraft.REFORGE_WITH_TAG.cost("defence"));
-        assertEquals(new InfusedCraftCosts.Cost(List.of(THREAT, SHROUD, PHASE), 1000), InfusedCraft.ADD_AND_REMOVE.cost("affinity"));
+        assertEquals(new CraftCost(List.of(SHROUD), 100, 1), InfusedCraft.REFORGE_WITH_TAG.cost("defence"));
+        assertEquals(new CraftCost(List.of(THREAT, SHROUD, PHASE), 1000, 2), InfusedCraft.ADD_AND_REMOVE.cost("affinity"));
         assertEquals(List.of(PHASE), InfusedCraftCosts.feedstocksFor("flux"));
         assertEquals(List.of(), InfusedCraftCosts.feedstocksFor("front_shield"));
         assertNull(InfusedCraft.REFORGE_WITH_TAG.cost("front_shield"));
@@ -69,10 +69,10 @@ class InfusedCraftCostsTest {
     @Test
     void addAndRemoveIsTheDearestCraftForEveryTag() {
         for (String tag : InfusedCraft.ADD_AND_REMOVE.tags()) {
-            int addAndRemove = InfusedCraft.ADD_AND_REMOVE.cost(tag).amount();
+            int addAndRemove = InfusedCraft.ADD_AND_REMOVE.cost(tag).feedstockAmount();
             for (InfusedCraft craft : InfusedCraft.values()) {
-                InfusedCraftCosts.Cost cost = craft.cost(tag);
-                assertTrue(craft == InfusedCraft.ADD_AND_REMOVE || cost == null || cost.amount() < addAndRemove, craft.id() + " " + tag);
+                CraftCost cost = craft.cost(tag);
+                assertTrue(craft == InfusedCraft.ADD_AND_REMOVE || cost == null || cost.feedstockAmount() < addAndRemove, craft.id() + " " + tag);
             }
         }
     }

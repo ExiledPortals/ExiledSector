@@ -6,7 +6,6 @@ import exiledsector.skills.tags.TagWeights;
 import exiledsector.skills.tags.ThemeTags;
 
 import java.util.Collection;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -47,7 +46,7 @@ public enum InfusedCraft {
         }
     };
 
-    static final String REFUSAL_PREFIX = "ui.infusedCraft.refused.";
+    static final String REFUSAL_PREFIX = HullItemCraftRefusals.PREFIX;
 
     private final int reshapingCost;
 
@@ -57,10 +56,6 @@ public enum InfusedCraft {
 
     public int reshapingCost() {
         return reshapingCost;
-    }
-
-    public static String reshapingId() {
-        return Nanoswarm.RESHAPING.itemId();
     }
 
     public String id() {
@@ -80,8 +75,12 @@ public enum InfusedCraft {
         return InfusedCraftCosts.tags(this);
     }
 
-    public InfusedCraftCosts.Cost cost(String tag) {
+    public CraftCost cost(String tag) {
         return InfusedCraftCosts.cost(this, tag);
+    }
+
+    public HullItemCraft forTag(String tag) {
+        return new TaggedCraft(this, tag);
     }
 
     abstract boolean offered(Item item, String tag, Set<ModifierSlot> inhibited);
@@ -102,46 +101,21 @@ public enum InfusedCraft {
     }
 
     private UseVerdict refusal(Item item, String tag, Set<ModifierSlot> inhibited) {
-        if (item == null) {
-            return UseVerdict.refused(REFUSAL_PREFIX + "loadFirst");
-        }
-        if (item.type() != ItemType.HULL_ITEM || !ItemTypes.takesCraftingItem(item.type())) {
-            return UseVerdict.refused(REFUSAL_PREFIX + "itemType");
-        }
-        if (item.mirrored()) {
-            return UseVerdict.refused(REFUSAL_PREFIX + "mirrored");
-        }
-        if (item.corrupted()) {
-            return UseVerdict.refused(REFUSAL_PREFIX + "corrupted");
-        }
-        if (ItemCrafting.isLockedFromCraftingItem(item.definition())) {
-            return UseVerdict.refused(REFUSAL_PREFIX + "locked");
+        UseVerdict itemRefusal = HullItemCraftRefusals.ofItem(item);
+        if (!itemRefusal.allowed()) {
+            return itemRefusal;
         }
         if (cost(tag) == null) {
             return UseVerdict.refused(REFUSAL_PREFIX + "tag");
         }
-        if (item.definition() != null && item.definition().unique()) {
+        if (item.definition().unique()) {
             return UseVerdict.refused(REFUSAL_PREFIX + "unique");
         }
-        if (offered(item, tag, inhibited)) {
-            return UseVerdict.ALLOW;
-        }
-        return offered(item, tag, Set.of()) ? UseVerdict.refused(REFUSAL_PREFIX + "inhibited") : UseVerdict.refused(REFUSAL_PREFIX + id());
+        return HullItemCraftRefusals.ofInhibitors(slots -> offered(item, tag, slots), inhibited, REFUSAL_PREFIX + id());
     }
 
     public Set<CraftingInhibitor> inhibitorsSpent(Item item, String tag, Collection<CraftingInhibitor> inhibitors) {
-        Set<CraftingInhibitor> spent = EnumSet.noneOf(CraftingInhibitor.class);
-        if (item == null || item.definition() == null || inhibitors.isEmpty()) {
-            return spent;
-        }
-        spent.addAll(CraftingInhibitor.tagInhibitors(withoutOwnTagInhibitors(tag, inhibitors)));
-        List<RolledModifier> changeable = changeable(item, tag);
-        for (CraftingInhibitor inhibitor : inhibitors) {
-            if (inhibitor.inhibitedSlot() != null && changeable.stream().anyMatch(rolled -> rolled.slot() == inhibitor.inhibitedSlot())) {
-                spent.add(inhibitor);
-            }
-        }
-        return spent;
+        return CraftingInhibitor.spentOn(item, withoutOwnTagInhibitors(tag, inhibitors), true, rolled -> changeable(item, tag).contains(rolled));
     }
 
     private static List<CraftingInhibitor> withoutOwnTagInhibitors(String tag, Collection<CraftingInhibitor> inhibitors) {
@@ -150,31 +124,47 @@ public enum InfusedCraft {
     }
 
     public boolean canAfford(String tag, CraftingMaterials materials) {
-        InfusedCraftCosts.Cost cost = cost(tag);
-        return cost != null && cost.feedstockIds().stream().allMatch(feedstockId -> materials.count(feedstockId) >= cost.amount())
-                && materials.count(reshapingId()) >= reshapingCost;
+        return forTag(tag).canAfford(materials);
     }
 
     public boolean apply(Item item, String tag, Collection<CraftingInhibitor> inhibitors, Random random) {
-        return verdict(item, tag, inhibitors).allowed()
-                && run(item, tag, CraftingInhibitor.inhibitedSlots(inhibitors), CraftingInhibitor.tagWeights(withoutOwnTagInhibitors(tag, inhibitors)), random);
+        return verdict(item, tag, inhibitors).allowed() && changeModifiers(item, tag, inhibitors, random);
+    }
+
+    private boolean changeModifiers(Item item, String tag, Collection<CraftingInhibitor> inhibitors, Random random) {
+        return run(item, tag, CraftingInhibitor.inhibitedSlots(inhibitors), CraftingInhibitor.tagWeights(withoutOwnTagInhibitors(tag, inhibitors)), random);
     }
 
     public Optional<Set<CraftingInhibitor>> use(Item item, String tag, CraftingMaterials materials,
                                                 Collection<CraftingInhibitor> inhibitors, Random random) {
-        if (!canAfford(tag, materials) || inhibitors.stream().anyMatch(inhibitor -> materials.count(inhibitor.itemId()) < 1)) {
-            return Optional.empty();
+        return forTag(tag).use(item, materials, inhibitors, random);
+    }
+
+    private record TaggedCraft(InfusedCraft craft, String tag) implements HullItemCraft {
+
+        @Override
+        public String id() {
+            return craft.id();
         }
-        Set<CraftingInhibitor> spent = inhibitorsSpent(item, tag, inhibitors);
-        if (!apply(item, tag, inhibitors, random)) {
-            return Optional.empty();
+
+        @Override
+        public CraftCost cost() {
+            return craft.cost(tag);
         }
-        InfusedCraftCosts.Cost cost = cost(tag);
-        cost.feedstockIds().forEach(feedstockId -> materials.take(feedstockId, cost.amount()));
-        if (reshapingCost > 0) {
-            materials.take(reshapingId(), reshapingCost);
+
+        @Override
+        public UseVerdict verdict(Item item, Collection<CraftingInhibitor> inhibitors) {
+            return craft.verdict(item, tag, inhibitors);
         }
-        spent.forEach(inhibitor -> materials.take(inhibitor.itemId(), 1));
-        return Optional.of(spent);
+
+        @Override
+        public Set<CraftingInhibitor> inhibitorsSpent(Item item, Collection<CraftingInhibitor> inhibitors) {
+            return craft.inhibitorsSpent(item, tag, inhibitors);
+        }
+
+        @Override
+        public boolean changeModifiers(Item item, Collection<CraftingInhibitor> inhibitors, Random random) {
+            return craft.changeModifiers(item, tag, inhibitors, random);
+        }
     }
 }
