@@ -9,22 +9,19 @@ import exiledsector.skills.tags.TagWeights;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public enum BiomeCraft {
+public enum BiomeCraft implements HullItemCraft {
 
     ADAPTIVE(100, 1),
     GRAFTING(1000, 2);
 
     static final int MIN_OTHER_MODIFIERS = 1;
     static final int MAX_OTHER_MODIFIERS = 3;
-    private static final String SHARED_REFUSAL_PREFIX = "ui.infusedCraft.refused.";
     private static final String REFUSAL_PREFIX = "chart.biomeCraft.refused.";
 
     private final int feedstockCost;
@@ -35,73 +32,36 @@ public enum BiomeCraft {
         this.reshapingCost = reshapingCost;
     }
 
+    @Override
     public String id() {
         return name().toLowerCase(Locale.ROOT);
     }
 
-    public int feedstockCost() {
-        return feedstockCost;
-    }
-
-    public int reshapingCost() {
-        return reshapingCost;
+    @Override
+    public CraftCost cost() {
+        return new CraftCost(feedstockIds(), feedstockCost, reshapingCost);
     }
 
     public static List<String> feedstockIds() {
         return Arrays.stream(InfusedFeedstock.values()).map(InfusedFeedstock::itemId).toList();
     }
 
+    @Override
     public UseVerdict verdict(Item item, Collection<CraftingInhibitor> inhibitors) {
-        if (item == null) {
-            return UseVerdict.refused(SHARED_REFUSAL_PREFIX + "loadFirst");
+        UseVerdict itemRefusal = HullItemCraftRefusals.ofItem(item);
+        if (!itemRefusal.allowed()) {
+            return itemRefusal;
         }
-        ItemDefinition definition = item.definition();
-        if (definition == null || definition.type() != ItemType.HULL_ITEM || !ItemTypes.takesCraftingItem(definition.type())) {
-            return UseVerdict.refused(SHARED_REFUSAL_PREFIX + "itemType");
-        }
-        if (item.mirrored()) {
-            return UseVerdict.refused(SHARED_REFUSAL_PREFIX + "mirrored");
-        }
-        if (item.corrupted()) {
-            return UseVerdict.refused(SHARED_REFUSAL_PREFIX + "corrupted");
-        }
-        if (ItemCrafting.isLockedFromCraftingItem(definition)) {
-            return UseVerdict.refused(SHARED_REFUSAL_PREFIX + "locked");
-        }
-        if (possible(item, CraftingInhibitor.inhibitedSlots(inhibitors))) {
-            return UseVerdict.ALLOW;
-        }
-        return possible(item, Set.of()) ? UseVerdict.refused(SHARED_REFUSAL_PREFIX + "inhibited") : UseVerdict.refused(REFUSAL_PREFIX + id());
+        return HullItemCraftRefusals.ofInhibitors(inhibited -> possible(item, inhibited), CraftingInhibitor.inhibitedSlots(inhibitors), REFUSAL_PREFIX + id());
     }
 
+    @Override
     public Set<CraftingInhibitor> inhibitorsSpent(Item item, Collection<CraftingInhibitor> inhibitors) {
-        Set<CraftingInhibitor> spent = EnumSet.noneOf(CraftingInhibitor.class);
-        if (item == null || item.definition() == null) {
-            return spent;
-        }
-        if (this == ADAPTIVE) {
-            spent.addAll(CraftingInhibitor.tagInhibitors(inhibitors));
-        }
-        for (CraftingInhibitor inhibitor : inhibitors) {
-            if (inhibitor.inhibitedSlot() != null && item.explicits().stream().anyMatch(rolled -> rolled.slot() == inhibitor.inhibitedSlot() && !rolled.immutable()
-                    && wouldChange(item, rolled))) {
-                spent.add(inhibitor);
-            }
-        }
-        return spent;
+        return CraftingInhibitor.spentOn(item, inhibitors, this == ADAPTIVE, rolled -> wouldChange(item, rolled));
     }
 
-    public boolean canAfford(CraftingMaterials materials) {
-        return feedstockIds().stream().allMatch(feedstockId -> materials.count(feedstockId) >= feedstockCost)
-                && materials.count(InfusedCraft.reshapingId()) >= reshapingCost;
-    }
-
-    public Optional<Set<CraftingInhibitor>> use(Item item, CraftingMaterials materials, Collection<CraftingInhibitor> inhibitors, Random random) {
-        if (!canAfford(materials) || inhibitors.stream().anyMatch(inhibitor -> materials.count(inhibitor.itemId()) < 1)
-                || !verdict(item, inhibitors).allowed()) {
-            return Optional.empty();
-        }
-        Set<CraftingInhibitor> spent = inhibitorsSpent(item, inhibitors);
+    @Override
+    public boolean changeModifiers(Item item, Collection<CraftingInhibitor> inhibitors, Random random) {
         Set<ModifierSlot> inhibited = CraftingInhibitor.inhibitedSlots(inhibitors);
         List<RolledModifier> replacement = switch (this) {
             case ADAPTIVE -> adapt(item, inhibited, CraftingInhibitor.tagWeights(inhibitors), random);
@@ -109,10 +69,7 @@ public enum BiomeCraft {
         };
         item.replaceExplicits(replacement);
         item.refreezeName();
-        feedstockIds().forEach(feedstockId -> materials.take(feedstockId, feedstockCost));
-        materials.take(InfusedCraft.reshapingId(), reshapingCost);
-        spent.forEach(inhibitor -> materials.take(inhibitor.itemId(), 1));
-        return Optional.of(spent);
+        return true;
     }
 
     private boolean possible(Item item, Set<ModifierSlot> inhibited) {
@@ -164,9 +121,7 @@ public enum BiomeCraft {
             if (openSides.isEmpty()) {
                 break;
             }
-            List<PoolEntry> side = openSides.get(random.nextInt(openSides.size()));
-            PoolEntry entry = side.get(WeightedPick.index(side, candidate -> candidate.biasedWeight(tagWeights), random.nextFloat()));
-            AffixLayout.insert(modifiers, RolledModifier.roll(entry.modifier(), random));
+            AffixLayout.insert(modifiers, AffixLayout.rollFrom(openSides, random, tagWeights));
         }
         return modifiers;
     }

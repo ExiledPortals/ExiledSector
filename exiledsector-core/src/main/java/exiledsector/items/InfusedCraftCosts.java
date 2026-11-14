@@ -24,9 +24,6 @@ public final class InfusedCraftCosts {
     private static final Logger LOG = Logger.getLogger(InfusedCraftCosts.class);
     private static final AtomicReference<Map<String, TagCosts>> COSTS_BY_TAG = new AtomicReference<>(Map.of());
 
-    public record Cost(List<String> feedstockIds, int amount) {
-    }
-
     private record TagCosts(List<String> feedstockIds, Map<InfusedCraft, Integer> amounts) {
     }
 
@@ -74,10 +71,10 @@ public final class InfusedCraftCosts {
         return new TagCosts(List.copyOf(feedstockIds), Map.copyOf(amounts));
     }
 
-    public static Cost cost(InfusedCraft craft, String tag) {
+    public static CraftCost cost(InfusedCraft craft, String tag) {
         TagCosts costs = tag == null ? null : COSTS_BY_TAG.get().get(tag);
         Integer amount = costs == null ? null : costs.amounts().get(craft);
-        return amount == null ? null : new Cost(costs.feedstockIds(), amount);
+        return amount == null ? null : new CraftCost(costs.feedstockIds(), amount, craft.reshapingCost());
     }
 
     public static List<String> tags(InfusedCraft craft) {

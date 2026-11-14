@@ -9,6 +9,7 @@ import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public enum CraftingInhibitor implements GrowableMaterial {
 
@@ -69,6 +70,24 @@ public enum CraftingInhibitor implements GrowableMaterial {
 
     public static Set<CraftingInhibitor> tagInhibitors() {
         return tagInhibitors(EnumSet.allOf(CraftingInhibitor.class));
+    }
+
+    public static Set<CraftingInhibitor> spentOn(Item item, Collection<CraftingInhibitor> inhibitors, boolean craftAddsModifiers,
+                                                 Predicate<RolledModifier> craftWouldChange) {
+        Set<CraftingInhibitor> spent = EnumSet.noneOf(CraftingInhibitor.class);
+        if (item == null || item.definition() == null) {
+            return spent;
+        }
+        if (craftAddsModifiers) {
+            spent.addAll(tagInhibitors(inhibitors));
+        }
+        for (CraftingInhibitor inhibitor : inhibitors) {
+            if (inhibitor.inhibitedSlot != null && item.explicits().stream().anyMatch(rolled -> rolled.slot() == inhibitor.inhibitedSlot
+                    && !rolled.immutable() && craftWouldChange.test(rolled))) {
+                spent.add(inhibitor);
+            }
+        }
+        return spent;
     }
 
     @Override

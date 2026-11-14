@@ -89,7 +89,7 @@ class BiomeCraftTest {
 
     private static CraftingMaterials materials(int feedstockEach, int inhibitorsEach, int reshapingCount) {
         Map<String, Integer> counts = new HashMap<>();
-        counts.put(InfusedCraft.reshapingId(), reshapingCount);
+        counts.put(CraftCost.reshapingId(), reshapingCount);
         BiomeCraft.feedstockIds().forEach(feedstockId -> counts.put(feedstockId, feedstockEach));
         for (CraftingInhibitor inhibitor : CraftingInhibitor.values()) {
             counts.put(inhibitor.itemId(), inhibitorsEach);
@@ -253,22 +253,20 @@ class BiomeCraftTest {
 
     @Test
     void eachCraftCostsItsAmountOfEveryInfusedFeedstockAndOfReshapingNanoswarms() {
-        assertEquals(100, BiomeCraft.ADAPTIVE.feedstockCost());
-        assertEquals(1000, BiomeCraft.GRAFTING.feedstockCost());
-        assertEquals(1, BiomeCraft.ADAPTIVE.reshapingCost());
-        assertEquals(2, BiomeCraft.GRAFTING.reshapingCost());
+        assertEquals(new CraftCost(BiomeCraft.feedstockIds(), 100, 1), BiomeCraft.ADAPTIVE.cost());
+        assertEquals(new CraftCost(BiomeCraft.feedstockIds(), 1000, 2), BiomeCraft.GRAFTING.cost());
         assertEquals(List.of("exiledSector_threat_feedstock", "exiledSector_shroud_feedstock", "exiledSector_phase_feedstock"), BiomeCraft.feedstockIds());
         for (BiomeCraft craft : BiomeCraft.values()) {
-            int cost = craft.feedstockCost();
-            CraftingMaterials materials = materials(cost + 5, 3, craft.reshapingCost() + 1);
+            int cost = craft.cost().feedstockAmount();
+            CraftingMaterials materials = materials(cost + 5, 3, craft.cost().reshapingCost() + 1);
             Item item = withModifiers(rolled(ModifierSlot.PREFIX, "FLUX_CAPACITY_MULT", 5f), rolled(ModifierSlot.SUFFIX, "ARMOR_PERCENT", 5f));
 
             assertTrue(craft.canAfford(materials), craft.id());
             assertTrue(craft.use(item, materials, Set.of(), new Random(3L)).isPresent(), craft.id());
 
             BiomeCraft.feedstockIds().forEach(feedstockId -> assertEquals(5, materials.count(feedstockId), craft.id() + " " + feedstockId));
-            assertEquals(1, materials.count(InfusedCraft.reshapingId()), craft.id());
-            assertFalse(craft.canAfford(materials(PLENTY, 3, craft.reshapingCost() - 1)), craft.id());
+            assertEquals(1, materials.count(CraftCost.reshapingId()), craft.id());
+            assertFalse(craft.canAfford(materials(PLENTY, 3, craft.cost().reshapingCost() - 1)), craft.id());
             assertFalse(craft.canAfford(materials), craft.id());
         }
     }
@@ -276,7 +274,7 @@ class BiomeCraftTest {
     @Test
     void aRefusedOrUnaffordableCraftSpendsNothing() {
         for (BiomeCraft craft : BiomeCraft.values()) {
-            int cost = craft.feedstockCost();
+            int cost = craft.cost().feedstockAmount();
             Map<String, Integer> counts = new HashMap<>(Map.of("exiledSector_threat_feedstock", cost, "exiledSector_shroud_feedstock", cost,
                     "exiledSector_phase_feedstock", cost - 1, CraftingInhibitor.PREFIX.itemId(), 1));
             CraftingMaterials shortOfPhase = CraftingMaterials.storedForTests(counts);

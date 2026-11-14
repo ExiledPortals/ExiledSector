@@ -43,7 +43,7 @@ class InfusedCraftTest {
     private static final int SEEDS = 60;
     private static final String FEEDSTOCK = "test_feedstock";
     private static final int COST = 10;
-    private static final String RESHAPING = InfusedCraft.reshapingId();
+    private static final String RESHAPING = CraftCost.reshapingId();
     private static final String BOTH_CRAFTS = FEEDSTOCK + ",10,10";
     private static final String COSTS = String.join("\n", "tag,feedstock,reforge_with_tag,add_and_remove",
             "weapon," + BOTH_CRAFTS, "flux," + BOTH_CRAFTS, "armour," + BOTH_CRAFTS, "front_shield," + BOTH_CRAFTS);
