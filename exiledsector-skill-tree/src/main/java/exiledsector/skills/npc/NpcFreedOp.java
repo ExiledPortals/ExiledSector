@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
+import exiledsector.skills.ShipHullSizes;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.SkillNodeOpCost;
 
@@ -28,7 +29,7 @@ public record NpcFreedOp(int opCostPerNode, Map<String, Integer> hullModOpCosts,
     }
 
     public static NpcFreedOp of(FleetMemberAPI member, NpcHullMods hullMods) {
-        HullSize hullSize = member.getHullSpec() == null ? null : member.getHullSpec().getHullSize();
+        HullSize hullSize = ShipHullSizes.of(member);
         SettingsAPI settings = Global.getSettings();
         MutableStat fighterBayStat = member.getStats() == null ? null : member.getStats().getNumFighterBays();
         Map<String, Integer> opCostsByHullMod = new HashMap<>();

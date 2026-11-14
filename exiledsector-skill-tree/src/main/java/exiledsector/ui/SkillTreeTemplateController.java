@@ -1,6 +1,5 @@
 package exiledsector.ui;
 
-import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
@@ -8,6 +7,7 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.i18n.Translation;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
+import exiledsector.skills.ShipHullSizes;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.template.AutoAllocateRun;
@@ -265,7 +265,7 @@ final class SkillTreeTemplateController {
         treeSession.closeChoicePicker();
         SkillTreeSounds.panelOpened();
         SkillTreeTemplateStore.reload();
-        listOverlay.open(hullSize(), SkillTreeTemplateStore.all(), assignedTemplateId());
+        listOverlay.open(ShipHullSizes.of(member),SkillTreeTemplateStore.all(), assignedTemplateId());
     }
 
     private void saveFromDialog(SkillNode startingRoot) {
@@ -282,7 +282,7 @@ final class SkillTreeTemplateController {
             }
             return;
         }
-        SkillTreeTemplateStore.save(name, startingRoot.getId(), hullSize(), treeSession.captureTemplateSteps(), treeSession.captureTemplateAnchors(),
+        SkillTreeTemplateStore.save(name, startingRoot.getId(), ShipHullSizes.of(member), treeSession.captureTemplateSteps(), treeSession.captureTemplateAnchors(),
                 treeSession.captureTemplateIntegrationMarks());
         templateBar.showResult(Translation.msg("ui.template.result.saved").arg("name", name).text());
     }
@@ -300,7 +300,7 @@ final class SkillTreeTemplateController {
         if (saved == null) {
             String defaultName = Translation.msg("ui.template.defaultName").arg("hull", hullName()).text();
             saved = SkillTreeTemplateStore.save(TemplateNames.unique(defaultName, startingRoot.getId(), SkillTreeTemplateStore.all()),
-                    startingRoot.getId(), hullSize(), steps, socketedAnchors, integrationMarks);
+                    startingRoot.getId(), ShipHullSizes.of(member), steps,socketedAnchors, integrationMarks);
         }
         SkillTreeTemplateStore.assign(member.getId(), saved.id());
         treeSession.planSaved(saved);
@@ -337,10 +337,6 @@ final class SkillTreeTemplateController {
     private String assignedTemplateId() {
         SkillTreeTemplate template = treeSession.template();
         return template == null ? null : template.id();
-    }
-
-    private HullSize hullSize() {
-        return member.getHullSpec() == null ? null : member.getHullSpec().getHullSize();
     }
 
     private String hullName() {

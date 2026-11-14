@@ -1,7 +1,7 @@
 package exiledsector.skills.npc;
 
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
-import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.skills.HullSizeTable;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.tags.ShipProfile;
@@ -31,10 +31,8 @@ final class NpcRelevance {
             Map.entry("front_shield", 0.1f), Map.entry("omni_shield", 0.1f), Map.entry("shieldless", 0.1f),
             Map.entry("logistics", 0.15f), Map.entry("fleet_support", 0.2f), Map.entry("d_mods", 0.2f));
     static final float LIGHT_ARMOUR_WEIGHT = 0.3f;
-    private static final Map<HullSize, Float> HEAVY_ARMOUR = Map.of(
-            HullSize.FRIGATE, 250f, HullSize.DESTROYER, 600f, HullSize.CRUISER, 1000f, HullSize.CAPITAL_SHIP, 1400f);
-    private static final Map<HullSize, Float> LIGHT_ARMOUR = Map.of(
-            HullSize.FRIGATE, 150f, HullSize.DESTROYER, 450f, HullSize.CRUISER, 800f, HullSize.CAPITAL_SHIP, 1100f);
+    private static final HullSizeTable HEAVY_ARMOUR = new HullSizeTable(Float.MAX_VALUE, 250f, 600f, 1000f, 1400f, Float.MAX_VALUE);
+    private static final HullSizeTable LIGHT_ARMOUR = new HullSizeTable(0f, 150f, 450f, 800f, 1100f, 0f);
 
     private final Map<String, Float> weightsByTag;
     private final TagWeights focusWeights;
@@ -66,10 +64,10 @@ final class NpcRelevance {
         if (shielded) {
             weightsByTag.merge("flux", 1f, Float::sum);
         }
-        if (profile.baseArmor() >= HEAVY_ARMOUR.getOrDefault(profile.hullSize(), Float.MAX_VALUE)) {
+        if (profile.baseArmor() >= HEAVY_ARMOUR.of(profile.hullSize())) {
             focus(weightsByTag, "armour", true);
             weightsByTag.merge("hull", 0.7f, Float::sum);
-        } else if (profile.baseArmor() > 0f && profile.baseArmor() <= LIGHT_ARMOUR.getOrDefault(profile.hullSize(), 0f)) {
+        } else if (profile.baseArmor() > 0f && profile.baseArmor() <= LIGHT_ARMOUR.of(profile.hullSize())) {
             weightsByTag.put("armour", LIGHT_ARMOUR_WEIGHT);
         }
         for (SkillType skillType : SkillTree.getAllTypes().values()) {
