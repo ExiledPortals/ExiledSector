@@ -171,7 +171,7 @@ class PreCollapseFacilityTest {
     @Test
     void databankRollsGrowWithTier() {
         assertEquals(FacilityRules.DATABANK_ROLLS, FacilityRules.databankRolls(ChartTiers.LOWEST_TIER));
-        assertTrue(FacilityRules.databankRolls(ChartTiers.HIGHEST_TIER) > FacilityRules.databankRolls(ChartTiers.LOWEST_TIER));
+        assertTrue(FacilityRules.databankRolls(ChartTiers.HIGHEST_DROP_TIER) > FacilityRules.databankRolls(ChartTiers.LOWEST_TIER));
         assertEquals(VaultsOfKnowledgeCompat.DATABANK_DROP_GROUP, FacilityLoot.databankDrops(5).get(0).group);
         assertEquals(FacilityRules.databankRolls(5), FacilityLoot.databankDrops(5).get(0).chances);
     }

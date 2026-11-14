@@ -154,10 +154,10 @@ class OfficerRewardDropTest {
         StarChartFixtures.registerShipped();
         try {
             ItemDrops.SiteLoot drop = OfficerRewardDrop.roll(List.of(CarriedItem.of(RewardKind.STAR_CHART, StarChartFixtures.TEST_FIXED)),
-                    ChartTiers.CORRUPTED_TIER, ChartGenContext.none(), new Random(4L));
+                    ChartTiers.HIGHEST_TIER, ChartGenContext.none(), new Random(4L));
 
             assertEquals(List.of(StarChartFixtures.TEST_FIXED), drop.items().stream().map(ItemData::definitionId).toList());
-            assertEquals(ChartTiers.HIGHEST_TIER, ((StarChart) drop.items().get(0).preview()).tier());
+            assertEquals(ChartTiers.HIGHEST_DROP_TIER, ((StarChart) drop.items().get(0).preview()).tier());
         } finally {
             StarChartFixtures.clear();
         }

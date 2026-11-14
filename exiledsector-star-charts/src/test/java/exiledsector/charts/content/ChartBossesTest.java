@@ -42,7 +42,7 @@ class ChartBossesTest {
         assertEquals(1f, ChartBosses.definition(ChartBossType.FLEET).fleetShare());
         assertEquals(List.of("station1_hightech_Standard"), variants(ChartBosses.stationsFor("tritachyon", 3)));
         assertEquals(List.of("station3_midline_Standard"), variants(ChartBosses.stationsFor("independent", 12)));
-        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_TIER; tier++) {
+        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_DROP_TIER; tier++) {
             for (String factionId : List.of("pirates", "independent", "some_mod_faction")) {
                 assertFalse(ChartBosses.stationsFor(factionId, tier).isEmpty(), factionId + " at tier " + tier);
             }
@@ -56,7 +56,7 @@ class ChartBossesTest {
 
         for (String factionId : List.of("remnant", "derelict")) {
             assertTrue(ChartBosses.definition(ChartBossType.STATION).excludes(factionId));
-            for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_TIER; tier++) {
+            for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_DROP_TIER; tier++) {
                 assertEquals(List.of(), ChartBosses.stationsFor(factionId, tier), factionId + " at tier " + tier);
                 assertNull(ChartBosses.pickStation(factionId, tier, new Random(tier)));
                 for (long seed = 0; seed < 10; seed++) {

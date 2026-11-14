@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.ChartIds;
 import exiledsector.data.CsvRows;
 import exiledsector.ModCsv;
+import exiledsector.items.ItemTraits;
 import exiledsector.loot.FleetLevelRange;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -16,9 +17,9 @@ import java.util.Map;
 
 public final class ChartTiers {
 
-    public static final int LOWEST_TIER = 1;
-    public static final int HIGHEST_TIER = 15;
-    public static final int CORRUPTED_TIER = HIGHEST_TIER + 1;
+    public static final int LOWEST_TIER = ItemTraits.LOWEST_TIER;
+    public static final int HIGHEST_DROP_TIER = ItemTraits.HIGHEST_DROP_TIER;
+    public static final int HIGHEST_TIER = ItemTraits.HIGHEST_TIER;
     public static final String PATH = "data/config/exiledSector/star_chart_tiers.csv";
     static final String TIER_COLUMN = "tier";
     private static final Logger LOG = Logger.getLogger(ChartTiers.class);
@@ -47,7 +48,7 @@ public final class ChartTiers {
                 int tier = csv.integer(row, TIER_COLUMN, 0, rowLabel);
                 if (!isValid(tier)) {
                     if (!ModCsv.text(row, TIER_COLUMN).isEmpty()) {
-                        csv.skipRow(rowLabel, "tier must be " + LOWEST_TIER + " to " + CORRUPTED_TIER);
+                        csv.skipRow(rowLabel, "tier must be " + LOWEST_TIER + " to " + HIGHEST_TIER);
                     }
                     return;
                 }
@@ -82,7 +83,7 @@ public final class ChartTiers {
         }
         csv.report(LOG);
         List<Integer> missing = new ArrayList<>();
-        for (int tier = LOWEST_TIER; tier <= CORRUPTED_TIER; tier++) {
+        for (int tier = LOWEST_TIER; tier <= HIGHEST_TIER; tier++) {
             if (!loaded.containsKey(tier)) {
                 missing.add(tier);
             }
@@ -114,7 +115,7 @@ public final class ChartTiers {
 
     public static int tierForLevel(int level) {
         int matchingTier = LOWEST_TIER;
-        for (int tier = LOWEST_TIER; tier <= HIGHEST_TIER; tier++) {
+        for (int tier = LOWEST_TIER; tier <= HIGHEST_DROP_TIER; tier++) {
             if (forTier(tier).levelMin() <= level) {
                 matchingTier = tier;
             }
@@ -123,17 +124,25 @@ public final class ChartTiers {
     }
 
     public static int clamp(int tier) {
-        return Math.max(LOWEST_TIER, Math.min(CORRUPTED_TIER, tier));
+        return ItemTraits.clampTier(tier);
+    }
+
+    public static int clampDropTier(int tier) {
+        return Math.min(HIGHEST_DROP_TIER, clamp(tier));
     }
 
     public static boolean isValid(int tier) {
-        return tier >= LOWEST_TIER && tier <= CORRUPTED_TIER;
+        return tier >= LOWEST_TIER && tier <= HIGHEST_TIER;
     }
 
     public static ChartTier forTier(int tier) {
         int clamped = clamp(tier);
         ChartTier loaded = tiers.get(clamped);
         return loaded != null ? loaded : ChartTier.fallback(clamped);
+    }
+
+    public static ChartTier adjusted(int tier, ChartGenContext context) {
+        return (context == null ? ChartGenContext.none() : context).adjust(forTier(tier));
     }
 
     public static FleetLevelRange fleetStrengthRangeFor(MemoryAPI fleetMemory) {

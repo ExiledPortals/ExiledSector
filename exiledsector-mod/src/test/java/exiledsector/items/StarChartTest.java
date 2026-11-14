@@ -99,7 +99,7 @@ class StarChartTest {
     @Test
     void theChartTierMatchesTheRunTiers() {
         assertEquals(exiledsector.charts.generation.ChartTiers.LOWEST_TIER, StarChart.LOWEST_TIER);
-        assertEquals(exiledsector.charts.generation.ChartTiers.HIGHEST_TIER, StarChart.HIGHEST_TIER);
+        assertEquals(exiledsector.charts.generation.ChartTiers.HIGHEST_DROP_TIER, StarChart.HIGHEST_DROP_TIER);
     }
 
     @Test
@@ -114,7 +114,7 @@ class StarChartTest {
         assertEquals(7, stored.tier());
         assertTrue(stored.id().startsWith("star_chart_"));
         assertEquals(chart.explicits(), stored.explicits());
-        assertEquals(StarChart.CORRUPTED_TIER, StarChartFixtures.chart(SINGLE, 5L, 99).tier());
+        assertEquals(StarChart.HIGHEST_TIER, StarChartFixtures.chart(SINGLE, 5L, 99).tier());
         assertEquals(StarChart.LOWEST_TIER, StarChartFixtures.chart(SINGLE, 5L, -3).tier());
         assertEquals(StarChart.LOWEST_TIER, ItemData.rolled(ItemDefinitions.get(SINGLE), 5L).preview().tier());
     }
@@ -199,7 +199,7 @@ class StarChartTest {
         ItemDefinition single = ItemDefinitions.get(SINGLE);
         boolean rolledOne = false;
         for (long seed = 0; seed < 1000; seed++) {
-            List<RolledModifier> rolled = ItemRoller.rollAtTierWithModifierCount(single, seed, StarChart.HIGHEST_TIER,
+            List<RolledModifier> rolled = ItemRoller.rollAtTierWithModifierCount(single, seed, StarChart.HIGHEST_DROP_TIER,
                     StarChartCorruption.EXPANDED_MODIFIERS, StarChartCorruption.EXPANDED_PER_SIDE);
             long cripplingCount = rolled.stream().filter(modifier -> crippling.contains(modifier.modifierId())).count();
 
@@ -282,7 +282,7 @@ class StarChartTest {
 
         assertEquals(List.of("CHART_ENEMY_LUDDS_LIGHT", "CHART_ENEMY_AT_ANY_COST"), zealous.lines().stream().map(ModifierLine::effectName).toList());
         assertFalse(zealous.rollsAtTier(StarChart.LOWEST_TIER));
-        assertTrue(zealous.rollsAtTier(StarChart.HIGHEST_TIER));
+        assertTrue(zealous.rollsAtTier(StarChart.HIGHEST_DROP_TIER));
     }
 
     @Test

@@ -3,7 +3,7 @@ package exiledsector.charts.anomaly.convoy;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import exiledsector.ExiledSector;
 import exiledsector.ModCsv;
-import exiledsector.charts.generation.ChartTiers;
+import exiledsector.charts.table.TierCurve;
 import exiledsector.data.CsvRows;
 import exiledsector.data.RandomRounding;
 import exiledsector.items.InfusedFeedstock;
@@ -23,15 +23,7 @@ final class ConvoyFeedstock {
     static final String FEEDSTOCK_COLUMN = "feedstock";
     static final float SPREAD = 0.15f;
     private static final Logger LOG = Logger.getLogger(ConvoyFeedstock.class);
-    private static volatile Map<String, Amount> amounts = Map.of();
-
-    record Amount(float lowestTierAmount, float highestTierAmount) {
-
-        float at(int tier) {
-            float perTier = (highestTierAmount - lowestTierAmount) / (ChartTiers.HIGHEST_TIER - ChartTiers.LOWEST_TIER);
-            return Math.max(0f, lowestTierAmount + perTier * (ChartTiers.clamp(tier) - ChartTiers.LOWEST_TIER));
-        }
-    }
+    private static volatile Map<String, TierCurve> amounts = Map.of();
 
     private ConvoyFeedstock() {
     }
@@ -41,7 +33,7 @@ final class ConvoyFeedstock {
     }
 
     static List<String> register(JSONArray rows) throws JSONException {
-        Map<String, Amount> loaded = new LinkedHashMap<>();
+        Map<String, TierCurve> loaded = new LinkedHashMap<>();
         CsvRows csv = new CsvRows(PATH);
         if (rows != null) {
             ModCsv.forEach(rows, (index, row) -> {
@@ -53,7 +45,7 @@ final class ConvoyFeedstock {
                     csv.skipRow(feedstock, "not an infused feedstock");
                     return;
                 }
-                loaded.put(feedstock, new Amount(csv.number(row, "tier_1", 0f, feedstock), csv.number(row, "tier_15", 0f, feedstock)));
+                loaded.put(feedstock, TierCurve.parse(csv, row, feedstock));
             });
         }
         csv.report(LOG);
@@ -70,7 +62,7 @@ final class ConvoyFeedstock {
     }
 
     static float sharedAmount(String feedstock, int tier) {
-        Amount amount = amounts.get(feedstock);
+        TierCurve amount = amounts.get(feedstock);
         return amount == null ? 0f : amount.at(tier);
     }
 

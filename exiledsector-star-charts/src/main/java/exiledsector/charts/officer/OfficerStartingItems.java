@@ -32,7 +32,7 @@ public final class OfficerStartingItems {
             return ChartTiers.LOWEST_TIER;
         }
         float rankShare = OfficerRanks.order(rankId) / (float) (rankCount - 1);
-        return ChartTiers.LOWEST_TIER + Math.round(rankShare * (ChartTiers.HIGHEST_TIER - ChartTiers.LOWEST_TIER));
+        return ChartTiers.LOWEST_TIER + Math.round(rankShare * (ChartTiers.HIGHEST_DROP_TIER - ChartTiers.LOWEST_TIER));
     }
 
     private static CarriedItem rolled(SectorAPI sector, AtlasOfficer officer, Random random) {

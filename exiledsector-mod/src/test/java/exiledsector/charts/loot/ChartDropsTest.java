@@ -204,6 +204,22 @@ class ChartDropsTest {
     }
 
     @Test
+    void aTierSixteenRunNeverDropsATierSixteenChartEvenWhenTheRuleReachesPastIt() throws Exception {
+        ChartDrops.register(new JSONArray().put(rule("chart_boss", 2f, 1f, 0f, 0f).put("same_tier", "0").put("plus_2", "1")
+                .put("max_tier", String.valueOf(ChartTiers.HIGHEST_TIER))));
+        Random random = new Random(16L);
+        int charts = 0;
+        for (int roll = 0; roll < 200; roll++) {
+            for (ItemData chart : ChartDrops.roll(ChartDrops.Source.CHART_BOSS, ChartTiers.HIGHEST_TIER, 1f, random).charts()) {
+                assertEquals(ChartTiers.HIGHEST_DROP_TIER, tierOf(chart));
+                charts++;
+            }
+        }
+        assertTrue(charts > 0);
+        assertEquals(ChartTiers.HIGHEST_DROP_TIER, ChartDrops.rule(ChartDrops.Source.CHART_BOSS).maxTier());
+    }
+
+    @Test
     void theRewardMultiplierScalesHowManyChartsDropWithoutACap() throws Exception {
         ChartDrops.register(new JSONArray().put(rule("run_reward", 1f, 0.25f, 0f, 0f)));
 

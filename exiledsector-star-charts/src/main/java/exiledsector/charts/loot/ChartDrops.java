@@ -89,7 +89,7 @@ public final class ChartDrops {
             catalystChance = Math.max(0f, catalystChance);
             minDefeatedDp = Math.max(0f, minDefeatedDp);
             defeatedDpPerTier = Math.max(0f, defeatedDpPerTier);
-            maxTier = ChartTiers.clamp(maxTier);
+            maxTier = ChartTiers.clampDropTier(maxTier);
         }
 
         int pickTierOffset(Random random) {
@@ -181,7 +181,7 @@ public final class ChartDrops {
             loaded.put(source, new Rule(csv.number(row, "chance", 0f, sourceText), csv.number(row, "extra_chance", 0f, sourceText),
                     tierWeights, craftingItemChance, catalystChance,
                     csv.number(row, "min_defeated_dp", 0f, sourceText), csv.number(row, "defeated_dp_per_tier", 0f, sourceText),
-                    csv.integer(row, "max_tier", ChartTiers.HIGHEST_TIER, sourceText)));
+                    csv.integer(row, "max_tier", ChartTiers.HIGHEST_DROP_TIER, sourceText)));
         });
         csv.report(LOG);
         rules = Map.copyOf(loaded);
@@ -208,7 +208,7 @@ public final class ChartDrops {
         if (!StarChartSettings.enabled() || rule == null || tier == NO_TIER || !mults.any()) {
             return Loot.NONE;
         }
-        int naturalTier = Math.min(ChartTiers.HIGHEST_TIER, ChartTiers.clamp(tier));
+        int naturalTier = ChartTiers.clampDropTier(tier);
         int baseTier = source.insideSystem() ? naturalTier : Math.min(rule.maxTier(), naturalTier);
         List<ItemData> charts = new ArrayList<>();
         int chartCount = mults.chart() > 0f ? chartCount(rule, mults.chart(), random) : 0;

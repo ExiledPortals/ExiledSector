@@ -49,7 +49,7 @@ public final class AtlasOpening {
     }
 
     public static Blocker check(AtlasGenerator generator, AtlasState state, AtlasCell cell, StarChart chart) {
-        return check(generator, state, cell, chart, chart == null ? ChartTiers.CORRUPTED_TIER : GatewayTierLimit.maxTier(Global.getSector()));
+        return check(generator, state, cell, chart, chart == null ? ChartTiers.HIGHEST_TIER : GatewayTierLimit.maxTier(Global.getSector()));
     }
 
     static Blocker check(AtlasGenerator generator, AtlasState state, AtlasCell cell, StarChart chart, int maxTier) {

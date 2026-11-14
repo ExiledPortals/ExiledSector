@@ -124,7 +124,7 @@ public class ChartAnomaliesTest {
         }
         ChartAnomalies.Definition breach = ChartAnomalies.definition(SpatialBreach.ANOMALY_ID);
         assertTrue(breach.insertable());
-        assertTrue(breach.allowedAt(ChartTiers.LOWEST_TIER) && breach.allowedAt(ChartTiers.HIGHEST_TIER));
+        assertTrue(breach.allowedAt(ChartTiers.LOWEST_TIER) && breach.allowedAt(ChartTiers.HIGHEST_DROP_TIER));
         assertFalse(ChartAnomalies.definition("black_hole").insertable());
         Set<DropType> lootKinds = new HashSet<>();
         for (String id : List.of(MagneticStorm.ANOMALY_ID)) {

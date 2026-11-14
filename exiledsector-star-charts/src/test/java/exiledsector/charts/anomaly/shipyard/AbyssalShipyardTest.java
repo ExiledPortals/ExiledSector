@@ -166,8 +166,8 @@ class AbyssalShipyardTest {
     void theGuardsGrowFromThreeEscortsToTheFullLineupWithTier() {
         CoredLineup lineup = ShipyardGuards.LINEUP;
         assertEquals(3, lineup.escortCount(ChartTiers.LOWEST_TIER));
-        assertEquals(lineup.escorts().size(), lineup.escortCount(ChartTiers.HIGHEST_TIER));
-        for (int tier = ChartTiers.LOWEST_TIER; tier < ChartTiers.HIGHEST_TIER; tier++) {
+        assertEquals(lineup.escorts().size(), lineup.escortCount(ChartTiers.HIGHEST_DROP_TIER));
+        for (int tier = ChartTiers.LOWEST_TIER; tier < ChartTiers.HIGHEST_DROP_TIER; tier++) {
             assertTrue(lineup.escortCount(tier + 1) >= lineup.escortCount(tier));
         }
     }

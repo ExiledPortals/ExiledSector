@@ -40,7 +40,7 @@ class StarChartCorruptionTest {
     @Test
     void expandingRerollsEightModifiersFourPerSide() {
         for (long seed = 0; seed < 20; seed++) {
-            StarChart chart = StarChartFixtures.chart(CHART, seed, 1 + (int) (seed % StarChart.CORRUPTED_TIER));
+            StarChart chart = StarChartFixtures.chart(CHART, seed, 1 + (int) (seed % StarChart.HIGHEST_TIER));
 
             assertSame(chart, StarChartCorruption.expandModifiers(chart, new Random(seed)));
 
@@ -54,27 +54,27 @@ class StarChartCorruptionTest {
 
     @Test
     void raisingATierReachesTheCorruptedTierAndStopsThere() {
-        StarChart chart = StarChartFixtures.chart(CHART, 3L, StarChart.HIGHEST_TIER);
+        StarChart chart = StarChartFixtures.chart(CHART, 3L, StarChart.HIGHEST_DROP_TIER);
 
         assertSame(chart, StarChartCorruption.raiseTier(chart));
-        assertEquals(StarChart.CORRUPTED_TIER, chart.tier());
+        assertEquals(StarChart.HIGHEST_TIER, chart.tier());
         assertNull(StarChartCorruption.raiseTier(chart));
-        assertEquals(StarChart.CORRUPTED_TIER, chart.tier());
+        assertEquals(StarChart.HIGHEST_TIER, chart.tier());
     }
 
     @Test
     void corruptingTopTierChartsCanRaiseThemOrExpandThem() {
         Set<CorruptionOutcome> seen = EnumSet.noneOf(CorruptionOutcome.class);
         for (long seed = 0; seed < 120; seed++) {
-            StarChart chart = StarChartFixtures.chart(CHART, seed, StarChart.HIGHEST_TIER);
+            StarChart chart = StarChartFixtures.chart(CHART, seed, StarChart.HIGHEST_DROP_TIER);
             Item corrupted = ItemCrafting.corrupt(new ItemStore(), chart, new Random(seed), definition -> true);
 
             assertTrue(corrupted.corrupted());
             seen.add(corrupted.corruption());
             if (corrupted.corruption() == CorruptionOutcome.TIER_RAISED) {
-                assertEquals(StarChart.CORRUPTED_TIER, corrupted.tier());
-            } else {
                 assertEquals(StarChart.HIGHEST_TIER, corrupted.tier());
+            } else {
+                assertEquals(StarChart.HIGHEST_DROP_TIER, corrupted.tier());
             }
             if (corrupted.corruption() == CorruptionOutcome.MODIFIERS_EXPANDED) {
                 assertEquals(StarChartCorruption.EXPANDED_MODIFIERS, corrupted.explicits().size());
@@ -86,9 +86,9 @@ class StarChartCorruptionTest {
 
     @Test
     void aCorruptedTierChartRaisesNoFurther() {
-        StarChart chart = StarChartFixtures.chart(CHART, 4L, StarChart.CORRUPTED_TIER);
+        StarChart chart = StarChartFixtures.chart(CHART, 4L, StarChart.HIGHEST_TIER);
 
-        assertEquals(StarChart.CORRUPTED_TIER, chart.tier());
+        assertEquals(StarChart.HIGHEST_TIER, chart.tier());
         assertNull(StarChartCorruption.corrupt(CorruptionOutcome.TIER_RAISED, chart, new Random(4L)));
     }
 }

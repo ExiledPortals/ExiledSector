@@ -21,7 +21,7 @@ public final class ChartSupply {
     }
 
     public static List<Item> combinable(ItemStore store, int tier, Item kept) {
-        if (store == null || tier >= ChartTiers.HIGHEST_TIER) {
+        if (store == null || tier >= ChartTiers.HIGHEST_DROP_TIER) {
             return List.of();
         }
         List<Item> candidates = new ArrayList<>();

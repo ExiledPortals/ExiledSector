@@ -91,11 +91,11 @@ class ChartLootTest {
             }
         }
         for (String scope : ChartLoot.scopes()) {
-            for (ChartLoot.Entry entry : ChartLoot.entriesFor(scope, ChartTiers.HIGHEST_TIER)) {
+            for (ChartLoot.Entry entry : ChartLoot.entriesFor(scope, ChartTiers.HIGHEST_DROP_TIER)) {
                 assertEquals(entry.type(), ChartLoot.typeOfGroup(entry.group()), entry.toString());
             }
         }
-        assertTrue(ChartLoot.entriesFor(ChartLoot.BOSS_SCOPE, ChartTiers.HIGHEST_TIER).size() >= 4);
+        assertTrue(ChartLoot.entriesFor(ChartLoot.BOSS_SCOPE, ChartTiers.HIGHEST_DROP_TIER).size() >= 4);
         assertNull(ChartLoot.typeOfGroup("rare_tech"), "colony item groups are never mapped, so no bonus scales them");
     }
 

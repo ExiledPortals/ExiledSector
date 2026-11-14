@@ -55,7 +55,7 @@ class StarChartSettingsTest {
         assertEquals(3, StarChartSettings.wormholeEntries(6));
         assertEquals(3, StarChartSettings.wormholeEntries(10));
         assertEquals(1, StarChartSettings.wormholeEntries(11));
-        assertEquals(1, StarChartSettings.wormholeEntries(StarChart.CORRUPTED_TIER));
+        assertEquals(1, StarChartSettings.wormholeEntries(StarChart.HIGHEST_TIER));
         assertEquals(6, StarChartSettings.wormholeEntries(TierRange.NO_TIER), "a tierless open counts as the lowest tier");
     }
 

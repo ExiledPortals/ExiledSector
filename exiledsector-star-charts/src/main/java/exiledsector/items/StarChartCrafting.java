@@ -78,7 +78,7 @@ public final class StarChartCrafting {
         if (!CraftingMaterialFamilies.appliesTo(craftingItem, chart.type())) {
             return CANNOT_USE;
         }
-        if (craftingItem == StarChartCipher.CARTOGRAPHY && chart.tier() >= StarChart.HIGHEST_TIER) {
+        if (craftingItem == StarChartCipher.CARTOGRAPHY && chart.tier() >= StarChart.HIGHEST_DROP_TIER) {
             return MAX_TIER;
         }
         if ((craftingItem == StarChartCipher.ERASURE || craftingItem == Nanoswarm.ANNULMENT) && chart.explicits().isEmpty()) {

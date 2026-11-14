@@ -126,7 +126,7 @@ class ChartContentPlannerTest {
 
     @Test
     void theSameSeedAndTierAlwaysPlanTheSameContent() {
-        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_TIER; tier++) {
+        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_DROP_TIER; tier++) {
             assertEquals(plan(1234L, tier), plan(1234L, tier), "tier " + tier);
         }
     }
@@ -168,7 +168,7 @@ class ChartContentPlannerTest {
 
     @Test
     void eachCategoryOverspendsByLessThanOneCheapestSiteAndOnlyUsesPointsOfInterestAllowedAtTheTier() {
-        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_TIER; tier++) {
+        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_DROP_TIER; tier++) {
             ChartTier tierData = ChartTiers.forTier(tier);
             for (long seed = 0; seed < 30; seed++) {
                 ChartContentPlan plan = plan(seed, tier);
@@ -255,7 +255,7 @@ class ChartContentPlannerTest {
 
     @Test
     void fleetsStayWithinTheTierRangeAndTheSizeCapsAndAverageTheTierFleetSize() {
-        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_TIER; tier++) {
+        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_DROP_TIER; tier++) {
             ChartTier tierData = ChartTiers.forTier(tier);
             for (long seed = 0; seed < 20; seed++) {
                 ChartContentPlan plan = plan(seed, tier);

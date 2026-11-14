@@ -32,7 +32,7 @@ public record AtlasSpecial(String id, Kind kind, Placement placement, float chan
 
         AtlasOpening.Blocker openBlocker(StarChart chart) {
             return switch (this) {
-                case BASTION -> chart == null || chart.tier() < ChartTiers.HIGHEST_TIER ? AtlasOpening.Blocker.BASTION_NEEDS_TOP_TIER : null;
+                case BASTION -> chart == null || chart.tier() < ChartTiers.HIGHEST_DROP_TIER ? AtlasOpening.Blocker.BASTION_NEEDS_TOP_TIER : null;
                 case INFESTATION -> AtlasOpening.explicitModifiers(chart) < AtlasOpening.INFESTATION_MODIFIERS ? AtlasOpening.Blocker.INFESTATION_NEEDS_MODIFIERS : null;
                 default -> null;
             };

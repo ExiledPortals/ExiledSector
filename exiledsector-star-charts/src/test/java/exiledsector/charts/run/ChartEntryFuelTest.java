@@ -19,7 +19,7 @@ class ChartEntryFuelTest {
     void costStartsAtAThousandAndRisesAHundredPerTier() {
         assertEquals(1000, ChartEntryFuel.cost(ChartTiers.LOWEST_TIER));
         assertEquals(1100, ChartEntryFuel.cost(ChartTiers.LOWEST_TIER + 1));
-        assertEquals(2500, ChartEntryFuel.cost(ChartTiers.CORRUPTED_TIER));
+        assertEquals(2500, ChartEntryFuel.cost(ChartTiers.HIGHEST_TIER));
     }
 
     @Test

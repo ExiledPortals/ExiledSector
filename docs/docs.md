@@ -730,7 +730,7 @@ no salvage of their own, drop none of this either (`SecretsOfTheFrontierCompat`)
 Hull items read the hull rows (`BattleItemDrops`): an enemy ship's tree raises the share rolled with two modifiers
 (`levelBoost`), never the count. Chart fleets roll subroutines from the `subroutine` row, and star charts and
 catalysts from `chart_drops.csv` and crafting items from `chart_materials.csv` (set at tiers 1 and 15,
-linear between, `ChartMaterials`) as a whole-chart amount, each fleet taking its fleet points at spawn over what its
+linear between and on to tier 16 unless a `tier_16` column sets it, `TierCurve`) as a whole-chart amount, each fleet taking its fleet points at spawn over what its
 tier spawns (`ChartFleetLoot.expectedFleetPoints`). Fleets an anomaly placed carry its id
 (`ANOMALY_MEMORY_KEY`) and drop all of this times its `fleet_loot` in `chart_anomalies.csv`
 (`ChartFleetLoot.anomalyFleetLoot`), except the boss. Each dropped chart rolls its tier from the row's `minus_2` to
@@ -848,8 +848,10 @@ modifiers, keeping their implicits. Subroutines add an implicit from `subroutine
 instead of replacing one, and their rare outcome only corrupts them.
 
 Star charts add two outcomes (`StarChartCorruption`): one tier up, reaching tier 16 from 15, or a reroll with 8 modifiers,
-4 per side. Tier 16 (`ChartTiers.CORRUPTED_TIER`) has its own row in `star_chart_tiers.csv` but is reached only this way.
-Chart drops, the Cartography Cipher and combining stop at 15, and a tier 16 clear records as tier 15 (`ItemUnlock`).
+4 per side. Tier 16 (`ItemTraits.HIGHEST_TIER`) is a tier of its own, with a row in `star_chart_tiers.csv`, reached only
+this way. Chart drops (`ChartTiers.clampDropTier`), the Cartography Cipher and combining stop at 15
+(`HIGHEST_DROP_TIER`), and a tier 16 clear records as tier 15 (`ItemUnlock`). Tier-scaled amounts and enemy scaling
+carry on to tier 16.
 
 ### Infused crafts
 

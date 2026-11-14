@@ -60,9 +60,9 @@ class ChartSupplyTest {
     @Test
     void topTierChartsCannotBeCombined() {
         for (long seed = 0; seed < 3; seed++) {
-            stored(seed, ChartTiers.HIGHEST_TIER);
+            stored(seed, ChartTiers.HIGHEST_DROP_TIER);
         }
 
-        assertEquals(List.of(), ChartSupply.combinable(store, ChartTiers.HIGHEST_TIER, null));
+        assertEquals(List.of(), ChartSupply.combinable(store, ChartTiers.HIGHEST_DROP_TIER, null));
     }
 }
