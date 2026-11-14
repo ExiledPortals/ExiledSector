@@ -110,14 +110,6 @@ public final class StormFront implements ContentPlacer, RunParticipant, LootShap
     }
 
     public static StormFrontTerrainPlugin frontHolding(CampaignFleetAPI fleet) {
-        if (fleet == null) {
-            return null;
-        }
-        for (StormFrontTerrainPlugin front : frontsIn(fleet.getContainingLocation())) {
-            if (front.containsEntity(fleet)) {
-                return front;
-            }
-        }
-        return null;
+        return fleet == null ? null : AnomalyTerrains.holding(fleet, frontsIn(fleet.getContainingLocation()));
     }
 }
