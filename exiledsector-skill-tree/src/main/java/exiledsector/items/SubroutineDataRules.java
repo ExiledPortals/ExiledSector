@@ -44,7 +44,7 @@ public final class SubroutineDataRules implements ItemDataRules {
 
     @Override
     public void checkItemFiles(ItemDataIntegrity integrity) throws IOException, JSONException {
-        integrity.checkDefinitions(ItemDataIntegrity.orEmpty(ModCsv.rows("id", SubroutineDefinitions.dataPath())), SubroutineDefinitions.dataPath(),
+        integrity.checkDefinitions(ModCsv.rows("id", SubroutineDefinitions.dataPath()), SubroutineDefinitions.dataPath(),
                 ItemType.SUBROUTINE);
         integrity.checkCorruptionPool(ModCsv.rows(SubroutineImplicits.IMPLICIT_COLUMN, SubroutineImplicits.DATA_PATH), SubroutineImplicits.DATA_PATH,
                 "the subroutine corruption pool", ItemType.SUBROUTINE);
@@ -52,9 +52,9 @@ public final class SubroutineDataRules implements ItemDataRules {
 
     @Override
     public List<ItemDataIntegrity.Violation> checkSeparately(Collection<String> definitionIds) throws IOException, JSONException {
-        JSONArray modifierRows = ItemDataIntegrity.orEmpty(ModCsv.rows("id", ItemModifiers.dataPath()));
-        JSONArray subroutineRows = ItemDataIntegrity.orEmpty(ModCsv.rows("id", SubroutineDefinitions.dataPath()));
-        JSONArray doctrineRows = ItemDataIntegrity.orEmpty(ModCsv.rows(DoctrineArchives.ID_COLUMN, DoctrineArchives.DATA_PATH));
+        JSONArray modifierRows = ModCsv.rows("id", ItemModifiers.dataPath());
+        JSONArray subroutineRows = ModCsv.rows("id", SubroutineDefinitions.dataPath());
+        JSONArray doctrineRows = ModCsv.rows(DoctrineArchives.ID_COLUMN, DoctrineArchives.DATA_PATH);
         List<ItemDataIntegrity.Violation> violations = new ArrayList<>(checkDoctrineArchives(modifierRows, subroutineRows, doctrineRows,
                 SkillTree.getAllTypes()));
         violations.addAll(checkModspecCaches(subroutineRows, SkillTree.getDeclaredNodes()));
@@ -64,16 +64,16 @@ public final class SubroutineDataRules implements ItemDataRules {
     public static List<ItemDataIntegrity.Violation> checkDoctrineArchives(JSONArray modifierRows, JSONArray subroutineRows, JSONArray doctrineRows,
                                                                           Map<String, SkillType> types) throws JSONException {
         ItemDataIntegrity integrity = new ItemDataIntegrity();
-        integrity.checkModifiers(ItemDataIntegrity.orEmpty(modifierRows), ItemModifiers.dataPath());
+        integrity.checkModifiers(modifierRows, ItemModifiers.dataPath());
         integrity.clearViolations();
-        checkDoctrineRows(integrity, ItemDataIntegrity.orEmpty(subroutineRows), ItemDataIntegrity.orEmpty(doctrineRows), types);
+        checkDoctrineRows(integrity, subroutineRows, doctrineRows, types);
         return integrity.violations();
     }
 
     public static List<ItemDataIntegrity.Violation> checkModspecCaches(JSONArray subroutineRows, Map<String, SkillNode> treeNodes)
             throws JSONException {
         ItemDataIntegrity integrity = new ItemDataIntegrity();
-        checkCacheRows(integrity, ItemDataIntegrity.orEmpty(subroutineRows), treeNodes);
+        checkCacheRows(integrity, subroutineRows, treeNodes);
         return integrity.violations();
     }
 

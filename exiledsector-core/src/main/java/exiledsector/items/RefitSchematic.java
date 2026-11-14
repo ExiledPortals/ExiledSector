@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.SpecialItemData;
+import exiledsector.data.WeightedPick;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.ShipHullSizes;
 

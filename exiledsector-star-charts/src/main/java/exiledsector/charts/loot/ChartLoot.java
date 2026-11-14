@@ -90,14 +90,7 @@ public final class ChartLoot {
         List<Entry> entries = new ArrayList<>();
         CsvRows csv = new CsvRows(PATH);
         List<String> scopes = scopes();
-        if (rows != null) {
-            ModCsv.forEach(rows, (index, row) -> {
-                String id = ModCsv.text(row, ID_COLUMN);
-                if (!id.isEmpty()) {
-                    parse(csv, row, id, groupExists, scopes, groupTypes, entries);
-                }
-            });
-        }
+        CsvRows.forEachIdRow(rows, ID_COLUMN, (id, row) -> parse(csv, row, id, groupExists, scopes, groupTypes, entries));
         csv.report(LOG);
         table = new Table(groupTypes, entries);
         return csv.problems();

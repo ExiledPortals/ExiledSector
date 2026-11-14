@@ -1,6 +1,6 @@
 package exiledsector.skills.loader;
 
-import com.fs.starfarer.api.Global;
+import exiledsector.ModJson;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.decoration.Decorations;
 import exiledsector.skills.layout.ConnectorCurve;
@@ -12,7 +12,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -46,12 +45,7 @@ public final class TreeLayoutReader {
     }
 
     public static JSONObject load(String path) {
-        try {
-            return Global.getSettings().loadJSON(path);
-        } catch (IOException | JSONException e) {
-            Logger.getLogger(TreeLayoutReader.class).error("Failed to load " + path, e);
-            return null;
-        }
+        return ModJson.jsonOrNull(path, false, Logger.getLogger(TreeLayoutReader.class));
     }
 
     public static <N extends TreeNode> Layout<N> read(JSONObject treeJson, String sourceName, Predicate<String> isVolume, NodeFactory<N> factory) {

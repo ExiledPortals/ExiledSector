@@ -24,8 +24,8 @@ import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.anomaly.StarRule;
 import exiledsector.charts.run.cleanup.ChartUsedNames;
 import exiledsector.Seeds;
-import exiledsector.items.WeightedPick;
 import exiledsector.charts.anomaly.LayoutShaper;
+import exiledsector.data.WeightedPick;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 

@@ -75,7 +75,7 @@ public final class ModspecCaches {
     public static void register(JSONArray rows) throws JSONException {
         Map<String, CacheBase> bases = new LinkedHashMap<>();
         Map<String, FactionFleetDrops.Source> fleetSources = new LinkedHashMap<>();
-        ModCsv.forEach(rows == null ? new JSONArray() : rows, (index, row) -> {
+        ModCsv.forEach(rows, (index, row) -> {
             ItemDefinition definition = ItemDefinitions.get(ModCsv.text(row, ID_COLUMN));
             if (definition == null || SubroutineKind.of(definition) != SubroutineKind.MODSPEC_CACHE) {
                 return;

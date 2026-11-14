@@ -2,7 +2,7 @@ package exiledsector.charts.anomaly.stormfront;
 
 import com.fs.starfarer.api.combat.ShipAPI;
 import exiledsector.charts.content.ChartSites;
-import exiledsector.items.WeightedPick;
+import exiledsector.data.WeightedPick;
 import exiledsector.skills.skilleffect.CombatQueries;
 import org.lwjgl.util.vector.Vector2f;
 

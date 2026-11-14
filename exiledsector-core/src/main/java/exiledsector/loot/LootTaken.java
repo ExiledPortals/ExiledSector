@@ -1,8 +1,9 @@
 package exiledsector.loot;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
-import exiledsector.ExiledSector;
 import exiledsector.PlayerFleet;
+import exiledsector.domain.DomainContributions;
+import exiledsector.domain.ExiledSectorDomain;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ public final class LootTaken {
 
     private static final Logger LOG = Logger.getLogger(LootTaken.class);
     private static final List<LootTakenListener> CORE_LISTENERS = List.of(new ItemStorageTransfer());
+    private static final DomainContributions<LootTakenListener> DOMAIN_LISTENERS = new DomainContributions<>(ExiledSectorDomain::lootTakenListeners);
 
     private LootTaken() {
     }
@@ -25,7 +27,7 @@ public final class LootTaken {
 
     static List<LootTakenListener> listeners() {
         List<LootTakenListener> listeners = new ArrayList<>(CORE_LISTENERS);
-        ExiledSector.enabledDomains().forEach(domain -> listeners.addAll(domain.lootTakenListeners()));
+        listeners.addAll(DOMAIN_LISTENERS.all());
         return listeners;
     }
 

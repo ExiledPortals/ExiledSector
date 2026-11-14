@@ -33,9 +33,6 @@ public final class CsvRows {
     }
 
     public static void forEachIdRow(JSONArray rows, String idColumn, IdRowHandler handler) throws JSONException {
-        if (rows == null) {
-            return;
-        }
         ModCsv.forEach(rows, (index, row) -> {
             String id = ModCsv.text(row, idColumn);
             if (!id.isEmpty()) {
@@ -45,7 +42,7 @@ public final class CsvRows {
     }
 
     public static void forEachRow(JSONArray rows, String path, Logger log, ModCsv.RowHandler parser) throws JSONException {
-        ModCsv.forEach(rows == null ? new JSONArray() : rows, (index, row) -> {
+        ModCsv.forEach(rows, (index, row) -> {
             try {
                 parser.accept(index, row);
             } catch (IllegalArgumentException e) {
@@ -112,6 +109,14 @@ public final class CsvRows {
             return fallback;
         }
         return parsed;
+    }
+
+    public float fraction(JSONObject row, String column, float fallback, String rowLabel) {
+        float value = number(row, column, fallback, rowLabel);
+        if (value < 0f || value > 1f) {
+            problem(rowLabel, column, value + " (needs 0 to 1)");
+        }
+        return value;
     }
 
     public boolean flag(JSONObject row, String column, boolean fallback, String rowLabel) {

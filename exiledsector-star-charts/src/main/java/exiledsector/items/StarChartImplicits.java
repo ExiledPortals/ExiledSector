@@ -3,6 +3,7 @@ package exiledsector.items;
 import exiledsector.ModCsv;
 import exiledsector.Seeds;
 import exiledsector.data.CsvRows;
+import exiledsector.data.WeightedPick;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierLine;
 import org.apache.log4j.Logger;

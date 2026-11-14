@@ -3,7 +3,7 @@ package exiledsector.charts.anomaly.debris;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import exiledsector.charts.content.ChartContentPlanner;
 import exiledsector.charts.generation.ChartTier;
-import exiledsector.items.WeightedPick;
+import exiledsector.data.WeightedPick;
 
 import java.util.List;
 import java.util.Random;

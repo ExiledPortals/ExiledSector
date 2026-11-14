@@ -43,9 +43,7 @@ public final class SecretsOfTheFrontierCompat {
 
     static List<String> missingFeatures() {
         List<String> missing = new ArrayList<>();
-        try {
-            Class.forName(FLASHBACK_ENCOUNTER_CLASS, false, Global.getSettings().getScriptClassLoader());
-        } catch (ClassNotFoundException | LinkageError e) {
+        if (!CompatTarget.classExists(FLASHBACK_ENCOUNTER_CLASS)) {
             missing.add(FLASHBACK_ENCOUNTER_CLASS + ", whose scripted story fights drop none of Exiled Sector's loot");
         }
         if (!CompatTarget.specExists(() -> Global.getSettings().getShipSystemSpec(CONCORD_SHIFT_SYSTEM_ID))) {

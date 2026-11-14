@@ -14,8 +14,8 @@ import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.impl.campaign.ids.ShipRoles;
 import com.fs.starfarer.api.impl.combat.threat.DisposableThreatFleetManager;
 import com.fs.starfarer.api.impl.combat.threat.ThreatFIDConfig;
+import exiledsector.data.WeightedPick;
 import exiledsector.i18n.Translation;
-import exiledsector.items.WeightedPick;
 
 import java.util.ArrayList;
 import java.util.List;

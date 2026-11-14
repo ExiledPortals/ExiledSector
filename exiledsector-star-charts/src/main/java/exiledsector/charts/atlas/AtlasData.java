@@ -215,11 +215,7 @@ public final class AtlasData {
                 stars.remove(star);
             }
         }
-        float nebulaChance = csv.number(row, "nebula_chance", Float.NaN, rowId);
-        if (nebulaChance < 0f || nebulaChance > 1f) {
-            csv.problem(rowId, "nebula_chance", nebulaChance + " (needs 0 to 1)");
-            nebulaChance = Math.max(0f, Math.min(1f, nebulaChance));
-        }
+        float nebulaChance = Math.max(0f, Math.min(1f, csv.fraction(row, "nebula_chance", Float.NaN, rowId)));
         return new ChartLook(CsvRows.entries(ModCsv.text(row, "backgrounds")), CsvRows.entries(ModCsv.text(row, "nebula_backgrounds")),
                 nebulaChance, colour(csv, row, "light_tint", rowId), csv.number(row, "light_tint_strength", 0f, rowId), stars,
                 categoryWeights(csv, row, "planets", rowId), csv.flag(row, "keep_ruins", false, rowId), ModCsv.text(row, "music"),
@@ -243,11 +239,7 @@ public final class AtlasData {
                 csv.skipRow(id, "needs a colour and a dark_colour");
                 return;
             }
-            float vignette = csv.number(row, "vignette", 1f, id);
-            if (vignette < 0f || vignette > 1f) {
-                csv.problem(id, "vignette", vignette + " (needs 0 to 1)");
-            }
-            loaded.put(id, new AbyssPalette(id, colour, darkColour, vignette));
+            loaded.put(id, new AbyssPalette(id, colour, darkColour, csv.fraction(row, "vignette", 1f, id)));
         });
         csv.report(LOG);
         abyssPalettes = Map.copyOf(loaded);
@@ -278,16 +270,13 @@ public final class AtlasData {
             if (size < AtlasRegion.MIN_SIZE || size > AtlasRegion.MAX_SIZE) {
                 csv.problem(id, "size", size + " (needs " + AtlasRegion.MIN_SIZE + " to " + AtlasRegion.MAX_SIZE + ")");
             }
-            float density = csv.number(row, "density", 1f, id);
-            if (density < 0f || density > 1f) {
-                csv.problem(id, "density", density + " (needs 0 to 1)");
-            }
+            float density = csv.fraction(row, "density", 1f, id);
             loaded.put(id, new AtlasRegion(id, csv.number(row, "weight", 1f, id), csv.integer(row, "min_steps", 0, id),
                     ModCsv.text(row, "requires_mod"), ModCsv.text(row, "unlock"), csv.weights(row, "layouts", id, layoutIds),
                     factionWeights(csv, row, id, knownFactions, moddedFactions),
                     csv.weights(row, "anomaly_weights", id, null),
                     csv.integer(row, "max_steps", AtlasRegion.NO_MAX_STEPS, id), csv.number(row, "weight_per_step", 0f, id), size, density,
-                    csv.weights(row, "neighbours", id, null), fraction(csv, row, "clouds", id), fraction(csv, row, "walls", id)));
+                    csv.weights(row, "neighbours", id, null), csv.fraction(row, "clouds", 0f, id), csv.fraction(row, "walls", 0f, id)));
             loadedLooks.put(id, look(csv, row, id));
             loadedAmbiences.put(id, ambience(csv, row, id));
         });
@@ -330,18 +319,10 @@ public final class AtlasData {
     }
 
     private static AtlasAmbience ambience(CsvRows csv, JSONObject row, String rowId) {
-        float storms = fraction(csv, row, "hyperspace_storms", rowId);
+        float storms = csv.fraction(row, "hyperspace_storms", 0f, rowId);
         Map<String, Float> picks = csv.weights(row, "decorations", rowId, decorations.keySet());
         return new AtlasAmbience(storms, colour(csv, row, "cloud_colour", rowId), picks,
                 csv.number(row, "decoration_density", picks.isEmpty() ? 0f : 1f, rowId), csv.flag(row, "abyss", false, rowId));
-    }
-
-    private static float fraction(CsvRows csv, JSONObject row, String column, String rowId) {
-        float value = csv.number(row, column, 0f, rowId);
-        if (value < 0f || value > 1f) {
-            csv.problem(rowId, column, value + " (needs 0 to 1)");
-        }
-        return value;
     }
 
     static List<String> registerDecorations(JSONArray rows) throws JSONException {
@@ -354,7 +335,7 @@ public final class AtlasData {
                 return;
             }
             loaded.put(id, new AtlasDecoration(id, sprites, ModCsv.text(row, "glow"), csv.integer(row, "columns", 1, id), csv.integer(row, "rows", 1, id),
-                    csv.number(row, "size", 0.05f, id), fraction(csv, row, "size_jitter", id), csv.integer(row, "count", 1, id),
+                    csv.number(row, "size", 0.05f, id), csv.fraction(row, "size_jitter", 0f, id), csv.integer(row, "count", 1, id),
                     csv.number(row, "spread", 0f, id), csv.number(row, "spin", 0f, id), csv.number(row, "drift", 0f, id), colour(csv, row, "colour", id),
                     colour(csv, row, "glow_colour", id), csv.number(row, "alpha", 1f, id), csv.number(row, "pulse", 0f, id),
                     csv.number(row, "ping", 0f, id), CsvRows.entries(ModCsv.text(row, "scatter"))));

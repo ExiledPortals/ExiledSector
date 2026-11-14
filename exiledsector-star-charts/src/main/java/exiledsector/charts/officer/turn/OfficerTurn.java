@@ -16,7 +16,7 @@ import exiledsector.charts.officer.turn.TurnResult.Replacement;
 import exiledsector.charts.officer.turn.TurnResult.ResolvedIntent;
 import exiledsector.charts.officer.turn.TurnResult.Standing;
 import exiledsector.charts.officer.turn.TurnResult.StandingChange;
-import exiledsector.items.WeightedPick;
+import exiledsector.data.WeightedPick;
 
 import java.util.ArrayList;
 import java.util.Collections;

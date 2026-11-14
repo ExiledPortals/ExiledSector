@@ -39,16 +39,16 @@ public final class StarChartDataRules implements ItemDataRules {
 
     @Override
     public void checkModifierFiles(ItemDataIntegrity integrity) throws IOException, JSONException {
-        integrity.checkModifiers(ItemDataIntegrity.orEmpty(ModCsv.rows("id", StarChartItems.MODIFIERS_PATH)), StarChartItems.MODIFIERS_PATH);
+        integrity.checkModifiers(ModCsv.rows("id", StarChartItems.MODIFIERS_PATH), StarChartItems.MODIFIERS_PATH);
     }
 
     @Override
     public void checkItemFiles(ItemDataIntegrity integrity) throws IOException, JSONException {
-        integrity.checkDefinitions(ItemDataIntegrity.orEmpty(ModCsv.rows("id", StarChartDefinitions.DATA_PATH)), StarChartDefinitions.DATA_PATH,
+        integrity.checkDefinitions(ModCsv.rows("id", StarChartDefinitions.DATA_PATH), StarChartDefinitions.DATA_PATH,
                 ItemType.STAR_CHART);
-        checkImplicits(integrity, ItemDataIntegrity.orEmpty(ModCsv.rows(StarChartImplicits.SYSTEM_TYPE_COLUMN, StarChartImplicits.DATA_PATH)));
+        checkImplicits(integrity, ModCsv.rows(StarChartImplicits.SYSTEM_TYPE_COLUMN, StarChartImplicits.DATA_PATH));
         Engrams.checkData(integrity);
-        checkBiomeModifiers(integrity, ItemDataIntegrity.orEmpty(ModCsv.rows(BiomeModifiers.ID_COLUMN, BiomeModifiers.PATH)));
+        checkBiomeModifiers(integrity, ModCsv.rows(BiomeModifiers.ID_COLUMN, BiomeModifiers.PATH));
     }
 
     static void checkBiomeModifiers(ItemDataIntegrity integrity, JSONArray rows) throws JSONException {
@@ -126,9 +126,6 @@ public final class StarChartDataRules implements ItemDataRules {
     }
 
     public static void checkImplicits(ItemDataIntegrity integrity, JSONArray rows) throws JSONException {
-        if (rows == null) {
-            return;
-        }
         String file = StarChartImplicits.DATA_PATH;
         Map<String, Integer> linesByType = new HashMap<>();
         ModCsv.forEach(rows, (index, row) -> {

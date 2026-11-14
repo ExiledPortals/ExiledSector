@@ -33,10 +33,21 @@ public record CompatTarget(String displayName, List<String> modIds, List<String>
         return missing;
     }
 
+    // java:S1181: an unknown spec id can surface as any Throwable from the game, and it only means the spec is missing
+    @SuppressWarnings("java:S1181")
     public static boolean specExists(Supplier<Object> spec) {
         try {
             return spec.get() != null;
-        } catch (RuntimeException e) {
+        } catch (Throwable e) {
+            return false;
+        }
+    }
+
+    public static boolean classExists(String className) {
+        try {
+            Class.forName(className, false, Global.getSettings().getScriptClassLoader());
+            return true;
+        } catch (ClassNotFoundException | LinkageError e) {
             return false;
         }
     }

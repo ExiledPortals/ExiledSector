@@ -29,7 +29,7 @@ final class ItemDataChecks {
         ItemDataIntegrity integrity = new ItemDataIntegrity();
         integrity.checkModifiers(modifierRows, ItemModifiers.dataPath());
         integrity.checkModifiers(chartModifierRows, StarChartItems.MODIFIERS_PATH);
-        integrity.checkDefinitions(ItemDataIntegrity.orEmpty(subroutineRows), SubroutineDefinitions.dataPath(), ItemType.SUBROUTINE);
+        integrity.checkDefinitions(subroutineRows, SubroutineDefinitions.dataPath(), ItemType.SUBROUTINE);
         integrity.checkDefinitions(hullItemRows, HullItem.definitionsPath(), ItemType.HULL_ITEM);
         integrity.checkDefinitions(chartRows, StarChartDefinitions.DATA_PATH, ItemType.STAR_CHART);
         integrity.checkKindImplicits(implicitRows, ItemImplicits.dataPath());

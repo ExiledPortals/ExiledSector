@@ -2,6 +2,7 @@ package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.SpecialItemSpecAPI;
 import exiledsector.ModCsv;
+import exiledsector.data.WeightedPick;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.data.CsvRows;
@@ -128,7 +129,7 @@ public final class Engrams {
     }
 
     public static void checkData(ItemDataIntegrity integrity) throws IOException, JSONException {
-        checkRows(integrity, ItemDataIntegrity.orEmpty(ModCsv.rows(ID_COLUMN, PATH)), PATH);
+        checkRows(integrity, ModCsv.rows(ID_COLUMN, PATH), PATH);
     }
 
     static void checkRows(ItemDataIntegrity integrity, JSONArray rows, String file) throws JSONException {

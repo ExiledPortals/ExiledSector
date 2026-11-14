@@ -120,10 +120,6 @@ public final class ItemDataIntegrity {
         return referencedIds.contains(modifierId);
     }
 
-    static JSONArray orEmpty(JSONArray rows) {
-        return rows == null ? new JSONArray() : rows;
-    }
-
     void checkVolume(String file, int line, String definitionId, String volume) {
         if (!volume.isEmpty() && !ItemVolumes.isKnown(volume)) {
             error(file, line, definitionId + " names the volume \"" + volume + "\"; expected one of " + ItemVolumes.known().stream().sorted().toList());
@@ -455,24 +451,24 @@ public final class ItemDataIntegrity {
 
     public void checkCorruptionPool(JSONArray rows, String file, String poolName, ItemType itemType) throws JSONException {
         List<ModifierRow> implicits = new ArrayList<>();
-        ModCsv.forEach(orEmpty(rows), (index, row) -> checkImplicitEntry(file, index + FIRST_DATA_LINE, poolName,
+        ModCsv.forEach(rows, (index, row) -> checkImplicitEntry(file, index + FIRST_DATA_LINE, poolName,
                 ModCsv.text(row, CorruptionImplicitPool.IMPLICIT_COLUMN), implicits, itemType));
     }
 
     public void checkPrototypeImplicits(JSONArray rows, String file, JSONArray hullItemRows, JSONArray kindImplicitRows) throws JSONException {
         Map<String, List<String>> kindImplicitIdsBySection = new HashMap<>();
-        ModCsv.forEach(orEmpty(kindImplicitRows), (index, row) -> kindImplicitIdsBySection.put(ModCsv.text(row, "section"),
+        ModCsv.forEach(kindImplicitRows, (index, row) -> kindImplicitIdsBySection.put(ModCsv.text(row, "section"),
                 CsvRows.entries(ModCsv.text(row, "implicits")).stream().map(String::trim).filter(ItemModifiers::isReference)
                         .map(entry -> ModifierReference.parse(entry).id()).toList()));
         Map<String, String> sectionsByBase = new HashMap<>();
-        ModCsv.forEach(orEmpty(hullItemRows), (index, row) -> {
+        ModCsv.forEach(hullItemRows, (index, row) -> {
             if (!"true".equalsIgnoreCase(ModCsv.text(row, "unique"))) {
                 sectionsByBase.put(ModCsv.text(row, "id"), ModCsv.text(row, "section"));
             }
         });
         Map<String, Integer> linesByBase = new HashMap<>();
         Map<String, String> basesByImplicit = new HashMap<>();
-        ModCsv.forEach(orEmpty(rows), (index, row) -> {
+        ModCsv.forEach(rows, (index, row) -> {
             int line = index + FIRST_DATA_LINE;
             String baseId = ModCsv.text(row, PrototypeImplicits.BASE_COLUMN);
             String section = sectionsByBase.get(baseId);

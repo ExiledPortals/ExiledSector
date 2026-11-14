@@ -27,7 +27,7 @@ public final class UniqueSubroutineRadii {
 
     public static void register(JSONArray rows) throws JSONException {
         Map<String, RadiusSize> sizes = new LinkedHashMap<>();
-        ModCsv.forEach(rows == null ? new JSONArray() : rows, (index, row) -> {
+        ModCsv.forEach(rows, (index, row) -> {
             ItemDefinition definition = ItemDefinitions.get(ModCsv.text(row, ID_COLUMN));
             String radiusText = ModCsv.text(row, RADIUS_COLUMN);
             if (definition == null || SubroutineKind.of(definition) != SubroutineKind.UNIQUE || radiusText.isEmpty()) {

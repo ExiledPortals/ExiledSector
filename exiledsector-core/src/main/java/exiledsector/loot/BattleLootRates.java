@@ -56,22 +56,16 @@ public final class BattleLootRates {
     public static void register(JSONArray rows) throws JSONException {
         Map<String, Rate> loaded = new LinkedHashMap<>();
         CsvRows csv = new CsvRows(DATA_PATH);
-        if (rows != null) {
-            ModCsv.forEach(rows, (index, row) -> {
-                String drop = ModCsv.text(row, DROP_COLUMN);
-                if (drop.isEmpty()) {
-                    return;
-                }
-                String curveText = ModCsv.text(row, "curve").toLowerCase(Locale.ROOT);
-                LootCurve curve = curveText.isEmpty() ? LootCurve.LINEAR : LootCurve.byIdOrNull(curveText);
-                if (curve == null) {
-                    csv.skipRow(drop, "unknown curve " + curveText + " (linear or diminishing)");
-                    return;
-                }
-                loaded.put(drop, new Rate(drop, csv.number(row, "per_100_dp", 0f, drop), curve, csv.number(row, "regular_share", 0f, drop),
-                        csv.number(row, "difficulty_scaling", 1f, drop)));
-            });
-        }
+        CsvRows.forEachIdRow(rows, DROP_COLUMN, (drop, row) -> {
+            String curveText = ModCsv.text(row, "curve").toLowerCase(Locale.ROOT);
+            LootCurve curve = curveText.isEmpty() ? LootCurve.LINEAR : LootCurve.byIdOrNull(curveText);
+            if (curve == null) {
+                csv.skipRow(drop, "unknown curve " + curveText + " (linear or diminishing)");
+                return;
+            }
+            loaded.put(drop, new Rate(drop, csv.number(row, "per_100_dp", 0f, drop), curve, csv.number(row, "regular_share", 0f, drop),
+                    csv.number(row, "difficulty_scaling", 1f, drop)));
+        });
         csv.report(LOG);
         RATES.set(Collections.unmodifiableMap(loaded));
     }

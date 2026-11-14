@@ -7,8 +7,8 @@ import exiledsector.charts.ChartIds;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.ChartVanillaLoot;
+import exiledsector.data.WeightedPick;
 import exiledsector.i18n.Translation;
-import exiledsector.items.WeightedPick;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 

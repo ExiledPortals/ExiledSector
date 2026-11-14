@@ -25,6 +25,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.RemnantSeededFleetManager;
 import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.data.WeightedPick;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.RunFactionDress;
@@ -38,7 +39,6 @@ import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.ChartFleetLoot;
 import exiledsector.charts.loot.ChartVanillaLoot;
 import exiledsector.charts.loot.DropType;
-import exiledsector.items.WeightedPick;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;

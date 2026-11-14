@@ -4,6 +4,8 @@ import com.fs.starfarer.api.Global;
 import exiledsector.ModCsv;
 import exiledsector.ModSettings;
 import exiledsector.compat.SalvageSiteCompat;
+import exiledsector.data.CsvRows;
+import exiledsector.data.WeightedPick;
 import exiledsector.skills.skilleffect.logistics.FoundItemQuantity;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -69,11 +71,7 @@ public final class ItemDrops {
 
     private static Map<String, Rule> parse(JSONArray rows, boolean otherMod) throws JSONException {
         Map<String, Rule> loaded = new HashMap<>();
-        ModCsv.forEach(rows, (index, row) -> {
-            String siteId = ModCsv.text(row, "site");
-            if (siteId.isEmpty()) {
-                return;
-            }
+        CsvRows.forEachIdRow(rows, "site", (siteId, row) -> {
             try {
                 List<Float> chances = new ArrayList<>();
                 for (String chanceText : row.optString("chances", "").split(";")) {

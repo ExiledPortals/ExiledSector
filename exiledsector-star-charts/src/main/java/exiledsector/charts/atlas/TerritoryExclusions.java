@@ -1,6 +1,7 @@
 package exiledsector.charts.atlas;
 
 import exiledsector.ModCsv;
+import exiledsector.data.CsvRows;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,14 +30,7 @@ public final class TerritoryExclusions {
 
     static Set<String> factionIds(JSONArray rows) throws JSONException {
         Set<String> factionIds = new LinkedHashSet<>();
-        if (rows != null) {
-            ModCsv.forEach(rows, (index, row) -> {
-                String factionId = ModCsv.text(row, FACTION_COLUMN);
-                if (!factionId.isEmpty()) {
-                    factionIds.add(factionId);
-                }
-            });
-        }
+        CsvRows.forEachIdRow(rows, FACTION_COLUMN, (factionId, row) -> factionIds.add(factionId));
         return factionIds;
     }
 

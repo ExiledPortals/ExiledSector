@@ -31,14 +31,14 @@ public final class WormholeAnchorDataRules implements ItemDataRules {
 
     @Override
     public List<ItemDataIntegrity.Violation> checkSeparately(Collection<String> definitionIds) throws IOException, JSONException {
-        JSONArray anchorRows = ItemDataIntegrity.orEmpty(ModCsv.rows("id", WormholeAnchorDefinitions.DATA_PATH));
+        JSONArray anchorRows = ModCsv.rows("id", WormholeAnchorDefinitions.DATA_PATH);
         return checkWormholeAnchors(anchorRows, SkillTree.getDeclaredNodes(), definitionIds);
     }
 
     public static List<ItemDataIntegrity.Violation> checkWormholeAnchors(JSONArray anchorRows, Map<String, SkillNode> treeNodes,
                                                                          Collection<String> otherDefinitionIds) throws JSONException {
         ItemDataIntegrity integrity = new ItemDataIntegrity();
-        checkAnchorRows(integrity, ItemDataIntegrity.orEmpty(anchorRows), treeNodes, otherDefinitionIds);
+        checkAnchorRows(integrity, anchorRows, treeNodes, otherDefinitionIds);
         return integrity.violations();
     }
 

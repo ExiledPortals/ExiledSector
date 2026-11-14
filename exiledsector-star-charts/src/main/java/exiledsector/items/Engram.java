@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import exiledsector.data.WeightedPick;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.modifiers.ModifierEffects;

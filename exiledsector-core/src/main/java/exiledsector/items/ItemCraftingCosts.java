@@ -2,6 +2,7 @@ package exiledsector.items;
 
 import exiledsector.ExiledSector;
 import exiledsector.ModCsv;
+import exiledsector.data.CsvRows;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,10 +30,9 @@ public final class ItemCraftingCosts {
 
     public static void register(JSONArray rows) throws JSONException {
         Map<String, Integer> loaded = new HashMap<>();
-        ModCsv.forEach(rows, (index, row) -> {
-            String itemId = ModCsv.text(row, "item");
+        CsvRows.forEachIdRow(rows, "item", (itemId, row) -> {
             String costText = ModCsv.text(row, "partsCost");
-            if (itemId.isEmpty() || costText.isEmpty()) {
+            if (costText.isEmpty()) {
                 return;
             }
             try {

@@ -37,17 +37,12 @@ public final class ScarTable {
     public static List<String> register(JSONArray rows) throws JSONException {
         Map<String, ScarRow> loaded = new LinkedHashMap<>();
         CsvRows csv = new CsvRows(PATH);
-        if (rows != null) {
-            ModCsv.forEach(rows, (index, row) -> {
-                String id = ModCsv.text(row, ID_COLUMN);
-                if (!id.isEmpty()) {
-                    ScarRow scar = parse(id, row, csv);
-                    if (scar != null) {
-                        loaded.put(id, scar);
-                    }
-                }
-            });
-        }
+        CsvRows.forEachIdRow(rows, ID_COLUMN, (id, row) -> {
+            ScarRow scar = parse(id, row, csv);
+            if (scar != null) {
+                loaded.put(id, scar);
+            }
+        });
         if (rows != null && !loaded.containsKey(FALLBACK_SCAR_ID)) {
             csv.skipRow(FALLBACK_SCAR_ID, "missing; it is the scar taken when no other fits");
         }

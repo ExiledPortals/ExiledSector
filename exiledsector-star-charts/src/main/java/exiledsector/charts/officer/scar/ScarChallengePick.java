@@ -30,14 +30,8 @@ public final class ScarChallengePick {
     public static List<String> register(JSONArray rows) throws JSONException {
         Map<String, List<String>> loaded = new LinkedHashMap<>();
         CsvRows csv = new CsvRows(FOCUS_PATH);
-        if (rows != null) {
-            ModCsv.forEach(rows, (index, row) -> {
-                String factionId = ModCsv.text(row, FACTION_COLUMN);
-                if (!factionId.isEmpty()) {
-                    loaded.put(factionId, strongestFirst(csv.weights(row, FOCUS_COLUMN, factionId, null)));
-                }
-            });
-        }
+        CsvRows.forEachIdRow(rows, FACTION_COLUMN,
+                (factionId, row) -> loaded.put(factionId, strongestFirst(csv.weights(row, FOCUS_COLUMN, factionId, null))));
         tagsByFaction = Map.copyOf(loaded);
         return csv.problems();
     }

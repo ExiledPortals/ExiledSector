@@ -3,6 +3,7 @@ package exiledsector.charts.officer.reward;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.BiomeModifiers;
 import exiledsector.charts.loot.ChartMaterials;
+import exiledsector.data.WeightedPick;
 import exiledsector.items.Engram;
 import exiledsector.items.Engrams;
 import exiledsector.items.GrantedModifiers;
@@ -11,7 +12,6 @@ import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemTypes;
-import exiledsector.items.WeightedPick;
 
 import java.util.ArrayList;
 import java.util.EnumMap;

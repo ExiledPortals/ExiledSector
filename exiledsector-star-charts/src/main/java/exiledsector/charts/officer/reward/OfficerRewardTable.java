@@ -49,32 +49,26 @@ public final class OfficerRewardTable {
         Map<RewardKind, Float> shares = new EnumMap<>(RewardKind.class);
         Map<String, Entry> items = new LinkedHashMap<>();
         CsvRows csv = new CsvRows(PATH);
-        if (rows != null) {
-            ModCsv.forEach(rows, (index, row) -> {
-                String id = ModCsv.text(row, ID_COLUMN);
-                if (id.isEmpty()) {
+        CsvRows.forEachIdRow(rows, ID_COLUMN, (id, row) -> {
+            String categoryText = ModCsv.text(row, "category");
+            if (categoryText.isEmpty()) {
+                RewardKind kind = RewardKind.byId(id);
+                if (kind == null) {
+                    csv.skipRow(id, "not a reward category");
                     return;
                 }
-                String categoryText = ModCsv.text(row, "category");
-                if (categoryText.isEmpty()) {
-                    RewardKind kind = RewardKind.byId(id);
-                    if (kind == null) {
-                        csv.skipRow(id, "not a reward category");
-                        return;
-                    }
-                    shares.put(kind, Math.max(0f, csv.number(row, "share", 0f, id)));
-                    return;
-                }
-                if (!CarriedItem.isSafeId(id)) {
-                    csv.skipRow(id, "id may only use letters, digits, '_', '.' and '-'");
-                    return;
-                }
-                Entry entry = entry(RewardKind.byId(categoryText), row, csv, id);
-                if (entry != null) {
-                    items.put(id, entry);
-                }
-            });
-        }
+                shares.put(kind, Math.max(0f, csv.number(row, "share", 0f, id)));
+                return;
+            }
+            if (!CarriedItem.isSafeId(id)) {
+                csv.skipRow(id, "id may only use letters, digits, '_', '.' and '-'");
+                return;
+            }
+            Entry entry = entry(RewardKind.byId(categoryText), row, csv, id);
+            if (entry != null) {
+                items.put(id, entry);
+            }
+        });
         csv.report(LOG);
         table = new Table(Collections.unmodifiableMap(shares), Collections.unmodifiableMap(items));
     }

@@ -8,10 +8,10 @@ import exiledsector.charts.content.ChartContentPlan.FleetRole;
 import exiledsector.charts.content.ChartContentPlan.PlannedFleet;
 import exiledsector.charts.content.ChartContentPlan.PlannedPoi;
 import exiledsector.charts.content.ChartContentPlan.PlannedStation;
-import exiledsector.items.WeightedPick;
 import exiledsector.Seeds;
 import exiledsector.charts.anomaly.ContentPlacer;
 import exiledsector.charts.anomaly.ContentPlanSite;
+import exiledsector.data.WeightedPick;
 
 import java.util.ArrayList;
 import java.util.List;

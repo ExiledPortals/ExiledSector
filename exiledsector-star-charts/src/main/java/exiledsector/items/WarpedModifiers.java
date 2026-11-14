@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import exiledsector.data.WeightedPick;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierEffects;

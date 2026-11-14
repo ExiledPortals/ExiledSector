@@ -5,7 +5,7 @@ import exiledsector.charts.table.BuiltInTable;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.data.CsvRows;
 import exiledsector.ModCsv;
-import exiledsector.items.WeightedPick;
+import exiledsector.data.WeightedPick;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;

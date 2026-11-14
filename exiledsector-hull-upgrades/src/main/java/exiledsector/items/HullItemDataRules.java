@@ -40,9 +40,9 @@ public final class HullItemDataRules implements ItemDataRules {
 
     @Override
     public void checkItemFiles(ItemDataIntegrity integrity) throws IOException, JSONException {
-        integrity.checkDefinitions(ItemDataIntegrity.orEmpty(ModCsv.rows("id", HullItem.definitionsPath())), HullItem.definitionsPath(),
+        integrity.checkDefinitions(ModCsv.rows("id", HullItem.definitionsPath()), HullItem.definitionsPath(),
                 ItemType.HULL_ITEM);
-        integrity.checkKindImplicits(ItemDataIntegrity.orEmpty(ModCsv.rows("section", ItemImplicits.dataPath())), ItemImplicits.dataPath());
+        integrity.checkKindImplicits(ModCsv.rows("section", ItemImplicits.dataPath()), ItemImplicits.dataPath());
         integrity.checkCorruptionPool(ModCsv.rows(CorruptionImplicitPool.IMPLICIT_COLUMN, ItemImplicits.corruptionDataPath()),
                 ItemImplicits.corruptionDataPath(), "the hull item corruption pool", ItemType.HULL_ITEM);
         integrity.checkPrototypeImplicits(ModCsv.rows(PrototypeImplicits.BASE_COLUMN, PrototypeImplicits.dataPath()), PrototypeImplicits.dataPath(),

@@ -31,7 +31,7 @@ import exiledsector.charts.anomaly.StarRule;
 import exiledsector.charts.anomaly.StellarFlares;
 import exiledsector.charts.table.BuiltInTable;
 import exiledsector.compat.UnknownSkiesCompat;
-import exiledsector.items.WeightedPick;
+import exiledsector.data.WeightedPick;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;

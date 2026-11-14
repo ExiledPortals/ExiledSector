@@ -1,18 +1,15 @@
 package exiledsector.items;
 
-import com.fs.starfarer.api.Global;
+import exiledsector.ModJson;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-
-import static exiledsector.ExiledSector.MOD_ID;
 
 public final class StarChartNames {
 
@@ -23,11 +20,7 @@ public final class StarChartNames {
     }
 
     public static void load() {
-        try {
-            register(Global.getSettings().getMergedJSONForMod(DATA_PATH, MOD_ID));
-        } catch (IOException | JSONException | RuntimeException e) {
-            LOG.error("Failed to load " + DATA_PATH, e);
-        }
+        ModJson.load(DATA_PATH, true, LOG, StarChartNames::register);
     }
 
     public static void register(JSONObject wordsJson) throws JSONException {

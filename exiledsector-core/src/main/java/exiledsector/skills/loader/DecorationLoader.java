@@ -42,16 +42,12 @@ public final class DecorationLoader {
             return Decorations.NONE;
         }
         List<Decoration> decorations = new ArrayList<>();
-        for (int i = 0; i < entries.length(); i++) {
-            try {
-                Decoration decoration = parseDecoration(entries.getJSONObject(i), isVolume);
-                if (decoration != null) {
-                    decorations.add(decoration);
-                }
-            } catch (JSONException e) {
-                Logger.getLogger(DecorationLoader.class).error("Skipping decoration " + TreeJson.entryLabel(entries, i) + " in " + sourceName + ": " + e.getMessage());
+        TreeJson.forEachEntry(entries, "decoration", sourceName, decorationJson -> {
+            Decoration decoration = parseDecoration(decorationJson, isVolume);
+            if (decoration != null) {
+                decorations.add(decoration);
             }
-        }
+        });
         return new Decorations(decorations);
     }
 

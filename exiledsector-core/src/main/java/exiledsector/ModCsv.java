@@ -27,6 +27,16 @@ public final class ModCsv {
         return Global.getSettings().getMergedSpreadsheetDataForMod(idColumn, path, ExiledSector.MOD_ID);
     }
 
+    public static JSONArray rowsOrEmpty(String idColumn, String path, Logger log) {
+        try {
+            JSONArray rows = rows(idColumn, path);
+            return rows == null ? new JSONArray() : rows;
+        } catch (IOException | JSONException e) {
+            log.error("Failed to load " + path, e);
+            return new JSONArray();
+        }
+    }
+
     public static void load(String idColumn, String path, Logger log, RowsHandler handler) {
         try {
             handler.accept(rows(idColumn, path));
@@ -36,6 +46,9 @@ public final class ModCsv {
     }
 
     public static void forEach(JSONArray rows, RowHandler handler) throws JSONException {
+        if (rows == null) {
+            return;
+        }
         for (int i = 0; i < rows.length(); i++) {
             handler.accept(i, rows.getJSONObject(i));
         }

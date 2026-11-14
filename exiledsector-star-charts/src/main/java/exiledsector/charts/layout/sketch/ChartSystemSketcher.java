@@ -16,7 +16,7 @@ import exiledsector.charts.layout.sketch.ChartSystemSketch.Belt;
 import exiledsector.charts.layout.sketch.ChartSystemSketch.Body;
 import exiledsector.charts.anomaly.StarRule;
 import exiledsector.Seeds;
-import exiledsector.items.WeightedPick;
+import exiledsector.data.WeightedPick;
 
 import java.util.ArrayList;
 import java.util.Collection;

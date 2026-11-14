@@ -15,13 +15,13 @@ import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.data.CsvRows;
 import exiledsector.ModCsv;
+import exiledsector.data.WeightedPick;
 import exiledsector.items.CraftingMaterialFamilies;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemTypes;
-import exiledsector.items.WeightedPick;
 import exiledsector.loot.LootSources;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -152,38 +152,36 @@ public final class ChartDrops {
     public static void register(JSONArray rows) throws JSONException {
         Map<Source, Rule> loaded = new EnumMap<>(Source.class);
         CsvRows csv = new CsvRows(PATH);
-        if (rows != null) {
-            ModCsv.forEach(rows, (index, row) -> {
-                String sourceText = ModCsv.text(row, SOURCE_COLUMN);
-                if (sourceText.isEmpty()) {
-                    return;
-                }
-                String rowLabel = "row " + (index + 1);
-                Source source = Source.byId(sourceText.toLowerCase(Locale.ROOT));
-                if (source == null) {
-                    csv.skipRow(rowLabel, "unknown source " + sourceText);
-                    return;
-                }
-                float craftingItemChance = csv.number(row, "crafting_item_chance", 0f, sourceText);
-                if (craftingItemChance > 0f && !source.insideSystem()) {
-                    csv.problem(rowLabel, "crafting_item_chance", sourceText + " is outside a chart system, where chart crafting items never drop");
-                    craftingItemChance = 0f;
-                }
-                float catalystChance = csv.number(row, "catalyst_chance", 0f, sourceText);
-                if (catalystChance > 0f && !source.insideSystem()) {
-                    csv.problem(rowLabel, "catalyst_chance", sourceText + " is outside a chart system, where Atlas Catalysts never drop");
-                    catalystChance = 0f;
-                }
-                List<Float> tierWeights = new ArrayList<>();
-                for (String column : TIER_OFFSET_COLUMNS) {
-                    tierWeights.add(csv.number(row, column, 0f, sourceText));
-                }
-                loaded.put(source, new Rule(csv.number(row, "chance", 0f, sourceText), csv.number(row, "extra_chance", 0f, sourceText),
-                        tierWeights, craftingItemChance, catalystChance,
-                        csv.number(row, "min_defeated_dp", 0f, sourceText), csv.number(row, "defeated_dp_per_tier", 0f, sourceText),
-                        csv.integer(row, "max_tier", ChartTiers.HIGHEST_TIER, sourceText)));
-            });
-        }
+        ModCsv.forEach(rows, (index, row) -> {
+            String sourceText = ModCsv.text(row, SOURCE_COLUMN);
+            if (sourceText.isEmpty()) {
+                return;
+            }
+            String rowLabel = "row " + (index + 1);
+            Source source = Source.byId(sourceText.toLowerCase(Locale.ROOT));
+            if (source == null) {
+                csv.skipRow(rowLabel, "unknown source " + sourceText);
+                return;
+            }
+            float craftingItemChance = csv.number(row, "crafting_item_chance", 0f, sourceText);
+            if (craftingItemChance > 0f && !source.insideSystem()) {
+                csv.problem(rowLabel, "crafting_item_chance", sourceText + " is outside a chart system, where chart crafting items never drop");
+                craftingItemChance = 0f;
+            }
+            float catalystChance = csv.number(row, "catalyst_chance", 0f, sourceText);
+            if (catalystChance > 0f && !source.insideSystem()) {
+                csv.problem(rowLabel, "catalyst_chance", sourceText + " is outside a chart system, where Atlas Catalysts never drop");
+                catalystChance = 0f;
+            }
+            List<Float> tierWeights = new ArrayList<>();
+            for (String column : TIER_OFFSET_COLUMNS) {
+                tierWeights.add(csv.number(row, column, 0f, sourceText));
+            }
+            loaded.put(source, new Rule(csv.number(row, "chance", 0f, sourceText), csv.number(row, "extra_chance", 0f, sourceText),
+                    tierWeights, craftingItemChance, catalystChance,
+                    csv.number(row, "min_defeated_dp", 0f, sourceText), csv.number(row, "defeated_dp_per_tier", 0f, sourceText),
+                    csv.integer(row, "max_tier", ChartTiers.HIGHEST_TIER, sourceText)));
+        });
         csv.report(LOG);
         rules = Map.copyOf(loaded);
     }

@@ -2,7 +2,7 @@ package exiledsector.ui.atlas;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import exiledsector.Seeds;
-import exiledsector.items.WeightedPick;
+import exiledsector.data.WeightedPick;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.charts.atlas.AtlasAmbience;
 import exiledsector.charts.atlas.AtlasCell;

@@ -1,4 +1,4 @@
-package exiledsector.items;
+package exiledsector.data;
 
 import org.junit.jupiter.api.Test;
 

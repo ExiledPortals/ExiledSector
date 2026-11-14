@@ -1,59 +1,42 @@
 package exiledsector.items;
 
 import exiledsector.ExiledSector;
-import exiledsector.ModCsv;
+import exiledsector.data.IdAliases;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 public final class MaterialIdAliases {
 
     static final String DATA_FILE = "material_id_aliases.csv";
-    private static final String ALIAS_COLUMN = "alias";
-    private static final Logger LOG = Logger.getLogger(MaterialIdAliases.class);
-    private static final AtomicReference<Map<String, String>> CURRENT_IDS_BY_ALIAS = new AtomicReference<>(Map.of());
+    private static final IdAliases ALIASES = new IdAliases(ExiledSector.configPath(DATA_FILE), "alias", "id", Logger.getLogger(MaterialIdAliases.class));
 
     private MaterialIdAliases() {
     }
 
     public static String dataPath() {
-        return ExiledSector.configPath(DATA_FILE);
+        return ALIASES.path();
     }
 
     public static void load() {
-        ModCsv.load(ALIAS_COLUMN, dataPath(), LOG, MaterialIdAliases::register);
+        ALIASES.load();
     }
 
     public static void register(JSONArray rows) throws JSONException {
-        Map<String, String> loaded = new LinkedHashMap<>();
-        if (rows != null) {
-            ModCsv.forEach(rows, (index, row) -> {
-                String alias = ModCsv.text(row, "alias");
-                String currentId = ModCsv.text(row, "id");
-                if (alias.isEmpty() || currentId.isEmpty()) {
-                    return;
-                }
-                if (loaded.putIfAbsent(alias, currentId) != null) {
-                    LOG.error("Skipping row " + (index + 1) + " of " + dataPath() + ": " + alias + " is listed more than once");
-                }
-            });
-        }
-        CURRENT_IDS_BY_ALIAS.set(Map.copyOf(loaded));
+        ALIASES.register(rows);
     }
 
     public static void clear() {
-        CURRENT_IDS_BY_ALIAS.set(Map.of());
+        ALIASES.clear();
     }
 
     public static Map<String, String> currentIdsByAlias() {
-        return CURRENT_IDS_BY_ALIAS.get();
+        return ALIASES.currentIdsByAlias();
     }
 
     public static String currentId(String itemId) {
-        return itemId == null ? null : CURRENT_IDS_BY_ALIAS.get().getOrDefault(itemId, itemId);
+        return ALIASES.currentId(itemId);
     }
 }

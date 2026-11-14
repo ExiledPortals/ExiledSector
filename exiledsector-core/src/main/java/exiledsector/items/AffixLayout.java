@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import exiledsector.data.WeightedPick;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
@@ -7,6 +8,7 @@ import exiledsector.modifiers.TierRange;
 import exiledsector.skills.tags.TagWeights;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -79,28 +81,17 @@ public final class AffixLayout {
             return rolledModifierCount(limits, roll);
         }
         List<Float> chances = limits.modifierCountChances();
-        float[] weights = new float[limits.maxModifiers()];
+        List<Float> weights = new ArrayList<>(Collections.nCopies(limits.maxModifiers(), 0f));
         float remainingChance = 1f;
         for (int index = 0; index < chances.size(); index++) {
-            weights[index] = chances.get(index);
+            weights.set(index, chances.get(index));
             remainingChance -= chances.get(index);
         }
-        weights[limits.maxModifiers() - 1] = Math.max(0f, remainingChance);
-        float totalWeight = 0f;
-        for (int index = 0; index < weights.length; index++) {
-            if (index + 1 > limits.commonMaxModifiers()) {
-                weights[index] *= Math.max(0f, rarity);
-            }
-            totalWeight += weights[index];
+        weights.set(limits.maxModifiers() - 1, Math.max(0f, remainingChance));
+        for (int index = limits.commonMaxModifiers(); index < weights.size(); index++) {
+            weights.set(index, weights.get(index) * Math.max(0f, rarity));
         }
-        float target = roll * totalWeight;
-        for (int index = 0; index < weights.length; index++) {
-            target -= weights[index];
-            if (target < 0f) {
-                return index + 1;
-            }
-        }
-        return limits.maxModifiers();
+        return WeightedPick.index(weights, Float::doubleValue, roll) + 1;
     }
 
     public static int prefixCount(int modifierCount, boolean morePrefixes) {

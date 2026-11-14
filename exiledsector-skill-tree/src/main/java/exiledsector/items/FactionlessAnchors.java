@@ -3,6 +3,7 @@ package exiledsector.items;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.ModCsv;
 import exiledsector.compat.NexerelinCompat;
+import exiledsector.data.CsvRows;
 import exiledsector.skills.npc.NpcFactionVolumes;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -34,18 +35,14 @@ public final class FactionlessAnchors {
 
     public static void register(JSONArray rows) throws JSONException {
         Map<String, Float> chancesBySite = new HashMap<>();
-        ModCsv.forEach(rows, (index, row) -> {
+        CsvRows.forEachRow(rows, DATA_PATH, LOG, (index, row) -> {
             String siteId = ModCsv.text(row, SITE_COLUMN);
             String chanceText = ModCsv.text(row, CHANCE_COLUMN);
-            try {
-                float chance = Float.parseFloat(chanceText);
-                if (siteId.isEmpty() || !(chance >= 0f) || Float.isInfinite(chance)) {
-                    throw new NumberFormatException(chanceText);
-                }
-                chancesBySite.put(siteId, chance);
-            } catch (NumberFormatException e) {
-                LOG.error("Skipping row " + (index + 1) + " of " + DATA_PATH + ": bad site or chance '" + chanceText + "'");
+            float chance = CsvRows.numberOrNaN(chanceText);
+            if (siteId.isEmpty() || !(chance >= 0f) || Float.isInfinite(chance)) {
+                throw new IllegalArgumentException("bad site or chance '" + chanceText + "'");
             }
+            chancesBySite.put(siteId, chance);
         });
         CHANCES_BY_SITE.set(Map.copyOf(chancesBySite));
     }

@@ -2,8 +2,8 @@ package exiledsector.items;
 
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierSlot;
-import com.fs.starfarer.api.Global;
 import exiledsector.ExiledSector;
+import exiledsector.ModJson;
 import exiledsector.Seeds;
 import exiledsector.i18n.Message;
 import exiledsector.i18n.Translation;
@@ -12,7 +12,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -47,11 +46,7 @@ public final class ItemNames {
     }
 
     public static void load() {
-        try {
-            registerWords(Global.getSettings().getMergedJSONForMod(namesPath(), ExiledSector.MOD_ID));
-        } catch (IOException | JSONException e) {
-            LOG.error("Failed to load " + namesPath(), e);
-        }
+        ModJson.load(namesPath(), true, LOG, ItemNames::registerWords);
     }
 
     public static void useTypeWords(ItemType type, NameWords typeWords) {

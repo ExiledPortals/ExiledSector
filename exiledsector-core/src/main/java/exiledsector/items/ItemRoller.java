@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import exiledsector.Seeds;
+import exiledsector.data.WeightedPick;
 import exiledsector.modifiers.TierRange;
 import exiledsector.skills.tags.TagWeights;
 

@@ -31,22 +31,20 @@ public final class EffectAliases {
 
     public static void register(JSONArray rows) throws JSONException {
         Map<String, String> loaded = new HashMap<>();
-        if (rows != null) {
-            ModCsv.forEach(rows, (index, row) -> {
-                String alias = ModCsv.text(row, ALIAS_COLUMN);
-                String currentName = ModCsv.text(row, EFFECT_COLUMN);
-                if (alias.isEmpty() || currentName.isEmpty()) {
-                    return;
-                }
-                if (!SkillEffectRegistry.contains(currentName)) {
-                    LOG.error("Skipping row " + (index + 1) + " of " + dataPath() + ": " + currentName + " is not a skill effect");
-                } else if (SkillEffectRegistry.contains(alias)) {
-                    LOG.warn("Skipping row " + (index + 1) + " of " + dataPath() + ": " + alias + " is still a skill effect of its own");
-                } else {
-                    loaded.put(alias, currentName);
-                }
-            });
-        }
+        ModCsv.forEach(rows, (index, row) -> {
+            String alias = ModCsv.text(row, ALIAS_COLUMN);
+            String currentName = ModCsv.text(row, EFFECT_COLUMN);
+            if (alias.isEmpty() || currentName.isEmpty()) {
+                return;
+            }
+            if (!SkillEffectRegistry.contains(currentName)) {
+                LOG.error("Skipping row " + (index + 1) + " of " + dataPath() + ": " + currentName + " is not a skill effect");
+            } else if (SkillEffectRegistry.contains(alias)) {
+                LOG.warn("Skipping row " + (index + 1) + " of " + dataPath() + ": " + alias + " is still a skill effect of its own");
+            } else {
+                loaded.put(alias, currentName);
+            }
+        });
         CURRENT_NAMES_BY_ALIAS.set(Map.copyOf(loaded));
     }
 

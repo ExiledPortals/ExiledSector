@@ -2,6 +2,7 @@ package exiledsector.items;
 
 import exiledsector.ExiledSector;
 import exiledsector.ModCsv;
+import exiledsector.data.CsvRows;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,15 +37,14 @@ public final class MarketHullItems {
 
     public static void register(JSONArray rows) throws JSONException {
         Map<String, CountRange> ranges = new LinkedHashMap<>();
-        ModCsv.forEach(rows == null ? new JSONArray() : rows, (index, row) -> {
+        CsvRows.forEachRow(rows, DATA_PATH, LOG, (index, row) -> {
             String submarketId = ModCsv.text(row, SUBMARKET_COLUMN);
             int min = wholeNumber(ModCsv.text(row, MIN_COUNT_COLUMN));
             int max = wholeNumber(ModCsv.text(row, MAX_COUNT_COLUMN));
             if (submarketId.isEmpty() || min < 0 || max < min) {
-                LOG.error("Skipping row " + (index + 1) + " of " + DATA_PATH + ": needs a submarket and counts with 0 <= min_count <= max_count");
-            } else {
-                ranges.put(submarketId, new CountRange(min, max));
+                throw new IllegalArgumentException("needs a submarket and counts with 0 <= min_count <= max_count");
             }
+            ranges.put(submarketId, new CountRange(min, max));
         });
         RANGES_BY_SUBMARKET.set(Collections.unmodifiableMap(ranges));
     }

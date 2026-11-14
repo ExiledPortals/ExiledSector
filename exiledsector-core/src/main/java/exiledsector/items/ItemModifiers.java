@@ -88,7 +88,7 @@ public final class ItemModifiers {
     }
 
     public static void registerPart(ModifierScope scope, JSONArray rows, String sourcePath) throws JSONException {
-        Catalogue part = catalogueOf(rows == null ? new JSONArray() : rows, sourcePath, scopes -> scopes.equals(Set.of(scope)),
+        Catalogue part = catalogueOf(rows, sourcePath, scopes -> scopes.equals(Set.of(scope)),
                 SHIP_ITEM_PART.get().modifiersById().keySet());
         synchronized (PARTS_BY_SCOPE) {
             PARTS_BY_SCOPE.put(scope, part);
