@@ -763,7 +763,7 @@ its share of the battle drops planned apart (`BattleItemDrops`). Rerolling the m
 ### Crewed and automated ships
 
 A ship is automated when vanilla's `Misc.isAutomated` would say so: the `automated` hullmod or the `automated` tag
-on its variant or hull spec (`ShipProfile.automated`). Crew Quarters needs `req_crewed`, so an automated ship can't
+on its variant or hull spec (`ShipProfile.automated`). The Crew section needs `req_crewed`, so an automated ship can't
 unlock it, and one that already did keeps it inactive until it is locked again.
 
 A hull item's `crew` column is `crewed`, `automated` or blank. `HullItem.requirementTag` turns it into `req_crewed`

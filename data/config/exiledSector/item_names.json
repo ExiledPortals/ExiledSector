@@ -11,8 +11,8 @@
 	},
 	"specialist_crew": {
 		"style": "codename",
-		"first": ["Synapse", "Cortex", "Myo", "Optic", "Neural", "Graft"],
-		"second": ["Weave", "Mesh", "Suite", "Splice", "Array", "Lattice"]
+		"first": ["Synapse", "Cortex", "Myo", "Optic", "Neural", "Spinal"],
+		"second": ["Weave", "Mesh", "Lace", "Splice", "Graft", "Implant"]
 	},
 	"engine_room_drive": {
 		"style": "product",

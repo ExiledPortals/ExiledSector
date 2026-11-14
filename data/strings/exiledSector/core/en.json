@@ -317,7 +317,7 @@
     "socketable.unknown": "Unrecognised hull item",
     "section.type.subroutine": "Subroutine",
     "section.type.bridge": "Bridge",
-    "section.type.crew_quarters": "Crew Quarters",
+    "section.type.crew_quarters": "Crew",
     "section.type.engine_room": "Engine Room",
     "section.type.reactor": "Reactor",
     "section.type.armor_plating": "Armor Plating",
