@@ -3,16 +3,11 @@ package exiledsector.charts.content;
 import java.util.List;
 
 public record ChartContent(int tier, String factionId, String bossFleetId, ChartBossType bossType, int fleets, int pois, List<String> anomalies,
-                           String protectedFleetId, String bossFlagshipId) {
+                           String bossFlagshipId) {
 
     public ChartContent {
         anomalies = anomalies == null ? List.of() : List.copyOf(anomalies);
         bossType = bossType == null ? ChartBossType.FLEET : bossType;
-    }
-
-    public ChartContent(int tier, String factionId, String bossFleetId, ChartBossType bossType, int fleets, int pois, List<String> anomalies,
-                        String protectedFleetId) {
-        this(tier, factionId, bossFleetId, bossType, fleets, pois, anomalies, protectedFleetId, null);
     }
 
     public ChartContent(int tier, String factionId, String bossFleetId, ChartBossType bossType, int fleets, int pois, List<String> anomalies) {

@@ -2,7 +2,7 @@
 
 The Outer Reaches are frontier space the factions are fighting over. Each faction holds small territories that start at 4 to 10 systems, each guarded by a named officer who persists across the save. Every officer the player beats, and every fourth other chart boss, the atlas takes a turn: officers push into unclaimed space and into each other's territories, challenge neighbouring officers, and rise or fall in rank. Beating an officer lets the player pick one of three items that officer will carry the next time they are beaten.
 
-Status: built 2026-11-13. Started 2026-11-12. Inspired by the Nemesis system of Middle-earth: Shadow of Mordor and Shadow of War (named, persistent enemy officers who remember the player, rise in rank and fight each other); never use that name. Builds on `atlas.md`, `completed/anomalies/faction_skirmish.md` and `anomalies/overview.md`.
+Status: built 2026-11-13. Started 2026-11-12. Inspired by the Nemesis system of Middle-earth: Shadow of Mordor and Shadow of War (named, persistent enemy officers who remember the player, rise in rank and fight each other); never use that name. Builds on `atlas.md`, the Faction Skirmish plan (since replaced by `completed/anomalies/faction_skirmish_rework.md`) and `anomalies/overview.md`.
 
 ## Territories
 

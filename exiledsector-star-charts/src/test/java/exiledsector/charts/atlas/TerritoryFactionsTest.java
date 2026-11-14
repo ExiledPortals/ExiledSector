@@ -1,6 +1,5 @@
 package exiledsector.charts.atlas;
 
-import exiledsector.charts.anomaly.skirmish.SkirmishFactions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +17,7 @@ class TerritoryFactionsTest {
 
     @AfterEach
     void restoreNeutralFactions() {
-        SkirmishFactions.useForTests(Set.of());
+        TerritoryExclusions.useForTests(Set.of());
     }
 
     private static AtlasRegion region(String regionId, Map<String, Float> factionWeights) {
@@ -42,7 +41,7 @@ class TerritoryFactionsTest {
 
     @Test
     void independentsMercenariesThePlayerAndNeutralFactionsHoldNoTerritory() {
-        SkirmishFactions.useForTests(Set.of("derelict"));
+        TerritoryExclusions.useForTests(Set.of("derelict"));
 
         assertTrue(TerritoryFactions.canHoldTerritory("pirates"));
         assertFalse(TerritoryFactions.canHoldTerritory("independent"));
@@ -54,7 +53,7 @@ class TerritoryFactionsTest {
 
     @Test
     void theBoardDrawsOnEveryTerritoryFactionOfTheNormalPoolAndTheRegionPools() {
-        SkirmishFactions.useForTests(Set.of("derelict"));
+        TerritoryExclusions.useForTests(Set.of("derelict"));
         AtlasRules rules = rules(List.of(region(AtlasRegion.NORMAL, Map.of()), region("badlands", Map.of("luddic_path", 1f, "derelict", 1f))));
 
         assertEquals(Set.of("pirates", "hegemony", "luddic_path"), TerritoryFactions.boardFactions(rules).keySet());
@@ -63,7 +62,7 @@ class TerritoryFactionsTest {
 
     @Test
     void unclaimedSystemsAreIndependentOrMercenaryUnlessTheRegionHasOnlyNeutralFactions() {
-        SkirmishFactions.useForTests(Set.of("derelict"));
+        TerritoryExclusions.useForTests(Set.of("derelict"));
         AtlasRegion normal = region(AtlasRegion.NORMAL, Map.of());
         AtlasRegion graveyard = region("graveyard", Map.of("derelict", 1f));
         AtlasRules rules = rules(List.of(normal, graveyard));

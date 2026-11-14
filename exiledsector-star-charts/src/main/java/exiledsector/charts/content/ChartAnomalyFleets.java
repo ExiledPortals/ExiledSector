@@ -132,16 +132,8 @@ public final class ChartAnomalyFleets {
         ChartContentGenerator.armAgainstPlayer(fleet, boss, context == null ? ChartGenContext.none() : context, ChartTiers.clamp(tier));
     }
 
-    public static void joinPlayer(CampaignFleetAPI fleet, String allyFactionId) {
-        ChartContentGenerator.joinPlayer(fleet, allyFactionId);
-    }
-
     public static void revealBoss(CampaignFleetAPI boss) {
         ChartContentGenerator.revealBoss(boss);
-    }
-
-    public static String dressAllies(String factionId) {
-        return ChartContentGenerator.dressAlliesOf(factionId);
     }
 
     public static String dress(String runFactionId, RunFactionDress dress) {

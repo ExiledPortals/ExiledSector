@@ -78,13 +78,16 @@ class ModdedChartFactionsTest {
     void nexerelinReadsOurRunOnlyFactionsAsUnplayableAndOutOfDiplomacy() throws Exception {
         java.nio.file.Path folder = exiledsector.ProjectFiles.projectRoot().resolve(ModdedChartFactions.CONFIG_FOLDER);
         String listed = java.nio.file.Files.readString(folder.resolve("mod_factions.csv"));
-        for (String factionId : List.of(DormantFleets.FACTION_ID, RunFactionDress.ALLY_FACTION_ID)) {
+        for (String factionId : List.of(DormantFleets.FACTION_ID, RunFactionDress.ALLY_FACTION_ID, RunFactionDress.ATTACKER_FACTION_ID,
+                RunFactionDress.DEFENDER_FACTION_ID)) {
             org.junit.jupiter.api.Assertions.assertTrue(listed.lines().anyMatch(factionId::equals), factionId);
             String config = java.nio.file.Files.readString(folder.resolve(factionId + ".json")).replaceAll("\\s", "");
             for (String flag : List.of("\"playableFaction\":false", "\"noRandomizeRelations\":true", "\"noSyncRelations\":true",
                     "\"disableDiplomacy\":true")) {
                 org.junit.jupiter.api.Assertions.assertTrue(config.contains(flag), factionId + " " + flag);
             }
+            String faction = java.nio.file.Files.readString(exiledsector.ProjectFiles.projectRoot().resolve("data/world/factions/" + factionId + ".faction"));
+            org.junit.jupiter.api.Assertions.assertTrue(faction.replaceAll("\s", "").contains("\"showInIntelTab\":false"), factionId);
         }
     }
 
@@ -99,7 +102,8 @@ class ModdedChartFactionsTest {
     void ourRunOnlyFactionsAreListedForNexerelinButNeverTakenAsChartFactions() throws Exception {
         List<String> listed = new ArrayList<>(Files.readAllLines(ProjectFiles.projectRoot().resolve(ModdedChartFactions.MOD_FACTIONS_PATH)));
         assertEquals(ModdedChartFactions.FACTION_COLUMN, listed.remove(0).trim());
-        assertEquals(List.of(ConvoyRules.FACTION_ID, DormantFleets.FACTION_ID, RunFactionDress.ALLY_FACTION_ID), listed.stream().map(String::trim).toList());
+        assertEquals(List.of(ConvoyRules.FACTION_ID, DormantFleets.FACTION_ID, RunFactionDress.ALLY_FACTION_ID, RunFactionDress.ATTACKER_FACTION_ID,
+                RunFactionDress.DEFENDER_FACTION_ID), listed.stream().map(String::trim).toList());
         JSONArray rows = new JSONArray();
         for (String factionId : listed) {
             rows.put(row(factionId.trim()));

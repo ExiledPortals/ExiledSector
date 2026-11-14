@@ -1,5 +1,6 @@
 package exiledsector.charts.objective;
 
+import com.fs.starfarer.api.campaign.BattleAPI;
 import com.fs.starfarer.api.campaign.CampaignEventListener.FleetDespawnReason;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
@@ -7,6 +8,8 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.anomaly.skirmish.SkirmishObjective;
+import exiledsector.charts.anomaly.skirmish.SkirmishProgress;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.atlas.AtlasProgress;
@@ -35,32 +38,19 @@ public final class ChartObjectives {
         return run;
     }
 
-    public static boolean fleetGone(SectorAPI sector, CampaignFleetAPI fleet, FleetDespawnReason reason) {
+    public static boolean fleetGone(SectorAPI sector, CampaignFleetAPI fleet, FleetDespawnReason reason, Object param) {
         ChartRun run = trackedRun();
         if (run == null || fleet == null || !DEFEAT_REASONS.contains(reason) || !ChartIds.belongsToRun(fleet, run.runId())) {
             return false;
         }
-        if (fleet.getId() != null && fleet.getId().equals(run.protectedFleetId()) || run.protectedFleetId() != null && protectedFallen(sector, run)) {
-            lost(sector, run);
-            return true;
+        if (SkirmishObjective.tracks(run)) {
+            boolean inPlayerBattle = param instanceof BattleAPI battle && battle.isPlayerInvolved();
+            return deliverOutsideBattle(sector, afterSkirmishFall(sector, run, SkirmishObjective.fleetGone(sector, run, fleet, inPlayerBattle)));
         }
         if (!isBossFleet(run, fleet)) {
             return false;
         }
         completedOutsideBattle(sector, run);
-        return true;
-    }
-
-    private static boolean protectedFallen(SectorAPI sector, ChartRun run) {
-        StarSystemAPI system = sector.getStarSystem(run.systemId());
-        if (system == null) {
-            return false;
-        }
-        for (CampaignFleetAPI fleet : system.getFleets()) {
-            if (run.protectedFleetId().equals(fleet.getId())) {
-                return fleet.isDespawning() || fleet.isEmpty();
-            }
-        }
         return true;
     }
 
@@ -73,23 +63,18 @@ public final class ChartObjectives {
         if (system == null) {
             return false;
         }
+        if (SkirmishObjective.tracks(run)) {
+            return deliverOutsideBattle(sector, afterSkirmishFall(sector, run, SkirmishObjective.reconcile(sector, run, system)));
+        }
         boolean bossStanding = false;
-        boolean protectedStanding = false;
         for (CampaignFleetAPI fleet : system.getFleets()) {
             if (fleet.isDespawning() || fleet.isEmpty()) {
                 continue;
-            }
-            if (run.protectedFleetId() != null && run.protectedFleetId().equals(fleet.getId())) {
-                protectedStanding = true;
             }
             if (isBossFleet(run, fleet)) {
                 run.recordBossFlagship(flagshipIdOf(fleet));
                 bossStanding = holdsMember(fleet, run.bossFlagshipId());
             }
-        }
-        if (run.protectedFleetId() != null && !protectedStanding) {
-            lost(sector, run);
-            return true;
         }
         if (bossStanding) {
             return false;
@@ -126,29 +111,42 @@ public final class ChartObjectives {
         return false;
     }
 
-    private static void lost(SectorAPI sector, ChartRun run) {
-        if (run.markObjectiveLost()) {
-            updateIntel(sector, run);
-        }
-    }
-
     public static ItemDrops.SiteLoot bossFellInBattle(SectorAPI sector, CampaignFleetAPI sourceFleet, List<FleetMemberAPI> lostMembers) {
         ChartRun run = trackedRun();
+        if (run != null && SkirmishObjective.tracks(run)) {
+            SkirmishProgress progress = afterSkirmishFall(sector, run, SkirmishObjective.fellInBattle(sector, run, sourceFleet, lostMembers));
+            return progress.loot();
+        }
         if (run == null || sourceFleet == null || run.bossFlagshipId() == null || !isBossFleet(run, sourceFleet)
-                || lostMembers.stream().noneMatch(member -> run.bossFlagshipId().equals(member.getId()))
-                || run.protectedFleetId() != null && protectedFallen(sector, run)) {
+                || lostMembers.stream().noneMatch(member -> run.bossFlagshipId().equals(member.getId()))) {
             return ItemDrops.SiteLoot.NONE;
         }
         return completed(sector, run);
     }
 
     private static void completedOutsideBattle(SectorAPI sector, ChartRun run) {
-        ItemDrops.SiteLoot rewardLoot = completed(sector, run);
+        addToPlayerCargo(sector, completed(sector, run));
+    }
+
+    private static boolean deliverOutsideBattle(SectorAPI sector, SkirmishProgress progress) {
+        addToPlayerCargo(sector, progress.loot());
+        return progress.flagshipFell();
+    }
+
+    private static void addToPlayerCargo(SectorAPI sector, ItemDrops.SiteLoot loot) {
         CampaignFleetAPI playerFleet = sector.getPlayerFleet();
-        if (!rewardLoot.isEmpty() && playerFleet != null && playerFleet.getCargo() != null) {
-            ItemLootListener.addSiteLoot(playerFleet.getCargo(), rewardLoot);
+        if (!loot.isEmpty() && playerFleet != null && playerFleet.getCargo() != null) {
+            ItemLootListener.addSiteLoot(playerFleet.getCargo(), loot);
             LootTaken.report();
         }
+    }
+
+    private static SkirmishProgress afterSkirmishFall(SectorAPI sector, ChartRun run, SkirmishProgress progress) {
+        if (!progress.bothFallen() || !run.markObjectiveComplete()) {
+            return progress;
+        }
+        AtlasProgress.completed(sector, run, progress.beatenOfficerId());
+        return new SkirmishProgress(true, progress.loot().plus(rewarded(sector, run)), true, progress.beatenOfficerId());
     }
 
     private static ItemDrops.SiteLoot completed(SectorAPI sector, ChartRun run) {
@@ -157,6 +155,10 @@ public final class ChartObjectives {
         }
         ItemDrops.SiteLoot officerLoot = OfficerDefeat.bossDefeated(sector, run);
         AtlasProgress.completed(sector, run);
+        return rewarded(sector, run).plus(officerLoot);
+    }
+
+    private static ItemDrops.SiteLoot rewarded(SectorAPI sector, ChartRun run) {
         ItemDrops.SiteLoot rewardLoot = ItemDrops.SiteLoot.NONE;
         try {
             ChartRewards.Reward reward = ChartRewards.grant(sector, run);
@@ -171,7 +173,6 @@ public final class ChartObjectives {
         } catch (RuntimeException | LinkageError e) {
             LOG.error("[ExiledSector] Granting the Wormhole Gateway upgrade for run " + run.runId() + " failed", e);
         }
-        rewardLoot = rewardLoot.plus(officerLoot);
         updateIntel(sector, run);
         return rewardLoot;
     }

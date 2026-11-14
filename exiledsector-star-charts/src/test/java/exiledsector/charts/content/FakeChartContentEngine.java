@@ -58,7 +58,7 @@ public final class FakeChartContentEngine implements ChartContentEngine {
     public final List<CampaignFleetAPI> emptyFleetsCreated = new ArrayList<>();
     public final List<Flagship> flagships = new ArrayList<>();
     public final List<Flagship> coreShips = new ArrayList<>();
-    public String alliesFactionId = "allies";
+    public boolean runFactionsMissing;
     public String convoyFactionId = "convoy";
     public int fleetPoints;
     public boolean failSiteDrops;
@@ -191,7 +191,10 @@ public final class FakeChartContentEngine implements ChartContentEngine {
     @Override
     public String dress(String runFactionId, RunFactionDress dress) {
         dressedFactions.add(dress.likenessFactionId());
-        return RunFactionDress.ALLY_FACTION_ID.equals(runFactionId) ? alliesFactionId : convoyFactionId;
+        if (!RunFactionDress.SKIRMISH_FACTION_IDS.contains(runFactionId)) {
+            return convoyFactionId;
+        }
+        return runFactionsMissing ? null : runFactionId;
     }
 
     @Override

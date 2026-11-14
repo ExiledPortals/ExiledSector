@@ -1,7 +1,6 @@
 package exiledsector.charts.atlas;
 
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
-import exiledsector.charts.anomaly.skirmish.SkirmishFactions;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -19,7 +18,8 @@ public final class TerritoryFactions {
     }
 
     public static boolean canHoldTerritory(String factionId) {
-        return SkirmishFactions.takesSides(factionId) && !UNCLAIMED_FACTIONS.contains(factionId) && !Factions.PLAYER.equals(factionId);
+        return !TerritoryExclusions.excludes(factionId) && !UNCLAIMED_FACTIONS.contains(factionId)
+ && !Factions.PLAYER.equals(factionId);
     }
 
     public static String territoryId(String factionId, AtlasCell commandCentre) {

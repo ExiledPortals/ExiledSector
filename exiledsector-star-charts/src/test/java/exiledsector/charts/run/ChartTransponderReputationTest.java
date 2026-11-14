@@ -32,6 +32,23 @@ class ChartTransponderReputationTest {
         return fleet;
     }
 
+    private static CampaignFleetAPI skirmishFleet(String copyFactionId, String realFactionId) {
+        CampaignFleetAPI fleet = fleet(copyFactionId, true);
+        when(fleet.getMemoryWithoutUpdate().getString(ChartIds.REAL_FACTION_MEMORY_KEY)).thenReturn(realFactionId);
+        return fleet;
+    }
+
+    @Test
+    void fightingASkirmishCopyCostsReputationWithTheRealFactionBehindIt() {
+        List<CampaignFleetAPI> enemies = List.of(skirmishFleet(RunFactionDress.ATTACKER_FACTION_ID, "tritachyon"),
+                skirmishFleet(RunFactionDress.DEFENDER_FACTION_ID, "hegemony"));
+
+        assertEquals(Set.of("tritachyon", "hegemony"), ChartTransponderReputation.factionsToPenalise(enemies, true, NOBODY_HOSTILE));
+        assertEquals(Set.of("hegemony"), ChartTransponderReputation.factionsToPenalise(enemies, true, "tritachyon"::equals));
+        assertTrue(ChartTransponderReputation.factionsToPenalise(List.of(skirmishFleet(RunFactionDress.DEFENDER_FACTION_ID, "")), true,
+                NOBODY_HOSTILE).isEmpty());
+    }
+
     @Test
     void aTransponderOnBattleCostsEachNonHostileChartFactionOnce() {
         List<CampaignFleetAPI> enemies = List.of(fleet("hegemony", true), fleet("hegemony", true), fleet("tritachyon", true));

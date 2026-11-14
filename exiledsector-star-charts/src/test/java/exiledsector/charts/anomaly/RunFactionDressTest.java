@@ -17,21 +17,21 @@ import static org.mockito.Mockito.when;
 class RunFactionDressTest {
 
     @Test
-    void theAlliesTakeTheRealFactionsNameAndLookAndOnlyBefriendThePlayer() {
-        FactionAPI allies = mock(FactionAPI.class);
+    void aSkirmishCopyTakesTheRealFactionsNameAndLookAndIsHostileToThePlayer() {
+        FactionAPI copy = mock(FactionAPI.class);
         FactionAPI hegemony = mock(FactionAPI.class);
-        when(allies.getId()).thenReturn(RunFactionDress.ALLY_FACTION_ID);
+        when(copy.getId()).thenReturn(RunFactionDress.ATTACKER_FACTION_ID);
         when(hegemony.getDisplayName()).thenReturn("Hegemony");
         when(hegemony.getDisplayNameWithArticle()).thenReturn("the Hegemony");
         when(hegemony.getLogo()).thenReturn("logo");
 
-        RunFactionDress.alliesOf("hegemony").apply(allies, hegemony, List.of(hegemony));
+        RunFactionDress.hostileCopyOf("hegemony").apply(copy, hegemony, List.of(hegemony));
 
-        verify(allies).setDisplayNameOverride("Hegemony");
-        verify(allies).setDisplayNameWithArticleOverride("the Hegemony");
-        verify(allies).setFactionLogoOverride("logo");
-        verify(allies).setRelationship(Factions.PLAYER, RepLevel.FRIENDLY);
-        verify(allies, never()).setRelationship(anyString(), eq(RepLevel.NEUTRAL));
+        verify(copy).setDisplayNameOverride("Hegemony");
+        verify(copy).setDisplayNameWithArticleOverride("the Hegemony");
+        verify(copy).setFactionLogoOverride("logo");
+        verify(copy).setRelationship(Factions.PLAYER, RepLevel.HOSTILE);
+        verify(copy, never()).setRelationship(anyString(), eq(RepLevel.NEUTRAL));
     }
 
     @Test

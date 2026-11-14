@@ -103,26 +103,10 @@ class ChartCampaignPluginTest {
     }
 
     @Test
-    void cancelsRepFromFightingBesideChartAllies() {
-        try (MockSector mockSector = new MockSector()) {
-            placePlayer(mockSector, true);
-
-            for (RepActions action : ChartAllyReputation.ALLY_COMBAT_ACTIONS) {
-                for (Object actionObject : new Object[]{action, envelope(action)}) {
-                    PluginPick<ReputationActionResponsePlugin> pick = new ChartCampaignPlugin().pickReputationActionResponsePlugin(actionObject, Factions.PIRATES);
-
-                    assertEquals(CampaignPlugin.PickPriority.MOD_SPECIFIC, pick.priority);
-                    assertEquals(0f, pick.plugin.handlePlayerReputationAction(actionObject, Factions.PIRATES).delta);
-                }
-            }
-        }
-    }
-
-    @Test
-    void leavesAllyRepOutsideChartsAndOtherRepInsideThem() {
+    void realFactionsKeepTheirReputationInsideAndOutsideCharts() {
         try (MockSector mockSector = new MockSector()) {
             placePlayer(mockSector, false);
-            assertNull(new ChartCampaignPlugin().pickReputationActionResponsePlugin(envelope(RepActions.COMBAT_HELP_MAJOR), Factions.PIRATES));
+            assertNull(new ChartCampaignPlugin().pickReputationActionResponsePlugin(envelope(RepActions.COMBAT_NORMAL), Factions.PIRATES));
 
             placePlayer(mockSector, true);
             assertNull(new ChartCampaignPlugin().pickReputationActionResponsePlugin(envelope(RepActions.COMBAT_NORMAL), Factions.PIRATES));
@@ -131,14 +115,17 @@ class ChartCampaignPluginTest {
     }
 
     @Test
-    void neverChangesRepWithTheChartAllyFaction() {
+    void neverChangesRepWithTheRunFactionCopies() {
         try (MockSector mockSector = new MockSector()) {
-            placePlayer(mockSector, false);
+            placePlayer(mockSector, true);
 
-            PluginPick<ReputationActionResponsePlugin> pick = new ChartCampaignPlugin()
-                    .pickReputationActionResponsePlugin(envelope(RepActions.COMBAT_NORMAL), RunFactionDress.ALLY_FACTION_ID);
+            for (String copyId : RunFactionDress.SKIRMISH_FACTION_IDS) {
+                PluginPick<ReputationActionResponsePlugin> pick = new ChartCampaignPlugin()
+                        .pickReputationActionResponsePlugin(envelope(RepActions.COMBAT_NORMAL), copyId);
 
-            assertEquals(0f, pick.plugin.handlePlayerReputationAction(RepActions.COMBAT_NORMAL, RunFactionDress.ALLY_FACTION_ID).delta);
+                assertEquals(CampaignPlugin.PickPriority.MOD_SPECIFIC, pick.priority);
+                assertEquals(0f, pick.plugin.handlePlayerReputationAction(RepActions.COMBAT_NORMAL, copyId).delta);
+            }
         }
     }
 }

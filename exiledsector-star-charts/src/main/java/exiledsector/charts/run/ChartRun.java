@@ -45,7 +45,6 @@ public final class ChartRun {
     private int contentPois;
     private boolean objectiveComplete;
     private boolean objectiveLost;
-    private String protectedFleetId;
     private boolean rewardClaimed;
     private boolean bossUniqueGranted;
     private boolean bossLootGuaranteed;
@@ -159,7 +158,6 @@ public final class ChartRun {
         contentFleets = content.fleets();
         contentPois = content.pois();
         anomalies = join(content.anomalies());
-        protectedFleetId = content.protectedFleetId();
         objectiveComplete = false;
         objectiveLost = false;
         rewardClaimed = false;
@@ -253,10 +251,6 @@ public final class ChartRun {
 
     public boolean isObjectiveComplete() {
         return objectiveComplete;
-    }
-
-    public String protectedFleetId() {
-        return protectedFleetId;
     }
 
     public boolean isObjectiveLost() {

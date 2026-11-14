@@ -1121,7 +1121,7 @@ never reach a chart: their totals are an input of the atlas generator, rebuilt w
 Atlas Catalysts are special items listed in `atlas_catalysts.csv` (`AtlasCatalysts`) and used on a revealed atlas system.
 Most insert their anomaly as a player record through `AtlasAnomalies.canInsert` and `insert` (`AnomalyCatalystUse`), so
 an anomaly they add takes the system's own faction. Whether it fits is the anomaly's `insertVerdict` (its `fitsAt` and
-`holdsAt` by default; the Faction Skirmish needs an officer of another faction bordering the system). Redeployment Orders
+`holdsAt` by default). Redeployment Orders
 instead hand a claimed system, never a command centre, to a neighbouring territory of another faction, raced on the atlas
 seed, the system and its current owner so a reload never changes the pick (`RedeploymentCatalystUse`, `AtlasTerritoryTransfer`). A row with the `star` effect may insert a star anomaly through
 `AtlasAnomalies.canInsert` and `insert` with `forcingStar`, which skip only the insertable check, so it never replaces a star
@@ -1165,7 +1165,7 @@ the top once, with leftovers dismissed (`OfficerSeatRepair`). Each record in
 the rank's boss size and Fleet Strength, and a portrait no other officer on the board holds, from their faction or else
 the independents (`OfficerPortraits`). On a new or switched commission, that faction's officers hand their territories
 and items to officers of other factions (`CommissionHandover`), and battling a non-hostile faction's chart fleets with the
-transponder on costs vanilla's aggressive-combat reputation once per faction (`ChartTransponderReputation`).
+transponder on costs vanilla's aggressive-combat reputation once per real faction (`ChartTransponderReputation`).
 
 The atlas takes a turn when the player beats an officer, every fourth other chart boss and when an officer's fleet beats
 the player (`OfficerTurns`, from `ChartObjectives.completed` and `ChartContentListener`). `OfficerTurn` is a pure function
@@ -1296,21 +1296,21 @@ rolling the battle's loot, skipping unfought loot such as a convoy's delivery (`
 
 ### Faction Skirmish
 
-The atlas never rolls a skirmish itself. After each officer turn, every declared Push or Challenge between factions
-that take sides (`chart_skirmish_factions.csv` lists those that don't) puts a world record on the contested system: the
-pushed border system, or for a challenge the defender's free system nearest the challenger, removed once the intent is gone unless a run is open there (`SkirmishContests`, `SkirmishRecords`). The player
-picks a side before the wormhole opens, kept with the contest on the `AtlasRunNode` (`SkirmishJoin`). The defender always
-has a station, and the attacker matches the defender's ordinary fleets plus the attacking officer in their flagship as
-commander, who pushes on the station once the rest have fallen (`SkirmishPlanner` through `adjustPlan`, `SkirmishBattle`,
-`ChartSkirmishes`). The joined side is 30% weaker, drops nothing and flies as the run-only faction
-`exiledSector_skirmish_ally`, friendly to the player (`RunFactionDress`); per-fleet `$cfai_makeHostile_<faction>` flags set
-the sides against each other, and `ChartAllyReputation` cancels vanilla's ally help and friendly-fire reputation changes.
+The atlas never rolls a skirmish itself. After each officer turn, every declared Push or Challenge, same-faction challenges
+included, puts a world record on the contested system: the pushed border system, or for a challenge the defender's free
+system nearest the challenger, removed once the intent is gone unless a run is open there (`SkirmishContests`,
+`SkirmishRecords`). Both officers bring their flagship fleets at their own rank's boss size: the defender's holds at the
+station with the system's patrols, and the attacker's waits apart until a defender fleet falls, then moves on the station
+(`SkirmishPlanner`, `SkirmishBattle`, `SkirmishAdvance`). Both sides fly hidden run-only copies of their factions,
+`exiledSector_skirmish_attacker` and `exiledSector_skirmish_defender`, with the real faction's name and crest, hostile to
+each other and the player (`RunFactionDress`); transponder reputation goes to the real faction (`ChartTransponderReputation`).
 
-Siding with the attacker or staying out makes the station the boss, counted whoever destroys it; siding with the defender
-makes the attacking officer the boss and protects the station, whose loss loses the run (`ChartRun.objectiveLost`).
-Winning on the attacker's side settles the contest for the attacker (a completed system is never claimed), killing the officer on the defender's side counts as
-beating that officer, and staying out settles it on its abstract roll when the run closes (`FactionSkirmish`,
-`ContestOutcomes`). A decided challenge waits in `AtlasState` for the next turn; a failed run leaves the intent to that turn.
+The run completes once both flagships have fallen to anyone (`SkirmishObjective`, `SkirmishFlagships`). Each one the
+player destroys counts as beating that officer, so one run can beat both, and both sit out any turn taken while the run
+is open (`OfficerTurns.openRunOfficerIds`). The first flagship to fall loses the fight, the player beating both drops it,
+and leaving with both standing leaves it to the next turn; the fight settles before the system is completed, so a
+winning attacker keeps it (`FactionSkirmish.settle`, `ContestOutcomes`, `AtlasProgress`). A decided challenge waits in
+`AtlasState` for the next turn.
 
 ### Relay Network
 

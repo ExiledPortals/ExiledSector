@@ -8,34 +8,39 @@ import exiledsector.charts.officer.FlagshipCatalogue;
 import exiledsector.charts.officer.OfficerFleets;
 import exiledsector.charts.officer.OfficerStartingItems;
 import exiledsector.charts.officer.StartingItemRoll;
-import exiledsector.charts.officer.turn.Intent;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 
+import java.util.Set;
+
 public record TerritoryContext(String excludedFactionId, AtlasCell openRunCell, FlagshipCatalogue catalogue, StartingItemRoll startingItems,
-                               int openRunOfficerId) {
+                               Set<Integer> openRunOfficerIds) {
 
     public static final TerritoryContext NONE = new TerritoryContext(null, null, FlagshipCatalogue.NONE);
 
+    public TerritoryContext {
+        openRunOfficerIds = openRunOfficerIds == null ? Set.of() : Set.copyOf(openRunOfficerIds);
+    }
+
     public TerritoryContext(String excludedFactionId, AtlasCell openRunCell, FlagshipCatalogue catalogue) {
-        this(excludedFactionId, openRunCell, catalogue, StartingItemRoll.NONE, Intent.NO_OFFICER);
+        this(excludedFactionId, openRunCell, catalogue, StartingItemRoll.NONE, Set.of());
     }
 
     public static TerritoryContext current() {
         return new TerritoryContext(commissionFactionId(), openRunCellOrNull(), FactionFlagships.INSTANCE,
-                OfficerStartingItems.forSector(Global.getSector()), openRunOfficerIdOrNone());
+                OfficerStartingItems.forSector(Global.getSector()), openRunOfficerIdsOrNone());
     }
 
     public TerritoryContext withoutOpenRun() {
-        return new TerritoryContext(excludedFactionId, null, catalogue, startingItems, Intent.NO_OFFICER);
+        return new TerritoryContext(excludedFactionId, null, catalogue, startingItems, Set.of());
     }
 
-    public TerritoryContext withOpenRun(AtlasCell cell, int officerRecordId) {
-        return new TerritoryContext(excludedFactionId, cell, catalogue, startingItems, officerRecordId);
+    public TerritoryContext withOpenRun(AtlasCell cell, Set<Integer> officerRecordIds) {
+        return new TerritoryContext(excludedFactionId, cell, catalogue, startingItems, officerRecordIds);
     }
 
     public boolean takesPartInOpenRun(AtlasState state, AtlasOfficer officer) {
-        if (openRunOfficerId != Intent.NO_OFFICER && officer.recordId() == openRunOfficerId) {
+        if (openRunOfficerIds.contains(officer.recordId())) {
             return true;
         }
         return openRunCell != null && officer.isActive()
@@ -50,13 +55,12 @@ public record TerritoryContext(String excludedFactionId, AtlasCell openRunCell, 
         }
     }
 
-    private static int openRunOfficerIdOrNone() {
+    private static Set<Integer> openRunOfficerIdsOrNone() {
         try {
             ChartRun run = ChartRuns.currentOrNull();
-            Integer recordId = run == null ? null : OfficerFleets.fightingRecordIdOf(run.atlasNode());
-            return recordId == null ? Intent.NO_OFFICER : recordId;
+            return run == null ? Set.of() : OfficerFleets.fightingRecordIdsOf(run.atlasNode());
         } catch (RuntimeException e) {
-            return Intent.NO_OFFICER;
+            return Set.of();
         }
     }
 

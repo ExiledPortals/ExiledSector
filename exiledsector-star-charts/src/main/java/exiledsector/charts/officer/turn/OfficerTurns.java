@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class OfficerTurns {
@@ -37,7 +38,16 @@ public final class OfficerTurns {
     }
 
     public static TurnResult bossKilled(AtlasGenerator generator, AtlasState state, ChartRun run) {
-        return bossKilled(generator, state, run == null ? null : OfficerFleets.recordIdOf(run.atlasNode()), TerritoryContext.current());
+        return bossKilled(generator, state, run == null ? null : OfficerFleets.recordIdOf(run.atlasNode()));
+    }
+
+    public static TurnResult bossKilled(AtlasGenerator generator, AtlasState state, Integer beatenOfficerId) {
+        return bossKilled(generator, state, beatenOfficerId, TerritoryContext.current());
+    }
+
+    public static TurnResult officerBeatenInOpenRun(AtlasGenerator generator, AtlasState state, int beatenOfficerId) {
+        return state.officer(beatenOfficerId) == null ? null
+                : take(generator, state, TurnCause.officerDefeated(beatenOfficerId), TerritoryContext.current());
     }
 
     static TurnResult bossKilled(AtlasGenerator generator, AtlasState state, Integer officerRecordId, TerritoryContext context) {
@@ -96,8 +106,8 @@ public final class OfficerTurns {
                 ? CommissionHandover.handOver(generator, state, AtlasReach.visible(generator, state), context)
                 : List.of();
         AtlasCell openRunCell = context.openRunCell();
-        TurnSetup setup = new TurnSetup(OfficerTurnTables.rules(), OfficerRanks.all(), resolvers, openRunCell, openRunOfficerId(state, cause,
-                openRunCell, context.openRunOfficerId()), context.catalogue(), context.startingItems());
+        TurnSetup setup = new TurnSetup(OfficerTurnTables.rules(), OfficerRanks.all(), resolvers, openRunCell, openRunOfficerIds(state, cause,
+                openRunCell, context.openRunOfficerIds()), context.catalogue(), context.startingItems());
         TurnResult result = OfficerTurn.take(TurnTerrain.of(generator, state, openRunCell), state, cause, setup);
         OfficerPortraits.assign(state, context);
         if (!handovers.isEmpty()) {
@@ -124,12 +134,16 @@ public final class OfficerTurns {
         state.markOfficerTurnUnseen();
     }
 
-    static int openRunOfficerId(AtlasState state, TurnCause cause, AtlasCell openRunCell, int fightingOfficerId) {
+    static Set<Integer> openRunOfficerIds(AtlasState state, TurnCause cause, AtlasCell openRunCell, Set<Integer> fightingOfficerIds) {
+        Set<Integer> recordIds = new TreeSet<>(fightingOfficerIds);
         if (cause.kind() == TurnCause.Kind.OFFICER_DEFEATED || cause.kind() == TurnCause.Kind.OFFICER_VICTORIOUS) {
-            return cause.officerRecordId();
+            recordIds.add(cause.officerRecordId());
         }
         AtlasOfficer holder = openRunCell == null ? null : state.officerAt(openRunCell);
-        return holder == null ? fightingOfficerId : holder.recordId();
+        if (holder != null) {
+            recordIds.add(holder.recordId());
+        }
+        return recordIds;
     }
 
     public static List<Intent> declaredIntents(AtlasState state) {

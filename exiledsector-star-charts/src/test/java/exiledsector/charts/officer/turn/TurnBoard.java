@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
@@ -76,11 +77,15 @@ final class TurnBoard {
     }
 
     static TurnSetup setup(TurnRules rules, IntentResolvers resolvers, AtlasCell openRunCell, int openRunOfficerId) {
-        return new TurnSetup(rules, OfficerRanks.all(), resolvers, openRunCell, openRunOfficerId, FlagshipCatalogue.NONE);
+        return setup(rules, resolvers, openRunCell, openRunOfficerId == Intent.NO_OFFICER ? Set.of() : Set.of(openRunOfficerId));
+    }
+
+    static TurnSetup setup(TurnRules rules, IntentResolvers resolvers, AtlasCell openRunCell, Set<Integer> openRunOfficerIds) {
+        return new TurnSetup(rules, OfficerRanks.all(), resolvers, openRunCell, openRunOfficerIds, FlagshipCatalogue.NONE);
     }
 
     static TurnSetup setup(TurnRules rules, StartingItemRoll startingItems) {
-        return new TurnSetup(rules, OfficerRanks.all(), IntentResolvers.ABSTRACT, null, Intent.NO_OFFICER, FlagshipCatalogue.NONE, startingItems);
+        return new TurnSetup(rules, OfficerRanks.all(), IntentResolvers.ABSTRACT, null, Set.of(), FlagshipCatalogue.NONE, startingItems);
     }
 
     static TurnResult take(AtlasState state, TurnCause cause, TurnSetup setup) {

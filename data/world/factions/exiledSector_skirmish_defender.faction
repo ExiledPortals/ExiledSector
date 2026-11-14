@@ -1,0 +1,24 @@
+{
+	id:"exiledSector_skirmish_defender",
+	"color":[200,90,120,255],
+	"baseUIColor":[200,90,120,255],
+	"displayName":"Defending Forces",
+	"displayNameWithArticle":"the Defending Forces",
+	"displayNameIsOrAre":"are",
+	"logo":"graphics/factions/neutral.png",
+	"crest":"graphics/factions/crest_neutral.png",
+	"showInIntelTab":false,
+	"names":{
+	},
+	"portraits":{
+	},
+	"music":{
+		"theme":"music_none",
+		"market_neutral":"music_none",
+		"market_hostile":"music_none",
+		"market_friendly":"music_none",
+		"encounter_neutral":"music_none",
+		"encounter_hostile":"music_none",
+		"encounter_friendly":"music_none",
+	},
+}

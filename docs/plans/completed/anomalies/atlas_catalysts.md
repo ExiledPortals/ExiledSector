@@ -35,7 +35,7 @@ Each catalyst is one special item (a `special_items.csv` row, like the nanoswarm
 | Transit Orders | Flagship Orders | Powerful Boss |
 | Transit Orders | Redeployment Orders | none: changes the system's faction (see Redeployment Orders) |
 
-A row whose anomaly isn't insertable, is unknown or needs a missing mod is skipped with a load problem. Asteroid Storm, Magnetic Storm and Stellar Flares become `insertable` in `chart_anomalies.csv`, as `docs/plans/atlas.md` already allows. The Storm, Forge, Picket and Assault rows were built as a step of each anomaly's own plan (`storm_front.md`, `derelict_forge.md`, `listening_post.md`, `faction_skirmish.md`), and Flagship Orders with Powerful Boss (`docs/plans/atlas.md` step 19).
+A row whose anomaly isn't insertable, is unknown or needs a missing mod is skipped with a load problem. Asteroid Storm, Magnetic Storm and Stellar Flares become `insertable` in `chart_anomalies.csv`, as `docs/plans/atlas.md` already allows. The Storm, Forge, Picket and Assault rows were built as a step of each anomaly's own plan (`storm_front.md`, `derelict_forge.md`, `listening_post.md`, and the Faction Skirmish plan, whose Assault Orders `faction_skirmish_rework.md` removed), and Flagship Orders with Powerful Boss (`docs/plans/atlas.md` step 19).
 
 The tooltip names the category ("Atlas Catalyst"), says what it adds ("Adds a Spatial Breach to a system on the Outer Reach Atlas"), and carries the family's flavour, per `docs/tooltip_wording.md`.
 

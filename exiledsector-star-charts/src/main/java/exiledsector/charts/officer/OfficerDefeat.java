@@ -19,8 +19,10 @@ import exiledsector.ui.atlas.OfficerRewardPicker;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 public final class OfficerDefeat {
 
@@ -41,23 +43,38 @@ public final class OfficerDefeat {
 
     public static ItemDrops.SiteLoot bossDefeated(SectorAPI sector, ChartRun run) {
         try {
-            return defeated(sector, run);
+            AtlasState state = AtlasState.getIfCreated(sector);
+            announce(sector, pickUnchosenAtRandom(state, Set.of()));
+            AtlasOfficer officer = state == null || run == null ? null : OfficerFleets.officerOf(run.atlasNode());
+            return officer == null ? ItemDrops.SiteLoot.NONE : defeated(sector, state, run, officer, run.bossFlagshipId());
         } catch (RuntimeException | LinkageError e) {
             LOG.error("[ExiledSector] Recording the defeat of the Atlas officer of run " + (run == null ? null : run.runId()) + " failed", e);
             return ItemDrops.SiteLoot.NONE;
         }
     }
 
-    private static ItemDrops.SiteLoot defeated(SectorAPI sector, ChartRun run) {
-        AtlasState state = AtlasState.getIfCreated(sector);
-        announce(sector, pickUnchosenAtRandom(state));
-        AtlasOfficer officer = state == null || run == null ? null : OfficerFleets.officerOf(run.atlasNode());
-        if (officer == null) {
+    public static ItemDrops.SiteLoot officerBeaten(SectorAPI sector, ChartRun run, int officerRecordId, String flagshipId) {
+        try {
+            AtlasState state = AtlasState.getIfCreated(sector);
+            if (state == null || run == null) {
+                return ItemDrops.SiteLoot.NONE;
+            }
+            Set<Integer> otherFighters = new HashSet<>(OfficerFleets.fightingRecordIdsOf(run.atlasNode()));
+            otherFighters.remove(officerRecordId);
+            announce(sector, pickUnchosenAtRandom(state, otherFighters));
+            AtlasOfficer officer = state.officer(officerRecordId);
+            return officer == null ? ItemDrops.SiteLoot.NONE : defeated(sector, state, run, officer, flagshipId);
+        } catch (RuntimeException | LinkageError e) {
+            LOG.error("[ExiledSector] Recording the defeat of Atlas officer " + officerRecordId + " in run " + (run == null ? null : run.runId())
+                    + " failed", e);
             return ItemDrops.SiteLoot.NONE;
         }
+    }
+
+    private static ItemDrops.SiteLoot defeated(SectorAPI sector, AtlasState state, ChartRun run, AtlasOfficer officer, String flagshipId) {
         Random random = Seeds.random(SEED_PREFIX + run.runId() + "|" + officer.recordId());
         HullFacts hull = OfficerFleets.flagshipHull(officer);
-        String scarId = Scars.pickAfterBattle(run.bossFlagshipId(), officer.scars(), hull);
+        String scarId = Scars.pickAfterBattle(flagshipId, officer.scars(), hull);
         AtlasOfficer scarred = scarred(officer, scarId, dModFor(scarId, officer, hull, random));
         ItemDrops.SiteLoot carriedLoot = OfficerRewardDrop.roll(officer.carried(), run, random);
         List<CarriedItem> offers = OfficerRewardPool.offers(RewardContext.forRun(sector, run, officer.factionId()), random);
@@ -81,20 +98,20 @@ public final class OfficerDefeat {
 
     public static List<RandomPick> pickUnchosenAtRandom(SectorAPI sector) {
         try {
-            return pickUnchosenAtRandom(AtlasState.getIfCreated(sector));
+            return pickUnchosenAtRandom(AtlasState.getIfCreated(sector), Set.of());
         } catch (RuntimeException | LinkageError e) {
             LOG.error("[ExiledSector] Picking the unchosen Atlas officer rewards failed", e);
             return List.of();
         }
     }
 
-    static List<RandomPick> pickUnchosenAtRandom(AtlasState state) {
+    static List<RandomPick> pickUnchosenAtRandom(AtlasState state, Set<Integer> stillChoosingRecordIds) {
         List<RandomPick> randomPicks = new ArrayList<>();
         if (state == null) {
             return randomPicks;
         }
         for (AtlasOfficer officer : state.officers()) {
-            if (!officer.hasPendingChoice()) {
+            if (!officer.hasPendingChoice() || stillChoosingRecordIds.contains(officer.recordId())) {
                 continue;
             }
             Random random = Seeds.random(UNCHOSEN_SEED_PREFIX + officer.recordId() + "|" + String.join(",", officer.pendingChoice()));

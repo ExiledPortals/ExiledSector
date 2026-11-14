@@ -115,11 +115,9 @@ After Incursion's room choices, detailed 2026-11-14: each time the player wakes 
 
 The picks belong to the chart run they were made in. Neither the rewards nor the scars carry to the next stage of the chain or to any other Star Chart, and a scar given to an Atlas officer's flagship this way never joins their record.
 
-### Faction Skirmish (decided in outline)
+### Faction Skirmish (replaced)
 
-Today: a capture on the attacker's side, and a weaker allied side that drops nothing.
-
-When the run completes, the faction left standing trains one of the player's officers, picked in a dialog, with a new officer skill tied to Exiled Sector's own systems. It is a real Starsector skill (`skill_data.csv` and a `.skill` file), so it shows on the officer and travels with them. The user details the skill when this step starts.
+Replaced by the officer battles of `completed/anomalies/faction_skirmish_rework.md`: the skirmish has no reward of its own, and the player gains what beating its two officers brings.
 
 ### Remnant Nexus (decided)
 
@@ -150,8 +148,6 @@ The Coronal Hypershunt is its own reward, as are the Derelict Forge, the Pre-Col
 - Supply Convoy: which tag families each infused feedstock covers; the split above is a first guess.
 - Supply Convoy: whether the bench should also craft subroutines, whose lines have tags too.
 - Supply Convoy: whether infused feedstock should also be bought in the main sector, or stay chart-only.
-- Faction Skirmish: whether staying out earns the training (from the attacker, left standing once the station falls) or nothing.
-- Faction Skirmish: one skill for every faction, or one per faction; whether it counts against the officer's skill limit; what a run grants an officer who already has it.
 
 ## Build order
 
@@ -165,4 +161,4 @@ The Coronal Hypershunt is its own reward, as are the Derelict Forge, the Pre-Col
 8. [x] Spatial Breach warped items: a static 30% chance on every hull item dropped within the open breach, after the part pool check; the caches' depth rarity goes. Built: the pool check found no part-bound effect in a non-unique pool (the only `SlotItemEffect`-style line, targeted hull item scaling, sits on the unique Extended Warranty Contract), so `items.WarpedModifiers` draws from other sections' non-unique pools, leaving out reserved modifiers, any line with socketed item scaling, any effect the item's own section can roll and anything sharing an effect or clashing with the item's present modifiers, and adds the pick through `GrantedModifiers.addWarped`. `anomaly.breach.BreachLoot` rolls `BreachRules.WARPED_CHANCE` from the item seed and `SpatialBreach.shapeDrop` (a new `LootShaper` hook run by `StarChartLootSource.shapeDrop`) applies it while the player fleet is inside the open field (`BreachTerrainPlugin.holds`). Core `RolledModifier.warped` keeps the mark, saved by `ItemCodec` (flag letter `w` after the slot code); `Item.explicitModifier` resolves it from the catalogue and the tooltip shows it as `Style.WARPED`. Crafts treat it as an ordinary explicit: rerolls keep its range, removal or reforge loses it, the Immutable Nanoswarm can lock it, and later grants that would displace it are skipped. Tested in hull-upgrades `WarpedModifierTest`, mod `ItemCodecTest`, Star Charts `WarpedModifiersTest`, `GrantedModifiersTest`, `BreachLootTest` and `BreachTerrainPluginTest`.
 9. [x] The seven tag inhibitors, their `special_items.csv` rows, icons (placeholders), strings (en and zh_CN), the weighting in the modifier roll, and excavation shaft drops, with tests. Built: the inhibitors are core `CraftingInhibitor` values with no slot, an inhibited tag and battle drop weight 0; each kind can be active once (decided: no duplicates, so weights never stack), and a modifier matching several active ones gets one 0.2x weight (`CraftingInhibitor.tagWeights`). `CraftingContext` carries the weights to Augmentation and Reshaping (`ItemCrafting`), the infused crafts (`InfusedCraft`, `InfusedCrafting`), Star Charts `Engram` and Adaptive Reforge (`BiomeCraft`); crafts that add modifiers spend them (`CraftingMaterialFamily.addsModifiers`), Biome Graft stays unweighted. Shafts drop two per full raid and guardian fleets one, scaled by the site quantity (`ExcavationLoot`, `ExcavationRules.INHIBITORS_PER_RAID`), with chart rows in `chart_materials.csv`. Since 2026-11-14 they are the sites' only reward: the lean, its dialog lines, the `excavation` scope of `chart_loot.csv`, the `exiledSector_chart_excavation` item row and the guardian fleet's extra vanilla drops are gone, and old run records with a lean still load (`ExcavationSite.decode`). The icons are recolours of the Prefix and Suffix Inhibitors' icons (`graphics/icons/cargo/<kind>_inhibitor.png`). Tested in core `TagInhibitorWeightsTest`, mod `CraftingInhibitorTest`, hull-upgrades `InfusedCraftTest`, Star Charts `BiomeCraftTest` and `ExcavationRulesTest`.
 10. [ ] Relay Network choices: the relay dialog's three reward group and scar pairs, the run-scoped boss rewards and flagship scars, strings (en and zh_CN), `docs/docs.md`, tests.
-11. [ ] Faction Skirmish officer training: the skill, the end-of-run officer pick, strings (en and zh_CN), tests, once the user details the skill.
+11. [x] Faction Skirmish: replaced by the officer battles, built in `completed/anomalies/faction_skirmish_rework.md`.

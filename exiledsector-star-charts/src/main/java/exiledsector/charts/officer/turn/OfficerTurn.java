@@ -69,11 +69,13 @@ public final class OfficerTurn {
         OfficerTurn officerTurn = new OfficerTurn(terrain, state, setup, Seeds.derived(state.seed(), TURN_SALT + turn * Seeds.GOLDEN_GAMMA));
         state.officers().forEach(officer -> officerTurn.standingsBefore.put(officer.recordId(), Standing.of(officer)));
         officerTurn.applyCause(cause);
-        officerTurn.resolveDeclared(decodeIntents(state.declaredIntents()));
+        List<Intent> declaredBefore = decodeIntents(state.declaredIntents());
+        officerTurn.resolveDeclared(declaredBefore);
+        List<Intent> stillFought = officerTurn.stillFoughtInOpenRun(declaredBefore);
         state.clearDecidedContests();
         officerTurn.earnHoldingsRenown();
         officerTurn.swapByRenown();
-        List<Intent> declared = officerTurn.declare();
+        List<Intent> declared = officerTurn.declare(stillFought);
         state.setDeclaredIntents(declared.stream().filter(intent -> intent.kind() != IntentKind.HOLD).map(Intent::encode).toList());
         TurnResult result = officerTurn.result(turn, cause);
         state.setLastTurnResult(result.encode());
@@ -148,7 +150,7 @@ public final class OfficerTurn {
     }
 
     private boolean canSwap(AtlasOfficer officer) {
-        return officer.heldCommand() && officer.recordId() != setup.openRunOfficerId() && !changedRankThisTurn.contains(officer.recordId());
+        return officer.heldCommand() && !setup.fightsInOpenRun(officer.recordId()) && !changedRankThisTurn.contains(officer.recordId());
     }
 
     private AtlasOfficer mostRenownedSwappable(List<AtlasOfficer> candidates) {
@@ -200,9 +202,18 @@ public final class OfficerTurn {
     }
 
     private boolean settledInRun(Intent intent) {
-        AtlasOfficer attacker = state.officer(intent.officerRecordId());
-        return intent.kind() == IntentKind.CHALLENGE && state.decidedContest(intent.encode()) != null && attacker != null && attacker.isActive()
-                && !beatenThisTurn.contains(attacker.recordId());
+        return intent.kind() == IntentKind.CHALLENGE && state.decidedContest(intent.encode()) != null && fightsOn(intent.officerRecordId())
+                && fightsOn(intent.targetRecordId());
+    }
+
+    private boolean fightsOn(int recordId) {
+        AtlasOfficer officer = state.officer(recordId);
+        return officer != null && officer.isActive() && !beatenThisTurn.contains(recordId);
+    }
+
+    private List<Intent> stillFoughtInOpenRun(List<Intent> intents) {
+        return intents.stream().filter(intent -> intent.kind().isConflict() && setup.fightsInOpenRun(intent.officerRecordId())
+                && setup.fightsInOpenRun(intent.targetRecordId()) && state.decidedContest(intent.encode()) == null).toList();
     }
 
     private boolean takesPart(int recordId) {
@@ -252,7 +263,7 @@ public final class OfficerTurn {
     private void resolveChallenge(Intent intent, Set<Integer> defending) {
         AtlasOfficer attacker = state.officer(intent.officerRecordId());
         AtlasOfficer defender = state.officer(intent.targetRecordId());
-        if (defender == null || !takesPart(defender.recordId())
+        if (defender == null || !takesPart(defender.recordId()) && !settledInRun(intent)
                 || state.decidedContest(intent.encode()) == null && !OfficerSeats.adjacent(setup.ranks(), state.officers(), attacker, defender)) {
             return;
         }
@@ -308,7 +319,8 @@ public final class OfficerTurn {
         }
     }
 
-    private List<Intent> declare() {
+    private List<Intent> declare(List<Intent> stillFought) {
+        stillFought.forEach(this::noteDeclared);
         List<AtlasOfficer> officers = new ArrayList<>(byRecordId(state.officers()).stream().filter(setup::canAct).toList());
         Collections.shuffle(officers, random);
         Map<Integer, List<Intent>> intentsByOfficer = new LinkedHashMap<>();
@@ -316,7 +328,7 @@ public final class OfficerTurn {
             intentsByOfficer.put(officer.recordId(), declareFor(officer));
         }
         declareDefences(intentsByOfficer);
-        List<Intent> declared = new ArrayList<>();
+        List<Intent> declared = new ArrayList<>(stillFought);
         intentsByOfficer.values().forEach(declared::addAll);
         return declared;
     }

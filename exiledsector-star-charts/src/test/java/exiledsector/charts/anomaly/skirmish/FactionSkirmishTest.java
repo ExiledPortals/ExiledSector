@@ -2,6 +2,7 @@ package exiledsector.charts.anomaly.skirmish;
 
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.anomaly.StateFields;
 import exiledsector.charts.atlas.AtlasAnomalyCandidate;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasData;
@@ -14,30 +15,22 @@ import exiledsector.charts.atlas.AtlasTraits;
 import exiledsector.charts.atlas.TestBorders;
 import exiledsector.charts.atlas.TestBorders.Border;
 import exiledsector.charts.generation.ChartGenContext;
-import exiledsector.charts.layout.ChartLayoutRequest;
-import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.OfficerFleets;
 import exiledsector.charts.officer.turn.Intent;
 import exiledsector.charts.officer.turn.OfficerTurnTables;
-import exiledsector.charts.officer.turn.TurnRules;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import static exiledsector.charts.atlas.TestBorders.NEUTRAL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FactionSkirmishTest {
-
-    private static final TurnRules ATTACKER_ALWAYS_WINS = new TurnRules(4, 6f, 100f, 0f, 0f, 1, 3, 2, 0, 50, 6, Map.of());
-    private static final TurnRules DEFENDER_ALWAYS_WINS = new TurnRules(4, 6f, 0f, 0f, 0f, 1, 3, 2, 0, 50, 6, Map.of());
 
     private AtlasState state;
     private AtlasGenerator generator;
@@ -48,18 +41,13 @@ class FactionSkirmishTest {
         return new AtlasTraits(new AtlasCell(2, 1), 5f, AtlasRegion.NORMAL, factionId, factionId, "compact", Set.of(), List.of("tritachyon"), null, null);
     }
 
-    private SkirmishJoin joinedOn(SkirmishSide side) {
-        return SkirmishJoin.of(joinNode(side));
-    }
-
-    private AtlasRunNode joinNode(SkirmishSide side) {
+    private AtlasRunNode joinNode() {
         AtlasRunNode skirmish = new AtlasRunNode(border.contested().pack(), "hegemony", List.of(), List.of(FactionSkirmish.ANOMALY_ID));
-        return ChartAnomalies.joinRunNode(skirmish, generator, state, border.contested(), side);
+        return ChartAnomalies.joinRunNode(skirmish, generator, state, border.contested(), null);
     }
 
     @BeforeEach
     void setUp() {
-        SkirmishFactions.useForTests(Set.of(NEUTRAL));
         state = new AtlasState(TestBorders.SEED);
         generator = TestBorders.generator(state);
         border = TestBorders.border(generator, state, "tritachyon", "hegemony");
@@ -69,83 +57,61 @@ class FactionSkirmishTest {
 
     @AfterEach
     void tearDown() {
-        SkirmishFactions.useForTests(Set.of());
         OfficerTurnTables.useForTests(null);
         ChartTables.resetAnomalies();
     }
 
     @Test
-    void openingTheSkirmishRecordsTheContestAndTheSideStayingOutByDefault() {
+    void openingTheSkirmishRecordsBothOfficersAndTheContest() {
         AtlasRunNode plain = new AtlasRunNode(border.contested().pack(), "hegemony", List.of(), List.of());
+        SkirmishFight fight = SkirmishFight.of(joinNode());
 
-        assertEquals(new SkirmishJoin(SkirmishSide.ATTACKER, "tritachyon", push), joinedOn(SkirmishSide.ATTACKER));
-        assertEquals(SkirmishSide.NEITHER, joinedOn(null).side());
-        assertEquals(plain, ChartAnomalies.joinRunNode(plain, generator, state, border.contested(), SkirmishSide.ATTACKER));
+        assertEquals(new SkirmishFight("tritachyon", border.attacker().rankId(), border.defender().rankId(), push), fight);
+        assertTrue(fight.betweenOfficers());
+        assertEquals(Set.of(border.attacker().recordId(), border.defender().recordId()), OfficerFleets.fightingRecordIdsOf(joinNode()));
+        assertEquals(plain, ChartAnomalies.joinRunNode(plain, generator, state, border.contested(), null));
+        assertEquals(Set.of(), OfficerFleets.fightingRecordIdsOf(plain));
     }
 
     @Test
-    void sidingWithTheDefenderMakesTheAttackingOfficerTheRunsOfficer() {
-        assertEquals(border.attacker().recordId(), OfficerFleets.recordIdOf(joinNode(SkirmishSide.DEFENDER)));
-        assertNull(OfficerFleets.recordIdOf(joinNode(SkirmishSide.ATTACKER)));
-        assertNull(OfficerFleets.recordIdOf(joinNode(SkirmishSide.NEITHER)));
+    void theFightSurvivesTheRunNodeEncodingAndReachesTheChartContext() {
+        AtlasRunNode decoded = AtlasRunNode.decode(joinNode().encode());
+        SkirmishFight expected = new SkirmishFight("tritachyon", border.attacker().rankId(), border.defender().rankId(), push);
+
+        assertEquals(expected, SkirmishFight.of(decoded));
+        assertEquals(expected, SkirmishFight.of(ChartGenContext.none().withAtlasNode(decoded).withAnomalies(List.of("black_hole"))));
+        assertEquals(new SkirmishFight(null, null, null, null), SkirmishFight.decode(new SkirmishFight("", "", "", null).encode()));
+        assertNull(SkirmishFight.decode("attacker"));
     }
 
     @Test
-    void theAttackingOfficerFightsInTheRunWhicheverSideThePlayerTakes() {
-        for (SkirmishSide side : SkirmishSide.values()) {
-            assertEquals(border.attacker().recordId(), OfficerFleets.fightingRecordIdOf(joinNode(side)), side.name());
-        }
-        assertNull(OfficerFleets.fightingRecordIdOf(new AtlasRunNode(border.contested().pack(), "hegemony", List.of(), List.of())));
+    void anOldSidedSkirmishLoadsAsAFightWithoutOfficers() {
+        SkirmishFight old = SkirmishFight.decode(StateFields.join("defender", "tritachyon", push.encode()));
+
+        assertEquals(new SkirmishFight("tritachyon", null, null, push), old);
+        assertFalse(old.betweenOfficers());
     }
 
     @Test
-    void theJoinSurvivesTheRunNodeEncodingAndReachesTheChartContext() {
-        AtlasRunNode decoded = AtlasRunNode.decode(joinNode(SkirmishSide.DEFENDER).encode());
-        SkirmishJoin expected = new SkirmishJoin(SkirmishSide.DEFENDER, "tritachyon", push);
-
-        assertEquals(expected, SkirmishJoin.of(decoded));
-        assertEquals(expected, SkirmishJoin.of(ChartGenContext.none().withAtlasNode(decoded).withAnomalies(List.of("black_hole"))));
-        assertEquals(new SkirmishJoin(SkirmishSide.NEITHER, null, null), SkirmishJoin.decode(new SkirmishJoin(null, "", null).encode()));
-        assertNull(SkirmishJoin.decode("attacker"));
-    }
-
-    @Test
-    void stayingOutDecidesThePushOnItsAbstractRoll() {
-        OfficerTurnTables.useForTests(DEFENDER_ALWAYS_WINS);
-        assertFalse(FactionSkirmish.stayedOut(generator, state, border.contested(), push));
+    void theAttackersWinMovesTheCellAndTheDefendersWinKeepsIt() {
+        assertFalse(FactionSkirmish.settle(generator, state, border.contested(), push, SkirmishResult.DEFENDER_WINS));
         assertEquals(border.defender().commandCentre(), state.commandCentreOf(border.contested()));
         assertTrue(state.declaredIntents().isEmpty());
 
         state.setDeclaredIntents(List.of(push.encode()));
-        OfficerTurnTables.useForTests(ATTACKER_ALWAYS_WINS);
-        assertTrue(FactionSkirmish.stayedOut(generator, state, border.contested(), push));
+        assertTrue(FactionSkirmish.settle(generator, state, border.contested(), push, SkirmishResult.ATTACKER_WINS));
         assertEquals(border.attacker().commandCentre(), state.commandCentreOf(border.contested()));
         assertEquals("tritachyon", AtlasOpening.territoryOwnerOf(generator, state, border.contested()));
     }
 
     @Test
-    void theConsoleSkirmishIsAlwaysLedByAnOfficer() {
-        AtlasOfficer attacker = FactionSkirmish.anyAttacker(state);
-        ChartGenContext joined = FactionSkirmish.joinedOn(new ChartLayoutRequest(77L, null), SkirmishSide.ATTACKER, attacker).chartContext();
-        SkirmishJoin join = SkirmishJoin.of(joined);
+    void aDroppedFightEndsWithoutAWinnerAndAnUndecidedOneWaitsForTheNextTurn() {
+        assertFalse(FactionSkirmish.settle(generator, state, border.contested(), push, SkirmishResult.UNDECIDED));
+        assertEquals(List.of(push.encode()), state.declaredIntents());
 
-        assertEquals(border.defender(), attacker);
-        assertEquals(attacker.factionId(), join.attackerId());
-        assertEquals(attacker.recordId(), join.contest().officerRecordId());
-        SkirmishFactions.useForTests(Set.of(NEUTRAL, "hegemony", "tritachyon"));
-        assertNull(FactionSkirmish.anyAttacker(state));
-    }
-
-    @Test
-    void theShippedListKeepsTheFactionsThatNeverTakeSidesOut() throws Exception {
-        SkirmishFactions.register(ChartTables.csvRows(SkirmishFactions.PATH));
-
-        for (String neutral : List.of("remnant", "derelict", "threat", "rat_abyssals")) {
-            assertFalse(SkirmishFactions.takesSides(neutral), neutral);
-        }
-        assertTrue(SkirmishFactions.takesSides("hegemony"));
-        assertFalse(SkirmishFactions.takesSides(null));
-        assertFalse(SkirmishFactions.takesSides(""));
+        assertFalse(FactionSkirmish.settle(generator, state, border.contested(), push, SkirmishResult.DROPPED));
+        assertTrue(state.declaredIntents().isEmpty());
+        assertEquals(border.defender().commandCentre(), state.commandCentreOf(border.contested()));
     }
 
     @Test

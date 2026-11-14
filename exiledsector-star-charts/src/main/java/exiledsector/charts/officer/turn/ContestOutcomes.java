@@ -10,6 +10,7 @@ import exiledsector.charts.officer.FlagshipCatalogue;
 import exiledsector.charts.officer.OfficerRanks;
 
 import java.util.List;
+import java.util.Set;
 
 public final class ContestOutcomes {
 
@@ -41,7 +42,7 @@ public final class ContestOutcomes {
     }
 
     private static TurnSetup setupWithoutOpenRun() {
-        return new TurnSetup(OfficerTurnTables.rules(), OfficerRanks.all(), OfficerTurns.resolvers(), null, Intent.NO_OFFICER, FlagshipCatalogue.NONE);
+        return new TurnSetup(OfficerTurnTables.rules(), OfficerRanks.all(), OfficerTurns.resolvers(), null, Set.of(), FlagshipCatalogue.NONE);
     }
 
     public static boolean settle(AtlasGenerator generator, AtlasState state, Intent intent, AtlasCell contestedCell, boolean attackerWins) {
@@ -57,13 +58,18 @@ public final class ContestOutcomes {
             } else if (!attackerWins && defender != null && declared.contains(Intent.defend(defender.recordId()))) {
                 addRenown(state, defender, rules.renownPerDefendHeld());
             }
-            if (declared.contains(intent)) {
-                state.setDeclaredIntents(declared.stream().filter(other -> !other.equals(intent)).map(Intent::encode).toList());
-            }
+            drop(state, intent);
         } else if (intent.kind() == IntentKind.CHALLENGE && declared.contains(intent)) {
             state.decideContest(intent.encode(), attackerWins);
         }
         return moved;
+    }
+
+    public static void drop(AtlasState state, Intent intent) {
+        List<Intent> declared = OfficerTurns.declaredIntents(state);
+        if (declared.contains(intent)) {
+            state.setDeclaredIntents(declared.stream().filter(other -> !other.equals(intent)).map(Intent::encode).toList());
+        }
     }
 
     private static boolean canTake(AtlasGenerator generator, AtlasState state, AtlasOfficer attacker, AtlasOfficer defender, AtlasCell cell) {

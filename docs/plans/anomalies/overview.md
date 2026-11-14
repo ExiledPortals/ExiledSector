@@ -6,7 +6,7 @@ An anomaly is anything a star chart system holds beyond its ordinary layout, fle
 |---|---|---|
 | Relay Network (built) | `../completed/anomalies/relay_network.md` | none, escalates the systems it leads to |
 | Excavation Sites (built) | `../completed/anomalies/excavation_sites.md` | one optional per open shaft, frigates and destroyers only; collapsed shafts are a marine raid |
-| Faction Skirmish (built) | `../completed/anomalies/faction_skirmish.md` | two sides' fleets; you join one or fight both |
+| Faction Skirmish (built) | `../completed/anomalies/faction_skirmish_rework.md` | two officers' flagship fleets, both hostile |
 | Listening Post (built) | `../completed/anomalies/listening_post.md` | zero if you get in unseen, one if the alarm goes up |
 | Derelict Forge (built) | `../completed/anomalies/derelict_forge.md` | one, a Guardian and its drones guarding the forge |
 | Storm Front (built) | `../completed/anomalies/storm_front.md` | none, changes the fights the chart already has |
