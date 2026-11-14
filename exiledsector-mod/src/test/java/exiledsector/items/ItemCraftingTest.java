@@ -261,7 +261,7 @@ class ItemCraftingTest {
         Item item = common();
         ItemCrafting.makeImmutable(item, new Random(4L));
         RolledModifier locked = item.explicits().stream().filter(RolledModifier::immutable).findFirst().orElseThrow();
-        RolledModifier legacy = new RolledModifier("RETIRED_" + locked.modifierId(), locked.slot(), locked.lines(), true);
+        RolledModifier legacy = new RolledModifier("RETIRED_" + locked.modifierId(), locked.slot(), locked.lines(), ModifierFlags.NONE.asImmutable());
 
         List<RolledModifier> resolved = item.definition().withCurrentIds(List.of(legacy));
 

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -100,6 +101,28 @@ class ItemCodecTest {
         assertEquals("Pi=FIGHTER_ARMOR_PERCENT:18.75;Pio=plated_frame=ARMOR_PERCENT:6.25+HULL_MULT:3.75;So=HULL_MULT:7.5", encoded);
         assertEquals(flagged, ItemCodec.decodeModifiers(encoded, "sub"));
         assertEquals(COMMON, ItemCodec.decodeModifiers(COMMON_TEXT, "sub"));
+    }
+
+    @Test
+    void everyFlagCombinationInTheSavedEncodingDecodesAndIsWrittenBackUnchanged() {
+        Map<String, ModifierFlags> flagsBySavedCode = Map.of(
+                "", new ModifierFlags(false, false, false),
+                "i", new ModifierFlags(true, false, false),
+                "o", new ModifierFlags(false, true, false),
+                "w", new ModifierFlags(false, false, true),
+                "io", new ModifierFlags(true, true, false),
+                "iw", new ModifierFlags(true, false, true),
+                "ow", new ModifierFlags(false, true, true),
+                "iow", new ModifierFlags(true, true, true));
+
+        flagsBySavedCode.forEach((savedCode, expectedFlags) -> {
+            String saved = "P" + savedCode + "=plated_frame=ARMOR_PERCENT:5+HULL_MULT:3;S" + savedCode + "=HULL_MULT:5";
+
+            List<RolledModifier> decoded = ItemCodec.decodeModifiers(saved, "sub");
+
+            assertEquals(List.of(expectedFlags, expectedFlags), decoded.stream().map(RolledModifier::flags).toList(), savedCode);
+            assertEquals(saved, ItemCodec.modifiers(decoded), savedCode);
+        });
     }
 
     @Test
