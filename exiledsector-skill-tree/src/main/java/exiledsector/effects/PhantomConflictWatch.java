@@ -1,6 +1,5 @@
 package exiledsector.effects;
 
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
@@ -220,7 +219,7 @@ public final class PhantomConflictWatch {
     }
 
     private static boolean apply(Revert revert) {
-        FleetMemberAPI member = playerFleetMember(revert.memberId());
+        FleetMemberAPI member = PlayerFleet.member(revert.memberId());
         ShipSkillData data = ShipSkillDataManager.find(revert.memberId());
         if (member == null || data == null || member.getVariant() == null) {
             return false;
@@ -247,19 +246,6 @@ public final class PhantomConflictWatch {
         FighterBayOverflow.returnUnhousedWingsAndAnnounce(member, member.getVariant(), cargo);
         announce(member, providers.get(0), conflict);
         return true;
-    }
-
-    private static FleetMemberAPI playerFleetMember(String memberId) {
-        CampaignFleetAPI playerFleet = PlayerFleet.orNull();
-        if (playerFleet == null) {
-            return null;
-        }
-        for (FleetMemberAPI member : playerFleet.getFleetData().getMembersListCopy()) {
-            if (member.getId().equals(memberId)) {
-                return member;
-            }
-        }
-        return null;
     }
 
     private static void announce(FleetMemberAPI member, SkillNode removedNode, LearnedPhantomConflicts.Conflict conflict) {

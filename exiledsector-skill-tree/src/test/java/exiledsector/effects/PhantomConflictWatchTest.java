@@ -30,6 +30,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -256,6 +257,19 @@ class PhantomConflictWatchTest {
         PhantomConflictWatch.inspect(member("sold-ship"), variant, Set.of(SAFETY_OVERRIDES), true);
 
         assertFalse(PhantomConflictWatch.applyPendingReverts());
+
+        assertTrue(data.isAllocated("overrides_1"));
+        assertFalse(PhantomConflictWatch.hasPendingReverts());
+    }
+
+    @Test
+    void aPlayerFleetWithoutFleetDataRevertsNothingAndDoesNotThrow() {
+        ShipSkillData data = treeWithOverrides("ship-a");
+        ShipVariantAPI variant = attemptedRemoval("cetan", "csp_cetanframe", true);
+        when(mockSector.playerFleet().getFleetData()).thenReturn(null);
+        PhantomConflictWatch.inspect(member("ship-a"), variant, Set.of(SAFETY_OVERRIDES), true);
+
+        assertFalse(assertDoesNotThrow(() -> PhantomConflictWatch.applyPendingReverts()));
 
         assertTrue(data.isAllocated("overrides_1"));
         assertFalse(PhantomConflictWatch.hasPendingReverts());
