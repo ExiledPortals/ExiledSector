@@ -86,7 +86,10 @@ public final class PrototypeImplicits {
     }
 
     public static ItemData create(ItemDefinition base, long seed, Random random) {
-        List<Modifier> pool = base == null ? List.of() : forBase(base.id());
+        if (base == null) {
+            return null;
+        }
+        List<Modifier> pool = forBase(base.id());
         if (pool.isEmpty()) {
             return null;
         }

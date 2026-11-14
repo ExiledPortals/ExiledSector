@@ -101,14 +101,15 @@ public enum InfusedCraft {
     }
 
     private UseVerdict refusal(Item item, String tag, Set<ModifierSlot> inhibited) {
+        ItemDefinition definition = item == null ? null : item.definition();
         UseVerdict itemRefusal = HullItemCraftRefusals.ofItem(item);
-        if (!itemRefusal.allowed()) {
+        if (definition == null || !itemRefusal.allowed()) {
             return itemRefusal;
         }
         if (cost(tag) == null) {
             return UseVerdict.refused(REFUSAL_PREFIX + "tag");
         }
-        if (item.definition().unique()) {
+        if (definition.unique()) {
             return UseVerdict.refused(REFUSAL_PREFIX + "unique");
         }
         return HullItemCraftRefusals.ofInhibitors(slots -> offered(item, tag, slots), inhibited, REFUSAL_PREFIX + id());

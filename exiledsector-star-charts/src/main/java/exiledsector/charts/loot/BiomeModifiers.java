@@ -170,8 +170,11 @@ public final class BiomeModifiers {
     public static ItemData onDrop(ItemData item, String biomeId) {
         ItemDefinition definition = item == null ? null : item.definition();
         String modifierId = definition == null ? null : modifierFor(biomeId, definition.kind());
+        if (modifierId == null) {
+            return item;
+        }
         Random random = Seeds.derived(item.seed(), GRANT_SEED_SALT);
-        if (modifierId == null || random.nextFloat() >= DROP_CHANCE) {
+        if (random.nextFloat() >= DROP_CHANCE) {
             return item;
         }
         return GrantedModifiers.add(item, modifierId, AffixLayout.dropLimits(definition.type()), random);
