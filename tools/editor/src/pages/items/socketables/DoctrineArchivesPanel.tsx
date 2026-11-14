@@ -1,14 +1,13 @@
 import { Button, Divider, Group, MultiSelect, Select, Stack, Text, TextInput, Title } from '@mantine/core';
-import { IconPlus, IconTrash } from '@tabler/icons-react';
-import { useCallback, useState } from 'react';
+import { IconPlus } from '@tabler/icons-react';
+import { useState } from 'react';
 import type { Draft } from 'immer';
 import type { Vocabulary } from '../../../api/vocabulary.ts';
 import { withCurrentOption, withCurrentOptions } from '../../../shared/arrays.ts';
 import { splitList } from '../../../shared/csv.ts';
-import { confirmAction } from '../../../shared/dialogs.tsx';
 import { DoctrineReplacementPools, type DoctrineTypeSource } from '../components/DoctrineArchiveView.tsx';
 import { DescriptionNote } from '../components/GameText.tsx';
-import { DescriptionField, IconField, IdField, ItemList, ListDetail, NameAndRarity, type ListedItem } from '../components/ItemFields.tsx';
+import { DeleteRowButton, DescriptionField, IconField, IdField, ItemList, ListDetail, NameAndRarity, type ListedItem } from '../components/ItemFields.tsx';
 import { ModifierPool } from '../components/ModifierPool.tsx';
 import { modifierLinesOf, useLineDescriptions, type LineDescriptions } from '../describedLines.ts';
 import type { ItemsPanelProps } from '../itemsDocument.ts';
@@ -30,7 +29,8 @@ import {
   type DoctrinePoolKey,
 } from '../model/doctrines.ts';
 import { MODIFIER_FILE_NAMES } from '../model/itemFamily.ts';
-import { otherItemIds, type ItemsModel } from '../model/workspace.ts';
+import { otherItemIds, shipDefinitionRows, type ItemsModel } from '../model/workspace.ts';
+import { useRowEdit } from '../useRowEdit.ts';
 
 const POOL_LABELS: Record<DoctrinePoolKey, string> = {
   notables: 'Replacement notables',
@@ -122,7 +122,7 @@ function draftArchive(draft: Draft<ItemsModel>, doctrineId: string): DoctrineArc
 
 function DoctrineForm({ document, model, vocabulary, definition, index, descriptions, onSelect }: DoctrineFormProps) {
   const updateDocument = document.update;
-  const edit = useCallback((recipe: (draft: ItemDefinition) => void) => updateDocument((draft) => recipe(draft.ship.definitions[index])), [updateDocument, index]);
+  const edit = useRowEdit(updateDocument, shipDefinitionRows, index);
   const archive = model.doctrines.archives.find((candidate) => candidate.id === definition.id);
   const editArchive = (recipe: (draft: DoctrineArchive) => void) =>
     document.update((draft) => {
@@ -132,21 +132,11 @@ function DoctrineForm({ document, model, vocabulary, definition, index, descript
       }
     });
 
-  const remove = async () => {
-    const confirmed = await confirmAction({
-      title: `Delete "${definition.id}"?`,
-      message: 'Removes it from subroutines.csv and its row from doctrine_archives.csv. Archives players already own will show as unrecognised.',
-      confirmLabel: 'Delete',
-      danger: true,
+  const remove = () =>
+    document.update((draft) => {
+      draft.ship.definitions.splice(index, 1);
+      draft.doctrines.archives = draft.doctrines.archives.filter((candidate) => candidate.id !== definition.id);
     });
-    if (confirmed) {
-      document.update((draft) => {
-        draft.ship.definitions.splice(index, 1);
-        draft.doctrines.archives = draft.doctrines.archives.filter((candidate) => candidate.id !== definition.id);
-      });
-      onSelect(Math.max(0, index - 1));
-    }
-  };
 
   return (
     <Stack gap="sm" maw={1100}>
@@ -192,9 +182,14 @@ function DoctrineForm({ document, model, vocabulary, definition, index, descript
       )}
       <Divider />
       <Group>
-        <Button color="red" variant="light" leftSection={<IconTrash size={14} />} onClick={() => void remove()}>
-          Delete this doctrine archive
-        </Button>
+        <DeleteRowButton
+          noun="doctrine archive"
+          rowId={definition.id}
+          message="Removes it from subroutines.csv and its row from doctrine_archives.csv. Archives players already own will show as unrecognised."
+          index={index}
+          onDelete={remove}
+          onSelect={onSelect}
+        />
       </Group>
     </Stack>
   );

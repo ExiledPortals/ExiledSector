@@ -1,11 +1,12 @@
 import { ActionIcon, Button, Divider, Group, MultiSelect, Paper, Select, Stack, TagsInput, Text, TextInput, Title, Tooltip } from '@mantine/core';
-import { IconCopy, IconPlus, IconTrash, IconX } from '@tabler/icons-react';
+import { IconCopy, IconPlus, IconX } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import type { Draft } from 'immer';
 import { DecimalInput } from '../../../shared/DecimalInput.tsx';
-import { confirmAction, notifyError } from '../../../shared/dialogs.tsx';
+import { confirmAction } from '../../../shared/dialogs.tsx';
 import { themeTagIssues, themeTagsFor } from '../../../shared/themeTags.ts';
 import { GameLines } from '../components/GameText.tsx';
+import { DeleteRowButton } from '../components/ItemFields.tsx';
 import { ModifierLineRow } from '../components/ModifierLineRow.tsx';
 import { displayItemType, type LineDescriptions } from '../describedLines.ts';
 import type { ItemsPanelProps } from '../itemsDocument.ts';
@@ -99,23 +100,6 @@ export function ModifierForm({ document, model, vocabulary, family, modifier, in
       catalogue.splice(index + 1, 0, copy);
     });
     onSelect(index + 1);
-  };
-
-  const remove = async () => {
-    if (isUsed(usage)) {
-      notifyError(`${modifier.id} is used by ${usedByText(usage)}. Remove those references first.`);
-      return;
-    }
-    const confirmed = await confirmAction({
-      title: `Delete "${modifier.id}"?`,
-      message: 'Nothing references it now, but items players already own may carry it, and their frozen names lose its word.',
-      confirmLabel: 'Delete',
-      danger: true,
-    });
-    if (confirmed) {
-      document.update((draft) => void draftCatalogue(draft, family).splice(index, 1));
-      onSelect(Math.max(0, index - 1));
-    }
   };
 
   const conventionIssue = idConventionIssue(modifier);
@@ -242,9 +226,15 @@ export function ModifierForm({ document, model, vocabulary, family, modifier, in
         <Button variant="default" leftSection={<IconCopy size={14} />} onClick={duplicate}>
           Duplicate
         </Button>
-        <Button color="red" variant="light" leftSection={<IconTrash size={14} />} onClick={() => void remove()}>
-          Delete this modifier
-        </Button>
+        <DeleteRowButton
+          noun="modifier"
+          rowId={modifier.id}
+          message="Nothing references it now, but items players already own may carry it, and their frozen names lose its word."
+          index={index}
+          refusal={isUsed(usage) ? `${modifier.id} is used by ${usedByText(usage)}. Remove those references first.` : undefined}
+          onDelete={() => document.update((draft) => void draftCatalogue(draft, family).splice(index, 1))}
+          onSelect={onSelect}
+        />
       </Group>
     </Stack>
   );

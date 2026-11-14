@@ -262,6 +262,10 @@ export function otherItemIds(model: ItemsModel, family: ItemFamily | 'anchor'): 
   return family === 'anchor' ? ids : [...ids, ...idsOf(model.anchors.anchors)];
 }
 
+export function shipDefinitionRows(model: ItemsModel): ItemDefinition[] {
+  return model.ship.definitions;
+}
+
 export function modifiersOf(model: ItemsModel, family: ItemFamily): ItemModifier[] {
   return familyCatalogue(model, family).modifiers;
 }
