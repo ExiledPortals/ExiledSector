@@ -103,8 +103,7 @@ public final class ItemCell extends BaseCustomUIPanelPlugin {
         }
         if (cellListener.marked()) {
             TileChrome.draw(cellPosition, markedFrame, alphaMult);
-            GLDraw.fillQuad(cellPosition.getX(), cellPosition.getY(), cellPosition.getWidth(), cellPosition.getHeight(), markedFrame.borderColor(),
-                    MARKED_FILL_ALPHA * alphaMult);
+            GLDraw.fillQuad(cellPosition, markedFrame.borderColor(), MARKED_FILL_ALPHA * alphaMult);
             return;
         }
         TileChrome.Frame shownFrame = cellListener.selected() ? selectedFrame : tileInput.isHovered() ? hoverFrame : idleFrame;

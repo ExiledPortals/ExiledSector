@@ -6,6 +6,7 @@ import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.skilleffect.render.Fade;
 import exiledsector.skills.skilleffect.render.SpriteCache;
+import exiledsector.ui.util.ColorUtil;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.HoloShapes;
 import exiledsector.ui.util.SpriteDraw;
@@ -104,7 +105,7 @@ public final class AnchorIconFx {
         float gemY = cy + (DESIGN_CENTRE - GEM_Y_FROM_TOP) * inset * unit;
         float reach = tunnelReach(inset);
         Color color = look.color();
-        float t = CargoIconFx.seconds() + CargoIconFx.hash(phaseSeed, 1, 1) * CYCLE_SECONDS;
+        float t = IconFxClock.phasedSeconds(phaseSeed, CYCLE_SECONDS);
         float cycle = Fade.cycle(t, CYCLE_SECONDS);
         float wave = animated ? wave(cycle) : IconFxKit.IDLE_WAVE;
 
@@ -114,7 +115,7 @@ public final class AnchorIconFx {
         CargoIconFx.drawIcon(sprites, iconPath, cx, cy, size * inset, alphaMult);
         boolean plateShutters = anchor != null && anchor.style() == AnchorLook.Style.PLATE_SHUTTERS;
         if (animated) {
-            Color haloTint = plateShutters ? THERMAL_CORE : CargoIconFx.lighten(color, 0.35f);
+            Color haloTint = plateShutters ? THERMAL_CORE : ColorUtil.lighten(color, 0.35f);
             drawAperture(sprites, haloTint, gemX, gemY, unit, openness(cycle), alphaMult);
             drawInfallRings(sprites, color, gemX, gemY, unit, reach, cycle, t, alphaMult);
             if (plateShutters) {
@@ -233,7 +234,7 @@ public final class AnchorIconFx {
                 continue;
             }
             if (tint == null) {
-                tint = CargoIconFx.lighten(color, 0.4f);
+                tint = ColorUtil.lighten(color, 0.4f);
             }
             float radius = ((reach - RING_MIN_RADIUS) * (float) Math.pow(1f - progress, 1.4) + RING_MIN_RADIUS) * unit;
             float alpha = (float) Math.sin(progress * Math.PI) * 0.85f * alphaMult;
@@ -255,7 +256,7 @@ public final class AnchorIconFx {
         float distance = startDistance - (startDistance - LOCK_END_DISTANCE) * travel;
         float arm = LOCK_ARM - travel;
         try (GlScope scope = GlScope.flat().additive().lineWidth(Math.max(1f, 1.4f * unit))) {
-            Misc.setColor(CargoIconFx.lighten(color, 0.5f), alpha);
+            Misc.setColor(ColorUtil.lighten(color, 0.5f), alpha);
             GL11.glBegin(GL11.GL_LINES);
             for (int quarter = 0; quarter < 4; quarter++) {
                 double angle = Math.PI / 4.0 + quarter * Math.PI / 2.0 + (1f - travel) * LOCK_SWING;
@@ -300,7 +301,7 @@ public final class AnchorIconFx {
             }
             scope.additive().lineWidth(Math.max(1f, 1.2f * unit));
             for (int side = -1; side <= 1; side += 2) {
-                Misc.setColor(CargoIconFx.lighten(color, 0.5f), alpha);
+                Misc.setColor(ColorUtil.lighten(color, 0.5f), alpha);
                 plateOutline(gemX, gemY, unit, side, gap, GL11.GL_LINE_LOOP);
                 Misc.setColor(PLATE_TRIM, alpha);
                 GL11.glBegin(GL11.GL_LINES);
@@ -356,7 +357,7 @@ public final class AnchorIconFx {
         }
         if (flash > 0.01f) {
             float flashSize = FLASH_SIZE * unit;
-            SpriteDraw.drawAdditiveAtCenter(sprites, IconFxKit.LIGHT_TEXTURE, badgeX, badgeY, flashSize, flashSize, CargoIconFx.lighten(color, 0.55f), flash * alphaMult);
+            SpriteDraw.drawAdditiveAtCenter(sprites, IconFxKit.LIGHT_TEXTURE, badgeX, badgeY, flashSize, flashSize, ColorUtil.lighten(color, 0.55f), flash * alphaMult);
         }
     }
 

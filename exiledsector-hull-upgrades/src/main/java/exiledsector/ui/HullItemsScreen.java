@@ -27,6 +27,7 @@ import exiledsector.ui.socket.CraftingBench;
 import exiledsector.ui.socket.SocketPanelPlacement;
 import exiledsector.ui.socket.SocketPanelTab;
 import exiledsector.ui.socket.StoragePlacement;
+import exiledsector.ui.util.ClickSwallow;
 import exiledsector.ui.util.GLDraw;
 import lunalib.backend.ui.refit.RefitButtonAdder;
 import lunalib.lunaRefit.BaseRefitButton;
@@ -60,7 +61,7 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
     private RefitButtonAdder refitAdder;
     private FleetMemberAPI lastRefitMember;
     private boolean switchingShip;
-    private boolean swallowFleetListMouseUp;
+    private final ClickSwallow fleetListClickSwallow = new ClickSwallow();
     private boolean pointerInFleetList;
     private CustomPanelAPI hostPanel;
     private SectionEditor sectionEditor;
@@ -479,7 +480,7 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
                 }
             }
             if (event.isLMBUpEvent()) {
-                swallowFleetListMouseUp = false;
+                fleetListClickSwallow.cancel();
             }
             if (escapeKey.released(event)) {
                 if (!fade.closing()) {
@@ -501,13 +502,12 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
             FleetMemberAPI clicked = RefitFleetList.memberAt(event.getX(), event.getY());
             if (clicked != null) {
                 event.consume();
-                swallowFleetListMouseUp = true;
+                fleetListClickSwallow.swallowNextRelease();
                 sectionsDisplay.hideTooltip();
                 switchShip(clicked);
             }
-        } else if (event.isLMBUpEvent() && swallowFleetListMouseUp) {
-            event.consume();
-            swallowFleetListMouseUp = false;
+        } else if (event.isLMBUpEvent()) {
+            fleetListClickSwallow.released(event);
         }
     }
 

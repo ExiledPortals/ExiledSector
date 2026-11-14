@@ -9,6 +9,7 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
 import exiledsector.ui.SkillTreeRefitButton;
+import exiledsector.ui.util.ClickSwallow;
 import exiledsector.ui.util.Rects;
 import org.apache.log4j.Logger;
 
@@ -25,7 +26,7 @@ final class SkillTreeChipClickTarget extends BaseCustomUIPanelPlugin {
     private Object modList;
     private UIComponentAPI chipRow;
     private ButtonAPI chipIcon;
-    private boolean swallowMouseUp;
+    private final ClickSwallow clickSwallow = new ClickSwallow();
 
     static void attach(Object modWidget, Object modList, Object chipRow) {
         if (failed || !(modWidget instanceof UIPanelAPI widget)) return;
@@ -84,10 +85,9 @@ final class SkillTreeChipClickTarget extends BaseCustomUIPanelPlugin {
         if (failed) return;
         for (InputEventAPI event : events) {
             if (event.isLMBUpEvent()) {
-                if (swallowMouseUp && !event.isConsumed()) event.consume();
-                swallowMouseUp = false;
+                clickSwallow.released(event);
             } else if (!event.isConsumed() && event.isLMBDownEvent() && isOverChip(event.getX(), event.getY()) && open(event)) {
-                swallowMouseUp = true;
+                clickSwallow.swallowNextRelease();
                 event.consume();
             }
         }

@@ -1,7 +1,5 @@
 package exiledsector.ui.util;
 
-import com.fs.starfarer.api.Global;
-
 import java.awt.Color;
 
 public final class HoloTransition {
@@ -92,10 +90,8 @@ public final class HoloTransition {
         if (reveal >= 1f) {
             return null;
         }
-        float screenScale = Global.getSettings().getScreenScaleMult();
         float visibleHeight = height * reveal;
-        return GlScope.clip((int) Math.floor(x * screenScale), (int) Math.floor((y + height - visibleHeight) * screenScale),
-                (int) Math.ceil(width * screenScale), (int) Math.ceil(visibleHeight * screenScale));
+        return UiClip.clipUi(x, y + height - visibleHeight, width, visibleHeight);
     }
 
     public void drawRevealLine(float x, float y, float width, float height, Color accent, float alphaMult) {

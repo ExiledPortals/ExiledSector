@@ -1,6 +1,7 @@
 package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.skills.skilleffect.render.Fade;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.SpriteDraw;
@@ -39,7 +40,7 @@ final class WormholeButtonFx {
             return;
         }
         float strength = (active ? 1f : IDLE_ALPHA) * alpha;
-        float pulse = (float) Math.sin(elapsedSeconds * PULSE_SPEED) * 0.5f + 0.5f;
+        float pulse = Fade.pulse(elapsedSeconds * PULSE_SPEED);
         float centreY = bottom + height / 2f;
         float mouthSize = height * MOUTH_SIZE_SHARE * (0.92f + 0.08f * pulse);
         float spin = elapsedSeconds * MOUTH_SPIN_DEGREES;

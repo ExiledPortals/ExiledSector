@@ -10,8 +10,8 @@ import exiledsector.ui.belt.AuroraBeltRenderer;
 import exiledsector.ui.belt.RadialBand;
 import exiledsector.ui.belt.RingBeltRenderer;
 import exiledsector.ui.util.ColorUtil;
+import exiledsector.ui.util.GlScope;
 import org.apache.log4j.Logger;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
@@ -89,30 +89,26 @@ public final class SkillTreeNodeRingRenderer {
         String nodeId = node.getId();
         float halfSize = footprintSize / 2f;
 
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-        if (tier == SkillTier.NOTABLE) {
-            float stateAlpha = allocated ? 1f : NodeRingArt.UNALLOCATED_ALPHA_MULT;
-            ringArt.drawNotableRings(cx, cy, footprintSize, nodeId, stateAlpha * alphaMult,
-                    doctrineColor == null ? NodeRingArt.RING_PINK_COLOR : doctrineColor);
-            ringArt.drawAmbientGlow(cx, cy, footprintSize, stateAlpha * alphaMult,
-                    doctrineColor == null ? NodeRingArt.AMBIENT_GLOW_COLOR : doctrineColor);
-        } else if (tier == SkillTier.KEYSTONE) {
-            float stateAlpha = allocated ? 1f : NodeRingArt.UNALLOCATED_ALPHA_MULT;
-            String ringBeltPath = resolveRingBeltPath(node);
-            float ringBeltWidth = resolveRingBeltWidth(node);
-            if (AURORA_TEXTURE_PATH.equals(ringBeltPath)) {
-                drawKeystoneAuroraBelt(cx, cy, footprintSize, ringBeltWidth, resolveRingBeltColor(node), stateAlpha, alphaMult, zoom);
-            } else {
-                drawKeystoneRingBelt(cx, cy, footprintSize, ringBeltWidth, ringBeltPath, stateAlpha, alphaMult);
+        try (GlScope scope = GlScope.save(GlScope.DRAW_ATTRIBS).normalBlend()) {
+            if (tier == SkillTier.NOTABLE) {
+                float stateAlpha = allocated ? 1f : NodeRingArt.UNALLOCATED_ALPHA_MULT;
+                ringArt.drawNotableRings(cx, cy, footprintSize, nodeId, stateAlpha * alphaMult,
+                        doctrineColor == null ? NodeRingArt.RING_PINK_COLOR : doctrineColor);
+                ringArt.drawAmbientGlow(cx, cy, footprintSize, stateAlpha * alphaMult,
+                        doctrineColor == null ? NodeRingArt.AMBIENT_GLOW_COLOR : doctrineColor);
+            } else if (tier == SkillTier.KEYSTONE) {
+                float stateAlpha = allocated ? 1f : NodeRingArt.UNALLOCATED_ALPHA_MULT;
+                String ringBeltPath = resolveRingBeltPath(node);
+                float ringBeltWidth = resolveRingBeltWidth(node);
+                if (AURORA_TEXTURE_PATH.equals(ringBeltPath)) {
+                    drawKeystoneAuroraBelt(cx, cy, footprintSize, ringBeltWidth, resolveRingBeltColor(node), stateAlpha, alphaMult, zoom);
+                } else {
+                    drawKeystoneRingBelt(cx, cy, footprintSize, ringBeltWidth, ringBeltPath, stateAlpha, alphaMult);
+                }
+            } else if (tier.isWormhole()) {
+                drawWormhole(cx, cy, footprintSize, alphaMult, nodeId, resolveWormholeColor(node), wormholeOpenness.of(nodeId));
             }
-        } else if (tier.isWormhole()) {
-            drawWormhole(cx, cy, footprintSize, alphaMult, nodeId, resolveWormholeColor(node), wormholeOpenness.of(nodeId));
         }
-
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glDisable(GL11.GL_BLEND);
 
         if (tier.isWormhole()) {
             return;
@@ -146,13 +142,10 @@ public final class SkillTreeNodeRingRenderer {
     }
 
     public void drawDoctrineSocketBelt(float cx, float cy, float footprintSize, Color doctrineColor, boolean live, float alphaMult, float zoom) {
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        drawKeystoneAuroraBelt(cx, cy, footprintSize, KEYSTONE_BELT_WIDTH_RATIO, doctrineColor, live ? 1f : NodeRingArt.UNALLOCATED_ALPHA_MULT,
-                alphaMult, zoom);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glDisable(GL11.GL_BLEND);
+        try (GlScope scope = GlScope.save(GlScope.DRAW_ATTRIBS).normalBlend()) {
+            drawKeystoneAuroraBelt(cx, cy, footprintSize, KEYSTONE_BELT_WIDTH_RATIO, doctrineColor, live ? 1f : NodeRingArt.UNALLOCATED_ALPHA_MULT,
+                    alphaMult, zoom);
+        }
     }
 
     private void drawKeystoneRingBelt(float cx, float cy, float footprintSize, float widthRatio, String ringArtPath, float stateAlpha, float alphaMult) {
@@ -172,12 +165,9 @@ public final class SkillTreeNodeRingRenderer {
     }
 
     public void drawSocketWormhole(float cx, float cy, float footprintSize, float alphaMult, String socketId, TreeNode exit, float rawOpenness) {
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        drawWormhole(cx, cy, footprintSize, alphaMult, socketId, resolveWormholeColor(exit), rawOpenness);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glDisable(GL11.GL_BLEND);
+        try (GlScope scope = GlScope.save(GlScope.DRAW_ATTRIBS).normalBlend()) {
+            drawWormhole(cx, cy, footprintSize, alphaMult, socketId, resolveWormholeColor(exit), rawOpenness);
+        }
     }
 
     private void drawWormhole(float cx, float cy, float footprintSize, float alphaMult, String nodeId, Color wormholeColor, float rawOpenness) {

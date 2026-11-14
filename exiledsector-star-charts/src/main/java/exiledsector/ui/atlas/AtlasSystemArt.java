@@ -2,12 +2,14 @@ package exiledsector.ui.atlas;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.skills.skilleffect.render.Fade;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.charts.anomaly.breach.BreachFieldRenderer;
 import exiledsector.charts.layout.sketch.ChartSystemSketch;
 import exiledsector.ui.belt.AuroraBeltRenderer;
 import exiledsector.ui.belt.RadialBand;
 import exiledsector.ui.util.GlScope;
+import exiledsector.ui.util.HoloShapes;
 import exiledsector.ui.util.SpriteDraw;
 import exiledsector.ui.util.UnitCircle;
 import org.lwjgl.opengl.GL11;
@@ -361,7 +363,7 @@ final class AtlasSystemArt {
         float bodyX = onPlanet ? frame.planetX[piece.planet()] : frame.starX;
         float bodyY = onPlanet ? frame.planetY[piece.planet()] : frame.starY;
         float bodyPixels = onPlanet ? frame.planetPixels[piece.planet()] : frame.starPixels;
-        float shift = (float) Math.sin(frame.elapsedSeconds * 0.7f + piece.variant()) * 0.5f + 0.5f;
+        float shift = Fade.pulse(frame.elapsedSeconds * 0.7f + piece.variant());
         bandCentre.set(bodyX, bodyY);
         AuroraBeltRenderer.render(texture, new RadialBand(bandCentre, bodyPixels * 1.1f, bodyPixels * 1.7f),
                 Misc.interpolateColor(AURORA_COLOUR, AURORA_SHIFT_COLOUR, shift), 0.75f * frame.alpha, frame.elapsedSeconds, 1f);
@@ -525,13 +527,8 @@ final class AtlasSystemArt {
         float cycle = frame.elapsedSeconds / SCAN_SECONDS + piece.variant() * 0.5f;
         float progress = cycle - (float) Math.floor(cycle);
         float ringRadius = planetPixels * (1.1f + 1.3f * progress);
-        try (GlScope scan = GlScope.flat().additive().lineWidth(1.5f)) {
-            GL11.glBegin(GL11.GL_LINE_LOOP);
-            Misc.setColor(SCAN_COLOUR, (1f - progress) * 0.7f * frame.alpha);
-            for (int index = 0; index < RING_CIRCLE.segments(); index++) {
-                GL11.glVertex2f(planetX + RING_CIRCLE.cos(index) * ringRadius, planetY + RING_CIRCLE.sin(index) * ringRadius);
-            }
-            GL11.glEnd();
+        try (GlScope scan = GlScope.flat().additive()) {
+            HoloShapes.circle(planetX, planetY, ringRadius, RING_CIRCLE, SCAN_COLOUR, 1.5f, (1f - progress) * 0.7f * frame.alpha);
         }
         double siteAngle = Math.toRadians(piece.angle());
         float glint = (float) Math.sin(frame.elapsedSeconds * 4f + piece.variant()) * 0.3f + 0.7f;

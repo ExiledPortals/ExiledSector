@@ -1,9 +1,9 @@
 package exiledsector.ui.decoration;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.PlanetSpecAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import exiledsector.PlanetSpecs;
+import exiledsector.skills.skilleffect.render.CategorySprite;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.skills.decoration.Star;
 import exiledsector.ui.SmoothZoom;
@@ -25,8 +25,8 @@ public class SkillTreeStarRenderer implements DecorationRenderer {
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeStarRenderer.class);
     private final UnitSphere unitSphere = new UnitSphere();
     private final Map<String, StarAnimation> animationById = new HashMap<>();
-    private SpriteAPI atmosphereTexture;
-    private SpriteAPI auroraTexture;
+    private final CategorySprite atmosphereTexture = new CategorySprite(AtmosphereRing.TEXTURE_CATEGORY, AtmosphereRing.TEXTURE_ID);
+    private final CategorySprite auroraTexture = new CategorySprite(StarAurora.TEXTURE_CATEGORY, StarAurora.TEXTURE_ID);
     private float mapRadius;
     private float mapAmount;
     private Set<String> starIdsHiddenOnMap = Set.of();
@@ -126,10 +126,7 @@ public class SkillTreeStarRenderer implements DecorationRenderer {
 
     private void renderAtmosphere(TreeViewport viewport, float alphaMult) {
         float zoom = viewport.zoom();
-        if (atmosphereTexture == null) {
-            atmosphereTexture = Global.getSettings().getSprite(AtmosphereRing.TEXTURE_CATEGORY, AtmosphereRing.TEXTURE_ID);
-        }
-        SpriteAPI texture = atmosphereTexture;
+        SpriteAPI texture = atmosphereTexture.get();
         if (texture == null) return;
 
         for (Star star : stars) {
@@ -156,10 +153,7 @@ public class SkillTreeStarRenderer implements DecorationRenderer {
 
     private void renderAurora(TreeViewport viewport, float alphaMult) {
         float zoom = viewport.zoom();
-        if (auroraTexture == null) {
-            auroraTexture = Global.getSettings().getSprite(StarAurora.TEXTURE_CATEGORY, StarAurora.TEXTURE_ID);
-        }
-        SpriteAPI texture = auroraTexture;
+        SpriteAPI texture = auroraTexture.get();
         if (texture == null) return;
 
         for (Star star : stars) {

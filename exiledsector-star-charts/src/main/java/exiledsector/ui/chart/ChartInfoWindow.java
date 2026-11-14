@@ -1,6 +1,5 @@
 package exiledsector.ui.chart;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
@@ -18,6 +17,7 @@ import exiledsector.ui.util.Rects;
 import exiledsector.ui.util.SpriteDraw;
 import exiledsector.ui.util.TextFont;
 import exiledsector.ui.util.TextLabel;
+import exiledsector.ui.util.UiClip;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -279,7 +279,7 @@ final class ChartInfoWindow {
         clipAreaWidth = width;
         clipAreaHeight = clipHeight;
         rewardButtonShown = fullyOpen && hasRewardButton;
-        try (GlScope clip = fullyOpen ? clipTo(left, clipBottom, width, clipHeight) : null) {
+        try (GlScope clip = fullyOpen ? UiClip.clipUi(left, clipBottom, width, clipHeight) : null) {
             float top = bottom + height - PAD + scrollOffset;
             for (Block block : blocks) {
                 top -= block.gapBefore();
@@ -383,11 +383,5 @@ final class ChartInfoWindow {
 
     private static TextLabel paragraph(StyledText text, float maxWidth, Color color) {
         return new TextLabel(BODY_FONT, color).setParagraphs(List.of(text), maxWidth, WRAP_HEIGHT, SkillTreePanelStyle::standardHighlightColor);
-    }
-
-    private static GlScope clipTo(float left, float bottom, float width, float height) {
-        float screenScale = Global.getSettings().getScreenScaleMult();
-        return GlScope.clip((int) Math.floor(left * screenScale), (int) Math.floor(bottom * screenScale),
-                (int) Math.ceil(width * screenScale), (int) Math.ceil(height * screenScale));
     }
 }

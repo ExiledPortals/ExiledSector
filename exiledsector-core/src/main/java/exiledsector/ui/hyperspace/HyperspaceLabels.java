@@ -41,7 +41,7 @@ public final class HyperspaceLabels {
         for (HyperspaceAnchor anchor : anchors) {
             TextLabel labelText = text(anchor);
             ScreenRect labelBox = box(viewport, anchor, mapStarRadius, mapAmount, labelText.width());
-            BorderedPanel.draw(labelBox.left(), labelBox.bottom(), labelBox.width(), labelBox.height(), alphaMult);
+            BorderedPanel.draw(labelBox, alphaMult);
             labelText.setColor(anchor.equals(hovered) ? HOVER_COLOR : TEXT_COLOR).setAlpha(alphaMult);
             labelText.draw(labelBox.left() + PADDING_X, labelBox.bottom() + labelBox.height() - PADDING_Y);
         }

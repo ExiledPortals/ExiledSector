@@ -12,6 +12,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.PlayerFleet;
 import exiledsector.charts.anomaly.ChartAnomalyTerrain;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.skilleffect.render.Fade;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
 import exiledsector.ui.VanillaText;
@@ -255,7 +256,7 @@ public class AnomalousDebrisTerrainPlugin extends ChartAnomalyTerrain {
             int cell = cellOf(piece);
             SpriteDraw.drawCellAtCenter(sheet, sheetColumns, sheetRows, cell, x, y, piece.size(), piece.size(), facing, light, alpha, false);
             if (piece.glows() && glowSheet != null) {
-                float pulse = 0.5f + 0.5f * (float) Math.sin(pulses[index]);
+                float pulse = Fade.pulse(pulses[index]);
                 SpriteDraw.drawCellAtCenter(glowSheet, sheetColumns, sheetRows, cell, x, y, piece.size(), piece.size(), facing, GLOW_COLOUR,
                         alpha * GLOW_ALPHA * pulse, true);
             }

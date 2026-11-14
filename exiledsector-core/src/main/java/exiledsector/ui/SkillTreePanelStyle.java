@@ -156,8 +156,8 @@ public final class SkillTreePanelStyle {
         float boxWidth = (float) Math.ceil(contentWidth + TOOLTIP_PADDING * 2f + TOOLTIP_WIDTH_SAFETY_MARGIN);
         float boxHeight = (float) Math.ceil(title.height() + TOOLTIP_TITLE_BODY_GAP + flavourHeight + body.height() + bodySectionsHeight + tablesHeight
                 + separatedHeight + footerHeight + TOOLTIP_PADDING * 2f);
-        float boxX = Math.round(tooltipLeft(mouseX, boxWidth, Global.getSettings().getScreenWidth()));
-        float boxY = Math.round(tooltipBottom(mouseY, boxHeight, Global.getSettings().getScreenHeight()));
+        float boxX = cursorBoxLeft(mouseX, boxWidth);
+        float boxY = cursorBoxBottom(mouseY, boxHeight);
 
         Color accent = getAccentColor();
         drawTooltipBackground(boxX, boxY, boxWidth, boxHeight, alphaMult, accent);
@@ -200,6 +200,14 @@ public final class SkillTreePanelStyle {
         sectionTop -= TOOLTIP_TABLE_GAP;
         section.setAlpha(alphaMult).draw(boxX + TOOLTIP_PADDING, sectionTop);
         return sectionTop - section.height();
+    }
+
+    public static float cursorBoxLeft(float mouseX, float boxWidth) {
+        return Math.round(tooltipLeft(mouseX, boxWidth, Global.getSettings().getScreenWidth()));
+    }
+
+    public static float cursorBoxBottom(float mouseY, float boxHeight) {
+        return Math.round(tooltipBottom(mouseY, boxHeight, Global.getSettings().getScreenHeight()));
     }
 
     public static float tooltipLeft(float mouseX, float boxWidth, float screenWidth) {

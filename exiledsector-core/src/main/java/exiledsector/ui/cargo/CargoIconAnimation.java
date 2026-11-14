@@ -9,7 +9,7 @@ public final class CargoIconAnimation {
     private boolean celebrating;
 
     public float burstAge(CargoIconLook look, CargoStackAPI stack) {
-        float now = CargoIconFx.seconds();
+        float now = IconFxClock.seconds();
         if (firstSeenSeconds < 0f) {
             firstSeenSeconds = now;
             celebrating = CargoIconLooks.celebratesDrop(look) && FreshLoot.isFreshLoot(stack);

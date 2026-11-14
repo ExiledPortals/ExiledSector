@@ -64,7 +64,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final SocketPlacement socketPlacement;
     private final SchematicButtons schematicButtons;
     private final SkillTreeChrome chrome;
-    private final PointerGesture<CanvasMode> gesture = new PointerGesture<>();
+    private final CanvasDrag<CanvasMode> drag = new CanvasDrag<>(camera);
+    private final PointerGesture<CanvasMode> gesture = drag.gesture();
     private final TreeCameraMemory.View cameraMemory;
     private final FleetShipList shipList;
     private final BaseRefitButton refitButton;
@@ -235,11 +236,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void dropStaleGesture(CanvasMode mode) {
-        if (gesture.isStaleIn(mode)) {
-            if (gesture.isPanning()) {
-                camera.stopDrag();
-            }
-            gesture.clear();
+        if (drag.dropIfStaleIn(mode)) {
             treeSession.cancelIntegrationHold();
         }
     }
@@ -358,12 +355,11 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         mouseX = event.getX();
         mouseY = event.getY();
         mouseKnown = true;
-        if (gesture.moveTo(mouseX, mouseY)) {
+        CanvasDrag.Move move = drag.pointerMoved(mouseX, mouseY, event.getDX(), event.getDY());
+        if (move == CanvasDrag.Move.STARTED_PANNING) {
             treeSession.cancelIntegrationHold();
-            camera.startDrag();
-            camera.dragBy(mouseX - gesture.pressX(), mouseY - gesture.pressY());
-            event.consume();
-        } else if (camera.dragBy(event.getDX(), event.getDY())) {
+        }
+        if (move != CanvasDrag.Move.NONE) {
             event.consume();
         }
     }
@@ -416,8 +412,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             return;
         }
         stopFollowing();
-        gesture.clear();
-        camera.stopDrag();
+        drag.release();
         treeSession.closeChoicePicker();
         exoshipView.enter();
         camera.startFollowing(exoshipView.fitZoom(canvasPosition));
@@ -480,8 +475,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         } else {
             Object target = treeTargetAt(x, y);
             if (!pressTarget(mode, target, event, true)) {
-                gesture.pressPan(mode, x, y);
-                camera.startDrag();
+                drag.pressPan(mode, x, y);
             } else if (target instanceof SkillNode pressedNode && !event.isCtrlDown() && !event.isShiftDown()) {
                 treeSession.beginIntegrationHold(pressedNode);
             }
@@ -629,8 +623,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         exoshipView.render(viewport, shipAlpha * treeAlpha);
         decorations.renderOverTree(decorationScene);
         if (craftingBenchDimProgress > 0f) {
-            GLDraw.fillQuad(canvasPosition.getX(), canvasPosition.getY(), canvasPosition.getWidth(), canvasPosition.getHeight(), Color.BLACK,
-                    CRAFTING_BENCH_DIM_ALPHA * craftingBenchDimProgress * alphaMult);
+            GLDraw.fillQuad(canvasPosition, Color.BLACK, CRAFTING_BENCH_DIM_ALPHA * craftingBenchDimProgress * alphaMult);
         }
         if (hyperspaceMode.isActive()) {
             hyperspaceMode.render(viewport, alphaMult, pointerOverTree, mouseX, mouseY);

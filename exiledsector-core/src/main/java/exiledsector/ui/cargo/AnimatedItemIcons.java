@@ -39,7 +39,7 @@ public final class AnimatedItemIcons {
             SpriteDraw.drawAdditiveAtCenter(cache, BEACON_GLOW_PATH, cx, cy, width, height, BEACON_GLOW_COLOR, alphaMult * STEADY_GLOW);
             return;
         }
-        float glowPhase = (CargoIconFx.seconds() * GLOW_CYCLES_PER_SECOND) % 1f;
+        float glowPhase = (IconFxClock.seconds() * GLOW_CYCLES_PER_SECOND) % 1f;
         float pulse = pulse(glowPhase);
         float firstWobble = ((glowPhase * 1.3f) % 1f - 0.5f) * GLOW_WOBBLE_DEGREES;
         float secondWobble = ((glowPhase * 1.9f) % 1f - 0.5f) * GLOW_WOBBLE_DEGREES;

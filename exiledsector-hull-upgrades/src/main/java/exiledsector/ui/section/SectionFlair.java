@@ -1,6 +1,7 @@
 package exiledsector.ui.section;
 
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.skills.skilleffect.render.Fade;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ShipSection;
@@ -74,7 +75,7 @@ public final class SectionFlair {
     private static void renderLayers(GlScope scope, float cx, float cy, float radius, Color accent, SectionLook look,
                                      float elapsedSeconds, float alpha) {
         float hover = look.hover();
-        float pulse = 0.5f + 0.5f * (float) Math.sin(elapsedSeconds * 2.4f);
+        float pulse = Fade.pulse(elapsedSeconds * 2.4f);
         float half = HoloSocketFrame.socketHalf(radius);
         boolean filled = look.iconPath() != null;
 
@@ -147,7 +148,7 @@ public final class SectionFlair {
                 pulseY = elbowY + (anchorY - elbowY) * share;
             }
             HoloShapes.diamond(pulseX, pulseY, 2.5f, Color.WHITE, 0.8f * alpha);
-            float markerPulse = 0.5f + 0.5f * (float) Math.sin(elapsedSeconds * 3f);
+            float markerPulse = Fade.pulse(elapsedSeconds * 3f);
             HoloBeams.circle(anchorX, anchorY, 6f + 2f * markerPulse, 1.5f, accent, (0.5f + 0.4f * markerPulse) * alpha);
             HoloShapes.diamond(anchorX, anchorY, 2.5f, accent, alpha);
             scope.normalBlend();

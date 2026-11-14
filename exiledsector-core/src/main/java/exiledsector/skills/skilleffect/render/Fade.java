@@ -17,6 +17,10 @@ public final class Fade {
         return smooth(Math.max(0f, Math.min(1f, (value - from) / (to - from))));
     }
 
+    public static float pulse(float phaseRadians) {
+        return 0.5f + 0.5f * (float) Math.sin(phaseRadians);
+    }
+
     public static float cycle(float seconds, float period) {
         float cycle = seconds % period / period;
         return cycle < 0f ? cycle + 1f : cycle;

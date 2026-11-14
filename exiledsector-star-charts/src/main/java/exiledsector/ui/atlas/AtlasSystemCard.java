@@ -150,8 +150,8 @@ final class AtlasSystemCard {
     void draw(float mouseX, float mouseY, float alphaMult) {
         float boxWidth = (float) Math.ceil(contentWidth + PADDING_X * 2f);
         float boxHeight = boxHeight();
-        float boxX = Math.round(SkillTreePanelStyle.tooltipLeft(mouseX, boxWidth, Global.getSettings().getScreenWidth()));
-        float boxY = Math.round(SkillTreePanelStyle.tooltipBottom(mouseY, boxHeight, Global.getSettings().getScreenHeight()));
+        float boxX = SkillTreePanelStyle.cursorBoxLeft(mouseX, boxWidth);
+        float boxY = SkillTreePanelStyle.cursorBoxBottom(mouseY, boxHeight);
         BorderedPanel.draw(boxX, boxY, boxWidth, boxHeight, alphaMult);
         float left = boxX + PADDING_X;
         float top = boxY + boxHeight - PADDING_Y;
