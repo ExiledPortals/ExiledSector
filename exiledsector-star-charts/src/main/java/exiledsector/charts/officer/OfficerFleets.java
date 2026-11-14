@@ -14,6 +14,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Personalities;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.loading.VariantSource;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.anomaly.StateFields;
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.content.ChartAnomalyFleets;
@@ -24,6 +25,7 @@ import exiledsector.charts.officer.scar.Scars;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 
+import java.util.Arrays;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
@@ -36,7 +38,6 @@ public final class OfficerFleets {
     public static final String TREE_SEED_MEMORY_KEY = "$exiledSector_officerTreeSeed";
     static final String TREE_SEED_PREFIX = "officer|";
     static final Set<String> FIGHTING_TRAITS = Set.of(Personalities.AGGRESSIVE, Personalities.RECKLESS);
-    static final String FIGHTING_SEPARATOR = ",";
 
     private OfficerFleets() {
     }
@@ -78,7 +79,7 @@ public final class OfficerFleets {
             recordIds.add(runOfficer);
         }
         String fighting = node.anomalyData(AtlasOfficer.FIGHTING_DATA_KEY);
-        for (String runData : fighting == null ? new String[0] : fighting.split(FIGHTING_SEPARATOR)) {
+        for (String runData : StateFields.list(fighting)) {
             Integer recordId = recordIdOfRunData(runData);
             if (recordId != null) {
                 recordIds.add(recordId);
@@ -88,11 +89,7 @@ public final class OfficerFleets {
     }
 
     public static String fightingRunData(int... recordIds) {
-        StringBuilder runData = new StringBuilder();
-        for (int recordId : recordIds) {
-            runData.append(runData.isEmpty() ? "" : FIGHTING_SEPARATOR).append(recordId);
-        }
-        return runData.toString();
+        return StateFields.join(Arrays.stream(recordIds).mapToObj(String::valueOf).toList());
     }
 
     static Integer recordIdOfRunData(String runData) {
@@ -180,17 +177,21 @@ public final class OfficerFleets {
         if (base == null) {
             return null;
         }
-        ShipVariantAPI variant = base.clone();
-        variant.setSource(VariantSource.REFIT);
-        for (String dmodId : officer.dmodIds()) {
-            variant.addPermaMod(dmodId, false);
-        }
-        FleetMemberAPI member = Global.getFactory().createFleetMember(FleetMemberType.SHIP, variant);
+        FleetMemberAPI member = Global.getFactory().createFleetMember(FleetMemberType.SHIP, refitWithDmods(base, officer));
         FactionAPI faction = OfficerText.faction(officer);
         if (faction != null) {
             member.setShipName(flagshipName(officer, faction));
         }
         return member;
+    }
+
+    private static ShipVariantAPI refitWithDmods(ShipVariantAPI base, AtlasOfficer officer) {
+        ShipVariantAPI variant = base.clone();
+        variant.setSource(VariantSource.REFIT);
+        for (String dmodId : officer.dmodIds()) {
+            variant.addPermaMod(dmodId, false);
+        }
+        return variant;
     }
 
     public static String flagshipName(AtlasOfficer officer, FactionAPI faction) {
@@ -218,12 +219,8 @@ public final class OfficerFleets {
             fleet.setCommander(commander);
         }
         flagship.setShipName(flagshipName(officer, faction));
-        ShipVariantAPI variant = flagship.getVariant().clone();
-        variant.setSource(VariantSource.REFIT);
+        ShipVariantAPI variant = refitWithDmods(flagship.getVariant(), officer);
         variant.addTag(Tags.VARIANT_UNBOARDABLE);
-        for (String dmodId : officer.dmodIds()) {
-            variant.addPermaMod(dmodId, false);
-        }
         flagship.setVariant(variant, false, true);
         return flagship;
     }

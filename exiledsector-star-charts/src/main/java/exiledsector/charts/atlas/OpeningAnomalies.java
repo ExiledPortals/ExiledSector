@@ -4,10 +4,7 @@ import exiledsector.charts.anomaly.AtlasRule;
 import exiledsector.charts.anomaly.ChartAnomalies;
 
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public final class OpeningAnomalies {
 
@@ -21,23 +18,18 @@ public final class OpeningAnomalies {
             return List.of();
         }
         AtlasRegion region = generator.regionOf(cell);
-        Map<String, Double> rolls = new HashMap<>();
-        List<String> passed = new ArrayList<>();
+        AnomalyRolls<String> rolls = new AnomalyRolls<>();
         for (ChartAnomalies.Definition definition : ChartAnomalies.definitions()) {
             String anomalyId = definition.id();
             if (!definition.rollsOnOpening() || present.contains(anomalyId) || region.anomalyWeight(anomalyId) <= 0f) {
                 continue;
             }
             double roll = AtlasHash.unit(AtlasHash.of(chartSeed, OPENING_SALT, anomalyId, cell.gridX(), cell.gridY()));
-            if (roll < definition.openingChance()) {
-                passed.add(anomalyId);
-                rolls.put(anomalyId, roll);
-            }
+            rolls.offer(anomalyId, anomalyId, roll, definition.openingChance());
         }
-        passed.sort(Comparator.<String>comparingDouble(rolls::get).thenComparing(Comparator.naturalOrder()));
         List<String> accepted = new ArrayList<>(present);
         List<String> added = new ArrayList<>();
-        for (String anomalyId : passed) {
+        for (String anomalyId : rolls.lowestFirst()) {
             if (accepted.size() >= AtlasAnomalies.MAX_PER_SYSTEM) {
                 break;
             }

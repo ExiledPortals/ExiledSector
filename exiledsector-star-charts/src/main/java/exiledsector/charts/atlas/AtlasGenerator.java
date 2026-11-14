@@ -3,8 +3,6 @@ package exiledsector.charts.atlas;
 import exiledsector.charts.content.ChartThreatFleets;
 
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -296,17 +294,11 @@ public final class AtlasGenerator {
                 kept.add(candidate);
             }
         }
-        for (AtlasAnomalyCandidate candidate : rollAnomalies(cell, traits, region)) {
-            if (kept.stream().noneMatch(candidate::conflictsWith)) {
-                kept.add(candidate);
-            }
-        }
-        return kept.stream().map(AtlasAnomalyCandidate::id).toList();
+        return addCompatible(kept, rollAnomalies(cell, traits, region)).stream().map(AtlasAnomalyCandidate::id).toList();
     }
 
     private List<AtlasAnomalyCandidate> rollAnomalies(AtlasCell cell, AtlasTraits traits, AtlasRegion region) {
-        List<AtlasAnomalyCandidate> passed = new ArrayList<>();
-        Map<String, Double> rolls = new HashMap<>();
+        AnomalyRolls<AtlasAnomalyCandidate> rolls = new AnomalyRolls<>();
         for (AtlasAnomalyCandidate candidate : rules.anomalies()) {
             if (candidate.placedPerBiome() || !unlocks.allows(candidate.requiredMod(), "")) {
                 continue;
@@ -317,14 +309,13 @@ public final class AtlasGenerator {
             }
             float weight = candidate.weighting().weightFor(traits, candidate.weight() * region.anomalyWeight(candidate.id()));
             double roll = AtlasHash.unit(AtlasHash.of(seed, ANOMALY_SALT, candidate.id(), cell.gridX(), cell.gridY()));
-            if (roll < chance * weight) {
-                passed.add(candidate);
-                rolls.put(candidate.id(), roll);
-            }
+            rolls.offer(candidate, candidate.id(), roll, chance * weight);
         }
-        passed.sort(Comparator.<AtlasAnomalyCandidate>comparingDouble(candidate -> rolls.get(candidate.id())).thenComparing(AtlasAnomalyCandidate::id));
-        List<AtlasAnomalyCandidate> kept = new ArrayList<>();
-        for (AtlasAnomalyCandidate candidate : passed) {
+        return addCompatible(new ArrayList<>(), rolls.lowestFirst());
+    }
+
+    private static List<AtlasAnomalyCandidate> addCompatible(List<AtlasAnomalyCandidate> kept, List<AtlasAnomalyCandidate> candidates) {
+        for (AtlasAnomalyCandidate candidate : candidates) {
             if (kept.stream().noneMatch(candidate::conflictsWith)) {
                 kept.add(candidate);
             }
