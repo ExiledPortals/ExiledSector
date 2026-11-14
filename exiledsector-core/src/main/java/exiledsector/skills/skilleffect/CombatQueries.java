@@ -36,7 +36,11 @@ public final class CombatQueries {
     }
 
     public static boolean isHostile(ShipAPI source, ShipAPI other) {
-        return other.getOwner() != source.getOwner() && other.getOwner() != Misc.OWNER_NEUTRAL;
+        return isHostileToSide(source.getOwner(), other);
+    }
+
+    public static boolean isHostileToSide(int side, ShipAPI other) {
+        return other.getOwner() != side && other.getOwner() != Misc.OWNER_NEUTRAL;
     }
 
     public static ShipAPI hostileLiveShip(ShipAPI source, CombatEntityAPI target) {
@@ -55,8 +59,11 @@ public final class CombatQueries {
     }
 
     public static boolean isAlliedShip(ShipAPI source, ShipAPI other) {
-        return other != source && other.getOwner() == source.getOwner() && !other.isFighter() && !other.isDrone()
-                && isAliveNotHulk(other) && !isAfterimage(other);
+        return other != source && isAlliedShipOfSide(source.getOwner(), other);
+    }
+
+    public static boolean isAlliedShipOfSide(int side, ShipAPI ship) {
+        return ship.getOwner() == side && !ship.isFighter() && !ship.isDrone() && isAliveNotHulk(ship) && !isAfterimage(ship);
     }
 
     public static ShipAPI carrierOf(ShipAPI fighter) {
