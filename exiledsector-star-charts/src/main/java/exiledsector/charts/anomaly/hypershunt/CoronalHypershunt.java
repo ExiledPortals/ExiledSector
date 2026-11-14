@@ -1,11 +1,9 @@
 package exiledsector.charts.anomaly.hypershunt;
 
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
-import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.impl.campaign.ids.Entities;
-import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.StarTypes;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
 import exiledsector.i18n.I18n;
@@ -17,6 +15,7 @@ import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.AtlasRule;
 import exiledsector.charts.anomaly.ContentPlacer;
+import exiledsector.charts.anomaly.GuardedStation;
 import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.anomaly.StarRule;
 import exiledsector.charts.anomaly.VanillaDefenders;
@@ -26,10 +25,8 @@ import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.atlas.AtlasTraits;
 import exiledsector.charts.content.ChartSites;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.charts.run.ChartRuns;
 import exiledsector.items.UseVerdict;
 
-import java.util.List;
 import java.util.Random;
 
 public final class CoronalHypershunt implements StarRule, AtlasRule, ContentPlacer, RunParticipant {
@@ -40,6 +37,8 @@ public final class CoronalHypershunt implements StarRule, AtlasRule, ContentPlac
     public static final float MIN_DISTANCE = 15f;
     public static final String TOO_CLOSE_KEY = "catalyst.refused.hypershunt.too_close";
     static final String ENTITY_TYPE = Entities.CORONAL_TAP;
+    public static final GuardedStation STATION = new GuardedStation(ENTITY_TYPE, HYPERSHUNT_TAG, ChartIds.PREFIX + "coronal_hypershunt_", null,
+            HypershuntGuards.GUARD_SALT);
     static final float ORBIT_GAP = 250f;
     static final long PLACEMENT_SALT = 0x48595053484e54L;
 
@@ -89,38 +88,21 @@ public final class CoronalHypershunt implements StarRule, AtlasRule, ContentPlac
         if (orbit == null) {
             orbit = AnomalyContentSite.orbit(star, random.nextFloat() * 360f, radius);
         }
-        SectorEntityToken hypershunt = site.addEntity(hypershuntId(site.runId()), null, ENTITY_TYPE, Factions.NEUTRAL, orbit);
-        hypershunt.addTag(HYPERSHUNT_TAG);
-        VanillaDefenders.arm(hypershunt, site.random(HypershuntGuards.GUARD_SALT).nextLong());
-        return hypershunt;
-    }
-
-    public static String hypershuntId(String runId) {
-        return ChartIds.PREFIX + "coronal_hypershunt_" + runId;
-    }
-
-    public static boolean isHypershunt(SectorEntityToken entity) {
-        return entity != null && entity.hasTag(HYPERSHUNT_TAG);
+        return STATION.place(site, orbit);
     }
 
     static ChartRun liveRunFor(SectorEntityToken hypershunt) {
-        ChartRun run = isHypershunt(hypershunt) ? ChartRuns.liveOwning(hypershunt) : null;
-        return run != null && run.anomalyIds().contains(ANOMALY_ID) ? run : null;
-    }
-
-    static SectorEntityToken hypershuntIn(LocationAPI location) {
-        List<SectorEntityToken> found = location == null ? List.of() : location.getEntitiesWithTag(HYPERSHUNT_TAG);
-        return found.isEmpty() ? null : found.get(0);
+        return STATION.liveRun(hypershunt, ANOMALY_ID);
     }
 
     @Override
     public InteractionDialogPlugin dialogFor(AnomalyRun run, SectorEntityToken target) {
-        return isHypershunt(target) && run.holds(target) ? new HypershuntDialog() : null;
+        return STATION.holds(target) && run.holds(target) ? new HypershuntDialog() : null;
     }
 
     @Override
     public String intelText(AnomalyRun run) {
-        SectorEntityToken hypershunt = hypershuntIn(run.system());
+        SectorEntityToken hypershunt = STATION.in(run.system());
         PlanetAPI star = hypershunt == null || !VanillaDefenders.guarded(hypershunt) || !(hypershunt.getOrbitFocus() instanceof PlanetAPI focus)
                 ? null : focus;
         if (star == null) {

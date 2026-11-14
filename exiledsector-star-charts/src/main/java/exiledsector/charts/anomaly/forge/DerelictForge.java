@@ -2,7 +2,6 @@ package exiledsector.charts.anomaly.forge;
 
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
@@ -12,9 +11,9 @@ import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ContentPlacer;
+import exiledsector.charts.anomaly.GuardedStation;
 import exiledsector.charts.anomaly.OrbitSearch;
 import exiledsector.charts.anomaly.RunParticipant;
-import exiledsector.charts.anomaly.VanillaDefenders;
 import exiledsector.charts.content.ChartSites;
 
 import java.util.List;
@@ -29,6 +28,8 @@ public final class DerelictForge implements ContentPlacer, RunParticipant {
     public static final String FORGE_TAG = ChartIds.PREFIX + "derelict_forge";
     public static final DerelictForge INSTANCE = new DerelictForge();
     static final String ENTITY_TYPE = ChartIds.PREFIX + "derelict_forge_station";
+    public static final GuardedStation STATION = new GuardedStation(ENTITY_TYPE, FORGE_TAG, ChartIds.PREFIX + "derelict_forge_",
+            "chart.anomaly.derelict_forge.name", ForgeGuards.GUARD_SALT);
     static final long PLACEMENT_SALT = 0x464f524745L;
 
     private DerelictForge() {
@@ -53,19 +54,9 @@ public final class DerelictForge implements ContentPlacer, RunParticipant {
         }
         List<ForgePrograms.Program> programs = ForgePrograms.roll(site.tier(),
                 ForgeRules.programCount(site.context().anomalyPercent(EXTRA_PROGRAMS_KEY)), random);
-        SectorEntityToken forge = site.addEntity(forgeId(site.runId()), Translation.gameText("chart.anomaly.derelict_forge.name"), ENTITY_TYPE, Factions.NEUTRAL, orbit);
-        forge.addTag(FORGE_TAG);
-        VanillaDefenders.arm(forge, site.random(ForgeGuards.GUARD_SALT).nextLong());
+        SectorEntityToken forge = STATION.place(site, orbit);
         ForgeStates.record(site.state(ANOMALY_ID), programs, ForgeRules.runCount(site.context().anomalyPercent(EXTRA_RUNS_KEY)));
         return forge;
-    }
-
-    public static String forgeId(String runId) {
-        return ChartIds.PREFIX + "derelict_forge_" + runId;
-    }
-
-    public static boolean isForge(SectorEntityToken entity) {
-        return entity != null && entity.hasTag(FORGE_TAG);
     }
 
     @Override
@@ -75,7 +66,7 @@ public final class DerelictForge implements ContentPlacer, RunParticipant {
 
     @Override
     public InteractionDialogPlugin dialogFor(AnomalyRun run, SectorEntityToken target) {
-        return isForge(target) ? new ForgeDialog(ForgeSite.DERELICT_FORGE) : null;
+        return STATION.holds(target) ? new ForgeDialog(ForgeSite.DERELICT_FORGE) : null;
     }
 
     @Override
