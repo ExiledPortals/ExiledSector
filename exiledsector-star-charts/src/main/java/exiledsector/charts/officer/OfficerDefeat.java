@@ -51,8 +51,7 @@ public final class OfficerDefeat {
             if (officer == null) {
                 return ItemDrops.SiteLoot.NONE;
             }
-            Map<String, Integer> theorem = DisplacementTheorem.bossDrop(run, officer.rankId(), officer.recordId());
-            return defeated(sector, state, run, officer, run.bossFlagshipId()).plus(List.of(), List.of(), theorem);
+            return defeated(sector, state, run, officer, run.bossFlagshipId());
         } catch (RuntimeException | LinkageError e) {
             LOG.error("[ExiledSector] Recording the defeat of the Atlas officer of run " + (run == null ? null : run.runId()) + " failed", e);
             return ItemDrops.SiteLoot.NONE;
@@ -79,6 +78,7 @@ public final class OfficerDefeat {
 
     private static ItemDrops.SiteLoot defeated(SectorAPI sector, AtlasState state, ChartRun run, AtlasOfficer officer, String flagshipId) {
         Random random = Seeds.random(SEED_PREFIX + run.runId() + "|" + officer.recordId());
+        Map<String, Integer> theorem = DisplacementTheorem.bossDrop(run, officer.rankId(), officer.recordId());
         HullFacts hull = OfficerFleets.flagshipHull(officer);
         String scarId = Scars.pickAfterBattle(flagshipId, officer.scars(), hull);
         AtlasOfficer scarred = scarred(officer, scarId, dModFor(scarId, officer, hull, random));
@@ -87,7 +87,7 @@ public final class OfficerDefeat {
         AtlasOfficer rewarded = rewarded(scarred, offers);
         state.putOfficer(rewarded);
         prompt(sector, rewarded);
-        return carriedLoot;
+        return carriedLoot.plus(List.of(), List.of(), theorem);
     }
 
     public static AtlasOfficer challengeLost(AtlasState state, int loserOfficerId, String winnerFactionId, Random random) {
