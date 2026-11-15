@@ -155,7 +155,7 @@ class CoronalHypershuntTest {
         assertEquals(Entities.CORONAL_TAP, addedTypes.get(0));
         assertEquals(Factions.NEUTRAL, addedFactions.get(0));
         SectorEntityToken hypershunt = added.get(0);
-        assertTrue(CoronalHypershunt.isHypershunt(hypershunt));
+        assertTrue(CoronalHypershunt.STATION.holds(hypershunt));
         assertTrue(hypershunt.hasTag(ChartIds.runTag(RUN_ID)));
         verify(hypershunt).setCircularOrbitPointingDown(eq(star), anyFloat(), eq(STAR_RADIUS + CoronalHypershunt.ORBIT_GAP), anyFloat());
         assertTrue(VanillaDefenders.guarded(hypershunt));

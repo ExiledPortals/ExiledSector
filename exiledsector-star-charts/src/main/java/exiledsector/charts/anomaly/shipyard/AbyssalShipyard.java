@@ -1,21 +1,19 @@
 package exiledsector.charts.anomaly.shipyard;
 
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
-import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AbyssOrbits;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ContentPlacer;
+import exiledsector.charts.anomaly.GuardedStation;
 import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.anomaly.VanillaDefenders;
 import exiledsector.charts.content.ChartSites;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.charts.run.ChartRuns;
 
 import java.util.List;
 
@@ -25,6 +23,8 @@ public final class AbyssalShipyard implements ContentPlacer, RunParticipant, Loo
     public static final AbyssalShipyard INSTANCE = new AbyssalShipyard();
     static final String ENTITY_TYPE = ChartIds.PREFIX + "abyssal_shipyard";
     static final String SHIPYARD_TAG = ChartIds.PREFIX + "abyssal_shipyard";
+    public static final GuardedStation STATION = new GuardedStation(ENTITY_TYPE, SHIPYARD_TAG, ChartIds.PREFIX + "abyssal_shipyard_",
+            "chart.anomaly.abyssal_shipyard.name", ShipyardGuards.GUARD_SALT);
     static final String SALVAGED_KEY = "$" + ChartIds.PREFIX + "shipyardSalvaged";
     static final float MIN_ORBIT_GAP = 1500f;
     static final float MAX_ORBIT_GAP = 2500f;
@@ -46,42 +46,25 @@ public final class AbyssalShipyard implements ContentPlacer, RunParticipant, Loo
     @Override
     public void generate(AnomalyContentSite site) {
         ChartSites.Orbit orbit = AbyssOrbits.nearPhotosphere(site, MIN_ORBIT_GAP, MAX_ORBIT_GAP, site.random(PLACEMENT_SALT));
-        SectorEntityToken shipyard = site.addEntity(shipyardId(site.runId()), Translation.gameText("chart.anomaly.abyssal_shipyard.name"),
-                ENTITY_TYPE, Factions.NEUTRAL, orbit);
-        shipyard.addTag(SHIPYARD_TAG);
-        VanillaDefenders.arm(shipyard, site.random(ShipyardGuards.GUARD_SALT).nextLong());
-    }
-
-    public static String shipyardId(String runId) {
-        return ChartIds.PREFIX + "abyssal_shipyard_" + runId;
-    }
-
-    static boolean isShipyard(SectorEntityToken entity) {
-        return entity != null && entity.hasTag(SHIPYARD_TAG);
+        STATION.place(site, orbit);
     }
 
     static ChartRun liveRunFor(SectorEntityToken shipyard) {
-        ChartRun run = isShipyard(shipyard) ? ChartRuns.liveOwning(shipyard) : null;
-        return run != null && run.anomalyIds().contains(ANOMALY_ID) ? run : null;
+        return STATION.liveRun(shipyard, ANOMALY_ID);
     }
 
     static boolean salvaged(SectorEntityToken shipyard) {
         return shipyard.getMemoryWithoutUpdate().getBoolean(SALVAGED_KEY);
     }
 
-    static SectorEntityToken shipyardIn(LocationAPI location) {
-        List<SectorEntityToken> found = location == null ? List.of() : location.getEntitiesWithTag(SHIPYARD_TAG);
-        return found.isEmpty() ? null : found.get(0);
-    }
-
     @Override
     public InteractionDialogPlugin dialogFor(AnomalyRun run, SectorEntityToken target) {
-        return isShipyard(target) && run.holds(target) ? new ShipyardDialog() : null;
+        return STATION.holds(target) && run.holds(target) ? new ShipyardDialog() : null;
     }
 
     @Override
     public String intelText(AnomalyRun run) {
-        SectorEntityToken shipyard = shipyardIn(run.system());
+        SectorEntityToken shipyard = STATION.in(run.system());
         if (shipyard == null || salvaged(shipyard)) {
             return null;
         }

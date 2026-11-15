@@ -1,9 +1,11 @@
 package exiledsector.charts.atlas;
 
+import exiledsector.charts.anomaly.ExclusiveAnomaly;
+
 import java.util.Set;
 
 public record AtlasAnomalyCandidate(String id, float weight, String requiredMod, boolean replacesStar, Set<String> excludes, Weighting weighting,
-                                    AtlasAnomalyChance ownChance, Set<String> biomes) {
+                                    AtlasAnomalyChance ownChance, Set<String> biomes) implements ExclusiveAnomaly {
 
     @FunctionalInterface
     public interface Weighting {
@@ -45,9 +47,5 @@ public record AtlasAnomalyCandidate(String id, float weight, String requiredMod,
 
     public boolean placedPerBiome() {
         return !biomes.isEmpty();
-    }
-
-    public boolean conflictsWith(AtlasAnomalyCandidate other) {
-        return !id.equals(other.id) && (replacesStar && other.replacesStar || excludes.contains(other.id) || other.excludes.contains(id));
     }
 }

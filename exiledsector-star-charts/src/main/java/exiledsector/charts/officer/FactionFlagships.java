@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI.ShipTypeHints;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import exiledsector.items.WeightedPick;
 import exiledsector.ui.decoration.FleetHulls;
 import org.apache.log4j.Logger;
 
@@ -72,14 +73,7 @@ public final class FactionFlagships implements FlagshipCatalogue {
         if (totalWeight <= 0f) {
             return sizes.isEmpty() ? null : sizes.get(sizes.size() - 1);
         }
-        float roll = random.nextFloat() * totalWeight;
-        for (HullSize size : sizes) {
-            roll -= sizeWeight(size, rankShare);
-            if (roll < 0f) {
-                return size;
-            }
-        }
-        return sizes.get(sizes.size() - 1);
+        return WeightedPick.pick(sizes, size -> sizeWeight(size, rankShare), random);
     }
 
     private static boolean isSmall(HullSize size) {

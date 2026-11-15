@@ -114,7 +114,7 @@ class DerelictForgeTest {
         assertEquals(DerelictForge.ENTITY_TYPE, addedTypes.get(0));
         assertEquals(Factions.NEUTRAL, addedFactions.get(0));
         SectorEntityToken forge = added.get(0);
-        assertTrue(DerelictForge.isForge(forge));
+        assertTrue(DerelictForge.STATION.holds(forge));
         assertTrue(forge.hasTag(ChartIds.runTag(RUN_ID)));
         verify(forge).setCircularOrbitPointingDown(eq(star), anyFloat(), anyFloat(), anyFloat());
         assertEquals(ForgeRules.BASE_PROGRAMS, ForgeStates.programs(run, ForgeSite.DERELICT_FORGE).size());

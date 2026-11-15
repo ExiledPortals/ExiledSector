@@ -70,7 +70,7 @@ public final class ChartAnomalies {
 
     public record Definition(String id, float weight, int minTier, int maxTier, String requiredMod, String icon, boolean insertable,
                              Set<String> excludes, boolean replacesStar, List<ChartGenContext.AppliedEffect> effects, Set<String> biomes,
-                             float fleetLoot, float openingChance) {
+                             float fleetLoot, float openingChance) implements ExclusiveAnomaly {
 
         public Definition {
             requiredMod = requiredMod == null ? "" : requiredMod;
@@ -121,9 +121,6 @@ public final class ChartAnomalies {
             return replacesStar || perBiome();
         }
 
-        public boolean conflictsWith(Definition other) {
-            return other != null && !id.equals(other.id) && (replacesStar && other.replacesStar || excludes.contains(other.id) || other.excludes.contains(id));
-        }
     }
 
     private ChartAnomalies() {

@@ -70,7 +70,7 @@ public abstract class AnomalyRunScript implements EveryFrameScript, ChartRunBoun
 
     @Override
     public boolean belongsToRun(String wantedRunId) {
-        return runId != null && runId.equals(wantedRunId);
+        return ChartRunBound.sameRun(runId, wantedRunId);
     }
 
     @Override

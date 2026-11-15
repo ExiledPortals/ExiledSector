@@ -38,7 +38,7 @@ public final class ChartForge {
 
     public static ChartRun liveRunFor(SectorEntityToken entity) {
         ForgeSite site = ForgeSite.of(entity);
-        return site == null ? null : withSite(ChartRuns.liveOwning(entity), site);
+        return site == null ? null : site.liveRunFor(entity);
     }
 
     private static ChartRun withSite(ChartRun run, ForgeSite site) {

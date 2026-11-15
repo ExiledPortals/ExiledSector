@@ -1,13 +1,11 @@
 package exiledsector.charts.anomaly.excavation;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.OptionPanelAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.TextPanelAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl;
 import com.fs.starfarer.api.impl.campaign.graid.GroundRaidObjectivePlugin;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.PlayerFleet;
@@ -15,18 +13,16 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-import exiledsector.charts.anomaly.AnomalyDialog;
-import exiledsector.charts.anomaly.AnomalyEncounters;
 import exiledsector.charts.anomaly.ChartRaid;
+import exiledsector.charts.anomaly.PlanetSiteDialog;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.charts.run.ChartRuns;
 import exiledsector.ui.VanillaText;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class ExcavationSiteDialog extends AnomalyDialog {
+public class ExcavationSiteDialog extends PlanetSiteDialog {
 
     static final String DESCEND = "exiledSector_excavationDescend";
     static final String RAID_OPTION = "exiledSector_excavationRaid";
@@ -34,8 +30,6 @@ public class ExcavationSiteDialog extends AnomalyDialog {
     static final String SCOUTED_KEY_PREFIX = "chart.anomaly.excavation_sites.dialog.scouted.";
 
     private final ChartRaid.Session raid = new ChartRaid.Session(closedDialog -> showMain());
-    private SectorEntityToken planet;
-    private FleetInteractionDialogPluginImpl encounter;
 
     public static boolean wantsToHandle(ChartRun run, SectorEntityToken target) {
         return target instanceof PlanetAPI planet && !planet.isStar() && ExcavationStates.standingAt(run, planet.getId()) != null;
@@ -60,27 +54,18 @@ public class ExcavationSiteDialog extends AnomalyDialog {
         return I18n.forGameText(() -> Translation.msg("chart.anomaly.excavation_sites.dialog.finds").arg("items", items).styled());
     }
 
-    @Override
-    protected void open() {
-        planet = dialog().getInteractionTarget();
-        showMain();
-    }
-
-    private ChartRun run() {
-        return ChartRuns.liveIn(planet.getContainingLocation());
-    }
-
     private ExcavationSite site() {
-        return ExcavationStates.at(run(), planet.getId());
+        return ExcavationStates.at(run(), planet().getId());
     }
 
-    private void showMain() {
-        dialog().getVisualPanel().showPlanetInfo(planet);
+    @Override
+    protected void showMain() {
+        dialog().getVisualPanel().showPlanetInfo(planet());
         TextPanelAPI text = text();
         OptionPanelAPI options = options();
         options.clearOptions();
         ExcavationSite site = site();
-        String planetName = planet.getName();
+        String planetName = planet().getName();
         if (site == null || site.cleared()) {
             VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg("chart.anomaly.excavation_sites.dialog.cleared").arg("planet", planetName).text()));
         } else {
@@ -129,7 +114,7 @@ public class ExcavationSiteDialog extends AnomalyDialog {
         } else if (RAID_OPTION.equals(optionData) && standing && site.access() == ExcavationSite.Access.COLLAPSED) {
             raid.launch(dialog(), run().tier(), site.seed() * 31L, this::objectives);
         } else if (CONTINUE.equals(optionData)) {
-            continueAfter(ExcavationSites.INSTANCE, planet);
+            continueAfter(ExcavationSites.INSTANCE, planet());
         } else {
             dialog().dismiss();
         }
@@ -137,34 +122,25 @@ public class ExcavationSiteDialog extends AnomalyDialog {
 
     private void descend(ExcavationSite site) {
         ChartRun run = run();
-        CampaignFleetAPI fleet = ExcavationFleets.fleetFor(planet, run, site);
+        CampaignFleetAPI fleet = ExcavationFleets.fleetFor(planet(), run, site);
         if (fleet == null) {
             VanillaText.plainPara(text(), Translation.gameText("chart.anomaly.excavation_sites.dialog.silent"));
             ExcavationStates.clear(run, site);
             showMain();
             return;
         }
-        encounter = new ExcavationEncounterDialog(ExcavationEncounters.config(leaving -> surface(leaving, site, fleet)));
-        AnomalyEncounters.engage(dialog(), fleet, encounter);
-    }
-
-    private void surface(InteractionDialogAPI leaving, ExcavationSite site, CampaignFleetAPI fleet) {
-        returnHere(leaving, planet);
-        boolean won = AnomalyEncounters.wonOutright(encounter);
-        encounter = null;
-        if (won || fleet.isEmpty()) {
+        fightHeldGuards(fleet, onLeave -> new ExcavationEncounterDialog(ExcavationEncounters.config(onLeave)), () -> {
             ExcavationStates.clear(run(), site);
-            ExcavationFleets.forget(planet);
-        }
-        showMain();
+            ExcavationFleets.forget(planet());
+        });
     }
 
     List<GroundRaidObjectivePlugin> objectives() {
         List<GroundRaidObjectivePlugin> objectives = new ArrayList<>();
         ChartRun run = run();
-        ExcavationSite site = ExcavationStates.standingAt(run, planet.getId());
+        ExcavationSite site = ExcavationStates.standingAt(run, planet().getId());
         if (site != null && site.access() == ExcavationSite.Access.COLLAPSED) {
-            objectives.add(new ExcavationSiteObjective(planet.getMarket(), site, ChartRaid.danger(run.tier()), raid::effectiveness));
+            objectives.add(new ExcavationSiteObjective(planet().getMarket(), site, ChartRaid.danger(run.tier()), raid::effectiveness));
         }
         return objectives;
     }

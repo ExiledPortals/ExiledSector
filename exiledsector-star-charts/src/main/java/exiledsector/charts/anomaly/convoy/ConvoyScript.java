@@ -18,6 +18,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.AnomalyRunScript;
+import exiledsector.charts.anomaly.AnomalyTerrains;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.loot.ChartFleetLoot;
 import exiledsector.charts.run.ChartRun;
@@ -128,7 +129,7 @@ public final class ConvoyScript extends AnomalyRunScript implements FleetEventLi
     void slowInTerrain(ConvoyState convoy, List<CampaignTerrainPlugin> slowing) {
         CampaignFleetAPI fleet = fleet(convoy);
         if (fleet != null) {
-            ConvoyTerrain.apply(fleet, ConvoyTerrain.inside(fleet, slowing) ? ConvoyRules.TERRAIN_BURN : 1f);
+            ConvoyTerrain.apply(fleet, AnomalyTerrains.holding(fleet, slowing) != null ? ConvoyRules.TERRAIN_BURN : 1f);
         }
     }
 
