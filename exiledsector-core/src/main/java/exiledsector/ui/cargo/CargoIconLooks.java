@@ -28,11 +28,7 @@ public final class CargoIconLooks {
         if (domainLook != null) {
             return domainLook;
         }
-        return forMaterial(lookTier(itemId), MaterialItems.color(itemId)).withSwarm(swarmFor(itemId));
-    }
-
-    private static MaterialTier lookTier(String itemId) {
-        return ItemDisassembly.FEEDSTOCK_ITEM_ID.equals(itemId) ? Nanoswarm.AUGMENTATION.tier() : MaterialItems.tier(itemId);
+        return forMaterial(MaterialItems.tier(itemId), MaterialItems.color(itemId)).withSwarm(swarmFor(itemId));
     }
 
     static SwarmMotion swarmFor(String itemId) {
@@ -51,10 +47,9 @@ public final class CargoIconLooks {
 
     public static CargoIconLook forMaterial(MaterialTier tier, Color color) {
         return switch (tier) {
-            case BASIC -> CargoIconLook.plain(color);
-            case MINOR -> CargoIconLook.glowing(color, 0.45f);
-            case MAJOR -> CargoIconLook.ringed(color, 0.55f);
-            case EXOTIC -> CargoIconLook.charged(color, 0.65f);
+            case COMMON -> CargoIconLook.glowing(color, 0.45f);
+            case RARE -> CargoIconLook.ringed(color, 0.55f);
+            case UNIQUE -> CargoIconLook.charged(color, 0.65f);
             case MYTHIC -> CargoIconLook.refracting(color, 0.75f);
         };
     }

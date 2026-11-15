@@ -10,9 +10,9 @@ import java.util.Set;
 
 public enum StarChartCipher implements CraftingMaterialFamily {
 
-    REFORGE("exiledSector_reforge_cipher", "reforge", 30, 5f, MaterialTier.MAJOR, new Color(80, 205, 225)),
-    ERASURE("exiledSector_erasure_cipher", "erasure", 40, 3f, MaterialTier.MAJOR, new Color(175, 180, 200)),
-    CARTOGRAPHY("exiledSector_cartographer_cipher", "cartographer", 120, 2f, MaterialTier.EXOTIC, new Color(245, 215, 110));
+    REFORGE("exiledSector_reforge_cipher", "reforge", 30, 5f, MaterialTier.COMMON, new Color(80, 205, 225)),
+    ERASURE("exiledSector_erasure_cipher", "erasure", 40, 3f, MaterialTier.COMMON, new Color(175, 180, 200)),
+    CARTOGRAPHY("exiledSector_cartographer_cipher", "cartographer", 120, 2f, MaterialTier.RARE, new Color(245, 215, 110));
 
     public static final List<Nanoswarm> KERNELS_ON_CHARTS = List.of(Nanoswarm.AUGMENTATION, Nanoswarm.CORRUPTION,
             Nanoswarm.ANNULMENT, Nanoswarm.TUNING);

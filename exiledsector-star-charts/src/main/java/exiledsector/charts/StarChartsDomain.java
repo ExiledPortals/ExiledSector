@@ -220,7 +220,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
 
     @Override
     public List<DomainMaterial> materialItems() {
-        return Arrays.stream(InfusedFeedstock.values()).map(feedstock -> new DomainMaterial(feedstock.itemId(), feedstock.color())).toList();
+        return Arrays.stream(InfusedFeedstock.values()).map(feedstock -> new DomainMaterial(feedstock.itemId(), InfusedFeedstock.TIER, feedstock.color())).toList();
     }
 
     @Override

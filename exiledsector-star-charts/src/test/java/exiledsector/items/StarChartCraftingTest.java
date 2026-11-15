@@ -37,7 +37,7 @@ class StarChartCraftingTest {
 
         @Override
         public MaterialTier tier() {
-            return MaterialTier.MAJOR;
+            return MaterialTier.RARE;
         }
 
         @Override

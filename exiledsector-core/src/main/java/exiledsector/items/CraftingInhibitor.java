@@ -13,15 +13,15 @@ import java.util.function.Predicate;
 
 public enum CraftingInhibitor implements GrowableMaterial {
 
-    PREFIX("exiledSector_prefix_inhibitor", ModifierSlot.PREFIX, null, 100, 0.5f, new Color(80, 225, 205)),
-    SUFFIX("exiledSector_suffix_inhibitor", ModifierSlot.SUFFIX, null, 100, 0.5f, new Color(235, 110, 225)),
-    BEAM("exiledSector_beam_inhibitor", null, "beam", 0, 0f, new Color(255, 100, 190)),
-    NON_BEAM_ENERGY("exiledSector_non_beam_energy_inhibitor", null, "non_beam_energy", 0, 0f, new Color(120, 160, 255)),
-    BALLISTIC("exiledSector_ballistic_inhibitor", null, "ballistic", 0, 0f, new Color(235, 200, 90)),
-    MISSILE("exiledSector_missile_inhibitor", null, "missile", 0, 0f, new Color(140, 230, 110)),
-    SHIELD("exiledSector_shield_inhibitor", null, "shield", 0, 0f, new Color(110, 215, 255)),
-    ARMOUR("exiledSector_armour_inhibitor", null, "armour", 0, 0f, new Color(200, 160, 120)),
-    PHASE("exiledSector_phase_inhibitor", null, "phase", 0, 0f, new Color(190, 130, 255));
+    PREFIX("exiledSector_prefix_inhibitor", ModifierSlot.PREFIX, null, 100, 0.5f, MaterialTier.UNIQUE, new Color(80, 225, 205)),
+    SUFFIX("exiledSector_suffix_inhibitor", ModifierSlot.SUFFIX, null, 100, 0.5f, MaterialTier.UNIQUE, new Color(235, 110, 225)),
+    BEAM("exiledSector_beam_inhibitor", null, "beam", 0, 0f, MaterialTier.COMMON, new Color(255, 100, 190)),
+    NON_BEAM_ENERGY("exiledSector_non_beam_energy_inhibitor", null, "non_beam_energy", 0, 0f, MaterialTier.COMMON, new Color(120, 160, 255)),
+    BALLISTIC("exiledSector_ballistic_inhibitor", null, "ballistic", 0, 0f, MaterialTier.COMMON, new Color(235, 200, 90)),
+    MISSILE("exiledSector_missile_inhibitor", null, "missile", 0, 0f, MaterialTier.COMMON, new Color(140, 230, 110)),
+    SHIELD("exiledSector_shield_inhibitor", null, "shield", 0, 0f, MaterialTier.RARE, new Color(110, 215, 255)),
+    ARMOUR("exiledSector_armour_inhibitor", null, "armour", 0, 0f, MaterialTier.RARE, new Color(200, 160, 120)),
+    PHASE("exiledSector_phase_inhibitor", null, "phase", 0, 0f, MaterialTier.RARE, new Color(190, 130, 255));
 
     public static final float INHIBITED_TAG_MULTIPLIER = 0.2f;
 
@@ -30,14 +30,17 @@ public enum CraftingInhibitor implements GrowableMaterial {
     private final String inhibitedTag;
     private final int defaultFeedstockCost;
     private final float dropWeight;
+    private final MaterialTier tier;
     private final Color color;
 
-    CraftingInhibitor(String itemId, ModifierSlot inhibitedSlot, String inhibitedTag, int defaultFeedstockCost, float dropWeight, Color color) {
+    CraftingInhibitor(String itemId, ModifierSlot inhibitedSlot, String inhibitedTag, int defaultFeedstockCost, float dropWeight, MaterialTier tier,
+                      Color color) {
         this.itemId = itemId;
         this.inhibitedSlot = inhibitedSlot;
         this.inhibitedTag = inhibitedTag;
         this.defaultFeedstockCost = defaultFeedstockCost;
         this.dropWeight = dropWeight;
+        this.tier = tier;
         this.color = color;
     }
 
@@ -122,7 +125,7 @@ public enum CraftingInhibitor implements GrowableMaterial {
     }
 
     public MaterialTier tier() {
-        return MaterialTier.EXOTIC;
+        return tier;
     }
 
     public Color color() {
