@@ -2,7 +2,7 @@
 
 Most anomalies are interesting to play but reward more of the same: extra quantity, an extra cache, a few reserved modifiers. Anomalous Debris is the exception, since its engrams are a crafting outcome nothing else gives. This plan gives each anomaly a reward that only it grants, the way each Path of Exile league mechanic has its own crafting or item outcome.
 
-Status: proposed 2026-11-11. Sections 1 and 2 are decided; every anomaly in section 3 is decided. Build steps 1 to 11 are built; Faction Skirmish (step 11) was replaced by the officer battles in `completed/anomalies/faction_skirmish_rework.md`. All numbers are placeholders.
+Status: built 2026-11-15 (proposed 2026-11-11). Every build step is built; Faction Skirmish (step 11) was replaced by the officer battles in `faction_skirmish_rework.md`. All numbers are placeholders.
 
 ## 1. Storm Front: biome modifiers on every hull item (built)
 
