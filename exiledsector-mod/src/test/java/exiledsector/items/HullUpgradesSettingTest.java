@@ -55,7 +55,7 @@ class HullUpgradesSettingTest {
     void keepsTheLevelsInsideThePlayerLevelRange() {
         configure(0, 99);
 
-        assertEquals(HullUpgradesSetting.MIN_UNLOCK_LEVEL, HullUpgradesSetting.unlockLevel());
-        assertEquals(UniqueSubroutinesSetting.MAX_UNLOCK_LEVEL, UniqueSubroutinesSetting.unlockLevel());
+        assertEquals(LevelGateSetting.MIN_LEVEL, HullUpgradesSetting.unlockLevel());
+        assertEquals(LevelGateSetting.MAX_LEVEL, UniqueSubroutinesSetting.unlockLevel());
     }
 }

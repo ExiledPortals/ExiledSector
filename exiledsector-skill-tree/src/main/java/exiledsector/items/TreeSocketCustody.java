@@ -7,12 +7,11 @@ import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillTree;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public final class TreeSocketCustody implements ShipCustody {
+public final class TreeSocketCustody extends SlottedItemCustody {
 
     public static final TreeSocketCustody INSTANCE = new TreeSocketCustody();
 
@@ -20,8 +19,13 @@ public final class TreeSocketCustody implements ShipCustody {
     }
 
     @Override
-    public boolean holdsItems(ShipSkillData shipData) {
-        return !shipData.getSocketedItems().isEmpty();
+    protected Map<String, String> itemIdsBySlot(ShipSkillData shipData) {
+        return shipData.getSocketedItems();
+    }
+
+    @Override
+    protected void emptySlot(ShipSkillData shipData, String nodeId) {
+        shipData.unsocketItem(nodeId);
     }
 
     @Override
@@ -50,28 +54,13 @@ public final class TreeSocketCustody implements ShipCustody {
 
     @Override
     public boolean unsocketIfMisfit(ShipSkillData shipData, Item item) {
-        String itemId = item.id();
-        for (Map.Entry<String, String> socketedEntry : List.copyOf(shipData.getSocketedItems().entrySet())) {
-            if (socketedEntry.getValue().equals(itemId) && (!fitsTreeSocket(item)
-                    || SubroutineSocketLimits.limitReached(item, socketedEntry.getKey(), shipData.getSocketedItems()))) {
-                shipData.unsocketItem(socketedEntry.getKey());
-                return true;
-            }
-        }
-        return false;
+        return emptyFirstSlotHolding(shipData, item, nodeId -> !fitsTreeSocket(item)
+                || SubroutineSocketLimits.limitReached(item, nodeId, shipData.getSocketedItems()));
     }
 
     @Override
     public List<Item> returnMisfits(ShipSkillData shipData, ItemStore store) {
-        List<Item> returnedItems = new ArrayList<>();
-        for (Map.Entry<String, String> socketedEntry : List.copyOf(shipData.getSocketedItems().entrySet())) {
-            Item item = store.find(socketedEntry.getValue());
-            if (item != null && item.kind() != null && !fitsTreeSocket(item)) {
-                shipData.unsocketItem(socketedEntry.getKey());
-                returnedItems.add(item);
-            }
-        }
-        return returnedItems;
+        return emptyMisfitSlots(shipData, store, (socketedItem, nodeId) -> !fitsTreeSocket(socketedItem));
     }
 
     @Override

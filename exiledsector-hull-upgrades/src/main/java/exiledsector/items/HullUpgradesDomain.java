@@ -4,7 +4,6 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.effects.ShipEffectSource;
-import exiledsector.i18n.Translation;
 import exiledsector.skills.SocketedItem;
 import exiledsector.skills.skilleffect.special.SlotItemEffect;
 import exiledsector.loot.BattleItemDropSetting;
@@ -13,16 +12,14 @@ import exiledsector.loot.MarketStock;
 import exiledsector.skills.ShipSections;
 import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.HullItemsRefitButton;
+import exiledsector.ui.SettingsPage;
 import exiledsector.ui.cargo.ItemIconLooks;
 import exiledsector.ui.inspect.ShipSummaryPart;
 import exiledsector.ui.refit.RefitButtonColumn;
 import exiledsector.ui.section.SectionIconLooks;
 import exiledsector.ui.section.SectionShipSummary;
-import lunalib.lunaSettings.LunaSettings.SettingsCreator;
 
 import java.util.List;
-
-import static exiledsector.ExiledSector.MOD_ID;
 
 public final class HullUpgradesDomain implements ExiledSectorDomain {
 
@@ -94,18 +91,14 @@ public final class HullUpgradesDomain implements ExiledSectorDomain {
         String itemsTab = ExiledSectorSettings.itemsTab();
         HullUpgradesSetting.SWITCH.addSettings("exiledSector_hullUpgradesHeader", "settings.hullUpgrades.header",
                 "settings.hullItems.hullUpgrades.name", "settings.hullItems.hullUpgrades.tooltip", itemsTab);
-        SettingsCreator.addInt(MOD_ID, HullUpgradesSetting.UNLOCK_LEVEL_FIELD_ID,
-                Translation.text("settings.hullItems.dropLevel.name"), Translation.text("settings.hullItems.dropLevel.tooltip"),
-                HullUpgradesSetting.DEFAULT_UNLOCK_LEVEL, HullUpgradesSetting.MIN_UNLOCK_LEVEL, HullUpgradesSetting.MAX_UNLOCK_LEVEL, itemsTab);
-        SettingsCreator.addRadio(MOD_ID, HullUpgradesSetting.POINTS_FIELD_ID,
-                Translation.text("settings.hullItems.hullUpgradePoints.name"), Translation.text("settings.hullItems.hullUpgradePoints.tooltip"),
-                HullUpgradesSetting.REFIT_SCHEMATICS, String.join(",", HullUpgradesSetting.POINTS_OPTIONS), itemsTab);
-        SettingsCreator.addBoolean(MOD_ID, HullUpgradesSetting.MASTER_SCHEMATICS_FIELD_ID,
-                Translation.text("settings.hullItems.masterSchematics.name"), Translation.text("settings.hullItems.masterSchematics.tooltip"),
-                HullUpgradesSetting.DEFAULT_MASTER_SCHEMATICS_REQUIRED, itemsTab);
-        SettingsCreator.addInt(MOD_ID, BattleItemDropSetting.FIELD_ID,
-                Translation.text("settings.hullItems.battleItems.name"), Translation.text("settings.hullItems.battleItems.tooltip"),
-                BattleItemDropSetting.DEFAULT_PERCENT, 0, BattleItemDropSetting.MAX_PERCENT, itemsTab);
+        SettingsPage itemsPage = new SettingsPage(itemsTab);
+        HullUpgradesSetting.UNLOCK_LEVEL.addSetting(itemsPage, "settings.hullItems.dropLevel");
+        itemsPage.radioSetting(HullUpgradesSetting.POINTS_FIELD_ID, "settings.hullItems.hullUpgradePoints",
+                HullUpgradesSetting.REFIT_SCHEMATICS, HullUpgradesSetting.POINTS_OPTIONS);
+        itemsPage.booleanSetting(HullUpgradesSetting.MASTER_SCHEMATICS_FIELD_ID, "settings.hullItems.masterSchematics",
+                HullUpgradesSetting.DEFAULT_MASTER_SCHEMATICS_REQUIRED);
+        itemsPage.intSetting(BattleItemDropSetting.FIELD_ID, "settings.hullItems.battleItems",
+                BattleItemDropSetting.DEFAULT_PERCENT, 0, BattleItemDropSetting.MAX_PERCENT);
     }
 
     @Override

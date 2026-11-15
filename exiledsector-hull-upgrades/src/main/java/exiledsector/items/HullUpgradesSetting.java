@@ -12,9 +12,8 @@ public final class HullUpgradesSetting {
     public static final String ENABLED_FIELD_ID = "exiledSector_hullUpgradesEnabled";
     public static final boolean DEFAULT_ENABLED = true;
     public static final String UNLOCK_LEVEL_FIELD_ID = "exiledSector_hullUpgradesUnlockLevel";
-    public static final int DEFAULT_UNLOCK_LEVEL = 15;
-    public static final int MIN_UNLOCK_LEVEL = 1;
-    public static final int MAX_UNLOCK_LEVEL = 15;
+    public static final int DEFAULT_UNLOCK_LEVEL = LevelGateSetting.DEFAULT_LEVEL;
+    public static final LevelGateSetting UNLOCK_LEVEL = new LevelGateSetting(UNLOCK_LEVEL_FIELD_ID);
     public static final String POINTS_FIELD_ID = "exiledSector_hullUpgradePoints";
     public static final String REFIT_SCHEMATICS = "Refit Schematics";
     public static final String STAR_CHART_PROGRESS = "Star Chart Progress";
@@ -25,7 +24,6 @@ public final class HullUpgradesSetting {
     public enum PointsMode {REFIT_SCHEMATICS, STAR_CHART_PROGRESS}
 
     public static final DomainSwitch SWITCH = new DomainSwitch(ENABLED_FIELD_ID, DEFAULT_ENABLED, MasterSchematicActivation::settingChanged);
-    private static volatile int unlockLevelSetting = DEFAULT_UNLOCK_LEVEL;
     private static volatile PointsMode pointsModeSetting = PointsMode.REFIT_SCHEMATICS;
     private static volatile boolean masterSchematicsRequiredSetting = DEFAULT_MASTER_SCHEMATICS_REQUIRED;
 
@@ -33,7 +31,7 @@ public final class HullUpgradesSetting {
     }
 
     public static void reloadSettings() {
-        unlockLevelSetting = clampLevel(ModSettings.intOr(UNLOCK_LEVEL_FIELD_ID, DEFAULT_UNLOCK_LEVEL));
+        UNLOCK_LEVEL.reload();
         PointsMode pointsMode = parsePointsMode(ModSettings.stringOr(POINTS_FIELD_ID, REFIT_SCHEMATICS));
         if (pointsMode != pointsModeSetting) {
             pointsModeSetting = pointsMode;
@@ -71,7 +69,7 @@ public final class HullUpgradesSetting {
     }
 
     public static int unlockLevel() {
-        return unlockLevelSetting;
+        return UNLOCK_LEVEL.level();
     }
 
     public static boolean hullItemDropsOpen(SectorAPI sector) {
@@ -83,10 +81,6 @@ public final class HullUpgradesSetting {
         return enabled() && playerLevel >= unlockLevel();
     }
 
-    static int clampLevel(int level) {
-        return Math.max(MIN_UNLOCK_LEVEL, Math.min(MAX_UNLOCK_LEVEL, level));
-    }
-
     public static void setEnabledForTests(boolean enabled) {
         SWITCH.setForTests(enabled);
     }
@@ -96,6 +90,6 @@ public final class HullUpgradesSetting {
     }
 
     public static void setUnlockLevelForTests(int unlockLevel) {
-        unlockLevelSetting = unlockLevel;
+        UNLOCK_LEVEL.setForTests(unlockLevel);
     }
 }

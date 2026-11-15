@@ -50,4 +50,25 @@ class WeightedPickTest {
             assertEquals(fromList, WeightedPick.pick(weights, new Random(seed)));
         }
     }
+
+    @Test
+    void pickOrUniformNeverPicksANegativeWeightWhileAnotherWeightIsPositive() {
+        Map<String, Double> weights = Map.of("negative", -5d, "zero", 0d, "positive", 1d);
+        Random random = new Random(3L);
+        for (int roll = 0; roll < 200; roll++) {
+            assertEquals("positive", WeightedPick.pickOrUniform(List.of("negative", "zero", "positive"), weights::get, random));
+        }
+    }
+
+    @Test
+    void pickOrUniformPicksAnyCandidateWhenNoWeightIsPositive() {
+        Random random = new Random(4L);
+        Map<String, Integer> picks = new HashMap<>();
+        for (int roll = 0; roll < 300; roll++) {
+            picks.merge(WeightedPick.pickOrUniform(List.of("a", "b", "c"), candidate -> 0d, random), 1, Integer::sum);
+        }
+
+        assertEquals(3, picks.size());
+        assertNull(WeightedPick.pickOrUniform(List.<String>of(), candidate -> 1d, random));
+    }
 }

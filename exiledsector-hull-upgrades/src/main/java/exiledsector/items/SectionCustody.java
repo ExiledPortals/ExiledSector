@@ -2,12 +2,11 @@ package exiledsector.items;
 
 import exiledsector.skills.ShipSkillData;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public final class SectionCustody implements ShipCustody {
+public final class SectionCustody extends SlottedItemCustody {
 
     public static final SectionCustody INSTANCE = new SectionCustody();
 
@@ -15,8 +14,13 @@ public final class SectionCustody implements ShipCustody {
     }
 
     @Override
-    public boolean holdsItems(ShipSkillData shipData) {
-        return !shipData.getSectionItems().isEmpty();
+    protected Map<String, String> itemIdsBySlot(ShipSkillData shipData) {
+        return shipData.getSectionItems();
+    }
+
+    @Override
+    protected void emptySlot(ShipSkillData shipData, String sectionKindId) {
+        shipData.removeFromSection(sectionKindId);
     }
 
     @Override
@@ -32,27 +36,12 @@ public final class SectionCustody implements ShipCustody {
 
     @Override
     public boolean unsocketIfMisfit(ShipSkillData shipData, Item item) {
-        String itemId = item.id();
-        for (Map.Entry<String, String> slotEntry : List.copyOf(shipData.getSectionItems().entrySet())) {
-            if (slotEntry.getValue().equals(itemId) && !fitsSection(item, slotEntry.getKey())) {
-                shipData.removeFromSection(slotEntry.getKey());
-                return true;
-            }
-        }
-        return false;
+        return emptyFirstSlotHolding(shipData, item, sectionKindId -> !fitsSection(item, sectionKindId));
     }
 
     @Override
     public List<Item> returnMisfits(ShipSkillData shipData, ItemStore store) {
-        List<Item> returnedItems = new ArrayList<>();
-        for (Map.Entry<String, String> slotEntry : List.copyOf(shipData.getSectionItems().entrySet())) {
-            Item item = store.find(slotEntry.getValue());
-            if (item != null && item.kind() != null && !fitsSection(item, slotEntry.getKey())) {
-                shipData.removeFromSection(slotEntry.getKey());
-                returnedItems.add(item);
-            }
-        }
-        return returnedItems;
+        return emptyMisfitSlots(shipData, store, (socketedItem, sectionKindId) -> !fitsSection(socketedItem, sectionKindId));
     }
 
     static boolean fitsSection(Item item, String sectionKindId) {
