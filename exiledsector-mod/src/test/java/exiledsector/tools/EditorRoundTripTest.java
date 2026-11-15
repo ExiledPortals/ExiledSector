@@ -112,7 +112,7 @@ class EditorRoundTripTest {
             new Pin("ship_skill_tree.json serpent decoration", DECORATION_LOADER, List.of("parseSerpent", "parseOrbit"), decoration("SERPENT"), true),
             new Pin("ship_skill_tree.json shrouded maw decoration", DECORATION_LOADER, List.of("parseShroudedMaw"), decoration("SHROUDED_MAW"), true),
             new Pin("ship_skill_tree.json hypershunt decoration", DECORATION_LOADER, List.of("parseHypershunt", "parseOrbit"), decoration("HYPERSHUNT"), true),
-            new Pin("subroutines.csv and hull_items.csv row key", ITEM_DEFINITIONS, List.of("rows"),
+            new Pin("subroutines.csv and hull_items.csv row key", ITEM_DEFINITIONS, List.of("load"),
                     List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "SUBROUTINE_COLUMNS"), new EditorSource(ITEM_DEFINITIONS_MODEL, "HULL_ITEM_COLUMNS")), true),
             new Pin("subroutines.csv columns", SUBROUTINE_DEFINITIONS, List.of("parse"),
                     List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "SUBROUTINE_COLUMNS")), true),
@@ -151,7 +151,7 @@ class EditorRoundTripTest {
                     List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "SUBROUTINE_COLUMNS")), true));
 
     private static final String JAVA_KEY_READ_PREFIX = "(?:\\.\\s*(?:opt|get|has|isNull)[A-Za-z]*\\s*\\(\\s*"
-            + "|\\bModCsv\\.text\\s*\\([^,()\"]*,\\s*|\\bModCsv\\.(?:load|rows)\\s*\\(\\s*|\\bcsv\\.(?:integer|number|flag)\\s*\\([^,()\"]*,\\s*)";
+            + "|\\bModCsv\\.text\\s*\\([^,()\"]*,\\s*|\\bModCsv\\.(?:load|rows(?:OrEmpty)?)\\s*\\(\\s*|\\bcsv\\.(?:integer|number|flag)\\s*\\([^,()\"]*,\\s*)";
     private static final Pattern JAVA_KEY_READ = Pattern.compile(JAVA_KEY_READ_PREFIX + "\"([^\"\\\\]*)\"");
     private static final Pattern JAVA_CONSTANT_KEY_READ = Pattern.compile(JAVA_KEY_READ_PREFIX + "([A-Z][A-Z0-9_]*)\\s*[,)]");
     private static final Pattern JAVA_STRING_CONSTANT = Pattern.compile("\\bstatic\\s+final\\s+String\\s+([A-Z][A-Z0-9_]*)\\s*=\\s*\"([^\"\\\\]*)\"\\s*;");
