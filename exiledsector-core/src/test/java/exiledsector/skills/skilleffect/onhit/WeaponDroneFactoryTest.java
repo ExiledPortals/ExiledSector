@@ -16,10 +16,12 @@ import com.fs.starfarer.api.loading.MissileSpecAPI;
 import com.fs.starfarer.api.loading.ProjectileSpecAPI;
 import com.fs.starfarer.api.loading.ProjectileWeaponSpecAPI;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
+import exiledsector.skills.skilleffect.CombatEngineExtension;
 import exiledsector.skills.skilleffect.CsvIdList;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Answers;
 import org.mockito.InOrder;
 import org.mockito.MockedStatic;
@@ -43,7 +45,8 @@ import static org.mockito.Mockito.when;
 
 class WeaponDroneFactoryTest {
 
-    private MockedStatic<Global> global;
+    @RegisterExtension
+    final CombatEngineExtension combat = new CombatEngineExtension();
     private MockedStatic<WeaponDroneStats> stats;
     private SettingsAPI settings;
     private CombatEngineAPI engine;
@@ -57,13 +60,11 @@ class WeaponDroneFactoryTest {
     @BeforeEach
     void setUp() {
         settings = mock(SettingsAPI.class);
-        engine = mock(CombatEngineAPI.class);
-        global = Mockito.mockStatic(Global.class);
-        global.when(Global::getSettings).thenReturn(settings);
-        global.when(Global::getCombatEngine).thenReturn(engine);
+        engine = combat.engine();
+        combat.global().when(Global::getSettings).thenReturn(settings);
         FactoryAPI factory = mock(FactoryAPI.class);
         when(factory.createPerson()).thenReturn(mock(PersonAPI.class, Answers.RETURNS_DEEP_STUBS));
-        global.when(Global::getFactory).thenReturn(factory);
+        combat.global().when(Global::getFactory).thenReturn(factory);
         stats = Mockito.mockStatic(WeaponDroneStats.class);
 
         ShipHullSpecAPI hull = mock(ShipHullSpecAPI.class);
@@ -84,7 +85,6 @@ class WeaponDroneFactoryTest {
     @AfterEach
     void tearDown() {
         stats.close();
-        global.close();
     }
 
     private static WeaponAPI weaponWith(Object spec, WeaponAPI.WeaponSize size) {

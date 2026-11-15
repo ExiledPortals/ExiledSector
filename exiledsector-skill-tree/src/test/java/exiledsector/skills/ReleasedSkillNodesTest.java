@@ -3,9 +3,9 @@ package exiledsector.skills;
 import exiledsector.ProjectFiles;
 import exiledsector.skills.npc.RealSkillData;
 import org.json.JSONArray;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -14,6 +14,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class ReleasedSkillNodesTest {
 
     private static final Path LEDGER = Path.of("exiledsector-skill-tree/src/test/resources/released_skill_nodes.json");
@@ -21,11 +22,6 @@ class ReleasedSkillNodesTest {
     @BeforeEach
     void setUp() throws Exception {
         RealSkillData.load();
-    }
-
-    @AfterEach
-    void tearDown() {
-        RealSkillData.clear();
     }
 
     private static List<String> released(String key) throws Exception {

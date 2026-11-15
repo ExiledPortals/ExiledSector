@@ -3,6 +3,7 @@ package exiledsector.skills.npc;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.MockShips;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,8 +42,7 @@ class NpcShipSelectorTest {
     }
 
     private static FleetMemberAPI member(boolean officered, boolean flagship) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getVariant()).thenReturn(mock(ShipVariantAPI.class));
+        FleetMemberAPI member = MockShips.member().variant(mock(ShipVariantAPI.class)).build();
         PersonAPI captain = mock(PersonAPI.class);
         when(captain.isDefault()).thenReturn(!officered);
         when(member.getCaptain()).thenReturn(captain);

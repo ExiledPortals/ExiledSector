@@ -25,6 +25,7 @@ import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.loading.VariantSource;
 import exiledsector.MockSector;
 import exiledsector.ExiledSector;
+import exiledsector.MockShips;
 import exiledsector.charts.ChartIds;
 import exiledsector.items.NpcItems;
 import exiledsector.items.MasterSchematic;
@@ -32,6 +33,7 @@ import exiledsector.items.WormholeAnchorDefinitions;
 import exiledsector.items.WormholeAnchorLinks;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AnchorLinks;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.ShipTrees;
@@ -39,7 +41,6 @@ import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
-import exiledsector.skills.SkillType;
 import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.npc.NpcFactionVolumes;
 import exiledsector.skills.npc.NpcLevelCaps;
@@ -54,6 +55,7 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -65,6 +67,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static exiledsector.skills.TestTrees.type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -75,6 +78,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class NpcFleetLevellerTest {
 
     private MockSector mockSector;
@@ -86,8 +90,6 @@ class NpcFleetLevellerTest {
     @BeforeEach
     void setUp() {
         SkillDataResolver.clearCache();
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
         SkillTree.register(new SkillNode("root_1", type("root", SkillTier.ROOT).build(), List.of(), 0f, 0f));
         SkillTree.register(new SkillNode("a_1", type("a", SkillTier.SMALL).build(), List.of("root_1"), 0f, 0f));
         SkillTree.register(new SkillNode("armor_1", type("heavyarmor", SkillTier.NOTABLE)
@@ -115,12 +117,6 @@ class NpcFleetLevellerTest {
         mockSector.close();
         NpcFactionVolumes.clear();
         SkillDataResolver.clearCache();
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
-    }
-
-    private static SkillType.Builder type(String id, SkillTier tier) {
-        return new SkillType.Builder(id, id, "a.png", tier);
     }
 
     private static ShipVariantAPI statefulVariant(Set<String> hullMods, List<String> tags) {
@@ -141,9 +137,7 @@ class NpcFleetLevellerTest {
     }
 
     private static FleetMemberAPI member(String id, ShipVariantAPI variant, boolean officered) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getId()).thenReturn(id);
-        when(member.getVariant()).thenReturn(variant);
+        FleetMemberAPI member = MockShips.member(id).variant(variant).build();
         ShipHullSpecAPI hullSpec = variant.getHullSpec();
         when(member.getHullSpec()).thenReturn(hullSpec);
         PersonAPI captain = mock(PersonAPI.class);

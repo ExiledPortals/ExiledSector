@@ -1,18 +1,14 @@
 package exiledsector.skills.skilleffect;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CollisionClass;
-import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.lwjgl.util.vector.Vector2f;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -33,22 +29,14 @@ import static org.mockito.Mockito.when;
 class ArcDischargeTest {
 
     private final List<Object> gridShips = new ArrayList<>();
-    private MockedStatic<Global> globalMock;
+    @RegisterExtension
+    final CombatEngineExtension combat = new CombatEngineExtension();
     private CombatEngineAPI engine;
 
     @BeforeEach
     void setUp() {
-        engine = mock(CombatEngineAPI.class);
-        CollisionGridAPI shipGrid = mock(CollisionGridAPI.class);
-        when(engine.getShipGrid()).thenReturn(shipGrid);
-        when(shipGrid.getCheckIterator(any(), anyFloat(), anyFloat())).thenAnswer(call -> new ArrayList<>(gridShips).iterator());
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getCombatEngine).thenReturn(engine);
-    }
-
-    @AfterEach
-    void tearDown() {
-        globalMock.close();
+        engine = combat.engine();
+        combat.shipGridOver(gridShips);
     }
 
     private ShipAPI ship(int owner, float x, boolean fighter, HullSize hullSize) {

@@ -3,9 +3,8 @@ package exiledsector.skills;
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.layout.SkillNodeDecoration;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,22 +17,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class ShipSkillDataTest {
 
     private static final int AMPLE_BUDGET = 100;
     private static final int AMPLE_NODE_CAP = 1000;
-
-    @BeforeEach
-    void setUp() {
-        SkillTree.clearTypes();
-        SkillTree.clearNodes();
-    }
-
-    @AfterEach
-    void tearDown() {
-        SkillTree.clearTypes();
-        SkillTree.clearNodes();
-    }
 
     private static AllocationCheck gate(ShipSkillData data, Collection<SkillNode> allNodes, String rootId, int totalOp, int opCost,
                                        int maxAllocatedNodes) {

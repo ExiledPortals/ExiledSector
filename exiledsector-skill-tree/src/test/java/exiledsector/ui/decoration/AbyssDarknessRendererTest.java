@@ -1,6 +1,7 @@
 package exiledsector.ui.decoration;
 
 import exiledsector.ProjectFiles;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -11,8 +12,8 @@ import exiledsector.skills.loader.DecorationLoader;
 import exiledsector.skills.npc.RealSkillData;
 import exiledsector.skills.tags.SkillTags;
 import exiledsector.ui.TreeViewport;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class AbyssDarknessRendererTest {
 
     private static final SkillType SMALL = new SkillType.Builder("small", "Small", "a.png", SkillTier.SMALL).build();
@@ -30,11 +32,6 @@ class AbyssDarknessRendererTest {
     private static final float CANVAS_HEIGHT = 900f;
 
     private record Band(float[] vertexXs, float[] vertexYs, float[] darkness) {
-    }
-
-    @AfterEach
-    void tearDown() {
-        RealSkillData.clear();
     }
 
     private static SkillNode node(String id, float treeX, float treeY, String... tags) {

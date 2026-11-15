@@ -1,13 +1,10 @@
 package exiledsector.items;
 
 import exiledsector.ProjectFiles;
-import org.json.CDL;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.List;
 
 final class HullItemRows {
@@ -49,8 +46,7 @@ final class HullItemRows {
     }
 
     static JSONArray shippedRows(String dataPath) throws Exception {
-        String csv = Files.readString(ProjectFiles.projectRoot().resolve(dataPath), StandardCharsets.UTF_8);
-        return CDL.toJSONArray(csv.replace("\r\n", "\n"));
+        return ProjectFiles.csvRows(dataPath);
     }
 
     static void registerModifierNames(String... idSlotLinesNames) throws JSONException {

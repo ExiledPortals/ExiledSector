@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.loading.DamagingExplosionSpec;
+import exiledsector.skills.skilleffect.CombatTestShips;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -23,12 +24,10 @@ import static org.mockito.Mockito.when;
 class ShroudedDamageListenerTest {
 
     private static ShroudedDamageListener listener(float lensPercent, float lightningPercent) {
-        ShipAPI owner = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS);
-        when(owner.getId()).thenReturn("dweller_hunter");
-        when(owner.getMutableStats()).thenReturn(stats);
-        when(stats.getDynamic().getValue(ShroudedDamageListener.LENS_DAMAGE_PERCENT_KEY, 0f)).thenReturn(lensPercent);
-        when(stats.getDynamic().getValue(ShroudedDamageListener.RIFT_LIGHTNING_DAMAGE_PERCENT_KEY, 0f)).thenReturn(lightningPercent);
+        ShipAPI owner = CombatTestShips.ship(mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS)).id("dweller_hunter")
+                .dynamic(ShroudedDamageListener.LENS_DAMAGE_PERCENT_KEY, lensPercent)
+                .dynamic(ShroudedDamageListener.RIFT_LIGHTNING_DAMAGE_PERCENT_KEY, lightningPercent)
+                .build();
         return new ShroudedDamageListener(owner);
     }
 

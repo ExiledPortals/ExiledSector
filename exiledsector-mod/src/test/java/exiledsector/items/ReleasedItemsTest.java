@@ -3,7 +3,6 @@ package exiledsector.items;
 import exiledsector.ProjectFiles;
 import exiledsector.skills.skilleffect.EffectAliases;
 import exiledsector.modifiers.ModifierSlot;
-import org.json.CDL;
 import org.json.JSONArray;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +18,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import static exiledsector.ProjectFiles.csvRows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -66,11 +66,6 @@ class ReleasedItemsTest {
         StarChartFixtures.clear();
         ItemDefinitions.clear();
         EffectAliases.clear();
-    }
-
-    private static JSONArray csvRows(String dataPath) throws Exception {
-        String csv = Files.readString(ProjectFiles.projectRoot().resolve(dataPath), StandardCharsets.UTF_8);
-        return CDL.toJSONArray(csv.replace("\r\n", "\n"));
     }
 
     private static List<ReleasedPoolEffect> ledger() throws IOException {

@@ -16,6 +16,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.DerelictShipEntityPlugin;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.ShipRecoverySpecial;
 import exiledsector.MockSector;
+import exiledsector.MockShips;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.skills.unlock.UnlockCondition;
 import exiledsector.skills.unlock.UnlockConditionType;
@@ -84,12 +85,10 @@ class AbyssSingularityTest {
     }
 
     private static FleetMemberAPI shipOfHull(String hullId) {
-        ShipHullSpecAPI hullSpec = mock(ShipHullSpecAPI.class);
-        when(hullSpec.getHullId()).thenReturn(hullId);
-        when(hullSpec.getBaseHullId()).thenReturn(hullId);
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getHullSpec()).thenReturn(hullSpec);
-        return member;
+        MockShips.MemberBuilder member = MockShips.member();
+        when(member.hullSpec().getHullId()).thenReturn(hullId);
+        when(member.hullSpec().getBaseHullId()).thenReturn(hullId);
+        return member.build();
     }
 
     private static EngagementResultAPI battle(boolean playerWon, List<FleetMemberAPI> destroyed, List<FleetMemberAPI> disabled) {

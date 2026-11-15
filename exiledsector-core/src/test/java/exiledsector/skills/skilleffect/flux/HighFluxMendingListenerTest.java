@@ -1,9 +1,8 @@
 package exiledsector.skills.skilleffect.flux;
 
 import com.fs.starfarer.api.combat.FluxTrackerAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.skills.skilleffect.CombatTestShips;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,13 +25,7 @@ class HighFluxMendingListenerTest {
     }
 
     private ShipAPI deployment() {
-        ShipAPI ship = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
-        when(ship.isAlive()).thenReturn(true);
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(stats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getValue(HighFluxMendingListener.REGEN_PERCENT_KEY, 0f)).thenReturn(1f);
+        ShipAPI ship = CombatTestShips.ship().alive().dynamic(HighFluxMendingListener.REGEN_PERCENT_KEY, 1f).build();
         when(ship.getFluxTracker()).thenReturn(flux);
         when(ship.getMaxHitpoints()).thenReturn(1000f);
         when(ship.getHitpoints()).thenAnswer(call -> hitpoints[0]);

@@ -1,15 +1,13 @@
 package exiledsector.skills.skilleffect.weapon;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import org.junit.jupiter.api.AfterEach;
+import exiledsector.skills.skilleffect.CombatEngineExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.lwjgl.util.vector.Vector2f;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,21 +27,15 @@ import static org.mockito.Mockito.when;
 
 class SharedTargetDamageListenerTest {
 
-    private MockedStatic<Global> globalMock;
+    @RegisterExtension
+    final CombatEngineExtension combat = new CombatEngineExtension();
     private final List<ShipAPI> ships = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
-        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+        CombatEngineAPI engine = combat.engine();
         when(engine.getCustomData()).thenReturn(new HashMap<>());
         when(engine.getShips()).thenReturn(ships);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getCombatEngine).thenReturn(engine);
-    }
-
-    @AfterEach
-    void tearDown() {
-        globalMock.close();
     }
 
     private static ShipAPI ship(String id, int owner) {

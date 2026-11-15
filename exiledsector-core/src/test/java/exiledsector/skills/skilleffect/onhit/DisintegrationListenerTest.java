@@ -8,7 +8,7 @@ import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.combat.WeaponAPI;
-import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.skills.skilleffect.CombatTestShips;
 import exiledsector.skills.skilleffect.weapon.BallisticAsEnergy;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
@@ -38,14 +38,7 @@ class DisintegrationListenerTest {
     }
 
     private static ShipAPI shipWithDynamicValue(String key, float value) {
-        ShipAPI ship = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(stats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getValue(key, 0f)).thenReturn(value);
-        when(ship.isAlive()).thenReturn(true);
-        return ship;
+        return CombatTestShips.ship().dynamic(key, value).alive().build();
     }
 
     private static DamagingProjectileAPI projectileFrom(WeaponAPI.WeaponType type) {

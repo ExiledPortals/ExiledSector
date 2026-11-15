@@ -17,9 +17,9 @@ import exiledsector.charts.ChartIds;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.anomaly.LiveAnomalyRuns;
 import exiledsector.charts.atlas.AtlasCatalysts;
 import exiledsector.charts.content.ChartAnomalyFleets;
-import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.FakeChartContentEngine;
 import exiledsector.charts.generation.ChartGenContext;
@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import static exiledsector.charts.anomaly.LiveAnomalyRuns.RUN_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -59,8 +60,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class LaunchingStationTest {
-
-    private static final String RUN_ID = "run1";
 
     private MockSector mockSector;
     private FakeChartContentEngine engine;
@@ -94,8 +93,7 @@ class LaunchingStationTest {
     }
 
     private static ChartRun run(int tier) {
-        ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        run.recordContent(new ChartContent(tier, "remnant", null, 3, 2));
+        ChartRun run = LiveAnomalyRuns.run(tier, "remnant", List.of());
         ChartRuns.store(run);
         return run;
     }
@@ -190,8 +188,7 @@ class LaunchingStationTest {
 
     @Test
     void onlyTheNexusStationItselfOverchargesTheHullItemsItDrops() {
-        ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        run.recordContent(new ChartContent(6, "remnant", null, 3, 2, List.of(RemnantNexusStation.ANOMALY_ID, DomainMothership.ANOMALY_ID)));
+        ChartRun run = LiveAnomalyRuns.run(6, "remnant", List.of(RemnantNexusStation.ANOMALY_ID, DomainMothership.ANOMALY_ID));
         ChartRuns.store(run);
         CampaignFleetAPI nexus = placed(RemnantNexusStation.INSTANCE, 6);
         CampaignFleetAPI launched = ((NexusFleetManager) systemScripts.get(0)).spawnFleet();

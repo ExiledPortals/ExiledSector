@@ -4,13 +4,12 @@ import exiledsector.skills.NodeGrants;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.SkillTier;
-import exiledsector.skills.SkillTree;
-import exiledsector.skills.SkillType;
-import exiledsector.skills.layout.SkillNodeDecoration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -19,11 +18,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static exiledsector.skills.TestTrees.taggedNode;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class NodeGrantCustodyTest {
 
     private static final String CACHE_ID = "item_cache";
@@ -36,14 +37,10 @@ class NodeGrantCustodyTest {
 
     @BeforeEach
     void setUp() {
-        SkillTree.clearNodes();
-        root = node("root", SkillTier.ROOT, "socket", "path");
-        socket = node("socket", SkillTier.SOCKET, "root");
-        pathNode = node("path", SkillTier.SMALL, "root", "notable");
-        notable = node("notable", SkillTier.NOTABLE, "path");
-        for (SkillNode node : List.of(root, socket, pathNode, notable)) {
-            SkillTree.register(node);
-        }
+        root = taggedNode("root", SkillTier.ROOT, "core", "socket", "path");
+        socket = taggedNode("socket", SkillTier.SOCKET, "core", "root");
+        pathNode = taggedNode("path", SkillTier.SMALL, "core", "root", "notable");
+        notable = taggedNode("notable", SkillTier.NOTABLE, "core", "path");
         NodeGrants.install(new NodeGrants.GrantLookup() {
             @Override
             public List<String> grantedNodeIds(String socketedItemId) {
@@ -60,12 +57,6 @@ class NodeGrantCustodyTest {
     @AfterEach
     void tearDown() {
         NodeGrants.install(null);
-        SkillTree.clearNodes();
-    }
-
-    private static SkillNode node(String id, SkillTier tier, String... connectedTo) {
-        SkillType type = new SkillType.Builder(id + "_type", id, "a.png", tier).effects(List.of()).build();
-        return new SkillNode(id, type, List.of(connectedTo), 0f, 0f, SkillNodeDecoration.NONE, List.of("core"));
     }
 
     private ShipSkillData shipWithGrant() {

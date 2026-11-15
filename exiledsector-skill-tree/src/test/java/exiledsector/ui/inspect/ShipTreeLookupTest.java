@@ -5,7 +5,9 @@ import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.MockSector;
+import exiledsector.MockShips;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -14,6 +16,7 @@ import exiledsector.skills.SkillType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 import java.util.Map;
@@ -26,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class ShipTreeLookupTest {
 
     private static final String NPC_TAG = "exiledSector_npcTree|bulwark|2|root_1,a_1";
@@ -36,8 +40,6 @@ class ShipTreeLookupTest {
     @BeforeEach
     void setUp() {
         SkillDataResolver.clearCache();
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
         SkillTree.register(new SkillNode("root_1", new SkillType.Builder("root", "Root", "a.png", SkillTier.ROOT).build(), List.of(), 0f, 0f));
         SkillTree.register(new SkillNode("a_1", new SkillType.Builder("a", "A", "a.png", SkillTier.SMALL).tags(List.of("ballistic")).build(), List.of("root_1"), 0f, 0f));
         mockSector = new MockSector();
@@ -48,16 +50,12 @@ class ShipTreeLookupTest {
     void tearDown() {
         mockSector.close();
         SkillDataResolver.clearCache();
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
     }
 
     private static FleetMemberAPI member(String id, boolean playerFleet, String... tags) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getId()).thenReturn(id);
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(variant.getTags()).thenReturn(List.of(tags));
-        when(member.getVariant()).thenReturn(variant);
+        FleetMemberAPI member = MockShips.member(id).variant(variant).build();
         CampaignFleetAPI fleet = mock(CampaignFleetAPI.class);
         when(fleet.isPlayerFleet()).thenReturn(playerFleet);
         FleetDataAPI fleetData = mock(FleetDataAPI.class);

@@ -1,8 +1,6 @@
 package exiledsector.skills.skilleffect.special;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ArmorGridAPI;
-import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageType;
@@ -13,12 +11,12 @@ import com.fs.starfarer.api.combat.ShipEngineControllerAPI.ShipEngineAPI;
 import com.fs.starfarer.api.combat.ShipEngineControllerAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.skills.skilleffect.CombatEngineExtension;
 import exiledsector.skills.skilleffect.DestructionWatchHarness;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.lwjgl.util.vector.Vector2f;
-import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
@@ -42,24 +40,15 @@ class HeartlessTest {
 
     private final List<Object> gridShips = new ArrayList<>();
 
-    private MockedStatic<Global> globalMock;
+    @RegisterExtension
+    final CombatEngineExtension combat = new CombatEngineExtension();
 
     private CombatEngineAPI combatEngine;
 
     @BeforeEach
     void setUp() {
-        CombatEngineAPI engine = mock(CombatEngineAPI.class);
-        combatEngine = engine;
-        CollisionGridAPI shipGrid = mock(CollisionGridAPI.class);
-        when(engine.getShipGrid()).thenReturn(shipGrid);
-        when(shipGrid.getCheckIterator(any(), anyFloat(), anyFloat())).thenAnswer(invocation -> new ArrayList<>(gridShips).iterator());
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getCombatEngine).thenReturn(engine);
-    }
-
-    @AfterEach
-    void tearDown() {
-        globalMock.close();
+        combatEngine = combat.engine();
+        combat.shipGridOver(gridShips);
     }
 
     private static ShipAPI ship(String id, float x, Map<String, Float> dynamicValues) {
@@ -232,7 +221,7 @@ class HeartlessTest {
         Armored heart = heartShip(FROZEN_HEART);
         ShipAPI enemy = other(800f, false);
         gridShips.addAll(List.of(heart.ship(), enemy));
-        DestructionWatchHarness destructionWatch = new DestructionWatchHarness(globalMock, combatEngine, gridShips);
+        DestructionWatchHarness destructionWatch = new DestructionWatchHarness(combat.global(), combatEngine, gridShips);
         new NearbyDestructionHeartless(heart.ship());
 
         destructionWatch.tick();
@@ -250,7 +239,7 @@ class HeartlessTest {
         ShipAPI alreadyDead = other(300f, false);
         destroy(alreadyDead);
         gridShips.addAll(List.of(heart.ship(), fighter, far, alreadyDead));
-        DestructionWatchHarness destructionWatch = new DestructionWatchHarness(globalMock, combatEngine, gridShips);
+        DestructionWatchHarness destructionWatch = new DestructionWatchHarness(combat.global(), combatEngine, gridShips);
         new NearbyDestructionHeartless(heart.ship());
 
         destructionWatch.tick();
@@ -268,7 +257,7 @@ class HeartlessTest {
         ShipAPI module = other(500f, false);
         when(module.getParentStation()).thenReturn(mock(ShipAPI.class));
         gridShips.addAll(List.of(heart.ship(), retreating, module));
-        DestructionWatchHarness destructionWatch = new DestructionWatchHarness(globalMock, combatEngine, gridShips);
+        DestructionWatchHarness destructionWatch = new DestructionWatchHarness(combat.global(), combatEngine, gridShips);
         new NearbyDestructionHeartless(heart.ship());
 
         destructionWatch.tick();
@@ -285,7 +274,7 @@ class HeartlessTest {
         Armored heart = heartShip(FROZEN_HEART);
         ShipAPI enemy = other(800f, false);
         gridShips.addAll(List.of(heart.ship(), enemy));
-        DestructionWatchHarness destructionWatch = new DestructionWatchHarness(globalMock, combatEngine, gridShips);
+        DestructionWatchHarness destructionWatch = new DestructionWatchHarness(combat.global(), combatEngine, gridShips);
         new NearbyDestructionHeartless(heart.ship());
 
         destructionWatch.tick();

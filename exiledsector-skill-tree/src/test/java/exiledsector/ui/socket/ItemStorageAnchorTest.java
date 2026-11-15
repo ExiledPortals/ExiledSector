@@ -6,12 +6,13 @@ import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemTypes;
 import exiledsector.items.WormholeAnchorDefinitions;
-import exiledsector.skills.SkillTree;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class ItemStorageAnchorTest {
 
     private static final String ANCHOR_ID = "wormhole_anchor_abyss";
@@ -33,7 +35,6 @@ class ItemStorageAnchorTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        SkillTree.clearNodes();
         WormholeAnchorDefinitions.register(new JSONArray().put(new JSONObject().put("id", ANCHOR_ID).put("volume", "abyss")
                 .put("exit_node", "rat_abyss_wormhole_1").put("name", "Abyss Wormhole Anchor").put("description", "Opens a wormhole to the Abyss volume."))
                 .put(new JSONObject().put("id", OTHER_ANCHOR_ID).put("volume", "stargazer").put("exit_node", "stargazer_wormhole_1")

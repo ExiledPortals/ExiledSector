@@ -1,6 +1,5 @@
 package exiledsector.skills.skilleffect;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.BeamAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
@@ -10,13 +9,11 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.combat.systems.EmpArcEntity;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.ArgumentCaptor;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.objenesis.ObjenesisStd;
 
 import java.util.ArrayList;
@@ -38,7 +35,8 @@ import static org.mockito.Mockito.when;
 
 class EmpOnlyHitsTest {
 
-    private MockedStatic<Global> globalMock;
+    @RegisterExtension
+    final CombatEngineExtension combat = new CombatEngineExtension();
     private CombatEngineAPI engine;
     private EmpOnlyHits router;
     private ShipAPI dealer;
@@ -46,17 +44,10 @@ class EmpOnlyHitsTest {
 
     @BeforeEach
     void setUp() {
-        engine = mock(CombatEngineAPI.class);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getCombatEngine).thenReturn(engine);
+        engine = combat.engine();
         router = new EmpOnlyHits();
         dealer = mock(ShipAPI.class);
         router.addHandler(dealer, seen::add);
-    }
-
-    @AfterEach
-    void tearDown() {
-        globalMock.close();
     }
 
     private DamageDealtModifier dealersModifierPass() {

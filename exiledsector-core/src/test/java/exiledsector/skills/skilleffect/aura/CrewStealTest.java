@@ -2,12 +2,12 @@ package exiledsector.skills.skilleffect.aura;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
 import exiledsector.MockSector;
+import exiledsector.skills.skilleffect.CombatTestShips;
 import exiledsector.skills.skilleffect.DestructionWatchHarness;
 import exiledsector.skills.skilleffect.logistics.FleetCrewLedger;
 import org.junit.jupiter.api.AfterEach;
@@ -54,13 +54,7 @@ class CrewStealTest {
     }
 
     private static ShipAPI ship(float x, int owner) {
-        ShipAPI ship = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        when(stats.getDynamic()).thenReturn(mock(DynamicStatsAPI.class));
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(ship.getLocation()).thenReturn(new Vector2f(x, 0f));
-        when(ship.getOwner()).thenReturn(owner);
-        when(ship.isAlive()).thenReturn(true);
+        ShipAPI ship = CombatTestShips.ship().at(new Vector2f(x, 0f)).owner(owner).alive().build();
         when(ship.getHitpoints()).thenReturn(1000f);
         return ship;
     }

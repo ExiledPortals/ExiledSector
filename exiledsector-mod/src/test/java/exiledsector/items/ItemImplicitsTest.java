@@ -1,22 +1,19 @@
 package exiledsector.items;
 
-import exiledsector.ProjectFiles;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.EffectAliases;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierCategory;
 import exiledsector.modifiers.ModifierSlot;
-import org.json.CDL;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.List;
 
+import static exiledsector.ProjectFiles.csvRows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -106,8 +103,4 @@ class ItemImplicitsTest {
         return effects.stream().map(RolledLine::magnitude).toList();
     }
 
-    private static JSONArray csvRows(String dataPath) throws Exception {
-        String csv = Files.readString(ProjectFiles.projectRoot().resolve(dataPath), StandardCharsets.UTF_8);
-        return CDL.toJSONArray(csv.replace("\r\n", "\n"));
-    }
 }

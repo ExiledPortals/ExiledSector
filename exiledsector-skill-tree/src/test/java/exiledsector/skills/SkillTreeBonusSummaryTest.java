@@ -4,40 +4,32 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.flux.FluxSkillEffect;
 import exiledsector.skills.SkillTreeBonusSummary.Summary;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 
+import static exiledsector.skills.TestTrees.node;
+import static exiledsector.skills.TestTrees.registered;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class SkillTreeBonusSummaryTest {
 
     private ShipSkillData data;
 
     @BeforeEach
     void setUp() {
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
         SkillNode root = register("root_1", new SkillType.Builder("root", "Low Tech", "a.png", SkillTier.ROOT)
                 .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f))).build());
         data = new ShipSkillData();
         ShipTrees.chooseStartingRoot(data, root);
     }
 
-    @AfterEach
-    void tearDown() {
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
-    }
-
     private static SkillNode register(String id, SkillType type) {
-        SkillTree.registerType(type);
-        SkillNode node = new SkillNode(id, type, List.of(), 0f, 0f);
-        SkillTree.register(node);
-        return node;
+        return node(id, registered(type));
     }
 
     private static SkillType small(String id, SkillTypeEffect... effects) {

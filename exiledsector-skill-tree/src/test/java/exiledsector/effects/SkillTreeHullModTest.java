@@ -25,6 +25,7 @@ import exiledsector.skills.skilleffect.flux.FluxSkillEffect;
 import exiledsector.skills.skilleffect.logistics.LogisticsSkillEffect;
 import exiledsector.skills.skilleffect.phase.PhaseSkillEffect;
 import exiledsector.ExiledSector;
+import exiledsector.MockShips;
 import exiledsector.persistence.ShipRecords;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedNode;
@@ -474,9 +475,7 @@ class SkillTreeHullModTest {
     }
 
     private static FleetMemberAPI memberWithId(String id) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getId()).thenReturn(id);
-        return member;
+        return MockShips.member(id).build();
     }
 
     @Test

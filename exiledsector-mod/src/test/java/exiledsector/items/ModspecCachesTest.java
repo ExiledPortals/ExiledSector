@@ -3,6 +3,7 @@ package exiledsector.items;
 import exiledsector.MockSector;
 import exiledsector.items.ItemDataIntegrity.Severity;
 import exiledsector.items.ItemDataIntegrity.Violation;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -16,6 +17,7 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -34,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class ModspecCachesTest {
 
     private static final String CACHE = "cache";
@@ -45,8 +48,6 @@ class ModspecCachesTest {
     void setUp() throws Exception {
         lunaSettings = Mockito.mockStatic(LunaSettings.class);
         lunaSettings.when(() -> LunaSettings.getBoolean(anyString(), anyString())).thenReturn(null);
-        SkillTree.clearTypes();
-        SkillTree.clearNodes();
         for (SkillNode node : List.of(node("core_notable_a", SkillTier.NOTABLE, "core", List.of()), node("core_notable_b", SkillTier.NOTABLE, "core", List.of()),
                 node("core_choice", SkillTier.NOTABLE, "core", List.of("core_notable_a_type")), node("core_small", SkillTier.SMALL, "core", List.of()),
                 node("hegemony_notable", SkillTier.NOTABLE, "hegemony", List.of()), node("hegemony_keystone", SkillTier.KEYSTONE, "hegemony", List.of()),
@@ -70,9 +71,6 @@ class ModspecCachesTest {
         ModspecCaches.clear();
         ItemDrops.clear();
         ItemDefinitions.clear();
-        SkillTree.clearTypes();
-        SkillTree.clearNodes();
-        RealSkillData.clear();
     }
 
     private static JSONObject cacheRow(String id, String nodeCountChances) throws Exception {

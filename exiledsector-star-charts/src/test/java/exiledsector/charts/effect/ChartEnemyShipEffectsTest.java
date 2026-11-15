@@ -14,6 +14,7 @@ import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.MockShips;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartGenContext.AppliedEffect;
@@ -79,9 +80,7 @@ class ChartEnemyShipEffectsTest {
     }
 
     private static FleetMemberAPI memberWith(ShipVariantAPI variant) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getVariant()).thenReturn(variant);
-        return member;
+        return MockShips.member().variant(variant).build();
     }
 
     @Test

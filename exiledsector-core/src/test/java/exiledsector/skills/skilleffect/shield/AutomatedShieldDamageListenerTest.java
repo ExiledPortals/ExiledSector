@@ -8,6 +8,7 @@ import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
+import exiledsector.skills.skilleffect.CombatTestShips;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -24,11 +25,8 @@ import static org.mockito.Mockito.when;
 class AutomatedShieldDamageListenerTest {
 
     private static ShipAPI ship(String id, int owner, boolean automated) {
-        ShipAPI ship = mock(ShipAPI.class);
+        ShipAPI ship = CombatTestShips.ship(mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS)).id(id).owner(owner).build();
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
-        when(ship.getId()).thenReturn(id);
-        when(ship.getOwner()).thenReturn(owner);
-        when(ship.getMutableStats()).thenReturn(mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS));
         when(ship.getVariant()).thenReturn(variant);
         when(variant.hasHullMod(HullMods.AUTOMATED)).thenReturn(automated);
         return ship;

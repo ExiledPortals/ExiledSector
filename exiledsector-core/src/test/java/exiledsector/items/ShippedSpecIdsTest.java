@@ -1,7 +1,6 @@
 package exiledsector.items;
 
 import exiledsector.ProjectFiles;
-import org.json.CDL;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
@@ -16,6 +15,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import static exiledsector.ProjectFiles.csvRows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ShippedSpecIdsTest {
@@ -27,11 +27,6 @@ class ShippedSpecIdsTest {
             "data/hulls/ship_data.csv", "data/weapons/weapon_data.csv");
     private static final Set<String> SWEPT_FILES = Set.of(SPECIAL_ITEMS, "data/campaign/commodities.csv",
             "data/weapons/weapon_data.csv");
-
-    private static JSONArray csvRows(String dataPath) throws Exception {
-        String csv = Files.readString(ProjectFiles.projectRoot().resolve(dataPath), StandardCharsets.UTF_8);
-        return CDL.toJSONArray(csv.replace("\r\n", "\n"));
-    }
 
     private static Set<String> shippedIds(String dataPath) throws Exception {
         Set<String> ids = new TreeSet<>();

@@ -8,6 +8,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.VariantSource;
+import exiledsector.MockShips;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.weapon.CloneableTestHullSpec;
 import exiledsector.skills.skilleffect.weapon.WeaponSlotConversion;
@@ -94,9 +95,7 @@ class SkillTreeHullModSlotConversionTest {
     }
 
     private static FleetMemberAPI member() {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getId()).thenReturn(SHIP_ID);
-        return member;
+        return MockShips.member(SHIP_ID).build();
     }
 
     private static SkillNode fafnirNode() {

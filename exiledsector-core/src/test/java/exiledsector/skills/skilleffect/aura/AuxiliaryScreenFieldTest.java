@@ -8,6 +8,8 @@ import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.skills.skilleffect.CombatTestShips;
+import exiledsector.skills.skilleffect.CombatTestShips.ShipBuilder;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.MockedStatic;
@@ -43,17 +45,12 @@ class AuxiliaryScreenFieldTest {
     }
 
     private static ShipAPI shipAt(Vector2f location, int owner, HullSize hullSize) {
-        ShipAPI ship = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        ShipBuilder ship = CombatTestShips.ship().alive().owner(owner).at(location).hullSize(hullSize);
+        MutableShipStatsAPI stats = ship.stats();
         when(stats.getHullDamageTakenMult()).thenReturn(new MutableStat(1f));
         when(stats.getArmorDamageTakenMult()).thenReturn(new MutableStat(1f));
         when(stats.getShieldDamageTakenMult()).thenReturn(new MutableStat(1f));
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(ship.isAlive()).thenReturn(true);
-        when(ship.getOwner()).thenReturn(owner);
-        when(ship.getLocation()).thenReturn(location);
-        when(ship.getHullSize()).thenReturn(hullSize);
-        return ship;
+        return ship.build();
     }
 
     private static AuraField.ShipsNear among(List<ShipAPI> ships) {

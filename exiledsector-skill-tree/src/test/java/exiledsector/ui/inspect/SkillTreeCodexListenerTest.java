@@ -11,8 +11,10 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.codex.CodexDataV2;
 import com.fs.starfarer.api.impl.codex.CodexEntryPlugin;
 import com.fs.starfarer.api.impl.codex.CodexEntryV2;
+import exiledsector.MockShips;
 import exiledsector.i18n.Catalogue;
 import exiledsector.i18n.I18n;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.PhantomHullModStatus;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillNode;
@@ -22,6 +24,7 @@ import exiledsector.skills.SkillType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -36,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class SkillTreeCodexListenerTest {
 
     private static final String NPC_TAG = "exiledSector_npcTree|bulwark|2|root_1,a_1";
@@ -44,8 +48,6 @@ class SkillTreeCodexListenerTest {
     void setUp() {
         CodexDataV2.ENTRIES.clear();
         SkillDataResolver.clearCache();
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
         SkillTree.register(new SkillNode("root_1", new SkillType.Builder("root", "Root", "a.png", SkillTier.ROOT).build(), List.of(), 0f, 0f));
         SkillTree.register(new SkillNode("a_1", new SkillType.Builder("a", "A", "a.png", SkillTier.SMALL).tags(List.of("ballistic")).build(), List.of("root_1"), 0f, 0f));
     }
@@ -54,17 +56,13 @@ class SkillTreeCodexListenerTest {
     void tearDown() {
         CodexDataV2.ENTRIES.clear();
         SkillDataResolver.clearCache();
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
         PhantomHullModStatus.clear();
     }
 
     private static FleetMemberAPI npc(String... tags) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(variant.getTags()).thenReturn(List.of(tags));
-        when(member.getVariant()).thenReturn(variant);
-        return member;
+        return MockShips.member().variant(variant).build();
     }
 
     private static CodexEntryPlugin memberEntry(String id, FleetMemberAPI member) {

@@ -1,16 +1,14 @@
 package exiledsector.skills.skilleffect.fighter;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import exiledsector.skills.skilleffect.CombatEngineExtension;
 import exiledsector.skills.skilleffect.CombatQueries;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.lwjgl.util.vector.Vector2f;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,19 +28,13 @@ class SwarmLinkListenerTest {
 
     private final List<ShipAPI> ships = new ArrayList<>();
     private final SwarmLinkCensus census = new SwarmLinkCensus();
-    private MockedStatic<Global> globalMock;
+    @RegisterExtension
+    final CombatEngineExtension combat = new CombatEngineExtension();
 
     @BeforeEach
     void setUp() {
-        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+        CombatEngineAPI engine = combat.engine();
         when(engine.getShips()).thenAnswer(invocation -> new ArrayList<>(ships));
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getCombatEngine).thenReturn(engine);
-    }
-
-    @AfterEach
-    void tearDown() {
-        globalMock.close();
     }
 
     private static ShipAPI craft(int owner, float x) {

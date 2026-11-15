@@ -8,6 +8,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.MockSector;
+import exiledsector.MockShips;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
@@ -71,11 +72,7 @@ class OpReserveParityTest {
     }
 
     private static FleetMemberAPI member(String id, ShipVariantAPI variant) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getId()).thenReturn(id);
-        when(member.getShipName()).thenReturn("ISS " + id);
-        when(member.getVariant()).thenReturn(variant);
-        return member;
+        return MockShips.member(id).shipName("ISS " + id).variant(variant).build();
     }
 
     @Test

@@ -1,6 +1,5 @@
 package exiledsector.skills.skilleffect.special;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.BoundsAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
@@ -14,13 +13,13 @@ import com.fs.starfarer.api.combat.ShipwideAIFlags.AIFlags;
 import com.fs.starfarer.api.combat.ShipwideAIFlags;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.skills.skilleffect.CombatEngineExtension;
 import exiledsector.skills.skilleffect.CombatQueries;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.ArgumentCaptor;
-import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
@@ -42,20 +41,14 @@ import static org.mockito.Mockito.when;
 class RamPilotListenerTest {
 
     private final List<ShipAPI> ships = new ArrayList<>();
-    private MockedStatic<Global> globalMock;
+    @RegisterExtension
+    final CombatEngineExtension combat = new CombatEngineExtension();
     private CombatEngineAPI engine;
 
     @BeforeEach
     void setUp() {
-        engine = mock(CombatEngineAPI.class);
+        engine = combat.engine();
         when(engine.getShips()).thenReturn(ships);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getCombatEngine).thenReturn(engine);
-    }
-
-    @AfterEach
-    void tearDown() {
-        globalMock.close();
     }
 
     private ShipAPI deployed(int owner, HullSize size, float x, float y) {

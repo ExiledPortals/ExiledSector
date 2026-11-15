@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.WeaponAPI.DerivedWeaponStatsAPI;
 import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
+import exiledsector.MockShips;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
@@ -54,8 +55,7 @@ class RiftStrikeTooltipTableTest {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS);
         when(stats.getDynamic().getValue(RiftExplosions.DAMAGE_PERCENT_KEY, 0f)).thenReturn(increasedRiftDamagePercent);
         when(stats.getDynamic().getMod(BallisticAsEnergy.KEY).computeEffective(0f)).thenReturn(ballisticCountsAsEnergy ? 1f : 0f);
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getVariant()).thenReturn(variant);
+        FleetMemberAPI member = MockShips.member().variant(variant).build();
         when(member.getStats()).thenReturn(stats);
         return member;
     }

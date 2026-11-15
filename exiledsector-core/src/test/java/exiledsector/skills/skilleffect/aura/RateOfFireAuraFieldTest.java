@@ -3,6 +3,7 @@ package exiledsector.skills.skilleffect.aura;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
+import exiledsector.skills.skilleffect.CombatTestShips;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -20,14 +21,7 @@ class RateOfFireAuraFieldTest {
     private static final float EPSILON = 1e-4f;
 
     private static ShipAPI ship(int owner, Vector2f location, Map<String, Float> magnitudes) {
-        ShipAPI ship = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS);
-        when(ship.getOwner()).thenReturn(owner);
-        when(ship.getMutableStats()).thenReturn(stats);
-        magnitudes.forEach((key, value) -> when(stats.getDynamic().getValue(key, 0f)).thenReturn(value));
-        when(ship.isAlive()).thenReturn(true);
-        when(ship.getLocation()).thenReturn(location);
-        return ship;
+        return CombatTestShips.ship(mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS)).owner(owner).dynamic(magnitudes).alive().at(location).build();
     }
 
     private static RateOfFireAuraListener auraSource(float percent) {

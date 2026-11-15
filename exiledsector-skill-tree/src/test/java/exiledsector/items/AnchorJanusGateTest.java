@@ -8,6 +8,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.MockSector;
 import exiledsector.effects.SkillTreeLootSource;
 import exiledsector.skills.AnchorLinks;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
@@ -22,6 +23,7 @@ import org.json.JSONArray;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -46,6 +48,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class AnchorJanusGateTest {
 
     private static final String HEGEMONY_ANCHOR = "wormhole_anchor_hegemony";
@@ -71,7 +74,6 @@ class AnchorJanusGateTest {
         mockSector = new MockSector();
         when(mockSector.sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
 
-        SkillTree.clearNodes();
         SkillType exitType = new SkillType.Builder("wormhole_exit", "Wormhole Exit", "", SkillTier.WORMHOLE_EXIT).build();
         SkillType sectionKind = new SkillType.Builder("socket", "Socket", "", SkillTier.SOCKET).build();
         root = new SkillNode("root", new SkillType.Builder("root_type", "Root", "", SkillTier.ROOT).build(), List.of(), 0f, 0f);
@@ -109,7 +111,6 @@ class AnchorJanusGateTest {
         AnchorLinks.install(null);
         NpcFactionVolumes.clear();
         WormholeAnchorDefinitions.clear();
-        SkillTree.clearNodes();
         mockSector.close();
         lunaSettingsMock.close();
     }

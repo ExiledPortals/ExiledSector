@@ -7,7 +7,8 @@ import com.fs.starfarer.api.combat.MissileAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.skills.skilleffect.CombatTestShips;
+import exiledsector.skills.skilleffect.CombatTestShips.ShipBuilder;
 import exiledsector.skills.skilleffect.KillWatch;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
@@ -28,19 +29,15 @@ import static org.mockito.Mockito.when;
 class EngramHitListenersTest {
 
     private static ShipAPI ship(int owner, String key, float value) {
-        ShipAPI ship = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(stats.getDynamic()).thenReturn(dynamic);
+        ShipBuilder builder = CombatTestShips.ship().owner(owner).alive();
+        if (key != null) {
+            builder.dynamic(key, value);
+        }
+        ShipAPI ship = builder.build();
+        MutableShipStatsAPI stats = builder.stats();
         when(stats.getMaxSpeed()).thenReturn(new MutableStat(100f));
         when(stats.getShieldDamageTakenMult()).thenReturn(new MutableStat(1f));
-        when(ship.getOwner()).thenReturn(owner);
-        when(ship.isAlive()).thenReturn(true);
         when(ship.getHitpoints()).thenReturn(1000f);
-        if (key != null) {
-            when(dynamic.getValue(key, 0f)).thenReturn(value);
-        }
         return ship;
     }
 

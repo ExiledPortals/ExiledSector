@@ -4,6 +4,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
+import exiledsector.skills.skilleffect.CombatTestShips;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -18,12 +19,7 @@ import static org.mockito.Mockito.when;
 class ThermoAcceleratorListenerTest {
 
     private static ShipAPI ship() {
-        ShipAPI ship = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS);
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(ship.isAlive()).thenReturn(true);
-        when(ship.getLocation()).thenReturn(new Vector2f());
-        return ship;
+        return CombatTestShips.ship(mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS)).alive().at(new Vector2f()).build();
     }
 
     private static WeaponAPI weapon(boolean hardpoint, boolean decorative, boolean systemSlot) {

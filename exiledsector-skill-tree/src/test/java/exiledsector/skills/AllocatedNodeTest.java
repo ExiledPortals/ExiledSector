@@ -1,14 +1,18 @@
 package exiledsector.skills;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 
+import static exiledsector.skills.TestTrees.node;
+import static exiledsector.skills.TestTrees.registered;
+import static exiledsector.skills.TestTrees.type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class AllocatedNodeTest {
 
     private SkillNode root;
@@ -17,21 +21,9 @@ class AllocatedNodeTest {
 
     @BeforeEach
     void setUp() {
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
-        hullOption = new SkillType.Builder("hull_option", "Hull", "a.png", SkillTier.SMALL).build();
-        SkillTree.registerType(hullOption);
-        root = new SkillNode("root_1", new SkillType.Builder("root", "Root", "a.png", SkillTier.ROOT).build(), List.of(), 0f, 0f);
-        choice = new SkillNode("optional_1", new SkillType.Builder("optional", "Optional", "a.png", SkillTier.SMALL)
-                .choiceOptionIds(List.of("hull_option")).build(), List.of("root_1"), 0f, 0f);
-        SkillTree.register(root);
-        SkillTree.register(choice);
-    }
-
-    @AfterEach
-    void tearDown() {
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
+        hullOption = registered(type("hull_option", SkillTier.SMALL).build());
+        root = node("root_1", type("root", SkillTier.ROOT).build());
+        choice = node("optional_1", type("optional", SkillTier.SMALL).choiceOptionIds(List.of("hull_option")).build(), "root_1");
     }
 
     @Test

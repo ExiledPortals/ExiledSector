@@ -5,6 +5,7 @@ import exiledsector.MockSector;
 import exiledsector.ProjectFiles;
 import exiledsector.items.ItemDataIntegrity.Severity;
 import exiledsector.items.ItemDataIntegrity.Violation;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
@@ -19,6 +20,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.HashSet;
 import java.util.List;
@@ -32,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class DoctrineArchiveDataTest {
 
     private static final Set<String> REWRITE_DOCTRINES = Set.of("doctrine_archive_tritachyon", "doctrine_archive_luddic", "doctrine_archive_remnant");
@@ -43,7 +46,6 @@ class DoctrineArchiveDataTest {
         DoctrineArchives.clear();
         ItemDefinitions.clear();
         ItemModifiers.clear();
-        RealSkillData.clear();
     }
 
     private static List<Violation> checkShipped() throws Exception {

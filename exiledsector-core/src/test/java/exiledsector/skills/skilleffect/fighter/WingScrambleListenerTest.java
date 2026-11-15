@@ -26,13 +26,13 @@ import com.fs.starfarer.api.fleet.RepairTrackerAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.loading.FighterWingSpecAPI;
 import com.fs.starfarer.api.loading.WingRole;
+import exiledsector.skills.skilleffect.CombatEngineExtension;
 import exiledsector.skills.skilleffect.DeploymentRecordPruner;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.InOrder;
-import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
@@ -62,7 +62,8 @@ class WingScrambleListenerTest {
     private static final String GUN_PLATFORM = "nsp_gun_platform";
     private static final int GUN_PLATFORM_WING_SIZE = 3;
 
-    private MockedStatic<Global> globalMock;
+    @RegisterExtension
+    final CombatEngineExtension combat = new CombatEngineExtension();
     private SettingsAPI settings;
     private FactoryAPI factory;
     private CombatEngineAPI engine;
@@ -87,13 +88,11 @@ class WingScrambleListenerTest {
         when(wingMember.getCrewComposition()).thenReturn(mock(CrewCompositionAPI.class));
         when(wingMember.getRepairTracker()).thenReturn(mock(RepairTrackerAPI.class));
         when(factory.createFleetMember(FleetMemberType.FIGHTER_WING, GUN_PLATFORM)).thenReturn(wingMember);
-        engine = mock(CombatEngineAPI.class);
+        engine = combat.engine();
         fleetManager = mock(CombatFleetManagerAPI.class);
         when(engine.getFleetManager(0)).thenReturn(fleetManager);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSettings).thenReturn(settings);
-        globalMock.when(Global::getFactory).thenReturn(factory);
-        globalMock.when(Global::getCombatEngine).thenReturn(engine);
+        combat.global().when(Global::getSettings).thenReturn(settings);
+        combat.global().when(Global::getFactory).thenReturn(factory);
         carrier = mock(ShipAPI.class);
         when(carrier.getOwner()).thenReturn(0);
         when(carrier.getCurrentCR()).thenReturn(0.6f);
@@ -104,11 +103,6 @@ class WingScrambleListenerTest {
         hostWing = mock(FighterWingAPI.class);
         hostBay = mock(FighterLaunchBayAPI.class);
         when(hostBay.getWing()).thenReturn(hostWing);
-    }
-
-    @AfterEach
-    void tearDown() {
-        globalMock.close();
     }
 
     private ShipAPI fighter() {

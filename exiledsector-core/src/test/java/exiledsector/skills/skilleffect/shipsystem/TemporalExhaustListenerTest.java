@@ -1,6 +1,5 @@
 package exiledsector.skills.skilleffect.shipsystem;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.MissileAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
@@ -8,14 +7,14 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipEngineControllerAPI;
 import com.fs.starfarer.api.combat.ShipEngineControllerAPI.ShipEngineAPI;
 import com.fs.starfarer.api.combat.ShipSystemAPI;
+import exiledsector.skills.skilleffect.CombatEngineExtension;
+import exiledsector.skills.skilleffect.CombatTestShips;
 import exiledsector.skills.skilleffect.weapon.RiftExplosions;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.ArgumentCaptor;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.util.List;
 import java.util.Random;
@@ -38,24 +37,19 @@ class TemporalExhaustListenerTest {
 
     private CombatEngineAPI engine;
     private MissileAPI rift;
-    private MockedStatic<Global> globalMock;
+    @RegisterExtension
+    final CombatEngineExtension combat = new CombatEngineExtension();
     private ShipAPI ship;
     private ShipSystemAPI system;
 
     @BeforeEach
     void setUp() {
         rift = mock(MissileAPI.class, RETURNS_DEEP_STUBS);
-        engine = mock(CombatEngineAPI.class);
+        engine = combat.engine();
         when(engine.spawnProjectile(any(), any(), anyString(), any(), anyFloat(), any())).thenReturn(rift);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getCombatEngine).thenReturn(engine);
 
-        ship = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS);
-        when(ship.getId()).thenReturn("tempest");
-        when(ship.isAlive()).thenReturn(true);
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(stats.getDynamic().getValue(TemporalExhaustListener.TIMEFLOW_PERCENT_KEY, 0f)).thenReturn(20f);
+        ship = CombatTestShips.ship(mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS)).id("tempest").alive()
+                .dynamic(TemporalExhaustListener.TIMEFLOW_PERCENT_KEY, 20f).build();
         when(ship.getFacing()).thenReturn(90f);
         system = mock(ShipSystemAPI.class);
         when(ship.getSystem()).thenReturn(system);
@@ -64,11 +58,6 @@ class TemporalExhaustListenerTest {
         ShipEngineControllerAPI engineController = mock(ShipEngineControllerAPI.class);
         when(engineController.getShipEngines()).thenReturn(List.of(shipEngine));
         when(ship.getEngineController()).thenReturn(engineController);
-    }
-
-    @AfterEach
-    void tearDown() {
-        globalMock.close();
     }
 
     private TemporalExhaustListener listener() {

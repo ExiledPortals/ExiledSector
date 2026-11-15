@@ -1,20 +1,17 @@
 package exiledsector.skills.skilleffect.onhit;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.MissileAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
-import com.fs.starfarer.api.util.DynamicStatsAPI;
-import org.junit.jupiter.api.AfterEach;
+import exiledsector.skills.skilleffect.CombatEngineExtension;
+import exiledsector.skills.skilleffect.CombatTestShips;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.lwjgl.util.vector.Vector2f;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +29,8 @@ import static org.mockito.Mockito.when;
 
 class ProjectileEchoListenerTest {
 
-    private MockedStatic<Global> global;
+    @RegisterExtension
+    final CombatEngineExtension combat = new CombatEngineExtension();
     private CombatEngineAPI engine;
     private CombatEntityAPI echo;
     private ShipAPI ship;
@@ -41,30 +39,16 @@ class ProjectileEchoListenerTest {
 
     @BeforeEach
     void setUp() {
-        engine = mock(CombatEngineAPI.class);
+        engine = combat.engine();
         echo = mock(CombatEntityAPI.class);
         when(engine.spawnProjectile(any(), any(), anyString(), any(), anyFloat(), any())).thenReturn(echo);
-        global = Mockito.mockStatic(Global.class);
-        global.when(Global::getCombatEngine).thenReturn(engine);
-        ship = mock(ShipAPI.class);
-        when(ship.getOwner()).thenReturn(0);
-        when(ship.isAlive()).thenReturn(true);
+        ship = CombatTestShips.ship().owner(0).alive().dynamic(ProjectileEchoListener.CHANCE_KEY, 100f).build();
         when(ship.getVelocity()).thenReturn(new Vector2f());
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(stats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getValue(ProjectileEchoListener.CHANCE_KEY, 0f)).thenReturn(100f);
         enemy = mock(ShipAPI.class);
         when(enemy.getOwner()).thenReturn(1);
         when(enemy.isAlive()).thenReturn(true);
         when(enemy.getLocation()).thenReturn(new Vector2f(100f, 0f));
         listener = new ProjectileEchoListener(ship);
-    }
-
-    @AfterEach
-    void tearDown() {
-        global.close();
     }
 
     private static WeaponAPI weapon(WeaponAPI.WeaponType type, boolean beam) {

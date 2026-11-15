@@ -1,18 +1,15 @@
 package exiledsector.skills.skilleffect.defense;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CollisionClass;
-import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
-import org.junit.jupiter.api.AfterEach;
+import exiledsector.skills.skilleffect.CombatEngineExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.lwjgl.util.vector.Vector2f;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,22 +26,14 @@ import static org.mockito.Mockito.when;
 class ArmorArcListenerTest {
 
     private final List<Object> gridShips = new ArrayList<>();
-    private MockedStatic<Global> globalMock;
+    @RegisterExtension
+    final CombatEngineExtension combat = new CombatEngineExtension();
     private CombatEngineAPI engine;
 
     @BeforeEach
     void setUp() {
-        engine = mock(CombatEngineAPI.class);
-        CollisionGridAPI shipGrid = mock(CollisionGridAPI.class);
-        when(engine.getShipGrid()).thenReturn(shipGrid);
-        when(shipGrid.getCheckIterator(any(), anyFloat(), anyFloat())).thenAnswer(call -> new ArrayList<>(gridShips).iterator());
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getCombatEngine).thenReturn(engine);
-    }
-
-    @AfterEach
-    void tearDown() {
-        globalMock.close();
+        engine = combat.engine();
+        combat.shipGridOver(gridShips);
     }
 
     private static ShipAPI plated(float arcs) {

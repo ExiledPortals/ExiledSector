@@ -1,5 +1,6 @@
 package exiledsector.skills.template;
 
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
@@ -9,9 +10,9 @@ import exiledsector.skills.SkillType;
 import exiledsector.skills.WormholePartners;
 import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.npc.RealSkillData;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -23,9 +24,13 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import static exiledsector.skills.TestTrees.node;
+import static exiledsector.skills.TestTrees.small;
+import static exiledsector.skills.TestTrees.type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class TemplateCaptureTest {
 
     private SkillNode root;
@@ -33,28 +38,14 @@ class TemplateCaptureTest {
 
     @BeforeEach
     void setUp() {
-        RealSkillData.clear();
-        root = register(new SkillNode("root", type("root", SkillTier.ROOT).build(), List.of(), 0f, 0f));
+        root = node("root", type("root", SkillTier.ROOT).build());
         data = new ShipSkillData();
         ShipTrees.chooseStartingRoot(data, root);
-    }
-
-    @AfterEach
-    void tearDown() {
-        RealSkillData.clear();
-    }
-
-    private static SkillType.Builder type(String id, SkillTier tier) {
-        return new SkillType.Builder(id, id, "a.png", tier).effects(List.of());
     }
 
     private static SkillNode register(SkillNode node) {
         SkillTree.register(node);
         return node;
-    }
-
-    private static SkillNode node(String id, String... connectedTo) {
-        return register(new SkillNode(id, type(id + "_type", SkillTier.SMALL).build(), List.of(connectedTo), 0f, 0f));
     }
 
     private List<TemplateStep> capture() {
@@ -67,8 +58,8 @@ class TemplateCaptureTest {
 
     @Test
     void anAlreadyValidOrderIsKeptAndTheStartingRootIsLeftOut() {
-        SkillNode a = node("a", "root");
-        SkillNode b = node("b", "a");
+        SkillNode a = small("a", "root");
+        SkillNode b = small("b", "a");
         ShipTrees.allocate(data, a, 1);
         ShipTrees.allocate(data, b, 1);
 
@@ -77,8 +68,8 @@ class TemplateCaptureTest {
 
     @Test
     void aChildAllocatedBeforeItsParentIsMovedAfterIt() {
-        SkillNode a = node("a", "root");
-        SkillNode b = node("b", "a");
+        SkillNode a = small("a", "root");
+        SkillNode b = small("b", "a");
         ShipTrees.allocate(data, b, 1);
         ShipTrees.allocate(data, a, 1);
 
@@ -87,9 +78,9 @@ class TemplateCaptureTest {
 
     @Test
     void independentBranchesKeepTheirOriginalOrder() {
-        SkillNode left = node("left", "root");
-        SkillNode right = node("right", "root");
-        SkillNode rightChild = node("right_child", "right");
+        SkillNode left = small("left", "root");
+        SkillNode right = small("right", "root");
+        SkillNode rightChild = small("right_child", "right");
         ShipTrees.allocate(data, right, 1);
         ShipTrees.allocate(data, rightChild, 1);
         ShipTrees.allocate(data, left, 1);
@@ -103,7 +94,7 @@ class TemplateCaptureTest {
         SkillTree.registerType(option);
         SkillNode slot = register(new SkillNode("slot", type("slot_type", SkillTier.SMALL).choiceOptionIds(List.of("hull")).build(),
                 List.of("root"), 0f, 0f));
-        SkillNode plain = node("plain", "root");
+        SkillNode plain = small("plain", "root");
         ShipTrees.selectOption(data, slot, option, 1);
         ShipTrees.allocate(data, plain, 1);
 
@@ -116,7 +107,7 @@ class TemplateCaptureTest {
         SkillNode near = register(new SkillNode("near", wormholeType, List.of("root", "far"), 0f, 0f,
                 new SkillNodeDecoration(null, null, null, null, "far")));
         register(new SkillNode("far", wormholeType, List.of("near"), 0f, 0f, new SkillNodeDecoration(null, null, null, null, "near")));
-        SkillNode beyond = node("beyond", "far");
+        SkillNode beyond = small("beyond", "far");
         ShipTrees.allocate(data, beyond, 1);
         ShipTrees.allocate(data, near, 1);
 
@@ -125,8 +116,8 @@ class TemplateCaptureTest {
 
     @Test
     void unknownNodesAreDroppedAndUnreachableOnesGoLast() {
-        SkillNode a = node("a", "root");
-        SkillNode stranded = node("stranded", "missing_parent");
+        SkillNode a = small("a", "root");
+        SkillNode stranded = small("stranded", "missing_parent");
         SkillNode unregistered = new SkillNode("gone", type("gone_type", SkillTier.SMALL).build(), List.of("root"), 0f, 0f);
         ShipTrees.allocate(data, stranded, 1);
         ShipTrees.allocate(data, unregistered, 1);
@@ -183,9 +174,9 @@ class TemplateCaptureTest {
 
     @Test
     void aGivenOrderIsKeptWhereverEachNodeIsAlreadyReachable() {
-        node("a", "root");
-        node("b", "a");
-        node("c", "root");
+        small("a", "root");
+        small("b", "a");
+        small("c", "root");
 
         List<TemplateStep> steps = TemplateCapture.capture(List.of("c", "b", "a"), nodeId -> null, WormholePartners::pairedWith, "root",
                 SkillTree.getAllNodes());

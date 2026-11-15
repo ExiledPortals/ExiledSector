@@ -1,9 +1,8 @@
 package exiledsector.skills;
 
 import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 
@@ -12,21 +11,12 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class SkillTreeTest {
 
     private static final SkillType TYPE = new SkillType.Builder("hull", "Hull", "a.png", SkillTier.SMALL)
             .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 1f)))
             .build();
-
-    @BeforeEach
-    void setUp() {
-        SkillTree.clearNodes();
-    }
-
-    @AfterEach
-    void tearDown() {
-        SkillTree.clearNodes();
-    }
 
     @Test
     void getReturnsNullForAnUnregisteredNode() {

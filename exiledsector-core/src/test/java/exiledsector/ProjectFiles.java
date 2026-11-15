@@ -1,5 +1,7 @@
 package exiledsector;
 
+import org.json.CDL;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -92,5 +94,14 @@ public final class ProjectFiles {
 
     public static JSONObject readJson(Path path) throws IOException, JSONException {
         return new JSONObject(Files.readString(path, StandardCharsets.UTF_8));
+    }
+
+    public static JSONArray csvRows(String gamePath) throws IOException, JSONException {
+        return csvRows(gameFile(gamePath));
+    }
+
+    public static JSONArray csvRows(Path path) throws IOException, JSONException {
+        String csv = Files.readString(path, StandardCharsets.UTF_8);
+        return CDL.toJSONArray(csv.replace("\r\n", "\n"));
     }
 }

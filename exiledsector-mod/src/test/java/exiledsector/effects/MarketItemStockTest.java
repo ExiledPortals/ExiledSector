@@ -19,6 +19,7 @@ import exiledsector.items.ItemDefinitions;
 import exiledsector.items.JanusDevice;
 import exiledsector.items.MarketHullItems;
 import exiledsector.items.WormholeAnchorDefinitions;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -30,6 +31,7 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 
 import java.util.ArrayList;
@@ -50,6 +52,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class MarketItemStockTest {
 
     private static final String HEGEMONY_ANCHOR = "wormhole_anchor_hegemony";
@@ -101,8 +104,6 @@ class MarketItemStockTest {
         ItemDefinitions.clear();
         WormholeAnchorDefinitions.clear();
         NpcFactionVolumes.clear();
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
     }
 
     private SubmarketAPI submarket(String specId, String factionId, float sinceStockRefresh, CargoAPI cargo) {

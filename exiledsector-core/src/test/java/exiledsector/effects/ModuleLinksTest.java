@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.VariantSource;
+import exiledsector.MockShips;
 import exiledsector.persistence.ShipRecords;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
@@ -29,9 +30,7 @@ import static org.mockito.Mockito.when;
 class ModuleLinksTest {
 
     private static FleetMemberAPI member(String id, ShipVariantAPI ownVariant) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getId()).thenReturn(id);
-        when(member.getVariant()).thenReturn(ownVariant);
+        FleetMemberAPI member = MockShips.member(id).variant(ownVariant).build();
         when(member.getFleetData()).thenReturn(mock(FleetDataAPI.class));
         return member;
     }

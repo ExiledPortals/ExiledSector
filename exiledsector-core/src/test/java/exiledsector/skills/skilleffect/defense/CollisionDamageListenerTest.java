@@ -1,6 +1,5 @@
 package exiledsector.skills.skilleffect.defense;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CollisionClass;
 import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
@@ -10,12 +9,12 @@ import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
-import org.junit.jupiter.api.AfterEach;
+import exiledsector.skills.skilleffect.CombatEngineExtension;
+import exiledsector.skills.skilleffect.CombatTestShips;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.lwjgl.util.vector.Vector2f;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.util.List;
 
@@ -34,36 +33,26 @@ class CollisionDamageListenerTest {
 
     private static final float EPSILON = 1e-4f;
 
-    private MockedStatic<Global> globalMock;
+    @RegisterExtension
+    final CombatEngineExtension combat = new CombatEngineExtension();
     private CollisionGridAPI shipGrid;
     private CollisionGridAPI asteroidGrid;
 
     @BeforeEach
     void setUp() {
-        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+        CombatEngineAPI engine = combat.engine();
         shipGrid = mock(CollisionGridAPI.class);
         asteroidGrid = mock(CollisionGridAPI.class);
         when(engine.getShipGrid()).thenReturn(shipGrid);
         when(engine.getAsteroidGrid()).thenReturn(asteroidGrid);
         when(shipGrid.getCheckIterator(any(), anyFloat(), anyFloat())).thenAnswer(invocation -> List.of().iterator());
         when(asteroidGrid.getCheckIterator(any(), anyFloat(), anyFloat())).thenAnswer(invocation -> List.of().iterator());
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getCombatEngine).thenReturn(engine);
-    }
-
-    @AfterEach
-    void tearDown() {
-        globalMock.close();
     }
 
     private static ShipAPI ship(String id, int owner, float x) {
-        ShipAPI ship = mock(ShipAPI.class);
-        when(ship.getId()).thenReturn(id);
-        when(ship.getOwner()).thenReturn(owner);
-        when(ship.getLocation()).thenReturn(new Vector2f(x, 0f));
+        ShipAPI ship = CombatTestShips.ship(mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS)).id(id).owner(owner).at(new Vector2f(x, 0f)).build();
         when(ship.getCollisionRadius()).thenReturn(100f);
         when(ship.getCollisionClass()).thenReturn(CollisionClass.SHIP);
-        when(ship.getMutableStats()).thenReturn(mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS));
         return ship;
     }
 

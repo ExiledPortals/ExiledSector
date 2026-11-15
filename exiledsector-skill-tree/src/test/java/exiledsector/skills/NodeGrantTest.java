@@ -2,12 +2,12 @@ package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.template.TemplateCapture;
 import exiledsector.skills.template.TemplateStep;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -15,10 +15,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static exiledsector.skills.TestTrees.taggedNode;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class NodeGrantTest {
 
     private static final String CACHE = "cache";
@@ -39,20 +41,17 @@ class NodeGrantTest {
 
     @BeforeEach
     void setUp() {
-        SkillTree.clearTypes();
-        SkillTree.clearNodes();
-        root = node("root", SkillTier.ROOT, "core");
-        coreNode = node("core_a", SkillTier.SMALL, "core", "root", "socket", "socket_b", "core_b");
-        socket = node("socket", SkillTier.SOCKET, "core", "core_a");
-        secondSocket = node("socket_b", SkillTier.SOCKET, "core", "core_a");
-        pathNode = node("core_b", SkillTier.SMALL, "core", "core_a", "notable");
-        notable = node("notable", SkillTier.NOTABLE, "hegemony", "core_b", "beyond");
-        beyond = node("beyond", SkillTier.SMALL, "hegemony", "notable");
-        farNotable = node("far_notable", SkillTier.NOTABLE, "abyss", "beyond");
+        root = taggedNode("root", SkillTier.ROOT, "core");
+        coreNode = taggedNode("core_a", SkillTier.SMALL, "core", "root", "socket", "socket_b", "core_b");
+        socket = taggedNode("socket", SkillTier.SOCKET, "core", "core_a");
+        secondSocket = taggedNode("socket_b", SkillTier.SOCKET, "core", "core_a");
+        pathNode = taggedNode("core_b", SkillTier.SMALL, "core", "core_a", "notable");
+        notable = taggedNode("notable", SkillTier.NOTABLE, "hegemony", "core_b", "beyond");
+        beyond = taggedNode("beyond", SkillTier.SMALL, "hegemony", "notable");
+        farNotable = taggedNode("far_notable", SkillTier.NOTABLE, "abyss", "beyond");
         nodesById = new LinkedHashMap<>();
         for (SkillNode node : List.of(root, coreNode, socket, secondSocket, pathNode, notable, beyond, farNotable)) {
             nodesById.put(node.getId(), node);
-            SkillTree.register(node);
         }
         topology = SkillTreeTopology.of(nodesById.values());
         grantedNodesByItemId.put(CACHE, List.of("notable"));
@@ -74,13 +73,6 @@ class NodeGrantTest {
     @AfterEach
     void tearDown() {
         NodeGrants.install(null);
-        SkillTree.clearTypes();
-        SkillTree.clearNodes();
-    }
-
-    private static SkillNode node(String id, SkillTier tier, String volume, String... connectedTo) {
-        SkillType type = new SkillType.Builder(id + "_type", id, "a.png", tier).effects(List.of()).build();
-        return new SkillNode(id, type, List.of(connectedTo), 0f, 0f, SkillNodeDecoration.NONE, List.of(volume));
     }
 
     private ShipSkillData shipWithSocketed(String itemId) {
