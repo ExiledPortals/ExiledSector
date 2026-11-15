@@ -24,7 +24,9 @@ public record FactionEncounterGate(String gateName, UnlockConditionType conditio
             "$encounteredDweller", false, false, Factions.DWELLER::equals);
     public static final FactionEncounterGate OMEGA = new FactionEncounterGate("Omega", UnlockConditionType.OMEGA_FOUND,
             "$exiledSector_foundOmega", true, true, Factions.OMEGA::equals);
-    public static final List<FactionEncounterGate> ALL = List.of(THREAT, REMNANT, DWELLER, OMEGA);
+    public static final FactionEncounterGate DERELICTS = new FactionEncounterGate("Derelict", UnlockConditionType.DERELICTS_FOUGHT,
+            "$exiledSector_foughtDerelicts", true, false, Factions.DERELICT::equals);
+    public static final List<FactionEncounterGate> ALL = List.of(THREAT, REMNANT, DWELLER, OMEGA, DERELICTS);
 
     public boolean isMet(SectorAPI sector) {
         MemoryAPI playerMemory = sector == null ? null : sector.getPlayerMemoryWithoutUpdate();

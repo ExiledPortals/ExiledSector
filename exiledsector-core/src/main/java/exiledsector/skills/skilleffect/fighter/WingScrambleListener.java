@@ -1,34 +1,21 @@
 package exiledsector.skills.skilleffect.fighter;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
-import com.fs.starfarer.api.characters.PersonAPI;
-import com.fs.starfarer.api.characters.ShipSkillEffect;
-import com.fs.starfarer.api.characters.SkillEffectType;
-import com.fs.starfarer.api.characters.SkillSpecAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatFleetManagerAPI;
-import com.fs.starfarer.api.combat.CombatReadinessPlugin;
-import com.fs.starfarer.api.combat.DeployedFleetMemberAPI;
 import com.fs.starfarer.api.combat.FighterLaunchBayAPI;
 import com.fs.starfarer.api.combat.FighterWingAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
-import com.fs.starfarer.api.fleet.CrewCompositionAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.fleet.FleetMemberType;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
-import com.fs.starfarer.api.impl.hullmods.ConvertedHangar;
 import com.fs.starfarer.api.loading.FighterWingSpecAPI;
-import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
 import com.fs.starfarer.api.loading.WingRole;
-import exiledsector.ModSounds;
-import exiledsector.skills.skilleffect.DeploymentRecordPruner;
 import exiledsector.skills.skilleffect.ShipCombatListener;
-import exiledsector.skills.skilleffect.TemporaryCombatSpawn;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -50,15 +37,9 @@ final class WingScrambleListener extends ShipCombatListener implements Advanceab
             Tags.WING_RAPID_REFORM, Tags.WING_LEADER_NO_SWARM, Tags.WING_WINGMEN_NO_SWARM, Tags.WING_MATCH_LEADER_FACING,
             Tags.WING_ATTACK_AT_AN_ANGLE, Tags.WING_KEEP_AT_RANGE, Tags.WING_TARGET_ESCORT_TARGET, Tags.SWARM_FIGHTER);
     static final float MAX_WAIT_FOR_LAUNCH_SECONDS = 4f;
-    static final float LAUNCHED_WING_CREW = 100000f;
-    static final float MIN_WING_MEMBER_READINESS = 0.01f;
     static final float LAUNCH_JITTER = 10f;
-    static final String SHIP_FIGHTERS_EFFECT_INFIX = "_ship_fighters_";
-    static final String ALL_FIGHTERS_EFFECT_INFIX = "_all_fighters_";
-    static final String TAKEOFF_SOUND = "fighter_takeoff";
+    private static final String FEATURE_NAME = "Coalition Flight Doctrine";
     private static final Logger LOG = Logger.getLogger(WingScrambleListener.class);
-    private static final Set<String> REPORTED_UNLAUNCHABLE_TYPES = new HashSet<>();
-    private static final Set<String> REPORTED_SETTLING_ERROR_TYPES = new HashSet<>();
 
     record DoctrineGroup(WingRole role, List<String> behaviourTags) {
     }
@@ -303,18 +284,13 @@ final class WingScrambleListener extends ShipCombatListener implements Advanceab
     ShipAPI launchCopy(CombatEngineAPI engine, String wingSpecId, FighterLaunchBayAPI hostBay) {
         CombatFleetManagerAPI fleetManager = engine.getFleetManager(ownerShip.getOwner());
         FleetMemberAPI wingMember = temporaryMemberFor(fleetManager, wingSpecId);
-        wingMember.setOwner(ownerShip.getOwner());
-        wingMember.setAlly(ownerShip.isAlly());
-        CrewCompositionAPI crew = wingMember.getCrewComposition();
-        if (crew != null) {
-            crew.setCrew(LAUNCHED_WING_CREW);
-        }
-        wingMember.getRepairTracker().setCR(Math.max(MIN_WING_MEMBER_READINESS, ownerShip.getCRAtDeployment()));
+        CarrierLaunch.readyTemporaryWingMember(wingMember, ownerShip);
         WeaponSlotAPI baySlot = hostBay.getWeaponSlot();
         Vector2f launchLocation = baySlot == null ? new Vector2f(ownerShip.getLocation()) : baySlot.computePosition(ownerShip);
         launchLocation.translate(jitter(), jitter());
         float launchFacing = (baySlot == null ? ownerShip.getFacing() : baySlot.computeMidArcAngle(ownerShip)) + jitter();
-        ShipAPI fighter = spawnLoneFighter(engine, fleetManager, wingMember, wingSpecId, launchLocation, launchFacing);
+        ShipAPI fighter = CarrierLaunch.spawnLoneFighter(engine, fleetManager, wingMember, wingSpecId, launchLocation, launchFacing, false,
+                FEATURE_NAME);
         if (fighter != null) {
             prepareLikeABayLaunch(fighter, hostBay.getWing(), fleetManager, launchLocation, launchFacing);
         }
@@ -335,122 +311,14 @@ final class WingScrambleListener extends ShipCombatListener implements Advanceab
         return ((float) Math.random() - 0.5f) * 2f * LAUNCH_JITTER;
     }
 
-    private static ShipAPI spawnLoneFighter(CombatEngineAPI engine, CombatFleetManagerAPI fleetManager, FleetMemberAPI wingMember, String wingSpecId,
-                                            Vector2f launchLocation, float launchFacing) {
-        FighterWingSpecAPI spec = Global.getSettings().getFighterWingSpec(wingSpecId);
-        int normalWingSize = spec.getNumFighters();
-        spec.setNumFighters(1);
-        ShipAPI spawned;
-        try {
-            spawned = TemporaryCombatSpawn.spawnQuietly(fleetManager, wingMember, launchLocation, launchFacing, (error, settledShip) -> {
-                if (settledShip == null) {
-                    throw error;
-                }
-                if (REPORTED_SETTLING_ERROR_TYPES.add(wingSpecId)) {
-                    LOG.warn("Wing " + wingSpecId + " threw while settling in after spawning; Coalition Flight Doctrine adopts the copy anyway", error);
-                }
-            });
-        } finally {
-            spec.setNumFighters(normalWingSize);
-        }
-        if (spawned == null) {
-            return null;
-        }
-        FighterWingAPI spawnedWing = spawned.getWing();
-        if (spawnedWing != null) {
-            for (ShipAPI spawnedMember : spawnedWing.getWingMembers()) {
-                spawnedWing.removeMember(spawnedMember);
-                if (spawnedMember != spawned) {
-                    engine.removeEntity(spawnedMember);
-                }
-            }
-            fleetManager.removeDeployed(spawnedWing, false);
-        }
-        if (!spawned.isFighter()) {
-            TemporaryCombatSpawn.dismiss(engine, fleetManager, spawned, wingMember);
-            if (REPORTED_UNLAUNCHABLE_TYPES.add(wingSpecId)) {
-                LOG.warn("Wing " + wingSpecId + " spawned a " + spawned.getHullSize() + " instead of a fighter; Coalition Flight Doctrine won't copy it");
-            }
-            return null;
-        }
-        if (spawnedWing != null) {
-            DeploymentRecordPruner.forget(fleetManager, wingMember);
-        }
-        return spawned;
-    }
-
     private void prepareLikeABayLaunch(ShipAPI fighter, FighterWingAPI hostWing, CombatFleetManagerAPI fleetManager, Vector2f launchLocation,
                                        float launchFacing) {
-        CombatReadinessPlugin readiness = Global.getSettings().getCRPlugin();
-        float carrierReadiness = ownerShip.getCurrentCR();
-        readiness.applyCRToStats(carrierReadiness, fighter.getMutableStats(), fighter.getHullSize());
-        readiness.applyCRToShip(carrierReadiness, fighter);
-        fighter.setOwner(ownerShip.getOwner());
+        CarrierLaunch.applyCarrierReadiness(fighter, ownerShip);
         fighter.setFacing(launchFacing);
         fighter.setWing(hostWing);
         fighter.setShipAI(Global.getSettings().pickShipAIPlugin(null, fighter));
         hostWing.addMember(fighter);
-        PersonAPI captain = ownerShip.getCaptain();
-        if (captain != null) {
-            applyFighterSkillEffects(captain.getStats(), SkillEffectType.SHIP_FIGHTERS, SHIP_FIGHTERS_EFFECT_INFIX, fighter);
-        }
-        ConvertedHangar.setFighterSkin(fighter, ownerShip);
-        applyCarrierHullMods(fighter);
-        PersonAPI commander = fleetCommanderFor(fleetManager);
-        if (commander != null) {
-            applyFighterSkillEffects(commander.getStats(), SkillEffectType.ALL_FIGHTERS_IN_FLEET, ALL_FIGHTERS_EFFECT_INFIX, fighter);
-        }
-        fighter.setAnimatedLaunch();
-        fighter.setLaunchingShip(ownerShip);
-        fighter.setAlly(ownerShip.isAlly());
-        fighter.getLocation().set(launchLocation);
-        fighter.getVelocity().set(ownerShip.getVelocity());
-        ModSounds.playAt(TAKEOFF_SOUND, 1f, ownerShip.getLocation(), ownerShip.getVelocity());
-    }
-
-    private PersonAPI fleetCommanderFor(CombatFleetManagerAPI fleetManager) {
-        DeployedFleetMemberAPI deployedCarrier = fleetManager.getDeployedFleetMember(ownerShip);
-        FleetMemberAPI carrierMember = deployedCarrier == null ? null : deployedCarrier.getMember();
-        if (carrierMember == null) {
-            return null;
-        }
-        if (carrierMember.getFleetCommanderForStats() != null) {
-            return carrierMember.getFleetCommanderForStats();
-        }
-        if (carrierMember.getFleetData() != null && carrierMember.getFleetData().getCommander() != null) {
-            return carrierMember.getFleetData().getCommander();
-        }
-        return fleetManager.getDefaultCommander();
-    }
-
-    static void applyFighterSkillEffects(MutableCharacterStatsAPI skills, SkillEffectType effectType, String effectIdInfix, ShipAPI fighter) {
-        if (skills == null) {
-            return;
-        }
-        for (MutableCharacterStatsAPI.SkillLevelAPI skillLevel : skills.getSkillsCopy()) {
-            SkillSpecAPI skill = skillLevel.getSkill();
-            List<SkillSpecAPI.SkillEffectSpecAPI> effects = skill.getEffectsAPI();
-            for (int index = 0; index < effects.size(); index++) {
-                SkillSpecAPI.SkillEffectSpecAPI effect = effects.get(index);
-                float governingLevel = skills.getSkillLevel(effect.getGoverningSkill());
-                ShipSkillEffect shipEffect = effect.getType() == effectType && governingLevel >= effect.getRequiredSkillLevel()
-                        ? effect.getAsShipEffect() : null;
-                if (shipEffect != null) {
-                    shipEffect.apply(fighter.getMutableStats(), fighter.getHullSize(), skill.getId() + effectIdInfix + index, governingLevel);
-                }
-            }
-        }
-    }
-
-    private void applyCarrierHullMods(ShipAPI fighter) {
-        if (ownerShip.getVariant() == null) {
-            return;
-        }
-        for (String hullModId : ownerShip.getVariant().getHullMods()) {
-            HullModSpecAPI spec = Global.getSettings().getHullModSpec(hullModId);
-            if (spec != null && spec.getEffect() != null) {
-                spec.getEffect().applyEffectsToFighterSpawnedByShip(fighter, ownerShip, hullModId);
-            }
-        }
+        CarrierLaunch.applyCarrierBonuses(fighter, ownerShip, fleetManager);
+        CarrierLaunch.finishLaunch(fighter, ownerShip, launchLocation);
     }
 }

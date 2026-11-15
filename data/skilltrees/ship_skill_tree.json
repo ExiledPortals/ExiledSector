@@ -9907,6 +9907,398 @@
 				"stargazer",
 				"gate_existential_threat_defeated"
 			]
+		},
+		{
+			"id": "affinity_145",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_146",
+				"affinity_147",
+				"all_weapon_damage_1",
+				"strikecraft_weapon_damage_8"
+			],
+			"x": 24000,
+			"y": -2100,
+			"tags": [
+				"domain_drones",
+				"gate_derelicts_fought"
+			]
+		},
+		{
+			"id": "affinity_146",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_145",
+				"domain_drones_wormhole_1",
+				"missile_weapon_damage_9",
+				"strikecraft_armor_1"
+			],
+			"x": 24600,
+			"y": -1500,
+			"tags": [
+				"domain_drones",
+				"gate_derelicts_fought"
+			]
+		},
+		{
+			"id": "domain_drones_wormhole_1",
+			"type": "wormhole_exit",
+			"connectedTo": [
+				"affinity_146",
+				"affinity_147",
+				"point_defense_damage_to_missiles_and_fighters_5",
+				"cargo_capacity_3"
+			],
+			"x": 24000,
+			"y": -900,
+			"tags": [
+				"domain_drones",
+				"gate_derelicts_fought"
+			]
+		},
+		{
+			"id": "affinity_147",
+			"type": "affinity",
+			"connectedTo": [
+				"domain_drones_wormhole_1",
+				"affinity_145",
+				"reduced_d_mod_effect_11",
+				"reduced_monthly_supplies_5"
+			],
+			"x": 23400,
+			"y": -1500,
+			"tags": [
+				"domain_drones",
+				"gate_derelicts_fought"
+			]
+		},
+		{
+			"id": "all_weapon_damage_1",
+			"type": "all_weapon_damage",
+			"connectedTo": [
+				"affinity_145",
+				"all_weapon_damage_2"
+			],
+			"x": 24000,
+			"y": -2740,
+			"tags": [
+				"domain_drones",
+				"gate_derelicts_fought"
+			]
+		},
+		{
+			"id": "all_weapon_damage_2",
+			"type": "all_weapon_damage",
+			"connectedTo": [
+				"all_weapon_damage_1",
+				"terrible_balance_1"
+			],
+			"x": 24000,
+			"y": -3500,
+			"tags": [
+				"domain_drones",
+				"gate_derelicts_fought"
+			]
+		},
+		{
+			"id": "terrible_balance_1",
+			"type": "terrible_balance",
+			"connectedTo": [
+				"all_weapon_damage_2"
+			],
+			"x": 24000,
+			"y": -4400,
+			"tags": [
+				"domain_drones",
+				"gate_derelicts_fought"
+			]
+		},
+		{
+			"id": "missile_weapon_damage_9",
+			"type": "missile_weapon_damage",
+			"connectedTo": [
+				"affinity_146",
+				"missile_weapon_damage_10"
+			],
+			"x": 25240,
+			"y": -1500,
+			"tags": [
+				"domain_drones",
+				"gate_derelicts_fought"
+			]
+		},
+		{
+			"id": "missile_weapon_damage_10",
+			"type": "missile_weapon_damage",
+			"connectedTo": [
+				"missile_weapon_damage_9",
+				"sentry_reserve_racks_1"
+			],
+			"x": 26000,
+			"y": -1500,
+			"tags": [
+				"domain_drones",
+				"gate_derelicts_fought"
+			]
+		},
+		{
+			"id": "sentry_reserve_racks_1",
+			"type": "sentry_reserve_racks",
+			"connectedTo": [
+				"missile_weapon_damage_10"
+			],
+			"x": 26900,
+			"y": -1500,
+			"tags": [
+				"domain_drones",
+				"gate_derelicts_fought"
+			]
+		},
+		{
+			"id": "point_defense_damage_to_missiles_and_fighters_5",
+			"type": "point_defense_damage_to_missiles_and_fighters",
+			"connectedTo": [
+				"domain_drones_wormhole_1",
+				"point_defense_damage_to_missiles_and_fighters_6"
+			],
+			"x": 24000,
+			"y": -260,
+			"tags": [
+				"domain_drones",
+				"gate_derelicts_fought"
+			]
+		},
+		{
+			"id": "point_defense_damage_to_missiles_and_fighters_6",
+			"type": "point_defense_damage_to_missiles_and_fighters",
+			"connectedTo": [
+				"point_defense_damage_to_missiles_and_fighters_5",
+				"defender_flare_bays_1"
+			],
+			"x": 24000,
+			"y": 500,
+			"tags": [
+				"domain_drones",
+				"gate_derelicts_fought"
+			]
+		},
+		{
+			"id": "defender_flare_bays_1",
+			"type": "defender_flare_bays",
+			"connectedTo": [
+				"point_defense_damage_to_missiles_and_fighters_6"
+			],
+			"x": 24000,
+			"y": 1400,
+			"tags": [
+				"domain_drones",
+				"gate_derelicts_fought"
+			]
+		},
+		{
+			"id": "reduced_d_mod_effect_11",
+			"type": "reduced_d_mod_effect",
+			"connectedTo": [
+				"affinity_147",
+				"reduced_d_mod_effect_12"
+			],
+			"x": 22760,
+			"y": -1500,
+			"tags": [
+				"domain_drones",
+				"gate_derelicts_fought"
+			]
+		},
+		{
+			"id": "reduced_d_mod_effect_12",
+			"type": "reduced_d_mod_effect",
+			"connectedTo": [
+				"reduced_d_mod_effect_11",
+				"rugged_drone_frame_1"
+			],
+			"x": 22000,
+			"y": -1500,
+			"tags": [
+				"domain_drones",
+				"gate_derelicts_fought"
+			]
+		},
+		{
+			"id": "rugged_drone_frame_1",
+			"type": "rugged_drone_frame",
+			"connectedTo": [
+				"reduced_d_mod_effect_12"
+			],
+			"x": 21100,
+			"y": -1500,
+			"tags": [
+				"domain_drones",
+				"gate_derelicts_fought"
+			]
+		},
+		{
+			"id": "strikecraft_weapon_damage_8",
+			"type": "strikecraft_weapon_damage",
+			"connectedTo": [
+				"affinity_145",
+				"strikecraft_weapon_damage_9"
+			],
+			"x": 24435,
+			"y": -2576,
+			"tags": [
+				"domain_drones",
+				"gate_derelicts_fought"
+			]
+		},
+		{
+			"id": "strikecraft_weapon_damage_9",
+			"type": "strikecraft_weapon_damage",
+			"connectedTo": [
+				"strikecraft_weapon_damage_8",
+				"mothership_uplink_1"
+			],
+			"x": 24964,
+			"y": -2827,
+			"tags": [
+				"domain_drones",
+				"gate_derelicts_fought"
+			]
+		},
+		{
+			"id": "mothership_uplink_1",
+			"type": "mothership_uplink",
+			"connectedTo": [
+				"strikecraft_weapon_damage_9"
+			],
+			"x": 25414,
+			"y": -2914,
+			"tags": [
+				"domain_drones",
+				"gate_derelicts_fought"
+			]
+		},
+		{
+			"id": "strikecraft_armor_1",
+			"type": "strikecraft_armor",
+			"connectedTo": [
+				"affinity_146",
+				"strikecraft_armor_2"
+			],
+			"x": 25076,
+			"y": -1065,
+			"tags": [
+				"domain_drones",
+				"gate_derelicts_fought"
+			]
+		},
+		{
+			"id": "strikecraft_armor_2",
+			"type": "strikecraft_armor",
+			"connectedTo": [
+				"strikecraft_armor_1",
+				"autoforge_escorts_1"
+			],
+			"x": 25327,
+			"y": -536,
+			"tags": [
+				"domain_drones",
+				"gate_derelicts_fought"
+			]
+		},
+		{
+			"id": "autoforge_escorts_1",
+			"type": "autoforge_escorts",
+			"connectedTo": [
+				"strikecraft_armor_2"
+			],
+			"x": 25414,
+			"y": -86,
+			"tags": [
+				"domain_drones",
+				"gate_derelicts_fought"
+			]
+		},
+		{
+			"id": "cargo_capacity_3",
+			"type": "cargo_capacity",
+			"connectedTo": [
+				"domain_drones_wormhole_1",
+				"cargo_capacity_4"
+			],
+			"x": 23565,
+			"y": -424,
+			"tags": [
+				"domain_drones",
+				"gate_derelicts_fought"
+			]
+		},
+		{
+			"id": "cargo_capacity_4",
+			"type": "cargo_capacity",
+			"connectedTo": [
+				"cargo_capacity_3",
+				"feed_the_forges_1"
+			],
+			"x": 23036,
+			"y": -173,
+			"tags": [
+				"domain_drones",
+				"gate_derelicts_fought"
+			]
+		},
+		{
+			"id": "feed_the_forges_1",
+			"type": "feed_the_forges",
+			"connectedTo": [
+				"cargo_capacity_4"
+			],
+			"x": 22586,
+			"y": -86,
+			"tags": [
+				"domain_drones",
+				"gate_derelicts_fought"
+			]
+		},
+		{
+			"id": "reduced_monthly_supplies_5",
+			"type": "reduced_monthly_supplies",
+			"connectedTo": [
+				"affinity_147",
+				"reduced_monthly_supplies_6"
+			],
+			"x": 22924,
+			"y": -1935,
+			"tags": [
+				"domain_drones",
+				"gate_derelicts_fought"
+			]
+		},
+		{
+			"id": "reduced_monthly_supplies_6",
+			"type": "reduced_monthly_supplies",
+			"connectedTo": [
+				"reduced_monthly_supplies_5",
+				"countless_cycles_1"
+			],
+			"x": 22673,
+			"y": -2464,
+			"tags": [
+				"domain_drones",
+				"gate_derelicts_fought"
+			]
+		},
+		{
+			"id": "countless_cycles_1",
+			"type": "countless_cycles",
+			"connectedTo": [
+				"reduced_monthly_supplies_6"
+			],
+			"x": 22586,
+			"y": -2914,
+			"tags": [
+				"domain_drones",
+				"gate_derelicts_fought"
+			]
 		}
 	],
 	"connectorCurves": [
@@ -12627,6 +13019,30 @@
 			"b": "stargazer_wormhole_1",
 			"controlX": 26967,
 			"controlY": -6701
+		},
+		{
+			"a": "affinity_145",
+			"b": "affinity_146",
+			"controlX": 24424,
+			"controlY": -1924
+		},
+		{
+			"a": "affinity_146",
+			"b": "domain_drones_wormhole_1",
+			"controlX": 24424,
+			"controlY": -1076
+		},
+		{
+			"a": "domain_drones_wormhole_1",
+			"b": "affinity_147",
+			"controlX": 23576,
+			"controlY": -1076
+		},
+		{
+			"a": "affinity_147",
+			"b": "affinity_145",
+			"controlX": 23576,
+			"controlY": -1924
 		}
 	],
 	"hiddenConnectors": [
@@ -14193,6 +14609,18 @@
 			]
 		},
 		{
+			"kind": "image",
+			"id": "domain_drones_mothership",
+			"x": 24000,
+			"y": -1500,
+			"width": 760,
+			"height": 760,
+			"imagePath": "graphics/stations/survey_mothership.png",
+			"tags": [
+				"domain_drones"
+			]
+		},
+		{
 			"kind": "ringBelt",
 			"id": "middle_ringbelt",
 			"x": 0,
@@ -14242,6 +14670,123 @@
 			"rotationSpeed": 0.4,
 			"tags": [
 				"stargazer"
+			]
+		},
+		{
+			"kind": "ringBelt",
+			"id": "domain_drones_asteroid_belt",
+			"x": 24000,
+			"y": -1500,
+			"innerRadius": 1880,
+			"outerRadius": 2120,
+			"ringArtPath": "graphics/planets/ring_band_asteroids.png",
+			"rotationSpeed": 0.3,
+			"tags": [
+				"domain_drones"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "domain_drones_survey_ship_1",
+			"x": 24508,
+			"y": -303,
+			"width": 320,
+			"height": 320,
+			"imagePath": "graphics/stations/survey_ship.png",
+			"rotation": 40,
+			"tags": [
+				"domain_drones"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "domain_drones_survey_ship_2",
+			"x": 23433,
+			"y": -2835,
+			"width": 320,
+			"height": 320,
+			"imagePath": "graphics/stations/survey_ship.png",
+			"rotation": 215,
+			"tags": [
+				"domain_drones"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "domain_drones_survey_ship_3",
+			"x": 26457,
+			"y": -507,
+			"width": 320,
+			"height": 320,
+			"imagePath": "graphics/stations/survey_ship.png",
+			"rotation": 300,
+			"tags": [
+				"domain_drones"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "domain_drones_probe_1",
+			"x": 22941,
+			"y": -1051,
+			"width": 200,
+			"height": 200,
+			"imagePath": "graphics/stations/survey_probe.png",
+			"rotation": 80,
+			"tags": [
+				"domain_drones"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "domain_drones_probe_2",
+			"x": 25473,
+			"y": -2125,
+			"width": 200,
+			"height": 200,
+			"imagePath": "graphics/stations/survey_probe.png",
+			"rotation": 140,
+			"tags": [
+				"domain_drones"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "domain_drones_probe_3",
+			"x": 21450,
+			"y": -2530,
+			"width": 200,
+			"height": 200,
+			"imagePath": "graphics/stations/survey_probe.png",
+			"rotation": 20,
+			"tags": [
+				"domain_drones"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "domain_drones_probe_4",
+			"x": 25086,
+			"y": -4189,
+			"width": 200,
+			"height": 200,
+			"imagePath": "graphics/stations/survey_probe.png",
+			"rotation": 250,
+			"tags": [
+				"domain_drones"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "domain_drones_probe_5",
+			"x": 22600,
+			"y": 925,
+			"width": 200,
+			"height": 200,
+			"imagePath": "graphics/stations/survey_probe.png",
+			"rotation": 170,
+			"tags": [
+				"domain_drones"
 			]
 		},
 		{

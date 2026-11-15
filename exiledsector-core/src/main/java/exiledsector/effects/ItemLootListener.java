@@ -29,6 +29,7 @@ import exiledsector.loot.BattleLoot;
 import exiledsector.loot.BattleMaterials;
 import exiledsector.loot.EncounterSalvage;
 import exiledsector.loot.LootSources;
+import exiledsector.skills.skilleffect.logistics.ForgeSupplies;
 import exiledsector.skills.skilleffect.logistics.SalvagedArmaments;
 import exiledsector.ui.CampaignMessages;
 import exiledsector.ui.cargo.MaterialDropAnnouncer;
@@ -47,6 +48,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
     private static final class Pending {
         private final BattleLoot battleLoot;
         private final BattleMaterials materials = new BattleMaterials();
+        private float defeatedDeploymentPoints;
 
         Pending(BattleLoot battleLoot) {
             this.battleLoot = battleLoot;
@@ -84,6 +86,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         }
         float difficultyMultiplier = LootSources.difficultyMultiplier(engagement.difficulty());
         float defeatedDp = engagement.enemyDeploymentPointsDefeated();
+        pendingLoot.defeatedDeploymentPoints += defeatedDp;
         record(pendingLoot, new BattleEngagement(engagementResult.getBattle(), difficultyMultiplier, defeatedDp, engagement.enemyLosses()));
     }
 
@@ -120,6 +123,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         if (pendingLoot != null && loot != null) {
             pendingLoot.battleLoot.setEncounterSalvage(EncounterSalvage.of(encounterPlugin));
             addEncounterLoot(pendingLoot, loot, lootRandom);
+            ForgeSupplies.addExtra(PlayerFleet.orNull(), loot, pendingLoot.defeatedDeploymentPoints, lootRandom);
         }
         pendingByBattle.keySet().removeIf(BattleAPI::isDone);
     }
@@ -141,6 +145,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
             return;
         }
         LootSources.all().forEach(source -> source.deliverBattleLoot(pendingLoot.battleLoot, playerFleet.getCargo()));
+        ForgeSupplies.addExtra(playerFleet, playerFleet.getCargo(), pendingLoot.defeatedDeploymentPoints, lootRandom);
         Map<String, Integer> materials = pendingLoot.materials.rollMaterials(lootRandom);
         materials.forEach((itemId, quantity) -> MaterialItems.add(playerFleet.getCargo(), itemId, quantity));
         MaterialDropAnnouncer.announce(materials);

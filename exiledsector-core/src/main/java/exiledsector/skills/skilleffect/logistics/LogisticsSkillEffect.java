@@ -10,6 +10,7 @@ import exiledsector.skills.skilleffect.DerivedStatEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
 import exiledsector.skills.skilleffect.PerDModMultEffect;
+import exiledsector.skills.skilleffect.PerDModPercentEffect;
 import exiledsector.skills.skilleffect.StatMode;
 
 import static exiledsector.skills.skilleffect.Backings.flag;
@@ -178,9 +179,11 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
         }
     },
     SUPPLIES_PER_MONTH_MULT(statEffect(MULT, stat(MutableShipStatsAPI::getSuppliesPerMonth), "stat.supplyUseForMaintenance", true)),
+    SUPPLIES_TO_RECOVER_MULT(statEffect(MULT, stat(MutableShipStatsAPI::getSuppliesToRecover), "stat.suppliesToRecover", true)),
     FUEL_USE_MULT(statEffect(MULT, bonus(MutableShipStatsAPI::getFuelUseMod), "stat.fuelConsumptionRate", true)),
     FUEL_AND_SUPPLY_USE_MULT_PER_DMOD(new PerDModMultEffect(all(bonus(MutableShipStatsAPI::getFuelUseMod), stat(MutableShipStatsAPI::getSuppliesPerMonth)),
             "stat.fuelAndSupplyUsePerDMod", true)),
+    DEPLOYMENT_POINTS_PERCENT_PER_DMOD(new PerDModPercentEffect(dynamicMod(Stats.DEPLOYMENT_POINTS_MOD), "stat.deploymentPointsPerDMod", true)),
     REMOVE_CIVILIAN_HULL_PENALTY {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -252,6 +255,7 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
             return StatMode.PERCENT.describeStat(magnitude, YOUR_FLEET, "stat.postBattleWeaponAndWingSalvage");
         }
     },
+    POST_BATTLE_SUPPLIES_PERCENT_OF_DEFEATED_DEPLOYMENT_POINTS(playerFleetContribution(ForgeSupplies.CONTRIBUTION_KEY)),
     FUEL_USE_REDUCTION_PERCENT_WHILE_HALF_FUELED(playerFleetContribution(FleetWideEffects.HALF_FUELED_FUEL_USE_KEY)),
     SUPPLY_USE_REDUCTION_PERCENT_PER_HULL_TYPE(playerFleetContribution(FleetWideEffects.SUPPLY_USE_PER_HULL_TYPE_KEY)) {
         @Override

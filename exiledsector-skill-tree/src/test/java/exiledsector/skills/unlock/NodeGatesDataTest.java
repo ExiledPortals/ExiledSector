@@ -42,6 +42,7 @@ class NodeGatesDataTest {
     private static final String REMNANT_GATE = "gate_remnant_fought";
     private static final String DWELLER_GATE = "gate_dweller_fought";
     private static final String OMEGA_GATE = "gate_omega_found";
+    private static final String DERELICTS_GATE = "gate_derelicts_fought";
     private static final String FROZEN_HEART_GATE = "gate_frozen_heart_visited";
     private static final String PROTOTYPE_GATE = "gate_ancient_prototype_found";
     private static final String CANDLES_GRACE_NODE_ID = "candles_grace_replica_1";
@@ -133,6 +134,16 @@ class NodeGatesDataTest {
                 NodeGates.all().get(REMNANT_GATE).stream().map(UnlockCondition::getType).toList());
         assertTrue(ungatedIn(SkillTags.REDACTED_VOLUME, REMNANT_GATE).isEmpty(),
                 "Remnant nodes without the gate: " + ungatedIn(SkillTags.REDACTED_VOLUME, REMNANT_GATE));
+    }
+
+    @Test
+    void everyDomainDronesNodeAndTheWormholeIntoItWaitUntilADerelictFleetIsFought() {
+        assertEquals(List.of(UnlockConditionType.DERELICTS_FOUGHT),
+                NodeGates.all().get(DERELICTS_GATE).stream().map(UnlockCondition::getType).toList());
+        assertEquals(NodeGates.AnchorRule.WITHHELD, NodeGates.gate(DERELICTS_GATE).anchorRule());
+        assertTrue(SkillTree.getAllNodes().values().stream().anyMatch(node -> SkillTags.DOMAIN_DRONES_VOLUME.equals(node.getVolume())));
+        assertTrue(ungatedIn(SkillTags.DOMAIN_DRONES_VOLUME, DERELICTS_GATE).isEmpty(),
+                "Domain Drones nodes without the gate: " + ungatedIn(SkillTags.DOMAIN_DRONES_VOLUME, DERELICTS_GATE));
     }
 
     @Test
