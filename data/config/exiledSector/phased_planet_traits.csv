@@ -1,0 +1,8 @@
+id,condition,weight,regions,anomalies,excludes,notes
+neutron_forged_mantle,exiledSector_trait_neutron_mantle,1,,neutron_star:10,furnace_heart,Placeholder weights. Leans towards neutron star charts
+residual_wormhole_throat,exiledSector_trait_wormhole_throat,1,,spatial_breach:8; relay_network:5,,Leans towards spatial breaches and relay networks
+hypershunt_bathed,exiledSector_trait_hypershunt_bathed,0.05,,coronal_hypershunt:40,,Very rare outside coronal hypershunt charts
+remnant_nanoforge_seams,exiledSector_trait_nanoforge_seams,0.5,remnant_expanse:8,remnant_nexus_station:8,,Leans towards Remnant space
+cryo_locked_aquifers,exiledSector_trait_cryo_aquifers,1,frozen_fringe:8; furnace:0,,furnace_heart,Never rolls in the Furnace
+furnace_heart,exiledSector_trait_furnace_heart,1,furnace:8; frozen_fringe:0,,cryo_locked_aquifers; neutron_forged_mantle,Never rolls in the Frozen Fringe
+abyssal_bloom,exiledSector_trait_abyssal_bloom,0.05,abyssal_rift:100,,,Almost only in the Abyssal Rift

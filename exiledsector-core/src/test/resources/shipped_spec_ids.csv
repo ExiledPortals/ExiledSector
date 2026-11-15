@@ -18,6 +18,7 @@ data/campaign/special_items.csv,exiledSector_convoy_orders
 data/campaign/special_items.csv,exiledSector_corrupted_nanoswarm
 data/campaign/special_items.csv,exiledSector_corruption_kernel
 data/campaign/special_items.csv,exiledSector_deintegration_schematic
+data/campaign/special_items.csv,exiledSector_displacement_theorem
 data/campaign/special_items.csv,exiledSector_erasure_cipher
 data/campaign/special_items.csv,exiledSector_facility_survey
 data/campaign/special_items.csv,exiledSector_fixation_kernel
@@ -77,9 +78,18 @@ data/campaign/commodities.csv,exiledSector_recalibration_kernel
 data/campaign/commodities.csv,exiledSector_socketable_parts
 data/campaign/commodities.csv,exiledSector_transposition_kernel
 data/campaign/abilities.csv,exiledSector_outer_reach_atlas
+data/campaign/industries.csv,exiledSector_phase_displacement_gate
 data/campaign/industries.csv,exiledSector_wormhole_gateway
 data/campaign/industries.csv,exiledSector_wormhole_gateway_advanced
 data/campaign/industries.csv,exiledSector_wormhole_gateway_perfected
+data/campaign/market_conditions.csv,exiledSector_phase_displaced
+data/campaign/market_conditions.csv,exiledSector_trait_abyssal_bloom
+data/campaign/market_conditions.csv,exiledSector_trait_cryo_aquifers
+data/campaign/market_conditions.csv,exiledSector_trait_furnace_heart
+data/campaign/market_conditions.csv,exiledSector_trait_hypershunt_bathed
+data/campaign/market_conditions.csv,exiledSector_trait_nanoforge_seams
+data/campaign/market_conditions.csv,exiledSector_trait_neutron_mantle
+data/campaign/market_conditions.csv,exiledSector_trait_wormhole_throat
 data/hullmods/hull_mods.csv,exiledSector_conflictWarning
 data/hullmods/hull_mods.csv,exiledSector_core
 data/hullmods/hull_mods.csv,exiledSector_module
