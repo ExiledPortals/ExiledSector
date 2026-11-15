@@ -7,13 +7,15 @@ import { CommitNumberInput, CommitSwitch, CommitTextInput } from '../../../share
 import { notifyError } from '../../../shared/dialogs.tsx';
 import { ImageBrowser } from '../../../shared/ImageBrowser.tsx';
 import {
+  clampDecorationSize,
   DECORATION_KINDS,
   decorationById,
   DEFAULT_STAR_COLOR,
-  MIN_DECORATION_SIZE,
   RING_BELT_STYLES,
   ringBeltArtPath,
   ringBeltStyleOf,
+  setRingInnerRadius,
+  setRingOuterRadius,
   THREAT_UNIT_SPRITES,
   THREAT_UNIT_TYPES,
   VANILLA_STAR_TYPES,
@@ -26,6 +28,7 @@ import type { TreeActions } from '../state/treeActions.ts';
 import { useTreeEditor, useTreeState } from '../state/treeEditorContext.ts';
 import { CommitColorInput } from './CommitColorInput.tsx';
 import { degreesOrZero, numberOrZero, setTags } from './inspectorEdits.ts';
+import { PositionFields } from './PositionFields.tsx';
 import { VolumeField } from './VolumeField.tsx';
 
 type Edit<TKind extends DecorationKind> = (change: (decoration: DecorationOfKind<TKind>) => void) => void;
@@ -36,7 +39,16 @@ interface FieldsProps<TKind extends DecorationKind> {
 }
 
 function sizeOrMinimum(value: number): number {
-  return Math.max(MIN_DECORATION_SIZE, Math.trunc(value) || MIN_DECORATION_SIZE);
+  return clampDecorationSize(Math.trunc(value) || 0);
+}
+
+function LengthRotationFields({ length, rotation, edit }: { length: number; rotation: number; edit: (change: (target: { length: number; rotation: number }) => void) => void }) {
+  return (
+    <Group grow gap={6}>
+      <CommitNumberInput size="xs" label="Length" value={length} onCommit={(value) => edit((target) => void (target.length = sizeOrMinimum(value)))} />
+      <CommitNumberInput size="xs" label="Rotation (deg)" value={rotation || 0} onCommit={(value) => edit((target) => void (target.rotation = degreesOrZero(value)))} />
+    </Group>
+  );
 }
 
 function SpinFields({ rotation, rotationSpeed, edit }: { rotation: number; rotationSpeed: number; edit: (change: (target: { rotation: number; rotationSpeed: number }) => void) => void }) {
@@ -135,13 +147,13 @@ function RingBeltFields({ decoration: belt, edit }: FieldsProps<'ringBelt'>) {
           size="xs"
           label="Inner radius"
           value={belt.innerRadius}
-          onCommit={(value) => edit((target) => void (target.innerRadius = Math.max(0, Math.min(Math.trunc(value) || 0, target.outerRadius - MIN_DECORATION_SIZE))))}
+          onCommit={(value) => edit((target) => setRingInnerRadius(target, Math.trunc(value) || 0))}
         />
         <CommitNumberInput
           size="xs"
           label="Outer radius"
           value={belt.outerRadius}
-          onCommit={(value) => edit((target) => void (target.outerRadius = Math.max(target.innerRadius + MIN_DECORATION_SIZE, Math.trunc(value) || 0)))}
+          onCommit={(value) => edit((target) => setRingOuterRadius(target, Math.trunc(value) || 0))}
         />
       </Group>
       <Select
@@ -168,21 +180,13 @@ function ThreatUnitFields({ decoration: unit, edit }: FieldsProps<'threatUnit'>)
         allowDeselect={false}
         onChange={(value) => edit((target) => void (target.unitType = value ?? 'fabricator'))}
       />
-      <Group grow gap={6}>
-        <CommitNumberInput size="xs" label="Length" value={unit.length} onCommit={(value) => edit((target) => void (target.length = sizeOrMinimum(value)))} />
-        <CommitNumberInput size="xs" label="Rotation (deg)" value={unit.rotation || 0} onCommit={(value) => edit((target) => void (target.rotation = degreesOrZero(value)))} />
-      </Group>
+      <LengthRotationFields length={unit.length} rotation={unit.rotation} edit={edit} />
     </>
   );
 }
 
 function ShroudedMawFields({ decoration: maw, edit }: FieldsProps<'shroudedMaw'>) {
-  return (
-    <Group grow gap={6}>
-      <CommitNumberInput size="xs" label="Length" value={maw.length} onCommit={(value) => edit((target) => void (target.length = sizeOrMinimum(value)))} />
-      <CommitNumberInput size="xs" label="Rotation (deg)" value={maw.rotation || 0} onCommit={(value) => edit((target) => void (target.rotation = degreesOrZero(value)))} />
-    </Group>
-  );
+  return <LengthRotationFields length={maw.length} rotation={maw.rotation} edit={edit} />;
 }
 
 function OrbitFields({ orbit, edit }: { orbit: OrbitSettings; edit: (change: (target: OrbitSettings) => void) => void }) {
@@ -280,10 +284,7 @@ export function DecorationInspector({ decorationId, vocabulary }: { decorationId
     <Stack gap="sm">
       <Title order={4}>{spec.label}</Title>
       <CommitTextInput size="xs" label={`${spec.label} id`} value={decoration.id} onCommit={rename} />
-      <Group grow gap={6}>
-        <CommitNumberInput size="xs" label="X" value={decoration.x} onCommit={(value) => edit((target) => void (target.x = value || 0))} />
-        <CommitNumberInput size="xs" label="Y" value={decoration.y} onCommit={(value) => edit((target) => void (target.y = value || 0))} />
-      </Group>
+      <PositionFields x={decoration.x} y={decoration.y} onEdit={edit} />
       <Fields decoration={decoration as never} edit={edit as Edit<DecorationKind>} />
       <VolumeField vocabulary={vocabulary} tags={decoration.tags} onChange={(tags) => edit((target) => setTags(target, tags))} />
       <Divider />
