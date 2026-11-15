@@ -6,7 +6,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI.ShipTypeHints;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
-import exiledsector.items.WeightedPick;
+import exiledsector.data.WeightedPick;
 import exiledsector.ui.decoration.FleetHulls;
 import org.apache.log4j.Logger;
 
