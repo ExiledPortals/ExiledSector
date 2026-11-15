@@ -9,6 +9,7 @@ import type { TreeActions } from '../state/treeActions.ts';
 import { useTreeEditor, useTreeState } from '../state/treeEditorContext.ts';
 import { selectionCount } from '../state/treeStore.ts';
 import { degreesOrZero } from './inspectorEdits.ts';
+import { PositionFields } from './PositionFields.tsx';
 
 function editAnchor(actions: TreeActions, anchorId: string, change: (anchor: OrbitAnchor, document: TreeDocument) => void): void {
   actions.editDocument((document) => {
@@ -54,14 +55,7 @@ export function AnchorInspector({ anchorId }: { anchorId: string }) {
     <Stack gap="sm">
       <Title order={4}>Anchor</Title>
       <CommitTextInput size="xs" label="Anchor id" value={anchor.id} onCommit={rename} />
-      <Group grow gap={6}>
-        <CommitNumberInput size="xs" label="X" value={anchor.x} onCommit={(value) => editAnchor(actions, anchorId, (target) => {
-          target.x = value || 0;
-        })} />
-        <CommitNumberInput size="xs" label="Y" value={anchor.y} onCommit={(value) => editAnchor(actions, anchorId, (target) => {
-          target.y = value || 0;
-        })} />
-      </Group>
+      <PositionFields x={anchor.x} y={anchor.y} onEdit={(change) => editAnchor(actions, anchorId, change)} />
       <Group grow gap={6}>
         <CommitNumberInput
           size="xs"

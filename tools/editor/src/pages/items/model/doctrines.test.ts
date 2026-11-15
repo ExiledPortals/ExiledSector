@@ -1,10 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { buildVocabulary } from '../../../api/vocabulary.ts';
+import { splitList } from '../../../shared/csv.ts';
+import { markRowsSaved } from '../../../shared/rowIds.ts';
 import {
   doctrineTypeFacts,
   joinEntries,
-  listEntries,
-  markDoctrinesSaved,
   newDoctrineArchive,
   parseDoctrineArchivesCsv,
   replacementCandidates,
@@ -15,19 +14,16 @@ import {
 } from './doctrines.ts';
 import { isUsed, modifierUsage, referenceIssues, renameModifierReferences } from './modifierUsage.ts';
 import { modifierById, validateModifiers, type ItemModifier } from './modifiers.ts';
+import { testVocabulary } from '../../../test/testVocabulary.ts';
 
-const vocabulary = buildVocabulary({
+const vocabulary = testVocabulary({
   effects: [{ name: 'ARMOR_PERCENT', statMode: 'PERCENT', lowerIsBetter: false }],
-  tags: { theme: [], volume: ['core'], requirement: [] },
-  tiers: [],
-  unlockConditionTypes: [],
-  blueprintCategories: [],
+  tags: { volume: ['core'] },
   itemTypes: ['subroutine', 'hull_item', 'star_chart', 'wormhole_anchor'],
   itemKinds: [{ id: 'bridge', type: 'hull_item' }],
   modifierScopes: ['subroutine', 'unique_subroutine', 'doctrine', 'hull_item', 'star_chart', 'wormhole_anchor'],
   doctrineBehaviours: ['REWRITE', 'AUGMENT'],
   radiusSizes: ['small', 'medium', 'large'],
-  itemUnlocks: [],
 });
 
 const TYPES = JSON.stringify({
@@ -62,7 +58,7 @@ describe('doctrine archives', () => {
     const model = parseDoctrineArchivesCsv(CSV);
 
     expect(model.archives.map((archive) => archive.id)).toEqual(['doc_transform', 'doc_augment']);
-    expect(listEntries(model.archives[0].notables)).toEqual(['notable_a', 'notable_b']);
+    expect(splitList(model.archives[0].notables)).toEqual(['notable_a', 'notable_b']);
     expect(model.archives[0].smallNodes).toBe('small_a');
     expect(model.archives[1].modifiers).toBe('@ARMOR_PERCENT_DOCTRINE:2');
     expect(serializeDoctrineArchivesCsv(model)).toBe(CSV);
@@ -119,7 +115,7 @@ describe('doctrine archives', () => {
     expect(added.behaviour).toBe('REWRITE');
     expect(added.radius).toBe('medium');
     current.push(added);
-    markDoctrinesSaved({ archives: current }, { archives: current.map((archive) => ({ ...archive })) });
+    markRowsSaved(current, current.map((archive) => ({ ...archive })));
     expect(current[2].loadedId).toBe('doc_missing');
   });
 

@@ -25,6 +25,7 @@ import type { TreeActions } from '../state/treeActions.ts';
 import { useTreeEditor, useTreeState } from '../state/treeEditorContext.ts';
 import { isReservedNodeId } from '../state/treeStore.ts';
 import { CommitColorInput } from './CommitColorInput.tsx';
+import { PositionFields } from './PositionFields.tsx';
 import { TagGroupsField } from './TagGroupsField.tsx';
 import { TypeForm, type TypeRecipe } from './TypeForm.tsx';
 
@@ -220,30 +221,7 @@ function NodePositionFields({ nodeId }: { nodeId: string }) {
       return { x: node?.x ?? 0, y: node?.y ?? 0 };
     }),
   );
-  return (
-    <Group grow gap={6}>
-      <CommitNumberInput
-        size="xs"
-        label="X"
-        value={position.x}
-        onCommit={(value) =>
-          editNode(actions, nodeId, (draft) => {
-            draft.x = value || 0;
-          })
-        }
-      />
-      <CommitNumberInput
-        size="xs"
-        label="Y"
-        value={position.y}
-        onCommit={(value) =>
-          editNode(actions, nodeId, (draft) => {
-            draft.y = value || 0;
-          })
-        }
-      />
-    </Group>
-  );
+  return <PositionFields x={position.x} y={position.y} onEdit={(change) => editNode(actions, nodeId, (draft) => change(draft))} />;
 }
 
 export function NodeInspector({ nodeId, vocabulary }: { nodeId: string; vocabulary: Vocabulary }) {

@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { buildVocabulary } from '../../../api/vocabulary.ts';
 import { parseItemDefinitions } from './definitions.ts';
 import { parseImplicitsCsv } from './implicits.ts';
 import { modifierUsage, referenceIssues, renameModifierReferences } from './modifierUsage.ts';
@@ -16,24 +15,20 @@ import {
   togglePerHullSize,
   validateModifiers,
 } from './modifiers.ts';
+import { testVocabulary } from '../../../test/testVocabulary.ts';
 
-const vocabulary = buildVocabulary({
+const vocabulary = testVocabulary({
   effects: [
     { name: 'HULL_MULT', statMode: 'MULT', lowerIsBetter: false },
     { name: 'ARMOR_FLAT', statMode: 'FLAT', lowerIsBetter: false },
     { name: 'ARMOR_PERCENT', statMode: 'PERCENT', lowerIsBetter: false },
   ],
-  tags: { theme: [], volume: [], requirement: [] },
-  tiers: [],
-  unlockConditionTypes: [],
-  blueprintCategories: [],
   itemTypes: ['subroutine', 'hull_item'],
   itemKinds: [
     { id: 'subroutine', type: 'subroutine' },
     { id: 'armor_plating', type: 'hull_item' },
   ],
   subroutineKinds: ['MODSPEC_CACHE', 'DOCTRINE', 'BYPASS', 'UNIQUE'],
-  itemUnlocks: [],
 });
 
 const SUBROUTINES_CSV = 'id,name,icon,rarity,unique,kind,description,unlock\ncache,Cache,,10,,MODSPEC_CACHE,,\n';
@@ -168,15 +163,10 @@ describe('item modifiers', () => {
   });
 
   it('keeps star chart modifiers out of item_modifiers.csv', () => {
-    const withCharts = buildVocabulary({
+    const withCharts = testVocabulary({
       effects: [{ name: 'HULL_MULT', statMode: 'MULT', lowerIsBetter: false }],
-      tags: { theme: [], volume: [], requirement: [] },
-      tiers: [],
-      unlockConditionTypes: [],
-      blueprintCategories: [],
       itemTypes: ['subroutine', 'hull_item', 'star_chart'],
       itemKinds: [{ id: 'subroutine', type: 'subroutine' }],
-      itemUnlocks: [],
     });
     expect(shipItemTypes(withCharts)).toEqual(['hull_item']);
     expect(newModifier([], 'prefix', withCharts).itemTypes).toEqual(['hull_item']);
@@ -208,16 +198,11 @@ describe('item modifiers', () => {
   });
 
   it('counts unique subroutine lines as unique_subroutine uses, renames them and checks their scope', () => {
-    const withUniques = buildVocabulary({
+    const withUniques = testVocabulary({
       effects: [{ name: 'HULL_MULT', statMode: 'MULT', lowerIsBetter: false }],
-      tags: { theme: [], volume: [], requirement: [] },
-      tiers: [],
-      unlockConditionTypes: [],
-      blueprintCategories: [],
       itemTypes: ['subroutine', 'hull_item', 'star_chart'],
       itemKinds: [{ id: 'subroutine', type: 'subroutine' }],
       modifierScopes: ['subroutine', 'unique_subroutine', 'hull_item', 'star_chart'],
-      itemUnlocks: [],
     });
     const items = parseItemDefinitions(
       'id,name,icon,rarity,unique,kind,description,lines,source,unlock\nlattice,Lattice,,10,true,UNIQUE,,@HULL_MULT_RELIC; HULL_MULT:1:1,site:wreck,\n',

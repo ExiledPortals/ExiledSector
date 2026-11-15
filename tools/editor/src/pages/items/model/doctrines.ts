@@ -1,5 +1,5 @@
 import type { Vocabulary } from '../../../api/vocabulary.ts';
-import { csvTableFromRows, parseCsvTable, serializeCsvTable, trimmedCsvCells, type CsvTable } from '../../../shared/csv.ts';
+import { csvTableFromColumns, parseCsvTable, readCsvRow, serializeCsvTable, splitList, type CsvColumn, type CsvTable } from '../../../shared/csv.ts';
 import type { ItemModifier } from './modifiers.ts';
 
 export const DOCTRINE_TYPE = 'doctrine';
@@ -8,10 +8,8 @@ export const DOCTRINE_ARCHIVE_RESOURCE = 'doctrine-archives';
 export const DOCTRINE_ARCHIVE_FILE_NAME = 'doctrine_archives.csv';
 export const REWRITE_BEHAVIOUR = 'REWRITE';
 export const AUGMENT_BEHAVIOUR = 'AUGMENT';
-export const DOCTRINE_ARCHIVE_COLUMNS = ['id', 'behaviour', 'radius', 'faction', 'notables', 'keystones', 'small_nodes', 'modifiers', 'min_lines', 'max_lines'] as const;
 export const DOCTRINE_POOL_TIERS = { notables: 'NOTABLE', keystones: 'KEYSTONE', smallNodes: 'SMALL' } as const;
 export type DoctrinePoolKey = keyof typeof DOCTRINE_POOL_TIERS;
-const ENTRY_SEPARATOR = ';';
 const LIST_JOINER = '; ';
 const WHOLE_NUMBER = /^\d{1,4}$/;
 const MODIFIER_ENTRY = /^@([^:]+)(?::([^:]*))?$/;
@@ -31,6 +29,19 @@ export interface DoctrineArchive {
   loadedId?: string;
 }
 
+const DOCTRINE_ARCHIVE_COLUMNS: readonly CsvColumn<DoctrineArchive>[] = [
+  { column: 'id', field: 'id' },
+  { column: 'behaviour', field: 'behaviour' },
+  { column: 'radius', field: 'radius' },
+  { column: 'faction', field: 'faction' },
+  { column: 'notables', field: 'notables' },
+  { column: 'keystones', field: 'keystones' },
+  { column: 'small_nodes', field: 'smallNodes' },
+  { column: 'modifiers', field: 'modifiers' },
+  { column: 'min_lines', field: 'minLines' },
+  { column: 'max_lines', field: 'maxLines' },
+];
+
 export interface DoctrineArchivesModel {
   table: CsvTable;
   archives: DoctrineArchive[];
@@ -45,49 +56,14 @@ export interface DoctrineTypeFacts {
 export function parseDoctrineArchivesCsv(text: string): DoctrineArchivesModel {
   const table = parseCsvTable(text);
   const archives = table.rows.map((cells): DoctrineArchive => {
-    const columns = trimmedCsvCells(table, cells, DOCTRINE_ARCHIVE_COLUMNS);
-    return {
-      cells,
-      id: columns.id,
-      behaviour: columns.behaviour,
-      radius: columns.radius,
-      faction: columns.faction,
-      notables: columns.notables,
-      keystones: columns.keystones,
-      smallNodes: columns.small_nodes,
-      modifiers: columns.modifiers,
-      minLines: columns.min_lines,
-      maxLines: columns.max_lines,
-      loadedId: columns.id,
-    };
+    const archive = { cells, ...readCsvRow(table, cells, DOCTRINE_ARCHIVE_COLUMNS) } as DoctrineArchive;
+    return { ...archive, loadedId: archive.id };
   });
   return { table, archives };
 }
 
-function archiveColumnValues(archive: DoctrineArchive): Record<(typeof DOCTRINE_ARCHIVE_COLUMNS)[number], string> {
-  return {
-    id: archive.id,
-    behaviour: archive.behaviour,
-    radius: archive.radius,
-    faction: archive.faction,
-    notables: archive.notables,
-    keystones: archive.keystones,
-    small_nodes: archive.smallNodes,
-    modifiers: archive.modifiers,
-    min_lines: archive.minLines,
-    max_lines: archive.maxLines,
-  };
-}
-
 export function serializeDoctrineArchivesCsv(model: DoctrineArchivesModel): string {
-  return serializeCsvTable(csvTableFromRows(model.table, model.archives, archiveColumnValues));
-}
-
-export function listEntries(text: string): string[] {
-  return text
-    .split(ENTRY_SEPARATOR)
-    .map((entry) => entry.trim())
-    .filter((entry) => entry !== '');
+  return serializeCsvTable(csvTableFromColumns(model.table, model.archives, DOCTRINE_ARCHIVE_COLUMNS));
 }
 
 export function joinEntries(entries: readonly string[]): string {
@@ -132,17 +108,6 @@ export function newDoctrineArchive(archives: DoctrineArchive[], doctrineSubrouti
   };
 }
 
-export function markDoctrinesSaved(model: Pick<DoctrineArchivesModel, 'archives'>, saved: Pick<DoctrineArchivesModel, 'archives'>): void {
-  for (const archive of model.archives) {
-    const savedArchive = saved.archives.find((candidate) =>
-      archive.loadedId ? candidate.loadedId === archive.loadedId : !candidate.loadedId && candidate.id === archive.id,
-    );
-    if (savedArchive) {
-      archive.loadedId = savedArchive.id;
-    }
-  }
-}
-
 function lineCount(text: string): number | null {
   if (text === '') {
     return 1;
@@ -153,7 +118,7 @@ function lineCount(text: string): number | null {
 function poolIssues(label: string, archive: DoctrineArchive, typeFacts: Readonly<Record<string, DoctrineTypeFacts>>): string[] {
   const issues: string[] = [];
   for (const [key, tier] of Object.entries(DOCTRINE_POOL_TIERS) as [DoctrinePoolKey, string][]) {
-    for (const typeId of listEntries(archive[key])) {
+    for (const typeId of splitList(archive[key])) {
       const facts = Object.hasOwn(typeFacts, typeId) ? typeFacts[typeId] : undefined;
       if (!facts) {
         issues.push(`${label}: ${typeId} is not a skill type`);
@@ -170,7 +135,7 @@ function poolIssues(label: string, archive: DoctrineArchive, typeFacts: Readonly
 function modifierIssues(label: string, archive: DoctrineArchive, modifiers: readonly ItemModifier[]): string[] {
   const issues: string[] = [];
   const seen = new Set<string>();
-  for (const entry of listEntries(archive.modifiers)) {
+  for (const entry of splitList(archive.modifiers)) {
     const match = MODIFIER_ENTRY.exec(entry);
     if (!match) {
       issues.push(`${label}: ${entry} is not @ID or @ID:weight`);
@@ -226,7 +191,7 @@ export function validateDoctrineArchives(
     if (minLines === null || maxLines === null || minLines < 1 || maxLines < minLines) {
       issues.push(`${label}: min lines must be 1 or more and max lines at least min lines`);
     }
-    const listedTypes = listEntries(archive.notables).length + listEntries(archive.keystones).length + listEntries(archive.smallNodes).length;
+    const listedTypes = splitList(archive.notables).length + splitList(archive.keystones).length + splitList(archive.smallNodes).length;
     issues.push(...poolIssues(label, archive, typeFacts));
     if (archive.behaviour === REWRITE_BEHAVIOUR) {
       if (listedTypes === 0) {
@@ -239,7 +204,7 @@ export function validateDoctrineArchives(
       if (listedTypes > 0) {
         issues.push(`${label}: an augmenting doctrine lists no replacement nodes`);
       }
-      if (listEntries(archive.modifiers).length === 0) {
+      if (splitList(archive.modifiers).length === 0) {
         issues.push(`${label}: an augmenting doctrine needs at least one modifier`);
       }
       issues.push(...modifierIssues(label, archive, modifiers));
@@ -255,7 +220,7 @@ export interface DoctrineModifierReference {
 
 export function doctrineModifierReferences(archive: Pick<DoctrineArchive, 'modifiers'>): DoctrineModifierReference[] {
   const references: DoctrineModifierReference[] = [];
-  for (const entry of listEntries(archive.modifiers)) {
+  for (const entry of splitList(archive.modifiers)) {
     const match = MODIFIER_ENTRY.exec(entry);
     if (match) {
       references.push(match[2] === undefined ? { modifierId: match[1].trim() } : { modifierId: match[1].trim(), weight: match[2] });
@@ -271,7 +236,7 @@ export function formatDoctrineModifiers(references: readonly DoctrineModifierRef
 export function renameDoctrineModifier(archives: DoctrineArchive[], fromId: string, toId: string): number {
   let renamed = 0;
   for (const archive of archives) {
-    const entries = listEntries(archive.modifiers);
+    const entries = splitList(archive.modifiers);
     let changed = false;
     const renamedEntries = entries.map((entry) => {
       const match = MODIFIER_ENTRY.exec(entry);

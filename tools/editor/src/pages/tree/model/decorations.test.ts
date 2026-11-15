@@ -1,11 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import {
+  clampDecorationSize,
   DECORATION_KINDS,
   decorationHandles,
   decorationReach,
   dragDecorationHandle,
   parseDecorations,
   serializeDecoration,
+  setRingInnerRadius,
+  setRingOuterRadius,
   type Decoration,
   type DecorationHandle,
   type HypershuntDecoration,
@@ -131,5 +134,25 @@ describe('length and rotation handles', () => {
     expect(maw.length).toBe(800);
     dragDecorationHandle(maw, 'rotate', { x: 100, y: 0 });
     expect(maw.rotation).toBe(90);
+  });
+});
+
+describe('decoration size limits', () => {
+  it('keeps a decoration at least 20 units across', () => {
+    expect(clampDecorationSize(5)).toBe(20);
+    expect(clampDecorationSize(300)).toBe(300);
+  });
+
+  it('keeps a ring belt at least 20 units wide whichever edge moves, and its inner edge at or past the centre', () => {
+    const belt = DECORATION_KINDS.ringBelt.create('belt', { x: 0, y: 0 }, CONTEXT);
+
+    setRingInnerRadius(belt, 1695);
+    expect(belt.innerRadius).toBe(1680);
+    setRingOuterRadius(belt, 1000);
+    expect(belt.outerRadius).toBe(1700);
+    setRingInnerRadius(belt, -50);
+    expect(belt.innerRadius).toBe(0);
+    dragDecorationHandle(belt, 'outer', { x: 10, y: 0 });
+    expect(belt.outerRadius).toBe(20);
   });
 });

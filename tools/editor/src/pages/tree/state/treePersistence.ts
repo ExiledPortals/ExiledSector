@@ -4,8 +4,7 @@ import { confirmAction, notifyError } from '../../../shared/dialogs.tsx';
 import { lineEndingOf } from '../../../shared/lineEndings.ts';
 import { handleSaveResult } from '../../../shared/saveResult.ts';
 import { saveOutcome, type SaveTicket } from '../../../shared/saveTracking.ts';
-import { pruneConnectorEntries } from '../model/connectors.ts';
-import { parseTreeDocument, serializeTreeFiles } from '../model/serialization.ts';
+import { normalizeTreeDocument, parseTreeDocument, serializeTreeFiles, type TreeDocumentContent } from '../model/serialization.ts';
 import type { TreeDocument } from '../model/types.ts';
 import { validateTree } from '../model/validation.ts';
 import type { TreeKind } from '../treeKinds.ts';
@@ -17,21 +16,7 @@ const NO_RESERVED_NODE_IDS: ReservedNodeIds = { replaced: [], released: [] };
 interface TreeDraft {
   basedOn: Record<string, string> | null;
   savedAt: number | null;
-  data: TreeDocument;
-}
-
-function normalizeDraftData(data: TreeDocument): TreeDocument {
-  const document: TreeDocument = {
-    types: data.types,
-    volumes: data.volumes ?? [],
-    nodes: data.nodes.map((node) => ({ ...node, connectedTo: node.connectedTo ?? [] })),
-    curves: data.curves ?? [],
-    hiddenConnectors: data.hiddenConnectors ?? [],
-    anchors: data.anchors ?? [],
-    decorations: data.decorations,
-  };
-  pruneConnectorEntries(document);
-  return document;
+  data: TreeDocumentContent;
 }
 
 export function createTreePersistence(kind: TreeKind, store: TreeStore) {
@@ -100,7 +85,7 @@ export function createTreePersistence(kind: TreeKind, store: TreeStore) {
       return;
     }
     const { lineEndings, baseHashes } = store.getState();
-    const draftDocument = normalizeDraftData(draft.data);
+    const draftDocument = normalizeTreeDocument(draft.data);
     const diskTexts = serializeTreeFiles(files, diskDocument, lineEndings);
     const draftTexts = serializeTreeFiles(files, draftDocument, lineEndings);
     if (draftTexts.types === diskTexts.types && draftTexts.tree === diskTexts.tree) {

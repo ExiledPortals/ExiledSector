@@ -1,10 +1,10 @@
 import { Button, Divider, Group, Select, Stack, Text, TextInput } from '@mantine/core';
-import { IconCopy, IconPlus, IconTrash } from '@tabler/icons-react';
-import { useCallback, useState } from 'react';
+import { IconCopy, IconPlus } from '@tabler/icons-react';
+import { useState } from 'react';
+import { withCurrentOption } from '../../../shared/arrays.ts';
 import { DecimalInput } from '../../../shared/DecimalInput.tsx';
-import { confirmAction } from '../../../shared/dialogs.tsx';
 import { DescriptionNote } from '../components/GameText.tsx';
-import { DescriptionField, IconField, IdField, ItemList, ListDetail, NameAndRarity, UniqueFields, type ListedItem } from '../components/ItemFields.tsx';
+import { DeleteRowButton, DescriptionField, IconField, IdField, ItemList, ListDetail, NameAndRarity, UniqueFields, type ListedItem } from '../components/ItemFields.tsx';
 import { ModifierPool } from '../components/ModifierPool.tsx';
 import { modifierLinesOf, useLineDescriptions, type LineDescriptions } from '../describedLines.ts';
 import type { ItemsPanelProps } from '../itemsDocument.ts';
@@ -26,7 +26,8 @@ import {
 } from '../model/definitions.ts';
 import { DOCTRINE_SUBROUTINE_KIND } from '../model/doctrines.ts';
 import { MODIFIER_FILE_NAMES } from '../model/itemFamily.ts';
-import { otherItemIds } from '../model/workspace.ts';
+import { otherItemIds, shipDefinitionRows } from '../model/workspace.ts';
+import { useRowEdit } from '../useRowEdit.ts';
 
 function isOtherSubroutine(definition: ItemDefinition): boolean {
   return itemTypeOfKind(definition.kind) === SUBROUTINE_TYPE && definition.subroutineKind !== DOCTRINE_SUBROUTINE_KIND;
@@ -139,13 +140,13 @@ function ModspecCacheFields({ definition, edit }: { definition: ItemDefinition; 
 
 function SubroutineForm({ document, model, vocabulary, definition, index, kinds, descriptions, onSelect }: SubroutineFormProps) {
   const updateDocument = document.update;
-  const edit = useCallback((recipe: (draft: ItemDefinition) => void) => updateDocument((draft) => recipe(draft.ship.definitions[index])), [updateDocument, index]);
+  const edit = useRowEdit(updateDocument, shipDefinitionRows, index);
   const subroutineKind = definition.subroutineKind ?? '';
-  const kindOptions = subroutineKind === '' || kinds.includes(subroutineKind) ? kinds : [subroutineKind, ...kinds];
+  const kindOptions = withCurrentOption(kinds, subroutineKind);
   const uniqueLines = definition.lines ?? [];
   const showsUniqueFields = isUniqueSubroutine(definition) || uniqueLines.length > 0 || Boolean(definition.source) || Boolean(definition.radius);
   const radius = definition.radius ?? '';
-  const radiusSizes = radius === '' || vocabulary.radiusSizes.includes(radius) ? vocabulary.radiusSizes : [radius, ...vocabulary.radiusSizes];
+  const radiusSizes = withCurrentOption(vocabulary.radiusSizes, radius);
   const radiusOptions = [{ value: '', label: 'none' }, ...radiusSizes.map((size) => ({ value: size, label: size }))];
 
   const duplicate = () => {
@@ -156,19 +157,6 @@ function SubroutineForm({ document, model, vocabulary, definition, index, kinds,
       draft.ship.definitions.splice(index + 1, 0, copy);
     });
     onSelect(index + 1);
-  };
-
-  const remove = async () => {
-    const confirmed = await confirmAction({
-      title: `Delete "${definition.id}"?`,
-      message: 'Subroutines players already own will show as unrecognised.',
-      confirmLabel: 'Delete',
-      danger: true,
-    });
-    if (confirmed) {
-      document.update((draft) => void draft.ship.definitions.splice(index, 1));
-      onSelect(Math.max(0, index - 1));
-    }
   };
 
   return (
@@ -273,9 +261,14 @@ function SubroutineForm({ document, model, vocabulary, definition, index, kinds,
         <Button variant="default" leftSection={<IconCopy size={14} />} onClick={duplicate}>
           Duplicate
         </Button>
-        <Button color="red" variant="light" leftSection={<IconTrash size={14} />} onClick={() => void remove()}>
-          Delete this subroutine
-        </Button>
+        <DeleteRowButton
+          noun="subroutine"
+          rowId={definition.id}
+          message="Subroutines players already own will show as unrecognised."
+          index={index}
+          onDelete={() => document.update((draft) => void draft.ship.definitions.splice(index, 1))}
+          onSelect={onSelect}
+        />
       </Group>
     </Stack>
   );

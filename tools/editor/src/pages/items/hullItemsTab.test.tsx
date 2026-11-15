@@ -21,7 +21,7 @@ describe('hull item types', () => {
   it('lists hull items by section and rarity and shows every modifier that can roll as its in-game text', async () => {
     const itemTypes = await openItems('Item types');
 
-    fireEvent.click(await within(itemTypes).findByText('Specialist Crew', undefined, LOAD_TIMEOUT));
+    fireEvent.click(await within(itemTypes).findByText('Crew Cybernetics', undefined, LOAD_TIMEOUT));
     expect((await within(itemTypes).findAllByText('-15 to -10', undefined, LOAD_TIMEOUT)).length).toBeGreaterThan(0);
     expect(within(itemTypes).getAllByText(/crew loss percent/).length).toBeGreaterThan(0);
     expect(within(itemTypes).getAllByText('-10 to -5').length).toBeGreaterThan(0);
@@ -40,7 +40,7 @@ describe('hull item types', () => {
   it('adds a prefix picked from the in-game texts, edits a weight, removes a suffix and saves hull_items.csv only', async () => {
     const before = readProjectFiles(HULL_ITEMS_FILE, SUBROUTINES_FILE, MODIFIERS_FILE);
     const itemTypes = await openItems('Item types');
-    fireEvent.click(await within(itemTypes).findByText('Specialist Crew', undefined, LOAD_TIMEOUT));
+    fireEvent.click(await within(itemTypes).findByText('Crew Cybernetics', undefined, LOAD_TIMEOUT));
     await within(itemTypes).findAllByText('-15 to -10', undefined, LOAD_TIMEOUT);
 
     await pickOption(itemTypes, 'Add to prefixes', 'fighter crew loss', /fighter crew loss percent.*FIGHTER_CREW_LOSS_PERCENT$/);
