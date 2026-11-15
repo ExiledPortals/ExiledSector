@@ -92,6 +92,19 @@ class SkillTreeSearchBarTest {
     }
 
     @Test
+    void shiftBackspaceClearsTheWholeQueryAndKeepsFocus() {
+        focus();
+        type("armor");
+        InputEventAPI shiftBackspace = keyDown(Keyboard.KEY_BACK, '\b');
+        when(shiftBackspace.isShiftDown()).thenReturn(true);
+
+        assertTrue(bar.handleKey(shiftBackspace));
+
+        assertEquals("", search.getQuery());
+        assertTrue(bar.isFocused());
+    }
+
+    @Test
     void escapeClearsTheQueryAndReleasesFocus() {
         focus();
         type("armor");

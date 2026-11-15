@@ -72,7 +72,7 @@ final class SkillTreeTextField {
             if (enteredText.isEmpty()) {
                 return KeyResult.CONSUMED;
             }
-            enteredText = withoutLastCodePoint(enteredText);
+            enteredText = event.isShiftDown() ? "" : withoutLastCodePoint(enteredText);
             return KeyResult.EDITED;
         }
         if (keyCode == Keyboard.KEY_RETURN || keyCode == Keyboard.KEY_NUMPADENTER) {

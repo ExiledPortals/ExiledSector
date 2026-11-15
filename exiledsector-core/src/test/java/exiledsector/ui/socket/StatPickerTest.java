@@ -1,5 +1,6 @@
 package exiledsector.ui.socket;
 
+import com.fs.starfarer.api.ui.TextFieldAPI;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -7,7 +8,10 @@ import java.util.Map;
 import java.util.function.ToDoubleFunction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class StatPickerTest {
 
@@ -30,6 +34,24 @@ class StatPickerTest {
         assertEquals(List.of("FLUX_DISSIPATION_PERCENT"), matching("flux d"));
         assertEquals(List.of("MIN_CREW_PERCENT"), matching("crew"));
         assertEquals(List.of(), matching("shield"));
+    }
+
+    @Test
+    void emptyingTheFieldInOneGoRefreshesTheListLikeDeletingByHand() {
+        TextFieldAPI field = mock(TextFieldAPI.class);
+        when(field.hasFocus()).thenReturn(true);
+        when(field.getText()).thenReturn("");
+        StatPicker picker = new StatPicker(new ModifierSearch.Row(), field);
+        assertTrue(picker.poll());
+
+        when(field.getText()).thenReturn("flux d");
+        assertTrue(picker.poll());
+        assertFalse(picker.poll());
+        assertEquals(List.of("FLUX_DISSIPATION_PERCENT"), matching(picker.filterText()));
+
+        when(field.getText()).thenReturn("");
+        assertTrue(picker.poll());
+        assertEquals(STATS, matching(picker.filterText()));
     }
 
     @Test
