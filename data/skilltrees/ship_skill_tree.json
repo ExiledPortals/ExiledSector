@@ -9917,10 +9917,10 @@
 				"affinity_160",
 				"all_weapon_damage_1"
 			],
-			"x": 39300,
-			"y": 6793,
+			"x": 39323,
+			"y": 6811,
 			"orbitAnchorId": "anchor_52",
-			"orbitAngle": -47.87327805098086,
+			"orbitAngle": -45.06732755950782,
 			"tags": [
 				"domain_drones",
 				"gate_mothership_defeated"
@@ -9935,10 +9935,10 @@
 				"cargo_capacity_4",
 				"affinity_147"
 			],
-			"x": 39336,
-			"y": 7646,
+			"x": 39323,
+			"y": 7659,
 			"orbitAnchorId": "anchor_52",
-			"orbitAngle": 43.05666632684493,
+			"orbitAngle": 44.79706420335207,
 			"tags": [
 				"domain_drones",
 				"gate_mothership_defeated"
@@ -9952,10 +9952,10 @@
 				"affinity_159",
 				"affinity_165"
 			],
-			"x": 37509,
-			"y": 8671,
+			"x": 37485,
+			"y": 8649,
 			"orbitAnchorId": "anchor_48",
-			"orbitAngle": 134.0571636909816,
+			"orbitAngle": 135,
 			"tags": [
 				"domain_drones",
 				"gate_mothership_defeated"
@@ -9971,10 +9971,10 @@
 				"cargo_capacity_3",
 				"affinity_146"
 			],
-			"x": 38461,
-			"y": 7646,
+			"x": 38475,
+			"y": 7659,
 			"orbitAnchorId": "anchor_52",
-			"orbitAngle": 136.90123647725142,
+			"orbitAngle": 135.06780562457436,
 			"tags": [
 				"domain_drones",
 				"gate_mothership_defeated"
@@ -10324,10 +10324,10 @@
 				"affinity_165",
 				"reduced_monthly_supplies_6"
 			],
-			"x": 36972,
-			"y": 6708,
+			"x": 36997,
+			"y": 6617,
 			"orbitAnchorId": "anchor_48",
-			"orbitAngle": -164.64039335507456,
+			"orbitAngle": -161.92767785104053,
 			"tags": [
 				"domain_drones",
 				"gate_mothership_defeated"
@@ -10341,10 +10341,10 @@
 				"strikecraft_weapon_damage_8",
 				"affinity_163"
 			],
-			"x": 39366,
-			"y": 5297,
+			"x": 39517,
+			"y": 5333,
 			"orbitAnchorId": "anchor_48",
-			"orbitAngle": -76.41852990586298,
+			"orbitAngle": -71.96318347697847,
 			"tags": [
 				"domain_drones",
 				"gate_mothership_defeated"
@@ -10358,10 +10358,10 @@
 				"affinity_163",
 				"missile_weapon_damage_9"
 			],
-			"x": 40852,
-			"y": 7639,
+			"x": 40801,
+			"y": 7853,
 			"orbitAnchorId": "anchor_48",
-			"orbitAngle": 11.615063490258771,
+			"orbitAngle": 17.927919762007235,
 			"tags": [
 				"domain_drones",
 				"gate_mothership_defeated"
@@ -10375,10 +10375,10 @@
 				"affinity_161",
 				"domain_drones_wormhole_1"
 			],
-			"x": 38379,
-			"y": 9165,
+			"x": 38281,
+			"y": 9137,
 			"orbitAnchorId": "anchor_48",
-			"orbitAngle": 105.05264372878068,
+			"orbitAngle": 107.96323995337737,
 			"tags": [
 				"domain_drones",
 				"gate_mothership_defeated"
@@ -10393,10 +10393,10 @@
 				"reduced_d_mod_effect_11",
 				"all_weapon_damage_2"
 			],
-			"x": 38461,
-			"y": 6828,
+			"x": 38475,
+			"y": 6811,
 			"orbitAnchorId": "anchor_52",
-			"orbitAngle": -136.88750150823398,
+			"orbitAngle": -134.7975422577818,
 			"tags": [
 				"domain_drones",
 				"gate_mothership_defeated"
@@ -10410,10 +10410,10 @@
 				"affinity_158",
 				"point_defense_damage_to_missiles_and_fighters_6"
 			],
-			"x": 39320,
-			"y": 9188,
+			"x": 39517,
+			"y": 9137,
 			"orbitAnchorId": "anchor_48",
-			"orbitAngle": 77.7552328054324,
+			"orbitAngle": 71.92767785104051,
 			"tags": [
 				"domain_drones",
 				"gate_mothership_defeated"
@@ -10427,10 +10427,10 @@
 				"missile_weapon_damage_10",
 				"affinity_149"
 			],
-			"x": 40829,
-			"y": 6734,
+			"x": 40801,
+			"y": 6617,
 			"orbitAnchorId": "anchor_48",
-			"orbitAngle": -14.592307967813287,
+			"orbitAngle": -18.036816523021535,
 			"tags": [
 				"domain_drones",
 				"gate_mothership_defeated"
@@ -10444,10 +10444,10 @@
 				"affinity_148",
 				"strikecraft_weapon_damage_9"
 			],
-			"x": 38564,
-			"y": 5269,
+			"x": 38281,
+			"y": 5333,
 			"orbitAnchorId": "anchor_48",
-			"orbitAngle": -99.59847399050183,
+			"orbitAngle": -107.92791976200725,
 			"tags": [
 				"domain_drones",
 				"gate_mothership_defeated"
@@ -10461,10 +10461,10 @@
 				"reduced_monthly_supplies_5",
 				"domain_drones_wormhole_1"
 			],
-			"x": 36972,
-			"y": 7766,
+			"x": 36997,
+			"y": 7853,
 			"orbitAnchorId": "anchor_48",
-			"orbitAngle": 164.63652802017918,
+			"orbitAngle": 162.03676004662265,
 			"tags": [
 				"domain_drones",
 				"gate_mothership_defeated"
@@ -13193,80 +13193,80 @@
 		{
 			"a": "affinity_145",
 			"b": "affinity_146",
-			"controlX": 39496,
-			"controlY": 7212
+			"controlX": 39499,
+			"controlY": 7235
 		},
 		{
 			"a": "affinity_146",
 			"b": "affinity_147",
-			"controlX": 38898,
-			"controlY": 7836
+			"controlX": 38899,
+			"controlY": 7835
 		},
 		{
 			"a": "affinity_147",
 			"b": "affinity_160",
 			"controlX": 38299,
-			"controlY": 7237
+			"controlY": 7235
 		},
 		{
 			"a": "affinity_160",
 			"b": "affinity_145",
-			"controlX": 38873,
-			"controlY": 6639
+			"controlX": 38899,
+			"controlY": 6635
 		},
 		{
 			"a": "affinity_149",
 			"b": "affinity_164",
-			"controlX": 38966,
-			"controlY": 5242
+			"controlX": 38899,
+			"controlY": 5235
 		},
 		{
 			"a": "affinity_158",
 			"b": "affinity_163",
-			"controlX": 40892,
-			"controlY": 7185
+			"controlX": 40899,
+			"controlY": 7235
 		},
 		{
 			"a": "affinity_159",
 			"b": "affinity_161",
-			"controlX": 38848,
-			"controlY": 9232
+			"controlX": 38899,
+			"controlY": 9235
 		},
 		{
 			"a": "affinity_148",
 			"b": "affinity_165",
-			"controlX": 36901,
-			"controlY": 7237
+			"controlX": 36899,
+			"controlY": 7235
 		},
 		{
 			"a": "affinity_149",
 			"b": "affinity_163",
-			"controlX": 40296,
-			"controlY": 5813
+			"controlX": 40313,
+			"controlY": 5821
 		},
 		{
 			"a": "affinity_158",
 			"b": "affinity_161",
-			"controlX": 40316,
-			"controlY": 8641
+			"controlX": 40313,
+			"controlY": 8649
 		},
 		{
 			"a": "affinity_159",
 			"b": "domain_drones_wormhole_1",
-			"controlX": 37912,
-			"controlY": 8973
+			"controlX": 37854,
+			"controlY": 8940
 		},
 		{
 			"a": "domain_drones_wormhole_1",
 			"b": "affinity_165",
-			"controlX": 37180,
-			"controlY": 8255
+			"controlX": 37194,
+			"controlY": 8280
 		},
 		{
 			"a": "affinity_148",
 			"b": "affinity_164",
-			"controlX": 37558,
-			"controlY": 5756
+			"controlX": 37485,
+			"controlY": 5821
 		},
 		{
 			"a": "affinity_145",
