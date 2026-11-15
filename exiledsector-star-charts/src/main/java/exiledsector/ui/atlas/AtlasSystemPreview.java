@@ -9,6 +9,8 @@ import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.charts.layout.sketch.ChartSystemSketch;
 import exiledsector.charts.layout.sketch.ChartSystemSketch.Belt;
 import exiledsector.charts.layout.sketch.ChartSystemSketch.Body;
+import exiledsector.charts.layout.sketch.ChartSystemSketch.Moon;
+import exiledsector.charts.layout.sketch.ChartSystemSketch.PlanetRing;
 import exiledsector.ui.belt.RadialBand;
 import exiledsector.ui.belt.RingBeltRenderer;
 import exiledsector.ui.decoration.AtmosphereRing;
@@ -71,6 +73,8 @@ final class AtlasSystemPreview {
     static final float PHOTOSPHERE_SPOTLIGHT_SHARE = 3f;
     static final float AURORA_DETAIL_RADIUS = 400f;
     static final float MIN_BAND_PIXELS = 2f;
+    static final float SATELLITE_MIN_PARENT_PIXELS = 4f;
+    static final float SATELLITE_SPREAD = 0.6f;
     static final float RING_SLOT_WIDTH = 256f;
     static final float SHADOW_FLOOR = 0.25f;
     static final float SHADOW_SLOPE = 0.9f;
@@ -140,6 +144,8 @@ final class AtlasSystemPreview {
             for (int i = 0; i < sketch.planets().size(); i++) {
                 drawPlanet(sketch.planets().get(i), i, fit, bodyAlpha);
             }
+            drawPlanetRings(sketch, fit, bodyAlpha);
+            drawMoons(sketch, fit, bodyAlpha);
             art.renderAnomalies(prepared.art(), frame);
         }
     }
@@ -280,19 +286,74 @@ final class AtlasSystemPreview {
     }
 
     private void drawPlanet(Body planet, int index, Fit fit, float alpha) {
-        PlanetSpecAPI spec = spec(planet.typeId());
         place(planet, fit);
         float pixels = planet.orbitRadius() <= 0f ? starPixels(planet, fit.radius()) : planetPixels(planet, fit.radius());
         frame.planetX[index] = bodyX;
         frame.planetY[index] = bodyY;
         frame.planetPixels[index] = pixels;
-        drawBody(spec, bodyX, bodyY, pixels, planet.startAngle(), fit.elapsedSeconds(), FALLBACK_PLANET_COLOUR, alpha, false);
-        float dx = fit.cx() - bodyX;
-        float dy = fit.cy() - bodyY;
+        drawWorld(planet, bodyX, bodyY, pixels, fit, alpha);
+    }
+
+    private void drawPlanetRings(ChartSystemSketch sketch, Fit fit, float alpha) {
+        for (PlanetRing ring : sketch.planetRings()) {
+            int parent = ring.planet();
+            if (showsSatellites(sketch, parent)) {
+                drawPlanetRing(ring.belt(), sketch.planets().get(parent), frame.planetX[parent], frame.planetY[parent], frame.planetPixels[parent],
+                        fit, alpha);
+            }
+        }
+    }
+
+    private void drawMoons(ChartSystemSketch sketch, Fit fit, float alpha) {
+        for (Moon moon : sketch.moons()) {
+            int parent = moon.planet();
+            if (showsSatellites(sketch, parent)) {
+                Body parentBody = sketch.planets().get(parent);
+                float parentPixels = frame.planetPixels[parent];
+                double angle = Math.toRadians(angleAt(moon.body().startAngle(), moon.body().orbitDays(), fit.elapsedSeconds()));
+                float distance = satelliteDistance(moon.body().orbitRadius(), parentBody.radius(), parentPixels);
+                float moonX = frame.planetX[parent] + (float) Math.cos(angle) * distance;
+                float moonY = frame.planetY[parent] + (float) Math.sin(angle) * distance;
+                drawWorld(moon.body(), moonX, moonY, moonPixels(moon.body(), parentBody, parentPixels), fit, alpha);
+            }
+        }
+    }
+
+    private boolean showsSatellites(ChartSystemSketch sketch, int parent) {
+        return parent >= 0 && parent < sketch.planets().size() && frame.planetPixels[parent] >= SATELLITE_MIN_PARENT_PIXELS;
+    }
+
+    static float satelliteDistance(float orbitRadius, float parentRadius, float parentPixels) {
+        float clearance = Math.max(0f, orbitRadius - parentRadius) / Math.max(1f, parentRadius);
+        return parentPixels * (1f + SATELLITE_SPREAD * (float) Math.sqrt(clearance));
+    }
+
+    static float moonPixels(Body moon, Body parent, float parentPixels) {
+        return Math.max(MIN_BODY_PIXELS, parentPixels * (float) Math.sqrt(moon.radius() / Math.max(1f, parent.radius())));
+    }
+
+    private void drawPlanetRing(Belt ring, Body parent, float parentX, float parentY, float parentPixels, Fit fit, float alpha) {
+        SpriteAPI texture = spriteCache.texture(ringTexture(ring.typeId()));
+        if (texture == null || texture.getWidth() <= 0f) {
+            return;
+        }
+        float inner = satelliteDistance(ring.orbitRadius() - ring.width() / 2f, parent.radius(), parentPixels);
+        float outer = Math.max(inner + MIN_BAND_PIXELS, satelliteDistance(ring.orbitRadius() + ring.width() / 2f, parent.radius(), parentPixels));
+        int slots = Math.max(1, Math.round(texture.getWidth() / RING_SLOT_WIDTH));
+        bandCentre.set(parentX, parentY);
+        RingBeltRenderer.renderSlot(texture, new RadialBand(bandCentre, inner, outer), ring.variant() % slots, RING_SLOT_WIDTH, Color.WHITE, alpha,
+                angleAt(0f, ring.orbitDays(), fit.elapsedSeconds()));
+    }
+
+    private void drawWorld(Body world, float x, float y, float pixels, Fit fit, float alpha) {
+        PlanetSpecAPI spec = spec(world.typeId());
+        drawBody(spec, x, y, pixels, world.startAngle(), fit.elapsedSeconds(), FALLBACK_PLANET_COLOUR, alpha, false);
+        float dx = fit.cx() - x;
+        float dy = fit.cy() - y;
         float length = (float) Math.sqrt(dx * dx + dy * dy);
         if (length > 0f && pixels >= SHADOW_MIN_PIXELS) {
             try (GlScope flat = GlScope.flat()) {
-                drawShadow(bodyX, bodyY, pixels, dx / length, dy / length, alpha);
+                drawShadow(x, y, pixels, dx / length, dy / length, alpha);
             }
         }
         SpriteAPI atmosphere = atmosphereTexture.get();
@@ -300,7 +361,7 @@ final class AtlasSystemPreview {
                 && spec.getAtmosphereColor() != null) {
             float thickness = pixels * spec.getAtmosphereThickness();
             float inner = pixels - thickness * AtmosphereRing.INNER_INSET_MULT;
-            AtmosphereRing.draw(atmosphere, bodyX, bodyY, inner, inner + thickness, spec.getAtmosphereColor(), alpha);
+            AtmosphereRing.draw(atmosphere, x, y, inner, inner + thickness, spec.getAtmosphereColor(), alpha);
         }
     }
 

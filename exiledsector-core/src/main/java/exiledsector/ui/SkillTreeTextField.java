@@ -9,9 +9,9 @@ import org.lwjgl.input.Keyboard;
 import java.awt.Color;
 import java.util.function.ToDoubleFunction;
 
-final class SkillTreeTextField {
+public final class SkillTreeTextField {
 
-    enum KeyResult {
+    public enum KeyResult {
         IGNORED, CONSUMED, EDITED, SUBMIT
     }
 
@@ -34,31 +34,31 @@ final class SkillTreeTextField {
     private String fittedWithCaret;
     private String fittedWithoutCaret;
 
-    SkillTreeTextField(int maxLength, TextFont font, Color textColor) {
+    public SkillTreeTextField(int maxLength, TextFont font, Color textColor) {
         this.maxLength = maxLength;
         this.font = font;
         this.textColor = textColor;
         this.displayLine = new TextLabel(font, textColor);
     }
 
-    String text() {
+    public String text() {
         return enteredText;
     }
 
-    void setText(String value) {
+    public void setText(String value) {
         enteredText = value == null ? "" : value;
     }
 
-    void focus(boolean value) {
+    public void focus(boolean value) {
         focused = value;
         caretSeconds = 0f;
     }
 
-    boolean isFocused() {
+    public boolean isFocused() {
         return focused;
     }
 
-    KeyResult handleKey(InputEventAPI event) {
+    public KeyResult handleKey(InputEventAPI event) {
         if (!focused) {
             return KeyResult.IGNORED;
         }
@@ -86,11 +86,11 @@ final class SkillTreeTextField {
         return KeyResult.CONSUMED;
     }
 
-    void advance(float amount) {
+    public void advance(float amount) {
         caretSeconds += amount;
     }
 
-    void render(float x, float bottom, float width, float height, String placeholder, float alphaMult) {
+    public void render(float x, float bottom, float width, float height, String placeholder, float alphaMult) {
         LazyFont loadedFont = font.font();
         if (loadedFont == null) {
             return;
@@ -126,7 +126,7 @@ final class SkillTreeTextField {
                 ? fittedWithCaret.substring(0, fittedWithCaret.length() - CARET.length()) : fittedWithCaret;
     }
 
-    static String fitEnd(String value, double maxWidth, ToDoubleFunction<String> widthOf) {
+    public static String fitEnd(String value, double maxWidth, ToDoubleFunction<String> widthOf) {
         String fitted = value;
         while (!fitted.isEmpty() && widthOf.applyAsDouble(fitted) > maxWidth) {
             fitted = fitted.substring(Character.charCount(fitted.codePointAt(0)));
@@ -134,7 +134,7 @@ final class SkillTreeTextField {
         return fitted;
     }
 
-    static String fitStart(String value, double maxWidth, ToDoubleFunction<String> widthOf) {
+    public static String fitStart(String value, double maxWidth, ToDoubleFunction<String> widthOf) {
         String fitted = value;
         while (!fitted.isEmpty() && widthOf.applyAsDouble(fitted) > maxWidth) {
             fitted = withoutLastCodePoint(fitted);

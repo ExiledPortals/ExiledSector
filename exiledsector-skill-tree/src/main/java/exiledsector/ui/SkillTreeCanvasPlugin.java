@@ -9,6 +9,7 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import exiledsector.skills.skilleffect.render.Fade;
 import exiledsector.effects.OpReserveParity;
+import exiledsector.i18n.Translation;
 import exiledsector.effects.PhantomConflictWatch;
 import exiledsector.effects.ShipTreeSync;
 import exiledsector.items.Item;
@@ -57,7 +58,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final SkillTreeNodeDrawer nodeDrawer;
     private final SkillTreeStatPanel statPanel;
     private final NodeSearch nodeSearch;
-    private final SkillTreeSearchBar searchBar;
+    private final CanvasSearchBar searchBar;
     private final SkillTreeTemplateController templateUi;
     private final TreeCamera camera = new TreeCamera();
     private final HyperspaceMode hyperspaceMode;
@@ -91,7 +92,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.fleetRenderer = SkillTreeFleetRenderer.forPlayerFleet(member.getId());
         exoshipView.setPlayerShip(member);
         this.nodeSearch = new NodeSearch(member.getHullSpec().getHullSize());
-        this.searchBar = new SkillTreeSearchBar(nodeSearch, this::jumpToNextSearchMatch);
+        this.searchBar = new CanvasSearchBar(nodeSearch, Translation.text("ui.search.placeholder"), this::jumpToNextSearchMatch);
         this.treeSession = new TreeAllocationSession(member, variant, refitButton, nodeSearch);
         this.decorations = ShipTreeDecorations.forActiveTree(treeSession::isLocked, treeSession::isConcealed);
         this.nodeDrawer = SkillTreeNodeDrawer.attachedTo(treeSession, member, panelStyle, nodeSearch);

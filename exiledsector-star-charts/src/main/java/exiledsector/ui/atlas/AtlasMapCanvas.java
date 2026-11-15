@@ -129,6 +129,7 @@ final class AtlasMapCanvas {
     private final ChartSystemSketch gatewaySketch;
     private final Map<Color, NodeRingArt.NotableLook[]> notableLooks = new HashMap<>();
     private Color lookAccent;
+    private AtlasSearch search = new AtlasSearch();
 
     AtlasMapCanvas(AtlasGenerator generator, AtlasState state) {
         this(generator, state, new AtlasScenery(generator.seed()));
@@ -207,6 +208,20 @@ final class AtlasMapCanvas {
 
     AtlasMapCanvas rebuilt() {
         return new AtlasMapCanvas(generator, state, scenery, gatewaySketch, ringArt, preview);
+    }
+
+    void highlight(AtlasSearch atlasSearch) {
+        search = atlasSearch;
+    }
+
+    Map<AtlasCell, List<String>> searchTerms() {
+        Map<AtlasCell, List<String>> terms = new LinkedHashMap<>();
+        for (AtlasCell cell : shown) {
+            if (!generator.isVoid(cell)) {
+                terms.put(cell, AtlasNodeText.searchTerms(generator, state, cell));
+            }
+        }
+        return terms;
     }
 
     private void addChains() {
@@ -425,11 +440,12 @@ final class AtlasMapCanvas {
     }
 
     void render(TreeViewport view, Color accent, float alphaMult, AtlasCell hiddenPreview) {
-        scenery.renderBackdrop(view, alphaMult);
+        float sceneryAlpha = search.backgroundAlpha() * alphaMult;
+        scenery.renderBackdrop(view, sceneryAlpha);
         drawLanes(view, accent, alphaMult);
         drawNodes(view, accent, alphaMult, hiddenPreview);
         drawAnomalies(view, alphaMult);
-        scenery.renderAbove(view, alphaMult);
+        scenery.renderAbove(view, sceneryAlpha);
     }
 
     static Color regionColour(String regionId, Color fallback) {
@@ -448,13 +464,14 @@ final class AtlasMapCanvas {
                     continue;
                 }
                 addLane(view, cell, neighbour, laneReach(innerRadius * nodeScale(cell), widthScale),
-                        bothVisible ? laneReach(innerRadius * nodeScale(neighbour), widthScale) : fogRadius, bothVisible, accent, alphaMult);
+                        bothVisible ? laneReach(innerRadius * nodeScale(neighbour), widthScale) : fogRadius, bothVisible, accent,
+                        search.laneAlpha(cell, neighbour) * alphaMult);
             }
         }
         BeamStroke.Look traceLook = beams.lit(TRACE_COLOUR);
         float traceWidthScale = widthScale * TRACE_WIDTH_SHARE;
-        float traceAlpha = TRACE_ALPHA * alphaMult;
         for (Trace trace : traces) {
+            float traceAlpha = TRACE_ALPHA * search.laneAlpha(trace.from(), trace.to()) * alphaMult;
             float x1 = screenX(view, trace.from());
             float y1 = screenY(view, trace.from());
             float x2 = screenX(view, trace.to());
@@ -492,7 +509,7 @@ final class AtlasMapCanvas {
         }
     }
 
-    private void drawNodes(TreeViewport view, Color accent, float alphaMult, AtlasCell hiddenPreview) {
+    private void drawNodes(TreeViewport view, Color accent, float mapAlpha, AtlasCell hiddenPreview) {
         float footprint = footprint(view);
         float widthScale = beamWidthScale(view);
         for (Map.Entry<AtlasCell, AtlasNode> entry : nodes.entrySet()) {
@@ -506,6 +523,7 @@ final class AtlasMapCanvas {
             if (!view.isVisible(x, y, NodeRingArt.portalReach(NodeMetrics.donutRadius(footprint)))) {
                 continue;
             }
+            float alphaMult = search.alpha(cell) * mapAlpha;
             if (!shown.contains(cell)) {
                 beams.ring(x, y, NodeMetrics.donutRadius(footprint * FOG_SIZE_SHARE), null, DULL_LOOK, FOG_RING_ALPHA * alphaMult, widthScale);
                 continue;
@@ -547,7 +565,7 @@ final class AtlasMapCanvas {
             if (openness <= 0f || !view.isVisible(x, y, radius * PING_CULL_SHARE)) {
                 continue;
             }
-            float alpha = openness * alphaMult;
+            float alpha = openness * search.alpha(icon.cell()) * alphaMult;
             drawIconFace(icon, x, y, radius, alpha);
             beams.ring(x, y, NodeBeams.huggingRingRadius(radius, ringWidthScale), null, beams.lit(icon.ringColour() == null ? Misc.getNegativeHighlightColor() : icon.ringColour()), alpha, ringWidthScale);
             if (icon.chain() != null) {

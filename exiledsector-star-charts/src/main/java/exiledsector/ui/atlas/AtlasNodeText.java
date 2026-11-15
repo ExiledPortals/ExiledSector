@@ -60,6 +60,32 @@ public final class AtlasNodeText {
                 officer, officer != null && centre.equals(cell), notes, stateLines(generator, state, cell, reachable));
     }
 
+    static List<String> searchTerms(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
+        AtlasNode node = generator.node(cell);
+        List<String> terms = new ArrayList<>();
+        terms.add(title(generator, cell));
+        if (node.isOrigin()) {
+            return terms;
+        }
+        terms.add(AtlasNames.name("layout", node.layoutId()));
+        terms.add(ChartFactions.displayName(AtlasOpening.factionFor(generator, state, cell, node)));
+        for (String anomalyId : AtlasAnomalies.effective(generator, state, cell)) {
+            terms.add(AtlasNames.name("anomaly", anomalyId));
+        }
+        for (AtlasLine note : notes(generator, state, cell, node)) {
+            terms.add(note.plain());
+        }
+        AtlasCell centre = state.commandCentreOf(cell);
+        AtlasOfficer officer = centre == null ? null : state.officerAt(centre);
+        if (officer != null) {
+            terms.add(OfficerText.title(officer));
+        }
+        for (AtlasLine status : stateLines(generator, state, cell, false)) {
+            terms.add(status.plain());
+        }
+        return terms;
+    }
+
     public static StyledText officerBody(AtlasOfficer officer) {
         List<StyledText> lines = new ArrayList<>(OfficerBoardTooltip.detailLines(officer, OfficerText.faction(officer)));
         OfficerText.detailLines(officer).forEach(line -> lines.add(line.styled()));

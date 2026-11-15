@@ -376,6 +376,7 @@
     "chart.atlas.borders": "Faction Territories",
     "chart.atlas.biomes": "Biomes",
     "chart.atlas.tree": "Atlas Tree",
+    "chart.atlas.search.placeholder": "Search systems...",
     "chart.atlas.officers": "Officers",
     "chart.atlas.officers.replay": "Replay",
     "chart.atlas.officers.reward": "Choose item",

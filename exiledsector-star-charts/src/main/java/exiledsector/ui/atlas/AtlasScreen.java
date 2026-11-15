@@ -39,6 +39,7 @@ import exiledsector.items.MaterialItems;
 import exiledsector.ui.CampaignOverlay;
 import exiledsector.ui.CanvasCamera;
 import exiledsector.ui.CanvasDrag;
+import exiledsector.ui.CanvasSearchBar;
 import exiledsector.ui.ChromeMetrics;
 import exiledsector.ui.EscapeKey;
 import exiledsector.ui.PointerGesture;
@@ -78,6 +79,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     static final float BIOMES_WIDTH = 120f;
     static final float TREE_WIDTH = 140f;
     static final float BUTTON_GAP = 10f;
+    static final float SEARCH_WIDTH = 280f;
     static final float OPEN_SECONDS = 0.2f;
     static final float BACKDROP_ALPHA = 0.8f;
     static final float FOCUS_SECONDS = 0.6f;
@@ -126,6 +128,8 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     private final TooltipText tooltipText = SkillTreePanelStyle.tooltipText();
     private final TextLabel tooltipTitle = new TextLabel(tooltipText.title(), SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
     private final TextLabel tooltipBody = new TextLabel(tooltipText.body(), SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
+    private final AtlasSearch search = new AtlasSearch();
+    private CanvasSearchBar searchBar;
     private AtlasMapCanvas map;
     private CustomPanelAPI panelRoot;
     private PositionAPI panelPosition;
@@ -197,8 +201,11 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         panelRoot = panel;
         SectorAPI sector = Global.getSector();
         AtlasGenerator generator = AtlasRuntime.generator(sector);
+        searchBar = new CanvasSearchBar(search, I18n.forGameText(() -> Translation.text("chart.atlas.search.placeholder")), this::jumpToNextSearchMatch,
+                SEARCH_WIDTH);
         map = new AtlasMapCanvas(generator, AtlasState.get(sector), new AtlasScenery(generator.seed()),
                 SectorSystemSketcher.sketch(WormholeGateway.playerGatewaySystem(sector)));
+        indexSearch();
         showOverlay(true);
         camera.jumpZoomTo(AtlasMapCanvas.MIN_ZOOM);
         AtlasCameraMemory.Centre remembered = AtlasCameraMemory.recall(sector);
@@ -250,6 +257,38 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         rewardButton.setEnabled(false);
     }
 
+    private void indexSearch() {
+        map.highlight(search);
+        search.index(I18n.forGameText(() -> map.searchTerms()));
+    }
+
+    private void jumpToNextSearchMatch() {
+        AtlasCell match = search.nextMatch();
+        if (match == null) {
+            SkillTreeSounds.refused();
+            return;
+        }
+        camera.panTo(map.displayX(match), map.displayY(match));
+        map.pulse(match);
+    }
+
+    private float searchBarLeft() {
+        float treeLeft = panelPosition.getWidth() - PANEL_MARGIN - CHROME_PAD - CLOSE_WIDTH - BORDERS_WIDTH - BIOMES_WIDTH - TREE_WIDTH - BUTTON_GAP * 3f;
+        return panelPosition.getX() + treeLeft - BUTTON_GAP - SEARCH_WIDTH;
+    }
+
+    private float searchBarBottom() {
+        return panelPosition.getY() + panelPosition.getHeight() - PANEL_MARGIN - CHROME_PAD - ChromeMetrics.CONTROL_HEIGHT;
+    }
+
+    private float searchBarOpacity() {
+        return officerBoard.isShowing() ? 0f : 1f - Fade.smooth(focusLevel);
+    }
+
+    private boolean overSearchBar(float x, float y) {
+        return searchBarOpacity() > 0f && searchBar.contains(searchBarLeft(), searchBarBottom(), x, y);
+    }
+
     private float sidePanelTop() {
         return PANEL_MARGIN + CHROME_PAD + ChromeMetrics.CONTROL_HEIGHT + BUTTON_GAP;
     }
@@ -294,6 +333,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         focusedCell = cell;
         focusing = true;
         tooltipSubject = null;
+        searchBar.unfocus();
         gesture.clear();
         camera.stopMoving();
         map.pulse(cell);
@@ -500,6 +540,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
 
     private void debugCompleted(AtlasCell cell) {
         map = map.rebuilt();
+        indexSearch();
         tooltipSubject = null;
         map.pulse(cell);
         leaveFocus();
@@ -666,6 +707,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         drag.release();
         hoveredCell = null;
         hoveredAnomaly = null;
+        searchBar.unfocus();
         officerBoard.open(map.generator(), map.state());
         unchosenRewardHolder = OfficerDefeat.nextUnchosen(map.state());
         placeOfficerBoard();
@@ -780,9 +822,11 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             } else if (focusedCell != null) {
                 focusInput(event);
             } else if (EscapeKey.matches(event)) {
-                if (escapeKey.released(event)) {
+                if (escapeKey.released(event) && !searchBar.escape()) {
                     close();
                 }
+                event.consume();
+            } else if (event.isKeyboardEvent() && searchBar.handleKey(event)) {
                 event.consume();
             } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_F2) {
                 if (event.isKeyDownEvent() && hoveredAnomaly != null && hoveredAnomaly.isOfficer()) {
@@ -827,11 +871,8 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             mouseY = y;
             drag.pointerMoved(x, y, event.getDX(), event.getDY());
         } else if (event.isMouseDownEvent() && event.isLMBEvent()) {
-            AtlasCell target = map.cellAt(viewport(), x, y);
-            if (target != null) {
-                gesture.pressTarget(null, target, x, y, event.isCtrlDown(), event.isShiftDown(), true);
-            } else {
-                drag.pressPan(null, x, y);
+            if (!searchBar.handleClick(searchBarLeft(), searchBarBottom(), x, y)) {
+                pressMap(event, x, y);
             }
         } else if (event.isMouseUpEvent() && event.isLMBUpEvent()) {
             AtlasCell released = map.cellAt(viewport(), x, y);
@@ -843,6 +884,15 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             camera.scrollAt(event.getEventValue() > 0, x, y, panelPosition);
         }
         event.consume();
+    }
+
+    private void pressMap(InputEventAPI event, float x, float y) {
+        AtlasCell target = map.cellAt(viewport(), x, y);
+        if (target != null) {
+            gesture.pressTarget(null, target, x, y, event.isCtrlDown(), event.isShiftDown(), true);
+        } else {
+            drag.pressPan(null, x, y);
+        }
     }
 
     private void clicked(AtlasCell cell) {
@@ -882,13 +932,14 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             return;
         }
         starfield.advance(amount);
+        searchBar.advance(amount);
         map.advance(amount);
         camera.advanceZoom(amount);
         camera.advancePan(amount);
         advanceSpotlight(amount);
         advanceOfficerBoard(amount);
         if (panelPosition != null) {
-            boolean hovering = focusedCell == null && !officerBoard.isShowing() && !camera.isDragging();
+            boolean hovering = focusedCell == null && !officerBoard.isShowing() && !camera.isDragging() && !overSearchBar(mouseX, mouseY);
             hoveredAnomaly = hovering ? map.anomalyAt(viewport(), mouseX, mouseY) : null;
             if (hoveredAnomaly == null || !hoveredAnomaly.isOfficer()) {
                 officerTooltip.cleanup();
@@ -946,7 +997,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         }
         frame.drawBackdrop(alpha);
         try (GlScope clip = frame.clipContent()) {
-            starfield.render(panelPosition, camera.panX(), camera.panY(), alpha);
+            starfield.render(panelPosition, camera.panX(), camera.panY(), search.backgroundAlpha() * alpha);
             map.render(viewport(), panelStyle.getAccentColor(), alpha, focusedCell);
             renderSpotlight(alpha);
             if (focusedCell != null) {
@@ -974,6 +1025,10 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     private void drawChrome(float alpha) {
         titleLabel.setAlpha(alpha).draw(frame.chromeLeft(), frame.chromeTop());
         frame.drawFooterHint(hintLabel, alpha);
+        float searchOpacity = searchBarOpacity();
+        if (searchOpacity > 0f) {
+            searchBar.render(searchBarLeft(), searchBarBottom(), searchOpacity * alpha);
+        }
     }
 
     private void drawTooltip(Object subject, Runnable writer, float alpha) {

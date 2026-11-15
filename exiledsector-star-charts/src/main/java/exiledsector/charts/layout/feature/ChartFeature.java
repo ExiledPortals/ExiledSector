@@ -6,5 +6,9 @@ public interface ChartFeature {
 
     String id();
 
-    SectorEntityToken build(FeatureSite site);
+    FeaturePlan plan(FeatureRolls rolls);
+
+    default SectorEntityToken build(FeatureSite site) {
+        return site.place(plan(site.rolls()));
+    }
 }

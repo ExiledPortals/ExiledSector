@@ -27,12 +27,12 @@ final class SocketPlacement {
     private final CustomPanelAPI hostPanel;
     private final TreeAllocationSession treeSession;
     private final NodeSearch nodeSearch;
-    private final SkillTreeSearchBar searchBar;
+    private final CanvasSearchBar searchBar;
     private final SkillTreeUiButton storageButton = new SkillTreeUiButton("");
     private final StoragePlacement<SkillNode> storage = new StoragePlacement<>(SocketPlacement::placingHint);
     private Item hoveredStorageItem;
 
-    SocketPlacement(CustomPanelAPI hostPanel, TreeAllocationSession treeSession, NodeSearch nodeSearch, SkillTreeSearchBar searchBar) {
+    SocketPlacement(CustomPanelAPI hostPanel, TreeAllocationSession treeSession, NodeSearch nodeSearch, CanvasSearchBar searchBar) {
         this.hostPanel = hostPanel;
         this.treeSession = treeSession;
         this.nodeSearch = nodeSearch;
