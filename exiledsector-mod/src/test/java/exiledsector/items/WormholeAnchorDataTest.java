@@ -52,7 +52,7 @@ class WormholeAnchorDataTest {
             Map.entry("shrouded", "shrouded_wormhole_1"),
             Map.entry("domain_drones", "domain_drones_wormhole_1"),
             Map.entry("exotech", "exoship"));
-    // TODO bake the Domain Drones anchor icon with tools/WormholeAnchorIcons.java once its colour is approved
+    // TODO bake the Explorarium anchor icon with tools/WormholeAnchorIcons.java once its colour is approved
     private static final Map<String, String> PLACEHOLDER_ICONS = Map.of(
             "domain_drones", "graphics/icons/cargo/exiledSector_wormhole_anchor_threat.png");
 

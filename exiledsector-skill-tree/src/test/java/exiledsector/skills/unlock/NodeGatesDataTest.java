@@ -143,7 +143,7 @@ class NodeGatesDataTest {
         assertEquals(NodeGates.AnchorRule.WITHHELD, NodeGates.gate(MOTHERSHIP_GATE).anchorRule());
         assertTrue(SkillTree.getAllNodes().values().stream().anyMatch(node -> SkillTags.DOMAIN_DRONES_VOLUME.equals(node.getVolume())));
         assertTrue(ungatedIn(SkillTags.DOMAIN_DRONES_VOLUME, MOTHERSHIP_GATE).isEmpty(),
-                "Domain Drones nodes without the gate: " + ungatedIn(SkillTags.DOMAIN_DRONES_VOLUME, MOTHERSHIP_GATE));
+                "Explorarium nodes without the gate: " + ungatedIn(SkillTags.DOMAIN_DRONES_VOLUME, MOTHERSHIP_GATE));
     }
 
     @Test

@@ -99,7 +99,7 @@ and Omega anchors don't wait for it. An anchor to a story-locked volume only dro
 
 - Nightcross opens as soon as you find any of its anchors.
 - Omega opens on your first win against an Omega fleet, or when you get an Omega anchor, such as the one in the shielded cache at Alpha Site.
-- Domain Drones opens on your first win against a Domain-era survey mothership.
+- Explorarium opens on your first win against a Domain-era survey mothership.
 - The battles against the Singularity and the Existential Threat each add their volume's anchor to the loot, once per save.
 
 The Shrouded and Omega anchors drop from every won battle against Dweller and Omega fleets. Beating a vanilla deserter

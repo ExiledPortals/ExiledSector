@@ -32,7 +32,7 @@ public final class MothershipGate {
         }
         if (defeatedMothership(result.getLoserResult())) {
             GateTriggers.record(sector, UnlockConditionType.MOTHERSHIP_DEFEATED, sector.getPlayerMemoryWithoutUpdate(), DEFEATED_FLAG,
-                    "Opened the Domain Drones gate: the player beat a Domain-era survey mothership");
+                    "Opened the Explorarium gate: the player beat a Domain-era survey mothership");
         }
     }
 

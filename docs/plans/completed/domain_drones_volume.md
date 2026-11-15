@@ -1,4 +1,4 @@
-# Domain Drones Volume
+# Explorarium Volume
 
 A ship tree volume built around the Domain's derelict war drones and survey motherships. It sits between the Pirate and Stargazer volumes, and a derelict survey mothership takes the place of the volume's star. The crew learns by reverse engineering: stripping drone wrecks and the autoforges of drifting motherships. On automated ships the core logs and indexes the wreck data instead (`exiled_sector_automated_flavour`).
 
