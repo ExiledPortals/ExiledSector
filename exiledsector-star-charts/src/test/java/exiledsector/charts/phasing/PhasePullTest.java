@@ -14,7 +14,6 @@ import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.StarChartSettings;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
@@ -55,11 +54,6 @@ class PhasePullTest {
     private final PhasedPlanetRecord job = new PhasedPlanetRecord("run1", "planet_3", "Charted Space III", "frozen", 140f, null,
             List.of("cold"), "Charted Space", null, List.of(), 6, List.of());
 
-    @BeforeAll
-    static void loadThemeGenerator() throws ClassNotFoundException {
-        ThemeGeneratorLoading.ensureLoaded();
-    }
-
     @BeforeEach
     void setUp() {
         mockSector = new MockSector();
@@ -76,6 +70,7 @@ class PhasePullTest {
         MemoryAPI memory = PhaseLockTest.mapMemory(gateMemory);
         market = mock(MarketAPI.class);
         when(market.getId()).thenReturn("home");
+        when(market.isPlayerOwned()).thenReturn(true);
         when(market.getMemoryWithoutUpdate()).thenReturn(memory);
         system = mock(StarSystemAPI.class);
         star = mock(PlanetAPI.class);
@@ -145,6 +140,33 @@ class PhasePullTest {
 
         StarChartSettings.setEnabledForTests(false);
         assertEquals(PhasePull.Pause.DOMAIN_OFF, PhasePull.pauseFor(gate));
+    }
+
+    @Test
+    void aDisruptedGateOrAMissingGatewayPausesThePull() {
+        when(gate.isFunctional()).thenReturn(false);
+        PhasePull.advance(mockSector.sector, gate, 30f);
+        assertEquals(PhasePull.Pause.NOT_FUNCTIONAL, PhasePull.pauseFor(gate));
+        assertEquals(0f, PhaseGateState.jobDays(market));
+
+        when(gate.isFunctional()).thenReturn(true);
+        rulesMock.when(() -> PhaseGateRules.holdsRequiredGateway(any())).thenReturn(false);
+        PhasePull.advance(mockSector.sector, gate, 30f);
+        assertEquals(PhasePull.Pause.NO_GATEWAY, PhasePull.pauseFor(gate));
+        assertEquals(0f, PhaseGateState.jobDays(market));
+    }
+
+    @Test
+    void aCapturedGatePausesThePullAndPlacesNothing() {
+        when(market.isPlayerOwned()).thenReturn(false);
+        when(market.getFactionId()).thenReturn("hegemony");
+
+        assertNull(PhasePull.advance(mockSector.sector, gate, PhasePull.PULL_DAYS + 1f));
+
+        assertEquals(PhasePull.Pause.NOT_PLAYER_OWNED, PhasePull.pauseFor(gate));
+        assertEquals(0f, PhaseGateState.jobDays(market));
+        assertTrue(PhaseGateState.hasJob(market));
+        verify(system, times(0)).addPlanet(anyString(), any(), anyString(), anyString(), anyFloat(), anyFloat(), anyFloat(), anyFloat());
     }
 
     @Test

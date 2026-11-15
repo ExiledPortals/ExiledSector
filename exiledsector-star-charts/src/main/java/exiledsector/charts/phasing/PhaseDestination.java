@@ -1,17 +1,23 @@
 package exiledsector.charts.phasing;
 
 import com.fs.starfarer.api.campaign.CampaignTerrainAPI;
+import com.fs.starfarer.api.campaign.CampaignTerrainPlugin;
 import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
-import com.fs.starfarer.api.impl.campaign.procgen.themes.BaseThemeGenerator;
-import com.fs.starfarer.api.impl.campaign.procgen.themes.BaseThemeGenerator.OrbitGap;
 import com.fs.starfarer.api.impl.campaign.terrain.BaseRingTerrain;
 import com.fs.starfarer.api.impl.campaign.terrain.BaseRingTerrain.RingParams;
+import com.fs.starfarer.api.impl.campaign.terrain.MagneticFieldTerrainPlugin;
+import com.fs.starfarer.api.impl.campaign.terrain.PulsarBeamTerrainPlugin;
+import com.fs.starfarer.api.impl.campaign.terrain.RadioChatterTerrainPlugin;
 import com.fs.starfarer.api.impl.campaign.terrain.StarCoronaTerrainPlugin;
+import exiledsector.charts.wormhole.ChartWormholePlacement;
+import exiledsector.charts.wormhole.ChartWormholePlacement.Band;
+import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public final class PhaseDestination {
@@ -33,20 +39,24 @@ public final class PhaseDestination {
     }
 
     public static float orbitRadius(StarSystemAPI system, SectorEntityToken focus, float planetRadius) {
-        float minPad = Math.max(MIN_PAD, coronaReach(system, focus) + planetRadius + CLEARANCE);
-        float outermost = outermostReach(system, focus);
+        float innermostOrbit = focus.getRadius() + Math.max(MIN_PAD, coronaReach(system, focus) + planetRadius + CLEARANCE);
+        float neededGap = planetRadius * 2f + CLEARANCE * 2f;
+        List<Band> occupied = occupiedBands(system, focus);
+        occupied.sort(Comparator.comparingDouble(Band::inner));
         float widestStart = 0f;
         float widestEnd = 0f;
-        for (OrbitGap gap : BaseThemeGenerator.findGaps(focus, minPad, outermost, planetRadius * 2f + CLEARANCE * 2f)) {
-            if (gap.end - gap.start > widestEnd - widestStart) {
-                widestStart = gap.start;
-                widestEnd = gap.end;
+        float freeFrom = innermostOrbit;
+        for (Band band : occupied) {
+            if (band.inner() - freeFrom > widestEnd - widestStart) {
+                widestStart = freeFrom;
+                widestEnd = band.inner();
             }
+            freeFrom = Math.max(freeFrom, band.outer());
         }
-        if (widestEnd > widestStart) {
+        if (widestEnd - widestStart >= neededGap) {
             return (widestStart + widestEnd) * 0.5f;
         }
-        return Math.max(outermost, focus.getRadius() + minPad) + planetRadius + FALLBACK_CLEARANCE;
+        return freeFrom + planetRadius + FALLBACK_CLEARANCE;
     }
 
     public static float orbitDays(float orbitRadius) {
@@ -55,8 +65,9 @@ public final class PhaseDestination {
 
     static float coronaReach(StarSystemAPI system, SectorEntityToken focus) {
         float reach = 0f;
-        for (CampaignTerrainAPI terrain : terrainAround(system, focus)) {
-            if (terrain.getPlugin() instanceof StarCoronaTerrainPlugin corona && ((BaseRingTerrain) corona).params != null) {
+        for (CampaignTerrainAPI terrain : system.getTerrainCopy()) {
+            if (terrain.getOrbitFocus() == focus && terrain.getPlugin() instanceof StarCoronaTerrainPlugin corona
+                    && ((BaseRingTerrain) corona).params != null) {
                 RingParams ring = ((BaseRingTerrain) corona).params;
                 reach = Math.max(reach, ring.middleRadius + ring.bandWidthInEngine * 0.5f - focus.getRadius());
             }
@@ -64,25 +75,33 @@ public final class PhaseDestination {
         return reach;
     }
 
-    static float outermostReach(StarSystemAPI system, SectorEntityToken focus) {
-        float reach = BaseThemeGenerator.getOrbitalRadius(focus);
-        List<SectorEntityToken> orbiting = new ArrayList<>(system.getJumpPoints());
-        orbiting.addAll(system.getEntities(CustomCampaignEntityAPI.class));
-        for (SectorEntityToken entity : orbiting) {
-            if (entity.getOrbitFocus() == focus) {
-                reach = Math.max(reach, entity.getCircularOrbitRadius() + entity.getRadius());
+    static List<Band> occupiedBands(StarSystemAPI system, SectorEntityToken focus) {
+        Vector2f focusLocation = focus.getLocation() != null ? focus.getLocation() : new Vector2f();
+        List<SectorEntityToken> bodies = new ArrayList<>(system.getPlanets());
+        bodies.addAll(system.getJumpPoints());
+        bodies.addAll(system.getEntities(CustomCampaignEntityAPI.class));
+        List<Band> occupied = new ArrayList<>();
+        for (SectorEntityToken body : bodies) {
+            if (body != focus) {
+                occupied.add(ChartWormholePlacement.centreBand(body, focusLocation, 0).sweptAt(0f, body.getRadius()));
             }
         }
-        return reach;
+        for (CampaignTerrainAPI terrain : system.getTerrainCopy()) {
+            if (terrain.getPlugin() instanceof BaseRingTerrain ring && ring.params != null && isObstacle(terrain, focus)) {
+                float halfWidth = ring.params.bandWidthInEngine * 0.5f;
+                Band ringCentre = ChartWormholePlacement.centreBand(terrain, focusLocation, 0);
+                occupied.add(ringCentre.sweptAt(Math.max(0f, ring.params.middleRadius - halfWidth), ring.params.middleRadius + halfWidth));
+            }
+        }
+        return occupied;
     }
 
-    private static List<CampaignTerrainAPI> terrainAround(StarSystemAPI system, SectorEntityToken focus) {
-        List<CampaignTerrainAPI> around = new ArrayList<>();
-        for (CampaignTerrainAPI terrain : system.getTerrainCopy()) {
-            if (terrain.getOrbitFocus() == focus) {
-                around.add(terrain);
-            }
+    private static boolean isObstacle(CampaignTerrainAPI terrain, SectorEntityToken focus) {
+        CampaignTerrainPlugin plugin = terrain.getPlugin();
+        if (plugin instanceof PulsarBeamTerrainPlugin || plugin instanceof RadioChatterTerrainPlugin) {
+            return false;
         }
-        return around;
+        boolean aroundFocus = terrain.getOrbitFocus() == focus;
+        return !(aroundFocus && (plugin instanceof StarCoronaTerrainPlugin || plugin instanceof MagneticFieldTerrainPlugin));
     }
 }

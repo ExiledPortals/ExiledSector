@@ -33,7 +33,7 @@ public class PhaseDisplacementGate extends BaseIndustry {
         return null;
     }
 
-    private static boolean isPlayers(MarketAPI candidate) {
+    static boolean isPlayers(MarketAPI candidate) {
         return candidate.isPlayerOwned() || Factions.PLAYER.equals(candidate.getFactionId());
     }
 

@@ -318,6 +318,7 @@
     "chart.phasing.lock.traits": "The readings show it would bring: {traits}.",
     "chart.phasing.wormhole.name": "Phase Displacement Wormhole",
     "chart.phasing.pull.paused.domainOff": "Paused while Star Charts are switched off.",
+    "chart.phasing.pull.paused.notPlayerOwned": "Paused while another faction holds the colony.",
     "chart.phasing.pull.paused.notFunctional": "Paused while the gate is disrupted.",
     "chart.phasing.pull.paused.gateway": "Paused until the colony has its Wormhole Gateway again.",
     "chart.phasing.pull.paused.hypershunt": "Paused until a working coronal hypershunt is in range.",

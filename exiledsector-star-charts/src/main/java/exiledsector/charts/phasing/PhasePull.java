@@ -28,7 +28,7 @@ public final class PhasePull {
     static final String ANGLE_SEED_PREFIX = "phaseAngle|";
 
     public enum Pause {
-        DOMAIN_OFF, NOT_FUNCTIONAL, NO_GATEWAY, NO_HYPERSHUNT, SHORTAGE
+        DOMAIN_OFF, NOT_PLAYER_OWNED, NOT_FUNCTIONAL, NO_GATEWAY, NO_HYPERSHUNT, SHORTAGE
     }
 
     private PhasePull() {
@@ -38,6 +38,9 @@ public final class PhasePull {
         MarketAPI market = gate.getMarket();
         if (!StarChartSettings.enabled()) {
             return Pause.DOMAIN_OFF;
+        }
+        if (market == null || !PhaseDisplacementGate.isPlayers(market)) {
+            return Pause.NOT_PLAYER_OWNED;
         }
         if (!gate.isFunctional()) {
             return Pause.NOT_FUNCTIONAL;
@@ -55,6 +58,7 @@ public final class PhasePull {
     public static String pauseKey(Pause pause) {
         return switch (pause) {
             case DOMAIN_OFF -> "chart.phasing.pull.paused.domainOff";
+            case NOT_PLAYER_OWNED -> "chart.phasing.pull.paused.notPlayerOwned";
             case NOT_FUNCTIONAL -> "chart.phasing.pull.paused.notFunctional";
             case NO_GATEWAY -> "chart.phasing.pull.paused.gateway";
             case NO_HYPERSHUNT -> "chart.phasing.pull.paused.hypershunt";

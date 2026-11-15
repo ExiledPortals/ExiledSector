@@ -7,9 +7,11 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.terrain.BaseRingTerrain;
 import com.fs.starfarer.api.impl.campaign.terrain.BaseRingTerrain.RingParams;
 import com.fs.starfarer.api.impl.campaign.terrain.StarCoronaTerrainPlugin;
-import org.junit.jupiter.api.BeforeAll;
+import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
+import com.fs.starfarer.api.campaign.JumpPointAPI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,11 +30,6 @@ class PhaseDestinationTest {
     private PlanetAPI star;
     private final List<PlanetAPI> planets = new ArrayList<>();
     private final List<CampaignTerrainAPI> terrain = new ArrayList<>();
-
-    @BeforeAll
-    static void loadThemeGenerator() throws ClassNotFoundException {
-        ThemeGeneratorLoading.ensureLoaded();
-    }
 
     @BeforeEach
     void setUp() {
@@ -92,6 +89,58 @@ class PhaseDestinationTest {
 
         float expected = 3400f + PLANET_RADIUS + PhaseDestination.FALLBACK_CLEARANCE;
         assertEquals(expected, PhaseDestination.orbitRadius(system, star, PLANET_RADIUS));
+    }
+
+    private SectorEntityToken nebulaCentre() {
+        SectorEntityToken centre = mock(SectorEntityToken.class);
+        when(centre.getLocation()).thenReturn(new Vector2f());
+        when(system.getStar()).thenReturn(null);
+        when(system.getCenter()).thenReturn(centre);
+        terrain.clear();
+        return centre;
+    }
+
+    private <T extends SectorEntityToken> T stationary(T body, float x, float y, float radius) {
+        when(body.getLocation()).thenReturn(new Vector2f(x, y));
+        when(body.getRadius()).thenReturn(radius);
+        return body;
+    }
+
+    @Test
+    void stationaryBodiesInANebulaKeepTheOrbitClear() {
+        SectorEntityToken centre = nebulaCentre();
+        PlanetAPI near = stationary(mock(PlanetAPI.class), 0f, 1200f, 100f);
+        PlanetAPI ringed = stationary(mock(PlanetAPI.class), 3000f, 0f, 200f);
+        planets.add(near);
+        planets.add(ringed);
+        planets.add(stationary(mock(PlanetAPI.class), 0f, -7000f, 150f));
+        CustomCampaignEntityAPI station = mock(CustomCampaignEntityAPI.class);
+        when(station.getOrbitFocus()).thenReturn(ringed);
+        when(station.getCircularOrbitRadius()).thenReturn(400f);
+        when(station.getRadius()).thenReturn(30f);
+        CustomCampaignEntityAPI buoy = stationary(mock(CustomCampaignEntityAPI.class), 5000f, 5000f, 50f);
+        when(system.getEntities(CustomCampaignEntityAPI.class)).thenReturn(new ArrayList<>(List.of(station, buoy)));
+        JumpPointAPI jumpPoint = stationary(mock(JumpPointAPI.class), -9000f, 0f, 100f);
+        when(system.getJumpPoints()).thenReturn(new ArrayList<>(List.of(jumpPoint)));
+
+        assertSame(centre, PhaseDestination.focusOf(system));
+        float orbit = PhaseDestination.orbitRadius(system, centre, PLANET_RADIUS);
+
+        assertEquals((3430f + 6850f) * 0.5f, orbit, 0.01f);
+    }
+
+    @Test
+    void aCrowdedNebulaPlacesThePlanetPastItsFarthestBody() {
+        SectorEntityToken centre = nebulaCentre();
+        planets.add(stationary(mock(PlanetAPI.class), 1000f, 0f, 200f));
+        planets.add(stationary(mock(PlanetAPI.class), 0f, 1600f, 200f));
+        planets.add(stationary(mock(PlanetAPI.class), -2200f, 0f, 200f));
+        JumpPointAPI jumpPoint = stationary(mock(JumpPointAPI.class), 0f, -2600f, 100f);
+        when(system.getJumpPoints()).thenReturn(new ArrayList<>(List.of(jumpPoint)));
+
+        float orbit = PhaseDestination.orbitRadius(system, centre, PLANET_RADIUS);
+
+        assertEquals(2700f + PLANET_RADIUS + PhaseDestination.FALLBACK_CLEARANCE, orbit, 0.01f);
     }
 
     @Test
