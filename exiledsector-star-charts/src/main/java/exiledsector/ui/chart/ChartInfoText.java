@@ -13,6 +13,7 @@ import exiledsector.charts.officer.OfficerText;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.i18n.I18n;
+import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.items.ItemName;
@@ -81,8 +82,9 @@ final class ChartInfoText {
         }
         String progress = ChartObjectiveIntel.progressText(run);
         String status = progress != null ? progress : Translation.gameText("chart.intel.reward");
+        Style statusStyle = run.isObjectiveComplete() ? Style.GOOD : Style.BAD;
         return new Objective(ChartObjectiveIntel.objectiveName(run),
-                StyledText.of(Translation.gameText(ChartObjectiveIntel.descriptionKey(run)) + "\n" + status));
+                StyledText.of(Translation.gameText(ChartObjectiveIntel.descriptionKey(run)) + "\n").append(StyledText.styled(status, statusStyle)));
     }
 
     static List<SlottedLine> modifierLines(StarChart chart) {

@@ -12,6 +12,7 @@ import exiledsector.charts.officer.reward.CarriedItem;
 import exiledsector.charts.officer.reward.RewardKind;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
+import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.items.ItemData;
@@ -101,6 +102,20 @@ class ChartInfoTextTest {
                 objective.body().plain());
         run.markObjectiveComplete();
         assertTrue(ChartInfoText.objective(run).body().plain().endsWith(Translation.gameText("chart.intel.complete")));
+    }
+
+    @Test
+    void theObjectiveStatusIsRedUntilCompleteThenGreen() {
+        ChartRun run = run(List.of());
+        String reward = Translation.gameText("chart.intel.reward");
+        String complete = Translation.gameText("chart.intel.complete");
+
+        StyledText pending = ChartInfoText.objective(run).body();
+        run.markObjectiveComplete();
+        StyledText done = ChartInfoText.objective(run).body();
+
+        assertEquals(List.of(new StyledText.Span(pending.plain().length() - reward.length(), pending.plain().length(), Style.BAD)), pending.spans());
+        assertEquals(List.of(new StyledText.Span(done.plain().length() - complete.length(), done.plain().length(), Style.GOOD)), done.spans());
     }
 
     @Test
