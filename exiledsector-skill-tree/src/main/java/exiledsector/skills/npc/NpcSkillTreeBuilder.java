@@ -1,7 +1,7 @@
 package exiledsector.skills.npc;
 
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
-import exiledsector.items.WeightedPick;
+import exiledsector.data.WeightedPick;
 import exiledsector.skills.AffinitySteps;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.SkillTypeEffect;
@@ -386,7 +386,7 @@ public final class NpcSkillTreeBuilder {
             }
             int coveredCost = 0;
             while (coveredCost < remaining() && !goalPool.isEmpty()) {
-                String goalNodeId = WeightedPick.pickOrUniform(goalPool,id -> nodeRelevance(search, id) * tierWeight(id), random);
+                String goalNodeId = WeightedPick.pickOrUniform(goalPool, id -> nodeRelevance(search, id) * tierWeight(id), random);
                 goalPool.remove(goalNodeId);
                 chosenGoals.add(goalNodeId);
                 coveredCost += search.cost(goalNodeId);
@@ -410,7 +410,7 @@ public final class NpcSkillTreeBuilder {
                     candidates.add(nodeId);
                 }
             }
-            String pickedNodeId = WeightedPick.pickOrUniform(candidates,id -> nodeRelevance(search, id), random);
+            String pickedNodeId = WeightedPick.pickOrUniform(candidates, id -> nodeRelevance(search, id), random);
             if (pickedNodeId == null) {
                 return false;
             }
@@ -540,7 +540,7 @@ public final class NpcSkillTreeBuilder {
             }
             SkillType rootAffinityOption = rootAffinityOption(options);
             SkillType pickedOption = rootAffinityOption != null ? rootAffinityOption
-                    : WeightedPick.pickOrUniform(options,optionType -> relevance.of(optionType.getTags()), random);
+                    : WeightedPick.pickOrUniform(options, optionType -> relevance.of(optionType.getTags()), random);
             if (pickedOption != null) {
                 searchOptions.put(node.getId(), pickedOption);
                 chosenOptions.put(node.getId(), pickedOption);
