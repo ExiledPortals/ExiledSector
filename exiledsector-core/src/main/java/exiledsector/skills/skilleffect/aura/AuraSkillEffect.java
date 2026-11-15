@@ -178,6 +178,14 @@ public enum AuraSkillEffect implements BackedSkillEffect {
                     .arg("stacks", PirateFrenzy.MAX_STACKS).styled().append("\n").append(PirateFrenzy.describeStackBonuses());
         }
     },
+    WEAPON_DAMAGE_AND_RATE_OF_FIRE_PERCENT_PER_NEARBY_ALLY_LOST(listener(TerribleBalanceListener.PERCENT_PER_STACK_KEY,
+            TerribleBalanceListener.class, TerribleBalanceListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("range", TerribleBalanceListener.RANGE)
+                    .arg("max", TerribleBalanceListener.MAX_STACKS).styled();
+        }
+    },
     CREW_STEAL_RANGE_FLAT(listener(CrewStealListener.RANGE_KEY, CrewStealListener.class, CrewStealListener::new)),
     CREW_STEAL_SKELETON_CREW_PERCENT(listener(CrewStealListener.SKELETON_CREW_PERCENT_KEY, CrewStealListener.class, CrewStealListener::new));
 

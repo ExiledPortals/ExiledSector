@@ -142,6 +142,18 @@ effect|AUGMENTED_SYSTEM_REGEN_PERCENT|12.5	0	On hulls with Augmented Systems, <g
 effect|AUGMENTED_SYSTEM_REGEN_PERCENT|100.0	0	On hulls with Augmented Systems, <good>100%</good> increased ship system charge regeneration.
 effect|AUGMENTED_SYSTEM_REGEN_PERCENT|-10.0	0	On hulls with Augmented Systems, <good>-10%</good> increased ship system charge regeneration.
 effect|AUGMENTED_SYSTEM_REGEN_PERCENT|-12.5	0	On hulls with Augmented Systems, <good>-12.5%</good> increased ship system charge regeneration.
+effect|AUTOFORGE_ESCORT_DRONES_FLAT|1.0	0	This ship launches <good>1</good> escort drones that stay close to it when it deploys. A destroyed drone is rebuilt after <hl>60</hl> seconds.
+effect|AUTOFORGE_ESCORT_DRONES_FLAT|10.0	0	This ship launches <good>8</good> escort drones that stay close to it when it deploys. A destroyed drone is rebuilt after <hl>60</hl> seconds.
+effect|AUTOFORGE_ESCORT_DRONES_FLAT|12.5	0	This ship launches <good>8</good> escort drones that stay close to it when it deploys. A destroyed drone is rebuilt after <hl>60</hl> seconds.
+effect|AUTOFORGE_ESCORT_DRONES_FLAT|100.0	0	This ship launches <good>8</good> escort drones that stay close to it when it deploys. A destroyed drone is rebuilt after <hl>60</hl> seconds.
+effect|AUTOFORGE_ESCORT_DRONES_FLAT|-10.0	0	This ship launches <good>0</good> escort drones that stay close to it when it deploys. A destroyed drone is rebuilt after <hl>60</hl> seconds.
+effect|AUTOFORGE_ESCORT_DRONES_FLAT|-12.5	0	This ship launches <good>0</good> escort drones that stay close to it when it deploys. A destroyed drone is rebuilt after <hl>60</hl> seconds.
+effect|AUTO_FLARES_PER_BURST_FLAT|1.0	0	When an enemy missile within <hl>1000</hl> su homes in on this ship, this ship fires <good>1</good> decoy flares, at most once every <hl>10</hl> seconds.
+effect|AUTO_FLARES_PER_BURST_FLAT|10.0	0	When an enemy missile within <hl>1000</hl> su homes in on this ship, this ship fires <good>10</good> decoy flares, at most once every <hl>10</hl> seconds.
+effect|AUTO_FLARES_PER_BURST_FLAT|12.5	0	When an enemy missile within <hl>1000</hl> su homes in on this ship, this ship fires <good>13</good> decoy flares, at most once every <hl>10</hl> seconds.
+effect|AUTO_FLARES_PER_BURST_FLAT|100.0	0	When an enemy missile within <hl>1000</hl> su homes in on this ship, this ship fires <good>20</good> decoy flares, at most once every <hl>10</hl> seconds.
+effect|AUTO_FLARES_PER_BURST_FLAT|-10.0	0	When an enemy missile within <hl>1000</hl> su homes in on this ship, this ship fires <good>0</good> decoy flares, at most once every <hl>10</hl> seconds.
+effect|AUTO_FLARES_PER_BURST_FLAT|-12.5	0	When an enemy missile within <hl>1000</hl> su homes in on this ship, this ship fires <good>0</good> decoy flares, at most once every <hl>10</hl> seconds.
 effect|BALLISTIC_AND_ENERGY_WEAPON_AMMO_SAVE_CHANCE_PERCENT|1.0	0	Ballistic and energy weapons have a <good>1%</good> chance not to consume ammo when firing.
 effect|BALLISTIC_AND_ENERGY_WEAPON_AMMO_SAVE_CHANCE_PERCENT|10.0	0	Ballistic and energy weapons have a <good>10%</good> chance not to consume ammo when firing.
 effect|BALLISTIC_AND_ENERGY_WEAPON_AMMO_SAVE_CHANCE_PERCENT|12.5	0	Ballistic and energy weapons have a <good>12.5%</good> chance not to consume ammo when firing.
@@ -862,6 +874,12 @@ effect|DECELERATION_FLAT|12.5	0	<good>+12.5</good> to deceleration.
 effect|DECELERATION_FLAT|100.0	0	<good>+100</good> to deceleration.
 effect|DECELERATION_FLAT|-10.0	0	<bad>-10</bad> to deceleration.
 effect|DECELERATION_FLAT|-12.5	0	<bad>-12.5</bad> to deceleration.
+effect|DEPLOYMENT_POINTS_PERCENT_PER_DMOD|1.0	1	<good>1%</good> increased deployment points for each d-mod, up to a maximum of <hl>5</hl> d-mods.
+effect|DEPLOYMENT_POINTS_PERCENT_PER_DMOD|10.0	1	<good>10%</good> increased deployment points for each d-mod, up to a maximum of <hl>5</hl> d-mods.
+effect|DEPLOYMENT_POINTS_PERCENT_PER_DMOD|12.5	1	<good>12.5%</good> increased deployment points for each d-mod, up to a maximum of <hl>5</hl> d-mods.
+effect|DEPLOYMENT_POINTS_PERCENT_PER_DMOD|100.0	1	<good>100%</good> increased deployment points for each d-mod, up to a maximum of <hl>5</hl> d-mods.
+effect|DEPLOYMENT_POINTS_PERCENT_PER_DMOD|-10.0	1	<bad>10%</bad> reduced deployment points for each d-mod, up to a maximum of <hl>5</hl> d-mods.
+effect|DEPLOYMENT_POINTS_PERCENT_PER_DMOD|-12.5	1	<bad>12.5%</bad> reduced deployment points for each d-mod, up to a maximum of <hl>5</hl> d-mods.
 effect|DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT|1.0	0	<good>1%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is dealt as high explosive damage instead.
 effect|DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT|10.0	0	<good>10%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is dealt as high explosive damage instead.
 effect|DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT|12.5	0	<good>12.5%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is dealt as high explosive damage instead.
@@ -880,6 +898,12 @@ effect|DISPLACER_FAILSAFE_HULL_PERCENT|12.5	0	Once per deployment, when hull dro
 effect|DISPLACER_FAILSAFE_HULL_PERCENT|100.0	0	Once per deployment, when hull drops below <good>100%</good>, this ship teleports <hl>1200</hl> su away from the nearest enemy and vents its flux.
 effect|DISPLACER_FAILSAFE_HULL_PERCENT|-10.0	0	Once per deployment, when hull drops below <good>-10%</good>, this ship teleports <hl>1200</hl> su away from the nearest enemy and vents its flux.
 effect|DISPLACER_FAILSAFE_HULL_PERCENT|-12.5	0	Once per deployment, when hull drops below <good>-12.5%</good>, this ship teleports <hl>1200</hl> su away from the nearest enemy and vents its flux.
+effect|DMOD_ACQUIRE_CHANCE_MULT|1.0	1	<good>1%</good> more chance to gain d-mods when disabled.
+effect|DMOD_ACQUIRE_CHANCE_MULT|10.0	1	<good>10%</good> more chance to gain d-mods when disabled.
+effect|DMOD_ACQUIRE_CHANCE_MULT|12.5	1	<good>12.5%</good> more chance to gain d-mods when disabled.
+effect|DMOD_ACQUIRE_CHANCE_MULT|100.0	1	<good>100%</good> more chance to gain d-mods when disabled.
+effect|DMOD_ACQUIRE_CHANCE_MULT|-10.0	1	<bad>10%</bad> less chance to gain d-mods when disabled.
+effect|DMOD_ACQUIRE_CHANCE_MULT|-12.5	1	<bad>12.5%</bad> less chance to gain d-mods when disabled.
 effect|DMOD_EFFECT_MULT|1.0	1	<good>1%</good> more negative effects from d-mods.
 effect|DMOD_EFFECT_MULT|10.0	1	<good>10%</good> more negative effects from d-mods.
 effect|DMOD_EFFECT_MULT|12.5	1	<good>12.5%</good> more negative effects from d-mods.
@@ -2002,6 +2026,12 @@ effect|MISSILE_RELOAD_PERCENT_PER_MINUTE|12.5	0	Missile weapons that cannot rege
 effect|MISSILE_RELOAD_PERCENT_PER_MINUTE|100.0	0	Missile weapons that cannot regenerate ammo reload <good>100%</good> of their base ammo every minute in combat.
 effect|MISSILE_RELOAD_PERCENT_PER_MINUTE|-10.0	0	Missile weapons that cannot regenerate ammo reload <good>-10%</good> of their base ammo every minute in combat.
 effect|MISSILE_RELOAD_PERCENT_PER_MINUTE|-12.5	0	Missile weapons that cannot regenerate ammo reload <good>-12.5%</good> of their base ammo every minute in combat.
+effect|MISSILE_RESERVE_RELOAD_PERCENT|1.0	0	The first time each missile weapon runs out of ammo in a battle, it reloads <good>1%</good> of its maximum ammo.
+effect|MISSILE_RESERVE_RELOAD_PERCENT|10.0	0	The first time each missile weapon runs out of ammo in a battle, it reloads <good>10%</good> of its maximum ammo.
+effect|MISSILE_RESERVE_RELOAD_PERCENT|12.5	0	The first time each missile weapon runs out of ammo in a battle, it reloads <good>12.5%</good> of its maximum ammo.
+effect|MISSILE_RESERVE_RELOAD_PERCENT|100.0	0	The first time each missile weapon runs out of ammo in a battle, it reloads <good>100%</good> of its maximum ammo.
+effect|MISSILE_RESERVE_RELOAD_PERCENT|-10.0	0	The first time each missile weapon runs out of ammo in a battle, it reloads <good>-10%</good> of its maximum ammo.
+effect|MISSILE_RESERVE_RELOAD_PERCENT|-12.5	0	The first time each missile weapon runs out of ammo in a battle, it reloads <good>-12.5%</good> of its maximum ammo.
 effect|MISSILE_SLOTS_ENERGY|1.0	0	Missile weapon mounts become energy mounts.
 effect|MISSILE_SLOTS_ENERGY|10.0	0	Missile weapon mounts become energy mounts.
 effect|MISSILE_SLOTS_ENERGY|12.5	0	Missile weapon mounts become energy mounts.
@@ -2608,6 +2638,12 @@ effect|POST_BATTLE_SALVAGE_PERCENT|12.5	0	Your fleet has <good>12.5%</good> incr
 effect|POST_BATTLE_SALVAGE_PERCENT|100.0	0	Your fleet has <good>100%</good> increased post-battle salvage.
 effect|POST_BATTLE_SALVAGE_PERCENT|-10.0	0	Your fleet has <bad>10%</bad> reduced post-battle salvage.
 effect|POST_BATTLE_SALVAGE_PERCENT|-12.5	0	Your fleet has <bad>12.5%</bad> reduced post-battle salvage.
+effect|POST_BATTLE_SUPPLIES_PERCENT_OF_DEFEATED_DEPLOYMENT_POINTS|1.0	0	After each battle your fleet wins, it salvages supplies equal to <good>1%</good> of the deployment points of the enemy ships it defeated.
+effect|POST_BATTLE_SUPPLIES_PERCENT_OF_DEFEATED_DEPLOYMENT_POINTS|10.0	0	After each battle your fleet wins, it salvages supplies equal to <good>10%</good> of the deployment points of the enemy ships it defeated.
+effect|POST_BATTLE_SUPPLIES_PERCENT_OF_DEFEATED_DEPLOYMENT_POINTS|12.5	0	After each battle your fleet wins, it salvages supplies equal to <good>12.5%</good> of the deployment points of the enemy ships it defeated.
+effect|POST_BATTLE_SUPPLIES_PERCENT_OF_DEFEATED_DEPLOYMENT_POINTS|100.0	0	After each battle your fleet wins, it salvages supplies equal to <good>100%</good> of the deployment points of the enemy ships it defeated.
+effect|POST_BATTLE_SUPPLIES_PERCENT_OF_DEFEATED_DEPLOYMENT_POINTS|-10.0	0	After each battle your fleet wins, it salvages supplies equal to <good>-10%</good> of the deployment points of the enemy ships it defeated.
+effect|POST_BATTLE_SUPPLIES_PERCENT_OF_DEFEATED_DEPLOYMENT_POINTS|-12.5	0	After each battle your fleet wins, it salvages supplies equal to <good>-12.5%</good> of the deployment points of the enemy ships it defeated.
 effect|POST_BATTLE_WEAPON_SALVAGE_PERCENT|1.0	0	Your fleet has <good>1%</good> increased quantity of weapons and strikecraft wings in post-battle salvage.
 effect|POST_BATTLE_WEAPON_SALVAGE_PERCENT|10.0	0	Your fleet has <good>10%</good> increased quantity of weapons and strikecraft wings in post-battle salvage.
 effect|POST_BATTLE_WEAPON_SALVAGE_PERCENT|12.5	0	Your fleet has <good>12.5%</good> increased quantity of weapons and strikecraft wings in post-battle salvage.
@@ -3406,6 +3442,12 @@ effect|STRIKECRAFT_RIFT_STRIKE_CHANCE_PERCENT|12.5	0	Strikecraft launched from t
 effect|STRIKECRAFT_RIFT_STRIKE_CHANCE_PERCENT|100.0	0	Strikecraft launched from this ship have a <good>100%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to <hl>50%</hl> of the weapon's base damage per shot, at least <hl>30</hl> and up to a maximum of <hl>500</hl>.
 effect|STRIKECRAFT_RIFT_STRIKE_CHANCE_PERCENT|-10.0	0	Strikecraft launched from this ship have a <good>-10%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to <hl>50%</hl> of the weapon's base damage per shot, at least <hl>30</hl> and up to a maximum of <hl>500</hl>.
 effect|STRIKECRAFT_RIFT_STRIKE_CHANCE_PERCENT|-12.5	0	Strikecraft launched from this ship have a <good>-12.5%</good> chance for energy projectile hits to trigger a rift explosion, dealing energy damage equal to <hl>50%</hl> of the weapon's base damage per shot, at least <hl>30</hl> and up to a maximum of <hl>500</hl>.
+effect|STRIKECRAFT_SHARE_OF_CARRIER_WEAPON_BONUSES_PERCENT|1.0	0	Strikecraft launched from this ship gain <good>1%</good> of this ship's increased weapon damage and rate of fire at launch.
+effect|STRIKECRAFT_SHARE_OF_CARRIER_WEAPON_BONUSES_PERCENT|10.0	0	Strikecraft launched from this ship gain <good>10%</good> of this ship's increased weapon damage and rate of fire at launch.
+effect|STRIKECRAFT_SHARE_OF_CARRIER_WEAPON_BONUSES_PERCENT|12.5	0	Strikecraft launched from this ship gain <good>12.5%</good> of this ship's increased weapon damage and rate of fire at launch.
+effect|STRIKECRAFT_SHARE_OF_CARRIER_WEAPON_BONUSES_PERCENT|100.0	0	Strikecraft launched from this ship gain <good>100%</good> of this ship's increased weapon damage and rate of fire at launch.
+effect|STRIKECRAFT_SHARE_OF_CARRIER_WEAPON_BONUSES_PERCENT|-10.0	0	Strikecraft launched from this ship gain <good>-10%</good> of this ship's increased weapon damage and rate of fire at launch.
+effect|STRIKECRAFT_SHARE_OF_CARRIER_WEAPON_BONUSES_PERCENT|-12.5	0	Strikecraft launched from this ship gain <good>-12.5%</good> of this ship's increased weapon damage and rate of fire at launch.
 effect|STRIKECRAFT_WEAPON_DAMAGE_PERCENT_PER_NEARBY_STRIKECRAFT|1.0	0	Strikecraft launched from this ship have <good>1%</good> increased weapon damage for every allied strikecraft within <hl>500</hl> su, up to a maximum of <hl>20%</hl>.
 effect|STRIKECRAFT_WEAPON_DAMAGE_PERCENT_PER_NEARBY_STRIKECRAFT|10.0	0	Strikecraft launched from this ship have <good>10%</good> increased weapon damage for every allied strikecraft within <hl>500</hl> su, up to a maximum of <hl>20%</hl>.
 effect|STRIKECRAFT_WEAPON_DAMAGE_PERCENT_PER_NEARBY_STRIKECRAFT|12.5	0	Strikecraft launched from this ship have <good>12.5%</good> increased weapon damage for every allied strikecraft within <hl>500</hl> su, up to a maximum of <hl>20%</hl>.
@@ -3430,6 +3472,12 @@ effect|SUPPLIES_PER_MONTH_PERCENT_PER_FIGHTER_BAY|12.5	1	<good>12.5%</good> incr
 effect|SUPPLIES_PER_MONTH_PERCENT_PER_FIGHTER_BAY|100.0	1	<good>100%</good> increased supply use for maintenance per strikecraft bay, up to <hl>80%</hl> in total.
 effect|SUPPLIES_PER_MONTH_PERCENT_PER_FIGHTER_BAY|-10.0	1	<bad>10%</bad> reduced supply use for maintenance per strikecraft bay, up to <hl>80%</hl> in total.
 effect|SUPPLIES_PER_MONTH_PERCENT_PER_FIGHTER_BAY|-12.5	1	<bad>12.5%</bad> reduced supply use for maintenance per strikecraft bay, up to <hl>80%</hl> in total.
+effect|SUPPLIES_TO_RECOVER_MULT|1.0	1	<good>1%</good> more supplies to recover after deployment.
+effect|SUPPLIES_TO_RECOVER_MULT|10.0	1	<good>10%</good> more supplies to recover after deployment.
+effect|SUPPLIES_TO_RECOVER_MULT|12.5	1	<good>12.5%</good> more supplies to recover after deployment.
+effect|SUPPLIES_TO_RECOVER_MULT|100.0	1	<good>100%</good> more supplies to recover after deployment.
+effect|SUPPLIES_TO_RECOVER_MULT|-10.0	1	<bad>10%</bad> less supplies to recover after deployment.
+effect|SUPPLIES_TO_RECOVER_MULT|-12.5	1	<bad>12.5%</bad> less supplies to recover after deployment.
 effect|SUPPLY_USE_REDUCTION_PERCENT_PER_HULL_TYPE|1.0	0	Your fleet has <good>1%</good> reduced supply use for maintenance for every different hull type among its ships, up to a maximum of <hl>15%</hl>.
 effect|SUPPLY_USE_REDUCTION_PERCENT_PER_HULL_TYPE|10.0	0	Your fleet has <good>10%</good> reduced supply use for maintenance for every different hull type among its ships, up to a maximum of <hl>15%</hl>.
 effect|SUPPLY_USE_REDUCTION_PERCENT_PER_HULL_TYPE|12.5	0	Your fleet has <good>12.5%</good> reduced supply use for maintenance for every different hull type among its ships, up to a maximum of <hl>15%</hl>.
@@ -3724,6 +3772,12 @@ effect|WEAPON_AUTOFIRE_ACCURACY_PERCENT|12.5	0	<good>12.5%</good> increased targ
 effect|WEAPON_AUTOFIRE_ACCURACY_PERCENT|100.0	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 effect|WEAPON_AUTOFIRE_ACCURACY_PERCENT|-10.0	0	<bad>10%</bad> reduced target leading accuracy of autofiring weapons.
 effect|WEAPON_AUTOFIRE_ACCURACY_PERCENT|-12.5	0	<bad>12.5%</bad> reduced target leading accuracy of autofiring weapons.
+effect|WEAPON_DAMAGE_AND_RATE_OF_FIRE_PERCENT_PER_NEARBY_ALLY_LOST|1.0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>1%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+effect|WEAPON_DAMAGE_AND_RATE_OF_FIRE_PERCENT_PER_NEARBY_ALLY_LOST|10.0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>10%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+effect|WEAPON_DAMAGE_AND_RATE_OF_FIRE_PERCENT_PER_NEARBY_ALLY_LOST|12.5	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>12.5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+effect|WEAPON_DAMAGE_AND_RATE_OF_FIRE_PERCENT_PER_NEARBY_ALLY_LOST|100.0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>100%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+effect|WEAPON_DAMAGE_AND_RATE_OF_FIRE_PERCENT_PER_NEARBY_ALLY_LOST|-10.0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>-10%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+effect|WEAPON_DAMAGE_AND_RATE_OF_FIRE_PERCENT_PER_NEARBY_ALLY_LOST|-12.5	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>-12.5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
 effect|WEAPON_DAMAGE_FLAT|1.0	0	<good>+1</good> to weapon damage.
 effect|WEAPON_DAMAGE_FLAT|10.0	0	<good>+10</good> to weapon damage.
 effect|WEAPON_DAMAGE_FLAT|12.5	0	<good>+12.5</good> to weapon damage.
@@ -4295,6 +4349,11 @@ integrated|all_must_serve|CRUISER|2	0	Takes <builtIn>10%</builtIn> of each such 
 integrated|all_must_serve|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|all_must_serve|CAPITAL_SHIP|1	0	Enemy ships destroyed within <good>1500</good> su of this ship have their survivors pressed into service. Each wreck is only claimed once.
 integrated|all_must_serve|CAPITAL_SHIP|2	0	Takes <builtIn>10%</builtIn> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, the rest join your fleet if there is room.
+type|all_weapon_damage|null|0	0	<good>2%</good> increased weapon damage.
+type|all_weapon_damage|FRIGATE|0	0	<good>2%</good> increased weapon damage.
+type|all_weapon_damage|DESTROYER|0	0	<good>2%</good> increased weapon damage.
+type|all_weapon_damage|CRUISER|0	0	<good>2%</good> increased weapon damage.
+type|all_weapon_damage|CAPITAL_SHIP|0	0	<good>2%</good> increased weapon damage.
 type|ammo_capacity|null|0	0	<good>20%</good> increased ballistic weapon ammo capacity.
 type|ammo_capacity|null|1	0	<good>20%</good> increased energy weapon ammo capacity.
 type|ammo_capacity|FRIGATE|0	0	<good>20%</good> increased ballistic weapon ammo capacity.
@@ -4504,6 +4563,39 @@ integrated|augmented_drive_field|CRUISER|2	0	<builtIn>15%</builtIn> less fuel co
 integrated|augmented_drive_field|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|augmented_drive_field|CAPITAL_SHIP|1	0	<good>+1</good> to max burn level.
 integrated|augmented_drive_field|CAPITAL_SHIP|2	0	<builtIn>15%</builtIn> less fuel consumption rate.
+flavour|autoforge_escorts	0	Stripping the autoforge of a drifting survey mothership teaches the crew how it builds the small drones that once guarded it, and how to keep a smaller forge running aboard a warship.
+flavourAutomated|autoforge_escorts	0	The ship's core indexes the build queue of an autoforge salvaged from a survey mothership and finds the escort drones still listed first. It leaves the order unchanged.
+type|autoforge_escorts|FRIGATE|0	0	This ship launches <good>1</good> escort drones that stay close to it when it deploys. A destroyed drone is rebuilt after <hl>60</hl> seconds.
+type|autoforge_escorts|DESTROYER|0	0	This ship launches <good>2</good> escort drones that stay close to it when it deploys. A destroyed drone is rebuilt after <hl>60</hl> seconds.
+type|autoforge_escorts|CRUISER|0	0	This ship launches <good>3</good> escort drones that stay close to it when it deploys. A destroyed drone is rebuilt after <hl>60</hl> seconds.
+type|autoforge_escorts|CAPITAL_SHIP|0	0	This ship launches <good>4</good> escort drones that stay close to it when it deploys. A destroyed drone is rebuilt after <hl>60</hl> seconds.
+integrable|autoforge_escorts|null|0	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|autoforge_escorts|null|1	0	<muted>When integrated, for 2 story points:</muted>
+integrable|autoforge_escorts|FRIGATE|0	0	This ship launches <good>1</good> escort drones that stay close to it when it deploys. A destroyed drone is rebuilt after <hl>60</hl> seconds.
+integrable|autoforge_escorts|FRIGATE|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|autoforge_escorts|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|autoforge_escorts|FRIGATE|3	0	Instead grants: This ship launches <builtIn>2</builtIn> escort drones that stay close to it when it deploys. A destroyed drone is rebuilt after <hl>60</hl> seconds.
+integrable|autoforge_escorts|DESTROYER|0	0	This ship launches <good>2</good> escort drones that stay close to it when it deploys. A destroyed drone is rebuilt after <hl>60</hl> seconds.
+integrable|autoforge_escorts|DESTROYER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|autoforge_escorts|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|autoforge_escorts|DESTROYER|3	0	Instead grants: This ship launches <builtIn>3</builtIn> escort drones that stay close to it when it deploys. A destroyed drone is rebuilt after <hl>60</hl> seconds.
+integrable|autoforge_escorts|CRUISER|0	0	This ship launches <good>3</good> escort drones that stay close to it when it deploys. A destroyed drone is rebuilt after <hl>60</hl> seconds.
+integrable|autoforge_escorts|CRUISER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|autoforge_escorts|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|autoforge_escorts|CRUISER|3	0	Instead grants: This ship launches <builtIn>4</builtIn> escort drones that stay close to it when it deploys. A destroyed drone is rebuilt after <hl>60</hl> seconds.
+integrable|autoforge_escorts|CAPITAL_SHIP|0	0	This ship launches <good>4</good> escort drones that stay close to it when it deploys. A destroyed drone is rebuilt after <hl>60</hl> seconds.
+integrable|autoforge_escorts|CAPITAL_SHIP|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|autoforge_escorts|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|autoforge_escorts|CAPITAL_SHIP|3	0	Instead grants: This ship launches <builtIn>5</builtIn> escort drones that stay close to it when it deploys. A destroyed drone is rebuilt after <hl>60</hl> seconds.
+integrated|autoforge_escorts|null|0	0	<builtIn>Integrated</builtIn>
+integrated|autoforge_escorts|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|autoforge_escorts|FRIGATE|1	0	This ship launches <builtIn>2</builtIn> escort drones that stay close to it when it deploys. A destroyed drone is rebuilt after <hl>60</hl> seconds.
+integrated|autoforge_escorts|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|autoforge_escorts|DESTROYER|1	0	This ship launches <builtIn>3</builtIn> escort drones that stay close to it when it deploys. A destroyed drone is rebuilt after <hl>60</hl> seconds.
+integrated|autoforge_escorts|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|autoforge_escorts|CRUISER|1	0	This ship launches <builtIn>4</builtIn> escort drones that stay close to it when it deploys. A destroyed drone is rebuilt after <hl>60</hl> seconds.
+integrated|autoforge_escorts|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|autoforge_escorts|CAPITAL_SHIP|1	0	This ship launches <builtIn>5</builtIn> escort drones that stay close to it when it deploys. A destroyed drone is rebuilt after <hl>60</hl> seconds.
 type|automated_repair_unit|null|0	0	<good>25%</good> less weapon and engine repair time.
 type-detail|automated_repair_unit|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Adaptive Entropy Arrester</hullmod>\n• <hullmod>Immanence Engine</hullmod>\n• <hullmod>Automated Repair Unit</hullmod>
 type|automated_repair_unit|FRIGATE|0	0	<good>25%</good> less weapon and engine repair time.
@@ -5626,6 +5718,43 @@ integrated|corrosion_beam|CRUISER|0	0	<builtIn>Integrated</builtIn>
 integrated|corrosion_beam|CRUISER|1	0	Every <hl>2</hl> seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most <builtIn>21</builtIn> of this ship's motes fly at once.
 integrated|corrosion_beam|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|corrosion_beam|CAPITAL_SHIP|1	0	Every <hl>2</hl> seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most <builtIn>21</builtIn> of this ship's motes fly at once.
+flavour|countless_cycles	0	The derelict drones still on patrol have flown countless cycles on patchwork and failing parts. Copying how their maintenance routines route around each broken system, the crew learns to field a worn ship with far less ceremony.
+flavourAutomated|countless_cycles	0	The ship's core logs the maintenance routines recovered from a drone that has flown countless cycles on failing parts, and indexes how each one routes around a broken system. It indexes the routines for its own systems without comment.
+type|countless_cycles|null|0	1	<bad>2%</bad> reduced deployment points for each d-mod, up to a maximum of <hl>5</hl> d-mods.
+type|countless_cycles|FRIGATE|0	1	<bad>2%</bad> reduced deployment points for each d-mod, up to a maximum of <hl>5</hl> d-mods.
+type|countless_cycles|DESTROYER|0	1	<bad>2%</bad> reduced deployment points for each d-mod, up to a maximum of <hl>5</hl> d-mods.
+type|countless_cycles|CRUISER|0	1	<bad>2%</bad> reduced deployment points for each d-mod, up to a maximum of <hl>5</hl> d-mods.
+type|countless_cycles|CAPITAL_SHIP|0	1	<bad>2%</bad> reduced deployment points for each d-mod, up to a maximum of <hl>5</hl> d-mods.
+integrable|countless_cycles|null|0	1	<bad>2%</bad> reduced deployment points for each d-mod, up to a maximum of <hl>5</hl> d-mods.
+integrable|countless_cycles|null|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|countless_cycles|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|countless_cycles|null|3	1	Instead grants <builtIn>3%</builtIn> reduced deployment points for each d-mod, up to a maximum of <hl>5</hl> d-mods.
+integrable|countless_cycles|FRIGATE|0	1	<bad>2%</bad> reduced deployment points for each d-mod, up to a maximum of <hl>5</hl> d-mods.
+integrable|countless_cycles|FRIGATE|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|countless_cycles|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|countless_cycles|FRIGATE|3	1	Instead grants <builtIn>3%</builtIn> reduced deployment points for each d-mod, up to a maximum of <hl>5</hl> d-mods.
+integrable|countless_cycles|DESTROYER|0	1	<bad>2%</bad> reduced deployment points for each d-mod, up to a maximum of <hl>5</hl> d-mods.
+integrable|countless_cycles|DESTROYER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|countless_cycles|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|countless_cycles|DESTROYER|3	1	Instead grants <builtIn>3%</builtIn> reduced deployment points for each d-mod, up to a maximum of <hl>5</hl> d-mods.
+integrable|countless_cycles|CRUISER|0	1	<bad>2%</bad> reduced deployment points for each d-mod, up to a maximum of <hl>5</hl> d-mods.
+integrable|countless_cycles|CRUISER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|countless_cycles|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|countless_cycles|CRUISER|3	1	Instead grants <builtIn>3%</builtIn> reduced deployment points for each d-mod, up to a maximum of <hl>5</hl> d-mods.
+integrable|countless_cycles|CAPITAL_SHIP|0	1	<bad>2%</bad> reduced deployment points for each d-mod, up to a maximum of <hl>5</hl> d-mods.
+integrable|countless_cycles|CAPITAL_SHIP|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|countless_cycles|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|countless_cycles|CAPITAL_SHIP|3	1	Instead grants <builtIn>3%</builtIn> reduced deployment points for each d-mod, up to a maximum of <hl>5</hl> d-mods.
+integrated|countless_cycles|null|0	0	<builtIn>Integrated</builtIn>
+integrated|countless_cycles|null|1	1	<builtIn>3%</builtIn> reduced deployment points for each d-mod, up to a maximum of <hl>5</hl> d-mods.
+integrated|countless_cycles|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|countless_cycles|FRIGATE|1	1	<builtIn>3%</builtIn> reduced deployment points for each d-mod, up to a maximum of <hl>5</hl> d-mods.
+integrated|countless_cycles|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|countless_cycles|DESTROYER|1	1	<builtIn>3%</builtIn> reduced deployment points for each d-mod, up to a maximum of <hl>5</hl> d-mods.
+integrated|countless_cycles|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|countless_cycles|CRUISER|1	1	<builtIn>3%</builtIn> reduced deployment points for each d-mod, up to a maximum of <hl>5</hl> d-mods.
+integrated|countless_cycles|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|countless_cycles|CAPITAL_SHIP|1	1	<builtIn>3%</builtIn> reduced deployment points for each d-mod, up to a maximum of <hl>5</hl> d-mods.
 type|crew_capacity|FRIGATE|0	0	<good>+5</good> to crew capacity.
 type|crew_capacity|DESTROYER|0	0	<good>+15</good> to crew capacity.
 type|crew_capacity|CRUISER|0	0	<good>+25</good> to crew capacity.
@@ -5804,6 +5933,43 @@ integrated|dedicated_targeting_core|CRUISER|2	0	<builtIn>45%</builtIn> increased
 integrated|dedicated_targeting_core|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|dedicated_targeting_core|CAPITAL_SHIP|1	0	<builtIn>65%</builtIn> increased ballistic weapon range.
 integrated|dedicated_targeting_core|CAPITAL_SHIP|2	0	<builtIn>65%</builtIn> increased energy weapon range.
+flavour|defender_flare_bays	0	A Defender drone fires its flares without waiting for an order: its sensors spot an incoming missile and the bays answer. The crew rebuilds the trigger circuit from a wreck and learns to wire it to a ship's own launchers.
+flavourAutomated|defender_flare_bays	0	The ship's core records how a Defender drone's sensors trigger its flare bays the moment a missile locks on, with no order in between. It indexes the circuit for its own launchers.
+type|defender_flare_bays|null|0	0	When an enemy missile within <hl>1000</hl> su homes in on this ship, this ship fires <good>6</good> decoy flares, at most once every <hl>10</hl> seconds.
+type|defender_flare_bays|FRIGATE|0	0	When an enemy missile within <hl>1000</hl> su homes in on this ship, this ship fires <good>6</good> decoy flares, at most once every <hl>10</hl> seconds.
+type|defender_flare_bays|DESTROYER|0	0	When an enemy missile within <hl>1000</hl> su homes in on this ship, this ship fires <good>6</good> decoy flares, at most once every <hl>10</hl> seconds.
+type|defender_flare_bays|CRUISER|0	0	When an enemy missile within <hl>1000</hl> su homes in on this ship, this ship fires <good>6</good> decoy flares, at most once every <hl>10</hl> seconds.
+type|defender_flare_bays|CAPITAL_SHIP|0	0	When an enemy missile within <hl>1000</hl> su homes in on this ship, this ship fires <good>6</good> decoy flares, at most once every <hl>10</hl> seconds.
+integrable|defender_flare_bays|null|0	0	When an enemy missile within <hl>1000</hl> su homes in on this ship, this ship fires <good>6</good> decoy flares, at most once every <hl>10</hl> seconds.
+integrable|defender_flare_bays|null|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|defender_flare_bays|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|defender_flare_bays|null|3	0	Instead grants: When an enemy missile within <hl>1000</hl> su homes in on this ship, this ship fires <builtIn>8</builtIn> decoy flares, at most once every <hl>10</hl> seconds.
+integrable|defender_flare_bays|FRIGATE|0	0	When an enemy missile within <hl>1000</hl> su homes in on this ship, this ship fires <good>6</good> decoy flares, at most once every <hl>10</hl> seconds.
+integrable|defender_flare_bays|FRIGATE|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|defender_flare_bays|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|defender_flare_bays|FRIGATE|3	0	Instead grants: When an enemy missile within <hl>1000</hl> su homes in on this ship, this ship fires <builtIn>8</builtIn> decoy flares, at most once every <hl>10</hl> seconds.
+integrable|defender_flare_bays|DESTROYER|0	0	When an enemy missile within <hl>1000</hl> su homes in on this ship, this ship fires <good>6</good> decoy flares, at most once every <hl>10</hl> seconds.
+integrable|defender_flare_bays|DESTROYER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|defender_flare_bays|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|defender_flare_bays|DESTROYER|3	0	Instead grants: When an enemy missile within <hl>1000</hl> su homes in on this ship, this ship fires <builtIn>8</builtIn> decoy flares, at most once every <hl>10</hl> seconds.
+integrable|defender_flare_bays|CRUISER|0	0	When an enemy missile within <hl>1000</hl> su homes in on this ship, this ship fires <good>6</good> decoy flares, at most once every <hl>10</hl> seconds.
+integrable|defender_flare_bays|CRUISER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|defender_flare_bays|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|defender_flare_bays|CRUISER|3	0	Instead grants: When an enemy missile within <hl>1000</hl> su homes in on this ship, this ship fires <builtIn>8</builtIn> decoy flares, at most once every <hl>10</hl> seconds.
+integrable|defender_flare_bays|CAPITAL_SHIP|0	0	When an enemy missile within <hl>1000</hl> su homes in on this ship, this ship fires <good>6</good> decoy flares, at most once every <hl>10</hl> seconds.
+integrable|defender_flare_bays|CAPITAL_SHIP|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|defender_flare_bays|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|defender_flare_bays|CAPITAL_SHIP|3	0	Instead grants: When an enemy missile within <hl>1000</hl> su homes in on this ship, this ship fires <builtIn>8</builtIn> decoy flares, at most once every <hl>10</hl> seconds.
+integrated|defender_flare_bays|null|0	0	<builtIn>Integrated</builtIn>
+integrated|defender_flare_bays|null|1	0	When an enemy missile within <hl>1000</hl> su homes in on this ship, this ship fires <builtIn>8</builtIn> decoy flares, at most once every <hl>10</hl> seconds.
+integrated|defender_flare_bays|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|defender_flare_bays|FRIGATE|1	0	When an enemy missile within <hl>1000</hl> su homes in on this ship, this ship fires <builtIn>8</builtIn> decoy flares, at most once every <hl>10</hl> seconds.
+integrated|defender_flare_bays|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|defender_flare_bays|DESTROYER|1	0	When an enemy missile within <hl>1000</hl> su homes in on this ship, this ship fires <builtIn>8</builtIn> decoy flares, at most once every <hl>10</hl> seconds.
+integrated|defender_flare_bays|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|defender_flare_bays|CRUISER|1	0	When an enemy missile within <hl>1000</hl> su homes in on this ship, this ship fires <builtIn>8</builtIn> decoy flares, at most once every <hl>10</hl> seconds.
+integrated|defender_flare_bays|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|defender_flare_bays|CAPITAL_SHIP|1	0	When an enemy missile within <hl>1000</hl> su homes in on this ship, this ship fires <builtIn>8</builtIn> decoy flares, at most once every <hl>10</hl> seconds.
 flavour|defensive_compact	0	Under the League's founding compact, every member world must defend whatever the League holds.
 type|defensive_compact|null|0	0	<good>20%</good> reduced damage taken while within <hl>1500</hl> su of a combat objective your side holds.
 type|defensive_compact|FRIGATE|0	0	<good>20%</good> reduced damage taken while within <hl>1500</hl> su of a combat objective your side holds.
@@ -8194,6 +8360,43 @@ integrated|extended_shields|CRUISER|2	0	<builtIn>+60</builtIn> to shield arc.
 integrated|extended_shields|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|extended_shields|CAPITAL_SHIP|1	0	<good>+40</good> to shield arc.
 integrated|extended_shields|CAPITAL_SHIP|2	0	<builtIn>+60</builtIn> to shield arc.
+flavour|feed_the_forges	0	A survey mothership's autoforge was built to feed itself from whatever it found. Studying one, the crew learns to break wrecks down into the supplies a fleet runs on.
+flavourAutomated|feed_the_forges	0	The ship's core records the feedstock tables of a survey mothership's autoforge and indexes which parts of a wreck become which supplies.
+type|feed_the_forges|null|0	0	After each battle your fleet wins, it salvages supplies equal to <good>10%</good> of the deployment points of the enemy ships it defeated.
+type|feed_the_forges|FRIGATE|0	0	After each battle your fleet wins, it salvages supplies equal to <good>10%</good> of the deployment points of the enemy ships it defeated.
+type|feed_the_forges|DESTROYER|0	0	After each battle your fleet wins, it salvages supplies equal to <good>10%</good> of the deployment points of the enemy ships it defeated.
+type|feed_the_forges|CRUISER|0	0	After each battle your fleet wins, it salvages supplies equal to <good>10%</good> of the deployment points of the enemy ships it defeated.
+type|feed_the_forges|CAPITAL_SHIP|0	0	After each battle your fleet wins, it salvages supplies equal to <good>10%</good> of the deployment points of the enemy ships it defeated.
+integrable|feed_the_forges|null|0	0	After each battle your fleet wins, it salvages supplies equal to <good>10%</good> of the deployment points of the enemy ships it defeated.
+integrable|feed_the_forges|null|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|feed_the_forges|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|feed_the_forges|null|3	0	Instead grants: After each battle your fleet wins, it salvages supplies equal to <builtIn>15%</builtIn> of the deployment points of the enemy ships it defeated.
+integrable|feed_the_forges|FRIGATE|0	0	After each battle your fleet wins, it salvages supplies equal to <good>10%</good> of the deployment points of the enemy ships it defeated.
+integrable|feed_the_forges|FRIGATE|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|feed_the_forges|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|feed_the_forges|FRIGATE|3	0	Instead grants: After each battle your fleet wins, it salvages supplies equal to <builtIn>15%</builtIn> of the deployment points of the enemy ships it defeated.
+integrable|feed_the_forges|DESTROYER|0	0	After each battle your fleet wins, it salvages supplies equal to <good>10%</good> of the deployment points of the enemy ships it defeated.
+integrable|feed_the_forges|DESTROYER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|feed_the_forges|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|feed_the_forges|DESTROYER|3	0	Instead grants: After each battle your fleet wins, it salvages supplies equal to <builtIn>15%</builtIn> of the deployment points of the enemy ships it defeated.
+integrable|feed_the_forges|CRUISER|0	0	After each battle your fleet wins, it salvages supplies equal to <good>10%</good> of the deployment points of the enemy ships it defeated.
+integrable|feed_the_forges|CRUISER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|feed_the_forges|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|feed_the_forges|CRUISER|3	0	Instead grants: After each battle your fleet wins, it salvages supplies equal to <builtIn>15%</builtIn> of the deployment points of the enemy ships it defeated.
+integrable|feed_the_forges|CAPITAL_SHIP|0	0	After each battle your fleet wins, it salvages supplies equal to <good>10%</good> of the deployment points of the enemy ships it defeated.
+integrable|feed_the_forges|CAPITAL_SHIP|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|feed_the_forges|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|feed_the_forges|CAPITAL_SHIP|3	0	Instead grants: After each battle your fleet wins, it salvages supplies equal to <builtIn>15%</builtIn> of the deployment points of the enemy ships it defeated.
+integrated|feed_the_forges|null|0	0	<builtIn>Integrated</builtIn>
+integrated|feed_the_forges|null|1	0	After each battle your fleet wins, it salvages supplies equal to <builtIn>15%</builtIn> of the deployment points of the enemy ships it defeated.
+integrated|feed_the_forges|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|feed_the_forges|FRIGATE|1	0	After each battle your fleet wins, it salvages supplies equal to <builtIn>15%</builtIn> of the deployment points of the enemy ships it defeated.
+integrated|feed_the_forges|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|feed_the_forges|DESTROYER|1	0	After each battle your fleet wins, it salvages supplies equal to <builtIn>15%</builtIn> of the deployment points of the enemy ships it defeated.
+integrated|feed_the_forges|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|feed_the_forges|CRUISER|1	0	After each battle your fleet wins, it salvages supplies equal to <builtIn>15%</builtIn> of the deployment points of the enemy ships it defeated.
+integrated|feed_the_forges|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|feed_the_forges|CAPITAL_SHIP|1	0	After each battle your fleet wins, it salvages supplies equal to <builtIn>15%</builtIn> of the deployment points of the enemy ships it defeated.
 flavour|flak_screen_doctrine	0	Hegemony point defense crews pack their flak loads for a wide burst, on the theory that a missile is rarely alone. The crew learns the trick escorting a Dominator through a missile strike. Its captain bills them for the ammunition.
 flavourAutomated|flak_screen_doctrine	0	Hegemony point defense crews pack their flak loads for a wide burst, on the theory that a missile is rarely alone. The ship's core records the pattern while escorting a Dominator through a missile strike, and the refit crew repacks the magazines to match.
 type|flak_screen_doctrine|null|0	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within <hl>100</hl> su.
@@ -10804,6 +11007,43 @@ type|more_hull|FRIGATE|0	0	<good>5%</good> more hull points.
 type|more_hull|DESTROYER|0	0	<good>5%</good> more hull points.
 type|more_hull|CRUISER|0	0	<good>5%</good> more hull points.
 type|more_hull|CAPITAL_SHIP|0	0	<good>5%</good> more hull points.
+flavour|mothership_uplink	0	Drones launched from a survey mothership share its targeting data from the moment they clear the bay. The crew rebuilds the uplink from a drifting hulk and learns to patch a carrier's strike craft into it.
+flavourAutomated|mothership_uplink	0	The ship's core logs the uplink a survey mothership keeps with its drones and records that they share its targeting data from launch. It indexes the link for its own strike craft.
+type|mothership_uplink|null|0	0	Strikecraft launched from this ship gain <good>25%</good> of this ship's increased weapon damage and rate of fire at launch.
+type|mothership_uplink|FRIGATE|0	0	Strikecraft launched from this ship gain <good>25%</good> of this ship's increased weapon damage and rate of fire at launch.
+type|mothership_uplink|DESTROYER|0	0	Strikecraft launched from this ship gain <good>25%</good> of this ship's increased weapon damage and rate of fire at launch.
+type|mothership_uplink|CRUISER|0	0	Strikecraft launched from this ship gain <good>25%</good> of this ship's increased weapon damage and rate of fire at launch.
+type|mothership_uplink|CAPITAL_SHIP|0	0	Strikecraft launched from this ship gain <good>25%</good> of this ship's increased weapon damage and rate of fire at launch.
+integrable|mothership_uplink|null|0	0	Strikecraft launched from this ship gain <good>25%</good> of this ship's increased weapon damage and rate of fire at launch.
+integrable|mothership_uplink|null|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|mothership_uplink|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|mothership_uplink|null|3	0	Instead grants: Strikecraft launched from this ship gain <builtIn>35%</builtIn> of this ship's increased weapon damage and rate of fire at launch.
+integrable|mothership_uplink|FRIGATE|0	0	Strikecraft launched from this ship gain <good>25%</good> of this ship's increased weapon damage and rate of fire at launch.
+integrable|mothership_uplink|FRIGATE|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|mothership_uplink|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|mothership_uplink|FRIGATE|3	0	Instead grants: Strikecraft launched from this ship gain <builtIn>35%</builtIn> of this ship's increased weapon damage and rate of fire at launch.
+integrable|mothership_uplink|DESTROYER|0	0	Strikecraft launched from this ship gain <good>25%</good> of this ship's increased weapon damage and rate of fire at launch.
+integrable|mothership_uplink|DESTROYER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|mothership_uplink|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|mothership_uplink|DESTROYER|3	0	Instead grants: Strikecraft launched from this ship gain <builtIn>35%</builtIn> of this ship's increased weapon damage and rate of fire at launch.
+integrable|mothership_uplink|CRUISER|0	0	Strikecraft launched from this ship gain <good>25%</good> of this ship's increased weapon damage and rate of fire at launch.
+integrable|mothership_uplink|CRUISER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|mothership_uplink|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|mothership_uplink|CRUISER|3	0	Instead grants: Strikecraft launched from this ship gain <builtIn>35%</builtIn> of this ship's increased weapon damage and rate of fire at launch.
+integrable|mothership_uplink|CAPITAL_SHIP|0	0	Strikecraft launched from this ship gain <good>25%</good> of this ship's increased weapon damage and rate of fire at launch.
+integrable|mothership_uplink|CAPITAL_SHIP|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|mothership_uplink|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|mothership_uplink|CAPITAL_SHIP|3	0	Instead grants: Strikecraft launched from this ship gain <builtIn>35%</builtIn> of this ship's increased weapon damage and rate of fire at launch.
+integrated|mothership_uplink|null|0	0	<builtIn>Integrated</builtIn>
+integrated|mothership_uplink|null|1	0	Strikecraft launched from this ship gain <builtIn>35%</builtIn> of this ship's increased weapon damage and rate of fire at launch.
+integrated|mothership_uplink|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|mothership_uplink|FRIGATE|1	0	Strikecraft launched from this ship gain <builtIn>35%</builtIn> of this ship's increased weapon damage and rate of fire at launch.
+integrated|mothership_uplink|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|mothership_uplink|DESTROYER|1	0	Strikecraft launched from this ship gain <builtIn>35%</builtIn> of this ship's increased weapon damage and rate of fire at launch.
+integrated|mothership_uplink|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|mothership_uplink|CRUISER|1	0	Strikecraft launched from this ship gain <builtIn>35%</builtIn> of this ship's increased weapon damage and rate of fire at launch.
+integrated|mothership_uplink|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|mothership_uplink|CAPITAL_SHIP|1	0	Strikecraft launched from this ship gain <builtIn>35%</builtIn> of this ship's increased weapon damage and rate of fire at launch.
 flavour|nanoforge_mending	0	Stripping the repair nanoforge out of a gutted Nexus shows the crew how the Remnant keep their hulls whole long after a fight should have broken them.
 flavourAutomated|nanoforge_mending	0	Stripping the repair nanoforge out of a gutted Nexus shows the refit crew how the Remnant keep their hulls whole long after a fight should have broken them. Wired into an automated hull, it needs no hand to tell it where to work.
 type|nanoforge_mending|null|0	0	After <hl>5</hl> seconds without taking hull damage, repairs <good>1%</good> of maximum hull per second in combat, up to <hl>100%</hl> of maximum hull in total per deployment.
@@ -12469,6 +12709,98 @@ type|root_midline|FRIGATE|0	0	<good>+10</good> to Midline Affinity.
 type|root_midline|DESTROYER|0	0	<good>+10</good> to Midline Affinity.
 type|root_midline|CRUISER|0	0	<good>+10</good> to Midline Affinity.
 type|root_midline|CAPITAL_SHIP|0	0	<good>+10</good> to Midline Affinity.
+flavour|rugged_drone_frame	0	Stripping a Bastillon wreck shows the crew why Domain war drones keep fighting long after they should have broken apart: every strut is doubled, and nothing vital sits where a single hit can reach it. The crew learns to rebuild a frame the same way.
+flavourAutomated|rugged_drone_frame	0	The ship's core indexes the frame of a Bastillon wreck strut by strut and records which doubled members kept it fighting after the hits that should have broken it. The refit crew learns to rebuild a frame to match the index.
+type|rugged_drone_frame|null|0	1	<bad>50%</bad> less negative effects from d-mods.
+type|rugged_drone_frame|null|1	1	<bad>50%</bad> less chance to gain d-mods when disabled.
+type|rugged_drone_frame|null|2	0	If disabled, this ship is almost always recoverable after the battle.
+type|rugged_drone_frame|null|3	1	<bad>50%</bad> less supplies to recover after deployment.
+type-detail|rugged_drone_frame|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Rugged Construction</hullmod>
+type|rugged_drone_frame|FRIGATE|0	1	<bad>50%</bad> less negative effects from d-mods.
+type|rugged_drone_frame|FRIGATE|1	1	<bad>50%</bad> less chance to gain d-mods when disabled.
+type|rugged_drone_frame|FRIGATE|2	0	If disabled, this ship is almost always recoverable after the battle.
+type|rugged_drone_frame|FRIGATE|3	1	<bad>50%</bad> less supplies to recover after deployment.
+type-detail|rugged_drone_frame|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Rugged Construction</hullmod>
+type|rugged_drone_frame|DESTROYER|0	1	<bad>50%</bad> less negative effects from d-mods.
+type|rugged_drone_frame|DESTROYER|1	1	<bad>50%</bad> less chance to gain d-mods when disabled.
+type|rugged_drone_frame|DESTROYER|2	0	If disabled, this ship is almost always recoverable after the battle.
+type|rugged_drone_frame|DESTROYER|3	1	<bad>50%</bad> less supplies to recover after deployment.
+type-detail|rugged_drone_frame|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Rugged Construction</hullmod>
+type|rugged_drone_frame|CRUISER|0	1	<bad>50%</bad> less negative effects from d-mods.
+type|rugged_drone_frame|CRUISER|1	1	<bad>50%</bad> less chance to gain d-mods when disabled.
+type|rugged_drone_frame|CRUISER|2	0	If disabled, this ship is almost always recoverable after the battle.
+type|rugged_drone_frame|CRUISER|3	1	<bad>50%</bad> less supplies to recover after deployment.
+type-detail|rugged_drone_frame|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Rugged Construction</hullmod>
+type|rugged_drone_frame|CAPITAL_SHIP|0	1	<bad>50%</bad> less negative effects from d-mods.
+type|rugged_drone_frame|CAPITAL_SHIP|1	1	<bad>50%</bad> less chance to gain d-mods when disabled.
+type|rugged_drone_frame|CAPITAL_SHIP|2	0	If disabled, this ship is almost always recoverable after the battle.
+type|rugged_drone_frame|CAPITAL_SHIP|3	1	<bad>50%</bad> less supplies to recover after deployment.
+type-detail|rugged_drone_frame|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Rugged Construction</hullmod>
+integrable|rugged_drone_frame|null|0	1	<bad>50%</bad> less negative effects from d-mods.
+integrable|rugged_drone_frame|null|1	1	<bad>50%</bad> less chance to gain d-mods when disabled.
+integrable|rugged_drone_frame|null|2	0	If disabled, this ship is almost always recoverable after the battle.
+integrable|rugged_drone_frame|null|3	1	<bad>50%</bad> less supplies to recover after deployment.
+integrable|rugged_drone_frame|null|4	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|rugged_drone_frame|null|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|rugged_drone_frame|null|6	0	In addition, grants <builtIn>10%</builtIn> increased hull points.
+integrable|rugged_drone_frame|FRIGATE|0	1	<bad>50%</bad> less negative effects from d-mods.
+integrable|rugged_drone_frame|FRIGATE|1	1	<bad>50%</bad> less chance to gain d-mods when disabled.
+integrable|rugged_drone_frame|FRIGATE|2	0	If disabled, this ship is almost always recoverable after the battle.
+integrable|rugged_drone_frame|FRIGATE|3	1	<bad>50%</bad> less supplies to recover after deployment.
+integrable|rugged_drone_frame|FRIGATE|4	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|rugged_drone_frame|FRIGATE|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|rugged_drone_frame|FRIGATE|6	0	In addition, grants <builtIn>10%</builtIn> increased hull points.
+integrable|rugged_drone_frame|DESTROYER|0	1	<bad>50%</bad> less negative effects from d-mods.
+integrable|rugged_drone_frame|DESTROYER|1	1	<bad>50%</bad> less chance to gain d-mods when disabled.
+integrable|rugged_drone_frame|DESTROYER|2	0	If disabled, this ship is almost always recoverable after the battle.
+integrable|rugged_drone_frame|DESTROYER|3	1	<bad>50%</bad> less supplies to recover after deployment.
+integrable|rugged_drone_frame|DESTROYER|4	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|rugged_drone_frame|DESTROYER|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|rugged_drone_frame|DESTROYER|6	0	In addition, grants <builtIn>10%</builtIn> increased hull points.
+integrable|rugged_drone_frame|CRUISER|0	1	<bad>50%</bad> less negative effects from d-mods.
+integrable|rugged_drone_frame|CRUISER|1	1	<bad>50%</bad> less chance to gain d-mods when disabled.
+integrable|rugged_drone_frame|CRUISER|2	0	If disabled, this ship is almost always recoverable after the battle.
+integrable|rugged_drone_frame|CRUISER|3	1	<bad>50%</bad> less supplies to recover after deployment.
+integrable|rugged_drone_frame|CRUISER|4	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|rugged_drone_frame|CRUISER|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|rugged_drone_frame|CRUISER|6	0	In addition, grants <builtIn>10%</builtIn> increased hull points.
+integrable|rugged_drone_frame|CAPITAL_SHIP|0	1	<bad>50%</bad> less negative effects from d-mods.
+integrable|rugged_drone_frame|CAPITAL_SHIP|1	1	<bad>50%</bad> less chance to gain d-mods when disabled.
+integrable|rugged_drone_frame|CAPITAL_SHIP|2	0	If disabled, this ship is almost always recoverable after the battle.
+integrable|rugged_drone_frame|CAPITAL_SHIP|3	1	<bad>50%</bad> less supplies to recover after deployment.
+integrable|rugged_drone_frame|CAPITAL_SHIP|4	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|rugged_drone_frame|CAPITAL_SHIP|5	0	<muted>When integrated, for 2 story points:</muted>
+integrable|rugged_drone_frame|CAPITAL_SHIP|6	0	In addition, grants <builtIn>10%</builtIn> increased hull points.
+integrated|rugged_drone_frame|null|0	0	<builtIn>Integrated</builtIn>
+integrated|rugged_drone_frame|null|1	1	<bad>50%</bad> less negative effects from d-mods.
+integrated|rugged_drone_frame|null|2	1	<bad>50%</bad> less chance to gain d-mods when disabled.
+integrated|rugged_drone_frame|null|3	0	If disabled, this ship is almost always recoverable after the battle.
+integrated|rugged_drone_frame|null|4	1	<bad>50%</bad> less supplies to recover after deployment.
+integrated|rugged_drone_frame|null|5	0	<builtIn>10%</builtIn> increased hull points.
+integrated|rugged_drone_frame|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|rugged_drone_frame|FRIGATE|1	1	<bad>50%</bad> less negative effects from d-mods.
+integrated|rugged_drone_frame|FRIGATE|2	1	<bad>50%</bad> less chance to gain d-mods when disabled.
+integrated|rugged_drone_frame|FRIGATE|3	0	If disabled, this ship is almost always recoverable after the battle.
+integrated|rugged_drone_frame|FRIGATE|4	1	<bad>50%</bad> less supplies to recover after deployment.
+integrated|rugged_drone_frame|FRIGATE|5	0	<builtIn>10%</builtIn> increased hull points.
+integrated|rugged_drone_frame|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|rugged_drone_frame|DESTROYER|1	1	<bad>50%</bad> less negative effects from d-mods.
+integrated|rugged_drone_frame|DESTROYER|2	1	<bad>50%</bad> less chance to gain d-mods when disabled.
+integrated|rugged_drone_frame|DESTROYER|3	0	If disabled, this ship is almost always recoverable after the battle.
+integrated|rugged_drone_frame|DESTROYER|4	1	<bad>50%</bad> less supplies to recover after deployment.
+integrated|rugged_drone_frame|DESTROYER|5	0	<builtIn>10%</builtIn> increased hull points.
+integrated|rugged_drone_frame|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|rugged_drone_frame|CRUISER|1	1	<bad>50%</bad> less negative effects from d-mods.
+integrated|rugged_drone_frame|CRUISER|2	1	<bad>50%</bad> less chance to gain d-mods when disabled.
+integrated|rugged_drone_frame|CRUISER|3	0	If disabled, this ship is almost always recoverable after the battle.
+integrated|rugged_drone_frame|CRUISER|4	1	<bad>50%</bad> less supplies to recover after deployment.
+integrated|rugged_drone_frame|CRUISER|5	0	<builtIn>10%</builtIn> increased hull points.
+integrated|rugged_drone_frame|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|rugged_drone_frame|CAPITAL_SHIP|1	1	<bad>50%</bad> less negative effects from d-mods.
+integrated|rugged_drone_frame|CAPITAL_SHIP|2	1	<bad>50%</bad> less chance to gain d-mods when disabled.
+integrated|rugged_drone_frame|CAPITAL_SHIP|3	0	If disabled, this ship is almost always recoverable after the battle.
+integrated|rugged_drone_frame|CAPITAL_SHIP|4	1	<bad>50%</bad> less supplies to recover after deployment.
+integrated|rugged_drone_frame|CAPITAL_SHIP|5	0	<builtIn>10%</builtIn> increased hull points.
 flavour|running_dark	0	Pirate captains run with their transponders dark and their drive plumes baffled behind scrap plating.
 type|running_dark|null|0	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of <hl>30%</hl>.
 type|running_dark|FRIGATE|0	1	Your fleet has <bad>10%</bad> reduced sensor profile while its transponder is off, up to a maximum of <hl>30%</hl>.
@@ -12752,6 +13084,48 @@ type|sensor_strength|FRIGATE|0	0	<good>+10</good> to this ship's sensor strength
 type|sensor_strength|DESTROYER|0	0	<good>+12</good> to this ship's sensor strength.
 type|sensor_strength|CRUISER|0	0	<good>+20</good> to this ship's sensor strength.
 type|sensor_strength|CAPITAL_SHIP|0	0	<good>+30</good> to this ship's sensor strength.
+flavour|sentry_reserve_racks	0	Sentry drones carry a sealed second rack behind the first, opened only once the first runs empty. The crew copies the layout from a wreck and learns where to find the room for it.
+flavourAutomated|sentry_reserve_racks	0	The ship's core logs the sealed second rack of a Sentry drone and the moment the drone starts feeding from it. The refit crew learns to build the same rack.
+type|sentry_reserve_racks|null|0	0	The first time each missile weapon runs out of ammo in a battle, it reloads <good>100%</good> of its maximum ammo.
+type|sentry_reserve_racks|FRIGATE|0	0	The first time each missile weapon runs out of ammo in a battle, it reloads <good>100%</good> of its maximum ammo.
+type|sentry_reserve_racks|DESTROYER|0	0	The first time each missile weapon runs out of ammo in a battle, it reloads <good>100%</good> of its maximum ammo.
+type|sentry_reserve_racks|CRUISER|0	0	The first time each missile weapon runs out of ammo in a battle, it reloads <good>100%</good> of its maximum ammo.
+type|sentry_reserve_racks|CAPITAL_SHIP|0	0	The first time each missile weapon runs out of ammo in a battle, it reloads <good>100%</good> of its maximum ammo.
+integrable|sentry_reserve_racks|null|0	0	The first time each missile weapon runs out of ammo in a battle, it reloads <good>100%</good> of its maximum ammo.
+integrable|sentry_reserve_racks|null|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|sentry_reserve_racks|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|sentry_reserve_racks|null|3	0	In addition, grants <builtIn>10%</builtIn> increased missile weapon ammo capacity.
+integrable|sentry_reserve_racks|FRIGATE|0	0	The first time each missile weapon runs out of ammo in a battle, it reloads <good>100%</good> of its maximum ammo.
+integrable|sentry_reserve_racks|FRIGATE|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|sentry_reserve_racks|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|sentry_reserve_racks|FRIGATE|3	0	In addition, grants <builtIn>10%</builtIn> increased missile weapon ammo capacity.
+integrable|sentry_reserve_racks|DESTROYER|0	0	The first time each missile weapon runs out of ammo in a battle, it reloads <good>100%</good> of its maximum ammo.
+integrable|sentry_reserve_racks|DESTROYER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|sentry_reserve_racks|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|sentry_reserve_racks|DESTROYER|3	0	In addition, grants <builtIn>10%</builtIn> increased missile weapon ammo capacity.
+integrable|sentry_reserve_racks|CRUISER|0	0	The first time each missile weapon runs out of ammo in a battle, it reloads <good>100%</good> of its maximum ammo.
+integrable|sentry_reserve_racks|CRUISER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|sentry_reserve_racks|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|sentry_reserve_racks|CRUISER|3	0	In addition, grants <builtIn>10%</builtIn> increased missile weapon ammo capacity.
+integrable|sentry_reserve_racks|CAPITAL_SHIP|0	0	The first time each missile weapon runs out of ammo in a battle, it reloads <good>100%</good> of its maximum ammo.
+integrable|sentry_reserve_racks|CAPITAL_SHIP|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|sentry_reserve_racks|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|sentry_reserve_racks|CAPITAL_SHIP|3	0	In addition, grants <builtIn>10%</builtIn> increased missile weapon ammo capacity.
+integrated|sentry_reserve_racks|null|0	0	<builtIn>Integrated</builtIn>
+integrated|sentry_reserve_racks|null|1	0	The first time each missile weapon runs out of ammo in a battle, it reloads <good>100%</good> of its maximum ammo.
+integrated|sentry_reserve_racks|null|2	0	<builtIn>10%</builtIn> increased missile weapon ammo capacity.
+integrated|sentry_reserve_racks|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|sentry_reserve_racks|FRIGATE|1	0	The first time each missile weapon runs out of ammo in a battle, it reloads <good>100%</good> of its maximum ammo.
+integrated|sentry_reserve_racks|FRIGATE|2	0	<builtIn>10%</builtIn> increased missile weapon ammo capacity.
+integrated|sentry_reserve_racks|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|sentry_reserve_racks|DESTROYER|1	0	The first time each missile weapon runs out of ammo in a battle, it reloads <good>100%</good> of its maximum ammo.
+integrated|sentry_reserve_racks|DESTROYER|2	0	<builtIn>10%</builtIn> increased missile weapon ammo capacity.
+integrated|sentry_reserve_racks|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|sentry_reserve_racks|CRUISER|1	0	The first time each missile weapon runs out of ammo in a battle, it reloads <good>100%</good> of its maximum ammo.
+integrated|sentry_reserve_racks|CRUISER|2	0	<builtIn>10%</builtIn> increased missile weapon ammo capacity.
+integrated|sentry_reserve_racks|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|sentry_reserve_racks|CAPITAL_SHIP|1	0	The first time each missile weapon runs out of ammo in a battle, it reloads <good>100%</good> of its maximum ammo.
+integrated|sentry_reserve_racks|CAPITAL_SHIP|2	0	<builtIn>10%</builtIn> increased missile weapon ammo capacity.
 flavour|seraph_hunting_routines	0	Code pulled from a dissected Seraph core, pieced back together and patched into the damage-control software. It mends the ship on what the guns take from others.
 itemCost|seraph_hunting_routines	0	Costs 25 rat_abyssal_matter to allocate, returned when unallocated.
 type|seraph_hunting_routines|null|0	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
@@ -13506,6 +13880,11 @@ integrated|strategic_fuel_reserve|CRUISER|0	0	<builtIn>Integrated</builtIn>
 integrated|strategic_fuel_reserve|CRUISER|1	0	<builtIn>20%</builtIn> reduced fuel use while your fleet carries at least half its fuel capacity.
 integrated|strategic_fuel_reserve|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|strategic_fuel_reserve|CAPITAL_SHIP|1	0	<builtIn>20%</builtIn> reduced fuel use while your fleet carries at least half its fuel capacity.
+type|strikecraft_armor|null|0	0	Strikecraft launched from this ship have <good>5%</good> increased armor.
+type|strikecraft_armor|FRIGATE|0	0	Strikecraft launched from this ship have <good>5%</good> increased armor.
+type|strikecraft_armor|DESTROYER|0	0	Strikecraft launched from this ship have <good>5%</good> increased armor.
+type|strikecraft_armor|CRUISER|0	0	Strikecraft launched from this ship have <good>5%</good> increased armor.
+type|strikecraft_armor|CAPITAL_SHIP|0	0	Strikecraft launched from this ship have <good>5%</good> increased armor.
 type|strikecraft_replacement|null|0	0	<good>5%</good> increased rate at which the strikecraft replacement rate recovers.
 type|strikecraft_replacement|null|1	1	<bad>5%</bad> reduced rate at which the strikecraft replacement rate decreases due to strikecraft losses.
 type|strikecraft_replacement|FRIGATE|0	0	<good>5%</good> increased rate at which the strikecraft replacement rate recovers.
@@ -13999,6 +14378,43 @@ type|temporary_maneuverability|CRUISER|0	0	<good>50%</good> increased maneuverab
 type|temporary_maneuverability|CRUISER|1	0	These effects only last for the first <hl>90</hl> seconds after the ship is deployed.
 type|temporary_maneuverability|CAPITAL_SHIP|0	0	<good>50%</good> increased maneuverability.
 type|temporary_maneuverability|CAPITAL_SHIP|1	0	These effects only last for the first <hl>90</hl> seconds after the ship is deployed.
+flavour|terrible_balance	0	The combat logic pulled from a Berserker's core treats every lost ally as a figure in a sum of attrition, and fights harder to keep that sum in its favor. The crew learns to wire the same logic into a ship's fire control.
+flavourAutomated|terrible_balance	0	The ship's core records the attrition logic pulled from a Berserker's core. Each lost ally was a figure in a sum, and the Berserker's fire control worked harder to keep the sum in its favor.
+type|terrible_balance|null|0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+type|terrible_balance|FRIGATE|0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+type|terrible_balance|DESTROYER|0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+type|terrible_balance|CRUISER|0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+type|terrible_balance|CAPITAL_SHIP|0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+integrable|terrible_balance|null|0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+integrable|terrible_balance|null|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|terrible_balance|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|terrible_balance|null|3	0	Instead grants: Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <builtIn>7%</builtIn> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+integrable|terrible_balance|FRIGATE|0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+integrable|terrible_balance|FRIGATE|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|terrible_balance|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|terrible_balance|FRIGATE|3	0	Instead grants: Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <builtIn>7%</builtIn> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+integrable|terrible_balance|DESTROYER|0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+integrable|terrible_balance|DESTROYER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|terrible_balance|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|terrible_balance|DESTROYER|3	0	Instead grants: Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <builtIn>7%</builtIn> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+integrable|terrible_balance|CRUISER|0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+integrable|terrible_balance|CRUISER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|terrible_balance|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|terrible_balance|CRUISER|3	0	Instead grants: Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <builtIn>7%</builtIn> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+integrable|terrible_balance|CAPITAL_SHIP|0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+integrable|terrible_balance|CAPITAL_SHIP|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|terrible_balance|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|terrible_balance|CAPITAL_SHIP|3	0	Instead grants: Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <builtIn>7%</builtIn> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+integrated|terrible_balance|null|0	0	<builtIn>Integrated</builtIn>
+integrated|terrible_balance|null|1	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <builtIn>7%</builtIn> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+integrated|terrible_balance|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|terrible_balance|FRIGATE|1	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <builtIn>7%</builtIn> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+integrated|terrible_balance|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|terrible_balance|DESTROYER|1	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <builtIn>7%</builtIn> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+integrated|terrible_balance|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|terrible_balance|CRUISER|1	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <builtIn>7%</builtIn> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+integrated|terrible_balance|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|terrible_balance|CAPITAL_SHIP|1	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <builtIn>7%</builtIn> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
 flavour|terrifying_presence	0	Sensor logs from fights with Remnant fleets show how the drones flood the spectrum with false returns, and rebuilding the ship's ECM suite around those recordings feeds enemy fire control a target that is never quite where it seems.
 type|terrifying_presence|null|0	0	Enemy ships within <hl>1000</hl> su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
 type|terrifying_presence|FRIGATE|0	0	Enemy ships within <hl>1000</hl> su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.

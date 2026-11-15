@@ -657,6 +657,12 @@
 			"id": "all_weapon_damage",
 			"name": "All Weapon Damage",
 			"icon": "graphics/icons/weapon_damage.png",
+			"effects": [
+				{
+					"effect": "WEAPON_DAMAGE_PERCENT",
+					"magnitude": 2
+				}
+			],
 			"tags": [
 				"damage"
 			]
@@ -8384,6 +8390,21 @@
 			]
 		},
 		{
+			"id": "strikecraft_armor",
+			"name": "Strikecraft Armor",
+			"icon": "",
+			"effects": [
+				{
+					"effect": "FIGHTER_ARMOR_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"tags": [
+				"strikecraft",
+				"armour"
+			]
+		},
+		{
 			"id": "spark_rift",
 			"name": "Spark Rift",
 			"icon": "graphics/icons/wing_commander_rift_shifted.png",
@@ -8469,6 +8490,261 @@
 				"missile",
 				"on_hit",
 				"req_missile"
+			]
+		},
+		{
+			"id": "rugged_drone_frame",
+			"name": "Rugged Drone Frame",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "DMOD_EFFECT_MULT",
+					"magnitude": -50
+				},
+				{
+					"effect": "DMOD_ACQUIRE_CHANCE_MULT",
+					"magnitude": -50
+				},
+				{
+					"effect": "SHIP_RECOVERY_CHANCE_BONUS",
+					"magnitude": 1000
+				},
+				{
+					"effect": "SUPPLIES_TO_RECOVER_MULT",
+					"magnitude": -50
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "DMOD_EFFECT_MULT",
+						"magnitude": -50
+					},
+					{
+						"effect": "DMOD_ACQUIRE_CHANCE_MULT",
+						"magnitude": -50
+					},
+					{
+						"effect": "SHIP_RECOVERY_CHANCE_BONUS",
+						"magnitude": 1000
+					},
+					{
+						"effect": "SUPPLIES_TO_RECOVER_MULT",
+						"magnitude": -50
+					},
+					{
+						"effect": "HULL_PERCENT",
+						"magnitude": 10
+					}
+				]
+			},
+			"phantomHullMods": [
+				"rugged"
+			],
+			"flavour": "Stripping a Bastillon wreck shows the crew why Domain war drones keep fighting long after they should have broken apart: every strut is doubled, and nothing vital sits where a single hit can reach it. The crew learns to rebuild a frame the same way.",
+			"flavourAutomated": "The ship's core indexes the frame of a Bastillon wreck strut by strut and records which doubled members kept it fighting after the hits that should have broken it. The refit crew learns to rebuild a frame to match the index.",
+			"tags": [
+				"d_mods",
+				"salvage"
+			]
+		},
+		{
+			"id": "countless_cycles",
+			"name": "Countless Cycles",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "DEPLOYMENT_POINTS_PERCENT_PER_DMOD",
+					"magnitude": -2
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "DEPLOYMENT_POINTS_PERCENT_PER_DMOD",
+						"magnitude": -3
+					}
+				]
+			},
+			"flavour": "The derelict drones still on patrol have flown countless cycles on patchwork and failing parts. Copying how their maintenance routines route around each broken system, the crew learns to field a worn ship with far less ceremony.",
+			"flavourAutomated": "The ship's core logs the maintenance routines recovered from a drone that has flown countless cycles on failing parts, and indexes how each one routes around a broken system. It indexes the routines for its own systems without comment.",
+			"tags": [
+				"d_mods",
+				"logistics"
+			]
+		},
+		{
+			"id": "terrible_balance",
+			"name": "Terrible Balance",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "WEAPON_DAMAGE_AND_RATE_OF_FIRE_PERCENT_PER_NEARBY_ALLY_LOST",
+					"magnitude": 5
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "WEAPON_DAMAGE_AND_RATE_OF_FIRE_PERCENT_PER_NEARBY_ALLY_LOST",
+						"magnitude": 7
+					}
+				]
+			},
+			"flavour": "The combat logic pulled from a Berserker's core treats every lost ally as a figure in a sum of attrition, and fights harder to keep that sum in its favor. The crew learns to wire the same logic into a ship's fire control.",
+			"flavourAutomated": "The ship's core records the attrition logic pulled from a Berserker's core. Each lost ally was a figure in a sum, and the Berserker's fire control worked harder to keep the sum in its favor.",
+			"tags": [
+				"damage",
+				"rate_of_fire",
+				"nearby_ships"
+			]
+		},
+		{
+			"id": "autoforge_escorts",
+			"name": "Autoforge Escorts",
+			"icon": "",
+			"tier": "NOTABLE",
+			"hullSizeEffects": [
+				{
+					"effect": "AUTOFORGE_ESCORT_DRONES_FLAT",
+					"frigate": 1,
+					"destroyer": 2,
+					"cruiser": 3,
+					"capitalShip": 4
+				}
+			],
+			"integrated": {
+				"hullSizeEffects": [
+					{
+						"effect": "AUTOFORGE_ESCORT_DRONES_FLAT",
+						"frigate": 2,
+						"destroyer": 3,
+						"cruiser": 4,
+						"capitalShip": 5
+					}
+				]
+			},
+			"flavour": "Stripping the autoforge of a drifting survey mothership teaches the crew how it builds the small drones that once guarded it, and how to keep a smaller forge running aboard a warship.",
+			"flavourAutomated": "The ship's core indexes the build queue of an autoforge salvaged from a survey mothership and finds the escort drones still listed first. It leaves the order unchanged.",
+			"tags": [
+				"strikecraft",
+				"point_defense"
+			]
+		},
+		{
+			"id": "feed_the_forges",
+			"name": "Feed the Forges",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "POST_BATTLE_SUPPLIES_PERCENT_OF_DEFEATED_DEPLOYMENT_POINTS",
+					"magnitude": 10
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "POST_BATTLE_SUPPLIES_PERCENT_OF_DEFEATED_DEPLOYMENT_POINTS",
+						"magnitude": 15
+					}
+				]
+			},
+			"flavour": "A survey mothership's autoforge was built to feed itself from whatever it found. Studying one, the crew learns to break wrecks down into the supplies a fleet runs on.",
+			"flavourAutomated": "The ship's core records the feedstock tables of a survey mothership's autoforge and indexes which parts of a wreck become which supplies.",
+			"tags": [
+				"supplies",
+				"salvage",
+				"campaign_only",
+				"player_only"
+			]
+		},
+		{
+			"id": "sentry_reserve_racks",
+			"name": "Sentry Reserve Racks",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "MISSILE_RESERVE_RELOAD_PERCENT",
+					"magnitude": 100
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "MISSILE_RESERVE_RELOAD_PERCENT",
+						"magnitude": 100
+					},
+					{
+						"effect": "MISSILE_WEAPON_AMMO_PERCENT",
+						"magnitude": 10
+					}
+				]
+			},
+			"flavour": "Sentry drones carry a sealed second rack behind the first, opened only once the first runs empty. The crew copies the layout from a wreck and learns where to find the room for it.",
+			"flavourAutomated": "The ship's core logs the sealed second rack of a Sentry drone and the moment the drone starts feeding from it. The refit crew learns to build the same rack.",
+			"tags": [
+				"missile",
+				"ammo",
+				"req_missile"
+			]
+		},
+		{
+			"id": "defender_flare_bays",
+			"name": "Defender Flare Bays",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "AUTO_FLARES_PER_BURST_FLAT",
+					"magnitude": 6
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "AUTO_FLARES_PER_BURST_FLAT",
+						"magnitude": 8
+					}
+				]
+			},
+			"flavour": "A Defender drone fires its flares without waiting for an order: its sensors spot an incoming missile and the bays answer. The crew rebuilds the trigger circuit from a wreck and learns to wire it to a ship's own launchers.",
+			"flavourAutomated": "The ship's core records how a Defender drone's sensors trigger its flare bays the moment a missile locks on, with no order in between. It indexes the circuit for its own launchers.",
+			"tags": [
+				"defence",
+				"point_defense"
+			]
+		},
+		{
+			"id": "mothership_uplink",
+			"name": "Mothership Uplink",
+			"icon": "",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "STRIKECRAFT_SHARE_OF_CARRIER_WEAPON_BONUSES_PERCENT",
+					"magnitude": 25
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "STRIKECRAFT_SHARE_OF_CARRIER_WEAPON_BONUSES_PERCENT",
+						"magnitude": 35
+					}
+				]
+			},
+			"flavour": "Drones launched from a survey mothership share its targeting data from the moment they clear the bay. The crew rebuilds the uplink from a drifting hulk and learns to patch a carrier's strike craft into it.",
+			"flavourAutomated": "The ship's core logs the uplink a survey mothership keeps with its drones and records that they share its targeting data from launch. It indexes the link for its own strike craft.",
+			"tags": [
+				"strikecraft",
+				"damage",
+				"rate_of_fire",
+				"req_strikecraft_bays"
 			]
 		}
 	]

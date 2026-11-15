@@ -51,6 +51,7 @@ class FactionEncounterGateTest {
         assertEquals("$exiledSector_foughtRemnant", FactionEncounterGate.REMNANT.flagKey());
         assertEquals("$encounteredDweller", FactionEncounterGate.DWELLER.flagKey());
         assertEquals("$exiledSector_foundOmega", FactionEncounterGate.OMEGA.flagKey());
+        assertEquals("$exiledSector_foughtDerelicts", FactionEncounterGate.DERELICTS.flagKey());
     }
 
     @Test
@@ -80,6 +81,15 @@ class FactionEncounterGateTest {
     void aBattleAgainstARemnantVolumeFleetSetsTheRemnantFlagWonOrLost() {
         FactionEncounterGate.REMNANT.recordBattle(sector, battleAgainst("hegemony", "remnant"), false);
         verify(playerMemory).set(FactionEncounterGate.REMNANT.flagKey(), true);
+    }
+
+    @Test
+    void aBattleAgainstADerelictFleetSetsTheDerelictFlagWonOrLost() {
+        FactionEncounterGate.DERELICTS.recordBattle(sector, battleAgainst("remnant"), false);
+        verify(playerMemory, never()).set(anyString(), any());
+
+        FactionEncounterGate.DERELICTS.recordBattle(sector, battleAgainst("hegemony", "derelict"), false);
+        verify(playerMemory).set(FactionEncounterGate.DERELICTS.flagKey(), true);
     }
 
     @Test

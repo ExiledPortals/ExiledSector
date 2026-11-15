@@ -194,6 +194,7 @@ export const UNLOCK_CONDITION_LABELS: Record<string, string> = {
   remnantFought: 'Player has fought a Remnant fleet',
   dwellerFought: 'Player has fought the Shrouded Dwellers',
   omegaFound: "Player has beaten an Omega fleet or opened the Alpha Site cache",
+  derelictsFought: "Player has fought a derelict drone fleet",
 };
 
 export const PARAMETERISED_UNLOCK_CONDITIONS: ReadonlySet<string> = new Set(['blueprint', 'characterStat', 'minShipLevel', 'memoryFlag', 'anchorFound']);

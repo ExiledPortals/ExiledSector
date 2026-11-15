@@ -449,6 +449,48 @@ strike craft counted as their carrier, or to no one if no enemy has.
 overload still drops the shield. Since the ship stays near full flux, an overload that begins within the replaced one's
 duration runs its normal course instead of costing hull again.
 
+### Rugged Drone Frame
+
+The node places `rugged` as a phantom hull mod and copies Rugged Construction with its own effects: d-mod effects and
+the chance to gain d-mods each 50% less (`DMOD_ACQUIRE_CHANCE_MULT`), a recovery chance bonus, and 50% less supplies to
+recover (`SUPPLIES_TO_RECOVER_MULT`). On a hull with Rugged Construction built in, no phantom is placed and the node's
+effects stack on the real hull mod.
+
+### Terrible Balance
+
+`WEAPON_DAMAGE_AND_RATE_OF_FIRE_PERCENT_PER_NEARBY_ALLY_LOST` adds a stack for each allied ship destroyed within
+1500 su, up to 5, kept until the end of combat. Strike craft and station modules don't count
+(`TerribleBalanceListener`, on `NearbyDestructionListener`).
+
+### Autoforge Escorts
+
+`AUTOFORGE_ESCORT_DRONES_FLAT` launches that many Terminator drones (`terminator_wing`, at most 8) once the ship's
+deployment burn ends, each as its own wing escorting the ship with no bay behind it. They get the ship's strikecraft
+bonuses as if launched from a bay (`CarrierLaunch`, shared with Coalition Flight Doctrine), and their wings are left
+out of the fleet's deployment records, so a lost drone isn't a lost ship. A lost drone is rebuilt after 60 seconds, and
+the drones are removed when the ship is destroyed or leaves (`AutoforgeEscortsListener`).
+
+### Mothership Uplink
+
+`STRIKECRAFT_SHARE_OF_CARRIER_WEAPON_BONUSES_PERCENT` gives each strikecraft at launch that share of the carrier's
+net percent bonus to ballistic, energy, missile and beam damage and to ballistic, energy and missile rate of fire,
+stat by stat, when it is positive. Multipliers aren't shared, and later changes to the carrier don't reach strikecraft
+already out (`MothershipUplink`).
+
+### Sentry Reserve Racks and Defender Flare Bays
+
+`MISSILE_RESERVE_RELOAD_PERCENT` refills a missile weapon with that share of its max ammo, at least one, the first
+time it runs empty in a battle; system and decorative weapons are skipped (`ReserveRacksListener`).
+
+`AUTO_FLARES_PER_BURST_FLAT` fires that many `flarelauncher1` flares (at most 20) behind the ship when an enemy guided
+missile within 1000 su targets it, then waits 10 seconds. Nothing fires while the ship is phased (`FlareBaysListener`).
+
+### Feed the Forges
+
+`POST_BATTLE_SUPPLIES_PERCENT_OF_DEFEATED_DEPLOYMENT_POINTS` sums over the player fleet's unmothballed ships and adds
+that share of the defeated enemy deployment points to a won battle's loot as supplies, the fraction rolled as a chance
+of one more (`ForgeSupplies`, from `ItemLootListener`).
+
 ### EMP damage
 
 Vanilla has no stat for EMP damage dealt, so `EmpDamageListener` (`weapon`) rescales the EMP of each hit on a ship.
@@ -831,7 +873,8 @@ and opens on `anchorFound` once any of its anchors reaches the player (`AnchorFi
 Threat battles add one volume anchor to their loot once per save (`GateRewardAnchors`). Omega opens on the first won
 fight against an Omega fleet (`FactionEncounterGate`) or once an Omega anchor reaches the player's cargo
 (`OmegaAnchorAcquisition`), such as the one the shielded cache at Alpha Site holds while the tree is on
-(`AlphaSiteOmegaCache`). NPC anchors ignore all of this, and open wormholes stay open.
+(`AlphaSiteOmegaCache`). Domain Drones opens on the first fight against a derelict fleet, won or not
+(`FactionEncounterGate`). NPC anchors ignore all of this, and open wormholes stay open.
 
 An anchor with `guaranteed_drop` in `wormhole_anchors.csv` drops from every won battle that defeats one of its
 factions instead of rolling its chance (`FactionFleetDrops`); the Shrouded and Omega anchors do this for Dweller and

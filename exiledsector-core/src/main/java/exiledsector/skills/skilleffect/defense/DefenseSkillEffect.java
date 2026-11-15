@@ -142,6 +142,7 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
         }
     },
     DMOD_EFFECT_MULT_PER_DMOD(new PerDModMultEffect(SkillEffectSupport::applyDModEffectMult, "stat.negativeEffectsFromDModsPerDMod", true, false)),
+    DMOD_ACQUIRE_CHANCE_MULT(statEffect(MULT, dynamicMod(Stats.DMOD_ACQUIRE_PROB_MOD), "stat.dModAcquireChance", true)),
     COMBAT_DMOD_EFFECT_MULT_PER_DMOD(new PerDModMultEffect(SkillEffectSupport::applyNonLogisticsDModEffectMult,
             "stat.combatDModEffects", true, false)),
     LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD(new PerDModMultEffect(SkillEffectSupport::applyLogisticsDModEffectMult,
@@ -190,6 +191,13 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
     WEAPON_DAMAGE_TAKEN_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getWeaponDamageTakenMult), "stat.damageTakenByWeapons", true)),
     MISSILE_EJECTION_CHANCE_PERCENT(listener(MissileEjectionListener.CHANCE_PERCENT_KEY, MissileEjectionListener.class,
             MissileEjectionListener::new)),
+    AUTO_FLARES_PER_BURST_FLAT(listener(FlareBaysListener.FLARES_PER_BURST_KEY, FlareBaysListener.class, FlareBaysListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", FlareBaysListener.flaresPerBurst(magnitude)).arg("range", FlareBaysListener.DETECTION_RANGE)
+                    .arg("seconds", FlareBaysListener.COOLDOWN_SECONDS).styled();
+        }
+    },
     NANOFORGE_HULL_REGEN_PERCENT(listener(NanoforgeMendingListener.REGEN_PERCENT_KEY, NanoforgeMendingListener.class,
             NanoforgeMendingListener::new)) {
         @Override

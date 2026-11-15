@@ -171,6 +171,7 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
             BallisticRangefinderListener.class, BallisticRangefinderListener::new)),
     MISSILE_AUTOLOADER_CAPACITY_PERCENT(listener(MissileAutoloaderListener.CAPACITY_PERCENT_KEY,
             MissileAutoloaderListener.class, MissileAutoloaderListener::new)),
+    MISSILE_RESERVE_RELOAD_PERCENT(listener(ReserveRacksListener.RELOAD_PERCENT_KEY, ReserveRacksListener.class, ReserveRacksListener::new)),
     MISSILE_AUTOLOADER_COOLDOWN_FLAT(listener(MissileAutoloaderListener.COOLDOWN_SECONDS_KEY,
             MissileAutoloaderListener.class, MissileAutoloaderListener::new)) {
         @Override

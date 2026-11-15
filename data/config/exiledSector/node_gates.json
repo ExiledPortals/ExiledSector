@@ -94,5 +94,13 @@
 				"type": "taniaLastStriveCompleted"
 			}
 		]
+	},
+	"gate_derelicts_fought": {
+		"anchors": "withheld",
+		"unlockConditions": [
+			{
+				"type": "derelictsFought"
+			}
+		]
 	}
 }

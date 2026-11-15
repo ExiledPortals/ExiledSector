@@ -143,7 +143,7 @@ class WingScrambleListenerTest {
         verify(fleetManager, never()).spawnShipOrWing(anyString(), any(Vector2f.class), anyFloat());
         verify(fleetManager, never()).spawnShipOrWing(anyString(), any(Vector2f.class), anyFloat(), anyFloat());
         verify(wingMember).setOwner(0);
-        verify(wingMember.getCrewComposition()).setCrew(WingScrambleListener.LAUNCHED_WING_CREW);
+        verify(wingMember.getCrewComposition()).setCrew(CarrierLaunch.LAUNCHED_WING_CREW);
         verify(wingMember.getRepairTracker()).setCR(0.7f);
         InOrder specSize = inOrder(gunPlatformSpec, fleetManager);
         specSize.verify(gunPlatformSpec).setNumFighters(1);
@@ -456,8 +456,7 @@ class WingScrambleListenerTest {
         when(fighter.getMutableStats()).thenReturn(fighterStats);
         when(fighter.getHullSize()).thenReturn(ShipAPI.HullSize.FIGHTER);
 
-        WingScrambleListener.applyFighterSkillEffects(captainSkills, SkillEffectType.SHIP_FIGHTERS, WingScrambleListener.SHIP_FIGHTERS_EFFECT_INFIX,
-                fighter);
+        CarrierLaunch.applyFighterSkillEffects(captainSkills, SkillEffectType.SHIP_FIGHTERS, CarrierLaunch.SHIP_FIGHTERS_EFFECT_INFIX, fighter);
 
         verify(shipFightersEffect).apply(fighterStats, ShipAPI.HullSize.FIGHTER, "carrier_group_ship_fighters_1", 2f);
         verify(shipOnlyEffect, never()).apply(any(), any(), anyString(), anyFloat());
