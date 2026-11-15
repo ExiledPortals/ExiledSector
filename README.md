@@ -42,7 +42,7 @@ Anchors start dropping once you have the Janus Device (or earlier if you change 
 
 </details>
 
-Every major faction has its own volume, with nodes that suit how that faction fights. The Hegemony gives you more armor, Tri-Tachyon gives you flux and sends you an invoice, and the Luddic Path would like your ship to explode, preferably next to someone else's. Even the Domain's derelict war drones have a volume, opened the first time you fight them. Your crew strips their wrecks for escort drones, flares that fire themselves and frames that refuse to fall apart.
+Every major faction has its own volume, with nodes that suit how that faction fights. The Hegemony gives you more armor, Tri-Tachyon gives you flux and sends you an invoice, and the Luddic Path would like your ship to explode, preferably next to someone else's. Even the Domain's derelict war drones have a volume, opened once you beat one of their survey motherships. Your crew strips their wrecks for escort drones, flares that fire themselves and frames that refuse to fall apart.
 
 <details>
 <summary>Unique faction volume nodes</summary>

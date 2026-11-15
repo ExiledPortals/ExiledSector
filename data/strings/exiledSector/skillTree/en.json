@@ -80,7 +80,7 @@
     "socketable.anchor.gate.gate_blood_trail_defeated": "<bad>Inert</bad> until The Blood Trail of Ramirez is defeated.",
     "socketable.anchor.gate.gate_frost_fire_defeated": "<bad>Inert</bad> until The Frost Fire is defeated.",
     "socketable.anchor.gate.gate_last_strive_completed": "<bad>Inert</bad> until The Last Strive is completed.",
-    "socketable.anchor.gate.gate_derelicts_fought": "<bad>Inert</bad> until your fleet has fought a derelict drone fleet.",
+    "socketable.anchor.gate.gate_mothership_defeated": "<bad>Inert</bad> until your fleet has beaten a Domain-era survey mothership.",
     "socketable.anchor.closeConfirm.one": "Closing this wormhole releases {count} node and returns {op} OP. Do it again to confirm.",
     "socketable.anchor.closeConfirm.other": "Closing this wormhole releases {count} nodes and returns {op} OP. Do it again to confirm.",
     "socketable.anchor.rewardGranted": "Your crew pull a {name} from the wreckage.",

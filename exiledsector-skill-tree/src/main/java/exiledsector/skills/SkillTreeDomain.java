@@ -89,6 +89,7 @@ import exiledsector.skills.npc.NpcLevelCaps;
 import exiledsector.skills.radius.NodeRadii;
 import exiledsector.skills.tags.VolumeToggles;
 import exiledsector.skills.unlock.FactionEncounterGate;
+import exiledsector.skills.unlock.MothershipGate;
 import exiledsector.skills.unlock.NodeGates;
 import exiledsector.skills.unlock.OmegaAnchorAcquisition;
 import exiledsector.skills.unlock.UnlockConditionOverrides;
@@ -252,6 +253,7 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
     public void afterLootListeners() {
         SectorAPI sector = Global.getSector();
         sector.addTransientListener(new FactionEncounterGate.BattleListener());
+        sector.addTransientListener(new MothershipGate.BattleListener());
         sector.getListenerManager().addListener(new AlphaSiteOmegaCache(), true);
         if (LostSectorCompat.isModEnabled()) {
             sector.getListenerManager().addListener(new LostSectorUnlocks.LocationListener(), true);

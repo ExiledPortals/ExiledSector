@@ -95,11 +95,11 @@
 			}
 		]
 	},
-	"gate_derelicts_fought": {
+	"gate_mothership_defeated": {
 		"anchors": "withheld",
 		"unlockConditions": [
 			{
-				"type": "derelictsFought"
+				"type": "mothershipDefeated"
 			}
 		]
 	}

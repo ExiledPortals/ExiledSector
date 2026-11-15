@@ -33,7 +33,7 @@ public final class SkillTags {
 
     public static final List<String> GATE = List.of("gate_singularity_defeated", "gate_pascal_visited", "gate_existential_threat_defeated",
             "gate_ancient_prototype_found", "gate_frozen_heart_visited", "gate_threat_fought", "gate_remnant_fought", "gate_dweller_fought", "gate_omega_found",
-            "gate_blood_trail_defeated", "gate_frost_fire_defeated", "gate_last_strive_completed", "gate_derelicts_fought");
+            "gate_blood_trail_defeated", "gate_frost_fire_defeated", "gate_last_strive_completed", "gate_mothership_defeated");
 
     public static final List<String> RULE = List.of("logistics_cap");
 

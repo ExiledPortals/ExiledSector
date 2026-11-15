@@ -456,11 +456,11 @@ the chance to gain d-mods each 50% less (`DMOD_ACQUIRE_CHANCE_MULT`), a recovery
 recover (`SUPPLIES_TO_RECOVER_MULT`). On a hull with Rugged Construction built in, no phantom is placed and the node's
 effects stack on the real hull mod.
 
-### Terrible Balance
+### Retaliatory Routines
 
 `WEAPON_DAMAGE_AND_RATE_OF_FIRE_PERCENT_PER_NEARBY_ALLY_LOST` adds a stack for each allied ship destroyed within
 1500 su, up to 5, kept until the end of combat. Strike craft and station modules don't count
-(`TerribleBalanceListener`, on `NearbyDestructionListener`).
+(`RetaliatoryRoutinesListener`, on `NearbyDestructionListener`).
 
 ### Autoforge Escorts
 
@@ -873,8 +873,8 @@ and opens on `anchorFound` once any of its anchors reaches the player (`AnchorFi
 Threat battles add one volume anchor to their loot once per save (`GateRewardAnchors`). Omega opens on the first won
 fight against an Omega fleet (`FactionEncounterGate`) or once an Omega anchor reaches the player's cargo
 (`OmegaAnchorAcquisition`), such as the one the shielded cache at Alpha Site holds while the tree is on
-(`AlphaSiteOmegaCache`). Domain Drones opens on the first fight against a derelict fleet, won or not
-(`FactionEncounterGate`). NPC anchors ignore all of this, and open wormholes stay open.
+(`AlphaSiteOmegaCache`). Domain Drones opens on the first won battle that beats a Domain-era survey mothership
+(`MothershipGate`). NPC anchors ignore all of this, and open wormholes stay open.
 
 An anchor with `guaranteed_drop` in `wormhole_anchors.csv` drops from every won battle that defeats one of its
 factions instead of rolling its chance (`FactionFleetDrops`); the Shrouded and Omega anchors do this for Dweller and

@@ -8392,7 +8392,7 @@
 		{
 			"id": "strikecraft_armor",
 			"name": "Strikecraft Armor",
-			"icon": "",
+			"icon": "graphics/icons/loadout_design_derelict_shifted_shifted.png",
 			"effects": [
 				{
 					"effect": "FIGHTER_ARMOR_PERCENT",
@@ -8495,7 +8495,7 @@
 		{
 			"id": "rugged_drone_frame",
 			"name": "Rugged Drone Frame",
-			"icon": "",
+			"icon": "graphics/icons/analyze_entity_shifted_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8552,7 +8552,7 @@
 		{
 			"id": "countless_cycles",
 			"name": "Countless Cycles",
-			"icon": "",
+			"icon": "graphics/icons/derelict_bounty_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8576,9 +8576,9 @@
 			]
 		},
 		{
-			"id": "terrible_balance",
-			"name": "Terrible Balance",
-			"icon": "",
+			"id": "retaliatory_routines",
+			"name": "Retaliatory Routines",
+			"icon": "graphics/icons/data_retrieval_uw_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8605,7 +8605,7 @@
 		{
 			"id": "autoforge_escorts",
 			"name": "Autoforge Escorts",
-			"icon": "",
+			"icon": "graphics/icons/derelict_contingent_shifted.png",
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -8637,7 +8637,7 @@
 		{
 			"id": "feed_the_forges",
 			"name": "Feed the Forges",
-			"icon": "",
+			"icon": "graphics/icons/commodity_production_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8665,7 +8665,7 @@
 		{
 			"id": "sentry_reserve_racks",
 			"name": "Sentry Reserve Racks",
-			"icon": "",
+			"icon": "graphics/icons/ordnance_expert_circular.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8696,7 +8696,7 @@
 		{
 			"id": "defender_flare_bays",
 			"name": "Defender Flare Bays",
-			"icon": "",
+			"icon": "graphics/icons/distress_call_shifted_shifted_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8722,7 +8722,7 @@
 		{
 			"id": "mothership_uplink",
 			"name": "Mothership Uplink",
-			"icon": "",
+			"icon": "graphics/icons/auxiliary_support_derelict_rotated_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{

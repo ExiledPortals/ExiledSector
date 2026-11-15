@@ -12587,6 +12587,43 @@ integrated|restriction_breeds_creativity|CRUISER|2	0	<builtIn>2%</builtIn> less 
 integrated|restriction_breeds_creativity|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|restriction_breeds_creativity|CAPITAL_SHIP|1	1	<bad>2%</bad> less armor damage taken for each d-mod, up to a maximum of <hl>5</hl> d-mods.
 integrated|restriction_breeds_creativity|CAPITAL_SHIP|2	0	<builtIn>2%</builtIn> less hull damage taken for each d-mod, up to a maximum of <hl>5</hl> d-mods.
+flavour|retaliatory_routines	0	The combat logic pulled from a Berserker's core treats every lost ally as a figure in a sum of attrition, and fights harder to keep that sum in its favor. The crew learns to wire the same logic into a ship's fire control.
+flavourAutomated|retaliatory_routines	0	The ship's core records the attrition logic pulled from a Berserker's core. Each lost ally was a figure in a sum, and the Berserker's fire control worked harder to keep the sum in its favor.
+type|retaliatory_routines|null|0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+type|retaliatory_routines|FRIGATE|0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+type|retaliatory_routines|DESTROYER|0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+type|retaliatory_routines|CRUISER|0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+type|retaliatory_routines|CAPITAL_SHIP|0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+integrable|retaliatory_routines|null|0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+integrable|retaliatory_routines|null|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|retaliatory_routines|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|retaliatory_routines|null|3	0	Instead grants: Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <builtIn>7%</builtIn> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+integrable|retaliatory_routines|FRIGATE|0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+integrable|retaliatory_routines|FRIGATE|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|retaliatory_routines|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|retaliatory_routines|FRIGATE|3	0	Instead grants: Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <builtIn>7%</builtIn> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+integrable|retaliatory_routines|DESTROYER|0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+integrable|retaliatory_routines|DESTROYER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|retaliatory_routines|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|retaliatory_routines|DESTROYER|3	0	Instead grants: Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <builtIn>7%</builtIn> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+integrable|retaliatory_routines|CRUISER|0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+integrable|retaliatory_routines|CRUISER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|retaliatory_routines|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|retaliatory_routines|CRUISER|3	0	Instead grants: Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <builtIn>7%</builtIn> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+integrable|retaliatory_routines|CAPITAL_SHIP|0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+integrable|retaliatory_routines|CAPITAL_SHIP|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|retaliatory_routines|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|retaliatory_routines|CAPITAL_SHIP|3	0	Instead grants: Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <builtIn>7%</builtIn> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+integrated|retaliatory_routines|null|0	0	<builtIn>Integrated</builtIn>
+integrated|retaliatory_routines|null|1	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <builtIn>7%</builtIn> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+integrated|retaliatory_routines|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|retaliatory_routines|FRIGATE|1	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <builtIn>7%</builtIn> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+integrated|retaliatory_routines|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|retaliatory_routines|DESTROYER|1	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <builtIn>7%</builtIn> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+integrated|retaliatory_routines|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|retaliatory_routines|CRUISER|1	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <builtIn>7%</builtIn> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
+integrated|retaliatory_routines|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|retaliatory_routines|CAPITAL_SHIP|1	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <builtIn>7%</builtIn> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
 type|rift_explosion_damage|null|0	0	<good>10%</good> increased rift explosion damage.
 type|rift_explosion_damage|null|1	0	Strikecraft launched from this ship have <good>10%</good> increased rift explosion damage.
 type|rift_explosion_damage|FRIGATE|0	0	<good>10%</good> increased rift explosion damage.
@@ -14378,43 +14415,6 @@ type|temporary_maneuverability|CRUISER|0	0	<good>50%</good> increased maneuverab
 type|temporary_maneuverability|CRUISER|1	0	These effects only last for the first <hl>90</hl> seconds after the ship is deployed.
 type|temporary_maneuverability|CAPITAL_SHIP|0	0	<good>50%</good> increased maneuverability.
 type|temporary_maneuverability|CAPITAL_SHIP|1	0	These effects only last for the first <hl>90</hl> seconds after the ship is deployed.
-flavour|terrible_balance	0	The combat logic pulled from a Berserker's core treats every lost ally as a figure in a sum of attrition, and fights harder to keep that sum in its favor. The crew learns to wire the same logic into a ship's fire control.
-flavourAutomated|terrible_balance	0	The ship's core records the attrition logic pulled from a Berserker's core. Each lost ally was a figure in a sum, and the Berserker's fire control worked harder to keep the sum in its favor.
-type|terrible_balance|null|0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
-type|terrible_balance|FRIGATE|0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
-type|terrible_balance|DESTROYER|0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
-type|terrible_balance|CRUISER|0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
-type|terrible_balance|CAPITAL_SHIP|0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
-integrable|terrible_balance|null|0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
-integrable|terrible_balance|null|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
-integrable|terrible_balance|null|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|terrible_balance|null|3	0	Instead grants: Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <builtIn>7%</builtIn> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
-integrable|terrible_balance|FRIGATE|0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
-integrable|terrible_balance|FRIGATE|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
-integrable|terrible_balance|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|terrible_balance|FRIGATE|3	0	Instead grants: Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <builtIn>7%</builtIn> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
-integrable|terrible_balance|DESTROYER|0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
-integrable|terrible_balance|DESTROYER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
-integrable|terrible_balance|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|terrible_balance|DESTROYER|3	0	Instead grants: Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <builtIn>7%</builtIn> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
-integrable|terrible_balance|CRUISER|0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
-integrable|terrible_balance|CRUISER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
-integrable|terrible_balance|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|terrible_balance|CRUISER|3	0	Instead grants: Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <builtIn>7%</builtIn> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
-integrable|terrible_balance|CAPITAL_SHIP|0	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <good>5%</good> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
-integrable|terrible_balance|CAPITAL_SHIP|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
-integrable|terrible_balance|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|terrible_balance|CAPITAL_SHIP|3	0	Instead grants: Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <builtIn>7%</builtIn> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
-integrated|terrible_balance|null|0	0	<builtIn>Integrated</builtIn>
-integrated|terrible_balance|null|1	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <builtIn>7%</builtIn> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
-integrated|terrible_balance|FRIGATE|0	0	<builtIn>Integrated</builtIn>
-integrated|terrible_balance|FRIGATE|1	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <builtIn>7%</builtIn> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
-integrated|terrible_balance|DESTROYER|0	0	<builtIn>Integrated</builtIn>
-integrated|terrible_balance|DESTROYER|1	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <builtIn>7%</builtIn> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
-integrated|terrible_balance|CRUISER|0	0	<builtIn>Integrated</builtIn>
-integrated|terrible_balance|CRUISER|1	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <builtIn>7%</builtIn> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
-integrated|terrible_balance|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
-integrated|terrible_balance|CAPITAL_SHIP|1	0	Whenever an allied ship is destroyed within <hl>1500</hl> su, this ship gains <builtIn>7%</builtIn> increased weapon damage and rate of fire until the end of combat, up to a maximum of <hl>5</hl> allied ships.
 flavour|terrifying_presence	0	Sensor logs from fights with Remnant fleets show how the drones flood the spectrum with false returns, and rebuilding the ship's ECM suite around those recordings feeds enemy fire control a target that is never quite where it seems.
 type|terrifying_presence|null|0	0	Enemy ships within <hl>1000</hl> su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
 type|terrifying_presence|FRIGATE|0	0	Enemy ships within <hl>1000</hl> su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.

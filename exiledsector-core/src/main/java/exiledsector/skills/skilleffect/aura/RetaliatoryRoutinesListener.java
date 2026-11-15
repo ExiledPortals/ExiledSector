@@ -11,7 +11,7 @@ import java.util.List;
 
 import static exiledsector.skills.skilleffect.ScaledBonus.percent;
 
-final class TerribleBalanceListener extends NearbyDestructionListener {
+final class RetaliatoryRoutinesListener extends NearbyDestructionListener {
 
     static final String PERCENT_PER_STACK_KEY = "exiledSector_terribleBalancePercentPerStack";
     static final float RANGE = 1500f;
@@ -24,7 +24,7 @@ final class TerribleBalanceListener extends NearbyDestructionListener {
     private final ScaledBonus.Tracker balanceBonus = BALANCE_BONUS.tracker();
     private int stacks;
 
-    TerribleBalanceListener(ShipAPI ownerShip) {
+    RetaliatoryRoutinesListener(ShipAPI ownerShip) {
         super(ownerShip, destroyed -> isAlliedShip(ownerShip, destroyed));
     }
 

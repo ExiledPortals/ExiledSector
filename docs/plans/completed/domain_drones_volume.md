@@ -17,10 +17,10 @@ Status: planned 2026-11-14, built 2026-11-15 on branch `domain-drones-volume`. E
 
 - Region tag `domain_drones`, added to `SkillTags.VOLUME` and the editor's `REGION_TAGS`.
 - The mothership is an `image` decoration at about (24000, -1500), using the vanilla sprite, tagged `domain_drones`. That is about 7k from the pirate star (18524, 4228) and 7.6k from the Stargazer star (29054, -7476), clear of the [REDACTED] and Omega volumes.
-- Gate `gate_derelicts_fought`: opens on the first battle against a derelict fleet, a new `FactionEncounterGate` entry like Remnant (`$exiledSector_foughtDerelicts`, no win needed), with withheld anchors. Derelict fleets turn up early, so the volume opens early in a playthrough.
+- Gate `gate_mothership_defeated`: opens on the first won battle that beats a Domain-era survey mothership (`MothershipGate`, `$exiledSector_defeatedMothership`), with withheld anchors.
 - `derelict,domain_drones` row in `npc_faction_volumes.csv`, so drone fleets carry the volume.
 - `wormhole_anchor_domain_drones` row in `wormhole_anchors.csv`, crest faction `derelict`, dropped by derelict fleets.
-- Layout follows the Domain Explorarium crest (approved 2026-11-15), 28 nodes. Three Affinity nodes (north, east, west) and the wormhole exit (south) sit on a small hub ring of radius 0.3R around the mothership, joined by curved connectors. Each hub starts two wheels of two lead-ins and a notable. The straight wheel runs out along the hub's direction, lead-ins at 0.62R and 1.0R, notable at 1.45R on a point of the diamond. The curved wheel bends clockwise, lead-ins at (0.58R, +22°) and (0.82R, +36°), notable on the outer circle at (1.0R, +45°). Diamond points: north Terrible Balance, east Sentry Reserve Racks, south Defender Flare Bays, west Rugged Drone Frame. Circle: northeast Mothership Uplink, southeast Autoforge Escorts, southwest Feed the Forges, northwest Countless Cycles. R is about 2000, picked to clear the neighbouring volumes. The concave diamond outline and the outer circle are decorations only.
+- Layout follows the Domain Explorarium crest (approved 2026-11-15), 28 nodes. Three Affinity nodes (north, east, west) and the wormhole exit (south) sit on a small hub ring of radius 0.3R around the mothership, joined by curved connectors. Each hub starts two wheels of two lead-ins and a notable. The straight wheel runs out along the hub's direction, lead-ins at 0.62R and 1.0R, notable at 1.45R on a point of the diamond. The curved wheel bends clockwise, lead-ins at (0.58R, +22°) and (0.82R, +36°), notable on the outer circle at (1.0R, +45°). Diamond points: north Retaliatory Routines, east Sentry Reserve Racks, south Defender Flare Bays, west Rugged Drone Frame. Circle: northeast Mothership Uplink, southeast Autoforge Escorts, southwest Feed the Forges, northwest Countless Cycles. R is about 2000, picked to clear the neighbouring volumes. The concave diamond outline and the outer circle are decorations only.
 
 ## Notables
 
@@ -34,7 +34,7 @@ Grants Rugged Construction as a phantom hull mod: d-mod effects reduced, far lik
 
 -2% deployment points per d-mod, up to 5 d-mods. A new `DEPLOYMENT_POINTS_PERCENT_PER_DMOD` effect on `PerDModPercentEffect`, in the logistics part. Lead-ins: Reduced Monthly Supplies.
 
-### Terrible Balance
+### Retaliatory Routines
 
 When an allied ship within 1500 su is destroyed, this ship gains +5% weapon damage and rate of fire for the rest of the battle, up to 5 stacks. Built on `NearbyDestructionListener` filtered to allies, in the aura part. Unlike Blood in the Water it counts only allied losses and lasts the whole battle. Lead-ins: All Weapon Damage.
 
@@ -60,8 +60,8 @@ The ship's strikecraft gain X% of the ship's own percent bonuses to weapon damag
 
 ## Steps
 
-1. Done: region tag (`SkillTags`), gate (`FactionEncounterGate.DERELICTS`, `node_gates.json`), faction volume row and anchor row. The anchor icon is still the threat anchor's placeholder (TODO in `WormholeAnchorDataTest`).
-2. Done: effects and tests. Rugged Drone Frame copies Rugged Construction with `DMOD_EFFECT_MULT`, the new `DMOD_ACQUIRE_CHANCE_MULT`, `SHIP_RECOVERY_CHANCE_BONUS` and the new `SUPPLIES_TO_RECOVER_MULT`; Countless Cycles is `DEPLOYMENT_POINTS_PERCENT_PER_DMOD`; Terrible Balance `TerribleBalanceListener`; Autoforge Escorts `AutoforgeEscortsListener` with Terminator drones, sharing `CarrierLaunch` with Coalition Flight Doctrine; Feed the Forges `ForgeSupplies`; Sentry Reserve Racks `ReserveRacksListener` (a share of max ammo); Defender Flare Bays `FlareBaysListener` (flares per burst, 1000 su, 10 s); Mothership Uplink `MothershipUplink`.
+1. Done: region tag (`SkillTags`), gate (`MothershipGate`, `node_gates.json`), faction volume row and anchor row. The anchor icon is still the threat anchor's placeholder (TODO in `WormholeAnchorDataTest`).
+2. Done: effects and tests. Rugged Drone Frame copies Rugged Construction with `DMOD_EFFECT_MULT`, the new `DMOD_ACQUIRE_CHANCE_MULT`, `SHIP_RECOVERY_CHANCE_BONUS` and the new `SUPPLIES_TO_RECOVER_MULT`; Countless Cycles is `DEPLOYMENT_POINTS_PERCENT_PER_DMOD`; Retaliatory Routines `RetaliatoryRoutinesListener`; Autoforge Escorts `AutoforgeEscortsListener` with Terminator drones, sharing `CarrierLaunch` with Coalition Flight Doctrine; Feed the Forges `ForgeSupplies`; Sentry Reserve Racks `ReserveRacksListener` (a share of max ammo); Defender Flare Bays `FlareBaysListener` (flares per burst, 1000 su, 10 s); Mothership Uplink `MothershipUplink`.
 3. Done: skill types with theme tags, names and flavour (en and zh_CN), plus the Strikecraft Armor lead-in and effects for All Weapon Damage. Icons stay blank.
 4. Done: layout in `ship_skill_tree.json` (mothership image, asteroid belt on the outer circle, scattered probes and survey ships, hub ring, wheels, wormhole exit). The diamond outline was left out.
 5. Done: `docs/docs.md` sections Rugged Drone Frame through Feed the Forges, and the gate in Wormhole anchors.

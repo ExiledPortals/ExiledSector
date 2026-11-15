@@ -21,7 +21,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class TerribleBalanceTest {
+class RetaliatoryRoutinesTest {
 
     private static final int PLAYER = 0;
     private static final int ENEMY = 1;
@@ -60,7 +60,7 @@ class TerribleBalanceTest {
         ShipAPI ship = ship(0f, PLAYER);
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS);
         when(ship.getMutableStats()).thenReturn(stats);
-        when(stats.getDynamic().getValue(TerribleBalanceListener.PERCENT_PER_STACK_KEY, 0f)).thenReturn(percentPerStack);
+        when(stats.getDynamic().getValue(RetaliatoryRoutinesListener.PERCENT_PER_STACK_KEY, 0f)).thenReturn(percentPerStack);
         return ship;
     }
 
@@ -80,10 +80,10 @@ class TerribleBalanceTest {
         ShipAPI allyFighter = ship(200f, PLAYER);
         when(allyFighter.isFighter()).thenReturn(true);
         battleShips.addAll(List.of(balanced, nearAlly, farAlly, nearEnemy, allyFighter));
-        TerribleBalanceListener listener = new TerribleBalanceListener(balanced);
+        RetaliatoryRoutinesListener listener = new RetaliatoryRoutinesListener(balanced);
 
         destructionWatch.tick();
-        List.of(nearAlly, farAlly, nearEnemy, allyFighter).forEach(TerribleBalanceTest::destroy);
+        List.of(nearAlly, farAlly, nearEnemy, allyFighter).forEach(RetaliatoryRoutinesTest::destroy);
         destructionWatch.tick();
 
         assertEquals(1, listener.stacks());
@@ -95,17 +95,17 @@ class TerribleBalanceTest {
     void stacksStopAtTheMaximum() {
         ShipAPI balanced = balancedShip(5f);
         List<ShipAPI> allies = new ArrayList<>();
-        for (int i = 0; i < TerribleBalanceListener.MAX_STACKS + 2; i++) {
+        for (int i = 0; i < RetaliatoryRoutinesListener.MAX_STACKS + 2; i++) {
             allies.add(ship(100f * (i + 1), PLAYER));
         }
         battleShips.add(balanced);
         battleShips.addAll(allies);
-        TerribleBalanceListener listener = new TerribleBalanceListener(balanced);
+        RetaliatoryRoutinesListener listener = new RetaliatoryRoutinesListener(balanced);
 
         destructionWatch.tick();
-        allies.forEach(TerribleBalanceTest::destroy);
+        allies.forEach(RetaliatoryRoutinesTest::destroy);
         destructionWatch.tick();
 
-        assertEquals(TerribleBalanceListener.MAX_STACKS, listener.stacks());
+        assertEquals(RetaliatoryRoutinesListener.MAX_STACKS, listener.stacks());
     }
 }

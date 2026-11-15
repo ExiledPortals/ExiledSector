@@ -33,7 +33,7 @@ public enum UnlockConditionType {
     REMNANT_FOUGHT(ModGate.of(() -> true, sector -> FactionEncounterGate.REMNANT.isMet(sector))),
     DWELLER_FOUGHT(ModGate.of(() -> true, sector -> FactionEncounterGate.DWELLER.isMet(sector))),
     OMEGA_FOUND(ModGate.of(() -> true, sector -> FactionEncounterGate.OMEGA.isMet(sector))),
-    DERELICTS_FOUGHT(ModGate.of(() -> true, sector -> FactionEncounterGate.DERELICTS.isMet(sector)));
+    MOTHERSHIP_DEFEATED(ModGate.of(() -> true, MothershipGate::isDefeated));
 
     record ModGate(Predicate<String> modEnabled, BiPredicate<SectorAPI, String> passed) {
 
