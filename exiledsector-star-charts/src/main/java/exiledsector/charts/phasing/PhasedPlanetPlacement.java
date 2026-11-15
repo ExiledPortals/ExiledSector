@@ -21,6 +21,7 @@ public final class PhasedPlanetPlacement {
     public static final String REGION_MEMORY_KEY = "$exiledSector_phasedRegion";
     public static final String TIER_MEMORY_KEY = "$exiledSector_phasedTier";
     static final String PLANET_ID_PREFIX = "exiledSector_phased_";
+    static final String RUINS_EXPLORED_MEMORY_KEY = "$ruinsExplored";
 
     private PhasedPlanetPlacement() {
     }
@@ -38,6 +39,9 @@ public final class PhasedPlanetPlacement {
         market.setSurveyLevel(SurveyLevel.FULL);
         for (MarketConditionAPI condition : market.getConditions()) {
             condition.setSurveyed(true);
+        }
+        if (Misc.hasRuins(market)) {
+            market.getMemoryWithoutUpdate().set(RUINS_EXPLORED_MEMORY_KEY, true);
         }
         market.reapplyConditions();
         planet.addTag(PHASED_TAG);

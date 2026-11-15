@@ -11,6 +11,7 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI.SurveyLevel;
 import com.fs.starfarer.api.campaign.econ.MarketConditionAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MarketConditionSpecAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.MockSector;
 import org.junit.jupiter.api.AfterEach;
@@ -107,6 +108,27 @@ class PhasedPlanetPlacementTest {
         verify(planetMemory).set(PhasedPlanetPlacement.ORIGIN_MEMORY_KEY, "Charted Space");
         verify(planetMemory).set(PhasedPlanetPlacement.REGION_MEMORY_KEY, "frozen_fringe");
         verify(planetMemory).set(PhasedPlanetPlacement.TIER_MEMORY_KEY, 12);
+    }
+
+    @Test
+    void keptRuinsArriveAlreadyExplored() {
+        MemoryAPI marketMemory = mock(MemoryAPI.class);
+        when(market.getMemoryWithoutUpdate()).thenReturn(marketMemory);
+        when(market.hasCondition(Conditions.RUINS_WIDESPREAD)).thenReturn(true);
+
+        PhasedPlanetPlacement.place(mockSector.sector, system, star, record(null), 4000f, 0f);
+
+        verify(marketMemory).set(PhasedPlanetPlacement.RUINS_EXPLORED_MEMORY_KEY, true);
+    }
+
+    @Test
+    void aPlanetWithoutRuinsGetsNoRuinsFlag() {
+        MemoryAPI marketMemory = mock(MemoryAPI.class);
+        when(market.getMemoryWithoutUpdate()).thenReturn(marketMemory);
+
+        PhasedPlanetPlacement.place(mockSector.sector, system, star, record(null), 4000f, 0f);
+
+        verify(marketMemory, never()).set(eq(PhasedPlanetPlacement.RUINS_EXPLORED_MEMORY_KEY), any());
     }
 
     @Test
