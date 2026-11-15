@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { buildVocabulary } from '../api/vocabulary.ts';
 import { parseModifiersCsv, TAGLESS, validateModifiers } from '../pages/items/model/modifiers.ts';
 import { readRepositoryFile } from '../test/testServer.ts';
 import { ancestorsListedBeside, ancestorsOf, themeTagIssues, themeTagsFor } from './themeTags.ts';
+import { repositoryVocabulary, testVocabulary } from '../test/testVocabulary.ts';
 
-const vocabulary = buildVocabulary({
+const vocabulary = testVocabulary({
   effects: [
     { name: 'SHIELD_ARC_PERCENT', statMode: 'PERCENT', lowerIsBetter: false },
     { name: 'CARGO_PERCENT', statMode: 'PERCENT', lowerIsBetter: false },
   ],
-  tags: { theme: ['defence', 'shield', 'front_shield', 'logistics'], volume: [], requirement: [] },
+  tags: { theme: ['defence', 'shield', 'front_shield', 'logistics'] },
   themeTags: [
     { id: 'defence', parent: null, scopes: ['ship', 'star_chart'] },
     { id: 'shield', parent: 'defence', scopes: ['ship', 'star_chart'] },
@@ -17,12 +17,7 @@ const vocabulary = buildVocabulary({
     { id: 'logistics', parent: null, scopes: ['ship'] },
     { id: 'loot', parent: null, scopes: ['star_chart'] },
   ],
-  tiers: [],
-  unlockConditionTypes: [],
-  blueprintCategories: [],
   itemTypes: ['hull_item', 'star_chart'],
-  itemKinds: [],
-  itemUnlocks: [],
   chartEffects: ['CHART_ITEM_PERCENT'],
 });
 
@@ -46,15 +41,8 @@ describe('theme tags', () => {
   });
 
   it('keeps the ship-only theme list when the vocabulary file predates tag details', () => {
-    const older = buildVocabulary({
-      effects: [],
-      tags: { theme: ['flux'], volume: [], requirement: [] },
-      tiers: [],
-      unlockConditionTypes: [],
-      blueprintCategories: [],
-      itemTypes: [],
-      itemKinds: [],
-      itemUnlocks: [],
+    const older = testVocabulary({
+      tags: { theme: ['flux'] },
     });
 
     expect(themeTagsFor(older, 'ship')).toEqual(['flux']);
@@ -80,7 +68,7 @@ describe('theme tags', () => {
   });
 
   it('finds no tag issue on the shipped modifiers', () => {
-    const shippedVocabulary = buildVocabulary(JSON.parse(readRepositoryFile('tools/editor_vocabulary.json')));
+    const shippedVocabulary = repositoryVocabulary();
     const files = [
       { file: 'data/config/exiledSector/item_modifiers.csv', scope: 'ship' as const },
       { file: 'data/config/exiledSector/star_chart_modifiers.csv', scope: 'star_chart' as const },

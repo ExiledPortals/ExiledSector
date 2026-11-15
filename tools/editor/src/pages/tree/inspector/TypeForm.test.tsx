@@ -2,21 +2,17 @@ import { fireEvent, screen } from '@testing-library/react';
 import { produce } from 'immer';
 import { useState } from 'react';
 import { describe, expect, it } from 'vitest';
-import { buildVocabulary } from '../../../api/vocabulary.ts';
 import { renderWithProviders } from '../../../test/renderWithProviders.tsx';
 import type { SkillType } from '../model/types.ts';
 import { TypeForm, type TypeRecipe } from './TypeForm.tsx';
 import { DIALOG_TYPE_SECTIONS } from './typeFormSections.ts';
+import { testVocabulary } from '../../../test/testVocabulary.ts';
 
-const vocabulary = buildVocabulary({
+const vocabulary = testVocabulary({
   effects: ['HULL_PERCENT', 'SHIELD_UPKEEP_MULT', 'SHIELD_SOFT_FLUX_CONVERSION_PERCENT'].map((name) => ({ name, statMode: 'PERCENT', lowerIsBetter: false })),
-  tags: { theme: [], volume: [], requirement: [] },
   tiers: ['SMALL', 'NOTABLE'],
   unlockConditionTypes: ['blueprint'],
   blueprintCategories: ['hullmod'],
-  itemTypes: [],
-  itemKinds: [],
-  itemUnlocks: [],
 });
 
 const shieldType: SkillType = {

@@ -7,9 +7,8 @@ import { createEditorServer } from './app.ts';
 import { editorCodeFingerprint, parseWorktreeList, type Checkout } from './checkouts.ts';
 import { DescribeService, libsDir } from './describe.ts';
 import type { ProjectPaths } from './paths.ts';
+import { EDITOR_HEADERS, TEST_PORT, writeTestFile } from './testSupport.ts';
 
-const PORT = 8792;
-const EDITOR_HEADERS = { 'x-skill-tree-editor': '1', host: `localhost:${PORT}` };
 
 let tempDir: string;
 let mainRoot: string;
@@ -18,16 +17,10 @@ let paths: ProjectPaths;
 let checkouts: Checkout[];
 let app: FastifyInstance;
 
-function writeFile(root: string, relativePath: string, content: string): void {
-  const fullPath = path.join(root, relativePath);
-  fs.mkdirSync(path.dirname(fullPath), { recursive: true });
-  fs.writeFileSync(fullPath, content);
-}
-
 function makeCheckout(name: string, treeText: string): string {
   const root = path.join(tempDir, name);
-  writeFile(root, 'data/skilltrees/ship_skill_tree.json', treeText);
-  writeFile(root, 'tools/editor/src/App.tsx', 'export const app = 1;\n');
+  writeTestFile(root, 'data/skilltrees/ship_skill_tree.json', treeText);
+  writeTestFile(root, 'tools/editor/src/App.tsx', 'export const app = 1;\n');
   return root;
 }
 
@@ -35,7 +28,7 @@ beforeEach(() => {
   tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'editor-checkouts-'));
   mainRoot = makeCheckout('ExiledSector', '{"nodes":[{"id":"main"}]}');
   branchRoot = makeCheckout('ExiledSector-parallel-work', '{"nodes":[{"id":"branch"}]}');
-  writeFile(branchRoot, 'tools/editor/src/App.tsx', 'export const app = 2;\n');
+  writeTestFile(branchRoot, 'tools/editor/src/App.tsx', 'export const app = 2;\n');
   paths = { projectRoot: mainRoot, vanillaCoreDir: path.join(tempDir, 'vanilla-core') };
   checkouts = [
     { root: mainRoot, branch: 'main', main: true },
@@ -43,7 +36,7 @@ beforeEach(() => {
   ];
   app = createEditorServer({
     paths,
-    port: PORT,
+    port: TEST_PORT,
     describe: new DescribeService(paths, { javaHome: null, maven: null }, Date.now, path.join(tempDir, 'tooltip-code')),
     listCheckouts: () => checkouts,
     editorDir: path.join(mainRoot, 'tools', 'editor'),
@@ -83,12 +76,12 @@ describe('editor code fingerprint', () => {
     const editorDir = path.join(mainRoot, 'tools', 'editor');
     const before = editorCodeFingerprint(editorDir);
 
-    writeFile(mainRoot, 'tools/editor/src/App.tsx', 'export const app = 1;\r\n');
-    writeFile(mainRoot, 'tools/editor/src/App.test.tsx', 'test');
-    writeFile(mainRoot, 'tools/editor/src/test/helper.ts', 'helper');
+    writeTestFile(mainRoot, 'tools/editor/src/App.tsx', 'export const app = 1;\r\n');
+    writeTestFile(mainRoot, 'tools/editor/src/App.test.tsx', 'test');
+    writeTestFile(mainRoot, 'tools/editor/src/test/helper.ts', 'helper');
     expect(editorCodeFingerprint(editorDir)).toBe(before);
 
-    writeFile(mainRoot, 'tools/editor/server/new.ts', 'export {};');
+    writeTestFile(mainRoot, 'tools/editor/server/new.ts', 'export {};');
     expect(editorCodeFingerprint(editorDir)).not.toBe(before);
   });
 });
@@ -139,11 +132,11 @@ describe('checkout switching', () => {
   });
 
   it('builds against the main checkout libs when a worktree has none', () => {
-    writeFile(mainRoot, 'libs/starfarer.api.jar', '');
+    writeTestFile(mainRoot, 'libs/starfarer.api.jar', '');
     const worktreePaths = { ...paths, projectRoot: path.join(mainRoot, '.claude', 'worktrees', 'probe'), mainCheckoutRoot: mainRoot };
 
     expect(libsDir(worktreePaths)).toBe(path.join(mainRoot, 'libs'));
-    writeFile(worktreePaths.projectRoot, 'libs/starfarer.api.jar', '');
+    writeTestFile(worktreePaths.projectRoot, 'libs/starfarer.api.jar', '');
     expect(libsDir(worktreePaths)).toBe(path.join(worktreePaths.projectRoot, 'libs'));
   });
 });

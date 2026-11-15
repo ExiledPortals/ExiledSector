@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { buildVocabulary } from '../../../api/vocabulary.ts';
 import { parseCsvTable, serializeCsvTable } from '../../../shared/csv.ts';
 import {
   definitionWarnings,
@@ -25,13 +24,10 @@ import {
   type ItemModifier,
   type ModifierLine,
 } from './modifiers.ts';
+import { testVocabulary } from '../../../test/testVocabulary.ts';
 
-const vocabulary = buildVocabulary({
+const vocabulary = testVocabulary({
   effects: [{ name: 'HULL_MULT', statMode: 'MULT', lowerIsBetter: false }],
-  tags: { theme: [], volume: [], requirement: [] },
-  tiers: [],
-  unlockConditionTypes: [],
-  blueprintCategories: [],
   itemTypes: ['subroutine', 'hull_item', 'star_chart'],
   itemKinds: [
     { id: 'subroutine', type: 'subroutine' },

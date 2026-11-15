@@ -7,6 +7,7 @@ import { DescribeService } from './describe.ts';
 import type { ProjectPaths } from './paths.ts';
 import { readSceneryData } from './routes/scenery.ts';
 import { parseStarsectorJson, strictJsonText } from './starsectorJson.ts';
+import { writeTestFile } from './testSupport.ts';
 
 const VANILLA_PLANETS = `{
 \t"star_yellow":{
@@ -27,12 +28,6 @@ const VANILLA_PLANETS = `{
 let projectRoot: string;
 let paths: ProjectPaths;
 
-function writeFile(root: string, relativePath: string, content: string): void {
-  const fullPath = path.join(root, relativePath);
-  fs.mkdirSync(path.dirname(fullPath), { recursive: true });
-  fs.writeFileSync(fullPath, content);
-}
-
 beforeEach(() => {
   projectRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'editor-scenery-'));
   paths = { projectRoot, vanillaCoreDir: path.join(projectRoot, 'vanilla-core') };
@@ -51,10 +46,10 @@ describe('Starsector JSON', () => {
 
 describe('scenery data', () => {
   it('reads the star specs from the vanilla planets file, lets the project override them and resolves the scenery sprites', () => {
-    writeFile(paths.vanillaCoreDir, 'data/config/planets.json', VANILLA_PLANETS);
-    writeFile(paths.vanillaCoreDir, 'data/config/settings.json', '{"graphics":{"planets":{\n"atmosphere2":"graphics/planets/atmosphere2.png", # used\n},"terrain":{"aurora":"graphics/planets/aurorae.png",},},"speed":1f,}');
-    writeFile(projectRoot, 'data/config/planets.json', '{"black_hole":{"rotation":5}}');
-    writeFile(projectRoot, 'data/config/settings.json', '{"graphics":{"terrain":{"aurora":"graphics/planets/custom_aurora.png"}}}');
+    writeTestFile(paths.vanillaCoreDir, 'data/config/planets.json', VANILLA_PLANETS);
+    writeTestFile(paths.vanillaCoreDir, 'data/config/settings.json', '{"graphics":{"planets":{\n"atmosphere2":"graphics/planets/atmosphere2.png", # used\n},"terrain":{"aurora":"graphics/planets/aurorae.png",},},"speed":1f,}');
+    writeTestFile(projectRoot, 'data/config/planets.json', '{"black_hole":{"rotation":5}}');
+    writeTestFile(projectRoot, 'data/config/settings.json', '{"graphics":{"terrain":{"aurora":"graphics/planets/custom_aurora.png"}}}');
 
     const data = readSceneryData(paths);
     expect(Object.keys(data.planetSpecs).sort()).toEqual(['black_hole', 'star_yellow']);
@@ -78,7 +73,7 @@ describe('scenery data', () => {
     expect(response.statusCode).toBe(200);
     expect(response.json()).toEqual({ ok: true, planetSpecs: {}, sprites: { atmosphere: 'graphics/planets/atmosphere2.png', aurora: 'graphics/planets/aurorae.png' } });
 
-    writeFile(paths.vanillaCoreDir, 'data/config/planets.json', '{ broken');
+    writeTestFile(paths.vanillaCoreDir, 'data/config/planets.json', '{ broken');
     const broken = await app.inject({ method: 'GET', url: '/api/scenery' });
     expect(broken.statusCode).toBe(500);
     expect(broken.json().ok).toBe(false);

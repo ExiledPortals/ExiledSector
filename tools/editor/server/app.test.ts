@@ -17,9 +17,8 @@ import {
   removeOtherSnapshots,
 } from './describe.ts';
 import type { ProjectPaths } from './paths.ts';
+import { EDITOR_HEADERS, TEST_PORT, writeTestFile } from './testSupport.ts';
 
-const PORT = 8792;
-const EDITOR_HEADERS = { 'x-skill-tree-editor': '1', host: `localhost:${PORT}` };
 const TYPES_TEXT = '{\n\t"skillTypes": [\n\t\t{ "id": "a" }\n\t]\n}\n';
 const TREE_TEXT = '{"nodes":[{"id":"n1"}]}\r\n';
 
@@ -28,10 +27,7 @@ let paths: ProjectPaths;
 let app: FastifyInstance;
 
 function writeProjectFile(relativePath: string, content: string | Buffer): string {
-  const fullPath = path.join(projectRoot, relativePath);
-  fs.mkdirSync(path.dirname(fullPath), { recursive: true });
-  fs.writeFileSync(fullPath, content);
-  return fullPath;
+  return writeTestFile(projectRoot, relativePath, content);
 }
 
 function writePng(relativePath: string, width: number, height: number, rgba: [number, number, number, number]): string {
@@ -65,7 +61,7 @@ beforeEach(() => {
   writeProjectFile('data/skilltrees/ship_skill_tree.json', TREE_TEXT);
   writeProjectFile('data/config/exiledSector/subroutines.csv', 'id,name\r\nx,X\r\n');
   writeProjectFile('tools/editor_vocabulary.json', '{"effects":[]}');
-  app = createEditorServer({ paths, port: PORT, describe: new DescribeService(paths, { javaHome: null, maven: null }, Date.now, path.join(projectRoot, 'tooltip-code')) });
+  app = createEditorServer({ paths, port: TEST_PORT, describe: new DescribeService(paths, { javaHome: null, maven: null }, Date.now, path.join(projectRoot, 'tooltip-code')) });
 });
 
 afterEach(async () => {
@@ -76,7 +72,7 @@ afterEach(async () => {
 describe('editor request check', () => {
   it('refuses changes without the editor header, from another host or from a foreign origin', async () => {
     const payload = { files: {} };
-    expect((await app.inject({ method: 'POST', url: '/api/files', payload, headers: { host: `localhost:${PORT}` } })).statusCode).toBe(403);
+    expect((await app.inject({ method: 'POST', url: '/api/files', payload, headers: { host: `localhost:${TEST_PORT}` } })).statusCode).toBe(403);
     expect((await app.inject({ method: 'POST', url: '/api/files', payload, headers: { ...EDITOR_HEADERS, host: 'evil:80' } })).statusCode).toBe(403);
     const foreign = await app.inject({ method: 'POST', url: '/api/files', payload, headers: { ...EDITOR_HEADERS, origin: 'http://evil.test' } });
     expect(foreign.statusCode).toBe(403);

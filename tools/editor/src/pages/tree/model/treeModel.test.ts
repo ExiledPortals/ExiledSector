@@ -1,6 +1,5 @@
 import { produce } from 'immer';
 import { describe, expect, it } from 'vitest';
-import { buildVocabulary } from '../../../api/vocabulary.ts';
 import {
   connectNodes,
   curveKey,
@@ -32,18 +31,16 @@ import { nameSlug, nodeById, nodeIdStem, type SkillType, type TreeDocument, type
 import { validateTree } from './validation.ts';
 import { renameVolume, volumeIdProblem, volumeUseCount } from './volumes.ts';
 import { ATLAS_TREE_KIND } from '../treeKinds.ts';
+import { testVocabulary, type TestVocabularyOverrides } from '../../../test/testVocabulary.ts';
 
-const vocabularyFile = {
+const vocabularyFields: TestVocabularyOverrides = {
   effects: [{ name: 'HULL_PERCENT', statMode: 'PERCENT', lowerIsBetter: false }],
   tags: { theme: ['armor'], volume: ['north', 'south'], requirement: ['req_civilian_hull'] },
   tiers: ['SMALL', 'NOTABLE', 'KEYSTONE', 'WORMHOLE', 'WORMHOLE_EXIT', 'ROOT', 'SOCKET'],
   unlockConditionTypes: ['blueprint'],
   blueprintCategories: ['hullmod'],
-  itemTypes: [],
-  itemKinds: [],
-  itemUnlocks: [],
 };
-const vocabulary = buildVocabulary(vocabularyFile);
+const vocabulary = testVocabulary(vocabularyFields);
 
 function node(id: string, x: number, y: number, connectedTo: string[] = [], extra: Partial<TreeNode> = {}): TreeNode {
   return { id, type: 'small', connectedTo, x, y, tags: ['north'], ...extra };
@@ -243,9 +240,9 @@ describe('validation and tags', () => {
   });
 
   it('takes atlas type tags from the star chart theme tags and flags a tag beside its own ancestor', () => {
-    const taggedVocabulary = buildVocabulary({
-      ...vocabularyFile,
-      tags: { ...vocabularyFile.tags, theme: ['armor', 'defence', 'logistics'] },
+    const taggedVocabulary = testVocabulary({
+      ...vocabularyFields,
+      tags: { ...vocabularyFields.tags, theme: ['armor', 'defence', 'logistics'] },
       themeTags: [
         { id: 'armor', parent: 'defence', scopes: ['ship', 'star_chart'] },
         { id: 'defence', parent: null, scopes: ['ship', 'star_chart'] },
@@ -303,7 +300,7 @@ describe('validation and tags', () => {
 
   it('reads the parameterless unlock condition list from the vocabulary and tolerates an older file without it', () => {
     expect(vocabulary.parameterlessUnlockConditionTypes).toEqual([]);
-    const withGates = buildVocabulary({ ...vocabularyFile, parameterlessUnlockConditionTypes: ['ratPlayerExoship'] });
+    const withGates = testVocabulary({ ...vocabularyFields, parameterlessUnlockConditionTypes: ['ratPlayerExoship'] });
     expect(withGates.parameterlessUnlockConditionTypes).toEqual(['ratPlayerExoship']);
   });
 });
@@ -361,7 +358,7 @@ describe('new node ids', () => {
 
 describe('rule tags', () => {
   it('groups rule tags apart and accepts them as known', () => {
-    const withRules = buildVocabulary({ ...vocabularyFile, tags: { ...vocabularyFile.tags, rule: ['logistics_cap'] } });
+    const withRules = testVocabulary({ ...vocabularyFields, tags: { ...vocabularyFields.tags, rule: ['logistics_cap'] } });
 
     expect(tagGroupOf(withRules, 'logistics_cap')).toBe('rule');
     expect(withRules.allTags).toContain('logistics_cap');

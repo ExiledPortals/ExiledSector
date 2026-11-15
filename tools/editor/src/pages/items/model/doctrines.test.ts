@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { buildVocabulary } from '../../../api/vocabulary.ts';
 import { splitList } from '../../../shared/csv.ts';
 import { markRowsSaved } from '../../../shared/rowIds.ts';
 import {
@@ -15,19 +14,16 @@ import {
 } from './doctrines.ts';
 import { isUsed, modifierUsage, referenceIssues, renameModifierReferences } from './modifierUsage.ts';
 import { modifierById, validateModifiers, type ItemModifier } from './modifiers.ts';
+import { testVocabulary } from '../../../test/testVocabulary.ts';
 
-const vocabulary = buildVocabulary({
+const vocabulary = testVocabulary({
   effects: [{ name: 'ARMOR_PERCENT', statMode: 'PERCENT', lowerIsBetter: false }],
-  tags: { theme: [], volume: ['core'], requirement: [] },
-  tiers: [],
-  unlockConditionTypes: [],
-  blueprintCategories: [],
+  tags: { volume: ['core'] },
   itemTypes: ['subroutine', 'hull_item', 'star_chart', 'wormhole_anchor'],
   itemKinds: [{ id: 'bridge', type: 'hull_item' }],
   modifierScopes: ['subroutine', 'unique_subroutine', 'doctrine', 'hull_item', 'star_chart', 'wormhole_anchor'],
   doctrineBehaviours: ['REWRITE', 'AUGMENT'],
   radiusSizes: ['small', 'medium', 'large'],
-  itemUnlocks: [],
 });
 
 const TYPES = JSON.stringify({

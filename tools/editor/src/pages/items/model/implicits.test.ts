@@ -1,7 +1,4 @@
-import fs from 'node:fs';
-import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { buildVocabulary } from '../../../api/vocabulary.ts';
 import {
   HULL_ITEM_CORRUPTION_POOL,
   parseCorruptionPoolCsv,
@@ -11,28 +8,26 @@ import {
 } from './implicits.ts';
 import { isUsed, modifierUsage, referenceIssues, renameModifierReferences, usedByText } from './modifierUsage.ts';
 import { modifierById, parseModifiersCsv, validateModifiers } from './modifiers.ts';
+import { readRepositoryFile } from '../../../test/testServer.ts';
+import { repositoryVocabulary, testVocabulary } from '../../../test/testVocabulary.ts';
 
-const repositoryRoot = path.resolve(import.meta.dirname, '..', '..', '..', '..', '..', '..');
-const implicitsFile = path.join(repositoryRoot, 'data', 'config', 'exiledSector', 'hull_item_implicits.csv');
-const corruptionPoolFile = path.join(repositoryRoot, 'data', 'config', 'exiledSector', 'subroutine_corruption_implicits.csv');
-const hullItemCorruptionPoolFile = path.join(repositoryRoot, 'data', 'config', 'exiledSector', 'hull_item_corruption_implicits.csv');
+const CONFIG_FOLDER = 'data/config/exiledSector';
 
-const vocabulary = buildVocabulary({
+function readConfigFile(fileName: string): string {
+  return readRepositoryFile(`${CONFIG_FOLDER}/${fileName}`, { stripByteOrderMark: true });
+}
+
+const vocabulary = testVocabulary({
   effects: [
     { name: 'ARMOR_PERCENT', statMode: 'PERCENT', lowerIsBetter: false },
     { name: 'FLUX_CAPACITY_PERCENT', statMode: 'PERCENT', lowerIsBetter: false },
   ],
-  tags: { theme: [], volume: [], requirement: [] },
-  tiers: [],
-  unlockConditionTypes: [],
-  blueprintCategories: [],
   itemTypes: ['subroutine', 'hull_item'],
   itemKinds: [
     { id: 'subroutine', type: 'subroutine' },
     { id: 'armor_plating', type: 'hull_item' },
     { id: 'shield_generator', type: 'hull_item' },
   ],
-  itemUnlocks: [],
 });
 
 const catalogue = modifierById(
@@ -47,8 +42,8 @@ const catalogue = modifierById(
 
 describe('hull item implicits', () => {
   it('saving the unchanged file reproduces it byte for byte', () => {
-    const text = fs.readFileSync(implicitsFile, 'utf8');
-    const realVocabulary = buildVocabulary(JSON.parse(fs.readFileSync(path.join(repositoryRoot, 'tools', 'editor_vocabulary.json'), 'utf8')));
+    const text = readConfigFile('hull_item_implicits.csv');
+    const realVocabulary = repositoryVocabulary();
     expect(serializeImplicitsCsv(parseImplicitsCsv(text, realVocabulary))).toBe(text);
   });
 
@@ -62,7 +57,7 @@ describe('hull item implicits', () => {
 
 describe('subroutine corruption pool', () => {
   it('saving the unchanged file reproduces it byte for byte', () => {
-    const text = fs.readFileSync(corruptionPoolFile, 'utf8');
+    const text = readConfigFile('subroutine_corruption_implicits.csv');
     expect(serializeCorruptionPoolCsv(parseCorruptionPoolCsv(text))).toBe(text);
   });
 
@@ -95,7 +90,7 @@ describe('subroutine corruption pool', () => {
 
 describe('hull item corruption pool', () => {
   it('saving the unchanged file reproduces it byte for byte', () => {
-    const text = fs.readFileSync(hullItemCorruptionPoolFile, 'utf8');
+    const text = readConfigFile('hull_item_corruption_implicits.csv');
     expect(serializeCorruptionPoolCsv(parseCorruptionPoolCsv(text, HULL_ITEM_CORRUPTION_POOL))).toBe(text);
   });
 

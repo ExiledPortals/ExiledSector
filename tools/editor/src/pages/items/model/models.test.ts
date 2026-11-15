@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { buildVocabulary } from '../../../api/vocabulary.ts';
 import {
   definitionWarnings,
   formatPool,
@@ -14,16 +13,13 @@ import {
   type ItemDefinition,
 } from './definitions.ts';
 import { modifierById, parseModifiersCsv } from './modifiers.ts';
+import { testVocabulary } from '../../../test/testVocabulary.ts';
 
-const vocabulary = buildVocabulary({
+const vocabulary = testVocabulary({
   effects: [
     { name: 'HULL_MULT', statMode: 'MULT', lowerIsBetter: false },
     { name: 'ARMOR_FLAT', statMode: 'FLAT', lowerIsBetter: false },
   ],
-  tags: { theme: [], volume: [], requirement: [] },
-  tiers: [],
-  unlockConditionTypes: [],
-  blueprintCategories: [],
   itemTypes: ['subroutine', 'hull_item'],
   itemKinds: [
     { id: 'subroutine', type: 'subroutine' },

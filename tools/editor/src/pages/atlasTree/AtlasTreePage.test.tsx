@@ -1,8 +1,8 @@
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { buildVocabulary } from '../../api/vocabulary.ts';
 import { renderWithProviders } from '../../test/renderWithProviders.tsx';
 import { readRepositoryFile, startTestServer, type TestServer } from '../../test/testServer.ts';
+import { repositoryVocabulary } from '../../test/testVocabulary.ts';
 import { openAddNode, openTypeEditor } from '../tree/dialogs/treeDialogs.tsx';
 import { decorationById } from '../tree/model/decorations.ts';
 import { nodeById, typeById } from '../tree/model/types.ts';
@@ -15,7 +15,7 @@ const ATLAS_TYPES_FILE = 'data/skilltrees/atlas_tree_types.json';
 const ATLAS_TREE_FILE = 'data/skilltrees/atlas_tree.json';
 const VOCABULARY_FILE = 'tools/editor_vocabulary.json';
 const NODE_RADII_FILE = 'data/config/exiledSector/node_radii.json';
-const sharedVocabulary = buildVocabulary(JSON.parse(readRepositoryFile(VOCABULARY_FILE)));
+const sharedVocabulary = repositoryVocabulary();
 const atlasStore = atlasTreeEditor.store;
 const { editDocument, selectOnly, setMode, addNodeOfType } = atlasTreeEditor.actions;
 

@@ -28,7 +28,7 @@ export interface ThemeTagInfo {
   scopes: ThemeTagScope[];
 }
 
-interface VocabularyFile {
+export interface VocabularyFile {
   effects: EffectInfo[];
   tags: { theme: string[]; volume: string[]; requirement: string[]; gate?: string[]; rule?: string[] };
   themeTags?: ThemeTagInfo[];
