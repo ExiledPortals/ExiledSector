@@ -2,7 +2,7 @@
 
 A ship tree volume built around the Domain's derelict war drones and survey motherships. It sits between the Pirate and Stargazer volumes, and a derelict survey mothership takes the place of the volume's star. The crew learns by reverse engineering: stripping drone wrecks and the autoforges of drifting motherships. On automated ships the core logs and indexes the wreck data instead (`exiled_sector_automated_flavour`).
 
-Status: planned 2026-11-14, built 2026-11-15 on branch `domain-drones-volume`. Every magnitude here is a placeholder pending balance. The anchor uses the threat anchor's icon until its own is picked, the node icons are blank, and the concave diamond outline decoration was left out (only the mothership image and the outer circle ring are placed).
+Status: planned 2026-11-14, built 2026-11-15 on branch `domain-drones-volume`. Every magnitude here is a placeholder pending balance. The anchor uses the threat anchor's icon until its own is picked, the node icons are blank, and the concave diamond outline decoration was left out (the mothership image, an asteroid belt on the outer circle and five derelict probes and three survey ships scattered in and around the volume are placed).
 
 ## Facts checked
 
@@ -63,7 +63,7 @@ The ship's strikecraft gain X% of the ship's own percent bonuses to weapon damag
 1. Done: region tag (`SkillTags`), gate (`FactionEncounterGate.DERELICTS`, `node_gates.json`), faction volume row and anchor row. The anchor icon is still the threat anchor's placeholder (TODO in `WormholeAnchorDataTest`).
 2. Done: effects and tests. Rugged Drone Frame copies Rugged Construction with `DMOD_EFFECT_MULT`, the new `DMOD_ACQUIRE_CHANCE_MULT`, `SHIP_RECOVERY_CHANCE_BONUS` and the new `SUPPLIES_TO_RECOVER_MULT`; Countless Cycles is `DEPLOYMENT_POINTS_PERCENT_PER_DMOD`; Terrible Balance `TerribleBalanceListener`; Autoforge Escorts `AutoforgeEscortsListener` with Terminator drones, sharing `CarrierLaunch` with Coalition Flight Doctrine; Feed the Forges `ForgeSupplies`; Sentry Reserve Racks `ReserveRacksListener` (a share of max ammo); Defender Flare Bays `FlareBaysListener` (flares per burst, 1000 su, 10 s); Mothership Uplink `MothershipUplink`.
 3. Done: skill types with theme tags, names and flavour (en and zh_CN), plus the Strikecraft Armor lead-in and effects for All Weapon Damage. Icons stay blank.
-4. Done: layout in `ship_skill_tree.json` (mothership image, outer circle ring, hub ring, wheels, wormhole exit). The diamond outline was left out.
+4. Done: layout in `ship_skill_tree.json` (mothership image, asteroid belt on the outer circle, scattered probes and survey ships, hub ring, wheels, wormhole exit). The diamond outline was left out.
 5. Done: `docs/docs.md` sections Rugged Drone Frame through Feed the Forges, and the gate in Wormhole anchors.
 6. Done: README and forum post sentence.
 
