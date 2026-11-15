@@ -47,7 +47,7 @@ public record Engram(String itemId, String englishName, String modifierId, Set<I
 
     @Override
     public MaterialTier tier() {
-        return MaterialTier.EXOTIC;
+        return MaterialTier.RARE;
     }
 
     @Override

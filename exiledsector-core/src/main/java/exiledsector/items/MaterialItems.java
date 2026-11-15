@@ -49,7 +49,15 @@ public final class MaterialItems {
             return craftingItem.tier();
         }
         CraftingInhibitor inhibitor = CraftingInhibitor.byItemId(itemId);
-        return inhibitor == null ? MaterialTier.BASIC : inhibitor.tier();
+        if (inhibitor != null) {
+            return inhibitor.tier();
+        }
+        for (DomainMaterial material : DOMAIN_MATERIALS.all()) {
+            if (material.itemId().equals(itemId)) {
+                return material.tier();
+            }
+        }
+        return MaterialTier.COMMON;
     }
 
     public static Color color(String itemId) {

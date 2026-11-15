@@ -168,8 +168,21 @@ class CraftingInhibitorTest {
     void wardsAreRareFoundMaterialsThatCannotBeSynthesised() {
         for (CraftingInhibitor inhibitor : CraftingInhibitor.values()) {
             assertTrue(MaterialItems.ids().contains(inhibitor.itemId()));
-            assertEquals(MaterialTier.EXOTIC, MaterialItems.tier(inhibitor.itemId()));
+            assertEquals(inhibitor.tier(), MaterialItems.tier(inhibitor.itemId()));
             assertTrue(inhibitor.dropWeight() < 1f);
+        }
+    }
+
+    @Test
+    void slotInhibitorsAreUniqueAndTagInhibitorsCommonOrRare() {
+        assertEquals(MaterialTier.UNIQUE, CraftingInhibitor.PREFIX.tier());
+        assertEquals(MaterialTier.UNIQUE, CraftingInhibitor.SUFFIX.tier());
+        for (CraftingInhibitor inhibitor : List.of(CraftingInhibitor.BEAM, CraftingInhibitor.NON_BEAM_ENERGY, CraftingInhibitor.BALLISTIC,
+                CraftingInhibitor.MISSILE)) {
+            assertEquals(MaterialTier.COMMON, inhibitor.tier(), inhibitor.name());
+        }
+        for (CraftingInhibitor inhibitor : List.of(CraftingInhibitor.SHIELD, CraftingInhibitor.ARMOUR, CraftingInhibitor.PHASE)) {
+            assertEquals(MaterialTier.RARE, inhibitor.tier(), inhibitor.name());
         }
     }
 }

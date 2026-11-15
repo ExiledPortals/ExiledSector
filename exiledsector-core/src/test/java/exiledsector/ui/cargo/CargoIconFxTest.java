@@ -67,18 +67,16 @@ class CargoIconFxTest {
     @Test
     void looksGetLouderWithEachTier() {
         Color color = Color.CYAN;
-        CargoIconLook basic = CargoIconLooks.forMaterial(MaterialTier.BASIC, color);
-        CargoIconLook minor = CargoIconLooks.forMaterial(MaterialTier.MINOR, color);
-        CargoIconLook major = CargoIconLooks.forMaterial(MaterialTier.MAJOR, color);
-        CargoIconLook exotic = CargoIconLooks.forMaterial(MaterialTier.EXOTIC, color);
+        CargoIconLook common = CargoIconLooks.forMaterial(MaterialTier.COMMON, color);
+        CargoIconLook rare = CargoIconLooks.forMaterial(MaterialTier.RARE, color);
+        CargoIconLook unique = CargoIconLooks.forMaterial(MaterialTier.UNIQUE, color);
         CargoIconLook mythic = CargoIconLooks.forMaterial(MaterialTier.MYTHIC, color);
 
-        assertFalse(CargoIconLooks.celebratesDrop(basic));
-        assertTrue(CargoIconLooks.celebratesDrop(minor));
-        assertTrue(minor.glow() < major.glow() && major.glow() < exotic.glow() && exotic.glow() < mythic.glow());
-        assertFalse(minor.rings());
-        assertTrue(major.rings() && !major.arcs());
-        assertTrue(exotic.arcs() && exotic.heartbeat() && !exotic.prismatic());
+        assertTrue(CargoIconLooks.celebratesDrop(common));
+        assertTrue(common.glow() < rare.glow() && rare.glow() < unique.glow() && unique.glow() < mythic.glow());
+        assertFalse(common.rings());
+        assertTrue(rare.rings() && !rare.arcs());
+        assertTrue(unique.arcs() && unique.heartbeat() && !unique.prismatic());
         assertTrue(mythic.prismatic());
     }
 
@@ -108,15 +106,15 @@ class CargoIconFxTest {
     @Test
     void busierAndFasterSwarmsAtHigherTiers() {
         Color color = Color.CYAN;
-        CargoIconLook minor = CargoIconLooks.forMaterial(MaterialTier.MINOR, color);
-        CargoIconLook major = CargoIconLooks.forMaterial(MaterialTier.MAJOR, color);
-        CargoIconLook exotic = CargoIconLooks.forMaterial(MaterialTier.EXOTIC, color);
+        CargoIconLook common = CargoIconLooks.forMaterial(MaterialTier.COMMON, color);
+        CargoIconLook rare = CargoIconLooks.forMaterial(MaterialTier.RARE, color);
+        CargoIconLook unique = CargoIconLooks.forMaterial(MaterialTier.UNIQUE, color);
         CargoIconLook mythic = CargoIconLooks.forMaterial(MaterialTier.MYTHIC, color);
 
-        assertTrue(CargoIconFx.speckCount(minor) < CargoIconFx.speckCount(major));
-        assertTrue(CargoIconFx.speckCount(major) < CargoIconFx.speckCount(exotic));
-        assertTrue(CargoIconFx.speckCount(exotic) < CargoIconFx.speckCount(mythic));
-        assertTrue(CargoIconFx.swarmSpeed(minor) < CargoIconFx.swarmSpeed(mythic));
+        assertTrue(CargoIconFx.speckCount(common) < CargoIconFx.speckCount(rare));
+        assertTrue(CargoIconFx.speckCount(rare) < CargoIconFx.speckCount(unique));
+        assertTrue(CargoIconFx.speckCount(unique) < CargoIconFx.speckCount(mythic));
+        assertTrue(CargoIconFx.swarmSpeed(common) < CargoIconFx.swarmSpeed(mythic));
     }
 
     @Test
@@ -130,10 +128,11 @@ class CargoIconFxTest {
     @Test
     void dropAnnouncementsUseTheRarestMaterialFound() {
         assertNull(MaterialDropAnnouncer.bestTier(Map.of()));
-        assertEquals(MaterialTier.BASIC, MaterialDropAnnouncer.bestTier(Map.of(ItemDisassembly.FEEDSTOCK_ITEM_ID, 4)));
-        assertEquals(MaterialTier.EXOTIC, MaterialDropAnnouncer.bestTier(Map.of(ItemDisassembly.FEEDSTOCK_ITEM_ID, 4,
-                Nanoswarm.CORRUPTION.itemId(), 1, Nanoswarm.AUGMENTATION.itemId(), 1)));
+        assertEquals(MaterialTier.COMMON, MaterialDropAnnouncer.bestTier(Map.of(ItemDisassembly.FEEDSTOCK_ITEM_ID, 4)));
+        assertEquals(MaterialTier.UNIQUE, MaterialDropAnnouncer.bestTier(Map.of(ItemDisassembly.FEEDSTOCK_ITEM_ID, 4,
+                Nanoswarm.TUNING.itemId(), 1, Nanoswarm.CORRUPTION.itemId(), 1, Nanoswarm.AUGMENTATION.itemId(), 1)));
         assertTrue(MaterialTier.MYTHIC.announced());
-        assertFalse(MaterialTier.MAJOR.announced());
+        assertTrue(MaterialTier.UNIQUE.announced());
+        assertFalse(MaterialTier.RARE.announced());
     }
 }

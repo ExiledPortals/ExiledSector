@@ -8,6 +8,8 @@ public enum InfusedFeedstock {
     SHROUD("exiledSector_shroud_feedstock", new Color(175, 0, 28)),
     PHASE("exiledSector_phase_feedstock", new Color(200, 120, 255));
 
+    public static final MaterialTier TIER = MaterialTier.RARE;
+
     private final String itemId;
     private final Color color;
 

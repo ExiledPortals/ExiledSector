@@ -34,10 +34,6 @@ public record CargoIconLook(Color color, float glow, boolean framed, boolean rin
         return art != null;
     }
 
-    public static CargoIconLook plain(Color color) {
-        return new CargoIconLook(color, 0f, false, false, false, false, false, false, false, null, SwarmMotion.NONE, null);
-    }
-
     public static CargoIconLook outlined(Color color) {
         return new CargoIconLook(color, 0f, true, false, false, false, false, false, false, null, SwarmMotion.NONE, null);
     }

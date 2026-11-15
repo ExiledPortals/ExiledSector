@@ -1,7 +1,6 @@
 package exiledsector.ui.cargo;
 
 import exiledsector.items.InfusedFeedstock;
-import exiledsector.items.Nanoswarm;
 
 public final class InfusedFeedstockIconLooks implements ItemIconLooks {
 
@@ -13,6 +12,6 @@ public final class InfusedFeedstockIconLooks implements ItemIconLooks {
     @Override
     public CargoIconLook materialLook(String itemId) {
         InfusedFeedstock feedstock = InfusedFeedstock.byItemId(itemId);
-        return feedstock == null ? null : CargoIconLooks.forMaterial(Nanoswarm.TUNING.tier(), feedstock.color()).withSwarm(SwarmMotion.ORBIT);
+        return feedstock == null ? null : CargoIconLooks.forMaterial(InfusedFeedstock.TIER, feedstock.color()).withSwarm(SwarmMotion.ORBIT);
     }
 }

@@ -47,7 +47,7 @@ class CraftingMaterialFamiliesTest {
 
         @Override
         public MaterialTier tier() {
-            return MaterialTier.MAJOR;
+            return MaterialTier.RARE;
         }
 
         @Override
@@ -136,14 +136,14 @@ class CraftingMaterialFamiliesTest {
     @Test
     void everyBuiltInCraftingItemIsRegisteredCommonestFirstWithItsValues() {
         List<Expected> expected = List.of(
-                new Expected("exiledSector_augmentation_nanoswarm", "augmentation", 10, 6f, MaterialTier.MINOR, true),
-                new Expected("exiledSector_fundamental_nanoswarm", "fundamental", 15, 4f, MaterialTier.MINOR, true),
-                new Expected("exiledSector_reshaping_nanoswarm", "reshaping", 20, 3f, MaterialTier.MAJOR, true),
-                new Expected("exiledSector_corrupted_nanoswarm", "corruption", 50, 1.5f, MaterialTier.EXOTIC, true),
-                new Expected("exiledSector_metamorph_nanoswarm", "metamorph", 150, 0.4f, MaterialTier.MYTHIC, true),
-                new Expected("exiledSector_annulment_nanoswarm", "annulment", 200, 0.3f, MaterialTier.MYTHIC, true),
-                new Expected("exiledSector_tuning_nanoswarm", "tuning", 200, 0.3f, MaterialTier.MYTHIC, true),
-                new Expected("exiledSector_immutable_nanoswarm", "immutable", 300, 0.2f, MaterialTier.MYTHIC, true),
+                new Expected("exiledSector_augmentation_nanoswarm", "augmentation", 10, 6f, MaterialTier.COMMON, true),
+                new Expected("exiledSector_fundamental_nanoswarm", "fundamental", 15, 4f, MaterialTier.COMMON, true),
+                new Expected("exiledSector_reshaping_nanoswarm", "reshaping", 20, 3f, MaterialTier.COMMON, true),
+                new Expected("exiledSector_corrupted_nanoswarm", "corruption", 50, 1.5f, MaterialTier.RARE, true),
+                new Expected("exiledSector_metamorph_nanoswarm", "metamorph", 150, 0.4f, MaterialTier.RARE, true),
+                new Expected("exiledSector_annulment_nanoswarm", "annulment", 200, 0.3f, MaterialTier.UNIQUE, true),
+                new Expected("exiledSector_tuning_nanoswarm", "tuning", 200, 0.3f, MaterialTier.UNIQUE, true),
+                new Expected("exiledSector_immutable_nanoswarm", "immutable", 300, 0.2f, MaterialTier.UNIQUE, true),
                 new Expected("exiledSector_replicator_nanoseed", "replication", 0, 0.035f, MaterialTier.MYTHIC, false));
 
         assertEquals(Arrays.asList(Nanoswarm.values()), CraftingMaterialFamilies.all());
@@ -209,7 +209,7 @@ class CraftingMaterialFamiliesTest {
         assertTrue(CraftingMaterialFamilies.forType(ItemType.HULL_ITEM).contains(purge));
         assertFalse(CraftingMaterialFamilies.forType(ItemType.SUBROUTINE).contains(purge));
         assertTrue(MaterialItems.isMaterial(PURGE_ID));
-        assertEquals(MaterialTier.MAJOR, MaterialItems.tier(PURGE_ID));
+        assertEquals(MaterialTier.RARE, MaterialItems.tier(PURGE_ID));
         assertEquals(Color.CYAN, MaterialItems.color(PURGE_ID));
         assertFalse(ItemCrafting.canUse(purge, subroutine, definition -> true));
         assertTrue(ItemCrafting.canUse(purge, hullItem, definition -> true));
