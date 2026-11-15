@@ -42,7 +42,7 @@ Anchors start dropping once you have the Janus Device (or earlier if you change 
 
 </details>
 
-Every major faction has its own volume, with nodes that suit how that faction fights. The Hegemony gives you more armor, Tri-Tachyon gives you flux and sends you an invoice, and the Luddic Path would like your ship to explode, preferably next to someone else's. Even the Domain's derelict war drones have a volume, opened once you beat one of their survey motherships. Your crew strips their wrecks for escort drones, flares that fire themselves and frames that refuse to fall apart.
+Every major faction has its own volume, with nodes that suit how that faction fights. The Hegemony gives you more armor, Tri-Tachyon gives you flux and sends you an invoice, and the Luddic Path would like your ship to explode, preferably next to someone else's.
 
 <details>
 <summary>Unique faction volume nodes</summary>
@@ -162,8 +162,6 @@ Charts roll modifiers too, and the same nanoswarms work on them. The modifiers m
 
 Open the wormhole, fly in, kill whoever lives there and take everything that isn't bolted down. The chart is complete once the boss's flagship or station is destroyed. When the run ends the system is deleted, along with anything you forgot to pick up. No it will not bloat your save (I hope).
 
-Unless you liked a planet. Beat an Admiral at tier 15 for the Displacement Theorem and you can build a Phase Displacement Gate at your Wormhole Gateway colony, as long as a working coronal hypershunt is in range. Phase lock a surveyed planet, finish the chart, and the gate drags that planet into your own system, conditions and all, sometimes with traits nothing else in the sector has.
-
 ## Requirements
 
 - Starsector 0.98.5a (0.98a-RC8 also works)
@@ -197,7 +195,7 @@ The mods below have specific compatibility work. The version listed is the last 
 | Nightcross Armory | 2.1.7 | REDACTED |
 | Nexerelin | 0.12.2d | The faction fleets that fly around the skill tree also visit the volumes of factions they're allied with. |
 | [GraphicsLib](https://fractalsoftworks.com/forum/index.php?topic=10982.0) | 1.12.2 | Optional. With its lighting and distortion turned on, a lot of the combat effects get shockwaves, glows, lights and distortion. You can turn almost all of it off in the Exiled Sector settings. |
-| Secrets of the Frontier | 0.15.1 | Its scripted story fights don't drop any salvage, so they don't drop Exiled Sector loot either. Its Concord Shift ships (Pledge, Pact, Vow, Covenant) can take phase nodes even though they also have shields. |
+| Secrets of the Frontier | 0.15.1 | Its scripted story fights don't drop any salvage, so they don't drop Exiled Sector loot either. |
 | DIY Planets | 1.0.30 | Its bar quests won't put their stations inside a Star Chart, where they'd be deleted when the chart closes. |
 
 Some modded weapons break (often hilariously) when their beams get split, their shots chain or their shells pierce. Those weapons are listed in:
@@ -241,7 +239,7 @@ Ctrl-Shift-click an unallocated node to take the shortest path to it. The path g
 <details>
 <summary><b>Do I have to build a tree for every ship?</b></summary>
 
-Yes, but templates and the ctrl + shift + click save you most of the busywork. The skill tree screen's "Save" button saves a ship's nodes and the order you took them in. "Load" puts that plan on another ship. A ship with a different starting point first takes the shortest route to the template. If Auto-allocate is on, each level-up takes the next node in the template for you. Template mode lets you plan a template without spending points. Templates are shared by every save and kept in saves/common/exiledSector_skillTreeTemplates.json.data, which the game re-reads whenever the skill tree opens, so outside planners can read and write them while the game runs.
+Yes, but templates and the ctrl + shift + click save you most of the busywork. The skill tree screen's "Save" button saves a ship's nodes and the order you took them in. "Load" puts that plan on another ship. A ship with a different starting point first takes the shortest route to the template. If Auto-allocate is on, each level-up takes the next node in the template for you. Template mode lets you plan a template without spending points.
 
 </details>
 
