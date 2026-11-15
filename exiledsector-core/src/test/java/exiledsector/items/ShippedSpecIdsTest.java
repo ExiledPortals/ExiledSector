@@ -23,7 +23,7 @@ class ShippedSpecIdsTest {
     private static final String BASELINE = "exiledsector-core/src/test/resources/shipped_spec_ids.csv";
     private static final String SPECIAL_ITEMS = "data/campaign/special_items.csv";
     private static final List<String> SPEC_FILES = List.of(SPECIAL_ITEMS, "data/campaign/commodities.csv",
-            "data/campaign/abilities.csv", "data/campaign/industries.csv", "data/hullmods/hull_mods.csv",
+            "data/campaign/abilities.csv", "data/campaign/industries.csv", "data/campaign/market_conditions.csv", "data/hullmods/hull_mods.csv",
             "data/hulls/ship_data.csv", "data/weapons/weapon_data.csv");
     private static final Set<String> SWEPT_FILES = Set.of(SPECIAL_ITEMS, "data/campaign/commodities.csv",
             "data/weapons/weapon_data.csv");

@@ -139,17 +139,21 @@ public final class ChartWormholePlacement {
     }
 
     public static Band centreBand(SectorEntityToken entity, int depth) {
+        return centreBand(entity, new Vector2f(), depth);
+    }
+
+    public static Band centreBand(SectorEntityToken entity, Vector2f origin, int depth) {
         SectorEntityToken focus = entity.getOrbitFocus();
         if (focus == null || focus == entity || depth >= MAX_ORBIT_DEPTH) {
             Vector2f location = entity.getLocation();
-            float distance = location == null ? 0f : location.length();
+            float distance = location == null ? 0f : Vector2f.sub(location, origin, new Vector2f()).length();
             return new Band(distance, distance);
         }
         float orbitRadius = entity.getCircularOrbitRadius();
         if (orbitRadius <= 0f && entity.getLocation() != null && focus.getLocation() != null) {
             orbitRadius = Vector2f.sub(entity.getLocation(), focus.getLocation(), new Vector2f()).length();
         }
-        return centreBand(focus, depth + 1).sweptAt(orbitRadius, orbitRadius);
+        return centreBand(focus, origin, depth + 1).sweptAt(orbitRadius, orbitRadius);
     }
 
     public record Band(float inner, float outer) {

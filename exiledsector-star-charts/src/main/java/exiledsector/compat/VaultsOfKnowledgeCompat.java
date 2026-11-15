@@ -1,5 +1,6 @@
 package exiledsector.compat;
 
+import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import exiledsector.ModSettings;
 import org.apache.log4j.Level;
@@ -17,6 +18,9 @@ public final class VaultsOfKnowledgeCompat {
     public static final String GATEWAY_ARRAY_RESEARCH_ID = "exiledSector_tech_wormhole_gateway_advanced";
     public static final String GATEWAY_NEXUS_RESEARCH_ID = "exiledSector_tech_wormhole_gateway_perfected";
     public static final List<String> GATEWAY_RESEARCH_IDS = List.of(GATEWAY_RESEARCH_ID, GATEWAY_ARRAY_RESEARCH_ID, GATEWAY_NEXUS_RESEARCH_ID);
+    public static final String PHASE_GATE_RESEARCH_ID = "exiledSector_tech_phase_displacement_gate";
+    public static final List<String> COLONY_RESEARCH_IDS = List.of(GATEWAY_RESEARCH_ID, GATEWAY_ARRAY_RESEARCH_ID, GATEWAY_NEXUS_RESEARCH_ID,
+            PHASE_GATE_RESEARCH_ID);
     public static final String DATABANK_DROP_GROUP = "ashes_research";
     static final String DEFENCE_MIN_SETTING = "aotd_defence_min_val";
     static final String DEFENCE_MAX_SETTING = "aotd_defence_max_val";
@@ -30,6 +34,7 @@ public final class VaultsOfKnowledgeCompat {
     private static final String FACTION_MANAGER_CLASS = "data.kaysaar.aotd.vok.scripts.research.AoTDFactionResearchManager";
     private static final String QUEUE_CLASS = "data.kaysaar.aotd.vok.scripts.research.ResearchQueueManager";
     private static final String RESEARCH_OPTION_CLASS = "data.kaysaar.aotd.vok.scripts.research.models.ResearchOption";
+    private static final String HYPERSHUNT_CLASS = "data.kaysaar.aotd.vok.campaign.econ.megastructures.impl.scripts.CoronalHypershuntMegastructure";
     private static final String STRING = "java.lang.String";
     private static final String ARRAY_LIST = "java.util.ArrayList";
 
@@ -57,6 +62,12 @@ public final class VaultsOfKnowledgeCompat {
             "Vaults of Knowledge player research lookup failed; the Wormhole Gateway upgrades are treated as researched",
             OptionalApi.RuntimeFailure.RETRY_NEXT_CALL);
 
+    static final ApiMember WITHIN_HYPERSHUNT_RANGE = ApiMember.staticMethod(HYPERSHUNT_CLASS, "isWithinRangeOfAtLeastOneHypershunt", ApiMember.BOOLEAN,
+            "com.fs.starfarer.api.campaign.SectorEntityToken");
+    private static final OptionalApi HYPERSHUNT_API = new OptionalApi(List.of(WITHIN_HYPERSHUNT_RANGE), Logger.getLogger(VaultsOfKnowledgeCompat.class),
+            Level.ERROR, "Vaults of Knowledge hypershunt range lookup failed; only vanilla hypershunts power the Phase Displacement Gate",
+            OptionalApi.RuntimeFailure.RETRY_NEXT_CALL);
+
     private VaultsOfKnowledgeCompat() {
     }
 
@@ -65,13 +76,24 @@ public final class VaultsOfKnowledgeCompat {
     }
 
     public static boolean isGatewayResearched(MarketAPI market) {
+        return isResearchedAt(GATEWAY_RESEARCH_ID, market);
+    }
+
+    public static boolean isResearchedAt(String researchId, MarketAPI market) {
         if (!isModEnabled()) {
             return true;
         }
         return RESEARCH_API.call(api -> {
             Object manager = api.handle(GET_INSTANCE).invoke();
-            return manager == null || (boolean) api.handle(IS_AVAILABLE_FOR_MARKET).invoke(manager, GATEWAY_RESEARCH_ID, market);
+            return manager == null || (boolean) api.handle(IS_AVAILABLE_FOR_MARKET).invoke(manager, researchId, market);
         }, true);
+    }
+
+    public static boolean isWithinHypershuntRange(SectorEntityToken entity) {
+        if (!isModEnabled() || entity == null) {
+            return false;
+        }
+        return HYPERSHUNT_API.call(api -> (boolean) api.handle(WITHIN_HYPERSHUNT_RANGE).invoke(entity), false);
     }
 
     public static boolean isResearchedForPlayer(String researchId) {
@@ -125,17 +147,17 @@ public final class VaultsOfKnowledgeCompat {
         List<?> repo = (List<?>) api.handle(RESEARCH_REPO).invoke(factionManager);
         Iterator<?> options = repo.iterator();
         while (options.hasNext()) {
-            if (GATEWAY_RESEARCH_IDS.contains((String) api.handle(OPTION_ID).invoke(options.next()))) {
+            if (COLONY_RESEARCH_IDS.contains((String) api.handle(OPTION_ID).invoke(options.next()))) {
                 options.remove();
             }
         }
         Object queue = api.handle(QUEUE).invoke(factionManager);
-        for (String researchId : GATEWAY_RESEARCH_IDS) {
+        for (String researchId : COLONY_RESEARCH_IDS) {
             if (queue != null) {
                 api.handle(REMOVE_FROM_QUEUE).invoke(queue, researchId);
             }
         }
-        if (GATEWAY_RESEARCH_IDS.contains((String) api.handle(FOCUS_ID).invoke(factionManager))) {
+        if (COLONY_RESEARCH_IDS.contains((String) api.handle(FOCUS_ID).invoke(factionManager))) {
             api.handle(SET_FOCUS).invoke(factionManager, (String) null);
         }
     }
@@ -155,6 +177,7 @@ public final class VaultsOfKnowledgeCompat {
         RESEARCH_API.reset();
         PLAYER_RESEARCH_API.reset();
         RESEARCH_TREE_API.reset();
+        HYPERSHUNT_API.reset();
     }
 
     static List<String> missingFeatures() {
@@ -167,6 +190,9 @@ public final class VaultsOfKnowledgeCompat {
         }
         if (!RESEARCH_TREE_API.missingMembers().isEmpty()) {
             missing.add("AoTDMainResearchManager, AoTDFactionResearchManager and ResearchQueueManager research lists, used to remove the Wormhole Gateway research while the Atlas needs no colony");
+        }
+        if (!HYPERSHUNT_API.missingMembers().isEmpty()) {
+            missing.add("CoronalHypershuntMegastructure.isWithinRangeOfAtLeastOneHypershunt, used to power the Phase Displacement Gate from a restored hypershunt");
         }
         return missing;
     }

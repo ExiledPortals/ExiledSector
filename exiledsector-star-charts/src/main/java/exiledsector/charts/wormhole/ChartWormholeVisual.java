@@ -110,7 +110,7 @@ final class ChartWormholeVisual {
 
     static boolean startsOpen(SectorEntityToken wormhole, boolean newlyCreated) {
         LocationAPI location = wormhole.getContainingLocation();
-        return newlyCreated || location == null || location.isHyperspace();
+        return newlyCreated || location == null || location.isHyperspace() || wormhole.hasTag(ChartIds.HELD_OPEN_WORMHOLE_TAG);
     }
 
     static String backdropFor(SectorAPI sector, SectorEntityToken wormhole) {
@@ -178,6 +178,10 @@ final class ChartWormholeVisual {
     void updateOpenState(SectorEntityToken wormhole) {
         LocationAPI location = wormhole.getContainingLocation();
         if (location == null || location.isHyperspace()) {
+            return;
+        }
+        if (wormhole.hasTag(ChartIds.HELD_OPEN_WORMHOLE_TAG)) {
+            open(wormhole);
             return;
         }
         CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
