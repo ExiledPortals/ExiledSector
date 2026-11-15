@@ -11,14 +11,15 @@ import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.TextPanelAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.FleetEncounterContext;
 import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.ui.LabelAPI;
 import exiledsector.MockSector;
+import exiledsector.MockShips;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -30,6 +31,7 @@ import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -50,6 +52,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class CombatXpAwardTest {
 
     private MockSector mockSector;
@@ -88,15 +91,12 @@ class CombatXpAwardTest {
         FactionAPI playerFaction = mock(FactionAPI.class);
         when(playerFaction.getBaseUIColor()).thenReturn(Color.CYAN);
         when(mockSector.sector.getPlayerFaction()).thenReturn(playerFaction);
-
-        SkillTree.clearNodes();
     }
 
     @AfterEach
     void tearDown() {
         mockSector.close();
         lunaSettingsMock.close();
-        SkillTree.clearNodes();
         SkillTreeSetting.setEnabledForTests(SkillTreeSetting.DEFAULT_ENABLED);
     }
 
@@ -119,18 +119,10 @@ class CombatXpAwardTest {
     }
 
     private static FleetMemberAPI member(String id) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        ShipHullSpecAPI hullSpec = mock(ShipHullSpecAPI.class);
-        when(member.getId()).thenReturn(id);
-        when(member.getShipName()).thenReturn("ISS " + id);
         ShipVariantAPI installedVariant = mock(ShipVariantAPI.class);
         when(installedVariant.getSource()).thenReturn(VariantSource.REFIT);
         when(installedVariant.hasHullMod(SkillTreeHullMod.ID)).thenReturn(true);
-        when(member.getVariant()).thenReturn(installedVariant);
-        when(member.getHullSpec()).thenReturn(hullSpec);
-        when(hullSpec.getHullSize()).thenReturn(HullSize.FRIGATE);
-        when(hullSpec.getHullNameWithDashClass()).thenReturn("Wolf-class");
-        return member;
+        return MockShips.member(id).shipName("ISS " + id).hullSize(HullSize.FRIGATE).hullName("Wolf-class").variant(installedVariant).build();
     }
 
     private static EngagementResultAPI engagement(boolean playerWon, float enemyDpDestroyed) {

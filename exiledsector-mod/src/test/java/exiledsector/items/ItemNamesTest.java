@@ -1,7 +1,6 @@
 package exiledsector.items;
 
 import exiledsector.ProjectFiles;
-import org.json.CDL;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -15,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static exiledsector.ProjectFiles.csvRows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -56,10 +56,6 @@ class ItemNamesTest {
     private static JSONObject words(String style, List<String> firstWords, List<String> secondWords, List<String> models) throws Exception {
         JSONObject wordsJson = new JSONObject().put("style", style).put("first", new JSONArray(firstWords)).put("second", new JSONArray(secondWords));
         return models.isEmpty() ? wordsJson : wordsJson.put("models", new JSONArray(models));
-    }
-
-    private static JSONArray csvRows(String dataPath) throws Exception {
-        return CDL.toJSONArray(Files.readString(ProjectFiles.projectRoot().resolve(dataPath), StandardCharsets.UTF_8).replace("\r\n", "\n"));
     }
 
     @AfterEach

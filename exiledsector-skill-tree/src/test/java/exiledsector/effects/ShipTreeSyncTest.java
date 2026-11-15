@@ -7,7 +7,6 @@ import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -15,6 +14,7 @@ import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.loading.VariantSource;
 import exiledsector.MockSector;
+import exiledsector.MockShips;
 import exiledsector.compat.SecondInCommandCompat;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
@@ -23,6 +23,7 @@ import exiledsector.items.WormholeAnchorDefinitions;
 import exiledsector.items.WormholeAnchorLinks;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AnchorLinks;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.PhantomHullModStatus;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTreeLinks;
@@ -43,6 +44,7 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -71,6 +73,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class ShipTreeSyncTest {
 
     private static final String MILITARIZED_SUBSYSTEMS = "militarized_subsystems";
@@ -100,7 +103,6 @@ class ShipTreeSyncTest {
         mockSector.global.when(Global::getSettings).thenReturn(settings);
         when(fleetData.getMembersListCopy()).thenReturn(List.of());
 
-        SkillTree.clearNodes();
         ShipTreeSync.takePlayerFleetSyncRequest();
     }
 
@@ -108,7 +110,6 @@ class ShipTreeSyncTest {
     void tearDown() {
         mockSector.close();
         lunaSettingsMock.close();
-        SkillTree.clearNodes();
         SkillTreeSetting.setEnabledForTests(SkillTreeSetting.DEFAULT_ENABLED);
         PhantomHullModStatus.clear();
         AnchorLinks.install(null);
@@ -117,18 +118,13 @@ class ShipTreeSyncTest {
     }
 
     static FleetMemberAPI mockMember(String id, boolean hasHullMod) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
-        ShipHullSpecAPI hullSpec = mock(ShipHullSpecAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        when(member.getId()).thenReturn(id);
-        when(member.getVariant()).thenReturn(variant);
-        when(member.getHullSpec()).thenReturn(hullSpec);
-        when(member.getStats()).thenReturn(stats);
-        when(stats.getFleetMember()).thenReturn(member);
-        when(hullSpec.getHullSize()).thenReturn(HullSize.FRIGATE);
         when(variant.hasHullMod(SkillTreeHullMod.ID)).thenReturn(hasHullMod);
         when(variant.getSource()).thenReturn(VariantSource.REFIT);
+        FleetMemberAPI member = MockShips.member(id).hullSize(HullSize.FRIGATE).variant(variant).build();
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        when(member.getStats()).thenReturn(stats);
+        when(stats.getFleetMember()).thenReturn(member);
         return member;
     }
 

@@ -3,20 +3,19 @@ package exiledsector.skills.progression;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.MockSector;
+import exiledsector.MockShips;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
-import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import lunalib.lunaSettings.LunaSettings;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -30,22 +29,13 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class ShipLevelSystemTest {
 
     private static final float XP_BASE = 100f;
     private static final float XP_GROWTH = 2f;
     private static final int NO_GROWTH_CUTOFF = 50;
     private static final int OP_COST_PER_NODE = 3;
-
-    @BeforeEach
-    void setUp() {
-        SkillTree.clearTypes();
-    }
-
-    @AfterEach
-    void tearDown() {
-        SkillTree.clearTypes();
-    }
 
     private static ShipLevelSystem.LevelCurve curve(int growthCutoffLevel, int maxLevel) {
         return new ShipLevelSystem.LevelCurve(XP_BASE, XP_GROWTH, growthCutoffLevel, 0f, 1, maxLevel);
@@ -359,11 +349,6 @@ class ShipLevelSystemTest {
     }
 
     private static FleetMemberAPI mockMember(String id) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        ShipHullSpecAPI hullSpec = mock(ShipHullSpecAPI.class);
-        when(member.getId()).thenReturn(id);
-        when(member.getHullSpec()).thenReturn(hullSpec);
-        when(hullSpec.getHullSize()).thenReturn(HullSize.FRIGATE);
-        return member;
+        return MockShips.member(id).hullSize(HullSize.FRIGATE).build();
     }
 }

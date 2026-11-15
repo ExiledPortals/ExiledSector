@@ -5,17 +5,19 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.shield.ShieldSkillEffect;
-import exiledsector.skills.npc.RealSkillData;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 import java.util.Set;
 
+import static exiledsector.skills.TestTrees.registered;
+import static exiledsector.skills.TestTrees.type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class NodeEligibilityTest {
 
     private static final ShipFacts FRONT_SHIELDED_FRIGATE = facts(ShieldType.FRONT, Set.of());
@@ -24,28 +26,13 @@ class NodeEligibilityTest {
 
     @BeforeEach
     void setUp() {
-        RealSkillData.clear();
         SkillNode root = node("root", type("root_type", SkillTier.ROOT).build());
         data = new ShipSkillData();
         ShipTrees.chooseStartingRoot(data, root);
     }
 
-    @AfterEach
-    void tearDown() {
-        RealSkillData.clear();
-    }
-
     private static ShipFacts facts(ShieldType shieldType, Set<String> installed) {
         return new ShipFacts(HullSize.FRIGATE, shieldType, shieldType == ShieldType.PHASE, 100f, installed::contains);
-    }
-
-    private static SkillType.Builder type(String id, SkillTier tier) {
-        return new SkillType.Builder(id, id + " name", "a.png", tier);
-    }
-
-    private static SkillType registered(SkillType type) {
-        SkillTree.registerType(type);
-        return type;
     }
 
     private static SkillNode node(String id, SkillType type) {

@@ -2,6 +2,7 @@ package exiledsector.charts.officer;
 
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.MockShips;
 import exiledsector.charts.officer.scar.ScarMemory;
 import exiledsector.charts.officer.scar.Scars;
 import org.junit.jupiter.api.Test;
@@ -17,9 +18,7 @@ import static org.mockito.Mockito.when;
 class OfficerFleetsTest {
 
     private static FleetMemberAPI member(String memberId) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getId()).thenReturn(memberId);
-        return member;
+        return MockShips.member(memberId).build();
     }
 
     private static MemoryAPI fleetMemory(String flagshipId, String treeSeed) {

@@ -12,12 +12,11 @@ import com.fs.starfarer.api.combat.ShipEngineControllerAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
 import exiledsector.compat.LostSectorCompat;
-import org.junit.jupiter.api.AfterEach;
+import exiledsector.skills.skilleffect.CombatEngineExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.lwjgl.util.vector.Vector2f;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.awt.Color;
 
@@ -38,7 +37,8 @@ class VolatileFluxListenerTest {
 
     private static final String MOD_ID = "exiledSector_fluxScaled_ship";
 
-    private MockedStatic<Global> globalMock;
+    @RegisterExtension
+    final CombatEngineExtension combat = new CombatEngineExtension();
     private CombatEngineAPI engine;
     private ShipAPI ship;
     private FluxTrackerAPI flux;
@@ -46,10 +46,8 @@ class VolatileFluxListenerTest {
 
     @BeforeEach
     void setUp() {
-        engine = mock(CombatEngineAPI.class);
+        engine = combat.engine();
         when(engine.getElapsedInLastFrame()).thenReturn(0.016f);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getCombatEngine).thenReturn(engine);
 
         ship = mock(ShipAPI.class);
         when(ship.getId()).thenReturn("ship");
@@ -64,11 +62,6 @@ class VolatileFluxListenerTest {
         when(stats.getDynamic()).thenReturn(dynamic);
         when(dynamic.getValue(VolatileFluxListener.TOP_SPEED_KEY, 0f)).thenReturn(50f);
         when(dynamic.getValue(VolatileFluxListener.RATE_OF_FIRE_KEY, 0f)).thenReturn(40f);
-    }
-
-    @AfterEach
-    void tearDown() {
-        globalMock.close();
     }
 
     private static FluxTrackerAPI trackerAt(float level, boolean overloaded, boolean venting) {
@@ -164,7 +157,7 @@ class VolatileFluxListenerTest {
         ModManagerAPI mods = mock(ModManagerAPI.class);
         when(settings.getModManager()).thenReturn(mods);
         when(mods.isModEnabled("lost_sector")).thenReturn(enabled);
-        globalMock.when(Global::getSettings).thenReturn(settings);
+        combat.global().when(Global::getSettings).thenReturn(settings);
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(variant.hasHullMod(LostSectorCompat.AUGMENTED_SYSTEMS_HULLMOD_ID)).thenReturn(true);
         when(ship.getVariant()).thenReturn(variant);

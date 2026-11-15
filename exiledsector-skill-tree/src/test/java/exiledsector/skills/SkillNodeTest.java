@@ -13,6 +13,7 @@ import exiledsector.skills.layout.SkillNodeDecoration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -28,6 +29,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class SkillNodeTest {
 
     private MockedStatic<Global> globalMock;
@@ -38,14 +40,12 @@ class SkillNodeTest {
 
     @BeforeEach
     void setUp() {
-        SkillTree.clearTypes();
         globalMock = Mockito.mockStatic(Global.class);
     }
 
     @AfterEach
     void tearDown() {
         globalMock.close();
-        SkillTree.clearTypes();
     }
 
     @Test

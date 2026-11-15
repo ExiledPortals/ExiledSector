@@ -2,18 +2,19 @@ package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledsector.skills.npc.RealSkillData;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiPredicate;
 
+import static exiledsector.skills.TestTrees.node;
+import static exiledsector.skills.TestTrees.small;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class AnchorRouteTest {
 
     private static final ShipFacts FRIGATE = new ShipFacts(HullSize.FRIGATE, ShieldType.FRONT, false, 100f, hullModId -> false);
@@ -23,26 +24,9 @@ class AnchorRouteTest {
 
     @BeforeEach
     void setUp() {
-        RealSkillData.clear();
         SkillNode root = node("root", SkillTier.ROOT);
         data = new ShipSkillData();
         ShipTrees.chooseStartingRoot(data, root);
-    }
-
-    @AfterEach
-    void tearDown() {
-        RealSkillData.clear();
-    }
-
-    private static SkillNode node(String id, SkillTier tier, String... connectedTo) {
-        SkillType type = new SkillType.Builder(id + "_type", id + " name", "a.png", tier).build();
-        SkillNode node = new SkillNode(id, type, Arrays.asList(connectedTo), 0f, 0f);
-        SkillTree.register(node);
-        return node;
-    }
-
-    private static SkillNode small(String id, String... connectedTo) {
-        return node(id, SkillTier.SMALL, connectedTo);
     }
 
     private static SkillNode socket(String id, String... connectedTo) {

@@ -8,6 +8,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.MockSector;
 import exiledsector.ProjectFiles;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
@@ -20,6 +21,7 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -31,6 +33,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class RandomAssortmentVolumesWithoutRatTest {
 
     private MockedStatic<LunaSettings> lunaSettingsMock;
@@ -58,7 +61,6 @@ class RandomAssortmentVolumesWithoutRatTest {
 
     @AfterEach
     void tearDown() throws Exception {
-        RealSkillData.clear();
         NodeGates.register(new JSONObject("{}"));
         mockSector.close();
         lunaSettingsMock.close();

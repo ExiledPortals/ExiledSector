@@ -1,21 +1,24 @@
 package exiledsector.skills.npc;
 
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
-import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
-import exiledsector.skills.SkillType;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 
+import static exiledsector.skills.TestTrees.node;
+import static exiledsector.skills.TestTrees.registered;
+import static exiledsector.skills.TestTrees.type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class NpcLevelCapTest {
 
     private static final int MAX_LEVEL = 50;
@@ -23,7 +26,6 @@ class NpcLevelCapTest {
 
     @BeforeEach
     void setUp() {
-        RealSkillData.clear();
         register("root", SkillTier.ROOT);
         String previous = "root";
         for (int index = 0; index < OVER_CAP_NODES; index++) {
@@ -33,15 +35,8 @@ class NpcLevelCapTest {
         }
     }
 
-    @AfterEach
-    void tearDown() {
-        RealSkillData.clear();
-    }
-
     private static void register(String id, SkillTier tier, String... connectedTo) {
-        SkillType type = new SkillType.Builder(id + "_type", id, "a.png", tier).build();
-        SkillTree.registerType(type);
-        SkillTree.register(new SkillNode(id, type, List.of(connectedTo), 0f, 0f));
+        node(id, registered(type(id + "_type", tier).build()), connectedTo);
     }
 
     private static ShipSkillData overCapTree() {

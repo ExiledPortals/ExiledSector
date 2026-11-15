@@ -11,6 +11,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
 import exiledsector.effects.ModuleShareSetting;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
@@ -22,6 +23,7 @@ import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -36,6 +38,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class ShipTreeSummaryRendererTest {
 
     private MockedStatic<Global> globalMock;
@@ -48,8 +51,6 @@ class ShipTreeSummaryRendererTest {
     void setUp() {
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSettings).thenReturn(mock(SettingsAPI.class));
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
         SkillNode root = new SkillNode("root_1", new SkillType.Builder("root", "Low Tech", "a.png", SkillTier.ROOT).build(), List.of(), 0f, 0f);
         SkillNode armor = new SkillNode("heavy_armor_1", new SkillType.Builder("heavyarmor", "Heavy Armor", "a.png", SkillTier.NOTABLE)
                 .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f))).build(), List.of("root_1"), 0f, 0f);
@@ -73,8 +74,6 @@ class ShipTreeSummaryRendererTest {
     @AfterEach
     void tearDown() {
         globalMock.close();
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
     }
 
     @Test

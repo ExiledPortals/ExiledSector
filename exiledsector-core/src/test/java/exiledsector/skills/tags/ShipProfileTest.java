@@ -16,6 +16,7 @@ import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
+import exiledsector.MockShips;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -36,13 +37,10 @@ class ShipProfileTest {
 
     private static FleetMemberAPI member(HullSize hullSize, ShieldType shieldType, int fighterBays,
                                          ShipVariantAPI variant, boolean flagship) {
-        ShipHullSpecAPI hullSpec = mock(ShipHullSpecAPI.class);
-        when(hullSpec.getHullSize()).thenReturn(hullSize);
-        when(hullSpec.getShieldType()).thenReturn(shieldType);
-        when(hullSpec.getFighterBays()).thenReturn(fighterBays);
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getHullSpec()).thenReturn(hullSpec);
-        when(member.getVariant()).thenReturn(variant);
+        MockShips.MemberBuilder builder = MockShips.member().hullSize(hullSize).variant(variant);
+        when(builder.hullSpec().getShieldType()).thenReturn(shieldType);
+        when(builder.hullSpec().getFighterBays()).thenReturn(fighterBays);
+        FleetMemberAPI member = builder.build();
         when(member.isFlagship()).thenReturn(flagship);
         return member;
     }

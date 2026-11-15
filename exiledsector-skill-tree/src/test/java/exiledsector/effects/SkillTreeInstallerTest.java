@@ -6,10 +6,11 @@ import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import exiledsector.MockSector;
-import exiledsector.skills.SkillTree;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 
@@ -21,6 +22,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class SkillTreeInstallerTest {
 
     private MockSector mockSector;
@@ -40,14 +42,12 @@ class SkillTreeInstallerTest {
 
         when(fleetData.getMembersListCopy()).thenReturn(List.of());
 
-        SkillTree.clearNodes();
         ShipTreeSync.takePlayerFleetSyncRequest();
     }
 
     @AfterEach
     void tearDown() {
         mockSector.close();
-        SkillTree.clearNodes();
     }
 
     @Test

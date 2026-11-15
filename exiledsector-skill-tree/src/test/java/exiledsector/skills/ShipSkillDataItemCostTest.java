@@ -3,10 +3,9 @@ package exiledsector.skills;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.security.AnyTypePermission;
-import exiledsector.skills.npc.RealSkillData;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 import java.util.Map;
@@ -15,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class ShipSkillDataItemCostTest {
 
     private static final SkillItemCost LOBSTERS = new SkillItemCost("lobster", 50f);
@@ -24,14 +24,8 @@ class ShipSkillDataItemCostTest {
 
     @BeforeEach
     void setUp() {
-        RealSkillData.clear();
         root = node("root", SkillTier.ROOT, null);
         lobster = node("lobster", SkillTier.SMALL, LOBSTERS);
-    }
-
-    @AfterEach
-    void tearDown() {
-        RealSkillData.clear();
     }
 
     private static SkillNode node(String id, SkillTier tier, SkillItemCost itemCost) {

@@ -7,6 +7,7 @@ import exiledsector.skills.layout.TreeTopology;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class WormholeAnchorLinksTest {
 
     private static final String ANCHOR = "anchor_1";
@@ -40,8 +42,6 @@ class WormholeAnchorLinksTest {
 
     @BeforeEach
     void setUp() {
-        SkillTree.clearTypes();
-        SkillTree.clearNodes();
         root = node("root", SkillTier.ROOT, "core");
         coreNode = node("core_a", SkillTier.SMALL, "core", "root");
         socket = node("socket", SkillTier.SOCKET, "core", "core_a");
@@ -73,8 +73,6 @@ class WormholeAnchorLinksTest {
     @AfterEach
     void tearDown() {
         AnchorLinks.install(null);
-        SkillTree.clearTypes();
-        SkillTree.clearNodes();
     }
 
     private static SkillNode node(String id, SkillTier tier, String volume, String... connectedTo) {

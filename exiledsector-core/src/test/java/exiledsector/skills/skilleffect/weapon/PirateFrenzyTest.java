@@ -2,6 +2,7 @@ package exiledsector.skills.skilleffect.weapon;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import exiledsector.skills.skilleffect.CombatTestShips;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -15,12 +16,7 @@ class PirateFrenzyTest {
     private static final String FRENZY_MOD_ID = "exiledSector_pirateFrenzy_raider";
 
     private static ShipAPI ship() {
-        ShipAPI ship = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS);
-        when(ship.getId()).thenReturn("raider");
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(ship.isAlive()).thenReturn(true);
-        return ship;
+        return CombatTestShips.ship(mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS)).id("raider").alive().build();
     }
 
     @Test

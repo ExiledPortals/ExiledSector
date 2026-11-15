@@ -16,6 +16,7 @@ import exiledsector.effects.SkillTreeInstaller;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemNames;
+import exiledsector.items.ItemVolumes;
 import exiledsector.items.SocketLossListener;
 import exiledsector.items.StarChartCipher;
 import exiledsector.items.StarChartFixtures;
@@ -23,6 +24,7 @@ import exiledsector.items.SubroutineKind;
 import exiledsector.persistence.InMemoryTemplateFile;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillDataResolver;
@@ -48,6 +50,7 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -70,6 +73,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class ExiledSectorModPluginTest {
 
     private static final String TYPES = "{ \"skillTypes\": [ { \"id\": \"root_type\", \"name\": \"Root\", \"icon\": \"a.png\", \"tier\": \"ROOT\" },"
@@ -153,13 +157,13 @@ class ExiledSectorModPluginTest {
     void tearDown() throws Exception {
         SkillTreeTemplateStore.useCommonFolder();
         loadTree("");
-        SkillTree.clearTypes();
         NpcFactionVolumes.clear();
         TreeFleetFactions.clear();
         NpcFocus.clear();
         NpcLevelCaps.clear();
         ItemDefinitions.clear();
         ItemNames.clear();
+        ItemVolumes.bind(null);
         StarChartFixtures.unregisterCraftingItems();
         settingsCreatorMock.close();
         mockSector.close();

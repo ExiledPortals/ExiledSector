@@ -1,20 +1,17 @@
 package exiledsector.items;
 
-import exiledsector.ProjectFiles;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.EffectAliases;
-import org.json.CDL;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.Random;
 
+import static exiledsector.ProjectFiles.csvRows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -116,8 +113,4 @@ class PrototypeImplicitsTest {
         assertFalse(PrototypeImplicits.isPrototypeImplicit("ENERGY_DAMAGE_PERCENT_PROTOTYPE_IMPLICIT"));
     }
 
-    private static JSONArray csvRows(String dataPath) throws Exception {
-        String csv = Files.readString(ProjectFiles.projectRoot().resolve(dataPath), StandardCharsets.UTF_8);
-        return CDL.toJSONArray(csv.replace("\r\n", "\n"));
-    }
 }

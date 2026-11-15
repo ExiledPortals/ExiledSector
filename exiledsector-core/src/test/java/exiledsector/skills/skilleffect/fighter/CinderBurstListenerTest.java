@@ -1,19 +1,15 @@
 package exiledsector.skills.skilleffect.fighter;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CollisionClass;
-import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.DamageType;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.util.DynamicStatsAPI;
-import org.junit.jupiter.api.AfterEach;
+import exiledsector.skills.skilleffect.CombatEngineExtension;
+import exiledsector.skills.skilleffect.CombatTestShips;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.lwjgl.util.vector.Vector2f;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,22 +29,14 @@ import static org.mockito.Mockito.when;
 class CinderBurstListenerTest {
 
     private final List<Object> gridShips = new ArrayList<>();
-    private MockedStatic<Global> globalMock;
+    @RegisterExtension
+    final CombatEngineExtension combat = new CombatEngineExtension();
     private CombatEngineAPI engine;
 
     @BeforeEach
     void setUp() {
-        engine = mock(CombatEngineAPI.class);
-        CollisionGridAPI shipGrid = mock(CollisionGridAPI.class);
-        when(engine.getShipGrid()).thenReturn(shipGrid);
-        when(shipGrid.getCheckIterator(any(), anyFloat(), anyFloat())).thenAnswer(invocation -> new ArrayList<>(gridShips).iterator());
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getCombatEngine).thenReturn(engine);
-    }
-
-    @AfterEach
-    void tearDown() {
-        globalMock.close();
+        engine = combat.engine();
+        combat.shipGridOver(gridShips);
     }
 
     private static ShipAPI ship(int owner, float x, float collisionRadius) {
@@ -64,13 +52,7 @@ class CinderBurstListenerTest {
     }
 
     private static ShipAPI carrier(float burstDamage) {
-        ShipAPI carrier = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
-        when(carrier.getMutableStats()).thenReturn(stats);
-        when(stats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getValue(CinderBurstListener.DAMAGE_KEY, 0f)).thenReturn(burstDamage);
-        return carrier;
+        return CombatTestShips.withDynamic(CinderBurstListener.DAMAGE_KEY, burstDamage);
     }
 
     @Test

@@ -2,7 +2,6 @@ package exiledsector.skills.skilleffect.onhit;
 
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipEngineControllerAPI;
@@ -11,6 +10,8 @@ import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.WeaponAPI.WeaponSize;
 import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.skills.skilleffect.CombatTestShips;
+import exiledsector.skills.skilleffect.CombatTestShips.ShipBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
@@ -34,15 +35,11 @@ class ConcussionShellListenerTest {
 
     @BeforeEach
     void setUp() {
-        ship = mock(ShipAPI.class);
-        when(ship.getOwner()).thenReturn(0);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        dynamic = mock(DynamicStatsAPI.class);
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(stats.getDynamic()).thenReturn(dynamic);
+        ShipBuilder shooter = CombatTestShips.ship().owner(0).dynamic(ConcussionShellListener.CHANCE_PERCENT_KEY, 10f);
+        ship = shooter.build();
+        dynamic = shooter.dynamicStats();
         ballisticRateOfFire = new MutableStat(1f);
-        when(stats.getBallisticRoFMult()).thenReturn(ballisticRateOfFire);
-        when(dynamic.getValue(ConcussionShellListener.CHANCE_PERCENT_KEY, 0f)).thenReturn(10f);
+        when(shooter.stats().getBallisticRoFMult()).thenReturn(ballisticRateOfFire);
 
         enemy = mock(ShipAPI.class);
         when(enemy.getOwner()).thenReturn(1);

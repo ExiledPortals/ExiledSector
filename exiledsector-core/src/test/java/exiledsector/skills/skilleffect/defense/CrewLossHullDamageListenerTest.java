@@ -6,7 +6,8 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.fleet.CrewCompositionAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.skills.skilleffect.CombatTestShips;
+import exiledsector.skills.skilleffect.CombatTestShips.ShipBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -29,14 +30,11 @@ class CrewLossHullDamageListenerTest {
     }
 
     private ShipAPI shipWithCrew(float crew) {
-        ShipAPI deployed = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
+        ShipBuilder builder = CombatTestShips.ship().dynamic(CrewLossHullDamageListener.PERCENT_PER_STEP_KEY, 1f);
+        ShipAPI deployed = builder.build();
+        MutableShipStatsAPI stats = builder.stats();
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         CrewCompositionAPI composition = mock(CrewCompositionAPI.class);
-        when(deployed.getMutableStats()).thenReturn(stats);
-        when(stats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getValue(CrewLossHullDamageListener.PERCENT_PER_STEP_KEY, 0f)).thenReturn(1f);
         when(stats.getHullDamageTakenMult()).thenReturn(hullDamageTakenMult);
         when(stats.getCrewLossMult()).thenReturn(crewLossMult);
         when(deployed.getMaxHitpoints()).thenReturn(MAX_HULL);

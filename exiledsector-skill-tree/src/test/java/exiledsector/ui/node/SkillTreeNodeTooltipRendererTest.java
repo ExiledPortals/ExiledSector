@@ -3,6 +3,7 @@ package exiledsector.ui.node;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.MockShips;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.skills.AllocationCheck;
@@ -31,13 +32,10 @@ class SkillTreeNodeTooltipRendererTest {
             .build();
 
     private static FleetMemberAPI member(boolean automated) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
-        ShipHullSpecAPI hullSpec = mock(ShipHullSpecAPI.class);
-        when(member.getVariant()).thenReturn(variant);
-        when(variant.getHullSpec()).thenReturn(hullSpec);
+        when(variant.getHullSpec()).thenReturn(mock(ShipHullSpecAPI.class));
         when(variant.hasHullMod("automated")).thenReturn(automated);
-        return member;
+        return MockShips.member().variant(variant).build();
     }
 
     @Test

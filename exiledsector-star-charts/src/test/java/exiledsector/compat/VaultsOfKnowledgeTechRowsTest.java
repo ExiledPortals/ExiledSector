@@ -1,31 +1,23 @@
 package exiledsector.compat;
 
-import exiledsector.ProjectFiles;
 import exiledsector.items.WormholeTechItems;
-import org.json.CDL;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static exiledsector.ProjectFiles.csvRows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class VaultsOfKnowledgeTechRowsTest {
 
     private static final String DATABANK = "research_databank";
-
-    private static JSONArray rows(String path) throws Exception {
-        String csv = Files.readString(ProjectFiles.projectRoot().resolve(path), StandardCharsets.UTF_8);
-        return CDL.toJSONArray(csv.replace("\r\n", "\n"));
-    }
 
     private static Map<String, Integer> itemCosts(String cell) {
         Map<String, Integer> costs = new HashMap<>();
@@ -40,12 +32,12 @@ class VaultsOfKnowledgeTechRowsTest {
     @Test
     void theGatewayResearchRowsCostDatabanksAndTheirOwnItems() throws Exception {
         Set<String> specialItems = new HashSet<>();
-        JSONArray items = rows("data/campaign/special_items.csv");
+        JSONArray items = csvRows("data/campaign/special_items.csv");
         for (int index = 0; index < items.length(); index++) {
             specialItems.add(items.getJSONObject(index).optString("id"));
         }
         Map<String, JSONObject> techs = new HashMap<>();
-        JSONArray techRows = rows("data/campaign/aotd_tech_options.csv");
+        JSONArray techRows = csvRows("data/campaign/aotd_tech_options.csv");
         for (int index = 0; index < techRows.length(); index++) {
             JSONObject row = techRows.getJSONObject(index);
             techs.put(row.getString("id"), row);

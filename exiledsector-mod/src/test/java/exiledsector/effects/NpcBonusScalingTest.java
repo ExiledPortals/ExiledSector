@@ -10,6 +10,7 @@ import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.logistics.LogisticsSkillEffect;
 import exiledsector.skills.skilleffect.onhit.OnHitSkillEffect;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
@@ -20,6 +21,7 @@ import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -32,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class NpcBonusScalingTest {
 
     private static final float TOLERANCE = 0.001f;
@@ -44,8 +47,6 @@ class NpcBonusScalingTest {
     void setUp() {
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class, invocation -> null);
         mockSector = new MockSector();
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
         ResolvedTree.clearCache();
     }
 
@@ -53,8 +54,6 @@ class NpcBonusScalingTest {
     void tearDown() {
         mockSector.close();
         lunaSettingsMock.close();
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
         ResolvedTree.clearCache();
     }
 

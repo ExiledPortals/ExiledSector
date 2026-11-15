@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import static exiledsector.charts.anomaly.LiveAnomalyRuns.RUN_ID;
+import static exiledsector.charts.anomaly.LiveAnomalyRuns.run;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -33,8 +35,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class ExcavationSitesTest {
-
-    private static final String RUN_ID = "run1";
 
     private MockSector mockSector;
     private StarSystemAPI system;
@@ -74,10 +74,6 @@ class ExcavationSitesTest {
         List<ExcavationSite> placed = ExcavationSites.place(site);
         site.commitStates(run);
         return placed;
-    }
-
-    private static ChartRun run() {
-        return new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
     }
 
     @Test

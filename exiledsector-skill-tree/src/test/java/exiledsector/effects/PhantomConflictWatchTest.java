@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.MockSector;
+import exiledsector.MockShips;
 import exiledsector.compat.MagicLibCompat;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedNode;
@@ -87,9 +88,7 @@ class PhantomConflictWatchTest {
     }
 
     private static FleetMemberAPI member(String memberId) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getId()).thenReturn(memberId);
-        return member;
+        return MockShips.member(memberId).build();
     }
 
     private static boolean blocks(String hullId, Set<String> hullMods) {
@@ -227,9 +226,7 @@ class PhantomConflictWatchTest {
     }
 
     private static FleetMemberAPI fittedMember(String memberId, ShipVariantAPI variant) {
-        FleetMemberAPI member = member(memberId);
-        when(member.getVariant()).thenReturn(variant);
-        return member;
+        return MockShips.member(memberId).variant(variant).build();
     }
 
     @Test

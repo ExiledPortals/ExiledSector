@@ -1,6 +1,5 @@
 package exiledsector.charts.anomaly.listeningpost;
 
-import exiledsector.ProjectFiles;
 import exiledsector.items.HullItem;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
@@ -9,16 +8,13 @@ import exiledsector.items.ItemModifiers;
 import exiledsector.items.PrototypeImplicits;
 import exiledsector.items.SubroutineDefinitions;
 import exiledsector.skills.skilleffect.EffectAliases;
-import org.json.CDL;
-import org.json.JSONArray;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.List;
 
+import static exiledsector.ProjectFiles.csvRows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -75,8 +71,4 @@ class VaultPrototypesTest {
         return prototypes.stream().map(ItemData::encode).toList();
     }
 
-    private static JSONArray csvRows(String dataPath) throws Exception {
-        String csv = Files.readString(ProjectFiles.projectRoot().resolve(dataPath), StandardCharsets.UTF_8);
-        return CDL.toJSONArray(csv.replace("\r\n", "\n"));
-    }
 }

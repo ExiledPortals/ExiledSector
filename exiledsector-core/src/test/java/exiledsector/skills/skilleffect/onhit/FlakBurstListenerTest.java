@@ -1,6 +1,5 @@
 package exiledsector.skills.skilleffect.onhit;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CollisionClass;
 import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
@@ -8,15 +7,15 @@ import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.MissileAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
-import org.junit.jupiter.api.AfterEach;
+import exiledsector.skills.skilleffect.CombatEngineExtension;
+import exiledsector.skills.skilleffect.CombatTestShips;
+import exiledsector.skills.skilleffect.CombatTestShips.ShipBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.lwjgl.util.vector.Vector2f;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +34,8 @@ class FlakBurstListenerTest {
 
     private static final float DAMAGE = 100f;
 
-    private MockedStatic<Global> global;
+    @RegisterExtension
+    final CombatEngineExtension combat = new CombatEngineExtension();
     private CombatEngineAPI engine;
     private ShipAPI ship;
     private DynamicStatsAPI dynamic;
@@ -45,29 +45,16 @@ class FlakBurstListenerTest {
 
     @BeforeEach
     void setUp() {
-        engine = mock(CombatEngineAPI.class);
+        engine = combat.engine();
+        combat.shipGridOver(shipsNearby);
         CollisionGridAPI missileGrid = mock(CollisionGridAPI.class);
-        CollisionGridAPI shipGrid = mock(CollisionGridAPI.class);
         when(engine.getMissileGrid()).thenReturn(missileGrid);
-        when(engine.getShipGrid()).thenReturn(shipGrid);
         when(missileGrid.getCheckIterator(any(), anyFloat(), anyFloat())).thenAnswer(invocation -> new ArrayList<>(missilesNearby).iterator());
-        when(shipGrid.getCheckIterator(any(), anyFloat(), anyFloat())).thenAnswer(invocation -> new ArrayList<>(shipsNearby).iterator());
-        global = Mockito.mockStatic(Global.class);
-        global.when(Global::getCombatEngine).thenReturn(engine);
 
-        ship = mock(ShipAPI.class);
-        when(ship.getOwner()).thenReturn(0);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        dynamic = mock(DynamicStatsAPI.class);
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(stats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getValue(FlakBurstListener.DAMAGE_KEY, 0f)).thenReturn(DAMAGE);
+        ShipBuilder shooter = CombatTestShips.ship().owner(0).dynamic(FlakBurstListener.DAMAGE_KEY, DAMAGE);
+        ship = shooter.build();
+        dynamic = shooter.dynamicStats();
         listener = new FlakBurstListener(ship);
-    }
-
-    @AfterEach
-    void tearDown() {
-        global.close();
     }
 
     private static MissileAPI missileAt(Vector2f location, int owner, float hitpoints) {

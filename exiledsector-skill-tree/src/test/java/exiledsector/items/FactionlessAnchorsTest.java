@@ -18,6 +18,7 @@ import exiledsector.ProjectFiles;
 import exiledsector.compat.NexerelinCompat;
 import exiledsector.effects.SkillTreeLootSource;
 import exiledsector.effects.TechMiningItemListener;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -31,6 +32,7 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -54,6 +56,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class FactionlessAnchorsTest {
 
     private static final String HEGEMONY_ANCHOR = "wormhole_anchor_hegemony";
@@ -83,7 +86,6 @@ class FactionlessAnchorsTest {
         mockSector.global.when(Global::getSettings).thenReturn(settings);
         NodeGates.register(new JSONObject("{}"));
 
-        SkillTree.clearNodes();
         SkillType exitType = new SkillType.Builder("wormhole_exit", "Wormhole Exit", "", SkillTier.WORMHOLE_EXIT).build();
         for (String exit : List.of("hegemony_2", "kesteven_wormhole1", "enigma_wormhole1")) {
             SkillTree.register(new SkillNode(exit, exitType, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of(exit.split("_")[0])));
@@ -102,7 +104,6 @@ class FactionlessAnchorsTest {
         FactionlessAnchors.clear();
         NpcFactionVolumes.clear();
         WormholeAnchorDefinitions.clear();
-        SkillTree.clearNodes();
         SectorManager.LIVE_FACTION_IDS.clear();
         NexConfig.CONFIGS_BY_FACTION.clear();
         mockSector.close();

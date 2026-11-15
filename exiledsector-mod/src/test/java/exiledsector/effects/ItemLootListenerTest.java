@@ -9,6 +9,7 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import data.scripts.campaign.plugins.amemory.SotfAMemoryFEContext;
 import exiledsector.MockSector;
+import exiledsector.MockShips;
 import exiledsector.items.MaterialItems;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.loot.ChartDrops;
@@ -30,11 +31,11 @@ import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledsector.skills.npc.RealSkillData;
 import exiledsector.loot.BattleLootRates;
 import exiledsector.items.FactionFleetDrops;
 import exiledsector.items.ItemData;
@@ -42,6 +43,7 @@ import exiledsector.items.ItemDefinitions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import exiledsector.items.ItemDisassembly;
 import lunalib.lunaSettings.LunaSettings;
 import org.mockito.ArgumentCaptor;
@@ -60,6 +62,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class ItemLootListenerTest {
 
     private static final String TAG = "exiledSector_npcTree|generated|1|root,socket_1|sockets:socket_1=npc:volume_subroutine/12";
@@ -93,7 +96,6 @@ class ItemLootListenerTest {
     void tearDown() {
         FactionFleetDrops.clear(TEST_DROPS);
         ItemDefinitions.clear();
-        RealSkillData.clear();
         mockSector.close();
         lunaSettingsMock.close();
     }
@@ -105,10 +107,7 @@ class ItemLootListenerTest {
     private static FleetMemberAPI flagship(String id, String tag) {
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(variant.getTags()).thenReturn(List.of(tag));
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getId()).thenReturn(id);
-        when(member.getVariant()).thenReturn(variant);
-        return member;
+        return MockShips.member(id).variant(variant).build();
     }
 
     private static EngagementResultAPI engagement(BattleAPI battle, List<FleetMemberAPI> destroyed, List<FleetMemberAPI> disabled) {
@@ -309,9 +308,7 @@ class ItemLootListenerTest {
     }
 
     private static FleetMemberAPI warship(String id, float deploymentPoints) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getId()).thenReturn(id);
-        when(member.getVariant()).thenReturn(mock(ShipVariantAPI.class));
+        FleetMemberAPI member = MockShips.member(id).variant(mock(ShipVariantAPI.class)).build();
         when(member.getDeploymentPointsCost()).thenReturn(deploymentPoints);
         return member;
     }

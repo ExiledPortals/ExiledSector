@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.ShipTrees;
 import org.mockito.Mockito;
 import exiledsector.skills.ShipSkillData;
@@ -11,6 +12,7 @@ import exiledsector.skills.SkillType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +27,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class ItemDisassemblyTest {
 
     private final ItemStore store = new ItemStore();
@@ -33,13 +36,11 @@ class ItemDisassemblyTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        SkillTree.clearNodes();
         HullItemRows.registerMilitary();
     }
 
     @AfterEach
     void tearDown() {
-        SkillTree.clearNodes();
         ItemDefinitions.clear();
     }
 

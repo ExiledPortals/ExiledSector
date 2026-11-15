@@ -9,18 +9,21 @@ import exiledsector.skills.skilleffect.weapon.ScopedWeaponEffect;
 import exiledsector.skills.skilleffect.weapon.WeaponScope;
 import exiledsector.skills.skilleffect.weapon.WeaponStatFamily;
 import exiledsector.effects.SkillTreeEffectSource;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static exiledsector.skills.TestTrees.node;
+import static exiledsector.skills.TestTrees.registered;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class DiminishingReturnsTest {
 
     private static final StatBaseline CRUISER = new StatBaseline(1000f, 8000f, 10000f, 500f, 50f);
@@ -30,17 +33,9 @@ class DiminishingReturnsTest {
 
     @BeforeEach
     void setUp() {
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
         SkillNode root = register("root_1", new SkillType.Builder("root", "Root", "a.png", SkillTier.ROOT).build());
         data = new ShipSkillData();
         ShipTrees.chooseStartingRoot(data, root);
-    }
-
-    @AfterEach
-    void tearDown() {
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
     }
 
     private static DiminishingReturns.Config config(int efficiencyPercent, int thresholdPercent) {
@@ -52,10 +47,7 @@ class DiminishingReturnsTest {
     }
 
     private static SkillNode register(String id, SkillType type) {
-        SkillTree.registerType(type);
-        SkillNode node = new SkillNode(id, type, List.of(), 0f, 0f);
-        SkillTree.register(node);
-        return node;
+        return node(id, registered(type));
     }
 
     private void allocate(String nodeId, SkillType.Builder type) {

@@ -8,6 +8,7 @@ import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.MockSector;
 import exiledsector.effects.SkillTreeLootSource;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -23,6 +24,7 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -44,6 +46,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class AnchorObtainabilityTest {
 
     private static final String HEGEMONY_ANCHOR = "wormhole_anchor_hegemony";
@@ -74,7 +77,6 @@ class AnchorObtainabilityTest {
         NodeGates.register(new JSONObject("{\"gate_withheld\": {\"unlockConditions\": [{\"type\": \"memoryFlag\", \"key\": \"" + WITHHELD_GATE_FLAG
                 + "\"}]}, \"gate_free\": {\"anchors\": \"free\", \"unlockConditions\": [{\"type\": \"memoryFlag\", \"key\": \"" + FREE_GATE_FLAG + "\"}]}}"));
 
-        SkillTree.clearNodes();
         SkillType exitType = new SkillType.Builder("wormhole_exit", "Wormhole Exit", "", SkillTier.WORMHOLE_EXIT).build();
         SkillType lockedExitType = new SkillType.Builder("wormhole_exit_locked", "Wormhole Exit", "", SkillTier.WORMHOLE_EXIT)
                 .unlockConditions(List.of(UnlockCondition.memoryFlag(EXIT_TYPE_FLAG))).build();
@@ -101,7 +103,6 @@ class AnchorObtainabilityTest {
     void tearDown() throws Exception {
         NpcFactionVolumes.clear();
         WormholeAnchorDefinitions.clear();
-        SkillTree.clearNodes();
         NodeGates.register(new JSONObject("{}"));
         mockSector.close();
         lunaSettingsMock.close();

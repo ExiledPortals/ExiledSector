@@ -11,12 +11,12 @@ import com.fs.starfarer.api.combat.BattleCreationContext;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatFleetManagerAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetGoal;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.mission.FleetSide;
 import com.fs.starfarer.api.mission.MissionDefinitionAPI;
 import exiledsector.MockSector;
+import exiledsector.MockShips;
 import exiledsector.charts.content.FakeChartContentEngine;
 import exiledsector.charts.run.ChartCampaignPlugin;
 import org.junit.jupiter.api.AfterEach;
@@ -58,10 +58,7 @@ class ExcavationBattleTest {
     }
 
     static FleetMemberAPI ship(HullSize size) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        ShipHullSpecAPI spec = mock(ShipHullSpecAPI.class);
-        when(spec.getHullSize()).thenReturn(size);
-        when(member.getHullSpec()).thenReturn(spec);
+        FleetMemberAPI member = MockShips.member().hullSize(size).build();
         when(member.canBeDeployedForCombat()).thenReturn(true);
         return member;
     }

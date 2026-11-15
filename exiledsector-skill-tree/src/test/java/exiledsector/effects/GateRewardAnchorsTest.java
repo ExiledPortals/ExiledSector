@@ -10,9 +10,9 @@ import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.MockSector;
+import exiledsector.MockShips;
 import exiledsector.compat.NightcrossCompat;
 import exiledsector.items.AnchorRows;
 import exiledsector.items.ItemData;
@@ -21,6 +21,7 @@ import exiledsector.items.JanusDevice;
 import exiledsector.items.WormholeAnchorDefinitions;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.BattleLoot;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -34,6 +35,7 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -56,6 +58,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class GateRewardAnchorsTest {
 
     private static final String ABYSS_GATE = "gate_singularity_defeated";
@@ -90,7 +93,6 @@ class GateRewardAnchorsTest {
         NodeGates.register(new JSONObject("{\"" + ABYSS_GATE + "\": {\"rewardAnchor\": true, \"unlockConditions\": [{\"type\": \"ratSingularityDefeated\"}]},"
                 + " \"" + EXISTENTIAL_THREAT_GATE + "\": {\"rewardAnchor\": true, \"unlockConditions\": [{\"type\": \"nightcrossExistentialThreatDefeated\"}]}}"));
 
-        SkillTree.clearNodes();
         SkillType exitType = new SkillType.Builder("wormhole_exit", "Wormhole Exit", "", SkillTier.WORMHOLE_EXIT).build();
         SkillTree.register(new SkillNode("rat_abyss_wormhole_1", exitType, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of("abyss", ABYSS_GATE)));
         SkillTree.register(new SkillNode("stargazer_wormhole_1", exitType, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of("stargazer", EXISTENTIAL_THREAT_GATE)));
@@ -103,7 +105,6 @@ class GateRewardAnchorsTest {
     void tearDown() throws Exception {
         SkillTreeSetting.setEnabledForTests(SkillTreeSetting.DEFAULT_ENABLED);
         WormholeAnchorDefinitions.clear();
-        SkillTree.clearNodes();
         NodeGates.register(new JSONObject("{}"));
         mockSector.close();
         lunaSettingsMock.close();
@@ -117,11 +118,9 @@ class GateRewardAnchorsTest {
     }
 
     private static FleetMemberAPI member(String hullId) {
-        ShipHullSpecAPI hullSpec = mock(ShipHullSpecAPI.class);
-        when(hullSpec.getHullId()).thenReturn(hullId);
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getHullSpec()).thenReturn(hullSpec);
-        return member;
+        MockShips.MemberBuilder member = MockShips.member();
+        when(member.hullSpec().getHullId()).thenReturn(hullId);
+        return member.build();
     }
 
     private static BattleLoot wonBattle() {

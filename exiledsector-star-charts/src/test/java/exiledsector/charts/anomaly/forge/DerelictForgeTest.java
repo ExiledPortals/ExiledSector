@@ -11,6 +11,7 @@ import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.anomaly.LiveAnomalyRuns;
 import exiledsector.charts.anomaly.VanillaDefenders;
 import exiledsector.charts.content.ChartSpot;
 import exiledsector.charts.content.FakeChartContentEngine;
@@ -27,10 +28,11 @@ import org.lwjgl.util.vector.Vector2f;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import static exiledsector.charts.anomaly.LiveAnomalyRuns.RUN_ID;
+import static exiledsector.charts.anomaly.LiveAnomalyRuns.run;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -46,8 +48,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class DerelictForgeTest {
-
-    private static final String RUN_ID = "run1";
 
     private MockSector mockSector;
     private StarSystemAPI system;
@@ -92,16 +92,12 @@ class DerelictForgeTest {
     }
 
     private AnomalyContentSite site(ChartGenContext context, Predicate<ChartSpot> clear) {
-        return new AnomalyContentSite(system, RUN_ID, 4, "pirates", context, List.of(), null, clear, salt -> new Random(salt));
+        return LiveAnomalyRuns.site(system, "pirates", context, clear);
     }
 
     private static void generateInto(ChartRun run, AnomalyContentSite site) {
         DerelictForge.INSTANCE.generate(site);
         site.commitStates(run);
-    }
-
-    private static ChartRun run() {
-        return new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
     }
 
     @Test

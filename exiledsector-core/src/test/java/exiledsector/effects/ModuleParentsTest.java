@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.VariantSource;
+import exiledsector.MockShips;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.DiminishingReturns;
 import exiledsector.skills.ShipSkillData;
@@ -43,9 +44,7 @@ class ModuleParentsTest {
     }
 
     private static FleetMemberAPI member(String id, ShipVariantAPI variant, FleetDataAPI fleetData) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getId()).thenReturn(id);
-        when(member.getVariant()).thenReturn(variant);
+        FleetMemberAPI member = MockShips.member(id).variant(variant).build();
         when(member.getFleetData()).thenReturn(fleetData);
         return member;
     }

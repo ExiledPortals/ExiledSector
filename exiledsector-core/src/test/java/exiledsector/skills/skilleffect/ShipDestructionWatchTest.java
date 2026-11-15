@@ -7,11 +7,9 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.skilleffect.ShipDestructionWatch.DestroyedShip;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +30,8 @@ class ShipDestructionWatchTest {
     private static final int ENEMY = 1;
 
     private final List<ShipAPI> battleShips = new ArrayList<>();
-    private MockedStatic<Global> globalMock;
+    @RegisterExtension
+    final CombatEngineExtension combat = new CombatEngineExtension();
     private CombatEngineAPI engine;
     private DestructionWatchHarness destructionWatch;
 
@@ -63,15 +62,8 @@ class ShipDestructionWatchTest {
 
     @BeforeEach
     void setUp() {
-        engine = mock(CombatEngineAPI.class);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getCombatEngine).thenReturn(engine);
-        destructionWatch = new DestructionWatchHarness(globalMock, engine, battleShips);
-    }
-
-    @AfterEach
-    void tearDown() {
-        globalMock.close();
+        engine = combat.engine();
+        destructionWatch = new DestructionWatchHarness(combat.global(), engine, battleShips);
     }
 
     private ShipAPI ship(int owner) {
@@ -203,7 +195,7 @@ class ShipDestructionWatchTest {
         verify(engine, times(1)).addPlugin(any(ShipDestructionWatch.class));
 
         engine.getCustomData().clear();
-        globalMock.when(Global::getCurrentState).thenReturn(GameState.CAMPAIGN);
+        combat.global().when(Global::getCurrentState).thenReturn(GameState.CAMPAIGN);
         new RecordingSubscriber(ship(PLAYER));
         assertFalse(engine.getCustomData().containsKey(ShipDestructionWatch.CUSTOM_DATA_KEY));
     }

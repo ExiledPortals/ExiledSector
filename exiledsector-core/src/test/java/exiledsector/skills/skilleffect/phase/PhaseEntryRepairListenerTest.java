@@ -1,9 +1,8 @@
 package exiledsector.skills.skilleffect.phase;
 
 import com.fs.starfarer.api.combat.ArmorGridAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.skills.skilleffect.CombatTestShips;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,12 +25,7 @@ class PhaseEntryRepairListenerTest {
             cells[(int) call.getArgument(0)][(int) call.getArgument(1)] = call.getArgument(2);
             return null;
         }).when(grid).setArmorValue(anyInt(), anyInt(), anyFloat());
-        ShipAPI ship = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(stats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getValue(PhaseEntryRepairListener.REPAIR_PERCENT_KEY, 0f)).thenReturn(30f);
+        ShipAPI ship = CombatTestShips.withDynamic(PhaseEntryRepairListener.REPAIR_PERCENT_KEY, 30f);
         when(ship.getArmorGrid()).thenReturn(grid);
         return ship;
     }

@@ -12,8 +12,8 @@ import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.anomaly.LiveAnomalyRuns;
 import exiledsector.charts.anomaly.VanillaDefenders;
-import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.FakeChartContentEngine;
 import exiledsector.charts.generation.ChartGenContext;
@@ -32,9 +32,9 @@ import org.lwjgl.util.vector.Vector2f;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
+import static exiledsector.charts.anomaly.LiveAnomalyRuns.RUN_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -49,8 +49,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class AbyssalResearchComplexTest {
-
-    private static final String RUN_ID = "run1";
 
     private MockSector mockSector;
     private StarSystemAPI system;
@@ -100,13 +98,11 @@ class AbyssalResearchComplexTest {
     }
 
     private AnomalyContentSite site() {
-        return new AnomalyContentSite(system, RUN_ID, 4, "rat_abyssals", ChartGenContext.none(), List.of(), null, spot -> true, salt -> new Random(salt));
+        return LiveAnomalyRuns.site(system, "rat_abyssals", ChartGenContext.none(), spot -> true);
     }
 
     private static ChartRun run() {
-        ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        run.recordContent(new ChartContent(4, "rat_abyssals", null, 3, 2, List.of(AbyssalResearchComplex.ANOMALY_ID)));
-        return run;
+        return LiveAnomalyRuns.run(4, "rat_abyssals", List.of(AbyssalResearchComplex.ANOMALY_ID));
     }
 
     @Test

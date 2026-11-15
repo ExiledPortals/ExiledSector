@@ -11,12 +11,14 @@ import exiledsector.ProjectFiles;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.WormholeAnchorDefinitions;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.npc.RealSkillData;
 import org.json.CDL;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -36,6 +38,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class AlphaSiteOmegaCacheTest {
 
     private static final String FOUND_OMEGA_KEY = "$exiledSector_foundOmega";
@@ -58,7 +61,6 @@ class AlphaSiteOmegaCacheTest {
     void tearDown() {
         WormholeAnchorDefinitions.clear();
         ItemDefinitions.clear();
-        RealSkillData.clear();
         miscMock.close();
     }
 

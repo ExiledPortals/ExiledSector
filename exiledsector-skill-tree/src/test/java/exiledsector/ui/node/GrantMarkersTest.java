@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.ShipFacts;
 import exiledsector.items.NodeGrantStatus;
 import exiledsector.skills.AllocationCheck;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.NodeGrants;
 import exiledsector.skills.ShipSkillData;
@@ -18,6 +19,7 @@ import exiledsector.skills.layout.SkillNodeDecoration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.awt.Color;
 import java.util.HashMap;
@@ -32,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class GrantMarkersTest {
 
     private static final String CACHE = "cache";
@@ -56,8 +59,6 @@ class GrantMarkersTest {
 
     @BeforeEach
     void setUp() {
-        SkillTree.clearTypes();
-        SkillTree.clearNodes();
         root = node("root", SkillTier.ROOT, "core_a");
         coreNode = node("core_a", SkillTier.SMALL, "root", "socket", "socket_b", "core_b");
         socket = node("socket", SkillTier.SOCKET, "core_a");
@@ -92,8 +93,6 @@ class GrantMarkersTest {
     @AfterEach
     void tearDown() {
         NodeGrants.install(null);
-        SkillTree.clearTypes();
-        SkillTree.clearNodes();
     }
 
     private static SkillNode node(String id, SkillTier tier, String... connectedTo) {

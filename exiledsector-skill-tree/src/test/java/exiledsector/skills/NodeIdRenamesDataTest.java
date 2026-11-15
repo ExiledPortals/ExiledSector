@@ -2,21 +2,19 @@ package exiledsector.skills;
 
 import exiledsector.ProjectFiles;
 import exiledsector.skills.npc.RealSkillData;
-import org.json.CDL;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static exiledsector.ProjectFiles.csvRows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -27,9 +25,9 @@ class NodeIdRenamesDataTest {
     @BeforeEach
     void setUp() throws Exception {
         RealSkillData.load();
-        NodeReplacements.register(rows(NodeReplacements.DATA_PATH));
-        NodeReplacements.registerRenames(rows(NodeReplacements.NODE_RENAMES_PATH));
-        NodeReplacements.registerTypeRenames(rows(NodeReplacements.TYPE_RENAMES_PATH));
+        NodeReplacements.register(csvRows(NodeReplacements.DATA_PATH));
+        NodeReplacements.registerRenames(csvRows(NodeReplacements.NODE_RENAMES_PATH));
+        NodeReplacements.registerTypeRenames(csvRows(NodeReplacements.TYPE_RENAMES_PATH));
     }
 
     @AfterEach
@@ -38,13 +36,8 @@ class NodeIdRenamesDataTest {
         RealSkillData.clear();
     }
 
-    private static JSONArray rows(String path) throws Exception {
-        String csv = Files.readString(ProjectFiles.projectRoot().resolve(path), StandardCharsets.UTF_8);
-        return CDL.toJSONArray(csv.replace("\r\n", "\n"));
-    }
-
     private static Map<String, String> pairs(String path) throws Exception {
-        JSONArray rows = rows(path);
+        JSONArray rows = csvRows(path);
         Map<String, String> pairs = new LinkedHashMap<>();
         for (int i = 0; i < rows.length(); i++) {
             pairs.put(rows.getJSONObject(i).getString("old"), rows.getJSONObject(i).getString("new"));

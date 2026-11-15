@@ -17,6 +17,7 @@ import exiledsector.effects.OpReserveParity;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocationCheck;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.ItemCostLedger;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipSkillData;
@@ -35,6 +36,7 @@ import org.apache.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -59,6 +61,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class NodeAllocatorTest {
 
     private MockedStatic<LunaSettings> lunaSettingsMock;
@@ -84,8 +87,6 @@ class NodeAllocatorTest {
         settings = mock(SettingsAPI.class);
         mockSector.global.when(Global::getSettings).thenReturn(settings);
 
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
         root = register("root_1", type("root", "Low Tech", SkillTier.ROOT).build());
         frontShield = register("makeshift_shield_generator_1", type("frontshield", "Front Shield", SkillTier.NOTABLE).build(), "root_1");
         omniShieldType = type("omnishield", "Omni Shield", SkillTier.NOTABLE).exclusiveSkillTypeIds(List.of("frontshield")).build();
@@ -112,8 +113,6 @@ class NodeAllocatorTest {
     void tearDown() {
         mockSector.close();
         lunaSettingsMock.close();
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
     }
 
     private static SkillType.Builder type(String id, String name, SkillTier tier) {

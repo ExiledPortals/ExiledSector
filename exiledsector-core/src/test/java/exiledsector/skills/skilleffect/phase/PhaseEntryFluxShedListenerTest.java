@@ -1,9 +1,8 @@
 package exiledsector.skills.skilleffect.phase;
 
 import com.fs.starfarer.api.combat.FluxTrackerAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.skills.skilleffect.CombatTestShips;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.ArgumentMatchers.anyFloat;
@@ -17,13 +16,8 @@ class PhaseEntryFluxShedListenerTest {
 
     @Test
     void enteringPhaseTurnsItsShareOfHardFluxSoftOncePerEntry() {
-        ShipAPI ship = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
+        ShipAPI ship = CombatTestShips.withDynamic(PhaseEntryFluxShedListener.SHED_PERCENT_KEY, 20f);
         FluxTrackerAPI flux = mock(FluxTrackerAPI.class);
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(stats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getValue(PhaseEntryFluxShedListener.SHED_PERCENT_KEY, 0f)).thenReturn(20f);
         when(ship.getFluxTracker()).thenReturn(flux);
         when(flux.getHardFlux()).thenReturn(500f);
         PhaseEntryFluxShedListener listener = new PhaseEntryFluxShedListener(ship);

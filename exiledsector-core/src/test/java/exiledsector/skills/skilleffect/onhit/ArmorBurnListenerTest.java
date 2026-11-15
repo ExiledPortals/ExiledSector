@@ -7,7 +7,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
-import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.skills.skilleffect.CombatTestShips;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.ArgumentCaptor;
@@ -27,14 +27,7 @@ import static org.mockito.Mockito.when;
 class ArmorBurnListenerTest {
 
     private static ShipAPI burningShip() {
-        ShipAPI ship = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(stats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getValue(ArmorBurnListener.BURN_PERCENT_KEY, 0f)).thenReturn(5f);
-        when(ship.getOwner()).thenReturn(0);
-        return ship;
+        return CombatTestShips.ship().dynamic(ArmorBurnListener.BURN_PERCENT_KEY, 5f).owner(0).build();
     }
 
     private static ShipAPI target(ArmorGridAPI grid, Vector2f point, int owner) {

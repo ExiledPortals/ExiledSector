@@ -6,17 +6,19 @@ import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.intel.PersonBountyIntel;
+import exiledsector.MockShips;
 import exiledsector.items.AnchorRows;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.WormholeAnchorDefinitions;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.BattleLoot;
-import exiledsector.skills.SkillTree;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import org.json.JSONArray;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class DeserterBountyAnchorsTest {
 
     private static final String HEGEMONY_ANCHOR = "wormhole_anchor_hegemony";
@@ -37,7 +40,6 @@ class DeserterBountyAnchorsTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        SkillTree.clearNodes();
         WormholeAnchorDefinitions.register(new JSONArray()
                 .put(AnchorRows.row(HEGEMONY_ANCHOR, "hegemony", "hegemony_2").put("drop_factions", "hegemony"))
                 .put(AnchorRows.row(PIRATE_ANCHOR, "pirate", "pirate_wormhole_2").put("drop_factions", "pirates")));
@@ -117,9 +119,7 @@ class DeserterBountyAnchorsTest {
     }
 
     private static FleetMemberAPI member(String id) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getId()).thenReturn(id);
-        return member;
+        return MockShips.member(id).build();
     }
 
     private static PersonBountyIntel bounty(PersonBountyIntel.BountyType type, String factionId, FleetMemberAPI flagship) {

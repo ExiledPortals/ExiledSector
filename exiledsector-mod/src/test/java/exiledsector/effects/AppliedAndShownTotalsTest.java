@@ -8,6 +8,7 @@ import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.flux.FluxSkillEffect;
 import exiledsector.skills.skilleffect.weapon.WeaponSkillEffect;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
@@ -18,6 +19,7 @@ import exiledsector.skills.SkillType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,6 +32,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class AppliedAndShownTotalsTest {
 
     private static final float TEMPORARY_SECONDS = 60f;
@@ -41,8 +44,6 @@ class AppliedAndShownTotalsTest {
 
     @BeforeEach
     void setUp() {
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
         ResolvedTree.clearCache();
         SkillNode root = register(new SkillType.Builder("root", "Low Tech", "a.png", SkillTier.ROOT)
                 .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f))).build());
@@ -52,8 +53,6 @@ class AppliedAndShownTotalsTest {
 
     @AfterEach
     void tearDown() {
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
         ResolvedTree.clearCache();
     }
 

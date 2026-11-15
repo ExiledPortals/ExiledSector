@@ -3,21 +3,25 @@ package exiledsector.skills;
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.layout.SkillNodeDecoration;
-import exiledsector.skills.npc.RealSkillData;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.special.SpecialSkillEffect;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.random.RandomGenerator;
 
+import static exiledsector.skills.TestTrees.node;
+import static exiledsector.skills.TestTrees.registered;
+import static exiledsector.skills.TestTrees.small;
+import static exiledsector.skills.TestTrees.type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class AllocationPathTest {
 
     private static final ShipFacts FRIGATE = new ShipFacts(HullSize.FRIGATE, ShieldType.FRONT, false, 100f, hullModId -> false);
@@ -37,34 +41,9 @@ class AllocationPathTest {
 
     @BeforeEach
     void setUp() {
-        RealSkillData.clear();
         SkillNode root = node("root", type("root_type", SkillTier.ROOT).build());
         data = new ShipSkillData();
         ShipTrees.chooseStartingRoot(data, root);
-    }
-
-    @AfterEach
-    void tearDown() {
-        RealSkillData.clear();
-    }
-
-    private static SkillType.Builder type(String id, SkillTier tier) {
-        return new SkillType.Builder(id, id + " name", "a.png", tier);
-    }
-
-    private static SkillType registered(SkillType type) {
-        SkillTree.registerType(type);
-        return type;
-    }
-
-    private static SkillNode node(String id, SkillType type, String... connectedTo) {
-        SkillNode node = new SkillNode(id, type, Arrays.asList(connectedTo), 0f, 0f);
-        SkillTree.register(node);
-        return node;
-    }
-
-    private static SkillNode small(String id, String... connectedTo) {
-        return node(id, type(id + "_type", SkillTier.SMALL).build(), connectedTo);
     }
 
     private static SkillNode wormhole(String id, String pairedNodeId, String... connectedTo) {

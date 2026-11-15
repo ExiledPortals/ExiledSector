@@ -14,6 +14,7 @@ import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.WeaponAPI.DerivedWeaponStatsAPI;
 import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
+import exiledsector.skills.skilleffect.CombatTestShips;
 import exiledsector.skills.skilleffect.weapon.RiftExplosions;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
@@ -43,14 +44,7 @@ import static org.mockito.Mockito.withSettings;
 class RiftStrikeListenerTest {
 
     private static ShipAPI ship(String id, int owner, float chancePercent) {
-        ShipAPI ship = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS);
-        when(ship.getId()).thenReturn(id);
-        when(ship.getOwner()).thenReturn(owner);
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(stats.getDynamic().getValue(RiftStrike.CHANCE_PERCENT_KEY, 0f)).thenReturn(chancePercent);
-        when(ship.isAlive()).thenReturn(true);
-        return ship;
+        return CombatTestShips.ship(mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS)).id(id).owner(owner).dynamic(RiftStrike.CHANCE_PERCENT_KEY, chancePercent).alive().build();
     }
 
     private static WeaponSpecAPI spec(WeaponType type, boolean beam, float damagePerShot) {

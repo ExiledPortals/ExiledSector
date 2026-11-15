@@ -12,6 +12,7 @@ import exiledsector.items.WormholeAnchorDefinitions;
 import exiledsector.persistence.InMemoryTemplateFile;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.LogisticsNodes;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
@@ -19,7 +20,6 @@ import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
-import exiledsector.skills.SkillType;
 import exiledsector.skills.progression.ShipLevelSystem;
 import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.TemplateStep;
@@ -29,6 +29,7 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -37,6 +38,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static exiledsector.skills.TestTrees.node;
+import static exiledsector.skills.TestTrees.registered;
+import static exiledsector.skills.TestTrees.small;
+import static exiledsector.skills.TestTrees.type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -46,6 +51,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class TemplateLevelUpTest {
 
     private MockSector mockSector;
@@ -63,13 +69,12 @@ class TemplateLevelUpTest {
         lunaSettingsMock.when(() -> LunaSettings.getBoolean(anyString(), anyString())).thenReturn(null);
         InMemoryTemplateFile.install();
 
-        SkillTree.clearNodes();
-        SkillNode root = node("root", type("root_type", SkillTier.ROOT).build(), List.of());
-        node("first", type("first_type", SkillTier.SMALL).build(), List.of("root"));
-        node("pricey", type("pricey_type", SkillTier.SMALL).itemCost(new SkillItemCost("alpha_core", 1f)).build(), List.of("first"));
-        node("second", type("second_type", SkillTier.SMALL).build(), List.of("first"));
-        node("third", type("third_type", SkillTier.SMALL).build(), List.of("second"));
-        node("cargo", type("cargo_type", SkillTier.NOTABLE).tags(List.of(LogisticsNodes.TAG)).build(), List.of("root"));
+        SkillNode root = node("root", SkillTier.ROOT);
+        small("first", "root");
+        node("pricey", type("pricey_type", SkillTier.SMALL).itemCost(new SkillItemCost("alpha_core", 1f)).build(), "first");
+        small("second", "first");
+        small("third", "second");
+        node("cargo", type("cargo_type", SkillTier.NOTABLE).tags(List.of(LogisticsNodes.TAG)).build(), "root");
 
         member = ShipTreeSyncTest.mockMember("planned", true);
         when(member.getHullSpec().getHullSize()).thenReturn(HullSize.FRIGATE);
@@ -82,17 +87,6 @@ class TemplateLevelUpTest {
         SkillTreeTemplateStore.useCommonFolder();
         mockSector.close();
         lunaSettingsMock.close();
-        SkillTree.clearNodes();
-    }
-
-    private static SkillType.Builder type(String id, SkillTier tier) {
-        return new SkillType.Builder(id, id, "a.png", tier).effects(List.of());
-    }
-
-    private static SkillNode node(String id, SkillType type, List<String> connectedIds) {
-        SkillNode node = new SkillNode(id, type, connectedIds, 0f, 0f);
-        SkillTree.register(node);
-        return node;
     }
 
     private void assignTemplate(String... nodeIds) {
@@ -107,8 +101,8 @@ class TemplateLevelUpTest {
 
     @Test
     void aTemplateSocketTakesItsAnchorFromStorageOnceTheLevelUpAllocatesIt() throws Exception {
-        node("socket", type("socket_type", SkillTier.SOCKET).build(), List.of("first"));
-        node("abyss_exit", type("abyss_exit_type", SkillTier.WORMHOLE_EXIT).build(), List.of());
+        node("socket", SkillTier.SOCKET, "first");
+        node("abyss_exit", SkillTier.WORMHOLE_EXIT);
         WormholeAnchorDefinitions.register(new JSONArray().put(new JSONObject().put("id", "wormhole_anchor_abyss").put("volume", "abyss")
                 .put("exit_node", "abyss_exit").put("name", "Abyss Wormhole Anchor").put("description", "Opens a wormhole.")));
         try {
@@ -158,9 +152,9 @@ class TemplateLevelUpTest {
 
     @Test
     void noRouteIsBuiltTowardAStepWhoseChosenOptionThisShipCannotTake() {
-        SkillTree.registerType(type("capital_option", SkillTier.SMALL).requiredHullSizes(List.of(HullSize.CAPITAL_SHIP)).build());
-        SkillTree.registerType(type("frigate_option", SkillTier.SMALL).build());
-        node("choice", type("choice_type", SkillTier.SMALL).choiceOptionIds(List.of("capital_option", "frigate_option")).build(), List.of("second"));
+        registered(type("capital_option", SkillTier.SMALL).requiredHullSizes(List.of(HullSize.CAPITAL_SHIP)).build());
+        registered(type("frigate_option", SkillTier.SMALL).build());
+        node("choice", type("choice_type", SkillTier.SMALL).choiceOptionIds(List.of("capital_option", "frigate_option")).build(), "second");
         List<TemplateStep> steps = List.of(new TemplateStep("choice", "capital_option"));
         SkillTreeTemplateStore.assign("planned", SkillTreeTemplateStore.save("plan", "other_root", HullSize.FRIGATE, steps).id());
         shipData.setAutoAllocateTemplate(true);

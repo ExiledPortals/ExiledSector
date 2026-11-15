@@ -14,6 +14,7 @@ import exiledsector.compat.NightcrossCompat;
 import exiledsector.compat.NightcrossUnlocks;
 import exiledsector.effects.SkillTreeLootSource;
 import exiledsector.loot.BattleLoot;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -30,6 +31,7 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -47,6 +49,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class AnchorFindRecordingTest {
 
     private static final String NIGHTCROSS_ANCHOR = "wormhole_anchor_nightcross";
@@ -77,7 +80,6 @@ class AnchorFindRecordingTest {
         NodeGates.register(new JSONObject("{\"gate_found\": {\"anchors\": \"free\", \"unlockConditions\": [{\"type\": \"anchorFound\", \"volume\": \""
                 + NIGHTCROSS + "\"}]}}"));
 
-        SkillTree.clearNodes();
         SkillType exitType = new SkillType.Builder("wormhole_exit", "Wormhole Exit", "", SkillTier.WORMHOLE_EXIT).build();
         SkillTree.register(new SkillNode("nightcross_wormhole_1", exitType, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of(NIGHTCROSS, "gate_found")));
         SkillTree.register(new SkillNode("hegemony_2", exitType, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of("hegemony")));
@@ -91,7 +93,6 @@ class AnchorFindRecordingTest {
     void tearDown() throws Exception {
         NpcFactionVolumes.clear();
         WormholeAnchorDefinitions.clear();
-        SkillTree.clearNodes();
         NodeGates.register(new JSONObject("{}"));
         mockSector.close();
         lunaSettingsMock.close();

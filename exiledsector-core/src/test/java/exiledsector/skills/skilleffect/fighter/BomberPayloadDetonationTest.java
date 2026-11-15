@@ -23,15 +23,14 @@ import com.fs.starfarer.api.loading.ShotBehaviorSpecAPI;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
 import com.fs.starfarer.api.loading.WingRole;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.skills.skilleffect.CombatEngineExtension;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.ArgumentCaptor;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.util.List;
 import java.util.Map;
@@ -58,7 +57,8 @@ class BomberPayloadDetonationTest {
     private static final float FRAME = 0.1f;
     private static final float DETONATION_SECONDS = BomberPayloadDetonation.CHECK_INTERVAL_SECONDS + FRAME;
 
-    private MockedStatic<Global> global;
+    @RegisterExtension
+    final CombatEngineExtension combat = new CombatEngineExtension();
     private CombatEngineAPI engine;
     private ShipAPI carrier;
 
@@ -78,17 +78,10 @@ class BomberPayloadDetonationTest {
 
     @BeforeEach
     void setUp() {
-        engine = mock(CombatEngineAPI.class);
+        engine = combat.engine();
         when(engine.isEntityInPlay(any())).thenReturn(true);
-        global = Mockito.mockStatic(Global.class);
-        global.when(Global::getCombatEngine).thenReturn(engine);
         carrier = ship(new Vector2f(0f, 0f));
         when(carrier.getCollisionRadius()).thenReturn(200f);
-    }
-
-    @AfterEach
-    void tearDown() {
-        global.close();
     }
 
     private ShipAPI withChance(float chancePercent) {
@@ -481,7 +474,7 @@ class BomberPayloadDetonationTest {
         DamagingProjectileAPI fuseExplosion = mock(DamagingProjectileAPI.class);
         when(engine.spawnDamagingExplosion(any(), eq(bomber), any())).thenReturn(fuseExplosion);
 
-        global.when(Global::getSettings).thenReturn(mock(SettingsAPI.class));
+        combat.global().when(Global::getSettings).thenReturn(mock(SettingsAPI.class));
 
         detonate(bomber);
 

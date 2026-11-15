@@ -1,23 +1,20 @@
 package exiledsector.ui.node;
 
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillTreeTopology;
 import exiledsector.skills.npc.RealSkillData;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class ConnectorDataTest {
-
-    @AfterEach
-    void tearDown() {
-        RealSkillData.clear();
-    }
 
     @Test
     void everyConnectionInTheRealTreeIsDrawnSoAllocationNeverFollowsAnInvisibleLink() throws Exception {

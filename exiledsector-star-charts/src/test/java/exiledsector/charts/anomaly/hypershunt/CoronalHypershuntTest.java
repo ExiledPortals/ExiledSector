@@ -16,11 +16,11 @@ import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.anomaly.LiveAnomalyRuns;
 import exiledsector.charts.anomaly.StarAnomalies;
 import exiledsector.charts.anomaly.VanillaDefenders;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasTraits;
-import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.content.ChartSpot;
 import exiledsector.charts.content.FakeChartContentEngine;
 import exiledsector.charts.generation.ChartGenContext;
@@ -34,10 +34,10 @@ import org.lwjgl.util.vector.Vector2f;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import static exiledsector.charts.anomaly.LiveAnomalyRuns.RUN_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -56,7 +56,6 @@ import static org.mockito.Mockito.when;
 
 class CoronalHypershuntTest {
 
-    private static final String RUN_ID = "run1";
     private static final float STAR_RADIUS = 1200f;
 
     private MockSector mockSector;
@@ -107,13 +106,11 @@ class CoronalHypershuntTest {
     }
 
     private AnomalyContentSite site(Predicate<ChartSpot> clear) {
-        return new AnomalyContentSite(system, RUN_ID, 4, "pirates", ChartGenContext.none(), List.of(), null, clear, salt -> new Random(salt));
+        return LiveAnomalyRuns.site(system, "pirates", ChartGenContext.none(), clear);
     }
 
     private static ChartRun run() {
-        ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        run.recordContent(new ChartContent(4, "pirates", null, 3, 2, List.of(CoronalHypershunt.ANOMALY_ID)));
-        return run;
+        return LiveAnomalyRuns.run(4, CoronalHypershunt.ANOMALY_ID);
     }
 
     private static AtlasTraits traitsAt(float distance) {

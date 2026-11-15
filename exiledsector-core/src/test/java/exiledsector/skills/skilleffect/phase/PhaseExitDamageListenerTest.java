@@ -2,6 +2,7 @@ package exiledsector.skills.skilleffect.phase;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import exiledsector.skills.skilleffect.CombatTestShips;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.ArgumentMatchers.anyFloat;
@@ -17,13 +18,7 @@ class PhaseExitDamageListenerTest {
     private static final String AMBUSH_MOD_ID = "exiledSector_phaseExitWeaponDamage_afflictor";
 
     private static ShipAPI phaseShip(float damagePercent) {
-        ShipAPI ship = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS);
-        when(ship.getId()).thenReturn("afflictor");
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(ship.isAlive()).thenReturn(true);
-        when(stats.getDynamic().getValue(PhaseExitDamageListener.DAMAGE_PERCENT_KEY, 0f)).thenReturn(damagePercent);
-        return ship;
+        return CombatTestShips.ship(mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS)).id("afflictor").alive().dynamic(PhaseExitDamageListener.DAMAGE_PERCENT_KEY, damagePercent).build();
     }
 
     @Test

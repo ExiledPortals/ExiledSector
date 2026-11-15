@@ -1,10 +1,10 @@
 package exiledsector.skills.skilleffect.flux;
 
 import com.fs.starfarer.api.combat.FluxTrackerAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.skills.skilleffect.CombatTestShips;
+import exiledsector.skills.skilleffect.CombatTestShips.ShipBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,16 +31,10 @@ class HardFluxDissipationListenerTest {
 
     @Test
     void dissipationRisesWithHardFluxAndFallsBackWhenItDrains() {
-        ShipAPI ship = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
+        ShipBuilder builder = CombatTestShips.ship().id("molten").alive().dynamic(HardFluxDissipationListener.PERCENT_PER_STEP_KEY, 1f);
+        ShipAPI ship = builder.build();
         MutableStat dissipation = new MutableStat(100f);
-        when(ship.getId()).thenReturn("molten");
-        when(ship.isAlive()).thenReturn(true);
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(stats.getDynamic()).thenReturn(dynamic);
-        when(stats.getFluxDissipation()).thenReturn(dissipation);
-        when(dynamic.getValue(HardFluxDissipationListener.PERCENT_PER_STEP_KEY, 0f)).thenReturn(1f);
+        when(builder.stats().getFluxDissipation()).thenReturn(dissipation);
         HardFluxDissipationListener listener = new HardFluxDissipationListener(ship);
 
         FluxTrackerAPI halfHard = flux(500f, 1000f);

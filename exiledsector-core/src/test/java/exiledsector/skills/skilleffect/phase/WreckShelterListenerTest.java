@@ -3,12 +3,12 @@ package exiledsector.skills.skilleffect.phase;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipSystemAPI;
 import com.fs.starfarer.api.combat.StatBonus;
-import com.fs.starfarer.api.util.DynamicStatsAPI;
 import exiledsector.MockSector;
+import exiledsector.skills.skilleffect.CombatTestShips;
+import exiledsector.skills.skilleffect.CombatTestShips.ShipBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,15 +47,9 @@ class WreckShelterListenerTest {
     }
 
     private static ShipAPI ship(float x) {
-        ShipAPI ship = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        when(stats.getDynamic()).thenReturn(mock(DynamicStatsAPI.class));
-        when(stats.getPhaseCloakUpkeepCostBonus()).thenReturn(mock(StatBonus.class));
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(ship.getId()).thenReturn("ship" + x);
-        when(ship.getLocation()).thenReturn(new Vector2f(x, 0f));
-        when(ship.isAlive()).thenReturn(true);
-        return ship;
+        ShipBuilder ship = CombatTestShips.ship().id("ship" + x).at(new Vector2f(x, 0f)).alive();
+        when(ship.stats().getPhaseCloakUpkeepCostBonus()).thenReturn(mock(StatBonus.class));
+        return ship.build();
     }
 
     private static ShipAPI wreck(float x) {

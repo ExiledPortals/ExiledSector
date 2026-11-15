@@ -7,6 +7,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.security.AnyTypePermission;
 import exiledsector.modifiers.ModifierSlot;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
@@ -16,6 +17,7 @@ import exiledsector.skills.SkillType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -33,6 +35,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class DeletedSubroutinesTest {
 
     private static final String DELETED = "domain_subroutine_military";
@@ -44,7 +47,6 @@ class DeletedSubroutinesTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        SkillTree.clearNodes();
         SkillType sectionKind = new SkillType.Builder("socket_type", "Socket", "", SkillTier.SOCKET).build();
         socket = new SkillNode("socket", sectionKind, List.of(), 0f, 0f);
         secondSocket = new SkillNode("second_socket", sectionKind, List.of(), 0f, 0f);
@@ -55,7 +57,6 @@ class DeletedSubroutinesTest {
 
     @AfterEach
     void tearDown() {
-        SkillTree.clearNodes();
         ItemDefinitions.clear();
         NpcItems.clearCache();
     }
