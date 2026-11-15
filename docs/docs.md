@@ -935,6 +935,19 @@ grants the Outer Reach Atlas ability (`AtlasAbility`). Every tier opens, and the
 from each faction's tree one frame after load, once Vaults of Knowledge has re-added them; switching the setting off
 gives them back.
 
+### Planet Phasing
+
+The Phase Displacement Gate (`charts.phasing.PhaseDisplacementGate`) is built at the Wormhole Gateway colony within range
+of a working coronal hypershunt, once the Displacement Theorem is used or researched (`PhaseGateRules`, `HypershuntPower`).
+While it is idle, a fully surveyed chart planet offers a Phase lock (`PhaseLock`), which records the planet as a JSON string
+in the gate market's memory with traits rolled from the run's seed. When the run closes with its objective done, the lock
+becomes a job (`ChartRunCloser`); a failed run drops it.
+
+During a job the gate demands transplutonics and volatiles, and `PhasePull` counts 120 days while it is functional, powered
+and unshort, growing a held-open wormhole at the widest free orbit (`PhaseDestination`). The planet is then added there with
+its kept conditions, Phase-Displaced and its traits (`PhasedPlanetPlacement`). Traits are weighted by region and anomaly
+in `phased_planet_traits.csv` and are market conditions in `charts.phasing.trait` that apply nothing while Star Charts are off.
+
 ### The atlas
 
 Each save has one atlas: `AtlasState` keeps the seed and per-system flags in persistent data, and `AtlasGenerator`
