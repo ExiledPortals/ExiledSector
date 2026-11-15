@@ -6,18 +6,24 @@ import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.cargo.CargoIconLooks;
 
-final class MaterialCountIcon extends BaseCustomUIPanelPlugin {
+final class CargoLookIcon extends BaseCustomUIPanelPlugin {
 
-    private static final SpriteCache ICONS = new SpriteCache(MaterialCountIcon.class);
+    private static final SpriteCache ICONS = new SpriteCache(CargoLookIcon.class);
 
     private final String iconPath;
     private final CargoIconLook iconLook;
+    private final float iconAlpha;
     private PositionAPI iconPosition;
 
-    MaterialCountIcon(String itemId, String iconPath) {
+    CargoLookIcon(String iconPath, CargoIconLook iconLook, float iconAlpha) {
         this.iconPath = iconPath;
+        this.iconLook = iconLook;
+        this.iconAlpha = iconAlpha;
+    }
+
+    static CargoLookIcon forMaterial(String itemId, String iconPath) {
         CargoIconLook materialLook = CargoIconLooks.forMaterial(itemId);
-        this.iconLook = materialLook == null ? null : materialLook.unframed();
+        return new CargoLookIcon(iconPath, materialLook == null ? null : materialLook.unframed(), 1f);
     }
 
     @Override
@@ -30,6 +36,6 @@ final class MaterialCountIcon extends BaseCustomUIPanelPlugin {
         if (iconPosition == null) {
             return;
         }
-        TileChrome.drawIcon(ICONS, iconPath, iconLook, iconPosition, iconPosition.getWidth(), alphaMult, 0f, System.identityHashCode(this));
+        TileChrome.drawIcon(ICONS, iconPath, iconLook, iconPosition, iconPosition.getWidth(), alphaMult * iconAlpha, 0f, System.identityHashCode(this));
     }
 }

@@ -1,5 +1,6 @@
 package exiledsector.ui.socket;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.Fonts;
@@ -10,6 +11,7 @@ import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.VanillaText;
+import exiledsector.ui.cargo.CargoIconLook;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -21,10 +23,10 @@ public final class AtlasAnomalyPanel extends HoloPanel {
         void closed();
     }
 
-    public record Entry(String title, String iconPath, StyledText body, String refusal) {
+    public record Entry(String title, String iconPath, CargoIconLook iconLook, StyledText body, String refusal) {
 
         public Entry(String title, String iconPath, StyledText body) {
-            this(title, iconPath, body, null);
+            this(title, iconPath, null, body, null);
         }
     }
 
@@ -38,6 +40,8 @@ public final class AtlasAnomalyPanel extends HoloPanel {
 
     public static final float PANEL_WIDTH = 380f;
     private static final float ICON_SIZE = 40f;
+    private static final float ICON_TEXT_GAP = 10f;
+    private static final float REFUSED_ICON_ALPHA = 0.5f;
 
     private enum Control {BACK}
 
@@ -117,18 +121,40 @@ public final class AtlasAnomalyPanel extends HoloPanel {
 
     private void addEntry(TooltipMakerAPI element, Entry entry) {
         float pad = element.getHeightSoFar() > 0f ? PAD : 0f;
-        boolean refused = entry.refusal() != null;
         boolean withIcon = !entry.iconPath().isEmpty() && spriteCache.ensureLoaded(entry.iconPath());
+        if (withIcon && entry.iconLook() != null) {
+            addAnimatedEntry(element, entry, pad);
+            return;
+        }
         TooltipMakerAPI text = withIcon ? element.beginImageWithText(entry.iconPath(), ICON_SIZE) : element;
+        writeEntryText(text, entry, withIcon ? 0f : pad);
+        if (withIcon) {
+            element.addImageWithText(pad);
+        }
+    }
+
+    private void addAnimatedEntry(TooltipMakerAPI element, Entry entry, float pad) {
+        float iconAlpha = entry.refusal() != null ? REFUSED_ICON_ALPHA : 1f;
+        element.addCustom(Global.getSettings().createCustom(ICON_SIZE, ICON_SIZE, new CargoLookIcon(entry.iconPath(), entry.iconLook(), iconAlpha)), pad);
+        UIComponentAPI icon = element.getPrev();
+        TooltipMakerAPI text = element.beginSubTooltip(innerWidth() - ICON_SIZE - ICON_TEXT_GAP);
+        writeEntryText(text, entry, 0f);
+        element.endSubTooltip();
+        element.addCustomDoNotSetPosition(text).getPosition().rightOfTop(icon, ICON_TEXT_GAP);
+        float overhang = text.getHeightSoFar() - ICON_SIZE;
+        if (overhang > 0f) {
+            element.addSpacer(overhang);
+        }
+    }
+
+    private static void writeEntryText(TooltipMakerAPI text, Entry entry, float pad) {
+        boolean refused = entry.refusal() != null;
         text.setParaFont(Fonts.ORBITRON_12);
-        VanillaText.plainPara(text, entry.title(), withIcon ? 0f : pad, refused ? Misc.getGrayColor() : Misc.getHighlightColor());
+        VanillaText.plainPara(text, entry.title(), pad, refused ? Misc.getGrayColor() : Misc.getHighlightColor());
         text.setParaFontDefault();
         if (refused) {
             VanillaText.plainPara(text, entry.refusal(), LINE_PAD, Misc.getNegativeHighlightColor());
         }
         VanillaText.addPara(text, entry.body(), LINE_PAD, refused ? Misc.getGrayColor() : Misc.getTextColor());
-        if (withIcon) {
-            element.addImageWithText(pad);
-        }
     }
 }

@@ -48,6 +48,7 @@ import exiledsector.ui.TooltipText;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.UiFonts;
 import exiledsector.ui.VanillaText;
+import exiledsector.ui.cargo.CatalystCargo;
 import exiledsector.ui.chart.StarChartCraftingBench;
 import exiledsector.ui.decoration.StarfieldRenderer;
 import exiledsector.ui.socket.AtlasAnomalyPanel;
@@ -553,8 +554,8 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         for (ActiveCatalysts.Planned planned : ActiveCatalysts.plan(map.generator(), map.state(), focusedCell, materials::count)) {
             String anomalyId = planned.catalyst().anomalyId();
             String refusal = planned.verdict().text(MaterialItems.displayName(planned.catalyst().itemId()), systemName(focusedCell));
-            catalysts.add(new AtlasAnomalyPanel.Entry(AtlasNames.anomaly(anomalyId), planned.catalyst().iconPath(), AtlasNodeText.anomalyBody(anomalyId),
-                    refusal));
+            catalysts.add(new AtlasAnomalyPanel.Entry(AtlasNames.anomaly(anomalyId), planned.catalyst().iconPath(),
+                    CatalystCargo.look(planned.catalyst().family()), AtlasNodeText.anomalyBody(anomalyId), refusal));
         }
         return new AtlasAnomalyPanel.Listing(system, catalysts);
     }
