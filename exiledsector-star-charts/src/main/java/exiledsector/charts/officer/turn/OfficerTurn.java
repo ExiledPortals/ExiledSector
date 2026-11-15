@@ -8,6 +8,7 @@ import exiledsector.charts.atlas.AtlasTerritoryTransfer;
 import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.OfficerBoardGenerator;
 import exiledsector.charts.officer.OfficerSeats;
+import exiledsector.charts.officer.OfficerStartingItems;
 import exiledsector.charts.officer.OfficerText;
 import exiledsector.charts.officer.reward.CarriedItem;
 import exiledsector.charts.officer.turn.TurnResult.LossKind;
@@ -38,6 +39,7 @@ public final class OfficerTurn {
     public static final String CHALLENGE_WON_HISTORY = "challengeWon";
     public static final String CHALLENGE_LOST_HISTORY = "challengeLost";
     private static final long TURN_SALT = 0x4f4654555246L;
+    private static final long CHALLENGE_LOSS_SALT = 0x4f43484c4f5353L;
     private static final Comparator<AtlasCell> CELL_ORDER = Comparator.comparingLong(AtlasCell::pack);
 
     private final TurnTerrain terrain;
@@ -275,9 +277,15 @@ public final class OfficerTurn {
         if (lowerRankWon && !beatenThisTurn.contains(winner.recordId()) && !beatenThisTurn.contains(loser.recordId())) {
             swapRanks(winner.recordId(), loser.recordId());
         }
+        dealFreshReward(loser.recordId());
         boolean died = loseFight(loser.recordId(), loserWasLowestRank);
         losses.add(new OfficerLoss(loser.recordId(), LossKind.LOST_CHALLENGE, winner.recordId(), loser.commandCentre(), false, died));
         resolvedIntents.add(new ResolvedIntent(IntentKind.CHALLENGE, attacker.recordId(), defender.recordId(), null, attackerWins, defended));
+    }
+
+    private void dealFreshReward(int recordId) {
+        Random rewardRandom = Seeds.derived(state.seed(), CHALLENGE_LOSS_SALT + state.officerTurn() * Seeds.GOLDEN_GAMMA + recordId);
+        state.putOfficer(OfficerStartingItems.dealt(state.officer(recordId), setup.startingItems(), rewardRandom));
     }
 
     private static AtlasOfficer withChallengeHistory(AtlasOfficer officer, String event, AtlasOfficer opponent) {

@@ -13,6 +13,7 @@ import exiledsector.charts.atlas.CommissionHandover;
 import exiledsector.charts.atlas.CommissionHandover.Handover;
 import exiledsector.charts.atlas.OfficerFlagshipRepair;
 import exiledsector.charts.atlas.OfficerPortraits;
+import exiledsector.charts.atlas.OfficerRewardRepair;
 import exiledsector.charts.atlas.OfficerSeatRepair;
 import exiledsector.charts.atlas.TerritoryContext;
 import exiledsector.charts.officer.AtlasOfficer;
@@ -102,6 +103,7 @@ public final class OfficerTurns {
     public static TurnResult take(AtlasGenerator generator, AtlasState state, TurnCause cause, TerritoryContext context) {
         OfficerSeatRepair.repair(generator, state, OfficerRanks.all(), context);
         OfficerFlagshipRepair.repair(state, OfficerRanks.all(), context);
+        OfficerRewardRepair.repair(state, context);
         List<Handover> handovers = CommissionHandover.isNeeded(state, context.excludedFactionId())
                 ? CommissionHandover.handOver(generator, state, AtlasReach.visible(generator, state), context)
                 : List.of();

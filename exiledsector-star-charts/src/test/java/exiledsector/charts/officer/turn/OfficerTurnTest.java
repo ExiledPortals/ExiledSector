@@ -273,6 +273,18 @@ class OfficerTurnTest {
     }
 
     @Test
+    void aChallengeLoserIsDealtAFreshRewardAfterHandingOverTheirItems() {
+        AtlasState state = borderingTerritories();
+        update(state, PIRATE_OFFICER, officer -> officer.withCarried(List.of(kernels(2))));
+        declare(state, Intent.challenge(HEGEMONY_OFFICER, PIRATE_OFFICER));
+
+        take(state, TurnCause.forced(), setup(ATTACKER_WINS, (officer, random) -> wards(1)));
+
+        assertEquals(List.of(kernels(2)), state.officer(HEGEMONY_OFFICER).carried());
+        assertEquals(List.of(wards(1)), state.officer(PIRATE_OFFICER).carried());
+    }
+
+    @Test
     void aLowerRankedChallengerWhoWinsTakesTheLosersRank() {
         AtlasState state = borderingTerritories();
         declare(state, Intent.challenge(PIRATE_OFFICER, HEGEMONY_OFFICER));
