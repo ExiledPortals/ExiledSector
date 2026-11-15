@@ -59,6 +59,18 @@ class SkillTreeTextFieldTest {
         assertEquals(SkillTreeTextField.KeyResult.CONSUMED, field.handleKey(keyDown(Keyboard.KEY_BACK, '\b')));
     }
 
+    @Test
+    void shiftBackspaceClearsTheWholeFieldAndIsHarmlessWhenEmpty() {
+        SkillTreeTextField field = focusedField();
+        field.setText("abcd");
+        InputEventAPI shiftBackspace = keyDown(Keyboard.KEY_BACK, '\b');
+        when(shiftBackspace.isShiftDown()).thenReturn(true);
+
+        assertEquals(SkillTreeTextField.KeyResult.EDITED, field.handleKey(shiftBackspace));
+        assertEquals("", field.text());
+        assertEquals(SkillTreeTextField.KeyResult.CONSUMED, field.handleKey(shiftBackspace));
+    }
+
     private static InputEventAPI keyRepeat(int keyCode, char character) {
         InputEventAPI event = mock(InputEventAPI.class);
         when(event.isRepeat()).thenReturn(true);
