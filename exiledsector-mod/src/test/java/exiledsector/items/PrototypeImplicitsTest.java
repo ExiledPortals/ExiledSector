@@ -8,6 +8,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -55,14 +56,13 @@ class PrototypeImplicitsTest {
     }
 
     @Test
-    void aPrototypeKeepsItsBaseImplicitsAndAddsOneFromItsBasePool() {
+    void aPrototypeReplacesItsBaseImplicitsWithOneFromItsBasePool() {
         Item item = prototype(EMITTER, 11L).preview();
-        List<RolledModifier> implicits = item.implicits();
         RolledModifier added = PrototypeImplicits.prototypeImplicit(item);
 
-        assertEquals(ItemImplicits.forType(item.kind()).size() + 1, implicits.size());
+        assertFalse(ItemImplicits.forType(item.kind()).isEmpty());
         assertNotNull(added);
-        assertEquals(added, implicits.get(implicits.size() - 1));
+        assertEquals(List.of(added), item.implicits());
         assertTrue(PrototypeImplicits.forBase(EMITTER).stream().anyMatch(implicit -> implicit.id().equals(added.modifierId())));
         assertFalse(item.implicitLines(added).isEmpty());
     }
@@ -84,11 +84,18 @@ class PrototypeImplicitsTest {
         assertEquals(added, PrototypeImplicits.prototypeImplicit(ItemData.parse(saved.encode()).preview()));
 
         ItemImplicits.register(new JSONArray().put(new JSONObject().put("section", "shield_generator").put("implicits", "HULL_PERCENT:50:60")));
-        List<RolledModifier> reloaded = ItemData.parse(saved.encode()).preview().implicits();
+        assertEquals(List.of(added), ItemData.parse(saved.encode()).preview().implicits());
+    }
 
-        assertEquals(2, reloaded.size());
-        assertEquals("HULL_PERCENT", reloaded.get(0).lines().get(0).effectName());
-        assertEquals(added, reloaded.get(1));
+    @Test
+    void aSavedPrototypeThatStillHasItsBaseImplicitsKeepsOnlyThePrototypeImplicit() throws Exception {
+        Item item = prototype(EMITTER, 11L).preview();
+        RolledModifier added = PrototypeImplicits.prototypeImplicit(item);
+        List<RolledModifier> oldImplicits = new ArrayList<>(ItemImplicits.roll(item.kind(), item.seed()));
+        oldImplicits.add(added);
+        item.replaceImplicits(oldImplicits);
+
+        assertEquals(List.of(added), ItemData.parse(ItemData.of(item).encode()).preview().implicits());
     }
 
     @Test

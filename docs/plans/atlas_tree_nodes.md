@@ -298,7 +298,7 @@ Notables:
 
 ### Depot (`listening_post`)
 
-Reward: prototype hull items, each with an extra implicit from its base's pool. Reaching the vault unseen picks one of three; after the alarm one is left at random.
+Reward: prototype hull items, each with its implicits replaced by one from its base's pool. Reaching the vault unseen picks one of three; after the alarm one is left at random.
 
 Small nodes:
 

@@ -125,20 +125,16 @@ public final class ItemImplicits {
         if (implicits.isEmpty()) {
             return savedImplicits;
         }
-        List<RolledModifier> ownImplicits = new ArrayList<>(savedImplicits.size());
-        List<RolledModifier> prototypeImplicits = new ArrayList<>(1);
-        for (RolledModifier saved : savedImplicits) {
-            if (PrototypeImplicits.isPrototypeImplicit(saved.modifierId())) {
-                prototypeImplicits.add(saved);
-            } else {
-                ownImplicits.add(saved);
-            }
+        List<RolledModifier> prototypeImplicits = savedImplicits.stream()
+                .filter(saved -> PrototypeImplicits.isPrototypeImplicit(saved.modifierId())).toList();
+        if (!prototypeImplicits.isEmpty()) {
+            return prototypeImplicits.size() == savedImplicits.size() ? savedImplicits : prototypeImplicits;
         }
-        if (matchesIds(implicits, ownImplicits) && savedImplicits.subList(0, ownImplicits.size()).equals(ownImplicits)) {
+        if (matchesIds(implicits, savedImplicits)) {
             return savedImplicits;
         }
         Map<String, RolledLine> savedLines = new HashMap<>();
-        RolledModifier.lines(ownImplicits).forEach(line -> savedLines.putIfAbsent(line.effectName(), line));
+        RolledModifier.lines(savedImplicits).forEach(line -> savedLines.putIfAbsent(line.effectName(), line));
         List<RolledModifier> freshRolls = roll(kind, seed);
         List<RolledModifier> resolved = new ArrayList<>(implicits.size());
         for (int index = 0; index < implicits.size(); index++) {
@@ -153,7 +149,6 @@ public final class ItemImplicits {
             resolved.add(keptLines.size() == implicit.lines().size()
                     ? new RolledModifier(implicit.id(), ModifierSlot.IMPLICIT, keptLines) : freshRolls.get(index));
         }
-        resolved.addAll(prototypeImplicits);
         return resolved;
     }
 

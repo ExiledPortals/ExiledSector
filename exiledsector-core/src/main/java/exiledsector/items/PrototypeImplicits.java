@@ -97,9 +97,7 @@ public final class PrototypeImplicits {
         if (item == null) {
             return null;
         }
-        List<RolledModifier> implicits = new ArrayList<>(item.implicits());
-        implicits.add(RolledModifier.roll(pool.get(random.nextInt(pool.size())), random));
-        item.replaceImplicits(implicits);
+        item.replaceImplicits(List.of(RolledModifier.roll(pool.get(random.nextInt(pool.size())), random)));
         return ItemData.of(item);
     }
 
