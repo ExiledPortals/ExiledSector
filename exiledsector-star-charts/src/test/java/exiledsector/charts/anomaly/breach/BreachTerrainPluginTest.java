@@ -236,6 +236,19 @@ class BreachTerrainPluginTest {
     }
 
     @Test
+    void riftMagnetismCarriesTheIncursionPointWithTheBreach() {
+        BreachTerrainPlugin plugin = new BreachTerrainPlugin();
+        plugin.init(SpatialBreach.TERRAIN_ID, terrainEntity, new BreachTerrainPlugin.Params("run1", 5, GROWTH,
+                List.of(), 1f, 9L, new BreachTuning(0f, true, false, new Vector2f(500f, 300f))));
+
+        plugin.drift(new Vector2f(1000f, 0f), 2f);
+
+        float step = BreachRules.DRIFT_SPEED * 2f;
+        assertEquals(500f + step, plugin.incursionPoint().x, 0.001f);
+        assertEquals(300f, plugin.incursionPoint().y, 0.001f);
+    }
+
+    @Test
     void theOpenFieldHoldsOnlyFleetsOverlappingIt() {
         BreachTerrainPlugin plugin = breach(List.of());
         CampaignFleetAPI inside = fleetAt(500f, 0f, true);

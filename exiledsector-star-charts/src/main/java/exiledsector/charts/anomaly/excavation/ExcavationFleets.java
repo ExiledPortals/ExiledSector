@@ -35,7 +35,7 @@ public final class ExcavationFleets {
     }
 
     public static CampaignFleetAPI fleetFor(SectorEntityToken planet, ChartRun run, ExcavationSite site, ExcavationGuardians guardians) {
-        return HeldGuards.held(planet, SITE_FLEET_KEY, () -> ExcavationDeliveries.withDeliveryLoot(planet, create(run, site, guardians)));
+        return HeldGuards.held(planet, SITE_FLEET_KEY, () -> ExcavationDeliveries.withDeliveries(planet, create(run, site, guardians), guardians));
     }
 
     public static boolean isHeld(SectorEntityToken planet) {
@@ -44,6 +44,7 @@ public final class ExcavationFleets {
 
     public static void forget(SectorEntityToken planet) {
         HeldGuards.forget(planet, SITE_FLEET_KEY);
+        ExcavationDeliveries.dropWaiting(planet);
     }
 
     static CampaignFleetAPI create(ChartRun run, ExcavationSite site, ExcavationGuardians guardians) {

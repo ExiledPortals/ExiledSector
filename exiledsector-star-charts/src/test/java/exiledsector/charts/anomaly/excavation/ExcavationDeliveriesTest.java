@@ -17,6 +17,7 @@ import exiledsector.charts.run.ChartRun;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -62,7 +63,9 @@ class ExcavationDeliveriesTest {
         FleetDataAPI guardianData = mock(FleetDataAPI.class);
         when(guardians.getFleetData()).thenReturn(guardianData);
 
-        assertEquals(List.of(frigate, destroyer), ExcavationDeliveries.joinShaftShips(convoyFleet, guardians, ExcavationRules.MAX_SHIP_SIZE));
+        List<FleetMemberAPI> taken = ExcavationDeliveries.takeShaftShips(convoyFleet, ExcavationRules.MAX_SHIP_SIZE);
+        assertEquals(List.of(frigate, destroyer), taken);
+        ExcavationDeliveries.addShips(guardians, taken);
 
         verify(convoyData).removeFleetMember(frigate);
         verify(guardianData).addFleetMember(destroyer);
@@ -70,7 +73,7 @@ class ExcavationDeliveriesTest {
         verify(guardianData, never()).addFleetMember(freighter);
         verify(guardianData, never()).addFleetMember(cruiser);
         verify(guardianData).sort();
-        assertEquals(List.of(), ExcavationDeliveries.joinShaftShips(null, guardians, ExcavationRules.MAX_SHIP_SIZE));
+        assertEquals(List.of(), ExcavationDeliveries.takeShaftShips(null, ExcavationRules.MAX_SHIP_SIZE));
     }
 
     @Test
@@ -118,10 +121,8 @@ class ExcavationDeliveriesTest {
         when(convoyFleet.getFleetData()).thenReturn(convoyData);
         when(convoyFleet.getFlagship()).thenReturn(flagship);
         when(convoyData.getMembersListCopy()).thenReturn(List.of(flagship, frigate, destroyer));
-        CampaignFleetAPI guardians = mock(CampaignFleetAPI.class);
-        when(guardians.getFleetData()).thenReturn(mock(FleetDataAPI.class));
 
-        assertEquals(List.of(frigate), ExcavationDeliveries.joinShaftShips(convoyFleet, guardians, ExcavationRules.FRIGATES_ONLY_SHIP_SIZE));
+        assertEquals(List.of(frigate), ExcavationDeliveries.takeShaftShips(convoyFleet, ExcavationRules.FRIGATES_ONLY_SHIP_SIZE));
     }
 
     @Test
@@ -169,6 +170,64 @@ class ExcavationDeliveriesTest {
     }
 
     @Test
+    void aConvoyAtAnUnguardedOpenShaftWaitsForTheFirstCavernsGuardiansInsteadOfRaisingThem() {
+        try (MockSector ignored = new MockSector()) {
+            ChartRun run = LiveAnomalyRuns.run(4, ExcavationSites.ANOMALY_ID);
+            ExcavationStates.record(ExcavationStates.of(run), new ExcavationSite(0, "rock", ExcavationSite.Access.OPEN, 1L, false));
+            MemoryAPI planetMemory = MapMemory.create();
+            SectorEntityToken planet = planetWith(planetMemory);
+            when(planet.getId()).thenReturn("rock");
+            FleetMemberAPI flagship = member(HullSize.DESTROYER, false);
+            FleetMemberAPI frigate = member(HullSize.FRIGATE, false);
+            CampaignFleetAPI convoyFleet = mock(CampaignFleetAPI.class);
+            FleetDataAPI convoyData = mock(FleetDataAPI.class);
+            when(convoyFleet.getFleetData()).thenReturn(convoyData);
+            when(convoyFleet.getFlagship()).thenReturn(flagship);
+            when(convoyData.getMembersListCopy()).thenReturn(List.of(flagship, frigate));
+            CargoAPI cache = mock(CargoAPI.class);
+
+            assertTrue(ExcavationDeliveries.accepts(run, planet));
+            ExcavationDeliveries.joinGuardians(run, planet, convoyFleet);
+            ExcavationDeliveries.deliverCache(run, planet, cache, 100f, 30f);
+
+            assertFalse(ExcavationFleets.isHeld(planet));
+            assertEquals(List.of(frigate), planetMemory.get(ExcavationDeliveries.WAITING_SHIPS_KEY));
+            assertSame(cache, planetMemory.get(ExcavationDeliveries.WAITING_CACHE_KEY));
+            assertNull(planetMemory.get(ExcavationDeliveries.CACHE_KEY));
+            assertEquals(1f, ExcavationDeliveries.raidDifficultyMult(planet), 0.001f);
+
+            CampaignFleetAPI guardians = mock(CampaignFleetAPI.class);
+            FleetDataAPI guardianData = mock(FleetDataAPI.class);
+            when(guardians.getFleetData()).thenReturn(guardianData);
+            MemoryAPI guardianMemory = MapMemory.create();
+            when(guardians.getMemoryWithoutUpdate()).thenReturn(guardianMemory);
+            planetMemory.unset(ExcavationDeliveries.WAITING_CACHE_KEY);
+
+            assertSame(guardians, ExcavationDeliveries.withDeliveries(planet, guardians, ExcavationGuardians.FIRST_CAVERN.asCorrupted()));
+            verify(guardianData).addFleetMember(frigate);
+            assertEquals(30f, ExcavationDeliveries.lootPercent(guardians), 0.001f);
+            assertNull(planetMemory.get(ExcavationDeliveries.WAITING_SHIPS_KEY));
+        }
+    }
+
+    @Test
+    void aSecondCavernsFleetLeavesTheWaitingConvoyShipsAlone() {
+        MemoryAPI planetMemory = MapMemory.create();
+        FleetMemberAPI frigate = member(HullSize.FRIGATE, false);
+        planetMemory.set(ExcavationDeliveries.WAITING_SHIPS_KEY, new ArrayList<>(List.of(frigate)));
+        CampaignFleetAPI secondCavern = mock(CampaignFleetAPI.class);
+        FleetDataAPI secondCavernData = mock(FleetDataAPI.class);
+        when(secondCavern.getFleetData()).thenReturn(secondCavernData);
+        MemoryAPI secondCavernMemory = MapMemory.create();
+        when(secondCavern.getMemoryWithoutUpdate()).thenReturn(secondCavernMemory);
+
+        ExcavationDeliveries.withDeliveries(planetWith(planetMemory), secondCavern, new ExcavationGuardians(true, false));
+
+        verify(secondCavernData, never()).addFleetMember(frigate);
+        assertEquals(List.of(frigate), planetMemory.get(ExcavationDeliveries.WAITING_SHIPS_KEY));
+    }
+
+    @Test
     void aSecondCavernsFleetKeepsTheDeliveredSitesLootLine() {
         MemoryAPI planetMemory = MapMemory.create();
         planetMemory.set(ExcavationDeliveries.LOOT_KEY, 30f);
@@ -178,9 +237,9 @@ class ExcavationDeliveriesTest {
         SectorEntityToken planet = planetWith(planetMemory);
         SectorEntityToken undelivered = planetWith(MapMemory.create());
 
-        assertSame(secondCavern, ExcavationDeliveries.withDeliveryLoot(planet, secondCavern));
+        assertSame(secondCavern, ExcavationDeliveries.withDeliveries(planet, secondCavern, new ExcavationGuardians(true, false)));
         assertEquals(30f, ExcavationDeliveries.lootPercent(secondCavern), 0.001f);
-        assertNull(ExcavationDeliveries.withDeliveryLoot(planet, null));
+        assertNull(ExcavationDeliveries.withDeliveries(planet, null, ExcavationGuardians.FIRST_CAVERN));
         assertFalse(ExcavationDeliveries.lootPercent(undelivered) > 0f);
     }
 }

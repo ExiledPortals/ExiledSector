@@ -79,6 +79,8 @@ public class BreachTerrainPlugin extends ChartAnomalyTerrain {
     private transient boolean coreChecked;
     private transient RadialBand rimBand;
     private transient BreachCorePlugin corePlugin;
+    private transient SectorEntityToken driftCore;
+    private transient SectorEntityToken driftStation;
     private transient float daysSinceTick;
     private transient float elapsedSeconds;
     private transient SpriteAPI bodySprite;
@@ -226,14 +228,42 @@ public class BreachTerrainPlugin extends ChartAnomalyTerrain {
             return;
         }
         entity.setFixedLocation(to.x, to.y);
-        SectorEntityToken core = entity.getContainingLocation().getEntityById(SpatialBreach.coreId(runId));
+        SectorEntityToken core = driftedCore();
         if (core != null) {
             core.setFixedLocation(to.x, to.y);
         }
+        driftIncursion(shiftX, shiftY);
         for (int i = 0; cacheFormed != null && i < cacheFormed.length; i++) {
             if (!cacheFormed[i]) {
                 cacheX[i] += shiftX;
                 cacheY[i] += shiftY;
+            }
+        }
+    }
+
+    Vector2f incursionPoint() {
+        return new Vector2f(incursionX, incursionY);
+    }
+
+    private SectorEntityToken driftedCore() {
+        if (driftCore == null || !driftCore.isAlive()) {
+            driftCore = entity.getContainingLocation().getEntityById(SpatialBreach.coreId(runId));
+        }
+        return driftCore;
+    }
+
+    private void driftIncursion(float shiftX, float shiftY) {
+        if (incursionStage != BreachIncursion.WAITING && incursionStage != BreachIncursion.GUARDED) {
+            return;
+        }
+        incursionX += shiftX;
+        incursionY += shiftY;
+        if (incursionStage == BreachIncursion.GUARDED) {
+            if (driftStation == null || !driftStation.isAlive()) {
+                driftStation = BreachIncursion.stationIn(entity.getContainingLocation());
+            }
+            if (driftStation != null) {
+                driftStation.setFixedLocation(incursionX, incursionY);
             }
         }
     }

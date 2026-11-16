@@ -138,6 +138,11 @@ final class BreachIncursion {
         return null;
     }
 
+    static SectorEntityToken stationIn(LocationAPI location) {
+        List<SectorEntityToken> stations = location == null ? List.of() : location.getEntitiesWithTag(STATION_TAG);
+        return stations.isEmpty() ? null : stations.get(0);
+    }
+
     private static void unlockStation(LocationAPI location) {
         for (SectorEntityToken station : List.copyOf(location.getEntitiesWithTag(STATION_TAG))) {
             station.removeTag(Tags.NON_CLICKABLE);
