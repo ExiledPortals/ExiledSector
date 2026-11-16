@@ -54,7 +54,7 @@ Increased effect of Star Chart modifiers scales every implicit and explicit modi
 
 The Atlas Tree makes every anomaly more rewarding or more likely to appear, one way or another. Each anomaly's nodes focus on the reward only it grants (`completed/anomalies/anomaly_rewards.md` and the anomaly's own plan): Excavation Sites on inhibitors, Supply Convoys on infused feedstock, and so on. They give more of the anomaly, more of its reward, or a change to how it grants it. An anomaly with no reward type of its own gets other effects instead. Each section names the reward, then lists small nodes, notables and, where one fits, a keystone. Nodes for an anomaly that needs a mod are hidden without it, as gated volumes are.
 
-An anomaly marker on an atlas system adds one more of that anomaly to the system where that makes sense, such as one more Anomalous Debris fleet. Anomalies where it doesn't keep today's rules, and their sections say so.
+An anomaly marker on an atlas system adds one more of that anomaly to the system where that makes sense, such as one more anomalous fleet. Anomalies where it doesn't keep today's rules, and their sections say so.
 
 ### Chance nodes
 
@@ -170,14 +170,14 @@ Small nodes:
 
 Notables:
 
-- Heavy Breach: "Spatial Breaches in your Star Charts hold at full size for 30 seconds before collapsing" (a hold phase in `BreachRules.Growth`). You get more time at the outermost caches.
-- Drifting Tear: "Open Spatial Breaches in your Star Charts drift toward your fleet" and "Breach caches in your Star Charts hold 40% increased quantity of items" (new). You can't park at the edge, because the drain follows you.
+- Heavy Breach: "Spatial Breaches in your Star Charts hold at full size for 30 seconds before collapsing" and "Spatial Breaches in your Star Charts drain 3% increased fuel and supplies for each second they've held at full size" (a hold phase in `BreachRules.Growth`, and a drain multiplier for `BreachSupplyBuff` and the fuel drain). You get more time at the outermost caches, at a rising price: the drain builds through the hold, reaching 90% increased after 30 seconds, and stays there through the collapse.
+- Rift Magnetism: "Open Spatial Breaches in your Star Charts drift toward your fleet" and "Breach caches in your Star Charts hold 40% increased quantity of items" (new). You can't park at the edge, because the drain follows you.
 - Hyperspace Bleed: "Ships fighting inside Spatial Breaches in your Star Charts are struck by hyperspace lightning" and "Battles inside Spatial Breaches in your Star Charts drop 50% increased quantity of hull items" (new). The lightning hits both sides, like Pitch Black's vision penalty.
 - Rally Point: "50% increased chance for hull items dropped by fleets you defeat inside Spatial Breaches in your Star Charts to be warped" (new). The fleets charging the breach become the reward.
-- Incursion: "Spatial Breaches in your Star Charts reveal a research station guarded by a fleet 110% of the Star Chart Boss's size" (new). The station appears when the breach opens, at a random point inside its maximum radius rather than at the core. If the collapsing edge passes the guard fleet before you defeat it, the station and its guard disappear. The station drops what a vanilla research station would drop in the chart, with every chart line applied, and its drops can be warped like anything else inside the breach.
-- Event Horizon (Black Hole): "Spatial Breaches in your Star Charts with a Black Hole open around the hole" (new). The hole's derelicts then sit inside the breach, so their salvage can be warped as well as hold immutables.
-- Breach Wake (Anomalous Debris): "Dormant fleets in your Star Charts wake and charge Spatial Breaches as they open" and "Hull items dropped by dormant fleets defeated inside Spatial Breaches in your Star Charts are always warped" (new). Corrupting one first still gives its engram.
-- Rift Duel (Atlas officers): "Atlas officers' flagship fleets in your Star Charts charge Spatial Breaches as they open" and "Atlas officers you defeat inside a Spatial Breach in your Star Charts offer 1 additional item to pick from" (new). It brings the officer fight into the drain.
+- Incursion: "Spatial Breaches in your Star Charts reveal a research station guarded by a large fleet" (new). The guard is always an Explorarium drone fleet (`derelict`), 110% of the Star Chart Boss's fleet size, so its losses count toward the Explorarium Wormhole Anchor's chance like any drone fleet's. The station appears when the breach opens, at a random point inside its maximum radius rather than at the core. If the collapsing edge passes the guard fleet before you defeat it, the station and its guard disappear. The station drops what a vanilla research station would drop in the chart, with every chart line applied, and its drops can be warped like anything else inside the breach.
+- Event Horizon (Black Hole): "Black Holes in your Star Charts sit inside a permanent Spatial Breach" and "Hull items found in derelicts around Black Holes in your Star Charts are always warped" (new). A separate effect, not a Spatial Breach: a static, fully open breach field drawn behind the hole, centred on it and wide enough to take in every derelict around it. It never opens or collapses, has no core, caches, drains or fleets charging it, and doesn't count toward the chart's one Spatial Breach, which still rolls as usual. It only makes the derelicts' hull items warped, on top of their chance to hold immutables.
+- Rude Awakening (Anomalous Debris): "Anomalous fleets in your Star Charts wake and charge Spatial Breaches as they open" and "Hull items dropped by anomalous fleets defeated inside Spatial Breaches in your Star Charts are always warped" (new). Corrupting one first still gives its engram.
+- Rift Duel (Atlas officers): "Atlas officers you defeat inside Spatial Breaches in your Star Charts duplicate 2 of their rewards at random" and "Atlas officers you defeat inside Spatial Breaches in your Star Charts offer 1 additional reward to pick from, granted the next time you defeat them" (new). Officer fleets already charge the breach like every fleet in the system. A defeated officer drops every reward on their card; two of those are picked at random and dropped a second time. The pick-one offer is separate and isn't duplicated.
 
 ### Relay Network (`relay_network`)
 
@@ -227,22 +227,34 @@ Keystone:
 
 ### Anomalous Debris (`anomalous_debris`)
 
-Reward: an engram from each corrupted dormant fleet beaten.
+Reward: an engram from each corrupted anomalous fleet beaten.
+
+Change to the anomaly: an anomalous fleet is 50% of the Star Chart Boss's fleet size before corruption, down from 110% (`DebrisRules.BOSS_SHARE`). Corruption and the nodes below scale from that. The debris fleets are called anomalous fleets everywhere, in these nodes and in game: the fleet's name ("Dormant Fleet" today, `chart.anomaly.anomalous_debris.fleet.name`) and the Engram Quantity line (`chart.modifier.CHART_ANOMALOUS_DEBRIS_CRAFTING_ITEM_QUANTITY_PERCENT`), in en and zh_CN. Not built yet.
 
 Small nodes:
 
 - The chance node.
 - Additional Debris: "Your Star Charts that contain Anomalous Debris have 1 additional debris field" (`CHART_EXTRA_ANOMALOUS_DEBRIS`).
-- Engram Quantity: "20% increased quantity of crafting items dropped by corrupted dormant fleets in your Star Charts" (`CHART_ANOMALOUS_DEBRIS_CRAFTING_ITEM_QUANTITY_PERCENT`).
+- Engram Quantity: "20% increased quantity of crafting items dropped by corrupted anomalous fleets in your Star Charts" (`CHART_ANOMALOUS_DEBRIS_CRAFTING_ITEM_QUANTITY_PERCENT`).
 
 Notables:
 
-- Recycled Kernels: "Corrupting a dormant fleet in your Star Charts has 25% chance not to spend the Corrupted Nanoswarm".
-- Deep Corruption: "Corrupted dormant fleets in your Star Charts have 30% increased fleet size" and "Corrupted dormant fleets in your Star Charts drop 1 additional engram".
+- Deep Corruption: "Corrupted anomalous fleets in your Star Charts have 30% increased fleet size" and "Corrupted anomalous fleets in your Star Charts drop 1 additional engram".
+- Double Dose: "Anomalous fleets in your Star Charts can be corrupted a second time for 1 more Corrupted Nanoswarm" and "Anomalous fleets corrupted twice in your Star Charts drop 2 additional engrams" (new). The second corruption strengthens the fleet again by the same step.
+- Lone Sleeper: "Your Star Charts with Anomalous Debris have only one debris field" and "Anomalous fleets in your Star Charts have 100% increased fleet size and drop 3 additional engrams when corrupted" (new). Several small fights become one big one.
+- Breached Graveyard (Spatial Breach): "Spatial Breaches in your Star Charts with Anomalous Debris open in a debris field" (new). The breach's core sits in the field, so the anomalous fleet's fight is always inside the open breach and its hull item drops can be warped.
+- Restless Sleepers: "Anomalous fleets in your Star Charts are always corrupted and awake" and "Anomalous fleets in your Star Charts roam their system and are hostile to you" (new). They're hostile only to you, not to the chart's other fleets, and are revealed like any other fleet once awake.
+- [REDACTED] Sleepers: "Anomalous fleets in your Star Charts have 30% of their ships replaced by what was left behind" (new). Remnant hulls.
+- Threatening Sleepers: "Anomalous fleets in your Star Charts have 30% of their ships replaced by something that crept in from the deep dark" (new). Threat hulls.
+- Veiled Sleepers: "Anomalous fleets in your Star Charts have 30% of their ships replaced by something that dwells behind the veil" (new). Shrouded hulls.
+
+The tooltips never name the faction; the player learns it from the ships they meet. The three Sleepers notables share one roll per ship, so they never claim the same ship: with all three, 90% of the fleet is a mix of the three and 10% keeps its random factions' hulls. A replaced ship becomes an equivalent hull from that faction's own hulls (`remnant`, `threat`, `dweller`): the same hull size where the faction has one, else the nearest size, closest in deployment points. It keeps its AI core captain, and corruption strengthens it like the rest of the fleet.
+
+Each replaced ship counts as its faction's for that faction's wormhole anchor, so its deployment points add to the anchor's chance per 100 deployment points lost (`FactionFleetDrops.chance`, `drop_chance` in `wormhole_anchors.csv`), alongside the fleet's usual loot and engram. Today `BattleEngagement.deploymentPointsLostByFaction` counts every lost ship as its fleet's faction (`FleetFactions.realFactionIdOf`), which would give the anomalous fleet's faction all of it. The replaced ship carries its source faction on the member instead, and the tally reads that before the fleet's faction. The anchor's Janus Device and volume gates still apply. Replaced Shrouded hulls use the same per-deployment-point chance as the other two: the Shrouded anchor's every-battle guarantee (`guaranteed_drop`) stays with real Dweller fleets.
 
 Keystone:
 
-- Silent Choir: "Every dormant fleet in your Star Charts wakes corrupted, spending no Corrupted Nanoswarm" and "Corrupted dormant fleets in your Star Charts have 50% increased fleet size".
+- Silent Choir: "Anomalous fleets in your Star Charts are always corrupted twice" and "Anomalous fleets in your Star Charts have 50% increased fleet size".
 
 ### Excavation Sites (`excavation_sites`)
 
@@ -268,7 +280,7 @@ More notables:
 - Needle Bores: "Only frigates can enter open shafts in your Star Charts" and "Fleets guarding open shafts in your Star Charts drop 2 additional inhibitors" (new, `ExcavationRules.MAX_SHIP_SIZE` 1 for both sides).
 - Widened Bores: "Cruisers can enter open shafts in your Star Charts" and "Fleets guarding open shafts in your Star Charts drop 1 additional inhibitor" (new, `ExcavationRules.MAX_SHIP_SIZE` 3 for both sides). With Needle Bores allocated too, only frigates go down, and both nodes' additional inhibitors apply.
 - Pitch Black: "Ships fighting in open shafts in your Star Charts have 70% reduced vision range" and "50% increased quantity of inhibitors from open shafts in your Star Charts" (new, the sight radius of every ship on both sides, set by the shaft's battle plugin, `ExcavationBattlePlugin`).
-- Infested Bolt-Holes: "Fleets guarding open shafts in your Star Charts with Anomalous Debris can be corrupted with a Corrupted Nanoswarm" and "Corrupted guardian fleets in your Star Charts drop an engram and 1 additional inhibitor" (new). The site dialog offers the corruption before the fight, as the dormant fleets' dialog does (`anomaly.debris`).
+- Infested Bolt-Holes: "Fleets guarding open shafts in your Star Charts with Anomalous Debris can be corrupted with a Corrupted Nanoswarm" and "Corrupted guardian fleets in your Star Charts drop an engram and 1 additional inhibitor" (new). The site dialog offers the corruption before the fight, as the anomalous fleets' dialog does (`anomaly.debris`).
 - Settled Shafts: "Each Settling Dust stack in your Star Charts grants 30% increased quantity of inhibitors found at Excavation Sites" (new, read through the Dense Nebula's stacks, so the nebula's battles come before the dig).
 
 ### Storm Front (`storm_front`)
