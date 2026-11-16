@@ -163,7 +163,18 @@ public enum ChartModifier implements ModifierEffect {
     CHART_FORGE_COST_PERCENT("derelict_forge.cost", AnomalyLine.PERCENT_REDUCED_WHEN_NEGATIVE),
     CHART_LISTENING_POST_PICKETS("listening_post.pickets", AnomalyLine.COUNT),
     CHART_LISTENING_POST_LOOT_QUANTITY_PERCENT("listening_post.loot", AnomalyLine.PERCENT),
-    CHART_LISTENING_POST_PURGE_PERCENT("listening_post.purge", AnomalyLine.PERCENT_INCREASED_WHEN_NEGATIVE);
+    CHART_LISTENING_POST_PURGE_PERCENT("listening_post.purge", AnomalyLine.PERCENT_INCREASED_WHEN_NEGATIVE),
+    CHART_LISTENING_POST_GARRISON_PICKETS("listening_post.garrisonPickets", AnomalyLine.FLAG),
+    CHART_LISTENING_POST_INSTANT_ALARM("listening_post.instantAlarm", AnomalyLine.FLAG),
+    CHART_LISTENING_POST_UNSEEN_PROTOTYPES("listening_post.unseenPrototypes", AnomalyLine.COUNT),
+    CHART_LISTENING_POST_RAID_ONLY("listening_post.raidOnly", AnomalyLine.FLAG),
+    CHART_LISTENING_POST_PROTOTYPES("listening_post.prototypes", AnomalyLine.COUNT),
+    CHART_LISTENING_POST_HUNTING_PICKETS("listening_post.huntingPickets", AnomalyLine.FLAG),
+    CHART_LISTENING_POST_PICKET_PROTOTYPES("listening_post.picketPrototypes", AnomalyLine.FLAG),
+    CHART_LISTENING_POST_ARMED_STATION("listening_post.armedStation", AnomalyLine.FLAG),
+    CHART_LISTENING_POST_PURGE_HELD("listening_post.purgeHeld", AnomalyLine.FLAG),
+    CHART_LISTENING_POST_OFFICER_LEDGER("listening_post.officerLedger", AnomalyLine.COUNT),
+    CHART_LISTENING_POST_STOLEN_CHARTS("listening_post.stolenCharts", AnomalyLine.COUNT);
 
     static final String KEY_PREFIX = "chart.modifier.";
 
@@ -179,14 +190,21 @@ public enum ChartModifier implements ModifierEffect {
         PERCENT(false, null),
         PERCENT_REDUCED_WHEN_NEGATIVE(false, ".reduced"),
         PERCENT_INCREASED_WHEN_NEGATIVE(false, ".increased"),
-        COUNT(true, null);
+        COUNT(true, null),
+        FLAG(false, null, true);
 
         private final boolean counted;
         private final String negativeKeySuffix;
+        private final boolean flag;
 
         AnomalyLine(boolean counted, String negativeKeySuffix) {
+            this(counted, negativeKeySuffix, false);
+        }
+
+        AnomalyLine(boolean counted, String negativeKeySuffix, boolean flag) {
             this.counted = counted;
             this.negativeKeySuffix = negativeKeySuffix;
+            this.flag = flag;
         }
     }
 
@@ -228,7 +246,7 @@ public enum ChartModifier implements ModifierEffect {
 
     ChartModifier(String anomalyTuningKey, AnomalyLine line) {
         this(line.counted, null, null, anomalyTuningKey, line.negativeKeySuffix,
-                (context, value) -> context.addAnomalyPercent(anomalyTuningKey, line.counted ? Math.round(value) : value), false);
+                (context, value) -> context.addAnomalyPercent(anomalyTuningKey, line.counted ? Math.round(value) : value), line.flag);
     }
 
     ChartModifier(boolean counted, DropType dropType, ChartFleetStat fleetStat, String anomalyTuningKey, String negativeKeySuffix,

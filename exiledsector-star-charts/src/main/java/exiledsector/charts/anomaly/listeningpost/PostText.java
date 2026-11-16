@@ -39,6 +39,12 @@ final class PostText {
             if (script != null && script.defended()) {
                 lines.add(Translation.gameText("chart.anomaly.listening_post.status.guarded"));
             }
+            if (script != null && script.purgeHeld()) {
+                lines.add(Translation.gameText("chart.anomaly.listening_post.status.fortified"));
+            }
+            if (script != null && script.hunted()) {
+                lines.add(Translation.gameText("chart.anomaly.listening_post.status.hunting"));
+            }
             return lines;
         }
         int suspicion = percent(state.suspicion());

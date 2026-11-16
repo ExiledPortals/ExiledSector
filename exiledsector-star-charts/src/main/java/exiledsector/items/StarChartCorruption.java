@@ -22,6 +22,15 @@ public final class StarChartCorruption {
         };
     }
 
+    public static ItemData withExpandedModifiers(ItemData chartData, Random random) {
+        if (!(chartData.preview() instanceof StarChart chart)) {
+            return chartData;
+        }
+        StarChart expanded = expandModifiers(chart, random);
+        chart.corrupt(expanded == null ? CorruptionOutcome.NOTHING : CorruptionOutcome.MODIFIERS_EXPANDED);
+        return ItemData.of(chart);
+    }
+
     static StarChart raiseTier(StarChart chart) {
         return chart.tier() < StarChart.HIGHEST_TIER ? StarChartCipher.raiseTier(chart) : null;
     }

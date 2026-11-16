@@ -14,6 +14,8 @@ import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.content.ChartAnomalyFleets;
 import exiledsector.charts.content.ChartContentGenerator;
+import exiledsector.charts.content.ChartContentPlanner;
+import exiledsector.charts.content.ChartFleetMarks;
 import exiledsector.charts.content.ChartFleetVisibility;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTier;
@@ -27,6 +29,7 @@ final class Pickets {
     static final String PICKET_MEMORY_KEY = "$exiledSector_chartPicket";
     static final String GUARD_MEMORY_KEY = "$exiledSector_chartPostGuard";
     static final String REPORT_MEMORY_KEY = "$exiledSector_chartPicketReport";
+    static final String HUNTING_MEMORY_KEY = "$exiledSector_chartPicketHunting";
     static final String SENSOR_MOD_ID = ChartIds.PREFIX + "picket_sensors";
     static final String REVEAL_MOD_ID = ChartIds.PREFIX + "picket_reveal";
 
@@ -34,17 +37,28 @@ final class Pickets {
     }
 
     static ChartAnomalyFleets.Spec spec(String factionId, ChartTier tier) {
-        return ChartAnomalyFleets.combat(factionId, FleetTypes.PATROL_SMALL, tier, tier.fleetSize() * ListeningPostRules.PICKET_SIZE_SHARE);
+        return spec(factionId, tier, false);
+    }
+
+    static ChartAnomalyFleets.Spec spec(String factionId, ChartTier tier, boolean garrison) {
+        return ChartAnomalyFleets.combat(factionId, garrison ? FleetTypes.PATROL_LARGE : FleetTypes.PATROL_SMALL, tier,
+                ListeningPostRules.picketSize(tier, garrison), ListeningPostRules.picketSizeCap(garrison));
     }
 
     static CampaignFleetAPI spawn(AnomalyContentSite site, PicketStation station, Vector2f postAt, FleetEventListener listener, Random random) {
         ChartGenContext context = site.context();
+        boolean garrison = DepotTuning.of(context).garrisonPickets();
+        ChartTier tier = ChartAnomalyFleets.tier(site.tier(), context);
         long fleetSeed = random.nextLong();
-        CampaignFleetAPI fleet = ChartAnomalyFleets.create(spec(site.factionId(), ChartAnomalyFleets.tier(site.tier(), context)), new Random(fleetSeed));
+        CampaignFleetAPI fleet = ChartAnomalyFleets.create(spec(site.factionId(), tier, garrison), new Random(fleetSeed));
         if (fleet == null) {
             return null;
         }
         ChartAnomalyFleets.prepare(fleet, site.runId(), site.tier(), fleetSeed, true, context);
+        if (garrison) {
+            ChartFleetMarks.setStrengthBonus(fleet.getMemoryWithoutUpdate(),
+                    ChartContentPlanner.overflowStrength(ListeningPostRules.picketSize(tier, true), ChartContentPlanner.BOSS_SIZE_CAP));
+        }
         dress(fleet, station.index());
         Vector2f at = station.around(postAt);
         site.addFleet(fleet, at);
@@ -94,6 +108,36 @@ final class Pickets {
         memory.unset(REPORT_MEMORY_KEY);
         picket.clearAssignments();
         picket.addAssignment(FleetAssignment.GO_TO_LOCATION, post, ChartContentGenerator.ASSIGNMENT_DAYS);
+    }
+
+    static boolean isHunting(CampaignFleetAPI picket) {
+        return picket.getMemoryWithoutUpdate() != null && picket.getMemoryWithoutUpdate().getBoolean(HUNTING_MEMORY_KEY);
+    }
+
+    static void hunt(CampaignFleetAPI picket, SectorEntityToken target) {
+        MemoryAPI memory = picket.getMemoryWithoutUpdate();
+        memory.unset(REPORT_MEMORY_KEY);
+        memory.unset(MemFlags.MEMORY_KEY_MAKE_NON_AGGRESSIVE);
+        memory.unset(MemFlags.MEMORY_KEY_FLEET_DO_NOT_GET_SIDETRACKED);
+        memory.set(MemFlags.MEMORY_KEY_MAKE_AGGRESSIVE, true);
+        memory.set(MemFlags.MEMORY_KEY_ALLOW_LONG_PURSUIT, true);
+        memory.set(MemFlags.MEMORY_KEY_NO_JUMP, true);
+        memory.set(HUNTING_MEMORY_KEY, true);
+        chase(picket, target);
+    }
+
+    static void chase(CampaignFleetAPI picket, SectorEntityToken target) {
+        picket.clearAssignments();
+        picket.addAssignment(FleetAssignment.INTERCEPT, target, ChartContentGenerator.ASSIGNMENT_DAYS);
+    }
+
+    static void search(CampaignFleetAPI picket, SectorEntityToken post) {
+        picket.clearAssignments();
+        picket.addAssignment(FleetAssignment.PATROL_SYSTEM, post, ChartContentGenerator.ASSIGNMENT_DAYS);
+    }
+
+    static boolean chasing(CampaignFleetAPI picket) {
+        return picket.getCurrentAssignment() != null && picket.getCurrentAssignment().getAssignment() == FleetAssignment.INTERCEPT;
     }
 
     static void standGuard(CampaignFleetAPI guard, SectorEntityToken post) {

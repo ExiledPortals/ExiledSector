@@ -10,6 +10,7 @@ import com.fs.starfarer.api.campaign.SectorEntityToken.VisibilityLevel;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.listeners.FleetEventListener;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.PlayerFleet;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.AnomalyRunScript;
 import exiledsector.charts.run.ChartRun;
@@ -23,6 +24,7 @@ public final class PostScript extends AnomalyRunScript implements FleetEventList
     private final String postId;
     private final List<PicketStation> stations = new ArrayList<>();
     private String guardId;
+    private String armedPostId;
 
     public PostScript(String runId, int tier, StarSystemAPI system, String postId) {
         super(runId, tier, system, false);
@@ -63,8 +65,11 @@ public final class PostScript extends AnomalyRunScript implements FleetEventList
         }
         SectorEntityToken post = post();
         if (state.alarm()) {
-            PostState.record(run, state.withVault(ListeningPostRules.vaultAfter(state.vaultShare(), days, purgeReduction(run))));
+            if (!purgeHeld(run)) {
+                PostState.record(run, state.withVault(ListeningPostRules.vaultAfter(state.vaultShare(), days, purgeReduction(run))));
+            }
             mergeArrivals(post);
+            keepHunting(post);
             return;
         }
         if (post != null) {
@@ -80,13 +85,15 @@ public final class PostScript extends AnomalyRunScript implements FleetEventList
     void detect(ChartRun run, PostState state, float days) {
         boolean contact = false;
         boolean reported = false;
+        boolean instantAlarm = DepotTuning.of(run).instantAlarm();
         for (CampaignFleetAPI picket : livingPickets()) {
             VisibilityLevel level = picket.getVisibilityLevelOfPlayerFleet();
             if (level == VisibilityLevel.SENSOR_CONTACT) {
                 contact = true;
             } else if (level == VisibilityLevel.COMPOSITION_DETAILS || level == VisibilityLevel.COMPOSITION_AND_FACTION_DETAILS) {
                 contact = true;
-                if (Pickets.reportDays(picket) < 0f) {
+                reported |= instantAlarm;
+                if (!instantAlarm && Pickets.reportDays(picket) < 0f) {
                     Pickets.setReportDays(picket, ListeningPostRules.REPORT_DAYS);
                     message("chart.anomaly.listening_post.identified");
                 }
@@ -123,18 +130,40 @@ public final class PostScript extends AnomalyRunScript implements FleetEventList
         }
         PostState.record(run, state.raised());
         SectorEntityToken post = post();
-        if (post != null) {
+        boolean hunting = DepotTuning.of(run).huntingPickets();
+        if (hunting) {
+            livingPickets().forEach(picket -> Pickets.hunt(picket, huntTarget(post)));
+        } else if (post != null) {
             livingPickets().forEach(picket -> Pickets.gather(picket, post));
         }
-        message("chart.anomaly.listening_post.alarm");
+        message(hunting ? "chart.anomaly.listening_post.alarm.hunting" : "chart.anomaly.listening_post.alarm");
         return true;
+    }
+
+    private SectorEntityToken huntTarget(SectorEntityToken post) {
+        CampaignFleetAPI player = PlayerFleet.orNull();
+        return player != null && playerInSystem() ? player : post;
+    }
+
+    void keepHunting(SectorEntityToken post) {
+        boolean playerHere = playerInSystem();
+        for (CampaignFleetAPI picket : livingPickets()) {
+            if (!Pickets.isHunting(picket)) {
+                continue;
+            }
+            if (playerHere && !Pickets.chasing(picket)) {
+                Pickets.chase(picket, PlayerFleet.orNull());
+            } else if (!playerHere && picket.getCurrentAssignment() == null && post != null) {
+                Pickets.search(picket, post);
+            }
+        }
     }
 
     void mergeArrivals(SectorEntityToken post) {
         if (post == null) {
             return;
         }
-        for (CampaignFleetAPI picket : livingPickets()) {
+        for (CampaignFleetAPI picket : guardingPickets()) {
             if (Misc.getDistance(picket.getLocation(), post.getLocation()) <= ListeningPostRules.GUARD_MERGE_RANGE + post.getRadius()) {
                 joinGuard(picket, post);
             }
@@ -144,12 +173,39 @@ public final class PostScript extends AnomalyRunScript implements FleetEventList
     public CampaignFleetAPI gatherDefenders() {
         SectorEntityToken post = post();
         if (post == null) {
-            return guard();
+            return defenderToEngage();
         }
-        for (CampaignFleetAPI picket : livingPickets()) {
+        for (CampaignFleetAPI picket : guardingPickets()) {
             joinGuard(picket, post);
         }
-        return guard();
+        CampaignFleetAPI station = armedPost();
+        CampaignFleetAPI guard = guard();
+        if (station != null && guard != null) {
+            guard.setLocation(station.getLocation().x, station.getLocation().y);
+        }
+        return defenderToEngage();
+    }
+
+    CampaignFleetAPI defenderToEngage() {
+        CampaignFleetAPI station = armedPost();
+        return station != null ? station : guard();
+    }
+
+    void arm(CampaignFleetAPI station) {
+        armedPostId = station == null ? null : station.getId();
+    }
+
+    public CampaignFleetAPI armedPost() {
+        CampaignFleetAPI fleet = livingFleet(armedPostId);
+        return fleet != null && !fleet.isEmpty() ? fleet : null;
+    }
+
+    boolean purgeHeld() {
+        return purgeHeld(liveRun());
+    }
+
+    boolean purgeHeld(ChartRun run) {
+        return armedPost() != null && DepotTuning.of(run).purgeHeld();
     }
 
     private void joinGuard(CampaignFleetAPI picket, SectorEntityToken post) {
@@ -178,8 +234,16 @@ public final class PostScript extends AnomalyRunScript implements FleetEventList
         return pickets;
     }
 
+    List<CampaignFleetAPI> guardingPickets() {
+        return livingPickets().stream().filter(picket -> !Pickets.isHunting(picket)).toList();
+    }
+
+    public boolean hunted() {
+        return livingPickets().stream().anyMatch(Pickets::isHunting);
+    }
+
     public boolean defended() {
-        return guard() != null || !livingPickets().isEmpty();
+        return guard() != null || !guardingPickets().isEmpty() || armedPost() != null;
     }
 
     float purgeReduction(ChartRun run) {
@@ -188,7 +252,7 @@ public final class PostScript extends AnomalyRunScript implements FleetEventList
 
     @Override
     public void reportBattleOccurred(CampaignFleetAPI fleet, CampaignFleetAPI primaryWinner, BattleAPI battle) {
-        if (fleet == null || battle == null || !battle.isPlayerInvolved() || !Pickets.isPicket(fleet) || fleet.isEmpty()) {
+        if (fleet == null || battle == null || !battle.isPlayerInvolved() || !(Pickets.isPicket(fleet) || ArmedPost.isArmedPost(fleet)) || fleet.isEmpty()) {
             return;
         }
         ChartRun run = liveRun();
