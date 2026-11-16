@@ -18,7 +18,14 @@ final class BreachCharge {
     }
 
     static void rally(LocationAPI location, SectorEntityToken breach) {
+        rally(location, breach, false);
+    }
+
+    static void rally(LocationAPI location, SectorEntityToken breach, boolean wakesAnomalousFleets) {
         for (CampaignFleetAPI fleet : location.getFleets()) {
+            if (wakesAnomalousFleets && DormantFleets.isDormant(fleet)) {
+                DormantFleets.wake(fleet);
+            }
             if (canCharge(fleet) && !isCharging(fleet.getAI(), breach)) {
                 fleet.addAssignmentAtStart(ASSIGNMENT, breach, ChartContentGenerator.ASSIGNMENT_DAYS,
                         Translation.gameText("chart.anomaly.spatial_breach.fleet.charging"), null);
@@ -42,7 +49,7 @@ final class BreachCharge {
 
     static boolean canCharge(CampaignFleetAPI fleet) {
         return fleet != null && !fleet.isPlayerFleet() && fleet.getAI() != null && !fleet.isStationMode() && !fleet.isDespawning()
-                && !DormantFleets.isDormant(fleet);
+                && !DormantFleets.isDormant(fleet) && !BreachIncursion.isGuard(fleet);
     }
 
     private static boolean isCharging(CampaignFleetAIAPI ai, SectorEntityToken breach) {

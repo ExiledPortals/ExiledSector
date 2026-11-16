@@ -3,11 +3,14 @@ package exiledsector.charts.anomaly;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
+import exiledsector.charts.anomaly.breach.EventHorizon;
 import exiledsector.charts.content.ChartPoi;
 import exiledsector.charts.content.ChartPois;
 import exiledsector.charts.content.ChartSites;
 import exiledsector.charts.loot.ImmutableDrops;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 
@@ -48,14 +51,19 @@ public final class StarAnomalies {
         }
         Random random = site.random(DERELICT_SALT);
         int count = MIN_DERELICTS + random.nextInt(EXTRA_DERELICTS);
+        List<SectorEntityToken> derelicts = new ArrayList<>();
+        float farthestReach = 0f;
         for (int i = 0; i < count; i++) {
             ChartPoi derelict = ChartSites.pick(ChartPoi.Kind.DERELICT, site.tier(), random);
             ChartSites.Orbit orbit = site.clearOrbit(star, star.getRadius() + DERELICT_GAP, DERELICT_REACH, random);
             SectorEntityToken placed = derelict == null || orbit == null ? null : site.addSite(derelict, orbit, random);
             if (placed != null) {
                 ImmutableDrops.mark(placed, DERELICT_IMMUTABLE_CHANCE);
+                derelicts.add(placed);
+                farthestReach = Math.max(farthestReach, orbit.radius() + placed.getRadius());
             }
         }
+        EventHorizon.surround(site, star, derelicts, farthestReach);
     }
 
     static void placeResearchStation(AnomalyContentSite site) {

@@ -3,6 +3,7 @@ package exiledsector.charts.officer;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.Seeds;
+import exiledsector.charts.anomaly.breach.RiftDuel;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.officer.reward.CarriedItem;
 import exiledsector.charts.officer.reward.OfficerRewardDrop;
@@ -82,8 +83,10 @@ public final class OfficerDefeat {
         HullFacts hull = OfficerFleets.flagshipHull(officer);
         String scarId = Scars.pickAfterBattle(flagshipId, officer.scars(), hull);
         AtlasOfficer scarred = scarred(officer, scarId, dModFor(scarId, officer, hull, random));
-        ItemDrops.SiteLoot carriedLoot = OfficerRewardDrop.roll(officer.carried(), run, random);
-        List<CarriedItem> offers = OfficerRewardPool.offers(RewardContext.forRun(sector, run, officer.factionId()), random);
+        RiftDuel duel = RiftDuel.at(sector, run);
+        ItemDrops.SiteLoot carriedLoot = OfficerRewardDrop.roll(officer.carried(), run, random).plus(duel.duplicatedLoot(officer, run));
+        List<CarriedItem> offers = OfficerRewardPool.offers(RewardContext.forRun(sector, run, officer.factionId()),
+                OfficerRewardPool.OFFER_COUNT + duel.extraOffers(), random);
         AtlasOfficer rewarded = rewarded(scarred, offers);
         state.putOfficer(rewarded);
         prompt(sector, rewarded);

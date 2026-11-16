@@ -30,7 +30,11 @@ public final class OfficerRewardPool {
     }
 
     public static List<CarriedItem> offers(RewardContext context, Random random) {
-        return offers(candidates(context, random), OfficerRewardTable.shares(), OFFER_COUNT, random);
+        return offers(context, OFFER_COUNT, random);
+    }
+
+    public static List<CarriedItem> offers(RewardContext context, int count, Random random) {
+        return offers(candidates(context, random), OfficerRewardTable.shares(), count, random);
     }
 
     public static List<RewardGroup> offeredGroups(RewardContext context, Random random) {

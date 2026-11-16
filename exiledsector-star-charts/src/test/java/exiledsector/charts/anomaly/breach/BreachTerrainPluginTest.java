@@ -182,6 +182,60 @@ class BreachTerrainPluginTest {
     }
 
     @Test
+    void heavyBreachHoldsAtFullSizeAndItsDrainRisesWithEverySecondHeld() {
+        BreachTerrainPlugin plugin = new BreachTerrainPlugin();
+        plugin.init(SpatialBreach.TERRAIN_ID, terrainEntity, new BreachTerrainPlugin.Params("run1", 5, new BreachRules.Growth(2000f, 60f, 60f, 30f),
+                List.of(), 1f, 9L, new BreachTuning(3f, false, false, null)));
+        CampaignFleetAPI player = fleetAt(0f, 0f, true);
+        BuffManagerAPI buffs = mock(BuffManagerAPI.class);
+        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        when(member.getBuffManager()).thenReturn(buffs);
+        FleetDataAPI fleetData = mock(FleetDataAPI.class);
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
+        when(player.getFleetData()).thenReturn(fleetData);
+        FleetLogisticsAPI logistics = mock(FleetLogisticsAPI.class);
+        when(logistics.getFuelCostPerLightYear()).thenReturn(10f);
+        when(player.getLogistics()).thenReturn(logistics);
+        CargoAPI cargo = mock(CargoAPI.class);
+        when(cargo.getFuel()).thenReturn(100f);
+        when(player.getCargo()).thenReturn(cargo);
+
+        plugin.elapse(75f);
+        assertEquals(2000f, plugin.radius(), 0.01f);
+        assertEquals(1.45f, plugin.drainMult(), 0.0001f);
+        plugin.tick(1f);
+
+        ArgumentCaptor<BuffManagerAPI.Buff> buff = ArgumentCaptor.forClass(BuffManagerAPI.Buff.class);
+        verify(buffs).addBuffOnlyUpdateStat(buff.capture());
+        assertEquals(BreachRules.SUPPLY_USE_PERCENT * 1.45f, ((BreachSupplyBuff) buff.getValue()).percent(), 0.01f);
+        verify(cargo).removeFuel(ArgumentMatchers.floatThat(fuel -> Math.abs(fuel - 10f * BreachRules.FUEL_LIGHT_YEARS_PER_DAY * 1.45f) < 0.001f));
+
+        plugin.elapse(40f);
+        assertFalse(plugin.isClosed());
+        assertEquals(1.9f, plugin.drainMult(), 0.0001f);
+        plugin.elapse(35f);
+        assertTrue(plugin.isClosed());
+    }
+
+    @Test
+    void riftMagnetismMovesTheBreachItsCoreAndItsUnformedCachesTowardTheTarget() {
+        BreachTerrainPlugin plugin = new BreachTerrainPlugin();
+        plugin.init(SpatialBreach.TERRAIN_ID, terrainEntity, new BreachTerrainPlugin.Params("run1", 5, GROWTH,
+                List.of(new BreachRules.CacheSite(1800f, 0f, 0.9f)), 1f, 9L, new BreachTuning(0f, true, false, null)));
+        SectorEntityToken core = mock(SectorEntityToken.class);
+        when(system.getEntityById(SpatialBreach.coreId("run1"))).thenReturn(core);
+
+        plugin.drift(new Vector2f(1000f, 0f), 2f);
+
+        float step = BreachRules.DRIFT_SPEED * 2f;
+        verify(terrainEntity).setFixedLocation(step, 0f);
+        verify(core).setFixedLocation(step, 0f);
+        plugin.elapse(60f);
+        plugin.tick(BreachTerrainPlugin.TICK_DAYS);
+        assertEquals(0, plugin.cachesFormed());
+    }
+
+    @Test
     void theOpenFieldHoldsOnlyFleetsOverlappingIt() {
         BreachTerrainPlugin plugin = breach(List.of());
         CampaignFleetAPI inside = fleetAt(500f, 0f, true);

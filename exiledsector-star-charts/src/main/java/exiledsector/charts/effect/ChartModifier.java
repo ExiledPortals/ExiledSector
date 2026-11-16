@@ -146,6 +146,20 @@ public enum ChartModifier implements ModifierEffect {
     CHART_BREACH_GROWTH_PERCENT("spatial_breach.growth", AnomalyLine.PERCENT),
     CHART_BREACH_CACHE_PERCENT("spatial_breach.caches", AnomalyLine.PERCENT),
     CHART_BREACH_CACHE_ITEM_PERCENT("spatial_breach.cacheItems", AnomalyLine.PERCENT),
+    CHART_BREACH_WARPED_CHANCE_PERCENT("spatial_breach.warped", AnomalyLine.PERCENT),
+    CHART_BREACH_HOLD_SECONDS("spatial_breach.hold", AnomalyLine.COUNT),
+    CHART_BREACH_HELD_DRAIN_PERCENT("spatial_breach.heldDrain", AnomalyLine.PERCENT),
+    CHART_BREACH_DRIFT("spatial_breach.drift", AnomalyLine.FLAG),
+    CHART_BREACH_LIGHTNING("spatial_breach.lightning", AnomalyLine.FLAG),
+    CHART_BREACH_BATTLE_HULL_ITEM_PERCENT("spatial_breach.battleHullItems", AnomalyLine.PERCENT),
+    CHART_BREACH_FLEET_WARPED_CHANCE_PERCENT("spatial_breach.fleetWarped", AnomalyLine.PERCENT),
+    CHART_BREACH_INCURSION("spatial_breach.incursion", AnomalyLine.FLAG),
+    CHART_BREACH_WAKES_ANOMALOUS_FLEETS("spatial_breach.wakesAnomalous", AnomalyLine.FLAG),
+    CHART_BREACH_ANOMALOUS_FLEETS_WARPED("spatial_breach.anomalousWarped", AnomalyLine.FLAG),
+    CHART_BREACH_OFFICER_DUPLICATED_REWARDS("spatial_breach.officerDuplicates", AnomalyLine.COUNT),
+    CHART_BREACH_OFFICER_EXTRA_OFFERS("spatial_breach.officerOffers", AnomalyLine.COUNT),
+    CHART_BLACK_HOLE_EVENT_HORIZON("black_hole.eventHorizon", AnomalyLine.FLAG),
+    CHART_BLACK_HOLE_WARPED_DERELICTS("black_hole.warpedDerelicts", AnomalyLine.FLAG),
     CHART_RELAY_COST_PERCENT("relay_network.cost", AnomalyLine.PERCENT_REDUCED_WHEN_NEGATIVE),
     CHART_RELAY_CHAIN_STAGES("relay_network.stages", AnomalyLine.COUNT),
     CHART_CONVOY_CARGO_PERCENT("supply_convoy.cargo", AnomalyLine.PERCENT),
@@ -179,7 +193,8 @@ public enum ChartModifier implements ModifierEffect {
         PERCENT(false, null),
         PERCENT_REDUCED_WHEN_NEGATIVE(false, ".reduced"),
         PERCENT_INCREASED_WHEN_NEGATIVE(false, ".increased"),
-        COUNT(true, null);
+        COUNT(true, null),
+        FLAG(false, null);
 
         private final boolean counted;
         private final String negativeKeySuffix;
@@ -228,7 +243,7 @@ public enum ChartModifier implements ModifierEffect {
 
     ChartModifier(String anomalyTuningKey, AnomalyLine line) {
         this(line.counted, null, null, anomalyTuningKey, line.negativeKeySuffix,
-                (context, value) -> context.addAnomalyPercent(anomalyTuningKey, line.counted ? Math.round(value) : value), false);
+                (context, value) -> context.addAnomalyPercent(anomalyTuningKey, line.counted ? Math.round(value) : value), line == AnomalyLine.FLAG);
     }
 
     ChartModifier(boolean counted, DropType dropType, ChartFleetStat fleetStat, String anomalyTuningKey, String negativeKeySuffix,
