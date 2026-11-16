@@ -42,7 +42,7 @@ class SkillTreeRefitButtonTest {
 
     @Test
     void usesTheVanillaSkillsCodexIcon() {
-        assertEquals("graphics/icons/skills.png", button.getIconName(null, null));
+        assertEquals("graphics/exiledSector/ui/skill_tree.png", button.getIconName(null, null));
     }
 
     @Test

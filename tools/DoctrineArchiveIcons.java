@@ -22,10 +22,10 @@ public final class DoctrineArchiveIcons {
     private static final String DEFAULT_GAME_CORE = "E:/Dev/Starsector/starsector-core";
     private static final String SOURCE_ICON = "graphics/icons/cargo/hyperspace_data.png";
     private static final String DEFAULT_CSV = "data/config/exiledSector/doctrine_archives.csv";
-    private static final String DEFAULT_OUTPUT_DIR = "graphics/icons/socketables";
-    private static final String FRAME_NAME = "exiledSector_doctrine_archive_frame.png";
-    private static final String STILL_PREFIX = "exiledSector_doctrine_archive_";
-    private static final String EMBLEM_PREFIX = "exiledSector_doctrine_emblem_";
+    private static final String DEFAULT_OUTPUT_DIR = "graphics/exiledSector/items/doctrine_archives";
+    private static final String FRAME_NAME = "doctrine_archive_frame.png";
+    private static final String STILL_PREFIX = "doctrine_archive_";
+    private static final String EMBLEM_PREFIX = "emblems/";
     private static final int EMBLEM_SIZE = 64;
     private static final int CORNER_SAMPLE = 6;
     private static final float KEY_FROM = 0.14f;
@@ -103,6 +103,7 @@ public final class DoctrineArchiveIcons {
         if (file.exists() && !overwrite) {
             throw new IOException(file + " already exists; pass --overwrite to replace it");
         }
+        file.getParentFile().mkdirs();
         ImageIO.write(image, "png", file);
         System.out.println("Wrote " + file);
     }

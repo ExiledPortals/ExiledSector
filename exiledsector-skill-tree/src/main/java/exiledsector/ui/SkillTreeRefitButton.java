@@ -58,7 +58,7 @@ public class SkillTreeRefitButton extends FullScreenRefitButton {
 
     @Override
     protected String iconPath() {
-        return "graphics/icons/skills.png";
+        return "graphics/exiledSector/ui/skill_tree.png";
     }
 
     @Override

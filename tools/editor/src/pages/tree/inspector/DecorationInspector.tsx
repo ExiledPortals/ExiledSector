@@ -131,7 +131,7 @@ function ImageFields({ decoration: image, edit }: FieldsProps<'image'>) {
         <ImageBrowser paths={staticImages.data} selectedPath={image.imagePath} onSelect={(path) => edit((target) => void (target.imagePath = path))} height={260} />
       ) : (
         <Text size="xs" c="dimmed">
-          No images found under graphics/backgrounds/static_images/.
+          No images found under graphics/exiledSector/scenery/clouds/.
         </Text>
       )}
     </>

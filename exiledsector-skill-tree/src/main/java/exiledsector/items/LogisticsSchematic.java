@@ -10,7 +10,7 @@ public enum LogisticsSchematic implements ShipSchematic {
     INSTANCE;
 
     public static final String ITEM_ID = "exiledSector_logistics_schematic";
-    public static final String ICON_PATH = "graphics/icons/hull_upgrades/logistics_schematic.png";
+    public static final String ICON_PATH = "graphics/exiledSector/items/schematics/logistics_schematic.png";
 
     public static boolean is(SpecialItemData special) {
         return special != null && ITEM_ID.equals(special.getId());

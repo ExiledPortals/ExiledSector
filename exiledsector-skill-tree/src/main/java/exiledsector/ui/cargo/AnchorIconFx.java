@@ -25,7 +25,7 @@ public final class AnchorIconFx {
     static final String TUNNEL_TEXTURE = "graphics/fx/radial_fx.png";
     static final String HALO_TEXTURE = "graphics/fx/star_halo.png";
     static final String RING_TEXTURE = "graphics/fx/shields256ringd.png";
-    static final String BUNDLED_CREST_DIRECTORY = "graphics/icons/crests/";
+    static final String BUNDLED_CREST_DIRECTORY = "graphics/exiledSector/items/anchors/crests/";
     private static final float DESIGN_SIZE = 80f;
     private static final float DESIGN_CENTRE = 40f;
     private static final float GEM_X = 36.5f;

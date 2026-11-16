@@ -93,7 +93,7 @@ class HullUpgradeTest {
         assertEquals(RefitSchematic.DOMAIN, RefitSchematic.parse("domain"));
         assertNull(RefitSchematic.parse("FIGHTER"));
         assertNull(RefitSchematic.parse(""));
-        assertEquals("graphics/icons/hull_upgrades/refit_schematic_military.png", RefitSchematic.MILITARY.iconPath());
+        assertEquals("graphics/exiledSector/items/schematics/refit_schematic_military.png", RefitSchematic.MILITARY.iconPath());
     }
 
     @Test

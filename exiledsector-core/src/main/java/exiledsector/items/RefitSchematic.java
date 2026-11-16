@@ -22,7 +22,7 @@ public enum RefitSchematic implements ShipSchematic {
     public static final String ITEM_ID = "exiledSector_refit_schematic";
     public static final String LEGACY_ITEM_ID = "exiledSector_hull_upgrade";
     public static final ItemStore.StackAbsorber STACK_ABSORBER = ItemStore.StackAbsorber.counting(RefitSchematic::of, ItemStore::addSchematics);
-    private static final String ICON_FOLDER = "graphics/icons/hull_upgrades/refit_schematic_";
+    private static final String ICON_FOLDER = "graphics/exiledSector/items/schematics/refit_schematic_";
     private static final List<RefitSchematic> TIERS = List.of(values());
     private static final AtomicReference<BooleanSupplier> DROPS_ALLOWED = new AtomicReference<>(() -> true);
 

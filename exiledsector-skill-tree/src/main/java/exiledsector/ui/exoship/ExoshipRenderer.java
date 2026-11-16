@@ -14,9 +14,9 @@ import java.util.List;
 
 public final class ExoshipRenderer {
 
-    static final String HULL_PATH = "graphics/fx/rat_exoship.png";
-    static final String LIGHTS_PATH = "graphics/fx/rat_exoship_lights.png";
-    static final String EXTERIOR_LIGHTS_PATH = "graphics/fx/rat_exoship_ext_lights.png";
+    static final String HULL_PATH = "graphics/exiledSector/scenery/exoship/rat_exoship.png";
+    static final String LIGHTS_PATH = "graphics/exiledSector/scenery/exoship/rat_exoship_lights.png";
+    static final String EXTERIOR_LIGHTS_PATH = "graphics/exiledSector/scenery/exoship/rat_exoship_ext_lights.png";
     static final String FLASH_CORE_PATH = "graphics/fx/hit_glow.png";
     static final String FLASH_HALO_PATH = "graphics/fx/star_halo.png";
     static final Color EXO_ORANGE = new Color(248, 172, 44);

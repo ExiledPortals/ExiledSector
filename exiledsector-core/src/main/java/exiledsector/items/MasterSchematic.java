@@ -18,7 +18,7 @@ public enum MasterSchematic implements ShipSchematic {
     public static final String ITEM_ID = "exiledSector_master_schematic";
     public static final ItemStore.StackAbsorber STACK_ABSORBER = ItemStore.StackAbsorber.counting(special -> is(special) ? INSTANCE : null,
             (store, schematic, count) -> store.addMasterSchematics(count));
-    public static final String ICON_PATH = "graphics/icons/hull_upgrades/master_schematic.png";
+    public static final String ICON_PATH = "graphics/exiledSector/items/schematics/master_schematic.png";
     public static final Color COLOR = new Color(235, 245, 255);
     static final float SALVAGE_CHANCE_SHARE = 0.5f;
     private static final AtomicReference<BooleanSupplier> REQUIRED = new AtomicReference<>(() -> false);

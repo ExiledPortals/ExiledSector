@@ -48,7 +48,7 @@ public final class StarChartFixtures {
 
     private static JSONObject chartRow(String id, String systemType, String name, int minTier, String prefixes, String suffixes)
             throws JSONException {
-        return new JSONObject().put("id", id).put("system_type", systemType).put("name", name).put("icon", "graphics/icons/colony_management.png")
+        return new JSONObject().put("id", id).put("system_type", systemType).put("name", name).put("icon", "graphics/exiledSector/items/charts/star_chart.png")
                 .put("rarity", "1").put("min_tier", String.valueOf(minTier)).put("description", "")
                 .put("prefixes", prefixes).put("suffixes", suffixes);
     }

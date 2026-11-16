@@ -54,7 +54,7 @@ class WormholeAnchorDataTest {
             Map.entry("exotech", "exoship"));
     // TODO bake the Explorarium anchor icon with tools/WormholeAnchorIcons.java once its colour is approved
     private static final Map<String, String> PLACEHOLDER_ICONS = Map.of(
-            "domain_drones", "graphics/icons/cargo/exiledSector_wormhole_anchor_threat.png");
+            "domain_drones", "graphics/exiledSector/items/anchors/wormhole_anchor_threat.png");
 
     @AfterEach
     void tearDown() {
@@ -97,7 +97,7 @@ class WormholeAnchorDataTest {
             WormholeAnchorDefinitions.AnchorStyle style = WormholeAnchorDefinitions.style(definition.id());
             if (!"exotech".equals(volume)) {
                 assertEquals(PLACEHOLDER_ICONS.getOrDefault(volume,
-                        "graphics/icons/cargo/exiledSector_wormhole_anchor_" + volume.toLowerCase(Locale.ROOT) + ".png"), definition.icon());
+                        "graphics/exiledSector/items/anchors/wormhole_anchor_" + volume.toLowerCase(Locale.ROOT) + ".png"), definition.icon());
                 assertTrue(new File(definition.icon()).isFile(), definition.icon() + " is missing");
             }
             assertNotEquals(WormholeAnchorDefinitions.DEFAULT_COLOR, style.color(), definition.id() + " has no colour");
