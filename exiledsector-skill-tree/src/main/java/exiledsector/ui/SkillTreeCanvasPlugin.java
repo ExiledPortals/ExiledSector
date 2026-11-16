@@ -70,7 +70,6 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final TreeCameraMemory.View cameraMemory;
     private final FleetShipList shipList;
     private final BaseRefitButton refitButton;
-    private final EscapeKey escapeKey = new EscapeKey();
 
     private PositionAPI canvasPosition;
     private float mouseX = 0f;
@@ -258,7 +257,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         dropStaleGesture(mode);
         if (event.isMouseMoveEvent()) {
             handleMouseMove(event);
-        } else if (EscapeKey.matches(event)) {
+        } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
             handleEscapeKey(event, mode);
         } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_F2 && openHoveredItemCodex(mode)) {
             event.consume();
@@ -305,10 +304,10 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void handleEscapeKey(InputEventAPI event, CanvasMode mode) {
-        boolean leftForPanelToClose = escapeKey.released(event) && !escapeTopmost(mode);
-        if (!leftForPanelToClose) {
-            event.consume();
+        if (event.isKeyDownEvent() && !escapeTopmost(mode) && refitButton != null) {
+            refitButton.closePanel();
         }
+        event.consume();
     }
 
     private boolean escapeTopmost(CanvasMode mode) {

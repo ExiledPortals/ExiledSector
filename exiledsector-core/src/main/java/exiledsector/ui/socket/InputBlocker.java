@@ -3,7 +3,7 @@ package exiledsector.ui.socket;
 import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledsector.ui.EscapeKey;
+import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
@@ -33,7 +33,7 @@ final class InputBlocker extends BaseCustomUIPanelPlugin {
             if (!event.isConsumed() && event.isMouseDownEvent() && press) {
                 pressHandler.run();
             }
-            if (!event.isConsumed() && (press || (event.isKeyboardEvent() && !EscapeKey.matches(event)))) {
+            if (!event.isConsumed() && (press || (event.isKeyboardEvent() && event.getEventValue() != Keyboard.KEY_ESCAPE))) {
                 event.consume();
             }
         }

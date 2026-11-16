@@ -41,7 +41,6 @@ import exiledsector.ui.CanvasCamera;
 import exiledsector.ui.CanvasDrag;
 import exiledsector.ui.CanvasSearchBar;
 import exiledsector.ui.ChromeMetrics;
-import exiledsector.ui.EscapeKey;
 import exiledsector.ui.PointerGesture;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeSounds;
@@ -115,7 +114,6 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
 
     private static final AtomicReference<Overlay> OVERLAY_SHOWN = new AtomicReference<>(Overlay.FACTIONS);
 
-    private final EscapeKey escapeKey = new EscapeKey();
     private final CampaignOverlay.Host host;
     private final SkillTreePanelStyle panelStyle = new SkillTreePanelStyle();
     private final StarfieldRenderer starfield = new StarfieldRenderer(panelStyle);
@@ -736,8 +734,8 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             mouseX = event.getX();
             mouseY = event.getY();
             dragMapUnderBoard(event);
-        } else if (EscapeKey.matches(event)) {
-            if (escapeKey.released(event)) {
+        } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
+            if (event.isKeyDownEvent()) {
                 officerBoard.close();
             }
         } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_F2) {
@@ -821,8 +819,8 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
                 officerBoardInput(event);
             } else if (focusedCell != null) {
                 focusInput(event);
-            } else if (EscapeKey.matches(event)) {
-                if (escapeKey.released(event) && !searchBar.escape()) {
+            } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
+                if (event.isKeyDownEvent() && !searchBar.escape()) {
                     close();
                 }
                 event.consume();
@@ -846,7 +844,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             mouseX = event.getX();
             mouseY = event.getY();
         }
-        if (escapeKey.released(event) && focusing) {
+        if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE && focusing) {
             focusEscape();
         }
         event.consume();

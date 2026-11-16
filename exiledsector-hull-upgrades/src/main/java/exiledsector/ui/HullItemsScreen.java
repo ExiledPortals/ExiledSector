@@ -31,6 +31,7 @@ import exiledsector.ui.util.ClickSwallow;
 import exiledsector.ui.util.GLDraw;
 import lunalib.backend.ui.refit.RefitButtonAdder;
 import lunalib.lunaRefit.BaseRefitButton;
+import org.lwjgl.input.Keyboard;
 
 import java.awt.Color;
 import java.util.EnumSet;
@@ -46,7 +47,6 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
     static final Set<SocketPanelTab> SHOWN_TABS = EnumSet.of(SocketPanelTab.HULL_ITEMS, SocketPanelTab.HULL_UPGRADES);
     private static final float BAY_BACKDROP_ALPHA = 0.8f;
 
-    private final EscapeKey escapeKey = new EscapeKey();
     private final BaseRefitButton refitButton;
     private RefitScreenLayout layout;
     private final RefitBackdrop backdrop = new RefitBackdrop();
@@ -482,7 +482,7 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
             if (event.isLMBUpEvent()) {
                 fleetListClickSwallow.cancel();
             }
-            if (escapeKey.released(event)) {
+            if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
                 if (!fade.closing()) {
                     escape();
                 }

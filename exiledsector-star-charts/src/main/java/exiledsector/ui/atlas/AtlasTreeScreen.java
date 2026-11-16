@@ -18,7 +18,6 @@ import exiledsector.skills.layout.TreeTopology;
 import exiledsector.ui.CampaignOverlay;
 import exiledsector.ui.CanvasCamera;
 import exiledsector.ui.CanvasDrag;
-import exiledsector.ui.EscapeKey;
 import exiledsector.ui.OverlayFade;
 import exiledsector.ui.PointerGesture;
 import exiledsector.ui.SkillTreePanelStyle;
@@ -33,6 +32,7 @@ import exiledsector.ui.hyperspace.HyperspaceMode;
 import exiledsector.ui.node.TreeNodeLayer;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.TextLabel;
+import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 import java.util.Set;
@@ -48,7 +48,6 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
 
     private enum Control { BACK }
 
-    private final EscapeKey escapeKey = new EscapeKey();
     private final CampaignOverlay.Host host;
     private final AtlasState state;
     private final AtlasTreeData data = AtlasTreeData.get();
@@ -155,8 +154,8 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
             }
             if (fade.closing()) {
                 event.consume();
-            } else if (EscapeKey.matches(event)) {
-                if (escapeKey.released(event)) {
+            } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
+                if (event.isKeyDownEvent()) {
                     fade.close();
                 }
                 event.consume();

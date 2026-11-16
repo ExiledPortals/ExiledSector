@@ -21,7 +21,6 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.CampaignOverlay;
-import exiledsector.ui.EscapeKey;
 import exiledsector.ui.OverlayFade;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeSounds;
@@ -30,6 +29,7 @@ import exiledsector.ui.cargo.IconCrossFade;
 import exiledsector.ui.cargo.IconFxClock;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.TextLabel;
+import org.lwjgl.input.Keyboard;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -61,7 +61,6 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
     private record Card(CarriedItem offer, RewardFace face, TextLabel nameLabel) {
     }
 
-    private final EscapeKey escapeKey = new EscapeKey();
     private final CampaignOverlay.Host host;
     private final String officerName;
     private final Consumer<CarriedItem> onPick;
@@ -199,7 +198,7 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
                     pick(released);
                 }
                 pressedCard = null;
-            } else if (escapeKey.released(event)) {
+            } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
                 decideLater();
             }
             event.consume();

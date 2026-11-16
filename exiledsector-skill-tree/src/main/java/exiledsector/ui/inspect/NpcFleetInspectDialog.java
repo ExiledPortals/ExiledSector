@@ -17,8 +17,8 @@ import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
-import exiledsector.ui.EscapeKey;
 import exiledsector.ui.VanillaText;
+import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +38,6 @@ public class NpcFleetInspectDialog implements CustomVisualDialogDelegate {
 
     private final List<CampaignFleetAPI> fleets;
     private final Runnable onDismissed;
-    private final EscapeKey escapeKey = new EscapeKey();
     private DialogCallbacks dialogCallbacks;
 
     public NpcFleetInspectDialog(List<CampaignFleetAPI> fleets, Runnable onDismissed) {
@@ -186,8 +185,8 @@ public class NpcFleetInspectDialog implements CustomVisualDialogDelegate {
             @Override
             public void processInput(List<InputEventAPI> events) {
                 for (InputEventAPI event : events) {
-                    if (!event.isConsumed() && EscapeKey.matches(event)) {
-                        if (escapeKey.released(event)) {
+                    if (!event.isConsumed() && event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
+                        if (event.isKeyDownEvent()) {
                             close();
                         }
                         event.consume();
