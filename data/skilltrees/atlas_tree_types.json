@@ -48,6 +48,142 @@
 				"encounter",
 				"loot"
 			]
+		},
+		{
+			"id": "relay_reward_rarity",
+			"name": "Relay Reward Rarity",
+			"effects": [
+				{
+					"effect": "CHART_RELAY_REWARD_RARITY_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"loot"
+			]
+		},
+		{
+			"id": "forked_trace",
+			"name": "Forked Trace",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_RELAY_ONWARD_SYSTEMS",
+					"magnitude": 2
+				}
+			],
+			"tags": [
+				"boss",
+				"loot"
+			]
+		},
+		{
+			"id": "crowded_channel",
+			"name": "Crowded Channel",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_RELAY_EXTRA_CHOICES",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"loot"
+			]
+		},
+		{
+			"id": "double_down",
+			"name": "Double Down",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_RELAY_EXTRA_REWARD_COPIES",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_RELAY_EXTRA_SCARS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"loot",
+				"boss"
+			]
+		},
+		{
+			"id": "extra_relay",
+			"name": "Extra Relay",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_RELAY_EXTRA_RELAYS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"encounter",
+				"loot"
+			]
+		},
+		{
+			"id": "scar_collector",
+			"name": "Scar Collector",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_RELAY_SCAR_REWARDS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"loot",
+				"boss"
+			]
+		},
+		{
+			"id": "early_echo",
+			"name": "Early Echo",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_RELAY_STAGE_UNIQUE_CHANCE",
+					"magnitude": 15
+				}
+			],
+			"tags": [
+				"hull_item",
+				"subroutine",
+				"boss"
+			]
+		},
+		{
+			"id": "shared_broadcast",
+			"name": "Shared Broadcast",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_RELAY_SHARED_BROADCAST",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"officers",
+				"loot"
+			]
+		},
+		{
+			"id": "full_array",
+			"name": "Full Array",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_RELAY_FULL_ARRAY",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"encounter"
+			]
 		}
 	]
 }

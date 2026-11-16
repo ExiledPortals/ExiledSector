@@ -148,6 +148,16 @@ public enum ChartModifier implements ModifierEffect {
     CHART_BREACH_CACHE_ITEM_PERCENT("spatial_breach.cacheItems", AnomalyLine.PERCENT),
     CHART_RELAY_COST_PERCENT("relay_network.cost", AnomalyLine.PERCENT_REDUCED_WHEN_NEGATIVE),
     CHART_RELAY_CHAIN_STAGES("relay_network.stages", AnomalyLine.COUNT),
+    CHART_RELAY_REWARD_RARITY_PERCENT("relay_network.rewardRarity", AnomalyLine.PERCENT),
+    CHART_RELAY_ONWARD_SYSTEMS("relay_network.onwardSystems", AnomalyLine.COUNT),
+    CHART_RELAY_EXTRA_CHOICES("relay_network.extraChoices", AnomalyLine.COUNT),
+    CHART_RELAY_EXTRA_REWARD_COPIES("relay_network.rewardCopies", AnomalyLine.COUNT),
+    CHART_RELAY_EXTRA_SCARS("relay_network.extraScars", AnomalyLine.COUNT),
+    CHART_RELAY_EXTRA_RELAYS("relay_network.extraRelays", AnomalyLine.COUNT),
+    CHART_RELAY_SCAR_REWARDS("relay_network.scarRewards", AnomalyLine.COUNT),
+    CHART_RELAY_STAGE_UNIQUE_CHANCE("relay_network.stageUnique", AnomalyLine.PERCENT),
+    CHART_RELAY_SHARED_BROADCAST("relay_network.sharedBroadcast", AnomalyLine.FLAG),
+    CHART_RELAY_FULL_ARRAY("relay_network.fullArray", AnomalyLine.FLAG),
     CHART_CONVOY_CARGO_PERCENT("supply_convoy.cargo", AnomalyLine.PERCENT),
     CHART_CONVOY_ESCORT_PERCENT("supply_convoy.escort", AnomalyLine.PERCENT_REDUCED_WHEN_NEGATIVE),
     CHART_EXTRA_CONVOYS("supply_convoy.extra", AnomalyLine.COUNT),
@@ -176,17 +186,20 @@ public enum ChartModifier implements ModifierEffect {
     }
 
     private enum AnomalyLine {
-        PERCENT(false, null),
-        PERCENT_REDUCED_WHEN_NEGATIVE(false, ".reduced"),
-        PERCENT_INCREASED_WHEN_NEGATIVE(false, ".increased"),
-        COUNT(true, null);
+        PERCENT(false, null, false),
+        PERCENT_REDUCED_WHEN_NEGATIVE(false, ".reduced", false),
+        PERCENT_INCREASED_WHEN_NEGATIVE(false, ".increased", false),
+        COUNT(true, null, false),
+        FLAG(true, null, true);
 
         private final boolean counted;
         private final String negativeKeySuffix;
+        private final boolean flag;
 
-        AnomalyLine(boolean counted, String negativeKeySuffix) {
+        AnomalyLine(boolean counted, String negativeKeySuffix, boolean flag) {
             this.counted = counted;
             this.negativeKeySuffix = negativeKeySuffix;
+            this.flag = flag;
         }
     }
 
@@ -228,7 +241,7 @@ public enum ChartModifier implements ModifierEffect {
 
     ChartModifier(String anomalyTuningKey, AnomalyLine line) {
         this(line.counted, null, null, anomalyTuningKey, line.negativeKeySuffix,
-                (context, value) -> context.addAnomalyPercent(anomalyTuningKey, line.counted ? Math.round(value) : value), false);
+                (context, value) -> context.addAnomalyPercent(anomalyTuningKey, line.counted ? Math.round(value) : value), line.flag);
     }
 
     ChartModifier(boolean counted, DropType dropType, ChartFleetStat fleetStat, String anomalyTuningKey, String negativeKeySuffix,
