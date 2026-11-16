@@ -3,10 +3,9 @@ package exiledsector.effects;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import exiledsector.items.ShipSchematic;
 import exiledsector.items.SkillTreeSchematicDrops;
-import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.BattleItemDropSetting;
 import exiledsector.loot.BattleLoot;
-import exiledsector.loot.FleetLossTally;
+import exiledsector.loot.FleetLoss;
 import exiledsector.loot.LootSource;
 import exiledsector.loot.LootSources;
 import exiledsector.loot.OutsideChartShare;
@@ -23,15 +22,6 @@ public final class SkillTreeSchematicLootSource implements LootSource {
     private static final Logger LOG = Logger.getLogger(SkillTreeSchematicLootSource.class);
 
     private SkillTreeSchematicLootSource() {
-    }
-
-    private FleetLossTally losses(BattleLoot battle) {
-        return battle.state(this, FleetLossTally::new);
-    }
-
-    @Override
-    public void recordEngagement(BattleLoot battle, BattleEngagement engagement) {
-        losses(battle).record(engagement);
     }
 
     @Override
@@ -59,14 +49,10 @@ public final class SkillTreeSchematicLootSource implements LootSource {
         }
         List<ShipSchematic> drops = new ArrayList<>();
         try {
-            List<SkillTreeSchematicDrops.SourceLoss> sources = new ArrayList<>();
-            for (FleetLossTally.FleetLoss fleetLoss : losses(battle).fleetLosses()) {
-                sources.add(new SkillTreeSchematicDrops.SourceLoss(fleetLoss.deploymentPoints(), fleetLoss.averageDifficulty(),
-                        LootSources.fleetLootRules(fleetLoss.fleet())));
-            }
+            List<FleetLoss> fleetLosses = battle.losses().fleetLosses(LootSources::fleetLootRules);
             float levelScaledShare = OutsideChartShare.current();
             for (SkillTreeSchematicDrops drop : SkillTreeSchematicDrops.values()) {
-                drops.addAll(Collections.nCopies(drop.rollBattle(sources, levelScaledShare, BattleItemDropSetting.multiplier(), battle.random()),
+                drops.addAll(Collections.nCopies(drop.rollBattle(fleetLosses, levelScaledShare, BattleItemDropSetting.multiplier(), battle.random()),
                         drop.schematic()));
             }
         } catch (RuntimeException e) {

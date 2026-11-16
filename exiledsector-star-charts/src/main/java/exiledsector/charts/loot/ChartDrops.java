@@ -26,7 +26,6 @@ import exiledsector.items.ItemTypes;
 import exiledsector.items.StarChartCipher;
 import exiledsector.loot.FleetDifficulties;
 import exiledsector.loot.LootMultipliers;
-import exiledsector.skills.skilleffect.logistics.FoundItemQuantity;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -228,9 +227,9 @@ public final class ChartDrops {
         }
         Map<String, Integer> craftingItems = new LinkedHashMap<>();
         if (source.insideSystem()) {
-            float expectedCraftingItems = rule.craftingItemChance() * Math.max(0f, mults.craftingItem()) * FoundItemQuantity.craftingItemMult();
+            float expectedCraftingItems = rule.craftingItemChance() * Math.max(0f, mults.craftingItem());
             float bandShift = ChartTiers.bandShift(tier) * mults.itemRarity();
-            CraftingDrops.rollInto(expectedCraftingItems, ChartDrops::isCipher, bandShift, random, craftingItems);
+            CraftingDrops.rollFoundByPlayerInto(expectedCraftingItems, ChartDrops::isCipher, bandShift, random, craftingItems);
         }
         Map<String, Integer> catalysts = new LinkedHashMap<>();
         int catalystCount = source.insideSystem() && !AtlasCatalysts.all().isEmpty()

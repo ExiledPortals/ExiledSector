@@ -589,7 +589,7 @@ public final class ChartGenContext {
 
     public LootMultipliers lootMultipliers(float scale, int chartTier) {
         return new LootMultipliers(itemChances().scaled(scale), dropMult(DropType.FEEDSTOCK) * scale, dropMult(DropType.CRAFTING_ITEM) * scale,
-                craftingBandShift(chartTier));
+                ChartTiers.bandShift(chartTier));
     }
 
     public float craftingBandShift(int chartTier) {

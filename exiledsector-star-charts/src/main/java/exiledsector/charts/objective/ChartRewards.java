@@ -70,9 +70,8 @@ public final class ChartRewards {
         int credits = creditsFor(run.tier(), rewardMult);
         cargo.getCredits().add(credits);
         float chanceMult = itemChanceMultFor(run.tier()) * rewardMult;
-        LootMultipliers rewardMultipliers = LootMultipliers.of(chanceMult)
-                .withItemChances(ItemChances.of(chanceMult).withRarity(context.itemRarityMult()))
-                .withCraftingBandShift(context.craftingBandShift(run.tier()));
+        LootMultipliers rewardMultipliers = new LootMultipliers(ItemChances.of(chanceMult).withRarity(context.itemRarityMult()), chanceMult, chanceMult,
+                ChartTiers.bandShift(run.tier()));
         ItemDrops.SiteLoot siteLoot = LootSources.rollSite(sector, REWARD_SITE, random, rewardMultipliers);
         ChartDrops.Loot chartLoot = ChartDrops.forRunReward(run, random);
         announce(run, credits);

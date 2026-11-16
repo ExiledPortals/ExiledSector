@@ -328,7 +328,8 @@ class ItemLootListenerTest {
     @Test
     void wonBattlesDropCraftingMaterialsPerDeploymentPointAtTheLevelOneShareAndNoChartOnlyOnes() throws Exception {
         BattleLootRates.register(new JSONArray()
-                .put(new JSONObject().put("drop", CraftingDrops.RATE_DROP).put("per_100_dp", "1").put("curve", "linear")));
+                .put(new JSONObject().put("drop", BattleLootRates.CRAFTING_ITEM_RATE).put("per_100_dp", "1").put("curve", "linear")
+                        .put("difficulty_scaling", "0")));
         CraftingDrops.register(new JSONArray()
                 .put(new JSONObject().put("item", "exiledSector_augmentation_nanoswarm").put("weight", "1").put("chart_only", "false"))
                 .put(new JSONObject().put("item", "exiledSector_reforge_cipher").put("weight", "100").put("chart_only", "true")));

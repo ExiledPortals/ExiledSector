@@ -20,26 +20,28 @@ import java.util.function.Predicate;
 public final class LootSources {
 
     private static final DomainContributions<LootSource> SOURCES = new DomainContributions<>(ExiledSectorDomain::lootSources);
+    private static final List<LootSource> CORE_SOURCES_AFTER_DOMAINS = List.of(CraftingLootSource.INSTANCE);
 
     private LootSources() {
     }
 
     public static List<LootSource> all() {
-        return SOURCES.all();
+        List<LootSource> sources = new ArrayList<>(SOURCES.all());
+        sources.addAll(CORE_SOURCES_AFTER_DOMAINS);
+        return sources;
     }
 
     public static FleetLootRules fleetLootRules(CampaignFleetAPI fleet) {
         return SOURCES.firstOr(source -> source.fleetLootRules(fleet), FleetLootRules.LEVEL_SCALED);
     }
 
-    public static LootMultipliers modifiersFor(SectorEntityToken site) {
-        return SOURCES.firstOr(source -> source.modifiersFor(site), LootMultipliers.NONE);
+    public static LootMultipliers lootMultipliersFor(SectorEntityToken site) {
+        return SOURCES.firstOr(source -> source.lootMultipliersFor(site), LootMultipliers.NONE);
     }
 
-    public static ItemDrops.SiteLoot rollSite(SectorAPI sector, String siteId, Random random, LootMultipliers modifiers) {
-        ItemDrops.SiteLoot baseLoot = ItemDrops.rollSite(siteId, random, modifiers.itemChances(), modifiers.feedstockMult(), modifiers.craftingItemMult(),
-                modifiers.craftingBandShift());
-        SiteFind find = new SiteFind(sector, siteId, random, modifiers.itemChances(), new ArrayList<>(), new ArrayList<>());
+    public static ItemDrops.SiteLoot rollSite(SectorAPI sector, String siteId, Random random, LootMultipliers multipliers) {
+        ItemDrops.SiteLoot baseLoot = ItemDrops.rollSite(siteId, random, multipliers);
+        SiteFind find = new SiteFind(sector, siteId, random, multipliers.chances(), new ArrayList<>(), new ArrayList<>());
         SOURCES.all().forEach(source -> source.addSiteFinds(find));
         return baseLoot.plus(find.items(), find.upgrades(), Map.of());
     }

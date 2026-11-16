@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import exiledsector.loot.BattleLootRates;
+import exiledsector.loot.FleetLoss;
 import exiledsector.loot.FleetLootRules;
 import exiledsector.loot.LootMultipliers;
 import org.json.JSONArray;
@@ -57,20 +58,20 @@ class BattleItemDropsTest {
         return new JSONObject().put("drop", drop).put("per_100_dp", rate).put("curve", curve);
     }
 
-    private static BattleItemDrops.SourceLoss source(float deploymentPoints) {
+    private static FleetLoss source(float deploymentPoints) {
         return source(deploymentPoints, ItemChances.BASE);
     }
 
-    private static BattleItemDrops.SourceLoss source(float deploymentPoints, ItemChances chances) {
-        return new BattleItemDrops.SourceLoss(deploymentPoints, 1f, 1f, rules(chances, true, 1f));
+    private static FleetLoss source(float deploymentPoints, ItemChances chances) {
+        return new FleetLoss(deploymentPoints, 1f, 0f, rules(chances, true, 1f));
     }
 
     private static FleetLootRules rules(ItemChances chances, boolean ownLedger, float deploymentPointsMult) {
         FleetLootRules.Kind kind = ownLedger ? FleetLootRules.Kind.OWN_LEDGER : FleetLootRules.Kind.LEVEL_SCALED;
-        return new FleetLootRules(kind, new LootMultipliers(chances, 1f, 1f), deploymentPointsMult, false);
+        return new FleetLootRules(kind, new LootMultipliers(chances, 1f, 1f, CraftingDrops.NO_BAND_SHIFT), deploymentPointsMult, false);
     }
 
-    private static BattleItemDrops.Battle battle(BattleItemDrops.SourceLoss... sources) {
+    private static BattleItemDrops.Battle battle(FleetLoss... sources) {
         return new BattleItemDrops.Battle(List.of(sources), null, LEVEL_ONE_SHARE);
     }
 
@@ -118,8 +119,8 @@ class BattleItemDropsTest {
     @Test
     void aBiggerEnemyTreeTurnsMoreHullItemsTwoModifierWithoutDroppingMore() {
         FleetLootRules full = rules(ItemChances.BASE, true, 1f);
-        Map<BattleItemDrops.Drop, Integer> doubled = counts(plan(battle(new BattleItemDrops.SourceLoss(1000f, 1f, 2f, full)), 1f));
-        Map<BattleItemDrops.Drop, Integer> capped = counts(plan(battle(new BattleItemDrops.SourceLoss(1000f, 1f, 3f, full)), 1f));
+        Map<BattleItemDrops.Drop, Integer> doubled = counts(plan(battle(new FleetLoss(1000f, 1f, 30f, full)), 1f));
+        Map<BattleItemDrops.Drop, Integer> capped = counts(plan(battle(new FleetLoss(1000f, 1f, 60f, full)), 1f));
 
         assertEquals(2, doubled.get(BattleItemDrops.Drop.MODS_1));
         assertEquals(4, doubled.get(BattleItemDrops.Drop.MODS_2));
@@ -130,13 +131,13 @@ class BattleItemDropsTest {
     @Test
     void difficultyStopsAtThreeTimesAndTheFleetsDeploymentPointMultiplierAndShareScaleItsDrops() throws Exception {
         FleetLootRules full = rules(ItemChances.BASE, true, 1f);
-        assertEquals(12, counts(plan(battle(new BattleItemDrops.SourceLoss(1000f, 6f, 1f, full)), 1f)).get(BattleItemDrops.Drop.MODS_1));
-        assertEquals(8, counts(plan(battle(new BattleItemDrops.SourceLoss(1000f, 1f, 1f, rules(ItemChances.BASE, true, 2f))), 1f))
+        assertEquals(12, counts(plan(battle(new FleetLoss(1000f, 6f, 0f, full)), 1f)).get(BattleItemDrops.Drop.MODS_1));
+        assertEquals(8, counts(plan(battle(new FleetLoss(1000f, 1f, 0f, rules(ItemChances.BASE, true, 2f))), 1f))
                 .get(BattleItemDrops.Drop.MODS_1));
 
-        assertEquals(2, counts(plan(battle(new BattleItemDrops.SourceLoss(1000f, 1f, 1f, rules(ItemChances.BASE, false, 1f))), 1f))
+        assertEquals(2, counts(plan(battle(new FleetLoss(1000f, 1f, 0f, rules(ItemChances.BASE, false, 1f))), 1f))
                 .get(BattleItemDrops.Drop.MODS_1));
-        assertEquals(4, counts(plan(battle(new BattleItemDrops.SourceLoss(1000f, 1f, 1f, rules(ItemChances.BASE, true, 1f))), 1f))
+        assertEquals(4, counts(plan(battle(new FleetLoss(1000f, 1f, 0f, rules(ItemChances.BASE, true, 1f))), 1f))
                 .get(BattleItemDrops.Drop.MODS_1));
     }
 
@@ -179,7 +180,7 @@ class BattleItemDropsTest {
 
     @Test
     void onlyTheHullItemsAnOverchargingFleetDropsAreOvercharged() {
-        BattleItemDrops.SourceLoss overcharging = new BattleItemDrops.SourceLoss(1000f, 1f, 1f, rules(ItemChances.BASE, true, 1f).overchargingHullItems());
+        FleetLoss overcharging = new FleetLoss(1000f, 1f, 0f, rules(ItemChances.BASE, true, 1f).overchargingHullItems());
 
         List<BattleItemDrops.Planned> planned = plan(battle(source(1000f), overcharging), 1f);
 
@@ -241,7 +242,7 @@ class BattleItemDropsTest {
                 .put(row(HULL_RELIC, "weapon_mount", "HULL_PERCENT:4:6").put("unique", "true"))
                 .put(row(FACTION_RELIC, "reactor", "HULL_PERCENT:4:6").put("unique", "true")
                         .put(HullItem.UNIQUE_SOURCE_COLUMN, "faction:tritachyon")));
-        List<BattleItemDrops.SourceLoss> sources = List.of(source(4000f));
+        List<FleetLoss> sources = List.of(source(4000f));
 
         Map<String, Integer> fromPirates = uniqueDrops(new BattleItemDrops.Battle(sources, "pirates", LEVEL_ONE_SHARE));
         Map<String, Integer> fromTriTachyon = uniqueDrops(new BattleItemDrops.Battle(sources, "tritachyon", LEVEL_ONE_SHARE));

@@ -7,7 +7,7 @@ import exiledsector.compat.SalvageSiteCompat;
 import exiledsector.data.CsvRows;
 import exiledsector.data.WeightedPick;
 import exiledsector.data.RandomRounding;
-import exiledsector.skills.skilleffect.logistics.FoundItemQuantity;
+import exiledsector.loot.LootMultipliers;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -133,20 +133,20 @@ public final class ItemDrops {
         return droppedItems;
     }
 
-    public static Map<String, Integer> rollMaterials(String siteId, Random random, float feedstockMult, float craftingItemMult,
-                                                     float craftingBandShift) {
+    public static Map<String, Integer> rollMaterials(String siteId, Random random, LootMultipliers multipliers) {
         Map<String, Integer> droppedMaterials = new LinkedHashMap<>();
         Rule rule = activeRule(siteId);
         if (rule == null || rule.chances().isEmpty()) {
             return droppedMaterials;
         }
-        int feedstockFound = rule.feedstockMax() > 0 ? rollFeedstockInRange(rule, random, feedstockMult)
-                : rollFeedstockPerChance(rule, random, feedstockMult);
+        int feedstockFound = rule.feedstockMax() > 0 ? rollFeedstockInRange(rule, random, multipliers.feedstockMult())
+                : rollFeedstockPerChance(rule, random, multipliers.feedstockMult());
         if (feedstockFound > 0) {
             droppedMaterials.put(ItemDisassembly.FEEDSTOCK_ITEM_ID, feedstockFound);
         }
-        float expectedCraftingItems = rule.chances().get(0) * CRAFTING_ITEM_SHARE * craftingItemMult * FoundItemQuantity.craftingItemMult();
-        CraftingDrops.rollInto(expectedCraftingItems, CraftingDrops.OUTSIDE_CHARTS, craftingBandShift, random, droppedMaterials);
+        float expectedCraftingItems = rule.chances().get(0) * CRAFTING_ITEM_SHARE * multipliers.craftingItemMult();
+        CraftingDrops.rollFoundByPlayerInto(expectedCraftingItems, CraftingDrops.OUTSIDE_CHARTS, multipliers.craftingBandShift(), random,
+                droppedMaterials);
         return droppedMaterials;
     }
 
@@ -209,10 +209,9 @@ public final class ItemDrops {
         }
     }
 
-    public static SiteLoot rollSite(String siteId, Random random, ItemChances chances, float feedstockMult, float craftingItemMult,
-                                    float craftingBandShift) {
-        List<ItemData> droppedItems = roll(siteId, random, chances);
-        return new SiteLoot(droppedItems, List.of(), rollMaterials(siteId, random, feedstockMult, craftingItemMult, craftingBandShift));
+    public static SiteLoot rollSite(String siteId, Random random, LootMultipliers multipliers) {
+        List<ItemData> droppedItems = roll(siteId, random, multipliers.chances());
+        return new SiteLoot(droppedItems, List.of(), rollMaterials(siteId, random, multipliers));
     }
 
     static void rollTargeted(Rule rule, Random random, float extraShare, float rarity, int sharedKinds, ItemKind kind,

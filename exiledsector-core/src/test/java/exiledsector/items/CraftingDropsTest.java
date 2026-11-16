@@ -114,11 +114,12 @@ class CraftingDropsTest {
 
     @Test
     void theCountIsTheCraftingItemRatePerHundredDeploymentPoints() throws Exception {
-        BattleLootRates.register(new JSONArray().put(new JSONObject().put("drop", CraftingDrops.RATE_DROP).put("per_100_dp", "1.5")
-                .put("curve", "linear")));
+        BattleLootRates.register(new JSONArray().put(new JSONObject().put("drop", BattleLootRates.CRAFTING_ITEM_RATE).put("per_100_dp", "1.5")
+                .put("curve", "linear").put("difficulty_scaling", "0")));
+        BattleLootRates.Rate craftingRate = BattleLootRates.rate(BattleLootRates.CRAFTING_ITEM_RATE);
 
-        assertEquals(6f, CraftingDrops.expectedCount(400f), 1e-5f);
-        assertEquals(0f, CraftingDrops.expectedCount(-10f), 1e-6f);
+        assertEquals(6f, craftingRate.expectedAtDifficulty(400f, 400f, 3f), 1e-5f);
+        assertEquals(0f, craftingRate.expectedAtDifficulty(-10f, 400f, 3f), 1e-6f);
     }
 
     @Test

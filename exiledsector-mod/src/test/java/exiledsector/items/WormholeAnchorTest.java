@@ -6,6 +6,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.security.AnyTypePermission;
 import exiledsector.i18n.StyledText;
+import exiledsector.loot.LootMultipliers;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -292,7 +293,7 @@ class WormholeAnchorTest {
             assertNotAnchor(ItemDrops.pickUnique(random, definition -> true), anchorIds);
             assertNotAnchor(ItemDrops.pickHullItemBasic(random), anchorIds);
             assertNotAnchor(ItemDrops.pickOfType(random, ItemType.STAR_CHART, definition -> true), anchorIds);
-            List<ItemData> dropped = new ArrayList<>(ItemDrops.rollSite("station", random, ItemChances.of(1f), 1f, 1f, CraftingDrops.NO_BAND_SHIFT).items());
+            List<ItemData> dropped = new ArrayList<>(ItemDrops.rollSite("station", random, LootMultipliers.NONE).items());
             dropped.addAll(HullItemDrops.rollHullItemLoot("station", random, ItemChances.BASE, 1f).items());
             for (ItemData item : dropped) {
                 assertFalse(anchorIds.contains(item.definitionId()), item.definitionId());

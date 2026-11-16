@@ -206,7 +206,7 @@ public final class StarChartLootSource implements LootSource {
     }
 
     @Override
-    public LootMultipliers modifiersAt(LocationAPI location) {
+    public LootMultipliers lootMultipliersAt(LocationAPI location) {
         LootMultipliers multipliers;
         try {
             multipliers = ChartDrops.liveLootMultipliersAt(location);
@@ -218,17 +218,17 @@ public final class StarChartLootSource implements LootSource {
     }
 
     @Override
-    public LootMultipliers modifiersFor(SectorEntityToken site) {
-        LootMultipliers modifiers = site == null ? null : modifiersAt(site.getContainingLocation());
+    public LootMultipliers lootMultipliersFor(SectorEntityToken site) {
+        LootMultipliers multipliers = site == null ? null : lootMultipliersAt(site.getContainingLocation());
         MemoryAPI memory = site == null ? null : site.getMemoryWithoutUpdate();
-        if (modifiers == null || memory == null) {
-            return modifiers;
+        if (multipliers == null || memory == null) {
+            return multipliers;
         }
-        ItemChances chances = modifiers.itemChances();
+        ItemChances chances = multipliers.chances();
         for (LootShaper anomaly : ChartAnomalies.with(LootShaper.class)) {
             chances = anomaly.siteChances(memory, chances);
         }
-        return chances == modifiers.itemChances() ? modifiers : modifiers.withItemChances(chances);
+        return chances == multipliers.chances() ? multipliers : multipliers.withChances(chances);
     }
 
     @Override

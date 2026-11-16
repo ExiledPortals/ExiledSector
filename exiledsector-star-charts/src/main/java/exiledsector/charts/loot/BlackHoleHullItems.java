@@ -24,12 +24,12 @@ final class BlackHoleHullItems {
     }
 
     static LootMultipliers withBonus(LootMultipliers multipliers, LocationAPI location) {
-        ItemChances chances = multipliers.itemChances();
+        ItemChances chances = multipliers.chances();
         if (!ChartDrops.isSystem(location) || !hasBlackHole((StarSystemAPI) location)) {
             return multipliers;
         }
         ItemChances boosted = withExtraHullItemShare(chances, BlackHoleSalvage.hullItemPercent(PlayerFleet.orNull()) / 100f);
-        return boosted == chances ? multipliers : multipliers.withItemChances(boosted);
+        return boosted == chances ? multipliers : multipliers.withChances(boosted);
     }
 
     static boolean hasBlackHole(StarSystemAPI system) {

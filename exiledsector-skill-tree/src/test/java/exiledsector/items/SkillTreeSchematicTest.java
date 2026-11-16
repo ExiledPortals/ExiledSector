@@ -2,6 +2,7 @@ package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
 import exiledsector.loot.BattleLootRates;
+import exiledsector.loot.FleetLoss;
 import exiledsector.loot.FleetLootRules;
 import exiledsector.loot.LootCurve;
 import exiledsector.loot.LootMultipliers;
@@ -102,9 +103,9 @@ class SkillTreeSchematicTest {
     @Test
     void battleDropsScaleWithDeploymentPointsAndRegularFleetsGetTheirShare() {
         BattleLootRates.Rate rate = new BattleLootRates.Rate(SkillTreeSchematicDrops.LOGISTICS.rateId(), 0.032f, LootCurve.LINEAR, 1f);
-        List<SkillTreeSchematicDrops.SourceLoss> regular = List.of(new SkillTreeSchematicDrops.SourceLoss(1000f, 1f, FleetLootRules.LEVEL_SCALED));
-        List<SkillTreeSchematicDrops.SourceLoss> chart = List.of(
-                new SkillTreeSchematicDrops.SourceLoss(1000f, 1f, FleetLootRules.ownLedger(LootMultipliers.NONE, 1f)));
+        List<FleetLoss> regular = List.of(new FleetLoss(1000f, 1f, 0f, FleetLootRules.LEVEL_SCALED));
+        List<FleetLoss> chart = List.of(
+                new FleetLoss(1000f, 1f, 0f, FleetLootRules.ownLedger(LootMultipliers.NONE, 1f)));
 
         assertEquals(0.16f, SkillTreeSchematicDrops.expectedBattleDrops(regular, rate, LEVEL_ONE_SHARE, 1f), 1e-5f);
         assertEquals(0.32f, SkillTreeSchematicDrops.expectedBattleDrops(chart, rate, LEVEL_ONE_SHARE, 1f), 1e-5f);
@@ -117,7 +118,7 @@ class SkillTreeSchematicTest {
     @Test
     void theBattleItemDropSliderScalesBattleDrops() {
         BattleLootRates.Rate rate = new BattleLootRates.Rate(SkillTreeSchematicDrops.DEINTEGRATION.rateId(), 0.032f, LootCurve.LINEAR, 1f);
-        List<SkillTreeSchematicDrops.SourceLoss> regular = List.of(new SkillTreeSchematicDrops.SourceLoss(1000f, 1f, FleetLootRules.LEVEL_SCALED));
+        List<FleetLoss> regular = List.of(new FleetLoss(1000f, 1f, 0f, FleetLootRules.LEVEL_SCALED));
 
         assertEquals(0.32f, SkillTreeSchematicDrops.expectedBattleDrops(regular, rate, LEVEL_ONE_SHARE, 2f), 1e-5f);
         assertEquals(0f, SkillTreeSchematicDrops.expectedBattleDrops(regular, rate, LEVEL_ONE_SHARE, 0f));

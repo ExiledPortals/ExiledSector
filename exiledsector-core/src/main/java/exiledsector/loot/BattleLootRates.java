@@ -9,6 +9,7 @@ import org.json.JSONException;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -16,6 +17,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public final class BattleLootRates {
 
     public static final String DATA_PATH = ExiledSector.configPath("battle_loot.csv");
+    public static final String CRAFTING_ITEM_RATE = "crafting_item";
     public static final float DIFFICULTY_CAP = 3f;
     static final String DROP_COLUMN = "drop";
     static final float DEPLOYMENT_POINTS_PER_RATE_STEP = 100f;
@@ -37,6 +39,24 @@ public final class BattleLootRates {
         public float expected(float lootDeploymentPoints, float battleDeploymentPoints) {
             return per100DeploymentPoints * Math.max(0f, lootDeploymentPoints) / DEPLOYMENT_POINTS_PER_RATE_STEP
                     * curve.factor(battleDeploymentPoints);
+        }
+
+        public float expectedAtDifficulty(float lootDeploymentPoints, float battleDeploymentPoints, float difficultyMultiplier) {
+            return expected(lootDeploymentPoints, battleDeploymentPoints) * difficulty(difficultyMultiplier);
+        }
+
+        public float expectedFrom(FleetLoss loss, float battleDeploymentPoints, float levelScaledShare) {
+            return expectedAtDifficulty(loss.lootDeploymentPoints(), battleDeploymentPoints, loss.averageDifficulty())
+                    * loss.rules().itemShare(levelScaledShare);
+        }
+
+        public float expectedFromAll(List<FleetLoss> losses, float levelScaledShare, FleetLoss.Factor factor) {
+            float battleDeploymentPoints = FleetLoss.totalDeploymentPoints(losses);
+            float expected = 0f;
+            for (FleetLoss loss : losses) {
+                expected += expectedFrom(loss, battleDeploymentPoints, levelScaledShare) * factor.of(loss);
+            }
+            return expected;
         }
     }
 

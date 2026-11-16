@@ -28,12 +28,12 @@ public interface LootSource {
         return null;
     }
 
-    default LootMultipliers modifiersAt(LocationAPI location) {
+    default LootMultipliers lootMultipliersAt(LocationAPI location) {
         return null;
     }
 
-    default LootMultipliers modifiersFor(SectorEntityToken site) {
-        return site == null ? null : modifiersAt(site.getContainingLocation());
+    default LootMultipliers lootMultipliersFor(SectorEntityToken site) {
+        return site == null ? null : lootMultipliersAt(site.getContainingLocation());
     }
 
     default void addSalvageLoot(SectorAPI sector, SectorEntityToken salvageEntity, CargoAPI loot) {

@@ -7,51 +7,46 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 public final class FleetLossTally {
-
-    @FunctionalInterface
-    public interface ShipWeight {
-
-        ShipWeight NONE = member -> 0f;
-
-        float of(FleetMemberAPI member);
-    }
-
-    public record FleetLoss(CampaignFleetAPI fleet, float deploymentPoints, float averageDifficulty, float averageShipWeight) {
-    }
 
     private static final class FleetTotals {
         private float deploymentPoints;
         private float difficultyWeighted;
-        private float shipWeighted;
+        private float shipLevelWeighted;
+
+        FleetLoss toLoss(FleetLootRules rules) {
+            return new FleetLoss(deploymentPoints, difficultyWeighted / deploymentPoints, shipLevelWeighted / deploymentPoints, rules);
+        }
     }
 
-    private final ShipWeight shipWeight;
     private final Map<String, Float> deploymentPointsByFaction = new LinkedHashMap<>();
     private final Map<CampaignFleetAPI, FleetTotals> totalsByFleet = new LinkedHashMap<>();
+    private final List<FleetLoss> engagementLossesAtRawDifficulty = new ArrayList<>();
 
-    public FleetLossTally() {
-        this(ShipWeight.NONE);
-    }
-
-    public FleetLossTally(ShipWeight shipWeight) {
-        this.shipWeight = shipWeight;
-    }
-
-    public void record(BattleEngagement engagement) {
+    public void record(BattleEngagement engagement, Function<CampaignFleetAPI, FleetLootRules> rulesAtRecordTime) {
         engagement.deploymentPointsLostByFaction().forEach((factionId, deploymentPoints) ->
                 deploymentPointsByFaction.merge(factionId, deploymentPoints, Float::sum));
-        float difficulty = BattleLootRates.difficulty(engagement.difficultyMultiplier());
+        float cappedDifficulty = BattleLootRates.difficulty(engagement.difficultyMultiplier());
         engagement.lostEnemiesBySourceFleet().forEach((sourceFleet, members) -> {
+            float engagementShipLevelWeighted = 0f;
             for (FleetMemberAPI member : members) {
                 float deploymentPoints = member.getDeploymentPointsCost();
                 if (deploymentPoints > 0f) {
+                    int shipLevel = FleetDifficulties.shipLevel(member);
                     FleetTotals totals = totalsByFleet.computeIfAbsent(sourceFleet, fleet -> new FleetTotals());
                     totals.deploymentPoints += deploymentPoints;
-                    totals.difficultyWeighted += deploymentPoints * difficulty;
-                    totals.shipWeighted += deploymentPoints * shipWeight.of(member);
+                    totals.difficultyWeighted += deploymentPoints * cappedDifficulty;
+                    totals.shipLevelWeighted += deploymentPoints * shipLevel;
+                    engagementShipLevelWeighted += deploymentPoints * shipLevel;
                 }
+            }
+            float engagementDeploymentPoints = BattleEngagement.deploymentPoints(members);
+            FleetLootRules rules = rulesAtRecordTime.apply(sourceFleet);
+            if (engagementDeploymentPoints > 0f) {
+                engagementLossesAtRawDifficulty.add(new FleetLoss(engagementDeploymentPoints, engagement.difficultyMultiplier(),
+                        engagementShipLevelWeighted / engagementDeploymentPoints, rules));
             }
         });
     }
@@ -70,10 +65,13 @@ public final class FleetLossTally {
         return mostDefeated;
     }
 
-    public List<FleetLoss> fleetLosses() {
+    public List<FleetLoss> fleetLosses(Function<CampaignFleetAPI, FleetLootRules> currentRules) {
         List<FleetLoss> fleetLosses = new ArrayList<>(totalsByFleet.size());
-        totalsByFleet.forEach((fleet, totals) -> fleetLosses.add(new FleetLoss(fleet, totals.deploymentPoints,
-                totals.difficultyWeighted / totals.deploymentPoints, totals.shipWeighted / totals.deploymentPoints)));
+        totalsByFleet.forEach((fleet, totals) -> fleetLosses.add(totals.toLoss(currentRules.apply(fleet))));
         return fleetLosses;
+    }
+
+    public List<FleetLoss> engagementLossesAtRawDifficulty() {
+        return List.copyOf(engagementLossesAtRawDifficulty);
     }
 }

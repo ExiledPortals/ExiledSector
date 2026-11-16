@@ -33,7 +33,6 @@ import exiledsector.items.ItemTypes;
 import exiledsector.items.ItemUnlock;
 import exiledsector.loot.BattleLootRates;
 import exiledsector.loot.LootSources;
-import exiledsector.skills.skilleffect.logistics.FoundItemQuantity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -221,7 +220,7 @@ public final class ChartFleetLoot {
         float lootDeploymentPoints = claimedShare * ledger.getFloat(ChartIds.START_DP_MEMORY_KEY) * spoilsMult * quantityMult;
         float chartShare = claimedShare * startFleetPoints(ledger) / Math.max(1f, expectedFleetPoints(run.tier())) * spoilsMult * quantityMult;
         ItemDrops.SiteLoot fleetLoot = subroutines(context, lootDeploymentPoints, battle, random)
-                .plus(List.of(), List.of(), craftingItems(run, context, lootDeploymentPoints, random))
+                .plus(List.of(), List.of(), craftingItems(run, context, lootDeploymentPoints, battle, random))
                 .plus(chartDrops(run, context, boss, chartShare, random));
         for (LootShaper anomaly : ChartAnomalies.inRun(run, LootShaper.class)) {
             ItemDrops.SiteLoot anomalyItems = anomaly.fleetItems(sector, fleet, run, context, share, random);
@@ -315,7 +314,7 @@ public final class ChartFleetLoot {
         if (rate == null) {
             return ItemDrops.SiteLoot.NONE;
         }
-        float expected = rate.expected(lootDeploymentPoints, battle.deploymentPoints()) * rate.difficulty(battle.difficultyMultiplier());
+        float expected = rate.expectedAtDifficulty(lootDeploymentPoints, battle.deploymentPoints(), battle.difficultyMultiplier());
         ItemChances chances = context.itemChances();
         List<ItemData> items = new ArrayList<>();
         addRolled(items, RandomRounding.round(expected * chances.general(), random), ItemDrops::pickBasic, chances.rarity(), random);
@@ -344,10 +343,11 @@ public final class ChartFleetLoot {
         return chartLoot.isEmpty() ? ItemDrops.SiteLoot.NONE : new ItemDrops.SiteLoot(chartLoot.charts(), List.of(), chartLoot.materials());
     }
 
-    static Map<String, Integer> craftingItems(ChartRun run, ChartGenContext context, float lootDeploymentPoints, Random random) {
-        float expectedCount = CraftingDrops.expectedCount(lootDeploymentPoints) * context.dropMult(DropType.CRAFTING_ITEM)
-                * FoundItemQuantity.craftingItemMult();
-        return CraftingDrops.roll(expectedCount, CraftingDrops.ANY_ITEM, context.craftingBandShift(run.tier()), random);
+    static Map<String, Integer> craftingItems(ChartRun run, ChartGenContext context, float lootDeploymentPoints, Battle battle, Random random) {
+        BattleLootRates.Rate rate = BattleLootRates.rate(BattleLootRates.CRAFTING_ITEM_RATE);
+        float expectedCount = rate == null ? 0f : rate.expectedAtDifficulty(lootDeploymentPoints, battle.deploymentPoints(), battle.difficultyMultiplier())
+                * context.dropMult(DropType.CRAFTING_ITEM);
+        return CraftingDrops.rollFoundByPlayer(expectedCount, CraftingDrops.ANY_ITEM, context.craftingBandShift(run.tier()), random);
     }
 
     private static ItemDrops.SiteLoot bossChest(SectorAPI sector, ChartGenContext context, int chartTier, float chanceMult, Random random) {

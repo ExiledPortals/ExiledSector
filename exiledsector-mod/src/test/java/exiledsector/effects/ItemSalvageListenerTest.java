@@ -129,9 +129,9 @@ class ItemSalvageListenerTest {
         SectorEntityToken nowhere = mock(SectorEntityToken.class);
 
         LootMultipliers none = new LootMultipliers(ChartGenContext.none().itemChances(), ChartGenContext.none().dropMult(DropType.FEEDSTOCK),
-                ChartGenContext.none().dropMult(DropType.CRAFTING_ITEM));
-        assertEquals(none, StarChartLootSource.INSTANCE.modifiersAt(outside.getContainingLocation()));
-        assertEquals(none, StarChartLootSource.INSTANCE.modifiersAt(nowhere.getContainingLocation()));
+                ChartGenContext.none().dropMult(DropType.CRAFTING_ITEM), CraftingDrops.NO_BAND_SHIFT);
+        assertEquals(none, StarChartLootSource.INSTANCE.lootMultipliersAt(outside.getContainingLocation()));
+        assertEquals(none, StarChartLootSource.INSTANCE.lootMultipliersAt(nowhere.getContainingLocation()));
     }
 
     @Test

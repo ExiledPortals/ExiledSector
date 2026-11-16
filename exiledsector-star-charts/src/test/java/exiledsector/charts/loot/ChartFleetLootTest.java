@@ -345,8 +345,8 @@ class ChartFleetLootTest {
     }
 
     private static void registerCraftingRate(String per100DeploymentPoints) throws Exception {
-        BattleLootRates.register(new JSONArray().put(new JSONObject().put("drop", CraftingDrops.RATE_DROP).put("per_100_dp", per100DeploymentPoints)
-                .put("curve", "diminishing").put("difficulty_scaling", "1")));
+        BattleLootRates.register(new JSONArray().put(new JSONObject().put("drop", BattleLootRates.CRAFTING_ITEM_RATE).put("per_100_dp", per100DeploymentPoints)
+                .put("curve", "linear").put("difficulty_scaling", "0")));
     }
 
     private static void registerCraftingDrops(JSONObject... rows) throws Exception {

@@ -2,7 +2,7 @@ package exiledsector.items;
 
 import exiledsector.data.RandomRounding;
 import exiledsector.loot.BattleLootRates;
-import exiledsector.loot.FleetLootRules;
+import exiledsector.loot.FleetLoss;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,27 +46,10 @@ public final class BattleItemDrops {
         }
     }
 
-    public record SourceLoss(float deploymentPoints, float difficultyMultiplier, float levelBoost, FleetLootRules rules) {
-
-        public SourceLoss {
-            deploymentPoints = Math.max(0f, deploymentPoints);
-            levelBoost = Math.max(1f, levelBoost);
-            rules = rules == null ? FleetLootRules.LEVEL_SCALED : rules;
-        }
-
-        ItemChances chances() {
-            return rules.multipliers().itemChances();
-        }
-
-        float twoModifierShare() {
-            return Math.min(MAX_TWO_MODIFIER_SHARE, BASE_TWO_MODIFIER_SHARE * levelBoost);
-        }
-    }
-
-    public record Battle(List<SourceLoss> sources, String uniqueFactionId, float levelScaledShare) {
+    public record Battle(List<FleetLoss> fleetLosses, String uniqueFactionId, float levelScaledShare) {
 
         public Battle {
-            sources = sources == null ? List.of() : List.copyOf(sources);
+            fleetLosses = fleetLosses == null ? List.of() : List.copyOf(fleetLosses);
         }
 
         public boolean isEmpty() {
@@ -74,11 +57,7 @@ public final class BattleItemDrops {
         }
 
         float deploymentPoints() {
-            float total = 0f;
-            for (SourceLoss source : sources) {
-                total += source.deploymentPoints();
-            }
-            return total;
+            return FleetLoss.totalDeploymentPoints(fleetLosses);
         }
     }
 
@@ -89,16 +68,24 @@ public final class BattleItemDrops {
 
         static final Expected NONE = new Expected(0f, 0f);
 
-        Expected plus(SourceLoss source, float amount) {
-            return source.rules().overchargesHullItems() ? new Expected(regular, overcharged + amount) : new Expected(regular + amount, overcharged);
+        Expected plus(FleetLoss loss, float amount) {
+            return loss.rules().overchargesHullItems() ? new Expected(regular, overcharged + amount) : new Expected(regular + amount, overcharged);
         }
     }
 
     private BattleItemDrops() {
     }
 
-    public static float levelBoost(int allocatedNodeCount) {
-        return 1f + Math.max(0, allocatedNodeCount) / NODES_PER_DOUBLING;
+    public static float levelBoost(float averageShipLevel) {
+        return 1f + Math.max(0f, averageShipLevel) / NODES_PER_DOUBLING;
+    }
+
+    static float twoModifierShare(FleetLoss loss) {
+        return Math.min(MAX_TWO_MODIFIER_SHARE, BASE_TWO_MODIFIER_SHARE * levelBoost(loss.averageShipLevel()));
+    }
+
+    private static ItemChances chancesOf(FleetLoss loss) {
+        return loss.rules().multipliers().chances();
     }
 
     public static HullItemDrops.SectionItemLoot roll(Battle battle, float dropMultiplier, float basicItemMult, Random random,
@@ -141,17 +128,17 @@ public final class BattleItemDrops {
                               boolean hullItemDropsOpen) {
         List<Planned> planned = new ArrayList<>();
         float battleDeploymentPoints = battle.deploymentPoints();
-        boolean anyOvercharging = battle.sources().stream().anyMatch(source -> source.rules().overchargesHullItems());
+        boolean anyOvercharging = battle.fleetLosses().stream().anyMatch(loss -> loss.rules().overchargesHullItems());
         for (Drop drop : Drop.values()) {
             if (!allowed(drop, hullItemDropsOpen)) {
                 continue;
             }
             float quantityMult = drop.modifierCount() > 0 ? basicItemMult : 1f;
             Expected expected = Expected.NONE;
-            for (SourceLoss source : battle.sources()) {
-                expected = expected.plus(source,
-                        expected(source, drop, battleDeploymentPoints, battle.levelScaledShare(), dropMultiplier * quantityMult)
-                                * source.chances().general());
+            for (FleetLoss loss : battle.fleetLosses()) {
+                expected = expected.plus(loss,
+                        expected(loss, drop, battleDeploymentPoints, battle.levelScaledShare(), dropMultiplier * quantityMult)
+                                * chancesOf(loss).general());
             }
             addPlanned(planned, drop, null, expected, anyOvercharging, random);
         }
@@ -161,10 +148,10 @@ public final class BattleItemDrops {
                     continue;
                 }
                 Expected expected = Expected.NONE;
-                for (SourceLoss source : battle.sources()) {
-                    expected = expected.plus(source,
-                            expected(source, drop, battleDeploymentPoints, battle.levelScaledShare(), dropMultiplier * basicItemMult)
-                                    * source.chances().targeted(kind) / kindsWithBasics.size());
+                for (FleetLoss loss : battle.fleetLosses()) {
+                    expected = expected.plus(loss,
+                            expected(loss, drop, battleDeploymentPoints, battle.levelScaledShare(), dropMultiplier * basicItemMult)
+                                    * chancesOf(loss).targeted(kind) / kindsWithBasics.size());
                 }
                 addPlanned(planned, drop, kind, expected, anyOvercharging, random);
             }
@@ -187,20 +174,18 @@ public final class BattleItemDrops {
         };
     }
 
-    private static float expected(SourceLoss source, Drop drop, float battleDeploymentPoints, float levelScaledShare, float dropMultiplier) {
+    private static float expected(FleetLoss loss, Drop drop, float battleDeploymentPoints, float levelScaledShare, float dropMultiplier) {
         BattleLootRates.Rate rate = BattleLootRates.rate(drop.rateId());
         if (rate == null) {
             return 0f;
         }
-        FleetLootRules rules = source.rules();
-        float rarityMult = drop.rarityScaled() ? source.chances().rarity() : 1f;
+        float rarityMult = drop.rarityScaled() ? chancesOf(loss).rarity() : 1f;
         float modifierShare = switch (drop) {
-            case MODS_1 -> 1f - source.twoModifierShare();
-            case MODS_2 -> source.twoModifierShare();
+            case MODS_1 -> 1f - twoModifierShare(loss);
+            case MODS_2 -> twoModifierShare(loss);
             default -> 1f;
         };
-        return rate.expected(source.deploymentPoints() * rules.deploymentPointsMult(), battleDeploymentPoints)
-                * rate.difficulty(source.difficultyMultiplier()) * rules.itemShare(levelScaledShare) * modifierShare * dropMultiplier * rarityMult;
+        return rate.expectedFrom(loss, battleDeploymentPoints, levelScaledShare) * modifierShare * dropMultiplier * rarityMult;
     }
 
     private static void addPlanned(List<Planned> planned, Drop drop, ItemKind kind, boolean overcharged, int count) {

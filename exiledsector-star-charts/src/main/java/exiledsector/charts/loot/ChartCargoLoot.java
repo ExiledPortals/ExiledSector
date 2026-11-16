@@ -24,8 +24,8 @@ public final class ChartCargoLoot {
         if (!(itemMult > 0f)) {
             return ItemDrops.SiteLoot.NONE;
         }
-        LootMultipliers modifiers = context.lootMultipliers(itemMult, run.tier());
-        ItemDrops.SiteLoot items = LootSources.rollSite(sector, siteId, random, modifiers);
+        LootMultipliers multipliers = context.lootMultipliers(itemMult, run.tier());
+        ItemDrops.SiteLoot items = LootSources.rollSite(sector, siteId, random, multipliers);
         ChartDrops.Loot charts = ChartDrops.roll(ChartDrops.Source.SYSTEM_SALVAGE, run.tier(), ChartDrops.Mults.of(context, itemMult), random);
         return items.plus(charts.charts(), List.of(), charts.materials());
     }

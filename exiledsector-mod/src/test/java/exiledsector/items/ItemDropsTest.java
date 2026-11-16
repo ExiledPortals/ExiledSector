@@ -2,6 +2,7 @@ package exiledsector.items;
 
 import exiledsector.ProjectFiles;
 import exiledsector.compat.SalvageSiteCompat;
+import exiledsector.loot.LootMultipliers;
 import lunalib.lunaSettings.LunaSettings;
 import org.json.CDL;
 import org.json.JSONArray;
@@ -223,7 +224,7 @@ class ItemDropsTest {
         Random random = new Random(13L);
         List<Map<String, Integer>> rolls = new java.util.ArrayList<>();
         for (int i = 0; i < TRIALS; i++) {
-            rolls.add(ItemDrops.rollMaterials(site, random, mult, mult, CraftingDrops.NO_BAND_SHIFT));
+            rolls.add(ItemDrops.rollMaterials(site, random, new LootMultipliers(ItemChances.BASE, mult, mult, CraftingDrops.NO_BAND_SHIFT)));
         }
         return rolls;
     }
@@ -274,7 +275,7 @@ class ItemDropsTest {
         Random random = new Random(19L);
         List<Map<String, Integer>> shifted = new java.util.ArrayList<>();
         for (int i = 0; i < TRIALS; i++) {
-            shifted.add(ItemDrops.rollMaterials("station", random, 1f, 1f, 3f));
+            shifted.add(ItemDrops.rollMaterials("station", random, new LootMultipliers(ItemChances.BASE, 1f, 1f, 3f)));
         }
         List<Map<String, Integer>> unshifted = materials("station", 1f);
 
@@ -305,7 +306,7 @@ class ItemDropsTest {
         Random random = new Random(17L);
         List<Map<String, Integer>> craftingItemOnly = new java.util.ArrayList<>();
         for (int i = 0; i < TRIALS; i++) {
-            craftingItemOnly.add(ItemDrops.rollMaterials("probe", random, 0f, 2f, CraftingDrops.NO_BAND_SHIFT));
+            craftingItemOnly.add(ItemDrops.rollMaterials("probe", random, new LootMultipliers(ItemChances.BASE, 0f, 2f, CraftingDrops.NO_BAND_SHIFT)));
         }
 
         assertEquals(0.0, materialShare(craftingItemOnly, roll -> roll.containsKey(ItemDisassembly.FEEDSTOCK_ITEM_ID)), 0.0);
@@ -314,7 +315,7 @@ class ItemDropsTest {
 
     @Test
     void sitesWithoutARuleDropNoMaterials() {
-        assertTrue(ItemDrops.rollMaterials("nowhere", new Random(1L), 1f, 1f, CraftingDrops.NO_BAND_SHIFT).isEmpty());
-        assertTrue(ItemDrops.rollMaterials(null, new Random(1L), 1f, 1f, CraftingDrops.NO_BAND_SHIFT).isEmpty());
+        assertTrue(ItemDrops.rollMaterials("nowhere", new Random(1L), new LootMultipliers(ItemChances.BASE, 1f, 1f, CraftingDrops.NO_BAND_SHIFT)).isEmpty());
+        assertTrue(ItemDrops.rollMaterials(null, new Random(1L), new LootMultipliers(ItemChances.BASE, 1f, 1f, CraftingDrops.NO_BAND_SHIFT)).isEmpty());
     }
 }
