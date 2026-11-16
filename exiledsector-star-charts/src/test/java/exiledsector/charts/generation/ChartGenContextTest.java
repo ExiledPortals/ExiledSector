@@ -29,6 +29,7 @@ import exiledsector.charts.objective.ChartRewards;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemKind;
+import exiledsector.items.ItemRoll;
 import exiledsector.items.ItemTraits;
 import exiledsector.items.StarChart;
 import exiledsector.items.StarChartFixtures;
@@ -409,7 +410,7 @@ class ChartGenContextTest {
         assertEquals(BASE.fleetSize(), polished.adjust(BASE).fleetSize(), TOLERANCE);
         assertSame(ChartGenContext.none(), ChartGenContext.of(List.of(), 0));
 
-        ItemData plainData = ItemData.rolledAtTier(StarChartFixtures.definition("star_chart"), 3L, 5);
+        ItemData plainData = ItemData.rolled(StarChartFixtures.definition("star_chart"), 3L, ItemRoll.atTier(5));
         StarChart plainChart = (StarChart) plainData.preview();
         StarChart polishedChart = (StarChart) plainData.withTraits(new ItemTraits(5, 12, null, null)).preview();
         ChartGenContext plainContext = ChartGenContext.from(plainChart);

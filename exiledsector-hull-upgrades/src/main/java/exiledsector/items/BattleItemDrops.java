@@ -115,7 +115,7 @@ public final class BattleItemDrops {
                 ItemDefinition definition = planned.kind() == null ? DroppableDefinitions.pickHullItemBasic(random, holdsCount)
                         : DroppableDefinitions.pickBasicOfKind(planned.kind(), random, holdsCount);
                 if (definition != null) {
-                    items.add(overchargedIfPlanned(planned, ItemData.rolledWithModifierCount(definition, random.nextLong(), modifierCount), random));
+                    items.add(overchargedIfPlanned(planned, ItemData.rolled(definition, random.nextLong(), ItemRoll.withModifierCount(modifierCount)), random));
                 }
             }
         }

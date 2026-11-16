@@ -169,7 +169,7 @@ public final class SalvageSiteDrops {
         for (int i = 0; i < extraCount; i++) {
             ItemDefinition definition = DroppableDefinitions.pickBasicOfKind(kind, random);
             if (definition != null) {
-                droppedItems.add(ItemData.rolledWithRarity(definition, random.nextLong(), rarity));
+                droppedItems.add(ItemData.rolled(definition, random.nextLong(), ItemRoll.dropAtRarity(rarity)));
             }
         }
     }
@@ -192,7 +192,7 @@ public final class SalvageSiteDrops {
             }
             ItemDefinition basicDefinition = picker.apply(random);
             if (basicDefinition != null) {
-                droppedItems.add(ItemData.rolledWithRarity(basicDefinition, random.nextLong(), rarity));
+                droppedItems.add(ItemData.rolled(basicDefinition, random.nextLong(), ItemRoll.dropAtRarity(rarity)));
             }
         }
         return droppedItems;

@@ -10,6 +10,7 @@ import exiledsector.data.RandomRounding;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
+import exiledsector.items.ItemRoll;
 import exiledsector.items.ItemTypes;
 import exiledsector.loot.Loot;
 
@@ -57,7 +58,7 @@ public final class OfficerRewardDrop {
             case BIOME_HULL_ITEM -> BiomeModifiers.grant(loot.rolledWithAffixLimitsAtRunTier(definition, seed), item.variant(), random);
             case STAR_CHART -> {
                 int chartTier = ChartTiers.clampDropTier(loot.tier());
-                yield ItemData.rolledAtTier(chartAt(definition, chartTier, random), seed, chartTier);
+                yield ItemData.rolled(chartAt(definition, chartTier, random), seed, ItemRoll.atTier(chartTier));
             }
             default -> loot.rolledWithAffixLimitsAtRunTier(definition, seed);
         };

@@ -43,7 +43,7 @@ class LuckyRollsTest {
     }
 
     private static ItemData dropped(String definitionId, long seed, int modifierCount) {
-        return ItemData.rolledWithModifierCount(ItemDefinitions.get(definitionId), seed, modifierCount);
+        return ItemData.rolled(ItemDefinitions.get(definitionId), seed, ItemRoll.withModifierCount(modifierCount));
     }
 
     private static float magnitude(ItemData item, int modifier) {

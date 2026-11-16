@@ -14,6 +14,7 @@ import exiledsector.data.RandomRounding;
 import exiledsector.items.DroppableDefinitions;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
+import exiledsector.items.ItemRoll;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemTypes;
 import exiledsector.loot.FleetDifficulties;
@@ -134,7 +135,7 @@ public final class ChartDrops {
             int dropTier = dropTier(rule, baseTier, rule.pickTierOffset(random));
             ItemDefinition definition = pickChartAtTier(random, dropTier);
             if (definition != null) {
-                charts.add(ItemData.rolledAtTier(definition, random.nextLong(), dropTier));
+                charts.add(ItemData.rolled(definition, random.nextLong(), ItemRoll.atTier(dropTier)));
             }
         }
         return charts;

@@ -204,7 +204,7 @@ class BattleItemDropsTest {
         ItemDefinition fullBridge = ItemDefinitions.get(FULL_BRIDGE);
         for (int modifierCount = 1; modifierCount <= 4; modifierCount++) {
             for (long seed = 0; seed < 50; seed++) {
-                ItemData rolled = ItemData.rolledWithModifierCount(fullBridge, seed, modifierCount);
+                ItemData rolled = ItemData.rolled(fullBridge, seed, ItemRoll.withModifierCount(modifierCount));
 
                 assertEquals(modifierCount, rolled.explicits().size());
                 assertEquals(rolled.explicits(), ItemData.of(rolled.toSpecialItem()).explicits());
@@ -358,8 +358,8 @@ class BattleItemDropsTest {
         ItemDefinition fullBridge = ItemDefinitions.get(FULL_BRIDGE);
         int singleModifier = 0;
         for (long seed = 0; seed < 4000; seed++) {
-            ItemData dropped = ItemData.rolledWithRarity(fullBridge, seed, 1f);
-            assertEquals(dropped, ItemData.rolledWithRarity(fullBridge, seed, 2f));
+            ItemData dropped = ItemData.rolled(fullBridge, seed, ItemRoll.dropAtRarity(1f));
+            assertEquals(dropped, ItemData.rolled(fullBridge, seed, ItemRoll.dropAtRarity(2f)));
             assertTrue(dropped.explicits().size() == 1 || dropped.explicits().size() == 2, dropped.toString());
             singleModifier += dropped.explicits().size() == 1 ? 1 : 0;
         }

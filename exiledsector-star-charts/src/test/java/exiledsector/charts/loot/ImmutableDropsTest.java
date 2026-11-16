@@ -8,6 +8,7 @@ import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemModifiers;
+import exiledsector.items.ItemRoll;
 import exiledsector.items.ModifierSources;
 import exiledsector.items.PoolEntry;
 import exiledsector.items.RolledModifier;
@@ -51,7 +52,7 @@ class ImmutableDropsTest {
     }
 
     private static ItemData dropped(String definitionId, long seed, int modifierCount) {
-        return ItemData.rolledWithModifierCount(ItemDefinitions.get(definitionId), seed, modifierCount);
+        return ItemData.rolled(ItemDefinitions.get(definitionId), seed, ItemRoll.withModifierCount(modifierCount));
     }
 
     private static long immutableCount(ItemData item) {

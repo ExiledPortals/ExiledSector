@@ -11,6 +11,7 @@ import exiledsector.items.CraftingDrops;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
+import exiledsector.items.ItemRoll;
 import exiledsector.loot.LootMultipliers;
 
 import java.util.List;
@@ -126,10 +127,10 @@ public record ChartLootContext(ChartGenContext effects, int tier) {
     }
 
     public ItemData rolledWithDropLimits(ItemDefinition definition, long seed) {
-        return ItemData.rolledWithRarity(definition, seed, rarity());
+        return ItemData.rolled(definition, seed, ItemRoll.dropAtRarity(rarity()));
     }
 
     public ItemData rolledWithAffixLimitsAtRunTier(ItemDefinition definition, long seed) {
-        return ItemData.rolledAtTierWithRarity(definition, seed, tier, rarity());
+        return ItemData.rolled(definition, seed, ItemRoll.atTier(tier).withRarity(rarity()));
     }
 }

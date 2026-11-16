@@ -68,7 +68,7 @@ class StarChartCipherTest {
     }
 
     private StarChart stored(String definitionId, long seed, int tier) {
-        return (StarChart) store.add(ItemData.rolledAtTier(ItemDefinitions.get(definitionId), seed, tier));
+        return (StarChart) store.add(ItemData.rolled(ItemDefinitions.get(definitionId), seed, ItemRoll.atTier(tier)));
     }
 
     private StarChart storedWith(String definitionId, int tier, Predicate<StarChart> wanted) {

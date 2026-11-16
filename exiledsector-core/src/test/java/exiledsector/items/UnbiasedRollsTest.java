@@ -44,7 +44,7 @@ class UnbiasedRollsTest {
     private List<String> rolledIds() {
         List<String> rolledIds = new ArrayList<>();
         for (long seed = 0; seed < 12; seed++) {
-            rolledIds.add(ItemRoller.rollWithModifierCount(definition, seed, 3).stream().map(RolledModifier::modifierId).toList().toString());
+            rolledIds.add(ItemRoller.roll(definition, seed, ItemRoll.withModifierCount(3)).stream().map(RolledModifier::modifierId).toList().toString());
         }
         return rolledIds;
     }

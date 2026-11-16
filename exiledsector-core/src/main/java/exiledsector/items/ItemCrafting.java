@@ -395,7 +395,7 @@ public final class ItemCrafting {
         }
         long seed = random.nextLong();
         int modifierCount = modifierCounts.get(random.nextInt(modifierCounts.size()));
-        Item replacement = Item.create(item.id(), base.id(), seed, ItemRoller.rollWithModifierCount(base, seed, modifierCount));
+        Item replacement = Item.create(item.id(), base.id(), seed, ItemRoller.roll(base, seed, ItemRoll.withModifierCount(modifierCount)));
         replacement.replaceImplicits(item.implicits());
         replacement.copyTraitsFrom(item);
         replacement.freezeName();
@@ -459,7 +459,7 @@ public final class ItemCrafting {
         List<RolledModifier> best = null;
         long bestOverlap = Long.MAX_VALUE;
         for (int attempt = 0; attempt < CORRUPTION_REROLL_ATTEMPTS && bestOverlap > 0; attempt++) {
-            List<RolledModifier> candidate = ItemRoller.rollAtTier(definition, random.nextLong(), item.tier());
+            List<RolledModifier> candidate = ItemRoller.roll(definition, random.nextLong(), ItemRoll.atTier(item.tier()));
             long overlap = candidate.stream().filter(rolled -> previousIds.contains(rolled.modifierId())).count();
             if (overlap < bestOverlap) {
                 best = candidate;
@@ -516,7 +516,7 @@ public final class ItemCrafting {
             return null;
         }
         long seed = random.nextLong();
-        Item replacement = Item.create(item.id(), nextDefinition.id(), seed, ItemRoller.rollAtTier(nextDefinition, seed, item.tier()));
+        Item replacement = Item.create(item.id(), nextDefinition.id(), seed, ItemRoller.roll(nextDefinition, seed, ItemRoll.atTier(item.tier())));
         replacement.copyTraitsFrom(item);
         replacement.freezeName();
         return store.replace(item, replacement) ? replacement : null;

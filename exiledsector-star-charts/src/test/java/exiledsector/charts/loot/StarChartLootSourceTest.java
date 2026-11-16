@@ -12,6 +12,7 @@ import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemKind;
+import exiledsector.items.ItemRoll;
 import exiledsector.items.LuckyRolls;
 import exiledsector.items.PoolEntry;
 import exiledsector.loot.BattleLoot;
@@ -53,7 +54,7 @@ class StarChartLootSourceTest {
     }
 
     private static ItemData dropped(long seed) {
-        return ItemData.rolledWithModifierCount(ItemDefinitions.get(PLATE), seed, 2);
+        return ItemData.rolled(ItemDefinitions.get(PLATE), seed, ItemRoll.withModifierCount(2));
     }
 
     @Test

@@ -58,7 +58,7 @@ class ItemTierAndLimitsTest {
     void rollingWithoutATierIgnoresTheTierGates() {
         for (long seed = 0; seed < 300; seed++) {
             assertEquals(ItemRoller.roll(UNGATED, seed), ItemRoller.roll(GATED, seed), "seed " + seed);
-            assertEquals(ItemRoller.roll(UNGATED, seed), ItemRoller.roll(UNGATED, seed, 9), "seed " + seed);
+            assertEquals(ItemRoller.roll(UNGATED, seed), ItemRoller.roll(UNGATED, seed, ItemRoll.atTier(9)), "seed " + seed);
         }
     }
 
@@ -66,8 +66,8 @@ class ItemTierAndLimitsTest {
     void rollingAtATierLeavesOutEntriesGatedAboveIt() {
         boolean gatedRolledAtFive = false;
         for (long seed = 0; seed < 300; seed++) {
-            assertFalse(rollsGatedEffect(ItemRoller.roll(GATED, seed, 4)), "seed " + seed);
-            gatedRolledAtFive |= rollsGatedEffect(ItemRoller.roll(GATED, seed, 5));
+            assertFalse(rollsGatedEffect(ItemRoller.roll(GATED, seed, ItemRoll.atTier(4))), "seed " + seed);
+            gatedRolledAtFive |= rollsGatedEffect(ItemRoller.roll(GATED, seed, ItemRoll.atTier(5)));
         }
         assertTrue(gatedRolledAtFive);
     }
