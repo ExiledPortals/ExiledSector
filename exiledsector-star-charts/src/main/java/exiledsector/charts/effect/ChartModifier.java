@@ -153,6 +153,19 @@ public enum ChartModifier implements ModifierEffect {
     CHART_EXTRA_CONVOYS("supply_convoy.extra", AnomalyLine.COUNT),
     CHART_EXTRA_ANOMALOUS_DEBRIS("anomalous_debris.extra", AnomalyLine.COUNT),
     CHART_ANOMALOUS_DEBRIS_CRAFTING_ITEM_QUANTITY_PERCENT("anomalous_debris.craftingItem", AnomalyLine.PERCENT),
+    CHART_ANOMALOUS_DEBRIS_FLEET_SIZE_PERCENT("anomalous_debris.fleetSize", AnomalyLine.PERCENT),
+    CHART_ANOMALOUS_DEBRIS_CORRUPTED_FLEET_SIZE_PERCENT("anomalous_debris.corruptedFleetSize", AnomalyLine.PERCENT),
+    CHART_ANOMALOUS_DEBRIS_CORRUPTED_ENGRAMS("anomalous_debris.corruptedEngrams", AnomalyLine.COUNT),
+    CHART_ANOMALOUS_DEBRIS_TWICE_CORRUPTED_ENGRAMS("anomalous_debris.twiceCorruptedEngrams", AnomalyLine.COUNT),
+    CHART_ANOMALOUS_DEBRIS_SECOND_CORRUPTION("anomalous_debris.secondCorruption", AnomalyLine.FLAG),
+    CHART_ANOMALOUS_DEBRIS_ALWAYS_TWICE_CORRUPTED("anomalous_debris.alwaysTwiceCorrupted", AnomalyLine.FLAG),
+    CHART_ANOMALOUS_DEBRIS_SINGLE_FIELD("anomalous_debris.singleField", AnomalyLine.FLAG),
+    CHART_ANOMALOUS_DEBRIS_BREACH_FIELD("anomalous_debris.breachField", AnomalyLine.FLAG),
+    CHART_ANOMALOUS_DEBRIS_AWAKE("anomalous_debris.awake", AnomalyLine.FLAG),
+    CHART_ANOMALOUS_DEBRIS_ROAMING("anomalous_debris.roaming", AnomalyLine.FLAG),
+    CHART_ANOMALOUS_DEBRIS_REMNANT_SHIP_SHARE("anomalous_debris.remnantShips", AnomalyLine.PERCENT),
+    CHART_ANOMALOUS_DEBRIS_THREAT_SHIP_SHARE("anomalous_debris.threatShips", AnomalyLine.PERCENT),
+    CHART_ANOMALOUS_DEBRIS_DWELLER_SHIP_SHARE("anomalous_debris.dwellerShips", AnomalyLine.PERCENT),
     CHART_EXTRA_EXCAVATION_SITES("excavation_sites.extra", AnomalyLine.COUNT),
     CHART_EXCAVATION_LOOT_QUANTITY_PERCENT("excavation_sites.loot", AnomalyLine.PERCENT),
     CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT("storm_front.loot", AnomalyLine.PERCENT),
@@ -179,7 +192,8 @@ public enum ChartModifier implements ModifierEffect {
         PERCENT(false, null),
         PERCENT_REDUCED_WHEN_NEGATIVE(false, ".reduced"),
         PERCENT_INCREASED_WHEN_NEGATIVE(false, ".increased"),
-        COUNT(true, null);
+        COUNT(true, null),
+        FLAG(false, null);
 
         private final boolean counted;
         private final String negativeKeySuffix;
@@ -228,7 +242,7 @@ public enum ChartModifier implements ModifierEffect {
 
     ChartModifier(String anomalyTuningKey, AnomalyLine line) {
         this(line.counted, null, null, anomalyTuningKey, line.negativeKeySuffix,
-                (context, value) -> context.addAnomalyPercent(anomalyTuningKey, line.counted ? Math.round(value) : value), false);
+                (context, value) -> context.addAnomalyPercent(anomalyTuningKey, line.counted ? Math.round(value) : value), line == AnomalyLine.FLAG);
     }
 
     ChartModifier(boolean counted, DropType dropType, ChartFleetStat fleetStat, String anomalyTuningKey, String negativeKeySuffix,

@@ -254,36 +254,38 @@ Keystone:
 
 ### Anomalous Debris (`anomalous_debris`)
 
-Status: building on branch `atlas-nodes/anomalous-debris` since 2026-11-16, chance node on `atlas-nodes/shared`.
+Status: built on branch `atlas-nodes/anomalous-debris` 2026-11-16, chance node on `atlas-nodes/shared`.
 
 Reward: an engram from each corrupted anomalous fleet beaten.
 
-Change to the anomaly: an anomalous fleet is 50% of the Star Chart Boss's fleet size before corruption, down from 110% (`DebrisRules.BOSS_SHARE`). Corruption and the nodes below scale from that. The debris fleets are called anomalous fleets everywhere, in these nodes and in game: the fleet's name ("Dormant Fleet" today, `chart.anomaly.anomalous_debris.fleet.name`) and the Engram Quantity line (`chart.modifier.CHART_ANOMALOUS_DEBRIS_CRAFTING_ITEM_QUANTITY_PERCENT`), in en and zh_CN. Not built yet.
+Change to the anomaly: an anomalous fleet is 50% of the Star Chart Boss's fleet size before corruption, down from 110% (`DebrisRules.BOSS_SHARE`). Corruption and the nodes below scale from that. The debris fleets are called anomalous fleets everywhere, in these nodes and in game: the fleet's name (`chart.anomaly.anomalous_debris.fleet.name`, now "Anomalous Fleet" and "Corrupted Anomalous Fleet") and the Engram Quantity line (`chart.modifier.CHART_ANOMALOUS_DEBRIS_CRAFTING_ITEM_QUANTITY_PERCENT`), in en and zh_CN. Built. The faction keeps its name, Dormant Cores, and the code keeps its `DormantFleet*` class names.
+
+Every node's lines are read through `DebrisTuning` (one record per chart) in `charts/anomaly/debris`.
 
 Small nodes:
 
 - The chance node.
-- Additional Debris: "Your Star Charts that contain Anomalous Debris have 1 additional debris field" (`CHART_EXTRA_ANOMALOUS_DEBRIS`).
-- Engram Quantity: "20% increased quantity of crafting items dropped by corrupted anomalous fleets in your Star Charts" (`CHART_ANOMALOUS_DEBRIS_CRAFTING_ITEM_QUANTITY_PERCENT`).
+- Additional Debris (`additional_debris`): "Your Star Charts that contain Anomalous Debris have 1 additional debris field" (`CHART_EXTRA_ANOMALOUS_DEBRIS`). Built.
+- Engram Quantity (`engram_quantity`): "20% increased quantity of crafting items dropped by corrupted anomalous fleets in your Star Charts" (`CHART_ANOMALOUS_DEBRIS_CRAFTING_ITEM_QUANTITY_PERCENT`). Built.
 
 Notables:
 
-- Deep Corruption: "Corrupted anomalous fleets in your Star Charts have 30% increased fleet size" and "Corrupted anomalous fleets in your Star Charts drop 1 additional engram".
-- Double Dose: "Anomalous fleets in your Star Charts can be corrupted a second time for 1 more Corrupted Nanoswarm" and "Anomalous fleets corrupted twice in your Star Charts drop 2 additional engrams" (new). The second corruption strengthens the fleet again by the same step.
-- Lone Sleeper: "Your Star Charts with Anomalous Debris have only one debris field" and "Anomalous fleets in your Star Charts have 100% increased fleet size and drop 3 additional engrams when corrupted" (new). Several small fights become one big one.
-- Breached Graveyard (Spatial Breach): "Spatial Breaches in your Star Charts with Anomalous Debris open in a debris field" (new). The breach's core sits in the field, so the anomalous fleet's fight is always inside the open breach and its hull item drops can be warped.
-- Restless Sleepers: "Anomalous fleets in your Star Charts are always corrupted and awake" and "Anomalous fleets in your Star Charts roam their system and are hostile to you" (new). They're hostile only to you, not to the chart's other fleets, and are revealed like any other fleet once awake.
-- [REDACTED] Sleepers: "Anomalous fleets in your Star Charts have 30% of their ships replaced by what was left behind" (new). Remnant hulls.
-- Threatening Sleepers: "Anomalous fleets in your Star Charts have 30% of their ships replaced by something that crept in from the deep dark" (new). Threat hulls.
-- Veiled Sleepers: "Anomalous fleets in your Star Charts have 30% of their ships replaced by something that dwells behind the veil" (new). Shrouded hulls.
+- Deep Corruption (`deep_corruption`): "Corrupted anomalous fleets in your Star Charts have 30% increased fleet size" (`CHART_ANOMALOUS_DEBRIS_CORRUPTED_FLEET_SIZE_PERCENT`) and "Corrupted anomalous fleets in your Star Charts drop 1 additional engram" (`CHART_ANOMALOUS_DEBRIS_CORRUPTED_ENGRAMS`). Built: `DebrisRules.fleetSize` and `DormantFleetLoot`.
+- Double Dose (`double_dose`): "Anomalous fleets in your Star Charts can be corrupted a second time for 1 additional Corrupted Nanoswarm" (`CHART_ANOMALOUS_DEBRIS_SECOND_CORRUPTION`) and "Anomalous fleets corrupted twice in your Star Charts drop 2 additional engrams" (`CHART_ANOMALOUS_DEBRIS_TWICE_CORRUPTED_ENGRAMS`). The second corruption strengthens the fleet again by the same step. Built: the dialog offers "Corrupt twice and engage" for two nanoswarms (`DormantFleetDialog`), and `DormantFleets.corrupt` rebuilds the fleet with the count stored on it.
+- Lone Sleeper (`lone_sleeper`): "Your Star Charts with Anomalous Debris have only one debris field" (`CHART_ANOMALOUS_DEBRIS_SINGLE_FIELD`), "Anomalous fleets in your Star Charts have 100% increased fleet size" (`CHART_ANOMALOUS_DEBRIS_FLEET_SIZE_PERCENT`) and "Corrupted anomalous fleets in your Star Charts drop 3 additional engrams" (`CHART_ANOMALOUS_DEBRIS_CORRUPTED_ENGRAMS`). Several small fights become one big one. Built: `DebrisRules.fieldCount`.
+- Breached Graveyard (`breached_graveyard`, Spatial Breach): "Spatial Breaches in your Star Charts with Anomalous Debris open in a debris field" (`CHART_ANOMALOUS_DEBRIS_BREACH_FIELD`). The breach's core sits in the field, so the anomalous fleet's fight is always inside the open breach and its hull item drops can be warped. Built: `BreachedGraveyard`, whichever anomaly generates second; a breach placed after the debris centres on the field farthest from the entry, and debris placed after the breach puts its first field on the breach core.
+- Restless Sleepers (`restless_sleepers`): "Anomalous fleets in your Star Charts are always corrupted and awake" (`CHART_ANOMALOUS_DEBRIS_AWAKE`) and "Anomalous fleets in your Star Charts roam their system and are hostile to you" (`CHART_ANOMALOUS_DEBRIS_ROAMING`). They're hostile only to you, not to the chart's other fleets, and are revealed like any other fleet once awake. Built: fleets wake when placed (`AnomalousDebris.placeField`) and a woken fleet patrols its system (`DormantFleets.wake`).
+- [REDACTED] Sleepers (`redacted_sleepers`): "Anomalous fleets in your Star Charts have 30% of their ships replaced by what was left behind" (`CHART_ANOMALOUS_DEBRIS_REMNANT_SHIP_SHARE`). Remnant hulls. Built.
+- Threatening Sleepers (`threatening_sleepers`): "Anomalous fleets in your Star Charts have 30% of their ships replaced by something that crept in from the deep dark" (`CHART_ANOMALOUS_DEBRIS_THREAT_SHIP_SHARE`). Threat hulls. Built.
+- Veiled Sleepers (`veiled_sleepers`): "Anomalous fleets in your Star Charts have 30% of their ships replaced by something that dwells behind the veil" (`CHART_ANOMALOUS_DEBRIS_DWELLER_SHIP_SHARE`). Shrouded hulls. Built.
 
-The tooltips never name the faction; the player learns it from the ships they meet. The three Sleepers notables share one roll per ship, so they never claim the same ship: with all three, 90% of the fleet is a mix of the three and 10% keeps its random factions' hulls. A replaced ship becomes an equivalent hull from that faction's own hulls (`remnant`, `threat`, `dweller`): the same hull size where the faction has one, else the nearest size, closest in deployment points. It keeps its AI core captain, and corruption strengthens it like the rest of the fleet.
+The tooltips never name the faction; the player learns it from the ships they meet. The three Sleepers notables share one roll per ship, so they never claim the same ship: with all three, 90% of the fleet is a mix of the three and 10% keeps its random factions' hulls. A replaced ship becomes an equivalent hull from that faction's own hulls (`remnant`, `threat`, `dweller`): the same hull size where the faction has one, else the nearest size, closest in deployment points. It keeps its AI core captain, and corruption strengthens it like the rest of the fleet. Built: `SleeperShips`, drawing from the faction's combat roles.
 
-Each replaced ship counts as its faction's for that faction's wormhole anchor, so its deployment points add to the anchor's chance per 100 deployment points lost (`FactionFleetDrops.chance`, `drop_chance` in `wormhole_anchors.csv`), alongside the fleet's usual loot and engram. Today `BattleEngagement.deploymentPointsLostByFaction` counts every lost ship as its fleet's faction (`FleetFactions.realFactionIdOf`), which would give the anomalous fleet's faction all of it. The replaced ship carries its source faction on the member instead, and the tally reads that before the fleet's faction. The anchor's Janus Device and volume gates still apply. Replaced Shrouded hulls use the same per-deployment-point chance as the other two: the Shrouded anchor's every-battle guarantee (`guaranteed_drop`) stays with real Dweller fleets.
+Each replaced ship counts as its faction's for that faction's wormhole anchor, so its deployment points add to the anchor's chance per 100 deployment points lost (`FactionFleetDrops.chance`, `drop_chance` in `wormhole_anchors.csv`), alongside the fleet's usual loot and engram. The anchor's Janus Device and volume gates still apply. Replaced Shrouded hulls use the same per-deployment-point chance as the other two: the Shrouded anchor's every-battle guarantee (`guaranteed_drop`) stays with real Dweller fleets. Built: the fleet's memory maps each replaced member's id to its faction (`FleetFactions.recordMemberFactions`), so a recovered ship carries no trace; `BattleEngagement.deploymentPointsLostByFaction` reads it before the fleet's faction, `deploymentPointsLostByFleetFaction` keeps the old tally, and `FactionFleetDrops.chance` fires a guarantee only on the fleet tally (`SkillTreeLootSource` passes both).
 
 Keystone:
 
-- Silent Choir: "Anomalous fleets in your Star Charts are always corrupted twice" and "Anomalous fleets in your Star Charts have 50% increased fleet size".
+- Silent Choir (`silent_choir`): "Anomalous fleets in your Star Charts are always corrupted twice" (`CHART_ANOMALOUS_DEBRIS_ALWAYS_TWICE_CORRUPTED`) and "Anomalous fleets in your Star Charts have 50% increased fleet size" (`CHART_ANOMALOUS_DEBRIS_FLEET_SIZE_PERCENT`). Built: fleets are generated corrupted twice and still dormant, so their dialog offers only Engage; with Restless Sleepers they are also awake.
 
 ### Excavation Sites (`excavation_sites`)
 

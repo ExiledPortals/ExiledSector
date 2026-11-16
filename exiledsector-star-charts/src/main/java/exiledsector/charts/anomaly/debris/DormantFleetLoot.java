@@ -27,8 +27,9 @@ public final class DormantFleetLoot {
         }
         memory.set(DormantFleets.CRAFTING_ITEM_DROPPED_KEY, true);
         float quantityMult = ChartGenContext.orNone(context).anomalyMult(AnomalousDebris.CRAFTING_ITEM_KEY);
+        int engrams = DebrisTuning.of(context).engramsFor(DormantFleets.corruptionsOf(fleet));
         Map<String, Integer> craftingItems = new LinkedHashMap<>();
-        for (int drop = DebrisRules.craftingItemCount(quantityMult, random); drop > 0; drop--) {
+        for (int drop = DebrisRules.craftingItemCount(engrams, quantityMult, random); drop > 0; drop--) {
             Engram craftingItem = Engrams.pick(tier, random);
             if (craftingItem != null) {
                 craftingItems.merge(craftingItem.itemId(), 1, Integer::sum);

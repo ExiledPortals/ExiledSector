@@ -28,6 +28,7 @@ import com.fs.starfarer.api.campaign.EngagementResultForFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.campaign.FleetEncounterContextPlugin;
 import com.fs.starfarer.api.campaign.SpecialItemData;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
@@ -38,6 +39,7 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.loot.BattleLootRates;
+import exiledsector.loot.FleetFactions;
 import exiledsector.items.FactionFleetDrops;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
@@ -54,6 +56,7 @@ import org.mockito.Mockito;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -312,6 +315,44 @@ class ItemLootListenerTest {
         FleetMemberAPI member = MockShips.member(id).variant(mock(ShipVariantAPI.class)).build();
         when(member.getDeploymentPointsCost()).thenReturn(deploymentPoints);
         return member;
+    }
+
+    private static Random rollingAt(float roll) {
+        return new Random() {
+            @Override
+            public float nextFloat() {
+                return roll;
+            }
+        };
+    }
+
+    @Test
+    void shipsBorrowedIntoAnotherFactionsFleetRollTheirOwnFactionsDropButNeverAGuaranteeMeantForThatFactionsFleets() throws Exception {
+        FactionFleetDrops.clear(TEST_DROPS);
+        ItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "remnant_drop").put("kind", "MODSPEC_CACHE").put("rarity", "10"))
+                .put(new JSONObject().put("id", "dweller_drop").put("kind", "MODSPEC_CACHE").put("rarity", "10")));
+        FactionFleetDrops.register(TEST_DROPS, Map.of("remnant_drop", FactionFleetDrops.Source.forVolume("REDACTED", Set.of("remnant"), 1f),
+                "dweller_drop", FactionFleetDrops.Source.forVolume("shrouded", Set.of("dweller"), 0.01f, true)));
+        BattleAPI battle = mock(BattleAPI.class);
+        FactionAPI anomalous = mock(FactionAPI.class);
+        when(anomalous.getId()).thenReturn("exiledSector_dormant");
+        MemoryAPI memory = mock(MemoryAPI.class);
+        when(memory.get(FleetFactions.MEMBER_FACTIONS_MEMORY_KEY)).thenReturn(Map.of("remnant_ship", "remnant", "dweller_ship", "dweller"));
+        CampaignFleetAPI fleet = mock(CampaignFleetAPI.class);
+        when(fleet.getFaction()).thenReturn(anomalous);
+        when(fleet.getMemoryWithoutUpdate()).thenReturn(memory);
+        FleetMemberAPI remnantShip = warship("remnant_ship", 100f);
+        FleetMemberAPI dwellerShip = warship("dweller_ship", 100f);
+        when(battle.getSourceFleet(remnantShip)).thenReturn(fleet);
+        when(battle.getSourceFleet(dwellerShip)).thenReturn(fleet);
+        ItemLootListener rollingListener = new ItemLootListener(rollingAt(0.4f));
+        rollingListener.holdLoot(PlayerEngagement.of(engagement(battle, List.of(remnantShip), List.of(dwellerShip)), 1f));
+        CargoAPI loot = mock(CargoAPI.class);
+
+        rollingListener.reportEncounterLootGenerated(context(battle), loot);
+
+        List<String> dropped = lootData(loot, 1);
+        assertEquals("remnant_drop", ItemData.parse(dropped.get(0)).definition().id());
     }
 
     @Test

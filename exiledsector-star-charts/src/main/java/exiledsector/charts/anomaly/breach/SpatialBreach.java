@@ -18,6 +18,7 @@ import exiledsector.charts.anomaly.AnomalyTerrains;
 import exiledsector.charts.anomaly.ContentPlacer;
 import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.anomaly.RunParticipant;
+import exiledsector.charts.anomaly.debris.BreachedGraveyard;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
 import org.lwjgl.util.vector.Vector2f;
@@ -56,7 +57,7 @@ public final class SpatialBreach implements ContentPlacer, RunParticipant, LootS
         StarSystemAPI system = site.system();
         ChartGenContext context = site.context();
         BreachRules.Growth growth = BreachRules.growth(site.tier(), context.anomalyMult(GROWTH_KEY));
-        Vector2f centre = pickCentre(site, growth.maxRadius(), site.random(CENTRE_SALT));
+        Vector2f centre = BreachedGraveyard.breachCentreOr(site, pickCentre(site, growth.maxRadius(), site.random(CENTRE_SALT)));
         if (centre == null) {
             throw new IllegalStateException("no clear spot for the breach");
         }
