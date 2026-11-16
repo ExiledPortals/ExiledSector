@@ -122,7 +122,7 @@ class CraftingBenchCargoLauncherTest {
         CraftingBenchCargoLauncher.open(campaignUI, afterCloseRuns::incrementAndGet);
 
         InputEventAPI escape = mock(InputEventAPI.class);
-        when(escape.isKeyUpEvent()).thenReturn(true);
+        when(escape.isKeyDownEvent()).thenReturn(true);
         when(escape.getEventValue()).thenReturn(Keyboard.KEY_ESCAPE);
         benchPlugin.processInput(List.of(escape));
         benchPlugin.advance(1f);

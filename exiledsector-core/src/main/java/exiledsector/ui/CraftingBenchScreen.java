@@ -116,7 +116,7 @@ final class CraftingBenchScreen extends BaseCustomUIPanelPlugin implements Campa
             if (event.isConsumed()) {
                 continue;
             }
-            if (event.isKeyUpEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
+            if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
                 if (!fade.closing() && (bay == null || !bay.escape())) {
                     close();
                 }

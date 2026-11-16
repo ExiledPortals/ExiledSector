@@ -734,7 +734,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             } else if (focusedCell != null) {
                 focusInput(event);
             } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
-                if (event.isKeyUpEvent()) {
+                if (event.isKeyDownEvent()) {
                     escape();
                 }
                 event.consume();
@@ -759,7 +759,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             mouseX = event.getX();
             mouseY = event.getY();
         }
-        if (event.isKeyUpEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE && focusing) {
+        if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE && focusing) {
             focusEscape();
         }
         event.consume();

@@ -481,7 +481,7 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
             if (event.isLMBUpEvent()) {
                 swallowFleetListMouseUp = false;
             }
-            if (event.isKeyUpEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
+            if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
                 if (!fade.closing()) {
                     escape();
                 }
