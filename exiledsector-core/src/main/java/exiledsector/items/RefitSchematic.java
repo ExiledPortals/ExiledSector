@@ -14,10 +14,10 @@ import java.util.function.BooleanSupplier;
 
 public enum RefitSchematic implements ShipSchematic {
 
-    SCRAPPED(2, 60f, new Color(170, 170, 170)),
-    STANDARD(3, 28f, ItemRarity.COMMON.color()),
-    MILITARY(4, 10f, ItemRarity.RARE.color()),
-    DOMAIN(5, 2f, ItemRarity.UNIQUE.color());
+    SCRAPPED(2, 1000, 60f, new Color(170, 170, 170)),
+    STANDARD(3, 2000, 28f, ItemRarity.COMMON.color()),
+    MILITARY(4, 3000, 10f, ItemRarity.RARE.color()),
+    DOMAIN(5, 4000, 2f, ItemRarity.UNIQUE.color());
 
     public static final String ITEM_ID = "exiledSector_refit_schematic";
     public static final String LEGACY_ITEM_ID = "exiledSector_hull_upgrade";
@@ -27,11 +27,13 @@ public enum RefitSchematic implements ShipSchematic {
     private static final AtomicReference<BooleanSupplier> DROPS_ALLOWED = new AtomicReference<>(() -> true);
 
     private final int points;
+    private final int price;
     private final float dropWeight;
     private final Color color;
 
-    RefitSchematic(int points, float dropWeight, Color color) {
+    RefitSchematic(int points, int price, float dropWeight, Color color) {
         this.points = points;
+        this.price = price;
         this.dropWeight = dropWeight;
         this.color = color;
     }
@@ -72,6 +74,10 @@ public enum RefitSchematic implements ShipSchematic {
 
     public int points() {
         return points;
+    }
+
+    public int price() {
+        return price;
     }
 
     public float dropWeight() {

@@ -1,6 +1,8 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.CargoStackAPI;
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.i18n.Translation;
 
@@ -19,6 +21,11 @@ public class RefitSchematicItemPlugin extends SchematicItemPlugin {
     @Override
     protected ShipSchematic schematic() {
         return schematic;
+    }
+
+    @Override
+    public int getPrice(MarketAPI market, SubmarketAPI submarket) {
+        return schematic == null ? super.getPrice(market, submarket) : schematic.price();
     }
 
     @Override
