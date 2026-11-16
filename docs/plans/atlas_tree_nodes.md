@@ -312,12 +312,13 @@ Small nodes:
 
 Notables:
 
-- Open Manifest: "Depot vaults in your Star Charts offer 1 additional prototype to pick from".
-- Tight Ring: "Depots in your Star Charts have 2 additional pickets" (`CHART_LISTENING_POST_PICKETS`) and "Reaching a Depot vault in your Star Charts unseen lets you pick 2 prototypes".
-
-Keystone:
-
-- Loud Entry: "The alarm is raised at every Depot in your Star Charts as you enter the system" and "Depot vaults in your Star Charts never purge and always offer their pick of prototypes".
+- Garrison Pickets: "Depot pickets in your Star Charts are half the size of the Star Chart Boss's fleet" (new; pickets are 30% of a chart fleet today, `HeistRules`). The size is the reward: pickets drop ordinary chart fleet loot, so larger pickets are more fleet to fight and more to win.
+- Hair Trigger: "Depot pickets in your Star Charts that identify your fleet raise the alarm at once" and "Depot vaults reached unseen in your Star Charts offer 2 additional prototypes to pick from" (new). Attacking a picket always identifies the fleet first (Detection in `completed/anomalies/listening_post.md`), so this rules out picking pickets off: the heist is pure stealth.
+- Shift Change: "Depot pickets in your Star Charts leave their points for 1 day in every 5", "Suspicion at Depots in your Star Charts builds 50% faster" and "Depot vaults in your Star Charts drop 1 additional prototype" (new). The ring opens on a schedule shown in the post's tooltip and intel, so the heist is timed. The additional prototype comes on top of the pick, alarm or not.
+- Hunting Party: "When the alarm is raised at a Depot in your Star Charts, its pickets hunt your fleet instead of guarding the post" and "Depot pickets in your Star Charts each carry a prototype" (new). Each picket drops its prototype when destroyed; the post is left unguarded, so the vault's remains are free to take once the hunt is survived.
+- Fortified Depot: "Depot posts in your Star Charts are armed stations that fight beside their guard" and "Depot vaults in your Star Charts don't purge while their post stands" (new). The post becomes a station fleet joining the guard's fight (`PostScript.gatherDefenders`), so the alarm path is a station assault for the full vault.
+- Officer's Ledger: "Depot vaults in an Atlas officer's territory in your Star Charts hold a copy of one of that officer's carried items" (new). The officer keeps the item; the copy is taken with the vault, alarm or not. A system outside every officer's territory gains nothing.
+- Stolen Charts: "Depot vaults reached unseen in your Star Charts hold 3 additional Star Charts" (new), rolled as the system's own Star Chart drops are.
 
 ### Pre-Collapse Facility (`pre_collapse_facility`)
 
