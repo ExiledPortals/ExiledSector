@@ -15,6 +15,7 @@ Scope:
 - Every line names where it applies, as Path of Exile's "in your Maps" does. A chart line says "your Star Charts": "Spatial Breaches in your Star Charts have 20% increased maximum radius". An atlas line names the atlas: "+1 lane of visibility around completed atlas systems".
 - The subject comes first, then the change: "Breach caches in your Star Charts contain...", "Fleets charging Spatial Breaches in your Star Charts have...". A line about the chart as a whole opens with "Your Star Charts".
 - Tree lines are their own text, not the chart's "in the system" wording, since a tree line describes every chart opened rather than the one in hand.
+- The Atlas Tree tooltip shows `atlasTree.line.<EFFECT_ID>` (starCharts catalogue, with its plural forms and negative-value variant like the chart line's) when that key exists and the chart line `chart.modifier.<EFFECT_ID>` otherwise, built with the chart line's own arguments (`AtlasTreeNodeText`).
 
 Shapes:
 
@@ -179,7 +180,7 @@ A chart holds at most one Spatial Breach, and a Spatial Breach marker on an atla
 
 Small nodes:
 
-- The chance node.
+- The chance node: built as `spatial_breach_chance` (`CHART_SPATIAL_BREACH_CHANCE_PERCENT`, read by `OpeningAnomalies.rolled`).
 - Breach Cache Quantity: increased breach cache quantity (`CHART_BREACH_CACHE_PERCENT`).
 - Breach Cache Items: increased quantity of items found in breach caches (`CHART_BREACH_CACHE_ITEM_PERCENT`).
 - Warped Chance: "50% increased chance for hull items dropped in Spatial Breaches in your Star Charts to be warped" (new, scales `BreachRules.WARPED_CHANCE`).
@@ -205,7 +206,7 @@ Change to the anomaly: a woken comm relay no longer shows every enemy fleet in t
 
 Small nodes:
 
-- The chance node.
+- The chance node: built as `relay_network_chance` (`CHART_RELAY_NETWORK_CHANCE_PERCENT`, read by `OpeningAnomalies.rolled`).
 - Relay Reward Rarity: "10% increased rarity of items from relay rewards in your Star Charts" (new). Item rarity applied to the items the boss drops for relay choices (`OfficerRewardDrop.roll`), on top of the chart's own rarity.
 
 Notables:
@@ -229,7 +230,7 @@ Change to the anomaly: a convoy carries one kind of infused feedstock instead of
 
 Small nodes:
 
-- The chance node.
+- The chance node: built as `supply_convoy_chance` (`CHART_SUPPLY_CONVOY_CHANCE_PERCENT`, read by `OpeningAnomalies.rolled`).
 - Threat Feedstock Chance: "10% reduced chance for Supply Convoys in your Star Charts to carry Threat-infused Feedstock" (new). Lead-in to Threat Embargo.
 - Shroud Feedstock Chance: the same for Shroud-infused Feedstock. Lead-in to Shroud Embargo.
 - Phase Feedstock Chance: the same for Phase-infused Feedstock. Lead-in to Phase Embargo.
@@ -262,7 +263,7 @@ Change to the anomaly: an anomalous fleet is 50% of the Star Chart Boss's fleet 
 
 Small nodes:
 
-- The chance node.
+- The chance node: built as `anomalous_debris_chance` (`CHART_ANOMALOUS_DEBRIS_CHANCE_PERCENT`, read by `OpeningAnomalies.rolled`).
 - Additional Debris: "Your Star Charts that contain Anomalous Debris have 1 additional debris field" (`CHART_EXTRA_ANOMALOUS_DEBRIS`).
 - Engram Quantity: "20% increased quantity of crafting items dropped by corrupted anomalous fleets in your Star Charts" (`CHART_ANOMALOUS_DEBRIS_CRAFTING_ITEM_QUANTITY_PERCENT`).
 
@@ -295,7 +296,7 @@ Additional inhibitors raise the base count, before any quantity. Each fight or r
 
 Small nodes:
 
-- The chance node.
+- The chance node: built as `excavation_sites_chance` (`CHART_EXCAVATION_SITES_CHANCE_PERCENT`, read by `OpeningAnomalies.rolled`).
 - Additional Site: "Your Star Charts that contain Excavation Sites have 1 additional excavation site" (`CHART_EXTRA_EXCAVATION_SITES`).
 - Inhibitor Quantity: "20% increased quantity of items found at excavation sites in your Star Charts" (`CHART_EXCAVATION_LOOT_QUANTITY_PERCENT`).
 
@@ -355,7 +356,7 @@ Reward: prototype hull items, each with its implicits replaced by one from its b
 
 Small nodes:
 
-- The chance node.
+- The chance node: built as `listening_post_chance` (`CHART_LISTENING_POST_CHANCE_PERCENT`, read by `OpeningAnomalies.rolled`).
 - Vault Quantity: "20% increased quantity of items in Depot vaults in your Star Charts" (`CHART_LISTENING_POST_LOOT_QUANTITY_PERCENT`).
 - Slow Purge: "25% reduced Depot vault purge rate in your Star Charts" (`CHART_LISTENING_POST_PURGE_PERCENT`).
 

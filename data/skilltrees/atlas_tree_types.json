@@ -48,6 +48,84 @@
 				"encounter",
 				"loot"
 			]
+		},
+		{
+			"id": "spatial_breach_chance",
+			"name": "Spatial Breach Chance",
+			"effects": [
+				{
+					"effect": "CHART_SPATIAL_BREACH_CHANCE_PERCENT",
+					"magnitude": 8
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "relay_network_chance",
+			"name": "Relay Network Chance",
+			"effects": [
+				{
+					"effect": "CHART_RELAY_NETWORK_CHANCE_PERCENT",
+					"magnitude": 8
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "supply_convoy_chance",
+			"name": "Supply Convoy Chance",
+			"effects": [
+				{
+					"effect": "CHART_SUPPLY_CONVOY_CHANCE_PERCENT",
+					"magnitude": 8
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "anomalous_debris_chance",
+			"name": "Anomalous Debris Chance",
+			"effects": [
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_CHANCE_PERCENT",
+					"magnitude": 8
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "excavation_sites_chance",
+			"name": "Excavation Sites Chance",
+			"effects": [
+				{
+					"effect": "CHART_EXCAVATION_SITES_CHANCE_PERCENT",
+					"magnitude": 8
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "listening_post_chance",
+			"name": "Depot Chance",
+			"effects": [
+				{
+					"effect": "CHART_LISTENING_POST_CHANCE_PERCENT",
+					"magnitude": 8
+				}
+			],
+			"tags": [
+				"encounter"
+			]
 		}
 	]
 }

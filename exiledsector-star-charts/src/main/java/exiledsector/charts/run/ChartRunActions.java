@@ -97,9 +97,9 @@ public final class ChartRunActions {
             }
         }
         List<ActiveCatalysts.Planned> catalysts = ActiveCatalysts.alsoApplyingIn(ActiveCatalysts.plan(generator, state, cell, materials::count), shownCatalysts);
-        AtlasRunNode opened = AtlasOpening.openedRunNode(generator, state, cell, chart.seed(), ActiveCatalysts.anomalyIds(catalysts));
-        AtlasRunNode runNode = ChartAnomalies.joinRunNode(opened, generator, state, cell, choice);
         List<ChartGenContext.AppliedEffect> treeLines = AtlasTree.chartLines(state);
+        AtlasRunNode opened = AtlasOpening.openedRunNode(generator, state, cell, chart.seed(), ActiveCatalysts.anomalyIds(catalysts), treeLines);
+        AtlasRunNode runNode = ChartAnomalies.joinRunNode(opened, generator, state, cell, choice);
         OpenResult result = openBesidePlayer(sector, entriesAllowed, random, AtlasOpening.request(generator, state, cell, chart, runNode, treeLines),
                 ItemData.of(chart).encode(), runNode, treeLines);
         if (result == OpenResult.OPENED) {

@@ -27,11 +27,15 @@ public enum AtlasModifier implements ModifierEffect {
 
     @Override
     public StyledText description(float magnitude) {
+        return description(key(), magnitude);
+    }
+
+    public StyledText description(String baseKey, float magnitude) {
         if (counted) {
             int count = Math.round(magnitude);
-            return Translation.msg(key()).count(count).arg("value", count).styled();
+            return Translation.msg(baseKey).count(count).arg("value", count).styled();
         }
-        return Translation.msg(key()).arg("value", magnitude).styled();
+        return Translation.msg(baseKey).arg("value", magnitude).styled();
     }
 
     public static AtlasModifier byNameOrNull(String effectName) {

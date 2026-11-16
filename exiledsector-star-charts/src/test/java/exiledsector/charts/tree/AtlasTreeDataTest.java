@@ -110,6 +110,23 @@ class AtlasTreeDataTest {
     }
 
     @Test
+    void eachAnomalyChanceTypeIsASmallNodeAddingEightPointsToItsOwnAnomalysOpeningChance() throws Exception {
+        AtlasTreeData data = AtlasTreeData.parse(ProjectFiles.readJson(ProjectFiles.projectRoot().resolve(AtlasTreeData.TYPES_PATH)),
+                ProjectFiles.readJson(ProjectFiles.projectRoot().resolve(AtlasTreeData.TREE_PATH)));
+
+        for (String anomalyId : List.of("spatial_breach", "relay_network", "supply_convoy", "anomalous_debris", "excavation_sites", "listening_post")) {
+            AtlasTreeType type = data.type(anomalyId + "_chance");
+            assertNotNull(type, anomalyId);
+            assertEquals(SkillTier.SMALL, type.tier(), anomalyId);
+            assertNull(type.iconPath(), anomalyId);
+            assertEquals(1, type.effects().size(), anomalyId);
+            assertEquals(anomalyId, type.effects().get(0).effect().openingChanceAnomalyId());
+            assertEquals(8f, type.effects().get(0).value(), anomalyId);
+        }
+        assertEquals("Depot Chance", data.type("listening_post_chance").name());
+    }
+
+    @Test
     void theShippedAtlasTreeLoadsWithARoot() throws Exception {
         JSONObject types = ProjectFiles.readJson(ProjectFiles.projectRoot().resolve(AtlasTreeData.TYPES_PATH));
         JSONObject tree = ProjectFiles.readJson(ProjectFiles.projectRoot().resolve(AtlasTreeData.TREE_PATH));
