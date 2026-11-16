@@ -2,6 +2,8 @@
 
 Node types for the Atlas Tree. Every type listed under Built is in `data/skilltrees/atlas_tree_types.json`, ready to place on the tree in the editor's Atlas Tree page; none is placed yet. Everything else is an idea to argue over, not a commitment. The tree's shape and rules are in `completed/atlas_skill_tree.md`. Magnitudes and icons are placeholders, and a line marked new needs an effect that doesn't exist yet.
 
+Building since 2026-11-16: the six anomalies with seven or more notables (Spatial Breach, Relay Network, Supply Convoy, Anomalous Debris, Excavation Sites and Depot), each on its own branch, with their chance nodes and the tree's own line text on a shared one. The other anomalies' nodes stay off for now.
+
 This plan took in `atlas_tree_anomalies.md` on 2026-11-15: its tooltip rules, its Spatial Breach ideas and its section per anomaly now live here.
 
 ## Tooltip rules
@@ -68,6 +70,8 @@ Faction Skirmish has no chance node: the officer turns place it, and its nodes a
 
 ### Black Hole (`black_hole`)
 
+Status: off for now (2026-11-16).
+
 Reward: 6 to 9 derelicts around the hole, each with a 10% chance that its hull items drop with four modifiers, one of them immutable.
 
 Small nodes:
@@ -83,6 +87,8 @@ Notables:
 
 ### Neutron Star (`neutron_star`)
 
+Status: off for now (2026-11-16).
+
 Reward: a research station in orbit, in a system with at least 7 planets for cover. It has no reward of its own yet (`anomaly_rewards.md`, Unchanged), so its nodes stay on the station until it gets one.
 
 Small nodes:
@@ -95,6 +101,8 @@ Notables:
 - Twin Stations: "Neutron Stars in your Star Charts have an additional research station".
 
 ### Dense Nebula (`dense_nebula`)
+
+Status: off for now (2026-11-16).
 
 Reward: Settling Dust, a stack for each battle won in the system, each giving 10% increased boss star charts, up to 10 stacks.
 
@@ -111,6 +119,8 @@ Notables:
 
 ### Asteroid Storm (`asteroid_storm`)
 
+Status: off for now (2026-11-16).
+
 Reward: caches hidden in its belts. It has no reward of its own yet; `anomaly_rewards.md` suggests the belt caches hold inhibitors, which its notable takes up.
 
 Small nodes:
@@ -125,6 +135,8 @@ Notables:
 
 ### Magnetic Storm (`magnetic_storm`)
 
+Status: off for now (2026-11-16).
+
 Reward: 50% increased quantity of crafting items found in the system, behind magnetic fields that blind sensors. No reward of its own yet.
 
 Small nodes:
@@ -138,6 +150,8 @@ Notables:
 - Shielded Arrays: "Your fleet's sensors are unaffected by magnetic fields in your Star Charts" and "Enemy fleets' sensors are unaffected by magnetic fields in your Star Charts".
 
 ### Stellar Flares (`stellar_flares`)
+
+Status: off for now (2026-11-16).
 
 Reward: every hull item dropped in the system rolls one of its modifiers again and keeps the better value.
 
@@ -156,6 +170,8 @@ Keystone:
 - Perfect Light: "Hull items dropped in your Star Charts with Stellar Flares roll every modifier twice, keeping the better values" and "Your Star Charts with Stellar Flares have 40% reduced quantity of hull items found".
 
 ### Spatial Breach (`spatial_breach`)
+
+Status: building on branch `atlas-nodes/spatial-breach` since 2026-11-16, chance node on `atlas-nodes/shared`.
 
 Reward: breach caches, and a 30% chance for every hull item dropped inside the open breach to be warped, carrying one modifier from another part's pool.
 
@@ -181,6 +197,8 @@ Notables:
 
 ### Relay Network (`relay_network`)
 
+Status: building on branch `atlas-nodes/relay-network` since 2026-11-16, chance node on `atlas-nodes/shared`.
+
 Reward: each woken relay offers three pairs of a reward and a scar, both added to the stage's boss; the last stage's boss drops a unique.
 
 Change to the anomaly: a woken comm relay no longer shows every enemy fleet in the system; that reveal moves to the Full Array notable below. The comm relay keeps its wake condition and choice. Not built yet: it goes in `ChartRelays` (the reveal on wake), with the comm relay strings and the Relay Network section of `docs/docs.md` updated to match.
@@ -202,6 +220,8 @@ Notables:
 - Full Array: "Waking every relay in a system in your Star Charts reveals all enemy fleets in it on the map and minimap" (new). The reveal the comm relay gave on its own, using the same detection stats (`Stats.DETECTED_BY_PLAYER_RANGE_MULT` and the extended detected range), applied once the last relay wakes. With Extra Relay that means all four.
 
 ### Supply Convoy (`supply_convoy`)
+
+Status: building on branch `atlas-nodes/supply-convoy` since 2026-11-16, chance node on `atlas-nodes/shared`.
 
 Reward: infused feedstock in the cargo pods and the delivered cache.
 
@@ -234,6 +254,8 @@ Keystone:
 
 ### Anomalous Debris (`anomalous_debris`)
 
+Status: building on branch `atlas-nodes/anomalous-debris` since 2026-11-16, chance node on `atlas-nodes/shared`.
+
 Reward: an engram from each corrupted anomalous fleet beaten.
 
 Change to the anomaly: an anomalous fleet is 50% of the Star Chart Boss's fleet size before corruption, down from 110% (`DebrisRules.BOSS_SHARE`). Corruption and the nodes below scale from that. The debris fleets are called anomalous fleets everywhere, in these nodes and in game: the fleet's name ("Dormant Fleet" today, `chart.anomaly.anomalous_debris.fleet.name`) and the Engram Quantity line (`chart.modifier.CHART_ANOMALOUS_DEBRIS_CRAFTING_ITEM_QUANTITY_PERCENT`), in en and zh_CN. Not built yet.
@@ -265,6 +287,8 @@ Keystone:
 
 ### Excavation Sites (`excavation_sites`)
 
+Status: building on branch `atlas-nodes/excavation-sites` since 2026-11-16, chance node on `atlas-nodes/shared`.
+
 Reward: inhibitors, two from each full raid of a collapsed shaft and one from each open shaft's guardian fleet.
 
 Additional inhibitors raise the base count, before any quantity. Each fight or raid adds up the base and every "N additional inhibitors" line that applies to it, scales the total by every quantity the run has for it (the run's quantity of items found, its crafting item quantity and Inhibitor Quantity below), and rolls each inhibitor of the result as a random kind, so a large drop is a spread of kinds rather than many of one. A guardian fleet with 2 additional inhibitors drops a base of 3, which 100% increased quantity of items found or crafting item quantity doubles to 6. Change: today `ExcavationLoot.expectedInhibitors` reads only the site's own quantity line; it also reads the run's item and crafting item quantity (`ChartGenContext.dropMult(DropType.CRAFTING_ITEM)`, as convoy feedstock does), and the additional lines join `perShaft`. The random kind is `ExcavationLoot.tagInhibitors` as built.
@@ -292,6 +316,8 @@ More notables:
 
 ### Storm Front (`storm_front`)
 
+Status: off for now (2026-11-16).
+
 Reward: every non-unique hull item from a battle in the storm carries a biome modifier, and those battles drop 50% increased quantity of items.
 
 Small nodes:
@@ -307,6 +333,8 @@ Notables:
 
 ### Derelict Forge (`derelict_forge`)
 
+Status: off for now (2026-11-16).
+
 Reward: the forge's programs, run on a hull item of the player's choosing.
 
 Small nodes:
@@ -320,6 +348,8 @@ Notables:
 - Overclocked Forge: "Derelict Forges in your Star Charts can run 1 additional program" (`CHART_FORGE_RUNS`) and "Derelict Forge guards in your Star Charts have 50% increased fleet size".
 
 ### Depot (`listening_post`)
+
+Status: building on branch `atlas-nodes/depot` since 2026-11-16, chance node on `atlas-nodes/shared`.
 
 Reward: prototype hull items, each with its implicits replaced by one from its base's pool. Reaching the vault unseen picks one of three; after the alarm one is left at random.
 
@@ -341,6 +371,8 @@ Notables:
 
 ### Pre-Collapse Facility (`pre_collapse_facility`)
 
+Status: off for now (2026-11-16).
+
 Reward: Vaults of Knowledge databanks. Needs Ashes of the Domain: Vaults of Knowledge, and its nodes are hidden without it.
 
 Small nodes:
@@ -350,6 +382,8 @@ Small nodes:
 
 ### Coronal Hypershunt (`coronal_hypershunt`)
 
+Status: off for now (2026-11-16).
+
 Reward: the Omega fleet guarding it. Rare, never insertable by players and never within 15 cells of the Gateway. With no reward type of its own, it gets other effects later.
 
 Small nodes:
@@ -357,6 +391,8 @@ Small nodes:
 - The atlas chance node.
 
 ### Remnant Nexus (`remnant_nexus_station`)
+
+Status: off for now (2026-11-16).
 
 Reward: each hull item the station itself drops has one modifier overcharged, rolled 25% past its top value.
 
@@ -371,6 +407,8 @@ Notables:
 
 ### Domain-era Mothership (`domain_mothership`)
 
+Status: off for now (2026-11-16).
+
 Reward: none of its own (one was won't do, 2026-11-14), so it gets other effects later.
 
 Small nodes:
@@ -378,6 +416,8 @@ Small nodes:
 - The biome chance node (Derelict Graveyard).
 
 ### Abyssal Shipyard (`abyssal_shipyard`)
+
+Status: off for now (2026-11-16).
 
 Reward: the shipyard's salvage from RAT's drop groups, behind its heavy abyssal guard. Needs Random Assortment of Things, as do the two below, and the nodes are hidden without it.
 
@@ -387,6 +427,8 @@ Small nodes:
 
 ### Abyssal Storm (`abyssal_storm`)
 
+Status: off for now (2026-11-16).
+
 Reward: 30% increased quantity of items found in the system, while storms light up every fleet outside the fog.
 
 Small nodes:
@@ -395,6 +437,8 @@ Small nodes:
 - Abyssal Storm Items: "Your Star Charts with an Abyssal Storm have 10% increased quantity of items found" (new, joins its `effects` line).
 
 ### Abyssal Research Complex (`abyssal_research_complex`)
+
+Status: off for now (2026-11-16).
 
 Reward: Abyssal Infusion, which adds the Abyssal Rift modifier for a hull item's part once per run for 500 Nanite Feedstock.
 
