@@ -112,7 +112,7 @@ public class ExcavationSiteDialog extends PlanetSiteDialog {
                 && hasExcavationShips(PlayerFleet.orNull())) {
             descend(site);
         } else if (RAID_OPTION.equals(optionData) && standing && site.access() == ExcavationSite.Access.COLLAPSED) {
-            raid.launch(dialog(), run().tier(), site.seed() * 31L, this::objectives);
+            raid.launch(dialog(), run().tier(), ExcavationDeliveries.raidDifficultyMult(planet()), site.seed() * 31L, this::objectives);
         } else if (CONTINUE.equals(optionData)) {
             continueAfter(ExcavationSites.INSTANCE, planet());
         } else {

@@ -21,9 +21,13 @@ public final class ExcavationLoot {
     }
 
     public static CargoAPI raidCargo(ChartRun run, float share, Random random) {
+        return raidCargo(run, share, 0f, random);
+    }
+
+    static CargoAPI raidCargo(ChartRun run, float share, float deliveryPercent, Random random) {
         CargoAPI cargo = Global.getFactory().createCargo(true);
         ChartGenContext context = ChartRunEffects.contextOf(run);
-        float expectedInhibitors = expectedInhibitors(ExcavationRules.INHIBITORS_PER_RAID, context, share);
+        float expectedInhibitors = expectedInhibitors(ExcavationRules.INHIBITORS_PER_RAID, context, share, deliveryPercent);
         tagInhibitors(expectedInhibitors, bandShift(context, run.tier()), random).forEach((itemId, quantity) -> MaterialItems.add(cargo, itemId, quantity));
         return cargo;
     }
@@ -37,7 +41,12 @@ public final class ExcavationLoot {
     }
 
     static float expectedInhibitors(float perShaft, ChartGenContext context, float share) {
-        return perShaft * Math.max(0f, quantityMult(context)) * Math.max(0f, share);
+        return expectedInhibitors(perShaft, context, share, 0f);
+    }
+
+    static float expectedInhibitors(float perShaft, ChartGenContext context, float share, float deliveryPercent) {
+        float increased = ChartGenContext.orNone(context).anomalyPercent(ExcavationSites.LOOT_KEY) + deliveryPercent;
+        return perShaft * Math.max(0f, 1f + increased / ExcavationDeliveries.PERCENT) * Math.max(0f, share);
     }
 
     static Map<String, Integer> tagInhibitors(float expectedCount, float bandShift, Random random) {
@@ -53,7 +62,8 @@ public final class ExcavationLoot {
         if (!ExcavationFleets.isExcavationFleet(fleet)) {
             return null;
         }
-        Map<String, Integer> inhibitors = tagInhibitors(expectedInhibitors(ExcavationRules.INHIBITORS_PER_GUARDIAN_FLEET, context, share),
+        Map<String, Integer> inhibitors = tagInhibitors(expectedInhibitors(ExcavationRules.INHIBITORS_PER_GUARDIAN_FLEET, context, share,
+                        ExcavationDeliveries.lootPercent(fleet)),
                 bandShift(context, chartTier), random);
         return inhibitors.isEmpty() ? null : new ItemDrops.SiteLoot(List.of(), List.of(), inhibitors);
     }

@@ -16,7 +16,6 @@ import exiledsector.charts.content.ChartAnomalyFleets;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTier;
-import exiledsector.charts.loot.DropType;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.Random;
@@ -42,7 +41,7 @@ final class ConvoyFleets {
     static boolean spawn(AnomalyContentSite site, ConvoyState convoy, String convoyFactionId, FleetEventListener convoyListener, Random random) {
         ChartGenContext context = site.context();
         ChartTier tier = ChartAnomalyFleets.tier(site.tier(), context);
-        float escortMult = context.anomalyMult(SupplyConvoy.ESCORT_KEY);
+        float escortMult = ConvoyRules.escortMult(context.anomalyPercent(SupplyConvoy.ESCORT_KEY), context.anomalyPercent(SupplyConvoy.FLEET_SIZE_KEY));
         StarSystemAPI system = site.system();
         SectorEntityToken entry = system.createToken(convoy.entryX(), convoy.entryY());
         convoy.placeTokens(entry, system.createToken(convoy.exitX(), convoy.exitY()));
@@ -61,11 +60,19 @@ final class ConvoyFleets {
         convoy.countCivilianOnly(civilianOnly);
         convoy.loadCargo(freighterPoints, ConvoyRules.cargoSteps(freighterPoints, context.anomalyMult(SupplyConvoy.CARGO_KEY)),
                 ConvoyRules.itemChanceMult(site.tier(), context.anomalyMult(SupplyConvoy.CARGO_KEY)));
-        convoy.loadFeedstock(ConvoyFeedstock.roll(site.tier(), context.dropMult(DropType.CRAFTING_ITEM) * context.anomalyMult(SupplyConvoy.CARGO_KEY),
+        convoy.loadFeedstock(ConvoyFeedstock.roll(site.tier(), FeedstockBonus.rollMult(context), FeedstockOdds.of(context),
                 Seeds.derived(convoy.cargoSeed(), FEEDSTOCK_SALT)));
+        if (huntsFromTheStart(context)) {
+            convoy.markHostile();
+            ConvoyHostility.makeHostile(fleet);
+        }
         fleet.addAssignment(FleetAssignment.ORBIT_PASSIVE, entry, ChartContentGenerator.ASSIGNMENT_DAYS);
         fleet.addEventListener(convoyListener);
         return true;
+    }
+
+    static boolean huntsFromTheStart(ChartGenContext context) {
+        return ChartGenContext.orNone(context).anomalyPercent(SupplyConvoy.HOSTILE_KEY) > 0f;
     }
 
     static void dress(CampaignFleetAPI fleet, ConvoyState convoy, String convoyFactionId) {

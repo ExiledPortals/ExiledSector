@@ -4,6 +4,8 @@ import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import exiledsector.charts.ChartTables;
+import exiledsector.charts.effect.ChartModifier;
+import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.items.InfusedFeedstock;
 import org.json.JSONArray;
@@ -11,6 +13,7 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -84,24 +87,92 @@ class ConvoyFeedstockTest {
 
         assertEquals(1, problems.size());
         assertEquals(0f, ConvoyFeedstock.sharedAmount("exiledSector_nanite_feedstock", 1), 0.001f);
-        assertEquals(Set.of(THREAT), ConvoyFeedstock.roll(1, 1f, new Random(1L)).keySet());
+        assertEquals(Set.of(THREAT), ConvoyFeedstock.roll(1, 1f, FeedstockOdds.EVEN, new Random(1L)).keySet());
     }
 
     @Test
-    void eachFeedstockRollsWithinFifteenPercentOfTheSharedAmountAndScalesWithTheQuantityLines() throws Exception {
+    void aConvoyCarriesOneKindHoldingThreeSharedAmountsWithinFifteenPercentScaledByTheQuantityLines() throws Exception {
         registerAll("150", "1000");
-        boolean anyUneven = false;
-        for (long seed = 0; seed < 200; seed++) {
-            Map<String, Float> rolled = ConvoyFeedstock.roll(8, 2f, new Random(seed));
-            assertEquals(Set.of(THREAT, SHROUD, PHASE), rolled.keySet());
-            for (float amount : rolled.values()) {
-                assertTrue(amount >= 575f * 2f * (1f - ConvoyFeedstock.SPREAD) - 0.01f, "rolled " + amount);
-                assertTrue(amount <= 575f * 2f * (1f + ConvoyFeedstock.SPREAD) + 0.01f, "rolled " + amount);
-            }
-            anyUneven |= new HashSet<>(rolled.values()).size() == 3;
+        Map<String, Integer> kindsRolled = new HashMap<>();
+        Random random = new Random(1L);
+        for (int roll = 0; roll < 300; roll++) {
+            Map<String, Float> rolled = ConvoyFeedstock.roll(8, 2f, FeedstockOdds.EVEN, random);
+            assertEquals(1, rolled.size());
+            float amount = rolled.values().iterator().next();
+            assertTrue(amount >= 3f * 575f * 2f * (1f - ConvoyFeedstock.SPREAD) - 0.01f, "rolled " + amount);
+            assertTrue(amount <= 3f * 575f * 2f * (1f + ConvoyFeedstock.SPREAD) + 0.01f, "rolled " + amount);
+            kindsRolled.merge(rolled.keySet().iterator().next(), 1, Integer::sum);
         }
-        assertTrue(anyUneven, "the three feedstocks roll independently");
-        assertEquals(0f, ConvoyFeedstock.roll(8, 0f, new Random(1L)).get(THREAT), 0.001f);
+        assertEquals(Set.of(THREAT, SHROUD, PHASE), kindsRolled.keySet());
+        kindsRolled.values().forEach(count -> assertTrue(count > 70, "each kind is about as likely, rolled " + kindsRolled));
+        assertEquals(0f, ConvoyFeedstock.roll(8, 0f, FeedstockOdds.EVEN, new Random(1L)).values().iterator().next(), 0.001f);
+    }
+
+    @Test
+    void reducingAKindsChanceMakesTheOthersLikelierAndReducingAllEquallyChangesNothing() throws Exception {
+        registerAll("150", "1000");
+        FeedstockOdds noThreat = new FeedstockOdds(Map.of(InfusedFeedstock.THREAT, 100f), false, 0f);
+        FeedstockOdds onlyPhase = new FeedstockOdds(Map.of(InfusedFeedstock.THREAT, 100f, InfusedFeedstock.SHROUD, 100f), false, 0f);
+        FeedstockOdds allReduced = new FeedstockOdds(Map.of(InfusedFeedstock.THREAT, 25f, InfusedFeedstock.SHROUD, 25f, InfusedFeedstock.PHASE, 25f), false, 0f);
+        for (long seed = 0; seed < 200; seed++) {
+            assertTrue(!ConvoyFeedstock.roll(8, 1f, noThreat, new Random(seed)).containsKey(THREAT));
+            assertEquals(Set.of(PHASE), ConvoyFeedstock.roll(8, 1f, onlyPhase, new Random(seed)).keySet());
+            assertEquals(ConvoyFeedstock.roll(8, 1f, FeedstockOdds.EVEN, new Random(seed)), ConvoyFeedstock.roll(8, 1f, allReduced, new Random(seed)));
+        }
+        assertEquals(0.75f, new FeedstockOdds(Map.of(InfusedFeedstock.SHROUD, 25f), false, 0f).weight(InfusedFeedstock.SHROUD), 0.001f);
+        assertEquals(1.1f, new FeedstockOdds(Map.of(InfusedFeedstock.SHROUD, -10f), false, 0f).weight(InfusedFeedstock.SHROUD), 0.001f);
+    }
+
+    @Test
+    void whenEveryKindIsRuledOutTheKindIsPickedEvenly() throws Exception {
+        registerAll("150", "1000");
+        FeedstockOdds none = new FeedstockOdds(Map.of(InfusedFeedstock.THREAT, 100f, InfusedFeedstock.SHROUD, 100f, InfusedFeedstock.PHASE, 100f), false, 0f);
+        Set<String> kinds = new HashSet<>();
+        Random random = new Random(1L);
+        for (int roll = 0; roll < 100; roll++) {
+            kinds.addAll(ConvoyFeedstock.roll(8, 1f, none, random).keySet());
+        }
+        assertEquals(Set.of(THREAT, SHROUD, PHASE), kinds);
+    }
+
+    @Test
+    void aMixedManifestSplitsTheTotalEquallyOverAllThreeKindsAndIgnoresTheChanceLines() throws Exception {
+        registerAll("150", "1000");
+        FeedstockOdds mixed = new FeedstockOdds(Map.of(InfusedFeedstock.THREAT, 100f), true, 0f);
+        Map<String, Float> rolled = ConvoyFeedstock.roll(8, 1f, mixed, new Random(3L));
+        float single = ConvoyFeedstock.roll(8, 1f, FeedstockOdds.EVEN, new Random(3L)).values().iterator().next();
+
+        assertEquals(Set.of(THREAT, SHROUD, PHASE), rolled.keySet());
+        rolled.values().forEach(amount -> assertEquals(rolled.get(THREAT), amount, 0.001f));
+        assertEquals(3f * 575f, ConvoyFeedstock.total(rolled), 3f * 575f * ConvoyFeedstock.SPREAD + 0.01f);
+        assertTrue(single > 0f);
+    }
+
+    @Test
+    void aDuplicationRollDoublesTheFeedstock() throws Exception {
+        registerAll("150", "1000");
+        for (long seed = 0; seed < 50; seed++) {
+            Map<String, Float> plain = ConvoyFeedstock.roll(8, 1f, FeedstockOdds.EVEN, new Random(seed));
+            Map<String, Float> doubled = ConvoyFeedstock.roll(8, 1f, new FeedstockOdds(Map.of(), false, 1f), new Random(seed));
+            assertEquals(plain.keySet(), doubled.keySet());
+            assertEquals(2f * ConvoyFeedstock.total(plain), ConvoyFeedstock.total(doubled), 0.01f);
+        }
+    }
+
+    @Test
+    void theOddsReadTheChartsLines() {
+        ChartGenContext context = ChartGenContext.of(List.of(
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_CONVOY_SHROUD_FEEDSTOCK_CHANCE_PERCENT, 35f),
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_CONVOY_DOUBLE_FEEDSTOCK_CHANCE_PERCENT, 25f),
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_CONVOY_MIXED_MANIFEST, 1f)));
+        FeedstockOdds odds = FeedstockOdds.of(context);
+
+        assertEquals(0.65f, odds.weight(InfusedFeedstock.SHROUD), 0.001f);
+        assertEquals(1f, odds.weight(InfusedFeedstock.THREAT), 0.001f);
+        assertEquals(0.25f, odds.doubleChance(), 0.001f);
+        assertTrue(odds.mixed());
+        assertEquals(FeedstockOdds.EVEN.mixed(), FeedstockOdds.of(null).mixed());
+        assertEquals(1f, FeedstockOdds.of(null).weight(InfusedFeedstock.PHASE), 0.001f);
     }
 
     @Test
@@ -155,6 +226,8 @@ class ConvoyFeedstockTest {
             assertTrue(specialItemIds.contains(feedstock.itemId()), feedstock.itemId() + " needs a special_items.csv row");
         }
         assertTrue(ConvoyCargo.manifestKeys(4).contains(ConvoyCargo.CATEGORY_KEY_PREFIX + "feedstock"));
+        assertTrue(ConvoyCargo.manifestKeys(4, Set.of(SHROUD)).contains(ConvoyCargo.CATEGORY_KEY_PREFIX + "feedstock.shroud"));
+        assertTrue(ConvoyCargo.manifestKeys(4, Set.of(SHROUD, PHASE)).contains(ConvoyCargo.CATEGORY_KEY_PREFIX + "feedstock"));
     }
 
     private static boolean isItem(SpecialItemData data, String itemId) {

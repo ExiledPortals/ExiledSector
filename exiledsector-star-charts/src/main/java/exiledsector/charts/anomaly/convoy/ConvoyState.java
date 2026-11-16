@@ -22,7 +22,7 @@ public final class ConvoyState {
     private final int index;
     private String fleetId;
     private final List<String> waypointIds;
-    private final String destinationId;
+    private String destinationId;
     private final float entryX;
     private final float entryY;
     private final float exitX;
@@ -39,6 +39,7 @@ public final class ConvoyState {
     private float deliveredShare;
     private CargoAPI cache;
     private boolean cacheTaken;
+    private boolean deliveredToExcavation;
     private int dropsRolled;
     private SectorEntityToken entryToken;
     private SectorEntityToken exitToken;
@@ -72,6 +73,11 @@ public final class ConvoyState {
 
     public String destinationId() {
         return destinationId;
+    }
+
+    void routeTo(String newDestinationId) {
+        destinationId = newDestinationId;
+        waypointIds.remove(newDestinationId);
     }
 
     float entryX() {
@@ -216,6 +222,14 @@ public final class ConvoyState {
 
     public boolean isCacheTaken() {
         return cacheTaken;
+    }
+
+    void markDeliveredToExcavation() {
+        deliveredToExcavation = true;
+    }
+
+    public boolean deliveredToExcavation() {
+        return deliveredToExcavation;
     }
 
     long nextDropSeed() {
