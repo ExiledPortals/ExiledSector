@@ -148,7 +148,7 @@ superior or subordinate, and a more renowned officer swaps ranks with their supe
 loses their territory and waits for a new command centre, and a Lieutenant dies on a second loss and is replaced. If
 you take a commission, that faction's officers hand their territories to other factions' officers.
 
-Each officer carries items, and beating one drops what they carry and offers three reward groups: your pick is what
+Each officer carries items, and beating one drops what they carry and offers three rewards: your pick is what
 they carry next time. Each defeat also gives their flagship a scar matching how your fleet fought it, plus a d-mod, up
 to five. Scars make the flagship stronger and raise its level, and the scar it has most of names the officer's
 epithet. An officer who loses a challenge to another gains a scar from the winner's faction.

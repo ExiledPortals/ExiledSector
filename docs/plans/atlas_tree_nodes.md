@@ -181,24 +181,24 @@ Notables:
 
 ### Relay Network (`relay_network`)
 
-Reward: each woken relay offers three pairs of a reward group and a scar, both added to the stage's boss; the last stage's boss drops a unique.
+Reward: each woken relay offers three pairs of a reward and a scar, both added to the stage's boss; the last stage's boss drops a unique.
 
 Change to the anomaly: a woken comm relay no longer shows every enemy fleet in the system; that reveal moves to the Full Array notable below. The comm relay keeps its wake condition and choice. Not built yet: it goes in `ChartRelays` (the reveal on wake), with the comm relay strings and the Relay Network section of `docs/docs.md` updated to match.
 
 Small nodes:
 
 - The chance node.
-- Relay Wake Cost: "25% reduced supply and heavy machinery cost to wake relays in your Star Charts" (`CHART_RELAY_COST_PERCENT`).
+- Relay Reward Rarity: "10% increased rarity of items from relay rewards in your Star Charts" (new). Item rarity applied to the items the boss drops for relay choices (`OfficerRewardDrop.roll`), on top of the chart's own rarity.
 
 Notables:
 
 - Forked Trace: "Completed Relay Network stages in your Star Charts move on to 2 systems" (new). The chain splits: each branch runs its own remaining stages and ends in its own unique. The network is a single chained record today (`AtlasAnomalyRecord`), so a fork needs a second record carrying the same stage.
 - Crowded Channel: "Relays in your Star Charts offer 1 additional choice".
-- Double Down: "Each relay choice in your Star Charts adds its reward group twice" and "Each relay choice in your Star Charts adds its scar twice".
+- Double Down: "Each relay choice in your Star Charts adds its reward twice" and "Each relay choice in your Star Charts adds an additional scar" (new). The additional scar is a different one, rolled like the offered scars (`Scars.withEffectsOn`), not a copy of the choice's own.
 - Extra Relay: "Relay Networks in your Star Charts have 1 additional relay" (new). The fourth relay is a second of a random type, woken the same way and offering its own choice, and all four must be woken for the network to move on. Never more than four relays.
-- Scar Collector: "Star Chart Bosses in your Star Charts drop 1 additional reward group for every 2 relay scars they carry" (new).
+- Scar Collector: "Star Chart Bosses in your Star Charts drop 1 additional reward for every 2 relay scars they carry" (new).
 - Early Echo: "Relay Network bosses in your Star Charts have 15% chance per stage to drop a unique" (new). Every stage's boss gets the chance, not only the last.
-- Shared Broadcast (Atlas officers): "Relay choices in your Star Charts also add their reward group and scar to a random Atlas officer" (new). The boss keeps both; the officer carries the reward group like any carried item and takes the scar on their flagship, so beating them later drops it.
+- Shared Broadcast (Atlas officers): "Relay choices in your Star Charts also add their rewards and scars to a random Atlas officer" (new). The boss keeps both; the officer carries the reward like any carried item and takes the scar on their flagship, so beating them later drops it.
 - Full Array: "Waking every relay in a system in your Star Charts reveals all enemy fleets in it on the map and minimap" (new). The reveal the comm relay gave on its own, using the same detection stats (`Stats.DETECTED_BY_PLAYER_RANGE_MULT` and the extended detected range), applied once the last relay wakes. With Extra Relay that means all four.
 
 ### Supply Convoy (`supply_convoy`)
