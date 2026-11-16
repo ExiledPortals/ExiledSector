@@ -267,31 +267,29 @@ public class BreachTerrainPlugin extends ChartAnomalyTerrain {
         if (fleet == null || !fleet.isPlayerFleet() || fleet.getLocation() == null) {
             return;
         }
-        float intensity = BreachRules.intensity(Misc.getDistance(entity.getLocation(), fleet.getLocation()) - fleet.getRadius(), radius);
-        if (intensity <= 0f) {
+        if (!BreachRules.inside(Misc.getDistance(entity.getLocation(), fleet.getLocation()) - fleet.getRadius(), radius)) {
             return;
         }
-        raiseSupplyUse(fleet, intensity, getTerrainName());
-        drainFuel(fleet, intensity, days);
+        raiseSupplyUse(fleet, getTerrainName());
+        drainFuel(fleet, days);
     }
 
-    private static void raiseSupplyUse(CampaignFleetAPI fleet, float intensity, String source) {
+    private static void raiseSupplyUse(CampaignFleetAPI fleet, String source) {
         if (fleet.getFleetData() == null) {
             return;
         }
-        float percent = BreachRules.supplyUsePercent(intensity);
         for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
             if (member.getBuffManager() != null) {
-                member.getBuffManager().addBuffOnlyUpdateStat(new BreachSupplyBuff(SUPPLY_BUFF_ID, percent, source, MOD_DAYS));
+                member.getBuffManager().addBuffOnlyUpdateStat(new BreachSupplyBuff(SUPPLY_BUFF_ID, BreachRules.SUPPLY_USE_PERCENT, source, MOD_DAYS));
             }
         }
     }
 
-    private static void drainFuel(CampaignFleetAPI fleet, float intensity, float days) {
+    private static void drainFuel(CampaignFleetAPI fleet, float days) {
         if (fleet.getLogistics() == null || fleet.getCargo() == null) {
             return;
         }
-        float fuel = fleet.getLogistics().getFuelCostPerLightYear() * BreachRules.FUEL_LIGHT_YEARS_PER_DAY * intensity * days;
+        float fuel = fleet.getLogistics().getFuelCostPerLightYear() * BreachRules.FUEL_LIGHT_YEARS_PER_DAY * days;
         float held = fleet.getCargo().getFuel();
         if (fuel > 0f && held > 0f) {
             fleet.getCargo().removeFuel(Math.min(fuel, held));

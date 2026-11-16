@@ -13,7 +13,7 @@ The breach is a custom terrain field that starts small and grows each day to a m
 
 Sensor range and burn level were reduced too until 2026-10-26, when they were dropped so the breach stays a logistics squeeze rather than a slog.
 
-All of these get stronger toward the core. Visuals borrow from vanilla hyperspace storms and abyssal hyperspace.
+Both are the same strength everywhere inside the breach (until 2026-11-16 they got stronger toward the core). Visuals borrow from vanilla hyperspace storms and abyssal hyperspace.
 
 ## Breach caches and the core
 

@@ -18,7 +18,7 @@ Shapes:
 
 - Chance to hold an anomaly, added as percentage points: "Your Star Charts have +4% chance to contain a Spatial Breach".
 - Change to an existing chance: "50% increased chance for Spatial Breaches in your Star Charts to...".
-- Guaranteed count: "Your Star Charts contain an additional Supply Convoy". Conditional count: "Your Star Charts that contain a Spatial Breach have 10% chance to contain an additional Spatial Breach". Fixed count: "Your Star Charts with Relay Networks always have four relays".
+- Guaranteed count: "Your Star Charts contain an additional Supply Convoy". Conditional count: "Your Star Charts that contain a Supply Convoy have 10% chance to contain an additional Supply Convoy". Fixed count: "Your Star Charts with Relay Networks always have four relays".
 - Quantity: "N% increased quantity of items found in breach caches in your Star Charts", "N% increased quantity of hull items dropped by Supply Convoys in your Star Charts".
 - Property of an anomaly's part: "Spatial Breaches in your Star Charts have 20% increased maximum radius", "Spatial Breaches in your Star Charts stay open 30 additional seconds before collapsing".
 - Time: "N% faster" and "N% slower" only when the value divides a time, and "N additional seconds" for flat time.
@@ -54,7 +54,7 @@ Increased effect of Star Chart modifiers scales every implicit and explicit modi
 
 The Atlas Tree makes every anomaly more rewarding or more likely to appear, one way or another. Each anomaly's nodes focus on the reward only it grants (`completed/anomalies/anomaly_rewards.md` and the anomaly's own plan): Excavation Sites on inhibitors, Supply Convoys on infused feedstock, and so on. They give more of the anomaly, more of its reward, or a change to how it grants it. An anomaly with no reward type of its own gets other effects instead. Each section names the reward, then lists small nodes, notables and, where one fits, a keystone. Nodes for an anomaly that needs a mod are hidden without it, as gated volumes are.
 
-An anomaly marker on an atlas system adds one more of that anomaly to the system where that makes sense: one more Spatial Breach, one more Anomalous Debris fleet. Anomalies where it doesn't keep today's rules, and their sections say so.
+An anomaly marker on an atlas system adds one more of that anomaly to the system where that makes sense, such as one more Anomalous Debris fleet. Anomalies where it doesn't keep today's rules, and their sections say so.
 
 ### Chance nodes
 
@@ -159,7 +159,7 @@ Keystone:
 
 Reward: breach caches, and a 30% chance for every hull item dropped inside the open breach to be warped, carrying one modifier from another part's pool.
 
-A system can hold more than one breach. A Spatial Breach marker on an atlas system adds one guaranteed breach to it. Today a system holds at most one: several need indexed cores, caches owned by their breach, spacing between breaches, and a `BreachTerrainPlugin.collapse` that removes only its own caches rather than every `CACHE_TAG` entity in the system (`completed/anomalies/spatial_breach_changes.md`).
+A chart holds at most one Spatial Breach, and a Spatial Breach marker on an atlas system doesn't add another. Its drains are the same strength everywhere inside it.
 
 Small nodes:
 
@@ -170,10 +170,14 @@ Small nodes:
 
 Notables:
 
-- Heavy Breach: the breach stays at full size for a while before it collapses (a hold phase in `BreachRules.Growth`).
-- Wide Tear: the breach opens to a larger maximum radius (a new radius line in `BreachRules`).
-- Hardened Hulls: the breach drains double the fuel and supplies, and 20% increased quantity of hull items found in breach caches (a drain line for `BreachSupplyBuff` and the fuel drain, and a hull item line scoped to breach caches).
-- Incursion: the breach spawns a guaranteed research station guarded by a fleet 110% of the boss fleet's size. The station drops what a vanilla research station would drop in the chart, with every chart line applied.
+- Heavy Breach: "Spatial Breaches in your Star Charts hold at full size for 30 seconds before collapsing" (a hold phase in `BreachRules.Growth`). You get more time at the outermost caches.
+- Drifting Tear: "Open Spatial Breaches in your Star Charts drift toward your fleet" and "Breach caches in your Star Charts hold 40% increased quantity of items" (new). You can't park at the edge, because the drain follows you.
+- Hyperspace Bleed: "Ships fighting inside Spatial Breaches in your Star Charts are struck by hyperspace lightning" and "Battles inside Spatial Breaches in your Star Charts drop 50% increased quantity of hull items" (new). The lightning hits both sides, like Pitch Black's vision penalty.
+- Rally Point: "50% increased chance for hull items dropped by fleets you defeat inside Spatial Breaches in your Star Charts to be warped" (new). The fleets charging the breach become the reward.
+- Incursion: "Spatial Breaches in your Star Charts reveal a research station guarded by a fleet 110% of the Star Chart Boss's size" (new). The station appears when the breach opens, at a random point inside its maximum radius rather than at the core. If the collapsing edge passes the guard fleet before you defeat it, the station and its guard disappear. The station drops what a vanilla research station would drop in the chart, with every chart line applied, and its drops can be warped like anything else inside the breach.
+- Event Horizon (Black Hole): "Spatial Breaches in your Star Charts with a Black Hole open around the hole" (new). The hole's derelicts then sit inside the breach, so their salvage can be warped as well as hold immutables.
+- Breach Wake (Anomalous Debris): "Dormant fleets in your Star Charts wake and charge Spatial Breaches as they open" and "Hull items dropped by dormant fleets defeated inside Spatial Breaches in your Star Charts are always warped" (new). Corrupting one first still gives its engram.
+- Rift Duel (Atlas officers): "Atlas officers' flagship fleets in your Star Charts charge Spatial Breaches as they open" and "Atlas officers you defeat inside a Spatial Breach in your Star Charts offer 1 additional item to pick from" (new). It brings the officer fight into the drain.
 
 ### Relay Network (`relay_network`)
 
@@ -407,5 +411,4 @@ Keystone:
 
 ## Open questions
 
-1. Spatial Breach Incursion: when the station appears, and whether it goes with the collapse.
-2. Which anomalies get a volume of their own and which share one: the tree plan's Volumes table groups the storm anomalies and gives Breach, Relay and Convoy their own, and the rest aren't placed yet.
+1. Which anomalies get a volume of their own and which share one: the tree plan's Volumes table groups the storm anomalies and gives Breach, Relay and Convoy their own, and the rest aren't placed yet.

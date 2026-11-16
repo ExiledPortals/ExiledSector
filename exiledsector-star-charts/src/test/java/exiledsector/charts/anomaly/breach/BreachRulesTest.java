@@ -53,20 +53,11 @@ class BreachRulesTest {
     }
 
     @Test
-    void effectsAreStrongestAtTheCoreAndStopOutsideTheField() {
-        assertEquals(1f, BreachRules.intensity(0f, 1000f));
-        assertEquals(BreachRules.EDGE_INTENSITY, BreachRules.intensity(1000f, 1000f), 0.001f);
-        assertEquals(0f, BreachRules.intensity(1001f, 1000f));
-        assertEquals(0f, BreachRules.intensity(10f, 0f));
-        assertTrue(BreachRules.intensity(200f, 1000f) > BreachRules.intensity(800f, 1000f));
-    }
-
-    @Test
-    void supplyUseRisesTowardTheCoreInWholeSteps() {
-        assertEquals(BreachRules.SUPPLY_USE_PERCENT, BreachRules.supplyUsePercent(1f));
-        assertEquals(25f, BreachRules.supplyUsePercent(BreachRules.EDGE_INTENSITY));
-        assertEquals(0f, BreachRules.supplyUsePercent(0f));
-        assertEquals(0f, BreachRules.supplyUsePercent(0.62f) % BreachRules.SUPPLY_USE_STEP);
+    void effectsApplyEverywhereInsideTheFieldAndStopOutsideIt() {
+        assertTrue(BreachRules.inside(0f, 1000f));
+        assertTrue(BreachRules.inside(1000f, 1000f));
+        assertFalse(BreachRules.inside(1001f, 1000f));
+        assertFalse(BreachRules.inside(10f, 0f));
     }
 
     @Test

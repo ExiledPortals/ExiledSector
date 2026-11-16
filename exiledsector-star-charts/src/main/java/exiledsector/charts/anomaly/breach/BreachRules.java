@@ -16,9 +16,7 @@ public final class BreachRules {
     static final float COLLAPSE_SECONDS = 60f;
     static final float TRIGGER_REACH = 150f;
     static final float MIN_GROWTH_MULT = 0.1f;
-    static final float EDGE_INTENSITY = 0.25f;
     static final float SUPPLY_USE_PERCENT = 100f;
-    static final float SUPPLY_USE_STEP = 5f;
     static final float FUEL_LIGHT_YEARS_PER_DAY = 0.5f;
     static final float BASE_CACHES = 2f;
     static final float CACHES_PER_TIER = 1f / 3f;
@@ -75,16 +73,8 @@ public final class BreachRules {
         return distance <= Math.max(0f, fleetRadius) + TRIGGER_REACH;
     }
 
-    static float intensity(float distance, float radius) {
-        if (radius <= 0f || distance > radius) {
-            return 0f;
-        }
-        float depth = 1f - Math.max(0f, distance) / radius;
-        return EDGE_INTENSITY + (1f - EDGE_INTENSITY) * depth;
-    }
-
-    static float supplyUsePercent(float intensity) {
-        return Math.round(SUPPLY_USE_PERCENT * Math.max(0f, Math.min(1f, intensity)) / SUPPLY_USE_STEP) * SUPPLY_USE_STEP;
+    static boolean inside(float distance, float radius) {
+        return radius > 0f && distance <= radius;
     }
 
     static int cacheCount(int tier, float cacheMult) {
