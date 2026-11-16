@@ -8,6 +8,10 @@ They are estimates for balancing, not measurements.
 - `chart_catalysts.csv`: Atlas Catalysts.
 - `chart_loot_model.js`: the model that writes all three; run `node docs/analysis/chart_loot/chart_loot_model.js` (about a minute).
   Its tier table, drop rates, site rows and modifier rolls are copied from the data files, so update them there first when those change.
+- `rarity_band_model.js`: crafting drops under `docs/plans/rarity_drop_bands.md` against today's, read straight from the data files; run
+  `node docs/analysis/chart_loot/rarity_band_model.js`. It writes `rarity_band_tiers.csv` (totals at the planned rate, Augmentation, Corrupted, the unique band and
+  Immutable, common share), `rarity_band_items.csv` (each item at tiers 1, 8 and 15) and `rarity_band_outside.csv` (a 300 DP fight at player level 1 and the level cap
+  outside charts).
 
 Columns:
 

@@ -1,0 +1,13 @@
+item,band,today,plan_level_1,plan_level_15
+augmentation,common,0.450,0.567,1.133
+fundamental,common,0.300,0.083,0.166
+reshaping,common,0.150,0.566,1.132
+corrupted,rare,0.045,0.285,0.570
+metamorph,rare,0.012,0.062,0.125
+annulment,unique,0.009,0.030,0.060
+tuning,unique,0.009,0.030,0.060
+immutable,unique,0.006,0.023,0.046
+replicator,mythic,0.001,0.005,0.011
+prefix,unique,0.006,0.023,0.046
+suffix,unique,0.006,0.023,0.046
+total,,0.994,1.697,3.395
