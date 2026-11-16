@@ -9,7 +9,6 @@ import org.json.JSONException;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -29,10 +28,6 @@ public final class BattleLootRates {
             per100DeploymentPoints = Math.max(0f, per100DeploymentPoints);
             curve = curve == null ? LootCurve.LINEAR : curve;
             difficultyScaling = Math.max(0f, difficultyScaling);
-        }
-
-        public Rate(String drop, float per100DeploymentPoints, LootCurve curve) {
-            this(drop, per100DeploymentPoints, curve, 1f);
         }
 
         public float difficulty(float difficultyMultiplier) {
@@ -75,10 +70,6 @@ public final class BattleLootRates {
 
     public static Rate rate(String drop) {
         return RATES.get().get(drop);
-    }
-
-    public static List<Rate> all() {
-        return List.copyOf(RATES.get().values());
     }
 
     public static float difficulty(float difficultyMultiplier) {

@@ -10,6 +10,7 @@ import exiledsector.items.HullUpgradeEffectSource;
 import exiledsector.items.HullUpgradeLootSource;
 import exiledsector.items.HullUpgradesSetting;
 import exiledsector.items.Subroutine;
+import exiledsector.loot.FleetDifficulties;
 import exiledsector.loot.LootSources;
 import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.npc.NpcTreeConfig;
@@ -72,11 +73,11 @@ class DomainSwitchesTest {
 
     @Test
     void withTheSkillTreeOffShipLevelsAreNotRatedSoLootFallsBackToDeploymentPoints() {
-        assertTrue(LootSources.shipLevelsRated());
+        assertTrue(FleetDifficulties.shipLevelsRated());
 
         SkillTreeSetting.setEnabledForTests(false);
 
-        assertFalse(LootSources.shipLevelsRated());
+        assertFalse(FleetDifficulties.shipLevelsRated());
     }
 
     @Test

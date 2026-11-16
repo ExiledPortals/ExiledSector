@@ -1,14 +1,13 @@
 package exiledsector.charts.officer.reward;
 
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.BiomeModifiers;
 import exiledsector.charts.loot.ChartDrops;
 import exiledsector.charts.loot.DropType;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.data.RandomRounding;
-import exiledsector.items.AffixLayout;
-import exiledsector.items.GrantedModifiers;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
@@ -69,9 +68,9 @@ public final class OfficerRewardDrop {
         long seed = random.nextLong();
         return switch (item.kind()) {
             case UNIQUE -> ItemData.rolled(definition, seed);
-            case BIOME_HULL_ITEM -> withBiomeModifier(ItemData.rolledAtTierWithRarity(definition, seed, runTier, rarity), definition, item.variant(), random);
+            case BIOME_HULL_ITEM -> BiomeModifiers.grant(ItemData.rolledAtTierWithRarity(definition, seed, runTier, rarity), item.variant(), random);
             case STAR_CHART -> {
-                int chartTier = OfficerRewardPool.chartTier(runTier);
+                int chartTier = ChartTiers.clampDropTier(runTier);
                 yield ItemData.rolledAtTier(chartAt(definition, chartTier, random), seed, chartTier);
             }
             default -> ItemData.rolledAtTierWithRarity(definition, seed, runTier, rarity);
@@ -84,13 +83,5 @@ public final class OfficerRewardDrop {
         }
         ItemDefinition replacement = ChartDrops.pickChartAtTier(random, runTier);
         return replacement == null ? definition : replacement;
-    }
-
-    private static ItemData withBiomeModifier(ItemData item, ItemDefinition definition, String biomeId, Random random) {
-        String modifierId = BiomeModifiers.modifierFor(biomeId, definition.kind());
-        if (modifierId == null || !GrantedModifiers.canGrant(definition, modifierId)) {
-            return item;
-        }
-        return GrantedModifiers.add(item, modifierId, AffixLayout.dropLimits(definition.type()), random);
     }
 }

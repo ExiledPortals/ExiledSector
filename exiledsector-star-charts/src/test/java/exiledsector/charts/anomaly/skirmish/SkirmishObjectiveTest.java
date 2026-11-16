@@ -115,7 +115,7 @@ class SkirmishObjectiveTest {
 
         assertTrue(ChartObjectives.fleetGone(sector, fleet(DEFENDER), FleetDespawnReason.DESTROYED_BY_BATTLE, battle(false)));
         assertTrue(run.isObjectiveComplete());
-        verify(credits, times(1)).add((float) ChartRewards.creditsFor(7));
+        verify(credits, times(1)).add((float) ChartRewards.creditsFor(7, 1f));
         SkirmishFlagships flagships = SkirmishFlagships.of(run);
         assertEquals(FlagshipFall.BEATEN_BY_PLAYER, flagships.attacker().fall());
         assertEquals(FlagshipFall.LOST_TO_RIVAL, flagships.defender().fall());

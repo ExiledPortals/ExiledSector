@@ -61,7 +61,7 @@ class SubroutineKindPoolsTest {
             for (ItemData item : ItemDrops.roll("derelict", random, ItemChances.of(1f), definition -> true)) {
                 dropped.add(item.definition().id());
             }
-            ItemDefinition sectionPick = ItemDrops.pickSectionItemBasic(ItemKind.SUBROUTINE, random);
+            ItemDefinition sectionPick = ItemDrops.pickBasicOfKind(ItemKind.SUBROUTINE, random);
             if (sectionPick != null) {
                 dropped.add(sectionPick.id());
             }

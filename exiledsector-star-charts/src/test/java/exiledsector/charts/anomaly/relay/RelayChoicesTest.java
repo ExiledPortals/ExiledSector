@@ -12,6 +12,7 @@ import exiledsector.ExiledSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.content.ChartContent;
+import exiledsector.charts.generation.ChartTiers;
 import exiledsector.items.CraftingDrops;
 import exiledsector.charts.officer.reward.CraftingTier;
 import exiledsector.charts.officer.reward.OfficerRewardTable;
@@ -81,7 +82,7 @@ class RelayChoicesTest {
     }
 
     private static RewardContext context() {
-        return new RewardContext(5, null, null, biomeId -> false, definition -> true, itemId -> true);
+        return new RewardContext(5, null, null, biomeId -> false, definition -> true, itemId -> true, ChartTiers.bandShift(5));
     }
 
     private static ChartRun wokenRun(String runId, RelayKind... woken) {

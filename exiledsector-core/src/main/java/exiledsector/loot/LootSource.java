@@ -6,7 +6,6 @@ import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import exiledsector.effects.TechMiningItemListener;
-import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 
@@ -23,10 +22,6 @@ public interface LootSource {
     }
 
     default void deliverBattleLoot(BattleLoot battle, CargoAPI playerCargo) {
-    }
-
-    default ItemChances itemChancesFor(CampaignFleetAPI fleet) {
-        return null;
     }
 
     default FleetLootRules fleetLootRules(CampaignFleetAPI fleet) {

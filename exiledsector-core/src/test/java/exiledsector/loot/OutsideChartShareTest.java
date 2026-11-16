@@ -36,9 +36,6 @@ class OutsideChartShareTest {
             mockSector.global.when(Global::getSettings).thenReturn(settings);
 
             assertEquals(0.75f, OutsideChartShare.current(), 1e-6f);
-            assertEquals(0.75f, FleetLootRules.REGULAR.share(), 1e-6f);
-            assertEquals(1f, FleetLootRules.full(LootMultipliers.NONE).share(), 1e-6f);
-            assertEquals(0f, FleetLootRules.FEEDSTOCK_ONLY.share(), 1e-6f);
         }
     }
 

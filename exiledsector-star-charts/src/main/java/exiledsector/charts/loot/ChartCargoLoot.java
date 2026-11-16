@@ -19,7 +19,8 @@ public final class ChartCargoLoot {
     private ChartCargoLoot() {
     }
 
-    public static ItemDrops.SiteLoot rollItems(SectorAPI sector, ChartRun run, ChartGenContext context, String siteId, float itemMult, Random random) {
+    private static ItemDrops.SiteLoot rollItems(SectorAPI sector, ChartRun run, ChartGenContext context, String siteId, float itemMult,
+                                                Random random) {
         if (!(itemMult > 0f)) {
             return ItemDrops.SiteLoot.NONE;
         }

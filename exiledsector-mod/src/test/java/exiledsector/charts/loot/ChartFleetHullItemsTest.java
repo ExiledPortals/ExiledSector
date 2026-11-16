@@ -1,5 +1,6 @@
 package exiledsector.charts.loot;
 
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
@@ -76,9 +77,9 @@ class ChartFleetHullItemsTest {
         try {
             ChartRun run = storeLiveRun(6);
 
-            ItemDrops.SiteLoot guardLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 80f), run,
+            ItemDrops.SiteLoot guardLoot = rollAlone(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 80f), run,
                     ChartGenContext.none(), 80f, new Random(1L));
-            ItemDrops.SiteLoot bossLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
+            ItemDrops.SiteLoot bossLoot = rollAlone(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
                     ChartGenContext.none(), 200f, new Random(1L));
 
             assertTrue(guardLoot.upgrades().isEmpty());
@@ -102,9 +103,9 @@ class ChartFleetHullItemsTest {
         try {
             ChartRun run = storeLiveRun(6);
 
-            ItemDrops.SiteLoot firstBattle = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
+            ItemDrops.SiteLoot firstBattle = rollAlone(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
                     ChartGenContext.none(), 100f, new Random(1L));
-            ItemDrops.SiteLoot secondBattle = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
+            ItemDrops.SiteLoot secondBattle = rollAlone(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
                     ChartGenContext.none(), 100f, new Random(1L));
 
             assertEquals(List.of("bridge_basic"), firstBattle.items().stream().map(ItemData::definitionId).toList());
@@ -131,20 +132,20 @@ class ChartFleetHullItemsTest {
             ChartGenContext lastStage = ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of("relay_network"))
                     .withExtraEffects(List.of(), true));
 
-            ItemDrops.SiteLoot guardLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 80f), run, lastStage, 80f,
+            ItemDrops.SiteLoot guardLoot = rollAlone(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 80f), run, lastStage, 80f,
                     new Random(1L));
-            ItemDrops.SiteLoot plainBossLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
+            ItemDrops.SiteLoot plainBossLoot = rollAlone(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
                     ChartGenContext.none(), 200f, new Random(1L));
-            ItemDrops.SiteLoot relaysAsleep = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, lastStage, 100f,
+            ItemDrops.SiteLoot relaysAsleep = rollAlone(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, lastStage, 100f,
                     new Random(1L));
             AnomalyState.of(run, RelayNetwork.ANOMALY_ID).put(RelayKind.NAV_BUOY.key(), RelayStates.WOKEN);
             AnomalyState.of(run, RelayNetwork.ANOMALY_ID).put(RelayKind.COMM_RELAY.key(), RelayStates.WOKEN);
-            ItemDrops.SiteLoot oneRelayAsleep = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, lastStage, 100f,
+            ItemDrops.SiteLoot oneRelayAsleep = rollAlone(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, lastStage, 100f,
                     new Random(1L));
             AnomalyState.of(run, RelayNetwork.ANOMALY_ID).put(RelayKind.SENSOR_ARRAY.key(), RelayStates.WOKEN);
-            ItemDrops.SiteLoot firstBattle = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, lastStage, 100f,
+            ItemDrops.SiteLoot firstBattle = rollAlone(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, lastStage, 100f,
                     new Random(1L));
-            ItemDrops.SiteLoot secondBattle = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, lastStage, 100f,
+            ItemDrops.SiteLoot secondBattle = rollAlone(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, lastStage, 100f,
                     new Random(1L));
 
             assertTrue(guardLoot.items().stream().noneMatch(item -> "site_relic".equals(item.definitionId())));
@@ -176,7 +177,7 @@ class ChartFleetHullItemsTest {
             ChartGenContext guaranteed = ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of())
                     .withExtraEffects(List.of(), true));
 
-            ItemDrops.SiteLoot bossLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, guaranteed, 100f,
+            ItemDrops.SiteLoot bossLoot = rollAlone(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, guaranteed, 100f,
                     new Random(1L));
 
             assertEquals(1, bossLoot.items().stream().filter(item -> "site_relic".equals(item.definitionId())).count());
@@ -192,5 +193,11 @@ class ChartFleetHullItemsTest {
         run.recordArrival();
         ChartRuns.store(run);
         return run;
+    }
+
+    private static ItemDrops.SiteLoot rollAlone(SectorAPI sector, CampaignFleetAPI fleet, ChartRun run, ChartGenContext context,
+                                                float defeatedDeploymentPoints, Random random) {
+        return ChartFleetLoot.roll(sector, fleet, run, context, defeatedDeploymentPoints, ChartFleetLoot.Battle.of(defeatedDeploymentPoints), 1f,
+                random);
     }
 }

@@ -73,7 +73,7 @@ class ItemDropsTest {
         Random random = new Random(11L);
         int hits = 0;
         for (int i = 0; i < TRIALS; i++) {
-            if (test.test(HullItemDrops.rollSectionItemLoot(site, random, mult).items())) {
+            if (test.test(HullItemDrops.rollHullItemLoot(site, random, ItemChances.of(mult), 1f).items())) {
                 hits++;
             }
         }
@@ -132,7 +132,7 @@ class ItemDropsTest {
     void basicDrawsNeverPickAUniqueAndUniqueDrawsOnlyPickUniques() {
         Random random = new Random(5L);
         for (int i = 0; i < 200; i++) {
-            assertEquals(MILITARY, ItemDrops.pickSectionItemBasic(ItemKind.BRIDGE, random).id());
+            assertEquals(MILITARY, ItemDrops.pickBasicOfKind(ItemKind.BRIDGE, random).id());
             assertEquals("relic", ItemDrops.pickUnique(random, definition -> true).id());
         }
     }
@@ -171,12 +171,12 @@ class ItemDropsTest {
         try (MockedStatic<LunaSettings> luna = Mockito.mockStatic(LunaSettings.class)) {
             luna.when(() -> LunaSettings.getBoolean("exiledSector", SalvageSiteCompat.DROPS_FIELD_ID)).thenReturn(true);
             assertTrue(ItemDrops.hasRule("rat_abyss_research"));
-            assertEquals(1, HullItemDrops.rollSectionItemLoot("rat_abyss_research", new Random(1L), 1f).items().size());
+            assertEquals(1, HullItemDrops.rollHullItemLoot("rat_abyss_research", new Random(1L), ItemChances.BASE, 1f).items().size());
             assertEquals(0.25, basicShare("probe", 1f, items -> !items.isEmpty()), 0.02);
 
             luna.when(() -> LunaSettings.getBoolean("exiledSector", SalvageSiteCompat.DROPS_FIELD_ID)).thenReturn(false);
             assertFalse(ItemDrops.hasRule("rat_abyss_research"));
-            assertTrue(HullItemDrops.rollSectionItemLoot("rat_abyss_research", new Random(1L), 1f).items().isEmpty());
+            assertTrue(HullItemDrops.rollHullItemLoot("rat_abyss_research", new Random(1L), ItemChances.BASE, 1f).items().isEmpty());
             assertTrue(ItemDrops.hasRule("probe"));
         }
     }
@@ -259,10 +259,10 @@ class ItemDropsTest {
     @Test
     void aSitesCraftingItemsComeFromTheDropTableWithoutTheChartOnlyOnes() {
         List<Map<String, Integer>> station = materials("station", 1f);
-        double share = ItemDrops.KERNEL_CHANCE_SHARE;
+        double share = ItemDrops.CRAFTING_ITEM_SHARE;
 
-        assertEquals(share, averageKernels(station), 0.02);
-        assertEquals(0.5 * share, averageKernels(materials("probe", 1f)), 0.02);
+        assertEquals(share, averageCraftingItems(station), 0.02);
+        assertEquals(0.5 * share, averageCraftingItems(materials("probe", 1f)), 0.02);
         assertEquals(share * dropShare(Nanoswarm.AUGMENTATION.itemId()), averageCount(station, Nanoswarm.AUGMENTATION.itemId()), 0.02);
         assertEquals(share * dropShare(Nanoswarm.CORRUPTION.itemId()), averageCount(station, Nanoswarm.CORRUPTION.itemId()), 0.01);
         assertEquals(share * dropShare(CraftingInhibitor.PREFIX.itemId()), averageCount(station, CraftingInhibitor.PREFIX.itemId()), 0.01);
@@ -278,20 +278,20 @@ class ItemDropsTest {
         }
         List<Map<String, Integer>> unshifted = materials("station", 1f);
 
-        assertEquals(averageKernels(unshifted), averageKernels(shifted), 0.02);
+        assertEquals(averageCraftingItems(unshifted), averageCraftingItems(shifted), 0.02);
         assertTrue(averageCount(shifted, Nanoswarm.CORRUPTION.itemId()) > 1.5 * averageCount(unshifted, Nanoswarm.CORRUPTION.itemId()));
         assertTrue(averageCount(shifted, Nanoswarm.AUGMENTATION.itemId()) < averageCount(unshifted, Nanoswarm.AUGMENTATION.itemId()));
     }
 
-    private static double averageKernels(List<Map<String, Integer>> rolls) {
-        return rolls.stream().mapToInt(ItemDropsTest::kernelCount).average().orElse(0);
+    private static double averageCraftingItems(List<Map<String, Integer>> rolls) {
+        return rolls.stream().mapToInt(ItemDropsTest::craftingItemCount).average().orElse(0);
     }
 
     private static double averageCount(List<Map<String, Integer>> rolls, String itemId) {
         return rolls.stream().mapToInt(roll -> roll.getOrDefault(itemId, 0)).average().orElse(0);
     }
 
-    private static int kernelCount(Map<String, Integer> roll) {
+    private static int craftingItemCount(Map<String, Integer> roll) {
         return roll.entrySet().stream().filter(entry -> CraftingDrops.covers(entry.getKey())).mapToInt(Map.Entry::getValue).sum();
     }
 
@@ -309,7 +309,7 @@ class ItemDropsTest {
         }
 
         assertEquals(0.0, materialShare(craftingItemOnly, roll -> roll.containsKey(ItemDisassembly.FEEDSTOCK_ITEM_ID)), 0.0);
-        assertEquals(2 * 0.5 * ItemDrops.KERNEL_CHANCE_SHARE, averageKernels(craftingItemOnly), 0.02);
+        assertEquals(2 * 0.5 * ItemDrops.CRAFTING_ITEM_SHARE, averageCraftingItems(craftingItemOnly), 0.02);
     }
 
     @Test

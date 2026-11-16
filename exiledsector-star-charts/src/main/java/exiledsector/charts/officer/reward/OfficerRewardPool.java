@@ -153,10 +153,6 @@ public final class OfficerRewardPool {
         };
     }
 
-    public static int chartTier(int runTier) {
-        return Math.min(runTier, ChartTiers.HIGHEST_DROP_TIER);
-    }
-
     private static boolean rollsAtAnyChartTier(ItemDefinition definition) {
         return IntStream.rangeClosed(ChartTiers.LOWEST_TIER, ChartTiers.HIGHEST_DROP_TIER).anyMatch(tier -> ItemTypes.rollsAtTier(definition, tier));
     }
@@ -226,7 +222,7 @@ public final class OfficerRewardPool {
 
     private static List<RewardCandidate> starCharts(RewardContext context) {
         return ItemDefinitions.ofType(ItemType.STAR_CHART).stream()
-                .filter(definition -> ItemDrops.isDroppable(definition) && ItemTypes.rollsAtTier(definition, chartTier(context.tier()))
+                .filter(definition -> ItemDrops.isDroppable(definition) && ItemTypes.rollsAtTier(definition, ChartTiers.clampDropTier(context.tier()))
                         && context.itemAllowed().test(definition))
                 .map(definition -> new RewardCandidate(CarriedItem.of(RewardKind.STAR_CHART, definition.id()), definition.rarity()))
                 .toList();

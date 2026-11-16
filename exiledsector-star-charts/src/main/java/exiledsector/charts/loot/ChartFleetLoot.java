@@ -187,10 +187,6 @@ public final class ChartFleetLoot {
         return fleetMemory != null && fleetMemory.getBoolean(ChartIds.fleetRunKey(run.runId())) ? run : null;
     }
 
-    public static ItemDrops.SiteLoot roll(SectorAPI sector, CampaignFleetAPI fleet, float defeatedDeploymentPoints, Random random) {
-        return roll(sector, fleet, defeatedDeploymentPoints, Battle.of(defeatedDeploymentPoints), random);
-    }
-
     public static ItemDrops.SiteLoot roll(SectorAPI sector, CampaignFleetAPI fleet, float defeatedDeploymentPoints, Battle battle, Random random) {
         if (!hasLootLedger(fleet)) {
             return ItemDrops.SiteLoot.NONE;
@@ -209,11 +205,6 @@ public final class ChartFleetLoot {
             quantityMult *= anomaly.battleLootMult(context);
         }
         return quantityMult;
-    }
-
-    static ItemDrops.SiteLoot roll(SectorAPI sector, CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, float defeatedDeploymentPoints,
-                                   Random random) {
-        return roll(sector, fleet, run, context, defeatedDeploymentPoints, Battle.of(defeatedDeploymentPoints), 1f, random);
     }
 
     static ItemDrops.SiteLoot roll(SectorAPI sector, CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, float defeatedDeploymentPoints,
@@ -330,7 +321,7 @@ public final class ChartFleetLoot {
         addRolled(items, RandomRounding.round(expected * chances.general(), random), ItemDrops::pickBasic, chances.rarity(), random);
         if (ItemDrops.hasDroppableBasic(ItemKind.SUBROUTINE)) {
             addRolled(items, RandomRounding.round(expected * chances.targeted(ItemKind.SUBROUTINE), random),
-                    picker -> ItemDrops.pickSectionItemBasic(ItemKind.SUBROUTINE, picker), chances.rarity(), random);
+                    picker -> ItemDrops.pickBasicOfKind(ItemKind.SUBROUTINE, picker), chances.rarity(), random);
         }
         items.addAll(ItemTypes.rollSalvage(random, expected * chances.general()));
         return items.isEmpty() ? ItemDrops.SiteLoot.NONE : new ItemDrops.SiteLoot(items, List.of(), Map.of());

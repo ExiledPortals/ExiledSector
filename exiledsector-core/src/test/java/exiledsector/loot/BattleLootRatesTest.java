@@ -27,16 +27,16 @@ class BattleLootRatesTest {
                 .put(row("odd", "1", "exponential"))
                 .put(row("negative", "-2", "")));
 
-        assertEquals(new BattleLootRates.Rate("swarm", 0.3f, LootCurve.LINEAR), BattleLootRates.rate("swarm"));
+        assertEquals(new BattleLootRates.Rate("swarm", 0.3f, LootCurve.LINEAR, 1f), BattleLootRates.rate("swarm"));
         assertEquals(LootCurve.DIMINISHING, BattleLootRates.rate("relic").curve());
         assertNull(BattleLootRates.rate("odd"));
-        assertEquals(new BattleLootRates.Rate("negative", 0f, LootCurve.LINEAR), BattleLootRates.rate("negative"));
+        assertEquals(new BattleLootRates.Rate("negative", 0f, LootCurve.LINEAR, 1f), BattleLootRates.rate("negative"));
     }
 
     @Test
     void aRateExpectsItsShareOfTheLootDeploymentPointsCurvedByTheWholeBattle() {
-        BattleLootRates.Rate linear = new BattleLootRates.Rate("swarm", 0.3f, LootCurve.LINEAR);
-        BattleLootRates.Rate diminishing = new BattleLootRates.Rate("relic", 1f, LootCurve.DIMINISHING);
+        BattleLootRates.Rate linear = new BattleLootRates.Rate("swarm", 0.3f, LootCurve.LINEAR, 1f);
+        BattleLootRates.Rate diminishing = new BattleLootRates.Rate("relic", 1f, LootCurve.DIMINISHING, 1f);
 
         assertEquals(3f, linear.expected(1000f, 1000f), 1e-4f);
         assertEquals(30f, diminishing.expected(4000f, 4f * LootCurve.KNEE_DEPLOYMENT_POINTS), 1e-3f);

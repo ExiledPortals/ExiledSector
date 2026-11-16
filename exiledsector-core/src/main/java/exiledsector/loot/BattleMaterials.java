@@ -18,7 +18,7 @@ public final class BattleMaterials {
 
     public void record(float deploymentPoints, float difficultyMultiplier, FleetLootRules rules) {
         if (deploymentPoints > 0f) {
-            losses.add(new Loss(deploymentPoints, difficultyMultiplier, rules == null ? FleetLootRules.REGULAR : rules));
+            losses.add(new Loss(deploymentPoints, difficultyMultiplier, rules == null ? FleetLootRules.LEVEL_SCALED : rules));
         }
     }
 
@@ -26,22 +26,23 @@ public final class BattleMaterials {
         float feedstock = 0f;
         for (Loss loss : losses) {
             FleetLootRules rules = loss.rules();
-            if (rules.paysNothing()) {
+            if (rules.kind() == FleetLootRules.Kind.SPENT) {
                 continue;
             }
-            float bonuses = rules.feedstockOnly() ? 1f : loss.difficultyMultiplier() * rules.multipliers().feedstockMult();
+            float bonuses = rules.kind() == FleetLootRules.Kind.FEEDSTOCK_ONLY ? 1f
+                    : loss.difficultyMultiplier() * rules.multipliers().feedstockMult();
             feedstock += loss.deploymentPoints() * ItemDrops.battleFeedstockPerDeploymentPoint() * bonuses;
         }
         return feedstock;
     }
 
-    public Map<String, Integer> rollMaterials(Random random) {
+    public Map<String, Integer> rollCraftingItems(float levelScaledShare, Random random) {
         float expectedCount = 0f;
         for (Loss loss : losses) {
             FleetLootRules rules = loss.rules();
-            if (!rules.sourceRollsMaterials()) {
-                expectedCount += CraftingDrops.expectedCount(loss.deploymentPoints() * rules.deploymentPointsMult()) * rules.share()
-                        * rules.multipliers().craftingItemMult();
+            if (rules.kind().rollsBattleCraftingItems()) {
+                expectedCount += CraftingDrops.expectedCount(loss.deploymentPoints() * rules.deploymentPointsMult())
+                        * rules.itemShare(levelScaledShare) * rules.multipliers().craftingItemMult();
             }
         }
         return CraftingDrops.roll(expectedCount * FoundItemQuantity.craftingItemMult(), CraftingDrops.OUTSIDE_CHARTS, CraftingDrops.NO_BAND_SHIFT,

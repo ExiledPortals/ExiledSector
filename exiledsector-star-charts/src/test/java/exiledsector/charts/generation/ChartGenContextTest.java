@@ -142,9 +142,9 @@ class ChartGenContextTest {
         ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_BOSS_STAR_CHART_PERCENT, 20f),
                 new AppliedEffect(ChartModifier.CHART_STAR_CHART_PERCENT, 30f)));
 
-        assertEquals(1.5f, context.bossStarChartMult(), TOLERANCE);
+        assertEquals(1.5f, context.bossStarChartMult(0f), TOLERANCE);
         assertEquals(1.3f, context.dropMult(DropType.STAR_CHART), TOLERANCE);
-        assertEquals(1f, ChartGenContext.none().bossStarChartMult(), TOLERANCE);
+        assertEquals(1f, ChartGenContext.none().bossStarChartMult(0f), TOLERANCE);
     }
 
     @Test
@@ -279,8 +279,7 @@ class ChartGenContextTest {
 
     @Test
     void theCompletionRewardScalesWithTheChart() {
-        assertEquals(ChartRewards.creditsFor(6), ChartRewards.creditsFor(6, 1f));
-        assertTrue(ChartRewards.creditsFor(6, 1.5f) > ChartRewards.creditsFor(6));
+        assertTrue(ChartRewards.creditsFor(6, 1.5f) > ChartRewards.creditsFor(6, 1f));
         assertEquals(0, ChartRewards.creditsFor(6, 1.5f) % 1000);
         assertEquals(0, ChartRewards.creditsFor(6, -1f));
     }

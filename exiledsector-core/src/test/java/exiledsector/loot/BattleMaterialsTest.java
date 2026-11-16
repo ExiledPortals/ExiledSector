@@ -53,38 +53,38 @@ class BattleMaterialsTest {
     @Test
     void aFeedstockOnlyFleetDropsBaseFeedstockAndNoMaterials() {
         BattleMaterials regular = new BattleMaterials();
-        regular.record(600f, 3f, FleetLootRules.REGULAR);
+        regular.record(600f, 3f, FleetLootRules.LEVEL_SCALED);
         BattleMaterials feedstockOnly = new BattleMaterials();
         feedstockOnly.record(600f, 3f, FleetLootRules.FEEDSTOCK_ONLY);
 
         assertEquals(3f * feedstockOnly.feedstock(), regular.feedstock(), 1e-4f);
-        assertEquals(Map.of(AUGMENTATION, 3), regular.rollMaterials(new Random(1L)));
-        assertTrue(feedstockOnly.rollMaterials(new Random(1L)).isEmpty());
+        assertEquals(Map.of(AUGMENTATION, 3), regular.rollCraftingItems(OutsideChartShare.current(), new Random(1L)));
+        assertTrue(feedstockOnly.rollCraftingItems(OutsideChartShare.current(), new Random(1L)).isEmpty());
     }
 
     @Test
     void craftingItemsIgnoreBattleDifficultyAndTheDiminishingCurve() {
         BattleMaterials hardBattle = new BattleMaterials();
-        hardBattle.record(10000f, 3f, FleetLootRules.full(LootMultipliers.NONE));
+        hardBattle.record(10000f, 3f, FleetLootRules.LEVEL_SCALED);
 
-        assertEquals(Map.of(AUGMENTATION, 100), hardBattle.rollMaterials(new Random(1L)));
+        assertEquals(Map.of(AUGMENTATION, 100), hardBattle.rollCraftingItems(1f, new Random(1L)));
     }
 
     @Test
     void aFleetWhoseLootIsSpentDropsNoFeedstockOrMaterials() {
         BattleMaterials spent = new BattleMaterials();
-        spent.record(200f, 3f, FleetLootRules.NONE);
+        spent.record(200f, 3f, FleetLootRules.SPENT);
 
         assertEquals(0f, spent.feedstock(), 1e-6f);
-        assertTrue(spent.rollMaterials(new Random(1L)).isEmpty());
+        assertTrue(spent.rollCraftingItems(OutsideChartShare.current(), new Random(1L)).isEmpty());
     }
 
     @Test
     void aFleetWhoseSourceRollsItsMaterialsDropsNothingHere() {
         BattleMaterials battle = new BattleMaterials();
-        battle.record(300f, 1f, new FleetLootRules(FleetLootRules.Rates.FULL, true, LootMultipliers.NONE, 1f));
+        battle.record(300f, 1f, FleetLootRules.ownLedger(LootMultipliers.NONE, 1f));
 
-        assertTrue(battle.rollMaterials(new Random(1L)).isEmpty());
+        assertTrue(battle.rollCraftingItems(OutsideChartShare.current(), new Random(1L)).isEmpty());
     }
 
     @Test

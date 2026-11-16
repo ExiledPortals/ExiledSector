@@ -86,7 +86,7 @@ public final class ExiledSectorSettings {
 
         itemsPage.header("exiledSector_craftingHeader", "settings.crafting.header");
         itemsPage.intSetting(ItemDrops.BATTLE_FEEDSTOCK_FIELD_ID, "settings.hullItems.battleFeedstock",
-                ItemDrops.DEFAULT_BATTLE_FEEDSTOCK_PER_100_DP, 0, ItemDrops.MAX_BATTLE_PARTS_PER_100_DP);
+                ItemDrops.DEFAULT_BATTLE_FEEDSTOCK_PER_100_DP, 0, ItemDrops.MAX_BATTLE_FEEDSTOCK_PER_100_DP);
         itemsPage.booleanSetting(CraftingMaterials.STORE_FIELD_ID, "settings.hullItems.storeMaterials", CraftingMaterials.DEFAULT_STORE);
     }
 

@@ -9,6 +9,7 @@ import exiledsector.loot.BattleLoot;
 import exiledsector.loot.FleetLossTally;
 import exiledsector.loot.LootSource;
 import exiledsector.loot.LootSources;
+import exiledsector.loot.OutsideChartShare;
 import exiledsector.loot.SiteFind;
 import org.apache.log4j.Logger;
 
@@ -63,8 +64,10 @@ public final class SkillTreeSchematicLootSource implements LootSource {
                 sources.add(new SkillTreeSchematicDrops.SourceLoss(fleetLoss.deploymentPoints(), fleetLoss.averageDifficulty(),
                         LootSources.fleetLootRules(fleetLoss.fleet())));
             }
+            float levelScaledShare = OutsideChartShare.current();
             for (SkillTreeSchematicDrops drop : SkillTreeSchematicDrops.values()) {
-                drops.addAll(Collections.nCopies(drop.rollBattle(sources, BattleItemDropSetting.multiplier(), battle.random()), drop.schematic()));
+                drops.addAll(Collections.nCopies(drop.rollBattle(sources, levelScaledShare, BattleItemDropSetting.multiplier(), battle.random()),
+                        drop.schematic()));
             }
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Rolling skill tree schematic battle drops failed", e);

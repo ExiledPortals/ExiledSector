@@ -13,11 +13,8 @@ import exiledsector.PlayerFleet;
 import exiledsector.Seeds;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
-import exiledsector.charts.effect.ChartEnemyShipEffects;
-import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.LootShaper;
-import exiledsector.charts.officer.OfficerFleets;
 import exiledsector.effects.ItemLootListener;
 import exiledsector.effects.TechMiningItemListener;
 import exiledsector.items.ItemChances;
@@ -30,12 +27,10 @@ import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.loot.BattleLoot;
 import exiledsector.loot.BattleLootRates;
-import exiledsector.loot.FleetDifficulty;
-import exiledsector.loot.FleetLevelRange;
+import exiledsector.loot.FleetDifficulties;
 import exiledsector.loot.FleetLootRules;
 import exiledsector.loot.LootMultipliers;
 import exiledsector.loot.LootSource;
-import exiledsector.loot.LootSources;
 import exiledsector.ui.cargo.MaterialDropAnnouncer;
 import org.apache.log4j.Logger;
 
@@ -44,7 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public final class StarChartLootSource implements LootSource, FleetDifficulty {
+public final class StarChartLootSource implements LootSource {
 
     public static final StarChartLootSource INSTANCE = new StarChartLootSource();
     static final long SALVAGE_SEED_SALT = 0x63686172746470L;
@@ -93,7 +88,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
                 continue;
             }
             for (FleetMemberAPI member : members) {
-                losses.highestDefeatedLevel = Math.max(losses.highestDefeatedLevel, LootSources.shipLevel(member));
+                losses.highestDefeatedLevel = Math.max(losses.highestDefeatedLevel, FleetDifficulties.shipLevel(member));
             }
         }
         if (engagement.defeatedDeploymentPoints() > 0f) {
@@ -183,16 +178,6 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
     }
 
     @Override
-    public ItemChances itemChancesFor(CampaignFleetAPI fleet) {
-        try {
-            return LootContexts.forFleet(fleet).itemChances();
-        } catch (RuntimeException e) {
-            LOG.error("[ExiledSector] Reading the item chances of a defeated fleet failed", e);
-            return LootContexts.global().itemChances();
-        }
-    }
-
-    @Override
     public FleetLootRules fleetLootRules(CampaignFleetAPI fleet) {
         try {
             ChartRun run = fleet == null ? null : ChartFleetLoot.liveRunOf(fleet);
@@ -200,7 +185,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
                 return null;
             }
             if (ChartFleetLoot.lootSpent(fleet)) {
-                return FleetLootRules.NONE;
+                return FleetLootRules.SPENT;
             }
             if (fleet.getMemoryWithoutUpdate().getBoolean(ChartIds.FEEDSTOCK_ONLY_MEMORY_KEY)) {
                 return FleetLootRules.FEEDSTOCK_ONLY;
@@ -211,7 +196,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
             ChartGenContext context = ChartRunEffects.contextOf(run);
             float battleLootMult = ChartFleetLoot.battleLootMult(anomaliesHoldingBattle(), context);
             LootMultipliers multipliers = BlackHoleHullItems.withBonusWherePlayerIs(context.lootMultipliers(battleLootMult, run.tier()));
-            FleetLootRules rules = new FleetLootRules(FleetLootRules.Rates.FULL, true, multipliers,
+            FleetLootRules rules = FleetLootRules.ownLedger(multipliers,
                     ChartFleetLoot.isBoss(fleet, run) ? context.bossSpoilsMult() : ChartFleetLoot.anomalyFleetLoot(fleet, run));
             return ChartFleetLoot.overchargesHullItems(fleet, run) ? rules.overchargingHullItems() : rules;
         } catch (RuntimeException e) {
@@ -338,31 +323,5 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
             LOG.error("[ExiledSector] Making a modifier of a salvaged item immutable failed", e);
             return item;
         }
-    }
-
-    @Override
-    public FleetLevelRange levelRange(MemoryAPI fleetMemory) {
-        return ChartTiers.fleetStrengthRangeFor(fleetMemory);
-    }
-
-    @Override
-    public String levelSeed(MemoryAPI fleetMemory) {
-        return ChartIds.fleetSeed(fleetMemory);
-    }
-
-    @Override
-    public String memberLevelSeed(MemoryAPI fleetMemory, FleetMemberAPI member) {
-        return OfficerFleets.flagshipTreeSeed(fleetMemory, member);
-    }
-
-    @Override
-    public int memberExtraLevels(MemoryAPI fleetMemory, FleetMemberAPI member) {
-        return OfficerFleets.flagshipExtraLevels(fleetMemory, member);
-    }
-
-    @Override
-    public List<String> grantedNodeIds(MemoryAPI fleetMemory) {
-        List<String> nodeIds = ChartEnemyShipEffects.grantedNodeIds(fleetMemory);
-        return nodeIds.isEmpty() ? null : nodeIds;
     }
 }

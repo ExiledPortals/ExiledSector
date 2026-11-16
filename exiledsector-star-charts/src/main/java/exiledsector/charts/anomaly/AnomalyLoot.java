@@ -1,17 +1,14 @@
 package exiledsector.charts.anomaly;
 
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.ChartCargoLoot;
-import exiledsector.charts.loot.ChartVanillaLoot;
 import exiledsector.charts.loot.DropType;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
-import exiledsector.items.ItemDrops;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,15 +45,5 @@ public record AnomalyLoot(String scope, String siteId, float baseSteps, float st
         float quantity = quantityMult(runContext);
         return ChartCargoLoot.roll(sector, run, leaning(runContext, leans), scope, siteId, steps(run.tier(), quantity) * share, items(quantity) * share,
                 random);
-    }
-
-    public ItemDrops.SiteLoot fleetItems(SectorAPI sector, ChartRun run, ChartGenContext context, List<DropType> leans, float share, Random random) {
-        return ChartCargoLoot.rollItems(sector, run, leaning(context, leans), siteId, items(quantityMult(context)) * share, random);
-    }
-
-    public void addVanillaDrops(CampaignFleetAPI fleet, ChartGenContext runContext, List<DropType> leans, int tier) {
-        ChartVanillaLoot.SiteDrops drops = ChartVanillaLoot.drops(scope, tier, steps(tier, quantityMult(runContext)), leaning(runContext, leans));
-        drops.random().forEach(fleet::addDropRandom);
-        drops.value().forEach(fleet::addDropValue);
     }
 }

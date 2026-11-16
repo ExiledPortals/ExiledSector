@@ -33,9 +33,9 @@ import exiledsector.skills.tags.ShipProfile;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.items.NpcItems;
 import exiledsector.items.MasterSchematic;
+import exiledsector.loot.FleetDifficulties;
 import exiledsector.loot.FleetFactions;
 import exiledsector.loot.FleetLevelRange;
-import exiledsector.loot.LootSources;
 import exiledsector.skills.npc.NpcNodeRange;
 
 import java.util.List;
@@ -142,24 +142,24 @@ public final class NpcFleetLeveller {
         static FleetLevelContext of(CampaignFleetAPI npcFleet, NpcLevelLimit levelLimit) {
             MemoryAPI fleetMemory = npcFleet.getMemoryWithoutUpdate();
             String fleetFactionId = FleetFactions.realFactionIdOf(npcFleet);
-            FleetLevelRange chartRange = LootSources.levelRange(fleetMemory);
+            FleetLevelRange chartRange = FleetDifficulties.levelRange(fleetMemory);
             NpcNodeRange chartLevels = NpcNodeRange.of(chartRange, ShipLevelConfig.maxLevel(), ShipLevelConfig.maxAllocatedNodesBesidesRoot());
-            String chartSeed = LootSources.levelSeed(fleetMemory);
+            String chartSeed = FleetDifficulties.levelSeed(fleetMemory);
             String seedPrefix = chartSeed != null ? CHART_SEED_PREFIX + chartSeed + "|"
                     : Global.getSector().getSeedString() + "|" + npcFleet.getId() + "|";
             return new FleetLevelContext(fleetMemory, chartSeed, seedPrefix, chartLevels != null ? List.of() : PlayerTreePower.current(),
                     chartLevels, chartRange == null || !MasterSchematic.required() ? 1f : chartRange.treeShare(), levelLimit, fleetFactionId,
-                    fleetFactionId == null ? null : NpcFactionVolumes.volumeFor(fleetFactionId), LootSources.grantedNodeIds(fleetMemory),
+                    fleetFactionId == null ? null : NpcFactionVolumes.volumeFor(fleetFactionId), FleetDifficulties.grantedNodeIds(fleetMemory),
                     NpcIntegratedNodes.averageSModsBeforeInflation(npcFleet));
         }
 
         NpcNodeRange chartLevelsFor(FleetMemberAPI member) {
             return chartLevels == null ? null
-                    : chartLevels.raisedBy(LootSources.memberExtraLevels(fleetMemory, member), ShipLevelConfig.maxAllocatedNodesBesidesRoot());
+                    : chartLevels.raisedBy(FleetDifficulties.memberExtraLevels(fleetMemory, member), ShipLevelConfig.maxAllocatedNodesBesidesRoot());
         }
 
         Random randomFor(FleetMemberAPI member, int memberIndex) {
-            String fixedMemberSeed = LootSources.memberLevelSeed(fleetMemory, member);
+            String fixedMemberSeed = FleetDifficulties.memberLevelSeed(fleetMemory, member);
             String memberSeedKey = chartSeed != null ? String.valueOf(memberIndex) : member.getId();
             return Seeds.random(fixedMemberSeed != null ? CHART_SEED_PREFIX + fixedMemberSeed : seedPrefix + memberSeedKey);
         }

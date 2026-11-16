@@ -4,7 +4,6 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.atlas.AtlasData;
 import exiledsector.charts.atlas.AtlasRuntime;
 import exiledsector.charts.atlas.AtlasUnlocks;
-import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.items.ItemDefinition;
@@ -15,16 +14,7 @@ import java.util.function.Predicate;
 public record RewardContext(int tier, String factionId, String commandCentreBiomeId, Predicate<String> biomeOpen,
                             Predicate<ItemDefinition> itemAllowed, Predicate<String> craftingItemAllowed, float craftingBandShift) {
 
-    public RewardContext(int tier, String factionId, String commandCentreBiomeId, Predicate<String> biomeOpen,
-                         Predicate<ItemDefinition> itemAllowed, Predicate<String> craftingItemAllowed) {
-        this(tier, factionId, commandCentreBiomeId, biomeOpen, itemAllowed, craftingItemAllowed, ChartTiers.bandShift(tier));
-    }
-
-    public static RewardContext forSector(SectorAPI sector, int tier, String factionId, String commandCentreBiomeId) {
-        return forSector(sector, tier, factionId, commandCentreBiomeId, ChartTiers.bandShift(tier));
-    }
-
-    private static RewardContext forSector(SectorAPI sector, int tier, String factionId, String commandCentreBiomeId, float craftingBandShift) {
+    public static RewardContext forSector(SectorAPI sector, int tier, String factionId, String commandCentreBiomeId, float craftingBandShift) {
         AtlasUnlocks unlocks = AtlasData.unlocksFor(sector);
         return new RewardContext(tier, factionId, commandCentreBiomeId, biomeId -> AtlasData.regionOpen(biomeId, unlocks), itemAllowedIn(sector),
                 craftingItemAllowedIn(sector), craftingBandShift);

@@ -24,8 +24,8 @@ import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemTypes;
 import exiledsector.items.StarChartCipher;
+import exiledsector.loot.FleetDifficulties;
 import exiledsector.loot.LootMultipliers;
-import exiledsector.loot.LootSources;
 import exiledsector.skills.skilleffect.logistics.FoundItemQuantity;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -298,7 +298,7 @@ public final class ChartDrops {
         if (defeatedDpTier == NO_TIER) {
             return NO_TIER;
         }
-        return LootSources.shipLevelsRated() ? ChartTiers.tierForLevel(highestDefeatedLevel) : defeatedDpTier;
+        return FleetDifficulties.shipLevelsRated() ? ChartTiers.tierForLevel(highestDefeatedLevel) : defeatedDpTier;
     }
 
     public static Loot forSalvage(SectorAPI sector, LocationAPI salvageLocation, Random random) {

@@ -568,6 +568,10 @@ public final class ChartGenContext {
         return multiplier(totalDropPercent(type));
     }
 
+    public float extraDropShare(DropType type) {
+        return Math.max(0f, dropMult(type) - 1f);
+    }
+
     public float rewardDropMult(DropType type) {
         return multiplier(rewardPercent + totalDropPercent(type));
     }
@@ -606,10 +610,6 @@ public final class ChartGenContext {
 
     public float bossStarChartPercent() {
         return bossStarChartPercent;
-    }
-
-    public float bossStarChartMult() {
-        return bossStarChartMult(0f);
     }
 
     public float bossStarChartMult(float extraPercent) {

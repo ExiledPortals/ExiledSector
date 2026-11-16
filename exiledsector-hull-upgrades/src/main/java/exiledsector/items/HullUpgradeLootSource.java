@@ -8,10 +8,12 @@ import exiledsector.effects.ItemLootListener;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.BattleLoot;
 import exiledsector.loot.BattleItemDropSetting;
+import exiledsector.loot.FleetDifficulties;
 import exiledsector.loot.FleetLossTally;
 import exiledsector.loot.LootSource;
 import exiledsector.loot.LootSources;
 import exiledsector.loot.MarketStock;
+import exiledsector.loot.OutsideChartShare;
 import exiledsector.loot.SiteFind;
 import exiledsector.skills.skilleffect.logistics.FoundItemQuantity;
 import org.apache.log4j.Logger;
@@ -29,7 +31,7 @@ public final class HullUpgradeLootSource implements LootSource, MarketStock {
     }
 
     private FleetLossTally losses(BattleLoot battle) {
-        return battle.state(this, () -> new FleetLossTally(member -> BattleItemDrops.levelBoost(LootSources.shipLevel(member))));
+        return battle.state(this, () -> new FleetLossTally(member -> BattleItemDrops.levelBoost(FleetDifficulties.shipLevel(member))));
     }
 
     private static BattleItemDrops.Battle battleItems(FleetLossTally losses) {
@@ -38,7 +40,7 @@ public final class HullUpgradeLootSource implements LootSource, MarketStock {
             sources.add(new BattleItemDrops.SourceLoss(fleetLoss.deploymentPoints(), fleetLoss.averageDifficulty(), fleetLoss.averageShipWeight(),
                     LootSources.fleetLootRules(fleetLoss.fleet())));
         }
-        return new BattleItemDrops.Battle(sources, losses.mostDefeatedFaction());
+        return new BattleItemDrops.Battle(sources, losses.mostDefeatedFaction(), OutsideChartShare.current());
     }
 
     @Override
@@ -71,7 +73,7 @@ public final class HullUpgradeLootSource implements LootSource, MarketStock {
             return HullItemDrops.SectionItemLoot.NONE;
         }
         try {
-            return BattleItemDrops.roll(battleItems(losses(battle)),BattleItemDropSetting.multiplier(),
+            return BattleItemDrops.roll(battleItems(losses(battle)), BattleItemDropSetting.multiplier(),
                     FoundItemQuantity.hullItemMult(), battle.random(),
                     definition -> ItemUnlock.canDrop(definition, sector), hullItemDropsOpen);
         } catch (RuntimeException e) {
@@ -83,10 +85,10 @@ public final class HullUpgradeLootSource implements LootSource, MarketStock {
     @Override
     public void addSiteFinds(SiteFind find) {
         if (HullUpgradesSetting.hullItemDropsOpen(find.sector())) {
-            HullItemDrops.SectionItemLoot sectionItemLoot = HullItemDrops.rollSectionItemLoot(find.dropSite(), find.random(), find.chances(),
+            HullItemDrops.SectionItemLoot hullItemLoot = HullItemDrops.rollHullItemLoot(find.dropSite(), find.random(), find.chances(),
                     FoundItemQuantity.hullItemMult());
-            find.items().addAll(sectionItemLoot.items());
-            find.upgrades().addAll(sectionItemLoot.upgrades());
+            find.items().addAll(hullItemLoot.items());
+            find.upgrades().addAll(hullItemLoot.upgrades());
         }
         find.upgrades().addAll(HullItemDrops.rollMasterSchematic(find.dropSite(), find.random(), find.chances().general()));
     }

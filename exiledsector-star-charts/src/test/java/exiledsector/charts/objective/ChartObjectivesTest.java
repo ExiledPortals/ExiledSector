@@ -92,7 +92,7 @@ class ChartObjectivesTest {
         assertTrue(ChartObjectives.fleetGone(sector, fleet("boss", true), FleetDespawnReason.NO_MEMBERS, null));
         assertTrue(run.isObjectiveComplete());
         assertTrue(run.isRewardClaimed());
-        verify(credits, times(1)).add((float) ChartRewards.creditsFor(7));
+        verify(credits, times(1)).add((float) ChartRewards.creditsFor(7, 1f));
 
         assertFalse(ChartObjectives.fleetGone(sector, fleet("boss", true), FleetDespawnReason.DESTROYED_BY_BATTLE, null));
         assertNull(ChartRewards.grant(sector, run));
@@ -221,7 +221,7 @@ class ChartObjectivesTest {
 
         assertTrue(run.isObjectiveComplete());
         assertTrue(run.isRewardClaimed());
-        verify(credits, times(1)).add((float) ChartRewards.creditsFor(7));
+        verify(credits, times(1)).add((float) ChartRewards.creditsFor(7, 1f));
         verify(mockSector.cargo(), never()).addSpecial(Mockito.any(), anyFloat());
         assertTrue(ChartObjectives.bossFellInBattle(sector, boss, members).isEmpty());
         assertFalse(ChartObjectives.reconcile(sector));
@@ -242,7 +242,7 @@ class ChartObjectivesTest {
     void creditsRiseWithTheTier() {
         int previous = 0;
         for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_DROP_TIER; tier++) {
-            int credits = ChartRewards.creditsFor(tier);
+            int credits = ChartRewards.creditsFor(tier, 1f);
             assertTrue(credits > previous, "tier " + tier);
             assertEquals(0, credits % 1000);
             previous = credits;

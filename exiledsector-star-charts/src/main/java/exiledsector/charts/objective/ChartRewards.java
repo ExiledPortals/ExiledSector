@@ -40,10 +40,6 @@ public final class ChartRewards {
     private ChartRewards() {
     }
 
-    public static int creditsFor(int tier) {
-        return creditsFor(tier, 1f);
-    }
-
     public static int creditsFor(int tier, float rewardMult) {
         float credits = CREDITS_PER_TIER_STEP * (float) Math.pow(ChartTiers.clamp(tier), CREDIT_TIER_EXPONENT) * Math.max(0f, rewardMult);
         return Math.round(credits / CREDIT_ROUNDING) * (int) CREDIT_ROUNDING;

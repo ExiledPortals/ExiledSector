@@ -8,6 +8,7 @@ import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.layout.abyss.AbyssArt;
 import exiledsector.charts.effect.ChartEnemyInflationListener;
 import exiledsector.charts.effect.ChartEnemyShipEffects;
+import exiledsector.charts.effect.ChartFleetDifficulty;
 import exiledsector.charts.effect.ChartPlayerModifierSource;
 import exiledsector.charts.loot.BiomeModifiers;
 import exiledsector.charts.loot.ChartStorageTransfer;
@@ -106,7 +107,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
 
     @Override
     public List<FleetDifficulty> fleetDifficulties() {
-        return List.of(StarChartLootSource.INSTANCE);
+        return List.of(ChartFleetDifficulty.INSTANCE);
     }
 
     @Override

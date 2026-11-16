@@ -241,7 +241,7 @@ public final class ItemStoragePanel extends HoloPanel {
 
     @Override
     protected float headerToolsWidth() {
-        return PARTS_ROOM + GAP;
+        return FEEDSTOCK_ROOM + GAP;
     }
 
     @Override
@@ -776,9 +776,9 @@ public final class ItemStoragePanel extends HoloPanel {
     }
 
     private void rebuildFeedstock() {
-        TooltipMakerAPI element = panelRoot.createUIElement(PARTS_ROOM, HEADER_HEIGHT, false);
+        TooltipMakerAPI element = panelRoot.createUIElement(FEEDSTOCK_ROOM, HEADER_HEIGHT, false);
         addFeedstockCount(element, 0f);
-        feedstockElement = replaceElement(feedstockElement, element, PAD + innerWidth() - CLOSE_BUTTON_WIDTH - GAP - PARTS_ROOM, PAD);
+        feedstockElement = replaceElement(feedstockElement, element, PAD + innerWidth() - CLOSE_BUTTON_WIDTH - GAP - FEEDSTOCK_ROOM, PAD);
         refreshOpacity();
     }
 

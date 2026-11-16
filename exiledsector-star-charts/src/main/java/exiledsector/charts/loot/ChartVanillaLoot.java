@@ -71,7 +71,7 @@ public final class ChartVanillaLoot {
 
     private static float extraShare(DropData existingDrop, ChartGenContext context) {
         DropType type = existingDrop == null ? null : ChartLoot.typeOfGroup(existingDrop.group);
-        return type == null ? 0f : context.dropMult(type) - 1f;
+        return type == null ? 0f : context.extraDropShare(type);
     }
 
     static DropData scaledRandomCopy(DropData existingDrop, ChartGenContext context, Random random) {

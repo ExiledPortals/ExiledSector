@@ -18,7 +18,7 @@ public enum SkillTreeSchematicDrops {
 
         public SourceLoss {
             deploymentPoints = Math.max(0f, deploymentPoints);
-            rules = rules == null ? FleetLootRules.REGULAR : rules;
+            rules = rules == null ? FleetLootRules.LEVEL_SCALED : rules;
         }
     }
 
@@ -38,11 +38,11 @@ public enum SkillTreeSchematicDrops {
         return rateId;
     }
 
-    public int rollBattle(List<SourceLoss> sources, float dropMultiplier, Random random) {
-        return RandomRounding.round(expectedBattleDrops(sources, BattleLootRates.rate(rateId), dropMultiplier), random);
+    public int rollBattle(List<SourceLoss> sources, float levelScaledShare, float dropMultiplier, Random random) {
+        return RandomRounding.round(expectedBattleDrops(sources, BattleLootRates.rate(rateId), levelScaledShare, dropMultiplier), random);
     }
 
-    static float expectedBattleDrops(List<SourceLoss> sources, BattleLootRates.Rate rate, float dropMultiplier) {
+    static float expectedBattleDrops(List<SourceLoss> sources, BattleLootRates.Rate rate, float levelScaledShare, float dropMultiplier) {
         if (rate == null || sources.isEmpty() || !(dropMultiplier > 0f)) {
             return 0f;
         }
@@ -54,7 +54,8 @@ public enum SkillTreeSchematicDrops {
         for (SourceLoss source : sources) {
             FleetLootRules rules = source.rules();
             expected += rate.expected(source.deploymentPoints() * rules.deploymentPointsMult(), battleDeploymentPoints)
-                    * rate.difficulty(source.difficultyMultiplier()) * rules.share() * rules.multipliers().itemChances().general();
+                    * rate.difficulty(source.difficultyMultiplier()) * rules.itemShare(levelScaledShare)
+                    * rules.multipliers().itemChances().general();
         }
         return expected * dropMultiplier;
     }

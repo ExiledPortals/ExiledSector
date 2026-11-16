@@ -28,7 +28,9 @@ import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.BattleLoot;
 import exiledsector.loot.BattleMaterials;
 import exiledsector.loot.EncounterSalvage;
+import exiledsector.loot.FleetDifficulties;
 import exiledsector.loot.LootSources;
+import exiledsector.loot.OutsideChartShare;
 import exiledsector.skills.skilleffect.logistics.ForgeSupplies;
 import exiledsector.skills.skilleffect.logistics.SalvagedArmaments;
 import exiledsector.ui.CampaignMessages;
@@ -84,7 +86,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         if (!engagement.playerWon()) {
             return;
         }
-        float difficultyMultiplier = LootSources.difficultyMultiplier(engagement.difficulty());
+        float difficultyMultiplier = FleetDifficulties.difficultyMultiplier(engagement.difficulty());
         float defeatedDp = engagement.enemyDeploymentPointsDefeated();
         pendingLoot.defeatedDeploymentPoints += defeatedDp;
         record(pendingLoot, new BattleEngagement(engagementResult.getBattle(), difficultyMultiplier, defeatedDp, engagement.enemyLosses()));
@@ -134,7 +136,8 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         if (wholeFeedstock > 0) {
             MaterialItems.add(loot, ItemDisassembly.FEEDSTOCK_ITEM_ID, wholeFeedstock);
         }
-        pendingLoot.materials.rollMaterials(random).forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
+        pendingLoot.materials.rollCraftingItems(OutsideChartShare.current(), random)
+                .forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
     }
 
     @Override
@@ -146,7 +149,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         }
         LootSources.all().forEach(source -> source.deliverBattleLoot(pendingLoot.battleLoot, playerFleet.getCargo()));
         ForgeSupplies.addExtra(playerFleet, playerFleet.getCargo(), pendingLoot.defeatedDeploymentPoints, lootRandom);
-        Map<String, Integer> materials = pendingLoot.materials.rollMaterials(lootRandom);
+        Map<String, Integer> materials = pendingLoot.materials.rollCraftingItems(OutsideChartShare.current(), lootRandom);
         materials.forEach((itemId, quantity) -> MaterialItems.add(playerFleet.getCargo(), itemId, quantity));
         MaterialDropAnnouncer.announce(materials);
         int wholeFeedstock = RandomRounding.round(pendingLoot.materials.feedstock(), lootRandom);

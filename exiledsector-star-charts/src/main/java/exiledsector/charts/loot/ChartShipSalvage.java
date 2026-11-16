@@ -116,7 +116,7 @@ final class ChartShipSalvage {
     }
 
     void addFor(CargoAPI loot, ChartGenContext context, CampaignFleetAPI fleet, List<LostShip> lostShips, Rates rates, Random random) {
-        float weaponShare = extraShare(context, DropType.WEAPON);
+        float weaponShare = context.extraDropShare(DropType.WEAPON);
         float scrapFleetPoints = 0f;
         for (LostShip ship : lostShips) {
             scrapFleetPoints += ship.fleetPoints();
@@ -124,13 +124,9 @@ final class ChartShipSalvage {
                 addFittings(loot, ship, rates, weaponShare, random);
             }
         }
-        addScrap(loot, scrapFleetPoints * rates.scrapValuePerFleetPoint() * extraShare(context, DropType.RESOURCE), rates.fuelMult(), random,
+        addScrap(loot, scrapFleetPoints * rates.scrapValuePerFleetPoint() * context.extraDropShare(DropType.RESOURCE), rates.fuelMult(), random,
                 ChartShipSalvage::basePrice);
         addCarriedCargo(loot, fleet, cargoBeforeLoot.get(fleet), context, rates, random);
-    }
-
-    static float extraShare(ChartGenContext context, DropType type) {
-        return Math.max(0f, context.dropMult(type) - 1f);
     }
 
     private static boolean salvageable(FleetMemberAPI member) {
@@ -218,7 +214,7 @@ final class ChartShipSalvage {
         }
         stacksBeforeLoot.forEach((stack, sizeBeforeLoot) -> {
             float lost = sizeBeforeLoot - cargo.getQuantity(stack.itemType(), stack.data());
-            float extra = lost * CARGO_TAKEN_SHARE * rates.cargoRecoveryShare() * extraShare(context, stack.dropType());
+            float extra = lost * CARGO_TAKEN_SHARE * rates.cargoRecoveryShare() * context.extraDropShare(stack.dropType());
             int wholeExtra = RandomRounding.round(extra, random);
             if (wholeExtra > 0) {
                 loot.addItems(stack.itemType(), stack.data(), wholeExtra);

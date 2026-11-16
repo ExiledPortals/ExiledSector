@@ -29,9 +29,11 @@ public final class ChartTiers {
     static final String TREE_SHARE_COLUMN = "tree_share";
     static final String BAND_SHIFT_COLUMN = "band_shift";
     private static volatile Map<Integer, ChartTier> tiers = Map.of();
-    private static volatile Map<Integer, Float> colonyItemChances = Map.of();
-    private static volatile Map<Integer, Float> treeShares = Map.of();
-    private static volatile Map<Integer, Float> bandShifts = Map.of();
+    private static volatile Map<Integer, ChartTierExtras> tierExtras = Map.of();
+
+    private record ChartTierExtras(float colonyItemChance, float treeShare, float bandShift) {
+        static final ChartTierExtras MISSING = new ChartTierExtras(0f, 1f, CraftingDrops.NO_BAND_SHIFT);
+    }
 
     private ChartTiers() {
     }
@@ -42,9 +44,7 @@ public final class ChartTiers {
 
     public static void register(JSONArray rows) throws JSONException {
         Map<Integer, ChartTier> loaded = new HashMap<>();
-        Map<Integer, Float> loadedColonyItemChances = new HashMap<>();
-        Map<Integer, Float> loadedTreeShares = new HashMap<>();
-        Map<Integer, Float> loadedBandShifts = new HashMap<>();
+        Map<Integer, ChartTierExtras> loadedExtras = new HashMap<>();
         CsvRows csv = new CsvRows(PATH);
         if (rows != null) {
             ModCsv.forEach(rows, (index, row) -> {
@@ -77,17 +77,16 @@ public final class ChartTiers {
                 if (colonyItemChance < 0f || colonyItemChance > MAX_COLONY_ITEM_CHANCE) {
                     csv.problem(label, "colony_item_chance", colonyItemChance + " is outside 0 to 1 (a fraction, so 0.04 is 4%)");
                 }
-                loadedColonyItemChances.put(tier, Math.max(0f, Math.min(MAX_COLONY_ITEM_CHANCE, colonyItemChance)));
                 float treeShare = csv.number(row, TREE_SHARE_COLUMN, 1f, label);
                 if (treeShare < 0f || treeShare > 1f) {
                     csv.problem(label, TREE_SHARE_COLUMN, treeShare + " is outside 0 to 1 (a fraction, so 0.5 is 50%)");
                 }
-                loadedTreeShares.put(tier, Math.max(0f, Math.min(1f, treeShare)));
                 float bandShift = csv.number(row, BAND_SHIFT_COLUMN, CraftingDrops.NO_BAND_SHIFT, label);
                 if (bandShift < 0f) {
                     csv.problem(label, BAND_SHIFT_COLUMN, bandShift + " is below 0");
                 }
-                loadedBandShifts.put(tier, Math.max(0f, bandShift));
+                loadedExtras.put(tier, new ChartTierExtras(Math.max(0f, Math.min(MAX_COLONY_ITEM_CHANCE, colonyItemChance)),
+                        Math.max(0f, Math.min(1f, treeShare)), Math.max(0f, bandShift)));
             });
         }
         csv.report(LOG);
@@ -101,21 +100,23 @@ public final class ChartTiers {
             LOG.warn("[ExiledSector] " + PATH + " has no row for tier(s) " + missing + "; those tiers use built-in values and have no colony item chance");
         }
         tiers = Map.copyOf(loaded);
-        colonyItemChances = Map.copyOf(loadedColonyItemChances);
-        treeShares = Map.copyOf(loadedTreeShares);
-        bandShifts = Map.copyOf(loadedBandShifts);
+        tierExtras = Map.copyOf(loadedExtras);
     }
 
     public static float treeShare(int tier) {
-        return treeShares.getOrDefault(clamp(tier), 1f);
+        return extrasAt(tier).treeShare();
     }
 
     public static float bandShift(int tier) {
-        return bandShifts.getOrDefault(clamp(tier), CraftingDrops.NO_BAND_SHIFT);
+        return extrasAt(tier).bandShift();
     }
 
     public static float colonyItemChance(int tier) {
-        return colonyItemChances.getOrDefault(clamp(tier), 0f);
+        return extrasAt(tier).colonyItemChance();
+    }
+
+    private static ChartTierExtras extrasAt(int tier) {
+        return tierExtras.getOrDefault(clamp(tier), ChartTierExtras.MISSING);
     }
 
     public static int firstColonyItemTier() {
@@ -177,8 +178,6 @@ public final class ChartTiers {
 
     public static void resetForTests() {
         tiers = Map.of();
-        colonyItemChances = Map.of();
-        treeShares = Map.of();
-        bandShifts = Map.of();
+        tierExtras = Map.of();
     }
 }
