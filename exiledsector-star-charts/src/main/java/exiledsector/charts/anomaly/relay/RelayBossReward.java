@@ -72,7 +72,7 @@ final class RelayBossReward {
 
     static Loot echoUnique(SectorAPI sector, ChartRun run, ChartGenContext runContext, Random random) {
         float chance = RelayTuning.stageUniqueChance(runContext);
-        if (chance <= 0f || runContext.guaranteedBossUnique() || !RelayStates.allWoken(run) || random.nextFloat() >= chance) {
+        if (chance <= 0f || !RelayStates.allWoken(run) || random.nextFloat() >= chance) {
             return Loot.NONE;
         }
         ItemDefinition unique = DroppableDefinitions.pickUniqueFromAnySource(random, definition -> ECHO_UNIQUE_TYPES.contains(definition.type())

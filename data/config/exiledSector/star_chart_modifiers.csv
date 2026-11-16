@@ -94,4 +94,3 @@ CHART_BLUEPRINT_PERCENT,suffix,star_chart,CHART_BLUEPRINT_PERCENT:low=20-30/mid=
 CHART_AI_CORE_PERCENT,suffix,star_chart,CHART_AI_CORE_PERCENT:low=20-30/mid=30-45/high=45-60,Cognition,,vanilla_loot
 CHART_COLONY_ITEM_PERCENT,suffix,star_chart,CHART_COLONY_ITEM_PERCENT:mid=40-60/high=90-120,Providence,,vanilla_loot
 CHART_BOSS_SPOILS_PERCENT,suffix,star_chart,CHART_BOSS_SPOILS_PERCENT:low=20-30/mid=30-50/high=50-75,the Hoard,,loot
-CHART_REWARD_PERCENT,suffix,star_chart,CHART_REWARD_PERCENT:low=10-20/mid=20-35/high=35-50,Bounty,,loot

@@ -9,6 +9,7 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.FleetMembers;
+import exiledsector.Seeds;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.LootShaper;
@@ -17,8 +18,11 @@ import exiledsector.charts.anomaly.skirmish.SkirmishProgress;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.atlas.AtlasProgress;
+import exiledsector.charts.loot.ChartDrops;
+import exiledsector.charts.loot.ChartLootContext;
 import exiledsector.charts.officer.OfficerDefeat;
 import exiledsector.effects.PlayerEngagement;
+import exiledsector.items.ItemData;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.DropOrigin;
 import exiledsector.loot.Loot;
@@ -28,11 +32,13 @@ import org.apache.log4j.Logger;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 public final class ChartObjectives {
 
     static final Set<FleetDespawnReason> DEFEAT_REASONS = Set.of(FleetDespawnReason.DESTROYED_BY_BATTLE, FleetDespawnReason.NO_MEMBERS);
+    private static final String BOSS_CHARTS_SEED_PREFIX = "bossCharts|";
     private static final Logger LOG = Logger.getLogger(ChartObjectives.class);
 
     private ChartObjectives() {
@@ -40,7 +46,7 @@ public final class ChartObjectives {
 
     static ChartRun trackedRun() {
         ChartRun run = ChartRuns.live();
-        if (run == null || run.isObjectiveComplete() || run.isObjectiveLost() || !run.hasBoss()) {
+        if (run == null || run.isObjectiveComplete() || !run.hasBoss()) {
             return null;
         }
         return run;
@@ -185,7 +191,8 @@ public final class ChartObjectives {
         }
         Loot anomalyLoot = anomalyBossLoot(sector, run);
         AtlasProgress.completed(sector, run, progress.beatenOfficerId());
-        return new SkirmishProgress(true, progress.loot().plus(rewarded(sector, run)).plus(anomalyLoot), true, progress.beatenOfficerId());
+        updateIntel(sector, run);
+        return new SkirmishProgress(true, progress.loot().plus(anomalyLoot).plus(guaranteedBossCharts(run)), true, progress.beatenOfficerId());
     }
 
     private static Loot completed(SectorAPI sector, ChartRun run) {
@@ -195,26 +202,19 @@ public final class ChartObjectives {
         Loot officerLoot = OfficerDefeat.bossDefeated(sector, run);
         Loot anomalyLoot = anomalyBossLoot(sector, run);
         AtlasProgress.completed(sector, run);
-        return rewarded(sector, run).plus(officerLoot).plus(anomalyLoot);
+        updateIntel(sector, run);
+        return officerLoot.plus(anomalyLoot).plus(guaranteedBossCharts(run));
     }
 
-    private static Loot rewarded(SectorAPI sector, ChartRun run) {
-        Loot rewardLoot = Loot.NONE;
+    private static Loot guaranteedBossCharts(ChartRun run) {
         try {
-            ChartRewards.Reward reward = ChartRewards.grant(sector, run);
-            if (reward != null) {
-                rewardLoot = reward.loot();
-            }
+            Random random = Seeds.random(BOSS_CHARTS_SEED_PREFIX + run.runId());
+            List<ItemData> charts = ChartDrops.guaranteedCharts(ChartDrops.Source.CHART_BOSS, ChartLootContext.of(run), random);
+            return charts.isEmpty() ? Loot.NONE : new Loot(charts, List.of(), Map.of());
         } catch (RuntimeException | LinkageError e) {
-            LOG.error("[ExiledSector] Rolling the Star Chart reward for run " + run.runId() + " failed", e);
+            LOG.error("[ExiledSector] Rolling the guaranteed boss Star Charts for run " + run.runId() + " failed", e);
+            return Loot.NONE;
         }
-        try {
-            GatewayUpgradeRewards.completed(sector, run.tier());
-        } catch (RuntimeException | LinkageError e) {
-            LOG.error("[ExiledSector] Granting the Wormhole Gateway upgrade for run " + run.runId() + " failed", e);
-        }
-        updateIntel(sector, run);
-        return rewardLoot;
     }
 
     private static Loot anomalyBossLoot(SectorAPI sector, ChartRun run) {

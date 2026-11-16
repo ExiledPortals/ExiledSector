@@ -1,10 +1,9 @@
-package exiledsector.charts.objective;
+package exiledsector.charts.wormhole;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.atlas.AtlasState;
-import exiledsector.charts.wormhole.WormholeGateway;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.WormholeTechItems;
 import org.apache.log4j.Logger;

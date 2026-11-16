@@ -55,12 +55,12 @@ public final class OfficerRewardDrop {
         long seed = random.nextLong();
         return switch (item.kind()) {
             case UNIQUE -> ItemData.rolled(definition, seed);
-            case BIOME_HULL_ITEM -> BiomeModifiers.grant(loot.rolledWithAffixLimitsAtRunTier(definition, seed), item.variant(), random);
+            case BIOME_HULL_ITEM -> BiomeModifiers.grant(loot.rolledWithDropLimits(definition, seed), item.variant(), random);
             case STAR_CHART -> {
                 int chartTier = ChartTiers.clampDropTier(loot.tier());
                 yield ItemData.rolled(chartAt(definition, chartTier, random), seed, ItemRoll.atTier(chartTier));
             }
-            default -> loot.rolledWithAffixLimitsAtRunTier(definition, seed);
+            default -> loot.rolledWithDropLimits(definition, seed);
         };
     }
 

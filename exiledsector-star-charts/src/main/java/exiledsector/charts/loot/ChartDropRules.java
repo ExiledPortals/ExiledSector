@@ -27,10 +27,11 @@ public final class ChartDropRules {
     private static final Logger LOG = Logger.getLogger(ChartDropRules.class);
     private static volatile Map<ChartDrops.Source, Rule> rules = Map.of();
 
-    record Rule(float chance, float extraChance, List<Float> tierWeights, float cipherChance, float catalystChance, float minDefeatedDp,
+    record Rule(int guaranteed, float chance, float extraChance, List<Float> tierWeights, float cipherChance, float catalystChance, float minDefeatedDp,
                 float defeatedDpPerTier, int maxTier) {
 
         Rule {
+            guaranteed = Math.max(0, guaranteed);
             chance = Math.max(0f, chance);
             extraChance = Math.max(0f, extraChance);
             tierWeights = tierWeights == null || tierWeights.size() != TIER_OFFSET_COLUMNS.size()
@@ -83,7 +84,8 @@ public final class ChartDropRules {
             for (String column : TIER_OFFSET_COLUMNS) {
                 tierWeights.add(csv.number(row, column, 0f, sourceText));
             }
-            loaded.put(source, new Rule(csv.number(row, "chance", 0f, sourceText), csv.number(row, "extra_chance", 0f, sourceText),
+            loaded.put(source, new Rule(csv.integer(row, "guaranteed", 0, sourceText), csv.number(row, "chance", 0f, sourceText),
+                    csv.number(row, "extra_chance", 0f, sourceText),
                     tierWeights, cipherChance, catalystChance,
                     csv.number(row, "min_defeated_dp", 0f, sourceText), csv.number(row, "defeated_dp_per_tier", 0f, sourceText),
                     csv.integer(row, "max_tier", ChartTiers.HIGHEST_DROP_TIER, sourceText)));

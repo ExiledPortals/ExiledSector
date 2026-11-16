@@ -106,11 +106,7 @@ public final class ChartVanillaLoot {
 
     public static void addToFleet(CampaignFleetAPI fleet, boolean boss, ChartGenContext context, int tier, Set<DropType> withheld) {
         float fleetPointSteps = fleet.getFleetPoints() / FLEET_POINTS_PER_STEP;
-        SiteDrops fleetDrops = drops(ChartLoot.FLEET_SCOPE, tier, fleetPointSteps, context, withheld);
-        if (boss) {
-            SiteDrops spoils = drops(ChartLoot.BOSS_SCOPE, tier, fleetPointSteps * context.bossSpoilsMult(), context, withheld);
-            fleetDrops = fleetDrops.plus(spoils.random(), spoils.value());
-        }
+        SiteDrops fleetDrops = drops(ChartLoot.FLEET_SCOPE, tier, fleetPointSteps, context.forFleetLoot(boss), withheld);
         fleetDrops.random().forEach(fleet::addDropRandom);
         fleetDrops.value().forEach(fleet::addDropValue);
     }

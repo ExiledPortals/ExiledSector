@@ -52,7 +52,7 @@ class ConvoyCargoTest {
     @Test
     void eachLostFreighterShareIsDroppedOnceAndTheRestStaysAboardForTheCache() {
         ConvoyState convoy = new ConvoyState(0, List.of(), "dest", 0f, 0f, 0f, 0f, 1L);
-        convoy.loadCargo(100f, 3f, 1f);
+        convoy.loadCargo(100f);
 
         assertEquals(0.4f, convoy.recordFreighterPoints(60f), 0.001f);
         assertEquals(0f, convoy.recordFreighterPoints(70f), 0.001f, "repairs never refund a dropped share");
@@ -87,7 +87,7 @@ class ConvoyCargoTest {
     @Test
     void losingShipsAfterDeliveryDropsNothing() {
         ConvoyState convoy = new ConvoyState(0, List.of(), "dest", 0f, 0f, 0f, 0f, 1L);
-        convoy.loadCargo(100f, 3f, 1f);
+        convoy.loadCargo(100f);
         convoy.setPhase(ConvoyState.Phase.EN_ROUTE);
         convoy.recordFreighterPoints(75f);
 

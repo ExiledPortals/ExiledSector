@@ -13,9 +13,8 @@ import exiledsector.charts.effect.ChartPlayerModifierSource;
 import exiledsector.charts.loot.BiomeModifiers;
 import exiledsector.charts.loot.ChartStorageTransfer;
 import exiledsector.charts.loot.StarChartLootSource;
+import exiledsector.charts.objective.BossDefeatLootSource;
 import exiledsector.charts.objective.ChartObjectives;
-import exiledsector.charts.objective.ChartRewardLootSource;
-import exiledsector.charts.objective.GatewayUpgradeRewards;
 import exiledsector.charts.officer.scar.ScarEffectSource;
 import exiledsector.charts.phasing.DisplacementTheorem;
 import exiledsector.charts.phasing.PhaseDisplacementGate;
@@ -23,6 +22,7 @@ import exiledsector.charts.phasing.PhasedPlanetTraits;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.run.ChartTransverseJump;
 import exiledsector.charts.wormhole.ColonyFreeAtlas;
+import exiledsector.charts.wormhole.GatewayUpgradeRewards;
 import exiledsector.charts.wormhole.LimboBlueprintCache;
 import exiledsector.charts.wormhole.WormholeGateway;
 import exiledsector.compat.DiyPlanetsCompat;
@@ -92,7 +92,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
 
     @Override
     public List<LootSource> lootSources() {
-        return List.of(StarChartLootSource.INSTANCE, ChartRewardLootSource.INSTANCE);
+        return List.of(StarChartLootSource.INSTANCE, BossDefeatLootSource.INSTANCE);
     }
 
     @Override

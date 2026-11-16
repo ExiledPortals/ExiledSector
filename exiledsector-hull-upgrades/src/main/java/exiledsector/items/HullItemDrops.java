@@ -20,13 +20,13 @@ public final class HullItemDrops {
         return rule == null || rule.chances().isEmpty() ? List.of() : MasterSchematic.rollSalvage(rule.chances().get(0) * chanceMult, random);
     }
 
-    public static Loot rollHullItemLoot(String siteId, Random random, ItemChances chances, float basicItemMult) {
+    public static Loot rollHullItemLoot(String siteId, Random random, ItemChances chances, float playerHullItemPercent) {
         SalvageSiteDrops.Rule rule = SalvageSiteDrops.activeRule(siteId);
         if (rule == null || rule.chances().isEmpty()) {
             return Loot.NONE;
         }
         float basicShare = SALVAGE_SHARE * rule.hullItemShare();
-        List<ItemData> droppedItems = SalvageSiteDrops.rollCascade(rule, random, chances.general() * basicItemMult, chances.rarity(),
+        List<ItemData> droppedItems = SalvageSiteDrops.rollCascade(rule, random, chances.generalPlusPercent(playerHullItemPercent), chances.rarity(),
                 DroppableDefinitions::pickHullItemBasic);
         droppedItems.removeIf(item -> random.nextFloat() >= basicShare);
         List<ShipSchematic> droppedSchematics = new ArrayList<>();
@@ -35,7 +35,7 @@ public final class HullItemDrops {
         }
         List<ItemKind> kindsWithBasics = DroppableDefinitions.hullItemKindsWithBasics();
         for (ItemKind kind : kindsWithBasics) {
-            SalvageSiteDrops.rollTargeted(rule, random, chances.targeted(kind) * basicShare * basicItemMult, chances.rarity(), kindsWithBasics.size(), kind,
+            SalvageSiteDrops.rollTargeted(rule, random, chances.targeted(kind) * basicShare, chances.rarity(), kindsWithBasics.size(), kind,
                     droppedItems);
         }
         return new Loot(droppedItems, droppedSchematics, Map.of());

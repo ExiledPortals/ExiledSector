@@ -61,19 +61,19 @@ class FleetLossTallyTest {
     }
 
     @Test
-    void eachEngagementKeepsItsRawDifficultyAndTheRulesItWasRecordedWith() {
+    void eachEngagementKeepsItsCappedDifficultyAndTheRulesItWasRecordedWith() {
         CampaignFleetAPI fleet = mock(CampaignFleetAPI.class);
         FleetLossTally tally = new FleetLossTally();
         tally.record(engagement(fleet, 2f, ship(100f)), anyFleet -> FleetLootRules.SPENT);
         tally.record(engagement(fleet, 5f, ship(60f), ship(40f)), anyFleet -> FleetLootRules.LEVEL_SCALED);
 
-        List<FleetLoss> engagementLosses = tally.engagementLossesAtRawDifficulty();
+        List<FleetLoss> engagementLosses = tally.engagementLossesAtRecordTime();
 
         assertEquals(2, engagementLosses.size());
         assertEquals(2f, engagementLosses.get(0).averageDifficulty(), 1e-6f);
         assertSame(FleetLootRules.SPENT, engagementLosses.get(0).rules());
         assertEquals(100f, engagementLosses.get(1).deploymentPoints(), 1e-4f);
-        assertEquals(5f, engagementLosses.get(1).averageDifficulty(), 1e-6f);
+        assertEquals(BattleLootRates.DIFFICULTY_CAP, engagementLosses.get(1).averageDifficulty(), 1e-6f);
         assertSame(FleetLootRules.LEVEL_SCALED, engagementLosses.get(1).rules());
     }
 
@@ -84,6 +84,6 @@ class FleetLossTallyTest {
         tally.record(engagement(fleet, 1f, ship(0f)), anyFleet -> FleetLootRules.LEVEL_SCALED);
 
         assertTrue(tally.fleetLosses(anyFleet -> FleetLootRules.LEVEL_SCALED).isEmpty());
-        assertTrue(tally.engagementLossesAtRawDifficulty().isEmpty());
+        assertTrue(tally.engagementLossesAtRecordTime().isEmpty());
     }
 }

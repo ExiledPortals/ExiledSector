@@ -23,15 +23,12 @@ class FoundItemQuantityTest {
     void theFleetsQuantityPercentsAddTogether() {
         String key = FoundItemQuantity.HULL_ITEM_PERCENT_KEY;
 
-        assertEquals(1.25f, FoundItemQuantity.mult(List.of(member(key, 10f), member(key, 15f)), key), 0.001f);
-        assertEquals(1f, FoundItemQuantity.mult(List.of(), key), 0.001f);
+        assertEquals(25f, FoundItemQuantity.percent(List.of(member(key, 10f), member(key, 15f)), key), 0.001f);
+        assertEquals(0f, FoundItemQuantity.percent(List.of(), key), 0.001f);
     }
 
     @Test
-    void theMultiplierNeverGoesBelowZeroAndIsOneWithoutAFleet() {
-        String key = FoundItemQuantity.CRAFTING_ITEM_PERCENT_KEY;
-
-        assertEquals(0f, FoundItemQuantity.mult(List.of(member(key, -150f)), key), 0.001f);
-        assertEquals(1f, FoundItemQuantity.mult((CampaignFleetAPI) null, key), 0.001f);
+    void thereIsNoBonusWithoutAFleet() {
+        assertEquals(0f, FoundItemQuantity.percent((CampaignFleetAPI) null, FoundItemQuantity.CRAFTING_ITEM_PERCENT_KEY), 0.001f);
     }
 }

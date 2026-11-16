@@ -14,19 +14,19 @@ public final class FoundItemQuantity {
     private FoundItemQuantity() {
     }
 
-    public static float hullItemMult() {
-        return mult(PlayerFleet.orNull(), HULL_ITEM_PERCENT_KEY);
+    public static float hullItemPercent() {
+        return percent(PlayerFleet.orNull(), HULL_ITEM_PERCENT_KEY);
     }
 
-    public static float craftingItemMult() {
-        return mult(PlayerFleet.orNull(), CRAFTING_ITEM_PERCENT_KEY);
+    public static float craftingItemPercent() {
+        return percent(PlayerFleet.orNull(), CRAFTING_ITEM_PERCENT_KEY);
     }
 
-    static float mult(CampaignFleetAPI fleet, String percentKey) {
-        return fleet == null || fleet.getFleetData() == null ? 1f : mult(fleet.getFleetData().getMembersListCopy(), percentKey);
+    static float percent(CampaignFleetAPI fleet, String percentKey) {
+        return fleet == null || fleet.getFleetData() == null ? 0f : percent(fleet.getFleetData().getMembersListCopy(), percentKey);
     }
 
-    static float mult(List<FleetMemberAPI> members, String percentKey) {
-        return Math.max(0f, 1f + FleetContributions.sum(members, percentKey) / 100f);
+    static float percent(List<FleetMemberAPI> members, String percentKey) {
+        return FleetContributions.sum(members, percentKey);
     }
 }

@@ -92,7 +92,7 @@ public final class RelayStages {
         if (stage == null) {
             return node;
         }
-        return node.withExtraEffects(stageEffects(stage.stage()), stage.isLast());
+        return node.withExtraEffects(stageEffects(stage.stage()));
     }
 
     public static List<AtlasLine> lines(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
@@ -105,9 +105,6 @@ public final class RelayStages {
                 AtlasLine.Tone.PLAIN));
         for (ChartGenContext.AppliedEffect applied : stageEffects(stage.stage())) {
             lines.add(new AtlasLine(applied.effect().description(applied.value()).toMarkup(), AtlasLine.Tone.STYLED));
-        }
-        if (stage.isLast()) {
-            lines.add(new AtlasLine(Translation.text("chart.atlas.node.relayLast"), AtlasLine.Tone.GOOD));
         }
         return lines;
     }

@@ -41,7 +41,7 @@ public final class RelayChoices {
     }
 
     static boolean open(ChartRun run, RelaySlot slot) {
-        return run != null && run.hasBoss() && !run.isObjectiveComplete() && !run.isObjectiveLost()
+        return run != null && run.hasBoss() && !run.isObjectiveComplete()
                 && RelayStates.isWoken(run, slot) && picked(run, slot) == null;
     }
 

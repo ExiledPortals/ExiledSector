@@ -8,8 +8,6 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.charts.ChartIds;
-import exiledsector.charts.anomaly.ChartAnomalies;
-import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.charts.run.ChartRuns;
@@ -27,20 +25,6 @@ public final class ChartFleetLedger {
             fleet.getMemoryWithoutUpdate().set(ChartIds.START_DP_MEMORY_KEY, startDeploymentPoints);
             fleet.getMemoryWithoutUpdate().set(ChartIds.START_FP_MEMORY_KEY, (float) fleet.getFleetPoints());
         }
-    }
-
-    public static void tagAnomaly(SectorEntityToken entity, String anomalyId) {
-        MemoryAPI memory = entity == null || anomalyId == null ? null : entity.getMemoryWithoutUpdate();
-        if (memory != null) {
-            memory.set(ChartIds.ANOMALY_MEMORY_KEY, anomalyId);
-        }
-    }
-
-    public static float anomalyFleetLoot(CampaignFleetAPI fleet, ChartRun run) {
-        MemoryAPI ledger = run == null || isBoss(fleet, run) ? null : ledgerOf(fleet);
-        ChartAnomalies.Definition definition = ledger != null && ledger.get(ChartIds.ANOMALY_MEMORY_KEY) instanceof String anomalyId
-                ? ChartAnomalies.definition(anomalyId) : null;
-        return definition == null ? 1f : definition.fleetLoot();
     }
 
     static float deploymentPoints(CampaignFleetAPI fleet) {
@@ -117,17 +101,14 @@ public final class ChartFleetLedger {
         return null;
     }
 
-    static FleetClaim claim(CampaignFleetAPI fleet, ChartRun run, float defeatedDeploymentPoints, ChartGenContext effects, float battleLootMult) {
+    static FleetClaim claim(CampaignFleetAPI fleet, ChartRun run, float defeatedDeploymentPoints) {
         float claimedShare = claimShare(fleet, defeatedDeploymentPoints);
         if (!(claimedShare > 0f)) {
             return null;
         }
         MemoryAPI ledger = ledgerOf(fleet);
-        boolean boss = isBoss(fleet, run);
-        float spoilsMult = boss ? effects.bossSpoilsMult() : 1f;
-        float lootQuantityMult = battleLootMult * anomalyFleetLoot(fleet, run);
-        return new FleetClaim(fleet, claimedShare, ledger.getFloat(ChartIds.START_DP_MEMORY_KEY), startFleetPoints(ledger), lootFleets(fleet), boss,
-                spoilsMult, lootQuantityMult);
+        return new FleetClaim(fleet, claimedShare, ledger.getFloat(ChartIds.START_DP_MEMORY_KEY), startFleetPoints(ledger), lootFleets(fleet),
+                isBoss(fleet, run));
     }
 
     static float claimShare(CampaignFleetAPI fleet, float defeatedDeploymentPoints) {

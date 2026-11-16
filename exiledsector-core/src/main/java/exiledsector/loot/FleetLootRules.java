@@ -1,6 +1,6 @@
 package exiledsector.loot;
 
-public record FleetLootRules(Kind kind, LootMultipliers multipliers, float deploymentPointsMult, boolean overchargesHullItems) {
+public record FleetLootRules(Kind kind, LootMultipliers multipliers, boolean overchargesHullItems) {
 
     public enum Kind {
         LEVEL_SCALED,
@@ -21,22 +21,21 @@ public record FleetLootRules(Kind kind, LootMultipliers multipliers, float deplo
         }
     }
 
-    public static final FleetLootRules LEVEL_SCALED = new FleetLootRules(Kind.LEVEL_SCALED, LootMultipliers.NONE, 1f, false);
-    public static final FleetLootRules FEEDSTOCK_ONLY = new FleetLootRules(Kind.FEEDSTOCK_ONLY, LootMultipliers.NONE, 1f, false);
-    public static final FleetLootRules SPENT = new FleetLootRules(Kind.SPENT, LootMultipliers.NONE, 1f, false);
+    public static final FleetLootRules LEVEL_SCALED = new FleetLootRules(Kind.LEVEL_SCALED, LootMultipliers.NONE, false);
+    public static final FleetLootRules FEEDSTOCK_ONLY = new FleetLootRules(Kind.FEEDSTOCK_ONLY, LootMultipliers.NONE, false);
+    public static final FleetLootRules SPENT = new FleetLootRules(Kind.SPENT, LootMultipliers.NONE, false);
 
     public FleetLootRules {
         kind = kind == null ? Kind.LEVEL_SCALED : kind;
         multipliers = multipliers == null ? LootMultipliers.NONE : multipliers;
-        deploymentPointsMult = Math.max(0f, deploymentPointsMult);
     }
 
-    public static FleetLootRules ownLedger(LootMultipliers multipliers, float deploymentPointsMult) {
-        return new FleetLootRules(Kind.OWN_LEDGER, multipliers, deploymentPointsMult, false);
+    public static FleetLootRules ownLedger(LootMultipliers multipliers) {
+        return new FleetLootRules(Kind.OWN_LEDGER, multipliers, false);
     }
 
     public FleetLootRules overchargingHullItems() {
-        return new FleetLootRules(kind, multipliers, deploymentPointsMult, true);
+        return new FleetLootRules(kind, multipliers, true);
     }
 
     public float itemShare(float levelScaledShare) {

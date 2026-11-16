@@ -5,7 +5,6 @@ import exiledsector.ModCsv;
 import exiledsector.data.CsvRows;
 import exiledsector.data.RandomRounding;
 import exiledsector.data.WeightedPick;
-import exiledsector.skills.skilleffect.logistics.FoundItemQuantity;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -86,15 +85,6 @@ public final class CraftingDrops {
         Map<String, Integer> dropped = new LinkedHashMap<>();
         rollInto(expectedCount, allowedItems, bandShift, random, dropped);
         return dropped;
-    }
-
-    public static Map<String, Integer> rollFoundByPlayer(float expectedCount, Predicate<String> allowedItems, float bandShift, Random random) {
-        return roll(expectedCount * FoundItemQuantity.craftingItemMult(), allowedItems, bandShift, random);
-    }
-
-    public static void rollFoundByPlayerInto(float expectedCount, Predicate<String> allowedItems, float bandShift, Random random,
-                                             Map<String, Integer> dropped) {
-        rollInto(expectedCount * FoundItemQuantity.craftingItemMult(), allowedItems, bandShift, random, dropped);
     }
 
     public static void rollInto(float expectedCount, Predicate<String> allowedItems, float bandShift, Random random,

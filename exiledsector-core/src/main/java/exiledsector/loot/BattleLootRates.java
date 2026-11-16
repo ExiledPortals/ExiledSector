@@ -46,7 +46,7 @@ public final class BattleLootRates {
         }
 
         public float expectedFrom(FleetLoss loss, float battleDeploymentPoints, float levelScaledShare) {
-            return expectedAtDifficulty(loss.lootDeploymentPoints(), battleDeploymentPoints, loss.averageDifficulty())
+            return expectedAtDifficulty(loss.deploymentPoints(), battleDeploymentPoints, loss.averageDifficulty())
                     * loss.rules().itemShare(levelScaledShare);
         }
 

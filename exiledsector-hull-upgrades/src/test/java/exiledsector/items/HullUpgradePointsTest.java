@@ -180,10 +180,10 @@ class HullUpgradePointsTest {
         HullUpgradePoints.install();
         Random random = new Random(7L);
 
-        assertEquals(1, HullItemDrops.rollHullItemLoot("station", random, ItemChances.BASE, 1f).schematics().size());
+        assertEquals(1, HullItemDrops.rollHullItemLoot("station", random, ItemChances.BASE, 0f).schematics().size());
         HullUpgradesSetting.setPointsModeForTests(HullUpgradesSetting.PointsMode.STAR_CHART_PROGRESS);
         for (int trial = 0; trial < 20; trial++) {
-            assertEquals(List.of(), HullItemDrops.rollHullItemLoot("station", random, ItemChances.BASE, 1f).schematics());
+            assertEquals(List.of(), HullItemDrops.rollHullItemLoot("station", random, ItemChances.BASE, 0f).schematics());
         }
     }
 

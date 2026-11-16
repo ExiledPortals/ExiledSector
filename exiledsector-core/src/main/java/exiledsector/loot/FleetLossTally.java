@@ -23,7 +23,7 @@ public final class FleetLossTally {
 
     private final Map<String, Float> deploymentPointsByFaction = new LinkedHashMap<>();
     private final Map<CampaignFleetAPI, FleetTotals> totalsByFleet = new LinkedHashMap<>();
-    private final List<FleetLoss> engagementLossesAtRawDifficulty = new ArrayList<>();
+    private final List<FleetLoss> engagementLossesAtRecordTime = new ArrayList<>();
 
     public void record(BattleEngagement engagement, Function<CampaignFleetAPI, FleetLootRules> rulesAtRecordTime) {
         engagement.deploymentPointsLostByFaction().forEach((factionId, deploymentPoints) ->
@@ -45,7 +45,7 @@ public final class FleetLossTally {
             float engagementDeploymentPoints = BattleEngagement.deploymentPoints(members);
             FleetLootRules rules = rulesAtRecordTime.apply(sourceFleet);
             if (engagementDeploymentPoints > 0f) {
-                engagementLossesAtRawDifficulty.add(new FleetLoss(engagementDeploymentPoints, engagement.difficultyMultiplier(),
+                engagementLossesAtRecordTime.add(new FleetLoss(engagementDeploymentPoints, cappedDifficulty,
                         engagementShipLevelWeighted / engagementDeploymentPoints, rules));
             }
         });
@@ -71,7 +71,7 @@ public final class FleetLossTally {
         return fleetLosses;
     }
 
-    public List<FleetLoss> engagementLossesAtRawDifficulty() {
-        return List.copyOf(engagementLossesAtRawDifficulty);
+    public List<FleetLoss> engagementLossesAtRecordTime() {
+        return List.copyOf(engagementLossesAtRecordTime);
     }
 }

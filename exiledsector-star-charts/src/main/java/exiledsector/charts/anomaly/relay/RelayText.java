@@ -41,14 +41,8 @@ final class RelayText {
         return Translation.gameText(PREFIX + "number." + number);
     }
 
-    static String nextStep(ChartRun run, AtlasAnomalyRecord.Chain stage) {
-        if (stage == null) {
-            return null;
-        }
-        if (!stage.isLast()) {
-            return "traced";
-        }
-        return run.isObjectiveComplete() || run.isObjectiveLost() ? null : "last";
+    static String nextStep(AtlasAnomalyRecord.Chain stage) {
+        return stage == null || stage.isLast() ? null : "traced";
     }
 
     static List<String> wokenMessages(ChartRun run, String relayName, AtlasAnomalyRecord.Chain stage) {
@@ -61,7 +55,7 @@ final class RelayText {
         String relays = numberWord(RelayStates.slots(run).size());
         messages.add(I18n.forGameText(() -> Translation.msg(PREFIX + "message.woken").arg("relay", relayName).text()));
         messages.add(I18n.forGameText(() -> Translation.msg(PREFIX + "message.allWoken").arg("relays", relays).text()));
-        String step = nextStep(run, stage);
+        String step = nextStep(stage);
         if (step != null) {
             messages.add(stepText(PREFIX + "message." + step, stage, relays));
         }
@@ -77,7 +71,7 @@ final class RelayText {
         if (awake < RelayStates.slots(run).size()) {
             return I18n.forGameText(() -> Translation.msg(PREFIX + "intel.progress").count(awake).arg("relays", relays).text());
         }
-        String step = nextStep(run, stage);
+        String step = nextStep(stage);
         return step == null ? I18n.forGameText(() -> Translation.msg(PREFIX + "intel.allWoken").arg("relays", relays).text())
                 : stepText(PREFIX + "intel." + step, stage, relays);
     }

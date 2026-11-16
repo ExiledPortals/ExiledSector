@@ -64,12 +64,12 @@ class BattleItemDropsTest {
     }
 
     private static FleetLoss source(float deploymentPoints, ItemChances chances) {
-        return new FleetLoss(deploymentPoints, 1f, 0f, rules(chances, true, 1f));
+        return new FleetLoss(deploymentPoints, 1f, 0f, rules(chances, true));
     }
 
-    private static FleetLootRules rules(ItemChances chances, boolean ownLedger, float deploymentPointsMult) {
+    private static FleetLootRules rules(ItemChances chances, boolean ownLedger) {
         FleetLootRules.Kind kind = ownLedger ? FleetLootRules.Kind.OWN_LEDGER : FleetLootRules.Kind.LEVEL_SCALED;
-        return new FleetLootRules(kind, new LootMultipliers(chances, 1f, 1f, CraftingDrops.NO_BAND_SHIFT), deploymentPointsMult, false);
+        return new FleetLootRules(kind, new LootMultipliers(chances, 1f, ItemQuantity.BASE, CraftingDrops.NO_BAND_SHIFT), false);
     }
 
     private static BattleItemDrops.Battle battle(FleetLoss... sources) {
@@ -77,7 +77,7 @@ class BattleItemDropsTest {
     }
 
     private static List<BattleItemDrops.Planned> plan(BattleItemDrops.Battle battle, float dropMultiplier) {
-        return BattleItemDrops.plan(battle, dropMultiplier, 1f, List.of(), neverLucky(), true);
+        return BattleItemDrops.plan(battle, dropMultiplier, 0f, List.of(), neverLucky(), true);
     }
 
     private static Random neverLucky() {
@@ -111,15 +111,24 @@ class BattleItemDropsTest {
 
     @Test
     void theHullItemQuantityScalesOnlyTheBasicHullItems() {
-        List<BattleItemDrops.Planned> planned = BattleItemDrops.plan(battle(source(1000f)), 1f, 2f, List.of(), neverLucky(), true);
+        List<BattleItemDrops.Planned> planned = BattleItemDrops.plan(battle(source(1000f)), 1f, 100f, List.of(), neverLucky(), true);
 
         assertEquals(Map.of(BattleItemDrops.Drop.MODS_1, 8, BattleItemDrops.Drop.MODS_2, 4, BattleItemDrops.Drop.REFIT_SCHEMATIC, 1),
                 counts(planned));
     }
 
     @Test
+    void thePlayersHullItemQuantityAddsToTheChartsItemQuantityInsteadOfMultiplyingIt() {
+        BattleItemDrops.Battle chartFleet = battle(source(1000f, ItemChances.of(ItemQuantity.increasedBy(100f))));
+        List<BattleItemDrops.Planned> planned = BattleItemDrops.plan(chartFleet, 1f, 100f, List.of(), neverLucky(), true);
+
+        assertEquals(12, counts(planned).get(BattleItemDrops.Drop.MODS_1));
+        assertEquals(6, counts(planned).get(BattleItemDrops.Drop.MODS_2));
+    }
+
+    @Test
     void aBiggerEnemyTreeTurnsMoreHullItemsTwoModifierWithoutDroppingMore() {
-        FleetLootRules full = rules(ItemChances.BASE, true, 1f);
+        FleetLootRules full = rules(ItemChances.BASE, true);
         Map<BattleItemDrops.Drop, Integer> doubled = counts(plan(battle(new FleetLoss(1000f, 1f, 30f, full)), 1f));
         Map<BattleItemDrops.Drop, Integer> capped = counts(plan(battle(new FleetLoss(1000f, 1f, 60f, full)), 1f));
 
@@ -130,15 +139,15 @@ class BattleItemDropsTest {
     }
 
     @Test
-    void difficultyStopsAtThreeTimesAndTheFleetsDeploymentPointMultiplierAndShareScaleItsDrops() throws Exception {
-        FleetLootRules full = rules(ItemChances.BASE, true, 1f);
+    void difficultyStopsAtThreeTimesAndTheFleetsItemQuantityAndShareScaleItsDrops() throws Exception {
+        FleetLootRules full = rules(ItemChances.BASE, true);
         assertEquals(12, counts(plan(battle(new FleetLoss(1000f, 6f, 0f, full)), 1f)).get(BattleItemDrops.Drop.MODS_1));
-        assertEquals(8, counts(plan(battle(new FleetLoss(1000f, 1f, 0f, rules(ItemChances.BASE, true, 2f))), 1f))
+        assertEquals(8, counts(plan(battle(new FleetLoss(1000f, 1f, 0f, rules(ItemChances.of(ItemQuantity.increasedBy(100f)), true))), 1f))
                 .get(BattleItemDrops.Drop.MODS_1));
 
-        assertEquals(2, counts(plan(battle(new FleetLoss(1000f, 1f, 0f, rules(ItemChances.BASE, false, 1f))), 1f))
+        assertEquals(2, counts(plan(battle(new FleetLoss(1000f, 1f, 0f, rules(ItemChances.BASE, false))), 1f))
                 .get(BattleItemDrops.Drop.MODS_1));
-        assertEquals(4, counts(plan(battle(new FleetLoss(1000f, 1f, 0f, rules(ItemChances.BASE, true, 1f))), 1f))
+        assertEquals(4, counts(plan(battle(new FleetLoss(1000f, 1f, 0f, rules(ItemChances.BASE, true))), 1f))
                 .get(BattleItemDrops.Drop.MODS_1));
     }
 
@@ -152,8 +161,8 @@ class BattleItemDropsTest {
 
     @Test
     void aTargetedChanceAddsItemsOfThatSectionOnTopOfTheGeneralRoll() {
-        ItemChances bridgeBonus = new ItemChances(1f, Map.of(ItemKind.BRIDGE, 1f));
-        List<BattleItemDrops.Planned> planned = BattleItemDrops.plan(battle(source(2000f, bridgeBonus)), 1f, 1f,
+        ItemChances bridgeBonus = ItemChances.BASE.withTargeted(Map.of(ItemKind.BRIDGE, 1f));
+        List<BattleItemDrops.Planned> planned = BattleItemDrops.plan(battle(source(2000f, bridgeBonus)), 1f, 0f,
                 List.of(ItemKind.BRIDGE, ItemKind.REACTOR), neverLucky(), true);
 
         long targeted = planned.stream().filter(entry -> entry.kind() != null).count();
@@ -181,7 +190,7 @@ class BattleItemDropsTest {
 
     @Test
     void onlyTheHullItemsAnOverchargingFleetDropsAreOvercharged() {
-        FleetLoss overcharging = new FleetLoss(1000f, 1f, 0f, rules(ItemChances.BASE, true, 1f).overchargingHullItems());
+        FleetLoss overcharging = new FleetLoss(1000f, 1f, 0f, rules(ItemChances.BASE, true).overchargingHullItems());
 
         List<BattleItemDrops.Planned> planned = plan(battle(source(1000f), overcharging), 1f);
 
@@ -190,10 +199,10 @@ class BattleItemDropsTest {
         assertEquals(counts(overchargedItems), counts(planned.stream().filter(entry -> !entry.overcharged()).toList()));
         Random random = new Random(5L);
         for (int trial = 0; trial < 20; trial++) {
-            for (ItemData item : BattleItemDrops.roll(battle(overcharging), 1f, 1f, random, definition -> false, true).items()) {
+            for (ItemData item : BattleItemDrops.roll(battle(overcharging), 1f, 0f, random, definition -> false, true).items()) {
                 assertEquals(1, item.explicits().stream().filter(RolledModifier::overcharged).count(), item.toString());
             }
-            for (ItemData item : BattleItemDrops.roll(battle(source(1000f)), 1f, 1f, random, definition -> false, true).items()) {
+            for (ItemData item : BattleItemDrops.roll(battle(source(1000f)), 1f, 0f, random, definition -> false, true).items()) {
                 assertTrue(item.explicits().stream().noneMatch(RolledModifier::overcharged), item.toString());
             }
         }
@@ -223,12 +232,12 @@ class BattleItemDropsTest {
         int relics = 0;
         int lockedRelics = 0;
         for (int trial = 0; trial < 100; trial++) {
-            Loot loot = BattleItemDrops.roll(bigBattle, 1f, 1f, random, definition -> true, true);
+            Loot loot = BattleItemDrops.roll(bigBattle, 1f, 0f, random, definition -> true, true);
             for (ItemData item : loot.items()) {
                 relics += HULL_RELIC.equals(item.definitionId()) ? 1 : 0;
                 assertFalse(THIN_BRIDGE.equals(item.definitionId()) && item.explicits().size() > 1, item.toString());
             }
-            for (ItemData item : BattleItemDrops.roll(bigBattle, 1f, 1f, random, definition -> false, true).items()) {
+            for (ItemData item : BattleItemDrops.roll(bigBattle, 1f, 0f, random, definition -> false, true).items()) {
                 lockedRelics += HULL_RELIC.equals(item.definitionId()) ? 1 : 0;
             }
         }
@@ -263,7 +272,7 @@ class BattleItemDropsTest {
         Map<String, Integer> drops = new HashMap<>();
         Random random = new Random(5L);
         for (int trial = 0; trial < 2000; trial++) {
-            for (ItemData item : BattleItemDrops.roll(battle, 1f, 1f, random, definition -> true, true).items()) {
+            for (ItemData item : BattleItemDrops.roll(battle, 1f, 0f, random, definition -> true, true).items()) {
                 if (ItemDefinitions.get(item.definitionId()).unique()) {
                     drops.merge(item.definitionId(), 1, Integer::sum);
                 }
@@ -276,8 +285,8 @@ class BattleItemDropsTest {
     void aBattleWithNoLossesOrADropMultiplierOfZeroDropsNothing() {
         BattleItemDrops.Battle battle = battle(source(4000f));
 
-        assertEquals(Loot.NONE, BattleItemDrops.roll(battle, 0f, 1f, new Random(1L), definition -> true, true));
-        assertEquals(Loot.NONE, BattleItemDrops.roll(battle(), 1f, 1f, new Random(1L), definition -> true, true));
+        assertEquals(Loot.NONE, BattleItemDrops.roll(battle, 0f, 0f, new Random(1L), definition -> true, true));
+        assertEquals(Loot.NONE, BattleItemDrops.roll(battle(), 1f, 0f, new Random(1L), definition -> true, true));
     }
 
     @Test
@@ -319,10 +328,10 @@ class BattleItemDropsTest {
         MasterSchematic.requiredWhen(() -> true);
         BattleItemDrops.Battle battle = battle(source(1000f));
 
-        Map<BattleItemDrops.Drop, Integer> closed = counts(BattleItemDrops.plan(battle, 1f, 1f, List.of(), neverLucky(), false));
+        Map<BattleItemDrops.Drop, Integer> closed = counts(BattleItemDrops.plan(battle, 1f, 0f, List.of(), neverLucky(), false));
 
         assertEquals(Map.of(BattleItemDrops.Drop.MASTER_SCHEMATIC, 1), closed);
-        Loot loot = BattleItemDrops.roll(battle, 1f, 1f, neverLucky(),
+        Loot loot = BattleItemDrops.roll(battle, 1f, 0f, neverLucky(),
                 definition -> true, false);
         assertEquals(List.of(MasterSchematic.INSTANCE), loot.schematics());
         assertTrue(loot.items().isEmpty());
@@ -333,7 +342,7 @@ class BattleItemDropsTest {
         Random random = new Random(5L);
         Map<RefitSchematic, Integer> tierCounts = new EnumMap<>(RefitSchematic.class);
         for (int trial = 0; trial < battles; trial++) {
-            for (ShipSchematic upgrade : BattleItemDrops.roll(battle, 1f, 1f, random, definition -> true, true).schematics()) {
+            for (ShipSchematic upgrade : BattleItemDrops.roll(battle, 1f, 0f, random, definition -> true, true).schematics()) {
                 if (upgrade instanceof RefitSchematic schematic) {
                     tierCounts.merge(schematic, 1, Integer::sum);
                 }

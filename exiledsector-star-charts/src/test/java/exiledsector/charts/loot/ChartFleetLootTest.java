@@ -12,8 +12,6 @@ import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec;
 import exiledsector.MockSector;
-import exiledsector.charts.anomaly.ChartAnomalies;
-import exiledsector.charts.anomaly.debris.AnomalousDebris;
 import exiledsector.charts.anomaly.stormfront.StormFront;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.generation.ChartGenContext.AppliedEffect;
@@ -30,7 +28,6 @@ import exiledsector.charts.generation.ChartTiers;
 import exiledsector.items.CraftingDrops;
 import exiledsector.items.ItemData;
 import exiledsector.items.Nanoswarm;
-import exiledsector.items.SalvageSiteDrops;
 import exiledsector.items.StarChartCipher;
 import exiledsector.items.StarChartFixtures;
 import exiledsector.loot.BattleLootRates;
@@ -429,46 +426,13 @@ class ChartFleetLootTest {
     }
 
     @Test
-    void anAnomalysFleetsDropTheirDeploymentPointShareTimesItsFleetLootButTheBossKeepsItsFull() throws Exception {
-        ChartAnomalies.register(new JSONArray().put(new JSONObject().put("id", AnomalousDebris.ANOMALY_ID).put("fleet_loot", "0.5")));
-        registerCraftingRate("10");
-        registerCraftingDrops(craftingDrop(AUGMENTATION, "1", "FALSE"));
-        try {
-            ChartRun run = storeLiveRun(8);
-            CampaignFleetAPI debrisFleet = ChartFleetFixtures.chartFleet("debris", RUN_ID, 100f);
-            ChartFleetLedger.tagAnomaly(debrisFleet, AnomalousDebris.ANOMALY_ID);
-            CampaignFleetAPI anomalyBoss = ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 100f);
-            ChartFleetLedger.tagAnomaly(anomalyBoss, AnomalousDebris.ANOMALY_ID);
-            CampaignFleetAPI untagged = ChartFleetFixtures.chartFleet("guard", RUN_ID, 100f);
-            ChartFleetLedger.tagAnomaly(untagged, "not_an_anomaly");
-
-            assertEquals(0.5f, ChartFleetLedger.anomalyFleetLoot(debrisFleet, run));
-            assertEquals(1f, ChartFleetLedger.anomalyFleetLoot(anomalyBoss, run));
-            assertEquals(1f, ChartFleetLedger.anomalyFleetLoot(untagged, run));
-            assertEquals(Map.of(AUGMENTATION, 5), rollAlone(sector, debrisFleet, run, ChartGenContext.none(), 100f,
-                    new Random(1L)).materials());
-        } finally {
-            BattleLootRates.clear();
-            CraftingDrops.clear();
-            ChartAnomalies.resetForTests();
-        }
-    }
-
-    @Test
     void theBossAddsNoCraftingItemsOfItsOwnBeyondItsDeploymentPoints() throws Exception {
-        SalvageSiteDrops.register(new JSONArray()
-                .put(new JSONObject().put("site", ChartIds.BOSS_LOOT_SITE).put("chances", "0").put("uniqueChance", "0")));
-        try {
-            ChartRun run = storeLiveRun(6);
+        ChartRun run = storeLiveRun(6);
 
-            Loot bossLoot = rollAlone(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
-                    ChartGenContext.none(), 200f, new Random(1L));
+        Loot bossLoot = rollAlone(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
+                ChartGenContext.none(), 200f, new Random(1L));
 
-            assertTrue(bossLoot.materials().isEmpty(), bossLoot.toString());
-            assertTrue(run.isBossLootGuaranteed());
-        } finally {
-            SalvageSiteDrops.clear();
-        }
+        assertTrue(bossLoot.materials().isEmpty(), bossLoot.toString());
     }
 
     @Test

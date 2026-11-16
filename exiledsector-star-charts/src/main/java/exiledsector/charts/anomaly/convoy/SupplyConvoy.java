@@ -25,7 +25,6 @@ import java.util.Set;
 public final class SupplyConvoy implements LayoutShaper, ContentPlacer, RunParticipant, LootShaper, AtlasRule {
 
     public static final String ANOMALY_ID = "supply_convoy";
-    public static final String CARGO_KEY = ChartModifier.CHART_CONVOY_CARGO_PERCENT.anomalyTuningKey();
     public static final String ESCORT_KEY = ChartModifier.CHART_CONVOY_ESCORT_PERCENT.anomalyTuningKey();
     public static final String EXTRA_KEY = ChartModifier.CHART_EXTRA_CONVOYS.anomalyTuningKey();
     public static final String EXTRA_CHANCE_KEY = ChartModifier.CHART_EXTRA_CONVOY_CHANCE_PERCENT.anomalyTuningKey();

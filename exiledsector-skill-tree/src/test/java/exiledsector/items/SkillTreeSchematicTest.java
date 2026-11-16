@@ -105,7 +105,7 @@ class SkillTreeSchematicTest {
         BattleLootRates.Rate rate = new BattleLootRates.Rate(SkillTreeSchematicDrops.LOGISTICS.rateId(), 0.032f, LootCurve.LINEAR, 1f);
         List<FleetLoss> regular = List.of(new FleetLoss(1000f, 1f, 0f, FleetLootRules.LEVEL_SCALED));
         List<FleetLoss> chart = List.of(
-                new FleetLoss(1000f, 1f, 0f, FleetLootRules.ownLedger(LootMultipliers.NONE, 1f)));
+                new FleetLoss(1000f, 1f, 0f, FleetLootRules.ownLedger(LootMultipliers.NONE)));
 
         assertEquals(0.16f, SkillTreeSchematicDrops.expectedBattleDrops(regular, rate, LEVEL_ONE_SHARE, 1f), 1e-5f);
         assertEquals(0.32f, SkillTreeSchematicDrops.expectedBattleDrops(chart, rate, LEVEL_ONE_SHARE, 1f), 1e-5f);

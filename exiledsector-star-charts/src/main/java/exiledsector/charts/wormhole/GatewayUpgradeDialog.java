@@ -1,4 +1,4 @@
-package exiledsector.charts.objective;
+package exiledsector.charts.wormhole;
 
 import com.fs.starfarer.api.campaign.SpecialItemSpecAPI;
 import com.fs.starfarer.api.campaign.TextPanelAPI;

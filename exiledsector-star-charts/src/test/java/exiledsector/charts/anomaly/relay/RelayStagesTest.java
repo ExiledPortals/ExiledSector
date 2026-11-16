@@ -221,8 +221,8 @@ class RelayStagesTest {
         while (cell != null && settled <= stages) {
             AtlasAnomalyRecord.Chain chain = RelayStages.stageAt(generator, state, cell);
             assertEquals(stages, chain.stages());
-            assertEquals(chain.isLast(), RelayStages.join(new AtlasRunNode(cell.pack(), "pirates", List.of(), List.of(RelayNetwork.ANOMALY_ID)),
-                    generator, state, cell).guaranteedBossUnique());
+            assertEquals(RelayStages.stageEffects(chain.stage()), RelayStages.join(new AtlasRunNode(cell.pack(), "pirates", List.of(),
+                    List.of(RelayNetwork.ANOMALY_ID)), generator, state, cell).effects());
             state.add(cell, AtlasState.COMPLETED);
             cell = RelayStages.settle(generator, state, cell, true, true);
             settled++;
@@ -251,17 +251,16 @@ class RelayStagesTest {
     }
 
     @Test
-    void openingAChainSystemAddsItsStageLinesAndTheLastStageGuaranteesAUnique() {
+    void openingAChainSystemAddsItsStageLinesWhetherOrNotItIsTheLastStage() {
         AtlasRunNode node = new AtlasRunNode(start.pack(), "pirates", List.of(), List.of(RelayNetwork.ANOMALY_ID));
         int recordId = insertAtStart(new AtlasAnomalyRecord.Chain(3, 3, AtlasCell.ORIGIN));
 
         AtlasRunNode last = RelayStages.join(node, generator, state, start);
 
         assertEquals(RelayStages.stageEffects(3), last.effects());
-        assertTrue(last.guaranteedBossUnique());
         state.removeAnomaly(recordId);
         insertAtStart(new AtlasAnomalyRecord.Chain(3, 4, AtlasCell.ORIGIN));
-        assertFalse(RelayStages.join(node, generator, state, start).guaranteedBossUnique());
+        assertEquals(RelayStages.stageEffects(3), RelayStages.join(node, generator, state, start).effects());
         AtlasRunNode plain = new AtlasRunNode(start.pack(), "pirates", List.of(), List.of());
         assertSame(plain, ChartAnomalies.joinRunNode(plain, generator, state, start, null));
     }
@@ -282,11 +281,9 @@ class RelayStagesTest {
         AtlasRunNode node = new AtlasRunNode(start.pack(), "pirates", List.of(), List.of(RelayNetwork.ANOMALY_ID));
         AtlasRunNode added = RelayStages.join(node, generator, state, start);
         assertEquals(List.of(), added.effects());
-        assertFalse(added.guaranteedBossUnique());
 
         insertAtStart(null);
         AtlasRunNode first = RelayStages.join(node, generator, state, start);
         assertEquals(List.of(), first.effects());
-        assertFalse(first.guaranteedBossUnique());
     }
 }

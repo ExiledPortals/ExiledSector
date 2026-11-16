@@ -178,7 +178,7 @@ class ConvoyFeedstockTest {
     @Test
     void thePodsTakeTheLostShareAndTheCacheKeepsEightyPercentOfTheDeliveredShare() {
         ConvoyState convoy = new ConvoyState(0, List.of(), "dest", 0f, 0f, 0f, 0f, 1L);
-        convoy.loadCargo(100f, 3f, 1f);
+        convoy.loadCargo(100f);
         convoy.loadFeedstock(Map.of(THREAT, 200f));
         convoy.setPhase(ConvoyState.Phase.EN_ROUTE);
 

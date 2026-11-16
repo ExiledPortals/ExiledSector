@@ -231,9 +231,7 @@ class ExcavationSitesTest {
         ExcavationSite site = new ExcavationSite(2, "planet_7", ExcavationSite.Access.OPEN, Long.MIN_VALUE, true);
 
         assertEquals(site, ExcavationSite.decode(2, site.encode()));
-        assertEquals(new ExcavationSite(0, "planet", ExcavationSite.Access.COLLAPSED, 5L, true), ExcavationSite.decode(0, "planet,COLLAPSED,WEAPON,5,1"));
         assertNull(ExcavationSite.decode(0, "planet,SIDEWAYS,1,0"));
-        assertNull(ExcavationSite.decode(0, "planet,SIDEWAYS,WEAPON,1,0"));
         assertNull(ExcavationSite.decode(0, "planet,OPEN,WEAPON"));
         assertFalse(StateFields.fits("a,b"));
         assertFalse(StateFields.fits("a=b"));

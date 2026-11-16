@@ -449,7 +449,6 @@ class ChartRunCloserTest {
         ChartRunCloser.close(sector, run);
 
         assertFalse(run.isObjectiveComplete());
-        assertFalse(run.isRewardClaimed());
     }
 
     private record BoundScript(String runId) implements EveryFrameScript, ChartRunBound {

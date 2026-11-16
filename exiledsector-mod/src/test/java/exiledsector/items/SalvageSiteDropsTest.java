@@ -74,7 +74,7 @@ class SalvageSiteDropsTest {
         Random random = new Random(11L);
         int hits = 0;
         for (int i = 0; i < TRIALS; i++) {
-            if (test.test(HullItemDrops.rollHullItemLoot(site, random, ItemChances.of(mult), 1f).items())) {
+            if (test.test(HullItemDrops.rollHullItemLoot(site, random, ItemChances.of(mult), 0f).items())) {
                 hits++;
             }
         }
@@ -172,12 +172,12 @@ class SalvageSiteDropsTest {
         try (MockedStatic<LunaSettings> luna = Mockito.mockStatic(LunaSettings.class)) {
             luna.when(() -> LunaSettings.getBoolean("exiledSector", SalvageSiteCompat.DROPS_FIELD_ID)).thenReturn(true);
             assertTrue(SalvageSiteDrops.hasRule("rat_abyss_research"));
-            assertEquals(1, HullItemDrops.rollHullItemLoot("rat_abyss_research", new Random(1L), ItemChances.BASE, 1f).items().size());
+            assertEquals(1, HullItemDrops.rollHullItemLoot("rat_abyss_research", new Random(1L), ItemChances.BASE, 0f).items().size());
             assertEquals(0.25, basicShare("probe", 1f, items -> !items.isEmpty()), 0.02);
 
             luna.when(() -> LunaSettings.getBoolean("exiledSector", SalvageSiteCompat.DROPS_FIELD_ID)).thenReturn(false);
             assertFalse(SalvageSiteDrops.hasRule("rat_abyss_research"));
-            assertTrue(HullItemDrops.rollHullItemLoot("rat_abyss_research", new Random(1L), ItemChances.BASE, 1f).items().isEmpty());
+            assertTrue(HullItemDrops.rollHullItemLoot("rat_abyss_research", new Random(1L), ItemChances.BASE, 0f).items().isEmpty());
             assertTrue(SalvageSiteDrops.hasRule("probe"));
         }
     }
@@ -224,7 +224,7 @@ class SalvageSiteDropsTest {
         Random random = new Random(13L);
         List<Map<String, Integer>> rolls = new java.util.ArrayList<>();
         for (int i = 0; i < TRIALS; i++) {
-            rolls.add(SalvageSiteDrops.rollMaterials(site, random, new LootMultipliers(ItemChances.BASE, mult, mult, CraftingDrops.NO_BAND_SHIFT)));
+            rolls.add(SalvageSiteDrops.rollMaterials(site, random, new LootMultipliers(ItemChances.BASE, mult, ItemQuantity.atShare(mult), CraftingDrops.NO_BAND_SHIFT)));
         }
         return rolls;
     }
@@ -275,7 +275,7 @@ class SalvageSiteDropsTest {
         Random random = new Random(19L);
         List<Map<String, Integer>> shifted = new java.util.ArrayList<>();
         for (int i = 0; i < TRIALS; i++) {
-            shifted.add(SalvageSiteDrops.rollMaterials("station", random, new LootMultipliers(ItemChances.BASE, 1f, 1f, 3f)));
+            shifted.add(SalvageSiteDrops.rollMaterials("station", random, new LootMultipliers(ItemChances.BASE, 1f, ItemQuantity.atShare(1f), 3f)));
         }
         List<Map<String, Integer>> unshifted = materials("station", 1f);
 
@@ -306,7 +306,7 @@ class SalvageSiteDropsTest {
         Random random = new Random(17L);
         List<Map<String, Integer>> craftingItemOnly = new java.util.ArrayList<>();
         for (int i = 0; i < TRIALS; i++) {
-            craftingItemOnly.add(SalvageSiteDrops.rollMaterials("probe", random, new LootMultipliers(ItemChances.BASE, 0f, 2f, CraftingDrops.NO_BAND_SHIFT)));
+            craftingItemOnly.add(SalvageSiteDrops.rollMaterials("probe", random, new LootMultipliers(ItemChances.BASE, 0f, ItemQuantity.atShare(2f), CraftingDrops.NO_BAND_SHIFT)));
         }
 
         assertEquals(0.0, materialShare(craftingItemOnly, roll -> roll.containsKey(ItemDisassembly.FEEDSTOCK_ITEM_ID)), 0.0);
@@ -315,7 +315,7 @@ class SalvageSiteDropsTest {
 
     @Test
     void sitesWithoutARuleDropNoMaterials() {
-        assertTrue(SalvageSiteDrops.rollMaterials("nowhere", new Random(1L), new LootMultipliers(ItemChances.BASE, 1f, 1f, CraftingDrops.NO_BAND_SHIFT)).isEmpty());
-        assertTrue(SalvageSiteDrops.rollMaterials(null, new Random(1L), new LootMultipliers(ItemChances.BASE, 1f, 1f, CraftingDrops.NO_BAND_SHIFT)).isEmpty());
+        assertTrue(SalvageSiteDrops.rollMaterials("nowhere", new Random(1L), new LootMultipliers(ItemChances.BASE, 1f, ItemQuantity.atShare(1f), CraftingDrops.NO_BAND_SHIFT)).isEmpty());
+        assertTrue(SalvageSiteDrops.rollMaterials(null, new Random(1L), new LootMultipliers(ItemChances.BASE, 1f, ItemQuantity.atShare(1f), CraftingDrops.NO_BAND_SHIFT)).isEmpty());
     }
 }

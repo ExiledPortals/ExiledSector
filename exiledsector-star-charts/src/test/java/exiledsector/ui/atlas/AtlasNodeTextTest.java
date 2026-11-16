@@ -106,7 +106,7 @@ class AtlasNodeTextTest {
     }
 
     @Test
-    void aRelayStageSystemShowsItsStageItsLinesAndTheLastStagesUnique() throws Exception {
+    void aRelayStageSystemShowsItsStageAndItsLines() throws Exception {
         ChartTables.loadAnomalies();
         AtlasData.registerNodeEffects(new JSONArray().put(new JSONObject().put("id", RelayStages.STAGE_EFFECTS_ID)
                 .put("effects", "CHART_FLEET_SIZE_PERCENT:20; CHART_QUANTITY_PERCENT:25")));
@@ -120,11 +120,10 @@ class AtlasNodeTextTest {
             List<AtlasLine> markers = AtlasNodeText.markers(generator, state, cell, generator.node(cell));
 
             assertTrue(markers.contains(new AtlasLine("Stage 3 of 3", AtlasLine.Tone.PLAIN)), markers.toString());
-            assertTrue(markers.contains(new AtlasLine("With every relay awake, the Star Chart Boss drops a unique hull item or subroutine",
-                    AtlasLine.Tone.GOOD)), markers.toString());
+            assertTrue(markers.stream().noneMatch(line -> line.plain().contains("unique")), markers.toString());
             List<String> styledLines = markers.stream().filter(line -> line.tone() == AtlasLine.Tone.STYLED).map(AtlasLine::plain).toList();
             assertEquals(List.of("40% increased enemy fleet size",
-                    "50% increased quantity of items found in the system, and 50% increased completion reward"), styledLines);
+                    "50% increased quantity of items found in the system"), styledLines);
             assertTrue(AtlasNodeText.confirmLines(generator, state, cell, itemId -> 0).stream().noneMatch(line -> line.contains("<")));
             assertTrue(AtlasNodeText.anomalyBody(generator, state, cell, RelayNetwork.ANOMALY_ID).plain().contains("Stage 3 of 3"));
             assertEquals(List.of(), AtlasNodeText.card(generator, state, cell, true).notes());

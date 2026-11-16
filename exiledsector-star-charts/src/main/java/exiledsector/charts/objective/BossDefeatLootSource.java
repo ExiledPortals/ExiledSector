@@ -10,28 +10,28 @@ import exiledsector.loot.LootDelivery;
 import exiledsector.loot.LootSource;
 import org.apache.log4j.Logger;
 
-public final class ChartRewardLootSource implements LootSource {
+public final class BossDefeatLootSource implements LootSource {
 
-    public static final ChartRewardLootSource INSTANCE = new ChartRewardLootSource();
-    private static final Logger LOG = Logger.getLogger(ChartRewardLootSource.class);
+    public static final BossDefeatLootSource INSTANCE = new BossDefeatLootSource();
+    private static final Logger LOG = Logger.getLogger(BossDefeatLootSource.class);
 
-    private static final class Reward {
+    private static final class FallenBossLoot {
         private Loot loot = Loot.NONE;
     }
 
-    private ChartRewardLootSource() {
+    private BossDefeatLootSource() {
     }
 
-    private Reward reward(BattleLoot battle) {
-        return battle.state(this, Reward::new);
+    private FallenBossLoot fallenBossLoot(BattleLoot battle) {
+        return battle.state(this, FallenBossLoot::new);
     }
 
     @Override
     public void recordEngagement(BattleLoot battle, BattleEngagement engagement) {
-        Reward reward = reward(battle);
+        FallenBossLoot fallen = fallenBossLoot(battle);
         engagement.lostEnemiesBySourceFleet().forEach((sourceFleet, members) -> {
             try {
-                reward.loot = reward.loot.plus(ChartObjectives.bossFellInBattle(Global.getSector(), sourceFleet, members));
+                fallen.loot = fallen.loot.plus(ChartObjectives.bossFellInBattle(Global.getSector(), sourceFleet, members));
             } catch (RuntimeException | LinkageError e) {
                 LOG.error("[ExiledSector] Checking whether the Star Chart boss fell in battle failed", e);
             }
@@ -40,11 +40,11 @@ public final class ChartRewardLootSource implements LootSource {
 
     @Override
     public void addEncounterLoot(BattleLoot battle, CargoAPI loot) {
-        LootDelivery.toLootScreen(loot, reward(battle).loot, DropOrigin.BATTLE);
+        LootDelivery.toLootScreen(loot, fallenBossLoot(battle).loot, DropOrigin.BATTLE);
     }
 
     @Override
     public void deliverBattleLoot(BattleLoot battle, CargoAPI playerCargo) {
-        LootDelivery.deliver(playerCargo, reward(battle).loot, DropOrigin.BATTLE);
+        LootDelivery.deliver(playerCargo, fallenBossLoot(battle).loot, DropOrigin.BATTLE);
     }
 }

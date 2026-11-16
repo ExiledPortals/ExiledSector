@@ -11,8 +11,10 @@ import exiledsector.items.CraftingDrops;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
+import exiledsector.items.ItemQuantity;
 import exiledsector.items.ItemRoll;
 import exiledsector.loot.LootMultipliers;
+import exiledsector.skills.skilleffect.logistics.FoundItemQuantity;
 
 import java.util.List;
 import java.util.Map;
@@ -22,11 +24,6 @@ import java.util.function.Predicate;
 public record ChartLootContext(ChartGenContext effects, int tier) {
 
     private static final ChartLootContext OUTSIDE_RUNS = new ChartLootContext(ChartGenContext.none(), ChartDrops.NO_TIER);
-
-    public enum PlayerFindBonus {
-        APPLIES,
-        SKIPPED
-    }
 
     public ChartLootContext {
         effects = ChartGenContext.orNone(effects);
@@ -56,9 +53,20 @@ public record ChartLootContext(ChartGenContext effects, int tier) {
         return tier == ChartDrops.NO_TIER;
     }
 
+    public ChartLootContext plusQuantityPercent(float increasedPercent) {
+        return withContext(effects.plusQuantityPercent(increasedPercent));
+    }
+
+    public ChartLootContext forFleetLoot(boolean boss) {
+        return withContext(effects.forFleetLoot(boss));
+    }
+
     public ChartLootContext withEffects(List<ChartGenContext.AppliedEffect> extraEffects) {
-        ChartGenContext withExtras = effects.withEffects(extraEffects);
-        return withExtras == effects ? this : new ChartLootContext(withExtras, tier);
+        return withContext(effects.withEffects(extraEffects));
+    }
+
+    private ChartLootContext withContext(ChartGenContext derived) {
+        return derived == effects ? this : new ChartLootContext(derived, tier);
     }
 
     public float bandShift() {
@@ -89,48 +97,28 @@ public record ChartLootContext(ChartGenContext effects, int tier) {
         return effects.carriedDropMult(type);
     }
 
-    public float rewardMult() {
-        return effects.rewardMult();
-    }
-
     public LootMultipliers multipliers(float scale) {
         if (isOutsideRuns()) {
             return LootMultipliers.of(scale);
         }
-        return new LootMultipliers(itemChances().scaled(scale), dropMult(DropType.FEEDSTOCK) * scale, dropMult(DropType.CRAFTING_ITEM) * scale,
-                bandShift());
+        ItemQuantity chartCraftingItems = ItemQuantity.increasedBy(effects.totalDropPercent(DropType.CRAFTING_ITEM)).scaled(scale);
+        return new LootMultipliers(itemChances().scaled(scale), dropMult(DropType.FEEDSTOCK) * scale, chartCraftingItems, bandShift());
     }
 
-    public LootMultipliers rewardMultipliers(float tierRamp) {
-        float chanceMult = tierRamp * rewardMult();
-        return new LootMultipliers(rewardChancesWithoutItemPercent(chanceMult), chanceMult, chanceMult, bandShift());
-    }
-
-    private ItemChances rewardChancesWithoutItemPercent(float chanceMult) {
-        return ItemChances.of(chanceMult).withRarity(rarity());
+    public float craftingItemMult(float extraIncreasedPercent) {
+        return ItemQuantity.increasedBy(effects.totalDropPercent(DropType.CRAFTING_ITEM) + extraIncreasedPercent + FoundItemQuantity.craftingItemPercent())
+                .mult();
     }
 
     public ChartDrops.Mults chartDropMults(float scale) {
-        return new ChartDrops.Mults(dropMult(DropType.STAR_CHART) * scale, dropMult(DropType.CRAFTING_ITEM) * scale,
-                dropMult(DropType.CATALYST) * scale);
+        return new ChartDrops.Mults(dropMult(DropType.STAR_CHART) * scale, craftingItemMult(0f) * scale, dropMult(DropType.CATALYST) * scale);
     }
 
-    public ChartDrops.Mults rewardChartDropMults() {
-        return new ChartDrops.Mults(effects.rewardDropMult(DropType.STAR_CHART), effects.rewardDropMult(DropType.CRAFTING_ITEM),
-                effects.rewardDropMult(DropType.CATALYST));
-    }
-
-    public Map<String, Integer> craftingItems(float expectedCount, Predicate<String> pool, PlayerFindBonus playerFindBonus, Random random) {
-        return playerFindBonus == PlayerFindBonus.APPLIES
-                ? CraftingDrops.rollFoundByPlayer(expectedCount, pool, craftingBandShift(), random)
-                : CraftingDrops.roll(expectedCount, pool, craftingBandShift(), random);
+    public Map<String, Integer> craftingItems(float expectedCount, Predicate<String> pool, Random random) {
+        return CraftingDrops.roll(expectedCount, pool, craftingBandShift(), random);
     }
 
     public ItemData rolledWithDropLimits(ItemDefinition definition, long seed) {
         return ItemData.rolled(definition, seed, ItemRoll.dropAtRarity(rarity()));
-    }
-
-    public ItemData rolledWithAffixLimitsAtRunTier(ItemDefinition definition, long seed) {
-        return ItemData.rolled(definition, seed, ItemRoll.atTier(tier).withRarity(rarity()));
     }
 }

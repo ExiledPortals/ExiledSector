@@ -30,9 +30,7 @@ public final class ConvoyState {
     private final long cargoSeed;
     private float startFreighterPoints;
     private float carriedFreighterPoints;
-    private float cargoSteps;
     private boolean civilianOnly;
-    private float itemChanceMult;
     private Map<String, Float> feedstock;
     private Phase phase = Phase.WAITING;
     private boolean hostile;
@@ -113,19 +111,13 @@ public final class ConvoyState {
         return exitToken;
     }
 
-    void loadCargo(float freighterPoints, float steps, float chanceMult) {
+    void loadCargo(float freighterPoints) {
         startFreighterPoints = Math.max(0f, freighterPoints);
         carriedFreighterPoints = startFreighterPoints;
-        cargoSteps = Math.max(0f, steps);
-        itemChanceMult = Math.max(0f, chanceMult);
     }
 
     public float cargoSteps() {
-        return cargoSteps;
-    }
-
-    public float itemChanceMult() {
-        return itemChanceMult;
+        return ConvoyRules.cargoSteps(startFreighterPoints);
     }
 
     void loadFeedstock(Map<String, Float> amounts) {

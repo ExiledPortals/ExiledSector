@@ -34,15 +34,15 @@ final class ChartInfoText {
                    List<StyledText> rewardLines, List<SlottedLine> modifierLines) {
     }
 
-    record Key(String runId, boolean objectiveComplete, boolean objectiveLost, List<String> anomalyIds, boolean rewardUnchosen) {
+    record Key(String runId, boolean objectiveComplete, List<String> anomalyIds, boolean rewardUnchosen) {
 
         static Key of(ChartRun run) {
-            return new Key(run.runId(), run.isObjectiveComplete(), run.isObjectiveLost(), List.copyOf(run.anomalyIds()),
+            return new Key(run.runId(), run.isObjectiveComplete(), List.copyOf(run.anomalyIds()),
                     unchosenRewardHolder() != null);
         }
 
         boolean matches(ChartRun run) {
-            return runId.equals(run.runId()) && objectiveComplete == run.isObjectiveComplete() && objectiveLost == run.isObjectiveLost()
+            return runId.equals(run.runId()) && objectiveComplete == run.isObjectiveComplete()
                     && anomalyIds.equals(run.anomalyIds()) && rewardUnchosen == (unchosenRewardHolder() != null);
         }
     }
@@ -80,11 +80,10 @@ final class ChartInfoText {
         if (!run.hasBoss()) {
             return null;
         }
+        StyledText description = StyledText.of(Translation.gameText(ChartObjectiveIntel.descriptionKey(run)));
         String progress = ChartObjectiveIntel.progressText(run);
-        String status = progress != null ? progress : Translation.gameText("chart.intel.reward");
-        Style statusStyle = run.isObjectiveComplete() ? Style.GOOD : Style.BAD;
         return new Objective(ChartObjectiveIntel.objectiveName(run),
-                StyledText.of(Translation.gameText(ChartObjectiveIntel.descriptionKey(run)) + "\n").append(StyledText.styled(status, statusStyle)));
+                progress == null ? description : description.append("\n").append(StyledText.styled(progress, Style.GOOD)));
     }
 
     static List<SlottedLine> modifierLines(StarChart chart) {

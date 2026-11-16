@@ -44,10 +44,6 @@ public final class ChartRun {
     private int contentFleets;
     private int contentPois;
     private boolean objectiveComplete;
-    private boolean objectiveLost;
-    private boolean rewardClaimed;
-    private boolean bossUniqueGranted;
-    private boolean bossLootGuaranteed;
     private String chartData;
     private String anomalies;
     private String atlasNode;
@@ -159,8 +155,6 @@ public final class ChartRun {
         contentPois = content.pois();
         anomalies = join(content.anomalies());
         objectiveComplete = false;
-        objectiveLost = false;
-        rewardClaimed = false;
     }
 
     public int tier() {
@@ -253,48 +247,12 @@ public final class ChartRun {
         return objectiveComplete;
     }
 
-    public boolean isObjectiveLost() {
-        return objectiveLost;
-    }
-
-    public boolean markObjectiveLost() {
-        if (objectiveComplete || objectiveLost) {
-            return false;
-        }
-        objectiveLost = true;
-        return true;
-    }
-
     public boolean markObjectiveComplete() {
-        if (objectiveComplete || objectiveLost || !hasBoss()) {
+        if (objectiveComplete || !hasBoss()) {
             return false;
         }
         objectiveComplete = true;
         return true;
-    }
-
-    public boolean claimReward() {
-        if (!objectiveComplete || rewardClaimed) {
-            return false;
-        }
-        rewardClaimed = true;
-        return true;
-    }
-
-    public boolean isBossUniqueGranted() {
-        return bossUniqueGranted;
-    }
-
-    public void grantBossUnique() {
-        bossUniqueGranted = true;
-    }
-
-    public boolean isBossLootGuaranteed() {
-        return bossLootGuaranteed;
-    }
-
-    public void guaranteeBossLoot() {
-        bossLootGuaranteed = true;
     }
 
     public String anomalyState(String key) {
@@ -327,10 +285,6 @@ public final class ChartRun {
             }
         }
         return parsedAnomalyStates;
-    }
-
-    public boolean isRewardClaimed() {
-        return rewardClaimed;
     }
 
     static String join(List<String> ids) {

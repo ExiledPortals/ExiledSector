@@ -15,8 +15,13 @@ import exiledsector.charts.run.ChartContentListener;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
-import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.content.FakeChartContentEngine;
+import exiledsector.charts.loot.ChartDropRules;
+import exiledsector.items.ItemData;
+import exiledsector.items.StarChartFixtures;
+import exiledsector.loot.Loot;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,7 +37,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -82,7 +86,7 @@ class ChartObjectivesTest {
     }
 
     @Test
-    void onlyDestroyingTheBossCompletesTheChartAndTheRewardComesOnce() {
+    void onlyDestroyingTheBossCompletesTheChartOnceAndGrantsNoCredits() {
         ChartRun run = openRun();
 
         assertFalse(ChartObjectives.fleetGone(sector, fleet("guard", true), FleetDespawnReason.DESTROYED_BY_BATTLE, null));
@@ -91,12 +95,9 @@ class ChartObjectivesTest {
 
         assertTrue(ChartObjectives.fleetGone(sector, fleet("boss", true), FleetDespawnReason.NO_MEMBERS, null));
         assertTrue(run.isObjectiveComplete());
-        assertTrue(run.isRewardClaimed());
-        verify(credits, times(1)).add((float) ChartRewards.creditsFor(7, 1f));
 
         assertFalse(ChartObjectives.fleetGone(sector, fleet("boss", true), FleetDespawnReason.DESTROYED_BY_BATTLE, null));
-        assertNull(ChartRewards.grant(sector, run));
-        verify(credits, times(1)).add(anyFloat());
+        verify(credits, never()).add(anyFloat());
     }
 
     @Test
@@ -220,11 +221,32 @@ class ChartObjectivesTest {
         ChartObjectives.bossFellInBattle(sector, boss, members);
 
         assertTrue(run.isObjectiveComplete());
-        assertTrue(run.isRewardClaimed());
-        verify(credits, times(1)).add((float) ChartRewards.creditsFor(7, 1f));
+        verify(credits, never()).add(anyFloat());
         verify(mockSector.cargo(), never()).addSpecial(Mockito.any(), anyFloat());
         assertTrue(ChartObjectives.bossFellInBattle(sector, boss, members).isEmpty());
         assertFalse(ChartObjectives.reconcile(sector));
+    }
+
+    @Test
+    void theBossFallingInBattleDropsItsGuaranteedStarChartOnceAtTheRunTierOrAbove() throws Exception {
+        StarChartFixtures.registerShipped();
+        ChartDropRules.register(new JSONArray().put(new JSONObject().put("source", "chart_boss").put("guaranteed", "1")
+                .put("same_tier", "0").put("plus_1", "1")));
+        try {
+            openBossRun("flagship");
+            CampaignFleetAPI boss = bossFleet("flagship", "escort");
+            List<FleetMemberAPI> members = boss.getFleetData().getMembersListCopy();
+
+            Loot loot = ChartObjectives.bossFellInBattle(sector, boss, members);
+
+            List<ItemData> charts = loot.items().stream().filter(item -> item.toSpecialItem().getId().equals(ItemData.STAR_CHART_ITEM_ID)).toList();
+            assertEquals(1, charts.size(), loot.toString());
+            assertEquals(8, charts.get(0).preview().tier());
+            assertTrue(ChartObjectives.bossFellInBattle(sector, boss, members).isEmpty());
+        } finally {
+            ChartDropRules.clear();
+            StarChartFixtures.clear();
+        }
     }
 
     @Test
@@ -236,18 +258,6 @@ class ChartObjectivesTest {
 
         assertFalse(ChartObjectives.reconcile(sector));
         assertFalse(run.isObjectiveComplete());
-    }
-
-    @Test
-    void creditsRiseWithTheTier() {
-        int previous = 0;
-        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_DROP_TIER; tier++) {
-            int credits = ChartRewards.creditsFor(tier, 1f);
-            assertTrue(credits > previous, "tier " + tier);
-            assertEquals(0, credits % 1000);
-            previous = credits;
-        }
-        assertTrue(ChartRewards.itemChanceMultFor(15) > ChartRewards.itemChanceMultFor(1));
     }
 
     @Test

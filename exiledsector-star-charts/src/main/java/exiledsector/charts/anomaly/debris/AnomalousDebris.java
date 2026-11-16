@@ -133,7 +133,7 @@ public final class AnomalousDebris implements ContentPlacer, RunParticipant, Loo
 
     @Override
     public Loot fleetLoot(FleetClaim claim, ChartLootContext loot, ChartFleetLoot.Battle battle, Random random) {
-        return DormantFleetLoot.craftingItemFor(claim.fleet(), loot.tier(), loot.effects(), random);
+        return DormantFleetLoot.craftingItemFor(claim.fleet(), loot, random);
     }
 
     public static List<AnomalousDebrisTerrainPlugin> fieldsIn(LocationAPI location) {

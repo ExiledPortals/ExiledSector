@@ -124,7 +124,7 @@ class ConvoyDeliveryTest {
         SupplyConvoy.INSTANCE.generate(other.site(ChartGenContext.none()));
         cargoRolls = mockStatic(ConvoyCargo.class);
         ConvoyState lost = other.script().convoys().get(0);
-        lost.loadCargo(100f, 1f, 1f);
+        lost.loadCargo(100f);
         other.script().depart(lost);
         other.script().reportFleetDespawnedToListener(other.fleet(lost), FleetDespawnReason.DESTROYED_BY_BATTLE, null);
         other.script().unloaded(lost);

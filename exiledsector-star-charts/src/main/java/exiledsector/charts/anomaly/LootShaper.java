@@ -28,10 +28,6 @@ public interface LootShaper extends ChartAnomaly {
         return Loot.NONE;
     }
 
-    default boolean holdsBackBossUnique(ChartRun run) {
-        return false;
-    }
-
     default Loot bossDefeatedLoot(SectorAPI sector, ChartRun run) {
         return Loot.NONE;
     }
@@ -40,8 +36,8 @@ public interface LootShaper extends ChartAnomaly {
         return false;
     }
 
-    default float battleLootMult(ChartGenContext context) {
-        return 1f;
+    default float battleQuantityPercent(ChartGenContext context) {
+        return 0f;
     }
 
     default float battleHullItemPercent(ChartGenContext context) {

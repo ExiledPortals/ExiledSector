@@ -348,8 +348,7 @@ public class StormFrontTerrainPlugin extends ChartAnomalyTerrain implements Slow
         int sensorLess = Math.round((1f - StormRules.SENSOR_RANGE_MULT) * 100f);
         VanillaText.addPara(tooltip, Translation.msg("chart.anomaly.storm_front.effect.sensors").arg("value", sensorLess).styled(), TOOLTIP_PAD, text);
         VanillaText.plainPara(tooltip, Translation.gameText("chart.anomaly.storm_front.effect.strikes"), TOOLTIP_PAD, text);
-        float lootMult = StormRules.lootQuantityMult(StormBattles.contextOf(StormBattles.runOf(this)));
-        int itemIncrease = Math.round((lootMult - 1f) * 100f);
+        int itemIncrease = Math.round(StormRules.lootQuantityPercent(StormBattles.contextOf(StormBattles.runOf(this))));
         VanillaText.addPara(tooltip, Translation.msg("chart.anomaly.storm_front.effect.items").arg("value", itemIncrease).styled(), TOOLTIP_PAD, text);
     }
 }

@@ -92,7 +92,7 @@ class AtlasOpeningTest {
     @Test
     void anOpenedChartAddsTheAnomaliesItRolledToTheRunButNotToTheAtlas() {
         ChartTables.useAnomalies(List.of(new ChartAnomalies.Definition(MagneticStorm.ANOMALY_ID, 1f, 1, 16, "", "", true, Set.of(), false,
-                ChartAnomalies.definition(MagneticStorm.ANOMALY_ID).effects(), Set.of(), 1f, 1f)));
+                ChartAnomalies.definition(MagneticStorm.ANOMALY_ID).effects(), Set.of(), 1f)));
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = new AtlasGenerator(SEED, rules(), AtlasUnlocks.NONE, state);
         AtlasCell cell = findInfested(generator, false);
@@ -241,7 +241,7 @@ class AtlasOpeningTest {
     }
 
     @Test
-    void aRunNodeKeepsItsAnomalyDataAndOlderNodesReadWithout() {
+    void aRunNodeKeepsItsAnomalyData() {
         AtlasRunNode node = new AtlasRunNode(9L, "hegemony", List.of(), List.of("faction_skirmish", "spatial_breach"))
                 .withAnomalyData("faction_skirmish", "attacker,tritachyon").withAnomalyData("spatial_breach", "x");
         AtlasRunNode decoded = AtlasRunNode.decode(node.encode());
@@ -250,30 +250,19 @@ class AtlasOpeningTest {
         assertEquals(List.of("faction_skirmish", "spatial_breach"), decoded.anomalyIds());
         assertEquals("attacker,tritachyon", decoded.anomalyData("faction_skirmish"));
         assertEquals("attacker,tritachyon", ChartGenContext.none().withAtlasNode(decoded).withAnomalies(List.of("black_hole")).anomalyData("faction_skirmish"));
-        AtlasRunNode older = AtlasRunNode.decode("9|hegemony||spatial_breach|true");
-        assertEquals(new AtlasRunNode(9L, "hegemony", List.of(), List.of("spatial_breach")), older);
-        assertEquals(null, older.anomalyData("faction_skirmish"));
+        assertEquals(null, decoded.anomalyData("black_hole"));
         assertEquals(null, node.withAnomalyData("spatial_breach", null).anomalyData("spatial_breach"));
     }
 
     @Test
-    void aRunNodeKeepsItsGuaranteedUniqueAndSkirmishNodesSavedBeforeItReadWithout() {
-        AtlasRunNode node = new AtlasRunNode(9L, "hegemony", List.of(), List.of("relay_network"))
-                .withExtraEffects(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_QUANTITY_PERCENT, 50f)), true);
+    void aRunNodeKeepsItsExtraEffects() {
+        AtlasRunNode node = new AtlasRunNode(9L, "hegemony", List.of(), List.of("faction_skirmish"))
+                .withAnomalyData("faction_skirmish", "attacker,tritachyon")
+                .withExtraEffects(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_QUANTITY_PERCENT, 50f)));
         AtlasRunNode decoded = AtlasRunNode.decode(node.encode());
 
         assertEquals(node, decoded);
-        assertTrue(decoded.guaranteedBossUnique());
         assertEquals(50f, decoded.effects().get(0).value());
-        assertTrue(ChartGenContext.none().withAtlasNode(decoded).withAnomalyEffects(List.of("relay_network")).withAnomalyData("faction_skirmish", "neither,")
-                .guaranteedBossUnique());
-        AtlasRunNode skirmishEra = AtlasRunNode.decode("9|hegemony||faction_skirmish|true|tritachyon|attacker|true");
-        assertNotNull(skirmishEra);
-        assertEquals(List.of("faction_skirmish"), skirmishEra.anomalyIds());
-        assertTrue(skirmishEra.guaranteedBossUnique());
-        assertNull(skirmishEra.anomalyData("faction_skirmish"));
-        assertTrue(skirmishEra.withAnomalyData("faction_skirmish", "defender,tritachyon").withExtraEffects(List.of(), true)
-                .withAnomalyData("faction_skirmish", "attacker,tritachyon").guaranteedBossUnique());
-        assertFalse(AtlasRunNode.decode("9|hegemony||faction_skirmish|true|tritachyon|attacker").guaranteedBossUnique());
+        assertEquals("attacker,tritachyon", decoded.anomalyData("faction_skirmish"));
     }
 }

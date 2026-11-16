@@ -11,6 +11,7 @@ import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemModifiers;
+import exiledsector.items.ItemRoll;
 import exiledsector.items.ModifierSources;
 import exiledsector.items.PoolEntry;
 import exiledsector.items.RolledModifier;
@@ -98,11 +99,13 @@ class OfficerRewardDropTest {
     }
 
     @Test
-    void carriedHullItemsDropOneRolledCopyPerCount() {
+    void carriedHullItemsDropOneCopyPerCountRolledWithDropLimits() {
         Loot drop = OfficerRewardDrop.roll(List.of(new CarriedItem(RewardKind.HULL_ITEM, BRIDGE, null, 2)), ChartLootContext.atTier(3), new Random(1L));
 
         assertEquals(List.of(BRIDGE, BRIDGE), drop.items().stream().map(ItemData::definitionId).toList());
         assertTrue(drop.materials().isEmpty());
+        long firstSeed = new Random(1L).nextLong();
+        assertEquals(ItemData.rolled(ItemDefinitions.get(BRIDGE), firstSeed, ItemRoll.dropAtRarity(1f)), drop.items().get(0));
     }
 
     @Test

@@ -60,11 +60,11 @@ public final class ConvoyRules {
         return Math.max(0f, 1f + (escortPercent + fleetSizePercent) / PERCENT);
     }
 
-    static float cargoSteps(float freighterPoints, float cargoMult) {
-        return Math.max(0f, freighterPoints) * CARGO_STEPS_PER_FREIGHTER_POINT * Math.max(0f, cargoMult);
+    static float cargoSteps(float freighterPoints) {
+        return Math.max(0f, freighterPoints) * CARGO_STEPS_PER_FREIGHTER_POINT;
     }
 
-    static float itemChanceMult(int tier, float cargoMult) {
-        return (1f + ITEM_CHANCE_PER_TIER * (ChartTiers.clamp(tier) - 1)) * Math.max(0f, cargoMult);
+    static float itemChanceMult(int tier) {
+        return 1f + ITEM_CHANCE_PER_TIER * (ChartTiers.clamp(tier) - 1);
     }
 }

@@ -87,9 +87,6 @@ public class ChartObjectiveIntel extends ChartRunIntel {
         if (run.isObjectiveComplete()) {
             return Translation.gameText("chart.intel.complete");
         }
-        if (run.isObjectiveLost()) {
-            return Translation.gameText("chart.intel.lost");
-        }
         return null;
     }
 
@@ -132,9 +129,6 @@ public class ChartObjectiveIntel extends ChartRunIntel {
             for (String line : ChartAnomalies.intelLines(anomalyRun)) {
                 info.addPara(safe(line), PARAGRAPH_PAD);
             }
-        }
-        if (!run.isObjectiveComplete() && !run.isObjectiveLost()) {
-            info.addPara(safe(Translation.gameText("chart.intel.reward")), PARAGRAPH_PAD);
         }
     }
 

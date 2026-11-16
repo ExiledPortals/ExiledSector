@@ -220,7 +220,6 @@ class PhaseLockTest {
     @Test
     void aFailedRunClearsTheLock() {
         PhaseLock.lock(mockSector.sector, planet);
-        run.markObjectiveLost();
 
         assertFalse(PhaseLock.runClosing(mockSector.sector, run));
 

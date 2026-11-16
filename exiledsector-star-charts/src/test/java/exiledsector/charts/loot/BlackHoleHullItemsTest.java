@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.charts.ChartIds;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemKind;
+import exiledsector.items.ItemQuantity;
 import exiledsector.loot.LootMultipliers;
 import org.junit.jupiter.api.Test;
 
@@ -43,7 +44,7 @@ class BlackHoleHullItemsTest {
 
     @Test
     void theBonusAddsTheSameExtraShareToEveryHullItemPartAndLeavesTheRestAlone() {
-        ItemChances chances = new ItemChances(1.5f, Map.of(ItemKind.BRIDGE, 0.2f, ItemKind.SUBROUTINE, 0.3f), 1.1f);
+        ItemChances chances = new ItemChances(ItemQuantity.atShare(1.5f), Map.of(ItemKind.BRIDGE, 0.2f, ItemKind.SUBROUTINE, 0.3f), 1.1f);
 
         ItemChances boosted = BlackHoleHullItems.withExtraHullItemShare(chances, 0.1f);
 

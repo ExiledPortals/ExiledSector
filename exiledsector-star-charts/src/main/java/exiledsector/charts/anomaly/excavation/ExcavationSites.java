@@ -91,7 +91,7 @@ public final class ExcavationSites implements LayoutShaper, ContentPlacer, RunPa
 
     @Override
     public Loot fleetLoot(FleetClaim claim, ChartLootContext loot, ChartFleetLoot.Battle battle, Random random) {
-        return ExcavationLoot.fleetItems(claim.fleet(), loot, DenseNebula.dust(ChartFleetLedger.liveRunOf(claim.fleet())), claim.anomalyShare(), random);
+        return ExcavationLoot.fleetItems(claim.fleet(), loot, DenseNebula.dust(ChartFleetLedger.liveRunOf(claim.fleet())), claim.mergedFleetShare(), random);
     }
 
     @Override

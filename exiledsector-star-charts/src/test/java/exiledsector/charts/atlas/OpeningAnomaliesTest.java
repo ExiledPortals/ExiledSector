@@ -42,7 +42,7 @@ class OpeningAnomaliesTest {
     }
 
     private static ChartAnomalies.Definition rolling(String id, float openingChance, Set<String> excludes) {
-        return new ChartAnomalies.Definition(id, 1f, 1, 16, "", "", true, excludes, false, List.of(), Set.of(), 1f, openingChance);
+        return new ChartAnomalies.Definition(id, 1f, 1, 16, "", "", true, excludes, false, List.of(), Set.of(), openingChance);
     }
 
     private static ChartAnomalies.Definition rolling(String id, float openingChance) {

@@ -66,7 +66,6 @@ public final class ExcavationFleets {
         fleet.setName(Translation.gameText(fleetNameKey(derelict, guardians)));
         ChartAnomalyFleets.prepare(fleet, run.runId(), run.tier(), random.nextLong(), false, context);
         ChartFleetLedger.recordStart(fleet);
-        ChartFleetLedger.tagAnomaly(fleet, ExcavationSites.ANOMALY_ID);
         MemoryAPI memory = fleet.getMemoryWithoutUpdate();
         ChartFleetMarks.setStrengthBonus(memory, ExcavationRules.strengthBonus(fleetSize, guardians.corrupted()));
         memory.set(SECOND_CAVERN_KEY, guardians.secondCavern());

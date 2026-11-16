@@ -7,6 +7,7 @@ import exiledsector.data.CsvRows;
 import exiledsector.data.RandomRounding;
 import exiledsector.loot.Loot;
 import exiledsector.loot.LootMultipliers;
+import exiledsector.skills.skilleffect.logistics.FoundItemQuantity;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -139,9 +140,9 @@ public final class SalvageSiteDrops {
         if (feedstockFound > 0) {
             droppedMaterials.put(ItemDisassembly.FEEDSTOCK_ITEM_ID, feedstockFound);
         }
-        float expectedCraftingItems = rule.chances().get(0) * CRAFTING_ITEM_SHARE * multipliers.craftingItemMult();
-        CraftingDrops.rollFoundByPlayerInto(expectedCraftingItems, CraftingDrops.OUTSIDE_CHARTS, multipliers.craftingBandShift(), random,
-                droppedMaterials);
+        float craftingItemMult = multipliers.craftingItems().plusPercent(FoundItemQuantity.craftingItemPercent()).mult();
+        float expectedCraftingItems = rule.chances().get(0) * CRAFTING_ITEM_SHARE * craftingItemMult;
+        CraftingDrops.rollInto(expectedCraftingItems, CraftingDrops.OUTSIDE_CHARTS, multipliers.craftingBandShift(), random, droppedMaterials);
         return droppedMaterials;
     }
 

@@ -197,9 +197,9 @@ public final class DoctrineArchives {
         return false;
     }
 
-    public static ItemData rollForBoss(int chartTier, String bossFactionId, float chanceMult, Random random,
+    public static ItemData rollForBoss(int chartTier, String bossFactionId, ItemQuantity quantity, Random random,
                                          Predicate<ItemDefinition> allowed) {
-        float chance = Math.min(1f, bossChance(chartTier) * Math.max(0f, chanceMult));
+        float chance = Math.min(1f, bossChance(chartTier) * quantity.mult());
         if (!(random.nextFloat() < chance)) {
             return null;
         }

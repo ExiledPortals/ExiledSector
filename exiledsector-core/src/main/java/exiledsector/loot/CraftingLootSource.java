@@ -8,6 +8,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.items.CraftingDrops;
 import exiledsector.items.ItemDisassembly;
 import exiledsector.items.MaterialItems;
+import exiledsector.skills.skilleffect.logistics.FoundItemQuantity;
 import exiledsector.ui.CampaignMessages;
 import exiledsector.ui.cargo.MaterialDropAnnouncer;
 
@@ -24,7 +25,7 @@ public final class CraftingLootSource implements LootSource {
 
     @Override
     public void addEncounterLoot(BattleLoot battle, CargoAPI loot) {
-        List<FleetLoss> losses = battle.losses().engagementLossesAtRawDifficulty();
+        List<FleetLoss> losses = battle.losses().engagementLossesAtRecordTime();
         int wholeFeedstock = RandomRounding.round(feedstock(losses), battle.random());
         if (wholeFeedstock > 0) {
             MaterialItems.add(loot, ItemDisassembly.FEEDSTOCK_ITEM_ID, wholeFeedstock);
@@ -35,7 +36,7 @@ public final class CraftingLootSource implements LootSource {
 
     @Override
     public void deliverBattleLoot(BattleLoot battle, CargoAPI playerCargo) {
-        List<FleetLoss> losses = battle.losses().engagementLossesAtRawDifficulty();
+        List<FleetLoss> losses = battle.losses().engagementLossesAtRecordTime();
         Map<String, Integer> craftingItems = rollCraftingItems(losses, OutsideChartShare.current(), battle.random());
         craftingItems.forEach((itemId, quantity) -> MaterialItems.add(playerCargo, itemId, quantity));
         MaterialDropAnnouncer.announce(craftingItems);
@@ -55,9 +56,9 @@ public final class CraftingLootSource implements LootSource {
         }
     }
 
-    static float feedstock(List<FleetLoss> engagementLossesAtRawDifficulty) {
+    static float feedstock(List<FleetLoss> engagementLosses) {
         float feedstock = 0f;
-        for (FleetLoss loss : engagementLossesAtRawDifficulty) {
+        for (FleetLoss loss : engagementLosses) {
             FleetLootRules rules = loss.rules();
             if (rules.kind() == FleetLootRules.Kind.SPENT) {
                 continue;
@@ -71,8 +72,13 @@ public final class CraftingLootSource implements LootSource {
 
     static Map<String, Integer> rollCraftingItems(List<FleetLoss> engagementLosses, float levelScaledShare, Random random) {
         BattleLootRates.Rate rate = BattleLootRates.rate(BattleLootRates.CRAFTING_ITEM_RATE);
+        float playerFoundPercent = FoundItemQuantity.craftingItemPercent();
         float expectedCount = rate == null ? 0f : rate.expectedFromAll(engagementLosses, levelScaledShare,
-                loss -> loss.rules().kind().rollsBattleCraftingItems() ? loss.rules().multipliers().craftingItemMult() : 0f);
-        return CraftingDrops.rollFoundByPlayer(expectedCount, CraftingDrops.OUTSIDE_CHARTS, CraftingDrops.NO_BAND_SHIFT, random);
+                loss -> craftingItemMult(loss.rules(), playerFoundPercent));
+        return CraftingDrops.roll(expectedCount, CraftingDrops.OUTSIDE_CHARTS, CraftingDrops.NO_BAND_SHIFT, random);
+    }
+
+    private static float craftingItemMult(FleetLootRules rules, float playerFoundPercent) {
+        return rules.kind().rollsBattleCraftingItems() ? rules.multipliers().craftingItems().plusPercent(playerFoundPercent).mult() : 0f;
     }
 }

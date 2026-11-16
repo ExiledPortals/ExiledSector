@@ -55,7 +55,7 @@ public final class HullUpgradeLootSource implements LootSource, MarketStock {
         }
         try {
             return BattleItemDrops.roll(battleItems(battle), BattleItemDropSetting.multiplier(),
-                    FoundItemQuantity.hullItemMult(), battle.random(),
+                    FoundItemQuantity.hullItemPercent(), battle.random(),
                     definition -> ItemUnlock.canDrop(definition, sector), hullItemDropsOpen);
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Rolling battle hull item drops failed", e);
@@ -67,7 +67,7 @@ public final class HullUpgradeLootSource implements LootSource, MarketStock {
     public void addSiteFinds(SiteFind find) {
         if (HullUpgradesSetting.hullItemDropsOpen(find.sector())) {
             Loot hullItemLoot = HullItemDrops.rollHullItemLoot(find.dropSite(), find.random(), find.chances(),
-                    FoundItemQuantity.hullItemMult());
+                    FoundItemQuantity.hullItemPercent());
             find.items().addAll(hullItemLoot.items());
             find.schematics().addAll(hullItemLoot.schematics());
         }

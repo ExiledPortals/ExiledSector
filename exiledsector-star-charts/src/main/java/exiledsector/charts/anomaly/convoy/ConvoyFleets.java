@@ -58,8 +58,7 @@ final class ConvoyFleets {
         boolean civilianOnly = ConvoyCargo.freighterPoints(fleet, true) > 0f;
         float freighterPoints = ConvoyCargo.freighterPoints(fleet, civilianOnly);
         convoy.countCivilianOnly(civilianOnly);
-        convoy.loadCargo(freighterPoints, ConvoyRules.cargoSteps(freighterPoints, context.anomalyMult(SupplyConvoy.CARGO_KEY)),
-                ConvoyRules.itemChanceMult(site.tier(), context.anomalyMult(SupplyConvoy.CARGO_KEY)));
+        convoy.loadCargo(freighterPoints);
         convoy.loadFeedstock(ConvoyFeedstock.roll(site.tier(), FeedstockBonus.rollMult(context), FeedstockOdds.of(context),
                 Seeds.derived(convoy.cargoSeed(), FEEDSTOCK_SALT)));
         if (huntsFromTheStart(context)) {

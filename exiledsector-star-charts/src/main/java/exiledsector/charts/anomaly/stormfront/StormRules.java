@@ -52,8 +52,8 @@ public final class StormRules {
         };
     }
 
-    public static float lootQuantityMult(ChartGenContext context) {
+    public static float lootQuantityPercent(ChartGenContext context) {
         float bonusPercent = context == null ? 0f : context.anomalyPercent(StormFront.LOOT_KEY);
-        return Math.max(0f, 1f + (LOOT_QUANTITY_PERCENT + bonusPercent) / ChartGenContext.PERCENT);
+        return LOOT_QUANTITY_PERCENT + bonusPercent;
     }
 }

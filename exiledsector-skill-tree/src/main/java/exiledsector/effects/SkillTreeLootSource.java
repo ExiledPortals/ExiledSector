@@ -19,6 +19,7 @@ import exiledsector.items.FactionlessAnchors;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
+import exiledsector.items.ItemQuantity;
 import exiledsector.items.ItemType;
 import exiledsector.items.SubroutineKind;
 import exiledsector.items.WormholeAnchorDefinitions;
@@ -117,9 +118,9 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty, M
     }
 
     @Override
-    public List<ItemData> bossDrops(int chartTier, String bossFactionId, float chanceMult, Random random,
+    public List<ItemData> bossDrops(int chartTier, String bossFactionId, ItemQuantity quantity, Random random,
                                       Predicate<ItemDefinition> allowed) {
-        ItemData doctrine = DoctrineArchives.rollForBoss(chartTier, bossFactionId, chanceMult, random, allowed);
+        ItemData doctrine = DoctrineArchives.rollForBoss(chartTier, bossFactionId, quantity, random, allowed);
         return doctrine == null ? List.of() : List.of(doctrine);
     }
 

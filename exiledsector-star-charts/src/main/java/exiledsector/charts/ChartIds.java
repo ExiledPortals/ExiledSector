@@ -32,12 +32,10 @@ public final class ChartIds {
     public static final String LOOT_SPENT_MEMORY_KEY = "$exiledSector_chartLootSpent";
     public static final String LOOT_DP_PAID_MEMORY_KEY = "$exiledSector_chartLootDpPaid";
     public static final String DEFENDED_SITE_MEMORY_KEY = "$exiledSector_chartDefendedSite";
-    public static final String ANOMALY_MEMORY_KEY = "$exiledSector_chartAnomaly";
     public static final String DEFENDER_LOOT_ADDED_MEMORY_KEY = "$exiledSector_chartDefenderLootAdded";
     public static final String VANILLA_DEFENDER_FLEET_MEMORY_KEY = "$defenderFleet";
     public static final String SKIRMISH_SIDE_MEMORY_KEY = "$exiledSector_chartSkirmishSide";
     public static final String REAL_FACTION_MEMORY_KEY = FleetFactions.REAL_FACTION_MEMORY_KEY;
-    public static final String BOSS_LOOT_SITE = PREFIX + "boss";
     public static final String CONTENT_TAG = PREFIX + "content";
     public static final String SENSOR_MOD_ID = PREFIX + "sensor_range";
     public static final String ENEMY_SENSOR_MOD_ID = PREFIX + "enemy_sensor_range";

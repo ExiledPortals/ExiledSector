@@ -148,19 +148,14 @@ class SupplyConvoyTest {
     }
 
     @Test
-    void theCargoLineScalesWhatTheFreightersCarry() {
-        ConvoySystem plain = new ConvoySystem(4);
-        plain.engine.fleetPoints = 100;
-        SupplyConvoy.INSTANCE.generate(plain.site(ChartGenContext.none()));
-        ConvoySystem richer = new ConvoySystem(4);
-        richer.engine.fleetPoints = 100;
-        SupplyConvoy.INSTANCE.generate(richer.site(with(ChartModifier.CHART_CONVOY_CARGO_PERCENT, 50f)));
+    void theFreightersCarryCargoForTheirFleetPoints() {
+        ConvoySystem convoySystem = new ConvoySystem(4);
+        convoySystem.engine.fleetPoints = 100;
+        SupplyConvoy.INSTANCE.generate(convoySystem.site(ChartGenContext.none()));
 
-        ConvoyState plainConvoy = plain.script().convoys().get(0);
-        ConvoyState richerConvoy = richer.script().convoys().get(0);
-        assertEquals(100f * ConvoyRules.CARGO_STEPS_PER_FREIGHTER_POINT, plainConvoy.cargoSteps(), 0.001f);
-        assertEquals(1.5f * plainConvoy.cargoSteps(), richerConvoy.cargoSteps(), 0.001f);
-        assertEquals(1.5f * plainConvoy.itemChanceMult(), richerConvoy.itemChanceMult(), 0.001f);
+        assertEquals(100f * ConvoyRules.CARGO_STEPS_PER_FREIGHTER_POINT, convoySystem.script().convoys().get(0).cargoSteps(), 0.001f);
+        assertEquals(1f, ConvoyRules.itemChanceMult(1), 0.001f);
+        assertEquals(1f + 4f * ConvoyRules.ITEM_CHANCE_PER_TIER, ConvoyRules.itemChanceMult(5), 0.001f);
     }
 
     @Test

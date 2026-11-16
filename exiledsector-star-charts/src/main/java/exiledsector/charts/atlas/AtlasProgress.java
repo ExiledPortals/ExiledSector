@@ -5,6 +5,8 @@ import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.officer.OfficerFleets;
 import exiledsector.charts.officer.turn.OfficerTurns;
 import exiledsector.charts.run.ChartRun;
+import exiledsector.charts.wormhole.GatewayUpgradeRewards;
+import exiledsector.items.ItemUnlock;
 import org.apache.log4j.Logger;
 
 public final class AtlasProgress {
@@ -32,12 +34,26 @@ public final class AtlasProgress {
             ChartAnomalies.runCompleted(sector, run);
             boolean changedHands = changedHands(holderBeforeRunEnd, state.commandCentreOf(cell));
             complete(generator, state, cell, run.tier(), changedHands);
+            tierCleared(sector, run);
             if (newlyCompleted) {
                 takeOfficerTurn(generator, state, run, beatenOfficerId);
             }
             AtlasReach.refreshReveal(generator, state);
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Recording the completed atlas system for run " + run.runId() + " failed", e);
+        }
+    }
+
+    private static void tierCleared(SectorAPI sector, ChartRun run) {
+        try {
+            ItemUnlock.recordChartCleared(sector, run.tier());
+        } catch (RuntimeException e) {
+            LOG.error("[ExiledSector] Recording the cleared Star Chart tier for run " + run.runId() + " failed", e);
+        }
+        try {
+            GatewayUpgradeRewards.completed(sector, run.tier());
+        } catch (RuntimeException | LinkageError e) {
+            LOG.error("[ExiledSector] Granting the Wormhole Gateway upgrade for run " + run.runId() + " failed", e);
         }
     }
 

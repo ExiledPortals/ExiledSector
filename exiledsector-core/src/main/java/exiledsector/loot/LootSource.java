@@ -8,6 +8,7 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import exiledsector.effects.TechMiningItemListener;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
+import exiledsector.items.ItemQuantity;
 
 import java.util.List;
 import java.util.Random;
@@ -39,7 +40,7 @@ public interface LootSource {
     default void addSalvageLoot(SectorAPI sector, SectorEntityToken salvageEntity, CargoAPI loot) {
     }
 
-    default List<ItemData> bossDrops(int chartTier, String bossFactionId, float chanceMult, Random random,
+    default List<ItemData> bossDrops(int chartTier, String bossFactionId, ItemQuantity quantity, Random random,
                                        Predicate<ItemDefinition> allowed) {
         return List.of();
     }

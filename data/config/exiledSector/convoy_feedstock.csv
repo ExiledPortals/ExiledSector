@@ -1,4 +1,4 @@
 feedstock,tier_1,tier_15,note
-exiledSector_threat_feedstock,150,1000,"Shared amount per feedstock at tier 1 and tier 15, linear between and on to tier 16 unless a tier_16 column sets it. A Supply Convoy carries one kind, rolled by weight, holding the three rows' total rolled up to 15% either side, then times the run's Crafting item bonus with item quantity and the convoy cargo line. Split over the freighters by fleet points: cargo pods drop the lost share and the delivered cache holds 80% of the rest"
+exiledSector_threat_feedstock,150,1000,"Shared amount per feedstock at tier 1 and tier 15, linear between and on to tier 16 unless a tier_16 column sets it. A Supply Convoy carries one kind, rolled by weight, holding the three rows' total rolled up to 15% either side, then times the run's Crafting item bonus with item quantity. Split over the freighters by fleet points: cargo pods drop the lost share and the delivered cache holds 80% of the rest"
 exiledSector_shroud_feedstock,150,1000,
 exiledSector_phase_feedstock,150,1000,

@@ -2,7 +2,6 @@ package exiledsector.charts.anomaly.skirmish;
 
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.ChartAnomalies;
-import exiledsector.charts.anomaly.StateFields;
 import exiledsector.charts.atlas.AtlasAnomalyCandidate;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasData;
@@ -82,14 +81,6 @@ class FactionSkirmishTest {
         assertEquals(expected, SkirmishFight.of(ChartGenContext.none().withAtlasNode(decoded).withAnomalies(List.of("black_hole"))));
         assertEquals(new SkirmishFight(null, null, null, null), SkirmishFight.decode(new SkirmishFight("", "", "", null).encode()));
         assertNull(SkirmishFight.decode("attacker"));
-    }
-
-    @Test
-    void anOldSidedSkirmishLoadsAsAFightWithoutOfficers() {
-        SkirmishFight old = SkirmishFight.decode(StateFields.join("defender", "tritachyon", push.encode()));
-
-        assertEquals(new SkirmishFight("tritachyon", null, null, push), old);
-        assertFalse(old.betweenOfficers());
     }
 
     @Test

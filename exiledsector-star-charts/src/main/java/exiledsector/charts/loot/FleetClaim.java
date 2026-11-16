@@ -3,21 +3,17 @@ package exiledsector.charts.loot;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 
 public record FleetClaim(CampaignFleetAPI fleet, float claimedShare, float startDeploymentPoints, float startFleetPoints, int mergedFleets,
-                         boolean boss, float spoilsMult, float lootQuantityMult) {
+                         boolean boss) {
 
     public float lootDeploymentPoints() {
-        return claimedShare * startDeploymentPoints * spoilsMult * lootQuantityMult;
+        return claimedShare * startDeploymentPoints;
     }
 
     public float chartShare(int tier) {
-        return claimedShare * startFleetPoints / Math.max(1f, ChartFleetLoot.expectedFleetPoints(tier)) * spoilsMult * lootQuantityMult;
+        return claimedShare * startFleetPoints / Math.max(1f, ChartFleetLoot.expectedFleetPoints(tier));
     }
 
-    public float anomalyShare() {
-        return claimedShare * mergedFleets * lootQuantityMult;
-    }
-
-    public float bossShare() {
-        return anomalyShare() * spoilsMult;
+    public float mergedFleetShare() {
+        return claimedShare * mergedFleets;
     }
 }

@@ -1,14 +1,11 @@
 package exiledsector.charts.loot;
 
-import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
-import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
-import com.fs.starfarer.api.util.MutableValue;
 import exiledsector.MockSector;
 import exiledsector.ProjectFiles;
 import exiledsector.charts.atlas.AtlasCatalysts;
@@ -21,10 +18,8 @@ import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.StarChartSettings;
-import exiledsector.charts.objective.ChartRewards;
 import exiledsector.items.CraftingDrops;
 import exiledsector.items.ItemData;
-import exiledsector.items.ItemUnlock;
 import exiledsector.items.StarChartCipher;
 import exiledsector.items.StarChartFixtures;
 import exiledsector.skills.SkillTreeSetting;
@@ -46,15 +41,11 @@ import java.util.TreeSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class ChartDropsTest {
@@ -118,18 +109,30 @@ class ChartDropsTest {
             assertNotNull(rule, source.id());
             assertTrue(rule.chance() > 0f, source.id());
             assertTrue(source.insideSystem() || rule.cipherChance() == 0f, source.id());
-            assertEquals(source.insideSystem(), rule.catalystChance() > 0f, source.id());
+            assertTrue(source.insideSystem() || rule.catalystChance() == 0f, source.id());
             if (!source.insideSystem()) {
                 assertTrue(rule.maxTier() <= 6, source.id() + " must leave the high tiers to the sustain loop");
                 assertEquals(ChartDropRules.SAME_TIER_ONLY, rule.tierWeights(), source.id());
             }
         }
-        assertEquals(1f, ChartDropRules.rule(ChartDrops.Source.RUN_REWARD).chance());
+        for (ChartDrops.Source source : List.of(ChartDrops.Source.SYSTEM_SALVAGE, ChartDrops.Source.CHART_FLEET, ChartDrops.Source.CHART_BOSS)) {
+            assertTrue(ChartDropRules.rule(source).catalystChance() > 0f, source.id());
+        }
+        ChartDropRules.Rule boss = ChartDropRules.rule(ChartDrops.Source.CHART_BOSS);
+        assertEquals(1, boss.guaranteed());
+        assertEquals(1.75f, boss.chance());
+        assertEquals(0f, boss.extraChance());
+        assertEquals(List.of(0f, 0f, 0.5f, 0.4f, 0.1f), boss.tierWeights(), "boss charts drop at or above the run's tier");
+        for (ChartDrops.Source source : ChartDrops.Source.values()) {
+            if (source != ChartDrops.Source.CHART_BOSS) {
+                assertEquals(0, ChartDropRules.rule(source).guaranteed(), source.id() + " guarantees nothing");
+            }
+        }
         assertEquals(0f, ChartDropRules.rule(ChartDrops.Source.CHART_FLEET).cipherChance(), "chart fleets drop crafting items per deployment point");
     }
 
     @Test
-    void theShippedSpreadDropsFleetChartsWithinTwoTiersBelowToOneAboveAndTheBossRarelyTwoAbove() throws Exception {
+    void theShippedSpreadDropsFleetChartsWithinTwoTiersBelowToOneAboveAndBossChartsAtOrAboveTheRunTier() throws Exception {
         ChartDropRules.register(ChartTables.csvRows(ChartDropRules.PATH));
         Random random = new Random(21L);
         Set<Integer> fleetTiers = new TreeSet<>();
@@ -148,7 +151,7 @@ class ChartDropsTest {
         }
 
         assertEquals(Set.of(8, 9, 10, 11), fleetTiers);
-        assertEquals(Set.of(8, 9, 10, 11, 12), bossTiers);
+        assertEquals(Set.of(10, 11, 12), bossTiers);
         assertEquals(0.1, bossTwoUp / (double) bossCharts, 0.02);
     }
 
@@ -165,17 +168,17 @@ class ChartDropsTest {
 
     @Test
     void nothingDropsWhileStarChartsAreSwitchedOff() throws Exception {
-        ChartDropRules.register(new JSONArray().put(rule("run_reward", 1f, 1f, 0f, 1f)).put(rule("chart_boss", 1f, 1f, 0f, 1f)));
+        ChartDropRules.register(new JSONArray().put(rule("chart_boss", 1f, 1f, 0f, 1f).put("guaranteed", "1")));
         StarChartSettings.setEnabledForTests(false);
         try {
             for (int roll = 0; roll < 50; roll++) {
-                assertSame(ChartDrops.Rolled.NONE, ChartDrops.roll(ChartDrops.Source.RUN_REWARD, 5, 1f, new Random(roll)));
                 assertSame(ChartDrops.Rolled.NONE, ChartDrops.roll(ChartDrops.Source.CHART_BOSS, 5, 2f, new Random(roll)));
+                assertTrue(ChartDrops.guaranteedCharts(ChartDrops.Source.CHART_BOSS, ChartLootContext.atTier(5), new Random(roll)).isEmpty());
             }
         } finally {
             StarChartSettings.setEnabledForTests(StarChartSettings.DEFAULT_ENABLED);
         }
-        assertEquals(2, ChartDrops.roll(ChartDrops.Source.RUN_REWARD, 5, 1f, new Random(1L)).charts().size());
+        assertEquals(2, ChartDrops.roll(ChartDrops.Source.CHART_BOSS, 5, 1f, new Random(1L)).charts().size());
     }
 
     @Test
@@ -188,23 +191,24 @@ class ChartDropsTest {
     }
 
     @Test
-    void runRewardsDropChartsAtTheRunTierOrOneAbove() throws Exception {
-        ChartDropRules.register(new JSONArray().put(rule("run_reward", 1f, 0f, 0.4f, 0f)));
+    void theBossGuaranteesItsChartsAtTheRunTierOrAboveWhateverItsChance() throws Exception {
+        ChartDropRules.register(new JSONArray().put(rule("chart_boss", 0f, 0f, 0.4f, 0f).put("guaranteed", "1")));
         Random random = new Random(11L);
         int trials = 3000;
         int tierUps = 0;
         for (int roll = 0; roll < trials; roll++) {
-            ChartDrops.Rolled loot = ChartDrops.roll(ChartDrops.Source.RUN_REWARD, 5, 1f, random);
-            assertEquals(1, loot.charts().size());
-            int tier = tierOf(loot.charts().get(0));
+            List<ItemData> charts = ChartDrops.guaranteedCharts(ChartDrops.Source.CHART_BOSS, ChartLootContext.atTier(5), random);
+            assertEquals(1, charts.size());
+            int tier = tierOf(charts.get(0));
             assertTrue(tier == 5 || tier == 6, "tier " + tier);
             tierUps += tier == 6 ? 1 : 0;
         }
         assertEquals(0.4, tierUps / (double) trials, 0.03);
         for (int roll = 0; roll < 50; roll++) {
-            ChartDrops.Rolled loot = ChartDrops.roll(ChartDrops.Source.RUN_REWARD, 15, 1f, random);
-            assertEquals(15, tierOf(loot.charts().get(0)));
+            assertEquals(15, tierOf(ChartDrops.guaranteedCharts(ChartDrops.Source.CHART_BOSS, ChartLootContext.atTier(15), random).get(0)));
         }
+        assertTrue(ChartDrops.guaranteedCharts(ChartDrops.Source.CHART_FLEET, ChartLootContext.atTier(5), random).isEmpty());
+        assertTrue(ChartDrops.guaranteedCharts(ChartDrops.Source.CHART_BOSS, ChartLootContext.outsideRuns(), random).isEmpty());
     }
 
     @Test
@@ -224,8 +228,8 @@ class ChartDropsTest {
     }
 
     @Test
-    void theRewardMultiplierScalesHowManyChartsDropWithoutACap() throws Exception {
-        ChartDropRules.register(new JSONArray().put(rule("run_reward", 1f, 0.25f, 0f, 0f)));
+    void theChartMultiplierScalesHowManyChartsDropWithoutACap() throws Exception {
+        ChartDropRules.register(new JSONArray().put(rule("chart_boss", 1f, 0.25f, 0f, 0f)));
 
         assertEquals(1.25, averageCharts(1f), 0.05);
         assertEquals(2.5, averageCharts(2f), 0.05);
@@ -238,14 +242,14 @@ class ChartDropsTest {
         int charts = 0;
         int trials = 2000;
         for (int roll = 0; roll < trials; roll++) {
-            charts += ChartDrops.roll(ChartDrops.Source.RUN_REWARD, 4, mult, random).charts().size();
+            charts += ChartDrops.roll(ChartDrops.Source.CHART_BOSS, 4, mult, random).charts().size();
         }
         return charts / (double) trials;
     }
 
     @Test
     void aChartOnlyDropsFromItsMinimumTier() throws Exception {
-        ChartDropRules.register(new JSONArray().put(rule("run_reward", 1f, 0f, 0f, 0f)));
+        ChartDropRules.register(new JSONArray().put(rule("chart_boss", 1f, 0f, 0f, 0f)));
 
         assertTrue(dropIds(6).contains(GATED));
         assertTrue(dropIds(3).contains(UNGATED));
@@ -256,7 +260,7 @@ class ChartDropsTest {
         Set<String> ids = new HashSet<>();
         Random random = new Random(tier);
         for (int roll = 0; roll < 4000; roll++) {
-            ChartDrops.roll(ChartDrops.Source.RUN_REWARD, tier, 1f, random).charts()
+            ChartDrops.roll(ChartDrops.Source.CHART_BOSS, tier, 1f, random).charts()
                     .forEach(chart -> ids.add(chart.definitionId()));
         }
         return ids;
@@ -421,24 +425,5 @@ class ChartDropsTest {
 
         assertEquals(1, ChartDrops.forTechMining(sector, true, 1f, new Random(1L)).charts().size());
         assertTrue(ChartDrops.forTechMining(sector, false, 1f, new Random(1L)).isEmpty());
-    }
-
-    @Test
-    void completingAnObjectiveRecordsTheClearedTierAndRollsChartsIntoTheRewardLoot() throws Exception {
-        ChartDropRules.register(new JSONArray().put(rule("run_reward", 1f, 0f, 0f, 2f)));
-        CargoAPI cargo = mockSector.cargo();
-        when(cargo.getCredits()).thenReturn(mock(MutableValue.class));
-        ChartRun run = storeRun(4);
-        assertTrue(run.markObjectiveComplete());
-
-        ChartRewards.Reward reward = ChartRewards.grant(sector, run);
-
-        assertEquals(4, ItemUnlock.highestClearedChartTier(sector));
-        List<ItemData> charts = reward.loot().items().stream().filter(item -> ItemData.STAR_CHART_ITEM_ID.equals(item.toSpecialItem().getId())).toList();
-        assertEquals(1, charts.size());
-        assertEquals(4, charts.get(0).preview().tier());
-        assertTrue(reward.loot().materials().keySet().stream().anyMatch(CHART_CRAFTING_ITEM_IDS::contains));
-        verify(cargo, never()).addSpecial(any(SpecialItemData.class), anyFloat());
-        assertNull(ChartRewards.grant(sector, run));
     }
 }

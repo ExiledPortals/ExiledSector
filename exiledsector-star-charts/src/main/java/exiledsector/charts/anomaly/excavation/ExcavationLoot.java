@@ -5,10 +5,8 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.anomaly.DenseNebula;
-import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.loot.ChartCraftingPools;
 import exiledsector.charts.loot.ChartLootContext;
-import exiledsector.charts.loot.DropType;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.items.Engram;
 import exiledsector.items.Engrams;
@@ -34,31 +32,21 @@ public final class ExcavationLoot {
         ChartLootContext loot = ChartLootContext.of(run);
         ExcavationTuning tuning = ExcavationTuning.of(loot.effects());
         float quantityPercent = ExcavationRules.inhibitorQuantityPercent(tuning, false, DenseNebula.dust(run)) + deliveryPercent;
-        float expectedInhibitors = expectedInhibitors(ExcavationRules.raidInhibitors(tuning), loot.effects(), quantityPercent, share);
+        float expectedInhibitors = expectedInhibitors(ExcavationRules.raidInhibitors(tuning), loot, quantityPercent, share);
         tagInhibitors(expectedInhibitors, loot, random).forEach((itemId, quantity) -> MaterialItems.add(cargo, itemId, quantity));
         return cargo;
     }
 
-    static float quantityMult(ChartGenContext context) {
-        return quantityMult(context, 0f);
+    static float quantityMult(ChartLootContext loot, float extraSitePercent) {
+        return loot.craftingItemMult(loot.effects().anomalyPercent(ExcavationSites.LOOT_KEY) + extraSitePercent);
     }
 
-    static float quantityMult(ChartGenContext context, float extraSitePercent) {
-        ChartGenContext lines = ChartGenContext.orNone(context);
-        float sitePercent = lines.anomalyPercent(ExcavationSites.LOOT_KEY) + extraSitePercent;
-        return ExcavationRules.multiplier(sitePercent) * lines.dropMult(DropType.CRAFTING_ITEM);
-    }
-
-    static float expectedInhibitors(float baseInhibitors, ChartGenContext context, float share) {
-        return expectedInhibitors(baseInhibitors, context, 0f, share);
-    }
-
-    static float expectedInhibitors(float baseInhibitors, ChartGenContext context, float extraSitePercent, float share) {
-        return Math.max(0f, baseInhibitors) * quantityMult(context, extraSitePercent) * Math.max(0f, share);
+    static float expectedInhibitors(float baseInhibitors, ChartLootContext loot, float extraSitePercent, float share) {
+        return Math.max(0f, baseInhibitors) * quantityMult(loot, extraSitePercent) * Math.max(0f, share);
     }
 
     static Map<String, Integer> tagInhibitors(float expectedCount, ChartLootContext loot, Random random) {
-        return loot.craftingItems(expectedCount, ChartCraftingPools.TAG_INHIBITORS, ChartLootContext.PlayerFindBonus.SKIPPED, random);
+        return loot.craftingItems(expectedCount, ChartCraftingPools.TAG_INHIBITORS, random);
     }
 
     public static Loot fleetItems(CampaignFleetAPI fleet, ChartLootContext loot, int dustStacks, float share, Random random) {
@@ -69,7 +57,7 @@ public final class ExcavationLoot {
         ExcavationGuardians guardians = ExcavationFleets.guardiansOf(fleet);
         float quantityPercent = ExcavationRules.inhibitorQuantityPercent(tuning, true, dustStacks) + ExcavationDeliveries.lootPercent(fleet);
         Map<String, Integer> found = new LinkedHashMap<>(tagInhibitors(
-                expectedInhibitors(ExcavationRules.guardianInhibitors(guardians, tuning), loot.effects(), quantityPercent, share), loot, random));
+                expectedInhibitors(ExcavationRules.guardianInhibitors(guardians, tuning), loot, quantityPercent, share), loot, random));
         if (guardians.corrupted() && share > 0f) {
             String engramId = engramOnce(fleet.getMemoryWithoutUpdate(), loot.tier(), random);
             if (engramId != null) {

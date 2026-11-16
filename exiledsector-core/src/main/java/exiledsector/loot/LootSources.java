@@ -9,6 +9,7 @@ import exiledsector.domain.DomainContributions;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
+import exiledsector.items.ItemQuantity;
 import exiledsector.items.SalvageSiteDrops;
 
 import java.util.ArrayList;
@@ -46,10 +47,10 @@ public final class LootSources {
         return baseLoot.plus(find.items(), find.schematics(), Map.of());
     }
 
-    public static List<ItemData> bossDrops(int chartTier, String bossFactionId, float chanceMult, Random random,
+    public static List<ItemData> bossDrops(int chartTier, String bossFactionId, ItemQuantity quantity, Random random,
                                              Predicate<ItemDefinition> allowed) {
         List<ItemData> drops = new ArrayList<>();
-        SOURCES.all().forEach(source -> drops.addAll(source.bossDrops(chartTier, bossFactionId, chanceMult, random, allowed)));
+        SOURCES.all().forEach(source -> drops.addAll(source.bossDrops(chartTier, bossFactionId, quantity, random, allowed)));
         return drops;
     }
 

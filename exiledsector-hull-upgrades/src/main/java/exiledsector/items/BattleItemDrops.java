@@ -90,7 +90,7 @@ public final class BattleItemDrops {
         return loss.rules().multipliers().chances();
     }
 
-    public static Loot roll(Battle battle, float dropMultiplier, float basicItemMult, Random random,
+    public static Loot roll(Battle battle, float dropMultiplier, float playerHullItemPercent, Random random,
                             Predicate<ItemDefinition> uniqueAllowed, boolean hullItemDropsOpen) {
         if (battle == null || battle.isEmpty() || !(dropMultiplier > 0f)) {
             return Loot.NONE;
@@ -98,7 +98,7 @@ public final class BattleItemDrops {
         List<ItemData> items = new ArrayList<>();
         List<ShipSchematic> schematics = new ArrayList<>();
         List<ItemKind> kindsWithBasics = hullItemDropsOpen ? DroppableDefinitions.hullItemKindsWithBasics() : List.of();
-        for (Planned planned : plan(battle, dropMultiplier, basicItemMult, kindsWithBasics, random, hullItemDropsOpen)) {
+        for (Planned planned : plan(battle, dropMultiplier, playerHullItemPercent, kindsWithBasics, random, hullItemDropsOpen)) {
             if (planned.drop() == Drop.REFIT_SCHEMATIC) {
                 schematics.add(RefitSchematic.roll(random));
             } else if (planned.drop() == Drop.MASTER_SCHEMATIC) {
@@ -126,7 +126,7 @@ public final class BattleItemDrops {
         return planned.overcharged() ? ItemOvercharge.overcharge(item, random) : item;
     }
 
-    static List<Planned> plan(Battle battle, float dropMultiplier, float basicItemMult, List<ItemKind> kindsWithBasics, Random random,
+    static List<Planned> plan(Battle battle, float dropMultiplier, float playerHullItemPercent, List<ItemKind> kindsWithBasics, Random random,
                               boolean hullItemDropsOpen) {
         List<Planned> planned = new ArrayList<>();
         float battleDeploymentPoints = battle.deploymentPoints();
@@ -135,12 +135,12 @@ public final class BattleItemDrops {
             if (!allowed(drop, hullItemDropsOpen)) {
                 continue;
             }
-            float quantityMult = drop.modifierCount() > 0 ? basicItemMult : 1f;
+            float playerPercent = drop.modifierCount() > 0 ? playerHullItemPercent : 0f;
             Expected expected = Expected.NONE;
             for (FleetLoss loss : battle.fleetLosses()) {
                 expected = expected.plus(loss,
-                        expected(loss, drop, battleDeploymentPoints, battle.levelScaledShare(), dropMultiplier * quantityMult)
-                                * chancesOf(loss).general());
+                        expected(loss, drop, battleDeploymentPoints, battle.levelScaledShare(), dropMultiplier)
+                                * chancesOf(loss).generalPlusPercent(playerPercent));
             }
             addPlanned(planned, drop, null, expected, anyOvercharging, random);
         }
@@ -152,7 +152,7 @@ public final class BattleItemDrops {
                 Expected expected = Expected.NONE;
                 for (FleetLoss loss : battle.fleetLosses()) {
                     expected = expected.plus(loss,
-                            expected(loss, drop, battleDeploymentPoints, battle.levelScaledShare(), dropMultiplier * basicItemMult)
+                            expected(loss, drop, battleDeploymentPoints, battle.levelScaledShare(), dropMultiplier)
                                     * chancesOf(loss).targeted(kind) / kindsWithBasics.size());
                 }
                 addPlanned(planned, drop, kind, expected, anyOvercharging, random);

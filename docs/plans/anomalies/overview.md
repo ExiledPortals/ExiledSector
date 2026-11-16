@@ -30,7 +30,7 @@ Combat readiness makes back-to-back fleet battles miserable, so each anomaly kee
 
 ## How an anomaly plugs in
 
-Each anomaly is one class behind `ChartAnomaly` (package `exiledsector.charts.anomaly`, with the `ChartAnomalies` registry; an anomaly with several classes gets a subpackage, such as `anomaly.breach` and `anomaly.skirmish`) and one row in `data/config/exiledSector/chart_anomalies.csv` (`id,weight,min_tier,max_tier,requires_mod,icon,insertable,excludes,effects,biomes,fleet_loot,opening_chance,note`). An anomaly implements only the role interfaces it needs (`StarRule`, `LayoutShaper`, `ContentPlacer`, `RunParticipant`, `LootShaper`, `AtlasRule`), and `ChartAnomalies.with` hands out each role's anomalies in registry order. Generation runs in three stages:
+Each anomaly is one class behind `ChartAnomaly` (package `exiledsector.charts.anomaly`, with the `ChartAnomalies` registry; an anomaly with several classes gets a subpackage, such as `anomaly.breach` and `anomaly.skirmish`) and one row in `data/config/exiledSector/chart_anomalies.csv` (`id,weight,min_tier,max_tier,requires_mod,icon,insertable,excludes,effects,biomes,opening_chance,note`). An anomaly implements only the role interfaces it needs (`StarRule`, `LayoutShaper`, `ContentPlacer`, `RunParticipant`, `LootShaper`, `AtlasRule`), and `ChartAnomalies.with` hands out each role's anomalies in registry order. Generation runs in three stages:
 
 1. Star: `primaryStar()` or `systemType()` replaces the star or the system type before layout (Black Hole, Neutron Star, Dense Nebula). These are locked to the atlas cell and can never be inserted.
 2. Shape: `shape(AnomalyLayoutSite)` adds terrain right after layout (Asteroid Storm, Magnetic Storm, Stellar Flares).

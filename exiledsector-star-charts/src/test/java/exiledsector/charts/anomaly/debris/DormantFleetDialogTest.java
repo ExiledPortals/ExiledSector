@@ -22,6 +22,7 @@ import exiledsector.MockSector;
 import exiledsector.charts.anomaly.LiveAnomalyRuns;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.loot.ChartLootContext;
 import exiledsector.charts.run.ChartCampaignPlugin;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.items.Engrams;
@@ -147,9 +148,13 @@ class DormantFleetDialogTest {
         ChartGenContext deepAndDouble = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_ANOMALOUS_DEBRIS_CORRUPTED_ENGRAMS, 1f),
                 new ChartGenContext.AppliedEffect(ChartModifier.CHART_ANOMALOUS_DEBRIS_TWICE_CORRUPTED_ENGRAMS, 2f)));
 
-        assertEquals(Map.of(ENGRAM, 2), DormantFleetLoot.craftingItemFor(corruptedTimes(1), 3, deepAndDouble, new Random(1L)).materials());
-        assertEquals(Map.of(ENGRAM, 4), DormantFleetLoot.craftingItemFor(corruptedTimes(2), 3, deepAndDouble, new Random(1L)).materials());
-        assertEquals(Map.of(ENGRAM, 1), DormantFleetLoot.craftingItemFor(corruptedTimes(2), 3, ChartGenContext.none(), new Random(1L)).materials());
+        assertEquals(Map.of(ENGRAM, 2), DormantFleetLoot.craftingItemFor(corruptedTimes(1), new ChartLootContext(deepAndDouble, 3), new Random(1L)).materials());
+        assertEquals(Map.of(ENGRAM, 4), DormantFleetLoot.craftingItemFor(corruptedTimes(2), new ChartLootContext(deepAndDouble, 3), new Random(1L)).materials());
+        assertEquals(Map.of(ENGRAM, 1), DormantFleetLoot.craftingItemFor(corruptedTimes(2), new ChartLootContext(ChartGenContext.none(), 3), new Random(1L)).materials());
+        ChartGenContext moreCraftingItems = ChartGenContext.of(List.of(
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_ANOMALOUS_DEBRIS_CRAFTING_ITEM_QUANTITY_PERCENT, 100f),
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_CRAFTING_ITEM_PERCENT, 100f)));
+        assertEquals(Map.of(ENGRAM, 3), DormantFleetLoot.craftingItemFor(corruptedTimes(2), new ChartLootContext(moreCraftingItems, 3), new Random(1L)).materials());
     }
 
     @Test
@@ -214,10 +219,10 @@ class DormantFleetDialogTest {
         CampaignFleetAPI plain = debrisFleet(false);
         Random random = new Random(2L);
 
-        Loot first = DormantFleetLoot.craftingItemFor(corrupted, 3, ChartGenContext.none(), random);
+        Loot first = DormantFleetLoot.craftingItemFor(corrupted, new ChartLootContext(ChartGenContext.none(), 3), random);
         assertEquals(Map.of(ENGRAM, 1), first.materials());
-        assertTrue(DormantFleetLoot.craftingItemFor(corrupted, 3, ChartGenContext.none(), random).materials().isEmpty());
-        assertTrue(DormantFleetLoot.craftingItemFor(plain, 3, ChartGenContext.none(), random).materials().isEmpty());
+        assertTrue(DormantFleetLoot.craftingItemFor(corrupted, new ChartLootContext(ChartGenContext.none(), 3), random).materials().isEmpty());
+        assertTrue(DormantFleetLoot.craftingItemFor(plain, new ChartLootContext(ChartGenContext.none(), 3), random).materials().isEmpty());
     }
 
     @Test

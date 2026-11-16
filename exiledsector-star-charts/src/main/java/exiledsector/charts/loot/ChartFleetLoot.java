@@ -2,13 +2,11 @@ package exiledsector.charts.loot;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledsector.charts.ChartIds;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.content.ChartContentPlanner;
 import exiledsector.charts.content.ChartFleetSpread;
-import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.run.ChartRun;
@@ -19,7 +17,7 @@ import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemOvercharge;
-import exiledsector.items.ItemType;
+import exiledsector.items.ItemQuantity;
 import exiledsector.items.ItemTypes;
 import exiledsector.items.ItemUnlock;
 import exiledsector.loot.BattleLootRates;
@@ -30,12 +28,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 import java.util.function.Function;
 
 public final class ChartFleetLoot {
 
-    static final Set<ItemType> GUARANTEED_UNIQUE_TYPES = Set.of(ItemType.HULL_ITEM, ItemType.SUBROUTINE);
     static final String SUBROUTINE_RATE = "subroutine";
 
     private ChartFleetLoot() {
@@ -65,27 +61,27 @@ public final class ChartFleetLoot {
 
     static Loot roll(SectorAPI sector, CampaignFleetAPI fleet, ChartRun run, ChartLootContext loot, float defeatedDeploymentPoints, Battle battle,
                      Random random) {
-        float battleLootMult = battleLootMult(battle.anomalies(), loot.effects());
-        FleetClaim claim = ChartFleetLedger.claim(fleet, run, defeatedDeploymentPoints, loot.effects(), battleLootMult);
+        FleetClaim claim = ChartFleetLedger.claim(fleet, run, defeatedDeploymentPoints);
         if (claim == null) {
             return Loot.NONE;
         }
-        Loot fleetLoot = subroutines(loot, claim.lootDeploymentPoints(), battle, random)
-                .plus(List.of(), List.of(), craftingItems(loot, claim.lootDeploymentPoints(), battle, random))
-                .plus(chartDrops(run, loot, claim, random))
-                .plus(anomalyFleetLoot(run, loot, claim, battle, random));
+        ChartLootContext fleetLoot = fleetLootContext(loot, battle.anomalies(), claim.boss());
+        Loot claimedLoot = subroutines(fleetLoot, claim.lootDeploymentPoints(), battle, random)
+                .plus(List.of(), List.of(), craftingItems(fleetLoot, claim.lootDeploymentPoints(), battle, random))
+                .plus(chartDrops(run, fleetLoot, claim, random))
+                .plus(anomalyFleetLoot(run, fleetLoot, claim, battle, random));
         if (overchargesHullItems(fleet, run)) {
-            fleetLoot = overcharged(fleetLoot, random);
+            claimedLoot = overcharged(claimedLoot, random);
         }
-        return claim.boss() ? withBossLoot(sector, run, loot, claim, fleetLoot, random) : fleetLoot;
+        return claim.boss() ? claimedLoot.plus(doctrineArchives(sector, run, fleetLoot, claim, random)) : claimedLoot;
     }
 
-    public static float battleLootMult(List<LootShaper> battleAnomalies, ChartGenContext context) {
-        float quantityMult = 1f;
+    static ChartLootContext fleetLootContext(ChartLootContext loot, List<LootShaper> battleAnomalies, boolean boss) {
+        float battleQuantityPercent = 0f;
         for (LootShaper anomaly : battleAnomalies) {
-            quantityMult *= anomaly.battleLootMult(context);
+            battleQuantityPercent += anomaly.battleQuantityPercent(loot.effects());
         }
-        return quantityMult;
+        return loot.forFleetLoot(boss).plusQuantityPercent(battleQuantityPercent);
     }
 
     private static Loot anomalyFleetLoot(ChartRun run, ChartLootContext loot, FleetClaim claim, Battle battle, Random random) {
@@ -96,18 +92,11 @@ public final class ChartFleetLoot {
         return anomalyLoot;
     }
 
-    private static Loot withBossLoot(SectorAPI sector, ChartRun run, ChartLootContext loot, FleetClaim claim, Loot fleetLoot, Random random) {
-        Loot bossLoot = fleetLoot.plus(bossChest(sector, loot, claim.bossShare(), random));
-        List<ItemData> bossDrops = LootSources.bossDrops(run.tier(), run.contentFaction(), claim.bossShare(), random,
+    private static Loot doctrineArchives(SectorAPI sector, ChartRun run, ChartLootContext bossLoot, FleetClaim claim, Random random) {
+        ItemQuantity quantity = ItemQuantity.increasedBy(bossLoot.effects().quantityPercent()).scaled(claim.mergedFleetShare());
+        List<ItemData> archives = LootSources.bossDrops(run.tier(), run.contentFaction(), quantity, random,
                 definition -> ItemUnlock.canDrop(definition, sector));
-        if (!bossDrops.isEmpty()) {
-            bossLoot = bossLoot.plus(bossDrops, List.of(), Map.of());
-        }
-        ItemData guaranteedUnique = guaranteedUnique(sector, run, loot, random);
-        if (guaranteedUnique != null) {
-            bossLoot = bossLoot.plus(List.of(guaranteedUnique), List.of(), Map.of());
-        }
-        return withBossGuarantees(sector, run, loot, bossLoot, random);
+        return archives.isEmpty() ? Loot.NONE : new Loot(archives, List.of(), Map.of());
     }
 
     public static boolean overchargesHullItems(CampaignFleetAPI fleet, ChartRun run) {
@@ -117,33 +106,6 @@ public final class ChartFleetLoot {
     private static Loot overcharged(Loot fleetLoot, Random random) {
         List<ItemData> items = fleetLoot.items().stream().map(item -> ItemOvercharge.overchargeHullItem(item, random)).toList();
         return new Loot(items, fleetLoot.schematics(), fleetLoot.materials());
-    }
-
-    static Loot withBossGuarantees(SectorAPI sector, ChartRun run, ChartLootContext loot, Loot bossLoot, Random random) {
-        if (run.isBossLootGuaranteed()) {
-            return bossLoot;
-        }
-        run.guaranteeBossLoot();
-        if (!ItemUnlock.available(ItemType.HULL_ITEM, sector) || bossLoot.items().stream().anyMatch(ItemData::isHullItem)) {
-            return bossLoot;
-        }
-        ItemDefinition definition = DroppableDefinitions.pickHullItemBasic(random);
-        return definition == null ? bossLoot
-                : bossLoot.plus(List.of(loot.rolledWithDropLimits(definition, random.nextLong())), List.of(), Map.of());
-    }
-
-    static ItemData guaranteedUnique(SectorAPI sector, ChartRun run, ChartLootContext loot, Random random) {
-        if (!loot.effects().guaranteedBossUnique() || run.isBossUniqueGranted()
-                || ChartAnomalies.inRun(run, LootShaper.class).stream().anyMatch(anomaly -> anomaly.holdsBackBossUnique(run))) {
-            return null;
-        }
-        ItemDefinition unique = DroppableDefinitions.pickUniqueFromAnySource(random, definition -> GUARANTEED_UNIQUE_TYPES.contains(definition.type())
-                && ItemUnlock.available(definition.type(), sector) && ItemUnlock.canDrop(definition, sector));
-        if (unique == null) {
-            return null;
-        }
-        run.grantBossUnique();
-        return ItemData.rolled(unique, random.nextLong());
     }
 
     public static float expectedFleetPoints(int tier) {
@@ -197,11 +159,7 @@ public final class ChartFleetLoot {
     static Map<String, Integer> craftingItems(ChartLootContext loot, float lootDeploymentPoints, Battle battle, Random random) {
         BattleLootRates.Rate rate = BattleLootRates.rate(BattleLootRates.CRAFTING_ITEM_RATE);
         float expectedCount = rate == null ? 0f : rate.expectedAtDifficulty(lootDeploymentPoints, battle.deploymentPoints(), battle.difficultyMultiplier())
-                * loot.dropMult(DropType.CRAFTING_ITEM);
-        return loot.craftingItems(expectedCount, ChartCraftingPools.ANY_ITEM, ChartLootContext.PlayerFindBonus.APPLIES, random);
-    }
-
-    private static Loot bossChest(SectorAPI sector, ChartLootContext loot, float chanceMult, Random random) {
-        return LootSources.rollSite(sector, ChartIds.BOSS_LOOT_SITE, random, loot.multipliers(chanceMult).withCraftingItemMult(0f));
+                * loot.craftingItemMult(0f);
+        return loot.craftingItems(expectedCount, ChartCraftingPools.ANY_ITEM, random);
     }
 }

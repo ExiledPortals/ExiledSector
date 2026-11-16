@@ -26,6 +26,7 @@ public final class MapMemory {
         when(memory.contains(anyString())).thenAnswer(invocation -> stored.containsKey((String) invocation.getArgument(0)));
         when(memory.get(anyString())).thenAnswer(invocation -> stored.get((String) invocation.getArgument(0)));
         when(memory.getBoolean(anyString())).thenAnswer(invocation -> Boolean.TRUE.equals(stored.get((String) invocation.getArgument(0))));
+        when(memory.getInt(anyString())).thenAnswer(invocation -> stored.get((String) invocation.getArgument(0)) instanceof Number number ? number.intValue() : 0);
         return memory;
     }
 }

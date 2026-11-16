@@ -646,7 +646,6 @@ public final class ChartContentGenerator {
                         salt -> BuiltInTable.rollFor(seed, anomalyId, salt), claimedPlanetIds, forces, plan.anomalyPlan(anomalyId));
                 try {
                     placer.generate(site);
-                    site.placed().forEach(entity -> ChartFleetLedger.tagAnomaly(entity, anomalyId));
                     anomalies.add(anomalyId);
                 } catch (RuntimeException | LinkageError e) {
                     site.rollBack();

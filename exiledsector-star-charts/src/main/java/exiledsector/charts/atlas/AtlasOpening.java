@@ -113,7 +113,7 @@ public final class AtlasOpening {
             return runNode;
         }
         OfficerRank rank = OfficerRanks.rank(officer.rankId());
-        return runNode.withExtraEffects(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_BOSS_SIZE_PERCENT, rank.bossSizePercent())), false)
+        return runNode.withExtraEffects(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_BOSS_SIZE_PERCENT, rank.bossSizePercent())))
                 .withAnomalyData(AtlasOfficer.RUN_DATA_KEY, Integer.toString(officer.recordId()));
     }
 

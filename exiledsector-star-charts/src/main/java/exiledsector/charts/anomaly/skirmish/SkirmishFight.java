@@ -9,9 +9,6 @@ public record SkirmishFight(String attackerFactionId, String attackerRankId, Str
 
     private static final int FIELD_COUNT = 7;
     private static final int CONTEST_FIELD = 3;
-    private static final int OLD_JOIN_FIELD_COUNT = 6;
-    private static final int OLD_JOIN_ATTACKER_FIELD = 1;
-    private static final int OLD_JOIN_CONTEST_FIELD = 2;
     private static final String NO_CONTEST = ",,,";
 
     public SkirmishFight {
@@ -38,10 +35,8 @@ public record SkirmishFight(String attackerFactionId, String attackerRankId, Str
     }
 
     static SkirmishFight decode(String data) {
-        SkirmishFight fight = StateFields.decode(data, FIELD_COUNT, fields -> new SkirmishFight(fields.text(0), fields.text(1), fields.text(2),
+        return StateFields.decode(data, FIELD_COUNT, fields -> new SkirmishFight(fields.text(0), fields.text(1), fields.text(2),
                 contestAt(fields, CONTEST_FIELD)));
-        return fight != null ? fight : StateFields.decode(data, OLD_JOIN_FIELD_COUNT, fields -> new SkirmishFight(fields.text(OLD_JOIN_ATTACKER_FIELD),
-                null, null, contestAt(fields, OLD_JOIN_CONTEST_FIELD)));
     }
 
     public static SkirmishFight of(AtlasRunNode node) {

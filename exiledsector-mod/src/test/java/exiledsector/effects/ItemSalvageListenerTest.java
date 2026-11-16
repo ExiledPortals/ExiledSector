@@ -20,6 +20,7 @@ import exiledsector.items.AnchorJanusGate;
 import exiledsector.items.CraftingDrops;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemData;
+import exiledsector.items.ItemQuantity;
 import exiledsector.items.ItemUnlock;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.WormholeAnchorDefinitions;
@@ -129,7 +130,7 @@ class ItemSalvageListenerTest {
         SectorEntityToken nowhere = mock(SectorEntityToken.class);
 
         LootMultipliers none = new LootMultipliers(ChartGenContext.none().itemChances(), ChartGenContext.none().dropMult(DropType.FEEDSTOCK),
-                ChartGenContext.none().dropMult(DropType.CRAFTING_ITEM), CraftingDrops.NO_BAND_SHIFT);
+                ItemQuantity.BASE, CraftingDrops.NO_BAND_SHIFT);
         assertEquals(none, StarChartLootSource.INSTANCE.lootMultipliersAt(outside.getContainingLocation()));
         assertEquals(none, StarChartLootSource.INSTANCE.lootMultipliersAt(nowhere.getContainingLocation()));
     }

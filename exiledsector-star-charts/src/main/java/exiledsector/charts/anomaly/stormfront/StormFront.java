@@ -86,8 +86,8 @@ public final class StormFront implements ContentPlacer, RunParticipant, LootShap
     }
 
     @Override
-    public float battleLootMult(ChartGenContext context) {
-        return StormRules.lootQuantityMult(context);
+    public float battleQuantityPercent(ChartGenContext context) {
+        return StormRules.lootQuantityPercent(context);
     }
 
     @Override

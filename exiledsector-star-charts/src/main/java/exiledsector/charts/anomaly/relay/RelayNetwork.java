@@ -91,11 +91,6 @@ public final class RelayNetwork implements ContentPlacer, RunParticipant, LootSh
     }
 
     @Override
-    public boolean holdsBackBossUnique(ChartRun run) {
-        return !RelayStates.allWoken(run);
-    }
-
-    @Override
     public Loot bossDefeatedLoot(SectorAPI sector, ChartRun run) {
         return RelayBossReward.bossReward(sector, run);
     }

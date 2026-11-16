@@ -15,10 +15,6 @@ public record FleetLoss(float deploymentPoints, float averageDifficulty, float a
         rules = rules == null ? FleetLootRules.LEVEL_SCALED : rules;
     }
 
-    public float lootDeploymentPoints() {
-        return deploymentPoints * rules.deploymentPointsMult();
-    }
-
     public static float totalDeploymentPoints(List<FleetLoss> losses) {
         float total = 0f;
         for (FleetLoss loss : losses) {

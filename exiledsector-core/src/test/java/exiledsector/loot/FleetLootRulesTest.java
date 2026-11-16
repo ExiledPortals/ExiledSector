@@ -14,7 +14,7 @@ class FleetLootRulesTest {
     @Test
     void onlyLevelScaledFleetsTakeTheLevelScaledShareAndOwnLedgerFleetsTakeItAll() {
         assertEquals(LEVEL_SCALED_SHARE, FleetLootRules.LEVEL_SCALED.itemShare(LEVEL_SCALED_SHARE), 1e-6f);
-        assertEquals(1f, FleetLootRules.ownLedger(LootMultipliers.NONE, 1f).itemShare(LEVEL_SCALED_SHARE), 1e-6f);
+        assertEquals(1f, FleetLootRules.ownLedger(LootMultipliers.NONE).itemShare(LEVEL_SCALED_SHARE), 1e-6f);
         assertEquals(0f, FleetLootRules.FEEDSTOCK_ONLY.itemShare(LEVEL_SCALED_SHARE), 1e-6f);
         assertEquals(0f, FleetLootRules.SPENT.itemShare(LEVEL_SCALED_SHARE), 1e-6f);
     }
@@ -29,11 +29,10 @@ class FleetLootRulesTest {
 
     @Test
     void missingPartsFallBackToLevelScaledWithoutMultipliers() {
-        FleetLootRules rules = new FleetLootRules(null, null, -2f, false);
+        FleetLootRules rules = new FleetLootRules(null, null, false);
 
         assertSame(FleetLootRules.Kind.LEVEL_SCALED, rules.kind());
         assertSame(LootMultipliers.NONE, rules.multipliers());
-        assertEquals(0f, rules.deploymentPointsMult(), 1e-6f);
         assertTrue(rules.overchargingHullItems().overchargesHullItems());
     }
 }

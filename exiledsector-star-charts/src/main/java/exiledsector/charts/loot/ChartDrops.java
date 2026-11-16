@@ -32,7 +32,6 @@ public final class ChartDrops {
     static final float BATTLE_DEPLOYMENT_POINTS_PER_CHANCE = 100f;
 
     public enum Source {
-        RUN_REWARD(true),
         SYSTEM_SALVAGE(true),
         CHART_FLEET(true),
         CHART_BOSS(true),
@@ -120,17 +119,28 @@ public final class ChartDrops {
         if (!StarChartSettings.enabled() || rule == null || context.tier() == NO_TIER || !mults.any()) {
             return Rolled.NONE;
         }
-        int naturalTier = ChartTiers.clampDropTier(context.tier());
-        int baseTier = source.insideSystem() ? naturalTier : Math.min(rule.maxTier(), naturalTier);
-        List<ItemData> charts = mults.chart() > 0f ? rollCharts(rule, baseTier, mults.chart(), random) : List.of();
+        List<ItemData> charts = mults.chart() > 0f ? rollCharts(rule, baseTier(source, rule, context), chartCount(rule, mults.chart(), random), random)
+                : List.of();
         RunExtras extras = source.insideSystem() ? rollRunExtras(rule, context, mults, random) : RunExtras.NONE;
         return charts.isEmpty() && extras.ciphers().isEmpty() && extras.catalysts().isEmpty() ? Rolled.NONE
                 : new Rolled(charts, extras.ciphers(), extras.catalysts());
     }
 
-    private static List<ItemData> rollCharts(ChartDropRules.Rule rule, int baseTier, float chartMult, Random random) {
+    public static List<ItemData> guaranteedCharts(Source source, ChartLootContext context, Random random) {
+        ChartDropRules.Rule rule = ChartDropRules.rule(source);
+        if (!StarChartSettings.enabled() || rule == null || context.tier() == NO_TIER) {
+            return List.of();
+        }
+        return rollCharts(rule, baseTier(source, rule, context), rule.guaranteed(), random);
+    }
+
+    private static int baseTier(Source source, ChartDropRules.Rule rule, ChartLootContext context) {
+        int naturalTier = ChartTiers.clampDropTier(context.tier());
+        return source.insideSystem() ? naturalTier : Math.min(rule.maxTier(), naturalTier);
+    }
+
+    private static List<ItemData> rollCharts(ChartDropRules.Rule rule, int baseTier, int chartCount, Random random) {
         List<ItemData> charts = new ArrayList<>();
-        int chartCount = chartCount(rule, chartMult, random);
         for (int i = 0; i < chartCount; i++) {
             int dropTier = dropTier(rule, baseTier, rule.pickTierOffset(random));
             ItemDefinition definition = pickChartAtTier(random, dropTier);
@@ -143,8 +153,7 @@ public final class ChartDrops {
 
     private static RunExtras rollRunExtras(ChartDropRules.Rule rule, ChartLootContext run, Mults mults, Random random) {
         float expectedCiphers = rule.cipherChance() * Math.max(0f, mults.cipher());
-        Map<String, Integer> ciphers = run.craftingItems(expectedCiphers, ChartCraftingPools.CIPHERS, ChartLootContext.PlayerFindBonus.APPLIES,
-                random);
+        Map<String, Integer> ciphers = run.craftingItems(expectedCiphers, ChartCraftingPools.CIPHERS, random);
         Map<String, Integer> catalysts = new LinkedHashMap<>();
         int catalystCount = AtlasCatalysts.all().isEmpty() ? 0 : RandomRounding.round(rule.catalystChance() * Math.max(0f, mults.catalyst()), random);
         int catalystTier = ChartTiers.clampDropTier(run.tier());
@@ -184,13 +193,6 @@ public final class ChartDrops {
         }
         int steps = rule.defeatedDpPerTier() > 0f ? (int) ((defeatedDp - rule.minDefeatedDp()) / rule.defeatedDpPerTier()) : 0;
         return Math.min(rule.maxTier(), ChartTiers.clamp(ChartTiers.LOWEST_TIER + steps));
-    }
-
-    public static Rolled forRunReward(ChartLootContext run, Random random) {
-        if (run.isOutsideRuns()) {
-            return Rolled.NONE;
-        }
-        return roll(Source.RUN_REWARD, run, run.rewardChartDropMults(), random);
     }
 
     public static Rolled forBattle(LocationAPI battleLocation, float difficultyScaledDeploymentPoints, int highestDefeatedLevel,

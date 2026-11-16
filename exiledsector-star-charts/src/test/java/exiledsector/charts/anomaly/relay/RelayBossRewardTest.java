@@ -1,7 +1,6 @@
 package exiledsector.charts.anomaly.relay;
 
 import exiledsector.charts.ChartIds;
-import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
@@ -70,16 +69,12 @@ class RelayBossRewardTest {
     }
 
     @Test
-    void earlyEchoNeedsItsLineEveryRelayAwakeAndAStageWithoutTheGuaranteedUnique() {
+    void earlyEchoNeedsItsLineAndEveryRelayAwake() {
         ChartGenContext echo = lines(ChartModifier.CHART_RELAY_STAGE_UNIQUE_CHANCE, 100f);
 
         assertEquals(1f, RelayTuning.stageUniqueChance(echo), 0.001f);
         assertSame(Loot.NONE, RelayBossReward.echoUnique(null, relayRun(true), ChartGenContext.none(), new Random(1L)));
         assertSame(Loot.NONE, RelayBossReward.echoUnique(null, relayRun(false), echo, new Random(1L)));
-        ChartGenContext lastStage = echo.withAtlasNode(new AtlasRunNode(7L, "pirates", List.of(), List.of(RelayNetwork.ANOMALY_ID))
-                .withExtraEffects(List.of(), true));
-        assertTrue(lastStage.guaranteedBossUnique());
-        assertSame(Loot.NONE, RelayBossReward.echoUnique(null, relayRun(true), lastStage, new Random(1L)));
     }
 
     @Test

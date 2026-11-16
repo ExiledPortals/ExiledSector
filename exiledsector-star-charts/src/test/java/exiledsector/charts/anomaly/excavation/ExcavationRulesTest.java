@@ -162,9 +162,9 @@ class ExcavationRulesTest {
                 new ChartGenContext.AppliedEffect(ChartModifier.CHART_EXCAVATION_LOOT_QUANTITY_PERCENT, 50f)));
 
         assertEquals(3, Math.round(context.anomalyPercent(ExcavationSites.EXTRA_KEY)));
-        assertEquals(1.5f, ExcavationLoot.quantityMult(context), 0.0001f);
-        assertEquals(1f, ExcavationLoot.quantityMult(ChartGenContext.none()), 0.0001f);
-        assertEquals(1f, ExcavationLoot.quantityMult(null), 0.0001f);
+        assertEquals(1.5f, ExcavationLoot.quantityMult(new ChartLootContext(context, ChartTiers.LOWEST_TIER), 0f), 0.0001f);
+        assertEquals(1f, ExcavationLoot.quantityMult(ChartLootContext.outsideRuns(), 0f), 0.0001f);
+        assertEquals(1f, ExcavationLoot.quantityMult(new ChartLootContext(null, ChartTiers.LOWEST_TIER), 0f), 0.0001f);
     }
 
     @Test
@@ -173,9 +173,11 @@ class ExcavationRulesTest {
         float perShaft = ExcavationRules.INHIBITORS_PER_RAID;
         assertEquals(2f, perShaft, 0.0001f);
         assertEquals(1f, ExcavationRules.INHIBITORS_PER_GUARDIAN_FLEET, 0.0001f);
-        assertEquals(perShaft, ExcavationLoot.expectedInhibitors(ExcavationRules.INHIBITORS_PER_RAID, context, 0.5f), 0.0001f);
-        assertEquals(perShaft * 0.5f, ExcavationLoot.expectedInhibitors(ExcavationRules.INHIBITORS_PER_RAID, ChartGenContext.none(), 0.5f), 0.0001f);
-        assertEquals(0f, ExcavationLoot.expectedInhibitors(ExcavationRules.INHIBITORS_PER_RAID, context, -1f), 0.0001f);
+        ChartLootContext boosted = new ChartLootContext(context, ChartTiers.LOWEST_TIER);
+        assertEquals(perShaft, ExcavationLoot.expectedInhibitors(ExcavationRules.INHIBITORS_PER_RAID, boosted, 0f, 0.5f), 0.0001f);
+        assertEquals(perShaft * 0.5f, ExcavationLoot.expectedInhibitors(ExcavationRules.INHIBITORS_PER_RAID, ChartLootContext.outsideRuns(), 0f, 0.5f),
+                0.0001f);
+        assertEquals(0f, ExcavationLoot.expectedInhibitors(ExcavationRules.INHIBITORS_PER_RAID, boosted, 0f, -1f), 0.0001f);
         CraftingDrops.register(ProjectFiles.csvRows(CraftingDrops.DATA_PATH));
         try {
             Map<String, Integer> found = ExcavationLoot.tagInhibitors(40f, ChartLootContext.outsideRuns(), new Random(1L));
@@ -202,13 +204,14 @@ class ExcavationRulesTest {
     }
 
     @Test
-    void theRunsCraftingItemQuantityScalesTheSiteQuantity() {
+    void theRunsCraftingItemQuantityAddsToTheSiteQuantityInsteadOfMultiplyingIt() {
         ChartGenContext context = ChartGenContext.of(List.of(line(ChartModifier.CHART_EXCAVATION_LOOT_QUANTITY_PERCENT, 50f),
-                line(ChartModifier.CHART_CRAFTING_ITEM_PERCENT, 100f)));
+                line(ChartModifier.CHART_CRAFTING_ITEM_PERCENT, 100f), line(ChartModifier.CHART_QUANTITY_PERCENT, 50f)));
+        ChartLootContext loot = new ChartLootContext(context, ChartTiers.LOWEST_TIER);
 
-        assertEquals(3f, ExcavationLoot.quantityMult(context), 0.0001f);
-        assertEquals(4f, ExcavationLoot.quantityMult(context, 50f), 0.0001f);
-        assertEquals(6f, ExcavationLoot.expectedInhibitors(ExcavationRules.INHIBITORS_PER_RAID, context, 1f), 0.0001f);
+        assertEquals(3f, ExcavationLoot.quantityMult(loot, 0f), 0.0001f);
+        assertEquals(3.5f, ExcavationLoot.quantityMult(loot, 50f), 0.0001f);
+        assertEquals(6f, ExcavationLoot.expectedInhibitors(ExcavationRules.INHIBITORS_PER_RAID, loot, 0f, 1f), 0.0001f);
     }
 
     private static int inhibitorCount(Loot loot) {

@@ -21,6 +21,7 @@ import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.anomaly.debris.BreachedGraveyard;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
+import exiledsector.items.ItemQuantity;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.BattleLoot;
 import exiledsector.PlayerFleet;
@@ -96,7 +97,7 @@ public final class SpatialBreach implements ContentPlacer, RunParticipant, LootS
 
     @Override
     public ItemChances siteChances(MemoryAPI siteMemory, ItemChances chances) {
-        return siteMemory.contains(ITEM_MULT_KEY) ? chances.scaled(siteMemory.getFloat(ITEM_MULT_KEY)) : chances;
+        return siteMemory.contains(ITEM_MULT_KEY) ? chances.plusPercent((siteMemory.getFloat(ITEM_MULT_KEY) - 1f) * ItemQuantity.PERCENT) : chances;
     }
 
     @Override

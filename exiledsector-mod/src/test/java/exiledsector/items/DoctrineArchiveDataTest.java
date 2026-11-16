@@ -242,9 +242,9 @@ class DoctrineArchiveDataTest {
             int tierFourteenDrops = 0;
             int tierOneDrops = 0;
             for (int trial = 0; trial < 20000; trial++) {
-                tierFourteenDrops += DoctrineArchives.rollForBoss(14, "hegemony", 1f, random, definition -> true) == null ? 0 : 1;
-                tierOneDrops += DoctrineArchives.rollForBoss(1, "hegemony", 1f, random, definition -> true) == null ? 0 : 1;
-                assertNotNull(DoctrineArchives.rollForBoss(15, "hegemony", 100f, random, definition -> true));
+                tierFourteenDrops += DoctrineArchives.rollForBoss(14, "hegemony", ItemQuantity.BASE, random, definition -> true) == null ? 0 : 1;
+                tierOneDrops += DoctrineArchives.rollForBoss(1, "hegemony", ItemQuantity.BASE, random, definition -> true) == null ? 0 : 1;
+                assertNotNull(DoctrineArchives.rollForBoss(15, "hegemony", ItemQuantity.increasedBy(9900f), random, definition -> true));
             }
 
             assertEquals(0.07f, tierFourteenDrops / 20000f, 0.01f);
@@ -256,7 +256,7 @@ class DoctrineArchiveDataTest {
                 assertTrue(DoctrineArchives.bossChance(tier) > 0f);
                 assertTrue(DoctrineArchives.bossChance(tier) < DoctrineArchives.bossChance(tier + 1));
             }
-            assertNull(DoctrineArchives.rollForBoss(15, "hegemony", 100f, random, definition -> false));
+            assertNull(DoctrineArchives.rollForBoss(15, "hegemony", ItemQuantity.increasedBy(9900f), random, definition -> false));
         } finally {
             NpcFactionVolumes.clear();
         }

@@ -128,7 +128,7 @@ anomalies, so the next run there is an ordinary system.
 
 ### Rarity
 
-A higher chart tier makes rare, unique and mythic crafting items a larger share of what its fleets, sites and rewards
+A higher chart tier makes rare, unique and mythic crafting items a larger share of what its fleets, sites and bosses
 drop, without changing how many drop. Increased rarity from a chart's modifiers multiplies that shift by the same
 amount at every tier, and makes hull items and subroutines found anywhere in the system more likely to roll extra
 modifiers and unique hull items more likely to drop.
@@ -163,8 +163,7 @@ Burst near the sensor array. Restoring its power in its dialog, for supplies and
 nav buoy or sensor array gives you vanilla's objective bonus, and each woken relay offers three choices of an item for the boss to drop and a scar for its flagship.
 
 If all three relays wake, the network moves to a nearby system further from the Gateway when the run ends, stronger at
-each stage, for up to three stages. The last stage's boss drops a unique hull item or subroutine if all three of its
-relays woke.
+each stage, for up to three stages.
 
 ### Depot
 

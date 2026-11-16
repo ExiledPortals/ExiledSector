@@ -1,6 +1,5 @@
 package exiledsector.charts.anomaly.skirmish;
 
-import exiledsector.charts.anomaly.StateFields;
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartTables;
@@ -108,13 +107,12 @@ class SkirmishPlannerTest {
     }
 
     @Test
-    void aSkirmishWithoutBothOfficersOrFromAnOldSavePlansNoFight() {
+    void aSkirmishWithoutBothOfficersPlansNoFight() {
         assertNull(skirmishOf(plan(fought(new SkirmishFight("tritachyon", lowestRank(), lowestRank(), null)))));
         assertNull(skirmishOf(plan(fought(new SkirmishFight("tritachyon", lowestRank(), lowestRank(),
                 Intent.challenge(ATTACKING_OFFICER, Intent.NO_OFFICER))))));
         assertNull(skirmishOf(plan(fought(fight(null, lowestRank(), lowestRank())))));
         assertNull(skirmishOf(plan(fought(fight("tritachyon", null, lowestRank())))));
-        assertNull(skirmishOf(plan(fought(StateFields.join("attacker", "tritachyon", Intent.push(ATTACKING_OFFICER, null, DEFENDING_OFFICER).encode())))));
         assertNull(skirmishOf(plan(ChartGenContext.none())));
     }
 }

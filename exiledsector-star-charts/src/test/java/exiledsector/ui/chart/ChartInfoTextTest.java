@@ -92,29 +92,27 @@ class ChartInfoTextTest {
     }
 
     @Test
-    void theObjectiveNamesTheBossAndShowsTheRewardUntilTheRunEnds() {
+    void theObjectiveNamesTheBossAndShowsItsDescriptionUntilItIsComplete() {
         ChartRun run = run(List.of());
 
         ChartInfoText.Objective objective = ChartInfoText.objective(run);
 
         assertEquals(Translation.gameText("chart.objective.boss.name"), objective.name());
-        assertEquals(Translation.gameText("chart.objective.boss.fleet.description") + "\n" + Translation.gameText("chart.intel.reward"),
-                objective.body().plain());
+        assertEquals(Translation.gameText("chart.objective.boss.fleet.description"), objective.body().plain());
         run.markObjectiveComplete();
         assertTrue(ChartInfoText.objective(run).body().plain().endsWith(Translation.gameText("chart.intel.complete")));
     }
 
     @Test
-    void theObjectiveStatusIsRedUntilCompleteThenGreen() {
+    void theObjectiveHasNoStatusUntilCompleteThenAGreenOne() {
         ChartRun run = run(List.of());
-        String reward = Translation.gameText("chart.intel.reward");
         String complete = Translation.gameText("chart.intel.complete");
 
         StyledText pending = ChartInfoText.objective(run).body();
         run.markObjectiveComplete();
         StyledText done = ChartInfoText.objective(run).body();
 
-        assertEquals(List.of(new StyledText.Span(pending.plain().length() - reward.length(), pending.plain().length(), Style.BAD)), pending.spans());
+        assertEquals(List.of(), pending.spans());
         assertEquals(List.of(new StyledText.Span(done.plain().length() - complete.length(), done.plain().length(), Style.GOOD)), done.spans());
     }
 

@@ -2,7 +2,7 @@ package exiledsector.charts.anomaly.debris;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.loot.ChartLootContext;
 import exiledsector.items.Engrams;
 import exiledsector.items.Engram;
 import exiledsector.loot.Loot;
@@ -17,7 +17,7 @@ public final class DormantFleetLoot {
     private DormantFleetLoot() {
     }
 
-    public static Loot craftingItemFor(CampaignFleetAPI fleet, int tier, ChartGenContext context, Random random) {
+    public static Loot craftingItemFor(CampaignFleetAPI fleet, ChartLootContext loot, Random random) {
         if (!DormantFleets.isCorrupted(fleet)) {
             return Loot.NONE;
         }
@@ -26,11 +26,11 @@ public final class DormantFleetLoot {
             return Loot.NONE;
         }
         memory.set(DormantFleets.CRAFTING_ITEM_DROPPED_KEY, true);
-        float quantityMult = ChartGenContext.orNone(context).anomalyMult(AnomalousDebris.CRAFTING_ITEM_KEY);
-        int engrams = DebrisTuning.of(context).engramsFor(DormantFleets.corruptionsOf(fleet));
+        float quantityMult = loot.craftingItemMult(loot.effects().anomalyPercent(AnomalousDebris.CRAFTING_ITEM_KEY));
+        int engrams = DebrisTuning.of(loot.effects()).engramsFor(DormantFleets.corruptionsOf(fleet));
         Map<String, Integer> craftingItems = new LinkedHashMap<>();
         for (int drop = DebrisRules.craftingItemCount(engrams, quantityMult, random); drop > 0; drop--) {
-            Engram craftingItem = Engrams.pick(tier, random);
+            Engram craftingItem = Engrams.pick(loot.tier(), random);
             if (craftingItem != null) {
                 craftingItems.merge(craftingItem.itemId(), 1, Integer::sum);
             }

@@ -101,7 +101,8 @@ public final class StarChartLootSource implements LootSource {
         }
         if (engagement.defeatedDeploymentPoints() > 0f) {
             losses.deploymentPointsDefeated += engagement.defeatedDeploymentPoints();
-            losses.chartDpDefeated += Math.max(0f, engagement.defeatedDeploymentPoints() - spentDeploymentPoints) * engagement.difficultyMultiplier();
+            losses.chartDpDefeated += Math.max(0f, engagement.defeatedDeploymentPoints() - spentDeploymentPoints)
+                    * BattleLootRates.difficulty(engagement.difficultyMultiplier());
         }
     }
 
@@ -203,11 +204,10 @@ public final class StarChartLootSource implements LootSource {
             }
             ChartLootContext loot = ChartLootContext.of(run);
             List<LootShaper> battleAnomalies = anomaliesHoldingBattle();
-            float battleLootMult = ChartFleetLoot.battleLootMult(battleAnomalies, loot.effects());
-            LootMultipliers multipliers = withBattleHullItems(BlackHoleHullItems.withBonusWherePlayerIs(loot.multipliers(battleLootMult)),
+            ChartLootContext fleetLoot = ChartFleetLoot.fleetLootContext(loot, battleAnomalies, ChartFleetLedger.isBoss(fleet, run));
+            LootMultipliers multipliers = withBattleHullItems(BlackHoleHullItems.withBonusWherePlayerIs(fleetLoot.multipliers(1f)),
                     battleAnomalies, loot.effects());
-            FleetLootRules rules = FleetLootRules.ownLedger(multipliers,
-                    ChartFleetLedger.isBoss(fleet, run) ? loot.effects().bossSpoilsMult() : ChartFleetLedger.anomalyFleetLoot(fleet, run));
+            FleetLootRules rules = FleetLootRules.ownLedger(multipliers);
             return ChartFleetLoot.overchargesHullItems(fleet, run) ? rules.overchargingHullItems() : rules;
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Reading the loot rules of a defeated fleet failed", e);

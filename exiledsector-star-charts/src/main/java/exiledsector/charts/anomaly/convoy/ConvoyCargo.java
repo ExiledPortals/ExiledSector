@@ -15,6 +15,7 @@ import exiledsector.data.RandomRounding;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.content.ChartAnomalyFleets;
+import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.ChartCargoLoot;
 import exiledsector.charts.loot.ChartDropRules;
 import exiledsector.charts.loot.ChartDrops;
@@ -95,14 +96,18 @@ final class ConvoyCargo {
 
     static CargoAPI roll(SectorAPI sector, ChartRun run, ConvoyState convoy, float share, float feedstockScale, Random random) {
         CargoAPI cargo = ChartCargoLoot.roll(sector, run, ConvoyRules.LOOT_SCOPE, ConvoyRules.CARGO_SITE, convoy.cargoSteps() * share,
-                convoy.itemChanceMult() * share, random);
+                itemChanceMult(run) * share, random);
         return withFeedstock(cargo, convoy, share * feedstockScale, random);
     }
 
     static CargoAPI lostCargo(SectorAPI sector, ChartRun run, ConvoyState convoy, float share, float feedstockScale, Random random) {
         CargoAPI cargo = ChartCargoLoot.rollFromBattle(sector, run, ConvoyRules.LOOT_SCOPE, ConvoyRules.CARGO_SITE, convoy.cargoSteps() * share,
-                convoy.itemChanceMult() * share, random);
+                itemChanceMult(run) * share, random);
         return withFeedstock(cargo, convoy, share * feedstockScale, random);
+    }
+
+    private static float itemChanceMult(ChartRun run) {
+        return ConvoyRules.itemChanceMult(run == null ? ChartTiers.LOWEST_TIER : run.tier());
     }
 
     static CargoAPI withFeedstock(CargoAPI cargo, ConvoyState convoy, float share, Random random) {

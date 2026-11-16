@@ -6,7 +6,6 @@ import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.effect.ChartEffects;
 import exiledsector.charts.effect.ChartFactionEffect;
-import exiledsector.charts.objective.ChartRewards;
 import exiledsector.items.StarChartImplicits;
 import exiledsector.modifiers.Modifier;
 import exiledsector.skills.progression.ShipLevelConfig;
@@ -138,7 +137,6 @@ class ChartContentDataTest {
             Set<String> sites = poi.requiredMod().isEmpty() ? dropSites : compatDropSites(poi.requiredMod());
             assertTrue(sites.contains(poi.specForSalvage()), poi.id() + " drops no hull items: " + poi.specForSalvage());
         }
-        assertTrue(dropSites.contains(ChartRewards.REWARD_SITE));
     }
 
     @Test

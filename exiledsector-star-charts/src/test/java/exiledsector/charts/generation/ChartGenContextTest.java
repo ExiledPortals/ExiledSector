@@ -6,7 +6,6 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.StarChartSettings;
-import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.content.ChartContentPlan.FleetRole;
 import exiledsector.charts.content.ChartContentPlan.PlannedFleet;
@@ -25,21 +24,23 @@ import exiledsector.charts.effect.ChartFleetStat;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.charts.loot.ChartLootTotals;
 import exiledsector.charts.loot.DropType;
-import exiledsector.charts.objective.ChartRewards;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemRoll;
 import exiledsector.items.ItemTraits;
+import exiledsector.items.RolledLine;
+import exiledsector.items.RolledModifier;
 import exiledsector.items.StarChart;
 import exiledsector.items.StarChartFixtures;
+import exiledsector.modifiers.ModifierSlot;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -82,7 +83,6 @@ class ChartGenContextTest {
     void noModifiersLeaveTheTierAlone() {
         assertSame(BASE, ChartGenContext.none().adjust(BASE));
         assertSame(ChartGenContext.none(), ChartGenContext.from(null));
-        assertEquals(1f, ChartGenContext.none().rewardMult());
         assertEquals(1f, ChartGenContext.none().sensorRangeMult());
         assertEquals(0, ChartGenContext.none().extraPois());
     }
@@ -127,18 +127,6 @@ class ChartGenContextTest {
     }
 
     @Test
-    void theCompletionRewardAddsEveryDropLineToTheRewardLine() {
-        ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_REWARD_PERCENT, 20f),
-                new AppliedEffect(ChartModifier.CHART_QUANTITY_PERCENT, 10f), new AppliedEffect(ChartModifier.CHART_STAR_CHART_PERCENT, 30f),
-                new AppliedEffect(ChartModifier.CHART_CATALYST_PERCENT, 40f), new AppliedEffect(ChartModifier.CHART_ITEM_PERCENT, 50f)));
-
-        assertEquals(2.1f, context.rewardDropMult(DropType.STAR_CHART), TOLERANCE);
-        assertEquals(1.7f, context.rewardDropMult(DropType.CATALYST), TOLERANCE);
-        assertEquals(1.3f, context.rewardDropMult(DropType.CRAFTING_ITEM), TOLERANCE);
-        assertEquals(1f, ChartGenContext.none().rewardDropMult(DropType.CATALYST), TOLERANCE);
-    }
-
-    @Test
     void theBossStarChartLineAddsToTheOtherStarChartLinesForBossesOnly() {
         ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_BOSS_STAR_CHART_PERCENT, 20f),
                 new AppliedEffect(ChartModifier.CHART_STAR_CHART_PERCENT, 30f)));
@@ -149,19 +137,19 @@ class ChartGenContextTest {
     }
 
     @Test
-    void eachRewardEffectChangesTheLootOrTheReward() {
+    void eachLootEffectChangesTheLoot() {
         ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_POI_BUDGET_PERCENT, 30f),
-                new AppliedEffect(ChartModifier.CHART_QUANTITY_PERCENT, 10f), new AppliedEffect(ChartModifier.CHART_REWARD_PERCENT, 20f),
+                new AppliedEffect(ChartModifier.CHART_QUANTITY_PERCENT, 10f),
                 new AppliedEffect(ChartModifier.CHART_EXTRA_POIS, 3f), new AppliedEffect(ChartModifier.CHART_ITEM_PERCENT, 50f)));
 
         assertEquals(BASE.poiBudget() * 1.3f, context.adjust(BASE).poiBudget(), TOLERANCE, "quantity does not raise the site budgets");
-        assertEquals(1.3f, context.rewardMult(), TOLERANCE);
+        assertEquals(1.1f, context.dropMult(DropType.FEEDSTOCK), TOLERANCE);
         assertEquals(3, context.extraPois());
         assertEquals(1.6f, context.itemChances().general(), TOLERANCE);
         assertEquals(BASE.fleetSize(), context.adjust(BASE).fleetSize(), TOLERANCE);
         assertEquals(0.7f, with(ChartModifier.CHART_SENSOR_RANGE_PERCENT, -30f).sensorRangeMult(), TOLERANCE);
         assertEquals(ChartGenContext.MIN_SENSOR_RANGE_MULT, with(ChartModifier.CHART_SENSOR_RANGE_PERCENT, -400f).sensorRangeMult(), TOLERANCE);
-        assertTrue(context.describe().contains("reward x1.30"), context.describe());
+        assertTrue(context.describe().contains("site budgets cache x1.30"), context.describe());
     }
 
     private static ChartContentPlan plan(ChartGenContext context, long seed) {
@@ -222,7 +210,7 @@ class ChartGenContextTest {
         assertEquals(12f, polished.quantityPercent(), TOLERANCE);
         assertEquals(1.12f, polished.dropMult(DropType.FEEDSTOCK), TOLERANCE);
         assertEquals(1f, polished.dropMult(DropType.COLONY_ITEM), TOLERANCE);
-        assertSame(ItemChances.BASE, ChartGenContext.none().itemChances());
+        assertEquals(ItemChances.BASE, ChartGenContext.none().itemChances());
     }
 
     @Test
@@ -276,13 +264,6 @@ class ChartGenContextTest {
         }
         assertTrue(ChartModifier.CHART_SENSOR_RANGE_PERCENT.description(-30f).plain().contains("30%"));
         assertFalse(ChartModifier.CHART_SENSOR_RANGE_PERCENT.description(-30f).plain().contains("-30"));
-    }
-
-    @Test
-    void theCompletionRewardScalesWithTheChart() {
-        assertTrue(ChartRewards.creditsFor(6, 1.5f) > ChartRewards.creditsFor(6, 1f));
-        assertEquals(0, ChartRewards.creditsFor(6, 1.5f) % 1000);
-        assertEquals(0, ChartRewards.creditsFor(6, -1f));
     }
 
     @Test
@@ -401,11 +382,11 @@ class ChartGenContextTest {
     }
 
     @Test
-    void chartQualityAddsOnePercentLootAndRewardPerPoint() {
+    void chartQualityAddsOnePercentItemQuantityPerPoint() {
         ChartGenContext polished = ChartGenContext.of(List.of(), 12);
         assertFalse(polished.isEmpty());
         assertEquals(1f, polished.siteBudgetMult(ChartPoi.Kind.CACHE), TOLERANCE);
-        assertEquals(1.12f, polished.rewardMult(), TOLERANCE);
+        assertEquals(1.12f, polished.dropMult(DropType.FEEDSTOCK), TOLERANCE);
         assertEquals(BASE.poiBudget(), polished.adjust(BASE).poiBudget(), TOLERANCE);
         assertEquals(BASE.fleetSize(), polished.adjust(BASE).fleetSize(), TOLERANCE);
         assertSame(ChartGenContext.none(), ChartGenContext.of(List.of(), 0));
@@ -418,12 +399,27 @@ class ChartGenContextTest {
 
         assertEquals(0, plainContext.quantity());
         assertEquals(12, polishedContext.quantity());
-        assertEquals(plainContext.rewardMult() + 0.12f, polishedContext.rewardMult(), TOLERANCE);
+        assertEquals(plainContext.dropMult(DropType.FEEDSTOCK) + 0.12f, polishedContext.dropMult(DropType.FEEDSTOCK), TOLERANCE);
         assertEquals(plainContext.siteBudgetMult(ChartPoi.Kind.STATION), polishedContext.siteBudgetMult(ChartPoi.Kind.STATION), TOLERANCE);
-        assertTrue(ChartRewards.creditsFor(5, polishedContext.rewardMult()) >= ChartRewards.creditsFor(5, plainContext.rewardMult()));
-        assertTrue(polishedChart.headerLines().stream().anyMatch(line -> line.plain().contains("12% increased quantity of items found in the system and completion reward")),
+        assertTrue(polishedChart.headerLines().stream().anyMatch(line -> line.plain().contains("12% increased quantity of items found in the system")),
                 polishedChart.headerLines().toString());
         assertTrue(plainChart.headerLines().stream().noneMatch(line -> line.plain().contains("Quality")));
+    }
+
+    @Test
+    void aChartThatRolledTheRetiredBountyModifierStillLoadsAndItsLineDoesNothing() {
+        ItemData rolled = StarChartFixtures.withEveryModifier(StarChartFixtures.TEST_GATED, 5L, 12);
+        List<RolledModifier> explicits = new ArrayList<>(rolled.explicits());
+        explicits.add(new RolledModifier("CHART_REWARD_PERCENT", ModifierSlot.SUFFIX, List.of(new RolledLine("CHART_REWARD_PERCENT", 30f))));
+        ItemData withBounty = ItemData.parse(new ItemData(rolled.definitionId(), rolled.seed(), explicits, rolled.frozenName(), rolled.traits()).encode());
+
+        StarChart plain = (StarChart) rolled.preview();
+        StarChart bounty = (StarChart) withBounty.preview();
+
+        assertEquals(explicits.size(), withBounty.explicits().size());
+        assertEquals(ChartGenContext.from(plain).describe(), ChartGenContext.from(bounty).describe());
+        assertEquals(plain.slottedEffectLines(false, null).stream().map(line -> line.text().plain()).toList(),
+                bounty.slottedEffectLines(false, null).stream().map(line -> line.text().plain()).toList());
     }
 
     @Test
@@ -461,16 +457,6 @@ class ChartGenContextTest {
         }
         assertEquals(BASE.poiBudget(), context.adjust(BASE).poiBudget(), TOLERANCE);
     }
-    @Test
-    void anAtlasNodeKeepsTheBossUniqueGuaranteeTheContextAlreadyHas() {
-        ChartGenContext guaranteed = ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "", List.of(), List.of(), true, Map.of()));
-
-        ChartGenContext plain = guaranteed.withAtlasNode(new AtlasRunNode(2L, "", List.of(), List.of()));
-
-        assertTrue(plain.guaranteedBossUnique());
-        assertFalse(ChartGenContext.none().withAtlasNode(new AtlasRunNode(2L, "", List.of(), List.of())).guaranteedBossUnique());
-    }
-
     @Test
     void rarityAddsUpAndOnlyShiftsTheRarityOfItemChances() {
         ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_ITEM_RARITY_PERCENT, 30f),

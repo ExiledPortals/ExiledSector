@@ -13,6 +13,8 @@ import exiledsector.charts.MapMemory;
 import exiledsector.charts.anomaly.LiveAnomalyRuns;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.generation.ChartTiers;
+import exiledsector.charts.loot.ChartLootContext;
 import exiledsector.charts.run.ChartRun;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
@@ -95,9 +97,11 @@ class ExcavationDeliveriesTest {
     void aConvoyDeliveryAddsToTheSitesInhibitorQuantity() {
         ChartGenContext context = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_EXCAVATION_LOOT_QUANTITY_PERCENT, 20f)));
 
-        assertEquals(15f, ExcavationLoot.expectedInhibitors(10f, context, 30f, 1f), 0.001f);
-        assertEquals(13f, ExcavationLoot.expectedInhibitors(10f, ChartGenContext.none(), 30f, 1f), 0.001f);
-        assertEquals(ExcavationLoot.expectedInhibitors(10f, context, 1f), ExcavationLoot.expectedInhibitors(10f, context, 0f, 1f), 0.001f);
+        ChartLootContext loot = new ChartLootContext(context, ChartTiers.LOWEST_TIER);
+
+        assertEquals(15f, ExcavationLoot.expectedInhibitors(10f, loot, 30f, 1f), 0.001f);
+        assertEquals(13f, ExcavationLoot.expectedInhibitors(10f, ChartLootContext.outsideRuns(), 30f, 1f), 0.001f);
+        assertEquals(12f, ExcavationLoot.expectedInhibitors(10f, loot, 0f, 1f), 0.001f);
     }
 
     @Test

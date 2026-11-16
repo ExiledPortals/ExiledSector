@@ -13,6 +13,7 @@ import exiledsector.compat.FirstFailureLog;
 import exiledsector.items.Item;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemKind;
+import exiledsector.items.ItemQuantity;
 import exiledsector.items.SlottedRoll;
 import exiledsector.items.StarChart;
 import exiledsector.modifiers.ModifierEffect;
@@ -80,12 +81,10 @@ public final class ChartGenContext {
     private final Map<DropType, Float> dropPercents = new EnumMap<>(DropType.class);
     private float bossSpoilsPercent;
     private float bossStarChartPercent;
-    private float rewardPercent;
     private final Map<ChartFleetStat, Float> fleetStatPercents = new EnumMap<>(ChartFleetStat.class);
     private Map<ChartFleetStat, Float> fleetStatMults;
     private final Map<String, Float> anomalyPercents = new LinkedHashMap<>();
     private final List<String> forcedAnomalies = new ArrayList<>();
-    private boolean guaranteedBossUnique;
     private boolean stationBossBarred;
     private String biomeId;
     private final Map<String, String> anomalyData = new LinkedHashMap<>();
@@ -340,10 +339,6 @@ public final class ChartGenContext {
         bossStarChartPercent += value;
     }
 
-    public void addRewardPercent(float value) {
-        rewardPercent += value;
-    }
-
     public void addFleetStatPercent(ChartFleetStat stat, float value) {
         fleetStatPercents.merge(stat, value, Float::sum);
     }
@@ -358,7 +353,6 @@ public final class ChartGenContext {
         }
         ChartGenContext context = derive(addedPlus(node.effects()), node.factionId().isEmpty() ? factionId : node.factionId());
         context.forceAnomalies(node.anomalyIds());
-        context.guaranteedBossUnique |= node.guaranteedBossUnique();
         context.anomalyData.putAll(node.anomalyData());
         return context;
     }
@@ -384,6 +378,14 @@ public final class ChartGenContext {
         return effects == null || effects.isEmpty() ? this : derive(addedPlus(effects), factionId);
     }
 
+    public ChartGenContext plusQuantityPercent(float increasedPercent) {
+        return increasedPercent == 0f ? this : withEffects(List.of(new AppliedEffect(ChartModifier.CHART_QUANTITY_PERCENT, increasedPercent)));
+    }
+
+    public ChartGenContext forFleetLoot(boolean boss) {
+        return boss ? plusQuantityPercent(bossSpoilsPercent) : this;
+    }
+
     private List<AppliedEffect> addedPlus(List<AppliedEffect> effects) {
         List<AppliedEffect> combined = new ArrayList<>(addedLines);
         combined.addAll(effects);
@@ -393,7 +395,6 @@ public final class ChartGenContext {
     private ChartGenContext derive(List<AppliedEffect> derivedAddedLines, String derivedFactionId) {
         ChartGenContext context = new ChartGenContext(chartLines, derivedAddedLines, quantity, derivedFactionId);
         context.forceAnomalies(forcedAnomalies);
-        context.guaranteedBossUnique = guaranteedBossUnique;
         context.stationBossBarred = stationBossBarred;
         context.biomeId = biomeId;
         context.anomalyData.putAll(anomalyData);
@@ -410,10 +411,6 @@ public final class ChartGenContext {
 
     public List<String> forcedAnomalies() {
         return List.copyOf(forcedAnomalies);
-    }
-
-    public boolean guaranteedBossUnique() {
-        return guaranteedBossUnique;
     }
 
     public ChartGenContext withStationBossBarred(boolean barred) {
@@ -543,10 +540,6 @@ public final class ChartGenContext {
         return text.toString();
     }
 
-    public float rewardMult() {
-        return multiplier(rewardPercent + quantityPercent + qualityQuantityPercent());
-    }
-
     public float quantityPercent() {
         return quantityPercent + qualityQuantityPercent();
     }
@@ -571,11 +564,7 @@ public final class ChartGenContext {
         return Math.max(0f, dropMult(type) - 1f);
     }
 
-    public float rewardDropMult(DropType type) {
-        return multiplier(rewardPercent + totalDropPercent(type));
-    }
-
-    private float totalDropPercent(DropType type) {
+    public float totalDropPercent(DropType type) {
         float percent = dropPercent(type);
         if (type.isItem()) {
             percent += itemPercent;
@@ -598,10 +587,6 @@ public final class ChartGenContext {
         return bossSpoilsPercent;
     }
 
-    public float bossSpoilsMult() {
-        return multiplier(bossSpoilsPercent);
-    }
-
     public float bossStarChartPercent() {
         return bossStarChartPercent;
     }
@@ -617,9 +602,7 @@ public final class ChartGenContext {
                 targetedShares.put(type.itemKind(), percent / PERCENT);
             }
         });
-        float generalMult = multiplier(itemPercent + quantityPercent());
-        ItemChances chances = targetedShares.isEmpty() ? ItemChances.of(generalMult) : new ItemChances(generalMult, targetedShares);
-        return chances.withRarity(itemRarityMult());
+        return new ItemChances(ItemQuantity.increasedBy(itemPercent + quantityPercent()), targetedShares, itemRarityMult());
     }
 
     public float sensorRangeMult() {
@@ -639,10 +622,10 @@ public final class ChartGenContext {
         }
         return factionText + String.format(Locale.ROOT, "fleet size %+.0f%%, %+d rolled fleet(s), %+d added fleet(s), %+d officer level(s), %+d officer(s), boss size %+.0f%%, "
                         + "fleet quality %+.0f%%, site budgets %s, %+d point(s) of interest, item drops %+.0f%%, item rarity %+.0f%%, drop types %s, "
-                        + "boss spoils x%.2f, reward x%.2f, sensor range x%.2f, chart quality %d, anomalies %s, twinned boss %b, "
+                        + "boss spoils %+.0f%%, sensor range x%.2f, chart quality %d, anomalies %s, twinned boss %b, "
                         + "barred combat hulls %s, ship systems disabled %b, autopilot forced %b, arc strike EMP %.0f, weapon misfires %.3f/s, damage per S-mod %+.0f%%, enemy node grants %s",
                 fleetSizePercent, baseFleets, extraFleets, officerLevelBonus, extraOfficers, bossSizePercent,
-                fleetQualityPercent, siteBudgetText(), extraPois(), itemPercent, itemRarityPercent, describeDropPercents(), bossSpoilsMult(), rewardMult(),
+                fleetQualityPercent, siteBudgetText(), extraPois(), itemPercent, itemRarityPercent, describeDropPercents(), bossSpoilsPercent,
                 sensorRangeMult(), quantity, forcedAnomalies.isEmpty() ? "none" : forcedAnomalies.toString(), twinnedBoss,
                 bannedCombatHullSizes.isEmpty() ? "none" : bannedCombatHullSizes.toString(), shipSystemsDisabled, autopilotForced, battleRules().arcStrikeEmp(), weaponMisfireRate,
                 damagePercentPerSMod, enemyGrantedNodeIds.isEmpty() ? "none" : enemyGrantedNodeIds.toString());

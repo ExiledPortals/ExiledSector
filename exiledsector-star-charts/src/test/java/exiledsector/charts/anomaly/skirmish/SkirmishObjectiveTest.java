@@ -20,7 +20,6 @@ import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.content.ChartStations;
 import exiledsector.charts.content.FakeChartContentEngine;
 import exiledsector.charts.objective.ChartObjectives;
-import exiledsector.charts.objective.ChartRewards;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.effects.PlayerEngagement;
@@ -115,7 +114,7 @@ class SkirmishObjectiveTest {
 
         assertTrue(ChartObjectives.fleetGone(sector, fleet(DEFENDER), FleetDespawnReason.DESTROYED_BY_BATTLE, battle(false)));
         assertTrue(run.isObjectiveComplete());
-        verify(credits, times(1)).add((float) ChartRewards.creditsFor(7, 1f));
+        verify(credits, never()).add(anyFloat());
         SkirmishFlagships flagships = SkirmishFlagships.of(run);
         assertEquals(FlagshipFall.BEATEN_BY_PLAYER, flagships.attacker().fall());
         assertEquals(FlagshipFall.LOST_TO_RIVAL, flagships.defender().fall());

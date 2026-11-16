@@ -51,6 +51,6 @@ final class BlackHoleHullItems {
         for (ItemKind kind : ItemKind.sectionItemTypes()) {
             targeted.merge(kind, extraShare, Float::sum);
         }
-        return new ItemChances(chances.general(), targeted, chances.rarity());
+        return chances.withTargeted(targeted);
     }
 }

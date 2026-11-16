@@ -9,8 +9,7 @@ final class FeedstockBonus {
     }
 
     static float rollMult(ChartGenContext context) {
-        ChartGenContext lines = ChartGenContext.orNone(context);
-        return increasedMult(lines, 0f) * lines.anomalyMult(SupplyConvoy.CARGO_KEY);
+        return increasedMult(ChartGenContext.orNone(context), 0f);
     }
 
     static float extraShare(ChartGenContext context, float extraPercent) {

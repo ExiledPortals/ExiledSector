@@ -85,14 +85,14 @@ class StarChartDataTest {
         ItemModifiers.registerPart(ModifierScope.STAR_CHART, new JSONArray()
                 .put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:low=1/mid=2/high=2", "Discovery"))
                 .put(chartModifier("HULL_MULT", "suffix", "CHART_EXTRA_POIS:1:2", "Copy"))
-                .put(HullItemRows.modifierRow("CHART_REWARD_PERCENT", "suffix", "subroutine;star_chart", "CHART_REWARD_PERCENT:1:2", "Mixed")),
+                .put(HullItemRows.modifierRow("CHART_BOSS_SPOILS_PERCENT", "suffix", "subroutine;star_chart", "CHART_BOSS_SPOILS_PERCENT:1:2", "Mixed")),
                 StarChartItems.MODIFIERS_PATH);
 
         assertNotNull(ItemModifiers.get("CHART_EXTRA_POIS"));
         assertEquals(List.of(ItemType.STAR_CHART), List.copyOf(ItemModifiers.itemTypes("CHART_EXTRA_POIS")));
         assertTrue(ItemModifiers.get("CHART_EXTRA_POIS").line().scalesWithTier());
         assertEquals("HULL_MULT", ItemModifiers.get("HULL_MULT").line().effectName(), "a chart row can never replace a ship modifier");
-        assertNull(ItemModifiers.get("CHART_REWARD_PERCENT"), "chart rows may only roll on star charts");
+        assertNull(ItemModifiers.get("CHART_BOSS_SPOILS_PERCENT"), "chart rows may only roll on star charts");
         ItemModifiers.register(new JSONArray().put(HullItemRows.modifierRow("HULL_MULT", "prefix", "HULL_MULT:4:6", "Reinforced")));
         assertNotNull(ItemModifiers.get("CHART_EXTRA_POIS"), "reloading ship modifiers keeps the chart ones");
         StarChartFixtures.clear();
@@ -107,10 +107,10 @@ class StarChartDataTest {
                 .put(HullItemRows.modifierRow("ARMOR_PERCENT", "prefix", "star_chart", "ARMOR_PERCENT:4:6", "Plated"));
         JSONArray chartModifiers = new JSONArray()
                 .put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:low=1/mid=1/high=2; CHART_ITEM_PERCENT:mid=1/high=2", "Discovery"))
-                .put(HullItemRows.modifierRow("CHART_REWARD_PERCENT", "suffix", "hull_item", "CHART_REWARD_PERCENT:1:2", "Bounty"));
+                .put(HullItemRows.modifierRow("CHART_BOSS_SPOILS_PERCENT", "suffix", "hull_item", "CHART_BOSS_SPOILS_PERCENT:1:2", "the Hoard"));
         JSONArray charts = new JSONArray()
                 .put(chart("chart_a", "QUATERNARY", "", "@CHART_EXTRA_POIS:2:t3-40"))
-                .put(chart("chart_b", "SINGLE", "", "@CHART_REWARD_PERCENT:2:t3; @CHART_MISSING"));
+                .put(chart("chart_b", "SINGLE", "", "@CHART_BOSS_SPOILS_PERCENT:2:t3; @CHART_MISSING"));
         JSONArray implicits = new JSONArray().put(new JSONObject().put("system_type", "NEBULA").put("implicits", "@CHART_EXTRA_POIS"));
         JSONArray hullItems = new JSONArray().put(HullItemRows.row("chip", "bridge", "@HULL_MULT:5:t3"));
 
@@ -123,7 +123,7 @@ class StarChartDataTest {
         assertTrue(errors.contains("ARMOR_PERCENT rolls on star_chart; star chart modifiers belong in " + StarChartItems.MODIFIERS_PATH), errors.toString());
         assertTrue(errors.contains("CHART_EXTRA_POIS gives CHART_ITEM_PERCENT the tier groups [mid, high], but its other lines use [low, mid, high]; "
                 + "every line of a modifier needs the same groups"), errors.toString());
-        assertTrue(errors.contains("CHART_REWARD_PERCENT is in " + StarChartItems.MODIFIERS_PATH + ", so its item_types must be star_chart only"),
+        assertTrue(errors.contains("CHART_BOSS_SPOILS_PERCENT is in " + StarChartItems.MODIFIERS_PATH + ", so its item_types must be star_chart only"),
                 errors.toString());
         assertTrue(errors.contains("chart_a has system type \"QUATERNARY\"; expected one of " + StarChartDefinitions.SYSTEM_TYPES + " or any"),
                 errors.toString());

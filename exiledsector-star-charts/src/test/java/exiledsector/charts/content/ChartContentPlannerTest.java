@@ -364,7 +364,7 @@ class ChartContentPlannerTest {
     void thePlannedAnomaliesEffectsSizeTheBoss() throws Exception {
         float bossSizePercent = 50f;
         ChartTables.useAnomalies(List.of(new ChartAnomalies.Definition(BOSS_SIZE_ANOMALY, 1f, 1, 16, "", "", true, Set.of(), false,
-                List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_BOSS_SIZE_PERCENT, bossSizePercent)), Set.of(), 1f, 1f)));
+                List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_BOSS_SIZE_PERCENT, bossSizePercent)), Set.of(), 1f)));
         try {
             ChartTier tier = ChartTiers.forTier(10);
             ChartContentPlan ordinary = ChartContentPlanner.plan(5L, tier, ChartPois.all(), ChartFactions.all(), EVERY_FACTION, ChartGenContext.none(),

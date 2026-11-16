@@ -79,7 +79,7 @@ class CraftingLootSourceTest {
 
     @Test
     void aFleetWhoseSourceRollsItsMaterialsDropsNothingHere() {
-        List<FleetLoss> ownLedger = List.of(new FleetLoss(300f, 1f, 0f, FleetLootRules.ownLedger(LootMultipliers.NONE, 1f)));
+        List<FleetLoss> ownLedger = List.of(new FleetLoss(300f, 1f, 0f, FleetLootRules.ownLedger(LootMultipliers.NONE)));
 
         assertTrue(CraftingLootSource.rollCraftingItems(ownLedger, OutsideChartShare.current(), new Random(1L)).isEmpty());
     }
