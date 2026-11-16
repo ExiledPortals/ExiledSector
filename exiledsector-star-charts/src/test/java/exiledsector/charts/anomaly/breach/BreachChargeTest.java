@@ -127,6 +127,7 @@ class BreachChargeTest {
 
         assertFalse(DormantFleets.isDormant(dormant));
         verify(dormant).addAssignmentAtStart(eq(FleetAssignment.ATTACK_LOCATION), eq(breach), eq(ChartContentGenerator.ASSIGNMENT_DAYS), anyString(), any());
+        verify(dormant, never()).addAssignment(eq(FleetAssignment.PATROL_SYSTEM), any(), anyFloat());
         assertFalse(BreachCharge.canCharge(guard));
         verify(guard, never()).addAssignmentAtStart(any(), any(), anyFloat(), anyString(), any());
     }

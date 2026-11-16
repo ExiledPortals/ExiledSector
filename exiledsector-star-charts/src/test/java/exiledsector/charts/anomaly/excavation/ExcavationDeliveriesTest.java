@@ -157,7 +157,8 @@ class ExcavationDeliveriesTest {
             when(planet.getId()).thenReturn("rock");
             when(planet.getLocation()).thenReturn(new Vector2f());
             CampaignFleetAPI guardians = mock(CampaignFleetAPI.class);
-            when(guardians.getMemoryWithoutUpdate()).thenReturn(MapMemory.create());
+            MemoryAPI guardianMemory = MapMemory.create();
+            when(guardians.getMemoryWithoutUpdate()).thenReturn(guardianMemory);
             planetMemory.set(ExcavationFleets.SITE_FLEET_KEY, guardians);
 
             ExcavationDeliveries.deliverCache(run, planet, null, 100f, 30f);
@@ -172,11 +173,14 @@ class ExcavationDeliveriesTest {
         MemoryAPI planetMemory = MapMemory.create();
         planetMemory.set(ExcavationDeliveries.LOOT_KEY, 30f);
         CampaignFleetAPI secondCavern = mock(CampaignFleetAPI.class);
-        when(secondCavern.getMemoryWithoutUpdate()).thenReturn(MapMemory.create());
+        MemoryAPI secondCavernMemory = MapMemory.create();
+        when(secondCavern.getMemoryWithoutUpdate()).thenReturn(secondCavernMemory);
+        SectorEntityToken planet = planetWith(planetMemory);
+        SectorEntityToken undelivered = planetWith(MapMemory.create());
 
-        assertSame(secondCavern, ExcavationDeliveries.withDeliveryLoot(planetWith(planetMemory), secondCavern));
+        assertSame(secondCavern, ExcavationDeliveries.withDeliveryLoot(planet, secondCavern));
         assertEquals(30f, ExcavationDeliveries.lootPercent(secondCavern), 0.001f);
-        assertNull(ExcavationDeliveries.withDeliveryLoot(planetWith(planetMemory), null));
-        assertFalse(ExcavationDeliveries.lootPercent(planetWith(MapMemory.create())) > 0f);
+        assertNull(ExcavationDeliveries.withDeliveryLoot(planet, null));
+        assertFalse(ExcavationDeliveries.lootPercent(undelivered) > 0f);
     }
 }

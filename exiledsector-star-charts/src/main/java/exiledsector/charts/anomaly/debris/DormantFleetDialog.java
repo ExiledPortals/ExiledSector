@@ -143,7 +143,7 @@ public class DormantFleetDialog extends AnomalyDialog {
             }
             DormantFleets.corrupt(dormantFleet, context, corruption.times());
         }
-        DormantFleets.wake(dormantFleet, DebrisTuning.of(context).roaming());
+        DormantFleets.wake(dormantFleet);
         fight(true);
     }
 

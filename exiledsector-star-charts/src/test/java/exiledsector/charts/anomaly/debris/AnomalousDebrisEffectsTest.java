@@ -81,7 +81,7 @@ class AnomalousDebrisEffectsTest {
         DebrisTuning restless = tuning(ChartModifier.CHART_ANOMALOUS_DEBRIS_AWAKE, 1, ChartModifier.CHART_ANOMALOUS_DEBRIS_ROAMING, 1);
         DebrisTuning choir = tuning(ChartModifier.CHART_ANOMALOUS_DEBRIS_ALWAYS_TWICE_CORRUPTED, 1, ChartModifier.CHART_ANOMALOUS_DEBRIS_FLEET_SIZE_PERCENT, 50);
         DebrisTuning both = tuning(ChartModifier.CHART_ANOMALOUS_DEBRIS_AWAKE, 1, ChartModifier.CHART_ANOMALOUS_DEBRIS_ROAMING, 1,
-                ChartModifier.CHART_ANOMALOUS_DEBRIS_ALWAYS_TWICE_CORRUPTED, 1);
+                ChartModifier.CHART_ANOMALOUS_DEBRIS_ALWAYS_TWICE_CORRUPTED, 1, ChartModifier.CHART_ANOMALOUS_DEBRIS_FLEET_SIZE_PERCENT, 50);
 
         assertTrue(restless.awake() && restless.roaming());
         assertEquals(1, restless.forcedCorruptions());
@@ -89,7 +89,8 @@ class AnomalousDebrisEffectsTest {
         assertEquals(2, choir.mostCorruptions());
         assertEquals(50f, choir.increasedSizePercent(2), 0.0001f);
         assertEquals(2, both.forcedCorruptions());
-        assertTrue(both.awake());
+        assertTrue(both.awake() && both.roaming());
+        assertEquals(50f, both.increasedSizePercent(both.forcedCorruptions()), 0.0001f);
     }
 
     @Test

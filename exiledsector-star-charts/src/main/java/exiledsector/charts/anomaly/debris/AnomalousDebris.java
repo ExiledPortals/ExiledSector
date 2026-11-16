@@ -74,6 +74,10 @@ public final class AnomalousDebris implements ContentPlacer, RunParticipant, Loo
         }
         site.addFleet(fleet, field.centre());
         site.addTerrain(TERRAIN_ID, new AnomalousDebrisTerrainPlugin.Params(site.runId(), fleet.getId(), field.radius(), seed), field.centre(), FIELD_TAG);
+        wakeIfRestless(fleet, tuning);
+    }
+
+    static void wakeIfRestless(CampaignFleetAPI fleet, DebrisTuning tuning) {
         if (tuning.awake()) {
             DormantFleets.wake(fleet, tuning.roaming());
         }

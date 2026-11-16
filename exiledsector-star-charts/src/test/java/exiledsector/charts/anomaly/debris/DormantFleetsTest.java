@@ -191,6 +191,33 @@ class DormantFleetsTest {
     }
 
     @Test
+    void aSilentChoirFleetWokenByRestlessSleepersStaysCorruptedTwiceAndPatrolsItsSystem() {
+        CampaignFleetAPI choir = dormantFleet();
+        DormantFleets.markCorrupted(choir, 2);
+        when(system.getCenter()).thenReturn(mock(SectorEntityToken.class));
+        when(factory.createFleetAI(choir)).thenReturn(mock(CampaignFleetAIAPI.class));
+        DebrisTuning tuning = DebrisTuning.of(withLines(ChartModifier.CHART_ANOMALOUS_DEBRIS_ALWAYS_TWICE_CORRUPTED,
+                ChartModifier.CHART_ANOMALOUS_DEBRIS_AWAKE, ChartModifier.CHART_ANOMALOUS_DEBRIS_ROAMING));
+
+        AnomalousDebris.wakeIfRestless(choir, tuning);
+
+        assertFalse(DormantFleets.isDormant(choir));
+        assertEquals(2, DormantFleets.corruptionsOf(choir));
+        verify(choir).addAssignment(eq(FleetAssignment.PATROL_SYSTEM), any(SectorEntityToken.class), anyFloat());
+        verify(choir, never()).addAssignment(eq(FleetAssignment.ORBIT_AGGRESSIVE), any(SectorEntityToken.class), anyFloat());
+    }
+
+    @Test
+    void withoutRestlessSleepersAFieldsFleetStaysDormant() {
+        CampaignFleetAPI sleeper = dormantFleet();
+
+        AnomalousDebris.wakeIfRestless(sleeper, DebrisTuning.of(withLines(ChartModifier.CHART_ANOMALOUS_DEBRIS_ALWAYS_TWICE_CORRUPTED)));
+
+        assertTrue(DormantFleets.isDormant(sleeper));
+        verify(sleeper, never()).addAssignment(any(), any(SectorEntityToken.class), anyFloat());
+    }
+
+    @Test
     void aFleetCorruptedBeforeTheCountWasStoredCountsAsCorruptedOnce() {
         CampaignFleetAPI legacy = dormantFleet();
         legacy.getMemoryWithoutUpdate().set(DormantFleets.CORRUPTED_KEY, true);

@@ -1,25 +1,42 @@
 package exiledsector.charts.anomaly.debris;
 
+import com.fs.starfarer.api.FactoryAPI;
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.PluginPick;
+import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CampaignPlugin;
+import com.fs.starfarer.api.campaign.CharacterDataAPI;
+import com.fs.starfarer.api.campaign.FleetAssignment;
+import com.fs.starfarer.api.campaign.FleetDataAPI;
+import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
+import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
+import com.fs.starfarer.api.campaign.ai.CampaignFleetAIAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import com.fs.starfarer.api.combat.StatBonus;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl;
 import exiledsector.MockSector;
 import exiledsector.charts.anomaly.LiveAnomalyRuns;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartCampaignPlugin;
+import exiledsector.charts.run.ChartRuns;
 import exiledsector.items.Engrams;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemModifiers;
 import exiledsector.items.ModifierSources;
+import lunalib.lunaSettings.LunaSettings;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.lwjgl.util.vector.Vector2f;
+import org.mockito.MockedConstruction;
+import org.mockito.MockedStatic;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,9 +49,16 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class DormantFleetDialogTest {
@@ -60,6 +84,7 @@ class DormantFleetDialogTest {
         Map<String, Object> stored = new HashMap<>();
         MemoryAPI memory = mock(MemoryAPI.class);
         doAnswer(invocation -> stored.put(invocation.getArgument(0), invocation.getArgument(1))).when(memory).set(anyString(), any());
+        doAnswer(invocation -> stored.remove((String) invocation.getArgument(0))).when(memory).unset(anyString());
         when(memory.getBoolean(anyString())).thenAnswer(invocation -> Boolean.TRUE.equals(stored.get((String) invocation.getArgument(0))));
         when(memory.contains(anyString())).thenAnswer(invocation -> stored.containsKey((String) invocation.getArgument(0)));
         when(memory.getInt(anyString())).thenAnswer(invocation -> stored.get((String) invocation.getArgument(0)) instanceof Integer count ? count : 0);
@@ -138,6 +163,48 @@ class DormantFleetDialogTest {
             assertInstanceOf(DormantFleetDialog.class, pick.plugin);
             assertEquals(CampaignPlugin.PickPriority.MOD_SPECIFIC, pick.priority);
             assertNull(new ChartCampaignPlugin().pickInteractionDialogPlugin(LiveAnomalyRuns.placedIn(mock(CampaignFleetAPI.class), system)));
+        }
+    }
+
+    private static MockedConstruction<FleetInteractionDialogPluginImpl> encountersIn(MockSector mockSector) {
+        mockSector.global.when(Global::getSettings).thenReturn(mock(SettingsAPI.class));
+        return mockConstruction(FleetInteractionDialogPluginImpl.class);
+    }
+
+    @Test
+    void aFleetWokenFromTheDialogStaysAtItsFieldEvenWhenRestlessSleepersMakeTheOthersRoam() {
+        try (MockSector mockSector = new MockSector();
+             MockedStatic<LunaSettings> ignored = mockStatic(LunaSettings.class);
+             MockedConstruction<FleetInteractionDialogPluginImpl> encounters = encountersIn(mockSector)) {
+            FactoryAPI factory = mock(FactoryAPI.class);
+            mockSector.global.when(Global::getFactory).thenReturn(factory);
+            when(factory.createFleetAI(any())).thenReturn(mock(CampaignFleetAIAPI.class));
+            MemoryAPI sectorMemory = memory();
+            when(mockSector.sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
+            when(mockSector.sector.getCharacterData()).thenReturn(mock(CharacterDataAPI.class));
+            StarSystemAPI system = LiveAnomalyRuns.systemWith(AnomalousDebris.ANOMALY_ID);
+            when(system.getCenter()).thenReturn(mock(SectorEntityToken.class));
+            when(system.createToken(anyFloat(), anyFloat())).thenReturn(mock(SectorEntityToken.class));
+            ChartRuns.currentOrNull().recordAtlasTreeLines(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_ANOMALOUS_DEBRIS_AWAKE, 1f),
+                    new ChartGenContext.AppliedEffect(ChartModifier.CHART_ANOMALOUS_DEBRIS_ROAMING, 1f)));
+            CampaignFleetAPI dormant = LiveAnomalyRuns.placedIn(debrisFleet(false), system);
+            when(dormant.getLocation()).thenReturn(new Vector2f(100f, 200f));
+            when(dormant.getDetectedRangeMod()).thenReturn(new StatBonus());
+            FleetDataAPI fleetData = mock(FleetDataAPI.class);
+            when(fleetData.getCombatReadyMembersListCopy()).thenReturn(List.of(mock(FleetMemberAPI.class)));
+            when(mockSector.playerFleet().getFleetData()).thenReturn(fleetData);
+            mockSector.cargo();
+            InteractionDialogAPI dialog = mock(InteractionDialogAPI.class, RETURNS_DEEP_STUBS);
+            when(dialog.getInteractionTarget()).thenReturn(dormant);
+            DormantFleetDialog plugin = new DormantFleetDialog();
+
+            plugin.init(dialog);
+            plugin.optionSelected(null, DormantFleetDialog.ENGAGE_OPTION);
+
+            assertFalse(DormantFleets.isDormant(dormant));
+            verify(dormant).addAssignment(eq(FleetAssignment.ORBIT_AGGRESSIVE), any(SectorEntityToken.class), anyFloat());
+            verify(dormant, never()).addAssignment(eq(FleetAssignment.PATROL_SYSTEM), any(SectorEntityToken.class), anyFloat());
+            verify(encounters.constructed().get(0)).init(dialog);
         }
     }
 
