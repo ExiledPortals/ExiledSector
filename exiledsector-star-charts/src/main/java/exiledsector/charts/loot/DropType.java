@@ -1,7 +1,7 @@
 package exiledsector.charts.loot;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledsector.items.ItemDrops;
+import exiledsector.items.DroppableDefinitions;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemUnlock;
@@ -72,7 +72,7 @@ public enum DropType {
         if (isSection() && !ItemUnlock.available(ItemType.HULL_ITEM, sector)) {
             return false;
         }
-        return ItemDrops.hasDroppableBasic(itemKind);
+        return DroppableDefinitions.hasDroppableBasic(itemKind);
     }
 
 }

@@ -11,8 +11,8 @@ import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.items.ItemChances;
-import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemUnlock;
+import exiledsector.loot.Loot;
 import exiledsector.loot.LootMultipliers;
 import exiledsector.loot.LootSources;
 import exiledsector.ui.CampaignMessages;
@@ -20,7 +20,6 @@ import exiledsector.Seeds;
 import org.apache.log4j.Logger;
 
 import java.awt.Color;
-import java.util.List;
 import java.util.Random;
 
 public final class ChartRewards {
@@ -34,7 +33,7 @@ public final class ChartRewards {
     private static final Color REWARD_COLOUR = new Color(120, 230, 140);
     private static final Logger LOG = Logger.getLogger(ChartRewards.class);
 
-    public record Reward(int credits, ItemDrops.SiteLoot loot) {
+    public record Reward(int credits, Loot loot) {
     }
 
     private ChartRewards() {
@@ -62,7 +61,7 @@ public final class ChartRewards {
         CargoAPI cargo = playerFleet == null ? null : playerFleet.getCargo();
         if (cargo == null) {
             LOG.warn("[ExiledSector] The Star Chart reward for run " + run.runId() + " had no cargo to go into");
-            return new Reward(0, ItemDrops.SiteLoot.NONE);
+            return new Reward(0, Loot.NONE);
         }
         Random random = rewardRandom(run);
         ChartGenContext context = ChartRunEffects.contextOf(run);
@@ -72,10 +71,10 @@ public final class ChartRewards {
         float chanceMult = itemChanceMultFor(run.tier()) * rewardMult;
         LootMultipliers rewardMultipliers = new LootMultipliers(ItemChances.of(chanceMult).withRarity(context.itemRarityMult()), chanceMult, chanceMult,
                 ChartTiers.bandShift(run.tier()));
-        ItemDrops.SiteLoot siteLoot = LootSources.rollSite(sector, REWARD_SITE, random, rewardMultipliers);
+        Loot siteLoot = LootSources.rollSite(sector, REWARD_SITE, random, rewardMultipliers);
         ChartDrops.Loot chartLoot = ChartDrops.forRunReward(run, random);
         announce(run, credits);
-        return new Reward(credits, siteLoot.plus(chartLoot.charts(), List.of(), chartLoot.materials()));
+        return new Reward(credits, siteLoot.plus(chartLoot.asLoot()));
     }
 
     private static void announce(ChartRun run, int credits) {

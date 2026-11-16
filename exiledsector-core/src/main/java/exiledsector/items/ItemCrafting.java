@@ -510,8 +510,8 @@ public final class ItemCrafting {
             return null;
         }
         Predicate<ItemDefinition> otherUniques = definition -> otherUnique(definition, currentDefinition, item.tier(), allowedUniques);
-        ItemDefinition nextDefinition = ItemDefinitions.isOwnType(currentDefinition.type()) ? ItemDrops.pickOfType(random, currentDefinition.type(), otherUniques)
-                : ItemDrops.pickUnique(random, otherUniques);
+        ItemDefinition nextDefinition = ItemDefinitions.isOwnType(currentDefinition.type()) ? DroppableDefinitions.pickOfType(random, currentDefinition.type(), otherUniques)
+                : DroppableDefinitions.pickUnique(random, otherUniques);
         if (nextDefinition == null) {
             return null;
         }

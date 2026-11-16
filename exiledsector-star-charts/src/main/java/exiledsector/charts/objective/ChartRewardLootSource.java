@@ -2,10 +2,11 @@ package exiledsector.charts.objective;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
-import exiledsector.effects.ItemLootListener;
-import exiledsector.items.ItemDrops;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.BattleLoot;
+import exiledsector.loot.DropOrigin;
+import exiledsector.loot.Loot;
+import exiledsector.loot.LootDelivery;
 import exiledsector.loot.LootSource;
 import org.apache.log4j.Logger;
 
@@ -15,7 +16,7 @@ public final class ChartRewardLootSource implements LootSource {
     private static final Logger LOG = Logger.getLogger(ChartRewardLootSource.class);
 
     private static final class Reward {
-        private ItemDrops.SiteLoot loot = ItemDrops.SiteLoot.NONE;
+        private Loot loot = Loot.NONE;
     }
 
     private ChartRewardLootSource() {
@@ -39,11 +40,11 @@ public final class ChartRewardLootSource implements LootSource {
 
     @Override
     public void addEncounterLoot(BattleLoot battle, CargoAPI loot) {
-        ItemLootListener.addBattleSiteLoot(loot, reward(battle).loot);
+        LootDelivery.toLootScreen(loot, reward(battle).loot, DropOrigin.BATTLE);
     }
 
     @Override
     public void deliverBattleLoot(BattleLoot battle, CargoAPI playerCargo) {
-        ItemLootListener.deliverBattleSiteLoot(playerCargo, reward(battle).loot);
+        LootDelivery.deliver(playerCargo, reward(battle).loot, DropOrigin.BATTLE);
     }
 }

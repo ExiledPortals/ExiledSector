@@ -7,6 +7,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import exiledsector.loot.Loot;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,7 @@ class HullItemDropsTest {
                 .put(row("bridge_basic", "bridge", "HULL_PERCENT:4:6"))
                 .put(row("emitter_basic", "shield_generator", "HULL_PERCENT:4:6"))
                 .put(row("bridge_relic", "bridge", "HULL_PERCENT:4:6").put("unique", "true")));
-        ItemDrops.register(new JSONArray()
+        SalvageSiteDrops.register(new JSONArray()
                 .put(new JSONObject().put("site", "station").put("chances", "1;0.5").put("uniqueChance", "0"))
                 .put(new JSONObject().put("site", "empty").put("chances", "").put("uniqueChance", "0.5"))
                 .put(new JSONObject().put("site", "chest").put("chances", "1;1").put("uniqueChance", "0").put("hullItemShare", "0")));
@@ -38,7 +39,7 @@ class HullItemDropsTest {
 
     @AfterEach
     void tearDown() {
-        ItemDrops.clear();
+        SalvageSiteDrops.clear();
         ItemDefinitions.clear();
     }
 
@@ -55,9 +56,9 @@ class HullItemDropsTest {
         int[] itemCounts = new int[3];
         int hullItemCount = 0;
         for (int i = 0; i < TRIALS; i++) {
-            HullItemDrops.SectionItemLoot loot = HullItemDrops.rollHullItemLoot("station", random, ItemChances.BASE, 1f);
+            Loot loot = HullItemDrops.rollHullItemLoot("station", random, ItemChances.BASE, 1f);
             itemCounts[loot.items().size()]++;
-            hullItemCount += loot.upgrades().size();
+            hullItemCount += loot.schematics().size();
             for (ItemData item : loot.items()) {
                 assertTrue(Set.of("bridge_basic", "emitter_basic").contains(item.definitionId()), item.definitionId());
             }
@@ -73,8 +74,8 @@ class HullItemDropsTest {
     void frameworkRollsLeaveTheSubroutineRollUntouched() {
         Random first = new Random(9L);
         Random second = new Random(9L);
-        List<ItemData> withoutHullItems = ItemDrops.roll("station", first, ItemChances.BASE, definition -> true);
-        List<ItemData> withHullItems = ItemDrops.roll("station", second, ItemChances.BASE, definition -> true);
+        List<ItemData> withoutHullItems = SalvageSiteDrops.roll("station", first, ItemChances.BASE, definition -> true);
+        List<ItemData> withHullItems = SalvageSiteDrops.roll("station", second, ItemChances.BASE, definition -> true);
         HullItemDrops.rollHullItemLoot("station", second, ItemChances.BASE, 1f);
 
         assertEquals(withoutHullItems, withHullItems);
@@ -85,12 +86,12 @@ class HullItemDropsTest {
         Random random = new Random(1L);
         Map<ItemKind, Integer> counts = new HashMap<>();
         for (int i = 0; i < TRIALS; i++) {
-            counts.merge(ItemDrops.pickHullItemBasic(random).kind(), 1, Integer::sum);
+            counts.merge(DroppableDefinitions.pickHullItemBasic(random).kind(), 1, Integer::sum);
         }
 
         assertEquals(Set.of(ItemKind.BRIDGE, ItemKind.SHIELD_GENERATOR), counts.keySet());
         assertEquals(0.5, counts.get(ItemKind.BRIDGE) / (double) TRIALS, 0.02);
-        assertNull(ItemDrops.pickBasicOfKind(ItemKind.PHASE_COIL, random));
+        assertNull(DroppableDefinitions.pickBasicOfKind(ItemKind.PHASE_COIL, random));
     }
 
     @Test
@@ -114,8 +115,8 @@ class HullItemDropsTest {
 
         assertEquals(HullItemDrops.rollHullItemLoot("station", new Random(4L), ItemChances.BASE, 1f).items(),
                 HullItemDrops.rollHullItemLoot("station", new Random(4L), phaseCoilBonus, 1f).items());
-        assertFalse(ItemDrops.hasDroppableBasic(ItemKind.PHASE_COIL));
-        assertFalse(ItemDrops.hasDroppableBasic(ItemKind.SUBROUTINE));
+        assertFalse(DroppableDefinitions.hasDroppableBasic(ItemKind.PHASE_COIL));
+        assertFalse(DroppableDefinitions.hasDroppableBasic(ItemKind.SUBROUTINE));
     }
 
     @Test
@@ -124,12 +125,12 @@ class HullItemDropsTest {
         ItemChances subroutineBonus = new ItemChances(1f, Map.of(ItemKind.SUBROUTINE, 0.5f));
         int subroutines = 0;
         for (int i = 0; i < TRIALS; i++) {
-            subroutines += ItemDrops.roll("station", random, subroutineBonus, definition -> true).size();
+            subroutines += SalvageSiteDrops.roll("station", random, subroutineBonus, definition -> true).size();
         }
 
         assertEquals(0, subroutines);
-        assertEquals(1.5f, ItemDrops.expectedCascadeCount(List.of(1f, 0.5f)), 0.0001f);
-        assertEquals(0.75f, ItemDrops.expectedCascadeCount(List.of(0.5f, 0.5f, 0f)), 0.0001f);
+        assertEquals(1.5f, SalvageSiteDrops.expectedCascadeCount(List.of(1f, 0.5f)), 0.0001f);
+        assertEquals(0.75f, SalvageSiteDrops.expectedCascadeCount(List.of(0.5f, 0.5f, 0f)), 0.0001f);
     }
 
     @Test
@@ -138,9 +139,9 @@ class HullItemDropsTest {
         ItemChances bridgeBonus = new ItemChances(1f, Map.of(ItemKind.BRIDGE, 2f));
         int upgrades = 0;
         for (int i = 0; i < 200; i++) {
-            HullItemDrops.SectionItemLoot loot = HullItemDrops.rollHullItemLoot("chest", random, bridgeBonus, 1f);
+            Loot loot = HullItemDrops.rollHullItemLoot("chest", random, bridgeBonus, 1f);
             assertEquals(List.of(), loot.items());
-            upgrades += loot.upgrades().size();
+            upgrades += loot.schematics().size();
         }
 
         assertEquals(200, upgrades);

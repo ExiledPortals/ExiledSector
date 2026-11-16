@@ -4,12 +4,12 @@ import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.BiomeModifiers;
 import exiledsector.items.CraftingDrops;
 import exiledsector.data.WeightedPick;
+import exiledsector.items.DroppableDefinitions;
 import exiledsector.items.Engram;
 import exiledsector.items.Engrams;
 import exiledsector.items.GrantedModifiers;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
-import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemTypes;
 
@@ -144,7 +144,7 @@ public final class OfficerRewardPool {
                     .filter(itemId -> CarriedItem.isSafeId(itemId) && craftingItemAllowed.test(itemId))
                     .map(itemId -> CarriedItem.of(RewardKind.ENGRAM, itemId)).toList();
             case STAR_CHART -> ItemDefinitions.ofType(ItemType.STAR_CHART).stream()
-                    .filter(definition -> ItemDrops.isDroppable(definition) && itemAllowed.test(definition) && rollsAtAnyChartTier(definition))
+                    .filter(definition -> DroppableDefinitions.isDroppable(definition) && itemAllowed.test(definition) && rollsAtAnyChartTier(definition))
                     .map(definition -> CarriedItem.of(RewardKind.STAR_CHART, definition.id())).toList();
             case HULL_ITEM, BIOME_HULL_ITEM -> definitions(ItemType.HULL_ITEM, false, itemAllowed).stream()
                     .map(definition -> CarriedItem.of(group.kind(), definition.id())).toList();
@@ -159,7 +159,7 @@ public final class OfficerRewardPool {
 
     private static List<ItemDefinition> definitions(ItemType type, boolean unique, Predicate<ItemDefinition> allowed) {
         return ItemDefinitions.ofType(type).stream()
-                .filter(definition -> definition.unique() == unique && ItemDrops.isDroppable(definition) && allowed.test(definition))
+                .filter(definition -> definition.unique() == unique && DroppableDefinitions.isDroppable(definition) && allowed.test(definition))
                 .toList();
     }
 
@@ -222,7 +222,7 @@ public final class OfficerRewardPool {
 
     private static List<RewardCandidate> starCharts(RewardContext context) {
         return ItemDefinitions.ofType(ItemType.STAR_CHART).stream()
-                .filter(definition -> ItemDrops.isDroppable(definition) && ItemTypes.rollsAtTier(definition, ChartTiers.clampDropTier(context.tier()))
+                .filter(definition -> DroppableDefinitions.isDroppable(definition) && ItemTypes.rollsAtTier(definition, ChartTiers.clampDropTier(context.tier()))
                         && context.itemAllowed().test(definition))
                 .map(definition -> new RewardCandidate(CarriedItem.of(RewardKind.STAR_CHART, definition.id()), definition.rarity()))
                 .toList();
@@ -233,7 +233,7 @@ public final class OfficerRewardPool {
         for (ItemType type : UNIQUE_TYPES) {
             for (ItemDefinition definition : definitions(type, true, context.itemAllowed())) {
                 uniques.add(new RewardCandidate(CarriedItem.of(RewardKind.UNIQUE, definition.id()),
-                        (float) ItemDrops.factionWeight(definition, context.factionId())));
+                        (float) DroppableDefinitions.factionWeight(definition, context.factionId())));
             }
         }
         return uniques;

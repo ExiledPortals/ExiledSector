@@ -8,8 +8,8 @@ import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.items.CraftingDrops;
 import exiledsector.items.CraftingInhibitor;
-import exiledsector.items.ItemDrops;
 import exiledsector.items.MaterialItems;
+import exiledsector.loot.Loot;
 
 import java.util.List;
 import java.util.Map;
@@ -49,12 +49,12 @@ public final class ExcavationLoot {
         return inhibitor != null && inhibitor.inhibitsTag();
     }
 
-    public static ItemDrops.SiteLoot fleetItems(CampaignFleetAPI fleet, ChartGenContext context, int chartTier, float share, Random random) {
+    public static Loot fleetItems(CampaignFleetAPI fleet, ChartGenContext context, int chartTier, float share, Random random) {
         if (!ExcavationFleets.isExcavationFleet(fleet)) {
             return null;
         }
         Map<String, Integer> inhibitors = tagInhibitors(expectedInhibitors(ExcavationRules.INHIBITORS_PER_GUARDIAN_FLEET, context, share),
                 bandShift(context, chartTier), random);
-        return inhibitors.isEmpty() ? null : new ItemDrops.SiteLoot(List.of(), List.of(), inhibitors);
+        return inhibitors.isEmpty() ? null : new Loot(List.of(), List.of(), inhibitors);
     }
 }

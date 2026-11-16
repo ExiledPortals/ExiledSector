@@ -82,7 +82,7 @@ class WormholeAnchorTest {
         SkillTree.clearNodes();
         WormholeAnchorDefinitions.clear();
         ItemDefinitions.clear();
-        ItemDrops.clear();
+        SalvageSiteDrops.clear();
     }
 
     private static XStream xstream() {
@@ -284,22 +284,22 @@ class WormholeAnchorTest {
     @Test
     void dropPickersNeverPickAnAnchor() throws Exception {
         ItemDefinitions.register(List.of(ItemDefinitions.get(HEGEMONY_ANCHOR), ItemDefinitions.get(ItemFixtures.SUBROUTINE)));
-        ItemDrops.register(new JSONArray().put(new JSONObject().put("site", "station").put("chances", "1;1;1").put("uniqueChance", "1")));
+        SalvageSiteDrops.register(new JSONArray().put(new JSONObject().put("site", "station").put("chances", "1;1;1").put("uniqueChance", "1")));
         Random random = new Random(3L);
         Set<String> anchorIds = Set.of(HEGEMONY_ANCHOR, ABYSS_ANCHOR, BEACON);
 
         for (int trial = 0; trial < 200; trial++) {
-            assertNotAnchor(ItemDrops.pickBasic(random), anchorIds);
-            assertNotAnchor(ItemDrops.pickUnique(random, definition -> true), anchorIds);
-            assertNotAnchor(ItemDrops.pickHullItemBasic(random), anchorIds);
-            assertNotAnchor(ItemDrops.pickOfType(random, ItemType.STAR_CHART, definition -> true), anchorIds);
-            List<ItemData> dropped = new ArrayList<>(ItemDrops.rollSite("station", random, LootMultipliers.NONE).items());
+            assertNotAnchor(DroppableDefinitions.pickBasic(random), anchorIds);
+            assertNotAnchor(DroppableDefinitions.pickUnique(random, definition -> true), anchorIds);
+            assertNotAnchor(DroppableDefinitions.pickHullItemBasic(random), anchorIds);
+            assertNotAnchor(DroppableDefinitions.pickOfType(random, ItemType.STAR_CHART, definition -> true), anchorIds);
+            List<ItemData> dropped = new ArrayList<>(SalvageSiteDrops.rollSite("station", random, LootMultipliers.NONE).items());
             dropped.addAll(HullItemDrops.rollHullItemLoot("station", random, ItemChances.BASE, 1f).items());
             for (ItemData item : dropped) {
                 assertFalse(anchorIds.contains(item.definitionId()), item.definitionId());
             }
         }
-        assertFalse(ItemDrops.canBeGrown(ItemDefinitions.get(HEGEMONY_ANCHOR)));
+        assertFalse(DroppableDefinitions.canBeGrown(ItemDefinitions.get(HEGEMONY_ANCHOR)));
     }
 
     private static void assertNotAnchor(ItemDefinition picked, Set<String> anchorIds) {

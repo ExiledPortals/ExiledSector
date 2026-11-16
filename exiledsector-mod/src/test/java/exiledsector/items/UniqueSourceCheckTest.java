@@ -32,14 +32,14 @@ class UniqueSourceCheckTest {
                 .put(uniqueRow("fleet_relic", "faction:pirates; faction:missing_faction"))
                 .put(uniqueRow("site_relic", "site:station; site:probe; site:nowhere"))
                 .put(HullItemRows.row("hull_relic", "reactor", "HULL_MULT:4:6").put("unique", "TRUE")));
-        ItemDrops.register(new JSONArray()
+        SalvageSiteDrops.register(new JSONArray()
                 .put(new JSONObject().put("site", "station").put("chances", "1").put("uniqueChance", "0.2"))
                 .put(new JSONObject().put("site", "probe").put("chances", "0.5").put("uniqueChance", "0")));
     }
 
     @AfterEach
     void tearDown() {
-        ItemDrops.clear();
+        SalvageSiteDrops.clear();
         ItemDefinitions.clear();
         ItemModifiers.clear();
     }
@@ -51,28 +51,28 @@ class UniqueSourceCheckTest {
 
     @Test
     void sourcesThatCanNeverDropAreReportedAndReachableOnesAreNot() {
-        List<String> warnings = UniqueSourceCheck.unreachableSources(ItemDefinitions.all(), Set.of("pirates", "hegemony"), ItemDrops::hasUniqueRoll);
+        List<String> warnings = UniqueSourceCheck.unreachableSources(ItemDefinitions.all(), Set.of("pirates", "hegemony"), SalvageSiteDrops::hasUniqueRoll);
 
         assertEquals(List.of(
                 "fleet_relic favours faction:missing_faction, but no faction with that id is loaded, so that bonus never applies",
-                "site_relic drops from site:probe, but " + ItemDrops.DATA_PATH + " has no row for that site with a uniqueChance above zero, so it can never drop there",
-                "site_relic drops from site:nowhere, but " + ItemDrops.DATA_PATH + " has no row for that site with a uniqueChance above zero, so it can never drop there"),
+                "site_relic drops from site:probe, but " + SalvageSiteDrops.DATA_PATH + " has no row for that site with a uniqueChance above zero, so it can never drop there",
+                "site_relic drops from site:nowhere, but " + SalvageSiteDrops.DATA_PATH + " has no row for that site with a uniqueChance above zero, so it can never drop there"),
                 warnings);
     }
 
     @Test
     void withoutAnyLoadedFactionSpecsTheFactionCheckIsSkipped() {
-        assertEquals(List.of(), UniqueSourceCheck.unreachableSources(List.of(ItemDefinitions.get("fleet_relic")), Set.of(), ItemDrops::hasUniqueRoll));
+        assertEquals(List.of(), UniqueSourceCheck.unreachableSources(List.of(ItemDefinitions.get("fleet_relic")), Set.of(), SalvageSiteDrops::hasUniqueRoll));
     }
 
     @Test
     void theShippedUniquesAllHaveAReachableSource() throws Exception {
         ItemFixtures.registerShippedItems();
-        ItemDrops.register(HullItemRows.shippedRows(ItemDrops.DATA_PATH));
+        SalvageSiteDrops.register(HullItemRows.shippedRows(SalvageSiteDrops.DATA_PATH));
 
         assertEquals(List.of(), UniqueSourceCheck.unreachableSources(ItemDefinitions.all(), Set.of("hegemony", "tritachyon", "sindrian_diktat", "persean", "luddic_church", "luddic_path", "pirates", "independent",
                         "navarchy_of_tania", "nightcross", "stargazer", "remnant", "omega", "derelict"),
-                ItemDrops::hasUniqueRoll));
+                SalvageSiteDrops::hasUniqueRoll));
     }
 
     @Test

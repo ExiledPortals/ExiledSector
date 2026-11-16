@@ -5,7 +5,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.items.Engrams;
 import exiledsector.items.Engram;
-import exiledsector.items.ItemDrops;
+import exiledsector.loot.Loot;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -17,13 +17,13 @@ public final class DormantFleetLoot {
     private DormantFleetLoot() {
     }
 
-    public static ItemDrops.SiteLoot craftingItemFor(CampaignFleetAPI fleet, int tier, ChartGenContext context, Random random) {
+    public static Loot craftingItemFor(CampaignFleetAPI fleet, int tier, ChartGenContext context, Random random) {
         if (!DormantFleets.isCorrupted(fleet)) {
-            return ItemDrops.SiteLoot.NONE;
+            return Loot.NONE;
         }
         MemoryAPI memory = fleet.getMemoryWithoutUpdate();
         if (memory.getBoolean(DormantFleets.CRAFTING_ITEM_DROPPED_KEY)) {
-            return ItemDrops.SiteLoot.NONE;
+            return Loot.NONE;
         }
         memory.set(DormantFleets.CRAFTING_ITEM_DROPPED_KEY, true);
         float quantityMult = ChartGenContext.orNone(context).anomalyMult(AnomalousDebris.CRAFTING_ITEM_KEY);
@@ -34,6 +34,6 @@ public final class DormantFleetLoot {
                 craftingItems.merge(craftingItem.itemId(), 1, Integer::sum);
             }
         }
-        return craftingItems.isEmpty() ? ItemDrops.SiteLoot.NONE : ItemDrops.SiteLoot.NONE.plus(List.of(), List.of(), craftingItems);
+        return craftingItems.isEmpty() ? Loot.NONE : Loot.NONE.plus(List.of(), List.of(), craftingItems);
     }
 }

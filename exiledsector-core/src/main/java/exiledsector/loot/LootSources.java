@@ -9,7 +9,7 @@ import exiledsector.domain.DomainContributions;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemDrops;
+import exiledsector.items.SalvageSiteDrops;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,11 +39,11 @@ public final class LootSources {
         return SOURCES.firstOr(source -> source.lootMultipliersFor(site), LootMultipliers.NONE);
     }
 
-    public static ItemDrops.SiteLoot rollSite(SectorAPI sector, String siteId, Random random, LootMultipliers multipliers) {
-        ItemDrops.SiteLoot baseLoot = ItemDrops.rollSite(siteId, random, multipliers);
+    public static Loot rollSite(SectorAPI sector, String siteId, Random random, LootMultipliers multipliers) {
+        Loot baseLoot = SalvageSiteDrops.rollSite(siteId, random, multipliers);
         SiteFind find = new SiteFind(sector, siteId, random, multipliers.chances(), new ArrayList<>(), new ArrayList<>());
         SOURCES.all().forEach(source -> source.addSiteFinds(find));
-        return baseLoot.plus(find.items(), find.upgrades(), Map.of());
+        return baseLoot.plus(find.items(), find.schematics(), Map.of());
     }
 
     public static List<ItemData> bossDrops(int chartTier, String bossFactionId, float chanceMult, Random random,
@@ -53,41 +53,22 @@ public final class LootSources {
         return drops;
     }
 
-    public static List<ItemData> shapeDrops(List<ItemData> items) {
-        return shape(items, false);
-    }
-
-    public static List<ItemData> shapeBattleDrops(List<ItemData> items) {
-        return shape(items, true);
-    }
-
-    public static List<ItemData> shapeSiteDrops(List<ItemData> items, SectorEntityToken site) {
-        List<ItemData> shaped = shapeDrops(items);
-        if (site == null || shaped.isEmpty()) {
-            return shaped;
-        }
-        List<ItemData> siteShaped = new ArrayList<>(shaped.size());
-        for (ItemData item : shaped) {
-            ItemData shapedItem = item;
-            for (LootSource source : SOURCES.all()) {
-                shapedItem = source.shapeSiteDrop(shapedItem, site);
-            }
-            siteShaped.add(shapedItem);
-        }
-        return siteShaped;
-    }
-
-    private static List<ItemData> shape(List<ItemData> items, boolean fromBattle) {
-        CampaignFleetAPI playerFleet = PlayerFleet.orNull();
-        LocationAPI location = playerFleet == null ? null : playerFleet.getContainingLocation();
-        if (location == null || items.isEmpty()) {
+    public static List<ItemData> shape(List<ItemData> items, DropOrigin origin) {
+        if (items.isEmpty()) {
             return items;
         }
+        CampaignFleetAPI playerFleet = PlayerFleet.orNull();
+        LocationAPI playerLocation = playerFleet == null ? null : playerFleet.getContainingLocation();
+        List<ItemData> shapedWhereThePlayerIs = playerLocation == null ? items : shapeEach(items, origin.whereThePlayerIs(), playerLocation);
+        return origin.kind() == DropOrigin.Kind.SITE ? shapeEach(shapedWhereThePlayerIs, origin, playerLocation) : shapedWhereThePlayerIs;
+    }
+
+    private static List<ItemData> shapeEach(List<ItemData> items, DropOrigin origin, LocationAPI playerLocation) {
         List<ItemData> shaped = new ArrayList<>(items.size());
         for (ItemData item : items) {
             ItemData shapedItem = item;
             for (LootSource source : SOURCES.all()) {
-                shapedItem = fromBattle ? source.shapeBattleDrop(shapedItem, location) : source.shapeDrop(shapedItem, location);
+                shapedItem = source.shape(shapedItem, origin, playerLocation);
             }
             shaped.add(shapedItem);
         }

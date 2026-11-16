@@ -7,7 +7,6 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.items.CraftingDrops;
 import exiledsector.items.ItemDisassembly;
-import exiledsector.items.ItemDrops;
 import exiledsector.items.MaterialItems;
 import exiledsector.ui.CampaignMessages;
 import exiledsector.ui.cargo.MaterialDropAnnouncer;
@@ -65,7 +64,7 @@ public final class CraftingLootSource implements LootSource {
             }
             float bonuses = rules.kind() == FleetLootRules.Kind.FEEDSTOCK_ONLY ? 1f
                     : loss.averageDifficulty() * rules.multipliers().feedstockMult();
-            feedstock += loss.deploymentPoints() * ItemDrops.battleFeedstockPerDeploymentPoint() * bonuses;
+            feedstock += loss.deploymentPoints() * BattleFeedstockSetting.feedstockPerDeploymentPoint() * bonuses;
         }
         return feedstock;
     }

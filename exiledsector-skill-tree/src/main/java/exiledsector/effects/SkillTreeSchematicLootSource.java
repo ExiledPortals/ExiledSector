@@ -5,7 +5,10 @@ import exiledsector.items.ShipSchematic;
 import exiledsector.items.SkillTreeSchematicDrops;
 import exiledsector.loot.BattleItemDropSetting;
 import exiledsector.loot.BattleLoot;
+import exiledsector.loot.DropOrigin;
 import exiledsector.loot.FleetLoss;
+import exiledsector.loot.Loot;
+import exiledsector.loot.LootDelivery;
 import exiledsector.loot.LootSource;
 import exiledsector.loot.LootSources;
 import exiledsector.loot.OutsideChartShare;
@@ -15,6 +18,7 @@ import org.apache.log4j.Logger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public final class SkillTreeSchematicLootSource implements LootSource {
 
@@ -26,19 +30,19 @@ public final class SkillTreeSchematicLootSource implements LootSource {
 
     @Override
     public void addEncounterLoot(BattleLoot battle, CargoAPI loot) {
-        ItemLootListener.addItems(loot, List.of(), battleDrops(battle));
+        LootDelivery.toLootScreen(loot, new Loot(List.of(), battleDrops(battle), Map.of()), DropOrigin.ANYWHERE);
     }
 
     @Override
     public void deliverBattleLoot(BattleLoot battle, CargoAPI playerCargo) {
-        ItemLootListener.deliverSchematics(playerCargo, battleDrops(battle));
+        LootDelivery.deliver(playerCargo, new Loot(List.of(), battleDrops(battle), Map.of()), DropOrigin.ANYWHERE);
     }
 
     @Override
     public void addSiteFinds(SiteFind find) {
         for (SkillTreeSchematicDrops drop : SkillTreeSchematicDrops.values()) {
             if (SkillTreeSchematicDrops.rollSiteFind(find.dropSite(), find.random(), find.chances())) {
-                find.upgrades().add(drop.schematic());
+                find.schematics().add(drop.schematic());
             }
         }
     }

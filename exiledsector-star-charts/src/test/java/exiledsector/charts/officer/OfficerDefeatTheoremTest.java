@@ -10,7 +10,7 @@ import exiledsector.charts.officer.scar.HullFacts;
 import exiledsector.charts.officer.scar.Scars;
 import exiledsector.charts.phasing.DisplacementTheorem;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.items.ItemDrops;
+import exiledsector.loot.Loot;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,7 +67,7 @@ class OfficerDefeatTheoremTest {
         scarsMock = Mockito.mockStatic(Scars.class, Mockito.CALLS_REAL_METHODS);
         scarsMock.when(() -> Scars.pickAfterBattle(nullable(String.class), any(), nullable(HullFacts.class))).thenReturn(null);
         dropMock = Mockito.mockStatic(OfficerRewardDrop.class);
-        dropMock.when(() -> OfficerRewardDrop.roll(anyList(), any(ChartRun.class), any(Random.class))).thenReturn(ItemDrops.SiteLoot.NONE);
+        dropMock.when(() -> OfficerRewardDrop.roll(anyList(), any(ChartRun.class), any(Random.class))).thenReturn(Loot.NONE);
         contextMock = Mockito.mockStatic(RewardContext.class);
         poolMock = Mockito.mockStatic(OfficerRewardPool.class);
         poolMock.when(() -> OfficerRewardPool.offers(nullable(RewardContext.class), any(Random.class))).thenReturn(List.of());
@@ -88,7 +88,7 @@ class OfficerDefeatTheoremTest {
 
     @Test
     void aChartBossRollsTheTheoremOnceFromItsRankBeforeTheDefeat() {
-        ItemDrops.SiteLoot loot = OfficerDefeat.bossDefeated(sector, run);
+        Loot loot = OfficerDefeat.bossDefeated(sector, run);
 
         assertEquals(THEOREM, loot.materials());
         theoremMock.verify(() -> DisplacementTheorem.bossDrop(run, "admiral", BOSS_RECORD_ID), times(1));
@@ -96,7 +96,7 @@ class OfficerDefeatTheoremTest {
 
     @Test
     void aFactionSkirmishOfficerRollsTheTheoremOnceFromItsRankBeforeTheDefeat() {
-        ItemDrops.SiteLoot loot = OfficerDefeat.officerBeaten(sector, run, SKIRMISH_RECORD_ID, "flagship");
+        Loot loot = OfficerDefeat.officerBeaten(sector, run, SKIRMISH_RECORD_ID, "flagship");
 
         assertEquals(THEOREM, loot.materials());
         theoremMock.verify(() -> DisplacementTheorem.bossDrop(run, "admiral", SKIRMISH_RECORD_ID), times(1));

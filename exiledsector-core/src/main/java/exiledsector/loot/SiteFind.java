@@ -8,5 +8,5 @@ import exiledsector.items.ShipSchematic;
 import java.util.List;
 import java.util.Random;
 
-public record SiteFind(SectorAPI sector, String dropSite, Random random, ItemChances chances, List<ItemData> items, List<ShipSchematic> upgrades) {
+public record SiteFind(SectorAPI sector, String dropSite, Random random, ItemChances chances, List<ItemData> items, List<ShipSchematic> schematics) {
 }

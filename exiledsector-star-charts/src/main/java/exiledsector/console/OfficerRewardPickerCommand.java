@@ -11,8 +11,8 @@ import exiledsector.charts.officer.reward.OfficerRewardPool;
 import exiledsector.charts.officer.reward.OfficerRewardText;
 import exiledsector.charts.officer.reward.RewardContext;
 import exiledsector.items.ItemData;
-import exiledsector.items.ItemDrops;
 import exiledsector.items.MaterialItems;
+import exiledsector.loot.Loot;
 import exiledsector.ui.atlas.OfficerRewardPicker;
 import org.lazywizard.console.Console;
 
@@ -60,7 +60,7 @@ public class OfficerRewardPickerCommand extends PlayerFleetCommand {
     }
 
     private static void grant(CampaignFleetAPI playerFleet, CarriedItem chosen, int tier, Random random) {
-        ItemDrops.SiteLoot drop = OfficerRewardDrop.roll(List.of(chosen), tier, ChartGenContext.none(), random);
+        Loot drop = OfficerRewardDrop.roll(List.of(chosen), tier, ChartGenContext.none(), random);
         for (ItemData item : drop.items()) {
             playerFleet.getCargo().addSpecial(item.toSpecialItem(), 1f);
         }

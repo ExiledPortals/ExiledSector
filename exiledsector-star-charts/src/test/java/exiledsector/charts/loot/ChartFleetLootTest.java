@@ -29,14 +29,15 @@ import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.items.CraftingDrops;
 import exiledsector.items.ItemData;
-import exiledsector.items.ItemDrops;
 import exiledsector.items.Nanoswarm;
+import exiledsector.items.SalvageSiteDrops;
 import exiledsector.items.StarChartCipher;
 import exiledsector.items.StarChartFixtures;
 import exiledsector.loot.BattleLootRates;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import exiledsector.loot.FleetLootRules;
+import exiledsector.loot.Loot;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -101,17 +102,17 @@ class ChartFleetLootTest {
         return run;
     }
 
-    private static ItemDrops.SiteLoot rollAlone(SectorAPI sector, CampaignFleetAPI fleet, float defeatedDeploymentPoints, Random random) {
+    private static Loot rollAlone(SectorAPI sector, CampaignFleetAPI fleet, float defeatedDeploymentPoints, Random random) {
         return ChartFleetLoot.roll(sector, fleet, defeatedDeploymentPoints, ChartFleetLoot.Battle.of(defeatedDeploymentPoints), random);
     }
 
-    private static ItemDrops.SiteLoot rollAlone(SectorAPI sector, CampaignFleetAPI fleet, ChartRun run, ChartGenContext context,
+    private static Loot rollAlone(SectorAPI sector, CampaignFleetAPI fleet, ChartRun run, ChartGenContext context,
                                                 float defeatedDeploymentPoints, Random random) {
         return ChartFleetLoot.roll(sector, fleet, run, context, defeatedDeploymentPoints, ChartFleetLoot.Battle.of(defeatedDeploymentPoints), 1f,
                 random);
     }
 
-    private static int chartCount(ItemDrops.SiteLoot loot) {
+    private static int chartCount(Loot loot) {
         return (int) loot.items().stream().filter(item -> item.toSpecialItem().getId().equals(ItemData.STAR_CHART_ITEM_ID)).count();
     }
 
@@ -164,9 +165,9 @@ class ChartFleetLootTest {
         CampaignFleetAPI fleet = ChartFleetFixtures.chartFleet("guard", RUN_ID, 100f);
         Random random = new Random(3L);
 
-        ItemDrops.SiteLoot firstBattle = rollAlone(sector, fleet, 50f, random);
-        ItemDrops.SiteLoot secondBattle = rollAlone(sector, fleet, 50f, random);
-        ItemDrops.SiteLoot thirdBattle = rollAlone(sector, fleet, 50f, random);
+        Loot firstBattle = rollAlone(sector, fleet, 50f, random);
+        Loot secondBattle = rollAlone(sector, fleet, 50f, random);
+        Loot thirdBattle = rollAlone(sector, fleet, 50f, random);
 
         assertEquals(1, chartCount(firstBattle));
         assertEquals(7, ItemData.ofStarChart(firstBattle.items().get(0).toSpecialItem()).preview().tier());
@@ -179,9 +180,9 @@ class ChartFleetLootTest {
         ChartDrops.register(new JSONArray().put(rule("chart_fleet", 2f, 7)));
         storeLiveRun(7);
 
-        ItemDrops.SiteLoot calm = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("calm", RUN_ID, 100f), 100f,
+        Loot calm = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("calm", RUN_ID, 100f), 100f,
                 new ChartFleetLoot.Battle(100f, 1f, List.of()), new Random(3L));
-        ItemDrops.SiteLoot stormy = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("stormy", RUN_ID, 100f), 100f,
+        Loot stormy = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("stormy", RUN_ID, 100f), 100f,
                 new ChartFleetLoot.Battle(100f, 1f, List.of(StormFront.INSTANCE)), new Random(3L));
 
         assertEquals(2, chartCount(calm));
@@ -278,11 +279,11 @@ class ChartFleetLootTest {
         ChartRun run = storeLiveRun(6);
         ChartGenContext hoard = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_BOSS_SPOILS_PERCENT, 100f)));
 
-        ItemDrops.SiteLoot guardLoot = rollAlone(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 100f), run, hoard, 100f,
+        Loot guardLoot = rollAlone(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 100f), run, hoard, 100f,
                 new Random(1L));
-        ItemDrops.SiteLoot plainBossLoot = rollAlone(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
+        Loot plainBossLoot = rollAlone(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
                 ChartGenContext.none(), 200f, new Random(1L));
-        ItemDrops.SiteLoot hoardBossLoot = rollAlone(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, hoard, 200f,
+        Loot hoardBossLoot = rollAlone(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, hoard, 200f,
                 new Random(1L));
 
         assertEquals(1, chartCount(guardLoot));
@@ -296,9 +297,9 @@ class ChartFleetLootTest {
         ChartRun run = storeLiveRun(6);
         ChartGenContext recovery = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_BOSS_STAR_CHART_PERCENT, 100f)));
 
-        ItemDrops.SiteLoot guardLoot = rollAlone(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 100f), run, recovery, 100f,
+        Loot guardLoot = rollAlone(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 100f), run, recovery, 100f,
                 new Random(1L));
-        ItemDrops.SiteLoot bossLoot = rollAlone(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, recovery, 200f,
+        Loot bossLoot = rollAlone(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, recovery, 200f,
                 new Random(1L));
 
         assertEquals(1, chartCount(guardLoot));
@@ -316,9 +317,9 @@ class ChartFleetLootTest {
             DenseNebula.INSTANCE.battleWon(new AnomalyRun(run, null));
         }
 
-        ItemDrops.SiteLoot guardLoot = rollAlone(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 100f), run,
+        Loot guardLoot = rollAlone(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 100f), run,
                 ChartGenContext.none(), 100f, new Random(1L));
-        ItemDrops.SiteLoot bossLoot = rollAlone(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
+        Loot bossLoot = rollAlone(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
                 ChartGenContext.none(), 200f, new Random(1L));
 
         assertEquals(1, chartCount(guardLoot));
@@ -373,9 +374,9 @@ class ChartFleetLootTest {
             ChartRun run = storeLiveRun(6);
             CampaignFleetAPI guard = ChartFleetFixtures.chartFleet("guard", RUN_ID, 100f);
 
-            ItemDrops.SiteLoot halfKilled = rollAlone(sector, guard, run, ChartGenContext.none(), 50f, new Random(1L));
-            ItemDrops.SiteLoot rebuiltAndKilled = rollAlone(sector, guard, run, ChartGenContext.none(), 100f, new Random(1L));
-            ItemDrops.SiteLoot farmedAgain = rollAlone(sector, guard, run, ChartGenContext.none(), 100f, new Random(1L));
+            Loot halfKilled = rollAlone(sector, guard, run, ChartGenContext.none(), 50f, new Random(1L));
+            Loot rebuiltAndKilled = rollAlone(sector, guard, run, ChartGenContext.none(), 100f, new Random(1L));
+            Loot farmedAgain = rollAlone(sector, guard, run, ChartGenContext.none(), 100f, new Random(1L));
 
             assertEquals(Map.of(AUGMENTATION, 1), halfKilled.materials());
             assertEquals(Map.of(AUGMENTATION, 1), rebuiltAndKilled.materials());
@@ -455,18 +456,18 @@ class ChartFleetLootTest {
 
     @Test
     void theBossAddsNoCraftingItemsOfItsOwnBeyondItsDeploymentPoints() throws Exception {
-        ItemDrops.register(new JSONArray()
+        SalvageSiteDrops.register(new JSONArray()
                 .put(new JSONObject().put("site", ChartIds.BOSS_LOOT_SITE).put("chances", "0").put("uniqueChance", "0")));
         try {
             ChartRun run = storeLiveRun(6);
 
-            ItemDrops.SiteLoot bossLoot = rollAlone(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
+            Loot bossLoot = rollAlone(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
                     ChartGenContext.none(), 200f, new Random(1L));
 
             assertTrue(bossLoot.materials().isEmpty(), bossLoot.toString());
             assertTrue(run.isBossLootGuaranteed());
         } finally {
-            ItemDrops.clear();
+            SalvageSiteDrops.clear();
         }
     }
 

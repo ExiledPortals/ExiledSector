@@ -11,6 +11,7 @@ import exiledsector.items.ItemModifiers;
 import exiledsector.items.ModifierSources;
 import exiledsector.items.PoolEntry;
 import exiledsector.items.RolledModifier;
+import exiledsector.loot.DropOrigin;
 import exiledsector.modifiers.ModifierSlot;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -126,11 +127,11 @@ class ImmutableDropsTest {
         MemoryAPI memory = FakeChartContentEngine.memory();
         when(site.getMemoryWithoutUpdate()).thenReturn(memory);
 
-        assertSame(item, StarChartLootSource.INSTANCE.shapeSiteDrop(item, site));
+        assertSame(item, StarChartLootSource.INSTANCE.shape(item, DropOrigin.site(site), null));
 
         ImmutableDrops.mark(site, 1f);
 
-        assertEquals(1L, immutableCount(StarChartLootSource.INSTANCE.shapeSiteDrop(item, site)));
+        assertEquals(1L, immutableCount(StarChartLootSource.INSTANCE.shape(item, DropOrigin.site(site), null)));
         assertSame(item, ImmutableDrops.onSiteDrop(item, null));
     }
 }

@@ -13,12 +13,12 @@ import exiledsector.MockSector;
 import exiledsector.ProjectFiles;
 import exiledsector.charts.loot.StarChartLootSource;
 import exiledsector.charts.loot.DropType;
+import exiledsector.items.SalvageSiteDrops;
 import exiledsector.loot.LootMultipliers;
 import exiledsector.charts.ChartIds;
 import exiledsector.items.AnchorJanusGate;
 import exiledsector.items.CraftingDrops;
 import exiledsector.items.ItemDefinitions;
-import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemUnlock;
 import exiledsector.items.MaterialItems;
@@ -70,14 +70,14 @@ class ItemSalvageListenerTest {
         miscMock.when(() -> Misc.getSalvageSeed(any())).thenReturn(42L);
         ItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "volume_subroutine").put("kind", "MODSPEC_CACHE")
                 .put("rarity", "10")));
-        ItemDrops.register(new JSONArray()
+        SalvageSiteDrops.register(new JSONArray()
                 .put(new JSONObject().put("site", "station_research").put("chances", "1").put("uniqueChance", "0")));
         CraftingDrops.register(ProjectFiles.csvRows(CraftingDrops.DATA_PATH));
     }
 
     @AfterEach
     void tearDown() {
-        ItemDrops.clear();
+        SalvageSiteDrops.clear();
         ItemDefinitions.clear();
         CraftingDrops.clear();
         miscMock.close();

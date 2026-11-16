@@ -42,7 +42,7 @@ public enum SkillTreeSchematicDrops {
     }
 
     public static boolean rollSiteFind(String siteId, Random random, ItemChances chances) {
-        ItemDrops.Rule rule = ItemDrops.activeRule(siteId);
+        SalvageSiteDrops.Rule rule = SalvageSiteDrops.activeRule(siteId);
         return rule != null && !rule.chances().isEmpty() && random.nextFloat() < siteFindChance(rule.chances().get(0), chances.general());
     }
 

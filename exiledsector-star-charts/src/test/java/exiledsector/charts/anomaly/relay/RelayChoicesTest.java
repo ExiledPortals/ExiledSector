@@ -28,12 +28,12 @@ import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
-import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ModifierSources;
 import exiledsector.items.PoolEntry;
 import exiledsector.items.StarChartCipher;
 import exiledsector.items.StarChartFixtures;
+import exiledsector.loot.Loot;
 import exiledsector.modifiers.ModifierSlot;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -162,7 +162,7 @@ class RelayChoicesTest {
         assertEquals(Map.of("kited", 2), RelayChoices.scarStacks(RelayChoices.picks(run)));
         assertEquals(List.of(), RelayChoices.picks(nextStage));
         assertEquals(List.of(), RelayChoices.storedOffers(nextStage, RelayKind.NAV_BUOY));
-        assertSame(ItemDrops.SiteLoot.NONE, RelayChoices.bossReward(null, nextStage));
+        assertSame(Loot.NONE, RelayChoices.bossReward(null, nextStage));
     }
 
     @Test
@@ -207,7 +207,7 @@ class RelayChoicesTest {
         List<RelayChoice> picks = List.of(new RelayChoice(RewardGroup.LOW_CRAFTING, "kited"), new RelayChoice(RewardGroup.FEEDSTOCK, "rammed"),
                 new RelayChoice(RewardGroup.HULL_ITEM, "overloaded"));
 
-        ItemDrops.SiteLoot loot = RelayChoices.bossReward(picks, context(), run, new Random(7L));
+        Loot loot = RelayChoices.bossReward(picks, context(), run, new Random(7L));
 
         assertEquals(loot.materials(), RelayChoices.bossReward(picks, context(), run, new Random(7L)).materials());
         assertEquals(2, loot.materials().size());

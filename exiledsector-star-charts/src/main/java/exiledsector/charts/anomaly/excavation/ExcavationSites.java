@@ -20,7 +20,7 @@ import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.anomaly.StateFields;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.items.ItemDrops;
+import exiledsector.loot.Loot;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -88,7 +88,7 @@ public final class ExcavationSites implements LayoutShaper, ContentPlacer, RunPa
     }
 
     @Override
-    public ItemDrops.SiteLoot fleetItems(SectorAPI sector, CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, float share, Random random) {
+    public Loot fleetItems(SectorAPI sector, CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, float share, Random random) {
         return ExcavationLoot.fleetItems(fleet, context, run.tier(), share, random);
     }
 

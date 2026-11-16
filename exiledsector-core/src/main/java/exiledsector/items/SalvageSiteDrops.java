@@ -2,11 +2,10 @@ package exiledsector.items;
 
 import com.fs.starfarer.api.Global;
 import exiledsector.ModCsv;
-import exiledsector.ModSettings;
 import exiledsector.compat.SalvageSiteCompat;
 import exiledsector.data.CsvRows;
-import exiledsector.data.WeightedPick;
 import exiledsector.data.RandomRounding;
+import exiledsector.loot.Loot;
 import exiledsector.loot.LootMultipliers;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -14,7 +13,6 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -23,10 +21,8 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.ToDoubleFunction;
-import java.util.regex.Pattern;
 
-public final class ItemDrops {
+public final class SalvageSiteDrops {
 
     static final String DATA_PATH = "data/config/exiledSector/item_salvage.csv";
     public static final String TECH_MINING_FIRST_FIND = "techmining_first_find";
@@ -34,23 +30,17 @@ public final class ItemDrops {
     static final int MIN_FEEDSTOCK_PER_FIND = 1;
     static final int MAX_FEEDSTOCK_PER_FIND = 3;
     static final float CRAFTING_ITEM_SHARE = 0.7f;
-    static final float FACTION_SOURCE_WEIGHT_MULT = 2f;
-    public static final String BATTLE_FEEDSTOCK_FIELD_ID = "exiledSector_socketPartsPer100DeploymentPoints";
-    public static final int DEFAULT_BATTLE_FEEDSTOCK_PER_100_DP = 5;
-    public static final int MAX_BATTLE_FEEDSTOCK_PER_100_DP = 200;
-    private static final float DEPLOYMENT_POINTS_PER_SETTING_STEP = 100f;
-    private static final Pattern SAFE_ID = Pattern.compile("[A-Za-z0-9_.-]+");
-    private static final Logger LOG = Logger.getLogger(ItemDrops.class);
+    private static final Logger LOG = Logger.getLogger(SalvageSiteDrops.class);
     private static final AtomicReference<Map<String, Rule>> RULES = new AtomicReference<>(Map.of());
 
     record Rule(List<Float> chances, float uniqueChance, int feedstockMin, int feedstockMax, float hullItemShare, boolean otherMod) {
     }
 
-    private ItemDrops() {
+    private SalvageSiteDrops() {
     }
 
     public static void load() {
-        ModCsv.load("site", DATA_PATH, LOG, ItemDrops::register);
+        ModCsv.load("site", DATA_PATH, LOG, SalvageSiteDrops::register);
         for (SalvageSiteCompat.Source source : SalvageSiteCompat.enabledSources()) {
             try {
                 registerOtherMod(SalvageSiteCompat.rows(source));
@@ -110,6 +100,11 @@ public final class ItemDrops {
         return rule != null && rule.uniqueChance() > 0f;
     }
 
+    public static Loot rollSite(String siteId, Random random, LootMultipliers multipliers) {
+        List<ItemData> droppedItems = roll(siteId, random, multipliers.chances());
+        return new Loot(droppedItems, List.of(), rollMaterials(siteId, random, multipliers));
+    }
+
     public static List<ItemData> roll(String siteId, Random random, ItemChances chances) {
         return roll(siteId, random, chances, definition -> ItemUnlock.canDrop(definition, Global.getSector()));
     }
@@ -119,9 +114,9 @@ public final class ItemDrops {
         if (rule == null) {
             return new ArrayList<>();
         }
-        List<ItemData> droppedItems = rollCascade(rule, random, chances.general(), chances.rarity(), ItemDrops::pickBasic);
+        List<ItemData> droppedItems = rollCascade(rule, random, chances.general(), chances.rarity(), DroppableDefinitions::pickBasic);
         if (random.nextFloat() < rule.uniqueChance() * chances.general() * chances.rarity()) {
-            ItemDefinition uniqueDefinition = pickUniqueAtSite(siteId, random, uniqueAllowed);
+            ItemDefinition uniqueDefinition = DroppableDefinitions.pickUniqueAtSite(siteId, random, uniqueAllowed);
             if (uniqueDefinition != null && ItemTypes.keptFromSalvage(uniqueDefinition, random)) {
                 droppedItems.add(ItemData.rolled(uniqueDefinition, random.nextLong()));
             }
@@ -165,63 +160,14 @@ public final class ItemDrops {
         return feedstockFound;
     }
 
-    public static float battleFeedstockPerDeploymentPoint() {
-        return Math.max(0, ModSettings.intOr(BATTLE_FEEDSTOCK_FIELD_ID, DEFAULT_BATTLE_FEEDSTOCK_PER_100_DP)) / DEPLOYMENT_POINTS_PER_SETTING_STEP;
-    }
-
-    public static ItemDefinition pickBasic(Random random) {
-        return pick(random, ItemDrops::canBeGrown);
-    }
-
-    public static boolean canBeGrown(ItemDefinition definition) {
-        return definition.type() == ItemType.SUBROUTINE && !definition.unique() && isDroppable(definition);
-    }
-
-    public record SiteLoot(List<ItemData> items, List<ShipSchematic> upgrades, Map<String, Integer> materials) {
-
-        public static final SiteLoot NONE = new SiteLoot(List.of(), List.of(), Map.of());
-
-        public SiteLoot {
-            items = List.copyOf(items);
-            upgrades = List.copyOf(upgrades);
-            materials = Collections.unmodifiableMap(new LinkedHashMap<>(materials));
-        }
-
-        public boolean isEmpty() {
-            return items.isEmpty() && upgrades.isEmpty() && materials.isEmpty();
-        }
-
-        public SiteLoot plus(List<ItemData> moreItems, List<ShipSchematic> moreUpgrades, Map<String, Integer> moreMaterials) {
-            if (moreItems.isEmpty() && moreUpgrades.isEmpty() && moreMaterials.isEmpty()) {
-                return this;
-            }
-            List<ItemData> allItems = new ArrayList<>(items);
-            allItems.addAll(moreItems);
-            List<ShipSchematic> allUpgrades = new ArrayList<>(upgrades);
-            allUpgrades.addAll(moreUpgrades);
-            Map<String, Integer> allMaterials = new LinkedHashMap<>(materials);
-            moreMaterials.forEach((itemId, quantity) -> allMaterials.merge(itemId, quantity, Integer::sum));
-            return new SiteLoot(allItems, allUpgrades, allMaterials);
-        }
-
-        public SiteLoot plus(SiteLoot other) {
-            return plus(other.items(), other.upgrades(), other.materials());
-        }
-    }
-
-    public static SiteLoot rollSite(String siteId, Random random, LootMultipliers multipliers) {
-        List<ItemData> droppedItems = roll(siteId, random, multipliers.chances());
-        return new SiteLoot(droppedItems, List.of(), rollMaterials(siteId, random, multipliers));
-    }
-
     static void rollTargeted(Rule rule, Random random, float extraShare, float rarity, int sharedKinds, ItemKind kind,
-                                     List<ItemData> droppedItems) {
-        if (!(extraShare > 0f) || !hasDroppableBasic(kind)) {
+                             List<ItemData> droppedItems) {
+        if (!(extraShare > 0f) || !DroppableDefinitions.hasDroppableBasic(kind)) {
             return;
         }
         int extraCount = RandomRounding.round(expectedCascadeCount(rule.chances()) * extraShare / sharedKinds, random);
         for (int i = 0; i < extraCount; i++) {
-            ItemDefinition definition = pickBasicOfKind(kind, random);
+            ItemDefinition definition = DroppableDefinitions.pickBasicOfKind(kind, random);
             if (definition != null) {
                 droppedItems.add(ItemData.rolledWithRarity(definition, random.nextLong(), rarity));
             }
@@ -238,16 +184,7 @@ public final class ItemDrops {
         return expectedCount;
     }
 
-    public static boolean hasDroppableBasic(ItemKind kind) {
-        return hasDroppableBasic(kind, definition -> true);
-    }
-
-    static boolean hasDroppableBasic(ItemKind kind, Predicate<ItemDefinition> filter) {
-        return ItemDefinitions.all().stream().anyMatch(definition -> isDroppableBasic(definition, kind) && filter.test(definition));
-    }
-
-    static List<ItemData> rollCascade(Rule rule, Random random, float chanceMult, float rarity,
-                                                        Function<Random, ItemDefinition> picker) {
+    static List<ItemData> rollCascade(Rule rule, Random random, float chanceMult, float rarity, Function<Random, ItemDefinition> picker) {
         List<ItemData> droppedItems = new ArrayList<>();
         for (float chance : rule.chances()) {
             if (random.nextFloat() >= chance * chanceMult) {
@@ -259,93 +196,6 @@ public final class ItemDrops {
             }
         }
         return droppedItems;
-    }
-
-    public static ItemDefinition pickBasicOfKind(ItemKind kind, Random random) {
-        return pickBasicOfKind(kind, random, definition -> true);
-    }
-
-    public static ItemDefinition pickBasicOfKind(ItemKind kind, Random random, Predicate<ItemDefinition> filter) {
-        return pick(random, definition -> definition.kind() == kind && !definition.unique() && filter.test(definition));
-    }
-
-    public static ItemDefinition pickHullItemBasic(Random random) {
-        return pickHullItemBasic(random, definition -> true);
-    }
-
-    public static ItemDefinition pickHullItemBasic(Random random, Predicate<ItemDefinition> filter) {
-        List<ItemKind> kindsWithBasics = hullItemKindsWithBasics(filter);
-        return kindsWithBasics.isEmpty() ? null : pickBasicOfKind(kindsWithBasics.get(random.nextInt(kindsWithBasics.size())), random, filter);
-    }
-
-    public static List<ItemKind> hullItemKindsWithBasics() {
-        return hullItemKindsWithBasics(definition -> true);
-    }
-
-    private static List<ItemKind> hullItemKindsWithBasics(Predicate<ItemDefinition> filter) {
-        List<ItemKind> kindsWithBasics = new ArrayList<>();
-        for (ItemKind kind : ItemKind.sectionItemTypes()) {
-            if (hasDroppableBasic(kind, filter)) {
-                kindsWithBasics.add(kind);
-            }
-        }
-        return kindsWithBasics;
-    }
-
-    private static boolean isDroppableBasic(ItemDefinition definition, ItemKind kind) {
-        return definition.kind() == kind && !definition.unique() && isDroppable(definition);
-    }
-
-    public static boolean isDroppable(ItemDefinition definition) {
-        return ItemTypes.inGenericPools(definition) && definition.rarity() > 0f
-                && SAFE_ID.matcher(definition.id()).matches() && ItemVolumes.dropsNow(definition);
-    }
-
-    public static ItemDefinition pickUnique(Random random, Predicate<ItemDefinition> allowedUniques) {
-        return pickUniqueAtSite(null, random, allowedUniques);
-    }
-
-    public static ItemDefinition pickUniqueAtSite(String siteId, Random random, Predicate<ItemDefinition> allowedUniques) {
-        return pick(random, definition -> definition.unique() && UniqueSource.allowsSite(definition.uniqueSources(), siteId)
-                && allowedUniques.test(definition));
-    }
-
-    public static ItemDefinition pickUniqueFromAnySource(Random random, Predicate<ItemDefinition> allowedUniques) {
-        return pick(random, definition -> definition.unique() && allowedUniques.test(definition));
-    }
-
-    public static ItemDefinition pickUniqueFromFaction(String factionId, Random random, Predicate<ItemDefinition> allowedUniques) {
-        return pick(random, definition -> definition.unique() && UniqueSource.allowsSite(definition.uniqueSources(), null)
-                && allowedUniques.test(definition), definition -> factionWeight(definition, factionId));
-    }
-
-    public static double factionWeight(ItemDefinition definition, String factionId) {
-        float mult = UniqueSource.favoursFaction(definition.uniqueSources(), factionId) ? FACTION_SOURCE_WEIGHT_MULT : 1f;
-        return definition.rarity() * mult;
-    }
-
-    public static ItemDefinition pickOfType(Random random, ItemType type, Predicate<ItemDefinition> filter) {
-        List<ItemDefinition> candidates = new ArrayList<>();
-        for (ItemDefinition definition : ItemDefinitions.ofType(type)) {
-            if (filter.test(definition) && isDroppable(definition)) {
-                candidates.add(definition);
-            }
-        }
-        return WeightedPick.pick(candidates, ItemDefinition::rarity, random);
-    }
-
-    private static ItemDefinition pick(Random random, Predicate<ItemDefinition> filter) {
-        return pick(random, filter, ItemDefinition::rarity);
-    }
-
-    private static ItemDefinition pick(Random random, Predicate<ItemDefinition> filter, ToDoubleFunction<ItemDefinition> weightOf) {
-        List<ItemDefinition> candidates = new ArrayList<>();
-        for (ItemDefinition definition : ItemDefinitions.all()) {
-            if (filter.test(definition) && isDroppable(definition)) {
-                candidates.add(definition);
-            }
-        }
-        return WeightedPick.pick(candidates, weightOf, random);
     }
 
     public static void clear() {

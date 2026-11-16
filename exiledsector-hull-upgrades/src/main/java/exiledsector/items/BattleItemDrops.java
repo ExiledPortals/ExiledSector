@@ -3,9 +3,11 @@ package exiledsector.items;
 import exiledsector.data.RandomRounding;
 import exiledsector.loot.BattleLootRates;
 import exiledsector.loot.FleetLoss;
+import exiledsector.loot.Loot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.function.Predicate;
 
@@ -88,21 +90,21 @@ public final class BattleItemDrops {
         return loss.rules().multipliers().chances();
     }
 
-    public static HullItemDrops.SectionItemLoot roll(Battle battle, float dropMultiplier, float basicItemMult, Random random,
-                                                 Predicate<ItemDefinition> uniqueAllowed, boolean hullItemDropsOpen) {
+    public static Loot roll(Battle battle, float dropMultiplier, float basicItemMult, Random random,
+                            Predicate<ItemDefinition> uniqueAllowed, boolean hullItemDropsOpen) {
         if (battle == null || battle.isEmpty() || !(dropMultiplier > 0f)) {
-            return HullItemDrops.SectionItemLoot.NONE;
+            return Loot.NONE;
         }
         List<ItemData> items = new ArrayList<>();
-        List<ShipSchematic> upgrades = new ArrayList<>();
-        List<ItemKind> kindsWithBasics = hullItemDropsOpen ? ItemDrops.hullItemKindsWithBasics() : List.of();
+        List<ShipSchematic> schematics = new ArrayList<>();
+        List<ItemKind> kindsWithBasics = hullItemDropsOpen ? DroppableDefinitions.hullItemKindsWithBasics() : List.of();
         for (Planned planned : plan(battle, dropMultiplier, basicItemMult, kindsWithBasics, random, hullItemDropsOpen)) {
             if (planned.drop() == Drop.REFIT_SCHEMATIC) {
-                upgrades.add(RefitSchematic.roll(random));
+                schematics.add(RefitSchematic.roll(random));
             } else if (planned.drop() == Drop.MASTER_SCHEMATIC) {
-                upgrades.add(MasterSchematic.INSTANCE);
+                schematics.add(MasterSchematic.INSTANCE);
             } else if (planned.drop() == Drop.UNIQUE) {
-                ItemDefinition definition = ItemDrops.pickUniqueFromFaction(battle.uniqueFactionId(), random,
+                ItemDefinition definition = DroppableDefinitions.pickUniqueFromFaction(battle.uniqueFactionId(), random,
                         candidate -> candidate.isHullItem() && uniqueAllowed.test(candidate));
                 if (definition != null) {
                     items.add(overchargedIfPlanned(planned, ItemData.rolled(definition, random.nextLong()), random));
@@ -110,14 +112,14 @@ public final class BattleItemDrops {
             } else {
                 int modifierCount = planned.drop().modifierCount();
                 Predicate<ItemDefinition> holdsCount = candidate -> ItemRoller.canRollModifierCount(candidate, modifierCount);
-                ItemDefinition definition = planned.kind() == null ? ItemDrops.pickHullItemBasic(random, holdsCount)
-                        : ItemDrops.pickBasicOfKind(planned.kind(), random, holdsCount);
+                ItemDefinition definition = planned.kind() == null ? DroppableDefinitions.pickHullItemBasic(random, holdsCount)
+                        : DroppableDefinitions.pickBasicOfKind(planned.kind(), random, holdsCount);
                 if (definition != null) {
                     items.add(overchargedIfPlanned(planned, ItemData.rolledWithModifierCount(definition, random.nextLong(), modifierCount), random));
                 }
             }
         }
-        return new HullItemDrops.SectionItemLoot(items, upgrades);
+        return new Loot(items, schematics, Map.of());
     }
 
     private static ItemData overchargedIfPlanned(Planned planned, ItemData item, Random random) {

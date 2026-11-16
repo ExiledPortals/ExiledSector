@@ -29,12 +29,12 @@ class SubroutineKindPoolsTest {
                 .put(ItemFixtures.subroutineRow("relic", SubroutineKind.UNIQUE).put("unique", "true").put("lines", "HULL_MULT:5:5")
                         .put("source", "faction:pirates"))
                 .put(HullItemRows.row("plate", "armor_plating", "HULL_MULT:4:6")));
-        ItemDrops.register(new JSONArray().put(new JSONObject().put("site", "derelict").put("chances", "1;1;1").put("uniqueChance", "0")));
+        SalvageSiteDrops.register(new JSONArray().put(new JSONObject().put("site", "derelict").put("chances", "1;1;1").put("uniqueChance", "0")));
     }
 
     @AfterEach
     void tearDown() {
-        ItemDrops.clear();
+        SalvageSiteDrops.clear();
         ItemDefinitions.clear();
         NpcItems.clearCache();
     }
@@ -58,16 +58,16 @@ class SubroutineKindPoolsTest {
         Random random = new Random(7L);
         Set<String> dropped = new HashSet<>();
         for (int trial = 0; trial < TRIALS; trial++) {
-            for (ItemData item : ItemDrops.roll("derelict", random, ItemChances.of(1f), definition -> true)) {
+            for (ItemData item : SalvageSiteDrops.roll("derelict", random, ItemChances.of(1f), definition -> true)) {
                 dropped.add(item.definition().id());
             }
-            ItemDefinition sectionPick = ItemDrops.pickBasicOfKind(ItemKind.SUBROUTINE, random);
+            ItemDefinition sectionPick = DroppableDefinitions.pickBasicOfKind(ItemKind.SUBROUTINE, random);
             if (sectionPick != null) {
                 dropped.add(sectionPick.id());
             }
         }
 
         assertTrue(dropped.stream().noneMatch(List.of("volume_chip", "doctrine_chip", "bypass_chip")::contains), dropped.toString());
-        assertFalse(ItemDrops.hasDroppableBasic(ItemKind.SUBROUTINE));
+        assertFalse(DroppableDefinitions.hasDroppableBasic(ItemKind.SUBROUTINE));
     }
 }

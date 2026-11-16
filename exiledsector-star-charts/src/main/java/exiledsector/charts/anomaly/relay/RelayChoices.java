@@ -14,7 +14,7 @@ import exiledsector.charts.officer.scar.HullFacts;
 import exiledsector.charts.officer.scar.ScarMemory;
 import exiledsector.charts.officer.scar.Scars;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.items.ItemDrops;
+import exiledsector.loot.Loot;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -131,15 +131,15 @@ public final class RelayChoices {
         }
     }
 
-    static ItemDrops.SiteLoot bossReward(SectorAPI sector, ChartRun run) {
+    static Loot bossReward(SectorAPI sector, ChartRun run) {
         List<RelayChoice> picks = picks(run);
         if (picks.isEmpty()) {
-            return ItemDrops.SiteLoot.NONE;
+            return Loot.NONE;
         }
         return bossReward(picks, RewardContext.forRun(sector, run, run.contentFaction()), run, Seeds.random(REWARD_SEED_PREFIX + run.runId()));
     }
 
-    static ItemDrops.SiteLoot bossReward(List<RelayChoice> picks, RewardContext context, ChartRun run, Random random) {
+    static Loot bossReward(List<RelayChoice> picks, RewardContext context, ChartRun run, Random random) {
         List<RewardGroup> groups = picks.stream().map(RelayChoice::group).toList();
         return OfficerRewardDrop.roll(OfficerRewardPool.drawn(groups, context, random), run, random);
     }

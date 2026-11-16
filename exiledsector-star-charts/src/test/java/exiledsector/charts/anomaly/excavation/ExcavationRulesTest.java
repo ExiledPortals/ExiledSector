@@ -11,7 +11,7 @@ import exiledsector.charts.anomaly.RaidDangerLevels;
 import exiledsector.ProjectFiles;
 import exiledsector.items.CraftingDrops;
 import exiledsector.items.CraftingInhibitor;
-import exiledsector.items.ItemDrops;
+import exiledsector.loot.Loot;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -88,8 +88,8 @@ class ExcavationRulesTest {
 
             CampaignFleetAPI guardians = mock(CampaignFleetAPI.class);
             when(guardians.hasTag(ExcavationFleets.FLEET_TAG)).thenReturn(true);
-            ItemDrops.SiteLoot loot = ExcavationLoot.fleetItems(guardians, context, ChartTiers.LOWEST_TIER, 1f, new Random(1L));
-            assertTrue(loot.items().isEmpty() && loot.upgrades().isEmpty());
+            Loot loot = ExcavationLoot.fleetItems(guardians, context, ChartTiers.LOWEST_TIER, 1f, new Random(1L));
+            assertTrue(loot.items().isEmpty() && loot.schematics().isEmpty());
             assertEquals(2, loot.materials().values().stream().mapToInt(Integer::intValue).sum());
             assertNull(ExcavationLoot.fleetItems(guardians, context, ChartTiers.LOWEST_TIER, 0f, new Random(1L)));
         } finally {

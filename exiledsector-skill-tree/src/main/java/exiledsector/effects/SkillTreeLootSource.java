@@ -24,7 +24,10 @@ import exiledsector.items.SubroutineKind;
 import exiledsector.items.WormholeAnchorDefinitions;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.BattleLoot;
+import exiledsector.loot.DropOrigin;
 import exiledsector.loot.FleetDifficulty;
+import exiledsector.loot.Loot;
+import exiledsector.loot.LootDelivery;
 import exiledsector.loot.LootSource;
 import exiledsector.loot.MarketStock;
 import exiledsector.skills.SkillTreeSetting;
@@ -80,7 +83,7 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty, M
     @Override
     public void deliverBattleLoot(BattleLoot battle, CargoAPI playerCargo) {
         List<ItemData> drops = battleDrops(battle);
-        ItemLootListener.deliverItems(playerCargo, drops);
+        LootDelivery.deliver(playerCargo, new Loot(drops, List.of(), Map.of()), DropOrigin.ANYWHERE);
         WormholeAnchorDefinitions.recordFound(drops, Global.getSector(), BATTLE_FIND);
     }
 

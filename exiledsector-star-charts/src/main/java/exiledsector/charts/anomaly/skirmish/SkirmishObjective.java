@@ -10,7 +10,7 @@ import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.officer.OfficerDefeat;
 import exiledsector.charts.officer.turn.OfficerTurns;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.items.ItemDrops;
+import exiledsector.loot.Loot;
 import org.apache.log4j.Logger;
 
 import java.util.List;
@@ -72,9 +72,9 @@ public final class SkirmishObjective {
         SkirmishFlagships.record(AnomalyState.of(run, FactionSkirmish.ANOMALY_ID), flagship.fallen(how, fallOrder));
 
         boolean beatenByPlayer = how == FlagshipFall.BEATEN_BY_PLAYER;
-        ItemDrops.SiteLoot officerLoot = beatenByPlayer
+        Loot officerLoot = beatenByPlayer
                 ? OfficerDefeat.officerBeaten(sector, run, flagship.officerRecordId(), flagship.flagshipId())
-                : ItemDrops.SiteLoot.NONE;
+                : Loot.NONE;
         SkirmishFlagships after = SkirmishFlagships.of(run);
         boolean bothFallen = after == null || after.allFallen();
         if (beatenByPlayer && !bothFallen) {

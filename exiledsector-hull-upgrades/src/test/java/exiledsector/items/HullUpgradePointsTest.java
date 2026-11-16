@@ -35,7 +35,7 @@ class HullUpgradePointsTest {
     @AfterEach
     void tearDown() {
         HullUpgradesSetting.setPointsModeForTests(HullUpgradesSetting.PointsMode.REFIT_SCHEMATICS);
-        ItemDrops.clear();
+        SalvageSiteDrops.clear();
     }
 
     private static ShipProfile fit() {
@@ -176,14 +176,14 @@ class HullUpgradePointsTest {
 
     @Test
     void noSchematicDropsFromSalvageOrTechMiningWhileStarChartProgressIsOn() throws Exception {
-        ItemDrops.register(new JSONArray().put(new JSONObject().put("site", "station").put("chances", "1").put("uniqueChance", "0")));
+        SalvageSiteDrops.register(new JSONArray().put(new JSONObject().put("site", "station").put("chances", "1").put("uniqueChance", "0")));
         HullUpgradePoints.install();
         Random random = new Random(7L);
 
-        assertEquals(1, HullItemDrops.rollHullItemLoot("station", random, ItemChances.BASE, 1f).upgrades().size());
+        assertEquals(1, HullItemDrops.rollHullItemLoot("station", random, ItemChances.BASE, 1f).schematics().size());
         HullUpgradesSetting.setPointsModeForTests(HullUpgradesSetting.PointsMode.STAR_CHART_PROGRESS);
         for (int trial = 0; trial < 20; trial++) {
-            assertEquals(List.of(), HullItemDrops.rollHullItemLoot("station", random, ItemChances.BASE, 1f).upgrades());
+            assertEquals(List.of(), HullItemDrops.rollHullItemLoot("station", random, ItemChances.BASE, 1f).schematics());
         }
     }
 

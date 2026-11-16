@@ -21,7 +21,7 @@ import exiledsector.charts.loot.ChartLoot;
 import exiledsector.charts.loot.DropType;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.effects.ItemLootListener;
-import exiledsector.items.ItemDrops;
+import exiledsector.items.SalvageSiteDrops;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ final class ConvoyCargo {
         for (DropType type : ChartLoot.dropTypesFor(ConvoyRules.LOOT_SCOPE, tier)) {
             keys.add(CATEGORY_KEY_PREFIX + type.name().toLowerCase(Locale.ROOT));
         }
-        if (ItemDrops.hasRule(ConvoyRules.CARGO_SITE)) {
+        if (SalvageSiteDrops.hasRule(ConvoyRules.CARGO_SITE)) {
             keys.add(CATEGORY_KEY_PREFIX + "items");
         }
         if (ConvoyFeedstock.hasRows()) {

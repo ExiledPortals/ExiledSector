@@ -56,15 +56,7 @@ public interface LootSource {
     default void itemsBought(List<ItemData> boughtItems) {
     }
 
-    default ItemData shapeDrop(ItemData item, LocationAPI location) {
-        return item;
-    }
-
-    default ItemData shapeBattleDrop(ItemData item, LocationAPI location) {
-        return shapeDrop(item, location);
-    }
-
-    default ItemData shapeSiteDrop(ItemData item, SectorEntityToken site) {
+    default ItemData shape(ItemData item, DropOrigin origin, LocationAPI location) {
         return item;
     }
 }

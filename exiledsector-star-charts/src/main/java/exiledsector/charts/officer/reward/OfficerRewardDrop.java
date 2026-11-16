@@ -11,8 +11,8 @@ import exiledsector.data.RandomRounding;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
-import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemTypes;
+import exiledsector.loot.Loot;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -25,11 +25,11 @@ public final class OfficerRewardDrop {
     private OfficerRewardDrop() {
     }
 
-    public static ItemDrops.SiteLoot roll(List<CarriedItem> carried, ChartRun run, Random random) {
+    public static Loot roll(List<CarriedItem> carried, ChartRun run, Random random) {
         return roll(carried, run.tier(), ChartRunEffects.contextOf(run), random);
     }
 
-    public static ItemDrops.SiteLoot roll(List<CarriedItem> carried, int runTier, ChartGenContext context, Random random) {
+    public static Loot roll(List<CarriedItem> carried, int runTier, ChartGenContext context, Random random) {
         List<ItemData> items = new ArrayList<>();
         Map<String, Integer> materials = new LinkedHashMap<>();
         float craftingMult = craftingMult(context);
@@ -46,9 +46,9 @@ public final class OfficerRewardDrop {
             }
         }
         if (items.isEmpty() && materials.isEmpty()) {
-            return ItemDrops.SiteLoot.NONE;
+            return Loot.NONE;
         }
-        return new ItemDrops.SiteLoot(items, List.of(), materials);
+        return new Loot(items, List.of(), materials);
     }
 
     public static float craftingMult(ChartGenContext context) {

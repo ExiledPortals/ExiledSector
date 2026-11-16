@@ -18,9 +18,9 @@ import exiledsector.ModCsv;
 import exiledsector.data.WeightedPick;
 import exiledsector.data.RandomRounding;
 import exiledsector.items.CraftingDrops;
+import exiledsector.items.DroppableDefinitions;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemTypes;
 import exiledsector.items.StarChartCipher;
@@ -147,6 +147,10 @@ public final class ChartDrops {
         public boolean isEmpty() {
             return charts.isEmpty() && craftingItems.isEmpty() && catalysts.isEmpty();
         }
+
+        public exiledsector.loot.Loot asLoot() {
+            return new exiledsector.loot.Loot(charts, List.of(), materials());
+        }
     }
 
     private ChartDrops() {
@@ -248,7 +252,7 @@ public final class ChartDrops {
     }
 
     public static ItemDefinition pickChartAtTier(Random random, int tier) {
-        return ItemDrops.pickOfType(random, ItemType.STAR_CHART, definition -> ItemTypes.rollsAtTier(definition, tier));
+        return DroppableDefinitions.pickOfType(random, ItemType.STAR_CHART, definition -> ItemTypes.rollsAtTier(definition, tier));
     }
 
     static boolean isCipher(String itemId) {

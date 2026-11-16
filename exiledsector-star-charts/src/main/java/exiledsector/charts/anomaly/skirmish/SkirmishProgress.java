@@ -1,13 +1,13 @@
 package exiledsector.charts.anomaly.skirmish;
 
-import exiledsector.items.ItemDrops;
+import exiledsector.loot.Loot;
 
-public record SkirmishProgress(boolean flagshipFell, ItemDrops.SiteLoot loot, boolean bothFallen, Integer beatenOfficerId) {
+public record SkirmishProgress(boolean flagshipFell, Loot loot, boolean bothFallen, Integer beatenOfficerId) {
 
-    public static final SkirmishProgress NONE = new SkirmishProgress(false, ItemDrops.SiteLoot.NONE, false, null);
+    public static final SkirmishProgress NONE = new SkirmishProgress(false, Loot.NONE, false, null);
 
     public SkirmishProgress {
-        loot = loot == null ? ItemDrops.SiteLoot.NONE : loot;
+        loot = loot == null ? Loot.NONE : loot;
     }
 
     SkirmishProgress then(SkirmishProgress later) {

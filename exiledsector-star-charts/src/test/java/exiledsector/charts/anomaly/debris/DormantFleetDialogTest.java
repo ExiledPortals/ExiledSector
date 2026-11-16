@@ -11,9 +11,9 @@ import exiledsector.charts.anomaly.LiveAnomalyRuns;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartCampaignPlugin;
 import exiledsector.items.Engrams;
-import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemModifiers;
 import exiledsector.items.ModifierSources;
+import exiledsector.loot.Loot;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -108,7 +108,7 @@ class DormantFleetDialogTest {
         CampaignFleetAPI plain = debrisFleet(false);
         Random random = new Random(2L);
 
-        ItemDrops.SiteLoot first = DormantFleetLoot.craftingItemFor(corrupted, 3, ChartGenContext.none(), random);
+        Loot first = DormantFleetLoot.craftingItemFor(corrupted, 3, ChartGenContext.none(), random);
         assertEquals(Map.of(ENGRAM, 1), first.materials());
         assertTrue(DormantFleetLoot.craftingItemFor(corrupted, 3, ChartGenContext.none(), random).materials().isEmpty());
         assertTrue(DormantFleetLoot.craftingItemFor(plain, 3, ChartGenContext.none(), random).materials().isEmpty());

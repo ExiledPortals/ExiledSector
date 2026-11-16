@@ -3,6 +3,7 @@ package exiledsector.items;
 import exiledsector.loot.BattleLootRates;
 import exiledsector.loot.FleetLoss;
 import exiledsector.loot.FleetLootRules;
+import exiledsector.loot.Loot;
 import exiledsector.loot.LootMultipliers;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -222,7 +223,7 @@ class BattleItemDropsTest {
         int relics = 0;
         int lockedRelics = 0;
         for (int trial = 0; trial < 100; trial++) {
-            HullItemDrops.SectionItemLoot loot = BattleItemDrops.roll(bigBattle, 1f, 1f, random, definition -> true, true);
+            Loot loot = BattleItemDrops.roll(bigBattle, 1f, 1f, random, definition -> true, true);
             for (ItemData item : loot.items()) {
                 relics += HULL_RELIC.equals(item.definitionId()) ? 1 : 0;
                 assertFalse(THIN_BRIDGE.equals(item.definitionId()) && item.explicits().size() > 1, item.toString());
@@ -275,8 +276,8 @@ class BattleItemDropsTest {
     void aBattleWithNoLossesOrADropMultiplierOfZeroDropsNothing() {
         BattleItemDrops.Battle battle = battle(source(4000f));
 
-        assertEquals(HullItemDrops.SectionItemLoot.NONE, BattleItemDrops.roll(battle, 0f, 1f, new Random(1L), definition -> true, true));
-        assertEquals(HullItemDrops.SectionItemLoot.NONE, BattleItemDrops.roll(battle(), 1f, 1f, new Random(1L), definition -> true, true));
+        assertEquals(Loot.NONE, BattleItemDrops.roll(battle, 0f, 1f, new Random(1L), definition -> true, true));
+        assertEquals(Loot.NONE, BattleItemDrops.roll(battle(), 1f, 1f, new Random(1L), definition -> true, true));
     }
 
     @Test
@@ -321,9 +322,9 @@ class BattleItemDropsTest {
         Map<BattleItemDrops.Drop, Integer> closed = counts(BattleItemDrops.plan(battle, 1f, 1f, List.of(), neverLucky(), false));
 
         assertEquals(Map.of(BattleItemDrops.Drop.MASTER_SCHEMATIC, 1), closed);
-        HullItemDrops.SectionItemLoot loot = BattleItemDrops.roll(battle, 1f, 1f, neverLucky(),
+        Loot loot = BattleItemDrops.roll(battle, 1f, 1f, neverLucky(),
                 definition -> true, false);
-        assertEquals(List.of(MasterSchematic.INSTANCE), loot.upgrades());
+        assertEquals(List.of(MasterSchematic.INSTANCE), loot.schematics());
         assertTrue(loot.items().isEmpty());
     }
 
@@ -332,7 +333,7 @@ class BattleItemDropsTest {
         Random random = new Random(5L);
         Map<RefitSchematic, Integer> tierCounts = new EnumMap<>(RefitSchematic.class);
         for (int trial = 0; trial < battles; trial++) {
-            for (ShipSchematic upgrade : BattleItemDrops.roll(battle, 1f, 1f, random, definition -> true, true).upgrades()) {
+            for (ShipSchematic upgrade : BattleItemDrops.roll(battle, 1f, 1f, random, definition -> true, true).schematics()) {
                 if (upgrade instanceof RefitSchematic schematic) {
                     tierCounts.merge(schematic, 1, Integer::sum);
                 }

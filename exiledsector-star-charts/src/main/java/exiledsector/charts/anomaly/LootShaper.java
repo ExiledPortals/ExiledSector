@@ -8,7 +8,7 @@ import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
-import exiledsector.items.ItemDrops;
+import exiledsector.loot.Loot;
 
 import java.util.List;
 import java.util.Random;
@@ -19,20 +19,20 @@ public interface LootShaper extends ChartAnomaly {
         return List.of();
     }
 
-    default ItemDrops.SiteLoot fleetItems(SectorAPI sector, CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, float share, Random random) {
+    default Loot fleetItems(SectorAPI sector, CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, float share, Random random) {
         return null;
     }
 
-    default ItemDrops.SiteLoot extraFleetLoot(CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, Random random) {
-        return ItemDrops.SiteLoot.NONE;
+    default Loot extraFleetLoot(CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, Random random) {
+        return Loot.NONE;
     }
 
     default boolean holdsBackBossUnique(ChartRun run) {
         return false;
     }
 
-    default ItemDrops.SiteLoot bossDefeatedLoot(SectorAPI sector, ChartRun run) {
-        return ItemDrops.SiteLoot.NONE;
+    default Loot bossDefeatedLoot(SectorAPI sector, ChartRun run) {
+        return Loot.NONE;
     }
 
     default boolean holdsPlayerBattle() {

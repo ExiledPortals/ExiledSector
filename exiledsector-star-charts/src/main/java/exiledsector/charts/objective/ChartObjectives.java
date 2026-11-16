@@ -18,10 +18,11 @@ import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.atlas.AtlasProgress;
 import exiledsector.charts.officer.OfficerDefeat;
-import exiledsector.effects.ItemLootListener;
 import exiledsector.effects.PlayerEngagement;
-import exiledsector.items.ItemDrops;
 import exiledsector.loot.BattleEngagement;
+import exiledsector.loot.DropOrigin;
+import exiledsector.loot.Loot;
+import exiledsector.loot.LootDelivery;
 import exiledsector.loot.LootTaken;
 import org.apache.log4j.Logger;
 
@@ -123,7 +124,7 @@ public final class ChartObjectives {
         return memberId == null || fleet.getFleetData() == null || FleetMembers.withId(fleet, memberId) != null;
     }
 
-    public static ItemDrops.SiteLoot bossFellInBattle(SectorAPI sector, CampaignFleetAPI sourceFleet, List<FleetMemberAPI> lostMembers) {
+    public static Loot bossFellInBattle(SectorAPI sector, CampaignFleetAPI sourceFleet, List<FleetMemberAPI> lostMembers) {
         ChartRun run = trackedRun();
         if (run != null && SkirmishObjective.tracks(run)) {
             SkirmishProgress progress = afterSkirmishFall(sector, run, SkirmishObjective.fellInBattle(sector, run, sourceFleet, lostMembers));
@@ -131,7 +132,7 @@ public final class ChartObjectives {
         }
         if (run == null || sourceFleet == null || run.bossFlagshipId() == null || !isBossFleet(run, sourceFleet)
                 || lostMembers.stream().noneMatch(member -> run.bossFlagshipId().equals(member.getId()))) {
-            return ItemDrops.SiteLoot.NONE;
+            return Loot.NONE;
         }
         return completed(sector, run);
     }
@@ -170,10 +171,10 @@ public final class ChartObjectives {
         return progress.flagshipFell();
     }
 
-    private static void addToPlayerCargo(SectorAPI sector, ItemDrops.SiteLoot loot) {
+    private static void addToPlayerCargo(SectorAPI sector, Loot loot) {
         CampaignFleetAPI playerFleet = sector.getPlayerFleet();
         if (!loot.isEmpty() && playerFleet != null && playerFleet.getCargo() != null) {
-            ItemLootListener.addSiteLoot(playerFleet.getCargo(), loot);
+            LootDelivery.toLootScreen(playerFleet.getCargo(), loot, DropOrigin.ANYWHERE);
             LootTaken.report();
         }
     }
@@ -182,23 +183,23 @@ public final class ChartObjectives {
         if (!progress.bothFallen() || !run.markObjectiveComplete()) {
             return progress;
         }
-        ItemDrops.SiteLoot anomalyLoot = anomalyBossLoot(sector, run);
+        Loot anomalyLoot = anomalyBossLoot(sector, run);
         AtlasProgress.completed(sector, run, progress.beatenOfficerId());
         return new SkirmishProgress(true, progress.loot().plus(rewarded(sector, run)).plus(anomalyLoot), true, progress.beatenOfficerId());
     }
 
-    private static ItemDrops.SiteLoot completed(SectorAPI sector, ChartRun run) {
+    private static Loot completed(SectorAPI sector, ChartRun run) {
         if (!run.markObjectiveComplete()) {
-            return ItemDrops.SiteLoot.NONE;
+            return Loot.NONE;
         }
-        ItemDrops.SiteLoot officerLoot = OfficerDefeat.bossDefeated(sector, run);
-        ItemDrops.SiteLoot anomalyLoot = anomalyBossLoot(sector, run);
+        Loot officerLoot = OfficerDefeat.bossDefeated(sector, run);
+        Loot anomalyLoot = anomalyBossLoot(sector, run);
         AtlasProgress.completed(sector, run);
         return rewarded(sector, run).plus(officerLoot).plus(anomalyLoot);
     }
 
-    private static ItemDrops.SiteLoot rewarded(SectorAPI sector, ChartRun run) {
-        ItemDrops.SiteLoot rewardLoot = ItemDrops.SiteLoot.NONE;
+    private static Loot rewarded(SectorAPI sector, ChartRun run) {
+        Loot rewardLoot = Loot.NONE;
         try {
             ChartRewards.Reward reward = ChartRewards.grant(sector, run);
             if (reward != null) {
@@ -216,8 +217,8 @@ public final class ChartObjectives {
         return rewardLoot;
     }
 
-    private static ItemDrops.SiteLoot anomalyBossLoot(SectorAPI sector, ChartRun run) {
-        ItemDrops.SiteLoot anomalyLoot = ItemDrops.SiteLoot.NONE;
+    private static Loot anomalyBossLoot(SectorAPI sector, ChartRun run) {
+        Loot anomalyLoot = Loot.NONE;
         try {
             for (LootShaper anomaly : ChartAnomalies.inRun(run, LootShaper.class)) {
                 anomalyLoot = anomalyLoot.plus(anomaly.bossDefeatedLoot(sector, run));

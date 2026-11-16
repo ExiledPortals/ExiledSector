@@ -15,11 +15,9 @@ import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.LootShaper;
-import exiledsector.effects.ItemLootListener;
 import exiledsector.effects.TechMiningItemListener;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
-import exiledsector.items.ItemDrops;
 import exiledsector.items.MaterialItems;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.charts.run.ChartRun;
@@ -27,8 +25,11 @@ import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.loot.BattleLoot;
 import exiledsector.loot.BattleLootRates;
+import exiledsector.loot.DropOrigin;
 import exiledsector.loot.FleetDifficulties;
 import exiledsector.loot.FleetLootRules;
+import exiledsector.loot.Loot;
+import exiledsector.loot.LootDelivery;
 import exiledsector.loot.LootMultipliers;
 import exiledsector.loot.LootSource;
 import exiledsector.ui.cargo.MaterialDropAnnouncer;
@@ -121,7 +122,7 @@ public final class StarChartLootSource implements LootSource {
 
     @Override
     public void addEncounterLoot(BattleLoot battle, CargoAPI loot) {
-        ItemLootListener.addBattleSiteLoot(loot, battleLoot(battle));
+        LootDelivery.toLootScreen(loot, battleLoot(battle), DropOrigin.BATTLE);
         try {
             losses(battle).shipSalvage.addTo(loot, battle.encounterSalvage(), battle.random());
         } catch (RuntimeException e) {
@@ -131,22 +132,22 @@ public final class StarChartLootSource implements LootSource {
 
     @Override
     public void deliverBattleLoot(BattleLoot battle, CargoAPI playerCargo) {
-        ItemLootListener.deliverBattleSiteLoot(playerCargo, battleLoot(battle));
+        LootDelivery.deliver(playerCargo, battleLoot(battle), DropOrigin.BATTLE);
     }
 
-    private ItemDrops.SiteLoot battleLoot(BattleLoot battle) {
+    private Loot battleLoot(BattleLoot battle) {
         Losses losses = losses(battle);
         SectorAPI sector = Global.getSector();
         CampaignFleetAPI playerFleet = PlayerFleet.orNull();
         if (sector == null || playerFleet == null || !(losses.deploymentPointsDefeated > 0f)) {
-            return ItemDrops.SiteLoot.NONE;
+            return Loot.NONE;
         }
-        ItemDrops.SiteLoot chartLoot = ItemDrops.SiteLoot.NONE;
+        Loot chartLoot = Loot.NONE;
         if (battle.playerWon()) {
             try {
                 ChartDrops.Loot battleLoot = ChartDrops.forBattle(playerFleet.getContainingLocation(), losses.chartDpDefeated,
                         losses.highestDefeatedLevel, battle.independentRandom());
-                chartLoot = chartLoot.plus(battleLoot.charts(), List.of(), battleLoot.materials());
+                chartLoot = chartLoot.plus(battleLoot.asLoot());
             } catch (RuntimeException e) {
                 LOG.error("[ExiledSector] Rolling Star Chart battle drops failed", e);
             }
@@ -268,13 +269,20 @@ public final class StarChartLootSource implements LootSource {
     }
 
     @Override
-    public ItemData shapeDrop(ItemData item, LocationAPI location) {
+    public ItemData shape(ItemData item, DropOrigin origin, LocationAPI location) {
+        return switch (origin.kind()) {
+            case ANYWHERE -> shapedWhereFound(item, location);
+            case BATTLE -> shapedAfterBattle(item, location);
+            case SITE -> immutableAtSite(item, origin.site());
+        };
+    }
+
+    private static ItemData shapedWhereFound(ItemData item, LocationAPI location) {
         SectorAPI sector = Global.getSector();
         return shapedByRunAnomalies(sector, withBiomeModifier(sector, item, location), location);
     }
 
-    @Override
-    public ItemData shapeBattleDrop(ItemData item, LocationAPI location) {
+    private static ItemData shapedAfterBattle(ItemData item, LocationAPI location) {
         SectorAPI sector = Global.getSector();
         ItemData shaped = withBiomeModifier(sector, item, location);
         for (LootShaper anomaly : anomaliesHoldingBattle()) {
@@ -315,8 +323,7 @@ public final class StarChartLootSource implements LootSource {
         return shaped;
     }
 
-    @Override
-    public ItemData shapeSiteDrop(ItemData item, SectorEntityToken site) {
+    private static ItemData immutableAtSite(ItemData item, SectorEntityToken site) {
         try {
             return ImmutableDrops.onSiteDrop(item, site.getMemoryWithoutUpdate());
         } catch (RuntimeException e) {

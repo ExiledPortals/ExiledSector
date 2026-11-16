@@ -14,7 +14,7 @@ import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.items.ItemDrops;
+import exiledsector.loot.Loot;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
@@ -116,7 +116,7 @@ public final class AnomalousDebris implements ContentPlacer, RunParticipant, Loo
     }
 
     @Override
-    public ItemDrops.SiteLoot extraFleetLoot(CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, Random random) {
+    public Loot extraFleetLoot(CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, Random random) {
         return DormantFleetLoot.craftingItemFor(fleet, run.tier(), context, random);
     }
 
