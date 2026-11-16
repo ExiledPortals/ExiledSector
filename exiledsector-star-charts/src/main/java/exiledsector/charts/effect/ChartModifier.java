@@ -155,6 +155,21 @@ public enum ChartModifier implements ModifierEffect {
     CHART_ANOMALOUS_DEBRIS_CRAFTING_ITEM_QUANTITY_PERCENT("anomalous_debris.craftingItem", AnomalyLine.PERCENT),
     CHART_EXTRA_EXCAVATION_SITES("excavation_sites.extra", AnomalyLine.COUNT),
     CHART_EXCAVATION_LOOT_QUANTITY_PERCENT("excavation_sites.loot", AnomalyLine.PERCENT),
+    CHART_EXCAVATION_OPEN_SHAFTS("excavation_sites.openShafts", AnomalyLine.FLAG),
+    CHART_EXCAVATION_COLLAPSED_SHAFTS("excavation_sites.collapsedShafts", AnomalyLine.FLAG),
+    CHART_EXCAVATION_TWIN_SHAFTS("excavation_sites.twinShafts", AnomalyLine.FLAG),
+    CHART_EXCAVATION_GUARDIAN_INHIBITORS("excavation_sites.guardianInhibitors", AnomalyLine.COUNT),
+    CHART_EXCAVATION_RAID_INHIBITORS("excavation_sites.raidInhibitors", AnomalyLine.COUNT),
+    CHART_EXCAVATION_SECOND_CAVERN("excavation_sites.secondCavern", AnomalyLine.FLAG),
+    CHART_EXCAVATION_SECOND_CAVERN_FLEET_SIZE_MULT("excavation_sites.secondCavernSize", AnomalyLine.PERCENT),
+    CHART_EXCAVATION_SECOND_CAVERN_INHIBITORS("excavation_sites.secondCavernInhibitors", AnomalyLine.COUNT),
+    CHART_EXCAVATION_FRIGATES_ONLY("excavation_sites.frigatesOnly", AnomalyLine.FLAG),
+    CHART_EXCAVATION_CRUISERS_ALLOWED("excavation_sites.cruisersAllowed", AnomalyLine.FLAG),
+    CHART_EXCAVATION_SIGHT_RADIUS_PERCENT("excavation_sites.sightRadius", AnomalyLine.PERCENT_REDUCED_WHEN_NEGATIVE),
+    CHART_EXCAVATION_OPEN_SHAFT_INHIBITOR_PERCENT("excavation_sites.openShaftInhibitors", AnomalyLine.PERCENT),
+    CHART_EXCAVATION_CORRUPTIBLE_GUARDIANS("excavation_sites.corruptibleGuardians", AnomalyLine.FLAG),
+    CHART_EXCAVATION_CORRUPTED_GUARDIAN_INHIBITORS("excavation_sites.corruptedInhibitors", AnomalyLine.COUNT),
+    CHART_EXCAVATION_INHIBITOR_PERCENT_PER_DUST("excavation_sites.inhibitorsPerDust", AnomalyLine.PERCENT),
     CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT("storm_front.loot", AnomalyLine.PERCENT),
     CHART_STORM_STRIKE_FREQUENCY_PERCENT("storm_front.strikes", AnomalyLine.PERCENT),
     CHART_STORM_FRONT_SIZE_PERCENT("storm_front.size", AnomalyLine.PERCENT),
@@ -179,7 +194,8 @@ public enum ChartModifier implements ModifierEffect {
         PERCENT(false, null),
         PERCENT_REDUCED_WHEN_NEGATIVE(false, ".reduced"),
         PERCENT_INCREASED_WHEN_NEGATIVE(false, ".increased"),
-        COUNT(true, null);
+        COUNT(true, null),
+        FLAG(true, null);
 
         private final boolean counted;
         private final String negativeKeySuffix;
@@ -228,7 +244,7 @@ public enum ChartModifier implements ModifierEffect {
 
     ChartModifier(String anomalyTuningKey, AnomalyLine line) {
         this(line.counted, null, null, anomalyTuningKey, line.negativeKeySuffix,
-                (context, value) -> context.addAnomalyPercent(anomalyTuningKey, line.counted ? Math.round(value) : value), false);
+                (context, value) -> context.addAnomalyPercent(anomalyTuningKey, line.counted ? Math.round(value) : value), line == AnomalyLine.FLAG);
     }
 
     ChartModifier(boolean counted, DropType dropType, ChartFleetStat fleetStat, String anomalyTuningKey, String negativeKeySuffix,
