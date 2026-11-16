@@ -160,8 +160,7 @@ epithet. An officer who loses a challenge to another gains a scar from the winne
 A Relay Network places a Domain-era nav buoy, comm relay and sensor array. Each one syncs when you do what it listens
 for: hold station slowly beside the nav buoy, keep your transponder on near the comm relay, or fire an Active Sensor
 Burst near the sensor array. Restoring its power in its dialog, for supplies and heavy machinery, then wakes it. A woken
-nav buoy or sensor array gives you vanilla's objective bonus, a woken comm relay shows every fleet in the system, and
-each woken relay offers three choices of an item for the boss to drop and a scar for its flagship.
+nav buoy or sensor array gives you vanilla's objective bonus, and each woken relay offers three choices of an item for the boss to drop and a scar for its flagship.
 
 If all three relays wake, the network moves to a nearby system further from the Gateway when the run ends, stronger at
 each stage, for up to three stages. The last stage's boss drops a unique hull item or subroutine if all three of its

@@ -120,7 +120,7 @@ class AtlasNodeTextTest {
             List<AtlasLine> markers = AtlasNodeText.markers(generator, state, cell, generator.node(cell));
 
             assertTrue(markers.contains(new AtlasLine("Stage 3 of 3", AtlasLine.Tone.PLAIN)), markers.toString());
-            assertTrue(markers.contains(new AtlasLine("With all three relays awake, the Star Chart Boss drops a unique hull item or subroutine",
+            assertTrue(markers.contains(new AtlasLine("With every relay awake, the Star Chart Boss drops a unique hull item or subroutine",
                     AtlasLine.Tone.GOOD)), markers.toString());
             List<String> styledLines = markers.stream().filter(line -> line.tone() == AtlasLine.Tone.STYLED).map(AtlasLine::plain).toList();
             assertEquals(List.of("40% increased enemy fleet size",

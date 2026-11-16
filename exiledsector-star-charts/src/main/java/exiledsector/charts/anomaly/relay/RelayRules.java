@@ -24,6 +24,7 @@ public final class RelayRules {
     public static final int MIN_ONWARD_LANES = 1;
     public static final int MAX_ONWARD_LANES = 2;
     public static final int STAGES = 3;
+    public static final int MAX_RELAYS = 4;
 
     public record Cost(int supplies, int machinery) {
     }

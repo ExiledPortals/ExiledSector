@@ -12,6 +12,8 @@ import exiledsector.ExiledSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.content.ChartContent;
+import exiledsector.charts.effect.ChartModifier;
+import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.items.CraftingDrops;
 import exiledsector.charts.officer.reward.CraftingTier;
 import exiledsector.charts.officer.reward.OfficerRewardTable;
@@ -46,6 +48,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -89,7 +92,7 @@ class RelayChoicesTest {
         run.recordContent(new ChartContent(4, "pirates", "boss", 3, 2, List.of(RelayNetwork.ANOMALY_ID)));
         run.recordArrival();
         for (RelayKind kind : woken) {
-            RelayStates.add(run, kind, RelayStates.WOKEN);
+            RelayStates.add(run, RelaySlot.of(kind), RelayStates.WOKEN);
         }
         return run;
     }
@@ -98,9 +101,9 @@ class RelayChoicesTest {
     void aRelayOffersTheSameThreeDistinctPairsFromItsSeedWithScarsFittingTheBossHull() {
         ChartRun run = wokenRun("run1", RelayKind.NAV_BUOY);
 
-        List<RelayChoice> offers = RelayChoices.roll(context(), SHIELDED_WARSHIP, RelayChoices.offerRandom(run, RelayKind.NAV_BUOY));
+        List<RelayChoice> offers = RelayChoices.roll(context(), SHIELDED_WARSHIP, RelayChoices.Offering.PLAIN, RelayChoices.offerRandom(run, RelaySlot.of(RelayKind.NAV_BUOY)));
 
-        assertEquals(offers, RelayChoices.roll(context(), SHIELDED_WARSHIP, RelayChoices.offerRandom(run, RelayKind.NAV_BUOY)));
+        assertEquals(offers, RelayChoices.roll(context(), SHIELDED_WARSHIP, RelayChoices.Offering.PLAIN, RelayChoices.offerRandom(run, RelaySlot.of(RelayKind.NAV_BUOY))));
         assertEquals(3, offers.size());
         assertEquals(3, new HashSet<>(offers.stream().map(RelayChoice::group).toList()).size());
         assertEquals(3, new HashSet<>(offers.stream().map(RelayChoice::scarId).toList()).size());
@@ -112,56 +115,95 @@ class RelayChoicesTest {
     @Test
     void pairingNeverRepeatsAScar() {
         List<RelayChoice> paired = RelayChoices.paired(List.of(RewardGroup.LOW_CRAFTING, RewardGroup.ENGRAM, RewardGroup.UNIQUE),
-                List.of("kited", "rammed"), new Random(3L));
+                List.of("kited", "rammed"), 0, new Random(3L));
 
         assertEquals(2, paired.size());
         assertEquals(Set.of("kited", "rammed"), new HashSet<>(paired.stream().map(RelayChoice::scarId).toList()));
     }
 
     @Test
+    void crowdedChannelAndDoubleDownOfferMoreChoicesEachWithADifferentExtraScar() {
+        ChartRun run = wokenRun("run1", RelayKind.NAV_BUOY);
+        RelayChoices.Offering offering = RelayChoices.Offering.of(ChartGenContext.of(List.of(
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_RELAY_EXTRA_CHOICES, 1f),
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_RELAY_EXTRA_SCARS, 1f))));
+
+        List<RelayChoice> offers = RelayChoices.roll(context(), SHIELDED_WARSHIP, offering, RelayChoices.offerRandom(run, RelaySlot.of(RelayKind.NAV_BUOY)));
+
+        assertEquals(new RelayChoices.Offering(4, 1), offering);
+        assertEquals(4, offers.size());
+        for (RelayChoice offer : offers) {
+            assertEquals(1, offer.extraScarIds().size());
+            assertNotEquals(offer.scarId(), offer.extraScarIds().get(0));
+            assertFalse(ScarTable.row(offer.extraScarIds().get(0)).fittingEffects(SHIELDED_WARSHIP).isEmpty(), offer.extraScarIds().get(0));
+        }
+    }
+
+    @Test
+    void extraScarsAreDrawnWithoutRepeatsAndNeverCopyTheChoicesOwnScar() {
+        List<String> extras = RelayChoices.extraScarsFor(List.of("kited", "rammed", "overloaded"), "kited", 5, new Random(1L));
+
+        assertEquals(Set.of("rammed", "overloaded"), new HashSet<>(extras));
+        assertEquals(List.of(), RelayChoices.extraScarsFor(List.of("kited"), "kited", 1, new Random(1L)));
+    }
+
+    @Test
+    void choicesWithExtraScarsRoundTripAndOldTwoFieldChoicesStillRead() {
+        RelayChoice doubled = new RelayChoice(RewardGroup.ENGRAM, "kited", List.of("rammed"));
+
+        assertEquals(doubled, RelayChoice.decode(doubled.encoded()));
+        assertEquals(List.of("kited", "rammed"), doubled.scarIds());
+        assertEquals(new RelayChoice(RewardGroup.ENGRAM, "kited"), RelayChoice.decode(RewardGroup.ENGRAM.id() + ":kited"));
+        assertNull(RelayChoice.decode(RewardGroup.ENGRAM.id() + ":kited:"));
+        assertNull(RelayChoice.decode(RewardGroup.ENGRAM.id()));
+        assertEquals(Map.of("kited", 2, "rammed", 1), RelayChoices.scarStacks(List.of(doubled, new RelayChoice(RewardGroup.UNIQUE, "kited"))));
+        assertEquals(3, RelayChoices.scarCount(List.of(doubled, new RelayChoice(RewardGroup.UNIQUE, "kited"))));
+    }
+
+    @Test
     void storedOffersComeBackUnchangedAndAPickClosesTheRelaysChoice() {
         ChartRun run = wokenRun("run1", RelayKind.NAV_BUOY);
-        RelayChoices.storeOffers(run, RelayKind.NAV_BUOY, STORED_OFFERS);
+        RelayChoices.storeOffers(run, RelaySlot.of(RelayKind.NAV_BUOY), STORED_OFFERS);
 
-        assertEquals(STORED_OFFERS, RelayChoices.offers(null, run, RelayKind.NAV_BUOY));
-        assertTrue(RelayChoices.pick(null, run, RelayKind.NAV_BUOY, 1));
+        assertEquals(STORED_OFFERS, RelayChoices.offers(null, run, RelaySlot.of(RelayKind.NAV_BUOY)));
+        assertTrue(RelayChoices.pick(null, run, RelaySlot.of(RelayKind.NAV_BUOY), 1));
 
-        assertEquals(STORED_OFFERS.get(1), RelayChoices.picked(run, RelayKind.NAV_BUOY));
-        assertFalse(RelayChoices.open(run, RelayKind.NAV_BUOY));
-        assertEquals(List.of(), RelayChoices.offers(null, run, RelayKind.NAV_BUOY));
-        assertFalse(RelayChoices.pick(null, run, RelayKind.NAV_BUOY, 0));
+        assertEquals(STORED_OFFERS.get(1), RelayChoices.picked(run, RelaySlot.of(RelayKind.NAV_BUOY)));
+        assertFalse(RelayChoices.open(run, RelaySlot.of(RelayKind.NAV_BUOY)));
+        assertEquals(List.of(), RelayChoices.offers(null, run, RelaySlot.of(RelayKind.NAV_BUOY)));
+        assertFalse(RelayChoices.pick(null, run, RelaySlot.of(RelayKind.NAV_BUOY), 0));
         assertEquals(List.of(STORED_OFFERS.get(1)), RelayChoices.picks(run));
     }
 
     @Test
     void noChoiceIsOpenForADormantRelayARunWithoutABossOrOnceTheBossIsDestroyed() {
         ChartRun run = wokenRun("run1", RelayKind.NAV_BUOY);
-        assertTrue(RelayChoices.open(run, RelayKind.NAV_BUOY));
-        assertFalse(RelayChoices.open(run, RelayKind.COMM_RELAY));
+        assertTrue(RelayChoices.open(run, RelaySlot.of(RelayKind.NAV_BUOY)));
+        assertFalse(RelayChoices.open(run, RelaySlot.of(RelayKind.COMM_RELAY)));
 
         ChartRun bossless = new ChartRun("run2", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
         bossless.recordContent(new ChartContent(4, "pirates", null, 3, 2, List.of(RelayNetwork.ANOMALY_ID)));
-        RelayStates.add(bossless, RelayKind.NAV_BUOY, RelayStates.WOKEN);
-        assertFalse(RelayChoices.open(bossless, RelayKind.NAV_BUOY));
+        RelayStates.add(bossless, RelaySlot.of(RelayKind.NAV_BUOY), RelayStates.WOKEN);
+        assertFalse(RelayChoices.open(bossless, RelaySlot.of(RelayKind.NAV_BUOY)));
 
         run.markObjectiveComplete();
-        assertFalse(RelayChoices.open(run, RelayKind.NAV_BUOY));
+        assertFalse(RelayChoices.open(run, RelaySlot.of(RelayKind.NAV_BUOY)));
     }
 
     @Test
     void picksBelongOnlyToTheRunTheyWereMadeIn() {
         ChartRun run = wokenRun("run1", RelayKind.NAV_BUOY, RelayKind.SENSOR_ARRAY);
-        RelayChoices.storeOffers(run, RelayKind.NAV_BUOY, STORED_OFFERS);
-        RelayChoices.storeOffers(run, RelayKind.SENSOR_ARRAY, STORED_OFFERS);
-        RelayChoices.pick(null, run, RelayKind.NAV_BUOY, 0);
-        RelayChoices.pick(null, run, RelayKind.SENSOR_ARRAY, 0);
+        RelayChoices.storeOffers(run, RelaySlot.of(RelayKind.NAV_BUOY), STORED_OFFERS);
+        RelayChoices.storeOffers(run, RelaySlot.of(RelayKind.SENSOR_ARRAY), STORED_OFFERS);
+        RelayChoices.pick(null, run, RelaySlot.of(RelayKind.NAV_BUOY), 0);
+        RelayChoices.pick(null, run, RelaySlot.of(RelayKind.SENSOR_ARRAY), 0);
 
         ChartRun nextStage = wokenRun("run2", RelayKind.NAV_BUOY);
 
         assertEquals(Map.of("kited", 2), RelayChoices.scarStacks(RelayChoices.picks(run)));
         assertEquals(List.of(), RelayChoices.picks(nextStage));
-        assertEquals(List.of(), RelayChoices.storedOffers(nextStage, RelayKind.NAV_BUOY));
-        assertSame(ItemDrops.SiteLoot.NONE, RelayChoices.bossReward(null, nextStage));
+        assertEquals(List.of(), RelayChoices.storedOffers(nextStage, RelaySlot.of(RelayKind.NAV_BUOY)));
+        assertSame(ItemDrops.SiteLoot.NONE, RelayBossReward.bossReward(null, nextStage));
     }
 
     @Test
@@ -184,12 +226,12 @@ class RelayChoicesTest {
         when(system.getFleets()).thenReturn(List.of(boss));
         SectorAPI sector = mock(SectorAPI.class);
         when(sector.getStarSystem(run.systemId())).thenReturn(system);
-        RelayChoices.storeOffers(run, RelayKind.NAV_BUOY, STORED_OFFERS);
-        RelayChoices.storeOffers(run, RelayKind.COMM_RELAY, STORED_OFFERS);
+        RelayChoices.storeOffers(run, RelaySlot.of(RelayKind.NAV_BUOY), STORED_OFFERS);
+        RelayChoices.storeOffers(run, RelaySlot.of(RelayKind.COMM_RELAY), STORED_OFFERS);
 
-        RelayChoices.pick(sector, run, RelayKind.NAV_BUOY, 0);
+        RelayChoices.pick(sector, run, RelaySlot.of(RelayKind.NAV_BUOY), 0);
         assertEquals(Map.of("kited", 1), ScarMemory.scarsOn(bossMemory, "boss-flagship"));
-        RelayChoices.pick(sector, run, RelayKind.COMM_RELAY, 0);
+        RelayChoices.pick(sector, run, RelaySlot.of(RelayKind.COMM_RELAY), 0);
 
         assertEquals("boss-flagship", ScarMemory.runFlagshipId(bossMemory));
         assertNull(Scars.flagshipIdOf(boss));
@@ -206,9 +248,9 @@ class RelayChoicesTest {
         List<RelayChoice> picks = List.of(new RelayChoice(RewardGroup.LOW_CRAFTING, "kited"), new RelayChoice(RewardGroup.FEEDSTOCK, "rammed"),
                 new RelayChoice(RewardGroup.HULL_ITEM, "overloaded"));
 
-        ItemDrops.SiteLoot loot = RelayChoices.bossReward(picks, context(), run, new Random(7L));
+        ItemDrops.SiteLoot loot = RelayBossReward.bossReward(picks, context(), run.tier(), RelayTuning.of(run), new Random(7L));
 
-        assertEquals(loot.materials(), RelayChoices.bossReward(picks, context(), run, new Random(7L)).materials());
+        assertEquals(loot.materials(), RelayBossReward.bossReward(picks, context(), run.tier(), RelayTuning.of(run), new Random(7L)).materials());
         assertEquals(2, loot.materials().size());
         assertTrue(loot.materials().keySet().stream().anyMatch(itemId -> OfficerRewardTable.categoryOf(itemId) == RewardKind.CRAFTING_ITEM
                 && OfficerRewardTable.tierOf(itemId) == CraftingTier.LOW), loot.materials().toString());

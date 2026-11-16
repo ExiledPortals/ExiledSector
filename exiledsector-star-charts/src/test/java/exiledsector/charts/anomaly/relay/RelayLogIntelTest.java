@@ -58,8 +58,8 @@ class RelayLogIntelTest {
     @Test
     void theIntelListsTheLogOfEveryAwakeRelayForTheStage() {
         ChartRun run = ChartRelaysTest.liveRelayRun();
-        RelayStates.add(run, RelayKind.SENSOR_ARRAY, RelayStates.WOKEN);
-        RelayStates.add(run, RelayKind.NAV_BUOY, RelayStates.WOKEN);
+        RelayStates.add(run, RelaySlot.of(RelayKind.SENSOR_ARRAY), RelayStates.WOKEN);
+        RelayStates.add(run, RelaySlot.of(RelayKind.NAV_BUOY), RelayStates.WOKEN);
         AtlasAnomalyRecord.Chain last = new AtlasAnomalyRecord.Chain(3, 3, null);
 
         List<RelayLogIntel.Entry> entries = RelayLogIntel.entries(run, last);

@@ -83,46 +83,94 @@ class ChartRelaysTest {
         SectorEntityToken buoy = RelayFixtures.relay(RelayKind.NAV_BUOY, new Vector2f());
         buoy.getMemoryWithoutUpdate().set(MemFlags.OBJECTIVE_NON_FUNCTIONAL, true);
 
-        assertTrue(ChartRelays.wake(run, system, buoy, RelayKind.NAV_BUOY));
+        assertTrue(ChartRelays.wake(run, system, buoy, RelaySlot.of(RelayKind.NAV_BUOY)));
 
         verify(buoy).setFaction(Factions.PLAYER);
         assertFalse(buoy.getMemoryWithoutUpdate().contains(MemFlags.OBJECTIVE_NON_FUNCTIONAL));
-        assertTrue(RelayStates.isWoken(run, RelayKind.NAV_BUOY));
-        assertFalse(RelayStates.isWoken(run, RelayKind.SENSOR_ARRAY));
-        assertFalse(ChartRelays.wake(run, system, buoy, RelayKind.NAV_BUOY));
+        assertTrue(RelayStates.isWoken(run, RelaySlot.of(RelayKind.NAV_BUOY)));
+        assertFalse(RelayStates.isWoken(run, RelaySlot.of(RelayKind.SENSOR_ARRAY)));
+        assertFalse(ChartRelays.wake(run, system, buoy, RelaySlot.of(RelayKind.NAV_BUOY)));
         verify(system, never()).getFleets();
     }
 
+    static ChartRun fullArrayRun() {
+        ChartRun run = liveRelayRun();
+        run.recordAtlasTreeLines(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_RELAY_FULL_ARRAY, 1f)));
+        return run;
+    }
+
     @Test
-    void aWokenCommRelayRevealsEveryOtherFleetToThePlayerOnly() {
-        ChartRun run = run();
+    void aWokenCommRelayNoLongerRevealsFleetsOnItsOwn() {
+        ChartRun run = liveRelayRun();
+        StarSystemAPI system = mock(StarSystemAPI.class);
+        CampaignFleetAPI enemy = RelayFixtures.fleet(false, new Vector2f(9000f, 0f));
+        when(system.getFleets()).thenReturn(List.of(enemy));
+        SectorEntityToken relay = RelayFixtures.relay(RelayKind.COMM_RELAY, new Vector2f());
+        relay.getMemoryWithoutUpdate().set(MemFlags.OBJECTIVE_NON_FUNCTIONAL, true);
+        RelayStates.add(run, RelaySlot.of(RelayKind.NAV_BUOY), RelayStates.WOKEN);
+        RelayStates.add(run, RelaySlot.of(RelayKind.SENSOR_ARRAY), RelayStates.WOKEN);
+
+        assertTrue(ChartRelays.wake(run, system, relay, RelaySlot.of(RelayKind.COMM_RELAY)));
+
+        assertTrue(RelayStates.allWoken(run));
+        verify(enemy, never()).setExtendedDetectedAtRange(ChartFleetVisibility.REVEAL_EXTENDED_RANGE);
+        assertTrue(relay.getMemoryWithoutUpdate().getBoolean(MemFlags.OBJECTIVE_NON_FUNCTIONAL));
+    }
+
+    @Test
+    void fullArrayRevealsEveryOtherFleetToThePlayerOnlyOnceTheLastRelayWakes() {
+        ChartRun run = fullArrayRun();
         StarSystemAPI system = mock(StarSystemAPI.class);
         CampaignFleetAPI player = RelayFixtures.fleet(true, new Vector2f());
         CampaignFleetAPI enemy = RelayFixtures.fleet(false, new Vector2f(9000f, 0f));
         when(system.getFleets()).thenReturn(List.of(player, enemy));
-        SectorEntityToken relay = RelayFixtures.relay(RelayKind.COMM_RELAY, new Vector2f());
-        relay.getMemoryWithoutUpdate().set(MemFlags.OBJECTIVE_NON_FUNCTIONAL, true);
 
-        assertTrue(ChartRelays.wake(run, system, relay, RelayKind.COMM_RELAY));
+        assertTrue(ChartRelays.wake(run, system, RelayFixtures.relay(RelayKind.COMM_RELAY, new Vector2f()), RelaySlot.of(RelayKind.COMM_RELAY)));
+        assertTrue(ChartRelays.wake(run, system, RelayFixtures.relay(RelayKind.NAV_BUOY, new Vector2f()), RelaySlot.of(RelayKind.NAV_BUOY)));
+        assertFalse(ChartRelays.fullArrayRevealing(run));
+        verify(enemy, never()).setExtendedDetectedAtRange(ChartFleetVisibility.REVEAL_EXTENDED_RANGE);
 
+        assertTrue(ChartRelays.wake(run, system, RelayFixtures.relay(RelayKind.SENSOR_ARRAY, new Vector2f()), RelaySlot.of(RelayKind.SENSOR_ARRAY)));
+
+        assertTrue(ChartRelays.fullArrayRevealing(run));
         assertEquals(ChartFleetVisibility.REVEAL_RANGE_MULT, enemy.getStats().getDynamic().getStat(Stats.DETECTED_BY_PLAYER_RANGE_MULT).getModifiedValue(), 0.001f);
         verify(enemy).setExtendedDetectedAtRange(ChartFleetVisibility.REVEAL_EXTENDED_RANGE);
         assertEquals(1f, player.getStats().getDynamic().getStat(Stats.DETECTED_BY_PLAYER_RANGE_MULT).getModifiedValue(), 0.001f);
         verify(player, never()).setExtendedDetectedAtRange(ChartFleetVisibility.REVEAL_EXTENDED_RANGE);
-        assertTrue(relay.getMemoryWithoutUpdate().getBoolean(MemFlags.OBJECTIVE_NON_FUNCTIONAL));
+    }
+
+    @Test
+    void withAnExtraRelayFullArrayWaitsForTheFourth() {
+        ChartRun run = fullArrayRun();
+        RelayStates.recordExtraRelay(RelayStates.of(run), RelayKind.NAV_BUOY);
+        StarSystemAPI system = mock(StarSystemAPI.class);
+        CampaignFleetAPI enemy = RelayFixtures.fleet(false, new Vector2f(9000f, 0f));
+        when(system.getFleets()).thenReturn(List.of(enemy));
+        for (RelayKind kind : RelayKind.values()) {
+            ChartRelays.wake(run, system, RelayFixtures.relay(kind, new Vector2f()), RelaySlot.of(kind));
+        }
+
+        assertEquals(4, RelayStates.slots(run).size());
+        assertFalse(RelayStates.allWoken(run));
+        verify(enemy, never()).setExtendedDetectedAtRange(ChartFleetVisibility.REVEAL_EXTENDED_RANGE);
+
+        assertTrue(ChartRelays.wake(run, system, RelayFixtures.relay(RelayKind.NAV_BUOY, new Vector2f()), RelaySlot.extraOf(RelayKind.NAV_BUOY)));
+
+        assertTrue(RelayStates.allWoken(run));
+        verify(enemy).setExtendedDetectedAtRange(ChartFleetVisibility.REVEAL_EXTENDED_RANGE);
     }
 
     @Test
     void relayFlagsLiveOnTheRunRecord() {
         ChartRun run = run();
-        assertEquals(0, RelayStates.flags(run, RelayKind.COMM_RELAY));
+        assertEquals(0, RelayStates.flags(run, RelaySlot.of(RelayKind.COMM_RELAY)));
 
-        RelayStates.add(run, RelayKind.COMM_RELAY, RelayStates.PAID);
-        assertFalse(RelayStates.readyToWake(run, RelayKind.COMM_RELAY));
-        RelayStates.add(run, RelayKind.COMM_RELAY, RelayStates.SYNCED);
-        assertTrue(RelayStates.readyToWake(run, RelayKind.COMM_RELAY));
-        assertEquals(RelayStates.PAID | RelayStates.SYNCED, RelayStates.flags(run, RelayKind.COMM_RELAY));
-        assertEquals(0, RelayStates.flags(run, RelayKind.NAV_BUOY));
+        RelayStates.add(run, RelaySlot.of(RelayKind.COMM_RELAY), RelayStates.PAID);
+        assertFalse(RelayStates.readyToWake(run, RelaySlot.of(RelayKind.COMM_RELAY)));
+        RelayStates.add(run, RelaySlot.of(RelayKind.COMM_RELAY), RelayStates.SYNCED);
+        assertTrue(RelayStates.readyToWake(run, RelaySlot.of(RelayKind.COMM_RELAY)));
+        assertEquals(RelayStates.PAID | RelayStates.SYNCED, RelayStates.flags(run, RelaySlot.of(RelayKind.COMM_RELAY)));
+        assertEquals(0, RelayStates.flags(run, RelaySlot.of(RelayKind.NAV_BUOY)));
         assertFalse(RelayStates.allWoken(run));
     }
 
@@ -195,17 +243,17 @@ class ChartRelaysTest {
         RelayRules.Cost cost = new RelayRules.Cost(30, 10);
 
         assertFalse(ChartRelays.canAfford(cargo, cost));
-        assertFalse(ChartRelays.restorePower(run, cargo, system, array, RelayKind.SENSOR_ARRAY, cost));
+        assertFalse(ChartRelays.restorePower(run, cargo, system, array, RelaySlot.of(RelayKind.SENSOR_ARRAY), cost));
         when(cargo.getCommodityQuantity(Commodities.HEAVY_MACHINERY)).thenReturn(10f);
-        RelayStates.add(run, RelayKind.SENSOR_ARRAY, RelayStates.SYNCED);
+        RelayStates.add(run, RelaySlot.of(RelayKind.SENSOR_ARRAY), RelayStates.SYNCED);
 
-        assertTrue(ChartRelays.restorePower(run, cargo, system, array, RelayKind.SENSOR_ARRAY, cost));
+        assertTrue(ChartRelays.restorePower(run, cargo, system, array, RelaySlot.of(RelayKind.SENSOR_ARRAY), cost));
 
         verify(cargo).removeSupplies(30f);
         verify(cargo).removeCommodity(Commodities.HEAVY_MACHINERY, 10f);
-        assertTrue(RelayStates.isWoken(run, RelayKind.SENSOR_ARRAY));
+        assertTrue(RelayStates.isWoken(run, RelaySlot.of(RelayKind.SENSOR_ARRAY)));
         verify(array).setFaction(Factions.PLAYER);
-        assertFalse(ChartRelays.restorePower(run, cargo, system, array, RelayKind.SENSOR_ARRAY, cost));
+        assertFalse(ChartRelays.restorePower(run, cargo, system, array, RelaySlot.of(RelayKind.SENSOR_ARRAY), cost));
     }
 
     @Test
@@ -223,12 +271,12 @@ class ChartRelaysTest {
         SectorEntityToken array = RelayFixtures.relay(RelayKind.SENSOR_ARRAY, new Vector2f());
         SectorEntityToken buoy = RelayFixtures.relay(RelayKind.NAV_BUOY, new Vector2f(9000f, 0f));
         when(system.getEntitiesWithTag(RelayNetwork.RELAY_TAG)).thenReturn(List.of(array, buoy));
-        RelayStates.add(run, RelayKind.SENSOR_ARRAY, RelayStates.PAID);
+        RelayStates.add(run, RelaySlot.of(RelayKind.SENSOR_ARRAY), RelayStates.PAID);
 
         assertTrue(ChartRelays.check(mockSector.sector, new AnomalyRun(run, system)));
 
-        assertTrue(RelayStates.isWoken(run, RelayKind.SENSOR_ARRAY));
-        assertFalse(RelayStates.has(run, RelayKind.NAV_BUOY, RelayStates.SYNCED));
+        assertTrue(RelayStates.isWoken(run, RelaySlot.of(RelayKind.SENSOR_ARRAY)));
+        assertFalse(RelayStates.has(run, RelaySlot.of(RelayKind.NAV_BUOY), RelayStates.SYNCED));
         assertFalse(ChartRelays.check(mockSector.sector, new AnomalyRun(run, system)));
         when(player.getContainingLocation()).thenReturn(mock(StarSystemAPI.class));
         assertFalse(ChartRelays.check(mockSector.sector, new AnomalyRun(run, system)));
@@ -249,18 +297,23 @@ class ChartRelaysTest {
     }
 
     @Test
-    void aWokenCommRelayAlsoRevealsFleetsThatTurnUpLater() {
-        ChartRun run = liveRelayRun();
+    void aFullArrayAlsoRevealsFleetsThatTurnUpLater() {
+        ChartRun run = fullArrayRun();
         ChartRuns.store(run);
         StarSystemAPI system = mock(StarSystemAPI.class);
         when(mockSector.sector.getStarSystem(run.systemId())).thenReturn(system);
         CampaignFleetAPI player = RelayFixtures.fleet(true, new Vector2f());
         when(player.getContainingLocation()).thenReturn(system);
         when(mockSector.sector.getPlayerFleet()).thenReturn(player);
-        RelayStates.add(run, RelayKind.COMM_RELAY, RelayStates.WOKEN);
         CampaignFleetAPI defenders = RelayFixtures.fleet(false, new Vector2f(7000f, 0f));
         when(system.getFleets()).thenReturn(List.of(player, defenders));
+        RelayStates.add(run, RelaySlot.of(RelayKind.COMM_RELAY), RelayStates.WOKEN);
+        RelayStates.add(run, RelaySlot.of(RelayKind.NAV_BUOY), RelayStates.WOKEN);
 
+        ChartRelays.check(mockSector.sector, new AnomalyRun(run, system));
+        verify(defenders, never()).setExtendedDetectedAtRange(ChartFleetVisibility.REVEAL_EXTENDED_RANGE);
+
+        RelayStates.add(run, RelaySlot.of(RelayKind.SENSOR_ARRAY), RelayStates.WOKEN);
         ChartRelays.check(mockSector.sector, new AnomalyRun(run, system));
 
         verify(defenders).setExtendedDetectedAtRange(ChartFleetVisibility.REVEAL_EXTENDED_RANGE);

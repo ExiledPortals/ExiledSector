@@ -14,18 +14,9 @@ import java.util.List;
 final class RelayText {
 
     static final String PREFIX = "chart.anomaly.relay_network.";
+    static final int LARGEST_WORDED_NUMBER = 6;
 
     private RelayText() {
-    }
-
-    static int awake(ChartRun run) {
-        int awake = 0;
-        for (RelayKind kind : RelayKind.values()) {
-            if (RelayStates.isWoken(run, kind)) {
-                awake++;
-            }
-        }
-        return awake;
     }
 
     static String part(AtlasAnomalyRecord.Chain stage) {
@@ -43,6 +34,13 @@ final class RelayText {
         return PREFIX + "log." + part(stage) + "." + kind.key();
     }
 
+    static String numberWord(int number) {
+        if (number < 1 || number > LARGEST_WORDED_NUMBER) {
+            return Integer.toString(number);
+        }
+        return Translation.gameText(PREFIX + "number." + number);
+    }
+
     static String nextStep(ChartRun run, AtlasAnomalyRecord.Chain stage) {
         if (stage == null) {
             return null;
@@ -55,30 +53,38 @@ final class RelayText {
 
     static List<String> wokenMessages(ChartRun run, String relayName, AtlasAnomalyRecord.Chain stage) {
         List<String> messages = new ArrayList<>();
-        int dormant = RelayKind.values().length - awake(run);
+        int dormant = RelayStates.slots(run).size() - RelayStates.awake(run);
         if (dormant > 0) {
             messages.add(I18n.forGameText(() -> Translation.msg(PREFIX + "message.wokenDormant").arg("relay", relayName).count(dormant).text()));
             return messages;
         }
+        String relays = numberWord(RelayStates.slots(run).size());
         messages.add(I18n.forGameText(() -> Translation.msg(PREFIX + "message.woken").arg("relay", relayName).text()));
-        messages.add(Translation.gameText(PREFIX + "message.allWoken"));
+        messages.add(I18n.forGameText(() -> Translation.msg(PREFIX + "message.allWoken").arg("relays", relays).text()));
         String step = nextStep(run, stage);
         if (step != null) {
-            messages.add(stepText(PREFIX + "message." + step, stage));
+            messages.add(stepText(PREFIX + "message." + step, stage, relays));
         }
         return messages;
     }
 
     static String status(ChartRun run, AtlasAnomalyRecord.Chain stage) {
-        int awake = awake(run);
+        int awake = RelayStates.awake(run);
+        String relays = numberWord(RelayStates.slots(run).size());
         if (awake == 0) {
-            return Translation.gameText(PREFIX + "intel");
+            return I18n.forGameText(() -> Translation.msg(PREFIX + "intel").arg("relays", relays).text());
         }
-        if (awake < RelayKind.values().length) {
-            return I18n.forGameText(() -> Translation.msg(PREFIX + "intel.progress").count(awake).text());
+        if (awake < RelayStates.slots(run).size()) {
+            return I18n.forGameText(() -> Translation.msg(PREFIX + "intel.progress").count(awake).arg("relays", relays).text());
         }
         String step = nextStep(run, stage);
-        return step == null ? Translation.gameText(PREFIX + "intel.allWoken") : stepText(PREFIX + "intel." + step, stage);
+        return step == null ? I18n.forGameText(() -> Translation.msg(PREFIX + "intel.allWoken").arg("relays", relays).text())
+                : stepText(PREFIX + "intel." + step, stage, relays);
+    }
+
+    static String choiceIntro(int offers) {
+        String orders = numberWord(offers);
+        return I18n.forGameText(() -> Translation.msg(PREFIX + "choice.intro").arg("orders", orders).text());
     }
 
     static StyledText offerLine(RelayChoice choice) {
@@ -90,17 +96,18 @@ final class RelayText {
     }
 
     static String optionText(RelayChoice choice) {
+        String scars = String.join(Translation.gameText("format.list.sep"), choice.scarIds().stream().map(ScarText::name).toList());
         return I18n.forGameText(() -> Translation.msg(PREFIX + "option.choice").arg("reward", OfficerRewardText.groupName(choice.group()))
-                .arg("scar", ScarText.name(choice.scarId())).text());
+                .arg("scar", scars).text());
     }
 
     static String choiceMessage(String relayName) {
         return I18n.forGameText(() -> Translation.msg(PREFIX + "message.choice").arg("relay", relayName).text());
     }
 
-    private static String stepText(String key, AtlasAnomalyRecord.Chain stage) {
+    private static String stepText(String key, AtlasAnomalyRecord.Chain stage, String relays) {
         int next = stage.stage() + 1;
         int stages = stage.stages();
-        return I18n.forGameText(() -> Translation.msg(key).arg("stage", next).arg("stages", stages).text());
+        return I18n.forGameText(() -> Translation.msg(key).arg("stage", next).arg("stages", stages).arg("relays", relays).text());
     }
 }
