@@ -7,6 +7,496 @@
 			"connectedTo": [],
 			"x": 0,
 			"y": 0
+		},
+		{
+			"id": "excavation_sites_chance_1",
+			"type": "excavation_sites_chance",
+			"connectedTo": [],
+			"x": -7500,
+			"y": 1500
+		},
+		{
+			"id": "additional_site_1",
+			"type": "additional_site",
+			"connectedTo": [],
+			"x": -7200,
+			"y": 1500
+		},
+		{
+			"id": "inhibitor_quantity_1",
+			"type": "inhibitor_quantity",
+			"connectedTo": [],
+			"x": -6900,
+			"y": 1500
+		},
+		{
+			"id": "open_bores_1",
+			"type": "open_bores",
+			"connectedTo": [],
+			"x": -8400,
+			"y": 1900
+		},
+		{
+			"id": "sapper_teams_1",
+			"type": "sapper_teams",
+			"connectedTo": [],
+			"x": -8100,
+			"y": 1900
+		},
+		{
+			"id": "twin_shafts_1",
+			"type": "twin_shafts",
+			"connectedTo": [],
+			"x": -7800,
+			"y": 1900
+		},
+		{
+			"id": "deeper_bores_1",
+			"type": "deeper_bores",
+			"connectedTo": [],
+			"x": -7500,
+			"y": 1900
+		},
+		{
+			"id": "needle_bores_1",
+			"type": "needle_bores",
+			"connectedTo": [],
+			"x": -7200,
+			"y": 1900
+		},
+		{
+			"id": "widened_bores_1",
+			"type": "widened_bores",
+			"connectedTo": [],
+			"x": -6900,
+			"y": 1900
+		},
+		{
+			"id": "pitch_black_1",
+			"type": "pitch_black",
+			"connectedTo": [],
+			"x": -6600,
+			"y": 1900
+		},
+		{
+			"id": "infested_bolt_holes_1",
+			"type": "infested_bolt_holes",
+			"connectedTo": [],
+			"x": -6300,
+			"y": 1900
+		},
+		{
+			"id": "settled_shafts_1",
+			"type": "settled_shafts",
+			"connectedTo": [],
+			"x": -6000,
+			"y": 1900
+		},
+		{
+			"id": "supply_convoy_chance_1",
+			"type": "supply_convoy_chance",
+			"connectedTo": [],
+			"x": -4950,
+			"y": 1500
+		},
+		{
+			"id": "threat_feedstock_chance_1",
+			"type": "threat_feedstock_chance",
+			"connectedTo": [],
+			"x": -4650,
+			"y": 1500
+		},
+		{
+			"id": "shroud_feedstock_chance_1",
+			"type": "shroud_feedstock_chance",
+			"connectedTo": [],
+			"x": -4350,
+			"y": 1500
+		},
+		{
+			"id": "phase_feedstock_chance_1",
+			"type": "phase_feedstock_chance",
+			"connectedTo": [],
+			"x": -4050,
+			"y": 1500
+		},
+		{
+			"id": "feedstock_duplication_1",
+			"type": "feedstock_duplication",
+			"connectedTo": [],
+			"x": -3750,
+			"y": 1500
+		},
+		{
+			"id": "additional_convoy_chance_1",
+			"type": "additional_convoy_chance",
+			"connectedTo": [],
+			"x": -3450,
+			"y": 1500
+		},
+		{
+			"id": "threat_embargo_1",
+			"type": "threat_embargo",
+			"connectedTo": [],
+			"x": -5100,
+			"y": 1900
+		},
+		{
+			"id": "shroud_embargo_1",
+			"type": "shroud_embargo",
+			"connectedTo": [],
+			"x": -4800,
+			"y": 1900
+		},
+		{
+			"id": "phase_embargo_1",
+			"type": "phase_embargo",
+			"connectedTo": [],
+			"x": -4500,
+			"y": 1900
+		},
+		{
+			"id": "torn_holds_1",
+			"type": "torn_holds",
+			"connectedTo": [],
+			"x": -4200,
+			"y": 1900
+		},
+		{
+			"id": "supply_lines_1",
+			"type": "supply_lines",
+			"connectedTo": [],
+			"x": -3900,
+			"y": 1900
+		},
+		{
+			"id": "bolt_hole_drop_1",
+			"type": "bolt_hole_drop",
+			"connectedTo": [],
+			"x": -3600,
+			"y": 1900
+		},
+		{
+			"id": "open_season_1",
+			"type": "open_season",
+			"connectedTo": [],
+			"x": -3300,
+			"y": 1900
+		},
+		{
+			"id": "mixed_manifest_1",
+			"type": "mixed_manifest",
+			"connectedTo": [],
+			"x": -4200,
+			"y": 2300
+		},
+		{
+			"id": "relay_network_chance_1",
+			"type": "relay_network_chance",
+			"connectedTo": [],
+			"x": -1500,
+			"y": 1500
+		},
+		{
+			"id": "relay_reward_rarity_1",
+			"type": "relay_reward_rarity",
+			"connectedTo": [],
+			"x": -1200,
+			"y": 1500
+		},
+		{
+			"id": "forked_trace_1",
+			"type": "forked_trace",
+			"connectedTo": [],
+			"x": -2400,
+			"y": 1900
+		},
+		{
+			"id": "crowded_channel_1",
+			"type": "crowded_channel",
+			"connectedTo": [],
+			"x": -2100,
+			"y": 1900
+		},
+		{
+			"id": "double_down_1",
+			"type": "double_down",
+			"connectedTo": [],
+			"x": -1800,
+			"y": 1900
+		},
+		{
+			"id": "extra_relay_1",
+			"type": "extra_relay",
+			"connectedTo": [],
+			"x": -1500,
+			"y": 1900
+		},
+		{
+			"id": "scar_collector_1",
+			"type": "scar_collector",
+			"connectedTo": [],
+			"x": -1200,
+			"y": 1900
+		},
+		{
+			"id": "early_echo_1",
+			"type": "early_echo",
+			"connectedTo": [],
+			"x": -900,
+			"y": 1900
+		},
+		{
+			"id": "shared_broadcast_1",
+			"type": "shared_broadcast",
+			"connectedTo": [],
+			"x": -600,
+			"y": 1900
+		},
+		{
+			"id": "full_array_1",
+			"type": "full_array",
+			"connectedTo": [],
+			"x": -300,
+			"y": 1900
+		},
+		{
+			"id": "spatial_breach_chance_1",
+			"type": "spatial_breach_chance",
+			"connectedTo": [],
+			"x": 1200,
+			"y": 1500
+		},
+		{
+			"id": "breach_cache_quantity_1",
+			"type": "breach_cache_quantity",
+			"connectedTo": [],
+			"x": 1500,
+			"y": 1500
+		},
+		{
+			"id": "breach_cache_items_1",
+			"type": "breach_cache_items",
+			"connectedTo": [],
+			"x": 1800,
+			"y": 1500
+		},
+		{
+			"id": "warped_chance_1",
+			"type": "warped_chance",
+			"connectedTo": [],
+			"x": 2100,
+			"y": 1500
+		},
+		{
+			"id": "heavy_breach_1",
+			"type": "heavy_breach",
+			"connectedTo": [],
+			"x": 600,
+			"y": 1900
+		},
+		{
+			"id": "rift_magnetism_1",
+			"type": "rift_magnetism",
+			"connectedTo": [],
+			"x": 900,
+			"y": 1900
+		},
+		{
+			"id": "hyperspace_bleed_1",
+			"type": "hyperspace_bleed",
+			"connectedTo": [],
+			"x": 1200,
+			"y": 1900
+		},
+		{
+			"id": "rally_point_1",
+			"type": "rally_point",
+			"connectedTo": [],
+			"x": 1500,
+			"y": 1900
+		},
+		{
+			"id": "incursion_1",
+			"type": "incursion",
+			"connectedTo": [],
+			"x": 1800,
+			"y": 1900
+		},
+		{
+			"id": "event_horizon_1",
+			"type": "event_horizon",
+			"connectedTo": [],
+			"x": 2100,
+			"y": 1900
+		},
+		{
+			"id": "rude_awakening_1",
+			"type": "rude_awakening",
+			"connectedTo": [],
+			"x": 2400,
+			"y": 1900
+		},
+		{
+			"id": "rift_duel_1",
+			"type": "rift_duel",
+			"connectedTo": [],
+			"x": 2700,
+			"y": 1900
+		},
+		{
+			"id": "anomalous_debris_chance_1",
+			"type": "anomalous_debris_chance",
+			"connectedTo": [],
+			"x": 4350,
+			"y": 1500
+		},
+		{
+			"id": "additional_debris_1",
+			"type": "additional_debris",
+			"connectedTo": [],
+			"x": 4650,
+			"y": 1500
+		},
+		{
+			"id": "engram_quantity_1",
+			"type": "engram_quantity",
+			"connectedTo": [],
+			"x": 4950,
+			"y": 1500
+		},
+		{
+			"id": "deep_corruption_1",
+			"type": "deep_corruption",
+			"connectedTo": [],
+			"x": 3600,
+			"y": 1900
+		},
+		{
+			"id": "double_dose_1",
+			"type": "double_dose",
+			"connectedTo": [],
+			"x": 3900,
+			"y": 1900
+		},
+		{
+			"id": "lone_sleeper_1",
+			"type": "lone_sleeper",
+			"connectedTo": [],
+			"x": 4200,
+			"y": 1900
+		},
+		{
+			"id": "breached_graveyard_1",
+			"type": "breached_graveyard",
+			"connectedTo": [],
+			"x": 4500,
+			"y": 1900
+		},
+		{
+			"id": "restless_sleepers_1",
+			"type": "restless_sleepers",
+			"connectedTo": [],
+			"x": 4800,
+			"y": 1900
+		},
+		{
+			"id": "redacted_sleepers_1",
+			"type": "redacted_sleepers",
+			"connectedTo": [],
+			"x": 5100,
+			"y": 1900
+		},
+		{
+			"id": "threatening_sleepers_1",
+			"type": "threatening_sleepers",
+			"connectedTo": [],
+			"x": 5400,
+			"y": 1900
+		},
+		{
+			"id": "veiled_sleepers_1",
+			"type": "veiled_sleepers",
+			"connectedTo": [],
+			"x": 5700,
+			"y": 1900
+		},
+		{
+			"id": "silent_choir_1",
+			"type": "silent_choir",
+			"connectedTo": [],
+			"x": 4650,
+			"y": 2300
+		},
+		{
+			"id": "listening_post_chance_1",
+			"type": "listening_post_chance",
+			"connectedTo": [],
+			"x": 7200,
+			"y": 1500
+		},
+		{
+			"id": "vault_quantity_1",
+			"type": "vault_quantity",
+			"connectedTo": [],
+			"x": 7500,
+			"y": 1500
+		},
+		{
+			"id": "slow_purge_1",
+			"type": "slow_purge",
+			"connectedTo": [],
+			"x": 7800,
+			"y": 1500
+		},
+		{
+			"id": "garrison_pickets_1",
+			"type": "garrison_pickets",
+			"connectedTo": [],
+			"x": 6600,
+			"y": 1900
+		},
+		{
+			"id": "hair_trigger_1",
+			"type": "hair_trigger",
+			"connectedTo": [],
+			"x": 6900,
+			"y": 1900
+		},
+		{
+			"id": "smash_and_grab_1",
+			"type": "smash_and_grab",
+			"connectedTo": [],
+			"x": 7200,
+			"y": 1900
+		},
+		{
+			"id": "hunting_party_1",
+			"type": "hunting_party",
+			"connectedTo": [],
+			"x": 7500,
+			"y": 1900
+		},
+		{
+			"id": "fortified_depot_1",
+			"type": "fortified_depot",
+			"connectedTo": [],
+			"x": 7800,
+			"y": 1900
+		},
+		{
+			"id": "officers_ledger_1",
+			"type": "officers_ledger",
+			"connectedTo": [],
+			"x": 8100,
+			"y": 1900
+		},
+		{
+			"id": "stolen_charts_1",
+			"type": "stolen_charts",
+			"connectedTo": [],
+			"x": 8400,
+			"y": 1900
 		}
 	],
 	"connectorCurves": [],
