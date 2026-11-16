@@ -5,6 +5,8 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CampaignTerrainAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.MockSector;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
@@ -13,6 +15,8 @@ import exiledsector.items.ItemKind;
 import exiledsector.items.ItemModifiers;
 import exiledsector.items.PoolEntry;
 import exiledsector.items.RolledModifier;
+import exiledsector.loot.BattleEngagement;
+import exiledsector.loot.BattleLoot;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -21,8 +25,11 @@ import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -82,6 +89,63 @@ class BreachLootTest {
         float share = warpedCount / (float) SEEDS;
         assertTrue(Math.abs(share - BreachRules.WARPED_CHANCE) < 0.04f, String.valueOf(share));
         assertNull(BreachLoot.warped(null));
+    }
+
+    @Test
+    void aHigherChanceWarpsEveryItemTheBaseChanceDidAndAnAlreadyWarpedItemStaysAsItIs() {
+        for (long seed = 0L; seed < 200L; seed++) {
+            ItemData base = BreachLoot.warped(item(seed));
+            ItemData raised = BreachLoot.warped(item(seed), BreachRules.battleWarpedChance(50f, 0f));
+            if (warped(base)) {
+                assertEquals(base, raised);
+            }
+            if (warped(raised)) {
+                assertSame(raised, BreachLoot.warped(raised, 1f));
+            }
+            assertTrue(warped(BreachLoot.warped(item(seed), 1f)));
+            assertFalse(warped(BreachLoot.warped(item(seed), 0f)));
+        }
+    }
+
+    @Test
+    void anomalousFleetsShareOfTheDefeatedDeploymentPointsCountsOnlyTheLatestBattle() {
+        CampaignFleetAPI debris = mock(CampaignFleetAPI.class);
+        CampaignFleetAPI pirates = mock(CampaignFleetAPI.class);
+        FleetMemberAPI debrisShip = mock(FleetMemberAPI.class);
+        when(debrisShip.getDeploymentPointsCost()).thenReturn(30f);
+        FleetMemberAPI pirateShip = mock(FleetMemberAPI.class);
+        when(pirateShip.getDeploymentPointsCost()).thenReturn(10f);
+        Map<FleetMemberAPI, CampaignFleetAPI> sources = Map.of(debrisShip, debris, pirateShip, pirates);
+        BattleEngagement engagement = new BattleEngagement(sources::get, 1f, 40f, List.of(debrisShip, pirateShip));
+        BattleLoot first = new BattleLoot(new Random(1L), new Random(2L));
+        BattleLoot second = new BattleLoot(new Random(1L), new Random(2L));
+
+        BreachBattles.reset();
+        assertEquals(0f, BreachBattles.anomalousShare());
+        BreachBattles.record(first, engagement, fleet -> fleet == debris);
+        assertEquals(0.75f, BreachBattles.anomalousShare(), 0.0001f);
+        BreachBattles.record(first, engagement, fleet -> fleet == debris);
+        assertEquals(0.75f, BreachBattles.anomalousShare(), 0.0001f);
+        BreachBattles.record(second, engagement, fleet -> false);
+        assertEquals(0f, BreachBattles.anomalousShare());
+        BreachBattles.reset();
+    }
+
+    @Test
+    void eventHorizonDerelictsAlwaysWarpTheirHullItemsAndOtherSitesNever() {
+        MemoryAPI marked = mock(MemoryAPI.class);
+        when(marked.getBoolean(EventHorizon.WARPED_KEY)).thenReturn(true);
+        MemoryAPI plain = mock(MemoryAPI.class);
+
+        for (long seed = 0L; seed < 20L; seed++) {
+            assertTrue(warped(EventHorizon.onSiteDrop(item(seed), marked)));
+            ItemData dropped = item(seed);
+            assertSame(dropped, EventHorizon.onSiteDrop(dropped, plain));
+            assertSame(dropped, EventHorizon.onSiteDrop(dropped, null));
+        }
+        assertNull(EventHorizon.onSiteDrop(null, marked));
+        assertEquals(5000f + EventHorizon.EDGE_MARGIN, EventHorizon.radiusAround(300f, 5000f));
+        assertEquals(300f + EventHorizon.EDGE_MARGIN, EventHorizon.radiusAround(300f, 0f));
     }
 
     @Test

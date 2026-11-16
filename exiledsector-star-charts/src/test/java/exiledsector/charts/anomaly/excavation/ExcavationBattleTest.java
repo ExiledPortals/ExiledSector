@@ -10,6 +10,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.BattleCreationContext;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatFleetManagerAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetGoal;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -17,8 +18,13 @@ import com.fs.starfarer.api.mission.FleetSide;
 import com.fs.starfarer.api.mission.MissionDefinitionAPI;
 import exiledsector.MockSector;
 import exiledsector.MockShips;
+import exiledsector.charts.anomaly.LiveAnomalyRuns;
 import exiledsector.charts.content.FakeChartContentEngine;
+import exiledsector.charts.effect.ChartModifier;
+import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartCampaignPlugin;
+import exiledsector.charts.run.ChartRun;
+import exiledsector.charts.run.ChartRuns;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -101,7 +107,32 @@ class ExcavationBattleTest {
         verify(player, never()).removeFromReserves(playerFrigate);
         verify(enemy).removeFromReserves(enemyCapital);
         verify(enemy, never()).removeFromReserves(enemyDestroyer);
-        assertEquals(0, ExcavationBattlePlugin.holdLargeHullsAbove(null));
+        assertEquals(0, ExcavationBattlePlugin.holdLargeHullsAbove(null, ExcavationRules.MAX_SHIP_SIZE));
+    }
+
+    @Test
+    void needleBoresHoldDestroyersAboveAndPitchBlackDarkensEveryShip() {
+        ChartRun run = LiveAnomalyRuns.run(4, ExcavationSites.ANOMALY_ID);
+        run.recordAtlasTreeLines(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_EXCAVATION_FRIGATES_ONLY, 1f),
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_EXCAVATION_SIGHT_RADIUS_PERCENT, -70f)));
+        ChartRuns.replace(run);
+        FleetMemberAPI playerFrigate = ship(HullSize.FRIGATE);
+        FleetMemberAPI playerDestroyer = ship(HullSize.DESTROYER);
+        CombatFleetManagerAPI player = manager(List.of(playerFrigate, playerDestroyer));
+        CombatFleetManagerAPI enemy = manager(List.of());
+        CombatEngineAPI engine = engineAgainst(excavationFleet());
+        when(engine.getFleetManager(FleetSide.PLAYER)).thenReturn(player);
+        when(engine.getFleetManager(FleetSide.ENEMY)).thenReturn(enemy);
+        ShipAPI ship = mock(ShipAPI.class, RETURNS_DEEP_STUBS);
+        when(engine.getShips()).thenReturn(List.of(ship));
+
+        new ExcavationBattlePlugin().init(engine);
+
+        verify(player).removeFromReserves(playerDestroyer);
+        verify(player, never()).removeFromReserves(playerFrigate);
+        verify(ship.getMutableStats().getSightRadiusMod()).modifyPercent(ExcavationBattlePlugin.SIGHT_MOD_ID, -70f);
+        assertEquals(0, ExcavationBattlePlugin.darken(engine, 0f));
+        assertEquals(0, ExcavationBattlePlugin.darken(null, -70f));
     }
 
     @Test

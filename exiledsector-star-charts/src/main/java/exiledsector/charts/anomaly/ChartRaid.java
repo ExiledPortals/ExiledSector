@@ -62,7 +62,11 @@ public class ChartRaid {
         }
 
         public void launch(InteractionDialogAPI dialog, int tier, long seed, Supplier<List<GroundRaidObjectivePlugin>> objectives) {
-            raid = new ChartRaid(dialog, difficulty(tier), objectives, new Random(seed + raidsLaunched++), closedDialog -> {
+            launch(dialog, tier, 1f, seed, objectives);
+        }
+
+        public void launch(InteractionDialogAPI dialog, int tier, float difficultyMult, long seed, Supplier<List<GroundRaidObjectivePlugin>> objectives) {
+            raid = new ChartRaid(dialog, difficulty(tier) * Math.max(0f, difficultyMult), objectives, new Random(seed + raidsLaunched++), closedDialog -> {
                 raid = null;
                 host.raidClosed(closedDialog);
             });

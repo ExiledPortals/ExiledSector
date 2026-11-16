@@ -26,6 +26,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyFloat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -52,7 +54,7 @@ class ConvoyDeliveryTest {
         destination = convoySystem.entities.get(convoy.destinationId());
         script.depart(convoy);
         cargoRolls = mockStatic(ConvoyCargo.class);
-        cargoRolls.when(() -> ConvoyCargo.deliveredCache(any(), any(), any(), any(), any())).thenReturn(rolledCache);
+        cargoRolls.when(() -> ConvoyCargo.deliveredCache(any(), any(), any(), any(), anyFloat(), any())).thenReturn(rolledCache);
     }
 
     @AfterEach
@@ -73,7 +75,8 @@ class ConvoyDeliveryTest {
 
         assertEquals(ConvoyState.Phase.DELIVERED, convoy.phase());
         assertEquals(1f, convoy.deliveredShare(), 0.001f);
-        cargoRolls.verify(() -> ConvoyCargo.deliveredCache(any(), any(), same(convoy), same(fleet), any()));
+        cargoRolls.verify(() -> ConvoyCargo.deliveredCache(any(), any(), same(convoy), same(fleet), eq(1f), any()));
+        assertFalse(convoy.deliveredToExcavation());
         assertEquals(List.of(convoy), script.cachesAt(destination));
         assertTrue(ConvoyCacheDialog.wantsToHandle(destination));
         assertTrue(ChartFleetLedger.lootSpent(fleet), "the convoy dropped its Exiled Sector loot with the cache");

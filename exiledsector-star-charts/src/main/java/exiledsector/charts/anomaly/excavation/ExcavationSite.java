@@ -9,11 +9,27 @@ public record ExcavationSite(int index, String planetId, Access access, long see
 
     public enum Access {
         OPEN,
-        COLLAPSED
+        COLLAPSED,
+        BOTH
     }
 
     public ExcavationSite asCleared() {
         return new ExcavationSite(index, planetId, access, seed, true);
+    }
+
+    public boolean hasOpenShaft() {
+        return !cleared && (access == Access.OPEN || access == Access.BOTH);
+    }
+
+    public boolean hasCollapsedShaft() {
+        return !cleared && (access == Access.COLLAPSED || access == Access.BOTH);
+    }
+
+    public ExcavationSite withoutShaft(Access shaft) {
+        if (access == Access.BOTH && shaft != Access.BOTH) {
+            return new ExcavationSite(index, planetId, shaft == Access.OPEN ? Access.COLLAPSED : Access.OPEN, seed, cleared);
+        }
+        return access == shaft || shaft == Access.BOTH ? asCleared() : this;
     }
 
     String encode() {

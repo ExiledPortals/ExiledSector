@@ -14,10 +14,14 @@ final class BreachLoot {
     }
 
     static ItemData warped(ItemData item) {
+        return warped(item, BreachRules.WARPED_CHANCE);
+    }
+
+    static ItemData warped(ItemData item, float chance) {
         if (item == null) {
             return null;
         }
         Random random = Seeds.derived(item.seed(), WARP_SEED_SALT);
-        return random.nextFloat() < BreachRules.WARPED_CHANCE ? WarpedModifiers.warp(item, random) : item;
+        return random.nextFloat() < chance ? WarpedModifiers.warp(item, random) : item;
     }
 }

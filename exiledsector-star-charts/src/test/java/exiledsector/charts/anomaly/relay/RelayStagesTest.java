@@ -23,12 +23,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -106,6 +108,57 @@ class RelayStagesTest {
 
         assertEquals(target, state.anomalyRecord(recordId).cell());
         assertEquals(new AtlasAnomalyRecord.Chain(3, 4, start), state.anomalyRecord(recordId).chain());
+        assertEquals(1, state.anomalyRecords().size());
+    }
+
+    @Test
+    void forkedTraceMovesACompletedStageOnToTwoSystemsEachCarryingTheNextStage() {
+        int recordId = insertAtStart(new AtlasAnomalyRecord.Chain(1, 3, null));
+        state.add(start, AtlasState.COMPLETED);
+
+        List<AtlasCell> targets = RelayStages.settle(generator, state, start, AtlasAnomalies.effective(generator, state, start), true, true, 2);
+
+        assertEquals(2, targets.size());
+        assertNotEquals(targets.get(0), targets.get(1));
+        assertEquals(targets.get(0), state.anomalyRecord(recordId).cell());
+        assertEquals(2, state.anomalyRecords().size());
+        for (AtlasCell target : targets) {
+            AtlasAnomalyRecord branch = RelayStages.recordAt(state, target);
+            assertEquals(new AtlasAnomalyRecord.Chain(2, 3, start), branch.chain());
+            assertEquals(AtlasAnomalyRecord.Source.WORLD, branch.source());
+        }
+    }
+
+    @Test
+    void eachForkedBranchRunsItsOwnRemainingStagesToItsOwnEnd() {
+        insertAtStart(null);
+        List<AtlasCell> frontier = List.of(start);
+        int lastStages = 0;
+        for (int stage = 1; stage <= RelayRules.STAGES; stage++) {
+            List<AtlasCell> next = new ArrayList<>();
+            for (AtlasCell cell : frontier) {
+                AtlasAnomalyRecord.Chain chain = RelayStages.stageAt(generator, state, cell);
+                assertEquals(stage, chain.stage());
+                if (chain.isLast()) {
+                    lastStages++;
+                }
+                state.add(cell, AtlasState.COMPLETED);
+                next.addAll(RelayStages.settle(generator, state, cell, AtlasAnomalies.effective(generator, state, cell), true, true, 2));
+            }
+            frontier = next;
+        }
+
+        assertEquals(List.of(), frontier);
+        assertTrue(lastStages >= 2, "branches reaching the last stage: " + lastStages);
+        assertEquals(List.of(), state.anomalyRecords());
+    }
+
+    @Test
+    void aNetworkThatCouldNotBePlacedDoesNotFork() {
+        insertAtStart(new AtlasAnomalyRecord.Chain(2, 4, AtlasCell.ORIGIN));
+        state.add(start, AtlasState.COMPLETED);
+
+        assertEquals(1, RelayStages.settle(generator, state, start, AtlasAnomalies.effective(generator, state, start), false, false, 2).size());
         assertEquals(1, state.anomalyRecords().size());
     }
 

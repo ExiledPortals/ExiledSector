@@ -73,7 +73,7 @@ public final class ChartFleetLoot {
         Loot fleetLoot = subroutines(loot, claim.lootDeploymentPoints(), battle, random)
                 .plus(List.of(), List.of(), craftingItems(loot, claim.lootDeploymentPoints(), battle, random))
                 .plus(chartDrops(run, loot, claim, random))
-                .plus(anomalyFleetLoot(run, loot, claim, random));
+                .plus(anomalyFleetLoot(run, loot, claim, battle, random));
         if (overchargesHullItems(fleet, run)) {
             fleetLoot = overcharged(fleetLoot, random);
         }
@@ -88,10 +88,10 @@ public final class ChartFleetLoot {
         return quantityMult;
     }
 
-    private static Loot anomalyFleetLoot(ChartRun run, ChartLootContext loot, FleetClaim claim, Random random) {
+    private static Loot anomalyFleetLoot(ChartRun run, ChartLootContext loot, FleetClaim claim, Battle battle, Random random) {
         Loot anomalyLoot = Loot.NONE;
         for (LootShaper anomaly : ChartAnomalies.inRun(run, LootShaper.class)) {
-            anomalyLoot = anomalyLoot.plus(anomaly.fleetLoot(claim, loot, random));
+            anomalyLoot = anomalyLoot.plus(anomaly.fleetLoot(claim, loot, battle, random));
         }
         return anomalyLoot;
     }

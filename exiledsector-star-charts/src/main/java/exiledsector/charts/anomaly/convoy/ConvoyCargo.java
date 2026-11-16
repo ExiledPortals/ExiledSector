@@ -22,13 +22,17 @@ import exiledsector.charts.loot.ChartLoot;
 import exiledsector.charts.loot.DropType;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.effects.ItemLootListener;
+import exiledsector.items.InfusedFeedstock;
 import exiledsector.items.SalvageSiteDrops;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.util.Set;
 
 final class ConvoyCargo {
 
@@ -38,6 +42,10 @@ final class ConvoyCargo {
     }
 
     static List<String> manifestKeys(int tier) {
+        return manifestKeys(tier, Set.of());
+    }
+
+    static List<String> manifestKeys(int tier, Collection<String> feedstockIds) {
         List<String> keys = new ArrayList<>();
         for (DropType type : ChartLoot.dropTypesFor(ConvoyRules.LOOT_SCOPE, tier)) {
             keys.add(CATEGORY_KEY_PREFIX + type.name().toLowerCase(Locale.ROOT));
@@ -46,7 +54,7 @@ final class ConvoyCargo {
             keys.add(CATEGORY_KEY_PREFIX + "items");
         }
         if (ConvoyFeedstock.hasRows()) {
-            keys.add(CATEGORY_KEY_PREFIX + "feedstock");
+            keys.add(feedstockKey(feedstockIds));
         }
         if (ChartDropRules.hasRule(ChartDrops.Source.SYSTEM_SALVAGE)) {
             keys.add(CATEGORY_KEY_PREFIX + "craftingItem");
@@ -55,8 +63,18 @@ final class ConvoyCargo {
         return keys;
     }
 
-    static StyledText manifest(int tier) {
-        return Translation.list(manifestKeys(tier).stream().map(Translation::styled).toList());
+    static String feedstockKey(Collection<String> feedstockIds) {
+        Set<String> kinds = new HashSet<>(feedstockIds);
+        InfusedFeedstock only = kinds.size() == 1 ? InfusedFeedstock.byItemId(kinds.iterator().next()) : null;
+        return only == null ? CATEGORY_KEY_PREFIX + "feedstock" : CATEGORY_KEY_PREFIX + "feedstock." + only.name().toLowerCase(Locale.ROOT);
+    }
+
+    static StyledText manifest(int tier, Collection<String> feedstockIds) {
+        return Translation.list(manifestKeys(tier, feedstockIds).stream().map(Translation::styled).toList());
+    }
+
+    static StyledText manifest(int tier, ConvoyState convoy) {
+        return manifest(tier, convoy == null ? Set.of() : convoy.feedstock().keySet());
     }
 
     static float freighterPoints(CampaignFleetAPI fleet, boolean civilianOnly) {
@@ -75,16 +93,16 @@ final class ConvoyCargo {
         return points;
     }
 
-    static CargoAPI roll(SectorAPI sector, ChartRun run, ConvoyState convoy, float share, Random random) {
+    static CargoAPI roll(SectorAPI sector, ChartRun run, ConvoyState convoy, float share, float feedstockScale, Random random) {
         CargoAPI cargo = ChartCargoLoot.roll(sector, run, ConvoyRules.LOOT_SCOPE, ConvoyRules.CARGO_SITE, convoy.cargoSteps() * share,
                 convoy.itemChanceMult() * share, random);
-        return withFeedstock(cargo, convoy, share, random);
+        return withFeedstock(cargo, convoy, share * feedstockScale, random);
     }
 
-    static CargoAPI lostCargo(SectorAPI sector, ChartRun run, ConvoyState convoy, float share, Random random) {
+    static CargoAPI lostCargo(SectorAPI sector, ChartRun run, ConvoyState convoy, float share, float feedstockScale, Random random) {
         CargoAPI cargo = ChartCargoLoot.rollFromBattle(sector, run, ConvoyRules.LOOT_SCOPE, ConvoyRules.CARGO_SITE, convoy.cargoSteps() * share,
                 convoy.itemChanceMult() * share, random);
-        return withFeedstock(cargo, convoy, share, random);
+        return withFeedstock(cargo, convoy, share * feedstockScale, random);
     }
 
     static CargoAPI withFeedstock(CargoAPI cargo, ConvoyState convoy, float share, Random random) {
@@ -93,12 +111,12 @@ final class ConvoyCargo {
         return cargo;
     }
 
-    static CargoAPI deliveredCache(SectorAPI sector, ChartRun run, ConvoyState convoy, CampaignFleetAPI fleet, Random random) {
+    static CargoAPI deliveredCache(SectorAPI sector, ChartRun run, ConvoyState convoy, CampaignFleetAPI fleet, float feedstockScale, Random random) {
         CargoAPI cache = Global.getFactory().createCargo(true);
         if (fleet != null && !fleet.isEmpty()) {
             ItemLootListener.addUnfoughtBattleLoot(cache, fleet, random);
         }
-        cache.addAll(roll(sector, run, convoy, convoy.deliveredShare(), random));
+        cache.addAll(roll(sector, run, convoy, convoy.deliveredShare(), feedstockScale, random));
         keepShare(cache, ConvoyRules.DELIVERED_SHARE, random);
         cache.sort();
         return cache;

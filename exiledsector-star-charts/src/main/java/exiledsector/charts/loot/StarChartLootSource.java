@@ -14,6 +14,8 @@ import exiledsector.Seeds;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.LootShaper;
+import exiledsector.charts.anomaly.breach.EventHorizon;
+import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.effects.TechMiningItemListener;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
@@ -67,6 +69,13 @@ public final class StarChartLootSource implements LootSource {
         Losses losses = losses(battle);
         if (losses.battleAnomalies == null) {
             losses.battleAnomalies = anomaliesHoldingBattle();
+        }
+        for (LootShaper anomaly : losses.battleAnomalies) {
+            try {
+                anomaly.engagementRecorded(battle, engagement);
+            } catch (RuntimeException e) {
+                LOG.error("[ExiledSector] Recording an engagement failed in anomaly " + anomaly.id(), e);
+            }
         }
         float spentDeploymentPoints = 0f;
         for (Map.Entry<CampaignFleetAPI, List<FleetMemberAPI>> fleetLosses : engagement.lostEnemiesBySourceFleet().entrySet()) {
@@ -193,8 +202,10 @@ public final class StarChartLootSource implements LootSource {
                 return null;
             }
             ChartLootContext loot = ChartLootContext.of(run);
-            float battleLootMult = ChartFleetLoot.battleLootMult(anomaliesHoldingBattle(), loot.effects());
-            LootMultipliers multipliers = BlackHoleHullItems.withBonusWherePlayerIs(loot.multipliers(battleLootMult));
+            List<LootShaper> battleAnomalies = anomaliesHoldingBattle();
+            float battleLootMult = ChartFleetLoot.battleLootMult(battleAnomalies, loot.effects());
+            LootMultipliers multipliers = withBattleHullItems(BlackHoleHullItems.withBonusWherePlayerIs(loot.multipliers(battleLootMult)),
+                    battleAnomalies, loot.effects());
             FleetLootRules rules = FleetLootRules.ownLedger(multipliers,
                     ChartFleetLedger.isBoss(fleet, run) ? loot.effects().bossSpoilsMult() : ChartFleetLedger.anomalyFleetLoot(fleet, run));
             return ChartFleetLoot.overchargesHullItems(fleet, run) ? rules.overchargingHullItems() : rules;
@@ -202,6 +213,16 @@ public final class StarChartLootSource implements LootSource {
             LOG.error("[ExiledSector] Reading the loot rules of a defeated fleet failed", e);
             return null;
         }
+    }
+
+    static LootMultipliers withBattleHullItems(LootMultipliers multipliers, List<LootShaper> battleAnomalies, ChartGenContext context) {
+        float percent = 0f;
+        for (LootShaper anomaly : battleAnomalies) {
+            percent += anomaly.battleHullItemPercent(context);
+        }
+        ItemChances chances = multipliers.chances();
+        ItemChances boosted = BlackHoleHullItems.withExtraHullItemShare(chances, percent / ChartGenContext.PERCENT);
+        return boosted == chances ? multipliers : multipliers.withChances(boosted);
     }
 
     @Override
@@ -323,7 +344,8 @@ public final class StarChartLootSource implements LootSource {
 
     private static ItemData immutableAtSite(ItemData item, SectorEntityToken site) {
         try {
-            return ImmutableDrops.onSiteDrop(item, site.getMemoryWithoutUpdate());
+            MemoryAPI memory = site.getMemoryWithoutUpdate();
+            return ImmutableDrops.onSiteDrop(EventHorizon.onSiteDrop(item, memory), memory);
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Making a modifier of a salvaged item immutable failed", e);
             return item;

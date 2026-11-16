@@ -7,6 +7,8 @@ import exiledsector.charts.anomaly.MagneticStorm;
 import exiledsector.charts.anomaly.StellarFlares;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
+import exiledsector.charts.effect.ChartModifier;
+import exiledsector.charts.generation.ChartGenContext.AppliedEffect;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -83,6 +85,53 @@ class OpeningAnomaliesTest {
         assertEquals(List.of(), OpeningAnomalies.rolled(generator, state, cell, CHART_SEED, full));
         AtlasGenerator barred = generator(state, Map.of(AtlasRegion.ANY_ANOMALY, 0f));
         assertEquals(List.of(), OpeningAnomalies.rolled(barred, state, system(barred), CHART_SEED, List.of()));
+    }
+
+    @Test
+    void treeChanceLinesAddPercentagePointsToTheirOwnAnomalyOnly() {
+        Map<String, Float> added = OpeningAnomalies.addedChances(List.of(new AppliedEffect(ChartModifier.CHART_SPATIAL_BREACH_CHANCE_PERCENT, 8f),
+                new AppliedEffect(ChartModifier.CHART_SPATIAL_BREACH_CHANCE_PERCENT, 4f), new AppliedEffect(ChartModifier.CHART_LISTENING_POST_CHANCE_PERCENT, 8f),
+                new AppliedEffect(ChartModifier.CHART_BREACH_CACHE_PERCENT, 50f)));
+
+        assertEquals(Map.of(SpatialBreach.ANOMALY_ID, 0.12f, "listening_post", 0.08f).keySet(), added.keySet());
+        assertEquals(0.12f, added.get(SpatialBreach.ANOMALY_ID), 1e-6f);
+        assertEquals(0.08f, added.get("listening_post"), 1e-6f);
+    }
+
+    @Test
+    void aTreeChanceLineMakesItsAnomalyRollButNeverOneWithoutAnOpeningChanceOrPastTheRules() {
+        ChartTables.useAnomalies(List.of(rolling(SpatialBreach.ANOMALY_ID, 1e-6f), rolling(AsteroidStorm.ANOMALY_ID, 1e-6f, Set.of(SpatialBreach.ANOMALY_ID)),
+                rolling(MagneticStorm.ANOMALY_ID, 0f)));
+        AtlasState state = new AtlasState(SEED);
+        AtlasGenerator generator = generator(state, Map.of());
+        AtlasCell cell = system(generator);
+        List<AppliedEffect> certain = List.of(new AppliedEffect(ChartModifier.CHART_SPATIAL_BREACH_CHANCE_PERCENT, 100f));
+
+        assertEquals(List.of(), OpeningAnomalies.rolled(generator, state, cell, CHART_SEED, List.of()));
+        assertEquals(List.of(SpatialBreach.ANOMALY_ID), OpeningAnomalies.rolled(generator, state, cell, CHART_SEED, List.of(), certain));
+        assertEquals(List.of(), OpeningAnomalies.rolled(generator, state, cell, CHART_SEED, List.of(AsteroidStorm.ANOMALY_ID), certain));
+        AtlasGenerator barred = generator(state, Map.of(SpatialBreach.ANOMALY_ID, 0f));
+        assertEquals(List.of(), OpeningAnomalies.rolled(barred, state, system(barred), CHART_SEED, List.of(), certain));
+    }
+
+    @Test
+    void oneChanceNodeDoublesTheCommonOpeningChance() throws Exception {
+        ChartTables.loadAnomalies();
+        AtlasState state = new AtlasState(SEED);
+        AtlasGenerator generator = generator(state, Map.of());
+        AtlasCell cell = system(generator);
+        List<AppliedEffect> chanceNode = List.of(new AppliedEffect(ChartModifier.CHART_SPATIAL_BREACH_CHANCE_PERCENT, 8f));
+        int openings = 4000;
+        int breaches = 0;
+
+        for (long chartSeed = 0; chartSeed < openings; chartSeed++) {
+            if (OpeningAnomalies.rolled(generator, state, cell, chartSeed, List.of(), chanceNode).contains(SpatialBreach.ANOMALY_ID)) {
+                breaches++;
+            }
+        }
+
+        float share = breaches / (float) openings;
+        assertTrue(share > 0.13f && share < 0.19f, "breach share " + share);
     }
 
     @Test

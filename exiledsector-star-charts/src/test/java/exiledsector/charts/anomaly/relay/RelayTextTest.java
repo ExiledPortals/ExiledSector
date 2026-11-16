@@ -11,6 +11,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RelayTextTest {
 
@@ -20,7 +21,7 @@ class RelayTextTest {
     private static ChartRun runWithAwake(RelayKind... kinds) {
         ChartRun run = ChartRelaysTest.liveRelayRun();
         for (RelayKind kind : kinds) {
-            RelayStates.add(run, kind, RelayStates.WOKEN);
+            RelayStates.add(run, RelaySlot.of(kind), RelayStates.WOKEN);
         }
         return run;
     }
@@ -76,8 +77,21 @@ class RelayTextTest {
     }
 
     @Test
+    void anExtraRelayCountsTowardTheStatusAndTheDormantRelays() {
+        ChartRun run = allAwake();
+        RelayStates.recordExtraRelay(RelayStates.of(run), RelayKind.COMM_RELAY);
+
+        assertEquals("3 of the four Domain-era relays are awake.", RelayText.status(run, FIRST_OF_THREE));
+        assertEquals(List.of("Sensor Array is awake, 1 relay still dormant"), RelayText.wokenMessages(run, "Sensor Array", FIRST_OF_THREE));
+        RelayStates.add(run, RelaySlot.extraOf(RelayKind.COMM_RELAY), RelayStates.WOKEN);
+        assertEquals("All four Domain-era relays are awake.", RelayText.status(run, null));
+        assertTrue(RelayText.choiceIntro(4).contains("drafts four forged orders"), RelayText.choiceIntro(4));
+        assertEquals("12", RelayText.numberWord(12));
+    }
+
+    @Test
     void theStatusFollowsHowManyRelaysAreAwake() {
-        assertEquals("Three dormant Domain-era relays sit in the system.", RelayText.status(runWithAwake(), FIRST_OF_THREE));
+        assertEquals("The system holds three dormant Domain-era relays.", RelayText.status(runWithAwake(), FIRST_OF_THREE));
         assertEquals("1 of the three Domain-era relays is awake.", RelayText.status(runWithAwake(RelayKind.SENSOR_ARRAY), FIRST_OF_THREE));
         assertEquals("2 of the three Domain-era relays are awake.",
                 RelayText.status(runWithAwake(RelayKind.SENSOR_ARRAY, RelayKind.NAV_BUOY), FIRST_OF_THREE));

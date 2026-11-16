@@ -4,6 +4,7 @@ import com.thoughtworks.xstream.XStream;
 import exiledsector.charts.anomaly.breach.BreachCorePlugin;
 import exiledsector.charts.anomaly.breach.BreachSupplyBuff;
 import exiledsector.charts.anomaly.breach.BreachTerrainPlugin;
+import exiledsector.charts.anomaly.breach.EventHorizonTerrainPlugin;
 import exiledsector.charts.anomaly.convoy.ConvoyIntel;
 import exiledsector.charts.anomaly.convoy.ConvoyScript;
 import exiledsector.charts.anomaly.convoy.ConvoyState;
@@ -49,6 +50,7 @@ public final class ChartSaveAliases {
             Map.entry("exiledSector.BreachTerrainPlugin", BreachTerrainPlugin.class),
             Map.entry("exiledSector.BreachCorePlugin", BreachCorePlugin.class),
             Map.entry("exiledSector.BreachSupplyBuff", BreachSupplyBuff.class),
+            Map.entry("exiledSector.EventHorizonTerrainPlugin", EventHorizonTerrainPlugin.class),
             Map.entry("exiledSector.AtlasState", AtlasState.class),
             Map.entry("exiledSector.ConvoyScript", ConvoyScript.class),
             Map.entry("exiledSector.ConvoyState", ConvoyState.class),

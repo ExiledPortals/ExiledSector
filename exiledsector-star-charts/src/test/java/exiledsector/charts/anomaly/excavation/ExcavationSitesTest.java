@@ -124,7 +124,7 @@ class ExcavationSitesTest {
         Random random = new Random(7L);
         int open = 0;
         for (int roll = 0; roll < 2000; roll++) {
-            open += ExcavationRules.access(random) == ExcavationSite.Access.OPEN ? 1 : 0;
+            open += ExcavationRules.access(random, ExcavationTuning.NONE) == ExcavationSite.Access.OPEN ? 1 : 0;
         }
         assertTrue(open > 900 && open < 1100, String.valueOf(open));
     }
@@ -191,6 +191,39 @@ class ExcavationSitesTest {
         assertNull(ExcavationStates.standingAt(run, "rock"));
         assertEquals(List.of("stone"), ExcavationStates.standing(run).stream().map(ExcavationSite::planetId).toList());
         assertEquals(-9L, ExcavationStates.standingAt(run, "stone").seed());
+    }
+
+    @Test
+    void twinShaftsGiveEverySiteBothShaftsAndEachClosesOnItsOwn() {
+        for (int index = 0; index < 4; index++) {
+            planet("rock" + index, false, false);
+        }
+        ChartGenContext twin = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_EXCAVATION_TWIN_SHAFTS, 1f)));
+        assertTrue(ExcavationSites.place(site(twin, 5L)).stream().allMatch(placed -> placed.access() == ExcavationSite.Access.BOTH));
+
+        ChartRun run = run();
+        ExcavationSite site = new ExcavationSite(0, "rock", ExcavationSite.Access.BOTH, 42L, false);
+        ExcavationStates.record(ExcavationStates.of(run), site);
+        assertTrue(site.hasOpenShaft() && site.hasCollapsedShaft());
+
+        assertTrue(ExcavationStates.clearShaft(run, site, ExcavationSite.Access.OPEN));
+        assertFalse(ExcavationStates.clearShaft(run, site, ExcavationSite.Access.OPEN));
+        ExcavationSite raidLeft = ExcavationStates.at(run, "rock");
+        assertEquals(ExcavationSite.Access.COLLAPSED, raidLeft.access());
+        assertFalse(raidLeft.hasOpenShaft());
+        assertTrue(raidLeft.hasCollapsedShaft());
+        assertNotNull(ExcavationStates.standingAt(run, "rock"));
+
+        assertTrue(ExcavationStates.clearShaft(run, site, ExcavationSite.Access.COLLAPSED));
+        assertTrue(ExcavationStates.at(run, "rock").cleared());
+        assertNull(ExcavationStates.standingAt(run, "rock"));
+        assertFalse(ExcavationStates.clearShaft(run, site, ExcavationSite.Access.COLLAPSED));
+
+        assertEquals(site.asCleared(), site.withoutShaft(ExcavationSite.Access.BOTH));
+        ExcavationSite open = new ExcavationSite(1, "stone", ExcavationSite.Access.OPEN, 1L, false);
+        assertSame(open, open.withoutShaft(ExcavationSite.Access.COLLAPSED));
+        assertFalse(open.asCleared().hasOpenShaft());
+        assertEquals(site, ExcavationSite.decode(0, site.encode()));
     }
 
     @Test

@@ -19,9 +19,15 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.AnomalyRunScript;
 import exiledsector.charts.anomaly.AnomalyTerrains;
+import exiledsector.charts.anomaly.breach.BreachTerrainPlugin;
+import exiledsector.charts.anomaly.breach.SpatialBreach;
+import exiledsector.charts.anomaly.excavation.ExcavationDeliveries;
+import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.content.ChartContentGenerator;
+import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.loot.ChartFleetLedger;
 import exiledsector.charts.run.ChartRun;
+import exiledsector.charts.run.ChartRunEffects;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
@@ -95,6 +101,10 @@ public final class ConvoyScript extends AnomalyRunScript implements FleetEventLi
     protected void everyFrame(SectorAPI sector, float amount) {
         if (!intelAdded) {
             intelAdded = true;
+            ChartRun run = liveRun();
+            if (run != null && ConvoyBoltHole.isOn(ChartRunEffects.contextOf(run))) {
+                ConvoyBoltHole.reroute(convoys, ExcavationDeliveries.standingPlanetIds(run).stream().filter(planetId -> entity(planetId) != null).toList());
+            }
             convoys.forEach(convoy -> ConvoyIntel.addFor(sector, this, convoy));
         }
         holdFleets(amount);
@@ -246,16 +256,30 @@ public final class ConvoyScript extends AnomalyRunScript implements FleetEventLi
     void recordLosses(ConvoyState convoy, float remainingFreighterPoints, Vector2f at) {
         boolean wasLost = convoy.phase() == ConvoyState.Phase.LOST;
         float lostShare = convoy.recordFreighterPoints(remainingFreighterPoints);
-        if (!wasLost && convoy.phase() == ConvoyState.Phase.LOST) {
+        boolean defeated = !wasLost && convoy.phase() == ConvoyState.Phase.LOST;
+        if (defeated) {
             leave(convoy);
         }
         SectorAPI sector = Global.getSector();
         ChartRun run = sector == null ? null : liveRun();
-        if (!(lostShare > 0f) || at == null || run == null) {
+        if (run == null) {
+            return;
+        }
+        ChartGenContext context = ChartRunEffects.contextOf(run);
+        if (defeated && ConvoySupplyLines.isOn(context)) {
+            ConvoySupplyLines.handOver(AtlasState.getIfCreated(sector), convoy, new Random(convoy.nextDropSeed()));
+        }
+        if (!(lostShare > 0f) || at == null) {
             return;
         }
         Random dropRandom = new Random(convoy.nextDropSeed());
-        ConvoyCargo.dropPods(system(), runId(), ConvoyCargo.lostCargo(sector, run, convoy, lostShare * ConvoyRules.POD_SHARE, dropRandom), at);
+        float feedstockScale = playerInBreach(sector) ? FeedstockBonus.breachShare(context) : 1f;
+        ConvoyCargo.dropPods(system(), runId(), ConvoyCargo.lostCargo(sector, run, convoy, lostShare * ConvoyRules.POD_SHARE, feedstockScale, dropRandom), at);
+    }
+
+    boolean playerInBreach(SectorAPI sector) {
+        BreachTerrainPlugin breach = SpatialBreach.breachIn(system());
+        return breach != null && breach.holds(sector.getPlayerFleet());
     }
 
     public float daysUntilDeparture(CampaignClockAPI clock) {
@@ -315,15 +339,18 @@ public final class ConvoyScript extends AnomalyRunScript implements FleetEventLi
         }
         CampaignFleetAPI fleet = fleet(convoy);
         ChartRun run = liveRun();
+        SectorEntityToken destination = entity(convoy.destinationId());
         if (run != null) {
-            convoy.storeCache(ConvoyCargo.deliveredCache(Global.getSector(), run, convoy, fleet, new Random(convoy.nextDropSeed())));
+            Random random = new Random(convoy.nextDropSeed());
+            if (!ConvoyBoltHole.deliver(Global.getSector(), run, convoy, fleet, destination, random)) {
+                convoy.storeCache(ConvoyCargo.deliveredCache(Global.getSector(), run, convoy, fleet, 1f, random));
+            }
         }
         if (fleet != null) {
             ChartFleetLedger.spendLoot(fleet);
             fleet.addAssignment(FleetAssignment.GO_TO_LOCATION_AND_DESPAWN, convoy.exitToken(), ChartContentGenerator.ASSIGNMENT_DAYS);
         }
-        SectorEntityToken destination = entity(convoy.destinationId());
-        if (destination != null && convoy.hasCache()) {
+        if (destination != null && (convoy.hasCache() || convoy.deliveredToExcavation())) {
             String planet = destination.getName();
             tellPlayer(() -> I18n.forGameText(() -> Translation.msg("chart.anomaly.supply_convoy.delivered").arg("planet", planet).text()), Misc::getHighlightColor);
         }

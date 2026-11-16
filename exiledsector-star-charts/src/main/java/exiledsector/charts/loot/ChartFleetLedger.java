@@ -158,7 +158,7 @@ public final class ChartFleetLedger {
         return fleetMemory != null && fleetMemory.get(LOOT_FLEETS_MEMORY_KEY) instanceof Number fleets ? Math.max(1, fleets.intValue()) : 1;
     }
 
-    static ChartRun liveRunOf(CampaignFleetAPI fleet) {
+    public static ChartRun liveRunOf(CampaignFleetAPI fleet) {
         ChartRun run = ChartRuns.live();
         MemoryAPI fleetMemory = run == null ? null : fleet.getMemoryWithoutUpdate();
         return fleetMemory != null && fleetMemory.getBoolean(ChartIds.fleetRunKey(run.runId())) ? run : null;

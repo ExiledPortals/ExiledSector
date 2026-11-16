@@ -68,30 +68,47 @@ public final class FactionFleetDrops {
     }
 
     public static float chance(Source source, Map<String, Float> defeatedDeploymentPointsByFaction) {
-        float qualifyingDeploymentPoints = 0f;
-        for (Map.Entry<String, Float> defeated : defeatedDeploymentPointsByFaction.entrySet()) {
-            if (source.dropsFrom(defeated.getKey()) && defeated.getValue() != null && defeated.getValue() > 0f) {
-                qualifyingDeploymentPoints += defeated.getValue();
-            }
+        return chance(source, defeatedDeploymentPointsByFaction, defeatedDeploymentPointsByFaction);
+    }
+
+    public static float chance(Source source, Map<String, Float> defeatedDeploymentPointsByFaction, Map<String, Float> defeatedDeploymentPointsByFleetFaction) {
+        if (source.guaranteed() && qualifyingDeploymentPoints(source, defeatedDeploymentPointsByFleetFaction) > 0f) {
+            return 1f;
         }
+        float qualifyingDeploymentPoints = qualifyingDeploymentPoints(source, defeatedDeploymentPointsByFaction);
         if (!(qualifyingDeploymentPoints > 0f)) {
             return 0f;
-        }
-        if (source.guaranteed()) {
-            return 1f;
         }
         float chance = Math.max(0f, source.chance()) * qualifyingDeploymentPoints / DEPLOYMENT_POINTS_PER_CHANCE_STEP;
         return Math.min(MAX_CHANCE_PER_BATTLE, chance);
     }
 
+    private static float qualifyingDeploymentPoints(Source source, Map<String, Float> defeatedDeploymentPointsByFaction) {
+        float qualifyingDeploymentPoints = 0f;
+        if (defeatedDeploymentPointsByFaction == null) {
+            return qualifyingDeploymentPoints;
+        }
+        for (Map.Entry<String, Float> defeated : defeatedDeploymentPointsByFaction.entrySet()) {
+            if (source.dropsFrom(defeated.getKey()) && defeated.getValue() != null && defeated.getValue() > 0f) {
+                qualifyingDeploymentPoints += defeated.getValue();
+            }
+        }
+        return qualifyingDeploymentPoints;
+    }
+
     public static List<ItemData> roll(Map<String, Float> defeatedDeploymentPointsByFaction, Random random, Predicate<ItemDefinition> allowed) {
+        return roll(defeatedDeploymentPointsByFaction, defeatedDeploymentPointsByFaction, random, allowed);
+    }
+
+    public static List<ItemData> roll(Map<String, Float> defeatedDeploymentPointsByFaction, Map<String, Float> defeatedDeploymentPointsByFleetFaction,
+                                      Random random, Predicate<ItemDefinition> allowed) {
         List<ItemData> droppedItems = new ArrayList<>();
         if (defeatedDeploymentPointsByFaction == null || defeatedDeploymentPointsByFaction.isEmpty()) {
             return droppedItems;
         }
         for (Map<String, Source> sources : SOURCES_BY_GROUP.get().values()) {
             for (Map.Entry<String, Source> sourceEntry : sources.entrySet()) {
-                float chance = chance(sourceEntry.getValue(), defeatedDeploymentPointsByFaction);
+                float chance = chance(sourceEntry.getValue(), defeatedDeploymentPointsByFaction, defeatedDeploymentPointsByFleetFaction);
                 if (!(chance > 0f) || random.nextFloat() >= chance) {
                     continue;
                 }

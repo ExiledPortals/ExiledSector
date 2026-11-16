@@ -1,5 +1,6 @@
 package exiledsector.charts.anomaly.listeningpost;
 
+import exiledsector.charts.generation.ChartTiers;
 import org.junit.jupiter.api.Test;
 
 import java.util.Random;
@@ -42,6 +43,27 @@ class ListeningPostRulesTest {
         }
         assertTrue(ListeningPostRules.picketCount(random, 100) <= ListeningPostRules.MAX_PICKETS + ListeningPostRules.MAX_EXTRA_PICKETS);
         assertTrue(ListeningPostRules.picketCount(random, -4) >= ListeningPostRules.MIN_PICKETS);
+    }
+
+    @Test
+    void stolenChartsNumberOneToTheLineAndSitWithinTwoTiersOfTheRun() {
+        Random random = new Random(5L);
+        boolean sawLowest = false;
+        boolean sawHighest = false;
+        for (int roll = 0; roll < 200; roll++) {
+            int count = ListeningPostRules.stolenChartCount(random, 3);
+            assertTrue(count >= 1 && count <= 3, String.valueOf(count));
+            int tier = ListeningPostRules.stolenChartTier(random, 8);
+            assertTrue(tier >= 6 && tier <= 10, String.valueOf(tier));
+            sawLowest |= tier == 6;
+            sawHighest |= tier == 10;
+            int lowTier = ListeningPostRules.stolenChartTier(random, 1);
+            assertTrue(lowTier >= ChartTiers.LOWEST_TIER && lowTier <= 3, String.valueOf(lowTier));
+            int topTier = ListeningPostRules.stolenChartTier(random, ChartTiers.HIGHEST_DROP_TIER);
+            assertTrue(topTier >= ChartTiers.HIGHEST_DROP_TIER - 2 && topTier <= ChartTiers.HIGHEST_DROP_TIER, String.valueOf(topTier));
+        }
+        assertTrue(sawLowest && sawHighest);
+        assertEquals(0, ListeningPostRules.stolenChartCount(random, 0));
     }
 
     @Test

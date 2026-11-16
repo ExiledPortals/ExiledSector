@@ -41,10 +41,11 @@ public class ExcavationBattleCreationPlugin implements BattleCreationPlugin {
                 (int) playerFleet.getCommanderStats().getCommandPoints().getModifiedValue() - baseCommandPoints);
         loader.initFleet(FleetSide.ENEMY, "", otherGoal, true,
                 (int) otherFleet.getCommanderStats().getCommandPoints().getModifiedValue() - baseCommandPoints);
-        for (FleetMemberAPI member : excavationShips(playerFleet, playerGoal == FleetGoal.ESCAPE)) {
+        int maxShipSize = ExcavationRules.maxShipSize(ExcavationBattlePlugin.liveTuning());
+        for (FleetMemberAPI member : excavationShips(playerFleet, playerGoal == FleetGoal.ESCAPE, maxShipSize)) {
             loader.addFleetMember(FleetSide.PLAYER, member);
         }
-        for (FleetMemberAPI member : excavationShips(otherFleet, otherGoal == FleetGoal.ESCAPE)) {
+        for (FleetMemberAPI member : excavationShips(otherFleet, otherGoal == FleetGoal.ESCAPE, maxShipSize)) {
             loader.addFleetMember(FleetSide.ENEMY, member);
         }
         createCavern(loader, playerFleet.getContainingLocation());
@@ -60,9 +61,9 @@ public class ExcavationBattleCreationPlugin implements BattleCreationPlugin {
         }
     }
 
-    static List<FleetMemberAPI> excavationShips(CampaignFleetAPI fleet, boolean escaping) {
+    static List<FleetMemberAPI> excavationShips(CampaignFleetAPI fleet, boolean escaping, int maxShipSize) {
         List<FleetMemberAPI> members = escaping ? fleet.getFleetData().getMembersListCopy() : fleet.getFleetData().getCombatReadyMembersListCopy();
-        return members.stream().filter(member -> !ExcavationBattlePlugin.holdsAbove(member)).toList();
+        return members.stream().filter(member -> !ExcavationBattlePlugin.holdsAbove(member, maxShipSize)).toList();
     }
 
     static void createCavern(MissionDefinitionAPI loader, LocationAPI location) {

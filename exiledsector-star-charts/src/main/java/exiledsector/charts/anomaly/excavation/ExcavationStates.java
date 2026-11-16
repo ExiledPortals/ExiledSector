@@ -77,4 +77,17 @@ public final class ExcavationStates {
         record(of(run), current.asCleared());
         return true;
     }
+
+    static boolean clearShaft(ChartRun run, ExcavationSite site, ExcavationSite.Access shaft) {
+        ExcavationSite current = run == null || site == null ? null : at(run, site.planetId());
+        if (current == null || current.cleared()) {
+            return false;
+        }
+        ExcavationSite remaining = current.withoutShaft(shaft);
+        if (remaining.equals(current)) {
+            return false;
+        }
+        record(of(run), remaining);
+        return true;
+    }
 }

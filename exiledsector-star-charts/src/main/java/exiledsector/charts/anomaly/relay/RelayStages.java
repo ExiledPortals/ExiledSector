@@ -118,14 +118,16 @@ public final class RelayStages {
             return;
         }
         settle(AtlasRuntime.generator(sector), AtlasState.get(sector), AtlasCell.unpack(node.cell()), node.anomalyIds(),
-                run.anomalyIds().contains(RelayNetwork.ANOMALY_ID), RelayStates.allWoken(run));
+                run.anomalyIds().contains(RelayNetwork.ANOMALY_ID), RelayStates.allWoken(run), RelayTuning.onwardSystems(RelayTuning.of(run)));
     }
 
     static AtlasCell settle(AtlasGenerator generator, AtlasState state, AtlasCell cell, boolean placed, boolean allWoken) {
-        return settle(generator, state, cell, AtlasAnomalies.effective(generator, state, cell), placed, allWoken);
+        List<AtlasCell> targets = settle(generator, state, cell, AtlasAnomalies.effective(generator, state, cell), placed, allWoken, 1);
+        return targets.isEmpty() ? null : targets.get(0);
     }
 
-    static AtlasCell settle(AtlasGenerator generator, AtlasState state, AtlasCell cell, List<String> runAnomalyIds, boolean placed, boolean allWoken) {
+    static List<AtlasCell> settle(AtlasGenerator generator, AtlasState state, AtlasCell cell, List<String> runAnomalyIds, boolean placed,
+                                  boolean allWoken, int onwardSystems) {
         AtlasAnomalyRecord record = recordAt(state, cell);
         AtlasAnomalyRecord.Chain current = chainAt(generator, state, cell, record, runAnomalyIds);
         AtlasAnomalyRecord.Chain next = null;
@@ -134,8 +136,35 @@ public final class RelayStages {
         } else if (allWoken && !current.isLast()) {
             next = new AtlasAnomalyRecord.Chain(current.stage() + 1, current.stages(), cell);
         }
-        AtlasCell target = next == null ? null
-                : AtlasAnomalies.onward(generator, state, cell, RelayNetwork.ANOMALY_ID, RelayRules.MIN_ONWARD_LANES, RelayRules.MAX_ONWARD_LANES);
+        AtlasCell target = moveOn(generator, state, cell, record, next);
+        if (target == null) {
+            return List.of();
+        }
+        List<AtlasCell> targets = new ArrayList<>(List.of(target));
+        int branches = placed ? onwardSystems : 1;
+        for (int branch = 1; branch < branches; branch++) {
+            AtlasCell fork = fork(generator, state, cell, next);
+            if (fork == null) {
+                break;
+            }
+            targets.add(fork);
+        }
+        return List.copyOf(targets);
+    }
+
+    static AtlasCell fork(AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasAnomalyRecord.Chain next) {
+        AtlasCell target = onward(generator, state, cell);
+        boolean inserted = target != null
+                && AtlasAnomalies.insert(generator, state, target, RelayNetwork.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD, null, next).check().allows();
+        return inserted ? target : null;
+    }
+
+    private static AtlasCell onward(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
+        return AtlasAnomalies.onward(generator, state, cell, RelayNetwork.ANOMALY_ID, RelayRules.MIN_ONWARD_LANES, RelayRules.MAX_ONWARD_LANES);
+    }
+
+    private static AtlasCell moveOn(AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasAnomalyRecord record, AtlasAnomalyRecord.Chain next) {
+        AtlasCell target = next == null ? null : onward(generator, state, cell);
         boolean moved = target != null && (record != null
                 ? AtlasAnomalies.move(generator, state, record.recordId(), target, null, next).allows()
                 : AtlasAnomalies.insert(generator, state, target, RelayNetwork.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD, null, next).check().allows());

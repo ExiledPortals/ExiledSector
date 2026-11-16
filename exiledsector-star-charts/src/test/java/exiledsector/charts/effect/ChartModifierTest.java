@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -24,7 +25,7 @@ class ChartModifierTest {
                 assertTrue(keys.add(effect.anomalyTuningKey()), effect.name());
             }
         }
-        assertEquals(21, keys.size());
+        assertEquals(98, keys.size());
         assertNull(ChartModifier.CHART_ITEM_PERCENT.anomalyTuningKey());
     }
 
@@ -35,5 +36,14 @@ class ChartModifierTest {
 
         assertEquals(2f, context.anomalyPercent(SupplyConvoy.EXTRA_KEY));
         assertEquals(-15f, context.anomalyPercent(DerelictForge.COST_KEY));
+    }
+
+    @Test
+    void flagAnomalyLinesAreFlagsAndRaiseTheirTuningKey() {
+        assertTrue(ChartModifier.CHART_LISTENING_POST_ARMED_STATION.isFlag());
+        assertFalse(ChartModifier.CHART_LISTENING_POST_STOLEN_CHARTS.isFlag());
+        ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_LISTENING_POST_ARMED_STATION, 1f)));
+
+        assertEquals(1f, context.anomalyPercent(ChartModifier.CHART_LISTENING_POST_ARMED_STATION.anomalyTuningKey()));
     }
 }

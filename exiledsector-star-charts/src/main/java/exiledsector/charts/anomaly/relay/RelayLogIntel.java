@@ -48,10 +48,11 @@ public class RelayLogIntel extends ChartRunIntel {
 
     static List<Entry> entries(ChartRun run, AtlasAnomalyRecord.Chain stage) {
         List<Entry> entries = new ArrayList<>();
-        for (RelayKind kind : RelayKind.values()) {
-            if (RelayStates.isWoken(run, kind)) {
+        for (RelaySlot slot : RelayStates.slots(run)) {
+            if (RelayStates.isWoken(run, slot)) {
+                RelayKind kind = slot.kind();
                 entries.add(new Entry(Translation.gameText(RelayText.PREFIX + kind.key() + ".name"), Translation.gameText(RelayText.logKey(kind, stage)),
-                        RelayChoices.picked(run, kind)));
+                        RelayChoices.picked(run, slot)));
             }
         }
         return entries;
@@ -78,7 +79,9 @@ public class RelayLogIntel extends ChartRunIntel {
             VanillaText.plainPara(info, entry.log(), LOG_PAD, Misc.getTextColor());
             if (entry.pick() != null) {
                 VanillaText.addPara(info, RelayText.pickedLine(entry.pick()), LOG_PAD, Misc.getTextColor());
-                VanillaText.addPara(info, ScarText.effectsLine(entry.pick().scarId(), bossHull), LOG_PAD, Misc.getTextColor());
+                for (String scarId : entry.pick().scarIds()) {
+                    VanillaText.addPara(info, ScarText.effectsLine(scarId, bossHull), LOG_PAD, Misc.getTextColor());
+                }
             }
         }
         VanillaText.plainPara(info, RelayText.status(run, stage), PARAGRAPH_PAD, Misc.getGrayColor());

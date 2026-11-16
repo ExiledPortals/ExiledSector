@@ -27,8 +27,9 @@ public class ConvoyEncounterDialog extends AnomalyDialog {
                 .arg("fleet", fleetName).text()));
         if (script != null) {
             int tier = script.tier();
+            ConvoyState convoy = ConvoyScript.convoyOf(fleet);
             VanillaText.addPara(text(), I18n.forGameText(() -> Translation.msg("chart.anomaly.supply_convoy.intel.manifest")
-                    .arg("cargo", ConvoyCargo.manifest(tier)).styled()), Misc.getTextColor());
+                    .arg("cargo", ConvoyCargo.manifest(tier, convoy)).styled()), Misc.getTextColor());
         }
         OptionPanelAPI options = options();
         options.clearOptions();

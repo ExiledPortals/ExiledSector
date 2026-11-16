@@ -1,6 +1,7 @@
 package exiledsector.charts.anomaly.excavation;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
+import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.MarketCMD.RaidDangerLevel;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -43,12 +44,17 @@ public class ExcavationSiteObjective extends ChartRaidObjective {
     protected CargoAPI take(Random random) {
         ChartRun run = ChartRuns.live();
         ExcavationSite current = run == null ? null : ExcavationStates.standingAt(run, site.planetId());
-        if (current == null || current.access() != ExcavationSite.Access.COLLAPSED) {
+        if (current == null || !current.hasCollapsedShaft()) {
             return null;
         }
         float share = ExcavationRules.raidShare((float) raidEffectiveness.getAsDouble());
-        CargoAPI cargo = ExcavationLoot.raidCargo(run, share, random);
-        ExcavationStates.clear(run, current);
+        SectorEntityToken planet = getMarket() == null ? null : getMarket().getPrimaryEntity();
+        CargoAPI cargo = ExcavationLoot.raidCargo(run, share, ExcavationDeliveries.lootPercent(planet), random);
+        CargoAPI delivered = ExcavationDeliveries.takeCache(planet);
+        if (delivered != null) {
+            cargo.addAll(delivered);
+        }
+        ExcavationStates.clearShaft(run, current, ExcavationSite.Access.COLLAPSED);
         return cargo;
     }
 }

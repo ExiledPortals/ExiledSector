@@ -28,6 +28,10 @@ public final class Translation {
         return I18n.catalogue().has(key);
     }
 
+    public static boolean hasMessage(String key) {
+        return has(key) || has(key + "." + Plurals.OTHER);
+    }
+
     public static String data(String key, String englishSource) {
         if (has(key)) {
             return text(key);

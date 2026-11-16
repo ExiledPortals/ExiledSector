@@ -12,10 +12,13 @@ import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ContentPlacer;
+import exiledsector.charts.anomaly.DenseNebula;
 import exiledsector.charts.anomaly.LayoutShaper;
 import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.anomaly.StateFields;
+import exiledsector.charts.loot.ChartFleetLedger;
+import exiledsector.charts.loot.ChartFleetLoot;
 import exiledsector.charts.loot.ChartLootContext;
 import exiledsector.charts.loot.FleetClaim;
 import exiledsector.loot.Loot;
@@ -60,9 +63,10 @@ public final class ExcavationSites implements LayoutShaper, ContentPlacer, RunPa
         List<PlanetAPI> planets = new ArrayList<>(site.freePlanets(true).stream().filter(planet -> StateFields.fits(planet.getId())).toList());
         Collections.shuffle(planets, random);
         int count = Math.min(planets.size(), ExcavationRules.siteCount(random, Math.round(site.context().anomalyPercent(EXTRA_KEY))));
+        ExcavationTuning tuning = ExcavationTuning.of(site.context());
         List<ExcavationSite> placed = new ArrayList<>();
         for (int index = 0; index < count; index++) {
-            ExcavationSite placedSite = new ExcavationSite(index, planets.get(index).getId(), ExcavationRules.access(random), random.nextLong(),
+            ExcavationSite placedSite = new ExcavationSite(index, planets.get(index).getId(), ExcavationRules.access(random, tuning), random.nextLong(),
                     false);
             ExcavationStates.record(site.state(ANOMALY_ID), placedSite);
             site.claim(planets.get(index));
@@ -86,8 +90,8 @@ public final class ExcavationSites implements LayoutShaper, ContentPlacer, RunPa
     }
 
     @Override
-    public Loot fleetLoot(FleetClaim claim, ChartLootContext loot, Random random) {
-        return ExcavationLoot.fleetItems(claim.fleet(), loot, claim.anomalyShare(), random);
+    public Loot fleetLoot(FleetClaim claim, ChartLootContext loot, ChartFleetLoot.Battle battle, Random random) {
+        return ExcavationLoot.fleetItems(claim.fleet(), loot, DenseNebula.dust(ChartFleetLedger.liveRunOf(claim.fleet())), claim.anomalyShare(), random);
     }
 
     @Override

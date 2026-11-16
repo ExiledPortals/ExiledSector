@@ -16,6 +16,7 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.AnomalyDialog;
 import exiledsector.charts.anomaly.AnomalyEncounters;
+import exiledsector.charts.anomaly.ChartRaid;
 import exiledsector.charts.atlas.AtlasProgress;
 import exiledsector.charts.atlas.AtlasReach;
 import exiledsector.charts.run.ChartRun;
@@ -27,6 +28,7 @@ import exiledsector.items.ItemDefinition;
 import exiledsector.items.PrototypeImplicits;
 import exiledsector.items.RolledModifier;
 import exiledsector.loot.DropOrigin;
+import exiledsector.loot.LootDelivery;
 import exiledsector.loot.LootSources;
 import exiledsector.ui.VanillaText;
 
@@ -38,6 +40,7 @@ public class PostDialog extends AnomalyDialog {
     static final String INFILTRATE = "exiledSector_postInfiltrate";
     static final String OPEN = "exiledSector_postOpen";
     static final String ENGAGE_OPTION = "exiledSector_postEngage";
+    static final String RAID_OPTION = "exiledSector_postRaid";
 
     private static final String[] INFILTRATION_KEYS = {
             "chart.anomaly.listening_post.dialog.infiltrate.approach",
@@ -47,7 +50,9 @@ public class PostDialog extends AnomalyDialog {
             "chart.anomaly.listening_post.dialog.infiltrate.vault"
     };
 
+    private final ChartRaid.Session raid = new ChartRaid.Session(closedDialog -> raidClosed());
     private SectorEntityToken post;
+    private List<ItemData> raidedPrototypes = List.of();
 
     record PrototypeChoice(int index) {
     }
@@ -73,22 +78,31 @@ public class PostDialog extends AnomalyDialog {
         TextPanelAPI text = text();
         OptionPanelAPI options = options();
         options.clearOptions();
-        PostState state = PostState.of(run());
+        ChartRun run = run();
+        PostState state = PostState.of(run);
         PostScript script = script();
+        boolean raidOnly = DepotTuning.of(run).raidOnly();
         if (state == null) {
             VanillaText.plainPara(text, Translation.gameText("chart.anomaly.listening_post.dialog.stale"));
         } else if (state.taken()) {
             VanillaText.plainPara(text, Translation.gameText("chart.anomaly.listening_post.dialog.taken"));
         } else if (!state.alarm()) {
             VanillaText.plainPara(text, Translation.gameText("chart.anomaly.listening_post.dialog.quiet"));
-            options.addOption(Translation.gameText("chart.anomaly.listening_post.dialog.option.infiltrate"), INFILTRATE);
+            if (raidOnly) {
+                VanillaText.plainPara(text, Translation.gameText("chart.anomaly.listening_post.dialog.raidOnly"));
+                options.addOption(Translation.gameText("chart.anomaly.listening_post.dialog.option.raid"), RAID_OPTION);
+            } else {
+                options.addOption(Translation.gameText("chart.anomaly.listening_post.dialog.option.infiltrate"), INFILTRATE);
+            }
         } else {
             int vault = PostText.percent(state.vaultShare());
             boolean defended = script != null && script.defended();
-            String key = defended ? "chart.anomaly.listening_post.dialog.guarded" : "chart.anomaly.listening_post.dialog.purged";
+            String key = alarmKey(defended, script != null && script.purgeHeld(run));
             VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg(key).arg("value", vault).text()));
             if (defended) {
                 options.addOption(Translation.gameText("chart.anomaly.listening_post.dialog.option.engage"), ENGAGE_OPTION);
+            } else if (raidOnly) {
+                options.addOption(Translation.gameText("chart.anomaly.listening_post.dialog.option.raidPurged"), RAID_OPTION);
             } else {
                 options.addOption(Translation.gameText("chart.anomaly.listening_post.dialog.option.openPurged"), OPEN);
             }
@@ -96,24 +110,84 @@ public class PostDialog extends AnomalyDialog {
         addLeaveOption();
     }
 
+    static String alarmKey(boolean defended, boolean purgeHeld) {
+        if (!defended) {
+            return "chart.anomaly.listening_post.dialog.purged";
+        }
+        return purgeHeld ? "chart.anomaly.listening_post.dialog.fortified" : "chart.anomaly.listening_post.dialog.guarded";
+    }
+
     @Override
     public void optionSelected(String optionText, Object optionData) {
+        if (raid.handles(optionData)) {
+            raid.optionSelected(optionData);
+            return;
+        }
         ChartRun run = run();
         PostState state = PostState.of(run);
         PostScript script = script();
-        boolean open = state != null && !state.taken() && (!state.alarm() || script == null || !script.defended());
-        if (INFILTRATE.equals(optionData) && state != null && !state.taken() && !state.alarm()) {
+        DepotTuning tuning = DepotTuning.of(run);
+        boolean reachable = state != null && !state.taken() && (!state.alarm() || script == null || !script.defended());
+        boolean open = reachable && !tuning.raidOnly();
+        if (optionData instanceof PrototypeChoice choice && !raidedPrototypes.isEmpty()) {
+            List<ItemData> offered = raidedPrototypes;
+            raidedPrototypes = List.of();
+            givePrototype(choice.index() < offered.size() ? offered.get(choice.index()) : null);
+        } else if (INFILTRATE.equals(optionData) && open && !state.alarm()) {
             infiltrate();
         } else if (OPEN.equals(optionData) && open) {
-            openVault(run, state);
-        } else if (optionData instanceof PrototypeChoice choice && state != null && state.quiet()) {
-            List<ItemData> offered = VaultPrototypes.offered(Global.getSector(), state.seed());
+            openVault(run, state, tuning);
+        } else if (RAID_OPTION.equals(optionData) && reachable && tuning.raidOnly()) {
+            launchRaid(run, state);
+        } else if (optionData instanceof PrototypeChoice choice && open) {
+            List<ItemData> offered = VaultPrototypes.offered(Global.getSector(), state.seed(), tuning.prototypePicks(state.quiet()));
             takeVault(run, state, choice.index() < offered.size() ? offered.get(choice.index()) : null);
         } else if (ENGAGE_OPTION.equals(optionData) && state != null && state.alarm() && !state.taken() && script != null) {
             engage(script.gatherDefenders());
         } else {
             dialog().dismiss();
         }
+    }
+
+    void launchRaid(ChartRun run, PostState state) {
+        PostMarket.ensure(post);
+        int vaultPercent = PostText.percent(state.vaultShare());
+        raid.launch(dialog(), run.tier(), state.seed(),
+                () -> List.of(new VaultRaidObjective(post.getMarket(), ChartRaid.danger(run.tier()), vaultPercent, this::raidVault)));
+    }
+
+    CargoAPI raidVault() {
+        ChartRun run = run();
+        PostState state = PostState.of(run);
+        if (state == null || state.taken()) {
+            return null;
+        }
+        List<ItemData> offered = VaultPrototypes.offered(Global.getSector(), state.seed(), DepotTuning.of(run).prototypePicks(state.quiet()));
+        CargoAPI vault = emptyVault(run, state);
+        if (offered.size() == 1) {
+            addPrototype(vault, offered.get(0));
+        } else {
+            raidedPrototypes = offered;
+        }
+        return vault;
+    }
+
+    void raidClosed() {
+        if (raidedPrototypes.isEmpty()) {
+            showEntityVisual(post);
+            showMain();
+            return;
+        }
+        showEntityVisual(post);
+        showPrototypes(raidedPrototypes);
+    }
+
+    void givePrototype(ItemData prototype) {
+        CargoAPI cargo = Global.getFactory().createCargo(true);
+        if (prototype != null) {
+            addPrototype(cargo, prototype);
+        }
+        showVault(cargo);
     }
 
     void infiltrate() {
@@ -127,15 +201,13 @@ public class PostDialog extends AnomalyDialog {
         addLeaveOption();
     }
 
-    void openVault(ChartRun run, PostState state) {
-        if (state.quiet()) {
-            List<ItemData> offered = VaultPrototypes.offered(Global.getSector(), state.seed());
-            if (!offered.isEmpty()) {
-                showPrototypes(offered);
-                return;
-            }
+    void openVault(ChartRun run, PostState state, DepotTuning tuning) {
+        List<ItemData> offered = VaultPrototypes.offered(Global.getSector(), state.seed(), tuning.prototypePicks(state.quiet()));
+        if (offered.size() > 1 || state.quiet() && !offered.isEmpty()) {
+            showPrototypes(offered);
+            return;
         }
-        takeVault(run, state, state.alarm() ? VaultPrototypes.leftAfterAlarm(Global.getSector(), state.seed()) : null);
+        takeVault(run, state, offered.isEmpty() ? null : offered.get(0));
     }
 
     void showPrototypes(List<ItemData> offered) {
@@ -166,21 +238,34 @@ public class PostDialog extends AnomalyDialog {
     }
 
     void takeVault(ChartRun run, PostState state, ItemData prototype) {
+        CargoAPI vault = emptyVault(run, state);
+        if (prototype != null) {
+            addPrototype(vault, prototype);
+        }
+        showVault(vault);
+    }
+
+    CargoAPI emptyVault(ChartRun run, PostState state) {
         PostState taken = state.asTaken();
         PostState.record(run, taken);
-        TextPanelAPI text = text();
         if (taken.clean() && AtlasProgress.revealLanesAround(Global.getSector(), run)) {
-            VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg("chart.anomaly.listening_post.dialog.lanes").count(AtlasReach.LISTENING_POST_LANES).text()));
+            VanillaText.plainPara(text(), I18n.forGameText(() -> Translation.msg("chart.anomaly.listening_post.dialog.lanes").count(AtlasReach.LISTENING_POST_LANES).text()));
         }
         CargoAPI vault = VaultLoot.roll(Global.getSector(), run, state.vaultShare(), new Random(state.seed()));
-        if (prototype != null) {
-            if (vault == null) {
-                vault = Global.getFactory().createCargo(true);
-            }
-            vault.addSpecial(LootSources.shape(List.of(prototype), DropOrigin.ANYWHERE).get(0).toSpecialItem(), 1f);
+        if (vault == null) {
+            vault = Global.getFactory().createCargo(true);
         }
+        LootDelivery.toLootScreen(vault, VaultExtras.roll(Global.getSector(), run, state, DepotTuning.of(run)), DropOrigin.ANYWHERE);
+        return vault;
+    }
+
+    static void addPrototype(CargoAPI vault, ItemData prototype) {
+        vault.addSpecial(LootSources.shape(List.of(prototype), DropOrigin.ANYWHERE).get(0).toSpecialItem(), 1f);
+    }
+
+    void showVault(CargoAPI vault) {
         if (vault == null || vault.isEmpty()) {
-            VanillaText.plainPara(text, Translation.gameText("chart.anomaly.listening_post.dialog.empty"));
+            VanillaText.plainPara(text(), Translation.gameText("chart.anomaly.listening_post.dialog.empty"));
             showMain();
             return;
         }

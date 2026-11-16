@@ -5,11 +5,14 @@ import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.loot.ChartFleetLoot;
 import exiledsector.charts.loot.ChartLootContext;
 import exiledsector.charts.loot.FleetClaim;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
+import exiledsector.loot.BattleEngagement;
+import exiledsector.loot.BattleLoot;
 import exiledsector.loot.Loot;
 
 import java.util.List;
@@ -21,7 +24,7 @@ public interface LootShaper extends ChartAnomaly {
         return List.of();
     }
 
-    default Loot fleetLoot(FleetClaim claim, ChartLootContext loot, Random random) {
+    default Loot fleetLoot(FleetClaim claim, ChartLootContext loot, ChartFleetLoot.Battle battle, Random random) {
         return Loot.NONE;
     }
 
@@ -39,6 +42,13 @@ public interface LootShaper extends ChartAnomaly {
 
     default float battleLootMult(ChartGenContext context) {
         return 1f;
+    }
+
+    default float battleHullItemPercent(ChartGenContext context) {
+        return 0f;
+    }
+
+    default void engagementRecorded(BattleLoot battle, BattleEngagement engagement) {
     }
 
     default ItemData shapeDrop(SectorAPI sector, ItemData item, LocationAPI location) {

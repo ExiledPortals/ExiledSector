@@ -10,6 +10,7 @@ import com.fs.starfarer.api.campaign.RepLevel;
 import com.fs.starfarer.api.campaign.FactionAPI.ShipPickMode;
 import com.fs.starfarer.api.campaign.FactionAPI.ShipPickParams;
 import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
@@ -40,6 +41,7 @@ import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.ChartFleetLedger;
 import exiledsector.charts.loot.ChartVanillaLoot;
 import exiledsector.charts.loot.DropType;
+import exiledsector.loot.FleetFactions;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
@@ -54,6 +56,7 @@ public final class DormantFleets {
     public static final String FLEET_TAG = ChartIds.PREFIX + "dormant_fleet";
     public static final String DORMANT_KEY = "$exiledSector_debrisDormant";
     public static final String CORRUPTED_KEY = "$exiledSector_debrisCorrupted";
+    public static final String CORRUPTIONS_KEY = "$exiledSector_debrisCorruptions";
     public static final String CRAFTING_ITEM_DROPPED_KEY = "$exiledSector_debrisCraftingItemDropped";
     static final String BUILD_SEED_KEY = "$exiledSector_debrisBuildSeed";
     static final String HIDDEN_MOD_ID = AnomalousDebris.TERRAIN_ID + "_hidden";
@@ -78,12 +81,16 @@ public final class DormantFleets {
         dressFaction(sector.getFaction(FACTION_ID), sector.getAllFactions());
         CampaignFleetAPI fleet = Global.getFactory().createEmptyFleet(FACTION_ID, Translation.gameText("chart.anomaly.anomalous_debris.fleet.name"), true);
         fleet.setInflater(null);
-        populate(fleet, hullFactions(sector), tier, context, seed, false);
+        int corruptions = DebrisTuning.of(context).forcedCorruptions();
+        populate(fleet, hullFactions(sector), tier, context, seed, corruptions);
         if (fleet.isEmpty()) {
             return null;
         }
         prepare(fleet, runId, tier, seed, new Random(seed));
-        setStrengthBonus(fleet, tier, context, false);
+        if (corruptions > 0) {
+            markCorrupted(fleet, corruptions);
+        }
+        setStrengthBonus(fleet, tier, context, corruptions);
         ChartVanillaLoot.addToFleet(fleet, false, ChartGenContext.orNone(context), tier, WITHHELD_DROPS);
         ChartEnemyShipEffects.grant(fleet, context);
         return fleet;
@@ -111,15 +118,18 @@ public final class DormantFleets {
         return factions;
     }
 
-    static void setStrengthBonus(CampaignFleetAPI fleet, int tier, ChartGenContext context, boolean corrupted) {
-        ChartFleetMarks.setStrengthBonus(fleet.getMemoryWithoutUpdate(), DebrisRules.strengthBonus(ChartTiers.adjusted(tier, context), corrupted));
+    static void setStrengthBonus(CampaignFleetAPI fleet, int tier, ChartGenContext context, int corruptions) {
+        float increasedSizePercent = DebrisTuning.of(context).increasedSizePercent(corruptions);
+        ChartFleetMarks.setStrengthBonus(fleet.getMemoryWithoutUpdate(), DebrisRules.strengthBonus(ChartTiers.adjusted(tier, context), corruptions,
+                increasedSizePercent));
     }
 
-    static void populate(CampaignFleetAPI fleet, List<HullFaction> factions, int tier, ChartGenContext context, long seed, boolean corrupted) {
+    static void populate(CampaignFleetAPI fleet, List<HullFaction> factions, int tier, ChartGenContext context, long seed, int corruptions) {
         Random random = new Random(seed);
         ChartTier adjusted = ChartTiers.adjusted(tier, context);
-        float points = DebrisRules.fleetPoints(adjusted, corrupted);
-        float averageDMods = DefaultFleetInflater.getAverageDmodsForQuality(DebrisRules.quality(adjusted, corrupted));
+        DebrisTuning tuning = DebrisTuning.of(context);
+        float points = DebrisRules.fleetPoints(adjusted, corruptions, tuning.increasedSizePercent(corruptions));
+        float averageDMods = DefaultFleetInflater.getAverageDmodsForQuality(DebrisRules.quality(adjusted, corruptions));
         ShipPickParams pickParams = new ShipPickParams(ShipPickMode.ALL);
         pickParams.blockFallback = true;
         pickParams.maxFP = Integer.MAX_VALUE;
@@ -138,9 +148,11 @@ public final class DormantFleets {
                 spent -= removeSmallest(fleet);
             }
         }
+        Map<FleetMemberAPI, String> replaced = SleeperShips.replace(fleet, tuning.sleeperShares(), random);
         for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
-            crew(member, tier, corrupted, averageDMods, random);
+            crew(member, tier, corruptions, averageDMods, random);
         }
+        FleetFactions.recordMemberFactions(fleet, replaced);
         fleet.getFleetData().sort();
         fleet.getFleetData().ensureHasFlagship();
         FleetMemberAPI flagship = fleet.getFlagship();
@@ -175,13 +187,13 @@ public final class DormantFleets {
         return smallest.getFleetPointCost();
     }
 
-    private static void crew(FleetMemberAPI member, int tier, boolean corrupted, float averageDMods, Random random) {
+    private static void crew(FleetMemberAPI member, int tier, int corruptions, float averageDMods, Random random) {
         ShipVariantAPI variant = ownCorelessVariant(member);
         int dMods = DefaultFleetInflater.getNumDModsToAdd(variant, averageDMods, random);
         if (dMods > 0) {
             DModManager.addDMods(member, false, dMods, random);
         }
-        String coreId = DebrisRules.coreId(DebrisRules.coreLevel(tier, random), corrupted);
+        String coreId = DebrisRules.coreId(DebrisRules.coreLevel(tier, random), corruptions);
         AICoreOfficerPlugin core = Misc.getAICoreOfficerPlugin(coreId);
         if (core != null) {
             PersonAPI captain = core.createPerson(coreId, FACTION_ID, random);
@@ -229,6 +241,25 @@ public final class DormantFleets {
         return isDebrisFleet(fleet) && fleet.getMemoryWithoutUpdate().getBoolean(CORRUPTED_KEY);
     }
 
+    public static int corruptionsOf(CampaignFleetAPI fleet) {
+        if (!isCorrupted(fleet)) {
+            return 0;
+        }
+        MemoryAPI memory = fleet.getMemoryWithoutUpdate();
+        return memory.contains(CORRUPTIONS_KEY) ? Math.max(1, memory.getInt(CORRUPTIONS_KEY)) : 1;
+    }
+
+    public static int corruptionsLeft(CampaignFleetAPI fleet, ChartGenContext context) {
+        return isDormant(fleet) ? Math.max(0, DebrisTuning.of(context).mostCorruptions() - corruptionsOf(fleet)) : 0;
+    }
+
+    static void markCorrupted(CampaignFleetAPI fleet, int corruptions) {
+        MemoryAPI memory = fleet.getMemoryWithoutUpdate();
+        memory.set(CORRUPTED_KEY, true);
+        memory.set(CORRUPTIONS_KEY, corruptions);
+        fleet.setName(Translation.gameText("chart.anomaly.anomalous_debris.fleet.corrupted.name"));
+    }
+
     public static void hide(CampaignFleetAPI fleet) {
         fleet.getDetectedRangeMod().modifyMult(HIDDEN_MOD_ID, 0f);
     }
@@ -244,21 +275,25 @@ public final class DormantFleets {
     }
 
     public static boolean corrupt(CampaignFleetAPI fleet, ChartGenContext context) {
-        if (!isDormant(fleet) || isCorrupted(fleet)) {
+        return corrupt(fleet, context, 1);
+    }
+
+    public static boolean corrupt(CampaignFleetAPI fleet, ChartGenContext context, int times) {
+        if (times <= 0 || corruptionsLeft(fleet, context) < times) {
             return false;
         }
+        int corruptions = corruptionsOf(fleet) + times;
         MemoryAPI memory = fleet.getMemoryWithoutUpdate();
         int tier = ChartFleetMarks.tierOf(memory, ChartTiers.LOWEST_TIER);
         long seed = buildSeed(memory);
         for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
             fleet.getFleetData().removeFleetMember(member);
         }
-        populate(fleet, hullFactions(Global.getSector()), tier, context, seed, true);
-        memory.set(CORRUPTED_KEY, true);
-        setStrengthBonus(fleet, tier, context, true);
+        populate(fleet, hullFactions(Global.getSector()), tier, context, seed, corruptions);
+        markCorrupted(fleet, corruptions);
+        setStrengthBonus(fleet, tier, context, corruptions);
         ChartFleetLedger.recordStart(fleet);
         ChartEnemyShipEffects.grant(fleet, context);
-        fleet.setName(Translation.gameText("chart.anomaly.anomalous_debris.fleet.corrupted.name"));
         return true;
     }
 
@@ -271,6 +306,10 @@ public final class DormantFleets {
     }
 
     public static boolean wake(CampaignFleetAPI fleet) {
+        return wake(fleet, false);
+    }
+
+    public static boolean wake(CampaignFleetAPI fleet, boolean roams) {
         if (!isDormant(fleet)) {
             return false;
         }
@@ -290,7 +329,9 @@ public final class DormantFleets {
         }
         fleet.clearAssignments();
         LocationAPI location = fleet.getContainingLocation();
-        if (location != null) {
+        if (roams && location instanceof StarSystemAPI system) {
+            ChartContentGenerator.patrolSystem(fleet, system);
+        } else if (location != null) {
             fleet.addAssignment(FleetAssignment.ORBIT_AGGRESSIVE, location.createToken(home.x, home.y), ChartContentGenerator.ASSIGNMENT_DAYS);
         }
         return true;

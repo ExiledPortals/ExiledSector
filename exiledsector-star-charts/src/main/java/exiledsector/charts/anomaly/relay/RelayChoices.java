@@ -5,8 +5,8 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.FleetMembers;
 import exiledsector.Seeds;
 import exiledsector.charts.anomaly.AnomalyState;
+import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.objective.ChartObjectives;
-import exiledsector.charts.officer.reward.OfficerRewardDrop;
 import exiledsector.charts.officer.reward.OfficerRewardPool;
 import exiledsector.charts.officer.reward.RewardContext;
 import exiledsector.charts.officer.reward.RewardGroup;
@@ -14,7 +14,6 @@ import exiledsector.charts.officer.scar.HullFacts;
 import exiledsector.charts.officer.scar.ScarMemory;
 import exiledsector.charts.officer.scar.Scars;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.loot.Loot;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -28,52 +27,71 @@ public final class RelayChoices {
     static final String PICK_FIELD_PREFIX = "pick.";
     static final String OFFER_SEPARATOR = ",";
     static final String OFFER_SEED_PREFIX = "relayChoices|";
-    static final String REWARD_SEED_PREFIX = "relayReward|";
+
+    record Offering(int choices, int extraScars) {
+
+        static final Offering PLAIN = new Offering(OfficerRewardPool.OFFER_COUNT, 0);
+
+        static Offering of(ChartGenContext context) {
+            return new Offering(RelayTuning.choiceCount(context), RelayTuning.extraScars(context));
+        }
+    }
 
     private RelayChoices() {
     }
 
-    static boolean open(ChartRun run, RelayKind kind) {
+    static boolean open(ChartRun run, RelaySlot slot) {
         return run != null && run.hasBoss() && !run.isObjectiveComplete() && !run.isObjectiveLost()
-                && RelayStates.isWoken(run, kind) && picked(run, kind) == null;
+                && RelayStates.isWoken(run, slot) && picked(run, slot) == null;
     }
 
-    static List<RelayChoice> offers(SectorAPI sector, ChartRun run, RelayKind kind) {
-        if (!open(run, kind)) {
+    static List<RelayChoice> offers(SectorAPI sector, ChartRun run, RelaySlot slot) {
+        if (!open(run, slot)) {
             return List.of();
         }
-        List<RelayChoice> stored = storedOffers(run, kind);
+        List<RelayChoice> stored = storedOffers(run, slot);
         if (!stored.isEmpty()) {
             return stored;
         }
         RewardContext context = RewardContext.forRun(sector, run, run.contentFaction());
-        List<RelayChoice> rolled = roll(context, bossHull(sector, run), offerRandom(run, kind));
-        storeOffers(run, kind, rolled);
+        List<RelayChoice> rolled = roll(context, bossHull(sector, run), Offering.of(RelayTuning.of(run)), offerRandom(run, slot));
+        storeOffers(run, slot, rolled);
         return rolled;
     }
 
-    static Random offerRandom(ChartRun run, RelayKind kind) {
-        return Seeds.random(OFFER_SEED_PREFIX + run.runId() + "|" + kind.key());
+    static Random offerRandom(ChartRun run, RelaySlot slot) {
+        return Seeds.random(OFFER_SEED_PREFIX + run.runId() + "|" + slot.key());
     }
 
-    static List<RelayChoice> roll(RewardContext context, HullFacts bossHull, Random random) {
-        return paired(OfficerRewardPool.offeredGroups(context, random), Scars.withEffectsOn(bossHull), random);
+    static List<RelayChoice> roll(RewardContext context, HullFacts bossHull, Offering offering, Random random) {
+        return paired(OfficerRewardPool.offeredGroups(context, offering.choices(), random), Scars.withEffectsOn(bossHull), offering.extraScars(), random);
     }
 
-    static List<RelayChoice> paired(List<RewardGroup> groups, List<String> scarIds, Random random) {
+    static List<RelayChoice> paired(List<RewardGroup> groups, List<String> scarIds, int extraScars, Random random) {
         List<String> unpairedScars = new ArrayList<>(scarIds);
         List<RelayChoice> choices = new ArrayList<>();
         for (RewardGroup group : groups) {
             if (unpairedScars.isEmpty()) {
                 break;
             }
-            choices.add(new RelayChoice(group, unpairedScars.remove(random.nextInt(unpairedScars.size()))));
+            String scarId = unpairedScars.remove(random.nextInt(unpairedScars.size()));
+            choices.add(new RelayChoice(group, scarId, extraScarsFor(scarIds, scarId, extraScars, random)));
         }
         return List.copyOf(choices);
     }
 
-    static List<RelayChoice> storedOffers(ChartRun run, RelayKind kind) {
-        String stored = state(run).text(OFFERS_FIELD_PREFIX + kind.key());
+    static List<String> extraScarsFor(List<String> scarIds, String ownScarId, int extraScars, Random random) {
+        List<String> candidates = new ArrayList<>(scarIds);
+        candidates.remove(ownScarId);
+        List<String> extras = new ArrayList<>();
+        while (extras.size() < extraScars && !candidates.isEmpty()) {
+            extras.add(candidates.remove(random.nextInt(candidates.size())));
+        }
+        return extras;
+    }
+
+    static List<RelayChoice> storedOffers(ChartRun run, RelaySlot slot) {
+        String stored = state(run).text(OFFERS_FIELD_PREFIX + slot.key());
         if (stored == null) {
             return List.of();
         }
@@ -87,28 +105,32 @@ public final class RelayChoices {
         return List.copyOf(offers);
     }
 
-    static void storeOffers(ChartRun run, RelayKind kind, List<RelayChoice> offers) {
-        state(run).put(OFFERS_FIELD_PREFIX + kind.key(), String.join(OFFER_SEPARATOR, offers.stream().map(RelayChoice::encoded).toList()));
+    static void storeOffers(ChartRun run, RelaySlot slot, List<RelayChoice> offers) {
+        state(run).put(OFFERS_FIELD_PREFIX + slot.key(), String.join(OFFER_SEPARATOR, offers.stream().map(RelayChoice::encoded).toList()));
     }
 
-    static boolean pick(SectorAPI sector, ChartRun run, RelayKind kind, int index) {
-        List<RelayChoice> offers = offers(sector, run, kind);
+    static boolean pick(SectorAPI sector, ChartRun run, RelaySlot slot, int index) {
+        List<RelayChoice> offers = offers(sector, run, slot);
         if (index < 0 || index >= offers.size()) {
             return false;
         }
-        state(run).put(PICK_FIELD_PREFIX + kind.key(), offers.get(index).encoded());
+        RelayChoice choice = offers.get(index);
+        state(run).put(PICK_FIELD_PREFIX + slot.key(), choice.encoded());
         scarBoss(sector, run);
+        if (RelayTuning.sharedBroadcast(RelayTuning.of(run))) {
+            RelayBroadcast.share(sector, run, slot, choice);
+        }
         return true;
     }
 
-    public static RelayChoice picked(ChartRun run, RelayKind kind) {
-        return RelayChoice.decode(state(run).text(PICK_FIELD_PREFIX + kind.key()));
+    public static RelayChoice picked(ChartRun run, RelaySlot slot) {
+        return RelayChoice.decode(state(run).text(PICK_FIELD_PREFIX + slot.key()));
     }
 
     public static List<RelayChoice> picks(ChartRun run) {
         List<RelayChoice> picks = new ArrayList<>();
-        for (RelayKind kind : RelayKind.values()) {
-            RelayChoice pick = picked(run, kind);
+        for (RelaySlot slot : RelayStates.slots(run)) {
+            RelayChoice pick = picked(run, slot);
             if (pick != null) {
                 picks.add(pick);
             }
@@ -119,9 +141,15 @@ public final class RelayChoices {
     static Map<String, Integer> scarStacks(List<RelayChoice> picks) {
         Map<String, Integer> stacks = new LinkedHashMap<>();
         for (RelayChoice pick : picks) {
-            stacks.merge(pick.scarId(), 1, Integer::sum);
+            for (String scarId : pick.scarIds()) {
+                stacks.merge(scarId, 1, Integer::sum);
+            }
         }
         return stacks;
+    }
+
+    static int scarCount(List<RelayChoice> picks) {
+        return picks.stream().mapToInt(pick -> pick.scarIds().size()).sum();
     }
 
     static void scarBoss(SectorAPI sector, ChartRun run) {
@@ -129,19 +157,6 @@ public final class RelayChoices {
         if (boss != null) {
             Scars.grantRunScars(boss, scarredFlagshipId(boss, run), scarStacks(picks(run)));
         }
-    }
-
-    static Loot bossReward(SectorAPI sector, ChartRun run) {
-        List<RelayChoice> picks = picks(run);
-        if (picks.isEmpty()) {
-            return Loot.NONE;
-        }
-        return bossReward(picks, RewardContext.forRun(sector, run, run.contentFaction()), run, Seeds.random(REWARD_SEED_PREFIX + run.runId()));
-    }
-
-    static Loot bossReward(List<RelayChoice> picks, RewardContext context, ChartRun run, Random random) {
-        List<RewardGroup> groups = picks.stream().map(RelayChoice::group).toList();
-        return OfficerRewardDrop.roll(OfficerRewardPool.drawn(groups, context, random), run, random);
     }
 
     static HullFacts bossHull(SectorAPI sector, ChartRun run) {
