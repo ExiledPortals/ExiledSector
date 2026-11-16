@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public final class BattleLootRates {
 
     public static final String DATA_PATH = ExiledSector.configPath("battle_loot.csv");
+    public static final String CRAFTING_ITEM_RATE = "crafting_item";
     public static final float DIFFICULTY_CAP = 3f;
     static final String DROP_COLUMN = "drop";
     static final float DEPLOYMENT_POINTS_PER_RATE_STEP = 100f;
@@ -31,10 +32,6 @@ public final class BattleLootRates {
             difficultyScaling = Math.max(0f, difficultyScaling);
         }
 
-        public Rate(String drop, float per100DeploymentPoints, LootCurve curve) {
-            this(drop, per100DeploymentPoints, curve, 1f);
-        }
-
         public float difficulty(float difficultyMultiplier) {
             return scaledDifficulty(difficultyMultiplier, difficultyScaling);
         }
@@ -42,6 +39,24 @@ public final class BattleLootRates {
         public float expected(float lootDeploymentPoints, float battleDeploymentPoints) {
             return per100DeploymentPoints * Math.max(0f, lootDeploymentPoints) / DEPLOYMENT_POINTS_PER_RATE_STEP
                     * curve.factor(battleDeploymentPoints);
+        }
+
+        public float expectedAtDifficulty(float lootDeploymentPoints, float battleDeploymentPoints, float difficultyMultiplier) {
+            return expected(lootDeploymentPoints, battleDeploymentPoints) * difficulty(difficultyMultiplier);
+        }
+
+        public float expectedFrom(FleetLoss loss, float battleDeploymentPoints, float levelScaledShare) {
+            return expectedAtDifficulty(loss.lootDeploymentPoints(), battleDeploymentPoints, loss.averageDifficulty())
+                    * loss.rules().itemShare(levelScaledShare);
+        }
+
+        public float expectedFromAll(List<FleetLoss> losses, float levelScaledShare, FleetLoss.Factor factor) {
+            float battleDeploymentPoints = FleetLoss.totalDeploymentPoints(losses);
+            float expected = 0f;
+            for (FleetLoss loss : losses) {
+                expected += expectedFrom(loss, battleDeploymentPoints, levelScaledShare) * factor.of(loss);
+            }
+            return expected;
         }
     }
 
@@ -75,10 +90,6 @@ public final class BattleLootRates {
 
     public static Rate rate(String drop) {
         return RATES.get().get(drop);
-    }
-
-    public static List<Rate> all() {
-        return List.copyOf(RATES.get().values());
     }
 
     public static float difficulty(float difficultyMultiplier) {

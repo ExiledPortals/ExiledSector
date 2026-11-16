@@ -20,7 +20,7 @@ import exiledsector.charts.content.ChartPois;
 import exiledsector.charts.content.ChartSites;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTier;
-import exiledsector.charts.loot.ChartFleetLoot;
+import exiledsector.charts.loot.ChartFleetLedger;
 import exiledsector.i18n.Translation;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -119,7 +119,7 @@ final class BreachIncursion {
         guard.setNoFactionInName(true);
         ChartAnomalyFleets.prepare(guard, runId, tier, random.nextLong(), true, context);
         ChartFleetMarks.setStrengthBonus(guard.getMemoryWithoutUpdate(), ChartContentPlanner.overflowStrength(size, ChartContentPlanner.BOSS_SIZE_CAP));
-        ChartFleetLoot.tagAnomaly(guard, SpatialBreach.ANOMALY_ID);
+        ChartFleetLedger.tagAnomaly(guard, SpatialBreach.ANOMALY_ID);
         guard.getMemoryWithoutUpdate().set(MemFlags.MEMORY_KEY_NO_REP_IMPACT, true);
         guard.addTag(GUARD_TAG);
         return guard;

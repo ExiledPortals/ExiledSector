@@ -62,14 +62,14 @@ class ModspecCachesTest {
                 .put(ItemFixtures.subroutineRow("doctrine_chip", SubroutineKind.DOCTRINE));
         ItemDefinitions.register(rows);
         ModspecCaches.register(rows);
-        ItemDrops.register(new JSONArray().put(new JSONObject().put("site", "derelict").put("chances", "1").put("uniqueChance", "0")));
+        SalvageSiteDrops.register(new JSONArray().put(new JSONObject().put("site", "derelict").put("chances", "1").put("uniqueChance", "0")));
     }
 
     @AfterEach
     void tearDown() {
         lunaSettings.close();
         ModspecCaches.clear();
-        ItemDrops.clear();
+        SalvageSiteDrops.clear();
         ItemDefinitions.clear();
     }
 
@@ -143,7 +143,7 @@ class ModspecCachesTest {
         Set<String> salvaged = new HashSet<>();
         Random random = new Random(11L);
         for (int trial = 0; trial < 50; trial++) {
-            ItemDrops.roll("derelict", random, ItemChances.of(1f), definition -> true).forEach(item -> salvaged.add(item.definition().id()));
+            SalvageSiteDrops.roll("derelict", random, ItemChances.of(1f), definition -> true).forEach(item -> salvaged.add(item.definition().id()));
         }
         assertEquals(Set.of(CACHE), salvaged);
     }

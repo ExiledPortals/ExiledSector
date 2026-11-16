@@ -6,7 +6,6 @@ import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import exiledsector.effects.TechMiningItemListener;
-import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 
@@ -25,20 +24,16 @@ public interface LootSource {
     default void deliverBattleLoot(BattleLoot battle, CargoAPI playerCargo) {
     }
 
-    default ItemChances itemChancesFor(CampaignFleetAPI fleet) {
-        return null;
-    }
-
     default FleetLootRules fleetLootRules(CampaignFleetAPI fleet) {
         return null;
     }
 
-    default LootMultipliers modifiersAt(LocationAPI location) {
+    default LootMultipliers lootMultipliersAt(LocationAPI location) {
         return null;
     }
 
-    default LootMultipliers modifiersFor(SectorEntityToken site) {
-        return site == null ? null : modifiersAt(site.getContainingLocation());
+    default LootMultipliers lootMultipliersFor(SectorEntityToken site) {
+        return site == null ? null : lootMultipliersAt(site.getContainingLocation());
     }
 
     default void addSalvageLoot(SectorAPI sector, SectorEntityToken salvageEntity, CargoAPI loot) {
@@ -61,15 +56,7 @@ public interface LootSource {
     default void itemsBought(List<ItemData> boughtItems) {
     }
 
-    default ItemData shapeDrop(ItemData item, LocationAPI location) {
-        return item;
-    }
-
-    default ItemData shapeBattleDrop(ItemData item, LocationAPI location) {
-        return shapeDrop(item, location);
-    }
-
-    default ItemData shapeSiteDrop(ItemData item, SectorEntityToken site) {
+    default ItemData shape(ItemData item, DropOrigin origin, LocationAPI location) {
         return item;
     }
 }

@@ -5,6 +5,7 @@ import exiledsector.charts.loot.ChartDrops;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
+import exiledsector.items.ItemRoll;
 import exiledsector.items.ItemType;
 import exiledsector.items.StarChart;
 import org.lazywizard.console.Console;
@@ -69,7 +70,7 @@ public class GrantStarChartsCommand extends RandomPlayerFleetCommand {
             if (definition == null) {
                 break;
             }
-            ItemData chart = ItemData.rolledAtTier(definition, random.nextLong(), arguments.tier());
+            ItemData chart = ItemData.rolled(definition, random.nextLong(), ItemRoll.atTier(arguments.tier()));
             playerFleet.getCargo().addSpecial(chart.toSpecialItem(), 1f);
             names.add(chart.preview() == null ? definition.id() : chart.preview().name());
         }

@@ -12,9 +12,10 @@ import exiledsector.charts.anomaly.AnomalyTerrains;
 import exiledsector.charts.anomaly.ContentPlacer;
 import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.anomaly.RunParticipant;
-import exiledsector.charts.generation.ChartGenContext;
-import exiledsector.charts.run.ChartRun;
-import exiledsector.items.ItemDrops;
+import exiledsector.charts.loot.ChartFleetLoot;
+import exiledsector.charts.loot.ChartLootContext;
+import exiledsector.charts.loot.FleetClaim;
+import exiledsector.loot.Loot;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
@@ -131,8 +132,8 @@ public final class AnomalousDebris implements ContentPlacer, RunParticipant, Loo
     }
 
     @Override
-    public ItemDrops.SiteLoot extraFleetLoot(CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, Random random) {
-        return DormantFleetLoot.craftingItemFor(fleet, run.tier(), context, random);
+    public Loot fleetLoot(FleetClaim claim, ChartLootContext loot, ChartFleetLoot.Battle battle, Random random) {
+        return DormantFleetLoot.craftingItemFor(claim.fleet(), loot.tier(), loot.effects(), random);
     }
 
     public static List<AnomalousDebrisTerrainPlugin> fieldsIn(LocationAPI location) {

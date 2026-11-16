@@ -5,7 +5,7 @@ import exiledsector.ModCsv;
 import exiledsector.data.CsvRows;
 import exiledsector.data.RandomRounding;
 import exiledsector.data.WeightedPick;
-import exiledsector.loot.BattleLootRates;
+import exiledsector.skills.skilleffect.logistics.FoundItemQuantity;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,12 +21,10 @@ import java.util.function.Predicate;
 public final class CraftingDrops {
 
     public static final String DATA_PATH = ExiledSector.configPath("crafting_drops.csv");
-    public static final String RATE_DROP = "crafting_item";
     public static final float NO_BAND_SHIFT = 1f;
     public static final Predicate<String> ANY_ITEM = itemId -> true;
     public static final Predicate<String> OUTSIDE_CHARTS = itemId -> !chartOnly(itemId);
     static final String ITEM_COLUMN = "item";
-    private static final float DEPLOYMENT_POINTS_PER_RATE_STEP = 100f;
     private static final Logger LOG = Logger.getLogger(CraftingDrops.class);
     private static final AtomicReference<Map<String, Drop>> DROPS = new AtomicReference<>(Map.of());
 
@@ -84,15 +82,19 @@ public final class CraftingDrops {
         return drop == null ? 0f : drop.shiftedWeight(bandShift);
     }
 
-    public static float expectedCount(float lootDeploymentPoints) {
-        BattleLootRates.Rate rate = BattleLootRates.rate(RATE_DROP);
-        return rate == null ? 0f : rate.per100DeploymentPoints() * Math.max(0f, lootDeploymentPoints) / DEPLOYMENT_POINTS_PER_RATE_STEP;
-    }
-
     public static Map<String, Integer> roll(float expectedCount, Predicate<String> allowedItems, float bandShift, Random random) {
         Map<String, Integer> dropped = new LinkedHashMap<>();
         rollInto(expectedCount, allowedItems, bandShift, random, dropped);
         return dropped;
+    }
+
+    public static Map<String, Integer> rollFoundByPlayer(float expectedCount, Predicate<String> allowedItems, float bandShift, Random random) {
+        return roll(expectedCount * FoundItemQuantity.craftingItemMult(), allowedItems, bandShift, random);
+    }
+
+    public static void rollFoundByPlayerInto(float expectedCount, Predicate<String> allowedItems, float bandShift, Random random,
+                                             Map<String, Integer> dropped) {
+        rollInto(expectedCount * FoundItemQuantity.craftingItemMult(), allowedItems, bandShift, random, dropped);
     }
 
     public static void rollInto(float expectedCount, Predicate<String> allowedItems, float bandShift, Random random,

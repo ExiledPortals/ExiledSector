@@ -41,6 +41,6 @@ class RiftDuelTest {
         }
         assertEquals(CARRIED.size(), RiftDuel.duplicated(CARRIED, 5, new Random(1L)).size());
         assertTrue(RiftDuel.duplicated(null, 2, new Random(1L)).isEmpty());
-        assertSame(exiledsector.items.ItemDrops.SiteLoot.NONE, RiftDuel.NONE.duplicatedLoot(null, null));
+        assertSame(exiledsector.loot.Loot.NONE, RiftDuel.NONE.duplicatedLoot(null, null));
     }
 }

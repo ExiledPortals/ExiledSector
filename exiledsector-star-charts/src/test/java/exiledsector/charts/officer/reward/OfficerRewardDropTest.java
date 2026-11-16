@@ -4,10 +4,11 @@ import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.BiomeModifiers;
+import exiledsector.charts.loot.ChartLootContext;
+import exiledsector.charts.loot.DropType;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
-import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemModifiers;
 import exiledsector.items.ModifierSources;
@@ -15,6 +16,7 @@ import exiledsector.items.PoolEntry;
 import exiledsector.items.RolledModifier;
 import exiledsector.items.StarChart;
 import exiledsector.items.StarChartFixtures;
+import exiledsector.loot.Loot;
 import exiledsector.modifiers.ModifierSlot;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -69,12 +71,12 @@ class OfficerRewardDropTest {
 
     @Test
     void craftingItemsScaleWithTheChartsItemAndCraftingItemPercents() {
-        assertEquals(1f, OfficerRewardDrop.craftingMult(ChartGenContext.none()), EPSILON);
-        assertEquals(1.5f, OfficerRewardDrop.craftingMult(context(ChartModifier.CHART_ITEM_PERCENT, 50f)), EPSILON);
-        assertEquals(1.25f, OfficerRewardDrop.craftingMult(context(ChartModifier.CHART_CRAFTING_ITEM_PERCENT, 25f)), EPSILON);
-        assertEquals(2f, OfficerRewardDrop.craftingMult(context(40f, 60f)), EPSILON);
-        assertEquals(0f, OfficerRewardDrop.craftingMult(context(-150f, 0f)), EPSILON);
-        assertEquals(1f, OfficerRewardDrop.craftingMult(context(ChartModifier.CHART_QUANTITY_PERCENT, 80f)), EPSILON);
+        assertEquals(1f, ChartGenContext.none().carriedDropMult(DropType.CRAFTING_ITEM), EPSILON);
+        assertEquals(1.5f, context(ChartModifier.CHART_ITEM_PERCENT, 50f).carriedDropMult(DropType.CRAFTING_ITEM), EPSILON);
+        assertEquals(1.25f, context(ChartModifier.CHART_CRAFTING_ITEM_PERCENT, 25f).carriedDropMult(DropType.CRAFTING_ITEM), EPSILON);
+        assertEquals(2f, context(40f, 60f).carriedDropMult(DropType.CRAFTING_ITEM), EPSILON);
+        assertEquals(0f, context(-150f, 0f).carriedDropMult(DropType.CRAFTING_ITEM), EPSILON);
+        assertEquals(1f, context(ChartModifier.CHART_QUANTITY_PERCENT, 80f).carriedDropMult(DropType.CRAFTING_ITEM), EPSILON);
     }
 
     @Test
@@ -82,7 +84,7 @@ class OfficerRewardDropTest {
         List<CarriedItem> carried = List.of(new CarriedItem(RewardKind.CRAFTING_ITEM, SWARM, null, 4), new CarriedItem(RewardKind.INHIBITOR, INHIBITOR, null, 2),
                 new CarriedItem(RewardKind.CRAFTING_ITEM, SWARM, null, 2));
 
-        ItemDrops.SiteLoot drop = OfficerRewardDrop.roll(carried, 5, context(ChartModifier.CHART_ITEM_PERCENT, 50f), new Random(1L));
+        Loot drop = OfficerRewardDrop.roll(carried, new ChartLootContext(context(ChartModifier.CHART_ITEM_PERCENT, 50f), 5), new Random(1L));
 
         assertEquals(Map.of(SWARM, 9, INHIBITOR, 3), drop.materials());
         assertTrue(drop.items().isEmpty());
@@ -90,14 +92,14 @@ class OfficerRewardDropTest {
 
     @Test
     void aCarriedCraftingItemAlwaysDropsAtLeastOne() {
-        ItemDrops.SiteLoot drop = OfficerRewardDrop.roll(List.of(new CarriedItem(RewardKind.CRAFTING_ITEM, SWARM, null, 3)), 5, context(-100f, 0f), new Random(1L));
+        Loot drop = OfficerRewardDrop.roll(List.of(new CarriedItem(RewardKind.CRAFTING_ITEM, SWARM, null, 3)), new ChartLootContext(context(-100f, 0f), 5), new Random(1L));
 
         assertEquals(Map.of(SWARM, 1), drop.materials());
     }
 
     @Test
     void carriedHullItemsDropOneRolledCopyPerCount() {
-        ItemDrops.SiteLoot drop = OfficerRewardDrop.roll(List.of(new CarriedItem(RewardKind.HULL_ITEM, BRIDGE, null, 2)), 3, ChartGenContext.none(), new Random(1L));
+        Loot drop = OfficerRewardDrop.roll(List.of(new CarriedItem(RewardKind.HULL_ITEM, BRIDGE, null, 2)), ChartLootContext.atTier(3), new Random(1L));
 
         assertEquals(List.of(BRIDGE, BRIDGE), drop.items().stream().map(ItemData::definitionId).toList());
         assertTrue(drop.materials().isEmpty());
@@ -107,8 +109,8 @@ class OfficerRewardDropTest {
     void aCarriedBiomeItemDropsWithItsBiomesModifier() {
         Random random = new Random(6L);
         for (int roll = 0; roll < 20; roll++) {
-            ItemDrops.SiteLoot drop = OfficerRewardDrop.roll(List.of(new CarriedItem(RewardKind.BIOME_HULL_ITEM, BRIDGE, RIFT, 1)), 3,
-                    ChartGenContext.none(), random);
+            Loot drop = OfficerRewardDrop.roll(List.of(new CarriedItem(RewardKind.BIOME_HULL_ITEM, BRIDGE, RIFT, 1)), ChartLootContext.atTier(3),
+                    random);
 
             assertEquals(1, drop.items().size());
             assertTrue(drop.items().get(0).explicits().stream().map(RolledModifier::modifierId).anyMatch(CHRONAL::equals));
@@ -121,9 +123,9 @@ class OfficerRewardDropTest {
                 new ChartGenContext.AppliedEffect(ChartModifier.CHART_CRAFTING_ITEM_PERCENT, 300f)));
         List<CarriedItem> carried = List.of(new CarriedItem(RewardKind.FEEDSTOCK, FEEDSTOCK, null, 40), new CarriedItem(RewardKind.CRAFTING_ITEM, SWARM, null, 2));
 
-        ItemDrops.SiteLoot drop = OfficerRewardDrop.roll(carried, 5, context, new Random(1L));
+        Loot drop = OfficerRewardDrop.roll(carried, new ChartLootContext(context, 5), new Random(1L));
 
-        assertEquals(2f, OfficerRewardDrop.feedstockMult(context), EPSILON);
+        assertEquals(2f, context.carriedDropMult(DropType.FEEDSTOCK), EPSILON);
         assertEquals(Map.of(FEEDSTOCK, 80, SWARM, 8), drop.materials());
     }
 
@@ -134,13 +136,13 @@ class OfficerRewardDropTest {
             CarriedItem gated = CarriedItem.of(RewardKind.STAR_CHART, StarChartFixtures.TEST_GATED);
             int highTier = StarChartFixtures.TEST_GATED_MIN_TIER + 2;
 
-            ItemDrops.SiteLoot atHighTier = OfficerRewardDrop.roll(List.of(gated), highTier, ChartGenContext.none(), new Random(1L));
+            Loot atHighTier = OfficerRewardDrop.roll(List.of(gated), ChartLootContext.atTier(highTier), new Random(1L));
             assertEquals(List.of(StarChartFixtures.TEST_GATED), atHighTier.items().stream().map(ItemData::definitionId).toList());
             assertEquals(highTier, ((StarChart) atHighTier.items().get(0).preview()).tier());
 
             Random random = new Random(2L);
             for (int roll = 0; roll < 20; roll++) {
-                ItemDrops.SiteLoot atLowTier = OfficerRewardDrop.roll(List.of(gated), 1, ChartGenContext.none(), random);
+                Loot atLowTier = OfficerRewardDrop.roll(List.of(gated), ChartLootContext.atTier(1), random);
                 assertEquals(1, atLowTier.items().size());
                 assertNotEquals(StarChartFixtures.TEST_GATED, atLowTier.items().get(0).definitionId());
             }
@@ -153,8 +155,8 @@ class OfficerRewardDropTest {
     void aStarChartFromACorruptedTierRunDropsAtTheHighestNormalTier() throws Exception {
         StarChartFixtures.registerShipped();
         try {
-            ItemDrops.SiteLoot drop = OfficerRewardDrop.roll(List.of(CarriedItem.of(RewardKind.STAR_CHART, StarChartFixtures.TEST_FIXED)),
-                    ChartTiers.HIGHEST_TIER, ChartGenContext.none(), new Random(4L));
+            Loot drop = OfficerRewardDrop.roll(List.of(CarriedItem.of(RewardKind.STAR_CHART, StarChartFixtures.TEST_FIXED)),
+                    ChartLootContext.atTier(ChartTiers.HIGHEST_TIER), new Random(4L));
 
             assertEquals(List.of(StarChartFixtures.TEST_FIXED), drop.items().stream().map(ItemData::definitionId).toList());
             assertEquals(ChartTiers.HIGHEST_DROP_TIER, ((StarChart) drop.items().get(0).preview()).tier());
@@ -165,8 +167,8 @@ class OfficerRewardDropTest {
 
     @Test
     void anItemWhoseDefinitionIsGoneDropsNothing() {
-        assertSame(ItemDrops.SiteLoot.NONE,
-                OfficerRewardDrop.roll(List.of(CarriedItem.of(RewardKind.UNIQUE, "removed_relic")), 3, ChartGenContext.none(), new Random(1L)));
-        assertSame(ItemDrops.SiteLoot.NONE, OfficerRewardDrop.roll(List.of(), 3, ChartGenContext.none(), new Random(1L)));
+        assertSame(Loot.NONE,
+                OfficerRewardDrop.roll(List.of(CarriedItem.of(RewardKind.UNIQUE, "removed_relic")), ChartLootContext.atTier(3), new Random(1L)));
+        assertSame(Loot.NONE, OfficerRewardDrop.roll(List.of(), ChartLootContext.atTier(3), new Random(1L)));
     }
 }

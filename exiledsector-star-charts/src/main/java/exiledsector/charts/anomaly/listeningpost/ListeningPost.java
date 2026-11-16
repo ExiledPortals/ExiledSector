@@ -1,11 +1,12 @@
 package exiledsector.charts.anomaly.listeningpost;
 
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import exiledsector.charts.generation.ChartGenContext;
-import exiledsector.items.ItemDrops;
+import exiledsector.charts.loot.ChartFleetLoot;
+import exiledsector.charts.loot.ChartLootContext;
+import exiledsector.charts.loot.FleetClaim;
+import exiledsector.loot.Loot;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.effect.ChartModifier;
@@ -49,12 +50,12 @@ public final class ListeningPost implements AtlasRule, ContentPlacer, RunPartici
     }
 
     @Override
-    public ItemDrops.SiteLoot battleItems(SectorAPI sector, CampaignFleetAPI fleet, ChartGenContext context, float lootDeploymentPoints,
-                                          float battleDeploymentPoints, float difficultyMultiplier, Random random) {
-        if (!PicketPrototypes.dropsFrom(fleet, context)) {
-            return ItemDrops.SiteLoot.NONE;
+    public Loot fleetLoot(FleetClaim claim, ChartLootContext loot, ChartFleetLoot.Battle battle, Random random) {
+        if (!PicketPrototypes.dropsFrom(claim.fleet(), loot.effects())) {
+            return Loot.NONE;
         }
-        return PicketPrototypes.roll(sector, context, lootDeploymentPoints, battleDeploymentPoints, difficultyMultiplier, random);
+        return PicketPrototypes.roll(Global.getSector(), loot.effects(), claim.lootDeploymentPoints(), battle.deploymentPoints(),
+                battle.difficultyMultiplier(), random);
     }
 
     @Override

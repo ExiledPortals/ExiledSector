@@ -58,12 +58,12 @@ public final class StarChartFixtures {
     }
 
     public static StarChart chart(String definitionId, long seed, int tier) {
-        return (StarChart) ItemData.rolledAtTier(ItemDefinitions.get(definitionId), seed, tier).preview();
+        return (StarChart) ItemData.rolled(ItemDefinitions.get(definitionId), seed, ItemRoll.atTier(tier)).preview();
     }
 
     public static ItemData withEveryModifier(String definitionId, long seed, int tier) {
         ItemDefinition definition = ItemDefinitions.get(definitionId);
-        ItemData rolled = ItemData.rolledAtTier(definition, seed, tier);
+        ItemData rolled = ItemData.rolled(definition, seed, ItemRoll.atTier(tier));
         Random random = Seeds.random(seed);
         List<RolledModifier> explicits = new ArrayList<>(definition.pool().size());
         for (PoolEntry entry : definition.pool()) {

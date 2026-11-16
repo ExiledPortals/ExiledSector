@@ -3,16 +3,16 @@ package exiledsector.console;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTiers;
+import exiledsector.charts.loot.ChartLootContext;
 import exiledsector.charts.officer.reward.CarriedItem;
 import exiledsector.charts.officer.reward.OfficerRewardDrop;
 import exiledsector.charts.officer.reward.OfficerRewardPool;
 import exiledsector.charts.officer.reward.OfficerRewardText;
 import exiledsector.charts.officer.reward.RewardContext;
 import exiledsector.items.ItemData;
-import exiledsector.items.ItemDrops;
 import exiledsector.items.MaterialItems;
+import exiledsector.loot.Loot;
 import exiledsector.ui.atlas.OfficerRewardPicker;
 import org.lazywizard.console.Console;
 
@@ -49,7 +49,7 @@ public class OfficerRewardPickerCommand extends PlayerFleetCommand {
             return CommandResult.BAD_SYNTAX;
         }
         SectorAPI sector = Global.getSector();
-        List<CarriedItem> offers = OfficerRewardPool.offers(RewardContext.forSector(sector, tier, null, null), random);
+        List<CarriedItem> offers = OfficerRewardPool.offers(RewardContext.forSector(sector, tier, null, null, ChartTiers.bandShift(tier)), random);
         if (offers.isEmpty()) {
             Console.showMessage("No reward can be offered at tier " + tier + ".");
             return CommandResult.ERROR;
@@ -60,7 +60,7 @@ public class OfficerRewardPickerCommand extends PlayerFleetCommand {
     }
 
     private static void grant(CampaignFleetAPI playerFleet, CarriedItem chosen, int tier, Random random) {
-        ItemDrops.SiteLoot drop = OfficerRewardDrop.roll(List.of(chosen), tier, ChartGenContext.none(), random);
+        Loot drop = OfficerRewardDrop.roll(List.of(chosen), ChartLootContext.atTier(tier), random);
         for (ItemData item : drop.items()) {
             playerFleet.getCargo().addSpecial(item.toSpecialItem(), 1f);
         }

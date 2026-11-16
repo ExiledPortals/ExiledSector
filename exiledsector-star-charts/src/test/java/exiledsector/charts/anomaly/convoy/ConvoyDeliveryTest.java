@@ -10,7 +10,7 @@ import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.FakeChartContentEngine;
 import exiledsector.charts.generation.ChartGenContext;
-import exiledsector.charts.loot.ChartFleetLoot;
+import exiledsector.charts.loot.ChartFleetLedger;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import org.junit.jupiter.api.AfterEach;
@@ -79,7 +79,7 @@ class ConvoyDeliveryTest {
         assertFalse(convoy.deliveredToExcavation());
         assertEquals(List.of(convoy), script.cachesAt(destination));
         assertTrue(ConvoyCacheDialog.wantsToHandle(destination));
-        assertTrue(ChartFleetLoot.lootSpent(fleet), "the convoy dropped its Exiled Sector loot with the cache");
+        assertTrue(ChartFleetLedger.lootSpent(fleet), "the convoy dropped its Exiled Sector loot with the cache");
         List<FakeChartContentEngine.Assignment> orders = convoySystem.assignments(fleet);
         assertEquals(new FakeChartContentEngine.Assignment(FleetAssignment.GO_TO_LOCATION_AND_DESPAWN, convoy.exitToken()), orders.get(orders.size() - 1));
         assertFalse(ConvoyCacheDialog.wantsToHandle(convoySystem.entities.get(convoy.waypointIds().get(0))));

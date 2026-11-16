@@ -156,7 +156,8 @@ class OfficerRewardPoolTest {
         StarChartCipher.registerAll();
         CraftingDrops.register(ChartTables.csvRows(CraftingDrops.DATA_PATH));
         for (int tier : new int[]{1, 8, 15}) {
-            RewardContext context = new RewardContext(tier, null, null, biomeId -> false, definition -> true, itemId -> true);
+            RewardContext context = new RewardContext(tier, null, null, biomeId -> false, definition -> true, itemId -> true,
+                    ChartTiers.bandShift(tier));
 
             Map<RewardGroup, Float> shares = OfficerRewardPool.groupShares(OfficerRewardPool.grouped(OfficerRewardPool.candidates(context,
                     new Random(1L))), OfficerRewardTable.shares());
@@ -236,14 +237,14 @@ class OfficerRewardPoolTest {
         try {
             int corrupted = ChartTiers.HIGHEST_TIER;
             List<CarriedItem> atCorrupted = OfficerRewardPool.candidates(new RewardContext(corrupted, null, null, biomeId -> false,
-                    definition -> true, itemId -> true), new Random(1L)).get(RewardKind.STAR_CHART).stream().map(RewardCandidate::item).toList();
+                    definition -> true, itemId -> true, ChartTiers.bandShift(corrupted)), new Random(1L))
+                    .get(RewardKind.STAR_CHART).stream().map(RewardCandidate::item).toList();
             List<CarriedItem> atHighest = OfficerRewardPool.candidates(new RewardContext(ChartTiers.HIGHEST_DROP_TIER, null, null, biomeId -> false,
-                    definition -> true, itemId -> true), new Random(1L)).get(RewardKind.STAR_CHART).stream().map(RewardCandidate::item).toList();
+                    definition -> true, itemId -> true, ChartTiers.bandShift(ChartTiers.HIGHEST_DROP_TIER)), new Random(1L))
+                    .get(RewardKind.STAR_CHART).stream().map(RewardCandidate::item).toList();
 
             assertFalse(atHighest.isEmpty());
             assertEquals(atHighest, atCorrupted);
-            assertEquals(ChartTiers.HIGHEST_DROP_TIER, OfficerRewardPool.chartTier(corrupted));
-            assertEquals(4, OfficerRewardPool.chartTier(4));
         } finally {
             StarChartFixtures.clear();
         }
@@ -316,7 +317,7 @@ class OfficerRewardPoolTest {
     }
 
     private static RewardContext context(String centreBiomeId, Predicate<String> biomeOpen) {
-        return new RewardContext(1, null, centreBiomeId, biomeOpen, definition -> true, itemId -> true);
+        return new RewardContext(1, null, centreBiomeId, biomeOpen, definition -> true, itemId -> true, ChartTiers.bandShift(1));
     }
 
     @Test

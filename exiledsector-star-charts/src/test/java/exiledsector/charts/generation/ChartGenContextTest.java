@@ -29,6 +29,7 @@ import exiledsector.charts.objective.ChartRewards;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemKind;
+import exiledsector.items.ItemRoll;
 import exiledsector.items.ItemTraits;
 import exiledsector.items.StarChart;
 import exiledsector.items.StarChartFixtures;
@@ -142,9 +143,9 @@ class ChartGenContextTest {
         ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_BOSS_STAR_CHART_PERCENT, 20f),
                 new AppliedEffect(ChartModifier.CHART_STAR_CHART_PERCENT, 30f)));
 
-        assertEquals(1.5f, context.bossStarChartMult(), TOLERANCE);
+        assertEquals(1.5f, context.bossStarChartMult(0f), TOLERANCE);
         assertEquals(1.3f, context.dropMult(DropType.STAR_CHART), TOLERANCE);
-        assertEquals(1f, ChartGenContext.none().bossStarChartMult(), TOLERANCE);
+        assertEquals(1f, ChartGenContext.none().bossStarChartMult(0f), TOLERANCE);
     }
 
     @Test
@@ -279,8 +280,7 @@ class ChartGenContextTest {
 
     @Test
     void theCompletionRewardScalesWithTheChart() {
-        assertEquals(ChartRewards.creditsFor(6), ChartRewards.creditsFor(6, 1f));
-        assertTrue(ChartRewards.creditsFor(6, 1.5f) > ChartRewards.creditsFor(6));
+        assertTrue(ChartRewards.creditsFor(6, 1.5f) > ChartRewards.creditsFor(6, 1f));
         assertEquals(0, ChartRewards.creditsFor(6, 1.5f) % 1000);
         assertEquals(0, ChartRewards.creditsFor(6, -1f));
     }
@@ -410,7 +410,7 @@ class ChartGenContextTest {
         assertEquals(BASE.fleetSize(), polished.adjust(BASE).fleetSize(), TOLERANCE);
         assertSame(ChartGenContext.none(), ChartGenContext.of(List.of(), 0));
 
-        ItemData plainData = ItemData.rolledAtTier(StarChartFixtures.definition("star_chart"), 3L, 5);
+        ItemData plainData = ItemData.rolled(StarChartFixtures.definition("star_chart"), 3L, ItemRoll.atTier(5));
         StarChart plainChart = (StarChart) plainData.preview();
         StarChart polishedChart = (StarChart) plainData.withTraits(new ItemTraits(5, 12, null, null)).preview();
         ChartGenContext plainContext = ChartGenContext.from(plainChart);

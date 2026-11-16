@@ -2,7 +2,7 @@ package exiledsector.items;
 
 import exiledsector.data.RandomRounding;
 import exiledsector.loot.BattleLootRates;
-import exiledsector.loot.FleetLootRules;
+import exiledsector.loot.FleetLoss;
 
 import java.util.List;
 import java.util.Random;
@@ -13,14 +13,6 @@ public enum SkillTreeSchematicDrops {
     DEINTEGRATION(DeintegrationSchematic.INSTANCE, "deintegration_schematic");
 
     static final RefitSchematic MATCHED_TIER = RefitSchematic.MILITARY;
-
-    public record SourceLoss(float deploymentPoints, float difficultyMultiplier, FleetLootRules rules) {
-
-        public SourceLoss {
-            deploymentPoints = Math.max(0f, deploymentPoints);
-            rules = rules == null ? FleetLootRules.REGULAR : rules;
-        }
-    }
 
     private final ShipSchematic schematic;
     private final String rateId;
@@ -38,29 +30,19 @@ public enum SkillTreeSchematicDrops {
         return rateId;
     }
 
-    public int rollBattle(List<SourceLoss> sources, float dropMultiplier, Random random) {
-        return RandomRounding.round(expectedBattleDrops(sources, BattleLootRates.rate(rateId), dropMultiplier), random);
+    public int rollBattle(List<FleetLoss> fleetLosses, float levelScaledShare, float dropMultiplier, Random random) {
+        return RandomRounding.round(expectedBattleDrops(fleetLosses, BattleLootRates.rate(rateId), levelScaledShare, dropMultiplier), random);
     }
 
-    static float expectedBattleDrops(List<SourceLoss> sources, BattleLootRates.Rate rate, float dropMultiplier) {
-        if (rate == null || sources.isEmpty() || !(dropMultiplier > 0f)) {
+    static float expectedBattleDrops(List<FleetLoss> fleetLosses, BattleLootRates.Rate rate, float levelScaledShare, float dropMultiplier) {
+        if (rate == null || fleetLosses.isEmpty() || !(dropMultiplier > 0f)) {
             return 0f;
         }
-        float battleDeploymentPoints = 0f;
-        for (SourceLoss source : sources) {
-            battleDeploymentPoints += source.deploymentPoints();
-        }
-        float expected = 0f;
-        for (SourceLoss source : sources) {
-            FleetLootRules rules = source.rules();
-            expected += rate.expected(source.deploymentPoints() * rules.deploymentPointsMult(), battleDeploymentPoints)
-                    * rate.difficulty(source.difficultyMultiplier()) * rules.share() * rules.multipliers().itemChances().general();
-        }
-        return expected * dropMultiplier;
+        return rate.expectedFromAll(fleetLosses, levelScaledShare, loss -> loss.rules().multipliers().chances().general()) * dropMultiplier;
     }
 
     public static boolean rollSiteFind(String siteId, Random random, ItemChances chances) {
-        ItemDrops.Rule rule = ItemDrops.activeRule(siteId);
+        SalvageSiteDrops.Rule rule = SalvageSiteDrops.activeRule(siteId);
         return rule != null && !rule.chances().isEmpty() && random.nextFloat() < siteFindChance(rule.chances().get(0), chances.general());
     }
 

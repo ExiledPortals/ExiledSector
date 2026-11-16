@@ -16,6 +16,7 @@ import exiledsector.compat.RandomAssortmentCompat;
 import exiledsector.items.ItemData;
 import exiledsector.items.HullUpgradesSetting;
 import exiledsector.items.ItemDefinitions;
+import exiledsector.items.ItemRoll;
 import exiledsector.items.JanusDevice;
 import exiledsector.items.MarketHullItems;
 import exiledsector.items.WormholeAnchorDefinitions;
@@ -210,8 +211,8 @@ class MarketItemStockTest {
     @Test
     void aMarketRestocksHullItemsWithOneModifierAndNoUniquesReplacingTheOldOnes() {
         CargoAPI cargo = mock(CargoAPI.class);
-        CargoStackAPI oldStock = specialStack(ItemData.rolledWithModifierCount(ItemDefinitions.get("bridge_basic"), 1L, 1).toMarketListing());
-        CargoStackAPI soldHullItem = specialStack(ItemData.rolledWithModifierCount(ItemDefinitions.get("bridge_basic"), 3L, 1).toSpecialItem());
+        CargoStackAPI oldStock = specialStack(ItemData.rolled(ItemDefinitions.get("bridge_basic"), 1L, ItemRoll.withModifierCount(1)).toMarketListing());
+        CargoStackAPI soldHullItem = specialStack(ItemData.rolled(ItemDefinitions.get("bridge_basic"), 3L, ItemRoll.withModifierCount(1)).toSpecialItem());
         CargoStackAPI oldAnchor = specialStack(ItemData.rolled(ItemDefinitions.get(HEGEMONY_ANCHOR), 2L).toMarketListing());
         when(cargo.getStacksCopy()).thenReturn(List.of(oldStock, soldHullItem, oldAnchor));
 
@@ -232,7 +233,7 @@ class MarketItemStockTest {
     @Test
     void aSwitchedOffDomainsListingsAreClearedOnRestockAndNotReplaced() {
         CargoAPI cargo = mock(CargoAPI.class);
-        CargoStackAPI oldStock = specialStack(ItemData.rolledWithModifierCount(ItemDefinitions.get("bridge_basic"), 1L, 1).toMarketListing());
+        CargoStackAPI oldStock = specialStack(ItemData.rolled(ItemDefinitions.get("bridge_basic"), 1L, ItemRoll.withModifierCount(1)).toMarketListing());
         when(cargo.getStacksCopy()).thenReturn(List.of(oldStock));
         HullUpgradesSetting.setEnabledForTests(false);
         try {

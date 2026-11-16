@@ -16,6 +16,7 @@ import exiledsector.charts.StarChartSettings;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
+import exiledsector.items.ItemRoll;
 import exiledsector.items.ItemStore;
 import exiledsector.items.StarChartFixtures;
 import exiledsector.charts.wormhole.WormholeOpenCheck.Blocker;
@@ -43,7 +44,7 @@ class WormholeOpenCheckTest {
     @BeforeEach
     void setUp() throws Exception {
         StarChartFixtures.registerShipped();
-        chart = store.add(ItemData.rolledAtTier(ItemDefinitions.get("star_chart"), 4L, 3));
+        chart = store.add(ItemData.rolled(ItemDefinitions.get("star_chart"), 4L, ItemRoll.atTier(3)));
         when(playerFleet.getContainingLocation()).thenReturn(hyperspace);
     }
 
@@ -62,7 +63,7 @@ class WormholeOpenCheckTest {
 
     @Test
     void openingNeedsAChartThatIsReallyInTheChartStore() {
-        Item loose = ItemData.rolledAtTier(ItemDefinitions.get("star_chart"), 5L, 3).preview();
+        Item loose = ItemData.rolled(ItemDefinitions.get("star_chart"), 5L, ItemRoll.atTier(3)).preview();
 
         assertEquals(Blocker.NO_CHART, WormholeOpenCheck.evaluate(null, store, true, playerFleet));
         assertEquals(Blocker.NO_CHART, WormholeOpenCheck.evaluate(loose, store, true, playerFleet));

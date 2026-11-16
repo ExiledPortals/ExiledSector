@@ -25,7 +25,7 @@ import exiledsector.charts.anomaly.excavation.ExcavationDeliveries;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.generation.ChartGenContext;
-import exiledsector.charts.loot.ChartFleetLoot;
+import exiledsector.charts.loot.ChartFleetLedger;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
 import org.lwjgl.util.vector.Vector2f;
@@ -347,7 +347,7 @@ public final class ConvoyScript extends AnomalyRunScript implements FleetEventLi
             }
         }
         if (fleet != null) {
-            ChartFleetLoot.spendLoot(fleet);
+            ChartFleetLedger.spendLoot(fleet);
             fleet.addAssignment(FleetAssignment.GO_TO_LOCATION_AND_DESPAWN, convoy.exitToken(), ChartContentGenerator.ASSIGNMENT_DAYS);
         }
         if (destination != null && (convoy.hasCache() || convoy.deliveredToExcavation())) {

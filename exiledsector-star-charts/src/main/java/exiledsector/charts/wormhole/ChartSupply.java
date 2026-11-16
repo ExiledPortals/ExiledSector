@@ -5,6 +5,7 @@ import exiledsector.charts.loot.ChartDrops;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
+import exiledsector.items.ItemRoll;
 import exiledsector.items.ItemStore;
 import exiledsector.items.StarChart;
 
@@ -42,6 +43,6 @@ public final class ChartSupply {
             return null;
         }
         spent.forEach(store::remove);
-        return store.add(ItemData.rolledAtTier(definition, random.nextLong(), tier + 1));
+        return store.add(ItemData.rolled(definition, random.nextLong(), ItemRoll.atTier(tier + 1)));
     }
 }

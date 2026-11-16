@@ -13,9 +13,11 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.Seeds;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
-import exiledsector.items.ItemDrops;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.ItemData;
+import exiledsector.items.SalvageSiteDrops;
+import exiledsector.loot.Loot;
+import exiledsector.loot.LootDelivery;
 import exiledsector.loot.LootMultipliers;
 import exiledsector.loot.LootSources;
 import exiledsector.ui.CampaignMessages;
@@ -53,9 +55,9 @@ public class TechMiningItemListener implements EconomyTickListener {
             MemoryAPI marketMemory = market.getMemoryWithoutUpdate();
             int minedMonths = monthsMined(marketMemory, techMining, decay);
             Random random = Seeds.random(sector.getSeedString() + "|" + market.getId() + "|" + minedMonths);
-            String dropSite = minedMonths == 0 ? ItemDrops.TECH_MINING_FIRST_FIND : ItemDrops.TECH_MINING_MONTHLY;
+            String dropSite = minedMonths == 0 ? SalvageSiteDrops.TECH_MINING_FIRST_FIND : SalvageSiteDrops.TECH_MINING_MONTHLY;
             float chanceMult = minedMonths == 0 ? 1f : (float) Math.pow(decay, minedMonths - 1);
-            ItemDrops.SiteLoot siteLoot = LootSources.rollSite(sector, dropSite, random, LootMultipliers.of(chanceMult));
+            Loot siteLoot = LootSources.rollSite(sector, dropSite, random, LootMultipliers.of(chanceMult));
             Find find = new Find(sector, market, minedMonths, dropSite, chanceMult, random, new ArrayList<>());
             LootSources.all().forEach(source -> source.addTechMiningFinds(find));
             marketMemory.set(MONTHS_KEY, minedMonths + 1);
@@ -77,7 +79,7 @@ public class TechMiningItemListener implements EconomyTickListener {
         return 0;
     }
 
-    private static void deliver(MarketAPI minedMarket, ItemDrops.SiteLoot found) {
+    private static void deliver(MarketAPI minedMarket, Loot found) {
         if (found.isEmpty()) {
             return;
         }
@@ -92,13 +94,13 @@ public class TechMiningItemListener implements EconomyTickListener {
             storageCargo = Global.getSector().getPlayerFleet().getCargo();
         }
         MarketAPI storedAt = storageMarket;
-        ItemLootListener.deliverSiteLoot(storageCargo, found,
+        LootDelivery.deliverAsRolled(storageCargo, found, LootDelivery.eachFind(
                 itemName -> announce(minedMarket, storedAt, itemName),
                 materials -> materials.forEach((itemId, quantity) -> {
                     String materialName = MaterialItems.displayName(itemId);
                     announce(minedMarket, storedAt, () -> Translation.msg("socketable.techMining.material").arg("count", quantity)
                             .arg("name", materialName).text());
-                }));
+                })));
     }
 
     private static void announce(MarketAPI minedMarket, MarketAPI storedAt, Supplier<String> itemName) {

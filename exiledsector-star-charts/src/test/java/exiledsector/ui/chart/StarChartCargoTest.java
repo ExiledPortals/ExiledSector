@@ -9,6 +9,7 @@ import exiledsector.i18n.LocaleChain;
 import exiledsector.i18n.RealCatalogue;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
+import exiledsector.items.ItemRoll;
 import exiledsector.items.ItemStore;
 import exiledsector.items.StarChartFixtures;
 import org.junit.jupiter.api.AfterEach;
@@ -45,7 +46,7 @@ class StarChartCargoTest {
     }
 
     private CargoStackAPI chartStack(int tier, float size) {
-        ItemData chart = ItemData.rolledAtTier(ItemDefinitions.get("star_chart"), 40L + tier, tier);
+        ItemData chart = ItemData.rolled(ItemDefinitions.get("star_chart"), 40L + tier, ItemRoll.atTier(tier));
         CargoStackAPI stack = mock(CargoStackAPI.class);
         when(stack.getSpecialDataIfSpecial()).thenReturn(new SpecialItemData(ItemData.STAR_CHART_ITEM_ID, chart.encode()));
         when(stack.getSize()).thenReturn(size);

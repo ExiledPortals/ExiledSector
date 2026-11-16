@@ -9,9 +9,12 @@ import com.fs.starfarer.api.campaign.listeners.ShowLootListener;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.util.Misc;
-import exiledsector.items.ItemDrops;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.ItemUnlock;
+import exiledsector.items.SalvageSiteDrops;
+import exiledsector.loot.DropOrigin;
+import exiledsector.loot.Loot;
+import exiledsector.loot.LootDelivery;
 import exiledsector.loot.LootMultipliers;
 import exiledsector.loot.LootSources;
 import exiledsector.ui.cargo.MaterialDropAnnouncer;
@@ -35,14 +38,14 @@ public class ItemSalvageListener implements ShowLootListener {
         }
         String siteId = siteId(salvageEntity);
         MemoryAPI entityMemory = salvageEntity.getMemoryWithoutUpdate();
-        if (!ItemDrops.hasRule(siteId) || entityMemory == null || entityMemory.getBoolean(ROLLED_KEY)) {
+        if (!SalvageSiteDrops.hasRule(siteId) || entityMemory == null || entityMemory.getBoolean(ROLLED_KEY)) {
             return;
         }
         entityMemory.set(ROLLED_KEY, true);
         Random random = new Random(Misc.getSalvageSeed(salvageEntity) ^ SEED_SALT);
-        LootMultipliers modifiers = LootSources.modifiersFor(salvageEntity);
-        ItemDrops.SiteLoot siteLoot = LootSources.rollSite(Global.getSector(), siteId, random, modifiers);
-        ItemLootListener.addSalvagedSiteLoot(loot, siteLoot, salvageEntity);
+        LootMultipliers multipliers = LootSources.lootMultipliersFor(salvageEntity);
+        Loot siteLoot = LootSources.rollSite(Global.getSector(), siteId, random, multipliers);
+        LootDelivery.toLootScreen(loot, siteLoot, DropOrigin.site(salvageEntity));
         MaterialDropAnnouncer.announceOnLootScreen(siteLoot.materials());
         LootSources.all().forEach(source -> source.addSalvageLoot(Global.getSector(), salvageEntity, loot));
         if (entityMemory.getBoolean(SHOWCASE_KEY)) {
@@ -53,7 +56,7 @@ public class ItemSalvageListener implements ShowLootListener {
 
     public static boolean canShowcase(SectorEntityToken salvageEntity) {
         MemoryAPI entityMemory = salvageEntity == null ? null : salvageEntity.getMemoryWithoutUpdate();
-        return entityMemory != null && ItemDrops.hasRule(siteId(salvageEntity)) && !entityMemory.getBoolean(ROLLED_KEY);
+        return entityMemory != null && SalvageSiteDrops.hasRule(siteId(salvageEntity)) && !entityMemory.getBoolean(ROLLED_KEY);
     }
 
     public static void markShowcase(SectorEntityToken salvageEntity) {

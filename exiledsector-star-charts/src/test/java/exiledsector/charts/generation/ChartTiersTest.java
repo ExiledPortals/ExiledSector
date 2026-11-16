@@ -2,6 +2,7 @@ package exiledsector.charts.generation;
 
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.effect.ChartModifier;
+import exiledsector.charts.loot.ChartLootContext;
 import exiledsector.items.CraftingDrops;
 import exiledsector.items.ItemTraits;
 import org.junit.jupiter.api.AfterEach;
@@ -76,8 +77,8 @@ class ChartTiersTest {
         ChartTiers.register(ChartTables.csvRows(ChartTiers.PATH));
         ChartGenContext treasure = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_ITEM_RARITY_PERCENT, 30f)));
 
-        assertEquals(ChartTiers.bandShift(5), ChartGenContext.none().craftingBandShift(5), 1e-6f);
-        assertEquals(ChartTiers.bandShift(5) * 1.3f, treasure.craftingBandShift(5), 1e-5f);
+        assertEquals(ChartTiers.bandShift(5), ChartLootContext.atTier(5).craftingBandShift(), 1e-6f);
+        assertEquals(ChartTiers.bandShift(5) * 1.3f, new ChartLootContext(treasure, 5).craftingBandShift(), 1e-5f);
         assertEquals(1.3f, treasure.itemChances().rarity(), 1e-6f);
     }
 }

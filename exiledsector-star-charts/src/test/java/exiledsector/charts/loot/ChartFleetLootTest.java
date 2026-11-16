@@ -29,14 +29,15 @@ import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.items.CraftingDrops;
 import exiledsector.items.ItemData;
-import exiledsector.items.ItemDrops;
 import exiledsector.items.Nanoswarm;
+import exiledsector.items.SalvageSiteDrops;
 import exiledsector.items.StarChartCipher;
 import exiledsector.items.StarChartFixtures;
 import exiledsector.loot.BattleLootRates;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import exiledsector.loot.FleetLootRules;
+import exiledsector.loot.Loot;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -83,7 +84,7 @@ class ChartFleetLootTest {
     @AfterEach
     void tearDown() {
         mockSector.close();
-        ChartDrops.clear();
+        ChartDropRules.clear();
         StarChartFixtures.unregisterCraftingItems();
         StarChartFixtures.clear();
     }
@@ -101,7 +102,17 @@ class ChartFleetLootTest {
         return run;
     }
 
-    private static int chartCount(ItemDrops.SiteLoot loot) {
+    private static Loot rollAlone(SectorAPI sector, CampaignFleetAPI fleet, float defeatedDeploymentPoints, Random random) {
+        return ChartFleetLoot.roll(sector, fleet, defeatedDeploymentPoints, ChartFleetLoot.Battle.of(defeatedDeploymentPoints), random);
+    }
+
+    private static Loot rollAlone(SectorAPI sector, CampaignFleetAPI fleet, ChartRun run, ChartGenContext context,
+                                                float defeatedDeploymentPoints, Random random) {
+        return ChartFleetLoot.roll(sector, fleet, run, new ChartLootContext(context, run.tier()), defeatedDeploymentPoints,
+                ChartFleetLoot.Battle.of(defeatedDeploymentPoints), random);
+    }
+
+    private static int chartCount(Loot loot) {
         return (int) loot.items().stream().filter(item -> item.toSpecialItem().getId().equals(ItemData.STAR_CHART_ITEM_ID)).count();
     }
 
@@ -119,21 +130,21 @@ class ChartFleetLootTest {
         when(fleet.getFleetData()).thenReturn(fleetData);
         when(fleet.getFleetPoints()).thenReturn(30);
 
-        ChartFleetLoot.recordStart(fleet);
+        ChartFleetLedger.recordStart(fleet);
 
         assertEquals(25f, fleetMemory.getFloat(ChartIds.START_DP_MEMORY_KEY));
         assertEquals(30f, fleetMemory.getFloat(ChartIds.START_FP_MEMORY_KEY));
-        assertTrue(ChartFleetLoot.hasLootLedger(fleet));
-        assertFalse(ChartFleetLoot.hasLootLedger(mock(CampaignFleetAPI.class)));
+        assertTrue(ChartFleetLedger.hasLootLedger(fleet));
+        assertFalse(ChartFleetLedger.hasLootLedger(mock(CampaignFleetAPI.class)));
     }
 
     @Test
     void aFleetBeatenOverSeveralBattlesDropsItsLootOnceInTotal() {
         CampaignFleetAPI fleet = ChartFleetFixtures.chartFleet("guard", RUN_ID, 100f);
 
-        assertEquals(0.4f, ChartFleetLoot.claimShare(fleet, 40f), 1e-6f);
-        assertEquals(0.6f, ChartFleetLoot.claimShare(fleet, 80f), 1e-6f);
-        assertEquals(0f, ChartFleetLoot.claimShare(fleet, 20f));
+        assertEquals(0.4f, ChartFleetLedger.claimShare(fleet, 40f), 1e-6f);
+        assertEquals(0.6f, ChartFleetLedger.claimShare(fleet, 80f), 1e-6f);
+        assertEquals(0f, ChartFleetLedger.claimShare(fleet, 20f));
     }
 
     @Test
@@ -141,22 +152,22 @@ class ChartFleetLootTest {
         storeLiveRun(7);
         CampaignFleetAPI fleet = ChartFleetFixtures.chartFleet("convoy", RUN_ID, 100f);
 
-        ChartFleetLoot.spendLoot(fleet);
+        ChartFleetLedger.spendLoot(fleet);
 
-        assertTrue(ChartFleetLoot.lootSpent(fleet));
-        assertSame(FleetLootRules.NONE, StarChartLootSource.INSTANCE.fleetLootRules(fleet));
+        assertTrue(ChartFleetLedger.lootSpent(fleet));
+        assertSame(FleetLootRules.SPENT, StarChartLootSource.INSTANCE.fleetLootRules(fleet));
     }
 
     @Test
     void aSplitFleetRollsItsLootInProportionToTheDeploymentPointsDestroyed() throws Exception {
-        ChartDrops.register(new JSONArray().put(rule("chart_fleet", 2f, 7)));
+        ChartDropRules.register(new JSONArray().put(rule("chart_fleet", 2f, 7)));
         storeLiveRun(7);
         CampaignFleetAPI fleet = ChartFleetFixtures.chartFleet("guard", RUN_ID, 100f);
         Random random = new Random(3L);
 
-        ItemDrops.SiteLoot firstBattle = ChartFleetLoot.roll(sector, fleet, 50f, random);
-        ItemDrops.SiteLoot secondBattle = ChartFleetLoot.roll(sector, fleet, 50f, random);
-        ItemDrops.SiteLoot thirdBattle = ChartFleetLoot.roll(sector, fleet, 50f, random);
+        Loot firstBattle = rollAlone(sector, fleet, 50f, random);
+        Loot secondBattle = rollAlone(sector, fleet, 50f, random);
+        Loot thirdBattle = rollAlone(sector, fleet, 50f, random);
 
         assertEquals(1, chartCount(firstBattle));
         assertEquals(7, ItemData.ofStarChart(firstBattle.items().get(0).toSpecialItem()).preview().tier());
@@ -166,12 +177,12 @@ class ChartFleetLootTest {
 
     @Test
     void aBattleInTheStormFrontDropsMoreItems() throws Exception {
-        ChartDrops.register(new JSONArray().put(rule("chart_fleet", 2f, 7)));
+        ChartDropRules.register(new JSONArray().put(rule("chart_fleet", 2f, 7)));
         storeLiveRun(7);
 
-        ItemDrops.SiteLoot calm = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("calm", RUN_ID, 100f), 100f,
+        Loot calm = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("calm", RUN_ID, 100f), 100f,
                 new ChartFleetLoot.Battle(100f, 1f, List.of()), new Random(3L));
-        ItemDrops.SiteLoot stormy = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("stormy", RUN_ID, 100f), 100f,
+        Loot stormy = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("stormy", RUN_ID, 100f), 100f,
                 new ChartFleetLoot.Battle(100f, 1f, List.of(StormFront.INSTANCE)), new Random(3L));
 
         assertEquals(2, chartCount(calm));
@@ -180,14 +191,14 @@ class ChartFleetLootTest {
 
     @Test
     void onlyFleetsOfTheLiveRunRollAnything() throws Exception {
-        ChartDrops.register(new JSONArray().put(rule("chart_fleet", 1f, 5)));
+        ChartDropRules.register(new JSONArray().put(rule("chart_fleet", 1f, 5)));
         CampaignFleetAPI fleet = ChartFleetFixtures.chartFleet("guard", RUN_ID, 100f);
 
-        assertTrue(ChartFleetLoot.roll(sector, fleet, 100f, new Random(1L)).isEmpty(), "no run stored");
+        assertTrue(rollAlone(sector, fleet, 100f, new Random(1L)).isEmpty(), "no run stored");
         storeLiveRun(5);
-        assertTrue(ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("other", "otherRun", 100f), 100f, new Random(1L)).isEmpty());
-        assertTrue(ChartFleetLoot.roll(sector, mock(CampaignFleetAPI.class), 100f, new Random(1L)).isEmpty());
-        assertEquals(1, chartCount(ChartFleetLoot.roll(sector, fleet, 100f, new Random(1L))));
+        assertTrue(rollAlone(sector, ChartFleetFixtures.chartFleet("other", "otherRun", 100f), 100f, new Random(1L)).isEmpty());
+        assertTrue(rollAlone(sector, mock(CampaignFleetAPI.class), 100f, new Random(1L)).isEmpty());
+        assertEquals(1, chartCount(rollAlone(sector, fleet, 100f, new Random(1L))));
     }
 
     private static StarSystemAPI chartSystem(SectorEntityToken... runEntities) {
@@ -224,7 +235,7 @@ class ChartFleetLootTest {
 
     @Test
     void aSitesSpawnedDefendersBecomeAChartFleetWithTheirLedgerOnTheSite() throws Exception {
-        ChartDrops.register(new JSONArray().put(rule("chart_fleet", 1f, 9)));
+        ChartDropRules.register(new JSONArray().put(rule("chart_fleet", 1f, 9)));
         ChartLoot.register(new JSONArray().put(new JSONObject().put("id", "fleet_weapons1").put("drop_type", "weapon").put("scope", "fleet")
                 .put("group", "weapons1").put("mode", "random").put("amount", "1")), group -> true);
         try {
@@ -233,19 +244,19 @@ class ChartFleetLootTest {
             SectorEntityToken probe = siteDefendedBy(drones);
             StarSystemAPI system = chartSystem(probe);
 
-            assertTrue(ChartFleetLoot.adoptDefender(drones, system));
-            assertTrue(ChartFleetLoot.hasLootLedger(drones));
+            assertTrue(ChartFleetLedger.adoptDefender(drones, system));
+            assertTrue(ChartFleetLedger.hasLootLedger(drones));
             assertEquals(40f, probe.getMemoryWithoutUpdate().getFloat(ChartIds.START_DP_MEMORY_KEY));
             assertEquals(200f, probe.getMemoryWithoutUpdate().getFloat(ChartIds.START_FP_MEMORY_KEY));
             Mockito.verify(drones).addDropRandom(Mockito.<SalvageEntityGenDataSpec.DropData>argThat(drop -> "weapons1".equals(drop.group)));
-            assertEquals(1, chartCount(ChartFleetLoot.roll(sector, drones, 20f, new Random(3L))));
+            assertEquals(1, chartCount(rollAlone(sector, drones, 20f, new Random(3L))));
 
             MemoryAPI wipedByVanilla = FakeChartContentEngine.memory();
             when(drones.getMemoryWithoutUpdate()).thenReturn(wipedByVanilla);
-            assertTrue(ChartFleetLoot.adoptDefender(drones, system));
+            assertTrue(ChartFleetLedger.adoptDefender(drones, system));
             Mockito.verify(drones, Mockito.times(1)).addDropRandom(Mockito.any(SalvageEntityGenDataSpec.DropData.class));
-            assertEquals(1, chartCount(ChartFleetLoot.roll(sector, drones, 40f, new Random(3L))), "a rematch drops only the half not yet dropped");
-            assertTrue(ChartFleetLoot.roll(sector, drones, 40f, new Random(3L)).isEmpty());
+            assertEquals(1, chartCount(rollAlone(sector, drones, 40f, new Random(3L))), "a rematch drops only the half not yet dropped");
+            assertTrue(rollAlone(sector, drones, 40f, new Random(3L)).isEmpty());
         } finally {
             ChartLoot.clear();
         }
@@ -257,22 +268,22 @@ class ChartFleetLootTest {
         CampaignFleetAPI stray = defenders(40f);
         StarSystemAPI system = chartSystem(siteDefendedBy(defenders(10f)));
 
-        assertFalse(ChartFleetLoot.adoptDefender(stray, system));
-        assertFalse(ChartFleetLoot.adoptDefender(defenders(40f), mock(LocationAPI.class)));
-        assertFalse(ChartFleetLoot.hasLootLedger(stray));
+        assertFalse(ChartFleetLedger.adoptDefender(stray, system));
+        assertFalse(ChartFleetLedger.adoptDefender(defenders(40f), mock(LocationAPI.class)));
+        assertFalse(ChartFleetLedger.hasLootLedger(stray));
     }
 
     @Test
     void theBossRollsItsOwnShareAndTheHoardScalesOnlyIt() throws Exception {
-        ChartDrops.register(new JSONArray().put(rule("chart_fleet", 1f, 6)).put(rule("chart_boss", 1f, 6)));
+        ChartDropRules.register(new JSONArray().put(rule("chart_fleet", 1f, 6)).put(rule("chart_boss", 1f, 6)));
         ChartRun run = storeLiveRun(6);
         ChartGenContext hoard = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_BOSS_SPOILS_PERCENT, 100f)));
 
-        ItemDrops.SiteLoot guardLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 100f), run, hoard, 100f,
+        Loot guardLoot = rollAlone(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 100f), run, hoard, 100f,
                 new Random(1L));
-        ItemDrops.SiteLoot plainBossLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
+        Loot plainBossLoot = rollAlone(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
                 ChartGenContext.none(), 200f, new Random(1L));
-        ItemDrops.SiteLoot hoardBossLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, hoard, 200f,
+        Loot hoardBossLoot = rollAlone(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, hoard, 200f,
                 new Random(1L));
 
         assertEquals(1, chartCount(guardLoot));
@@ -282,13 +293,13 @@ class ChartFleetLootTest {
 
     @Test
     void theBossStarChartLineScalesOnlyTheBosssStarCharts() throws Exception {
-        ChartDrops.register(new JSONArray().put(rule("chart_fleet", 1f, 6)).put(rule("chart_boss", 1f, 6)));
+        ChartDropRules.register(new JSONArray().put(rule("chart_fleet", 1f, 6)).put(rule("chart_boss", 1f, 6)));
         ChartRun run = storeLiveRun(6);
         ChartGenContext recovery = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_BOSS_STAR_CHART_PERCENT, 100f)));
 
-        ItemDrops.SiteLoot guardLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 100f), run, recovery, 100f,
+        Loot guardLoot = rollAlone(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 100f), run, recovery, 100f,
                 new Random(1L));
-        ItemDrops.SiteLoot bossLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, recovery, 200f,
+        Loot bossLoot = rollAlone(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, recovery, 200f,
                 new Random(1L));
 
         assertEquals(1, chartCount(guardLoot));
@@ -297,7 +308,7 @@ class ChartFleetLootTest {
 
     @Test
     void settlingDustScalesOnlyTheBosssStarCharts() throws Exception {
-        ChartDrops.register(new JSONArray().put(rule("chart_fleet", 1f, 6)).put(rule("chart_boss", 1f, 6)));
+        ChartDropRules.register(new JSONArray().put(rule("chart_fleet", 1f, 6)).put(rule("chart_boss", 1f, 6)));
         ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
         run.recordContent(new ChartContent(6, "hegemony", BOSS_ID, 4, 6, List.of(DenseNebula.ANOMALY_ID)));
         run.recordArrival();
@@ -306,9 +317,9 @@ class ChartFleetLootTest {
             DenseNebula.INSTANCE.battleWon(new AnomalyRun(run, null));
         }
 
-        ItemDrops.SiteLoot guardLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 100f), run,
+        Loot guardLoot = rollAlone(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 100f), run,
                 ChartGenContext.none(), 100f, new Random(1L));
-        ItemDrops.SiteLoot bossLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
+        Loot bossLoot = rollAlone(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
                 ChartGenContext.none(), 200f, new Random(1L));
 
         assertEquals(1, chartCount(guardLoot));
@@ -317,16 +328,16 @@ class ChartFleetLootTest {
 
     @Test
     void aWholeTiersWorthOfFleetPointsDropsTheRowsChanceAndBiggerFleetsDropMore() throws Exception {
-        ChartDrops.register(new JSONArray().put(new JSONObject().put("source", "chart_fleet").put("chance", "1.5")));
+        ChartDropRules.register(new JSONArray().put(new JSONObject().put("source", "chart_fleet").put("chance", "1.5")));
         ChartRun run = storeLiveRun(10);
         float wholeChart = ChartFleetLoot.expectedFleetPoints(10);
         int charts = 0;
         int doubledCharts = 0;
         Random random = new Random(7L);
         for (int trial = 0; trial < 2000; trial++) {
-            charts += chartCount(ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, wholeChart), run,
+            charts += chartCount(rollAlone(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, wholeChart), run,
                     ChartGenContext.none(), wholeChart, random));
-            doubledCharts += chartCount(ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("big", RUN_ID, 2f * wholeChart), run,
+            doubledCharts += chartCount(rollAlone(sector, ChartFleetFixtures.chartFleet("big", RUN_ID, 2f * wholeChart), run,
                     ChartGenContext.none(), 2f * wholeChart, random));
         }
 
@@ -335,8 +346,8 @@ class ChartFleetLootTest {
     }
 
     private static void registerCraftingRate(String per100DeploymentPoints) throws Exception {
-        BattleLootRates.register(new JSONArray().put(new JSONObject().put("drop", CraftingDrops.RATE_DROP).put("per_100_dp", per100DeploymentPoints)
-                .put("curve", "diminishing").put("difficulty_scaling", "1")));
+        BattleLootRates.register(new JSONArray().put(new JSONObject().put("drop", BattleLootRates.CRAFTING_ITEM_RATE).put("per_100_dp", per100DeploymentPoints)
+                .put("curve", "linear").put("difficulty_scaling", "0")));
     }
 
     private static void registerCraftingDrops(JSONObject... rows) throws Exception {
@@ -363,9 +374,9 @@ class ChartFleetLootTest {
             ChartRun run = storeLiveRun(6);
             CampaignFleetAPI guard = ChartFleetFixtures.chartFleet("guard", RUN_ID, 100f);
 
-            ItemDrops.SiteLoot halfKilled = ChartFleetLoot.roll(sector, guard, run, ChartGenContext.none(), 50f, new Random(1L));
-            ItemDrops.SiteLoot rebuiltAndKilled = ChartFleetLoot.roll(sector, guard, run, ChartGenContext.none(), 100f, new Random(1L));
-            ItemDrops.SiteLoot farmedAgain = ChartFleetLoot.roll(sector, guard, run, ChartGenContext.none(), 100f, new Random(1L));
+            Loot halfKilled = rollAlone(sector, guard, run, ChartGenContext.none(), 50f, new Random(1L));
+            Loot rebuiltAndKilled = rollAlone(sector, guard, run, ChartGenContext.none(), 100f, new Random(1L));
+            Loot farmedAgain = rollAlone(sector, guard, run, ChartGenContext.none(), 100f, new Random(1L));
 
             assertEquals(Map.of(AUGMENTATION, 1), halfKilled.materials());
             assertEquals(Map.of(AUGMENTATION, 1), rebuiltAndKilled.materials());
@@ -385,7 +396,7 @@ class ChartFleetLootTest {
             ChartFleetLoot.Battle hardBattle = new ChartFleetLoot.Battle(200000f, 3f, List.of());
 
             Map<String, Integer> drops = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 100000f), run,
-                    ChartGenContext.none(), 100000f, hardBattle, 1f, new Random(1L)).materials();
+                    new ChartLootContext(ChartGenContext.none(), run.tier()), 100000f, hardBattle, new Random(1L)).materials();
 
             assertEquals(1000, total(drops));
             assertTrue(drops.getOrDefault(REFORGE_CIPHER, 0) > 400, drops.toString());
@@ -404,10 +415,10 @@ class ChartFleetLootTest {
             ChartRun run = storeLiveRun(8);
             ChartGenContext treasure = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_ITEM_RARITY_PERCENT, 100f)));
 
-            Map<String, Integer> drops = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 100000f), run, treasure,
+            Map<String, Integer> drops = rollAlone(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 100000f), run, treasure,
                     100000f, new Random(1L)).materials();
 
-            assertEquals(3f, treasure.craftingBandShift(8), 1e-6f);
+            assertEquals(3f, new ChartLootContext(treasure, 8).craftingBandShift(), 1e-6f);
             assertEquals(1000, total(drops));
             assertEquals(0.75f, drops.get(CORRUPTION) / 1000f, 0.05f);
         } finally {
@@ -425,16 +436,16 @@ class ChartFleetLootTest {
         try {
             ChartRun run = storeLiveRun(8);
             CampaignFleetAPI debrisFleet = ChartFleetFixtures.chartFleet("debris", RUN_ID, 100f);
-            ChartFleetLoot.tagAnomaly(debrisFleet, AnomalousDebris.ANOMALY_ID);
+            ChartFleetLedger.tagAnomaly(debrisFleet, AnomalousDebris.ANOMALY_ID);
             CampaignFleetAPI anomalyBoss = ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 100f);
-            ChartFleetLoot.tagAnomaly(anomalyBoss, AnomalousDebris.ANOMALY_ID);
+            ChartFleetLedger.tagAnomaly(anomalyBoss, AnomalousDebris.ANOMALY_ID);
             CampaignFleetAPI untagged = ChartFleetFixtures.chartFleet("guard", RUN_ID, 100f);
-            ChartFleetLoot.tagAnomaly(untagged, "not_an_anomaly");
+            ChartFleetLedger.tagAnomaly(untagged, "not_an_anomaly");
 
-            assertEquals(0.5f, ChartFleetLoot.anomalyFleetLoot(debrisFleet, run));
-            assertEquals(1f, ChartFleetLoot.anomalyFleetLoot(anomalyBoss, run));
-            assertEquals(1f, ChartFleetLoot.anomalyFleetLoot(untagged, run));
-            assertEquals(Map.of(AUGMENTATION, 5), ChartFleetLoot.roll(sector, debrisFleet, run, ChartGenContext.none(), 100f,
+            assertEquals(0.5f, ChartFleetLedger.anomalyFleetLoot(debrisFleet, run));
+            assertEquals(1f, ChartFleetLedger.anomalyFleetLoot(anomalyBoss, run));
+            assertEquals(1f, ChartFleetLedger.anomalyFleetLoot(untagged, run));
+            assertEquals(Map.of(AUGMENTATION, 5), rollAlone(sector, debrisFleet, run, ChartGenContext.none(), 100f,
                     new Random(1L)).materials());
         } finally {
             BattleLootRates.clear();
@@ -445,18 +456,18 @@ class ChartFleetLootTest {
 
     @Test
     void theBossAddsNoCraftingItemsOfItsOwnBeyondItsDeploymentPoints() throws Exception {
-        ItemDrops.register(new JSONArray()
+        SalvageSiteDrops.register(new JSONArray()
                 .put(new JSONObject().put("site", ChartIds.BOSS_LOOT_SITE).put("chances", "0").put("uniqueChance", "0")));
         try {
             ChartRun run = storeLiveRun(6);
 
-            ItemDrops.SiteLoot bossLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
+            Loot bossLoot = rollAlone(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
                     ChartGenContext.none(), 200f, new Random(1L));
 
             assertTrue(bossLoot.materials().isEmpty(), bossLoot.toString());
             assertTrue(run.isBossLootGuaranteed());
         } finally {
-            ItemDrops.clear();
+            SalvageSiteDrops.clear();
         }
     }
 
@@ -465,9 +476,9 @@ class ChartFleetLootTest {
         ChartRun run = storeLiveRun(6);
         CampaignFleetAPI guard = ChartFleetFixtures.chartFleet("guard", RUN_ID, 80f);
 
-        assertEquals(ChartGenContext.none().itemChances(), LootContexts.forFleet(mock(CampaignFleetAPI.class)).itemChances());
-        assertEquals(ChartGenContext.none().itemChances(), LootContexts.forFleet(null).itemChances());
-        assertEquals(ChartRunEffects.contextOf(run).itemChances(), LootContexts.forFleet(guard).itemChances());
-        assertTrue(ChartFleetLoot.liveRunOf(guard) != null);
+        assertEquals(ChartGenContext.none().itemChances(), ChartLootContext.forFleet(mock(CampaignFleetAPI.class)).itemChances());
+        assertEquals(ChartGenContext.none().itemChances(), ChartLootContext.forFleet(null).itemChances());
+        assertEquals(ChartRunEffects.contextOf(run).itemChances(), ChartLootContext.forFleet(guard).itemChances());
+        assertTrue(ChartFleetLedger.liveRunOf(guard) != null);
     }
 }

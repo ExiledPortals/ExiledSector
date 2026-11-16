@@ -93,6 +93,10 @@ public final class ChartIds {
         entity.addTag(runTag(runId));
     }
 
+    public static boolean isChartSystem(LocationAPI location) {
+        return location instanceof StarSystemAPI system && system.hasTag(SYSTEM_TAG);
+    }
+
     public static String locationIdOf(LocationAPI location) {
         if (location == null || location.isHyperspace()) {
             return HYPERSPACE_LOCATION_ID;

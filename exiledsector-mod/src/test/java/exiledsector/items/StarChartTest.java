@@ -109,7 +109,7 @@ class StarChartTest {
         assertEquals(ItemType.STAR_CHART, chart.type());
 
         ItemStore store = ItemStore.forStarCharts();
-        Item stored = store.add(ItemData.rolledAtTier(ItemDefinitions.get(SINGLE), 5L, 7));
+        Item stored = store.add(ItemData.rolled(ItemDefinitions.get(SINGLE), 5L, ItemRoll.atTier(7)));
         assertInstanceOf(StarChart.class, stored);
         assertEquals(7, stored.tier());
         assertTrue(stored.id().startsWith("star_chart_"));
@@ -133,7 +133,7 @@ class StarChartTest {
     @Test
     void theTierSurvivesMirroringCorruptionAndRerolls() {
         ItemStore store = ItemStore.forStarCharts();
-        Item chart = store.add(ItemData.rolledAtTier(ItemDefinitions.get(SINGLE), 11L, 9));
+        Item chart = store.add(ItemData.rolled(ItemDefinitions.get(SINGLE), 11L, ItemRoll.atTier(9)));
 
         Item mirror = store.addMirrorOf(chart);
         assertEquals(9, mirror.tier());
@@ -199,7 +199,7 @@ class StarChartTest {
         ItemDefinition single = ItemDefinitions.get(SINGLE);
         boolean rolledOne = false;
         for (long seed = 0; seed < 1000; seed++) {
-            List<RolledModifier> rolled = ItemRoller.rollAtTierWithModifierCount(single, seed, StarChart.HIGHEST_DROP_TIER,
+            List<RolledModifier> rolled = ItemRoller.rollPastLimits(single, seed, StarChart.HIGHEST_DROP_TIER,
                     StarChartCorruption.EXPANDED_MODIFIERS, StarChartCorruption.EXPANDED_PER_SIDE);
             long cripplingCount = rolled.stream().filter(modifier -> crippling.contains(modifier.modifierId())).count();
 
@@ -321,7 +321,7 @@ class StarChartTest {
 
     @Test
     void aDroppedChartCarriesNoImplicits() {
-        ItemData dropped = ItemData.rolledAtTier(ItemDefinitions.get(SINGLE), 8L, 3);
+        ItemData dropped = ItemData.rolled(ItemDefinitions.get(SINGLE), 8L, ItemRoll.atTier(3));
 
         assertTrue(dropped.preview().implicits().isEmpty());
     }
@@ -346,7 +346,7 @@ class StarChartTest {
 
     @Test
     void chartsTravelAsTheirOwnSpecialItemThatTheHullItemDecoderIgnores() {
-        ItemData chart = ItemData.rolledAtTier(ItemDefinitions.get(SINGLE), 4L, 2);
+        ItemData chart = ItemData.rolled(ItemDefinitions.get(SINGLE), 4L, ItemRoll.atTier(2));
         SpecialItemData special = chart.toSpecialItem();
 
         assertEquals(ItemData.STAR_CHART_ITEM_ID, special.getId());
@@ -362,7 +362,7 @@ class StarChartTest {
     void theStoresNeverTakeEachOthersItems() {
         ItemStore hullStore = new ItemStore();
         ItemStore chartStore = ItemStore.forStarCharts();
-        ItemData chart = ItemData.rolledAtTier(ItemDefinitions.get(SINGLE), 4L, 2);
+        ItemData chart = ItemData.rolled(ItemDefinitions.get(SINGLE), 4L, ItemRoll.atTier(2));
         ItemData hullItem = ItemData.rolled(ItemDefinitions.all().iterator().next(), 4L);
 
         assertNull(hullStore.add(chart));
@@ -378,7 +378,7 @@ class StarChartTest {
 
     @Test
     void absorbingDispatchesOnTheSpecialItemId() {
-        ItemData chart = ItemData.rolledAtTier(ItemDefinitions.get(SINGLE), 4L, 5);
+        ItemData chart = ItemData.rolled(ItemDefinitions.get(SINGLE), 4L, ItemRoll.atTier(5));
         ItemData hullItem = ItemData.rolled(ItemDefinitions.all().iterator().next(), 4L);
         CargoStackAPI chartStack = stack(chart.toSpecialItem(), 2f);
         CargoStackAPI hullStack = stack(hullItem.toSpecialItem(), 1f);
@@ -420,7 +420,7 @@ class StarChartTest {
     @Test
     void aSavedChartStoreLoadsBackUnderStableAliases() {
         ItemStore store = ItemStore.forStarCharts();
-        Item chart = store.add(ItemData.rolledAtTier(ItemDefinitions.get(BINARY), 77L, 8));
+        Item chart = store.add(ItemData.rolled(ItemDefinitions.get(BINARY), 77L, ItemRoll.atTier(8)));
         chart.corrupt(CorruptionOutcome.NOTHING);
 
         String xml = xstream().toXML(store);
@@ -466,7 +466,7 @@ class StarChartTest {
     @Test
     void aChartWhoseDefinitionGoesMissingKeepsItsTierUntilItReturns() {
         ItemStore store = ItemStore.forStarCharts();
-        store.add(ItemData.rolledAtTier(ItemDefinitions.get(BINARY), 77L, 8));
+        store.add(ItemData.rolled(ItemDefinitions.get(BINARY), 77L, ItemRoll.atTier(8)));
         String xml = xstream().toXML(store);
 
         StarChartFixtures.clear();
@@ -568,11 +568,11 @@ class StarChartTest {
         assertEquals(4, StarChartDefinitions.minTier(GATED));
         assertEquals(StarChart.LOWEST_TIER, StarChartDefinitions.minTier(UNGATED));
         assertEquals(StarChart.LOWEST_TIER, StarChartDefinitions.minTier(SINGLE));
-        assertEquals(4, ItemData.rolledAtTier(gatedChart, 3L, 1).traits().tier());
-        assertEquals(4, ItemData.rolledAtTier(gatedChart, 3L, 1).preview().tier());
+        assertEquals(4, ItemData.rolled(gatedChart, 3L, ItemRoll.atTier(1)).traits().tier());
+        assertEquals(4, ItemData.rolled(gatedChart, 3L, ItemRoll.atTier(1)).preview().tier());
         assertEquals(4, ItemData.rolled(gatedChart, 3L).preview().tier());
         assertEquals(4, new ItemData(GATED, 3L).preview().tier());
-        assertEquals(9, ItemData.rolledAtTier(gatedChart, 3L, 9).preview().tier());
+        assertEquals(9, ItemData.rolled(gatedChart, 3L, ItemRoll.atTier(9)).preview().tier());
         ItemData lowTierData = new ItemData(GATED, 3L, null, null, ItemTraits.ofTier(2));
         assertEquals(4, lowTierData.preview().tier());
         assertEquals(4, ItemStore.forStarCharts().add(lowTierData).tier());
@@ -622,7 +622,7 @@ class StarChartTest {
     @Test
     void aMirroredChartStaysMirroredThroughTheCodecAndTheStore() {
         ItemStore store = ItemStore.forStarCharts();
-        Item chart = store.add(ItemData.rolledAtTier(ItemDefinitions.get(SINGLE), 31L, 7));
+        Item chart = store.add(ItemData.rolled(ItemDefinitions.get(SINGLE), 31L, ItemRoll.atTier(7)));
         Item mirror = store.addMirrorOf(chart);
 
         String plainEncoded = ItemData.of(chart).encode();

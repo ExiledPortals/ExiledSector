@@ -13,12 +13,12 @@ import exiledsector.MockSector;
 import exiledsector.ProjectFiles;
 import exiledsector.charts.loot.StarChartLootSource;
 import exiledsector.charts.loot.DropType;
+import exiledsector.items.SalvageSiteDrops;
 import exiledsector.loot.LootMultipliers;
 import exiledsector.charts.ChartIds;
 import exiledsector.items.AnchorJanusGate;
 import exiledsector.items.CraftingDrops;
 import exiledsector.items.ItemDefinitions;
-import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemUnlock;
 import exiledsector.items.MaterialItems;
@@ -26,7 +26,7 @@ import exiledsector.items.WormholeAnchorDefinitions;
 import exiledsector.items.StarChartCipher;
 import exiledsector.items.StarChartFixtures;
 import exiledsector.charts.content.ChartContent;
-import exiledsector.charts.loot.ChartDrops;
+import exiledsector.charts.loot.ChartDropRules;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
@@ -70,14 +70,14 @@ class ItemSalvageListenerTest {
         miscMock.when(() -> Misc.getSalvageSeed(any())).thenReturn(42L);
         ItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "volume_subroutine").put("kind", "MODSPEC_CACHE")
                 .put("rarity", "10")));
-        ItemDrops.register(new JSONArray()
+        SalvageSiteDrops.register(new JSONArray()
                 .put(new JSONObject().put("site", "station_research").put("chances", "1").put("uniqueChance", "0")));
         CraftingDrops.register(ProjectFiles.csvRows(CraftingDrops.DATA_PATH));
     }
 
     @AfterEach
     void tearDown() {
-        ItemDrops.clear();
+        SalvageSiteDrops.clear();
         ItemDefinitions.clear();
         CraftingDrops.clear();
         miscMock.close();
@@ -129,9 +129,9 @@ class ItemSalvageListenerTest {
         SectorEntityToken nowhere = mock(SectorEntityToken.class);
 
         LootMultipliers none = new LootMultipliers(ChartGenContext.none().itemChances(), ChartGenContext.none().dropMult(DropType.FEEDSTOCK),
-                ChartGenContext.none().dropMult(DropType.CRAFTING_ITEM));
-        assertEquals(none, StarChartLootSource.INSTANCE.modifiersAt(outside.getContainingLocation()));
-        assertEquals(none, StarChartLootSource.INSTANCE.modifiersAt(nowhere.getContainingLocation()));
+                ChartGenContext.none().dropMult(DropType.CRAFTING_ITEM), CraftingDrops.NO_BAND_SHIFT);
+        assertEquals(none, StarChartLootSource.INSTANCE.lootMultipliersAt(outside.getContainingLocation()));
+        assertEquals(none, StarChartLootSource.INSTANCE.lootMultipliersAt(nowhere.getContainingLocation()));
     }
 
     @Test
@@ -149,7 +149,7 @@ class ItemSalvageListenerTest {
     void aSalvagedSystemsiteCanAlsoHoldAStarChartAndAChartCraftingItem() throws Exception {
         StarChartFixtures.registerShipped();
         StarChartCipher.registerAll();
-        ChartDrops.register(new JSONArray().put(new JSONObject().put("source", "system_salvage").put("chance", "1").put("crafting_item_chance", "200")));
+        ChartDropRules.register(new JSONArray().put(new JSONObject().put("source", "system_salvage").put("chance", "1").put("cipher_chance", "200")));
         try (MockSector mockSector = new MockSector()) {
             ChartRun run = new ChartRun("salvageRun", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
             run.recordContent(new ChartContent(6, "hegemony", "boss", 4, 6));
@@ -172,7 +172,7 @@ class ItemSalvageListenerTest {
             assertEquals(6, ItemData.ofStarChart(charts.get(0)).preview().tier());
             assertEquals(StarChartCipher.values().length, specials.getAllValues().stream().filter(special -> StarChartCipher.byItemId(special.getId()) != null).count());
         } finally {
-            ChartDrops.clear();
+            ChartDropRules.clear();
             StarChartFixtures.unregisterCraftingItems();
             StarChartFixtures.clear();
         }

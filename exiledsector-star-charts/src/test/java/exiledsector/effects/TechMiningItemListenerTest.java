@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import exiledsector.charts.loot.StarChartLootSource;
-import exiledsector.charts.loot.ChartDrops;
+import exiledsector.charts.loot.ChartDropRules;
 import exiledsector.items.ItemData;
 import exiledsector.items.StarChartFixtures;
 import org.json.JSONArray;
@@ -58,7 +58,7 @@ class TechMiningItemListenerTest {
     @Test
     void aTechMiningFindCanTurnUpALowTierStarChartFromTheFirstFindOrLaterMonths() throws Exception {
         StarChartFixtures.registerShipped();
-        ChartDrops.register(new JSONArray()
+        ChartDropRules.register(new JSONArray()
                 .put(new JSONObject().put("source", "techmining_first_find").put("chance", "1").put("min_defeated_dp", "1")
                         .put("defeated_dp_per_tier", "3").put("max_tier", "5"))
                 .put(new JSONObject().put("source", "techmining_monthly").put("chance", "0")));
@@ -75,7 +75,7 @@ class TechMiningItemListenerTest {
             assertEquals(firstFind.get(0).seed(), StarChartLootSource.techMiningCharts(sector, "colony", 0, 1f).get(0).seed());
             assertEquals(List.of(), StarChartLootSource.techMiningCharts(sector, "colony", 3, 1f));
         } finally {
-            ChartDrops.clear();
+            ChartDropRules.clear();
             StarChartFixtures.clear();
         }
     }

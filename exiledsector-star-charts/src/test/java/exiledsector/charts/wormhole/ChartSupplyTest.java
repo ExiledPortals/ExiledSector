@@ -4,6 +4,7 @@ import exiledsector.charts.generation.ChartTiers;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
+import exiledsector.items.ItemRoll;
 import exiledsector.items.ItemStore;
 import exiledsector.items.StarChart;
 import exiledsector.items.StarChartFixtures;
@@ -35,7 +36,7 @@ class ChartSupplyTest {
     }
 
     private Item stored(long seed, int tier) {
-        return store.add(ItemData.rolledAtTier(ItemDefinitions.get("star_chart"), seed, tier));
+        return store.add(ItemData.rolled(ItemDefinitions.get("star_chart"), seed, ItemRoll.atTier(tier)));
     }
 
     @Test

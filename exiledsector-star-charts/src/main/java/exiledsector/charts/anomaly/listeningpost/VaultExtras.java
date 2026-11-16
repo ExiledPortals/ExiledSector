@@ -12,8 +12,9 @@ import exiledsector.charts.officer.reward.OfficerRewardDrop;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemDrops;
+import exiledsector.items.ItemRoll;
 import exiledsector.items.StarChartCorruption;
+import exiledsector.loot.Loot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +29,8 @@ final class VaultExtras {
     private VaultExtras() {
     }
 
-    static ItemDrops.SiteLoot roll(SectorAPI sector, ChartRun run, PostState state, DepotTuning tuning) {
-        ItemDrops.SiteLoot extras = ItemDrops.SiteLoot.NONE;
+    static Loot roll(SectorAPI sector, ChartRun run, PostState state, DepotTuning tuning) {
+        Loot extras = Loot.NONE;
         if (state.quiet()) {
             List<ItemData> charts = stolenCharts(run.tier(), tuning.maxStolenCharts(), Seeds.derived(state.seed(), STOLEN_CHARTS_SALT));
             if (!charts.isEmpty()) {
@@ -50,7 +51,7 @@ final class VaultExtras {
             int tier = ListeningPostRules.stolenChartTier(random, runTier);
             ItemDefinition definition = ChartDrops.pickChartAtTier(random, tier);
             if (definition != null) {
-                charts.add(StarChartCorruption.withExpandedModifiers(ItemData.rolledAtTier(definition, random.nextLong(), tier), random));
+                charts.add(StarChartCorruption.withExpandedModifiers(ItemData.rolled(definition, random.nextLong(), ItemRoll.atTier(tier)), random));
             }
         }
         return charts;

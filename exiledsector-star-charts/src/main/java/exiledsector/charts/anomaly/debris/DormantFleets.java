@@ -38,7 +38,7 @@ import exiledsector.charts.effect.ChartEnemyShipEffects;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.generation.ChartTiers;
-import exiledsector.charts.loot.ChartFleetLoot;
+import exiledsector.charts.loot.ChartFleetLedger;
 import exiledsector.charts.loot.ChartVanillaLoot;
 import exiledsector.charts.loot.DropType;
 import exiledsector.loot.FleetFactions;
@@ -292,7 +292,7 @@ public final class DormantFleets {
         populate(fleet, hullFactions(Global.getSector()), tier, context, seed, corruptions);
         markCorrupted(fleet, corruptions);
         setStrengthBonus(fleet, tier, context, corruptions);
-        ChartFleetLoot.recordStart(fleet);
+        ChartFleetLedger.recordStart(fleet);
         ChartEnemyShipEffects.grant(fleet, context);
         return true;
     }

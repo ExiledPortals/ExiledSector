@@ -12,9 +12,11 @@ import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemKind;
+import exiledsector.items.ItemRoll;
 import exiledsector.items.LuckyRolls;
 import exiledsector.items.PoolEntry;
 import exiledsector.loot.BattleLoot;
+import exiledsector.loot.DropOrigin;
 import exiledsector.modifiers.ModifierSlot;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,7 +54,7 @@ class StarChartLootSourceTest {
     }
 
     private static ItemData dropped(long seed) {
-        return ItemData.rolledWithModifierCount(ItemDefinitions.get(PLATE), seed, 2);
+        return ItemData.rolled(ItemDefinitions.get(PLATE), seed, ItemRoll.withModifierCount(2));
     }
 
     @Test
@@ -80,8 +82,8 @@ class StarChartLootSourceTest {
                 ItemData item = dropped(seed);
                 ItemData lucky = LuckyRolls.withLuckyModifier(item);
 
-                assertEquals(lucky, StarChartLootSource.INSTANCE.shapeDrop(item, system));
-                assertEquals(lucky, StarChartLootSource.INSTANCE.shapeBattleDrop(item, system));
+                assertEquals(lucky, StarChartLootSource.INSTANCE.shape(item, DropOrigin.ANYWHERE, system));
+                assertEquals(lucky, StarChartLootSource.INSTANCE.shape(item, DropOrigin.BATTLE, system));
                 changed += lucky.equals(item) ? 0 : 1;
             }
             assertTrue(changed > 0);
@@ -96,8 +98,8 @@ class StarChartLootSourceTest {
             for (long seed = 0L; seed < 20L; seed++) {
                 ItemData item = dropped(seed);
 
-                assertSame(item, StarChartLootSource.INSTANCE.shapeDrop(item, calm));
-                assertSame(item, StarChartLootSource.INSTANCE.shapeDrop(item, outside));
+                assertSame(item, StarChartLootSource.INSTANCE.shape(item, DropOrigin.ANYWHERE, calm));
+                assertSame(item, StarChartLootSource.INSTANCE.shape(item, DropOrigin.ANYWHERE, outside));
             }
         }
     }

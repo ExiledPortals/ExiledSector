@@ -2,6 +2,7 @@ package exiledsector.items;
 
 import exiledsector.ProjectFiles;
 import exiledsector.compat.SalvageSiteCompat;
+import exiledsector.loot.LootMultipliers;
 import lunalib.lunaSettings.LunaSettings;
 import org.json.CDL;
 import org.json.JSONArray;
@@ -29,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class ItemDropsTest {
+class SalvageSiteDropsTest {
 
     private static final int TRIALS = 20000;
 
@@ -38,7 +39,7 @@ class ItemDropsTest {
         ItemDefinitions.register(new JSONArray()
                 .put(row(MILITARY, HullItemRows.MILITARY_SECTION, MILITARY_PREFIXES, MILITARY_SUFFIXES))
                 .put(ItemFixtures.subroutineRow("relic", SubroutineKind.UNIQUE).put("unique", "true")));
-        ItemDrops.register(new JSONArray()
+        SalvageSiteDrops.register(new JSONArray()
                 .put(new JSONObject().put("site", "probe").put("chances", "0.5").put("uniqueChance", "0"))
                 .put(new JSONObject().put("site", "station").put("chances", "1;0.6;0.3").put("uniqueChance", "0.19"))
                 .put(new JSONObject().put("site", "research").put("chances", "1;0.6;0.3").put("uniqueChance", "0").put("feedstockMin", "20").put("feedstockMax", "30"))
@@ -48,7 +49,7 @@ class ItemDropsTest {
 
     @AfterEach
     void tearDown() {
-        ItemDrops.clear();
+        SalvageSiteDrops.clear();
         ItemDefinitions.clear();
         CraftingDrops.clear();
     }
@@ -62,7 +63,7 @@ class ItemDropsTest {
         Random random = new Random(11L);
         int hits = 0;
         for (int i = 0; i < TRIALS; i++) {
-            if (test.test(ItemDrops.roll(site, random, ItemChances.of(mult), uniqueAllowed))) {
+            if (test.test(SalvageSiteDrops.roll(site, random, ItemChances.of(mult), uniqueAllowed))) {
                 hits++;
             }
         }
@@ -73,7 +74,7 @@ class ItemDropsTest {
         Random random = new Random(11L);
         int hits = 0;
         for (int i = 0; i < TRIALS; i++) {
-            if (test.test(HullItemDrops.rollSectionItemLoot(site, random, mult).items())) {
+            if (test.test(HullItemDrops.rollHullItemLoot(site, random, ItemChances.of(mult), 1f).items())) {
                 hits++;
             }
         }
@@ -112,7 +113,7 @@ class ItemDropsTest {
         assertEquals(0.0, share("station", 1f, definition -> false, items -> items.stream().anyMatch(item -> "relic".equals(item.definitionId()))), 0.0);
         Random random = new Random(2L);
         for (int i = 0; i < 200; i++) {
-            assertTrue(ItemDrops.roll("station", random, ItemChances.BASE).stream().noneMatch(item -> "relic".equals(item.definitionId())));
+            assertTrue(SalvageSiteDrops.roll("station", random, ItemChances.BASE).stream().noneMatch(item -> "relic".equals(item.definitionId())));
         }
     }
 
@@ -123,29 +124,29 @@ class ItemDropsTest {
 
     @Test
     void unknownOrMalformedSitesDropNothing() {
-        assertFalse(ItemDrops.hasRule("broken"));
-        assertTrue(ItemDrops.roll("nowhere", new Random(1L), ItemChances.BASE).isEmpty());
-        assertTrue(ItemDrops.roll(null, new Random(1L), ItemChances.BASE).isEmpty());
+        assertFalse(SalvageSiteDrops.hasRule("broken"));
+        assertTrue(SalvageSiteDrops.roll("nowhere", new Random(1L), ItemChances.BASE).isEmpty());
+        assertTrue(SalvageSiteDrops.roll(null, new Random(1L), ItemChances.BASE).isEmpty());
     }
 
     @Test
     void basicDrawsNeverPickAUniqueAndUniqueDrawsOnlyPickUniques() {
         Random random = new Random(5L);
         for (int i = 0; i < 200; i++) {
-            assertEquals(MILITARY, ItemDrops.pickSectionItemBasic(ItemKind.BRIDGE, random).id());
-            assertEquals("relic", ItemDrops.pickUnique(random, definition -> true).id());
+            assertEquals(MILITARY, DroppableDefinitions.pickBasicOfKind(ItemKind.BRIDGE, random).id());
+            assertEquals("relic", DroppableDefinitions.pickUnique(random, definition -> true).id());
         }
     }
 
     @Test
     void theShippedTableGivesTheAgreedChances() throws Exception {
-        String csv = Files.readString(ProjectFiles.projectRoot().resolve(ItemDrops.DATA_PATH), StandardCharsets.UTF_8);
+        String csv = Files.readString(ProjectFiles.projectRoot().resolve(SalvageSiteDrops.DATA_PATH), StandardCharsets.UTF_8);
         JSONArray rows = CDL.toJSONArray(csv.replace("\r\n", "\n"));
-        ItemDrops.register(rows);
+        SalvageSiteDrops.register(rows);
 
         assertEquals(rows.length(), countRules(rows));
         Map<String, Float> firstChances = Map.of("derelict_probe", 0.5f, "derelict_survey_ship", 0.8f, "derelict_mothership", 1f,
-                "station_research", 1f, "station_mining", 1f, "orbital_habitat", 1f, ItemDrops.TECH_MINING_FIRST_FIND, 0.8f,
+                "station_research", 1f, "station_mining", 1f, "orbital_habitat", 1f, SalvageSiteDrops.TECH_MINING_FIRST_FIND, 0.8f,
                 "weapons_cache", 0.4f, "wreck", 0.1f);
         for (int i = 0; i < rows.length(); i++) {
             JSONObject row = rows.getJSONObject(i);
@@ -164,20 +165,20 @@ class ItemDropsTest {
 
     @Test
     void otherModSitesOnlyDropWhileTheSettingIsOnAndNeverOverrideOurOwnRows() throws Exception {
-        ItemDrops.registerOtherMod(new JSONArray()
+        SalvageSiteDrops.registerOtherMod(new JSONArray()
                 .put(new JSONObject().put("site", "rat_abyss_research").put("chances", "1").put("uniqueChance", "0"))
                 .put(new JSONObject().put("site", "probe").put("chances", "1").put("uniqueChance", "0")));
 
         try (MockedStatic<LunaSettings> luna = Mockito.mockStatic(LunaSettings.class)) {
             luna.when(() -> LunaSettings.getBoolean("exiledSector", SalvageSiteCompat.DROPS_FIELD_ID)).thenReturn(true);
-            assertTrue(ItemDrops.hasRule("rat_abyss_research"));
-            assertEquals(1, HullItemDrops.rollSectionItemLoot("rat_abyss_research", new Random(1L), 1f).items().size());
+            assertTrue(SalvageSiteDrops.hasRule("rat_abyss_research"));
+            assertEquals(1, HullItemDrops.rollHullItemLoot("rat_abyss_research", new Random(1L), ItemChances.BASE, 1f).items().size());
             assertEquals(0.25, basicShare("probe", 1f, items -> !items.isEmpty()), 0.02);
 
             luna.when(() -> LunaSettings.getBoolean("exiledSector", SalvageSiteCompat.DROPS_FIELD_ID)).thenReturn(false);
-            assertFalse(ItemDrops.hasRule("rat_abyss_research"));
-            assertTrue(HullItemDrops.rollSectionItemLoot("rat_abyss_research", new Random(1L), 1f).items().isEmpty());
-            assertTrue(ItemDrops.hasRule("probe"));
+            assertFalse(SalvageSiteDrops.hasRule("rat_abyss_research"));
+            assertTrue(HullItemDrops.rollHullItemLoot("rat_abyss_research", new Random(1L), ItemChances.BASE, 1f).items().isEmpty());
+            assertTrue(SalvageSiteDrops.hasRule("probe"));
         }
     }
 
@@ -192,7 +193,7 @@ class ItemDropsTest {
         SalvageSiteCompat.SOURCES.forEach(source -> expected.add(source.modId() + ".csv"));
         assertEquals(expected, files);
 
-        String base = Files.readString(ProjectFiles.projectRoot().resolve(ItemDrops.DATA_PATH), StandardCharsets.UTF_8);
+        String base = Files.readString(ProjectFiles.projectRoot().resolve(SalvageSiteDrops.DATA_PATH), StandardCharsets.UTF_8);
         Set<String> vanillaSites = new HashSet<>();
         JSONArray baseRows = CDL.toJSONArray(base.replace("\r\n", "\n"));
         for (int i = 0; i < baseRows.length(); i++) {
@@ -212,7 +213,7 @@ class ItemDropsTest {
     private static int countRules(JSONArray rows) throws Exception {
         int count = 0;
         for (int i = 0; i < rows.length(); i++) {
-            if (ItemDrops.hasRule(rows.getJSONObject(i).getString("site"))) {
+            if (SalvageSiteDrops.hasRule(rows.getJSONObject(i).getString("site"))) {
                 count++;
             }
         }
@@ -223,7 +224,7 @@ class ItemDropsTest {
         Random random = new Random(13L);
         List<Map<String, Integer>> rolls = new java.util.ArrayList<>();
         for (int i = 0; i < TRIALS; i++) {
-            rolls.add(ItemDrops.rollMaterials(site, random, mult, mult, CraftingDrops.NO_BAND_SHIFT));
+            rolls.add(SalvageSiteDrops.rollMaterials(site, random, new LootMultipliers(ItemChances.BASE, mult, mult, CraftingDrops.NO_BAND_SHIFT)));
         }
         return rolls;
     }
@@ -259,10 +260,10 @@ class ItemDropsTest {
     @Test
     void aSitesCraftingItemsComeFromTheDropTableWithoutTheChartOnlyOnes() {
         List<Map<String, Integer>> station = materials("station", 1f);
-        double share = ItemDrops.KERNEL_CHANCE_SHARE;
+        double share = SalvageSiteDrops.CRAFTING_ITEM_SHARE;
 
-        assertEquals(share, averageKernels(station), 0.02);
-        assertEquals(0.5 * share, averageKernels(materials("probe", 1f)), 0.02);
+        assertEquals(share, averageCraftingItems(station), 0.02);
+        assertEquals(0.5 * share, averageCraftingItems(materials("probe", 1f)), 0.02);
         assertEquals(share * dropShare(Nanoswarm.AUGMENTATION.itemId()), averageCount(station, Nanoswarm.AUGMENTATION.itemId()), 0.02);
         assertEquals(share * dropShare(Nanoswarm.CORRUPTION.itemId()), averageCount(station, Nanoswarm.CORRUPTION.itemId()), 0.01);
         assertEquals(share * dropShare(CraftingInhibitor.PREFIX.itemId()), averageCount(station, CraftingInhibitor.PREFIX.itemId()), 0.01);
@@ -274,24 +275,24 @@ class ItemDropsTest {
         Random random = new Random(19L);
         List<Map<String, Integer>> shifted = new java.util.ArrayList<>();
         for (int i = 0; i < TRIALS; i++) {
-            shifted.add(ItemDrops.rollMaterials("station", random, 1f, 1f, 3f));
+            shifted.add(SalvageSiteDrops.rollMaterials("station", random, new LootMultipliers(ItemChances.BASE, 1f, 1f, 3f)));
         }
         List<Map<String, Integer>> unshifted = materials("station", 1f);
 
-        assertEquals(averageKernels(unshifted), averageKernels(shifted), 0.02);
+        assertEquals(averageCraftingItems(unshifted), averageCraftingItems(shifted), 0.02);
         assertTrue(averageCount(shifted, Nanoswarm.CORRUPTION.itemId()) > 1.5 * averageCount(unshifted, Nanoswarm.CORRUPTION.itemId()));
         assertTrue(averageCount(shifted, Nanoswarm.AUGMENTATION.itemId()) < averageCount(unshifted, Nanoswarm.AUGMENTATION.itemId()));
     }
 
-    private static double averageKernels(List<Map<String, Integer>> rolls) {
-        return rolls.stream().mapToInt(ItemDropsTest::kernelCount).average().orElse(0);
+    private static double averageCraftingItems(List<Map<String, Integer>> rolls) {
+        return rolls.stream().mapToInt(SalvageSiteDropsTest::craftingItemCount).average().orElse(0);
     }
 
     private static double averageCount(List<Map<String, Integer>> rolls, String itemId) {
         return rolls.stream().mapToInt(roll -> roll.getOrDefault(itemId, 0)).average().orElse(0);
     }
 
-    private static int kernelCount(Map<String, Integer> roll) {
+    private static int craftingItemCount(Map<String, Integer> roll) {
         return roll.entrySet().stream().filter(entry -> CraftingDrops.covers(entry.getKey())).mapToInt(Map.Entry::getValue).sum();
     }
 
@@ -305,16 +306,16 @@ class ItemDropsTest {
         Random random = new Random(17L);
         List<Map<String, Integer>> craftingItemOnly = new java.util.ArrayList<>();
         for (int i = 0; i < TRIALS; i++) {
-            craftingItemOnly.add(ItemDrops.rollMaterials("probe", random, 0f, 2f, CraftingDrops.NO_BAND_SHIFT));
+            craftingItemOnly.add(SalvageSiteDrops.rollMaterials("probe", random, new LootMultipliers(ItemChances.BASE, 0f, 2f, CraftingDrops.NO_BAND_SHIFT)));
         }
 
         assertEquals(0.0, materialShare(craftingItemOnly, roll -> roll.containsKey(ItemDisassembly.FEEDSTOCK_ITEM_ID)), 0.0);
-        assertEquals(2 * 0.5 * ItemDrops.KERNEL_CHANCE_SHARE, averageKernels(craftingItemOnly), 0.02);
+        assertEquals(2 * 0.5 * SalvageSiteDrops.CRAFTING_ITEM_SHARE, averageCraftingItems(craftingItemOnly), 0.02);
     }
 
     @Test
     void sitesWithoutARuleDropNoMaterials() {
-        assertTrue(ItemDrops.rollMaterials("nowhere", new Random(1L), 1f, 1f, CraftingDrops.NO_BAND_SHIFT).isEmpty());
-        assertTrue(ItemDrops.rollMaterials(null, new Random(1L), 1f, 1f, CraftingDrops.NO_BAND_SHIFT).isEmpty());
+        assertTrue(SalvageSiteDrops.rollMaterials("nowhere", new Random(1L), new LootMultipliers(ItemChances.BASE, 1f, 1f, CraftingDrops.NO_BAND_SHIFT)).isEmpty());
+        assertTrue(SalvageSiteDrops.rollMaterials(null, new Random(1L), new LootMultipliers(ItemChances.BASE, 1f, 1f, CraftingDrops.NO_BAND_SHIFT)).isEmpty());
     }
 }

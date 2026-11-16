@@ -14,6 +14,7 @@ import exiledsector.charts.ChartTables;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.generation.ChartTiers;
 import exiledsector.items.CraftingDrops;
 import exiledsector.charts.officer.reward.CraftingTier;
 import exiledsector.charts.officer.reward.OfficerRewardTable;
@@ -29,12 +30,12 @@ import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
-import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ModifierSources;
 import exiledsector.items.PoolEntry;
 import exiledsector.items.StarChartCipher;
 import exiledsector.items.StarChartFixtures;
+import exiledsector.loot.Loot;
 import exiledsector.modifiers.ModifierSlot;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -84,7 +85,7 @@ class RelayChoicesTest {
     }
 
     private static RewardContext context() {
-        return new RewardContext(5, null, null, biomeId -> false, definition -> true, itemId -> true);
+        return new RewardContext(5, null, null, biomeId -> false, definition -> true, itemId -> true, ChartTiers.bandShift(5));
     }
 
     private static ChartRun wokenRun(String runId, RelayKind... woken) {
@@ -203,7 +204,7 @@ class RelayChoicesTest {
         assertEquals(Map.of("kited", 2), RelayChoices.scarStacks(RelayChoices.picks(run)));
         assertEquals(List.of(), RelayChoices.picks(nextStage));
         assertEquals(List.of(), RelayChoices.storedOffers(nextStage, RelaySlot.of(RelayKind.NAV_BUOY)));
-        assertSame(ItemDrops.SiteLoot.NONE, RelayBossReward.bossReward(null, nextStage));
+        assertSame(Loot.NONE, RelayBossReward.bossReward(null, nextStage));
     }
 
     @Test
@@ -248,7 +249,7 @@ class RelayChoicesTest {
         List<RelayChoice> picks = List.of(new RelayChoice(RewardGroup.LOW_CRAFTING, "kited"), new RelayChoice(RewardGroup.FEEDSTOCK, "rammed"),
                 new RelayChoice(RewardGroup.HULL_ITEM, "overloaded"));
 
-        ItemDrops.SiteLoot loot = RelayBossReward.bossReward(picks, context(), run.tier(), RelayTuning.of(run), new Random(7L));
+        Loot loot = RelayBossReward.bossReward(picks, context(), run.tier(), RelayTuning.of(run), new Random(7L));
 
         assertEquals(loot.materials(), RelayBossReward.bossReward(picks, context(), run.tier(), RelayTuning.of(run), new Random(7L)).materials());
         assertEquals(2, loot.materials().size());

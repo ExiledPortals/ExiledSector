@@ -17,7 +17,6 @@ import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.AnomalyDialog;
 import exiledsector.charts.anomaly.AnomalyEncounters;
 import exiledsector.charts.anomaly.ChartRaid;
-import exiledsector.effects.ItemLootListener;
 import exiledsector.charts.atlas.AtlasProgress;
 import exiledsector.charts.atlas.AtlasReach;
 import exiledsector.charts.run.ChartRun;
@@ -28,6 +27,8 @@ import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.PrototypeImplicits;
 import exiledsector.items.RolledModifier;
+import exiledsector.loot.DropOrigin;
+import exiledsector.loot.LootDelivery;
 import exiledsector.loot.LootSources;
 import exiledsector.ui.VanillaText;
 
@@ -254,12 +255,12 @@ public class PostDialog extends AnomalyDialog {
         if (vault == null) {
             vault = Global.getFactory().createCargo(true);
         }
-        ItemLootListener.addSiteLoot(vault, VaultExtras.roll(Global.getSector(), run, state, DepotTuning.of(run)));
+        LootDelivery.toLootScreen(vault, VaultExtras.roll(Global.getSector(), run, state, DepotTuning.of(run)), DropOrigin.ANYWHERE);
         return vault;
     }
 
     static void addPrototype(CargoAPI vault, ItemData prototype) {
-        vault.addSpecial(LootSources.shapeDrops(List.of(prototype)).get(0).toSpecialItem(), 1f);
+        vault.addSpecial(LootSources.shape(List.of(prototype), DropOrigin.ANYWHERE).get(0).toSpecialItem(), 1f);
     }
 
     void showVault(CargoAPI vault) {

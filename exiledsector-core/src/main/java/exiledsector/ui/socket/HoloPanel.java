@@ -45,13 +45,13 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
     static final float CLOSE_BUTTON_WIDTH = 70f;
     private static final float FEEDSTOCK_ICON_SIZE = 24f;
     static final float FEEDSTOCK_TEXT_TOP = 5f;
-    private static final float PARTS_TOOLTIP_WIDTH = 300f;
+    private static final float FEEDSTOCK_TOOLTIP_WIDTH = 300f;
     private static final DomainContributions<String> DOMAIN_FEEDSTOCKS = new DomainContributions<>(ExiledSectorDomain::craftingBenchFeedstockIds);
     private static final float CONFIRM_BUTTON_HEIGHT = 26f;
     private static final float TAB_TEXT_PADDING = 24f;
     private static final float NARROW_TAB_TEXT_PADDING = 16f;
     static final List<String> TAB_FONTS = List.of(Fonts.ORBITRON_20AABOLD, Fonts.ORBITRON_20AA, Fonts.ORBITRON_12);
-    static final float PARTS_ROOM = 80f;
+    static final float FEEDSTOCK_ROOM = 80f;
 
     private record TabButton(SocketPanelTab tab) {
     }
@@ -533,7 +533,7 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
             element.getPrev().getPosition().inTR(countRight + countWidth + LINE_PAD, 0f);
             pairWidth += LINE_PAD + FEEDSTOCK_ICON_SIZE;
         }
-        element.addTooltipToPrevious(new GameTextTooltip(PARTS_TOOLTIP_WIDTH, tooltipBody), TooltipMakerAPI.TooltipLocation.BELOW);
+        element.addTooltipToPrevious(new GameTextTooltip(FEEDSTOCK_TOOLTIP_WIDTH, tooltipBody), TooltipMakerAPI.TooltipLocation.BELOW);
         return countRight + pairWidth + GAP * 2f;
     }
 }

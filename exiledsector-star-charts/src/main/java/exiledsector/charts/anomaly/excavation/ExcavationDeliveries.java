@@ -6,7 +6,7 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.BaseSalvageSpecial;
-import exiledsector.charts.loot.ChartFleetLoot;
+import exiledsector.charts.loot.ChartFleetLedger;
 import exiledsector.charts.run.ChartRun;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ public final class ExcavationDeliveries {
     public static void joinGuardians(ChartRun run, SectorEntityToken planet, CampaignFleetAPI convoyFleet) {
         CampaignFleetAPI guardians = guardiansAt(run, planet);
         if (guardians != null && !joinShaftShips(convoyFleet, guardians, ExcavationRules.maxShipSize(ExcavationTuning.ofRun(run))).isEmpty()) {
-            ChartFleetLoot.recordStart(guardians);
+            ChartFleetLedger.recordStart(guardians);
         }
     }
 

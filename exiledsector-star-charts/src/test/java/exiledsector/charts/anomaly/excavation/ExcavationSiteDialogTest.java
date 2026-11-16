@@ -21,14 +21,15 @@ import exiledsector.charts.anomaly.debris.AnomalousDebris;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.loot.ChartLootContext;
 import exiledsector.charts.run.ChartCampaignPlugin;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.i18n.Translation;
 import exiledsector.items.Engrams;
-import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemModifiers;
 import exiledsector.items.ModifierSources;
+import exiledsector.loot.Loot;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -165,10 +166,10 @@ class ExcavationSiteDialogTest {
             stored.put(ExcavationFleets.CORRUPTED_KEY, true);
             assertEquals(new ExcavationGuardians(true, true), ExcavationFleets.guardiansOf(fleet));
 
-            ItemDrops.SiteLoot loot = ExcavationLoot.fleetItems(fleet, ChartGenContext.none(), 4, 0, 1f, new Random(1L));
+            Loot loot = ExcavationLoot.fleetItems(fleet, ChartLootContext.atTier(4), 0, 1f, new Random(1L));
             assertEquals(1, loot.materials().getOrDefault(ENGRAM, 0));
-            ItemDrops.SiteLoot again = ExcavationLoot.fleetItems(fleet, ChartGenContext.none(), 4, 0, 1f, new Random(1L));
-            assertTrue(again == null || !again.materials().containsKey(ENGRAM));
+            Loot again = ExcavationLoot.fleetItems(fleet, ChartLootContext.atTier(4), 0, 1f, new Random(1L));
+            assertTrue(!again.materials().containsKey(ENGRAM));
             assertNull(ExcavationLoot.engramOnce(null, 4, new Random(1L)));
         } finally {
             Engrams.unregisterAll();

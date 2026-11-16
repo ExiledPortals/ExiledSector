@@ -80,7 +80,7 @@ class StarChartCraftingTest {
     @BeforeEach
     void setUp() throws Exception {
         StarChartFixtures.registerShipped();
-        chart = store.add(ItemData.rolledAtTier(ItemDefinitions.get("star_chart"), 8L, 6));
+        chart = store.add(ItemData.rolled(ItemDefinitions.get("star_chart"), 8L, ItemRoll.atTier(6)));
     }
 
     @AfterEach
@@ -121,7 +121,7 @@ class StarChartCraftingTest {
         StarChartCipher.registerAll();
         CraftingMaterials materials = CraftingMaterials.cargoOnly(cargo);
         when(cargo.getQuantity(eq(CargoAPI.CargoItemType.SPECIAL), any())).thenReturn(100f);
-        Item topTier = store.add(ItemData.rolledAtTier(ItemDefinitions.get("star_chart"), 3L, 15));
+        Item topTier = store.add(ItemData.rolled(ItemDefinitions.get("star_chart"), 3L, ItemRoll.atTier(15)));
 
         assertEquals(StarChartCrafting.MAX_TIER, StarChartCrafting.refusal(StarChartCipher.CARTOGRAPHY, topTier, store, materials, definition -> true));
         assertEquals(StarChartCrafting.CANNOT_USE, StarChartCrafting.refusal(Nanoswarm.METAMORPH, chart, store, materials, definition -> true));
@@ -218,7 +218,7 @@ class StarChartCraftingTest {
 
         owns(SURVEY_ID, 1f);
         assertEquals(StarChartCrafting.NO_CHART, StarChartCrafting.refusal(survey, null, store, materials, definition -> true));
-        Item loose = ItemData.rolledAtTier(ItemDefinitions.get("star_chart"), 9L, 2).preview();
+        Item loose = ItemData.rolled(ItemDefinitions.get("star_chart"), 9L, ItemRoll.atTier(2)).preview();
         assertEquals(StarChartCrafting.NO_CHART, StarChartCrafting.refusal(survey, loose, store, materials, definition -> true));
         assertEquals(StarChartCrafting.NO_CHART, StarChartCrafting.refusal(survey, chart, new ItemStore(), materials, definition -> true));
         assertEquals(StarChartCrafting.CORRUPTED, StarChartCrafting.refusal(survey, withFlag("c", "NOTHING"), store, materials, definition -> true));

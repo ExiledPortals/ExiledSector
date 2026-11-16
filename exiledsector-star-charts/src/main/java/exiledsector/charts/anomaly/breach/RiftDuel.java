@@ -9,7 +9,7 @@ import exiledsector.charts.officer.reward.CarriedItem;
 import exiledsector.charts.officer.reward.OfficerRewardDrop;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
-import exiledsector.items.ItemDrops;
+import exiledsector.loot.Loot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,13 +33,13 @@ public record RiftDuel(int duplicatedRewards, int extraOffers) {
         return new RiftDuel(BreachLines.count(context, BreachLines.OFFICER_DUPLICATES_KEY), BreachLines.count(context, BreachLines.OFFICER_OFFERS_KEY));
     }
 
-    public ItemDrops.SiteLoot duplicatedLoot(AtlasOfficer officer, ChartRun run) {
+    public Loot duplicatedLoot(AtlasOfficer officer, ChartRun run) {
         if (duplicatedRewards <= 0 || officer == null || run == null) {
-            return ItemDrops.SiteLoot.NONE;
+            return Loot.NONE;
         }
         Random random = Seeds.random(SEED_PREFIX + run.runId() + "|" + officer.recordId());
         List<CarriedItem> duplicated = duplicated(officer.carried(), duplicatedRewards, random);
-        return duplicated.isEmpty() ? ItemDrops.SiteLoot.NONE : OfficerRewardDrop.roll(duplicated, run, random);
+        return duplicated.isEmpty() ? Loot.NONE : OfficerRewardDrop.roll(duplicated, run, random);
     }
 
     static List<CarriedItem> duplicated(List<CarriedItem> carried, int count, Random random) {

@@ -8,10 +8,11 @@ import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.anomaly.RaidDangerLevels;
+import exiledsector.charts.loot.ChartLootContext;
 import exiledsector.ProjectFiles;
 import exiledsector.items.CraftingDrops;
 import exiledsector.items.CraftingInhibitor;
-import exiledsector.items.ItemDrops;
+import exiledsector.loot.Loot;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -177,23 +178,24 @@ class ExcavationRulesTest {
         assertEquals(0f, ExcavationLoot.expectedInhibitors(ExcavationRules.INHIBITORS_PER_RAID, context, -1f), 0.0001f);
         CraftingDrops.register(ProjectFiles.csvRows(CraftingDrops.DATA_PATH));
         try {
-            Map<String, Integer> found = ExcavationLoot.tagInhibitors(40f, CraftingDrops.NO_BAND_SHIFT, new Random(1L));
+            Map<String, Integer> found = ExcavationLoot.tagInhibitors(40f, ChartLootContext.outsideRuns(), new Random(1L));
             Set<String> tagInhibitorIds = CraftingInhibitor.tagInhibitors().stream().map(CraftingInhibitor::itemId).collect(Collectors.toSet());
             assertEquals(40, found.values().stream().mapToInt(Integer::intValue).sum());
             assertTrue(tagInhibitorIds.containsAll(found.keySet()) && found.size() > 1, found.toString());
-            assertTrue(ExcavationLoot.tagInhibitors(0f, CraftingDrops.NO_BAND_SHIFT, new Random(1L)).isEmpty());
-            assertNull(ExcavationLoot.fleetItems(mock(CampaignFleetAPI.class), context, ChartTiers.LOWEST_TIER, 0, 1f, new Random(1L)));
+            assertTrue(ExcavationLoot.tagInhibitors(0f, ChartLootContext.outsideRuns(), new Random(1L)).isEmpty());
+            ChartLootContext firstTier = new ChartLootContext(context, ChartTiers.LOWEST_TIER);
+            assertSame(Loot.NONE, ExcavationLoot.fleetItems(mock(CampaignFleetAPI.class), firstTier, 0, 1f, new Random(1L)));
 
             CampaignFleetAPI guardians = mock(CampaignFleetAPI.class);
             when(guardians.hasTag(ExcavationFleets.FLEET_TAG)).thenReturn(true);
-            ItemDrops.SiteLoot loot = ExcavationLoot.fleetItems(guardians, context, ChartTiers.LOWEST_TIER, 0, 1f, new Random(1L));
-            assertTrue(loot.items().isEmpty() && loot.upgrades().isEmpty());
+            Loot loot = ExcavationLoot.fleetItems(guardians, firstTier, 0, 1f, new Random(1L));
+            assertTrue(loot.items().isEmpty() && loot.schematics().isEmpty());
             assertEquals(2, inhibitorCount(loot));
-            assertNull(ExcavationLoot.fleetItems(guardians, context, ChartTiers.LOWEST_TIER, 0, 0f, new Random(1L)));
+            assertSame(Loot.NONE, ExcavationLoot.fleetItems(guardians, firstTier, 0, 0f, new Random(1L)));
 
             ChartGenContext settled = ChartGenContext.of(List.of(line(ChartModifier.CHART_EXCAVATION_INHIBITOR_PERCENT_PER_DUST, 50f),
                     line(ChartModifier.CHART_EXCAVATION_OPEN_SHAFT_INHIBITOR_PERCENT, 100f)));
-            assertEquals(3, inhibitorCount(ExcavationLoot.fleetItems(guardians, settled, ChartTiers.LOWEST_TIER, 2, 1f, new Random(1L))));
+            assertEquals(3, inhibitorCount(ExcavationLoot.fleetItems(guardians, new ChartLootContext(settled, ChartTiers.LOWEST_TIER), 2, 1f, new Random(1L))));
         } finally {
             CraftingDrops.clear();
         }
@@ -209,7 +211,7 @@ class ExcavationRulesTest {
         assertEquals(6f, ExcavationLoot.expectedInhibitors(ExcavationRules.INHIBITORS_PER_RAID, context, 1f), 0.0001f);
     }
 
-    private static int inhibitorCount(ItemDrops.SiteLoot loot) {
+    private static int inhibitorCount(Loot loot) {
         return loot.materials().values().stream().mapToInt(Integer::intValue).sum();
     }
 

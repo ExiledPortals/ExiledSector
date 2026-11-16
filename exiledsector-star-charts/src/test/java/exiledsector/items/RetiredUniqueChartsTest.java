@@ -38,7 +38,7 @@ class RetiredUniqueChartsTest {
     }
 
     private static ItemData chart(String definitionId) {
-        ItemData shipped = ItemData.rolledAtTier(ItemDefinitions.get("star_chart"), 7L, 3);
+        ItemData shipped = ItemData.rolled(ItemDefinitions.get("star_chart"), 7L, ItemRoll.atTier(3));
         return new ItemData(definitionId, shipped.seed(), shipped.explicits(), shipped.frozenName(), shipped.traits());
     }
 

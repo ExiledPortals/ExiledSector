@@ -1,7 +1,9 @@
 package exiledsector.items;
 
 import exiledsector.loot.BattleLootRates;
+import exiledsector.loot.FleetLoss;
 import exiledsector.loot.FleetLootRules;
+import exiledsector.loot.Loot;
 import exiledsector.loot.LootMultipliers;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -30,6 +32,7 @@ class BattleItemDropsTest {
     private static final String FULL_REACTOR = "reactor_full";
     private static final String HULL_RELIC = "hull_relic";
     private static final String FACTION_RELIC = "faction_relic";
+    private static final float LEVEL_ONE_SHARE = 0.5f;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -56,25 +59,25 @@ class BattleItemDropsTest {
         return new JSONObject().put("drop", drop).put("per_100_dp", rate).put("curve", curve);
     }
 
-    private static BattleItemDrops.SourceLoss source(float deploymentPoints) {
+    private static FleetLoss source(float deploymentPoints) {
         return source(deploymentPoints, ItemChances.BASE);
     }
 
-    private static BattleItemDrops.SourceLoss source(float deploymentPoints, ItemChances chances) {
-        return new BattleItemDrops.SourceLoss(deploymentPoints, 1f, 1f, rules(chances, true, 1f));
+    private static FleetLoss source(float deploymentPoints, ItemChances chances) {
+        return new FleetLoss(deploymentPoints, 1f, 0f, rules(chances, true, 1f));
     }
 
-    private static FleetLootRules rules(ItemChances chances, boolean fullRates, float deploymentPointsMult) {
-        return new FleetLootRules(fullRates ? FleetLootRules.Rates.FULL : FleetLootRules.Rates.REGULAR, false, new LootMultipliers(chances, 1f, 1f),
-                deploymentPointsMult);
+    private static FleetLootRules rules(ItemChances chances, boolean ownLedger, float deploymentPointsMult) {
+        FleetLootRules.Kind kind = ownLedger ? FleetLootRules.Kind.OWN_LEDGER : FleetLootRules.Kind.LEVEL_SCALED;
+        return new FleetLootRules(kind, new LootMultipliers(chances, 1f, 1f, CraftingDrops.NO_BAND_SHIFT), deploymentPointsMult, false);
     }
 
-    private static BattleItemDrops.Battle battle(BattleItemDrops.SourceLoss... sources) {
-        return new BattleItemDrops.Battle(List.of(sources), null);
+    private static BattleItemDrops.Battle battle(FleetLoss... sources) {
+        return new BattleItemDrops.Battle(List.of(sources), null, LEVEL_ONE_SHARE);
     }
 
     private static List<BattleItemDrops.Planned> plan(BattleItemDrops.Battle battle, float dropMultiplier) {
-        return BattleItemDrops.plan(battle, dropMultiplier, List.of(), neverLucky(), true);
+        return BattleItemDrops.plan(battle, dropMultiplier, 1f, List.of(), neverLucky(), true);
     }
 
     private static Random neverLucky() {
@@ -117,8 +120,8 @@ class BattleItemDropsTest {
     @Test
     void aBiggerEnemyTreeTurnsMoreHullItemsTwoModifierWithoutDroppingMore() {
         FleetLootRules full = rules(ItemChances.BASE, true, 1f);
-        Map<BattleItemDrops.Drop, Integer> doubled = counts(plan(battle(new BattleItemDrops.SourceLoss(1000f, 1f, 2f, full)), 1f));
-        Map<BattleItemDrops.Drop, Integer> capped = counts(plan(battle(new BattleItemDrops.SourceLoss(1000f, 1f, 3f, full)), 1f));
+        Map<BattleItemDrops.Drop, Integer> doubled = counts(plan(battle(new FleetLoss(1000f, 1f, 30f, full)), 1f));
+        Map<BattleItemDrops.Drop, Integer> capped = counts(plan(battle(new FleetLoss(1000f, 1f, 60f, full)), 1f));
 
         assertEquals(2, doubled.get(BattleItemDrops.Drop.MODS_1));
         assertEquals(4, doubled.get(BattleItemDrops.Drop.MODS_2));
@@ -129,13 +132,13 @@ class BattleItemDropsTest {
     @Test
     void difficultyStopsAtThreeTimesAndTheFleetsDeploymentPointMultiplierAndShareScaleItsDrops() throws Exception {
         FleetLootRules full = rules(ItemChances.BASE, true, 1f);
-        assertEquals(12, counts(plan(battle(new BattleItemDrops.SourceLoss(1000f, 6f, 1f, full)), 1f)).get(BattleItemDrops.Drop.MODS_1));
-        assertEquals(8, counts(plan(battle(new BattleItemDrops.SourceLoss(1000f, 1f, 1f, rules(ItemChances.BASE, true, 2f))), 1f))
+        assertEquals(12, counts(plan(battle(new FleetLoss(1000f, 6f, 0f, full)), 1f)).get(BattleItemDrops.Drop.MODS_1));
+        assertEquals(8, counts(plan(battle(new FleetLoss(1000f, 1f, 0f, rules(ItemChances.BASE, true, 2f))), 1f))
                 .get(BattleItemDrops.Drop.MODS_1));
 
-        assertEquals(2, counts(plan(battle(new BattleItemDrops.SourceLoss(1000f, 1f, 1f, rules(ItemChances.BASE, false, 1f))), 1f))
+        assertEquals(2, counts(plan(battle(new FleetLoss(1000f, 1f, 0f, rules(ItemChances.BASE, false, 1f))), 1f))
                 .get(BattleItemDrops.Drop.MODS_1));
-        assertEquals(4, counts(plan(battle(new BattleItemDrops.SourceLoss(1000f, 1f, 1f, rules(ItemChances.BASE, true, 1f))), 1f))
+        assertEquals(4, counts(plan(battle(new FleetLoss(1000f, 1f, 0f, rules(ItemChances.BASE, true, 1f))), 1f))
                 .get(BattleItemDrops.Drop.MODS_1));
     }
 
@@ -150,7 +153,7 @@ class BattleItemDropsTest {
     @Test
     void aTargetedChanceAddsItemsOfThatSectionOnTopOfTheGeneralRoll() {
         ItemChances bridgeBonus = new ItemChances(1f, Map.of(ItemKind.BRIDGE, 1f));
-        List<BattleItemDrops.Planned> planned = BattleItemDrops.plan(battle(source(2000f, bridgeBonus)), 1f,
+        List<BattleItemDrops.Planned> planned = BattleItemDrops.plan(battle(source(2000f, bridgeBonus)), 1f, 1f,
                 List.of(ItemKind.BRIDGE, ItemKind.REACTOR), neverLucky(), true);
 
         long targeted = planned.stream().filter(entry -> entry.kind() != null).count();
@@ -178,7 +181,7 @@ class BattleItemDropsTest {
 
     @Test
     void onlyTheHullItemsAnOverchargingFleetDropsAreOvercharged() {
-        BattleItemDrops.SourceLoss overcharging = new BattleItemDrops.SourceLoss(1000f, 1f, 1f, rules(ItemChances.BASE, true, 1f).overchargingHullItems());
+        FleetLoss overcharging = new FleetLoss(1000f, 1f, 0f, rules(ItemChances.BASE, true, 1f).overchargingHullItems());
 
         List<BattleItemDrops.Planned> planned = plan(battle(source(1000f), overcharging), 1f);
 
@@ -187,10 +190,10 @@ class BattleItemDropsTest {
         assertEquals(counts(overchargedItems), counts(planned.stream().filter(entry -> !entry.overcharged()).toList()));
         Random random = new Random(5L);
         for (int trial = 0; trial < 20; trial++) {
-            for (ItemData item : BattleItemDrops.roll(battle(overcharging), 1f, random, definition -> false, true).items()) {
+            for (ItemData item : BattleItemDrops.roll(battle(overcharging), 1f, 1f, random, definition -> false, true).items()) {
                 assertEquals(1, item.explicits().stream().filter(RolledModifier::overcharged).count(), item.toString());
             }
-            for (ItemData item : BattleItemDrops.roll(battle(source(1000f)), 1f, random, definition -> false, true).items()) {
+            for (ItemData item : BattleItemDrops.roll(battle(source(1000f)), 1f, 1f, random, definition -> false, true).items()) {
                 assertTrue(item.explicits().stream().noneMatch(RolledModifier::overcharged), item.toString());
             }
         }
@@ -201,7 +204,7 @@ class BattleItemDropsTest {
         ItemDefinition fullBridge = ItemDefinitions.get(FULL_BRIDGE);
         for (int modifierCount = 1; modifierCount <= 4; modifierCount++) {
             for (long seed = 0; seed < 50; seed++) {
-                ItemData rolled = ItemData.rolledWithModifierCount(fullBridge, seed, modifierCount);
+                ItemData rolled = ItemData.rolled(fullBridge, seed, ItemRoll.withModifierCount(modifierCount));
 
                 assertEquals(modifierCount, rolled.explicits().size());
                 assertEquals(rolled.explicits(), ItemData.of(rolled.toSpecialItem()).explicits());
@@ -215,17 +218,17 @@ class BattleItemDropsTest {
 
     @Test
     void aBattleNeverRollsAnItemThatCannotHoldItsModifiersAndUniquesNeedTheirUnlock() {
-        BattleItemDrops.Battle bigBattle = new BattleItemDrops.Battle(List.of(source(4000f)), "pirates");
+        BattleItemDrops.Battle bigBattle = new BattleItemDrops.Battle(List.of(source(4000f)), "pirates", LEVEL_ONE_SHARE);
         Random random = new Random(3L);
         int relics = 0;
         int lockedRelics = 0;
         for (int trial = 0; trial < 100; trial++) {
-            HullItemDrops.SectionItemLoot loot = BattleItemDrops.roll(bigBattle, 1f, random, definition -> true, true);
+            Loot loot = BattleItemDrops.roll(bigBattle, 1f, 1f, random, definition -> true, true);
             for (ItemData item : loot.items()) {
                 relics += HULL_RELIC.equals(item.definitionId()) ? 1 : 0;
                 assertFalse(THIN_BRIDGE.equals(item.definitionId()) && item.explicits().size() > 1, item.toString());
             }
-            for (ItemData item : BattleItemDrops.roll(bigBattle, 1f, random, definition -> false, true).items()) {
+            for (ItemData item : BattleItemDrops.roll(bigBattle, 1f, 1f, random, definition -> false, true).items()) {
                 lockedRelics += HULL_RELIC.equals(item.definitionId()) ? 1 : 0;
             }
         }
@@ -240,10 +243,10 @@ class BattleItemDropsTest {
                 .put(row(HULL_RELIC, "weapon_mount", "HULL_PERCENT:4:6").put("unique", "true"))
                 .put(row(FACTION_RELIC, "reactor", "HULL_PERCENT:4:6").put("unique", "true")
                         .put(HullItem.UNIQUE_SOURCE_COLUMN, "faction:tritachyon")));
-        List<BattleItemDrops.SourceLoss> sources = List.of(source(4000f));
+        List<FleetLoss> sources = List.of(source(4000f));
 
-        Map<String, Integer> fromPirates = uniqueDrops(new BattleItemDrops.Battle(sources, "pirates"));
-        Map<String, Integer> fromTriTachyon = uniqueDrops(new BattleItemDrops.Battle(sources, "tritachyon"));
+        Map<String, Integer> fromPirates = uniqueDrops(new BattleItemDrops.Battle(sources, "pirates", LEVEL_ONE_SHARE));
+        Map<String, Integer> fromTriTachyon = uniqueDrops(new BattleItemDrops.Battle(sources, "tritachyon", LEVEL_ONE_SHARE));
 
         assertEquals(List.of(UniqueSource.parse("faction:tritachyon")), ItemDefinitions.get(FACTION_RELIC).uniqueSources());
         assertEquals(0.5, share(fromPirates, FACTION_RELIC), 0.05);
@@ -260,7 +263,7 @@ class BattleItemDropsTest {
         Map<String, Integer> drops = new HashMap<>();
         Random random = new Random(5L);
         for (int trial = 0; trial < 2000; trial++) {
-            for (ItemData item : BattleItemDrops.roll(battle, 1f, random, definition -> true, true).items()) {
+            for (ItemData item : BattleItemDrops.roll(battle, 1f, 1f, random, definition -> true, true).items()) {
                 if (ItemDefinitions.get(item.definitionId()).unique()) {
                     drops.merge(item.definitionId(), 1, Integer::sum);
                 }
@@ -273,9 +276,8 @@ class BattleItemDropsTest {
     void aBattleWithNoLossesOrADropMultiplierOfZeroDropsNothing() {
         BattleItemDrops.Battle battle = battle(source(4000f));
 
-        assertEquals(HullItemDrops.SectionItemLoot.NONE, BattleItemDrops.roll(battle, 0f, new Random(1L), definition -> true, true));
-        assertEquals(HullItemDrops.SectionItemLoot.NONE, BattleItemDrops.roll(new BattleItemDrops.Battle(List.of(), null), 1f,
-                new Random(1L), definition -> true, true));
+        assertEquals(Loot.NONE, BattleItemDrops.roll(battle, 0f, 1f, new Random(1L), definition -> true, true));
+        assertEquals(Loot.NONE, BattleItemDrops.roll(battle(), 1f, 1f, new Random(1L), definition -> true, true));
     }
 
     @Test
@@ -317,12 +319,12 @@ class BattleItemDropsTest {
         MasterSchematic.requiredWhen(() -> true);
         BattleItemDrops.Battle battle = battle(source(1000f));
 
-        Map<BattleItemDrops.Drop, Integer> closed = counts(BattleItemDrops.plan(battle, 1f, List.of(), neverLucky(), false));
+        Map<BattleItemDrops.Drop, Integer> closed = counts(BattleItemDrops.plan(battle, 1f, 1f, List.of(), neverLucky(), false));
 
         assertEquals(Map.of(BattleItemDrops.Drop.MASTER_SCHEMATIC, 1), closed);
-        HullItemDrops.SectionItemLoot loot = BattleItemDrops.roll(battle, 1f, neverLucky(),
+        Loot loot = BattleItemDrops.roll(battle, 1f, 1f, neverLucky(),
                 definition -> true, false);
-        assertEquals(List.of(MasterSchematic.INSTANCE), loot.upgrades());
+        assertEquals(List.of(MasterSchematic.INSTANCE), loot.schematics());
         assertTrue(loot.items().isEmpty());
     }
 
@@ -331,7 +333,7 @@ class BattleItemDropsTest {
         Random random = new Random(5L);
         Map<RefitSchematic, Integer> tierCounts = new EnumMap<>(RefitSchematic.class);
         for (int trial = 0; trial < battles; trial++) {
-            for (ShipSchematic upgrade : BattleItemDrops.roll(battle, 1f, random, definition -> true, true).upgrades()) {
+            for (ShipSchematic upgrade : BattleItemDrops.roll(battle, 1f, 1f, random, definition -> true, true).schematics()) {
                 if (upgrade instanceof RefitSchematic schematic) {
                     tierCounts.merge(schematic, 1, Integer::sum);
                 }
@@ -356,8 +358,8 @@ class BattleItemDropsTest {
         ItemDefinition fullBridge = ItemDefinitions.get(FULL_BRIDGE);
         int singleModifier = 0;
         for (long seed = 0; seed < 4000; seed++) {
-            ItemData dropped = ItemData.rolledWithRarity(fullBridge, seed, 1f);
-            assertEquals(dropped, ItemData.rolledWithRarity(fullBridge, seed, 2f));
+            ItemData dropped = ItemData.rolled(fullBridge, seed, ItemRoll.dropAtRarity(1f));
+            assertEquals(dropped, ItemData.rolled(fullBridge, seed, ItemRoll.dropAtRarity(2f)));
             assertTrue(dropped.explicits().size() == 1 || dropped.explicits().size() == 2, dropped.toString());
             singleModifier += dropped.explicits().size() == 1 ? 1 : 0;
         }

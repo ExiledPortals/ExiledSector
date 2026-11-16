@@ -1,10 +1,8 @@
 package exiledsector.charts.anomaly.excavation;
 
 import com.fs.starfarer.api.campaign.BattleCreationPlugin;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.PlanetAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Style;
@@ -19,9 +17,11 @@ import exiledsector.charts.anomaly.LayoutShaper;
 import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.anomaly.StateFields;
-import exiledsector.charts.generation.ChartGenContext;
-import exiledsector.charts.run.ChartRun;
-import exiledsector.items.ItemDrops;
+import exiledsector.charts.loot.ChartFleetLedger;
+import exiledsector.charts.loot.ChartFleetLoot;
+import exiledsector.charts.loot.ChartLootContext;
+import exiledsector.charts.loot.FleetClaim;
+import exiledsector.loot.Loot;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -90,8 +90,8 @@ public final class ExcavationSites implements LayoutShaper, ContentPlacer, RunPa
     }
 
     @Override
-    public ItemDrops.SiteLoot fleetItems(SectorAPI sector, CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, float share, Random random) {
-        return ExcavationLoot.fleetItems(fleet, context, run.tier(), DenseNebula.dust(run), share, random);
+    public Loot fleetLoot(FleetClaim claim, ChartLootContext loot, ChartFleetLoot.Battle battle, Random random) {
+        return ExcavationLoot.fleetItems(claim.fleet(), loot, DenseNebula.dust(ChartFleetLedger.liveRunOf(claim.fleet())), claim.anomalyShare(), random);
     }
 
     @Override

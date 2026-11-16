@@ -5,12 +5,15 @@ import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.loot.ChartFleetLoot;
+import exiledsector.charts.loot.ChartLootContext;
+import exiledsector.charts.loot.FleetClaim;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
-import exiledsector.items.ItemDrops;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.BattleLoot;
+import exiledsector.loot.Loot;
 
 import java.util.List;
 import java.util.Random;
@@ -21,25 +24,16 @@ public interface LootShaper extends ChartAnomaly {
         return List.of();
     }
 
-    default ItemDrops.SiteLoot fleetItems(SectorAPI sector, CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, float share, Random random) {
-        return null;
-    }
-
-    default ItemDrops.SiteLoot extraFleetLoot(CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, Random random) {
-        return ItemDrops.SiteLoot.NONE;
-    }
-
-    default ItemDrops.SiteLoot battleItems(SectorAPI sector, CampaignFleetAPI fleet, ChartGenContext context, float lootDeploymentPoints,
-                                           float battleDeploymentPoints, float difficultyMultiplier, Random random) {
-        return ItemDrops.SiteLoot.NONE;
+    default Loot fleetLoot(FleetClaim claim, ChartLootContext loot, ChartFleetLoot.Battle battle, Random random) {
+        return Loot.NONE;
     }
 
     default boolean holdsBackBossUnique(ChartRun run) {
         return false;
     }
 
-    default ItemDrops.SiteLoot bossDefeatedLoot(SectorAPI sector, ChartRun run) {
-        return ItemDrops.SiteLoot.NONE;
+    default Loot bossDefeatedLoot(SectorAPI sector, ChartRun run) {
+        return Loot.NONE;
     }
 
     default boolean holdsPlayerBattle() {

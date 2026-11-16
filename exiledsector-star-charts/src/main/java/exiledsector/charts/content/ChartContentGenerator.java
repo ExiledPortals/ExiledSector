@@ -37,7 +37,7 @@ import exiledsector.charts.anomaly.ContentPlacer;
 import exiledsector.charts.officer.OfficerFleets;
 import exiledsector.data.WeightedPick;
 import exiledsector.i18n.Translation;
-import exiledsector.charts.loot.ChartFleetLoot;
+import exiledsector.charts.loot.ChartFleetLedger;
 import exiledsector.charts.loot.ChartVanillaLoot;
 import exiledsector.charts.loot.DropType;
 import exiledsector.charts.objective.ChartObjectives;
@@ -275,7 +275,7 @@ public final class ChartContentGenerator {
         memory.set(ChartIds.TIER_MEMORY_KEY, tier);
         memory.set(ChartIds.SEED_MEMORY_KEY, Long.toString(fleetSeed, Character.MAX_RADIX));
         memory.set(ChartIds.fleetRunKey(runId), true);
-        ChartFleetLoot.recordStart(fleet);
+        ChartFleetLedger.recordStart(fleet);
         fleet.setNoAutoDespawn(true);
         tagContent(fleet, runId);
     }
@@ -646,7 +646,7 @@ public final class ChartContentGenerator {
                         salt -> BuiltInTable.rollFor(seed, anomalyId, salt), claimedPlanetIds, forces, plan.anomalyPlan(anomalyId));
                 try {
                     placer.generate(site);
-                    site.placed().forEach(entity -> ChartFleetLoot.tagAnomaly(entity, anomalyId));
+                    site.placed().forEach(entity -> ChartFleetLedger.tagAnomaly(entity, anomalyId));
                     anomalies.add(anomalyId);
                 } catch (RuntimeException | LinkageError e) {
                     site.rollBack();

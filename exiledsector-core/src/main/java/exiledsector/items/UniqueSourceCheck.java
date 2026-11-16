@@ -24,7 +24,7 @@ public final class UniqueSourceCheck {
             for (FactionSpecAPI factionSpec : Global.getSettings().getAllFactionSpecs()) {
                 knownFactionIds.add(factionSpec.getId());
             }
-            for (String warning : unreachableSources(ItemDefinitions.all(), knownFactionIds, ItemDrops::hasUniqueRoll)) {
+            for (String warning : unreachableSources(ItemDefinitions.all(), knownFactionIds, SalvageSiteDrops::hasUniqueRoll)) {
                 LOG.warn(warning);
             }
         } catch (RuntimeException e) {
@@ -39,7 +39,7 @@ public final class UniqueSourceCheck {
                 if (source.kind() == UniqueSource.Kind.FACTION && !knownFactionIds.isEmpty() && !knownFactionIds.contains(source.sourceId())) {
                     warnings.add(definition.id() + " favours " + source.text() + ", but no faction with that id is loaded, so that bonus never applies");
                 } else if (source.kind() == UniqueSource.Kind.SITE && !siteRollsUniques.test(source.sourceId())) {
-                    warnings.add(definition.id() + " drops from " + source.text() + ", but " + ItemDrops.DATA_PATH
+                    warnings.add(definition.id() + " drops from " + source.text() + ", but " + SalvageSiteDrops.DATA_PATH
                             + " has no row for that site with a uniqueChance above zero, so it can never drop there");
                 }
             }

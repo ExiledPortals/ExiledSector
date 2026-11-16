@@ -168,16 +168,21 @@ public final class BiomeModifiers {
     }
 
     public static ItemData onDrop(ItemData item, String biomeId) {
-        ItemDefinition definition = item == null ? null : item.definition();
-        String modifierId = definition == null ? null : modifierFor(biomeId, definition.kind());
-        if (modifierId == null) {
+        if (modifierOn(item, biomeId) == null) {
             return item;
         }
         Random random = Seeds.derived(item.seed(), GRANT_SEED_SALT);
-        if (random.nextFloat() >= DROP_CHANCE) {
-            return item;
-        }
-        return GrantedModifiers.add(item, modifierId, AffixLayout.dropLimits(definition.type()), random);
+        return random.nextFloat() < DROP_CHANCE ? grant(item, biomeId, random) : item;
+    }
+
+    public static ItemData grant(ItemData item, String biomeId, Random random) {
+        String modifierId = modifierOn(item, biomeId);
+        return modifierId == null ? item : GrantedModifiers.add(item, modifierId, AffixLayout.dropLimits(item.definition().type()), random);
+    }
+
+    private static String modifierOn(ItemData item, String biomeId) {
+        ItemDefinition definition = item == null ? null : item.definition();
+        return definition == null ? null : modifierFor(biomeId, definition.kind());
     }
 
     public static ItemData onDrop(SectorAPI sector, ItemData item, LocationAPI location) {

@@ -146,7 +146,7 @@ public enum StarChartCipher implements CraftingMaterialFamily {
             return null;
         }
         for (int attempt = 0; attempt < MAX_REFORGE_ATTEMPTS; attempt++) {
-            List<RolledModifier> rerolled = keepInhibited(chart.explicits(), ItemRoller.rollAtTier(definition, random.nextLong(), chart.tier()), inhibited);
+            List<RolledModifier> rerolled = keepInhibited(chart.explicits(), ItemRoller.roll(definition, random.nextLong(), ItemRoll.atTier(chart.tier())), inhibited);
             if (!rerolled.equals(chart.explicits())) {
                 chart.replaceExplicits(rerolled);
                 chart.refreezeName();

@@ -19,7 +19,7 @@ import exiledsector.charts.content.ChartFleetMarks;
 import exiledsector.charts.content.ChartFleetVisibility;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTier;
-import exiledsector.charts.loot.ChartFleetLoot;
+import exiledsector.charts.loot.ChartFleetLedger;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.Random;
@@ -160,7 +160,7 @@ final class Pickets {
             addTo(guardMemory, picketMemory, ChartIds.START_DP_MEMORY_KEY);
             addTo(guardMemory, picketMemory, ChartIds.START_FP_MEMORY_KEY);
             addTo(guardMemory, picketMemory, ChartIds.LOOT_DP_PAID_MEMORY_KEY);
-            guardMemory.set(ChartFleetLoot.LOOT_FLEETS_MEMORY_KEY, ChartFleetLoot.lootFleets(guard) + ChartFleetLoot.lootFleets(picket));
+            guardMemory.set(ChartFleetLedger.LOOT_FLEETS_MEMORY_KEY, ChartFleetLedger.lootFleets(guard) + ChartFleetLedger.lootFleets(picket));
         }
         picket.getDropRandom().forEach(guard::addDropRandom);
         picket.getDropValue().forEach(guard::addDropValue);

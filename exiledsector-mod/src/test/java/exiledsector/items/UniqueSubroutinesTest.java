@@ -40,14 +40,14 @@ class UniqueSubroutinesTest {
     void setUp() throws Exception {
         registerModifiers("TOP_SPEED_PERCENT:8:12");
         registerDefinitions();
-        ItemDrops.register(new JSONArray()
+        SalvageSiteDrops.register(new JSONArray()
                 .put(new JSONObject().put("site", "station").put("chances", "0").put("uniqueChance", "1"))
                 .put(new JSONObject().put("site", "elsewhere").put("chances", "0").put("uniqueChance", "1")));
     }
 
     @AfterEach
     void tearDown() {
-        ItemDrops.clear();
+        SalvageSiteDrops.clear();
         ItemDefinitions.clear();
         ItemModifiers.clear();
         NpcItems.clearCache();
@@ -204,8 +204,8 @@ class UniqueSubroutinesTest {
         Random random = new Random(3L);
         Set<String> picked = new HashSet<>();
         for (int trial = 0; trial < TRIALS; trial++) {
-            picked.add(idOrBlank(ItemDrops.pickBasic(random)));
-            picked.add(idOrBlank(ItemDrops.pickUnique(random, definition -> true)));
+            picked.add(idOrBlank(DroppableDefinitions.pickBasic(random)));
+            picked.add(idOrBlank(DroppableDefinitions.pickUnique(random, definition -> true)));
         }
 
         assertEquals(Set.of("", FLEET_RELIC, HULL_RELIC_A, HULL_RELIC_B), picked);
@@ -216,7 +216,7 @@ class UniqueSubroutinesTest {
         Random random = new Random(6L);
         Set<String> picked = new HashSet<>();
         for (int trial = 0; trial < TRIALS; trial++) {
-            picked.add(idOrBlank(ItemDrops.pickUniqueFromAnySource(random, definition -> true)));
+            picked.add(idOrBlank(DroppableDefinitions.pickUniqueFromAnySource(random, definition -> true)));
         }
 
         assertEquals(Set.of(FLEET_RELIC, SITE_RELIC, HULL_RELIC_A, HULL_RELIC_B), picked);
@@ -234,16 +234,16 @@ class UniqueSubroutinesTest {
         int fromPirates = 0;
         int fromHegemony = 0;
         for (int trial = 0; trial < TRIALS; trial++) {
-            String pirateId = idOrBlank(ItemDrops.pickUniqueFromFaction("pirates", random, definition -> definition == fleetRelic || definition == hullRelic));
-            String hegemonyId = idOrBlank(ItemDrops.pickUniqueFromFaction("hegemony", random, definition -> definition == fleetRelic || definition == hullRelic));
+            String pirateId = idOrBlank(DroppableDefinitions.pickUniqueFromFaction("pirates", random, definition -> definition == fleetRelic || definition == hullRelic));
+            String hegemonyId = idOrBlank(DroppableDefinitions.pickUniqueFromFaction("hegemony", random, definition -> definition == fleetRelic || definition == hullRelic));
             fromPirates += FLEET_RELIC.equals(pirateId) ? 1 : 0;
             fromHegemony += FLEET_RELIC.equals(hegemonyId) ? 1 : 0;
-            assertFalse(SITE_RELIC.equals(idOrBlank(ItemDrops.pickUniqueFromFaction("pirates", random, SubroutineKind::isUnique))));
+            assertFalse(SITE_RELIC.equals(idOrBlank(DroppableDefinitions.pickUniqueFromFaction("pirates", random, SubroutineKind::isUnique))));
         }
 
-        assertEquals(2.0 * fleetRelic.rarity(), ItemDrops.factionWeight(fleetRelic, "pirates"), 1e-6);
-        assertEquals(fleetRelic.rarity(), ItemDrops.factionWeight(fleetRelic, "hegemony"), 1e-6);
-        assertEquals(hullRelic.rarity(), ItemDrops.factionWeight(hullRelic, "pirates"), 1e-6);
+        assertEquals(2.0 * fleetRelic.rarity(), DroppableDefinitions.factionWeight(fleetRelic, "pirates"), 1e-6);
+        assertEquals(fleetRelic.rarity(), DroppableDefinitions.factionWeight(fleetRelic, "hegemony"), 1e-6);
+        assertEquals(hullRelic.rarity(), DroppableDefinitions.factionWeight(hullRelic, "pirates"), 1e-6);
         double pirateShare = 2.0 * fleetRelic.rarity() / (2.0 * fleetRelic.rarity() + hullRelic.rarity());
         double hegemonyShare = fleetRelic.rarity() / (double) (fleetRelic.rarity() + hullRelic.rarity());
         assertEquals(pirateShare, fromPirates / (double) TRIALS, 0.02);
@@ -254,8 +254,8 @@ class UniqueSubroutinesTest {
     void onlyTheSourceSiteDropsASiteUniqueWhileAFactionUniqueDropsAtAnySite() {
         Random random = new Random(6L);
         for (int trial = 0; trial < 200; trial++) {
-            List<String> fromStation = ItemDrops.roll("station", random, ItemChances.BASE, SubroutineKind::isUnique).stream().map(ItemData::definitionId).toList();
-            List<String> fromElsewhere = ItemDrops.roll("elsewhere", random, ItemChances.BASE, SubroutineKind::isUnique).stream().map(ItemData::definitionId).toList();
+            List<String> fromStation = SalvageSiteDrops.roll("station", random, ItemChances.BASE, SubroutineKind::isUnique).stream().map(ItemData::definitionId).toList();
+            List<String> fromElsewhere = SalvageSiteDrops.roll("elsewhere", random, ItemChances.BASE, SubroutineKind::isUnique).stream().map(ItemData::definitionId).toList();
 
             assertEquals(1, fromStation.size(), fromStation.toString());
             assertTrue(Set.of(SITE_RELIC, FLEET_RELIC).contains(fromStation.get(0)), fromStation.toString());
@@ -263,7 +263,7 @@ class UniqueSubroutinesTest {
         }
         Set<String> hullSiteDrops = new HashSet<>();
         for (int trial = 0; trial < 200; trial++) {
-            ItemDrops.roll("elsewhere", random, ItemChances.BASE, definition -> true).forEach(drop -> hullSiteDrops.add(drop.definitionId()));
+            SalvageSiteDrops.roll("elsewhere", random, ItemChances.BASE, definition -> true).forEach(drop -> hullSiteDrops.add(drop.definitionId()));
         }
         assertEquals(Set.of(FLEET_RELIC, HULL_RELIC_A, HULL_RELIC_B), hullSiteDrops);
     }

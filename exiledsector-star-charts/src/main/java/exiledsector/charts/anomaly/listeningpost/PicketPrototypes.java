@@ -5,8 +5,8 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.data.RandomRounding;
 import exiledsector.items.ItemData;
-import exiledsector.items.ItemDrops;
 import exiledsector.loot.BattleLootRates;
+import exiledsector.loot.Loot;
 
 import java.util.List;
 import java.util.Map;
@@ -26,13 +26,13 @@ final class PicketPrototypes {
         if (rate == null || !(lootDeploymentPoints > 0f)) {
             return 0f;
         }
-        return rate.expected(lootDeploymentPoints, battleDeploymentPoints) * rate.difficulty(difficultyMultiplier) * context.itemChances().general();
+        return rate.expectedAtDifficulty(lootDeploymentPoints, battleDeploymentPoints, difficultyMultiplier) * context.itemChances().general();
     }
 
-    static ItemDrops.SiteLoot roll(SectorAPI sector, ChartGenContext context, float lootDeploymentPoints, float battleDeploymentPoints,
-                                   float difficultyMultiplier, Random random) {
+    static Loot roll(SectorAPI sector, ChartGenContext context, float lootDeploymentPoints, float battleDeploymentPoints, float difficultyMultiplier,
+                     Random random) {
         int count = RandomRounding.round(expected(context, lootDeploymentPoints, battleDeploymentPoints, difficultyMultiplier), random);
         List<ItemData> prototypes = VaultPrototypes.dropped(sector, count, random);
-        return prototypes.isEmpty() ? ItemDrops.SiteLoot.NONE : new ItemDrops.SiteLoot(prototypes, List.of(), Map.of());
+        return prototypes.isEmpty() ? Loot.NONE : new Loot(prototypes, List.of(), Map.of());
     }
 }

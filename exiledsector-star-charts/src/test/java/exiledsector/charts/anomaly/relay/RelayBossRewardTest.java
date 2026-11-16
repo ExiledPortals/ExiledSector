@@ -7,7 +7,7 @@ import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.officer.reward.RewardGroup;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.items.ItemDrops;
+import exiledsector.loot.Loot;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -74,12 +74,12 @@ class RelayBossRewardTest {
         ChartGenContext echo = lines(ChartModifier.CHART_RELAY_STAGE_UNIQUE_CHANCE, 100f);
 
         assertEquals(1f, RelayTuning.stageUniqueChance(echo), 0.001f);
-        assertSame(ItemDrops.SiteLoot.NONE, RelayBossReward.echoUnique(null, relayRun(true), ChartGenContext.none(), new Random(1L)));
-        assertSame(ItemDrops.SiteLoot.NONE, RelayBossReward.echoUnique(null, relayRun(false), echo, new Random(1L)));
+        assertSame(Loot.NONE, RelayBossReward.echoUnique(null, relayRun(true), ChartGenContext.none(), new Random(1L)));
+        assertSame(Loot.NONE, RelayBossReward.echoUnique(null, relayRun(false), echo, new Random(1L)));
         ChartGenContext lastStage = echo.withAtlasNode(new AtlasRunNode(7L, "pirates", List.of(), List.of(RelayNetwork.ANOMALY_ID))
                 .withExtraEffects(List.of(), true));
         assertTrue(lastStage.guaranteedBossUnique());
-        assertSame(ItemDrops.SiteLoot.NONE, RelayBossReward.echoUnique(null, relayRun(true), lastStage, new Random(1L)));
+        assertSame(Loot.NONE, RelayBossReward.echoUnique(null, relayRun(true), lastStage, new Random(1L)));
     }
 
     @Test

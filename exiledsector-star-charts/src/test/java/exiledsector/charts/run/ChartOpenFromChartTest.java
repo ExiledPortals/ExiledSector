@@ -17,6 +17,7 @@ import exiledsector.charts.layout.FakeChartLayoutEngine;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
+import exiledsector.items.ItemRoll;
 import exiledsector.items.ItemStore;
 import exiledsector.items.StarChart;
 import exiledsector.items.StarChartFixtures;
@@ -68,8 +69,8 @@ class ChartOpenFromChartTest {
         FakeChartLayoutEngine.install(FakeChartLayoutEngine.doingNothing());
         FakeChartContentEngine.install(FakeChartContentEngine.offeringNothing());
         store = ItemStore.starCharts();
-        firstChart = store.add(ItemData.rolledAtTier(ItemDefinitions.get("star_chart"), 31L, 9));
-        secondChart = store.add(ItemData.rolledAtTier(ItemDefinitions.get("star_chart"), 32L, 2));
+        firstChart = store.add(ItemData.rolled(ItemDefinitions.get("star_chart"), 31L, ItemRoll.atTier(9)));
+        secondChart = store.add(ItemData.rolled(ItemDefinitions.get("star_chart"), 32L, ItemRoll.atTier(2)));
     }
 
     @AfterEach
@@ -114,7 +115,7 @@ class ChartOpenFromChartTest {
 
     @Test
     void onlyAChartThatIsReallyInTheChartStoreCanBeOpened() {
-        Item looseChart = ItemData.rolledAtTier(ItemDefinitions.get("star_chart"), 33L, 2).preview();
+        Item looseChart = ItemData.rolled(ItemDefinitions.get("star_chart"), 33L, ItemRoll.atTier(2)).preview();
 
         assertEquals(ChartRunActions.OpenResult.NO_CHART, ChartRunActions.openFromStore(sector, 1, new Random(1), store, looseChart));
         assertEquals(ChartRunActions.OpenResult.NO_CHART, ChartRunActions.openFromStore(sector, 1, new Random(1), new ItemStore(), firstChart));
