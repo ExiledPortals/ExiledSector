@@ -1,4 +1,5 @@
 import type { EffectInfo, Vocabulary } from '../../api/vocabulary.ts';
+import { atlasIconDestination, shipTreeIconDestination, type ImageDestination } from '../../shared/imageFolders.ts';
 import { themeTagsFor } from '../../shared/themeTags.ts';
 import { DIALOG_TYPE_SECTIONS, INSPECTOR_TYPE_SECTIONS, NODE_HEADER_TYPE_SECTIONS, type TypeFormSection } from './inspector/typeFormSections.ts';
 import { ATLAS_TREE_FILES, SHIP_TREE_FILES, type TreeFiles } from './model/treeFiles.ts';
@@ -17,6 +18,7 @@ export interface TreeKind {
   draftStorageKey: string;
   reservesRetiredNodeIds: boolean;
   typeSections: TreeTypeSections;
+  typeIconDestination: (typeId: string) => ImageDestination;
   editorVocabulary: (vocabulary: Vocabulary, declaredVolumes: string[]) => Vocabulary;
 }
 
@@ -27,6 +29,7 @@ export const SHIP_TREE_KIND: TreeKind = {
   draftStorageKey: 'exiledSectorEditor.treeDraft',
   reservesRetiredNodeIds: true,
   typeSections: { nodeHeader: NODE_HEADER_TYPE_SECTIONS, inspector: INSPECTOR_TYPE_SECTIONS, dialog: DIALOG_TYPE_SECTIONS },
+  typeIconDestination: shipTreeIconDestination,
   editorVocabulary: (vocabulary) => vocabulary,
 };
 
@@ -61,6 +64,7 @@ export const ATLAS_TREE_KIND: TreeKind = {
   draftStorageKey: 'exiledSectorEditor.atlasTreeDraft',
   reservesRetiredNodeIds: false,
   typeSections: { nodeHeader: [], inspector: ['flavour', 'effects'], dialog: ['identity', 'tags', 'effects', 'flavour', 'todo'] },
+  typeIconDestination: atlasIconDestination,
   editorVocabulary: atlasEditorVocabulary,
 };
 

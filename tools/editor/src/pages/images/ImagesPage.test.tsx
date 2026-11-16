@@ -8,15 +8,21 @@ import { renderWithProviders } from '../../test/renderWithProviders.tsx';
 import { startTestServer, type TestServer } from '../../test/testServer.ts';
 import { ImagesPage } from './ImagesPage.tsx';
 
-const ICON_FILE = 'graphics/icons/abilities/exiledSector_outer_reach_atlas.png';
-const ROTATED_FILE = 'graphics/icons/abilities/exiledSector_outer_reach_atlas_turned.png';
+const ICON_FILE = 'graphics/exiledSector/campaign/abilities/outer_reach_atlas.png';
+const ROTATED_FILE = 'art/unused/outer_reach_atlas_turned.png';
+const ATLAS_TYPES_FILE = 'data/skilltrees/atlas_tree_types.json';
+const POOL_FILE = 'art/atlas_unused/rat_pool_icon.png';
+const CIRCULAR_POOL_FILE = 'art/atlas_unused_circular/rat_pool_icon.png';
 const VANILLA_ICON_FILE = 'graphics/icons/cargo/vanilla_chip.png';
-const VANILLA_COPY_FILE = 'graphics/icons/cargo/vanilla_chip_green.png';
+const VANILLA_COPY_FILE = 'art/unused/vanilla_chip_green.png';
 
 let server: TestServer;
 
 beforeAll(() => {
-  server = startTestServer([ICON_FILE]);
+  server = startTestServer([ICON_FILE, ATLAS_TYPES_FILE]);
+  const poolIcon = path.join(server.projectRoot, POOL_FILE);
+  fs.mkdirSync(path.dirname(poolIcon), { recursive: true });
+  fs.copyFileSync(path.join(server.projectRoot, ICON_FILE), poolIcon);
   const vanillaIcon = path.join(server.projectRoot, 'vanilla-core', VANILLA_ICON_FILE);
   fs.mkdirSync(path.dirname(vanillaIcon), { recursive: true });
   const image = new PNG({ width: 2, height: 2 });
@@ -57,7 +63,7 @@ describe('images page', () => {
     expect(screen.getByTestId('rotation-clip').style.overflow).toBe('hidden');
   });
 
-  it('saves a rotated copy next to the original and shows the new copy unmodified', async () => {
+  it('saves a rotated copy to art/unused and shows the new copy unmodified', async () => {
     renderWithProviders(<ImagesPage />);
     fireEvent.click(await screen.findByTitle(ICON_FILE));
 
@@ -92,5 +98,30 @@ describe('images page', () => {
     await waitFor(() => expect(fs.existsSync(path.join(server.projectRoot, VANILLA_COPY_FILE))).toBe(true));
     expect(await screen.findByRole('button', { name: 'Delete this image' })).toBeTruthy();
     expect(fs.existsSync(path.join(server.projectRoot, 'vanilla-core', VANILLA_ICON_FILE))).toBe(true);
+  });
+
+  it('shows where an image is used and filters out images the Atlas Tree uses', async () => {
+    renderWithProviders(<ImagesPage />);
+    fireEvent.click(await screen.findByTitle(ICON_FILE));
+
+    expect(await screen.findByText('Used by')).toBeTruthy();
+    expect(screen.getByText(ATLAS_TYPES_FILE)).toBeTruthy();
+    expect(screen.getByText('(Atlas Tree)')).toBeTruthy();
+    fireEvent.click(getLabelled('Show'));
+    fireEvent.click(await screen.findByRole('option', { name: 'Not used in the Atlas Tree' }));
+    await waitFor(() => expect(screen.queryByTitle(ICON_FILE)).toBeNull());
+    expect(screen.getByTitle(POOL_FILE)).toBeTruthy();
+  });
+
+  it('moves an Atlas pool icon into the circular pool when it is made circular', async () => {
+    renderWithProviders(<ImagesPage />);
+    fireEvent.click(await screen.findByTitle(POOL_FILE));
+
+    expect(await screen.findByText('Atlas icon pool')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Make circular and move to the circular pool' }));
+
+    await waitFor(() => expect(fs.existsSync(path.join(server.projectRoot, CIRCULAR_POOL_FILE))).toBe(true));
+    expect(fs.existsSync(path.join(server.projectRoot, POOL_FILE))).toBe(false);
+    expect(await screen.findByText('Ready for the Atlas Tree')).toBeTruthy();
   });
 });

@@ -216,126 +216,183 @@ describe('reserved node ids', () => {
 });
 
 describe('images', () => {
-  it('lists project and vanilla images and serves them without escaping the roots', async () => {
-    writePng('graphics/icons/b.png', 2, 2, [1, 2, 3, 255]);
-    writePng('graphics/backgrounds/static_images/s.png', 2, 2, [1, 2, 3, 255]);
+  const post = (url: string, payload: Record<string, unknown>) => app.inject({ method: 'POST', url, headers: EDITOR_HEADERS, payload });
+
+  it('lists project, source art and vanilla images and serves them without escaping the roots', async () => {
+    writePng('graphics/exiledSector/tree/base/b.png', 2, 2, [1, 2, 3, 255]);
+    writePng('graphics/exiledSector/scenery/clouds/s.png', 2, 2, [1, 2, 3, 255]);
+    writePng('art/unused/u.png', 2, 2, [1, 2, 3, 255]);
     fs.mkdirSync(path.join(paths.vanillaCoreDir, 'graphics/icons/cargo'), { recursive: true });
     const image = new PNG({ width: 1, height: 1 });
     fs.writeFileSync(path.join(paths.vanillaCoreDir, 'graphics/icons/cargo/v.png'), PNG.sync.write(image));
-    expect((await app.inject({ method: 'GET', url: '/api/images/static' })).json()).toEqual(['graphics/backgrounds/static_images/s.png']);
+    expect((await app.inject({ method: 'GET', url: '/api/images/static' })).json()).toEqual(['graphics/exiledSector/scenery/clouds/s.png']);
     expect((await app.inject({ method: 'GET', url: '/api/images/all' })).json()).toEqual({
-      projectImages: ['graphics/backgrounds/static_images/s.png', 'graphics/icons/b.png'],
+      projectImages: ['art/unused/u.png', 'graphics/exiledSector/scenery/clouds/s.png', 'graphics/exiledSector/tree/base/b.png'],
       vanillaImages: ['graphics/icons/cargo/v.png'],
     });
     expect((await app.inject({ method: 'GET', url: '/files/graphics/icons/cargo/v.png' })).statusCode).toBe(200);
-    expect((await app.inject({ method: 'GET', url: '/files/graphics/icons/b.png' })).headers['content-type']).toBe('image/png');
+    expect((await app.inject({ method: 'GET', url: '/files/graphics/exiledSector/tree/base/b.png' })).headers['content-type']).toBe('image/png');
     expect((await app.inject({ method: 'GET', url: '/files/data/skilltrees/skill_types.json' })).statusCode).toBe(404);
     expect((await app.inject({ method: 'GET', url: '/files/..%2F..%2Fsecret.png' })).statusCode).toBe(404);
   });
 
-  it('makes colour-shifted and circular copies and refuses to overwrite unless asked', async () => {
-    writePng('graphics/icons/red.png', 8, 8, [255, 0, 0, 255]);
-    const payload = { path: 'graphics/icons/red.png', suffix: 'green', hueShift: 120 };
-    const shifted = await app.inject({ method: 'POST', url: '/api/images/colorshift', headers: EDITOR_HEADERS, payload });
-    expect(shifted.json()).toEqual({ ok: true, path: 'graphics/icons/red_green.png' });
-    expect(readPixel(path.join(projectRoot, 'graphics/icons/red_green.png'), 3, 3)).toEqual([0, 255, 0, 255]);
-    expect((await app.inject({ method: 'POST', url: '/api/images/colorshift', headers: EDITOR_HEADERS, payload })).statusCode).toBe(409);
-    const overwritten = await app.inject({ method: 'POST', url: '/api/images/colorshift', headers: EDITOR_HEADERS, payload: { ...payload, overwrite: true } });
-    expect(overwritten.statusCode).toBe(200);
-    const badSuffix = await app.inject({ method: 'POST', url: '/api/images/colorshift', headers: EDITOR_HEADERS, payload: { ...payload, suffix: 'a/b' } });
-    expect(badSuffix.statusCode).toBe(400);
+  it('reports where each image is used, counts prefix-built Java paths and marks Atlas Tree uses', async () => {
+    writePng('graphics/exiledSector/tree/base/armor.png', 1, 1, [0, 0, 0, 255]);
+    writePng('graphics/exiledSector/items/charts/star_chart.png', 1, 1, [0, 0, 0, 255]);
+    writePng('graphics/exiledSector/items/schematics/refit_schematic_frigate.png', 1, 1, [0, 0, 0, 255]);
+    writePng('art/atlas_unused/spare.png', 1, 1, [0, 0, 0, 255]);
+    writeProjectFile(
+      'data/skilltrees/skill_types.json',
+      JSON.stringify({ skillTypes: [{ id: 'armor', name: 'Armor', icon: 'graphics/exiledSector/tree/base/armor.png' }] }),
+    );
+    writeProjectFile(
+      'data/skilltrees/atlas_tree_types.json',
+      JSON.stringify({ skillTypes: [{ id: 'charts', name: 'Charts', icon: 'graphics/exiledSector/items/charts/star_chart.png' }] }),
+    );
+    writeProjectFile('data/campaign/special_items.csv', 'name,id,icon\r\nChart,exiledSector_chart,graphics/exiledSector/items/charts/star_chart.png\r\n');
+    writeProjectFile(
+      'exiledsector-core/src/main/java/exiledsector/Schematic.java',
+      'class Schematic { static final String FOLDER = "graphics/exiledSector/items/schematics/refit_schematic_"; }',
+    );
 
-    const circular = await app.inject({ method: 'POST', url: '/api/images/circular', headers: EDITOR_HEADERS, payload: { path: 'graphics/icons/red.png', suffix: 'round' } });
-    expect(circular.json().path).toBe('graphics/unused/circular/red_round.png');
-    const circularPath = path.join(projectRoot, 'graphics/unused/circular/red_round.png');
+    const usage = (await app.inject({ method: 'GET', url: '/api/images/usage' })).json();
+
+    expect(usage['graphics/exiledSector/tree/base/armor.png']).toEqual([{ file: 'data/skilltrees/skill_types.json', detail: 'Armor (armor)', atlas: false }]);
+    expect(usage['graphics/exiledSector/items/charts/star_chart.png']).toEqual([
+      { file: 'data/campaign/special_items.csv', detail: 'Chart', atlas: false },
+      { file: 'data/skilltrees/atlas_tree_types.json', detail: 'Charts (charts)', atlas: true },
+    ]);
+    expect(usage['graphics/exiledSector/items/schematics/refit_schematic_frigate.png']).toEqual([
+      { file: 'exiledsector-core/src/main/java/exiledsector/Schematic.java', detail: 'Schematic', atlas: false },
+    ]);
+    expect(usage['art/atlas_unused/spare.png']).toBeUndefined();
+  });
+
+  it('saves colour-shifted and circular copies to art and refuses to overwrite unless asked', async () => {
+    writePng('graphics/exiledSector/tree/base/red.png', 8, 8, [255, 0, 0, 255]);
+    const payload = { path: 'graphics/exiledSector/tree/base/red.png', suffix: 'green', hueShift: 120 };
+    const shifted = await post('/api/images/colorshift', payload);
+    expect(shifted.json()).toEqual({ ok: true, path: 'art/unused/red_green.png' });
+    expect(readPixel(path.join(projectRoot, 'art/unused/red_green.png'), 3, 3)).toEqual([0, 255, 0, 255]);
+    expect((await post('/api/images/colorshift', payload)).statusCode).toBe(409);
+    expect((await post('/api/images/colorshift', { ...payload, overwrite: true })).statusCode).toBe(200);
+    expect((await post('/api/images/colorshift', { ...payload, suffix: 'a/b' })).statusCode).toBe(400);
+    const shiftedAgain = await post('/api/images/colorshift', { path: 'art/unused/red_green.png', suffix: 'blue', hueShift: 120 });
+    expect(shiftedAgain.json()).toEqual({ ok: true, path: 'art/unused/red_green_blue.png' });
+
+    const circular = await post('/api/images/circular', { path: 'graphics/exiledSector/tree/base/red.png', suffix: 'round' });
+    expect(circular.json().path).toBe('art/unused/circular/red_round.png');
+    const circularPath = path.join(projectRoot, 'art/unused/circular/red_round.png');
     expect(readPixel(circularPath, 0, 0)[3]).toBe(0);
     expect(readPixel(circularPath, 4, 4)).toEqual([255, 0, 0, 255]);
+    expect(fs.existsSync(path.join(projectRoot, 'graphics/exiledSector/tree/base/red.png'))).toBe(true);
   });
 
-  it('makes rotated copies next to the original', async () => {
-    writePng('graphics/icons/wide.png', 4, 2, [0, 0, 255, 255]);
-    const rotated = await app.inject({ method: 'POST', url: '/api/images/rotate', headers: EDITOR_HEADERS, payload: { path: 'graphics/icons/wide.png', suffix: 'turned', degrees: 90 } });
-    expect(rotated.json()).toEqual({ ok: true, path: 'graphics/icons/wide_turned.png' });
-    const image = PNG.sync.read(fs.readFileSync(path.join(projectRoot, 'graphics/icons/wide_turned.png')));
+  it('moves an Atlas pool icon into the circular pool under its own name when made circular', async () => {
+    writePng('art/atlas_unused/rat_grid.png', 8, 8, [255, 0, 0, 255]);
+
+    const circular = await post('/api/images/circular', { path: 'art/atlas_unused/rat_grid.png', suffix: '' });
+
+    expect(circular.json()).toEqual({ ok: true, path: 'art/atlas_unused_circular/rat_grid.png', consumed: 'art/atlas_unused/rat_grid.png' });
+    expect(fs.existsSync(path.join(projectRoot, 'art/atlas_unused/rat_grid.png'))).toBe(false);
+    expect(readPixel(path.join(projectRoot, 'art/atlas_unused_circular/rat_grid.png'), 0, 0)[3]).toBe(0);
+  });
+
+  it('saves rotated copies of shipped images to art/unused', async () => {
+    writePng('graphics/exiledSector/tree/base/wide.png', 4, 2, [0, 0, 255, 255]);
+    const payload = { path: 'graphics/exiledSector/tree/base/wide.png', suffix: 'turned', degrees: 90 };
+    const rotated = await post('/api/images/rotate', payload);
+    expect(rotated.json()).toEqual({ ok: true, path: 'art/unused/wide_turned.png' });
+    const image = PNG.sync.read(fs.readFileSync(path.join(projectRoot, 'art/unused/wide_turned.png')));
     expect([image.width, image.height]).toEqual([2, 4]);
-    expect((await app.inject({ method: 'POST', url: '/api/images/rotate', headers: EDITOR_HEADERS, payload: { path: 'graphics/icons/wide.png', suffix: 'turned', degrees: 90 } })).statusCode).toBe(409);
+    expect((await post('/api/images/rotate', payload)).statusCode).toBe(409);
   });
 
-  it('copies listed vanilla icons into the mod but never deletes, moves or overrides them', async () => {
+  it('copies listed vanilla icons into art but never deletes, moves or overrides them', async () => {
     writeVanillaPng('graphics/icons/cargo/red.png', [255, 0, 0, 255]);
-    writeVanillaPng('graphics/icons/cargo/red_taken.png', [0, 255, 0, 255]);
     writeVanillaPng('graphics/icons/cargo/shadowed.png', [0, 0, 255, 255]);
     writePng('graphics/icons/cargo/shadowed.png', 2, 2, [9, 9, 9, 255]);
     writeVanillaPng('graphics/ships/unlisted.png', [255, 0, 0, 255]);
     const listing = (await app.inject({ method: 'GET', url: '/api/images/all' })).json();
-    expect([...listing.vanillaImages].sort()).toEqual(['graphics/icons/cargo/red.png', 'graphics/icons/cargo/red_taken.png']);
+    expect(listing.vanillaImages).toEqual(['graphics/icons/cargo/red.png']);
     expect(listing.projectImages).toEqual(['graphics/icons/cargo/shadowed.png']);
 
-    const copy = (payload: Record<string, unknown>) => app.inject({ method: 'POST', url: '/api/images/colorshift', headers: EDITOR_HEADERS, payload });
-    const shifted = await copy({ path: 'graphics/icons/cargo/red.png', suffix: 'green', hueShift: 120 });
-    expect(shifted.json()).toEqual({ ok: true, path: 'graphics/icons/cargo/red_green.png' });
-    expect(readPixel(path.join(projectRoot, 'graphics/icons/cargo/red_green.png'), 0, 0)).toEqual([0, 255, 0, 255]);
-    const shadowed = await copy({ path: 'graphics/icons/cargo/shadowed.png', suffix: 'copy', hueShift: 0 });
+    const shifted = await post('/api/images/colorshift', { path: 'graphics/icons/cargo/red.png', suffix: 'green', hueShift: 120 });
+    expect(shifted.json()).toEqual({ ok: true, path: 'art/unused/red_green.png' });
+    expect(readPixel(path.join(projectRoot, 'art/unused/red_green.png'), 0, 0)).toEqual([0, 255, 0, 255]);
+    const shadowed = await post('/api/images/colorshift', { path: 'graphics/icons/cargo/shadowed.png', suffix: 'copy', hueShift: 0 });
     expect(readPixel(path.join(projectRoot, shadowed.json().path), 0, 0)).toEqual([9, 9, 9, 255]);
-    const overriding = await copy({ path: 'graphics/icons/cargo/red.png', suffix: 'taken', hueShift: 0, overwrite: true });
-    expect(overriding.statusCode).toBe(400);
-    expect(overriding.json().message).toBe('graphics/icons/cargo/red_taken.png is a vanilla image; a copy there would replace it game-wide.');
-    expect(fs.existsSync(path.join(projectRoot, 'graphics/icons/cargo/red_taken.png'))).toBe(false);
-    expect((await copy({ path: 'graphics/ships/unlisted.png', suffix: 'copy' })).statusCode).toBe(400);
+    expect((await post('/api/images/colorshift', { path: 'graphics/ships/unlisted.png', suffix: 'copy' })).statusCode).toBe(400);
 
-    const deleted = await app.inject({ method: 'POST', url: '/api/images/delete', headers: EDITOR_HEADERS, payload: { path: 'graphics/icons/cargo/red.png' } });
-    expect(deleted.json()).toEqual({ ok: false, message: 'Vanilla images are read-only.' });
-    const moved = await app.inject({ method: 'POST', url: '/api/images/move', headers: EDITOR_HEADERS, payload: { from: 'graphics/icons/cargo/red.png', to: 'graphics/icons/red.png' } });
+    expect((await post('/api/images/delete', { path: 'graphics/icons/cargo/red.png' })).json()).toEqual({ ok: false, message: 'Vanilla images are read-only.' });
+    const moved = await post('/api/images/move', { from: 'graphics/icons/cargo/red.png', to: 'graphics/icons/red.png' });
     expect(moved.json()).toEqual({ ok: false, message: 'Vanilla images are read-only.' });
+    const overriding = await post('/api/images/place', { from: 'art/unused/red_green.png', to: 'graphics/icons/cargo/red.png' });
+    expect(overriding.statusCode).toBe(400);
+    expect(fs.existsSync(path.join(projectRoot, 'graphics/icons/cargo/red.png'))).toBe(false);
     expect(fs.existsSync(path.join(paths.vanillaCoreDir, 'graphics/icons/cargo/red.png'))).toBe(true);
   });
 
-  it('only copies png images under graphics', async () => {
+  it('only copies png images under graphics or art', async () => {
     writePng('data/config/outside.png', 2, 2, [255, 0, 0, 255]);
-    writeProjectFile('graphics/icons/notes.txt', 'not an image');
+    writeProjectFile('graphics/exiledSector/notes.txt', 'not an image');
     for (const url of ['/api/images/colorshift', '/api/images/circular', '/api/images/rotate']) {
-      for (const source of ['data/config/outside.png', 'graphics/icons/notes.txt', 'graphics/../data/config/outside.png', '../outside.png']) {
-        const refused = await app.inject({ method: 'POST', url, headers: EDITOR_HEADERS, payload: { path: source, suffix: 'copy' } });
+      for (const source of ['data/config/outside.png', 'graphics/exiledSector/notes.txt', 'graphics/../data/config/outside.png', '../outside.png']) {
+        const refused = await post(url, { path: source, suffix: 'copy' });
         expect(refused.statusCode).toBe(400);
         expect(refused.json().message).toBe('Source image not found.');
       }
     }
     expect(fs.existsSync(path.join(projectRoot, 'data/config/outside_copy.png'))).toBe(false);
-    expect(fs.existsSync(path.join(projectRoot, 'graphics/unused/circular'))).toBe(false);
+    expect(fs.existsSync(path.join(projectRoot, 'art/unused'))).toBe(false);
   });
 
-  it('moves images and only deletes pngs under graphics', async () => {
-    writePng('graphics/unused/a.png', 1, 1, [0, 0, 0, 255]);
-    writePng('graphics/icons/taken.png', 1, 1, [0, 0, 0, 255]);
-    const moved = await app.inject({ method: 'POST', url: '/api/images/move', headers: EDITOR_HEADERS, payload: { from: 'graphics/unused/a.png', to: 'graphics/icons/a.png' } });
-    expect(moved.json()).toEqual({ ok: true, path: 'graphics/icons/a.png' });
-    const clash = await app.inject({ method: 'POST', url: '/api/images/move', headers: EDITOR_HEADERS, payload: { from: 'graphics/icons/a.png', to: 'graphics/icons/taken.png' } });
+  it('moves images out of art and only deletes images under graphics or art', async () => {
+    writePng('art/unused/a.png', 1, 1, [0, 0, 0, 255]);
+    writePng('graphics/exiledSector/tree/base/taken.png', 1, 1, [0, 0, 0, 255]);
+    const moved = await post('/api/images/move', { from: 'art/unused/a.png', to: 'graphics/exiledSector/tree/base/a.png' });
+    expect(moved.json()).toEqual({ ok: true, path: 'graphics/exiledSector/tree/base/a.png' });
+    const clash = await post('/api/images/move', { from: 'graphics/exiledSector/tree/base/a.png', to: 'graphics/exiledSector/tree/base/taken.png' });
     expect(clash.statusCode).toBe(400);
-    const notImage = await app.inject({ method: 'POST', url: '/api/images/delete', headers: EDITOR_HEADERS, payload: { path: 'data/skilltrees/skill_types.json' } });
-    expect(notImage.statusCode).toBe(400);
-    const deleted = await app.inject({ method: 'POST', url: '/api/images/delete', headers: EDITOR_HEADERS, payload: { path: 'graphics/icons/a.png' } });
-    expect(deleted.statusCode).toBe(200);
-    expect(fs.existsSync(path.join(projectRoot, 'graphics/icons/a.png'))).toBe(false);
+    expect((await post('/api/images/delete', { path: 'data/skilltrees/skill_types.json' })).statusCode).toBe(400);
+    expect((await post('/api/images/delete', { path: 'graphics/exiledSector/tree/base/a.png' })).statusCode).toBe(200);
+    expect(fs.existsSync(path.join(projectRoot, 'graphics/exiledSector/tree/base/a.png'))).toBe(false);
   });
 
-  it('only moves png images under graphics to png paths under graphics', async () => {
-    writePng('graphics/icons/b.png', 1, 1, [0, 0, 0, 255]);
+  it('only moves png images under graphics or art to png paths under graphics or art', async () => {
+    writePng('graphics/exiledSector/b.png', 1, 1, [0, 0, 0, 255]);
     writePng('data/config/outside.png', 1, 1, [0, 0, 0, 255]);
-    const move = (from: string, to: string) => app.inject({ method: 'POST', url: '/api/images/move', headers: EDITOR_HEADERS, payload: { from, to } });
-
-    const fromOutside = await move('data/config/outside.png', 'graphics/icons/outside.png');
-    expect(fromOutside.statusCode).toBe(400);
-    expect(fromOutside.json().message).toBe('Source image not found.');
-    const notImage = await move('data/skilltrees/skill_types.json', 'graphics/icons/types.png');
-    expect(notImage.statusCode).toBe(400);
-    for (const destination of ['data/config/b.png', 'graphics/icons/b.json', 'graphics/../data/b.png', '../b.png']) {
-      const refused = await move('graphics/icons/b.png', destination);
-      expect(refused.statusCode).toBe(400);
-      expect(refused.json().message).toBe('Images can only be moved to a .png path under graphics/.');
+    for (const url of ['/api/images/move', '/api/images/place']) {
+      const fromOutside = await post(url, { from: 'data/config/outside.png', to: 'graphics/exiledSector/outside.png' });
+      expect(fromOutside.statusCode).toBe(400);
+      expect(fromOutside.json().message).toBe('Source image not found.');
+      expect((await post(url, { from: 'data/skilltrees/skill_types.json', to: 'graphics/exiledSector/types.png' })).statusCode).toBe(400);
+      for (const destination of ['data/config/b.png', 'graphics/exiledSector/b.json', 'graphics/../data/b.png', '../b.png']) {
+        const refused = await post(url, { from: 'graphics/exiledSector/b.png', to: destination });
+        expect(refused.statusCode).toBe(400);
+        expect(refused.json().message).toBe('Images can only be moved to a .png path under graphics/ or art/.');
+      }
     }
-    expect(fs.existsSync(path.join(projectRoot, 'graphics/icons/b.png'))).toBe(true);
+    expect(fs.existsSync(path.join(projectRoot, 'graphics/exiledSector/b.png'))).toBe(true);
     expect(fs.existsSync(path.join(projectRoot, 'data/config/outside.png'))).toBe(true);
-    expect(fs.existsSync(path.join(projectRoot, 'data/skilltrees/skill_types.json'))).toBe(true);
+  });
+
+  it('places a picked icon, returning the icon it replaces to the pool only when nothing else uses it', async () => {
+    writePng('art/atlas_unused_circular/first.png', 1, 1, [1, 0, 0, 255]);
+    writePng('art/atlas_unused_circular/second.png', 1, 1, [2, 0, 0, 255]);
+    writePng('art/atlas_unused_circular/third.png', 1, 1, [3, 0, 0, 255]);
+    const target = 'graphics/exiledSector/tree/atlas/charts.png';
+    const place = (from: string) => post('/api/images/place', { from, to: target, displaceTo: 'art/atlas_unused_circular/', replacing: target });
+
+    expect((await place('art/atlas_unused_circular/first.png')).json()).toEqual({ ok: true, path: target });
+    writeProjectFile('data/skilltrees/atlas_tree_types.json', JSON.stringify({ skillTypes: [{ id: 'charts', name: 'Charts', icon: target }] }));
+    expect((await place('art/atlas_unused_circular/second.png')).json()).toEqual({ ok: true, path: target, displaced: 'art/atlas_unused_circular/charts.png' });
+    expect(readPixel(path.join(projectRoot, target), 0, 0)[0]).toBe(2);
+    expect(readPixel(path.join(projectRoot, 'art/atlas_unused_circular/charts.png'), 0, 0)[0]).toBe(1);
+
+    writeProjectFile('data/campaign/special_items.csv', `name,id,icon\r\nChart,chart,${target}\r\n`);
+    expect((await place('art/atlas_unused_circular/third.png')).json()).toEqual({ ok: true, path: 'graphics/exiledSector/tree/atlas/charts_2.png' });
+    expect(readPixel(path.join(projectRoot, target), 0, 0)[0]).toBe(2);
   });
 });
 

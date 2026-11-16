@@ -5,6 +5,7 @@ import type { Draft } from 'immer';
 import type { Vocabulary } from '../../../api/vocabulary.ts';
 import { withCurrentOption, withCurrentOptions } from '../../../shared/arrays.ts';
 import { splitList } from '../../../shared/csv.ts';
+import { itemIconDestination } from '../../../shared/imageFolders.ts';
 import { DoctrineReplacementPools, type DoctrineTypeSource } from '../components/DoctrineArchiveView.tsx';
 import { DescriptionNote } from '../components/GameText.tsx';
 import { DeleteRowButton, DescriptionField, IconField, IdField, ItemList, ListDetail, NameAndRarity, type ListedItem } from '../components/ItemFields.tsx';
@@ -140,7 +141,7 @@ function DoctrineForm({ document, model, vocabulary, definition, index, descript
 
   return (
     <Stack gap="sm" maw={1100}>
-      <IconField icon={definition.icon} targetFolder="graphics/icons/socketables/" onChange={(icon) => edit((draft) => void (draft.icon = icon))} />
+      <IconField icon={definition.icon} destination={itemIconDestination('doctrine_archives', definition.id)} onChange={(icon) => edit((draft) => void (draft.icon = icon))} />
       <IdField
         id={definition.id}
         loadedId={definition.loadedId}

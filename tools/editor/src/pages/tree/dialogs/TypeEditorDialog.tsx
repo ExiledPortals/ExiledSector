@@ -73,6 +73,7 @@ export function TypeEditorDialog({ modalId, existingTypeId, vocabulary, onSaved,
           allTypes={allTypes}
           idEditable={existingTypeId === null}
           onEditOptionType={onEditOptionType}
+          iconDestination={kind.typeIconDestination(draft.id)}
         />
       </ScrollArea.Autosize>
       <Group justify="flex-end">

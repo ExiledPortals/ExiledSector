@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { stringsRevision } from '../../../api/describe.ts';
 import { codeRevision, DescribedTypesCache, typeTooltip, type TypeTooltip } from '../../../api/tooltipCode.ts';
 import { splitList } from '../../../shared/csv.ts';
+import { doctrineTypeIconDestination } from '../../../shared/imageFolders.ts';
 import { fileUrl } from '../../../shared/imagePaths.ts';
 import { ImagePickButton } from '../../../shared/ImagePickButton.tsx';
 import { TooltipEffects } from '../../../shared/TooltipBody.tsx';
@@ -86,6 +87,8 @@ function ReplacementRow({ typeId, source, listedTypes }: { typeId: string; sourc
         <ImagePickButton
           size="xs"
           label="Change image"
+          destination={doctrineTypeIconDestination(type.id)}
+          currentPath={type.icon}
           aria-label={`Change image of ${type.name || type.id}`}
           onPicked={(iconPath) => source.onIconPicked(type.id, iconPath)}
         />

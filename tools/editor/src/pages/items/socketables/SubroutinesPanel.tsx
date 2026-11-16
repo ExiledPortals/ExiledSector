@@ -3,6 +3,7 @@ import { IconCopy, IconPlus } from '@tabler/icons-react';
 import { useState } from 'react';
 import { withCurrentOption } from '../../../shared/arrays.ts';
 import { DecimalInput } from '../../../shared/DecimalInput.tsx';
+import { itemIconDestination } from '../../../shared/imageFolders.ts';
 import { DescriptionNote } from '../components/GameText.tsx';
 import { DeleteRowButton, DescriptionField, IconField, IdField, ItemList, ListDetail, NameAndRarity, UniqueFields, type ListedItem } from '../components/ItemFields.tsx';
 import { ModifierPool } from '../components/ModifierPool.tsx';
@@ -161,7 +162,7 @@ function SubroutineForm({ document, model, vocabulary, definition, index, kinds,
 
   return (
     <Stack gap="sm" maw={1100}>
-      <IconField icon={definition.icon} targetFolder="graphics/icons/socketables/" onChange={(icon) => edit((draft) => void (draft.icon = icon))} />
+      <IconField icon={definition.icon} destination={itemIconDestination('subroutines', definition.id)} onChange={(icon) => edit((draft) => void (draft.icon = icon))} />
       <Group grow align="flex-start">
         <IdField
           id={definition.id}

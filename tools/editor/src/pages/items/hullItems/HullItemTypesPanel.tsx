@@ -1,6 +1,7 @@
 import { Button, Divider, Group, Select, Stack, Text, TextInput, Title } from '@mantine/core';
 import { IconCopy, IconPlus, IconSearch } from '@tabler/icons-react';
 import { useState } from 'react';
+import { itemIconDestination } from '../../../shared/imageFolders.ts';
 import { DeleteRowButton, DescriptionField, IconField, IdField, ItemList, ListDetail, NameAndRarity, UniqueFields, type ListedItem } from '../components/ItemFields.tsx';
 import { DescriptionNote, GameLines, MissingModifier } from '../components/GameText.tsx';
 import { ModifierPool } from '../components/ModifierPool.tsx';
@@ -180,7 +181,7 @@ function HullItemForm({ document, model, vocabulary, definition, index, descript
 
   return (
     <Stack gap="sm" maw={1100}>
-      <IconField icon={definition.icon} targetFolder="graphics/icons/socketables/" onChange={(icon) => edit((draft) => void (draft.icon = icon))} />
+      <IconField icon={definition.icon} destination={itemIconDestination('hull_items', definition.id)} onChange={(icon) => edit((draft) => void (draft.icon = icon))} />
       <Group grow align="flex-start">
         <IdField
           id={definition.id}

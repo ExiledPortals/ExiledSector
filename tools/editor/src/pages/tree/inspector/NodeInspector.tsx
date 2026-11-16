@@ -144,7 +144,7 @@ function KeystoneFields({ node }: { node: NodeDetails }) {
         />
         <ImagePickButton
           size="xs"
-          targetFolder={null}
+          destination={null}
           onPicked={(path) => {
             editNode(actions, node.id, (draft) => {
               draft.ringBeltPath = path;
@@ -338,6 +338,8 @@ export function NodeInspector({ nodeId, vocabulary }: { nodeId: string; vocabula
           <ImagePickButton
             size="xs"
             label="Select icon"
+            destination={kind.typeIconDestination(type.id)}
+            currentPath={type.icon}
             onPicked={(path) => {
               editType((draft) => {
                 draft.icon = path;
