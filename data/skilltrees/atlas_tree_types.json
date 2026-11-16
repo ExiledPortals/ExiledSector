@@ -316,6 +316,203 @@
 			"tags": [
 				"crafting_item"
 			]
+		},
+		{
+			"id": "threat_feedstock_chance",
+			"name": "Threat Feedstock Chance",
+			"effects": [
+				{
+					"effect": "CHART_CONVOY_THREAT_FEEDSTOCK_CHANCE_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"crafting_item"
+			]
+		},
+		{
+			"id": "shroud_feedstock_chance",
+			"name": "Shroud Feedstock Chance",
+			"effects": [
+				{
+					"effect": "CHART_CONVOY_SHROUD_FEEDSTOCK_CHANCE_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"crafting_item"
+			]
+		},
+		{
+			"id": "phase_feedstock_chance",
+			"name": "Phase Feedstock Chance",
+			"effects": [
+				{
+					"effect": "CHART_CONVOY_PHASE_FEEDSTOCK_CHANCE_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"crafting_item"
+			]
+		},
+		{
+			"id": "feedstock_duplication",
+			"name": "Feedstock Duplication",
+			"effects": [
+				{
+					"effect": "CHART_CONVOY_DOUBLE_FEEDSTOCK_CHANCE_PERCENT",
+					"magnitude": 25
+				}
+			],
+			"tags": [
+				"crafting_item"
+			]
+		},
+		{
+			"id": "additional_convoy_chance",
+			"name": "Additional Convoy Chance",
+			"effects": [
+				{
+					"effect": "CHART_EXTRA_CONVOY_CHANCE_PERCENT",
+					"magnitude": 30
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "threat_embargo",
+			"name": "Threat Embargo",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_CONVOY_THREAT_FEEDSTOCK_CHANCE_PERCENT",
+					"magnitude": 25
+				}
+			],
+			"tags": [
+				"crafting_item"
+			]
+		},
+		{
+			"id": "shroud_embargo",
+			"name": "Shroud Embargo",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_CONVOY_SHROUD_FEEDSTOCK_CHANCE_PERCENT",
+					"magnitude": 25
+				}
+			],
+			"tags": [
+				"crafting_item"
+			]
+		},
+		{
+			"id": "phase_embargo",
+			"name": "Phase Embargo",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_CONVOY_PHASE_FEEDSTOCK_CHANCE_PERCENT",
+					"magnitude": 25
+				}
+			],
+			"tags": [
+				"crafting_item"
+			]
+		},
+		{
+			"id": "torn_holds",
+			"name": "Torn Holds",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_CONVOY_BREACH_FEEDSTOCK_PERCENT",
+					"magnitude": 50
+				}
+			],
+			"tags": [
+				"crafting_item"
+			]
+		},
+		{
+			"id": "supply_lines",
+			"name": "Supply Lines",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_CONVOY_OFFICER_FEEDSTOCK",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"crafting_item",
+				"officers"
+			]
+		},
+		{
+			"id": "bolt_hole_drop",
+			"name": "Bolt-Hole Drop",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_CONVOY_EXCAVATION_DELIVERY",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_CONVOY_EXCAVATION_RAID_DIFFICULTY_PERCENT",
+					"magnitude": 100
+				},
+				{
+					"effect": "CHART_CONVOY_EXCAVATION_LOOT_PERCENT",
+					"magnitude": 30
+				}
+			],
+			"tags": [
+				"crafting_item",
+				"encounter"
+			]
+		},
+		{
+			"id": "open_season",
+			"name": "Open Season",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_HOSTILE_CONVOYS",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_CONVOY_FEEDSTOCK_PERCENT",
+					"magnitude": 20
+				}
+			],
+			"tags": [
+				"crafting_item",
+				"encounter"
+			]
+		},
+		{
+			"id": "mixed_manifest",
+			"name": "Mixed Manifest",
+			"tier": "KEYSTONE",
+			"effects": [
+				{
+					"effect": "CHART_CONVOY_MIXED_MANIFEST",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_CONVOY_FLEET_SIZE_PERCENT",
+					"magnitude": 20
+				}
+			],
+			"tags": [
+				"crafting_item",
+				"fleet_size"
+			]
 		}
 	]
 }

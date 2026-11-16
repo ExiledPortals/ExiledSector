@@ -89,7 +89,7 @@ public class ConvoyIntel extends ChartRunIntel {
             VanillaText.addPara(info, I18n.forGameText(() -> Translation.styled("chart.anomaly.supply_convoy.intel.hostile")), PARAGRAPH_PAD, text);
         }
         int tier = script.tier();
-        VanillaText.addPara(info, I18n.forGameText(() -> Translation.msg("chart.anomaly.supply_convoy.intel.manifest").arg("cargo", ConvoyCargo.manifest(tier))
+        VanillaText.addPara(info, I18n.forGameText(() -> Translation.msg("chart.anomaly.supply_convoy.intel.manifest").arg("cargo", ConvoyCargo.manifest(tier, convoy))
                 .styled()), PARAGRAPH_PAD, text);
     }
 
@@ -115,6 +115,7 @@ public class ConvoyIntel extends ChartRunIntel {
                     .count(days(daysToDestination(convoy, clock))).text();
             case UNLOADING -> Translation.msg("chart.anomaly.supply_convoy.intel.status.unloading").arg("destination", destination).text();
             case DELIVERED -> convoy.hasCache() ? Translation.msg("chart.anomaly.supply_convoy.intel.status.delivered").arg("destination", destination).text()
+                    : convoy.deliveredToExcavation() ? Translation.msg("chart.anomaly.supply_convoy.intel.status.excavation").arg("destination", destination).text()
                     : Translation.gameText(convoy.isCacheTaken() ? "chart.anomaly.supply_convoy.intel.status.raided" : "chart.anomaly.supply_convoy.intel.status.empty");
             case LOST -> Translation.text("chart.anomaly.supply_convoy.intel.status.lost");
         });

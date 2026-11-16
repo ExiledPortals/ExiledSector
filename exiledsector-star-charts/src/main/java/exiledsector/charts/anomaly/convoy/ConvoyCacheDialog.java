@@ -11,7 +11,9 @@ import exiledsector.charts.anomaly.ChartRaid;
 import exiledsector.ui.VanillaText;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ConvoyCacheDialog extends AnomalyDialog {
 
@@ -55,10 +57,12 @@ public class ConvoyCacheDialog extends AnomalyDialog {
             VanillaText.plainPara(text(), I18n.forGameText(() -> Translation.msg("chart.anomaly.supply_convoy.cache.empty").arg("planet", planetName).text()));
         } else {
             int tier = script.tier();
+            Set<String> feedstockIds = new HashSet<>();
+            caches.forEach(convoy -> feedstockIds.addAll(convoy.feedstock().keySet()));
             VanillaText.plainPara(text(), I18n.forGameText(() -> Translation.msg("chart.anomaly.supply_convoy.cache.description")
                     .arg("planet", planetName).text()));
             VanillaText.addPara(text(), I18n.forGameText(() -> Translation.msg("chart.anomaly.supply_convoy.intel.manifest")
-                    .arg("cargo", ConvoyCargo.manifest(tier)).styled()), Misc.getTextColor());
+                    .arg("cargo", ConvoyCargo.manifest(tier, feedstockIds)).styled()), Misc.getTextColor());
             options.addOption(Translation.gameText("chart.anomaly.supply_convoy.cache.option.raid"), RAID_OPTION);
         }
         options.addOption(Translation.gameText("chart.anomaly.supply_convoy.cache.option.continue"), CONTINUE);

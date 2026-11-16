@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,16 +67,64 @@ final class ConvoyFeedstock {
         return amount == null ? 0f : amount.at(tier);
     }
 
-    static Map<String, Float> roll(int tier, float quantityMult, Random random) {
-        Map<String, Float> rolled = new LinkedHashMap<>();
+    static Map<String, Float> roll(int tier, float quantityMult, FeedstockOdds odds, Random random) {
+        List<InfusedFeedstock> carried = new ArrayList<>();
+        float total = 0f;
         for (InfusedFeedstock feedstock : InfusedFeedstock.values()) {
             float shared = sharedAmount(feedstock.itemId(), tier);
             if (shared > 0f) {
-                float spread = 1f + (random.nextFloat() * 2f - 1f) * SPREAD;
-                rolled.put(feedstock.itemId(), shared * spread * Math.max(0f, quantityMult));
+                carried.add(feedstock);
+                total += shared;
             }
         }
+        Map<String, Float> rolled = new LinkedHashMap<>();
+        if (carried.isEmpty()) {
+            return rolled;
+        }
+        InfusedFeedstock kind = odds.mixed() ? null : pickKind(carried, odds, random);
+        float spread = 1f + (random.nextFloat() * 2f - 1f) * SPREAD;
+        float doubled = random.nextFloat() < odds.doubleChance() ? 2f : 1f;
+        float amount = total * spread * doubled * Math.max(0f, quantityMult);
+        if (kind != null) {
+            rolled.put(kind.itemId(), amount);
+            return rolled;
+        }
+        for (InfusedFeedstock feedstock : carried) {
+            rolled.put(feedstock.itemId(), amount / carried.size());
+        }
         return rolled;
+    }
+
+    static InfusedFeedstock pickKind(List<InfusedFeedstock> carried, FeedstockOdds odds, Random random) {
+        float totalWeight = 0f;
+        for (InfusedFeedstock feedstock : carried) {
+            totalWeight += odds.weight(feedstock);
+        }
+        if (totalWeight <= 0f) {
+            return carried.get(random.nextInt(carried.size()));
+        }
+        float roll = random.nextFloat() * totalWeight;
+        InfusedFeedstock lastLikely = null;
+        for (InfusedFeedstock feedstock : carried) {
+            float weight = odds.weight(feedstock);
+            if (weight <= 0f) {
+                continue;
+            }
+            lastLikely = feedstock;
+            roll -= weight;
+            if (roll < 0f) {
+                return feedstock;
+            }
+        }
+        return lastLikely;
+    }
+
+    static float total(Map<String, Float> feedstock) {
+        float total = 0f;
+        for (float amount : feedstock.values()) {
+            total += amount;
+        }
+        return total;
     }
 
     static void add(CargoAPI cargo, Map<String, Float> feedstock, float share, Random random) {

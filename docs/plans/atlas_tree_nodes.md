@@ -222,36 +222,36 @@ Notables:
 
 ### Supply Convoy (`supply_convoy`)
 
-Status: building on branch `atlas-nodes/supply-convoy` since 2026-11-16, chance node on `atlas-nodes/shared`.
+Status: built on branch `atlas-nodes/supply-convoy` 2026-11-16.
 
 Reward: infused feedstock in the cargo pods and the delivered cache.
 
-Change to the anomaly: a convoy carries one kind of infused feedstock instead of all three. The kind is rolled when the convoy is generated, Threat-, Shroud- and Phase-infused alike likely, and shown in its manifest and intel. It carries the total the three shared before (three times the shared amount, rolled up or down by as much as 15%), so a convoy is worth the same and the kind is the gamble. Not built yet: it goes in `ConvoyFeedstock.roll`, with `anomaly_rewards.md` and the Supply Convoy section of `docs/docs.md` updated to match.
+Change to the anomaly: a convoy carries one kind of infused feedstock instead of all three. The kind is rolled when the convoy is generated, Threat-, Shroud- and Phase-infused alike likely, and shown in its manifest and intel. It carries the total the three shared before (three times the shared amount, rolled up or down by as much as 15%), so a convoy is worth the same and the kind is the gamble. Built: `ConvoyFeedstock.roll` with `FeedstockOdds`, the kind's name in the manifest through `ConvoyCargo.feedstockKey` (`chart.anomaly.supply_convoy.cargo.feedstock.<kind>`), `anomaly_rewards.md` updated; `docs/docs.md` has no Supply Convoy section to change.
 
-Small nodes:
+Small nodes (types in `atlas_tree_types.json`, tested in `SupplyConvoyAtlasTypesTest`):
 
 - The chance node: built as `supply_convoy_chance` (`CHART_SUPPLY_CONVOY_CHANCE_PERCENT`, read by `OpeningAnomalies.rolled`).
-- Threat Feedstock Chance: "10% reduced chance for Supply Convoys in your Star Charts to carry Threat-infused Feedstock" (new). Lead-in to Threat Embargo.
-- Shroud Feedstock Chance: the same for Shroud-infused Feedstock. Lead-in to Shroud Embargo.
-- Phase Feedstock Chance: the same for Phase-infused Feedstock. Lead-in to Phase Embargo.
-- Feedstock Duplication: "Supply Convoys in your Star Charts have 25% chance to carry double feedstock" (new, rolled with the kind).
-- Additional Convoy Chance: "Your Star Charts that contain a Supply Convoy have +30% chance to contain an additional Supply Convoy" (new: `CHART_EXTRA_CONVOYS` rounds to whole convoys, so this needs a chance line, still capped by `ConvoyRules.MAX_CONVOYS`).
+- [x] Threat Feedstock Chance: "10% reduced chance for Supply Convoys in your Star Charts to carry Threat-infused Feedstock" (new). Lead-in to Threat Embargo. Built: `threat_feedstock_chance`, `CHART_CONVOY_THREAT_FEEDSTOCK_CHANCE_PERCENT`, read by `FeedstockOdds`.
+- [x] Shroud Feedstock Chance: the same for Shroud-infused Feedstock. Lead-in to Shroud Embargo. Built: `shroud_feedstock_chance`, `CHART_CONVOY_SHROUD_FEEDSTOCK_CHANCE_PERCENT`.
+- [x] Phase Feedstock Chance: the same for Phase-infused Feedstock. Lead-in to Phase Embargo. Built: `phase_feedstock_chance`, `CHART_CONVOY_PHASE_FEEDSTOCK_CHANCE_PERCENT`.
+- [x] Feedstock Duplication: "Supply Convoys in your Star Charts have 25% chance to carry double feedstock" (new, rolled with the kind). Built: `feedstock_duplication`, `CHART_CONVOY_DOUBLE_FEEDSTOCK_CHANCE_PERCENT`, rolled in `ConvoyFeedstock.roll`.
+- [x] Additional Convoy Chance: "Your Star Charts that contain a Supply Convoy have +30% chance to contain an additional Supply Convoy" (new: `CHART_EXTRA_CONVOYS` rounds to whole convoys, so this needs a chance line, still capped by `ConvoyRules.MAX_CONVOYS`). Built: `additional_convoy_chance`, `CHART_EXTRA_CONVOY_CHANCE_PERCENT`, rolled in `ConvoyRules.convoyCount` from `SupplyConvoy.generate`.
 
-The feedstock chance lines scale that kind's weight in the roll, so reducing one makes the other two likelier. A player who wants one kind reduces the other two; reducing all three equally changes nothing.
+The feedstock chance lines scale that kind's weight in the roll, so reducing one makes the other two likelier. A player who wants one kind reduces the other two; reducing all three equally changes nothing. Built: a kind's weight is 100% less its reduced chance, at least 0; with every weight at 0 the kinds are picked evenly.
 
-Notables:
+Notables (tested in `ConvoyAtlasNodesTest` and `ExcavationDeliveriesTest`):
 
-- Threat Embargo: "25% reduced chance for Supply Convoys in your Star Charts to carry Threat-infused Feedstock".
-- Shroud Embargo: the same for Shroud-infused Feedstock.
-- Phase Embargo: the same for Phase-infused Feedstock.
-- Torn Holds: "Supply Convoys defeated inside Spatial Breaches in your Star Charts drop 50% increased quantity of feedstock" (new, read while the player fleet is inside the open breach, as warped items are).
-- Supply Lines: "Supply Convoys you defeat in your Star Charts give a random Atlas officer carried feedstock equal to the convoy's" (new). The officer carries it like any carried item, so beating them drops it (`completed/atlas_officers.md`).
-- Bolt-Hole Drop: "Supply Convoys in your Star Charts deliver to an Excavation Site where one exists, adding their frigates and destroyers to its guardian fleet", "Raids on Excavation Sites a Supply Convoy delivered to in your Star Charts have 100% increased difficulty" and "30% increased quantity of feedstock and inhibitors found at Excavation Sites a Supply Convoy delivered to in your Star Charts" (new). The convoy picks a site's planet as its destination (`ConvoyRoute`), and the delivered cache joins that site's reward instead of a raid of its own: won with the guardian fleet at an open shaft, or with the raid at a collapsed one (`ExcavationLoot`). Only the frigates and destroyers still in the convoy when it unloads join the guardian fleet, since nothing bigger fits down the shaft. With no Excavation Site in the chart the convoy delivers as usual.
-- Open Season: "Supply Convoys in your Star Charts are hostile to you" and "Supply Convoys in your Star Charts drop 20% increased quantity of feedstock" (new). The convoy fights from the start, so there's no free approach to pick the strike.
+- [x] Threat Embargo: "25% reduced chance for Supply Convoys in your Star Charts to carry Threat-infused Feedstock". Built: `threat_embargo`, the small node's line at 25.
+- [x] Shroud Embargo: the same for Shroud-infused Feedstock. Built: `shroud_embargo`.
+- [x] Phase Embargo: the same for Phase-infused Feedstock. Built: `phase_embargo`.
+- [x] Torn Holds: "Supply Convoys defeated inside Spatial Breaches in your Star Charts drop 50% increased quantity of feedstock" (new, read while the player fleet is inside the open breach, as warped items are). Built: `torn_holds`, `CHART_CONVOY_BREACH_FEEDSTOCK_PERCENT`; `ConvoyScript.recordLosses` scales the pods' feedstock by `FeedstockBonus.breachShare` while `SpatialBreach.breachIn` holds the player fleet.
+- [x] Supply Lines: "Supply Convoys you defeat in your Star Charts give a random Atlas officer carried feedstock equal to the convoy's" (new). The officer carries it like any carried item, so beating them drops it (`completed/atlas_officers.md`). Built: `supply_lines`, `CHART_CONVOY_OFFICER_FEEDSTOCK`; `ConvoySupplyLines.handOver` gives a random officer in command the convoy's rolled feedstock as carried items when its freighters are destroyed.
+- [x] Bolt-Hole Drop: "Supply Convoys in your Star Charts deliver to an Excavation Site where one exists, adding their frigates and destroyers to its guardian fleet", "Raids on Excavation Sites a Supply Convoy delivered to in your Star Charts have 100% increased difficulty" and "30% increased quantity of feedstock and inhibitors found at Excavation Sites a Supply Convoy delivered to in your Star Charts" (new). The convoy picks a site's planet as its destination (`ConvoyRoute`), and the delivered cache joins that site's reward instead of a raid of its own: won with the guardian fleet at an open shaft, or with the raid at a collapsed one (`ExcavationLoot`). Only the frigates and destroyers still in the convoy when it unloads join the guardian fleet, since nothing bigger fits down the shaft. With no Excavation Site in the chart the convoy delivers as usual. Built: `bolt_hole_drop`, `CHART_CONVOY_EXCAVATION_DELIVERY`, `CHART_CONVOY_EXCAVATION_RAID_DIFFICULTY_PERCENT`, `CHART_CONVOY_EXCAVATION_LOOT_PERCENT`. `ConvoyBoltHole.reroute` sends waiting convoys to the standing sites' planets on the script's first frame (the sites are only known once every anomaly has generated), and `ConvoyBoltHole.deliver` hands the ships and cache to `excavation.ExcavationDeliveries`: an open shaft's guardian fleet takes the cache as extra salvage, a collapsed shaft keeps it on the planet for the raid (`ExcavationSiteObjective`), which `ExcavationSiteDialog` launches harder through `ChartRaid.Session.launch`. The site's inhibitors get the loot line in `ExcavationLoot`.
+- [x] Open Season: "Supply Convoys in your Star Charts are hostile to you" and "Supply Convoys in your Star Charts drop 20% increased quantity of feedstock" (new). The convoy fights from the start, so there's no free approach to pick the strike. Built: `open_season`, `CHART_HOSTILE_CONVOYS` (`ConvoyFleets.huntsFromTheStart`) and `CHART_CONVOY_FEEDSTOCK_PERCENT` (`FeedstockBonus.rollMult`, added to the crafting item quantity).
 
 Keystone:
 
-- Mixed Manifest: "Supply Convoys in your Star Charts carry an equal amount of all three kinds of infused feedstock" and "Supply Convoys in your Star Charts have 20% increased fleet size" (new). The total stays the same, split three ways; with it allocated the feedstock chance lines do nothing.
+- [x] Mixed Manifest: "Supply Convoys in your Star Charts carry an equal amount of all three kinds of infused feedstock" and "Supply Convoys in your Star Charts have 20% increased fleet size" (new). The total stays the same, split three ways; with it allocated the feedstock chance lines do nothing. Built: `mixed_manifest`, `CHART_CONVOY_MIXED_MANIFEST` (`FeedstockOdds.mixed`) and `CHART_CONVOY_FLEET_SIZE_PERCENT` (added to the escort size in `ConvoyRules.escortMult`).
 
 ### Anomalous Debris (`anomalous_debris`)
 

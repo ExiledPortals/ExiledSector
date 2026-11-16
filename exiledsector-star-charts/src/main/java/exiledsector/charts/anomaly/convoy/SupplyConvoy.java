@@ -28,10 +28,22 @@ public final class SupplyConvoy implements LayoutShaper, ContentPlacer, RunParti
     public static final String CARGO_KEY = ChartModifier.CHART_CONVOY_CARGO_PERCENT.anomalyTuningKey();
     public static final String ESCORT_KEY = ChartModifier.CHART_CONVOY_ESCORT_PERCENT.anomalyTuningKey();
     public static final String EXTRA_KEY = ChartModifier.CHART_EXTRA_CONVOYS.anomalyTuningKey();
+    public static final String EXTRA_CHANCE_KEY = ChartModifier.CHART_EXTRA_CONVOY_CHANCE_PERCENT.anomalyTuningKey();
+    public static final String DOUBLE_FEEDSTOCK_KEY = ChartModifier.CHART_CONVOY_DOUBLE_FEEDSTOCK_CHANCE_PERCENT.anomalyTuningKey();
+    public static final String BREACH_FEEDSTOCK_KEY = ChartModifier.CHART_CONVOY_BREACH_FEEDSTOCK_PERCENT.anomalyTuningKey();
+    public static final String OFFICER_FEEDSTOCK_KEY = ChartModifier.CHART_CONVOY_OFFICER_FEEDSTOCK.anomalyTuningKey();
+    public static final String EXCAVATION_DELIVERY_KEY = ChartModifier.CHART_CONVOY_EXCAVATION_DELIVERY.anomalyTuningKey();
+    public static final String EXCAVATION_RAID_DIFFICULTY_KEY = ChartModifier.CHART_CONVOY_EXCAVATION_RAID_DIFFICULTY_PERCENT.anomalyTuningKey();
+    public static final String EXCAVATION_LOOT_KEY = ChartModifier.CHART_CONVOY_EXCAVATION_LOOT_PERCENT.anomalyTuningKey();
+    public static final String HOSTILE_KEY = ChartModifier.CHART_HOSTILE_CONVOYS.anomalyTuningKey();
+    public static final String FEEDSTOCK_KEY = ChartModifier.CHART_CONVOY_FEEDSTOCK_PERCENT.anomalyTuningKey();
+    public static final String MIXED_MANIFEST_KEY = ChartModifier.CHART_CONVOY_MIXED_MANIFEST.anomalyTuningKey();
+    public static final String FLEET_SIZE_KEY = ChartModifier.CHART_CONVOY_FLEET_SIZE_PERCENT.anomalyTuningKey();
     public static final String CONVOY_MEMORY_KEY = "$exiledSector_chartConvoy";
     public static final SupplyConvoy INSTANCE = new SupplyConvoy();
     static final int MIN_PLANETS = 3;
     static final long ROUTE_SALT = 0x434f4e564f5952L;
+    static final long EXTRA_CHANCE_SALT = 0x434f4e564f5943L;
 
     private SupplyConvoy() {
     }
@@ -80,7 +92,8 @@ public final class SupplyConvoy implements LayoutShaper, ContentPlacer, RunParti
         String convoyFactionId = ChartAnomalyFleets.dress(ConvoyRules.FACTION_ID, factionDress(site.factionId()));
         ConvoyScript script = new ConvoyScript(site.runId(), site.tier(), site.system());
         Set<SectorEntityToken> takenDestinations = new HashSet<>(planets.stream().filter(site::isClaimed).toList());
-        int count = ConvoyRules.convoyCount(site.context().anomalyPercent(EXTRA_KEY));
+        int count = ConvoyRules.convoyCount(site.context().anomalyPercent(EXTRA_KEY), site.context().anomalyPercent(EXTRA_CHANCE_KEY),
+                site.random(EXTRA_CHANCE_SALT));
         for (int index = 0; index < count; index++) {
             Random random = site.random(ROUTE_SALT + index);
             ConvoyRoute.Plan plan = ConvoyRoute.plan(planets, stations, takenDestinations, random);

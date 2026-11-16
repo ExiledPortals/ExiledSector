@@ -170,7 +170,7 @@ public class ExcavationSiteDialog extends PlanetSiteDialog {
             closeOpenShaft();
             showMain();
         } else if (RAID_OPTION.equals(optionData) && site != null && site.hasCollapsedShaft() && !secondCavernOffered) {
-            raid.launch(dialog(), run().tier(), site.seed() * 31L, this::objectives);
+            raid.launch(dialog(), run().tier(), ExcavationDeliveries.raidDifficultyMult(planet()), site.seed() * 31L, this::objectives);
         } else if (CONTINUE.equals(optionData)) {
             continueAfter(ExcavationSites.INSTANCE, planet());
         } else {

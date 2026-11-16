@@ -27,10 +27,14 @@ public final class ExcavationLoot {
     }
 
     public static CargoAPI raidCargo(ChartRun run, float share, Random random) {
+        return raidCargo(run, share, 0f, random);
+    }
+
+    static CargoAPI raidCargo(ChartRun run, float share, float deliveryPercent, Random random) {
         CargoAPI cargo = Global.getFactory().createCargo(true);
         ChartGenContext context = ChartRunEffects.contextOf(run);
         ExcavationTuning tuning = ExcavationTuning.of(context);
-        float quantityPercent = ExcavationRules.inhibitorQuantityPercent(tuning, false, DenseNebula.dust(run));
+        float quantityPercent = ExcavationRules.inhibitorQuantityPercent(tuning, false, DenseNebula.dust(run)) + deliveryPercent;
         float expectedInhibitors = expectedInhibitors(ExcavationRules.raidInhibitors(tuning), context, quantityPercent, share);
         tagInhibitors(expectedInhibitors, bandShift(context, run.tier()), random).forEach((itemId, quantity) -> MaterialItems.add(cargo, itemId, quantity));
         return cargo;
@@ -74,7 +78,7 @@ public final class ExcavationLoot {
         }
         ExcavationTuning tuning = ExcavationTuning.of(context);
         ExcavationGuardians guardians = ExcavationFleets.guardiansOf(fleet);
-        float quantityPercent = ExcavationRules.inhibitorQuantityPercent(tuning, true, dustStacks);
+        float quantityPercent = ExcavationRules.inhibitorQuantityPercent(tuning, true, dustStacks) + ExcavationDeliveries.lootPercent(fleet);
         Map<String, Integer> found = new LinkedHashMap<>(tagInhibitors(
                 expectedInhibitors(ExcavationRules.guardianInhibitors(guardians, tuning), context, quantityPercent, share), bandShift(context, chartTier), random));
         if (guardians.corrupted() && share > 0f) {
