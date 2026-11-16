@@ -26,8 +26,8 @@ public enum ChartModifier implements ModifierEffect {
     CHART_FLEET_QUALITY_PERCENT(false, ChartGenContext::addFleetQualityPercent),
     CHART_SENSOR_RANGE_PERCENT(false, ChartGenContext::addSensorRangePercent) {
         @Override
-        public StyledText description(float magnitude) {
-            return Translation.msg(key()).arg("value", Math.abs(magnitude)).styled();
+        public StyledText description(String baseKey, float magnitude) {
+            return Translation.msg(baseKey).arg("value", Math.abs(magnitude)).styled();
         }
     },
     CHART_FRAGMENTATION_DAMAGE_TAKEN_PERCENT(ChartFleetStat.FRAGMENTATION_DAMAGE_TAKEN),
@@ -74,14 +74,14 @@ public enum ChartModifier implements ModifierEffect {
     CHART_FORCED_AUTOPILOT(ChartGenContext::forceAutopilot),
     CHART_ARC_STRIKE_EMP_FLAT(false, ChartGenContext::addArcStrikeEmp) {
         @Override
-        public StyledText description(float magnitude) {
-            return Translation.msg(key()).arg("value", magnitude).arg("seconds", ChartArcStrikePlugin.INTERVAL_SECONDS).styled();
+        public StyledText description(String baseKey, float magnitude) {
+            return Translation.msg(baseKey).arg("value", magnitude).arg("seconds", ChartArcStrikePlugin.INTERVAL_SECONDS).styled();
         }
     },
     CHART_WEAPON_MISFIRE_SECONDS(false, ChartGenContext::addWeaponMisfireSeconds) {
         @Override
-        public StyledText description(float magnitude) {
-            return Translation.msg(key()).arg("value", magnitude).arg("delay", ChartMisfirePlugin.GRACE_SECONDS).styled();
+        public StyledText description(String baseKey, float magnitude) {
+            return Translation.msg(baseKey).arg("value", magnitude).arg("delay", ChartMisfirePlugin.GRACE_SECONDS).styled();
         }
 
         @Override
@@ -91,8 +91,8 @@ public enum ChartModifier implements ModifierEffect {
     },
     CHART_DAMAGE_PER_SMOD_PERCENT(false, ChartGenContext::addDamagePercentPerSMod) {
         @Override
-        public StyledText description(float magnitude) {
-            return Translation.msg(key()).arg("value", Math.abs(magnitude)).styled();
+        public StyledText description(String baseKey, float magnitude) {
+            return Translation.msg(baseKey).arg("value", Math.abs(magnitude)).styled();
         }
     },
     CHART_ENEMY_LIONS_GAZE("lions_gaze_1"),
@@ -143,6 +143,12 @@ public enum ChartModifier implements ModifierEffect {
     CHART_BOSS_STAR_CHART_PERCENT(false, ChartGenContext::addBossStarChartPercent),
     CHART_REWARD_PERCENT(false, ChartGenContext::addRewardPercent),
     CHART_MODIFIER_EFFECT_PERCENT(false, (context, value) -> { }),
+    CHART_SPATIAL_BREACH_CHANCE_PERCENT(new OpeningChance("spatial_breach")),
+    CHART_RELAY_NETWORK_CHANCE_PERCENT(new OpeningChance("relay_network")),
+    CHART_SUPPLY_CONVOY_CHANCE_PERCENT(new OpeningChance("supply_convoy")),
+    CHART_ANOMALOUS_DEBRIS_CHANCE_PERCENT(new OpeningChance("anomalous_debris")),
+    CHART_EXCAVATION_SITES_CHANCE_PERCENT(new OpeningChance("excavation_sites")),
+    CHART_LISTENING_POST_CHANCE_PERCENT(new OpeningChance("listening_post")),
     CHART_BREACH_GROWTH_PERCENT("spatial_breach.growth", AnomalyLine.PERCENT),
     CHART_BREACH_CACHE_PERCENT("spatial_breach.caches", AnomalyLine.PERCENT),
     CHART_BREACH_CACHE_ITEM_PERCENT("spatial_breach.cacheItems", AnomalyLine.PERCENT),
@@ -175,6 +181,9 @@ public enum ChartModifier implements ModifierEffect {
         void raise(ChartGenContext context);
     }
 
+    private record OpeningChance(String anomalyId) {
+    }
+
     private enum AnomalyLine {
         PERCENT(false, null),
         PERCENT_REDUCED_WHEN_NEGATIVE(false, ".reduced"),
@@ -200,6 +209,7 @@ public enum ChartModifier implements ModifierEffect {
     private final Contribution contribution;
     private final boolean flag;
     private String grantedNodeId;
+    private String openingChanceAnomalyId;
 
     ChartModifier(boolean counted, Contribution contribution) {
         this(counted, null, null, null, null, contribution, false);
@@ -216,6 +226,11 @@ public enum ChartModifier implements ModifierEffect {
     ChartModifier(String grantedNodeId) {
         this(context -> context.grantEnemyNode(grantedNodeId));
         this.grantedNodeId = grantedNodeId;
+    }
+
+    ChartModifier(OpeningChance openingChance) {
+        this(false, (context, value) -> { });
+        this.openingChanceAnomalyId = openingChance.anomalyId();
     }
 
     ChartModifier(HullSize bannedCombatHullSize) {
@@ -258,6 +273,10 @@ public enum ChartModifier implements ModifierEffect {
         return anomalyTuningKey;
     }
 
+    public String openingChanceAnomalyId() {
+        return openingChanceAnomalyId;
+    }
+
     public boolean canRoll(SectorAPI sector) {
         if (grantedNodeId != null && !GrantedNodes.exists(grantedNodeId)) {
             return false;
@@ -271,10 +290,14 @@ public enum ChartModifier implements ModifierEffect {
 
     @Override
     public StyledText description(float magnitude) {
+        return description(key(), magnitude);
+    }
+
+    public StyledText description(String baseKey, float magnitude) {
         if (negativeKeySuffix != null) {
-            return Translation.msg(magnitude < 0f ? key() + negativeKeySuffix : key()).arg("value", Math.abs(magnitude)).styled();
+            return Translation.msg(messageKey(baseKey, magnitude)).arg("value", Math.abs(magnitude)).styled();
         }
-        Message message = Translation.msg(key());
+        Message message = Translation.msg(baseKey);
         if (flag) {
             return message.styled();
         }
@@ -283,6 +306,10 @@ public enum ChartModifier implements ModifierEffect {
             return message.count(count).arg("value", count).styled();
         }
         return message.arg("value", fleetStat != null ? Math.abs(magnitude) : magnitude).styled();
+    }
+
+    public String messageKey(String baseKey, float magnitude) {
+        return negativeKeySuffix != null && magnitude < 0f ? baseKey + negativeKeySuffix : baseKey;
     }
 
     @Override

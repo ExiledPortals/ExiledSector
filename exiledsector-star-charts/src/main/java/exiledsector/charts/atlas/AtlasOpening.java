@@ -83,9 +83,14 @@ public final class AtlasOpening {
     }
 
     public static AtlasRunNode openedRunNode(AtlasGenerator generator, AtlasState state, AtlasCell cell, long chartSeed, List<String> catalystAnomalyIds) {
+        return openedRunNode(generator, state, cell, chartSeed, catalystAnomalyIds, List.of());
+    }
+
+    public static AtlasRunNode openedRunNode(AtlasGenerator generator, AtlasState state, AtlasCell cell, long chartSeed, List<String> catalystAnomalyIds,
+                                             List<ChartGenContext.AppliedEffect> treeLines) {
         List<String> anomalyIds = new ArrayList<>(AtlasAnomalies.effective(generator, state, cell));
         anomalyIds.addAll(catalystAnomalyIds);
-        anomalyIds.addAll(OpeningAnomalies.rolled(generator, state, cell, chartSeed, anomalyIds));
+        anomalyIds.addAll(OpeningAnomalies.rolled(generator, state, cell, chartSeed, anomalyIds, treeLines));
         return withOfficer(state, cell, runNode(generator, state, cell, anomalyIds));
     }
 
