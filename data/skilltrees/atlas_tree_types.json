@@ -649,6 +649,186 @@
 			"tags": [
 				"encounter"
 			]
+		},
+		{
+			"id": "breach_cache_quantity",
+			"name": "Breach Cache Quantity",
+			"effects": [
+				{
+					"effect": "CHART_BREACH_CACHE_PERCENT",
+					"magnitude": 20
+				}
+			],
+			"tags": [
+				"loot"
+			]
+		},
+		{
+			"id": "breach_cache_items",
+			"name": "Breach Cache Items",
+			"effects": [
+				{
+					"effect": "CHART_BREACH_CACHE_ITEM_PERCENT",
+					"magnitude": 20
+				}
+			],
+			"tags": [
+				"loot"
+			]
+		},
+		{
+			"id": "warped_chance",
+			"name": "Warped Chance",
+			"effects": [
+				{
+					"effect": "CHART_BREACH_WARPED_CHANCE_PERCENT",
+					"magnitude": 50
+				}
+			],
+			"tags": [
+				"loot"
+			]
+		},
+		{
+			"id": "heavy_breach",
+			"name": "Heavy Breach",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_BREACH_HOLD_SECONDS",
+					"magnitude": 30
+				},
+				{
+					"effect": "CHART_BREACH_HELD_DRAIN_PERCENT",
+					"magnitude": 3
+				}
+			],
+			"tags": [
+				"loot"
+			]
+		},
+		{
+			"id": "rift_magnetism",
+			"name": "Rift Magnetism",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_BREACH_DRIFT",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_BREACH_CACHE_ITEM_PERCENT",
+					"magnitude": 40
+				}
+			],
+			"tags": [
+				"loot"
+			]
+		},
+		{
+			"id": "hyperspace_bleed",
+			"name": "Hyperspace Bleed",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_BREACH_LIGHTNING",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_BREACH_BATTLE_HULL_ITEM_PERCENT",
+					"magnitude": 50
+				}
+			],
+			"tags": [
+				"encounter",
+				"loot"
+			]
+		},
+		{
+			"id": "rally_point",
+			"name": "Rally Point",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_BREACH_FLEET_WARPED_CHANCE_PERCENT",
+					"magnitude": 50
+				}
+			],
+			"tags": [
+				"encounter",
+				"loot"
+			]
+		},
+		{
+			"id": "incursion",
+			"name": "Incursion",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_BREACH_INCURSION",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"encounter",
+				"loot"
+			]
+		},
+		{
+			"id": "event_horizon",
+			"name": "Event Horizon",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_BLACK_HOLE_EVENT_HORIZON",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_BLACK_HOLE_WARPED_DERELICTS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"loot"
+			]
+		},
+		{
+			"id": "rude_awakening",
+			"name": "Rude Awakening",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_BREACH_WAKES_ANOMALOUS_FLEETS",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_BREACH_ANOMALOUS_FLEETS_WARPED",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"encounter",
+				"loot"
+			]
+		},
+		{
+			"id": "rift_duel",
+			"name": "Rift Duel",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_BREACH_OFFICER_DUPLICATED_REWARDS",
+					"magnitude": 2
+				},
+				{
+					"effect": "CHART_BREACH_OFFICER_EXTRA_OFFERS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"encounter",
+				"loot"
+			]
 		}
 	]
 }

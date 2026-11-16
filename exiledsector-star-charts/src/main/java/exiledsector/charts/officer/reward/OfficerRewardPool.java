@@ -30,15 +30,15 @@ public final class OfficerRewardPool {
     }
 
     public static List<CarriedItem> offers(RewardContext context, Random random) {
-        return offers(candidates(context, random), OfficerRewardTable.shares(), OFFER_COUNT, random);
+        return offers(context, OFFER_COUNT, random);
     }
 
-    public static List<RewardGroup> offeredGroups(RewardContext context, Random random) {
-        return offers(context, random).stream().map(RewardGroup::of).toList();
+    public static List<CarriedItem> offers(RewardContext context, int count, Random random) {
+        return offers(candidates(context, random), OfficerRewardTable.shares(), count, random);
     }
 
     public static List<RewardGroup> offeredGroups(RewardContext context, int count, Random random) {
-        return offers(candidates(context, random), OfficerRewardTable.shares(), count, random).stream().map(RewardGroup::of).toList();
+        return offers(context, count, random).stream().map(RewardGroup::of).toList();
     }
 
     public static List<CarriedItem> drawn(List<RewardGroup> groups, RewardContext context, Random random) {

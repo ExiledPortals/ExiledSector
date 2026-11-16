@@ -9,6 +9,8 @@ import exiledsector.charts.run.ChartRun;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDrops;
+import exiledsector.loot.BattleEngagement;
+import exiledsector.loot.BattleLoot;
 
 import java.util.List;
 import java.util.Random;
@@ -41,6 +43,13 @@ public interface LootShaper extends ChartAnomaly {
 
     default float battleLootMult(ChartGenContext context) {
         return 1f;
+    }
+
+    default float battleHullItemPercent(ChartGenContext context) {
+        return 0f;
+    }
+
+    default void engagementRecorded(BattleLoot battle, BattleEngagement engagement) {
     }
 
     default ItemData shapeDrop(SectorAPI sector, ItemData item, LocationAPI location) {

@@ -4,6 +4,10 @@
 		"musicSuppression":0.5,
 		"loopOne":"terrain_hyperspace_abyss",
 	},
+	"exiledSector_chart_event_horizon":{
+		"plugin":"exiledsector.charts.anomaly.breach.EventHorizonTerrainPlugin",
+		"musicSuppression":0,
+	},
 	"exiledSector_chart_corona":{
 		"plugin":"exiledsector.charts.layout.ChartCoronaTerrainPlugin",
 		"musicSuppression":1,

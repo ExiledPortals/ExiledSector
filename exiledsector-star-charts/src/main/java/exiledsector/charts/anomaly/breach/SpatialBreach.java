@@ -20,6 +20,9 @@ import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
+import exiledsector.loot.BattleEngagement;
+import exiledsector.loot.BattleLoot;
+import exiledsector.PlayerFleet;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.List;
@@ -40,6 +43,7 @@ public final class SpatialBreach implements ContentPlacer, RunParticipant, LootS
     static final long CENTRE_SALT = 0x425243454e5452L;
     static final long CACHE_SALT = 0x42524341434845L;
     static final long SPAWN_SALT = 0x42525350574e53L;
+    static final long INCURSION_SALT = 0x4252494e435253L;
     static final float POI_OFFSET_SHARE = 0.5f;
     static final float ENTRY_MARGIN = 500f;
 
@@ -55,15 +59,17 @@ public final class SpatialBreach implements ContentPlacer, RunParticipant, LootS
     public void generate(AnomalyContentSite site) {
         StarSystemAPI system = site.system();
         ChartGenContext context = site.context();
-        BreachRules.Growth growth = BreachRules.growth(site.tier(), context.anomalyMult(GROWTH_KEY));
+        BreachRules.Growth growth = BreachRules.growth(site.tier(), context.anomalyMult(GROWTH_KEY), context.anomalyPercent(BreachLines.HOLD_KEY));
         Vector2f centre = pickCentre(site, growth.maxRadius(), site.random(CENTRE_SALT));
         if (centre == null) {
             throw new IllegalStateException("no clear spot for the breach");
         }
         int cacheCount = BreachRules.cacheCount(site.tier(), context.anomalyMult(CACHE_KEY));
         List<BreachRules.CacheSite> caches = BreachRules.cacheSites(centre, growth.maxRadius(), cacheCount, site::isClear, site.random(CACHE_SALT));
+        Vector2f incursionAt = BreachLines.on(context, BreachLines.INCURSION_KEY)
+                ? BreachRules.incursionSite(centre, growth.maxRadius(), site::isClear, site.random(INCURSION_SALT)) : null;
         BreachTerrainPlugin.Params params = new BreachTerrainPlugin.Params(site.runId(), site.tier(), growth, caches,
-                context.anomalyMult(CACHE_ITEM_KEY), site.random(SPAWN_SALT).nextLong());
+                context.anomalyMult(CACHE_ITEM_KEY), site.random(SPAWN_SALT).nextLong(), BreachTuning.from(context, incursionAt));
         site.addTerrain(TERRAIN_ID, params, centre);
         SectorEntityToken core = site.track(system.addCustomEntity(coreId(site.runId()), Translation.gameText("chart.anomaly.spatial_breach.core.name"), CORE_TYPE,
                 Factions.NEUTRAL));
@@ -94,8 +100,43 @@ public final class SpatialBreach implements ContentPlacer, RunParticipant, LootS
 
     @Override
     public ItemData shapeDrop(SectorAPI sector, ItemData item, LocationAPI location) {
+        if (!holdsPlayer(sector, location)) {
+            return item;
+        }
+        return BreachLoot.warped(item, BreachRules.warpedChance(BreachLines.contextIn(location).anomalyPercent(BreachLines.WARPED_KEY)));
+    }
+
+    @Override
+    public boolean holdsPlayerBattle() {
+        CampaignFleetAPI player = PlayerFleet.orNull();
+        BreachTerrainPlugin breach = player == null ? null : breachIn(player.getContainingLocation());
+        return breach != null && breach.holds(player);
+    }
+
+    @Override
+    public ItemData shapeBattleDrop(SectorAPI sector, ItemData item, LocationAPI location) {
+        if (!holdsPlayer(sector, location)) {
+            return item;
+        }
+        ChartGenContext context = BreachLines.contextIn(location);
+        float increasedPercent = context.anomalyPercent(BreachLines.WARPED_KEY) + context.anomalyPercent(BreachLines.FLEET_WARPED_KEY);
+        float anomalousShare = BreachLines.on(context, BreachLines.ANOMALOUS_WARPED_KEY) ? BreachBattles.anomalousShare() : 0f;
+        return BreachLoot.warped(item, BreachRules.battleWarpedChance(increasedPercent, anomalousShare));
+    }
+
+    @Override
+    public float battleHullItemPercent(ChartGenContext context) {
+        return context == null ? 0f : context.anomalyPercent(BreachLines.BATTLE_HULL_ITEM_KEY);
+    }
+
+    @Override
+    public void engagementRecorded(BattleLoot battle, BattleEngagement engagement) {
+        BreachBattles.record(battle, engagement);
+    }
+
+    private static boolean holdsPlayer(SectorAPI sector, LocationAPI location) {
         BreachTerrainPlugin breach = breachIn(location);
-        return breach != null && sector != null && breach.holds(sector.getPlayerFleet()) ? BreachLoot.warped(item) : item;
+        return breach != null && sector != null && breach.holds(sector.getPlayerFleet());
     }
 
     public static String coreId(String runId) {

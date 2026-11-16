@@ -86,6 +86,43 @@ class SpatialBreachTest {
     }
 
     @Test
+    void atlasTreeLinesAddAHoldTheirTuningAndAnIncursionPointInsideTheFullBreach() {
+        ChartGenContext context = ChartGenContext.of(List.of(
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_BREACH_HOLD_SECONDS, 30f),
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_BREACH_HELD_DRAIN_PERCENT, 3f),
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_BREACH_DRIFT, 1f),
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_BREACH_WAKES_ANOMALOUS_FLEETS, 1f),
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_BREACH_INCURSION, 1f)));
+
+        SpatialBreach.INSTANCE.generate(site(context, point -> true));
+
+        ArgumentCaptor<Object> params = ArgumentCaptor.forClass(Object.class);
+        verify(system).addTerrain(eq(SpatialBreach.TERRAIN_ID), params.capture());
+        ArgumentCaptor<Float> x = ArgumentCaptor.forClass(Float.class);
+        ArgumentCaptor<Float> y = ArgumentCaptor.forClass(Float.class);
+        verify(terrain).setFixedLocation(x.capture(), y.capture());
+        BreachTerrainPlugin.Params opened = (BreachTerrainPlugin.Params) params.getValue();
+        assertEquals(30f, opened.growth().holdSeconds());
+        assertEquals(3f, opened.tuning().heldDrainPercent());
+        assertTrue(opened.tuning().drifts());
+        assertTrue(opened.tuning().wakesAnomalousFleets());
+        float fromCentre = Vector2f.sub(opened.tuning().incursionAt(), new Vector2f(x.getValue(), y.getValue()), new Vector2f()).length();
+        assertTrue(fromCentre <= opened.growth().maxRadius() * BreachRules.MAX_INCURSION_DEPTH + 0.01f);
+        assertTrue(fromCentre >= opened.growth().maxRadius() * BreachRules.MIN_INCURSION_DEPTH - 0.01f);
+    }
+
+    @Test
+    void withoutAtlasTreeLinesTheBreachHasNoTuning() {
+        SpatialBreach.INSTANCE.generate(site(ChartGenContext.none(), point -> true));
+
+        ArgumentCaptor<Object> params = ArgumentCaptor.forClass(Object.class);
+        verify(system).addTerrain(eq(SpatialBreach.TERRAIN_ID), params.capture());
+        BreachTerrainPlugin.Params opened = (BreachTerrainPlugin.Params) params.getValue();
+        assertEquals(0f, opened.growth().holdSeconds());
+        assertEquals(new BreachTuning(0f, false, false, null), opened.tuning());
+    }
+
+    @Test
     void theFullyGrownBreachNeverReachesTheEntryWormhole() {
         Vector2f entry = new Vector2f(2600f, 0f);
         float maxRadius = BreachRules.growth(5, 1f).maxRadius();
