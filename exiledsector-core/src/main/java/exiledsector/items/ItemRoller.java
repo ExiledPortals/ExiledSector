@@ -23,6 +23,17 @@ public final class ItemRoller {
         return roll(definition, seed, rolledTier);
     }
 
+    public static List<RolledModifier> rollAtTierWithRarity(ItemDefinition definition, long seed, int tier, float rarity) {
+        int rolledTier = ItemTypes.rolledTier(definition, tier);
+        if (definition.unique() || definition.keepsOneModifier() || ItemTypes.tiered(definition.type())) {
+            return roll(definition, seed, rolledTier);
+        }
+        Random random = Seeds.random(seed);
+        AffixLayout.Limits limits = AffixLayout.limits(definition.type());
+        return rollAffixes(definition, limits.maxPerSide(), AffixLayout.rolledModifierCount(limits, random.nextFloat(), rarity), random,
+                rolledTier, TagWeights.NONE);
+    }
+
     public static List<RolledModifier> rollWithRarity(ItemDefinition definition, long seed, float rarity) {
         if (definition.unique() || definition.keepsOneModifier() || ItemTypes.tiered(definition.type())) {
             return roll(definition, seed);

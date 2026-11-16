@@ -23,17 +23,16 @@ public final class BattleLootRates {
     private static final Logger LOG = Logger.getLogger(BattleLootRates.class);
     private static final AtomicReference<Map<String, Rate>> RATES = new AtomicReference<>(Map.of());
 
-    public record Rate(String drop, float per100DeploymentPoints, LootCurve curve, float regularShare, float difficultyScaling) {
+    public record Rate(String drop, float per100DeploymentPoints, LootCurve curve, float difficultyScaling) {
 
         public Rate {
             per100DeploymentPoints = Math.max(0f, per100DeploymentPoints);
             curve = curve == null ? LootCurve.LINEAR : curve;
-            regularShare = Math.max(0f, regularShare);
             difficultyScaling = Math.max(0f, difficultyScaling);
         }
 
-        public Rate(String drop, float per100DeploymentPoints, LootCurve curve, float regularShare) {
-            this(drop, per100DeploymentPoints, curve, regularShare, 1f);
+        public Rate(String drop, float per100DeploymentPoints, LootCurve curve) {
+            this(drop, per100DeploymentPoints, curve, 1f);
         }
 
         public float difficulty(float difficultyMultiplier) {
@@ -63,7 +62,7 @@ public final class BattleLootRates {
                 csv.skipRow(drop, "unknown curve " + curveText + " (linear or diminishing)");
                 return;
             }
-            loaded.put(drop, new Rate(drop, csv.number(row, "per_100_dp", 0f, drop), curve, csv.number(row, "regular_share", 0f, drop),
+            loaded.put(drop, new Rate(drop, csv.number(row, "per_100_dp", 0f, drop), curve,
                     csv.number(row, "difficulty_scaling", 1f, drop)));
         });
         csv.report(LOG);

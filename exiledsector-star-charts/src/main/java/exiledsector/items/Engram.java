@@ -41,11 +41,6 @@ public record Engram(String itemId, String englishName, String modifierId, Set<I
     }
 
     @Override
-    public float dropWeight() {
-        return weight;
-    }
-
-    @Override
     public MaterialTier tier() {
         return MaterialTier.RARE;
     }
@@ -63,11 +58,6 @@ public record Engram(String itemId, String englishName, String modifierId, Set<I
     @Override
     public boolean appliesTo(ItemType type) {
         return type != null && itemTypes.contains(type);
-    }
-
-    @Override
-    public boolean dropsFromShipLoot() {
-        return false;
     }
 
     public Modifier modifier() {

@@ -27,6 +27,7 @@ import exiledsector.effects.PlayerEngagementPipeline;
 import exiledsector.effects.ResolvedTree;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.effects.TechMiningItemListener;
+import exiledsector.items.CraftingDrops;
 import exiledsector.items.HullUpgradesDomain;
 import exiledsector.items.InfusedCraftCosts;
 import exiledsector.items.ItemCraftingCosts;
@@ -103,6 +104,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         ItemNames.load();
         ItemDrops.load();
         BattleLootRates.load();
+        CraftingDrops.load();
         UniqueSourceCheck.logUnreachableSources();
         CompatChecks.logAtStartup(compatTargets());
         GraphicsLibCompat.loadLightData(LIGHT_DATA_PATH);

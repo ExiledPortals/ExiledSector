@@ -11,6 +11,7 @@ import java.util.Random;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -58,7 +59,7 @@ class TagInhibitorWeightsTest {
         assertEquals(7, CraftingInhibitor.tagInhibitors().size());
         for (CraftingInhibitor inhibitor : CraftingInhibitor.tagInhibitors()) {
             assertNull(inhibitor.inhibitedSlot());
-            assertTrue(!inhibitor.growable() && inhibitor.dropWeight() == 0f, inhibitor.name());
+            assertFalse(inhibitor.growable(), inhibitor.name());
         }
     }
 }

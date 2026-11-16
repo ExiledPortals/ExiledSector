@@ -53,7 +53,7 @@ class BattleItemDropsTest {
     }
 
     private static JSONObject rateRow(String drop, String rate, String curve) throws Exception {
-        return new JSONObject().put("drop", drop).put("per_100_dp", rate).put("curve", curve).put("regular_share", "1");
+        return new JSONObject().put("drop", drop).put("per_100_dp", rate).put("curve", curve);
     }
 
     private static BattleItemDrops.SourceLoss source(float deploymentPoints) {
@@ -61,7 +61,7 @@ class BattleItemDropsTest {
     }
 
     private static BattleItemDrops.SourceLoss source(float deploymentPoints, ItemChances chances) {
-        return new BattleItemDrops.SourceLoss(deploymentPoints, 1f, 1f, rules(chances, false, 1f));
+        return new BattleItemDrops.SourceLoss(deploymentPoints, 1f, 1f, rules(chances, true, 1f));
     }
 
     private static FleetLootRules rules(ItemChances chances, boolean fullRates, float deploymentPointsMult) {
@@ -116,9 +116,9 @@ class BattleItemDropsTest {
 
     @Test
     void aBiggerEnemyTreeTurnsMoreHullItemsTwoModifierWithoutDroppingMore() {
-        FleetLootRules regular = rules(ItemChances.BASE, false, 1f);
-        Map<BattleItemDrops.Drop, Integer> doubled = counts(plan(battle(new BattleItemDrops.SourceLoss(1000f, 1f, 2f, regular)), 1f));
-        Map<BattleItemDrops.Drop, Integer> capped = counts(plan(battle(new BattleItemDrops.SourceLoss(1000f, 1f, 3f, regular)), 1f));
+        FleetLootRules full = rules(ItemChances.BASE, true, 1f);
+        Map<BattleItemDrops.Drop, Integer> doubled = counts(plan(battle(new BattleItemDrops.SourceLoss(1000f, 1f, 2f, full)), 1f));
+        Map<BattleItemDrops.Drop, Integer> capped = counts(plan(battle(new BattleItemDrops.SourceLoss(1000f, 1f, 3f, full)), 1f));
 
         assertEquals(2, doubled.get(BattleItemDrops.Drop.MODS_1));
         assertEquals(4, doubled.get(BattleItemDrops.Drop.MODS_2));
@@ -128,13 +128,13 @@ class BattleItemDropsTest {
 
     @Test
     void difficultyStopsAtThreeTimesAndTheFleetsDeploymentPointMultiplierAndShareScaleItsDrops() throws Exception {
-        FleetLootRules regular = rules(ItemChances.BASE, false, 1f);
-        assertEquals(12, counts(plan(battle(new BattleItemDrops.SourceLoss(1000f, 6f, 1f, regular)), 1f)).get(BattleItemDrops.Drop.MODS_1));
-        assertEquals(8, counts(plan(battle(new BattleItemDrops.SourceLoss(1000f, 1f, 1f, rules(ItemChances.BASE, false, 2f))), 1f))
+        FleetLootRules full = rules(ItemChances.BASE, true, 1f);
+        assertEquals(12, counts(plan(battle(new BattleItemDrops.SourceLoss(1000f, 6f, 1f, full)), 1f)).get(BattleItemDrops.Drop.MODS_1));
+        assertEquals(8, counts(plan(battle(new BattleItemDrops.SourceLoss(1000f, 1f, 1f, rules(ItemChances.BASE, true, 2f))), 1f))
                 .get(BattleItemDrops.Drop.MODS_1));
 
-        BattleLootRates.register(new JSONArray().put(rateRow("hull_item", "0.6", "linear").put("regular_share", "0.5")));
-        assertEquals(2, counts(plan(battle(source(1000f)), 1f)).get(BattleItemDrops.Drop.MODS_1));
+        assertEquals(2, counts(plan(battle(new BattleItemDrops.SourceLoss(1000f, 1f, 1f, rules(ItemChances.BASE, false, 1f))), 1f))
+                .get(BattleItemDrops.Drop.MODS_1));
         assertEquals(4, counts(plan(battle(new BattleItemDrops.SourceLoss(1000f, 1f, 1f, rules(ItemChances.BASE, true, 1f))), 1f))
                 .get(BattleItemDrops.Drop.MODS_1));
     }
@@ -178,7 +178,7 @@ class BattleItemDropsTest {
 
     @Test
     void onlyTheHullItemsAnOverchargingFleetDropsAreOvercharged() {
-        BattleItemDrops.SourceLoss overcharging = new BattleItemDrops.SourceLoss(1000f, 1f, 1f, rules(ItemChances.BASE, false, 1f).overchargingHullItems());
+        BattleItemDrops.SourceLoss overcharging = new BattleItemDrops.SourceLoss(1000f, 1f, 1f, rules(ItemChances.BASE, true, 1f).overchargingHullItems());
 
         List<BattleItemDrops.Planned> planned = plan(battle(source(1000f), overcharging), 1f);
 

@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import exiledsector.ProjectFiles;
 import exiledsector.modifiers.ModifierSlot;
 import exiledsector.ui.inspect.CodexModifierTable;
 import org.json.JSONArray;
@@ -310,8 +311,14 @@ class EngramTest {
     }
 
     @Test
-    void theCraftingItemsNeverDropFromShipLootAndReserveTheirModifiers() {
-        assertFalse(craftingItem(REVENANT).dropsFromShipLoot());
+    void theCraftingItemsAreNotInTheCraftingDropTableAndReserveTheirModifiers() throws Exception {
+        CraftingDrops.register(ProjectFiles.csvRows(CraftingDrops.DATA_PATH));
+        try {
+            assertTrue(CraftingDrops.covers(Nanoswarm.AUGMENTATION.itemId()));
+            assertFalse(CraftingDrops.covers(craftingItem(REVENANT).itemId()));
+        } finally {
+            CraftingDrops.clear();
+        }
         assertFalse(craftingItem(REVENANT).growable());
         assertTrue(ModifierSources.isReserved(GRANTED_PREFIX));
         assertEquals(VIGIL, ModifierSources.owner(GRANTED_SUFFIX));

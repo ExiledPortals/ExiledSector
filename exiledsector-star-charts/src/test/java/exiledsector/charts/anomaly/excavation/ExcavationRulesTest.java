@@ -8,6 +8,8 @@ import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.anomaly.RaidDangerLevels;
+import exiledsector.ProjectFiles;
+import exiledsector.items.CraftingDrops;
 import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.ItemDrops;
 import org.junit.jupiter.api.BeforeAll;
@@ -67,7 +69,7 @@ class ExcavationRulesTest {
     }
 
     @Test
-    void shaftsDropTagInhibitorsScaledByTheirShareAndTheSiteQuantity() {
+    void shaftsDropTagInhibitorsScaledByTheirShareAndTheSiteQuantity() throws Exception {
         ChartGenContext context = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_EXCAVATION_LOOT_QUANTITY_PERCENT, 100f)));
         float perShaft = ExcavationRules.INHIBITORS_PER_RAID;
         assertEquals(2f, perShaft, 0.0001f);
@@ -75,19 +77,24 @@ class ExcavationRulesTest {
         assertEquals(perShaft, ExcavationLoot.expectedInhibitors(ExcavationRules.INHIBITORS_PER_RAID, context, 0.5f), 0.0001f);
         assertEquals(perShaft * 0.5f, ExcavationLoot.expectedInhibitors(ExcavationRules.INHIBITORS_PER_RAID, ChartGenContext.none(), 0.5f), 0.0001f);
         assertEquals(0f, ExcavationLoot.expectedInhibitors(ExcavationRules.INHIBITORS_PER_RAID, context, -1f), 0.0001f);
-        Map<String, Integer> found = ExcavationLoot.tagInhibitors(40f, new Random(1L));
-        Set<String> tagInhibitorIds = CraftingInhibitor.tagInhibitors().stream().map(CraftingInhibitor::itemId).collect(Collectors.toSet());
-        assertEquals(40, found.values().stream().mapToInt(Integer::intValue).sum());
-        assertTrue(tagInhibitorIds.containsAll(found.keySet()) && found.size() > 1, found.toString());
-        assertTrue(ExcavationLoot.tagInhibitors(0f, new Random(1L)).isEmpty());
-        assertNull(ExcavationLoot.fleetItems(mock(CampaignFleetAPI.class), context, 1f, new Random(1L)));
+        CraftingDrops.register(ProjectFiles.csvRows(CraftingDrops.DATA_PATH));
+        try {
+            Map<String, Integer> found = ExcavationLoot.tagInhibitors(40f, CraftingDrops.NO_BAND_SHIFT, new Random(1L));
+            Set<String> tagInhibitorIds = CraftingInhibitor.tagInhibitors().stream().map(CraftingInhibitor::itemId).collect(Collectors.toSet());
+            assertEquals(40, found.values().stream().mapToInt(Integer::intValue).sum());
+            assertTrue(tagInhibitorIds.containsAll(found.keySet()) && found.size() > 1, found.toString());
+            assertTrue(ExcavationLoot.tagInhibitors(0f, CraftingDrops.NO_BAND_SHIFT, new Random(1L)).isEmpty());
+            assertNull(ExcavationLoot.fleetItems(mock(CampaignFleetAPI.class), context, ChartTiers.LOWEST_TIER, 1f, new Random(1L)));
 
-        CampaignFleetAPI guardians = mock(CampaignFleetAPI.class);
-        when(guardians.hasTag(ExcavationFleets.FLEET_TAG)).thenReturn(true);
-        ItemDrops.SiteLoot loot = ExcavationLoot.fleetItems(guardians, context, 1f, new Random(1L));
-        assertTrue(loot.items().isEmpty() && loot.upgrades().isEmpty());
-        assertEquals(2, loot.materials().values().stream().mapToInt(Integer::intValue).sum());
-        assertNull(ExcavationLoot.fleetItems(guardians, context, 0f, new Random(1L)));
+            CampaignFleetAPI guardians = mock(CampaignFleetAPI.class);
+            when(guardians.hasTag(ExcavationFleets.FLEET_TAG)).thenReturn(true);
+            ItemDrops.SiteLoot loot = ExcavationLoot.fleetItems(guardians, context, ChartTiers.LOWEST_TIER, 1f, new Random(1L));
+            assertTrue(loot.items().isEmpty() && loot.upgrades().isEmpty());
+            assertEquals(2, loot.materials().values().stream().mapToInt(Integer::intValue).sum());
+            assertNull(ExcavationLoot.fleetItems(guardians, context, ChartTiers.LOWEST_TIER, 0f, new Random(1L)));
+        } finally {
+            CraftingDrops.clear();
+        }
     }
 
     @Test

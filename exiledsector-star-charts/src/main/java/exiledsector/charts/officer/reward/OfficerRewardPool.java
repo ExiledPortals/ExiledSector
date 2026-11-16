@@ -2,7 +2,7 @@ package exiledsector.charts.officer.reward;
 
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.BiomeModifiers;
-import exiledsector.charts.loot.ChartMaterials;
+import exiledsector.items.CraftingDrops;
 import exiledsector.data.WeightedPick;
 import exiledsector.items.Engram;
 import exiledsector.items.Engrams;
@@ -196,9 +196,9 @@ public final class OfficerRewardPool {
     private static List<RewardCandidate> craftingItems(RewardKind category, RewardContext context) {
         List<RewardCandidate> craftingItems = new ArrayList<>();
         for (String itemId : OfficerRewardTable.itemsIn(category)) {
-            float amount = ChartMaterials.amount(itemId, context.tier());
-            if (amount > 0f && context.craftingItemAllowed().test(itemId)) {
-                craftingItems.add(new RewardCandidate(CarriedItem.of(category, itemId), amount));
+            float shiftedWeight = CraftingDrops.shiftedWeight(itemId, context.craftingBandShift());
+            if (shiftedWeight > 0f && context.craftingItemAllowed().test(itemId)) {
+                craftingItems.add(new RewardCandidate(CarriedItem.of(category, itemId), shiftedWeight));
             }
         }
         return craftingItems;
@@ -208,7 +208,7 @@ public final class OfficerRewardPool {
         List<RewardCandidate> engrams = new ArrayList<>();
         for (Engram engram : Engrams.all()) {
             if (engram.dropsAt(context.tier()) && CarriedItem.isSafeId(engram.itemId()) && context.craftingItemAllowed().test(engram.itemId())) {
-                engrams.add(new RewardCandidate(CarriedItem.of(RewardKind.ENGRAM, engram.itemId()), engram.dropWeight()));
+                engrams.add(new RewardCandidate(CarriedItem.of(RewardKind.ENGRAM, engram.itemId()), engram.weight()));
             }
         }
         return engrams;

@@ -54,7 +54,7 @@ public enum SkillTreeSchematicDrops {
         for (SourceLoss source : sources) {
             FleetLootRules rules = source.rules();
             expected += rate.expected(source.deploymentPoints() * rules.deploymentPointsMult(), battleDeploymentPoints)
-                    * rate.difficulty(source.difficultyMultiplier()) * rules.share(rate) * rules.multipliers().itemChances().general();
+                    * rate.difficulty(source.difficultyMultiplier()) * rules.share() * rules.multipliers().itemChances().general();
         }
         return expected * dropMultiplier;
     }

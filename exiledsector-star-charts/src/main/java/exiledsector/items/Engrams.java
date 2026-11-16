@@ -114,7 +114,7 @@ public final class Engrams {
 
     public static Engram pick(int tier, Random random) {
         List<Engram> dropping = loaded.stream().filter(craftingItem -> craftingItem.dropsAt(tier)).toList();
-        return dropping.isEmpty() ? null : WeightedPick.pick(dropping, Engram::dropWeight, random);
+        return dropping.isEmpty() ? null : WeightedPick.pick(dropping, Engram::weight, random);
     }
 
     public static void localise() {

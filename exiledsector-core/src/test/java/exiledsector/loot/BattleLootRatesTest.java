@@ -15,28 +15,28 @@ class BattleLootRatesTest {
         BattleLootRates.clear();
     }
 
-    private static JSONObject row(String drop, String rate, String curve, String regularShare) throws Exception {
-        return new JSONObject().put("drop", drop).put("per_100_dp", rate).put("curve", curve).put("regular_share", regularShare);
+    private static JSONObject row(String drop, String rate, String curve) throws Exception {
+        return new JSONObject().put("drop", drop).put("per_100_dp", rate).put("curve", curve);
     }
 
     @Test
     void theTableReadsEachRowAndSkipsUnknownCurves() throws Exception {
         BattleLootRates.register(new JSONArray()
-                .put(row("swarm", "0.3", "linear", "0.5"))
-                .put(row("relic", "0.01", "Diminishing", "1"))
-                .put(row("odd", "1", "exponential", "1"))
-                .put(row("negative", "-2", "", "")));
+                .put(row("swarm", "0.3", "linear"))
+                .put(row("relic", "0.01", "Diminishing"))
+                .put(row("odd", "1", "exponential"))
+                .put(row("negative", "-2", "")));
 
-        assertEquals(new BattleLootRates.Rate("swarm", 0.3f, LootCurve.LINEAR, 0.5f), BattleLootRates.rate("swarm"));
+        assertEquals(new BattleLootRates.Rate("swarm", 0.3f, LootCurve.LINEAR), BattleLootRates.rate("swarm"));
         assertEquals(LootCurve.DIMINISHING, BattleLootRates.rate("relic").curve());
         assertNull(BattleLootRates.rate("odd"));
-        assertEquals(new BattleLootRates.Rate("negative", 0f, LootCurve.LINEAR, 0f), BattleLootRates.rate("negative"));
+        assertEquals(new BattleLootRates.Rate("negative", 0f, LootCurve.LINEAR), BattleLootRates.rate("negative"));
     }
 
     @Test
     void aRateExpectsItsShareOfTheLootDeploymentPointsCurvedByTheWholeBattle() {
-        BattleLootRates.Rate linear = new BattleLootRates.Rate("swarm", 0.3f, LootCurve.LINEAR, 1f);
-        BattleLootRates.Rate diminishing = new BattleLootRates.Rate("relic", 1f, LootCurve.DIMINISHING, 1f);
+        BattleLootRates.Rate linear = new BattleLootRates.Rate("swarm", 0.3f, LootCurve.LINEAR);
+        BattleLootRates.Rate diminishing = new BattleLootRates.Rate("relic", 1f, LootCurve.DIMINISHING);
 
         assertEquals(3f, linear.expected(1000f, 1000f), 1e-4f);
         assertEquals(30f, diminishing.expected(4000f, 4f * LootCurve.KNEE_DEPLOYMENT_POINTS), 1e-3f);
@@ -54,9 +54,9 @@ class BattleLootRatesTest {
     @Test
     void eachRowScalesBattleDifficultyByItsOwnDial() throws Exception {
         BattleLootRates.register(new JSONArray()
-                .put(row("swarm", "1", "linear", "1").put("difficulty_scaling", "0"))
-                .put(row("relic", "1", "linear", "1").put("difficulty_scaling", "0.5"))
-                .put(row("hull", "1", "linear", "1")));
+                .put(row("swarm", "1", "linear").put("difficulty_scaling", "0"))
+                .put(row("relic", "1", "linear").put("difficulty_scaling", "0.5"))
+                .put(row("hull", "1", "linear")));
 
         assertEquals(1f, BattleLootRates.rate("swarm").difficulty(3f), 1e-4f);
         assertEquals(1.5f, BattleLootRates.rate("relic").difficulty(2f), 1e-4f);

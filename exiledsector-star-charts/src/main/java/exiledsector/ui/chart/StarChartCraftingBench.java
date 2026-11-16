@@ -15,6 +15,7 @@ import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.wormhole.StarChartOpening;
 import exiledsector.charts.wormhole.WormholeOpenCheck;
 import exiledsector.i18n.StyledText;
+import exiledsector.items.CraftingDrops;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.Item;
@@ -94,7 +95,8 @@ public final class StarChartCraftingBench implements BenchModeSupport {
 
     @Override
     public List<CraftingMaterialFamily> craftingItems() {
-        return StarChartCrafting.craftingItems().stream().sorted(Comparator.comparingDouble(CraftingMaterialFamily::dropWeight).reversed()).toList();
+        Comparator<CraftingMaterialFamily> commonestFirst = Comparator.comparingDouble(craftingItem -> -CraftingDrops.weight(craftingItem.itemId()));
+        return StarChartCrafting.craftingItems().stream().sorted(commonestFirst).toList();
     }
 
     @Override

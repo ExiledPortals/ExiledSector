@@ -10,9 +10,9 @@ import java.util.Set;
 
 public enum StarChartCipher implements CraftingMaterialFamily {
 
-    REFORGE("exiledSector_reforge_cipher", "reforge", 30, 5f, MaterialTier.COMMON, new Color(80, 205, 225)),
-    ERASURE("exiledSector_erasure_cipher", "erasure", 40, 3f, MaterialTier.COMMON, new Color(175, 180, 200)),
-    CARTOGRAPHY("exiledSector_cartographer_cipher", "cartographer", 120, 2f, MaterialTier.RARE, new Color(245, 215, 110));
+    REFORGE("exiledSector_reforge_cipher", "reforge", 30, MaterialTier.COMMON, new Color(80, 205, 225)),
+    ERASURE("exiledSector_erasure_cipher", "erasure", 40, MaterialTier.COMMON, new Color(175, 180, 200)),
+    CARTOGRAPHY("exiledSector_cartographer_cipher", "cartographer", 120, MaterialTier.RARE, new Color(245, 215, 110));
 
     public static final List<Nanoswarm> KERNELS_ON_CHARTS = List.of(Nanoswarm.AUGMENTATION, Nanoswarm.CORRUPTION,
             Nanoswarm.ANNULMENT, Nanoswarm.TUNING);
@@ -21,15 +21,13 @@ public enum StarChartCipher implements CraftingMaterialFamily {
     private final String itemId;
     private final String key;
     private final int defaultFeedstockCost;
-    private final float dropWeight;
     private final MaterialTier tier;
     private final Color color;
 
-    StarChartCipher(String itemId, String key, int defaultFeedstockCost, float dropWeight, MaterialTier tier, Color color) {
+    StarChartCipher(String itemId, String key, int defaultFeedstockCost, MaterialTier tier, Color color) {
         this.itemId = itemId;
         this.key = key;
         this.defaultFeedstockCost = defaultFeedstockCost;
-        this.dropWeight = dropWeight;
         this.tier = tier;
         this.color = color;
     }
@@ -62,11 +60,6 @@ public enum StarChartCipher implements CraftingMaterialFamily {
     @Override
     public String key() {
         return key;
-    }
-
-    @Override
-    public float dropWeight() {
-        return dropWeight;
     }
 
     @Override

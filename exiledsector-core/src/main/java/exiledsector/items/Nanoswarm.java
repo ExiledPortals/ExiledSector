@@ -7,7 +7,7 @@ import java.util.Random;
 
 public enum Nanoswarm implements CraftingMaterialFamily {
 
-    AUGMENTATION("exiledSector_augmentation_nanoswarm", 10, 6, MaterialTier.COMMON, new Color(90, 170, 255)) {
+    AUGMENTATION("exiledSector_augmentation_nanoswarm", 10, MaterialTier.COMMON, new Color(90, 170, 255)) {
         @Override
         public boolean canUse(Item item, CraftingContext context) {
             return ItemCrafting.canAugment(item);
@@ -23,7 +23,7 @@ public enum Nanoswarm implements CraftingMaterialFamily {
             return true;
         }
     },
-    FUNDAMENTAL("exiledSector_fundamental_nanoswarm", 15, 4, MaterialTier.COMMON, new Color(185, 125, 255)) {
+    FUNDAMENTAL("exiledSector_fundamental_nanoswarm", 15, MaterialTier.COMMON, new Color(185, 125, 255)) {
         @Override
         public boolean canUse(Item item, CraftingContext context) {
             return ItemCrafting.canRerollFundamentals(item);
@@ -34,7 +34,7 @@ public enum Nanoswarm implements CraftingMaterialFamily {
             return ItemCrafting.rerollFundamentals(item, random);
         }
     },
-    RESHAPING("exiledSector_reshaping_nanoswarm", 20, 3, MaterialTier.COMMON, new Color(255, 195, 80)) {
+    RESHAPING("exiledSector_reshaping_nanoswarm", 20, MaterialTier.COMMON, new Color(255, 195, 80)) {
         @Override
         public boolean canUse(Item item, CraftingContext context) {
             return ItemCrafting.canReshape(item, item.definition(), context.inhibitedSlots());
@@ -60,7 +60,7 @@ public enum Nanoswarm implements CraftingMaterialFamily {
             return ItemCrafting.canReshapeAway(item, item.definition(), rolled);
         }
     },
-    CORRUPTION("exiledSector_corrupted_nanoswarm", 50, 1.5f, MaterialTier.RARE, Item.CORRUPTED_FRAME_COLOR) {
+    CORRUPTION("exiledSector_corrupted_nanoswarm", 50, MaterialTier.RARE, Item.CORRUPTED_FRAME_COLOR) {
         @Override
         public boolean canUse(Item item, CraftingContext context) {
             return true;
@@ -76,7 +76,7 @@ public enum Nanoswarm implements CraftingMaterialFamily {
             return true;
         }
     },
-    METAMORPH("exiledSector_metamorph_nanoswarm", 150, 0.4f, MaterialTier.RARE, new Color(255, 140, 50)) {
+    METAMORPH("exiledSector_metamorph_nanoswarm", 150, MaterialTier.RARE, new Color(255, 140, 50)) {
         @Override
         public boolean canUse(Item item, CraftingContext context) {
             return !ItemCrafting.inhibitorBlocksMetamorph(item, context.inhibitedSlots())
@@ -93,7 +93,7 @@ public enum Nanoswarm implements CraftingMaterialFamily {
             return true;
         }
     },
-    ANNULMENT("exiledSector_annulment_nanoswarm", 200, 0.3f, MaterialTier.UNIQUE, new Color(80, 230, 200)) {
+    ANNULMENT("exiledSector_annulment_nanoswarm", 200, MaterialTier.UNIQUE, new Color(80, 230, 200)) {
         @Override
         public boolean appliesTo(ItemType type) {
             return type == ItemType.HULL_ITEM;
@@ -119,7 +119,7 @@ public enum Nanoswarm implements CraftingMaterialFamily {
             return true;
         }
     },
-    TUNING("exiledSector_tuning_nanoswarm", 200, 0.3f, MaterialTier.UNIQUE, new Color(110, 235, 140)) {
+    TUNING("exiledSector_tuning_nanoswarm", 200, MaterialTier.UNIQUE, new Color(110, 235, 140)) {
         @Override
         public boolean canUse(Item item, CraftingContext context) {
             return ItemCrafting.canTune(item, item.definition(), context.inhibitedSlots());
@@ -140,7 +140,7 @@ public enum Nanoswarm implements CraftingMaterialFamily {
             return ItemCrafting.canVary(item, rolled);
         }
     },
-    IMMUTABLE("exiledSector_immutable_nanoswarm", 300, 0.2f, MaterialTier.UNIQUE, new Color(230, 80, 175)) {
+    IMMUTABLE("exiledSector_immutable_nanoswarm", 300, MaterialTier.UNIQUE, new Color(230, 80, 175)) {
         @Override
         public boolean canUse(Item item, CraftingContext context) {
             return ItemCrafting.canMakeImmutable(item, context.inhibitedSlots());
@@ -161,7 +161,7 @@ public enum Nanoswarm implements CraftingMaterialFamily {
             return true;
         }
     },
-    REPLICATION("exiledSector_replicator_nanoseed", 0, 0.035f, MaterialTier.MYTHIC, new Color(225, 240, 255)) {
+    REPLICATION("exiledSector_replicator_nanoseed", 0, MaterialTier.MYTHIC, new Color(225, 240, 255)) {
         @Override
         public boolean canUse(Item item, CraftingContext context) {
             return true;
@@ -180,14 +180,12 @@ public enum Nanoswarm implements CraftingMaterialFamily {
 
     private final String itemId;
     private final int defaultFeedstockCost;
-    private final float dropWeight;
     private final MaterialTier tier;
     private final Color color;
 
-    Nanoswarm(String itemId, int defaultFeedstockCost, float dropWeight, MaterialTier tier, Color color) {
+    Nanoswarm(String itemId, int defaultFeedstockCost, MaterialTier tier, Color color) {
         this.itemId = itemId;
         this.defaultFeedstockCost = defaultFeedstockCost;
-        this.dropWeight = dropWeight;
         this.tier = tier;
         this.color = color;
     }
@@ -209,11 +207,6 @@ public enum Nanoswarm implements CraftingMaterialFamily {
     @Override
     public String key() {
         return name().toLowerCase(Locale.ROOT);
-    }
-
-    @Override
-    public float dropWeight() {
-        return dropWeight;
     }
 
     @Override

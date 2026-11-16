@@ -206,7 +206,7 @@ public final class BattleItemDrops {
             default -> 1f;
         };
         return rate.expected(source.deploymentPoints() * rules.deploymentPointsMult(), battleDeploymentPoints)
-                * rate.difficulty(source.difficultyMultiplier()) * rules.share(rate) * modifierShare * dropMultiplier * rarityMult;
+                * rate.difficulty(source.difficultyMultiplier()) * rules.share() * modifierShare * dropMultiplier * rarityMult;
     }
 
     private static void addPlanned(List<Planned> planned, Drop drop, ItemKind kind, boolean overcharged, int count) {

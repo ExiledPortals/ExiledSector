@@ -10,11 +10,13 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.MockSector;
+import exiledsector.ProjectFiles;
 import exiledsector.charts.loot.StarChartLootSource;
 import exiledsector.charts.loot.DropType;
 import exiledsector.loot.LootMultipliers;
 import exiledsector.charts.ChartIds;
 import exiledsector.items.AnchorJanusGate;
+import exiledsector.items.CraftingDrops;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemData;
@@ -70,12 +72,14 @@ class ItemSalvageListenerTest {
                 .put("rarity", "10")));
         ItemDrops.register(new JSONArray()
                 .put(new JSONObject().put("site", "station_research").put("chances", "1").put("uniqueChance", "0")));
+        CraftingDrops.register(ProjectFiles.csvRows(CraftingDrops.DATA_PATH));
     }
 
     @AfterEach
     void tearDown() {
         ItemDrops.clear();
         ItemDefinitions.clear();
+        CraftingDrops.clear();
         miscMock.close();
     }
 
@@ -145,7 +149,7 @@ class ItemSalvageListenerTest {
     void aSalvagedSystemsiteCanAlsoHoldAStarChartAndAChartCraftingItem() throws Exception {
         StarChartFixtures.registerShipped();
         StarChartCipher.registerAll();
-        ChartDrops.register(new JSONArray().put(new JSONObject().put("source", "system_salvage").put("chance", "1").put("crafting_item_chance", "10")));
+        ChartDrops.register(new JSONArray().put(new JSONObject().put("source", "system_salvage").put("chance", "1").put("crafting_item_chance", "200")));
         try (MockSector mockSector = new MockSector()) {
             ChartRun run = new ChartRun("salvageRun", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
             run.recordContent(new ChartContent(6, "hegemony", "boss", 4, 6));

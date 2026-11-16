@@ -6,7 +6,7 @@ import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.BiomeModifiers;
-import exiledsector.charts.loot.ChartMaterials;
+import exiledsector.items.CraftingDrops;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemKind;
@@ -56,7 +56,7 @@ class OfficerRewardPoolTest {
         ModifierSources.clear();
         ItemDefinitions.clear();
         ItemModifiers.clear();
-        ChartMaterials.clear();
+        CraftingDrops.clear();
         StarChartFixtures.unregisterCraftingItems();
     }
 
@@ -154,7 +154,7 @@ class OfficerRewardPoolTest {
     void theShippedTablesOfferRarerCraftingTiersLessOften() throws Exception {
         OfficerRewardTable.register(ChartTables.csvRows(OfficerRewardTable.PATH));
         StarChartCipher.registerAll();
-        ChartMaterials.register(ChartTables.csvRows(ChartMaterials.PATH));
+        CraftingDrops.register(ChartTables.csvRows(CraftingDrops.DATA_PATH));
         for (int tier : new int[]{1, 8, 15}) {
             RewardContext context = new RewardContext(tier, null, null, biomeId -> false, definition -> true, itemId -> true);
 
@@ -169,6 +169,23 @@ class OfficerRewardPoolTest {
             assertEquals(8f, shares.get(RewardGroup.FEEDSTOCK), 0.001f);
             assertEquals(7f, shares.get(RewardGroup.INHIBITOR), 0.001f);
         }
+    }
+
+    @Test
+    void aHigherBandShiftOffersRareAndBetterCraftingItemsMoreOften() throws Exception {
+        OfficerRewardTable.register(ChartTables.csvRows(OfficerRewardTable.PATH));
+        StarChartCipher.registerAll();
+        CraftingDrops.register(ChartTables.csvRows(CraftingDrops.DATA_PATH));
+        RewardContext unshifted = new RewardContext(1, null, null, biomeId -> false, definition -> true, itemId -> true, 1f);
+        RewardContext shifted = new RewardContext(1, null, null, biomeId -> false, definition -> true, itemId -> true, 3f);
+
+        Map<RewardGroup, Float> unshiftedShares = OfficerRewardPool.groupShares(OfficerRewardPool.grouped(OfficerRewardPool.candidates(unshifted,
+                new Random(1L))), OfficerRewardTable.shares());
+        Map<RewardGroup, Float> shiftedShares = OfficerRewardPool.groupShares(OfficerRewardPool.grouped(OfficerRewardPool.candidates(shifted,
+                new Random(1L))), OfficerRewardTable.shares());
+
+        assertTrue(shiftedShares.get(RewardGroup.LOW_CRAFTING) < unshiftedShares.get(RewardGroup.LOW_CRAFTING), shiftedShares.toString());
+        assertTrue(shiftedShares.get(RewardGroup.HIGH_CRAFTING) > unshiftedShares.get(RewardGroup.HIGH_CRAFTING), shiftedShares.toString());
     }
 
     @Test

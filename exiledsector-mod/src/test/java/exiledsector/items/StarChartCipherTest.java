@@ -1,6 +1,6 @@
 package exiledsector.items;
 
-import exiledsector.charts.loot.ChartDrops;
+import exiledsector.ProjectFiles;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierCategory;
@@ -11,11 +11,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -104,12 +102,10 @@ class StarChartCipherTest {
                 CraftingMaterialFamilies.forType(ItemType.SUBROUTINE));
         assertEquals(Arrays.asList(Nanoswarm.values()), CraftingMaterialFamilies.forType(ItemType.HULL_ITEM));
         for (StarChartCipher craftingItem : StarChartCipher.values()) {
-            assertFalse(craftingItem.dropsFromShipLoot(), craftingItem.name());
             assertSame(craftingItem, CraftingMaterialFamilies.byItemId(craftingItem.itemId()));
             assertTrue(MaterialItems.isMaterial(craftingItem.itemId()));
         }
         for (Nanoswarm kernel : Nanoswarm.values()) {
-            assertTrue(kernel.dropsFromShipLoot(), kernel.name());
             assertFalse(kernel.appliesTo(ItemType.STAR_CHART), kernel.name());
         }
 
@@ -419,26 +415,19 @@ class StarChartCipherTest {
     }
 
     @Test
-    void shipKernelDropsLeaveOutChartCraftingItems() {
-        List<ItemDrops.MaterialDrop> builtInDrops = new ArrayList<>();
-        for (Nanoswarm craftingItem : Nanoswarm.values()) {
-            builtInDrops.add(new ItemDrops.MaterialDrop(craftingItem.itemId(), craftingItem.dropWeight()));
+    void theShippedCraftingDropTableGivesCiphersOnlyInsideChartsAndNanoswarmsEverywhere() throws Exception {
+        CraftingDrops.register(ProjectFiles.csvRows(CraftingDrops.DATA_PATH));
+        try {
+            for (StarChartCipher craftingItem : StarChartCipher.values()) {
+                assertTrue(CraftingDrops.weight(craftingItem.itemId()) > 0f, craftingItem.name());
+                assertTrue(CraftingDrops.chartOnly(craftingItem.itemId()), craftingItem.name());
+            }
+            for (Nanoswarm kernel : Nanoswarm.values()) {
+                assertTrue(CraftingDrops.weight(kernel.itemId()) > 0f, kernel.name());
+                assertFalse(CraftingDrops.chartOnly(kernel.itemId()), kernel.name());
+            }
+        } finally {
+            CraftingDrops.clear();
         }
-        for (CraftingInhibitor inhibitor : CraftingInhibitor.values()) {
-            builtInDrops.add(new ItemDrops.MaterialDrop(inhibitor.itemId(), inhibitor.dropWeight()));
-        }
-        assertEquals(builtInDrops, ItemDrops.materialDrops());
-    }
-
-    @Test
-    void chartCraftingItemDropsListOnlyTheChartOnlyCraftingItemsByWeight() {
-        Set<ItemDrops.MaterialDrop> expected = new HashSet<>();
-        for (StarChartCipher craftingItem : StarChartCipher.values()) {
-            expected.add(new ItemDrops.MaterialDrop(craftingItem.itemId(), craftingItem.dropWeight()));
-        }
-        assertEquals(expected, Set.copyOf(ChartDrops.chartCraftingItemDrops()));
-
-        StarChartFixtures.unregisterCraftingItems();
-        assertTrue(ChartDrops.chartCraftingItemDrops().isEmpty());
     }
 }

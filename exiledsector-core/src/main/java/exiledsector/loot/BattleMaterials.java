@@ -1,17 +1,13 @@
 package exiledsector.loot;
 
-import exiledsector.data.RandomRounding;
-import exiledsector.items.CraftingInhibitor;
-import exiledsector.items.CraftingMaterialFamilies;
+import exiledsector.items.CraftingDrops;
 import exiledsector.items.ItemDrops;
 import exiledsector.skills.skilleffect.logistics.FoundItemQuantity;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.function.Predicate;
 
 public final class BattleMaterials {
 
@@ -40,58 +36,15 @@ public final class BattleMaterials {
     }
 
     public Map<String, Integer> rollMaterials(Random random) {
-        float battleDeploymentPoints = 0f;
+        float expectedCount = 0f;
         for (Loss loss : losses) {
-            battleDeploymentPoints += loss.deploymentPoints();
-        }
-        Map<String, Integer> materials = new LinkedHashMap<>();
-        for (BattleLootRates.Rate rate : materialRates()) {
-            float expected = 0f;
-            for (Loss loss : losses) {
-                if (!loss.rules().sourceRollsMaterials()) {
-                    expected += expected(rate, loss.deploymentPoints(), battleDeploymentPoints, loss.difficultyMultiplier(), loss.rules());
-                }
-            }
-            addCount(materials, rate, expected, random);
-        }
-        return materials;
-    }
-
-    public static Map<String, Integer> roll(float lootDeploymentPoints, float battleDeploymentPoints, float difficultyMultiplier,
-                                            FleetLootRules rules, Random random) {
-        return roll(lootDeploymentPoints, battleDeploymentPoints, difficultyMultiplier, rules, drop -> true, random);
-    }
-
-    public static Map<String, Integer> roll(float lootDeploymentPoints, float battleDeploymentPoints, float difficultyMultiplier,
-                                            FleetLootRules rules, Predicate<String> rolledDrops, Random random) {
-        Map<String, Integer> materials = new LinkedHashMap<>();
-        for (BattleLootRates.Rate rate : materialRates()) {
-            if (rolledDrops.test(rate.drop())) {
-                addCount(materials, rate, expected(rate, lootDeploymentPoints, battleDeploymentPoints, difficultyMultiplier, rules), random);
+            FleetLootRules rules = loss.rules();
+            if (!rules.sourceRollsMaterials()) {
+                expectedCount += CraftingDrops.expectedCount(loss.deploymentPoints() * rules.deploymentPointsMult()) * rules.share()
+                        * rules.multipliers().craftingItemMult();
             }
         }
-        return materials;
-    }
-
-    private static float expected(BattleLootRates.Rate rate, float deploymentPoints, float battleDeploymentPoints, float difficultyMultiplier,
-                                  FleetLootRules rules) {
-        return rate.expected(deploymentPoints * rules.deploymentPointsMult(), battleDeploymentPoints)
-                * rate.difficulty(difficultyMultiplier) * rules.share(rate) * rules.multipliers().craftingItemMult()
-                * FoundItemQuantity.craftingItemMult();
-    }
-
-    private static void addCount(Map<String, Integer> materials, BattleLootRates.Rate rate, float expected, Random random) {
-        int count = RandomRounding.round(expected, random);
-        if (count > 0) {
-            materials.merge(rate.drop(), count, Integer::sum);
-        }
-    }
-
-    private static List<BattleLootRates.Rate> materialRates() {
-        return BattleLootRates.all().stream().filter(rate -> isMaterial(rate.drop())).toList();
-    }
-
-    public static boolean isMaterial(String itemId) {
-        return CraftingMaterialFamilies.byItemId(itemId) != null || CraftingInhibitor.byItemId(itemId) != null;
+        return CraftingDrops.roll(expectedCount * FoundItemQuantity.craftingItemMult(), CraftingDrops.OUTSIDE_CHARTS, CraftingDrops.NO_BAND_SHIFT,
+                random);
     }
 }
