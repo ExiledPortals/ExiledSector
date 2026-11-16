@@ -240,6 +240,8 @@ public final class ChartFleetLoot {
         }
         for (LootShaper anomaly : ChartAnomalies.inRun(run, LootShaper.class)) {
             fleetLoot = fleetLoot.plus(anomaly.extraFleetLoot(fleet, run, context, random));
+            fleetLoot = fleetLoot.plus(anomaly.battleItems(sector, fleet, context, lootDeploymentPoints, battle.deploymentPoints(), battle.difficultyMultiplier(),
+                    random));
         }
         if (overchargesHullItems(fleet, run)) {
             fleetLoot = overcharged(fleetLoot, random);

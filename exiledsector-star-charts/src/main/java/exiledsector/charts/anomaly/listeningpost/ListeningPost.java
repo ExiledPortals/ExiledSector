@@ -1,7 +1,11 @@
 package exiledsector.charts.anomaly.listeningpost;
 
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
+import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
+import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.items.ItemDrops;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.effect.ChartModifier;
@@ -29,6 +33,7 @@ public final class ListeningPost implements AtlasRule, ContentPlacer, RunPartici
     public static final ListeningPost INSTANCE = new ListeningPost();
     static final long PLACEMENT_SALT = 0x4c495354454e50L;
     static final long PICKET_SALT = 0x5049434b455453L;
+    static final long ARMED_POST_SALT = 0x41524d4544504fL;
 
     private ListeningPost() {
     }
@@ -41,6 +46,15 @@ public final class ListeningPost implements AtlasRule, ContentPlacer, RunPartici
     @Override
     public List<String> lootScopes() {
         return List.of(ListeningPostRules.LOOT_SCOPE);
+    }
+
+    @Override
+    public ItemDrops.SiteLoot battleItems(SectorAPI sector, CampaignFleetAPI fleet, ChartGenContext context, float lootDeploymentPoints,
+                                          float battleDeploymentPoints, float difficultyMultiplier, Random random) {
+        if (!PicketPrototypes.dropsFrom(fleet, context)) {
+            return ItemDrops.SiteLoot.NONE;
+        }
+        return PicketPrototypes.roll(sector, context, lootDeploymentPoints, battleDeploymentPoints, difficultyMultiplier, random);
     }
 
     @Override
@@ -75,6 +89,9 @@ public final class ListeningPost implements AtlasRule, ContentPlacer, RunPartici
         }
         if (script.stations().isEmpty()) {
             throw new IllegalStateException("no picket could be formed");
+        }
+        if (DepotTuning.of(site.context()).armedPost()) {
+            script.arm(ArmedPost.spawn(site, post, script, site.random(ARMED_POST_SALT)));
         }
         PostState.record(site.state(ANOMALY_ID), PostState.fresh(random.nextLong()));
         return site.addScript(script);

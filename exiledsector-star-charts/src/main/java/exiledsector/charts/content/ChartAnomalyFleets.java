@@ -86,6 +86,10 @@ public final class ChartAnomalyFleets {
         return station == null || station.isEmpty() ? null : station;
     }
 
+    public static String stationVariant(String factionId, int tier, Random random) {
+        return ChartBosses.pickStation(factionId, tier, random);
+    }
+
     public static CampaignFleetAPI emptyFleet(String factionId, String fleetType) {
         return ChartContentGenerator.engine().createEmptyFleet(factionId, fleetType);
     }

@@ -29,6 +29,11 @@ public interface LootShaper extends ChartAnomaly {
         return ItemDrops.SiteLoot.NONE;
     }
 
+    default ItemDrops.SiteLoot battleItems(SectorAPI sector, CampaignFleetAPI fleet, ChartGenContext context, float lootDeploymentPoints,
+                                           float battleDeploymentPoints, float difficultyMultiplier, Random random) {
+        return ItemDrops.SiteLoot.NONE;
+    }
+
     default boolean holdsBackBossUnique(ChartRun run) {
         return false;
     }

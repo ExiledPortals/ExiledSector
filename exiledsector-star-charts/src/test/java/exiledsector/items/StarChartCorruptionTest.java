@@ -53,6 +53,18 @@ class StarChartCorruptionTest {
     }
 
     @Test
+    void stolenChartsComeCorruptedWithEightModifiers() {
+        StarChart chart = StarChartFixtures.chart(CHART, 7L, 6);
+
+        Item stolen = StarChartCorruption.withExpandedModifiers(ItemData.of(chart), new Random(7L)).preview();
+
+        assertTrue(stolen.corrupted());
+        assertEquals(CorruptionOutcome.MODIFIERS_EXPANDED, stolen.corruption());
+        assertEquals(StarChartCorruption.EXPANDED_MODIFIERS, ((StarChart) stolen).explicits().size());
+        assertEquals(6, ((StarChart) stolen).tier());
+    }
+
+    @Test
     void raisingATierReachesTheCorruptedTierAndStopsThere() {
         StarChart chart = StarChartFixtures.chart(CHART, 3L, StarChart.HIGHEST_DROP_TIER);
 

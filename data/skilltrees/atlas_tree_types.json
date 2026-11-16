@@ -1011,6 +1011,154 @@
 				"fleet_size",
 				"crafting_item"
 			]
+		},
+		{
+			"id": "vault_quantity",
+			"name": "Vault Quantity",
+			"effects": [
+				{
+					"effect": "CHART_LISTENING_POST_LOOT_QUANTITY_PERCENT",
+					"magnitude": 20
+				}
+			],
+			"tags": [
+				"loot"
+			]
+		},
+		{
+			"id": "slow_purge",
+			"name": "Slow Purge",
+			"effects": [
+				{
+					"effect": "CHART_LISTENING_POST_PURGE_PERCENT",
+					"magnitude": 25
+				}
+			],
+			"tags": [
+				"loot"
+			]
+		},
+		{
+			"id": "garrison_pickets",
+			"name": "Garrison Pickets",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_LISTENING_POST_GARRISON_PICKETS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"fleet_size",
+				"loot"
+			]
+		},
+		{
+			"id": "hair_trigger",
+			"name": "Hair Trigger",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_LISTENING_POST_INSTANT_ALARM",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_LISTENING_POST_UNSEEN_PROTOTYPES",
+					"magnitude": 2
+				}
+			],
+			"tags": [
+				"encounter",
+				"hull_item"
+			]
+		},
+		{
+			"id": "smash_and_grab",
+			"name": "Smash and Grab",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_LISTENING_POST_RAID_ONLY",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_LISTENING_POST_LOOT_QUANTITY_PERCENT",
+					"magnitude": 30
+				},
+				{
+					"effect": "CHART_LISTENING_POST_PROTOTYPES",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"hull_item"
+			]
+		},
+		{
+			"id": "hunting_party",
+			"name": "Hunting Party",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_LISTENING_POST_HUNTING_PICKETS",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_LISTENING_POST_PICKET_PROTOTYPES",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"encounter",
+				"hull_item"
+			]
+		},
+		{
+			"id": "fortified_depot",
+			"name": "Fortified Depot",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_LISTENING_POST_ARMED_STATION",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_LISTENING_POST_PURGE_HELD",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"encounter",
+				"loot"
+			]
+		},
+		{
+			"id": "officers_ledger",
+			"name": "Officer's Ledger",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_LISTENING_POST_OFFICER_LEDGER",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"loot"
+			]
+		},
+		{
+			"id": "stolen_charts",
+			"name": "Stolen Charts",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_LISTENING_POST_STOLEN_CHARTS",
+					"magnitude": 3
+				}
+			],
+			"tags": [
+				"star_chart"
+			]
 		}
 	]
 }

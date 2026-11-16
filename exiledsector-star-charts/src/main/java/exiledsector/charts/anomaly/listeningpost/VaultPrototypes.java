@@ -24,7 +24,16 @@ public final class VaultPrototypes {
     }
 
     static List<ItemData> offered(SectorAPI sector, long vaultSeed) {
-        return ItemUnlock.available(ItemType.HULL_ITEM, sector) ? roll(PICKS, vaultSeed, definition -> ItemUnlock.canDrop(definition, sector)) : List.of();
+        return offered(sector, vaultSeed, PICKS);
+    }
+
+    static List<ItemData> offered(SectorAPI sector, long vaultSeed, int count) {
+        return ItemUnlock.available(ItemType.HULL_ITEM, sector) ? roll(count, vaultSeed, definition -> ItemUnlock.canDrop(definition, sector)) : List.of();
+    }
+
+    static List<ItemData> dropped(SectorAPI sector, int count, Random random) {
+        return ItemUnlock.available(ItemType.HULL_ITEM, sector) && count > 0
+                ? roll(count, random.nextLong(), definition -> ItemUnlock.canDrop(definition, sector)) : List.of();
     }
 
     static ItemData leftAfterAlarm(SectorAPI sector, long vaultSeed) {
