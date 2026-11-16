@@ -12,8 +12,6 @@ public interface CraftingMaterialFamily extends GrowableMaterial {
 
     String key();
 
-    float dropWeight();
-
     MaterialTier tier();
 
     Color color();
@@ -46,10 +44,6 @@ public interface CraftingMaterialFamily extends GrowableMaterial {
 
     default boolean appliesToShipItems() {
         return appliesTo(ItemType.SUBROUTINE) || appliesTo(ItemType.HULL_ITEM);
-    }
-
-    default boolean dropsFromShipLoot() {
-        return appliesToShipItems();
     }
 
     default String refusalNoticeKey(Item item) {

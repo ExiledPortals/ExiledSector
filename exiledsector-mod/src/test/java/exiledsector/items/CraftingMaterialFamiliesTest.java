@@ -41,11 +41,6 @@ class CraftingMaterialFamiliesTest {
         }
 
         @Override
-        public float dropWeight() {
-            return 2f;
-        }
-
-        @Override
         public MaterialTier tier() {
             return MaterialTier.RARE;
         }
@@ -106,49 +101,43 @@ class CraftingMaterialFamiliesTest {
         when(cargo.getQuantity(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(itemId))).thenReturn(quantity);
     }
 
-    private record Expected(String itemId, String key, int feedstockCost, float dropWeight, MaterialTier tier, boolean growable) {
+    private record Expected(String itemId, String key, int feedstockCost, MaterialTier tier, boolean growable) {
     }
 
     @Test
-    void materialsGetRarerAndCostlierToGrowInTheIntendedOrder() {
+    void materialsGetCostlierToGrowInTheIntendedOrder() {
         List<String> commonestFirst = List.of(
                 Nanoswarm.AUGMENTATION.itemId(), Nanoswarm.FUNDAMENTAL.itemId(), Nanoswarm.RESHAPING.itemId(),
                 Nanoswarm.CORRUPTION.itemId(), CraftingInhibitor.PREFIX.itemId(), CraftingInhibitor.SUFFIX.itemId(),
                 Nanoswarm.METAMORPH.itemId(), Nanoswarm.ANNULMENT.itemId(), Nanoswarm.TUNING.itemId(), Nanoswarm.IMMUTABLE.itemId(),
                 Nanoswarm.REPLICATION.itemId());
-        float previousWeight = Float.MAX_VALUE;
         int previousCost = 0;
         for (String itemId : commonestFirst) {
             Nanoswarm craftingItem = Nanoswarm.byItemId(itemId);
             GrowableMaterial material = craftingItem != null ? craftingItem : CraftingInhibitor.byItemId(itemId);
-            float weight = craftingItem != null ? craftingItem.dropWeight() : CraftingInhibitor.byItemId(itemId).dropWeight();
-            assertTrue(weight <= previousWeight, itemId + " drops more often than the material before it");
-            previousWeight = weight;
             if (material.growable()) {
                 assertTrue(material.feedstockCost() >= previousCost, itemId + " is cheaper to grow than a commoner material");
                 previousCost = material.feedstockCost();
             }
         }
-        assertTrue(CraftingInhibitor.PREFIX.dropWeight() < Nanoswarm.CORRUPTION.dropWeight());
-        assertTrue(Nanoswarm.METAMORPH.dropWeight() < CraftingInhibitor.SUFFIX.dropWeight());
     }
 
     @Test
     void everyBuiltInCraftingItemIsRegisteredCommonestFirstWithItsValues() {
         List<Expected> expected = List.of(
-                new Expected("exiledSector_augmentation_nanoswarm", "augmentation", 10, 6f, MaterialTier.COMMON, true),
-                new Expected("exiledSector_fundamental_nanoswarm", "fundamental", 15, 4f, MaterialTier.COMMON, true),
-                new Expected("exiledSector_reshaping_nanoswarm", "reshaping", 20, 3f, MaterialTier.COMMON, true),
-                new Expected("exiledSector_corrupted_nanoswarm", "corruption", 50, 1.5f, MaterialTier.RARE, true),
-                new Expected("exiledSector_metamorph_nanoswarm", "metamorph", 150, 0.4f, MaterialTier.RARE, true),
-                new Expected("exiledSector_annulment_nanoswarm", "annulment", 200, 0.3f, MaterialTier.UNIQUE, true),
-                new Expected("exiledSector_tuning_nanoswarm", "tuning", 200, 0.3f, MaterialTier.UNIQUE, true),
-                new Expected("exiledSector_immutable_nanoswarm", "immutable", 300, 0.2f, MaterialTier.UNIQUE, true),
-                new Expected("exiledSector_replicator_nanoseed", "replication", 0, 0.035f, MaterialTier.MYTHIC, false));
+                new Expected("exiledSector_augmentation_nanoswarm", "augmentation", 10, MaterialTier.COMMON, true),
+                new Expected("exiledSector_fundamental_nanoswarm", "fundamental", 15, MaterialTier.COMMON, true),
+                new Expected("exiledSector_reshaping_nanoswarm", "reshaping", 20, MaterialTier.COMMON, true),
+                new Expected("exiledSector_corrupted_nanoswarm", "corruption", 50, MaterialTier.RARE, true),
+                new Expected("exiledSector_metamorph_nanoswarm", "metamorph", 150, MaterialTier.RARE, true),
+                new Expected("exiledSector_annulment_nanoswarm", "annulment", 200, MaterialTier.UNIQUE, true),
+                new Expected("exiledSector_tuning_nanoswarm", "tuning", 200, MaterialTier.UNIQUE, true),
+                new Expected("exiledSector_immutable_nanoswarm", "immutable", 300, MaterialTier.UNIQUE, true),
+                new Expected("exiledSector_replicator_nanoseed", "replication", 0, MaterialTier.MYTHIC, false));
 
         assertEquals(Arrays.asList(Nanoswarm.values()), CraftingMaterialFamilies.all());
         assertEquals(expected, CraftingMaterialFamilies.all().stream().map(craftingItem -> new Expected(craftingItem.itemId(), craftingItem.key(),
-                craftingItem.feedstockCost(), craftingItem.dropWeight(), craftingItem.tier(), craftingItem.growable())).toList());
+                craftingItem.feedstockCost(), craftingItem.tier(), craftingItem.growable())).toList());
         for (Nanoswarm craftingItem : Nanoswarm.values()) {
             assertSame(craftingItem, CraftingMaterialFamilies.byItemId(craftingItem.itemId()));
             assertEquals(craftingItem.name().toLowerCase(java.util.Locale.ROOT), craftingItem.key());
@@ -185,19 +174,7 @@ class CraftingMaterialFamiliesTest {
     }
 
     @Test
-    void kernelDropsListEveryCraftingItemAndInhibitorByWeight() {
-        List<ItemDrops.MaterialDrop> builtInDrops = new ArrayList<>();
-        for (Nanoswarm craftingItem : Nanoswarm.values()) {
-            builtInDrops.add(new ItemDrops.MaterialDrop(craftingItem.itemId(), craftingItem.dropWeight()));
-        }
-        for (CraftingInhibitor inhibitor : CraftingInhibitor.values()) {
-            builtInDrops.add(new ItemDrops.MaterialDrop(inhibitor.itemId(), inhibitor.dropWeight()));
-        }
-        assertEquals(builtInDrops, ItemDrops.materialDrops());
-    }
-
-    @Test
-    void anAddedCraftingItemJoinsTheMaterialsDropsAndCraftingForItsTypesOnly() {
+    void anAddedCraftingItemJoinsTheMaterialsAndCraftingForItsTypesOnly() {
         CraftingMaterialFamilies.register(purge);
         Item hullItem = store.add(ItemDefinitions.get(HullItemRows.MILITARY), 4L);
         Item subroutine = store.add(ItemDefinitions.get("volume"), 4L);
@@ -217,7 +194,6 @@ class CraftingMaterialFamiliesTest {
         assertEquals(explicitsBefore - 1, hullItem.explicits().size());
         verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(PURGE_ID), 1);
         assertTrue(ItemCrafting.inhibitorsSpentBy(purge, hullItem, List.of(CraftingInhibitor.PREFIX, CraftingInhibitor.SUFFIX)).isEmpty());
-        assertTrue(ItemDrops.materialDrops().stream().anyMatch(drop -> drop.itemId().equals(PURGE_ID)));
     }
 
     @Test

@@ -12,7 +12,7 @@ import exiledsector.ExiledSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.content.ChartContent;
-import exiledsector.charts.loot.ChartMaterials;
+import exiledsector.items.CraftingDrops;
 import exiledsector.charts.officer.reward.CraftingTier;
 import exiledsector.charts.officer.reward.OfficerRewardTable;
 import exiledsector.charts.officer.reward.RewardContext;
@@ -66,14 +66,14 @@ class RelayChoicesTest {
     void setUp() throws Exception {
         OfficerRewardTable.register(ChartTables.csvRows(OfficerRewardTable.PATH));
         StarChartCipher.registerAll();
-        ChartMaterials.register(ChartTables.csvRows(ChartMaterials.PATH));
+        CraftingDrops.register(ChartTables.csvRows(CraftingDrops.DATA_PATH));
         ScarTable.register(ChartTables.csvRows(SCARS_PATH));
     }
 
     @AfterEach
     void tearDown() {
         OfficerRewardTable.clear();
-        ChartMaterials.clear();
+        CraftingDrops.clear();
         ScarTable.clear();
         StarChartFixtures.unregisterCraftingItems();
         ModifierSources.clear();

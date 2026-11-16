@@ -1,7 +1,7 @@
 package exiledsector.charts.officer.reward;
 
 import exiledsector.charts.ChartTables;
-import exiledsector.charts.loot.ChartMaterials;
+import exiledsector.items.CraftingDrops;
 import exiledsector.items.StarChartCipher;
 import exiledsector.items.StarChartFixtures;
 import org.json.JSONArray;
@@ -27,7 +27,7 @@ class OfficerRewardTableTest {
     @AfterEach
     void tearDown() {
         OfficerRewardTable.clear();
-        ChartMaterials.clear();
+        CraftingDrops.clear();
         StarChartFixtures.unregisterCraftingItems();
     }
 
@@ -123,17 +123,17 @@ class OfficerRewardTableTest {
     }
 
     @Test
-    void everyShippedItemHasATierAndAChartMaterialsAmount() throws Exception {
+    void everyShippedItemHasATierAndACraftingDropWeight() throws Exception {
         OfficerRewardTable.register(ChartTables.csvRows(OfficerRewardTable.PATH));
         StarChartCipher.registerAll();
-        ChartMaterials.register(ChartTables.csvRows(ChartMaterials.PATH));
+        CraftingDrops.register(ChartTables.csvRows(CraftingDrops.DATA_PATH));
         List<String> itemIds = new ArrayList<>(OfficerRewardTable.itemsIn(RewardKind.CRAFTING_ITEM));
         itemIds.addAll(OfficerRewardTable.itemsIn(RewardKind.INHIBITOR));
 
         assertFalse(itemIds.isEmpty());
         for (String itemId : itemIds) {
             assertNotNull(OfficerRewardTable.tierOf(itemId), itemId);
-            assertTrue(ChartMaterials.covers(itemId), itemId);
+            assertTrue(CraftingDrops.covers(itemId), itemId);
         }
     }
 }

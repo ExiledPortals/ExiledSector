@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.ChartIds;
 import exiledsector.data.CsvRows;
 import exiledsector.ModCsv;
+import exiledsector.items.CraftingDrops;
 import exiledsector.items.ItemTraits;
 import exiledsector.loot.FleetLevelRange;
 import org.apache.log4j.Logger;
@@ -26,9 +27,11 @@ public final class ChartTiers {
     static final float MAX_COLONY_ITEM_CHANCE = 1f;
     static final int BOSS_EXTRA_LEVELS = 1;
     static final String TREE_SHARE_COLUMN = "tree_share";
+    static final String BAND_SHIFT_COLUMN = "band_shift";
     private static volatile Map<Integer, ChartTier> tiers = Map.of();
     private static volatile Map<Integer, Float> colonyItemChances = Map.of();
     private static volatile Map<Integer, Float> treeShares = Map.of();
+    private static volatile Map<Integer, Float> bandShifts = Map.of();
 
     private ChartTiers() {
     }
@@ -41,6 +44,7 @@ public final class ChartTiers {
         Map<Integer, ChartTier> loaded = new HashMap<>();
         Map<Integer, Float> loadedColonyItemChances = new HashMap<>();
         Map<Integer, Float> loadedTreeShares = new HashMap<>();
+        Map<Integer, Float> loadedBandShifts = new HashMap<>();
         CsvRows csv = new CsvRows(PATH);
         if (rows != null) {
             ModCsv.forEach(rows, (index, row) -> {
@@ -79,6 +83,11 @@ public final class ChartTiers {
                     csv.problem(label, TREE_SHARE_COLUMN, treeShare + " is outside 0 to 1 (a fraction, so 0.5 is 50%)");
                 }
                 loadedTreeShares.put(tier, Math.max(0f, Math.min(1f, treeShare)));
+                float bandShift = csv.number(row, BAND_SHIFT_COLUMN, CraftingDrops.NO_BAND_SHIFT, label);
+                if (bandShift < 0f) {
+                    csv.problem(label, BAND_SHIFT_COLUMN, bandShift + " is below 0");
+                }
+                loadedBandShifts.put(tier, Math.max(0f, bandShift));
             });
         }
         csv.report(LOG);
@@ -94,10 +103,15 @@ public final class ChartTiers {
         tiers = Map.copyOf(loaded);
         colonyItemChances = Map.copyOf(loadedColonyItemChances);
         treeShares = Map.copyOf(loadedTreeShares);
+        bandShifts = Map.copyOf(loadedBandShifts);
     }
 
     public static float treeShare(int tier) {
         return treeShares.getOrDefault(clamp(tier), 1f);
+    }
+
+    public static float bandShift(int tier) {
+        return bandShifts.getOrDefault(clamp(tier), CraftingDrops.NO_BAND_SHIFT);
     }
 
     public static float colonyItemChance(int tier) {
@@ -165,5 +179,6 @@ public final class ChartTiers {
         tiers = Map.of();
         colonyItemChances = Map.of();
         treeShares = Map.of();
+        bandShifts = Map.of();
     }
 }

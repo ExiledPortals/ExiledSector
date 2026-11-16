@@ -11,6 +11,7 @@ import data.scripts.campaign.plugins.amemory.SotfAMemoryFEContext;
 import exiledsector.MockSector;
 import exiledsector.MockShips;
 import exiledsector.items.MaterialItems;
+import exiledsector.items.CraftingDrops;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.loot.ChartDrops;
 import exiledsector.charts.loot.ChartFleetFixtures;
@@ -325,12 +326,12 @@ class ItemLootListenerTest {
     }
 
     @Test
-    void wonBattlesDropCraftingMaterialsPerDeploymentPointAtTheRegularShareAndNoChartOnlyOnes() throws Exception {
+    void wonBattlesDropCraftingMaterialsPerDeploymentPointAtTheLevelOneShareAndNoChartOnlyOnes() throws Exception {
         BattleLootRates.register(new JSONArray()
-                .put(new JSONObject().put("drop", "exiledSector_augmentation_nanoswarm").put("per_100_dp", "1").put("curve", "linear")
-                        .put("regular_share", "0.5"))
-                .put(new JSONObject().put("drop", "exiledSector_fundamental_nanoswarm").put("per_100_dp", "1").put("curve", "linear")
-                        .put("regular_share", "0")));
+                .put(new JSONObject().put("drop", CraftingDrops.RATE_DROP).put("per_100_dp", "1").put("curve", "linear")));
+        CraftingDrops.register(new JSONArray()
+                .put(new JSONObject().put("item", "exiledSector_augmentation_nanoswarm").put("weight", "1").put("chart_only", "false"))
+                .put(new JSONObject().put("item", "exiledSector_reforge_cipher").put("weight", "100").put("chart_only", "true")));
         try {
             ItemLootListener unluckyListener = new ItemLootListener(neverLucky());
             BattleAPI battle = mock(BattleAPI.class);
@@ -340,9 +341,10 @@ class ItemLootListenerTest {
             unluckyListener.reportEncounterLootGenerated(context(battle), loot);
 
             verify(loot).addSpecial(MaterialItems.data("exiledSector_augmentation_nanoswarm"), 2);
-            verify(loot, never()).addSpecial(Mockito.eq(MaterialItems.data("exiledSector_fundamental_nanoswarm")), anyFloat());
+            verify(loot, never()).addSpecial(Mockito.eq(MaterialItems.data("exiledSector_reforge_cipher")), anyFloat());
         } finally {
             BattleLootRates.clear();
+            CraftingDrops.clear();
         }
     }
 
@@ -441,8 +443,7 @@ class ItemLootListenerTest {
         when(mockSector.sector.getPlayerStats()).thenReturn(playerStats);
         ItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "test_bridge").put("section", "bridge").put("rarity", "10")
                 .put("prefixes", "HULL_PERCENT:4:6")));
-        BattleLootRates.register(new JSONArray().put(new JSONObject().put("drop", "hull_item").put("per_100_dp", "3").put("curve", "linear")
-                .put("regular_share", "1")));
+        BattleLootRates.register(new JSONArray().put(new JSONObject().put("drop", "hull_item").put("per_100_dp", "3").put("curve", "linear")));
         try {
             ItemLootListener unluckyListener = new ItemLootListener(neverLucky());
             BattleAPI battle = mock(BattleAPI.class);

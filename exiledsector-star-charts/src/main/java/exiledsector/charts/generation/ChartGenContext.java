@@ -583,8 +583,17 @@ public final class ChartGenContext {
         return percent;
     }
 
-    public LootMultipliers lootMultipliers(float scale) {
-        return new LootMultipliers(itemChances().scaled(scale), dropMult(DropType.FEEDSTOCK) * scale, dropMult(DropType.CRAFTING_ITEM) * scale);
+    public LootMultipliers lootMultipliers(float scale, int chartTier) {
+        return new LootMultipliers(itemChances().scaled(scale), dropMult(DropType.FEEDSTOCK) * scale, dropMult(DropType.CRAFTING_ITEM) * scale,
+                craftingBandShift(chartTier));
+    }
+
+    public float craftingBandShift(int chartTier) {
+        return ChartTiers.bandShift(chartTier) * itemRarityMult();
+    }
+
+    public float itemRarityMult() {
+        return multiplier(itemRarityPercent);
     }
 
     public float bossSpoilsPercent() {
@@ -616,7 +625,7 @@ public final class ChartGenContext {
         });
         float generalMult = multiplier(itemPercent + quantityPercent());
         ItemChances chances = targetedShares.isEmpty() ? ItemChances.of(generalMult) : new ItemChances(generalMult, targetedShares);
-        return chances.withRarity(multiplier(itemRarityPercent));
+        return chances.withRarity(itemRarityMult());
     }
 
     public float sensorRangeMult() {

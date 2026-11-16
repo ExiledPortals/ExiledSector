@@ -210,7 +210,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
             }
             ChartGenContext context = ChartRunEffects.contextOf(run);
             float battleLootMult = ChartFleetLoot.battleLootMult(anomaliesHoldingBattle(), context);
-            LootMultipliers multipliers = BlackHoleHullItems.withBonusWherePlayerIs(context.lootMultipliers(battleLootMult));
+            LootMultipliers multipliers = BlackHoleHullItems.withBonusWherePlayerIs(context.lootMultipliers(battleLootMult, run.tier()));
             FleetLootRules rules = new FleetLootRules(FleetLootRules.Rates.FULL, true, multipliers,
                     ChartFleetLoot.isBoss(fleet, run) ? context.bossSpoilsMult() : ChartFleetLoot.anomalyFleetLoot(fleet, run));
             return ChartFleetLoot.overchargesHullItems(fleet, run) ? rules.overchargingHullItems() : rules;
@@ -222,14 +222,14 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
 
     @Override
     public LootMultipliers modifiersAt(LocationAPI location) {
-        ChartGenContext context;
+        LootMultipliers multipliers;
         try {
-            context = ChartDrops.liveContextAt(location);
+            multipliers = ChartDrops.liveLootMultipliersAt(location);
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Reading the Star Chart loot bonuses failed", e);
-            context = ChartGenContext.none();
+            multipliers = LootMultipliers.NONE;
         }
-        return BlackHoleHullItems.withBonus(context.lootMultipliers(1f), location);
+        return BlackHoleHullItems.withBonus(multipliers, location);
     }
 
     @Override
@@ -243,7 +243,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
         for (LootShaper anomaly : ChartAnomalies.with(LootShaper.class)) {
             chances = anomaly.siteChances(memory, chances);
         }
-        return chances == modifiers.itemChances() ? modifiers : new LootMultipliers(chances, modifiers.feedstockMult(), modifiers.craftingItemMult());
+        return chances == modifiers.itemChances() ? modifiers : modifiers.withItemChances(chances);
     }
 
     @Override

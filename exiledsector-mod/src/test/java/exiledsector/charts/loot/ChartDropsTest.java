@@ -10,6 +10,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.util.MutableValue;
 import exiledsector.MockSector;
+import exiledsector.ProjectFiles;
 import exiledsector.charts.atlas.AtlasCatalysts;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.effect.ChartModifier;
@@ -21,6 +22,7 @@ import exiledsector.charts.ChartTables;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.objective.ChartRewards;
+import exiledsector.items.CraftingDrops;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemUnlock;
 import exiledsector.items.StarChartCipher;
@@ -72,6 +74,7 @@ class ChartDropsTest {
     void setUp() throws Exception {
         StarChartFixtures.registerShipped();
         StarChartCipher.registerAll();
+        CraftingDrops.register(ProjectFiles.csvRows(CraftingDrops.DATA_PATH));
         mockSector = new MockSector();
         sector = mockSector.sector;
         MemoryAPI sectorMemory = mock(MemoryAPI.class);
@@ -90,6 +93,7 @@ class ChartDropsTest {
     void tearDown() {
         mockSector.close();
         ChartDrops.clear();
+        CraftingDrops.clear();
         AtlasCatalysts.resetForTests();
         StarChartFixtures.unregisterCraftingItems();
         StarChartFixtures.clear();

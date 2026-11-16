@@ -234,7 +234,7 @@ class ChartGenContextTest {
         assertEquals(List.of("Item quantity +23%", "Crafting items +47%"), lines);
         ChartGenContext sites = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_STATION_BUDGET_PERCENT, 30f)));
         assertEquals(List.of("Stations +30%"), ChartLootTotals.lines(sites).stream().map(StyledText::plain).toList());
-        assertEquals(List.of("Rarity of hull items and subroutines +25%"),
+        assertEquals(List.of("Rarity of hull items, subroutines and crafting items +25%"),
                 ChartLootTotals.lines(with(ChartModifier.CHART_ITEM_RARITY_PERCENT, 25f)).stream().map(StyledText::plain).toList());
         assertTrue(ChartLootTotals.lines(with(ChartModifier.CHART_FLEET_SIZE_PERCENT, 30f)).isEmpty());
     }

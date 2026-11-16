@@ -1,19 +1,9 @@
-drop,per_100_dp,curve,regular_share,difficulty_scaling,note
-exiledSector_augmentation_nanoswarm,1.2,linear,0.125,0,"Expected drops per 100 deployment points an enemy fleet loses, then times battle difficulty (capped at 3x, scaled by difficulty_scaling: 1 = full, 0 = ignored) and the fleet's loot multipliers. A linear drop scales 1:1; a diminishing one runs at full rate up to 3000 DP in one battle and grows with the square root of DP past it. regular_share is the rate for fleets outside Star Charts (0 = chart fleets only)"
-exiledSector_fundamental_nanoswarm,0.8,linear,0.125,0,
-exiledSector_reshaping_nanoswarm,0.4,linear,0.125,0,
-exiledSector_corrupted_nanoswarm,0.12,diminishing,0.125,0,
-exiledSector_metamorph_nanoswarm,0.0332,diminishing,0.125,0,
-exiledSector_annulment_nanoswarm,0.0252,diminishing,0.125,0,
-exiledSector_tuning_nanoswarm,0.0252,diminishing,0.125,0,
-exiledSector_immutable_nanoswarm,0.0168,diminishing,0.125,0,
-exiledSector_replicator_nanoseed,0.0028,diminishing,0.125,0,
-exiledSector_prefix_inhibitor,0.0168,diminishing,0.125,0,
-exiledSector_suffix_inhibitor,0.0168,diminishing,0.125,0,
-subroutine,0.16,diminishing,0,1,"Basic subroutines from chart fleets, plus the item quantity bonus's targeted extras"
-hull_item,0.176,diminishing,0.6825,1,"Basic hull items; enemy tree size raises the share that drop with two modifiers instead of the count"
-unique_hull_item,0.016,diminishing,0.375,1,
-refit_schematic,0.2133,diminishing,0.375,1,
-logistics_schematic,0.0213,diminishing,0.375,1,"Logistics Schematics from the skill tree domain; matches the Military Refit Schematic (refit_schematic times its 10% tier weight)"
-deintegration_schematic,0.0252,diminishing,0.125,0,"Deintegration Schematics from the skill tree domain; same rate as the Tuning Nanoswarm"
-master_schematic,0.1333,diminishing,0.375,1,"Only while the Master Schematic is still needed"
+drop,per_100_dp,curve,difficulty_scaling,note
+crafting_item,1.132,linear,0,"Expected drops per 100 deployment points an enemy fleet loses, then times battle difficulty (capped at 3x, scaled by difficulty_scaling: 1 = full, 0 = ignored) and the fleet's loot multipliers. A linear drop scales 1:1; a diminishing one runs at full rate up to 3000 DP in one battle and grows with the square root of DP past it. Star Charts fleets drop the full rate; fleets outside charts drop 0.5x at level 1 rising to 1x at the game's level cap. crafting_item is every crafting item together, picked from crafting_drops.csv; it ignores the curve and battle difficulty, and at this rate a tier 15 chart's fleets and boss drop about 50"
+subroutine,0.16,diminishing,1,"Basic subroutines from chart fleets, plus the item quantity bonus's targeted extras; Star Charts fleets only"
+hull_item,0.176,diminishing,1,"Basic hull items; enemy tree size raises the share that drop with two modifiers instead of the count"
+unique_hull_item,0.016,diminishing,1,
+refit_schematic,0.2133,diminishing,1,
+logistics_schematic,0.0213,diminishing,1,"Logistics Schematics from the skill tree domain; matches the Military Refit Schematic (refit_schematic times its 10% tier weight)"
+deintegration_schematic,0.0252,diminishing,0,"Deintegration Schematics from the skill tree domain; the old Tuning Nanoswarm rate"
+master_schematic,0.1333,diminishing,1,"Only while the Master Schematic is still needed"

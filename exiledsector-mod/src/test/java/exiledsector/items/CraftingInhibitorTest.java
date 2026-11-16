@@ -169,7 +169,6 @@ class CraftingInhibitorTest {
         for (CraftingInhibitor inhibitor : CraftingInhibitor.values()) {
             assertTrue(MaterialItems.ids().contains(inhibitor.itemId()));
             assertEquals(inhibitor.tier(), MaterialItems.tier(inhibitor.itemId()));
-            assertTrue(inhibitor.dropWeight() < 1f);
         }
     }
 

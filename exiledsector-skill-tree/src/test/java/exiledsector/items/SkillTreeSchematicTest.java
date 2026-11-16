@@ -98,11 +98,11 @@ class SkillTreeSchematicTest {
 
     @Test
     void battleDropsScaleWithDeploymentPointsAndRegularFleetsGetTheirShare() {
-        BattleLootRates.Rate rate = new BattleLootRates.Rate(SkillTreeSchematicDrops.LOGISTICS.rateId(), 0.032f, LootCurve.LINEAR, 0.25f, 1f);
+        BattleLootRates.Rate rate = new BattleLootRates.Rate(SkillTreeSchematicDrops.LOGISTICS.rateId(), 0.032f, LootCurve.LINEAR);
         List<SkillTreeSchematicDrops.SourceLoss> regular = List.of(new SkillTreeSchematicDrops.SourceLoss(1000f, 1f, FleetLootRules.REGULAR));
         List<SkillTreeSchematicDrops.SourceLoss> chart = List.of(new SkillTreeSchematicDrops.SourceLoss(1000f, 1f, FleetLootRules.full(null)));
 
-        assertEquals(0.08f, SkillTreeSchematicDrops.expectedBattleDrops(regular, rate, 1f), 1e-5f);
+        assertEquals(0.16f, SkillTreeSchematicDrops.expectedBattleDrops(regular, rate, 1f), 1e-5f);
         assertEquals(0.32f, SkillTreeSchematicDrops.expectedBattleDrops(chart, rate, 1f), 1e-5f);
         assertEquals(0f, SkillTreeSchematicDrops.expectedBattleDrops(regular, null, 1f));
         for (SkillTreeSchematicDrops drop : SkillTreeSchematicDrops.values()) {
@@ -112,10 +112,10 @@ class SkillTreeSchematicTest {
 
     @Test
     void theBattleItemDropSliderScalesBattleDrops() {
-        BattleLootRates.Rate rate = new BattleLootRates.Rate(SkillTreeSchematicDrops.DEINTEGRATION.rateId(), 0.032f, LootCurve.LINEAR, 0.25f, 1f);
+        BattleLootRates.Rate rate = new BattleLootRates.Rate(SkillTreeSchematicDrops.DEINTEGRATION.rateId(), 0.032f, LootCurve.LINEAR);
         List<SkillTreeSchematicDrops.SourceLoss> regular = List.of(new SkillTreeSchematicDrops.SourceLoss(1000f, 1f, FleetLootRules.REGULAR));
 
-        assertEquals(0.16f, SkillTreeSchematicDrops.expectedBattleDrops(regular, rate, 2f), 1e-5f);
+        assertEquals(0.32f, SkillTreeSchematicDrops.expectedBattleDrops(regular, rate, 2f), 1e-5f);
         assertEquals(0f, SkillTreeSchematicDrops.expectedBattleDrops(regular, rate, 0f));
     }
 }

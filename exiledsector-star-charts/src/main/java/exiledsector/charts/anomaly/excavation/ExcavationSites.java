@@ -89,7 +89,7 @@ public final class ExcavationSites implements LayoutShaper, ContentPlacer, RunPa
 
     @Override
     public ItemDrops.SiteLoot fleetItems(SectorAPI sector, CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, float share, Random random) {
-        return ExcavationLoot.fleetItems(fleet, context, share, random);
+        return ExcavationLoot.fleetItems(fleet, context, run.tier(), share, random);
     }
 
     @Override

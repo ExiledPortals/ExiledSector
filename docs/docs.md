@@ -78,8 +78,9 @@ A few modded weapons that break when copied use simpler splits without their spe
 
 Battle drops scale with the deployment points of the enemy ships you destroy, and past about 3000 DP in one battle
 extra DP adds less. Harder battles, by vanilla's battle difficulty, drop up to three times as much, though crafting
-items ignore difficulty. Fleets outside Star Charts drop a smaller share than chart fleets, and enemy ships with skill
-trees make hull items more likely to have two modifiers.
+items ignore difficulty. Fleets outside Star Charts drop half of what a tier 1 chart fleet does at level 1, rising to
+the same at the level cap, though ciphers and the weapon and defence inhibitors only drop in charts. Enemy ships with
+skill trees make hull items more likely to have two modifiers.
 
 A hull item that drops has one or two modifiers, never more, so rare items only come from crafting. Unique items are
 the exception. Secrets of the Frontier's scripted story fights drop no Exiled Sector loot.
@@ -124,6 +125,13 @@ ability that opens wormholes anywhere outside a chart, with every tier open.
 Killing a system's boss, its flagship or station, is the only way to complete it, and each completed system gives an
 Atlas Skill Point, up to 100. A run that ends without killing the boss uses up the system's anomalies, except star
 anomalies, so the next run there is an ordinary system.
+
+### Rarity
+
+A higher chart tier makes rare, unique and mythic crafting items a larger share of what its fleets, sites and rewards
+drop, without changing how many drop. Increased rarity from a chart's modifiers multiplies that shift by the same
+amount at every tier, and makes hull items and subroutines found anywhere in the system more likely to roll extra
+modifiers and unique hull items more likely to drop.
 
 ### Biome modifiers
 

@@ -43,12 +43,14 @@ class ItemDropsTest {
                 .put(new JSONObject().put("site", "station").put("chances", "1;0.6;0.3").put("uniqueChance", "0.19"))
                 .put(new JSONObject().put("site", "research").put("chances", "1;0.6;0.3").put("uniqueChance", "0").put("feedstockMin", "20").put("feedstockMax", "30"))
                 .put(new JSONObject().put("site", "broken").put("chances", "lots").put("uniqueChance", "0")));
+        CraftingDrops.register(ProjectFiles.csvRows(CraftingDrops.DATA_PATH));
     }
 
     @AfterEach
     void tearDown() {
         ItemDrops.clear();
         ItemDefinitions.clear();
+        CraftingDrops.clear();
     }
 
     private static double share(String site, float mult, java.util.function.Predicate<List<ItemData>> test) {
@@ -221,7 +223,7 @@ class ItemDropsTest {
         Random random = new Random(13L);
         List<Map<String, Integer>> rolls = new java.util.ArrayList<>();
         for (int i = 0; i < TRIALS; i++) {
-            rolls.add(ItemDrops.rollMaterials(site, random, mult, mult));
+            rolls.add(ItemDrops.rollMaterials(site, random, mult, mult, CraftingDrops.NO_BAND_SHIFT));
         }
         return rolls;
     }
@@ -255,59 +257,47 @@ class ItemDropsTest {
     }
 
     @Test
-    void eachKernelRollsItsOwnChanceSoSeveralCanDropAtOnce() {
+    void aSitesCraftingItemsComeFromTheDropTableWithoutTheChartOnlyOnes() {
         List<Map<String, Integer>> station = materials("station", 1f);
         double share = ItemDrops.KERNEL_CHANCE_SHARE;
 
         assertEquals(share, averageKernels(station), 0.02);
         assertEquals(0.5 * share, averageKernels(materials("probe", 1f)), 0.02);
-        assertEquals(share * dropShare(Nanoswarm.AUGMENTATION), materialShare(station, roll -> roll.containsKey(Nanoswarm.AUGMENTATION.itemId())), 0.02);
-        assertEquals(share * dropShare(Nanoswarm.METAMORPH), materialShare(station, roll -> roll.containsKey(Nanoswarm.METAMORPH.itemId())), 0.01);
-        assertTrue(dropShare(Nanoswarm.REPLICATION) < 0.005);
-        assertEquals(share * CraftingInhibitor.PREFIX.dropWeight() / totalKernelWeight(), materialShare(station, roll -> roll.containsKey(CraftingInhibitor.PREFIX.itemId())), 0.01);
-        assertTrue(station.stream().anyMatch(roll -> kernelKinds(roll) > 1));
+        assertEquals(share * dropShare(Nanoswarm.AUGMENTATION.itemId()), averageCount(station, Nanoswarm.AUGMENTATION.itemId()), 0.02);
+        assertEquals(share * dropShare(Nanoswarm.CORRUPTION.itemId()), averageCount(station, Nanoswarm.CORRUPTION.itemId()), 0.01);
+        assertEquals(share * dropShare(CraftingInhibitor.PREFIX.itemId()), averageCount(station, CraftingInhibitor.PREFIX.itemId()), 0.01);
+        assertTrue(station.stream().noneMatch(roll -> roll.keySet().stream().anyMatch(CraftingDrops::chartOnly)));
     }
 
     @Test
-    void aCraftingItemChanceAboveOneDropsThatManyWithAChanceOfOneMore() {
-        Random random = new Random(9L);
-        List<ItemDrops.MaterialDrop> drops = List.of(new ItemDrops.MaterialDrop("a", 3f), new ItemDrops.MaterialDrop("b", 1f));
-        double totalA = 0;
+    void aSitesBandShiftMovesItsCraftingItemsOutOfTheCommonBand() {
+        Random random = new Random(19L);
+        List<Map<String, Integer>> shifted = new java.util.ArrayList<>();
         for (int i = 0; i < TRIALS; i++) {
-            Map<String, Integer> dropped = new java.util.HashMap<>();
-            ItemDrops.rollEachCraftingItem(drops, 2f, random, dropped);
-            int countA = dropped.getOrDefault("a", 0);
-            assertTrue(countA == 1 || countA == 2);
-            assertTrue(dropped.getOrDefault("b", 0) <= 1);
-            totalA += countA;
+            shifted.add(ItemDrops.rollMaterials("station", random, 1f, 1f, 3f));
         }
-        assertEquals(1.5, totalA / TRIALS, 0.02);
+        List<Map<String, Integer>> unshifted = materials("station", 1f);
+
+        assertEquals(averageKernels(unshifted), averageKernels(shifted), 0.02);
+        assertTrue(averageCount(shifted, Nanoswarm.CORRUPTION.itemId()) > 1.5 * averageCount(unshifted, Nanoswarm.CORRUPTION.itemId()));
+        assertTrue(averageCount(shifted, Nanoswarm.AUGMENTATION.itemId()) < averageCount(unshifted, Nanoswarm.AUGMENTATION.itemId()));
     }
 
     private static double averageKernels(List<Map<String, Integer>> rolls) {
         return rolls.stream().mapToInt(ItemDropsTest::kernelCount).average().orElse(0);
     }
 
+    private static double averageCount(List<Map<String, Integer>> rolls, String itemId) {
+        return rolls.stream().mapToInt(roll -> roll.getOrDefault(itemId, 0)).average().orElse(0);
+    }
+
     private static int kernelCount(Map<String, Integer> roll) {
-        return roll.entrySet().stream().filter(entry -> isKernel(entry.getKey())).mapToInt(Map.Entry::getValue).sum();
+        return roll.entrySet().stream().filter(entry -> CraftingDrops.covers(entry.getKey())).mapToInt(Map.Entry::getValue).sum();
     }
 
-    private static long kernelKinds(Map<String, Integer> roll) {
-        return roll.keySet().stream().filter(ItemDropsTest::isKernel).count();
-    }
-
-    private static boolean isKernel(String itemId) {
-        return java.util.Arrays.stream(Nanoswarm.values()).anyMatch(craftingItem -> craftingItem.itemId().equals(itemId))
-                || java.util.Arrays.stream(CraftingInhibitor.values()).anyMatch(inhibitor -> inhibitor.itemId().equals(itemId));
-    }
-
-    private static double dropShare(Nanoswarm craftingItem) {
-        return craftingItem.dropWeight() / totalKernelWeight();
-    }
-
-    private static double totalKernelWeight() {
-        return java.util.Arrays.stream(Nanoswarm.values()).mapToDouble(Nanoswarm::dropWeight).sum()
-                + java.util.Arrays.stream(CraftingInhibitor.values()).mapToDouble(CraftingInhibitor::dropWeight).sum();
+    private static double dropShare(String itemId) {
+        double outsideChartWeight = CraftingDrops.all().stream().filter(drop -> !drop.chartOnly()).mapToDouble(CraftingDrops.Drop::weight).sum();
+        return CraftingDrops.weight(itemId) / outsideChartWeight;
     }
 
     @Test
@@ -315,7 +305,7 @@ class ItemDropsTest {
         Random random = new Random(17L);
         List<Map<String, Integer>> craftingItemOnly = new java.util.ArrayList<>();
         for (int i = 0; i < TRIALS; i++) {
-            craftingItemOnly.add(ItemDrops.rollMaterials("probe", random, 0f, 2f));
+            craftingItemOnly.add(ItemDrops.rollMaterials("probe", random, 0f, 2f, CraftingDrops.NO_BAND_SHIFT));
         }
 
         assertEquals(0.0, materialShare(craftingItemOnly, roll -> roll.containsKey(ItemDisassembly.FEEDSTOCK_ITEM_ID)), 0.0);
@@ -324,7 +314,7 @@ class ItemDropsTest {
 
     @Test
     void sitesWithoutARuleDropNoMaterials() {
-        assertTrue(ItemDrops.rollMaterials("nowhere", new Random(1L), 1f, 1f).isEmpty());
-        assertTrue(ItemDrops.rollMaterials(null, new Random(1L), 1f, 1f).isEmpty());
+        assertTrue(ItemDrops.rollMaterials("nowhere", new Random(1L), 1f, 1f, CraftingDrops.NO_BAND_SHIFT).isEmpty());
+        assertTrue(ItemDrops.rollMaterials(null, new Random(1L), 1f, 1f, CraftingDrops.NO_BAND_SHIFT).isEmpty());
     }
 }

@@ -17,13 +17,16 @@ import exiledsector.data.CsvRows;
 import exiledsector.ModCsv;
 import exiledsector.data.WeightedPick;
 import exiledsector.data.RandomRounding;
-import exiledsector.items.CraftingMaterialFamilies;
+import exiledsector.items.CraftingDrops;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemTypes;
+import exiledsector.items.StarChartCipher;
+import exiledsector.loot.LootMultipliers;
 import exiledsector.loot.LootSources;
+import exiledsector.skills.skilleffect.logistics.FoundItemQuantity;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -98,7 +101,11 @@ public final class ChartDrops {
         }
     }
 
-    public record Mults(float chart, float craftingItem, float catalyst) {
+    public record Mults(float chart, float craftingItem, float catalyst, float itemRarity) {
+
+        public Mults(float chart, float craftingItem, float catalyst) {
+            this(chart, craftingItem, catalyst, 1f);
+        }
 
         public static Mults uniform(float mult) {
             return new Mults(mult, mult, mult);
@@ -106,12 +113,12 @@ public final class ChartDrops {
 
         public static Mults of(ChartGenContext context, float scale) {
             return new Mults(context.dropMult(DropType.STAR_CHART) * scale, context.dropMult(DropType.CRAFTING_ITEM) * scale,
-                    context.dropMult(DropType.CATALYST) * scale);
+                    context.dropMult(DropType.CATALYST) * scale, context.itemRarityMult());
         }
 
         public static Mults ofReward(ChartGenContext context) {
             return new Mults(context.rewardDropMult(DropType.STAR_CHART), context.rewardDropMult(DropType.CRAFTING_ITEM),
-                    context.rewardDropMult(DropType.CATALYST));
+                    context.rewardDropMult(DropType.CATALYST), context.itemRarityMult());
         }
 
         boolean any() {
@@ -221,7 +228,9 @@ public final class ChartDrops {
         }
         Map<String, Integer> craftingItems = new LinkedHashMap<>();
         if (source.insideSystem()) {
-            ItemDrops.rollEachCraftingItem(chartCraftingItemDrops(), rule.craftingItemChance() * Math.max(0f, mults.craftingItem()), random, craftingItems);
+            float expectedCraftingItems = rule.craftingItemChance() * Math.max(0f, mults.craftingItem()) * FoundItemQuantity.craftingItemMult();
+            float bandShift = ChartTiers.bandShift(tier) * mults.itemRarity();
+            CraftingDrops.rollInto(expectedCraftingItems, ChartDrops::isCipher, bandShift, random, craftingItems);
         }
         Map<String, Integer> catalysts = new LinkedHashMap<>();
         int catalystCount = source.insideSystem() && !AtlasCatalysts.all().isEmpty()
@@ -243,11 +252,8 @@ public final class ChartDrops {
         return ItemDrops.pickOfType(random, ItemType.STAR_CHART, definition -> ItemTypes.rollsAtTier(definition, tier));
     }
 
-    public static List<ItemDrops.MaterialDrop> chartCraftingItemDrops() {
-        return CraftingMaterialFamilies.forType(ItemType.STAR_CHART).stream()
-                .filter(craftingItem -> !craftingItem.dropsFromShipLoot() && craftingItem.dropWeight() > 0f)
-                .map(craftingItem -> new ItemDrops.MaterialDrop(craftingItem.itemId(), craftingItem.dropWeight()))
-                .toList();
+    static boolean isCipher(String itemId) {
+        return StarChartCipher.byItemId(itemId) != null;
     }
 
     static int chartCount(Rule rule, float chanceMult, Random random) {
@@ -320,9 +326,12 @@ public final class ChartDrops {
         return roll(source, systemRun.tier(), Mults.of(context, 1f), random);
     }
 
-    public static ChartGenContext liveContextAt(LocationAPI location) {
+    public static LootMultipliers liveLootMultipliersAt(LocationAPI location) {
         ChartRun run = ChartRuns.liveIn(location);
-        return run == null ? LootContexts.global() : ChartRunEffects.contextOf(run);
+        if (run == null) {
+            return LootContexts.global().lootMultipliers(1f, ChartTiers.LOWEST_TIER);
+        }
+        return ChartRunEffects.contextOf(run).lootMultipliers(1f, run.tier());
     }
 
     static boolean isSystem(LocationAPI location) {

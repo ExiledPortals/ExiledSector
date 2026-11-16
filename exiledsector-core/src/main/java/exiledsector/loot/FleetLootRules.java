@@ -32,10 +32,10 @@ public record FleetLootRules(Rates rates, boolean sourceRollsMaterials, LootMult
         return new FleetLootRules(Rates.FULL, false, multipliers, 1f);
     }
 
-    public float share(BattleLootRates.Rate rate) {
+    public float share() {
         return switch (rates) {
             case FULL -> 1f;
-            case REGULAR -> rate.regularShare();
+            case REGULAR -> OutsideChartShare.current();
             case FEEDSTOCK_ONLY, NONE -> 0f;
         };
     }

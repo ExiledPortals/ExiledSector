@@ -52,6 +52,14 @@ public record ItemData(String definitionId, long seed, List<RolledModifier> expl
         return new ItemData(definition.id(), seed, modifiers, ItemNames.freeze(definition, seed, modifiers), tierTraits);
     }
 
+    public static ItemData rolledAtTierWithRarity(ItemDefinition definition, long seed, int tier, float rarity) {
+        ItemTypeSupport support = ItemTypes.of(definition.type());
+        int rolledTier = support == null ? tier : support.rolledTier(definition.id(), tier);
+        List<RolledModifier> modifiers = ItemRoller.rollAtTierWithRarity(definition, seed, rolledTier, rarity);
+        ItemTraits tierTraits = support == null ? null : support.traitsAtTier(definition, seed, rolledTier);
+        return new ItemData(definition.id(), seed, modifiers, ItemNames.freeze(definition, seed, modifiers), tierTraits);
+    }
+
     public static ItemData of(Item item) {
         return new ItemData(item.definitionId(), item.seed(), item.explicits(), item.frozenName(), item.traits());
     }

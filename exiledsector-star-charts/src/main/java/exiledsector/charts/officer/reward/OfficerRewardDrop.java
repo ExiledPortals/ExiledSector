@@ -42,7 +42,7 @@ public final class OfficerRewardDrop {
             } else {
                 ItemDefinition definition = ItemDefinitions.get(item.id());
                 for (int copy = 0; definition != null && copy < item.baseCount(); copy++) {
-                    items.add(rolled(item, definition, runTier, random));
+                    items.add(rolled(item, definition, runTier, context.itemRarityMult(), random));
                 }
             }
         }
@@ -65,16 +65,16 @@ public final class OfficerRewardDrop {
         return Math.max(0f, 1f + percent / ChartGenContext.PERCENT);
     }
 
-    private static ItemData rolled(CarriedItem item, ItemDefinition definition, int runTier, Random random) {
+    private static ItemData rolled(CarriedItem item, ItemDefinition definition, int runTier, float rarity, Random random) {
         long seed = random.nextLong();
         return switch (item.kind()) {
             case UNIQUE -> ItemData.rolled(definition, seed);
-            case BIOME_HULL_ITEM -> withBiomeModifier(ItemData.rolledAtTier(definition, seed, runTier), definition, item.variant(), random);
+            case BIOME_HULL_ITEM -> withBiomeModifier(ItemData.rolledAtTierWithRarity(definition, seed, runTier, rarity), definition, item.variant(), random);
             case STAR_CHART -> {
                 int chartTier = OfficerRewardPool.chartTier(runTier);
                 yield ItemData.rolledAtTier(chartAt(definition, chartTier, random), seed, chartTier);
             }
-            default -> ItemData.rolledAtTier(definition, seed, runTier);
+            default -> ItemData.rolledAtTierWithRarity(definition, seed, runTier, rarity);
         };
     }
 

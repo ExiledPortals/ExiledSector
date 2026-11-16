@@ -31,11 +31,6 @@ class StarChartCraftingTest {
     private record TestChartCraftingItem(String itemId, String key, boolean copies) implements CraftingMaterialFamily {
 
         @Override
-        public float dropWeight() {
-            return 0f;
-        }
-
-        @Override
         public MaterialTier tier() {
             return MaterialTier.RARE;
         }

@@ -73,7 +73,7 @@ CHART_STATION_BUDGET_PERCENT,suffix,star_chart,CHART_STATION_BUDGET_PERCENT:low=
 CHART_DERELICT_BUDGET_PERCENT,suffix,star_chart,CHART_DERELICT_BUDGET_PERCENT:low=20-30/mid=30-45/high=45-60,Wreckage,,loot
 CHART_EXTRA_POIS,suffix,star_chart,CHART_EXTRA_POIS:low=1/mid=2/high=3,Discovery,,loot
 CHART_ITEM_PERCENT,suffix,star_chart,CHART_ITEM_PERCENT:low=15-25/mid=25-40/high=40-60,Salvage,,hull_item;subroutine;star_chart
-CHART_ITEM_RARITY_PERCENT,suffix,star_chart,CHART_ITEM_RARITY_PERCENT:low=15-25/mid=25-40/high=40-60,Treasure,,hull_item;subroutine
+CHART_ITEM_RARITY_PERCENT,suffix,star_chart,CHART_ITEM_RARITY_PERCENT:low=10-15/mid=15-22/high=22-30,Treasure,,hull_item;subroutine;crafting_item
 CHART_BRIDGE_ITEM_PERCENT,suffix,star_chart,CHART_BRIDGE_ITEM_PERCENT:low=30-40/mid=40-60/high=60-80,Helm,,hull_item
 CHART_CREW_QUARTERS_ITEM_PERCENT,suffix,star_chart,CHART_CREW_QUARTERS_ITEM_PERCENT:low=30-40/mid=40-60/high=60-80,Billets,,hull_item
 CHART_ENGINE_ROOM_ITEM_PERCENT,suffix,star_chart,CHART_ENGINE_ROOM_ITEM_PERCENT:low=30-40/mid=40-60/high=60-80,Thrust,,hull_item
