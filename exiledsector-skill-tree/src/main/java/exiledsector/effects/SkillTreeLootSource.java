@@ -51,6 +51,8 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty, M
     private static final float FULL_DIFFICULTY_STRENGTH = 1f;
     private static final Logger LOG = Logger.getLogger(SkillTreeLootSource.class);
 
+    private static final Object FLEET_FACTION_STATE = new Object();
+
     private SkillTreeLootSource() {
     }
 
@@ -58,11 +60,18 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty, M
         return battle.state(this, LinkedHashMap::new);
     }
 
+    private static Map<String, Float> defeatedDeploymentPointsByFleetFaction(BattleLoot battle) {
+        return battle.state(FLEET_FACTION_STATE, LinkedHashMap::new);
+    }
+
     @Override
     public void recordEngagement(BattleLoot battle, BattleEngagement engagement) {
         Map<String, Float> defeatedDeploymentPointsByFaction = defeatedDeploymentPointsByFaction(battle);
         engagement.deploymentPointsLostByFaction().forEach((factionId, deploymentPoints) ->
                 defeatedDeploymentPointsByFaction.merge(factionId, deploymentPoints, Float::sum));
+        Map<String, Float> defeatedDeploymentPointsByFleetFaction = defeatedDeploymentPointsByFleetFaction(battle);
+        engagement.deploymentPointsLostByFleetFaction().forEach((factionId, deploymentPoints) ->
+                defeatedDeploymentPointsByFleetFaction.merge(factionId, deploymentPoints, Float::sum));
         GateRewardAnchors.recordEngagement(battle, engagement);
         DeserterBountyAnchors.recordEngagement(battle, engagement, Global.getSector());
         if (NightcrossCompat.isModEnabled()) {
@@ -96,7 +105,8 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty, M
             return List.of();
         }
         try {
-            return FactionFleetDrops.roll(defeatedDeploymentPointsByFaction(battle), battle.random(), FactionFleetDrops::available);
+            return FactionFleetDrops.roll(defeatedDeploymentPointsByFaction(battle), defeatedDeploymentPointsByFleetFaction(battle), battle.random(),
+                    FactionFleetDrops::available);
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Rolling faction fleet item drops failed", e);
             return List.of();

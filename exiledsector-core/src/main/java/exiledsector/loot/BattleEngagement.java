@@ -43,6 +43,19 @@ public record BattleEngagement(Function<FleetMemberAPI, CampaignFleetAPI> source
     public Map<String, Float> deploymentPointsLostByFaction() {
         Map<String, Float> byFaction = new LinkedHashMap<>();
         lostEnemiesBySourceFleet().forEach((sourceFleet, members) -> {
+            for (FleetMemberAPI member : members) {
+                String factionId = FleetFactions.factionIdOf(member, sourceFleet);
+                if (factionId != null) {
+                    byFaction.merge(factionId, member.getDeploymentPointsCost(), Float::sum);
+                }
+            }
+        });
+        return byFaction;
+    }
+
+    public Map<String, Float> deploymentPointsLostByFleetFaction() {
+        Map<String, Float> byFaction = new LinkedHashMap<>();
+        lostEnemiesBySourceFleet().forEach((sourceFleet, members) -> {
             String factionId = FleetFactions.realFactionIdOf(sourceFleet);
             if (factionId != null) {
                 byFaction.merge(factionId, deploymentPoints(members), Float::sum);

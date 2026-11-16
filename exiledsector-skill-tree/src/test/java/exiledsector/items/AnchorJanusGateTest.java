@@ -192,6 +192,43 @@ class AnchorJanusGateTest {
     }
 
     @Test
+    void replacedAnomalousShipsDropTheirOwnFactionsAnchorOnlyPastTheJanusGateAndNeverByTheShroudedGuarantee() throws Exception {
+        String redactedAnchor = "wormhole_anchor_redacted";
+        String shroudedAnchor = "wormhole_anchor_shrouded";
+        WormholeAnchorDefinitions.register(new JSONArray()
+                .put(AnchorRows.row(redactedAnchor, "REDACTED", "hegemony_2").put("drop_chance", "1"))
+                .put(AnchorRows.row(shroudedAnchor, "shrouded", "hegemony_2").put("drop_factions", "dweller").put("drop_chance", "0.01")
+                        .put("guaranteed_drop", "true")));
+        NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"remnant\", \"volume\": \"REDACTED\"}]"));
+        Map<String, Float> byShip = Map.of("remnant", 100f, "dweller", 20f, "exiledSector_dormant", 200f);
+        Map<String, Float> byFleet = Map.of("exiledSector_dormant", 320f);
+
+        assertTrue(rolledIds(byShip, byFleet, 50).isEmpty());
+
+        janusObtained(true);
+
+        Map<String, Integer> drops = new HashMap<>();
+        Random random = new Random(5L);
+        int battles = 400;
+        for (int battle = 0; battle < battles; battle++) {
+            FactionFleetDrops.roll(byShip, byFleet, random, FactionFleetDrops::available).forEach(item -> drops.merge(item.definition().id(), 1, Integer::sum));
+        }
+        assertTrue(drops.getOrDefault(redactedAnchor, 0) > battles * 0.4, String.valueOf(drops));
+        assertTrue(drops.getOrDefault(shroudedAnchor, 0) < battles * 0.05, String.valueOf(drops));
+        assertEquals(Set.of(shroudedAnchor), rolledIds(Map.of("dweller", 5f), Map.of("dweller", 5f), 1));
+        assertTrue(rolledIds(byFleet, byFleet, 50).isEmpty());
+    }
+
+    private static Set<String> rolledIds(Map<String, Float> byShip, Map<String, Float> byFleet, int battles) {
+        Random random = new Random(3L);
+        Set<String> droppedIds = new HashSet<>();
+        for (int battle = 0; battle < battles; battle++) {
+            FactionFleetDrops.roll(byShip, byFleet, random, FactionFleetDrops::available).forEach(item -> droppedIds.add(item.definition().id()));
+        }
+        return droppedIds;
+    }
+
+    @Test
     void aHalvedMarketChanceStocksAboutHalfTheRestocks() {
         janusObtained(true);
         Random random = new Random(3L);

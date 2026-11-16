@@ -829,6 +829,188 @@
 				"encounter",
 				"loot"
 			]
+		},
+		{
+			"id": "additional_debris",
+			"name": "Additional Debris",
+			"effects": [
+				{
+					"effect": "CHART_EXTRA_ANOMALOUS_DEBRIS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "engram_quantity",
+			"name": "Engram Quantity",
+			"effects": [
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_CRAFTING_ITEM_QUANTITY_PERCENT",
+					"magnitude": 20
+				}
+			],
+			"tags": [
+				"crafting_item"
+			]
+		},
+		{
+			"id": "deep_corruption",
+			"name": "Deep Corruption",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_CORRUPTED_FLEET_SIZE_PERCENT",
+					"magnitude": 30
+				},
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_CORRUPTED_ENGRAMS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"fleet_size",
+				"crafting_item"
+			]
+		},
+		{
+			"id": "double_dose",
+			"name": "Double Dose",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_SECOND_CORRUPTION",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_TWICE_CORRUPTED_ENGRAMS",
+					"magnitude": 2
+				}
+			],
+			"tags": [
+				"fleet_size",
+				"crafting_item"
+			]
+		},
+		{
+			"id": "lone_sleeper",
+			"name": "Lone Sleeper",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_SINGLE_FIELD",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_FLEET_SIZE_PERCENT",
+					"magnitude": 100
+				},
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_CORRUPTED_ENGRAMS",
+					"magnitude": 3
+				}
+			],
+			"tags": [
+				"fleet_size",
+				"crafting_item"
+			]
+		},
+		{
+			"id": "breached_graveyard",
+			"name": "Breached Graveyard",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_BREACH_FIELD",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"encounter",
+				"hull_item"
+			]
+		},
+		{
+			"id": "restless_sleepers",
+			"name": "Restless Sleepers",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_AWAKE",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_ROAMING",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"enemy",
+				"encounter"
+			]
+		},
+		{
+			"id": "redacted_sleepers",
+			"name": "[REDACTED] Sleepers",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_REMNANT_SHIP_SHARE",
+					"magnitude": 30
+				}
+			],
+			"tags": [
+				"enemy"
+			]
+		},
+		{
+			"id": "threatening_sleepers",
+			"name": "Threatening Sleepers",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_THREAT_SHIP_SHARE",
+					"magnitude": 30
+				}
+			],
+			"tags": [
+				"enemy"
+			]
+		},
+		{
+			"id": "veiled_sleepers",
+			"name": "Veiled Sleepers",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_DWELLER_SHIP_SHARE",
+					"magnitude": 30
+				}
+			],
+			"tags": [
+				"enemy"
+			]
+		},
+		{
+			"id": "silent_choir",
+			"name": "Silent Choir",
+			"tier": "KEYSTONE",
+			"effects": [
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_ALWAYS_TWICE_CORRUPTED",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_FLEET_SIZE_PERCENT",
+					"magnitude": 50
+				}
+			],
+			"tags": [
+				"fleet_size",
+				"crafting_item"
+			]
 		}
 	]
 }

@@ -8,6 +8,7 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.MockSector;
 import exiledsector.charts.anomaly.LiveAnomalyRuns;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartCampaignPlugin;
 import exiledsector.items.Engrams;
@@ -21,6 +22,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -59,6 +61,8 @@ class DormantFleetDialogTest {
         MemoryAPI memory = mock(MemoryAPI.class);
         doAnswer(invocation -> stored.put(invocation.getArgument(0), invocation.getArgument(1))).when(memory).set(anyString(), any());
         when(memory.getBoolean(anyString())).thenAnswer(invocation -> Boolean.TRUE.equals(stored.get((String) invocation.getArgument(0))));
+        when(memory.contains(anyString())).thenAnswer(invocation -> stored.containsKey((String) invocation.getArgument(0)));
+        when(memory.getInt(anyString())).thenAnswer(invocation -> stored.get((String) invocation.getArgument(0)) instanceof Integer count ? count : 0);
         return memory;
     }
 
@@ -79,13 +83,48 @@ class DormantFleetDialogTest {
         DormantFleetDialog.Options noShips = DormantFleetDialog.options(false, 5);
 
         assertTrue(withKernel.canEngage());
-        assertTrue(withKernel.canCorrupt());
-        assertNull(withKernel.corruptBlockedKey());
+        assertTrue(withKernel.corruption(1).enabled());
+        assertNull(withKernel.corruption(1).blockedKey());
+        assertNull(withKernel.corruption(2));
         assertTrue(withoutKernel.canEngage());
-        assertFalse(withoutKernel.canCorrupt());
-        assertEquals("chart.anomaly.anomalous_debris.dialog.noKernel", withoutKernel.corruptBlockedKey());
+        assertFalse(withoutKernel.corruption(1).enabled());
+        assertEquals("chart.anomaly.anomalous_debris.dialog.noKernel", withoutKernel.corruption(1).blockedKey());
         assertFalse(noShips.canEngage());
-        assertFalse(noShips.canCorrupt());
+        assertFalse(noShips.corruption(1).enabled());
+        assertEquals("chart.anomaly.anomalous_debris.dialog.noReadyShips", noShips.corruption(1).blockedKey());
+    }
+
+    @Test
+    void aSecondCorruptionIsOfferedForAnotherNanoswarmOnlyWhileOneIsLeft() {
+        DormantFleetDialog.Options twoLeft = DormantFleetDialog.options(true, 2, 2);
+        DormantFleetDialog.Options oneHeld = DormantFleetDialog.options(true, 1, 2);
+        DormantFleetDialog.Options noneLeft = DormantFleetDialog.options(true, 5, 0);
+
+        assertEquals(2, twoLeft.corruption(2).cost());
+        assertTrue(twoLeft.corruption(1).enabled());
+        assertTrue(twoLeft.corruption(2).enabled());
+        assertTrue(oneHeld.corruption(1).enabled());
+        assertFalse(oneHeld.corruption(2).enabled());
+        assertEquals("chart.anomaly.anomalous_debris.dialog.notEnoughKernels", oneHeld.corruption(2).blockedKey());
+        assertTrue(noneLeft.corruptions().isEmpty());
+        assertTrue(noneLeft.canEngage());
+        assertFalse(twoLeft.corruption(1).optionId().equals(twoLeft.corruption(2).optionId()));
+    }
+
+    private static CampaignFleetAPI corruptedTimes(int corruptions) {
+        CampaignFleetAPI fleet = debrisFleet(true);
+        fleet.getMemoryWithoutUpdate().set(DormantFleets.CORRUPTIONS_KEY, corruptions);
+        return fleet;
+    }
+
+    @Test
+    void theEngramLinesAddToWhatACorruptedFleetDrops() {
+        ChartGenContext deepAndDouble = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_ANOMALOUS_DEBRIS_CORRUPTED_ENGRAMS, 1f),
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_ANOMALOUS_DEBRIS_TWICE_CORRUPTED_ENGRAMS, 2f)));
+
+        assertEquals(Map.of(ENGRAM, 2), DormantFleetLoot.craftingItemFor(corruptedTimes(1), 3, deepAndDouble, new Random(1L)).materials());
+        assertEquals(Map.of(ENGRAM, 4), DormantFleetLoot.craftingItemFor(corruptedTimes(2), 3, deepAndDouble, new Random(1L)).materials());
+        assertEquals(Map.of(ENGRAM, 1), DormantFleetLoot.craftingItemFor(corruptedTimes(2), 3, ChartGenContext.none(), new Random(1L)).materials());
     }
 
     @Test
@@ -117,12 +156,12 @@ class DormantFleetDialogTest {
     @Test
     void theQuantityLineRaisesTheEngramsDropped() {
         Random random = new Random(4L);
-        assertEquals(2, DebrisRules.craftingItemCount(2f, random));
+        assertEquals(2, DebrisRules.craftingItemCount(1, 2f, random));
         int total = 0;
         for (int draw = 0; draw < 1000; draw++) {
-            total += DebrisRules.craftingItemCount(1.5f, random);
+            total += DebrisRules.craftingItemCount(1, 1.5f, random);
         }
         assertTrue(total > 1400 && total < 1600, String.valueOf(total));
-        assertEquals(1, DebrisRules.craftingItemCount(1f, random));
+        assertEquals(1, DebrisRules.craftingItemCount(1, 1f, random));
     }
 }
