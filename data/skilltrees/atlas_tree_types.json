@@ -126,6 +126,196 @@
 			"tags": [
 				"encounter"
 			]
+		},
+		{
+			"id": "additional_site",
+			"name": "Additional Site",
+			"effects": [
+				{
+					"effect": "CHART_EXTRA_EXCAVATION_SITES",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"crafting_item"
+			]
+		},
+		{
+			"id": "inhibitor_quantity",
+			"name": "Inhibitor Quantity",
+			"effects": [
+				{
+					"effect": "CHART_EXCAVATION_LOOT_QUANTITY_PERCENT",
+					"magnitude": 20
+				}
+			],
+			"tags": [
+				"crafting_item"
+			]
+		},
+		{
+			"id": "open_bores",
+			"name": "Open Bores",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_EXCAVATION_OPEN_SHAFTS",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_EXCAVATION_GUARDIAN_INHIBITORS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"encounter",
+				"crafting_item"
+			]
+		},
+		{
+			"id": "sapper_teams",
+			"name": "Sapper Teams",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_EXCAVATION_COLLAPSED_SHAFTS",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_EXCAVATION_RAID_INHIBITORS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"crafting_item"
+			]
+		},
+		{
+			"id": "twin_shafts",
+			"name": "Twin Shafts",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_EXCAVATION_TWIN_SHAFTS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"crafting_item"
+			]
+		},
+		{
+			"id": "deeper_bores",
+			"name": "Deeper Bores",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_EXCAVATION_SECOND_CAVERN",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_EXCAVATION_SECOND_CAVERN_FLEET_SIZE_MULT",
+					"magnitude": 50
+				},
+				{
+					"effect": "CHART_EXCAVATION_SECOND_CAVERN_INHIBITORS",
+					"magnitude": 2
+				}
+			],
+			"tags": [
+				"fleet_size",
+				"crafting_item"
+			]
+		},
+		{
+			"id": "needle_bores",
+			"name": "Needle Bores",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_EXCAVATION_FRIGATES_ONLY",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_EXCAVATION_GUARDIAN_INHIBITORS",
+					"magnitude": 2
+				}
+			],
+			"tags": [
+				"battle_rules",
+				"crafting_item"
+			]
+		},
+		{
+			"id": "widened_bores",
+			"name": "Widened Bores",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_EXCAVATION_CRUISERS_ALLOWED",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_EXCAVATION_GUARDIAN_INHIBITORS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"battle_rules",
+				"crafting_item"
+			]
+		},
+		{
+			"id": "pitch_black",
+			"name": "Pitch Black",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_EXCAVATION_SIGHT_RADIUS_PERCENT",
+					"magnitude": -70
+				},
+				{
+					"effect": "CHART_EXCAVATION_OPEN_SHAFT_INHIBITOR_PERCENT",
+					"magnitude": 50
+				}
+			],
+			"tags": [
+				"battle_rules",
+				"crafting_item"
+			]
+		},
+		{
+			"id": "infested_bolt_holes",
+			"name": "Infested Bolt-Holes",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_EXCAVATION_CORRUPTIBLE_GUARDIANS",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_EXCAVATION_CORRUPTED_GUARDIAN_INHIBITORS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"encounter",
+				"crafting_item"
+			]
+		},
+		{
+			"id": "settled_shafts",
+			"name": "Settled Shafts",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_EXCAVATION_INHIBITOR_PERCENT_PER_DUST",
+					"magnitude": 30
+				}
+			],
+			"tags": [
+				"crafting_item"
+			]
 		}
 	]
 }

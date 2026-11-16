@@ -14,6 +14,7 @@ import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ContentPlacer;
+import exiledsector.charts.anomaly.DenseNebula;
 import exiledsector.charts.anomaly.LayoutShaper;
 import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.anomaly.RunParticipant;
@@ -62,9 +63,10 @@ public final class ExcavationSites implements LayoutShaper, ContentPlacer, RunPa
         List<PlanetAPI> planets = new ArrayList<>(site.freePlanets(true).stream().filter(planet -> StateFields.fits(planet.getId())).toList());
         Collections.shuffle(planets, random);
         int count = Math.min(planets.size(), ExcavationRules.siteCount(random, Math.round(site.context().anomalyPercent(EXTRA_KEY))));
+        ExcavationTuning tuning = ExcavationTuning.of(site.context());
         List<ExcavationSite> placed = new ArrayList<>();
         for (int index = 0; index < count; index++) {
-            ExcavationSite placedSite = new ExcavationSite(index, planets.get(index).getId(), ExcavationRules.access(random), random.nextLong(),
+            ExcavationSite placedSite = new ExcavationSite(index, planets.get(index).getId(), ExcavationRules.access(random, tuning), random.nextLong(),
                     false);
             ExcavationStates.record(site.state(ANOMALY_ID), placedSite);
             site.claim(planets.get(index));
@@ -89,7 +91,7 @@ public final class ExcavationSites implements LayoutShaper, ContentPlacer, RunPa
 
     @Override
     public ItemDrops.SiteLoot fleetItems(SectorAPI sector, CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, float share, Random random) {
-        return ExcavationLoot.fleetItems(fleet, context, run.tier(), share, random);
+        return ExcavationLoot.fleetItems(fleet, context, run.tier(), DenseNebula.dust(run), share, random);
     }
 
     @Override

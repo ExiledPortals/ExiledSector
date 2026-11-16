@@ -15,13 +15,13 @@ final class ExcavationEncounterDialog extends FleetInteractionDialogPluginImpl {
     @Override
     protected void updateEngagementChoice(boolean withText) {
         super.updateEngagementChoice(withText);
-        disableEngageWithoutExcavationShips(options, PlayerFleet.orNull());
+        disableEngageWithoutExcavationShips(options, PlayerFleet.orNull(), ExcavationRules.maxShipSize(ExcavationBattlePlugin.liveTuning()));
     }
 
-    static void disableEngageWithoutExcavationShips(OptionPanelAPI options, CampaignFleetAPI playerFleet) {
-        if (options != null && options.hasOption(OptionId.ENGAGE) && !ExcavationSiteDialog.hasExcavationShips(playerFleet)) {
+    static void disableEngageWithoutExcavationShips(OptionPanelAPI options, CampaignFleetAPI playerFleet, int maxShipSize) {
+        if (options != null && options.hasOption(OptionId.ENGAGE) && !ExcavationSiteDialog.hasExcavationShips(playerFleet, maxShipSize)) {
             options.setEnabled(OptionId.ENGAGE, false);
-            options.setTooltip(OptionId.ENGAGE, Translation.gameText("chart.anomaly.excavation_sites.dialog.noShaftShips"));
+            options.setTooltip(OptionId.ENGAGE, Translation.gameText(ExcavationSiteDialog.sizedKey(ExcavationSiteDialog.NO_SHAFT_SHIPS_KEY, maxShipSize)));
         }
     }
 }

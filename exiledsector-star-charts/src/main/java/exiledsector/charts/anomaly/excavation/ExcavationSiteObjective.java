@@ -43,12 +43,12 @@ public class ExcavationSiteObjective extends ChartRaidObjective {
     protected CargoAPI take(Random random) {
         ChartRun run = ChartRuns.live();
         ExcavationSite current = run == null ? null : ExcavationStates.standingAt(run, site.planetId());
-        if (current == null || current.access() != ExcavationSite.Access.COLLAPSED) {
+        if (current == null || !current.hasCollapsedShaft()) {
             return null;
         }
         float share = ExcavationRules.raidShare((float) raidEffectiveness.getAsDouble());
         CargoAPI cargo = ExcavationLoot.raidCargo(run, share, random);
-        ExcavationStates.clear(run, current);
+        ExcavationStates.clearShaft(run, current, ExcavationSite.Access.COLLAPSED);
         return cargo;
     }
 }
