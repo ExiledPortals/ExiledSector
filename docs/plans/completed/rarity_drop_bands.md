@@ -97,6 +97,9 @@ so at default settings they always drop at the level cap factor. Hull items woul
 
 ## Open questions
 
+Each is built with one answer for now: a tier 1 chart's mix outside charts, Fundamental's derived weight, the
+curve kept for the other rows, one shift for every band above common and vanilla finds unchanged.
+
 1. Whether fights outside charts should keep a tier 1 chart's mix, or keep today's common-heavy mix with a band
    shift below 1x (about 0.3x keeps today's rare share).
 2. What Fundamental's single weight should be; today it is 0.8 per 100 DP outside charts and 0.03 to 0.07 inside.
@@ -107,22 +110,30 @@ so at default settings they always drop at the level cap factor. Hull items woul
 
 ## Steps
 
-1. `crafting_drops.csv` (item, weight, chart only) and one core helper that takes a count, the items a source may
-   give and a band shift and returns the drops, bands read from `MaterialItems.tier`. Tests: band weights match at
-   1x, the shift moves count out of common and keeps the total, chart-only items stay out of other sources.
-2. Battle drops: `BattleMaterials` uses one `crafting_item` row in `battle_loot.csv` and the helper; the per-item
-   crafting rows go. `FleetLootRules` gives fleets outside charts the level-scaled share for every row and the
-   `regular_share` column goes.
-3. Charts: `ChartFleetLoot` counts from claimed DP with the same rate; `ChartMaterials` and `chart_materials.csv`
-   go; `band_shift` in `star_chart_tiers.csv`; `OfficerRewardPool` picks crafting items through the helper at the
-   chart's shift. Tests in `ChartFleetLootTest` and for `OfficerRewardPool`.
-4. Sites: the crafting picks in `ItemDrops` and `ChartDrops` go through the helper; the families' `dropWeight`
-   stops being a drop weight.
-5. `ExcavationLoot` picks its tag inhibitors through the helper, tag inhibitors only.
-6. Check every hull item source in a chart (caches, excavation sites, black hole derelicts, spatial breach, officer
-   rewards) passes the chart's rarity, and route the ones that don't through `ChartGenContext.itemChances`.
-7. Treasure's range in `star_chart_modifiers.csv` (placeholder +10-30%, low 10-15 / mid 15-22 / high 22-30) and its
-   line text (`chart.modifier.CHART_ITEM_RARITY_PERCENT`, en and zh_CN), reading as rarity of every item found in
-   the system.
-8. `chart_loot_model.js` reads the new rate and weights instead of `chart_materials.csv`; `docs/docs.md` (Star
-   Charts) gets one paragraph on what rarity changes.
+1. Done: `crafting_drops.csv` (item, weight, chart only) and the core helper `CraftingDrops` (`exiledsector-core`,
+   `exiledsector.items`). One weighted pick by weight × band shift (common at 1x) gives the same odds as a band roll
+   then an in-band pick, so the helper does that in one step. Tests in `CraftingDropsTest`.
+2. Done: `BattleMaterials` uses the one `crafting_item` row (1.132 per 100 DP) in `battle_loot.csv` and the helper;
+   the per-item crafting rows and the `regular_share` column are gone. `FleetLootRules.share` gives fleets outside
+   charts `OutsideChartShare` (`exiledsector.loot`) for every row, read against the game's level cap, on top of the
+   hull items drop level gate. Tests in `BattleMaterialsTest`, `BattleLootRatesTest`, `OutsideChartShareTest` and
+   `BattleItemDropsTest`.
+3. Done: `ChartFleetLoot.craftingItems` counts from claimed DP at the same rate; `ChartMaterials`,
+   `ChartMaterialsTest` and `chart_materials.csv` are gone; `band_shift` in `star_chart_tiers.csv`, read by
+   `ChartTiers.bandShift` and `ChartGenContext.craftingBandShift`; `OfficerRewardPool` weights crafting items by
+   `CraftingDrops.shiftedWeight` at the run's shift (`RewardContext.craftingBandShift`). Tests in
+   `ChartFleetLootTest`, `ChartTiersTest` and `OfficerRewardPoolTest`.
+4. Done: `ItemDrops` picks site crafting items through the helper (outside-chart items, the site's band shift);
+   `ChartDrops` picks chart salvage and run reward ciphers through it. `dropWeight` is gone from the crafting
+   families, `StarChartCipher` and `Engram`. Tests in `ItemDropsTest`, `ChartDropsTest` and `StarChartCipherTest`.
+5. Done: `ExcavationLoot.tagInhibitors` picks through the helper, inhibitors that inhibit a tag only, at the run's
+   band shift. Tests in `ExcavationRulesTest`.
+6. Done: caches, sites, black hole derelicts and spatial breach already took `ChartGenContext.lootMultipliers`. The
+   boss guarantee in `ChartFleetLoot`, non-unique officer rewards (`OfficerRewardDrop`, through
+   `ItemData.rolledAtTierWithRarity`) and the objective reward (`ChartRewards`) now take the chart's rarity too.
+7. Done: Treasure in `star_chart_modifiers.csv` at low 10-15 / mid 15-22 / high 22-30 with the `crafting_item` tag, and
+   its line and totals text in en and zh_CN name hull items, subroutines and crafting items (star charts and vanilla
+   finds don't respond to rarity).
+8. Done: `chart_loot_model.js` reads `crafting_drops.csv`, the `crafting_item` rate and `band_shift`;
+   `rarity_band_model.js` keeps the old amounts in the script. `docs/docs.md` has a Rarity section under Star Charts
+   and the outside-chart share in Drops.

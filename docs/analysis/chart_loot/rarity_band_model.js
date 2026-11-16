@@ -40,9 +40,31 @@ const tiers = readCsv('star_chart_tiers.csv').map(row => ({
   tier: +row.tier, fleetSize: +row.fleet_size, fleetsMin: +row.fleets_min, fleetsMax: +row.fleets_max, bossSize: +row.boss_size,
 })).filter(row => row.tier >= 1 && row.tier <= 15);
 
-const materials = readCsv('chart_materials.csv').filter(row => BANDS[row.drop])
-  .map(row => ({ id: row.drop, band: BANDS[row.drop], tier1: +row.tier_1, tier15: +row.tier_15 }));
-const battleLoot = Object.fromEntries(readCsv('battle_loot.csv').map(row => [row.drop, row]));
+const CHART_MATERIALS_BEFORE_BANDS = {
+  exiledSector_augmentation_nanoswarm: [2.07, 9.16], exiledSector_fundamental_nanoswarm: [0.075, 1.34],
+  exiledSector_reshaping_nanoswarm: [1.47, 9.15], exiledSector_corrupted_nanoswarm: [0.735, 9.72],
+  exiledSector_metamorph_nanoswarm: [0.138, 2.13], exiledSector_annulment_nanoswarm: [0.147, 1.03],
+  exiledSector_tuning_nanoswarm: [0.147, 1.03], exiledSector_immutable_nanoswarm: [0.069, 0.781],
+  exiledSector_replicator_nanoseed: [0.014, 0.187], exiledSector_prefix_inhibitor: [0.069, 0.781],
+  exiledSector_suffix_inhibitor: [0.069, 0.781], exiledSector_beam_inhibitor: [0.01, 0.12],
+  exiledSector_non_beam_energy_inhibitor: [0.01, 0.12], exiledSector_ballistic_inhibitor: [0.01, 0.12],
+  exiledSector_missile_inhibitor: [0.01, 0.12], exiledSector_shield_inhibitor: [0.01, 0.12],
+  exiledSector_armour_inhibitor: [0.01, 0.12], exiledSector_phase_inhibitor: [0.01, 0.12],
+  exiledSector_reforge_cipher: [1.47, 9.15], exiledSector_erasure_cipher: [1, 6], exiledSector_cartographer_cipher: [0.075, 1.34],
+};
+const BATTLE_LOOT_BEFORE_BANDS = {
+  exiledSector_augmentation_nanoswarm: [1.2, 0.125], exiledSector_fundamental_nanoswarm: [0.8, 0.125],
+  exiledSector_reshaping_nanoswarm: [0.4, 0.125], exiledSector_corrupted_nanoswarm: [0.12, 0.125],
+  exiledSector_metamorph_nanoswarm: [0.0332, 0.125], exiledSector_annulment_nanoswarm: [0.0252, 0.125],
+  exiledSector_tuning_nanoswarm: [0.0252, 0.125], exiledSector_immutable_nanoswarm: [0.0168, 0.125],
+  exiledSector_replicator_nanoseed: [0.0028, 0.125], exiledSector_prefix_inhibitor: [0.0168, 0.125],
+  exiledSector_suffix_inhibitor: [0.0168, 0.125],
+};
+
+const materials = Object.entries(CHART_MATERIALS_BEFORE_BANDS)
+  .map(([id, [tier1, tier15]]) => ({ id, band: BANDS[id], tier1, tier15 }));
+const battleLoot = Object.fromEntries(Object.entries(BATTLE_LOOT_BEFORE_BANDS)
+  .map(([id, [per100, regularShare]]) => [id, { per_100_dp: per100, regular_share: regularShare }]));
 
 function chartDp(tier) {
   const spread = rolledFleets => {
