@@ -15,7 +15,6 @@ import exiledsector.items.ItemChances;
 import exiledsector.items.ItemKind;
 import exiledsector.items.SlottedRoll;
 import exiledsector.items.StarChart;
-import exiledsector.loot.LootMultipliers;
 import exiledsector.modifiers.ModifierEffect;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierSlot;
@@ -587,13 +586,8 @@ public final class ChartGenContext {
         return percent;
     }
 
-    public LootMultipliers lootMultipliers(float scale, int chartTier) {
-        return new LootMultipliers(itemChances().scaled(scale), dropMult(DropType.FEEDSTOCK) * scale, dropMult(DropType.CRAFTING_ITEM) * scale,
-                ChartTiers.bandShift(chartTier));
-    }
-
-    public float craftingBandShift(int chartTier) {
-        return ChartTiers.bandShift(chartTier) * itemRarityMult();
+    public float carriedDropMult(DropType type) {
+        return multiplier(itemPercent + dropPercent(type));
     }
 
     public float itemRarityMult() {

@@ -5,6 +5,8 @@ import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.loot.ChartLootContext;
+import exiledsector.charts.loot.FleetClaim;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
@@ -19,11 +21,7 @@ public interface LootShaper extends ChartAnomaly {
         return List.of();
     }
 
-    default Loot fleetItems(SectorAPI sector, CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, float share, Random random) {
-        return null;
-    }
-
-    default Loot extraFleetLoot(CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, Random random) {
+    default Loot fleetLoot(FleetClaim claim, ChartLootContext loot, Random random) {
         return Loot.NONE;
     }
 

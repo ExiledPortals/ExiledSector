@@ -4,8 +4,8 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.atlas.AtlasData;
 import exiledsector.charts.atlas.AtlasRuntime;
 import exiledsector.charts.atlas.AtlasUnlocks;
+import exiledsector.charts.loot.ChartLootContext;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemUnlock;
 
@@ -30,6 +30,6 @@ public record RewardContext(int tier, String factionId, String commandCentreBiom
 
     public static RewardContext forRun(SectorAPI sector, ChartRun run, String officerFactionId) {
         return forSector(sector, run.tier(), officerFactionId, AtlasRuntime.regionOf(sector, run.atlasNode()),
-                ChartRunEffects.contextOf(run).craftingBandShift(run.tier()));
+                ChartLootContext.of(run).craftingBandShift());
     }
 }

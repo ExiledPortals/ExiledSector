@@ -26,7 +26,7 @@ import exiledsector.items.WormholeAnchorDefinitions;
 import exiledsector.items.StarChartCipher;
 import exiledsector.items.StarChartFixtures;
 import exiledsector.charts.content.ChartContent;
-import exiledsector.charts.loot.ChartDrops;
+import exiledsector.charts.loot.ChartDropRules;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
@@ -149,7 +149,7 @@ class ItemSalvageListenerTest {
     void aSalvagedSystemsiteCanAlsoHoldAStarChartAndAChartCraftingItem() throws Exception {
         StarChartFixtures.registerShipped();
         StarChartCipher.registerAll();
-        ChartDrops.register(new JSONArray().put(new JSONObject().put("source", "system_salvage").put("chance", "1").put("crafting_item_chance", "200")));
+        ChartDropRules.register(new JSONArray().put(new JSONObject().put("source", "system_salvage").put("chance", "1").put("cipher_chance", "200")));
         try (MockSector mockSector = new MockSector()) {
             ChartRun run = new ChartRun("salvageRun", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
             run.recordContent(new ChartContent(6, "hegemony", "boss", 4, 6));
@@ -172,7 +172,7 @@ class ItemSalvageListenerTest {
             assertEquals(6, ItemData.ofStarChart(charts.get(0)).preview().tier());
             assertEquals(StarChartCipher.values().length, specials.getAllValues().stream().filter(special -> StarChartCipher.byItemId(special.getId()) != null).count());
         } finally {
-            ChartDrops.clear();
+            ChartDropRules.clear();
             StarChartFixtures.unregisterCraftingItems();
             StarChartFixtures.clear();
         }

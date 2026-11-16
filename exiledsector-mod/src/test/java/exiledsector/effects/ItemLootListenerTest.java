@@ -13,7 +13,7 @@ import exiledsector.MockShips;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.CraftingDrops;
 import exiledsector.charts.content.ChartContent;
-import exiledsector.charts.loot.ChartDrops;
+import exiledsector.charts.loot.ChartDropRules;
 import exiledsector.charts.loot.ChartFleetFixtures;
 import exiledsector.charts.loot.ChartFleetLoot;
 import exiledsector.charts.ChartIds;
@@ -371,7 +371,7 @@ class ItemLootListenerTest {
     @Test
     void wonBattlesRollStarChartsFromChartFleetsAtTheRunTierAndOutsideOnlyFromStrongEnemies() throws Exception {
         StarChartFixtures.registerShipped();
-        ChartDrops.register(new JSONArray()
+        ChartDropRules.register(new JSONArray()
                 .put(new JSONObject().put("source", "chart_fleet").put("chance", String.valueOf(ChartFleetLoot.expectedFleetPoints(8) / 20f)))
                 .put(new JSONObject().put("source", "battle").put("chance", "0.25").put("min_defeated_dp", "150").put("defeated_dp_per_tier", "100")
                         .put("max_tier", "6")));
@@ -418,7 +418,7 @@ class ItemLootListenerTest {
             assertEquals(1, strongCharts.size());
             assertEquals(1, ItemData.ofStarChart(strongCharts.get(0)).preview().tier(), "ships without NPC trees count as level 0");
         } finally {
-            ChartDrops.clear();
+            ChartDropRules.clear();
             StarChartFixtures.clear();
         }
     }

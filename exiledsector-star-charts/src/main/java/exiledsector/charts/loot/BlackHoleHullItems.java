@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.PlayerFleet;
+import exiledsector.charts.ChartIds;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemKind;
 import exiledsector.loot.LootMultipliers;
@@ -25,7 +26,7 @@ final class BlackHoleHullItems {
 
     static LootMultipliers withBonus(LootMultipliers multipliers, LocationAPI location) {
         ItemChances chances = multipliers.chances();
-        if (!ChartDrops.isSystem(location) || !hasBlackHole((StarSystemAPI) location)) {
+        if (!ChartIds.isChartSystem(location) || !hasBlackHole((StarSystemAPI) location)) {
             return multipliers;
         }
         ItemChances boosted = withExtraHullItemShare(chances, BlackHoleSalvage.hullItemPercent(PlayerFleet.orNull()) / 100f);

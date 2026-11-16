@@ -6,9 +6,9 @@ import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.ChartCargoLoot;
+import exiledsector.charts.loot.ChartLootContext;
 import exiledsector.charts.loot.DropType;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.charts.run.ChartRunEffects;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +28,7 @@ public record AnomalyLoot(String scope, String siteId, float baseSteps, float st
         return itemMult * Math.max(0f, quantityMult);
     }
 
-    public ChartGenContext leaning(ChartGenContext context, List<DropType> leans) {
-        ChartGenContext base = ChartGenContext.orNone(context);
+    public ChartLootContext leaning(ChartLootContext loot, List<DropType> leans) {
         List<ChartGenContext.AppliedEffect> effects = new ArrayList<>();
         for (DropType lean : leans) {
             ChartModifier effect = ChartModifier.forDropType(lean);
@@ -37,13 +36,13 @@ public record AnomalyLoot(String scope, String siteId, float baseSteps, float st
                 effects.add(new ChartGenContext.AppliedEffect(effect, leanPercent));
             }
         }
-        return effects.isEmpty() ? base : base.withEffects(effects);
+        return loot.withEffects(effects);
     }
 
     public CargoAPI roll(SectorAPI sector, ChartRun run, List<DropType> leans, float share, Random random) {
-        ChartGenContext runContext = ChartRunEffects.contextOf(run);
-        float quantity = quantityMult(runContext);
-        return ChartCargoLoot.roll(sector, run, leaning(runContext, leans), scope, siteId, steps(run.tier(), quantity) * share, items(quantity) * share,
+        ChartLootContext runLoot = ChartLootContext.of(run);
+        float quantity = quantityMult(runLoot.effects());
+        return ChartCargoLoot.roll(sector, leaning(runLoot, leans), scope, siteId, steps(runLoot.tier(), quantity) * share, items(quantity) * share,
                 random);
     }
 }

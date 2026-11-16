@@ -6,14 +6,11 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.loot.ChartDrops;
+import exiledsector.charts.loot.ChartLootContext;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.charts.run.ChartRunEffects;
-import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTiers;
-import exiledsector.items.ItemChances;
 import exiledsector.items.ItemUnlock;
 import exiledsector.loot.Loot;
-import exiledsector.loot.LootMultipliers;
 import exiledsector.loot.LootSources;
 import exiledsector.ui.CampaignMessages;
 import exiledsector.Seeds;
@@ -64,15 +61,11 @@ public final class ChartRewards {
             return new Reward(0, Loot.NONE);
         }
         Random random = rewardRandom(run);
-        ChartGenContext context = ChartRunEffects.contextOf(run);
-        float rewardMult = context.rewardMult();
-        int credits = creditsFor(run.tier(), rewardMult);
+        ChartLootContext loot = ChartLootContext.of(run);
+        int credits = creditsFor(run.tier(), loot.rewardMult());
         cargo.getCredits().add(credits);
-        float chanceMult = itemChanceMultFor(run.tier()) * rewardMult;
-        LootMultipliers rewardMultipliers = new LootMultipliers(ItemChances.of(chanceMult).withRarity(context.itemRarityMult()), chanceMult, chanceMult,
-                ChartTiers.bandShift(run.tier()));
-        Loot siteLoot = LootSources.rollSite(sector, REWARD_SITE, random, rewardMultipliers);
-        ChartDrops.Loot chartLoot = ChartDrops.forRunReward(run, random);
+        Loot siteLoot = LootSources.rollSite(sector, REWARD_SITE, random, loot.rewardMultipliers(itemChanceMultFor(run.tier())));
+        ChartDrops.Rolled chartLoot = ChartDrops.forRunReward(loot, random);
         announce(run, credits);
         return new Reward(credits, siteLoot.plus(chartLoot.asLoot()));
     }

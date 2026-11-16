@@ -37,7 +37,7 @@ import exiledsector.charts.effect.ChartEnemyShipEffects;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.generation.ChartTiers;
-import exiledsector.charts.loot.ChartFleetLoot;
+import exiledsector.charts.loot.ChartFleetLedger;
 import exiledsector.charts.loot.ChartVanillaLoot;
 import exiledsector.charts.loot.DropType;
 import org.lwjgl.util.vector.Vector2f;
@@ -256,7 +256,7 @@ public final class DormantFleets {
         populate(fleet, hullFactions(Global.getSector()), tier, context, seed, true);
         memory.set(CORRUPTED_KEY, true);
         setStrengthBonus(fleet, tier, context, true);
-        ChartFleetLoot.recordStart(fleet);
+        ChartFleetLedger.recordStart(fleet);
         ChartEnemyShipEffects.grant(fleet, context);
         fleet.setName(Translation.gameText("chart.anomaly.anomalous_debris.fleet.corrupted.name"));
         return true;

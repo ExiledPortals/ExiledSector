@@ -198,7 +198,7 @@ class ChartFleetHullItemsTest {
 
     private static Loot rollAlone(SectorAPI sector, CampaignFleetAPI fleet, ChartRun run, ChartGenContext context,
                                                 float defeatedDeploymentPoints, Random random) {
-        return ChartFleetLoot.roll(sector, fleet, run, context, defeatedDeploymentPoints, ChartFleetLoot.Battle.of(defeatedDeploymentPoints), 1f,
-                random);
+        return ChartFleetLoot.roll(sector, fleet, run, new ChartLootContext(context, run.tier()), defeatedDeploymentPoints,
+                ChartFleetLoot.Battle.of(defeatedDeploymentPoints), random);
     }
 }

@@ -101,7 +101,7 @@ final class ChartShipSalvage {
     }
 
     void addTo(CargoAPI loot, EncounterSalvage encounter, Random random) {
-        addTo(loot, encounter, LootContexts::forFleet, Rates::current, random);
+        addTo(loot, encounter, fleet -> ChartLootContext.forFleet(fleet).effects(), Rates::current, random);
     }
 
     void addTo(CargoAPI loot, EncounterSalvage encounter, Function<CampaignFleetAPI, ChartGenContext> contexts, Supplier<Rates> vanillaRates,

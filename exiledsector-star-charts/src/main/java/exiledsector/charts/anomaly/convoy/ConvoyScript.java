@@ -20,7 +20,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.AnomalyRunScript;
 import exiledsector.charts.anomaly.AnomalyTerrains;
 import exiledsector.charts.content.ChartContentGenerator;
-import exiledsector.charts.loot.ChartFleetLoot;
+import exiledsector.charts.loot.ChartFleetLedger;
 import exiledsector.charts.run.ChartRun;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -319,7 +319,7 @@ public final class ConvoyScript extends AnomalyRunScript implements FleetEventLi
             convoy.storeCache(ConvoyCargo.deliveredCache(Global.getSector(), run, convoy, fleet, new Random(convoy.nextDropSeed())));
         }
         if (fleet != null) {
-            ChartFleetLoot.spendLoot(fleet);
+            ChartFleetLedger.spendLoot(fleet);
             fleet.addAssignment(FleetAssignment.GO_TO_LOCATION_AND_DESPAWN, convoy.exitToken(), ChartContentGenerator.ASSIGNMENT_DAYS);
         }
         SectorEntityToken destination = entity(convoy.destinationId());

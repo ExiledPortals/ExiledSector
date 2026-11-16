@@ -1,12 +1,11 @@
 package exiledsector.charts.officer.reward;
 
-import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.BiomeModifiers;
 import exiledsector.charts.loot.ChartDrops;
+import exiledsector.charts.loot.ChartLootContext;
 import exiledsector.charts.loot.DropType;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.data.RandomRounding;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
@@ -26,14 +25,14 @@ public final class OfficerRewardDrop {
     }
 
     public static Loot roll(List<CarriedItem> carried, ChartRun run, Random random) {
-        return roll(carried, run.tier(), ChartRunEffects.contextOf(run), random);
+        return roll(carried, ChartLootContext.of(run), random);
     }
 
-    public static Loot roll(List<CarriedItem> carried, int runTier, ChartGenContext context, Random random) {
+    public static Loot roll(List<CarriedItem> carried, ChartLootContext loot, Random random) {
         List<ItemData> items = new ArrayList<>();
         Map<String, Integer> materials = new LinkedHashMap<>();
-        float craftingMult = craftingMult(context);
-        float feedstockMult = feedstockMult(context);
+        float craftingMult = loot.carriedDropMult(DropType.CRAFTING_ITEM);
+        float feedstockMult = loot.carriedDropMult(DropType.FEEDSTOCK);
         for (CarriedItem item : carried) {
             if (item.kind().craftingItem()) {
                 float mult = item.kind() == RewardKind.FEEDSTOCK ? feedstockMult : craftingMult;
@@ -41,7 +40,7 @@ public final class OfficerRewardDrop {
             } else {
                 ItemDefinition definition = ItemDefinitions.get(item.id());
                 for (int copy = 0; definition != null && copy < item.baseCount(); copy++) {
-                    items.add(rolled(item, definition, runTier, context.itemRarityMult(), random));
+                    items.add(rolled(item, definition, loot, random));
                 }
             }
         }
@@ -51,29 +50,16 @@ public final class OfficerRewardDrop {
         return new Loot(items, List.of(), materials);
     }
 
-    public static float craftingMult(ChartGenContext context) {
-        return dropMult(context, DropType.CRAFTING_ITEM);
-    }
-
-    public static float feedstockMult(ChartGenContext context) {
-        return dropMult(context, DropType.FEEDSTOCK);
-    }
-
-    private static float dropMult(ChartGenContext context, DropType dropType) {
-        float percent = context.itemPercent() + context.dropPercent(dropType);
-        return Math.max(0f, 1f + percent / ChartGenContext.PERCENT);
-    }
-
-    private static ItemData rolled(CarriedItem item, ItemDefinition definition, int runTier, float rarity, Random random) {
+    private static ItemData rolled(CarriedItem item, ItemDefinition definition, ChartLootContext loot, Random random) {
         long seed = random.nextLong();
         return switch (item.kind()) {
             case UNIQUE -> ItemData.rolled(definition, seed);
-            case BIOME_HULL_ITEM -> BiomeModifiers.grant(ItemData.rolledAtTierWithRarity(definition, seed, runTier, rarity), item.variant(), random);
+            case BIOME_HULL_ITEM -> BiomeModifiers.grant(loot.rolledWithAffixLimitsAtRunTier(definition, seed), item.variant(), random);
             case STAR_CHART -> {
-                int chartTier = ChartTiers.clampDropTier(runTier);
+                int chartTier = ChartTiers.clampDropTier(loot.tier());
                 yield ItemData.rolledAtTier(chartAt(definition, chartTier, random), seed, chartTier);
             }
-            default -> ItemData.rolledAtTierWithRarity(definition, seed, runTier, rarity);
+            default -> loot.rolledWithAffixLimitsAtRunTier(definition, seed);
         };
     }
 

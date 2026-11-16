@@ -11,7 +11,6 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.PlayerFleet;
 import exiledsector.Seeds;
-import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.LootShaper;
@@ -21,7 +20,6 @@ import exiledsector.items.ItemData;
 import exiledsector.items.MaterialItems;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.loot.BattleLoot;
 import exiledsector.loot.BattleLootRates;
@@ -75,8 +73,8 @@ public final class StarChartLootSource implements LootSource {
             CampaignFleetAPI sourceFleet = fleetLosses.getKey();
             List<FleetMemberAPI> members = fleetLosses.getValue();
             float deploymentPoints = BattleEngagement.deploymentPoints(members);
-            boolean spent = ChartFleetLoot.lootSpent(sourceFleet);
-            if (ChartFleetLoot.hasLootLedger(sourceFleet) || adoptedAsDefender(sourceFleet)) {
+            boolean spent = ChartFleetLedger.lootSpent(sourceFleet);
+            if (ChartFleetLedger.hasLootLedger(sourceFleet) || adoptedAsDefender(sourceFleet)) {
                 losses.shipSalvage.record(sourceFleet, members);
                 if (!spent) {
                     losses.chartFleetDeploymentPoints.merge(sourceFleet, deploymentPoints, Float::sum);
@@ -113,7 +111,7 @@ public final class StarChartLootSource implements LootSource {
             return false;
         }
         try {
-            return ChartFleetLoot.adoptDefender(sourceFleet, playerFleet.getContainingLocation());
+            return ChartFleetLedger.adoptDefender(sourceFleet, playerFleet.getContainingLocation());
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Checking whether a fleet defends a Star Chart site failed", e);
             return false;
@@ -145,7 +143,7 @@ public final class StarChartLootSource implements LootSource {
         Loot chartLoot = Loot.NONE;
         if (battle.playerWon()) {
             try {
-                ChartDrops.Loot battleLoot = ChartDrops.forBattle(playerFleet.getContainingLocation(), losses.chartDpDefeated,
+                ChartDrops.Rolled battleLoot = ChartDrops.forBattle(playerFleet.getContainingLocation(), losses.chartDpDefeated,
                         losses.highestDefeatedLevel, battle.independentRandom());
                 chartLoot = chartLoot.plus(battleLoot.asLoot());
             } catch (RuntimeException e) {
@@ -181,24 +179,24 @@ public final class StarChartLootSource implements LootSource {
     @Override
     public FleetLootRules fleetLootRules(CampaignFleetAPI fleet) {
         try {
-            ChartRun run = fleet == null ? null : ChartFleetLoot.liveRunOf(fleet);
+            ChartRun run = fleet == null ? null : ChartFleetLedger.liveRunOf(fleet);
             if (run == null) {
                 return null;
             }
-            if (ChartFleetLoot.lootSpent(fleet)) {
+            if (ChartFleetLedger.lootSpent(fleet)) {
                 return FleetLootRules.SPENT;
             }
             if (fleet.getMemoryWithoutUpdate().getBoolean(ChartIds.FEEDSTOCK_ONLY_MEMORY_KEY)) {
                 return FleetLootRules.FEEDSTOCK_ONLY;
             }
-            if (!ChartFleetLoot.hasLootLedger(fleet)) {
+            if (!ChartFleetLedger.hasLootLedger(fleet)) {
                 return null;
             }
-            ChartGenContext context = ChartRunEffects.contextOf(run);
-            float battleLootMult = ChartFleetLoot.battleLootMult(anomaliesHoldingBattle(), context);
-            LootMultipliers multipliers = BlackHoleHullItems.withBonusWherePlayerIs(context.lootMultipliers(battleLootMult, run.tier()));
+            ChartLootContext loot = ChartLootContext.of(run);
+            float battleLootMult = ChartFleetLoot.battleLootMult(anomaliesHoldingBattle(), loot.effects());
+            LootMultipliers multipliers = BlackHoleHullItems.withBonusWherePlayerIs(loot.multipliers(battleLootMult));
             FleetLootRules rules = FleetLootRules.ownLedger(multipliers,
-                    ChartFleetLoot.isBoss(fleet, run) ? context.bossSpoilsMult() : ChartFleetLoot.anomalyFleetLoot(fleet, run));
+                    ChartFleetLedger.isBoss(fleet, run) ? loot.effects().bossSpoilsMult() : ChartFleetLedger.anomalyFleetLoot(fleet, run));
             return ChartFleetLoot.overchargesHullItems(fleet, run) ? rules.overchargingHullItems() : rules;
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Reading the loot rules of a defeated fleet failed", e);
@@ -210,7 +208,7 @@ public final class StarChartLootSource implements LootSource {
     public LootMultipliers lootMultipliersAt(LocationAPI location) {
         LootMultipliers multipliers;
         try {
-            multipliers = ChartDrops.liveLootMultipliersAt(location);
+            multipliers = ChartLootContext.at(location).multipliers(1f);
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Reading the Star Chart loot bonuses failed", e);
             multipliers = LootMultipliers.NONE;
@@ -234,22 +232,22 @@ public final class StarChartLootSource implements LootSource {
 
     @Override
     public void addSalvageLoot(SectorAPI sector, SectorEntityToken salvageEntity, CargoAPI loot) {
-        ChartDrops.Loot chartLoot = salvageLoot(sector, salvageEntity);
+        ChartDrops.Rolled chartLoot = salvageLoot(sector, salvageEntity);
         chartLoot.charts().forEach(chart -> loot.addSpecial(chart.toSpecialItem(), 1f));
         chartLoot.materials().forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
-        MaterialDropAnnouncer.announceOnLootScreen(chartLoot.craftingItems());
+        MaterialDropAnnouncer.announceOnLootScreen(chartLoot.ciphers());
     }
 
-    public static ChartDrops.Loot salvageLoot(SectorAPI sector, SectorEntityToken salvageEntity) {
+    public static ChartDrops.Rolled salvageLoot(SectorAPI sector, SectorEntityToken salvageEntity) {
         if (sector == null) {
-            return ChartDrops.Loot.NONE;
+            return ChartDrops.Rolled.NONE;
         }
         try {
             Random chartRandom = new Random(Misc.getSalvageSeed(salvageEntity) ^ SALVAGE_SEED_SALT);
             return ChartDrops.forSalvage(sector, salvageEntity.getContainingLocation(), chartRandom);
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Rolling Star Chart salvage drops failed", e);
-            return ChartDrops.Loot.NONE;
+            return ChartDrops.Rolled.NONE;
         }
     }
 

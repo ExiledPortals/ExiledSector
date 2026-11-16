@@ -4,10 +4,9 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.loot.ChartCraftingPools;
+import exiledsector.charts.loot.ChartLootContext;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.charts.run.ChartRunEffects;
-import exiledsector.items.CraftingDrops;
-import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.MaterialItems;
 import exiledsector.loot.Loot;
 
@@ -22,14 +21,10 @@ public final class ExcavationLoot {
 
     public static CargoAPI raidCargo(ChartRun run, float share, Random random) {
         CargoAPI cargo = Global.getFactory().createCargo(true);
-        ChartGenContext context = ChartRunEffects.contextOf(run);
-        float expectedInhibitors = expectedInhibitors(ExcavationRules.INHIBITORS_PER_RAID, context, share);
-        tagInhibitors(expectedInhibitors, bandShift(context, run.tier()), random).forEach((itemId, quantity) -> MaterialItems.add(cargo, itemId, quantity));
+        ChartLootContext loot = ChartLootContext.of(run);
+        float expectedInhibitors = expectedInhibitors(ExcavationRules.INHIBITORS_PER_RAID, loot.effects(), share);
+        tagInhibitors(expectedInhibitors, loot, random).forEach((itemId, quantity) -> MaterialItems.add(cargo, itemId, quantity));
         return cargo;
-    }
-
-    static float bandShift(ChartGenContext context, int chartTier) {
-        return ChartGenContext.orNone(context).craftingBandShift(chartTier);
     }
 
     static float quantityMult(ChartGenContext context) {
@@ -40,21 +35,16 @@ public final class ExcavationLoot {
         return perShaft * Math.max(0f, quantityMult(context)) * Math.max(0f, share);
     }
 
-    static Map<String, Integer> tagInhibitors(float expectedCount, float bandShift, Random random) {
-        return CraftingDrops.roll(expectedCount, ExcavationLoot::isTagInhibitor, bandShift, random);
+    static Map<String, Integer> tagInhibitors(float expectedCount, ChartLootContext loot, Random random) {
+        return loot.craftingItems(expectedCount, ChartCraftingPools.TAG_INHIBITORS, ChartLootContext.PlayerFindBonus.SKIPPED, random);
     }
 
-    static boolean isTagInhibitor(String itemId) {
-        CraftingInhibitor inhibitor = CraftingInhibitor.byItemId(itemId);
-        return inhibitor != null && inhibitor.inhibitsTag();
-    }
-
-    public static Loot fleetItems(CampaignFleetAPI fleet, ChartGenContext context, int chartTier, float share, Random random) {
+    public static Loot fleetItems(CampaignFleetAPI fleet, ChartLootContext loot, float share, Random random) {
         if (!ExcavationFleets.isExcavationFleet(fleet)) {
-            return null;
+            return Loot.NONE;
         }
-        Map<String, Integer> inhibitors = tagInhibitors(expectedInhibitors(ExcavationRules.INHIBITORS_PER_GUARDIAN_FLEET, context, share),
-                bandShift(context, chartTier), random);
-        return inhibitors.isEmpty() ? null : new Loot(List.of(), List.of(), inhibitors);
+        Map<String, Integer> inhibitors = tagInhibitors(expectedInhibitors(ExcavationRules.INHIBITORS_PER_GUARDIAN_FLEET, loot.effects(), share),
+                loot, random);
+        return inhibitors.isEmpty() ? Loot.NONE : new Loot(List.of(), List.of(), inhibitors);
     }
 }

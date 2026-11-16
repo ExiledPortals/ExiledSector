@@ -16,6 +16,7 @@ import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.content.ChartAnomalyFleets;
 import exiledsector.charts.loot.ChartCargoLoot;
+import exiledsector.charts.loot.ChartDropRules;
 import exiledsector.charts.loot.ChartDrops;
 import exiledsector.charts.loot.ChartLoot;
 import exiledsector.charts.loot.DropType;
@@ -47,7 +48,7 @@ final class ConvoyCargo {
         if (ConvoyFeedstock.hasRows()) {
             keys.add(CATEGORY_KEY_PREFIX + "feedstock");
         }
-        if (ChartDrops.hasRule(ChartDrops.Source.SYSTEM_SALVAGE)) {
+        if (ChartDropRules.hasRule(ChartDrops.Source.SYSTEM_SALVAGE)) {
             keys.add(CATEGORY_KEY_PREFIX + "craftingItem");
             keys.add(CATEGORY_KEY_PREFIX + "star_chart");
         }

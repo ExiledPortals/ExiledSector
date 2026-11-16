@@ -3,8 +3,8 @@ package exiledsector.console;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTiers;
+import exiledsector.charts.loot.ChartLootContext;
 import exiledsector.charts.officer.reward.CarriedItem;
 import exiledsector.charts.officer.reward.OfficerRewardDrop;
 import exiledsector.charts.officer.reward.OfficerRewardPool;
@@ -60,7 +60,7 @@ public class OfficerRewardPickerCommand extends PlayerFleetCommand {
     }
 
     private static void grant(CampaignFleetAPI playerFleet, CarriedItem chosen, int tier, Random random) {
-        Loot drop = OfficerRewardDrop.roll(List.of(chosen), tier, ChartGenContext.none(), random);
+        Loot drop = OfficerRewardDrop.roll(List.of(chosen), ChartLootContext.atTier(tier), random);
         for (ItemData item : drop.items()) {
             playerFleet.getCargo().addSpecial(item.toSpecialItem(), 1f);
         }

@@ -15,7 +15,7 @@ import exiledsector.charts.content.ChartContentPlanner;
 import exiledsector.charts.content.ChartFleetMarks;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTier;
-import exiledsector.charts.loot.ChartFleetLoot;
+import exiledsector.charts.loot.ChartFleetLedger;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
 
@@ -53,8 +53,8 @@ public final class ExcavationFleets {
         }
         fleet.setName(Translation.gameText(derelict ? "chart.anomaly.excavation_sites.fleet.derelict" : "chart.anomaly.excavation_sites.fleet.garrison"));
         ChartAnomalyFleets.prepare(fleet, run.runId(), run.tier(), random.nextLong(), false, context);
-        ChartFleetLoot.recordStart(fleet);
-        ChartFleetLoot.tagAnomaly(fleet, ExcavationSites.ANOMALY_ID);
+        ChartFleetLedger.recordStart(fleet);
+        ChartFleetLedger.tagAnomaly(fleet, ExcavationSites.ANOMALY_ID);
         MemoryAPI memory = fleet.getMemoryWithoutUpdate();
         ChartFleetMarks.setStrengthBonus(memory, ExcavationRules.strengthBonus(tier));
         memory.set(MemFlags.MEMORY_KEY_NO_REP_IMPACT, true);

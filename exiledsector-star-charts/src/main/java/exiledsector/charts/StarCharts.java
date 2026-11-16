@@ -16,7 +16,7 @@ import exiledsector.charts.content.ChartPois;
 import exiledsector.charts.effect.ChartEffects;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.layout.feature.ChartFeatures;
-import exiledsector.charts.loot.ChartDrops;
+import exiledsector.charts.loot.ChartDropRules;
 import exiledsector.charts.loot.ChartLoot;
 import exiledsector.charts.officer.OfficerRanks;
 import exiledsector.charts.officer.reward.OfficerRewardTable;
@@ -87,7 +87,7 @@ public final class StarCharts {
         ChartEffects.register();
         ChartBlockedAbilities.load();
         ChartTiers.load();
-        ChartDrops.load();
+        ChartDropRules.load();
         OfficerRewardTable.load();
         ChartPois.load();
         ChartLoot.load();
