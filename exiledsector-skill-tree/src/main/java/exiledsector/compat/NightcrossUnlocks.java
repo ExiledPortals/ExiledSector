@@ -4,7 +4,6 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.listeners.DiscoverEntityListener;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
@@ -19,8 +18,6 @@ import java.util.Set;
 
 public final class NightcrossUnlocks {
 
-    public static final String PASCAL_SYSTEM_NAME = "Pascal";
-    static final String PASCAL_VISITED_FLAG = "$exiledSector_pascalVisited";
     static final String PROTOTYPE_FOUND_FLAG = "$exiledSector_ancientPrototypeFound";
     static final String EXISTENTIAL_THREAT_DEFEATED_SECTOR_FLAG = "$na_defeated_macula";
     static final String EXISTENTIAL_THREAT_DEFEATED_PLAYER_FLAG = "$defeatedLunarFleet";
@@ -30,18 +27,6 @@ public final class NightcrossUnlocks {
     static final Set<String> PROTOTYPE_HULL_IDS = Set.of("na_mare_proto", "na_sop_proto", "na_macula_proto");
 
     private NightcrossUnlocks() {
-    }
-
-    public static boolean pascalVisitedBeforeAnchors(SectorAPI sector) {
-        if (sector == null) {
-            return false;
-        }
-        MemoryAPI sectorMemory = sector.getMemoryWithoutUpdate();
-        StarSystemAPI pascal = sector.getStarSystem(PASCAL_SYSTEM_NAME);
-        if (sectorMemory != null && sectorMemory.getBoolean(PASCAL_VISITED_FLAG)) {
-            return true;
-        }
-        return pascal == null ? NightcrossCompat.isModEnabled() : pascal.isEnteredByPlayer();
     }
 
     public static boolean isExistentialThreatDefeated(SectorAPI sector) {

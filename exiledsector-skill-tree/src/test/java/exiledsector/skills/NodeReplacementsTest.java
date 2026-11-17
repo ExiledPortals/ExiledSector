@@ -189,7 +189,6 @@ class NodeReplacementsTest {
 
         assertNotNull(decoded);
         assertEquals(armor.getId(), decoded.steps().get(0).optionTypeId());
-        assertEquals(armor.getId(), AffinityOptions.currentOptionId("old_armor_option"));
         assertEquals(new NodeEntry("kept", armor.getId()), NodeEntry.parse("kept=old_armor_option"));
     }
 

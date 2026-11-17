@@ -51,21 +51,11 @@ public final class ItemCostLedger {
     }
 
     static void ensure(ShipSkillData data) {
-        if (data.paidItemCostIds != null && data.paidItemCostQuantities != null) {
-            return;
+        if (data.paidItemCostIds == null) {
+            data.paidItemCostIds = new LinkedHashMap<>();
         }
-        data.paidItemCostIds = new LinkedHashMap<>();
-        data.paidItemCostQuantities = new LinkedHashMap<>();
-        if (data.npcBuild) {
-            return;
-        }
-        for (String nodeId : data.allocatedNodeIds) {
-            SkillNode node = SkillTree.getDeclared(nodeId);
-            SkillItemCost legacyCharge = node == null ? null : node.getType().getItemCost();
-            if (legacyCharge != null) {
-                data.paidItemCostIds.put(nodeId, legacyCharge.itemId());
-                data.paidItemCostQuantities.put(nodeId, legacyCharge.quantity());
-            }
+        if (data.paidItemCostQuantities == null) {
+            data.paidItemCostQuantities = new LinkedHashMap<>();
         }
     }
 }

@@ -32,7 +32,6 @@ import exiledsector.effects.NpcBonusScale;
 import exiledsector.effects.NpcFleetDialogListener;
 import exiledsector.effects.NpcFleetInflationListener;
 import exiledsector.effects.NpcFleetSweepScript;
-import exiledsector.effects.OpReserveHullMods;
 import exiledsector.effects.PhantomConflictWatch;
 import exiledsector.effects.PhantomHullMods;
 import exiledsector.effects.PlayerEngagementPipeline;
@@ -49,8 +48,6 @@ import exiledsector.effects.TemplateDockingRetry;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.SpecLocalisation;
 import exiledsector.items.ItemVolumes;
-import exiledsector.items.anchor.AnchorFindMigration;
-import exiledsector.items.subroutine.DeletedSubroutines;
 import exiledsector.items.custody.CargoRefund;
 import exiledsector.items.subroutine.doctrine.DoctrineArchives;
 import exiledsector.items.subroutine.doctrine.DoctrineOverrides;
@@ -75,12 +72,10 @@ import exiledsector.items.anchor.WormholeAnchor;
 import exiledsector.items.anchor.WormholeAnchorDataRules;
 import exiledsector.items.anchor.WormholeAnchorDefinitions;
 import exiledsector.items.anchor.WormholeAnchorLinks;
-import exiledsector.items.anchor.WormholeAnchorMigration;
 import exiledsector.loot.FleetDifficulty;
 import exiledsector.loot.LootSource;
 import exiledsector.loot.LootTakenListener;
 import exiledsector.loot.MarketStock;
-import exiledsector.persistence.RetiredReserveIds;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
 import exiledsector.skills.npc.NpcFactionVolumes;
@@ -211,7 +206,6 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
 
     @Override
     public void configureXStream(XStream xstream) {
-        RetiredReserveIds.register(xstream);
     }
 
     @Override
@@ -226,19 +220,16 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
         NpcBonusScale.invalidate();
         NpcItems.clearCache();
         SectorAPI sector = Global.getSector();
-        DeletedSubroutines.removeFromSave(savedCargoes);
-        OpReserveHullMods.forgetLegacySlots(sector.getPersistentData());
     }
 
     @Override
     public void afterSaveRepair() {
-        AffinityOptions.migrateAll(ShipSkillDataManager.all().values());
+        OptionRenames.applyAll(ShipSkillDataManager.all().values());
         forgetUnknownNodes();
         SkillTreeTemplateStore.reload();
         SkillTreeTemplateStore.moveSavedTemplatesToFile();
         SkillTreeTemplateStore.pruneAssignments(ShipSkillDataManager::hasProgress);
         SectorAPI sector = Global.getSector();
-        sector.removeScriptsOfClass(SkillTreeInstaller.class);
         sector.addTransientScript(new SkillTreeInstaller());
         sector.addTransientScript(new NpcFleetSweepScript());
         sector.addTransientListener(new NpcFleetDialogListener());
@@ -270,12 +261,11 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
 
     @Override
     public void afterSocketCustody() {
-        WormholeAnchorMigration.run();
+        WormholeAnchorLinks.refresh();
         SectorAPI sector = Global.getSector();
         if (sector == null) {
             return;
         }
-        AnchorFindMigration.run(sector);
         GateRewardAnchors.markOpenGatesGrantedOnce(sector);
         sector.getListenerManager().addListener(new GateRewardAnchors(), true);
         GateRewardAnchors.grantMissed(sector);

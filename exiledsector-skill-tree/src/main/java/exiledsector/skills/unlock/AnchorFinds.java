@@ -39,15 +39,11 @@ public final class AnchorFinds {
         return false;
     }
 
-    public static boolean markFound(SectorAPI sector, String volume, String reason) {
+    private static void markFound(SectorAPI sector, String volume, String reason) {
         MemoryAPI sectorMemory = sector == null || volume == null ? null : sector.getMemoryWithoutUpdate();
-        if (sectorMemory == null) {
-            return false;
-        }
-        if (!sectorMemory.getBoolean(FOUND_FLAG_PREFIX + volume)) {
+        if (sectorMemory != null && !sectorMemory.getBoolean(FOUND_FLAG_PREFIX + volume)) {
             sectorMemory.set(FOUND_FLAG_PREFIX + volume, true);
             LOG.info("[ExiledSector] Recorded a found " + volume + " anchor: " + reason);
         }
-        return true;
     }
 }
