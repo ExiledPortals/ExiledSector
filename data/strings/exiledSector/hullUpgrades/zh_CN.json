@@ -252,5 +252,11 @@
     "pattern.block.unique": "独特船体物品无法被复制。",
     "pattern.block.cannotAfford": "需要{cost}纳米原料。",
     "pattern.block.away": "只有你舰队中的舰船才能被链接。",
-    "pattern.lossWarning": "如果一艘链接的舰船被摧毁，模板舰船会失去该舰船所复制的船体物品之一。"
+    "pattern.lossWarning": "如果一艘链接的舰船被摧毁，模板舰船会失去该舰船所复制的船体物品之一。",
+    "pattern.sockets.hint": "点击舰船上的插槽，将其复制到链接的舰船，或停止复制。已复制{selected}/{count}个插槽。",
+    "pattern.ships.hint": "点击舰船以链接或取消链接。",
+    "pattern.ship.hintLink": "点击以链接这艘舰船。",
+    "pattern.ship.hintUnlink": "点击以取消链接这艘舰船。",
+    "pattern.section.hintSelect": "点击以将此插槽复制到链接的舰船。",
+    "pattern.section.hintDeselect": "点击以停止复制此插槽。"
 }

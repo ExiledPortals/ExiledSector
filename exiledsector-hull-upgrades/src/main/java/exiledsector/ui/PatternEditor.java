@@ -2,6 +2,8 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.PlayerFleet;
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
 import exiledsector.items.Item;
 import exiledsector.items.crafting.material.CraftingMaterials;
 import exiledsector.items.hull.ShipSection;
@@ -18,6 +20,7 @@ import exiledsector.skills.ShipSkillData;
 import exiledsector.ui.socket.HullPatternPanel;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
@@ -31,6 +34,8 @@ final class PatternEditor {
     private int shownEditRevision = Integer.MIN_VALUE;
     private int shownFeedstock = Integer.MIN_VALUE;
     private HullPatternPanel.View shownView;
+    private HullPatternPanel.View lookView;
+    private SectionsDisplay.PatternLook shownLook;
 
     PatternEditor(FleetMemberAPI member, SectionEditor sectionEditor) {
         this.member = member;
@@ -58,6 +63,43 @@ final class PatternEditor {
             refreshIfChanged();
         }
         return shownView;
+    }
+
+    SectionsDisplay.PatternLook sectionLook() {
+        HullPatternPanel.View shown = view();
+        if (shown != lookView || shownLook == null) {
+            lookView = shown;
+            shownLook = new SectionsDisplay.PatternLook(litSections(shown), section -> sectionHint(shown, section));
+        }
+        return shownLook;
+    }
+
+    private static Set<ShipSection> litSections(HullPatternPanel.View shown) {
+        Set<ShipSection> lit = EnumSet.noneOf(ShipSection.class);
+        if (shown.state() == HullPatternPanel.State.PATTERN_HERE) {
+            shown.sockets().stream().filter(HullPatternPanel.SocketEntry::selected).forEach(entry -> lit.add(entry.section()));
+        } else if (shown.state() == HullPatternPanel.State.FOLLOWER) {
+            shown.followerSockets().stream().filter(socket -> socket.status() == HullPatternPanel.FollowerStatus.CLONED)
+                    .forEach(socket -> lit.add(socket.section()));
+        }
+        return lit;
+    }
+
+    private static StyledText sectionHint(HullPatternPanel.View shown, ShipSection section) {
+        if (shown.state() != HullPatternPanel.State.PATTERN_HERE) {
+            return null;
+        }
+        for (HullPatternPanel.SocketEntry entry : shown.sockets()) {
+            if (entry.section() != section) {
+                continue;
+            }
+            if (entry.selected()) {
+                return Translation.styled("pattern.section.hintDeselect");
+            }
+            return entry.block() == null ? Translation.styled("pattern.section.hintSelect")
+                    : StyledText.of(HullPatternPanel.selectBlockText(entry.block(), shown.selectCost()));
+        }
+        return null;
     }
 
     HullPatternPanel.Listener listener(Runnable closed) {
@@ -161,7 +203,7 @@ final class PatternEditor {
     private HullPatternPanel.View view(HullPatternPanel.State state, String hullName, HullPatternPanel.PatternShip patternShip, HullPattern pattern,
                                        List<HullPatternPanel.SocketEntry> sockets, List<HullPatternPanel.ShipEntry> ships,
                                        List<HullPatternPanel.FollowerSocket> followerSockets) {
-        return new HullPatternPanel.View(state, member.getId(), member.getShipName(), hullName, patternShip,
+        return new HullPatternPanel.View(state, member.getId(), member.getShipName(), HullTypes.of(member), hullName, patternShip,
                 pattern == null ? 0 : HullPatternRules.selectCost(pattern), pattern == null ? 0 : HullPatternRules.linkCost(pattern),
                 pattern == null ? 0 : pattern.selectedCount(), pattern == null ? 0 : pattern.followerCount(), sockets, ships, followerSockets);
     }
@@ -208,12 +250,13 @@ final class PatternEditor {
                 continue;
             }
             listed.add(candidate.getId());
-            ships.add(new HullPatternPanel.ShipEntry(candidate.getId(), candidate.getShipName(), false, pattern.isFollower(candidate.getId()),
+            ships.add(new HullPatternPanel.ShipEntry(candidate.getId(), candidate.getShipName(), candidate, false, pattern.isFollower(candidate.getId()),
                     HullPatternRules.linkBlock(pattern, candidate, true, feedstock)));
         }
         for (String followerId : pattern.followerIds()) {
             if (!listed.contains(followerId)) {
-                ships.add(new HullPatternPanel.ShipEntry(followerId, Objects.toString(pattern.followerName(followerId), followerId), true, true, null));
+                ships.add(new HullPatternPanel.ShipEntry(followerId, Objects.toString(pattern.followerName(followerId), followerId), null, true, true,
+                        null));
             }
         }
         return ships;

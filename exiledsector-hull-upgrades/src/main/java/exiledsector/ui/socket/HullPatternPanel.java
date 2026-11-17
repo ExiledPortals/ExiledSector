@@ -1,8 +1,12 @@
 package exiledsector.ui.socket;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
+import com.fs.starfarer.api.ui.LabelAPI;
+import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -10,9 +14,12 @@ import exiledsector.i18n.Translation;
 import exiledsector.items.hull.ShipSection;
 import exiledsector.items.pattern.HullPatternRules;
 import exiledsector.items.pattern.HullPatternShips;
+import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.VanillaText;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -46,7 +53,7 @@ public final class HullPatternPanel extends HoloPanel {
                               HullPatternRules.SelectBlock block) {
     }
 
-    public record ShipEntry(String shipId, String shipName, boolean away, boolean linked, HullPatternRules.LinkBlock block) {
+    public record ShipEntry(String shipId, String shipName, FleetMemberAPI member, boolean away, boolean linked, HullPatternRules.LinkBlock block) {
     }
 
     public record FollowerSocket(ShipSection section, FollowerStatus status, String itemName, Color itemColor) {
@@ -55,7 +62,7 @@ public final class HullPatternPanel extends HoloPanel {
     public record PatternShip(String shipName, HullPatternShips.Where where, String marketName) {
     }
 
-    public record View(State state, String shipId, String shipName, String hullName, PatternShip patternShip, int selectCost, int linkCost, int selectedCount,
+    public record View(State state, String shipId, String shipName, String hullType, String hullName, PatternShip patternShip, int selectCost, int linkCost, int selectedCount,
                        int followerCount, List<SocketEntry> sockets, List<ShipEntry> ships, List<FollowerSocket> followerSockets) {
     }
 
@@ -64,30 +71,38 @@ public final class HullPatternPanel extends HoloPanel {
     private static final float CONFIRM_HEIGHT = 170f;
     private static final float SCROLLBAR_ROOM = 14f;
     private static final float BLOCK_TOOLTIP_WIDTH = 320f;
+    private static final int SHIP_COLUMNS = 2;
+    private static final float SHIP_ROW_GAP = GAP;
+    private static final float MIN_SHIP_CELL_HEIGHT = 110f;
+    private static final float MAX_SHIP_CELL_ASPECT = 1.25f;
+    private static final float SHIP_FIT_SLACK = 4f;
+    private static final int MIN_SHIP_ROWS_SHOWN = 2;
+    private static final Color AWAY_NAME_COLOR = new Color(130, 130, 130);
 
     private enum Control {CLOSE, CREATE, DELETE, UNLINK, CONFIRM, CANCEL}
 
     private record SocketToggle(SocketEntry entry) {
     }
 
-    private record ShipToggle(ShipEntry entry) {
-    }
-
     private final Listener panelListener;
+    private final PatternShipPortraits shipPortraits;
     private View view;
     private Runnable pendingAction;
     private UIComponentAPI headerElement;
     private TooltipMakerAPI listElement;
+    private TooltipMakerAPI shipGridElement;
+    private float shipGridScroll;
 
-    private HullPatternPanel(CustomPanelAPI hostPanel, View view, Listener panelListener) {
+    private HullPatternPanel(CustomPanelAPI hostPanel, View view, Listener panelListener, PatternShipPortraits shipPortraits) {
         super(hostPanel);
         this.view = view;
         this.panelListener = panelListener;
+        this.shipPortraits = shipPortraits;
     }
 
     public static HullPatternPanel open(CustomPanelAPI hostPanel, SocketPanelPlacement placement, View view, Listener panelListener,
-                                        Consumer<SocketPanelTab> tabListener, Set<SocketPanelTab> shownTabs) {
-        HullPatternPanel panel = new HullPatternPanel(hostPanel, view, panelListener);
+                                        PatternShipPortraits shipPortraits, Consumer<SocketPanelTab> tabListener, Set<SocketPanelTab> shownTabs) {
+        HullPatternPanel panel = new HullPatternPanel(hostPanel, view, panelListener, shipPortraits);
         panel.setTabListener(tabListener);
         panel.setShownTabs(shownTabs);
         panel.attach(placement.panelLeft(), placement.panelTop(), placement.panelWidth(), placement.panelHeight(), placement.instantly());
@@ -144,6 +159,29 @@ public final class HullPatternPanel extends HoloPanel {
         panelListener.closed();
     }
 
+    public void socketClicked(ShipSection section) {
+        queue(() -> {
+            if (isConfirmOpen()) {
+                return;
+            }
+            SocketEntry entry = view.state() == State.PATTERN_HERE ? socketEntry(section) : null;
+            if (entry == null || (!entry.selected() && entry.block() != null)) {
+                SkillTreeSounds.refused();
+                return;
+            }
+            socketPressed(entry);
+        });
+    }
+
+    private SocketEntry socketEntry(ShipSection section) {
+        for (SocketEntry entry : view.sockets()) {
+            if (entry.section() == section) {
+                return entry;
+            }
+        }
+        return null;
+    }
+
     public boolean escape() {
         if (!isConfirmOpen()) {
             return false;
@@ -183,8 +221,6 @@ public final class HullPatternPanel extends HoloPanel {
                     Translation.msg("pattern.confirm.unlink.body").arg("cost", view.linkCost()).text(), () -> panelListener.unlink(view.shipId()));
         } else if (id instanceof SocketToggle toggle) {
             socketPressed(toggle.entry());
-        } else if (id instanceof ShipToggle toggle) {
-            shipPressed(toggle.entry());
         }
     }
 
@@ -201,7 +237,7 @@ public final class HullPatternPanel extends HoloPanel {
                     Translation.msg("pattern.confirm.deselect.body").arg("cost", view.selectCost()).text(),
                     () -> panelListener.deselect(entry.section()));
         } else if (entry.block() != null) {
-            rebuildList();
+            SkillTreeSounds.refused();
         } else if (view.selectCost() <= 0) {
             panelListener.select(entry.section());
             rebuildList();
@@ -217,7 +253,7 @@ public final class HullPatternPanel extends HoloPanel {
             confirm(Translation.msg("pattern.confirm.unlink.title").arg("ship", entry.shipName()).text(),
                     Translation.msg("pattern.confirm.unlink.body").arg("cost", view.linkCost()).text(), () -> panelListener.unlink(entry.shipId()));
         } else if (entry.block() != null) {
-            rebuildList();
+            SkillTreeSounds.refused();
         } else if (view.linkCost() <= 0) {
             panelListener.link(entry.shipId());
             rebuildList();
@@ -238,7 +274,9 @@ public final class HullPatternPanel extends HoloPanel {
     }
 
     private void rebuildList() {
-        float restoredScroll = listElement == null || listElement.getExternalScroller() == null ? 0f : listElement.getExternalScroller().getYOffset();
+        float restoredScroll = scrollOffset(listElement);
+        shipGridScroll = scrollOffset(shipGridElement);
+        shipGridElement = null;
         hoverTooltip.hide();
         float listWidth = innerWidth();
         float listTop = PAD + HEADER_HEIGHT + GAP;
@@ -249,7 +287,7 @@ public final class HullPatternPanel extends HoloPanel {
             case NOT_IN_FLEET -> paragraph(element, Translation.text("pattern.state.notInFleet"), 0f, Misc.getTextColor());
             case NOT_PATTERNABLE -> paragraph(element, Translation.text("pattern.state.notPatternable"), 0f, Misc.getTextColor());
             case NO_PATTERN -> writeNoPattern(element, rowWidth);
-            case PATTERN_HERE -> writePatternHere(element, rowWidth);
+            case PATTERN_HERE -> writePatternHere(element, rowWidth, listHeight);
             case FOLLOWER -> writeFollower(element, rowWidth);
             case PATTERN_ELSEWHERE -> writeElsewhere(element, rowWidth);
         }
@@ -266,28 +304,138 @@ public final class HullPatternPanel extends HoloPanel {
                 GAP * 3f);
     }
 
-    private void writePatternHere(TooltipMakerAPI element, float rowWidth) {
+    private void writePatternHere(TooltipMakerAPI element, float rowWidth, float listHeight) {
         paragraph(element, Translation.msg("pattern.state.here").arg("hull", view.hullName()).text(), 0f, Misc.getTextColor());
         paragraph(element, Translation.msg("pattern.costs").arg("cost", HullPatternRules.FEEDSTOCK_PER_SOCKET).arg("select", view.selectCost())
                 .arg("link", view.linkCost()).text(), GAP * 2f, Misc.getGrayColor());
         paragraph(element, Translation.text("pattern.lossWarning"), GAP * 2f, Misc.getNegativeHighlightColor());
         element.addSectionHeading(Translation.text("pattern.heading.sockets"), Alignment.MID, GAP * 3f);
-        paragraph(element, Translation.msg("pattern.limit").arg("count", HullPatternRules.MAX_SOCKETS).text(), GAP, Misc.getGrayColor());
+        paragraph(element, Translation.msg("pattern.sockets.hint").arg("selected", view.selectedCount()).arg("count", HullPatternRules.MAX_SOCKETS)
+                .text(), GAP, Misc.getGrayColor());
         for (SocketEntry entry : view.sockets()) {
-            String line = Translation.msg("pattern.socket.line").arg("section", entry.section().displayName()).arg("item", socketStatusText(entry)).text();
-            checkboxRow(element, line, new SocketToggle(entry), entry.selected(), entry.block() == null || entry.selected(), rowWidth,
-                    entry.selected() ? null : selectBlockText(entry.block()));
+            if (entry.selected() && entry.status() == SocketStatus.LOCKED) {
+                String line = Translation.msg("pattern.socket.line").arg("section", entry.section().displayName()).arg("item", socketStatusText(entry))
+                        .text();
+                checkedRow(element, line, new SocketToggle(entry), rowWidth);
+            }
         }
         element.addSectionHeading(Translation.text("pattern.heading.ships"), Alignment.MID, GAP * 3f);
         if (view.ships().isEmpty()) {
             paragraph(element, Translation.msg("pattern.ships.none").arg("hull", view.hullName()).text(), GAP, Misc.getGrayColor());
-        }
-        for (ShipEntry entry : view.ships()) {
-            String line = entry.away() ? Translation.msg("pattern.ship.away").arg("ship", entry.shipName()).text() : entry.shipName();
-            checkboxRow(element, line, new ShipToggle(entry), entry.linked(), entry.block() == null || entry.linked(), rowWidth,
-                    entry.linked() ? null : linkBlockText(entry.block()));
+        } else {
+            paragraph(element, Translation.text("pattern.ships.hint"), GAP, Misc.getGrayColor());
+            addShipGrid(element, rowWidth, listHeight);
         }
         element.addButton(Translation.text("pattern.button.delete"), Control.DELETE, rowWidth, BUTTON_HEIGHT, GAP * 4f);
+    }
+
+    private void addShipGrid(TooltipMakerAPI element, float rowWidth, float listHeight) {
+        List<ShipEntry> ships = view.ships();
+        Set<String> shownShipIds = new HashSet<>();
+        ships.forEach(entry -> shownShipIds.add(entry.shipId()));
+        shipPortraits.retain(shownShipIds);
+        int rows = (ships.size() + SHIP_COLUMNS - 1) / SHIP_COLUMNS;
+        float gridHeight = shipGridHeight(listHeight - element.getHeightSoFar() - BUTTON_HEIGHT - GAP * 5f);
+        float cellHeight = shipCellHeight(columnWidth(rowWidth), gridHeight, rows);
+        boolean scrolls = rowsHeight(cellHeight, rows) > gridHeight;
+        float cellsWidth = scrolls ? rowWidth - SCROLLBAR_ROOM : rowWidth;
+        float columnWidth = columnWidth(cellsWidth);
+        CustomPanelAPI gridPanel = Global.getSettings().createCustom(rowWidth, gridHeight, null);
+        TooltipMakerAPI gridElement = gridPanel.createUIElement(rowWidth, gridHeight, true);
+        for (int start = 0; start < ships.size(); start += SHIP_COLUMNS) {
+            CustomPanelAPI rowPanel = Global.getSettings().createCustom(cellsWidth, cellHeight, null);
+            int rowCount = Math.min(ships.size(), start + SHIP_COLUMNS) - start;
+            for (int i = 0; i < rowCount; i++) {
+                rowPanel.addComponent(shipCell(ships.get(start + i), columnWidth, cellHeight)).inTL(i * (columnWidth + GAP), 0f);
+            }
+            gridElement.addCustom(rowPanel, start == 0 ? 0f : SHIP_ROW_GAP);
+        }
+        gridPanel.addUIElement(gridElement).inTL(0f, 0f);
+        shipGridElement = gridElement;
+        if (shipGridScroll > 0f && gridElement.getExternalScroller() != null) {
+            gridElement.getExternalScroller().setYOffset(Math.min(shipGridScroll, Math.max(0f, gridElement.getHeightSoFar() - gridHeight)));
+        }
+        element.addCustom(gridPanel, GAP);
+    }
+
+    private static float columnWidth(float cellsWidth) {
+        return (cellsWidth - GAP * (SHIP_COLUMNS - 1)) / SHIP_COLUMNS;
+    }
+
+    static float shipGridHeight(float roomBelow) {
+        return Math.max(rowsHeight(MIN_SHIP_CELL_HEIGHT, MIN_SHIP_ROWS_SHOWN), (float) Math.floor(roomBelow));
+    }
+
+    static float rowsHeight(float cellHeight, int rows) {
+        return rows <= 0 ? 0f : rows * cellHeight + (rows - 1) * SHIP_ROW_GAP;
+    }
+
+    static float shipCellHeight(float columnWidth, float gridHeight, int rows) {
+        float maxHeight = (float) Math.floor(columnWidth * MAX_SHIP_CELL_ASPECT);
+        if (rows <= 0) {
+            return maxHeight;
+        }
+        float roomPerCell = (float) Math.floor((gridHeight - SHIP_FIT_SLACK - (rows - 1) * SHIP_ROW_GAP) / rows);
+        return Math.max(MIN_SHIP_CELL_HEIGHT, Math.min(maxHeight, roomPerCell));
+    }
+
+    private static float scrollOffset(TooltipMakerAPI scrolledElement) {
+        return scrolledElement == null || scrolledElement.getExternalScroller() == null ? 0f : scrolledElement.getExternalScroller().getYOffset();
+    }
+
+    private CustomPanelAPI shipCell(ShipEntry entry, float cellWidth, float cellHeight) {
+        boolean blocked = !entry.linked() && entry.block() != null;
+        IconTileCell.Hooks hooks = new IconTileCell.Hooks(() -> queue(() -> shipPressed(entry)),
+                cellPosition -> queue(() -> showShipTooltip(entry, cellPosition)), () -> queue(() -> hideTooltipOf(entry)));
+        PatternShipCell cell = new PatternShipCell(shipPortraits.of(entry.shipId(), entry.member(), view.hullType()), entry.linked(), blocked,
+                this::visibleShipAreas, hooks);
+        CustomPanelAPI cellPanel = Global.getSettings().createCustom(cellWidth, cellHeight, cell);
+        TooltipMakerAPI nameElement = cellPanel.createUIElement(cellWidth, PatternShipCell.NAME_HEIGHT, false);
+        String name = entry.away() ? Translation.msg("pattern.ship.away").arg("ship", entry.shipName()).text() : entry.shipName();
+        Color nameColor = entry.linked() ? Misc.getTextColor() : Misc.getGrayColor();
+        if (entry.away()) {
+            nameColor = AWAY_NAME_COLOR;
+        }
+        LabelAPI label = VanillaText.plainPara(nameElement, name, 0f, nameColor);
+        label.setAlignment(Alignment.MID);
+        label.getPosition().setSize(cellWidth - GAP * 2f, PatternShipCell.NAME_HEIGHT - LINE_PAD).inTL(GAP, 0f);
+        cellPanel.addUIElement(nameElement).inTL(0f, cellHeight - PatternShipCell.NAME_HEIGHT);
+        return cellPanel;
+    }
+
+    private List<PositionAPI> visibleShipAreas() {
+        List<PositionAPI> areas = new ArrayList<>(2);
+        for (UIComponentAPI placed : new UIComponentAPI[]{placedComponent(listElement), placedComponent(shipGridElement)}) {
+            if (placed != null) {
+                areas.add(placed.getPosition());
+            }
+        }
+        return areas;
+    }
+
+    private void showShipTooltip(ShipEntry entry, PositionAPI cellPosition) {
+        if (isConfirmOpen()) {
+            return;
+        }
+        String text;
+        if (entry.linked()) {
+            text = Translation.text("pattern.ship.hintUnlink");
+        } else if (entry.block() != null) {
+            text = linkBlockText(entry.block());
+        } else {
+            text = Translation.text("pattern.ship.hintLink");
+        }
+        if (text == null) {
+            return;
+        }
+        hoverTooltip.show(entry, BLOCK_TOOLTIP_WIDTH, (tooltip, expanded) -> VanillaText.plainPara(tooltip, text, 0f, Misc.getTextColor()),
+                cellPosition);
+    }
+
+    private void hideTooltipOf(Object tooltipKey) {
+        if (hoverTooltip.isShowing(tooltipKey)) {
+            hoverTooltip.hide();
+        }
     }
 
     private void writeFollower(TooltipMakerAPI element, float rowWidth) {
@@ -319,15 +467,10 @@ public final class HullPatternPanel extends HoloPanel {
         element.addButton(Translation.text("pattern.button.deleteOther"), Control.DELETE, rowWidth, BUTTON_HEIGHT, GAP * 3f);
     }
 
-    private void checkboxRow(TooltipMakerAPI element, String text, Object data, boolean checked, boolean enabled, float rowWidth, String blockText) {
+    private static void checkedRow(TooltipMakerAPI element, String text, Object data, float rowWidth) {
         ButtonAPI checkbox = element.addAreaCheckbox(text, data, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(), Misc.getBrightPlayerColor(),
                 rowWidth, ROW_HEIGHT, GAP);
-        checkbox.setChecked(checked);
-        checkbox.setEnabled(enabled);
-        if (blockText != null) {
-            element.addTooltipToPrevious(new GameTextTooltip(BLOCK_TOOLTIP_WIDTH,
-                    tooltip -> VanillaText.plainPara(tooltip, blockText, 0f, Misc.getTextColor())), TooltipMakerAPI.TooltipLocation.BELOW);
-        }
+        checkbox.setChecked(true);
     }
 
     private static void paragraph(TooltipMakerAPI element, String text, float pad, Color color) {
@@ -344,7 +487,7 @@ public final class HullPatternPanel extends HoloPanel {
         };
     }
 
-    private String selectBlockText(HullPatternRules.SelectBlock block) {
+    public static String selectBlockText(HullPatternRules.SelectBlock block, int selectCost) {
         if (block == null) {
             return null;
         }
@@ -353,7 +496,7 @@ public final class HullPatternPanel extends HoloPanel {
             case REQUIREMENT_UNMET -> Translation.text("pattern.block.requirement");
             case HOLDS_UNIQUE -> Translation.text("pattern.block.unique");
             case AT_LIMIT -> Translation.msg("pattern.limit").arg("count", HullPatternRules.MAX_SOCKETS).text();
-            case CANNOT_AFFORD -> Translation.msg("pattern.block.cannotAfford").arg("cost", view.selectCost()).text();
+            case CANNOT_AFFORD -> Translation.msg("pattern.block.cannotAfford").arg("cost", selectCost).text();
         };
     }
 

@@ -24,6 +24,6 @@ Socketing hull items into every ship of a ten-ship wolfpack is tedious. A patter
 2. Cloned items in sockets and their effects. Done: `HullPatternClones` and `ShipSections` (an `UnlockedSection` knows whether its item is cloned), with the pattern state in the sections cache.
 3. Pattern activity: in-fleet check refreshed on player fleet sync, followers' stats refreshed when the pattern changes. Done: `HullPatternActivity`, wired in `HullUpgradesDomain`.
 4. Custody: deleting a sold or destroyed pattern ship's pattern, unlinking a destroyed follower and the item loss. Done: `HullPatternCustody` (id-aware `ShipCustody` hooks in core).
-5. Hull Patterns tab on the hull items screen. Done: `HullPatternPanel` and `PatternEditor`, `SocketPanelTab.HULL_PATTERNS`.
+5. Hull Patterns tab on the hull items screen. Done: `HullPatternPanel` and `PatternEditor`, `SocketPanelTab.HULL_PATTERNS`. While the tab is open the ship's sockets are dulled and act as the clone selector (`SectionsDisplay.PatternLook`); linked ships are a two-column grid of ship miniatures with their weapons (`PatternShipCell`, `PatternShipPortraits`), dulled until linked.
 6. Cloned items shown on follower sockets with their source. Done: `SectionsDisplay`.
 7. Tests. Done: `HullPatternsTest` in exiledsector-hull-upgrades (cloning, overrides, costs, one pattern per type, stations, uniques, the socket cap, dormancy, returning followers, losses).

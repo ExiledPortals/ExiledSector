@@ -132,5 +132,11 @@
     "pattern.block.unique": "Unique hull items can't be cloned.",
     "pattern.block.cannotAfford": "Needs {cost} Nanite Feedstock.",
     "pattern.block.away": "Only ships in your fleet can be linked.",
-    "pattern.lossWarning": "If a linked ship is destroyed, the pattern ship loses one of the hull items that ship was cloning."
+    "pattern.lossWarning": "If a linked ship is destroyed, the pattern ship loses one of the hull items that ship was cloning.",
+    "pattern.sockets.hint": "Click a socket on the ship to clone it into linked ships, or to stop cloning it. {selected} of {count} sockets are cloned.",
+    "pattern.ships.hint": "Click a ship to link or unlink it.",
+    "pattern.ship.hintLink": "Click to link this ship.",
+    "pattern.ship.hintUnlink": "Click to unlink this ship.",
+    "pattern.section.hintSelect": "Click to clone this socket into linked ships.",
+    "pattern.section.hintDeselect": "Click to stop cloning this socket."
 }

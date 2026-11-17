@@ -23,6 +23,7 @@ import exiledsector.ui.refit.RefitScreenLayout;
 import exiledsector.ui.section.SectionLayout;
 import exiledsector.ui.socket.HullPatternPanel;
 import exiledsector.ui.socket.HullUpgradePanel;
+import exiledsector.ui.socket.PatternShipPortraits;
 import exiledsector.ui.socket.ItemStoragePanel;
 import exiledsector.ui.socket.CraftingBench;
 import exiledsector.ui.socket.SocketPanelPlacement;
@@ -72,6 +73,7 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
     private final StoragePlacement<ShipSection> storage = new StoragePlacement<>(this::placingHint);
     private HullUpgradePanel upgradesPanel;
     private HullPatternPanel patternsPanel;
+    private final PatternShipPortraits patternShipPortraits = new PatternShipPortraits();
     private CraftingBench bay;
     private float bayDim;
     private final OverlayFade fade = new OverlayFade(OPEN_SECONDS);
@@ -188,6 +190,7 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
         if (patternsPanel != null && patternEditor.refreshIfChanged()) {
             patternsPanel.update(patternEditor.view());
         }
+        sectionsDisplay.showPattern(patternsPanel == null ? null : patternEditor.sectionLook());
         if (storage.isStale(sectionEditor.revision())) {
             storage.refresh(sectionEditor.revision());
         }
@@ -198,6 +201,7 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
             if (portrait != null) {
                 portrait.cleanup();
             }
+            patternShipPortraits.cleanup();
             if (levelNotice != null) {
                 levelNotice.dispose();
             }
@@ -239,7 +243,7 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
         patternsPanel = HullPatternPanel.open(hostPanel, placement(true), patternEditor.view(), patternEditor.listener(() -> {
             patternsPanel = null;
             close();
-        }), tabListener, SHOWN_TABS);
+        }), patternShipPortraits, tabListener, SHOWN_TABS);
     }
 
     private void openStorage(ItemKind kindFilter, Predicate<Item> targetFits) {
@@ -424,6 +428,12 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
             return;
         }
         int sectionIndex = sectionIndexAt(x, y);
+        if (patternsPanel != null) {
+            if (sectionIndex >= 0) {
+                patternsPanel.socketClicked(sectionsDisplay.sections().get(sectionIndex).section());
+            }
+            return;
+        }
         if (sectionIndex < 0) {
             storage.stopPlacing();
             clearTarget();
@@ -450,7 +460,7 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
     }
 
     private void pressRight(float x, float y) {
-        int sectionIndex = sectionIndexAt(x, y);
+        int sectionIndex = patternsPanel == null ? sectionIndexAt(x, y) : -1;
         if (sectionIndex < 0) {
             return;
         }

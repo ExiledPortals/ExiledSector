@@ -34,6 +34,8 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
 
 final class SectionsDisplay {
 
@@ -48,7 +50,12 @@ final class SectionsDisplay {
         }
     }
 
+    record PatternLook(Set<ShipSection> litSections, Function<ShipSection, StyledText> hint) {
+    }
+
     static final int MAX_SECTIONS = HullUpgradePoints.MOST_POINTS;
+    private static final float PATTERN_DULL = 0.3f;
+    private static final float PATTERN_HOVER_LIFT = 0.35f;
     private static final float HOVER_SECONDS = 0.15f;
     private static final float LABEL_GAP = 8f;
     private static final TextFont LABEL_FONT = UiFonts.TITLE;
@@ -77,6 +84,7 @@ final class SectionsDisplay {
     private List<ShipSections.UnlockedSection> unlockedSections = List.of();
     private List<SectionLayout.Placement> placements = List.of();
     private int renderedSections;
+    private PatternLook patternLook;
 
     SectionsDisplay(CustomPanelAPI hostPanel, SectionEditor sectionEditor) {
         this.hostPanel = hostPanel;
@@ -117,6 +125,13 @@ final class SectionsDisplay {
         refreshLabels();
         hideTooltip();
         return true;
+    }
+
+    void showPattern(PatternLook look) {
+        if (look != patternLook) {
+            patternLook = look;
+            hideTooltip();
+        }
     }
 
     void absorbUpgradesFromCargo() {
@@ -196,18 +211,23 @@ final class SectionsDisplay {
         hostPanel.addComponent(tooltipAnchor).inTL(sectionCentreX[hovered] - radius - hostPosition.getX(),
                 hostPosition.getY() + hostPosition.getHeight() - sectionCentreY[hovered] - radius);
         tooltipSection = hovered;
-        hoverTooltip.show(hoveredSection, hoveredSection.item(), sectionEditor.hullSize(), expanded -> tooltipFooter(hoveredSection, sectionEditor), tooltipAnchor.getPosition());
+        PatternLook shownLook = patternLook;
+        hoverTooltip.show(hoveredSection, hoveredSection.item(), sectionEditor.hullSize(), expanded -> tooltipFooter(hoveredSection, shownLook),
+                tooltipAnchor.getPosition());
     }
 
-    private static List<StyledText> tooltipFooter(ShipSections.UnlockedSection unlocked, SectionEditor editor) {
-        List<StyledText> footer = new ArrayList<>(AffinityItemLines.current(unlocked.item(), editor.hullSize(), editor::affinityTotals));
+    private List<StyledText> tooltipFooter(ShipSections.UnlockedSection unlocked, PatternLook shownLook) {
+        List<StyledText> footer = new ArrayList<>(AffinityItemLines.current(unlocked.item(), sectionEditor.hullSize(), sectionEditor::affinityTotals));
         if (!unlocked.active()) {
             footer.add(Translation.msg("framework.section.inactive")
                     .arg("requirement", RefitSchematicTooltip.requirementText(unlocked.unmetRequirement())).styled());
         }
+        StyledText patternHint = shownLook == null ? null : shownLook.hint().apply(unlocked.section());
         if (unlocked.cloned()) {
-            footer.add(Translation.msg("pattern.section.clonedHint").arg("ship", editor.patternShipName()).styled());
-        } else {
+            footer.add(Translation.msg("pattern.section.clonedHint").arg("ship", sectionEditor.patternShipName()).styled());
+        } else if (patternHint != null) {
+            footer.add(patternHint);
+        } else if (shownLook == null) {
             footer.add(Translation.styled("framework.section.removeHint"));
         }
         return footer;
@@ -320,21 +340,38 @@ final class SectionsDisplay {
                     SectionLayout.edgeY(placement, sectionY), SectionLayout.elbowX(placement, sectionX),
                     SectionLayout.elbowY(placement, sectionY), ship.pointScreenX(anchor), ship.pointScreenY(anchor));
             SectionFlair.leader(path, accent, elapsedSeconds + i * 0.37f,
-                    alpha * 0.9f * placingDim(placing, unlocked.section()));
+                    alpha * 0.9f * sectionDim(i, placing, unlocked.section()));
         }
         renderedSections = unlockedSections.size();
         float radius = SectionLayout.SECTION_RADIUS;
         for (int i = 0; i < renderedSections; i++) {
             ShipSections.UnlockedSection unlocked = unlockedSections.get(i);
-            boolean selected = placing != null ? HullItem.fits(placing, unlocked.section()) : targetedSection == unlocked.section();
+            boolean selected = isSelected(unlocked.section(), placing, targetedSection);
             SectionFlair.SectionLook look = new SectionFlair.SectionLook(hoverLevels[i], selected, unlocked.active(),
                     unlocked.item() == null ? null : unlocked.item().iconPath());
-            float sectionAlpha = alpha * placingDim(placing, unlocked.section());
+            float sectionAlpha = alpha * sectionDim(i, placing, unlocked.section());
             SectionFlair.render(sectionCentreX[i], sectionCentreY[i], radius, SectionFlair.colorOf(unlocked.section()), look,
                     elapsedSeconds + i * 0.53f, sectionAlpha);
             drawCentred(typeLabels[i], sectionCentreX[i], sectionCentreY[i] + radius + LABEL_GAP + LABEL_FONT_SIZE, sectionAlpha);
             drawCentred(stateLabels[i], sectionCentreX[i], sectionCentreY[i] - radius - LABEL_GAP, sectionAlpha);
         }
+    }
+
+    private boolean isSelected(ShipSection section, Item placing, ShipSection targetedSection) {
+        if (patternLook != null) {
+            return patternLook.litSections().contains(section);
+        }
+        return placing != null ? HullItem.fits(placing, section) : targetedSection == section;
+    }
+
+    private float sectionDim(int index, Item placing, ShipSection section) {
+        if (patternLook == null) {
+            return placingDim(placing, section);
+        }
+        if (patternLook.litSections().contains(section)) {
+            return 1f;
+        }
+        return PATTERN_DULL + PATTERN_HOVER_LIFT * hoverLevels[index];
     }
 
     private static float placingDim(Item placing, ShipSection section) {
