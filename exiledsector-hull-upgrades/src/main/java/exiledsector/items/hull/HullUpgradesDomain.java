@@ -2,14 +2,19 @@ package exiledsector.items.hull;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.effects.ShipEffectSource;
 import exiledsector.items.ItemDataRules;
 import exiledsector.items.ItemStore;
 import exiledsector.items.ItemTypeSupport;
+import exiledsector.items.custody.HullPatternCustody;
 import exiledsector.items.custody.SectionCustody;
 import exiledsector.items.custody.ShipCustody;
 import exiledsector.items.drop.MarketHullItems;
+import exiledsector.items.pattern.HullPatternActivity;
+import exiledsector.items.pattern.HullPatterns;
 import exiledsector.items.schematic.MasterSchematic;
 import exiledsector.items.schematic.MasterSchematicActivation;
 import exiledsector.items.schematic.RefitSchematic;
@@ -64,7 +69,17 @@ public final class HullUpgradesDomain implements ExiledSectorDomain {
 
     @Override
     public List<ShipCustody> shipCustodies() {
-        return List.of(SectionCustody.INSTANCE);
+        return List.of(HullPatternCustody.INSTANCE, SectionCustody.INSTANCE);
+    }
+
+    @Override
+    public void playerFleetSynced() {
+        HullPatternActivity.playerFleetSynced();
+    }
+
+    @Override
+    public void memberChanged(FleetMemberAPI member, ShipVariantAPI editedVariant) {
+        HullPatternActivity.memberChanged(member);
     }
 
     @Override
@@ -120,6 +135,8 @@ public final class HullUpgradesDomain implements ExiledSectorDomain {
     @Override
     public void onGameLoad(boolean newGame, List<CargoAPI> savedCargoes) {
         ShipSections.clearCache();
+        HullPatternActivity.reset();
+        HullPatterns.markChanged();
         HullUpgradePoints.markChanged();
         MasterSchematicActivation.sync(Global.getSector());
     }

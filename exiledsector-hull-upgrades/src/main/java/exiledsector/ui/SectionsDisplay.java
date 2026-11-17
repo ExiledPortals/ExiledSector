@@ -18,6 +18,7 @@ import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
 import exiledsector.items.schematic.RefitSchematic;
 import exiledsector.items.hull.ShipSection;
+import exiledsector.items.pattern.HullPatterns;
 import exiledsector.skills.ShipSections;
 import exiledsector.ui.decoration.HullPoint;
 import exiledsector.ui.decoration.InspectedShip;
@@ -68,6 +69,7 @@ final class SectionsDisplay {
     private float elapsedSeconds;
     private int shownRevision = Integer.MIN_VALUE;
     private int shownPointsRevision = Integer.MIN_VALUE;
+    private int shownPatternRevision = Integer.MIN_VALUE;
     private ItemStore upgradeStore;
     private int shownSchematicRevision = Integer.MIN_VALUE;
     private Map<RefitSchematic, Integer> shownSchematicCounts = Map.of();
@@ -96,9 +98,12 @@ final class SectionsDisplay {
         int pointsRevision = HullUpgradePoints.revision();
         ItemStore store = upgradeStore();
         int schematicRevision = store == null ? 0 : store.shipSchematicRevision();
-        if (revision == shownRevision && pointsRevision == shownPointsRevision && schematicRevision == shownSchematicRevision) {
+        int patternRevision = HullPatterns.revision();
+        if (revision == shownRevision && pointsRevision == shownPointsRevision && schematicRevision == shownSchematicRevision
+                && patternRevision == shownPatternRevision) {
             return false;
         }
+        shownPatternRevision = patternRevision;
         shownRevision = revision;
         shownPointsRevision = pointsRevision;
         shownSchematicRevision = schematicRevision;
@@ -164,6 +169,9 @@ final class SectionsDisplay {
             } else if (unlocked.item() == null) {
                 stateLabels[i].set(Translation.text("framework.section.empty"));
                 stateLabels[i].setColor(Misc.getGrayColor());
+            } else if (unlocked.cloned()) {
+                stateLabels[i].set(Translation.msg("pattern.section.clonedLabel").arg("item", unlocked.item().name()).text());
+                stateLabels[i].setColor(unlocked.item().rarity().color());
             } else {
                 stateLabels[i].set(unlocked.item().name());
                 stateLabels[i].setColor(unlocked.item().rarity().color());
@@ -197,7 +205,11 @@ final class SectionsDisplay {
             footer.add(Translation.msg("framework.section.inactive")
                     .arg("requirement", RefitSchematicTooltip.requirementText(unlocked.unmetRequirement())).styled());
         }
-        footer.add(Translation.styled("framework.section.removeHint"));
+        if (unlocked.cloned()) {
+            footer.add(Translation.msg("pattern.section.clonedHint").arg("ship", editor.patternShipName()).styled());
+        } else {
+            footer.add(Translation.styled("framework.section.removeHint"));
+        }
         return footer;
     }
 

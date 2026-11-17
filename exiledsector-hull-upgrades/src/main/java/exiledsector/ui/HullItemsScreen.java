@@ -21,6 +21,7 @@ import exiledsector.ui.decoration.ShipAnchors;
 import exiledsector.ui.refit.RefitFleetList;
 import exiledsector.ui.refit.RefitScreenLayout;
 import exiledsector.ui.section.SectionLayout;
+import exiledsector.ui.socket.HullPatternPanel;
 import exiledsector.ui.socket.HullUpgradePanel;
 import exiledsector.ui.socket.ItemStoragePanel;
 import exiledsector.ui.socket.CraftingBench;
@@ -44,7 +45,8 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
 
     static final float OPEN_SECONDS = 0.25f;
     static final float CONTENT_SECONDS = 0.3f;
-    static final Set<SocketPanelTab> SHOWN_TABS = EnumSet.of(SocketPanelTab.HULL_ITEMS, SocketPanelTab.HULL_UPGRADES);
+    static final Set<SocketPanelTab> SHOWN_TABS = EnumSet.of(SocketPanelTab.HULL_ITEMS, SocketPanelTab.HULL_UPGRADES,
+            SocketPanelTab.HULL_PATTERNS);
     private static final float BAY_BACKDROP_ALPHA = 0.8f;
 
     private final BaseRefitButton refitButton;
@@ -66,8 +68,10 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
     private CustomPanelAPI hostPanel;
     private SectionEditor sectionEditor;
     private SectionsDisplay sectionsDisplay;
+    private PatternEditor patternEditor;
     private final StoragePlacement<ShipSection> storage = new StoragePlacement<>(this::placingHint);
     private HullUpgradePanel upgradesPanel;
+    private HullPatternPanel patternsPanel;
     private CraftingBench bay;
     private float bayDim;
     private final OverlayFade fade = new OverlayFade(OPEN_SECONDS);
@@ -108,6 +112,7 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
     private void startEditing() {
         sectionEditor = new SectionEditor(member, variant, refitButton);
         sectionsDisplay = new SectionsDisplay(hostPanel, sectionEditor);
+        patternEditor = new PatternEditor(member, sectionEditor);
         sectionsDisplay.refreshIfChanged();
     }
 
@@ -154,6 +159,9 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
         if (upgradesPanel != null) {
             swapOutUpgrades();
             openUpgrades(true);
+        } else if (patternsPanel != null) {
+            swapOutPatterns();
+            openPatterns();
         } else if (storage.isOpen()) {
             swapOutStorage();
             openStorage(null, ItemStoragePanel.ANY_ITEM);
@@ -176,6 +184,9 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
         }
         if (sectionsDisplay.refreshIfChanged() && upgradesPanel != null) {
             upgradesPanel.update(sectionsDisplay.panelView());
+        }
+        if (patternsPanel != null && patternEditor.refreshIfChanged()) {
+            patternsPanel.update(patternEditor.view());
         }
         if (storage.isStale(sectionEditor.revision())) {
             storage.refresh(sectionEditor.revision());
@@ -222,6 +233,13 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
         if (!instantly) {
             SkillTreeSounds.panelOpened();
         }
+    }
+
+    private void openPatterns() {
+        patternsPanel = HullPatternPanel.open(hostPanel, placement(true), patternEditor.view(), patternEditor.listener(() -> {
+            patternsPanel = null;
+            close();
+        }), tabListener, SHOWN_TABS);
     }
 
     private void openStorage(ItemKind kindFilter, Predicate<Item> targetFits) {
@@ -289,7 +307,14 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
             showStorage();
         } else if (tab == SocketPanelTab.HULL_UPGRADES && upgradesPanel == null) {
             swapOutStorage();
+            swapOutPatterns();
             openUpgrades(true);
+        } else if (tab == SocketPanelTab.HULL_PATTERNS && patternsPanel == null) {
+            storage.stopPlacing();
+            clearTarget();
+            swapOutStorage();
+            swapOutUpgrades();
+            openPatterns();
         }
     }
 
@@ -309,12 +334,21 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
         }
     }
 
+    private void swapOutPatterns() {
+        if (patternsPanel != null) {
+            HullPatternPanel swapped = patternsPanel;
+            patternsPanel = null;
+            swapped.swapOut();
+        }
+    }
+
     private void showStorage() {
         showStorage(null, ItemStoragePanel.ANY_ITEM);
     }
 
     private void showStorage(ItemKind kindFilter, Predicate<Item> targetFits) {
         swapOutUpgrades();
+        swapOutPatterns();
         if (!storage.isOpen()) {
             openStorage(kindFilter, targetFits);
         } else {
@@ -372,6 +406,9 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
         }
         if (upgradesPanel != null) {
             upgradesPanel.close();
+        }
+        if (patternsPanel != null) {
+            patternsPanel.close();
         }
     }
 
@@ -434,12 +471,15 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
         if (upgradesPanel != null && upgradesPanel.escape()) {
             return;
         }
+        if (patternsPanel != null && patternsPanel.escape()) {
+            return;
+        }
         if (storage.placingItem() != null) {
             storage.stopPlacing();
         } else if (storage.target() != null) {
             clearTarget();
             switchTab(SocketPanelTab.HULL_UPGRADES);
-        } else if (storage.isOpen()) {
+        } else if (storage.isOpen() || patternsPanel != null) {
             switchTab(SocketPanelTab.HULL_UPGRADES);
         } else {
             close();
@@ -454,7 +494,8 @@ final class HullItemsScreen extends BaseCustomUIPanelPlugin {
         return (bay != null && bay.contains(x, y))
                 || (storage.isOpen() && (storage.panel().contains(x, y) || storage.panel().craftingBenchContains(x, y)
                 || storage.panel().advancedSearchContains(x, y)))
-                || (upgradesPanel != null && upgradesPanel.contains(x, y));
+                || (upgradesPanel != null && upgradesPanel.contains(x, y))
+                || (patternsPanel != null && patternsPanel.contains(x, y));
     }
 
     @Override

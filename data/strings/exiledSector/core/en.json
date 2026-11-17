@@ -202,6 +202,7 @@
     "ui.craftingBench.cargoButton": "Exiled Sector Crafting Bench",
     "ui.socketPanel.tab.hullItems": "Hull Items",
     "ui.socketPanel.tab.hullUpgrades": "Hull Upgrades",
+    "ui.socketPanel.tab.hullPatterns": "Hull Patterns",
 
     "settings.interface.header": "Interface",
     "settings.tab.items": "Items",

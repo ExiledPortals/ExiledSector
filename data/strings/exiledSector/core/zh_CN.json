@@ -662,6 +662,7 @@
     "ui.craftingBench.cargoButton": "Exiled Sector 制作台",
     "ui.socketPanel.tab.hullItems": "船体物品",
     "ui.socketPanel.tab.hullUpgrades": "船体升级",
+    "ui.socketPanel.tab.hullPatterns": "船体模板",
 
     "settings.interface.header": "界面",
     "settings.tab.items": "物品",

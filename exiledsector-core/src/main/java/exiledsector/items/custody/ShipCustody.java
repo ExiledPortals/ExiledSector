@@ -11,7 +11,15 @@ public interface ShipCustody {
 
     boolean holdsItems(ShipSkillData shipData);
 
+    default boolean holdsItems(String shipId, ShipSkillData shipData) {
+        return holdsItems(shipData);
+    }
+
     List<? extends CargoRefund> release(ShipSkillData shipData, boolean destroyed, ItemStore store);
+
+    default List<? extends CargoRefund> release(String shipId, ShipSkillData shipData, boolean destroyed, ItemStore store) {
+        return release(shipData, destroyed, store);
+    }
 
     boolean unsocketIfMisfit(ShipSkillData shipData, Item item);
 

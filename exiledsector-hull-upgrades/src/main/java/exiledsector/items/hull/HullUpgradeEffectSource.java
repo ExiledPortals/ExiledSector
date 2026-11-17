@@ -3,12 +3,14 @@ package exiledsector.items.hull;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.effects.ShipEffectContext;
 import exiledsector.effects.ShipEffectSource;
+import exiledsector.items.pattern.HullPatternClones;
 import exiledsector.skills.EffectContribution;
 import exiledsector.skills.ShipSections;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.special.SpecialSkillEffect;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,7 +26,8 @@ public final class HullUpgradeEffectSource implements ShipEffectSource {
     public Object cacheKey(ShipEffectContext context) {
         List<ShipSections.UnlockedSection> sections = ShipSections.forVariant(context.shipData(), context.variant());
         List<String> targets = sections.stream().map(unlocked -> String.valueOf(new HullItemOrigin(unlocked).targetSlotId())).toList();
-        return List.of(sections, targets, context.variant() == null ? 0 : context.variant().getSMods().size());
+        return Arrays.asList(sections, targets, context.variant() == null ? 0 : context.variant().getSMods().size(),
+                HullPatternClones.stampFor(context.shipData()));
     }
 
     @Override

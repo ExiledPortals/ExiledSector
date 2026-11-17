@@ -16,8 +16,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class SocketPanelTabTest {
 
     @Test
-    void theItemsPanelHasHullItemsThenHullUpgrades() {
-        assertEquals(List.of(SocketPanelTab.HULL_ITEMS, SocketPanelTab.HULL_UPGRADES), List.of(SocketPanelTab.values()));
+    void theItemsPanelHasHullItemsThenHullUpgradesThenHullPatterns() {
+        assertEquals(List.of(SocketPanelTab.HULL_ITEMS, SocketPanelTab.HULL_UPGRADES, SocketPanelTab.HULL_PATTERNS), List.of(SocketPanelTab.values()));
     }
 
     @ParameterizedTest

@@ -10,6 +10,10 @@ import exiledsector.items.hull.HullItem;
 import exiledsector.items.hull.HullUpgradeRules;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
+import exiledsector.items.pattern.HullPattern;
+import exiledsector.items.pattern.HullPatternActivity;
+import exiledsector.items.pattern.HullPatterns;
+import exiledsector.items.pattern.HullTypes;
 import exiledsector.items.schematic.RefitSchematic;
 import exiledsector.items.hull.ShipSection;
 import exiledsector.persistence.ShipSkillDataManager;
@@ -117,6 +121,16 @@ final class SectionEditor {
 
     boolean removeFromSection(ShipSection section) {
         return apply(data().removeFromSection(section.id()) != null, false);
+    }
+
+    String patternShipName() {
+        HullPattern pattern = HullPatterns.get().ofFollower(shipEdit.member().getId());
+        FleetMemberAPI patternMember = HullPatternActivity.activePatternMember(pattern);
+        return patternMember != null ? patternMember.getShipName() : HullTypes.displayName(pattern == null ? null : pattern.hullType());
+    }
+
+    void patternChanged(boolean paidSound) {
+        apply(true, paidSound);
     }
 
     private ShipSkillData data() {

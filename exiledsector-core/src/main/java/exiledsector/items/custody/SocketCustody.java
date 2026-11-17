@@ -73,20 +73,20 @@ public final class SocketCustody {
         Set<String> lostForGood = new HashSet<>(lostInCombat);
         lostForGood.retainAll(shipDataById.keySet());
         shipDataById.forEach((shipId, shipData) -> {
-            if (ownedShipIds.contains(shipId) || !holdsSocketItems(shipData)) {
+            if (ownedShipIds.contains(shipId) || !holdsSocketItems(shipId, shipData)) {
                 return;
             }
             boolean destroyed = lostInCombat.contains(shipId);
             for (ShipCustody custody : custodies()) {
-                custody.release(shipData, destroyed, store).forEach(refund);
+                custody.release(shipId, shipData, destroyed, store).forEach(refund);
             }
         });
-        lostInCombat.removeIf(shipId -> !shipDataById.containsKey(shipId) || !holdsSocketItems(shipDataById.get(shipId)));
+        lostInCombat.removeIf(shipId -> !shipDataById.containsKey(shipId) || !holdsSocketItems(shipId, shipDataById.get(shipId)));
         return lostForGood;
     }
 
-    static boolean holdsSocketItems(ShipSkillData shipData) {
-        return custodies().stream().anyMatch(custody -> custody.holdsItems(shipData));
+    static boolean holdsSocketItems(String shipId, ShipSkillData shipData) {
+        return custodies().stream().anyMatch(custody -> custody.holdsItems(shipId, shipData));
     }
 
     public static List<ShipCustody> custodies() {
