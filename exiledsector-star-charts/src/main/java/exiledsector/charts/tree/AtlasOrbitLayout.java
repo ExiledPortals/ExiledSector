@@ -2,10 +2,13 @@ package exiledsector.charts.tree;
 
 import exiledsector.charts.tree.AtlasOrbitSystem.Body;
 import exiledsector.charts.tree.AtlasOrbitSystem.Link;
+import exiledsector.charts.tree.AtlasOrbitSystem.LinkKind;
 import exiledsector.charts.tree.AtlasOrbitSystem.Track;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public final class AtlasOrbitLayout {
 
@@ -17,14 +20,16 @@ public final class AtlasOrbitLayout {
 
     private final boolean[] highway;
     private final List<Wheel> wheels;
-    private final List<Link> rays;
+    private final List<Link> rays = new ArrayList<>();
+    private final List<Link> arcs = new ArrayList<>();
+    private final List<Link> tethers = new ArrayList<>();
     private final List<Belt> belts;
 
-    private AtlasOrbitLayout(boolean[] highway, List<Wheel> wheels, List<Link> rays, List<Belt> belts) {
+    private AtlasOrbitLayout(AtlasOrbitSystem system, boolean[] highway, List<Wheel> wheels, List<Belt> belts) {
         this.highway = highway;
         this.wheels = List.copyOf(wheels);
-        this.rays = List.copyOf(rays);
         this.belts = List.copyOf(belts);
+        sortLinks(system);
     }
 
     public static AtlasOrbitLayout of(AtlasOrbitSystem system) {
@@ -39,7 +44,7 @@ public final class AtlasOrbitLayout {
         for (Body body : bodies) {
             highway[body.index()] = body.orbits() && !bodies.get(body.centreIndex()).orbits() && satelliteCounts[body.index()] == 0;
         }
-        return new AtlasOrbitLayout(highway, wheelsOf(system, satelliteCounts), raysOf(system), beltsOf(system, highway));
+        return new AtlasOrbitLayout(system, highway, wheelsOf(system, satelliteCounts), beltsOf(system, highway));
     }
 
     private static List<Wheel> wheelsOf(AtlasOrbitSystem system, int[] satelliteCounts) {
@@ -79,15 +84,25 @@ public final class AtlasOrbitLayout {
         return -1;
     }
 
-    private static List<Link> raysOf(AtlasOrbitSystem system) {
+    private void sortLinks(AtlasOrbitSystem system) {
         List<Body> bodies = system.bodies();
-        List<Link> rays = new ArrayList<>();
+        Set<Long> wheelLinks = new HashSet<>();
+        for (Wheel wheel : wheels) {
+            wheelLinks.add(pairOf(wheel.highway(), wheel.outer()));
+            wheelLinks.add(pairOf(wheel.outer(), wheel.inner()));
+            wheelLinks.add(pairOf(wheel.inner(), wheel.centre()));
+        }
         for (Link link : system.links()) {
             if (!bodies.get(link.first()).orbits() || !bodies.get(link.second()).orbits()) {
                 rays.add(link);
+            } else if (!wheelLinks.contains(pairOf(link.first(), link.second()))) {
+                (link.kind() == LinkKind.ARC ? arcs : tethers).add(link);
             }
         }
-        return rays;
+    }
+
+    private static long pairOf(int first, int second) {
+        return ((long) Math.min(first, second) << 32) | Math.max(first, second);
     }
 
     private static List<Belt> beltsOf(AtlasOrbitSystem system, boolean[] highway) {
@@ -118,6 +133,14 @@ public final class AtlasOrbitLayout {
 
     public List<Link> rays() {
         return rays;
+    }
+
+    public List<Link> arcs() {
+        return arcs;
+    }
+
+    public List<Link> tethers() {
+        return tethers;
     }
 
     public List<Belt> belts() {

@@ -37,18 +37,26 @@ public final class AtlasTree {
         return AtlasEffects.of(lines);
     }
 
+    public static List<AtlasTreeEffectGroups.Group> effectGroups(AtlasState state) {
+        return AtlasTreeEffectGroups.of(allocatedNodes(state));
+    }
+
     private static List<AtlasTreeType> allocatedTypes(AtlasState state) {
+        return allocatedNodes(state).stream().map(AtlasTreeNode::type).toList();
+    }
+
+    private static List<AtlasTreeNode> allocatedNodes(AtlasState state) {
         AtlasTreeData data = AtlasTreeData.get();
         Set<String> allocatedIds = new LinkedHashSet<>(data.topology().rootIds());
         allocatedIds.addAll(allocation(state).storedNodeIds());
-        List<AtlasTreeType> types = new ArrayList<>();
+        List<AtlasTreeNode> nodes = new ArrayList<>();
         for (String nodeId : allocatedIds) {
             AtlasTreeNode node = data.node(nodeId);
             if (node != null && node.type() != null) {
-                types.add(node.type());
+                nodes.add(node);
             }
         }
-        return types;
+        return nodes;
     }
 
     public static int unspentPoints(AtlasState state, AtlasTreeAllocation allocation) {

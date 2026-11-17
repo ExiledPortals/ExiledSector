@@ -1,6 +1,7 @@
 package exiledsector.ui.atlas;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
+import com.fs.starfarer.api.util.Misc;
 import exiledsector.charts.tree.AtlasBodyArt;
 import exiledsector.charts.tree.AtlasOrbitLayout;
 import exiledsector.charts.tree.AtlasOrbitSystem;
@@ -48,6 +49,13 @@ final class AtlasOrbitView {
     private static final float SHIP_GROUP_HIT_SCALE = 1.1f;
     private static final float LINK_GAP_SCALE = 1.05f;
     private static final float HIGHWAY_RING_SCALE = 1.35f;
+    private static final float MIN_PATH_STEP_PIXELS = 4f;
+    private static final int ARC_POINTS = 24;
+    private static final int CURVE_POINTS = 16;
+    private static final float ARROW_PIXELS_PER_ZOOM = 32f;
+    private static final float MIN_ARROW_PIXELS = 7f;
+    private static final float MAX_ARROW_PIXELS = 14f;
+    private static final float UNALLOCATED_ARROW_SHARE = 0.45f;
     private static final float AVAILABLE_RING_SCALE = 1.45f;
     private static final float HOVER_RING_SCALE = 1.65f;
     private static final float HOVER_RING_ALPHA = 0.8f;
@@ -74,8 +82,13 @@ final class AtlasOrbitView {
     private final AtlasOrbitLayout layout;
     private final AtlasShipGroup[] shipGroups;
     private final List<Wheel> wheels = new ArrayList<>();
-    private final float[] pathXs = new float[Math.max(AtlasWheelRoute.APPROACH_POINTS, AtlasWheelRoute.SPIRAL_POINTS)];
-    private final float[] pathYs = new float[Math.max(AtlasWheelRoute.APPROACH_POINTS, AtlasWheelRoute.SPIRAL_POINTS)];
+    private final float[] pathXs = new float[Math.max(ARC_POINTS, Math.max(AtlasWheelRoute.APPROACH_POINTS, AtlasWheelRoute.SPIRAL_POINTS))];
+    private final float[] pathYs = new float[pathXs.length];
+    private final float[] arcXs = new float[ARC_POINTS];
+    private final float[] arcYs = new float[ARC_POINTS];
+    private final float[] curveXs = new float[CURVE_POINTS];
+    private final float[] curveYs = new float[CURVE_POINTS];
+    private final AtlasCourseArrows courseArrows = new AtlasCourseArrows();
     private boolean[] allocated = new boolean[0];
     private float timeScale = 1f;
 
@@ -134,6 +147,7 @@ final class AtlasOrbitView {
         orbitSeconds += amount * timeScale;
         system.positionsAt(orbitSeconds, positions);
         ringArt.advance(amount);
+        courseArrows.advance(amount);
         for (Wheel wheel : wheels) {
             wheel.route().advance(amount);
         }
@@ -200,7 +214,13 @@ final class AtlasOrbitView {
             renderBody(viewport, body, states, body.nodeId().equals(hoveredNodeId), seconds, alpha);
         }
         for (Link ray : layout.rays()) {
-            addRay(viewport, ray, alpha);
+            addStraight(viewport, ray, alpha);
+        }
+        for (Link tether : layout.tethers()) {
+            addStraight(viewport, tether, alpha);
+        }
+        for (Link arc : layout.arcs()) {
+            addArc(viewport, arc, alpha);
         }
         for (Wheel wheel : wheels) {
             addWheel(viewport, wheel, alpha);
@@ -228,7 +248,7 @@ final class AtlasOrbitView {
         }
     }
 
-    private void addRay(TreeViewport viewport, Link ray, float alpha) {
+    private void addStraight(TreeViewport viewport, Link ray, float alpha) {
         float firstX = viewport.screenX(positions.x(ray.first()));
         float firstY = viewport.screenY(positions.y(ray.first()));
         float secondX = viewport.screenX(positions.x(ray.second()));
@@ -254,9 +274,9 @@ final class AtlasOrbitView {
         AtlasWheelRoute route = wheel.route();
         route.trace();
         if (hasHighway) {
-            paintRoute(viewport, route.approachXs, route.approachYs, AtlasWheelRoute.APPROACH_POINTS, bodies.highway(), bodies.outer(), alpha);
+            paintCourse(viewport, route.approachXs, route.approachYs, AtlasWheelRoute.APPROACH_POINTS, bodies.highway(), bodies.outer(), alpha);
         }
-        paintRoute(viewport, route.spiralXs, route.spiralYs, AtlasWheelRoute.SPIRAL_POINTS, bodies.outer(), bodies.inner(), alpha);
+        paintCourse(viewport, route.spiralXs, route.spiralYs, AtlasWheelRoute.SPIRAL_POINTS, bodies.outer(), bodies.inner(), alpha);
         float innerX = positions.x(bodies.inner());
         float innerY = positions.y(bodies.inner());
         float worldCentreX = positions.x(bodies.centre());
@@ -264,17 +284,67 @@ final class AtlasOrbitView {
         float bend = ROUTE_BEND_SHARE * route.bendSide();
         float throughX = (innerX + worldCentreX) / 2f - (worldCentreY - innerY) * bend;
         float throughY = (innerY + worldCentreY) / 2f + (worldCentreX - innerX) * bend;
-        connectors.paintCurved(new ConnectorEndpoint(viewport.screenX(innerX), viewport.screenY(innerY), gapOf(bodies.inner(), viewport)),
-                viewport.screenX(throughX), viewport.screenY(throughY), new ConnectorEndpoint(centreX, centreY, gapOf(bodies.centre(), viewport)),
-                style(viewport, bodies.inner(), bodies.centre(), alpha));
+        float controlX = 2f * throughX - (innerX + worldCentreX) / 2f;
+        float controlY = 2f * throughY - (innerY + worldCentreY) / 2f;
+        for (int point = 0; point < CURVE_POINTS; point++) {
+            float share = point / (float) (CURVE_POINTS - 1);
+            float rest = 1f - share;
+            curveXs[point] = rest * rest * innerX + 2f * rest * share * controlX + share * share * worldCentreX;
+            curveYs[point] = rest * rest * innerY + 2f * rest * share * controlY + share * share * worldCentreY;
+        }
+        paintCourse(viewport, curveXs, curveYs, CURVE_POINTS, bodies.inner(), bodies.centre(), alpha);
+    }
+
+    private void addArc(TreeViewport viewport, Link arc, float alpha) {
+        int centre = system.tracks().get(arc.trackIndex()).centreIndex();
+        float centreX = positions.x(centre);
+        float centreY = positions.y(centre);
+        float radius = system.tracks().get(arc.trackIndex()).radius();
+        double fromTurn = Math.atan2(positions.y(arc.first()) - centreY, positions.x(arc.first()) - centreX);
+        double toTurn = Math.atan2(positions.y(arc.second()) - centreY, positions.x(arc.second()) - centreX);
+        double sweep = Math.IEEEremainder(toTurn - fromTurn, Math.PI * 2.0);
+        float middleX = viewport.screenX(centreX + radius * (float) Math.cos(fromTurn + sweep / 2.0));
+        float middleY = viewport.screenY(centreY + radius * (float) Math.sin(fromTurn + sweep / 2.0));
+        if (!viewport.isVisible(middleX, middleY, radius * viewport.zoom() * (float) Math.abs(sweep) * 2f)) {
+            return;
+        }
+        for (int point = 0; point < ARC_POINTS; point++) {
+            double turn = fromTurn + sweep * point / (ARC_POINTS - 1);
+            arcXs[point] = centreX + radius * (float) Math.cos(turn);
+            arcYs[point] = centreY + radius * (float) Math.sin(turn);
+        }
+        paintRoute(viewport, arcXs, arcYs, ARC_POINTS, arc.first(), arc.second(), alpha);
     }
 
     private void paintRoute(TreeViewport viewport, float[] worldXs, float[] worldYs, int count, int from, int to, float alpha) {
+        int kept = toScreen(viewport, worldXs, worldYs, count);
+        connectors.paintPath(pathXs, pathYs, kept, gapOf(from, viewport), gapOf(to, viewport), style(viewport, from, to, alpha));
+    }
+
+    private void paintCourse(TreeViewport viewport, float[] worldXs, float[] worldYs, int count, int from, int to, float alpha) {
+        int kept = toScreen(viewport, worldXs, worldYs, count);
+        float size = Math.min(MAX_ARROW_PIXELS, Math.max(MIN_ARROW_PIXELS, ARROW_PIXELS_PER_ZOOM * viewport.zoom()));
+        float share = allocated[from] && allocated[to] ? 1f : UNALLOCATED_ARROW_SHARE;
+        courseArrows.render(pathXs, pathYs, kept, gapOf(from, viewport), gapOf(to, viewport), size, Misc.getBasePlayerColor(), alpha * share);
+    }
+
+    private int toScreen(TreeViewport viewport, float[] worldXs, float[] worldYs, int count) {
+        int kept = 0;
         for (int point = 0; point < count; point++) {
-            pathXs[point] = viewport.screenX(worldXs[point]);
-            pathYs[point] = viewport.screenY(worldYs[point]);
+            float screenX = viewport.screenX(worldXs[point]);
+            float screenY = viewport.screenY(worldYs[point]);
+            boolean last = point == count - 1;
+            if (kept > 0 && !last && Math.hypot(screenX - pathXs[kept - 1], screenY - pathYs[kept - 1]) < MIN_PATH_STEP_PIXELS) {
+                continue;
+            }
+            if (last && kept > 1 && Math.hypot(screenX - pathXs[kept - 1], screenY - pathYs[kept - 1]) < MIN_PATH_STEP_PIXELS) {
+                kept--;
+            }
+            pathXs[kept] = screenX;
+            pathYs[kept] = screenY;
+            kept++;
         }
-        connectors.paintPath(pathXs, pathYs, count, gapOf(from, viewport), gapOf(to, viewport), style(viewport, from, to, alpha));
+        return kept;
     }
 
     private ConnectorStyle style(TreeViewport viewport, int first, int second, float alpha) {
@@ -283,8 +353,8 @@ final class AtlasOrbitView {
     }
 
     private float gapOf(int bodyIndex, TreeViewport viewport) {
-        AtlasBodyArt art = system.bodies().get(bodyIndex).art();
-        return Math.max(art.size() * viewport.zoom(), MIN_BODY_PIXELS) * LINK_GAP_SCALE;
+        float screenRadius = Math.max(system.bodies().get(bodyIndex).art().size() * viewport.zoom(), MIN_BODY_PIXELS);
+        return screenRadius * (layout.isHighway(bodyIndex) ? HIGHWAY_RING_SCALE : LINK_GAP_SCALE);
     }
 
     private void renderBody(TreeViewport viewport, Body body, States states, boolean hovered, float seconds, float alpha) {

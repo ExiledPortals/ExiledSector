@@ -3,6 +3,7 @@ package exiledsector.ui.atlas;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.input.InputEventAPI;
+import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.charts.atlas.AtlasState;
@@ -17,6 +18,7 @@ import exiledsector.skills.SkillTier;
 import exiledsector.ui.CampaignOverlay;
 import exiledsector.ui.CanvasCamera;
 import exiledsector.ui.CanvasDrag;
+import exiledsector.ui.ChromeMetrics;
 import exiledsector.ui.OverlayFade;
 import exiledsector.ui.PointerGesture;
 import exiledsector.ui.SkillTreePanelStyle;
@@ -38,13 +40,16 @@ import java.util.Set;
 public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements CampaignOverlay.Screen {
 
     private static final float BACK_WIDTH = 160f;
+    private static final float EFFECTS_WIDTH = 160f;
+    private static final float BUTTON_GAP = 8f;
+    private static final float PANEL_GAP = 8f;
     private static final float OPEN_SECONDS = AtlasScreen.OPEN_SECONDS;
     private static final float START_ZOOM = 0.3f;
     private static final float TITLE_GAP = 8f;
     private static final float TOOLTIP_MAX_TEXT_HEIGHT = AtlasScreen.TOOLTIP_MAX_TEXT_HEIGHT;
     private static final String VOLUME_KEY_PREFIX = "atlasTree.volume.";
 
-    private enum Control { BACK }
+    private enum Control { BACK, EFFECTS }
 
     private final CampaignOverlay.Host host;
     private final AtlasState state;
@@ -65,6 +70,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
     private final TextLabel tooltipTitle = new TextLabel(tooltipText.title(), SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
     private final TextLabel tooltipBody = new TextLabel(tooltipText.body(), SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
     private final OverlayFade fade = new OverlayFade(OPEN_SECONDS);
+    private final AtlasTreeEffectsPanel effectsPanel;
     private final AtlasOrbitView.States nodeStates = new AtlasOrbitView.States() {
         @Override
         public boolean allocated(String nodeId) {
@@ -77,6 +83,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
             return unspentPoints > 0 && node != null && allocation.canAllocate(node);
         }
     };
+    private ButtonAPI effectsButton;
     private AtlasTreeAllocation allocation;
     private int unspentPoints;
     private PositionAPI panelPosition;
@@ -90,6 +97,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         this.host = host;
         this.state = AtlasState.get(Global.getSector());
         this.decorations = TreeDecorations.of(data.decorations());
+        this.effectsPanel = new AtlasTreeEffectsPanel(() -> AtlasTree.effectGroups(state));
         this.hyperspace = new HyperspaceMode(camera, this::hyperspaceContent, HyperspaceMode.Framing.ALL_VOLUMES, AtlasTreeScreen::volumeLabel, () -> { });
         refreshAllocation();
     }
@@ -118,6 +126,18 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         hintLabel.set(Translation.text("atlasTree.hint"));
         refreshPointsLabel();
         AtlasOverlayFrame.addTopRightButton(panel, Translation.text("atlasTree.back"), Control.BACK, BACK_WIDTH);
+        effectsButton = AtlasOverlayFrame.addTopRightButton(panel, effectsButtonText(), Control.EFFECTS, EFFECTS_WIDTH, BACK_WIDTH + BUTTON_GAP);
+    }
+
+    private String effectsButtonText() {
+        return Translation.text(effectsPanel.isOpen() ? "atlasTree.effects.hide" : "atlasTree.effects.show");
+    }
+
+    private void toggleEffects() {
+        effectsPanel.toggle();
+        if (effectsButton != null) {
+            I18n.forGameText(() -> effectsButton.setText(effectsButtonText()));
+        }
     }
 
     private void refreshAllocation() {
@@ -133,6 +153,8 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
     public void buttonPressed(Object buttonId) {
         if (buttonId == Control.BACK) {
             fade.close();
+        } else if (buttonId == Control.EFFECTS && !hyperspace.isActive()) {
+            toggleEffects();
         }
     }
 
@@ -154,7 +176,9 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
             if (fade.closing()) {
                 event.consume();
             } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
-                if (event.isKeyDownEvent()) {
+                if (event.isKeyDownEvent() && effectsPanel.isOpen() && !hyperspace.isActive()) {
+                    toggleEffects();
+                } else if (event.isKeyDownEvent()) {
                     fade.close();
                 }
                 event.consume();
@@ -182,6 +206,13 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
     private void treeInput(InputEventAPI event) {
         float x = event.getX();
         float y = event.getY();
+        if (effectsPanel.contains(x, y) && (event.isMouseDownEvent() || event.isMouseScrollEvent())) {
+            if (event.isMouseScrollEvent()) {
+                effectsPanel.scroll(x, y, event.getEventValue());
+            }
+            event.consume();
+            return;
+        }
         if (event.isLMBDownEvent()) {
             AtlasTreeNode target = nodeAt(x, y);
             camera.stopDrag();
@@ -231,6 +262,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         }
         refreshAllocation();
         refreshPointsLabel();
+        effectsPanel.invalidate();
         tooltipSubject = null;
         if (allocating) {
             SkillTreeSounds.allocated(soundSize(node.getTier()));
@@ -274,7 +306,8 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         camera.advanceZoom(amount);
         camera.advancePan(amount);
         orbitView.advance(amount, hoveredNode != null);
-        boolean hovering = mouseKnown && !hyperspace.isActive() && !camera.isDragging() && !gesture.isPanning();
+        effectsPanel.advance(amount);
+        boolean hovering = mouseKnown && !hyperspace.isActive() && !camera.isDragging() && !gesture.isPanning() && !effectsPanel.contains(mouseX, mouseY);
         hoveredNode = hovering ? nodeAt(mouseX, mouseY) : null;
     }
 
@@ -292,6 +325,8 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
             renderCanvas(alpha);
         }
         drawChrome(alpha);
+        effectsPanel.render(frame.chromeRight(), frame.chromeTop() - ChromeMetrics.CONTROL_HEIGHT - PANEL_GAP,
+                frame.chromeBottom() + hintLabel.height() + PANEL_GAP, alpha * hyperspace.treeAlpha());
         if (hoveredNode != null) {
             drawTooltip(hoveredNode, alpha);
         }

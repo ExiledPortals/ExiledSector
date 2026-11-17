@@ -7,7 +7,9 @@ The Atlas Tree is one large star system whose nodes orbit. Built 2026-11-17.
 - The root is the central star. Five highway rings of small nodes with no anomaly orbit it: rings 1-2 Boss Star Charts,
   rings 3-4 Catalysts, ring 5 Star Chart Modifier Effect. Each ring turns at its own speed, slower further out. The
   rings hold 8, 12, 18, 20 and 24 nodes; three rays leave the star, and 3, 4, 5 and 6 tethers reach rings 2 to 5.
-  Ring radii follow from the widest wheel either side of each ring, so wheels never overlap (the generator checks).
+  Rings sit half the natural spacing apart, but never so close that a wheel reaches the next belt. Wheels from both rings
+  share the space between them, so each takes the spoke nearest its slot that clears every placed wheel, and ring links
+  pick anchors clear of the wheels they cross (the generator checks both).
 - Every notable and keystone is its own wheel: a body (planet, fleet, derelicts, station, relay, breach) that turns with
   its ring, on its inside or outside, with two small nodes orbiting it on two tracks. The path is ring node, outer small, inner
   small, notable, so each notable has exactly two lead-ups of its anomaly. Convoy fleets are the exception: their two
@@ -33,16 +35,24 @@ The Atlas Tree is one large star system whose nodes orbit. Built 2026-11-17.
 ## Drawing (done: `ui.atlas.AtlasOrbitView`, `ui.atlas.AtlasBodyPainter`)
 
 - The art is the node: dull when unallocated, brighter with a breathing ring when allocatable, full colour when
-  allocated. Every body keeps its colour glow, at half strength until allocated. Hover shows the node tooltip and
-  slows orbits to a quarter speed.
+  allocated. Bodies have no glow; excavation planets carry the chart screen's blinking site dot. Hover shows the node
+  tooltip and slows orbits to a quarter speed.
 - Highway rings are asteroid belts (the outermost ice) turning with their ring; highway nodes keep a white node ring.
   `charts.tree.AtlasOrbitLayout` sorts bodies into highway nodes, wheels, star rays and belts.
-- Only the star rays and each wheel's chain are drawn, with the skill tree's connector beams (`ui.atlas.AtlasWheelRoute`):
-  the highway node wraps around the notable to the outer small (switching sides over the planet once the other way is
+- Star rays, ring arcs and ring-to-ring tethers use the skill tree's connector beams.
+- Each wheel's chain (`ui.atlas.AtlasWheelRoute`) is drawn as vanilla's lay-in-course arrows moving toward the notable
+  (`ui.atlas.AtlasCourseArrows`, the `ship_arrow` sprite in the player colour, fading in and out at the ends): the
+  highway node wraps around the notable to the outer small (switching sides over the planet once the other way is
   clearly shorter), a spiral carries on the same way to the inner small, and a slight curve joins the notable.
-  Ring-to-ring tethers still count as links but are not drawn.
 - Fleets, derelicts and the battlestation are drawn from vanilla hulls (`ui.decoration.AtlasShipGroup`); fleets drift
   in formation with engine flames, derelicts tumble without drives.
+
+## Atlas Tree Effects (done: `ui.atlas.AtlasTreeEffectsPanel`, `charts.tree.AtlasTreeEffectGroups`)
+
+- A Show Effects button beside Back toggles a panel on the right listing every granted effect, summed per anomaly. Nodes
+  without an anomaly tag form the Every Star Chart group first, then single anomalies, then hybrids under both names.
+- The panel scrolls with the mouse wheel, blocks clicks and hovers beneath it, closes on Esc before the screen does,
+  and rebuilds its text after each allocation or refund.
 
 ## Open
 

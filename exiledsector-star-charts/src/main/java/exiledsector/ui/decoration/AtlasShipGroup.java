@@ -16,25 +16,21 @@ public final class AtlasShipGroup {
 
     public enum Mode { UNDER_WAY, DORMANT, STATION }
 
-    static final float SHIP_SCALE = 2.2f;
+    static final float SHIP_SCALE = 4.4f;
     private static final float ENGINE_LEVEL = 0.6f;
     private static final String[] DEBRIS_PATHS = {
             "graphics/debris/debris_lrg0.png", "graphics/debris/debris_lrg1.png", "graphics/debris/debris_med0.png", "graphics/debris/debris_med1.png",
             "graphics/debris/debris_med2.png", "graphics/debris/debris_sml0.png", "graphics/debris/debris_sml1.png", "graphics/debris/debris_sml2.png",
             "graphics/debris/debris_sml3.png"};
-    private static final String DUST_PATH = "graphics/fx/glow64.png";
     private static final int DEBRIS_PIECES = 18;
     private static final float DEBRIS_REACH = 1.5f;
-    private static final float DEBRIS_MIN_SIZE = 4f;
-    private static final float DEBRIS_SIZE_SPREAD = 10f;
+    private static final float DEBRIS_MIN_SIZE = 8f;
+    private static final float DEBRIS_SIZE_SPREAD = 20f;
     private static final float DEBRIS_ALPHA = 0.8f;
-    private static final float DUST_SCALE = 3.4f;
-    private static final float DUST_ALPHA = 0.18f;
     private static final float WRECK_REACH = 0.8f;
     private static final float TUMBLE_DEGREES_PER_SECOND = 5f;
     private static final float STATION_TURN_DEGREES_PER_SECOND = 1.5f;
     private static final Color DEBRIS_TINT = new Color(150, 142, 132);
-    private static final Color DUST_TINT = new Color(120, 105, 95);
     private static final Logger LOG = Logger.getLogger(AtlasShipGroup.class);
 
     private final SpriteCache spriteCache = new SpriteCache(AtlasShipGroup.class);
@@ -105,8 +101,6 @@ public final class AtlasShipGroup {
     }
 
     private void renderDebris(float screenX, float screenY, float zoom, float alpha) {
-        float dustSize = radius * DUST_SCALE * zoom;
-        SpriteDraw.drawAdditiveAtCenter(spriteCache, DUST_PATH, screenX, screenY, dustSize, dustSize, DUST_TINT, alpha * DUST_ALPHA);
         for (Debris piece : debris) {
             SpriteAPI sprite = spriteCache.sprite(piece.path());
             if (sprite == null || sprite.getWidth() <= 0f || sprite.getHeight() <= 0f) {

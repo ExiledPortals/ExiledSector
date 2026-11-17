@@ -1,5 +1,6 @@
 package exiledsector.ui.atlas;
 
+import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -21,10 +22,15 @@ final class AtlasOverlayFrame {
 
     private PositionAPI panelPosition;
 
-    static void addTopRightButton(CustomPanelAPI panel, String buttonText, Object buttonId, float buttonWidth) {
+    static ButtonAPI addTopRightButton(CustomPanelAPI panel, String buttonText, Object buttonId, float buttonWidth) {
+        return addTopRightButton(panel, buttonText, buttonId, buttonWidth, 0f);
+    }
+
+    static ButtonAPI addTopRightButton(CustomPanelAPI panel, String buttonText, Object buttonId, float buttonWidth, float rightOffset) {
         TooltipMakerAPI element = panel.createUIElement(buttonWidth, ChromeMetrics.CONTROL_HEIGHT, false);
-        element.addButton(buttonText, buttonId, buttonWidth, ChromeMetrics.CONTROL_HEIGHT, 0f);
-        panel.addUIElement(element).inTL(panel.getPosition().getWidth() - PANEL_MARGIN - CHROME_PAD - buttonWidth, PANEL_MARGIN + CHROME_PAD);
+        ButtonAPI button = element.addButton(buttonText, buttonId, buttonWidth, ChromeMetrics.CONTROL_HEIGHT, 0f);
+        panel.addUIElement(element).inTL(panel.getPosition().getWidth() - PANEL_MARGIN - CHROME_PAD - rightOffset - buttonWidth, PANEL_MARGIN + CHROME_PAD);
+        return button;
     }
 
     void place(PositionAPI position) {
@@ -49,6 +55,14 @@ final class AtlasOverlayFrame {
 
     float chromeLeft() {
         return innerLeft() + CHROME_PAD;
+    }
+
+    float chromeRight() {
+        return innerLeft() + innerWidth() - CHROME_PAD;
+    }
+
+    float chromeBottom() {
+        return innerBottom() + CHROME_PAD;
     }
 
     float chromeTop() {

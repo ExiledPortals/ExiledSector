@@ -54,6 +54,15 @@ class AtlasOrbitLayoutTest {
     }
 
     @Test
+    void linksAlongARingAreArcsAndLinksBetweenRingsAreTethersWhileTheWheelChainIsLeftToTheWheel() {
+        Set<String> arcs = layout.arcs().stream().map(this::describe).collect(Collectors.toSet());
+        Set<String> tethers = layout.tethers().stream().map(this::describe).collect(Collectors.toSet());
+
+        assertEquals(Set.of("a1-a2", "a2-a3", "b1-b2", "b2-b3"), arcs);
+        assertEquals(Set.of("a1-b2"), tethers);
+    }
+
+    @Test
     void everyHighwayTrackBecomesABeltAndTheOutermostIsMarked() {
         List<AtlasOrbitLayout.Belt> belts = layout.belts();
 

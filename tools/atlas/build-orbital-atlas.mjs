@@ -20,11 +20,12 @@ const HIGHWAY_ROCK_SIZE = 16;
 const ROOT_RAYS = 3;
 const TETHERS_INTO_RING = [0, 3, 4, 5, 6];
 const SPOKE_CLEARANCE = BELT_HALF_WIDTH + 40;
-const SPOKE_SPREAD = 60;
-const SATELLITE_GAP = 40;
+const SPOKE_SPREAD = 30;
+const SATELLITE_GAP = 100;
 const WHEEL_CLEARANCE = 60;
-const INNER_SATELLITE_SPEED = [8, 13];
-const OUTER_SATELLITE_SPEED = [4.5, 7.5];
+const BELT_CLEARANCE = 40;
+const INNER_SATELLITE_SPEED = [3.2, 5.2];
+const OUTER_SATELLITE_SPEED = [1.8, 3];
 const ESCORT_BESIDE = [1, 0.75];
 const ESCORT_BEHIND = [0.5, 0.6];
 const SITE_LIGHT = '#ffbe5a';
@@ -76,12 +77,12 @@ function shuffled(options) {
 const sitePlanets = shuffled(SITE_PLANETS);
 const nextSitePlanet = () => sitePlanets.shift();
 
-const escortFleet = () => ({ kind: 'fleet', hulls: pickSome(ESCORTS, 2, 3), size: 26, facing: 'travel' });
-const convoyFleet = (hulls) => ({ kind: 'fleet', hulls, size: 70, facing: 'travel' });
+const escortFleet = () => ({ kind: 'fleet', hulls: pickSome(ESCORTS, 2, 3), size: 52, facing: 'travel' });
+const convoyFleet = (hulls) => ({ kind: 'fleet', hulls, size: 140, facing: 'travel' });
 
 function dormantFleet(notableType) {
   const hulls = DORMANT_HULLS[DORMANT_FACTION[notableType] ?? 'derelict'];
-  return { kind: 'derelicts', hulls: [pick(hulls.lead), ...pickSome(hulls.rest, 3, 5)], size: 70 };
+  return { kind: 'derelicts', hulls: [pick(hulls.lead), ...pickSome(hulls.rest, 3, 5)], size: 140 };
 }
 
 const ANOMALIES = {
@@ -103,38 +104,38 @@ const ANOMALIES = {
     colour: '#6ec8ff',
     chance: 'relay_network_chance',
     others: ['relay_reward_rarity'],
-    small: () => ({ kind: 'sprite', path: 'graphics/ships/nav_buoy.png', size: 14, facing: 'spin' }),
-    notable: () => ({ kind: 'sprite', path: pick(['graphics/ships/com_relay.png', 'graphics/ships/sensor_array.png']), size: 28, facing: 'spin', spin: 0.2 }),
+    small: () => ({ kind: 'sprite', path: 'graphics/ships/nav_buoy.png', size: 28, facing: 'spin' }),
+    notable: () => ({ kind: 'sprite', path: pick(['graphics/ships/com_relay.png', 'graphics/ships/sensor_array.png']), size: 56, facing: 'spin', spin: 0.2 }),
   },
   spatial_breach: {
     colour: '#be78ff',
     chance: 'spatial_breach_chance',
     others: ['breach_cache_quantity', 'breach_cache_items', 'warped_chance'],
-    small: () => ({ kind: 'breach', size: 17 }),
-    notable: () => ({ kind: 'breach', size: 52 }),
+    small: () => ({ kind: 'breach', size: 34 }),
+    notable: () => ({ kind: 'breach', size: 104 }),
   },
   anomalous_debris: {
     colour: '#ff6e5a',
     chance: 'anomalous_debris_chance',
     others: ['additional_debris', 'engram_quantity'],
-    small: () => ({ kind: 'sprite', path: pick(['graphics/asteroids/asteroid1.png', 'graphics/asteroids/asteroid2.png', 'graphics/asteroids/asteroid3.png', 'graphics/asteroids/asteroid4.png']), size: 19, facing: 'spin' }),
+    small: () => ({ kind: 'sprite', path: pick(['graphics/asteroids/asteroid1.png', 'graphics/asteroids/asteroid2.png', 'graphics/asteroids/asteroid3.png', 'graphics/asteroids/asteroid4.png']), size: 38, facing: 'spin' }),
     notable: (notableType) => dormantFleet(notableType),
   },
   listening_post: {
     colour: '#f0dc6e',
     chance: 'listening_post_chance',
     others: ['vault_quantity', 'slow_purge'],
-    small: () => ({ kind: 'sprite', path: pick(['graphics/ships/wolf/wolf_base.png', 'graphics/ships/lasher/lasher_base.png']), size: 17, facing: 'travel' }),
-    notable: () => ({ kind: 'sprite', path: pick(['graphics/stations/station_side01.png', 'graphics/stations/station_side02.png', 'graphics/stations/station_side03.png', 'graphics/stations/station_side04.png']), size: 58, facing: 'spin' }),
+    small: () => ({ kind: 'sprite', path: pick(['graphics/ships/wolf/wolf_base.png', 'graphics/ships/lasher/lasher_base.png']), size: 34, facing: 'travel' }),
+    notable: () => ({ kind: 'sprite', path: pick(['graphics/stations/station_side01.png', 'graphics/stations/station_side02.png', 'graphics/stations/station_side03.png', 'graphics/stations/station_side04.png']), size: 116, facing: 'spin' }),
   },
 };
 
 const NOTABLE_ART = {
-  silent_choir: () => ({ kind: 'sprite', path: 'graphics/stations/cryosleeper.png', size: 92, facing: 'spin' }),
-  mixed_manifest: () => ({ kind: 'sprite', path: 'graphics/stations/station_midline1.png', size: 92, facing: 'spin' }),
-  incursion: () => ({ kind: 'sprite', path: 'graphics/stations/station_side00.png', size: 64, facing: 'spin', spin: 0.3 }),
-  fortified_depot: () => ({ kind: 'station', hulls: ['station2'], size: 80 }),
-  double_down: () => ({ kind: 'binary', paths: ['graphics/ships/com_relay.png', 'graphics/ships/sensor_array.png'], size: 40, facing: 'spin', spin: 0.2 }),
+  silent_choir: () => ({ kind: 'sprite', path: 'graphics/stations/cryosleeper.png', size: 184, facing: 'spin' }),
+  mixed_manifest: () => ({ kind: 'sprite', path: 'graphics/stations/station_midline1.png', size: 184, facing: 'spin' }),
+  incursion: () => ({ kind: 'sprite', path: 'graphics/stations/station_side00.png', size: 128, facing: 'spin', spin: 0.3 }),
+  fortified_depot: () => ({ kind: 'station', hulls: ['station2'], size: 160 }),
+  double_down: () => ({ kind: 'binary', paths: ['graphics/ships/com_relay.png', 'graphics/ships/sensor_array.png'], size: 80, facing: 'spin', spin: 0.2 }),
   open_season: () => convoyFleet(pickSome(COMBAT_FREIGHTERS, 5, 6)),
 };
 
@@ -259,8 +260,14 @@ const extentOf = (ringIndex, inside) => Math.max(BELT_HALF_WIDTH,
   ...plannedWheels.filter((wheel) => wheel.ringIndex === ringIndex && wheel.inside === inside).map((wheel) => wheel.extent));
 const ringRadii = [];
 RING_NODE_COUNTS.forEach((_, ringIndex) => {
-  const below = ringIndex === 0 ? STAR_RADIUS + STAR_CLEARANCE : ringRadii[ringIndex - 1] + extentOf(ringIndex - 1, false) + RING_CLEARANCE;
-  ringRadii.push(Math.round(below + extentOf(ringIndex, true)));
+  if (ringIndex === 0) {
+    ringRadii.push(Math.round(STAR_RADIUS + STAR_CLEARANCE + extentOf(0, true)));
+    return;
+  }
+  const outward = extentOf(ringIndex - 1, false);
+  const inward = extentOf(ringIndex, true);
+  const gap = Math.max((outward + RING_CLEARANCE + inward) / 2, Math.max(outward, inward) + BELT_HALF_WIDTH + BELT_CLEARANCE);
+  ringRadii.push(Math.round(ringRadii[ringIndex - 1] + gap));
 });
 
 function ringSpeed(ringIndex) {
@@ -323,18 +330,29 @@ function satelliteOffsets(wheel, spokeAngle) {
   }));
 }
 
+const placedWheels = [];
+const clashes = ({ x, y }, reach) => placedWheels.some((other) => Math.hypot(other.x - x, other.y - y) < reach + other.reach + WHEEL_CLEARANCE);
+
 for (const wheel of plannedWheels) {
   const ring = rings[wheel.ringIndex];
   const step = ring.nodes.length / wheel.slotCount;
   const jitter = (random() - 0.5) * step * 0.35;
-  let spokeIndex = Math.round(wheel.slot * step + jitter + ring.nodes.length) % ring.nodes.length;
-  while (ring.usedSpokes.has(spokeIndex)) spokeIndex = (spokeIndex + 1) % ring.nodes.length;
+  const target = Math.round(wheel.slot * step + jitter + ring.nodes.length) % ring.nodes.length;
+  const centreDistance = ring.radius + (wheel.inside ? -1 : 1) * wheel.spokeLength;
+  const centreOf = (spokeIndex) => ({
+    x: centreDistance * Math.cos(toRadians(ring.nodes[spokeIndex].angle)),
+    y: centreDistance * Math.sin(toRadians(ring.nodes[spokeIndex].angle)),
+  });
+  const candidates = Array.from({ length: ring.nodes.length * 2 }, (_, offset) => {
+    const shift = offset % 2 === 0 ? offset / 2 : -(offset + 1) / 2;
+    return (target + shift + ring.nodes.length * 4) % ring.nodes.length;
+  }).filter((index, order, all) => all.indexOf(index) === order && !ring.usedSpokes.has(index));
+  const spokeIndex = candidates.find((index) => !clashes(centreOf(index), wheel.reach));
+  if (spokeIndex === undefined) throw new Error(`No clear spoke for ${wheel.notableType} on ring ${wheel.ringIndex}`);
   ring.usedSpokes.add(spokeIndex);
   const spoke = ring.nodes[spokeIndex];
-  const centreDistance = ring.radius + (wheel.inside ? -1 : 1) * wheel.spokeLength;
-  const angle = toRadians(spoke.angle);
-  const centreX = centreDistance * Math.cos(angle);
-  const centreY = centreDistance * Math.sin(angle);
+  const { x: centreX, y: centreY } = centreOf(spokeIndex);
+  placedWheels.push({ x: centreX, y: centreY, reach: wheel.reach });
   const notable = addNode(wheel.notableType, centreX, centreY, wheel.tags, { around: ROOT_ID, speed: ring.speed, colour: wheel.colour, art: wheel.art });
   const offsets = satelliteOffsets(wheel, spoke.angle);
   const satellites = offsets.map((offset, order) => {
@@ -348,34 +366,40 @@ for (const wheel of plannedWheels) {
   link(spoke.node, satellites[0]);
   link(satellites[0], satellites[1]);
   link(satellites[1], notable);
-  ring.wheels.push({ x: centreX, y: centreY, reach: wheel.reach, type: wheel.notableType, angle: spoke.angle, inside: wheel.inside, extent: wheel.extent });
+  ring.wheels.push({ x: centreX, y: centreY, reach: wheel.reach, type: wheel.notableType, angle: spoke.angle, inside: wheel.inside, distance: centreDistance });
   if (wheel.inside) ring.insideSpokes.push(spoke.node.id);
 }
 
 const overlaps = [];
-for (const ring of rings) {
-  ring.wheels.forEach((first, index) => ring.wheels.slice(index + 1).forEach((second) => {
-    const distance = Math.hypot(first.x - second.x, first.y - second.y);
-    if (distance < first.reach + second.reach + WHEEL_CLEARANCE) overlaps.push(`${first.type} and ${second.type} (${Math.round(distance)})`);
-  }));
-}
+const allWheels = rings.flatMap((ring) => ring.wheels);
+allWheels.forEach((first, index) => allWheels.slice(index + 1).forEach((second) => {
+  const distance = Math.hypot(first.x - second.x, first.y - second.y);
+  if (distance < first.reach + second.reach + WHEEL_CLEARANCE) overlaps.push(`${first.type} and ${second.type} (${Math.round(distance)})`);
+}));
 if (overlaps.length > 0) throw new Error(`Wheels overlap: ${overlaps.join(', ')}`);
 
-function clearOfInsideWheels(ring, angle) {
-  return ring.wheels.filter((wheel) => wheel.inside).every(({ angle: wheelAngle, extent, reach }) => {
-    const clearance = Math.atan2(reach + 60, ring.radius - extent + reach) * 180 / Math.PI;
+function wheelsBelow(ringIndex) {
+  const inside = rings[ringIndex].wheels.filter((wheel) => wheel.inside);
+  return ringIndex === 0 ? inside : [...inside, ...rings[ringIndex - 1].wheels.filter((wheel) => !wheel.inside)];
+}
+
+function clearOfWheels(wheels, angle) {
+  return wheels.every(({ angle: wheelAngle, distance, reach }) => {
+    const clearance = Math.asin(Math.min(1, (reach + WHEEL_CLEARANCE) / distance)) * 180 / Math.PI;
     return angularGap(angle, wheelAngle) > clearance;
   });
 }
 
-function spreadAnchors(ring, count) {
+function spreadAnchors(ringIndex, count) {
+  const ring = rings[ringIndex];
+  const below = wheelsBelow(ringIndex);
   const chosen = [];
   const phase = random() * 360;
   for (let anchor = 0; anchor < count; anchor++) {
     const target = phase + anchor * 360 / count;
     const candidates = ring.nodes
       .filter(({ node }) => !ring.insideSpokes.includes(node.id) && !chosen.some((picked) => picked.node === node))
-      .sort((first, second) => (clearOfInsideWheels(ring, second.angle) - clearOfInsideWheels(ring, first.angle))
+      .sort((first, second) => (clearOfWheels(below, second.angle) - clearOfWheels(below, first.angle))
         || angularGap(first.angle, target) - angularGap(second.angle, target));
     if (candidates.length === 0) throw new Error(`No clear tether anchor on ring at ${ring.radius}`);
     chosen.push(candidates[0]);
@@ -383,10 +407,10 @@ function spreadAnchors(ring, count) {
   return chosen;
 }
 
-spreadAnchors(rings[0], ROOT_RAYS).forEach(({ node }) => link(root, node));
+spreadAnchors(0, ROOT_RAYS).forEach(({ node }) => link(root, node));
 for (let ringIndex = 1; ringIndex < rings.length; ringIndex++) {
   const below = rings[ringIndex - 1];
-  spreadAnchors(rings[ringIndex], TETHERS_INTO_RING[ringIndex]).forEach(({ node, angle }) => {
+  spreadAnchors(ringIndex, TETHERS_INTO_RING[ringIndex]).forEach(({ node, angle }) => {
     const landing = [...below.nodes].sort((first, second) => angularGap(first.angle, angle) - angularGap(second.angle, angle))[0];
     link(node, landing.node);
   });
@@ -411,3 +435,7 @@ writeFileSync(ORBITS_PATH, withCrlf({ orbits }));
 
 console.log(`${nodes.length} nodes, ${plannedWheels.length} wheels, rings ${rings.map((ring) => `${ring.nodes.length}@${ring.radius}`).join(' / ')}`);
 console.log('chance nodes', chanceCounts);
+const blockedAnchors = rings.flatMap((ring, ringIndex) => ring.nodes
+  .filter(({ node }) => node.connectedTo.some((id) => id === ROOT_ID || (ringIndex > 0 && rings[ringIndex - 1].nodes.some(({ node: lower }) => lower.id === id))))
+  .filter(({ angle }) => !clearOfWheels(wheelsBelow(ringIndex), angle)));
+console.log('ring links crossing a wheel', blockedAnchors.length);

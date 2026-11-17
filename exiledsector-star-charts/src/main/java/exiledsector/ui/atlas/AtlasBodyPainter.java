@@ -20,15 +20,13 @@ final class AtlasBodyPainter {
 
     private static final Color DULL_TINT = new Color(78, 80, 88);
     private static final Color AVAILABLE_TINT = new Color(150, 152, 160);
-    private static final String GLOW_PATH = "graphics/fx/glow64.png";
+    private static final String SITE_LIGHT_PATH = AtlasSystemArt.GLOW;
     private static final String CORE_GLOW_PATH = "graphics/fx/hit_glow.png";
     private static final String WHIRL_PATH = "graphics/stations/gate_whirl_glow.png";
-    private static final float LIT_GLOW_SCALE = 3.4f;
-    private static final float LIT_GLOW_ALPHA = 0.45f;
-    private static final float UNLIT_GLOW_SHARE = 0.5f;
     private static final float SITE_LIGHT_REACH = 0.8f;
-    private static final float SITE_LIGHT_SIZE = 0.7f;
+    private static final float SITE_LIGHT_SIZE = 0.15f;
     private static final float SITE_LIGHT_MIN_PIXELS = 6f;
+    private static final float SITE_LIGHT_MAX_PIXELS = 18f;
     private static final float SITE_LIGHT_BLINKS_PER_SECOND = 4f;
     private static final float UNLIT_SITE_LIGHT_SHARE = 0.6f;
     private static final float BINARY_SEPARATION = 0.55f;
@@ -50,9 +48,6 @@ final class AtlasBodyPainter {
         if (art.kind() == AtlasBodyArt.Kind.STAR || alpha <= 0f) {
             return;
         }
-        float glowSize = placement.screenRadius() * LIT_GLOW_SCALE;
-        float glowAlpha = LIT_GLOW_ALPHA * (lighting == Lighting.LIT ? 1f : UNLIT_GLOW_SHARE);
-        SpriteDraw.drawAdditiveAtCenter(sprites, GLOW_PATH, placement.screenX(), placement.screenY(), glowSize, glowSize, colour, alpha * glowAlpha);
         switch (art.kind()) {
             case PLANET -> paintPlanet(art, colour, placement, lighting, seconds, alpha);
             case SPRITE -> paintSprite(firstPath(art), placement.screenX(), placement.screenY(), placement.screenRadius(), angleOf(art, placement),
@@ -72,9 +67,9 @@ final class AtlasBodyPainter {
         double siteAngle = Math.toRadians(placement.seedDegrees());
         float radius = placement.screenRadius();
         float blink = (float) Math.sin(seconds * SITE_LIGHT_BLINKS_PER_SECOND + placement.seedDegrees()) * 0.3f + 0.7f;
-        float size = Math.max(SITE_LIGHT_MIN_PIXELS, radius * SITE_LIGHT_SIZE);
+        float size = Math.min(SITE_LIGHT_MAX_PIXELS, Math.max(SITE_LIGHT_MIN_PIXELS, radius * SITE_LIGHT_SIZE));
         float share = lighting == Lighting.LIT ? 1f : UNLIT_SITE_LIGHT_SHARE;
-        SpriteDraw.drawAdditiveAtCenter(sprites, GLOW_PATH, placement.screenX() + (float) Math.cos(siteAngle) * radius * SITE_LIGHT_REACH,
+        SpriteDraw.drawAdditiveAtCenter(sprites, SITE_LIGHT_PATH, placement.screenX() + (float) Math.cos(siteAngle) * radius * SITE_LIGHT_REACH,
                 placement.screenY() + (float) Math.sin(siteAngle) * radius * SITE_LIGHT_REACH, size, size, light, blink * share * alpha);
     }
 
