@@ -9,6 +9,7 @@ import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.items.Item;
 import exiledsector.items.ItemDefinitions;
+import exiledsector.items.TestItems;
 import exiledsector.items.crafting.ForgeChoice;
 import exiledsector.items.crafting.ForgeOperation;
 import exiledsector.items.crafting.material.CraftingMaterials;
@@ -85,7 +86,7 @@ class ChartForgeTest {
     }
 
     private static Item plate() {
-        return Item.withEffects("plate", PLATE, 1L, List.of(new RolledLine("FLUX_CAPACITY_MULT", 5f), new RolledLine("ARMOR_PERCENT", 7f)));
+        return TestItems.withLines("plate", PLATE, 1L, List.of(new RolledLine("FLUX_CAPACITY_MULT", 5f), new RolledLine("ARMOR_PERCENT", 7f)));
     }
 
     @Test

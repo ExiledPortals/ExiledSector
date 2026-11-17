@@ -2,6 +2,7 @@ package exiledsector.items.crafting;
 
 import exiledsector.items.Item;
 import exiledsector.items.ItemDefinitions;
+import exiledsector.items.TestItems;
 import exiledsector.items.modifier.AffixLayout;
 import exiledsector.items.modifier.ItemImplicits;
 import exiledsector.items.modifier.RolledLine;
@@ -51,7 +52,7 @@ class ItemForgingTest {
     }
 
     private static Item plate(RolledLine... effects) {
-        return Item.withEffects("plate", PLATE, 1L, List.of(effects));
+        return TestItems.withLines("plate", PLATE, 1L, List.of(effects));
     }
 
     private static List<String> effectNames(Item item) {
@@ -116,7 +117,7 @@ class ItemForgingTest {
 
     @Test
     void perfectingAHarmfulModifierMakesItAsMildAsItsRangeAllows() {
-        Item item = Item.withEffects("drawback", DRAWBACK, 1L, List.of(new RolledLine("WEAPON_DAMAGE_PERCENT", -8f)));
+        Item item = TestItems.withLines("drawback", DRAWBACK, 1L, List.of(new RolledLine("WEAPON_DAMAGE_PERCENT", -8f)));
 
         assertTrue(ForgeOperation.PERFECT.apply(item, ForgeChoice.modifier(item.explicits().get(0)), new Random(1L)));
         assertEquals(-5f, item.effects().get(0).magnitude());
@@ -169,7 +170,7 @@ class ItemForgingTest {
 
     @Test
     void uniquesRefuseEveryProgramThatChangesWhichModifiersTheyHold() {
-        Item relic = Item.withEffects("relic", RELIC, 1L, List.of(new RolledLine("HULL_MULT", 5f), new RolledLine("ARMOR_PERCENT", 7f)));
+        Item relic = TestItems.withLines("relic", RELIC, 1L, List.of(new RolledLine("HULL_MULT", 5f), new RolledLine("ARMOR_PERCENT", 7f)));
 
         assertFalse(ForgeOperation.GRAFT.verdict(relic).allowed());
         assertFalse(ForgeOperation.EXCISE.verdict(relic).allowed());

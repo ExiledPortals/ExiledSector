@@ -7,14 +7,10 @@ import exiledsector.items.modifier.PoolEntry;
 import exiledsector.items.subroutine.SubroutineDefinitions;
 import exiledsector.items.subroutine.SubroutineKind;
 import exiledsector.modifiers.ModifierSlot;
-import exiledsector.skills.npc.RealSkillData;
-import org.json.CDL;
 import org.json.JSONArray;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 
@@ -137,8 +133,8 @@ class ItemDefinitionsTest {
     void aHullItemsKindFollowsItsDefinition() throws Exception {
         ItemDefinitions.register(new JSONArray().put(row("bridge_item", "bridge", "HULL_MULT:4:6")));
 
-        assertEquals(ItemKind.BRIDGE, Item.withEffects("a", "bridge_item", 1L, List.of()).kind());
-        assertNull(Item.withEffects("b", "not_loaded", 1L, List.of()).kind());
+        assertEquals(ItemKind.BRIDGE, TestItems.withLines("a", "bridge_item", 1L, List.of()).kind());
+        assertNull(TestItems.withLines("b", "not_loaded", 1L, List.of()).kind());
     }
 
     @Test

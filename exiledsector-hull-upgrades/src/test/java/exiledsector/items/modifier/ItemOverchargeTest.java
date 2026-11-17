@@ -4,6 +4,7 @@ import exiledsector.i18n.Style;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
+import exiledsector.items.TestItems;
 import exiledsector.items.crafting.ForgeOperation;
 import exiledsector.modifiers.ModifierSlot;
 import org.json.JSONArray;
@@ -53,7 +54,7 @@ class ItemOverchargeTest {
     }
 
     private static ItemData item(String definitionId, RolledLine... effects) {
-        return ItemData.of(Item.withEffects("plate", definitionId, 1L, List.of(effects)));
+        return ItemData.of(TestItems.withLines("plate", definitionId, 1L, List.of(effects)));
     }
 
     private static List<RolledModifier> overchargedModifiers(ItemData item) {
@@ -120,7 +121,7 @@ class ItemOverchargeTest {
     void rerollingTheValuesEndsTheOverchargeWhileOtherChangesKeepIt() {
         RolledModifier overcharged = new RolledModifier("FLUX_CAPACITY_MULT", ModifierSlot.PREFIX, List.of(new RolledLine("FLUX_CAPACITY_MULT", 7.5f)),
                 ModifierFlags.NONE.asOvercharged());
-        Item item = Item.withEffects("plate", PLATE, 1L, List.of(new RolledLine("FLUX_CAPACITY_MULT", 5f)));
+        Item item = TestItems.withLines("plate", PLATE, 1L, List.of(new RolledLine("FLUX_CAPACITY_MULT", 5f)));
 
         RolledModifier rerolled = overcharged.rerolled(item.explicitModifier("FLUX_CAPACITY_MULT")::line, new Random(4L));
 

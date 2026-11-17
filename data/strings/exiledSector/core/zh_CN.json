@@ -457,7 +457,7 @@
     "ui.craftingBench.notice.corrupted.became_rare.hardware": "腐化纳米群把{before}拆回普通骨架，并重建为{name}。",
     "ui.craftingBench.notice.corrupted.became_rare.crew": "腐化纳米群抹去了{before}的独特之处。他们现在是{name}。",
     "ui.craftingBench.notice.movedToStorage": "{name}现在只能装入{type}舱段，已移回仓库。",
-    "socketable.migration.returned": "军官、团队等专业人员现在需安装在船体升级舱段中，以下物品已从子程序插槽移回船体物品仓库：{names}",
+    "socketable.migration.returned": "{names}已退回仓库：其所在的插槽已不再接受它们。",
     "socketable.modifier.CHART_FLEET_SIZE_PERCENT": "坚守",
     "socketable.modifier.CHART_EXTRA_FLEETS": "拥挤",
     "socketable.modifier.CHART_OFFICER_LEVEL_BONUS": "老练",

@@ -120,7 +120,6 @@ public final class HullUpgradesDomain implements ExiledSectorDomain {
     @Override
     public void onGameLoad(boolean newGame, List<CargoAPI> savedCargoes) {
         ShipSections.clearCache();
-        HullUpgradeMigration.runOnSave(savedCargoes);
         HullUpgradePoints.markChanged();
         MasterSchematicActivation.sync(Global.getSector());
     }

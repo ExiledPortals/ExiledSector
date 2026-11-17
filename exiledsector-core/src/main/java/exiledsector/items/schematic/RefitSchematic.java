@@ -5,7 +5,6 @@ import exiledsector.data.WeightedPick;
 import exiledsector.i18n.Translation;
 import exiledsector.items.ItemStore;
 import exiledsector.items.modifier.ItemRarity;
-import exiledsector.skills.ShipHullSizes;
 
 import java.awt.Color;
 import java.util.List;
@@ -22,7 +21,6 @@ public enum RefitSchematic implements ShipSchematic {
     DOMAIN(5, 4000, 2f, ItemRarity.UNIQUE.color());
 
     public static final String ITEM_ID = "exiledSector_refit_schematic";
-    public static final String LEGACY_ITEM_ID = "exiledSector_hull_upgrade";
     public static final ItemStore.StackAbsorber STACK_ABSORBER = ItemStore.StackAbsorber.counting(RefitSchematic::of, ItemStore::addSchematics);
     private static final String ICON_FOLDER = "graphics/exiledSector/items/schematics/refit_schematic_";
     private static final List<RefitSchematic> TIERS = List.of(values());
@@ -50,15 +48,11 @@ public enum RefitSchematic implements ShipSchematic {
                 return schematic;
             }
         }
-        return isLegacyData(trimmed) ? STANDARD : null;
-    }
-
-    public static boolean isLegacyData(String encoded) {
-        return encoded != null && ShipHullSizes.byName(encoded.trim()) != null;
+        return null;
     }
 
     public static RefitSchematic of(SpecialItemData special) {
-        return special != null && (ITEM_ID.equals(special.getId()) || LEGACY_ITEM_ID.equals(special.getId())) ? parse(special.getData()) : null;
+        return special != null && ITEM_ID.equals(special.getId()) ? parse(special.getData()) : null;
     }
 
 

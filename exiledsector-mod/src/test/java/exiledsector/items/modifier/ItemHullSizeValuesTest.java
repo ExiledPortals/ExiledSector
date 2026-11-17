@@ -5,6 +5,7 @@ import exiledsector.i18n.StyledText;
 import exiledsector.items.Item;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
+import exiledsector.items.TestItems;
 import exiledsector.skills.SkillTypeEffect;
 import org.json.JSONArray;
 import org.junit.jupiter.api.AfterEach;
@@ -56,7 +57,7 @@ class ItemHullSizeValuesTest {
     @Test
     void eachHullSizeGetsItsOwnValueWhateverWasStored() throws Exception {
         ItemDefinitions.register(new JSONArray().put(row("scaled", "bridge", SCALED_POOL)));
-        Item item = Item.withEffects("socketable_1", "scaled", 1L,
+        Item item = TestItems.withLines("socketable_1", "scaled", 1L,
                 List.of(new RolledLine("ARMOR_FLAT", 3f), new RolledLine("HULL_MULT", 5f)));
 
         assertEquals(List.of(5f, 5f), magnitudes(item.skillEffects(HullSize.FRIGATE)));
@@ -76,7 +77,7 @@ class ItemHullSizeValuesTest {
     @Test
     void theGenericTooltipListsEveryHullSizeValueLikeVanilla() throws Exception {
         ItemDefinitions.register(new JSONArray().put(row("scaled", "bridge", SCALED_POOL)));
-        Item item = Item.withEffects("socketable_2", "scaled", 1L,
+        Item item = TestItems.withLines("socketable_2", "scaled", 1L,
                 List.of(new RolledLine("ARMOR_FLAT", 5f), new RolledLine("HULL_MULT", 5f)));
 
         List<StyledText> lines = item.effectLines(true);
@@ -90,7 +91,7 @@ class ItemHullSizeValuesTest {
     @Test
     void onAShipTheTooltipShowsOnlyThatHullSizesValueWithNoRange() throws Exception {
         ItemDefinitions.register(new JSONArray().put(row("scaled", "bridge", SCALED_POOL)));
-        Item item = Item.withEffects("socketable_3", "scaled", 1L, List.of(new RolledLine("ARMOR_FLAT", 5f)));
+        Item item = TestItems.withLines("socketable_3", "scaled", 1L, List.of(new RolledLine("ARMOR_FLAT", 5f)));
 
         String expanded = item.effectLines(true, HullSize.CAPITAL_SHIP).get(0).plain();
 

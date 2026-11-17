@@ -45,8 +45,6 @@ public abstract class Item {
     private final String id;
     private String definitionId;
     private long seed;
-    private List<RolledLine> effects;
-    private List<RolledLine> implicits;
     private List<RolledModifier> explicitModifiers;
     private List<RolledModifier> implicitModifiers;
     private FrozenName frozenName;
@@ -66,8 +64,6 @@ public abstract class Item {
         this.id = source.id;
         this.definitionId = source.definitionId;
         this.seed = source.seed;
-        this.effects = source.effects;
-        this.implicits = source.implicits;
         this.explicitModifiers = source.explicitModifiers;
         this.implicitModifiers = source.implicitModifiers;
         this.frozenName = source.frozenName;
@@ -109,10 +105,6 @@ public abstract class Item {
     public ItemTraits traits() {
         List<RolledModifier> currentImplicits = implicits();
         return new ItemTraits(tier(), 0, corruption, currentImplicits.isEmpty() ? null : currentImplicits, mirrored);
-    }
-
-    public static Item withEffects(String id, String definitionId, long seed, List<RolledLine> effects) {
-        return create(id, definitionId, seed, RolledModifier.fromLegacyEffects(ItemDefinitions.get(definitionId), effects));
     }
 
     public abstract ItemType type();
@@ -171,20 +163,11 @@ public abstract class Item {
 
     public List<RolledModifier> explicits() {
         ItemDefinition definition = definition();
-        if (explicitModifiers != null) {
-            if (!explicitIdsCurrent && definition != null) {
-                explicitModifiers = new ArrayList<>(definition.withCurrentUniquePool(definition.withCurrentIds(explicitModifiers), seed));
-                explicitIdsCurrent = true;
-            }
-            return Collections.unmodifiableList(explicitModifiers);
+        if (!explicitIdsCurrent && definition != null) {
+            explicitModifiers = new ArrayList<>(definition.withCurrentUniquePool(definition.withCurrentIds(explicitModifiers), seed));
+            explicitIdsCurrent = true;
         }
-        List<RolledModifier> converted = RolledModifier.fromLegacyEffects(definition, effects == null ? List.of() : effects);
-        if (definition != null || effects == null) {
-            explicitModifiers = new ArrayList<>(converted);
-            explicitIdsCurrent = definition != null;
-            effects = null;
-        }
-        return Collections.unmodifiableList(converted);
+        return Collections.unmodifiableList(explicitModifiers);
     }
 
     public List<RolledLine> effects() {
@@ -192,30 +175,23 @@ public abstract class Item {
     }
 
     public List<RolledModifier> implicits() {
-        if (implicitModifiers != null) {
-            if (!implicitIdsCurrent && corruption != CorruptionOutcome.IMPLICIT_REPLACED && ItemImplicits.isLoaded() && kind() != null && !kind().implicits().isEmpty()) {
-                implicitModifiers = new ArrayList<>(ItemImplicits.withCurrentIds(kind(), implicitModifiers, seed));
-                implicitIdsCurrent = true;
+        if (implicitModifiers == null) {
+            List<RolledModifier> rolled = ItemImplicits.roll(kind(), seed);
+            if (ItemImplicits.isLoaded() && kind() != null) {
+                implicitModifiers = new ArrayList<>(rolled);
+                implicitIdsCurrent = !kind().implicits().isEmpty();
             }
-            return Collections.unmodifiableList(implicitModifiers);
+            return rolled;
         }
-        boolean resolvable = ItemImplicits.isLoaded() && kind() != null;
-        List<RolledModifier> rolled = implicits == null ? ItemImplicits.roll(kind(), seed)
-                : resolvable ? ItemImplicits.withCurrentIds(kind(), implicitsFromLegacy(implicits), seed) : implicitsFromLegacy(implicits);
-        if (implicits != null || resolvable) {
-            implicitModifiers = new ArrayList<>(rolled);
-            implicitIdsCurrent = resolvable && !kind().implicits().isEmpty();
-            implicits = null;
+        if (!implicitIdsCurrent && corruption != CorruptionOutcome.IMPLICIT_REPLACED && ItemImplicits.isLoaded() && kind() != null && !kind().implicits().isEmpty()) {
+            implicitModifiers = new ArrayList<>(ItemImplicits.withCurrentIds(kind(), implicitModifiers, seed));
+            implicitIdsCurrent = true;
         }
-        return rolled;
+        return Collections.unmodifiableList(implicitModifiers);
     }
 
     public List<RolledModifier> storedImplicits() {
         return implicitModifiers;
-    }
-
-    private static List<RolledModifier> implicitsFromLegacy(List<RolledLine> legacyImplicits) {
-        return legacyImplicits.stream().map(implicit -> RolledModifier.single(ModifierSlot.IMPLICIT, implicit)).toList();
     }
 
     public ItemDefinition definition() {
@@ -232,11 +208,8 @@ public abstract class Item {
     }
 
     private FrozenName frozenName(ItemDefinition definition) {
-        if (definition != null && (frozenName == null || frozenName.isAssembledText())) {
-            FrozenName freshName = ItemNames.freeze(definition, seed, explicits());
-            if (freshName != null || frozenName == null) {
-                frozenName = freshName;
-            }
+        if (definition != null && frozenName == null) {
+            frozenName = ItemNames.freeze(definition, seed, explicits());
         }
         return frozenName;
     }
@@ -253,7 +226,6 @@ public abstract class Item {
 
     public void replaceExplicits(List<RolledModifier> replacementModifiers) {
         explicitModifiers = new ArrayList<>(replacementModifiers);
-        effects = null;
     }
 
     public void addExplicit(RolledModifier added) {
@@ -283,7 +255,6 @@ public abstract class Item {
 
     public void replaceImplicits(List<RolledModifier> replacementImplicits) {
         implicitModifiers = new ArrayList<>(replacementImplicits);
-        implicits = null;
     }
 
     public Item mirrorAs(String copyId) {

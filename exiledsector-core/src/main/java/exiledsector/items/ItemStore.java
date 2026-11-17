@@ -56,7 +56,6 @@ public final class ItemStore {
 
     private final List<Item> owned = new ArrayList<>();
     private long nextId = 1;
-    private Map<String, Integer> hullUpgrades;
     private Map<String, Integer> refitSchematics;
     private int masterSchematics;
     private boolean holdsStarCharts;
@@ -274,26 +273,6 @@ public final class ItemStore {
         masterSchematics--;
         shipSchematicRevision++;
         return true;
-    }
-
-    public int convertLegacyHullUpgrades() {
-        if (hullUpgrades == null) {
-            return 0;
-        }
-        int legacyCount = 0;
-        for (Integer count : hullUpgrades.values()) {
-            legacyCount += count == null ? 0 : Math.max(0, count);
-        }
-        hullUpgrades = null;
-        addSchematics(RefitSchematic.STANDARD, legacyCount);
-        return legacyCount;
-    }
-
-    public void addLegacyHullUpgrades(String hullSizeName, int count) {
-        if (hullUpgrades == null) {
-            hullUpgrades = new LinkedHashMap<>();
-        }
-        hullUpgrades.merge(hullSizeName, count, Integer::sum);
     }
 
     public int absorbFrom(CargoAPI cargo) {

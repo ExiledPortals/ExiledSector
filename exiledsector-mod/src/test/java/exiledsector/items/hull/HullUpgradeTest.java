@@ -12,6 +12,7 @@ import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemFixtures;
 import exiledsector.items.ItemSaveAliases;
 import exiledsector.items.ItemStore;
+import exiledsector.items.TestItems;
 import exiledsector.items.UnresolvedItem;
 import exiledsector.items.crafting.ItemCrafting;
 import exiledsector.items.custody.SocketCustody;
@@ -96,12 +97,10 @@ class HullUpgradeTest {
     }
 
     @Test
-    void schematicCargoDataRoundTripsAndOldHullUpgradesReadAsStandard() {
+    void schematicCargoDataRoundTrips() {
         for (RefitSchematic schematic : RefitSchematic.values()) {
             assertEquals(schematic, RefitSchematic.of(schematic.toSpecialItem()));
         }
-        assertEquals(RefitSchematic.STANDARD, RefitSchematic.parse("CRUISER"));
-        assertEquals(RefitSchematic.STANDARD, RefitSchematic.parse("CAPITAL_SHIP"));
         assertEquals(RefitSchematic.DOMAIN, RefitSchematic.parse("domain"));
         assertNull(RefitSchematic.parse("FIGHTER"));
         assertNull(RefitSchematic.parse(""));
@@ -233,7 +232,7 @@ class HullUpgradeTest {
 
         ShipTrees.resetAllocations(shipData);
         assertEquals(List.of("bridge"), shipData.getUnlockedSectionIds());
-        Item metamorphosed = Item.withEffects(officer.id(), "chip", 3L, List.of());
+        Item metamorphosed = TestItems.withLines(officer.id(), "chip", 3L, List.of());
         store.replace(officer, metamorphosed);
 
         assertTrue(SocketCustody.unsocketIfMisfit(ships, metamorphosed));

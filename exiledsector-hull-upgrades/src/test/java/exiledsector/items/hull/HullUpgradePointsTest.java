@@ -1,8 +1,5 @@
 package exiledsector.items.hull;
 
-import com.fs.starfarer.api.campaign.CargoAPI;
-import com.fs.starfarer.api.campaign.CargoStackAPI;
-import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.items.ItemStore;
@@ -17,9 +14,7 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -28,10 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 class HullUpgradePointsTest {
 
@@ -51,13 +42,6 @@ class HullUpgradePointsTest {
         ShipSkillData shipData = new ShipSkillData();
         shipData.setStoredHullUpgradePoints(storedPoints);
         return shipData;
-    }
-
-    private static CargoStackAPI stack(SpecialItemData special, float size) {
-        CargoStackAPI stack = mock(CargoStackAPI.class);
-        when(stack.getSpecialDataIfSpecial()).thenReturn(special);
-        when(stack.getSize()).thenReturn(size);
-        return stack;
     }
 
     @Test
@@ -210,46 +194,6 @@ class HullUpgradePointsTest {
         assertEquals(HullUpgradeRules.UnlockBlock.NO_POINTS, HullUpgradeRules.unlockBlock(shipData, ShipSection.ARMOR_PLATING, fit()));
         assertTrue(HullUpgradeRules.lock(shipData, ShipSection.BRIDGE));
         assertTrue(HullUpgradeRules.unlock(shipData, ShipSection.ARMOR_PLATING, fit()));
-    }
-
-    @Test
-    void schematicsUnderTheOldItemIdBecomeTheSameSchematicUnderTheCurrentId() {
-        CargoStackAPI oldIdStack = stack(new SpecialItemData(RefitSchematic.LEGACY_ITEM_ID, RefitSchematic.MILITARY.toSpecialItem().getData()), 2f);
-        CargoAPI cargo = mock(CargoAPI.class);
-        when(cargo.getStacksCopy()).thenReturn(new ArrayList<>(List.of(oldIdStack)));
-
-        assertEquals(2, HullUpgradeMigration.convertCargo(cargo));
-
-        verify(cargo).removeStack(oldIdStack);
-        verify(cargo).addSpecial(RefitSchematic.MILITARY.toSpecialItem(), 2f);
-    }
-
-    @Test
-    void theMigrationKeepsShipPointsAndTurnsEachOldUpgradeIntoOneStandardSchematicOnce() {
-        ShipSkillData oldShip = shipWithStoredPoints(3);
-        store.addLegacyHullUpgrades("CRUISER", 2);
-        store.addLegacyHullUpgrades("FRIGATE", 1);
-        store.addSchematics(RefitSchematic.MILITARY, 1);
-        CargoStackAPI legacyStack = stack(new SpecialItemData(RefitSchematic.ITEM_ID, "DESTROYER"), 2f);
-        CargoStackAPI currentStack = stack(RefitSchematic.SCRAPPED.toSpecialItem(), 1f);
-        CargoAPI cargo = mock(CargoAPI.class);
-        when(cargo.getStacksCopy()).thenReturn(new ArrayList<>(List.of(legacyStack, currentStack)));
-        List<CargoAPI> cargoes = new ArrayList<>();
-        cargoes.add(cargo);
-        cargoes.add(null);
-
-        HullUpgradeMigration.run(store, cargoes);
-
-        assertEquals(3, HullUpgradePoints.of(oldShip));
-        assertEquals(Map.of(RefitSchematic.STANDARD, 3, RefitSchematic.MILITARY, 1), store.schematicCounts());
-        verify(cargo).removeStack(legacyStack);
-        verify(cargo, never()).removeStack(currentStack);
-        verify(cargo).addSpecial(RefitSchematic.STANDARD.toSpecialItem(), 2f);
-
-        when(cargo.getStacksCopy()).thenReturn(new ArrayList<>(List.of(currentStack)));
-        HullUpgradeMigration.run(store, cargoes);
-        assertEquals(Map.of(RefitSchematic.STANDARD, 3, RefitSchematic.MILITARY, 1), store.schematicCounts());
-        assertEquals(0, store.convertLegacyHullUpgrades());
     }
 
     @Test
