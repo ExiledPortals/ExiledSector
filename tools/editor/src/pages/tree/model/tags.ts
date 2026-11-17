@@ -1,10 +1,11 @@
 import type { Vocabulary } from '../../../api/vocabulary.ts';
 
-export type TagGroupKey = 'theme' | 'volume' | 'requirement' | 'gate' | 'rule';
+export type TagGroupKey = 'theme' | 'volume' | 'anomaly' | 'requirement' | 'gate' | 'rule';
 
 export const TAG_GROUPS: { key: TagGroupKey; label: string }[] = [
   { key: 'theme', label: 'Theme' },
   { key: 'volume', label: 'Volume' },
+  { key: 'anomaly', label: 'Anomaly' },
   { key: 'requirement', label: 'Requirement' },
   { key: 'gate', label: 'Gate' },
   { key: 'rule', label: 'Rule' },
@@ -12,6 +13,7 @@ export const TAG_GROUPS: { key: TagGroupKey; label: string }[] = [
 
 export const TYPE_TAG_GROUPS: TagGroupKey[] = ['theme', 'requirement', 'rule'];
 export const NODE_TAG_GROUPS: TagGroupKey[] = ['volume', 'requirement', 'gate'];
+export const ATLAS_NODE_TAG_GROUPS: TagGroupKey[] = ['volume', 'anomaly'];
 export const VOLUME_ONLY_TAG_GROUPS: TagGroupKey[] = ['volume'];
 
 export function isVolumeTag(vocabulary: Vocabulary, tag: string): boolean {
@@ -21,6 +23,9 @@ export function isVolumeTag(vocabulary: Vocabulary, tag: string): boolean {
 export function tagGroupOf(vocabulary: Vocabulary, tag: string): TagGroupKey {
   if (isVolumeTag(vocabulary, tag)) {
     return 'volume';
+  }
+  if (vocabulary.anomalyTags.includes(tag)) {
+    return 'anomaly';
   }
   if (vocabulary.gateTags.includes(tag)) {
     return 'gate';

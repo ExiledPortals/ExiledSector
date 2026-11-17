@@ -332,8 +332,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
 
     private void writeTooltip(AtlasTreeNode node) {
         tooltipTitle.setWrapped(node.getDisplayName(), tooltipText.maxTextWidth(), TOOLTIP_MAX_TEXT_HEIGHT);
-        List<StyledText> body = AtlasTreeNodeText.body(node.type(), node.getTier() == SkillTier.ROOT
-                ? Translation.msg("atlasTree.pointsSource").arg("max", AtlasState.MAX_ATLAS_SKILL_POINTS).styled() : null);
+        List<StyledText> body = AtlasTreeNodeText.tooltipBody(node.type());
         tooltipBody.setParagraphs(body, tooltipText.maxTextWidth(), TOOLTIP_MAX_TEXT_HEIGHT, SkillTreePanelStyle::standardHighlightColor);
     }
 

@@ -170,7 +170,7 @@ export function createTreePersistence(kind: TreeKind, store: TreeStore) {
       notifyError('Not saved - the tree files or the editor vocabulary did not load. Fix the error, then reload from disk.');
       return;
     }
-    const issues = validateTree(state.document, vocabulary, state.replacedNodeIds);
+    const issues = validateTree(state.document, vocabulary, state.replacedNodeIds, kind.requiresVolumeTag);
     if (issues.length > 0) {
       const shown = issues.slice(0, 8).join('\n') + (issues.length > 8 ? '\n...' : '');
       const saveAnyway = await confirmAction({

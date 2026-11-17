@@ -88,7 +88,7 @@ public final class AtlasTreeData {
         };
     }
 
-    static Map<String, AtlasTreeType> parseTypes(JSONObject typesJson) {
+    public static Map<String, AtlasTreeType> parseTypes(JSONObject typesJson) {
         Map<String, AtlasTreeType> types = new LinkedHashMap<>();
         if (typesJson == null) {
             return types;

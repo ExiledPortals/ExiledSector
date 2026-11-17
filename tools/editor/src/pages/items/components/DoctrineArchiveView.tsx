@@ -1,7 +1,7 @@
 import { Avatar, Group, Stack, Text } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { stringsRevision } from '../../../api/describe.ts';
-import { codeRevision, DescribedTypesCache, typeTooltip, type TypeTooltip } from '../../../api/tooltipCode.ts';
+import { codeRevision, DescribedTypesCache, hullSizesRequest, typeTooltip, type TypeTooltip } from '../../../api/tooltipCode.ts';
 import { splitList } from '../../../shared/csv.ts';
 import { doctrineTypeIconDestination } from '../../../shared/imageFolders.ts';
 import { fileUrl } from '../../../shared/imagePaths.ts';
@@ -25,7 +25,7 @@ export interface DoctrineTypeSource {
   onIconPicked: (typeId: string, iconPath: string) => void;
 }
 
-const describedTypes = new DescribedTypesCache(HULL_SIZE_OPTIONS.map((option) => option.value));
+const describedTypes = new DescribedTypesCache(hullSizesRequest(HULL_SIZE_OPTIONS.map((option) => option.value)));
 
 function useTypeTooltip(typeId: string, source: DoctrineTypeSource) {
   return useQuery({

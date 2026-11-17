@@ -1,5 +1,5 @@
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { renderWithProviders } from '../../test/renderWithProviders.tsx';
 import { readRepositoryFile, startTestServer, type TestServer } from '../../test/testServer.ts';
 import { repositoryVocabulary } from '../../test/testVocabulary.ts';
@@ -74,7 +74,36 @@ describe('atlas tree page', () => {
     expect(container.querySelector('[data-node-id="atlas_root"]')).toBeTruthy();
     expect(shipTreeEditor.store.getState().load.status).toBe('idle');
     expect(screen.queryByText('All sizes')).toBeNull();
-    expect(screen.getByText('1 issue - click to view')).toBeTruthy();
+    expect(screen.queryByText(/click to view/)).toBeNull();
+  });
+
+  it('shows the in-game tooltip of a hovered atlas node from one atlas describe request', async () => {
+    const serverFetch = globalThis.fetch;
+    const describeBodies: string[] = [];
+    vi.stubGlobal('fetch', async (input: RequestInfo | URL, init?: RequestInit) => {
+      if (String(input) !== '/api/describe') {
+        return serverFetch(input, init);
+      }
+      describeBodies.push(String(init?.body));
+      const descriptions = Object.fromEntries(
+        atlasStore.getState().document.types.map((type) => [
+          type.id,
+          { title: `Copied ${type.id}`, flavour: null, effects: ['<good>+1</good> line', '<muted>Flavour</muted>'], details: [], expandHint: '' },
+        ]),
+      );
+      return new Response(JSON.stringify({ descriptions }), { headers: { 'content-type': 'application/json' } });
+    });
+    try {
+      const { container } = await renderLoadedAtlas();
+      fireEvent.mouseOver(container.querySelector('[data-node-id="atlas_root"]') as Element, { clientX: 100, clientY: 50 });
+      const rootType = nodeById(atlasStore.getState().document, 'atlas_root')?.type;
+      expect(await screen.findByText(`Copied ${rootType}`)).toBeTruthy();
+      expect(screen.getByText('Flavour').style.color).toBe('rgb(140, 140, 140)');
+      expect(describeBodies).toHaveLength(1);
+      expect(Object.keys(JSON.parse(describeBodies[0]) as object)).toEqual(['atlasTypes']);
+    } finally {
+      vi.stubGlobal('fetch', serverFetch);
+    }
   });
 
   it('adds, renames and removes volumes, renaming the tags that use them', async () => {
@@ -139,6 +168,8 @@ describe('atlas tree page', () => {
     expect(screen.queryByText(/^Item cost/)).toBeNull();
     expect(screen.queryByText(/^Type tags/)).toBeNull();
     expect(screen.getByPlaceholderText('Volume: none')).toBeTruthy();
+    expect(screen.getByPlaceholderText('Anomaly: none')).toBeTruthy();
+    expect(screen.queryByPlaceholderText('Requirement: none')).toBeNull();
 
     commitField('X', '250');
     expect(nodeById(atlasStore.getState().document, 'atlas_root')?.x).toBe(250);

@@ -57,11 +57,11 @@ function validateTiers(document: TreeDocument, vocabulary: Vocabulary, issues: s
   }
 }
 
-function validateTags(document: TreeDocument, vocabulary: Vocabulary, issues: string[]): void {
+function validateTags(document: TreeDocument, vocabulary: Vocabulary, requiresVolumeTag: boolean, issues: string[]): void {
   for (const node of document.nodes) {
     const nodeTags = node.tags ?? [];
     const volumeTags = nodeTags.filter((tag) => isVolumeTag(vocabulary, tag));
-    if (volumeTags.length === 0) {
+    if (volumeTags.length === 0 && requiresVolumeTag) {
       issues.push(`Node "${node.id}" has no volume tag`);
     } else if (volumeTags.length > 1) {
       issues.push(`Node "${node.id}" has ${volumeTags.length} volume tags (${volumeTags.join(', ')}), needs exactly one`);
@@ -87,7 +87,7 @@ function validateTags(document: TreeDocument, vocabulary: Vocabulary, issues: st
   }
 }
 
-export function validateTree(document: TreeDocument, vocabulary: Vocabulary | null, replacedNodeIds: ReadonlySet<string> = new Set()): string[] {
+export function validateTree(document: TreeDocument, vocabulary: Vocabulary | null, replacedNodeIds: ReadonlySet<string> = new Set(), requiresVolumeTag = true): string[] {
   const issues: string[] = [];
   const idCounts = new Map<string, number>();
   for (const node of document.nodes) {
@@ -139,7 +139,7 @@ export function validateTree(document: TreeDocument, vocabulary: Vocabulary | nu
   validateVolumes(document, issues);
   if (vocabulary) {
     validateTiers(document, vocabulary, issues);
-    validateTags(document, vocabulary, issues);
+    validateTags(document, vocabulary, requiresVolumeTag, issues);
   }
   return issues;
 }

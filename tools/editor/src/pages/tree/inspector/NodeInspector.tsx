@@ -8,7 +8,6 @@ import { notifyError, notifyInfo } from '../../../shared/dialogs.tsx';
 import { ImagePickButton } from '../../../shared/ImagePickButton.tsx';
 import { openTypeEditor, openTypePicker } from '../dialogs/treeDialogs.tsx';
 import { connectNodes, isConnectorHidden, pairWormholes, renameNode, toggleConnectorHidden, unlinkNodes } from '../model/connectors.ts';
-import { NODE_TAG_GROUPS } from '../model/tags.ts';
 import {
   AURORA_RING_BELT_PATH,
   isAuroraBelt,
@@ -273,7 +272,7 @@ export function NodeInspector({ nodeId, vocabulary }: { nodeId: string; vocabula
         label="Node tags (this node only)"
         vocabulary={vocabulary}
         tags={node.tags ?? []}
-        groups={NODE_TAG_GROUPS}
+        groups={kind.nodeTagGroups}
         onChange={(tags) =>
           editNode(actions, node.id, (draft) => {
             if (tags.length) {

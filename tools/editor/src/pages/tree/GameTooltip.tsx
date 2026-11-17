@@ -1,12 +1,12 @@
 import { Portal } from '@mantine/core';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { DescribedTypesCache, typeTooltip, useTooltipCodeStatus, type DescribedTypes } from '../../api/tooltipCode.ts';
+import { useTooltipCodeStatus, type DescribedTypes, type DescribedTypesCache, type TypeTooltip } from '../../api/tooltipCode.ts';
 import { TooltipBody, TooltipNote } from '../../shared/TooltipBody.tsx';
 import { TOOLTIP_PANEL_CLASS } from '../../shared/tooltipMarkup.ts';
 import type { TooltipContent } from '../../shared/tooltipContent.ts';
 import { skillTypesFileObject } from './model/serialization.ts';
-import { HULL_SIZE_OPTIONS, nodeById } from './model/types.ts';
-import { shipTreeEditor } from './state/treeEditor.ts';
+import { nodeById } from './model/types.ts';
+import type { TreeEditor } from './state/treeEditor.ts';
 import classes from './GameTooltip.module.css';
 
 const SHOW_DELAY_MS = 250;
@@ -15,19 +15,21 @@ const PREFETCH_DELAY_MS = 600;
 
 type TooltipState = { kind: 'note'; message: string } | { kind: 'content'; content: TooltipContent };
 
-const describedTypes = new DescribedTypesCache(HULL_SIZE_OPTIONS.map((option) => option.value));
-
-function currentTypesJson(): string {
-  return JSON.stringify(skillTypesFileObject(shipTreeEditor.store.getState().document.types));
+export interface GameTooltipSource<Entry> {
+  editor: TreeEditor;
+  describedTypes: DescribedTypesCache<Entry>;
+  tooltip: (described: DescribedTypes<Entry>, typeId: string) => TypeTooltip;
 }
 
-function tooltipFor(described: DescribedTypes, typeId: string, hullSize: string): TooltipState {
-  const sizes = hullSize ? HULL_SIZE_OPTIONS.filter((option) => option.value === hullSize) : HULL_SIZE_OPTIONS;
-  const tooltip = typeTooltip(described, typeId, sizes);
+function currentTypesJson(editor: TreeEditor): string {
+  return JSON.stringify(skillTypesFileObject(editor.store.getState().document.types));
+}
+
+function tooltipState(tooltip: TypeTooltip): TooltipState {
   return 'content' in tooltip ? { kind: 'content', content: tooltip.content } : { kind: 'note', message: tooltip.note };
 }
 
-function hoveredTypeId(target: EventTarget | null): string | null {
+function hoveredTypeId(editor: TreeEditor, target: EventTarget | null): string | null {
   const element = target instanceof Element ? target.closest<HTMLElement | SVGElement>('[data-node-id], [data-type-id]') : null;
   if (!element) {
     return null;
@@ -35,16 +37,17 @@ function hoveredTypeId(target: EventTarget | null): string | null {
   if (element.dataset.typeId) {
     return element.dataset.typeId;
   }
-  return nodeById(shipTreeEditor.store.getState().document, element.dataset.nodeId ?? '')?.type ?? null;
+  return nodeById(editor.store.getState().document, element.dataset.nodeId ?? '')?.type ?? null;
 }
 
-export function GameTooltip({ hullSize }: { hullSize: string }) {
+export function GameTooltip<Entry>({ source }: { source: GameTooltipSource<Entry> }) {
   const [shown, setShown] = useState<TooltipState | null>(null);
   const [expanded, setExpanded] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
   const hover = useRef({ typeId: null as string | null, timer: 0, x: 0, y: 0, serial: 0 });
-  const hullSizeRef = useRef(hullSize);
-  hullSizeRef.current = hullSize;
+  const sourceRef = useRef(source);
+  sourceRef.current = source;
+  const { editor, describedTypes } = source;
 
   const position = () => {
     const box = boxRef.current;
@@ -75,10 +78,10 @@ export function GameTooltip({ hullSize }: { hullSize: string }) {
     let prefetchTimer = 0;
     const prefetch = () => {
       window.clearTimeout(prefetchTimer);
-      prefetchTimer = window.setTimeout(() => void describedTypes.describe(currentTypesJson()), PREFETCH_DELAY_MS);
+      prefetchTimer = window.setTimeout(() => void describedTypes.describe(currentTypesJson(editor)), PREFETCH_DELAY_MS);
     };
     prefetch();
-    const unsubscribeTypes = shipTreeEditor.store.subscribe((state, previous) => {
+    const unsubscribeTypes = editor.store.subscribe((state, previous) => {
       if (state.document.types !== previous.document.types) {
         prefetch();
       }
@@ -93,10 +96,11 @@ export function GameTooltip({ hullSize }: { hullSize: string }) {
       unsubscribeTypes();
       unsubscribeCode();
     };
-  }, []);
+  }, [editor, describedTypes]);
 
   useEffect(() => {
     const state = hover.current;
+    const tooltipFor = (described: DescribedTypes<Entry>, typeId: string) => tooltipState(sourceRef.current.tooltip(described, typeId));
 
     const request = async () => {
       const typeId = state.typeId;
@@ -105,15 +109,15 @@ export function GameTooltip({ hullSize }: { hullSize: string }) {
       }
       state.serial++;
       const serial = state.serial;
-      const typesJson = currentTypesJson();
+      const typesJson = currentTypesJson(editor);
       const settled = describedTypes.current(typesJson);
       if (settled?.kind === 'ready') {
-        setShown(tooltipFor(settled, typeId, hullSizeRef.current));
+        setShown(tooltipFor(settled, typeId));
         return;
       }
       const previous = describedTypes.lastDescribed();
       if (previous?.kind === 'ready' && previous.byTypeId.has(typeId)) {
-        setShown(tooltipFor(previous, typeId, hullSizeRef.current));
+        setShown(tooltipFor(previous, typeId));
       }
       const described = await describedTypes.describe(typesJson);
       if (serial !== state.serial || state.typeId !== typeId) {
@@ -122,7 +126,7 @@ export function GameTooltip({ hullSize }: { hullSize: string }) {
       if (described.kind === 'note' && previous?.kind === 'ready' && previous.byTypeId.has(typeId)) {
         return;
       }
-      setShown(tooltipFor(described, typeId, hullSizeRef.current));
+      setShown(tooltipFor(described, typeId));
       if (described.kind === 'note' && described.pending) {
         state.timer = window.setTimeout(() => void request(), RETRY_DELAY_MS);
       }
@@ -138,7 +142,7 @@ export function GameTooltip({ hullSize }: { hullSize: string }) {
     const onMouseOver = (event: MouseEvent) => {
       state.x = event.clientX;
       state.y = event.clientY;
-      const typeId = hoveredTypeId(event.target);
+      const typeId = hoveredTypeId(editor, event.target);
       if (typeId === state.typeId) {
         return;
       }
@@ -176,7 +180,7 @@ export function GameTooltip({ hullSize }: { hullSize: string }) {
       document.removeEventListener('wheel', hide);
       document.removeEventListener('keydown', onKeyDown);
     };
-  }, []);
+  }, [editor, describedTypes]);
 
   if (!shown) {
     return null;

@@ -3,8 +3,8 @@ import classes from './TooltipBody.module.css';
 
 export const TOOLTIP_PANEL_CLASS = classes.panel;
 
-export const MARKUP_COLOURS: Record<string, string> = { good: '#98fb00', bad: '#fc6300', hl: '#ffc800', hullmod: '#ffa03c', node: '#5abeff' };
-const MARKUP_PATTERN = /<(\/?)(good|bad|hl|hullmod|node)>/g;
+export const MARKUP_COLOURS: Record<string, string> = { good: '#98fb00', bad: '#fc6300', hl: '#ffc800', hullmod: '#ffa03c', node: '#5abeff', muted: '#8c8c8c' };
+const MARKUP_PATTERN = /<(\/?)(good|bad|hl|hullmod|node|muted)>/g;
 
 export function renderMarkup(markup: string): ReactNode[] {
   const parts: ReactNode[] = [];

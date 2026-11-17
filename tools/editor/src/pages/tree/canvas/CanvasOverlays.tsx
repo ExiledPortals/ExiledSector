@@ -13,8 +13,8 @@ function IssuesBadge() {
   const replacedNodeIds = useTreeState((state) => state.replacedNodeIds);
   const vocabulary = useTreeVocabulary();
   const issues = useMemo(
-    () => validateTree(document, vocabulary.data ?? null, replacedNodeIds),
-    [document, vocabulary.data, replacedNodeIds],
+    () => validateTree(document, vocabulary.data ?? null, replacedNodeIds, kind.requiresVolumeTag),
+    [document, vocabulary.data, replacedNodeIds, kind],
   );
   if (issues.length === 0) {
     return null;

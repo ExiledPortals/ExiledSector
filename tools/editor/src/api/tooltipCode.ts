@@ -51,15 +51,23 @@ export function codeRevision(): number {
 
 export type DescribedByHullSize = Record<string, Described>;
 
-export type DescribedTypes =
-  | { kind: 'ready'; byTypeId: ReadonlyMap<string, DescribedByHullSize> }
+export type DescribedTypes<Entry = DescribedByHullSize> =
+  | { kind: 'ready'; byTypeId: ReadonlyMap<string, Entry> }
   | { kind: 'note'; message: string; pending: boolean };
 
-interface DescribedTypesEntry {
+interface DescribedTypesEntry<Entry> {
   key: string;
-  result: Promise<DescribedTypes>;
-  settled: DescribedTypes | null;
+  result: Promise<DescribedTypes<Entry>>;
+  settled: DescribedTypes<Entry> | null;
 }
+
+export type DescribeRequest = (typesJson: string) => string;
+
+export function hullSizesRequest(hullSizes: string[]): DescribeRequest {
+  return (typesJson) => `{"types":${typesJson},"hullSizes":${JSON.stringify(hullSizes)}}`;
+}
+
+export const atlasTypesRequest: DescribeRequest = (typesJson) => `{"atlasTypes":${typesJson}}`;
 
 function hashText(text: string): number {
   let hash = 5381;
@@ -69,14 +77,14 @@ function hashText(text: string): number {
   return hash;
 }
 
-async function fetchDescribedTypes(typesJson: string, hullSizes: string[]): Promise<DescribedTypes> {
+async function fetchDescribedTypes<Entry>(requestBody: string): Promise<DescribedTypes<Entry>> {
   try {
     const response = await fetch('/api/describe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Skill-Tree-Editor': '1' },
-      body: `{"types":${typesJson},"hullSizes":${JSON.stringify(hullSizes)}}`,
+      body: requestBody,
     });
-    const body = (await response.json()) as { descriptions?: Record<string, DescribedByHullSize>; pending?: boolean; message?: string; error?: string };
+    const body = (await response.json()) as { descriptions?: Record<string, Entry>; pending?: boolean; message?: string; error?: string };
     if (body.descriptions) {
       return { kind: 'ready', byTypeId: new Map(Object.entries(body.descriptions)) };
     }
@@ -107,22 +115,33 @@ export function typeTooltip(described: DescribedTypes, typeId: string, hullSizes
   return { content: mergeDescriptions(entries) };
 }
 
-export class DescribedTypesCache {
-  private latest: DescribedTypesEntry | null = null;
-  private lastReady: DescribedTypes | null = null;
+export function atlasTypeTooltip(described: DescribedTypes<Described>, typeId: string): TypeTooltip {
+  if (described.kind === 'note') {
+    return { note: described.message, pending: described.pending };
+  }
+  const entry = described.byTypeId.get(typeId);
+  if (!entry || entry.error) {
+    return { note: entry?.error ?? `Unknown or invalid type "${typeId}"`, pending: false };
+  }
+  return { content: mergeDescriptions([{ label: '', described: entry }]) };
+}
 
-  constructor(private readonly hullSizes: string[]) {}
+export class DescribedTypesCache<Entry = DescribedByHullSize> {
+  private latest: DescribedTypesEntry<Entry> | null = null;
+  private lastReady: DescribedTypes<Entry> | null = null;
+
+  constructor(private readonly request: DescribeRequest) {}
 
   private keyOf(typesJson: string): string {
     return `${typesJson.length}|${hashText(typesJson)}|${stringsRevision()}|${codeRevision()}`;
   }
 
-  describe(typesJson: string): Promise<DescribedTypes> {
+  describe(typesJson: string): Promise<DescribedTypes<Entry>> {
     const key = this.keyOf(typesJson);
     if (this.latest?.key === key && this.latest.settled?.kind !== 'note') {
       return this.latest.result;
     }
-    const entry: DescribedTypesEntry = { key, result: fetchDescribedTypes(typesJson, this.hullSizes), settled: null };
+    const entry: DescribedTypesEntry<Entry> = { key, result: fetchDescribedTypes<Entry>(this.request(typesJson)), settled: null };
     entry.result = entry.result.then((described) => {
       entry.settled = described;
       if (described.kind === 'ready') {
@@ -134,11 +153,11 @@ export class DescribedTypesCache {
     return entry.result;
   }
 
-  current(typesJson: string): DescribedTypes | null {
+  current(typesJson: string): DescribedTypes<Entry> | null {
     return this.latest?.key === this.keyOf(typesJson) ? this.latest.settled : null;
   }
 
-  lastDescribed(): DescribedTypes | null {
+  lastDescribed(): DescribedTypes<Entry> | null {
     return this.lastReady;
   }
 }

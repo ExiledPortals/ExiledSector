@@ -1,6 +1,7 @@
 import { Select, Tooltip } from '@mantine/core';
-import { useState } from 'react';
-import { GameTooltip } from './GameTooltip.tsx';
+import { useMemo, useState } from 'react';
+import { DescribedTypesCache, hullSizesRequest, typeTooltip, type DescribedByHullSize } from '../../api/tooltipCode.ts';
+import { GameTooltip, type GameTooltipSource } from './GameTooltip.tsx';
 import { HULL_SIZE_OPTIONS } from './model/types.ts';
 import { shipTreeEditor } from './state/treeEditor.ts';
 import { TreeEditorPage } from './TreeEditorPage.tsx';
@@ -27,12 +28,18 @@ function useTooltipHullSize(): [string, (hullSize: string) => void] {
   return [hullSize, update];
 }
 
+const shipDescribedTypes = new DescribedTypesCache(hullSizesRequest(HULL_SIZE_OPTIONS.map((option) => option.value)));
+
 export function TreePage() {
   const [tooltipHullSize, setTooltipHullSize] = useTooltipHullSize();
+  const tooltipSource = useMemo((): GameTooltipSource<DescribedByHullSize> => {
+    const sizes = tooltipHullSize ? HULL_SIZE_OPTIONS.filter((option) => option.value === tooltipHullSize) : HULL_SIZE_OPTIONS;
+    return { editor: shipTreeEditor, describedTypes: shipDescribedTypes, tooltip: (described, typeId) => typeTooltip(described, typeId, sizes) };
+  }, [tooltipHullSize]);
   const hullSizeSelect = (
     <Tooltip label="Hull size used by the in-game tooltip preview (hover a node, F1 for details)">
       <Select size="xs" w={130} data={TOOLTIP_HULL_SIZES} value={tooltipHullSize} onChange={(value) => setTooltipHullSize(value ?? '')} allowDeselect={false} />
     </Tooltip>
   );
-  return <TreeEditorPage editor={shipTreeEditor} toolbarControls={hullSizeSelect} overlay={<GameTooltip hullSize={tooltipHullSize} />} />;
+  return <TreeEditorPage editor={shipTreeEditor} toolbarControls={hullSizeSelect} overlay={<GameTooltip source={tooltipSource} />} />;
 }

@@ -1,6 +1,7 @@
 package exiledsector.ui.atlas;
 
 import exiledsector.charts.atlas.AtlasEffects;
+import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.atlas.AtlasModifier;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
@@ -8,15 +9,21 @@ import exiledsector.charts.tree.AtlasTreeType;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.SkillTier;
 
 import java.util.ArrayList;
 import java.util.List;
 
-final class AtlasTreeNodeText {
+public final class AtlasTreeNodeText {
 
     static final String LINE_KEY_PREFIX = "atlasTree.line.";
 
     private AtlasTreeNodeText() {
+    }
+
+    public static List<StyledText> tooltipBody(AtlasTreeType type) {
+        return body(type, type.tier() == SkillTier.ROOT
+                ? Translation.msg("atlasTree.pointsSource").arg("max", AtlasState.MAX_ATLAS_SKILL_POINTS).styled() : null);
     }
 
     static List<StyledText> body(AtlasTreeType type, StyledText extraLine) {

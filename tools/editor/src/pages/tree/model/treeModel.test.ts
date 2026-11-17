@@ -219,24 +219,28 @@ describe('validation and tags', () => {
     ]);
   });
 
-  it('checks atlas nodes against the declared volumes, chart and atlas effects and atlas tiers', () => {
+  it('checks atlas nodes against the declared volumes, anomalies, chart and atlas effects and atlas tiers without requiring a volume', () => {
     const atlasVocabulary = ATLAS_TREE_KIND.editorVocabulary(
-      { ...vocabulary, chartEffectNames: ['CHART_EXTRA_FLEETS'], atlasEffectNames: ['ATLAS_VISIBILITY_LANES'] },
+      { ...vocabulary, chartEffectNames: ['CHART_EXTRA_FLEETS'], atlasEffectNames: ['ATLAS_VISIBILITY_LANES'], chartAnomalyIds: ['spatial_breach'] },
       ['crafting', 'crafting'],
     );
-    const document = makeDocument([node('a', 0, 0, [], { tags: ['crafting'] }), node('b', 1, 0, [], { tags: ['north'] })], { volumes: ['crafting', 'crafting'] });
+    const document = makeDocument(
+      [node('a', 0, 0, [], { tags: ['crafting', 'spatial_breach'] }), node('b', 1, 0, [], { tags: ['north'] }), node('c', 2, 0, [], { tags: ['spatial_breach'] })],
+      { volumes: ['crafting', 'crafting'] },
+    );
     document.types[0].effects = [
       { effect: 'CHART_EXTRA_FLEETS', magnitude: 1 },
       { effect: 'ATLAS_VISIBILITY_LANES', magnitude: 1 },
       { effect: 'HULL_PERCENT', magnitude: 5 },
     ];
-    expect(validateTree(document, atlasVocabulary)).toEqual([
+    expect(validateTree(document, atlasVocabulary, new Set(), ATLAS_TREE_KIND.requiresVolumeTag)).toEqual([
       'Type "small" uses unknown effect "HULL_PERCENT"',
       'Volume "crafting" is declared more than once',
       'Type "exit" has tier "WORMHOLE_EXIT", which this tree does not use',
-      'Node "b" has no volume tag',
       'Node "b" has unknown tag "north"',
     ]);
+    expect(tagGroupOf(atlasVocabulary, 'spatial_breach')).toBe('anomaly');
+    expect(tagGroupOf(vocabulary, 'spatial_breach')).toBe('theme');
   });
 
   it('takes atlas type tags from the star chart theme tags and flags a tag beside its own ancestor', () => {

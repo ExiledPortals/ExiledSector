@@ -52,6 +52,7 @@ export interface VocabularyFile {
   chartTierGroups?: ChartTierGroup[];
   chartEffects?: string[];
   atlasEffects?: string[];
+  chartAnomalies?: string[];
   chartSystemTypes?: string[];
 }
 
@@ -64,6 +65,7 @@ export interface Vocabulary {
   requirementTags: string[];
   gateTags: string[];
   ruleTags: string[];
+  anomalyTags: string[];
   allTags: string[];
   tiers: string[];
   unlockConditionTypes: string[];
@@ -87,6 +89,7 @@ export interface Vocabulary {
   chartTierGroups: ChartTierGroup[];
   chartEffectNames: string[];
   atlasEffectNames: string[];
+  chartAnomalyIds: string[];
   chartSystemTypes: string[];
 }
 
@@ -105,6 +108,7 @@ export function buildVocabulary(file: VocabularyFile): Vocabulary {
     requirementTags: file.tags.requirement.slice(),
     gateTags: (file.tags.gate ?? []).slice(),
     ruleTags: (file.tags.rule ?? []).slice(),
+    anomalyTags: [],
     allTags: [...file.tags.theme, ...file.tags.volume, ...file.tags.requirement, ...(file.tags.gate ?? []), ...(file.tags.rule ?? [])],
     tiers: file.tiers.slice(),
     unlockConditionTypes: file.unlockConditionTypes.slice(),
@@ -128,6 +132,7 @@ export function buildVocabulary(file: VocabularyFile): Vocabulary {
     chartTierGroups: (file.chartTierGroups ?? DEFAULT_CHART_TIER_GROUPS).map((group) => ({ ...group })),
     chartEffectNames: (file.chartEffects ?? []).slice(),
     atlasEffectNames: (file.atlasEffects ?? []).slice(),
+    chartAnomalyIds: (file.chartAnomalies ?? []).slice(),
     chartSystemTypes: (file.chartSystemTypes ?? []).slice(),
   };
 }
