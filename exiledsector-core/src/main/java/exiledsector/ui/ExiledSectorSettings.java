@@ -7,7 +7,6 @@ import exiledsector.compat.CombatGlow;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.LanguageSetting;
 import exiledsector.i18n.Translation;
-import exiledsector.loot.BattleFeedstockSetting;
 import exiledsector.skills.DiminishedStat;
 import exiledsector.skills.DiminishingReturns;
 import exiledsector.skills.skilleffect.onhit.MaxRefractionCountConfig;
@@ -85,8 +84,6 @@ public final class ExiledSectorSettings {
         itemsPage.booleanSetting(SalvageSiteCompat.DROPS_FIELD_ID, "settings.hullItems.otherModDrops", SalvageSiteCompat.DEFAULT_DROPS);
 
         itemsPage.header("exiledSector_craftingHeader", "settings.crafting.header");
-        itemsPage.intSetting(BattleFeedstockSetting.FIELD_ID, "settings.hullItems.battleFeedstock",
-                BattleFeedstockSetting.DEFAULT_FEEDSTOCK_PER_100_DEPLOYMENT_POINTS, 0, BattleFeedstockSetting.MAX_FEEDSTOCK_PER_100_DEPLOYMENT_POINTS);
         itemsPage.booleanSetting(CraftingMaterials.STORE_FIELD_ID, "settings.hullItems.storeMaterials", CraftingMaterials.DEFAULT_STORE);
     }
 

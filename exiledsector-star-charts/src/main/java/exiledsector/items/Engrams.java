@@ -30,7 +30,7 @@ public final class Engrams {
 
     public static final String PATH = "data/config/exiledSector/engrams.csv";
     static final String ID_COLUMN = "id";
-    static final Set<ModifierScope> TAKEN_SCOPES = Set.of(ModifierScope.HULL_ITEM, ModifierScope.SUBROUTINE);
+    static final Set<ModifierScope> TAKEN_SCOPES = Set.of(ModifierScope.HULL_ITEM);
     private static final Logger LOG = Logger.getLogger(Engrams.class);
     public static final CodexModifierTable CODEX_TABLE = new CodexModifierTable("chart.codex.engramModifiers", Engrams::codexRows);
     private static volatile List<Engram> loaded = List.of();
@@ -141,7 +141,7 @@ public final class Engrams {
                 return;
             }
             Set<ModifierScope> scopes = takenScopes(row,
-                    entry -> integrity.error(file, line, craftingItemId + " lists item type \"" + entry + "\"; expected hull_item or subroutine"));
+                    entry -> integrity.error(file, line, craftingItemId + " lists item type \"" + entry + "\"; expected hull_item"));
             if (scopes.isEmpty()) {
                 integrity.error(file, line, craftingItemId + " needs at least one item type in item_types");
             }

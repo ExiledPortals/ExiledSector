@@ -10,8 +10,8 @@ import exiledsector.effects.GrantedNodes;
 import exiledsector.i18n.Message;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.loot.DropType;
 import exiledsector.modifiers.ModifierEffect;
-import exiledsector.charts.loot.DropType;
 
 import java.util.List;
 
@@ -111,15 +111,15 @@ public enum ChartModifier implements ModifierEffect {
     CHART_ENEMY_CORROSION_BEAM("corrosion_beam_1"),
     CHART_ENEMY_LUDDS_LIGHT("ludds_light_1"),
     CHART_ENEMY_AT_ANY_COST("at_any_cost_1"),
-    CHART_QUANTITY_PERCENT(false, ChartGenContext::addQuantityPercent),
+    CHART_QUANTITY_PERCENT(DropType.ITEM),
     CHART_POI_BUDGET_PERCENT(false, ChartGenContext::addAllSiteBudgetsPercent),
     CHART_CACHE_BUDGET_PERCENT(false, (context, value) -> context.addSiteBudgetPercent(ChartPoi.Kind.CACHE, value)),
     CHART_DOMAIN_BUDGET_PERCENT(false, (context, value) -> context.addSiteBudgetPercent(ChartPoi.Kind.DOMAIN, value)),
     CHART_STATION_BUDGET_PERCENT(false, (context, value) -> context.addSiteBudgetPercent(ChartPoi.Kind.STATION, value)),
     CHART_DERELICT_BUDGET_PERCENT(false, (context, value) -> context.addSiteBudgetPercent(ChartPoi.Kind.DERELICT, value)),
     CHART_EXTRA_POIS(true, (context, value) -> context.addExtraPois(Math.round(value))),
-    CHART_ITEM_PERCENT(false, ChartGenContext::addItemPercent),
-    CHART_ITEM_RARITY_PERCENT(false, ChartGenContext::addItemRarityPercent),
+    CHART_ITEM_PERCENT(DropType.HULL_ITEM),
+    CHART_ITEM_RARITY_PERCENT(false, (context, value) -> context.addRarityPercent(DropType.ITEM, value)),
     CHART_BRIDGE_ITEM_PERCENT(DropType.BRIDGE),
     CHART_CREW_QUARTERS_ITEM_PERCENT(DropType.CREW_QUARTERS),
     CHART_ENGINE_ROOM_ITEM_PERCENT(DropType.ENGINE_ROOM),
@@ -131,7 +131,11 @@ public enum ChartModifier implements ModifierEffect {
     CHART_FLIGHT_DECK_ITEM_PERCENT(DropType.FLIGHT_DECK),
     CHART_SUBROUTINE_PERCENT(DropType.SUBROUTINE),
     CHART_STAR_CHART_PERCENT(DropType.STAR_CHART),
+    CHART_SCHEMATIC_PERCENT(DropType.SCHEMATIC),
     CHART_CRAFTING_ITEM_PERCENT(DropType.CRAFTING_ITEM),
+    CHART_BASIC_CRAFTING_ITEM_PERCENT(DropType.BASIC_CRAFTING_ITEM),
+    CHART_ENGRAM_PERCENT(DropType.ENGRAM),
+    CHART_INHIBITOR_PERCENT(DropType.INHIBITOR),
     CHART_FEEDSTOCK_PERCENT(DropType.FEEDSTOCK),
     CHART_CATALYST_PERCENT(DropType.CATALYST),
     CHART_WEAPON_PERCENT(DropType.WEAPON),

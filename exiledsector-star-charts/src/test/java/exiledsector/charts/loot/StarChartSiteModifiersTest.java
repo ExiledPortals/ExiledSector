@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.content.FakeChartContentEngine;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
+import exiledsector.loot.DropType;
 import exiledsector.loot.LootMultipliers;
 import org.junit.jupiter.api.Test;
 
@@ -26,19 +27,21 @@ class StarChartSiteModifiersTest {
     void anOrdinarySiteGetsTheLocationsModifiers() {
         LootMultipliers multipliers = StarChartLootSource.INSTANCE.lootMultipliersFor(site(FakeChartContentEngine.memory()));
 
-        assertEquals(1f, multipliers.chances().general());
-        assertEquals(1f, multipliers.chances().rarity());
+        assertEquals(1f, multipliers.quantity(DropType.ITEM));
+        assertEquals(1f, multipliers.rarity(DropType.ITEM));
     }
 
     @Test
-    void breachCacheQuantityRaisesOnlyTheSitesItemQuantity() {
+    void breachCacheQuantityRaisesTheSitesItemQuantityAndEveryTypeUnderIt() {
         MemoryAPI memory = FakeChartContentEngine.memory();
         memory.set(SpatialBreach.ITEM_MULT_KEY, 2f);
 
         LootMultipliers multipliers = StarChartLootSource.INSTANCE.lootMultipliersFor(site(memory));
 
-        assertEquals(2f, multipliers.chances().general(), 0.001f);
-        assertEquals(1f, multipliers.chances().rarity(), 0.001f);
+        assertEquals(2f, multipliers.quantity(DropType.ITEM), 0.001f);
+        assertEquals(2f, multipliers.quantity(DropType.BRIDGE), 0.001f);
+        assertEquals(2f, multipliers.quantity(DropType.CRAFTING_ITEM), 0.001f);
+        assertEquals(1f, multipliers.rarity(DropType.ITEM), 0.001f);
     }
 
     @Test

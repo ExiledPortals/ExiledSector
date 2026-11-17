@@ -95,11 +95,6 @@ public enum Nanoswarm implements CraftingMaterialFamily {
     },
     ANNULMENT("exiledSector_annulment_nanoswarm", 200, MaterialTier.UNIQUE, new Color(80, 230, 200)) {
         @Override
-        public boolean appliesTo(ItemType type) {
-            return type == ItemType.HULL_ITEM;
-        }
-
-        @Override
         public boolean canUse(Item item, CraftingContext context) {
             return ItemCrafting.canAnnul(item, context.inhibitedSlots());
         }
@@ -231,6 +226,10 @@ public enum Nanoswarm implements CraftingMaterialFamily {
 
     @Override
     public boolean appliesTo(ItemType type) {
-        return type == ItemType.HULL_ITEM || type == ItemType.SUBROUTINE;
+        return type == ItemType.HULL_ITEM || (type == ItemType.SUBROUTINE && worksWithoutRolledModifiers());
+    }
+
+    private boolean worksWithoutRolledModifiers() {
+        return this == CORRUPTION || this == TUNING || this == REPLICATION;
     }
 }

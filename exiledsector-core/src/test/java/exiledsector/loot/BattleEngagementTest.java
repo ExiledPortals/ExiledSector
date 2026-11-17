@@ -55,6 +55,21 @@ class BattleEngagementTest {
         assertEquals(Map.of("hegemony", 5f), engagement.deploymentPointsLostByFaction());
     }
 
+    @Test
+    void eachSourceFleetsLossesCanBeWeightedByThatFleet() {
+        CampaignFleetAPI fleet = mock(CampaignFleetAPI.class);
+        FactionAPI faction = mock(FactionAPI.class);
+        when(faction.getId()).thenReturn("pirates");
+        when(fleet.getFaction()).thenReturn(faction);
+        when(fleet.getMemoryWithoutUpdate()).thenReturn(mock(MemoryAPI.class));
+        FleetMemberAPI frigate = mock(FleetMemberAPI.class);
+        when(frigate.getDeploymentPointsCost()).thenReturn(8f);
+        BattleEngagement engagement = BattleEngagement.unfought(fleet, List.of(frigate));
+
+        assertEquals(Map.of("pirates", 8f), engagement.deploymentPointsLostByFaction());
+        assertEquals(Map.of("pirates", 12f), engagement.deploymentPointsLostByFaction(sourceFleet -> sourceFleet == fleet ? 1.5 : 0));
+    }
+
     private static FleetMemberAPI member(String id, float deploymentPoints) {
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn(id);

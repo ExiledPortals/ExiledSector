@@ -6,11 +6,13 @@ import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.MutableValue;
 import exiledsector.MockSector;
 import exiledsector.charts.content.ChartBossType;
 import exiledsector.charts.content.ChartContent;
+import exiledsector.charts.content.ChartFleetMarks;
 import exiledsector.charts.run.ChartContentListener;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.run.ChartRun;
@@ -247,6 +249,43 @@ class ChartObjectivesTest {
             ChartDropRules.clear();
             StarChartFixtures.clear();
         }
+    }
+
+    @Test
+    void aTwinnedBossDropsItsOwnGuaranteedStarChartOnceWhenItsFlagshipFallsEvenAfterTheObjectiveIsDone() throws Exception {
+        StarChartFixtures.registerShipped();
+        ChartDropRules.register(new JSONArray().put(new JSONObject().put("source", "chart_boss").put("guaranteed", "1")
+                .put("same_tier", "0").put("plus_1", "1")));
+        try {
+            ChartRun run = openBossRun("flagship");
+            CampaignFleetAPI boss = bossFleet("flagship");
+            CampaignFleetAPI twin = fleet("twin", true);
+            MemoryAPI twinMemory = FakeChartContentEngine.memory();
+            when(twin.getMemoryWithoutUpdate()).thenReturn(twinMemory);
+            twinMemory.set(ChartIds.fleetRunKey(RUN_ID), true);
+            ChartFleetMarks.markTwinBoss(twin, "twinFlagship");
+            FleetMemberAPI twinFlagship = mock(FleetMemberAPI.class);
+            when(twinFlagship.getId()).thenReturn("twinFlagship");
+            FleetMemberAPI twinEscort = mock(FleetMemberAPI.class);
+            when(twinEscort.getId()).thenReturn("twinEscort");
+
+            assertEquals(1, chartsIn(ChartObjectives.bossFellInBattle(sector, boss, boss.getFleetData().getMembersListCopy())));
+            assertTrue(run.isObjectiveComplete());
+            assertTrue(ChartObjectives.bossFellInBattle(sector, twin, List.of(twinEscort)).isEmpty());
+
+            Loot twinLoot = ChartObjectives.bossFellInBattle(sector, twin, List.of(twinEscort, twinFlagship));
+
+            assertEquals(1, chartsIn(twinLoot));
+            assertEquals(8, twinLoot.items().get(0).preview().tier());
+            assertTrue(ChartObjectives.bossFellInBattle(sector, twin, List.of(twinFlagship)).isEmpty());
+        } finally {
+            ChartDropRules.clear();
+            StarChartFixtures.clear();
+        }
+    }
+
+    private static int chartsIn(Loot loot) {
+        return (int) loot.items().stream().filter(item -> item.toSpecialItem().getId().equals(ItemData.STAR_CHART_ITEM_ID)).count();
     }
 
     @Test

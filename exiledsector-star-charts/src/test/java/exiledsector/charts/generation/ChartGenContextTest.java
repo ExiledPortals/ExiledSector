@@ -23,16 +23,15 @@ import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.effect.ChartFleetStat;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.charts.loot.ChartLootTotals;
-import exiledsector.charts.loot.DropType;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
-import exiledsector.items.ItemKind;
 import exiledsector.items.ItemRoll;
 import exiledsector.items.ItemTraits;
 import exiledsector.items.RolledLine;
 import exiledsector.items.RolledModifier;
 import exiledsector.items.StarChart;
 import exiledsector.items.StarChartFixtures;
+import exiledsector.loot.DropType;
 import exiledsector.modifiers.ModifierSlot;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -145,7 +144,9 @@ class ChartGenContextTest {
         assertEquals(BASE.poiBudget() * 1.3f, context.adjust(BASE).poiBudget(), TOLERANCE, "quantity does not raise the site budgets");
         assertEquals(1.1f, context.dropMult(DropType.FEEDSTOCK), TOLERANCE);
         assertEquals(3, context.extraPois());
-        assertEquals(1.6f, context.itemChances().general(), TOLERANCE);
+        assertEquals(1.6f, context.dropMult(DropType.BRIDGE), TOLERANCE);
+        assertEquals(1.1f, context.dropMult(DropType.SUBROUTINE), TOLERANCE, "the hull item line leaves subroutines out");
+        assertEquals(1.1f, context.dropMult(DropType.STAR_CHART), TOLERANCE, "the hull item line leaves Star Charts out");
         assertEquals(BASE.fleetSize(), context.adjust(BASE).fleetSize(), TOLERANCE);
         assertEquals(0.7f, with(ChartModifier.CHART_SENSOR_RANGE_PERCENT, -30f).sensorRangeMult(), TOLERANCE);
         assertEquals(ChartGenContext.MIN_SENSOR_RANGE_MULT, with(ChartModifier.CHART_SENSOR_RANGE_PERCENT, -400f).sensorRangeMult(), TOLERANCE);
@@ -193,23 +194,25 @@ class ChartGenContextTest {
 
         assertEquals(1.8f, context.dropMult(DropType.REACTOR), TOLERANCE);
         assertEquals(1.3f, context.dropMult(DropType.BRIDGE), TOLERANCE);
-        assertEquals(1.3f, context.dropMult(DropType.STAR_CHART), TOLERANCE);
-        assertEquals(1.4f, context.dropMult(DropType.CRAFTING_ITEM), TOLERANCE, "Salvage only reaches item types");
+        assertEquals(1.3f, context.dropMult(DropType.HULL_ITEM), TOLERANCE);
+        assertEquals(1.1f, context.dropMult(DropType.STAR_CHART), TOLERANCE);
+        assertEquals(1.1f, context.dropMult(DropType.SUBROUTINE), TOLERANCE);
+        assertEquals(1.4f, context.dropMult(DropType.CRAFTING_ITEM), TOLERANCE, "the hull item line only reaches hull items");
         assertEquals(1.1f, context.dropMult(DropType.WEAPON), TOLERANCE);
-        assertEquals(1f, context.dropMult(DropType.COLONY_ITEM), TOLERANCE, "Quantity leaves colony items out");
-        assertEquals(1.3f, context.itemChances().general(), TOLERANCE);
-        assertEquals(0.5f, context.itemChances().targeted(ItemKind.REACTOR), TOLERANCE);
-        assertEquals(0f, context.itemChances().targeted(ItemKind.BRIDGE), TOLERANCE);
+        assertEquals(1.1f, context.dropMult(DropType.COLONY_ITEM), TOLERANCE, "colony items read the item quantity too");
+        assertEquals(0.5f, context.itemChances().extraOverParent(DropType.REACTOR), TOLERANCE);
+        assertEquals(0f, context.itemChances().extraOverParent(DropType.BRIDGE), TOLERANCE);
         assertTrue(context.describe().contains("reactor +50%"), context.describe());
     }
 
     @Test
-    void chartQualityCountsAsQuantityForEveryDropTypeButColonyItems() {
+    void chartQualityCountsAsQuantityForEveryDropType() {
         ChartGenContext polished = ChartGenContext.of(List.of(), 12);
 
         assertEquals(12f, polished.quantityPercent(), TOLERANCE);
-        assertEquals(1.12f, polished.dropMult(DropType.FEEDSTOCK), TOLERANCE);
-        assertEquals(1f, polished.dropMult(DropType.COLONY_ITEM), TOLERANCE);
+        for (DropType type : DropType.values()) {
+            assertEquals(1.12f, polished.dropMult(type), TOLERANCE, type.name());
+        }
         assertEquals(ItemChances.BASE, ChartGenContext.none().itemChances());
     }
 
@@ -223,7 +226,7 @@ class ChartGenContextTest {
         assertEquals(List.of("Item quantity +23%", "Crafting items +47%"), lines);
         ChartGenContext sites = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_STATION_BUDGET_PERCENT, 30f)));
         assertEquals(List.of("Stations +30%"), ChartLootTotals.lines(sites).stream().map(StyledText::plain).toList());
-        assertEquals(List.of("Rarity of hull items, subroutines and crafting items +25%"),
+        assertEquals(List.of("Rarity of hull items, unique items and crafting items +25%"),
                 ChartLootTotals.lines(with(ChartModifier.CHART_ITEM_RARITY_PERCENT, 25f)).stream().map(StyledText::plain).toList());
         assertTrue(ChartLootTotals.lines(with(ChartModifier.CHART_FLEET_SIZE_PERCENT, 30f)).isEmpty());
     }
@@ -458,14 +461,47 @@ class ChartGenContextTest {
         assertEquals(BASE.poiBudget(), context.adjust(BASE).poiBudget(), TOLERANCE);
     }
     @Test
-    void rarityAddsUpAndOnlyShiftsTheRarityOfItemChances() {
+    void itemRarityAddsUpAtTheRootAndOnlyShiftsTheRarityOfItemChances() {
         ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_ITEM_RARITY_PERCENT, 30f),
                 new AppliedEffect(ChartModifier.CHART_ITEM_RARITY_PERCENT, 20f)));
 
-        assertEquals(1.5f, context.itemChances().rarity(), TOLERANCE);
-        assertEquals(1f, context.itemChances().general(), TOLERANCE);
-        assertEquals(1f, ChartGenContext.none().itemChances().rarity(), TOLERANCE);
-        assertEquals(1.5f, context.itemChances().scaled(2f).rarity(), TOLERANCE);
+        assertEquals(50f, context.rarityPercent(DropType.ITEM), TOLERANCE);
+        assertEquals(50f, context.itemRarityPercent(), TOLERANCE);
+        assertEquals(0f, context.rarityPercent(DropType.HULL_ITEM), TOLERANCE);
+        for (DropType type : DropType.values()) {
+            assertEquals(1.5f, context.itemChances().rarity(type), TOLERANCE, type.name());
+            assertEquals(1f, context.itemChances().quantity(type), TOLERANCE, type.name());
+            assertEquals(1f, ChartGenContext.none().itemChances().rarity(type), TOLERANCE, type.name());
+        }
+        assertEquals(1.5f, context.itemChances().scaled(2f).rarity(DropType.BRIDGE), TOLERANCE);
+    }
+
+    @Test
+    void aNodesRarityPercentReachesOnlyTheDropTypesBelowIt() {
+        ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_INHIBITOR_PERCENT, 0f)));
+        context.addRarityPercent(DropType.INHIBITOR, 40f);
+
+        assertEquals(1.4f, context.itemChances().rarity(DropType.INHIBITOR), TOLERANCE);
+        assertEquals(1f, context.itemChances().rarity(DropType.ENGRAM), TOLERANCE);
+        assertEquals(1f, context.itemChances().rarity(DropType.CRAFTING_ITEM), TOLERANCE);
+        assertEquals(0f, context.itemRarityPercent(), TOLERANCE);
+    }
+
+    @Test
+    void theSchematicAndCraftingSubcategoryLinesAddAtTheirOwnNodes() {
+        ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_SCHEMATIC_PERCENT, 10f),
+                new AppliedEffect(ChartModifier.CHART_BASIC_CRAFTING_ITEM_PERCENT, 20f), new AppliedEffect(ChartModifier.CHART_ENGRAM_PERCENT, 30f),
+                new AppliedEffect(ChartModifier.CHART_INHIBITOR_PERCENT, 40f), new AppliedEffect(ChartModifier.CHART_CRAFTING_ITEM_PERCENT, 50f)));
+
+        assertEquals(1.1f, context.itemChances().quantity(DropType.SCHEMATIC), TOLERANCE);
+        assertEquals(1f, context.itemChances().quantity(DropType.HULL_ITEM), TOLERANCE);
+        assertEquals(1.5f, context.itemChances().quantity(DropType.CRAFTING_ITEM), TOLERANCE);
+        assertEquals(1.7f, context.itemChances().quantity(DropType.BASIC_CRAFTING_ITEM), TOLERANCE);
+        assertEquals(1.8f, context.itemChances().quantity(DropType.ENGRAM), TOLERANCE);
+        assertEquals(1.9f, context.itemChances().quantity(DropType.INHIBITOR), TOLERANCE);
+        for (DropType node : List.of(DropType.SCHEMATIC, DropType.BASIC_CRAFTING_ITEM, DropType.ENGRAM, DropType.INHIBITOR)) {
+            assertEquals(node, ChartModifier.forDropType(node).dropType());
+        }
     }
 
     @Test

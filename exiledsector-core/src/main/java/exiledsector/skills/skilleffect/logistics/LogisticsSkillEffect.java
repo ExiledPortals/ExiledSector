@@ -237,6 +237,12 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
             return StatMode.PERCENT.describeStat(magnitude, YOUR_FLEET, "stat.blackHoleHullItemQuantity");
         }
     },
+    ITEM_QUANTITY_PERCENT(playerFleetContribution(FoundItemQuantity.ITEM_PERCENT_KEY)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return StatMode.PERCENT.describeStat(magnitude, YOUR_FLEET, "stat.itemQuantity");
+        }
+    },
     HULL_ITEM_QUANTITY_PERCENT(playerFleetContribution(FoundItemQuantity.HULL_ITEM_PERCENT_KEY)) {
         @Override
         public StyledText description(float magnitude) {
@@ -247,6 +253,12 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
         @Override
         public StyledText description(float magnitude) {
             return StatMode.PERCENT.describeStat(magnitude, YOUR_FLEET, "stat.craftingItemQuantity");
+        }
+    },
+    FEEDSTOCK_QUANTITY_PERCENT(playerFleetContribution(FoundItemQuantity.FEEDSTOCK_PERCENT_KEY)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return StatMode.PERCENT.describeStat(magnitude, YOUR_FLEET, "stat.feedstockQuantity");
         }
     },
     POST_BATTLE_WEAPON_SALVAGE_PERCENT(playerFleetContribution(SalvagedArmaments.CONTRIBUTION_KEY)) {

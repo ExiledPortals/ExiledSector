@@ -40,7 +40,7 @@ final class ConvoySupplyLines {
         for (Map.Entry<String, Float> entry : feedstock.entrySet()) {
             int count = Math.round(entry.getValue());
             if (count >= 1 && CarriedItem.isSafeId(entry.getKey())) {
-                carried.add(new CarriedItem(RewardKind.FEEDSTOCK, entry.getKey(), null, count));
+                carried.add(CarriedItem.withFinalCount(RewardKind.FEEDSTOCK, entry.getKey(), count));
             }
         }
         return carried;

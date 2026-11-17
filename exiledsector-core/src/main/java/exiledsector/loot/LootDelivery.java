@@ -1,6 +1,7 @@
 package exiledsector.loot;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
+import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
@@ -86,10 +87,14 @@ public final class LootDelivery {
     }
 
     public static void deliver(CargoAPI cargo, Loot loot, DropOrigin origin, Announcer announcer) {
-        deliverAsRolled(cargo, shaped(loot, origin), announcer);
+        addAndAnnounce(cargo, shaped(loot, origin), announcer);
     }
 
-    public static void deliverAsRolled(CargoAPI cargo, Loot loot, Announcer announcer) {
+    public static void deliverFoundAt(CargoAPI cargo, Loot loot, LocationAPI foundAt, Announcer announcer) {
+        addAndAnnounce(cargo, loot.withItems(LootSources.shape(loot.items(), DropOrigin.ANYWHERE, foundAt)), announcer);
+    }
+
+    private static void addAndAnnounce(CargoAPI cargo, Loot loot, Announcer announcer) {
         add(cargo, loot);
         announcer.announceItems(loot.items());
         announcer.announceSchematics(loot.schematics());

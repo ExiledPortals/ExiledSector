@@ -22,8 +22,8 @@ public final class DroppableDefinitions {
                 && SAFE_ID.matcher(definition.id()).matches() && ItemVolumes.dropsNow(definition);
     }
 
-    public static boolean canBeGrown(ItemDefinition definition) {
-        return definition.type() == ItemType.SUBROUTINE && !definition.unique() && isDroppable(definition);
+    public static boolean hasDroppable(ItemKind kind) {
+        return ItemDefinitions.all().stream().anyMatch(definition -> definition.kind() == kind && isDroppable(definition));
     }
 
     public static boolean hasDroppableBasic(ItemKind kind) {
@@ -36,10 +36,6 @@ public final class DroppableDefinitions {
 
     private static boolean isDroppableBasic(ItemDefinition definition, ItemKind kind) {
         return definition.kind() == kind && !definition.unique() && isDroppable(definition);
-    }
-
-    public static ItemDefinition pickBasic(Random random) {
-        return pick(random, DroppableDefinitions::canBeGrown);
     }
 
     public static ItemDefinition pickBasicOfKind(ItemKind kind, Random random) {

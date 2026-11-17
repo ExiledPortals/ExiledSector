@@ -39,13 +39,13 @@ import exiledsector.data.WeightedPick;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.loot.ChartFleetLedger;
 import exiledsector.charts.loot.ChartVanillaLoot;
-import exiledsector.charts.loot.DropType;
 import exiledsector.charts.objective.ChartObjectives;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.table.BuiltInTable;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.run.cleanup.ChartRunCloser;
 import exiledsector.Seeds;
+import exiledsector.loot.DropType;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -510,6 +510,7 @@ public final class ChartContentGenerator {
             try {
                 CampaignFleetAPI twin = launchBuilt(plan, built, guarded, twinSeed, new Random(twinSeed), () -> twinAt, false);
                 if (twin != null && built.role() == FleetRole.BOSS) {
+                    ChartFleetMarks.markTwinBoss(twin, ChartObjectives.flagshipIdOf(twin));
                     revealBoss(twin);
                 }
             } catch (RuntimeException | LinkageError e) {

@@ -25,7 +25,6 @@ const HULL_ITEM_RATE = 0.066;
 const UNIQUE_HULL_ITEM_RATE = 0.006;
 const HULL_ITEM_SALVAGE_SHARE = 0.5;
 const SITE_CRAFTING_ITEM_SHARE = 0.7;
-const FEEDSTOCK_PER_100_DP = 5;
 const CHART_DROPS = {
   systemSalvage: { charts: 0.04, ciphers: 0.48, catalysts: 0.06 },
   chartFleet: { charts: 1.5 },
@@ -46,7 +45,9 @@ const CRAFTING_DROPS = readCsv('crafting_drops.csv').map(row => ({
   key: shortKey(row.item), weight: +row.weight, chartOnly: row.chart_only.toUpperCase() === 'TRUE', common: COMMON_BANDS.has(shortKey(row.item)),
 }));
 const CRAFTING_KEYS = CRAFTING_DROPS.map(drop => drop.key);
-const CRAFTING_ITEMS_PER_100_DP = +readCsv('battle_loot.csv').find(row => row.drop === 'crafting_item').per_100_dp;
+const BATTLE_LOOT = readCsv('battle_loot.csv');
+const CRAFTING_ITEMS_PER_100_DP = +BATTLE_LOOT.find(row => row.drop === 'crafting_item').per_100_dp;
+const FEEDSTOCK_PER_100_DP = +BATTLE_LOOT.find(row => row.drop === 'feedstock').per_100_dp;
 const BAND_SHIFTS = Object.fromEntries(readCsv('star_chart_tiers.csv').map(row => [+row.tier, +row.band_shift || 1]));
 
 function craftingMix(bandShift, allowed) {
@@ -150,13 +151,14 @@ function planPois(tier, budgets, extraPois, random) {
   return planned;
 }
 
-function expectedFleetPoints(tier) {
+function expectedFleetPoints(tier, twinnedBoss) {
   const spread = rolledFleets => {
     const kept = Math.min(FLEET_LIMIT, rolledFleets);
     const cutShare = (rolledFleets - kept) / kept;
     return kept * Math.min(FLEET_SIZE_CAP, tier.fleetSize * (1 + 0.75 * cutShare)) * FLEET_POINTS_PER_PERCENT;
   };
-  return (spread(tier.fleetsMin) + spread(tier.fleetsMax)) / 2 + Math.min(BOSS_SIZE_CAP, tier.bossSize) * FLEET_POINTS_PER_PERCENT;
+  const bosses = twinnedBoss ? 2 : 1;
+  return (spread(tier.fleetsMin) + spread(tier.fleetsMax)) / 2 + bosses * Math.min(BOSS_SIZE_CAP, tier.bossSize) * FLEET_POINTS_PER_PERCENT;
 }
 
 function simulateChart(tier, modifiers, samples) {
@@ -176,13 +178,13 @@ function simulateChart(tier, modifiers, samples) {
   const feedstockMult = 1 + (suffixRoll('feedstock') + quantity) / 100;
   const catalystMult = 1 + (suffixRoll('catalyst') + quantity) / 100;
   const bossQuantity = suffixRoll('hoard') / 100;
-  const starChartMult = 1 + (suffixRoll('item') + suffixRoll('cartography') + quantity) / 100;
+  const starChartMult = 1 + (suffixRoll('cartography') + quantity) / 100;
   const budgets = {};
   for (const kind of ['cache', 'domain', 'station', 'derelict']) {
     budgets[kind] = tier.budget[kind] * (1 + (suffixRoll('plenty') + suffixRoll(kind + 'B')) / 100);
   }
   const extraPois = suffixRoll('discovery');
-  const tierFleetPoints = expectedFleetPoints(tier);
+  const tierFleetPoints = expectedFleetPoints(tier, twinnedBoss);
   const bandShift = (BAND_SHIFTS[tier.tier] || 1) * rarityMult;
   const fleetMix = craftingMix(bandShift, ANY_ITEM);
   const siteMix = craftingMix(bandShift, OUTSIDE_CHARTS);
@@ -238,11 +240,10 @@ function simulateChart(tier, modifiers, samples) {
 
   const bossFleetPoints = bossSize * FLEET_POINTS_PER_PERCENT;
   const bossDp = bossFleetPoints * DP_PER_FLEET_POINT_BOSS;
-  addBattle(bossDp, bossFleetPoints / tierFleetPoints, 1, bossQuantity);
-  totals.charts += CHART_DROPS.chartBoss.guaranteed
-    + CHART_DROPS.chartBoss.charts * bossFleetPoints / tierFleetPoints * (starChartMult + bossQuantity);
-  if (twinnedBoss) {
-    addBattle(bossDp, bossFleetPoints / tierFleetPoints, 1);
+  for (let boss = 0; boss < (twinnedBoss ? 2 : 1); boss++) {
+    addBattle(bossDp, bossFleetPoints / tierFleetPoints, 1, bossQuantity);
+    totals.charts += CHART_DROPS.chartBoss.guaranteed
+      + CHART_DROPS.chartBoss.charts * bossFleetPoints / tierFleetPoints * (starChartMult + bossQuantity);
   }
 
   totals.crafting = CRAFTING_KEYS.reduce((sum, key) => sum + totals[key], 0);
@@ -265,7 +266,7 @@ const SUFFIX_POOLS = {
   hull: ['item', 'targeted', 'targeted2', 'targeted3', 'hoard', 'plenty', 'discovery', 'cacheB', 'stationB', 'domainB', 'derelictB'],
   crafting: ['craftingItem', 'hoard', 'plenty', 'discovery', 'cacheB', 'stationB', 'domainB', 'derelictB'],
   cat: ['catalyst', 'hoard', 'plenty', 'discovery', 'cacheB', 'stationB', 'domainB', 'derelictB'],
-  charts: ['cartography', 'item', 'hoard', 'plenty', 'discovery', 'cacheB', 'stationB', 'domainB', 'derelictB'],
+  charts: ['cartography', 'hoard', 'plenty', 'discovery', 'cacheB', 'stationB', 'domainB', 'derelictB'],
 };
 const modifierKey = poolEntry => poolEntry.replace(/[23]$/, '');
 

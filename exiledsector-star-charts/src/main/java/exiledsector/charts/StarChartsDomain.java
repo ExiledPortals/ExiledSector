@@ -120,8 +120,8 @@ public final class StarChartsDomain implements ExiledSectorDomain {
             for (StarChartCipher craftingItem : StarChartCipher.values()) {
                 MaterialItems.localise(craftingItem.itemId());
             }
-            for (InfusedFeedstock craftingItem : InfusedFeedstock.values()) {
-                MaterialItems.localise(craftingItem.itemId());
+            for (InfusedFeedstock feedstock : InfusedFeedstock.values()) {
+                MaterialItems.localise(feedstock.itemId());
             }
             WormholeGateway.INDUSTRY_IDS.forEach(SpecLocalisation::industry);
             SpecLocalisation.industry(PhaseDisplacementGate.INDUSTRY_ID);

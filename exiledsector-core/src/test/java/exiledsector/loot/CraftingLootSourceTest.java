@@ -4,7 +4,9 @@ import exiledsector.MockSector;
 import exiledsector.ProjectFiles;
 import exiledsector.items.CraftingDrops;
 import exiledsector.items.CraftingInhibitor;
+import exiledsector.items.ItemChances;
 import exiledsector.items.Nanoswarm;
+import exiledsector.skills.skilleffect.logistics.FoundItemQuantity;
 import lunalib.lunaSettings.LunaSettings;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -38,6 +40,8 @@ class CraftingLootSourceTest {
         BattleLootRates.register(new JSONArray()
                 .put(new JSONObject().put("drop", BattleLootRates.CRAFTING_ITEM_RATE).put("per_100_dp", "1").put("curve", "linear")
                         .put("difficulty_scaling", "0"))
+                .put(new JSONObject().put("drop", BattleLootRates.FEEDSTOCK_RATE).put("per_100_dp", "5").put("curve", "linear")
+                        .put("difficulty_scaling", "1"))
                 .put(new JSONObject().put("drop", "hull_item").put("per_100_dp", "5").put("curve", "linear")));
         CraftingDrops.register(new JSONArray()
                 .put(new JSONObject().put("item", AUGMENTATION).put("weight", "1").put("chart_only", "false"))
@@ -70,6 +74,53 @@ class CraftingLootSourceTest {
     }
 
     @Test
+    void battleFeedstockIsFivePer100DeploymentPointsTimesTheCappedDifficulty() {
+        assertEquals(15f, CraftingLootSource.feedstock(List.of(new FleetLoss(300f, 1f, 0f, FleetLootRules.LEVEL_SCALED))), 1e-4f);
+        assertEquals(30f, CraftingLootSource.feedstock(List.of(new FleetLoss(300f, 2f, 0f, FleetLootRules.LEVEL_SCALED))), 1e-4f);
+        assertEquals(1500f, CraftingLootSource.feedstock(List.of(new FleetLoss(10000f, 3f, 0f, FleetLootRules.LEVEL_SCALED))), 1e-4f);
+    }
+
+    @Test
+    void theChartsFeedstockQuantityAndThePlayersFoundFeedstockQuantityAddIntoOnePercent() {
+        LootMultipliers chartFeedstock = new LootMultipliers(ItemChances.increasedBy(DropType.FEEDSTOCK, 50f), CraftingDrops.NO_BAND_SHIFT);
+        List<FleetLoss> chartFleet = List.of(new FleetLoss(100f, 1f, 0f, FleetLootRules.ownLedger(chartFeedstock)));
+        List<FleetLoss> stationFleet = List.of(new FleetLoss(100f, 3f, 0f, FleetLootRules.FEEDSTOCK_ONLY));
+
+        try (MockedStatic<FoundItemQuantity> found = Mockito.mockStatic(FoundItemQuantity.class)) {
+            found.when(() -> FoundItemQuantity.nodePercent(DropType.FEEDSTOCK)).thenReturn(50f);
+
+            assertEquals(10f, CraftingLootSource.feedstock(chartFleet), 1e-4f);
+            assertEquals(7.5f, CraftingLootSource.feedstock(stationFleet), 1e-4f);
+        }
+    }
+
+    @Test
+    void battleCraftingItemsReadThePlayersFoundCraftingItemQuantity() {
+        List<FleetLoss> hardBattle = List.of(new FleetLoss(10000f, 3f, 0f, FleetLootRules.LEVEL_SCALED));
+
+        try (MockedStatic<FoundItemQuantity> found = Mockito.mockStatic(FoundItemQuantity.class)) {
+            found.when(() -> FoundItemQuantity.nodePercent(DropType.CRAFTING_ITEM)).thenReturn(150f);
+
+            assertEquals(Map.of(AUGMENTATION, 250), CraftingLootSource.rollCraftingItems(hardBattle, 1f, new Random(1L)));
+        }
+    }
+
+    @Test
+    void thePlayersItemQuantityRaisesBattleFeedstockAndCraftingItemsWithTheirOwnStats() {
+        List<FleetLoss> hardBattle = List.of(new FleetLoss(10000f, 3f, 0f, FleetLootRules.LEVEL_SCALED));
+        List<FleetLoss> fleet = List.of(new FleetLoss(100f, 1f, 0f, FleetLootRules.LEVEL_SCALED));
+
+        try (MockedStatic<FoundItemQuantity> found = Mockito.mockStatic(FoundItemQuantity.class)) {
+            found.when(() -> FoundItemQuantity.nodePercent(DropType.ITEM)).thenReturn(50f);
+            found.when(() -> FoundItemQuantity.nodePercent(DropType.CRAFTING_ITEM)).thenReturn(50f);
+            found.when(() -> FoundItemQuantity.nodePercent(DropType.FEEDSTOCK)).thenReturn(10f);
+
+            assertEquals(Map.of(AUGMENTATION, 200), CraftingLootSource.rollCraftingItems(hardBattle, 1f, new Random(1L)));
+            assertEquals(8f, CraftingLootSource.feedstock(fleet), 1e-4f);
+        }
+    }
+
+    @Test
     void aFleetWhoseLootIsSpentDropsNoFeedstockOrMaterials() {
         List<FleetLoss> spent = List.of(new FleetLoss(200f, 3f, 0f, FleetLootRules.SPENT));
 
@@ -85,13 +136,18 @@ class CraftingLootSourceTest {
     }
 
     @Test
-    void theShippedTableHasOneLinearCraftingItemRowWithoutDifficultyScalingAndNoPerItemCraftingRows() throws Exception {
+    void theShippedTableHasLinearCraftingItemAndFeedstockRowsAndNoPerItemCraftingRows() throws Exception {
         BattleLootRates.register(ProjectFiles.csvRows(BattleLootRates.DATA_PATH));
 
         BattleLootRates.Rate craftingRate = BattleLootRates.rate(BattleLootRates.CRAFTING_ITEM_RATE);
         assertNotNull(craftingRate);
         assertEquals(LootCurve.LINEAR, craftingRate.curve());
         assertEquals(0f, craftingRate.difficultyScaling());
+        BattleLootRates.Rate feedstockRate = BattleLootRates.rate(BattleLootRates.FEEDSTOCK_RATE);
+        assertNotNull(feedstockRate);
+        assertEquals(5f, feedstockRate.per100DeploymentPoints());
+        assertEquals(LootCurve.LINEAR, feedstockRate.curve());
+        assertEquals(1f, feedstockRate.difficultyScaling());
         for (Nanoswarm nanoswarm : Nanoswarm.values()) {
             assertNull(BattleLootRates.rate(nanoswarm.itemId()), nanoswarm.name());
         }

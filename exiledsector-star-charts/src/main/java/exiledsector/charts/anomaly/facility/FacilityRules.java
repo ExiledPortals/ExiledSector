@@ -9,7 +9,6 @@ public final class FacilityRules {
     static final float GUARD_SIZE_SHARE = 0.75f;
     static final float LOOT_STEPS = 1.5f;
     static final float LOOT_STEPS_PER_TIER = 0.35f;
-    static final float ITEM_MULT = 1f;
     static final int DATABANK_ROLLS = 10;
     static final int DATABANK_ROLLS_PER_TIER = 2;
 

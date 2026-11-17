@@ -61,10 +61,6 @@ public final class ChartDrops {
 
     public record Mults(float chart, float cipher, float catalyst) {
 
-        public static Mults uniform(float mult) {
-            return new Mults(mult, mult, mult);
-        }
-
         boolean any() {
             return chart > 0f || cipher > 0f || catalyst > 0f;
         }
@@ -107,7 +103,8 @@ public final class ChartDrops {
     }
 
     public static Rolled roll(Source source, int tier, float chanceMult, Random random) {
-        return roll(source, tier, Mults.uniform(chanceMult), random);
+        ChartLootContext atTier = ChartLootContext.atTier(tier);
+        return roll(source, atTier, atTier.chartDropMults(chanceMult), random);
     }
 
     public static Rolled roll(Source source, int tier, Mults mults, Random random) {
@@ -153,7 +150,7 @@ public final class ChartDrops {
 
     private static RunExtras rollRunExtras(ChartDropRules.Rule rule, ChartLootContext run, Mults mults, Random random) {
         float expectedCiphers = rule.cipherChance() * Math.max(0f, mults.cipher());
-        Map<String, Integer> ciphers = run.craftingItems(expectedCiphers, ChartCraftingPools.CIPHERS, random);
+        Map<String, Integer> ciphers = run.craftingSplit(ChartCraftingPools.CIPHERS).roll(expectedCiphers, random);
         Map<String, Integer> catalysts = new LinkedHashMap<>();
         int catalystCount = AtlasCatalysts.all().isEmpty() ? 0 : RandomRounding.round(rule.catalystChance() * Math.max(0f, mults.catalyst()), random);
         int catalystTier = ChartTiers.clampDropTier(run.tier());

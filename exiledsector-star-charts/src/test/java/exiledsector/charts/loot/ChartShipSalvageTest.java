@@ -19,6 +19,7 @@ import exiledsector.MockShips;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartGenContext.AppliedEffect;
+import exiledsector.loot.DropType;
 import exiledsector.loot.EncounterSalvage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

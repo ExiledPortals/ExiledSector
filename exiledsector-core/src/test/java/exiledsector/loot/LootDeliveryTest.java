@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 class LootDeliveryTest {
 
     @Test
-    void deliveringAsRolledAddsItemsThenSchematicsThenMaterialsAndAnnouncesThemInThatOrder() {
+    void deliveringWhereFoundAddsItemsThenSchematicsThenMaterialsAndAnnouncesThemInThatOrder() {
         CargoAPI cargo = mock(CargoAPI.class);
         ItemData item = mock(ItemData.class);
         SpecialItemData itemData = new SpecialItemData("item", "data");
@@ -32,7 +32,7 @@ class LootDeliveryTest {
         Loot loot = new Loot(List.of(item), List.of(schematic), Map.of("feedstock", 3));
         LootDelivery.Announcer announcer = mock(LootDelivery.Announcer.class);
 
-        LootDelivery.deliverAsRolled(cargo, loot, announcer);
+        LootDelivery.deliverFoundAt(cargo, loot, null, announcer);
 
         InOrder order = inOrder(cargo, announcer);
         order.verify(cargo).addSpecial(itemData, 1f);

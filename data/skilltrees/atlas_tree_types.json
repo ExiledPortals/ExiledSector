@@ -327,7 +327,7 @@
 				}
 			],
 			"tags": [
-				"crafting_item"
+				"feedstock"
 			]
 		},
 		{
@@ -340,7 +340,7 @@
 				}
 			],
 			"tags": [
-				"crafting_item"
+				"feedstock"
 			]
 		},
 		{
@@ -353,7 +353,7 @@
 				}
 			],
 			"tags": [
-				"crafting_item"
+				"feedstock"
 			]
 		},
 		{
@@ -366,7 +366,7 @@
 				}
 			],
 			"tags": [
-				"crafting_item"
+				"feedstock"
 			]
 		},
 		{
@@ -393,7 +393,7 @@
 				}
 			],
 			"tags": [
-				"crafting_item"
+				"feedstock"
 			]
 		},
 		{
@@ -407,7 +407,7 @@
 				}
 			],
 			"tags": [
-				"crafting_item"
+				"feedstock"
 			]
 		},
 		{
@@ -421,7 +421,7 @@
 				}
 			],
 			"tags": [
-				"crafting_item"
+				"feedstock"
 			]
 		},
 		{
@@ -435,7 +435,7 @@
 				}
 			],
 			"tags": [
-				"crafting_item"
+				"feedstock"
 			]
 		},
 		{
@@ -449,7 +449,7 @@
 				}
 			],
 			"tags": [
-				"crafting_item",
+				"feedstock",
 				"officers"
 			]
 		},
@@ -472,6 +472,7 @@
 				}
 			],
 			"tags": [
+				"feedstock",
 				"crafting_item",
 				"encounter"
 			]
@@ -491,7 +492,7 @@
 				}
 			],
 			"tags": [
-				"crafting_item",
+				"feedstock",
 				"encounter"
 			]
 		},

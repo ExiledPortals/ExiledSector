@@ -12,9 +12,13 @@ import exiledsector.charts.loot.ChartLootContext;
 import exiledsector.ProjectFiles;
 import exiledsector.items.CraftingDrops;
 import exiledsector.items.CraftingInhibitor;
+import exiledsector.loot.DropType;
 import exiledsector.loot.Loot;
+import exiledsector.skills.skilleffect.logistics.FoundItemQuantity;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.util.List;
 import java.util.Map;
@@ -212,6 +216,20 @@ class ExcavationRulesTest {
         assertEquals(3f, ExcavationLoot.quantityMult(loot, 0f), 0.0001f);
         assertEquals(3.5f, ExcavationLoot.quantityMult(loot, 50f), 0.0001f);
         assertEquals(6f, ExcavationLoot.expectedInhibitors(ExcavationRules.INHIBITORS_PER_RAID, loot, 0f, 1f), 0.0001f);
+    }
+
+    @Test
+    void thePlayersFoundCraftingItemQuantityAddsToTheInhibitorQuantity() {
+        ChartGenContext context = ChartGenContext.of(List.of(line(ChartModifier.CHART_EXCAVATION_LOOT_QUANTITY_PERCENT, 50f),
+                line(ChartModifier.CHART_CRAFTING_ITEM_PERCENT, 100f)));
+        ChartLootContext loot = new ChartLootContext(context, ChartTiers.LOWEST_TIER);
+
+        try (MockedStatic<FoundItemQuantity> found = Mockito.mockStatic(FoundItemQuantity.class)) {
+            found.when(() -> FoundItemQuantity.nodePercent(DropType.CRAFTING_ITEM)).thenReturn(50f);
+
+            assertEquals(3f, ExcavationLoot.quantityMult(loot, 0f), 0.0001f);
+            assertEquals(1.5f, ExcavationLoot.quantityMult(ChartLootContext.outsideRuns(), 0f), 0.0001f);
+        }
     }
 
     private static int inhibitorCount(Loot loot) {

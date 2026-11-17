@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.loot.ChartLootContext;
 import exiledsector.items.Engrams;
 import exiledsector.items.Engram;
+import exiledsector.loot.DropType;
 import exiledsector.loot.Loot;
 
 import java.util.LinkedHashMap;
@@ -26,7 +27,7 @@ public final class DormantFleetLoot {
             return Loot.NONE;
         }
         memory.set(DormantFleets.CRAFTING_ITEM_DROPPED_KEY, true);
-        float quantityMult = loot.craftingItemMult(loot.effects().anomalyPercent(AnomalousDebris.CRAFTING_ITEM_KEY));
+        float quantityMult = loot.quantityMult(DropType.ENGRAM, loot.effects().anomalyPercent(AnomalousDebris.CRAFTING_ITEM_KEY));
         int engrams = DebrisTuning.of(loot.effects()).engramsFor(DormantFleets.corruptionsOf(fleet));
         Map<String, Integer> craftingItems = new LinkedHashMap<>();
         for (int drop = DebrisRules.craftingItemCount(engrams, quantityMult, random); drop > 0; drop--) {

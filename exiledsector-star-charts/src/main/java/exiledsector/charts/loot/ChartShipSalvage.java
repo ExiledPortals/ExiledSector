@@ -17,6 +17,7 @@ import com.fs.starfarer.api.util.DynamicStatsAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.data.RandomRounding;
+import exiledsector.loot.DropType;
 import exiledsector.loot.EncounterSalvage;
 
 import java.util.ArrayList;

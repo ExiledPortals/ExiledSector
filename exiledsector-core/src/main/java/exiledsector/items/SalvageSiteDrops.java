@@ -5,9 +5,9 @@ import exiledsector.ModCsv;
 import exiledsector.compat.SalvageSiteCompat;
 import exiledsector.data.CsvRows;
 import exiledsector.data.RandomRounding;
+import exiledsector.loot.DropType;
 import exiledsector.loot.Loot;
 import exiledsector.loot.LootMultipliers;
-import exiledsector.skills.skilleffect.logistics.FoundItemQuantity;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,11 +30,11 @@ public final class SalvageSiteDrops {
     public static final String TECH_MINING_MONTHLY = "techmining_monthly";
     static final int MIN_FEEDSTOCK_PER_FIND = 1;
     static final int MAX_FEEDSTOCK_PER_FIND = 3;
-    static final float CRAFTING_ITEM_SHARE = 0.7f;
+    static final float CRAFTING_ITEM_SALVAGE_SHARE = 0.7f;
     private static final Logger LOG = Logger.getLogger(SalvageSiteDrops.class);
     private static final AtomicReference<Map<String, Rule>> RULES = new AtomicReference<>(Map.of());
 
-    record Rule(List<Float> chances, float uniqueChance, int feedstockMin, int feedstockMax, float hullItemShare, boolean otherMod) {
+    record Rule(List<Float> chances, float uniqueChance, int feedstockMin, int feedstockMax, boolean otherMod) {
     }
 
     private SalvageSiteDrops() {
@@ -76,10 +76,8 @@ public final class SalvageSiteDrops {
                 String feedstockMaxText = ModCsv.text(row, "feedstockMax");
                 int feedstockMin = feedstockMinText.isEmpty() ? 0 : Math.max(0, Integer.parseInt(feedstockMinText));
                 int feedstockMax = feedstockMaxText.isEmpty() ? feedstockMin : Math.max(feedstockMin, Integer.parseInt(feedstockMaxText));
-                String hullItemShareText = ModCsv.text(row, "hullItemShare");
-                float hullItemShare = hullItemShareText.isEmpty() ? 1f : Math.max(0f, Float.parseFloat(hullItemShareText));
                 loaded.put(siteId, new Rule(List.copyOf(chances), uniqueChanceText.isEmpty() ? 0f : Float.parseFloat(uniqueChanceText),
-                        feedstockMin, feedstockMax, hullItemShare, otherMod));
+                        feedstockMin, feedstockMax, otherMod));
             } catch (NumberFormatException e) {
                 LOG.error("Skipping the salvage drop row for site " + siteId + ": " + e.getMessage());
             }
@@ -115,16 +113,14 @@ public final class SalvageSiteDrops {
         if (rule == null) {
             return new ArrayList<>();
         }
-        List<ItemData> droppedItems = rollCascade(rule, random, chances.general(), chances.rarity(), DroppableDefinitions::pickBasic);
-        if (random.nextFloat() < rule.uniqueChance() * chances.general() * chances.rarity()) {
-            ItemDefinition uniqueDefinition = DroppableDefinitions.pickUniqueAtSite(siteId, random, uniqueAllowed);
-            if (uniqueDefinition != null && ItemTypes.keptFromSalvage(uniqueDefinition, random)) {
-                droppedItems.add(ItemData.rolled(uniqueDefinition, random.nextLong()));
-            }
+        List<ItemData> droppedItems = new ArrayList<>();
+        ItemDefinition uniqueDefinition = UniqueDropRoll.rollScaledByRarity(random, rule.uniqueChance(), chances,
+                picker -> DroppableDefinitions.pickUniqueAtSite(siteId, picker, uniqueAllowed));
+        if (uniqueDefinition != null && ItemTypes.keptFromSalvage(uniqueDefinition, random)) {
+            droppedItems.add(ItemData.rolled(uniqueDefinition, random.nextLong()));
         }
-        rollTargeted(rule, random, chances.targeted(ItemKind.SUBROUTINE), chances.rarity(), 1, ItemKind.SUBROUTINE, droppedItems);
         if (!rule.chances().isEmpty()) {
-            droppedItems.addAll(ItemTypes.rollSalvage(random, rule.chances().get(0) * chances.general()));
+            droppedItems.addAll(ItemTypes.rollSalvage(random, rule.chances().get(0) * chances.quantity(DropType.SUBROUTINE)));
         }
         return droppedItems;
     }
@@ -135,14 +131,14 @@ public final class SalvageSiteDrops {
         if (rule == null || rule.chances().isEmpty()) {
             return droppedMaterials;
         }
-        int feedstockFound = rule.feedstockMax() > 0 ? rollFeedstockInRange(rule, random, multipliers.feedstockMult())
-                : rollFeedstockPerChance(rule, random, multipliers.feedstockMult());
+        float feedstockMult = multipliers.quantity(DropType.FEEDSTOCK);
+        int feedstockFound = rule.feedstockMax() > 0 ? rollFeedstockInRange(rule, random, feedstockMult)
+                : rollFeedstockPerChance(rule, random, feedstockMult);
         if (feedstockFound > 0) {
             droppedMaterials.put(ItemDisassembly.FEEDSTOCK_ITEM_ID, feedstockFound);
         }
-        float craftingItemMult = multipliers.craftingItems().plusPercent(FoundItemQuantity.craftingItemPercent()).mult();
-        float expectedCraftingItems = rule.chances().get(0) * CRAFTING_ITEM_SHARE * craftingItemMult;
-        CraftingDrops.rollInto(expectedCraftingItems, CraftingDrops.OUTSIDE_CHARTS, multipliers.craftingBandShift(), random, droppedMaterials);
+        float baseCraftingItems = rule.chances().get(0) * CRAFTING_ITEM_SALVAGE_SHARE;
+        CraftingDrops.rollInto(baseCraftingItems, CraftingDrops.OUTSIDE_CHARTS, multipliers, random, droppedMaterials);
         return droppedMaterials;
     }
 
@@ -161,12 +157,13 @@ public final class SalvageSiteDrops {
         return feedstockFound;
     }
 
-    static void rollTargeted(Rule rule, Random random, float extraShare, float rarity, int sharedKinds, ItemKind kind,
+    static void rollTargeted(Rule rule, Random random, float extraShare, ItemChances chances, int sharedKinds, ItemKind kind,
                              List<ItemData> droppedItems) {
         if (!(extraShare > 0f) || !DroppableDefinitions.hasDroppableBasic(kind)) {
             return;
         }
         int extraCount = RandomRounding.round(expectedCascadeCount(rule.chances()) * extraShare / sharedKinds, random);
+        float rarity = chances.rarity(DropType.forItemKind(kind));
         for (int i = 0; i < extraCount; i++) {
             ItemDefinition definition = DroppableDefinitions.pickBasicOfKind(kind, random);
             if (definition != null) {
@@ -185,7 +182,7 @@ public final class SalvageSiteDrops {
         return expectedCount;
     }
 
-    static List<ItemData> rollCascade(Rule rule, Random random, float chanceMult, float rarity, Function<Random, ItemDefinition> picker) {
+    static List<ItemData> rollCascade(Rule rule, Random random, float chanceMult, ItemChances chances, Function<Random, ItemDefinition> picker) {
         List<ItemData> droppedItems = new ArrayList<>();
         for (float chance : rule.chances()) {
             if (random.nextFloat() >= chance * chanceMult) {
@@ -193,7 +190,7 @@ public final class SalvageSiteDrops {
             }
             ItemDefinition basicDefinition = picker.apply(random);
             if (basicDefinition != null) {
-                droppedItems.add(ItemData.rolled(basicDefinition, random.nextLong(), ItemRoll.dropAtRarity(rarity)));
+                droppedItems.add(ItemData.rolled(basicDefinition, random.nextLong(), ItemRoll.dropAtRarity(chances.rarity(DropType.forDefinition(basicDefinition)))));
             }
         }
         return droppedItems;

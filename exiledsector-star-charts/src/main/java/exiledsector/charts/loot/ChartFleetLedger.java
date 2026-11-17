@@ -8,6 +8,7 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.content.ChartFleetMarks;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.charts.run.ChartRuns;
@@ -146,6 +147,9 @@ public final class ChartFleetLedger {
     }
 
     static boolean isBoss(CampaignFleetAPI fleet, ChartRun run) {
-        return fleet != null && fleet.getId() != null && fleet.getId().equals(run.bossFleetId());
+        if (fleet == null || fleet.getId() == null) {
+            return false;
+        }
+        return fleet.getId().equals(run.bossFleetId()) || ChartFleetMarks.twinBossFlagshipId(fleet) != null;
     }
 }

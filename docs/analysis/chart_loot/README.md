@@ -1,6 +1,6 @@
 # Chart loot estimates
 
-Average drops per Star Chart run by tier, modelled on 2026-11-16 from the data and loot code after the completion reward, the boss's
+Average drops per Star Chart run by tier, modelled on 2026-11-17 from the data and loot code after the completion reward, the boss's
 guaranteed hull items and the boss's chest were removed.
 They are estimates for balancing, not measurements.
 
@@ -10,8 +10,8 @@ They are estimates for balancing, not measurements.
 - `chart_star_charts.csv`: Star Charts from fleets, the boss and salvage.
 - `chart_loot_model.js`: the model that writes all four; run `node docs/analysis/chart_loot/chart_loot_model.js` (about a minute).
   Its tier table, drop rates, site rows and modifier rolls are copied from the data files, so update them there first when those change.
-  Crafting items are read straight from `crafting_drops.csv`, the `crafting_item` row of `battle_loot.csv` and the `band_shift` column of
-  `star_chart_tiers.csv`.
+  Crafting items and battle feedstock are read straight from `crafting_drops.csv`, the `crafting_item` and `feedstock` rows of
+  `battle_loot.csv` and the `band_shift` column of `star_chart_tiers.csv`.
 - `rarity_band_model.js`: crafting drops under `docs/plans/completed/rarity_drop_bands.md` against the drops before it, with the old
   `chart_materials.csv` amounts and `battle_loot.csv` crafting rows kept in the script and the chart tiers read from the data files; run
   `node docs/analysis/chart_loot/rarity_band_model.js`. It writes `rarity_band_tiers.csv` (totals at the planned rate, Augmentation, Corrupted, the unique band and
@@ -32,4 +32,5 @@ Assumptions:
 - Sites are planned by the same budget spending as `ChartContentPlanner`; vanilla salvage defenders' loot is left out.
 - Hull items leave out Refit and Master Schematics. The boss guarantees no hull item; its uniques drop by chance like any other.
 - The boss drops from the shared pool by its deployment points like any fleet; the Hoard adds to the quantity of its own loot only.
+- A Twinned boss is a second boss: it counts in the shared pool, takes the Hoard and drops its own guaranteed chart.
 - Star Charts count every chart dropped, whatever its tier, including the boss's one guaranteed chart.

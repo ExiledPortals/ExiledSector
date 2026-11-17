@@ -11,6 +11,7 @@ import exiledsector.charts.run.ChartRun;
 import exiledsector.items.Engram;
 import exiledsector.items.Engrams;
 import exiledsector.items.MaterialItems;
+import exiledsector.loot.DropType;
 import exiledsector.loot.Loot;
 
 import java.util.LinkedHashMap;
@@ -38,7 +39,7 @@ public final class ExcavationLoot {
     }
 
     static float quantityMult(ChartLootContext loot, float extraSitePercent) {
-        return loot.craftingItemMult(loot.effects().anomalyPercent(ExcavationSites.LOOT_KEY) + extraSitePercent);
+        return loot.quantityMult(DropType.INHIBITOR, loot.effects().anomalyPercent(ExcavationSites.LOOT_KEY) + extraSitePercent);
     }
 
     static float expectedInhibitors(float baseInhibitors, ChartLootContext loot, float extraSitePercent, float share) {
@@ -46,7 +47,7 @@ public final class ExcavationLoot {
     }
 
     static Map<String, Integer> tagInhibitors(float expectedCount, ChartLootContext loot, Random random) {
-        return loot.craftingItems(expectedCount, ChartCraftingPools.TAG_INHIBITORS, random);
+        return loot.craftingSplit(ChartCraftingPools.TAG_INHIBITORS).roll(expectedCount, random);
     }
 
     public static Loot fleetItems(CampaignFleetAPI fleet, ChartLootContext loot, int dustStacks, float share, Random random) {

@@ -255,12 +255,12 @@ public class PostDialog extends AnomalyDialog {
         if (vault == null) {
             vault = Global.getFactory().createCargo(true);
         }
-        LootDelivery.toLootScreen(vault, VaultExtras.roll(Global.getSector(), run, state, DepotTuning.of(run)), DropOrigin.ANYWHERE);
+        LootDelivery.toLootScreen(vault, VaultExtras.roll(Global.getSector(), run, state, DepotTuning.of(run)), DropOrigin.site(post));
         return vault;
     }
 
-    static void addPrototype(CargoAPI vault, ItemData prototype) {
-        vault.addSpecial(LootSources.shape(List.of(prototype), DropOrigin.ANYWHERE).get(0).toSpecialItem(), 1f);
+    private void addPrototype(CargoAPI vault, ItemData prototype) {
+        vault.addSpecial(LootSources.shape(List.of(prototype), DropOrigin.site(post)).get(0).toSpecialItem(), 1f);
     }
 
     void showVault(CargoAPI vault) {

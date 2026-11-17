@@ -10,29 +10,24 @@ import exiledsector.charts.content.ChartFleetSpread;
 import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.data.RandomRounding;
-import exiledsector.items.DroppableDefinitions;
-import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
-import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemKind;
 import exiledsector.items.ItemOvercharge;
 import exiledsector.items.ItemQuantity;
 import exiledsector.items.ItemTypes;
 import exiledsector.items.ItemUnlock;
 import exiledsector.loot.BattleLootRates;
+import exiledsector.loot.DropType;
 import exiledsector.loot.Loot;
 import exiledsector.loot.LootSources;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.function.Function;
 
 public final class ChartFleetLoot {
 
-    static final String SUBROUTINE_RATE = "subroutine";
+    static final String MODSPEC_CACHE_RATE = "modspec_cache";
+    static final int TWINNED_BOSS_FLEETS = 2;
 
     private ChartFleetLoot() {
     }
@@ -66,7 +61,7 @@ public final class ChartFleetLoot {
             return Loot.NONE;
         }
         ChartLootContext fleetLoot = fleetLootContext(loot, battle.anomalies(), claim.boss());
-        Loot claimedLoot = subroutines(fleetLoot, claim.lootDeploymentPoints(), battle, random)
+        Loot claimedLoot = modspecCaches(fleetLoot, claim.lootDeploymentPoints(), battle, random)
                 .plus(List.of(), List.of(), craftingItems(fleetLoot, claim.lootDeploymentPoints(), battle, random))
                 .plus(chartDrops(run, fleetLoot, claim, random))
                 .plus(anomalyFleetLoot(run, fleetLoot, claim, battle, random));
@@ -93,10 +88,13 @@ public final class ChartFleetLoot {
     }
 
     private static Loot doctrineArchives(SectorAPI sector, ChartRun run, ChartLootContext bossLoot, FleetClaim claim, Random random) {
-        ItemQuantity quantity = ItemQuantity.increasedBy(bossLoot.effects().quantityPercent()).scaled(claim.mergedFleetShare());
-        List<ItemData> archives = LootSources.bossDrops(run.tier(), run.contentFaction(), quantity, random,
+        List<ItemData> archives = LootSources.bossDrops(run.tier(), run.contentFaction(), doctrineArchiveQuantity(bossLoot, claim.mergedFleetShare()), random,
                 definition -> ItemUnlock.canDrop(definition, sector));
         return archives.isEmpty() ? Loot.NONE : new Loot(archives, List.of(), Map.of());
+    }
+
+    static ItemQuantity doctrineArchiveQuantity(ChartLootContext bossLoot, float mergedFleetShare) {
+        return new ItemQuantity(bossLoot.itemChances().increasedPercent(DropType.SUBROUTINE), mergedFleetShare);
     }
 
     public static boolean overchargesHullItems(CampaignFleetAPI fleet, ChartRun run) {
@@ -108,12 +106,12 @@ public final class ChartFleetLoot {
         return new Loot(items, fleetLoot.schematics(), fleetLoot.materials());
     }
 
-    public static float expectedFleetPoints(int tier) {
+    public static float expectedFleetPoints(int tier, boolean twinnedBoss) {
         ChartTier base = ChartTiers.forTier(tier);
         int fleetLimit = StarChartSettings.fleetLimit();
         float fleets = (spreadFleetPoints(base.fleetsMin(), base, fleetLimit) + spreadFleetPoints(base.fleetsMax(), base, fleetLimit)) / 2f;
         float boss = base.boss() ? ChartTier.fleetPoints(Math.min(ChartContentPlanner.BOSS_SIZE_CAP, base.bossSize())) : 0f;
-        return fleets + boss;
+        return fleets + boss * (twinnedBoss ? TWINNED_BOSS_FLEETS : 1);
     }
 
     private static float spreadFleetPoints(int rolledFleets, ChartTier base, int fleetLimit) {
@@ -121,36 +119,20 @@ public final class ChartFleetLoot {
         return spread.fleets() * ChartTier.fleetPoints(spread.cappedFleetSize());
     }
 
-    static Loot subroutines(ChartLootContext loot, float lootDeploymentPoints, Battle battle, Random random) {
-        BattleLootRates.Rate rate = BattleLootRates.rate(SUBROUTINE_RATE);
+    static Loot modspecCaches(ChartLootContext loot, float lootDeploymentPoints, Battle battle, Random random) {
+        BattleLootRates.Rate rate = BattleLootRates.rate(MODSPEC_CACHE_RATE);
         if (rate == null) {
             return Loot.NONE;
         }
-        float expected = rate.expectedAtDifficulty(lootDeploymentPoints, battle.deploymentPoints(), battle.difficultyMultiplier());
-        ItemChances chances = loot.itemChances();
-        List<ItemData> items = new ArrayList<>();
-        addRolled(items, RandomRounding.round(expected * chances.general(), random), DroppableDefinitions::pickBasic, loot, random);
-        if (DroppableDefinitions.hasDroppableBasic(ItemKind.SUBROUTINE)) {
-            addRolled(items, RandomRounding.round(expected * chances.targeted(ItemKind.SUBROUTINE), random),
-                    picker -> DroppableDefinitions.pickBasicOfKind(ItemKind.SUBROUTINE, picker), loot, random);
-        }
-        items.addAll(ItemTypes.rollSalvage(random, expected * chances.general()));
-        return items.isEmpty() ? Loot.NONE : new Loot(items, List.of(), Map.of());
-    }
-
-    private static void addRolled(List<ItemData> items, int count, Function<Random, ItemDefinition> picker, ChartLootContext loot, Random random) {
-        for (int i = 0; i < count; i++) {
-            ItemDefinition definition = picker.apply(random);
-            if (definition != null) {
-                items.add(loot.rolledWithDropLimits(definition, random.nextLong()));
-            }
-        }
+        float expectedCacheRolls = rate.expectedAtDifficulty(lootDeploymentPoints, battle.deploymentPoints(), battle.difficultyMultiplier());
+        List<ItemData> caches = ItemTypes.rollSalvage(random, expectedCacheRolls * loot.quantityMult(DropType.SUBROUTINE));
+        return caches.isEmpty() ? Loot.NONE : new Loot(caches, List.of(), Map.of());
     }
 
     private static Loot chartDrops(ChartRun run, ChartLootContext loot, FleetClaim claim, Random random) {
-        float chartShare = claim.chartShare(loot.tier());
-        float chartMult = claim.boss() ? loot.effects().bossStarChartMult(ChartAnomalies.bossStarChartPercent(run)) : loot.dropMult(DropType.STAR_CHART);
-        ChartDrops.Mults mults = new ChartDrops.Mults(chartMult * chartShare, 0f, loot.dropMult(DropType.CATALYST) * chartShare);
+        float chartShare = claim.chartShare(loot);
+        float chartMult = claim.boss() ? loot.effects().bossStarChartMult(ChartAnomalies.bossStarChartPercent(run)) : loot.quantityMult(DropType.STAR_CHART);
+        ChartDrops.Mults mults = new ChartDrops.Mults(chartMult * chartShare, 0f, loot.quantityMult(DropType.CATALYST) * chartShare);
         ChartDrops.Rolled chartLoot = ChartDrops.roll(claim.boss() ? ChartDrops.Source.CHART_BOSS : ChartDrops.Source.CHART_FLEET, loot, mults,
                 random);
         return chartLoot.isEmpty() ? Loot.NONE : chartLoot.asLoot();
@@ -158,8 +140,7 @@ public final class ChartFleetLoot {
 
     static Map<String, Integer> craftingItems(ChartLootContext loot, float lootDeploymentPoints, Battle battle, Random random) {
         BattleLootRates.Rate rate = BattleLootRates.rate(BattleLootRates.CRAFTING_ITEM_RATE);
-        float expectedCount = rate == null ? 0f : rate.expectedAtDifficulty(lootDeploymentPoints, battle.deploymentPoints(), battle.difficultyMultiplier())
-                * loot.craftingItemMult(0f);
-        return loot.craftingItems(expectedCount, ChartCraftingPools.ANY_ITEM, random);
+        float baseCount = rate == null ? 0f : rate.expectedAtDifficulty(lootDeploymentPoints, battle.deploymentPoints(), battle.difficultyMultiplier());
+        return loot.craftingItems(baseCount, ChartCraftingPools.ANY_ITEM, random);
     }
 }

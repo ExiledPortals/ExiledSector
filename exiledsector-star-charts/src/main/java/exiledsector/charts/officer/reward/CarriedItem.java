@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 public record CarriedItem(RewardKind kind, String id, String variant, int baseCount) {
 
     public static final String SEPARATOR = ":";
+    public static final String FINAL_COUNT_VARIANT = "final_count";
     private static final Pattern SAFE_ID = Pattern.compile("[A-Za-z0-9_.-]+");
     private static final int PARTS_WITHOUT_VARIANT = 3;
     private static final int PARTS_WITH_VARIANT = 4;
@@ -29,6 +30,14 @@ public record CarriedItem(RewardKind kind, String id, String variant, int baseCo
 
     public static CarriedItem of(RewardKind kind, String id) {
         return new CarriedItem(kind, id, null, 1);
+    }
+
+    public static CarriedItem withFinalCount(RewardKind kind, String id, int count) {
+        return new CarriedItem(kind, id, kind.material() ? FINAL_COUNT_VARIANT : null, count);
+    }
+
+    public boolean hasFinalCount() {
+        return kind.material() && FINAL_COUNT_VARIANT.equals(variant);
     }
 
     public static boolean isSafeId(String text) {
@@ -74,7 +83,7 @@ public record CarriedItem(RewardKind kind, String id, String variant, int baseCo
     }
 
     public int entries() {
-        return kind.craftingItem() ? 1 : baseCount;
+        return kind.material() ? 1 : baseCount;
     }
 
     public static List<CarriedItem> joined(List<CarriedItem> carried, Collection<CarriedItem> added) {

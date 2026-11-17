@@ -248,7 +248,7 @@ class AnchorJanusGateTest {
         CargoAPI loot = mock(CargoAPI.class);
         ArgumentCaptor<SpecialItemData> added = ArgumentCaptor.forClass(SpecialItemData.class);
 
-        SkillTreeLootSource.INSTANCE.addShowcaseLoot(loot, new Random(3L));
+        SkillTreeLootSource.INSTANCE.addShowcaseLoot(loot, null, new Random(3L));
 
         verify(loot, atLeastOnce()).addSpecial(added.capture(), anyFloat());
         List<String> anchorDefinitionIds = added.getAllValues().stream()

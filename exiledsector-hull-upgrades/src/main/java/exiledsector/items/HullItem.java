@@ -41,7 +41,7 @@ public final class HullItem extends Item {
 
         @Override
         public float salvageShare() {
-            return HullItemDrops.SALVAGE_SHARE;
+            return HullItemDrops.HULL_ITEM_SALVAGE_SHARE;
         }
 
         @Override

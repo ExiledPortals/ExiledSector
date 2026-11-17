@@ -18,6 +18,7 @@ public final class BattleLootRates {
 
     public static final String DATA_PATH = ExiledSector.configPath("battle_loot.csv");
     public static final String CRAFTING_ITEM_RATE = "crafting_item";
+    public static final String FEEDSTOCK_RATE = "feedstock";
     public static final float DIFFICULTY_CAP = 3f;
     static final String DROP_COLUMN = "drop";
     static final float DEPLOYMENT_POINTS_PER_RATE_STEP = 100f;

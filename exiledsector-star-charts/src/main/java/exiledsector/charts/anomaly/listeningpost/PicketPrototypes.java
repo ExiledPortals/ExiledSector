@@ -6,6 +6,7 @@ import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.data.RandomRounding;
 import exiledsector.items.ItemData;
 import exiledsector.loot.BattleLootRates;
+import exiledsector.loot.DropType;
 import exiledsector.loot.Loot;
 
 import java.util.List;
@@ -26,7 +27,7 @@ final class PicketPrototypes {
         if (rate == null || !(lootDeploymentPoints > 0f)) {
             return 0f;
         }
-        return rate.expectedAtDifficulty(lootDeploymentPoints, battleDeploymentPoints, difficultyMultiplier) * context.itemChances().general();
+        return rate.expectedAtDifficulty(lootDeploymentPoints, battleDeploymentPoints, difficultyMultiplier) * context.itemChances().quantity(DropType.HULL_ITEM);
     }
 
     static Loot roll(SectorAPI sector, ChartGenContext context, float lootDeploymentPoints, float battleDeploymentPoints, float difficultyMultiplier,

@@ -142,8 +142,7 @@ class CraftingMaterialFamiliesTest {
             assertSame(craftingItem, CraftingMaterialFamilies.byItemId(craftingItem.itemId()));
             assertEquals(craftingItem.name().toLowerCase(java.util.Locale.ROOT), craftingItem.key());
         }
-        assertEquals(CraftingMaterialFamilies.all().stream().filter(craftingItem -> craftingItem != Nanoswarm.ANNULMENT).toList(),
-                CraftingMaterialFamilies.forType(ItemType.SUBROUTINE));
+        assertEquals(List.of(Nanoswarm.CORRUPTION, Nanoswarm.TUNING, Nanoswarm.REPLICATION), CraftingMaterialFamilies.forType(ItemType.SUBROUTINE));
         assertEquals(CraftingMaterialFamilies.all(), CraftingMaterialFamilies.forType(ItemType.HULL_ITEM));
         assertEquals(List.of(), CraftingMaterialFamilies.forType(null));
         assertNull(CraftingMaterialFamilies.byItemId(ItemDisassembly.FEEDSTOCK_ITEM_ID));

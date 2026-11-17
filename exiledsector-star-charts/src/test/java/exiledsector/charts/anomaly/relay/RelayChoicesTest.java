@@ -36,6 +36,7 @@ import exiledsector.items.PoolEntry;
 import exiledsector.items.StarChartCipher;
 import exiledsector.items.StarChartFixtures;
 import exiledsector.loot.Loot;
+import exiledsector.loot.LootMultipliers;
 import exiledsector.modifiers.ModifierSlot;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -85,7 +86,7 @@ class RelayChoicesTest {
     }
 
     private static RewardContext context() {
-        return new RewardContext(5, null, null, biomeId -> false, definition -> true, itemId -> true, ChartTiers.bandShift(5));
+        return new RewardContext(5, null, null, biomeId -> false, definition -> true, itemId -> true, LootMultipliers.atTierBandShift(ChartTiers.bandShift(5)));
     }
 
     private static ChartRun wokenRun(String runId, RelayKind... woken) {

@@ -121,6 +121,11 @@ class AbyssalShipyardTest {
     }
 
     @Test
+    void theShipyardsLootAddsItsOwnQuantityIntoTheChartsItemQuantity() {
+        assertEquals(ShipyardDialog.LOOT_QUANTITY_PERCENT, ShipyardDialog.LOOT.quantityPercent(ChartGenContext.none()));
+    }
+
+    @Test
     void theShipyardOrbitsAPhotosphereAsAGuardedNeutralEntity() {
         AbyssalShipyard.INSTANCE.generate(site());
 

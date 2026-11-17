@@ -5,6 +5,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.content.ChartPoi;
 import exiledsector.items.StarChart;
+import exiledsector.loot.DropType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,10 +25,11 @@ public final class ChartLootTotals {
     public static List<StyledText> lines(ChartGenContext context) {
         List<StyledText> lines = new ArrayList<>();
         addLine(lines, Translation.text("chart.totals.quantity"), context.quantityPercent());
-        addLine(lines, Translation.text("chart.totals.items"), context.itemPercent());
         addLine(lines, Translation.text("chart.totals.itemRarity"), context.itemRarityPercent());
         for (DropType type : DropType.values()) {
-            addLine(lines, Translation.text(DROP_TYPE_KEY_PREFIX + type.name()), context.dropPercent(type));
+            if (type != DropType.ITEM) {
+                addLine(lines, Translation.text(DROP_TYPE_KEY_PREFIX + type.name()), context.dropPercent(type));
+            }
         }
         addLine(lines, Translation.text("chart.totals.bossSpoils"), context.bossSpoilsPercent());
         addLine(lines, Translation.text("chart.totals.bossStarCharts"), context.bossStarChartPercent());

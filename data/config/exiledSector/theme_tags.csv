@@ -64,4 +64,5 @@ hull_item,loot,star_chart
 subroutine,loot,star_chart
 star_chart,loot,star_chart
 crafting_item,loot,star_chart
+feedstock,loot,star_chart
 vanilla_loot,loot,star_chart

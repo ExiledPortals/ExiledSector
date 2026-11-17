@@ -3,7 +3,7 @@ package exiledsector.charts.anomaly.listeningpost;
 import exiledsector.charts.content.ChartContentPlanner;
 import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.generation.ChartTiers;
-import exiledsector.charts.loot.DropType;
+import exiledsector.loot.DropType;
 
 import java.util.List;
 import java.util.Random;
@@ -33,7 +33,7 @@ public final class ListeningPostRules {
     static final float GUARD_MERGE_RANGE = 300f;
     static final float LOOT_STEPS = 1.5f;
     static final float LOOT_STEPS_PER_TIER = 0.35f;
-    static final float ITEM_MULT = 1.5f;
+    static final float VAULT_QUANTITY_PERCENT = 50f;
     static final float LEAN_PERCENT = 100f;
     static final List<DropType> LEANS = List.of(DropType.STAR_CHART, DropType.BLUEPRINT, DropType.SUBROUTINE);
     static final String PICKET_PROTOTYPE_RATE = "prototype";

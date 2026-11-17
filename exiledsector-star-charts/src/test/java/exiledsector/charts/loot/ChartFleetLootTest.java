@@ -14,6 +14,9 @@ import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec;
 import exiledsector.MockSector;
 import exiledsector.charts.anomaly.stormfront.StormFront;
 import exiledsector.charts.content.ChartContent;
+import exiledsector.charts.content.ChartContentPlanner;
+import exiledsector.charts.content.ChartFleetMarks;
+import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.generation.ChartGenContext.AppliedEffect;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
@@ -31,6 +34,7 @@ import exiledsector.items.Nanoswarm;
 import exiledsector.items.StarChartCipher;
 import exiledsector.items.StarChartFixtures;
 import exiledsector.loot.BattleLootRates;
+import exiledsector.loot.DropType;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import exiledsector.loot.FleetLootRules;
@@ -87,7 +91,7 @@ class ChartFleetLootTest {
     }
 
     private static JSONObject rule(String source, float chartsPerHundredFleetPoints, int tier) throws Exception {
-        float chance = chartsPerHundredFleetPoints * ChartFleetLoot.expectedFleetPoints(tier) / 100f;
+        float chance = chartsPerHundredFleetPoints * ChartFleetLoot.expectedFleetPoints(tier, false) / 100f;
         return new JSONObject().put("source", source).put("chance", String.valueOf(chance));
     }
 
@@ -304,6 +308,28 @@ class ChartFleetLootTest {
     }
 
     @Test
+    void aTwinnedBossRollsAsABossWithTheBossStarChartLine() throws Exception {
+        ChartDropRules.register(new JSONArray().put(rule("chart_fleet", 1f, 6)).put(rule("chart_boss", 1f, 6)));
+        ChartRun run = storeLiveRun(6);
+        ChartGenContext recovery = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_BOSS_STAR_CHART_PERCENT, 100f)));
+        CampaignFleetAPI twin = ChartFleetFixtures.chartFleet("twin", RUN_ID, 200f);
+        ChartFleetMarks.markTwinBoss(twin, "twinFlagship");
+
+        assertTrue(ChartFleetLedger.isBoss(twin, run));
+        assertFalse(ChartFleetLedger.isBoss(ChartFleetFixtures.chartFleet("guard", RUN_ID, 200f), run));
+        assertEquals(4, chartCount(rollAlone(sector, twin, run, recovery, 200f, new Random(1L))));
+    }
+
+    @Test
+    void aTwinnedBossCountsTheBossFleetPointsTwiceInWhatTheTierSpawns() {
+        ChartTier base = ChartTiers.forTier(10);
+        float bossFleetPoints = ChartTier.fleetPoints(Math.min(ChartContentPlanner.BOSS_SIZE_CAP, base.bossSize()));
+
+        assertTrue(base.boss());
+        assertEquals(bossFleetPoints, ChartFleetLoot.expectedFleetPoints(10, true) - ChartFleetLoot.expectedFleetPoints(10, false), 0.01f);
+    }
+
+    @Test
     void settlingDustScalesOnlyTheBosssStarCharts() throws Exception {
         ChartDropRules.register(new JSONArray().put(rule("chart_fleet", 1f, 6)).put(rule("chart_boss", 1f, 6)));
         ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
@@ -327,7 +353,7 @@ class ChartFleetLootTest {
     void aWholeTiersWorthOfFleetPointsDropsTheRowsChanceAndBiggerFleetsDropMore() throws Exception {
         ChartDropRules.register(new JSONArray().put(new JSONObject().put("source", "chart_fleet").put("chance", "1.5")));
         ChartRun run = storeLiveRun(10);
-        float wholeChart = ChartFleetLoot.expectedFleetPoints(10);
+        float wholeChart = ChartFleetLoot.expectedFleetPoints(10, false);
         int charts = 0;
         int doubledCharts = 0;
         Random random = new Random(7L);
@@ -415,7 +441,7 @@ class ChartFleetLootTest {
             Map<String, Integer> drops = rollAlone(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 100000f), run, treasure,
                     100000f, new Random(1L)).materials();
 
-            assertEquals(3f, new ChartLootContext(treasure, 8).craftingBandShift(), 1e-6f);
+            assertEquals(3f, new ChartLootContext(treasure, 8).craftingBandShift(DropType.BASIC_CRAFTING_ITEM), 1e-6f);
             assertEquals(1000, total(drops));
             assertEquals(0.75f, drops.get(CORRUPTION) / 1000f, 0.05f);
         } finally {

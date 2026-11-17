@@ -9,8 +9,8 @@ public record FleetClaim(CampaignFleetAPI fleet, float claimedShare, float start
         return claimedShare * startDeploymentPoints;
     }
 
-    public float chartShare(int tier) {
-        return claimedShare * startFleetPoints / Math.max(1f, ChartFleetLoot.expectedFleetPoints(tier));
+    public float chartShare(ChartLootContext loot) {
+        return claimedShare * startFleetPoints / Math.max(1f, ChartFleetLoot.expectedFleetPoints(loot.tier(), loot.effects().twinnedBoss()));
     }
 
     public float mergedFleetShare() {

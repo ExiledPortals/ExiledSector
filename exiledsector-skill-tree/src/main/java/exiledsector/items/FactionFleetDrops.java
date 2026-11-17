@@ -102,17 +102,25 @@ public final class FactionFleetDrops {
 
     public static List<ItemData> roll(Map<String, Float> defeatedDeploymentPointsByFaction, Map<String, Float> defeatedDeploymentPointsByFleetFaction,
                                       Random random, Predicate<ItemDefinition> allowed) {
+        return roll(defeatedDeploymentPointsByFaction, defeatedDeploymentPointsByFleetFaction, defeatedDeploymentPointsByFaction, random, allowed);
+    }
+
+    public static List<ItemData> roll(Map<String, Float> defeatedDeploymentPointsByFaction, Map<String, Float> defeatedDeploymentPointsByFleetFaction,
+                                      Map<String, Float> subroutineQuantityWeightedDeploymentPointsByFaction, Random random,
+                                      Predicate<ItemDefinition> allowed) {
         List<ItemData> droppedItems = new ArrayList<>();
         if (defeatedDeploymentPointsByFaction == null || defeatedDeploymentPointsByFaction.isEmpty()) {
             return droppedItems;
         }
         for (Map<String, Source> sources : SOURCES_BY_GROUP.get().values()) {
             for (Map.Entry<String, Source> sourceEntry : sources.entrySet()) {
-                float chance = chance(sourceEntry.getValue(), defeatedDeploymentPointsByFaction, defeatedDeploymentPointsByFleetFaction);
+                ItemDefinition definition = ItemDefinitions.get(sourceEntry.getKey());
+                Map<String, Float> qualifyingDeploymentPointsByFaction = definition != null && definition.kind() == ItemKind.SUBROUTINE
+                        ? subroutineQuantityWeightedDeploymentPointsByFaction : defeatedDeploymentPointsByFaction;
+                float chance = Math.min(1f, chance(sourceEntry.getValue(), qualifyingDeploymentPointsByFaction, defeatedDeploymentPointsByFleetFaction));
                 if (!(chance > 0f) || random.nextFloat() >= chance) {
                     continue;
                 }
-                ItemDefinition definition = ItemDefinitions.get(sourceEntry.getKey());
                 if (definition != null && allowed.test(definition)) {
                     droppedItems.add(ItemData.rolled(definition, random.nextLong()));
                 }

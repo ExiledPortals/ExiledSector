@@ -48,7 +48,7 @@ record RewardFace(List<String> iconPaths, Color frameColour) {
     }
 
     private static String iconPath(CarriedItem item) {
-        if (item.kind().craftingItem()) {
+        if (item.kind().material()) {
             return MaterialItems.loadedIconPath(item.id());
         }
         ItemDefinition definition = ItemDefinitions.get(item.id());

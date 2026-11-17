@@ -7,7 +7,9 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.listeners.ShowLootListener;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Entities;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
+import com.fs.starfarer.api.impl.campaign.terrain.DebrisFieldTerrainPlugin;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.ItemUnlock;
@@ -50,7 +52,7 @@ public class ItemSalvageListener implements ShowLootListener {
         LootSources.all().forEach(source -> source.addSalvageLoot(Global.getSector(), salvageEntity, loot));
         if (entityMemory.getBoolean(SHOWCASE_KEY)) {
             entityMemory.unset(SHOWCASE_KEY);
-            addShowcaseLoot(loot, new Random(Misc.getSalvageSeed(salvageEntity) ^ SHOWCASE_SEED_SALT));
+            addShowcaseLoot(loot, salvageEntity, new Random(Misc.getSalvageSeed(salvageEntity) ^ SHOWCASE_SEED_SALT));
         }
     }
 
@@ -63,8 +65,8 @@ public class ItemSalvageListener implements ShowLootListener {
         salvageEntity.getMemoryWithoutUpdate().set(SHOWCASE_KEY, true);
     }
 
-    static void addShowcaseLoot(CargoAPI loot, Random random) {
-        LootSources.all().forEach(source -> source.addShowcaseLoot(loot, random));
+    static void addShowcaseLoot(CargoAPI loot, SectorEntityToken salvageEntity, Random random) {
+        LootSources.all().forEach(source -> source.addShowcaseLoot(loot, salvageEntity, random));
         Map<String, Integer> materials = new LinkedHashMap<>();
         MaterialItems.ids().stream().filter(itemId -> ItemUnlock.craftingItemUsable(itemId, Global.getSector())).forEach(itemId -> materials.put(itemId, 1));
         materials.forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
@@ -76,6 +78,21 @@ public class ItemSalvageListener implements ShowLootListener {
         if (entityMemory != null && entityMemory.contains(MemFlags.SALVAGE_SPEC_ID_OVERRIDE)) {
             return entityMemory.getString(MemFlags.SALVAGE_SPEC_ID_OVERRIDE);
         }
-        return salvageEntity.getCustomEntityType();
+        String entityType = salvageEntity.getCustomEntityType();
+        if (Entities.DEBRIS_FIELD_SHARED.equals(entityType) && !dropsSalvageLoot(entityMemory)) {
+            return null;
+        }
+        return entityType;
+    }
+
+    static boolean dropsSalvageLoot(MemoryAPI debrisMemory) {
+        Object field = debrisMemory == null ? null : debrisMemory.get(MemFlags.SALVAGE_DEBRIS_FIELD);
+        if (!(field instanceof DebrisFieldTerrainPlugin debris) || debris.getParams() == null || debris.getParams().source == null) {
+            return false;
+        }
+        return switch (debris.getParams().source) {
+            case GEN, MIXED -> true;
+            default -> false;
+        };
     }
 }

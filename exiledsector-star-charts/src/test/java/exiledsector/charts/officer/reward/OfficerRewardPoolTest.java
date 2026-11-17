@@ -16,6 +16,7 @@ import exiledsector.items.ModifierSources;
 import exiledsector.items.PoolEntry;
 import exiledsector.items.StarChartCipher;
 import exiledsector.items.StarChartFixtures;
+import exiledsector.loot.LootMultipliers;
 import exiledsector.modifiers.ModifierSlot;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -157,7 +158,7 @@ class OfficerRewardPoolTest {
         CraftingDrops.register(ChartTables.csvRows(CraftingDrops.DATA_PATH));
         for (int tier : new int[]{1, 8, 15}) {
             RewardContext context = new RewardContext(tier, null, null, biomeId -> false, definition -> true, itemId -> true,
-                    ChartTiers.bandShift(tier));
+                    LootMultipliers.atTierBandShift(ChartTiers.bandShift(tier)));
 
             Map<RewardGroup, Float> shares = OfficerRewardPool.groupShares(OfficerRewardPool.grouped(OfficerRewardPool.candidates(context,
                     new Random(1L))), OfficerRewardTable.shares());
@@ -177,8 +178,8 @@ class OfficerRewardPoolTest {
         OfficerRewardTable.register(ChartTables.csvRows(OfficerRewardTable.PATH));
         StarChartCipher.registerAll();
         CraftingDrops.register(ChartTables.csvRows(CraftingDrops.DATA_PATH));
-        RewardContext unshifted = new RewardContext(1, null, null, biomeId -> false, definition -> true, itemId -> true, 1f);
-        RewardContext shifted = new RewardContext(1, null, null, biomeId -> false, definition -> true, itemId -> true, 3f);
+        RewardContext unshifted = new RewardContext(1, null, null, biomeId -> false, definition -> true, itemId -> true, LootMultipliers.atTierBandShift(1f));
+        RewardContext shifted = new RewardContext(1, null, null, biomeId -> false, definition -> true, itemId -> true, LootMultipliers.atTierBandShift(3f));
 
         Map<RewardGroup, Float> unshiftedShares = OfficerRewardPool.groupShares(OfficerRewardPool.grouped(OfficerRewardPool.candidates(unshifted,
                 new Random(1L))), OfficerRewardTable.shares());
@@ -237,10 +238,10 @@ class OfficerRewardPoolTest {
         try {
             int corrupted = ChartTiers.HIGHEST_TIER;
             List<CarriedItem> atCorrupted = OfficerRewardPool.candidates(new RewardContext(corrupted, null, null, biomeId -> false,
-                    definition -> true, itemId -> true, ChartTiers.bandShift(corrupted)), new Random(1L))
+                    definition -> true, itemId -> true, LootMultipliers.atTierBandShift(ChartTiers.bandShift(corrupted))), new Random(1L))
                     .get(RewardKind.STAR_CHART).stream().map(RewardCandidate::item).toList();
             List<CarriedItem> atHighest = OfficerRewardPool.candidates(new RewardContext(ChartTiers.HIGHEST_DROP_TIER, null, null, biomeId -> false,
-                    definition -> true, itemId -> true, ChartTiers.bandShift(ChartTiers.HIGHEST_DROP_TIER)), new Random(1L))
+                    definition -> true, itemId -> true, LootMultipliers.atTierBandShift(ChartTiers.bandShift(ChartTiers.HIGHEST_DROP_TIER))), new Random(1L))
                     .get(RewardKind.STAR_CHART).stream().map(RewardCandidate::item).toList();
 
             assertFalse(atHighest.isEmpty());
@@ -317,7 +318,7 @@ class OfficerRewardPoolTest {
     }
 
     private static RewardContext context(String centreBiomeId, Predicate<String> biomeOpen) {
-        return new RewardContext(1, null, centreBiomeId, biomeOpen, definition -> true, itemId -> true, ChartTiers.bandShift(1));
+        return new RewardContext(1, null, centreBiomeId, biomeOpen, definition -> true, itemId -> true, LootMultipliers.atTierBandShift(ChartTiers.bandShift(1)));
     }
 
     @Test

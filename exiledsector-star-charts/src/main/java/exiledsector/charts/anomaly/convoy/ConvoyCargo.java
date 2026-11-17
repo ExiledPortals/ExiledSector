@@ -20,11 +20,11 @@ import exiledsector.charts.loot.ChartCargoLoot;
 import exiledsector.charts.loot.ChartDropRules;
 import exiledsector.charts.loot.ChartDrops;
 import exiledsector.charts.loot.ChartLoot;
-import exiledsector.charts.loot.DropType;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.effects.ItemLootListener;
 import exiledsector.items.InfusedFeedstock;
 import exiledsector.items.SalvageSiteDrops;
+import exiledsector.loot.DropType;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;

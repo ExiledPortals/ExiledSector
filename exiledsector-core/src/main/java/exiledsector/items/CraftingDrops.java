@@ -5,10 +5,13 @@ import exiledsector.ModCsv;
 import exiledsector.data.CsvRows;
 import exiledsector.data.RandomRounding;
 import exiledsector.data.WeightedPick;
+import exiledsector.loot.DropType;
+import exiledsector.loot.LootMultipliers;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -76,31 +79,79 @@ public final class CraftingDrops {
         return drop != null && drop.chartOnly();
     }
 
-    public static float shiftedWeight(String itemId, float bandShift) {
+    public static float shiftedWeight(String itemId, LootMultipliers multipliers) {
         Drop drop = itemId == null ? null : DROPS.get().get(itemId);
-        return drop == null ? 0f : drop.shiftedWeight(bandShift);
+        return drop == null ? 0f : drop.shiftedWeight(multipliers.craftingBandShift(DropType.forCraftingItem(itemId)));
     }
 
-    public static Map<String, Integer> roll(float expectedCount, Predicate<String> allowedItems, float bandShift, Random random) {
+    public static Map<String, Integer> roll(float baseCount, Predicate<String> allowedItems, LootMultipliers multipliers, Random random) {
         Map<String, Integer> dropped = new LinkedHashMap<>();
-        rollInto(expectedCount, allowedItems, bandShift, random, dropped);
+        rollInto(baseCount, allowedItems, multipliers, random, dropped);
         return dropped;
     }
 
-    public static void rollInto(float expectedCount, Predicate<String> allowedItems, float bandShift, Random random,
+    public static void rollInto(float baseCount, Predicate<String> allowedItems, LootMultipliers multipliers, Random random,
                                 Map<String, Integer> dropped) {
-        if (!(expectedCount > 0f)) {
+        if (!(baseCount > 0f)) {
             return;
         }
-        List<Drop> candidates = DROPS.get().values().stream()
-                .filter(drop -> drop.weight() > 0f && allowedItems.test(drop.itemId())).toList();
+        Split split = split(allowedItems, multipliers);
+        split.rollInto(baseCount * split.meanQuantity(), random, dropped);
+    }
+
+    public static Split split(Predicate<String> allowedItems, LootMultipliers multipliers) {
+        List<WeightedDrop> candidates = new ArrayList<>();
+        for (Drop drop : DROPS.get().values()) {
+            if (drop.weight() > 0f && allowedItems.test(drop.itemId())) {
+                DropType subcategory = DropType.forCraftingItem(drop.itemId());
+                candidates.add(new WeightedDrop(drop.itemId(), drop.shiftedWeight(multipliers.craftingBandShift(subcategory)),
+                        multipliers.quantity(subcategory)));
+            }
+        }
+        return new Split(List.copyOf(candidates), meanQuantity(candidates));
+    }
+
+    private static float meanQuantity(List<WeightedDrop> candidates) {
         if (candidates.isEmpty()) {
-            return;
+            return 0f;
         }
-        int count = RandomRounding.round(expectedCount, random);
-        for (int dropIndex = 0; dropIndex < count; dropIndex++) {
-            Drop picked = WeightedPick.pick(candidates, candidate -> candidate.shiftedWeight(bandShift), random);
-            dropped.merge(picked.itemId(), 1, Integer::sum);
+        float firstQuantity = candidates.get(0).quantity();
+        if (candidates.stream().allMatch(candidate -> candidate.quantity() == firstQuantity)) {
+            return firstQuantity;
+        }
+        float weightTotal = 0f;
+        float weightedQuantityTotal = 0f;
+        for (WeightedDrop candidate : candidates) {
+            weightTotal += candidate.weight();
+            weightedQuantityTotal += candidate.weight() * candidate.quantity();
+        }
+        return weightTotal > 0f ? weightedQuantityTotal / weightTotal : 0f;
+    }
+
+    public record WeightedDrop(String itemId, float weight, float quantity) {
+    }
+
+    public record Split(List<WeightedDrop> candidates, float meanQuantity) {
+
+        public void rollInto(float expectedCount, Random random, Map<String, Integer> dropped) {
+            if (!(expectedCount > 0f) || !(meanQuantity > 0f) || candidates.isEmpty()) {
+                return;
+            }
+            int count = RandomRounding.round(expectedCount, random);
+            for (int dropIndex = 0; dropIndex < count; dropIndex++) {
+                WeightedDrop picked = WeightedPick.pick(candidates, this::pickWeight, random);
+                dropped.merge(picked.itemId(), 1, Integer::sum);
+            }
+        }
+
+        public Map<String, Integer> roll(float expectedCount, Random random) {
+            Map<String, Integer> dropped = new LinkedHashMap<>();
+            rollInto(expectedCount, random, dropped);
+            return dropped;
+        }
+
+        private float pickWeight(WeightedDrop candidate) {
+            return candidate.weight() * (candidate.quantity() / meanQuantity);
         }
     }
 }

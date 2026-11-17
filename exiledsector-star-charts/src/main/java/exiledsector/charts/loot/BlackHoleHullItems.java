@@ -7,12 +7,9 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.PlayerFleet;
 import exiledsector.charts.ChartIds;
 import exiledsector.items.ItemChances;
-import exiledsector.items.ItemKind;
+import exiledsector.loot.DropType;
 import exiledsector.loot.LootMultipliers;
 import exiledsector.skills.skilleffect.logistics.BlackHoleSalvage;
-
-import java.util.EnumMap;
-import java.util.Map;
 
 final class BlackHoleHullItems {
 
@@ -29,7 +26,7 @@ final class BlackHoleHullItems {
         if (!ChartIds.isChartSystem(location) || !hasBlackHole((StarSystemAPI) location)) {
             return multipliers;
         }
-        ItemChances boosted = withExtraHullItemShare(chances, BlackHoleSalvage.hullItemPercent(PlayerFleet.orNull()) / 100f);
+        ItemChances boosted = chances.plusPercent(DropType.HULL_ITEM, BlackHoleSalvage.hullItemPercent(PlayerFleet.orNull()));
         return boosted == chances ? multipliers : multipliers.withChances(boosted);
     }
 
@@ -40,17 +37,5 @@ final class BlackHoleHullItems {
             }
         }
         return false;
-    }
-
-    static ItemChances withExtraHullItemShare(ItemChances chances, float extraShare) {
-        if (!(extraShare > 0f)) {
-            return chances;
-        }
-        Map<ItemKind, Float> targeted = new EnumMap<>(ItemKind.class);
-        targeted.putAll(chances.targeted());
-        for (ItemKind kind : ItemKind.sectionItemTypes()) {
-            targeted.merge(kind, extraShare, Float::sum);
-        }
-        return chances.withTargeted(targeted);
     }
 }

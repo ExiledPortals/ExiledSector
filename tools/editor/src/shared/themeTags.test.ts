@@ -81,4 +81,13 @@ describe('theme tags', () => {
       expect(issues, file).toEqual([]);
     }
   });
+
+  it('ships feedstock as its own loot tag, apart from crafting items', () => {
+    const shippedVocabulary = repositoryVocabulary();
+    const chartModifiers = parseModifiersCsv(readRepositoryFile('data/config/exiledSector/star_chart_modifiers.csv')).modifiers;
+
+    expect(ancestorsOf(shippedVocabulary, 'feedstock')).toEqual(['loot']);
+    expect(themeTagsFor(shippedVocabulary, 'star_chart')).toContain('feedstock');
+    expect(chartModifiers.find((modifier) => modifier.id === 'CHART_FEEDSTOCK_PERCENT')?.tags).toEqual(['feedstock']);
+  });
 });

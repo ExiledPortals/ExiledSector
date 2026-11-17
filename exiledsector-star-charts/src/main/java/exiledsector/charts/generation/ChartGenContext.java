@@ -8,14 +8,12 @@ import exiledsector.charts.effect.ChartBattleRules;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.effect.ChartFactionEffect;
 import exiledsector.charts.effect.ChartFleetStat;
-import exiledsector.charts.loot.DropType;
 import exiledsector.compat.FirstFailureLog;
 import exiledsector.items.Item;
 import exiledsector.items.ItemChances;
-import exiledsector.items.ItemKind;
-import exiledsector.items.ItemQuantity;
 import exiledsector.items.SlottedRoll;
 import exiledsector.items.StarChart;
+import exiledsector.loot.DropType;
 import exiledsector.modifiers.ModifierEffect;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierSlot;
@@ -73,12 +71,10 @@ public final class ChartGenContext {
     private float damagePercentPerSMod;
     private final Set<String> enemyGrantedNodeIds = new LinkedHashSet<>();
     private float battleSizeBonus;
-    private float quantityPercent;
     private final Map<ChartPoi.Kind, Float> siteBudgetPercents = new EnumMap<>(ChartPoi.Kind.class);
     private int extraPois;
-    private float itemPercent;
-    private float itemRarityPercent;
     private final Map<DropType, Float> dropPercents = new EnumMap<>(DropType.class);
+    private final Map<DropType, Float> rarityPercents = new EnumMap<>(DropType.class);
     private float bossSpoilsPercent;
     private float bossStarChartPercent;
     private final Map<ChartFleetStat, Float> fleetStatPercents = new EnumMap<>(ChartFleetStat.class);
@@ -301,10 +297,6 @@ public final class ChartGenContext {
                 damagePercentPerSMod);
     }
 
-    public void addQuantityPercent(float value) {
-        quantityPercent += value;
-    }
-
     public void addSiteBudgetPercent(ChartPoi.Kind kind, float value) {
         siteBudgetPercents.merge(kind, value, Float::sum);
     }
@@ -319,12 +311,8 @@ public final class ChartGenContext {
         extraPois += value;
     }
 
-    public void addItemPercent(float value) {
-        itemPercent += value;
-    }
-
-    public void addItemRarityPercent(float value) {
-        itemRarityPercent += value;
+    public void addRarityPercent(DropType type, float value) {
+        rarityPercents.merge(type, value, Float::sum);
     }
 
     public void addDropPercent(DropType type, float value) {
@@ -541,46 +529,28 @@ public final class ChartGenContext {
     }
 
     public float quantityPercent() {
-        return quantityPercent + qualityQuantityPercent();
-    }
-
-    public float itemPercent() {
-        return itemPercent;
+        return dropPercent(DropType.ITEM);
     }
 
     public float itemRarityPercent() {
-        return itemRarityPercent;
+        return rarityPercent(DropType.ITEM);
+    }
+
+    public float rarityPercent(DropType type) {
+        return rarityPercents.getOrDefault(type, 0f);
     }
 
     public float dropPercent(DropType type) {
-        return dropPercents.getOrDefault(type, 0f);
+        float percent = dropPercents.getOrDefault(type, 0f);
+        return type == DropType.ITEM ? percent + qualityQuantityPercent() : percent;
     }
 
     public float dropMult(DropType type) {
-        return multiplier(totalDropPercent(type));
+        return itemChances().quantity(type);
     }
 
     public float extraDropShare(DropType type) {
         return Math.max(0f, dropMult(type) - 1f);
-    }
-
-    public float totalDropPercent(DropType type) {
-        float percent = dropPercent(type);
-        if (type.isItem()) {
-            percent += itemPercent;
-        }
-        if (type.quantityApplies()) {
-            percent += quantityPercent();
-        }
-        return percent;
-    }
-
-    public float carriedDropMult(DropType type) {
-        return multiplier(itemPercent + dropPercent(type));
-    }
-
-    public float itemRarityMult() {
-        return multiplier(itemRarityPercent);
     }
 
     public float bossSpoilsPercent() {
@@ -592,17 +562,18 @@ public final class ChartGenContext {
     }
 
     public float bossStarChartMult(float extraPercent) {
-        return multiplier(totalDropPercent(DropType.STAR_CHART) + bossStarChartPercent + extraPercent);
+        return itemChances().plusPercent(DropType.STAR_CHART, bossStarChartPercent + extraPercent).quantity(DropType.STAR_CHART);
     }
 
     public ItemChances itemChances() {
-        Map<ItemKind, Float> targetedShares = new EnumMap<>(ItemKind.class);
-        dropPercents.forEach((type, percent) -> {
-            if (type.itemKind() != null && percent != 0f) {
-                targetedShares.put(type.itemKind(), percent / PERCENT);
+        Map<DropType, Float> nodePercents = new EnumMap<>(DropType.class);
+        for (DropType node : DropType.values()) {
+            float percent = dropPercent(node);
+            if (percent != 0f) {
+                nodePercents.put(node, percent);
             }
-        });
-        return new ItemChances(ItemQuantity.increasedBy(itemPercent + quantityPercent()), targetedShares, itemRarityMult());
+        }
+        return new ItemChances(nodePercents, rarityPercents, 1f);
     }
 
     public float sensorRangeMult() {
@@ -621,22 +592,27 @@ public final class ChartGenContext {
             return factionText + "no chart modifiers";
         }
         return factionText + String.format(Locale.ROOT, "fleet size %+.0f%%, %+d rolled fleet(s), %+d added fleet(s), %+d officer level(s), %+d officer(s), boss size %+.0f%%, "
-                        + "fleet quality %+.0f%%, site budgets %s, %+d point(s) of interest, item drops %+.0f%%, item rarity %+.0f%%, drop types %s, "
+                        + "fleet quality %+.0f%%, site budgets %s, %+d point(s) of interest, item rarity %+.0f%%, drop types %s, "
                         + "boss spoils %+.0f%%, sensor range x%.2f, chart quality %d, anomalies %s, twinned boss %b, "
                         + "barred combat hulls %s, ship systems disabled %b, autopilot forced %b, arc strike EMP %.0f, weapon misfires %.3f/s, damage per S-mod %+.0f%%, enemy node grants %s",
                 fleetSizePercent, baseFleets, extraFleets, officerLevelBonus, extraOfficers, bossSizePercent,
-                fleetQualityPercent, siteBudgetText(), extraPois(), itemPercent, itemRarityPercent, describeDropPercents(), bossSpoilsPercent,
+                fleetQualityPercent, siteBudgetText(), extraPois(), itemRarityPercent(), describeDropPercents(), bossSpoilsPercent,
                 sensorRangeMult(), quantity, forcedAnomalies.isEmpty() ? "none" : forcedAnomalies.toString(), twinnedBoss,
                 bannedCombatHullSizes.isEmpty() ? "none" : bannedCombatHullSizes.toString(), shipSystemsDisabled, autopilotForced, battleRules().arcStrikeEmp(), weaponMisfireRate,
                 damagePercentPerSMod, enemyGrantedNodeIds.isEmpty() ? "none" : enemyGrantedNodeIds.toString());
     }
 
     private String describeDropPercents() {
-        if (dropPercents.isEmpty()) {
+        List<String> parts = new ArrayList<>();
+        for (DropType type : DropType.values()) {
+            float percent = dropPercent(type);
+            if (percent != 0f) {
+                parts.add(String.format(Locale.ROOT, "%s %+.0f%%", type.name().toLowerCase(Locale.ROOT), percent));
+            }
+        }
+        if (parts.isEmpty()) {
             return "none";
         }
-        List<String> parts = new ArrayList<>();
-        dropPercents.forEach((type, percent) -> parts.add(String.format(Locale.ROOT, "%s %+.0f%%", type.name().toLowerCase(Locale.ROOT), percent)));
         return String.join(" ", parts);
     }
 }

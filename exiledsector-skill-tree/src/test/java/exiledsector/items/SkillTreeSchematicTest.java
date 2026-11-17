@@ -2,6 +2,7 @@ package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
 import exiledsector.loot.BattleLootRates;
+import exiledsector.loot.DropType;
 import exiledsector.loot.FleetLoss;
 import exiledsector.loot.FleetLootRules;
 import exiledsector.loot.LootCurve;
@@ -107,20 +108,23 @@ class SkillTreeSchematicTest {
         List<FleetLoss> chart = List.of(
                 new FleetLoss(1000f, 1f, 0f, FleetLootRules.ownLedger(LootMultipliers.NONE)));
 
-        assertEquals(0.16f, SkillTreeSchematicDrops.expectedBattleDrops(regular, rate, LEVEL_ONE_SHARE, 1f), 1e-5f);
-        assertEquals(0.32f, SkillTreeSchematicDrops.expectedBattleDrops(chart, rate, LEVEL_ONE_SHARE, 1f), 1e-5f);
-        assertEquals(0f, SkillTreeSchematicDrops.expectedBattleDrops(regular, null, LEVEL_ONE_SHARE, 1f));
+        assertEquals(0.16f, SkillTreeSchematicDrops.expectedBattleDrops(regular, rate, LEVEL_ONE_SHARE), 1e-5f);
+        assertEquals(0.32f, SkillTreeSchematicDrops.expectedBattleDrops(chart, rate, LEVEL_ONE_SHARE), 1e-5f);
+        assertEquals(0f, SkillTreeSchematicDrops.expectedBattleDrops(regular, null, LEVEL_ONE_SHARE));
         for (SkillTreeSchematicDrops drop : SkillTreeSchematicDrops.values()) {
-            assertEquals(0, drop.rollBattle(List.of(), LEVEL_ONE_SHARE, 1f, new Random(1)));
+            assertEquals(0, drop.rollBattle(List.of(), LEVEL_ONE_SHARE, new Random(1)));
         }
     }
 
     @Test
-    void theBattleItemDropSliderScalesBattleDrops() {
-        BattleLootRates.Rate rate = new BattleLootRates.Rate(SkillTreeSchematicDrops.DEINTEGRATION.rateId(), 0.032f, LootCurve.LINEAR, 1f);
-        List<FleetLoss> regular = List.of(new FleetLoss(1000f, 1f, 0f, FleetLootRules.LEVEL_SCALED));
+    void battleDropsReadTheSchematicNode() {
+        BattleLootRates.Rate rate = new BattleLootRates.Rate(SkillTreeSchematicDrops.LOGISTICS.rateId(), 0.032f, LootCurve.LINEAR, 1f);
+        List<FleetLoss> moreSchematics = List.of(new FleetLoss(1000f, 1f, 0f,
+                FleetLootRules.ownLedger(new LootMultipliers(ItemChances.increasedBy(DropType.SCHEMATIC, 50f), 1f))));
+        List<FleetLoss> moreHullItems = List.of(new FleetLoss(1000f, 1f, 0f,
+                FleetLootRules.ownLedger(new LootMultipliers(ItemChances.increasedBy(DropType.HULL_ITEM, 50f), 1f))));
 
-        assertEquals(0.32f, SkillTreeSchematicDrops.expectedBattleDrops(regular, rate, LEVEL_ONE_SHARE, 2f), 1e-5f);
-        assertEquals(0f, SkillTreeSchematicDrops.expectedBattleDrops(regular, rate, LEVEL_ONE_SHARE, 0f));
+        assertEquals(0.48f, SkillTreeSchematicDrops.expectedBattleDrops(moreSchematics, rate, LEVEL_ONE_SHARE), 1e-5f);
+        assertEquals(0.32f, SkillTreeSchematicDrops.expectedBattleDrops(moreHullItems, rate, LEVEL_ONE_SHARE), 1e-5f);
     }
 }

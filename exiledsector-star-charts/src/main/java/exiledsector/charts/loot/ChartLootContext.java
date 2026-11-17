@@ -11,10 +11,9 @@ import exiledsector.items.CraftingDrops;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemQuantity;
 import exiledsector.items.ItemRoll;
+import exiledsector.loot.DropType;
 import exiledsector.loot.LootMultipliers;
-import exiledsector.skills.skilleffect.logistics.FoundItemQuantity;
 
 import java.util.List;
 import java.util.Map;
@@ -73,52 +72,47 @@ public record ChartLootContext(ChartGenContext effects, int tier) {
         return isOutsideRuns() ? CraftingDrops.NO_BAND_SHIFT : ChartTiers.bandShift(tier);
     }
 
-    public float rarity() {
-        return effects.itemRarityMult();
+    public float rarity(DropType type) {
+        return itemChances().rarity(type);
     }
 
-    public float craftingBandShift() {
-        return bandShift() * rarity();
+    public float craftingBandShift(DropType craftingSubcategory) {
+        return multipliers(1f).craftingBandShift(craftingSubcategory);
     }
 
     public ItemChances itemChances() {
         return effects.itemChances();
     }
 
-    public float dropMult(DropType type) {
-        return effects.dropMult(type);
-    }
-
     public float extraDropShare(DropType type) {
         return effects.extraDropShare(type);
     }
 
-    public float carriedDropMult(DropType type) {
-        return effects.carriedDropMult(type);
-    }
-
     public LootMultipliers multipliers(float scale) {
-        if (isOutsideRuns()) {
-            return LootMultipliers.of(scale);
-        }
-        ItemQuantity chartCraftingItems = ItemQuantity.increasedBy(effects.totalDropPercent(DropType.CRAFTING_ITEM)).scaled(scale);
-        return new LootMultipliers(itemChances().scaled(scale), dropMult(DropType.FEEDSTOCK) * scale, chartCraftingItems, bandShift());
+        return new LootMultipliers(itemChances().scaled(scale), bandShift());
     }
 
-    public float craftingItemMult(float extraIncreasedPercent) {
-        return ItemQuantity.increasedBy(effects.totalDropPercent(DropType.CRAFTING_ITEM) + extraIncreasedPercent + FoundItemQuantity.craftingItemPercent())
-                .mult();
+    public float quantityMult(DropType type) {
+        return itemChances().quantity(type);
+    }
+
+    public float quantityMult(DropType type, float extraIncreasedPercent) {
+        return itemChances().plusPercent(type, extraIncreasedPercent).quantity(type);
     }
 
     public ChartDrops.Mults chartDropMults(float scale) {
-        return new ChartDrops.Mults(dropMult(DropType.STAR_CHART) * scale, craftingItemMult(0f) * scale, dropMult(DropType.CATALYST) * scale);
+        return new ChartDrops.Mults(quantityMult(DropType.STAR_CHART) * scale, quantityMult(DropType.BASIC_CRAFTING_ITEM) * scale, quantityMult(DropType.CATALYST) * scale);
     }
 
-    public Map<String, Integer> craftingItems(float expectedCount, Predicate<String> pool, Random random) {
-        return CraftingDrops.roll(expectedCount, pool, craftingBandShift(), random);
+    public Map<String, Integer> craftingItems(float baseCount, Predicate<String> pool, Random random) {
+        return CraftingDrops.roll(baseCount, pool, multipliers(1f), random);
+    }
+
+    public CraftingDrops.Split craftingSplit(Predicate<String> pool) {
+        return CraftingDrops.split(pool, multipliers(1f));
     }
 
     public ItemData rolledWithDropLimits(ItemDefinition definition, long seed) {
-        return ItemData.rolled(definition, seed, ItemRoll.dropAtRarity(rarity()));
+        return ItemData.rolled(definition, seed, ItemRoll.dropAtRarity(rarity(DropType.forDefinition(definition))));
     }
 }

@@ -7,6 +7,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.FleetMembers;
 import exiledsector.Seeds;
@@ -15,10 +16,12 @@ import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.anomaly.skirmish.SkirmishObjective;
 import exiledsector.charts.anomaly.skirmish.SkirmishProgress;
+import exiledsector.charts.content.ChartFleetMarks;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.atlas.AtlasProgress;
 import exiledsector.charts.loot.ChartDrops;
+import exiledsector.charts.loot.ChartFleetLedger;
 import exiledsector.charts.loot.ChartLootContext;
 import exiledsector.charts.officer.OfficerDefeat;
 import exiledsector.effects.PlayerEngagement;
@@ -39,6 +42,7 @@ public final class ChartObjectives {
 
     static final Set<FleetDespawnReason> DEFEAT_REASONS = Set.of(FleetDespawnReason.DESTROYED_BY_BATTLE, FleetDespawnReason.NO_MEMBERS);
     private static final String BOSS_CHARTS_SEED_PREFIX = "bossCharts|";
+    private static final String TWIN_BOSS_CHARTS_SEED_SUFFIX = "|twin";
     private static final Logger LOG = Logger.getLogger(ChartObjectives.class);
 
     private ChartObjectives() {
@@ -131,6 +135,10 @@ public final class ChartObjectives {
     }
 
     public static Loot bossFellInBattle(SectorAPI sector, CampaignFleetAPI sourceFleet, List<FleetMemberAPI> lostMembers) {
+        return objectiveBossFell(sector, sourceFleet, lostMembers).plus(twinBossFell(sourceFleet, lostMembers));
+    }
+
+    private static Loot objectiveBossFell(SectorAPI sector, CampaignFleetAPI sourceFleet, List<FleetMemberAPI> lostMembers) {
         ChartRun run = trackedRun();
         if (run != null && SkirmishObjective.tracks(run)) {
             SkirmishProgress progress = afterSkirmishFall(sector, run, SkirmishObjective.fellInBattle(sector, run, sourceFleet, lostMembers));
@@ -141,6 +149,20 @@ public final class ChartObjectives {
             return Loot.NONE;
         }
         return completed(sector, run);
+    }
+
+    static Loot twinBossFell(CampaignFleetAPI sourceFleet, List<FleetMemberAPI> lostMembers) {
+        String twinFlagshipId = ChartFleetMarks.twinBossFlagshipId(sourceFleet);
+        if (twinFlagshipId == null || lostMembers.stream().noneMatch(member -> twinFlagshipId.equals(member.getId()))) {
+            return Loot.NONE;
+        }
+        ChartRun run = ChartFleetLedger.liveRunOf(sourceFleet);
+        MemoryAPI twinMemory = sourceFleet.getMemoryWithoutUpdate();
+        if (run == null || twinMemory.getBoolean(ChartIds.TWIN_BOSS_CHARTS_GIVEN_MEMORY_KEY)) {
+            return Loot.NONE;
+        }
+        twinMemory.set(ChartIds.TWIN_BOSS_CHARTS_GIVEN_MEMORY_KEY, true);
+        return guaranteedBossCharts(run, BOSS_CHARTS_SEED_PREFIX + run.runId() + TWIN_BOSS_CHARTS_SEED_SUFFIX);
     }
 
     public static void afterPlayerEngagement(PlayerEngagement engagement) {
@@ -169,18 +191,18 @@ public final class ChartObjectives {
     }
 
     private static void completedOutsideBattle(SectorAPI sector, ChartRun run) {
-        addToPlayerCargo(sector, completed(sector, run));
+        deliverToPlayerCargo(sector, completed(sector, run));
     }
 
     private static boolean deliverOutsideBattle(SectorAPI sector, SkirmishProgress progress) {
-        addToPlayerCargo(sector, progress.loot());
+        deliverToPlayerCargo(sector, progress.loot());
         return progress.flagshipFell();
     }
 
-    private static void addToPlayerCargo(SectorAPI sector, Loot loot) {
+    private static void deliverToPlayerCargo(SectorAPI sector, Loot loot) {
         CampaignFleetAPI playerFleet = sector.getPlayerFleet();
         if (!loot.isEmpty() && playerFleet != null && playerFleet.getCargo() != null) {
-            LootDelivery.toLootScreen(playerFleet.getCargo(), loot, DropOrigin.ANYWHERE);
+            LootDelivery.deliver(playerFleet.getCargo(), loot, DropOrigin.ANYWHERE);
             LootTaken.report();
         }
     }
@@ -207,8 +229,12 @@ public final class ChartObjectives {
     }
 
     private static Loot guaranteedBossCharts(ChartRun run) {
+        return guaranteedBossCharts(run, BOSS_CHARTS_SEED_PREFIX + run.runId());
+    }
+
+    private static Loot guaranteedBossCharts(ChartRun run, String seed) {
         try {
-            Random random = Seeds.random(BOSS_CHARTS_SEED_PREFIX + run.runId());
+            Random random = Seeds.random(seed);
             List<ItemData> charts = ChartDrops.guaranteedCharts(ChartDrops.Source.CHART_BOSS, ChartLootContext.of(run), random);
             return charts.isEmpty() ? Loot.NONE : new Loot(charts, List.of(), Map.of());
         } catch (RuntimeException | LinkageError e) {

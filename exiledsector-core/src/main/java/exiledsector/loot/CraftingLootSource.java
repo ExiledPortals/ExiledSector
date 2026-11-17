@@ -8,7 +8,6 @@ import exiledsector.i18n.Translation;
 import exiledsector.items.CraftingDrops;
 import exiledsector.items.ItemDisassembly;
 import exiledsector.items.MaterialItems;
-import exiledsector.skills.skilleffect.logistics.FoundItemQuantity;
 import exiledsector.ui.CampaignMessages;
 import exiledsector.ui.cargo.MaterialDropAnnouncer;
 
@@ -57,28 +56,29 @@ public final class CraftingLootSource implements LootSource {
     }
 
     static float feedstock(List<FleetLoss> engagementLosses) {
+        BattleLootRates.Rate rate = BattleLootRates.rate(BattleLootRates.FEEDSTOCK_RATE);
+        if (rate == null) {
+            return 0f;
+        }
+        float battleDeploymentPoints = FleetLoss.totalDeploymentPoints(engagementLosses);
         float feedstock = 0f;
         for (FleetLoss loss : engagementLosses) {
             FleetLootRules rules = loss.rules();
             if (rules.kind() == FleetLootRules.Kind.SPENT) {
                 continue;
             }
-            float bonuses = rules.kind() == FleetLootRules.Kind.FEEDSTOCK_ONLY ? 1f
-                    : loss.averageDifficulty() * rules.multipliers().feedstockMult();
-            feedstock += loss.deploymentPoints() * BattleFeedstockSetting.feedstockPerDeploymentPoint() * bonuses;
+            float expected = rules.kind() == FleetLootRules.Kind.FEEDSTOCK_ONLY ? rate.expected(loss.deploymentPoints(), battleDeploymentPoints)
+                    : rate.expectedAtDifficulty(loss.deploymentPoints(), battleDeploymentPoints, loss.averageDifficulty());
+            feedstock += expected * rules.multipliers().quantity(DropType.FEEDSTOCK);
         }
         return feedstock;
     }
 
     static Map<String, Integer> rollCraftingItems(List<FleetLoss> engagementLosses, float levelScaledShare, Random random) {
         BattleLootRates.Rate rate = BattleLootRates.rate(BattleLootRates.CRAFTING_ITEM_RATE);
-        float playerFoundPercent = FoundItemQuantity.craftingItemPercent();
+        CraftingDrops.Split split = CraftingDrops.split(CraftingDrops.OUTSIDE_CHARTS, FleetLootRules.LEVEL_SCALED.multipliers());
         float expectedCount = rate == null ? 0f : rate.expectedFromAll(engagementLosses, levelScaledShare,
-                loss -> craftingItemMult(loss.rules(), playerFoundPercent));
-        return CraftingDrops.roll(expectedCount, CraftingDrops.OUTSIDE_CHARTS, CraftingDrops.NO_BAND_SHIFT, random);
-    }
-
-    private static float craftingItemMult(FleetLootRules rules, float playerFoundPercent) {
-        return rules.kind().rollsBattleCraftingItems() ? rules.multipliers().craftingItems().plusPercent(playerFoundPercent).mult() : 0f;
+                loss -> loss.rules().kind().rollsBattleCraftingItems() ? split.meanQuantity() : 0f);
+        return split.roll(expectedCount, random);
     }
 }

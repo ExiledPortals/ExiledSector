@@ -6,7 +6,6 @@ import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.effects.ShipEffectSource;
 import exiledsector.skills.SocketedItem;
 import exiledsector.skills.skilleffect.special.SlotItemEffect;
-import exiledsector.loot.BattleItemDropSetting;
 import exiledsector.loot.LootSource;
 import exiledsector.loot.MarketStock;
 import exiledsector.skills.ShipSections;
@@ -97,8 +96,6 @@ public final class HullUpgradesDomain implements ExiledSectorDomain {
                 HullUpgradesSetting.REFIT_SCHEMATICS, HullUpgradesSetting.POINTS_OPTIONS);
         itemsPage.booleanSetting(HullUpgradesSetting.MASTER_SCHEMATICS_FIELD_ID, "settings.hullItems.masterSchematics",
                 HullUpgradesSetting.DEFAULT_MASTER_SCHEMATICS_REQUIRED);
-        itemsPage.intSetting(BattleItemDropSetting.FIELD_ID, "settings.hullItems.battleItems",
-                BattleItemDropSetting.DEFAULT_PERCENT, 0, BattleItemDropSetting.MAX_PERCENT);
     }
 
     @Override

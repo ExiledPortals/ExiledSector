@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import exiledsector.loot.DropType;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,7 +15,7 @@ class ItemQuantityTest {
         ItemQuantity chartAndPlayer = ItemQuantity.increasedBy(10f).plusPercent(10f);
 
         assertEquals(1.2f, chartAndPlayer.mult(), EPSILON);
-        assertEquals(1.2f, ItemChances.of(ItemQuantity.increasedBy(10f)).generalPlusPercent(10f), EPSILON);
+        assertEquals(1.2f, ItemChances.increasedBy(DropType.ITEM, 10f).plusPercent(DropType.ITEM, 10f).quantity(DropType.ITEM), EPSILON);
     }
 
     @Test

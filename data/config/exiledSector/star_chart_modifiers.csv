@@ -72,7 +72,7 @@ CHART_DOMAIN_BUDGET_PERCENT,suffix,star_chart,CHART_DOMAIN_BUDGET_PERCENT:low=20
 CHART_STATION_BUDGET_PERCENT,suffix,star_chart,CHART_STATION_BUDGET_PERCENT:low=20-30/mid=30-45/high=45-60,Outposts,,loot
 CHART_DERELICT_BUDGET_PERCENT,suffix,star_chart,CHART_DERELICT_BUDGET_PERCENT:low=20-30/mid=30-45/high=45-60,Wreckage,,loot
 CHART_EXTRA_POIS,suffix,star_chart,CHART_EXTRA_POIS:low=1/mid=2/high=3,Discovery,,loot
-CHART_ITEM_PERCENT,suffix,star_chart,CHART_ITEM_PERCENT:low=15-25/mid=25-40/high=40-60,Salvage,,hull_item;subroutine;star_chart
+CHART_ITEM_PERCENT,suffix,star_chart,CHART_ITEM_PERCENT:low=15-25/mid=25-40/high=40-60,Salvage,,hull_item
 CHART_ITEM_RARITY_PERCENT,suffix,star_chart,CHART_ITEM_RARITY_PERCENT:low=10-15/mid=15-22/high=22-30,Treasure,,hull_item;subroutine;crafting_item
 CHART_BRIDGE_ITEM_PERCENT,suffix,star_chart,CHART_BRIDGE_ITEM_PERCENT:low=30-40/mid=40-60/high=60-80,Helm,,hull_item
 CHART_CREW_QUARTERS_ITEM_PERCENT,suffix,star_chart,CHART_CREW_QUARTERS_ITEM_PERCENT:low=30-40/mid=40-60/high=60-80,Billets,,hull_item
@@ -86,7 +86,7 @@ CHART_FLIGHT_DECK_ITEM_PERCENT,suffix,star_chart,CHART_FLIGHT_DECK_ITEM_PERCENT:
 CHART_SUBROUTINE_PERCENT,suffix,star_chart,CHART_SUBROUTINE_PERCENT:low=30-40/mid=40-60/high=60-80,Code,,subroutine
 CHART_STAR_CHART_PERCENT,suffix,star_chart,CHART_STAR_CHART_PERCENT:low=20-30/mid=30-45/high=45-60,Cartography,,star_chart
 CHART_CRAFTING_ITEM_PERCENT,suffix,star_chart,CHART_CRAFTING_ITEM_PERCENT:low=20-30/mid=30-45/high=45-60,Swarming,,crafting_item
-CHART_FEEDSTOCK_PERCENT,suffix,star_chart,CHART_FEEDSTOCK_PERCENT:low=25-35/mid=35-50/high=50-70,Reclamation,,crafting_item
+CHART_FEEDSTOCK_PERCENT,suffix,star_chart,CHART_FEEDSTOCK_PERCENT:low=25-35/mid=35-50/high=50-70,Reclamation,,feedstock
 CHART_CATALYST_PERCENT,suffix,star_chart,CHART_CATALYST_PERCENT:low=20-30/mid=30-45/high=45-60,Catalysis,,loot
 CHART_WEAPON_PERCENT,suffix,star_chart,CHART_WEAPON_PERCENT:low=25-35/mid=35-50/high=50-70,Ordnance,,vanilla_loot
 CHART_RESOURCE_PERCENT,suffix,star_chart,CHART_RESOURCE_PERCENT:low=25-35/mid=35-50/high=50-70,Provisions,,vanilla_loot

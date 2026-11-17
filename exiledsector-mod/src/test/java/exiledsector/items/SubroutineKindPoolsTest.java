@@ -58,16 +58,11 @@ class SubroutineKindPoolsTest {
         Random random = new Random(7L);
         Set<String> dropped = new HashSet<>();
         for (int trial = 0; trial < TRIALS; trial++) {
-            for (ItemData item : SalvageSiteDrops.roll("derelict", random, ItemChances.of(1f), definition -> true)) {
+            for (ItemData item : SalvageSiteDrops.roll("derelict", random, ItemChances.BASE, definition -> true)) {
                 dropped.add(item.definition().id());
-            }
-            ItemDefinition sectionPick = DroppableDefinitions.pickBasicOfKind(ItemKind.SUBROUTINE, random);
-            if (sectionPick != null) {
-                dropped.add(sectionPick.id());
             }
         }
 
         assertTrue(dropped.stream().noneMatch(List.of("volume_chip", "doctrine_chip", "bypass_chip")::contains), dropped.toString());
-        assertFalse(DroppableDefinitions.hasDroppableBasic(ItemKind.SUBROUTINE));
     }
 }

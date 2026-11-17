@@ -4,6 +4,7 @@ import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.ChartLootContext;
+import exiledsector.loot.DropType;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -71,14 +72,14 @@ class ListeningPostRulesTest {
     }
 
     @Test
-    void theVaultGrowsWithTierAndItsQuantityJoinsTheChartsItemQuantity() {
+    void theVaultGrowsWithTierAndItsOwnAndItsLinesQuantityJoinTheChartsItemQuantity() {
         assertEquals(ListeningPostRules.LOOT_STEPS, VaultLoot.LOOT.steps(1), EPSILON);
         assertTrue(VaultLoot.LOOT.steps(10) > VaultLoot.LOOT.steps(1));
         ChartGenContext context = ChartGenContext.none().withEffects(List.of(
                 new ChartGenContext.AppliedEffect(ChartModifier.CHART_QUANTITY_PERCENT, 20f),
                 new ChartGenContext.AppliedEffect(ChartModifier.CHART_LISTENING_POST_LOOT_QUANTITY_PERCENT, 30f)));
         ChartLootContext vaultLoot = VaultLoot.LOOT.withQuantityAndLeans(new ChartLootContext(context, 1), List.of());
-        assertEquals(1.5f, vaultLoot.itemChances().general(), EPSILON);
-        assertEquals(0f, VaultLoot.LOOT.quantityPercent(ChartGenContext.none()), EPSILON);
+        assertEquals(1f + (20f + 30f + ListeningPostRules.VAULT_QUANTITY_PERCENT) / 100f, vaultLoot.quantityMult(DropType.ITEM), EPSILON);
+        assertEquals(ListeningPostRules.VAULT_QUANTITY_PERCENT, VaultLoot.LOOT.quantityPercent(ChartGenContext.none()), EPSILON);
     }
 }

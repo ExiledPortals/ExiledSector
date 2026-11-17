@@ -2,6 +2,7 @@ package exiledsector.items;
 
 import exiledsector.data.RandomRounding;
 import exiledsector.loot.BattleLootRates;
+import exiledsector.loot.DropType;
 import exiledsector.loot.FleetLoss;
 
 import java.util.List;
@@ -30,24 +31,24 @@ public enum SkillTreeSchematicDrops {
         return rateId;
     }
 
-    public int rollBattle(List<FleetLoss> fleetLosses, float levelScaledShare, float dropMultiplier, Random random) {
-        return RandomRounding.round(expectedBattleDrops(fleetLosses, BattleLootRates.rate(rateId), levelScaledShare, dropMultiplier), random);
+    public int rollBattle(List<FleetLoss> fleetLosses, float levelScaledShare, Random random) {
+        return RandomRounding.round(expectedBattleDrops(fleetLosses, BattleLootRates.rate(rateId), levelScaledShare), random);
     }
 
-    static float expectedBattleDrops(List<FleetLoss> fleetLosses, BattleLootRates.Rate rate, float levelScaledShare, float dropMultiplier) {
-        if (rate == null || fleetLosses.isEmpty() || !(dropMultiplier > 0f)) {
+    static float expectedBattleDrops(List<FleetLoss> fleetLosses, BattleLootRates.Rate rate, float levelScaledShare) {
+        if (rate == null || fleetLosses.isEmpty()) {
             return 0f;
         }
-        return rate.expectedFromAll(fleetLosses, levelScaledShare, loss -> loss.rules().multipliers().chances().general()) * dropMultiplier;
+        return rate.expectedFromAll(fleetLosses, levelScaledShare, loss -> loss.rules().multipliers().quantity(DropType.SCHEMATIC));
     }
 
     public static boolean rollSiteFind(String siteId, Random random, ItemChances chances) {
         SalvageSiteDrops.Rule rule = SalvageSiteDrops.activeRule(siteId);
-        return rule != null && !rule.chances().isEmpty() && random.nextFloat() < siteFindChance(rule.chances().get(0), chances.general());
+        return rule != null && !rule.chances().isEmpty() && random.nextFloat() < siteFindChance(rule.chances().get(0), chances.quantity(DropType.SCHEMATIC));
     }
 
-    static float siteFindChance(float firstItemChance, float generalChanceMult) {
-        return firstItemChance * generalChanceMult * matchedTierShare();
+    static float siteFindChance(float firstItemChance, float itemQuantityMult) {
+        return firstItemChance * itemQuantityMult * matchedTierShare();
     }
 
     static float matchedTierShare() {

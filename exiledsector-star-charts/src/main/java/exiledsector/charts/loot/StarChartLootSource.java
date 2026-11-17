@@ -19,13 +19,13 @@ import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.effects.TechMiningItemListener;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
-import exiledsector.items.MaterialItems;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.loot.BattleLoot;
 import exiledsector.loot.BattleLootRates;
 import exiledsector.loot.DropOrigin;
+import exiledsector.loot.DropType;
 import exiledsector.loot.FleetDifficulties;
 import exiledsector.loot.FleetLootRules;
 import exiledsector.loot.Loot;
@@ -221,7 +221,7 @@ public final class StarChartLootSource implements LootSource {
             percent += anomaly.battleHullItemPercent(context);
         }
         ItemChances chances = multipliers.chances();
-        ItemChances boosted = BlackHoleHullItems.withExtraHullItemShare(chances, percent / ChartGenContext.PERCENT);
+        ItemChances boosted = chances.plusPercent(DropType.HULL_ITEM, percent);
         return boosted == chances ? multipliers : multipliers.withChances(boosted);
     }
 
@@ -254,8 +254,7 @@ public final class StarChartLootSource implements LootSource {
     @Override
     public void addSalvageLoot(SectorAPI sector, SectorEntityToken salvageEntity, CargoAPI loot) {
         ChartDrops.Rolled chartLoot = salvageLoot(sector, salvageEntity);
-        chartLoot.charts().forEach(chart -> loot.addSpecial(chart.toSpecialItem(), 1f));
-        chartLoot.materials().forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
+        LootDelivery.toLootScreen(loot, chartLoot.asLoot(), DropOrigin.site(salvageEntity));
         MaterialDropAnnouncer.announceOnLootScreen(chartLoot.ciphers());
     }
 

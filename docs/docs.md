@@ -130,8 +130,8 @@ anomalies, so the next run there is an ordinary system.
 
 A higher chart tier makes rare, unique and mythic crafting items a larger share of what its fleets, sites and bosses
 drop, without changing how many drop. Increased rarity from a chart's modifiers multiplies that shift by the same
-amount at every tier, and makes hull items and subroutines found anywhere in the system more likely to roll extra
-modifiers and unique hull items more likely to drop.
+amount at every tier, and makes hull items found anywhere in the system more likely to roll extra modifiers and unique
+items more likely to drop.
 
 ### Biome modifiers
 

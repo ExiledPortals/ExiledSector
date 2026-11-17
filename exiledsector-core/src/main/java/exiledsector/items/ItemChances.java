@@ -1,58 +1,92 @@
 package exiledsector.items;
 
+import exiledsector.loot.DropType;
+import exiledsector.skills.skilleffect.logistics.FoundItemQuantity;
+
 import java.util.EnumMap;
 import java.util.Map;
 
-public record ItemChances(ItemQuantity quantity, Map<ItemKind, Float> targeted, float rarity) {
+public record ItemChances(Map<DropType, Float> nodePercents, Map<DropType, Float> rarityPercents, float share) {
 
-    public static final ItemChances BASE = new ItemChances(ItemQuantity.BASE, Map.of(), 1f);
+    public static final ItemChances BASE = new ItemChances(Map.of(), Map.of(), 1f);
 
     public ItemChances {
-        quantity = quantity == null ? ItemQuantity.BASE : quantity;
-        targeted = targeted == null ? Map.of() : Map.copyOf(targeted);
-        rarity = Math.max(0f, rarity);
+        nodePercents = nodePercents == null ? Map.of() : Map.copyOf(nodePercents);
+        rarityPercents = rarityPercents == null ? Map.of() : Map.copyOf(rarityPercents);
+        share = Math.max(0f, share);
     }
 
-    public static ItemChances of(float general) {
-        return general == 1f ? BASE : new ItemChances(ItemQuantity.atShare(general), Map.of(), 1f);
+    public static ItemChances atShare(float share) {
+        return share == 1f ? BASE : new ItemChances(Map.of(), Map.of(), share);
     }
 
-    public static ItemChances of(ItemQuantity quantity) {
-        return new ItemChances(quantity, Map.of(), 1f);
+    public static ItemChances increasedBy(DropType node, float increasedPercent) {
+        return BASE.plusPercent(node, increasedPercent);
     }
 
-    public float general() {
-        return quantity.mult();
+    public float nodePercent(DropType node) {
+        return percentAt(nodePercents, node);
     }
 
-    public float generalPlusPercent(float extraIncreasedPercent) {
-        return quantity.plusPercent(extraIncreasedPercent).mult();
+    public float rarityPercent(DropType node) {
+        return percentAt(rarityPercents, node);
     }
 
-    public ItemChances plusPercent(float extraIncreasedPercent) {
-        ItemQuantity increased = quantity.plusPercent(extraIncreasedPercent);
-        return increased == quantity ? this : new ItemChances(increased, targeted, rarity);
+    public float increasedPercent(DropType type) {
+        float increasedPercent = 0f;
+        for (DropType node : type.chain()) {
+            increasedPercent += nodePercent(node) + FoundItemQuantity.nodePercent(node);
+        }
+        return increasedPercent;
     }
 
-    public ItemChances withRarity(float rarityMult) {
-        return rarityMult == rarity ? this : new ItemChances(quantity, targeted, rarityMult);
+    public float increasedRarity(DropType type) {
+        float increasedRarity = 0f;
+        for (DropType node : type.chain()) {
+            increasedRarity += rarityPercent(node);
+        }
+        return increasedRarity;
     }
 
-    public ItemChances withTargeted(Map<ItemKind, Float> extraShares) {
-        return new ItemChances(quantity, extraShares, rarity);
+    public float quantity(DropType type) {
+        return new ItemQuantity(increasedPercent(type), share).mult();
+    }
+
+    public float rarity(DropType type) {
+        return Math.max(0f, 1f + increasedRarity(type) / 100f);
+    }
+
+    public float extraOverParent(DropType type) {
+        return type.parent() == null ? 0f : Math.max(0f, quantity(type) - quantity(type.parent()));
+    }
+
+    public ItemChances plusPercent(DropType node, float extraIncreasedPercent) {
+        if (extraIncreasedPercent == 0f) {
+            return this;
+        }
+        return new ItemChances(plus(nodePercents, node, extraIncreasedPercent), rarityPercents, share);
+    }
+
+    public ItemChances plusRarityPercent(DropType node, float extraIncreasedRarity) {
+        if (extraIncreasedRarity == 0f) {
+            return this;
+        }
+        return new ItemChances(nodePercents, plus(rarityPercents, node, extraIncreasedRarity), share);
     }
 
     public ItemChances scaled(float factor) {
-        if (factor == 1f) {
-            return this;
-        }
-        Map<ItemKind, Float> scaledTargeted = new EnumMap<>(ItemKind.class);
-        targeted.forEach((kind, extraShare) -> scaledTargeted.put(kind, extraShare * factor));
-        return new ItemChances(quantity.scaled(factor), scaledTargeted, rarity);
+        return factor == 1f ? this : new ItemChances(nodePercents, rarityPercents, share * factor);
     }
 
-    public float targeted(ItemKind kind) {
-        Float extraShare = targeted.get(kind);
-        return extraShare == null ? 0f : Math.max(0f, extraShare);
+    private static float percentAt(Map<DropType, Float> percents, DropType node) {
+        Float percent = percents.get(node);
+        return percent == null ? 0f : percent;
+    }
+
+    private static Map<DropType, Float> plus(Map<DropType, Float> percents, DropType node, float extra) {
+        Map<DropType, Float> summed = new EnumMap<>(DropType.class);
+        summed.putAll(percents);
+        summed.merge(node, extra, Float::sum);
+        return summed;
     }
 }

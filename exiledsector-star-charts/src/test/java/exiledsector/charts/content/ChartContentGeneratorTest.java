@@ -764,6 +764,7 @@ class ChartContentGeneratorTest {
 
     @Test
     void aTwinnedBossAddsARevealedBossSizedFleetFromItsOwnSeedThatTheObjectiveIgnores() {
+        engine.fleetsHaveFlagships = true;
         ChartGenContext twinned = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_TWINNED_BOSS, 1f)));
         ChartContent content = ChartContentGenerator.generate(sector, system, RUN_ID, 11L, 8, WORMHOLE, twinned, null, List.of());
         ChartContentPlan plan = ChartContentPlanner.plan(11L, ChartTiers.forTier(8), ChartPois.all(), ChartFactions.all(), id -> true);
@@ -778,6 +779,8 @@ class ChartContentGeneratorTest {
         assertTrue(inSystem.contains(twin));
         verify(twin).setExtendedDetectedAtRange(ChartFleetVisibility.REVEAL_EXTENDED_RANGE);
         assertEquals(ChartContentGenerator.TWIN_OFFSET, Vector2f.sub(boss.getLocation(), twin.getLocation(), new Vector2f()).length(), 1f);
+        assertEquals(twin.getId() + "-flagship", ChartFleetMarks.twinBossFlagshipId(twin));
+        assertNull(ChartFleetMarks.twinBossFlagshipId(boss));
     }
 
     @Test

@@ -3,6 +3,7 @@ package exiledsector.items;
 import exiledsector.MockSector;
 import exiledsector.items.ItemDataIntegrity.Severity;
 import exiledsector.items.ItemDataIntegrity.Violation;
+import exiledsector.loot.DropType;
 import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -143,9 +144,27 @@ class ModspecCachesTest {
         Set<String> salvaged = new HashSet<>();
         Random random = new Random(11L);
         for (int trial = 0; trial < 50; trial++) {
-            SalvageSiteDrops.roll("derelict", random, ItemChances.of(1f), definition -> true).forEach(item -> salvaged.add(item.definition().id()));
+            SalvageSiteDrops.roll("derelict", random, ItemChances.BASE, definition -> true).forEach(item -> salvaged.add(item.definition().id()));
         }
         assertEquals(Set.of(CACHE), salvaged);
+    }
+
+    @Test
+    void aCacheReadsTheIncreasedQuantityOfSubroutinesInSalvageAndFromFleets() throws Exception {
+        SalvageSiteDrops.register(new JSONArray().put(new JSONObject().put("site", "wreck").put("chances", "0.4").put("uniqueChance", "0")));
+        ItemChances moreSubroutines = ItemChances.increasedBy(DropType.SUBROUTINE, 50f);
+        int trials = 20000;
+        Random random = new Random(7L);
+        int salvagedCaches = 0;
+        int fleetCaches = 0;
+        for (int trial = 0; trial < trials; trial++) {
+            salvagedCaches += SalvageSiteDrops.roll("wreck", random, moreSubroutines, definition -> true).size();
+            fleetCaches += FactionFleetDrops.roll(Map.of("independent", 10f), Map.of("independent", 10f), Map.of("independent", 20f), random,
+                    definition -> CACHE.equals(definition.id())).size();
+        }
+
+        assertEquals(0.4f * 1.5f, salvagedCaches / (float) trials, 0.015f);
+        assertEquals(0.1f, fleetCaches / (float) trials, 0.01f);
     }
 
     @Test

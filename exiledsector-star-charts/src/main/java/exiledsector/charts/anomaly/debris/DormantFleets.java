@@ -40,7 +40,7 @@ import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.ChartFleetLedger;
 import exiledsector.charts.loot.ChartVanillaLoot;
-import exiledsector.charts.loot.DropType;
+import exiledsector.loot.DropType;
 import exiledsector.loot.FleetFactions;
 import org.lwjgl.util.vector.Vector2f;
 

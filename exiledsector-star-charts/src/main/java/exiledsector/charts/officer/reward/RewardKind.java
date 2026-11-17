@@ -11,19 +11,19 @@ public enum RewardKind {
     UNIQUE("unique", false);
 
     private final String id;
-    private final boolean craftingItem;
+    private final boolean material;
 
-    RewardKind(String id, boolean craftingItem) {
+    RewardKind(String id, boolean material) {
         this.id = id;
-        this.craftingItem = craftingItem;
+        this.material = material;
     }
 
     public String id() {
         return id;
     }
 
-    public boolean craftingItem() {
-        return craftingItem;
+    public boolean material() {
+        return material;
     }
 
     public static RewardKind byId(String id) {

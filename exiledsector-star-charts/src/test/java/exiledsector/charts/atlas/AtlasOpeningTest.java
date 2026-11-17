@@ -2,13 +2,13 @@ package exiledsector.charts.atlas;
 
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
-import exiledsector.charts.loot.DropType;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.MagneticStorm;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.wormhole.GatewayTierLimit;
 import exiledsector.items.StarChart;
+import exiledsector.loot.DropType;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;

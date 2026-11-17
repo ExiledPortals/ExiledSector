@@ -356,14 +356,21 @@ class ItemLootListenerTest {
     }
 
     @Test
-    void wonBattlesAddPartsForTheEnemyDeploymentPointsDefeated() {
-        BattleAPI battle = mock(BattleAPI.class);
-        listener.holdLoot(PlayerEngagement.of(engagement(battle, List.of(warship("a", 120f)), List.of(warship("b", 80f))), 1f));
-        CargoAPI loot = mock(CargoAPI.class);
+    void wonBattlesAddPartsForTheEnemyDeploymentPointsDefeated() throws Exception {
+        BattleLootRates.register(new JSONArray()
+                .put(new JSONObject().put("drop", BattleLootRates.FEEDSTOCK_RATE).put("per_100_dp", "5").put("curve", "linear")
+                        .put("difficulty_scaling", "1")));
+        try {
+            BattleAPI battle = mock(BattleAPI.class);
+            listener.holdLoot(PlayerEngagement.of(engagement(battle, List.of(warship("a", 120f)), List.of(warship("b", 80f))), 1f));
+            CargoAPI loot = mock(CargoAPI.class);
 
-        listener.reportEncounterLootGenerated(context(battle), loot);
+            listener.reportEncounterLootGenerated(context(battle), loot);
 
-        verify(loot).addSpecial(MaterialItems.data(ItemDisassembly.FEEDSTOCK_ITEM_ID), 10);
+            verify(loot).addSpecial(MaterialItems.data(ItemDisassembly.FEEDSTOCK_ITEM_ID), 10);
+        } finally {
+            BattleLootRates.clear();
+        }
     }
 
     @Test
@@ -413,7 +420,7 @@ class ItemLootListenerTest {
     void wonBattlesRollStarChartsFromChartFleetsAtTheRunTierAndOutsideOnlyFromStrongEnemies() throws Exception {
         StarChartFixtures.registerShipped();
         ChartDropRules.register(new JSONArray()
-                .put(new JSONObject().put("source", "chart_fleet").put("chance", String.valueOf(ChartFleetLoot.expectedFleetPoints(8) / 20f)))
+                .put(new JSONObject().put("source", "chart_fleet").put("chance", String.valueOf(ChartFleetLoot.expectedFleetPoints(8, false) / 20f)))
                 .put(new JSONObject().put("source", "battle").put("chance", "0.25").put("min_defeated_dp", "150").put("defeated_dp_per_tier", "100")
                         .put("max_tier", "6")));
         try {

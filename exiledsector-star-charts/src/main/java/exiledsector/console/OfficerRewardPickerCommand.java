@@ -13,6 +13,7 @@ import exiledsector.charts.officer.reward.RewardContext;
 import exiledsector.items.ItemData;
 import exiledsector.items.MaterialItems;
 import exiledsector.loot.Loot;
+import exiledsector.loot.LootMultipliers;
 import exiledsector.ui.atlas.OfficerRewardPicker;
 import org.lazywizard.console.Console;
 
@@ -49,7 +50,7 @@ public class OfficerRewardPickerCommand extends PlayerFleetCommand {
             return CommandResult.BAD_SYNTAX;
         }
         SectorAPI sector = Global.getSector();
-        List<CarriedItem> offers = OfficerRewardPool.offers(RewardContext.forSector(sector, tier, null, null, ChartTiers.bandShift(tier)), random);
+        List<CarriedItem> offers = OfficerRewardPool.offers(RewardContext.forSector(sector, tier, null, null, LootMultipliers.atTierBandShift(ChartTiers.bandShift(tier))), random);
         if (offers.isEmpty()) {
             Console.showMessage("No reward can be offered at tier " + tier + ".");
             return CommandResult.ERROR;

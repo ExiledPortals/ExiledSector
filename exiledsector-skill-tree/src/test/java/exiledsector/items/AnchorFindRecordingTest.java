@@ -65,6 +65,7 @@ class AnchorFindRecordingTest {
     void setUp() throws Exception {
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
         lunaSettingsMock.when(() -> LunaSettings.getBoolean(anyString(), anyString())).thenReturn(null);
+        lunaSettingsMock.when(() -> LunaSettings.getInt(anyString(), anyString())).thenReturn(null);
         MemoryAPI sectorMemory = mock(MemoryAPI.class);
         memoryValues.put(JanusDevice.FLAG, true);
         when(sectorMemory.getBoolean(anyString())).thenAnswer(call -> Boolean.TRUE.equals(memoryValues.get(call.<String>getArgument(0))));
@@ -153,7 +154,7 @@ class AnchorFindRecordingTest {
 
     @Test
     void showcaseSalvageRecordsTheAnchorsItHandsOut() {
-        SkillTreeLootSource.INSTANCE.addShowcaseLoot(mock(CargoAPI.class), new Random(3L));
+        SkillTreeLootSource.INSTANCE.addShowcaseLoot(mock(CargoAPI.class), null, new Random(3L));
 
         assertTrue(nightcrossFound());
     }

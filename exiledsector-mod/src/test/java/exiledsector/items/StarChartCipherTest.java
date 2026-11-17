@@ -98,8 +98,7 @@ class StarChartCipherTest {
         assertEquals(List.of(Nanoswarm.AUGMENTATION, Nanoswarm.CORRUPTION, Nanoswarm.ANNULMENT, Nanoswarm.TUNING,
                         StarChartCipher.REFORGE, StarChartCipher.ERASURE, StarChartCipher.CARTOGRAPHY),
                 CraftingMaterialFamilies.forType(ItemType.STAR_CHART));
-        assertEquals(Arrays.stream(Nanoswarm.values()).filter(kernel -> kernel != Nanoswarm.ANNULMENT).toList(),
-                CraftingMaterialFamilies.forType(ItemType.SUBROUTINE));
+        assertEquals(List.of(Nanoswarm.CORRUPTION, Nanoswarm.TUNING, Nanoswarm.REPLICATION), CraftingMaterialFamilies.forType(ItemType.SUBROUTINE));
         assertEquals(Arrays.asList(Nanoswarm.values()), CraftingMaterialFamilies.forType(ItemType.HULL_ITEM));
         for (StarChartCipher craftingItem : StarChartCipher.values()) {
             assertSame(craftingItem, CraftingMaterialFamilies.byItemId(craftingItem.itemId()));

@@ -28,6 +28,18 @@ class CarriedItemTest {
     }
 
     @Test
+    void aFinalCountMarksOnlyMaterialsAndSurvivesTheToken() {
+        CarriedItem feedstock = CarriedItem.withFinalCount(RewardKind.FEEDSTOCK, "exiledSector_threat_feedstock", 500);
+        CarriedItem hullItem = CarriedItem.withFinalCount(RewardKind.HULL_ITEM, "es_bridge.mk-2", 2);
+
+        assertEquals("feedstock:500:exiledSector_threat_feedstock:final_count", feedstock.toToken());
+        assertTrue(CarriedItem.fromToken(feedstock.toToken()).hasFinalCount());
+        assertFalse(new CarriedItem(RewardKind.FEEDSTOCK, "exiledSector_threat_feedstock", null, 500).hasFinalCount());
+        assertNull(hullItem.variant());
+        assertFalse(hullItem.hasFinalCount());
+    }
+
+    @Test
     void malformedTokensReadAsNothing() {
         for (String token : new String[]{null, "", "hull_item:1", "hull_item:1:a:b:c", "nothing:1:item", "hull_item:0:item", "hull_item:-1:item",
                 "hull_item:x:item", "hull_item:1234567890:item", "hull_item:1:", "hull_item:1:bad id", "hull_item:1:item:", "hull_item:1:item:bad|biome"}) {

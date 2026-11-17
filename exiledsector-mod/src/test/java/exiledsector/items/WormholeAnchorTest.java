@@ -289,17 +289,15 @@ class WormholeAnchorTest {
         Set<String> anchorIds = Set.of(HEGEMONY_ANCHOR, ABYSS_ANCHOR, BEACON);
 
         for (int trial = 0; trial < 200; trial++) {
-            assertNotAnchor(DroppableDefinitions.pickBasic(random), anchorIds);
             assertNotAnchor(DroppableDefinitions.pickUnique(random, definition -> true), anchorIds);
             assertNotAnchor(DroppableDefinitions.pickHullItemBasic(random), anchorIds);
             assertNotAnchor(DroppableDefinitions.pickOfType(random, ItemType.STAR_CHART, definition -> true), anchorIds);
             List<ItemData> dropped = new ArrayList<>(SalvageSiteDrops.rollSite("station", random, LootMultipliers.NONE).items());
-            dropped.addAll(HullItemDrops.rollHullItemLoot("station", random, ItemChances.BASE, 0f).items());
+            dropped.addAll(HullItemDrops.rollHullItemLoot("station", random, ItemChances.BASE).items());
             for (ItemData item : dropped) {
                 assertFalse(anchorIds.contains(item.definitionId()), item.definitionId());
             }
         }
-        assertFalse(DroppableDefinitions.canBeGrown(ItemDefinitions.get(HEGEMONY_ANCHOR)));
     }
 
     private static void assertNotAnchor(ItemDefinition picked, Set<String> anchorIds) {

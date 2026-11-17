@@ -65,9 +65,10 @@ class ConvoyAtlasNodesTest {
     }
 
     @Test
-    void feedstockQuantityLinesAddToTheCraftingItemQuantity() {
+    void convoyFeedstockLinesAddToTheFeedstockQuantityAndIgnoreTheCraftingItemQuantity() {
         ChartGenContext context = ChartGenContext.of(List.of(
-                new ChartGenContext.AppliedEffect(ChartModifier.CHART_CRAFTING_ITEM_PERCENT, 50f),
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_FEEDSTOCK_PERCENT, 50f),
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_CRAFTING_ITEM_PERCENT, 100f),
                 new ChartGenContext.AppliedEffect(ChartModifier.CHART_CONVOY_FEEDSTOCK_PERCENT, 20f),
                 new ChartGenContext.AppliedEffect(ChartModifier.CHART_CONVOY_BREACH_FEEDSTOCK_PERCENT, 50f),
                 new ChartGenContext.AppliedEffect(ChartModifier.CHART_CONVOY_EXCAVATION_LOOT_PERCENT, 30f)));
@@ -118,7 +119,7 @@ class ConvoyAtlasNodesTest {
         feedstock.put(THREAT, 1234.6f);
         feedstock.put(PHASE, 0.2f);
 
-        assertEquals(List.of(new CarriedItem(RewardKind.FEEDSTOCK, THREAT, null, 1235)), ConvoySupplyLines.carriedFeedstock(feedstock));
+        assertEquals(List.of(CarriedItem.withFinalCount(RewardKind.FEEDSTOCK, THREAT, 1235)), ConvoySupplyLines.carriedFeedstock(feedstock));
         assertEquals(List.of(), ConvoySupplyLines.carriedFeedstock(Map.of()));
     }
 
@@ -139,7 +140,8 @@ class ConvoyAtlasNodesTest {
         assertNotNull(supplied);
         assertEquals(commanding.recordId(), supplied.recordId());
         CarriedItem carried = state.officer(commanding.recordId()).carried().get(state.officer(commanding.recordId()).carried().size() - 1);
-        assertEquals(new CarriedItem(RewardKind.FEEDSTOCK, THREAT, null, 500), carried);
+        assertEquals(CarriedItem.withFinalCount(RewardKind.FEEDSTOCK, THREAT, 500), carried);
+        assertTrue(carried.hasFinalCount());
         assertEquals(commanding.carried().size() + 1, state.officer(commanding.recordId()).carried().size());
         assertNull(ConvoySupplyLines.handOver(null, convoy, new Random(1L)));
         assertNull(ConvoySupplyLines.handOver(state, waitingConvoy(1, "planet_b", List.of()), new Random(1L)));

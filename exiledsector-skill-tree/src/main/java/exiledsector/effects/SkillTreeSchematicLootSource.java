@@ -3,7 +3,6 @@ package exiledsector.effects;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import exiledsector.items.ShipSchematic;
 import exiledsector.items.SkillTreeSchematicDrops;
-import exiledsector.loot.BattleItemDropSetting;
 import exiledsector.loot.BattleLoot;
 import exiledsector.loot.DropOrigin;
 import exiledsector.loot.FleetLoss;
@@ -56,7 +55,7 @@ public final class SkillTreeSchematicLootSource implements LootSource {
             List<FleetLoss> fleetLosses = battle.losses().fleetLosses(LootSources::fleetLootRules);
             float levelScaledShare = OutsideChartShare.current();
             for (SkillTreeSchematicDrops drop : SkillTreeSchematicDrops.values()) {
-                drops.addAll(Collections.nCopies(drop.rollBattle(fleetLosses, levelScaledShare, BattleItemDropSetting.multiplier(), battle.random()),
+                drops.addAll(Collections.nCopies(drop.rollBattle(fleetLosses, levelScaledShare, battle.random()),
                         drop.schematic()));
             }
         } catch (RuntimeException e) {

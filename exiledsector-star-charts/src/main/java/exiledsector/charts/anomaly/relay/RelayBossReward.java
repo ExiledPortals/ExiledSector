@@ -15,6 +15,7 @@ import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemUnlock;
+import exiledsector.items.UniqueDropRoll;
 import exiledsector.loot.Loot;
 
 import java.util.ArrayList;
@@ -72,11 +73,12 @@ final class RelayBossReward {
 
     static Loot echoUnique(SectorAPI sector, ChartRun run, ChartGenContext runContext, Random random) {
         float chance = RelayTuning.stageUniqueChance(runContext);
-        if (chance <= 0f || !RelayStates.allWoken(run) || random.nextFloat() >= chance) {
+        if (chance <= 0f || !RelayStates.allWoken(run)) {
             return Loot.NONE;
         }
-        ItemDefinition unique = DroppableDefinitions.pickUniqueFromAnySource(random, definition -> ECHO_UNIQUE_TYPES.contains(definition.type())
-                && ItemUnlock.available(definition.type(), sector) && ItemUnlock.canDrop(definition, sector));
+        ItemDefinition unique = UniqueDropRoll.roll(random, chance, runContext.itemChances(),
+                picker -> DroppableDefinitions.pickUniqueFromAnySource(picker, definition -> ECHO_UNIQUE_TYPES.contains(definition.type())
+                        && ItemUnlock.available(definition.type(), sector) && ItemUnlock.canDrop(definition, sector)));
         if (unique == null) {
             return Loot.NONE;
         }

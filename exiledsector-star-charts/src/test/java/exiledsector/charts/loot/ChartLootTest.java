@@ -9,6 +9,7 @@ import exiledsector.charts.content.ChartPoi;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.effect.ChartModifier;
+import exiledsector.loot.DropType;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;

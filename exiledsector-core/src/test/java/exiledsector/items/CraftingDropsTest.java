@@ -1,14 +1,21 @@
 package exiledsector.items;
 
 import exiledsector.ProjectFiles;
+import exiledsector.data.RandomRounding;
+import exiledsector.data.WeightedPick;
 import exiledsector.loot.BattleLootRates;
+import exiledsector.loot.DropType;
+import exiledsector.loot.LootMultipliers;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -20,6 +27,7 @@ class CraftingDropsTest {
     private static final String CORRUPTION = Nanoswarm.CORRUPTION.itemId();
     private static final String IMMUTABLE = Nanoswarm.IMMUTABLE.itemId();
     private static final String BEAM_INHIBITOR = CraftingInhibitor.BEAM.itemId();
+    private static final String PREFIX_INHIBITOR = CraftingInhibitor.PREFIX.itemId();
     private static final int MANY_DROPS = 40000;
 
     @AfterEach
@@ -44,6 +52,25 @@ class CraftingDropsTest {
         return drops.values().stream().mapToInt(Integer::intValue).sum();
     }
 
+    private static LootMultipliers shift(float bandShift) {
+        return LootMultipliers.atTierBandShift(bandShift);
+    }
+
+    private static Map<String, Integer> singlePoolRoll(float expectedCount, Predicate<String> allowedItems, float bandShift, Random random) {
+        Map<String, Integer> dropped = new LinkedHashMap<>();
+        List<CraftingDrops.Drop> candidates = CraftingDrops.all().stream()
+                .filter(drop -> drop.weight() > 0f && allowedItems.test(drop.itemId())).toList();
+        if (!(expectedCount > 0f) || candidates.isEmpty()) {
+            return dropped;
+        }
+        int count = RandomRounding.round(expectedCount, random);
+        for (int dropIndex = 0; dropIndex < count; dropIndex++) {
+            CraftingDrops.Drop picked = WeightedPick.pick(candidates, candidate -> candidate.shiftedWeight(bandShift), random);
+            dropped.merge(picked.itemId(), 1, Integer::sum);
+        }
+        return dropped;
+    }
+
     @Test
     void theTableReadsEachItemsWeightAndWhetherItDropsOnlyInCharts() throws Exception {
         registerSmallTable();
@@ -60,16 +87,16 @@ class CraftingDropsTest {
     void theBandShiftMultipliesEveryBandButCommon() throws Exception {
         registerSmallTable();
 
-        assertEquals(6f, CraftingDrops.shiftedWeight(AUGMENTATION, 2.5f), 1e-6f);
-        assertEquals(7.5f, CraftingDrops.shiftedWeight(CORRUPTION, 2.5f), 1e-6f);
-        assertEquals(2.5f, CraftingDrops.shiftedWeight(IMMUTABLE, 2.5f), 1e-6f);
+        assertEquals(6f, CraftingDrops.shiftedWeight(AUGMENTATION, shift(2.5f)), 1e-6f);
+        assertEquals(7.5f, CraftingDrops.shiftedWeight(CORRUPTION, shift(2.5f)), 1e-6f);
+        assertEquals(2.5f, CraftingDrops.shiftedWeight(IMMUTABLE, shift(2.5f)), 1e-6f);
     }
 
     @Test
     void atNoShiftEachItemDropsByItsShareOfTheWeights() throws Exception {
         registerSmallTable();
 
-        Map<String, Integer> drops = CraftingDrops.roll(MANY_DROPS, CraftingDrops.OUTSIDE_CHARTS, CraftingDrops.NO_BAND_SHIFT, new Random(7L));
+        Map<String, Integer> drops = CraftingDrops.roll(MANY_DROPS, CraftingDrops.OUTSIDE_CHARTS, LootMultipliers.NONE, new Random(7L));
 
         assertEquals(MANY_DROPS, total(drops));
         assertEquals(0.6f, drops.get(AUGMENTATION) / (float) MANY_DROPS, 0.01f);
@@ -81,8 +108,8 @@ class CraftingDropsTest {
     void aBandShiftMovesDropsOutOfCommonWithoutChangingTheCount() throws Exception {
         registerSmallTable();
 
-        Map<String, Integer> unshifted = CraftingDrops.roll(MANY_DROPS, CraftingDrops.OUTSIDE_CHARTS, 1f, new Random(3L));
-        Map<String, Integer> shifted = CraftingDrops.roll(MANY_DROPS, CraftingDrops.OUTSIDE_CHARTS, 2f, new Random(3L));
+        Map<String, Integer> unshifted = CraftingDrops.roll(MANY_DROPS, CraftingDrops.OUTSIDE_CHARTS, shift(1f), new Random(3L));
+        Map<String, Integer> shifted = CraftingDrops.roll(MANY_DROPS, CraftingDrops.OUTSIDE_CHARTS, shift(2f), new Random(3L));
 
         assertEquals(total(unshifted), total(shifted));
         assertEquals(6f / 14f, shifted.get(AUGMENTATION) / (float) MANY_DROPS, 0.01f);
@@ -95,9 +122,9 @@ class CraftingDropsTest {
     void chartOnlyItemsStayOutOfOtherSourcesAndASourceGivesOnlyItsItems() throws Exception {
         registerSmallTable();
 
-        Map<String, Integer> outside = CraftingDrops.roll(MANY_DROPS, CraftingDrops.OUTSIDE_CHARTS, 1f, new Random(5L));
-        Map<String, Integer> inside = CraftingDrops.roll(MANY_DROPS, CraftingDrops.ANY_ITEM, 1f, new Random(5L));
-        Map<String, Integer> inhibitorsOnly = CraftingDrops.roll(30, BEAM_INHIBITOR::equals, 3f, new Random(5L));
+        Map<String, Integer> outside = CraftingDrops.roll(MANY_DROPS, CraftingDrops.OUTSIDE_CHARTS, shift(1f), new Random(5L));
+        Map<String, Integer> inside = CraftingDrops.roll(MANY_DROPS, CraftingDrops.ANY_ITEM, shift(1f), new Random(5L));
+        Map<String, Integer> inhibitorsOnly = CraftingDrops.roll(30, BEAM_INHIBITOR::equals, shift(3f), new Random(5L));
 
         assertFalse(outside.containsKey(BEAM_INHIBITOR));
         assertTrue(inside.containsKey(BEAM_INHIBITOR));
@@ -108,8 +135,71 @@ class CraftingDropsTest {
     void nothingDropsWithoutACountOrAnAllowedItem() throws Exception {
         registerSmallTable();
 
-        assertTrue(CraftingDrops.roll(0f, CraftingDrops.ANY_ITEM, 1f, new Random(1L)).isEmpty());
-        assertTrue(CraftingDrops.roll(5f, itemId -> false, 1f, new Random(1L)).isEmpty());
+        assertTrue(CraftingDrops.roll(0f, CraftingDrops.ANY_ITEM, shift(1f), new Random(1L)).isEmpty());
+        assertTrue(CraftingDrops.roll(5f, itemId -> false, shift(1f), new Random(1L)).isEmpty());
+    }
+
+    @Test
+    void withoutSubcategoryPercentsTheDropsMatchOneCraftingItemPoolDrawForDraw() throws Exception {
+        registerSmallTable();
+        LootMultipliers multipliers = new LootMultipliers(ItemChances.increasedBy(DropType.CRAFTING_ITEM, 50f)
+                .plusPercent(DropType.ITEM, 20f).plusRarityPercent(DropType.ITEM, 30f), 2f);
+        float craftingQuantity = multipliers.quantity(DropType.CRAFTING_ITEM);
+        float bandShift = 2f * multipliers.rarity(DropType.ITEM);
+
+        for (long seed = 0L; seed < 200L; seed++) {
+            float baseCount = 0.37f * seed;
+            assertEquals(singlePoolRoll(baseCount * craftingQuantity, CraftingDrops.ANY_ITEM, bandShift, new Random(seed)),
+                    CraftingDrops.roll(baseCount, CraftingDrops.ANY_ITEM, multipliers, new Random(seed)), "seed " + seed);
+        }
+        assertEquals(craftingQuantity, CraftingDrops.split(CraftingDrops.ANY_ITEM, multipliers).meanQuantity());
+    }
+
+    @Test
+    void eachSubcategoryScalesItsOwnShareOfTheCount() throws Exception {
+        registerSmallTable();
+        LootMultipliers doubledInhibitors = new LootMultipliers(ItemChances.increasedBy(DropType.INHIBITOR, 100f), CraftingDrops.NO_BAND_SHIFT);
+        CraftingDrops.Split split = CraftingDrops.split(CraftingDrops.ANY_ITEM, doubledInhibitors);
+
+        assertEquals((10f + 2f * 2f) / 12f, split.meanQuantity(), 1e-6f);
+        Map<String, Integer> drops = CraftingDrops.roll(MANY_DROPS, CraftingDrops.ANY_ITEM, doubledInhibitors, new Random(11L));
+        assertEquals(MANY_DROPS * 10f / 12f, drops.get(AUGMENTATION) + drops.get(CORRUPTION) + drops.get(IMMUTABLE), MANY_DROPS * 0.01f);
+        assertEquals(MANY_DROPS * 4f / 12f, drops.get(BEAM_INHIBITOR), MANY_DROPS * 0.01f);
+        assertEquals(MANY_DROPS * 6f / 12f, drops.get(AUGMENTATION), MANY_DROPS * 0.01f);
+    }
+
+    @Test
+    void aSubcategoryAtNoQuantityDropsNoneOfItsItems() throws Exception {
+        registerSmallTable();
+        LootMultipliers noBasics = new LootMultipliers(ItemChances.increasedBy(DropType.BASIC_CRAFTING_ITEM, -100f), CraftingDrops.NO_BAND_SHIFT);
+
+        Map<String, Integer> drops = CraftingDrops.roll(120f, CraftingDrops.ANY_ITEM, noBasics, new Random(2L));
+
+        assertEquals(Map.of(BEAM_INHIBITOR, 20), drops);
+        assertTrue(CraftingDrops.roll(120f, CraftingDrops.OUTSIDE_CHARTS, noBasics, new Random(2L)).isEmpty());
+    }
+
+    @Test
+    void aSplitWithNoQuantityLeftDropsNothingEvenWhenGivenACount() throws Exception {
+        registerSmallTable();
+        LootMultipliers noBasics = new LootMultipliers(ItemChances.increasedBy(DropType.BASIC_CRAFTING_ITEM, -100f), CraftingDrops.NO_BAND_SHIFT);
+        CraftingDrops.Split basicsOnly = CraftingDrops.split(CraftingDrops.OUTSIDE_CHARTS, noBasics);
+
+        assertTrue(basicsOnly.roll(5f, new Random(3L)).isEmpty());
+    }
+
+    @Test
+    void eachSubcategorysRarityShiftsOnlyItsOwnBands() throws Exception {
+        CraftingDrops.register(new JSONArray()
+                .put(row(CORRUPTION, "3", "FALSE"))
+                .put(row(PREFIX_INHIBITOR, "3", "FALSE")));
+        LootMultipliers rarerInhibitors = new LootMultipliers(ItemChances.BASE.plusRarityPercent(DropType.INHIBITOR, 100f), 1.5f);
+
+        assertEquals(4.5f, CraftingDrops.shiftedWeight(CORRUPTION, rarerInhibitors), 1e-6f);
+        assertEquals(9f, CraftingDrops.shiftedWeight(PREFIX_INHIBITOR, rarerInhibitors), 1e-6f);
+        Map<String, Integer> drops = CraftingDrops.roll(MANY_DROPS, CraftingDrops.ANY_ITEM, rarerInhibitors, new Random(4L));
+        assertEquals(MANY_DROPS, total(drops));
+        assertEquals(MANY_DROPS * 2f / 3f, drops.get(PREFIX_INHIBITOR), MANY_DROPS * 0.01f);
     }
 
     @Test

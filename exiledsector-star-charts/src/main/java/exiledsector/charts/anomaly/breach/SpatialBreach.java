@@ -25,6 +25,7 @@ import exiledsector.items.ItemQuantity;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.BattleLoot;
 import exiledsector.PlayerFleet;
+import exiledsector.loot.DropType;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.List;
@@ -97,7 +98,7 @@ public final class SpatialBreach implements ContentPlacer, RunParticipant, LootS
 
     @Override
     public ItemChances siteChances(MemoryAPI siteMemory, ItemChances chances) {
-        return siteMemory.contains(ITEM_MULT_KEY) ? chances.plusPercent((siteMemory.getFloat(ITEM_MULT_KEY) - 1f) * ItemQuantity.PERCENT) : chances;
+        return siteMemory.contains(ITEM_MULT_KEY) ? chances.plusPercent(DropType.ITEM, (siteMemory.getFloat(ITEM_MULT_KEY) - 1f) * ItemQuantity.PERCENT) : chances;
     }
 
     @Override

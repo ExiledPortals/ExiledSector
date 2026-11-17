@@ -1192,6 +1192,12 @@ effect|EXPLODE_ON_DEATH_AREA_PERCENT|12.5	0	<good>12.5%</good> increased area of
 effect|EXPLODE_ON_DEATH_AREA_PERCENT|100.0	0	<good>100%</good> increased area of this ship's death detonation. Allied ships are still not spared.
 effect|EXPLODE_ON_DEATH_AREA_PERCENT|-10.0	0	<good>-10%</good> increased area of this ship's death detonation. Allied ships are still not spared.
 effect|EXPLODE_ON_DEATH_AREA_PERCENT|-12.5	0	<good>-12.5%</good> increased area of this ship's death detonation. Allied ships are still not spared.
+effect|FEEDSTOCK_QUANTITY_PERCENT|1.0	0	Your fleet has <good>1%</good> increased quantity of feedstock found.
+effect|FEEDSTOCK_QUANTITY_PERCENT|10.0	0	Your fleet has <good>10%</good> increased quantity of feedstock found.
+effect|FEEDSTOCK_QUANTITY_PERCENT|12.5	0	Your fleet has <good>12.5%</good> increased quantity of feedstock found.
+effect|FEEDSTOCK_QUANTITY_PERCENT|100.0	0	Your fleet has <good>100%</good> increased quantity of feedstock found.
+effect|FEEDSTOCK_QUANTITY_PERCENT|-10.0	0	Your fleet has <bad>10%</bad> reduced quantity of feedstock found.
+effect|FEEDSTOCK_QUANTITY_PERCENT|-12.5	0	Your fleet has <bad>12.5%</bad> reduced quantity of feedstock found.
 effect|FIGHTER_ARMOR_PERCENT|1.0	0	Strikecraft launched from this ship have <good>1%</good> increased armor.
 effect|FIGHTER_ARMOR_PERCENT|10.0	0	Strikecraft launched from this ship have <good>10%</good> increased armor.
 effect|FIGHTER_ARMOR_PERCENT|12.5	0	Strikecraft launched from this ship have <good>12.5%</good> increased armor.
@@ -1840,6 +1846,12 @@ effect|ION_ARC_CHANCE_PERCENT|12.5	0	Energy shots that hit an enemy shield can a
 effect|ION_ARC_CHANCE_PERCENT|100.0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing <hl>25%</hl> of the shot's damage plus <hl>50%</hl> as EMP. The chance is <good>100%</good> when the target is at full hard flux and falls with its hard flux.
 effect|ION_ARC_CHANCE_PERCENT|-10.0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing <hl>25%</hl> of the shot's damage plus <hl>50%</hl> as EMP. The chance is <good>-10%</good> when the target is at full hard flux and falls with its hard flux.
 effect|ION_ARC_CHANCE_PERCENT|-12.5	0	Energy shots that hit an enemy shield can arc through to its hull, dealing <hl>25%</hl> of the shot's damage plus <hl>50%</hl> as EMP. The chance is <good>-12.5%</good> when the target is at full hard flux and falls with its hard flux.
+effect|ITEM_QUANTITY_PERCENT|1.0	0	Your fleet has <good>1%</good> increased quantity of items found.
+effect|ITEM_QUANTITY_PERCENT|10.0	0	Your fleet has <good>10%</good> increased quantity of items found.
+effect|ITEM_QUANTITY_PERCENT|12.5	0	Your fleet has <good>12.5%</good> increased quantity of items found.
+effect|ITEM_QUANTITY_PERCENT|100.0	0	Your fleet has <good>100%</good> increased quantity of items found.
+effect|ITEM_QUANTITY_PERCENT|-10.0	0	Your fleet has <bad>10%</bad> reduced quantity of items found.
+effect|ITEM_QUANTITY_PERCENT|-12.5	0	Your fleet has <bad>12.5%</bad> reduced quantity of items found.
 effect|KILL_FLUX_VENT_PERCENT|1.0	0	Destroying an enemy ship removes flux equal to <good>1%</good> of this ship's maximum flux.
 effect|KILL_FLUX_VENT_PERCENT|10.0	0	Destroying an enemy ship removes flux equal to <good>10%</good> of this ship's maximum flux.
 effect|KILL_FLUX_VENT_PERCENT|12.5	0	Destroying an enemy ship removes flux equal to <good>12.5%</good> of this ship's maximum flux.

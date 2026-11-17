@@ -7,12 +7,13 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Entities;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
+import com.fs.starfarer.api.impl.campaign.terrain.DebrisFieldTerrainPlugin;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.MockSector;
 import exiledsector.ProjectFiles;
 import exiledsector.charts.loot.StarChartLootSource;
-import exiledsector.charts.loot.DropType;
 import exiledsector.items.SalvageSiteDrops;
 import exiledsector.loot.LootMultipliers;
 import exiledsector.charts.ChartIds;
@@ -20,7 +21,6 @@ import exiledsector.items.AnchorJanusGate;
 import exiledsector.items.CraftingDrops;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemData;
-import exiledsector.items.ItemQuantity;
 import exiledsector.items.ItemUnlock;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.WormholeAnchorDefinitions;
@@ -123,14 +123,65 @@ class ItemSalvageListenerTest {
         assertEquals("custom_station", ItemSalvageListener.siteId(site("custom_station", null)));
     }
 
+    private static SectorEntityToken scavengedDebris(DebrisFieldTerrainPlugin.DebrisFieldSource source) {
+        SectorEntityToken debris = site(Entities.DEBRIS_FIELD_SHARED, null);
+        DebrisFieldTerrainPlugin.DebrisFieldParams params = new DebrisFieldTerrainPlugin.DebrisFieldParams(200f, 1f, 10f, 5f);
+        params.source = source;
+        DebrisFieldTerrainPlugin field = mock(DebrisFieldTerrainPlugin.class);
+        when(field.getParams()).thenReturn(params);
+        when(debris.getMemoryWithoutUpdate().get(MemFlags.SALVAGE_DEBRIS_FIELD)).thenReturn(field);
+        return debris;
+    }
+
+    @Test
+    void everyDebrisFieldButBattleAndSalvagedWreckDebrisIsASalvageSite() {
+        for (DebrisFieldTerrainPlugin.DebrisFieldSource source : List.of(DebrisFieldTerrainPlugin.DebrisFieldSource.GEN,
+                DebrisFieldTerrainPlugin.DebrisFieldSource.MIXED)) {
+            assertEquals(Entities.DEBRIS_FIELD_SHARED, ItemSalvageListener.siteId(scavengedDebris(source)), source.name());
+        }
+        for (DebrisFieldTerrainPlugin.DebrisFieldSource source : List.of(DebrisFieldTerrainPlugin.DebrisFieldSource.BATTLE,
+                DebrisFieldTerrainPlugin.DebrisFieldSource.SALVAGE, DebrisFieldTerrainPlugin.DebrisFieldSource.PLAYER_SALVAGE)) {
+            assertEquals(null, ItemSalvageListener.siteId(scavengedDebris(source)), source.name());
+        }
+        assertEquals(null, ItemSalvageListener.siteId(scavengedDebris(null)));
+        assertEquals(null, ItemSalvageListener.siteId(site(Entities.DEBRIS_FIELD_SHARED, null)));
+    }
+
+    @Test
+    void aChartDebrisRingRollsItsSalvageOnceOnTheFieldsOwnMemory() throws Exception {
+        SalvageSiteDrops.register(new JSONArray().put(new JSONObject().put("site", Entities.DEBRIS_FIELD_SHARED).put("chances", "1")
+                .put("uniqueChance", "0").put("feedstockMin", "5").put("feedstockMax", "5")));
+        SectorEntityToken ring = scavengedDebris(DebrisFieldTerrainPlugin.DebrisFieldSource.MIXED);
+        CargoAPI loot = mock(CargoAPI.class);
+
+        listener.reportAboutToShowLootToPlayer(loot, dialogFor(ring));
+        listener.reportAboutToShowLootToPlayer(loot, dialogFor(ring));
+
+        verify(ring.getMemoryWithoutUpdate(), times(1)).set(ItemSalvageListener.ROLLED_KEY, true);
+        assertFalse(ItemSalvageListener.canShowcase(ring));
+    }
+
+    @Test
+    void theShippedTableListsDebrisFieldsLikeAWreck() throws Exception {
+        SalvageSiteDrops.register(ProjectFiles.csvRows("data/config/exiledSector/item_salvage.csv"));
+        CargoAPI battleDebrisLoot = mock(CargoAPI.class);
+
+        assertTrue(SalvageSiteDrops.hasRule(Entities.DEBRIS_FIELD_SHARED));
+        assertTrue(ItemSalvageListener.canShowcase(scavengedDebris(DebrisFieldTerrainPlugin.DebrisFieldSource.GEN)));
+        assertTrue(ItemSalvageListener.canShowcase(scavengedDebris(DebrisFieldTerrainPlugin.DebrisFieldSource.MIXED)));
+        assertFalse(ItemSalvageListener.canShowcase(scavengedDebris(DebrisFieldTerrainPlugin.DebrisFieldSource.PLAYER_SALVAGE)));
+        assertFalse(ItemSalvageListener.canShowcase(scavengedDebris(DebrisFieldTerrainPlugin.DebrisFieldSource.BATTLE)));
+        listener.reportAboutToShowLootToPlayer(battleDebrisLoot, dialogFor(scavengedDebris(DebrisFieldTerrainPlugin.DebrisFieldSource.BATTLE)));
+        Mockito.verifyNoInteractions(battleDebrisLoot);
+    }
+
     @Test
     void salvageOutsideALiveChartSystemGetsNoChartBonuses() {
         SectorEntityToken outside = mock(SectorEntityToken.class);
         when(outside.getContainingLocation()).thenReturn(mock(LocationAPI.class));
         SectorEntityToken nowhere = mock(SectorEntityToken.class);
 
-        LootMultipliers none = new LootMultipliers(ChartGenContext.none().itemChances(), ChartGenContext.none().dropMult(DropType.FEEDSTOCK),
-                ItemQuantity.BASE, CraftingDrops.NO_BAND_SHIFT);
+        LootMultipliers none = new LootMultipliers(ChartGenContext.none().itemChances(), CraftingDrops.NO_BAND_SHIFT);
         assertEquals(none, StarChartLootSource.INSTANCE.lootMultipliersAt(outside.getContainingLocation()));
         assertEquals(none, StarChartLootSource.INSTANCE.lootMultipliersAt(nowhere.getContainingLocation()));
     }

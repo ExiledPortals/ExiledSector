@@ -324,6 +324,7 @@ class ItemCraftingTest {
         assertFalse(ItemCrafting.canUse(Nanoswarm.ANNULMENT, unique, definition -> true));
         assertFalse(Nanoswarm.ANNULMENT.appliesTo(ItemType.SUBROUTINE));
         assertTrue(Nanoswarm.ANNULMENT.appliesTo(ItemType.HULL_ITEM));
+        assertTrue(Nanoswarm.TUNING.appliesTo(ItemType.SUBROUTINE));
         assertFalse(ItemCrafting.canAnnul(item, bothInhibited));
         assertNull(ItemCrafting.annul(item, new Random(1L), bothInhibited));
         assertEquals(2, item.explicits().size());

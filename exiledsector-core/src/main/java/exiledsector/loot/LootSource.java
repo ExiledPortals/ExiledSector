@@ -45,7 +45,7 @@ public interface LootSource {
         return List.of();
     }
 
-    default void addShowcaseLoot(CargoAPI loot, Random random) {
+    default void addShowcaseLoot(CargoAPI loot, SectorEntityToken salvageEntity, Random random) {
     }
 
     default void addSiteFinds(SiteFind find) {

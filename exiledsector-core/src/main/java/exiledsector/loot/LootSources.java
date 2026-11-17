@@ -59,17 +59,23 @@ public final class LootSources {
             return items;
         }
         CampaignFleetAPI playerFleet = PlayerFleet.orNull();
-        LocationAPI playerLocation = playerFleet == null ? null : playerFleet.getContainingLocation();
-        List<ItemData> shapedWhereThePlayerIs = playerLocation == null ? items : shapeEach(items, origin.whereThePlayerIs(), playerLocation);
-        return origin.kind() == DropOrigin.Kind.SITE ? shapeEach(shapedWhereThePlayerIs, origin, playerLocation) : shapedWhereThePlayerIs;
+        return shape(items, origin, playerFleet == null ? null : playerFleet.getContainingLocation());
     }
 
-    private static List<ItemData> shapeEach(List<ItemData> items, DropOrigin origin, LocationAPI playerLocation) {
+    public static List<ItemData> shape(List<ItemData> items, DropOrigin origin, LocationAPI foundAt) {
+        if (items.isEmpty()) {
+            return items;
+        }
+        List<ItemData> shapedWhereFound = foundAt == null ? items : shapeEach(items, origin.whereThePlayerIs(), foundAt);
+        return origin.kind() == DropOrigin.Kind.SITE ? shapeEach(shapedWhereFound, origin, foundAt) : shapedWhereFound;
+    }
+
+    private static List<ItemData> shapeEach(List<ItemData> items, DropOrigin origin, LocationAPI foundAt) {
         List<ItemData> shaped = new ArrayList<>(items.size());
         for (ItemData item : items) {
             ItemData shapedItem = item;
             for (LootSource source : SOURCES.all()) {
-                shapedItem = source.shape(shapedItem, origin, playerLocation);
+                shapedItem = source.shape(shapedItem, origin, foundAt);
             }
             shaped.add(shapedItem);
         }

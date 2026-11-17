@@ -94,7 +94,7 @@ public class TechMiningItemListener implements EconomyTickListener {
             storageCargo = Global.getSector().getPlayerFleet().getCargo();
         }
         MarketAPI storedAt = storageMarket;
-        LootDelivery.deliverAsRolled(storageCargo, found, LootDelivery.eachFind(
+        LootDelivery.deliverFoundAt(storageCargo, found, minedMarket.getContainingLocation(), LootDelivery.eachFind(
                 itemName -> announce(minedMarket, storedAt, itemName),
                 materials -> materials.forEach((itemId, quantity) -> {
                     String materialName = MaterialItems.displayName(itemId);

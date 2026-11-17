@@ -1,9 +1,11 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
+import com.fs.starfarer.api.campaign.SectorAPI;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.security.AnyTypePermission;
+import exiledsector.loot.DropType;
 import exiledsector.modifiers.ModifierSlot;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -84,6 +86,15 @@ class UniqueSubroutinesTest {
 
     private Item fleetRelic(long seed) {
         return store.add(ItemData.rolled(ItemDefinitions.get(FLEET_RELIC), seed));
+    }
+
+    @Test
+    void theSubroutineQuantityStatCanRollWhenOnlyUniqueSubroutinesDrop() throws JSONException {
+        ItemDefinitions.clear();
+        ItemDefinitions.register(new JSONArray().put(uniqueRow(FLEET_RELIC, "@TOP_SPEED_PERCENT_RELIC", "faction:pirates")));
+
+        assertFalse(DroppableDefinitions.hasDroppableBasic(ItemKind.SUBROUTINE));
+        assertTrue(DropType.SUBROUTINE.canDrop(mock(SectorAPI.class)));
     }
 
     @Test
@@ -200,15 +211,14 @@ class UniqueSubroutinesTest {
     }
 
     @Test
-    void genericPickersSkipSiteBoundUniquesButNotFactionFavouredOnes() {
+    void theGenericUniquePickerSkipsSiteBoundUniquesButNotFactionFavouredOnes() {
         Random random = new Random(3L);
         Set<String> picked = new HashSet<>();
         for (int trial = 0; trial < TRIALS; trial++) {
-            picked.add(idOrBlank(DroppableDefinitions.pickBasic(random)));
             picked.add(idOrBlank(DroppableDefinitions.pickUnique(random, definition -> true)));
         }
 
-        assertEquals(Set.of("", FLEET_RELIC, HULL_RELIC_A, HULL_RELIC_B), picked);
+        assertEquals(Set.of(FLEET_RELIC, HULL_RELIC_A, HULL_RELIC_B), picked);
     }
 
     @Test

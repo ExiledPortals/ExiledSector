@@ -74,8 +74,6 @@
     "settings.hullItems.hullUpgradePoints.tooltip": "Refit Schematics raise a ship straight to their tier, up to 5. Star Chart Progress raises every ship to 2, 3 and 4 points as you clear tier 5, 10 and 15 Star Charts, and needs Star Charts switched on.",
     "settings.hullItems.masterSchematics.name": "Require Master Schematics",
     "settings.hullItems.masterSchematics.tooltip": "Each ship's skill tree stays locked until a Master Schematic is used on it. NPC trees only mirror ships with an open tree. Ships that already have nodes are unlocked when this is switched on. Needs Hull Upgrades.",
-    "settings.hullItems.battleItems.name": "Hull Item Drops From Battles",
-    "settings.hullItems.battleItems.tooltip": "Covers hull items and schematics, including Logistics Schematics. 100 is normal and 0 turns them off.",
     "hullItem.target.line": "Targets this ship's {section} item.",
     "hullItem.target.choices": "Can target: {sections}",
     "hullItem.affinity.current": "Currently on this ship: {line}",

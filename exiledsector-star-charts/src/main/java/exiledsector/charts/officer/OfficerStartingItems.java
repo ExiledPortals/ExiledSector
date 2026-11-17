@@ -5,6 +5,7 @@ import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.officer.reward.CarriedItem;
 import exiledsector.charts.officer.reward.OfficerRewardPool;
 import exiledsector.charts.officer.reward.RewardContext;
+import exiledsector.loot.LootMultipliers;
 import org.apache.log4j.Logger;
 
 import java.util.List;
@@ -38,7 +39,7 @@ public final class OfficerStartingItems {
     private static CarriedItem rolled(SectorAPI sector, AtlasOfficer officer, Random random) {
         try {
             int tier = tierFor(officer.rankId());
-            RewardContext context = RewardContext.forSector(sector, tier, officer.factionId(), null, ChartTiers.bandShift(tier));
+            RewardContext context = RewardContext.forSector(sector, tier, officer.factionId(), null, LootMultipliers.atTierBandShift(ChartTiers.bandShift(tier)));
             return OfficerRewardPool.startingItem(context, OfficerRanks.startingOdds(officer.rankId()), random);
         } catch (RuntimeException | LinkageError e) {
             LOG.error("[ExiledSector] Rolling the starting item of Atlas officer " + officer.recordId() + " failed", e);

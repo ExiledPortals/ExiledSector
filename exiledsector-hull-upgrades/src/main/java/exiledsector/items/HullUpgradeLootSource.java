@@ -5,8 +5,8 @@ import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import exiledsector.loot.BattleLoot;
-import exiledsector.loot.BattleItemDropSetting;
 import exiledsector.loot.DropOrigin;
+import exiledsector.loot.DropType;
 import exiledsector.loot.FleetLossTally;
 import exiledsector.loot.Loot;
 import exiledsector.loot.LootDelivery;
@@ -15,7 +15,6 @@ import exiledsector.loot.LootSources;
 import exiledsector.loot.MarketStock;
 import exiledsector.loot.OutsideChartShare;
 import exiledsector.loot.SiteFind;
-import exiledsector.skills.skilleffect.logistics.FoundItemQuantity;
 import org.apache.log4j.Logger;
 
 import java.util.List;
@@ -54,8 +53,7 @@ public final class HullUpgradeLootSource implements LootSource, MarketStock {
             return Loot.NONE;
         }
         try {
-            return BattleItemDrops.roll(battleItems(battle), BattleItemDropSetting.multiplier(),
-                    FoundItemQuantity.hullItemPercent(), battle.random(),
+            return BattleItemDrops.roll(battleItems(battle), battle.random(),
                     definition -> ItemUnlock.canDrop(definition, sector), hullItemDropsOpen);
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Rolling battle hull item drops failed", e);
@@ -66,12 +64,11 @@ public final class HullUpgradeLootSource implements LootSource, MarketStock {
     @Override
     public void addSiteFinds(SiteFind find) {
         if (HullUpgradesSetting.hullItemDropsOpen(find.sector())) {
-            Loot hullItemLoot = HullItemDrops.rollHullItemLoot(find.dropSite(), find.random(), find.chances(),
-                    FoundItemQuantity.hullItemPercent());
+            Loot hullItemLoot = HullItemDrops.rollHullItemLoot(find.dropSite(), find.random(), find.chances());
             find.items().addAll(hullItemLoot.items());
             find.schematics().addAll(hullItemLoot.schematics());
         }
-        find.schematics().addAll(HullItemDrops.rollMasterSchematic(find.dropSite(), find.random(), find.chances().general()));
+        find.schematics().addAll(HullItemDrops.rollMasterSchematic(find.dropSite(), find.random(), find.chances().quantity(DropType.SCHEMATIC)));
     }
 
     @Override

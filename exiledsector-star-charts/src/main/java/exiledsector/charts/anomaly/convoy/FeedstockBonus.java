@@ -1,7 +1,7 @@
 package exiledsector.charts.anomaly.convoy;
 
 import exiledsector.charts.generation.ChartGenContext;
-import exiledsector.charts.loot.DropType;
+import exiledsector.loot.DropType;
 
 final class FeedstockBonus {
 
@@ -27,7 +27,7 @@ final class FeedstockBonus {
     }
 
     private static float increasedMult(ChartGenContext lines, float extraPercent) {
-        float increased = lines.anomalyPercent(SupplyConvoy.FEEDSTOCK_KEY) + extraPercent;
-        return Math.max(0f, lines.dropMult(DropType.CRAFTING_ITEM) + increased / ChartGenContext.PERCENT);
+        return lines.itemChances().plusPercent(DropType.FEEDSTOCK, lines.anomalyPercent(SupplyConvoy.FEEDSTOCK_KEY) + extraPercent)
+                .quantity(DropType.FEEDSTOCK);
     }
 }

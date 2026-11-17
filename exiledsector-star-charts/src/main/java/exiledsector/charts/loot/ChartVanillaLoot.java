@@ -7,6 +7,7 @@ import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.content.ChartPoi;
 
 import exiledsector.data.RandomRounding;
+import exiledsector.loot.DropType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
