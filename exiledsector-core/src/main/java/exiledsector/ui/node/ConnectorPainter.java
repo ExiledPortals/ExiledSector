@@ -41,6 +41,7 @@ public final class ConnectorPainter {
     private final float[] cumulativeArcLength = new float[CURVE_ARC_SAMPLES + 1];
     private final float[] bubbleFractions = new float[MAX_BUBBLES_PER_CONNECTOR];
     private final float[] pathPoint = new float[4];
+    private float[] pathLengths = new float[0];
     private int bubbleCount;
     private boolean bubblesTowardEnd;
     private Color conduitColor = Color.WHITE;
@@ -208,6 +209,35 @@ public final class ConnectorPainter {
         SegmentFade segmentFade = segmentFade(connectorStyle, totalLength - r1 - r2);
         renderCurveSegments(curve, cumLen, r1, segmentFade);
         drawBubbles(segmentFade, r1, totalLength, 0f, 0f, 0f, 0f, curve, cumLen);
+    }
+
+    public void paintPath(float[] xs, float[] ys, int count, float startRadius, float endRadius, ConnectorStyle connectorStyle) {
+        if (count < 2) return;
+        if (pathLengths.length < count) {
+            pathLengths = new float[count];
+        }
+        pathLengths[0] = 0f;
+        for (int i = 1; i < count; i++) {
+            pathLengths[i] = pathLengths[i - 1] + (float) Math.hypot(xs[i] - xs[i - 1], ys[i] - ys[i - 1]);
+        }
+        float totalLength = pathLengths[count - 1];
+        float visibleLength = totalLength - startRadius - endRadius;
+        if (visibleLength <= 0f) return;
+
+        SegmentFade segmentFade = segmentFade(connectorStyle, visibleLength);
+        float visibleEnd = totalLength - endRadius;
+        for (int i = 1; i < count; i++) {
+            float from = Math.max(pathLengths[i - 1], startRadius);
+            float to = Math.min(pathLengths[i], visibleEnd);
+            float stepLength = pathLengths[i] - pathLengths[i - 1];
+            if (to <= from || stepLength <= 0f) continue;
+            float fromShare = (from - pathLengths[i - 1]) / stepLength;
+            float toShare = (to - pathLengths[i - 1]) / stepLength;
+            scratchSegment.set(xs[i - 1] + (xs[i] - xs[i - 1]) * fromShare, ys[i - 1] + (ys[i] - ys[i - 1]) * fromShare,
+                    xs[i - 1] + (xs[i] - xs[i - 1]) * toShare, ys[i - 1] + (ys[i] - ys[i - 1]) * toShare,
+                    (from - startRadius) / visibleLength, (to - startRadius) / visibleLength);
+            drawFadedSegment(scratchSegment, segmentFade);
+        }
     }
 
     private void drawBubbles(SegmentFade segmentFade, float startLength, float totalLength, float startX, float startY, float dirX, float dirY,

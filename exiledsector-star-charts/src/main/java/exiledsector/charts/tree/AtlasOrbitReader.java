@@ -47,7 +47,10 @@ public final class AtlasOrbitReader {
             paths.add(0, path);
         }
         AtlasBodyArt.Facing facing = enumNamed(AtlasBodyArt.Facing.class, artJson.optString("facing", "spin"), AtlasBodyArt.Facing.SPIN);
-        return new AtlasBodyArt(kind, artJson.optString("planet", null), paths, (float) artJson.optDouble("size", AtlasBodyArt.DEFAULT_SIZE), facing);
+        AtlasBodyArt.Shape shape = new AtlasBodyArt.Shape((float) artJson.optDouble("size", AtlasBodyArt.DEFAULT_SIZE), facing,
+                (float) artJson.optDouble("spin", 1.0));
+        return new AtlasBodyArt(kind, artJson.optString("planet", null), paths, TreeJson.stringList(artJson.optJSONArray("hulls")), shape,
+                artJson.optString("light", null));
     }
 
     private static <E extends Enum<E>> E enumNamed(Class<E> type, String name, E fallback) {

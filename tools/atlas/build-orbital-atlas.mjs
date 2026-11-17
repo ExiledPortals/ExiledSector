@@ -7,47 +7,104 @@ const TREE_PATH = resolve(repoRoot, 'data/skilltrees/atlas_tree.json');
 const ORBITS_PATH = resolve(repoRoot, 'data/skilltrees/atlas_orbits.json');
 
 const ROOT_ID = 'atlas_root';
-const STAR_RADIUS = 260;
-const RING_RADII = [1000, 2000, 3000, 4000, 5000];
+const STAR_RADIUS = 520;
+const STAR_CLEARANCE = 260;
+const RING_CLEARANCE = 160;
+const BELT_HALF_WIDTH = 75;
 const RING_NODE_COUNTS = [8, 12, 18, 20, 24];
 const INNER_RING_SPEED = 1.2;
 const RING_HIGHWAYS = ['travel_boss_star_charts', 'travel_boss_star_charts', 'travel_catalysts', 'travel_catalysts', 'travel_chart_modifier_effect'];
-const HIGHWAY_COLOURS = {
-  travel_boss_star_charts: '#b4d2ff',
-  travel_catalysts: '#ffc85a',
-  travel_chart_modifier_effect: '#e68cff',
-};
+const HIGHWAY_COLOUR = '#ffffff';
 const HIGHWAY_ROCKS = Array.from({ length: 12 }, (_, index) => `graphics/asteroids/ring_asteroid${String(index).padStart(2, '0')}.png`);
 const HIGHWAY_ROCK_SIZE = 16;
 const ROOT_RAYS = 3;
 const TETHERS_INTO_RING = [0, 3, 4, 5, 6];
-const SPOKE_LENGTH_MIN = 95;
-const SPOKE_LENGTH_SPREAD = 70;
-const SATELLITE_GAP = 42;
+const SPOKE_CLEARANCE = BELT_HALF_WIDTH + 40;
+const SPOKE_SPREAD = 60;
+const SATELLITE_GAP = 40;
+const WHEEL_CLEARANCE = 60;
 const INNER_SATELLITE_SPEED = [8, 13];
 const OUTER_SATELLITE_SPEED = [4.5, 7.5];
+const ESCORT_BESIDE = [1, 0.75];
+const ESCORT_BEHIND = [0.5, 0.6];
+const SITE_LIGHT = '#ffbe5a';
+
+const MOON_PLANETS = ['barren', 'barren2', 'barren3', 'rocky_ice', 'frozen1', 'rocky_metallic'];
+const SITE_PLANETS = ['lava', 'frozen', 'frozen2', 'frozen3', 'cryovolcanic', 'barren', 'barren_castiron', 'barren2', 'barren3', 'rocky_metallic',
+  'rocky_unstable', 'rocky_ice', 'barren-bombarded', 'toxic_cold', 'terran', 'terran-eccentric', 'jungle', 'water', 'tundra', 'desert', 'desert1',
+  'barren-desert'];
+const CONVOY_LEADS = ['atlas', 'colossus', 'prometheus'];
+const FREIGHTERS = ['buffalo', 'tarsus', 'hermes', 'phaeton', 'dram', 'mule'];
+const COMBAT_FREIGHTERS = ['gemini', 'wayfarer', 'mule', 'cerberus', 'hound'];
+const ESCORTS = ['lasher', 'wolf', 'hound', 'vigilance', 'centurion', 'brawler', 'enforcer', 'hammerhead', 'sunder', 'monitor'];
+const DORMANT_HULLS = {
+  remnant: { lead: ['brilliant', 'radiant', 'nova', 'apex'], rest: ['glimmer', 'lumen', 'fulgent', 'scintilla'] },
+  threat: { lead: ['fabricator_unit', 'hive_unit', 'standoff_unit'], rest: ['skirmish_unit', 'assault_unit', 'overseer_unit'] },
+  dweller: { lead: ['shrouded_maw', 'shrouded_maelstrom'], rest: ['shrouded_tendril', 'shrouded_eye'] },
+  derelict: { lead: ['guardian', 'rampart', 'bastillon', 'berserker'], rest: ['picket', 'sentry', 'warden', 'defender'] },
+};
+const DORMANT_FACTION = { redacted_sleepers: 'remnant', threatening_sleepers: 'threat', veiled_sleepers: 'dweller' };
+
+function seededRandom(seed) {
+  let state = seed >>> 0;
+  return () => {
+    state = (state + 0x6d2b79f5) >>> 0;
+    let mixed = state;
+    mixed = Math.imul(mixed ^ (mixed >>> 15), mixed | 1);
+    mixed ^= mixed + Math.imul(mixed ^ (mixed >>> 7), mixed | 61);
+    return ((mixed ^ (mixed >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const random = seededRandom(20261117);
+const between = ([low, high]) => low + (high - low) * random();
+const pick = (options) => options[Math.floor(random() * options.length)];
+const pickSome = (options, low, high) => Array.from({ length: low + Math.floor(random() * (high - low + 1)) }, () => pick(options));
+const round = (value) => Math.round(value * 10) / 10;
+const toRadians = (degrees) => degrees * Math.PI / 180;
+const angularGap = (first, second) => Math.abs(((first - second + 540) % 360) - 180);
+
+function shuffled(options) {
+  const copy = [...options];
+  for (let index = copy.length - 1; index > 0; index--) {
+    const swap = Math.floor(random() * (index + 1));
+    [copy[index], copy[swap]] = [copy[swap], copy[index]];
+  }
+  return copy;
+}
+
+const sitePlanets = shuffled(SITE_PLANETS);
+const nextSitePlanet = () => sitePlanets.shift();
+
+const escortFleet = () => ({ kind: 'fleet', hulls: pickSome(ESCORTS, 2, 3), size: 26, facing: 'travel' });
+const convoyFleet = (hulls) => ({ kind: 'fleet', hulls, size: 70, facing: 'travel' });
+
+function dormantFleet(notableType) {
+  const hulls = DORMANT_HULLS[DORMANT_FACTION[notableType] ?? 'derelict'];
+  return { kind: 'derelicts', hulls: [pick(hulls.lead), ...pickSome(hulls.rest, 3, 5)], size: 70 };
+}
 
 const ANOMALIES = {
   excavation_sites: {
     colour: '#ffaa50',
     chance: 'excavation_sites_chance',
     others: ['additional_site', 'inhibitor_quantity'],
-    small: (pick) => ({ kind: 'planet', planet: pick(['barren', 'barren2', 'barren3', 'rocky_ice', 'frozen1']), size: 15 }),
-    notable: (pick) => ({ kind: 'planet', planet: pick(['barren', 'barren_castiron', 'rocky_metallic', 'rocky_unstable', 'barren-bombarded', 'cryovolcanic', 'barren-desert', 'rocky_ice']), size: 50 }),
+    small: () => ({ kind: 'planet', planet: pick(MOON_PLANETS), size: 45 }),
+    notable: () => ({ kind: 'planet', planet: nextSitePlanet(), size: 150, light: SITE_LIGHT }),
   },
   supply_convoy: {
     colour: '#78dc8c',
     chance: 'supply_convoy_chance',
     others: ['threat_feedstock_chance', 'shroud_feedstock_chance', 'phase_feedstock_chance', 'feedstock_duplication', 'additional_convoy_chance'],
-    small: (pick) => ({ kind: 'sprite', path: pick(['graphics/ships/buffalo/buffalo_base.png', 'graphics/ships/hermes/hermes_base.png', 'graphics/ships/tarsus/tarsus_base.png', 'graphics/ships/mule/mule_base.png']), size: 20, facing: 'travel' }),
-    notable: () => ({ kind: 'fleet', paths: ['graphics/ships/atlas/atlas.png', 'graphics/ships/buffalo/buffalo_base.png', 'graphics/ships/buffalo/buffalo_base.png'], size: 58 }),
+    small: escortFleet,
+    notable: () => convoyFleet([pick(CONVOY_LEADS), ...pickSome(FREIGHTERS, 4, 6)]),
   },
   relay_network: {
     colour: '#6ec8ff',
     chance: 'relay_network_chance',
     others: ['relay_reward_rarity'],
-    small: () => ({ kind: 'sprite', path: 'graphics/ships/nav_buoy.png', size: 17, facing: 'spin' }),
-    notable: (pick) => ({ kind: 'sprite', path: pick(['graphics/ships/com_relay.png', 'graphics/ships/sensor_array.png']), size: 50, facing: 'spin' }),
+    small: () => ({ kind: 'sprite', path: 'graphics/ships/nav_buoy.png', size: 14, facing: 'spin' }),
+    notable: () => ({ kind: 'sprite', path: pick(['graphics/ships/com_relay.png', 'graphics/ships/sensor_array.png']), size: 28, facing: 'spin', spin: 0.2 }),
   },
   spatial_breach: {
     colour: '#be78ff',
@@ -60,26 +117,25 @@ const ANOMALIES = {
     colour: '#ff6e5a',
     chance: 'anomalous_debris_chance',
     others: ['additional_debris', 'engram_quantity'],
-    small: (pick) => ({ kind: 'sprite', path: pick(['graphics/asteroids/asteroid1.png', 'graphics/asteroids/asteroid2.png', 'graphics/asteroids/asteroid3.png', 'graphics/asteroids/asteroid4.png']), size: 19, facing: 'spin' }),
-    notable: (pick) => ({ kind: 'fleet', paths: pick([
-      ['graphics/ships/derelict/derelict_warden.png', 'graphics/ships/derelict/derelict_sentry.png', 'graphics/ships/derelict/derelict_picket.png'],
-      ['graphics/ships/derelict/derelict_bastillon.png', 'graphics/ships/derelict/derelict_defender.png', 'graphics/ships/derelict/derelict_defender.png'],
-      ['graphics/ships/derelict/derelict_berserker.png', 'graphics/ships/derelict/derelict_picket.png', 'graphics/ships/derelict/derelict_sentry.png'],
-      ['graphics/ships/derelict/derelict_rampart.png', 'graphics/ships/derelict/derelict_warden.png', 'graphics/ships/derelict/derelict_picket.png'],
-    ]), size: 58 }),
+    small: () => ({ kind: 'sprite', path: pick(['graphics/asteroids/asteroid1.png', 'graphics/asteroids/asteroid2.png', 'graphics/asteroids/asteroid3.png', 'graphics/asteroids/asteroid4.png']), size: 19, facing: 'spin' }),
+    notable: (notableType) => dormantFleet(notableType),
   },
   listening_post: {
     colour: '#f0dc6e',
     chance: 'listening_post_chance',
     others: ['vault_quantity', 'slow_purge'],
-    small: (pick) => ({ kind: 'sprite', path: pick(['graphics/ships/wolf/wolf_base.png', 'graphics/ships/lasher/lasher_base.png']), size: 17, facing: 'travel' }),
-    notable: (pick) => ({ kind: 'sprite', path: pick(['graphics/stations/station_side00.png', 'graphics/stations/station_side01.png', 'graphics/stations/station_side02.png', 'graphics/stations/station_side03.png', 'graphics/stations/station_side04.png']), size: 58, facing: 'spin' }),
+    small: () => ({ kind: 'sprite', path: pick(['graphics/ships/wolf/wolf_base.png', 'graphics/ships/lasher/lasher_base.png']), size: 17, facing: 'travel' }),
+    notable: () => ({ kind: 'sprite', path: pick(['graphics/stations/station_side01.png', 'graphics/stations/station_side02.png', 'graphics/stations/station_side03.png', 'graphics/stations/station_side04.png']), size: 58, facing: 'spin' }),
   },
 };
 
-const KEYSTONE_ART = {
-  silent_choir: { kind: 'sprite', path: 'graphics/stations/cryosleeper.png', size: 92, facing: 'spin' },
-  mixed_manifest: { kind: 'sprite', path: 'graphics/stations/station_midline1.png', size: 92, facing: 'spin' },
+const NOTABLE_ART = {
+  silent_choir: () => ({ kind: 'sprite', path: 'graphics/stations/cryosleeper.png', size: 92, facing: 'spin' }),
+  mixed_manifest: () => ({ kind: 'sprite', path: 'graphics/stations/station_midline1.png', size: 92, facing: 'spin' }),
+  incursion: () => ({ kind: 'sprite', path: 'graphics/stations/station_side00.png', size: 64, facing: 'spin', spin: 0.3 }),
+  fortified_depot: () => ({ kind: 'station', hulls: ['station2'], size: 80 }),
+  double_down: () => ({ kind: 'binary', paths: ['graphics/ships/com_relay.png', 'graphics/ships/sensor_array.png'], size: 40, facing: 'spin', spin: 0.2 }),
+  open_season: () => convoyFleet(pickSome(COMBAT_FREIGHTERS, 5, 6)),
 };
 
 const HYBRIDS = {
@@ -122,28 +178,6 @@ const RINGS = [
 
 const MAX_CHANCE_NODES = 12;
 
-function seededRandom(seed) {
-  let state = seed >>> 0;
-  return () => {
-    state = (state + 0x6d2b79f5) >>> 0;
-    let mixed = state;
-    mixed = Math.imul(mixed ^ (mixed >>> 15), mixed | 1);
-    mixed ^= mixed + Math.imul(mixed ^ (mixed >>> 7), mixed | 61);
-    return ((mixed ^ (mixed >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-const random = seededRandom(20261117);
-const between = ([low, high]) => low + (high - low) * random();
-const pick = (options) => options[Math.floor(random() * options.length)];
-const round = (value) => Math.round(value * 10) / 10;
-const toRadians = (degrees) => degrees * Math.PI / 180;
-const angularGap = (first, second) => Math.abs(((first - second + 540) % 360) - 180);
-
-function ringSpeed(ringIndex) {
-  return round(INNER_RING_SPEED * Math.pow(RING_RADII[0] / RING_RADII[ringIndex], 1.5) * 1000) / 1000;
-}
-
 const nodes = [];
 const orbits = [];
 const nodeById = new Map();
@@ -171,36 +205,16 @@ function link(first, second) {
   if (!second.connectedTo.includes(first.id)) second.connectedTo.push(first.id);
 }
 
-const root = { id: ROOT_ID, type: ROOT_ID, connectedTo: [], x: 0, y: 0 };
-nodes.push(root);
-nodeById.set(ROOT_ID, root);
-orbits.push({ id: ROOT_ID, art: { kind: 'star', size: STAR_RADIUS } });
-
-const rings = RING_RADII.map((radius, ringIndex) => {
-  const count = RING_NODE_COUNTS[ringIndex];
-  const phase = random() * 360;
-  const type = RING_HIGHWAYS[ringIndex];
-  const speed = ringSpeed(ringIndex);
-  const ringNodes = [];
-  for (let index = 0; index < count; index++) {
-    const angle = phase + index * 360 / count;
-    const node = addNode(type, radius * Math.cos(toRadians(angle)), radius * Math.sin(toRadians(angle)), [], {
-      around: ROOT_ID, speed, colour: HIGHWAY_COLOURS[type], art: { kind: 'sprite', path: pick(HIGHWAY_ROCKS), size: HIGHWAY_ROCK_SIZE, facing: 'spin' },
-    });
-    ringNodes.push({ node, angle });
-  }
-  ringNodes.forEach(({ node }, index) => link(node, ringNodes[(index + 1) % count].node));
-  return { radius, speed, nodes: ringNodes, insideWheelAngles: [], insideSpokes: [], usedSpokes: new Set() };
-});
-
 function wheelPlan(notableType) {
   const hybrid = HYBRIDS[notableType];
   if (hybrid) {
+    const art = { kind: 'planet', planet: hybrid.planet, size: 162 };
+    if (hybrid.anomalies.includes('excavation_sites')) art.light = SITE_LIGHT;
     return {
       notableType,
       tags: [...new Set(notableType === 'event_horizon' ? ['black_hole', 'spatial_breach'] : hybrid.anomalies)],
       colour: hybrid.colour,
-      art: { kind: 'planet', planet: hybrid.planet, size: 54 },
+      art,
       smallAnomalies: hybrid.anomalies,
       hybrid: true,
     };
@@ -211,16 +225,69 @@ function wheelPlan(notableType) {
     notableType,
     tags: [anomaly],
     colour: ANOMALIES[anomaly].colour,
-    art: KEYSTONE_ART[notableType] ?? ANOMALIES[anomaly].notable(pick),
+    art: NOTABLE_ART[notableType]?.() ?? ANOMALIES[anomaly].notable(notableType),
     smallAnomalies: [anomaly, anomaly],
     hybrid: false,
   };
+}
+
+function shapeWheel(wheel) {
+  wheel.smallArt = wheel.smallAnomalies.map((anomaly) => ANOMALIES[anomaly].small());
+  wheel.convoy = !wheel.hybrid && wheel.art.kind === 'fleet';
+  const [outerSize, innerSize] = wheel.smallArt.map((art) => art.size);
+  if (wheel.convoy) {
+    const spacing = wheel.art.size + SATELLITE_GAP + Math.max(outerSize, innerSize);
+    wheel.escortSpacing = spacing;
+    const outerTrack = spacing * Math.hypot(ESCORT_BESIDE[0], ESCORT_BEHIND[0]);
+    wheel.reach = outerTrack + outerSize;
+  } else {
+    wheel.innerTrack = wheel.art.size + SATELLITE_GAP + innerSize;
+    wheel.outerTrack = wheel.innerTrack + innerSize + SATELLITE_GAP + outerSize;
+    wheel.reach = wheel.outerTrack + outerSize;
+  }
+  wheel.spokeLength = SPOKE_CLEARANCE + random() * SPOKE_SPREAD + wheel.reach;
+  wheel.extent = wheel.spokeLength + wheel.reach;
 }
 
 const plannedWheels = RINGS.flatMap((entries, ringIndex) => entries.map((entry, slot) => {
   const [notableType, side] = entry.split(' ');
   return { ...wheelPlan(notableType), ringIndex, slot, slotCount: entries.length, inside: side === 'i' };
 }));
+plannedWheels.forEach(shapeWheel);
+
+const extentOf = (ringIndex, inside) => Math.max(BELT_HALF_WIDTH,
+  ...plannedWheels.filter((wheel) => wheel.ringIndex === ringIndex && wheel.inside === inside).map((wheel) => wheel.extent));
+const ringRadii = [];
+RING_NODE_COUNTS.forEach((_, ringIndex) => {
+  const below = ringIndex === 0 ? STAR_RADIUS + STAR_CLEARANCE : ringRadii[ringIndex - 1] + extentOf(ringIndex - 1, false) + RING_CLEARANCE;
+  ringRadii.push(Math.round(below + extentOf(ringIndex, true)));
+});
+
+function ringSpeed(ringIndex) {
+  return round(INNER_RING_SPEED * Math.pow(ringRadii[0] / ringRadii[ringIndex], 1.5) * 1000) / 1000;
+}
+
+const root = { id: ROOT_ID, type: ROOT_ID, connectedTo: [], x: 0, y: 0 };
+nodes.push(root);
+nodeById.set(ROOT_ID, root);
+orbits.push({ id: ROOT_ID, art: { kind: 'star', size: STAR_RADIUS } });
+
+const rings = ringRadii.map((radius, ringIndex) => {
+  const count = RING_NODE_COUNTS[ringIndex];
+  const phase = random() * 360;
+  const type = RING_HIGHWAYS[ringIndex];
+  const speed = ringSpeed(ringIndex);
+  const ringNodes = [];
+  for (let index = 0; index < count; index++) {
+    const angle = phase + index * 360 / count;
+    const node = addNode(type, radius * Math.cos(toRadians(angle)), radius * Math.sin(toRadians(angle)), [], {
+      around: ROOT_ID, speed, colour: HIGHWAY_COLOUR, art: { kind: 'sprite', path: pick(HIGHWAY_ROCKS), size: HIGHWAY_ROCK_SIZE, facing: 'spin' },
+    });
+    ringNodes.push({ node, angle });
+  }
+  ringNodes.forEach(({ node }, index) => link(node, ringNodes[(index + 1) % count].node));
+  return { radius, speed, nodes: ringNodes, wheels: [], insideSpokes: [], usedSpokes: new Set() };
+});
 
 const slotsByAnomaly = new Map();
 const orderedForChance = [...plannedWheels.filter((wheel) => wheel.hybrid), ...plannedWheels.filter((wheel) => !wheel.hybrid)];
@@ -240,6 +307,22 @@ for (const [anomaly, slots] of slotsByAnomaly) {
   });
 }
 
+function satelliteOffsets(wheel, spokeAngle) {
+  const phases = [random() * Math.PI * 2, random() * Math.PI * 2];
+  if (!wheel.convoy) {
+    return [wheel.outerTrack, wheel.innerTrack].map((track, order) => ({ x: track * Math.cos(phases[order]), y: track * Math.sin(phases[order]) }));
+  }
+  const outwardX = Math.cos(toRadians(spokeAngle));
+  const outwardY = Math.sin(toRadians(spokeAngle));
+  const travelX = -outwardY;
+  const travelY = outwardX;
+  const highwaySide = wheel.inside ? 1 : -1;
+  return [highwaySide, -highwaySide].map((side, order) => ({
+    x: wheel.escortSpacing * (side * ESCORT_BESIDE[order] * outwardX - ESCORT_BEHIND[order] * travelX),
+    y: wheel.escortSpacing * (side * ESCORT_BESIDE[order] * outwardY - ESCORT_BEHIND[order] * travelY),
+  }));
+}
+
 for (const wheel of plannedWheels) {
   const ring = rings[wheel.ringIndex];
   const step = ring.nodes.length / wheel.slotCount;
@@ -248,38 +331,39 @@ for (const wheel of plannedWheels) {
   while (ring.usedSpokes.has(spokeIndex)) spokeIndex = (spokeIndex + 1) % ring.nodes.length;
   ring.usedSpokes.add(spokeIndex);
   const spoke = ring.nodes[spokeIndex];
-  const bodySize = wheel.art.size;
-  const innerTrack = bodySize + SATELLITE_GAP;
-  const outerTrack = innerTrack + SATELLITE_GAP;
-  const spokeLength = SPOKE_LENGTH_MIN + random() * SPOKE_LENGTH_SPREAD;
-  const centreDistance = ring.radius + (wheel.inside ? -1 : 1) * (outerTrack + spokeLength);
+  const centreDistance = ring.radius + (wheel.inside ? -1 : 1) * wheel.spokeLength;
   const angle = toRadians(spoke.angle);
   const centreX = centreDistance * Math.cos(angle);
   const centreY = centreDistance * Math.sin(angle);
-  const tags = wheel.tags;
-  const notable = addNode(wheel.notableType, centreX, centreY, tags, { around: ROOT_ID, speed: ring.speed, colour: wheel.colour, art: wheel.art });
-  const satellites = [outerTrack, innerTrack].map((trackRadius, order) => {
+  const notable = addNode(wheel.notableType, centreX, centreY, wheel.tags, { around: ROOT_ID, speed: ring.speed, colour: wheel.colour, art: wheel.art });
+  const offsets = satelliteOffsets(wheel, spoke.angle);
+  const satellites = offsets.map((offset, order) => {
     const smallAnomaly = wheel.smallAnomalies[order];
-    const smallType = wheel.smallTypes[order];
-    const phase = random() * Math.PI * 2;
     const speedRange = order === 0 ? OUTER_SATELLITE_SPEED : INNER_SATELLITE_SPEED;
-    const art = ANOMALIES[smallAnomaly].small(pick);
-    return addNode(smallType, centreX + trackRadius * Math.cos(phase), centreY + trackRadius * Math.sin(phase), [smallAnomaly], {
-      around: notable.id, speed: round(between(speedRange) * 10) / 10, colour: ANOMALIES[smallAnomaly].colour, art,
+    const speed = wheel.convoy ? 0 : round(between(speedRange) * 10) / 10;
+    return addNode(wheel.smallTypes[order], centreX + offset.x, centreY + offset.y, [smallAnomaly], {
+      around: notable.id, speed, colour: ANOMALIES[smallAnomaly].colour, art: wheel.smallArt[order],
     });
   });
   link(spoke.node, satellites[0]);
   link(satellites[0], satellites[1]);
   link(satellites[1], notable);
-  if (wheel.inside) {
-    ring.insideWheelAngles.push({ angle: spoke.angle, reach: outerTrack + spokeLength + outerTrack });
-  }
+  ring.wheels.push({ x: centreX, y: centreY, reach: wheel.reach, type: wheel.notableType, angle: spoke.angle, inside: wheel.inside, extent: wheel.extent });
   if (wheel.inside) ring.insideSpokes.push(spoke.node.id);
 }
 
+const overlaps = [];
+for (const ring of rings) {
+  ring.wheels.forEach((first, index) => ring.wheels.slice(index + 1).forEach((second) => {
+    const distance = Math.hypot(first.x - second.x, first.y - second.y);
+    if (distance < first.reach + second.reach + WHEEL_CLEARANCE) overlaps.push(`${first.type} and ${second.type} (${Math.round(distance)})`);
+  }));
+}
+if (overlaps.length > 0) throw new Error(`Wheels overlap: ${overlaps.join(', ')}`);
+
 function clearOfInsideWheels(ring, angle) {
-  return ring.insideWheelAngles.every(({ angle: wheelAngle, reach }) => {
-    const clearance = Math.atan2(reach + 60, ring.radius - reach) * 180 / Math.PI;
+  return ring.wheels.filter((wheel) => wheel.inside).every(({ angle: wheelAngle, extent, reach }) => {
+    const clearance = Math.atan2(reach + 60, ring.radius - extent + reach) * 180 / Math.PI;
     return angularGap(angle, wheelAngle) > clearance;
   });
 }
@@ -325,5 +409,5 @@ const withCrlf = (value) => JSON.stringify(value, null, '\t').replace(/\n/g, '\r
 writeFileSync(TREE_PATH, withCrlf(tree));
 writeFileSync(ORBITS_PATH, withCrlf({ orbits }));
 
-console.log(`${nodes.length} nodes, ${plannedWheels.length} wheels, rings ${rings.map((ring) => ring.nodes.length).join('/')}`);
+console.log(`${nodes.length} nodes, ${plannedWheels.length} wheels, rings ${rings.map((ring) => `${ring.nodes.length}@${ring.radius}`).join(' / ')}`);
 console.log('chance nodes', chanceCounts);

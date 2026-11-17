@@ -25,13 +25,17 @@ final class AtlasBodyPainter {
     private static final String WHIRL_PATH = "graphics/stations/gate_whirl_glow.png";
     private static final float LIT_GLOW_SCALE = 3.4f;
     private static final float LIT_GLOW_ALPHA = 0.45f;
+    private static final float UNLIT_GLOW_SHARE = 0.5f;
+    private static final float SITE_LIGHT_REACH = 0.8f;
+    private static final float SITE_LIGHT_SIZE = 0.7f;
+    private static final float SITE_LIGHT_MIN_PIXELS = 6f;
+    private static final float SITE_LIGHT_BLINKS_PER_SECOND = 4f;
+    private static final float UNLIT_SITE_LIGHT_SHARE = 0.6f;
+    private static final float BINARY_SEPARATION = 0.55f;
+    private static final float BINARY_BODY_SHARE = 0.5f;
+    private static final float BINARY_DEGREES_PER_SECOND = 10f;
     private static final float PLANET_TURN_DEGREES_PER_SECOND = 5f;
     private static final float ATMOSPHERE_MIN_SHARE = 0.12f;
-    private static final float FLEET_LEAD_SHARE = 1.25f;
-    private static final float FLEET_ESCORT_SHARE = 0.7f;
-    private static final float FLEET_LEAD_AHEAD = 0.25f;
-    private static final float FLEET_ESCORT_BEHIND = 0.45f;
-    private static final float FLEET_ESCORT_SPREAD = 0.62f;
     private static final float SPRITE_FACING_OFFSET = -90f;
     private static final int SPHERE_DETAIL = 24;
 
@@ -39,24 +43,52 @@ final class AtlasBodyPainter {
     private final UnitSphere sphere = new UnitSphere(SPHERE_DETAIL);
     private final CategorySprite atmosphereTexture = new CategorySprite(AtmosphereRing.TEXTURE_CATEGORY, AtmosphereRing.TEXTURE_ID);
 
-    record Placement(float screenX, float screenY, float screenRadius, float headingDegrees, float spinDegrees) {
+    record Placement(float screenX, float screenY, float screenRadius, float headingDegrees, float spinDegrees, float seedDegrees) {
     }
 
-    void paint(AtlasBodyArt art, Color colour, Placement placement, Lighting lighting, float seconds, float alpha) {
+    void paint(AtlasBodyArt art, Color colour, Color siteLight, Placement placement, Lighting lighting, float seconds, float alpha) {
         if (art.kind() == AtlasBodyArt.Kind.STAR || alpha <= 0f) {
             return;
         }
-        if (lighting == Lighting.LIT) {
-            float glowSize = placement.screenRadius() * LIT_GLOW_SCALE;
-            SpriteDraw.drawAdditiveAtCenter(sprites, GLOW_PATH, placement.screenX(), placement.screenY(), glowSize, glowSize, colour, alpha * LIT_GLOW_ALPHA);
-        }
+        float glowSize = placement.screenRadius() * LIT_GLOW_SCALE;
+        float glowAlpha = LIT_GLOW_ALPHA * (lighting == Lighting.LIT ? 1f : UNLIT_GLOW_SHARE);
+        SpriteDraw.drawAdditiveAtCenter(sprites, GLOW_PATH, placement.screenX(), placement.screenY(), glowSize, glowSize, colour, alpha * glowAlpha);
         switch (art.kind()) {
             case PLANET -> paintPlanet(art, colour, placement, lighting, seconds, alpha);
             case SPRITE -> paintSprite(firstPath(art), placement.screenX(), placement.screenY(), placement.screenRadius(), angleOf(art, placement),
                     lighting, alpha);
-            case FLEET -> paintFleet(art.spritePaths(), placement, lighting, alpha);
+            case BINARY -> paintBinary(art, placement, lighting, seconds, alpha);
             case BREACH -> paintBreach(colour, placement, lighting, seconds, alpha);
+            case FLEET, DERELICTS, STATION -> {
+            }
             default -> paintPlain(colour, placement, lighting, alpha);
+        }
+        if (siteLight != null) {
+            paintSiteLight(siteLight, placement, lighting, seconds, alpha);
+        }
+    }
+
+    private void paintSiteLight(Color light, Placement placement, Lighting lighting, float seconds, float alpha) {
+        double siteAngle = Math.toRadians(placement.seedDegrees());
+        float radius = placement.screenRadius();
+        float blink = (float) Math.sin(seconds * SITE_LIGHT_BLINKS_PER_SECOND + placement.seedDegrees()) * 0.3f + 0.7f;
+        float size = Math.max(SITE_LIGHT_MIN_PIXELS, radius * SITE_LIGHT_SIZE);
+        float share = lighting == Lighting.LIT ? 1f : UNLIT_SITE_LIGHT_SHARE;
+        SpriteDraw.drawAdditiveAtCenter(sprites, GLOW_PATH, placement.screenX() + (float) Math.cos(siteAngle) * radius * SITE_LIGHT_REACH,
+                placement.screenY() + (float) Math.sin(siteAngle) * radius * SITE_LIGHT_REACH, size, size, light, blink * share * alpha);
+    }
+
+    private void paintBinary(AtlasBodyArt art, Placement placement, Lighting lighting, float seconds, float alpha) {
+        double pairTurn = Math.toRadians(placement.seedDegrees() + seconds * BINARY_DEGREES_PER_SECOND * art.spinRate());
+        float offset = placement.screenRadius() * BINARY_SEPARATION;
+        float offsetX = offset * (float) Math.cos(pairTurn);
+        float offsetY = offset * (float) Math.sin(pairTurn);
+        float bodyRadius = placement.screenRadius() * BINARY_BODY_SHARE;
+        List<String> paths = art.spritePaths();
+        for (int member = 0; member < Math.min(2, paths.size()); member++) {
+            float side = member == 0 ? 1f : -1f;
+            paintSprite(paths.get(member), placement.screenX() + offsetX * side, placement.screenY() + offsetY * side, bodyRadius,
+                    placement.spinDegrees() * side, lighting, alpha);
         }
     }
 
@@ -109,27 +141,6 @@ final class AtlasBodyPainter {
         float scale = screenRadius * 2f / longest;
         SpriteDraw.drawAtCenter(sprite, screenX, screenY, sprite.getWidth() * scale, sprite.getHeight() * scale, tintFor(lighting, Color.WHITE), alpha,
                 angleDegrees);
-    }
-
-    private void paintFleet(List<String> paths, Placement placement, Lighting lighting, float alpha) {
-        if (paths.isEmpty()) {
-            return;
-        }
-        double heading = Math.toRadians(placement.headingDegrees());
-        float forwardX = (float) Math.cos(heading);
-        float forwardY = (float) Math.sin(heading);
-        float radius = placement.screenRadius();
-        float angle = placement.headingDegrees() + SPRITE_FACING_OFFSET;
-        for (int ship = 1; ship < paths.size(); ship++) {
-            float side = ship % 2 == 0 ? -1f : 1f;
-            float row = (ship + 1) / 2;
-            float escortX = placement.screenX() - forwardX * radius * FLEET_ESCORT_BEHIND * row - forwardY * radius * FLEET_ESCORT_SPREAD * side;
-            float escortY = placement.screenY() - forwardY * radius * FLEET_ESCORT_BEHIND * row + forwardX * radius * FLEET_ESCORT_SPREAD * side;
-            paintSprite(paths.get(ship), escortX, escortY, radius * FLEET_ESCORT_SHARE, angle,
-                    lighting, alpha);
-        }
-        paintSprite(paths.get(0), placement.screenX() + forwardX * radius * FLEET_LEAD_AHEAD, placement.screenY() + forwardY * radius * FLEET_LEAD_AHEAD,
-                radius * FLEET_LEAD_SHARE, angle, lighting, alpha);
     }
 
     private void paintBreach(Color colour, Placement placement, Lighting lighting, float seconds, float alpha) {

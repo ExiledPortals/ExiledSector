@@ -40,13 +40,13 @@ class AtlasOrbitSystemTest {
                 { "id": "b1", "around": "root", "speed": 1 },
                 { "id": "b2", "around": "root", "speed": 1 },
                 { "id": "b3", "around": "root", "speed": 1 },
-                { "id": "planet", "around": "root", "speed": 2, "colour": "#ffaa50", "art": { "kind": "planet", "planet": "barren", "size": 12 } },
-                { "id": "out", "around": "planet", "speed": 5, "art": { "kind": "sprite", "path": "graphics/ships/nav_buoy.png", "size": 4, "facing": "travel" } },
-                { "id": "in", "around": "planet", "speed": 9 }
+                { "id": "planet", "around": "root", "speed": 2, "colour": "#ffaa50", "art": { "kind": "planet", "planet": "barren", "size": 12, "light": "#ffbe5a" } },
+                { "id": "out", "around": "planet", "speed": 5, "art": { "kind": "sprite", "path": "graphics/ships/nav_buoy.png", "size": 4, "facing": "travel", "spin": 0.2 } },
+                { "id": "in", "around": "planet", "speed": 9, "art": { "kind": "derelicts", "hulls": ["picket", "warden"], "size": 6 } }
             ] }
             """;
 
-    private static AtlasTreeData data() {
+    static AtlasTreeData data() {
         try {
             return AtlasTreeData.parse(new JSONObject(AtlasTreeFixtures.TYPES), new JSONObject(TREE), new JSONObject(ORBITS));
         } catch (JSONException e) {
@@ -129,10 +129,16 @@ class AtlasOrbitSystemTest {
         assertEquals(AtlasBodyArt.Kind.PLANET, planet.art().kind());
         assertEquals("barren", planet.art().planetType());
         assertEquals(12f, planet.art().size());
+        assertEquals("#ffbe5a", planet.art().lightColour());
+        assertEquals(1f, planet.art().spinRate());
         assertEquals("#ffaa50", planet.colour());
         assertEquals(AtlasBodyArt.Facing.TRAVEL, system.body("out").art().facing());
+        assertEquals(0.2f, system.body("out").art().spinRate());
         assertEquals(List.of("graphics/ships/nav_buoy.png"), system.body("out").art().spritePaths());
-        assertEquals(AtlasBodyArt.Kind.PLAIN, system.body("in").art().kind());
+        assertEquals(AtlasBodyArt.Kind.DERELICTS, system.body("in").art().kind());
+        assertEquals(List.of("picket", "warden"), system.body("in").art().hullIds());
+        assertTrue(system.body("in").art().isShipGroup());
+        assertEquals(AtlasBodyArt.Kind.PLAIN, system.body("a1").art().kind());
     }
 
     @Test

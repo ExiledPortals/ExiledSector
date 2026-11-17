@@ -7,9 +7,14 @@ The Atlas Tree is one large star system whose nodes orbit. Built 2026-11-17.
 - The root is the central star. Five highway rings of small nodes with no anomaly orbit it: rings 1-2 Boss Star Charts,
   rings 3-4 Catalysts, ring 5 Star Chart Modifier Effect. Each ring turns at its own speed, slower further out. The
   rings hold 8, 12, 18, 20 and 24 nodes; three rays leave the star, and 3, 4, 5 and 6 tethers reach rings 2 to 5.
-- Every notable and keystone is its own wheel: a body (planet, fleet, station, relay, breach) that turns with its ring,
-  on its inside or outside, with two small nodes orbiting it on two tracks. The path is ring node, outer small, inner
-  small, notable, so each notable has exactly two lead-ups of its anomaly.
+  Ring radii follow from the widest wheel either side of each ring, so wheels never overlap (the generator checks).
+- Every notable and keystone is its own wheel: a body (planet, fleet, derelicts, station, relay, breach) that turns with
+  its ring, on its inside or outside, with two small nodes orbiting it on two tracks. The path is ring node, outer small, inner
+  small, notable, so each notable has exactly two lead-ups of its anomaly. Convoy fleets are the exception: their two
+  escort fleets do not orbit but hold station beside and a little behind the convoy.
+- Excavation notables are planets of differing non-gas-giant types with the blinking site light; Debris notables are
+  dormant hulls of their sleeper faction in a debris field; Double Down is a binary of two relays; Fortified Depot is a
+  low-tech battlestation; Incursion a research station; Open Season a fleet of combat freighters.
 - Hybrids are planets whose two smalls come one from each parent anomaly (Event Horizon takes two breach smalls).
 - Chance nodes (+8%) fill lead-up slots first on hybrids, then from the inner ring outward, at most 12 per anomaly.
 - Harder notables sit on outer rings. An anomaly's notables are spread around and across rings, never grouped.
@@ -27,9 +32,17 @@ The Atlas Tree is one large star system whose nodes orbit. Built 2026-11-17.
 
 ## Drawing (done: `ui.atlas.AtlasOrbitView`, `ui.atlas.AtlasBodyPainter`)
 
-- The art is the node: dull when unallocated, brighter with a pulsing ring when allocatable, full colour with a glow
-  when allocated. Hover shows the node tooltip. Orbits slow to a stop while a node is hovered.
-- Tracks that links use are drawn as faint circles, lit in the node's colour once a node on them is allocated.
+- The art is the node: dull when unallocated, brighter with a breathing ring when allocatable, full colour when
+  allocated. Every body keeps its colour glow, at half strength until allocated. Hover shows the node tooltip and
+  slows orbits to a quarter speed.
+- Highway rings are asteroid belts (the outermost ice) turning with their ring; highway nodes keep a white node ring.
+  `charts.tree.AtlasOrbitLayout` sorts bodies into highway nodes, wheels, star rays and belts.
+- Only the star rays and each wheel's chain are drawn, with the skill tree's connector beams (`ui.atlas.AtlasWheelRoute`):
+  the highway node wraps around the notable to the outer small (switching sides over the planet once the other way is
+  clearly shorter), a spiral carries on the same way to the inner small, and a slight curve joins the notable.
+  Ring-to-ring tethers still count as links but are not drawn.
+- Fleets, derelicts and the battlestation are drawn from vanilla hulls (`ui.decoration.AtlasShipGroup`); fleets drift
+  in formation with engine flames, derelicts tumble without drives.
 
 ## Open
 

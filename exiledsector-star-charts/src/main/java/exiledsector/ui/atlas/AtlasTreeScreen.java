@@ -56,7 +56,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
     private final PointerGesture<Void> gesture = drag.gesture();
     private final AtlasOverlayFrame frame = new AtlasOverlayFrame();
     private final TreeDecorations decorations;
-    private final AtlasOrbitView orbitView = new AtlasOrbitView(data.orbits());
+    private final AtlasOrbitView orbitView = new AtlasOrbitView(data.orbits(), panelStyle);
     private final HyperspaceMode hyperspace;
     private final TextLabel titleLabel = new TextLabel(UiFonts.TITLE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
     private final TextLabel pointsLabel = new TextLabel(UiFonts.HINT, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
