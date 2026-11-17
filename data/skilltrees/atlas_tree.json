@@ -4,106 +4,1526 @@
 		{
 			"id": "atlas_root",
 			"type": "atlas_root",
-			"connectedTo": [],
+			"connectedTo": [
+				"travel_boss_star_charts_1",
+				"travel_boss_star_charts_4",
+				"travel_boss_star_charts_7"
+			],
 			"x": 0,
 			"y": 0
 		},
 		{
+			"id": "travel_boss_star_charts_1",
+			"type": "travel_boss_star_charts",
+			"connectedTo": [
+				"travel_boss_star_charts_2",
+				"travel_boss_star_charts_8",
+				"excavation_sites_chance_1",
+				"atlas_root"
+			],
+			"x": 711.6,
+			"y": -702.6
+		},
+		{
+			"id": "travel_boss_star_charts_2",
+			"type": "travel_boss_star_charts",
+			"connectedTo": [
+				"travel_boss_star_charts_1",
+				"travel_boss_star_charts_3",
+				"supply_convoy_chance_1"
+			],
+			"x": 1000,
+			"y": 6.4
+		},
+		{
+			"id": "travel_boss_star_charts_3",
+			"type": "travel_boss_star_charts",
+			"connectedTo": [
+				"travel_boss_star_charts_2",
+				"travel_boss_star_charts_4",
+				"travel_boss_star_charts_15"
+			],
+			"x": 702.6,
+			"y": 711.6
+		},
+		{
+			"id": "travel_boss_star_charts_4",
+			"type": "travel_boss_star_charts",
+			"connectedTo": [
+				"travel_boss_star_charts_3",
+				"travel_boss_star_charts_5",
+				"listening_post_chance_1",
+				"atlas_root"
+			],
+			"x": -6.4,
+			"y": 1000
+		},
+		{
+			"id": "travel_boss_star_charts_5",
+			"type": "travel_boss_star_charts",
+			"connectedTo": [
+				"travel_boss_star_charts_4",
+				"travel_boss_star_charts_6",
+				"anomalous_debris_chance_1",
+				"travel_boss_star_charts_19"
+			],
+			"x": -711.6,
+			"y": 702.6
+		},
+		{
+			"id": "travel_boss_star_charts_6",
+			"type": "travel_boss_star_charts",
+			"connectedTo": [
+				"travel_boss_star_charts_5",
+				"travel_boss_star_charts_7",
+				"spatial_breach_chance_1"
+			],
+			"x": -1000,
+			"y": -6.4
+		},
+		{
+			"id": "travel_boss_star_charts_7",
+			"type": "travel_boss_star_charts",
+			"connectedTo": [
+				"travel_boss_star_charts_6",
+				"travel_boss_star_charts_8",
+				"atlas_root"
+			],
+			"x": -702.6,
+			"y": -711.6
+		},
+		{
+			"id": "travel_boss_star_charts_8",
+			"type": "travel_boss_star_charts",
+			"connectedTo": [
+				"travel_boss_star_charts_7",
+				"travel_boss_star_charts_1",
+				"supply_convoy_chance_3",
+				"travel_boss_star_charts_11"
+			],
+			"x": 6.4,
+			"y": -1000
+		},
+		{
+			"id": "travel_boss_star_charts_9",
+			"type": "travel_boss_star_charts",
+			"connectedTo": [
+				"travel_boss_star_charts_10",
+				"travel_boss_star_charts_20",
+				"excavation_sites_chance_3"
+			],
+			"x": -1619.9,
+			"y": -1172.9
+		},
+		{
+			"id": "travel_boss_star_charts_10",
+			"type": "travel_boss_star_charts",
+			"connectedTo": [
+				"travel_boss_star_charts_9",
+				"travel_boss_star_charts_11",
+				"travel_catalysts_16"
+			],
+			"x": -816.4,
+			"y": -1825.8
+		},
+		{
+			"id": "travel_boss_star_charts_11",
+			"type": "travel_boss_star_charts",
+			"connectedTo": [
+				"travel_boss_star_charts_10",
+				"travel_boss_star_charts_12",
+				"relay_network_chance_1",
+				"travel_boss_star_charts_8"
+			],
+			"x": 205.8,
+			"y": -1989.4
+		},
+		{
+			"id": "travel_boss_star_charts_12",
+			"type": "travel_boss_star_charts",
+			"connectedTo": [
+				"travel_boss_star_charts_11",
+				"travel_boss_star_charts_13",
+				"listening_post_chance_3"
+			],
+			"x": 1172.9,
+			"y": -1619.9
+		},
+		{
+			"id": "travel_boss_star_charts_13",
+			"type": "travel_boss_star_charts",
+			"connectedTo": [
+				"travel_boss_star_charts_12",
+				"travel_boss_star_charts_14",
+				"spatial_breach_chance_3"
+			],
+			"x": 1825.8,
+			"y": -816.4
+		},
+		{
+			"id": "travel_boss_star_charts_14",
+			"type": "travel_boss_star_charts",
+			"connectedTo": [
+				"travel_boss_star_charts_13",
+				"travel_boss_star_charts_15",
+				"anomalous_debris_chance_3",
+				"travel_catalysts_4"
+			],
+			"x": 1989.4,
+			"y": 205.8
+		},
+		{
+			"id": "travel_boss_star_charts_15",
+			"type": "travel_boss_star_charts",
+			"connectedTo": [
+				"travel_boss_star_charts_14",
+				"travel_boss_star_charts_16",
+				"relay_network_chance_3",
+				"travel_boss_star_charts_3"
+			],
+			"x": 1619.9,
+			"y": 1172.9
+		},
+		{
+			"id": "travel_boss_star_charts_16",
+			"type": "travel_boss_star_charts",
+			"connectedTo": [
+				"travel_boss_star_charts_15",
+				"travel_boss_star_charts_17",
+				"travel_catalysts_7"
+			],
+			"x": 816.4,
+			"y": 1825.8
+		},
+		{
+			"id": "travel_boss_star_charts_17",
+			"type": "travel_boss_star_charts",
+			"connectedTo": [
+				"travel_boss_star_charts_16",
+				"travel_boss_star_charts_18",
+				"excavation_sites_chance_5"
+			],
+			"x": -205.8,
+			"y": 1989.4
+		},
+		{
+			"id": "travel_boss_star_charts_18",
+			"type": "travel_boss_star_charts",
+			"connectedTo": [
+				"travel_boss_star_charts_17",
+				"travel_boss_star_charts_19"
+			],
+			"x": -1172.9,
+			"y": 1619.9
+		},
+		{
+			"id": "travel_boss_star_charts_19",
+			"type": "travel_boss_star_charts",
+			"connectedTo": [
+				"travel_boss_star_charts_18",
+				"travel_boss_star_charts_20",
+				"supply_convoy_chance_5",
+				"travel_boss_star_charts_5"
+			],
+			"x": -1825.8,
+			"y": 816.4
+		},
+		{
+			"id": "travel_boss_star_charts_20",
+			"type": "travel_boss_star_charts",
+			"connectedTo": [
+				"travel_boss_star_charts_19",
+				"travel_boss_star_charts_9",
+				"relay_network_chance_5",
+				"travel_catalysts_13"
+			],
+			"x": -1989.4,
+			"y": -205.8
+		},
+		{
+			"id": "travel_catalysts_1",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_2",
+				"travel_catalysts_18",
+				"excavation_sites_chance_7"
+			],
+			"x": 1090,
+			"y": -2795
+		},
+		{
+			"id": "travel_catalysts_2",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_1",
+				"travel_catalysts_3",
+				"travel_catalysts_31"
+			],
+			"x": 1980.2,
+			"y": -2253.6
+		},
+		{
+			"id": "travel_catalysts_3",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_2",
+				"travel_catalysts_4",
+				"excavation_sites_chance_9"
+			],
+			"x": 2631.6,
+			"y": -1440.4
+		},
+		{
+			"id": "travel_catalysts_4",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_3",
+				"travel_catalysts_5",
+				"travel_boss_star_charts_14"
+			],
+			"x": 2965.5,
+			"y": -453.5
+		},
+		{
+			"id": "travel_catalysts_5",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_4",
+				"travel_catalysts_6",
+				"anomalous_debris_chance_6",
+				"travel_catalysts_35"
+			],
+			"x": 2941.8,
+			"y": 588.1
+		},
+		{
+			"id": "travel_catalysts_6",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_5",
+				"travel_catalysts_7",
+				"relay_network_chance_7"
+			],
+			"x": 2563.2,
+			"y": 1558.8
+		},
+		{
+			"id": "travel_catalysts_7",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_6",
+				"travel_catalysts_8",
+				"travel_boss_star_charts_16"
+			],
+			"x": 1875.5,
+			"y": 2341.5
+		},
+		{
+			"id": "travel_catalysts_8",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_7",
+				"travel_catalysts_9",
+				"spatial_breach_chance_5",
+				"travel_catalysts_38"
+			],
+			"x": 961.5,
+			"y": 2841.7
+		},
+		{
+			"id": "travel_catalysts_9",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_8",
+				"travel_catalysts_10"
+			],
+			"x": -68.4,
+			"y": 2999.2
+		},
+		{
+			"id": "travel_catalysts_10",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_9",
+				"travel_catalysts_11",
+				"supply_convoy_chance_7"
+			],
+			"x": -1090,
+			"y": 2795
+		},
+		{
+			"id": "travel_catalysts_11",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_10",
+				"travel_catalysts_12"
+			],
+			"x": -1980.2,
+			"y": 2253.6
+		},
+		{
+			"id": "travel_catalysts_12",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_11",
+				"travel_catalysts_13",
+				"supply_convoy_chance_8",
+				"travel_catalysts_22"
+			],
+			"x": -2631.6,
+			"y": 1440.4
+		},
+		{
+			"id": "travel_catalysts_13",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_12",
+				"travel_catalysts_14",
+				"listening_post_chance_5",
+				"travel_boss_star_charts_20"
+			],
+			"x": -2965.5,
+			"y": 453.5
+		},
+		{
+			"id": "travel_catalysts_14",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_13",
+				"travel_catalysts_15"
+			],
+			"x": -2941.8,
+			"y": -588.1
+		},
+		{
+			"id": "travel_catalysts_15",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_14",
+				"travel_catalysts_16",
+				"relay_network_chance_9",
+				"travel_catalysts_26"
+			],
+			"x": -2563.2,
+			"y": -1558.8
+		},
+		{
+			"id": "travel_catalysts_16",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_15",
+				"travel_catalysts_17",
+				"travel_boss_star_charts_10"
+			],
+			"x": -1875.5,
+			"y": -2341.5
+		},
+		{
+			"id": "travel_catalysts_17",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_16",
+				"travel_catalysts_18",
+				"listening_post_chance_7"
+			],
+			"x": -961.5,
+			"y": -2841.7
+		},
+		{
+			"id": "travel_catalysts_18",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_17",
+				"travel_catalysts_1"
+			],
+			"x": 68.4,
+			"y": -2999.2
+		},
+		{
+			"id": "travel_catalysts_19",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_20",
+				"travel_catalysts_38",
+				"excavation_sites_chance_10"
+			],
+			"x": -39.2,
+			"y": 3999.8
+		},
+		{
+			"id": "travel_catalysts_20",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_19",
+				"travel_catalysts_21",
+				"travel_chart_modifier_effect_7"
+			],
+			"x": -1273.3,
+			"y": 3791.9
+		},
+		{
+			"id": "travel_catalysts_21",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_20",
+				"travel_catalysts_22",
+				"anomalous_debris_chance_8"
+			],
+			"x": -2382.7,
+			"y": 3212.9
+		},
+		{
+			"id": "travel_catalysts_22",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_21",
+				"travel_catalysts_23",
+				"travel_catalysts_12"
+			],
+			"x": -3259,
+			"y": 2319.3
+		},
+		{
+			"id": "travel_catalysts_23",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_22",
+				"travel_catalysts_24",
+				"anomalous_debris_chance_10"
+			],
+			"x": -3816.2,
+			"y": 1198.7
+		},
+		{
+			"id": "travel_catalysts_24",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_23",
+				"travel_catalysts_25",
+				"travel_chart_modifier_effect_11"
+			],
+			"x": -3999.8,
+			"y": -39.2
+		},
+		{
+			"id": "travel_catalysts_25",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_24",
+				"travel_catalysts_26"
+			],
+			"x": -3791.9,
+			"y": -1273.3
+		},
+		{
+			"id": "travel_catalysts_26",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_25",
+				"travel_catalysts_27",
+				"spatial_breach_chance_9",
+				"travel_catalysts_15"
+			],
+			"x": -3212.9,
+			"y": -2382.7
+		},
+		{
+			"id": "travel_catalysts_27",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_26",
+				"travel_catalysts_28",
+				"travel_chart_modifier_effect_15"
+			],
+			"x": -2319.3,
+			"y": -3259
+		},
+		{
+			"id": "travel_catalysts_28",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_27",
+				"travel_catalysts_29",
+				"listening_post_chance_9"
+			],
+			"x": -1198.7,
+			"y": -3816.2
+		},
+		{
+			"id": "travel_catalysts_29",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_28",
+				"travel_catalysts_30"
+			],
+			"x": 39.2,
+			"y": -3999.8
+		},
+		{
+			"id": "travel_catalysts_30",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_29",
+				"travel_catalysts_31",
+				"spatial_breach_chance_10"
+			],
+			"x": 1273.3,
+			"y": -3791.9
+		},
+		{
+			"id": "travel_catalysts_31",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_30",
+				"travel_catalysts_32",
+				"travel_catalysts_2",
+				"travel_chart_modifier_effect_20"
+			],
+			"x": 2382.7,
+			"y": -3212.9
+		},
+		{
+			"id": "travel_catalysts_32",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_31",
+				"travel_catalysts_33",
+				"relay_network_chance_11"
+			],
+			"x": 3259,
+			"y": -2319.3
+		},
+		{
+			"id": "travel_catalysts_33",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_32",
+				"travel_catalysts_34"
+			],
+			"x": 3816.2,
+			"y": -1198.7
+		},
+		{
+			"id": "travel_catalysts_34",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_33",
+				"travel_catalysts_35",
+				"additional_site_1",
+				"travel_chart_modifier_effect_23"
+			],
+			"x": 3999.8,
+			"y": 39.2
+		},
+		{
+			"id": "travel_catalysts_35",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_34",
+				"travel_catalysts_36",
+				"travel_catalysts_5"
+			],
+			"x": 3791.9,
+			"y": 1273.3
+		},
+		{
+			"id": "travel_catalysts_36",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_35",
+				"travel_catalysts_37"
+			],
+			"x": 3212.9,
+			"y": 2382.7
+		},
+		{
+			"id": "travel_catalysts_37",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_36",
+				"travel_catalysts_38",
+				"anomalous_debris_chance_11"
+			],
+			"x": 2319.3,
+			"y": 3259
+		},
+		{
+			"id": "travel_catalysts_38",
+			"type": "travel_catalysts",
+			"connectedTo": [
+				"travel_catalysts_37",
+				"travel_catalysts_19",
+				"travel_catalysts_8",
+				"travel_chart_modifier_effect_4"
+			],
+			"x": 1198.7,
+			"y": 3816.2
+		},
+		{
+			"id": "travel_chart_modifier_effect_1",
+			"type": "travel_chart_modifier_effect",
+			"connectedTo": [
+				"travel_chart_modifier_effect_2",
+				"travel_chart_modifier_effect_24",
+				"additional_site_2"
+			],
+			"x": 4531.6,
+			"y": 2113
+		},
+		{
+			"id": "travel_chart_modifier_effect_2",
+			"type": "travel_chart_modifier_effect",
+			"connectedTo": [
+				"travel_chart_modifier_effect_1",
+				"travel_chart_modifier_effect_3"
+			],
+			"x": 3830.3,
+			"y": 3213.8
+		},
+		{
+			"id": "travel_chart_modifier_effect_3",
+			"type": "travel_chart_modifier_effect",
+			"connectedTo": [
+				"travel_chart_modifier_effect_2",
+				"travel_chart_modifier_effect_4",
+				"supply_convoy_chance_10"
+			],
+			"x": 2868,
+			"y": 4095.7
+		},
+		{
+			"id": "travel_chart_modifier_effect_4",
+			"type": "travel_chart_modifier_effect",
+			"connectedTo": [
+				"travel_chart_modifier_effect_3",
+				"travel_chart_modifier_effect_5",
+				"breach_cache_items_1",
+				"travel_catalysts_38"
+			],
+			"x": 1710.2,
+			"y": 4698.4
+		},
+		{
+			"id": "travel_chart_modifier_effect_5",
+			"type": "travel_chart_modifier_effect",
+			"connectedTo": [
+				"travel_chart_modifier_effect_4",
+				"travel_chart_modifier_effect_6"
+			],
+			"x": 435.9,
+			"y": 4981
+		},
+		{
+			"id": "travel_chart_modifier_effect_6",
+			"type": "travel_chart_modifier_effect",
+			"connectedTo": [
+				"travel_chart_modifier_effect_5",
+				"travel_chart_modifier_effect_7",
+				"relay_reward_rarity_1"
+			],
+			"x": -868.1,
+			"y": 4924.1
+		},
+		{
+			"id": "travel_chart_modifier_effect_7",
+			"type": "travel_chart_modifier_effect",
+			"connectedTo": [
+				"travel_chart_modifier_effect_6",
+				"travel_chart_modifier_effect_8",
+				"travel_catalysts_20"
+			],
+			"x": -2113,
+			"y": 4531.6
+		},
+		{
+			"id": "travel_chart_modifier_effect_8",
+			"type": "travel_chart_modifier_effect",
+			"connectedTo": [
+				"travel_chart_modifier_effect_7",
+				"travel_chart_modifier_effect_9",
+				"supply_convoy_chance_11"
+			],
+			"x": -3213.8,
+			"y": 3830.3
+		},
+		{
+			"id": "travel_chart_modifier_effect_9",
+			"type": "travel_chart_modifier_effect",
+			"connectedTo": [
+				"travel_chart_modifier_effect_8",
+				"travel_chart_modifier_effect_10",
+				"spatial_breach_chance_12"
+			],
+			"x": -4095.7,
+			"y": 2868
+		},
+		{
+			"id": "travel_chart_modifier_effect_10",
+			"type": "travel_chart_modifier_effect",
+			"connectedTo": [
+				"travel_chart_modifier_effect_9",
+				"travel_chart_modifier_effect_11"
+			],
+			"x": -4698.4,
+			"y": 1710.2
+		},
+		{
+			"id": "travel_chart_modifier_effect_11",
+			"type": "travel_chart_modifier_effect",
+			"connectedTo": [
+				"travel_chart_modifier_effect_10",
+				"travel_chart_modifier_effect_12",
+				"additional_site_3",
+				"travel_catalysts_24"
+			],
+			"x": -4981,
+			"y": 435.9
+		},
+		{
+			"id": "travel_chart_modifier_effect_12",
+			"type": "travel_chart_modifier_effect",
+			"connectedTo": [
+				"travel_chart_modifier_effect_11",
+				"travel_chart_modifier_effect_13",
+				"engram_quantity_1"
+			],
+			"x": -4924.1,
+			"y": -868.1
+		},
+		{
+			"id": "travel_chart_modifier_effect_13",
+			"type": "travel_chart_modifier_effect",
+			"connectedTo": [
+				"travel_chart_modifier_effect_12",
+				"travel_chart_modifier_effect_14"
+			],
+			"x": -4531.6,
+			"y": -2113
+		},
+		{
+			"id": "travel_chart_modifier_effect_14",
+			"type": "travel_chart_modifier_effect",
+			"connectedTo": [
+				"travel_chart_modifier_effect_13",
+				"travel_chart_modifier_effect_15",
+				"listening_post_chance_11"
+			],
+			"x": -3830.3,
+			"y": -3213.8
+		},
+		{
+			"id": "travel_chart_modifier_effect_15",
+			"type": "travel_chart_modifier_effect",
+			"connectedTo": [
+				"travel_chart_modifier_effect_14",
+				"travel_chart_modifier_effect_16",
+				"travel_catalysts_27"
+			],
+			"x": -2868,
+			"y": -4095.7
+		},
+		{
+			"id": "travel_chart_modifier_effect_16",
+			"type": "travel_chart_modifier_effect",
+			"connectedTo": [
+				"travel_chart_modifier_effect_15",
+				"travel_chart_modifier_effect_17",
+				"relay_reward_rarity_3"
+			],
+			"x": -1710.2,
+			"y": -4698.4
+		},
+		{
+			"id": "travel_chart_modifier_effect_17",
+			"type": "travel_chart_modifier_effect",
+			"connectedTo": [
+				"travel_chart_modifier_effect_16",
+				"travel_chart_modifier_effect_18",
+				"threat_feedstock_chance_1"
+			],
+			"x": -435.9,
+			"y": -4981
+		},
+		{
+			"id": "travel_chart_modifier_effect_18",
+			"type": "travel_chart_modifier_effect",
+			"connectedTo": [
+				"travel_chart_modifier_effect_17",
+				"travel_chart_modifier_effect_19"
+			],
+			"x": 868.1,
+			"y": -4924.1
+		},
+		{
+			"id": "travel_chart_modifier_effect_19",
+			"type": "travel_chart_modifier_effect",
+			"connectedTo": [
+				"travel_chart_modifier_effect_18",
+				"travel_chart_modifier_effect_20",
+				"engram_quantity_2"
+			],
+			"x": 2113,
+			"y": -4531.6
+		},
+		{
+			"id": "travel_chart_modifier_effect_20",
+			"type": "travel_chart_modifier_effect",
+			"connectedTo": [
+				"travel_chart_modifier_effect_19",
+				"travel_chart_modifier_effect_21",
+				"vault_quantity_1",
+				"travel_catalysts_31"
+			],
+			"x": 3213.8,
+			"y": -3830.3
+		},
+		{
+			"id": "travel_chart_modifier_effect_21",
+			"type": "travel_chart_modifier_effect",
+			"connectedTo": [
+				"travel_chart_modifier_effect_20",
+				"travel_chart_modifier_effect_22"
+			],
+			"x": 4095.7,
+			"y": -2868
+		},
+		{
+			"id": "travel_chart_modifier_effect_22",
+			"type": "travel_chart_modifier_effect",
+			"connectedTo": [
+				"travel_chart_modifier_effect_21",
+				"travel_chart_modifier_effect_23",
+				"breach_cache_quantity_2"
+			],
+			"x": 4698.4,
+			"y": -1710.2
+		},
+		{
+			"id": "travel_chart_modifier_effect_23",
+			"type": "travel_chart_modifier_effect",
+			"connectedTo": [
+				"travel_chart_modifier_effect_22",
+				"travel_chart_modifier_effect_24",
+				"engram_quantity_3",
+				"travel_catalysts_34"
+			],
+			"x": 4981,
+			"y": -435.9
+		},
+		{
+			"id": "travel_chart_modifier_effect_24",
+			"type": "travel_chart_modifier_effect",
+			"connectedTo": [
+				"travel_chart_modifier_effect_23",
+				"travel_chart_modifier_effect_1"
+			],
+			"x": 4924.1,
+			"y": 868.1
+		},
+		{
+			"id": "settled_shafts_1",
+			"type": "settled_shafts",
+			"connectedTo": [
+				"excavation_sites_chance_2"
+			],
+			"x": 908.3,
+			"y": -896.8,
+			"tags": [
+				"excavation_sites"
+			]
+		},
+		{
 			"id": "excavation_sites_chance_1",
 			"type": "excavation_sites_chance",
-			"connectedTo": [],
-			"x": -7500,
-			"y": 1500,
+			"connectedTo": [
+				"travel_boss_star_charts_1",
+				"excavation_sites_chance_2"
+			],
+			"x": 1014.4,
+			"y": -814.9,
 			"tags": [
 				"excavation_sites"
 			]
 		},
 		{
-			"id": "additional_site_1",
-			"type": "additional_site",
-			"connectedTo": [],
-			"x": -7200,
-			"y": 1500,
+			"id": "excavation_sites_chance_2",
+			"type": "excavation_sites_chance",
+			"connectedTo": [
+				"excavation_sites_chance_1",
+				"settled_shafts_1"
+			],
+			"x": 996.8,
+			"y": -922,
 			"tags": [
 				"excavation_sites"
 			]
 		},
 		{
-			"id": "inhibitor_quantity_1",
-			"type": "inhibitor_quantity",
-			"connectedTo": [],
-			"x": -6900,
-			"y": 1500,
+			"id": "threat_embargo_1",
+			"type": "threat_embargo",
+			"connectedTo": [
+				"supply_convoy_chance_2"
+			],
+			"x": 745.8,
+			"y": 4.8,
 			"tags": [
-				"excavation_sites"
+				"supply_convoy"
 			]
 		},
 		{
-			"id": "open_bores_1",
-			"type": "open_bores",
-			"connectedTo": [],
-			"x": -8400,
-			"y": 1900,
+			"id": "supply_convoy_chance_1",
+			"type": "supply_convoy_chance",
+			"connectedTo": [
+				"travel_boss_star_charts_2",
+				"supply_convoy_chance_2"
+			],
+			"x": 795.2,
+			"y": 137.9,
 			"tags": [
-				"excavation_sites"
+				"supply_convoy"
 			]
 		},
 		{
-			"id": "sapper_teams_1",
-			"type": "sapper_teams",
-			"connectedTo": [],
-			"x": -8100,
-			"y": 1900,
+			"id": "supply_convoy_chance_2",
+			"type": "supply_convoy_chance",
+			"connectedTo": [
+				"supply_convoy_chance_1",
+				"threat_embargo_1"
+			],
+			"x": 794.4,
+			"y": -82.6,
 			"tags": [
-				"excavation_sites"
+				"supply_convoy"
+			]
+		},
+		{
+			"id": "officers_ledger_1",
+			"type": "officers_ledger",
+			"connectedTo": [
+				"listening_post_chance_2"
+			],
+			"x": -7.9,
+			"y": 1243.1,
+			"tags": [
+				"listening_post"
+			]
+		},
+		{
+			"id": "listening_post_chance_1",
+			"type": "listening_post_chance",
+			"connectedTo": [
+				"travel_boss_star_charts_4",
+				"listening_post_chance_2"
+			],
+			"x": -127,
+			"y": 1165.6,
+			"tags": [
+				"listening_post"
+			]
+		},
+		{
+			"id": "listening_post_chance_2",
+			"type": "listening_post_chance",
+			"connectedTo": [
+				"listening_post_chance_1",
+				"officers_ledger_1"
+			],
+			"x": -40,
+			"y": 1337.8,
+			"tags": [
+				"listening_post"
+			]
+		},
+		{
+			"id": "redacted_sleepers_1",
+			"type": "redacted_sleepers",
+			"connectedTo": [
+				"anomalous_debris_chance_2"
+			],
+			"x": -536.9,
+			"y": 530.1,
+			"tags": [
+				"anomalous_debris"
+			]
+		},
+		{
+			"id": "anomalous_debris_chance_1",
+			"type": "anomalous_debris_chance",
+			"connectedTo": [
+				"travel_boss_star_charts_5",
+				"anomalous_debris_chance_2"
+			],
+			"x": -483,
+			"y": 398.8,
+			"tags": [
+				"anomalous_debris"
+			]
+		},
+		{
+			"id": "anomalous_debris_chance_2",
+			"type": "anomalous_debris_chance",
+			"connectedTo": [
+				"anomalous_debris_chance_1",
+				"redacted_sleepers_1"
+			],
+			"x": -619.6,
+			"y": 586.4,
+			"tags": [
+				"anomalous_debris"
+			]
+		},
+		{
+			"id": "heavy_breach_1",
+			"type": "heavy_breach",
+			"connectedTo": [
+				"spatial_breach_chance_2"
+			],
+			"x": -1250,
+			"y": -8,
+			"tags": [
+				"spatial_breach"
+			]
+		},
+		{
+			"id": "spatial_breach_chance_1",
+			"type": "spatial_breach_chance",
+			"connectedTo": [
+				"travel_boss_star_charts_6",
+				"spatial_breach_chance_2"
+			],
+			"x": -1155.6,
+			"y": 89.9,
+			"tags": [
+				"spatial_breach"
+			]
+		},
+		{
+			"id": "spatial_breach_chance_2",
+			"type": "spatial_breach_chance",
+			"connectedTo": [
+				"spatial_breach_chance_1",
+				"heavy_breach_1"
+			],
+			"x": -1186,
+			"y": 60.9,
+			"tags": [
+				"spatial_breach"
+			]
+		},
+		{
+			"id": "shroud_embargo_1",
+			"type": "shroud_embargo",
+			"connectedTo": [
+				"supply_convoy_chance_4"
+			],
+			"x": 4.7,
+			"y": -736.4,
+			"tags": [
+				"supply_convoy"
+			]
+		},
+		{
+			"id": "supply_convoy_chance_3",
+			"type": "supply_convoy_chance",
+			"connectedTo": [
+				"travel_boss_star_charts_8",
+				"supply_convoy_chance_4"
+			],
+			"x": 144.1,
+			"y": -709.3,
+			"tags": [
+				"supply_convoy"
+			]
+		},
+		{
+			"id": "supply_convoy_chance_4",
+			"type": "supply_convoy_chance",
+			"connectedTo": [
+				"supply_convoy_chance_3",
+				"shroud_embargo_1"
+			],
+			"x": 0.1,
+			"y": -636.5,
+			"tags": [
+				"supply_convoy"
 			]
 		},
 		{
 			"id": "twin_shafts_1",
 			"type": "twin_shafts",
-			"connectedTo": [],
-			"x": -7800,
-			"y": 1900,
+			"connectedTo": [
+				"excavation_sites_chance_4"
+			],
+			"x": -1393.1,
+			"y": -1008.7,
 			"tags": [
 				"excavation_sites"
 			]
 		},
 		{
-			"id": "deeper_bores_1",
-			"type": "deeper_bores",
-			"connectedTo": [],
-			"x": -7500,
-			"y": 1900,
+			"id": "excavation_sites_chance_3",
+			"type": "excavation_sites_chance",
+			"connectedTo": [
+				"travel_boss_star_charts_9",
+				"excavation_sites_chance_4"
+			],
+			"x": -1356.8,
+			"y": -879.7,
 			"tags": [
 				"excavation_sites"
 			]
 		},
 		{
-			"id": "needle_bores_1",
-			"type": "needle_bores",
-			"connectedTo": [],
-			"x": -7200,
-			"y": 1900,
+			"id": "excavation_sites_chance_4",
+			"type": "excavation_sites_chance",
+			"connectedTo": [
+				"excavation_sites_chance_3",
+				"twin_shafts_1"
+			],
+			"x": -1475.7,
+			"y": -1049.2,
 			"tags": [
 				"excavation_sites"
 			]
 		},
 		{
-			"id": "widened_bores_1",
-			"type": "widened_bores",
-			"connectedTo": [],
-			"x": -6900,
-			"y": 1900,
+			"id": "crowded_channel_1",
+			"type": "crowded_channel",
+			"connectedTo": [
+				"relay_network_chance_2"
+			],
+			"x": 232.8,
+			"y": -2250.2,
+			"tags": [
+				"relay_network"
+			]
+		},
+		{
+			"id": "relay_network_chance_1",
+			"type": "relay_network_chance",
+			"connectedTo": [
+				"travel_boss_star_charts_11",
+				"relay_network_chance_2"
+			],
+			"x": 127.3,
+			"y": -2332.7,
+			"tags": [
+				"relay_network"
+			]
+		},
+		{
+			"id": "relay_network_chance_2",
+			"type": "relay_network_chance",
+			"connectedTo": [
+				"relay_network_chance_1",
+				"crowded_channel_1"
+			],
+			"x": 271.9,
+			"y": -2333.5,
+			"tags": [
+				"relay_network"
+			]
+		},
+		{
+			"id": "stolen_charts_1",
+			"type": "stolen_charts",
+			"connectedTo": [
+				"listening_post_chance_4"
+			],
+			"x": 1007.8,
+			"y": -1391.9,
+			"tags": [
+				"listening_post"
+			]
+		},
+		{
+			"id": "listening_post_chance_3",
+			"type": "listening_post_chance",
+			"connectedTo": [
+				"travel_boss_star_charts_12",
+				"listening_post_chance_4"
+			],
+			"x": 879.4,
+			"y": -1331.4,
+			"tags": [
+				"listening_post"
+			]
+		},
+		{
+			"id": "listening_post_chance_4",
+			"type": "listening_post_chance",
+			"connectedTo": [
+				"listening_post_chance_3",
+				"stolen_charts_1"
+			],
+			"x": 1080.9,
+			"y": -1323.7,
+			"tags": [
+				"listening_post"
+			]
+		},
+		{
+			"id": "rift_magnetism_1",
+			"type": "rift_magnetism",
+			"connectedTo": [
+				"spatial_breach_chance_4"
+			],
+			"x": 2089.4,
+			"y": -934.3,
+			"tags": [
+				"spatial_breach"
+			]
+		},
+		{
+			"id": "spatial_breach_chance_3",
+			"type": "spatial_breach_chance",
+			"connectedTo": [
+				"travel_boss_star_charts_13",
+				"spatial_breach_chance_4"
+			],
+			"x": 1995.5,
+			"y": -836,
+			"tags": [
+				"spatial_breach"
+			]
+		},
+		{
+			"id": "spatial_breach_chance_4",
+			"type": "spatial_breach_chance",
+			"connectedTo": [
+				"spatial_breach_chance_3",
+				"rift_magnetism_1"
+			],
+			"x": 2031.7,
+			"y": -1008.6,
+			"tags": [
+				"spatial_breach"
+			]
+		},
+		{
+			"id": "veiled_sleepers_1",
+			"type": "veiled_sleepers",
+			"connectedTo": [
+				"anomalous_debris_chance_4"
+			],
+			"x": 1753.6,
+			"y": 181.4,
+			"tags": [
+				"anomalous_debris"
+			]
+		},
+		{
+			"id": "anomalous_debris_chance_3",
+			"type": "anomalous_debris_chance",
+			"connectedTo": [
+				"travel_boss_star_charts_14",
+				"anomalous_debris_chance_4"
+			],
+			"x": 1868,
+			"y": 265.6,
+			"tags": [
+				"anomalous_debris"
+			]
+		},
+		{
+			"id": "anomalous_debris_chance_4",
+			"type": "anomalous_debris_chance",
+			"connectedTo": [
+				"anomalous_debris_chance_3",
+				"veiled_sleepers_1"
+			],
+			"x": 1795.9,
+			"y": 90.8,
+			"tags": [
+				"anomalous_debris"
+			]
+		},
+		{
+			"id": "shared_broadcast_1",
+			"type": "shared_broadcast",
+			"connectedTo": [
+				"relay_network_chance_4"
+			],
+			"x": 1860,
+			"y": 1346.8,
+			"tags": [
+				"relay_network"
+			]
+		},
+		{
+			"id": "relay_network_chance_3",
+			"type": "relay_network_chance",
+			"connectedTo": [
+				"travel_boss_star_charts_15",
+				"relay_network_chance_4"
+			],
+			"x": 1859.6,
+			"y": 1480.8,
+			"tags": [
+				"relay_network"
+			]
+		},
+		{
+			"id": "relay_network_chance_4",
+			"type": "relay_network_chance",
+			"connectedTo": [
+				"relay_network_chance_3",
+				"shared_broadcast_1"
+			],
+			"x": 1952,
+			"y": 1347.1,
+			"tags": [
+				"relay_network"
+			]
+		},
+		{
+			"id": "sapper_teams_1",
+			"type": "sapper_teams",
+			"connectedTo": [
+				"excavation_sites_chance_6"
+			],
+			"x": -177.3,
+			"y": 1713.4,
 			"tags": [
 				"excavation_sites"
 			]
 		},
 		{
-			"id": "pitch_black_1",
-			"type": "pitch_black",
-			"connectedTo": [],
-			"x": -6600,
-			"y": 1900,
+			"id": "excavation_sites_chance_5",
+			"type": "excavation_sites_chance",
+			"connectedTo": [
+				"travel_boss_star_charts_17",
+				"excavation_sites_chance_6"
+			],
+			"x": -309.1,
+			"y": 1689.4,
+			"tags": [
+				"excavation_sites"
+			]
+		},
+		{
+			"id": "excavation_sites_chance_6",
+			"type": "excavation_sites_chance",
+			"connectedTo": [
+				"excavation_sites_chance_5",
+				"sapper_teams_1"
+			],
+			"x": -111.7,
+			"y": 1648.9,
+			"tags": [
+				"excavation_sites"
+			]
+		},
+		{
+			"id": "phase_embargo_1",
+			"type": "phase_embargo",
+			"connectedTo": [
+				"supply_convoy_chance_6"
+			],
+			"x": -2079.9,
+			"y": 930.1,
+			"tags": [
+				"supply_convoy"
+			]
+		},
+		{
+			"id": "supply_convoy_chance_5",
+			"type": "supply_convoy_chance",
+			"connectedTo": [
+				"travel_boss_star_charts_19",
+				"supply_convoy_chance_6"
+			],
+			"x": -1957.3,
+			"y": 858.4,
+			"tags": [
+				"supply_convoy"
+			]
+		},
+		{
+			"id": "supply_convoy_chance_6",
+			"type": "supply_convoy_chance",
+			"connectedTo": [
+				"supply_convoy_chance_5",
+				"phase_embargo_1"
+			],
+			"x": -2164,
+			"y": 876,
+			"tags": [
+				"supply_convoy"
+			]
+		},
+		{
+			"id": "extra_relay_1",
+			"type": "extra_relay",
+			"connectedTo": [
+				"relay_network_chance_6"
+			],
+			"x": -2232.4,
+			"y": -231,
+			"tags": [
+				"relay_network"
+			]
+		},
+		{
+			"id": "relay_network_chance_5",
+			"type": "relay_network_chance",
+			"connectedTo": [
+				"travel_boss_star_charts_20",
+				"relay_network_chance_6"
+			],
+			"x": -2208.8,
+			"y": -362.9,
+			"tags": [
+				"relay_network"
+			]
+		},
+		{
+			"id": "relay_network_chance_6",
+			"type": "relay_network_chance",
+			"connectedTo": [
+				"relay_network_chance_5",
+				"extra_relay_1"
+			],
+			"x": -2140.4,
+			"y": -232.8,
+			"tags": [
+				"relay_network"
+			]
+		},
+		{
+			"id": "open_bores_1",
+			"type": "open_bores",
+			"connectedTo": [
+				"excavation_sites_chance_8"
+			],
+			"x": 1190.8,
+			"y": -3053.4,
+			"tags": [
+				"excavation_sites"
+			]
+		},
+		{
+			"id": "excavation_sites_chance_7",
+			"type": "excavation_sites_chance",
+			"connectedTo": [
+				"travel_catalysts_1",
+				"excavation_sites_chance_8"
+			],
+			"x": 1308.8,
+			"y": -2989.8,
+			"tags": [
+				"excavation_sites"
+			]
+		},
+		{
+			"id": "excavation_sites_chance_8",
+			"type": "excavation_sites_chance",
+			"connectedTo": [
+				"excavation_sites_chance_7",
+				"open_bores_1"
+			],
+			"x": 1178.4,
+			"y": -3144.6,
 			"tags": [
 				"excavation_sites"
 			]
@@ -111,475 +1531,38 @@
 		{
 			"id": "infested_bolt_holes_1",
 			"type": "infested_bolt_holes",
-			"connectedTo": [],
-			"x": -6300,
-			"y": 1900,
+			"connectedTo": [
+				"anomalous_debris_chance_5"
+			],
+			"x": 2381.5,
+			"y": -1303.5,
 			"tags": [
 				"excavation_sites",
 				"anomalous_debris"
 			]
 		},
 		{
-			"id": "settled_shafts_1",
-			"type": "settled_shafts",
-			"connectedTo": [],
-			"x": -6000,
-			"y": 1900,
+			"id": "excavation_sites_chance_9",
+			"type": "excavation_sites_chance",
+			"connectedTo": [
+				"travel_catalysts_3",
+				"anomalous_debris_chance_5"
+			],
+			"x": 2299.6,
+			"y": -1192.5,
 			"tags": [
 				"excavation_sites"
 			]
 		},
 		{
-			"id": "supply_convoy_chance_1",
-			"type": "supply_convoy_chance",
-			"connectedTo": [],
-			"x": -4950,
-			"y": 1500,
-			"tags": [
-				"supply_convoy"
-			]
-		},
-		{
-			"id": "threat_feedstock_chance_1",
-			"type": "threat_feedstock_chance",
-			"connectedTo": [],
-			"x": -4650,
-			"y": 1500,
-			"tags": [
-				"supply_convoy"
-			]
-		},
-		{
-			"id": "shroud_feedstock_chance_1",
-			"type": "shroud_feedstock_chance",
-			"connectedTo": [],
-			"x": -4350,
-			"y": 1500,
-			"tags": [
-				"supply_convoy"
-			]
-		},
-		{
-			"id": "phase_feedstock_chance_1",
-			"type": "phase_feedstock_chance",
-			"connectedTo": [],
-			"x": -4050,
-			"y": 1500,
-			"tags": [
-				"supply_convoy"
-			]
-		},
-		{
-			"id": "feedstock_duplication_1",
-			"type": "feedstock_duplication",
-			"connectedTo": [],
-			"x": -3750,
-			"y": 1500,
-			"tags": [
-				"supply_convoy"
-			]
-		},
-		{
-			"id": "additional_convoy_chance_1",
-			"type": "additional_convoy_chance",
-			"connectedTo": [],
-			"x": -3450,
-			"y": 1500,
-			"tags": [
-				"supply_convoy"
-			]
-		},
-		{
-			"id": "threat_embargo_1",
-			"type": "threat_embargo",
-			"connectedTo": [],
-			"x": -5100,
-			"y": 1900,
-			"tags": [
-				"supply_convoy"
-			]
-		},
-		{
-			"id": "shroud_embargo_1",
-			"type": "shroud_embargo",
-			"connectedTo": [],
-			"x": -4800,
-			"y": 1900,
-			"tags": [
-				"supply_convoy"
-			]
-		},
-		{
-			"id": "phase_embargo_1",
-			"type": "phase_embargo",
-			"connectedTo": [],
-			"x": -4500,
-			"y": 1900,
-			"tags": [
-				"supply_convoy"
-			]
-		},
-		{
-			"id": "torn_holds_1",
-			"type": "torn_holds",
-			"connectedTo": [],
-			"x": -4200,
-			"y": 1900,
-			"tags": [
-				"supply_convoy",
-				"spatial_breach"
-			]
-		},
-		{
-			"id": "supply_lines_1",
-			"type": "supply_lines",
-			"connectedTo": [],
-			"x": -3900,
-			"y": 1900,
-			"tags": [
-				"supply_convoy"
-			]
-		},
-		{
-			"id": "bolt_hole_drop_1",
-			"type": "bolt_hole_drop",
-			"connectedTo": [],
-			"x": -3600,
-			"y": 1900,
-			"tags": [
-				"supply_convoy",
-				"excavation_sites"
-			]
-		},
-		{
-			"id": "open_season_1",
-			"type": "open_season",
-			"connectedTo": [],
-			"x": -3300,
-			"y": 1900,
-			"tags": [
-				"supply_convoy"
-			]
-		},
-		{
-			"id": "mixed_manifest_1",
-			"type": "mixed_manifest",
-			"connectedTo": [],
-			"x": -4200,
-			"y": 2300,
-			"tags": [
-				"supply_convoy"
-			]
-		},
-		{
-			"id": "relay_network_chance_1",
-			"type": "relay_network_chance",
-			"connectedTo": [],
-			"x": -1500,
-			"y": 1500,
-			"tags": [
-				"relay_network"
-			]
-		},
-		{
-			"id": "relay_reward_rarity_1",
-			"type": "relay_reward_rarity",
-			"connectedTo": [],
-			"x": -1200,
-			"y": 1500,
-			"tags": [
-				"relay_network"
-			]
-		},
-		{
-			"id": "forked_trace_1",
-			"type": "forked_trace",
-			"connectedTo": [],
-			"x": -2400,
-			"y": 1900,
-			"tags": [
-				"relay_network"
-			]
-		},
-		{
-			"id": "crowded_channel_1",
-			"type": "crowded_channel",
-			"connectedTo": [],
-			"x": -2100,
-			"y": 1900,
-			"tags": [
-				"relay_network"
-			]
-		},
-		{
-			"id": "double_down_1",
-			"type": "double_down",
-			"connectedTo": [],
-			"x": -1800,
-			"y": 1900,
-			"tags": [
-				"relay_network"
-			]
-		},
-		{
-			"id": "extra_relay_1",
-			"type": "extra_relay",
-			"connectedTo": [],
-			"x": -1500,
-			"y": 1900,
-			"tags": [
-				"relay_network"
-			]
-		},
-		{
-			"id": "scar_collector_1",
-			"type": "scar_collector",
-			"connectedTo": [],
-			"x": -1200,
-			"y": 1900,
-			"tags": [
-				"relay_network"
-			]
-		},
-		{
-			"id": "early_echo_1",
-			"type": "early_echo",
-			"connectedTo": [],
-			"x": -900,
-			"y": 1900,
-			"tags": [
-				"relay_network"
-			]
-		},
-		{
-			"id": "shared_broadcast_1",
-			"type": "shared_broadcast",
-			"connectedTo": [],
-			"x": -600,
-			"y": 1900,
-			"tags": [
-				"relay_network"
-			]
-		},
-		{
-			"id": "full_array_1",
-			"type": "full_array",
-			"connectedTo": [],
-			"x": -300,
-			"y": 1900,
-			"tags": [
-				"relay_network"
-			]
-		},
-		{
-			"id": "spatial_breach_chance_1",
-			"type": "spatial_breach_chance",
-			"connectedTo": [],
-			"x": 1200,
-			"y": 1500,
-			"tags": [
-				"spatial_breach"
-			]
-		},
-		{
-			"id": "breach_cache_quantity_1",
-			"type": "breach_cache_quantity",
-			"connectedTo": [],
-			"x": 1500,
-			"y": 1500,
-			"tags": [
-				"spatial_breach"
-			]
-		},
-		{
-			"id": "breach_cache_items_1",
-			"type": "breach_cache_items",
-			"connectedTo": [],
-			"x": 1800,
-			"y": 1500,
-			"tags": [
-				"spatial_breach"
-			]
-		},
-		{
-			"id": "warped_chance_1",
-			"type": "warped_chance",
-			"connectedTo": [],
-			"x": 2100,
-			"y": 1500,
-			"tags": [
-				"spatial_breach"
-			]
-		},
-		{
-			"id": "heavy_breach_1",
-			"type": "heavy_breach",
-			"connectedTo": [],
-			"x": 600,
-			"y": 1900,
-			"tags": [
-				"spatial_breach"
-			]
-		},
-		{
-			"id": "rift_magnetism_1",
-			"type": "rift_magnetism",
-			"connectedTo": [],
-			"x": 900,
-			"y": 1900,
-			"tags": [
-				"spatial_breach"
-			]
-		},
-		{
-			"id": "hyperspace_bleed_1",
-			"type": "hyperspace_bleed",
-			"connectedTo": [],
-			"x": 1200,
-			"y": 1900,
-			"tags": [
-				"spatial_breach"
-			]
-		},
-		{
-			"id": "rally_point_1",
-			"type": "rally_point",
-			"connectedTo": [],
-			"x": 1500,
-			"y": 1900,
-			"tags": [
-				"spatial_breach"
-			]
-		},
-		{
-			"id": "incursion_1",
-			"type": "incursion",
-			"connectedTo": [],
-			"x": 1800,
-			"y": 1900,
-			"tags": [
-				"spatial_breach"
-			]
-		},
-		{
-			"id": "event_horizon_1",
-			"type": "event_horizon",
-			"connectedTo": [],
-			"x": 2100,
-			"y": 1900,
-			"tags": [
-				"black_hole",
-				"spatial_breach"
-			]
-		},
-		{
-			"id": "rude_awakening_1",
-			"type": "rude_awakening",
-			"connectedTo": [],
-			"x": 2400,
-			"y": 1900,
-			"tags": [
-				"spatial_breach",
-				"anomalous_debris"
-			]
-		},
-		{
-			"id": "rift_duel_1",
-			"type": "rift_duel",
-			"connectedTo": [],
-			"x": 2700,
-			"y": 1900,
-			"tags": [
-				"spatial_breach"
-			]
-		},
-		{
-			"id": "anomalous_debris_chance_1",
+			"id": "anomalous_debris_chance_5",
 			"type": "anomalous_debris_chance",
-			"connectedTo": [],
-			"x": 4350,
-			"y": 1500,
-			"tags": [
-				"anomalous_debris"
-			]
-		},
-		{
-			"id": "additional_debris_1",
-			"type": "additional_debris",
-			"connectedTo": [],
-			"x": 4650,
-			"y": 1500,
-			"tags": [
-				"anomalous_debris"
-			]
-		},
-		{
-			"id": "engram_quantity_1",
-			"type": "engram_quantity",
-			"connectedTo": [],
-			"x": 4950,
-			"y": 1500,
-			"tags": [
-				"anomalous_debris"
-			]
-		},
-		{
-			"id": "deep_corruption_1",
-			"type": "deep_corruption",
-			"connectedTo": [],
-			"x": 3600,
-			"y": 1900,
-			"tags": [
-				"anomalous_debris"
-			]
-		},
-		{
-			"id": "double_dose_1",
-			"type": "double_dose",
-			"connectedTo": [],
-			"x": 3900,
-			"y": 1900,
-			"tags": [
-				"anomalous_debris"
-			]
-		},
-		{
-			"id": "lone_sleeper_1",
-			"type": "lone_sleeper",
-			"connectedTo": [],
-			"x": 4200,
-			"y": 1900,
-			"tags": [
-				"anomalous_debris"
-			]
-		},
-		{
-			"id": "breached_graveyard_1",
-			"type": "breached_graveyard",
-			"connectedTo": [],
-			"x": 4500,
-			"y": 1900,
-			"tags": [
-				"anomalous_debris",
-				"spatial_breach"
-			]
-		},
-		{
-			"id": "restless_sleepers_1",
-			"type": "restless_sleepers",
-			"connectedTo": [],
-			"x": 4800,
-			"y": 1900,
-			"tags": [
-				"anomalous_debris"
-			]
-		},
-		{
-			"id": "redacted_sleepers_1",
-			"type": "redacted_sleepers",
-			"connectedTo": [],
-			"x": 5100,
-			"y": 1900,
+			"connectedTo": [
+				"excavation_sites_chance_9",
+				"infested_bolt_holes_1"
+			],
+			"x": 2428.4,
+			"y": -1219.7,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -587,39 +1570,1118 @@
 		{
 			"id": "threatening_sleepers_1",
 			"type": "threatening_sleepers",
-			"connectedTo": [],
-			"x": 5400,
-			"y": 1900,
+			"connectedTo": [
+				"anomalous_debris_chance_7"
+			],
+			"x": 3217.4,
+			"y": 643.2,
 			"tags": [
 				"anomalous_debris"
 			]
 		},
 		{
-			"id": "veiled_sleepers_1",
-			"type": "veiled_sleepers",
-			"connectedTo": [],
-			"x": 5700,
-			"y": 1900,
+			"id": "anomalous_debris_chance_6",
+			"type": "anomalous_debris_chance",
+			"connectedTo": [
+				"travel_catalysts_5",
+				"anomalous_debris_chance_7"
+			],
+			"x": 3076.3,
+			"y": 627.5,
 			"tags": [
 				"anomalous_debris"
 			]
 		},
 		{
-			"id": "silent_choir_1",
-			"type": "silent_choir",
-			"connectedTo": [],
-			"x": 4650,
-			"y": 2300,
+			"id": "anomalous_debris_chance_7",
+			"type": "anomalous_debris_chance",
+			"connectedTo": [
+				"anomalous_debris_chance_6",
+				"threatening_sleepers_1"
+			],
+			"x": 3118.9,
+			"y": 660.4,
 			"tags": [
 				"anomalous_debris"
 			]
 		},
 		{
-			"id": "listening_post_chance_1",
+			"id": "scar_collector_1",
+			"type": "scar_collector",
+			"connectedTo": [
+				"relay_network_chance_8"
+			],
+			"x": 2321.6,
+			"y": 1411.9,
+			"tags": [
+				"relay_network"
+			]
+		},
+		{
+			"id": "relay_network_chance_7",
+			"type": "relay_network_chance",
+			"connectedTo": [
+				"travel_catalysts_6",
+				"relay_network_chance_8"
+			],
+			"x": 2219.7,
+			"y": 1499,
+			"tags": [
+				"relay_network"
+			]
+		},
+		{
+			"id": "relay_network_chance_8",
+			"type": "relay_network_chance",
+			"connectedTo": [
+				"relay_network_chance_7",
+				"scar_collector_1"
+			],
+			"x": 2310.1,
+			"y": 1320.6,
+			"tags": [
+				"relay_network"
+			]
+		},
+		{
+			"id": "rally_point_1",
+			"type": "rally_point",
+			"connectedTo": [
+				"spatial_breach_chance_6"
+			],
+			"x": 886.4,
+			"y": 2619.5,
+			"tags": [
+				"spatial_breach"
+			]
+		},
+		{
+			"id": "spatial_breach_chance_5",
+			"type": "spatial_breach_chance",
+			"connectedTo": [
+				"travel_catalysts_8",
+				"spatial_breach_chance_6"
+			],
+			"x": 791.1,
+			"y": 2522.4,
+			"tags": [
+				"spatial_breach"
+			]
+		},
+		{
+			"id": "spatial_breach_chance_6",
+			"type": "spatial_breach_chance",
+			"connectedTo": [
+				"spatial_breach_chance_5",
+				"rally_point_1"
+			],
+			"x": 924.5,
+			"y": 2705.5,
+			"tags": [
+				"spatial_breach"
+			]
+		},
+		{
+			"id": "torn_holds_1",
+			"type": "torn_holds",
+			"connectedTo": [
+				"spatial_breach_chance_7"
+			],
+			"x": -1181.2,
+			"y": 3028.7,
+			"tags": [
+				"supply_convoy",
+				"spatial_breach"
+			]
+		},
+		{
+			"id": "supply_convoy_chance_7",
+			"type": "supply_convoy_chance",
+			"connectedTo": [
+				"travel_catalysts_10",
+				"spatial_breach_chance_7"
+			],
+			"x": -1166,
+			"y": 2891.5,
+			"tags": [
+				"supply_convoy"
+			]
+		},
+		{
+			"id": "spatial_breach_chance_7",
+			"type": "spatial_breach_chance",
+			"connectedTo": [
+				"supply_convoy_chance_7",
+				"torn_holds_1"
+			],
+			"x": -1259.9,
+			"y": 2973.7,
+			"tags": [
+				"spatial_breach"
+			]
+		},
+		{
+			"id": "supply_lines_1",
+			"type": "supply_lines",
+			"connectedTo": [
+				"supply_convoy_chance_9"
+			],
+			"x": -2369.1,
+			"y": 1296.7,
+			"tags": [
+				"supply_convoy"
+			]
+		},
+		{
+			"id": "supply_convoy_chance_8",
+			"type": "supply_convoy_chance",
+			"connectedTo": [
+				"travel_catalysts_12",
+				"supply_convoy_chance_9"
+			],
+			"x": -2373,
+			"y": 1438.7,
+			"tags": [
+				"supply_convoy"
+			]
+		},
+		{
+			"id": "supply_convoy_chance_9",
+			"type": "supply_convoy_chance",
+			"connectedTo": [
+				"supply_convoy_chance_8",
+				"supply_lines_1"
+			],
+			"x": -2459.3,
+			"y": 1253.6,
+			"tags": [
+				"supply_convoy"
+			]
+		},
+		{
+			"id": "hair_trigger_1",
+			"type": "hair_trigger",
+			"connectedTo": [
+				"listening_post_chance_6"
+			],
+			"x": -3224.8,
+			"y": 493.1,
+			"tags": [
+				"listening_post"
+			]
+		},
+		{
+			"id": "listening_post_chance_5",
 			"type": "listening_post_chance",
-			"connectedTo": [],
-			"x": 7200,
-			"y": 1500,
+			"connectedTo": [
+				"travel_catalysts_13",
+				"listening_post_chance_6"
+			],
+			"x": -3212.9,
+			"y": 351.6,
+			"tags": [
+				"listening_post"
+			]
+		},
+		{
+			"id": "listening_post_chance_6",
+			"type": "listening_post_chance",
+			"connectedTo": [
+				"listening_post_chance_5",
+				"hair_trigger_1"
+			],
+			"x": -3321.7,
+			"y": 468.6,
+			"tags": [
+				"listening_post"
+			]
+		},
+		{
+			"id": "early_echo_1",
+			"type": "early_echo",
+			"connectedTo": [
+				"relay_network_chance_10"
+			],
+			"x": -2769.4,
+			"y": -1684.2,
+			"tags": [
+				"relay_network"
+			]
+		},
+		{
+			"id": "relay_network_chance_9",
+			"type": "relay_network_chance",
+			"connectedTo": [
+				"travel_catalysts_15",
+				"relay_network_chance_10"
+			],
+			"x": -2637.6,
+			"y": -1660.2,
+			"tags": [
+				"relay_network"
+			]
+		},
+		{
+			"id": "relay_network_chance_10",
+			"type": "relay_network_chance",
+			"connectedTo": [
+				"relay_network_chance_9",
+				"early_echo_1"
+			],
+			"x": -2686.7,
+			"y": -1724.4,
+			"tags": [
+				"relay_network"
+			]
+		},
+		{
+			"id": "smash_and_grab_1",
+			"type": "smash_and_grab",
+			"connectedTo": [
+				"listening_post_chance_8"
+			],
+			"x": -867.6,
+			"y": -2564,
+			"tags": [
+				"listening_post"
+			]
+		},
+		{
+			"id": "listening_post_chance_7",
+			"type": "listening_post_chance",
+			"connectedTo": [
+				"travel_catalysts_17",
+				"listening_post_chance_8"
+			],
+			"x": -996.7,
+			"y": -2504.9,
+			"tags": [
+				"listening_post"
+			]
+		},
+		{
+			"id": "listening_post_chance_8",
+			"type": "listening_post_chance",
+			"connectedTo": [
+				"listening_post_chance_7",
+				"smash_and_grab_1"
+			],
+			"x": -858.9,
+			"y": -2464.3,
+			"tags": [
+				"listening_post"
+			]
+		},
+		{
+			"id": "widened_bores_1",
+			"type": "widened_bores",
+			"connectedTo": [
+				"excavation_sites_chance_11"
+			],
+			"x": -36.7,
+			"y": 3747.5,
+			"tags": [
+				"excavation_sites"
+			]
+		},
+		{
+			"id": "excavation_sites_chance_10",
+			"type": "excavation_sites_chance",
+			"connectedTo": [
+				"travel_catalysts_19",
+				"excavation_sites_chance_11"
+			],
+			"x": -149.7,
+			"y": 3819.7,
+			"tags": [
+				"excavation_sites"
+			]
+		},
+		{
+			"id": "excavation_sites_chance_11",
+			"type": "excavation_sites_chance",
+			"connectedTo": [
+				"excavation_sites_chance_10",
+				"widened_bores_1"
+			],
+			"x": -21.6,
+			"y": 3656.8,
+			"tags": [
+				"excavation_sites"
+			]
+		},
+		{
+			"id": "double_dose_1",
+			"type": "double_dose",
+			"connectedTo": [
+				"anomalous_debris_chance_9"
+			],
+			"x": -2544.9,
+			"y": 3431.5,
+			"tags": [
+				"anomalous_debris"
+			]
+		},
+		{
+			"id": "anomalous_debris_chance_8",
+			"type": "anomalous_debris_chance",
+			"connectedTo": [
+				"travel_catalysts_21",
+				"anomalous_debris_chance_9"
+			],
+			"x": -2686.4,
+			"y": 3420.1,
+			"tags": [
+				"anomalous_debris"
+			]
+		},
+		{
+			"id": "anomalous_debris_chance_9",
+			"type": "anomalous_debris_chance",
+			"connectedTo": [
+				"anomalous_debris_chance_8",
+				"double_dose_1"
+			],
+			"x": -2513.6,
+			"y": 3336.5,
+			"tags": [
+				"anomalous_debris"
+			]
+		},
+		{
+			"id": "breached_graveyard_1",
+			"type": "breached_graveyard",
+			"connectedTo": [
+				"spatial_breach_chance_8"
+			],
+			"x": -3555.2,
+			"y": 1116.8,
+			"tags": [
+				"anomalous_debris",
+				"spatial_breach"
+			]
+		},
+		{
+			"id": "anomalous_debris_chance_10",
+			"type": "anomalous_debris_chance",
+			"connectedTo": [
+				"travel_catalysts_23",
+				"spatial_breach_chance_8"
+			],
+			"x": -3692.8,
+			"y": 1127.3,
+			"tags": [
+				"anomalous_debris"
+			]
+		},
+		{
+			"id": "spatial_breach_chance_8",
+			"type": "spatial_breach_chance",
+			"connectedTo": [
+				"anomalous_debris_chance_10",
+				"breached_graveyard_1"
+			],
+			"x": -3650.5,
+			"y": 1128.3,
+			"tags": [
+				"spatial_breach"
+			]
+		},
+		{
+			"id": "rift_duel_1",
+			"type": "rift_duel",
+			"connectedTo": [
+				"breach_cache_quantity_1"
+			],
+			"x": -3429.6,
+			"y": -2543.5,
+			"tags": [
+				"spatial_breach"
+			]
+		},
+		{
+			"id": "spatial_breach_chance_9",
+			"type": "spatial_breach_chance",
+			"connectedTo": [
+				"travel_catalysts_26",
+				"breach_cache_quantity_1"
+			],
+			"x": -3294.2,
+			"y": -2555.6,
+			"tags": [
+				"spatial_breach"
+			]
+		},
+		{
+			"id": "breach_cache_quantity_1",
+			"type": "breach_cache_quantity",
+			"connectedTo": [
+				"spatial_breach_chance_9",
+				"rift_duel_1"
+			],
+			"x": -3422.8,
+			"y": -2637.3,
+			"tags": [
+				"spatial_breach"
+			]
+		},
+		{
+			"id": "garrison_pickets_1",
+			"type": "garrison_pickets",
+			"connectedTo": [
+				"listening_post_chance_10"
+			],
+			"x": -1285.9,
+			"y": -4093.8,
+			"tags": [
+				"listening_post"
+			]
+		},
+		{
+			"id": "listening_post_chance_9",
+			"type": "listening_post_chance",
+			"connectedTo": [
+				"travel_catalysts_28",
+				"listening_post_chance_10"
+			],
+			"x": -1415.1,
+			"y": -4152.6,
+			"tags": [
+				"listening_post"
+			]
+		},
+		{
+			"id": "listening_post_chance_10",
+			"type": "listening_post_chance",
+			"connectedTo": [
+				"listening_post_chance_9",
+				"garrison_pickets_1"
+			],
+			"x": -1383.8,
+			"y": -4073.1,
+			"tags": [
+				"listening_post"
+			]
+		},
+		{
+			"id": "event_horizon_1",
+			"type": "event_horizon",
+			"connectedTo": [
+				"spatial_breach_chance_11"
+			],
+			"x": 1186.7,
+			"y": -3534.1,
+			"tags": [
+				"black_hole",
+				"spatial_breach"
+			]
+		},
+		{
+			"id": "spatial_breach_chance_10",
+			"type": "spatial_breach_chance",
+			"connectedTo": [
+				"travel_catalysts_30",
+				"spatial_breach_chance_11"
+			],
+			"x": 1233.7,
+			"y": -3663.9,
+			"tags": [
+				"spatial_breach"
+			]
+		},
+		{
+			"id": "spatial_breach_chance_11",
+			"type": "spatial_breach_chance",
+			"connectedTo": [
+				"spatial_breach_chance_10",
+				"event_horizon_1"
+			],
+			"x": 1192.6,
+			"y": -3629.9,
+			"tags": [
+				"spatial_breach"
+			]
+		},
+		{
+			"id": "full_array_1",
+			"type": "full_array",
+			"connectedTo": [
+				"relay_network_chance_12"
+			],
+			"x": 3448.2,
+			"y": -2454,
+			"tags": [
+				"relay_network"
+			]
+		},
+		{
+			"id": "relay_network_chance_11",
+			"type": "relay_network_chance",
+			"connectedTo": [
+				"travel_catalysts_32",
+				"relay_network_chance_12"
+			],
+			"x": 3517.6,
+			"y": -2568.6,
+			"tags": [
+				"relay_network"
+			]
+		},
+		{
+			"id": "relay_network_chance_12",
+			"type": "relay_network_chance",
+			"connectedTo": [
+				"relay_network_chance_11",
+				"full_array_1"
+			],
+			"x": 3446.3,
+			"y": -2546,
+			"tags": [
+				"relay_network"
+			]
+		},
+		{
+			"id": "needle_bores_1",
+			"type": "needle_bores",
+			"connectedTo": [
+				"inhibitor_quantity_1"
+			],
+			"x": 3728.5,
+			"y": 36.5,
+			"tags": [
+				"excavation_sites"
+			]
+		},
+		{
+			"id": "additional_site_1",
+			"type": "additional_site",
+			"connectedTo": [
+				"travel_catalysts_34",
+				"inhibitor_quantity_1"
+			],
+			"x": 3775.4,
+			"y": -89,
+			"tags": [
+				"excavation_sites"
+			]
+		},
+		{
+			"id": "inhibitor_quantity_1",
+			"type": "inhibitor_quantity",
+			"connectedTo": [
+				"additional_site_1",
+				"needle_bores_1"
+			],
+			"x": 3636.6,
+			"y": 39.4,
+			"tags": [
+				"excavation_sites"
+			]
+		},
+		{
+			"id": "deep_corruption_1",
+			"type": "deep_corruption",
+			"connectedTo": [
+				"additional_debris_1"
+			],
+			"x": 2482.3,
+			"y": 3488,
+			"tags": [
+				"anomalous_debris"
+			]
+		},
+		{
+			"id": "anomalous_debris_chance_11",
+			"type": "anomalous_debris_chance",
+			"connectedTo": [
+				"travel_catalysts_37",
+				"additional_debris_1"
+			],
+			"x": 2558.4,
+			"y": 3607.8,
+			"tags": [
+				"anomalous_debris"
+			]
+		},
+		{
+			"id": "additional_debris_1",
+			"type": "additional_debris",
+			"connectedTo": [
+				"anomalous_debris_chance_11",
+				"deep_corruption_1"
+			],
+			"x": 2382.6,
+			"y": 3480.5,
+			"tags": [
+				"anomalous_debris"
+			]
+		},
+		{
+			"id": "deeper_bores_1",
+			"type": "deeper_bores",
+			"connectedTo": [
+				"inhibitor_quantity_2"
+			],
+			"x": 4740,
+			"y": 2210.2,
+			"tags": [
+				"excavation_sites"
+			]
+		},
+		{
+			"id": "additional_site_2",
+			"type": "additional_site",
+			"connectedTo": [
+				"travel_chart_modifier_effect_1",
+				"inhibitor_quantity_2"
+			],
+			"x": 4615.7,
+			"y": 2260.2,
+			"tags": [
+				"excavation_sites"
+			]
+		},
+		{
+			"id": "inhibitor_quantity_2",
+			"type": "inhibitor_quantity",
+			"connectedTo": [
+				"additional_site_2",
+				"deeper_bores_1"
+			],
+			"x": 4766,
+			"y": 2298.4,
+			"tags": [
+				"excavation_sites"
+			]
+		},
+		{
+			"id": "bolt_hole_drop_1",
+			"type": "bolt_hole_drop",
+			"connectedTo": [
+				"excavation_sites_chance_12"
+			],
+			"x": 2722.7,
+			"y": 3888.3,
+			"tags": [
+				"supply_convoy",
+				"excavation_sites"
+			]
+		},
+		{
+			"id": "supply_convoy_chance_10",
+			"type": "supply_convoy_chance",
+			"connectedTo": [
+				"travel_chart_modifier_effect_3",
+				"excavation_sites_chance_12"
+			],
+			"x": 2633.5,
+			"y": 3993.6,
+			"tags": [
+				"supply_convoy"
+			]
+		},
+		{
+			"id": "excavation_sites_chance_12",
+			"type": "excavation_sites_chance",
+			"connectedTo": [
+				"supply_convoy_chance_10",
+				"bolt_hole_drop_1"
+			],
+			"x": 2766.5,
+			"y": 3802.8,
+			"tags": [
+				"excavation_sites"
+			]
+		},
+		{
+			"id": "hyperspace_bleed_1",
+			"type": "hyperspace_bleed",
+			"connectedTo": [
+				"warped_chance_1"
+			],
+			"x": 1802,
+			"y": 4950.6,
+			"tags": [
+				"spatial_breach"
+			]
+		},
+		{
+			"id": "breach_cache_items_1",
+			"type": "breach_cache_items",
+			"connectedTo": [
+				"travel_chart_modifier_effect_4",
+				"warped_chance_1"
+			],
+			"x": 1904.9,
+			"y": 5039.4,
+			"tags": [
+				"spatial_breach"
+			]
+		},
+		{
+			"id": "warped_chance_1",
+			"type": "warped_chance",
+			"connectedTo": [
+				"breach_cache_items_1",
+				"hyperspace_bleed_1"
+			],
+			"x": 1725.4,
+			"y": 4896.1,
+			"tags": [
+				"spatial_breach"
+			]
+		},
+		{
+			"id": "double_down_1",
+			"type": "double_down",
+			"connectedTo": [
+				"relay_reward_rarity_2"
+			],
+			"x": -823.5,
+			"y": 4671,
+			"tags": [
+				"relay_network"
+			]
+		},
+		{
+			"id": "relay_reward_rarity_1",
+			"type": "relay_reward_rarity",
+			"connectedTo": [
+				"travel_chart_modifier_effect_6",
+				"relay_reward_rarity_2"
+			],
+			"x": -883.6,
+			"y": 4551.2,
+			"tags": [
+				"relay_network"
+			]
+		},
+		{
+			"id": "relay_reward_rarity_2",
+			"type": "relay_reward_rarity",
+			"connectedTo": [
+				"relay_reward_rarity_1",
+				"double_down_1"
+			],
+			"x": -795.1,
+			"y": 4758.5,
+			"tags": [
+				"relay_network"
+			]
+		},
+		{
+			"id": "open_season_1",
+			"type": "open_season",
+			"connectedTo": [
+				"supply_convoy_chance_12"
+			],
+			"x": -3381.4,
+			"y": 4030,
+			"tags": [
+				"supply_convoy"
+			]
+		},
+		{
+			"id": "supply_convoy_chance_11",
+			"type": "supply_convoy_chance",
+			"connectedTo": [
+				"travel_chart_modifier_effect_8",
+				"supply_convoy_chance_12"
+			],
+			"x": -3440.9,
+			"y": 4159,
+			"tags": [
+				"supply_convoy"
+			]
+		},
+		{
+			"id": "supply_convoy_chance_12",
+			"type": "supply_convoy_chance",
+			"connectedTo": [
+				"supply_convoy_chance_11",
+				"open_season_1"
+			],
+			"x": -3481.1,
+			"y": 4022.3,
+			"tags": [
+				"supply_convoy"
+			]
+		},
+		{
+			"id": "rude_awakening_1",
+			"type": "rude_awakening",
+			"connectedTo": [
+				"anomalous_debris_chance_12"
+			],
+			"x": -3891.9,
+			"y": 2725.3,
+			"tags": [
+				"spatial_breach",
+				"anomalous_debris"
+			]
+		},
+		{
+			"id": "spatial_breach_chance_12",
+			"type": "spatial_breach_chance",
+			"connectedTo": [
+				"travel_chart_modifier_effect_9",
+				"anomalous_debris_chance_12"
+			],
+			"x": -4006.3,
+			"y": 2802.4,
+			"tags": [
+				"spatial_breach"
+			]
+		},
+		{
+			"id": "anomalous_debris_chance_12",
+			"type": "anomalous_debris_chance",
+			"connectedTo": [
+				"spatial_breach_chance_12",
+				"rude_awakening_1"
+			],
+			"x": -3945.7,
+			"y": 2804.8,
+			"tags": [
+				"anomalous_debris"
+			]
+		},
+		{
+			"id": "pitch_black_1",
+			"type": "pitch_black",
+			"connectedTo": [
+				"inhibitor_quantity_3"
+			],
+			"x": -5240.2,
+			"y": 458.6,
+			"tags": [
+				"excavation_sites"
+			]
+		},
+		{
+			"id": "additional_site_3",
+			"type": "additional_site",
+			"connectedTo": [
+				"travel_chart_modifier_effect_11",
+				"inhibitor_quantity_3"
+			],
+			"x": -5114.4,
+			"y": 412.5,
+			"tags": [
+				"excavation_sites"
+			]
+		},
+		{
+			"id": "inhibitor_quantity_3",
+			"type": "inhibitor_quantity",
+			"connectedTo": [
+				"additional_site_3",
+				"pitch_black_1"
+			],
+			"x": -5150.1,
+			"y": 477.3,
+			"tags": [
+				"excavation_sites"
+			]
+		},
+		{
+			"id": "lone_sleeper_1",
+			"type": "lone_sleeper",
+			"connectedTo": [
+				"additional_debris_2"
+			],
+			"x": -4681.5,
+			"y": -825.4,
+			"tags": [
+				"anomalous_debris"
+			]
+		},
+		{
+			"id": "engram_quantity_1",
+			"type": "engram_quantity",
+			"connectedTo": [
+				"travel_chart_modifier_effect_12",
+				"additional_debris_2"
+			],
+			"x": -4601.9,
+			"y": -707.8,
+			"tags": [
+				"anomalous_debris"
+			]
+		},
+		{
+			"id": "additional_debris_2",
+			"type": "additional_debris",
+			"connectedTo": [
+				"engram_quantity_1",
+				"lone_sleeper_1"
+			],
+			"x": -4719.5,
+			"y": -732.9,
+			"tags": [
+				"anomalous_debris"
+			]
+		},
+		{
+			"id": "fortified_depot_1",
+			"type": "fortified_depot",
+			"connectedTo": [
+				"listening_post_chance_12"
+			],
+			"x": -4036.7,
+			"y": -3387,
+			"tags": [
+				"listening_post"
+			]
+		},
+		{
+			"id": "listening_post_chance_11",
+			"type": "listening_post_chance",
+			"connectedTo": [
+				"travel_chart_modifier_effect_14",
+				"listening_post_chance_12"
+			],
+			"x": -4003.4,
+			"y": -3248.9,
+			"tags": [
+				"listening_post"
+			]
+		},
+		{
+			"id": "listening_post_chance_12",
+			"type": "listening_post_chance",
+			"connectedTo": [
+				"listening_post_chance_11",
+				"fortified_depot_1"
+			],
+			"x": -4085.7,
+			"y": -3299.8,
+			"tags": [
+				"listening_post"
+			]
+		},
+		{
+			"id": "forked_trace_1",
+			"type": "forked_trace",
+			"connectedTo": [
+				"relay_reward_rarity_4"
+			],
+			"x": -1608.6,
+			"y": -4419.2,
+			"tags": [
+				"relay_network"
+			]
+		},
+		{
+			"id": "relay_reward_rarity_3",
+			"type": "relay_reward_rarity",
+			"connectedTo": [
+				"travel_chart_modifier_effect_16",
+				"relay_reward_rarity_4"
+			],
+			"x": -1633.8,
+			"y": -4550.8,
+			"tags": [
+				"relay_network"
+			]
+		},
+		{
+			"id": "relay_reward_rarity_4",
+			"type": "relay_reward_rarity",
+			"connectedTo": [
+				"relay_reward_rarity_3",
+				"forked_trace_1"
+			],
+			"x": -1528.9,
+			"y": -4465.2,
+			"tags": [
+				"relay_network"
+			]
+		},
+		{
+			"id": "mixed_manifest_1",
+			"type": "mixed_manifest",
+			"connectedTo": [
+				"shroud_feedstock_chance_1"
+			],
+			"x": -460.1,
+			"y": -5258,
+			"tags": [
+				"supply_convoy"
+			]
+		},
+		{
+			"id": "threat_feedstock_chance_1",
+			"type": "threat_feedstock_chance",
+			"connectedTo": [
+				"travel_chart_modifier_effect_17",
+				"shroud_feedstock_chance_1"
+			],
+			"x": -406,
+			"y": -5425.4,
+			"tags": [
+				"supply_convoy"
+			]
+		},
+		{
+			"id": "shroud_feedstock_chance_1",
+			"type": "shroud_feedstock_chance",
+			"connectedTo": [
+				"threat_feedstock_chance_1",
+				"mixed_manifest_1"
+			],
+			"x": -424.7,
+			"y": -5387.2,
+			"tags": [
+				"supply_convoy"
+			]
+		},
+		{
+			"id": "restless_sleepers_1",
+			"type": "restless_sleepers",
+			"connectedTo": [
+				"additional_debris_3"
+			],
+			"x": 2002.2,
+			"y": -4294,
+			"tags": [
+				"anomalous_debris"
+			]
+		},
+		{
+			"id": "engram_quantity_2",
+			"type": "engram_quantity",
+			"connectedTo": [
+				"travel_chart_modifier_effect_19",
+				"additional_debris_3"
+			],
+			"x": 1984.2,
+			"y": -4153.1,
+			"tags": [
+				"anomalous_debris"
+			]
+		},
+		{
+			"id": "additional_debris_3",
+			"type": "additional_debris",
+			"connectedTo": [
+				"engram_quantity_2",
+				"restless_sleepers_1"
+			],
+			"x": 2048.3,
+			"y": -4205.2,
+			"tags": [
+				"anomalous_debris"
+			]
+		},
+		{
+			"id": "hunting_party_1",
+			"type": "hunting_party",
+			"connectedTo": [
+				"slow_purge_1"
+			],
+			"x": 3379,
+			"y": -4027.1,
 			"tags": [
 				"listening_post"
 			]
@@ -627,9 +2689,12 @@
 		{
 			"id": "vault_quantity_1",
 			"type": "vault_quantity",
-			"connectedTo": [],
-			"x": 7500,
-			"y": 1500,
+			"connectedTo": [
+				"travel_chart_modifier_effect_20",
+				"slow_purge_1"
+			],
+			"x": 3298.2,
+			"y": -3910.3,
 			"tags": [
 				"listening_post"
 			]
@@ -637,86 +2702,104 @@
 		{
 			"id": "slow_purge_1",
 			"type": "slow_purge",
-			"connectedTo": [],
-			"x": 7800,
-			"y": 1500,
+			"connectedTo": [
+				"vault_quantity_1",
+				"hunting_party_1"
+			],
+			"x": 3437.2,
+			"y": -4108.3,
 			"tags": [
 				"listening_post"
 			]
 		},
 		{
-			"id": "garrison_pickets_1",
-			"type": "garrison_pickets",
-			"connectedTo": [],
-			"x": 6600,
-			"y": 1900,
+			"id": "incursion_1",
+			"type": "incursion",
+			"connectedTo": [
+				"breach_cache_items_2"
+			],
+			"x": 4416,
+			"y": -1607.4,
 			"tags": [
-				"listening_post"
+				"spatial_breach"
 			]
 		},
 		{
-			"id": "hair_trigger_1",
-			"type": "hair_trigger",
-			"connectedTo": [],
-			"x": 6900,
-			"y": 1900,
+			"id": "breach_cache_quantity_2",
+			"type": "breach_cache_quantity",
+			"connectedTo": [
+				"travel_chart_modifier_effect_22",
+				"breach_cache_items_2"
+			],
+			"x": 4308.1,
+			"y": -1690.2,
 			"tags": [
-				"listening_post"
+				"spatial_breach"
 			]
 		},
 		{
-			"id": "smash_and_grab_1",
-			"type": "smash_and_grab",
-			"connectedTo": [],
-			"x": 7200,
-			"y": 1900,
+			"id": "breach_cache_items_2",
+			"type": "breach_cache_items",
+			"connectedTo": [
+				"breach_cache_quantity_2",
+				"incursion_1"
+			],
+			"x": 4439.8,
+			"y": -1698.4,
 			"tags": [
-				"listening_post"
+				"spatial_breach"
 			]
 		},
 		{
-			"id": "hunting_party_1",
-			"type": "hunting_party",
-			"connectedTo": [],
-			"x": 7500,
-			"y": 1900,
+			"id": "silent_choir_1",
+			"type": "silent_choir",
+			"connectedTo": [
+				"additional_debris_4"
+			],
+			"x": 5303.9,
+			"y": -464.2,
 			"tags": [
-				"listening_post"
+				"anomalous_debris"
 			]
 		},
 		{
-			"id": "fortified_depot_1",
-			"type": "fortified_depot",
-			"connectedTo": [],
-			"x": 7800,
-			"y": 1900,
+			"id": "engram_quantity_3",
+			"type": "engram_quantity",
+			"connectedTo": [
+				"travel_chart_modifier_effect_23",
+				"additional_debris_4"
+			],
+			"x": 5128.3,
+			"y": -476.7,
 			"tags": [
-				"listening_post"
+				"anomalous_debris"
 			]
 		},
 		{
-			"id": "officers_ledger_1",
-			"type": "officers_ledger",
-			"connectedTo": [],
-			"x": 8100,
-			"y": 1900,
+			"id": "additional_debris_4",
+			"type": "additional_debris",
+			"connectedTo": [
+				"engram_quantity_3",
+				"silent_choir_1"
+			],
+			"x": 5434.2,
+			"y": -495.3,
 			"tags": [
-				"listening_post"
-			]
-		},
-		{
-			"id": "stolen_charts_1",
-			"type": "stolen_charts",
-			"connectedTo": [],
-			"x": 8400,
-			"y": 1900,
-			"tags": [
-				"listening_post"
+				"anomalous_debris"
 			]
 		}
 	],
 	"connectorCurves": [],
 	"hiddenConnectors": [],
 	"orbitAnchors": [],
-	"decorations": []
+	"decorations": [
+		{
+			"kind": "star",
+			"id": "atlas_star",
+			"x": 0,
+			"y": 0,
+			"radius": 260,
+			"starType": "star_yellow"
+		}
+	]
 }

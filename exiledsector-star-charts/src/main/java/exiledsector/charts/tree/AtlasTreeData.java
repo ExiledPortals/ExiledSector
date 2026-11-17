@@ -17,6 +17,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,16 +34,35 @@ public final class AtlasTreeData {
     private final TreeTopology<AtlasTreeNode> topology;
     private final Decorations decorations;
     private final List<String> volumes;
+    private final AtlasOrbitSystem orbits;
 
-    private AtlasTreeData(Map<String, AtlasTreeType> types, TreeLayoutReader.Layout<AtlasTreeNode> layout) {
+    private AtlasTreeData(Map<String, AtlasTreeType> types, TreeLayoutReader.Layout<AtlasTreeNode> layout, Map<String, AtlasOrbit> orbitsById) {
         this.types = Map.copyOf(types);
-        this.topology = TreeTopology.of(layout.nodes(), TreeTopology.ConnectorLinks.of(layout.connectorCurves(), layout.hiddenConnectors()));
+        this.orbits = AtlasOrbitSystem.of(layout.nodes(), orbitsById);
+        this.topology = TreeTopology.of(withTetherNeighbours(layout.nodes(), orbits),
+                TreeTopology.ConnectorLinks.of(layout.connectorCurves(), layout.hiddenConnectors()));
         this.decorations = layout.decorations();
         this.volumes = List.copyOf(layout.volumes());
     }
 
+    private static List<AtlasTreeNode> withTetherNeighbours(List<AtlasTreeNode> nodes, AtlasOrbitSystem orbits) {
+        List<AtlasTreeNode> linked = new ArrayList<>(nodes.size());
+        for (AtlasTreeNode node : nodes) {
+            Set<String> acrossTethers = orbits.neighboursAcrossTethers(node.getId());
+            if (acrossTethers.isEmpty()) {
+                linked.add(node);
+                continue;
+            }
+            Set<String> connected = new LinkedHashSet<>(node.getConnectedNodeIds());
+            connected.addAll(acrossTethers);
+            linked.add(new AtlasTreeNode(node.getId(), node.type(), List.copyOf(connected), node.getX(), node.getY(), node.getDecoration(),
+                    node.getTreeTags()));
+        }
+        return linked;
+    }
+
     public static void load() {
-        loaded = parse(TreeLayoutReader.load(TYPES_PATH), TreeLayoutReader.load(TREE_PATH));
+        loaded = parse(TreeLayoutReader.load(TYPES_PATH), TreeLayoutReader.load(TREE_PATH), TreeLayoutReader.load(AtlasOrbitReader.ORBITS_PATH));
     }
 
     public static AtlasTreeData get() {
@@ -54,15 +74,19 @@ public final class AtlasTreeData {
     }
 
     static AtlasTreeData empty() {
-        return new AtlasTreeData(Map.of(), TreeLayoutReader.Layout.empty());
+        return new AtlasTreeData(Map.of(), TreeLayoutReader.Layout.empty(), Map.of());
     }
 
     static AtlasTreeData parse(JSONObject typesJson, JSONObject treeJson) {
+        return parse(typesJson, treeJson, null);
+    }
+
+    static AtlasTreeData parse(JSONObject typesJson, JSONObject treeJson, JSONObject orbitsJson) {
         Map<String, AtlasTreeType> types = parseTypes(typesJson);
         List<String> volumes = treeJson == null ? List.of() : TreeLayoutReader.parseVolumes(treeJson, TREE_PATH);
         Set<String> volumeIds = Set.copyOf(volumes);
         TreeLayoutReader.Layout<AtlasTreeNode> layout = TreeLayoutReader.read(treeJson, TREE_PATH, volumeIds::contains, nodeFactory(types));
-        AtlasTreeData data = new AtlasTreeData(types, layout);
+        AtlasTreeData data = new AtlasTreeData(types, layout, AtlasOrbitReader.parse(orbitsJson));
         for (String issue : WormholePairValidator.findIssues(layout.nodes())) {
             LOG.error("[ExiledSector] " + TREE_PATH + ": " + issue);
         }
@@ -153,6 +177,10 @@ public final class AtlasTreeData {
 
     public AtlasTreeType type(String typeId) {
         return types.get(typeId);
+    }
+
+    public AtlasOrbitSystem orbits() {
+        return orbits;
     }
 
     public Decorations decorations() {

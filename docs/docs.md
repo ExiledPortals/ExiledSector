@@ -126,6 +126,9 @@ Killing a system's boss, its flagship or station, is the only way to complete it
 Atlas Skill Point, up to 100. A run that ends without killing the boss uses up the system's anomalies, except star
 anomalies, so the next run there is an ordinary system.
 
+On the Atlas Tree every orbit turns at its own speed. A line that reaches out to another orbit, rather than to a single
+body, connects to everything on that orbit, so holding any one of them lets you take the body the line hangs from.
+
 ### Rarity
 
 A higher chart tier makes rare, unique and mythic crafting items a larger share of what its fleets, sites and bosses
