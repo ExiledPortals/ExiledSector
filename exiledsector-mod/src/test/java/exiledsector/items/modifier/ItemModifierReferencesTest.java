@@ -110,17 +110,17 @@ class ItemModifierReferencesTest {
 
     @Test
     void itemsSavedUnderARenamedDefinitionIdLoadUnderTheCurrentId() throws Exception {
-        ItemIdAliases.register(new JSONArray().put(new JSONObject().put("alias", "framework_engine_room_drive").put("id", DRIVE)));
+        ItemIdAliases.register(new JSONArray().put(new JSONObject().put("alias", "renamed_engine_room_drive").put("id", DRIVE)));
         try {
-            String xml = xstream().toXML(Item.create("item_1", DRIVE, 4L, List.of())).replace(DRIVE, "framework_engine_room_drive");
+            String xml = xstream().toXML(Item.create("item_1", DRIVE, 4L, List.of())).replace(DRIVE, "renamed_engine_room_drive");
 
             Item restored = (Item) xstream().fromXML(xml);
 
-            assertTrue(xml.contains("framework_engine_room_drive"), xml);
+            assertTrue(xml.contains("renamed_engine_room_drive"), xml);
             assertEquals(HullItem.class, restored.getClass());
             assertEquals(DRIVE, restored.definitionId());
-            assertEquals(DRIVE, ItemData.parse("framework_engine_room_drive|5").definitionId());
-            assertEquals(DRIVE, ItemDefinitions.get("framework_engine_room_drive").id());
+            assertEquals(DRIVE, ItemData.parse("renamed_engine_room_drive|5").definitionId());
+            assertEquals(DRIVE, ItemDefinitions.get("renamed_engine_room_drive").id());
         } finally {
             ItemIdAliases.clear();
         }
@@ -223,16 +223,6 @@ class ItemModifierReferencesTest {
 
         assertEquals(ItemImplicits.roll(saved.kind(), 9L), resolved);
         assertEquals("TOP_SPEED_PERCENT_IMPLICIT", resolved.get(0).modifierId());
-    }
-
-    @Test
-    void cargoCodesFromBeforeModifierIdsDecodeToThePoolsCurrentIds() {
-        List<RolledModifier> decoded = ItemCodec.decodeModifiers("P=TOP_SPEED_PERCENT:12;FUEL_USE_MULT:-11", DRIVE);
-
-        assertEquals(List.of("TOP_SPEED_PERCENT_ENGINE_ROOM", "FUEL_USE_MULT_ENGINE_ROOM"), decoded.stream().map(RolledModifier::modifierId).toList());
-        String reencoded = ItemCodec.modifiers(decoded);
-        assertEquals("P=TOP_SPEED_PERCENT_ENGINE_ROOM=TOP_SPEED_PERCENT:12;S=FUEL_USE_MULT_ENGINE_ROOM=FUEL_USE_MULT:-11", reencoded);
-        assertEquals(decoded, ItemCodec.decodeModifiers(reencoded, DRIVE));
     }
 
     @Test

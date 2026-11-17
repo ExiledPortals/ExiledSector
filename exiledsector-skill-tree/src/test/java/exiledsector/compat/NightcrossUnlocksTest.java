@@ -8,7 +8,6 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -52,7 +51,6 @@ class NightcrossUnlocksTest {
     private SectorAPI sector;
     private MemoryAPI sectorMemory;
     private MemoryAPI playerMemory;
-    private StarSystemAPI pascal;
     private CampaignFleetAPI playerFleet;
 
     private static MemoryAPI memory() {
@@ -74,7 +72,6 @@ class NightcrossUnlocksTest {
 
         sectorMemory = memory();
         playerMemory = memory();
-        pascal = mock(StarSystemAPI.class);
         mockSector = new MockSector();
         sector = mockSector.sector;
         playerFleet = mockSector.playerFleet();
@@ -83,7 +80,6 @@ class NightcrossUnlocksTest {
         when(fleetData.getMembersListCopy()).thenReturn(List.of());
         when(sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
         when(sector.getPlayerMemoryWithoutUpdate()).thenReturn(playerMemory);
-        when(sector.getStarSystem(NightcrossUnlocks.PASCAL_SYSTEM_NAME)).thenReturn(pascal);
 
         mockSector.global.when(Global::getSettings).thenReturn(settings);
     }
@@ -103,32 +99,12 @@ class NightcrossUnlocksTest {
     }
 
     @Test
-    void theNightcrossVolumeOpensOnceANightcrossAnchorIsFoundNotOnEnteringPascal() {
-        when(pascal.isEnteredByPlayer()).thenReturn(true);
+    void theNightcrossVolumeOpensOnceANightcrossAnchorIsFound() {
         assertTrue(SkillTypeUnlockStatus.isLocked(PASCAL_GATE, null));
 
         AnchorFinds.record(sector, "nightcross", "test");
 
         assertFalse(SkillTypeUnlockStatus.isLocked(PASCAL_GATE, null));
-    }
-
-    @Test
-    void aSaveThatEnteredPascalBeforeAnchorsCountsAsHavingFoundOne() {
-        assertFalse(NightcrossUnlocks.pascalVisitedBeforeAnchors(sector));
-
-        when(pascal.isEnteredByPlayer()).thenReturn(true);
-        assertTrue(NightcrossUnlocks.pascalVisitedBeforeAnchors(sector));
-
-        when(pascal.isEnteredByPlayer()).thenReturn(false);
-        sectorMemory.set(NightcrossUnlocks.PASCAL_VISITED_FLAG, true);
-        assertTrue(NightcrossUnlocks.pascalVisitedBeforeAnchors(sector));
-    }
-
-    @Test
-    void aRandomSectorWithoutPascalCountsAsVisitedLikeBefore() {
-        when(sector.getStarSystem(NightcrossUnlocks.PASCAL_SYSTEM_NAME)).thenReturn(null);
-
-        assertTrue(NightcrossUnlocks.pascalVisitedBeforeAnchors(sector));
     }
 
     @Test

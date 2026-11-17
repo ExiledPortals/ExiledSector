@@ -98,7 +98,7 @@ class ShipTreeRenamesTest {
     }
 
     private List<SkillItemCost> loadSave() {
-        AffinityOptions.migrateAll(ShipSkillDataManager.all().values());
+        OptionRenames.applyAll(ShipSkillDataManager.all().values());
         ShipTreeRepairs.replaceRemovedNodes(declaredTree, NodeReplacements.all());
         Map<String, SkillNode> effectiveTree = new LinkedHashMap<>(declaredTree);
         effectiveTree.remove("new_dormant");

@@ -47,7 +47,7 @@ class ItemTooltipTest {
     @Test
     void theTooltipListsEachRolledLineWithoutAKindLine() throws Exception {
         HullItemRows.registerMilitary();
-        Item item = Item.withEffects("socketable_1", HullItemRows.MILITARY, 1L,
+        Item item = TestItems.withLines("socketable_1", HullItemRows.MILITARY, 1L,
                 List.of(new RolledLine("BEAM_WEAPON_DAMAGE_PERCENT", 12f), new RolledLine("REMOVED_EFFECT", 3f)));
 
         List<String> lines = item.tooltipLines().stream().map(StyledText::plain).toList();
@@ -59,7 +59,7 @@ class ItemTooltipTest {
     @Test
     void expandedEffectLinesShowTheRollRangeInBracketsAfterTheValue() throws Exception {
         HullItemRows.registerMilitary();
-        Item item = Item.withEffects("socketable_4", HullItemRows.MILITARY, 1L,
+        Item item = TestItems.withLines("socketable_4", HullItemRows.MILITARY, 1L,
                 List.of(new RolledLine("BEAM_WEAPON_DAMAGE_PERCENT", 12f), new RolledLine("SHIELD_DAMAGE_TAKEN_MULT", -12f),
                         new RolledLine("REMOVED_EFFECT", 3f)));
 
@@ -75,7 +75,7 @@ class ItemTooltipTest {
     @Test
     void slottedEffectLinesTagEachExplicitAsPrefixOrSuffix() throws Exception {
         HullItemRows.registerMilitary();
-        Item item = Item.withEffects("socketable_6", HullItemRows.MILITARY, 1L,
+        Item item = TestItems.withLines("socketable_6", HullItemRows.MILITARY, 1L,
                 List.of(new RolledLine("BEAM_WEAPON_DAMAGE_PERCENT", 12f), new RolledLine("SHIELD_DAMAGE_TAKEN_MULT", -12f)));
 
         List<SlottedLine> lines = item.slottedEffectLines(true, null);
@@ -88,7 +88,7 @@ class ItemTooltipTest {
     @Test
     void anEffectNoLongerInItsPoolOrWithAFixedValueShowsNoRange() throws Exception {
         ItemDefinitions.register(new org.json.JSONArray().put(HullItemRows.row("fixed", "bridge", "HULL_MULT:5:5")));
-        Item item = Item.withEffects("socketable_5", "fixed", 1L,
+        Item item = TestItems.withLines("socketable_5", "fixed", 1L,
                 List.of(new RolledLine("HULL_MULT", 5f), new RolledLine("ARMOR_PERCENT", 7f)));
 
         assertEquals(List.of("5% more hull points.", "7% increased armor."),
@@ -98,7 +98,7 @@ class ItemTooltipTest {
     @Test
     void onAKnownHullSizeTheTooltipShowsOnlyThatSizesValue() throws Exception {
         ItemDefinitions.register(new org.json.JSONArray().put(HullItemRows.row("plating", "bridge", "ARMOR_FLAT:5/10/15/20")));
-        Item item = Item.withEffects("socketable_6", "plating", 1L, List.of(new RolledLine("ARMOR_FLAT", 5f)));
+        Item item = TestItems.withLines("socketable_6", "plating", 1L, List.of(new RolledLine("ARMOR_FLAT", 5f)));
 
         List<String> onCapital = writtenParagraphs(item, HullSize.CAPITAL_SHIP, List::of, true);
         List<String> withoutShip = writtenParagraphs(item, null, List::of, true);
@@ -120,7 +120,7 @@ class ItemTooltipTest {
     @Test
     void theExpandedCargoTooltipMarksEachExplicitAsPrefixOrSuffixAndTheCompactOneDoesNot() throws Exception {
         HullItemRows.registerMilitary();
-        Item item = Item.withEffects("socketable_7", HullItemRows.MILITARY, 1L,
+        Item item = TestItems.withLines("socketable_7", HullItemRows.MILITARY, 1L,
                 List.of(new RolledLine("BEAM_WEAPON_DAMAGE_PERCENT", 12f), new RolledLine("SHIELD_DAMAGE_TAKEN_MULT", -12f)));
         String prefixTag = I18n.forGameText(() -> exiledsector.i18n.Translation.text(SlottedRows.slotTagKey(ModifierSlot.PREFIX)));
         String suffixTag = I18n.forGameText(() -> exiledsector.i18n.Translation.text(SlottedRows.slotTagKey(ModifierSlot.SUFFIX)));
@@ -165,7 +165,7 @@ class ItemTooltipTest {
     void theDescriptionIsTheOnlyLineAboveTheEffects() throws Exception {
         ItemDefinitions.register(new org.json.JSONArray().put(HullItemRows.row("described", "bridge", "HULL_MULT:4:6")
                 .put("description", "Pulled from a Domain-era warship.")));
-        Item item = Item.withEffects("socketable_3", "described", 1L, List.of());
+        Item item = TestItems.withLines("socketable_3", "described", 1L, List.of());
 
         List<String> lines = item.tooltipLines().stream().map(StyledText::plain).toList();
 
@@ -174,7 +174,7 @@ class ItemTooltipTest {
 
     @Test
     void anItemWhoseDefinitionIsGoneKeepsItsEffectsButShowsAsUnrecognised() {
-        Item item = Item.withEffects("socketable_2", "removed_mod_item", 1L,
+        Item item = TestItems.withLines("socketable_2", "removed_mod_item", 1L,
                 List.of(new RolledLine("BEAM_WEAPON_DAMAGE_PERCENT", 12f)));
 
         assertEquals("Unrecognised hull item", item.name());

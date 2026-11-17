@@ -22,11 +22,6 @@ public class MaterialItemPlugin extends AnimatedCargoItemPlugin {
     private static final float LINE_PAD = 3f;
 
     @Override
-    public void setId(String id) {
-        super.setId(MaterialIdAliases.currentId(id));
-    }
-
-    @Override
     public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, CargoTransferHandlerAPI transferHandler, Object stackSource) {
         writeTooltip(tooltip, itemId, getName());
         addCostLabel(tooltip, TOOLTIP_PAD, transferHandler, stackSource);

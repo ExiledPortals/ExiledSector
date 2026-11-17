@@ -35,8 +35,6 @@ class ItemCodecTest {
     private static final String COMMON_TEXT = "P=FIGHTER_ARMOR_PERCENT:12;S=HULL_MULT:5";
     private static final String RARE_TEXT = "P=FIGHTER_ARMOR_PERCENT:12;P=FLUX_DISSIPATION_MULT:5.5;S=ARMOR_PERCENT:-0.25;S=HULL_MULT:1.0E-4";
     private static final String HYBRID_TEXT = "P=plated_frame=ARMOR_PERCENT:5+HULL_MULT:3;S=HULL_MULT:5";
-    private static final String RELEASED_COMMON_TEXT = "FIGHTER_ARMOR_PERCENT:12;HULL_MULT:5";
-    private static final String RELEASED_RARE_TEXT = "FIGHTER_ARMOR_PERCENT:12;FLUX_DISSIPATION_MULT:5.5;ARMOR_PERCENT:-0.25;HULL_MULT:1.0E-4";
 
     private static final ItemData COMMON_ITEM =
             new ItemData("sub", 42L, COMMON, new FrozenName("FIGHTER_ARMOR_PERCENT", "HULL_MULT", null, null));
@@ -151,18 +149,6 @@ class ItemCodecTest {
     }
 
     @Test
-    void releasedEffectOnlyStringsDecodeIntoModifiersWithSlotsFromTheDefinition() {
-        assertEquals(COMMON_ITEM, ItemData.parse(COMMON_CARGO.replace(COMMON_TEXT, RELEASED_COMMON_TEXT)));
-        assertEquals(RARE_ITEM, ItemData.parse(RARE_CARGO.replace(RARE_TEXT, RELEASED_RARE_TEXT)));
-        assertEquals(npcItem(RARE_ITEM), NpcItems.item("npc:sub/42/" + RELEASED_RARE_TEXT));
-        assertEquals(new ItemData("removed", 9L, List.of(suffix("FIGHTER_ARMOR_PERCENT", 12f), suffix("HULL_MULT", 5f)), null),
-                ItemData.parse(UNNAMED_CARGO.replace(COMMON_TEXT, RELEASED_COMMON_TEXT)), "without a definition the slot falls back to suffix");
-        assertEquals(List.of(ModifierSlot.PREFIX, ModifierSlot.PREFIX, ModifierSlot.SUFFIX),
-                ItemCodec.decodeModifiers("BEAM_WEAPON_DAMAGE_PERCENT:12;FIGHTER_ARMOR_PERCENT:12;HULL_MULT:5", "sub").stream()
-                        .map(RolledModifier::slot).toList(), "a retired effect before a prefix is a prefix, as in old saves");
-    }
-
-    @Test
     void frozenCargoStringsKeepTheirLenientReadingRules() {
         assertEquals(new ItemData("sub", 5L), ItemData.parse("{\"d\":\"sub\",\"s\":5}"));
         assertEquals(new ItemData("sub", 5L), ItemData.parse("{\"d\":\"sub\",\"s\":5,\"e\":\"BROKEN\",\"n\":true,\"r1\":\"A\"}"));
@@ -201,14 +187,12 @@ class ItemCodecTest {
         assertEquals(new ItemData("sub", 8L, List.of(), null), NpcItems.item("npc:sub/8/"));
         assertEquals(new ItemData("sub", 7L), NpcItems.item("npc:sub/7"));
         assertEquals(new ItemData("a/b", 7L), NpcItems.item("npc:a/b/7"));
-        assertEquals(HullItemRows.data("sub", 42L, List.of(new RolledLine("B", 2f)), null), NpcItems.item("npc:sub/42/A:1/B:2"));
-        assertEquals(HullItemRows.data("sub", 42L, List.of(new RolledLine("A", 1f), new RolledLine("B", 2f)), null),
-                NpcItems.item("npc:sub/42/A:1;;B:2;"));
     }
 
     @Test
     void brokenOrForeignNpcIdsStayUnresolved() {
         assertNull(NpcItems.item("npc:sub/42/BROKEN"));
+        assertNull(NpcItems.item("npc:sub/42/A:1"));
         assertNull(NpcItems.item("npc:sub/42/A:x"));
         assertNull(NpcItems.item("npc:sub/42/:1"));
         assertNull(NpcItems.item("npc:sub/42/X=A:1"));
@@ -271,8 +255,6 @@ class ItemCodecTest {
         EffectAliases.register(new JSONArray().put(new JSONObject().put("alias", "OLD_HULL_MULT").put("effect", "HULL_MULT")));
         try {
             assertEquals(COMMON_ITEM, ItemCodec.decode(COMMON_CARGO.replace("HULL_MULT", "OLD_HULL_MULT")));
-            assertEquals(COMMON_ITEM, ItemCodec.decode(COMMON_CARGO.replace(COMMON_TEXT, RELEASED_COMMON_TEXT)
-                    .replace("HULL_MULT", "OLD_HULL_MULT")));
             assertEquals(List.of(suffix("HULL_MULT", 5f)), ItemCodec.decodeModifiers("S=OLD_HULL_MULT=OLD_HULL_MULT:5", "sub"));
         } finally {
             EffectAliases.clear();

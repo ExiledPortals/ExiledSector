@@ -3,7 +3,6 @@ package exiledsector.items;
 import exiledsector.ProjectFiles;
 import exiledsector.items.modifier.ItemModifiers;
 import exiledsector.items.modifier.RolledLine;
-import exiledsector.items.modifier.RolledModifier;
 import exiledsector.items.name.FrozenName;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,7 +22,7 @@ public final class HullItemRows {
     }
 
     public static ItemData data(String definitionId, long seed, List<RolledLine> effects, FrozenName frozenName) {
-        return new ItemData(definitionId, seed, RolledModifier.fromLegacyEffects(ItemDefinitions.get(definitionId), effects), frozenName);
+        return new ItemData(definitionId, seed, TestItems.explicits(ItemDefinitions.get(definitionId), effects), frozenName);
     }
 
     public static JSONObject row(String id, String section, String prefixes) throws JSONException {

@@ -37,15 +37,13 @@ import exiledsector.items.ItemDefinitions;
 import exiledsector.loot.BattleLootRates;
 import exiledsector.loot.BattleLootTrigger;
 import exiledsector.loot.LootScreenTrigger;
-import exiledsector.items.ItemIdAliases;
 import exiledsector.items.modifier.ItemImplicits;
 import exiledsector.items.modifier.ItemModifiers;
 import exiledsector.items.name.ItemNames;
+import exiledsector.items.ItemIdAliases;
 import exiledsector.items.ItemSaveAliases;
 import exiledsector.items.ItemStore;
-import exiledsector.items.crafting.material.MaterialIdAliases;
 import exiledsector.items.crafting.material.MaterialItems;
-import exiledsector.items.crafting.material.MaterialMigration;
 import exiledsector.items.RetiredItems;
 import exiledsector.items.custody.SavedCargo;
 import exiledsector.items.custody.SocketCustody;
@@ -70,8 +68,6 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
 
     public static final String LIGHT_DATA_PATH = "data/lights/exiledsector_lights.csv";
     static final String SHIP_SKILL_DATA_ALIAS = "exiledSector.ShipSkillData";
-    static final String RETIRED_LIBRARY_PACKAGE = "exiledlib";
-    static final String ROOT_PACKAGE = "exiledsector";
     public static final List<String> LOCALISED_HULLMODS = List.of(SkillTreeHullMod.ID);
     public static final List<ExiledSectorDomain> DOMAINS;
 
@@ -93,7 +89,6 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         ThemeTags.load();
         DOMAINS.forEach(ExiledSectorDomain::loadData);
         ItemIdAliases.load();
-        MaterialIdAliases.load();
         ItemModifiers.load();
         ItemDefinitions.load();
         ItemImplicits.load();
@@ -142,8 +137,6 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
 
     @Override
     public void configureXStream(XStream xStream) {
-        xStream.aliasPackage(RETIRED_LIBRARY_PACKAGE, ROOT_PACKAGE);
-        xStream.aliasPackage(ROOT_PACKAGE, ROOT_PACKAGE);
         ItemSaveAliases.register(xStream);
         DOMAINS.forEach(domain -> domain.configureXStream(xStream));
         xStream.alias(SHIP_SKILL_DATA_ALIAS, ShipSkillData.class);
@@ -158,7 +151,6 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         List<CargoAPI> savedCargoes = SavedCargo.cargoes(sector);
         DOMAINS.forEach(domain -> domain.onGameLoad(newGame, savedCargoes));
         ItemStore.get().freezeNames();
-        MaterialMigration.run(savedCargoes);
         RetiredItems.removeFrom(sector, savedCargoes);
         ShipSkillDataManager.removeBlankRecords();
         FleetWideEffects.markPhaseFieldStale();

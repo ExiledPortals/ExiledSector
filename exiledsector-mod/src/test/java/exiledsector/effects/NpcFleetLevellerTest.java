@@ -351,17 +351,6 @@ class NpcFleetLevellerTest {
     }
 
     @Test
-    void aTreeTaggedBeforeTheNpcRenameIsRetaggedWithTheCurrentPrefix() {
-        List<String> tags = new ArrayList<>(List.of("exiledSector_enemyTree|bulwark|2|root_1,a_1,armor_1"));
-        FleetMemberAPI officered = member("m1", statefulVariant(new LinkedHashSet<>(Set.of(SkillTreeHullMod.ID)), tags), true);
-
-        NpcFleetLeveller.ensure(fleetOf(officered));
-
-        assertEquals(List.of(NpcLevelCaps.TAG_PREFIX + "25"), tags.stream().filter(tag -> !tag.startsWith(NpcTreeTag.PREFIX)).toList());
-        assertEquals(1, tags.stream().filter(tag -> tag.startsWith(NpcTreeTag.PREFIX)).count());
-    }
-
-    @Test
     void yourShipsDetachedIntoATaskGroupKeepTheirOwnTreeAndHullMods() {
         Set<String> hullMods = new LinkedHashSet<>(List.of("heavyarmor", SkillTreeHullMod.ID));
         ShipVariantAPI yourVariant = statefulVariant(hullMods, new ArrayList<>());

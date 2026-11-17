@@ -35,7 +35,6 @@ import exiledsector.charts.run.cleanup.ChartLoadSweep;
 import exiledsector.charts.run.diagnostics.ChartSoakScript;
 import exiledsector.charts.tree.AtlasTreeData;
 import exiledsector.items.ItemStore;
-import exiledsector.items.starchart.RetiredUniqueCharts;
 import exiledsector.ui.chart.ChartInfoTab;
 import org.apache.log4j.Logger;
 
@@ -60,7 +59,6 @@ public final class StarCharts {
             sector.getListenerManager().removeListenerOfClass(ChartInfoTab.class);
             sector.getListenerManager().addListener(new ChartInfoTab(), true);
         }
-        RetiredUniqueCharts.removeFrom(sector);
         SkirmishRecords.dropPlayerInserted(sector);
         absorbCharts(sector);
     }

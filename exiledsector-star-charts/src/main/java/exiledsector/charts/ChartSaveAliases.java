@@ -77,15 +77,10 @@ public final class ChartSaveAliases {
             Map.entry("exiledSector.PhaseDisplacementGate", PhaseDisplacementGate.class),
             Map.entry("exiledSector.PhaseDisplacementIntel", PhaseDisplacementIntel.class));
 
-    static final Map<String, Class<?>> MOVED = Map.of(
-            "exiledsector.charts.anomaly.ChartCoronaTerrainPlugin", ChartCoronaTerrainPlugin.class,
-            "exiledsector.charts.anomaly.ChartPulsarBeamTerrainPlugin", ChartPulsarBeamTerrainPlugin.class);
-
     private ChartSaveAliases() {
     }
 
     public static void register(XStream xstream) {
-        MOVED.forEach(xstream::alias);
         ALIASES.forEach(xstream::alias);
         xstream.aliasField("quality", StarChart.class, "quantity");
     }

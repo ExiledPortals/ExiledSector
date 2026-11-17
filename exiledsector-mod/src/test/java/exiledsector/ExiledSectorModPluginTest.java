@@ -55,12 +55,10 @@ import org.mockito.InOrder;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -298,15 +296,6 @@ class ExiledSectorModPluginTest {
     }
 
     @Test
-    void onGameLoadRemovesInstallerCopiesPersistedByOlderSavesBeforeAddingTheTransientOne() {
-        new ExiledSectorModPlugin().onGameLoad(false);
-
-        InOrder order = inOrder(sector);
-        order.verify(sector).removeScriptsOfClass(SkillTreeInstaller.class);
-        order.verify(sector).addTransientScript(any(SkillTreeInstaller.class));
-    }
-
-    @Test
     void onGameLoadDropsTemplateAssignmentsForShipsWithNoProgressOrDeletedTemplates() {
         String templateId = SkillTreeTemplateStore.save("Brawler", "root_low_tech_1", HullSize.CRUISER, List.of()).id();
         ShipSkillDataManager.get("kept").addXp(5f);
@@ -321,18 +310,14 @@ class ExiledSectorModPluginTest {
     }
 
     @Test
-    void onGameLoadForgetsTheRetiredReserveSlotsAndDropsBlankRecordsLeftByShipsWithNoProgress() {
+    void onGameLoadDropsBlankRecordsLeftByShipsWithNoProgress() {
         ShipSkillDataManager.get("temporary-copy");
         ShipSkillDataManager.get("levelled").addXp(5f);
-        persistentData.put("exiledSector_opSpentSlots", new HashMap<>(Map.of("temporary-copy", 0, "levelled", 1, "sold", 2)));
-        persistentData.put("exiledSector_opSpentNextSlot", 3);
 
         new ExiledSectorModPlugin().onGameLoad(false);
 
-        assertFalse(persistentData.containsKey("exiledSector_opSpentSlots"));
         assertNull(ShipSkillDataManager.find("temporary-copy"));
         assertNotNull(ShipSkillDataManager.find("levelled"));
-        assertFalse(persistentData.containsKey("exiledSector_opSpentNextSlot"));
     }
 
     @Test

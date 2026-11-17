@@ -2,6 +2,7 @@ package exiledsector.items.crafting;
 
 import exiledsector.items.Item;
 import exiledsector.items.ItemDefinitions;
+import exiledsector.items.TestItems;
 import exiledsector.items.modifier.ItemModifiers;
 import exiledsector.items.modifier.RolledLine;
 import org.json.JSONArray;
@@ -52,7 +53,7 @@ class ForgeInfusionsTest {
     }
 
     private static Item plate(RolledLine... effects) {
-        return Item.withEffects("plate", PLATE, 1L, List.of(effects));
+        return TestItems.withLines("plate", PLATE, 1L, List.of(effects));
     }
 
     private static String refusal(Item item) {
@@ -84,7 +85,7 @@ class ForgeInfusionsTest {
 
     @Test
     void uniquesPartsWithoutAnInfusionAndClashingEffectsAreRefused() {
-        assertEquals(ForgeOperation.REFUSAL_PREFIX + "infuse.unique", refusal(Item.withEffects("relic", RELIC, 1L, List.of())));
+        assertEquals(ForgeOperation.REFUSAL_PREFIX + "infuse.unique", refusal(TestItems.withLines("relic", RELIC, 1L, List.of())));
 
         ForgeInfusions.use(definition -> CLASHING_INFUSION);
         assertEquals(ForgeOperation.REFUSAL_PREFIX + "infuse.clash", refusal(plate(new RolledLine("FLUX_CAPACITY_MULT", 5f))));

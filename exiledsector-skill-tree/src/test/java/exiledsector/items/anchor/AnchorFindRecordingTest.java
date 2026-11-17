@@ -4,14 +4,10 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ModManagerAPI;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
-import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
-import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.MockSector;
 import exiledsector.compat.NightcrossCompat;
-import exiledsector.compat.NightcrossUnlocks;
 import exiledsector.effects.SkillTreeLootSource;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
@@ -162,12 +158,9 @@ class AnchorFindRecordingTest {
     }
 
     @Test
-    void aNewFindReopensARelockedGateButTheLoadMigrationDoesNot() {
-        AnchorFinds.markFound(sector, NIGHTCROSS, "test");
+    void aNewFindReopensARelockedGateButAFindOpeningNoGateDoesNot() {
+        AnchorFinds.record(sector, NIGHTCROSS, "test");
         RelockedGates.relockOpenGates(sector);
-        assertTrue(RelockedGates.isRelocked(sector, UnlockConditionType.ANCHOR_FOUND));
-
-        AnchorFinds.markFound(sector, NIGHTCROSS, "load migration");
         assertTrue(RelockedGates.isRelocked(sector, UnlockConditionType.ANCHOR_FOUND));
 
         AnchorFinds.record(sector, "hegemony", "an anchor whose volume has no anchorFound gate");
@@ -175,30 +168,5 @@ class AnchorFindRecordingTest {
 
         AnchorFinds.record(sector, NIGHTCROSS, "found again");
         assertFalse(RelockedGates.isRelocked(sector, UnlockConditionType.ANCHOR_FOUND));
-    }
-
-    @Test
-    void theLoadMigrationRecordsHeldAnchorsButNotMarketListings() {
-        CargoAPI cargo = mock(CargoAPI.class);
-        CargoStackAPI listed = specialStack(anchor(NIGHTCROSS_ANCHOR).toMarketListing());
-        CargoStackAPI held = specialStack(anchor(HEGEMONY_ANCHOR).toSpecialItem());
-        when(cargo.getStacksCopy()).thenReturn(List.of(listed, held));
-        when(sector.getStarSystem(NightcrossUnlocks.PASCAL_SYSTEM_NAME)).thenReturn(mock(StarSystemAPI.class));
-
-        AnchorFindMigration.recordHeldAnchors(sector, List.of(cargo), List.of());
-
-        assertFalse(nightcrossFound());
-        assertTrue(AnchorFinds.isFound(sector, "hegemony"));
-
-        AnchorFindMigration.recordHeldAnchors(sector, List.of(), List.of(anchor(NIGHTCROSS_ANCHOR).create("socketable_1")));
-
-        assertTrue(nightcrossFound());
-    }
-
-    private static CargoStackAPI specialStack(SpecialItemData special) {
-        CargoStackAPI stack = mock(CargoStackAPI.class);
-        when(stack.isSpecialStack()).thenReturn(true);
-        when(stack.getSpecialDataIfSpecial()).thenReturn(special);
-        return stack;
     }
 }

@@ -55,11 +55,11 @@
               <locked>false</locked>
             </exiledSector.RolledModifier>
             <exiledSector.RolledModifier>
-              <modifierId>BALLISTIC_WEAPON_FIRE_RATE_PERCENT</modifierId>
+              <modifierId>BALLISTIC_WEAPON_RATE_OF_FIRE_PERCENT</modifierId>
               <slot>PREFIX</slot>
               <lines>
                 <exiledSector.RolledEffect>
-                  <effectName>BALLISTIC_WEAPON_FIRE_RATE_PERCENT</effectName>
+                  <effectName>BALLISTIC_WEAPON_RATE_OF_FIRE_PERCENT</effectName>
                   <magnitude>11.0</magnitude>
                 </exiledSector.RolledEffect>
               </lines>
@@ -100,12 +100,6 @@
         </exiledSector.WormholeAnchor>
       </owned>
       <nextId>4</nextId>
-      <hullUpgrades class="linked-hash-map">
-        <entry>
-          <string>CRUISER</string>
-          <int>2</int>
-        </entry>
-      </hullUpgrades>
       <holdsStarCharts>false</holdsStarCharts>
     </exiledSector.SocketableStore>
   </entry>
@@ -115,7 +109,7 @@
       <owned>
         <exiledSector.StarChart>
           <id>star_chart_1</id>
-          <definitionId>star_chart_single</definitionId>
+          <definitionId>star_chart</definitionId>
           <seed>14</seed>
           <explicitModifiers>
             <exiledSector.RolledModifier>

@@ -1,6 +1,5 @@
 package exiledsector.items.modifier;
 
-import exiledsector.items.ItemDefinition;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierCategory;
 import exiledsector.modifiers.ModifierLine;
@@ -46,32 +45,6 @@ public final class RolledModifier {
             rolledLines.add(new RolledLine(line.effectName(), line.roll(random)));
         }
         return new RolledModifier(modifier.id(), modifier.slot(), rolledLines);
-    }
-
-    public static List<RolledModifier> fromLegacyEffects(ItemDefinition definition, List<RolledLine> effects) {
-        List<RolledModifier> modifiers = new ArrayList<>(effects.size());
-        for (int index = 0; index < effects.size(); index++) {
-            modifiers.add(single(legacySlot(definition, effects, index), effects.get(index)));
-        }
-        return definition == null ? modifiers : definition.withCurrentIds(modifiers);
-    }
-
-    private static ModifierSlot legacySlot(ItemDefinition definition, List<RolledLine> effects, int index) {
-        ModifierSlot listedSlot = listedSlot(definition, effects.get(index));
-        if (listedSlot != null) {
-            return listedSlot;
-        }
-        for (RolledLine laterEffect : effects.subList(index + 1, effects.size())) {
-            if (listedSlot(definition, laterEffect) == ModifierSlot.PREFIX) {
-                return ModifierSlot.PREFIX;
-            }
-        }
-        return ModifierSlot.SUFFIX;
-    }
-
-    private static ModifierSlot listedSlot(ItemDefinition definition, RolledLine effect) {
-        PoolEntry entry = definition == null ? null : definition.poolEntry(effect.effectName());
-        return entry == null ? null : entry.slot();
     }
 
     public static List<RolledLine> lines(List<RolledModifier> modifiers) {

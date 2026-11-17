@@ -98,11 +98,10 @@ class NodeIdRenamesDataTest {
 
     @Test
     void oldAffinityOptionsReadBackAsTheRenamedAffinities() {
-        assertEquals("low_tech_affinity", AffinityOptions.currentOptionId("affinity_low_tech"));
-        assertEquals("low_tech_affinity", AffinityOptions.currentOptionId("hull"));
-        assertEquals("high_tech_affinity", AffinityOptions.currentOptionId("affinity_high_tech"));
-        assertEquals("midline_affinity", AffinityOptions.currentOptionId("affinity_midline"));
-        assertEquals("ballistic_weapon_damage", AffinityOptions.currentOptionId("ballistic_damage"));
-        assertEquals("non_beam_energy_weapon_damage", AffinityOptions.currentOptionId("non_beam_energy_damage"));
+        assertEquals("low_tech_affinity", NodeReplacements.currentTypeId("affinity_low_tech"));
+        assertEquals("high_tech_affinity", NodeReplacements.currentTypeId("affinity_high_tech"));
+        assertEquals("midline_affinity", NodeReplacements.currentTypeId("affinity_midline"));
+        assertEquals("ballistic_weapon_damage", NodeReplacements.currentTypeId("ballistic_damage"));
+        assertEquals("non_beam_energy_weapon_damage", NodeReplacements.currentTypeId("non_beam_energy_damage"));
     }
 }

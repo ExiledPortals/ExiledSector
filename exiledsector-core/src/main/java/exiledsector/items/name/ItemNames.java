@@ -200,9 +200,6 @@ public final class ItemNames {
         if (nameParts.rareFirst() == null) {
             return null;
         }
-        if (nameParts.isAssembledText()) {
-            return nameParts.rareFirst();
-        }
         String firstWord = word(nameParts.rareFirst());
         String secondWord = word(nameParts.rareSecond());
         if (!nameParts.isProduct()) {

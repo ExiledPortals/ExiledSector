@@ -1,7 +1,6 @@
 package exiledsector.ui.cargo;
 
 import com.fs.starfarer.api.campaign.SpecialItemData;
-import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.items.ItemData;
 import exiledsector.items.crafting.ItemDisassembly;
 import exiledsector.items.crafting.material.CraftingInhibitor;
@@ -41,11 +40,10 @@ class LootAlertTest {
     }
 
     @Test
-    void everyRefitSchematicTierAndAnOldHullUpgradeHaveTheirOwnAlert() {
+    void everyRefitSchematicTierHasItsOwnAlert() {
         for (RefitSchematic schematic : RefitSchematic.values()) {
             assertEquals(LootAlert.REFIT_SCHEMATIC, LootAlert.of(schematic.toSpecialItem()));
         }
-        assertEquals(LootAlert.REFIT_SCHEMATIC, LootAlert.of(new SpecialItemData(RefitSchematic.ITEM_ID, HullSize.CRUISER.name())));
     }
 
     @Test

@@ -1,8 +1,8 @@
 package exiledsector.skills.template;
 
-import exiledsector.skills.AffinityOptions;
 import exiledsector.skills.AllocationCheck;
 import exiledsector.skills.AllocationPath;
+import exiledsector.skills.NodeReplacements;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillTreeTopology;
@@ -34,7 +34,7 @@ public final class TemplateBridge {
     public static List<SkillType> selections(List<TemplateStep> steps) {
         List<SkillType> selections = new ArrayList<>();
         for (TemplateStep step : steps) {
-            SkillType selection = step.optionTypeId() == null ? null : SkillTree.getType(AffinityOptions.currentOptionId(step.optionTypeId()));
+            SkillType selection = step.optionTypeId() == null ? null : SkillTree.getType(NodeReplacements.currentTypeId(step.optionTypeId()));
             if (selection != null) {
                 selections.add(selection);
             }

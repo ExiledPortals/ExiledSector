@@ -266,14 +266,4 @@ class GateRewardAnchorsTest {
         verify(playerCargo, never()).addSpecial(any(), anyFloat());
         assertFalse(GateRewardAnchors.granted(sector, EXISTENTIAL_THREAT_GATE));
     }
-
-    @Test
-    void aSaveGrantedTheStargazerAnchorUnderTheGatesFormerNameIsNotGrantedItAgain() {
-        SectorAPI sector = mock(SectorAPI.class);
-        MemoryAPI sectorMemory = memory(new HashMap<>(Map.of(GateRewardAnchors.GRANTED_PREFIX + "gate_lunar_fleet_defeated", true)));
-        when(sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
-
-        assertTrue(GateRewardAnchors.granted(sector, EXISTENTIAL_THREAT_GATE));
-        assertFalse(GateRewardAnchors.granted(sector, ABYSS_GATE));
-    }
 }

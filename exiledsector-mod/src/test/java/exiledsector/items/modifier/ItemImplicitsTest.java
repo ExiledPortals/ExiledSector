@@ -5,6 +5,7 @@ import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemFixtures;
 import exiledsector.items.ItemKind;
+import exiledsector.items.TestItems;
 import exiledsector.items.hull.HullItem;
 import exiledsector.items.subroutine.SubroutineDefinitions;
 import exiledsector.skills.SkillTypeEffect;
@@ -65,9 +66,9 @@ class ItemImplicitsTest {
 
     @Test
     void anItemRollsTheSameImplicitsFromItsSeedAndKeepsThemFrozen() throws Exception {
-        Item shieldItem = Item.withEffects("item", "shield_generator_emitter", 42L, List.of());
+        Item shieldItem = TestItems.withLines("item", "shield_generator_emitter", 42L, List.of());
         List<RolledLine> firstRoll = RolledModifier.lines(shieldItem.implicits());
-        Item sameSeed = Item.withEffects("other", "shield_generator_emitter", 42L, List.of());
+        Item sameSeed = TestItems.withLines("other", "shield_generator_emitter", 42L, List.of());
 
         assertEquals(2, firstRoll.size());
         assertEquals(magnitudes(firstRoll), magnitudes(RolledModifier.lines(sameSeed.implicits())));
@@ -82,13 +83,13 @@ class ItemImplicitsTest {
                 .filter(definition -> definition.unique() && definition.kind() == ItemKind.WEAPON_MOUNT).findFirst().orElseThrow();
         ItemDefinition subroutine = ItemDefinitions.get(ItemFixtures.SUBROUTINE);
 
-        assertEquals(1, Item.withEffects("u", unique.id(), 7L, List.of()).implicits().size());
-        assertTrue(Item.withEffects("s", subroutine.id(), 7L, List.of()).implicits().isEmpty());
+        assertEquals(1, TestItems.withLines("u", unique.id(), 7L, List.of()).implicits().size());
+        assertTrue(TestItems.withLines("s", subroutine.id(), 7L, List.of()).implicits().isEmpty());
     }
 
     @Test
     void implicitsApplyAlongsideExplicitsWithoutChangingRarity() {
-        Item plate = Item.withEffects("plate", "armor_plate", 9L, List.of(new RolledLine("HULL_PERCENT", 5f)));
+        Item plate = TestItems.withLines("plate", "armor_plate", 9L, List.of(new RolledLine("HULL_PERCENT", 5f)));
         List<SkillTypeEffect> applied = plate.skillEffects();
 
         assertEquals(2, applied.size());
@@ -98,7 +99,7 @@ class ItemImplicitsTest {
 
     @Test
     void anItemGroupsItsRollsIntoImplicitAndExplicitWithPrefixesAndSuffixesUnderExplicit() {
-        Item plate = Item.withEffects("plate", "armor_plate", 9L,
+        Item plate = TestItems.withLines("plate", "armor_plate", 9L,
                 List.of(new RolledLine("HULL_PERCENT", 5f), new RolledLine("KINETIC_DAMAGE_TAKEN_PERCENT", -5f)));
 
         assertEquals(List.of(ModifierSlot.IMPLICIT), plate.rolls(ModifierCategory.IMPLICIT).stream().map(SlottedRoll::slot).toList());

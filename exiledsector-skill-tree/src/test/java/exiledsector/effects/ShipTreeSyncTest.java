@@ -436,17 +436,6 @@ class ShipTreeSyncTest {
     }
 
     @Test
-    void aRecoveredShipWithAnOldImplicitAnchorTagLosesTheVolumeToo() throws Exception {
-        registerHegemonyVolume();
-
-        ShipSkillData adopted = adoptFactionShip("exiledSector_npcTree|generated|5|root_1,a_1,socket_1,gate_far,pride|anchors:socket_1=gate_far");
-
-        assertEquals(List.of("root_1", "a_1", "socket_1"), List.copyOf(adopted.getAllocatedNodeIds()));
-        assertTrue(adopted.getSocketedItems().isEmpty());
-        assertEquals(3, adopted.getBankedFreeAllocations());
-    }
-
-    @Test
     void aRecoveredNpcShipKeepsItsTreeAsItsOwnSavedTree() {
         registerNpcTreeNodes();
         Set<String> hullMods = new HashSet<>(Set.of(SkillTreeHullMod.ID));

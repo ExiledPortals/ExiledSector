@@ -93,7 +93,6 @@ class ReleasedItemsTest {
     @Test
     void everyItemIdAliasPointsAtALoadedDefinitionAndNoAliasIsStillADefinition() throws Exception {
         JSONArray aliases = csvRows(ItemIdAliases.dataPath());
-        assertTrue(aliases.length() > 0);
         for (int i = 0; i < aliases.length(); i++) {
             String alias = aliases.getJSONObject(i).getString("alias");
             String currentId = aliases.getJSONObject(i).getString("id");

@@ -158,27 +158,17 @@ public final class ItemCodec {
             return null;
         }
         List<RolledModifier> modifiers = new ArrayList<>();
-        List<RolledLine> legacyEffects = new ArrayList<>();
         for (String entry : encoded.split(EFFECT_SEPARATOR)) {
             if (entry.isEmpty()) {
                 continue;
             }
-            if (entry.contains(MODIFIER_FIELD_SEPARATOR)) {
-                RolledModifier modifier = decodeModifier(entry);
-                if (modifier == null) {
-                    return null;
-                }
-                modifiers.add(modifier);
-            } else {
-                RolledLine effect = decodeEffect(entry);
-                if (effect == null) {
-                    return null;
-                }
-                legacyEffects.add(effect);
+            RolledModifier modifier = entry.contains(MODIFIER_FIELD_SEPARATOR) ? decodeModifier(entry) : null;
+            if (modifier == null) {
+                return null;
             }
+            modifiers.add(modifier);
         }
         ItemDefinition definition = ItemDefinitions.get(definitionId);
-        modifiers.addAll(RolledModifier.fromLegacyEffects(definition, legacyEffects));
         return definition == null ? modifiers : definition.withCurrentIds(modifiers);
     }
 
@@ -295,16 +285,13 @@ public final class ItemCodec {
     }
 
     private static CorruptionOutcome corruption(JSONObject json) {
-        Object stored = json.opt(CORRUPTED_KEY);
-        if (stored == null || Boolean.FALSE.equals(stored)) {
-            return null;
-        }
+        String stored = json.optString(CORRUPTED_KEY, "");
         for (CorruptionOutcome outcome : CorruptionOutcome.values()) {
-            if (outcome.name().equals(String.valueOf(stored))) {
+            if (outcome.name().equals(stored)) {
                 return outcome;
             }
         }
-        return CorruptionOutcome.NOTHING;
+        return null;
     }
 
     private static FrozenName frozenName(JSONObject json) {

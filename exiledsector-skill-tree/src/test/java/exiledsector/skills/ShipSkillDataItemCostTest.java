@@ -1,14 +1,10 @@
 package exiledsector.skills;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
-import com.thoughtworks.xstream.security.AnyTypePermission;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -33,15 +29,6 @@ class ShipSkillDataItemCostTest {
         SkillNode node = new SkillNode(id, type, tier == SkillTier.ROOT ? List.of() : List.of("root"), 0f, 0f);
         SkillTree.register(node);
         return node;
-    }
-
-    private static ShipSkillData roundTripWithoutTheLedger(ShipSkillData data) {
-        XStream xstream = new XStream(new DomDriver());
-        XStream.setupDefaultSecurity(xstream);
-        xstream.addPermission(AnyTypePermission.ANY);
-        String olderXml = xstream.toXML(data).replaceAll("<paidItemCost(Ids|Quantities)[^>]*/>", "")
-                .replaceAll("(?s)<paidItemCost(Ids|Quantities)[^>]*>.*?</paidItemCost\\1>", "");
-        return (ShipSkillData) xstream.fromXML(olderXml);
     }
 
     @Test
@@ -82,51 +69,5 @@ class ShipSkillDataItemCostTest {
 
         assertNull(ItemCostLedger.paidItemCost(data, "lobster"));
         assertEquals(LOBSTERS, ItemCostLedger.paidItemCost(data, "lobster_v2"));
-    }
-
-    @Test
-    void aSaveFromBeforeTheLedgerTreatsItsAllocatedItemNodesAsCharged() {
-        ShipSkillData written = new ShipSkillData();
-        ShipTrees.chooseStartingRoot(written, root);
-        ShipTrees.allocate(written, lobster, 3);
-
-        ShipSkillData loaded = roundTripWithoutTheLedger(written);
-
-        assertEquals(LOBSTERS, ItemCostLedger.paidItemCost(loaded, "lobster"));
-        assertNull(ItemCostLedger.paidItemCost(loaded, "root"));
-    }
-
-    @Test
-    void aLegacySavesChargeFollowsANodeReplacedOnLoad() {
-        node("lobster_v2", SkillTier.SMALL, null);
-        ShipSkillData written = new ShipSkillData();
-        ShipTrees.chooseStartingRoot(written, root);
-        ShipTrees.allocate(written, lobster, 3);
-        ShipSkillData loaded = roundTripWithoutTheLedger(written);
-
-        assertTrue(ShipTrees.replaceNode(loaded, "lobster", "lobster_v2"));
-
-        assertEquals(LOBSTERS, ItemCostLedger.paidItemCost(loaded, "lobster_v2"));
-    }
-
-    @Test
-    void anNpcBuildFromBeforeTheLedgerWasNeverCharged() {
-        ShipSkillData written = new ShipSkillData();
-        written.markNpcBuild();
-        ShipTrees.chooseStartingRoot(written, root);
-        ShipTrees.allocate(written, lobster, 3);
-
-        assertNull(ItemCostLedger.paidItemCost(roundTripWithoutTheLedger(written), "lobster"));
-    }
-
-    @Test
-    void forgettingNodesFromALegacySaveStillLeavesTheirChargesToRefund() {
-        ShipSkillData written = new ShipSkillData();
-        ShipTrees.chooseStartingRoot(written, root);
-        ShipTrees.allocate(written, lobster, 3);
-        ShipSkillData loaded = roundTripWithoutTheLedger(written);
-
-        assertEquals(List.of("lobster"), ShipTrees.forgetUnknownNodes(loaded, Map.of("root", root), SkillTree.getAllTypes()));
-        assertEquals(LOBSTERS, ItemCostLedger.takePaidItemCost(loaded, "lobster"));
     }
 }

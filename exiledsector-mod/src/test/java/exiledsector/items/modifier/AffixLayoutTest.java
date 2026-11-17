@@ -4,6 +4,7 @@ import exiledsector.items.HullItemRows;
 import exiledsector.items.Item;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
+import exiledsector.items.TestItems;
 import exiledsector.items.crafting.ItemCrafting;
 import exiledsector.modifiers.ModifierSlot;
 import org.json.JSONArray;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -39,7 +41,7 @@ class AffixLayoutTest {
     }
 
     private List<List<PoolEntry>> openSides(RolledLine... effects) {
-        return AffixLayout.openSides(military, RolledModifier.fromLegacyEffects(military, List.of(effects)));
+        return AffixLayout.openSides(military, TestItems.explicits(military, List.of(effects)));
     }
 
     private boolean prefixesOpen(List<List<PoolEntry>> sides) {
@@ -91,42 +93,36 @@ class AffixLayoutTest {
         assertEquals(List.of(), openSides(PREFIX_CAPACITY, PREFIX_DISSIPATION, SUFFIX_SHIELDS, SUFFIX_HULL));
     }
 
-    @Test
-    void anEffectNoLongerInThePoolStillTakesASlotOnTheSideItsPositionShows() {
-        List<List<PoolEntry>> afterSuffix = openSides(PREFIX_CAPACITY, SUFFIX_SHIELDS, RETIRED);
-        assertTrue(prefixesOpen(afterSuffix));
-        assertFalse(suffixesOpen(afterSuffix), "a retired effect after a suffix is a suffix, so a third suffix must not be added");
-
-        List<List<PoolEntry>> beforePrefix = openSides(RETIRED, PREFIX_CAPACITY, SUFFIX_SHIELDS);
-        assertFalse(prefixesOpen(beforePrefix), "a retired effect before a prefix is a prefix");
-        assertTrue(suffixesOpen(beforePrefix));
+    private List<RolledModifier> savedWithRetired(ModifierSlot retiredSlot) {
+        List<RolledModifier> modifiers = new ArrayList<>(TestItems.explicits(military, List.of(PREFIX_CAPACITY, SUFFIX_SHIELDS)));
+        modifiers.add(retiredSlot == ModifierSlot.PREFIX ? 0 : modifiers.size(), RolledModifier.single(retiredSlot, RETIRED));
+        return modifiers;
     }
 
     @Test
-    void anEffectWhoseSideCannotBeToldIsKeptAsASuffix() {
-        List<List<PoolEntry>> sides = openSides(RETIRED, SUFFIX_SHIELDS);
+    void anEffectNoLongerInThePoolStillTakesUpTheSlotItWasSavedIn() {
+        List<List<PoolEntry>> retiredSuffix = AffixLayout.openSides(military, savedWithRetired(ModifierSlot.SUFFIX));
+        assertTrue(prefixesOpen(retiredSuffix));
+        assertFalse(suffixesOpen(retiredSuffix), "a retired suffix still counts, so a third suffix must not be added");
 
-        assertTrue(prefixesOpen(sides));
-        assertFalse(suffixesOpen(sides));
-        List<List<PoolEntry>> betweenSides = openSides(PREFIX_CAPACITY, RETIRED, SUFFIX_SHIELDS);
-        assertTrue(prefixesOpen(betweenSides));
-        assertFalse(suffixesOpen(betweenSides));
+        List<List<PoolEntry>> retiredPrefix = AffixLayout.openSides(military, savedWithRetired(ModifierSlot.PREFIX));
+        assertFalse(prefixesOpen(retiredPrefix), "a retired prefix still counts");
+        assertTrue(suffixesOpen(retiredPrefix));
     }
 
     @Test
     void newPrefixesGoAfterTheLastPrefixAndNewSuffixesGoLast() {
-        List<RolledModifier> modifiers = RolledModifier.fromLegacyEffects(military, List.of(PREFIX_CAPACITY, SUFFIX_SHIELDS));
-        List<RolledModifier> retiredFirst = RolledModifier.fromLegacyEffects(military, List.of(RETIRED, PREFIX_CAPACITY, SUFFIX_SHIELDS));
+        List<RolledModifier> modifiers = TestItems.explicits(military, List.of(PREFIX_CAPACITY, SUFFIX_SHIELDS));
 
         assertEquals(1, AffixLayout.insertIndex(modifiers, ModifierSlot.PREFIX));
         assertEquals(2, AffixLayout.insertIndex(modifiers, ModifierSlot.SUFFIX));
-        assertEquals(2, AffixLayout.insertIndex(retiredFirst, ModifierSlot.PREFIX));
+        assertEquals(2, AffixLayout.insertIndex(savedWithRetired(ModifierSlot.PREFIX), ModifierSlot.PREFIX));
     }
 
     @Test
     void augmentingAnItemWithARetiredSuffixNeverAddsAThirdSuffix() {
         for (long seed = 0; seed < 200; seed++) {
-            Item item = Item.withEffects("socketable_" + seed, HullItemRows.MILITARY, seed,
+            Item item = TestItems.withLines("socketable_" + seed, HullItemRows.MILITARY, seed,
                     List.of(PREFIX_CAPACITY, SUFFIX_SHIELDS, RETIRED));
 
             ItemCrafting.augment(item, new Random(seed));

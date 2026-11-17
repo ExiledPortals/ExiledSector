@@ -23,7 +23,6 @@ import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunState;
 import exiledsector.charts.wormhole.ChartWormholePlugin;
 import org.junit.jupiter.api.Test;
-import org.mockito.InOrder;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -43,7 +42,6 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -184,24 +182,6 @@ class ChartPersistenceGuardTest {
         ChartSaveAliases.register(xstream);
 
         ChartSaveAliases.ALIASES.forEach((alias, type) -> verify(xstream).alias(alias, type));
-    }
-
-    @Test
-    void readsMovedClassesUnderTheirOldNamesButWritesTheStableAlias() {
-        XStream xstream = mock(XStream.class);
-        InOrder order = inOrder(xstream);
-
-        ChartSaveAliases.register(xstream);
-
-        ChartSaveAliases.MOVED.forEach((oldName, type) -> {
-            assertTrue(ChartSaveAliases.ALIASES.containsValue(type), type.getName());
-            order.verify(xstream).alias(oldName, type);
-        });
-        ChartSaveAliases.ALIASES.forEach((alias, type) -> {
-            if (ChartSaveAliases.MOVED.containsValue(type)) {
-                order.verify(xstream).alias(alias, type);
-            }
-        });
     }
 
     @Test

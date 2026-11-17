@@ -5,6 +5,7 @@ import exiledsector.items.HullItemRows;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemType;
+import exiledsector.items.TestItems;
 import exiledsector.items.hull.HullItem;
 import exiledsector.items.modifier.ItemModifiers;
 import exiledsector.items.modifier.ItemRarity;
@@ -79,7 +80,7 @@ class ItemNamesTest {
 
     private static ItemName name(String definitionId, long seed, List<RolledLine> effects) {
         ItemDefinition definition = ItemDefinitions.get(definitionId);
-        return ItemNames.nameFor(definition, definition.kind(), seed, RolledModifier.fromLegacyEffects(definition, effects));
+        return ItemNames.nameFor(definition, definition.kind(), seed, TestItems.explicits(definition, effects));
     }
 
     @Test
