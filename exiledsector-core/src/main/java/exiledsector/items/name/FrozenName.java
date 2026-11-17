@@ -68,10 +68,6 @@ public final class FrozenName {
         return product;
     }
 
-    public boolean isAssembledText() {
-        return rareFirst != null && rareSecond == null;
-    }
-
     @Override
     public boolean equals(Object other) {
         return other instanceof FrozenName otherName && Objects.equals(prefixEffect, otherName.prefixEffect)

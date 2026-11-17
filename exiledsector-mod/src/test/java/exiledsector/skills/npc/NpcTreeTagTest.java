@@ -131,28 +131,13 @@ class NpcTreeTagTest {
         ShipSkillData data = withOpenHegemonyVolume();
 
         String tag = NpcTreeTag.encode(data);
-        ShipSkillData decoded = NpcTreeTag.decode(tag);
-        ShipSkillData legacy = NpcTreeTag.decode(NpcTreeTag.LEGACY_PREFIX + tag.substring(NpcTreeTag.PREFIX.length()));
+        ShipSkillData restored = NpcTreeTag.decode(tag);
 
         assertEquals("exiledSector_npcTree|generated|2|root,a,socket_1,hegemony_2,pride|sockets:socket_1=" + HEGEMONY_ANCHOR, tag);
-        for (ShipSkillData restored : List.of(decoded, legacy)) {
-            assertEquals(Map.of("socket_1", HEGEMONY_ANCHOR), restored.getSocketedItems());
-            assertEquals(List.copyOf(data.getAllocatedNodeIds()), List.copyOf(restored.getAllocatedNodeIds()));
-            assertTrue(restored.isFreeNode("hegemony_2"));
-            assertEquals("socket_1", ShipTreeLinks.wormholePartner(restored, SkillTree.get("hegemony_2")));
-        }
-    }
-
-    @Test
-    void anOldImplicitAnchorDecodesAsTheVolumesRealAnchor() {
-        withSocket();
-
-        ShipSkillData decoded = NpcTreeTag.decode("exiledSector_npcTree|generated|2|root,a,socket_1,hegemony_2,pride|anchors:socket_1=hegemony_2");
-
-        assertEquals(Map.of("socket_1", HEGEMONY_ANCHOR), decoded.getSocketedItems());
-        assertTrue(decoded.isFreeNode("hegemony_2"));
-        assertEquals("exiledSector_npcTree|generated|2|root,a,socket_1,hegemony_2,pride|sockets:socket_1=" + HEGEMONY_ANCHOR,
-                NpcTreeTag.encode(decoded));
+        assertEquals(Map.of("socket_1", HEGEMONY_ANCHOR), restored.getSocketedItems());
+        assertEquals(List.copyOf(data.getAllocatedNodeIds()), List.copyOf(restored.getAllocatedNodeIds()));
+        assertTrue(restored.isFreeNode("hegemony_2"));
+        assertEquals("socket_1", ShipTreeLinks.wormholePartner(restored, SkillTree.get("hegemony_2")));
     }
 
     @Test
@@ -296,16 +281,6 @@ class NpcTreeTagTest {
         assertEquals(tag, NpcTreeTag.find(variantWithTags("exiledSector_installed_x", tag)));
         assertNull(NpcTreeTag.find(variantWithTags("exiledSector_installed_x")));
         assertNull(NpcTreeTag.find(null));
-    }
-
-    @Test
-    void tagsSavedBeforeTheNpcRenameAreStillFoundAndDecoded() {
-        String current = NpcTreeTag.encode(build(5));
-        String legacy = NpcTreeTag.LEGACY_PREFIX + current.substring(NpcTreeTag.PREFIX.length());
-
-        assertEquals(legacy, NpcTreeTag.find(variantWithTags(legacy)));
-        assertEquals(List.copyOf(NpcTreeTag.decode(current).getAllocatedNodeIds()),
-                List.copyOf(NpcTreeTag.decode(legacy).getAllocatedNodeIds()));
     }
 
     @Test

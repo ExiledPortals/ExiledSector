@@ -40,7 +40,6 @@ import java.util.function.Predicate;
 public final class GateRewardAnchors implements EconomyTickListener {
 
     static final String GRANTED_PREFIX = "$exiledSector_rewardAnchorGranted_";
-    private static final Map<String, String> FORMER_GATE_TAGS = Map.of("gate_existential_threat_defeated", "gate_lunar_fleet_defeated");
     static final String MIGRATION_DONE_KEY = "exiledSector_rewardAnchorMigrationDone";
     private static final Object BATTLE_STATE_KEY = new Object();
     private static final Map<UnlockConditionType, Predicate<BattleEngagement>> BOSS_BEATEN_IN = Map.of(
@@ -174,11 +173,7 @@ public final class GateRewardAnchors implements EconomyTickListener {
 
     static boolean granted(SectorAPI sector, String gateTag) {
         MemoryAPI sectorMemory = sector == null ? null : sector.getMemoryWithoutUpdate();
-        if (sectorMemory == null || sectorMemory.getBoolean(GRANTED_PREFIX + gateTag)) {
-            return true;
-        }
-        String formerTag = FORMER_GATE_TAGS.get(gateTag);
-        return formerTag != null && sectorMemory.getBoolean(GRANTED_PREFIX + formerTag);
+        return sectorMemory == null || sectorMemory.getBoolean(GRANTED_PREFIX + gateTag);
     }
 
     private static void markGranted(SectorAPI sector, String gateTag) {
