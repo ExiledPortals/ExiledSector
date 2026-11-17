@@ -38,8 +38,8 @@ export interface SerpentPart {
 
 function serpentPart(name: string, partWidth: number, partHeight: number, behindHead: number, imageBackOffset: number): SerpentPart {
   return {
-    spritePath: `graphics/fx/rat_genesis_serpent_${name}.png`,
-    glowPath: `graphics/fx/rat_genesis_serpent_${name}_glow.png`,
+    spritePath: `graphics/exiledSector/scenery/serpent/rat_genesis_serpent_${name}.png`,
+    glowPath: `graphics/exiledSector/scenery/serpent/rat_genesis_serpent_${name}_glow.png`,
     partWidth,
     partHeight,
     behindHead,

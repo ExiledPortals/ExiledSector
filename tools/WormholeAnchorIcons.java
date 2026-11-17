@@ -15,8 +15,8 @@ public final class WormholeAnchorIcons {
 
     private static final String DEFAULT_SOURCE = "E:/Dev/Starsector/starsector-core/graphics/icons/cargo/wormhole_anchor.png";
     private static final String DEFAULT_CSV = "data/config/exiledSector/wormhole_anchors.csv";
-    private static final String DEFAULT_OUTPUT_DIR = "graphics/icons/cargo";
-    private static final String FILE_PREFIX = "exiledSector_wormhole_anchor_";
+    private static final String DEFAULT_OUTPUT_DIR = "graphics/exiledSector/items/anchors";
+    private static final String FILE_PREFIX = "wormhole_anchor_";
     private static final float GLOW_HUE_MIN = 265f;
     private static final float GLOW_HUE_MAX = 345f;
     private static final float GLOW_SATURATION_MIN = 0.2f;

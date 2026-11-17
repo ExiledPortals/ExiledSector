@@ -77,7 +77,7 @@ describe('item definitions', () => {
         definition({
           id: 'Bad Id',
           kind: 'nope',
-          icon: 'graphics/unused/x.png',
+          icon: 'art/unused/x.png',
           rarity: '-1',
           unlock: 'mystery',
           prefixes: parsePool('@HULL_MULT; @HULL_MULT_BRIDGE; @NOT_THERE:0; ARMOR_FLAT:1:2'),
@@ -90,7 +90,7 @@ describe('item definitions', () => {
     expect(issues).toEqual([
       'Bad Id: id must use only lowercase letters, digits and underscores',
       'Bad Id: kind must be one of subroutine, bridge',
-      'Bad Id: icon graphics/unused/x.png is in a folder that is not deployed',
+      'Bad Id: icon art/unused/x.png is in a folder that is not deployed',
       'Bad Id: rarity must be zero or more',
       'Bad Id: unknown drop condition mystery',
       'Bad Id: HULL_MULT is listed twice, as HULL_MULT and HULL_MULT_BRIDGE',

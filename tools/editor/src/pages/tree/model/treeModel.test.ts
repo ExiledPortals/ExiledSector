@@ -186,13 +186,13 @@ describe('validation and tags', () => {
     ]);
     document.types[0].tags = ['north'];
     document.types[0].effects = [{ effect: 'NOPE', magnitude: 1 }];
-    document.types[0].icon = 'graphics/unused/x.png';
+    document.types[0].icon = 'art/unused/x.png';
     expect(validateTree(document, vocabulary)).toEqual([
       'Duplicate node id: a',
       'Node "a" uses unknown type "missing"',
       'Node "a" connection "ghost" does not exist',
       'Wormhole node "w" has no paired wormhole set',
-      'Type "small" icon graphics/unused/x.png is in a folder that is not deployed',
+      'Type "small" icon art/unused/x.png is in a folder that is not deployed',
       'Type "small" uses unknown effect "NOPE"',
       'Node "a" has no volume tag',
       'Node "w" has 2 volume tags (north, south), needs exactly one',

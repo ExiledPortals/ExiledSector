@@ -4,6 +4,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import type { Vocabulary } from '../../../api/vocabulary.ts';
 import { DecimalInput } from '../../../shared/DecimalInput.tsx';
 import { confirmAction, notifyError } from '../../../shared/dialogs.tsx';
+import type { ImageDestination } from '../../../shared/imageFolders.ts';
 import { fileUrl } from '../../../shared/imagePaths.ts';
 import { ImagePickButton } from '../../../shared/ImagePickButton.tsx';
 import { unlockOptions } from '../itemOptions.ts';
@@ -67,12 +68,12 @@ export function ItemList({ items, selectedIndex, onSelect, emptyText }: ItemList
   );
 }
 
-export function IconField({ icon, targetFolder, onChange }: { icon: string; targetFolder: string; onChange: (icon: string) => void }) {
+export function IconField({ icon, destination, onChange }: { icon: string; destination: ImageDestination; onChange: (icon: string) => void }) {
   return (
     <Group align="flex-end" wrap="nowrap">
       <Avatar src={fileUrl(icon)} radius="sm" size={64} />
       <TextInput style={{ flex: 1 }} label="Icon path" value={icon} onChange={(event) => onChange(event.currentTarget.value)} />
-      <ImagePickButton targetFolder={targetFolder} onPicked={onChange} />
+      <ImagePickButton destination={destination} currentPath={icon} onPicked={onChange} />
     </Group>
   );
 }

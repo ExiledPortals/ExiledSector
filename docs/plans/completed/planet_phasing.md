@@ -26,7 +26,7 @@ These were read from the 0.98a API source (`starfarer.api.zip`), our code and Va
 
 ### The structure
 
-Phase Displacement Gate, id `exiledSector_phase_displacement_gate`, in the star-charts domain. Its icon is the Bifrost image by Jeremy Cohen, copied to `graphics/icons/industry/exiledSector_phase_displacement_gate.png` and credited to him in `CREDITS.md`.
+Phase Displacement Gate, id `exiledSector_phase_displacement_gate`, in the star-charts domain. Its icon is the Bifrost image by Jeremy Cohen, copied to `graphics/exiledSector/colony/industries/aotd_phase_displacement_gate.png` and credited to him in `CREDITS.md`.
 
 - Unlock. With VoK, it is a new research row: tier 5, column 2, row 9, beside `exiledSector_tech_wormhole_gateway_perfected` and after it, costing `research_databank:20` plus one of the new special item, rewarding the industry. Without VoK, right-clicking the special item unlocks it for good (a sector flag, like the blueprint's `$exiledSector_gatewayUnlocked`), and the player only needs a Wormhole Gateway of any tier, since the upgrades don't exist without VoK.
 - Build conditions: the market holds the player's Gateway (Gateway Nexus with VoK), since the Displacement Gate runs on the Gateway's link to the Outer Reaches, and the market is within 10 light-years of a working hypershunt (the vanilla lookup above, or with VoK its own hypershunt range check, which also covers Hypershunt Receivers). One Gateway per faction means one Displacement Gate per faction. The build tooltip lists whichever condition is missing. A Gateway already built far from any hypershunt can't take a Displacement Gate, so the Gateway's own tooltip should mention the hypershunt range once the Displacement Gate research is done.

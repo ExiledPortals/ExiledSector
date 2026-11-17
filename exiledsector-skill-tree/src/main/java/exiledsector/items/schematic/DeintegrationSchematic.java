@@ -12,7 +12,7 @@ public enum DeintegrationSchematic implements ShipSchematic {
     INSTANCE;
 
     public static final String ITEM_ID = "exiledSector_deintegration_schematic";
-    public static final String ICON_PATH = "graphics/icons/hull_upgrades/deintegration_schematic.png";
+    public static final String ICON_PATH = "graphics/exiledSector/items/schematics/deintegration_schematic.png";
 
     public static int held(CargoAPI cargo) {
         return cargo == null ? 0 : (int) cargo.getQuantity(CargoAPI.CargoItemType.SPECIAL, INSTANCE.toSpecialItem());

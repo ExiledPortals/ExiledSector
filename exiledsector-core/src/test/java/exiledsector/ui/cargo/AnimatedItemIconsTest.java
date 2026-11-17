@@ -13,7 +13,7 @@ class AnimatedItemIconsTest {
     @Test
     void onlyTheBeaconSpriteIsAnimated() {
         assertTrue(AnimatedItemIcons.isAnimated(AnimatedItemIcons.BEACON_PATH));
-        assertFalse(AnimatedItemIcons.isAnimated("graphics/icons/rat_exogrid.png"));
+        assertFalse(AnimatedItemIcons.isAnimated("graphics/exiledSector/tree/exotech/rat_exo_tech_grid_splice.png"));
         assertFalse(AnimatedItemIcons.isAnimated(null));
     }
 

@@ -39,8 +39,8 @@ public final class StarChart extends Item {
     public static final int HIGHEST_TIER = ItemTraits.HIGHEST_TIER;
     public static final int LOWEST_QUANTITY = 0;
     public static final int HIGHEST_QUANTITY = 20;
-    static final String LOW_TIER_ICON = "graphics/icons/star_charts/star_chart_white.png";
-    static final String HIGH_TIER_ICON = "graphics/icons/star_charts/star_chart_red.png";
+    static final String LOW_TIER_ICON = "graphics/exiledSector/items/charts/star_chart_white.png";
+    static final String HIGH_TIER_ICON = "graphics/exiledSector/items/charts/star_chart_red.png";
     private static final int LAST_LOW_TIER = 5;
     private static final int FIRST_HIGH_TIER = 11;
     static final AffixLayout.Limits AFFIX_LIMITS = new AffixLayout.Limits(2, 6, 3, List.of(0.2f, 0.25f, 0.2f, 0.15f, 0.1f));

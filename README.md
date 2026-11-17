@@ -1,4 +1,4 @@
-<p align="center"><img src="graphics/description/logo.png" alt="Exiled Sector"></p>
+<p align="center"><img src="art/description/logo.png" alt="Exiled Sector"></p>
 
 <p align="center"><i>Still sane, exile?</i></p>
 
@@ -25,7 +25,7 @@ Modules on ships and stations share part of their parent tree's effects.
 <details>
 <summary>The skill tree</summary>
 
-<img src="graphics/description/skill_tree.gif" alt="The skill tree">
+<img src="art/description/skill_tree.gif" alt="The skill tree">
 
 </details>
 
@@ -38,7 +38,7 @@ Anchors start dropping once you have the Janus Device (or earlier if you change 
 <details>
 <summary>Travelling through a Wormhole Anchor</summary>
 
-<img src="graphics/description/wormhole_anchor.gif" alt="Travelling through a Wormhole Anchor">
+<img src="art/description/wormhole_anchor.gif" alt="Travelling through a Wormhole Anchor">
 
 </details>
 
@@ -47,7 +47,7 @@ Every major faction has its own volume, with nodes that suit how that faction fi
 <details>
 <summary>Unique faction volume nodes</summary>
 
-<img src="graphics/description/faction_volumes.png" alt="Faction volumes">
+<img src="art/description/faction_volumes.png" alt="Faction volumes">
 
 </details>
 
@@ -56,7 +56,7 @@ If you're running Random Assortment of Things, Nightcross Armory, Navarchy of Ta
 <details>
 <summary>Spoilers: volumes from other mods</summary>
 
-<img src="graphics/description/mod_volumes.png" alt="Volumes from other mods">
+<img src="art/description/mod_volumes.png" alt="Volumes from other mods">
 
 </details>
 
@@ -71,7 +71,7 @@ Find Refit Schematics (which start dropping once you reach level 15) that can in
 <details>
 <summary>Unlocking a section</summary>
 
-<img src="graphics/description/hull_upgrades.gif" alt="Unlocking a section">
+<img src="art/description/hull_upgrades.gif" alt="Unlocking a section">
 
 </details>
 
@@ -80,14 +80,14 @@ Hull items come in common, rare and unique, and roll prefixes and suffixes the w
 <details>
 <summary>Hull items</summary>
 
-<img src="graphics/description/hull_items.gif" alt="Browsing hull items">
+<img src="art/description/hull_items.gif" alt="Browsing hull items">
 
 </details>
 
 <details>
 <summary>Installing hull items</summary>
 
-<img src="graphics/description/hull_item_install.gif" alt="Installing hull items">
+<img src="art/description/hull_item_install.gif" alt="Installing hull items">
 
 </details>
 
@@ -96,21 +96,21 @@ Bad rolls? Take the item to the crafting bench and use nanoswarms on it to add, 
 <details>
 <summary>The crafting bench</summary>
 
-<img src="graphics/description/crafting_open.gif" alt="Opening the crafting bench">
+<img src="art/description/crafting_open.gif" alt="Opening the crafting bench">
 
 </details>
 
 <details>
 <summary>Nanoswarm types</summary>
 
-<img src="graphics/description/crafting_nanoswarms.gif" alt="The nanoswarms">
+<img src="art/description/crafting_nanoswarms.gif" alt="The nanoswarms">
 
 </details>
 
 <details>
 <summary>Using nanoswarms</summary>
 
-<img src="graphics/description/crafting_use.gif" alt="Using nanoswarms on a hull item">
+<img src="art/description/crafting_use.gif" alt="Using nanoswarms on a hull item">
 
 </details>
 
@@ -121,7 +121,7 @@ Loot drops where you'd expect: research stations, orbital labs, derelicts and th
 <details>
 <summary>LOOOOOOT</summary>
 
-<img src="graphics/description/loot.gif" alt="Looting a research station">
+<img src="art/description/loot.gif" alt="Looting a research station">
 
 </details>
 
@@ -138,7 +138,7 @@ If you don't want to build a colony, turn on No Colony Requirement in LunaLib se
 <details>
 <summary>Opening the Outer Reach Atlas</summary>
 
-<img src="graphics/description/atlas_open.gif" alt="Opening the Outer Reach Atlas">
+<img src="art/description/atlas_open.gif" alt="Opening the Outer Reach Atlas">
 
 </details>
 
@@ -149,14 +149,14 @@ Charts roll modifiers too, and the same nanoswarms work on them. The modifiers m
 <details>
 <summary>Inspecting an atlas system</summary>
 
-<img src="graphics/description/atlas_system.gif" alt="Inspecting an atlas system">
+<img src="art/description/atlas_system.gif" alt="Inspecting an atlas system">
 
 </details>
 
 <details>
 <summary>Crafting a Star Chart</summary>
 
-<img src="graphics/description/atlas_chart_bench.gif" alt="Crafting a Star Chart">
+<img src="art/description/atlas_chart_bench.gif" alt="Crafting a Star Chart">
 
 </details>
 

@@ -35,7 +35,7 @@ The managers are system scripts that implement `ChartRunBound`. `ChartRunCloser`
 1. [x] The `biomes` column and per-biome placement. Built: `ChartAnomalies.Definition.biomes` (`perBiome`, `keptWhenSpent`), `AtlasAnomalyCandidate.biomes`, `AtlasBiomeAnomalies` and `AtlasGenerator.biomeAnomalyCell`; per-biome candidates are skipped by the chance roll. Tests: `AtlasBiomeAnomaliesTest`.
 2. [x] Boss rows removed and `excluded_factions` on `chart_bosses.csv` (`ChartBosses.Definition.excludes`). Tests: `ChartBossesTest`.
 3. [x] The anomalies and their managers: `LaunchingStation`, `RemnantNexusStation`, `DomainMothership`, `NexusFleetManager`, `MothershipFleetManager`, `StationFleets`, `StationRules`; system-script cleanup in `ChartRunCloser`. Tests: `LaunchingStationTest`, `ChartRunCloserTest`.
-4. [x] Strings (en and zh_CN draft), `docs/docs.md` section, placeholder atlas icons: `graphics/icons/anomalies/remnant_nexus_station.png` (vanilla's Remnant crest scaled to 40 px) and `graphics/icons/anomalies/domain_mothership.png` (a copy of vanilla's `log_to_domain_derelict` intel icon).
+4. [x] Strings (en and zh_CN draft), `docs/docs.md` section, placeholder atlas icons: `graphics/exiledSector/anomalies/remnant_nexus_station.png` (vanilla's Remnant crest scaled to 40 px) and `graphics/exiledSector/anomalies/domain_mothership.png` (a copy of vanilla's `log_to_domain_derelict` intel icon).
 
 ## Open questions
 

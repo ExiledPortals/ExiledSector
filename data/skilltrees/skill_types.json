@@ -3,7 +3,7 @@
 		{
 			"id": "flux_capacity",
 			"name": "Flux Capacity",
-			"icon": "graphics/icons/flux_capacity.png",
+			"icon": "graphics/exiledSector/tree/base/flux_capacity.png",
 			"effects": [
 				{
 					"effect": "FLUX_CAPACITY_MULT",
@@ -17,7 +17,7 @@
 		{
 			"id": "flux_dissipation",
 			"name": "Flux Dissipation",
-			"icon": "graphics/icons/flux_dissipation.png",
+			"icon": "graphics/exiledSector/tree/base/flux_dissipation.png",
 			"effects": [
 				{
 					"effect": "FLUX_DISSIPATION_MULT",
@@ -31,7 +31,7 @@
 		{
 			"id": "flux_capacity_and_dissipation",
 			"name": "Flux Capacity and Dissipation",
-			"icon": "graphics/icons/hybrid_flux.png",
+			"icon": "graphics/exiledSector/tree/base/flux_capacity_and_dissipation.png",
 			"tags": [
 				"flux"
 			]
@@ -39,7 +39,7 @@
 		{
 			"id": "increased_hull",
 			"name": "Increased Hull",
-			"icon": "graphics/icons/hull.png",
+			"icon": "graphics/exiledSector/tree/tania/increased_hull.png",
 			"effects": [
 				{
 					"effect": "HULL_MULT",
@@ -53,7 +53,7 @@
 		{
 			"id": "armor",
 			"name": "Armor",
-			"icon": "graphics/icons/armor.png",
+			"icon": "graphics/exiledSector/tree/base/armor.png",
 			"hullSizeEffects": [
 				{
 					"effect": "ARMOR_FLAT",
@@ -70,7 +70,7 @@
 		{
 			"id": "ballistic_weapon_damage",
 			"name": "Ballistic Weapon Damage",
-			"icon": "graphics/icons/ballistic_damage.png",
+			"icon": "graphics/exiledSector/tree/base/ballistic_weapon_damage.png",
 			"effects": [
 				{
 					"effect": "BALLISTIC_WEAPON_DAMAGE_PERCENT",
@@ -86,7 +86,7 @@
 		{
 			"id": "ballistic_projectile_speed",
 			"name": "Ballistic Projectile Speed",
-			"icon": "graphics/icons/ballistic_projectile_speed.png",
+			"icon": "graphics/exiledSector/tree/base/ballistic_projectile_speed.png",
 			"effects": [
 				{
 					"effect": "BALLISTIC_WEAPON_PROJECTILE_SPEED_PERCENT",
@@ -101,7 +101,7 @@
 		{
 			"id": "missile_top_speed",
 			"name": "Missile Top Speed",
-			"icon": "graphics/icons/missile_top_speed.png",
+			"icon": "graphics/exiledSector/tree/hegemony/missile_top_speed.png",
 			"effects": [
 				{
 					"effect": "MISSILE_WEAPON_PROJECTILE_SPEED_PERCENT",
@@ -116,7 +116,7 @@
 		{
 			"id": "reduced_d_mod_effect",
 			"name": "Reduced D-Mod Effect",
-			"icon": "graphics/icons/reduced_D_mod_effect.png",
+			"icon": "graphics/exiledSector/tree/base/reduced_d_mod_effect.png",
 			"effects": [
 				{
 					"effect": "DMOD_EFFECT_MULT",
@@ -130,7 +130,7 @@
 		{
 			"id": "heavy_ballistics_integration",
 			"name": "Heavy Ballistics Integration",
-			"icon": "graphics/icons/heavy_ballistics_integration.png",
+			"icon": "graphics/exiledSector/tree/hegemony/heavy_ballistics_integration.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -163,7 +163,7 @@
 		{
 			"id": "ground_support",
 			"name": "Ground Support",
-			"icon": "graphics/icons/ground_support.png",
+			"icon": "graphics/exiledSector/tree/pirate/ground_support.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -193,7 +193,7 @@
 		{
 			"id": "cheap_shots",
 			"name": "Cheap Shots",
-			"icon": "graphics/icons/evasive_maneuvering_shifted.png",
+			"icon": "graphics/exiledSector/tree/pirate/cheap_shots.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -223,7 +223,7 @@
 		{
 			"id": "running_dark",
 			"name": "Running Dark",
-			"icon": "graphics/icons/transponder_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/pirate/running_dark.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -254,7 +254,7 @@
 		{
 			"id": "blood_in_the_water",
 			"name": "Blood in the Water",
-			"icon": "graphics/icons/pirate_frenzy_shifted.png",
+			"icon": "graphics/exiledSector/tree/pirate/blood_in_the_water.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -285,7 +285,7 @@
 		{
 			"id": "cut_and_run",
 			"name": "Cut and Run",
-			"icon": "graphics/icons/officer_training_shifted_shifted_shifted_z.png",
+			"icon": "graphics/exiledSector/tree/pirate/cut_and_run.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -315,7 +315,7 @@
 		{
 			"id": "haul_the_prize",
 			"name": "Haul the Prize",
-			"icon": "graphics/icons/carrier_command_shifted_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/pirate/haul_the_prize.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -347,7 +347,7 @@
 		{
 			"id": "pick_off_the_stragglers",
 			"name": "Pick Off The Stragglers",
-			"icon": "graphics/icons/wolfpack_circular_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/pirate/pick_off_the_stragglers.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -373,7 +373,7 @@
 		{
 			"id": "tripad_backdoor",
 			"name": "TriPad Backdoor",
-			"icon": "graphics/icons/tactical_superiority.png",
+			"icon": "graphics/exiledSector/tree/tritachyon/tripad_backdoor.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -398,7 +398,7 @@
 		{
 			"id": "objective_capture_range",
 			"name": "Objective Capture Range",
-			"icon": "graphics/icons/objective_capture_range.png",
+			"icon": "graphics/exiledSector/tree/base/objective_capture_range.png",
 			"effects": [
 				{
 					"effect": "OBJECTIVE_CAPTURE_RANGE_FLAT",
@@ -412,7 +412,7 @@
 		{
 			"id": "combat_readiness",
 			"name": "Combat Readiness",
-			"icon": "graphics/icons/combat_readiness.png",
+			"icon": "graphics/exiledSector/tree/base/combat_readiness.png",
 			"effects": [
 				{
 					"effect": "MAX_COMBAT_READINESS_PERCENT",
@@ -426,7 +426,7 @@
 		{
 			"id": "nanoforge_mending",
 			"name": "Nanoforge Mending",
-			"icon": "graphics/icons/nanoforge_mending.png",
+			"icon": "graphics/exiledSector/tree/redacted/nanoforge_mending.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -456,7 +456,7 @@
 		{
 			"id": "disintegration",
 			"name": "Disintegration",
-			"icon": "graphics/icons/disintegration.png",
+			"icon": "graphics/exiledSector/tree/omega/disintegration.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -483,7 +483,7 @@
 		{
 			"id": "machine_precision",
 			"name": "Machine Precision",
-			"icon": "graphics/icons/machine_precision.png",
+			"icon": "graphics/exiledSector/tree/redacted/machine_precision.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -532,7 +532,7 @@
 		{
 			"id": "terrifying_presence",
 			"name": "Terrifying Presence",
-			"icon": "graphics/icons/terrifying_presence.png",
+			"icon": "graphics/exiledSector/tree/redacted/terrifying_presence.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -561,7 +561,7 @@
 		{
 			"id": "xiv_torpedo_doctrine",
 			"name": "XIV Torpedo Doctrine",
-			"icon": "graphics/icons/torpedo_specialisation.png",
+			"icon": "graphics/exiledSector/tree/hegemony/xiv_torpedo_doctrine.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -599,7 +599,7 @@
 		{
 			"id": "missile_weapon_damage",
 			"name": "Missile Weapon Damage",
-			"icon": "graphics/icons/missile_damage.png",
+			"icon": "graphics/exiledSector/tree/base/missile_weapon_damage.png",
 			"effects": [
 				{
 					"effect": "MISSILE_WEAPON_DAMAGE_PERCENT",
@@ -615,7 +615,7 @@
 		{
 			"id": "non_beam_energy_weapon_damage",
 			"name": "Non-Beam Energy Weapon Damage",
-			"icon": "graphics/icons/non_beam_energy_damage.png",
+			"icon": "graphics/exiledSector/tree/base/non_beam_energy_weapon_damage.png",
 			"effects": [
 				{
 					"effect": "NON_BEAM_ENERGY_WEAPON_DAMAGE_PERCENT",
@@ -631,7 +631,7 @@
 		{
 			"id": "beam_weapon_damage",
 			"name": "Beam Weapon Damage",
-			"icon": "graphics/icons/beam_damage.png",
+			"icon": "graphics/exiledSector/tree/base/beam_weapon_damage.png",
 			"effects": [
 				{
 					"effect": "BEAM_WEAPON_DAMAGE_PERCENT",
@@ -647,7 +647,7 @@
 		{
 			"id": "energy_weapon_damage",
 			"name": "Energy Weapon Damage",
-			"icon": "graphics/icons/energy_damage.png",
+			"icon": "graphics/exiledSector/tree/base/energy_weapon_damage.png",
 			"tags": [
 				"energy",
 				"damage"
@@ -656,7 +656,7 @@
 		{
 			"id": "all_weapon_damage",
 			"name": "All Weapon Damage",
-			"icon": "graphics/icons/weapon_damage.png",
+			"icon": "graphics/exiledSector/tree/domain_drones/all_weapon_damage.png",
 			"effects": [
 				{
 					"effect": "WEAPON_DAMAGE_PERCENT",
@@ -670,7 +670,7 @@
 		{
 			"id": "repair_time",
 			"name": "Repair Time",
-			"icon": "graphics/icons/repair_time.png",
+			"icon": "graphics/exiledSector/tree/base/repair_time.png",
 			"effects": [
 				{
 					"effect": "REPAIR_TIME_MULT",
@@ -684,7 +684,7 @@
 		{
 			"id": "weapon_turn_rate",
 			"name": "Weapon Turn Rate",
-			"icon": "graphics/icons/weapon_turn_rate.png",
+			"icon": "graphics/exiledSector/tree/base/weapon_turn_rate.png",
 			"effects": [
 				{
 					"effect": "WEAPON_TURN_RATE_PERCENT",
@@ -698,7 +698,7 @@
 		{
 			"id": "more_hull",
 			"name": "More Hull",
-			"icon": "graphics/icons/hull_multi.png",
+			"icon": "graphics/exiledSector/tree/base/more_hull.png",
 			"effects": [
 				{
 					"effect": "HULL_MULT",
@@ -712,7 +712,7 @@
 		{
 			"id": "lions_gaze",
 			"name": "Lion's Gaze",
-			"icon": "graphics/icons/beam_split.png",
+			"icon": "graphics/exiledSector/tree/sindrian_dictat/lions_gaze.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -738,7 +738,7 @@
 		{
 			"id": "flux_coil_adjunct",
 			"name": "Flux Coil Adjunct",
-			"icon": "graphics/icons/flux_coil_adjunct.png",
+			"icon": "graphics/exiledSector/tree/base/flux_coil_adjunct.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -783,7 +783,7 @@
 		{
 			"id": "safety_overrides",
 			"name": "Safety Overrides",
-			"icon": "graphics/icons/safety_overrides.png",
+			"icon": "graphics/exiledSector/tree/base/safety_overrides.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -859,7 +859,7 @@
 		{
 			"id": "ludds_light",
 			"name": "Ludd's Light",
-			"icon": "graphics/icons/fuel_core_overload.png",
+			"icon": "graphics/exiledSector/tree/luddic/ludds_light.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -887,7 +887,7 @@
 		{
 			"id": "at_any_cost",
 			"name": "At Any Cost",
-			"icon": "graphics/icons/exposed_fuel_lines.png",
+			"icon": "graphics/exiledSector/tree/luddic/at_any_cost.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -919,7 +919,7 @@
 		{
 			"id": "refracting_projectiles",
 			"name": "Refracting Projectiles",
-			"icon": "graphics/icons/energy_chain.png",
+			"icon": "graphics/exiledSector/tree/tritachyon/refracting_projectiles.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -958,7 +958,7 @@
 		{
 			"id": "hullbreacher_rounds",
 			"name": "Hullbreacher Rounds",
-			"icon": "graphics/icons/explosion3_shifted.png",
+			"icon": "graphics/exiledSector/tree/hegemony/hullbreacher_rounds.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -989,7 +989,7 @@
 		{
 			"id": "navy_heartbeat",
 			"name": "Navy Heartbeat",
-			"icon": "graphics/icons/ballistic_momentum.png",
+			"icon": "graphics/exiledSector/tree/hegemony/navy_heartbeat.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1021,7 +1021,7 @@
 		{
 			"id": "comsec_discipline",
 			"name": "COMSEC Discipline",
-			"icon": "graphics/icons/eccm_shifted.png",
+			"icon": "graphics/exiledSector/tree/persean_league/comsec_discipline.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1058,7 +1058,7 @@
 		{
 			"id": "defensive_compact",
 			"name": "Defensive Compact",
-			"icon": "graphics/icons/coordinated_maneuvers2_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/persean_league/defensive_compact.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1087,7 +1087,7 @@
 		{
 			"id": "joint_strike_package",
 			"name": "Joint Strike Package",
-			"icon": "graphics/icons/joint_strike_package.png",
+			"icon": "graphics/exiledSector/tree/persean_league/joint_strike_package.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1118,7 +1118,7 @@
 		{
 			"id": "league_requisitions",
 			"name": "League Requisitions",
-			"icon": "graphics/icons/fleet_logistics_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/base/league_requisitions.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1149,7 +1149,7 @@
 		{
 			"id": "kazeron_recovery_standards",
 			"name": "Kazeron Recovery Standards",
-			"icon": "graphics/icons/recovery_shuttles_shifted.png",
+			"icon": "graphics/exiledSector/tree/base/kazeron_recovery_standards.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1176,7 +1176,7 @@
 		{
 			"id": "domain_pattern_laminate",
 			"name": "Domain-Pattern Laminate",
-			"icon": "graphics/icons/fleet_logistics_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/base/league_requisitions.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1215,7 +1215,7 @@
 		{
 			"id": "flak_screen_doctrine",
 			"name": "Flak Screen Doctrine",
-			"icon": "graphics/icons/pointdefenseai_shifted.png",
+			"icon": "graphics/exiledSector/tree/hegemony/flak_screen_doctrine.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1246,7 +1246,7 @@
 		{
 			"id": "hold_the_line",
 			"name": "Hold the Line",
-			"icon": "graphics/icons/coordinated_maneuvers_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/hegemony/hold_the_line.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1276,7 +1276,7 @@
 		{
 			"id": "auxiliary_screen",
 			"name": "Auxiliary Screen",
-			"icon": "graphics/icons/escort_package.png",
+			"icon": "graphics/exiledSector/tree/base/escort_package.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1312,7 +1312,7 @@
 		{
 			"id": "concussion_shells",
 			"name": "Concussion Shells",
-			"icon": "graphics/icons/explosion2_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/hegemony/concussion_shells.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1343,7 +1343,7 @@
 		{
 			"id": "league_picket_targeting",
 			"name": "League Picket Targeting",
-			"icon": "graphics/icons/attuned_sensors.png",
+			"icon": "graphics/exiledSector/tree/persean_league/league_picket_targeting.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1375,7 +1375,7 @@
 		{
 			"id": "accelerated_shields",
 			"name": "Accelerated Shields",
-			"icon": "graphics/icons/advancedshieldemitter.png",
+			"icon": "graphics/exiledSector/tree/base/accelerated_shields.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1425,7 +1425,7 @@
 		{
 			"id": "adaptive_phase_coils",
 			"name": "Adaptive Phase Coils",
-			"icon": "graphics/icons/adaptive_coils.png",
+			"icon": "graphics/exiledSector/tree/base/adaptive_phase_coils.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1462,7 +1462,7 @@
 		{
 			"id": "advanced_optics",
 			"name": "Advanced Optics",
-			"icon": "graphics/icons/advancedoptics.png",
+			"icon": "graphics/exiledSector/tree/base/advanced_optics.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1501,7 +1501,7 @@
 		{
 			"id": "advanced_turret_gyros",
 			"name": "Advanced Turret Gyros",
-			"icon": "graphics/icons/turretgyros.png",
+			"icon": "graphics/exiledSector/tree/base/advanced_turret_gyros.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1565,7 +1565,7 @@
 		{
 			"id": "armored_weapon_mounts",
 			"name": "Armored Weapon Mounts",
-			"icon": "graphics/icons/armoredweapons.png",
+			"icon": "graphics/exiledSector/tree/base/armored_weapon_mounts.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1625,7 +1625,7 @@
 		{
 			"id": "automated_repair_unit",
 			"name": "Automated Repair Unit",
-			"icon": "graphics/icons/autorepair.png",
+			"icon": "graphics/exiledSector/tree/base/automated_repair_unit.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1666,7 +1666,7 @@
 		{
 			"id": "auxiliary_thrusters",
 			"name": "Auxiliary Thrusters",
-			"icon": "graphics/icons/auxiliarythrusters.png",
+			"icon": "graphics/exiledSector/tree/base/auxiliary_thrusters.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1700,7 +1700,7 @@
 		{
 			"id": "ballistic_rangefinder",
 			"name": "Ballistic Rangefinder",
-			"icon": "graphics/icons/ballistic_rangefinder.png",
+			"icon": "graphics/exiledSector/tree/base/ballistic_rangefinder.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -1736,7 +1736,7 @@
 		{
 			"id": "blast_doors",
 			"name": "Blast Doors",
-			"icon": "graphics/icons/blast_doors.png",
+			"icon": "graphics/exiledSector/tree/base/blast_doors.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1775,7 +1775,7 @@
 		{
 			"id": "converted_hangar",
 			"name": "Converted Hangar",
-			"icon": "graphics/icons/converted_hangar.png",
+			"icon": "graphics/exiledSector/tree/base/converted_hangar.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -1863,7 +1863,7 @@
 		{
 			"id": "converted_fighter_bay",
 			"name": "Converted Fighter Bay",
-			"icon": "graphics/icons/converted_fighterbay.png",
+			"icon": "graphics/exiledSector/tree/base/converted_fighter_bay.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -1919,7 +1919,7 @@
 		{
 			"id": "dedicated_targeting_core",
 			"name": "Dedicated Targeting Core",
-			"icon": "graphics/icons/dedicated_targeting_core.png",
+			"icon": "graphics/exiledSector/tree/base/dedicated_targeting_core.png",
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -1969,7 +1969,7 @@
 		{
 			"id": "defensive_targeting_array",
 			"name": "Defensive Targeting Array",
-			"icon": "graphics/icons/defensive_targeting_array.png",
+			"icon": "graphics/exiledSector/tree/base/defensive_targeting_array.png",
 			"tier": "KEYSTONE",
 			"integrated": {
 				"effects": [
@@ -2002,7 +2002,7 @@
 		{
 			"id": "eccm_package",
 			"name": "ECCM Package",
-			"icon": "graphics/icons/eccm.png",
+			"icon": "graphics/exiledSector/tree/base/eccm_package.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2093,7 +2093,7 @@
 		{
 			"id": "ecm_package",
 			"name": "ECM Package",
-			"icon": "graphics/icons/ecm.png",
+			"icon": "graphics/exiledSector/tree/base/ecm_package.png",
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -2133,7 +2133,7 @@
 		{
 			"id": "escort_package",
 			"name": "Escort Package",
-			"icon": "graphics/icons/escort_package.png",
+			"icon": "graphics/exiledSector/tree/base/escort_package.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2192,7 +2192,7 @@
 		{
 			"id": "expanded_deck_crew",
 			"name": "Expanded Deck Crew",
-			"icon": "graphics/icons/expanded_deck_crew.png",
+			"icon": "graphics/exiledSector/tree/base/expanded_deck_crew.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2242,7 +2242,7 @@
 		{
 			"id": "hybrid_p_space_shrouding",
 			"name": "Hybrid P-space Shrouding",
-			"icon": "graphics/icons/phase_sensor_upgrades.png",
+			"icon": "graphics/exiledSector/tree/tritachyon/hybrid_p_space_shrouding.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2281,7 +2281,7 @@
 		{
 			"id": "league_reload_drill",
 			"name": "League Reload Drill",
-			"icon": "graphics/icons/hoarded_arms.png",
+			"icon": "graphics/exiledSector/tree/persean_league/league_reload_drill.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2320,7 +2320,7 @@
 		{
 			"id": "expanded_magazines",
 			"name": "Expanded Magazines",
-			"icon": "graphics/icons/magazines.png",
+			"icon": "graphics/exiledSector/tree/base/expanded_magazines.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2371,7 +2371,7 @@
 		{
 			"id": "expanded_missile_racks",
 			"name": "Expanded Missile Racks",
-			"icon": "graphics/icons/missleracks.png",
+			"icon": "graphics/exiledSector/tree/base/expanded_missile_racks.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2410,7 +2410,7 @@
 		{
 			"id": "extended_shields",
 			"name": "Extended Shields",
-			"icon": "graphics/icons/extendedshieldemitter.png",
+			"icon": "graphics/exiledSector/tree/base/extended_shields.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2448,7 +2448,7 @@
 		{
 			"id": "shield_shunt",
 			"name": "Shield Shunt",
-			"icon": "graphics/icons/shield_shunt.png",
+			"icon": "graphics/exiledSector/tree/base/shield_shunt.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2494,7 +2494,7 @@
 		{
 			"id": "makeshift_shield_generator",
 			"name": "Makeshift Shield Generator",
-			"icon": "graphics/icons/frontshield.png",
+			"icon": "graphics/exiledSector/tree/base/makeshift_shield_generator.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -2527,7 +2527,7 @@
 		{
 			"id": "missile_autoloader",
 			"name": "Missile Autoloader",
-			"icon": "graphics/icons/missile_autoloader.png",
+			"icon": "graphics/exiledSector/tree/base/missile_autoloader.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -2571,7 +2571,7 @@
 		{
 			"id": "neural_interface",
 			"name": "Neural Interface",
-			"icon": "graphics/icons/neural_interface.png",
+			"icon": "graphics/exiledSector/tree/base/neural_interface.png",
 			"tier": "KEYSTONE",
 			"integrated": {
 				"effects": [
@@ -2609,7 +2609,7 @@
 		{
 			"id": "hardened_shields",
 			"name": "Hardened Shields",
-			"icon": "graphics/icons/hardenedshieldemitter.png",
+			"icon": "graphics/exiledSector/tree/base/hardened_shields.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2652,7 +2652,7 @@
 		{
 			"id": "hardened_subsystems",
 			"name": "Hardened Subsystems",
-			"icon": "graphics/icons/hardened_subsystems.png",
+			"icon": "graphics/exiledSector/tree/base/hardened_subsystems.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2678,7 +2678,7 @@
 		{
 			"id": "heavy_armor",
 			"name": "Heavy Armor",
-			"icon": "graphics/icons/heavyarmor.png",
+			"icon": "graphics/exiledSector/tree/base/heavy_armor.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2723,7 +2723,7 @@
 		{
 			"id": "nskr_criticalArmor",
 			"name": "Critical Point Refit",
-			"icon": "graphics/icons/nskr_criticalArmor_shifted.png",
+			"icon": "graphics/exiledSector/tree/kesteven/nskr_criticalArmor.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2755,7 +2755,7 @@
 		{
 			"id": "nskr_inertial",
 			"name": "Inertial Supercharging",
-			"icon": "graphics/icons/nskr_inertial.png",
+			"icon": "graphics/exiledSector/tree/kesteven/nskr_inertial.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2801,7 +2801,7 @@
 		{
 			"id": "nskr_acoils",
 			"name": "Kesteven High-Energy Weapon Systems",
-			"icon": "graphics/icons/nskr_acoils_shifted.png",
+			"icon": "graphics/exiledSector/tree/kesteven/nskr_acoils.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2839,7 +2839,7 @@
 		{
 			"id": "energy_weapon_flux_cost",
 			"name": "Energy Weapon Flux Cost",
-			"icon": "graphics/icons/power_grid_manipulation_shifted_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/base/energy_weapon_flux_cost.png",
 			"effects": [
 				{
 					"effect": "ENERGY_WEAPON_FLUX_COST_PERCENT",
@@ -2855,7 +2855,7 @@
 		{
 			"id": "energy_weapon_fire_rate",
 			"name": "Energy Weapon Fire Rate",
-			"icon": "graphics/icons/evasive_maneuvering_shifted_blue.png",
+			"icon": "graphics/exiledSector/tree/base/energy_weapon_fire_rate.png",
 			"effects": [
 				{
 					"effect": "ENERGY_WEAPON_RATE_OF_FIRE_PERCENT",
@@ -2871,7 +2871,7 @@
 		{
 			"id": "nskr_absorption",
 			"name": "ABSORB Reserve",
-			"icon": "graphics/icons/frozen_heart_shifted.png",
+			"icon": "graphics/exiledSector/tree/kesteven/nskr_absorption.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2905,7 +2905,7 @@
 		{
 			"id": "live_munitions",
 			"name": "Live Munitions",
-			"icon": "graphics/icons/officer_training_shifted_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/enigma/live_munitions.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2947,7 +2947,7 @@
 		{
 			"id": "all_must_serve",
 			"name": "All Must Serve",
-			"icon": "graphics/icons/recovery_shuttles_shifted.png",
+			"icon": "graphics/exiledSector/tree/base/kazeron_recovery_standards.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2980,7 +2980,7 @@
 		{
 			"id": "husk_plating",
 			"name": "Husk Plating",
-			"icon": "graphics/icons/armor_shifted.png",
+			"icon": "graphics/exiledSector/tree/enigma/husk_plating.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3021,7 +3021,7 @@
 		{
 			"id": "nskr_volatile",
 			"name": "Volatile Flux Tuning",
-			"icon": "graphics/icons/nskr_volatile.png",
+			"icon": "graphics/exiledSector/tree/kesteven/nskr_volatile.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3123,7 +3123,7 @@
 		{
 			"id": "nskr_bigBats",
 			"name": "High Capacitance Banks",
-			"icon": "graphics/icons/nskr_bigBats.png",
+			"icon": "graphics/exiledSector/tree/kesteven/nskr_bigBats.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3159,7 +3159,7 @@
 		{
 			"id": "frozen_heart",
 			"name": "Frozen Heart",
-			"icon": "graphics/icons/frozen_heart2_shifted.png",
+			"icon": "graphics/exiledSector/tree/enigma/frozen_heart.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -3217,7 +3217,7 @@
 		{
 			"id": "high_scatter_amplifier",
 			"name": "High Scatter Amplifier",
-			"icon": "graphics/icons/high_scatter_amp.png",
+			"icon": "graphics/exiledSector/tree/base/high_scatter_amplifier.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3273,7 +3273,7 @@
 		{
 			"id": "integrated_point_defense_ai",
 			"name": "Integrated Point Defense AI",
-			"icon": "graphics/icons/pointdefenseai.png",
+			"icon": "graphics/exiledSector/tree/base/integrated_point_defense_ai.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3321,7 +3321,7 @@
 		{
 			"id": "integrated_targeting_unit",
 			"name": "Integrated Targeting Unit",
-			"icon": "graphics/icons/targetingunit.png",
+			"icon": "graphics/exiledSector/tree/base/integrated_targeting_unit.png",
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -3374,7 +3374,7 @@
 		{
 			"id": "nav_relay",
 			"name": "Nav Relay",
-			"icon": "graphics/icons/nav_relay.png",
+			"icon": "graphics/exiledSector/tree/base/nav_relay.png",
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -3414,7 +3414,7 @@
 		{
 			"id": "shield_conversion_front",
 			"name": "Shield Conversion - Front",
-			"icon": "graphics/icons/frontemitter.png",
+			"icon": "graphics/exiledSector/tree/base/shield_conversion_front.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3461,7 +3461,7 @@
 		{
 			"id": "shield_conversion_omni",
 			"name": "Shield Conversion - Omni",
-			"icon": "graphics/icons/adaptiveshields.png",
+			"icon": "graphics/exiledSector/tree/base/shield_conversion_omni.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -3500,7 +3500,7 @@
 		{
 			"id": "operations_center",
 			"name": "Operations Center",
-			"icon": "graphics/icons/operations_center.png",
+			"icon": "graphics/exiledSector/tree/base/operations_center.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -3534,7 +3534,7 @@
 		{
 			"id": "phase_anchor",
 			"name": "Phase Anchor",
-			"icon": "graphics/icons/phase_anchor.png",
+			"icon": "graphics/exiledSector/tree/base/phase_anchor.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -3590,7 +3590,7 @@
 		{
 			"id": "recovery_shuttles",
 			"name": "Recovery Shuttles",
-			"icon": "graphics/icons/recovery_shuttles.png",
+			"icon": "graphics/exiledSector/tree/base/recovery_shuttles.png",
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -3633,7 +3633,7 @@
 		{
 			"id": "reinforced_bulkheads",
 			"name": "Reinforced Bulkheads",
-			"icon": "graphics/icons/reinforcedhull.png",
+			"icon": "graphics/exiledSector/tree/base/reinforced_bulkheads.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3688,7 +3688,7 @@
 		{
 			"id": "resistant_flux_conduits",
 			"name": "Resistant Flux Conduits",
-			"icon": "graphics/icons/fluxbreakers.png",
+			"icon": "graphics/exiledSector/tree/base/resistant_flux_conduits.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3736,7 +3736,7 @@
 		{
 			"id": "stabilized_shields",
 			"name": "Stabilized Shields",
-			"icon": "graphics/icons/stabilizedshieldemitter.png",
+			"icon": "graphics/exiledSector/tree/base/stabilized_shields.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3774,7 +3774,7 @@
 		{
 			"id": "unstable_injector",
 			"name": "Unstable Injector",
-			"icon": "graphics/icons/unstable_injector.png",
+			"icon": "graphics/exiledSector/tree/base/unstable_injector.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -3810,7 +3810,7 @@
 		{
 			"id": "additional_berthing",
 			"name": "Additional Berthing",
-			"icon": "graphics/icons/additional_berthing.png",
+			"icon": "graphics/exiledSector/tree/base/additional_berthing.png",
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -3844,7 +3844,7 @@
 		{
 			"id": "augmented_drive_field",
 			"name": "Augmented Drive Field",
-			"icon": "graphics/icons/augmentedengines.png",
+			"icon": "graphics/exiledSector/tree/base/augmented_drive_field.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3883,7 +3883,7 @@
 		{
 			"id": "auxiliary_fuel_tanks",
 			"name": "Auxiliary Fuel Tanks",
-			"icon": "graphics/icons/auxiliary_fuel_tanks.png",
+			"icon": "graphics/exiledSector/tree/base/auxiliary_fuel_tanks.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3928,7 +3928,7 @@
 		{
 			"id": "efficiency_overhaul",
 			"name": "Efficiency Overhaul",
-			"icon": "graphics/icons/efficiency_overhaul.png",
+			"icon": "graphics/exiledSector/tree/base/efficiency_overhaul.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -4009,7 +4009,7 @@
 		{
 			"id": "expanded_cargo_holds",
 			"name": "Expanded Cargo Holds",
-			"icon": "graphics/icons/expanded_cargo_holds.png",
+			"icon": "graphics/exiledSector/tree/base/expanded_cargo_holds.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4055,7 +4055,7 @@
 		{
 			"id": "high_resolution_sensors",
 			"name": "High Resolution Sensors",
-			"icon": "graphics/icons/hiressensors.png",
+			"icon": "graphics/exiledSector/tree/base/high_resolution_sensors.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4114,7 +4114,7 @@
 		{
 			"id": "insulated_engine_assembly",
 			"name": "Insulated Engine Assembly",
-			"icon": "graphics/icons/insulatedengine.png",
+			"icon": "graphics/exiledSector/tree/base/insulated_engine_assembly.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4169,7 +4169,7 @@
 		{
 			"id": "militarized_subsystems",
 			"name": "Militarized Subsystems",
-			"icon": "graphics/icons/militarized_subsystems.png",
+			"icon": "graphics/exiledSector/tree/base/militarized_subsystems.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4209,7 +4209,7 @@
 		{
 			"id": "solar_shielding",
 			"name": "Solar Shielding",
-			"icon": "graphics/icons/solar_shielding.png",
+			"icon": "graphics/exiledSector/tree/base/solar_shielding.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4244,7 +4244,7 @@
 		{
 			"id": "surveying_equipment",
 			"name": "Surveying Equipment",
-			"icon": "graphics/icons/surveying_equipment.png",
+			"icon": "graphics/exiledSector/tree/base/surveying_equipment.png",
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -4299,7 +4299,7 @@
 		{
 			"id": "root_low_tech",
 			"name": "Low Tech",
-			"icon": "graphics/icons/root_low_tech.png",
+			"icon": "graphics/exiledSector/tree/roots/root_low_tech.png",
 			"tier": "ROOT",
 			"effects": [
 				{
@@ -4314,7 +4314,7 @@
 		{
 			"id": "root_midline",
 			"name": "Midline",
-			"icon": "graphics/icons/root_midline.png",
+			"icon": "graphics/exiledSector/tree/roots/root_midline.png",
 			"tier": "ROOT",
 			"effects": [
 				{
@@ -4329,7 +4329,7 @@
 		{
 			"id": "root_high_tech",
 			"name": "High Tech",
-			"icon": "graphics/icons/root_high_tech.png",
+			"icon": "graphics/exiledSector/tree/roots/root_high_tech.png",
 			"tier": "ROOT",
 			"effects": [
 				{
@@ -4344,7 +4344,7 @@
 		{
 			"id": "strikecraft_weapon_damage",
 			"name": "Strikecraft Weapon Damage",
-			"icon": "graphics/icons/fighter_weapon_damage_shifted.png",
+			"icon": "graphics/exiledSector/tree/base/strikecraft_weapon_damage.png",
 			"effects": [
 				{
 					"effect": "FIGHTER_WEAPON_DAMAGE_PERCENT",
@@ -4360,7 +4360,7 @@
 		{
 			"id": "strikecraft_speed",
 			"name": "Strikecraft Speed",
-			"icon": "graphics/icons/fighter_speed.png",
+			"icon": "graphics/exiledSector/tree/base/strikecraft_speed.png",
 			"effects": [
 				{
 					"effect": "FIGHTER_TOP_SPEED_PERCENT",
@@ -4375,7 +4375,7 @@
 		{
 			"id": "affinity",
 			"name": "Affinity",
-			"icon": "graphics/icons/small_flux_optional.png",
+			"icon": "graphics/exiledSector/tree/base/affinity.png",
 			"options": [
 				"high_tech_affinity",
 				"midline_affinity",
@@ -4390,7 +4390,7 @@
 		{
 			"id": "low_tech_affinity",
 			"name": "Low Tech Affinity",
-			"icon": "graphics/icons/root_low_tech.png",
+			"icon": "graphics/exiledSector/tree/roots/root_low_tech.png",
 			"effects": [
 				{
 					"effect": "LOW_TECH_AFFINITY_FLAT",
@@ -4404,7 +4404,7 @@
 		{
 			"id": "high_tech_affinity",
 			"name": "High Tech Affinity",
-			"icon": "graphics/icons/root_high_tech.png",
+			"icon": "graphics/exiledSector/tree/roots/root_high_tech.png",
 			"effects": [
 				{
 					"effect": "HIGH_TECH_AFFINITY_FLAT",
@@ -4418,7 +4418,7 @@
 		{
 			"id": "midline_affinity",
 			"name": "Midline Affinity",
-			"icon": "graphics/icons/root_midline.png",
+			"icon": "graphics/exiledSector/tree/roots/root_midline.png",
 			"effects": [
 				{
 					"effect": "MIDLINE_AFFINITY_FLAT",
@@ -4432,7 +4432,7 @@
 		{
 			"id": "flux_distributor",
 			"name": "Flux Distributor",
-			"icon": "graphics/icons/flux_distributor.png",
+			"icon": "graphics/exiledSector/tree/base/flux_distributor.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4477,7 +4477,7 @@
 		{
 			"id": "shared_fate",
 			"name": "Shared Fate",
-			"icon": "graphics/icons/shared_fate.png",
+			"icon": "graphics/exiledSector/tree/persean_league/shared_fate.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4512,7 +4512,7 @@
 		{
 			"id": "shared_damage_taken",
 			"name": "Shared Damage Taken",
-			"icon": "graphics/icons/shared_damage_taken.png",
+			"icon": "graphics/exiledSector/tree/persean_league/shared_damage_taken.png",
 			"effects": [
 				{
 					"effect": "SHIELD_DAMAGE_SHARED_PERCENT",
@@ -4529,7 +4529,7 @@
 		{
 			"id": "survey_heavy_machinery_cost_reduction",
 			"name": "Survey Heavy Machinery Cost Reduction",
-			"icon": "graphics/icons/survey_mach_cost.png",
+			"icon": "graphics/exiledSector/tree/base/survey_heavy_machinery_cost_reduction.png",
 			"hullSizeEffects": [
 				{
 					"effect": "SURVEY_COST_REDUCTION_HEAVY_MACHINERY",
@@ -4547,7 +4547,7 @@
 		{
 			"id": "survey_supplies_cost_reduction",
 			"name": "Survey Supplies Cost Reduction",
-			"icon": "graphics/icons/survey_supplies_cost_reduction.png",
+			"icon": "graphics/exiledSector/tree/base/survey_supplies_cost_reduction.png",
 			"hullSizeEffects": [
 				{
 					"effect": "SURVEY_COST_REDUCTION_SUPPLIES",
@@ -4565,7 +4565,7 @@
 		{
 			"id": "survey_cost_reduction",
 			"name": "Survey Cost Reduction",
-			"icon": "graphics/icons/survey_generic_cost_reduction.png",
+			"icon": "graphics/exiledSector/tree/base/survey_cost_reduction.png",
 			"hullSizeEffects": [
 				{
 					"effect": "SURVEY_COST_REDUCTION_HEAVY_MACHINERY",
@@ -4590,7 +4590,7 @@
 		{
 			"id": "sensor_strength",
 			"name": "Sensor Strength",
-			"icon": "graphics/icons/increased_sensor_strength.png",
+			"icon": "graphics/exiledSector/tree/base/sensor_strength.png",
 			"hullSizeEffects": [
 				{
 					"effect": "SENSOR_STRENGTH_FLAT",
@@ -4607,7 +4607,7 @@
 		{
 			"id": "increased_sensor_strength",
 			"name": "Increased Sensor Strength",
-			"icon": "graphics/icons/sensors_circular_shifted.png",
+			"icon": "graphics/exiledSector/tree/persean_league/increased_sensor_strength.png",
 			"effects": [
 				{
 					"effect": "SENSOR_STRENGTH_PERCENT",
@@ -4621,7 +4621,7 @@
 		{
 			"id": "knights_charge",
 			"name": "Knight's Charge",
-			"icon": "graphics/icons/violence_of_action.png",
+			"icon": "graphics/exiledSector/tree/luddic/knights_charge.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4655,7 +4655,7 @@
 		{
 			"id": "martyrs_payload",
 			"name": "Martyr's Payload",
-			"icon": "graphics/icons/martyrs_payload.png",
+			"icon": "graphics/exiledSector/tree/luddic/martyrs_payload.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4701,7 +4701,7 @@
 		{
 			"id": "restriction_breeds_creativity",
 			"name": "Restriction Breeds Creativity",
-			"icon": "graphics/icons/restriction_breeds_creativity.png",
+			"icon": "graphics/exiledSector/tree/pirate/restriction_breeds_creativity.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4732,7 +4732,7 @@
 		{
 			"id": "perseverance_through_faith",
 			"name": "Perseverance Through Faith",
-			"icon": "graphics/icons/perseverence_through_faith.png",
+			"icon": "graphics/exiledSector/tree/luddic/perseverance_through_faith.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4766,7 +4766,7 @@
 		{
 			"id": "increased_mass",
 			"name": "Increased Mass",
-			"icon": "graphics/icons/mass_shifted.png",
+			"icon": "graphics/exiledSector/tree/luddic/increased_mass.png",
 			"effects": [
 				{
 					"effect": "SHIP_MASS_PERCENT",
@@ -4781,7 +4781,7 @@
 		{
 			"id": "pathers_prow",
 			"name": "Pather's Prow",
-			"icon": "graphics/icons/bulk_transport_shifted.png",
+			"icon": "graphics/exiledSector/tree/luddic/pathers_prow.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4806,7 +4806,7 @@
 		{
 			"id": "litany_of_the_fallen",
 			"name": "Litany of the Fallen",
-			"icon": "graphics/icons/luddic_pilgrims_path_gold_circular.png",
+			"icon": "graphics/exiledSector/tree/luddic/litany_of_the_fallen.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4837,7 +4837,7 @@
 		{
 			"id": "sanctified_scars",
 			"name": "Sanctified Scars",
-			"icon": "graphics/icons/scars_shifted.png",
+			"icon": "graphics/exiledSector/tree/luddic/sanctified_scars.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4867,7 +4867,7 @@
 		{
 			"id": "rite_of_mortification",
 			"name": "Rite of Mortification",
-			"icon": "graphics/icons/shieldsmaybe_shifted.png",
+			"icon": "graphics/exiledSector/tree/luddic/rite_of_mortification.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4902,7 +4902,7 @@
 		{
 			"id": "crustacean_integration",
 			"name": "Crustacean Integration",
-			"icon": "graphics/icons/crustacean_integration.png",
+			"icon": "graphics/exiledSector/tree/sindrian_dictat/crustacean_integration.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4952,7 +4952,7 @@
 		{
 			"id": "waste_not",
 			"name": "Waste Not",
-			"icon": "graphics/icons/waste_not.png",
+			"icon": "graphics/exiledSector/tree/pirate/waste_not.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4997,7 +4997,7 @@
 		{
 			"id": "crew_capacity",
 			"name": "Crew Capacity",
-			"icon": "graphics/icons/crew_capacity_flat.png",
+			"icon": "graphics/exiledSector/tree/base/crew_capacity.png",
 			"hullSizeEffects": [
 				{
 					"effect": "CREW_CAPACITY_FLAT",
@@ -5015,7 +5015,7 @@
 		{
 			"id": "engine_durability_and_sensor_profile",
 			"name": "Engine Durability and Sensor Profile",
-			"icon": "graphics/icons/engine_durability.png",
+			"icon": "graphics/exiledSector/tree/base/engine_durability_and_sensor_profile.png",
 			"effects": [
 				{
 					"effect": "ENGINE_DURABILITY_PERCENT",
@@ -5034,7 +5034,7 @@
 		{
 			"id": "cargo_capacity",
 			"name": "Cargo Capacity",
-			"icon": "graphics/icons/cargo_capacity_flat.png",
+			"icon": "graphics/exiledSector/tree/base/cargo_capacity.png",
 			"hullSizeEffects": [
 				{
 					"effect": "CARGO_CAPACITY_FLAT",
@@ -5052,7 +5052,7 @@
 		{
 			"id": "fuel",
 			"name": "Fuel",
-			"icon": "graphics/icons/fuel_flat.png",
+			"icon": "graphics/exiledSector/tree/base/fuel.png",
 			"hullSizeEffects": [
 				{
 					"effect": "FUEL_CAPACITY_FLAT",
@@ -5069,7 +5069,7 @@
 		{
 			"id": "shield_arc",
 			"name": "Shield Arc",
-			"icon": "graphics/icons/shield_arc.png",
+			"icon": "graphics/exiledSector/tree/base/shield_arc.png",
 			"effects": [
 				{
 					"effect": "SHIELD_ARC_FLAT",
@@ -5084,7 +5084,7 @@
 		{
 			"id": "shield_raise_rate",
 			"name": "Shield Raise Rate",
-			"icon": "graphics/icons/shield_raise_rate.png",
+			"icon": "graphics/exiledSector/tree/base/shield_raise_rate.png",
 			"effects": [
 				{
 					"effect": "SHIELD_RAISE_RATE_PERCENT",
@@ -5099,7 +5099,7 @@
 		{
 			"id": "shield_turn_rate",
 			"name": "Shield Turn Rate",
-			"icon": "graphics/icons/shield_turn_rate.png",
+			"icon": "graphics/exiledSector/tree/base/shield_turn_rate.png",
 			"effects": [
 				{
 					"effect": "SHIELD_TURN_RATE_PERCENT",
@@ -5114,7 +5114,7 @@
 		{
 			"id": "shield_raise_rate_or_shield_turn_rate",
 			"name": "Shield Raise Rate or Shield Turn Rate",
-			"icon": "graphics/icons/shield_turn_raise_rate_optional.png",
+			"icon": "graphics/exiledSector/tree/base/shield_raise_rate_or_shield_turn_rate.png",
 			"options": [
 				"shield_raise_rate",
 				"shield_turn_rate"
@@ -5127,7 +5127,7 @@
 		{
 			"id": "ballistic_or_energy_weapon_damage",
 			"name": "Ballistic or Energy Weapon Damage",
-			"icon": "graphics/icons/ballistic_damage.png",
+			"icon": "graphics/exiledSector/tree/base/ballistic_weapon_damage.png",
 			"options": [
 				"ballistic_weapon_damage",
 				"non_beam_energy_weapon_damage"
@@ -5141,7 +5141,7 @@
 		{
 			"id": "ballistic_and_energy_weapon_range",
 			"name": "Ballistic and Energy Weapon Range",
-			"icon": "graphics/icons/ballistic_and_energy_weapon_range.png",
+			"icon": "graphics/exiledSector/tree/base/ballistic_and_energy_weapon_range.png",
 			"hullSizeEffects": [
 				{
 					"effect": "BALLISTIC_WEAPON_RANGE_PERCENT",
@@ -5165,7 +5165,7 @@
 		{
 			"id": "shield_flux_damage_reduction",
 			"name": "Shield Flux/Damage Reduction",
-			"icon": "graphics/icons/shield_damage_taken_multi.png",
+			"icon": "graphics/exiledSector/tree/base/shield_flux_damage_reduction.png",
 			"effects": [
 				{
 					"effect": "SHIELD_DAMAGE_TAKEN_MULT",
@@ -5181,7 +5181,7 @@
 		{
 			"id": "shield_upkeep_reduction",
 			"name": "Shield Upkeep Reduction",
-			"icon": "graphics/icons/shield_upkeep_multi.png",
+			"icon": "graphics/exiledSector/tree/base/shield_upkeep_reduction.png",
 			"effects": [
 				{
 					"effect": "SHIELD_UPKEEP_MULT",
@@ -5196,7 +5196,7 @@
 		{
 			"id": "top_speed",
 			"name": "Top Speed",
-			"icon": "graphics/icons/top_speed.png",
+			"icon": "graphics/exiledSector/tree/base/top_speed.png",
 			"hullSizeEffects": [
 				{
 					"effect": "TOP_SPEED_FLAT",
@@ -5213,7 +5213,7 @@
 		{
 			"id": "phase_cloak_flux_threshold",
 			"name": "Phase Cloak Flux Threshold",
-			"icon": "graphics/icons/phase_cloak_flux_threshold.png",
+			"icon": "graphics/exiledSector/tree/base/phase_cloak_flux_threshold.png",
 			"effects": [
 				{
 					"effect": "PHASE_CLOAK_FLUX_THRESHOLD_PERCENT",
@@ -5228,7 +5228,7 @@
 		{
 			"id": "less_emp_damage_taken",
 			"name": "Less EMP Damage Taken",
-			"icon": "graphics/icons/emp_damage_taken_multi.png",
+			"icon": "graphics/exiledSector/tree/base/less_emp_damage_taken.png",
 			"effects": [
 				{
 					"effect": "EMP_DAMAGE_TAKEN_MULT",
@@ -5243,7 +5243,7 @@
 		{
 			"id": "increased_vent_rate",
 			"name": "Increased Vent Rate",
-			"icon": "graphics/icons/increased_vent_rate.png",
+			"icon": "graphics/exiledSector/tree/base/increased_vent_rate.png",
 			"effects": [
 				{
 					"effect": "VENT_RATE_PERCENT",
@@ -5257,7 +5257,7 @@
 		{
 			"id": "vent_rate_and_emp_damage",
 			"name": "Vent Rate and EMP Damage",
-			"icon": "graphics/icons/vent_rate_and_emp_damage.png",
+			"icon": "graphics/exiledSector/tree/base/vent_rate_and_emp_damage.png",
 			"effects": [
 				{
 					"effect": "VENT_RATE_PERCENT",
@@ -5278,7 +5278,7 @@
 		{
 			"id": "weapon_durability",
 			"name": "Weapon Durability",
-			"icon": "graphics/icons/weapon_durability.png",
+			"icon": "graphics/exiledSector/tree/base/weapon_durability.png",
 			"effects": [
 				{
 					"effect": "WEAPON_DURABILITY_PERCENT",
@@ -5343,7 +5343,7 @@
 		{
 			"id": "point_defense_damage_to_missiles_and_fighters",
 			"name": "Point Defense Damage to Missiles and Fighters",
-			"icon": "graphics/icons/pd_damage_to_missiles.png",
+			"icon": "graphics/exiledSector/tree/base/point_defense_damage_to_missiles_and_fighters.png",
 			"effects": [
 				{
 					"effect": "PD_DAMAGE_TO_MISSILES_PERCENT",
@@ -5361,7 +5361,7 @@
 		{
 			"id": "damage_to_helpless_ships",
 			"name": "Damage to Helpless Ships",
-			"icon": "graphics/icons/emergency_burn_shifted.png",
+			"icon": "graphics/exiledSector/tree/pirate/damage_to_helpless_ships.png",
 			"effects": [
 				{
 					"effect": "DAMAGE_TO_HELPLESS_SHIP_PERCENT",
@@ -5377,7 +5377,7 @@
 		{
 			"id": "weapon_flux_cost",
 			"name": "Weapon Flux Cost",
-			"icon": "graphics/icons/energy_weapon_mastery_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/pirate/weapon_flux_cost.png",
 			"effects": [
 				{
 					"effect": "WEAPON_FLUX_COST_PERCENT",
@@ -5394,7 +5394,7 @@
 		{
 			"id": "acceleration",
 			"name": "Acceleration",
-			"icon": "graphics/icons/engine_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/pirate/acceleration.png",
 			"effects": [
 				{
 					"effect": "ACCELERATION_PERCENT",
@@ -5410,7 +5410,7 @@
 		{
 			"id": "damage_to_slower_ships",
 			"name": "Damage to Slower Ships",
-			"icon": "graphics/icons/coordinated_maneuvers2_shifted_shifted_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/pirate/damage_to_slower_ships.png",
 			"effects": [
 				{
 					"effect": "DAMAGE_TO_SLOWER_SHIP_PERCENT",
@@ -5426,7 +5426,7 @@
 		{
 			"id": "maneuverability",
 			"name": "Maneuverability",
-			"icon": "graphics/icons/maneuverability_percent.png",
+			"icon": "graphics/exiledSector/tree/base/maneuverability.png",
 			"effects": [
 				{
 					"effect": "MANEUVERABILITY_PERCENT",
@@ -5440,7 +5440,7 @@
 		{
 			"id": "strikecraft_replacement",
 			"name": "Strikecraft Replacement",
-			"icon": "graphics/icons/fighter_replacement.png",
+			"icon": "graphics/exiledSector/tree/base/strikecraft_replacement.png",
 			"effects": [
 				{
 					"effect": "FIGHTER_REPLACEMENT_RECOVERY_PERCENT",
@@ -5459,7 +5459,7 @@
 		{
 			"id": "reduced_monthly_supplies",
 			"name": "Reduced Monthly Supplies",
-			"icon": "graphics/icons/reduced_monthly_supplies.png",
+			"icon": "graphics/exiledSector/tree/base/reduced_monthly_supplies.png",
 			"effects": [
 				{
 					"effect": "SUPPLIES_PER_MONTH_MULT",
@@ -5474,7 +5474,7 @@
 		{
 			"id": "rationing",
 			"name": "Rationing",
-			"icon": "graphics/icons/rationing.png",
+			"icon": "graphics/exiledSector/tree/base/rationing.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -5508,7 +5508,7 @@
 		{
 			"id": "additional_beam_splits",
 			"name": "Additional Beam Splits",
-			"icon": "graphics/icons/beam_split_reduced_damage.png",
+			"icon": "graphics/exiledSector/tree/sindrian_dictat/additional_beam_splits.png",
 			"effects": [
 				{
 					"effect": "BEAM_WEAPON_SPLIT_TARGETS_FLAT",
@@ -5523,7 +5523,7 @@
 		{
 			"id": "sindrian_shielding",
 			"name": "Sindrian Shielding",
-			"icon": "graphics/icons/sindrian_shielding.png",
+			"icon": "graphics/exiledSector/tree/sindrian_dictat/sindrian_shielding.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -5558,7 +5558,7 @@
 		{
 			"id": "lions_guard_arsenal",
 			"name": "Lion's Guard Arsenal",
-			"icon": "graphics/icons/ballistic_and_energy_weapon_range.png",
+			"icon": "graphics/exiledSector/tree/base/ballistic_and_energy_weapon_range.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -5591,7 +5591,7 @@
 		{
 			"id": "strategic_fuel_reserve",
 			"name": "Strategic Fuel Reserve",
-			"icon": "graphics/icons/loadout_design_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/sindrian_dictat/strategic_fuel_reserve.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -5617,7 +5617,7 @@
 		{
 			"id": "executors_decree",
 			"name": "Executor's Decree",
-			"icon": "graphics/icons/safety_overrides_shifted.png",
+			"icon": "graphics/exiledSector/tree/sindrian_dictat/executors_decree.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -5658,7 +5658,7 @@
 		{
 			"id": "lions_roar",
 			"name": "Lion's Roar",
-			"icon": "graphics/icons/sensors_circular_shifted_1.png",
+			"icon": "graphics/exiledSector/tree/sindrian_dictat/lions_roar.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -5683,7 +5683,7 @@
 		{
 			"id": "honor_guard",
 			"name": "Honor Guard",
-			"icon": "graphics/icons/leadership2_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/sindrian_dictat/honor_guard.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -5712,7 +5712,7 @@
 		{
 			"id": "energy_damage_resistance",
 			"name": "Energy Damage Resistance",
-			"icon": "graphics/icons/less_energy_damage_taken.png",
+			"icon": "graphics/exiledSector/tree/sindrian_dictat/energy_damage_resistance.png",
 			"effects": [
 				{
 					"effect": "ENERGY_DAMAGE_TAKEN_PERCENT",
@@ -5727,7 +5727,7 @@
 		{
 			"id": "fragmentation_damage_resistance",
 			"name": "Fragmentation Damage Resistance",
-			"icon": "graphics/icons/repair_coordinator_shifted_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/hegemony/fragmentation_damage_resistance.png",
 			"effects": [
 				{
 					"effect": "FRAGMENTATION_DAMAGE_TAKEN_PERCENT",
@@ -5742,7 +5742,7 @@
 		{
 			"id": "ammo_capacity",
 			"name": "Ammo Capacity",
-			"icon": "graphics/icons/ammo_capacity.png",
+			"icon": "graphics/exiledSector/tree/persean_league/ammo_capacity.png",
 			"effects": [
 				{
 					"effect": "BALLISTIC_WEAPON_AMMO_PERCENT",
@@ -5762,7 +5762,7 @@
 		{
 			"id": "peak_cr_duration",
 			"name": "Peak CR Duration",
-			"icon": "graphics/icons/peak_cr_duration.png",
+			"icon": "graphics/exiledSector/tree/base/peak_cr_duration.png",
 			"effects": [
 				{
 					"effect": "PEAK_CR_DURATION_PERCENT",
@@ -5776,7 +5776,7 @@
 		{
 			"id": "temporary_maneuverability",
 			"name": "Temporary Maneuverability",
-			"icon": "graphics/icons/temporary_acceleration.png",
+			"icon": "graphics/exiledSector/tree/luddic/temporary_maneuverability.png",
 			"effects": [
 				{
 					"effect": "MANEUVERABILITY_PERCENT",
@@ -5791,7 +5791,7 @@
 		{
 			"id": "freebooters_charge",
 			"name": "Freebooter's Charge",
-			"icon": "graphics/icons/reckless_assault.png",
+			"icon": "graphics/exiledSector/tree/pirate/freebooters_charge.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -5836,7 +5836,7 @@
 		{
 			"id": "ecm_resistance",
 			"name": "ECM Resistance",
-			"icon": "graphics/icons/cybernetic_augmentation_shifted.png",
+			"icon": "graphics/exiledSector/tree/base/ecm_resistance.png",
 			"effects": [
 				{
 					"effect": "ELECTRONIC_WARFARE_PENALTY_MULT",
@@ -5850,7 +5850,7 @@
 		{
 			"id": "ballistic_and_energy_weapon_range_while_escorting",
 			"name": "Ballistic and Energy Weapon Range While Escorting",
-			"icon": "graphics/icons/gunnery_implants_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/base/ballistic_and_energy_weapon_range_while_escorting.png",
 			"effects": [
 				{
 					"effect": "ESCORT_WEAPON_RANGE_BONUS_PERCENT",
@@ -5869,7 +5869,7 @@
 		{
 			"id": "top_speed_while_escorting",
 			"name": "Top Speed While Escorting",
-			"icon": "graphics/icons/engine3_shifted.png",
+			"icon": "graphics/exiledSector/tree/base/top_speed_while_escorting.png",
 			"effects": [
 				{
 					"effect": "ESCORT_SPEED_BONUS_PERCENT",
@@ -5888,7 +5888,7 @@
 		{
 			"id": "dynamic_grid",
 			"name": "Dynamic Grid",
-			"icon": "graphics/icons/na_dynamic_grid.png",
+			"icon": "graphics/exiledSector/tree/nightcross/na_dynamic_grid.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -5949,7 +5949,7 @@
 		{
 			"id": "ion_bolter_rounds",
 			"name": "Ion Bolter Rounds",
-			"icon": "graphics/icons/na_ion_rounds.png",
+			"icon": "graphics/exiledSector/tree/nightcross/na_ion_bolter_rounds.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -5977,7 +5977,7 @@
 		{
 			"id": "hardlight_marking",
 			"name": "Hardlight Marking",
-			"icon": "graphics/icons/na_hardlight_infusion.png",
+			"icon": "graphics/exiledSector/tree/nightcross/na_hardlight_marking.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6013,7 +6013,7 @@
 		{
 			"id": "phase_entangled_wings",
 			"name": "Phase-Entangled Wings",
-			"icon": "graphics/icons/field_modulation_circular_alt1.png",
+			"icon": "graphics/exiledSector/tree/tritachyon/phase_entangled_wings.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6048,7 +6048,7 @@
 		{
 			"id": "repair_coordinator",
 			"name": "Repair Coordinator",
-			"icon": "graphics/icons/repair_coordinator_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/nightcross/repair_coordinator.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6075,7 +6075,7 @@
 		{
 			"id": "coalition_flight_doctrine",
 			"name": "Coalition Flight Doctrine",
-			"icon": "graphics/icons/fighter_doctrine_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/persean_league/coalition_flight_doctrine.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -6106,7 +6106,7 @@
 		{
 			"id": "candles_grace_replica",
 			"name": "Candle's Grace Replica",
-			"icon": "graphics/icons/na_gravitational_drag.png",
+			"icon": "graphics/exiledSector/tree/stargazer/na_candles_grace_replica.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6135,7 +6135,7 @@
 		{
 			"id": "beautiful_nightmare",
 			"name": "Beautiful Nightmare",
-			"icon": "graphics/icons/na_beautiful_nightmare.png",
+			"icon": "graphics/exiledSector/tree/stargazer/na_beautiful_nightmare.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -6183,7 +6183,7 @@
 		{
 			"id": "furor_machinae",
 			"name": "Furor Machinae",
-			"icon": "graphics/icons/na_furor_machinae.png",
+			"icon": "graphics/exiledSector/tree/stargazer/na_furor_machinae.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6209,7 +6209,7 @@
 		{
 			"id": "language_of_the_lost",
 			"name": "Language of the Lost",
-			"icon": "graphics/icons/na_language_of_the_lost.png",
+			"icon": "graphics/exiledSector/tree/stargazer/na_language_of_the_lost.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6243,7 +6243,7 @@
 		{
 			"id": "corrosion_beam",
 			"name": "Corrosion Beam",
-			"icon": "graphics/icons/na_corrosion_beam.png",
+			"icon": "graphics/exiledSector/tree/stargazer/na_corrosion_beam.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6274,7 +6274,7 @@
 		{
 			"id": "exo_tech_grid_splice",
 			"name": "Exo-Tech Grid Splice",
-			"icon": "graphics/icons/rat_exogrid.png",
+			"icon": "graphics/exiledSector/tree/exotech/rat_exo_tech_grid_splice.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -6341,7 +6341,7 @@
 		{
 			"id": "exo_tech_coil_tuning",
 			"name": "Exo-Tech Coil Tuning",
-			"icon": "graphics/icons/rat_coil_efficiency.png",
+			"icon": "graphics/exiledSector/tree/exotech/rat_exo_tech_coil_tuning.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6377,7 +6377,7 @@
 		{
 			"id": "phase_fed_magazines",
 			"name": "Phase-Fed Magazines",
-			"icon": "graphics/icons/magazines.png",
+			"icon": "graphics/exiledSector/tree/base/expanded_magazines.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6413,7 +6413,7 @@
 		{
 			"id": "hypatia_pattern_warpfield",
 			"name": "Hypatia-Pattern Warpfield",
-			"icon": "graphics/icons/rat_warpfield.png",
+			"icon": "graphics/exiledSector/tree/exotech/rat_hypatia_pattern_warpfield.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6460,7 +6460,7 @@
 		{
 			"id": "timeflow",
 			"name": "Timeflow",
-			"icon": "graphics/icons/rat_hyperspatial_reconfiguration.png",
+			"icon": "graphics/exiledSector/tree/exotech/rat_timeflow.png",
 			"effects": [
 				{
 					"effect": "TIMEFLOW_PERCENT",
@@ -6474,7 +6474,7 @@
 		{
 			"id": "sensor_profile",
 			"name": "Sensor Profile",
-			"icon": "graphics/icons/rat_undetectable.png",
+			"icon": "graphics/exiledSector/tree/base/rat_sensor_profile.png",
 			"effects": [
 				{
 					"effect": "SENSOR_PROFILE_PERCENT",
@@ -6488,7 +6488,7 @@
 		{
 			"id": "borrowed_grace",
 			"name": "Borrowed Grace",
-			"icon": "graphics/icons/rat_seraphs_grace.png",
+			"icon": "graphics/exiledSector/tree/abyss/rat_borrowed_grace.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -6545,7 +6545,7 @@
 		{
 			"id": "salvaged_abyssal_grid",
 			"name": "Salvaged Abyssal Grid",
-			"icon": "graphics/icons/rat_abyssal_grid.png",
+			"icon": "graphics/exiledSector/tree/abyss/rat_salvaged_abyssal_grid.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6605,7 +6605,7 @@
 		{
 			"id": "seraph_hunting_routines",
 			"name": "Seraph Hunting Routines",
-			"icon": "graphics/icons/rat_skill_seraph.png",
+			"icon": "graphics/exiledSector/tree/abyss/rat_seraph_hunting_routines.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6669,7 +6669,7 @@
 		{
 			"id": "fragment_swarm",
 			"name": "Fragment Swarm",
-			"icon": "graphics/icons/fragment_swarm.png",
+			"icon": "graphics/exiledSector/tree/threat/fragment_swarm.png",
 			"tier": "NOTABLE",
 			"integrated": {
 				"effects": [
@@ -6703,7 +6703,7 @@
 		{
 			"id": "secondary_fabricator",
 			"name": "Secondary Fabricator",
-			"icon": "graphics/icons/secondary_fabricator.png",
+			"icon": "graphics/exiledSector/tree/threat/secondary_fabricator.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6741,7 +6741,7 @@
 		{
 			"id": "fragment_coordinator",
 			"name": "Fragment Coordinator",
-			"icon": "graphics/icons/fragment_coordinator.png",
+			"icon": "graphics/exiledSector/tree/threat/fragment_coordinator.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6779,7 +6779,7 @@
 		{
 			"id": "fragment_swarm_size",
 			"name": "Fragment Swarm Size",
-			"icon": "graphics/icons/fragment_coordinator.png",
+			"icon": "graphics/exiledSector/tree/threat/fragment_coordinator.png",
 			"effects": [
 				{
 					"effect": "FRAGMENT_SWARM_SIZE_PERCENT",
@@ -6793,7 +6793,7 @@
 		{
 			"id": "fragment_replacement_rate",
 			"name": "Fragment Replacement Rate",
-			"icon": "graphics/icons/secondary_fabricator.png",
+			"icon": "graphics/exiledSector/tree/threat/secondary_fabricator.png",
 			"effects": [
 				{
 					"effect": "FRAGMENT_REPLACEMENT_RATE_PERCENT",
@@ -6807,7 +6807,7 @@
 		{
 			"id": "shrouded_lens",
 			"name": "Shrouded Lens",
-			"icon": "graphics/icons/shrouded_lens.png",
+			"icon": "graphics/exiledSector/tree/shrouded/shrouded_lens.png",
 			"tier": "NOTABLE",
 			"integrated": {
 				"effects": [
@@ -6839,7 +6839,7 @@
 		{
 			"id": "shrouded_mantle",
 			"name": "Shrouded Mantle",
-			"icon": "graphics/icons/shrouded_mantle.png",
+			"icon": "graphics/exiledSector/tree/shrouded/shrouded_mantle.png",
 			"tier": "NOTABLE",
 			"integrated": {
 				"effects": [
@@ -6866,7 +6866,7 @@
 		{
 			"id": "shrouded_thunderhead",
 			"name": "Shrouded Thunderhead",
-			"icon": "graphics/icons/shrouded_thunderhead.png",
+			"icon": "graphics/exiledSector/tree/shrouded/shrouded_thunderhead.png",
 			"tier": "NOTABLE",
 			"integrated": {
 				"effects": [
@@ -6898,7 +6898,7 @@
 		{
 			"id": "shrouded_lens_damage",
 			"name": "Shrouded Lens Damage",
-			"icon": "graphics/icons/shrouded_lens_damage.png",
+			"icon": "graphics/exiledSector/tree/shrouded/shrouded_lens_damage.png",
 			"effects": [
 				{
 					"effect": "SHROUDED_LENS_DAMAGE_PERCENT",
@@ -6912,7 +6912,7 @@
 		{
 			"id": "rift_lightning_damage",
 			"name": "Rift Lightning Damage",
-			"icon": "graphics/icons/rift_lightning_damage.png",
+			"icon": "graphics/exiledSector/tree/shrouded/rift_lightning_damage.png",
 			"effects": [
 				{
 					"effect": "RIFT_LIGHTNING_DAMAGE_PERCENT",
@@ -6926,7 +6926,7 @@
 		{
 			"id": "rift_explosion_damage",
 			"name": "Rift Explosion Damage",
-			"icon": "graphics/icons/rift_explosion_starscape_shifted.png",
+			"icon": "graphics/exiledSector/tree/omega/rift_explosion_damage.png",
 			"effects": [
 				{
 					"effect": "RIFT_EXPLOSION_DAMAGE_PERCENT",
@@ -6945,7 +6945,7 @@
 		{
 			"id": "rift_harmonics",
 			"name": "Rift Harmonics",
-			"icon": "graphics/icons/rift_explosion_multiple_shifted.png",
+			"icon": "graphics/exiledSector/tree/omega/rift_harmonics.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6977,7 +6977,7 @@
 		{
 			"id": "hungering_rift_healing",
 			"name": "Hungering Rift Healing",
-			"icon": "graphics/icons/hungering_rift_healing.png",
+			"icon": "graphics/exiledSector/tree/shrouded/hungering_rift_healing.png",
 			"effects": [
 				{
 					"effect": "HUNGERING_RIFT_HEALING_PERCENT",
@@ -6992,7 +6992,7 @@
 		{
 			"id": "chronos_rhythms",
 			"name": "Chronos Rhythms",
-			"icon": "graphics/icons/rat_skill_time.png",
+			"icon": "graphics/exiledSector/tree/abyss/rat_chronos_rhythms.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7032,7 +7032,7 @@
 		{
 			"id": "ship_system_cooldown",
 			"name": "Ship System Cooldown",
-			"icon": "graphics/icons/rat_supercharged.png",
+			"icon": "graphics/exiledSector/tree/base/rat_ship_system_cooldown.png",
 			"effects": [
 				{
 					"effect": "SYSTEM_COOLDOWN_PERCENT",
@@ -7046,7 +7046,7 @@
 		{
 			"id": "doctrine_alpha_grade_fire_control",
 			"name": "Alpha-Grade Fire Control",
-			"icon": "graphics/icons/doctrine_tt_alpha_fire_control.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_alpha_grade_fire_control.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7079,7 +7079,7 @@
 		{
 			"id": "doctrine_flux_arbitrage",
 			"name": "Flux Arbitrage",
-			"icon": "graphics/icons/doctrine_tt_flux_arbitrage.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_flux_arbitrage.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7112,7 +7112,7 @@
 		{
 			"id": "doctrine_quarterly_targets",
 			"name": "Quarterly Targets",
-			"icon": "graphics/icons/doctrine_tt_quarterly_targets.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_quarterly_targets.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7145,7 +7145,7 @@
 		{
 			"id": "doctrine_tachyon_lance_licensing",
 			"name": "Tachyon Lance Licensing",
-			"icon": "graphics/icons/doctrine_tt_tachyon_lance_licensing.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_tachyon_lance_licensing.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7181,7 +7181,7 @@
 		{
 			"id": "doctrine_black_ledger_coil_tuning",
 			"name": "Black Ledger Coil Tuning",
-			"icon": "graphics/icons/doctrine_tt_black_ledger_coils.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_black_ledger_coil_tuning.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7217,7 +7217,7 @@
 		{
 			"id": "doctrine_escrowed_emitters",
 			"name": "Escrowed Emitters",
-			"icon": "graphics/icons/doctrine_tt_escrowed_emitters.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_escrowed_emitters.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7252,7 +7252,7 @@
 		{
 			"id": "doctrine_hostile_takeover",
 			"name": "Hostile Takeover",
-			"icon": "graphics/icons/tactical_superiority.png",
+			"icon": "graphics/exiledSector/tree/tritachyon/tripad_backdoor.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -7295,7 +7295,7 @@
 		{
 			"id": "doctrine_blessed_plating",
 			"name": "Blessed Plating",
-			"icon": "graphics/icons/doctrine_luddic_blessed_plating.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_blessed_plating.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7328,7 +7328,7 @@
 		{
 			"id": "doctrine_faithful_hands",
 			"name": "Faithful Hands",
-			"icon": "graphics/icons/doctrine_luddic_faithful_hands.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_faithful_hands.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7362,7 +7362,7 @@
 		{
 			"id": "doctrine_pilgrims_burn",
 			"name": "Pilgrim's Burn",
-			"icon": "graphics/icons/doctrine_luddic_pilgrims_burn.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_pilgrims_burn.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7397,7 +7397,7 @@
 		{
 			"id": "doctrine_righteous_fury",
 			"name": "Righteous Fury",
-			"icon": "graphics/icons/doctrine_luddic_righteous_fury.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_righteous_fury.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7432,7 +7432,7 @@
 		{
 			"id": "doctrine_penitent_hulls",
 			"name": "Penitent Hulls",
-			"icon": "graphics/icons/doctrine_luddic_penitent_hulls.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_penitent_hulls.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7466,7 +7466,7 @@
 		{
 			"id": "doctrine_pilgrim_volunteers",
 			"name": "Pilgrim Volunteers",
-			"icon": "graphics/icons/Pilgrim_volunteers_shifted.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_pilgrim_volunteers.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7500,7 +7500,7 @@
 		{
 			"id": "doctrine_plain_rites",
 			"name": "Plain Rites",
-			"icon": "graphics/icons/plain_rites_shifted.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_plain_rites.png",
 			"flavour": "Luddic doctrine calls a ship system's refinements vanity. Stripped back to plain, honest machinery, it does what it was built to do and nothing more.",
 			"tags": [
 				"low_tech"
@@ -7509,7 +7509,7 @@
 		{
 			"id": "doctrine_swarm_logic",
 			"name": "Swarm Logic",
-			"icon": "graphics/icons/doctrine_remnant_swarm_logic.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_swarm_logic.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7543,7 +7543,7 @@
 		{
 			"id": "doctrine_unblinking_watch",
 			"name": "Unblinking Watch",
-			"icon": "graphics/icons/doctrine_remnant_unblinking_watch.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_unblinking_watch.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7576,7 +7576,7 @@
 		{
 			"id": "doctrine_cold_logic",
 			"name": "Cold Logic",
-			"icon": "graphics/icons/doctrine_remnant_cold_logic.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_cold_logic.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7609,7 +7609,7 @@
 		{
 			"id": "doctrine_fortress_lattice",
 			"name": "Fortress Lattice",
-			"icon": "graphics/icons/doctrine_remnant_fortress_lattice.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_fortress_lattice.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7654,7 +7654,7 @@
 		{
 			"id": "doctrine_lumen_harmonics",
 			"name": "Lumen Harmonics",
-			"icon": "graphics/icons/doctrine_remnant_lumen_harmonics.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_lumen_harmonics.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7689,7 +7689,7 @@
 		{
 			"id": "doctrine_ordo_signal_mesh",
 			"name": "Ordo Signal Mesh",
-			"icon": "graphics/icons/doctrine_remnant_ordo_signal_mesh.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_ordo_signal_mesh.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7733,7 +7733,7 @@
 		{
 			"id": "doctrine_tireless_cadence",
 			"name": "Tireless Cadence",
-			"icon": "graphics/icons/doctrine_remnant_automated_command.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_tireless_cadence.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -7775,7 +7775,7 @@
 		{
 			"id": "tania_weapon_fire_rate",
 			"name": "Weapon Fire Rate",
-			"icon": "graphics/icons/tania_weapon_fire_rate.png",
+			"icon": "graphics/exiledSector/tree/tania/tania_weapon_fire_rate.png",
 			"effects": [
 				{
 					"effect": "WEAPON_RATE_OF_FIRE_PERCENT",
@@ -7789,7 +7789,7 @@
 		{
 			"id": "tania_fafnir_breeches",
 			"name": "Dual-Feed Mounts",
-			"icon": "graphics/icons/tania_fafnir_breeches.png",
+			"icon": "graphics/exiledSector/tree/tania/tania_fafnir_breeches.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -7821,7 +7821,7 @@
 		{
 			"id": "tania_dysis_drive",
 			"name": "Dysis Drive",
-			"icon": "graphics/icons/tania_dysis_drive.png",
+			"icon": "graphics/exiledSector/tree/tania/tania_dysis_drive.png",
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -7852,7 +7852,7 @@
 		{
 			"id": "tania_carina_charge",
 			"name": "Carina Charge",
-			"icon": "graphics/icons/tania_carina_charge.png",
+			"icon": "graphics/exiledSector/tree/tania/tania_carina_charge.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7877,7 +7877,7 @@
 		{
 			"id": "tania_solaris_overdrive",
 			"name": "Solaris Overdrive",
-			"icon": "graphics/icons/tania_solaris_overdrive.png",
+			"icon": "graphics/exiledSector/tree/tania/tania_solaris_overdrive.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7919,7 +7919,7 @@
 		{
 			"id": "tania_rise_from_the_ashes",
 			"name": "Rise From the Ashes",
-			"icon": "graphics/icons/tania_rise_from_the_ashes.png",
+			"icon": "graphics/exiledSector/tree/tania/tania_rise_from_the_ashes.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7962,7 +7962,7 @@
 		{
 			"id": "tania_thermo_accelerator",
 			"name": "Thermo-Accelerator",
-			"icon": "graphics/icons/tania_thermo_accelerator.png",
+			"icon": "graphics/exiledSector/tree/tania/tania_thermo_accelerator.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -7988,7 +7988,7 @@
 		{
 			"id": "tania_merite_lunge",
 			"name": "Merite Lunge",
-			"icon": "graphics/icons/tania_merite_lunge.png",
+			"icon": "graphics/exiledSector/tree/tania/tania_merite_lunge.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8021,7 +8021,7 @@
 		{
 			"id": "emp_damage",
 			"name": "EMP Damage",
-			"icon": "graphics/icons/idk_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/base/emp_damage.png",
 			"effects": [
 				{
 					"effect": "EMP_DAMAGE_PERCENT",
@@ -8038,7 +8038,7 @@
 		{
 			"id": "ion_cascade",
 			"name": "Ion Cascade",
-			"icon": "graphics/icons/mechanical_engineering_shifted.png",
+			"icon": "graphics/exiledSector/tree/tritachyon/ion_cascade.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8069,7 +8069,7 @@
 		{
 			"id": "relay_protocols",
 			"name": "Relay Protocols",
-			"icon": "graphics/icons/sensors_circular.png",
+			"icon": "graphics/exiledSector/tree/redacted/relay_protocols.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8108,7 +8108,7 @@
 		{
 			"id": "greater_high_tech_affinity",
 			"name": "Greater High Tech Affinity",
-			"icon": "graphics/icons/root_high_tech.png",
+			"icon": "graphics/exiledSector/tree/roots/root_high_tech.png",
 			"effects": [
 				{
 					"effect": "HIGH_TECH_AFFINITY_FLAT",
@@ -8123,7 +8123,7 @@
 		{
 			"id": "adaptive_munitions",
 			"name": "Adaptive Munitions",
-			"icon": "graphics/icons/advanced_tactics_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/redacted/adaptive_munitions.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8151,7 +8151,7 @@
 		{
 			"id": "equilibrium_protocol",
 			"name": "Equilibrium Protocol",
-			"icon": "graphics/icons/frozen_heart2_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/redacted/equilibrium_protocol.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8180,7 +8180,7 @@
 		{
 			"id": "beam_or_non_beam_energy_weapon_damage",
 			"name": "Beam or Non-Beam Energy Weapon Damage",
-			"icon": "graphics/icons/beam_damage.png",
+			"icon": "graphics/exiledSector/tree/base/beam_weapon_damage.png",
 			"options": [
 				"beam_weapon_damage",
 				"non_beam_energy_weapon_damage"
@@ -8195,7 +8195,7 @@
 		{
 			"id": "ion_spill",
 			"name": "Ion Spill",
-			"icon": "graphics/icons/slipsurge_shifted_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/redacted/ion_spill.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8222,7 +8222,7 @@
 		{
 			"id": "dormant_repair_cycle",
 			"name": "Dormant Repair Cycle",
-			"icon": "graphics/icons/mechanical_engineering_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/redacted/dormant_repair_cycle.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8248,7 +8248,7 @@
 		{
 			"id": "phase_cloak_activation_cost",
 			"name": "Phase Cloak Activation Cost",
-			"icon": "graphics/icons/phase_field_shifted.png",
+			"icon": "graphics/exiledSector/tree/tritachyon/phase_cloak_activation_cost.png",
 			"effects": [
 				{
 					"effect": "PHASE_CLOAK_ACTIVATION_COST_MULT",
@@ -8266,7 +8266,7 @@
 		{
 			"id": "phase_ambush_doctrine",
 			"name": "Phase Ambush Doctrine",
-			"icon": "graphics/icons/EW_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/tritachyon/phase_ambush_doctrine.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8297,7 +8297,7 @@
 		{
 			"id": "phase_cloak_cooldown",
 			"name": "Phase Cloak Cooldown",
-			"icon": "graphics/icons/field_repairs_shifted_phase.png",
+			"icon": "graphics/exiledSector/tree/tritachyon/phase_cloak_cooldown.png",
 			"effects": [
 				{
 					"effect": "PHASE_CLOAK_COOLDOWN_PERCENT",
@@ -8314,7 +8314,7 @@
 		{
 			"id": "phantom_wake",
 			"name": "Phantom Wake",
-			"icon": "graphics/icons/go_dark_shifted.png",
+			"icon": "graphics/exiledSector/tree/tritachyon/phantom_wake.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8344,7 +8344,7 @@
 		{
 			"id": "cease_and_desist",
 			"name": "Cease and Desist",
-			"icon": "graphics/icons/systems_expertise_circular_alt1.png",
+			"icon": "graphics/exiledSector/tree/tritachyon/cease_and_desist.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8375,7 +8375,7 @@
 		{
 			"id": "strikecraft_weapon_range",
 			"name": "Strikecraft Weapon Range",
-			"icon": "graphics/icons/fighter3_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/omega/strikecraft_weapon_range.png",
 			"effects": [
 				{
 					"effect": "FIGHTER_WEAPON_RANGE_PERCENT",
@@ -8392,7 +8392,7 @@
 		{
 			"id": "strikecraft_armor",
 			"name": "Strikecraft Armor",
-			"icon": "graphics/icons/loadout_design_derelict_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/domain_drones/strikecraft_armor.png",
 			"effects": [
 				{
 					"effect": "FIGHTER_ARMOR_PERCENT",
@@ -8407,7 +8407,7 @@
 		{
 			"id": "spark_rift",
 			"name": "Spark Rift",
-			"icon": "graphics/icons/wing_commander_rift_shifted.png",
+			"icon": "graphics/exiledSector/tree/omega/spark_rift.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8434,7 +8434,7 @@
 		{
 			"id": "temporal_exhaust",
 			"name": "Temporal Exhaust",
-			"icon": "graphics/icons/rift_engines_shifted.png",
+			"icon": "graphics/exiledSector/tree/omega/temporal_exhaust.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8464,7 +8464,7 @@
 		{
 			"id": "resonator_payload",
 			"name": "Resonator Payload",
-			"icon": "graphics/icons/rift_missile_shifted.png",
+			"icon": "graphics/exiledSector/tree/omega/resonator_payload.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8495,7 +8495,7 @@
 		{
 			"id": "rugged_drone_frame",
 			"name": "Rugged Drone Frame",
-			"icon": "graphics/icons/analyze_entity_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/domain_drones/rugged_drone_frame.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8552,7 +8552,7 @@
 		{
 			"id": "countless_cycles",
 			"name": "Countless Cycles",
-			"icon": "graphics/icons/derelict_bounty_shifted.png",
+			"icon": "graphics/exiledSector/tree/domain_drones/countless_cycles.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8578,7 +8578,7 @@
 		{
 			"id": "retaliatory_routines",
 			"name": "Retaliatory Routines",
-			"icon": "graphics/icons/data_retrieval_uw_shifted.png",
+			"icon": "graphics/exiledSector/tree/domain_drones/retaliatory_routines.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8605,7 +8605,7 @@
 		{
 			"id": "autoforge_escorts",
 			"name": "Autoforge Escorts",
-			"icon": "graphics/icons/derelict_contingent_shifted.png",
+			"icon": "graphics/exiledSector/tree/domain_drones/autoforge_escorts.png",
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -8637,7 +8637,7 @@
 		{
 			"id": "feed_the_forges",
 			"name": "Feed the Forges",
-			"icon": "graphics/icons/commodity_production_shifted.png",
+			"icon": "graphics/exiledSector/tree/domain_drones/feed_the_forges.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8665,7 +8665,7 @@
 		{
 			"id": "sentry_reserve_racks",
 			"name": "Sentry Reserve Racks",
-			"icon": "graphics/icons/ordnance_expert_circular.png",
+			"icon": "graphics/exiledSector/tree/domain_drones/sentry_reserve_racks.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8696,7 +8696,7 @@
 		{
 			"id": "defender_flare_bays",
 			"name": "Defender Flare Bays",
-			"icon": "graphics/icons/distress_call_shifted_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/domain_drones/defender_flare_bays.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8722,7 +8722,7 @@
 		{
 			"id": "mothership_uplink",
 			"name": "Mothership Uplink",
-			"icon": "graphics/icons/auxiliary_support_derelict_rotated_shifted.png",
+			"icon": "graphics/exiledSector/tree/domain_drones/mothership_uplink.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{

@@ -170,7 +170,7 @@ class ItemDefinitionsTest {
         }
         for (ItemDefinition definition : ItemDefinitions.all()) {
             String icon = definition.icon();
-            assertFalse(icon.startsWith("graphics/unused/") || icon.startsWith("graphics/description/"),
+            assertFalse(icon.startsWith("art/unused/") || icon.startsWith("art/description/"),
                     definition.id() + " uses " + icon + ", which build-common.ps1 leaves out of deploys and releases");
         }
     }

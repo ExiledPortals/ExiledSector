@@ -14193,7 +14193,7 @@
 			"radius": 400,
 			"starType": "star_blue_giant",
 			"color": "#00479e",
-			"overlayPath": "graphics/fx/tritachyon_logo.png",
+			"overlayPath": "graphics/exiledSector/scenery/logos/tritachyon_logo.png",
 			"overlaySize": 0.95,
 			"overlayAlpha": 0.45,
 			"tags": [
@@ -14218,7 +14218,7 @@
 			"y": 4228,
 			"radius": 400,
 			"starType": "star_red_dwarf",
-			"overlayPath": "graphics/fx/pirates_logo.png",
+			"overlayPath": "graphics/exiledSector/scenery/logos/pirates_logo.png",
 			"overlaySize": 0.75,
 			"overlayAlpha": 0.45,
 			"tags": [
@@ -14233,7 +14233,7 @@
 			"radius": 400,
 			"starType": "star_red_supergiant",
 			"color": "#ff4900",
-			"overlayPath": "graphics/fx/hegemony_logo.png",
+			"overlayPath": "graphics/exiledSector/scenery/logos/hegemony_logo.png",
 			"overlaySize": 0.95,
 			"overlayAlpha": 0.7,
 			"tags": [
@@ -14248,7 +14248,7 @@
 			"radius": 400,
 			"starType": "star_browndwarf",
 			"color": "#780039",
-			"overlayPath": "graphics/fx/sindrian_diktat_logo.png",
+			"overlayPath": "graphics/exiledSector/scenery/logos/sindrian_diktat_logo.png",
 			"overlaySize": 0.95,
 			"overlayAlpha": 0.45,
 			"tags": [
@@ -14263,7 +14263,7 @@
 			"radius": 400,
 			"starType": "star_orange",
 			"color": "#f4c537",
-			"overlayPath": "graphics/fx/persean_league_logo.png",
+			"overlayPath": "graphics/exiledSector/scenery/logos/persean_league_logo.png",
 			"overlaySize": 0.7,
 			"overlayAlpha": 0.3,
 			"tags": [
@@ -14337,7 +14337,7 @@
 			"radius": 400,
 			"starType": "star_orange",
 			"color": "#f08a3c",
-			"overlayPath": "graphics/fx/tania_logo.png",
+			"overlayPath": "graphics/exiledSector/scenery/logos/tania_logo.png",
 			"overlaySize": 0.95,
 			"overlayAlpha": 0.45,
 			"tags": [
@@ -14362,7 +14362,7 @@
 			"y": -1374,
 			"width": 763,
 			"height": 468,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_01.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/hyperspace_cloud_01.png",
 			"rotation": 264,
 			"tags": [
 				"core"
@@ -14375,7 +14375,7 @@
 			"y": 776,
 			"width": 757,
 			"height": 724,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_07_lowtech.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/hyperspace_cloud_07_lowtech.png",
 			"rotation": 307,
 			"tags": [
 				"core"
@@ -14388,7 +14388,7 @@
 			"y": 795,
 			"width": 548,
 			"height": 485,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_10_orange.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/hyperspace_cloud_10_orange.png",
 			"tags": [
 				"core"
 			]
@@ -14400,7 +14400,7 @@
 			"y": 1153,
 			"width": 501,
 			"height": 533,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_06_lowtech.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/hyperspace_cloud_06_lowtech.png",
 			"rotation": 203,
 			"tags": [
 				"core"
@@ -14413,7 +14413,7 @@
 			"y": 677,
 			"width": 526,
 			"height": 602,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_04_lowtech.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/hyperspace_cloud_04_lowtech.png",
 			"rotation": 253,
 			"tags": [
 				"core"
@@ -14426,7 +14426,7 @@
 			"y": 527,
 			"width": 519,
 			"height": 656,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_09_lowtech.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/hyperspace_cloud_09_lowtech.png",
 			"rotation": 164,
 			"tags": [
 				"core"
@@ -14439,7 +14439,7 @@
 			"y": 577,
 			"width": 749,
 			"height": 889,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_04_orange.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/hyperspace_cloud_04_orange.png",
 			"rotation": 237,
 			"tags": [
 				"core"
@@ -14452,7 +14452,7 @@
 			"y": 1085,
 			"width": 615,
 			"height": 560,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_09_orange.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/hyperspace_cloud_09_orange.png",
 			"rotation": 294,
 			"tags": [
 				"core"
@@ -14465,7 +14465,7 @@
 			"y": 1010,
 			"width": 626,
 			"height": 491,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_07_blend_b75.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/hyperspace_cloud_07_blend_b75.png",
 			"rotation": 94,
 			"tags": [
 				"core"
@@ -14478,7 +14478,7 @@
 			"y": -1594,
 			"width": 561,
 			"height": 549,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_04.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/hyperspace_cloud_04.png",
 			"rotation": 179,
 			"tags": [
 				"core"
@@ -14491,7 +14491,7 @@
 			"y": -1673,
 			"width": 587,
 			"height": 680,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_01.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/hyperspace_cloud_01.png",
 			"rotation": 261,
 			"tags": [
 				"core"
@@ -14504,7 +14504,7 @@
 			"y": -1646,
 			"width": 886,
 			"height": 508,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_05.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/hyperspace_cloud_05.png",
 			"rotation": 230,
 			"tags": [
 				"core"
@@ -14517,7 +14517,7 @@
 			"y": 17640,
 			"width": 1700,
 			"height": 1700,
-			"imagePath": "graphics/backgrounds/nebula_blobs/luddic_nebula_back_1.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/luddic_nebula_back_1.png",
 			"rotation": 285,
 			"parallax": 0.9,
 			"tags": [
@@ -14531,7 +14531,7 @@
 			"y": 18043,
 			"width": 1700,
 			"height": 1700,
-			"imagePath": "graphics/backgrounds/nebula_blobs/luddic_nebula_back_2.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/luddic_nebula_back_2.png",
 			"rotation": 285,
 			"parallax": 0.9,
 			"tags": [
@@ -14545,7 +14545,7 @@
 			"y": 17871,
 			"width": 1700,
 			"height": 1700,
-			"imagePath": "graphics/backgrounds/nebula_blobs/luddic_nebula_back_3.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/luddic_nebula_back_3.png",
 			"rotation": 285,
 			"parallax": 0.9,
 			"tags": [
@@ -14559,7 +14559,7 @@
 			"y": 16666,
 			"width": 1700,
 			"height": 1700,
-			"imagePath": "graphics/backgrounds/nebula_blobs/luddic_nebula_back_4.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/luddic_nebula_back_4.png",
 			"rotation": 285,
 			"parallax": 0.9,
 			"tags": [
@@ -14573,7 +14573,7 @@
 			"y": 16541,
 			"width": 1700,
 			"height": 1700,
-			"imagePath": "graphics/backgrounds/nebula_blobs/luddic_nebula_back_5.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/luddic_nebula_back_5.png",
 			"rotation": 285,
 			"parallax": 0.9,
 			"tags": [
@@ -14587,7 +14587,7 @@
 			"y": 17119,
 			"width": 3400,
 			"height": 3400,
-			"imagePath": "graphics/backgrounds/static_images/luddic_nebula.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/luddic_nebula.png",
 			"rotation": 285,
 			"tags": [
 				"luddic"
@@ -14600,7 +14600,7 @@
 			"y": 16881,
 			"width": 1700,
 			"height": 1700,
-			"imagePath": "graphics/backgrounds/nebula_blobs/luddic_nebula_front_1.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/luddic_nebula_front_1.png",
 			"rotation": 285,
 			"parallax": 1.1,
 			"tags": [
@@ -14614,7 +14614,7 @@
 			"y": 17538,
 			"width": 1700,
 			"height": 1700,
-			"imagePath": "graphics/backgrounds/nebula_blobs/luddic_nebula_front_2.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/luddic_nebula_front_2.png",
 			"rotation": 285,
 			"parallax": 1.1,
 			"tags": [
@@ -14628,7 +14628,7 @@
 			"y": 17969,
 			"width": 1700,
 			"height": 1700,
-			"imagePath": "graphics/backgrounds/nebula_blobs/luddic_nebula_front_3.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/luddic_nebula_front_3.png",
 			"rotation": 285,
 			"parallax": 1.1,
 			"tags": [
@@ -14642,7 +14642,7 @@
 			"y": 17593,
 			"width": 1700,
 			"height": 1700,
-			"imagePath": "graphics/backgrounds/nebula_blobs/luddic_nebula_front_4.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/luddic_nebula_front_4.png",
 			"rotation": 285,
 			"parallax": 1.1,
 			"tags": [
@@ -14656,7 +14656,7 @@
 			"y": 17889,
 			"width": 1700,
 			"height": 1700,
-			"imagePath": "graphics/backgrounds/nebula_blobs/luddic_nebula_front_5.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/luddic_nebula_front_5.png",
 			"rotation": 285,
 			"parallax": 1.1,
 			"tags": [
@@ -14670,7 +14670,7 @@
 			"y": 29877,
 			"width": 6400,
 			"height": 6400,
-			"imagePath": "graphics/backgrounds/nebula_blobs/tania_nebula_back_1.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/tania_nebula_back_1.png",
 			"behindStars": true,
 			"parallax": 0.85,
 			"tags": [
@@ -14684,7 +14684,7 @@
 			"y": 28635,
 			"width": 6400,
 			"height": 6400,
-			"imagePath": "graphics/backgrounds/nebula_blobs/tania_nebula_back_2.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/tania_nebula_back_2.png",
 			"behindStars": true,
 			"parallax": 0.85,
 			"tags": [
@@ -14698,7 +14698,7 @@
 			"y": 35203,
 			"width": 6400,
 			"height": 6400,
-			"imagePath": "graphics/backgrounds/nebula_blobs/tania_nebula_back_3.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/tania_nebula_back_3.png",
 			"behindStars": true,
 			"parallax": 0.85,
 			"tags": [
@@ -14712,7 +14712,7 @@
 			"y": 26293,
 			"width": 6400,
 			"height": 6400,
-			"imagePath": "graphics/backgrounds/nebula_blobs/tania_nebula_back_4.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/tania_nebula_back_4.png",
 			"behindStars": true,
 			"parallax": 0.85,
 			"tags": [
@@ -14726,7 +14726,7 @@
 			"y": 30750,
 			"width": 12800,
 			"height": 12800,
-			"imagePath": "graphics/backgrounds/static_images/tania_nebula.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/tania_nebula.png",
 			"behindStars": true,
 			"tags": [
 				"tania"
@@ -14739,7 +14739,7 @@
 			"y": 29172,
 			"width": 6400,
 			"height": 6400,
-			"imagePath": "graphics/backgrounds/nebula_blobs/tania_nebula_front_1.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/tania_nebula_front_1.png",
 			"behindStars": true,
 			"parallax": 1.15,
 			"tags": [
@@ -14753,7 +14753,7 @@
 			"y": 32441,
 			"width": 6400,
 			"height": 6400,
-			"imagePath": "graphics/backgrounds/nebula_blobs/tania_nebula_front_2.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/tania_nebula_front_2.png",
 			"behindStars": true,
 			"parallax": 1.15,
 			"tags": [
@@ -14767,7 +14767,7 @@
 			"y": 32806,
 			"width": 6400,
 			"height": 6400,
-			"imagePath": "graphics/backgrounds/nebula_blobs/tania_nebula_front_3.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/tania_nebula_front_3.png",
 			"behindStars": true,
 			"parallax": 1.15,
 			"tags": [
@@ -14781,7 +14781,7 @@
 			"y": 29108,
 			"width": 6400,
 			"height": 6400,
-			"imagePath": "graphics/backgrounds/nebula_blobs/tania_nebula_front_4.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/tania_nebula_front_4.png",
 			"behindStars": true,
 			"parallax": 1.15,
 			"tags": [
@@ -14795,7 +14795,7 @@
 			"y": 30995,
 			"width": 6400,
 			"height": 6400,
-			"imagePath": "graphics/backgrounds/nebula_blobs/tania_nebula_front_5.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/tania_nebula_front_5.png",
 			"behindStars": true,
 			"parallax": 1.15,
 			"tags": [
@@ -14809,7 +14809,7 @@
 			"y": 36429,
 			"width": 927,
 			"height": 830,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_01.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_01.png",
 			"rotation": 173,
 			"tags": [
 				"abyss"
@@ -14822,7 +14822,7 @@
 			"y": 37831,
 			"width": 923,
 			"height": 806,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_02.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_02.png",
 			"rotation": 28,
 			"tags": [
 				"abyss"
@@ -14835,7 +14835,7 @@
 			"y": 38252,
 			"width": 906,
 			"height": 899,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_03.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_03.png",
 			"rotation": 5,
 			"tags": [
 				"abyss"
@@ -14848,7 +14848,7 @@
 			"y": 37356,
 			"width": 1009,
 			"height": 936,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_05.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_05.png",
 			"rotation": 186,
 			"tags": [
 				"abyss"
@@ -14861,7 +14861,7 @@
 			"y": 35330,
 			"width": 1032,
 			"height": 1082,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_06.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_06.png",
 			"rotation": 2,
 			"tags": [
 				"abyss"
@@ -14874,7 +14874,7 @@
 			"y": 35337,
 			"width": 1003,
 			"height": 1040,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_07.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_07.png",
 			"rotation": 1,
 			"tags": [
 				"abyss"
@@ -14887,7 +14887,7 @@
 			"y": 35183,
 			"width": 901,
 			"height": 1017,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_12.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_12.png",
 			"rotation": 153,
 			"tags": [
 				"abyss"
@@ -14900,7 +14900,7 @@
 			"y": 37186,
 			"width": 1097,
 			"height": 1227,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_14.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_14.png",
 			"rotation": 219,
 			"tags": [
 				"abyss"
@@ -14913,7 +14913,7 @@
 			"y": 36666,
 			"width": 1129,
 			"height": 1072,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_01.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_01.png",
 			"rotation": 290,
 			"tags": [
 				"abyss"
@@ -14926,7 +14926,7 @@
 			"y": 37479,
 			"width": 1135,
 			"height": 982,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_02.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_02.png",
 			"rotation": 107,
 			"tags": [
 				"abyss"
@@ -14939,7 +14939,7 @@
 			"y": 38097,
 			"width": 1183,
 			"height": 1023,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_03.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_03.png",
 			"rotation": 296,
 			"tags": [
 				"abyss"
@@ -14952,7 +14952,7 @@
 			"y": 38112,
 			"width": 1471,
 			"height": 1399,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_05.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_05.png",
 			"rotation": 43,
 			"tags": [
 				"abyss"
@@ -14965,7 +14965,7 @@
 			"y": 37752,
 			"width": 1235,
 			"height": 1298,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_06.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_06.png",
 			"rotation": 20,
 			"tags": [
 				"abyss"
@@ -14978,7 +14978,7 @@
 			"y": 36632,
 			"width": 1332,
 			"height": 1350,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_07.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_07.png",
 			"rotation": 276,
 			"tags": [
 				"abyss"
@@ -14991,7 +14991,7 @@
 			"y": 35776,
 			"width": 1474,
 			"height": 1615,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_12.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_12.png",
 			"rotation": 349,
 			"tags": [
 				"abyss"
@@ -15004,7 +15004,7 @@
 			"y": 34999,
 			"width": 1398,
 			"height": 1449,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_14.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_14.png",
 			"rotation": 159,
 			"tags": [
 				"abyss"
@@ -15017,7 +15017,7 @@
 			"y": 34783,
 			"width": 1325,
 			"height": 1310,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_01.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_01.png",
 			"rotation": 81,
 			"tags": [
 				"abyss"
@@ -15030,7 +15030,7 @@
 			"y": 35853,
 			"width": 1123,
 			"height": 1173,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_02.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_02.png",
 			"rotation": 44,
 			"tags": [
 				"abyss"
@@ -15168,7 +15168,7 @@
 			"y": 0,
 			"innerRadius": 2900,
 			"outerRadius": 3250,
-			"ringArtPath": "graphics/planets/ring_band_dust.png",
+			"ringArtPath": "graphics/exiledSector/scenery/rings/ring_band_dust.png",
 			"rotationSpeed": 0.6,
 			"tags": [
 				"core"
@@ -15181,7 +15181,7 @@
 			"y": 0,
 			"innerRadius": 4350,
 			"outerRadius": 4800,
-			"ringArtPath": "graphics/planets/ring_band_dust.png",
+			"ringArtPath": "graphics/exiledSector/scenery/rings/ring_band_dust.png",
 			"rotationSpeed": -0.8,
 			"tags": [
 				"core"
@@ -15194,7 +15194,7 @@
 			"y": -18999,
 			"innerRadius": 2900,
 			"outerRadius": 3100,
-			"ringArtPath": "graphics/planets/ring_band_ice.png",
+			"ringArtPath": "graphics/exiledSector/scenery/rings/ring_band_ice.png",
 			"rotationSpeed": -0.8,
 			"tags": [
 				"tritachyon"
@@ -15207,7 +15207,7 @@
 			"y": -14962,
 			"innerRadius": 640,
 			"outerRadius": 1000,
-			"ringArtPath": "graphics/planets/ring_band_dust.png",
+			"ringArtPath": "graphics/exiledSector/scenery/rings/ring_band_dust.png",
 			"rotationSpeed": 0.4,
 			"tags": [
 				"stargazer"
@@ -15220,7 +15220,7 @@
 			"y": 7235,
 			"innerRadius": 1880,
 			"outerRadius": 2120,
-			"ringArtPath": "graphics/planets/ring_band_asteroids.png",
+			"ringArtPath": "graphics/exiledSector/scenery/rings/ring_band_asteroids.png",
 			"rotationSpeed": 0.3,
 			"tags": [
 				"domain_drones"

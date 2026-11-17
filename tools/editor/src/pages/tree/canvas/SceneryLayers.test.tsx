@@ -14,7 +14,7 @@ import { SHIP_TREE_KIND } from '../treeKinds.ts';
 import { DecorationLayer } from './DecorationLayers.tsx';
 import { TreeCanvas } from './TreeCanvas.tsx';
 
-const CONTEXT = { imagePath: 'graphics/backgrounds/static_images/hyperspace_cloud_01.png', region: undefined };
+const CONTEXT = { imagePath: 'graphics/exiledSector/scenery/clouds/hyperspace_cloud_01.png', region: undefined };
 
 const DECORATIONS: Decoration[] = [
   DECORATION_KINDS.star.create('sun', { x: 0, y: 0 }, CONTEXT),

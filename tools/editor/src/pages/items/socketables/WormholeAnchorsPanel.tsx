@@ -3,6 +3,7 @@ import { IconPlus } from '@tabler/icons-react';
 import { useState } from 'react';
 import { withCurrentOption } from '../../../shared/arrays.ts';
 import { DecimalInput } from '../../../shared/DecimalInput.tsx';
+import { itemIconDestination } from '../../../shared/imageFolders.ts';
 import { DeleteRowButton, DescriptionField, IconField, IdField, ItemList, ListDetail, NameAndRarity, type ListedItem } from '../components/ItemFields.tsx';
 import { unlockOptions } from '../itemOptions.ts';
 import type { ItemsPanelProps } from '../itemsDocument.ts';
@@ -71,7 +72,7 @@ function AnchorForm({ document, model, vocabulary, anchor, index, onSelect }: An
 
   return (
     <Stack gap="sm" maw={1100}>
-      <IconField icon={anchor.icon} targetFolder="graphics/icons/" onChange={(icon) => edit((draft) => void (draft.icon = icon))} />
+      <IconField icon={anchor.icon} destination={itemIconDestination('anchors', anchor.id)} onChange={(icon) => edit((draft) => void (draft.icon = icon))} />
       <IdField
         id={anchor.id}
         loadedId={anchor.loadedId}

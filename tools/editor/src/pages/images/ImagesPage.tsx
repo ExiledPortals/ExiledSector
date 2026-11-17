@@ -1,18 +1,22 @@
-import { Alert, Box, Button, Center, Divider, Group, Image, Loader, NumberInput, Paper, ScrollArea, Stack, Text, TextInput, Title } from '@mantine/core';
-import { IconAlertTriangle, IconCircle, IconColorSwatch, IconRotateClockwise, IconTrash } from '@tabler/icons-react';
+import { Alert, Box, Button, Center, Divider, Group, Image, List, Loader, NumberInput, Paper, ScrollArea, Stack, Text, TextInput, Title } from '@mantine/core';
+import { IconAlertTriangle, IconArrowRight, IconCircle, IconColorSwatch, IconRotateClockwise, IconTrash } from '@tabler/icons-react';
 import { useMemo, useState, type CSSProperties, type ReactNode } from 'react';
 import {
   deleteImage,
+  moveImage,
   postImageCopy,
   useImageListing,
+  useImageUsage,
   useRefreshImages,
+  type ImageUse,
   type ImageCopyOperation,
   type ImageCopyParameters,
   type ImageCopyRequest,
 } from '../../api/images.ts';
 import { confirmAction, notifyError, notifySuccess } from '../../shared/dialogs.tsx';
 import { ImageBrowser } from '../../shared/ImageBrowser.tsx';
-import { fileUrl, isUnshippedImagePath } from '../../shared/imagePaths.ts';
+import { ATLAS_CIRCULAR_POOL_FOLDER, ATLAS_ICON_FOLDER, ATLAS_POOL_FOLDER, CIRCULAR_ART_FOLDER, UNUSED_ART_FOLDER, isInFolder } from '../../shared/imageFolders.ts';
+import { fileUrl, imageFileName, isUnshippedImagePath } from '../../shared/imagePaths.ts';
 
 const DETAIL_WIDTH = 320;
 const DEFAULT_HUE_SHIFT = 240;
@@ -67,14 +71,76 @@ function RotationPreview({ path, degrees }: { path: string; degrees: number }) {
   );
 }
 
+function UsageList({ uses }: { uses: ImageUse[] | undefined }) {
+  if (!uses || uses.length === 0) {
+    return (
+      <Text size="xs" c="green">
+        Not used by any data file or code.
+      </Text>
+    );
+  }
+  return (
+    <Stack gap={2}>
+      <Text size="xs" fw={600}>
+        Used by
+      </Text>
+      <List size="xs" spacing={2}>
+        {uses.map((use) => (
+          <List.Item key={`${use.file}|${use.detail}`}>
+            <Text span size="xs" ff="monospace">
+              {use.file}
+            </Text>
+            {use.detail ? <Text span size="xs">{` - ${use.detail}`}</Text> : null}
+            {use.atlas ? <Text span size="xs" c="cyan">{' (Atlas Tree)'}</Text> : null}
+          </List.Item>
+        ))}
+      </List>
+    </Stack>
+  );
+}
+
+function AtlasPoolNote({ path, busy, onMoved }: { path: string; busy: boolean; onMoved: (path: string) => void }) {
+  const moveAsIs = async () => {
+    const result = await moveImage(path, ATLAS_CIRCULAR_POOL_FOLDER + imageFileName(path));
+    if (!result.ok) {
+      notifyError(`Could not move: ${result.message}`);
+      return;
+    }
+    const moved = result.data.path ?? ATLAS_CIRCULAR_POOL_FOLDER + imageFileName(path);
+    notifySuccess(`Moved to ${moved}`);
+    onMoved(moved);
+  };
+  if (isInFolder(path, ATLAS_CIRCULAR_POOL_FOLDER)) {
+    return (
+      <Alert color="cyan" p="xs" title="Ready for the Atlas Tree">
+        <Text size="xs">Pick this icon for an Atlas Tree type in its icon picker; it moves to {ATLAS_ICON_FOLDER} under the type's id.</Text>
+      </Alert>
+    );
+  }
+  return (
+    <Alert color="cyan" p="xs" title="Atlas icon pool">
+      <Stack gap={6}>
+        <Text size="xs">
+          Make a circular copy below to move this icon into {ATLAS_CIRCULAR_POOL_FOLDER}, where the Atlas Tree icon picker finds it. If it is already circular, move it
+          as it is.
+        </Text>
+        <Button size="xs" variant="default" leftSection={<IconArrowRight size={14} />} loading={busy} onClick={() => void moveAsIs()}>
+          Move to the circular pool as it is
+        </Button>
+      </Stack>
+    </Alert>
+  );
+}
+
 interface ImageDetailProps {
   path: string;
   vanilla: boolean;
+  uses: ImageUse[] | undefined;
   onCreated: (path: string) => void;
   onDeleted: () => void;
 }
 
-function ImageDetail({ path, vanilla, onCreated, onDeleted }: ImageDetailProps) {
+function ImageDetail({ path, vanilla, uses, onCreated, onDeleted }: ImageDetailProps) {
   const [hueShift, setHueShift] = useState<number>(DEFAULT_HUE_SHIFT);
   const [degrees, setDegrees] = useState<number>(DEFAULT_ROTATION);
   const [suffix, setSuffix] = useState(DEFAULT_SUFFIX);
@@ -86,8 +152,10 @@ function ImageDetail({ path, vanilla, onCreated, onDeleted }: ImageDetailProps) 
     rotate: { degrees },
   };
 
+  const inAtlasPool = isInFolder(path, ATLAS_POOL_FOLDER);
+
   const runCopy = async (operation: ImageCopyOperation) => {
-    if (!suffix.trim()) {
+    if (!suffix.trim() && !(operation === 'circular' && inAtlasPool)) {
       notifyError('Suffix is required.');
       return;
     }
@@ -139,9 +207,11 @@ function ImageDetail({ path, vanilla, onCreated, onDeleted }: ImageDetailProps) 
       )}
       {vanilla && (
         <Text size="xs" c="dimmed">
-          Vanilla image: it is read-only, and copies are saved to the same folder in the mod.
+          Vanilla image: it is read-only, and copies are saved to {UNUSED_ART_FOLDER}.
         </Text>
       )}
+      <UsageList uses={uses} />
+      {isInFolder(path, ATLAS_POOL_FOLDER) || isInFolder(path, ATLAS_CIRCULAR_POOL_FOLDER) ? <AtlasPoolNote path={path} busy={busy} onMoved={onCreated} /> : null}
       <TextInput label="New file suffix" value={suffix} onChange={(event) => setSuffix(event.currentTarget.value)} />
       <Divider label="Colour shift" labelPosition="left" />
       <OperationPreview>
@@ -162,10 +232,12 @@ function ImageDetail({ path, vanilla, onCreated, onDeleted }: ImageDetailProps) 
         <img src={fileUrl(path)} alt={`${path} circular`} style={{ ...PREVIEW_IMAGE_STYLE, borderRadius: '50%' }} />
       </OperationPreview>
       <Button variant="default" leftSection={<IconCircle size={16} />} loading={busy} onClick={() => void runCopy('circular')}>
-        Make circular copy
+        {inAtlasPool ? 'Make circular and move to the circular pool' : 'Make circular copy'}
       </Button>
       <Text size="xs" c="dimmed">
-        Colour-shifted and rotated copies are saved next to the original as name_suffix.png. Circular copies go to graphics/unused/circular/. Quarter turns are lossless; other angles keep the image size and clip the corners.
+        Copies of images under art/ stay in their folder; copies of shipped or vanilla images go to {UNUSED_ART_FOLDER}, named name_suffix.png. Circular copies go to{' '}
+        {CIRCULAR_ART_FOLDER}, except icons in {ATLAS_POOL_FOLDER}, which move to {ATLAS_CIRCULAR_POOL_FOLDER} under the same name. Quarter turns are lossless; other
+        angles keep the image size and clip the corners. Picking an art/ image as an icon moves it into graphics/.
       </Text>
       {!vanilla && (
         <>
@@ -181,6 +253,7 @@ function ImageDetail({ path, vanilla, onCreated, onDeleted }: ImageDetailProps) 
 
 export function ImagesPage() {
   const images = useImageListing();
+  const usage = useImageUsage();
   const refreshImages = useRefreshImages();
   const [selectedPath, setSelectedPath] = useState<string | null>(null);
   const allPaths = useMemo(() => (images.data ? [...images.data.projectImages, ...images.data.vanillaImages] : []), [images.data]);
@@ -207,7 +280,7 @@ export function ImagesPage() {
         <Title order={3} mb="sm">
           Images
         </Title>
-        <ImageBrowser paths={allPaths} selectedPath={selectedPath} onSelect={setSelectedPath} height="calc(100dvh - 190px)" />
+        <ImageBrowser paths={allPaths} usage={usage.data} selectedPath={selectedPath} onSelect={setSelectedPath} height="calc(100dvh - 190px)" />
       </Box>
       <Divider orientation="vertical" />
       <ScrollArea w={DETAIL_WIDTH} type="auto" style={{ flexShrink: 0 }}>
@@ -217,6 +290,7 @@ export function ImagesPage() {
               key={selectedPath}
               path={selectedPath}
               vanilla={vanillaPaths.has(selectedPath)}
+              uses={usage.data?.[selectedPath]}
               onCreated={(created) => {
                 void refreshImages();
                 setSelectedPath(created);
@@ -228,7 +302,7 @@ export function ImagesPage() {
             />
           ) : (
             <Text c="dimmed" size="sm">
-              Select an image to recolour, rotate, make a circular copy of or delete it.
+              Select an image to see where it is used, or to recolour, rotate, make a circular copy of or delete it. For Atlas Tree icons, start in {ATLAS_POOL_FOLDER}.
             </Text>
           )}
         </Box>

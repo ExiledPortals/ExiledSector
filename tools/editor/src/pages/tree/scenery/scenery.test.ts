@@ -11,7 +11,7 @@ import { projectSphere, SPHERE_DETAIL, sphereOrientation } from './sphereMesh.ts
 import { createStarfield, placeFieldStar, STARFIELD_SPRITE_PATHS } from './starfield.ts';
 import { fragmentPose, isFragmentInFront, threatFragmentCount } from './threatSwarm.ts';
 
-const CONTEXT = { imagePath: 'graphics/backgrounds/static_images/hyperspace_cloud_01.png', region: undefined };
+const CONTEXT = { imagePath: 'graphics/exiledSector/scenery/clouds/hyperspace_cloud_01.png', region: undefined };
 
 function created<TKind extends Decoration['kind']>(kind: TKind, id: string, x = 0, y = 0) {
   return DECORATION_KINDS[kind].create(id, { x, y }, CONTEXT);

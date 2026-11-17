@@ -406,7 +406,7 @@ class ShipTreeSyncTest {
                 List.of("gate_far"), 0f, 0f, SkillNodeDecoration.NONE, List.of("hegemony")));
         WormholeAnchorDefinitions.register(new JSONArray().put(new JSONObject().put("id", "wormhole_anchor_hegemony")
                 .put("volume", "hegemony").put("exit_node", "gate_far").put("name", "Hegemony Anchor")
-                .put("icon", "graphics/icons/nav_relay.png").put("rarity", "10").put("description", "Opens a wormhole.")));
+                .put("icon", "graphics/exiledSector/tree/base/nav_relay.png").put("rarity", "10").put("description", "Opens a wormhole.")));
         WormholeAnchorLinks.install();
     }
 

@@ -21,7 +21,7 @@ public final class HullUpgradeIcons {
     private static final int ICON_SIZE = 128;
     private static final int GRID_SPACING = 24;
     private static final String DEFAULT_SHIPS_DIR = "E:/Dev/Starsector/starsector-core/graphics/ships";
-    private static final String DEFAULT_OUTPUT_DIR = "graphics/icons/hull_upgrades";
+    private static final String DEFAULT_OUTPUT_DIR = "graphics/exiledSector/items/schematics";
     private static final String[] HULL_SIZES = {"frigate", "destroyer", "cruiser", "capital"};
     private static final String[] DEFAULT_SPRITES = {
             "wolf/wolf_base.png", "hammerhead/hammerhead_base.png", "dominator/dominator_base.png", "onslaught/onslaught_base.png"};

@@ -4,6 +4,7 @@ import { withCurrentOption } from '../../../shared/arrays.ts';
 import { CommitNumberInput, CommitTextarea, CommitTextInput } from '../../../shared/CommitInputs.tsx';
 import { EditableRows } from '../../../shared/EditableRows.tsx';
 import { EffectSelect } from '../../../shared/EffectSelect.tsx';
+import { shipTreeIconDestination, type ImageDestination } from '../../../shared/imageFolders.ts';
 import { ImagePickButton } from '../../../shared/ImagePickButton.tsx';
 import { TYPE_TAG_GROUPS } from '../model/tags.ts';
 import {
@@ -30,6 +31,7 @@ interface TypeFormProps {
   note?: string;
   idEditable?: boolean;
   onEditOptionType?: (typeId: string) => void;
+  iconDestination?: ImageDestination;
 }
 
 function idListText(ids: string[] | undefined): string {
@@ -308,7 +310,7 @@ function FlavourField({ type, onEdit, note }: Pick<TypeFormProps, 'type' | 'onEd
 }
 
 export function TypeForm(props: TypeFormProps) {
-  const { type, onEdit, sections, vocabulary, note = '', idEditable = false } = props;
+  const { type, onEdit, sections, vocabulary, note = '', idEditable = false, iconDestination = shipTreeIconDestination(type.id) } = props;
   const renderSection = (section: TypeFormSection) => {
     switch (section) {
       case 'identity':
@@ -324,7 +326,7 @@ export function TypeForm(props: TypeFormProps) {
               <CommitTextInput size="xs" style={{ flex: 1 }} label="Icon path" value={type.icon ?? ''} onCommit={(text) => onEdit((draft) => {
                 draft.icon = text.trim();
               })} />
-              <ImagePickButton size="xs" onPicked={(path) => onEdit((draft) => {
+              <ImagePickButton size="xs" destination={iconDestination} currentPath={type.icon} onPicked={(path) => onEdit((draft) => {
                 draft.icon = path;
               })} />
             </Group>

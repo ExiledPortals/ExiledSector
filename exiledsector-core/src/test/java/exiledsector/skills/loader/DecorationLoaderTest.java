@@ -116,14 +116,14 @@ class DecorationLoaderTest {
     @Test
     void parsesAllFieldsOfARingBelt() throws Exception {
         RingBelt belt = parse("{ \"kind\": \"ringBelt\", \"id\": \"outer_ringbelt\", \"x\": 100, \"y\": -50, \"innerRadius\": 2850, \"outerRadius\": 3150,"
-                + "\"ringArtPath\": \"graphics/planets/ring_band_dust.png\", \"rotation\": 45, \"rotationSpeed\": -0.8 }").ringBelts().get(0);
+                + "\"ringArtPath\": \"graphics/exiledSector/scenery/rings/ring_band_dust.png\", \"rotation\": 45, \"rotationSpeed\": -0.8 }").ringBelts().get(0);
 
         assertEquals("outer_ringbelt", belt.getId());
         assertEquals(100f, belt.getX());
         assertEquals(-50f, belt.getY());
         assertEquals(2850f, belt.getInnerRadius());
         assertEquals(3150f, belt.getOuterRadius());
-        assertEquals("graphics/planets/ring_band_dust.png", belt.getRingArtPath());
+        assertEquals("graphics/exiledSector/scenery/rings/ring_band_dust.png", belt.getRingArtPath());
         assertEquals(45f, belt.getRotation());
         assertEquals(-0.8f, belt.getRotationSpeed());
     }

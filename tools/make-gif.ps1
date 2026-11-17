@@ -26,7 +26,7 @@ if (-not $Name) {
     $Name = [IO.Path]::GetFileNameWithoutExtension($sourcePath)
 }
 if (-not $Output) {
-    $Output = Join-Path $PSScriptRoot "..\graphics\description\$Name.gif"
+    $Output = Join-Path $PSScriptRoot "..\art\description\$Name.gif"
 }
 $outputPath = [IO.Path]::GetFullPath($Output)
 

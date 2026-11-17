@@ -38,7 +38,7 @@ Affinity is a reusable stepped bonus, so it lives in Exiled Lib, in the `special
 
 ### Node types
 
-- Three new option types: `affinity_low_tech`, `affinity_high_tech` and `affinity_midline`, each giving 5 of its affinity. Each uses its root's icon (`graphics/icons/root_low_tech.png` and so on). Icons must be circular copies: check the root icons are, and make circular copies with the editor's "Make circular copy" if not.
+- Three new option types: `affinity_low_tech`, `affinity_high_tech` and `affinity_midline`, each giving 5 of its affinity. Each uses its root's icon (`graphics/exiledSector/tree/roots/root_low_tech.png` and so on). Icons must be circular copies: check the root icons are, and make circular copies with the editor's "Make circular copy" if not.
 - `small_flux_optional` keeps its id (saves and `released_skill_nodes.json` refer to it). Its `optionalOptions` become the three affinity types, and its name becomes "Affinity". Before a choice is made the tree draws it as the usual optional-node pie split of its three options' icons, which are the root icons.
 - The four old option types stay in `skill_types.json` only while anything still refers to them (the migration below). Delete them afterwards if nothing else uses them.
 - The roots' `effects` and `hullSizeEffects` become a single `*_AFFINITY_FLAT` of 10.

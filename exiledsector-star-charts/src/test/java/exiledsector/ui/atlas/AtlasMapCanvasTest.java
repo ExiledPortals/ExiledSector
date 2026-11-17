@@ -86,7 +86,7 @@ class AtlasMapCanvasTest {
             AtlasMapCanvas.AnomalyIcon icon = canvas.anomalyIcons().stream().filter(candidate -> candidate.cell().equals(bastion)).findFirst()
                     .orElseThrow();
             assertEquals(SpatialBreach.ANOMALY_ID, icon.anomalyId());
-            assertEquals("graphics/icons/anomalies/spatial_breach.png", icon.iconPath());
+            assertEquals("graphics/exiledSector/anomalies/spatial_breach.png", icon.iconPath());
             assertNull(icon.chain());
 
             float orbit = AtlasMapCanvas.footprint(view) * AtlasMapCanvas.ANOMALY_ORBIT_SHARE;

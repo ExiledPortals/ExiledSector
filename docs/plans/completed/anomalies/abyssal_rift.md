@@ -43,9 +43,9 @@ Three Rift-only `chart_poi.csv` rows of the station kind, each a custom entity o
 
 | Site | Sprite | Illustration | Drop groups (from RAT) |
 |---|---|---|---|
-| Abyssal Fabricator | `graphics/stations/rat_abyss_fabricator.png` | `rat_abyss_wreckage*.jpg` | `rat_abyss_alterations_rare`, `rat_abyss_weapons`, `rat_abyss_artifact_rare` |
-| Abyssal Accumulator | `graphics/stations/rat_abyss_accumalator.png` | `rat_abyss_abandoned2.jpg` | as the fabricator, with more basic salvage |
-| Abyssal Research Station | `graphics/stations/rat_abyss_research.png` | `rat_abyss_abandoned.jpg` | `rat_abyss_weapons`, `rat_abyss_alteration_common`, `rat_abyss_transmitter` |
+| Abyssal Fabricator | `graphics/exiledSector/campaign/entities/rat_abyss_fabricator.png` | `rat_abyss_wreckage*.jpg` | `rat_abyss_alterations_rare`, `rat_abyss_weapons`, `rat_abyss_artifact_rare` |
+| Abyssal Accumulator | `graphics/exiledSector/campaign/entities/rat_abyss_accumalator.png` | `rat_abyss_abandoned2.jpg` | as the fabricator, with more basic salvage |
+| Abyssal Research Station | `graphics/exiledSector/campaign/entities/rat_abyss_research.png` | `rat_abyss_abandoned.jpg` | `rat_abyss_weapons`, `rat_abyss_alteration_common`, `rat_abyss_transmitter` |
 
 `chart_poi.csv` gets a `biomes` column: a row with biomes appears only in those biomes, and a row without appears everywhere but in biomes that turn ordinary sites off. The Rift keeps vanilla caches and derelicts out and places only these. The Rift layout has no orbits, so the sites sit on clear spots around the photospheres. Guarded sites get `rat_abyssals` defenders through the usual defended-site adoption.
 

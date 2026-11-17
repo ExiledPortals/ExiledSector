@@ -14,9 +14,9 @@ import java.awt.Color;
 
 public final class DoctrineIconFx {
 
-    public static final String STILL_PREFIX = "graphics/icons/socketables/exiledSector_doctrine_archive_";
+    public static final String STILL_PREFIX = "graphics/exiledSector/items/doctrine_archives/doctrine_archive_";
     static final String FRAME_PATH = STILL_PREFIX + "frame.png";
-    public static final String EMBLEM_PREFIX = "graphics/icons/socketables/exiledSector_doctrine_emblem_";
+    public static final String EMBLEM_PREFIX = "graphics/exiledSector/items/doctrine_archives/emblems/";
     static final float CYCLE_SECONDS = 6f;
     static final float SEAL_KEY = 0.55f;
     static final float STAMP_DROP = 0.04f;

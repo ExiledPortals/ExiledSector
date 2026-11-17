@@ -15,7 +15,7 @@ public class HullItemsRefitButton extends FullScreenRefitButton {
     static final String BUTTON_KEY = "ui.hullItemsRefitButton";
     public static final RefitButtonColumn.ButtonSpec COLUMN_BUTTON = new RefitButtonColumn.ButtonSpec("exiledSector_hullUpgradesButton",
             BUTTON_KEY, RefitButtonConfig::hullItemsKey, RefitButtonConfig::buttonUnderHullMods, () -> openPanel(null));
-    static final String ICON_PATH = "graphics/icons/hull_upgrades/hull_upgrade_cruiser_unique.png";
+    static final String ICON_PATH = "graphics/exiledSector/ui/hull_items_button.png";
 
     public static void addButton() {
         LunaRefitManager.addRefitButton(new HullItemsRefitButton());

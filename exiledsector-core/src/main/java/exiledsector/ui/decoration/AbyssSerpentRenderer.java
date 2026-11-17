@@ -61,7 +61,7 @@ public final class AbyssSerpentRenderer implements DecorationRenderer {
     }
 
     private static Part part(String name, float width, float height, float behindHead, float imageBackOffset) {
-        return new Part("graphics/fx/rat_genesis_serpent_" + name + ".png", "graphics/fx/rat_genesis_serpent_" + name + "_glow.png",
+        return new Part("graphics/exiledSector/scenery/serpent/rat_genesis_serpent_" + name + ".png", "graphics/exiledSector/scenery/serpent/rat_genesis_serpent_" + name + "_glow.png",
                 width, height, behindHead, imageBackOffset);
     }
 

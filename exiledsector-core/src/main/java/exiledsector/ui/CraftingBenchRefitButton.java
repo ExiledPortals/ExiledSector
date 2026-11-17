@@ -8,7 +8,7 @@ import lunalib.lunaRefit.LunaRefitManager;
 public class CraftingBenchRefitButton extends FullScreenRefitButton {
 
     public static final String BUTTON_KEY = "ui.craftingBench.refitButton";
-    static final String ICON_PATH = "graphics/icons/cargo/nanoswarm_augmentation.png";
+    static final String ICON_PATH = "graphics/exiledSector/items/crafting/augmentation_nanoswarm.png";
 
     public static void addButton() {
         LunaRefitManager.addRefitButton(new CraftingBenchRefitButton());
