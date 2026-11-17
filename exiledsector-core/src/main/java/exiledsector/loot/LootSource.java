@@ -8,7 +8,7 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import exiledsector.effects.TechMiningItemListener;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemQuantity;
+import exiledsector.items.drop.ItemQuantity;
 
 import java.util.List;
 import java.util.Random;

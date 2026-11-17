@@ -2,12 +2,12 @@ package exiledsector.ui.cargo;
 
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledsector.items.Nanoswarm;
-import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.ItemData;
-import exiledsector.items.ItemDisassembly;
-import exiledsector.items.ItemRarity;
-import exiledsector.items.RefitSchematic;
+import exiledsector.items.crafting.ItemDisassembly;
+import exiledsector.items.crafting.material.CraftingInhibitor;
+import exiledsector.items.crafting.material.Nanoswarm;
+import exiledsector.items.modifier.ItemRarity;
+import exiledsector.items.schematic.RefitSchematic;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

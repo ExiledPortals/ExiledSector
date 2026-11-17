@@ -13,7 +13,7 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
 import exiledsector.compat.ExoticaCompat;
-import exiledsector.items.HullUpgradesSetting;
+import exiledsector.items.hull.HullUpgradesSetting;
 import exiledsector.skills.SkillTreeSetting;
 import exiledsector.ui.HullItemsRefitButton;
 import exiledsector.ui.CraftingBenchRefitButton;

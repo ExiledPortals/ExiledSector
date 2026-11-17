@@ -8,7 +8,7 @@ import exiledsector.MockSector;
 import exiledsector.items.Item;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemStore;
-import exiledsector.items.WormholeAnchorDefinitions;
+import exiledsector.items.anchor.WormholeAnchorDefinitions;
 import exiledsector.persistence.InMemoryTemplateFile;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;

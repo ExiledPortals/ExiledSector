@@ -1,7 +1,7 @@
 package exiledsector.console;
 
-import exiledsector.items.InfusedFeedstock;
-import exiledsector.items.ItemDisassembly;
+import exiledsector.items.crafting.ItemDisassembly;
+import exiledsector.items.crafting.material.InfusedFeedstock;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

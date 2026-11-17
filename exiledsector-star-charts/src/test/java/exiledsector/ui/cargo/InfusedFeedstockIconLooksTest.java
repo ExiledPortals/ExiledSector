@@ -1,8 +1,8 @@
 package exiledsector.ui.cargo;
 
-import exiledsector.items.InfusedFeedstock;
-import exiledsector.items.MaterialTier;
-import exiledsector.items.Nanoswarm;
+import exiledsector.items.crafting.material.InfusedFeedstock;
+import exiledsector.items.crafting.material.MaterialTier;
+import exiledsector.items.crafting.material.Nanoswarm;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

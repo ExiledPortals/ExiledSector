@@ -33,7 +33,7 @@ import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunState;
 import exiledsector.charts.wormhole.ChartWormholePlugin;
 import exiledsector.charts.wormhole.WormholeGateway;
-import exiledsector.items.StarChart;
+import exiledsector.items.starchart.StarChart;
 import exiledsector.ui.atlas.AtlasAbility;
 
 import java.util.Map;

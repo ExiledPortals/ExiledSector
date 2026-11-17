@@ -10,7 +10,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.charts.effect.ChartEffects;
 import exiledsector.items.ItemEffects;
 import exiledsector.items.ItemType;
-import exiledsector.items.RolledLine;
+import exiledsector.items.modifier.RolledLine;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.TierGroup;

@@ -2,9 +2,9 @@ package exiledsector.ui.socket;
 
 import exiledsector.MockSector;
 import exiledsector.charts.StarChartSettings;
-import exiledsector.items.CraftingMaterials;
-import exiledsector.items.Engram;
 import exiledsector.items.ItemType;
+import exiledsector.items.crafting.material.CraftingMaterials;
+import exiledsector.items.crafting.material.Engram;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

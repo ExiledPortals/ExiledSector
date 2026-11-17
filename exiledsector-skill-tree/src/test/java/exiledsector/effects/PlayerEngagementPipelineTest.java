@@ -15,7 +15,7 @@ import exiledsector.MockShips;
 import exiledsector.skills.skilleffect.logistics.FleetWideEffects;
 import exiledsector.effects.PlayerEngagementPipeline.Stage;
 import exiledsector.effects.PlayerEngagementPipeline.Step;
-import exiledsector.items.SocketLossListener;
+import exiledsector.items.custody.SocketLossListener;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

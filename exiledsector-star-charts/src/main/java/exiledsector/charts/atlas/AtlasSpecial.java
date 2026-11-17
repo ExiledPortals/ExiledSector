@@ -2,7 +2,7 @@ package exiledsector.charts.atlas;
 
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.data.EnumKeys;
-import exiledsector.items.StarChart;
+import exiledsector.items.starchart.StarChart;
 
 public record AtlasSpecial(String id, Kind kind, Placement placement, float chance, float minSteps, float radius, int count, float steps,
                            String requiredMod, String unlock, String factionId) {

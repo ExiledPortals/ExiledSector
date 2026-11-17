@@ -1,6 +1,6 @@
 package exiledsector.ui.cargo;
 
-import exiledsector.items.InfusedFeedstock;
+import exiledsector.items.crafting.material.InfusedFeedstock;
 
 public final class InfusedFeedstockIconLooks implements ItemIconLooks {
 

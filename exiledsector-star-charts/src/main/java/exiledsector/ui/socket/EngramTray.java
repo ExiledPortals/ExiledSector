@@ -1,8 +1,8 @@
 package exiledsector.ui.socket;
 
-import exiledsector.items.CraftingMaterials;
-import exiledsector.items.Engram;
-import exiledsector.items.Engrams;
+import exiledsector.items.crafting.material.CraftingMaterials;
+import exiledsector.items.crafting.material.Engram;
+import exiledsector.items.crafting.material.Engrams;
 import exiledsector.modifiers.ModifierSlot;
 
 import java.util.ArrayList;

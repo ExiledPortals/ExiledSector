@@ -4,7 +4,7 @@ import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.charts.ChartIds;
-import exiledsector.items.ItemChances;
+import exiledsector.items.drop.ItemChances;
 import exiledsector.loot.DropType;
 import exiledsector.loot.LootMultipliers;
 import exiledsector.skills.skilleffect.logistics.BlackHoleSalvage;

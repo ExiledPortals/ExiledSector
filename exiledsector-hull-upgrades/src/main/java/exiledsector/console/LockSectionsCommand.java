@@ -1,7 +1,7 @@
 package exiledsector.console;
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledsector.items.HullUpgradePoints;
+import exiledsector.items.hull.HullUpgradePoints;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import org.lazywizard.console.Console;

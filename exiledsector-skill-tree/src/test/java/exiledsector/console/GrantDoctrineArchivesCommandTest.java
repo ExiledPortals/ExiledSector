@@ -1,10 +1,10 @@
 package exiledsector.console;
 
-import exiledsector.items.DoctrineArchives;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
-import exiledsector.items.Subroutine;
-import exiledsector.items.SubroutineKind;
+import exiledsector.items.subroutine.Subroutine;
+import exiledsector.items.subroutine.SubroutineKind;
+import exiledsector.items.subroutine.doctrine.DoctrineArchives;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;

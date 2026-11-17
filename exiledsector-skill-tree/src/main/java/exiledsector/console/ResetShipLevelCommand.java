@@ -1,8 +1,8 @@
 package exiledsector.console;
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledsector.items.CargoRefund;
-import exiledsector.items.NodeGrantStatus;
+import exiledsector.items.custody.CargoRefund;
+import exiledsector.items.subroutine.NodeGrantStatus;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ItemCostLedger;
 import exiledsector.skills.ShipSkillData;

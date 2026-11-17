@@ -1,7 +1,7 @@
 package exiledsector.ui.socket;
 
-import exiledsector.items.Nanoswarm;
-import exiledsector.items.StarChartCipher;
+import exiledsector.items.crafting.material.Nanoswarm;
+import exiledsector.items.crafting.material.StarChartCipher;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

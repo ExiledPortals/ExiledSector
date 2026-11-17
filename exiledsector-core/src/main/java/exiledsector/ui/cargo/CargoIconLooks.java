@@ -2,16 +2,16 @@ package exiledsector.ui.cargo;
 
 import exiledsector.domain.DomainContributions;
 import exiledsector.domain.ExiledSectorDomain;
-import exiledsector.items.Nanoswarm;
-import exiledsector.items.CraftingInhibitor;
-import exiledsector.items.CraftingMaterialFamilies;
-import exiledsector.items.CraftingMaterialFamily;
 import exiledsector.items.Item;
-import exiledsector.items.ItemDisassembly;
 import exiledsector.items.ItemKind;
-import exiledsector.items.ItemRarity;
-import exiledsector.items.MaterialItems;
-import exiledsector.items.MaterialTier;
+import exiledsector.items.crafting.ItemDisassembly;
+import exiledsector.items.crafting.material.CraftingInhibitor;
+import exiledsector.items.crafting.material.CraftingMaterialFamilies;
+import exiledsector.items.crafting.material.CraftingMaterialFamily;
+import exiledsector.items.crafting.material.MaterialItems;
+import exiledsector.items.crafting.material.MaterialTier;
+import exiledsector.items.crafting.material.Nanoswarm;
+import exiledsector.items.modifier.ItemRarity;
 
 import java.awt.Color;
 

@@ -2,13 +2,13 @@ package exiledsector.ui.socket;
 
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-import exiledsector.items.CraftCost;
-import exiledsector.items.CraftingInhibitor;
-import exiledsector.items.HullItemCraft;
 import exiledsector.items.Item;
-import exiledsector.items.MaterialItems;
-import exiledsector.items.SocketCustody;
 import exiledsector.items.UseVerdict;
+import exiledsector.items.crafting.CraftCost;
+import exiledsector.items.crafting.HullItemCraft;
+import exiledsector.items.crafting.material.CraftingInhibitor;
+import exiledsector.items.crafting.material.MaterialItems;
+import exiledsector.items.custody.SocketCustody;
 import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.cargo.CargoIconLooks;
 

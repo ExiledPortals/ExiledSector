@@ -1,5 +1,7 @@
 package exiledsector.items;
 
+import exiledsector.items.crafting.CorruptionOutcome;
+import exiledsector.items.modifier.RolledModifier;
 import java.util.List;
 
 public record ItemTraits(int tier, int quantity, CorruptionOutcome corruption, List<RolledModifier> implicits, boolean mirrored) {

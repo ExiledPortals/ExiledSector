@@ -44,7 +44,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <systemPropertyVariables>
-                        <exiledsector.test.domains>exiledsector.items.HullUpgradesDomain</exiledsector.test.domains>
+                        <exiledsector.test.domains>exiledsector.items.hull.HullUpgradesDomain</exiledsector.test.domains>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>

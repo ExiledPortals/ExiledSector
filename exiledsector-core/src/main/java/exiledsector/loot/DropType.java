@@ -1,12 +1,12 @@
 package exiledsector.loot;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledsector.items.CraftingInhibitor;
-import exiledsector.items.DroppableDefinitions;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemUnlock;
+import exiledsector.items.crafting.material.CraftingInhibitor;
+import exiledsector.items.drop.DroppableDefinitions;
 
 import java.util.ArrayList;
 import java.util.List;

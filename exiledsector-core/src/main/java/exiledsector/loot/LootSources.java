@@ -9,8 +9,8 @@ import exiledsector.domain.DomainContributions;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemQuantity;
-import exiledsector.items.SalvageSiteDrops;
+import exiledsector.items.drop.ItemQuantity;
+import exiledsector.items.drop.SalvageSiteDrops;
 
 import java.util.ArrayList;
 import java.util.List;

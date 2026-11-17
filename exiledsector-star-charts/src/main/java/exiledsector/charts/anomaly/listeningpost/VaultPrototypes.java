@@ -7,7 +7,7 @@ import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemUnlock;
-import exiledsector.items.PrototypeImplicits;
+import exiledsector.items.modifier.PrototypeImplicits;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,11 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.SpecialItemData;
+import exiledsector.items.modifier.ItemRoll;
+import exiledsector.items.modifier.ItemRoller;
+import exiledsector.items.modifier.RolledModifier;
+import exiledsector.items.name.FrozenName;
+import exiledsector.items.name.ItemNames;
 
 import java.util.List;
 

@@ -1,5 +1,8 @@
 package exiledsector.items;
 
+import exiledsector.items.modifier.PoolEntry;
+import exiledsector.items.modifier.RolledLine;
+import exiledsector.items.modifier.RolledModifier;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;

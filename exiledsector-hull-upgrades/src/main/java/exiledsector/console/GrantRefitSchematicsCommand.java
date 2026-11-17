@@ -1,6 +1,6 @@
 package exiledsector.console;
 
-import exiledsector.items.RefitSchematic;
+import exiledsector.items.schematic.RefitSchematic;
 
 import java.util.List;
 

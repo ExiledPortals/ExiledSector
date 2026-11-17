@@ -2,7 +2,7 @@ package exiledsector.charts.anomaly.breach;
 
 import exiledsector.Seeds;
 import exiledsector.items.ItemData;
-import exiledsector.items.WarpedModifiers;
+import exiledsector.items.modifier.WarpedModifiers;
 
 import java.util.Random;
 

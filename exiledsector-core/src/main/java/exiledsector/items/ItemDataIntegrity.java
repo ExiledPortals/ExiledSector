@@ -4,6 +4,12 @@ import exiledsector.ModCsv;
 import exiledsector.data.CsvRows;
 import exiledsector.domain.DomainContributions;
 import exiledsector.domain.ExiledSectorDomain;
+import exiledsector.items.drop.UniqueSource;
+import exiledsector.items.modifier.CorruptionImplicitPool;
+import exiledsector.items.modifier.ItemModifiers;
+import exiledsector.items.modifier.ModifierReference;
+import exiledsector.items.modifier.ModifierScope;
+import exiledsector.items.modifier.PrototypeImplicits;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
@@ -39,13 +45,13 @@ public final class ItemDataIntegrity {
     }
 
     static final String HYBRID_ID_PREFIX = "HYBRID_";
-    static final String ENTRY_SEPARATOR = ";";
-    static final int FIRST_DATA_LINE = 2;
+    public static final String ENTRY_SEPARATOR = ";";
+    public static final int FIRST_DATA_LINE = 2;
     static final String TAG_BESIDE_ANCESTOR = " beside its ancestor ";
     private static final Logger LOG = Logger.getLogger(ItemDataIntegrity.class);
     private static final DomainContributions<ItemDataRules> RULES = DomainContributions.fromEveryDomain(ExiledSectorDomain::itemDataRules);
 
-    record ModifierRow(String id, ModifierSlot slot, Set<ModifierScope> scopes, List<String> effectNames, boolean named, int line,
+    public record ModifierRow(String id, ModifierSlot slot, Set<ModifierScope> scopes, List<String> effectNames, boolean named, int line,
                        String file) {
     }
 
@@ -108,29 +114,29 @@ public final class ItemDataIntegrity {
         return List.copyOf(violations);
     }
 
-    void clearViolations() {
+    public void clearViolations() {
         violations.clear();
     }
 
-    Map<String, ModifierRow> modifiersById() {
+    public Map<String, ModifierRow> modifiersById() {
         return modifiersById;
     }
 
-    boolean isReferenced(String modifierId) {
+    public boolean isReferenced(String modifierId) {
         return referencedIds.contains(modifierId);
     }
 
-    void checkVolume(String file, int line, String definitionId, String volume) {
+    public void checkVolume(String file, int line, String definitionId, String volume) {
         if (!volume.isEmpty() && !ItemVolumes.isKnown(volume)) {
             error(file, line, definitionId + " names the volume \"" + volume + "\"; expected one of " + ItemVolumes.known().stream().sorted().toList());
         }
     }
 
-    void error(String file, int line, String message) {
+    public void error(String file, int line, String message) {
         violations.add(new Violation(Severity.ERROR, file, line, message));
     }
 
-    void warning(String file, int line, String message) {
+    public void warning(String file, int line, String message) {
         violations.add(new Violation(Severity.WARNING, file, line, message));
     }
 
@@ -240,7 +246,7 @@ public final class ItemDataIntegrity {
         return effectNames;
     }
 
-    void checkEffectName(String file, int line, String modifierId, ModifierEffects effects, String effectName) {
+    public void checkEffectName(String file, int line, String modifierId, ModifierEffects effects, String effectName) {
         String currentName = effects.currentName(effectName);
         if (currentName == null) {
             error(file, line, modifierId + " uses " + effectName + ", which is not a skill effect");
@@ -331,7 +337,7 @@ public final class ItemDataIntegrity {
         }
     }
 
-    void checkUniqueSources(String file, int line, String definitionId, String sourcesText) {
+    public void checkUniqueSources(String file, int line, String definitionId, String sourcesText) {
         try {
             UniqueSource.parseList(sourcesText);
         } catch (IllegalArgumentException e) {
@@ -382,7 +388,7 @@ public final class ItemDataIntegrity {
         }
     }
 
-    void checkWeight(String file, int line, String definitionId, String entryText, String weightText) {
+    public void checkWeight(String file, int line, String definitionId, String entryText, String weightText) {
         try {
             if (!(Float.parseFloat(weightText.trim()) > 0f)) {
                 error(file, line, definitionId + " entry \"" + entryText + "\" needs a weight above zero");
@@ -392,7 +398,7 @@ public final class ItemDataIntegrity {
         }
     }
 
-    ModifierRow referencedModifier(String file, int line, String ownerId, String referenceId, ModifierSlot slot, ModifierScope scope) {
+    public ModifierRow referencedModifier(String file, int line, String ownerId, String referenceId, ModifierSlot slot, ModifierScope scope) {
         ModifierRow modifier = modifiersById.get(referenceId);
         if (modifier == null) {
             error(file, line, ownerId + " references " + referenceId + ", which is not in " + modifierFileFor(scope));
@@ -418,7 +424,7 @@ public final class ItemDataIntegrity {
         return ItemModifiers.dataPath();
     }
 
-    void checkRepeats(String file, int line, String ownerId, ModifierRow modifier, List<ModifierRow> pool) {
+    public void checkRepeats(String file, int line, String ownerId, ModifierRow modifier, List<ModifierRow> pool) {
         for (ModifierRow listed : pool) {
             if (listed.id().equals(modifier.id())) {
                 error(file, line, ownerId + " lists " + modifier.id() + " more than once");
@@ -499,7 +505,7 @@ public final class ItemDataIntegrity {
         });
     }
 
-    void checkImplicitEntry(String file, int line, String typeId, String entryText, List<ModifierRow> implicits, ItemType itemType) {
+    public void checkImplicitEntry(String file, int line, String typeId, String entryText, List<ModifierRow> implicits, ItemType itemType) {
         if (entryText.isEmpty()) {
             return;
         }

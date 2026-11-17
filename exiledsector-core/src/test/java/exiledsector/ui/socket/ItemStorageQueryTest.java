@@ -1,7 +1,7 @@
 package exiledsector.ui.socket;
 
-import exiledsector.items.ItemRarity;
 import exiledsector.items.ItemStatTotals;
+import exiledsector.items.modifier.ItemRarity;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

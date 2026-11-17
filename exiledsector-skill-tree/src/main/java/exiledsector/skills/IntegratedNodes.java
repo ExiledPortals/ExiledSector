@@ -1,7 +1,7 @@
 package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledsector.items.DoctrineArchives;
+import exiledsector.items.subroutine.doctrine.DoctrineArchives;
 
 import java.util.List;
 import java.util.Map;

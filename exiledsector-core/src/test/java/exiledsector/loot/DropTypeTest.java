@@ -1,8 +1,8 @@
 package exiledsector.loot;
 
-import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemKind;
+import exiledsector.items.crafting.material.CraftingInhibitor;
 import org.junit.jupiter.api.Test;
 
 import java.util.EnumMap;

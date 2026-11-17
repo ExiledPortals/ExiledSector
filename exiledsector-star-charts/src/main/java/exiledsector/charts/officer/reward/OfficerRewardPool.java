@@ -2,16 +2,16 @@ package exiledsector.charts.officer.reward;
 
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.BiomeModifiers;
-import exiledsector.items.CraftingDrops;
 import exiledsector.data.WeightedPick;
-import exiledsector.items.DroppableDefinitions;
-import exiledsector.items.Engram;
-import exiledsector.items.Engrams;
-import exiledsector.items.GrantedModifiers;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemTypes;
+import exiledsector.items.crafting.material.Engram;
+import exiledsector.items.crafting.material.Engrams;
+import exiledsector.items.drop.CraftingDrops;
+import exiledsector.items.drop.DroppableDefinitions;
+import exiledsector.items.modifier.GrantedModifiers;
 
 import java.util.ArrayList;
 import java.util.EnumMap;

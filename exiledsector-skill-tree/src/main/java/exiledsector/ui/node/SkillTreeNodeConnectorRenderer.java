@@ -1,6 +1,6 @@
 package exiledsector.ui.node;
 
-import exiledsector.items.RootConduits;
+import exiledsector.items.subroutine.RootConduits;
 import exiledsector.skills.ExoshipNodes;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;

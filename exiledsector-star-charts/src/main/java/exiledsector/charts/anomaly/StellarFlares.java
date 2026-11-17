@@ -11,7 +11,7 @@ import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.layout.ChartLayoutGenerator;
 import exiledsector.items.ItemData;
-import exiledsector.items.LuckyRolls;
+import exiledsector.items.modifier.LuckyRolls;
 
 public final class StellarFlares implements LayoutShaper, AtlasRule, LootShaper {
 

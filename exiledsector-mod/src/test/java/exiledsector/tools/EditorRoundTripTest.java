@@ -43,19 +43,19 @@ class EditorRoundTripTest {
     private static final String ATLAS_TREE_DATA = "exiledsector/charts/tree/AtlasTreeData.java";
     private static final String ITEM_DEFINITIONS = "exiledsector/items/ItemDefinitions.java";
     private static final String ITEM_DEFINITION = "exiledsector/items/ItemDefinition.java";
-    private static final String SUBROUTINE_DEFINITIONS = "exiledsector/items/SubroutineDefinitions.java";
-    private static final String HULL_ITEM = "exiledsector/items/HullItem.java";
-    private static final String HULL_ITEM_IMPLICITS = "exiledsector/items/ItemImplicits.java";
-    private static final String ITEM_MODIFIERS = "exiledsector/items/ItemModifiers.java";
-    private static final String STAR_CHART_DEFINITIONS = "exiledsector/items/StarChartDefinitions.java";
-    private static final String STAR_CHART_IMPLICITS = "exiledsector/items/StarChartImplicits.java";
-    private static final String SUBROUTINE_IMPLICITS = "exiledsector/items/SubroutineImplicits.java";
-    private static final String CORRUPTION_IMPLICIT_POOL = "exiledsector/items/CorruptionImplicitPool.java";
-    private static final String STAR_CHART_ITEMS = "exiledsector/items/StarChartItems.java";
-    private static final String WORMHOLE_ANCHOR_DEFINITIONS = "exiledsector/items/WormholeAnchorDefinitions.java";
-    private static final String DOCTRINE_ARCHIVES = "exiledsector/items/DoctrineArchives.java";
-    private static final String MODSPEC_CACHES = "exiledsector/items/ModspecCaches.java";
-    private static final String UNIQUE_SUBROUTINE_RADII = "exiledsector/items/UniqueSubroutineRadii.java";
+    private static final String SUBROUTINE_DEFINITIONS = "exiledsector/items/subroutine/SubroutineDefinitions.java";
+    private static final String HULL_ITEM = "exiledsector/items/hull/HullItem.java";
+    private static final String HULL_ITEM_IMPLICITS = "exiledsector/items/modifier/ItemImplicits.java";
+    private static final String ITEM_MODIFIERS = "exiledsector/items/modifier/ItemModifiers.java";
+    private static final String STAR_CHART_DEFINITIONS = "exiledsector/items/starchart/StarChartDefinitions.java";
+    private static final String STAR_CHART_IMPLICITS = "exiledsector/items/starchart/StarChartImplicits.java";
+    private static final String SUBROUTINE_IMPLICITS = "exiledsector/items/subroutine/SubroutineImplicits.java";
+    private static final String CORRUPTION_IMPLICIT_POOL = "exiledsector/items/modifier/CorruptionImplicitPool.java";
+    private static final String STAR_CHART_ITEMS = "exiledsector/items/starchart/StarChartItems.java";
+    private static final String WORMHOLE_ANCHOR_DEFINITIONS = "exiledsector/items/anchor/WormholeAnchorDefinitions.java";
+    private static final String DOCTRINE_ARCHIVES = "exiledsector/items/subroutine/doctrine/DoctrineArchives.java";
+    private static final String MODSPEC_CACHES = "exiledsector/items/subroutine/ModspecCaches.java";
+    private static final String UNIQUE_SUBROUTINE_RADII = "exiledsector/items/subroutine/UniqueSubroutineRadii.java";
 
     private static final List<String> LOADERS = List.of(TYPE_LOADER, TREE_LOADER, TREE_LAYOUT_READER, DECORATION_LOADER, ATLAS_TREE_DATA, ITEM_DEFINITIONS, ITEM_DEFINITION, SUBROUTINE_DEFINITIONS,
             HULL_ITEM, HULL_ITEM_IMPLICITS, ITEM_MODIFIERS, STAR_CHART_DEFINITIONS, STAR_CHART_IMPLICITS, STAR_CHART_ITEMS,

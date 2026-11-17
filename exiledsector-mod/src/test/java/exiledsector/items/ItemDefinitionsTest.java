@@ -1,5 +1,11 @@
 package exiledsector.items;
 
+import exiledsector.items.hull.HullItem;
+import exiledsector.items.modifier.ItemModifiers;
+import exiledsector.items.modifier.ItemRoller;
+import exiledsector.items.modifier.PoolEntry;
+import exiledsector.items.subroutine.SubroutineDefinitions;
+import exiledsector.items.subroutine.SubroutineKind;
 import exiledsector.modifiers.ModifierSlot;
 import exiledsector.skills.npc.RealSkillData;
 import org.json.CDL;

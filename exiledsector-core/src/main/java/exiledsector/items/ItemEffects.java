@@ -66,7 +66,7 @@ public final class ItemEffects {
         return previous.byType().get(type);
     }
 
-    static String anyCurrentName(String effectName) {
+    public static String anyCurrentName(String effectName) {
         if (effectName == null) {
             return null;
         }

@@ -1,0 +1,58 @@
+package exiledsector.items.hull;
+
+import exiledsector.ModCsv;
+import exiledsector.items.ItemDataIntegrity;
+import exiledsector.items.ItemDataRules;
+import exiledsector.items.ItemType;
+import exiledsector.items.ItemVolumes;
+import exiledsector.items.modifier.CorruptionImplicitPool;
+import exiledsector.items.modifier.ItemImplicits;
+import exiledsector.items.modifier.PrototypeImplicits;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+public final class HullItemDataRules implements ItemDataRules {
+
+    public static final HullItemDataRules INSTANCE = new HullItemDataRules();
+
+    private HullItemDataRules() {
+    }
+
+    @Override
+    public ItemType type() {
+        return ItemType.HULL_ITEM;
+    }
+
+    @Override
+    public void checkDefinitionRow(ItemDataIntegrity integrity, String file, int line, String definitionId, JSONObject row) {
+        String sourcesText = ModCsv.text(row, HullItem.UNIQUE_SOURCE_COLUMN);
+        integrity.checkUniqueSources(file, line, definitionId, sourcesText);
+        if (!sourcesText.isEmpty() && !"true".equalsIgnoreCase(ModCsv.text(row, "unique"))) {
+            integrity.warning(file, line, definitionId + " names a source, but sources only apply to unique hull items");
+        }
+        integrity.checkVolume(file, line, definitionId, ModCsv.text(row, ItemVolumes.VOLUME_COLUMN));
+        String mechanic = ModCsv.text(row, HullItem.MECHANIC_COLUMN);
+        if (!mechanic.isEmpty() && !HullItem.MECHANICS.contains(mechanic)) {
+            integrity.error(file, line, definitionId + " has an unknown mechanic \"" + mechanic + "\"; the mechanics are " + String.join(", ", HullItem.MECHANICS));
+        } else if (!mechanic.isEmpty() && !"true".equalsIgnoreCase(ModCsv.text(row, "unique"))) {
+            integrity.warning(file, line, definitionId + " names a mechanic, but mechanics are meant for unique hull items");
+        }
+        String crew = ModCsv.text(row, HullItem.CREW_COLUMN);
+        if (!crew.isEmpty() && !HullItem.CREW_VALUES.contains(crew)) {
+            integrity.error(file, line, definitionId + " has an unknown crew \"" + crew + "\"; it must be blank or one of " + String.join(", ", HullItem.CREW_VALUES));
+        }
+    }
+
+    @Override
+    public void checkItemFiles(ItemDataIntegrity integrity) throws IOException, JSONException {
+        integrity.checkDefinitions(ModCsv.rows("id", HullItem.definitionsPath()), HullItem.definitionsPath(),
+                ItemType.HULL_ITEM);
+        integrity.checkKindImplicits(ModCsv.rows("section", ItemImplicits.dataPath()), ItemImplicits.dataPath());
+        integrity.checkCorruptionPool(ModCsv.rows(CorruptionImplicitPool.IMPLICIT_COLUMN, ItemImplicits.corruptionDataPath()),
+                ItemImplicits.corruptionDataPath(), "the hull item corruption pool", ItemType.HULL_ITEM);
+        integrity.checkPrototypeImplicits(ModCsv.rows(PrototypeImplicits.BASE_COLUMN, PrototypeImplicits.dataPath()), PrototypeImplicits.dataPath(),
+                ModCsv.rows("id", HullItem.definitionsPath()), ModCsv.rows("section", ItemImplicits.dataPath()));
+    }
+}

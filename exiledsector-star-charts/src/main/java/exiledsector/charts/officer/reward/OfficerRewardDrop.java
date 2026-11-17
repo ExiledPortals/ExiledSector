@@ -10,8 +10,8 @@ import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemKind;
-import exiledsector.items.ItemRoll;
 import exiledsector.items.ItemTypes;
+import exiledsector.items.modifier.ItemRoll;
 import exiledsector.loot.DropType;
 import exiledsector.loot.Loot;
 

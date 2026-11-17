@@ -12,7 +12,7 @@ import exiledsector.skills.DiminishingReturns;
 import exiledsector.skills.skilleffect.onhit.MaxRefractionCountConfig;
 import exiledsector.compat.SalvageSiteCompat;
 import exiledsector.domain.ExiledSectorDomain;
-import exiledsector.items.CraftingMaterials;
+import exiledsector.items.crafting.material.CraftingMaterials;
 import exiledsector.ui.cargo.ItemAnimationSetting;
 import exiledsector.ui.refit.RefitButtonConfig;
 import lunalib.lunaSettings.LunaSettings.SettingsCreator;

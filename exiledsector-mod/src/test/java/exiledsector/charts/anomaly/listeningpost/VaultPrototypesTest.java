@@ -1,12 +1,12 @@
 package exiledsector.charts.anomaly.listeningpost;
 
-import exiledsector.items.HullItem;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
-import exiledsector.items.ItemImplicits;
-import exiledsector.items.ItemModifiers;
-import exiledsector.items.PrototypeImplicits;
-import exiledsector.items.SubroutineDefinitions;
+import exiledsector.items.hull.HullItem;
+import exiledsector.items.modifier.ItemImplicits;
+import exiledsector.items.modifier.ItemModifiers;
+import exiledsector.items.modifier.PrototypeImplicits;
+import exiledsector.items.subroutine.SubroutineDefinitions;
 import exiledsector.skills.skilleffect.EffectAliases;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

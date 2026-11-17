@@ -12,8 +12,8 @@ import exiledsector.charts.officer.reward.OfficerRewardDrop;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemRoll;
-import exiledsector.items.StarChartCorruption;
+import exiledsector.items.crafting.StarChartCorruption;
+import exiledsector.items.modifier.ItemRoll;
 import exiledsector.loot.Loot;
 
 import java.util.ArrayList;

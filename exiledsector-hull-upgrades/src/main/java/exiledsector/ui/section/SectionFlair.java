@@ -1,10 +1,10 @@
 package exiledsector.ui.section;
 
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.items.ItemKind;
+import exiledsector.items.hull.ShipSection;
 import exiledsector.skills.skilleffect.render.Fade;
 import exiledsector.skills.skilleffect.render.SpriteCache;
-import exiledsector.items.ItemKind;
-import exiledsector.items.ShipSection;
 import exiledsector.ui.cargo.AnimatedItemIcons;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.HoloBeams;

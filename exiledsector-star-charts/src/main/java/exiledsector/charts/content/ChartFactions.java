@@ -6,7 +6,7 @@ import exiledsector.charts.effect.ChartFactionEffect;
 import exiledsector.data.CsvRows;
 import exiledsector.ModCsv;
 import exiledsector.data.WeightedPick;
-import exiledsector.items.StarChartImplicits;
+import exiledsector.items.starchart.StarChartImplicits;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;

@@ -14,7 +14,7 @@ import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.GuardedSiteDialog;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.items.CraftingMaterials;
+import exiledsector.items.crafting.material.CraftingMaterials;
 import exiledsector.ui.CraftingBenchCargoLauncher;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.socket.BenchModeSupport;

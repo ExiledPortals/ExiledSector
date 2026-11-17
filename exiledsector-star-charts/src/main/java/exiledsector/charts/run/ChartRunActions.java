@@ -16,7 +16,7 @@ import exiledsector.charts.objective.ChartObjectiveIntel;
 import exiledsector.charts.run.cleanup.ChartRunCloser;
 import exiledsector.charts.tree.AtlasTree;
 import exiledsector.compat.DiyPlanetsCompat;
-import exiledsector.items.CraftingMaterials;
+import exiledsector.items.crafting.material.CraftingMaterials;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemStore;
@@ -28,7 +28,7 @@ import exiledsector.charts.atlas.AtlasProgress;
 import exiledsector.charts.atlas.AtlasRunChoice;
 import exiledsector.charts.atlas.AtlasRuntime;
 import exiledsector.charts.atlas.AtlasState;
-import exiledsector.items.StarChart;
+import exiledsector.items.starchart.StarChart;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 

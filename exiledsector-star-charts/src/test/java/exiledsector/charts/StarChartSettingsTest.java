@@ -1,6 +1,6 @@
 package exiledsector.charts;
 
-import exiledsector.items.StarChart;
+import exiledsector.items.starchart.StarChart;
 import exiledsector.modifiers.TierRange;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;

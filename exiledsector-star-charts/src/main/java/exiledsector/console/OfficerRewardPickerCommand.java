@@ -11,7 +11,7 @@ import exiledsector.charts.officer.reward.OfficerRewardPool;
 import exiledsector.charts.officer.reward.OfficerRewardText;
 import exiledsector.charts.officer.reward.RewardContext;
 import exiledsector.items.ItemData;
-import exiledsector.items.MaterialItems;
+import exiledsector.items.crafting.material.MaterialItems;
 import exiledsector.loot.Loot;
 import exiledsector.loot.LootMultipliers;
 import exiledsector.ui.atlas.OfficerRewardPicker;

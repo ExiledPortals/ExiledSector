@@ -10,7 +10,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
-import exiledsector.items.MasterSchematic;
+import exiledsector.items.schematic.MasterSchematic;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillTreeSetting;
 import exiledsector.ui.hyperspace.HyperspaceCamera;

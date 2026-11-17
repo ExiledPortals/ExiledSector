@@ -1,9 +1,9 @@
 package exiledsector.charts.officer.reward;
 
 import exiledsector.charts.ChartTables;
-import exiledsector.items.CraftingDrops;
-import exiledsector.items.StarChartCipher;
-import exiledsector.items.StarChartFixtures;
+import exiledsector.items.crafting.material.StarChartCipher;
+import exiledsector.items.drop.CraftingDrops;
+import exiledsector.items.starchart.StarChartFixtures;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;

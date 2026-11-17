@@ -1,6 +1,7 @@
 package exiledsector.skills.npc;
 
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import exiledsector.items.drop.NpcItems;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.NodeEntry;
 import exiledsector.skills.NodeReplacements;
@@ -11,7 +12,6 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledsector.items.NpcItems;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

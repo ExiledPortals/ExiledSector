@@ -1,6 +1,6 @@
 package exiledsector.console;
 
-import exiledsector.items.DeintegrationSchematic;
+import exiledsector.items.schematic.DeintegrationSchematic;
 
 import java.util.List;
 

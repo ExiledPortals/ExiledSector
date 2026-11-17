@@ -5,7 +5,7 @@ import exiledsector.modifiers.ModifierSlot;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import exiledsector.items.PoolEntry;
+import exiledsector.items.modifier.PoolEntry;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;

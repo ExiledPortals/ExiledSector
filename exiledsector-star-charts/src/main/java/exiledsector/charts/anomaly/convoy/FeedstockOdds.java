@@ -2,7 +2,7 @@ package exiledsector.charts.anomaly.convoy;
 
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
-import exiledsector.items.InfusedFeedstock;
+import exiledsector.items.crafting.material.InfusedFeedstock;
 
 import java.util.EnumMap;
 import java.util.Map;

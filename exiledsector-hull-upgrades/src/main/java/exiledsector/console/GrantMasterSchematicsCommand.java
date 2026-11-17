@@ -1,6 +1,6 @@
 package exiledsector.console;
 
-import exiledsector.items.MasterSchematic;
+import exiledsector.items.schematic.MasterSchematic;
 
 import java.util.List;
 

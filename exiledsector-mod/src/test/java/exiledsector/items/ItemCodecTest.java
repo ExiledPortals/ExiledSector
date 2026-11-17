@@ -1,5 +1,10 @@
 package exiledsector.items;
 
+import exiledsector.items.drop.NpcItems;
+import exiledsector.items.modifier.ModifierFlags;
+import exiledsector.items.modifier.RolledLine;
+import exiledsector.items.modifier.RolledModifier;
+import exiledsector.items.name.FrozenName;
 import exiledsector.skills.skilleffect.EffectAliases;
 import exiledsector.modifiers.ModifierSlot;
 import org.json.JSONArray;

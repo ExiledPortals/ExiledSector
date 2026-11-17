@@ -15,9 +15,9 @@ import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
-import exiledsector.items.ItemRoll;
+import exiledsector.items.modifier.ItemRoll;
 import exiledsector.items.ItemType;
-import exiledsector.items.StarChart;
+import exiledsector.items.starchart.StarChart;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;

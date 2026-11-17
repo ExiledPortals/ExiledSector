@@ -2,8 +2,8 @@ package exiledsector.ui.socket;
 
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-import exiledsector.items.BiomeCraft;
-import exiledsector.items.HullItemCraft;
+import exiledsector.items.crafting.BiomeCraft;
+import exiledsector.items.crafting.HullItemCraft;
 
 final class BiomeCraftEntry extends HullItemCraftEntry {
 

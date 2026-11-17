@@ -2,6 +2,8 @@ package exiledsector.items;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.i18n.StyledText;
+import exiledsector.items.modifier.RolledLine;
+import exiledsector.items.modifier.SlottedRoll;
 import exiledsector.modifiers.ModifierCategory;
 import exiledsector.modifiers.ModifierEffect;
 import exiledsector.modifiers.ModifierEffects;

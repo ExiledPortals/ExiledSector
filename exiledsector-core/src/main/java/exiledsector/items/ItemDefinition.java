@@ -1,6 +1,12 @@
 package exiledsector.items;
 
 import exiledsector.Seeds;
+import exiledsector.items.drop.UniqueSource;
+import exiledsector.items.modifier.ItemModifiers;
+import exiledsector.items.modifier.ModifierScope;
+import exiledsector.items.modifier.ModifierSources;
+import exiledsector.items.modifier.PoolEntry;
+import exiledsector.items.modifier.RolledModifier;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
@@ -202,7 +208,7 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
         return null;
     }
 
-    PoolEntry poolEntryFor(String modifierId, ModifierSlot slot) {
+    public PoolEntry poolEntryFor(String modifierId, ModifierSlot slot) {
         PoolEntry listedEntry = poolEntryFor(modifierId);
         return listedEntry != null ? listedEntry : singleEntryFor(modifierId, slot);
     }
@@ -348,7 +354,7 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
         }
     }
 
-    static String currentEffectName(String listedName, ModifierEffects effects) {
+    public static String currentEffectName(String listedName, ModifierEffects effects) {
         String currentName = effects.currentName(listedName);
         if (currentName == null) {
             LOG.warn("Skipping pool entry " + listedName + ": it is not a skill effect");

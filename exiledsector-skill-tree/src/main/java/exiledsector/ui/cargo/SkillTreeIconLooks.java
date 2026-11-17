@@ -1,11 +1,11 @@
 package exiledsector.ui.cargo;
 
-import exiledsector.items.DoctrineArchive;
-import exiledsector.items.DoctrineArchives;
 import exiledsector.items.Item;
-import exiledsector.items.Subroutine;
-import exiledsector.items.SubroutineKind;
-import exiledsector.items.WormholeAnchor;
+import exiledsector.items.anchor.WormholeAnchor;
+import exiledsector.items.subroutine.Subroutine;
+import exiledsector.items.subroutine.SubroutineKind;
+import exiledsector.items.subroutine.doctrine.DoctrineArchive;
+import exiledsector.items.subroutine.doctrine.DoctrineArchives;
 import exiledsector.ui.node.DoctrineColors;
 
 import java.awt.Color;

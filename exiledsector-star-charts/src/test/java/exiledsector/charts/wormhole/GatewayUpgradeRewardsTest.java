@@ -8,7 +8,7 @@ import exiledsector.MockSector;
 import exiledsector.charts.MapMemory;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.compat.VaultsOfKnowledgeCompat;
-import exiledsector.items.WormholeTechItems;
+import exiledsector.items.starchart.WormholeTechItems;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

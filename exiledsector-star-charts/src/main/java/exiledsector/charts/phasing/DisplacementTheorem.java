@@ -4,7 +4,7 @@ import exiledsector.Seeds;
 import exiledsector.charts.officer.OfficerRank;
 import exiledsector.charts.officer.OfficerRanks;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.items.MaterialItems;
+import exiledsector.items.crafting.material.MaterialItems;
 
 import java.util.List;
 import java.util.Map;

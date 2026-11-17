@@ -10,7 +10,7 @@ import exiledsector.items.ItemKind;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
 import exiledsector.items.ItemTypes;
-import exiledsector.items.SubroutineRadius;
+import exiledsector.items.subroutine.SubroutineRadius;
 import exiledsector.ui.node.NodeSearch;
 import exiledsector.ui.node.TreeAllocationSession;
 import exiledsector.ui.socket.SocketPanelPlacement;

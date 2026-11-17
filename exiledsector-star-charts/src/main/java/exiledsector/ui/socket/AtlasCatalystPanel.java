@@ -9,7 +9,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.charts.atlas.ActiveCatalysts;
 import exiledsector.charts.atlas.AtlasCatalysts;
 import exiledsector.charts.atlas.AtlasState;
-import exiledsector.items.AtlasCatalystItems;
+import exiledsector.items.starchart.AtlasCatalystItems;
 import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.cargo.CatalystCargo;

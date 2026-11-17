@@ -1,8 +1,8 @@
 package exiledsector.effects;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
-import exiledsector.items.ShipSchematic;
-import exiledsector.items.SkillTreeSchematicDrops;
+import exiledsector.items.drop.SkillTreeSchematicDrops;
+import exiledsector.items.schematic.ShipSchematic;
 import exiledsector.loot.BattleLoot;
 import exiledsector.loot.DropOrigin;
 import exiledsector.loot.FleetLoss;

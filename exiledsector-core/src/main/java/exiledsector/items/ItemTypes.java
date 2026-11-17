@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import exiledsector.items.crafting.CorruptionOutcome;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -18,7 +19,7 @@ public final class ItemTypes {
         SUPPORT_BY_TYPE.put(support.type(), support);
     }
 
-    static void unregister(ItemType type) {
+    public static void unregister(ItemType type) {
         SUPPORT_BY_TYPE.remove(type);
     }
 
@@ -66,7 +67,7 @@ public final class ItemTypes {
         return support == null ? ItemTraits.LOWEST_TIER : support.lowestTier(definitionId);
     }
 
-    static int rolledTier(ItemDefinition definition, int tier) {
+    public static int rolledTier(ItemDefinition definition, int tier) {
         ItemTypeSupport support = of(definition.type());
         return support == null ? tier : support.rolledTier(definition.id(), tier);
     }
@@ -89,7 +90,7 @@ public final class ItemTypes {
         return rolled;
     }
 
-    static boolean keptFromSalvage(ItemDefinition definition, Random random) {
+    public static boolean keptFromSalvage(ItemDefinition definition, Random random) {
         ItemTypeSupport support = of(definition.type());
         float share = support == null ? 1f : support.salvageShare();
         return share >= 1f || random.nextFloat() < share;
@@ -100,7 +101,7 @@ public final class ItemTypes {
         return support != null && support.uniqueRarity(definition);
     }
 
-    static Item corrupt(CorruptionOutcome outcome, Item item, Random random) {
+    public static Item corrupt(CorruptionOutcome outcome, Item item, Random random) {
         ItemTypeSupport support = of(item.type());
         return support == null ? null : support.corrupt(outcome, item, random);
     }

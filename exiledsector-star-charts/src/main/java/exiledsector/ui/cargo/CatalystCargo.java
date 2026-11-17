@@ -5,8 +5,8 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.charts.atlas.AtlasCatalysts;
 import exiledsector.i18n.Translation;
-import exiledsector.items.AtlasCatalystItems;
-import exiledsector.items.MaterialItems;
+import exiledsector.items.crafting.material.MaterialItems;
+import exiledsector.items.starchart.AtlasCatalystItems;
 import exiledsector.ui.VanillaText;
 
 public final class CatalystCargo {

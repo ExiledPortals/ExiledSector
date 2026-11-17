@@ -4,7 +4,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-import exiledsector.items.DoctrineOverrides;
+import exiledsector.items.subroutine.doctrine.DoctrineOverrides;
 import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.layout.TreeNode;
 import exiledsector.skills.tags.SkillTags;

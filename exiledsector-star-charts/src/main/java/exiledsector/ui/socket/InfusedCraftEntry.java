@@ -3,10 +3,10 @@ package exiledsector.ui.socket;
 import exiledsector.i18n.Message;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-import exiledsector.items.CraftCost;
-import exiledsector.items.HullItemCraft;
-import exiledsector.items.InfusedCraft;
-import exiledsector.items.MaterialItems;
+import exiledsector.items.crafting.CraftCost;
+import exiledsector.items.crafting.HullItemCraft;
+import exiledsector.items.crafting.InfusedCraft;
+import exiledsector.items.crafting.material.MaterialItems;
 import exiledsector.skills.tags.ThemeTags;
 
 import java.util.ArrayList;

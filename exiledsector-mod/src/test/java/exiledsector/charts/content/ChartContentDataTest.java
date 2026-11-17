@@ -6,7 +6,7 @@ import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.effect.ChartEffects;
 import exiledsector.charts.effect.ChartFactionEffect;
-import exiledsector.items.StarChartImplicits;
+import exiledsector.items.starchart.StarChartImplicits;
 import exiledsector.modifiers.Modifier;
 import exiledsector.skills.progression.ShipLevelConfig;
 import org.json.JSONArray;

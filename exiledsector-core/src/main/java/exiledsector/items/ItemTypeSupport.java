@@ -1,6 +1,9 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
+import exiledsector.items.crafting.CorruptionOutcome;
+import exiledsector.items.modifier.AffixLayout;
+import exiledsector.items.modifier.RolledModifier;
 import org.json.JSONObject;
 
 import java.util.List;

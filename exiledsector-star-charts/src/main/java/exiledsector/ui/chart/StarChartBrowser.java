@@ -6,7 +6,7 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
-import exiledsector.items.StarChart;
+import exiledsector.items.starchart.StarChart;
 
 import java.util.ArrayList;
 import java.util.Arrays;

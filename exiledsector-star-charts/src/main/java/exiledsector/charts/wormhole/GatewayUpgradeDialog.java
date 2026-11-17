@@ -5,7 +5,7 @@ import com.fs.starfarer.api.campaign.TextPanelAPI;
 import com.fs.starfarer.api.impl.campaign.rulecmd.AddRemoveCommodity;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
-import exiledsector.items.MaterialItems;
+import exiledsector.items.crafting.material.MaterialItems;
 import exiledsector.ui.BaseDialogPlugin;
 import exiledsector.ui.VanillaText;
 

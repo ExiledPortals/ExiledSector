@@ -9,8 +9,8 @@ import exiledsector.charts.anomaly.debris.DormantFleetDialog;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
-import exiledsector.items.CraftingMaterials;
-import exiledsector.items.Nanoswarm;
+import exiledsector.items.crafting.material.CraftingMaterials;
+import exiledsector.items.crafting.material.Nanoswarm;
 
 final class ExcavationCorruption {
 

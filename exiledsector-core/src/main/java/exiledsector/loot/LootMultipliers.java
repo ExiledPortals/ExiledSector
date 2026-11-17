@@ -1,7 +1,7 @@
 package exiledsector.loot;
 
-import exiledsector.items.CraftingDrops;
-import exiledsector.items.ItemChances;
+import exiledsector.items.drop.CraftingDrops;
+import exiledsector.items.drop.ItemChances;
 
 public record LootMultipliers(ItemChances chances, float tierBandShift) {
 

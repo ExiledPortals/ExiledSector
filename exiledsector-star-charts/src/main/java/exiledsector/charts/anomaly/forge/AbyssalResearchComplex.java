@@ -13,7 +13,7 @@ import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.anomaly.VanillaDefenders;
 import exiledsector.charts.content.ChartSites;
 import exiledsector.charts.loot.BiomeModifiers;
-import exiledsector.items.ForgeInfusions;
+import exiledsector.items.crafting.ForgeInfusions;
 
 import java.util.List;
 

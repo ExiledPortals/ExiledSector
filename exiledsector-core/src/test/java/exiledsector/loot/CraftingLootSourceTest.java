@@ -2,10 +2,10 @@ package exiledsector.loot;
 
 import exiledsector.MockSector;
 import exiledsector.ProjectFiles;
-import exiledsector.items.CraftingDrops;
-import exiledsector.items.CraftingInhibitor;
-import exiledsector.items.ItemChances;
-import exiledsector.items.Nanoswarm;
+import exiledsector.items.crafting.material.CraftingInhibitor;
+import exiledsector.items.crafting.material.Nanoswarm;
+import exiledsector.items.drop.CraftingDrops;
+import exiledsector.items.drop.ItemChances;
 import exiledsector.skills.skilleffect.logistics.FoundItemQuantity;
 import lunalib.lunaSettings.LunaSettings;
 import org.json.JSONArray;

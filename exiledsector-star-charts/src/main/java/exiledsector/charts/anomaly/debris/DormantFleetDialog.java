@@ -13,8 +13,8 @@ import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.charts.run.ChartRuns;
-import exiledsector.items.Nanoswarm;
-import exiledsector.items.CraftingMaterials;
+import exiledsector.items.crafting.material.Nanoswarm;
+import exiledsector.items.crafting.material.CraftingMaterials;
 import exiledsector.ui.VanillaText;
 
 import java.util.ArrayList;

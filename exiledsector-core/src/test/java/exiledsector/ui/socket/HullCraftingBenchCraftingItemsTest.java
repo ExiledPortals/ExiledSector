@@ -1,9 +1,9 @@
 package exiledsector.ui.socket;
 
-import exiledsector.items.Nanoswarm;
-import exiledsector.items.CraftingMaterialFamily;
 import exiledsector.items.ItemNature;
 import exiledsector.items.ItemType;
+import exiledsector.items.crafting.material.CraftingMaterialFamily;
+import exiledsector.items.crafting.material.Nanoswarm;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

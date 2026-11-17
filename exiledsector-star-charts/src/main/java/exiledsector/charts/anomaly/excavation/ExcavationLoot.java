@@ -8,9 +8,9 @@ import exiledsector.charts.anomaly.DenseNebula;
 import exiledsector.charts.loot.ChartCraftingPools;
 import exiledsector.charts.loot.ChartLootContext;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.items.Engram;
-import exiledsector.items.Engrams;
-import exiledsector.items.MaterialItems;
+import exiledsector.items.crafting.material.Engram;
+import exiledsector.items.crafting.material.Engrams;
+import exiledsector.items.crafting.material.MaterialItems;
 import exiledsector.loot.DropType;
 import exiledsector.loot.Loot;
 

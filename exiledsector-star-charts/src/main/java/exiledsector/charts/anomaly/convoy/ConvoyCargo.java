@@ -22,8 +22,8 @@ import exiledsector.charts.loot.ChartDrops;
 import exiledsector.charts.loot.ChartLoot;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.effects.ItemLootListener;
-import exiledsector.items.InfusedFeedstock;
-import exiledsector.items.SalvageSiteDrops;
+import exiledsector.items.crafting.material.InfusedFeedstock;
+import exiledsector.items.drop.SalvageSiteDrops;
 import exiledsector.loot.DropType;
 import org.lwjgl.util.vector.Vector2f;
 

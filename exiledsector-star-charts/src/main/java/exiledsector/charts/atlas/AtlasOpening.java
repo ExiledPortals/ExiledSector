@@ -11,7 +11,7 @@ import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.OfficerRank;
 import exiledsector.charts.officer.OfficerRanks;
 import exiledsector.charts.wormhole.GatewayTierLimit;
-import exiledsector.items.StarChart;
+import exiledsector.items.starchart.StarChart;
 import exiledsector.modifiers.ModifierSlot;
 
 import java.util.ArrayList;

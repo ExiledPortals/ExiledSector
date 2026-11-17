@@ -9,7 +9,7 @@ import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import exiledsector.charts.loot.StarChartLootSource;
 import exiledsector.charts.loot.ChartDropRules;
 import exiledsector.items.ItemData;
-import exiledsector.items.StarChartFixtures;
+import exiledsector.items.starchart.StarChartFixtures;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

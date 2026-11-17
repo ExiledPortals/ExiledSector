@@ -5,7 +5,7 @@ import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemTypes;
-import exiledsector.items.WormholeAnchorDefinitions;
+import exiledsector.items.anchor.WormholeAnchorDefinitions;
 import exiledsector.skills.ClearedSkillTreeExtension;
 import org.json.JSONArray;
 import org.json.JSONObject;

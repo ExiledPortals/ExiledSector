@@ -1,6 +1,9 @@
 package exiledsector.items;
 
 import exiledsector.charts.loot.BiomeModifiers;
+import exiledsector.items.modifier.ItemModifiers;
+import exiledsector.items.modifier.ModifierParts;
+import exiledsector.items.modifier.ShippedModifierParts;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierLine;
 import org.json.JSONArray;

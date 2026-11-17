@@ -5,7 +5,7 @@ import exiledsector.charts.StarCharts;
 import exiledsector.i18n.StyledText;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
-import exiledsector.items.StarChart;
+import exiledsector.items.starchart.StarChart;
 import org.lazywizard.console.Console;
 
 import java.util.List;

@@ -75,7 +75,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <systemPropertyVariables>
-                        <exiledsector.test.domains>exiledsector.skills.SkillTreeDomain,exiledsector.items.HullUpgradesDomain,exiledsector.charts.StarChartsDomain</exiledsector.test.domains>
+                        <exiledsector.test.domains>exiledsector.skills.SkillTreeDomain,exiledsector.items.hull.HullUpgradesDomain,exiledsector.charts.StarChartsDomain</exiledsector.test.domains>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>

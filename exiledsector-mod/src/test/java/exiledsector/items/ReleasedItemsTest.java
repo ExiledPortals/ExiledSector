@@ -1,6 +1,13 @@
 package exiledsector.items;
 
 import exiledsector.ProjectFiles;
+import exiledsector.items.hull.HullItem;
+import exiledsector.items.modifier.ItemModifiers;
+import exiledsector.items.modifier.PoolEntry;
+import exiledsector.items.modifier.RolledLine;
+import exiledsector.items.name.ItemNames;
+import exiledsector.items.starchart.StarChartFixtures;
+import exiledsector.items.subroutine.SubroutineDefinitions;
 import exiledsector.skills.skilleffect.EffectAliases;
 import exiledsector.modifiers.ModifierSlot;
 import org.json.JSONArray;

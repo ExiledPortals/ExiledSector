@@ -2,7 +2,7 @@ package exiledsector.console;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import exiledsector.charts.atlas.AtlasCatalysts;
-import exiledsector.items.MaterialItems;
+import exiledsector.items.crafting.material.MaterialItems;
 import org.lazywizard.console.Console;
 
 import java.util.ArrayList;

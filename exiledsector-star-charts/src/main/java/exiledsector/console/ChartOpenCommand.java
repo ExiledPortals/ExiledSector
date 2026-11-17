@@ -15,7 +15,7 @@ import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.atlas.AtlasData;
-import exiledsector.items.StarChart;
+import exiledsector.items.starchart.StarChart;
 import org.lazywizard.console.Console;
 
 import java.util.ArrayList;

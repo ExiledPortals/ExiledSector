@@ -5,9 +5,9 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.data.RandomRounding;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
-import exiledsector.items.CraftingDrops;
-import exiledsector.items.ItemDisassembly;
-import exiledsector.items.MaterialItems;
+import exiledsector.items.crafting.ItemDisassembly;
+import exiledsector.items.crafting.material.MaterialItems;
+import exiledsector.items.drop.CraftingDrops;
 import exiledsector.ui.CampaignMessages;
 import exiledsector.ui.cargo.MaterialDropAnnouncer;
 

@@ -3,8 +3,8 @@ package exiledsector.charts.anomaly.debris;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.loot.ChartLootContext;
-import exiledsector.items.Engrams;
-import exiledsector.items.Engram;
+import exiledsector.items.crafting.material.Engram;
+import exiledsector.items.crafting.material.Engrams;
 import exiledsector.loot.DropType;
 import exiledsector.loot.Loot;
 

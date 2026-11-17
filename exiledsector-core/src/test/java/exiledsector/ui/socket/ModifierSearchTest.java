@@ -2,10 +2,10 @@ package exiledsector.ui.socket;
 
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
-import exiledsector.items.ItemRarity;
 import exiledsector.items.ItemStatTotals;
-import exiledsector.items.RolledLine;
-import exiledsector.items.SlottedRoll;
+import exiledsector.items.modifier.ItemRarity;
+import exiledsector.items.modifier.RolledLine;
+import exiledsector.items.modifier.SlottedRoll;
 import exiledsector.modifiers.ModifierEffect;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;

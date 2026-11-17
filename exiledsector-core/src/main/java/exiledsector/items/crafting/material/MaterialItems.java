@@ -1,0 +1,141 @@
+package exiledsector.items.crafting.material;
+
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CargoAPI;
+import com.fs.starfarer.api.campaign.SpecialItemData;
+import com.fs.starfarer.api.campaign.SpecialItemSpecAPI;
+import exiledsector.domain.DomainContributions;
+import exiledsector.domain.ExiledSectorDomain;
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
+import exiledsector.items.crafting.ItemDisassembly;
+import exiledsector.skills.skilleffect.render.SpriteCache;
+
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
+
+public final class MaterialItems {
+
+    private static final String MATERIAL_KEY_PREFIX = "material.";
+    private static final SpriteCache SPRITES = new SpriteCache(MaterialItems.class);
+    private static final Color FEEDSTOCK_COLOR = new Color(200, 170, 130);
+    private static final DomainContributions<DomainMaterial> DOMAIN_MATERIALS = DomainContributions.fromEveryDomain(ExiledSectorDomain::materialItems);
+
+    private MaterialItems() {
+    }
+
+    public static List<String> ids() {
+        List<String> itemIds = new ArrayList<>();
+        itemIds.add(ItemDisassembly.FEEDSTOCK_ITEM_ID);
+        for (CraftingMaterialFamily craftingItem : CraftingMaterialFamilies.all()) {
+            itemIds.add(craftingItem.itemId());
+        }
+        for (CraftingInhibitor inhibitor : CraftingInhibitor.values()) {
+            itemIds.add(inhibitor.itemId());
+        }
+        for (DomainMaterial material : DOMAIN_MATERIALS.all()) {
+            itemIds.add(material.itemId());
+        }
+        return itemIds;
+    }
+
+    public static boolean isMaterial(String itemId) {
+        return itemId != null && ids().contains(itemId);
+    }
+
+    public static MaterialTier tier(String itemId) {
+        CraftingMaterialFamily craftingItem = CraftingMaterialFamilies.byItemId(itemId);
+        if (craftingItem != null) {
+            return craftingItem.tier();
+        }
+        CraftingInhibitor inhibitor = CraftingInhibitor.byItemId(itemId);
+        if (inhibitor != null) {
+            return inhibitor.tier();
+        }
+        for (DomainMaterial material : DOMAIN_MATERIALS.all()) {
+            if (material.itemId().equals(itemId)) {
+                return material.tier();
+            }
+        }
+        return MaterialTier.COMMON;
+    }
+
+    public static Color color(String itemId) {
+        CraftingMaterialFamily craftingItem = CraftingMaterialFamilies.byItemId(itemId);
+        if (craftingItem != null) {
+            return craftingItem.color();
+        }
+        CraftingInhibitor inhibitor = CraftingInhibitor.byItemId(itemId);
+        if (inhibitor != null) {
+            return inhibitor.color();
+        }
+        for (DomainMaterial material : DOMAIN_MATERIALS.all()) {
+            if (material.itemId().equals(itemId)) {
+                return material.color();
+            }
+        }
+        return FEEDSTOCK_COLOR;
+    }
+
+    public static SpecialItemData data(String itemId) {
+        return new SpecialItemData(itemId, null);
+    }
+
+    public static int count(CargoAPI cargo, String itemId) {
+        return cargo == null ? 0 : Math.round(cargo.getQuantity(CargoAPI.CargoItemType.SPECIAL, data(itemId)));
+    }
+
+    public static void add(CargoAPI cargo, String itemId, int quantity) {
+        if (cargo != null && quantity > 0) {
+            cargo.addSpecial(data(itemId), quantity);
+        }
+    }
+
+    public static void remove(CargoAPI cargo, String itemId, int quantity) {
+        if (cargo != null && quantity > 0) {
+            cargo.removeItems(CargoAPI.CargoItemType.SPECIAL, data(itemId), quantity);
+        }
+    }
+
+    public static SpecialItemSpecAPI spec(String itemId) {
+        try {
+            return Global.getSettings().getSpecialItemSpec(itemId);
+        } catch (RuntimeException missingSpec) {
+            return null;
+        }
+    }
+
+    public static void localise(String itemId) {
+        localise(itemId, MATERIAL_KEY_PREFIX);
+    }
+
+    public static void localise(String itemId, String keyPrefix) {
+        SpecialItemSpecAPI itemSpec = spec(itemId);
+        if (itemSpec != null) {
+            itemSpec.setName(Translation.data(keyPrefix + itemId + ".name", itemSpec.getName()));
+            StyledText description = Translation.dataStyled(keyPrefix + itemId + ".description", itemSpec.getDesc());
+            itemSpec.setDesc(description == null ? null : description.plain());
+        }
+    }
+
+    public static String descriptionKey(String itemId) {
+        return MATERIAL_KEY_PREFIX + itemId + ".description";
+    }
+
+    public static String displayName(String itemId) {
+        SpecialItemSpecAPI spec = spec(itemId);
+        return spec != null ? spec.getName() : itemId;
+    }
+
+    public static String iconPath(String itemId) {
+        SpecialItemSpecAPI spec = spec(itemId);
+        String params = spec == null ? null : spec.getParams();
+        return params == null || params.isBlank() ? null : params.trim();
+    }
+
+    public static String loadedIconPath(String itemId) {
+        String iconPath = iconPath(itemId);
+        return iconPath != null && SPRITES.ensureLoaded(iconPath) ? iconPath : null;
+    }
+}

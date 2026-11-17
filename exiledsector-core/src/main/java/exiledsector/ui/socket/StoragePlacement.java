@@ -2,7 +2,7 @@ package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.items.Item;
-import exiledsector.items.SocketCustody;
+import exiledsector.items.custody.SocketCustody;
 
 import java.util.Map;
 import java.util.function.Function;

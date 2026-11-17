@@ -1,7 +1,7 @@
 package exiledsector.ui.socket;
 
-import exiledsector.items.BiomeCraft;
-import exiledsector.items.InfusedCraft;
+import exiledsector.items.crafting.BiomeCraft;
+import exiledsector.items.crafting.InfusedCraft;
 
 import java.util.ArrayList;
 import java.util.Comparator;

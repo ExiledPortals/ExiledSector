@@ -10,7 +10,7 @@ import exiledsector.charts.run.ChartRunActions;
 import exiledsector.charts.run.ChartRunActions.OpenResult;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
-import exiledsector.items.StarChart;
+import exiledsector.items.starchart.StarChart;
 
 import java.util.Locale;
 

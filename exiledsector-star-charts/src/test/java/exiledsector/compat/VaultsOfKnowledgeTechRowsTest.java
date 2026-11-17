@@ -2,7 +2,7 @@ package exiledsector.compat;
 
 import exiledsector.charts.phasing.DisplacementTheorem;
 import exiledsector.charts.phasing.PhaseDisplacementGate;
-import exiledsector.items.WormholeTechItems;
+import exiledsector.items.starchart.WormholeTechItems;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;

@@ -4,7 +4,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.ChartIds;
 import exiledsector.data.CsvRows;
 import exiledsector.ModCsv;
-import exiledsector.items.CraftingDrops;
+import exiledsector.items.drop.CraftingDrops;
 import exiledsector.items.ItemTraits;
 import exiledsector.loot.FleetLevelRange;
 import org.apache.log4j.Logger;

@@ -5,9 +5,9 @@ import exiledsector.charts.loot.ChartDrops;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemRoll;
 import exiledsector.items.ItemStore;
-import exiledsector.items.StarChart;
+import exiledsector.items.modifier.ItemRoll;
+import exiledsector.items.starchart.StarChart;
 
 import java.util.ArrayList;
 import java.util.Comparator;

@@ -2,8 +2,8 @@ package exiledsector.console;
 
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
-import exiledsector.items.WormholeAnchor;
-import exiledsector.items.WormholeAnchorDefinitions;
+import exiledsector.items.anchor.WormholeAnchor;
+import exiledsector.items.anchor.WormholeAnchorDefinitions;
 import exiledsector.skills.SkillTree;
 import org.json.JSONArray;
 import org.json.JSONObject;

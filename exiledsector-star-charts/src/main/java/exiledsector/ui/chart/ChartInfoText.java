@@ -16,9 +16,9 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-import exiledsector.items.ItemName;
-import exiledsector.items.SlottedLine;
-import exiledsector.items.StarChart;
+import exiledsector.items.modifier.SlottedLine;
+import exiledsector.items.name.ItemName;
+import exiledsector.items.starchart.StarChart;
 import exiledsector.ui.atlas.AtlasNodeText;
 import exiledsector.ui.socket.AtlasAnomalyPanel.Entry;
 

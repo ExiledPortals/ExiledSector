@@ -1,9 +1,9 @@
 package exiledsector.effects;
 
 import com.fs.starfarer.api.combat.ShipVariantAPI;
-import exiledsector.items.DoctrineLayer;
-import exiledsector.items.DoctrineOverrides;
-import exiledsector.items.DoctrineRewrite;
+import exiledsector.items.subroutine.doctrine.DoctrineLayer;
+import exiledsector.items.subroutine.doctrine.DoctrineOverrides;
+import exiledsector.items.subroutine.doctrine.DoctrineRewrite;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.HullModNames;
 import exiledsector.skills.ShipSkillData;

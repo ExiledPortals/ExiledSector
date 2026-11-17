@@ -2,8 +2,8 @@ package exiledsector.charts.atlas;
 
 import exiledsector.charts.anomaly.AtlasRule;
 import exiledsector.charts.anomaly.ChartAnomalies;
-import exiledsector.items.CraftingMaterials;
 import exiledsector.items.UseVerdict;
+import exiledsector.items.crafting.material.CraftingMaterials;
 
 import java.util.ArrayList;
 import java.util.List;

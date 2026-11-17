@@ -6,12 +6,12 @@ import exiledsector.charts.officer.reward.CarriedItem;
 import exiledsector.charts.officer.reward.OfficerRewardPool;
 import exiledsector.charts.officer.reward.RewardContext;
 import exiledsector.charts.officer.reward.RewardGroup;
-import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
-import exiledsector.items.ItemDisassembly;
-import exiledsector.items.ItemRarity;
-import exiledsector.items.MaterialItems;
+import exiledsector.items.crafting.ItemDisassembly;
+import exiledsector.items.crafting.material.CraftingInhibitor;
+import exiledsector.items.crafting.material.MaterialItems;
+import exiledsector.items.modifier.ItemRarity;
 
 import java.awt.Color;
 import java.util.List;

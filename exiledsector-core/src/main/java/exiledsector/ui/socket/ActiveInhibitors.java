@@ -1,6 +1,6 @@
 package exiledsector.ui.socket;
 
-import exiledsector.items.CraftingInhibitor;
+import exiledsector.items.crafting.material.CraftingInhibitor;
 
 import java.util.Collection;
 import java.util.Collections;

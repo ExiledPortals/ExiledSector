@@ -1,8 +1,8 @@
 package exiledsector.charts.loot;
 
-import exiledsector.items.CraftingDrops;
-import exiledsector.items.CraftingInhibitor;
-import exiledsector.items.StarChartCipher;
+import exiledsector.items.crafting.material.CraftingInhibitor;
+import exiledsector.items.crafting.material.StarChartCipher;
+import exiledsector.items.drop.CraftingDrops;
 
 import java.util.function.Predicate;
 

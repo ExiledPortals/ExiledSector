@@ -2,12 +2,12 @@ package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.i18n.StyledText;
-import exiledsector.items.CraftingInhibitor;
-import exiledsector.items.CraftingMaterialFamily;
-import exiledsector.items.CraftingMaterials;
-import exiledsector.items.GrowableMaterial;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
+import exiledsector.items.crafting.material.CraftingInhibitor;
+import exiledsector.items.crafting.material.CraftingMaterialFamily;
+import exiledsector.items.crafting.material.CraftingMaterials;
+import exiledsector.items.crafting.material.GrowableMaterial;
 
 import java.awt.Color;
 import java.util.Random;

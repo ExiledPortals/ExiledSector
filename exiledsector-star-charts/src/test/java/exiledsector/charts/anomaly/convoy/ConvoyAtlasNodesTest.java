@@ -10,7 +10,7 @@ import exiledsector.charts.officer.OfficerBoardGenerator;
 import exiledsector.charts.officer.OfficerRank;
 import exiledsector.charts.officer.reward.CarriedItem;
 import exiledsector.charts.officer.reward.RewardKind;
-import exiledsector.items.InfusedFeedstock;
+import exiledsector.items.crafting.material.InfusedFeedstock;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedHashMap;

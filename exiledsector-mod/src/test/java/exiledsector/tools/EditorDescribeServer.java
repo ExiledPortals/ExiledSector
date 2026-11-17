@@ -5,7 +5,7 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.RealCatalogue;
 import exiledsector.ExiledSector;
 import exiledsector.charts.StarChartsDomain;
-import exiledsector.items.HullUpgradesDomain;
+import exiledsector.items.hull.HullUpgradesDomain;
 import exiledsector.skills.SkillTreeDomain;
 import exiledsector.skills.VanillaHullModLines;
 import exiledsector.skills.npc.RealSkillData;

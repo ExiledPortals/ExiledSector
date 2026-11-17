@@ -1,7 +1,7 @@
 package exiledsector.ui.socket;
 
-import exiledsector.items.CraftingInhibitor;
-import exiledsector.items.CraftingMaterials;
+import exiledsector.items.crafting.material.CraftingInhibitor;
+import exiledsector.items.crafting.material.CraftingMaterials;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

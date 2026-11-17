@@ -1,15 +1,15 @@
 package exiledsector.domain;
 
 import exiledsector.ExiledSector;
-import exiledsector.items.HullUpgradesDomain;
-import exiledsector.items.ItemDefinition;
 import exiledsector.effects.ShipEffectSources;
 import exiledsector.effects.SkillTreeEffectSource;
 import exiledsector.effects.SkillTreeLootSource;
-import exiledsector.items.HullUpgradeEffectSource;
-import exiledsector.items.HullUpgradeLootSource;
-import exiledsector.items.HullUpgradesSetting;
-import exiledsector.items.Subroutine;
+import exiledsector.items.ItemDefinition;
+import exiledsector.items.hull.HullUpgradeEffectSource;
+import exiledsector.items.hull.HullUpgradeLootSource;
+import exiledsector.items.hull.HullUpgradesDomain;
+import exiledsector.items.hull.HullUpgradesSetting;
+import exiledsector.items.subroutine.Subroutine;
 import exiledsector.loot.FleetDifficulties;
 import exiledsector.loot.LootSources;
 import exiledsector.skills.SkillTreeSetting;

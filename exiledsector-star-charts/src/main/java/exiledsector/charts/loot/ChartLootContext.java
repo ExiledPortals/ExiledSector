@@ -7,11 +7,11 @@ import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.charts.run.ChartRuns;
-import exiledsector.items.CraftingDrops;
-import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemRoll;
+import exiledsector.items.drop.CraftingDrops;
+import exiledsector.items.drop.ItemChances;
+import exiledsector.items.modifier.ItemRoll;
 import exiledsector.loot.DropType;
 import exiledsector.loot.LootMultipliers;
 

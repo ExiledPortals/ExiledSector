@@ -11,12 +11,12 @@ import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.data.EnumKeys;
 import exiledsector.data.RandomRounding;
-import exiledsector.items.DroppableDefinitions;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemRoll;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemTypes;
+import exiledsector.items.drop.DroppableDefinitions;
+import exiledsector.items.modifier.ItemRoll;
 import exiledsector.loot.FleetDifficulties;
 import exiledsector.loot.Loot;
 

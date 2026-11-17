@@ -35,7 +35,7 @@ import exiledsector.charts.run.cleanup.ChartLoadSweep;
 import exiledsector.charts.run.diagnostics.ChartSoakScript;
 import exiledsector.charts.tree.AtlasTreeData;
 import exiledsector.items.ItemStore;
-import exiledsector.items.RetiredUniqueCharts;
+import exiledsector.items.starchart.RetiredUniqueCharts;
 import exiledsector.ui.chart.ChartInfoTab;
 import org.apache.log4j.Logger;
 

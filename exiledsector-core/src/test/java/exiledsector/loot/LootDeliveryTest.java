@@ -3,7 +3,7 @@ package exiledsector.loot;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import exiledsector.items.ItemData;
-import exiledsector.items.ShipSchematic;
+import exiledsector.items.schematic.ShipSchematic;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 

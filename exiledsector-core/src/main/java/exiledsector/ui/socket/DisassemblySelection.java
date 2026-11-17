@@ -8,7 +8,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.items.Item;
-import exiledsector.items.ItemRarity;
+import exiledsector.items.modifier.ItemRarity;
 import exiledsector.ui.VanillaText;
 
 import java.awt.Color;

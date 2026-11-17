@@ -1,0 +1,314 @@
+package exiledsector.items.anchor;
+
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CargoAPI;
+import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.campaign.SpecialItemData;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import exiledsector.MockSector;
+import exiledsector.effects.SkillTreeLootSource;
+import exiledsector.items.Item;
+import exiledsector.items.ItemData;
+import exiledsector.items.ItemDefinition;
+import exiledsector.items.ItemDefinitions;
+import exiledsector.items.ItemType;
+import exiledsector.items.drop.FactionFleetDrops;
+import exiledsector.items.drop.NpcItems;
+import exiledsector.skills.AnchorLinks;
+import exiledsector.skills.ClearedSkillTreeExtension;
+import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
+import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillTier;
+import exiledsector.skills.SkillTree;
+import exiledsector.skills.SkillType;
+import exiledsector.skills.layout.SkillNodeDecoration;
+import exiledsector.skills.npc.NpcFactionVolumes;
+import exiledsector.skills.tags.SkillTags;
+import lunalib.lunaSettings.LunaSettings;
+import org.json.JSONArray;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyFloat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(ClearedSkillTreeExtension.class)
+class AnchorJanusGateTest {
+
+    private static final String HEGEMONY_ANCHOR = "wormhole_anchor_hegemony";
+    private static final String BEACON = "wormhole_anchor_exotech";
+    private static final String OMEGA_ANCHOR = "wormhole_anchor_omega";
+
+    private final Map<String, Item> itemsById = new HashMap<>();
+    private MockedStatic<LunaSettings> lunaSettingsMock;
+    private MockSector mockSector;
+    private MemoryAPI sectorMemory;
+    private Boolean allowBeforeJanus;
+    private SkillNode root;
+    private SkillNode socket;
+
+    @BeforeEach
+    void setUp() throws Exception {
+        allowBeforeJanus = null;
+        lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean(anyString(), anyString())).thenReturn(null);
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean(anyString(), Mockito.eq(AnchorJanusGate.ALLOW_BEFORE_JANUS_FIELD_ID)))
+                .thenAnswer(invocation -> allowBeforeJanus);
+        sectorMemory = mock(MemoryAPI.class);
+        mockSector = new MockSector();
+        when(mockSector.sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
+
+        SkillType exitType = new SkillType.Builder("wormhole_exit", "Wormhole Exit", "", SkillTier.WORMHOLE_EXIT).build();
+        SkillType sectionKind = new SkillType.Builder("socket", "Socket", "", SkillTier.SOCKET).build();
+        root = new SkillNode("root", new SkillType.Builder("root_type", "Root", "", SkillTier.ROOT).build(), List.of(), 0f, 0f);
+        socket = new SkillNode("socket", sectionKind, List.of("root"), 0f, 0f, SkillNodeDecoration.NONE, List.of("core"));
+        for (SkillNode node : List.of(root, socket,
+                new SkillNode("hegemony_2", exitType, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of("hegemony")),
+                new SkillNode("exoship", exitType, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of(SkillTags.EXOTECH_VOLUME)))) {
+            SkillTree.register(node);
+        }
+        WormholeAnchorDefinitions.register(new JSONArray()
+                .put(AnchorRows.row(HEGEMONY_ANCHOR, "hegemony", "hegemony_2").put("drop_chance", "1").put("market_chance", "1"))
+                .put(AnchorRows.row(BEACON, SkillTags.EXOTECH_VOLUME, "exoship").put("drop_factions", "rat_exotech")
+                        .put("drop_chance", "1").put("market_chance", "1")));
+        NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"hegemony\", \"volume\": \"hegemony\"}]"));
+        AnchorLinks.install(new AnchorLinks.ExitLookup() {
+            @Override
+            public String exitNodeId(String socketedItemId) {
+                return itemsById.get(socketedItemId) instanceof WormholeAnchor anchor ? anchor.linkedExitNodeId() : null;
+            }
+
+            @Override
+            public boolean canOpen(String socketedItemId) {
+                return itemsById.get(socketedItemId) instanceof WormholeAnchor anchor && anchor.canOpen(Global.getSector());
+            }
+
+            @Override
+            public int revision() {
+                return 0;
+            }
+        });
+    }
+
+    @AfterEach
+    void tearDown() {
+        AnchorLinks.install(null);
+        NpcFactionVolumes.clear();
+        WormholeAnchorDefinitions.clear();
+        mockSector.close();
+        lunaSettingsMock.close();
+    }
+
+    private void janusObtained(boolean obtained) {
+        when(sectorMemory.getBoolean(JanusDevice.FLAG)).thenReturn(obtained);
+    }
+
+    private WormholeAnchor anchor(String definitionId, String itemId) {
+        WormholeAnchor anchor = (WormholeAnchor) ItemData.rolled(ItemDefinitions.get(definitionId), 5L).create(itemId);
+        itemsById.put(itemId, anchor);
+        return anchor;
+    }
+
+    private ShipSkillData shipWithSocketed(WormholeAnchor anchor) {
+        ShipSkillData data = new ShipSkillData();
+        ShipTrees.chooseStartingRoot(data, root);
+        ShipTrees.allocate(data, socket, 1);
+        data.socketItem(socket.getId(), anchor.id());
+        return data;
+    }
+
+    private static Set<String> droppedIds(Map<String, Float> defeated) {
+        Random random = new Random(3L);
+        Set<String> droppedIds = new HashSet<>();
+        for (int battle = 0; battle < 50; battle++) {
+            FactionFleetDrops.roll(defeated, random, FactionFleetDrops::available).forEach(item -> droppedIds.add(item.definition().id()));
+        }
+        return droppedIds;
+    }
+
+    @Test
+    void theGateOpensWithTheJanusDeviceOrTheToggle() {
+        SectorAPI sector = Global.getSector();
+        assertFalse(AnchorJanusGate.open(sector));
+
+        janusObtained(true);
+        assertTrue(AnchorJanusGate.open(sector));
+
+        janusObtained(false);
+        allowBeforeJanus = true;
+        assertTrue(AnchorJanusGate.open(sector));
+    }
+
+    @Test
+    void theBeaconIsExemptAndEveryOtherAnchorIsGated() {
+        assertFalse(AnchorJanusGate.applies(BEACON));
+        assertTrue(AnchorJanusGate.applies(HEGEMONY_ANCHOR));
+        assertFalse(AnchorJanusGate.withholds(BEACON, Global.getSector()));
+        assertTrue(AnchorJanusGate.withholds(HEGEMONY_ANCHOR, Global.getSector()));
+    }
+
+    @Test
+    void theOmegaAnchorDropsAndWorksBeforeJanusSoBeatingOmegaEarlyIsNeverWasted() throws Exception {
+        WormholeAnchorDefinitions.register(new JSONArray()
+                .put(AnchorRows.row(HEGEMONY_ANCHOR, "hegemony", "hegemony_2"))
+                .put(AnchorRows.row(OMEGA_ANCHOR, SkillTags.OMEGA_VOLUME, "hegemony_2").put("guaranteed_drop", "true")));
+
+        assertFalse(AnchorJanusGate.applies(OMEGA_ANCHOR));
+        assertFalse(AnchorJanusGate.withholds(OMEGA_ANCHOR, Global.getSector()));
+        assertTrue(AnchorJanusGate.withholds(HEGEMONY_ANCHOR, Global.getSector()));
+    }
+
+    @Test
+    void anchorsNeitherDropNorStockBeforeJanusButTheBeaconStillDoes() {
+        Map<String, Float> defeated = Map.of("hegemony", 10000f, "rat_exotech", 10000f);
+
+        assertFalse(FactionFleetDrops.available(ItemDefinitions.get(HEGEMONY_ANCHOR)));
+        assertTrue(FactionFleetDrops.available(ItemDefinitions.get(BEACON)));
+        assertEquals(Set.of(BEACON), droppedIds(defeated));
+        assertTrue(WormholeAnchorDefinitions.rollMarketStock("hegemony", new Random(3L)).isEmpty());
+        assertEquals(List.of(ItemDefinitions.get(BEACON)), WormholeAnchorDefinitions.rollMarketStock("rat_exotech", new Random(3L)));
+
+        janusObtained(true);
+
+        assertTrue(FactionFleetDrops.available(ItemDefinitions.get(HEGEMONY_ANCHOR)));
+        assertEquals(Set.of(BEACON, HEGEMONY_ANCHOR), droppedIds(defeated));
+        assertEquals(List.of(ItemDefinitions.get(HEGEMONY_ANCHOR)), WormholeAnchorDefinitions.rollMarketStock("hegemony", new Random(3L)));
+    }
+
+    @Test
+    void replacedAnomalousShipsDropTheirOwnFactionsAnchorOnlyPastTheJanusGateAndNeverByTheShroudedGuarantee() throws Exception {
+        String redactedAnchor = "wormhole_anchor_redacted";
+        String shroudedAnchor = "wormhole_anchor_shrouded";
+        WormholeAnchorDefinitions.register(new JSONArray()
+                .put(AnchorRows.row(redactedAnchor, "REDACTED", "hegemony_2").put("drop_chance", "1"))
+                .put(AnchorRows.row(shroudedAnchor, "shrouded", "hegemony_2").put("drop_factions", "dweller").put("drop_chance", "0.01")
+                        .put("guaranteed_drop", "true")));
+        NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"remnant\", \"volume\": \"REDACTED\"}]"));
+        Map<String, Float> byShip = Map.of("remnant", 100f, "dweller", 20f, "exiledSector_dormant", 200f);
+        Map<String, Float> byFleet = Map.of("exiledSector_dormant", 320f);
+
+        assertTrue(rolledIds(byShip, byFleet, 50).isEmpty());
+
+        janusObtained(true);
+
+        Map<String, Integer> drops = new HashMap<>();
+        Random random = new Random(5L);
+        int battles = 400;
+        for (int battle = 0; battle < battles; battle++) {
+            FactionFleetDrops.roll(byShip, byFleet, random, FactionFleetDrops::available).forEach(item -> drops.merge(item.definition().id(), 1, Integer::sum));
+        }
+        assertTrue(drops.getOrDefault(redactedAnchor, 0) > battles * 0.4, String.valueOf(drops));
+        assertTrue(drops.getOrDefault(shroudedAnchor, 0) < battles * 0.05, String.valueOf(drops));
+        assertEquals(Set.of(shroudedAnchor), rolledIds(Map.of("dweller", 5f), Map.of("dweller", 5f), 1));
+        assertTrue(rolledIds(byFleet, byFleet, 50).isEmpty());
+    }
+
+    private static Set<String> rolledIds(Map<String, Float> byShip, Map<String, Float> byFleet, int battles) {
+        Random random = new Random(3L);
+        Set<String> droppedIds = new HashSet<>();
+        for (int battle = 0; battle < battles; battle++) {
+            FactionFleetDrops.roll(byShip, byFleet, random, FactionFleetDrops::available).forEach(item -> droppedIds.add(item.definition().id()));
+        }
+        return droppedIds;
+    }
+
+    @Test
+    void aHalvedMarketChanceStocksAboutHalfTheRestocks() {
+        janusObtained(true);
+        Random random = new Random(3L);
+        int fullStocked = 0;
+        int halvedStocked = 0;
+        for (int restock = 0; restock < 1000; restock++) {
+            fullStocked += WormholeAnchorDefinitions.rollMarketStock("hegemony", 1f, random).size();
+            halvedStocked += WormholeAnchorDefinitions.rollMarketStock("hegemony", 0.5f, random).size();
+        }
+
+        assertEquals(1000, fullStocked);
+        assertTrue(halvedStocked > 420 && halvedStocked < 580, "halved restocks stocked " + halvedStocked);
+    }
+
+    @Test
+    void showcaseSalvageOffersOnlyTheBeaconBeforeJanus() {
+        CargoAPI loot = mock(CargoAPI.class);
+        ArgumentCaptor<SpecialItemData> added = ArgumentCaptor.forClass(SpecialItemData.class);
+
+        SkillTreeLootSource.INSTANCE.addShowcaseLoot(loot, null, new Random(3L));
+
+        verify(loot, atLeastOnce()).addSpecial(added.capture(), anyFloat());
+        List<String> anchorDefinitionIds = added.getAllValues().stream()
+                .map(ItemData::of)
+                .filter(item -> item != null && item.definition() != null && item.definition().type() == ItemType.WORMHOLE_ANCHOR)
+                .map(item -> item.definition().id()).toList();
+        assertEquals(List.of(BEACON), anchorDefinitionIds);
+    }
+
+    @Test
+    void aHeldAnchorIsInertUntilJanusAndTheBeaconNeverIs() {
+        WormholeAnchor hegemony = anchor(HEGEMONY_ANCHOR, "socketable_1");
+        WormholeAnchor beacon = anchor(BEACON, "socketable_2");
+        SectorAPI sector = Global.getSector();
+
+        assertEquals(WormholeAnchor.Inertness.JANUS, hegemony.inertness(sector));
+        assertFalse(hegemony.canOpen(sector));
+        assertNull(beacon.inertness(sector));
+
+        janusObtained(true);
+
+        assertNull(hegemony.inertness(sector));
+        assertTrue(hegemony.canOpen(sector));
+    }
+
+    @Test
+    void noWormholeOpensBeforeJanusAndAnOpenOneStaysOpen() {
+        ShipSkillData data = shipWithSocketed(anchor(HEGEMONY_ANCHOR, "socketable_1"));
+
+        assertEquals(List.of(), ShipTrees.openAnchorWormholes(data, 100));
+        assertFalse(data.isAllocated("hegemony_2"));
+
+        janusObtained(true);
+        assertEquals(List.of("hegemony_2"), ShipTrees.openAnchorWormholes(data, 100));
+
+        janusObtained(false);
+        assertEquals(List.of(), ShipTrees.openAnchorWormholes(data, 100));
+        assertTrue(data.isAllocated("hegemony_2"));
+    }
+
+    @Test
+    void npcTreesStillTakeTheirVolumesAnchorBeforeJanus() {
+        assertNotNull(NpcItems.anchorFor("hegemony"));
+    }
+
+    @Test
+    void theConsoleAndOtherItemTypesAreUnaffected() {
+        ItemDefinition subroutine = mock(ItemDefinition.class);
+        when(subroutine.rarity()).thenReturn(10f);
+        when(subroutine.type()).thenReturn(ItemType.SUBROUTINE);
+        when(subroutine.id()).thenReturn("some_subroutine");
+
+        assertTrue(FactionFleetDrops.available(subroutine));
+        verify(sectorMemory, Mockito.never()).getBoolean(any());
+    }
+}

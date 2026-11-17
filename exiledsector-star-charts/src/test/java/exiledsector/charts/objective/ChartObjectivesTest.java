@@ -20,7 +20,7 @@ import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.content.FakeChartContentEngine;
 import exiledsector.charts.loot.ChartDropRules;
 import exiledsector.items.ItemData;
-import exiledsector.items.StarChartFixtures;
+import exiledsector.items.starchart.StarChartFixtures;
 import exiledsector.loot.Loot;
 import org.json.JSONArray;
 import org.json.JSONObject;

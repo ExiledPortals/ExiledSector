@@ -1,0 +1,548 @@
+package exiledsector.items.subroutine.doctrine;
+
+import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.MockSector;
+import exiledsector.items.HullItemRows;
+import exiledsector.items.Item;
+import exiledsector.items.ItemData;
+import exiledsector.items.ItemDefinitions;
+import exiledsector.items.ItemFixtures;
+import exiledsector.items.ItemStore;
+import exiledsector.items.crafting.ItemCrafting;
+import exiledsector.items.modifier.ItemModifiers;
+import exiledsector.items.subroutine.Subroutine;
+import exiledsector.items.subroutine.SubroutineKind;
+import exiledsector.items.subroutine.SubroutineRadius;
+import exiledsector.items.subroutine.UniqueSubroutineRadii;
+import exiledsector.skills.ShipFacts;
+import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.effects.DoctrineRevertConflicts;
+import exiledsector.effects.DoctrineRevertRelease;
+import exiledsector.skills.AllocatedNode;
+import exiledsector.skills.AllocatedSkillEffects;
+import exiledsector.skills.AllocationCheck;
+import exiledsector.skills.IntegratedEffects;
+import exiledsector.skills.IntegratedNodes;
+import exiledsector.skills.NodeEligibility;
+import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
+import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillTier;
+import exiledsector.skills.SkillTree;
+import exiledsector.skills.SkillType;
+import exiledsector.skills.radius.NodeRadii;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+class DoctrineOverridesTest {
+
+    private static final String REWRITE = "doctrine_transform";
+    private static final String AUGMENT = "doctrine_augment";
+    private static final String NARROW = "doctrine_narrow";
+    private static final String UNIQUE_RELIC = "relic";
+    private static final List<String> NOTABLE_POOL = List.of("faction_a", "faction_b", "faction_c");
+
+    private MockSector mockSector;
+    private SkillNode socket;
+    private SkillNode nearNotable;
+    private SkillNode otherNearNotable;
+    private SkillNode nearSmall;
+    private SkillNode nearKeystone;
+    private SkillNode farNotable;
+
+    @BeforeEach
+    void setUp() throws Exception {
+        mockSector = new MockSector();
+        SkillTree.clear();
+        NodeRadii.register(new JSONObject("{ \"small\": 150, \"medium\": 250, \"large\": 350, \"extra_large\": 450 }"));
+        registerType(type("original", SkillTier.NOTABLE, "HULL_MULT", 5f).build());
+        registerType(type("original_two", SkillTier.NOTABLE, "HULL_MULT", 6f).build());
+        registerType(type("small_hull", SkillTier.SMALL, "HULL_MULT", 2f).build());
+        registerType(type("old_keystone", SkillTier.KEYSTONE, "HULL_MULT", 10f).build());
+        registerType(type("faction_a", SkillTier.NOTABLE, "ARMOR_PERCENT", 10f).build());
+        registerType(type("faction_b", SkillTier.NOTABLE, "ARMOR_PERCENT", 11f).build());
+        registerType(type("faction_c", SkillTier.NOTABLE, "ARMOR_PERCENT", 12f).build());
+        registerType(type("faction_keystone", SkillTier.KEYSTONE, "ARMOR_PERCENT", 30f).build());
+        registerType(new SkillType.Builder("plain", "Plain", "a.png", SkillTier.SMALL).build());
+        registerType(new SkillType.Builder("socket_type", "Socket", "a.png", SkillTier.SOCKET).build());
+        socket = node("socket", "socket_type", 0f, 0f);
+        nearNotable = node("near_notable", "original", 100f, 0f);
+        otherNearNotable = node("other_near_notable", "original_two", 0f, 100f);
+        nearSmall = node("near_small", "small_hull", -100f, 0f);
+        nearKeystone = node("near_keystone", "old_keystone", 0f, -100f);
+        farNotable = node("far_notable", "original", 5000f, 0f);
+        ItemModifiers.register(new JSONArray()
+                .put(HullItemRows.modifierRow("ARMOR_PERCENT_TEST_DOCTRINE", "prefix", "doctrine", "ARMOR_PERCENT:2:4", ""))
+                .put(HullItemRows.modifierRow("HULL_PERCENT_TEST_DOCTRINE", "prefix", "doctrine", "HULL_PERCENT:1:3", "")));
+        ItemDefinitions.register(new JSONArray()
+                .put(ItemFixtures.subroutineRow(REWRITE, SubroutineKind.DOCTRINE))
+                .put(ItemFixtures.subroutineRow(AUGMENT, SubroutineKind.DOCTRINE))
+                .put(ItemFixtures.subroutineRow(NARROW, SubroutineKind.DOCTRINE))
+                .put(ItemFixtures.subroutineRow(UNIQUE_RELIC, SubroutineKind.UNIQUE).put("unique", "true").put("lines", "HULL_MULT:1:1")
+                        .put("source", "faction:pirates")));
+        DoctrineArchives.register(new JSONArray()
+                .put(archiveRow(REWRITE, "REWRITE", "medium").put("notables", String.join("; ", NOTABLE_POOL))
+                        .put("keystones", "faction_keystone").put("small_nodes", "plain"))
+                .put(archiveRow(AUGMENT, "AUGMENT", "medium").put("modifiers", "@ARMOR_PERCENT_TEST_DOCTRINE; @HULL_PERCENT_TEST_DOCTRINE")
+                        .put("min_lines", "1").put("max_lines", "2"))
+                .put(archiveRow(NARROW, "REWRITE", "medium").put("notables", "original_two")));
+    }
+
+    @AfterEach
+    void tearDown() {
+        DoctrineOverrides.clearCache();
+        DoctrineArchives.clear();
+        UniqueSubroutineRadii.clear();
+        ItemDefinitions.clear();
+        ItemModifiers.clear();
+        SkillTree.clear();
+        NodeRadii.reset();
+        mockSector.close();
+    }
+
+    private static SkillType.Builder type(String id, SkillTier tier, String effectName, float magnitude) {
+        return new SkillType.Builder(id, id, "a.png", tier).effects(List.of(new SkillTypeEffect(SkillEffect.byName(effectName), magnitude)));
+    }
+
+    private static void registerType(SkillType type) {
+        SkillTree.registerType(type);
+    }
+
+    private static SkillNode node(String id, String typeId, float x, float y) {
+        SkillNode node = new SkillNode(id, SkillTree.getType(typeId), List.of(), x, y);
+        SkillTree.register(node);
+        return node;
+    }
+
+    private static JSONObject archiveRow(String id, String behaviour, String radius) throws Exception {
+        return new JSONObject().put("id", id).put("behaviour", behaviour).put("radius", radius);
+    }
+
+    private ShipSkillData shipWith(String definitionId, long seed, SkillNode... allocated) {
+        ShipSkillData data = new ShipSkillData();
+        ShipTrees.allocate(data, socket, 0);
+        for (SkillNode node : allocated) {
+            ShipTrees.allocate(data, node, 0);
+        }
+        Item doctrine = ItemStore.get().add(ItemData.rolled(ItemDefinitions.get(definitionId), seed));
+        data.socketItem(socket.getId(), doctrine.id());
+        return data;
+    }
+
+    @Test
+    void aRewriteDoctrineRewritesNotablesKeystonesAndSmallNodesInRangeOnly() {
+        ShipSkillData data = shipWith(REWRITE, 4471L, nearNotable);
+
+        SkillType notable = nearNotable.resolveEffectiveType(data);
+        assertTrue(NOTABLE_POOL.contains(notable.getId()), notable.getId());
+        assertEquals("faction_keystone", nearKeystone.resolveEffectiveType(data).getId());
+        assertEquals("plain", nearSmall.resolveEffectiveType(data).getId());
+        assertEquals("original", farNotable.resolveEffectiveType(data).getId());
+        assertEquals("socket_type", socket.resolveEffectiveType(data).getId());
+        DoctrineRewrite rewrite = DoctrineOverrides.rewrite(data, nearNotable.getId());
+        assertEquals("original", rewrite.originalType().getId());
+        assertEquals(DoctrineRewriter.revision(4471L), rewrite.revision());
+    }
+
+    @Test
+    void theRewriteIsAPureFunctionOfTheSeedAndTheNode() {
+        ShipSkillData first = shipWith(REWRITE, 77L, nearNotable);
+        ShipSkillData second = shipWith(REWRITE, 77L);
+
+        assertEquals(nearNotable.resolveEffectiveType(first).getId(), nearNotable.resolveEffectiveType(second).getId());
+        assertEquals(DoctrineRewriter.candidateOrder(77L, nearNotable.getId(), NOTABLE_POOL),
+                DoctrineRewriter.candidateOrder(77L, nearNotable.getId(), List.of("faction_c", "faction_a", "faction_b")));
+        Set<String> firstPicks = new java.util.HashSet<>();
+        for (long seed = 0; seed < 40; seed++) {
+            firstPicks.add(DoctrineRewriter.candidateOrder(seed, nearNotable.getId(), NOTABLE_POOL).get(0));
+        }
+        assertEquals(Set.copyOf(NOTABLE_POOL), firstPicks);
+    }
+
+    @Test
+    void twoNotablesInRangeNeverTakeTheSameReplacement() {
+        for (long seed = 0; seed < 40; seed++) {
+            ShipSkillData data = shipWith(REWRITE, seed);
+            assertNotEquals(nearNotable.resolveEffectiveType(data).getId(), otherNearNotable.resolveEffectiveType(data).getId());
+        }
+    }
+
+    @Test
+    void removingTheDoctrineRevertsTheNodesAndLeavesThemAllocated() {
+        ShipSkillData data = shipWith(REWRITE, 9L, nearNotable);
+        assertNotEquals("original", nearNotable.resolveEffectiveType(data).getId());
+
+        data.unsocketItem(socket.getId());
+
+        assertEquals("original", nearNotable.resolveEffectiveType(data).getId());
+        assertTrue(data.isAllocated(nearNotable.getId()));
+    }
+
+    @Test
+    void aNodeRewrittenIntoAnIntegrableReplacementCanBeIntegratedAndKeepsItThroughRevertAndLoad() {
+        for (String typeId : NOTABLE_POOL) {
+            registerType(integrable(typeId, "ARMOR_PERCENT", 10f, 15f));
+        }
+        ShipSkillData data = shipWith(REWRITE, 9L, nearNotable, nearSmall);
+        String doctrineItemId = data.getSocketedItems().get(socket.getId());
+        String replacementId = nearNotable.resolveEffectiveType(data).getId();
+
+        assertTrue(IntegratedNodes.canIntegrate(data, nearNotable));
+        data.integrate(nearNotable.getId());
+        data.integrate(nearSmall.getId());
+        assertEquals(List.of(effect("ARMOR_PERCENT", 15f)), currentEffects(data, nearNotable));
+        assertEquals(2, IntegratedNodes.forgetInapplicable(data, SkillTree.getDeclaredNodes()));
+        assertEquals(Set.of(nearNotable.getId()), data.getIntegratedNodeIds());
+
+        data.unsocketItem(socket.getId());
+        assertEquals(List.of(effect("HULL_MULT", 5f)), currentEffects(data, nearNotable));
+        assertEquals(0, IntegratedNodes.forgetInapplicable(data, SkillTree.getDeclaredNodes()));
+
+        data.socketItem(socket.getId(), doctrineItemId);
+        assertEquals(replacementId, nearNotable.resolveEffectiveType(data).getId());
+        assertEquals(List.of(effect("ARMOR_PERCENT", 15f)), currentEffects(data, nearNotable));
+    }
+
+    @Test
+    void anIntegratedNodeRewrittenIntoAReplacementWithoutIntegratedEffectsGetsThemBackWhenItReverts() {
+        registerType(integrable("integrable_original", "HULL_MULT", 5f, 8f));
+        SkillNode integrableNotable = node("integrable_notable", "integrable_original", 100f, 100f);
+        ShipSkillData data = shipWith(REWRITE, 9L, integrableNotable);
+        data.integrate(integrableNotable.getId());
+
+        assertFalse(IntegratedNodes.canIntegrate(data, integrableNotable));
+        assertEquals(integrableNotable.resolveEffectiveType(data).getEffects(), currentEffects(data, integrableNotable));
+        assertEquals(0, IntegratedNodes.forgetInapplicable(data, SkillTree.getDeclaredNodes()));
+
+        data.unsocketItem(socket.getId());
+        assertEquals(List.of(effect("HULL_MULT", 8f)), currentEffects(data, integrableNotable));
+    }
+
+    private static SkillType integrable(String id, String effectName, float normalMagnitude, float integratedMagnitude) {
+        return type(id, SkillTier.NOTABLE, effectName, normalMagnitude)
+                .integratedEffects(new IntegratedEffects(List.of(effect(effectName, integratedMagnitude)), List.of()))
+                .build();
+    }
+
+    private static SkillTypeEffect effect(String effectName, float magnitude) {
+        return new SkillTypeEffect(SkillEffect.byName(effectName), magnitude);
+    }
+
+    private static List<SkillTypeEffect> currentEffects(ShipSkillData data, SkillNode node) {
+        return IntegratedNodes.effectsFor(data, node.getId(), node.resolveEffectiveType(data), HullSize.CRUISER);
+    }
+
+    @Test
+    void aDoctrineInAnUnallocatedSocketRewritesNothing() {
+        ShipSkillData data = shipWith(REWRITE, 9L, nearNotable);
+        ShipTrees.deallocate(data, socket);
+
+        assertEquals("original", nearNotable.resolveEffectiveType(data).getId());
+        assertTrue(DoctrineOverrides.layer(data).isEmpty());
+    }
+
+    @Test
+    void anIneligibleReplacementSkipsToTheNextCandidateInSeedOrder() {
+        long seed = 12L;
+        String firstChoice = DoctrineRewriter.candidateOrder(seed, nearNotable.getId(), NOTABLE_POOL).get(0);
+        SkillType capitalOnly = type(firstChoice, SkillTier.NOTABLE, "ARMOR_PERCENT", 10f).requiredHullSizes(EnumSet.of(HullSize.CAPITAL_SHIP)).build();
+        SkillTree.registerType(capitalOnly);
+        ShipSkillData data = shipWith(REWRITE, seed, nearNotable);
+        DoctrineOverrides.bindShipFacts(data, () -> new ShipFacts(HullSize.FRIGATE, ShieldType.FRONT, false, 100f, hullModId -> false));
+
+        String replacement = nearNotable.resolveEffectiveType(data).getId();
+        assertNotEquals(firstChoice, replacement);
+        assertTrue(NOTABLE_POOL.contains(replacement));
+
+        DoctrineOverrides.bindShipFacts(data, () -> new ShipFacts(HullSize.CAPITAL_SHIP, ShieldType.FRONT, false, 100f, hullModId -> false));
+        assertEquals(firstChoice, nearNotable.resolveEffectiveType(data).getId());
+    }
+
+    @Test
+    void aReplacementExclusiveWithAnAllocatedNodeElsewhereIsSkipped() {
+        long seed = 31L;
+        String firstChoice = DoctrineRewriter.candidateOrder(seed, nearNotable.getId(), NOTABLE_POOL).get(0);
+        registerType(new SkillType.Builder("rival", "Rival", "a.png", SkillTier.NOTABLE).exclusiveSkillTypeIds(List.of(firstChoice)).build());
+        SkillNode rival = node("rival_node", "rival", 9000f, 0f);
+        ShipSkillData data = shipWith(REWRITE, seed, nearNotable, rival);
+
+        assertNotEquals(firstChoice, nearNotable.resolveEffectiveType(data).getId());
+    }
+
+    @Test
+    void aReplacementTheShipAlreadyHasElsewhereIsSkipped() {
+        long seed = 31L;
+        String firstChoice = DoctrineRewriter.candidateOrder(seed, nearNotable.getId(), NOTABLE_POOL).get(0);
+        SkillNode alreadyOwned = node("owned_faction_node", firstChoice, 9000f, 0f);
+        ShipSkillData data = shipWith(REWRITE, seed, nearNotable, alreadyOwned);
+
+        assertNotEquals(firstChoice, nearNotable.resolveEffectiveType(data).getId());
+    }
+
+    @Test
+    void aNodeThatKeepsItsOwnTypeReservesItSoNoOtherNodeDuplicatesIt() {
+        ShipSkillData data = shipWith(NARROW, 8L, nearNotable, otherNearNotable);
+
+        assertEquals("original", nearNotable.resolveEffectiveType(data).getId());
+        assertEquals("original_two", otherNearNotable.resolveEffectiveType(data).getId());
+        assertTrue(DoctrineOverrides.layer(data).rewrites().isEmpty());
+    }
+
+    @Test
+    void aRewrittenNodeNoLongerCarriesItsOriginalsExclusions() {
+        SkillType exclusiveOriginal = new SkillType.Builder("exclusive_original", "X", "a.png", SkillTier.NOTABLE)
+                .exclusiveSkillTypeIds(List.of("rival_type")).build();
+        SkillType rival = new SkillType.Builder("rival_type", "R", "a.png", SkillTier.NOTABLE).build();
+        SkillNode exclusiveNode = new SkillNode("exclusive_node", exclusiveOriginal, List.of(), 0f, 0f);
+
+        assertTrue(new AllocatedNode(exclusiveNode, exclusiveOriginal).isExclusiveWith(rival));
+        assertFalse(new AllocatedNode(exclusiveNode, SkillTree.getType("faction_a")).isExclusiveWith(rival));
+    }
+
+    @Test
+    void removingARewritingDoctrineNamesTheInstalledHullModsItsOriginalsWouldStrip() {
+        registerType(new SkillType.Builder("hull_mod_notable", "Hull Mod Notable", "a.png", SkillTier.NOTABLE).exclusiveHullModIds(List.of("rival_mod"))
+                .build());
+        SkillNode hullModNode = node("hull_mod_node", "hull_mod_notable", 100f, 100f);
+        ShipSkillData data = shipWith(REWRITE, 21L, hullModNode);
+        assertNotEquals("hull_mod_notable", hullModNode.resolveEffectiveType(data).getId());
+
+        assertEquals(Set.of("rival_mod"), DoctrineRevertConflicts.hullModsLostOnRemoval(data, socket.getId(), hullModId -> true));
+        assertEquals(Set.of(), DoctrineRevertConflicts.hullModsLostOnRemoval(data, socket.getId(), hullModId -> false));
+        assertEquals(Set.of(), DoctrineRevertConflicts.hullModsLostOnRemoval(data, "elsewhere", hullModId -> true));
+        ShipTrees.deallocate(data, hullModNode);
+        assertEquals(Set.of(), DoctrineRevertConflicts.hullModsLostOnRemoval(data, socket.getId(), hullModId -> true));
+    }
+
+    private AllocationCheck frigateGate(ShipSkillData data) {
+        ShipFacts frigate = new ShipFacts(HullSize.FRIGATE, ShieldType.FRONT, false, 100f, hullModId -> false);
+        DoctrineOverrides.bindShipFacts(data, () -> frigate);
+        return new AllocationCheck(data, SkillTree.topology(), socket.getId(), new AllocationCheck.Budget(100, 1, 100),
+                NodeEligibility.Context.of(data, frigate, null));
+    }
+
+    @Test
+    void aRewrittenNodeIsCheckedAsItsReplacementNotItsOriginal() {
+        registerType(type("capital_only", SkillTier.NOTABLE, "HULL_MULT", 5f).requiredHullSizes(EnumSet.of(HullSize.CAPITAL_SHIP)).build());
+        SkillNode capitalOnly = node("capital_only_node", "capital_only", 100f, 100f);
+        ShipSkillData data = shipWith(REWRITE, 14L);
+        AllocationCheck gate = frigateGate(data);
+
+        assertNotEquals("capital_only", capitalOnly.resolveEffectiveType(data).getId());
+        assertTrue(gate.allocation(capitalOnly).allowed());
+
+        data.unsocketItem(socket.getId());
+        assertEquals(NodeEligibility.Kind.WRONG_HULL_SIZE, frigateGate(data).allocation(capitalOnly).block().kind());
+    }
+
+    @Test
+    void aRewrittenNodeWhoseOriginalOffersOptionsAllocatesWithoutAskingAndRevertsToTheFirstOption() {
+        registerType(type("opt_a", SkillTier.NOTABLE, "HULL_MULT", 1f).build());
+        registerType(type("opt_b", SkillTier.NOTABLE, "HULL_MULT", 2f).build());
+        registerType(new SkillType.Builder("choice", "Choice", "a.png", SkillTier.NOTABLE).choiceOptionIds(List.of("opt_a", "opt_b")).build());
+        SkillNode choice = node("choice_node", "choice", -100f, 100f);
+        ShipSkillData data = shipWith(REWRITE, 14L);
+        AllocationCheck gate = frigateGate(data);
+
+        assertFalse(choice.offersOptions(data));
+        assertTrue(gate.options(choice).isEmpty());
+        assertTrue(gate.allocation(choice, null).allowed());
+        assertFalse(gate.allocation(choice, SkillTree.getType("opt_a")).allowed());
+
+        ShipTrees.allocate(data, choice, null, 0);
+        assertNotEquals("opt_a", choice.resolveEffectiveType(data).getId());
+        assertEquals(Set.of(choice.getId()), data.getReplacementAllocatedNodeIds());
+
+        data.unsocketItem(socket.getId());
+        assertEquals("opt_a", choice.resolveEffectiveType(data).getId());
+        assertTrue(ShipTrees.forgetUnknownNodes(data, SkillTree.getAllNodes(), SkillTree.getAllTypes()).isEmpty());
+        assertTrue(data.isAllocated(choice.getId()));
+    }
+
+    @Test
+    void aRevertedNodeWhoseOriginalIsNotAllowedIsReleased() {
+        registerType(type("capital_only", SkillTier.NOTABLE, "HULL_MULT", 5f).requiredHullSizes(EnumSet.of(HullSize.CAPITAL_SHIP)).build());
+        SkillNode capitalOnly = node("capital_only_node", "capital_only", 100f, 100f);
+        ShipSkillData data = shipWith(REWRITE, 14L);
+        frigateGate(data);
+        ShipTrees.allocate(data, capitalOnly, null, 0);
+        ShipFacts frigate = new ShipFacts(HullSize.FRIGATE, ShieldType.FRONT, false, 100f, hullModId -> false);
+
+        assertTrue(DoctrineRevertRelease.release(data, frigate, SkillTree.topology(), socket.getId()).nodeIds().isEmpty());
+        assertTrue(data.isAllocated(capitalOnly.getId()));
+
+        data.unsocketItem(socket.getId());
+        assertEquals(List.of(capitalOnly.getId()), DoctrineRevertRelease.release(data, frigate, SkillTree.topology(), socket.getId()).nodeIds());
+        assertFalse(data.isAllocated(capitalOnly.getId()));
+        assertTrue(data.getReplacementAllocatedNodeIds().isEmpty());
+    }
+
+    @Test
+    void twoRevertedOriginalsThatExcludeEachOtherReleaseOnlyOne() {
+        registerType(new SkillType.Builder("rival_a", "A", "a.png", SkillTier.NOTABLE).exclusiveSkillTypeIds(List.of("rival_b")).build());
+        registerType(new SkillType.Builder("rival_b", "B", "a.png", SkillTier.NOTABLE).exclusiveSkillTypeIds(List.of("rival_a")).build());
+        SkillNode first = node("a_rival_node", "rival_a", 100f, 100f);
+        SkillNode second = node("b_rival_node", "rival_b", -100f, 100f);
+        ShipSkillData data = shipWith(REWRITE, 14L);
+        frigateGate(data);
+        ShipTrees.allocate(data, first, null, 0);
+        ShipTrees.allocate(data, second, null, 0);
+        assertEquals(Set.of(first.getId(), second.getId()), data.getReplacementAllocatedNodeIds());
+        ShipFacts frigate = new ShipFacts(HullSize.FRIGATE, ShieldType.FRONT, false, 100f, hullModId -> false);
+
+        data.unsocketItem(socket.getId());
+
+        assertEquals(List.of(first.getId()), DoctrineRevertRelease.release(data, frigate, SkillTree.topology(), socket.getId()).nodeIds());
+        assertTrue(data.isAllocated(second.getId()));
+    }
+
+    @Test
+    void aRevertedNodeWhoseOriginalIsAllowedStaysAndIsNoLongerTracked() {
+        ShipSkillData data = shipWith(REWRITE, 14L);
+        frigateGate(data);
+        ShipTrees.allocate(data, nearNotable, null, 0);
+        ShipFacts frigate = new ShipFacts(HullSize.FRIGATE, ShieldType.FRONT, false, 100f, hullModId -> false);
+
+        data.unsocketItem(socket.getId());
+
+        assertTrue(DoctrineRevertRelease.release(data, frigate, SkillTree.topology(), socket.getId()).nodeIds().isEmpty());
+        assertTrue(data.isAllocated(nearNotable.getId()));
+        assertTrue(data.getReplacementAllocatedNodeIds().isEmpty());
+    }
+
+    @Test
+    void anAugmentDoctrineAddsSeededLinesToEveryNodeInRangeThatOnlyApplyWhileAllocated() {
+        ShipSkillData data = shipWith(AUGMENT, 5L, nearNotable);
+
+        assertEquals("original", nearNotable.resolveEffectiveType(data).getId());
+        for (SkillNode node : List.of(nearNotable, otherNearNotable, nearSmall, nearKeystone)) {
+            DoctrineRewrite rewrite = DoctrineOverrides.rewrite(data, node.getId());
+            assertNotNull(rewrite, node.getId());
+            assertFalse(rewrite.rewritten());
+            int lineCount = rewrite.augmentLines().size();
+            assertTrue(lineCount >= 1 && lineCount <= 2, node.getId() + " has " + lineCount);
+        }
+        assertNull(DoctrineOverrides.rewrite(data, farNotable.getId()));
+
+        List<SkillTypeEffect> added = DoctrineOverrides.addedEffects(data, nearNotable, HullSize.CRUISER);
+        List<SkillTypeEffect> applied = AllocatedSkillEffects.appliedEffects(data, new AllocatedNode(nearNotable, nearNotable.resolveEffectiveType(data)),
+                HullSize.CRUISER);
+        assertTrue(applied.containsAll(added));
+        for (SkillTypeEffect effect : added) {
+            String name = effect.effect().name();
+            float magnitude = effect.magnitude();
+            assertTrue(name.equals("ARMOR_PERCENT") ? magnitude >= 2f && magnitude <= 4f : magnitude >= 1f && magnitude <= 3f, name + " " + magnitude);
+        }
+        List<SkillEffect> gathered = AllocatedSkillEffects.forData(data, HullSize.CRUISER);
+        long armorLinesGathered = gathered.stream().filter(effect -> effect.name().equals("ARMOR_PERCENT")).count();
+        long armorLinesOnAllocated = added.stream().filter(effect -> effect.effect().name().equals("ARMOR_PERCENT")).count();
+        assertEquals(armorLinesOnAllocated, armorLinesGathered);
+    }
+
+    @Test
+    void theLayerIsCachedUntilTheShipChanges() {
+        ShipSkillData data = shipWith(REWRITE, 3L, nearNotable);
+        DoctrineLayer first = DoctrineOverrides.layer(data);
+
+        assertSame(first, DoctrineOverrides.layer(data));
+        ShipTrees.deallocate(data, nearNotable);
+        assertNotSameLayer(first, DoctrineOverrides.layer(data));
+    }
+
+    @Test
+    void tuningRerollsTheFirmwareRevisionAndTheRewriteFollows() {
+        ShipSkillData data = new ShipSkillData();
+        ShipTrees.allocate(data, socket, 0);
+        ShipTrees.allocate(data, nearNotable, 0);
+        Subroutine doctrine = (Subroutine) ItemStore.get().add(ItemData.rolled(ItemDefinitions.get(REWRITE), 3L));
+        data.socketItem(socket.getId(), doctrine.id());
+        int revisionBefore = doctrine.firmwareRevision();
+
+        assertTrue(ItemCrafting.canTune(doctrine, doctrine.definition(), Set.of()));
+        assertSame(doctrine, ItemCrafting.tune(doctrine, new Random(5L)));
+        data.markChanged();
+
+        assertNotEquals(revisionBefore, doctrine.firmwareRevision());
+        assertEquals(doctrine.firmwareRevision(), DoctrineOverrides.rewrite(data, nearNotable.getId()).revision());
+    }
+
+    private static void assertNotSameLayer(DoctrineLayer first, DoctrineLayer second) {
+        assertFalse(first == second);
+    }
+
+    @Test
+    void aShipWithoutSocketedItemsHasNoLayer() {
+        ShipSkillData data = new ShipSkillData();
+        ShipTrees.allocate(data, nearNotable, 0);
+
+        assertTrue(DoctrineOverrides.layer(data).isEmpty());
+        assertEquals("original", nearNotable.resolveEffectiveType(data).getId());
+    }
+
+    @Test
+    void theRadiusRingCentresOnTheDoctrinesSocket() {
+        Item doctrine = ItemStore.get().add(ItemData.rolled(ItemDefinitions.get(REWRITE), 1L));
+        Item relic = ItemStore.get().add(ItemData.rolled(ItemDefinitions.get(UNIQUE_RELIC), 1L));
+
+        SubroutineRadius.Footprint footprint = SubroutineRadius.footprint(doctrine, socket.getId());
+        assertEquals(socket.getId(), footprint.centreNodeId());
+        assertEquals(exiledsector.skills.radius.RadiusSize.MEDIUM, footprint.size());
+        assertNull(SubroutineRadius.footprint(relic, socket.getId()));
+    }
+
+    @Test
+    void aUniqueSubroutineWithARadiusCentresItOnItsSocketAndNamesItInTheTooltip() throws Exception {
+        Item relic = ItemStore.get().add(ItemData.rolled(ItemDefinitions.get(UNIQUE_RELIC), 1L));
+        Item doctrine = ItemStore.get().add(ItemData.rolled(ItemDefinitions.get(REWRITE), 1L));
+        UniqueSubroutineRadii.register(new JSONArray()
+                .put(new JSONObject().put("id", UNIQUE_RELIC).put(UniqueSubroutineRadii.RADIUS_COLUMN, "small"))
+                .put(new JSONObject().put("id", REWRITE).put(UniqueSubroutineRadii.RADIUS_COLUMN, "large")));
+
+        SubroutineRadius.Footprint footprint = SubroutineRadius.footprint(relic, socket.getId());
+        List<String> lines = new ArrayList<>();
+        relic.headerLines().forEach(line -> lines.add(line.toMarkup()));
+
+        assertEquals(socket.getId(), footprint.centreNodeId());
+        assertEquals(exiledsector.skills.radius.RadiusSize.SMALL, footprint.size());
+        assertNull(footprint.factionId());
+        assertTrue(lines.contains(SubroutineRadius.radiusLine(exiledsector.skills.radius.RadiusSize.SMALL).toMarkup()), lines.toString());
+        assertEquals(exiledsector.skills.radius.RadiusSize.MEDIUM, SubroutineRadius.sizeOf(doctrine));
+    }
+
+    @Test
+    void aUniqueSubroutineWithABadRadiusHasNone() throws Exception {
+        Item relic = ItemStore.get().add(ItemData.rolled(ItemDefinitions.get(UNIQUE_RELIC), 1L));
+        UniqueSubroutineRadii.register(new JSONArray().put(new JSONObject().put("id", UNIQUE_RELIC).put(UniqueSubroutineRadii.RADIUS_COLUMN, "huge")));
+
+        assertNull(SubroutineRadius.footprint(relic, socket.getId()));
+        assertEquals(List.of(), ((Subroutine) relic).kindLines());
+    }
+
+    @Test
+    void theItemTooltipShowsTheFirmwareRevision() {
+        Item doctrine = ItemStore.get().add(ItemData.rolled(ItemDefinitions.get(REWRITE), 4471L));
+        List<String> lines = new ArrayList<>();
+        doctrine.headerLines().forEach(line -> lines.add(line.toMarkup()));
+
+        assertTrue(lines.stream().anyMatch(line -> line.contains(String.valueOf(DoctrineRewriter.revision(4471L)))), lines.toString());
+    }
+}

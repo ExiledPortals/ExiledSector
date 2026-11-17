@@ -1,0 +1,122 @@
+package exiledsector.items.subroutine;
+
+import exiledsector.items.ItemDefinition;
+import exiledsector.items.ItemStore;
+import exiledsector.items.drop.FactionFleetDrops;
+import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTreeLinks;
+import exiledsector.skills.ShipTrees;
+import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillTier;
+import exiledsector.skills.SkillTree;
+import exiledsector.skills.SkillTreeTopology;
+import exiledsector.skills.TreeSearch;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.WeakHashMap;
+
+public final class RootConduits {
+
+    public static final float AFFINITY_PER_NODE = 5f;
+    static final float DROP_CHANCE_PER_100_DEPLOYMENT_POINTS = 0.01f;
+    static final String DROP_SOURCE_GROUP = "root_conduit";
+
+    public record Conduit(String socketId, SkillEffect affinity, List<String> path) {
+
+        public int nodesBetween() {
+            return Math.max(0, path.size() - 2);
+        }
+
+        public float affinityGranted() {
+            return AFFINITY_PER_NODE * nodesBetween();
+        }
+
+        public Set<String> connectorKeys() {
+            Set<String> keys = new HashSet<>();
+            for (int index = 1; index < path.size(); index++) {
+                keys.add(SkillTree.curveKey(path.get(index - 1), path.get(index)));
+            }
+            return keys;
+        }
+    }
+
+    private record CachedPath(String socketId, String rootId, SkillTreeTopology topology, int revision, List<String> path) {
+    }
+
+    private static final Map<ShipSkillData, CachedPath> PATHS = new WeakHashMap<>();
+
+    private RootConduits() {
+    }
+
+    public static void registerDrops() {
+        Map<String, FactionFleetDrops.Source> sources = new LinkedHashMap<>();
+        for (ItemDefinition definition : SubroutineKind.ROOT_CONDUIT.definitions()) {
+            sources.put(definition.id(), FactionFleetDrops.Source.anyFaction(DROP_CHANCE_PER_100_DEPLOYMENT_POINTS));
+        }
+        FactionFleetDrops.register(DROP_SOURCE_GROUP, sources);
+    }
+
+    public static Conduit of(ShipSkillData data) {
+        if (data == null || data.isNpcBuild()) {
+            return null;
+        }
+        for (Map.Entry<String, String> socketed : new TreeMap<>(data.getSocketedItems()).entrySet()) {
+            if (data.isAllocated(socketed.getKey()) && ItemStore.lookup(socketed.getValue()) instanceof Subroutine subroutine
+                    && subroutine.subroutineKind() == SubroutineKind.ROOT_CONDUIT) {
+                return new Conduit(socketed.getKey(), subroutine.conduitAffinity(), cachedPath(data, socketed.getKey()));
+            }
+        }
+        return null;
+    }
+
+    public static SkillTypeEffect effectAt(ShipSkillData data, String socketId) {
+        Conduit conduit = of(data);
+        return conduit == null || !conduit.socketId().equals(socketId) ? null : new SkillTypeEffect(conduit.affinity(), conduit.affinityGranted());
+    }
+
+    private static List<String> cachedPath(ShipSkillData data, String socketId) {
+        String rootId = ShipTrees.resolveStartingRootId(data);
+        SkillTreeTopology topology = SkillTree.topology();
+        synchronized (PATHS) {
+            CachedPath cached = PATHS.get(data);
+            if (cached != null && cached.socketId().equals(socketId) && Objects.equals(cached.rootId(), rootId) && cached.topology() == topology
+                    && cached.revision() == data.revision()) {
+                return cached.path();
+            }
+            List<String> path = rootId == null ? List.of() : allocatedRoute(topology, data, socketId, rootId);
+            if (cached != null && cached.path().equals(path)) {
+                path = cached.path();
+            }
+            PATHS.put(data, new CachedPath(socketId, rootId, topology, data.revision(), path));
+            return path;
+        }
+    }
+
+    static List<String> allocatedRoute(SkillTreeTopology topology, ShipSkillData data, String socketId, String rootId) {
+        TreeSearch search = TreeSearch.from(topology, List.of(rootId),
+                child -> data.isAllocated(child.getId()) && child.getType().getTier() != SkillTier.WORMHOLE_EXIT,
+                child -> allocatedPartner(data, child));
+        if (!search.reaches(socketId)) {
+            return List.of();
+        }
+        List<String> route = new ArrayList<>();
+        for (String step = socketId; step != null; step = search.parent(step)) {
+            route.add(step);
+        }
+        return List.copyOf(route);
+    }
+
+    private static String allocatedPartner(ShipSkillData data, SkillNode node) {
+        String partnerId = ShipTreeLinks.wormholePartner(data, node);
+        return partnerId != null && data.isAllocated(partnerId) ? partnerId : null;
+    }
+}

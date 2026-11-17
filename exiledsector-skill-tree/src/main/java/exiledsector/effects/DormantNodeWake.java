@@ -4,7 +4,7 @@ import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.PlayerFleet;
-import exiledsector.items.DoctrineOverrides;
+import exiledsector.items.subroutine.doctrine.DoctrineOverrides;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.DormantNodes;
 import exiledsector.skills.ItemCostLedger;

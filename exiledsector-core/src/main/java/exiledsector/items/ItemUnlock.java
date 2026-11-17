@@ -6,6 +6,8 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.impl.campaign.intel.misc.GateHaulerIntel;
 import exiledsector.compat.RandomAssortmentCompat;
+import exiledsector.items.crafting.material.CraftingMaterialFamilies;
+import exiledsector.items.crafting.material.CraftingMaterialFamily;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;

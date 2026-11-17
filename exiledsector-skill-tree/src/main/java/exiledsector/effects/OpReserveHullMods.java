@@ -3,7 +3,7 @@ package exiledsector.effects;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledsector.items.MasterSchematic;
+import exiledsector.items.schematic.MasterSchematic;
 import exiledsector.persistence.RetiredReserveIds;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;

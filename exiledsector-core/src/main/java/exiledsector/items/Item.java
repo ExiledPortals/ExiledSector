@@ -5,6 +5,21 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.items.crafting.CorruptionOutcome;
+import exiledsector.items.modifier.AffixLayout;
+import exiledsector.items.modifier.ItemImplicits;
+import exiledsector.items.modifier.ItemModifiers;
+import exiledsector.items.modifier.ItemRarity;
+import exiledsector.items.modifier.ModifierSources;
+import exiledsector.items.modifier.PoolEntry;
+import exiledsector.items.modifier.PrototypeImplicits;
+import exiledsector.items.modifier.RolledLine;
+import exiledsector.items.modifier.RolledModifier;
+import exiledsector.items.modifier.SlottedLine;
+import exiledsector.items.modifier.SlottedRoll;
+import exiledsector.items.name.FrozenName;
+import exiledsector.items.name.ItemName;
+import exiledsector.items.name.ItemNames;
 import exiledsector.modifiers.ModifierEffect;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
@@ -271,7 +286,7 @@ public abstract class Item {
         implicits = null;
     }
 
-    Item mirrorAs(String copyId) {
+    public Item mirrorAs(String copyId) {
         Item copy = create(copyId, definitionId, seed, explicits());
         copy.copyTraitsFrom(this);
         copy.implicitModifiers = new ArrayList<>(implicits());

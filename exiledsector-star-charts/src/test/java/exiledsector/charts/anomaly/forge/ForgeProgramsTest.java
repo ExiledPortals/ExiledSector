@@ -1,8 +1,8 @@
 package exiledsector.charts.anomaly.forge;
 
 import exiledsector.ProjectFiles;
-import exiledsector.items.ForgeOperation;
 import exiledsector.items.ItemType;
+import exiledsector.items.crafting.ForgeOperation;
 import org.json.CDL;
 import org.json.JSONArray;
 import org.json.JSONObject;

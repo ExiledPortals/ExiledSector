@@ -10,7 +10,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.ProjectFiles;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
-import exiledsector.items.WormholeAnchorDefinitions;
+import exiledsector.items.anchor.WormholeAnchorDefinitions;
 import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.npc.RealSkillData;

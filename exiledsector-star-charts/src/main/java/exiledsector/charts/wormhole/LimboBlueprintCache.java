@@ -12,9 +12,9 @@ import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.BaseSalvageSpe
 import com.fs.starfarer.api.util.IntervalUtil;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.Translation;
-import exiledsector.items.JanusDevice;
-import exiledsector.items.MaterialItems;
-import exiledsector.items.WormholeTechItems;
+import exiledsector.items.anchor.JanusDevice;
+import exiledsector.items.crafting.material.MaterialItems;
+import exiledsector.items.starchart.WormholeTechItems;
 import exiledsector.ui.CampaignMessages;
 import org.apache.log4j.Logger;
 

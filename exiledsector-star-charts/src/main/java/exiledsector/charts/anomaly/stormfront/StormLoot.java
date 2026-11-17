@@ -9,11 +9,11 @@ import exiledsector.charts.atlas.AtlasUnlocks;
 import exiledsector.charts.loot.BiomeModifiers;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
-import exiledsector.items.AffixLayout;
-import exiledsector.items.GrantedModifiers;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
+import exiledsector.items.modifier.AffixLayout;
+import exiledsector.items.modifier.GrantedModifiers;
 
 import java.util.List;
 import java.util.Random;

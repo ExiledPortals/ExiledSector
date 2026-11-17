@@ -2,6 +2,16 @@ package exiledsector.items;
 
 import exiledsector.items.ItemDataIntegrity.Severity;
 import exiledsector.items.ItemDataIntegrity.Violation;
+import exiledsector.items.hull.HullItem;
+import exiledsector.items.modifier.ItemImplicits;
+import exiledsector.items.modifier.ItemModifiers;
+import exiledsector.items.modifier.PrototypeImplicits;
+import exiledsector.items.starchart.StarChartDefinitions;
+import exiledsector.items.starchart.StarChartImplicits;
+import exiledsector.items.starchart.StarChartItems;
+import exiledsector.items.subroutine.SubroutineDefinitions;
+import exiledsector.items.subroutine.SubroutineImplicits;
+import exiledsector.items.subroutine.UniqueSubroutineRadii;
 import exiledsector.skills.tags.ThemeTags;
 import org.json.JSONArray;
 import org.json.JSONException;

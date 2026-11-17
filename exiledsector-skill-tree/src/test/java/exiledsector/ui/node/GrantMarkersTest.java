@@ -3,7 +3,7 @@ package exiledsector.ui.node;
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.ShipFacts;
-import exiledsector.items.NodeGrantStatus;
+import exiledsector.items.subroutine.NodeGrantStatus;
 import exiledsector.skills.AllocationCheck;
 import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.NodeEligibility;

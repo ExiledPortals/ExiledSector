@@ -1,5 +1,11 @@
 package exiledsector.items;
 
+import exiledsector.items.crafting.CorruptionOutcome;
+import exiledsector.items.modifier.ItemModifiers;
+import exiledsector.items.modifier.ModifierFlags;
+import exiledsector.items.modifier.RolledLine;
+import exiledsector.items.modifier.RolledModifier;
+import exiledsector.items.name.FrozenName;
 import exiledsector.modifiers.ModifierSlot;
 import org.json.JSONException;
 import org.json.JSONObject;

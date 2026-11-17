@@ -2,6 +2,8 @@ package exiledsector.items;
 
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
+import exiledsector.items.modifier.ItemModifiers;
+import exiledsector.items.modifier.RolledLine;
 import exiledsector.modifiers.ModifierEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.items.ItemDataIntegrity.Severity;

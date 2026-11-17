@@ -1,7 +1,7 @@
 package exiledsector.loot;
 
 import exiledsector.items.ItemData;
-import exiledsector.items.ShipSchematic;
+import exiledsector.items.schematic.ShipSchematic;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedHashMap;

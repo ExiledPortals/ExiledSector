@@ -5,9 +5,9 @@ import exiledsector.charts.loot.ChartDrops;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
-import exiledsector.items.ItemRoll;
 import exiledsector.items.ItemType;
-import exiledsector.items.StarChart;
+import exiledsector.items.modifier.ItemRoll;
+import exiledsector.items.starchart.StarChart;
 import org.lazywizard.console.Console;
 
 import java.util.ArrayList;

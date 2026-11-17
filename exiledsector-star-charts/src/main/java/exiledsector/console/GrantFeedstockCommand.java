@@ -1,9 +1,9 @@
 package exiledsector.console;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import exiledsector.items.InfusedFeedstock;
-import exiledsector.items.ItemDisassembly;
-import exiledsector.items.MaterialItems;
+import exiledsector.items.crafting.ItemDisassembly;
+import exiledsector.items.crafting.material.InfusedFeedstock;
+import exiledsector.items.crafting.material.MaterialItems;
 import org.lazywizard.console.Console;
 
 import java.util.Collections;

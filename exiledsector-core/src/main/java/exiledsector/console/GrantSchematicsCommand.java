@@ -1,7 +1,7 @@
 package exiledsector.console;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import exiledsector.items.ShipSchematic;
+import exiledsector.items.schematic.ShipSchematic;
 import org.lazywizard.console.Console;
 
 import java.util.List;

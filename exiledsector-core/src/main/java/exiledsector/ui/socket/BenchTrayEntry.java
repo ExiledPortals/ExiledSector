@@ -2,8 +2,8 @@ package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.i18n.StyledText;
-import exiledsector.items.CraftingMaterialFamily;
 import exiledsector.items.ItemDefinition;
+import exiledsector.items.crafting.material.CraftingMaterialFamily;
 import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.cargo.CargoIconLooks;
 

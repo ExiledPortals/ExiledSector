@@ -3,8 +3,8 @@ package exiledsector.ui.node;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledsector.items.DoctrineArchive;
-import exiledsector.items.DoctrineArchives;
+import exiledsector.items.subroutine.doctrine.DoctrineArchive;
+import exiledsector.items.subroutine.doctrine.DoctrineArchives;
 
 import java.awt.Color;
 import java.util.HashMap;

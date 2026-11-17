@@ -9,6 +9,7 @@ import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.SpecialItemSpecAPI;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
+import exiledsector.items.custody.SavedCargo;
 import org.apache.log4j.Logger;
 
 import java.util.List;

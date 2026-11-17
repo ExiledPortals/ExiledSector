@@ -36,8 +36,8 @@ import exiledsector.skills.progression.ShipOpBudget;
 import exiledsector.skills.progression.SkillNodeOpCost;
 import exiledsector.skills.unlock.NodeGates;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
-import exiledsector.items.DoctrineOverrides;
-import exiledsector.items.NodeGrantStatus;
+import exiledsector.items.subroutine.doctrine.DoctrineOverrides;
+import exiledsector.items.subroutine.NodeGrantStatus;
 import exiledsector.ui.refit.ShipEditSession;
 
 import java.util.ArrayList;

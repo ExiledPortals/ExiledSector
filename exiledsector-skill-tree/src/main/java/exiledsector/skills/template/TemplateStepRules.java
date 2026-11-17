@@ -1,6 +1,6 @@
 package exiledsector.skills.template;
 
-import exiledsector.items.DoctrineOverrides;
+import exiledsector.items.subroutine.doctrine.DoctrineOverrides;
 import exiledsector.skills.AllocationCheck;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipSkillData;

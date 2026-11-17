@@ -12,7 +12,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
-import exiledsector.items.WormholeAnchorDefinitions;
+import exiledsector.items.anchor.WormholeAnchorDefinitions;
 import exiledsector.loot.DropOrigin;
 import exiledsector.loot.Loot;
 import exiledsector.loot.LootDelivery;

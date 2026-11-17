@@ -10,12 +10,12 @@ import exiledsector.charts.officer.reward.OfficerRewardPool;
 import exiledsector.charts.officer.reward.RewardContext;
 import exiledsector.charts.officer.reward.RewardGroup;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.items.DroppableDefinitions;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemUnlock;
-import exiledsector.items.UniqueDropRoll;
+import exiledsector.items.drop.DroppableDefinitions;
+import exiledsector.items.drop.UniqueDropRoll;
 import exiledsector.loot.Loot;
 
 import java.util.ArrayList;

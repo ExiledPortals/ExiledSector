@@ -7,9 +7,9 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
-import exiledsector.items.ItemRarity;
-import exiledsector.items.MaterialItems;
-import exiledsector.items.ShipSchematic;
+import exiledsector.items.crafting.material.MaterialItems;
+import exiledsector.items.modifier.ItemRarity;
+import exiledsector.items.schematic.ShipSchematic;
 import exiledsector.ui.CampaignMessages;
 import exiledsector.ui.cargo.MaterialDropAnnouncer;
 

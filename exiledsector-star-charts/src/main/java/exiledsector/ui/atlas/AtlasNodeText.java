@@ -20,7 +20,7 @@ import exiledsector.charts.atlas.AtlasSpecial;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.OfficerText;
-import exiledsector.items.MaterialItems;
+import exiledsector.items.crafting.material.MaterialItems;
 import exiledsector.ui.socket.BenchModeSupport;
 
 import java.util.ArrayList;

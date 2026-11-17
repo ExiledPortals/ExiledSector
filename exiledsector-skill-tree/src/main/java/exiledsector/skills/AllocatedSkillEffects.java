@@ -4,13 +4,13 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.special.SpecialSkillEffect;
-import exiledsector.items.DoctrineOverrides;
-import exiledsector.items.EmptyShells;
+import exiledsector.items.subroutine.doctrine.DoctrineOverrides;
+import exiledsector.items.subroutine.EmptyShells;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
 import exiledsector.items.NodeSocketable;
-import exiledsector.items.RootConduits;
-import exiledsector.items.Subroutine;
+import exiledsector.items.subroutine.RootConduits;
+import exiledsector.items.subroutine.Subroutine;
 import exiledsector.persistence.ShipSkillDataManager;
 
 import java.util.ArrayList;

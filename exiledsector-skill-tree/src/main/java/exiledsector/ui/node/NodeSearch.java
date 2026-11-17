@@ -2,7 +2,7 @@ package exiledsector.ui.node;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.i18n.StyledText;
-import exiledsector.items.DoctrineOverrides;
+import exiledsector.items.subroutine.doctrine.DoctrineOverrides;
 import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.LogisticsNodes;
 import exiledsector.skills.ShipSkillData;

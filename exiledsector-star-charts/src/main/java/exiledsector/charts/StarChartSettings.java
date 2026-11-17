@@ -3,7 +3,7 @@ package exiledsector.charts;
 import exiledsector.ModSettings;
 import exiledsector.i18n.Translation;
 import exiledsector.domain.DomainSwitch;
-import exiledsector.items.StarChart;
+import exiledsector.items.starchart.StarChart;
 import exiledsector.modifiers.TierGroup;
 
 import java.util.List;

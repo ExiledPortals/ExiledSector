@@ -1,9 +1,9 @@
 package exiledsector.charts.anomaly.forge;
 
 import exiledsector.i18n.Translation;
-import exiledsector.items.ForgeChoice;
-import exiledsector.items.ForgeOperation;
 import exiledsector.items.Item;
+import exiledsector.items.crafting.ForgeChoice;
+import exiledsector.items.crafting.ForgeOperation;
 
 import java.util.ArrayList;
 import java.util.List;

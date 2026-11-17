@@ -8,7 +8,7 @@ import exiledsector.charts.effect.ChartPlayerModifiers;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
-import exiledsector.items.StarChart;
+import exiledsector.items.starchart.StarChart;
 
 import java.util.Objects;
 

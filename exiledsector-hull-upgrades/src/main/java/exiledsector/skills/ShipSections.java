@@ -2,12 +2,12 @@ package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
-import exiledsector.items.HullItem;
-import exiledsector.skills.tags.NodeRequirements;
-import exiledsector.skills.tags.ShipProfile;
-import exiledsector.items.ShipSection;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
+import exiledsector.items.hull.HullItem;
+import exiledsector.items.hull.ShipSection;
+import exiledsector.skills.tags.NodeRequirements;
+import exiledsector.skills.tags.ShipProfile;
 
 import java.util.ArrayList;
 import java.util.Collection;

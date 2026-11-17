@@ -7,6 +7,9 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.items.modifier.SlottedLine;
+import exiledsector.items.modifier.SlottedRows;
+import exiledsector.items.name.ItemName;
 import exiledsector.ui.TooltipTextSize;
 import exiledsector.ui.VanillaText;
 

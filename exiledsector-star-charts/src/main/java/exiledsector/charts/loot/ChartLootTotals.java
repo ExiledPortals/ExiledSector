@@ -4,7 +4,7 @@ import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.content.ChartPoi;
-import exiledsector.items.StarChart;
+import exiledsector.items.starchart.StarChart;
 import exiledsector.loot.DropType;
 
 import java.util.ArrayList;

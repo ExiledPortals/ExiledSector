@@ -3,10 +3,10 @@ package exiledsector.charts.loot;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.Seeds;
-import exiledsector.items.CraftingContext;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
-import exiledsector.items.Nanoswarm;
+import exiledsector.items.crafting.CraftingContext;
+import exiledsector.items.crafting.material.Nanoswarm;
 
 import java.util.Random;
 import java.util.Set;

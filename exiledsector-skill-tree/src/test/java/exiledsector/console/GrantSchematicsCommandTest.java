@@ -1,8 +1,8 @@
 package exiledsector.console;
 
-import exiledsector.items.DeintegrationSchematic;
-import exiledsector.items.LogisticsSchematic;
-import exiledsector.items.ShipSchematic;
+import exiledsector.items.schematic.DeintegrationSchematic;
+import exiledsector.items.schematic.LogisticsSchematic;
+import exiledsector.items.schematic.ShipSchematic;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;

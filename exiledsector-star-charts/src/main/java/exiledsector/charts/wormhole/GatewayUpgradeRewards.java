@@ -4,8 +4,8 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.atlas.AtlasState;
-import exiledsector.items.MaterialItems;
-import exiledsector.items.WormholeTechItems;
+import exiledsector.items.crafting.material.MaterialItems;
+import exiledsector.items.starchart.WormholeTechItems;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;

@@ -1,7 +1,7 @@
 package exiledsector.effects;
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledsector.items.DoctrineOverrides;
+import exiledsector.items.subroutine.doctrine.DoctrineOverrides;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ReleasedNodes;

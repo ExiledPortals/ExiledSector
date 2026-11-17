@@ -1,12 +1,12 @@
 package exiledsector.ui.socket;
 
 import exiledsector.i18n.RealCatalogue;
-import exiledsector.items.CorruptionOutcome;
-import exiledsector.items.Nanoswarm;
-import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.ItemNature;
-import exiledsector.items.MaterialItems;
-import exiledsector.items.SlottedRows;
+import exiledsector.items.crafting.CorruptionOutcome;
+import exiledsector.items.crafting.material.CraftingInhibitor;
+import exiledsector.items.crafting.material.MaterialItems;
+import exiledsector.items.crafting.material.Nanoswarm;
+import exiledsector.items.modifier.SlottedRows;
 import exiledsector.modifiers.ModifierSlot;
 import org.json.JSONObject;
 import org.junit.jupiter.params.ParameterizedTest;

@@ -17,7 +17,7 @@ import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.anomaly.breach.EventHorizon;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.effects.TechMiningItemListener;
-import exiledsector.items.ItemChances;
+import exiledsector.items.drop.ItemChances;
 import exiledsector.items.ItemData;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.charts.run.ChartRun;

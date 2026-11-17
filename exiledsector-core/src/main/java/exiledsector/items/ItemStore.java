@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import exiledsector.ExiledSector;
+import exiledsector.items.schematic.RefitSchematic;
 import exiledsector.persistence.SaveData;
 import org.apache.log4j.Logger;
 
@@ -288,7 +289,7 @@ public final class ItemStore {
         return legacyCount;
     }
 
-    void addLegacyHullUpgrades(String hullSizeName, int count) {
+    public void addLegacyHullUpgrades(String hullSizeName, int count) {
         if (hullUpgrades == null) {
             hullUpgrades = new LinkedHashMap<>();
         }

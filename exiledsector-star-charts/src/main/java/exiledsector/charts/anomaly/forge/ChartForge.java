@@ -5,12 +5,12 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
-import exiledsector.items.CraftingMaterials;
-import exiledsector.items.ForgeChoice;
 import exiledsector.items.Item;
-import exiledsector.items.ItemDisassembly;
-import exiledsector.items.SocketCustody;
 import exiledsector.items.UseVerdict;
+import exiledsector.items.crafting.ForgeChoice;
+import exiledsector.items.crafting.ItemDisassembly;
+import exiledsector.items.crafting.material.CraftingMaterials;
+import exiledsector.items.custody.SocketCustody;
 
 import java.util.Random;
 

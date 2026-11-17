@@ -7,7 +7,7 @@ import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.MagneticStorm;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.wormhole.GatewayTierLimit;
-import exiledsector.items.StarChart;
+import exiledsector.items.starchart.StarChart;
 import exiledsector.loot.DropType;
 import org.json.JSONArray;
 import org.json.JSONObject;

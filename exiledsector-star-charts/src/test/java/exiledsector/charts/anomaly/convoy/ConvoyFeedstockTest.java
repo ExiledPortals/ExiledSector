@@ -7,7 +7,7 @@ import exiledsector.charts.ChartTables;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTiers;
-import exiledsector.items.InfusedFeedstock;
+import exiledsector.items.crafting.material.InfusedFeedstock;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;

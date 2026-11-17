@@ -1,6 +1,6 @@
 package exiledsector.skills;
 
-import exiledsector.items.DoctrineOverrides;
+import exiledsector.items.subroutine.doctrine.DoctrineOverrides;
 
 import java.util.ArrayList;
 import java.util.Collection;

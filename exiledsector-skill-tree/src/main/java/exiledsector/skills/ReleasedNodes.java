@@ -1,7 +1,7 @@
 package exiledsector.skills;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
-import exiledsector.items.CargoRefund;
+import exiledsector.items.custody.CargoRefund;
 
 import java.util.List;
 

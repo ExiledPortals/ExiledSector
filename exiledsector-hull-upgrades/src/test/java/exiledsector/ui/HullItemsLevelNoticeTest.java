@@ -2,7 +2,7 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
-import exiledsector.items.HullUpgradesSetting;
+import exiledsector.items.hull.HullUpgradesSetting;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
