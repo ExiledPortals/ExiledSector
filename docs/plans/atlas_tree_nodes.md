@@ -138,7 +138,11 @@ Notables:
 
 Status: off for now (2026-11-16).
 
-Reward: 50% increased quantity of crafting items found in the system, behind magnetic fields that blind sensors. No reward of its own yet.
+Reward: 20% increased quantity of crafting items found in the system, behind magnetic fields that blind sensors. No reward of its own yet.
+
+Change to the anomaly: its crafting item line drops from 50% to 20% (`CHART_CRAFTING_ITEM_PERCENT` in its `effects` in `chart_anomalies.csv`), and Charged Fields brings it back to 50%.
+
+Its nodes are passive like the anomaly itself: none asks the player to fly into a field or time an aurora. It gets a handful of notables rather than a full set.
 
 Small nodes:
 
@@ -147,8 +151,14 @@ Small nodes:
 
 Notables:
 
-- Charged Fields: "Magnetic Storms in your Star Charts have 2 additional magnetic fields" and "Your Star Charts with a Magnetic Storm have 30% increased quantity of crafting items found".
-- Shielded Arrays: "Your fleet's sensors are unaffected by magnetic fields in your Star Charts" and "Enemy fleets' sensors are unaffected by magnetic fields in your Star Charts".
+- Charged Fields: "Your Star Charts with a Magnetic Storm have 30% increased quantity of crafting items found" (new, joins its `effects` line).
+- Static Harvest: "Your Star Charts with a Magnetic Storm have 30% increased quantity of feedstock found" (new, `CHART_FEEDSTOCK_PERCENT` read only with a Magnetic Storm).
+- Ion Front (Storm Front): "Storm Fronts in your Star Charts with a Magnetic Storm set off auroras in the magnetic fields they cross" and "Battles in Storm Fronts in your Star Charts with a Magnetic Storm drop 50% increased quantity of crafting items" (new). Its auroras are vanilla magnetic storms, blinding sensors as usual.
+- Geomagnetic Surge (Stellar Flares): "Corona flares in your Star Charts with a Magnetic Storm set off auroras" and "Hull items dropped in your Star Charts with a Magnetic Storm and Stellar Flares roll 1 additional modifier twice, keeping the better value" (new). Its auroras are vanilla magnetic storms, blinding sensors as usual. The rolls add to Stellar Flares' own, so 2 modifiers roll twice.
+
+Idea for a fifth, not decided:
+
+- Lodestone Seams (Excavation Sites): "Shafts at Excavation Sites in your Star Charts with a Magnetic Storm drop 1 additional inhibitor".
 
 ### Stellar Flares (`stellar_flares`)
 
@@ -329,10 +339,18 @@ Small nodes:
 - Storm Item Quantity: "15% increased quantity of items dropped by battles in Storm Fronts in your Star Charts" (`CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT`).
 - Storm Front Size: "20% increased Storm Front size in your Star Charts" (`CHART_STORM_FRONT_SIZE_PERCENT`).
 
+Its nodes are about fighting in the storm. Ion Front, its pairing with the Magnetic Storm, is listed there.
+
 Notables:
 
-- Lightning Rod: "50% increased frequency of storm strikes in your Star Charts" (`CHART_STORM_STRIKE_FREQUENCY_PERCENT`) and "30% increased quantity of items dropped by battles in Storm Fronts in your Star Charts".
-- Stalled Front: "Storm Fronts in your Star Charts take 15 additional days to cross the system".
+- Lightning Rod: "50% increased frequency of storm strikes in your Star Charts" (`CHART_STORM_STRIKE_FREQUENCY_PERCENT`) and "30% increased quantity of items dropped by battles in Storm Fronts in your Star Charts" (`CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT`).
+- Supercell: "100% increased Storm Front size in your Star Charts" (`CHART_STORM_FRONT_SIZE_PERCENT`).
+- Eye of the Storm: "Storm Fronts in your Star Charts have 80% reduced speed while your fleet is inside them" (new, slows the band's movement in `StormFrontTerrainPlugin`; the crossing still ends at the far edge, later by however long the player stayed inside, and chart intel's days follow).
+- [REDACTED] Front: "Enemy fleets you fight in Storm Fronts in your Star Charts are joined by 5 to 10 frigates of what was left behind" (new). Remnant frigates join the enemy side when the battle in the storm starts. As with the [REDACTED] Sleepers, the tooltip never names the faction, and each joining ship counts as Remnant for the Remnant wormhole anchor's chance per 100 deployment points lost (`FleetFactions.recordMemberFactions`). The ships keep their AI core captains, so they can drop AI cores as vanilla Remnant ships do.
+- Captured Front (Black Hole): "Storm Fronts in your Star Charts with a Black Hole circle the hole instead of crossing the system" and "Hull items dropped by battles in Storm Fronts in your Star Charts with a Black Hole have 10% chance to have an immutable modifier" (new). The front orbits the hole through its derelicts for the whole run and never leaves (`StormPath`), so chart intel says where it is next rather than when it leaves.
+- Static Dust (Dense Nebula): "Battles won in Storm Fronts in your Star Charts with a Dense Nebula grant 2 additional Settling Dust stacks" and "+3 to maximum Settling Dust stacks in your Star Charts with a Storm Front" (new, adds to the stack count and `MAX_DUST`).
+- Solar Front (Stellar Flares): "Biome modifiers on hull items dropped by battles in Storm Fronts in your Star Charts with Stellar Flares roll twice, keeping the better value" (new, in `StormLoot`). The front's clouds and flashes turn red and orange, on the map and in battle (`StormFrontTerrainPlugin`, `StormOverlay`).
+- Thunder Duel (Atlas officers): "Atlas officers you defeat in Storm Fronts in your Star Charts drop 1 additional item from their reward pool" (new). The officers don't seek out the storm: fighting them in it is up to the player.
 
 ### Derelict Forge (`derelict_forge`)
 
