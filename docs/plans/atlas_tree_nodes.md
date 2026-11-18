@@ -85,6 +85,7 @@ Notables:
 
 - Locked Wreckage: "Immutable hull items from derelicts around Black Holes in your Star Charts have 2 immutable modifiers".
 - Deep Wreckage: "Derelicts around Black Holes in your Star Charts are guarded by an additional fleet" and "100% increased chance for them to hold immutable hull items".
+- Lost Observatory: "One of the derelicts around Black Holes in your Star Charts is always a research station" (new). `StarAnomalies.scatterDerelicts` places the Neutron Star's research station (`RESEARCH_STATION`) as one of the derelicts, so it counts toward their number, gets their chance to hold immutable hull items and sits inside Event Horizon's breach.
 
 ### Neutron Star (`neutron_star`)
 
@@ -120,19 +121,13 @@ Notables:
 
 ### Asteroid Storm (`asteroid_storm`)
 
-Status: off for now (2026-11-16).
+Status: retired 2026-11-18 (`retire-asteroid-storm`, merged into `parallel-work`). It wasn't interesting enough to keep, so it gets no nodes and has left the game.
 
-Reward: caches hidden in its belts. It has no reward of its own yet; `anomaly_rewards.md` suggests the belt caches hold inhibitors, which its notable takes up.
+Retiring it:
 
-Small nodes:
-
-- The chance node.
-- Belt Cache Quantity: "Asteroid Storms in your Star Charts hide 2 additional belt caches" (new).
-
-Notables:
-
-- Prospector's Find: "Belt caches in your Star Charts contain an inhibitor".
-- Rockfall: "50% increased frequency of asteroid impacts in your Star Charts" and "40% increased quantity of items found in belt caches in your Star Charts".
+1. [x] Remove the anomaly: its `chart_anomalies.csv` row, `AsteroidStorm` and its entry in `ChartAnomalies`, its case in `AtlasSystemArt`, its name and description strings (en and zh_CN), its atlas marker icon (`graphics/exiledSector/anomalies/asteroid_storm.png`), its entry in `tools/editor_vocabulary.json`, and the mentions in `anomalies/overview.md` and `atlas.md`. Tests that use it as a sample anomaly switch to another one. Built: also `AnomalyLayoutSite.outerRadius` and `angle()`, which only it used; tests now sample Magnetic Storm or Anomalous Debris, and `AtlasFingerprintTest` has the new atlas hash, so atlas systems that would have rolled it roll differently, as when Powerful Boss went.
+2. [x] Retire its catalyst, the Shattered Terminus: its `atlas_catalysts.csv` row goes, while its `special_items.csv` row stays as a stub so a held one still loads, and a load sweep removes it from cargo and storage (save compatibility rule). Built: the row is a retired stub (`exiledSector_retired_id` tag, `BaseSpecialItemPlugin`), swept by `RetiredItems.removeFrom` from `ExiledSectorModPlugin.onGameLoad`; its catalyst name strings went, since the stub names itself. A Shattered Terminus left switched on is skipped and switched off by `ActiveCatalysts`. Tested in `AtlasCatalystsTest`.
+3. [x] Sweep old atlases on load: an Asteroid Storm marker on an atlas system is dropped, and the system keeps its other anomalies. A run open in such a system needs nothing, since run state isn't save compatible. Built: `asteroid_storm` joins `AtlasState.REMOVED_ANOMALY_IDS`, dropped by `AtlasState.repaired()`; tested in `AtlasAnomaliesTest.loadingDropsRecordsOfRemovedAnomalies`.
 
 ### Magnetic Storm (`magnetic_storm`)
 
@@ -362,15 +357,23 @@ Status: off for now (2026-11-16).
 
 Reward: the forge's programs, run on a hull item of the player's choosing.
 
+Change to the anomaly (overhaul, 2026-11-18):
+
+- The forge no longer grants commodities: its `CHART_RESOURCE_PERCENT:100` effect leaves `chart_anomalies.csv`, since its programs no longer cost metals.
+- Its guards' drone escort is 80% of the Star Chart Boss's fleet size (`max(bossSize, fleetSize)`, as the other anomalies' boss-sized fleets are), up from 50% of a chart fleet's (`ForgeRules.ESCORT_SIZE_SHARE`). The Guardian stays.
+- Anchor Reroll and Retemper are deleted (`chart_forge_programs.csv`, `ForgeOperation`, their strings and route texts).
+- Every forge offers all of its programs instead of rolling 3: Graft, Excise and Perfect. The program roll, its weights, tiers and `ForgeRules.programCount` go, and so does `CHART_FORGE_PROGRAMS`.
+- A forge in a biome system offers Biome Infusion instead of Graft: "Adds the system's biome modifier for the item's part to an item with room for it." It is the Abyssal Research Complex's Abyssal Infusion generalised to the system's biome (`ForgeInfusions`, with the modifier from `BiomeModifiers.modifierFor` for the system's region), refused on the same terms. A system whose region has no biome modifiers keeps Graft. It is named Biome Infusion because the Infused Crafting tray already has a Biome Graft, which trades a random modifier for a biome modifier.
+- Every program costs a fixed amount, with no metals, rare metals or tier scaling: Graft 300 Nanite Feedstock, Excise 500 Nanite Feedstock, Perfect 1000 Nanite Feedstock, and Biome Infusion 500 of each infused feedstock (Threat-, Shroud- and Phase-infused). The cost columns in `chart_forge_programs.csv` become Nanite Feedstock and infused feedstock; Abyssal Infusion keeps its 500 Nanite Feedstock at the Research Complex.
+
 Small nodes:
 
 - The chance node.
-- Forge Cost: "20% reduced Derelict Forge program costs in your Star Charts" (`CHART_FORGE_COST_PERCENT`).
 
 Notables:
 
-- Unlocked Library: "Derelict Forges in your Star Charts offer 2 additional programs" (`CHART_FORGE_PROGRAMS`).
-- Overclocked Forge: "Derelict Forges in your Star Charts can run 1 additional program" (`CHART_FORGE_RUNS`) and "Derelict Forge guards in your Star Charts have 50% increased fleet size".
+- Recycled Stock: "20% reduced feedstock cost of Derelict Forge programs in your Star Charts" (`CHART_FORGE_COST_PERCENT`, applied to both Nanite and infused feedstock).
+- Overclocked Forge: "Derelict Forges in your Star Charts can run 1 additional program" (`CHART_FORGE_RUNS`).
 
 ### Depot (`listening_post`)
 
