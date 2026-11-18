@@ -179,7 +179,7 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
 
     @Override
     public void processInput(List<InputEventAPI> events) {
-        if (panelPosition == null) {
+        if (panelPosition == null || fade.handedOver()) {
             return;
         }
         for (InputEventAPI event : events) {
@@ -194,7 +194,7 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
                 pressedCard = cardAt(event.getX(), event.getY());
             } else if (event.isLMBUpEvent()) {
                 Card released = cardAt(event.getX(), event.getY());
-                if (released != null && released == pressedCard && !fade.closing() && !picked) {
+                if (released != null && released == pressedCard && !fade.closing() && !picked && !host.replacing()) {
                     pick(released);
                 }
                 pressedCard = null;
@@ -206,8 +206,8 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
     }
 
     private void decideLater() {
-        if (!fade.closing() && !picked) {
-            fade.close();
+        if (!fade.closing() && !picked && !host.replacing()) {
+            leave();
         }
     }
 
@@ -215,7 +215,16 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
         picked = true;
         SkillTreeSounds.socketed();
         onPick.accept(OfficerRewardPool.picked(card.offer(), random));
-        fade.close();
+        leave();
+    }
+
+    private void leave() {
+        if (returnTo == null) {
+            fade.close();
+        } else {
+            fade.handOver();
+            host.switchTo(returnTo);
+        }
     }
 
     private Card cardAt(float x, float y) {
@@ -235,12 +244,11 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
             return;
         }
         if (fade.advance(amount)) {
-            if (returnTo != null) {
-                host.switchTo(returnTo);
-            } else {
-                host.close();
-            }
+            host.close();
             return;
+        }
+        if (fade.fullyOpen()) {
+            host.shown();
         }
         hoveredCard = mouseKnown && !fade.closing() ? cardAt(mouseX, mouseY) : null;
     }
@@ -254,7 +262,7 @@ public final class OfficerRewardPicker extends BaseCustomUIPanelPlugin implement
         if (alpha <= 0f) {
             return;
         }
-        frame.drawBackdrop(alpha);
+        frame.drawBackdrop(alpha, !host.replacing());
         float top = frame.chromeTop();
         titleLabel.setAlpha(alpha).draw(frame.chromeLeft(), top);
         hintLabel.setAlpha(alpha).draw(frame.chromeLeft(), top - titleLabel.height() - TITLE_GAP);

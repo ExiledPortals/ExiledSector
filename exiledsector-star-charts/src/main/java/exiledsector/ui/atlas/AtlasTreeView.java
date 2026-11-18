@@ -1,9 +1,12 @@
 package exiledsector.ui.atlas;
 
+import com.fs.starfarer.api.graphics.SpriteAPI;
 import exiledsector.charts.tree.AtlasBodyArt;
+import exiledsector.charts.tree.AtlasLinkPath;
 import exiledsector.charts.tree.AtlasTreeBodies;
 import exiledsector.charts.tree.AtlasTreeBodies.Body;
 import exiledsector.charts.tree.AtlasTreeBodies.Link;
+import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.decoration.AtlasShipGroup;
@@ -15,8 +18,11 @@ import exiledsector.ui.node.ConnectorPainter.ConnectorStyle;
 import exiledsector.ui.node.ConnectorPainter.EdgeFill;
 import exiledsector.ui.node.NodeBeams;
 import exiledsector.ui.node.NodeRingArt;
+import exiledsector.ui.node.SkillTreeNodeGeometry;
+import exiledsector.ui.util.TexturedQuadBatch;
 
 import java.awt.Color;
+import java.util.Arrays;
 
 final class AtlasTreeView {
 
@@ -33,18 +39,23 @@ final class AtlasTreeView {
     private static final float MIN_HIT_PIXELS = 8f;
     private static final float HIT_SCALE = 1.15f;
     private static final float SHIP_GROUP_HIT_SCALE = 1.1f;
-    private static final float LINK_GAP_SCALE = 1.05f;
+    private static final float STAR_GAP_SCALE = 1.05f;
     private static final float HIGHWAY_RING_SCALE = 1.35f;
+    private static final float BODY_RING_SCALE = 1.12f;
     private static final float MIN_PATH_STEP_PIXELS = 4f;
-    private static final int ARC_POINTS = 24;
-    private static final float AVAILABLE_RING_SCALE = 1.45f;
-    private static final float HOVER_RING_SCALE = 1.65f;
+    private static final int MAX_PATH_POINTS = 32;
+    private static final float HOVER_RING_SCALE = 1.25f;
     private static final float HOVER_RING_ALPHA = 0.8f;
     private static final float SPIN_DEGREES_PER_SECOND = 12f;
+    private static final float OBJECT_SPIN_SHARE = 0.2f;
     private static final float DULL_SHIP_ALPHA = 0.55f;
     private static final float AVAILABLE_SHIP_ALPHA = 0.8f;
     private static final double ANIMATION_PERIOD_SECONDS = 3600.0;
     private static final float[] CIRCLE = NodeRingArt.outlineRadii((cos, sin) -> 1f);
+    private static final String CORONA_PATH = "graphics/fx/hit_glow.png";
+    private static final float CORONA_SCALE = 3.2f;
+    private static final float DULL_CORONA_ALPHA = 0.16f;
+    private static final float FULL_CORONA_ALPHA = 0.55f;
 
     private final AtlasTreeBodies bodies;
     private final AtlasBodyPainter painter = new AtlasBodyPainter();
@@ -55,8 +66,13 @@ final class AtlasTreeView {
     private final Color[] siteLights;
     private final float[] spinSeeds;
     private final AtlasShipGroup[] shipGroups;
-    private final float[] arcXs = new float[ARC_POINTS];
-    private final float[] arcYs = new float[ARC_POINTS];
+    private final float[] pathXs = new float[MAX_PATH_POINTS];
+    private final float[] pathYs = new float[MAX_PATH_POINTS];
+    private final SpriteCache spriteCache = new SpriteCache(AtlasTreeView.class);
+    private final TexturedQuadBatch coronaBatch = new TexturedQuadBatch();
+    private final float[] wheelReach;
+    private final int[] wheelMembers;
+    private final int[] wheelAllocated;
     private boolean[] allocated = new boolean[0];
     private double elapsedSeconds;
 
@@ -68,12 +84,41 @@ final class AtlasTreeView {
         this.siteLights = new Color[count];
         this.spinSeeds = new float[count];
         this.shipGroups = new AtlasShipGroup[count];
+        this.wheelReach = new float[count];
+        this.wheelMembers = new int[count];
+        this.wheelAllocated = new int[count];
         for (Body body : bodies.bodies()) {
             colours[body.index()] = parseColour(body.colour(), DEFAULT_COLOUR);
             siteLights[body.index()] = parseColour(body.art().lightColour(), null);
             spinSeeds[body.index()] = Math.floorMod(body.nodeId().hashCode(), 360);
             shipGroups[body.index()] = shipGroupOf(body);
         }
+        measureWheels();
+    }
+
+    private void measureWheels() {
+        for (Body body : bodies.bodies()) {
+            if (body.wheel() == AtlasTreeBodies.NO_WHEEL) {
+                continue;
+            }
+            Body centre = bodies.bodies().get(body.wheel());
+            float reach = (float) Math.hypot(body.x() - centre.x(), body.y() - centre.y()) + body.art().size();
+            wheelReach[centre.index()] = Math.max(wheelReach[centre.index()], reach);
+            wheelMembers[centre.index()]++;
+        }
+        for (Body body : bodies.bodies()) {
+            if (wheelMembers[body.index()] > 0) {
+                wheelMembers[body.index()]++;
+                wheelReach[body.index()] = Math.max(wheelReach[body.index()], body.art().size());
+            }
+        }
+    }
+
+    private int wheelCentreOf(Body body) {
+        if (body.wheel() != AtlasTreeBodies.NO_WHEEL) {
+            return body.wheel();
+        }
+        return wheelMembers[body.index()] > 0 ? body.index() : AtlasTreeBodies.NO_WHEEL;
     }
 
     private static AtlasShipGroup shipGroupOf(Body body) {
@@ -81,6 +126,7 @@ final class AtlasTreeView {
         AtlasShipGroup.Mode mode = switch (art.kind()) {
             case FLEET -> AtlasShipGroup.Mode.UNDER_WAY;
             case DERELICTS -> AtlasShipGroup.Mode.DORMANT;
+            case SHROUDED -> AtlasShipGroup.Mode.SWIMMING;
             case STATION -> AtlasShipGroup.Mode.STATION;
             default -> null;
         };
@@ -145,67 +191,109 @@ final class AtlasTreeView {
         if (allocated.length != bodies.bodies().size()) {
             allocated = new boolean[bodies.bodies().size()];
         }
+        Arrays.fill(wheelAllocated, 0);
         for (Body body : bodies.bodies()) {
             allocated[body.index()] = states.allocated(body.nodeId());
+            int centre = wheelCentreOf(body);
+            if (allocated[body.index()] && centre != AtlasTreeBodies.NO_WHEEL) {
+                wheelAllocated[centre]++;
+            }
         }
+        renderCoronas(viewport, alpha);
         for (Body body : bodies.bodies()) {
             renderBody(viewport, body, states, body.nodeId().equals(hoveredNodeId), seconds, alpha);
         }
         for (Link link : bodies.links()) {
-            if (link.alongRing()) {
-                addArc(viewport, link, alpha);
-            } else {
-                addStraight(viewport, link, alpha);
-            }
+            addLink(viewport, link, alpha);
         }
         beams.flush();
     }
 
-    private void addStraight(TreeViewport viewport, Link link, float alpha) {
-        Body first = bodies.bodies().get(link.first());
-        Body second = bodies.bodies().get(link.second());
-        float firstX = viewport.screenX(first.x());
-        float firstY = viewport.screenY(first.y());
-        float secondX = viewport.screenX(second.x());
-        float secondY = viewport.screenY(second.y());
-        if (!viewport.overlaps(Math.min(firstX, secondX), Math.min(firstY, secondY), Math.max(firstX, secondX), Math.max(firstY, secondY))) {
+    private void renderCoronas(TreeViewport viewport, float alpha) {
+        SpriteAPI glow = spriteCache.texture(CORONA_PATH);
+        if (glow == null) {
             return;
         }
-        connectors.paintStraight(new ConnectorEndpoint(firstX, firstY, gapOf(first, viewport)), new ConnectorEndpoint(secondX, secondY,
-                gapOf(second, viewport)), style(viewport, link, alpha));
+        try (TexturedQuadBatch quads = coronaBatch.beginAdditive(glow)) {
+            for (Body body : bodies.bodies()) {
+                int index = body.index();
+                if (wheelMembers[index] == 0) {
+                    continue;
+                }
+                float screenX = viewport.screenX(body.x());
+                float screenY = viewport.screenY(body.y());
+                float size = wheelReach[index] * CORONA_SCALE * viewport.zoom();
+                if (!viewport.isVisible(screenX, screenY, size / 2f)) {
+                    continue;
+                }
+                float share = wheelAllocated[index] / (float) wheelMembers[index];
+                float coronaAlpha = DULL_CORONA_ALPHA + (FULL_CORONA_ALPHA - DULL_CORONA_ALPHA) * share;
+                quads.quadAtCenter(screenX, screenY, size, size, 0f, colours[index], alpha * coronaAlpha);
+            }
+        }
     }
 
-    private void addArc(TreeViewport viewport, Link link, float alpha) {
-        Body star = bodies.star();
+    private void addLink(TreeViewport viewport, Link link, float alpha) {
+        AtlasLinkPath path = link.path();
+        float left = viewport.screenX(path.minX());
+        float right = viewport.screenX(path.maxX());
+        float top = viewport.screenY(path.maxY());
+        float bottom = viewport.screenY(path.minY());
+        if (!viewport.overlaps(Math.min(left, right), Math.min(top, bottom), Math.max(left, right), Math.max(top, bottom))) {
+            return;
+        }
         Body first = bodies.bodies().get(link.first());
         Body second = bodies.bodies().get(link.second());
-        float radius = bodies.ringRadius(link);
-        double fromTurn = Math.atan2(first.y() - star.y(), first.x() - star.x());
-        double toTurn = Math.atan2(second.y() - star.y(), second.x() - star.x());
-        double sweep = Math.IEEEremainder(toTurn - fromTurn, Math.PI * 2.0);
-        float middleX = viewport.screenX(star.x() + radius * (float) Math.cos(fromTurn + sweep / 2.0));
-        float middleY = viewport.screenY(star.y() + radius * (float) Math.sin(fromTurn + sweep / 2.0));
-        if (!viewport.isVisible(middleX, middleY, radius * viewport.zoom() * (float) Math.abs(sweep) * 2f)) {
+        float startGap = gapOf(first, viewport);
+        float endGap = gapOf(second, viewport);
+        ConnectorStyle style = style(viewport, link, alpha);
+        if (path.size() == 2) {
+            connectors.paintStraight(new ConnectorEndpoint(viewport.screenX(path.x(0)), viewport.screenY(path.y(0)), startGap),
+                    new ConnectorEndpoint(viewport.screenX(path.x(1)), viewport.screenY(path.y(1)), endGap), style);
             return;
         }
         int kept = 0;
-        for (int point = 0; point < ARC_POINTS; point++) {
-            double turn = fromTurn + sweep * point / (ARC_POINTS - 1);
-            float screenX = viewport.screenX(star.x() + radius * (float) Math.cos(turn));
-            float screenY = viewport.screenY(star.y() + radius * (float) Math.sin(turn));
-            boolean last = point == ARC_POINTS - 1;
-            boolean close = kept > 0 && Math.hypot(screenX - arcXs[kept - 1], screenY - arcYs[kept - 1]) < MIN_PATH_STEP_PIXELS;
-            if (close && !last) {
+        int last = Math.min(path.size(), MAX_PATH_POINTS) - 1;
+        for (int point = 0; point <= last; point++) {
+            float screenX = viewport.screenX(path.x(point));
+            float screenY = viewport.screenY(path.y(point));
+            boolean close = kept > 0 && Math.hypot(screenX - pathXs[kept - 1], screenY - pathYs[kept - 1]) < MIN_PATH_STEP_PIXELS;
+            if (close && point != last) {
                 continue;
             }
             if (close && kept > 1) {
                 kept--;
             }
-            arcXs[kept] = screenX;
-            arcYs[kept] = screenY;
+            pathXs[kept] = screenX;
+            pathYs[kept] = screenY;
             kept++;
         }
-        connectors.paintPath(arcXs, arcYs, kept, gapOf(first, viewport), gapOf(second, viewport), style(viewport, link, alpha));
+        connectors.paintPath(pathXs, pathYs, kept, lengthAlongPath(kept, true, startGap), lengthAlongPath(kept, false, endGap), style);
+    }
+
+    private float lengthAlongPath(int count, boolean fromStart, float reach) {
+        int step = fromStart ? 1 : -1;
+        int end = fromStart ? 0 : count - 1;
+        float walked = 0f;
+        for (int point = end; fromStart ? point + 1 < count : point > 0; point += step) {
+            int next = point + step;
+            float stepX = pathXs[next] - pathXs[point];
+            float stepY = pathYs[next] - pathYs[point];
+            float stepLength = (float) Math.hypot(stepX, stepY);
+            if (stepLength <= 0f) {
+                continue;
+            }
+            if (Math.hypot(pathXs[next] - pathXs[end], pathYs[next] - pathYs[end]) >= reach) {
+                float offsetX = pathXs[point] - pathXs[end];
+                float offsetY = pathYs[point] - pathYs[end];
+                float half = (offsetX * stepX + offsetY * stepY) / stepLength;
+                float rest = offsetX * offsetX + offsetY * offsetY - reach * reach;
+                float along = -half + (float) Math.sqrt(Math.max(0f, half * half - rest));
+                return walked + Math.max(0f, Math.min(stepLength, along));
+            }
+            walked += stepLength;
+        }
+        return walked;
     }
 
     private ConnectorStyle style(TreeViewport viewport, Link link, float alpha) {
@@ -213,16 +301,33 @@ final class AtlasTreeView {
         return new ConnectorStyle(new ConnectorFade(kind, false, false, false, false), EdgeFill.NONE, viewport.zoom(), alpha);
     }
 
+    private static float screenRadiusOf(Body body, TreeViewport viewport) {
+        return Math.max(body.art().size() * viewport.zoom(), MIN_BODY_PIXELS);
+    }
+
+    private static float ringRadiusOf(Body body, TreeViewport viewport) {
+        float scale = body.highway() ? HIGHWAY_RING_SCALE : BODY_RING_SCALE;
+        return NodeBeams.huggingRingRadius(screenRadiusOf(body, viewport) * scale, NodeBeams.widthScale(viewport.zoom()));
+    }
+
     private static float gapOf(Body body, TreeViewport viewport) {
-        float screenRadius = Math.max(body.art().size() * viewport.zoom(), MIN_BODY_PIXELS);
-        return screenRadius * (body.highway() ? HIGHWAY_RING_SCALE : LINK_GAP_SCALE);
+        if (body.art().kind() == AtlasBodyArt.Kind.STAR) {
+            return screenRadiusOf(body, viewport) * STAR_GAP_SCALE;
+        }
+        float ringOuterEdge = NodeBeams.ringOuterEdge(ringRadiusOf(body, viewport), NodeBeams.widthScale(viewport.zoom()));
+        return NodeBeams.laneReach(ringOuterEdge, SkillTreeNodeGeometry.laneWidthScale(viewport.zoom()));
+    }
+
+    private static float spinSpeed(Body body) {
+        float share = body.art().kind() == AtlasBodyArt.Kind.PLANET ? 1f : OBJECT_SPIN_SHARE;
+        return SPIN_DEGREES_PER_SECOND * share * body.art().spinRate() * (body.index() % 2 == 0 ? 1f : -1f);
     }
 
     private void renderBody(TreeViewport viewport, Body body, States states, boolean hovered, float seconds, float alpha) {
         int index = body.index();
         float screenX = viewport.screenX(body.x());
         float screenY = viewport.screenY(body.y());
-        float screenRadius = Math.max(body.art().size() * viewport.zoom(), MIN_BODY_PIXELS);
+        float screenRadius = screenRadiusOf(body, viewport);
         if (!viewport.isVisible(screenX, screenY, screenRadius * HOVER_RING_SCALE * 2f)) {
             return;
         }
@@ -231,7 +336,7 @@ final class AtlasTreeView {
         AtlasBodyPainter.Lighting lighting = lit ? AtlasBodyPainter.Lighting.LIT
                 : available ? AtlasBodyPainter.Lighting.AVAILABLE : AtlasBodyPainter.Lighting.DULL;
         float heading = body.art().heading();
-        float spin = spinSeeds[index] + seconds * SPIN_DEGREES_PER_SECOND * body.art().spinRate() * (index % 2 == 0 ? 1f : -1f);
+        float spin = spinSeeds[index] + seconds * spinSpeed(body);
         AtlasBodyPainter.Placement placement = new AtlasBodyPainter.Placement(screenX, screenY, screenRadius, heading, spin, spinSeeds[index]);
         painter.paint(body.art(), colours[index], siteLights[index], placement, lighting, seconds, alpha);
         AtlasShipGroup group = shipGroups[index];
@@ -239,16 +344,15 @@ final class AtlasTreeView {
             float shipAlpha = lit ? 1f : available ? AVAILABLE_SHIP_ALPHA : DULL_SHIP_ALPHA;
             group.render(screenX, screenY, viewport.zoom(), heading, alpha * shipAlpha);
         }
-        float widthScale = NodeBeams.widthScale(viewport.zoom());
-        if (body.highway()) {
-            NodeBeams.RingLight light = lit ? NodeBeams.RingLight.LIT : available ? NodeBeams.RingLight.BREATHING : NodeBeams.RingLight.DULL;
-            beams.nodeRing(screenX, screenY, screenRadius * HIGHWAY_RING_SCALE, CIRCLE, light, colours[index], body.nodeId(), alpha, widthScale);
-        } else if (available) {
-            beams.nodeRing(screenX, screenY, screenRadius * AVAILABLE_RING_SCALE, CIRCLE, NodeBeams.RingLight.BREATHING, colours[index], body.nodeId(),
-                    alpha, widthScale);
+        if (body.art().kind() == AtlasBodyArt.Kind.STAR) {
+            return;
         }
+        float widthScale = NodeBeams.widthScale(viewport.zoom());
+        float ringRadius = ringRadiusOf(body, viewport);
+        NodeBeams.RingLight light = lit ? NodeBeams.RingLight.LIT : available ? NodeBeams.RingLight.BREATHING : NodeBeams.RingLight.DULL;
+        beams.nodeRing(screenX, screenY, ringRadius, CIRCLE, light, colours[index], body.nodeId(), alpha, widthScale);
         if (hovered) {
-            beams.ring(screenX, screenY, screenRadius * HOVER_RING_SCALE, CIRCLE, beams.lit(HOVER_COLOUR), alpha * HOVER_RING_ALPHA, widthScale);
+            beams.ring(screenX, screenY, ringRadius * HOVER_RING_SCALE, CIRCLE, beams.lit(HOVER_COLOUR), alpha * HOVER_RING_ALPHA, widthScale);
         }
     }
 }

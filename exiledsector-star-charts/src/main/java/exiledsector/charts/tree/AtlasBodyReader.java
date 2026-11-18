@@ -33,7 +33,7 @@ public final class AtlasBodyReader {
 
     private static AtlasBody parseBody(JSONObject bodyJson) throws JSONException {
         return new AtlasBody(bodyJson.getString("id"), bodyJson.optBoolean("highway", false), bodyJson.optString("colour", null),
-                parseArt(bodyJson.optJSONObject("art")));
+                bodyJson.optString("wheel", null), Integer.signum(bodyJson.optInt("spiral", 0)), parseArt(bodyJson.optJSONObject("art")));
     }
 
     private static AtlasBodyArt parseArt(JSONObject artJson) throws JSONException {

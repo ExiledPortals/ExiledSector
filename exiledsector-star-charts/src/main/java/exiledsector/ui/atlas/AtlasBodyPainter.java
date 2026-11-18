@@ -6,10 +6,14 @@ import exiledsector.PlanetSpecs;
 import exiledsector.charts.tree.AtlasBodyArt;
 import exiledsector.skills.skilleffect.render.CategorySprite;
 import exiledsector.skills.skilleffect.render.SpriteCache;
+import exiledsector.ui.belt.AuroraBeltRenderer;
+import exiledsector.ui.belt.RadialBand;
+import exiledsector.ui.belt.RingBeltRenderer;
 import exiledsector.ui.decoration.AtmosphereRing;
 import exiledsector.ui.decoration.PlanetSphere;
 import exiledsector.ui.decoration.UnitSphere;
 import exiledsector.ui.util.SpriteDraw;
+import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
 import java.util.List;
@@ -31,15 +35,36 @@ final class AtlasBodyPainter {
     private static final float UNLIT_SITE_LIGHT_SHARE = 0.6f;
     private static final float BINARY_SEPARATION = 0.55f;
     private static final float BINARY_BODY_SHARE = 0.5f;
-    private static final float BINARY_DEGREES_PER_SECOND = 10f;
+    private static final float BINARY_DEGREES_PER_SECOND = 2f;
     private static final float PLANET_TURN_DEGREES_PER_SECOND = 5f;
     private static final float ATMOSPHERE_MIN_SHARE = 0.12f;
     private static final float SPRITE_FACING_OFFSET = -90f;
     private static final int SPHERE_DETAIL = 24;
+    private static final Color HORIZON_COLOUR = new Color(255, 170, 255);
+    private static final Color ACCRETION_COLOUR = new Color(167, 120, 167);
+    private static final String HALO_PATH = "graphics/fx/star_halo.png";
+    private static final String AURORA_PATH = "graphics/planets/aurorae.png";
+    private static final float HOLE_SHARE = 0.42f;
+    private static final float RIM_INNER = 0.9f;
+    private static final float RIM_OUTER = 1.15f;
+    private static final int ACCRETION_BANDS = 4;
+    private static final float ACCRETION_INNER_SHARE = 0.46f;
+    private static final float ACCRETION_BAND_STEP = 0.12f;
+    private static final float ACCRETION_BAND_WIDTH = 0.28f;
+    private static final float ACCRETION_SLOT_WIDTH = 256f;
+    private static final float ACCRETION_DEGREES_PER_SECOND = 14f;
+    private static final float ACCRETION_SLOWING_PER_BAND = 3f;
+    private static final float HORIZON_INNER = 1.3f;
+    private static final float HORIZON_OUTER = 2.4f;
+    private static final float HORIZON_ALPHA = 0.18f;
+    private static final float HALO_HALF_SIZE = 5f;
+    private static final float HALO_ALPHA = 0.55f;
 
     private final SpriteCache sprites = new SpriteCache(AtlasBodyPainter.class);
     private final UnitSphere sphere = new UnitSphere(SPHERE_DETAIL);
     private final CategorySprite atmosphereTexture = new CategorySprite(AtmosphereRing.TEXTURE_CATEGORY, AtmosphereRing.TEXTURE_ID);
+    private final CategorySprite dustRings = new CategorySprite("misc", "rings_dust0");
+    private final Vector2f bandCentre = new Vector2f();
 
     record Placement(float screenX, float screenY, float screenRadius, float headingDegrees, float spinDegrees, float seedDegrees) {
     }
@@ -54,7 +79,7 @@ final class AtlasBodyPainter {
                     lighting, alpha);
             case BINARY -> paintBinary(art, placement, lighting, seconds, alpha);
             case BREACH -> paintBreach(colour, placement, lighting, seconds, alpha);
-            case FLEET, DERELICTS, STATION -> {
+            case FLEET, DERELICTS, SHROUDED, STATION -> {
             }
             default -> paintPlain(colour, placement, lighting, alpha);
         }
@@ -111,6 +136,10 @@ final class AtlasBodyPainter {
             paintPlain(colour, placement, lighting, alpha);
             return;
         }
+        if (spec.isBlackHole()) {
+            paintBlackHole(texture, spec, placement, lighting, seconds, alpha);
+            return;
+        }
         float radius = placement.screenRadius();
         float turn = placement.spinDegrees() + seconds * PLANET_TURN_DEGREES_PER_SECOND;
         PlanetSphere.draw(sphere, texture, spec, placement.screenX(), placement.screenY(), radius, turn, tintFor(lighting, spec.getPlanetColor()),
@@ -122,6 +151,39 @@ final class AtlasBodyPainter {
             Color atmosphereColour = spec.getAtmosphereThickness() > 0f ? spec.getAtmosphereColor() : colour;
             AtmosphereRing.draw(atmosphere, placement.screenX(), placement.screenY(), innerRadius, innerRadius + thickness, atmosphereColour, alpha);
         }
+    }
+
+    private void paintBlackHole(SpriteAPI texture, PlanetSpecAPI spec, Placement placement, Lighting lighting, float seconds, float alpha) {
+        float glow = alpha * switch (lighting) {
+            case LIT -> 1f;
+            case AVAILABLE -> 0.75f;
+            case DULL -> 0.45f;
+        };
+        float x = placement.screenX();
+        float y = placement.screenY();
+        float hole = placement.screenRadius() * HOLE_SHARE;
+        bandCentre.set(x, y);
+        SpriteAPI dust = dustRings.get();
+        if (dust != null) {
+            for (int band = 0; band < ACCRETION_BANDS; band++) {
+                float inner = placement.screenRadius() * (ACCRETION_INNER_SHARE + ACCRETION_BAND_STEP * band);
+                float turn = placement.seedDegrees() * (band + 1) + seconds * (ACCRETION_DEGREES_PER_SECOND - ACCRETION_SLOWING_PER_BAND * band);
+                RingBeltRenderer.renderSlot(dust, new RadialBand(bandCentre, inner, inner + placement.screenRadius() * ACCRETION_BAND_WIDTH), band % 2,
+                        ACCRETION_SLOT_WIDTH, ACCRETION_COLOUR, glow * (1f - band * 0.2f), turn);
+            }
+        }
+        PlanetSphere.draw(sphere, texture, spec, x, y, hole, 0f, Color.BLACK, alpha, 0f, 0f);
+        SpriteAPI atmosphere = atmosphereTexture.get();
+        if (atmosphere != null) {
+            AtmosphereRing.draw(atmosphere, x, y, hole * RIM_INNER, hole * RIM_OUTER, HORIZON_COLOUR, glow);
+        }
+        SpriteAPI aurora = sprites.texture(AURORA_PATH);
+        if (aurora != null) {
+            AuroraBeltRenderer.render(aurora, new RadialBand(bandCentre, hole * HORIZON_INNER, hole * HORIZON_OUTER), HORIZON_COLOUR, glow * HORIZON_ALPHA,
+                    seconds, 1f);
+        }
+        float halo = hole * HALO_HALF_SIZE * 2f;
+        SpriteDraw.drawAdditiveAtCenter(sprites, HALO_PATH, x, y, halo, halo, HORIZON_COLOUR, glow * HALO_ALPHA);
     }
 
     private void paintSprite(String path, float screenX, float screenY, float screenRadius, float angleDegrees, Lighting lighting, float alpha) {

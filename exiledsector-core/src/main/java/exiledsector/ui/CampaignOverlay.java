@@ -26,6 +26,13 @@ public final class CampaignOverlay {
         default void switchTo(Function<Host, Screen> nextScreen) {
             close();
         }
+
+        default void shown() {
+        }
+
+        default boolean replacing() {
+            return false;
+        }
     }
 
     public interface Screen extends CustomUIPanelPlugin {
@@ -44,7 +51,7 @@ public final class CampaignOverlay {
     @SuppressWarnings("java:S1181")
     public static boolean open(CampaignUIAPI campaignUI, Function<Host, Screen> screenFor, Runnable afterClose) {
         try {
-            return openOver(hostPanel(campaignUI), screenFor, afterClose);
+            return openOver(hostPanel(campaignUI), screenFor, afterClose, null);
         } catch (Throwable e) {
             LOG.error("[ExiledSector] Could not open a full-screen window over the campaign screens", e);
             return false;
@@ -52,15 +59,15 @@ public final class CampaignOverlay {
     }
 
     public static boolean openIn(InteractionDialogAPI dialog, Function<Host, Screen> screenFor, Runnable afterClose) {
-        return openOver(dialog instanceof UIPanelAPI dialogPanel ? dialogPanel : null, screenFor, afterClose);
+        return openOver(dialog instanceof UIPanelAPI dialogPanel ? dialogPanel : null, screenFor, afterClose, null);
     }
 
     // java:S1181: UiReflection declares Throwable, and a changed engine may only cost this overlay, never the game
     @SuppressWarnings("java:S1181")
-    private static boolean openOver(UIPanelAPI hostPanel, Function<Host, Screen> screenFor, Runnable afterClose) {
+    private static boolean openOver(UIPanelAPI hostPanel, Function<Host, Screen> screenFor, Runnable afterClose, CustomPanelAPI replacedPanel) {
         try {
-            if (hostPanel == null || overlayOpenIn(hostPanel)) return false;
-            OverlayHost host = new OverlayHost(hostPanel, afterClose);
+            if (hostPanel == null || overlayOpenIn(hostPanel, replacedPanel)) return false;
+            OverlayHost host = new OverlayHost(hostPanel, afterClose, replacedPanel);
             Screen screen = screenFor.apply(host);
             CustomPanelAPI panel = Global.getSettings().createCustom(Global.getSettings().getScreenWidth(), Global.getSettings().getScreenHeight(), screen);
             host.overlayPanel = panel;
@@ -96,9 +103,9 @@ public final class CampaignOverlay {
         return UiReflection.call(campaignUI, "getCore") instanceof UIPanelAPI corePanel ? corePanel : null;
     }
 
-    private static boolean overlayOpenIn(UIPanelAPI hostPanel) throws Throwable {
+    private static boolean overlayOpenIn(UIPanelAPI hostPanel, CustomPanelAPI replacedPanel) throws Throwable {
         for (Object child : UiReflection.children(hostPanel)) {
-            if (child instanceof CustomPanelAPI panel && panel.getPlugin() instanceof Screen) return true;
+            if (child != replacedPanel && child instanceof CustomPanelAPI panel && panel.getPlugin() instanceof Screen) return true;
         }
         return false;
     }
@@ -108,10 +115,33 @@ public final class CampaignOverlay {
         private final UIPanelAPI hostPanel;
         private final Runnable afterClose;
         private CustomPanelAPI overlayPanel;
+        private CustomPanelAPI replacedPanel;
+        private boolean replacedPanelLeaving;
 
-        private OverlayHost(UIPanelAPI hostPanel, Runnable afterClose) {
+        private OverlayHost(UIPanelAPI hostPanel, Runnable afterClose, CustomPanelAPI replacedPanel) {
             this.hostPanel = hostPanel;
             this.afterClose = afterClose;
+            this.replacedPanel = replacedPanel;
+        }
+
+        @Override
+        public void shown() {
+            if (replacedPanel != null && !replacedPanelLeaving) {
+                replacedPanelLeaving = true;
+                TransientScripts.nextFrame(Global.getSector(), this::removeReplacedPanel);
+            }
+        }
+
+        @Override
+        public boolean replacing() {
+            return replacedPanel != null;
+        }
+
+        private void removeReplacedPanel() {
+            if (replacedPanel != null) {
+                hostPanel.removeComponent(replacedPanel);
+                replacedPanel = null;
+            }
         }
 
         @Override
@@ -127,18 +157,23 @@ public final class CampaignOverlay {
         @Override
         public void switchTo(Function<Host, Screen> nextScreen) {
             TransientScripts.nextFrame(Global.getSector(), () -> {
-                if (overlayPanel != null) {
-                    hostPanel.removeComponent(overlayPanel);
-                    overlayPanel = null;
-                }
+                removeReplacedPanel();
+                CustomPanelAPI shownPanel = overlayPanel;
+                overlayPanel = null;
                 OPEN_HOSTS.remove(this);
-                if (!openOver(hostPanel, nextScreen, afterClose) && afterClose != null) {
-                    afterClose.run();
+                if (!openOver(hostPanel, nextScreen, afterClose, shownPanel)) {
+                    if (shownPanel != null) {
+                        hostPanel.removeComponent(shownPanel);
+                    }
+                    if (afterClose != null) {
+                        afterClose.run();
+                    }
                 }
             });
         }
 
         private void remove(String wormholeMessage) {
+            removeReplacedPanel();
             if (overlayPanel != null) {
                 hostPanel.removeComponent(overlayPanel);
             }

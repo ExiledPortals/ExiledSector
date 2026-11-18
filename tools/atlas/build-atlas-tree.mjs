@@ -20,13 +20,14 @@ const ROOT_RAYS = 3;
 const LINKS_INTO_RING = [0, 3, 4, 5, 6];
 const SPOKE_CLEARANCE = HIGHWAY_HALF_WIDTH + 40;
 const SPOKE_SPREAD = 30;
-const SATELLITE_GAP = 100;
+const SATELLITE_GAP = 170;
 const WHEEL_CLEARANCE = 60;
 const HIGHWAY_CLEARANCE = 40;
 const BODY_CLEARANCE = 12;
 const OUTER_SMALL_TURN = [35, 70];
 const INNER_SMALL_TURN = [60, 110];
-const SATELLITE_TRIES = 200;
+const SPIRAL_POINTS = 24;
+const SPIRAL_HOOK = 150;
 const ESCORT_BESIDE = [1, 0.75];
 const ESCORT_BEHIND = [0.5, 0.6];
 const SITE_LIGHT = '#ffbe5a';
@@ -82,7 +83,11 @@ const escortFleet = () => ({ kind: 'fleet', hulls: pickSome(ESCORTS, 2, 3), size
 const convoyFleet = (hulls) => ({ kind: 'fleet', hulls, size: 140, facing: 'travel' });
 
 function dormantFleet(notableType) {
-  const hulls = DORMANT_HULLS[DORMANT_FACTION[notableType] ?? 'derelict'];
+  const faction = DORMANT_FACTION[notableType] ?? 'derelict';
+  const hulls = DORMANT_HULLS[faction];
+  if (faction === 'dweller') {
+    return { kind: 'shrouded', hulls: [pick(hulls.lead), ...pickSome(hulls.rest, 2, 3)], size: 140 };
+  }
   return { kind: 'derelicts', hulls: [pick(hulls.lead), ...pickSome(hulls.rest, 3, 5)], size: 140 };
 }
 
@@ -132,7 +137,6 @@ const ANOMALIES = {
 };
 
 const NOTABLE_ART = {
-  silent_choir: () => ({ kind: 'sprite', path: 'graphics/stations/cryosleeper.png', size: 184, facing: 'spin' }),
   mixed_manifest: () => ({ kind: 'sprite', path: 'graphics/stations/station_midline1.png', size: 184, facing: 'spin' }),
   incursion: () => ({ kind: 'sprite', path: 'graphics/stations/station_side00.png', size: 128, facing: 'spin', spin: 0.3 }),
   fortified_depot: () => ({ kind: 'station', hulls: ['station2'], size: 160 }),
@@ -323,9 +327,8 @@ function distanceToSegment(point, from, to) {
 }
 
 const clearOf = (from, to, circles) => circles.every((circle) => distanceToSegment(circle, from, to) >= circle.radius);
-const bodyCircle = (x, y, size) => ({ x, y, radius: size + BODY_CLEARANCE });
 
-function satelliteOffsets(wheel, spokeAngle, centre, spoke) {
+function satelliteOffsets(wheel, spokeAngle) {
   const outwardX = Math.cos(toRadians(spokeAngle));
   const outwardY = Math.sin(toRadians(spokeAngle));
   if (wheel.convoy) {
@@ -338,23 +341,32 @@ function satelliteOffsets(wheel, spokeAngle, centre, spoke) {
     }));
   }
   const towardSpoke = wheel.inside ? spokeAngle : spokeAngle + 180;
-  const [outerSize, innerSize] = wheel.smallArt.map((art) => art.size);
-  const notableCircle = bodyCircle(centre.x, centre.y, wheel.art.size);
-  for (let attempt = 0; attempt < SATELLITE_TRIES; attempt++) {
-    const side = random() < 0.5 ? 1 : -1;
-    const outerAngle = towardSpoke + side * between(OUTER_SMALL_TURN);
-    const innerAngle = outerAngle + side * between(INNER_SMALL_TURN);
-    const offsets = [[wheel.outerTrack, outerAngle], [wheel.innerTrack, innerAngle]]
-      .map(([track, angle]) => ({ x: track * Math.cos(toRadians(angle)), y: track * Math.sin(toRadians(angle)) }));
-    const outer = { x: centre.x + offsets[0].x, y: centre.y + offsets[0].y };
-    const inner = { x: centre.x + offsets[1].x, y: centre.y + offsets[1].y };
-    if (clearOf(spoke, outer, [notableCircle, bodyCircle(inner.x, inner.y, innerSize)])
-      && clearOf(outer, inner, [notableCircle])
-      && clearOf(inner, centre, [bodyCircle(outer.x, outer.y, outerSize)])) {
-      return offsets;
-    }
-  }
-  throw new Error(`No clear lead-up for ${wheel.notableType}`);
+  const side = random() < 0.5 ? 1 : -1;
+  const outerAngle = towardSpoke + side * between(OUTER_SMALL_TURN);
+  const innerAngle = outerAngle + side * between(INNER_SMALL_TURN);
+  return [[wheel.outerTrack, outerAngle], [wheel.innerTrack, innerAngle]]
+    .map(([track, angle]) => ({ x: track * Math.cos(toRadians(angle)), y: track * Math.sin(toRadians(angle)) }));
+}
+
+const polarAround = (centre, point) => ({ radius: Math.hypot(point.x - centre.x, point.y - centre.y), angle: Math.atan2(point.y - centre.y, point.x - centre.x) });
+const turnOf = (centre, from, to) => (Math.sin(polarAround(centre, to).angle - polarAround(centre, from).angle) >= 0 ? 1 : -1);
+
+function spiralPath(from, to, centre, turn) {
+  const fromPolar = polarAround(centre, from);
+  const toPolar = polarAround(centre, to);
+  const inward = fromPolar.radius >= toPolar.radius;
+  const outer = inward ? fromPolar : toPolar;
+  const inner = { ...(inward ? toPolar : fromPolar) };
+  if (inner.radius < 1) inner.angle = outer.angle + turn * toRadians(SPIRAL_HOOK);
+  const fullTurn = Math.PI * 2;
+  const sweep = turn * ((((inner.angle - outer.angle) * turn) % fullTurn + fullTurn) % fullTurn);
+  const points = Array.from({ length: SPIRAL_POINTS }, (_, index) => {
+    const share = index / (SPIRAL_POINTS - 1);
+    const radius = outer.radius + (inner.radius - outer.radius) * share;
+    const angle = outer.angle + sweep * share;
+    return { x: centre.x + radius * Math.cos(angle), y: centre.y + radius * Math.sin(angle) };
+  });
+  return inward ? points : points.reverse();
 }
 
 const travelHeading = (angle) => round(-angle - 90);
@@ -365,6 +377,7 @@ function withHeading(art, angle) {
 }
 
 const placedWheels = [];
+const wheelOf = new Map();
 const clashes = ({ x, y }, reach) => placedWheels.some((other) => Math.hypot(other.x - x, other.y - y) < reach + other.reach + WHEEL_CLEARANCE);
 
 for (const wheel of plannedWheels) {
@@ -387,13 +400,19 @@ for (const wheel of plannedWheels) {
   const spoke = ring.nodes[spokeIndex];
   const centre = centreOf(spokeIndex);
   placedWheels.push({ x: centre.x, y: centre.y, reach: wheel.reach });
-  const notable = addNode(wheel.notableType, centre.x, centre.y, wheel.tags, { colour: wheel.colour, art: withHeading(wheel.art, spoke.angle) });
-  const offsets = satelliteOffsets(wheel, spoke.angle, centre, spoke.node);
+  const offsets = satelliteOffsets(wheel, spoke.angle);
+  const turn = turnOf(centre, spoke.node, { x: centre.x + offsets[0].x, y: centre.y + offsets[0].y });
+  const notable = addNode(wheel.notableType, centre.x, centre.y, wheel.tags, {
+    colour: wheel.colour, spiral: turn, art: withHeading(wheel.art, spoke.angle),
+  });
+  wheelOf.set(notable.id, { centre: notable, turn });
   const satellites = offsets.map((offset, order) => {
     const smallAnomaly = wheel.smallAnomalies[order];
-    return addNode(wheel.smallTypes[order], centre.x + offset.x, centre.y + offset.y, [smallAnomaly], {
-      colour: ANOMALIES[smallAnomaly].colour, art: withHeading(wheel.smallArt[order], spoke.angle),
+    const small = addNode(wheel.smallTypes[order], centre.x + offset.x, centre.y + offset.y, [smallAnomaly], {
+      colour: ANOMALIES[smallAnomaly].colour, wheel: notable.id, art: withHeading(wheel.smallArt[order], spoke.angle),
     });
+    wheelOf.set(small.id, { centre: notable, turn });
+    return small;
   });
   link(spoke.node, satellites[0]);
   link(satellites[0], satellites[1]);
@@ -441,20 +460,20 @@ rings.forEach((_, ringIndex) => {
 
 const sameRing = (first, second) => bodyById.get(first.id).highway && bodyById.get(second.id).highway
   && Math.abs(Math.hypot(first.x, first.y) - Math.hypot(second.x, second.y)) < 1;
+const wheelLinkOf = (first, second) => (bodyById.get(first.id).wheel ? wheelOf.get(first.id) : bodyById.get(second.id).wheel ? wheelOf.get(second.id) : null);
 const crossings = [];
-for (const node of nodes) {
-  for (const otherId of node.connectedTo) {
-    const other = nodeById.get(otherId);
-    if (node.id > other.id || sameRing(node, other)) {
-      continue;
-    }
-    const blocking = nodes.filter((body) => body !== node && body !== other && body.id !== ROOT_ID)
-      .filter((body) => distanceToSegment(body, node, other) < bodyById.get(body.id).art.size + BODY_CLEARANCE);
-    if (blocking.length > 0) crossings.push(`${node.id}-${other.id} crosses ${blocking.map((body) => body.id).join(', ')}`);
-  }
+const drawnLinks = nodes.flatMap((node) => node.connectedTo.map((id) => nodeById.get(id))
+  .filter((other) => node.id < other.id && !sameRing(node, other)).map((other) => {
+    const wheel = wheelLinkOf(node, other);
+    return { ends: [node, other], points: wheel ? spiralPath(node, other, wheel.centre, wheel.turn) : [node, other] };
+  }));
+const segmentsOf = (points) => points.slice(1).map((point, index) => [points[index], point]);
+for (const { ends, points } of drawnLinks) {
+  const blocking = nodes.filter((body) => !ends.includes(body) && body.id !== ROOT_ID)
+    .filter((body) => segmentsOf(points).some(([from, to]) => distanceToSegment(body, from, to) < bodyById.get(body.id).art.size + BODY_CLEARANCE));
+  if (blocking.length > 0) crossings.push(`${ends[0].id}-${ends[1].id} crosses ${blocking.map((body) => body.id).join(', ')}`);
 }
-const straightLinks = nodes.flatMap((node) => node.connectedTo.map((id) => nodeById.get(id))
-  .filter((other) => node.id < other.id && !sameRing(node, other)).map((other) => [node, other]));
+const straightLinks = drawnLinks.filter(({ points }) => points.length === 2).map(({ ends }) => ends);
 function crossesCircle(from, to, radius) {
   const deltaX = to.x - from.x;
   const deltaY = to.y - from.y;
@@ -471,11 +490,13 @@ for (const [from, to] of straightLinks) {
   if (crossed.length > 0) crossings.push(`${from.id}-${to.id} crosses the ring at ${crossed.join(', ')}`);
 }
 const cross = (a, b, c) => (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
-straightLinks.forEach(([first, second], index) => straightLinks.slice(index + 1).forEach(([third, fourth]) => {
-  if ([first, second].some((end) => end === third || end === fourth)) return;
-  const apart = (cross(first, second, third) > 0) !== (cross(first, second, fourth) > 0);
-  const across = (cross(third, fourth, first) > 0) !== (cross(third, fourth, second) > 0);
-  if (apart && across) crossings.push(`${first.id}-${second.id} crosses ${third.id}-${fourth.id}`);
+const segmentsCross = ([first, second], [third, fourth]) => (cross(first, second, third) > 0) !== (cross(first, second, fourth) > 0)
+  && (cross(third, fourth, first) > 0) !== (cross(third, fourth, second) > 0);
+drawnLinks.forEach((link, index) => drawnLinks.slice(index + 1).forEach((other) => {
+  if (link.ends.some((end) => other.ends.includes(end))) return;
+  if (segmentsOf(link.points).some((segment) => segmentsOf(other.points).some((otherSegment) => segmentsCross(segment, otherSegment)))) {
+    crossings.push(`${link.ends[0].id}-${link.ends[1].id} crosses ${other.ends[0].id}-${other.ends[1].id}`);
+  }
 }));
 if (crossings.length > 0) throw new Error(`Links cross: ${crossings.join('; ')}`);
 

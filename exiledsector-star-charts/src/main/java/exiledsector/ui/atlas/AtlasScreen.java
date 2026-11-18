@@ -663,6 +663,9 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
 
     @Override
     public void buttonPressed(Object buttonId) {
+        if (fade.handedOver()) {
+            return;
+        }
         if (buttonId == Control.OFFICERS) {
             toggleOfficers();
             return;
@@ -681,12 +684,12 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             officerBoard.close();
         }
         if (buttonId == Control.CLOSE) {
-            close();
+            closeByPlayer();
         } else if (buttonId == Control.BORDERS && bordersButton != null) {
             toggleOverlay(Overlay.FACTIONS, bordersButton, biomesButton);
         } else if (buttonId == Control.BIOMES && biomesButton != null) {
             toggleOverlay(Overlay.BIOMES, biomesButton, bordersButton);
-        } else if (buttonId == Control.TREE && !focusing && !fade.closing()) {
+        } else if (buttonId == Control.TREE && !focusing && !fade.closing() && !host.replacing()) {
             openAtlasTree();
         } else if (buttonId == Control.FOCUS_SWITCH && focusing) {
             if (chartMode) {
@@ -718,12 +721,13 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     }
 
     private void chooseUnchosenReward() {
-        if (!officerBoard.isOpen() || unchosenRewardHolder == null || fade.closing()) {
+        if (!officerBoard.isOpen() || unchosenRewardHolder == null || fade.closing() || host.replacing()) {
             return;
         }
         AtlasCameraMemory.remember(Global.getSector(), camera.centreTreeX(), camera.centreTreeY());
         officerBoard.close();
         officerTooltip.cleanup();
+        fade.handOver();
         host.switchTo(OfficerRewardPicker.unchosenScreen(unchosenRewardHolder, AtlasScreen::withOfficerBoard));
         unchosenRewardHolder = null;
     }
@@ -798,7 +802,14 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         AtlasCameraMemory.remember(Global.getSector(), camera.centreTreeX(), camera.centreTreeY());
         officerBoard.close();
         officerTooltip.cleanup();
+        fade.handOver();
         host.switchTo(AtlasTreeScreen::new);
+    }
+
+    private void closeByPlayer() {
+        if (!host.replacing()) {
+            close();
+        }
     }
 
     private void close() {
@@ -811,7 +822,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
 
     @Override
     public void processInput(List<InputEventAPI> events) {
-        if (panelPosition == null || map == null) {
+        if (panelPosition == null || map == null || fade.handedOver()) {
             return;
         }
         for (InputEventAPI event : events) {
@@ -826,7 +837,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
                 focusInput(event);
             } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
                 if (event.isKeyDownEvent() && !searchBar.escape()) {
-                    close();
+                    closeByPlayer();
                 }
                 event.consume();
             } else if (event.isKeyboardEvent() && searchBar.handleKey(event)) {
@@ -912,6 +923,9 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             return;
         }
         boolean finishedClosing = fade.advance(amount);
+        if (fade.fullyOpen()) {
+            host.shown();
+        }
         if (openBoardWhenPlaced && panelPosition != null) {
             openBoardWhenPlaced = false;
             toggleOfficers();
@@ -1004,7 +1018,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         if (alpha <= 0f) {
             return;
         }
-        frame.drawBackdrop(alpha);
+        frame.drawBackdrop(alpha, !host.replacing());
         try (GlScope clip = frame.clipContent()) {
             starfield.render(panelPosition, camera.panX(), camera.panY(), search.backgroundAlpha() * alpha);
             map.render(viewport(), panelStyle.getAccentColor(), alpha, focusedCell);

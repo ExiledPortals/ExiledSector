@@ -151,10 +151,20 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
 
     @Override
     public void buttonPressed(Object buttonId) {
+        if (fade.handedOver()) {
+            return;
+        }
         if (buttonId == Control.BACK) {
-            fade.close();
+            back();
         } else if (buttonId == Control.EFFECTS && !hyperspace.isActive()) {
             toggleEffects();
+        }
+    }
+
+    private void back() {
+        if (!fade.closing() && !host.replacing()) {
+            fade.handOver();
+            host.switchTo(AtlasScreen::create);
         }
     }
 
@@ -166,7 +176,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
 
     @Override
     public void processInput(List<InputEventAPI> events) {
-        if (panelPosition == null) {
+        if (panelPosition == null || fade.handedOver()) {
             return;
         }
         for (InputEventAPI event : events) {
@@ -179,7 +189,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
                 if (event.isKeyDownEvent() && effectsPanel.isOpen() && !hyperspace.isActive()) {
                     toggleEffects();
                 } else if (event.isKeyDownEvent()) {
-                    fade.close();
+                    back();
                 }
                 event.consume();
             } else if (event.isMouseMoveEvent()) {
@@ -296,9 +306,9 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         if (panelPosition == null) {
             return;
         }
-        if (fade.advance(amount)) {
-            host.switchTo(AtlasScreen::create);
-            return;
+        fade.advance(amount);
+        if (fade.fullyOpen()) {
+            host.shown();
         }
         starfield.advance(amount);
         decorations.advance(amount);
@@ -320,7 +330,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         if (alpha <= 0f) {
             return;
         }
-        frame.drawBackdrop(alpha);
+        frame.drawBackdrop(alpha, !host.replacing());
         try (GlScope clip = frame.clipContent()) {
             renderCanvas(alpha);
         }

@@ -9,7 +9,7 @@ public record AtlasBodyArt(Kind kind, String planetType, List<String> spritePath
     public static final Shape DEFAULT_SHAPE = new Shape(DEFAULT_SIZE, Facing.SPIN, 1f, DEFAULT_HEADING);
     public static final AtlasBodyArt PLAIN = new AtlasBodyArt(Kind.PLAIN, null, List.of(), List.of(), DEFAULT_SHAPE, null);
 
-    public enum Kind { STAR, PLANET, SPRITE, BINARY, FLEET, DERELICTS, STATION, BREACH, PLAIN }
+    public enum Kind { STAR, PLANET, SPRITE, BINARY, FLEET, DERELICTS, SHROUDED, STATION, BREACH, PLAIN }
 
     public enum Facing { SPIN, TRAVEL }
 
@@ -39,6 +39,6 @@ public record AtlasBodyArt(Kind kind, String planetType, List<String> spritePath
     }
 
     public boolean isShipGroup() {
-        return kind == Kind.FLEET || kind == Kind.DERELICTS || kind == Kind.STATION;
+        return kind == Kind.FLEET || kind == Kind.DERELICTS || kind == Kind.SHROUDED || kind == Kind.STATION;
     }
 }

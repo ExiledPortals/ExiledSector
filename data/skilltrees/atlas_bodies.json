@@ -13,7 +13,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid02.png",
+				"path": "graphics/asteroids/ring_asteroid07.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -24,7 +24,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid05.png",
+				"path": "graphics/asteroids/ring_asteroid07.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -35,7 +35,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid00.png",
+				"path": "graphics/asteroids/ring_asteroid07.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -46,7 +46,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid03.png",
+				"path": "graphics/asteroids/ring_asteroid10.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -57,7 +57,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid09.png",
+				"path": "graphics/asteroids/ring_asteroid03.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -68,7 +68,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid11.png",
+				"path": "graphics/asteroids/ring_asteroid02.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -79,7 +79,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid08.png",
+				"path": "graphics/asteroids/ring_asteroid06.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -90,7 +90,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid07.png",
+				"path": "graphics/asteroids/ring_asteroid06.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -101,7 +101,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid07.png",
+				"path": "graphics/asteroids/ring_asteroid04.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -112,7 +112,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid10.png",
+				"path": "graphics/asteroids/ring_asteroid01.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -123,7 +123,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid03.png",
+				"path": "graphics/asteroids/ring_asteroid04.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -134,7 +134,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid02.png",
+				"path": "graphics/asteroids/ring_asteroid09.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -145,7 +145,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid06.png",
+				"path": "graphics/asteroids/ring_asteroid03.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -156,7 +156,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid06.png",
+				"path": "graphics/asteroids/ring_asteroid10.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -167,7 +167,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid11.png",
+				"path": "graphics/asteroids/ring_asteroid06.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -189,7 +189,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid01.png",
+				"path": "graphics/asteroids/ring_asteroid06.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -200,7 +200,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid04.png",
+				"path": "graphics/asteroids/ring_asteroid00.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -211,7 +211,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid09.png",
+				"path": "graphics/asteroids/ring_asteroid02.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -222,7 +222,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid03.png",
+				"path": "graphics/asteroids/ring_asteroid00.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -233,7 +233,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid06.png",
+				"path": "graphics/asteroids/ring_asteroid11.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -244,7 +244,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid04.png",
+				"path": "graphics/asteroids/ring_asteroid02.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -255,7 +255,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid06.png",
+				"path": "graphics/asteroids/ring_asteroid04.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -266,7 +266,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid00.png",
+				"path": "graphics/asteroids/ring_asteroid09.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -277,7 +277,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid02.png",
+				"path": "graphics/asteroids/ring_asteroid05.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -288,7 +288,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid00.png",
+				"path": "graphics/asteroids/ring_asteroid01.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -299,7 +299,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid03.png",
+				"path": "graphics/asteroids/ring_asteroid11.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -310,7 +310,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid11.png",
+				"path": "graphics/asteroids/ring_asteroid02.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -321,7 +321,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid02.png",
+				"path": "graphics/asteroids/ring_asteroid06.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -332,7 +332,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid04.png",
+				"path": "graphics/asteroids/ring_asteroid02.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -343,7 +343,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid09.png",
+				"path": "graphics/asteroids/ring_asteroid04.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -354,7 +354,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid05.png",
+				"path": "graphics/asteroids/ring_asteroid03.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -365,7 +365,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid01.png",
+				"path": "graphics/asteroids/ring_asteroid04.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -376,7 +376,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid11.png",
+				"path": "graphics/asteroids/ring_asteroid04.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -387,7 +387,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid02.png",
+				"path": "graphics/asteroids/ring_asteroid11.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -398,7 +398,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid06.png",
+				"path": "graphics/asteroids/ring_asteroid09.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -409,7 +409,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid02.png",
+				"path": "graphics/asteroids/ring_asteroid03.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -420,7 +420,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid04.png",
+				"path": "graphics/asteroids/ring_asteroid05.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -431,7 +431,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid04.png",
+				"path": "graphics/asteroids/ring_asteroid06.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -442,7 +442,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid04.png",
+				"path": "graphics/asteroids/ring_asteroid06.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -453,7 +453,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid11.png",
+				"path": "graphics/asteroids/ring_asteroid07.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -464,7 +464,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid09.png",
+				"path": "graphics/asteroids/ring_asteroid06.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -475,7 +475,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid03.png",
+				"path": "graphics/asteroids/ring_asteroid09.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -486,7 +486,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid05.png",
+				"path": "graphics/asteroids/ring_asteroid01.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -497,7 +497,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid03.png",
+				"path": "graphics/asteroids/ring_asteroid08.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -508,7 +508,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid06.png",
+				"path": "graphics/asteroids/ring_asteroid00.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -530,7 +530,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid07.png",
+				"path": "graphics/asteroids/ring_asteroid05.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -541,7 +541,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid06.png",
+				"path": "graphics/asteroids/ring_asteroid02.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -552,7 +552,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid09.png",
+				"path": "graphics/asteroids/ring_asteroid02.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -563,7 +563,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid01.png",
+				"path": "graphics/asteroids/ring_asteroid05.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -574,7 +574,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid08.png",
+				"path": "graphics/asteroids/ring_asteroid10.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -585,7 +585,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid00.png",
+				"path": "graphics/asteroids/ring_asteroid11.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -607,7 +607,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid05.png",
+				"path": "graphics/asteroids/ring_asteroid11.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -618,7 +618,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid02.png",
+				"path": "graphics/asteroids/ring_asteroid06.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -629,7 +629,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid02.png",
+				"path": "graphics/asteroids/ring_asteroid09.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -640,7 +640,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid05.png",
+				"path": "graphics/asteroids/ring_asteroid09.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -651,7 +651,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid11.png",
+				"path": "graphics/asteroids/ring_asteroid09.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -673,7 +673,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid11.png",
+				"path": "graphics/asteroids/ring_asteroid00.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -684,7 +684,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid06.png",
+				"path": "graphics/asteroids/ring_asteroid11.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -695,7 +695,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid09.png",
+				"path": "graphics/asteroids/ring_asteroid05.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -706,7 +706,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid09.png",
+				"path": "graphics/asteroids/ring_asteroid02.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -717,7 +717,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid06.png",
+				"path": "graphics/asteroids/ring_asteroid00.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -728,7 +728,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid09.png",
+				"path": "graphics/asteroids/ring_asteroid04.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -750,7 +750,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid00.png",
+				"path": "graphics/asteroids/ring_asteroid09.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -761,7 +761,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid11.png",
+				"path": "graphics/asteroids/ring_asteroid05.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -772,7 +772,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid05.png",
+				"path": "graphics/asteroids/ring_asteroid09.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -783,7 +783,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid02.png",
+				"path": "graphics/asteroids/ring_asteroid09.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -794,7 +794,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid00.png",
+				"path": "graphics/asteroids/ring_asteroid08.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -805,7 +805,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid04.png",
+				"path": "graphics/asteroids/ring_asteroid00.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -816,7 +816,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid06.png",
+				"path": "graphics/asteroids/ring_asteroid10.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -827,7 +827,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid09.png",
+				"path": "graphics/asteroids/ring_asteroid10.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -838,7 +838,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid05.png",
+				"path": "graphics/asteroids/ring_asteroid08.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -849,7 +849,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid09.png",
+				"path": "graphics/asteroids/ring_asteroid04.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -860,7 +860,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid09.png",
+				"path": "graphics/asteroids/ring_asteroid01.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -871,7 +871,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid08.png",
+				"path": "graphics/asteroids/ring_asteroid07.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -882,7 +882,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid00.png",
+				"path": "graphics/asteroids/ring_asteroid09.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -893,7 +893,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid10.png",
+				"path": "graphics/asteroids/ring_asteroid00.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -904,7 +904,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid10.png",
+				"path": "graphics/asteroids/ring_asteroid03.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -912,6 +912,7 @@
 		{
 			"id": "settled_shafts_1",
 			"colour": "#ffaa50",
+			"spiral": -1,
 			"art": {
 				"kind": "planet",
 				"planet": "rocky_ice",
@@ -922,15 +923,7 @@
 		{
 			"id": "excavation_sites_chance_1",
 			"colour": "#ffaa50",
-			"art": {
-				"kind": "planet",
-				"planet": "barren3",
-				"size": 45
-			}
-		},
-		{
-			"id": "excavation_sites_chance_2",
-			"colour": "#ffaa50",
+			"wheel": "settled_shafts_1",
 			"art": {
 				"kind": "planet",
 				"planet": "frozen1",
@@ -938,8 +931,19 @@
 			}
 		},
 		{
+			"id": "excavation_sites_chance_2",
+			"colour": "#ffaa50",
+			"wheel": "settled_shafts_1",
+			"art": {
+				"kind": "planet",
+				"planet": "barren",
+				"size": 45
+			}
+		},
+		{
 			"id": "threat_embargo_1",
 			"colour": "#78dc8c",
+			"spiral": -1,
 			"art": {
 				"kind": "fleet",
 				"hulls": [
@@ -953,40 +957,44 @@
 				],
 				"size": 140,
 				"facing": "travel",
-				"heading": -398.3
+				"heading": -404
 			}
 		},
 		{
 			"id": "supply_convoy_chance_1",
 			"colour": "#78dc8c",
+			"wheel": "threat_embargo_1",
 			"art": {
 				"kind": "fleet",
 				"hulls": [
-					"sunder",
-					"enforcer"
+					"monitor",
+					"lasher"
 				],
 				"size": 52,
 				"facing": "travel",
-				"heading": -398.3
+				"heading": -404
 			}
 		},
 		{
 			"id": "supply_convoy_chance_2",
 			"colour": "#78dc8c",
+			"wheel": "threat_embargo_1",
 			"art": {
 				"kind": "fleet",
 				"hulls": [
 					"enforcer",
+					"hound",
 					"wolf"
 				],
 				"size": 52,
 				"facing": "travel",
-				"heading": -398.3
+				"heading": -404
 			}
 		},
 		{
 			"id": "officers_ledger_1",
 			"colour": "#f0dc6e",
+			"spiral": 1,
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/stations/station_side04.png",
@@ -997,28 +1005,31 @@
 		{
 			"id": "listening_post_chance_1",
 			"colour": "#f0dc6e",
-			"art": {
-				"kind": "sprite",
-				"path": "graphics/ships/wolf/wolf_base.png",
-				"size": 34,
-				"facing": "travel",
-				"heading": -443.3
-			}
-		},
-		{
-			"id": "listening_post_chance_2",
-			"colour": "#f0dc6e",
+			"wheel": "officers_ledger_1",
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/ships/lasher/lasher_base.png",
 				"size": 34,
 				"facing": "travel",
-				"heading": -443.3
+				"heading": -494
+			}
+		},
+		{
+			"id": "listening_post_chance_2",
+			"colour": "#f0dc6e",
+			"wheel": "officers_ledger_1",
+			"art": {
+				"kind": "sprite",
+				"path": "graphics/ships/lasher/lasher_base.png",
+				"size": 34,
+				"facing": "travel",
+				"heading": -494
 			}
 		},
 		{
 			"id": "redacted_sleepers_1",
 			"colour": "#ff6e5a",
+			"spiral": -1,
 			"art": {
 				"kind": "derelicts",
 				"hulls": [
@@ -1028,15 +1039,16 @@
 					"fulgent"
 				],
 				"size": 140,
-				"heading": -533.3
+				"heading": -539
 			}
 		},
 		{
 			"id": "anomalous_debris_chance_1",
 			"colour": "#ff6e5a",
+			"wheel": "redacted_sleepers_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid4.png",
+				"path": "graphics/asteroids/asteroid1.png",
 				"size": 38,
 				"facing": "spin"
 			}
@@ -1044,6 +1056,7 @@
 		{
 			"id": "anomalous_debris_chance_2",
 			"colour": "#ff6e5a",
+			"wheel": "redacted_sleepers_1",
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/asteroids/asteroid3.png",
@@ -1054,6 +1067,7 @@
 		{
 			"id": "heavy_breach_1",
 			"colour": "#be78ff",
+			"spiral": 1,
 			"art": {
 				"kind": "breach",
 				"size": 104
@@ -1062,6 +1076,7 @@
 		{
 			"id": "spatial_breach_chance_1",
 			"colour": "#be78ff",
+			"wheel": "heavy_breach_1",
 			"art": {
 				"kind": "breach",
 				"size": 34
@@ -1070,6 +1085,7 @@
 		{
 			"id": "spatial_breach_chance_2",
 			"colour": "#be78ff",
+			"wheel": "heavy_breach_1",
 			"art": {
 				"kind": "breach",
 				"size": 34
@@ -1078,6 +1094,7 @@
 		{
 			"id": "shroud_embargo_1",
 			"colour": "#78dc8c",
+			"spiral": -1,
 			"art": {
 				"kind": "fleet",
 				"hulls": [
@@ -1091,41 +1108,43 @@
 				],
 				"size": 140,
 				"facing": "travel",
-				"heading": -668.3
+				"heading": -674
 			}
 		},
 		{
 			"id": "supply_convoy_chance_3",
 			"colour": "#78dc8c",
+			"wheel": "shroud_embargo_1",
 			"art": {
 				"kind": "fleet",
 				"hulls": [
-					"brawler",
-					"sunder"
+					"hammerhead",
+					"vigilance"
 				],
 				"size": 52,
 				"facing": "travel",
-				"heading": -668.3
+				"heading": -674
 			}
 		},
 		{
 			"id": "supply_convoy_chance_4",
 			"colour": "#78dc8c",
+			"wheel": "shroud_embargo_1",
 			"art": {
 				"kind": "fleet",
 				"hulls": [
 					"hound",
-					"brawler",
-					"lasher"
+					"hound"
 				],
 				"size": 52,
 				"facing": "travel",
-				"heading": -668.3
+				"heading": -674
 			}
 		},
 		{
 			"id": "twin_shafts_1",
 			"colour": "#ffaa50",
+			"spiral": -1,
 			"art": {
 				"kind": "planet",
 				"planet": "barren-bombarded",
@@ -1136,15 +1155,7 @@
 		{
 			"id": "excavation_sites_chance_3",
 			"colour": "#ffaa50",
-			"art": {
-				"kind": "planet",
-				"planet": "barren",
-				"size": 45
-			}
-		},
-		{
-			"id": "excavation_sites_chance_4",
-			"colour": "#ffaa50",
+			"wheel": "twin_shafts_1",
 			"art": {
 				"kind": "planet",
 				"planet": "frozen1",
@@ -1152,8 +1163,19 @@
 			}
 		},
 		{
+			"id": "excavation_sites_chance_4",
+			"colour": "#ffaa50",
+			"wheel": "twin_shafts_1",
+			"art": {
+				"kind": "planet",
+				"planet": "barren3",
+				"size": 45
+			}
+		},
+		{
 			"id": "crowded_channel_1",
 			"colour": "#6ec8ff",
+			"spiral": -1,
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/ships/com_relay.png",
@@ -1165,6 +1187,7 @@
 		{
 			"id": "relay_network_chance_1",
 			"colour": "#6ec8ff",
+			"wheel": "crowded_channel_1",
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/ships/nav_buoy.png",
@@ -1175,6 +1198,7 @@
 		{
 			"id": "relay_network_chance_2",
 			"colour": "#6ec8ff",
+			"wheel": "crowded_channel_1",
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/ships/nav_buoy.png",
@@ -1185,6 +1209,7 @@
 		{
 			"id": "stolen_charts_1",
 			"colour": "#f0dc6e",
+			"spiral": -1,
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/stations/station_side02.png",
@@ -1195,28 +1220,31 @@
 		{
 			"id": "listening_post_chance_3",
 			"colour": "#f0dc6e",
+			"wheel": "stolen_charts_1",
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/ships/wolf/wolf_base.png",
 				"size": 34,
 				"facing": "travel",
-				"heading": -393.8
+				"heading": -528.8
 			}
 		},
 		{
 			"id": "listening_post_chance_4",
 			"colour": "#f0dc6e",
+			"wheel": "stolen_charts_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/ships/wolf/wolf_base.png",
+				"path": "graphics/ships/lasher/lasher_base.png",
 				"size": 34,
 				"facing": "travel",
-				"heading": -393.8
+				"heading": -528.8
 			}
 		},
 		{
 			"id": "rift_magnetism_1",
 			"colour": "#be78ff",
+			"spiral": -1,
 			"art": {
 				"kind": "breach",
 				"size": 104
@@ -1225,6 +1253,7 @@
 		{
 			"id": "spatial_breach_chance_3",
 			"colour": "#be78ff",
+			"wheel": "rift_magnetism_1",
 			"art": {
 				"kind": "breach",
 				"size": 34
@@ -1233,6 +1262,7 @@
 		{
 			"id": "spatial_breach_chance_4",
 			"colour": "#be78ff",
+			"wheel": "rift_magnetism_1",
 			"art": {
 				"kind": "breach",
 				"size": 34
@@ -1241,25 +1271,24 @@
 		{
 			"id": "veiled_sleepers_1",
 			"colour": "#ff6e5a",
+			"spiral": -1,
 			"art": {
-				"kind": "derelicts",
+				"kind": "shrouded",
 				"hulls": [
 					"shrouded_maelstrom",
 					"shrouded_tendril",
-					"shrouded_eye",
-					"shrouded_eye",
-					"shrouded_tendril"
+					"shrouded_eye"
 				],
-				"size": 140,
-				"heading": -483.8
+				"size": 140
 			}
 		},
 		{
 			"id": "anomalous_debris_chance_3",
 			"colour": "#ff6e5a",
+			"wheel": "veiled_sleepers_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid2.png",
+				"path": "graphics/asteroids/asteroid1.png",
 				"size": 38,
 				"facing": "spin"
 			}
@@ -1267,9 +1296,10 @@
 		{
 			"id": "anomalous_debris_chance_4",
 			"colour": "#ff6e5a",
+			"wheel": "veiled_sleepers_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid4.png",
+				"path": "graphics/asteroids/asteroid3.png",
 				"size": 38,
 				"facing": "spin"
 			}
@@ -1277,9 +1307,10 @@
 		{
 			"id": "shared_broadcast_1",
 			"colour": "#6ec8ff",
+			"spiral": -1,
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/ships/com_relay.png",
+				"path": "graphics/ships/sensor_array.png",
 				"size": 56,
 				"facing": "spin",
 				"spin": 0.2
@@ -1288,6 +1319,7 @@
 		{
 			"id": "relay_network_chance_3",
 			"colour": "#6ec8ff",
+			"wheel": "shared_broadcast_1",
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/ships/nav_buoy.png",
@@ -1298,6 +1330,7 @@
 		{
 			"id": "relay_network_chance_4",
 			"colour": "#6ec8ff",
+			"wheel": "shared_broadcast_1",
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/ships/nav_buoy.png",
@@ -1308,6 +1341,7 @@
 		{
 			"id": "sapper_teams_1",
 			"colour": "#ffaa50",
+			"spiral": -1,
 			"art": {
 				"kind": "planet",
 				"planet": "barren_castiron",
@@ -1318,15 +1352,7 @@
 		{
 			"id": "excavation_sites_chance_5",
 			"colour": "#ffaa50",
-			"art": {
-				"kind": "planet",
-				"planet": "rocky_metallic",
-				"size": 45
-			}
-		},
-		{
-			"id": "excavation_sites_chance_6",
-			"colour": "#ffaa50",
+			"wheel": "sapper_teams_1",
 			"art": {
 				"kind": "planet",
 				"planet": "frozen1",
@@ -1334,59 +1360,71 @@
 			}
 		},
 		{
+			"id": "excavation_sites_chance_6",
+			"colour": "#ffaa50",
+			"wheel": "sapper_teams_1",
+			"art": {
+				"kind": "planet",
+				"planet": "barren3",
+				"size": 45
+			}
+		},
+		{
 			"id": "phase_embargo_1",
 			"colour": "#78dc8c",
+			"spiral": 1,
 			"art": {
 				"kind": "fleet",
 				"hulls": [
 					"atlas",
+					"buffalo",
+					"mule",
 					"tarsus",
-					"dram",
-					"tarsus",
-					"tarsus",
-					"phaeton",
-					"hermes"
+					"dram"
 				],
 				"size": 140,
 				"facing": "travel",
-				"heading": -573.8
+				"heading": -708.8
 			}
 		},
 		{
 			"id": "supply_convoy_chance_5",
 			"colour": "#78dc8c",
+			"wheel": "phase_embargo_1",
 			"art": {
 				"kind": "fleet",
 				"hulls": [
-					"enforcer",
-					"wolf"
+					"monitor",
+					"hound"
 				],
 				"size": 52,
 				"facing": "travel",
-				"heading": -573.8
+				"heading": -708.8
 			}
 		},
 		{
 			"id": "supply_convoy_chance_6",
 			"colour": "#78dc8c",
+			"wheel": "phase_embargo_1",
 			"art": {
 				"kind": "fleet",
 				"hulls": [
-					"hammerhead",
-					"vigilance",
-					"lasher"
+					"lasher",
+					"enforcer",
+					"hammerhead"
 				],
 				"size": 52,
 				"facing": "travel",
-				"heading": -573.8
+				"heading": -708.8
 			}
 		},
 		{
 			"id": "extra_relay_1",
 			"colour": "#6ec8ff",
+			"spiral": 1,
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/ships/sensor_array.png",
+				"path": "graphics/ships/com_relay.png",
 				"size": 56,
 				"facing": "spin",
 				"spin": 0.2
@@ -1395,6 +1433,7 @@
 		{
 			"id": "relay_network_chance_5",
 			"colour": "#6ec8ff",
+			"wheel": "extra_relay_1",
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/ships/nav_buoy.png",
@@ -1405,6 +1444,7 @@
 		{
 			"id": "relay_network_chance_6",
 			"colour": "#6ec8ff",
+			"wheel": "extra_relay_1",
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/ships/nav_buoy.png",
@@ -1415,6 +1455,7 @@
 		{
 			"id": "open_bores_1",
 			"colour": "#ffaa50",
+			"spiral": -1,
 			"art": {
 				"kind": "planet",
 				"planet": "barren3",
@@ -1425,24 +1466,27 @@
 		{
 			"id": "excavation_sites_chance_7",
 			"colour": "#ffaa50",
+			"wheel": "open_bores_1",
 			"art": {
 				"kind": "planet",
-				"planet": "barren2",
+				"planet": "barren",
 				"size": 45
 			}
 		},
 		{
 			"id": "excavation_sites_chance_8",
 			"colour": "#ffaa50",
+			"wheel": "open_bores_1",
 			"art": {
 				"kind": "planet",
-				"planet": "rocky_metallic",
+				"planet": "rocky_ice",
 				"size": 45
 			}
 		},
 		{
 			"id": "infested_bolt_holes_1",
 			"colour": "#ff8c55",
+			"spiral": -1,
 			"art": {
 				"kind": "planet",
 				"planet": "toxic",
@@ -1453,18 +1497,20 @@
 		{
 			"id": "excavation_sites_chance_9",
 			"colour": "#ffaa50",
+			"wheel": "infested_bolt_holes_1",
 			"art": {
 				"kind": "planet",
-				"planet": "frozen1",
+				"planet": "rocky_metallic",
 				"size": 45
 			}
 		},
 		{
 			"id": "anomalous_debris_chance_5",
 			"colour": "#ff6e5a",
+			"wheel": "infested_bolt_holes_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid3.png",
+				"path": "graphics/asteroids/asteroid4.png",
 				"size": 38,
 				"facing": "spin"
 			}
@@ -1472,21 +1518,24 @@
 		{
 			"id": "threatening_sleepers_1",
 			"colour": "#ff6e5a",
+			"spiral": 1,
 			"art": {
 				"kind": "derelicts",
 				"hulls": [
-					"hive_unit",
-					"skirmish_unit",
-					"skirmish_unit",
-					"overseer_unit"
+					"fabricator_unit",
+					"assault_unit",
+					"overseer_unit",
+					"assault_unit",
+					"skirmish_unit"
 				],
 				"size": 140,
-				"heading": -499.3
+				"heading": -247.4
 			}
 		},
 		{
 			"id": "anomalous_debris_chance_6",
 			"colour": "#ff6e5a",
+			"wheel": "threatening_sleepers_1",
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/asteroids/asteroid3.png",
@@ -1497,9 +1546,10 @@
 		{
 			"id": "anomalous_debris_chance_7",
 			"colour": "#ff6e5a",
+			"wheel": "threatening_sleepers_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid1.png",
+				"path": "graphics/asteroids/asteroid3.png",
 				"size": 38,
 				"facing": "spin"
 			}
@@ -1507,6 +1557,7 @@
 		{
 			"id": "scar_collector_1",
 			"colour": "#6ec8ff",
+			"spiral": 1,
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/ships/com_relay.png",
@@ -1518,6 +1569,7 @@
 		{
 			"id": "relay_network_chance_7",
 			"colour": "#6ec8ff",
+			"wheel": "scar_collector_1",
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/ships/nav_buoy.png",
@@ -1528,6 +1580,7 @@
 		{
 			"id": "relay_network_chance_8",
 			"colour": "#6ec8ff",
+			"wheel": "scar_collector_1",
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/ships/nav_buoy.png",
@@ -1538,6 +1591,7 @@
 		{
 			"id": "rally_point_1",
 			"colour": "#be78ff",
+			"spiral": -1,
 			"art": {
 				"kind": "breach",
 				"size": 104
@@ -1546,6 +1600,7 @@
 		{
 			"id": "spatial_breach_chance_5",
 			"colour": "#be78ff",
+			"wheel": "rally_point_1",
 			"art": {
 				"kind": "breach",
 				"size": 34
@@ -1554,6 +1609,7 @@
 		{
 			"id": "spatial_breach_chance_6",
 			"colour": "#be78ff",
+			"wheel": "rally_point_1",
 			"art": {
 				"kind": "breach",
 				"size": 34
@@ -1562,6 +1618,7 @@
 		{
 			"id": "torn_holds_1",
 			"colour": "#9aaaff",
+			"spiral": 1,
 			"art": {
 				"kind": "planet",
 				"planet": "lava_minor",
@@ -1571,21 +1628,23 @@
 		{
 			"id": "supply_convoy_chance_7",
 			"colour": "#78dc8c",
+			"wheel": "torn_holds_1",
 			"art": {
 				"kind": "fleet",
 				"hulls": [
 					"centurion",
-					"enforcer",
+					"centurion",
 					"brawler"
 				],
 				"size": 52,
 				"facing": "travel",
-				"heading": -599.3
+				"heading": -367.4
 			}
 		},
 		{
 			"id": "spatial_breach_chance_7",
 			"colour": "#be78ff",
+			"wheel": "torn_holds_1",
 			"art": {
 				"kind": "breach",
 				"size": 34
@@ -1594,55 +1653,61 @@
 		{
 			"id": "supply_lines_1",
 			"colour": "#78dc8c",
+			"spiral": -1,
 			"art": {
 				"kind": "fleet",
 				"hulls": [
-					"prometheus",
+					"atlas",
+					"hermes",
+					"mule",
+					"phaeton",
 					"buffalo",
 					"hermes",
-					"tarsus",
-					"dram",
-					"dram"
+					"tarsus"
 				],
 				"size": 140,
 				"facing": "travel",
-				"heading": -619.3
+				"heading": -387.4
 			}
 		},
 		{
 			"id": "supply_convoy_chance_8",
 			"colour": "#78dc8c",
+			"wheel": "supply_lines_1",
 			"art": {
 				"kind": "fleet",
 				"hulls": [
-					"hammerhead",
-					"enforcer"
+					"wolf",
+					"hound",
+					"sunder"
 				],
 				"size": 52,
 				"facing": "travel",
-				"heading": -619.3
+				"heading": -387.4
 			}
 		},
 		{
 			"id": "supply_convoy_chance_9",
 			"colour": "#78dc8c",
+			"wheel": "supply_lines_1",
 			"art": {
 				"kind": "fleet",
 				"hulls": [
-					"centurion",
-					"brawler"
+					"hound",
+					"enforcer"
 				],
 				"size": 52,
 				"facing": "travel",
-				"heading": -619.3
+				"heading": -387.4
 			}
 		},
 		{
 			"id": "hair_trigger_1",
 			"colour": "#f0dc6e",
+			"spiral": -1,
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/stations/station_side01.png",
+				"path": "graphics/stations/station_side03.png",
 				"size": 116,
 				"facing": "spin"
 			}
@@ -1650,31 +1715,34 @@
 		{
 			"id": "listening_post_chance_5",
 			"colour": "#f0dc6e",
-			"art": {
-				"kind": "sprite",
-				"path": "graphics/ships/lasher/lasher_base.png",
-				"size": 34,
-				"facing": "travel",
-				"heading": -679.3
-			}
-		},
-		{
-			"id": "listening_post_chance_6",
-			"colour": "#f0dc6e",
+			"wheel": "hair_trigger_1",
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/ships/wolf/wolf_base.png",
 				"size": 34,
 				"facing": "travel",
-				"heading": -679.3
+				"heading": -447.4
+			}
+		},
+		{
+			"id": "listening_post_chance_6",
+			"colour": "#f0dc6e",
+			"wheel": "hair_trigger_1",
+			"art": {
+				"kind": "sprite",
+				"path": "graphics/ships/wolf/wolf_base.png",
+				"size": 34,
+				"facing": "travel",
+				"heading": -447.4
 			}
 		},
 		{
 			"id": "early_echo_1",
 			"colour": "#6ec8ff",
+			"spiral": 1,
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/ships/com_relay.png",
+				"path": "graphics/ships/sensor_array.png",
 				"size": 56,
 				"facing": "spin",
 				"spin": 0.2
@@ -1683,6 +1751,7 @@
 		{
 			"id": "relay_network_chance_9",
 			"colour": "#6ec8ff",
+			"wheel": "early_echo_1",
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/ships/nav_buoy.png",
@@ -1693,6 +1762,7 @@
 		{
 			"id": "relay_network_chance_10",
 			"colour": "#6ec8ff",
+			"wheel": "early_echo_1",
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/ships/nav_buoy.png",
@@ -1703,9 +1773,10 @@
 		{
 			"id": "smash_and_grab_1",
 			"colour": "#f0dc6e",
+			"spiral": 1,
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/stations/station_side04.png",
+				"path": "graphics/stations/station_side01.png",
 				"size": 116,
 				"facing": "spin"
 			}
@@ -1713,28 +1784,31 @@
 		{
 			"id": "listening_post_chance_7",
 			"colour": "#f0dc6e",
+			"wheel": "smash_and_grab_1",
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/ships/wolf/wolf_base.png",
 				"size": 34,
 				"facing": "travel",
-				"heading": -739.3
+				"heading": -527.4
 			}
 		},
 		{
 			"id": "listening_post_chance_8",
 			"colour": "#f0dc6e",
+			"wheel": "smash_and_grab_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/ships/wolf/wolf_base.png",
+				"path": "graphics/ships/lasher/lasher_base.png",
 				"size": 34,
 				"facing": "travel",
-				"heading": -739.3
+				"heading": -527.4
 			}
 		},
 		{
 			"id": "widened_bores_1",
 			"colour": "#ffaa50",
+			"spiral": -1,
 			"art": {
 				"kind": "planet",
 				"planet": "toxic_cold",
@@ -1745,42 +1819,48 @@
 		{
 			"id": "excavation_sites_chance_10",
 			"colour": "#ffaa50",
+			"wheel": "widened_bores_1",
 			"art": {
 				"kind": "planet",
-				"planet": "rocky_metallic",
+				"planet": "barren",
 				"size": 45
 			}
 		},
 		{
 			"id": "excavation_sites_chance_11",
 			"colour": "#ffaa50",
+			"wheel": "widened_bores_1",
 			"art": {
 				"kind": "planet",
-				"planet": "barren2",
+				"planet": "barren",
 				"size": 45
 			}
 		},
 		{
 			"id": "double_dose_1",
 			"colour": "#ff6e5a",
+			"spiral": 1,
 			"art": {
 				"kind": "derelicts",
 				"hulls": [
-					"bastillon",
+					"guardian",
+					"warden",
+					"picket",
 					"defender",
 					"warden",
 					"defender"
 				],
 				"size": 140,
-				"heading": -245.8
+				"heading": -230.4
 			}
 		},
 		{
 			"id": "anomalous_debris_chance_8",
 			"colour": "#ff6e5a",
+			"wheel": "double_dose_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid1.png",
+				"path": "graphics/asteroids/asteroid2.png",
 				"size": 38,
 				"facing": "spin"
 			}
@@ -1788,6 +1868,7 @@
 		{
 			"id": "anomalous_debris_chance_9",
 			"colour": "#ff6e5a",
+			"wheel": "double_dose_1",
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/asteroids/asteroid2.png",
@@ -1798,6 +1879,7 @@
 		{
 			"id": "breached_graveyard_1",
 			"colour": "#e070b0",
+			"spiral": 1,
 			"art": {
 				"kind": "planet",
 				"planet": "barren_venuslike",
@@ -1807,9 +1889,10 @@
 		{
 			"id": "anomalous_debris_chance_10",
 			"colour": "#ff6e5a",
+			"wheel": "breached_graveyard_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid4.png",
+				"path": "graphics/asteroids/asteroid2.png",
 				"size": 38,
 				"facing": "spin"
 			}
@@ -1817,6 +1900,7 @@
 		{
 			"id": "spatial_breach_chance_8",
 			"colour": "#be78ff",
+			"wheel": "breached_graveyard_1",
 			"art": {
 				"kind": "breach",
 				"size": 34
@@ -1825,6 +1909,7 @@
 		{
 			"id": "rift_duel_1",
 			"colour": "#be78ff",
+			"spiral": 1,
 			"art": {
 				"kind": "breach",
 				"size": 104
@@ -1833,6 +1918,7 @@
 		{
 			"id": "spatial_breach_chance_9",
 			"colour": "#be78ff",
+			"wheel": "rift_duel_1",
 			"art": {
 				"kind": "breach",
 				"size": 34
@@ -1841,6 +1927,7 @@
 		{
 			"id": "breach_cache_quantity_1",
 			"colour": "#be78ff",
+			"wheel": "rift_duel_1",
 			"art": {
 				"kind": "breach",
 				"size": 34
@@ -1849,6 +1936,7 @@
 		{
 			"id": "garrison_pickets_1",
 			"colour": "#f0dc6e",
+			"spiral": -1,
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/stations/station_side04.png",
@@ -1859,28 +1947,31 @@
 		{
 			"id": "listening_post_chance_9",
 			"colour": "#f0dc6e",
-			"art": {
-				"kind": "sprite",
-				"path": "graphics/ships/wolf/wolf_base.png",
-				"size": 34,
-				"facing": "travel",
-				"heading": -371.8
-			}
-		},
-		{
-			"id": "listening_post_chance_10",
-			"colour": "#f0dc6e",
+			"wheel": "garrison_pickets_1",
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/ships/lasher/lasher_base.png",
 				"size": 34,
 				"facing": "travel",
-				"heading": -371.8
+				"heading": -356.4
+			}
+		},
+		{
+			"id": "listening_post_chance_10",
+			"colour": "#f0dc6e",
+			"wheel": "garrison_pickets_1",
+			"art": {
+				"kind": "sprite",
+				"path": "graphics/ships/wolf/wolf_base.png",
+				"size": 34,
+				"facing": "travel",
+				"heading": -356.4
 			}
 		},
 		{
 			"id": "event_horizon_1",
 			"colour": "#be78ff",
+			"spiral": -1,
 			"art": {
 				"kind": "planet",
 				"planet": "black_hole",
@@ -1890,6 +1981,7 @@
 		{
 			"id": "spatial_breach_chance_10",
 			"colour": "#be78ff",
+			"wheel": "event_horizon_1",
 			"art": {
 				"kind": "breach",
 				"size": 34
@@ -1898,6 +1990,7 @@
 		{
 			"id": "spatial_breach_chance_11",
 			"colour": "#be78ff",
+			"wheel": "event_horizon_1",
 			"art": {
 				"kind": "breach",
 				"size": 34
@@ -1906,6 +1999,7 @@
 		{
 			"id": "full_array_1",
 			"colour": "#6ec8ff",
+			"spiral": -1,
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/ships/com_relay.png",
@@ -1917,6 +2011,7 @@
 		{
 			"id": "relay_network_chance_11",
 			"colour": "#6ec8ff",
+			"wheel": "full_array_1",
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/ships/nav_buoy.png",
@@ -1927,6 +2022,7 @@
 		{
 			"id": "relay_network_chance_12",
 			"colour": "#6ec8ff",
+			"wheel": "full_array_1",
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/ships/nav_buoy.png",
@@ -1937,6 +2033,7 @@
 		{
 			"id": "needle_bores_1",
 			"colour": "#ffaa50",
+			"spiral": -1,
 			"art": {
 				"kind": "planet",
 				"planet": "terran",
@@ -1947,15 +2044,17 @@
 		{
 			"id": "additional_site_1",
 			"colour": "#ffaa50",
+			"wheel": "needle_bores_1",
 			"art": {
 				"kind": "planet",
-				"planet": "barren3",
+				"planet": "frozen1",
 				"size": 45
 			}
 		},
 		{
 			"id": "inhibitor_quantity_1",
 			"colour": "#ffaa50",
+			"wheel": "needle_bores_1",
 			"art": {
 				"kind": "planet",
 				"planet": "rocky_metallic",
@@ -1965,6 +2064,7 @@
 		{
 			"id": "deep_corruption_1",
 			"colour": "#ff6e5a",
+			"spiral": 1,
 			"art": {
 				"kind": "derelicts",
 				"hulls": [
@@ -1976,15 +2076,16 @@
 					"defender"
 				],
 				"size": 140,
-				"heading": -533.8
+				"heading": -518.4
 			}
 		},
 		{
 			"id": "anomalous_debris_chance_11",
 			"colour": "#ff6e5a",
+			"wheel": "deep_corruption_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid3.png",
+				"path": "graphics/asteroids/asteroid4.png",
 				"size": 38,
 				"facing": "spin"
 			}
@@ -1992,9 +2093,10 @@
 		{
 			"id": "additional_debris_1",
 			"colour": "#ff6e5a",
+			"wheel": "deep_corruption_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid2.png",
+				"path": "graphics/asteroids/asteroid4.png",
 				"size": 38,
 				"facing": "spin"
 			}
@@ -2002,6 +2104,7 @@
 		{
 			"id": "deeper_bores_1",
 			"colour": "#ffaa50",
+			"spiral": -1,
 			"art": {
 				"kind": "planet",
 				"planet": "barren",
@@ -2012,15 +2115,17 @@
 		{
 			"id": "additional_site_2",
 			"colour": "#ffaa50",
+			"wheel": "deeper_bores_1",
 			"art": {
 				"kind": "planet",
-				"planet": "rocky_metallic",
+				"planet": "rocky_ice",
 				"size": 45
 			}
 		},
 		{
 			"id": "inhibitor_quantity_2",
 			"colour": "#ffaa50",
+			"wheel": "deeper_bores_1",
 			"art": {
 				"kind": "planet",
 				"planet": "frozen1",
@@ -2030,6 +2135,7 @@
 		{
 			"id": "bolt_hole_drop_1",
 			"colour": "#c8c86e",
+			"spiral": 1,
 			"art": {
 				"kind": "planet",
 				"planet": "arid",
@@ -2040,21 +2146,23 @@
 		{
 			"id": "supply_convoy_chance_10",
 			"colour": "#78dc8c",
+			"wheel": "bolt_hole_drop_1",
 			"art": {
 				"kind": "fleet",
 				"hulls": [
-					"brawler",
-					"monitor",
-					"sunder"
+					"hound",
+					"hammerhead",
+					"hound"
 				],
 				"size": 52,
 				"facing": "travel",
-				"heading": -442.4
+				"heading": -305
 			}
 		},
 		{
 			"id": "excavation_sites_chance_12",
 			"colour": "#ffaa50",
+			"wheel": "bolt_hole_drop_1",
 			"art": {
 				"kind": "planet",
 				"planet": "rocky_metallic",
@@ -2064,6 +2172,7 @@
 		{
 			"id": "hyperspace_bleed_1",
 			"colour": "#be78ff",
+			"spiral": 1,
 			"art": {
 				"kind": "breach",
 				"size": 104
@@ -2072,6 +2181,7 @@
 		{
 			"id": "breach_cache_items_1",
 			"colour": "#be78ff",
+			"wheel": "hyperspace_bleed_1",
 			"art": {
 				"kind": "breach",
 				"size": 34
@@ -2080,6 +2190,7 @@
 		{
 			"id": "warped_chance_1",
 			"colour": "#be78ff",
+			"wheel": "hyperspace_bleed_1",
 			"art": {
 				"kind": "breach",
 				"size": 34
@@ -2088,6 +2199,7 @@
 		{
 			"id": "double_down_1",
 			"colour": "#6ec8ff",
+			"spiral": 1,
 			"art": {
 				"kind": "binary",
 				"paths": [
@@ -2102,6 +2214,7 @@
 		{
 			"id": "relay_reward_rarity_1",
 			"colour": "#6ec8ff",
+			"wheel": "double_down_1",
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/ships/nav_buoy.png",
@@ -2112,6 +2225,7 @@
 		{
 			"id": "relay_reward_rarity_2",
 			"colour": "#6ec8ff",
+			"wheel": "double_down_1",
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/ships/nav_buoy.png",
@@ -2122,6 +2236,7 @@
 		{
 			"id": "open_season_1",
 			"colour": "#78dc8c",
+			"spiral": 1,
 			"art": {
 				"kind": "fleet",
 				"hulls": [
@@ -2133,42 +2248,44 @@
 				],
 				"size": 140,
 				"facing": "travel",
-				"heading": -502.4
+				"heading": -365
 			}
 		},
 		{
 			"id": "supply_convoy_chance_11",
 			"colour": "#78dc8c",
+			"wheel": "open_season_1",
 			"art": {
 				"kind": "fleet",
 				"hulls": [
 					"hound",
-					"hammerhead",
-					"hound"
+					"monitor"
 				],
 				"size": 52,
 				"facing": "travel",
-				"heading": -502.4
+				"heading": -365
 			}
 		},
 		{
 			"id": "supply_convoy_chance_12",
 			"colour": "#78dc8c",
+			"wheel": "open_season_1",
 			"art": {
 				"kind": "fleet",
 				"hulls": [
-					"sunder",
-					"wolf",
-					"enforcer"
+					"monitor",
+					"enforcer",
+					"hound"
 				],
 				"size": 52,
 				"facing": "travel",
-				"heading": -502.4
+				"heading": -365
 			}
 		},
 		{
 			"id": "rude_awakening_1",
 			"colour": "#e070b0",
+			"spiral": -1,
 			"art": {
 				"kind": "planet",
 				"planet": "irradiated",
@@ -2178,6 +2295,7 @@
 		{
 			"id": "spatial_breach_chance_12",
 			"colour": "#be78ff",
+			"wheel": "rude_awakening_1",
 			"art": {
 				"kind": "breach",
 				"size": 34
@@ -2186,9 +2304,10 @@
 		{
 			"id": "anomalous_debris_chance_12",
 			"colour": "#ff6e5a",
+			"wheel": "rude_awakening_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid1.png",
+				"path": "graphics/asteroids/asteroid2.png",
 				"size": 38,
 				"facing": "spin"
 			}
@@ -2196,6 +2315,7 @@
 		{
 			"id": "pitch_black_1",
 			"colour": "#ffaa50",
+			"spiral": 1,
 			"art": {
 				"kind": "planet",
 				"planet": "water",
@@ -2206,24 +2326,27 @@
 		{
 			"id": "additional_site_3",
 			"colour": "#ffaa50",
+			"wheel": "pitch_black_1",
 			"art": {
 				"kind": "planet",
-				"planet": "frozen1",
+				"planet": "barren3",
 				"size": 45
 			}
 		},
 		{
 			"id": "inhibitor_quantity_3",
 			"colour": "#ffaa50",
+			"wheel": "pitch_black_1",
 			"art": {
 				"kind": "planet",
-				"planet": "rocky_metallic",
+				"planet": "barren2",
 				"size": 45
 			}
 		},
 		{
 			"id": "lone_sleeper_1",
 			"colour": "#ff6e5a",
+			"spiral": -1,
 			"art": {
 				"kind": "derelicts",
 				"hulls": [
@@ -2233,15 +2356,16 @@
 					"sentry"
 				],
 				"size": 140,
-				"heading": -577.4
+				"heading": -425
 			}
 		},
 		{
 			"id": "engram_quantity_1",
 			"colour": "#ff6e5a",
+			"wheel": "lone_sleeper_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid1.png",
+				"path": "graphics/asteroids/asteroid4.png",
 				"size": 38,
 				"facing": "spin"
 			}
@@ -2249,9 +2373,10 @@
 		{
 			"id": "additional_debris_2",
 			"colour": "#ff6e5a",
+			"wheel": "lone_sleeper_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid3.png",
+				"path": "graphics/asteroids/asteroid2.png",
 				"size": 38,
 				"facing": "spin"
 			}
@@ -2259,40 +2384,44 @@
 		{
 			"id": "fortified_depot_1",
 			"colour": "#f0dc6e",
+			"spiral": 1,
 			"art": {
 				"kind": "station",
 				"hulls": [
 					"station2"
 				],
 				"size": 160,
-				"heading": -607.4
+				"heading": -470
 			}
 		},
 		{
 			"id": "listening_post_chance_11",
 			"colour": "#f0dc6e",
+			"wheel": "fortified_depot_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/ships/wolf/wolf_base.png",
+				"path": "graphics/ships/lasher/lasher_base.png",
 				"size": 34,
 				"facing": "travel",
-				"heading": -607.4
+				"heading": -470
 			}
 		},
 		{
 			"id": "listening_post_chance_12",
 			"colour": "#f0dc6e",
+			"wheel": "fortified_depot_1",
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/ships/wolf/wolf_base.png",
 				"size": 34,
 				"facing": "travel",
-				"heading": -607.4
+				"heading": -470
 			}
 		},
 		{
 			"id": "forked_trace_1",
 			"colour": "#6ec8ff",
+			"spiral": -1,
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/ships/sensor_array.png",
@@ -2304,6 +2433,7 @@
 		{
 			"id": "relay_reward_rarity_3",
 			"colour": "#6ec8ff",
+			"wheel": "forked_trace_1",
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/ships/nav_buoy.png",
@@ -2314,6 +2444,7 @@
 		{
 			"id": "relay_reward_rarity_4",
 			"colour": "#6ec8ff",
+			"wheel": "forked_trace_1",
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/ships/nav_buoy.png",
@@ -2324,6 +2455,7 @@
 		{
 			"id": "mixed_manifest_1",
 			"colour": "#78dc8c",
+			"spiral": 1,
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/stations/station_midline1.png",
@@ -2334,35 +2466,38 @@
 		{
 			"id": "threat_feedstock_chance_1",
 			"colour": "#78dc8c",
+			"wheel": "mixed_manifest_1",
 			"art": {
 				"kind": "fleet",
 				"hulls": [
-					"centurion",
-					"enforcer",
-					"brawler"
+					"wolf",
+					"lasher",
+					"hammerhead"
 				],
 				"size": 52,
 				"facing": "travel",
-				"heading": -652.4
+				"heading": -515
 			}
 		},
 		{
 			"id": "shroud_feedstock_chance_1",
 			"colour": "#78dc8c",
+			"wheel": "mixed_manifest_1",
 			"art": {
 				"kind": "fleet",
 				"hulls": [
-					"wolf",
-					"centurion"
+					"centurion",
+					"hammerhead"
 				],
 				"size": 52,
 				"facing": "travel",
-				"heading": -652.4
+				"heading": -515
 			}
 		},
 		{
 			"id": "restless_sleepers_1",
 			"colour": "#ff6e5a",
+			"spiral": -1,
 			"art": {
 				"kind": "derelicts",
 				"hulls": [
@@ -2374,15 +2509,16 @@
 					"warden"
 				],
 				"size": 140,
-				"heading": -682.4
+				"heading": -545
 			}
 		},
 		{
 			"id": "engram_quantity_2",
 			"colour": "#ff6e5a",
+			"wheel": "restless_sleepers_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid1.png",
+				"path": "graphics/asteroids/asteroid2.png",
 				"size": 38,
 				"facing": "spin"
 			}
@@ -2390,6 +2526,7 @@
 		{
 			"id": "additional_debris_3",
 			"colour": "#ff6e5a",
+			"wheel": "restless_sleepers_1",
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/asteroids/asteroid1.png",
@@ -2400,6 +2537,7 @@
 		{
 			"id": "hunting_party_1",
 			"colour": "#f0dc6e",
+			"spiral": -1,
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/stations/station_side02.png",
@@ -2410,28 +2548,31 @@
 		{
 			"id": "vault_quantity_1",
 			"colour": "#f0dc6e",
+			"wheel": "hunting_party_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/ships/wolf/wolf_base.png",
+				"path": "graphics/ships/lasher/lasher_base.png",
 				"size": 34,
 				"facing": "travel",
-				"heading": -697.4
+				"heading": -560
 			}
 		},
 		{
 			"id": "slow_purge_1",
 			"colour": "#f0dc6e",
+			"wheel": "hunting_party_1",
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/ships/wolf/wolf_base.png",
 				"size": 34,
 				"facing": "travel",
-				"heading": -697.4
+				"heading": -560
 			}
 		},
 		{
 			"id": "incursion_1",
 			"colour": "#be78ff",
+			"spiral": 1,
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/stations/station_side00.png",
@@ -2443,6 +2584,7 @@
 		{
 			"id": "breach_cache_quantity_2",
 			"colour": "#be78ff",
+			"wheel": "incursion_1",
 			"art": {
 				"kind": "breach",
 				"size": 34
@@ -2451,6 +2593,7 @@
 		{
 			"id": "breach_cache_items_2",
 			"colour": "#be78ff",
+			"wheel": "incursion_1",
 			"art": {
 				"kind": "breach",
 				"size": 34
@@ -2459,16 +2602,25 @@
 		{
 			"id": "silent_choir_1",
 			"colour": "#ff6e5a",
+			"spiral": 1,
 			"art": {
-				"kind": "sprite",
-				"path": "graphics/stations/cryosleeper.png",
-				"size": 184,
-				"facing": "spin"
+				"kind": "derelicts",
+				"hulls": [
+					"rampart",
+					"sentry",
+					"sentry",
+					"defender",
+					"warden",
+					"picket"
+				],
+				"size": 140,
+				"heading": -620
 			}
 		},
 		{
 			"id": "engram_quantity_3",
 			"colour": "#ff6e5a",
+			"wheel": "silent_choir_1",
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/asteroids/asteroid2.png",
@@ -2479,9 +2631,10 @@
 		{
 			"id": "additional_debris_4",
 			"colour": "#ff6e5a",
+			"wheel": "silent_choir_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid1.png",
+				"path": "graphics/asteroids/asteroid4.png",
 				"size": 38,
 				"facing": "spin"
 			}

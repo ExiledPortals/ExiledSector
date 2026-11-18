@@ -1,0 +1,108 @@
+package exiledsector.charts.tree;
+
+public final class AtlasLinkPath {
+
+    private static final int ARC_POINTS = 24;
+    private static final int SPIRAL_POINTS = 24;
+    private static final double SPIRAL_HOOK_RADIANS = Math.toRadians(150.0);
+    private static final double FULL_TURN = Math.PI * 2.0;
+    private static final float CENTRE_RADIUS = 1f;
+
+    private final float[] xs;
+    private final float[] ys;
+    private final float minX;
+    private final float minY;
+    private final float maxX;
+    private final float maxY;
+
+    private AtlasLinkPath(float[] xs, float[] ys) {
+        this.xs = xs;
+        this.ys = ys;
+        float lowX = Float.MAX_VALUE;
+        float lowY = Float.MAX_VALUE;
+        float highX = -Float.MAX_VALUE;
+        float highY = -Float.MAX_VALUE;
+        for (int point = 0; point < xs.length; point++) {
+            lowX = Math.min(lowX, xs[point]);
+            lowY = Math.min(lowY, ys[point]);
+            highX = Math.max(highX, xs[point]);
+            highY = Math.max(highY, ys[point]);
+        }
+        this.minX = lowX;
+        this.minY = lowY;
+        this.maxX = highX;
+        this.maxY = highY;
+    }
+
+    static AtlasLinkPath straight(float fromX, float fromY, float toX, float toY) {
+        return new AtlasLinkPath(new float[]{fromX, toX}, new float[]{fromY, toY});
+    }
+
+    static AtlasLinkPath arc(float centreX, float centreY, float radius, float fromX, float fromY, float toX, float toY) {
+        double fromTurn = Math.atan2(fromY - centreY, fromX - centreX);
+        double sweep = Math.IEEEremainder(Math.atan2(toY - centreY, toX - centreX) - fromTurn, FULL_TURN);
+        float[] xs = new float[ARC_POINTS];
+        float[] ys = new float[ARC_POINTS];
+        for (int point = 0; point < ARC_POINTS; point++) {
+            double turn = fromTurn + sweep * point / (ARC_POINTS - 1);
+            xs[point] = centreX + radius * (float) Math.cos(turn);
+            ys[point] = centreY + radius * (float) Math.sin(turn);
+        }
+        return new AtlasLinkPath(xs, ys);
+    }
+
+    static AtlasLinkPath spiral(float centreX, float centreY, int turn, float fromX, float fromY, float toX, float toY) {
+        double fromRadius = Math.hypot(fromX - centreX, fromY - centreY);
+        double toRadius = Math.hypot(toX - centreX, toY - centreY);
+        boolean inward = fromRadius >= toRadius;
+        double outerRadius = inward ? fromRadius : toRadius;
+        double innerRadius = inward ? toRadius : fromRadius;
+        double outerAngle = inward ? Math.atan2(fromY - centreY, fromX - centreX) : Math.atan2(toY - centreY, toX - centreX);
+        double innerAngle = innerRadius < CENTRE_RADIUS ? outerAngle + turn * SPIRAL_HOOK_RADIANS
+                : inward ? Math.atan2(toY - centreY, toX - centreX) : Math.atan2(fromY - centreY, fromX - centreX);
+        double sweep = turn * floorMod((innerAngle - outerAngle) * turn, FULL_TURN);
+        float[] xs = new float[SPIRAL_POINTS];
+        float[] ys = new float[SPIRAL_POINTS];
+        for (int point = 0; point < SPIRAL_POINTS; point++) {
+            double share = (double) point / (SPIRAL_POINTS - 1);
+            double radius = outerRadius + (innerRadius - outerRadius) * share;
+            double angle = outerAngle + sweep * share;
+            int slot = inward ? point : SPIRAL_POINTS - 1 - point;
+            xs[slot] = centreX + (float) (radius * Math.cos(angle));
+            ys[slot] = centreY + (float) (radius * Math.sin(angle));
+        }
+        return new AtlasLinkPath(xs, ys);
+    }
+
+    private static double floorMod(double value, double modulus) {
+        return ((value % modulus) + modulus) % modulus;
+    }
+
+    public int size() {
+        return xs.length;
+    }
+
+    public float x(int point) {
+        return xs[point];
+    }
+
+    public float y(int point) {
+        return ys[point];
+    }
+
+    public float minX() {
+        return minX;
+    }
+
+    public float minY() {
+        return minY;
+    }
+
+    public float maxX() {
+        return maxX;
+    }
+
+    public float maxY() {
+        return maxY;
+    }
+}

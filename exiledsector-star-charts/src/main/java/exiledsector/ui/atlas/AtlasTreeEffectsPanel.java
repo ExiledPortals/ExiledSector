@@ -28,19 +28,33 @@ final class AtlasTreeEffectsPanel {
     private static final float PADDING = 18f;
     private static final float TITLE_GAP = 10f;
     private static final float HEADER_GAP = 4f;
+    private static final float EFFECT_GAP = 7f;
     private static final float GROUP_GAP = 14f;
     private static final float SCROLL_STEP = 60f;
     private static final float UNLIMITED_TEXT_HEIGHT = 100000f;
 
-    private record Section(TextLabel header, TextLabel body) {
+    private record Section(TextLabel header, List<TextLabel> effects) {
 
         float height() {
-            return header.height() + HEADER_GAP + body.height();
+            float height = header.height() + HEADER_GAP;
+            for (TextLabel effect : effects) {
+                height += effect.height();
+            }
+            return height + EFFECT_GAP * Math.max(0, effects.size() - 1);
+        }
+
+        void draw(float left, float top, float alpha) {
+            header.setAlpha(alpha).draw(left, top);
+            float effectTop = top - header.height() - HEADER_GAP;
+            for (TextLabel effect : effects) {
+                effect.setAlpha(alpha).draw(left, effectTop);
+                effectTop -= effect.height() + EFFECT_GAP;
+            }
         }
 
         void dispose() {
             header.dispose();
-            body.dispose();
+            effects.forEach(TextLabel::dispose);
         }
     }
 
@@ -144,8 +158,7 @@ final class AtlasTreeEffectsPanel {
             for (Section section : sections) {
                 float sectionBottom = sectionTop - section.height();
                 if (sectionBottom < clipTop && sectionTop > clipBottom) {
-                    section.header().setAlpha(alpha).draw(left, sectionTop);
-                    section.body().setAlpha(alpha).draw(left, sectionTop - section.header().height() - HEADER_GAP);
+                    section.draw(left, sectionTop, alpha);
                 }
                 sectionTop = sectionBottom - GROUP_GAP;
             }
@@ -180,10 +193,12 @@ final class AtlasTreeEffectsPanel {
 
     private Section section(String headerText, List<StyledText> lines) {
         TextLabel header = new TextLabel(fonts.title(), SkillTreePanelStyle.TOOLTIP_TITLE_COLOR).set(headerText);
-        TextLabel body = new TextLabel(fonts.body(), SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
-        body.setParagraphs(List.of(StyledText.join(StyledText.of("\n"), lines)), CONTENT_WIDTH, UNLIMITED_TEXT_HEIGHT,
-                SkillTreePanelStyle::standardHighlightColor);
-        return new Section(header, body);
+        List<TextLabel> effects = new ArrayList<>();
+        for (StyledText line : lines) {
+            effects.add(new TextLabel(fonts.body(), SkillTreePanelStyle.TOOLTIP_BODY_COLOR).setParagraphs(List.of(line), CONTENT_WIDTH,
+                    UNLIMITED_TEXT_HEIGHT, SkillTreePanelStyle::standardHighlightColor));
+        }
+        return new Section(header, effects);
     }
 
     static String groupName(AtlasTreeEffectGroups.Group group) {

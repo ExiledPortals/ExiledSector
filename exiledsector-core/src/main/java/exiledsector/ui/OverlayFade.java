@@ -8,6 +8,7 @@ public final class OverlayFade {
     private float openLevel;
     private boolean closing;
     private boolean closed;
+    private boolean handedOver;
 
     public OverlayFade(float openSeconds) {
         this.openSeconds = openSeconds;
@@ -30,12 +31,20 @@ public final class OverlayFade {
         closing = true;
     }
 
+    public void handOver() {
+        handedOver = true;
+    }
+
     public boolean closing() {
-        return closing;
+        return closing || handedOver;
+    }
+
+    public boolean handedOver() {
+        return handedOver;
     }
 
     public boolean fullyOpen() {
-        return !closing && openLevel >= 1f;
+        return !closing() && openLevel >= 1f;
     }
 
     public float smoothLevel() {

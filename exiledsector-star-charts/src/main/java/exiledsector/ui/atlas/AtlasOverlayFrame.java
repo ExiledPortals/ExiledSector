@@ -69,8 +69,10 @@ final class AtlasOverlayFrame {
         return innerBottom() + innerHeight() - CHROME_PAD;
     }
 
-    void drawBackdrop(float alpha) {
-        GLDraw.fillQuad(panelPosition, Color.BLACK, BACKDROP_ALPHA * alpha);
+    void drawBackdrop(float alpha, boolean withMargin) {
+        if (withMargin) {
+            GLDraw.fillQuad(panelPosition, Color.BLACK, BACKDROP_ALPHA * alpha);
+        }
         fillInner(Color.BLACK, alpha);
         BorderedPanel.draw(innerLeft(), innerBottom(), innerWidth(), innerHeight(), alpha);
     }

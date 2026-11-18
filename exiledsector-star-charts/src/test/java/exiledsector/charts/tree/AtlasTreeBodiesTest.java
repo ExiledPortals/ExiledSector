@@ -38,9 +38,9 @@ class AtlasTreeBodiesTest {
                 { "id": "a3", "highway": true },
                 { "id": "b1", "highway": true },
                 { "id": "b2", "highway": true },
-                { "id": "planet", "colour": "#ffaa50", "art": { "kind": "planet", "planet": "barren", "size": 12, "light": "#ffbe5a" } },
-                { "id": "out", "art": { "kind": "sprite", "path": "graphics/ships/nav_buoy.png", "size": 4, "facing": "travel", "spin": 0.2, "heading": 45 } },
-                { "id": "in", "art": { "kind": "derelicts", "hulls": ["picket", "warden"], "size": 6 } }
+                { "id": "planet", "colour": "#ffaa50", "spiral": -1, "art": { "kind": "planet", "planet": "barren", "size": 12, "light": "#ffbe5a" } },
+                { "id": "out", "wheel": "planet", "art": { "kind": "sprite", "path": "graphics/ships/nav_buoy.png", "size": 4, "facing": "travel", "spin": 0.2, "heading": 45 } },
+                { "id": "in", "wheel": "planet", "art": { "kind": "shrouded", "hulls": ["picket", "warden"], "size": 6 } }
             ] }
             """;
 
@@ -52,8 +52,12 @@ class AtlasTreeBodiesTest {
         }
     }
 
-    private static Set<String> describe(AtlasTreeBodies bodies, boolean alongRing) {
-        return bodies.links().stream().filter(link -> link.alongRing() == alongRing).map(link -> describe(bodies, link)).collect(Collectors.toSet());
+    private static Set<String> describe(AtlasTreeBodies bodies, AtlasTreeBodies.Shape shape) {
+        return bodies.links().stream().filter(link -> link.shape() == shape).map(link -> describe(bodies, link)).collect(Collectors.toSet());
+    }
+
+    private static Link linkBetween(AtlasTreeBodies bodies, String pair) {
+        return bodies.links().stream().filter(link -> describe(bodies, link).equals(pair)).findFirst().orElseThrow();
     }
 
     private static String describe(AtlasTreeBodies bodies, Link link) {
@@ -63,12 +67,41 @@ class AtlasTreeBodiesTest {
     }
 
     @Test
-    void linksBetweenHighwayNodesTheSameDistanceFromTheStarFollowTheRingAndEveryOtherLinkIsStraight() {
+    void ringNeighboursFollowTheRingWheelLinksSpiralIntoTheirCentreAndEveryOtherLinkIsStraight() {
         AtlasTreeBodies bodies = data().bodies();
 
-        assertEquals(Set.of("a1-a2", "a2-a3", "b1-b2"), describe(bodies, true));
-        assertEquals(Set.of("a1-root", "a1-b2", "a3-out", "in-out", "in-planet"), describe(bodies, false));
+        assertEquals(Set.of("a1-a2", "a2-a3", "b1-b2"), describe(bodies, AtlasTreeBodies.Shape.ALONG_RING));
+        assertEquals(Set.of("a3-out", "in-out", "in-planet"), describe(bodies, AtlasTreeBodies.Shape.SPIRAL));
+        assertEquals(Set.of("a1-root", "a1-b2"), describe(bodies, AtlasTreeBodies.Shape.STRAIGHT));
         assertEquals(100f, bodies.ringRadius(bodies.links().stream().filter(Link::alongRing).findFirst().orElseThrow()), 0.01f);
+    }
+
+    @Test
+    void aSpiralRunsFromBodyToBodyAndClosesInOnItsWheelCentreAllTheWay() {
+        AtlasTreeBodies bodies = data().bodies();
+        AtlasTreeBodies.Body planet = bodies.body("planet");
+
+        for (String pair : List.of("a3-out", "in-out", "in-planet")) {
+            Link link = linkBetween(bodies, pair);
+            AtlasTreeBodies.Body first = bodies.bodies().get(link.first());
+            AtlasTreeBodies.Body second = bodies.bodies().get(link.second());
+            AtlasLinkPath path = link.path();
+            assertEquals(first.x(), path.x(0), 0.01f, pair);
+            assertEquals(first.y(), path.y(0), 0.01f, pair);
+            assertEquals(second.x(), path.x(path.size() - 1), 0.01f, pair);
+            assertEquals(second.y(), path.y(path.size() - 1), 0.01f, pair);
+            double previous = Double.NaN;
+            boolean inward = Math.hypot(first.x() - planet.x(), first.y() - planet.y()) >= Math.hypot(second.x() - planet.x(), second.y() - planet.y());
+            for (int point = 0; point < path.size(); point++) {
+                double reach = Math.hypot(path.x(point) - planet.x(), path.y(point) - planet.y());
+                if (!Double.isNaN(previous)) {
+                    assertTrue(inward ? reach <= previous + 0.01 : reach >= previous - 0.01, pair + " point " + point);
+                }
+                previous = reach;
+            }
+        }
+        Link hook = linkBetween(bodies, "in-planet");
+        assertTrue(hook.path().size() > 2);
     }
 
     @Test
@@ -98,7 +131,11 @@ class AtlasTreeBodiesTest {
         assertEquals(45f, bodies.body("out").art().heading());
         assertEquals(List.of("graphics/ships/nav_buoy.png"), bodies.body("out").art().spritePaths());
         assertEquals(List.of("picket", "warden"), bodies.body("in").art().hullIds());
+        assertEquals(AtlasBodyArt.Kind.SHROUDED, bodies.body("in").art().kind());
         assertTrue(bodies.body("in").art().isShipGroup());
+        assertEquals(bodies.body("planet").index(), bodies.body("in").wheel());
+        assertEquals(-1, bodies.body("planet").spiral());
+        assertEquals(AtlasTreeBodies.NO_WHEEL, bodies.body("a1").wheel());
         assertEquals("root", bodies.star().nodeId());
     }
 
@@ -108,6 +145,6 @@ class AtlasTreeBodiesTest {
 
         assertEquals(AtlasBodyArt.Kind.PLAIN, bodies.body("a1").art().kind());
         assertNull(bodies.star());
-        assertTrue(bodies.links().stream().noneMatch(Link::alongRing));
+        assertTrue(bodies.links().stream().allMatch(link -> link.shape() == AtlasTreeBodies.Shape.STRAIGHT));
     }
 }

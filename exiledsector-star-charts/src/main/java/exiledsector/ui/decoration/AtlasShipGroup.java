@@ -4,33 +4,20 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import exiledsector.skills.skilleffect.render.SpriteCache;
-import exiledsector.ui.util.SpriteDraw;
 import org.apache.log4j.Logger;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public final class AtlasShipGroup {
 
-    public enum Mode { UNDER_WAY, DORMANT, STATION }
+    public enum Mode { UNDER_WAY, DORMANT, STATION, SWIMMING }
 
     static final float SHIP_SCALE = 4.4f;
     private static final float ENGINE_LEVEL = 0.6f;
-    private static final String[] DEBRIS_PATHS = {
-            "graphics/debris/debris_lrg0.png", "graphics/debris/debris_lrg1.png", "graphics/debris/debris_med0.png", "graphics/debris/debris_med1.png",
-            "graphics/debris/debris_med2.png", "graphics/debris/debris_sml0.png", "graphics/debris/debris_sml1.png", "graphics/debris/debris_sml2.png",
-            "graphics/debris/debris_sml3.png"};
-    private static final int DEBRIS_PIECES = 18;
-    private static final float DEBRIS_REACH = 1.5f;
-    private static final float DEBRIS_MIN_SIZE = 8f;
-    private static final float DEBRIS_SIZE_SPREAD = 20f;
-    private static final float DEBRIS_ALPHA = 0.8f;
     private static final float WRECK_REACH = 0.8f;
-    private static final float TUMBLE_DEGREES_PER_SECOND = 5f;
-    private static final float STATION_TURN_DEGREES_PER_SECOND = 1.5f;
-    private static final Color DEBRIS_TINT = new Color(150, 142, 132);
+    private static final float STATION_TURN_DEGREES_PER_SECOND = 0.3f;
     private static final Logger LOG = Logger.getLogger(AtlasShipGroup.class);
 
     private final SpriteCache spriteCache = new SpriteCache(AtlasShipGroup.class);
@@ -41,14 +28,12 @@ public final class AtlasShipGroup {
     private final long seed;
     private List<RoamingShip> ships;
     private List<Wreck> wrecks;
-    private List<Debris> debris;
+    private AtlasDebrisField debris;
+    private AtlasShroudedPod pod;
     private float seconds;
 
     private record Wreck(String spritePath, float width, float height, float scale, HullEngines engines, float offsetX, float offsetY,
                          float facingDeg, float tumble) {
-    }
-
-    private record Debris(String path, float offsetX, float offsetY, float size, float facingDeg, float tumble) {
     }
 
     public AtlasShipGroup(Mode mode, List<String> hullIds, float radius, long seed) {
@@ -73,7 +58,10 @@ public final class AtlasShipGroup {
         }
         build(headingDeg);
         if (debris != null) {
-            renderDebris(screenX, screenY, zoom, alpha);
+            debris.render(screenX, screenY, zoom, seconds, alpha);
+        }
+        if (pod != null) {
+            pod.render(screenX, screenY, zoom, seconds, alpha);
         }
         for (Wreck wreck : wrecks) {
             float x = screenX + wreck.offsetX() * zoom;
@@ -100,19 +88,6 @@ public final class AtlasShipGroup {
         }
     }
 
-    private void renderDebris(float screenX, float screenY, float zoom, float alpha) {
-        for (Debris piece : debris) {
-            SpriteAPI sprite = spriteCache.sprite(piece.path());
-            if (sprite == null || sprite.getWidth() <= 0f || sprite.getHeight() <= 0f) {
-                continue;
-            }
-            float longest = Math.max(sprite.getWidth(), sprite.getHeight());
-            float scale = piece.size() * zoom / longest;
-            SpriteDraw.drawAtCenter(sprite, screenX + piece.offsetX() * zoom, screenY - piece.offsetY() * zoom, sprite.getWidth() * scale,
-                    sprite.getHeight() * scale, DEBRIS_TINT, alpha * DEBRIS_ALPHA, piece.facingDeg() + piece.tumble() * seconds);
-        }
-    }
-
     private void build(float headingDeg) {
         if (ships != null) {
             return;
@@ -131,6 +106,7 @@ public final class AtlasShipGroup {
             case UNDER_WAY -> buildUnderWay(hulls, headingDeg, random);
             case DORMANT -> buildDormant(hulls, random);
             case STATION -> buildStation(hulls);
+            case SWIMMING -> pod = new AtlasShroudedPod(spriteCache, hulls, radius, random);
         }
     }
 
@@ -150,18 +126,10 @@ public final class AtlasShipGroup {
             ShipHullSpecAPI hull = hulls.get(index);
             float reach = index == 0 ? 0f : (float) Math.sqrt(random.nextFloat()) * radius * WRECK_REACH;
             double angle = random.nextDouble() * Math.PI * 2.0;
-            float tumble = (random.nextFloat() * 2f - 1f) * TUMBLE_DEGREES_PER_SECOND;
             addWreck(hull, FleetShipDrift.HullMotion.of(hull.getHullSize()).scaleMult() * SHIP_SCALE, reach * (float) Math.cos(angle),
-                    reach * (float) Math.sin(angle), random.nextFloat() * 360f, tumble);
+                    reach * (float) Math.sin(angle), random.nextFloat() * 360f, 0f);
         }
-        debris = new ArrayList<>();
-        for (int piece = 0; piece < DEBRIS_PIECES; piece++) {
-            float reach = (float) Math.sqrt(random.nextFloat()) * radius * DEBRIS_REACH;
-            double angle = random.nextDouble() * Math.PI * 2.0;
-            debris.add(new Debris(DEBRIS_PATHS[random.nextInt(DEBRIS_PATHS.length)], reach * (float) Math.cos(angle), reach * (float) Math.sin(angle),
-                    DEBRIS_MIN_SIZE + random.nextFloat() * DEBRIS_SIZE_SPREAD, random.nextFloat() * 360f,
-                    (random.nextFloat() * 2f - 1f) * TUMBLE_DEGREES_PER_SECOND * 2f));
-        }
+        debris = new AtlasDebrisField(spriteCache, radius, seed);
     }
 
     private void buildStation(List<ShipHullSpecAPI> hulls) {

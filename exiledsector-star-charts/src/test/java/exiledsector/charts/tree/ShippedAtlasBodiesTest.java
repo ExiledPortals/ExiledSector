@@ -147,7 +147,7 @@ class ShippedAtlasBodiesTest {
     }
 
     @Test
-    void noStraightLinkPassesOverAnotherBody() throws Exception {
+    void noLinkPassesOverAnotherBody() throws Exception {
         AtlasTreeBodies bodies = shipped().bodies();
         List<String> crossings = new ArrayList<>();
         for (AtlasTreeBodies.Link link : bodies.links()) {
@@ -158,7 +158,7 @@ class ShippedAtlasBodiesTest {
             AtlasTreeBodies.Body second = bodies.bodies().get(link.second());
             for (AtlasTreeBodies.Body body : bodies.bodies()) {
                 if (body != first && body != second && body != bodies.star()
-                        && distanceToSegment(body, first, second) < body.art().size() + BODY_CLEARANCE) {
+                        && distanceToPath(body, link.path()) < body.art().size() + BODY_CLEARANCE) {
                     crossings.add(first.nodeId() + "-" + second.nodeId() + " crosses " + body.nodeId());
                 }
             }
@@ -167,11 +167,19 @@ class ShippedAtlasBodiesTest {
         assertTrue(crossings.isEmpty(), String.join("\n", crossings));
     }
 
-    private static double distanceToSegment(AtlasTreeBodies.Body point, AtlasTreeBodies.Body from, AtlasTreeBodies.Body to) {
-        double deltaX = to.x() - from.x();
-        double deltaY = to.y() - from.y();
+    private static double distanceToPath(AtlasTreeBodies.Body point, AtlasLinkPath path) {
+        double nearest = Double.MAX_VALUE;
+        for (int segment = 0; segment + 1 < path.size(); segment++) {
+            nearest = Math.min(nearest, distanceToSegment(point, path.x(segment), path.y(segment), path.x(segment + 1), path.y(segment + 1)));
+        }
+        return nearest;
+    }
+
+    private static double distanceToSegment(AtlasTreeBodies.Body point, float fromX, float fromY, float toX, float toY) {
+        double deltaX = toX - fromX;
+        double deltaY = toY - fromY;
         double lengthSquared = deltaX * deltaX + deltaY * deltaY;
-        double share = lengthSquared == 0 ? 0 : Math.max(0, Math.min(1, ((point.x() - from.x()) * deltaX + (point.y() - from.y()) * deltaY) / lengthSquared));
-        return Math.hypot(point.x() - (from.x() + share * deltaX), point.y() - (from.y() + share * deltaY));
+        double share = lengthSquared == 0 ? 0 : Math.max(0, Math.min(1, ((point.x() - fromX) * deltaX + (point.y() - fromY) * deltaY) / lengthSquared));
+        return Math.hypot(point.x() - (fromX + share * deltaX), point.y() - (fromY + share * deltaY));
     }
 }
