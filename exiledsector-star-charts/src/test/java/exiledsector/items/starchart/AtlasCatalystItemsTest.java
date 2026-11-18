@@ -17,7 +17,7 @@ class AtlasCatalystItemsTest {
     private static final AtlasCatalysts.Catalyst SURVEY = new AtlasCatalysts.Catalyst("test_survey", "relay_network", AtlasCatalysts.Family.SURVEY, 1f, 1);
     private static final AtlasCatalysts.Catalyst TERMINUS = new AtlasCatalysts.Catalyst("test_terminus", "spatial_breach", AtlasCatalysts.Family.TERMINUS,
             1f, 1);
-    private static final AtlasCatalysts.Catalyst UNCARRIED = new AtlasCatalysts.Catalyst("test_uncarried", "asteroid_storm",
+    private static final AtlasCatalysts.Catalyst UNCARRIED = new AtlasCatalysts.Catalyst("test_uncarried", "magnetic_storm",
             AtlasCatalysts.Family.TERMINUS, 1f, 1);
 
     @AfterEach

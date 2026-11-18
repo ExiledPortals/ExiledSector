@@ -8,6 +8,7 @@ import exiledsector.MockSector;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.convoy.SupplyConvoy;
+import exiledsector.charts.anomaly.debris.AnomalousDebris;
 import exiledsector.charts.anomaly.excavation.ExcavationSites;
 import exiledsector.charts.anomaly.facility.PreCollapseFacility;
 import exiledsector.charts.atlas.AtlasRunNode;
@@ -155,16 +156,16 @@ public class ChartAnomaliesTest {
                         List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_CRAFTING_ITEM_PERCENT, 50f))),
                 new ChartAnomalies.Definition(SpatialBreach.ANOMALY_ID, 1f, 1, 15, "", "", false, Set.of(), false,
                         List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_FEEDSTOCK_PERCENT, 30f))),
-                definition(AsteroidStorm.ANOMALY_ID)));
+                definition(AnomalousDebris.ANOMALY_ID)));
         ChartGenContext chart = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_CRAFTING_ITEM_PERCENT, 20f)))
-                .withAnomalies(List.of(AsteroidStorm.ANOMALY_ID));
+                .withAnomalies(List.of(AnomalousDebris.ANOMALY_ID));
 
-        ChartGenContext context = chart.withAnomalyEffects(List.of(MagneticStorm.ANOMALY_ID, SpatialBreach.ANOMALY_ID, AsteroidStorm.ANOMALY_ID));
+        ChartGenContext context = chart.withAnomalyEffects(List.of(MagneticStorm.ANOMALY_ID, SpatialBreach.ANOMALY_ID, AnomalousDebris.ANOMALY_ID));
 
         assertEquals(70f, context.dropPercent(DropType.CRAFTING_ITEM), 0.001f);
         assertEquals(30f, context.dropPercent(DropType.FEEDSTOCK), 0.001f);
-        assertEquals(List.of(AsteroidStorm.ANOMALY_ID), context.forcedAnomalies());
-        assertSame(chart, chart.withAnomalyEffects(List.of(AsteroidStorm.ANOMALY_ID)));
+        assertEquals(List.of(AnomalousDebris.ANOMALY_ID), context.forcedAnomalies());
+        assertSame(chart, chart.withAnomalyEffects(List.of(AnomalousDebris.ANOMALY_ID)));
         assertSame(chart, chart.withAnomalyEffects(null));
     }
 
@@ -187,28 +188,28 @@ public class ChartAnomaliesTest {
                 .put(new JSONObject().put("id", "black_hole").put("opening_chance", "0.08"))
                 .put(new JSONObject().put("id", "remnant_nexus_station").put("biomes", "remnant_expanse").put("opening_chance", "0.08"))
                 .put(new JSONObject().put("id", SpatialBreach.ANOMALY_ID).put("opening_chance", "0.08"))
-                .put(new JSONObject().put("id", AsteroidStorm.ANOMALY_ID)));
+                .put(new JSONObject().put("id", AnomalousDebris.ANOMALY_ID)));
 
         assertEquals(2, problems.size());
         assertFalse(ChartAnomalies.definition("black_hole").rollsOnOpening());
         assertFalse(ChartAnomalies.definition("remnant_nexus_station").rollsOnOpening());
         assertEquals(0.08f, ChartAnomalies.definition(SpatialBreach.ANOMALY_ID).openingChance(), 1e-6f);
-        assertFalse(ChartAnomalies.definition(AsteroidStorm.ANOMALY_ID).rollsOnOpening());
+        assertFalse(ChartAnomalies.definition(AnomalousDebris.ANOMALY_ID).rollsOnOpening());
     }
 
     @Test
     void starAnomaliesConflictWithEachOtherAndExcludesWorkBothWays() {
         ChartAnomalies.useForTests(List.of(definition("black_hole"), definition("dense_nebula"),
-                definition(SpatialBreach.ANOMALY_ID, 1, 15, "", Set.of(MagneticStorm.ANOMALY_ID)), definition(MagneticStorm.ANOMALY_ID), definition(AsteroidStorm.ANOMALY_ID)));
+                definition(SpatialBreach.ANOMALY_ID, 1, 15, "", Set.of(MagneticStorm.ANOMALY_ID)), definition(MagneticStorm.ANOMALY_ID), definition(AnomalousDebris.ANOMALY_ID)));
 
         assertTrue(ChartAnomalies.conflicts("black_hole", "dense_nebula"));
         assertTrue(ChartAnomalies.conflicts(SpatialBreach.ANOMALY_ID, MagneticStorm.ANOMALY_ID));
         assertTrue(ChartAnomalies.conflicts(MagneticStorm.ANOMALY_ID, SpatialBreach.ANOMALY_ID));
-        assertFalse(ChartAnomalies.conflicts(SpatialBreach.ANOMALY_ID, AsteroidStorm.ANOMALY_ID));
-        assertFalse(ChartAnomalies.conflicts("black_hole", AsteroidStorm.ANOMALY_ID));
+        assertFalse(ChartAnomalies.conflicts(SpatialBreach.ANOMALY_ID, AnomalousDebris.ANOMALY_ID));
+        assertFalse(ChartAnomalies.conflicts("black_hole", AnomalousDebris.ANOMALY_ID));
         assertFalse(ChartAnomalies.accepts(List.of("black_hole"), "dense_nebula"));
         assertFalse(ChartAnomalies.accepts(List.of("black_hole"), "black_hole"));
-        assertTrue(ChartAnomalies.accepts(List.of("black_hole"), AsteroidStorm.ANOMALY_ID));
+        assertTrue(ChartAnomalies.accepts(List.of("black_hole"), AnomalousDebris.ANOMALY_ID));
     }
 
     @Test
@@ -234,8 +235,8 @@ public class ChartAnomaliesTest {
     @Test
     void forcedAnomaliesKeepTheirOrderIgnoreTheTierRangeAndDropConflicts() {
         ChartAnomalies.useForTests(List.of(definition("black_hole", 10, 15, "", Set.of()), definition("dense_nebula"),
-                definition(MagneticStorm.ANOMALY_ID, 1, 15, "", Set.of(AsteroidStorm.ANOMALY_ID)), definition(AsteroidStorm.ANOMALY_ID)));
-        ChartGenContext context = ChartGenContext.none().withAnomalies(List.of("black_hole", "dense_nebula", MagneticStorm.ANOMALY_ID, AsteroidStorm.ANOMALY_ID));
+                definition(MagneticStorm.ANOMALY_ID, 1, 15, "", Set.of(AnomalousDebris.ANOMALY_ID)), definition(AnomalousDebris.ANOMALY_ID)));
+        ChartGenContext context = ChartGenContext.none().withAnomalies(List.of("black_hole", "dense_nebula", MagneticStorm.ANOMALY_ID, AnomalousDebris.ANOMALY_ID));
 
         assertEquals(List.of("black_hole", MagneticStorm.ANOMALY_ID), ChartAnomalies.planned(context));
         assertSame(StarAnomalies.BLACK_HOLE, ChartAnomalies.starOf(ChartAnomalies.planned(context)));
@@ -243,13 +244,13 @@ public class ChartAnomaliesTest {
 
     @Test
     void theAtlasNodesAnomaliesArriveAsForcedAnomalies() {
-        ChartAnomalies.useForTests(List.of(definition(SpatialBreach.ANOMALY_ID), definition(AsteroidStorm.ANOMALY_ID)));
-        AtlasRunNode node = new AtlasRunNode(7L, "pirates", List.of(), List.of(AsteroidStorm.ANOMALY_ID, SpatialBreach.ANOMALY_ID));
+        ChartAnomalies.useForTests(List.of(definition(SpatialBreach.ANOMALY_ID), definition(AnomalousDebris.ANOMALY_ID)));
+        AtlasRunNode node = new AtlasRunNode(7L, "pirates", List.of(), List.of(AnomalousDebris.ANOMALY_ID, SpatialBreach.ANOMALY_ID));
 
         ChartGenContext context = ChartGenContext.none().withAtlasNode(node);
 
-        assertEquals(List.of(AsteroidStorm.ANOMALY_ID, SpatialBreach.ANOMALY_ID), context.forcedAnomalies());
-        assertEquals(List.of(AsteroidStorm.ANOMALY_ID, SpatialBreach.ANOMALY_ID), ChartAnomalies.planned(context));
+        assertEquals(List.of(AnomalousDebris.ANOMALY_ID, SpatialBreach.ANOMALY_ID), context.forcedAnomalies());
+        assertEquals(List.of(AnomalousDebris.ANOMALY_ID, SpatialBreach.ANOMALY_ID), ChartAnomalies.planned(context));
     }
 
     @Test

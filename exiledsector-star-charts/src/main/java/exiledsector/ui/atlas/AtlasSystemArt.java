@@ -23,7 +23,7 @@ import java.util.Random;
 final class AtlasSystemArt {
 
     enum Kind {
-        NEBULA_PUFF, ACCRETION, WRECK, PULSAR, RESEARCH_STATION, ASTEROID, AURORA, FLARE, BREACH, BATTLE, RELAY, CONVOY, DEBRIS,
+        NEBULA_PUFF, ACCRETION, WRECK, PULSAR, RESEARCH_STATION, AURORA, FLARE, BREACH, BATTLE, RELAY, CONVOY, DEBRIS,
         EXCAVATION, STORM, FORGE, LISTENING_POST
     }
 
@@ -78,15 +78,12 @@ final class AtlasSystemArt {
     static final String DEFENDER_SPRITE = "graphics/ships/wolf/wolf_base.png";
     static final List<String> RELAY_SPRITES = List.of("graphics/ships/nav_buoy.png", "graphics/ships/com_relay.png", "graphics/ships/sensor_array.png");
     static final List<Float> RELAY_ASPECTS = List.of(1f, 177f / 96f, 1f);
-    static final List<String> ASTEROID_SPRITES = List.of("graphics/asteroids/asteroid1.png", "graphics/asteroids/asteroid2.png",
-            "graphics/asteroids/asteroid3.png", "graphics/asteroids/asteroid4.png");
     static final float CONVOY_ASPECT = 100f / 150f;
     static final float ATTACKER_ASPECT = 68f / 96f;
     static final float DEFENDER_ASPECT = 52f / 96f;
     static final int NEBULA_PUFFS = 10;
     static final int DENSE_NEBULA_PUFFS = 18;
     static final float NEBULA_ALPHA = 0.6f;
-    static final int ASTEROIDS_PER_BELT = 14;
     static final int DEBRIS_PIECES = 5;
     static final int SHEET_SIDE = 4;
     static final int CLOUD_SHEET_SIDE = 2;
@@ -182,16 +179,6 @@ final class AtlasSystemArt {
                 pieces.add(new Piece(Kind.PULSAR, -1, 0.95f, random.nextFloat() * 360f, 0f, 40f, 0));
                 pieces.add(new Piece(Kind.RESEARCH_STATION, -1, 0.3f, random.nextFloat() * 360f, 0.06f, 8f, 0));
             }
-            case "asteroid_storm" -> {
-                for (float belt : new float[]{0.45f + random.nextFloat() * 0.12f, 0.7f + random.nextFloat() * 0.15f}) {
-                    float speed = 3f + random.nextFloat() * 2f;
-                    for (int index = 0; index < ASTEROIDS_PER_BELT; index++) {
-                        float angle = 360f * index / ASTEROIDS_PER_BELT + random.nextFloat() * 15f;
-                        pieces.add(new Piece(Kind.ASTEROID, -1, belt + (random.nextFloat() - 0.5f) * 0.04f, angle,
-                                0.015f + random.nextFloat() * 0.02f, speed, random.nextInt(ASTEROID_SPRITES.size())));
-                    }
-                }
-            }
             case "magnetic_storm" -> {
                 pieces.add(new Piece(Kind.AURORA, -1, 0f, 0f, 0f, 0f, 0));
                 int planet = pickPlanet(random, orbiting);
@@ -265,7 +252,6 @@ final class AtlasSystemArt {
                 case WRECK -> drawWreck(piece, frame);
                 case PULSAR -> drawPulsar(piece, frame);
                 case RESEARCH_STATION -> drawOrbitingSprite(piece, frame, RESEARCH_STATION_SPRITE, 1f, null);
-                case ASTEROID -> drawAsteroid(piece, frame);
                 case AURORA -> drawAurora(piece, frame);
                 case FLARE -> drawFlare(piece, frame);
                 case BREACH -> drawBreach(piece, frame);
@@ -345,13 +331,6 @@ final class AtlasSystemArt {
                 GL11.glEnd();
             }
         }
-    }
-
-    private void drawAsteroid(Piece piece, Frame frame) {
-        aroundStar(piece, frame, piece.speed());
-        float size = piece.size() * frame.radius;
-        SpriteDraw.drawAtCenter(spriteCache, ASTEROID_SPRITES.get(piece.variant()), pieceX, pieceY, size, size, Color.WHITE, frame.alpha,
-                piece.angle() * 3f + frame.elapsedSeconds * piece.speed() * 6f);
     }
 
     private void drawAurora(Piece piece, Frame frame) {

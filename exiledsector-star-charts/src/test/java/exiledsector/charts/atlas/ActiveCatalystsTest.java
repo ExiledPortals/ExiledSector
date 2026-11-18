@@ -1,7 +1,7 @@
 package exiledsector.charts.atlas;
 
 import exiledsector.charts.ChartTables;
-import exiledsector.charts.anomaly.AsteroidStorm;
+import exiledsector.charts.anomaly.MagneticStorm;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.StarAnomalies;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
@@ -28,7 +28,7 @@ class ActiveCatalystsTest {
     private static final List<AtlasRegion> REGIONS = List.of(new AtlasRegion(AtlasRegion.NORMAL, 1f, 0, "", "", Map.of(), Map.of(), Map.of()));
     private static final AtlasCatalysts.Catalyst BREACH_TERMINUS = new AtlasCatalysts.Catalyst("test_breach_terminus", SpatialBreach.ANOMALY_ID,
             AtlasCatalysts.Family.TERMINUS, 1f, 1);
-    private static final AtlasCatalysts.Catalyst STORM_TERMINUS = new AtlasCatalysts.Catalyst("test_storm_terminus", AsteroidStorm.ANOMALY_ID,
+    private static final AtlasCatalysts.Catalyst STORM_TERMINUS = new AtlasCatalysts.Catalyst("test_storm_terminus", MagneticStorm.ANOMALY_ID,
             AtlasCatalysts.Family.TERMINUS, 1f, 1);
     private static final AtlasCatalysts.Catalyst HYPERSHUNT_SURVEY = new AtlasCatalysts.Catalyst("test_hypershunt_survey", CoronalHypershunt.ANOMALY_ID,
             AtlasCatalysts.Family.SURVEY, 0f, 1, AtlasCatalysts.Effect.STAR, "");
@@ -122,7 +122,7 @@ class ActiveCatalystsTest {
         List<ActiveCatalysts.Planned> planned = ActiveCatalysts.plan(generator, state, cell, materials::count);
         ActiveCatalysts.spend(state, planned, materials);
 
-        assertEquals(List.of(SpatialBreach.ANOMALY_ID, AsteroidStorm.ANOMALY_ID), ActiveCatalysts.anomalyIds(planned));
+        assertEquals(List.of(SpatialBreach.ANOMALY_ID, MagneticStorm.ANOMALY_ID), ActiveCatalysts.anomalyIds(planned));
         assertEquals(1, materials.count(BREACH_TERMINUS.itemId()));
         assertEquals(0, materials.count(STORM_TERMINUS.itemId()));
         assertEquals(List.of(BREACH_TERMINUS.itemId()), state.activeCatalystIds());
@@ -150,23 +150,23 @@ class ActiveCatalystsTest {
 
     @Test
     void aConflictNamesTheAnomalyAlreadyThere() {
-        ChartTables.useAnomalies(List.of(definition(SpatialBreach.ANOMALY_ID, Set.of(AsteroidStorm.ANOMALY_ID)), definition(AsteroidStorm.ANOMALY_ID, Set.of())));
+        ChartTables.useAnomalies(List.of(definition(SpatialBreach.ANOMALY_ID, Set.of(MagneticStorm.ANOMALY_ID)), definition(MagneticStorm.ANOMALY_ID, Set.of())));
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = generator(state);
         AtlasCell cell = system(generator, 0);
-        AtlasAnomalies.insert(generator, state, cell, AsteroidStorm.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD, null);
+        AtlasAnomalies.insert(generator, state, cell, MagneticStorm.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD, null);
         state.setCatalystOn(BREACH_TERMINUS.itemId(), true);
 
         UseVerdict verdict = onlyVerdict(ActiveCatalysts.plan(generator, state, cell, itemId -> 1));
 
         assertEquals("catalyst.refused.conflict", verdict.refusalKey());
-        assertEquals(AtlasNames.anomaly(AsteroidStorm.ANOMALY_ID), verdict.args().get("other"));
+        assertEquals(AtlasNames.anomaly(MagneticStorm.ANOMALY_ID), verdict.args().get("other"));
         assertEquals(AtlasNames.anomaly(SpatialBreach.ANOMALY_ID), verdict.args().get("anomaly"));
     }
 
     @Test
     void aLaterCatalystConflictingWithAnEarlierOneIsSkipped() {
-        ChartTables.useAnomalies(List.of(definition(SpatialBreach.ANOMALY_ID, Set.of(AsteroidStorm.ANOMALY_ID)), definition(AsteroidStorm.ANOMALY_ID, Set.of())));
+        ChartTables.useAnomalies(List.of(definition(SpatialBreach.ANOMALY_ID, Set.of(MagneticStorm.ANOMALY_ID)), definition(MagneticStorm.ANOMALY_ID, Set.of())));
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = generator(state);
         AtlasCell cell = system(generator, 0);
@@ -175,9 +175,9 @@ class ActiveCatalystsTest {
 
         List<ActiveCatalysts.Planned> planned = ActiveCatalysts.plan(generator, state, cell, itemId -> 1);
 
-        assertEquals(List.of(AsteroidStorm.ANOMALY_ID), ActiveCatalysts.anomalyIds(planned));
+        assertEquals(List.of(MagneticStorm.ANOMALY_ID), ActiveCatalysts.anomalyIds(planned));
         assertEquals("catalyst.refused.conflict", planned.get(1).verdict().refusalKey());
-        assertEquals(AtlasNames.anomaly(AsteroidStorm.ANOMALY_ID), planned.get(1).verdict().args().get("other"));
+        assertEquals(AtlasNames.anomaly(MagneticStorm.ANOMALY_ID), planned.get(1).verdict().args().get("other"));
     }
 
     @Test
