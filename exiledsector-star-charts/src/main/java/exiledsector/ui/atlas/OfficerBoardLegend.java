@@ -27,6 +27,7 @@ final class OfficerBoardLegend {
     static final float DEFEND_MARK_SIZE = 18f;
     static final float BATTLE_MARK_SIZE = 18f;
     static final float RANK_MARK_WIDTH = 16f;
+    static final float LOOT_MARK_SIZE = 18f;
     static final float SLOT_SIZE = 18f;
     static final float GHOST_FOOTPRINT = 30f;
     static final String GHOST_SEED = "officer_legend";
@@ -40,7 +41,8 @@ final class OfficerBoardLegend {
         DEFEND("chart.officer.board.legend.defend"),
         UNKNOWN("chart.officer.board.legend.unknown"),
         ROSE("chart.officer.board.legend.rose"),
-        FELL("chart.officer.board.legend.fell");
+        FELL("chart.officer.board.legend.fell"),
+        SCAVENGED("chart.officer.board.legend.scavenged");
 
         private final String key;
 
@@ -139,6 +141,7 @@ final class OfficerBoardLegend {
             case BATTLE -> OfficerBoard.battleMark(sprites, centreX, centreY, BATTLE_MARK_SIZE, alpha);
             case DEFEND -> OfficerBoard.defendMark(sprites, centreX, centreY, DEFEND_MARK_SIZE, alpha);
             case ROSE, FELL -> OfficerBoard.rankMark(sprites, centreX, centreY, RANK_MARK_WIDTH, glyph == Glyph.ROSE, alpha);
+            case SCAVENGED -> OfficerBoard.lootMark(sprites, centreX, centreY, LOOT_MARK_SIZE, alpha);
             case IDLE -> drawSlot(centreX, centreY, OfficerBoard.DIMMED_TINT, OfficerBoard.DIMMED_ALPHA * alpha);
             case UNKNOWN -> ghosts.draw(centreX, centreY, GHOST_FOOTPRINT, alpha, GHOST_SEED);
         }

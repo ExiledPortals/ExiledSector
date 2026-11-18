@@ -3,7 +3,6 @@ package exiledsector.charts.officer.turn;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.officer.AtlasOfficer;
-import exiledsector.charts.officer.OfficerRank;
 import exiledsector.charts.officer.OfficerRanks;
 import exiledsector.charts.officer.OfficerText;
 import exiledsector.charts.officer.reward.CarriedItem;
@@ -21,6 +20,7 @@ import java.util.Set;
 import static exiledsector.charts.officer.turn.TurnBoard.ATTACKER_WINS;
 import static exiledsector.charts.officer.turn.TurnBoard.DEFENDER_WINS;
 import static exiledsector.charts.officer.turn.TurnBoard.SEED;
+import static exiledsector.charts.officer.turn.TurnBoard.crowdedBoard;
 import static exiledsector.charts.officer.turn.TurnBoard.declare;
 import static exiledsector.charts.officer.turn.TurnBoard.place;
 import static exiledsector.charts.officer.turn.TurnBoard.setup;
@@ -45,21 +45,6 @@ class OfficerTurnTest {
         AtlasState state = new AtlasState(SEED);
         place(state, HEGEMONY_OFFICER, "hegemony", "commander", HEGEMONY_CENTRE, HEGEMONY_BORDER);
         place(state, PIRATE_OFFICER, "pirates", "lieutenant", PIRATE_CENTRE, PIRATE_BORDER);
-        return state;
-    }
-
-    private static AtlasState crowdedBoard(long seed) {
-        AtlasState state = new AtlasState(seed);
-        List<String> factionIds = List.of("hegemony", "pirates", "tritachyon");
-        List<String> rankIds = OfficerRanks.all().stream().map(OfficerRank::id).toList();
-        int recordId = 1;
-        for (int gridX = -6; gridX <= 6; gridX += 3) {
-            for (int gridY = -6; gridY <= 6; gridY += 3) {
-                place(state, recordId, factionIds.get(recordId % factionIds.size()), rankIds.get(recordId % rankIds.size()),
-                        new AtlasCell(gridX, gridY));
-                recordId++;
-            }
-        }
         return state;
     }
 
@@ -502,7 +487,7 @@ class OfficerTurnTest {
     void heldSystemsEarnRenownEachTurn() {
         AtlasState state = new AtlasState(SEED);
         place(state, HEGEMONY_OFFICER, "hegemony", "commander", HEGEMONY_CENTRE, new AtlasCell(1, 0), new AtlasCell(0, 1), new AtlasCell(-1, 0));
-        TurnRules rules = new TurnRules(4, 6f, 50f, 0f, 0f, 1, 3, 2, 2, 50, 6, Map.of());
+        TurnRules rules = new TurnRules(4, 6f, 50f, 0f, 0f, 1, 3, 2, 2, 50, 6, 2, 3, Map.of());
 
         take(state, TurnCause.forced(), setup(rules));
 
@@ -512,7 +497,7 @@ class OfficerTurnTest {
     @Test
     void theConflictCapStopsPushesAndChallenges() {
         AtlasState state = crowdedBoard(SEED);
-        TurnRules rules = new TurnRules(4, 6f, 50f, 6.25f, 10f, 1, 3, 2, 4, 50, 0, Map.of());
+        TurnRules rules = new TurnRules(4, 6f, 50f, 6.25f, 10f, 1, 3, 2, 4, 50, 0, 2, 3, Map.of());
         for (int turn = 0; turn < 6; turn++) {
             take(state, TurnCause.forced(), setup(rules));
             assertTrue(OfficerTurn.decodeIntents(state.declaredIntents()).stream().noneMatch(intent -> intent.kind().isConflict()));

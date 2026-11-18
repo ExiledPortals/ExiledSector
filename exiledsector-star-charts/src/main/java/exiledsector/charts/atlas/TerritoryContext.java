@@ -1,12 +1,15 @@
 package exiledsector.charts.atlas;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.FactionFlagships;
 import exiledsector.charts.officer.FlagshipCatalogue;
 import exiledsector.charts.officer.OfficerFleets;
+import exiledsector.charts.officer.OfficerScavenging;
 import exiledsector.charts.officer.OfficerStartingItems;
+import exiledsector.charts.officer.ScavengeRoll;
 import exiledsector.charts.officer.StartingItemRoll;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
@@ -14,7 +17,7 @@ import exiledsector.charts.run.ChartRuns;
 import java.util.Set;
 
 public record TerritoryContext(String excludedFactionId, AtlasCell openRunCell, FlagshipCatalogue catalogue, StartingItemRoll startingItems,
-                               Set<Integer> openRunOfficerIds) {
+                               ScavengeRoll scavenges, Set<Integer> openRunOfficerIds) {
 
     public static final TerritoryContext NONE = new TerritoryContext(null, null, FlagshipCatalogue.NONE);
 
@@ -23,20 +26,21 @@ public record TerritoryContext(String excludedFactionId, AtlasCell openRunCell, 
     }
 
     public TerritoryContext(String excludedFactionId, AtlasCell openRunCell, FlagshipCatalogue catalogue) {
-        this(excludedFactionId, openRunCell, catalogue, StartingItemRoll.NONE, Set.of());
+        this(excludedFactionId, openRunCell, catalogue, StartingItemRoll.NONE, ScavengeRoll.NONE, Set.of());
     }
 
     public static TerritoryContext current() {
-        return new TerritoryContext(commissionFactionId(), openRunCellOrNull(), FactionFlagships.INSTANCE,
-                OfficerStartingItems.forSector(Global.getSector()), openRunOfficerIdsOrNone());
+        SectorAPI sector = Global.getSector();
+        return new TerritoryContext(commissionFactionId(), openRunCellOrNull(), FactionFlagships.INSTANCE, OfficerStartingItems.forSector(sector),
+                OfficerScavenging.forSector(sector), openRunOfficerIdsOrNone());
     }
 
     public TerritoryContext withoutOpenRun() {
-        return new TerritoryContext(excludedFactionId, null, catalogue, startingItems, Set.of());
+        return new TerritoryContext(excludedFactionId, null, catalogue, startingItems, scavenges, Set.of());
     }
 
     public TerritoryContext withOpenRun(AtlasCell cell, Set<Integer> officerRecordIds) {
-        return new TerritoryContext(excludedFactionId, cell, catalogue, startingItems, officerRecordIds);
+        return new TerritoryContext(excludedFactionId, cell, catalogue, startingItems, scavenges, officerRecordIds);
     }
 
     public boolean takesPartInOpenRun(AtlasState state, AtlasOfficer officer) {

@@ -2,7 +2,10 @@ package exiledsector.charts.officer.turn;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -22,7 +25,7 @@ class TurnRulesTest {
     @Test
     void aDefenceLowersTheAttackersChanceWhichStaysBetweenNoneAndCertain() {
         assertEquals(40f, RULES.attackerChancePercent(2, 2, true));
-        TurnRules lopsided = new TurnRules(4, 6f, 95f, 50f, 10f, 1, 3, 2, 4, 50, 6, Map.of());
+        TurnRules lopsided = new TurnRules(4, 6f, 95f, 50f, 10f, 1, 3, 2, 4, 50, 6, 2, 3, Map.of());
         assertEquals(100f, lopsided.attackerChancePercent(4, 0, false));
         assertEquals(0f, lopsided.attackerChancePercent(0, 4, true));
     }
@@ -45,6 +48,18 @@ class TurnRulesTest {
         assertEquals(3, RULES.renownAfterLoss(7));
         assertEquals(0, RULES.renownAfterLoss(0));
         assertEquals(2, RULES.holdingsRenown(9));
-        assertEquals(0, new TurnRules(4, 6f, 50f, 6.25f, 10f, 1, 3, 2, 0, 50, 6, Map.of()).holdingsRenown(9));
+        assertEquals(0, new TurnRules(4, 6f, 50f, 6.25f, 10f, 1, 3, 2, 0, 50, 6, 2, 3, Map.of()).holdingsRenown(9));
+    }
+
+    @Test
+    void theScavengerCountStaysWithinItsRangeAndAReversedRangeUsesTheFewest() {
+        Random random = new Random(7L);
+        Set<Integer> counts = new HashSet<>();
+        for (int roll = 0; roll < 50; roll++) {
+            counts.add(RULES.scavengerCount(random));
+        }
+        assertEquals(Set.of(2, 3), counts);
+        assertEquals(4, new TurnRules(4, 6f, 50f, 6.25f, 10f, 1, 3, 2, 4, 50, 6, 4, 1, Map.of()).scavengerCount(random));
+        assertEquals(0, new TurnRules(4, 6f, 50f, 6.25f, 10f, 1, 3, 2, 4, 50, 6, -2, 0, Map.of()).scavengerCount(random));
     }
 }

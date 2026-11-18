@@ -4,6 +4,7 @@ import exiledsector.charts.officer.OfficerRank;
 import exiledsector.charts.officer.turn.TurnResult;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -22,10 +23,16 @@ final class OfficerBoardShuffle {
     static final float MARK_IN_START = 0.5f;
     static final float MARK_FADE_SECONDS = 0.5f;
     static final float SETTLE_START = 3.5f;
+    static final float LOOT_START = 2.5f;
+    static final float LOOT_SECONDS = 1.5f;
+    static final float LOOT_POP_SHARE = 0.3f;
+    static final float LOOT_FADE_IN_SHARE = 0.15f;
+    static final float LOOT_FADE_OUT_SHARE = 0.4f;
+    static final float LOOT_OVERSHOOT = 1.70158f;
 
     enum RankMark { NONE, ROSE, FELL }
 
-    record Mover(int recordId, OfficerBoardLayout.Seat from, OfficerBoardLayout.Seat to, RankMark mark) {
+    record Mover(int recordId, OfficerBoardLayout.Seat from, OfficerBoardLayout.Seat to, RankMark mark, boolean scavenged) {
 
         boolean arrives() {
             return from == null;
@@ -46,7 +53,8 @@ final class OfficerBoardShuffle {
         this.movers = movers;
     }
 
-    static OfficerBoardShuffle of(List<OfficerRank> ranksLowestFirst, List<OfficerBoardLayout.Entry> current, List<TurnResult.StandingChange> changes) {
+    static OfficerBoardShuffle of(List<OfficerRank> ranksLowestFirst, List<OfficerBoardLayout.Entry> current, List<TurnResult.StandingChange> changes,
+                                  Collection<Integer> scavengerRecordIds) {
         Map<Integer, TurnResult.StandingChange> changeById = new HashMap<>();
         for (TurnResult.StandingChange change : changes) {
             changeById.put(change.recordId(), change);
@@ -74,11 +82,12 @@ final class OfficerBoardShuffle {
         List<Mover> movers = new ArrayList<>();
         for (OfficerBoardLayout.Entry entry : previous) {
             movers.add(new Mover(entry.recordId(), before.seat(entry.recordId()), after.seat(entry.recordId()),
-                    mark(before, after, entry.recordId())));
+                    mark(before, after, entry.recordId()), after.contains(entry.recordId()) && scavengerRecordIds.contains(entry.recordId())));
         }
         for (OfficerBoardLayout.Entry entry : current) {
             if (!before.contains(entry.recordId())) {
-                movers.add(new Mover(entry.recordId(), null, after.seat(entry.recordId()), RankMark.NONE));
+                movers.add(new Mover(entry.recordId(), null, after.seat(entry.recordId()), RankMark.NONE,
+                        scavengerRecordIds.contains(entry.recordId())));
             }
         }
         return new OfficerBoardShuffle(before, after, List.copyOf(movers));
@@ -126,6 +135,25 @@ final class OfficerBoardShuffle {
         float in = clamp((elapsedSeconds - MARK_IN_START) / MARK_FADE_SECONDS);
         float out = 1f - clamp((elapsedSeconds - SETTLE_START) / MARK_FADE_SECONDS);
         return Math.min(in, out);
+    }
+
+    static float lootProgress(float elapsedSeconds) {
+        return clamp((elapsedSeconds - LOOT_START) / LOOT_SECONDS);
+    }
+
+    static float lootAlpha(float elapsedSeconds) {
+        float progress = lootProgress(elapsedSeconds);
+        return clamp(Math.min(progress / LOOT_FADE_IN_SHARE, (1f - progress) / LOOT_FADE_OUT_SHARE));
+    }
+
+    static float lootScale(float elapsedSeconds) {
+        float shifted = clamp(lootProgress(elapsedSeconds) / LOOT_POP_SHARE) - 1f;
+        return 1f + (LOOT_OVERSHOOT + 1f) * shifted * shifted * shifted + LOOT_OVERSHOOT * shifted * shifted;
+    }
+
+    static float lootRise(float elapsedSeconds) {
+        float remaining = 1f - lootProgress(elapsedSeconds);
+        return 1f - remaining * remaining;
     }
 
     static float arrowAlpha(float elapsedSeconds) {

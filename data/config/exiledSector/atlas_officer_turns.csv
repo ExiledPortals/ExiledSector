@@ -10,3 +10,5 @@ renown_per_defend_held,2,
 systems_per_renown,4,"Each turn an officer gains one renown per this many systems held"
 renown_kept_on_loss,50,"Percent of renown kept after losing a fight"
 max_conflicts_per_turn,6,"Pushes plus challenges declared across the whole board"
+scavengers_min,2,"Fewest holding officers who scavenge an item each turn"
+scavengers_max,3,"Most holding officers who scavenge an item each turn"

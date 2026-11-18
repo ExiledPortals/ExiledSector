@@ -5,8 +5,10 @@ import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.atlas.AtlasTerritoryPlacer;
 import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.FlagshipCatalogue;
+import exiledsector.charts.officer.OfficerRank;
 import exiledsector.charts.officer.OfficerRanks;
 import exiledsector.charts.officer.OfficerSeats;
+import exiledsector.charts.officer.ScavengeRoll;
 import exiledsector.charts.officer.StartingItemRoll;
 
 import java.util.ArrayList;
@@ -21,8 +23,8 @@ final class TurnBoard {
 
     static final long SEED = 0x51e7L;
     static final int GRID_RADIUS = 6;
-    static final TurnRules ATTACKER_WINS = new TurnRules(4, 6f, 100f, 0f, 0f, 1, 3, 2, 0, 50, 6, Map.of());
-    static final TurnRules DEFENDER_WINS = new TurnRules(4, 6f, 0f, 0f, 0f, 1, 3, 2, 0, 50, 6, Map.of());
+    static final TurnRules ATTACKER_WINS = new TurnRules(4, 6f, 100f, 0f, 0f, 1, 3, 2, 0, 50, 6, 2, 3, Map.of());
+    static final TurnRules DEFENDER_WINS = new TurnRules(4, 6f, 0f, 0f, 0f, 1, 3, 2, 0, 50, 6, 2, 3, Map.of());
 
     private TurnBoard() {
     }
@@ -64,6 +66,21 @@ final class TurnBoard {
         return officer;
     }
 
+    static AtlasState crowdedBoard(long seed) {
+        AtlasState state = new AtlasState(seed);
+        List<String> factionIds = List.of("hegemony", "pirates", "tritachyon");
+        List<String> rankIds = OfficerRanks.all().stream().map(OfficerRank::id).toList();
+        int recordId = 1;
+        for (int gridX = -6; gridX <= 6; gridX += 3) {
+            for (int gridY = -6; gridY <= 6; gridY += 3) {
+                place(state, recordId, factionIds.get(recordId % factionIds.size()), rankIds.get(recordId % rankIds.size()),
+                        new AtlasCell(gridX, gridY));
+                recordId++;
+            }
+        }
+        return state;
+    }
+
     static int freeSeat(AtlasState state, String rankId) {
         int seat = 0;
         while (OfficerSeats.seated(state.officers(), rankId, seat) != null) {
@@ -86,6 +103,11 @@ final class TurnBoard {
 
     static TurnSetup setup(TurnRules rules, StartingItemRoll startingItems) {
         return new TurnSetup(rules, OfficerRanks.all(), IntentResolvers.ABSTRACT, null, Set.of(), FlagshipCatalogue.NONE, startingItems);
+    }
+
+    static TurnSetup scavengingSetup(TurnRules rules, AtlasCell openRunCell, Set<Integer> openRunOfficerIds, ScavengeRoll scavenges) {
+        return new TurnSetup(rules, OfficerRanks.all(), IntentResolvers.ABSTRACT, openRunCell, openRunOfficerIds, FlagshipCatalogue.NONE,
+                StartingItemRoll.NONE, scavenges);
     }
 
     static TurnResult take(AtlasState state, TurnCause cause, TurnSetup setup) {

@@ -19,10 +19,10 @@ public final class OfficerTurnTables {
     static final String INTENTS_PATH = ExiledSector.configPath("atlas_officer_intents.csv");
     static final String ID_COLUMN = "id";
     static final String VALUE_COLUMN = "value";
-    static final TurnRules DEFAULTS = new TurnRules(4, 6f, 50f, 6.25f, 10f, 1, 3, 2, 4, 50, 6, Map.of());
+    static final TurnRules DEFAULTS = new TurnRules(4, 6f, 50f, 6.25f, 10f, 1, 3, 2, 4, 50, 6, 2, 3, Map.of());
     static final List<String> RULE_IDS = List.of("other_boss_kills_per_turn", "expand_brake_size", "even_chance", "chance_per_rank",
             "defend_bonus", "renown_per_claim", "renown_per_challenge_won", "renown_per_defend_held", "systems_per_renown", "renown_kept_on_loss",
-            "max_conflicts_per_turn");
+            "max_conflicts_per_turn", "scavengers_min", "scavengers_max");
     private static final Logger LOG = Logger.getLogger(OfficerTurnTables.class);
     private static volatile TurnRules rules = DEFAULTS;
 
@@ -56,6 +56,8 @@ public final class OfficerTurnTables {
                 whole(values, "systems_per_renown", DEFAULTS.systemsPerRenown()),
                 whole(values, "renown_kept_on_loss", DEFAULTS.renownKeptOnLossPercent()),
                 whole(values, "max_conflicts_per_turn", DEFAULTS.maxConflictsPerTurn()),
+                whole(values, "scavengers_min", DEFAULTS.scavengersMin()),
+                whole(values, "scavengers_max", DEFAULTS.scavengersMax()),
                 rules.intentWeights());
         csv.report(LOG);
         rules = loaded;
