@@ -15,14 +15,17 @@ import exiledsector.charts.anomaly.GuardedStation;
 import exiledsector.charts.anomaly.OrbitSearch;
 import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.content.ChartSites;
+import exiledsector.charts.loot.BiomeModifiers;
+import exiledsector.items.crafting.ForgeOperation;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
+import java.util.stream.Stream;
 
 public final class DerelictForge implements ContentPlacer, RunParticipant {
 
     public static final String ANOMALY_ID = "derelict_forge";
-    public static final String EXTRA_PROGRAMS_KEY = ChartModifier.CHART_FORGE_PROGRAMS.anomalyTuningKey();
     public static final String EXTRA_RUNS_KEY = ChartModifier.CHART_FORGE_RUNS.anomalyTuningKey();
     public static final String COST_KEY = ChartModifier.CHART_FORGE_COST_PERCENT.anomalyTuningKey();
     public static final String FORGE_TAG = ChartIds.PREFIX + "derelict_forge";
@@ -52,11 +55,17 @@ public final class DerelictForge implements ContentPlacer, RunParticipant {
         if (orbit == null) {
             throw new IllegalStateException("no clear orbit for the derelict forge");
         }
-        List<ForgePrograms.Program> programs = ForgePrograms.roll(site.tier(),
-                ForgeRules.programCount(site.context().anomalyPercent(EXTRA_PROGRAMS_KEY)), random);
+        String biomeId = site.context().biomeId();
+        String infusionBiome = BiomeModifiers.hasModifiers(biomeId) ? biomeId : null;
         SectorEntityToken forge = STATION.place(site, orbit);
-        ForgeStates.record(site.state(ANOMALY_ID), programs, ForgeRules.runCount(site.context().anomalyPercent(EXTRA_RUNS_KEY)));
+        ForgeStates.record(site.state(ANOMALY_ID), programs(infusionBiome != null), ForgeRules.runCount(site.context().anomalyPercent(EXTRA_RUNS_KEY)),
+                infusionBiome);
         return forge;
+    }
+
+    static List<ForgePrograms.Program> programs(boolean biomeSystem) {
+        ForgeOperation adding = biomeSystem ? ForgeOperation.BIOME_INFUSE : ForgeOperation.GRAFT;
+        return Stream.of(adding, ForgeOperation.EXCISE, ForgeOperation.PERFECT).map(ForgePrograms::of).filter(Objects::nonNull).toList();
     }
 
     @Override

@@ -465,7 +465,7 @@ class StarChartTest {
     @Test
     void chartsNeverRollAnomalyLinesAndAnOldChartCarryingThemStillLoadsWithoutAnAnomaly() {
         Set<String> removed = Set.of("CHART_BREACH_CHANCE", "HYBRID_CHART_BREACH_GROWTH", "HYBRID_CHART_BREACH_CACHES", "HYBRID_CHART_BREACH_CORE",
-                "CHART_ASTEROID_STORM_CHANCE", "CHART_MAGNETIC_STORM_CHANCE", "CHART_STELLAR_FLARES_CHANCE");
+                "CHART_ASTEROID_STORM_CHANCE", "CHART_MAGNETIC_STORM_CHANCE", "CHART_STELLAR_FLARES_CHANCE", "CHART_FORGE_PROGRAMS");
         for (long seed = 0; seed < 200; seed++) {
             StarChart chart = StarChartFixtures.chart(SINGLE, seed, 12);
             assertTrue(modifierIds(chart).stream().noneMatch(removed::contains), "seed " + seed + ": " + modifierIds(chart));

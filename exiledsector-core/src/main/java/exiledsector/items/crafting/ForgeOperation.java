@@ -10,74 +10,67 @@ import java.util.Random;
 public enum ForgeOperation {
     GRAFT {
         @Override
-        public List<ForgeChoice> choices(Item item) {
+        public List<ForgeChoice> choices(Item item, ForgeInfusions.Source infusion) {
             return ItemForging.graftParts(item).stream().map(ForgeChoice::part).toList();
         }
 
         @Override
-        boolean run(Item item, ForgeChoice choice, Random random) {
+        boolean run(Item item, ForgeChoice choice, ForgeInfusions.Source infusion, Random random) {
             return ItemForging.graft(item, choice.part(), random) != null;
         }
     },
     EXCISE {
         @Override
-        public List<ForgeChoice> choices(Item item) {
+        public List<ForgeChoice> choices(Item item, ForgeInfusions.Source infusion) {
             return ItemForging.excisable(item).stream().map(ForgeChoice::modifier).toList();
         }
 
         @Override
-        boolean run(Item item, ForgeChoice choice, Random random) {
+        boolean run(Item item, ForgeChoice choice, ForgeInfusions.Source infusion, Random random) {
             return ItemForging.excise(item, choice.modifier());
         }
     },
     PERFECT {
         @Override
-        public List<ForgeChoice> choices(Item item) {
+        public List<ForgeChoice> choices(Item item, ForgeInfusions.Source infusion) {
             return ItemForging.perfectible(item).stream().map(ForgeChoice::modifier).toList();
         }
 
         @Override
-        boolean run(Item item, ForgeChoice choice, Random random) {
+        boolean run(Item item, ForgeChoice choice, ForgeInfusions.Source infusion, Random random) {
             return ItemForging.perfect(item, choice.modifier());
-        }
-    },
-    ANCHOR_REROLL {
-        @Override
-        public List<ForgeChoice> choices(Item item) {
-            return ItemForging.anchors(item).stream().map(ForgeChoice::modifier).toList();
-        }
-
-        @Override
-        boolean run(Item item, ForgeChoice choice, Random random) {
-            return ItemForging.anchorReroll(item, choice.modifier(), random);
-        }
-    },
-    RETEMPER {
-        @Override
-        public List<ForgeChoice> choices(Item item) {
-            return ItemForging.canRetemper(item) ? List.of(ForgeChoice.WHOLE_ITEM) : List.of();
-        }
-
-        @Override
-        boolean run(Item item, ForgeChoice choice, Random random) {
-            return ItemForging.retemper(item, random);
         }
     },
     INFUSE {
         @Override
-        public List<ForgeChoice> choices(Item item) {
-            return ForgeInfusions.block(item) == null ? List.of(ForgeChoice.WHOLE_ITEM) : List.of();
+        public List<ForgeChoice> choices(Item item, ForgeInfusions.Source infusion) {
+            return ForgeInfusions.choices(item, infusion);
         }
 
         @Override
-        String refusalReason(Item item) {
-            ForgeInfusions.Block block = ForgeInfusions.block(item);
-            return block == null ? null : id() + "." + block.name().toLowerCase(Locale.ROOT);
+        String refusalReason(Item item, ForgeInfusions.Source infusion) {
+            return ForgeInfusions.refusalReason(this, item, infusion);
         }
 
         @Override
-        boolean run(Item item, ForgeChoice choice, Random random) {
-            return ForgeInfusions.infuse(item, random);
+        boolean run(Item item, ForgeChoice choice, ForgeInfusions.Source infusion, Random random) {
+            return ForgeInfusions.infuse(item, infusion, random);
+        }
+    },
+    BIOME_INFUSE {
+        @Override
+        public List<ForgeChoice> choices(Item item, ForgeInfusions.Source infusion) {
+            return ForgeInfusions.choices(item, infusion);
+        }
+
+        @Override
+        String refusalReason(Item item, ForgeInfusions.Source infusion) {
+            return ForgeInfusions.refusalReason(this, item, infusion);
+        }
+
+        @Override
+        boolean run(Item item, ForgeChoice choice, ForgeInfusions.Source infusion, Random random) {
+            return ForgeInfusions.infuse(item, infusion, random);
         }
     };
 
@@ -96,19 +89,31 @@ public enum ForgeOperation {
         return null;
     }
 
-    public abstract List<ForgeChoice> choices(Item item);
+    public abstract List<ForgeChoice> choices(Item item, ForgeInfusions.Source infusion);
 
-    abstract boolean run(Item item, ForgeChoice choice, Random random);
+    public List<ForgeChoice> choices(Item item) {
+        return choices(item, ForgeInfusions.Source.NONE);
+    }
 
-    String refusalReason(Item item) {
-        return choices(item).isEmpty() ? id() : null;
+    abstract boolean run(Item item, ForgeChoice choice, ForgeInfusions.Source infusion, Random random);
+
+    String refusalReason(Item item, ForgeInfusions.Source infusion) {
+        return choices(item, infusion).isEmpty() ? id() : null;
+    }
+
+    public boolean infuses() {
+        return this == INFUSE || this == BIOME_INFUSE;
     }
 
     public boolean picksAChoice() {
-        return this != RETEMPER && this != INFUSE;
+        return !infuses();
     }
 
     public UseVerdict verdict(Item item) {
+        return verdict(item, ForgeInfusions.Source.NONE);
+    }
+
+    public UseVerdict verdict(Item item, ForgeInfusions.Source infusion) {
         if (item == null) {
             return UseVerdict.refused(REFUSAL_PREFIX + "loadFirst");
         }
@@ -124,11 +129,15 @@ public enum ForgeOperation {
         if (ItemCrafting.isLockedFromCraftingItem(item.definition())) {
             return UseVerdict.refused(REFUSAL_PREFIX + "uniqueSubroutine");
         }
-        String reason = refusalReason(item);
+        String reason = refusalReason(item, infusion);
         return reason == null ? UseVerdict.ALLOW : UseVerdict.refused(REFUSAL_PREFIX + reason);
     }
 
     public boolean apply(Item item, ForgeChoice choice, Random random) {
-        return verdict(item).allowed() && choice != null && choices(item).contains(choice) && run(item, choice, random);
+        return apply(item, choice, ForgeInfusions.Source.NONE, random);
+    }
+
+    public boolean apply(Item item, ForgeChoice choice, ForgeInfusions.Source infusion, Random random) {
+        return verdict(item, infusion).allowed() && choice != null && choices(item, infusion).contains(choice) && run(item, choice, infusion, random);
     }
 }

@@ -12,8 +12,6 @@ import exiledsector.charts.anomaly.GuardedStation;
 import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.anomaly.VanillaDefenders;
 import exiledsector.charts.content.ChartSites;
-import exiledsector.charts.loot.BiomeModifiers;
-import exiledsector.items.crafting.ForgeInfusions;
 
 import java.util.List;
 
@@ -41,16 +39,11 @@ public final class AbyssalResearchComplex implements ContentPlacer, RunParticipa
     }
 
     @Override
-    public void loadItems() {
-        ForgeInfusions.use(definition -> BiomeModifiers.modifierFor(BIOME_ID, definition.kind()));
-    }
-
-    @Override
     public void generate(AnomalyContentSite site) {
         ChartSites.Orbit orbit = AbyssOrbits.nearPhotosphere(site, MIN_ORBIT_GAP, MAX_ORBIT_GAP, site.random(PLACEMENT_SALT));
         STATION.place(site, orbit);
         ForgePrograms.Program infuse = ForgePrograms.byId(INFUSE_PROGRAM);
-        ForgeStates.record(site.state(ANOMALY_ID), infuse == null ? List.of() : List.of(infuse), RUNS);
+        ForgeStates.record(site.state(ANOMALY_ID), infuse == null ? List.of() : List.of(infuse), RUNS, BIOME_ID);
     }
 
     @Override
