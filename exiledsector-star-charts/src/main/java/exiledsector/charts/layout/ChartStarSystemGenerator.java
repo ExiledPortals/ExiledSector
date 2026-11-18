@@ -305,7 +305,7 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
     private void shapeOrDrop(LayoutShaper anomaly, Random anomalyRandom) {
         Set<SectorEntityToken> before = new HashSet<>(system.getAllEntities());
         try {
-            anomaly.shape(new AnomalyLayoutSite(system, centre(), visibleStars(), ChartWormholePlacement.outermost(system, List.of()), anomalyRandom));
+            anomaly.shape(new AnomalyLayoutSite(system, centre(), visibleStars(), anomalyRandom));
         } catch (RuntimeException | LinkageError e) {
             LOG.warn("[ExiledSector] Shaping the " + anomaly.id() + " anomaly failed; the Star Chart is generated without it", e);
             for (SectorEntityToken added : new ArrayList<>(system.getAllEntities())) {

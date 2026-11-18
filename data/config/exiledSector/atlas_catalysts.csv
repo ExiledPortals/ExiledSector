@@ -1,6 +1,5 @@
 id,anomaly,family,weight,min_tier,effect,icon,note
 exiledSector_breach_terminus,spatial_breach,terminus,1,1,,,Breach Terminus
-exiledSector_shattered_terminus,asteroid_storm,terminus,1,1,,,Shattered Terminus
 exiledSector_magnetised_terminus,magnetic_storm,terminus,1,1,,,Magnetised Terminus
 exiledSector_flare_terminus,stellar_flares,terminus,1,1,,,Flare Terminus
 exiledSector_wreck_terminus,anomalous_debris,terminus,1,1,,,Wreck Terminus

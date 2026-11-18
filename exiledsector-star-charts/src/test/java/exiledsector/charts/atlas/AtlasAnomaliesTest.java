@@ -2,7 +2,7 @@ package exiledsector.charts.atlas;
 
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.ChartTables;
-import exiledsector.charts.anomaly.AsteroidStorm;
+import exiledsector.charts.anomaly.MagneticStorm;
 import exiledsector.charts.anomaly.AtlasRule;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
@@ -46,7 +46,9 @@ class AtlasAnomaliesTest {
         AtlasState state = new AtlasState(SEED);
         AtlasCell cell = new AtlasCell(1, 0);
         state.insertAnomaly(cell, "powerful_boss", AtlasAnomalyRecord.Source.PLAYER);
-        int kept = state.insertAnomaly(cell, "asteroid_storm", AtlasAnomalyRecord.Source.WORLD);
+        state.insertAnomaly(cell, "asteroid_storm", AtlasAnomalyRecord.Source.WORLD);
+        int kept = state.insertAnomaly(cell, MagneticStorm.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD);
+        state.insertAnomaly(new AtlasCell(2, 0), "asteroid_storm", AtlasAnomalyRecord.Source.PLAYER);
 
         state.repaired();
 
@@ -138,26 +140,26 @@ class AtlasAnomaliesTest {
     void insertingRefusesAnAnomalyTheBiomeWeighsAtZeroEvenWhenForcingAStar() {
         AtlasState state = new AtlasState(SEED);
         AtlasRegion ownAnomaliesOnly = new AtlasRegion(AtlasRegion.NORMAL, 1f, 0, "", "", Map.of(), Map.of(),
-                Map.of(AtlasRegion.ANY_ANOMALY, 0f, AsteroidStorm.ANOMALY_ID, 1f));
+                Map.of(AtlasRegion.ANY_ANOMALY, 0f, MagneticStorm.ANOMALY_ID, 1f));
         AtlasGenerator generator = new AtlasGenerator(SEED, new AtlasRules(List.of(ownAnomaliesOnly), Map.of("compact", 1f), Map.of("pirates", 1f),
                 new AtlasAnomalyChance(0.3f, 0f, 0.3f), AtlasAnomalyChance.NEVER, List.of(), List.of()), AtlasUnlocks.NONE, state);
         AtlasCell cell = system(generator, 0);
 
         assertEquals(AtlasAnomalies.InsertCheck.NOT_IN_BIOME, AtlasAnomalies.canInsert(generator, state, cell, SpatialBreach.ANOMALY_ID, null));
         assertEquals(AtlasAnomalies.InsertCheck.NOT_IN_BIOME, AtlasAnomalies.canInsert(generator, state, cell, "black_hole", null, true));
-        assertEquals(AtlasAnomalies.InsertCheck.ALLOWED, AtlasAnomalies.canInsert(generator, state, cell, AsteroidStorm.ANOMALY_ID, null));
+        assertEquals(AtlasAnomalies.InsertCheck.ALLOWED, AtlasAnomalies.canInsert(generator, state, cell, MagneticStorm.ANOMALY_ID, null));
     }
 
     @Test
     void insertingRefusesMissingModsConflictsAndSystemsTheAnomalyDoesNotFit() {
-        ChartTables.useAnomalies(List.of(definition(SpatialBreach.ANOMALY_ID, true, Set.of(AsteroidStorm.ANOMALY_ID), ""), definition(AsteroidStorm.ANOMALY_ID, true, Set.of(), ""),
+        ChartTables.useAnomalies(List.of(definition(SpatialBreach.ANOMALY_ID, true, Set.of(MagneticStorm.ANOMALY_ID), ""), definition(MagneticStorm.ANOMALY_ID, true, Set.of(), ""),
                 definition("black_hole", true, Set.of(), "a_mod_that_is_not_here")));
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = generator(state);
         AtlasCell cell = system(generator, 0);
 
         assertEquals(AtlasAnomalies.InsertCheck.NOT_INSERTABLE, AtlasAnomalies.canInsert(generator, state, cell, "black_hole", null));
-        assertEquals(AtlasAnomalies.InsertCheck.ALLOWED, AtlasAnomalies.insert(generator, state, cell, AsteroidStorm.ANOMALY_ID, AtlasAnomalyRecord.Source.PLAYER, null).check());
+        assertEquals(AtlasAnomalies.InsertCheck.ALLOWED, AtlasAnomalies.insert(generator, state, cell, MagneticStorm.ANOMALY_ID, AtlasAnomalyRecord.Source.PLAYER, null).check());
         assertEquals(AtlasAnomalies.InsertCheck.CONFLICT, AtlasAnomalies.canInsert(generator, state, cell, SpatialBreach.ANOMALY_ID, null));
 
         ChartAnomaly nowhere = new AtlasRule() {
@@ -200,14 +202,14 @@ class AtlasAnomaliesTest {
     void closingARunSpendsInsertedAnomaliesAndFailingAlsoSpendsAllRolledOnesButTheStar() {
         AtlasState state = new AtlasState(SEED);
         AtlasRules rolled = rules(new AtlasAnomalyChance(1f, 0f, 1f), List.of(new AtlasAnomalyCandidate("black_hole", 1f, "", true, Set.of(), null),
-                new AtlasAnomalyCandidate(AsteroidStorm.ANOMALY_ID, 1f, "")));
+                new AtlasAnomalyCandidate(MagneticStorm.ANOMALY_ID, 1f, "")));
         AtlasGenerator generator = new AtlasGenerator(SEED, rolled, AtlasUnlocks.NONE, state);
         AtlasCell failed = system(generator, 0);
         AtlasCell completed = system(generator, 1);
         AtlasAnomalies.insert(generator, state, failed, SpatialBreach.ANOMALY_ID, AtlasAnomalyRecord.Source.PLAYER, null);
         AtlasAnomalies.insert(generator, state, completed, SpatialBreach.ANOMALY_ID, AtlasAnomalyRecord.Source.PLAYER, null);
         List<String> before = AtlasAnomalies.effective(generator, state, failed);
-        assertEquals(Set.of("black_hole", AsteroidStorm.ANOMALY_ID), Set.copyOf(before.subList(0, 2)));
+        assertEquals(Set.of("black_hole", MagneticStorm.ANOMALY_ID), Set.copyOf(before.subList(0, 2)));
         assertEquals(SpatialBreach.ANOMALY_ID, before.get(2));
 
         AtlasProgress.fail(state, failed);

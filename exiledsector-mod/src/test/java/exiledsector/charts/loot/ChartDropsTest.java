@@ -279,7 +279,7 @@ class ChartDropsTest {
     @Test
     void catalystsDropOnlyInsideSystemsAmongThoseTheTierReachesScaledByTheirMultiplier() throws Exception {
         AtlasCatalysts.useForTests(List.of(new AtlasCatalysts.Catalyst("test_low", "spatial_breach", AtlasCatalysts.Family.TERMINUS, 1f, 1),
-                new AtlasCatalysts.Catalyst("test_high", "asteroid_storm", AtlasCatalysts.Family.TERMINUS, 1f, 10)));
+                new AtlasCatalysts.Catalyst("test_high", "magnetic_storm", AtlasCatalysts.Family.TERMINUS, 1f, 10)));
         ChartDropRules.register(new JSONArray().put(rule("system_salvage", 0f, 0f, 0f, 0f).put("catalyst_chance", "1"))
                 .put(rule("salvage", 0f, 0f, 0f, 0f).put("catalyst_chance", "1")));
 

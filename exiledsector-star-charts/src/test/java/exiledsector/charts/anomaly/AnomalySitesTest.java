@@ -1,11 +1,9 @@
 package exiledsector.charts.anomaly;
 
 import com.fs.starfarer.api.EveryFrameScript;
-import com.fs.starfarer.api.campaign.CampaignTerrainAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
-import com.fs.starfarer.api.impl.campaign.terrain.BaseRingTerrain;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.ChartPois;
@@ -111,30 +109,6 @@ class AnomalySitesTest {
         StarAnomalies.NEUTRON_STAR.generate(site(spot -> false));
 
         assertEquals(List.of(), engine.salvageEntities);
-    }
-
-    @Test
-    void anAsteroidStormHidesCachesInsideItsOwnBelts() {
-        CampaignTerrainAPI stormBelt = belt(3000f, true);
-        CampaignTerrainAPI otherBelt = belt(6000f, false);
-        when(system.getTerrainCopy()).thenReturn(List.of(stormBelt, otherBelt));
-
-        AsteroidStorm.INSTANCE.generate(site(spot -> true));
-
-        int caches = engine.salvageEntities.size();
-        assertTrue(caches >= 2 && caches <= 3, "got " + caches);
-        assertTrue(engine.salvageTypes.stream().allMatch("supply_cache"::equals));
-        assertTrue(orbitRadii(star).stream().allMatch(radius -> Math.abs(radius - 3000f) <= 125f));
-    }
-
-    private CampaignTerrainAPI belt(float middleRadius, boolean storm) {
-        BaseRingTerrain ring = mock(BaseRingTerrain.class);
-        ring.params = new BaseRingTerrain.RingParams(500f, middleRadius, star);
-        CampaignTerrainAPI belt = mock(CampaignTerrainAPI.class);
-        when(belt.getPlugin()).thenReturn(ring);
-        when(belt.hasTag(AsteroidStorm.BELT_TAG)).thenReturn(storm);
-        when(belt.getOrbitFocus()).thenReturn(star);
-        return belt;
     }
 
     @Test

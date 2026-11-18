@@ -10,6 +10,7 @@ import exiledsector.charts.anomaly.facility.PreCollapseFacility;
 import exiledsector.charts.anomaly.hypershunt.CoronalHypershunt;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.compat.VaultsOfKnowledgeCompat;
+import exiledsector.items.RetiredItems;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -22,6 +23,7 @@ import java.util.Random;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -32,6 +34,7 @@ class AtlasCatalystsTest {
 
     private static final String FACILITY_SURVEY = "exiledSector_facility_survey";
     private static final String HYPERSHUNT_SURVEY = "exiledSector_hypershunt_survey";
+    private static final String SHATTERED_TERMINUS = "exiledSector_shattered_terminus";
 
     @BeforeEach
     void setUp() throws Exception {
@@ -49,7 +52,7 @@ class AtlasCatalystsTest {
         List<String> problems = AtlasCatalysts.register(ChartTables.csvRows(AtlasCatalysts.PATH));
 
         assertEquals(List.of(), problems);
-        assertEquals(Set.of("spatial_breach", "asteroid_storm", "magnetic_storm", "stellar_flares", "anomalous_debris", "excavation_sites",
+        assertEquals(Set.of("spatial_breach", "magnetic_storm", "stellar_flares", "anomalous_debris", "excavation_sites",
                 "relay_network", "supply_convoy", "storm_front", "derelict_forge", "listening_post"), Set.copyOf(AtlasCatalysts.all().stream().filter(catalyst -> catalyst.effect() == AtlasCatalysts.Effect.ANOMALY)
                 .map(AtlasCatalysts.Catalyst::anomalyId).toList()));
         JSONArray specialItems = ChartTables.csvRows("data/campaign/special_items.csv");
@@ -71,6 +74,32 @@ class AtlasCatalystsTest {
         assertEquals("listening_post", picket.anomalyId());
         assertEquals(ChartAnomalies.definition("listening_post").icon(), picket.iconPath());
         assertNull(AtlasCatalysts.byItemId("exiledSector_flagship_orders"));
+        assertNull(AtlasCatalysts.byItemId("exiledSector_shattered_terminus"));
+    }
+
+    @Test
+    void theShatteredTerminusKeepsOnlyARetiredRowSoTheLoadSweepRemovesHeldOnes() throws Exception {
+        JSONArray catalystRows = ChartTables.csvRows(AtlasCatalysts.PATH);
+        Set<String> catalystIds = new HashSet<>();
+        for (int index = 0; index < catalystRows.length(); index++) {
+            catalystIds.add(catalystRows.getJSONObject(index).optString("id"));
+        }
+        JSONArray specialItems = ChartTables.csvRows("data/campaign/special_items.csv");
+        JSONObject shattered = null;
+        for (int index = 0; index < specialItems.length(); index++) {
+            JSONObject row = specialItems.getJSONObject(index);
+            if (row.optString("plugin").endsWith(".AtlasCatalystItemPlugin")) {
+                assertTrue(catalystIds.contains(row.optString("id")), row.optString("id") + " uses the catalyst plugin but has no catalyst row");
+            }
+            if (SHATTERED_TERMINUS.equals(row.optString("id"))) {
+                shattered = row;
+            }
+        }
+
+        assertNotNull(shattered);
+        assertFalse(catalystIds.contains(SHATTERED_TERMINUS));
+        Set<String> tags = Set.of(shattered.optString("tags").replace(" ", "").split(","));
+        assertTrue(tags.containsAll(Set.of("hide_in_codex", RetiredItems.RETIRED_ID_TAG)), tags.toString());
     }
 
     @Test

@@ -3,7 +3,7 @@ package exiledsector.charts.atlas;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
 import exiledsector.charts.layout.ChartLayoutRecipe;
 import exiledsector.charts.ChartTables;
-import exiledsector.charts.anomaly.AsteroidStorm;
+import exiledsector.charts.anomaly.MagneticStorm;
 import exiledsector.charts.layout.abyss.AbyssPalette;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -67,7 +67,7 @@ class AtlasDataTest {
         assertEquals(0f, AtlasData.rules().layoutWeights().get("abyssal_depths"));
         assertEquals(4, AtlasData.recipeFor("abyssal_rift", "abyssal_depths").look().abyssPalettes().size());
         assertEquals(0, AtlasData.recipeFor("abyssal_rift", "abyssal_depths").shape().maxOrbits());
-        assertEquals(0f, AtlasData.rules().region("abyssal_rift").anomalyWeight(AsteroidStorm.ANOMALY_ID));
+        assertEquals(0f, AtlasData.rules().region("abyssal_rift").anomalyWeight(MagneticStorm.ANOMALY_ID));
         assertFalse(AtlasData.recipeFor("threat_expanse", "abyssal_void").look().abyssal());
         assertEquals(3, rules.specials().stream().filter(special -> special.placement() == AtlasSpecial.Placement.FIXED)
                 .mapToInt(AtlasSpecial::count).sum());
@@ -192,7 +192,7 @@ class AtlasDataTest {
     @Test
     void unknownMarkersAndBadSpecialsAreReported() throws Exception {
         List<String> anomalyChanceProblems = AtlasData.registerAnomalyChances(new JSONArray().put(new JSONObject().put("id", "storm").put("chance", "0.1"))
-                .put(new JSONObject().put("id", "asteroid_storm").put("chance", "0.2")));
+                .put(new JSONObject().put("id", "magnetic_storm").put("chance", "0.2")));
         List<String> specialProblems = AtlasData.registerSpecials(new JSONArray()
                 .put(new JSONObject().put("id", "bastion").put("placement", "fixed").put("count", "4").put("steps", "25"))
                 .put(new JSONObject().put("id", "nexus").put("kind", "infestation").put("radius", "12"))

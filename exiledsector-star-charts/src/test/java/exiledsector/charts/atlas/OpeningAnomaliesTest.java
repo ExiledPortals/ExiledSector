@@ -1,7 +1,7 @@
 package exiledsector.charts.atlas;
 
 import exiledsector.charts.ChartTables;
-import exiledsector.charts.anomaly.AsteroidStorm;
+import exiledsector.charts.anomaly.debris.AnomalousDebris;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.MagneticStorm;
 import exiledsector.charts.anomaly.StellarFlares;
@@ -56,7 +56,7 @@ class OpeningAnomaliesTest {
 
     @Test
     void anomaliesWithAnOpeningChanceJoinTheChartOnTopOfTheAtlasOnesAndOthersNever() {
-        ChartTables.useAnomalies(List.of(rolling(SpatialBreach.ANOMALY_ID, 1f), rolling(AsteroidStorm.ANOMALY_ID, 1f),
+        ChartTables.useAnomalies(List.of(rolling(SpatialBreach.ANOMALY_ID, 1f), rolling(AnomalousDebris.ANOMALY_ID, 1f),
                 rolling(MagneticStorm.ANOMALY_ID, 0f), rolling(StellarFlares.ANOMALY_ID, 1f)));
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = generator(state, Map.of());
@@ -64,14 +64,14 @@ class OpeningAnomaliesTest {
 
         List<String> rolled = OpeningAnomalies.rolled(generator, state, cell, CHART_SEED, List.of(StellarFlares.ANOMALY_ID));
 
-        assertEquals(Set.of(SpatialBreach.ANOMALY_ID, AsteroidStorm.ANOMALY_ID), Set.copyOf(rolled));
+        assertEquals(Set.of(SpatialBreach.ANOMALY_ID, AnomalousDebris.ANOMALY_ID), Set.copyOf(rolled));
         assertEquals(2, rolled.size());
         assertEquals(List.of(), OpeningAnomalies.rolled(generator, state, AtlasCell.ORIGIN, CHART_SEED, List.of()));
     }
 
     @Test
     void theRollKeepsTheSystemCapConflictsBiomeWeightsAndWhereAnAnomalyFits() {
-        ChartTables.useAnomalies(List.of(rolling(SpatialBreach.ANOMALY_ID, 1f, Set.of(AsteroidStorm.ANOMALY_ID)), rolling(AsteroidStorm.ANOMALY_ID, 1f),
+        ChartTables.useAnomalies(List.of(rolling(SpatialBreach.ANOMALY_ID, 1f, Set.of(AnomalousDebris.ANOMALY_ID)), rolling(AnomalousDebris.ANOMALY_ID, 1f),
                 rolling(FactionSkirmish.ANOMALY_ID, 1f)));
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = generator(state, Map.of());
@@ -100,7 +100,7 @@ class OpeningAnomaliesTest {
 
     @Test
     void aTreeChanceLineMakesItsAnomalyRollButNeverOneWithoutAnOpeningChanceOrPastTheRules() {
-        ChartTables.useAnomalies(List.of(rolling(SpatialBreach.ANOMALY_ID, 1e-6f), rolling(AsteroidStorm.ANOMALY_ID, 1e-6f, Set.of(SpatialBreach.ANOMALY_ID)),
+        ChartTables.useAnomalies(List.of(rolling(SpatialBreach.ANOMALY_ID, 1e-6f), rolling(AnomalousDebris.ANOMALY_ID, 1e-6f, Set.of(SpatialBreach.ANOMALY_ID)),
                 rolling(MagneticStorm.ANOMALY_ID, 0f)));
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = generator(state, Map.of());
@@ -109,7 +109,7 @@ class OpeningAnomaliesTest {
 
         assertEquals(List.of(), OpeningAnomalies.rolled(generator, state, cell, CHART_SEED, List.of()));
         assertEquals(List.of(SpatialBreach.ANOMALY_ID), OpeningAnomalies.rolled(generator, state, cell, CHART_SEED, List.of(), certain));
-        assertEquals(List.of(), OpeningAnomalies.rolled(generator, state, cell, CHART_SEED, List.of(AsteroidStorm.ANOMALY_ID), certain));
+        assertEquals(List.of(), OpeningAnomalies.rolled(generator, state, cell, CHART_SEED, List.of(AnomalousDebris.ANOMALY_ID), certain));
         AtlasGenerator barred = generator(state, Map.of(SpatialBreach.ANOMALY_ID, 0f));
         assertEquals(List.of(), OpeningAnomalies.rolled(barred, state, system(barred), CHART_SEED, List.of(), certain));
     }

@@ -32,7 +32,7 @@ public final class AtlasState implements AtlasMemory {
     public static final int FLAGSHIP_ROLL = 1;
     static final String FLAG_SEPARATOR = ",";
     private static final Random SEEDS = new Random();
-    private static final Set<String> REMOVED_ANOMALY_IDS = Set.of("powerful_boss");
+    private static final Set<String> REMOVED_ANOMALY_IDS = Set.of("powerful_boss", "asteroid_storm");
 
     private final long seed;
     private final int generatorVersion;
