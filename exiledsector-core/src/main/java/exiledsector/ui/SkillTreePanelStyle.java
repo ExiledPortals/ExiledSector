@@ -36,7 +36,7 @@ public final class SkillTreePanelStyle {
     public static final Color GLOW_COLOR = new Color(120, 200, 255);
     public static final Color POSITIVE_STAT_COLOR = new Color(0x98, 0xFB, 0x00);
     public static final Color IMMUTABLE_TEXT_COLOR = new Color(230, 80, 175);
-    public static final Color OVERCHARGED_TEXT_COLOR = new Color(80, 230, 255);
+    public static final Color OVERCHARGED_TEXT_COLOR = new Color(70, 255, 235);
     public static final Color WARPED_TEXT_COLOR = new Color(170, 120, 255);
     public static final Color NEGATIVE_STAT_COLOR = new Color(0xFC, 0x63, 0x00);
 

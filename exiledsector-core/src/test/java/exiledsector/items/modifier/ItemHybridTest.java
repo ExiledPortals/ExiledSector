@@ -97,18 +97,51 @@ class ItemHybridTest {
     }
 
     @Test
-    void aWarpedOrOverchargedModifierColoursOnlyItsCaptionWhenExpanded() {
-        RolledModifier warped = platedFrame(7f, 4f).asWarped();
-        RolledModifier immutable = RolledModifier.single(ModifierSlot.SUFFIX, new RolledLine("HULL_MULT", 5f)).asImmutable().asWarped();
-        Item item = item(List.of(warped, immutable));
+    void aWarpedModifierColoursOnlyTheWordWarpedInItsCaption() {
+        Item item = item(List.of(platedFrame(7f, 4f).asWarped()));
 
         List<SlottedLine> expanded = item.slottedEffectLines(true, null);
         List<SlottedLine> collapsed = item.slottedEffectLines(false, null);
 
         assertTrue(expanded.get(0).text().toMarkup().contains("<warped>Warped</warped>"), expanded.get(0).text().toMarkup());
-        assertTrue(expanded.get(1).text().spans().stream().noneMatch(span -> span.style() == Style.WARPED));
-        assertTrue(expanded.get(4).text().spans().stream().anyMatch(span -> span.style() == Style.IMMUTABLE));
-        assertTrue(collapsed.get(0).text().spans().stream().anyMatch(span -> span.style() == Style.WARPED));
+        assertTrue(expanded.stream().skip(1).allMatch(line -> styles(line.text()).equals(List.of(Style.GOOD))));
+        assertTrue(collapsed.stream().allMatch(line -> styles(line.text()).equals(List.of(Style.GOOD))));
+    }
+
+    @Test
+    void anOverchargedModifierColoursOnlyItsValues() {
+        RolledModifier overcharged = RolledModifier.single(ModifierSlot.SUFFIX, new RolledLine("HULL_MULT", 5f))
+                .overchargedWith(List.of(new RolledLine("HULL_MULT", 7f)));
+        Item item = item(List.of(overcharged));
+
+        StyledText collapsed = item.effectLines(false).get(0);
+        StyledText expanded = item.slottedEffectLines(true, null).get(1).text();
+
+        assertEquals(List.of(Style.OVERCHARGED), styles(collapsed));
+        assertEquals("7%", spanText(collapsed, 0));
+        assertEquals(List.of(Style.OVERCHARGED), styles(expanded));
+    }
+
+    @Test
+    void anImmutableOverchargedModifierColoursItsTextImmutableAndKeepsItsValueOvercharged() {
+        RolledModifier both = RolledModifier.single(ModifierSlot.SUFFIX, new RolledLine("HULL_MULT", 5f))
+                .overchargedWith(List.of(new RolledLine("HULL_MULT", 7f))).asImmutable();
+        Item item = item(List.of(both));
+
+        StyledText collapsed = item.effectLines(false).get(0);
+
+        assertEquals(List.of(Style.OVERCHARGED, Style.IMMUTABLE), styles(collapsed));
+        assertEquals("7%", spanText(collapsed, 0));
+        assertEquals(collapsed.plain().length(), collapsed.spans().get(1).end());
+    }
+
+    private static List<Style> styles(StyledText text) {
+        return text.spans().stream().map(StyledText.Span::style).toList();
+    }
+
+    private static String spanText(StyledText text, int index) {
+        StyledText.Span span = text.spans().get(index);
+        return text.plain().substring(span.start(), span.end());
     }
 
     @Test

@@ -48,6 +48,7 @@ public final class VanillaText {
         Prepared prepared = prepare(text, palette);
         LabelAPI label = plainPara(tooltip, prepared.text(), pad, base);
         highlight(label, prepared);
+        OverchargeBreath.attach(tooltip, label, text, prepared.colors());
         return label;
     }
 

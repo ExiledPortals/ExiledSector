@@ -18,6 +18,7 @@ import java.awt.Color;
 public final class CargoIconLooks {
 
     private static final float CORRUPTED_GLOW = 0.45f;
+    public static final Color WARPED_BORDER = new Color(170, 90, 255);
     private static final DomainContributions<ItemIconLooks> ITEM_LOOKS = DomainContributions.fromEveryDomain(ExiledSectorDomain::itemIconLooks);
 
     private CargoIconLooks() {
@@ -76,7 +77,7 @@ public final class CargoIconLooks {
         for (ItemIconLooks itemLooks : ITEM_LOOKS.all()) {
             look = itemLooks.decorated(item, look);
         }
-        return look;
+        return item.isWarped() && !look.ownArt() ? look.withChargedBorder(WARPED_BORDER) : look;
     }
 
     public static Color kindColor(ItemKind kind) {

@@ -529,7 +529,7 @@ public abstract class Item {
             StyledText description = explicitLine(effects, effect, modifier == null ? null : modifier.line(effect.effectName()),
                     withRollRanges, context);
             if (description != null) {
-                StyledText shown = shownAs(rolledModifier, description, withRollRanges);
+                StyledText shown = shownAs(rolledModifier, description);
                 ModifierEffect resolvedEffect = effect.effect(effects);
                 described.add(resolvedEffect == null ? new SlottedLine(rolledModifier.slot(), shown)
                         : new SlottedLine(rolledModifier.slot(), shown, resolvedEffect.detailTitle(), resolvedEffect.detailLines()));
@@ -545,17 +545,9 @@ public abstract class Item {
         lines.addAll(described);
     }
 
-    private static StyledText shownAs(RolledModifier rolledModifier, StyledText description, boolean captioned) {
-        if (rolledModifier.immutable()) {
-            return description.withUnstyledAs(Style.IMMUTABLE);
-        }
-        if (captioned) {
-            return description;
-        }
-        if (rolledModifier.overcharged()) {
-            return description.withUnstyledAs(Style.OVERCHARGED);
-        }
-        return rolledModifier.warped() ? description.withUnstyledAs(Style.WARPED) : description;
+    private static StyledText shownAs(RolledModifier rolledModifier, StyledText description) {
+        StyledText shown = rolledModifier.overcharged() ? description.withFirstSpanAs(Style.OVERCHARGED) : description;
+        return rolledModifier.immutable() ? shown.withUnstyledAs(Style.IMMUTABLE) : shown;
     }
 
     private static SlottedLine caption(RolledModifier rolledModifier, Modifier modifier) {
