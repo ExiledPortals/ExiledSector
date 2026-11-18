@@ -129,9 +129,10 @@ The three offers are drawn without repeats from one pool, weighted by each item'
 - crafting items (by their `chart_materials.csv` share at the run tier), each offered as a single item with no count shown;
 - Prefix and Suffix Inhibitors, each offered as a single item;
 - Engrams (by their `engrams.csv` weight, from their `min_tier`);
+- Doctrine Archives, by their weight in `atlas_officer_rewards.csv`, from every faction whatever the officer's faction (built 2026-11-18);
 - rarely, a unique hull item or subroutine (`unique` true, by `rarity`), leaning towards uniques whose `source` is the officer's faction.
 
-The tables use different scales, so each category gets a share of the pool before the item weights apply within it: 35% hull item base types, 15% biome hull items, 30% crafting items, 7% inhibitors, 8% Engrams, 5% uniques (placeholders). These shares and each crafting item's tier (low, mid or high) sit in a new `atlas_officer_rewards.csv`.
+The tables use different scales, so each category gets a share of the pool before the item weights apply within it: 35 hull item base types, 15 biome hull items, 30 crafting items, 7 inhibitors, 8 Engrams, 8 feedstock, 18 Star Charts, 5 Doctrine Archives and 5 uniques, as relative weights (placeholders). These shares and each crafting item's tier (low, mid or high) sit in a new `atlas_officer_rewards.csv`.
 
 Every officer starts with one item already carried, rolled from the same pool when the officer is generated, so the first fight with anyone is worth something. A higher rank rolls it rarer: each rank row in `atlas_officer_ranks.csv` sets that rank's unique share and its crafting item tier weights (placeholder: from 2% uniques and low, mid and high tiers 70/25/5 for a Lieutenant up to 15% and 10/45/45 for an Admiral). A starting crafting item rolls its base count like a picked one. A replacement Lieutenant starts with a Lieutenant's roll.
 

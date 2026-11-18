@@ -149,6 +149,18 @@ class OfficerRewardDropTest {
     }
 
     @Test
+    void aCarriedDoctrineArchiveDropsAsOneRolledArchive() {
+        String archive = "test_doctrine_archive";
+        ItemDefinitions.register(List.of(new ItemDefinition(archive, ItemKind.SUBROUTINE, archive, ItemDefinition.FALLBACK_ICON, 10f, false, "",
+                List.of(), List.of(), "")));
+
+        Loot drop = OfficerRewardDrop.roll(List.of(CarriedItem.of(RewardKind.DOCTRINE_ARCHIVE, archive)), new ChartLootContext(ChartGenContext.of(List.of()), 5),
+                new Random(1L));
+
+        assertEquals(List.of(archive), drop.items().stream().map(ItemData::definitionId).toList());
+    }
+
+    @Test
     void aCarriedBiomeItemDropsWithItsBiomesModifier() {
         Random random = new Random(6L);
         for (int roll = 0; roll < 20; roll++) {

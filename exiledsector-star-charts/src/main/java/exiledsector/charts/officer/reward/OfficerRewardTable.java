@@ -92,7 +92,15 @@ public final class OfficerRewardTable {
             }
             return new Entry(category, null, weight, minCount, maxCount);
         }
-        csv.skipRow(id, "category must be crafting_item, inhibitor or feedstock");
+        if (category == RewardKind.DOCTRINE_ARCHIVE) {
+            float weight = csv.number(row, WEIGHT_COLUMN, 0f, id);
+            if (!(weight > 0f)) {
+                csv.skipRow(id, "a doctrine archive needs a positive weight");
+                return null;
+            }
+            return new Entry(category, null, weight, 1, 1);
+        }
+        csv.skipRow(id, "category must be crafting_item, inhibitor, feedstock or doctrine_archive");
         return null;
     }
 

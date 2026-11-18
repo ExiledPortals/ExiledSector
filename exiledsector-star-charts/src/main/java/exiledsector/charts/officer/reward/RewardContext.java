@@ -1,6 +1,7 @@
 package exiledsector.charts.officer.reward;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
+import exiledsector.ExiledSector;
 import exiledsector.charts.atlas.AtlasData;
 import exiledsector.charts.atlas.AtlasRuntime;
 import exiledsector.charts.atlas.AtlasUnlocks;
@@ -22,7 +23,8 @@ public record RewardContext(int tier, String factionId, String commandCentreBiom
     }
 
     public static Predicate<ItemDefinition> itemAllowedIn(SectorAPI sector) {
-        return definition -> ItemUnlock.available(definition.type(), sector) && ItemUnlock.canDrop(definition, sector);
+        return definition -> ExiledSector.domainEnabledFor(definition.type()) && ItemUnlock.available(definition.type(), sector)
+                && ItemUnlock.canDrop(definition, sector);
     }
 
     public static Predicate<String> craftingItemAllowedIn(SectorAPI sector) {

@@ -12,6 +12,7 @@ import exiledsector.items.crafting.ItemDisassembly;
 import exiledsector.items.crafting.material.CraftingInhibitor;
 import exiledsector.items.crafting.material.MaterialItems;
 import exiledsector.items.modifier.ItemRarity;
+import exiledsector.ui.node.NodeRingArt;
 
 import java.awt.Color;
 import java.util.List;
@@ -43,6 +44,7 @@ record RewardFace(List<String> iconPaths, Color frameColour) {
             case STAR_CHART -> STAR_CHART_FRAME;
             case HULL_ITEM -> ItemRarity.COMMON.color();
             case BIOME_HULL_ITEM -> BIOME_HULL_ITEM_FRAME;
+            case DOCTRINE_ARCHIVE -> NodeRingArt.RING_PINK_COLOR;
             case UNIQUE -> ItemRarity.UNIQUE.color();
         };
     }

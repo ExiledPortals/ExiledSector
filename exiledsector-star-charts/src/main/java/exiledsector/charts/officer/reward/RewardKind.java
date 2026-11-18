@@ -8,6 +8,7 @@ public enum RewardKind {
     ENGRAM("engram", true),
     FEEDSTOCK("feedstock", true),
     STAR_CHART("star_chart", false),
+    DOCTRINE_ARCHIVE("doctrine_archive", false),
     UNIQUE("unique", false);
 
     private final String id;

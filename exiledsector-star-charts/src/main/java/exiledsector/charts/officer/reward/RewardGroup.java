@@ -14,6 +14,7 @@ public enum RewardGroup {
     STAR_CHART("starChart", RewardKind.STAR_CHART, null),
     HULL_ITEM("hullItem", RewardKind.HULL_ITEM, null),
     BIOME_HULL_ITEM("biomeHullItem", RewardKind.BIOME_HULL_ITEM, null),
+    DOCTRINE_ARCHIVE("doctrineArchive", RewardKind.DOCTRINE_ARCHIVE, null),
     UNIQUE("unique", RewardKind.UNIQUE, null);
 
     private static final String LABEL_KEY_PREFIX = "chart.officer.reward.group.";

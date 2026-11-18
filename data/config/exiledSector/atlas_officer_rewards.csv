@@ -5,7 +5,8 @@ crafting_item,,30,,,,,"Crafting items by their crafting_drops.csv weight with th
 inhibitor,,7,,,,,"Prefix and Suffix Inhibitors by their crafting_drops.csv weight with the run's crafting rarity"
 engram,,8,,,,,"Engrams by their engrams.csv weight, from their min_tier"
 feedstock,,8,,,,,"Placeholder share. Nanite Feedstock and the infused feedstocks by their weight below"
-star_chart,,7,,,,,"Placeholder share. Star Charts that roll at the run tier, by rarity. One drops at the tier of the run the officer is beaten in, swapped for another Star Chart if it can't roll there"
+star_chart,,18,,,,,"Placeholder share. Star Charts that roll at the run tier, by rarity. One drops at the tier of the run the officer is beaten in, swapped for another Star Chart if it can't roll there"
+doctrine_archive,,5,,,,,"Placeholder share. Doctrine Archives by their weight below, from every faction whatever the officer's faction"
 unique,,5,,,,,"Unique hull items and subroutines by rarity, leaning to uniques whose source is the officer's faction. A rank's unique_share replaces this for that rank's starting item"
 exiledSector_augmentation_nanoswarm,crafting_item,,low,,,,"Rows with a category are the items in it. tier sets the item's reward group, the hidden count rolled when the item is picked or starts carried (low 1 to 7, mid 1 to 3, high 1) and which of a rank's craft_low, craft_mid and craft_high weights apply to its starting item. Every id needs a crafting_drops.csv row"
 exiledSector_reshaping_nanoswarm,crafting_item,,low,,,,
@@ -32,3 +33,10 @@ exiledSector_nanite_feedstock,feedstock,,,4,30,90,"Placeholder weights and count
 exiledSector_threat_feedstock,feedstock,,,1,100,300,
 exiledSector_shroud_feedstock,feedstock,,,1,100,300,
 exiledSector_phase_feedstock,feedstock,,,1,100,300,
+doctrine_archive_hegemony,doctrine_archive,,,1,,,"Placeholder weights. weight is the archive's weight within the doctrine archive group; it drops as one rolled archive, its count scaled like a carried unique subroutine's"
+doctrine_archive_tritachyon,doctrine_archive,,,1,,,
+doctrine_archive_luddic,doctrine_archive,,,1,,,
+doctrine_archive_sindrian_diktat,doctrine_archive,,,1,,,
+doctrine_archive_pirate,doctrine_archive,,,1,,,
+doctrine_archive_persean_league,doctrine_archive,,,1,,,
+doctrine_archive_remnant,doctrine_archive,,,1,,,

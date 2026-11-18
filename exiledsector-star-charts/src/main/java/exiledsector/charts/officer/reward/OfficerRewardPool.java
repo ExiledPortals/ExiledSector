@@ -7,6 +7,7 @@ import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemTypes;
+import exiledsector.items.ItemVolumes;
 import exiledsector.items.crafting.material.Engram;
 import exiledsector.items.crafting.material.Engrams;
 import exiledsector.items.drop.CraftingDrops;
@@ -133,6 +134,7 @@ public final class OfficerRewardPool {
         candidates.put(RewardKind.ENGRAM, engrams(context));
         candidates.put(RewardKind.FEEDSTOCK, feedstock(context));
         candidates.put(RewardKind.STAR_CHART, starCharts(context));
+        candidates.put(RewardKind.DOCTRINE_ARCHIVE, doctrineArchives(context));
         candidates.put(RewardKind.UNIQUE, uniques(context));
         return candidates;
     }
@@ -152,6 +154,8 @@ public final class OfficerRewardPool {
                     .map(definition -> CarriedItem.of(RewardKind.STAR_CHART, definition.id())).toList();
             case HULL_ITEM, BIOME_HULL_ITEM -> definitions(ItemType.HULL_ITEM, false, itemAllowed).stream()
                     .map(definition -> CarriedItem.of(group.kind(), definition.id())).toList();
+            case DOCTRINE_ARCHIVE -> doctrineArchiveDefinitions(itemAllowed).stream()
+                    .map(definition -> CarriedItem.of(RewardKind.DOCTRINE_ARCHIVE, definition.id())).toList();
             case UNIQUE -> UNIQUE_TYPES.stream().flatMap(type -> definitions(type, true, itemAllowed).stream())
                     .map(definition -> CarriedItem.of(RewardKind.UNIQUE, definition.id())).toList();
         };
@@ -230,6 +234,24 @@ public final class OfficerRewardPool {
                         && context.itemAllowed().test(definition))
                 .map(definition -> new RewardCandidate(CarriedItem.of(RewardKind.STAR_CHART, definition.id()), definition.rarity()))
                 .toList();
+    }
+
+    private static List<RewardCandidate> doctrineArchives(RewardContext context) {
+        return doctrineArchiveDefinitions(context.itemAllowed()).stream()
+                .map(definition -> new RewardCandidate(CarriedItem.of(RewardKind.DOCTRINE_ARCHIVE, definition.id()),
+                        OfficerRewardTable.weightOf(definition.id())))
+                .toList();
+    }
+
+    private static List<ItemDefinition> doctrineArchiveDefinitions(Predicate<ItemDefinition> allowed) {
+        List<ItemDefinition> definitions = new ArrayList<>();
+        for (String itemId : OfficerRewardTable.itemsIn(RewardKind.DOCTRINE_ARCHIVE)) {
+            ItemDefinition definition = ItemDefinitions.get(itemId);
+            if (definition != null && definition.rarity() > 0f && ItemVolumes.dropsNow(definition) && allowed.test(definition)) {
+                definitions.add(definition);
+            }
+        }
+        return definitions;
     }
 
     private static List<RewardCandidate> uniques(RewardContext context) {

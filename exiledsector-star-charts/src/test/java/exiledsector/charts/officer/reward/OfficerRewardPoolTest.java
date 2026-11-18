@@ -251,6 +251,27 @@ class OfficerRewardPoolTest {
         }
     }
 
+    @Test
+    void doctrineArchivesAreOfferedByTheirTableWeightWhateverTheOfficersFaction() throws Exception {
+        ItemDefinitions.register(List.of(definition("test_hegemony_archive", ItemKind.SUBROUTINE), definition("test_luddic_archive", ItemKind.SUBROUTINE),
+                definition("test_locked_archive", ItemKind.SUBROUTINE)));
+        OfficerRewardTable.register(new JSONArray()
+                .put(new JSONObject().put("id", "test_hegemony_archive").put("category", "doctrine_archive").put("weight", "1"))
+                .put(new JSONObject().put("id", "test_luddic_archive").put("category", "doctrine_archive").put("weight", "3"))
+                .put(new JSONObject().put("id", "test_locked_archive").put("category", "doctrine_archive").put("weight", "1"))
+                .put(new JSONObject().put("id", "test_missing_archive").put("category", "doctrine_archive").put("weight", "1")));
+        Predicate<ItemDefinition> allowed = definition -> !"test_locked_archive".equals(definition.id());
+        RewardContext context = new RewardContext(5, "hegemony", null, biomeId -> false, allowed, itemId -> true,
+                LootMultipliers.atTierCraftingRarity(ChartTiers.craftingRarity(5)));
+
+        List<RewardCandidate> archives = OfficerRewardPool.candidates(context, new Random(1L)).get(RewardKind.DOCTRINE_ARCHIVE);
+
+        assertEquals(List.of(candidate(RewardKind.DOCTRINE_ARCHIVE, "test_hegemony_archive", 1f), candidate(RewardKind.DOCTRINE_ARCHIVE, "test_luddic_archive", 3f)),
+                archives);
+        assertEquals(List.of("test_hegemony_archive", "test_luddic_archive"), ids(OfficerRewardPool.possible(RewardGroup.DOCTRINE_ARCHIVE, allowed, itemId -> true)));
+        assertEquals(1, OfficerRewardPool.picked(CarriedItem.of(RewardKind.DOCTRINE_ARCHIVE, "test_luddic_archive"), new Random(2L)).baseCount());
+    }
+
     private static ItemDefinition unique(String id, String unlock) {
         return new ItemDefinition(id, ItemKind.BRIDGE, id, ItemDefinition.FALLBACK_ICON, 1f, true, "",
                 List.of(PoolEntry.of(ModifierSlot.PREFIX, "HULL_PERCENT", 4f, 6f, 1f)), List.of(), unlock);

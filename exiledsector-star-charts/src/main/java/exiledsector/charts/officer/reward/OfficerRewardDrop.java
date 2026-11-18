@@ -79,7 +79,7 @@ public final class OfficerRewardDrop {
     private static ItemData rolled(CarriedItem item, ItemDefinition definition, ChartLootContext loot, Random random) {
         long seed = random.nextLong();
         return switch (item.kind()) {
-            case UNIQUE -> ItemData.rolled(definition, seed);
+            case UNIQUE, DOCTRINE_ARCHIVE -> ItemData.rolled(definition, seed);
             case BIOME_HULL_ITEM -> BiomeModifiers.grant(loot.rolledWithDropLimits(definition, seed), item.variant(), random);
             case STAR_CHART -> {
                 int chartTier = ChartTiers.clampDropTier(loot.tier());

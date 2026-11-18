@@ -111,7 +111,32 @@ class OfficerRewardTableTest {
         OfficerRewardTable.register(ChartTables.csvRows(OfficerRewardTable.PATH));
 
         assertEquals(Map.of(RewardKind.HULL_ITEM, 35f, RewardKind.BIOME_HULL_ITEM, 15f, RewardKind.CRAFTING_ITEM, 30f, RewardKind.INHIBITOR, 7f,
-                RewardKind.ENGRAM, 8f, RewardKind.FEEDSTOCK, 8f, RewardKind.STAR_CHART, 7f, RewardKind.UNIQUE, 5f), OfficerRewardTable.shares());
+                RewardKind.ENGRAM, 8f, RewardKind.FEEDSTOCK, 8f, RewardKind.STAR_CHART, 18f, RewardKind.DOCTRINE_ARCHIVE, 5f, RewardKind.UNIQUE, 5f),
+                OfficerRewardTable.shares());
+    }
+
+    @Test
+    void doctrineArchiveRowsNeedAWeightAndAlwaysCountOne() throws Exception {
+        OfficerRewardTable.register(new JSONArray()
+                .put(row("archive", "doctrine_archive", "", "").put("weight", "2"))
+                .put(row("weightless_archive", "doctrine_archive", "", "").put("weight", "0")));
+
+        assertEquals(List.of("archive"), OfficerRewardTable.itemsIn(RewardKind.DOCTRINE_ARCHIVE));
+        assertEquals(RewardKind.DOCTRINE_ARCHIVE, OfficerRewardTable.categoryOf("archive"));
+        assertEquals(2f, OfficerRewardTable.weightOf("archive"));
+        assertEquals(1, OfficerRewardTable.rollCount("archive", new Random(1L)));
+    }
+
+    @Test
+    void theShippedDoctrineArchivesAreEveryFactionsArchiveAtEqualWeight() throws Exception {
+        OfficerRewardTable.register(ChartTables.csvRows(OfficerRewardTable.PATH));
+        List<String> archiveIds = OfficerRewardTable.itemsIn(RewardKind.DOCTRINE_ARCHIVE);
+
+        assertEquals(List.of("doctrine_archive_hegemony", "doctrine_archive_tritachyon", "doctrine_archive_luddic", "doctrine_archive_sindrian_diktat",
+                "doctrine_archive_pirate", "doctrine_archive_persean_league", "doctrine_archive_remnant"), archiveIds);
+        for (String archiveId : archiveIds) {
+            assertEquals(1f, OfficerRewardTable.weightOf(archiveId), archiveId);
+        }
     }
 
     @Test

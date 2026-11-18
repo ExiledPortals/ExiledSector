@@ -27,7 +27,7 @@ class RewardGroupTest {
     void theGroupsKeepTheirShownOrder() {
         assertEquals(List.of(RewardGroup.LOW_CRAFTING, RewardGroup.MID_CRAFTING, RewardGroup.HIGH_CRAFTING, RewardGroup.INHIBITOR,
                 RewardGroup.ENGRAM, RewardGroup.FEEDSTOCK, RewardGroup.STAR_CHART, RewardGroup.HULL_ITEM, RewardGroup.BIOME_HULL_ITEM,
-                RewardGroup.UNIQUE), Arrays.asList(RewardGroup.values()));
+                RewardGroup.DOCTRINE_ARCHIVE, RewardGroup.UNIQUE), Arrays.asList(RewardGroup.values()));
     }
 
     @Test
