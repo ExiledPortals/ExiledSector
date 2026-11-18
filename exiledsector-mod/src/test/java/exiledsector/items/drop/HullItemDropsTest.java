@@ -38,8 +38,8 @@ class HullItemDropsTest {
                 .put(row("emitter_basic", "shield_generator", "HULL_PERCENT:4:6"))
                 .put(row("bridge_relic", "bridge", "HULL_PERCENT:4:6").put("unique", "true")));
         SalvageSiteDrops.register(new JSONArray()
-                .put(new JSONObject().put("site", "station").put("chances", "1;0.5").put("uniqueChance", "0"))
-                .put(new JSONObject().put("site", "empty").put("chances", "").put("uniqueChance", "0.5")));
+                .put(new JSONObject().put("site", "station").put("chances", "1;0.5").put("hullItemUniqueChance", "0"))
+                .put(new JSONObject().put("site", "empty").put("chances", "").put("hullItemUniqueChance", "0.5")));
     }
 
     @AfterEach

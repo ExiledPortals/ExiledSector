@@ -51,10 +51,10 @@ class SalvageSiteDropsTest {
                 .put(row(MILITARY, HullItemRows.MILITARY_SECTION, MILITARY_PREFIXES, MILITARY_SUFFIXES))
                 .put(ItemFixtures.subroutineRow("relic", SubroutineKind.UNIQUE).put("unique", "true")));
         SalvageSiteDrops.register(new JSONArray()
-                .put(new JSONObject().put("site", "probe").put("chances", "0.5").put("uniqueChance", "0"))
-                .put(new JSONObject().put("site", "station").put("chances", "1;0.6;0.3").put("uniqueChance", "0.19"))
-                .put(new JSONObject().put("site", "research").put("chances", "1;0.6;0.3").put("uniqueChance", "0").put("feedstockMin", "20").put("feedstockMax", "30"))
-                .put(new JSONObject().put("site", "broken").put("chances", "lots").put("uniqueChance", "0")));
+                .put(new JSONObject().put("site", "probe").put("chances", "0.5").put("hullItemUniqueChance", "0"))
+                .put(new JSONObject().put("site", "station").put("chances", "1;0.6;0.3").put("hullItemUniqueChance", "0.19").put("subroutineUniqueChance", "0.19"))
+                .put(new JSONObject().put("site", "research").put("chances", "1;0.6;0.3").put("hullItemUniqueChance", "0").put("feedstockMin", "20").put("feedstockMax", "30"))
+                .put(new JSONObject().put("site", "broken").put("chances", "lots").put("hullItemUniqueChance", "0")));
         CraftingDrops.register(ProjectFiles.csvRows(CraftingDrops.DATA_PATH));
     }
 
@@ -125,12 +125,29 @@ class SalvageSiteDropsTest {
         assertEquals(0.38, relics / (double) TRIALS, 0.02);
     }
 
-    @Test
-    void aUniqueHullItemKeepsItsSalvageShareOfTheSiteUniqueRoll() throws Exception {
-        ItemDefinitions.register(new JSONArray().put(row("bridge_relic", "bridge", "HULL_PERCENT:4:6").put("unique", "true")));
+    private static double hullItemsPerSite(String site, ItemChances chances, java.util.function.Predicate<ItemData> counted) {
+        Random random = new Random(11L);
+        long found = 0;
+        for (int i = 0; i < TRIALS; i++) {
+            found += HullItemDrops.rollHullItemLoot(site, random, chances, definition -> true).items().stream().filter(counted).count();
+        }
+        return found / (double) TRIALS;
+    }
 
-        assertEquals(0.19 * HullItemDrops.HULL_ITEM_SALVAGE_SHARE,
-                share("station", 1f, items -> items.stream().anyMatch(item -> "bridge_relic".equals(item.definitionId()))), 0.02);
+    @Test
+    void aSitesHullItemsTurnUniqueAtItsUniqueChanceAndRarityConvertsMoreWithoutAddingAny() throws Exception {
+        ItemDefinitions.register(new JSONArray()
+                .put(row(MILITARY, HullItemRows.MILITARY_SECTION, MILITARY_PREFIXES, MILITARY_SUFFIXES))
+                .put(row("bridge_relic", "bridge", "HULL_PERCENT:4:6").put("unique", "true")));
+        ItemChances rarer = ItemChances.BASE.plusRarityPercent(DropType.ITEM, 100f);
+        double keptHullItems = 1.78 * HullItemDrops.HULL_ITEM_SALVAGE_SHARE;
+
+        assertEquals(0.0, share("station", 1f, items -> items.stream().anyMatch(item -> "bridge_relic".equals(item.definitionId()))), 0.0);
+        assertEquals(0.19 * HullItemDrops.HULL_ITEM_SALVAGE_SHARE, hullItemsPerSite("station", ItemChances.BASE, item -> "bridge_relic".equals(item.definitionId())), 0.01);
+        assertEquals(0.38 * HullItemDrops.HULL_ITEM_SALVAGE_SHARE, hullItemsPerSite("station", rarer, item -> "bridge_relic".equals(item.definitionId())), 0.01);
+        assertEquals(keptHullItems, hullItemsPerSite("station", ItemChances.BASE, item -> true), 0.02);
+        assertEquals(keptHullItems, hullItemsPerSite("station", rarer, item -> true), 0.02);
+        assertEquals(0.0, hullItemsPerSite("research", rarer, item -> "bridge_relic".equals(item.definitionId())), 0.0);
     }
 
     @Test
@@ -177,13 +194,14 @@ class SalvageSiteDropsTest {
             JSONObject row = rows.getJSONObject(i);
             String site = row.getString("site");
             float first = Float.parseFloat(row.getString("chances").split(";")[0]);
-            float unique = Float.parseFloat(row.getString("uniqueChance"));
-            assertTrue(first >= 0f && first <= 1f && unique >= 0f && unique <= 1f, site);
+            float hullItemUnique = Float.parseFloat(row.getString("hullItemUniqueChance"));
+            float subroutineUnique = Float.parseFloat(row.getString("subroutineUniqueChance"));
+            assertTrue(first >= 0f && first <= 1f && hullItemUnique >= 0f && hullItemUnique <= 1f && subroutineUnique >= 0f && subroutineUnique <= 1f, site);
             if (firstChances.containsKey(site)) {
                 assertEquals(firstChances.get(site), first, 1e-6f, site);
             }
             if (site.contains("derelict") || site.contains("probe") || site.contains("cache") || site.equals("wreck")) {
-                assertEquals(0f, unique, site + " should never drop uniques");
+                assertEquals(0f, hullItemUnique + subroutineUnique, site + " should never drop uniques");
             }
         }
     }
@@ -191,8 +209,8 @@ class SalvageSiteDropsTest {
     @Test
     void otherModSitesOnlyDropWhileTheSettingIsOnAndNeverOverrideOurOwnRows() throws Exception {
         SalvageSiteDrops.registerOtherMod(new JSONArray()
-                .put(new JSONObject().put("site", "rat_abyss_research").put("chances", "1").put("uniqueChance", "0"))
-                .put(new JSONObject().put("site", "probe").put("chances", "1").put("uniqueChance", "0")));
+                .put(new JSONObject().put("site", "rat_abyss_research").put("chances", "1").put("hullItemUniqueChance", "0"))
+                .put(new JSONObject().put("site", "probe").put("chances", "1").put("hullItemUniqueChance", "0")));
 
         try (MockedStatic<LunaSettings> luna = Mockito.mockStatic(LunaSettings.class)) {
             luna.when(() -> LunaSettings.getBoolean("exiledSector", SalvageSiteCompat.DROPS_FIELD_ID)).thenReturn(true);

@@ -39,8 +39,8 @@ class UniqueSourceCheckTest {
                 .put(uniqueRow("site_relic", "site:station; site:probe; site:nowhere"))
                 .put(HullItemRows.row("hull_relic", "reactor", "HULL_MULT:4:6").put("unique", "TRUE")));
         SalvageSiteDrops.register(new JSONArray()
-                .put(new JSONObject().put("site", "station").put("chances", "1").put("uniqueChance", "0.2"))
-                .put(new JSONObject().put("site", "probe").put("chances", "0.5").put("uniqueChance", "0")));
+                .put(new JSONObject().put("site", "station").put("chances", "1").put("hullItemUniqueChance", "0.2").put("subroutineUniqueChance", "0.2"))
+                .put(new JSONObject().put("site", "probe").put("chances", "0.5").put("hullItemUniqueChance", "0").put("subroutineUniqueChance", "0")));
     }
 
     @AfterEach
@@ -61,8 +61,8 @@ class UniqueSourceCheckTest {
 
         assertEquals(List.of(
                 "fleet_relic favours faction:missing_faction, but no faction with that id is loaded, so that bonus never applies",
-                "site_relic drops from site:probe, but " + SalvageSiteDrops.DATA_PATH + " has no row for that site with a uniqueChance above zero, so it can never drop there",
-                "site_relic drops from site:nowhere, but " + SalvageSiteDrops.DATA_PATH + " has no row for that site with a uniqueChance above zero, so it can never drop there"),
+                "site_relic drops from site:probe, but " + SalvageSiteDrops.DATA_PATH + " has no row for that site with a subroutineUniqueChance above zero, so it can never drop there",
+                "site_relic drops from site:nowhere, but " + SalvageSiteDrops.DATA_PATH + " has no row for that site with a subroutineUniqueChance above zero, so it can never drop there"),
                 warnings);
     }
 

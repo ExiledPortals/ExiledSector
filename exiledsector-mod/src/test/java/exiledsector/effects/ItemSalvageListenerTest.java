@@ -72,7 +72,7 @@ class ItemSalvageListenerTest {
         ItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "volume_subroutine").put("kind", "MODSPEC_CACHE")
                 .put("rarity", "10")));
         SalvageSiteDrops.register(new JSONArray()
-                .put(new JSONObject().put("site", "station_research").put("chances", "1").put("uniqueChance", "0")));
+                .put(new JSONObject().put("site", "station_research").put("chances", "1").put("hullItemUniqueChance", "0")));
         CraftingDrops.register(ProjectFiles.csvRows(CraftingDrops.DATA_PATH));
     }
 
@@ -150,7 +150,7 @@ class ItemSalvageListenerTest {
     @Test
     void aChartDebrisRingRollsItsSalvageOnceOnTheFieldsOwnMemory() throws Exception {
         SalvageSiteDrops.register(new JSONArray().put(new JSONObject().put("site", Entities.DEBRIS_FIELD_SHARED).put("chances", "1")
-                .put("uniqueChance", "0").put("feedstockMin", "5").put("feedstockMax", "5")));
+                .put("hullItemUniqueChance", "0").put("feedstockMin", "5").put("feedstockMax", "5")));
         SectorEntityToken ring = scavengedDebris(DebrisFieldTerrainPlugin.DebrisFieldSource.MIXED);
         CargoAPI loot = mock(CargoAPI.class);
 

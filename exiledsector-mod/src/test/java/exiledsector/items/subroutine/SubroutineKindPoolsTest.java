@@ -36,7 +36,7 @@ class SubroutineKindPoolsTest {
                 .put(ItemFixtures.subroutineRow("relic", SubroutineKind.UNIQUE).put("unique", "true").put("lines", "HULL_MULT:5:5")
                         .put("source", "faction:pirates"))
                 .put(HullItemRows.row("plate", "armor_plating", "HULL_MULT:4:6")));
-        SalvageSiteDrops.register(new JSONArray().put(new JSONObject().put("site", "derelict").put("chances", "1;1;1").put("uniqueChance", "0")));
+        SalvageSiteDrops.register(new JSONArray().put(new JSONObject().put("site", "derelict").put("chances", "1;1;1").put("hullItemUniqueChance", "0")));
     }
 
     @AfterEach

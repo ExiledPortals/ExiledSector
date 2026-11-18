@@ -165,7 +165,7 @@ class HullUpgradePointsTest {
 
     @Test
     void noSchematicDropsFromSalvageOrTechMiningWhileStarChartProgressIsOn() throws Exception {
-        SalvageSiteDrops.register(new JSONArray().put(new JSONObject().put("site", "station").put("chances", "1").put("uniqueChance", "0")));
+        SalvageSiteDrops.register(new JSONArray().put(new JSONObject().put("site", "station").put("chances", "1").put("hullItemUniqueChance", "0")));
         HullUpgradePoints.install();
         Random random = new Random(7L);
 

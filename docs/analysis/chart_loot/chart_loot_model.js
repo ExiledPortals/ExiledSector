@@ -205,8 +205,10 @@ function simulateChart(tier, modifiers, samples) {
 
   const addBattle = (dp, fleetPointShare, weight, extraQuantity = 0) => {
     const hullFactor = dp / 100 * diminishingFactor(dp);
-    totals.hull += weight * HULL_ITEM_RATE * hullFactor * (itemMult + extraQuantity + targetedShare);
-    totals.unique += weight * UNIQUE_HULL_ITEM_RATE * hullFactor * (itemMult + extraQuantity) * rarityMult;
+    const hullItems = weight * (HULL_ITEM_RATE + UNIQUE_HULL_ITEM_RATE) * hullFactor * (itemMult + extraQuantity + targetedShare);
+    const uniqueShare = Math.min(1, UNIQUE_HULL_ITEM_RATE / (HULL_ITEM_RATE + UNIQUE_HULL_ITEM_RATE) * rarityMult);
+    totals.hull += hullItems * (1 - uniqueShare);
+    totals.unique += hullItems * uniqueShare;
     addCraftingItems(weight * CRAFTING_ITEMS_PER_100_DP * dp / 100 * (craftingItemMult + extraQuantity), fleetMix);
     totals.feed += weight * FEEDSTOCK_PER_100_DP * dp / 100 * (feedstockMult + extraQuantity);
     totals.cat += weight * (catalystMult + extraQuantity) * fleetPointShare;

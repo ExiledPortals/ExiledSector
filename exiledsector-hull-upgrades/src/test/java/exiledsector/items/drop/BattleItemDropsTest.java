@@ -60,7 +60,6 @@ class BattleItemDropsTest {
                 .put(row(HULL_RELIC, "weapon_mount", "HULL_PERCENT:4:6").put("unique", "true")));
         BattleLootRates.register(new JSONArray()
                 .put(rateRow("hull_item", "0.6", "linear"))
-                .put(rateRow("unique_hull_item", "0.015", "linear"))
                 .put(rateRow("refit_schematic", "0.1", "linear"))
                 .put(rateRow("master_schematic", "0.1", "linear")));
     }
@@ -133,7 +132,7 @@ class BattleItemDropsTest {
 
             assertEquals(Map.of(BattleItemDrops.Drop.MODS_1, 8, BattleItemDrops.Drop.MODS_2, 4, BattleItemDrops.Drop.REFIT_SCHEMATIC, 1),
                     counts(plan(battle(source(1000f)))));
-            assertEquals(Map.of(BattleItemDrops.Drop.MODS_1, 80, BattleItemDrops.Drop.MODS_2, 40, BattleItemDrops.Drop.UNIQUE, 3,
+            assertEquals(Map.of(BattleItemDrops.Drop.MODS_1, 80, BattleItemDrops.Drop.MODS_2, 40,
                     BattleItemDrops.Drop.REFIT_SCHEMATIC, 10), counts(plan(battle(source(10000f)))));
         }
     }
@@ -143,7 +142,7 @@ class BattleItemDropsTest {
         try (MockedStatic<FoundItemQuantity> found = Mockito.mockStatic(FoundItemQuantity.class)) {
             found.when(() -> FoundItemQuantity.nodePercent(DropType.ITEM)).thenReturn(100f);
 
-            assertEquals(Map.of(BattleItemDrops.Drop.MODS_1, 80, BattleItemDrops.Drop.MODS_2, 40, BattleItemDrops.Drop.UNIQUE, 3,
+            assertEquals(Map.of(BattleItemDrops.Drop.MODS_1, 80, BattleItemDrops.Drop.MODS_2, 40,
                     BattleItemDrops.Drop.REFIT_SCHEMATIC, 20), counts(plan(battle(source(10000f)))));
         }
     }
@@ -209,7 +208,7 @@ class BattleItemDropsTest {
     void aLinearRowScalesWithTheWholeBattle() {
         List<BattleItemDrops.Planned> planned = plan(battle(source(10000f)));
 
-        assertEquals(Map.of(BattleItemDrops.Drop.MODS_1, 40, BattleItemDrops.Drop.MODS_2, 20, BattleItemDrops.Drop.UNIQUE, 1,
+        assertEquals(Map.of(BattleItemDrops.Drop.MODS_1, 40, BattleItemDrops.Drop.MODS_2, 20,
                 BattleItemDrops.Drop.REFIT_SCHEMATIC, 10), counts(planned));
     }
 
@@ -382,50 +381,64 @@ class BattleItemDropsTest {
         return tierCounts;
     }
     @Test
-    void rarityMultipliesOnlyTheUniqueRowOfABattle() {
+    void rarityLeavesHowManyItemsABattleDropsUnchanged() {
         List<BattleItemDrops.Planned> plain = plan(battle(source(10000f)));
         List<BattleItemDrops.Planned> rarer = plan(battle(source(10000f, ItemChances.BASE.plusRarityPercent(DropType.ITEM, 100f))));
 
-        assertEquals(counts(plain).get(BattleItemDrops.Drop.MODS_1), counts(rarer).get(BattleItemDrops.Drop.MODS_1));
-        assertEquals(counts(plain).get(BattleItemDrops.Drop.MODS_2), counts(rarer).get(BattleItemDrops.Drop.MODS_2));
-        assertEquals(counts(plain).get(BattleItemDrops.Drop.REFIT_SCHEMATIC), counts(rarer).get(BattleItemDrops.Drop.REFIT_SCHEMATIC));
-        assertEquals(1, counts(plain).get(BattleItemDrops.Drop.UNIQUE));
-        assertEquals(3, counts(rarer).get(BattleItemDrops.Drop.UNIQUE));
+        assertEquals(counts(plain), counts(rarer));
     }
 
     @Test
-    void theUniqueRowReadsTheHullItemRarityChain() {
-        List<BattleItemDrops.Planned> hullItems = plan(battle(source(10000f, ItemChances.BASE.plusRarityPercent(DropType.HULL_ITEM, 100f))));
-        List<BattleItemDrops.Planned> subroutines = plan(battle(source(10000f, ItemChances.BASE.plusRarityPercent(DropType.SUBROUTINE, 100f))));
-
-        assertEquals(3, counts(hullItems).get(BattleItemDrops.Drop.UNIQUE));
-        assertEquals(1, counts(subroutines).get(BattleItemDrops.Drop.UNIQUE));
+    void aTwelfthOfABattlesHullItemsDropUniqueAndRarityRaisesThatShareUpToAll() {
+        assertEquals(1f / 12f, BattleItemDrops.uniqueChance(battle(source(1000f)), DropType.HULL_ITEM), 1e-6f);
+        assertEquals(1f / 6f, BattleItemDrops.uniqueChance(battle(source(1000f, ItemChances.BASE.plusRarityPercent(DropType.ITEM, 100f))),
+                DropType.HULL_ITEM), 1e-6f);
+        assertEquals(1f, BattleItemDrops.uniqueChance(battle(source(1000f, ItemChances.BASE.plusRarityPercent(DropType.ITEM, 2000f))),
+                DropType.HULL_ITEM), 1e-6f);
     }
 
     @Test
-    void aBattleUniqueIsAlwaysKeptWhenNoSectionHasItsOwnBonus() {
-        BattleItemDrops.Battle battle = battle(source(10000f, ItemChances.BASE.plusPercent(DropType.HULL_ITEM, 100f)));
+    void theUniqueShareReadsTheHullItemRarityChain() {
+        BattleItemDrops.Battle hullItems = battle(source(1000f, ItemChances.BASE.plusRarityPercent(DropType.HULL_ITEM, 100f)));
+        BattleItemDrops.Battle subroutines = battle(source(1000f, ItemChances.BASE.plusRarityPercent(DropType.SUBROUTINE, 100f)));
 
-        assertEquals(1f, BattleItemDrops.uniqueKeepChance(battle, ItemDefinitions.get(HULL_RELIC)));
+        assertEquals(1f / 6f, BattleItemDrops.uniqueChance(hullItems, DropType.HULL_ITEM), 1e-6f);
+        assertEquals(1f / 12f, BattleItemDrops.uniqueChance(subroutines, DropType.HULL_ITEM), 1e-6f);
     }
 
     @Test
-    void aBattleUniqueReadsItsOwnSectionsChain() {
-        ItemChances weaponMountBonus = ItemChances.BASE.plusPercent(DropType.WEAPON_MOUNT, 100f);
-        BattleItemDrops.Battle weaponMounts = battle(source(10000f, weaponMountBonus));
+    void aSectionsRarityRaisesOnlyThatSectionsUniqueShare() {
+        BattleItemDrops.Battle weaponMounts = battle(source(1000f, ItemChances.BASE.plusRarityPercent(DropType.WEAPON_MOUNT, 100f)));
 
-        assertEquals(1f, BattleItemDrops.uniqueKeepChance(weaponMounts, ItemDefinitions.get(HULL_RELIC)));
-        assertTrue(counts(plan(weaponMounts)).get(BattleItemDrops.Drop.UNIQUE) > counts(plan(battle(source(10000f)))).get(BattleItemDrops.Drop.UNIQUE));
+        assertEquals(1f / 6f, BattleItemDrops.uniqueChance(weaponMounts, DropType.WEAPON_MOUNT), 1e-6f);
+        assertEquals(1f / 12f, BattleItemDrops.uniqueChance(weaponMounts, DropType.REACTOR), 1e-6f);
     }
 
     @Test
-    void anotherSectionsBonusRaisesThePlannedUniquesButNotThisUniquesShare() {
-        ItemChances reactorBonus = ItemChances.BASE.plusPercent(DropType.REACTOR, 100f);
-        BattleItemDrops.Battle reactors = battle(source(10000f, reactorBonus));
+    void fleetsShareTheBattlesUniqueChanceByHowManyHullItemsEachDrops() {
+        FleetLoss rarer = source(1000f, ItemChances.BASE.plusRarityPercent(DropType.ITEM, 100f));
+        FleetLoss moreItems = source(1000f, ItemChances.increasedBy(DropType.HULL_ITEM, 100f));
 
-        float expectedKeepChance = reactorBonus.quantity(DropType.WEAPON_MOUNT) / reactorBonus.quantity(DropType.REACTOR);
-        assertEquals(expectedKeepChance, BattleItemDrops.uniqueKeepChance(reactors, ItemDefinitions.get(HULL_RELIC)), 1e-6f);
-        assertTrue(expectedKeepChance < 1f);
+        assertEquals(1f / 8f, BattleItemDrops.uniqueChance(battle(rarer, source(1000f)), DropType.HULL_ITEM), 1e-6f);
+        assertEquals((2f / 12f + 2f / 12f) / 3f, BattleItemDrops.uniqueChance(battle(rarer, moreItems), DropType.HULL_ITEM), 1e-6f);
+    }
+
+    @Test
+    void aHullItemThatRollsUniqueDropsAsACommonWhenNoUniqueFits() {
+        ItemChances alwaysUnique = ItemChances.BASE.plusRarityPercent(DropType.ITEM, 2000f).plusPercent(DropType.BRIDGE, 100f);
+        BattleItemDrops.Battle battle = battle(source(2000f, alwaysUnique));
+        long planned = BattleItemDrops.plan(battle, DroppableDefinitions.hullItemKindsWithBasics(), neverLucky(), true).stream()
+                .filter(entry -> entry.drop().modifierCount() > 0).count();
+
+        List<ItemData> unlocked = BattleItemDrops.roll(battle, neverLucky(), definition -> true, true).items();
+        List<ItemData> locked = BattleItemDrops.roll(battle, neverLucky(), definition -> false, true).items();
+
+        assertEquals(planned, unlocked.size());
+        assertEquals(planned, locked.size());
+        assertTrue(locked.stream().noneMatch(item -> item.definition().unique()));
+        assertTrue(unlocked.stream().anyMatch(item -> item.definition().kind() == ItemKind.BRIDGE));
+        assertTrue(unlocked.stream().filter(item -> item.definition().kind() == ItemKind.BRIDGE).noneMatch(item -> item.definition().unique()));
+        assertTrue(unlocked.stream().filter(item -> item.definition().kind() != ItemKind.BRIDGE).allMatch(item -> HULL_RELIC.equals(item.definitionId())));
     }
 
     @Test

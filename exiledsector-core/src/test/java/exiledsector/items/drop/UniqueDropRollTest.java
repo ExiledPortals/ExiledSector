@@ -94,6 +94,26 @@ class UniqueDropRollTest {
     }
 
     @Test
+    void aConversionReadsOnlyTheRarityOfTheUniqueItRollsAndStopsAtCertain() {
+        ItemChances chances = ItemChances.BASE.plusRarityPercent(DropType.BRIDGE, 100f).plusPercent(DropType.ITEM, 100f);
+
+        assertEquals(BASE_CHANCE * 2f, conversionShare(UNIQUE_BRIDGE, chances), 0.01f);
+        assertEquals(BASE_CHANCE, conversionShare(UNIQUE_SUBROUTINE, chances), 0.01f);
+        assertEquals(1f, UniqueDropRoll.conversionChance(BASE_CHANCE, ItemChances.BASE.plusRarityPercent(DropType.ITEM, 900f), DropType.BRIDGE));
+    }
+
+    private static float conversionShare(ItemDefinition picked, ItemChances chances) {
+        Random random = new Random(3L);
+        int drops = 0;
+        for (int trial = 0; trial < TRIALS; trial++) {
+            if (UniqueDropRoll.rollConversion(random, BASE_CHANCE, chances, picker -> picked) != null) {
+                drops++;
+            }
+        }
+        return drops / (float) TRIALS;
+    }
+
+    @Test
     void withNothingToPickNothingDrops() {
         assertNull(UniqueDropRoll.roll(new Random(1L), 1f, ItemChances.BASE, picker -> null));
     }

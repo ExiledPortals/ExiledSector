@@ -72,7 +72,7 @@ class ModspecCachesTest {
                 .put(ItemFixtures.subroutineRow("doctrine_chip", SubroutineKind.DOCTRINE));
         ItemDefinitions.register(rows);
         ModspecCaches.register(rows);
-        SalvageSiteDrops.register(new JSONArray().put(new JSONObject().put("site", "derelict").put("chances", "1").put("uniqueChance", "0")));
+        SalvageSiteDrops.register(new JSONArray().put(new JSONObject().put("site", "derelict").put("chances", "1").put("hullItemUniqueChance", "0")));
     }
 
     @AfterEach
@@ -160,7 +160,7 @@ class ModspecCachesTest {
 
     @Test
     void aCacheReadsTheIncreasedQuantityOfSubroutinesInSalvageAndFromFleets() throws Exception {
-        SalvageSiteDrops.register(new JSONArray().put(new JSONObject().put("site", "wreck").put("chances", "0.4").put("uniqueChance", "0")));
+        SalvageSiteDrops.register(new JSONArray().put(new JSONObject().put("site", "wreck").put("chances", "0.4").put("hullItemUniqueChance", "0")));
         ItemChances moreSubroutines = ItemChances.increasedBy(DropType.SUBROUTINE, 50f);
         int trials = 20000;
         Random random = new Random(7L);

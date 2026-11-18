@@ -21,7 +21,15 @@ public final class UniqueDropRoll {
         return roll(random, type -> baseChance * chances.rarity(type) * chances.quantity(type), picker);
     }
 
-    private static ItemDefinition roll(Random random, ToDoubleFunction<DropType> chanceOf, Function<Random, ItemDefinition> picker) {
+    public static ItemDefinition rollConversion(Random random, float baseShare, ItemChances chances, Function<Random, ItemDefinition> picker) {
+        return roll(random, type -> conversionChance(baseShare, chances, type), picker);
+    }
+
+    public static float conversionChance(float baseShare, ItemChances chances, DropType type) {
+        return Math.min(1f, baseShare * chances.rarity(type));
+    }
+
+    public static ItemDefinition roll(Random random, ToDoubleFunction<DropType> chanceOf, Function<Random, ItemDefinition> picker) {
         float uniqueRoll = random.nextFloat();
         if (uniqueRoll >= highestChance(chanceOf)) {
             return null;

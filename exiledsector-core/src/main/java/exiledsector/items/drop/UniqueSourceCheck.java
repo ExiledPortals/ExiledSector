@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Predicate;
+import java.util.function.BiPredicate;
 
 public final class UniqueSourceCheck {
 
@@ -34,15 +34,16 @@ public final class UniqueSourceCheck {
         }
     }
 
-    static List<String> unreachableSources(Collection<ItemDefinition> definitions, Set<String> knownFactionIds, Predicate<String> siteRollsUniques) {
+    static List<String> unreachableSources(Collection<ItemDefinition> definitions, Set<String> knownFactionIds, BiPredicate<ItemDefinition, String> siteRollsUniques) {
         List<String> warnings = new ArrayList<>();
         for (ItemDefinition definition : definitions) {
             for (UniqueSource source : definition.uniqueSources()) {
                 if (source.kind() == UniqueSource.Kind.FACTION && !knownFactionIds.isEmpty() && !knownFactionIds.contains(source.sourceId())) {
                     warnings.add(definition.id() + " favours " + source.text() + ", but no faction with that id is loaded, so that bonus never applies");
-                } else if (source.kind() == UniqueSource.Kind.SITE && !siteRollsUniques.test(source.sourceId())) {
+                } else if (source.kind() == UniqueSource.Kind.SITE && !siteRollsUniques.test(definition, source.sourceId())) {
                     warnings.add(definition.id() + " drops from " + source.text() + ", but " + SalvageSiteDrops.DATA_PATH
-                            + " has no row for that site with a uniqueChance above zero, so it can never drop there");
+                            + " has no row for that site with a " + SalvageSiteDrops.uniqueChanceColumn(definition)
+                            + " above zero, so it can never drop there");
                 }
             }
         }

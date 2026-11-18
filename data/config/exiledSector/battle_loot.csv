@@ -2,8 +2,7 @@ drop,per_100_dp,curve,difficulty_scaling,note
 crafting_item,1.132,linear,0,"Expected drops per 100 deployment points an enemy fleet loses, then times battle difficulty (capped at 3x, scaled by difficulty_scaling: 1 = full, 0 = ignored) and the fleet's loot multipliers. A linear drop scales 1:1; a diminishing one runs at full rate up to 3000 DP in one battle and grows with the square root of DP past it. Star Charts fleets drop the full rate; fleets outside charts drop 0.5x at level 1 rising to 1x at the game's level cap. crafting_item is every crafting item together, picked from crafting_drops.csv; at this rate a tier 15 chart's fleets and boss drop about 50"
 feedstock,5,linear,1,"Nanite Feedstock; every fleet drops the full rate whatever its level, and station fleets in Star Charts drop it at the base rate with no difficulty or chart bonus"
 modspec_cache,0.16,diminishing,1,"Contraband Modspec Cache rolls from chart fleets: each roll tries every cache at its salvage chance; Star Charts fleets only"
-hull_item,0.176,diminishing,1,"Basic hull items; enemy tree size raises the share that drop with two modifiers instead of the count"
-unique_hull_item,0.016,diminishing,1,
+hull_item,0.192,diminishing,1,"Hull items; enemy tree size raises the share that drop with two modifiers instead of the count, and rarity turns more of them unique (1 in 12 at base) instead of adding drops"
 refit_schematic,0.2133,diminishing,1,
 logistics_schematic,0.0213,diminishing,1,"Logistics Schematics from the skill tree domain; matches the Military Refit Schematic (refit_schematic times its 10% tier weight)"
 deintegration_schematic,0.0252,diminishing,0,"Deintegration Schematics from the skill tree domain; the old Tuning Nanoswarm rate"

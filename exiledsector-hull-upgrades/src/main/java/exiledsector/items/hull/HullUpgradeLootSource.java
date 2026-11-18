@@ -70,7 +70,8 @@ public final class HullUpgradeLootSource implements LootSource, MarketStock {
     @Override
     public void addSiteFinds(SiteFind find) {
         if (HullUpgradesSetting.hullItemDropsOpen(find.sector())) {
-            Loot hullItemLoot = HullItemDrops.rollHullItemLoot(find.dropSite(), find.random(), find.chances());
+            Loot hullItemLoot = HullItemDrops.rollHullItemLoot(find.dropSite(), find.random(), find.chances(),
+                    definition -> ItemUnlock.canDrop(definition, find.sector()));
             find.items().addAll(hullItemLoot.items());
             find.schematics().addAll(hullItemLoot.schematics());
         }

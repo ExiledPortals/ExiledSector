@@ -313,7 +313,7 @@ class WormholeAnchorTest {
     @Test
     void dropPickersNeverPickAnAnchor() throws Exception {
         ItemDefinitions.register(List.of(ItemDefinitions.get(HEGEMONY_ANCHOR), ItemDefinitions.get(ItemFixtures.SUBROUTINE)));
-        SalvageSiteDrops.register(new JSONArray().put(new JSONObject().put("site", "station").put("chances", "1;1;1").put("uniqueChance", "1")));
+        SalvageSiteDrops.register(new JSONArray().put(new JSONObject().put("site", "station").put("chances", "1;1;1").put("hullItemUniqueChance", "1").put("subroutineUniqueChance", "1")));
         Random random = new Random(3L);
         Set<String> anchorIds = Set.of(HEGEMONY_ANCHOR, ABYSS_ANCHOR, BEACON);
 

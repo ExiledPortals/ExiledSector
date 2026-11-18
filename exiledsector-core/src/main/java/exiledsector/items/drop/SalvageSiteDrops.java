@@ -18,6 +18,7 @@ import exiledsector.loot.LootMultipliers;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,7 +42,20 @@ public final class SalvageSiteDrops {
     private static final Logger LOG = Logger.getLogger(SalvageSiteDrops.class);
     private static final AtomicReference<Map<String, Rule>> RULES = new AtomicReference<>(Map.of());
 
-    record Rule(List<Float> chances, float uniqueChance, int feedstockMin, int feedstockMax, boolean otherMod) {
+    static final String HULL_ITEM_UNIQUE_CHANCE_COLUMN = "hullItemUniqueChance";
+    static final String SUBROUTINE_UNIQUE_CHANCE_COLUMN = "subroutineUniqueChance";
+
+    record Rule(List<Float> chances, float hullItemUniqueChance, float subroutineUniqueChance, int feedstockMin, int feedstockMax,
+                boolean otherMod) {
+
+        float hullItemUniqueShareOfCascade() {
+            float cascadeCount = expectedCascadeCount(chances);
+            return cascadeCount > 0f ? hullItemUniqueChance / cascadeCount : 0f;
+        }
+
+        float uniqueChance(ItemDefinition unique) {
+            return unique.isHullItem() ? hullItemUniqueChance : subroutineUniqueChance;
+        }
     }
 
     private SalvageSiteDrops() {
@@ -78,18 +92,22 @@ public final class SalvageSiteDrops {
                         chances.add(Float.parseFloat(chanceText.trim()));
                     }
                 }
-                String uniqueChanceText = ModCsv.text(row, "uniqueChance");
                 String feedstockMinText = ModCsv.text(row, "feedstockMin");
                 String feedstockMaxText = ModCsv.text(row, "feedstockMax");
                 int feedstockMin = feedstockMinText.isEmpty() ? 0 : Math.max(0, Integer.parseInt(feedstockMinText));
                 int feedstockMax = feedstockMaxText.isEmpty() ? feedstockMin : Math.max(feedstockMin, Integer.parseInt(feedstockMaxText));
-                loaded.put(siteId, new Rule(List.copyOf(chances), uniqueChanceText.isEmpty() ? 0f : Float.parseFloat(uniqueChanceText),
-                        feedstockMin, feedstockMax, otherMod));
+                loaded.put(siteId, new Rule(List.copyOf(chances), chanceIn(row, HULL_ITEM_UNIQUE_CHANCE_COLUMN),
+                        chanceIn(row, SUBROUTINE_UNIQUE_CHANCE_COLUMN), feedstockMin, feedstockMax, otherMod));
             } catch (NumberFormatException e) {
                 LOG.error("Skipping the salvage drop row for site " + siteId + ": " + e.getMessage());
             }
         });
         return loaded;
+    }
+
+    private static float chanceIn(JSONObject row, String column) {
+        String chanceText = ModCsv.text(row, column);
+        return chanceText.isEmpty() ? 0f : Float.parseFloat(chanceText);
     }
 
     public static boolean hasRule(String siteId) {
@@ -101,9 +119,13 @@ public final class SalvageSiteDrops {
         return rule == null || rule.otherMod() && !SalvageSiteCompat.dropsEnabled() ? null : rule;
     }
 
-    public static boolean hasUniqueRoll(String siteId) {
+    public static boolean hasUniqueRoll(ItemDefinition unique, String siteId) {
         Rule rule = activeRule(siteId);
-        return rule != null && rule.uniqueChance() > 0f;
+        return rule != null && rule.uniqueChance(unique) > 0f;
+    }
+
+    public static String uniqueChanceColumn(ItemDefinition unique) {
+        return unique.isHullItem() ? HULL_ITEM_UNIQUE_CHANCE_COLUMN : SUBROUTINE_UNIQUE_CHANCE_COLUMN;
     }
 
     public static Loot rollSite(String siteId, Random random, LootMultipliers multipliers) {
@@ -121,8 +143,8 @@ public final class SalvageSiteDrops {
             return new ArrayList<>();
         }
         List<ItemData> droppedItems = new ArrayList<>();
-        ItemDefinition uniqueDefinition = UniqueDropRoll.rollScaledByRarity(random, rule.uniqueChance(), chances,
-                picker -> DroppableDefinitions.pickUniqueAtSite(siteId, picker, uniqueAllowed));
+        ItemDefinition uniqueDefinition = UniqueDropRoll.rollScaledByRarity(random, rule.subroutineUniqueChance(), chances,
+                picker -> DroppableDefinitions.pickUniqueAtSite(siteId, picker, candidate -> !candidate.isHullItem() && uniqueAllowed.test(candidate)));
         if (uniqueDefinition != null && ItemTypes.keptFromSalvage(uniqueDefinition, random)) {
             droppedItems.add(ItemData.rolled(uniqueDefinition, random.nextLong()));
         }

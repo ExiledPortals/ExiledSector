@@ -68,8 +68,8 @@ class UniqueSubroutinesTest {
         registerModifiers("TOP_SPEED_PERCENT:8:12");
         registerDefinitions();
         SalvageSiteDrops.register(new JSONArray()
-                .put(new JSONObject().put("site", "station").put("chances", "0").put("uniqueChance", "1"))
-                .put(new JSONObject().put("site", "elsewhere").put("chances", "0").put("uniqueChance", "1")));
+                .put(new JSONObject().put("site", "station").put("chances", "0").put("subroutineUniqueChance", "1"))
+                .put(new JSONObject().put("site", "elsewhere").put("chances", "0").put("subroutineUniqueChance", "1")));
     }
 
     @AfterEach
@@ -286,7 +286,7 @@ class UniqueSubroutinesTest {
     }
 
     @Test
-    void onlyTheSourceSiteDropsASiteUniqueWhileAFactionUniqueDropsAtAnySite() {
+    void onlyTheSourceSiteDropsASiteUniqueWhileAFactionUniqueDropsAtAnySiteAndTheSiteRollSkipsHullItems() {
         Random random = new Random(6L);
         for (int trial = 0; trial < 200; trial++) {
             List<String> fromStation = SalvageSiteDrops.roll("station", random, ItemChances.BASE, SubroutineKind::isUnique).stream().map(ItemData::definitionId).toList();
@@ -296,11 +296,11 @@ class UniqueSubroutinesTest {
             assertTrue(Set.of(SITE_RELIC, FLEET_RELIC).contains(fromStation.get(0)), fromStation.toString());
             assertEquals(List.of(FLEET_RELIC), fromElsewhere);
         }
-        Set<String> hullSiteDrops = new HashSet<>();
+        Set<String> siteRollDrops = new HashSet<>();
         for (int trial = 0; trial < 200; trial++) {
-            SalvageSiteDrops.roll("elsewhere", random, ItemChances.BASE, definition -> true).forEach(drop -> hullSiteDrops.add(drop.definitionId()));
+            SalvageSiteDrops.roll("elsewhere", random, ItemChances.BASE, definition -> true).forEach(drop -> siteRollDrops.add(drop.definitionId()));
         }
-        assertEquals(Set.of(FLEET_RELIC, HULL_RELIC_A, HULL_RELIC_B), hullSiteDrops);
+        assertEquals(Set.of(FLEET_RELIC), siteRollDrops);
     }
 
     @Test
