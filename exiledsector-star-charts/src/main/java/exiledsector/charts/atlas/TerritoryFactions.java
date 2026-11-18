@@ -12,6 +12,7 @@ public final class TerritoryFactions {
     static final float MERCENARY_WEIGHT = 3f;
     private static final Set<String> UNCLAIMED_FACTIONS = Set.of(Factions.INDEPENDENT, Factions.MERCENARY);
     private static final long UNCLAIMED_SALT = 0x554e434c4149L;
+    private static final long HOLDOUT_SALT = 0x484f4c444f5554L;
     private static final String TERRITORY_SEPARATOR = "|";
 
     private TerritoryFactions() {
@@ -45,6 +46,14 @@ public final class TerritoryFactions {
             addCapable(factions, region.factionWeights(), rules);
         }
         return factions;
+    }
+
+    static String holdoutFaction(long seed, AtlasRegion region, AtlasCell cell, String ownerFactionId) {
+        Map<String, Float> natives = AtlasRegion.NORMAL.equals(region.id()) ? Map.of() : capable(region.factionWeights());
+        if (ownerFactionId == null || natives.isEmpty() || natives.containsKey(ownerFactionId)) {
+            return null;
+        }
+        return AtlasHash.race(seed, HOLDOUT_SALT ^ AtlasHash.idSalt(region.id()), cell.gridX(), cell.gridY(), natives);
     }
 
     static String unclaimedFaction(long seed, AtlasRules rules, AtlasRegion region, AtlasCell cell) {

@@ -73,4 +73,24 @@ class TerritoryFactionsTest {
         }
         assertEquals(Map.of(), TerritoryFactions.territoryWeights(rules, graveyard));
     }
+
+    @Test
+    void anOutsideOwnerInARegionWithItsOwnTerritoryFactionsFacesTheirHoldouts() {
+        AtlasRegion badlands = region("pirate_badlands", Map.of("pirates", 5f, "independent", 1f, "mercenary", 1f));
+        AtlasCell cell = new AtlasCell(4, -2);
+
+        assertEquals("pirates", TerritoryFactions.holdoutFaction(7L, badlands, cell, "luddic_church"));
+        assertNull(TerritoryFactions.holdoutFaction(7L, badlands, cell, "pirates"));
+        assertNull(TerritoryFactions.holdoutFaction(7L, badlands, cell, null));
+    }
+
+    @Test
+    void theNormalRegionAndRegionsWithoutTerritoryFactionsHaveNoHoldouts() {
+        TerritoryExclusions.useForTests(Set.of("remnant"));
+        AtlasCell cell = new AtlasCell(4, -2);
+
+        assertNull(TerritoryFactions.holdoutFaction(7L, region(AtlasRegion.NORMAL, Map.of("pirates", 1f, "hegemony", 1f)), cell, "tritachyon"));
+        assertNull(TerritoryFactions.holdoutFaction(7L, region("storm_belt", Map.of()), cell, "tritachyon"));
+        assertNull(TerritoryFactions.holdoutFaction(7L, region("remnant_expanse", Map.of("remnant", 1f)), cell, "tritachyon"));
+    }
 }

@@ -19,6 +19,8 @@ import java.util.Random;
 
 public final class ChartAnomalyFleets {
 
+    public static final String HOSTILE_TO_FACTION_PREFIX = "$cfai_makeHostile_";
+
     public record Spec(String factionId, String fleetType, FleetStrength strength, float freighterPoints, float tankerPoints) {
 
         public Spec atLeast(float minCombatPoints) {
@@ -122,6 +124,10 @@ public final class ChartAnomalyFleets {
 
     public static void arm(CampaignFleetAPI fleet, boolean boss, ChartGenContext context, int tier) {
         ChartContentGenerator.armAgainstPlayer(fleet, boss, ChartGenContext.orNone(context), ChartTiers.clamp(tier));
+    }
+
+    public static void makeHostileTo(CampaignFleetAPI fleet, String enemyFactionId) {
+        fleet.getMemoryWithoutUpdate().set(HOSTILE_TO_FACTION_PREFIX + enemyFactionId, true);
     }
 
     public static void revealBoss(CampaignFleetAPI boss) {

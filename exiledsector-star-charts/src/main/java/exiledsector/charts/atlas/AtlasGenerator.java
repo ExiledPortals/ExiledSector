@@ -160,6 +160,10 @@ public final class AtlasGenerator {
         return TerritoryFactions.territoryWeights(rules, regionOf(cell));
     }
 
+    public String holdoutFactionAt(AtlasCell cell, String ownerFactionId) {
+        return TerritoryFactions.holdoutFaction(seed, regionOf(cell), cell, ownerFactionId);
+    }
+
     public boolean isTerritoryless(AtlasCell cell) {
         return territoryWeights(cell).isEmpty();
     }

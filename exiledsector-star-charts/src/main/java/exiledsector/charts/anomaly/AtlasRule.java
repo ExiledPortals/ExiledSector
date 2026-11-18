@@ -31,6 +31,10 @@ public interface AtlasRule extends ChartAnomaly {
         return true;
     }
 
+    default boolean derivedFromAtlas() {
+        return false;
+    }
+
     default boolean holdsAt(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
         return true;
     }

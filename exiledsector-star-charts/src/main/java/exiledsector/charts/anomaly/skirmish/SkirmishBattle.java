@@ -25,7 +25,6 @@ import java.util.Random;
 
 final class SkirmishBattle {
 
-    static final String HOSTILE_TO_FACTION_PREFIX = "$cfai_makeHostile_";
     static final long DEFENDER_FLEET_SALT = 0x4348534b444546L;
     static final long ATTACKER_FLEET_SALT = 0x4348534b464c54L;
     static final long STAGING_SALT = 0x4348535441474eL;
@@ -77,7 +76,7 @@ final class SkirmishBattle {
         String ownFactionId = fightingFactionOf(attacking);
         String enemyFactionId = fightingFactionOf(!attacking);
         if (!enemyFactionId.equals(ownFactionId)) {
-            memory.set(HOSTILE_TO_FACTION_PREFIX + enemyFactionId, true);
+            ChartAnomalyFleets.makeHostileTo(fleet, enemyFactionId);
         }
         if (!ownFactionId.equals(realFactionOf(attacking))) {
             fleet.setFaction(ownFactionId, true);

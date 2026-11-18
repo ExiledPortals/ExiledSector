@@ -10,6 +10,7 @@ import exiledsector.charts.anomaly.convoy.ConvoyScript;
 import exiledsector.charts.anomaly.convoy.ConvoyState;
 import exiledsector.charts.anomaly.convoy.ConvoyStep;
 import exiledsector.charts.anomaly.debris.AnomalousDebrisTerrainPlugin;
+import exiledsector.charts.anomaly.holdouts.HoldoutRestraint;
 import exiledsector.charts.anomaly.relay.RelayLogIntel;
 import exiledsector.charts.anomaly.listeningpost.ListeningPostPlugin;
 import exiledsector.charts.anomaly.listeningpost.PicketStation;
@@ -70,6 +71,7 @@ public final class ChartSaveAliases {
             Map.entry("exiledSector.ChartPulsarBeamTerrainPlugin", ChartPulsarBeamTerrainPlugin.class),
             Map.entry("exiledSector.ListeningPostPlugin", ListeningPostPlugin.class),
             Map.entry("exiledSector.PostScript", PostScript.class),
+            Map.entry("exiledSector.HoldoutRestraint", HoldoutRestraint.class),
             Map.entry("exiledSector.PicketStation", PicketStation.class),
             Map.entry("exiledSector.MothershipFleetManager", MothershipFleetManager.class),
             Map.entry("exiledSector.NexusFleetManager", NexusFleetManager.class),

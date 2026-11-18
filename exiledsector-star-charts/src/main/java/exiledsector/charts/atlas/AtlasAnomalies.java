@@ -67,6 +67,11 @@ public final class AtlasAnomalies {
                 accepted.add(record.anomalyId());
             }
         }
+        for (AtlasRule derived : ChartAnomalies.with(AtlasRule.class)) {
+            if (derived.derivedFromAtlas() && accepted.size() < MAX_PER_SYSTEM && !spent && accepts(generator, state, cell, accepted, derived.id())) {
+                accepted.add(derived.id());
+            }
+        }
         return List.copyOf(accepted);
     }
 
