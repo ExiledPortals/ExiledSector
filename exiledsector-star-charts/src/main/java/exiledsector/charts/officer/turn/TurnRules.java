@@ -1,10 +1,12 @@
 package exiledsector.charts.officer.turn;
 
 import java.util.Map;
+import java.util.Random;
 
 public record TurnRules(int otherBossKillsPerTurn, float expandBrakeSize, float evenChancePercent, float chancePerRankPercent,
                         float defendBonusPercent, int renownPerClaim, int renownPerChallengeWon, int renownPerDefendHeld, int systemsPerRenown,
-                        int renownKeptOnLossPercent, int maxConflictsPerTurn, Map<String, IntentWeights> intentWeights) {
+                        int renownKeptOnLossPercent, int maxConflictsPerTurn, int scavengersMin, int scavengersMax,
+                        Map<String, IntentWeights> intentWeights) {
 
     public TurnRules {
         intentWeights = Map.copyOf(intentWeights);
@@ -12,7 +14,14 @@ public record TurnRules(int otherBossKillsPerTurn, float expandBrakeSize, float 
 
     public TurnRules withIntentWeights(Map<String, IntentWeights> weights) {
         return new TurnRules(otherBossKillsPerTurn, expandBrakeSize, evenChancePercent, chancePerRankPercent, defendBonusPercent, renownPerClaim,
-                renownPerChallengeWon, renownPerDefendHeld, systemsPerRenown, renownKeptOnLossPercent, maxConflictsPerTurn, weights);
+                renownPerChallengeWon, renownPerDefendHeld, systemsPerRenown, renownKeptOnLossPercent, maxConflictsPerTurn, scavengersMin, scavengersMax,
+                weights);
+    }
+
+    public int scavengerCount(Random random) {
+        int fewest = Math.max(0, scavengersMin);
+        int most = Math.max(fewest, scavengersMax);
+        return fewest + random.nextInt(most - fewest + 1);
     }
 
     public float intentWeight(String rankId, String traitId, IntentKind kind) {

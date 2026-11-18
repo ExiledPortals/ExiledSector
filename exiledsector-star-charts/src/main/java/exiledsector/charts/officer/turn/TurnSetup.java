@@ -5,13 +5,14 @@ import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.FlagshipCatalogue;
 import exiledsector.charts.officer.OfficerRank;
 import exiledsector.charts.officer.OfficerRanks;
+import exiledsector.charts.officer.ScavengeRoll;
 import exiledsector.charts.officer.StartingItemRoll;
 
 import java.util.List;
 import java.util.Set;
 
 public record TurnSetup(TurnRules rules, List<OfficerRank> ranks, IntentResolvers resolvers, AtlasCell openRunCell, Set<Integer> openRunOfficerIds,
-                        FlagshipCatalogue catalogue, StartingItemRoll startingItems) {
+                        FlagshipCatalogue catalogue, StartingItemRoll startingItems, ScavengeRoll scavenges) {
 
     public TurnSetup {
         ranks = List.copyOf(ranks);
@@ -21,6 +22,11 @@ public record TurnSetup(TurnRules rules, List<OfficerRank> ranks, IntentResolver
     public TurnSetup(TurnRules rules, List<OfficerRank> ranks, IntentResolvers resolvers, AtlasCell openRunCell, Set<Integer> openRunOfficerIds,
                      FlagshipCatalogue catalogue) {
         this(rules, ranks, resolvers, openRunCell, openRunOfficerIds, catalogue, StartingItemRoll.NONE);
+    }
+
+    public TurnSetup(TurnRules rules, List<OfficerRank> ranks, IntentResolvers resolvers, AtlasCell openRunCell, Set<Integer> openRunOfficerIds,
+                     FlagshipCatalogue catalogue, StartingItemRoll startingItems) {
+        this(rules, ranks, resolvers, openRunCell, openRunOfficerIds, catalogue, startingItems, ScavengeRoll.NONE);
     }
 
     public int rankOrder(String rankId) {

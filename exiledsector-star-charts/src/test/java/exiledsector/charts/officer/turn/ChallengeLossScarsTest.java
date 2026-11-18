@@ -48,6 +48,6 @@ class ChallengeLossScarsTest {
     }
 
     private static TurnResult result(OfficerLoss... losses) {
-        return new TurnResult(1, TurnCause.forced(), List.of(), List.of(), List.of(losses), List.of(), Map.of());
+        return new TurnResult(1, TurnCause.forced(), List.of(), List.of(), List.of(losses), List.of(), Map.of(), List.of());
     }
 }

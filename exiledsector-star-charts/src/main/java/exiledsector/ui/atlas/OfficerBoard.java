@@ -59,6 +59,9 @@ final class OfficerBoard {
     static final float BATTLE_MARK_SHARE = 0.3f;
     static final float HOVERED_BATTLE_MARK_SCALE = 1.3f;
     static final String BATTLE_MARK_PATH = "graphics/warroom/taskicons/icon_assault.png";
+    static final float LOOT_MARK_SHARE = 0.45f;
+    static final float LOOT_RISE_SHARE = 0.55f;
+    static final String LOOT_MARK_PATH = "graphics/icons/intel/log_treasure.png";
     static final String HELP_ICON_PATH = "graphics/ui/icons/fleettab/more_info.png";
     static final float HELP_ICON_SIZE = 24f;
     static final Color SLOT_FILL = new Color(20, 24, 30);
@@ -138,7 +141,7 @@ final class OfficerBoard {
             entries.add(new OfficerBoardLayout.Entry(officer.recordId(), officer.rankId(), officer.renown(), officer.seat()));
         }
         lastTurn.fallen().forEach(records::putIfAbsent);
-        shuffle = OfficerBoardShuffle.of(OfficerRanks.all(), entries, lastTurn.standingChanges());
+        shuffle = OfficerBoardShuffle.of(OfficerRanks.all(), entries, lastTurn.standingChanges(), Set.copyOf(lastTurn.scavengerRecordIds()));
         records.forEach((recordId, officer) -> faces.put(recordId, face(officer)));
         shownLinks = linksTouchingIdentified(shuffle.after());
         arrows = OfficerBoardArrows.arrows(lastTurn.resolvedIntents(), OfficerTurns.declaredIntents(state), this::settledAndIdentified,
@@ -419,6 +422,7 @@ final class OfficerBoard {
         drawShields(alpha * OfficerBoardShuffle.arrowAlpha(shuffleSeconds));
         drawBattleMarks(alpha * OfficerBoardShuffle.arrowAlpha(shuffleSeconds));
         drawRankMarks(alpha * OfficerBoardShuffle.markAlpha(shuffleSeconds));
+        drawLootMarks(alpha * OfficerBoardShuffle.lootAlpha(shuffleSeconds));
         if (open && hoveredRecordId != null) {
             AtlasOfficer hovered = records.get(hoveredRecordId);
             tooltip.show(hovered);
@@ -534,6 +538,24 @@ final class OfficerBoard {
                         mover.mark() == OfficerBoardShuffle.RankMark.ROSE, alpha);
             }
         }
+    }
+
+    private void drawLootMarks(float alpha) {
+        if (alpha <= 0f) {
+            return;
+        }
+        float portraitSize = geometry.portraitSize();
+        float markSize = portraitSize * LOOT_MARK_SHARE * OfficerBoardShuffle.lootScale(shuffleSeconds);
+        float rise = portraitSize * LOOT_RISE_SHARE * OfficerBoardShuffle.lootRise(shuffleSeconds);
+        for (OfficerBoardShuffle.Mover mover : shuffle.movers()) {
+            if (mover.scavenged()) {
+                lootMark(sprites, centreX(mover), centreY(mover) + rise, markSize, alpha);
+            }
+        }
+    }
+
+    static void lootMark(SpriteCache sprites, float centreX, float centreY, float size, float alpha) {
+        SpriteDraw.drawAtCenter(sprites, LOOT_MARK_PATH, centreX, centreY, size, size, Color.WHITE, alpha);
     }
 
     static void rankMark(SpriteCache sprites, float centreX, float centreY, float width, boolean rose, float alpha) {

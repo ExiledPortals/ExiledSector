@@ -4,6 +4,7 @@ import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.FlagshipCatalogue;
 import exiledsector.charts.officer.OfficerBoardGenerator;
 import exiledsector.charts.officer.OfficerRank;
+import exiledsector.charts.officer.ScavengeRoll;
 import exiledsector.charts.officer.reward.CarriedItem;
 import exiledsector.charts.officer.reward.RewardKind;
 import org.junit.jupiter.api.Test;
@@ -24,7 +25,8 @@ class OfficerRewardRepairTest {
     private static final CarriedItem KERNELS = new CarriedItem(RewardKind.CRAFTING_ITEM, "kernel", null, 2);
     private static final CarriedItem WARDS = new CarriedItem(RewardKind.CRAFTING_ITEM, "ward", null, 1);
     private static final CarriedItem ENGRAM = CarriedItem.of(RewardKind.ENGRAM, "engram_a");
-    private static final TerritoryContext CONTEXT = new TerritoryContext(null, null, FlagshipCatalogue.NONE, (officer, random) -> WARDS, Set.of());
+    private static final TerritoryContext CONTEXT = new TerritoryContext(null, null, FlagshipCatalogue.NONE, (officer, random) -> WARDS,
+            ScavengeRoll.NONE, Set.of());
 
     private static List<AtlasOfficer> board(AtlasState state) {
         OfficerBoardGenerator.generate(TestBorders.SEED, RANKS, Map.of("hegemony", 1f), FlagshipCatalogue.NONE).forEach(state::putOfficer);

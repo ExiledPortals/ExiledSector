@@ -40,6 +40,7 @@ public final class OfficerTurn {
     public static final String CHALLENGE_LOST_HISTORY = "challengeLost";
     private static final long TURN_SALT = 0x4f4654555246L;
     private static final long CHALLENGE_LOSS_SALT = 0x4f43484c4f5353L;
+    private static final long SCAVENGE_SALT = 0x4f534341564eL;
     private static final Comparator<AtlasCell> CELL_ORDER = Comparator.comparingLong(AtlasCell::pack);
 
     private final TurnTerrain terrain;
@@ -52,6 +53,7 @@ public final class OfficerTurn {
     private final List<OfficerLoss> losses = new ArrayList<>();
     private final List<Replacement> replacements = new ArrayList<>();
     private final Map<Integer, AtlasOfficer> fallen = new LinkedHashMap<>();
+    private final List<Integer> scavengerRecordIds = new ArrayList<>();
     private final Set<Integer> changedRankThisTurn = new HashSet<>();
     private final Set<Integer> beatenThisTurn = new HashSet<>();
     private final Set<AtlasCell> declaredCells = new HashSet<>();
@@ -79,6 +81,7 @@ public final class OfficerTurn {
         officerTurn.swapByRenown();
         List<Intent> declared = officerTurn.declare(stillFought);
         state.setDeclaredIntents(declared.stream().filter(intent -> intent.kind() != IntentKind.HOLD).map(Intent::encode).toList());
+        officerTurn.scavenge(declared);
         TurnResult result = officerTurn.result(turn, cause);
         state.setLastTurnResult(result.encode());
         return result;
@@ -460,6 +463,30 @@ public final class OfficerTurn {
         }
     }
 
+    private void scavenge(List<Intent> declared) {
+        Set<Integer> busy = new HashSet<>();
+        for (Intent intent : declared) {
+            if (intent.kind() != IntentKind.HOLD) {
+                busy.add(intent.officerRecordId());
+            }
+            if (intent.kind().isConflict()) {
+                busy.add(intent.targetRecordId());
+            }
+        }
+        List<AtlasOfficer> idle = new ArrayList<>(byRecordId(state.officers()).stream()
+                .filter(officer -> setup.canAct(officer) && !busy.contains(officer.recordId())).toList());
+        Collections.shuffle(idle, random);
+        int scavengers = Math.min(rules.scavengerCount(random), idle.size());
+        for (AtlasOfficer officer : idle.subList(0, scavengers)) {
+            Random lootRandom = Seeds.derived(state.seed(), SCAVENGE_SALT + state.officerTurn() * Seeds.GOLDEN_GAMMA + officer.recordId());
+            CarriedItem item = setup.scavenges().roll(officer, lootRandom);
+            if (item != null) {
+                state.putOfficer(officer.withCarried(CarriedItem.joined(officer.carried(), List.of(item))));
+                scavengerRecordIds.add(officer.recordId());
+            }
+        }
+    }
+
     private IntentKind pick(Map<IntentKind, Float> weights) {
         return Objects.requireNonNullElse(WeightedPick.pick(weights, random), IntentKind.HOLD);
     }
@@ -485,6 +512,6 @@ public final class OfficerTurn {
                 changes.add(new StandingChange(recordId, before, after));
             }
         }
-        return new TurnResult(turn, cause, changes, resolvedIntents, losses, replacements, fallen);
+        return new TurnResult(turn, cause, changes, resolvedIntents, losses, replacements, fallen, scavengerRecordIds);
     }
 }

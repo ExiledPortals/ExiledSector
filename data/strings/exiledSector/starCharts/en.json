@@ -409,6 +409,7 @@
     "chart.officer.board.legend.unknown": "Not yet identified",
     "chart.officer.board.legend.rose": "Gained a rank last turn",
     "chart.officer.board.legend.fell": "Lost a rank last turn",
+    "chart.officer.board.legend.scavenged": "Scavenged an item last turn",
     "chart.officer.board.turns": "Officers act on their intents every turn.\nA turn is counted:\n• each time you battle an officer\n• every {charts} star charts you complete without interacting with an officer",
     "chart.officer.board.chartCount": "{counted}/{needed}",
     "atlasTree.title": "Atlas Tree",

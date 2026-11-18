@@ -12,9 +12,10 @@ import java.util.Objects;
 import java.util.TreeMap;
 
 public record TurnResult(int turn, TurnCause cause, List<StandingChange> standingChanges, List<ResolvedIntent> resolvedIntents,
-                         List<OfficerLoss> losses, List<Replacement> replacements, Map<Integer, AtlasOfficer> fallen) {
+                         List<OfficerLoss> losses, List<Replacement> replacements, Map<Integer, AtlasOfficer> fallen,
+                         List<Integer> scavengerRecordIds) {
 
-    public static final TurnResult NONE = new TurnResult(0, TurnCause.forced(), List.of(), List.of(), List.of(), List.of(), Map.of());
+    public static final TurnResult NONE = new TurnResult(0, TurnCause.forced(), List.of(), List.of(), List.of(), List.of(), Map.of(), List.of());
     static final String SEPARATOR = ",";
     static final String TURN_LINE = "turn";
     static final String STANDING_LINE = "standing";
@@ -22,6 +23,7 @@ public record TurnResult(int turn, TurnCause cause, List<StandingChange> standin
     static final String LOSS_LINE = "loss";
     static final String REPLACEMENT_LINE = "replacement";
     static final String FALLEN_LINE = "fallen";
+    static final String SCAVENGE_LINE = "scavenge";
 
     public TurnResult {
         standingChanges = List.copyOf(standingChanges);
@@ -29,6 +31,7 @@ public record TurnResult(int turn, TurnCause cause, List<StandingChange> standin
         losses = List.copyOf(losses);
         replacements = List.copyOf(replacements);
         fallen = Map.copyOf(fallen);
+        scavengerRecordIds = List.copyOf(scavengerRecordIds);
     }
 
     public record Standing(String rankId, int renown, int seat) {
@@ -78,7 +81,7 @@ public record TurnResult(int turn, TurnCause cause, List<StandingChange> standin
             mergedFallen.put(predecessor.recordId(), predecessor);
         }
         List<StandingChange> mergedChanges = changes.values().stream().filter(change -> !Objects.equals(change.before(), change.after())).toList();
-        return new TurnResult(turn, cause, mergedChanges, resolvedIntents, losses, mergedReplacements, mergedFallen);
+        return new TurnResult(turn, cause, mergedChanges, resolvedIntents, losses, mergedReplacements, mergedFallen, scavengerRecordIds);
     }
 
     public List<StandingChange> rankChanges() {
@@ -112,6 +115,9 @@ public record TurnResult(int turn, TurnCause cause, List<StandingChange> standin
             lines.add(join(REPLACEMENT_LINE, Integer.toString(replacement.fallenRecordId()), Integer.toString(replacement.replacementRecordId())));
         }
         fallen.keySet().stream().sorted().forEach(recordId -> lines.add(join(FALLEN_LINE, Integer.toString(recordId), fallen.get(recordId).encode())));
+        for (int recordId : scavengerRecordIds) {
+            lines.add(join(SCAVENGE_LINE, Integer.toString(recordId)));
+        }
         return lines;
     }
 
@@ -130,17 +136,18 @@ public record TurnResult(int turn, TurnCause cause, List<StandingChange> standin
             List<OfficerLoss> losses = new ArrayList<>();
             List<Replacement> replacements = new ArrayList<>();
             Map<Integer, AtlasOfficer> fallen = new LinkedHashMap<>();
+            List<Integer> scavengers = new ArrayList<>();
             for (String line : lines.subList(1, lines.size())) {
-                decodeLine(line, standings, intents, losses, replacements, fallen);
+                decodeLine(line, standings, intents, losses, replacements, fallen, scavengers);
             }
-            return new TurnResult(Integer.parseInt(header[1]), cause, standings, intents, losses, replacements, fallen);
+            return new TurnResult(Integer.parseInt(header[1]), cause, standings, intents, losses, replacements, fallen, scavengers);
         } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
             return NONE;
         }
     }
 
     private static void decodeLine(String line, List<StandingChange> standings, List<ResolvedIntent> intents, List<OfficerLoss> losses,
-                                   List<Replacement> replacements, Map<Integer, AtlasOfficer> fallen) {
+                                   List<Replacement> replacements, Map<Integer, AtlasOfficer> fallen, List<Integer> scavengers) {
         if (line.startsWith(FALLEN_LINE + SEPARATOR)) {
             String[] fields = line.split(SEPARATOR, 3);
             int recordId = Integer.parseInt(fields[1]);
@@ -159,6 +166,7 @@ public record TurnResult(int turn, TurnCause cause, List<StandingChange> standin
             case LOSS_LINE -> losses.add(new OfficerLoss(Integer.parseInt(fields[1]), LossKind.valueOf(fields[2]), Integer.parseInt(fields[3]),
                     uncell(fields[4]), unflag(fields[5]), unflag(fields[6])));
             case REPLACEMENT_LINE -> replacements.add(new Replacement(Integer.parseInt(fields[1]), Integer.parseInt(fields[2])));
+            case SCAVENGE_LINE -> scavengers.add(Integer.parseInt(fields[1]));
             default -> {
             }
         }

@@ -62,10 +62,11 @@ class AtlasCommandsTest {
         TurnResult result = new TurnResult(3, TurnCause.officerDefeated(2), List.of(),
                 List.of(new TurnResult.ResolvedIntent(IntentKind.CHALLENGE, 1, 2, null, false, true)),
                 List.of(new TurnResult.OfficerLoss(2, TurnResult.LossKind.BEATEN_BY_PLAYER, Intent.NO_OFFICER, new AtlasCell(3, 0), true, false)),
-                List.of(), Map.of());
+                List.of(), Map.of(), List.of(1));
         assertEquals("Officer turn 3, caused by officer defeated (#2 pirates lieutenant)"
                 + "\n#1 hegemony lieutenant challenge against #2 pirates lieutenant (defended): failed"
-                + "\nLoss: #2 beaten by player, fled", AtlasLastTurnCommand.describe(state, result));
+                + "\nLoss: #2 beaten by player, fled"
+                + "\nScavenged: #1 hegemony lieutenant", AtlasLastTurnCommand.describe(state, result));
         assertEquals("No officer turn has been taken yet.", AtlasLastTurnCommand.describe(state, TurnResult.NONE));
     }
 }

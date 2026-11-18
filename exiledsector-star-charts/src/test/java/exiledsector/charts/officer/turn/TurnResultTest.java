@@ -39,13 +39,30 @@ class TurnResultTest {
                 List.of(new OfficerLoss(4, LossKind.BEATEN_BY_PLAYER, Intent.NO_OFFICER, centre, false, true),
                         new OfficerLoss(3, LossKind.LOST_CHALLENGE, 1, new AtlasCell(6, 0), false, false)),
                 List.of(new Replacement(4, 9)),
-                Map.of(4, fallen));
+                Map.of(4, fallen),
+                List.of(5, 2));
     }
 
     @Test
     void aTurnResultRoundTrips() {
         TurnResult result = fullResult();
         assertEquals(result, TurnResult.decode(result.encode()));
+    }
+
+    @Test
+    void scavengersAreSavedOneLineEach() {
+        List<String> lines = fullResult().encode();
+
+        assertEquals(List.of("scavenge,5", "scavenge,2"), lines.subList(lines.size() - 2, lines.size()));
+    }
+
+    @Test
+    void aResultSavedBeforeScavengingDecodesWithNoScavengers() {
+        TurnResult result = TurnResult.decode(List.of("turn,3,FORCED,0", "replacement,4,9"));
+
+        assertEquals(3, result.turn());
+        assertEquals(List.of(new Replacement(4, 9)), result.replacements());
+        assertTrue(result.scavengerRecordIds().isEmpty());
     }
 
     @Test

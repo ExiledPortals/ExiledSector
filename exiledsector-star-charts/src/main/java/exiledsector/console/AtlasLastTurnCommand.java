@@ -52,6 +52,9 @@ public class AtlasLastTurnCommand extends CampaignCommand {
             text.append("\nRank: #").append(change.recordId()).append(" ").append(change.before().rankId()).append(" -> ")
                     .append(change.after().rankId());
         }
+        for (int recordId : result.scavengerRecordIds()) {
+            text.append("\nScavenged: ").append(AtlasIntentsCommand.officer(state, recordId));
+        }
         return text.toString();
     }
 
