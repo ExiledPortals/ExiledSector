@@ -23,6 +23,7 @@ import exiledsector.ui.OverlayFade;
 import exiledsector.ui.PointerGesture;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeSounds;
+import exiledsector.ui.SmoothZoom;
 import exiledsector.ui.TooltipText;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.UiFonts;
@@ -45,6 +46,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
     private static final float PANEL_GAP = 8f;
     private static final float OPEN_SECONDS = AtlasScreen.OPEN_SECONDS;
     private static final float START_ZOOM = 0.3f;
+    private static final float MIN_ZOOM = 0.065f;
     private static final float TITLE_GAP = 8f;
     private static final float TOOLTIP_MAX_TEXT_HEIGHT = AtlasScreen.TOOLTIP_MAX_TEXT_HEIGHT;
     private static final String VOLUME_KEY_PREFIX = "atlasTree.volume.";
@@ -56,7 +58,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
     private final AtlasTreeData data = AtlasTreeData.get();
     private final SkillTreePanelStyle panelStyle = new SkillTreePanelStyle();
     private final StarfieldRenderer starfield = new StarfieldRenderer(panelStyle);
-    private final CanvasCamera camera = new CanvasCamera();
+    private final CanvasCamera camera = new CanvasCamera(MIN_ZOOM, SmoothZoom.MAX_ZOOM);
     private final CanvasDrag<Void> drag = new CanvasDrag<>(camera);
     private final PointerGesture<Void> gesture = drag.gesture();
     private final AtlasOverlayFrame frame = new AtlasOverlayFrame();

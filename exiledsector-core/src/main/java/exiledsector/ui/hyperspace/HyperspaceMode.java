@@ -7,7 +7,6 @@ import exiledsector.skills.decoration.Star;
 import exiledsector.skills.layout.TreeTopology;
 import exiledsector.ui.CanvasCamera;
 import exiledsector.ui.SkillTreeSounds;
-import exiledsector.ui.SmoothZoom;
 import exiledsector.ui.TreeViewport;
 
 import java.util.HashSet;
@@ -157,7 +156,7 @@ public final class HyperspaceMode {
                 TreeViewport viewport = camera.viewport(canvasPosition);
                 float worldX = (event.getX() - viewport.centerX()) / camera.zoom();
                 float worldY = (viewport.centerY() - event.getY()) / camera.zoom();
-                hyperspaceTransition.zoomInAbout(camera.current(), worldX, worldY, SmoothZoom.MIN_ZOOM);
+                hyperspaceTransition.zoomInAbout(camera.current(), worldX, worldY, camera.minZoom());
                 SkillTreeSounds.hyperspaceIn();
             }
             event.consume();

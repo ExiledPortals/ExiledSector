@@ -156,6 +156,10 @@ public class CanvasCamera {
         smoothZoom.scroll(in);
     }
 
+    public float minZoom() {
+        return smoothZoom.minZoom();
+    }
+
     public boolean isSettledAtMinimum() {
         return smoothZoom.isSettledAtMinimum();
     }

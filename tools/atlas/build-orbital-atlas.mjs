@@ -9,7 +9,6 @@ const ORBITS_PATH = resolve(repoRoot, 'data/skilltrees/atlas_orbits.json');
 const ROOT_ID = 'atlas_root';
 const STAR_RADIUS = 520;
 const STAR_CLEARANCE = 260;
-const RING_CLEARANCE = 160;
 const BELT_HALF_WIDTH = 75;
 const RING_NODE_COUNTS = [8, 12, 18, 20, 24];
 const INNER_RING_SPEED = 1.2;
@@ -24,6 +23,7 @@ const SPOKE_SPREAD = 30;
 const SATELLITE_GAP = 100;
 const WHEEL_CLEARANCE = 60;
 const BELT_CLEARANCE = 40;
+const LANE_CLEARANCE = 60;
 const INNER_SATELLITE_SPEED = [3.2, 5.2];
 const OUTER_SATELLITE_SPEED = [1.8, 3];
 const ESCORT_BESIDE = [1, 0.75];
@@ -266,8 +266,8 @@ RING_NODE_COUNTS.forEach((_, ringIndex) => {
   }
   const outward = extentOf(ringIndex - 1, false);
   const inward = extentOf(ringIndex, true);
-  const gap = Math.max((outward + RING_CLEARANCE + inward) / 2, Math.max(outward, inward) + BELT_HALF_WIDTH + BELT_CLEARANCE);
-  ringRadii.push(Math.round(ringRadii[ringIndex - 1] + gap));
+  const gap = Math.max(outward + LANE_CLEARANCE + inward, Math.max(outward, inward) + BELT_HALF_WIDTH + BELT_CLEARANCE);
+  ringRadii.push(Math.ceil(ringRadii[ringIndex - 1] + gap));
 });
 
 function ringSpeed(ringIndex) {
@@ -377,6 +377,17 @@ allWheels.forEach((first, index) => allWheels.slice(index + 1).forEach((second) 
   if (distance < first.reach + second.reach + WHEEL_CLEARANCE) overlaps.push(`${first.type} and ${second.type} (${Math.round(distance)})`);
 }));
 if (overlaps.length > 0) throw new Error(`Wheels overlap: ${overlaps.join(', ')}`);
+
+const crossings = [];
+for (let ringIndex = 1; ringIndex < rings.length; ringIndex++) {
+  const outward = rings[ringIndex - 1].wheels.filter((wheel) => !wheel.inside);
+  const inward = rings[ringIndex].wheels.filter((wheel) => wheel.inside);
+  outward.forEach((lower) => inward.forEach((upper) => {
+    const clearance = (upper.distance - upper.reach) - (lower.distance + lower.reach);
+    if (clearance < LANE_CLEARANCE) crossings.push(`${lower.type} and ${upper.type} (${Math.round(clearance)})`);
+  }));
+}
+if (crossings.length > 0) throw new Error(`Wheels share a lane: ${crossings.join(', ')}`);
 
 function wheelsBelow(ringIndex) {
   const inside = rings[ringIndex].wheels.filter((wheel) => wheel.inside);

@@ -1,18 +1,13 @@
 package exiledsector.ui.atlas;
 
-import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.charts.tree.AtlasBodyArt;
 import exiledsector.charts.tree.AtlasOrbitLayout;
 import exiledsector.charts.tree.AtlasOrbitSystem;
 import exiledsector.charts.tree.AtlasOrbitSystem.Body;
 import exiledsector.charts.tree.AtlasOrbitSystem.Link;
-import exiledsector.charts.tree.AtlasOrbitSystem.Track;
-import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.TreeViewport;
-import exiledsector.ui.belt.RadialBand;
-import exiledsector.ui.belt.RingBeltRenderer;
 import exiledsector.ui.decoration.AtlasShipGroup;
 import exiledsector.ui.node.ConnectorKind;
 import exiledsector.ui.node.ConnectorPainter;
@@ -22,7 +17,6 @@ import exiledsector.ui.node.ConnectorPainter.ConnectorStyle;
 import exiledsector.ui.node.ConnectorPainter.EdgeFill;
 import exiledsector.ui.node.NodeBeams;
 import exiledsector.ui.node.NodeRingArt;
-import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -39,10 +33,6 @@ final class AtlasOrbitView {
 
     private static final Color DEFAULT_COLOUR = new Color(200, 210, 230);
     private static final Color HOVER_COLOUR = Color.WHITE;
-    private static final String ASTEROID_BELT_PATH = "graphics/exiledSector/scenery/rings/ring_band_asteroids.png";
-    private static final String ICE_BELT_PATH = "graphics/exiledSector/scenery/rings/ring_band_ice.png";
-    private static final float BELT_HALF_WIDTH = 75f;
-    private static final float BELT_ALPHA = 0.9f;
     private static final float MIN_BODY_PIXELS = 2.5f;
     private static final float MIN_HIT_PIXELS = 8f;
     private static final float HIT_SCALE = 1.15f;
@@ -72,7 +62,6 @@ final class AtlasOrbitView {
     private final AtlasOrbitSystem system;
     private final AtlasOrbitSystem.Positions positions;
     private final AtlasBodyPainter painter = new AtlasBodyPainter();
-    private final SpriteCache beltSprites = new SpriteCache(AtlasOrbitView.class);
     private final NodeRingArt ringArt = new NodeRingArt();
     private final NodeBeams beams = new NodeBeams(ringArt);
     private final ConnectorPainter connectors;
@@ -80,6 +69,7 @@ final class AtlasOrbitView {
     private final Color[] siteLights;
     private final float[] spinSeeds;
     private final AtlasOrbitLayout layout;
+    private final AtlasBeltPainter beltPainter;
     private final AtlasShipGroup[] shipGroups;
     private final List<Wheel> wheels = new ArrayList<>();
     private final float[] pathXs = new float[Math.max(ARC_POINTS, Math.max(AtlasWheelRoute.APPROACH_POINTS, AtlasWheelRoute.SPIRAL_POINTS))];
@@ -105,6 +95,7 @@ final class AtlasOrbitView {
         this.spinSeeds = new float[bodies.size()];
         this.shipGroups = new AtlasShipGroup[bodies.size()];
         this.layout = AtlasOrbitLayout.of(system);
+        this.beltPainter = new AtlasBeltPainter(layout.belts());
         for (Body body : bodies) {
             colours[body.index()] = parseColour(body.colour(), DEFAULT_COLOUR);
             siteLights[body.index()] = parseColour(body.art().lightColour(), null);
@@ -209,7 +200,7 @@ final class AtlasOrbitView {
         for (Body body : system.bodies()) {
             allocated[body.index()] = states.allocated(body.nodeId());
         }
-        renderBelts(viewport, alpha);
+        beltPainter.render(viewport, positions, orbitSeconds, alpha);
         for (Body body : system.bodies()) {
             renderBody(viewport, body, states, body.nodeId().equals(hoveredNodeId), seconds, alpha);
         }
@@ -226,26 +217,6 @@ final class AtlasOrbitView {
             addWheel(viewport, wheel, alpha);
         }
         beams.flush();
-    }
-
-    private void renderBelts(TreeViewport viewport, float alpha) {
-        float zoom = viewport.zoom();
-        for (AtlasOrbitLayout.Belt belt : layout.belts()) {
-            Track track = belt.track();
-            float centreX = viewport.screenX(positions.x(track.centreIndex()));
-            float centreY = viewport.screenY(positions.y(track.centreIndex()));
-            float outer = (track.radius() + BELT_HALF_WIDTH) * zoom;
-            if (!viewport.overlaps(centreX - outer, centreY - outer, centreX + outer, centreY + outer)) {
-                continue;
-            }
-            SpriteAPI texture = beltSprites.texture(belt.outermost() ? ICE_BELT_PATH : ASTEROID_BELT_PATH);
-            if (texture == null) {
-                continue;
-            }
-            float turn = positions.turnDegrees(track.memberIndexes().get(0));
-            RadialBand band = new RadialBand(new Vector2f(centreX, centreY), (track.radius() - BELT_HALF_WIDTH) * zoom, outer);
-            RingBeltRenderer.render(texture, band, Color.WHITE, alpha * BELT_ALPHA, -turn, viewport);
-        }
     }
 
     private void addStraight(TreeViewport viewport, Link ray, float alpha) {

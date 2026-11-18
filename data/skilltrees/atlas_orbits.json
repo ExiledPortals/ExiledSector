@@ -106,7 +106,7 @@
 		{
 			"id": "travel_boss_star_charts_9",
 			"around": "atlas_root",
-			"speed": 0.5455,
+			"speed": 0.3463,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -118,7 +118,7 @@
 		{
 			"id": "travel_boss_star_charts_10",
 			"around": "atlas_root",
-			"speed": 0.5455,
+			"speed": 0.3463,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -130,7 +130,7 @@
 		{
 			"id": "travel_boss_star_charts_11",
 			"around": "atlas_root",
-			"speed": 0.5455,
+			"speed": 0.3463,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -142,7 +142,7 @@
 		{
 			"id": "travel_boss_star_charts_12",
 			"around": "atlas_root",
-			"speed": 0.5455,
+			"speed": 0.3463,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -154,7 +154,7 @@
 		{
 			"id": "travel_boss_star_charts_13",
 			"around": "atlas_root",
-			"speed": 0.5455,
+			"speed": 0.3463,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -166,7 +166,7 @@
 		{
 			"id": "travel_boss_star_charts_14",
 			"around": "atlas_root",
-			"speed": 0.5455,
+			"speed": 0.3463,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -178,7 +178,7 @@
 		{
 			"id": "travel_boss_star_charts_15",
 			"around": "atlas_root",
-			"speed": 0.5455,
+			"speed": 0.3463,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -190,7 +190,7 @@
 		{
 			"id": "travel_boss_star_charts_16",
 			"around": "atlas_root",
-			"speed": 0.5455,
+			"speed": 0.3463,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -202,7 +202,7 @@
 		{
 			"id": "travel_boss_star_charts_17",
 			"around": "atlas_root",
-			"speed": 0.5455,
+			"speed": 0.3463,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -214,7 +214,7 @@
 		{
 			"id": "travel_boss_star_charts_18",
 			"around": "atlas_root",
-			"speed": 0.5455,
+			"speed": 0.3463,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -226,7 +226,7 @@
 		{
 			"id": "travel_boss_star_charts_19",
 			"around": "atlas_root",
-			"speed": 0.5455,
+			"speed": 0.3463,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -238,7 +238,7 @@
 		{
 			"id": "travel_boss_star_charts_20",
 			"around": "atlas_root",
-			"speed": 0.5455,
+			"speed": 0.3463,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -250,7 +250,7 @@
 		{
 			"id": "travel_catalysts_1",
 			"around": "atlas_root",
-			"speed": 0.3276,
+			"speed": 0.18430000000000002,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -262,7 +262,7 @@
 		{
 			"id": "travel_catalysts_2",
 			"around": "atlas_root",
-			"speed": 0.3276,
+			"speed": 0.18430000000000002,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -274,7 +274,7 @@
 		{
 			"id": "travel_catalysts_3",
 			"around": "atlas_root",
-			"speed": 0.3276,
+			"speed": 0.18430000000000002,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -286,7 +286,7 @@
 		{
 			"id": "travel_catalysts_4",
 			"around": "atlas_root",
-			"speed": 0.3276,
+			"speed": 0.18430000000000002,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -298,7 +298,7 @@
 		{
 			"id": "travel_catalysts_5",
 			"around": "atlas_root",
-			"speed": 0.3276,
+			"speed": 0.18430000000000002,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -310,7 +310,7 @@
 		{
 			"id": "travel_catalysts_6",
 			"around": "atlas_root",
-			"speed": 0.3276,
+			"speed": 0.18430000000000002,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -322,7 +322,7 @@
 		{
 			"id": "travel_catalysts_7",
 			"around": "atlas_root",
-			"speed": 0.3276,
+			"speed": 0.18430000000000002,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -334,7 +334,7 @@
 		{
 			"id": "travel_catalysts_8",
 			"around": "atlas_root",
-			"speed": 0.3276,
+			"speed": 0.18430000000000002,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -346,7 +346,7 @@
 		{
 			"id": "travel_catalysts_9",
 			"around": "atlas_root",
-			"speed": 0.3276,
+			"speed": 0.18430000000000002,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -358,7 +358,7 @@
 		{
 			"id": "travel_catalysts_10",
 			"around": "atlas_root",
-			"speed": 0.3276,
+			"speed": 0.18430000000000002,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -370,7 +370,7 @@
 		{
 			"id": "travel_catalysts_11",
 			"around": "atlas_root",
-			"speed": 0.3276,
+			"speed": 0.18430000000000002,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -382,7 +382,7 @@
 		{
 			"id": "travel_catalysts_12",
 			"around": "atlas_root",
-			"speed": 0.3276,
+			"speed": 0.18430000000000002,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -394,7 +394,7 @@
 		{
 			"id": "travel_catalysts_13",
 			"around": "atlas_root",
-			"speed": 0.3276,
+			"speed": 0.18430000000000002,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -406,7 +406,7 @@
 		{
 			"id": "travel_catalysts_14",
 			"around": "atlas_root",
-			"speed": 0.3276,
+			"speed": 0.18430000000000002,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -418,7 +418,7 @@
 		{
 			"id": "travel_catalysts_15",
 			"around": "atlas_root",
-			"speed": 0.3276,
+			"speed": 0.18430000000000002,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -430,7 +430,7 @@
 		{
 			"id": "travel_catalysts_16",
 			"around": "atlas_root",
-			"speed": 0.3276,
+			"speed": 0.18430000000000002,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -442,7 +442,7 @@
 		{
 			"id": "travel_catalysts_17",
 			"around": "atlas_root",
-			"speed": 0.3276,
+			"speed": 0.18430000000000002,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -454,7 +454,7 @@
 		{
 			"id": "travel_catalysts_18",
 			"around": "atlas_root",
-			"speed": 0.3276,
+			"speed": 0.18430000000000002,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -466,7 +466,7 @@
 		{
 			"id": "travel_catalysts_19",
 			"around": "atlas_root",
-			"speed": 0.22219999999999998,
+			"speed": 0.1144,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -478,7 +478,7 @@
 		{
 			"id": "travel_catalysts_20",
 			"around": "atlas_root",
-			"speed": 0.22219999999999998,
+			"speed": 0.1144,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -490,7 +490,7 @@
 		{
 			"id": "travel_catalysts_21",
 			"around": "atlas_root",
-			"speed": 0.22219999999999998,
+			"speed": 0.1144,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -502,7 +502,7 @@
 		{
 			"id": "travel_catalysts_22",
 			"around": "atlas_root",
-			"speed": 0.22219999999999998,
+			"speed": 0.1144,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -514,7 +514,7 @@
 		{
 			"id": "travel_catalysts_23",
 			"around": "atlas_root",
-			"speed": 0.22219999999999998,
+			"speed": 0.1144,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -526,7 +526,7 @@
 		{
 			"id": "travel_catalysts_24",
 			"around": "atlas_root",
-			"speed": 0.22219999999999998,
+			"speed": 0.1144,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -538,7 +538,7 @@
 		{
 			"id": "travel_catalysts_25",
 			"around": "atlas_root",
-			"speed": 0.22219999999999998,
+			"speed": 0.1144,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -550,7 +550,7 @@
 		{
 			"id": "travel_catalysts_26",
 			"around": "atlas_root",
-			"speed": 0.22219999999999998,
+			"speed": 0.1144,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -562,7 +562,7 @@
 		{
 			"id": "travel_catalysts_27",
 			"around": "atlas_root",
-			"speed": 0.22219999999999998,
+			"speed": 0.1144,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -574,7 +574,7 @@
 		{
 			"id": "travel_catalysts_28",
 			"around": "atlas_root",
-			"speed": 0.22219999999999998,
+			"speed": 0.1144,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -586,7 +586,7 @@
 		{
 			"id": "travel_catalysts_29",
 			"around": "atlas_root",
-			"speed": 0.22219999999999998,
+			"speed": 0.1144,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -598,7 +598,7 @@
 		{
 			"id": "travel_catalysts_30",
 			"around": "atlas_root",
-			"speed": 0.22219999999999998,
+			"speed": 0.1144,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -610,7 +610,7 @@
 		{
 			"id": "travel_catalysts_31",
 			"around": "atlas_root",
-			"speed": 0.22219999999999998,
+			"speed": 0.1144,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -622,7 +622,7 @@
 		{
 			"id": "travel_catalysts_32",
 			"around": "atlas_root",
-			"speed": 0.22219999999999998,
+			"speed": 0.1144,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -634,7 +634,7 @@
 		{
 			"id": "travel_catalysts_33",
 			"around": "atlas_root",
-			"speed": 0.22219999999999998,
+			"speed": 0.1144,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -646,7 +646,7 @@
 		{
 			"id": "travel_catalysts_34",
 			"around": "atlas_root",
-			"speed": 0.22219999999999998,
+			"speed": 0.1144,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -658,7 +658,7 @@
 		{
 			"id": "travel_catalysts_35",
 			"around": "atlas_root",
-			"speed": 0.22219999999999998,
+			"speed": 0.1144,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -670,7 +670,7 @@
 		{
 			"id": "travel_catalysts_36",
 			"around": "atlas_root",
-			"speed": 0.22219999999999998,
+			"speed": 0.1144,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -682,7 +682,7 @@
 		{
 			"id": "travel_catalysts_37",
 			"around": "atlas_root",
-			"speed": 0.22219999999999998,
+			"speed": 0.1144,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -694,7 +694,7 @@
 		{
 			"id": "travel_catalysts_38",
 			"around": "atlas_root",
-			"speed": 0.22219999999999998,
+			"speed": 0.1144,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -706,7 +706,7 @@
 		{
 			"id": "travel_chart_modifier_effect_1",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -718,7 +718,7 @@
 		{
 			"id": "travel_chart_modifier_effect_2",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -730,7 +730,7 @@
 		{
 			"id": "travel_chart_modifier_effect_3",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -742,7 +742,7 @@
 		{
 			"id": "travel_chart_modifier_effect_4",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -754,7 +754,7 @@
 		{
 			"id": "travel_chart_modifier_effect_5",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -766,7 +766,7 @@
 		{
 			"id": "travel_chart_modifier_effect_6",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -778,7 +778,7 @@
 		{
 			"id": "travel_chart_modifier_effect_7",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -790,7 +790,7 @@
 		{
 			"id": "travel_chart_modifier_effect_8",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -802,7 +802,7 @@
 		{
 			"id": "travel_chart_modifier_effect_9",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -814,7 +814,7 @@
 		{
 			"id": "travel_chart_modifier_effect_10",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -826,7 +826,7 @@
 		{
 			"id": "travel_chart_modifier_effect_11",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -838,7 +838,7 @@
 		{
 			"id": "travel_chart_modifier_effect_12",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -850,7 +850,7 @@
 		{
 			"id": "travel_chart_modifier_effect_13",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -862,7 +862,7 @@
 		{
 			"id": "travel_chart_modifier_effect_14",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -874,7 +874,7 @@
 		{
 			"id": "travel_chart_modifier_effect_15",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -886,7 +886,7 @@
 		{
 			"id": "travel_chart_modifier_effect_16",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -898,7 +898,7 @@
 		{
 			"id": "travel_chart_modifier_effect_17",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -910,7 +910,7 @@
 		{
 			"id": "travel_chart_modifier_effect_18",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -922,7 +922,7 @@
 		{
 			"id": "travel_chart_modifier_effect_19",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -934,7 +934,7 @@
 		{
 			"id": "travel_chart_modifier_effect_20",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -946,7 +946,7 @@
 		{
 			"id": "travel_chart_modifier_effect_21",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -958,7 +958,7 @@
 		{
 			"id": "travel_chart_modifier_effect_22",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -970,7 +970,7 @@
 		{
 			"id": "travel_chart_modifier_effect_23",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -982,7 +982,7 @@
 		{
 			"id": "travel_chart_modifier_effect_24",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
@@ -1235,7 +1235,7 @@
 		{
 			"id": "twin_shafts_1",
 			"around": "atlas_root",
-			"speed": 0.5455,
+			"speed": 0.3463,
 			"colour": "#ffaa50",
 			"art": {
 				"kind": "planet",
@@ -1269,7 +1269,7 @@
 		{
 			"id": "crowded_channel_1",
 			"around": "atlas_root",
-			"speed": 0.5455,
+			"speed": 0.3463,
 			"colour": "#6ec8ff",
 			"art": {
 				"kind": "sprite",
@@ -1306,7 +1306,7 @@
 		{
 			"id": "stolen_charts_1",
 			"around": "atlas_root",
-			"speed": 0.5455,
+			"speed": 0.3463,
 			"colour": "#f0dc6e",
 			"art": {
 				"kind": "sprite",
@@ -1342,7 +1342,7 @@
 		{
 			"id": "rift_magnetism_1",
 			"around": "atlas_root",
-			"speed": 0.5455,
+			"speed": 0.3463,
 			"colour": "#be78ff",
 			"art": {
 				"kind": "breach",
@@ -1372,7 +1372,7 @@
 		{
 			"id": "veiled_sleepers_1",
 			"around": "atlas_root",
-			"speed": 0.5455,
+			"speed": 0.3463,
 			"colour": "#ff6e5a",
 			"art": {
 				"kind": "derelicts",
@@ -1413,7 +1413,7 @@
 		{
 			"id": "shared_broadcast_1",
 			"around": "atlas_root",
-			"speed": 0.5455,
+			"speed": 0.3463,
 			"colour": "#6ec8ff",
 			"art": {
 				"kind": "sprite",
@@ -1450,7 +1450,7 @@
 		{
 			"id": "sapper_teams_1",
 			"around": "atlas_root",
-			"speed": 0.5455,
+			"speed": 0.3463,
 			"colour": "#ffaa50",
 			"art": {
 				"kind": "planet",
@@ -1484,7 +1484,7 @@
 		{
 			"id": "phase_embargo_1",
 			"around": "atlas_root",
-			"speed": 0.5455,
+			"speed": 0.3463,
 			"colour": "#78dc8c",
 			"art": {
 				"kind": "fleet",
@@ -1535,7 +1535,7 @@
 		{
 			"id": "extra_relay_1",
 			"around": "atlas_root",
-			"speed": 0.5455,
+			"speed": 0.3463,
 			"colour": "#6ec8ff",
 			"art": {
 				"kind": "sprite",
@@ -1572,7 +1572,7 @@
 		{
 			"id": "open_bores_1",
 			"around": "atlas_root",
-			"speed": 0.3276,
+			"speed": 0.18430000000000002,
 			"colour": "#ffaa50",
 			"art": {
 				"kind": "planet",
@@ -1606,7 +1606,7 @@
 		{
 			"id": "infested_bolt_holes_1",
 			"around": "atlas_root",
-			"speed": 0.3276,
+			"speed": 0.18430000000000002,
 			"colour": "#ff8c55",
 			"art": {
 				"kind": "planet",
@@ -1641,7 +1641,7 @@
 		{
 			"id": "threatening_sleepers_1",
 			"around": "atlas_root",
-			"speed": 0.3276,
+			"speed": 0.18430000000000002,
 			"colour": "#ff6e5a",
 			"art": {
 				"kind": "derelicts",
@@ -1681,7 +1681,7 @@
 		{
 			"id": "scar_collector_1",
 			"around": "atlas_root",
-			"speed": 0.3276,
+			"speed": 0.18430000000000002,
 			"colour": "#6ec8ff",
 			"art": {
 				"kind": "sprite",
@@ -1718,7 +1718,7 @@
 		{
 			"id": "rally_point_1",
 			"around": "atlas_root",
-			"speed": 0.3276,
+			"speed": 0.18430000000000002,
 			"colour": "#be78ff",
 			"art": {
 				"kind": "breach",
@@ -1748,7 +1748,7 @@
 		{
 			"id": "torn_holds_1",
 			"around": "atlas_root",
-			"speed": 0.3276,
+			"speed": 0.18430000000000002,
 			"colour": "#9aaaff",
 			"art": {
 				"kind": "planet",
@@ -1785,7 +1785,7 @@
 		{
 			"id": "supply_lines_1",
 			"around": "atlas_root",
-			"speed": 0.3276,
+			"speed": 0.18430000000000002,
 			"colour": "#78dc8c",
 			"art": {
 				"kind": "fleet",
@@ -1834,7 +1834,7 @@
 		{
 			"id": "hair_trigger_1",
 			"around": "atlas_root",
-			"speed": 0.3276,
+			"speed": 0.18430000000000002,
 			"colour": "#f0dc6e",
 			"art": {
 				"kind": "sprite",
@@ -1870,7 +1870,7 @@
 		{
 			"id": "early_echo_1",
 			"around": "atlas_root",
-			"speed": 0.3276,
+			"speed": 0.18430000000000002,
 			"colour": "#6ec8ff",
 			"art": {
 				"kind": "sprite",
@@ -1907,7 +1907,7 @@
 		{
 			"id": "smash_and_grab_1",
 			"around": "atlas_root",
-			"speed": 0.3276,
+			"speed": 0.18430000000000002,
 			"colour": "#f0dc6e",
 			"art": {
 				"kind": "sprite",
@@ -1943,7 +1943,7 @@
 		{
 			"id": "widened_bores_1",
 			"around": "atlas_root",
-			"speed": 0.22219999999999998,
+			"speed": 0.1144,
 			"colour": "#ffaa50",
 			"art": {
 				"kind": "planet",
@@ -1977,7 +1977,7 @@
 		{
 			"id": "double_dose_1",
 			"around": "atlas_root",
-			"speed": 0.22219999999999998,
+			"speed": 0.1144,
 			"colour": "#ff6e5a",
 			"art": {
 				"kind": "derelicts",
@@ -2017,7 +2017,7 @@
 		{
 			"id": "breached_graveyard_1",
 			"around": "atlas_root",
-			"speed": 0.22219999999999998,
+			"speed": 0.1144,
 			"colour": "#e070b0",
 			"art": {
 				"kind": "planet",
@@ -2050,7 +2050,7 @@
 		{
 			"id": "rift_duel_1",
 			"around": "atlas_root",
-			"speed": 0.22219999999999998,
+			"speed": 0.1144,
 			"colour": "#be78ff",
 			"art": {
 				"kind": "breach",
@@ -2080,7 +2080,7 @@
 		{
 			"id": "garrison_pickets_1",
 			"around": "atlas_root",
-			"speed": 0.22219999999999998,
+			"speed": 0.1144,
 			"colour": "#f0dc6e",
 			"art": {
 				"kind": "sprite",
@@ -2116,7 +2116,7 @@
 		{
 			"id": "event_horizon_1",
 			"around": "atlas_root",
-			"speed": 0.22219999999999998,
+			"speed": 0.1144,
 			"colour": "#be78ff",
 			"art": {
 				"kind": "planet",
@@ -2147,7 +2147,7 @@
 		{
 			"id": "full_array_1",
 			"around": "atlas_root",
-			"speed": 0.22219999999999998,
+			"speed": 0.1144,
 			"colour": "#6ec8ff",
 			"art": {
 				"kind": "sprite",
@@ -2184,7 +2184,7 @@
 		{
 			"id": "needle_bores_1",
 			"around": "atlas_root",
-			"speed": 0.22219999999999998,
+			"speed": 0.1144,
 			"colour": "#ffaa50",
 			"art": {
 				"kind": "planet",
@@ -2218,7 +2218,7 @@
 		{
 			"id": "deep_corruption_1",
 			"around": "atlas_root",
-			"speed": 0.22219999999999998,
+			"speed": 0.1144,
 			"colour": "#ff6e5a",
 			"art": {
 				"kind": "derelicts",
@@ -2260,7 +2260,7 @@
 		{
 			"id": "deeper_bores_1",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#ffaa50",
 			"art": {
 				"kind": "planet",
@@ -2294,7 +2294,7 @@
 		{
 			"id": "bolt_hole_drop_1",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#c8c86e",
 			"art": {
 				"kind": "planet",
@@ -2333,7 +2333,7 @@
 		{
 			"id": "hyperspace_bleed_1",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#be78ff",
 			"art": {
 				"kind": "breach",
@@ -2363,7 +2363,7 @@
 		{
 			"id": "double_down_1",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#6ec8ff",
 			"art": {
 				"kind": "binary",
@@ -2403,7 +2403,7 @@
 		{
 			"id": "open_season_1",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#78dc8c",
 			"art": {
 				"kind": "fleet",
@@ -2453,7 +2453,7 @@
 		{
 			"id": "rude_awakening_1",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#e070b0",
 			"art": {
 				"kind": "planet",
@@ -2486,7 +2486,7 @@
 		{
 			"id": "pitch_black_1",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#ffaa50",
 			"art": {
 				"kind": "planet",
@@ -2520,7 +2520,7 @@
 		{
 			"id": "lone_sleeper_1",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#ff6e5a",
 			"art": {
 				"kind": "derelicts",
@@ -2560,7 +2560,7 @@
 		{
 			"id": "fortified_depot_1",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#f0dc6e",
 			"art": {
 				"kind": "station",
@@ -2597,7 +2597,7 @@
 		{
 			"id": "forked_trace_1",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#6ec8ff",
 			"art": {
 				"kind": "sprite",
@@ -2634,7 +2634,7 @@
 		{
 			"id": "mixed_manifest_1",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#78dc8c",
 			"art": {
 				"kind": "sprite",
@@ -2677,7 +2677,7 @@
 		{
 			"id": "restless_sleepers_1",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#ff6e5a",
 			"art": {
 				"kind": "derelicts",
@@ -2719,7 +2719,7 @@
 		{
 			"id": "hunting_party_1",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#f0dc6e",
 			"art": {
 				"kind": "sprite",
@@ -2755,7 +2755,7 @@
 		{
 			"id": "incursion_1",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#be78ff",
 			"art": {
 				"kind": "sprite",
@@ -2788,7 +2788,7 @@
 		{
 			"id": "silent_choir_1",
 			"around": "atlas_root",
-			"speed": 0.1621,
+			"speed": 0.08,
 			"colour": "#ff6e5a",
 			"art": {
 				"kind": "sprite",

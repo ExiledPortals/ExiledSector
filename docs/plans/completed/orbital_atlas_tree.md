@@ -7,9 +7,10 @@ The Atlas Tree is one large star system whose nodes orbit. Built 2026-11-17.
 - The root is the central star. Five highway rings of small nodes with no anomaly orbit it: rings 1-2 Boss Star Charts,
   rings 3-4 Catalysts, ring 5 Star Chart Modifier Effect. Each ring turns at its own speed, slower further out. The
   rings hold 8, 12, 18, 20 and 24 nodes; three rays leave the star, and 3, 4, 5 and 6 tethers reach rings 2 to 5.
-  Rings sit half the natural spacing apart, but never so close that a wheel reaches the next belt. Wheels from both rings
-  share the space between them, so each takes the spoke nearest its slot that clears every placed wheel, and ring links
-  pick anchors clear of the wheels they cross (the generator checks both).
+  Each gap between belts holds two lanes: the inner ring's outward wheels keep below the outer ring's inward wheels, so
+  rings turning at different speeds never carry wheels through each other. Rings sit just far enough apart for both
+  lanes, and satellites keep their full distance from their notable. Each wheel takes the spoke nearest its slot that
+  clears every placed wheel, and ring links pick anchors clear of the wheels they cross (the generator checks all three).
 - Every notable and keystone is its own wheel: a body (planet, fleet, derelicts, station, relay, breach) that turns with
   its ring, on its inside or outside, with two small nodes orbiting it on two tracks. The path is ring node, outer small, inner
   small, notable, so each notable has exactly two lead-ups of its anomaly. Convoy fleets are the exception: their two
@@ -37,7 +38,10 @@ The Atlas Tree is one large star system whose nodes orbit. Built 2026-11-17.
 - The art is the node: dull when unallocated, brighter with a breathing ring when allocatable, full colour when
   allocated. Bodies have no glow; excavation planets carry the chart screen's blinking site dot. Hover shows the node
   tooltip and slows orbits to a quarter speed.
-- Highway rings are asteroid belts (the outermost ice) turning with their ring; highway nodes keep a white node ring.
+- Highway rings are drawn like vanilla asteroid belts (`ui.atlas.AtlasBeltPainter`): two bands from vanilla's ring
+  texture, one turning with the ring and one a little slower, tiled at the texture's own scale however long the ring,
+  plus loose asteroids that spin and drift at their own speeds. The outermost belt is ice bands without loose asteroids,
+  like a vanilla ring system. Highway nodes keep a white node ring. The atlas camera zooms out further than other trees.
   `charts.tree.AtlasOrbitLayout` sorts bodies into highway nodes, wheels, star rays and belts.
 - Star rays, ring arcs and ring-to-ring tethers use the skill tree's connector beams.
 - Each wheel's chain (`ui.atlas.AtlasWheelRoute`) is drawn as vanilla's lay-in-course arrows moving toward the notable
