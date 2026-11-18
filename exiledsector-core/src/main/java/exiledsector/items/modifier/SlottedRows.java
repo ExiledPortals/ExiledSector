@@ -3,8 +3,6 @@ package exiledsector.items.modifier;
 import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledsector.i18n.Translation;
-import exiledsector.modifiers.ModifierSlot;
 import exiledsector.ui.VanillaText;
 
 import java.util.List;
@@ -12,7 +10,7 @@ import java.util.function.Consumer;
 
 public final class SlottedRows {
 
-    public record Layout(float rowWidth, float slotTagWidth, float slotTagGap, Consumer<TooltipMakerAPI> cellFont) {
+    public record Layout(float rowWidth, float captionTagGap, float captionPad, Consumer<TooltipMakerAPI> cellFont) {
     }
 
     private SlottedRows() {
@@ -25,28 +23,38 @@ public final class SlottedRows {
 
     public static void add(TooltipMakerAPI tooltip, List<SlottedLine> rows, Layout layout, float firstPad, float linePad,
                            Consumer<SlottedLine> afterRowText) {
-        float textWidth = layout.rowWidth() - layout.slotTagWidth() - layout.slotTagGap();
         float rowPad = firstPad;
+        boolean first = true;
         for (SlottedLine row : rows) {
-            TooltipMakerAPI textCell = tooltip.beginSubTooltip(textWidth);
+            if (row.caption() && !first) {
+                rowPad = Math.max(rowPad, layout.captionPad());
+            }
+            TooltipMakerAPI textCell = tooltip.beginSubTooltip(layout.rowWidth());
             layout.cellFont().accept(textCell);
-            VanillaText.addPara(textCell, row.text(), 0f, Misc.getTextColor());
+            boolean tagsBeside = row.captionTags() == null || fitsBeside(textCell, row, layout);
+            VanillaText.addPara(textCell, row.text(), 0f, row.caption() ? Misc.getGrayColor() : Misc.getTextColor());
             tooltip.endSubTooltip();
             tooltip.addCustom(textCell, rowPad);
             afterRowText.accept(row);
             rowPad = linePad;
-            if (row.slot() == null) {
+            first = false;
+            if (row.captionTags() == null) {
                 continue;
             }
-            TooltipMakerAPI slotCell = tooltip.beginSubTooltip(layout.slotTagWidth());
-            layout.cellFont().accept(slotCell);
-            VanillaText.plainPara(slotCell, Translation.text(slotTagKey(row.slot())), 0f, Misc.getGrayColor()).setAlignment(Alignment.RMID);
+            TooltipMakerAPI tagCell = tooltip.beginSubTooltip(layout.rowWidth());
+            layout.cellFont().accept(tagCell);
+            VanillaText.addPara(tagCell, row.captionTags(), 0f, Misc.getGrayColor()).setAlignment(Alignment.RMID);
             tooltip.endSubTooltip();
-            tooltip.addCustomDoNotSetPosition(slotCell).getPosition().rightOfTop(textCell, layout.slotTagGap());
+            if (tagsBeside) {
+                tooltip.addCustomDoNotSetPosition(tagCell).getPosition().rightOfTop(textCell, -layout.rowWidth());
+            } else {
+                tooltip.addCustom(tagCell, 0f);
+            }
         }
     }
 
-    public static String slotTagKey(ModifierSlot slot) {
-        return slot == ModifierSlot.PREFIX ? "item.tooltip.slotTag.prefix" : "item.tooltip.slotTag.suffix";
+    private static boolean fitsBeside(TooltipMakerAPI cell, SlottedLine row, Layout layout) {
+        float labelsWidth = row.text().isEmpty() ? 0f : cell.computeStringWidth(row.text().plain()) + layout.captionTagGap();
+        return labelsWidth + cell.computeStringWidth(row.captionTags().plain()) <= layout.rowWidth();
     }
 }

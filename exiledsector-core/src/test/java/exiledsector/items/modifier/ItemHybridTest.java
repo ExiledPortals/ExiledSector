@@ -1,5 +1,6 @@
 package exiledsector.items.modifier;
 
+import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.items.Item;
 import exiledsector.items.ItemDefinition;
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -81,25 +81,38 @@ class ItemHybridTest {
     }
 
     @Test
-    void expandedLinesGroupAHybridUnderOneTaggedHeader() {
+    void expandedLinesGroupAHybridUnderOneCaption() {
         Item item = item(List.of(platedFrame(7f, 4f), RolledModifier.single(ModifierSlot.SUFFIX, new RolledLine("HULL_MULT", 5f))));
 
         List<SlottedLine> expanded = item.slottedEffectLines(true, null);
         List<StyledText> collapsed = item.effectLines(false);
 
-        assertEquals(Arrays.asList(ModifierSlot.PREFIX, null, null, ModifierSlot.SUFFIX), expanded.stream().map(SlottedLine::slot).toList());
-        assertEquals("<muted>Hybrid</muted>", expanded.get(0).text().toMarkup());
-        assertTrue(expanded.get(1).text().toMarkup().startsWith("<muted>|</muted> "));
-        assertTrue(expanded.get(1).text().plain().contains("(5%-10%)"));
-        assertTrue(expanded.get(2).text().toMarkup().startsWith("<muted>|</muted> "));
-        assertTrue(expanded.get(2).text().plain().contains("(3%-6%)"));
-        assertTrue(expanded.get(3).text().plain().contains("(4%-6%)"));
-        assertTrue(collapsed.stream().noneMatch(line -> line.plain().startsWith("|") || line.plain().equals("Hybrid")));
+        assertEquals(List.of(true, false, false, true, false), expanded.stream().map(SlottedLine::caption).toList());
+        assertEquals("Prefix", expanded.get(0).text().plain());
+        assertTrue(expanded.get(1).text().plain().startsWith("7%") && expanded.get(1).text().plain().contains("(5%-10%)"));
+        assertTrue(expanded.get(2).text().plain().startsWith("4%") && expanded.get(2).text().plain().contains("(3%-6%)"));
+        assertEquals("Suffix", expanded.get(3).text().plain());
+        assertTrue(expanded.get(4).text().plain().contains("(4%-6%)"));
         assertEquals(3, collapsed.size());
     }
 
     @Test
-    void aBiomesModifierShowsTheBiomeAboveItsLinesLikeAHybridHeaderWhenExpanded() {
+    void aWarpedOrOverchargedModifierColoursOnlyItsCaptionWhenExpanded() {
+        RolledModifier warped = platedFrame(7f, 4f).asWarped();
+        RolledModifier immutable = RolledModifier.single(ModifierSlot.SUFFIX, new RolledLine("HULL_MULT", 5f)).asImmutable().asWarped();
+        Item item = item(List.of(warped, immutable));
+
+        List<SlottedLine> expanded = item.slottedEffectLines(true, null);
+        List<SlottedLine> collapsed = item.slottedEffectLines(false, null);
+
+        assertTrue(expanded.get(0).text().toMarkup().contains("<warped>Warped</warped>"), expanded.get(0).text().toMarkup());
+        assertTrue(expanded.get(1).text().spans().stream().noneMatch(span -> span.style() == Style.WARPED));
+        assertTrue(expanded.get(4).text().spans().stream().anyMatch(span -> span.style() == Style.IMMUTABLE));
+        assertTrue(collapsed.get(0).text().spans().stream().anyMatch(span -> span.style() == Style.WARPED));
+    }
+
+    @Test
+    void aBiomesModifierNamesTheBiomeInItsCaptionWhenExpanded() {
         String abyssalHeader = "chart.biomeModifier.header.abyssal_rift";
         RolledModifier fortitude = RolledModifier.single(ModifierSlot.SUFFIX, new RolledLine("HULL_MULT", 5f));
         ModifierSources.reserve(fortitude.modifierId(), "biome:abyssal_rift", List.of(), abyssalHeader);
@@ -109,17 +122,12 @@ class ItemHybridTest {
         List<SlottedLine> expanded = item.slottedEffectLines(true, null);
         List<StyledText> collapsed = item.effectLines(false);
 
-        assertEquals(Arrays.asList(ModifierSlot.PREFIX, null, null, null, ModifierSlot.SUFFIX, null),
-                expanded.stream().map(SlottedLine::slot).toList());
-        assertEquals("<muted>Abyssal</muted>", expanded.get(0).text().toMarkup());
-        assertEquals("<muted>Hybrid</muted>", expanded.get(1).text().toMarkup());
-        assertTrue(expanded.get(2).text().toMarkup().startsWith("<muted>|</muted> "));
-        assertTrue(expanded.get(3).text().toMarkup().startsWith("<muted>|</muted> "));
-        assertEquals("<muted>Abyssal</muted>", expanded.get(4).text().toMarkup());
-        assertTrue(expanded.get(5).text().toMarkup().startsWith("<muted>|</muted> "));
-        assertTrue(expanded.get(5).text().plain().contains("(4%-6%)"));
+        assertEquals(List.of(true, false, false, true, false), expanded.stream().map(SlottedLine::caption).toList());
+        assertEquals("Prefix, Abyssal", expanded.get(0).text().plain());
+        assertEquals("Suffix, Abyssal", expanded.get(3).text().plain());
+        assertTrue(expanded.get(4).text().plain().contains("(4%-6%)"));
         assertEquals(3, collapsed.size());
-        assertTrue(collapsed.stream().noneMatch(line -> line.plain().equals("Abyssal") || line.plain().startsWith("|")));
+        assertTrue(collapsed.stream().noneMatch(line -> line.plain().contains("Abyssal")));
     }
 
     @Test

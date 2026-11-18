@@ -23,8 +23,8 @@ public final class ItemTooltip {
     private static final float LARGE_TEXT_WIDTH = 700f;
     public static final float PAD = 10f;
     private static final float LINE_PAD = 3f;
-    private static final float SLOT_TAG_WIDTH = 30f;
-    private static final float SLOT_TAG_GAP = 6f;
+    private static final float CAPTION_TAG_GAP = 12f;
+    private static final float CAPTION_PAD = 7f;
 
     private ItemTooltip() {
     }
@@ -58,21 +58,20 @@ public final class ItemTooltip {
         }
         addLines(tooltip, item.detailLines(), Misc.getTextColor());
         item.writeTooltipSections(tooltip, hullSize, showRollRanges);
-        List<StyledText> implicitLines = item.implicitLines(showRollRanges);
-        if (!implicitLines.isEmpty()) {
-            tooltip.addSectionHeading(Translation.text("item.tooltip.implicit"), Alignment.MID, PAD);
-            addLines(tooltip, implicitLines, Misc.getTextColor());
-        }
-        List<SlottedLine> effectRows = item.slottedEffectRows(showRollRanges, hullSize);
-        if (effectRows.isEmpty()) {
+        addModifierSection(tooltip, "item.tooltip.implicit", item.implicitRows(showRollRanges), showRollRanges);
+        addModifierSection(tooltip, "item.tooltip.explicit", item.slottedEffectRows(showRollRanges, hullSize), showRollRanges);
+    }
+
+    private static void addModifierSection(TooltipMakerAPI tooltip, String headingKey, List<SlottedLine> rows, boolean showRollRanges) {
+        if (rows.isEmpty()) {
             return;
         }
-        tooltip.addSectionHeading(Translation.text("item.tooltip.explicit"), Alignment.MID, PAD);
+        tooltip.addSectionHeading(Translation.text(headingKey), Alignment.MID, PAD);
         if (showRollRanges) {
-            SlottedRows.Layout layout = new SlottedRows.Layout(tooltip.getWidthSoFar(), SLOT_TAG_WIDTH, SLOT_TAG_GAP, TooltipTextSize::applyBodyFont);
-            SlottedRows.add(tooltip, effectRows, layout, PAD, LINE_PAD);
+            SlottedRows.Layout layout = new SlottedRows.Layout(tooltip.getWidthSoFar(), CAPTION_TAG_GAP, CAPTION_PAD, TooltipTextSize::applyBodyFont);
+            SlottedRows.add(tooltip, rows, layout, PAD, LINE_PAD);
         } else {
-            addLines(tooltip, effectRows.stream().map(SlottedLine::text).toList(), Misc.getTextColor());
+            addLines(tooltip, rows.stream().map(SlottedLine::inlineText).toList(), Misc.getTextColor());
         }
     }
 

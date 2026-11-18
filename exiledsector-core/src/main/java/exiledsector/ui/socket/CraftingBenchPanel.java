@@ -103,7 +103,7 @@ public final class CraftingBenchPanel extends HoloPanel {
     private static final float PICK_BUTTON_WIDTH = 120f;
     private static final float TOOLTIP_WIDTH = 340f;
     private static final float LARGE_TEXT_TOOLTIP_WIDTH = 530f;
-    private static final float SLOT_TAG_WIDTH = 20f;
+    private static final float CAPTION_TAG_GAP = 12f;
     private static final float SCROLLBAR_ROOM = 20f;
     private static final float MIN_OPEN_BUTTON_HEIGHT = 26f;
     private static final float OPEN_CONFIRM_HEIGHT = 170f;
@@ -1469,13 +1469,12 @@ public final class CraftingBenchPanel extends HoloPanel {
                 centred(VanillaText.addPara(element, line, linePad, Misc.getTextColor()));
                 linePad = LINE_PAD;
             }
-            List<SlottedLine> implicitLines = new ArrayList<>();
-            loadedItem.implicitLines(detailsShowRollRanges).forEach(line -> implicitLines.add(new SlottedLine(null, line)));
-            addDetailSection(element, "item.tooltip.implicit", implicitLines, paraPad);
             if (detailsShowRollRanges) {
+                addSlottedDetailSection(element, "item.tooltip.implicit", loadedItem.implicitSlottedLines(true), paraPad, detailsWidth);
                 addSlottedDetailSection(element, "item.tooltip.explicit", loadedItem.slottedEffectLines(true, null), paraPad,
                         detailsWidth);
             } else {
+                addDetailSection(element, "item.tooltip.implicit", loadedItem.implicitSlottedLines(false), paraPad);
                 addDetailSection(element, "item.tooltip.explicit", loadedItem.slottedEffectLines(false, null), paraPad);
             }
         }
@@ -1522,7 +1521,7 @@ public final class CraftingBenchPanel extends HoloPanel {
             return;
         }
         element.addSectionHeading(Translation.text(headingKey), Alignment.MID, headingPad);
-        SlottedRows.Layout layout = new SlottedRows.Layout(sectionWidth - SCROLLBAR_ROOM, SLOT_TAG_WIDTH, GAP, TooltipTextSize::applyBodyFont);
+        SlottedRows.Layout layout = new SlottedRows.Layout(sectionWidth - SCROLLBAR_ROOM, CAPTION_TAG_GAP, GAP, TooltipTextSize::applyBodyFont);
         SlottedRows.add(element, lines, layout, GAP, LINE_PAD, line -> addLineDetailTooltip(element, line));
     }
 

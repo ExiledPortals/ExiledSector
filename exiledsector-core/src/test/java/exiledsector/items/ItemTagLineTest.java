@@ -4,6 +4,7 @@ import exiledsector.i18n.StyledText;
 import exiledsector.items.modifier.PoolEntry;
 import exiledsector.items.modifier.RolledLine;
 import exiledsector.items.modifier.RolledModifier;
+import exiledsector.items.modifier.SlottedLine;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ItemTagLineTest {
@@ -50,13 +52,23 @@ class ItemTagLineTest {
     }
 
     @Test
-    void expandedLinesListEachTaggedModifiersOwnTagsUnderIt() {
-        List<String> expanded = item().slottedEffectLines(true, null).stream().map(line -> line.text().toMarkup()).toList();
+    void expandedLinesCaptionEachModifierWithItsOwnTags() {
+        List<SlottedLine> expanded = item().slottedEffectLines(true, null);
 
-        assertEquals(7, expanded.size(), expanded.toString());
-        assertEquals("<muted>Armor, Hull</muted>", expanded.get(3));
-        assertEquals("<muted>Front Shield</muted>", expanded.get(5));
-        assertTrue(expanded.get(6).contains("(4%-6%)"), expanded.get(6));
+        assertEquals(List.of(true, false, false, true, false, true, false), expanded.stream().map(SlottedLine::caption).toList());
+        assertEquals("Prefix", expanded.get(0).text().plain());
+        assertEquals("<muted>Armor, Hull</muted>", expanded.get(0).captionTags().toMarkup());
+        assertEquals("<muted>Front Shield</muted>", expanded.get(3).captionTags().toMarkup());
+        assertNull(expanded.get(5).captionTags());
+        assertTrue(expanded.get(6).text().plain().contains("(4%-6%)"), expanded.get(6).text().plain());
+    }
+
+    @Test
+    void textOnlyExpandedLinesPutACaptionsTagsBesideItsLabels() {
+        List<String> expanded = item().effectLines(true).stream().map(StyledText::plain).toList();
+
+        assertEquals("Prefix - Armor, Hull", expanded.get(0));
+        assertEquals("Suffix", expanded.get(5));
     }
 
     @Test

@@ -100,7 +100,7 @@ class ItemEffectsTest {
         assertSame(plunderEffects, item.modifierEffects());
         assertEquals(PLUNDER, item.effects().get(0).effectName());
         assertEquals(List.of("Plunder +15%"), item.effectLines().stream().map(StyledText::plain).toList());
-        assertTrue(item.effectLines(true).get(0).plain().startsWith("Plunder +15%"));
+        assertTrue(item.effectLines(true).get(1).plain().startsWith("Plunder +15%"));
         assertTrue(item.skillEffects().isEmpty(), "an effect that is not a ship skill effect never reaches a ship");
         assertEquals("Plunder +10/20%", new RolledLine(PLUNDER, 10f)
                 .rangeDescription(plunderEffects, ModifierLine.perTierGroup(PLUNDER, List.of(TierGroup.MID, TierGroup.HIGH), List.of(10f, 20f))).plain());

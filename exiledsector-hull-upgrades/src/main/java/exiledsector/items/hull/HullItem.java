@@ -3,6 +3,7 @@ package exiledsector.items.hull;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.ExiledSector;
 import exiledsector.i18n.StyledText;
+import exiledsector.items.modifier.SlottedLine;
 import exiledsector.i18n.Translation;
 import exiledsector.items.BasicItemTypeSupport;
 import exiledsector.items.Item;
@@ -207,18 +208,18 @@ public final class HullItem extends Item {
     }
 
     @Override
-    public List<StyledText> implicitLines(boolean withRollRanges) {
+    public List<SlottedLine> implicitSlottedLines(boolean withRollRanges) {
         ShipSection target = targetSection();
         if (target == null) {
-            return super.implicitLines(withRollRanges);
+            return super.implicitSlottedLines(withRollRanges);
         }
-        List<StyledText> lines = new ArrayList<>();
-        lines.add(Translation.msg("hullItem.target.line").arg("section", target.displayName()).styled());
+        List<SlottedLine> lines = new ArrayList<>();
+        lines.add(new SlottedLine(null, Translation.msg("hullItem.target.line").arg("section", target.displayName()).styled()));
         if (withRollRanges) {
             String choices = targetChoices().stream().map(ShipSection::displayName).collect(Collectors.joining(", "));
-            lines.add(Translation.msg("hullItem.target.choices").arg("sections", choices).styled());
+            lines.add(new SlottedLine(null, Translation.msg("hullItem.target.choices").arg("sections", choices).styled()));
         }
-        lines.addAll(super.implicitLines(withRollRanges));
+        lines.addAll(super.implicitSlottedLines(withRollRanges));
         return lines;
     }
 

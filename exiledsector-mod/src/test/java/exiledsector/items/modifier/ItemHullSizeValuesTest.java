@@ -82,10 +82,10 @@ class ItemHullSizeValuesTest {
 
         List<StyledText> lines = item.effectLines(true);
 
-        assertEquals(2, lines.size());
-        assertTrue(lines.get(0).plain().contains("5/10/15/20"), lines.get(0).plain());
-        StyledText.Span valueSpan = lines.get(0).spans().get(0);
-        assertTrue(lines.get(0).plain().substring(valueSpan.start(), valueSpan.end()).contains("5/10/15/20"));
+        assertEquals(4, lines.size());
+        assertTrue(lines.get(1).plain().contains("5/10/15/20"), lines.get(1).plain());
+        StyledText.Span valueSpan = lines.get(1).spans().get(0);
+        assertTrue(lines.get(1).plain().substring(valueSpan.start(), valueSpan.end()).contains("5/10/15/20"));
     }
 
     @Test
@@ -93,7 +93,7 @@ class ItemHullSizeValuesTest {
         ItemDefinitions.register(new JSONArray().put(row("scaled", "bridge", SCALED_POOL)));
         Item item = TestItems.withLines("socketable_3", "scaled", 1L, List.of(new RolledLine("ARMOR_FLAT", 5f)));
 
-        String expanded = item.effectLines(true, HullSize.CAPITAL_SHIP).get(0).plain();
+        String expanded = item.effectLines(true, HullSize.CAPITAL_SHIP).get(1).plain();
 
         assertTrue(expanded.contains("20"), expanded);
         assertFalse(expanded.contains("/") || expanded.contains("("), expanded);

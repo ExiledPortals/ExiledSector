@@ -467,13 +467,21 @@ public abstract class Item {
     }
 
     public List<StyledText> implicitLines(boolean withRollRanges) {
+        return inlineTexts(implicitRows(withRollRanges));
+    }
+
+    public List<SlottedLine> implicitRows(boolean withRollRanges) {
+        return rows(implicitSlottedLines(withRollRanges), withRollRanges);
+    }
+
+    public List<SlottedLine> implicitSlottedLines(boolean withRollRanges) {
         List<SlottedLine> lines = new ArrayList<>();
         ModifierEffects effects = modifierEffects();
         ScaleContext context = scaleContext(null);
         for (RolledModifier implicit : implicits()) {
             addModifierLines(lines, implicit, implicitModifier(implicit.modifierId()), effects, withRollRanges, context);
         }
-        return texts(lines, withRollRanges);
+        return lines;
     }
 
     public List<StyledText> implicitLines(RolledModifier implicit) {
@@ -521,7 +529,7 @@ public abstract class Item {
             StyledText description = explicitLine(effects, effect, modifier == null ? null : modifier.line(effect.effectName()),
                     withRollRanges, context);
             if (description != null) {
-                StyledText shown = shownAs(rolledModifier, description);
+                StyledText shown = shownAs(rolledModifier, description, withRollRanges);
                 ModifierEffect resolvedEffect = effect.effect(effects);
                 described.add(resolvedEffect == null ? new SlottedLine(rolledModifier.slot(), shown)
                         : new SlottedLine(rolledModifier.slot(), shown, resolvedEffect.detailTitle(), resolvedEffect.detailLines()));
@@ -530,21 +538,19 @@ public abstract class Item {
         if (described.isEmpty()) {
             return;
         }
-        List<String> headerKeys = withRollRanges ? headerKeys(rolledModifier, described.size() > 1) : List.of();
-        if (headerKeys.isEmpty()) {
-            lines.addAll(described);
-        } else {
-            addUnderHeaders(lines, rolledModifier.slot(), headerKeys, described);
+        SlottedLine caption = withRollRanges ? caption(rolledModifier, modifier) : null;
+        if (caption != null) {
+            lines.add(caption);
         }
-        StyledText tagLine = withRollRanges && modifier != null ? ThemeTagLine.of(modifier.tags()) : null;
-        if (tagLine != null) {
-            lines.add(new SlottedLine(null, tagLine));
-        }
+        lines.addAll(described);
     }
 
-    private static StyledText shownAs(RolledModifier rolledModifier, StyledText description) {
+    private static StyledText shownAs(RolledModifier rolledModifier, StyledText description, boolean captioned) {
         if (rolledModifier.immutable()) {
             return description.withUnstyledAs(Style.IMMUTABLE);
+        }
+        if (captioned) {
+            return description;
         }
         if (rolledModifier.overcharged()) {
             return description.withUnstyledAs(Style.OVERCHARGED);
@@ -552,38 +558,43 @@ public abstract class Item {
         return rolledModifier.warped() ? description.withUnstyledAs(Style.WARPED) : description;
     }
 
-    private static void addUnderHeaders(List<SlottedLine> lines, ModifierSlot slot, List<String> headerKeys, List<SlottedLine> described) {
-        ModifierSlot headerSlot = slot;
-        for (String headerKey : headerKeys) {
-            lines.add(new SlottedLine(headerSlot, Translation.styled(headerKey)));
-            headerSlot = null;
-        }
-        for (SlottedLine line : described) {
-            lines.add(new SlottedLine(null, Translation.msg("socketable.tooltip.hybridLine").arg("line", line.text()).styled(),
-                    line.detailTitle(), line.details()));
-        }
-    }
-
-    private static List<String> headerKeys(RolledModifier rolledModifier, boolean hybrid) {
-        List<String> headerKeys = new ArrayList<>(3);
-        if (rolledModifier.warped()) {
-            headerKeys.add("socketable.tooltip.warpedHeader");
+    private static SlottedLine caption(RolledModifier rolledModifier, Modifier modifier) {
+        List<StyledText> labels = new ArrayList<>(4);
+        String slotKey = captionSlotKey(rolledModifier.slot());
+        if (slotKey != null) {
+            labels.add(Translation.styled(slotKey));
         }
         String originHeaderKey = ModifierSources.headerKey(rolledModifier.modifierId());
         if (originHeaderKey != null) {
-            headerKeys.add(originHeaderKey);
+            labels.add(Translation.styled(originHeaderKey));
+        }
+        if (rolledModifier.warped()) {
+            labels.add(Translation.styled("socketable.tooltip.warped"));
         }
         if (rolledModifier.overcharged()) {
-            headerKeys.add("socketable.tooltip.overcharged");
+            labels.add(Translation.styled("socketable.tooltip.overcharged"));
         }
-        if (hybrid) {
-            headerKeys.add("socketable.tooltip.hybrid");
+        StyledText tags = modifier == null ? null : ThemeTagLine.of(modifier.tags());
+        if (labels.isEmpty() && tags == null) {
+            return null;
         }
-        return headerKeys;
+        StyledText labelText = labels.isEmpty() ? StyledText.EMPTY : Translation.list(labels).withUnstyledAs(Style.MUTED);
+        return SlottedLine.caption(rolledModifier.slot(), labelText, tags);
+    }
+
+    public static String captionSlotKey(ModifierSlot slot) {
+        if (slot == ModifierSlot.PREFIX) {
+            return "item.tooltip.caption.prefix";
+        }
+        return slot == ModifierSlot.SUFFIX ? "item.tooltip.caption.suffix" : null;
     }
 
     private static List<StyledText> texts(List<SlottedLine> lines, boolean withDetails) {
-        return rows(lines, withDetails).stream().map(SlottedLine::text).toList();
+        return inlineTexts(rows(lines, withDetails));
+    }
+
+    private static List<StyledText> inlineTexts(List<SlottedLine> rows) {
+        return rows.stream().map(SlottedLine::inlineText).toList();
     }
 
     private static List<SlottedLine> rows(List<SlottedLine> lines, boolean withDetails) {

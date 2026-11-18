@@ -1,12 +1,12 @@
 package exiledsector.ui.socket;
 
 import exiledsector.i18n.RealCatalogue;
+import exiledsector.items.Item;
 import exiledsector.items.ItemNature;
 import exiledsector.items.crafting.CorruptionOutcome;
 import exiledsector.items.crafting.material.CraftingInhibitor;
 import exiledsector.items.crafting.material.MaterialItems;
 import exiledsector.items.crafting.material.Nanoswarm;
-import exiledsector.items.modifier.SlottedRows;
 import exiledsector.modifiers.ModifierSlot;
 import org.json.JSONObject;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -49,8 +49,9 @@ class CraftingBenchStringKeysTest {
         require(catalogue, InhibitorTray.INSTANCE.titleKey(), missing);
         require(catalogue, InhibitorTray.INSTANCE.emptyKey(), missing);
         for (ModifierSlot slot : List.of(ModifierSlot.PREFIX, ModifierSlot.SUFFIX)) {
-            require(catalogue, SlottedRows.slotTagKey(slot), missing);
+            require(catalogue, Item.captionSlotKey(slot), missing);
         }
+        require(catalogue, "item.tooltip.captionLine", missing);
         assertEquals(List.of(), missing);
     }
 

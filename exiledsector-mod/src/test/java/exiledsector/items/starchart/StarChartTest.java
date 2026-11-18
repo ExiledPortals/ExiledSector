@@ -290,12 +290,12 @@ class StarChartTest {
             List<StyledText> expanded = chart.effectLines(true);
 
             assertEquals(1, collapsed.size());
-            assertEquals(collapsed.get(0).plain(), expanded.get(0).plain());
             StyledText hullbreacherTagLine = ThemeTagLine.of(ItemModifiers.get("CHART_ENEMY_HULLBREACHER_ROUNDS").tags());
+            assertEquals("Prefix - " + hullbreacherTagLine.plain(), expanded.get(0).plain());
+            assertEquals(collapsed.get(0).plain(), expanded.get(1).plain());
             assertTrue(expanded.size() > 3, expanded.toString());
-            assertTrue(expanded.get(1).spans().stream().anyMatch(span -> span.style() == Style.BAD), expanded.get(1).toMarkup());
-            assertTrue(expanded.get(expanded.size() - 2).plain().endsWith(SkillTree.get("hullbreacher_rounds_1").getType().getFlavourText()));
-            assertEquals(hullbreacherTagLine.plain(), expanded.get(expanded.size() - 1).plain());
+            assertTrue(expanded.get(2).spans().stream().anyMatch(span -> span.style() == Style.BAD), expanded.get(2).toMarkup());
+            assertTrue(expanded.get(expanded.size() - 1).plain().endsWith(SkillTree.get("hullbreacher_rounds_1").getType().getFlavourText()));
         } finally {
             RealSkillData.clear();
         }
@@ -338,7 +338,7 @@ class StarChartTest {
             List<SlottedLine> expandedLines = chart.slottedEffectLines(true, null);
             assertEquals(chart.effectLines(true).size() - 2, lines.get(0).details().size());
             assertEquals(2, expandedLines.size());
-            assertEquals(ThemeTagLine.of(ItemModifiers.get("CHART_ENEMY_HULLBREACHER_ROUNDS").tags()).plain(), expandedLines.get(1).text().plain());
+            assertEquals(ThemeTagLine.of(ItemModifiers.get("CHART_ENEMY_HULLBREACHER_ROUNDS").tags()).plain(), expandedLines.get(0).captionTags().plain());
         } finally {
             RealSkillData.clear();
         }
