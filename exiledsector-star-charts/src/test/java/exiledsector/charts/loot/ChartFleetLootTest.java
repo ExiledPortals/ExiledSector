@@ -430,10 +430,12 @@ class ChartFleetLootTest {
     }
 
     @Test
-    void theChartTiersBandShiftTimesItemRarityMovesChartFleetDropsOutOfTheCommonBand() throws Exception {
+    void theChartTiersCraftingRarityTimesItemRarityMovesChartFleetDropsTowardRarerItems() throws Exception {
         registerCraftingRate("1");
-        registerCraftingDrops(craftingDrop(AUGMENTATION, "1", "FALSE"), craftingDrop(CORRUPTION, "1", "FALSE"));
-        ChartTiers.register(new JSONArray().put(new JSONObject().put("tier", "8").put("band_shift", "1.5")));
+        registerCraftingDrops(craftingDrop(AUGMENTATION, "3", "FALSE"), craftingDrop(CORRUPTION, "1", "FALSE"));
+        ChartTiers.register(new JSONArray().put(new JSONObject().put("tier", "8").put("crafting_rarity", "1.5")));
+        double exponent = Math.pow(3, -CraftingDrops.RARITY_FLATTENING);
+        double corruptionShare = Math.pow(0.25, exponent) / (Math.pow(0.25, exponent) + Math.pow(0.75, exponent));
         try {
             ChartRun run = storeLiveRun(8);
             ChartGenContext treasure = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_ITEM_RARITY_PERCENT, 100f)));
@@ -441,9 +443,9 @@ class ChartFleetLootTest {
             Map<String, Integer> drops = rollAlone(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 100000f), run, treasure,
                     100000f, new Random(1L)).materials();
 
-            assertEquals(3f, new ChartLootContext(treasure, 8).craftingBandShift(DropType.BASIC_CRAFTING_ITEM), 1e-6f);
+            assertEquals(3f, new ChartLootContext(treasure, 8).craftingRarity(DropType.BASIC_CRAFTING_ITEM), 1e-6f);
             assertEquals(1000, total(drops));
-            assertEquals(0.75f, drops.get(CORRUPTION) / 1000f, 0.05f);
+            assertEquals(corruptionShare, drops.get(CORRUPTION) / 1000.0, 0.04);
         } finally {
             BattleLootRates.clear();
             CraftingDrops.clear();

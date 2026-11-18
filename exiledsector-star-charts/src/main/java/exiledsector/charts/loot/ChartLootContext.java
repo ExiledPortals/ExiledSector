@@ -68,16 +68,16 @@ public record ChartLootContext(ChartGenContext effects, int tier) {
         return derived == effects ? this : new ChartLootContext(derived, tier);
     }
 
-    public float bandShift() {
-        return isOutsideRuns() ? CraftingDrops.NO_BAND_SHIFT : ChartTiers.bandShift(tier);
+    public float tierCraftingRarity() {
+        return isOutsideRuns() ? CraftingDrops.BASE_RARITY : ChartTiers.craftingRarity(tier);
     }
 
     public float rarity(DropType type) {
         return itemChances().rarity(type);
     }
 
-    public float craftingBandShift(DropType craftingSubcategory) {
-        return multipliers(1f).craftingBandShift(craftingSubcategory);
+    public float craftingRarity(DropType craftingSubcategory) {
+        return multipliers(1f).craftingRarity(craftingSubcategory);
     }
 
     public ItemChances itemChances() {
@@ -89,7 +89,7 @@ public record ChartLootContext(ChartGenContext effects, int tier) {
     }
 
     public LootMultipliers multipliers(float scale) {
-        return new LootMultipliers(itemChances().scaled(scale), bandShift());
+        return new LootMultipliers(itemChances().scaled(scale), tierCraftingRarity());
     }
 
     public float quantityMult(DropType type) {

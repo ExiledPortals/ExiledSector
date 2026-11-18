@@ -196,9 +196,9 @@ public final class OfficerRewardPool {
     private static List<RewardCandidate> craftingItems(RewardKind category, RewardContext context) {
         List<RewardCandidate> craftingItems = new ArrayList<>();
         for (String itemId : OfficerRewardTable.itemsIn(category)) {
-            float shiftedWeight = CraftingDrops.shiftedWeight(itemId, context.lootMultipliers());
-            if (shiftedWeight > 0f && context.craftingItemAllowed().test(itemId)) {
-                craftingItems.add(new RewardCandidate(CarriedItem.of(category, itemId), shiftedWeight));
+            float weightAtRarity = CraftingDrops.weightAtRarity(itemId, context.lootMultipliers());
+            if (weightAtRarity > 0f && context.craftingItemAllowed().test(itemId)) {
+                craftingItems.add(new RewardCandidate(CarriedItem.of(category, itemId), weightAtRarity));
             }
         }
         return craftingItems;

@@ -82,7 +82,7 @@ class CraftingLootSourceTest {
 
     @Test
     void theChartsFeedstockQuantityAndThePlayersFoundFeedstockQuantityAddIntoOnePercent() {
-        LootMultipliers chartFeedstock = new LootMultipliers(ItemChances.increasedBy(DropType.FEEDSTOCK, 50f), CraftingDrops.NO_BAND_SHIFT);
+        LootMultipliers chartFeedstock = new LootMultipliers(ItemChances.increasedBy(DropType.FEEDSTOCK, 50f), CraftingDrops.BASE_RARITY);
         List<FleetLoss> chartFleet = List.of(new FleetLoss(100f, 1f, 0f, FleetLootRules.ownLedger(chartFeedstock)));
         List<FleetLoss> stationFleet = List.of(new FleetLoss(100f, 3f, 0f, FleetLootRules.FEEDSTOCK_ONLY));
 

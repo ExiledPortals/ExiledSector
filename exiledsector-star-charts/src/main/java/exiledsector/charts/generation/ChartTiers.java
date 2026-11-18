@@ -27,12 +27,12 @@ public final class ChartTiers {
     static final float MAX_COLONY_ITEM_CHANCE = 1f;
     static final int BOSS_EXTRA_LEVELS = 1;
     static final String TREE_SHARE_COLUMN = "tree_share";
-    static final String BAND_SHIFT_COLUMN = "band_shift";
+    static final String CRAFTING_RARITY_COLUMN = "crafting_rarity";
     private static volatile Map<Integer, ChartTier> tiers = Map.of();
     private static volatile Map<Integer, ChartTierExtras> tierExtras = Map.of();
 
-    private record ChartTierExtras(float colonyItemChance, float treeShare, float bandShift) {
-        static final ChartTierExtras MISSING = new ChartTierExtras(0f, 1f, CraftingDrops.NO_BAND_SHIFT);
+    private record ChartTierExtras(float colonyItemChance, float treeShare, float craftingRarity) {
+        static final ChartTierExtras MISSING = new ChartTierExtras(0f, 1f, CraftingDrops.BASE_RARITY);
     }
 
     private ChartTiers() {
@@ -81,12 +81,12 @@ public final class ChartTiers {
                 if (treeShare < 0f || treeShare > 1f) {
                     csv.problem(label, TREE_SHARE_COLUMN, treeShare + " is outside 0 to 1 (a fraction, so 0.5 is 50%)");
                 }
-                float bandShift = csv.number(row, BAND_SHIFT_COLUMN, CraftingDrops.NO_BAND_SHIFT, label);
-                if (bandShift < 0f) {
-                    csv.problem(label, BAND_SHIFT_COLUMN, bandShift + " is below 0");
+                float craftingRarity = csv.number(row, CRAFTING_RARITY_COLUMN, CraftingDrops.BASE_RARITY, label);
+                if (craftingRarity < 0f) {
+                    csv.problem(label, CRAFTING_RARITY_COLUMN, craftingRarity + " is below 0");
                 }
                 loadedExtras.put(tier, new ChartTierExtras(Math.max(0f, Math.min(MAX_COLONY_ITEM_CHANCE, colonyItemChance)),
-                        Math.max(0f, Math.min(1f, treeShare)), Math.max(0f, bandShift)));
+                        Math.max(0f, Math.min(1f, treeShare)), Math.max(0f, craftingRarity)));
             });
         }
         csv.report(LOG);
@@ -107,8 +107,8 @@ public final class ChartTiers {
         return extrasAt(tier).treeShare();
     }
 
-    public static float bandShift(int tier) {
-        return extrasAt(tier).bandShift();
+    public static float craftingRarity(int tier) {
+        return extrasAt(tier).craftingRarity();
     }
 
     public static float colonyItemChance(int tier) {

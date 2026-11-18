@@ -131,10 +131,13 @@ body, connects to everything on that orbit, so holding any one of them lets you 
 
 ### Rarity
 
-A higher chart tier makes rare, unique and mythic crafting items a larger share of what its fleets, sites and bosses
-drop, without changing how many drop. Increased rarity from a chart's modifiers multiplies that shift by the same
-amount at every tier, and makes hull items found anywhere in the system more likely to roll extra modifiers and unique
-items more likely to drop.
+A higher chart tier makes rarer crafting items a larger share of what its fleets, sites and bosses drop, without
+changing how many drop. Increased rarity from a chart's modifiers works the same way and is as strong at every tier, and makes hull
+items found anywhere in the system more likely to roll extra modifiers and unique items more likely to drop.
+
+The rarer a crafting item is, the more rarity helps it, so the extra share comes from the most common ones such as
+Augmentation and Reshaping Nanoswarms. More rarity always helps: a rarer item never outdrops a more common one, but
+the gap keeps narrowing however much rarity you stack.
 
 ### Biome modifiers
 

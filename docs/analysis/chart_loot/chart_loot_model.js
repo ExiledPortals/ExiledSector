@@ -38,23 +38,25 @@ function readCsv(file) {
   return lines.slice(1).map(line => Object.fromEntries(line.split(',').slice(0, header.length).map((cell, index) => [header[index], cell])));
 }
 
-const COMMON_BANDS = new Set(['augmentation', 'fundamental', 'reshaping', 'beam', 'non_beam_energy', 'ballistic', 'missile', 'reforge', 'erasure']);
+const RARITY_FLATTENING = 0.4;
 const CIPHER_KEYS = new Set(['reforge', 'erasure', 'cartographer']);
 const shortKey = itemId => itemId.replace('exiledSector_', '').replace(/_(nanoswarm|nanoseed|inhibitor|cipher)$/, '');
 const CRAFTING_DROPS = readCsv('crafting_drops.csv').map(row => ({
-  key: shortKey(row.item), weight: +row.weight, chartOnly: row.chart_only.toUpperCase() === 'TRUE', common: COMMON_BANDS.has(shortKey(row.item)),
+  key: shortKey(row.item), weight: +row.weight, chartOnly: row.chart_only.toUpperCase() === 'TRUE',
 }));
 const CRAFTING_KEYS = CRAFTING_DROPS.map(drop => drop.key);
 const BATTLE_LOOT = readCsv('battle_loot.csv');
 const CRAFTING_ITEMS_PER_100_DP = +BATTLE_LOOT.find(row => row.drop === 'crafting_item').per_100_dp;
 const FEEDSTOCK_PER_100_DP = +BATTLE_LOOT.find(row => row.drop === 'feedstock').per_100_dp;
-const BAND_SHIFTS = Object.fromEntries(readCsv('star_chart_tiers.csv').map(row => [+row.tier, +row.band_shift || 1]));
+const TABLE_WEIGHT = CRAFTING_DROPS.reduce((sum, drop) => sum + drop.weight, 0);
+const CRAFTING_RARITIES = Object.fromEntries(readCsv('star_chart_tiers.csv').map(row => [+row.tier, +row.crafting_rarity || 1]));
 
-function craftingMix(bandShift, allowed) {
+function craftingMix(rarity, allowed) {
   const pool = CRAFTING_DROPS.filter(allowed);
-  const shifted = pool.map(drop => drop.weight * (drop.common ? 1 : bandShift));
-  const total = shifted.reduce((sum, weight) => sum + weight, 0);
-  return Object.fromEntries(pool.map((drop, index) => [drop.key, shifted[index] / total]));
+  const exponent = Math.pow(Math.max(0.01, rarity), -RARITY_FLATTENING);
+  const reshaped = pool.map(drop => TABLE_WEIGHT * Math.pow(drop.weight / TABLE_WEIGHT, exponent));
+  const total = reshaped.reduce((sum, weight) => sum + weight, 0);
+  return Object.fromEntries(pool.map((drop, index) => [drop.key, reshaped[index] / total]));
 }
 const ANY_ITEM = () => true;
 const OUTSIDE_CHARTS = drop => !drop.chartOnly;
@@ -185,10 +187,10 @@ function simulateChart(tier, modifiers, samples) {
   }
   const extraPois = suffixRoll('discovery');
   const tierFleetPoints = expectedFleetPoints(tier, twinnedBoss);
-  const bandShift = (BAND_SHIFTS[tier.tier] || 1) * rarityMult;
-  const fleetMix = craftingMix(bandShift, ANY_ITEM);
-  const siteMix = craftingMix(bandShift, OUTSIDE_CHARTS);
-  const cipherMix = craftingMix(bandShift, CIPHERS_ONLY);
+  const craftingRarity = (CRAFTING_RARITIES[tier.tier] || 1) * rarityMult;
+  const fleetMix = craftingMix(craftingRarity, ANY_ITEM);
+  const siteMix = craftingMix(craftingRarity, OUTSIDE_CHARTS);
+  const cipherMix = craftingMix(craftingRarity, CIPHERS_ONLY);
   const addCraftingItems = (count, mix) => {
     for (const [key, share] of Object.entries(mix)) {
       totals[key] += count * share;

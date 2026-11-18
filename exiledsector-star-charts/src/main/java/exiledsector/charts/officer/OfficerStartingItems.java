@@ -39,7 +39,7 @@ public final class OfficerStartingItems {
     private static CarriedItem rolled(SectorAPI sector, AtlasOfficer officer, Random random) {
         try {
             int tier = tierFor(officer.rankId());
-            RewardContext context = RewardContext.forSector(sector, tier, officer.factionId(), null, LootMultipliers.atTierBandShift(ChartTiers.bandShift(tier)));
+            RewardContext context = RewardContext.forSector(sector, tier, officer.factionId(), null, LootMultipliers.atTierCraftingRarity(ChartTiers.craftingRarity(tier)));
             return OfficerRewardPool.startingItem(context, OfficerRanks.startingOdds(officer.rankId()), random);
         } catch (RuntimeException | LinkageError e) {
             LOG.error("[ExiledSector] Rolling the starting item of Atlas officer " + officer.recordId() + " failed", e);

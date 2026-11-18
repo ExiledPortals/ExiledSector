@@ -61,26 +61,26 @@ class ChartTiersTest {
     }
 
     @Test
-    void theShippedBandShiftStartsAtNoShiftAndNeverFallsWithTier() throws Exception {
-        assertEquals(CraftingDrops.NO_BAND_SHIFT, ChartTiers.bandShift(8));
+    void theShippedCraftingRarityStartsAtBaseAndNeverFallsWithTier() throws Exception {
+        assertEquals(CraftingDrops.BASE_RARITY, ChartTiers.craftingRarity(8));
         ChartTiers.register(ChartTables.csvRows(ChartTiers.PATH));
 
-        assertEquals(CraftingDrops.NO_BAND_SHIFT, ChartTiers.bandShift(ChartTiers.LOWEST_TIER));
+        assertEquals(CraftingDrops.BASE_RARITY, ChartTiers.craftingRarity(ChartTiers.LOWEST_TIER));
         for (int tier = ChartTiers.LOWEST_TIER + 1; tier <= ChartTiers.HIGHEST_TIER; tier++) {
-            assertTrue(ChartTiers.bandShift(tier) >= ChartTiers.bandShift(tier - 1), "tier " + tier);
+            assertTrue(ChartTiers.craftingRarity(tier) >= ChartTiers.craftingRarity(tier - 1), "tier " + tier);
         }
-        assertEquals(2.11f, ChartTiers.bandShift(15), 1e-6f);
-        assertEquals(ChartTiers.bandShift(ChartTiers.HIGHEST_TIER), ChartTiers.bandShift(99));
+        assertEquals(1.66f, ChartTiers.craftingRarity(15), 1e-6f);
+        assertEquals(ChartTiers.craftingRarity(ChartTiers.HIGHEST_TIER), ChartTiers.craftingRarity(99));
     }
 
     @Test
-    void aRunsBandShiftIsItsTiersShiftTimesItsItemRarity() throws Exception {
+    void aRunsCraftingRarityIsItsTiersCraftingRarityTimesItsItemRarity() throws Exception {
         ChartTiers.register(ChartTables.csvRows(ChartTiers.PATH));
         ChartGenContext treasure = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_ITEM_RARITY_PERCENT, 30f)));
 
-        assertEquals(ChartTiers.bandShift(5), ChartLootContext.atTier(5).craftingBandShift(DropType.BASIC_CRAFTING_ITEM), 1e-6f);
-        assertEquals(ChartTiers.bandShift(5) * 1.3f, new ChartLootContext(treasure, 5).craftingBandShift(DropType.BASIC_CRAFTING_ITEM), 1e-5f);
-        assertEquals(ChartTiers.bandShift(5) * 1.3f, new ChartLootContext(treasure, 5).craftingBandShift(DropType.INHIBITOR), 1e-5f);
+        assertEquals(ChartTiers.craftingRarity(5), ChartLootContext.atTier(5).craftingRarity(DropType.BASIC_CRAFTING_ITEM), 1e-6f);
+        assertEquals(ChartTiers.craftingRarity(5) * 1.3f, new ChartLootContext(treasure, 5).craftingRarity(DropType.BASIC_CRAFTING_ITEM), 1e-5f);
+        assertEquals(ChartTiers.craftingRarity(5) * 1.3f, new ChartLootContext(treasure, 5).craftingRarity(DropType.INHIBITOR), 1e-5f);
         assertEquals(1.3f, treasure.itemChances().rarity(DropType.ITEM), 1e-6f);
     }
 }

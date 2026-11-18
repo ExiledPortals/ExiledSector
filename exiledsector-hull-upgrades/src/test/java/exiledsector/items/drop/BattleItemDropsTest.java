@@ -86,7 +86,7 @@ class BattleItemDropsTest {
 
     private static FleetLootRules rules(ItemChances chances, boolean ownLedger) {
         FleetLootRules.Kind kind = ownLedger ? FleetLootRules.Kind.OWN_LEDGER : FleetLootRules.Kind.LEVEL_SCALED;
-        return new FleetLootRules(kind, new LootMultipliers(chances, CraftingDrops.NO_BAND_SHIFT), false);
+        return new FleetLootRules(kind, new LootMultipliers(chances, CraftingDrops.BASE_RARITY), false);
     }
 
     private static BattleItemDrops.Battle battle(FleetLoss... sources) {

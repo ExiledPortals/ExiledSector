@@ -1,8 +1,8 @@
 id,category,share,tier,weight,min_count,max_count,note
 hull_item,,35,,,,,"Rows with no category are the reward pool's categories: each one's share of the three offers an Atlas officer gives on defeat, and of every officer's starting item, before the item weights apply within it. A category's share splits over its reward groups (low, mid and high tier crafting items; every other category is one group) by the summed weights of each group's items at the run tier, so a rarer tier is offered less often. The three offers are three different groups, each a hidden item drawn by weight within its group. hull_item is the non-unique hull item base types by rarity"
 biome_hull_item,,15,,,,,"A hull item base type that always carries a biome modifier: the command centre biome's, else a random one from the biomes the player has opened"
-crafting_item,,30,,,,,"Crafting items by their crafting_drops.csv weight with the run's band shift"
-inhibitor,,7,,,,,"Prefix and Suffix Inhibitors by their crafting_drops.csv weight with the run's band shift"
+crafting_item,,30,,,,,"Crafting items by their crafting_drops.csv weight with the run's crafting rarity"
+inhibitor,,7,,,,,"Prefix and Suffix Inhibitors by their crafting_drops.csv weight with the run's crafting rarity"
 engram,,8,,,,,"Engrams by their engrams.csv weight, from their min_tier"
 feedstock,,8,,,,,"Placeholder share. Nanite Feedstock and the infused feedstocks by their weight below"
 star_chart,,7,,,,,"Placeholder share. Star Charts that roll at the run tier, by rarity. One drops at the tier of the run the officer is beaten in, swapped for another Star Chart if it can't roll there"

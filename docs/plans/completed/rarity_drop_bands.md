@@ -6,6 +6,9 @@ then a weighted pick within the band. This replaces three separate weight tables
 `battle_loot.csv`, `chart_materials.csv` with its per-tier targets and fleet-point shares, and each family's
 `dropWeight` used by salvage sites) with one count rule and one weight table.
 
+Rules 4 to 6 (the bands and the band shift) were later replaced by `crafting_rarity_curve.md`; the count rule and the
+one weight table still stand.
+
 Today rarity (`ItemChances.rarity`, fed only by the chart suffix `CHART_ITEM_RARITY_PERCENT`, Treasure) weights
 subroutine and salvage modifier counts and scales unique hull item chances. Crafting items ignore it. Those jobs
 stay as they are.

@@ -3,7 +3,7 @@ package exiledsector.loot;
 import exiledsector.items.drop.CraftingDrops;
 import exiledsector.items.drop.ItemChances;
 
-public record LootMultipliers(ItemChances chances, float tierBandShift) {
+public record LootMultipliers(ItemChances chances, float tierCraftingRarity) {
 
     public static final LootMultipliers NONE = of(1f);
 
@@ -12,11 +12,11 @@ public record LootMultipliers(ItemChances chances, float tierBandShift) {
     }
 
     public static LootMultipliers of(float share) {
-        return new LootMultipliers(ItemChances.atShare(share), CraftingDrops.NO_BAND_SHIFT);
+        return new LootMultipliers(ItemChances.atShare(share), CraftingDrops.BASE_RARITY);
     }
 
-    public static LootMultipliers atTierBandShift(float tierBandShift) {
-        return new LootMultipliers(ItemChances.BASE, tierBandShift);
+    public static LootMultipliers atTierCraftingRarity(float tierCraftingRarity) {
+        return new LootMultipliers(ItemChances.BASE, tierCraftingRarity);
     }
 
     public float quantity(DropType type) {
@@ -27,11 +27,11 @@ public record LootMultipliers(ItemChances chances, float tierBandShift) {
         return chances.rarity(type);
     }
 
-    public float craftingBandShift(DropType craftingSubcategory) {
-        return tierBandShift * chances.rarity(craftingSubcategory);
+    public float craftingRarity(DropType craftingSubcategory) {
+        return tierCraftingRarity * chances.rarity(craftingSubcategory);
     }
 
     public LootMultipliers withChances(ItemChances chances) {
-        return new LootMultipliers(chances, tierBandShift);
+        return new LootMultipliers(chances, tierCraftingRarity);
     }
 }

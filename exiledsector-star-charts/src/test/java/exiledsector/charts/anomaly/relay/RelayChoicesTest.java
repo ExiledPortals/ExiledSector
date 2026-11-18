@@ -86,7 +86,7 @@ class RelayChoicesTest {
     }
 
     private static RewardContext context() {
-        return new RewardContext(5, null, null, biomeId -> false, definition -> true, itemId -> true, LootMultipliers.atTierBandShift(ChartTiers.bandShift(5)));
+        return new RewardContext(5, null, null, biomeId -> false, definition -> true, itemId -> true, LootMultipliers.atTierCraftingRarity(ChartTiers.craftingRarity(5)));
     }
 
     private static ChartRun wokenRun(String runId, RelayKind... woken) {

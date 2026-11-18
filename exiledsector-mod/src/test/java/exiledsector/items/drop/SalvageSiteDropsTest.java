@@ -249,7 +249,7 @@ class SalvageSiteDropsTest {
         Random random = new Random(13L);
         List<Map<String, Integer>> rolls = new java.util.ArrayList<>();
         for (int i = 0; i < TRIALS; i++) {
-            rolls.add(SalvageSiteDrops.rollMaterials(site, random, new LootMultipliers(ItemChances.atShare(mult), CraftingDrops.NO_BAND_SHIFT)));
+            rolls.add(SalvageSiteDrops.rollMaterials(site, random, new LootMultipliers(ItemChances.atShare(mult), CraftingDrops.BASE_RARITY)));
         }
         return rolls;
     }
@@ -296,23 +296,23 @@ class SalvageSiteDropsTest {
     }
 
     @Test
-    void aSitesBandShiftMovesItsCraftingItemsOutOfTheCommonBand() {
+    void aSitesCraftingRarityMovesItsCraftingItemsTowardRarerOnes() {
         Random random = new Random(19L);
-        List<Map<String, Integer>> shifted = new java.util.ArrayList<>();
+        List<Map<String, Integer>> rarer = new java.util.ArrayList<>();
         for (int i = 0; i < TRIALS; i++) {
-            shifted.add(SalvageSiteDrops.rollMaterials("station", random, new LootMultipliers(ItemChances.BASE, 3f)));
+            rarer.add(SalvageSiteDrops.rollMaterials("station", random, new LootMultipliers(ItemChances.BASE, 3f)));
         }
-        List<Map<String, Integer>> unshifted = materials("station", 1f);
+        List<Map<String, Integer>> base = materials("station", 1f);
 
-        assertEquals(averageCraftingItems(unshifted), averageCraftingItems(shifted), 0.02);
-        assertTrue(averageCount(shifted, Nanoswarm.CORRUPTION.itemId()) > 1.5 * averageCount(unshifted, Nanoswarm.CORRUPTION.itemId()));
-        assertTrue(averageCount(shifted, Nanoswarm.AUGMENTATION.itemId()) < averageCount(unshifted, Nanoswarm.AUGMENTATION.itemId()));
+        assertEquals(averageCraftingItems(base), averageCraftingItems(rarer), 0.02);
+        assertTrue(averageCount(rarer, Nanoswarm.IMMUTABLE.itemId()) > 1.5 * averageCount(base, Nanoswarm.IMMUTABLE.itemId()));
+        assertTrue(averageCount(rarer, Nanoswarm.AUGMENTATION.itemId()) < averageCount(base, Nanoswarm.AUGMENTATION.itemId()));
     }
 
     @Test
     void aSitesInhibitorsScaleByTheInhibitorNodeAndItsOtherCraftingItemsDoNot() {
         Random random = new Random(23L);
-        LootMultipliers moreInhibitors = new LootMultipliers(ItemChances.increasedBy(DropType.INHIBITOR, 100f), CraftingDrops.NO_BAND_SHIFT);
+        LootMultipliers moreInhibitors = new LootMultipliers(ItemChances.increasedBy(DropType.INHIBITOR, 100f), CraftingDrops.BASE_RARITY);
         List<Map<String, Integer>> boosted = new java.util.ArrayList<>();
         for (int i = 0; i < TRIALS; i++) {
             boosted.add(SalvageSiteDrops.rollMaterials("station", random, moreInhibitors));
@@ -346,7 +346,7 @@ class SalvageSiteDropsTest {
         ItemChances craftingItemsOnly = new ItemChances(Map.of(DropType.FEEDSTOCK, -100f, DropType.CRAFTING_ITEM, 100f), Map.of(), 1f);
         List<Map<String, Integer>> craftingItemOnly = new java.util.ArrayList<>();
         for (int i = 0; i < TRIALS; i++) {
-            craftingItemOnly.add(SalvageSiteDrops.rollMaterials("probe", random, new LootMultipliers(craftingItemsOnly, CraftingDrops.NO_BAND_SHIFT)));
+            craftingItemOnly.add(SalvageSiteDrops.rollMaterials("probe", random, new LootMultipliers(craftingItemsOnly, CraftingDrops.BASE_RARITY)));
         }
 
         assertEquals(0.0, materialShare(craftingItemOnly, roll -> roll.containsKey(ItemDisassembly.FEEDSTOCK_ITEM_ID)), 0.0);

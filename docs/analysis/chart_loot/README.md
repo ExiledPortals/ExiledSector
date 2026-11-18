@@ -11,8 +11,12 @@ They are estimates for balancing, not measurements.
 - `chart_loot_model.js`: the model that writes all four; run `node docs/analysis/chart_loot/chart_loot_model.js` (about a minute).
   Its tier table, drop rates, site rows and modifier rolls are copied from the data files, so update them there first when those change.
   Crafting items and battle feedstock are read straight from `crafting_drops.csv`, the `crafting_item` and `feedstock` rows of
-  `battle_loot.csv` and the `band_shift` column of `star_chart_tiers.csv`.
-- `rarity_band_model.js`: crafting drops under `docs/plans/completed/rarity_drop_bands.md` against the drops before it, with the old
+  `battle_loot.csv` and the `crafting_rarity` column of `star_chart_tiers.csv`.
+- `crafting_rarity_model.js`: the rarity curve in `docs/plans/completed/crafting_rarity_curve.md` against the band shifts it replaced; run
+  `node docs/analysis/chart_loot/crafting_rarity_model.js`. It prints the crafting rarity that gives each tier the same average drop rarity as its old
+  band shift (the values in `star_chart_tiers.csv`) and writes `crafting_rarity_tiers.csv` (each tier, bands against the curve) and
+  `crafting_rarity_sweep.csv` (tier 15 from 0% to 800% increased rarity).
+- `rarity_band_model.js`: the band system the rarity curve replaced. Crafting drops under `docs/plans/completed/rarity_drop_bands.md` against the drops before it, with the old
   `chart_materials.csv` amounts and `battle_loot.csv` crafting rows kept in the script and the chart tiers read from the data files; run
   `node docs/analysis/chart_loot/rarity_band_model.js`. It writes `rarity_band_tiers.csv` (totals at the planned rate, Augmentation, Corrupted, the unique band and
   Immutable, common share), `rarity_band_items.csv` (each item at tiers 1, 8 and 15) and `rarity_band_outside.csv` (a 300 DP fight at player level 1 and the level cap

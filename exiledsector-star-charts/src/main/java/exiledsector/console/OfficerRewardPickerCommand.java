@@ -50,7 +50,7 @@ public class OfficerRewardPickerCommand extends PlayerFleetCommand {
             return CommandResult.BAD_SYNTAX;
         }
         SectorAPI sector = Global.getSector();
-        List<CarriedItem> offers = OfficerRewardPool.offers(RewardContext.forSector(sector, tier, null, null, LootMultipliers.atTierBandShift(ChartTiers.bandShift(tier))), random);
+        List<CarriedItem> offers = OfficerRewardPool.offers(RewardContext.forSector(sector, tier, null, null, LootMultipliers.atTierCraftingRarity(ChartTiers.craftingRarity(tier))), random);
         if (offers.isEmpty()) {
             Console.showMessage("No reward can be offered at tier " + tier + ".");
             return CommandResult.ERROR;
