@@ -12,8 +12,11 @@ import exiledsector.ui.belt.RingBeltRenderer;
 import exiledsector.ui.decoration.AtmosphereRing;
 import exiledsector.ui.decoration.PlanetSphere;
 import exiledsector.ui.decoration.UnitSphere;
+import exiledsector.ui.util.GlScope;
+import exiledsector.ui.util.HoloShapes;
 import exiledsector.ui.util.SpriteDraw;
 import org.lwjgl.util.vector.Vector2f;
+import org.lwjgl.util.vector.Vector3f;
 
 import java.awt.Color;
 import java.util.List;
@@ -27,10 +30,15 @@ final class AtlasBodyPainter {
     private static final String SITE_LIGHT_PATH = AtlasSystemArt.GLOW;
     private static final String CORE_GLOW_PATH = "graphics/fx/hit_glow.png";
     private static final String WHIRL_PATH = "graphics/stations/gate_whirl_glow.png";
+    private static final float BREACH_VOID_SHARE = 1.05f;
+    private static final float BREACH_VOID_EDGE_SHARE = 1.3f;
     private static final float SITE_LIGHT_REACH = 0.8f;
-    private static final float SITE_LIGHT_SIZE = 0.15f;
-    private static final float SITE_LIGHT_MIN_PIXELS = 6f;
-    private static final float SITE_LIGHT_MAX_PIXELS = 18f;
+    private static final float SITE_LIGHT_SIZE = 0.3f;
+    private static final float SITE_LIGHT_MIN_PIXELS = 12f;
+    private static final float SITE_LIGHT_MAX_PIXELS = 36f;
+    private static final int SITE_LIGHT_LAYERS = 2;
+    private static final float SITE_LIGHT_MAX_LATITUDE = 45f;
+    private static final float SITE_LIGHT_LIMB_FADE = 0.25f;
     private static final float SITE_LIGHT_BLINKS_PER_SECOND = 4f;
     private static final float UNLIT_SITE_LIGHT_SHARE = 0.6f;
     private static final float BINARY_SEPARATION = 0.55f;
@@ -65,6 +73,7 @@ final class AtlasBodyPainter {
     private final CategorySprite atmosphereTexture = new CategorySprite(AtmosphereRing.TEXTURE_CATEGORY, AtmosphereRing.TEXTURE_ID);
     private final CategorySprite dustRings = new CategorySprite("misc", "rings_dust0");
     private final Vector2f bandCentre = new Vector2f();
+    private final Vector3f siteOffset = new Vector3f();
 
     record Placement(float screenX, float screenY, float screenRadius, float headingDegrees, float spinDegrees, float seedDegrees) {
     }
@@ -84,18 +93,54 @@ final class AtlasBodyPainter {
             default -> paintPlain(colour, placement, lighting, alpha);
         }
         if (siteLight != null) {
-            paintSiteLight(siteLight, placement, lighting, seconds, alpha);
+            paintSiteLight(art, siteLight, placement, lighting, seconds, alpha);
         }
     }
 
-    private void paintSiteLight(Color light, Placement placement, Lighting lighting, float seconds, float alpha) {
-        double siteAngle = Math.toRadians(placement.seedDegrees());
+    private void paintSiteLight(AtlasBodyArt art, Color light, Placement placement, Lighting lighting, float seconds, float alpha) {
         float radius = placement.screenRadius();
+        PlanetSpecAPI spec = art.kind() == AtlasBodyArt.Kind.PLANET ? PlanetSpecs.byType(art.planetType()) : null;
+        float offsetX;
+        float offsetY;
+        float facing;
+        if (spec == null) {
+            double siteAngle = Math.toRadians(placement.seedDegrees());
+            offsetX = (float) Math.cos(siteAngle) * SITE_LIGHT_REACH;
+            offsetY = (float) Math.sin(siteAngle) * SITE_LIGHT_REACH;
+            facing = 1f;
+        } else {
+            siteOnSurface(spec, placement.seedDegrees(), placement.spinDegrees() + seconds * PLANET_TURN_DEGREES_PER_SECOND);
+            offsetX = siteOffset.x;
+            offsetY = siteOffset.y;
+            facing = Math.min(1f, siteOffset.z / SITE_LIGHT_LIMB_FADE);
+        }
+        if (facing <= 0f) {
+            return;
+        }
         float blink = (float) Math.sin(seconds * SITE_LIGHT_BLINKS_PER_SECOND + placement.seedDegrees()) * 0.3f + 0.7f;
         float size = Math.min(SITE_LIGHT_MAX_PIXELS, Math.max(SITE_LIGHT_MIN_PIXELS, radius * SITE_LIGHT_SIZE));
         float share = lighting == Lighting.LIT ? 1f : UNLIT_SITE_LIGHT_SHARE;
-        SpriteDraw.drawAdditiveAtCenter(sprites, SITE_LIGHT_PATH, placement.screenX() + (float) Math.cos(siteAngle) * radius * SITE_LIGHT_REACH,
-                placement.screenY() + (float) Math.sin(siteAngle) * radius * SITE_LIGHT_REACH, size, size, light, blink * share * alpha);
+        for (int layer = 0; layer < SITE_LIGHT_LAYERS; layer++) {
+            SpriteDraw.drawAdditiveAtCenter(sprites, SITE_LIGHT_PATH, placement.screenX() + offsetX * radius, placement.screenY() + offsetY * radius, size,
+                    size, light, blink * share * facing * alpha);
+        }
+    }
+
+    private void siteOnSurface(PlanetSpecAPI spec, float seedDegrees, float rotationDegrees) {
+        double latitude = Math.toRadians(SITE_LIGHT_MAX_LATITUDE * Math.sin(Math.toRadians(seedDegrees * 3f)));
+        double longitude = Math.toRadians(seedDegrees);
+        double x = Math.cos(latitude) * Math.cos(longitude);
+        double y = Math.sin(latitude);
+        double z = Math.cos(latitude) * Math.sin(longitude);
+        double spin = Math.toRadians(rotationDegrees);
+        double spunX = x * Math.cos(spin) + z * Math.sin(spin);
+        double spunZ = -x * Math.sin(spin) + z * Math.cos(spin);
+        double pitch = Math.toRadians(spec.getPitch());
+        double pitchedY = y * Math.cos(pitch) - spunZ * Math.sin(pitch);
+        double pitchedZ = y * Math.sin(pitch) + spunZ * Math.cos(pitch);
+        double tilt = Math.toRadians(spec.getTilt());
+        siteOffset.set((float) (spunX * Math.cos(tilt) - pitchedY * Math.sin(tilt)), (float) (spunX * Math.sin(tilt) + pitchedY * Math.cos(tilt)),
+                (float) -pitchedZ);
     }
 
     private void paintBinary(AtlasBodyArt art, Placement placement, Lighting lighting, float seconds, float alpha) {
@@ -207,6 +252,11 @@ final class AtlasBodyPainter {
             case DULL -> 0.2f;
         };
         float radius = placement.screenRadius();
+        try (GlScope scope = GlScope.flat()) {
+            HoloShapes.disc(placement.screenX(), placement.screenY(), radius * BREACH_VOID_SHARE, Color.BLACK, alpha);
+            HoloShapes.radialGlow(placement.screenX(), placement.screenY(), radius * BREACH_VOID_SHARE, radius * BREACH_VOID_EDGE_SHARE, Color.BLACK,
+                    alpha);
+        }
         float outer = radius * 2.4f;
         float inner = radius * 1.7f;
         SpriteDraw.drawAdditiveAtCenter(sprites, WHIRL_PATH, placement.screenX(), placement.screenY(), outer, outer, colour, alpha * strength,

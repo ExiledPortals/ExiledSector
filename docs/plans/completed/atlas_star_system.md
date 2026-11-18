@@ -30,9 +30,10 @@ lay-in-course arrows were removed on 2026-11-18 and every body now stays where t
 ## Drawing (done: `ui.atlas.AtlasTreeView`, `ui.atlas.AtlasBodyPainter`, `charts.tree.AtlasTreeBodies`)
 
 - The art is the node: dull when unallocated, brighter with a breathing ring when allocatable, full colour when
-  allocated. Bodies have no glow; excavation planets carry the chart screen's blinking site dot. Every body but the
-  star wears the ship tree's node ring in its anomaly colour (white on highways), and connectors stop at the ring's
-  edge as they do in the ship tree. Hover shows the node tooltip.
+  allocated. Excavation planets carry a bright blinking site light fixed to the surface, turning with the planet and
+  hidden while it is on the far side. Breach bodies sit on a pitch-black disc that hides the starscape, with their
+  corona peeking out round it. Every body but the star wears the ship tree's node ring in its anomaly colour (white on
+  highways), and connectors stop at the ring's edge as they do in the ship tree. Hover shows the node tooltip.
 - Each notable sits in a soft corona of its colour a little wider than the body, dull while untouched and brighter
   for each of its wheel's three nodes allocated.
 - Links along a ring are connector beams following the ring's circle, wheel links follow their spiral

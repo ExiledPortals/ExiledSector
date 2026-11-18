@@ -54,6 +54,7 @@ final class AtlasTreeView {
     private static final float[] CIRCLE = NodeRingArt.outlineRadii((cos, sin) -> 1f);
     private static final String CORONA_PATH = "graphics/fx/hit_glow.png";
     private static final float CORONA_SCALE = 2.8f;
+    private static final float BREACH_CORONA_SCALE = 3.8f;
     private static final float DULL_CORONA_ALPHA = 0.16f;
     private static final float FULL_CORONA_ALPHA = 0.55f;
 
@@ -215,7 +216,8 @@ final class AtlasTreeView {
                 }
                 float screenX = viewport.screenX(body.x());
                 float screenY = viewport.screenY(body.y());
-                float size = screenRadiusOf(body, viewport) * CORONA_SCALE;
+                float scale = body.art().kind() == AtlasBodyArt.Kind.BREACH ? BREACH_CORONA_SCALE : CORONA_SCALE;
+                float size = screenRadiusOf(body, viewport) * scale;
                 if (!viewport.isVisible(screenX, screenY, size / 2f)) {
                     continue;
                 }
