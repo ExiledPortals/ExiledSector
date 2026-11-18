@@ -5,14 +5,15 @@ import java.util.List;
 public record AtlasBodyArt(Kind kind, String planetType, List<String> spritePaths, List<String> hullIds, Shape shape, String lightColour) {
 
     public static final float DEFAULT_SIZE = 20f;
-    public static final Shape DEFAULT_SHAPE = new Shape(DEFAULT_SIZE, Facing.SPIN, 1f);
+    public static final float DEFAULT_HEADING = 90f;
+    public static final Shape DEFAULT_SHAPE = new Shape(DEFAULT_SIZE, Facing.SPIN, 1f, DEFAULT_HEADING);
     public static final AtlasBodyArt PLAIN = new AtlasBodyArt(Kind.PLAIN, null, List.of(), List.of(), DEFAULT_SHAPE, null);
 
     public enum Kind { STAR, PLANET, SPRITE, BINARY, FLEET, DERELICTS, STATION, BREACH, PLAIN }
 
     public enum Facing { SPIN, TRAVEL }
 
-    public record Shape(float size, Facing facing, float spinRate) {
+    public record Shape(float size, Facing facing, float spinRate, float heading) {
     }
 
     public AtlasBodyArt {
@@ -31,6 +32,10 @@ public record AtlasBodyArt(Kind kind, String planetType, List<String> spritePath
 
     public float spinRate() {
         return shape.spinRate();
+    }
+
+    public float heading() {
+        return shape.heading();
     }
 
     public boolean isShipGroup() {

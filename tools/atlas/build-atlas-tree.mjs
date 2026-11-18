@@ -4,28 +4,29 @@ import { fileURLToPath } from 'node:url';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const TREE_PATH = resolve(repoRoot, 'data/skilltrees/atlas_tree.json');
-const ORBITS_PATH = resolve(repoRoot, 'data/skilltrees/atlas_orbits.json');
+const BODIES_PATH = resolve(repoRoot, 'data/skilltrees/atlas_bodies.json');
 
 const ROOT_ID = 'atlas_root';
 const STAR_RADIUS = 520;
 const STAR_CLEARANCE = 260;
-const BELT_HALF_WIDTH = 75;
+const HIGHWAY_HALF_WIDTH = 75;
+const WHEEL_PAIR_CLEARANCE = 160;
 const RING_NODE_COUNTS = [8, 12, 18, 20, 24];
-const INNER_RING_SPEED = 1.2;
 const RING_HIGHWAYS = ['travel_boss_star_charts', 'travel_boss_star_charts', 'travel_catalysts', 'travel_catalysts', 'travel_chart_modifier_effect'];
 const HIGHWAY_COLOUR = '#ffffff';
 const HIGHWAY_ROCKS = Array.from({ length: 12 }, (_, index) => `graphics/asteroids/ring_asteroid${String(index).padStart(2, '0')}.png`);
 const HIGHWAY_ROCK_SIZE = 16;
 const ROOT_RAYS = 3;
-const TETHERS_INTO_RING = [0, 3, 4, 5, 6];
-const SPOKE_CLEARANCE = BELT_HALF_WIDTH + 40;
+const LINKS_INTO_RING = [0, 3, 4, 5, 6];
+const SPOKE_CLEARANCE = HIGHWAY_HALF_WIDTH + 40;
 const SPOKE_SPREAD = 30;
 const SATELLITE_GAP = 100;
 const WHEEL_CLEARANCE = 60;
-const BELT_CLEARANCE = 40;
-const LANE_CLEARANCE = 60;
-const INNER_SATELLITE_SPEED = [3.2, 5.2];
-const OUTER_SATELLITE_SPEED = [1.8, 3];
+const HIGHWAY_CLEARANCE = 40;
+const BODY_CLEARANCE = 12;
+const OUTER_SMALL_TURN = [35, 70];
+const INNER_SMALL_TURN = [60, 110];
+const SATELLITE_TRIES = 200;
 const ESCORT_BESIDE = [1, 0.75];
 const ESCORT_BEHIND = [0.5, 0.6];
 const SITE_LIGHT = '#ffbe5a';
@@ -180,8 +181,9 @@ const RINGS = [
 const MAX_CHANCE_NODES = 12;
 
 const nodes = [];
-const orbits = [];
+const bodies = [];
 const nodeById = new Map();
+const bodyById = new Map();
 const typeCounters = new Map();
 
 function nextId(type) {
@@ -190,14 +192,16 @@ function nextId(type) {
   return `${type}_${count}`;
 }
 
-function addNode(type, x, y, tags, orbit) {
+function addNode(type, x, y, tags, body) {
   const node = { id: nextId(type), type, connectedTo: [], x: round(x), y: round(y) };
   if (tags.length > 0) {
     node.tags = tags;
   }
   nodes.push(node);
   nodeById.set(node.id, node);
-  orbits.push({ id: node.id, ...orbit });
+  const entry = { id: node.id, ...body };
+  bodies.push(entry);
+  bodyById.set(node.id, entry);
   return node;
 }
 
@@ -256,7 +260,7 @@ const plannedWheels = RINGS.flatMap((entries, ringIndex) => entries.map((entry, 
 }));
 plannedWheels.forEach(shapeWheel);
 
-const extentOf = (ringIndex, inside) => Math.max(BELT_HALF_WIDTH,
+const extentOf = (ringIndex, inside) => Math.max(HIGHWAY_HALF_WIDTH,
   ...plannedWheels.filter((wheel) => wheel.ringIndex === ringIndex && wheel.inside === inside).map((wheel) => wheel.extent));
 const ringRadii = [];
 RING_NODE_COUNTS.forEach((_, ringIndex) => {
@@ -266,34 +270,31 @@ RING_NODE_COUNTS.forEach((_, ringIndex) => {
   }
   const outward = extentOf(ringIndex - 1, false);
   const inward = extentOf(ringIndex, true);
-  const gap = Math.max(outward + LANE_CLEARANCE + inward, Math.max(outward, inward) + BELT_HALF_WIDTH + BELT_CLEARANCE);
-  ringRadii.push(Math.ceil(ringRadii[ringIndex - 1] + gap));
+  const gap = Math.max((outward + WHEEL_PAIR_CLEARANCE + inward) / 2, Math.max(outward, inward) + HIGHWAY_HALF_WIDTH + HIGHWAY_CLEARANCE);
+  ringRadii.push(Math.round(ringRadii[ringIndex - 1] + gap));
 });
-
-function ringSpeed(ringIndex) {
-  return round(INNER_RING_SPEED * Math.pow(ringRadii[0] / ringRadii[ringIndex], 1.5) * 1000) / 1000;
-}
 
 const root = { id: ROOT_ID, type: ROOT_ID, connectedTo: [], x: 0, y: 0 };
 nodes.push(root);
 nodeById.set(ROOT_ID, root);
-orbits.push({ id: ROOT_ID, art: { kind: 'star', size: STAR_RADIUS } });
+const rootBody = { id: ROOT_ID, art: { kind: 'star', size: STAR_RADIUS } };
+bodies.push(rootBody);
+bodyById.set(ROOT_ID, rootBody);
 
 const rings = ringRadii.map((radius, ringIndex) => {
   const count = RING_NODE_COUNTS[ringIndex];
   const phase = random() * 360;
   const type = RING_HIGHWAYS[ringIndex];
-  const speed = ringSpeed(ringIndex);
   const ringNodes = [];
   for (let index = 0; index < count; index++) {
     const angle = phase + index * 360 / count;
     const node = addNode(type, radius * Math.cos(toRadians(angle)), radius * Math.sin(toRadians(angle)), [], {
-      around: ROOT_ID, speed, colour: HIGHWAY_COLOUR, art: { kind: 'sprite', path: pick(HIGHWAY_ROCKS), size: HIGHWAY_ROCK_SIZE, facing: 'spin' },
+      highway: true, colour: HIGHWAY_COLOUR, art: { kind: 'sprite', path: pick(HIGHWAY_ROCKS), size: HIGHWAY_ROCK_SIZE, facing: 'spin' },
     });
     ringNodes.push({ node, angle });
   }
   ringNodes.forEach(({ node }, index) => link(node, ringNodes[(index + 1) % count].node));
-  return { radius, speed, nodes: ringNodes, wheels: [], insideSpokes: [], usedSpokes: new Set() };
+  return { radius, nodes: ringNodes, wheels: [], spokes: new Set() };
 });
 
 const slotsByAnomaly = new Map();
@@ -314,20 +315,53 @@ for (const [anomaly, slots] of slotsByAnomaly) {
   });
 }
 
-function satelliteOffsets(wheel, spokeAngle) {
-  const phases = [random() * Math.PI * 2, random() * Math.PI * 2];
-  if (!wheel.convoy) {
-    return [wheel.outerTrack, wheel.innerTrack].map((track, order) => ({ x: track * Math.cos(phases[order]), y: track * Math.sin(phases[order]) }));
-  }
+function distanceToSegment(point, from, to) {
+  const lengthSquared = (to.x - from.x) ** 2 + (to.y - from.y) ** 2;
+  const share = lengthSquared === 0 ? 0
+    : Math.max(0, Math.min(1, ((point.x - from.x) * (to.x - from.x) + (point.y - from.y) * (to.y - from.y)) / lengthSquared));
+  return Math.hypot(point.x - (from.x + share * (to.x - from.x)), point.y - (from.y + share * (to.y - from.y)));
+}
+
+const clearOf = (from, to, circles) => circles.every((circle) => distanceToSegment(circle, from, to) >= circle.radius);
+const bodyCircle = (x, y, size) => ({ x, y, radius: size + BODY_CLEARANCE });
+
+function satelliteOffsets(wheel, spokeAngle, centre, spoke) {
   const outwardX = Math.cos(toRadians(spokeAngle));
   const outwardY = Math.sin(toRadians(spokeAngle));
-  const travelX = -outwardY;
-  const travelY = outwardX;
-  const highwaySide = wheel.inside ? 1 : -1;
-  return [highwaySide, -highwaySide].map((side, order) => ({
-    x: wheel.escortSpacing * (side * ESCORT_BESIDE[order] * outwardX - ESCORT_BEHIND[order] * travelX),
-    y: wheel.escortSpacing * (side * ESCORT_BESIDE[order] * outwardY - ESCORT_BEHIND[order] * travelY),
-  }));
+  if (wheel.convoy) {
+    const travelX = -outwardY;
+    const travelY = outwardX;
+    const highwaySide = wheel.inside ? 1 : -1;
+    return [highwaySide, -highwaySide].map((side, order) => ({
+      x: wheel.escortSpacing * (side * ESCORT_BESIDE[order] * outwardX - ESCORT_BEHIND[order] * travelX),
+      y: wheel.escortSpacing * (side * ESCORT_BESIDE[order] * outwardY - ESCORT_BEHIND[order] * travelY),
+    }));
+  }
+  const towardSpoke = wheel.inside ? spokeAngle : spokeAngle + 180;
+  const [outerSize, innerSize] = wheel.smallArt.map((art) => art.size);
+  const notableCircle = bodyCircle(centre.x, centre.y, wheel.art.size);
+  for (let attempt = 0; attempt < SATELLITE_TRIES; attempt++) {
+    const side = random() < 0.5 ? 1 : -1;
+    const outerAngle = towardSpoke + side * between(OUTER_SMALL_TURN);
+    const innerAngle = outerAngle + side * between(INNER_SMALL_TURN);
+    const offsets = [[wheel.outerTrack, outerAngle], [wheel.innerTrack, innerAngle]]
+      .map(([track, angle]) => ({ x: track * Math.cos(toRadians(angle)), y: track * Math.sin(toRadians(angle)) }));
+    const outer = { x: centre.x + offsets[0].x, y: centre.y + offsets[0].y };
+    const inner = { x: centre.x + offsets[1].x, y: centre.y + offsets[1].y };
+    if (clearOf(spoke, outer, [notableCircle, bodyCircle(inner.x, inner.y, innerSize)])
+      && clearOf(outer, inner, [notableCircle])
+      && clearOf(inner, centre, [bodyCircle(outer.x, outer.y, outerSize)])) {
+      return offsets;
+    }
+  }
+  throw new Error(`No clear lead-up for ${wheel.notableType}`);
+}
+
+const travelHeading = (angle) => round(-angle - 90);
+
+function withHeading(art, angle) {
+  const travels = art.facing === 'travel' || art.kind === 'fleet' || art.kind === 'derelicts' || art.kind === 'station';
+  return travels ? { ...art, heading: travelHeading(angle) } : art;
 }
 
 const placedWheels = [];
@@ -346,86 +380,104 @@ for (const wheel of plannedWheels) {
   const candidates = Array.from({ length: ring.nodes.length * 2 }, (_, offset) => {
     const shift = offset % 2 === 0 ? offset / 2 : -(offset + 1) / 2;
     return (target + shift + ring.nodes.length * 4) % ring.nodes.length;
-  }).filter((index, order, all) => all.indexOf(index) === order && !ring.usedSpokes.has(index));
+  }).filter((index, order, all) => all.indexOf(index) === order && !ring.spokes.has(index));
   const spokeIndex = candidates.find((index) => !clashes(centreOf(index), wheel.reach));
   if (spokeIndex === undefined) throw new Error(`No clear spoke for ${wheel.notableType} on ring ${wheel.ringIndex}`);
-  ring.usedSpokes.add(spokeIndex);
+  ring.spokes.add(spokeIndex);
   const spoke = ring.nodes[spokeIndex];
-  const { x: centreX, y: centreY } = centreOf(spokeIndex);
-  placedWheels.push({ x: centreX, y: centreY, reach: wheel.reach });
-  const notable = addNode(wheel.notableType, centreX, centreY, wheel.tags, { around: ROOT_ID, speed: ring.speed, colour: wheel.colour, art: wheel.art });
-  const offsets = satelliteOffsets(wheel, spoke.angle);
+  const centre = centreOf(spokeIndex);
+  placedWheels.push({ x: centre.x, y: centre.y, reach: wheel.reach });
+  const notable = addNode(wheel.notableType, centre.x, centre.y, wheel.tags, { colour: wheel.colour, art: withHeading(wheel.art, spoke.angle) });
+  const offsets = satelliteOffsets(wheel, spoke.angle, centre, spoke.node);
   const satellites = offsets.map((offset, order) => {
     const smallAnomaly = wheel.smallAnomalies[order];
-    const speedRange = order === 0 ? OUTER_SATELLITE_SPEED : INNER_SATELLITE_SPEED;
-    const speed = wheel.convoy ? 0 : round(between(speedRange) * 10) / 10;
-    return addNode(wheel.smallTypes[order], centreX + offset.x, centreY + offset.y, [smallAnomaly], {
-      around: notable.id, speed, colour: ANOMALIES[smallAnomaly].colour, art: wheel.smallArt[order],
+    return addNode(wheel.smallTypes[order], centre.x + offset.x, centre.y + offset.y, [smallAnomaly], {
+      colour: ANOMALIES[smallAnomaly].colour, art: withHeading(wheel.smallArt[order], spoke.angle),
     });
   });
   link(spoke.node, satellites[0]);
   link(satellites[0], satellites[1]);
   link(satellites[1], notable);
-  ring.wheels.push({ x: centreX, y: centreY, reach: wheel.reach, type: wheel.notableType, angle: spoke.angle, inside: wheel.inside, distance: centreDistance });
-  if (wheel.inside) ring.insideSpokes.push(spoke.node.id);
+  ring.wheels.push({ x: centre.x, y: centre.y, radius: wheel.reach + WHEEL_CLEARANCE / 2, type: wheel.notableType });
 }
 
 const overlaps = [];
 const allWheels = rings.flatMap((ring) => ring.wheels);
 allWheels.forEach((first, index) => allWheels.slice(index + 1).forEach((second) => {
   const distance = Math.hypot(first.x - second.x, first.y - second.y);
-  if (distance < first.reach + second.reach + WHEEL_CLEARANCE) overlaps.push(`${first.type} and ${second.type} (${Math.round(distance)})`);
+  if (distance < first.radius + second.radius) overlaps.push(`${first.type} and ${second.type} (${Math.round(distance)})`);
 }));
 if (overlaps.length > 0) throw new Error(`Wheels overlap: ${overlaps.join(', ')}`);
 
-const crossings = [];
-for (let ringIndex = 1; ringIndex < rings.length; ringIndex++) {
-  const outward = rings[ringIndex - 1].wheels.filter((wheel) => !wheel.inside);
-  const inward = rings[ringIndex].wheels.filter((wheel) => wheel.inside);
-  outward.forEach((lower) => inward.forEach((upper) => {
-    const clearance = (upper.distance - upper.reach) - (lower.distance + lower.reach);
-    if (clearance < LANE_CLEARANCE) crossings.push(`${lower.type} and ${upper.type} (${Math.round(clearance)})`);
-  }));
-}
-if (crossings.length > 0) throw new Error(`Wheels share a lane: ${crossings.join(', ')}`);
+const ringLinkTargets = (ringIndex) => (ringIndex === 0 ? [{ node: root, angle: null }] : rings[ringIndex - 1].nodes);
 
-function wheelsBelow(ringIndex) {
-  const inside = rings[ringIndex].wheels.filter((wheel) => wheel.inside);
-  return ringIndex === 0 ? inside : [...inside, ...rings[ringIndex - 1].wheels.filter((wheel) => !wheel.inside)];
-}
-
-function clearOfWheels(wheels, angle) {
-  return wheels.every(({ angle: wheelAngle, distance, reach }) => {
-    const clearance = Math.asin(Math.min(1, (reach + WHEEL_CLEARANCE) / distance)) * 180 / Math.PI;
-    return angularGap(angle, wheelAngle) > clearance;
-  });
-}
-
-function spreadAnchors(ringIndex, count) {
-  const ring = rings[ringIndex];
-  const below = wheelsBelow(ringIndex);
+function spreadRingLinks(ringIndex, count) {
+  const pairs = [];
+  for (const anchor of rings[ringIndex].nodes) {
+    for (const landing of ringLinkTargets(ringIndex)) {
+      if (clearOf(anchor.node, landing.node, allWheels)) {
+        pairs.push({ anchor, landing, bend: landing.angle === null ? 0 : angularGap(anchor.angle, landing.angle) });
+      }
+    }
+  }
   const chosen = [];
   const phase = random() * 360;
-  for (let anchor = 0; anchor < count; anchor++) {
-    const target = phase + anchor * 360 / count;
-    const candidates = ring.nodes
-      .filter(({ node }) => !ring.insideSpokes.includes(node.id) && !chosen.some((picked) => picked.node === node))
-      .sort((first, second) => (clearOfWheels(below, second.angle) - clearOfWheels(below, first.angle))
-        || angularGap(first.angle, target) - angularGap(second.angle, target));
-    if (candidates.length === 0) throw new Error(`No clear tether anchor on ring at ${ring.radius}`);
-    chosen.push(candidates[0]);
+  for (let index = 0; index < count; index++) {
+    const target = phase + index * 360 / count;
+    const free = pairs.filter((pair) => !chosen.some((picked) => picked.anchor === pair.anchor
+      || (pair.landing.angle !== null && picked.landing === pair.landing)));
+    if (free.length === 0) throw new Error(`No clear link into ring ${ringIndex}`);
+    const cost = (pair) => angularGap(pair.anchor.angle, target) + pair.bend * 2;
+    free.sort((first, second) => cost(first) - cost(second));
+    chosen.push(free[0]);
   }
   return chosen;
 }
 
-spreadAnchors(0, ROOT_RAYS).forEach(({ node }) => link(root, node));
-for (let ringIndex = 1; ringIndex < rings.length; ringIndex++) {
-  const below = rings[ringIndex - 1];
-  spreadAnchors(ringIndex, TETHERS_INTO_RING[ringIndex]).forEach(({ node, angle }) => {
-    const landing = [...below.nodes].sort((first, second) => angularGap(first.angle, angle) - angularGap(second.angle, angle))[0];
-    link(node, landing.node);
-  });
+rings.forEach((_, ringIndex) => {
+  const count = ringIndex === 0 ? ROOT_RAYS : LINKS_INTO_RING[ringIndex];
+  spreadRingLinks(ringIndex, count).forEach(({ anchor, landing }) => link(anchor.node, landing.node));
+});
+
+const sameRing = (first, second) => bodyById.get(first.id).highway && bodyById.get(second.id).highway
+  && Math.abs(Math.hypot(first.x, first.y) - Math.hypot(second.x, second.y)) < 1;
+const crossings = [];
+for (const node of nodes) {
+  for (const otherId of node.connectedTo) {
+    const other = nodeById.get(otherId);
+    if (node.id > other.id || sameRing(node, other)) {
+      continue;
+    }
+    const blocking = nodes.filter((body) => body !== node && body !== other && body.id !== ROOT_ID)
+      .filter((body) => distanceToSegment(body, node, other) < bodyById.get(body.id).art.size + BODY_CLEARANCE);
+    if (blocking.length > 0) crossings.push(`${node.id}-${other.id} crosses ${blocking.map((body) => body.id).join(', ')}`);
+  }
 }
+const straightLinks = nodes.flatMap((node) => node.connectedTo.map((id) => nodeById.get(id))
+  .filter((other) => node.id < other.id && !sameRing(node, other)).map((other) => [node, other]));
+function crossesCircle(from, to, radius) {
+  const deltaX = to.x - from.x;
+  const deltaY = to.y - from.y;
+  const a = deltaX * deltaX + deltaY * deltaY;
+  const b = 2 * (from.x * deltaX + from.y * deltaY);
+  const c = from.x * from.x + from.y * from.y - radius * radius;
+  const discriminant = b * b - 4 * a * c;
+  if (discriminant <= 0) return false;
+  const edge = 1 / Math.sqrt(a);
+  return [(-b - Math.sqrt(discriminant)) / (2 * a), (-b + Math.sqrt(discriminant)) / (2 * a)].some((share) => share > edge && share < 1 - edge);
+}
+for (const [from, to] of straightLinks) {
+  const crossed = ringRadii.filter((radius) => crossesCircle(from, to, radius));
+  if (crossed.length > 0) crossings.push(`${from.id}-${to.id} crosses the ring at ${crossed.join(', ')}`);
+}
+const cross = (a, b, c) => (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+straightLinks.forEach(([first, second], index) => straightLinks.slice(index + 1).forEach(([third, fourth]) => {
+  if ([first, second].some((end) => end === third || end === fourth)) return;
+  const apart = (cross(first, second, third) > 0) !== (cross(first, second, fourth) > 0);
+  const across = (cross(third, fourth, first) > 0) !== (cross(third, fourth, second) > 0);
+  if (apart && across) crossings.push(`${first.id}-${second.id} crosses ${third.id}-${fourth.id}`);
+}));
+if (crossings.length > 0) throw new Error(`Links cross: ${crossings.join('; ')}`);
 
 const chanceCounts = {};
 for (const node of nodes) {
@@ -442,11 +494,7 @@ tree.decorations = [{ kind: 'star', id: 'atlas_star', x: 0, y: 0, radius: STAR_R
 
 const withCrlf = (value) => JSON.stringify(value, null, '\t').replace(/\n/g, '\r\n') + '\r\n';
 writeFileSync(TREE_PATH, withCrlf(tree));
-writeFileSync(ORBITS_PATH, withCrlf({ orbits }));
+writeFileSync(BODIES_PATH, withCrlf({ bodies }));
 
 console.log(`${nodes.length} nodes, ${plannedWheels.length} wheels, rings ${rings.map((ring) => `${ring.nodes.length}@${ring.radius}`).join(' / ')}`);
 console.log('chance nodes', chanceCounts);
-const blockedAnchors = rings.flatMap((ring, ringIndex) => ring.nodes
-  .filter(({ node }) => node.connectedTo.some((id) => id === ROOT_ID || (ringIndex > 0 && rings[ringIndex - 1].nodes.some(({ node: lower }) => lower.id === id))))
-  .filter(({ angle }) => !clearOfWheels(wheelsBelow(ringIndex), angle)));
-console.log('ring links crossing a wheel', blockedAnchors.length);

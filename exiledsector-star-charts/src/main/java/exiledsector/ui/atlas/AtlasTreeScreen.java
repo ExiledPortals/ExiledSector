@@ -23,7 +23,6 @@ import exiledsector.ui.OverlayFade;
 import exiledsector.ui.PointerGesture;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeSounds;
-import exiledsector.ui.SmoothZoom;
 import exiledsector.ui.TooltipText;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.UiFonts;
@@ -46,7 +45,6 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
     private static final float PANEL_GAP = 8f;
     private static final float OPEN_SECONDS = AtlasScreen.OPEN_SECONDS;
     private static final float START_ZOOM = 0.3f;
-    private static final float MIN_ZOOM = 0.065f;
     private static final float TITLE_GAP = 8f;
     private static final float TOOLTIP_MAX_TEXT_HEIGHT = AtlasScreen.TOOLTIP_MAX_TEXT_HEIGHT;
     private static final String VOLUME_KEY_PREFIX = "atlasTree.volume.";
@@ -58,12 +56,12 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
     private final AtlasTreeData data = AtlasTreeData.get();
     private final SkillTreePanelStyle panelStyle = new SkillTreePanelStyle();
     private final StarfieldRenderer starfield = new StarfieldRenderer(panelStyle);
-    private final CanvasCamera camera = new CanvasCamera(MIN_ZOOM, SmoothZoom.MAX_ZOOM);
+    private final CanvasCamera camera = new CanvasCamera();
     private final CanvasDrag<Void> drag = new CanvasDrag<>(camera);
     private final PointerGesture<Void> gesture = drag.gesture();
     private final AtlasOverlayFrame frame = new AtlasOverlayFrame();
     private final TreeDecorations decorations;
-    private final AtlasOrbitView orbitView = new AtlasOrbitView(data.orbits(), panelStyle);
+    private final AtlasTreeView treeView = new AtlasTreeView(data.bodies(), panelStyle);
     private final HyperspaceMode hyperspace;
     private final TextLabel titleLabel = new TextLabel(UiFonts.TITLE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
     private final TextLabel pointsLabel = new TextLabel(UiFonts.HINT, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
@@ -73,7 +71,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
     private final TextLabel tooltipBody = new TextLabel(tooltipText.body(), SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
     private final OverlayFade fade = new OverlayFade(OPEN_SECONDS);
     private final AtlasTreeEffectsPanel effectsPanel;
-    private final AtlasOrbitView.States nodeStates = new AtlasOrbitView.States() {
+    private final AtlasTreeView.States nodeStates = new AtlasTreeView.States() {
         @Override
         public boolean allocated(String nodeId) {
             return allocation.isAllocated(nodeId);
@@ -118,7 +116,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         camera.jumpZoomTo(START_ZOOM);
         List<AtlasTreeNode> roots = data.topology().roots();
         if (!roots.isEmpty()) {
-            camera.centreOn(orbitView.x(roots.get(0).getId()), orbitView.y(roots.get(0).getId()));
+            camera.centreOn(treeView.x(roots.get(0).getId()), treeView.y(roots.get(0).getId()));
         }
         I18n.forGameText(() -> buildChrome(panel));
     }
@@ -289,7 +287,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         if (partner == null) {
             return;
         }
-        camera.panTo(orbitView.x(partner.getId()), orbitView.y(partner.getId()));
+        camera.panTo(treeView.x(partner.getId()), treeView.y(partner.getId()));
         SkillTreeSounds.wormholeJumped();
     }
 
@@ -307,7 +305,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         hyperspace.advance(amount);
         camera.advanceZoom(amount);
         camera.advancePan(amount);
-        orbitView.advance(amount, hoveredNode != null);
+        treeView.advance(amount);
         effectsPanel.advance(amount);
         boolean hovering = mouseKnown && !hyperspace.isActive() && !camera.isDragging() && !gesture.isPanning() && !effectsPanel.contains(mouseX, mouseY);
         hoveredNode = hovering ? nodeAt(mouseX, mouseY) : null;
@@ -341,7 +339,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         DecorationScene scene = new DecorationScene(viewport, alpha, treeAlpha, hyperspace.anchorIds(),
                 new DecorationScene.StarMap(hyperspace.starRadius(), hyperspace.mapAmount(), hyperspace.hiddenStarIds()));
         decorations.renderBehindTree(scene);
-        orbitView.render(viewport, nodeStates, hoveredNode == null ? null : hoveredNode.getId(), alpha * treeAlpha);
+        treeView.render(viewport, nodeStates, hoveredNode == null ? null : hoveredNode.getId(), alpha * treeAlpha);
         decorations.renderOverTree(scene);
         if (hyperspace.isActive()) {
             hyperspace.render(viewport, alpha, mouseKnown, mouseX, mouseY);
@@ -371,7 +369,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
     }
 
     private AtlasTreeNode nodeAt(float screenX, float screenY) {
-        String nodeId = orbitView.nodeAt(viewport(), screenX, screenY);
+        String nodeId = treeView.nodeAt(viewport(), screenX, screenY);
         return nodeId == null ? null : data.node(nodeId);
     }
 

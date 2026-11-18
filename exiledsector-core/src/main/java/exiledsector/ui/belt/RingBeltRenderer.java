@@ -20,30 +20,20 @@ public final class RingBeltRenderer {
     }
 
     public static void render(SpriteAPI texture, RadialBand band, Color color, float alphaMult, float rotationDeg, TreeViewport clip) {
-        render(texture, band, color, alphaMult, rotationDeg, clip, new TextureSlot(0f, 1f, texture.getHeight() / texture.getWidth()),
-                RadialBandMaths.MAX_TILE_COUNT);
+        render(texture, band, color, alphaMult, rotationDeg, clip, new TextureSlot(0f, 1f, texture.getHeight() / texture.getWidth()));
     }
 
     public static void renderSlot(SpriteAPI texture, RadialBand band, int slot, float slotWidthInImage, Color color, float alphaMult,
                                   float rotationDeg) {
-        render(texture, band, color, alphaMult, rotationDeg, null, slotOf(texture, slot, slotWidthInImage), RadialBandMaths.MAX_TILE_COUNT);
-    }
-
-    public static void renderSlotTrueScale(SpriteAPI texture, RadialBand band, int slot, float slotWidthInImage, Color color, float alphaMult,
-                                           float rotationDeg, TreeViewport clip) {
-        render(texture, band, color, alphaMult, rotationDeg, clip, slotOf(texture, slot, slotWidthInImage), RadialBandMaths.UNCAPPED_TILE_COUNT);
-    }
-
-    private static TextureSlot slotOf(SpriteAPI texture, int slot, float slotWidthInImage) {
-        return new TextureSlot(RadialBandMaths.slotInnerTexX(texture, slot, slotWidthInImage),
-                RadialBandMaths.slotOuterTexX(texture, slot, slotWidthInImage), texture.getHeight() / slotWidthInImage);
+        render(texture, band, color, alphaMult, rotationDeg, null, new TextureSlot(RadialBandMaths.slotInnerTexX(texture, slot, slotWidthInImage),
+                RadialBandMaths.slotOuterTexX(texture, slot, slotWidthInImage), texture.getHeight() / slotWidthInImage));
     }
 
     private record TextureSlot(float innerTexX, float outerTexX, float aspectRatio) {
     }
 
     private static void render(SpriteAPI texture, RadialBand band, Color color, float alphaMult, float rotationDeg, TreeViewport clip,
-                               TextureSlot slot, float maxTileCount) {
+                               TextureSlot slot) {
         if (alphaMult <= 0f) {
             return;
         }
@@ -57,7 +47,7 @@ public final class RingBeltRenderer {
         }
 
         float tileCount = RadialBandMaths.wholeTileCount(circumference, RadialBandMaths.thickness(band), slot.aspectRatio(), TILE_DENSITY,
-                maxTileCount);
+                RadialBandMaths.MAX_TILE_COUNT);
         float texPerSegment = tileCount / segments;
 
         RadialBandGL.begin(texture, band.center().x, band.center().y, GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, color, alphaMult);

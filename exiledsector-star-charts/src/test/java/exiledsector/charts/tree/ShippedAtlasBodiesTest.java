@@ -17,17 +17,19 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class ShippedAtlasOrbitsTest {
+class ShippedAtlasBodiesTest {
 
     private static final int MAX_CHANCE_NODES_PER_ANOMALY = 12;
+    private static final List<Integer> RING_NODE_COUNTS = List.of(8, 12, 18, 20, 24);
+    private static final float BODY_CLEARANCE = 12f;
     private static final List<String> ANOMALIES = List.of("spatial_breach", "relay_network", "supply_convoy", "anomalous_debris", "excavation_sites",
             "listening_post");
 
     private static AtlasTreeData shipped() throws Exception {
         JSONObject types = ProjectFiles.readJson(ProjectFiles.projectRoot().resolve(AtlasTreeData.TYPES_PATH));
         JSONObject tree = ProjectFiles.readJson(ProjectFiles.projectRoot().resolve(AtlasTreeData.TREE_PATH));
-        JSONObject orbits = ProjectFiles.readJson(ProjectFiles.projectRoot().resolve(AtlasOrbitReader.ORBITS_PATH));
-        return AtlasTreeData.parse(types, tree, orbits);
+        JSONObject bodies = ProjectFiles.readJson(ProjectFiles.projectRoot().resolve(AtlasBodyReader.BODIES_PATH));
+        return AtlasTreeData.parse(types, tree, bodies);
     }
 
     private static boolean isWheelCentre(AtlasTreeNode node) {
@@ -35,16 +37,13 @@ class ShippedAtlasOrbitsTest {
     }
 
     @Test
-    void everyTreeNodeHasAnOrbitAndEveryOrbitANode() throws Exception {
+    void everyTreeNodeHasABodyAndEveryBodyANode() throws Exception {
         AtlasTreeData data = shipped();
-        Map<String, AtlasOrbit> orbits = AtlasOrbitReader.parse(ProjectFiles.readJson(ProjectFiles.projectRoot().resolve(AtlasOrbitReader.ORBITS_PATH)));
+        Map<String, AtlasBody> bodies = AtlasBodyReader.parse(ProjectFiles.readJson(ProjectFiles.projectRoot().resolve(AtlasBodyReader.BODIES_PATH)));
         Set<String> nodeIds = new HashSet<>();
         data.topology().nodes().forEach(node -> nodeIds.add(node.getId()));
 
-        assertEquals(nodeIds, orbits.keySet());
-        for (AtlasOrbit orbit : orbits.values()) {
-            assertTrue(orbit.aroundId() == null || nodeIds.contains(orbit.aroundId()), orbit.nodeId() + " orbits missing " + orbit.aroundId());
-        }
+        assertEquals(nodeIds, bodies.keySet());
     }
 
     @Test
@@ -127,16 +126,52 @@ class ShippedAtlasOrbitsTest {
     }
 
     @Test
-    void theHighwayRingsTurnSlowerFurtherFromTheStar() throws Exception {
-        AtlasOrbitSystem system = shipped().orbits();
-        List<AtlasOrbitSystem.Track> starTracks = system.tracks().stream()
-                .filter(track -> !system.bodies().get(track.centreIndex()).orbits() && track.memberIndexes().size() > 3)
-                .sorted((first, second) -> Float.compare(first.radius(), second.radius()))
-                .toList();
-
-        assertEquals(5, starTracks.size());
-        for (int ring = 1; ring < starTracks.size(); ring++) {
-            assertTrue(starTracks.get(ring).degreesPerSecond() < starTracks.get(ring - 1).degreesPerSecond(), "ring " + ring);
+    void theHighwayNodesFormFiveRingsRoundTheStarEachJoinedToItsNeighboursAlongTheRing() throws Exception {
+        AtlasTreeBodies bodies = shipped().bodies();
+        Map<Integer, Integer> ringLinksByBody = new HashMap<>();
+        for (AtlasTreeBodies.Link link : bodies.links()) {
+            if (link.alongRing()) {
+                ringLinksByBody.merge(link.first(), 1, Integer::sum);
+                ringLinksByBody.merge(link.second(), 1, Integer::sum);
+            }
         }
+        Map<Long, Integer> nodesByRadius = new HashMap<>();
+        for (AtlasTreeBodies.Body body : bodies.bodies()) {
+            if (body.highway()) {
+                assertEquals(2, ringLinksByBody.getOrDefault(body.index(), 0), body.nodeId());
+                nodesByRadius.merge(Math.round(Math.hypot(body.x() - bodies.star().x(), body.y() - bodies.star().y())), 1, Integer::sum);
+            }
+        }
+
+        assertEquals(RING_NODE_COUNTS, nodesByRadius.entrySet().stream().sorted(Map.Entry.comparingByKey()).map(Map.Entry::getValue).toList());
+    }
+
+    @Test
+    void noStraightLinkPassesOverAnotherBody() throws Exception {
+        AtlasTreeBodies bodies = shipped().bodies();
+        List<String> crossings = new ArrayList<>();
+        for (AtlasTreeBodies.Link link : bodies.links()) {
+            if (link.alongRing()) {
+                continue;
+            }
+            AtlasTreeBodies.Body first = bodies.bodies().get(link.first());
+            AtlasTreeBodies.Body second = bodies.bodies().get(link.second());
+            for (AtlasTreeBodies.Body body : bodies.bodies()) {
+                if (body != first && body != second && body != bodies.star()
+                        && distanceToSegment(body, first, second) < body.art().size() + BODY_CLEARANCE) {
+                    crossings.add(first.nodeId() + "-" + second.nodeId() + " crosses " + body.nodeId());
+                }
+            }
+        }
+
+        assertTrue(crossings.isEmpty(), String.join("\n", crossings));
+    }
+
+    private static double distanceToSegment(AtlasTreeBodies.Body point, AtlasTreeBodies.Body from, AtlasTreeBodies.Body to) {
+        double deltaX = to.x() - from.x();
+        double deltaY = to.y() - from.y();
+        double lengthSquared = deltaX * deltaX + deltaY * deltaY;
+        double share = lengthSquared == 0 ? 0 : Math.max(0, Math.min(1, ((point.x() - from.x()) * deltaX + (point.y() - from.y()) * deltaY) / lengthSquared));
+        return Math.hypot(point.x() - (from.x() + share * deltaX), point.y() - (from.y() + share * deltaY));
     }
 }

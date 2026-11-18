@@ -11,29 +11,29 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public final class AtlasOrbitReader {
+public final class AtlasBodyReader {
 
-    static final String ORBITS_PATH = "data/skilltrees/atlas_orbits.json";
-    private static final Logger LOG = Logger.getLogger(AtlasOrbitReader.class);
+    static final String BODIES_PATH = "data/skilltrees/atlas_bodies.json";
+    private static final Logger LOG = Logger.getLogger(AtlasBodyReader.class);
 
-    private AtlasOrbitReader() {
+    private AtlasBodyReader() {
     }
 
-    public static Map<String, AtlasOrbit> parse(JSONObject orbitsJson) {
-        Map<String, AtlasOrbit> orbits = new LinkedHashMap<>();
-        if (orbitsJson == null) {
-            return orbits;
+    public static Map<String, AtlasBody> parse(JSONObject bodiesJson) {
+        Map<String, AtlasBody> bodies = new LinkedHashMap<>();
+        if (bodiesJson == null) {
+            return bodies;
         }
-        TreeJson.forEachEntry(orbitsJson.optJSONArray("orbits"), "atlas orbit", ORBITS_PATH, orbitJson -> {
-            AtlasOrbit orbit = parseOrbit(orbitJson);
-            orbits.put(orbit.nodeId(), orbit);
+        TreeJson.forEachEntry(bodiesJson.optJSONArray("bodies"), "atlas body", BODIES_PATH, bodyJson -> {
+            AtlasBody body = parseBody(bodyJson);
+            bodies.put(body.nodeId(), body);
         });
-        return orbits;
+        return bodies;
     }
 
-    private static AtlasOrbit parseOrbit(JSONObject orbitJson) throws JSONException {
-        return new AtlasOrbit(orbitJson.getString("id"), orbitJson.optString("around", null), (float) orbitJson.optDouble("speed", 0.0),
-                orbitJson.optString("colour", null), parseArt(orbitJson.optJSONObject("art")));
+    private static AtlasBody parseBody(JSONObject bodyJson) throws JSONException {
+        return new AtlasBody(bodyJson.getString("id"), bodyJson.optBoolean("highway", false), bodyJson.optString("colour", null),
+                parseArt(bodyJson.optJSONObject("art")));
     }
 
     private static AtlasBodyArt parseArt(JSONObject artJson) throws JSONException {
@@ -48,7 +48,7 @@ public final class AtlasOrbitReader {
         }
         AtlasBodyArt.Facing facing = enumNamed(AtlasBodyArt.Facing.class, artJson.optString("facing", "spin"), AtlasBodyArt.Facing.SPIN);
         AtlasBodyArt.Shape shape = new AtlasBodyArt.Shape((float) artJson.optDouble("size", AtlasBodyArt.DEFAULT_SIZE), facing,
-                (float) artJson.optDouble("spin", 1.0));
+                (float) artJson.optDouble("spin", 1.0), (float) artJson.optDouble("heading", AtlasBodyArt.DEFAULT_HEADING));
         return new AtlasBodyArt(kind, artJson.optString("planet", null), paths, TreeJson.stringList(artJson.optJSONArray("hulls")), shape,
                 artJson.optString("light", null));
     }
@@ -57,7 +57,7 @@ public final class AtlasOrbitReader {
         try {
             return Enum.valueOf(type, name.toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException e) {
-            LOG.error("[ExiledSector] " + ORBITS_PATH + ": unknown " + type.getSimpleName() + " \"" + name + "\"");
+            LOG.error("[ExiledSector] " + BODIES_PATH + ": unknown " + type.getSimpleName() + " \"" + name + "\"");
             return fallback;
         }
     }

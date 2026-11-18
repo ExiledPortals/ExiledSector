@@ -32,10 +32,6 @@ public final class SmoothZoom {
         return currentZoom;
     }
 
-    public float minZoom() {
-        return minZoom;
-    }
-
     public float target() {
         return zoomTarget;
     }
