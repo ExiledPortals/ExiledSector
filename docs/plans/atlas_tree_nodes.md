@@ -357,14 +357,14 @@ Status: off for now (2026-11-16).
 
 Reward: the forge's programs, run on a hull item of the player's choosing.
 
-Change to the anomaly (overhaul, 2026-11-18):
+Change to the anomaly (overhaul, 2026-11-18, built on `derelict-forge-overhaul`, merged into `parallel-work`):
 
-- The forge no longer grants commodities: its `CHART_RESOURCE_PERCENT:100` effect leaves `chart_anomalies.csv`, since its programs no longer cost metals.
-- Its guards' drone escort is 80% of the Star Chart Boss's fleet size (`max(bossSize, fleetSize)`, as the other anomalies' boss-sized fleets are), up from 50% of a chart fleet's (`ForgeRules.ESCORT_SIZE_SHARE`). The Guardian stays.
-- Anchor Reroll and Retemper are deleted (`chart_forge_programs.csv`, `ForgeOperation`, their strings and route texts).
-- Every forge offers all of its programs instead of rolling 3: Graft, Excise and Perfect. The program roll, its weights, tiers and `ForgeRules.programCount` go, and so does `CHART_FORGE_PROGRAMS`.
-- A forge in a biome system offers Biome Infusion instead of Graft: "Adds the system's biome modifier for the item's part to an item with room for it." It is the Abyssal Research Complex's Abyssal Infusion generalised to the system's biome (`ForgeInfusions`, with the modifier from `BiomeModifiers.modifierFor` for the system's region), refused on the same terms. A system whose region has no biome modifiers keeps Graft. It is named Biome Infusion because the Infused Crafting tray already has a Biome Graft, which trades a random modifier for a biome modifier.
-- Every program costs a fixed amount, with no metals, rare metals or tier scaling: Graft 300 Nanite Feedstock, Excise 500 Nanite Feedstock, Perfect 1000 Nanite Feedstock, and Biome Infusion 500 of each infused feedstock (Threat-, Shroud- and Phase-infused). The cost columns in `chart_forge_programs.csv` become Nanite Feedstock and infused feedstock; Abyssal Infusion keeps its 500 Nanite Feedstock at the Research Complex.
+- [x] The forge no longer grants commodities: its `CHART_RESOURCE_PERCENT:100` effect leaves `chart_anomalies.csv`, since its programs no longer cost metals.
+- [x] Its guards' drone escort is 80% of the Star Chart Boss's fleet size (`max(bossSize, fleetSize)`, as the other anomalies' boss-sized fleets are), up from 50% of a chart fleet's. Built as `ForgeRules.ESCORT_BOSS_SHARE` and `ForgeRules.escortSize`. The Guardian stays.
+- [x] Anchor Reroll and Retemper are deleted (`chart_forge_programs.csv`, `ForgeOperation`, their strings and route texts).
+- [x] Every forge offers all of its programs instead of rolling 3: Graft, Excise and Perfect. The program roll, its weights, tiers and `ForgeRules.programCount` go, and so does `CHART_FORGE_PROGRAMS`. Built as `DerelictForge.programs`.
+- [x] A forge in a biome system offers Biome Infusion instead of Graft: "Adds the system's biome modifier for the item's part to an item with room for it." It is the Abyssal Research Complex's Abyssal Infusion generalised to the system's biome (`ForgeInfusions`, which now takes the biome per call, with the modifier from `BiomeModifiers.modifierFor` for the system's region), refused on the same terms. A system whose region has no biome modifiers keeps Graft. It is named Biome Infusion (program id `biome_infuse`) because the Infused Crafting tray already has a Biome Graft, which trades a random modifier for a biome modifier. Biome Infusion and Abyssal Infusion both refuse an item that already has 2 biome modifiers, as the Infused Crafting tray's biome crafts do (`ForgeInfusions.Block.LIMIT`, with the limit from `ChartForge.BiomeInfusion`).
+- [x] Every program costs a fixed amount, with no metals, rare metals or tier scaling: Graft 300 Nanite Feedstock, Excise 500 Nanite Feedstock, Perfect 1000 Nanite Feedstock, and Biome Infusion 500 of each infused feedstock (Threat-, Shroud- and Phase-infused). The cost columns in `chart_forge_programs.csv` are now `feedstock` and `infused_feedstock_each` (`ForgeRules.Cost`); Abyssal Infusion keeps its 500 Nanite Feedstock at the Research Complex. The cost line reads "feedstock cost of Derelict Forge programs".
 
 Small nodes:
 

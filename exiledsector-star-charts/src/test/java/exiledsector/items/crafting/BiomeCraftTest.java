@@ -1,5 +1,6 @@
 package exiledsector.items.crafting;
 
+import exiledsector.charts.anomaly.forge.ChartForge;
 import exiledsector.charts.loot.BiomeModifiers;
 import exiledsector.items.HullItemRows;
 import exiledsector.items.Item;
@@ -215,6 +216,21 @@ class BiomeCraftTest {
             assertEquals(BiomeModifiers.MAX_PER_ITEM, biomeModifierCount(item));
             assertFalse(item.explicits().stream().anyMatch(rolled -> rolled.modifierId().equals(PLASMATIC)));
         }
+    }
+
+    @Test
+    void theForgesInfusionsAddNoThirdBiomeModifier() throws Exception {
+        registerThreeBiomes();
+        ForgeInfusions.Source nebula = new ChartForge.BiomeInfusion("test_nebula");
+        Item atLimit = withModifiers(biome(CHRONAL), biome(AMBUSHERS));
+        Item withRoom = withModifiers(biome(CHRONAL));
+
+        assertEquals("biome_infuse.limit", ForgeInfusions.refusalReason(ForgeOperation.BIOME_INFUSE, atLimit, nebula));
+        assertEquals("infuse.limit", ForgeInfusions.refusalReason(ForgeOperation.INFUSE, atLimit, nebula));
+        assertFalse(ForgeInfusions.infuse(atLimit, nebula, new Random(1L)));
+        assertEquals(BiomeModifiers.MAX_PER_ITEM, atLimit.explicits().size());
+        assertTrue(ForgeInfusions.infuse(withRoom, nebula, new Random(1L)));
+        assertEquals(BiomeModifiers.MAX_PER_ITEM, biomeModifierCount(withRoom));
     }
 
     @Test

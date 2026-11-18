@@ -23,6 +23,7 @@ public final class ForgeInfusions {
         NONE,
         PRESENT,
         CLASH,
+        LIMIT,
         FULL
     }
 
@@ -32,6 +33,10 @@ public final class ForgeInfusions {
         Source NONE = definition -> null;
 
         String modifierFor(ItemDefinition definition);
+
+        default boolean hasRoomFor(List<RolledModifier> present, String modifierId) {
+            return true;
+        }
     }
 
     private ForgeInfusions() {
@@ -60,6 +65,9 @@ public final class ForgeInfusions {
         boolean sharesEffect = present.stream().anyMatch(rolled -> rolled.lines().stream().anyMatch(line -> effects.contains(line.effectName())));
         if (sharesEffect || ModifierExclusivity.clashesWithRolled(modifierId, present)) {
             return Block.CLASH;
+        }
+        if (!source.hasRoomFor(present, modifierId)) {
+            return Block.LIMIT;
         }
         AffixLayout.Limits limits = AffixLayout.limits(definition.type());
         long sameSide = present.stream().filter(rolled -> rolled.slot() == modifier.slot()).count();

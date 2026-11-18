@@ -5,6 +5,7 @@ import exiledsector.charts.loot.BiomeModifiers;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.items.Item;
+import exiledsector.items.ItemDefinition;
 import exiledsector.items.UseVerdict;
 import exiledsector.items.crafting.BiomeCraft;
 import exiledsector.items.crafting.ForgeChoice;
@@ -12,6 +13,7 @@ import exiledsector.items.crafting.ForgeInfusions;
 import exiledsector.items.crafting.ItemDisassembly;
 import exiledsector.items.crafting.material.CraftingMaterials;
 import exiledsector.items.custody.SocketCustody;
+import exiledsector.items.modifier.RolledModifier;
 
 import java.util.List;
 import java.util.Random;
@@ -62,7 +64,20 @@ public final class ChartForge {
 
     static ForgeInfusions.Source infusionFor(ChartRun run, ForgeSite site) {
         String biomeId = ForgeStates.infusionBiome(run, site);
-        return biomeId == null ? ForgeInfusions.Source.NONE : definition -> BiomeModifiers.modifierFor(biomeId, definition.kind());
+        return biomeId == null ? ForgeInfusions.Source.NONE : new BiomeInfusion(biomeId);
+    }
+
+    public record BiomeInfusion(String biomeId) implements ForgeInfusions.Source {
+
+        @Override
+        public String modifierFor(ItemDefinition definition) {
+            return BiomeModifiers.modifierFor(biomeId, definition.kind());
+        }
+
+        @Override
+        public boolean hasRoomFor(List<RolledModifier> present, String modifierId) {
+            return BiomeModifiers.hasRoomFor(present, modifierId);
+        }
     }
 
     public static UseVerdict verdict(ChartRun run, ForgeSite site, ForgePrograms.Program program, Item item, CraftingMaterials materials) {

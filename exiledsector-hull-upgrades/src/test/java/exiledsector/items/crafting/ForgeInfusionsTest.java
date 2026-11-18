@@ -1,10 +1,12 @@
 package exiledsector.items.crafting;
 
 import exiledsector.items.Item;
+import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.TestItems;
 import exiledsector.items.modifier.ItemModifiers;
 import exiledsector.items.modifier.RolledLine;
+import exiledsector.items.modifier.RolledModifier;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -112,6 +114,27 @@ class ForgeInfusionsTest {
         assertEquals(ForgeOperation.REFUSAL_PREFIX + "biome_infuse.clash",
                 refusal(ForgeOperation.BIOME_INFUSE, plate(new RolledLine("FLUX_CAPACITY_MULT", 5f)), definition -> CLASHING_INFUSION));
         assertEquals(ForgeOperation.REFUSAL_PREFIX + "biome_infuse.none", refusal(ForgeOperation.BIOME_INFUSE, plate(), ForgeInfusions.Source.NONE));
+    }
+
+    @Test
+    void aSourceWithoutRoomForItsModifierRefusesTheInfusion() {
+        Item item = plate(new RolledLine("FLUX_CAPACITY_MULT", 5f));
+        ForgeInfusions.Source atLimit = new ForgeInfusions.Source() {
+            @Override
+            public String modifierFor(ItemDefinition definition) {
+                return INFUSION;
+            }
+
+            @Override
+            public boolean hasRoomFor(List<RolledModifier> present, String modifierId) {
+                return false;
+            }
+        };
+
+        assertEquals(ForgeOperation.REFUSAL_PREFIX + "infuse.limit", refusal(ForgeOperation.INFUSE, item, atLimit));
+        assertEquals(ForgeOperation.REFUSAL_PREFIX + "biome_infuse.limit", refusal(ForgeOperation.BIOME_INFUSE, item, atLimit));
+        assertFalse(ForgeOperation.BIOME_INFUSE.apply(item, ForgeChoice.WHOLE_ITEM, atLimit, new Random(1L)));
+        assertEquals(1, item.explicits().size());
     }
 
     @Test
