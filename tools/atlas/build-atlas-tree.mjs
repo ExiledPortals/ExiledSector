@@ -170,8 +170,8 @@ const ANOMALY_OF = {
 };
 
 const RINGS = [
-  ['settled_shafts o', 'threat_embargo i', 'officers_ledger o', 'redacted_sleepers i', 'heavy_breach o', 'shroud_embargo i'],
-  ['twin_shafts i', 'crowded_channel o', 'stolen_charts i', 'rift_magnetism o', 'veiled_sleepers i', 'shared_broadcast o', 'sapper_teams i',
+  ['settled_shafts o', 'threat_embargo i', 'officers_ledger o', 'stolen_charts i', 'heavy_breach o', 'shroud_embargo i'],
+  ['twin_shafts i', 'crowded_channel o', 'redacted_sleepers i', 'rift_magnetism o', 'veiled_sleepers i', 'shared_broadcast o', 'sapper_teams i',
     'phase_embargo o', 'extra_relay o'],
   ['open_bores o', 'infested_bolt_holes i', 'threatening_sleepers o', 'scar_collector i', 'rally_point i', 'torn_holds o', 'supply_lines i',
     'hair_trigger o', 'early_echo o', 'smash_and_grab i'],

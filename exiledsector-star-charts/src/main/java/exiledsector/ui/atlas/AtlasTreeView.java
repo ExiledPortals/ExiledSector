@@ -53,7 +53,7 @@ final class AtlasTreeView {
     private static final double ANIMATION_PERIOD_SECONDS = 3600.0;
     private static final float[] CIRCLE = NodeRingArt.outlineRadii((cos, sin) -> 1f);
     private static final String CORONA_PATH = "graphics/fx/hit_glow.png";
-    private static final float CORONA_SCALE = 3.2f;
+    private static final float CORONA_SCALE = 2.8f;
     private static final float DULL_CORONA_ALPHA = 0.16f;
     private static final float FULL_CORONA_ALPHA = 0.55f;
 
@@ -70,7 +70,6 @@ final class AtlasTreeView {
     private final float[] pathYs = new float[MAX_PATH_POINTS];
     private final SpriteCache spriteCache = new SpriteCache(AtlasTreeView.class);
     private final TexturedQuadBatch coronaBatch = new TexturedQuadBatch();
-    private final float[] wheelReach;
     private final int[] wheelMembers;
     private final int[] wheelAllocated;
     private boolean[] allocated = new boolean[0];
@@ -84,7 +83,6 @@ final class AtlasTreeView {
         this.siteLights = new Color[count];
         this.spinSeeds = new float[count];
         this.shipGroups = new AtlasShipGroup[count];
-        this.wheelReach = new float[count];
         this.wheelMembers = new int[count];
         this.wheelAllocated = new int[count];
         for (Body body : bodies.bodies()) {
@@ -98,18 +96,13 @@ final class AtlasTreeView {
 
     private void measureWheels() {
         for (Body body : bodies.bodies()) {
-            if (body.wheel() == AtlasTreeBodies.NO_WHEEL) {
-                continue;
+            if (body.wheel() != AtlasTreeBodies.NO_WHEEL) {
+                wheelMembers[body.wheel()]++;
             }
-            Body centre = bodies.bodies().get(body.wheel());
-            float reach = (float) Math.hypot(body.x() - centre.x(), body.y() - centre.y()) + body.art().size();
-            wheelReach[centre.index()] = Math.max(wheelReach[centre.index()], reach);
-            wheelMembers[centre.index()]++;
         }
         for (Body body : bodies.bodies()) {
             if (wheelMembers[body.index()] > 0) {
                 wheelMembers[body.index()]++;
-                wheelReach[body.index()] = Math.max(wheelReach[body.index()], body.art().size());
             }
         }
     }
@@ -222,7 +215,7 @@ final class AtlasTreeView {
                 }
                 float screenX = viewport.screenX(body.x());
                 float screenY = viewport.screenY(body.y());
-                float size = wheelReach[index] * CORONA_SCALE * viewport.zoom();
+                float size = screenRadiusOf(body, viewport) * CORONA_SCALE;
                 if (!viewport.isVisible(screenX, screenY, size / 2f)) {
                     continue;
                 }

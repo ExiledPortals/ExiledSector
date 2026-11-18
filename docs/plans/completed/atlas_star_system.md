@@ -33,8 +33,8 @@ lay-in-course arrows were removed on 2026-11-18 and every body now stays where t
   allocated. Bodies have no glow; excavation planets carry the chart screen's blinking site dot. Every body but the
   star wears the ship tree's node ring in its anomaly colour (white on highways), and connectors stop at the ring's
   edge as they do in the ship tree. Hover shows the node tooltip.
-- Each wheel sits in a soft corona of its colour, dull while untouched and brighter for each of its three nodes
-  allocated.
+- Each notable sits in a soft corona of its colour a little wider than the body, dull while untouched and brighter
+  for each of its wheel's three nodes allocated.
 - Links along a ring are connector beams following the ring's circle, wheel links follow their spiral
   (`charts.tree.AtlasLinkPath`), and the rays between the star and the rings are straight.
 - Fleets, derelicts and the battlestation are drawn from vanilla hulls (`ui.decoration.AtlasShipGroup`); fleets drift

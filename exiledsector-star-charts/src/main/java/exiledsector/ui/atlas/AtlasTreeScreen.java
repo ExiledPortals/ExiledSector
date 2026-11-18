@@ -65,7 +65,6 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
     private final HyperspaceMode hyperspace;
     private final TextLabel titleLabel = new TextLabel(UiFonts.TITLE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
     private final TextLabel pointsLabel = new TextLabel(UiFonts.HINT, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
-    private final TextLabel hintLabel = new TextLabel(UiFonts.HINT, AtlasScreen.HINT_COLOUR);
     private final TooltipText tooltipText = SkillTreePanelStyle.tooltipText();
     private final TextLabel tooltipTitle = new TextLabel(tooltipText.title(), SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
     private final TextLabel tooltipBody = new TextLabel(tooltipText.body(), SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
@@ -123,7 +122,6 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
 
     private void buildChrome(CustomPanelAPI panel) {
         titleLabel.set(Translation.text("atlasTree.title"));
-        hintLabel.set(Translation.text("atlasTree.hint"));
         refreshPointsLabel();
         AtlasOverlayFrame.addTopRightButton(panel, Translation.text("atlasTree.back"), Control.BACK, BACK_WIDTH);
         effectsButton = AtlasOverlayFrame.addTopRightButton(panel, effectsButtonText(), Control.EFFECTS, EFFECTS_WIDTH, BACK_WIDTH + BUTTON_GAP);
@@ -336,7 +334,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         }
         drawChrome(alpha);
         effectsPanel.render(frame.chromeRight(), frame.chromeTop() - ChromeMetrics.CONTROL_HEIGHT - PANEL_GAP,
-                frame.chromeBottom() + hintLabel.height() + PANEL_GAP, alpha * hyperspace.treeAlpha());
+                frame.chromeBottom() + PANEL_GAP, alpha * hyperspace.treeAlpha());
         if (hoveredNode != null) {
             drawTooltip(hoveredNode, alpha);
         }
@@ -361,7 +359,6 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         float top = frame.chromeTop();
         titleLabel.setAlpha(alpha).draw(left, top);
         pointsLabel.setAlpha(alpha).draw(left, top - titleLabel.height() - TITLE_GAP);
-        frame.drawFooterHint(hintLabel, alpha);
     }
 
     private void drawTooltip(AtlasTreeNode node, float alpha) {

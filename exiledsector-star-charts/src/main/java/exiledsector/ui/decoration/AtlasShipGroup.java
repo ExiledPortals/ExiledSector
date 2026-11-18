@@ -141,9 +141,9 @@ public final class AtlasShipGroup {
         if (texture == null) {
             return;
         }
-        float longest = Math.max(texture.getWidth(), texture.getHeight());
-        if (longest > 0f) {
-            addWreck(hull, radius * 2f / longest, 0f, 0f, 90f, STATION_TURN_DEGREES_PER_SECOND);
+        float diagonal = (float) Math.hypot(texture.getWidth(), texture.getHeight());
+        if (diagonal > 0f) {
+            addWreck(hull, radius * 2f / diagonal, 0f, 0f, 90f, STATION_TURN_DEGREES_PER_SECOND);
         }
     }
 

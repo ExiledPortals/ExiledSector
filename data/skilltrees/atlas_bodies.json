@@ -1027,41 +1027,38 @@
 			}
 		},
 		{
-			"id": "redacted_sleepers_1",
-			"colour": "#ff6e5a",
+			"id": "stolen_charts_1",
+			"colour": "#f0dc6e",
 			"spiral": -1,
 			"art": {
-				"kind": "derelicts",
-				"hulls": [
-					"radiant",
-					"glimmer",
-					"fulgent",
-					"fulgent"
-				],
-				"size": 140,
+				"kind": "sprite",
+				"path": "graphics/stations/station_side02.png",
+				"size": 116,
+				"facing": "spin"
+			}
+		},
+		{
+			"id": "listening_post_chance_3",
+			"colour": "#f0dc6e",
+			"wheel": "stolen_charts_1",
+			"art": {
+				"kind": "sprite",
+				"path": "graphics/ships/wolf/wolf_base.png",
+				"size": 34,
+				"facing": "travel",
 				"heading": -539
 			}
 		},
 		{
-			"id": "anomalous_debris_chance_1",
-			"colour": "#ff6e5a",
-			"wheel": "redacted_sleepers_1",
+			"id": "listening_post_chance_4",
+			"colour": "#f0dc6e",
+			"wheel": "stolen_charts_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid1.png",
-				"size": 38,
-				"facing": "spin"
-			}
-		},
-		{
-			"id": "anomalous_debris_chance_2",
-			"colour": "#ff6e5a",
-			"wheel": "redacted_sleepers_1",
-			"art": {
-				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid3.png",
-				"size": 38,
-				"facing": "spin"
+				"path": "graphics/ships/lasher/lasher_base.png",
+				"size": 34,
+				"facing": "travel",
+				"heading": -539
 			}
 		},
 		{
@@ -1098,13 +1095,11 @@
 			"art": {
 				"kind": "fleet",
 				"hulls": [
-					"colossus",
+					"atlas",
+					"phaeton",
+					"phaeton",
 					"hermes",
-					"mule",
-					"hermes",
-					"tarsus",
-					"tarsus",
-					"dram"
+					"mule"
 				],
 				"size": 140,
 				"facing": "travel",
@@ -1207,38 +1202,42 @@
 			}
 		},
 		{
-			"id": "stolen_charts_1",
-			"colour": "#f0dc6e",
+			"id": "redacted_sleepers_1",
+			"colour": "#ff6e5a",
 			"spiral": -1,
 			"art": {
+				"kind": "derelicts",
+				"hulls": [
+					"apex",
+					"glimmer",
+					"lumen",
+					"fulgent",
+					"glimmer"
+				],
+				"size": 140,
+				"heading": -528.8
+			}
+		},
+		{
+			"id": "anomalous_debris_chance_1",
+			"colour": "#ff6e5a",
+			"wheel": "redacted_sleepers_1",
+			"art": {
 				"kind": "sprite",
-				"path": "graphics/stations/station_side02.png",
-				"size": 116,
+				"path": "graphics/asteroids/asteroid1.png",
+				"size": 38,
 				"facing": "spin"
 			}
 		},
 		{
-			"id": "listening_post_chance_3",
-			"colour": "#f0dc6e",
-			"wheel": "stolen_charts_1",
+			"id": "anomalous_debris_chance_2",
+			"colour": "#ff6e5a",
+			"wheel": "redacted_sleepers_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/ships/wolf/wolf_base.png",
-				"size": 34,
-				"facing": "travel",
-				"heading": -528.8
-			}
-		},
-		{
-			"id": "listening_post_chance_4",
-			"colour": "#f0dc6e",
-			"wheel": "stolen_charts_1",
-			"art": {
-				"kind": "sprite",
-				"path": "graphics/ships/lasher/lasher_base.png",
-				"size": 34,
-				"facing": "travel",
-				"heading": -528.8
+				"path": "graphics/asteroids/asteroid4.png",
+				"size": 38,
+				"facing": "spin"
 			}
 		},
 		{
@@ -1275,7 +1274,8 @@
 			"art": {
 				"kind": "shrouded",
 				"hulls": [
-					"shrouded_maelstrom",
+					"shrouded_maw",
+					"shrouded_tendril",
 					"shrouded_tendril",
 					"shrouded_eye"
 				],
