@@ -82,6 +82,7 @@ The zh_CN catalogue was drafted by Claude and still needs review by a native spe
 | Erasure Cipher | 抹除密码 | Removes every modifier from a Star Chart |
 | Overcharged (modifier) | 超载 | A modifier rolled past its top roll; kept apart from 过载 (overloaded) |
 | Warped | 扭曲 | A hull item modifier from another section's pool, found in a Spatial Breach |
+| Lucky (modifier) | 幸运 | A modifier rolled twice, keeping the best, from Stellar Flares |
 | Grow | 培育 | Making a crafting material from Nanite Feedstock |
 | Escort | 护航 | |
 | Refraction / refract | 折射 | Refracting Projectiles' shots, matching its name 折射弹体 |
