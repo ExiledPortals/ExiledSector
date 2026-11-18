@@ -40,6 +40,8 @@ import exiledsector.items.subroutine.SubroutineKind;
 import exiledsector.items.subroutine.SubroutineRadius;
 import exiledsector.items.subroutine.SubroutineSocketLimits;
 import exiledsector.items.subroutine.NodeGrantLinks;
+import exiledsector.items.subroutine.doctrine.DoctrineLayer;
+import exiledsector.items.subroutine.doctrine.DoctrineOverrides;
 import exiledsector.items.anchor.WormholeAnchor;
 import exiledsector.items.anchor.WormholeAnchorLinks;
 import exiledsector.items.anchor.WormholeAnchorSocketLimits;
@@ -270,6 +272,10 @@ public final class TreeAllocationSession {
 
     public Item socketedItem(SkillNode node) {
         return node == null ? null : ItemStore.lookup(allocator.data().getSocketedItem(node.getId()));
+    }
+
+    public DoctrineLayer doctrineLayer() {
+        return DoctrineOverrides.layer(allocator.data());
     }
 
     public SubroutineRadius.Footprint socketedRadiusFootprint() {

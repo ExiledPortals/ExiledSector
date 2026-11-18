@@ -57,9 +57,7 @@ class WormholeAnchorDataTest {
             Map.entry("nightcross", "nightcross_wormhole_1"),
             Map.entry("stargazer", "stargazer_wormhole_1"),
             Map.entry("abyss", "rat_abyss_wormhole_1"),
-            Map.entry("threat", "threat_wormhole_1"),
             Map.entry("tania", "tania_wormhole_1"),
-            Map.entry("shrouded", "shrouded_wormhole_1"),
             Map.entry("domain_drones", "domain_drones_wormhole_1"),
             Map.entry("exotech", "exoship"));
     // TODO bake the Explorarium anchor icon with tools/WormholeAnchorIcons.java once its colour is approved
@@ -118,18 +116,15 @@ class WormholeAnchorDataTest {
     }
 
     @Test
-    void onlyTheShroudedAndOmegaAnchorsAlwaysDropAndOnlyFromTheirOwnFleets() throws Exception {
+    void onlyTheOmegaAnchorAlwaysDropsAndOnlyFromItsOwnFleets() throws Exception {
         WormholeAnchorDefinitions.register(shippedAnchors());
 
-        FactionFleetDrops.Source shrouded = FactionFleetDrops.source("wormhole_anchor_shrouded");
-        assertTrue(shrouded.guaranteed());
-        assertEquals(Set.of("dweller"), shrouded.extraFactionIds());
         FactionFleetDrops.Source omega = FactionFleetDrops.source("wormhole_anchor_omega");
         assertTrue(omega.guaranteed());
         assertEquals("omega", omega.volume());
         assertTrue(omega.extraFactionIds().isEmpty());
         for (ItemDefinition anchor : ItemDefinitions.ofType(ItemType.WORMHOLE_ANCHOR)) {
-            if (!Set.of("wormhole_anchor_shrouded", "wormhole_anchor_omega").contains(anchor.id())) {
+            if (!"wormhole_anchor_omega".equals(anchor.id())) {
                 assertFalse(FactionFleetDrops.source(anchor.id()).guaranteed(), anchor.id());
             }
         }

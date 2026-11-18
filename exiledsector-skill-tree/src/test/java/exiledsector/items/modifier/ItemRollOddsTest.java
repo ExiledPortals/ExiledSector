@@ -45,7 +45,7 @@ class ItemRollOddsTest {
 
     private static DoctrineArchive augmentingDoctrine(List<PoolEntry> pool, int minLines, int maxLines) {
         return new DoctrineArchive("odds_doctrine", DoctrineBehaviour.AUGMENT, RadiusSize.LARGE, List.of(), List.of(), List.of(), pool,
-                minLines, maxLines, null);
+                minLines, maxLines, null, null, null);
     }
 
     @Test

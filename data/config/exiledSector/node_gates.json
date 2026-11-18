@@ -41,27 +41,11 @@
 			}
 		]
 	},
-	"gate_threat_fought": {
-		"anchors": "withheld",
-		"unlockConditions": [
-			{
-				"type": "threatFought"
-			}
-		]
-	},
 	"gate_remnant_fought": {
 		"anchors": "withheld",
 		"unlockConditions": [
 			{
 				"type": "remnantFought"
-			}
-		]
-	},
-	"gate_dweller_fought": {
-		"anchors": "withheld",
-		"unlockConditions": [
-			{
-				"type": "dwellerFought"
 			}
 		]
 	},

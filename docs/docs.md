@@ -103,7 +103,7 @@ and Omega anchors don't wait for it. An anchor to a story-locked volume only dro
 - Explorarium opens on your first win against a Domain-era survey mothership.
 - The battles against the Singularity and the Existential Threat each add their volume's anchor to the loot, once per save.
 
-The Shrouded and Omega anchors drop from every won battle against Dweller and Omega fleets. Beating a vanilla deserter
+The Omega anchor drops from every won battle against Omega fleets. Beating a vanilla deserter
 bounty's flagship adds that faction's anchor. If a faction is missing, or Nexerelin has eliminated it, its anchor turns
 up in salvage and tech mining sites instead.
 

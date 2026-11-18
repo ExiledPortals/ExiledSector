@@ -199,12 +199,12 @@ class AnchorJanusGateTest {
     }
 
     @Test
-    void replacedAnomalousShipsDropTheirOwnFactionsAnchorOnlyPastTheJanusGateAndNeverByTheShroudedGuarantee() throws Exception {
+    void replacedAnomalousShipsDropTheirOwnFactionsAnchorOnlyPastTheJanusGateAndNeverByAnotherFactionsGuarantee() throws Exception {
         String redactedAnchor = "wormhole_anchor_redacted";
-        String shroudedAnchor = "wormhole_anchor_shrouded";
+        String guaranteedAnchor = "wormhole_anchor_kesteven";
         WormholeAnchorDefinitions.register(new JSONArray()
                 .put(AnchorRows.row(redactedAnchor, "REDACTED", "hegemony_2").put("drop_chance", "1"))
-                .put(AnchorRows.row(shroudedAnchor, "shrouded", "hegemony_2").put("drop_factions", "dweller").put("drop_chance", "0.01")
+                .put(AnchorRows.row(guaranteedAnchor, "kesteven", "hegemony_2").put("drop_factions", "dweller").put("drop_chance", "0.01")
                         .put("guaranteed_drop", "true")));
         NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"remnant\", \"volume\": \"REDACTED\"}]"));
         Map<String, Float> byShip = Map.of("remnant", 100f, "dweller", 20f, "exiledSector_dormant", 200f);
@@ -221,8 +221,8 @@ class AnchorJanusGateTest {
             FactionFleetDrops.roll(byShip, byFleet, random, FactionFleetDrops::available).forEach(item -> drops.merge(item.definition().id(), 1, Integer::sum));
         }
         assertTrue(drops.getOrDefault(redactedAnchor, 0) > battles * 0.4, String.valueOf(drops));
-        assertTrue(drops.getOrDefault(shroudedAnchor, 0) < battles * 0.05, String.valueOf(drops));
-        assertEquals(Set.of(shroudedAnchor), rolledIds(Map.of("dweller", 5f), Map.of("dweller", 5f), 1));
+        assertTrue(drops.getOrDefault(guaranteedAnchor, 0) < battles * 0.05, String.valueOf(drops));
+        assertEquals(Set.of(guaranteedAnchor), rolledIds(Map.of("dweller", 5f), Map.of("dweller", 5f), 1));
         assertTrue(rolledIds(byFleet, byFleet, 50).isEmpty());
     }
 

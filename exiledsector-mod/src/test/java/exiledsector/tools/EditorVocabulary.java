@@ -9,6 +9,7 @@ import exiledsector.charts.atlas.AtlasModifier;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.items.subroutine.doctrine.DoctrineBehaviour;
+import exiledsector.items.subroutine.doctrine.DoctrineInfestation;
 import exiledsector.items.hull.HullItem;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemType;
@@ -79,6 +80,8 @@ final class EditorVocabulary {
         json.append("  \"modifierScopes\": ").append(list(Arrays.stream(ModifierScope.values()).map(ModifierScope::id).toList())).append(",\n");
         json.append("  \"doctrineBehaviours\": ").append(list(Arrays.stream(DoctrineBehaviour.values()).map(DoctrineBehaviour::id).toList())).append(",\n");
         json.append("  \"radiusSizes\": ").append(list(Arrays.stream(RadiusSize.values()).map(RadiusSize::dataKey).toList())).append(",\n");
+        json.append("  \"doctrineInfestations\": ")
+                .append(list(Arrays.stream(DoctrineInfestation.values()).map(DoctrineInfestation::dataKey).toList())).append(",\n");
         json.append("  \"uniqueSourceKinds\": ")
                 .append(list(Arrays.stream(UniqueSource.Kind.values()).map(UniqueSource.Kind::prefix).toList())).append(",\n");
         json.append("  \"hullItemMechanics\": ").append(list(HullItem.MECHANICS)).append(",\n");

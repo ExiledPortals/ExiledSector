@@ -57,7 +57,7 @@ class HyperspaceTest {
     @Test
     void aStarlessVolumeIsAnchoredOnItsThreatUnitBeforeAnyImage() {
         List<HyperspaceAnchor> anchors = anchorsOf(star("sun", 0f, 0f, "core"),
-                new ThreatUnit("fabricator", 100f, 200f, ThreatUnit.FABRICATOR, 600f, 0f, SkillTags.treeTags(List.of("threat"))), image("threat_cloud", "threat"));
+                new ThreatUnit("fabricator", 100f, 200f, ThreatUnit.FABRICATOR, 600f, 0f, SkillTags.treeTags(List.of("kesteven"))), image("kesteven_cloud", "kesteven"));
 
         assertEquals(List.of("sun", "fabricator"), anchors.stream().map(HyperspaceAnchor::id).toList());
         assertEquals(300f, anchors.get(1).radius());
@@ -66,7 +66,7 @@ class HyperspaceTest {
 
     @Test
     void aStarlessVolumeIsAnchoredOnItsShroudedMawBeforeAnyImage() {
-        List<HyperspaceAnchor> anchors = anchorsOf(image("shroud_cloud", "shrouded"), new ShroudedMaw("maw", 100f, 200f, 620f, 0f, SkillTags.treeTags(List.of("shrouded"))));
+        List<HyperspaceAnchor> anchors = anchorsOf(image("kesteven_cloud", "kesteven"), new ShroudedMaw("maw", 100f, 200f, 620f, 0f, SkillTags.treeTags(List.of("kesteven"))));
 
         assertEquals(List.of("maw"), anchors.stream().map(HyperspaceAnchor::id).toList());
         assertEquals(310f, anchors.get(0).radius());

@@ -49,6 +49,7 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.SpecLocalisation;
 import exiledsector.items.ItemVolumes;
 import exiledsector.items.custody.CargoRefund;
+import exiledsector.items.subroutine.doctrine.ConvertedAnchorRelease;
 import exiledsector.items.subroutine.doctrine.DoctrineArchives;
 import exiledsector.items.subroutine.doctrine.DoctrineOverrides;
 import exiledsector.items.anchor.FactionlessAnchors;
@@ -219,7 +220,7 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
         TreeCameraMemory.forgetAll();
         NpcBonusScale.invalidate();
         NpcItems.clearCache();
-        SectorAPI sector = Global.getSector();
+        ConvertedAnchorRelease.releaseOnce(Global.getSector(), ShipSkillDataManager.all());
     }
 
     @Override

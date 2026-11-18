@@ -275,6 +275,42 @@ function ArchiveFields({ document, model, vocabulary, archive, descriptions, edi
           <DoctrineReplacementPools archive={archive} source={typeSource({ document, model })} />
         </>
       )}
+      <Group grow align="flex-start">
+        <Select
+          label="Infestation"
+          description="Corrupted from birth, drawn with the faction's infestation instead of the band"
+          data={withCurrentOption(vocabulary.doctrineInfestations, archive.infestation)}
+          value={archive.infestation === '' ? null : archive.infestation}
+          onChange={(value) => editArchive((draft) => void (draft.infestation = value ?? ''))}
+          clearable
+        />
+        <TextInput
+          label="Drop factions"
+          description="Fleet factions that drop it; blank for none"
+          value={archive.dropFactions}
+          onChange={(event) => {
+            const text = event.currentTarget.value;
+            editArchive((draft) => void (draft.dropFactions = text));
+          }}
+        />
+        <TextInput
+          label="Drop chance"
+          description="Per 100 DP of those fleets destroyed"
+          value={archive.dropChance}
+          onChange={(event) => {
+            const text = event.currentTarget.value;
+            editArchive((draft) => void (draft.dropChance = text));
+          }}
+        />
+        <Select
+          label="Guaranteed drop"
+          description="Every battle against them drops one"
+          data={['true', 'false']}
+          value={archive.guaranteedDrop === '' ? null : archive.guaranteedDrop}
+          onChange={(value) => editArchive((draft) => void (draft.guaranteedDrop = value ?? ''))}
+          clearable
+        />
+      </Group>
       {archive.behaviour !== REWRITE_BEHAVIOUR && (
         <>
           <Group grow align="flex-start">

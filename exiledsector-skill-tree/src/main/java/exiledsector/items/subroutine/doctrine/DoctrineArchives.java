@@ -6,6 +6,7 @@ import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemIdAliases;
+import exiledsector.items.drop.FactionFleetDrops;
 import exiledsector.items.drop.ItemQuantity;
 import exiledsector.items.modifier.ItemModifiers;
 import exiledsector.items.modifier.ModifierScope;
@@ -27,9 +28,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
@@ -48,6 +51,11 @@ public final class DoctrineArchives {
     public static final String MODIFIERS_COLUMN = "modifiers";
     static final String MIN_LINES_COLUMN = "min_lines";
     static final String MAX_LINES_COLUMN = "max_lines";
+    public static final String INFESTATION_COLUMN = "infestation";
+    public static final String DROP_FACTIONS_COLUMN = "drop_factions";
+    public static final String DROP_CHANCE_COLUMN = "drop_chance";
+    public static final String GUARANTEED_DROP_COLUMN = "guaranteed_drop";
+    static final String DROP_SOURCE_GROUP = "doctrine_archive";
     static final int DEFAULT_LINES = 1;
     private static final float[] BOSS_CHANCE_BY_TIER = {
             0.010f, 0.013f, 0.017f, 0.020f, 0.023f, 0.027f, 0.030f, 0.033f, 0.037f, 0.040f, 0.045f, 0.050f, 0.060f, 0.070f, 0.070f, 0.080f};
@@ -66,12 +74,17 @@ public final class DoctrineArchives {
 
     public static void register(JSONArray rows) throws JSONException {
         Map<String, DoctrineArchive> loaded = new LinkedHashMap<>();
+        Map<String, FactionFleetDrops.Source> fleetDrops = new LinkedHashMap<>();
         CsvRows.forEachRow(rows, DATA_PATH, LOG, (index, row) -> {
             DoctrineArchive archive = parse(row);
             if (loaded.putIfAbsent(archive.definitionId(), archive) != null) {
                 throw new IllegalArgumentException(archive.definitionId() + " is listed more than once");
             }
+            if (archive.fleetDrop() != null) {
+                fleetDrops.put(archive.definitionId(), archive.fleetDrop());
+            }
         });
+        FactionFleetDrops.register(DROP_SOURCE_GROUP, fleetDrops);
         for (ItemDefinition definition : SubroutineKind.DOCTRINE.definitions()) {
             if (!loaded.containsKey(definition.id())) {
                 LOG.error(definition.id() + " is a " + SubroutineKind.DOCTRINE.id() + " subroutine with no row in " + DATA_PATH
@@ -103,17 +116,29 @@ public final class DoctrineArchives {
         String modifiersText = ModCsv.text(row, MODIFIERS_COLUMN);
         int minLines = lineCount(ModCsv.text(row, MIN_LINES_COLUMN));
         int maxLines = lineCount(ModCsv.text(row, MAX_LINES_COLUMN));
+        DoctrineInfestation infestation = DoctrineInfestation.byDataKeyOrNull(ModCsv.text(row, INFESTATION_COLUMN));
+        FactionFleetDrops.Source fleetDrop = fleetDrop(row);
         if (behaviour == DoctrineBehaviour.REWRITE) {
             return new DoctrineArchive(definitionId, behaviour, radiusSize, typeIds(ModCsv.text(row, NOTABLES_COLUMN)),
                     typeIds(ModCsv.text(row, KEYSTONES_COLUMN)), typeIds(ModCsv.text(row, SMALL_NODES_COLUMN)), List.of(), minLines, maxLines,
-                    factionId);
+                    factionId, infestation, fleetDrop);
         }
         List<PoolEntry> modifierPool = modifierPool(definitionId, modifiersText);
         if (modifierPool.isEmpty()) {
             throw new IllegalArgumentException(definitionId + " augments nodes but lists no modifiers");
         }
         return new DoctrineArchive(definitionId, behaviour, radiusSize, List.of(), List.of(), List.of(), modifierPool, minLines, maxLines,
-                factionId);
+                factionId, infestation, fleetDrop);
+    }
+
+    private static FactionFleetDrops.Source fleetDrop(JSONObject row) {
+        Set<String> dropFactionIds = new LinkedHashSet<>(CsvRows.entries(ModCsv.text(row, DROP_FACTIONS_COLUMN)));
+        if (dropFactionIds.isEmpty()) {
+            return null;
+        }
+        float chance = CsvRows.numberOrNaN(ModCsv.text(row, DROP_CHANCE_COLUMN));
+        return FactionFleetDrops.Source.forVolume(null, dropFactionIds, Float.isNaN(chance) ? 0f : chance,
+                Boolean.parseBoolean(ModCsv.text(row, GUARANTEED_DROP_COLUMN)));
     }
 
     public static List<String> problems(String definitionId, JSONObject row) {
@@ -132,6 +157,11 @@ public final class DoctrineArchives {
         if (minLines == null || maxLines == null || minLines < 1 || maxLines < minLines) {
             problems.add(definitionId + " needs min_lines of 1 or more and max_lines of at least min_lines");
         }
+        String infestationText = ModCsv.text(row, INFESTATION_COLUMN);
+        if (!infestationText.isEmpty() && DoctrineInfestation.byDataKeyOrNull(infestationText) == null) {
+            problems.add(definitionId + " has infestation \"" + infestationText + "\"; expected blank or one of " + DoctrineInfestation.dataKeys());
+        }
+        problems.addAll(dropProblems(definitionId, row));
         boolean listsTypes = !typeIds(ModCsv.text(row, NOTABLES_COLUMN)).isEmpty() || !typeIds(ModCsv.text(row, KEYSTONES_COLUMN)).isEmpty()
                 || !typeIds(ModCsv.text(row, SMALL_NODES_COLUMN)).isEmpty();
         if (behaviour == DoctrineBehaviour.REWRITE) {
@@ -143,6 +173,23 @@ public final class DoctrineArchives {
             }
         } else if (behaviour == DoctrineBehaviour.AUGMENT && listsTypes) {
             problems.add(definitionId + " augments nodes, so it lists no replacement nodes");
+        }
+        return problems;
+    }
+
+    private static List<String> dropProblems(String definitionId, JSONObject row) {
+        List<String> problems = new ArrayList<>();
+        boolean dropsFromFleets = !CsvRows.entries(ModCsv.text(row, DROP_FACTIONS_COLUMN)).isEmpty();
+        String chanceText = ModCsv.text(row, DROP_CHANCE_COLUMN);
+        String guaranteedText = ModCsv.text(row, GUARANTEED_DROP_COLUMN);
+        if (!CsvRows.isValidChance(chanceText)) {
+            problems.add(definitionId + " has the drop chance \"" + chanceText + "\"; expected a number of 0 or more");
+        }
+        if (!guaranteedText.isEmpty() && !"true".equalsIgnoreCase(guaranteedText) && !"false".equalsIgnoreCase(guaranteedText)) {
+            problems.add(definitionId + " has the guaranteed drop \"" + guaranteedText + "\"; expected true, false or blank");
+        }
+        if (!dropsFromFleets && (!chanceText.isEmpty() || "true".equalsIgnoreCase(guaranteedText))) {
+            problems.add(definitionId + " sets a fleet drop but lists no drop factions");
         }
         return problems;
     }
@@ -230,9 +277,11 @@ public final class DoctrineArchives {
             if (definition == null || !allowed.test(definition)) {
                 continue;
             }
-            candidates.add(definition);
             if (sameFaction(archive.factionId(), factionId)) {
                 factionMatches.add(definition);
+            }
+            if (!archive.infested()) {
+                candidates.add(definition);
             }
         }
         List<ItemDefinition> pool = factionMatches.isEmpty() ? candidates : factionMatches;
@@ -251,7 +300,13 @@ public final class DoctrineArchives {
         return GENERATION.get();
     }
 
+    public static boolean infested(String definitionId) {
+        DoctrineArchive archive = get(definitionId);
+        return archive != null && archive.infested();
+    }
+
     public static void clear() {
+        FactionFleetDrops.clear(DROP_SOURCE_GROUP);
         BY_ID.set(Map.of());
         GENERATION.incrementAndGet();
     }

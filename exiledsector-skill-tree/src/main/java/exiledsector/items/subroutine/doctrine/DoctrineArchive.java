@@ -1,5 +1,6 @@
 package exiledsector.items.subroutine.doctrine;
 
+import exiledsector.items.drop.FactionFleetDrops;
 import exiledsector.items.modifier.PoolEntry;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.radius.RadiusSize;
@@ -12,7 +13,7 @@ import java.util.Map;
 
 public record DoctrineArchive(String definitionId, DoctrineBehaviour behaviour, RadiusSize radiusSize, List<String> notableTypeIds,
                               List<String> keystoneTypeIds, List<String> smallTypeIds, List<PoolEntry> modifierPool, int minLines,
-                              int maxLines, String factionId) {
+                              int maxLines, String factionId, DoctrineInfestation infestation, FactionFleetDrops.Source fleetDrop) {
 
     public DoctrineArchive {
         notableTypeIds = List.copyOf(notableTypeIds);
@@ -39,6 +40,10 @@ public record DoctrineArchive(String definitionId, DoctrineBehaviour behaviour, 
 
     public boolean augments() {
         return behaviour == DoctrineBehaviour.AUGMENT;
+    }
+
+    public boolean infested() {
+        return infestation != null;
     }
 
     public Map<String, Double> lineChances() {

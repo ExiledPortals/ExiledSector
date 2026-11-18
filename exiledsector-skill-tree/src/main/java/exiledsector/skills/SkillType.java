@@ -77,6 +77,39 @@ public class SkillType {
         this.integratedEffects = builder.integratedEffects;
     }
 
+    private SkillType(SkillType source, SkillItemCost itemCost, List<UnlockCondition> unlockConditions) {
+        this.id = source.id;
+        this.displayName = source.displayName;
+        this.iconPath = source.iconPath;
+        this.effects = source.effects;
+        this.hullSizeEffects = source.hullSizeEffects;
+        this.tier = source.tier;
+        this.vanillaHullModId = source.vanillaHullModId;
+        this.itemCost = itemCost;
+        this.temporaryAfterDeploymentSeconds = source.temporaryAfterDeploymentSeconds;
+        this.requiredHullSizes = source.requiredHullSizes;
+        this.flavour = source.flavour;
+        this.flavourAutomated = source.flavourAutomated;
+        this.effectText = source.effectText;
+        this.todo = source.todo;
+        this.choiceOptionIds = source.choiceOptionIds;
+        this.choiceOptionIdSet = source.choiceOptionIdSet;
+        this.exclusiveHullModIds = source.exclusiveHullModIds;
+        this.phantomHullModIds = source.phantomHullModIds;
+        this.ownHullModIds = source.ownHullModIds;
+        this.excludedHullModIds = source.excludedHullModIds;
+        this.exclusiveAndOwnHullModIds = source.exclusiveAndOwnHullModIds;
+        this.exclusiveSkillTypeIds = source.exclusiveSkillTypeIds;
+        this.unlockConditions = unlockConditions;
+        this.tags = source.tags;
+        this.moduleShareOverride = source.moduleShareOverride;
+        this.integratedEffects = source.integratedEffects;
+    }
+
+    public SkillType withoutAcquisitionCosts() {
+        return itemCost == null && unlockConditions.isEmpty() ? this : new SkillType(this, null, Collections.emptyList());
+    }
+
     public static final class Builder {
         private final String id;
         private final String displayName;

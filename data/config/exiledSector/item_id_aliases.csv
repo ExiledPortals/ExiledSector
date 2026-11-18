@@ -3,3 +3,5 @@ bridge_officer,command_suite
 flight_deck_crew,launch_assembly
 crew_quarters_specialists,specialist_crew
 armor_plating_plate,armor_plate
+wormhole_anchor_threat,doctrine_archive_threat
+wormhole_anchor_shrouded,doctrine_archive_shrouded

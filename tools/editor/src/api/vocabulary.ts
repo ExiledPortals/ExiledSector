@@ -42,6 +42,7 @@ export interface VocabularyFile {
   modifierScopes?: string[];
   doctrineBehaviours?: string[];
   radiusSizes?: string[];
+  doctrineInfestations?: string[];
   uniqueSourceKinds?: string[];
   hullItemMechanics?: string[];
   hullItemCrew?: string[];
@@ -78,6 +79,7 @@ export interface Vocabulary {
   modifierScopes: string[];
   doctrineBehaviours: string[];
   radiusSizes: string[];
+  doctrineInfestations: string[];
   uniqueSourceKinds: string[];
   hullItemMechanics: string[];
   hullItemCrew: string[];
@@ -121,6 +123,7 @@ export function buildVocabulary(file: VocabularyFile): Vocabulary {
     modifierScopes: (file.modifierScopes ?? file.itemTypes).slice(),
     doctrineBehaviours: (file.doctrineBehaviours ?? ['REWRITE', 'AUGMENT']).slice(),
     radiusSizes: (file.radiusSizes ?? ['small', 'medium', 'large']).slice(),
+    doctrineInfestations: (file.doctrineInfestations ?? ['threat', 'shroud']).slice(),
     uniqueSourceKinds: (file.uniqueSourceKinds ?? ['faction', 'site']).slice(),
     hullItemMechanics: (file.hullItemMechanics ?? ['one_of']).slice(),
     hullItemCrew: (file.hullItemCrew ?? ['crewed', 'automated']).slice(),

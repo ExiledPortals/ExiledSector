@@ -24,13 +24,13 @@ class TreeFleetFactionsTest {
 
     @Test
     void fleetsRoamTheVanillaVolumesAndEveryVolumeGivenAFleetFaction() throws Exception {
-        TreeFleetFactions.register(new JSONArray("[{\"faction\": \"threat\", \"volume\": \"threat\"},"
+        TreeFleetFactions.register(new JSONArray("[{\"faction\": \"enigma\", \"volume\": \"enigma\"},"
                 + "{\"faction\": \"kesteven\", \"volume\": \"kesteven\"}]"));
 
         List<String> volumes = TreeFleetFactions.volumes();
 
         assertTrue(volumes.containsAll(SkillTags.FACTION_VOLUMES));
-        assertTrue(volumes.contains("threat"));
+        assertTrue(volumes.contains("enigma"));
         assertTrue(volumes.contains("kesteven"));
         assertEquals(SkillTags.FACTION_VOLUMES.size() + 2, volumes.size());
     }
@@ -54,11 +54,11 @@ class TreeFleetFactionsTest {
     }
 
     @Test
-    void theShippedCsvGivesThreatAndTheModVolumesFleets() throws Exception {
+    void theShippedCsvGivesTheModVolumesFleets() throws Exception {
         String csv = Files.readString(ProjectFiles.projectRoot().resolve(TreeFleetFactions.DATA_PATH));
         TreeFleetFactions.register(CDL.toJSONArray(csv.replace("\r\n", "\n")));
 
-        assertEquals(List.of("threat"), TreeFleetFactions.factionsIn("threat"));
+        assertEquals(List.of("enigma"), TreeFleetFactions.factionsIn("enigma"));
         assertEquals(List.of(), TreeFleetFactions.factionsIn("exotech"));
         assertTrue(TreeFleetFactions.volumes().containsAll(List.of("enigma", "kesteven", "abyss", "nightcross", "stargazer", "tania")));
     }

@@ -73,15 +73,6 @@ class AbyssDarknessRendererTest {
     }
 
     @Test
-    void theThreatVolumeSitsInAbyssalHyperspaceEvenWithoutTheAbyss() {
-        AbyssalDepth abyssalDepth = AbyssalDepth.of(List.of(node("main", -1000f, 0f, SkillTags.CORE_VOLUME),
-                node("fabricator", -10000f, 0f, SkillTags.THREAT_VOLUME)));
-
-        assertNotNull(abyssalDepth);
-        assertEquals(1f, AbyssDarknessRenderer.darkness(abyssalDepth.depthAt(-10000f, 0f)));
-    }
-
-    @Test
     void aTreeWithoutAnAbyssHasNoDarkness() {
         assertNull(AbyssalDepth.of(List.of(node("main", 500f, 500f, SkillTags.CORE_VOLUME))));
     }

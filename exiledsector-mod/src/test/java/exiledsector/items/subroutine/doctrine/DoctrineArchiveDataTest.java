@@ -15,6 +15,7 @@ import exiledsector.items.ItemFixtures;
 import exiledsector.items.ItemStore;
 import exiledsector.items.ItemTraits;
 import exiledsector.items.ItemType;
+import exiledsector.items.drop.FactionFleetDrops;
 import exiledsector.items.drop.ItemQuantity;
 import exiledsector.items.modifier.ItemModifiers;
 import exiledsector.items.subroutine.SubroutineDataRules;
@@ -45,6 +46,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -55,6 +57,7 @@ class DoctrineArchiveDataTest {
     private static final Set<String> REWRITE_DOCTRINES = Set.of("doctrine_archive_tritachyon", "doctrine_archive_luddic", "doctrine_archive_remnant");
     private static final Set<String> AUGMENT_DOCTRINES = Set.of("doctrine_archive_hegemony", "doctrine_archive_sindrian_diktat",
             "doctrine_archive_pirate", "doctrine_archive_persean_league");
+    private static final Set<String> INFESTED_DOCTRINES = Set.of("doctrine_archive_threat", "doctrine_archive_shrouded");
 
     @AfterEach
     void tearDown() {
@@ -84,8 +87,11 @@ class DoctrineArchiveDataTest {
                 .filter(definition -> SubroutineKind.of(definition) == SubroutineKind.DOCTRINE).map(ItemDefinition::id).collect(Collectors.toSet());
         Set<String> expected = new HashSet<>(REWRITE_DOCTRINES);
         expected.addAll(AUGMENT_DOCTRINES);
+        expected.addAll(INFESTED_DOCTRINES);
         assertEquals(expected, doctrineDefinitions);
-        for (String definitionId : REWRITE_DOCTRINES) {
+        Set<String> rewriting = new HashSet<>(REWRITE_DOCTRINES);
+        rewriting.addAll(INFESTED_DOCTRINES);
+        for (String definitionId : rewriting) {
             DoctrineArchive archive = DoctrineArchives.get(definitionId);
             assertNotNull(archive, definitionId);
             assertTrue(archive.rewritesNodes(), definitionId);
@@ -130,6 +136,8 @@ class DoctrineArchiveDataTest {
                         if (archive.rewritesNodes()) {
                             SkillTier tier = SkillTree.get(rewrite.nodeId()).getType().getTier();
                             assertTrue(archive.replacementPool(tier).contains(rewrite.replacementType().getId()), rewrite.toString());
+                            assertNull(rewrite.replacementType().getItemCost(), rewrite.toString());
+                            assertTrue(rewrite.replacementType().getUnlockConditions().isEmpty(), rewrite.toString());
                         } else {
                             assertTrue(rewrite.augmented() && !rewrite.addedEffects(HullSize.CRUISER).isEmpty());
                         }
@@ -291,6 +299,35 @@ class DoctrineArchiveDataTest {
             }
 
             assertEquals(REWRITE_DOCTRINES.size() + AUGMENT_DOCTRINES.size(), independentDrops.size());
+        } finally {
+            NpcFactionVolumes.clear();
+        }
+    }
+
+    @Test
+    void theInfestedArchivesDropOnlyFromTheirOwnFleetsAndAreBornCorrupted() throws Exception {
+        loadShippedDoctrines();
+        try {
+            assertEquals(DoctrineInfestation.THREAT, DoctrineArchives.get("doctrine_archive_threat").infestation());
+            assertEquals(DoctrineInfestation.SHROUD, DoctrineArchives.get("doctrine_archive_shrouded").infestation());
+            FactionFleetDrops.Source shrouded = FactionFleetDrops.source("doctrine_archive_shrouded");
+            assertTrue(shrouded.guaranteed());
+            assertEquals(Set.of("dweller"), shrouded.extraFactionIds());
+            FactionFleetDrops.Source threat = FactionFleetDrops.source("doctrine_archive_threat");
+            assertFalse(threat.guaranteed());
+            assertEquals(Set.of("threat"), threat.extraFactionIds());
+            assertEquals(0.15f, threat.chance(), 1e-6f);
+            Random random = new Random(6L);
+            for (int trial = 0; trial < 100; trial++) {
+                assertEquals("doctrine_archive_threat", DoctrineArchives.pickFor("threat", random, definition -> true).id());
+                assertFalse(INFESTED_DOCTRINES.contains(DoctrineArchives.pickFor("independent", random, definition -> true).id()));
+            }
+            for (String definitionId : DoctrineArchives.all().stream().map(DoctrineArchive::definitionId).toList()) {
+                boolean infested = INFESTED_DOCTRINES.contains(definitionId);
+                assertEquals(infested, DoctrineArchives.infested(definitionId), definitionId);
+                assertEquals(infested, FactionFleetDrops.source(definitionId) != null, definitionId);
+                assertEquals(infested, Item.create("archive_" + definitionId, definitionId, 9L, List.of()).corrupted(), definitionId);
+            }
         } finally {
             NpcFactionVolumes.clear();
         }

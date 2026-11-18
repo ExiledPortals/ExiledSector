@@ -316,9 +316,8 @@ public final class SubroutineDataRules implements ItemDataRules {
                 integrity.error(file, line, definitionId + " lists " + typeId + " as a " + tier + " replacement, but it is a " + type.getTier()
                         + " node");
             }
-            if (type.isChoice() || type.getItemCost() != null) {
-                integrity.error(file, line, definitionId + " lists " + typeId
-                        + ", but choice nodes and nodes with an item cost can't be replacements");
+            if (type.isChoice()) {
+                integrity.error(file, line, definitionId + " lists " + typeId + ", but choice nodes can't be replacements");
             }
         }
     }

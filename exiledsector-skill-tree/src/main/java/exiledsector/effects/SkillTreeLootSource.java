@@ -170,7 +170,9 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty, M
         List<ItemDefinition> doctrines = new ArrayList<>();
         for (ItemDefinition definition : ItemDefinitions.ofType(ItemType.SUBROUTINE)) {
             if (SubroutineKind.of(definition) == SubroutineKind.DOCTRINE) {
-                doctrines.add(definition);
+                if (!DoctrineArchives.infested(definition.id())) {
+                    doctrines.add(definition);
+                }
             } else if (!definition.unique()) {
                 shown.add(ItemData.rolled(definition, random.nextLong()));
             }

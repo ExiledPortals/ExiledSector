@@ -107,7 +107,7 @@ class DoctrineIconLookTest {
     }
 
     @Test
-    void everyShippedDoctrineUsesItsBakedStillAndHasAnEmblemForItsFaction() throws Exception {
+    void everyShippedDoctrineButTheInfestedOnesUsesItsBakedStillAndHasAnEmblemForItsFaction() throws Exception {
         JSONArray subroutines = HullItemRows.shippedRows(SubroutineDefinitions.dataPath());
         JSONArray archives = HullItemRows.shippedRows(DoctrineArchives.DATA_PATH);
         assertTrue(Files.isRegularFile(ProjectFiles.projectRoot().resolve(DoctrineIconFx.STILL_PREFIX + "frame.png")));
@@ -120,6 +120,11 @@ class DoctrineIconLookTest {
                 if (subroutines.getJSONObject(row).getString("id").equals(id)) {
                     icon = subroutines.getJSONObject(row).getString("icon");
                 }
+            }
+            if (!archive.optString(DoctrineArchives.INFESTATION_COLUMN).isEmpty()) {
+                assertFalse(icon.startsWith(DoctrineIconFx.STILL_PREFIX), id + " looks like a regular doctrine archive");
+                assertTrue(Files.isRegularFile(ProjectFiles.projectRoot().resolve(icon)), icon);
+                continue;
             }
             String factionId = archive.getString("faction");
             assertEquals(DoctrineIconFx.STILL_PREFIX + id.substring("doctrine_archive_".length()) + ".png", icon, id);

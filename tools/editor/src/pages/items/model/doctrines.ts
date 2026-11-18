@@ -12,6 +12,8 @@ export const DOCTRINE_POOL_TIERS = { notables: 'NOTABLE', keystones: 'KEYSTONE',
 export type DoctrinePoolKey = keyof typeof DOCTRINE_POOL_TIERS;
 const LIST_JOINER = '; ';
 const WHOLE_NUMBER = /^\d{1,4}$/;
+const CHANCE = /^[0-9]+([.][0-9]+)?$/;
+const BOOLEAN_TEXT = ['', 'true', 'false'];
 const MODIFIER_ENTRY = /^@([^:]+)(?::([^:]*))?$/;
 
 export interface DoctrineArchive {
@@ -26,6 +28,10 @@ export interface DoctrineArchive {
   modifiers: string;
   minLines: string;
   maxLines: string;
+  infestation: string;
+  dropFactions: string;
+  dropChance: string;
+  guaranteedDrop: string;
   loadedId?: string;
 }
 
@@ -40,6 +46,10 @@ const DOCTRINE_ARCHIVE_COLUMNS: readonly CsvColumn<DoctrineArchive>[] = [
   { column: 'modifiers', field: 'modifiers' },
   { column: 'min_lines', field: 'minLines' },
   { column: 'max_lines', field: 'maxLines' },
+  { column: 'infestation', field: 'infestation' },
+  { column: 'drop_factions', field: 'dropFactions' },
+  { column: 'drop_chance', field: 'dropChance' },
+  { column: 'guaranteed_drop', field: 'guaranteedDrop' },
 ];
 
 export interface DoctrineArchivesModel {
@@ -50,7 +60,6 @@ export interface DoctrineArchivesModel {
 export interface DoctrineTypeFacts {
   tier: string;
   optional: boolean;
-  itemCost: boolean;
 }
 
 export function parseDoctrineArchivesCsv(text: string): DoctrineArchivesModel {
@@ -71,13 +80,12 @@ export function joinEntries(entries: readonly string[]): string {
 }
 
 export function doctrineTypeFacts(typesText: string): Record<string, DoctrineTypeFacts> {
-  const types = (JSON.parse(typesText) as { skillTypes?: { id?: string; tier?: string; options?: unknown[]; itemCost?: unknown }[] }).skillTypes ?? [];
+  const types = (JSON.parse(typesText) as { skillTypes?: { id?: string; tier?: string; options?: unknown[] }[] }).skillTypes ?? [];
   const facts: Record<string, DoctrineTypeFacts> = {};
   for (const type of types) {
     facts[String(type.id ?? '')] = {
       tier: String(type.tier ?? 'SMALL'),
       optional: Array.isArray(type.options) && type.options.length > 0,
-      itemCost: type.itemCost !== undefined && type.itemCost !== null,
     };
   }
   return facts;
@@ -85,7 +93,7 @@ export function doctrineTypeFacts(typesText: string): Record<string, DoctrineTyp
 
 export function replacementCandidates(typeFacts: Readonly<Record<string, DoctrineTypeFacts>>, tier: string): string[] {
   return Object.entries(typeFacts)
-    .filter(([, facts]) => facts.tier === tier && !facts.optional && !facts.itemCost)
+    .filter(([, facts]) => facts.tier === tier && !facts.optional)
     .map(([typeId]) => typeId)
     .sort((first, second) => first.localeCompare(second));
 }
@@ -105,6 +113,10 @@ export function newDoctrineArchive(archives: DoctrineArchive[], doctrineSubrouti
     modifiers: '',
     minLines: '1',
     maxLines: '1',
+    infestation: '',
+    dropFactions: '',
+    dropChance: '',
+    guaranteedDrop: '',
   };
 }
 
@@ -124,10 +136,27 @@ function poolIssues(label: string, archive: DoctrineArchive, typeFacts: Readonly
         issues.push(`${label}: ${typeId} is not a skill type`);
       } else if (facts.tier !== tier) {
         issues.push(`${label}: ${typeId} is listed as a ${tier} replacement, but it is a ${facts.tier} node`);
-      } else if (facts.optional || facts.itemCost) {
-        issues.push(`${label}: ${typeId} is optional or has an item cost, so it can't be a replacement`);
+      } else if (facts.optional) {
+        issues.push(`${label}: ${typeId} is optional, so it can't be a replacement`);
       }
     }
+  }
+  return issues;
+}
+
+function dropIssues(label: string, archive: DoctrineArchive, vocabulary: Vocabulary): string[] {
+  const issues: string[] = [];
+  if (archive.infestation !== '' && !vocabulary.doctrineInfestations.includes(archive.infestation)) {
+    issues.push(`${label}: infestation must be blank or one of ${vocabulary.doctrineInfestations.join(', ')}`);
+  }
+  if (archive.dropChance !== '' && !CHANCE.test(archive.dropChance)) {
+    issues.push(`${label}: drop chance must be a number of 0 or more`);
+  }
+  if (!BOOLEAN_TEXT.includes(archive.guaranteedDrop.toLowerCase())) {
+    issues.push(`${label}: guaranteed drop must be true, false or blank`);
+  }
+  if (splitList(archive.dropFactions).length === 0 && (archive.dropChance !== '' || archive.guaranteedDrop.toLowerCase() === 'true')) {
+    issues.push(`${label}: a fleet drop needs at least one drop faction`);
   }
   return issues;
 }
@@ -193,6 +222,7 @@ export function validateDoctrineArchives(
     }
     const listedTypes = splitList(archive.notables).length + splitList(archive.keystones).length + splitList(archive.smallNodes).length;
     issues.push(...poolIssues(label, archive, typeFacts));
+    issues.push(...dropIssues(label, archive, vocabulary));
     if (archive.behaviour === REWRITE_BEHAVIOUR) {
       if (listedTypes === 0) {
         issues.push(`${label}: a transforming doctrine needs at least one replacement notable, keystone or small node`);

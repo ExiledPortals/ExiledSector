@@ -15,6 +15,7 @@ import exiledsector.effects.ShipTreeSync;
 import exiledsector.items.Item;
 import exiledsector.items.custody.SocketCustody;
 import exiledsector.items.subroutine.SubroutineRadius;
+import exiledsector.items.subroutine.doctrine.DoctrineLayer;
 import exiledsector.skills.ExoshipNodes;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
@@ -30,6 +31,8 @@ import exiledsector.ui.hyperspace.HyperspaceCamera;
 import exiledsector.ui.hyperspace.HyperspaceMode;
 import exiledsector.ui.inspect.ItemCodex;
 import exiledsector.ui.node.DoctrineColors;
+import exiledsector.ui.infestation.InfestationEffects;
+import exiledsector.ui.infestation.InfestedDoctrine;
 import exiledsector.ui.node.NodeRadiusRingRenderer;
 import exiledsector.ui.node.NodeSearch;
 import exiledsector.ui.node.SkillTreeNodeDrawer;
@@ -54,6 +57,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final ExoshipView exoshipView = new ExoshipView();
     private final SkillTreeFleetRenderer fleetRenderer;
     private final NodeRadiusRingRenderer radiusRingRenderer = new NodeRadiusRingRenderer();
+    private final InfestationEffects infestationEffects = new InfestationEffects();
+    private DoctrineLayer shownInfestationLayer;
+    private InfestedDoctrine shownInfestation;
     private final TreeAllocationSession treeSession;
     private final SkillTreeNodeDrawer nodeDrawer;
     private final SkillTreeStatPanel statPanel;
@@ -195,6 +201,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         nodeDrawer.advance(amount);
         refreshSocketedRadiusRing();
         radiusRingRenderer.advance(amount);
+        infestationEffects.advance(amount);
         camera.applyStartingRootFollow(treeSession, followingStartingRoot);
         CanvasMode mode = mode();
         dropStaleGesture(mode);
@@ -616,7 +623,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             refreshRadiusRing(layers, treeHovered);
             radiusRingRenderer.renderSocketed(layers);
             radiusRingRenderer.render(layers);
+            infestationEffects.renderUnderNodes(layers);
             nodeDrawer.render(layers, mouseX, mouseY, treeHovered);
+            infestationEffects.renderOverNodes(layers);
         }
         fleetRenderer.render(viewport, backgroundAlpha * treeAlpha * exoshipFade);
         float shipAlpha = backgroundAlpha + (alphaMult * treeSession.treeAlpha() - backgroundAlpha) * exoshipView.viewLevel();
@@ -648,6 +657,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             footprint = socketPlacement.hoveredStorageFootprint();
         }
         SkillNode centre = footprint == null ? null : SkillTree.get(footprint.centreNodeId());
+        if (centre != null && shownInfestation != null && shownInfestation.scene().socket() == centre) {
+            centre = null;
+        }
         if (centre != null) {
             radiusRingRenderer.setHighlightedRadius(centre, footprint.size());
             hoverRingShown = true;
@@ -658,10 +670,24 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void refreshSocketedRadiusRing() {
+        InfestedDoctrine infestation = refreshInfestation();
         SubroutineRadius.Footprint footprint = treeSession.socketedRadiusFootprint();
-        SkillNode centre = footprint == null ? null : SkillTree.get(footprint.centreNodeId());
+        boolean infestationDrawsTheRim = infestation != null && footprint != null
+                && infestation.scene().socket().getId().equals(footprint.centreNodeId());
+        SkillNode centre = footprint == null || infestationDrawsTheRim ? null : SkillTree.get(footprint.centreNodeId());
         Color factionColor = footprint == null ? null : DoctrineColors.forFaction(footprint.factionId());
         radiusRingRenderer.setSocketedRadius(centre, footprint == null ? null : footprint.size(), factionColor);
+    }
+
+    private InfestedDoctrine refreshInfestation() {
+        DoctrineLayer doctrineLayer = treeSession.doctrineLayer();
+        if (doctrineLayer != shownInfestationLayer) {
+            shownInfestationLayer = doctrineLayer;
+            shownInfestation = InfestedDoctrine.of(doctrineLayer);
+            infestationEffects.show(shownInfestation == null ? null : shownInfestation.look(),
+                    shownInfestation == null ? null : shownInfestation.scene());
+        }
+        return shownInfestation;
     }
 
     private SubroutineRadius.Footprint socketFootprint(SkillNode socket) {

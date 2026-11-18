@@ -231,7 +231,8 @@ public final class DoctrineOverrides {
             boolean uniquePerShip = tier != SkillTier.SMALL;
             SkillType replacement = null;
             for (String typeId : DoctrineRewriter.candidateOrder(doctrine.seed(), node.getId(), archive.replacementPool(tier))) {
-                SkillType candidate = SkillTree.getType(typeId);
+                SkillType listedType = SkillTree.getType(typeId);
+                SkillType candidate = listedType == null ? null : listedType.withoutAcquisitionCosts();
                 if (candidate != null && !typeId.equals(node.getType().getId()) && !(uniquePerShip && takenTypeIds.contains(typeId))
                         && eligible(node, candidate, context, facts, shieldType)) {
                     replacement = candidate;
@@ -253,7 +254,7 @@ public final class DoctrineOverrides {
     }
 
     private static boolean eligible(SkillNode node, SkillType candidate, List<AllocatedNode> context, ShipFacts facts, ShieldType shieldType) {
-        if (candidate.isChoice() || candidate.getItemCost() != null) {
+        if (candidate.isChoice()) {
             return false;
         }
         if (facts == null) {
