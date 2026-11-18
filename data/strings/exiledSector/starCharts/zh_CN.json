@@ -400,6 +400,8 @@
     "chart.officer.board.legend.unknown": "尚未识别",
     "chart.officer.board.legend.rose": "上回合获得一级军衔",
     "chart.officer.board.legend.fell": "上回合失去一级军衔",
+    "chart.officer.board.turns": "军官每回合都会执行其意图。\n以下情况计为一回合：\n• 每次与军官交战\n• 每完成{charts}张星图且未与军官接触",
+    "chart.officer.board.chartCount": "{counted}/{needed}",
     "atlasTree.title": "星图册技能树",
     "atlasTree.hint": "点击与已分配节点相邻的节点以分配，再次点击可退还。Ctrl+Shift+点击可分配整条路径。右键点击虫洞可穿越。缩小可查看所有星域。Esc返回星图册。",
     "atlasTree.back": "返回星图册",

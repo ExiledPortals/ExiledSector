@@ -107,6 +107,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     static final float OFFICERS_WIDTH = 120f;
     static final float REPLAY_WIDTH = 100f;
     static final float REWARD_WIDTH = 150f;
+    static final float CHART_COUNT_WIDTH = 40f;
 
     private enum Control { CLOSE, BORDERS, BIOMES, TREE, FOCUS_SWITCH, DEBUG_COMPLETE, OFFICERS, OFFICERS_REPLAY, OFFICERS_REWARD }
 
@@ -236,7 +237,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         float treeLeft = position.getWidth() - PANEL_MARGIN - CHROME_PAD - CLOSE_WIDTH - BORDERS_WIDTH - BIOMES_WIDTH - TREE_WIDTH - BUTTON_GAP * 3f;
         panelRoot.addUIElement(treeElement).inTL(treeLeft, PANEL_MARGIN + CHROME_PAD);
         float bottomRowTop = position.getHeight() - PANEL_MARGIN - CHROME_PAD - ChromeMetrics.CONTROL_HEIGHT;
-        float officersLeft = position.getWidth() - PANEL_MARGIN - CHROME_PAD - OFFICERS_WIDTH;
+        float officersLeft = officersLeft(position);
         officersElement = panelRoot.createUIElement(OFFICERS_WIDTH, ChromeMetrics.CONTROL_HEIGHT, false);
         officersButton = officersElement.addButton(Translation.text("chart.atlas.officers"), Control.OFFICERS, OFFICERS_WIDTH,
                 ChromeMetrics.CONTROL_HEIGHT, 0f);
@@ -250,9 +251,13 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         rewardElement = panelRoot.createUIElement(REWARD_WIDTH, ChromeMetrics.CONTROL_HEIGHT, false);
         rewardButton = rewardElement.addButton(Translation.text("chart.atlas.officers.reward"), Control.OFFICERS_REWARD, REWARD_WIDTH,
                 ChromeMetrics.CONTROL_HEIGHT, 0f);
-        panelRoot.addUIElement(rewardElement).inTL(officersLeft - BUTTON_GAP * 2f - REPLAY_WIDTH - REWARD_WIDTH, bottomRowTop);
+        panelRoot.addUIElement(rewardElement).inTL(officersLeft - BUTTON_GAP * 3f - REPLAY_WIDTH - CHART_COUNT_WIDTH - REWARD_WIDTH, bottomRowTop);
         rewardElement.setOpacity(0f);
         rewardButton.setEnabled(false);
+    }
+
+    private static float officersLeft(PositionAPI position) {
+        return position.getWidth() - PANEL_MARGIN - CHROME_PAD - OFFICERS_WIDTH;
     }
 
     private void indexSearch() {
@@ -962,6 +967,12 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         }
     }
 
+    private void renderChartCount(float alpha) {
+        float countRight = panelPosition.getX() + officersLeft(panelPosition) - BUTTON_GAP * 2f - REPLAY_WIDTH;
+        float rowCentreY = panelPosition.getY() + PANEL_MARGIN + CHROME_PAD + ChromeMetrics.CONTROL_HEIGHT / 2f;
+        officerBoard.renderChartCount(countRight, rowCentreY, alpha);
+    }
+
     private void advanceOfficerBoard(float amount) {
         if (panelPosition != null && officerBoard.isShowing()) {
             placeOfficerBoard();
@@ -1005,6 +1016,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             }
         }
         drawChrome(alpha);
+        renderChartCount(alpha);
         officerBoard.render(alpha, mouseX, mouseY, panelStyle.getAccentColor());
         if (hoveredAnomaly != null && hoveredAnomaly.isOfficer() && !gesture.isPanning()) {
             officerTooltip.show(hoveredAnomaly.officer());

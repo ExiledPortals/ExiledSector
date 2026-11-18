@@ -58,7 +58,6 @@ public final class OfficerTurns {
         if (state.addOtherBossKill() < OfficerTurnTables.rules().otherBossKillsPerTurn()) {
             return null;
         }
-        state.clearOtherBossKills();
         return take(generator, state, TurnCause.bossKills(), context);
     }
 
@@ -101,6 +100,7 @@ public final class OfficerTurns {
     }
 
     public static TurnResult take(AtlasGenerator generator, AtlasState state, TurnCause cause, TerritoryContext context) {
+        state.clearOtherBossKills();
         OfficerSeatRepair.repair(generator, state, OfficerRanks.all(), context);
         OfficerFlagshipRepair.repair(state, OfficerRanks.all(), context);
         OfficerRewardRepair.repair(state, context);

@@ -8,6 +8,7 @@ import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.OfficerRanks;
 import exiledsector.charts.officer.OfficerText;
+import exiledsector.charts.officer.turn.OfficerTurnTables;
 import exiledsector.charts.officer.turn.OfficerTurns;
 import exiledsector.charts.officer.turn.TurnResult;
 import exiledsector.i18n.I18n;
@@ -99,6 +100,7 @@ final class OfficerBoard {
     private final OfficerBoardLegend legend = new OfficerBoardLegend(ghosts, beams, sprites);
     private final OfficerBoardTooltip tooltip = new OfficerBoardTooltip(sprites);
     private final TextLabel titleLabel = new TextLabel(UiFonts.TITLE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
+    private final TextLabel chartCountLabel = new TextLabel(UiFonts.BODY, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
     private final List<TextLabel> rankLabels = new ArrayList<>();
     private final Map<Integer, AtlasOfficer> records = new HashMap<>();
     private final Map<Integer, Face> faces = new HashMap<>();
@@ -148,7 +150,9 @@ final class OfficerBoard {
         if (unseen) {
             state.markOfficerTurnSeen();
         }
-        I18n.forGameText(() -> writeLabels(shuffle.after()));
+        int chartsPerTurn = OfficerTurnTables.rules().otherBossKillsPerTurn();
+        int chartsCounted = Math.min(state.otherBossKills(), chartsPerTurn);
+        I18n.forGameText(() -> writeLabels(shuffle.after(), chartsCounted, chartsPerTurn));
         geometry = null;
         hoveredRecordId = null;
         hoveredBattleMark = null;
@@ -184,8 +188,9 @@ final class OfficerBoard {
                 faction == null ? FALLBACK_FRAME_COLOUR : faction.getBaseUIColor(), officer.isActive() ? officer.commandCentre() : null);
     }
 
-    private void writeLabels(OfficerBoardLayout layout) {
+    private void writeLabels(OfficerBoardLayout layout, int chartsCounted, int chartsPerTurn) {
         titleLabel.set(Translation.text("chart.officer.board.title"));
+        chartCountLabel.set(Translation.msg("chart.officer.board.chartCount").arg("counted", chartsCounted).arg("needed", chartsPerTurn).text());
         rankLabels.clear();
         float widestLabel = 0f;
         for (int row = 0; row < layout.rowCount(); row++) {
@@ -195,7 +200,7 @@ final class OfficerBoard {
             widestLabel = Math.max(widestLabel, label.width());
         }
         labelColumnWidth = (float) Math.ceil(widestLabel) + INSET;
-        legend.write();
+        legend.write(chartsPerTurn);
     }
 
     void close() {
@@ -420,6 +425,13 @@ final class OfficerBoard {
             tooltip.draw(accent, mouseX, mouseY, alpha);
         } else if (helpHovered) {
             legend.drawTooltip(accent, mouseX, mouseY, alpha);
+        }
+    }
+
+    void renderChartCount(float right, float centreY, float alphaMult) {
+        float alpha = Fade.smooth(openLevel) * alphaMult;
+        if (alpha > 0f) {
+            chartCountLabel.setAlpha(alpha).draw(right - chartCountLabel.width(), centreY + chartCountLabel.height() / 2f);
         }
     }
 

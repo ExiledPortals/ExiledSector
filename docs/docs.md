@@ -146,8 +146,8 @@ full. Adaptive Reforge and Biome Graft in the Infused Crafting tray add them too
 ### Atlas officers
 
 Factions hold territories in the atlas, each run from a command centre by a named officer. Officers have ranks, and
-each answers to one officer of the rank above. The atlas takes a turn when you beat an officer, after every fourth
-other chart boss, and when an officer's fleet beats you. In a turn, officers push on borders and challenge their
+each answers to one officer of the rank above. The atlas takes a turn when you beat an officer, when an officer's
+fleet beats you, and after four other chart bosses since the last turn. In a turn, officers push on borders and challenge their
 superior or subordinate, and a more renowned officer swaps ranks with their superior. A beaten officer drops a rank,
 loses their territory and waits for a new command centre, and a Lieutenant dies on a second loss and is replaced. If
 you take a commission, that faction's officers hand their territories to other factions' officers.

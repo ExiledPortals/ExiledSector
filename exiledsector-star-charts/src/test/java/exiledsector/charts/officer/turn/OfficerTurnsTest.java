@@ -65,7 +65,7 @@ class OfficerTurnsTest {
     }
 
     @Test
-    void beatingAnOfficerTakesATurnAtOnceAndLeavesTheKillCountAlone() {
+    void beatingAnOfficerTakesATurnAtOnceAndResetsTheKillCount() {
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = generator(state);
         int recordId = TestTerritories.establish(state, new AtlasCell(4, 0), "pirates").recordId();
@@ -74,7 +74,7 @@ class OfficerTurnsTest {
         TurnResult result = OfficerTurns.bossKilled(generator, state, recordId, TerritoryContext.NONE);
 
         assertEquals(TurnCause.officerDefeated(recordId), result.cause());
-        assertEquals(1, state.otherBossKills());
+        assertEquals(0, state.otherBossKills());
         assertEquals(result, OfficerTurns.lastTurn(state));
         assertTrue(state.officer(recordId).hasFled());
         assertTrue(state.officer(recordId).lastChance());

@@ -21,6 +21,7 @@ final class OfficerBoardLegend {
     static final float COLUMN_GAP = 16f;
     static final float ROW_GAP = 6f;
     static final float PADDING = 10f;
+    static final float SECTION_GAP = 14f;
     static final int COLUMNS = 2;
     static final int ARROW_SEGMENTS = 13;
     static final float ARROWHEAD_LENGTH = 7f;
@@ -53,6 +54,7 @@ final class OfficerBoardLegend {
     private final OfficerBoardBeams beams;
     private final SpriteCache sprites;
     private final Map<Glyph, TextLabel> labels = new EnumMap<>(Glyph.class);
+    private final TextLabel turnsLabel = new TextLabel(UiFonts.BODY, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
 
     OfficerBoardLegend(SensorGhostRenderer ghosts, OfficerBoardBeams beams, SpriteCache sprites) {
         this.ghosts = ghosts;
@@ -60,7 +62,8 @@ final class OfficerBoardLegend {
         this.sprites = sprites;
     }
 
-    void write() {
+    void write(int chartsPerTurn) {
+        turnsLabel.setWrapped(Translation.msg("chart.officer.board.turns").arg("charts", chartsPerTurn).text(), width(), Float.MAX_VALUE);
         for (Glyph glyph : Glyph.values()) {
             labels.computeIfAbsent(glyph, unused -> new TextLabel(UiFonts.BODY, SkillTreePanelStyle.TOOLTIP_BODY_COLOR))
                     .setWrapped(Translation.text(glyph.key), TEXT_WIDTH, Float.MAX_VALUE);
@@ -120,12 +123,15 @@ final class OfficerBoardLegend {
     }
 
     void drawTooltip(Color accent, float mouseX, float mouseY, float alpha) {
+        float turnsHeight = turnsLabel.height() + SECTION_GAP;
         float boxWidth = (float) Math.ceil(width() + PADDING * 2f);
-        float boxHeight = (float) Math.ceil(height() + PADDING * 2f);
+        float boxHeight = (float) Math.ceil(turnsHeight + height() + PADDING * 2f);
         float boxX = SkillTreePanelStyle.cursorBoxLeft(mouseX, boxWidth);
         float boxY = SkillTreePanelStyle.cursorBoxBottom(mouseY, boxHeight);
         SkillTreePanelStyle.drawTooltipBackground(boxX, boxY, boxWidth, boxHeight, alpha, accent);
-        draw(boxX + PADDING, boxY + boxHeight - PADDING, alpha);
+        float top = boxY + boxHeight - PADDING;
+        turnsLabel.setAlpha(alpha).draw(boxX + PADDING, top);
+        draw(boxX + PADDING, top - turnsHeight, alpha);
     }
 
     private void drawGlyph(Glyph glyph, float left, float centreY, float alpha) {
