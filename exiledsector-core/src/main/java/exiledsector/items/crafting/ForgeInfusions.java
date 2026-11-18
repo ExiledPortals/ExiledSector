@@ -11,9 +11,9 @@ import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public final class ForgeInfusions {
@@ -26,26 +26,28 @@ public final class ForgeInfusions {
         FULL
     }
 
-    private static volatile Function<ItemDefinition, String> source = definition -> null;
+    @FunctionalInterface
+    public interface Source {
+
+        Source NONE = definition -> null;
+
+        String modifierFor(ItemDefinition definition);
+    }
 
     private ForgeInfusions() {
     }
 
-    public static void use(Function<ItemDefinition, String> modifierForDefinition) {
-        source = modifierForDefinition == null ? definition -> null : modifierForDefinition;
-    }
-
-    static String modifierFor(Item item) {
+    static String modifierFor(Item item, Source source) {
         ItemDefinition definition = item == null ? null : item.definition();
-        return definition == null ? null : source.apply(definition);
+        return definition == null || source == null ? null : source.modifierFor(definition);
     }
 
-    static Block block(Item item) {
+    static Block block(Item item, Source source) {
         ItemDefinition definition = item.definition();
         if (definition == null || definition.unique() || definition.keepsOneModifier()) {
             return Block.UNIQUE;
         }
-        String modifierId = modifierFor(item);
+        String modifierId = modifierFor(item, source);
         Modifier modifier = modifierId == null ? null : ItemModifiers.get(modifierId);
         if (modifier == null || modifier.slot() == ModifierSlot.IMPLICIT || !ItemModifiers.itemTypes(modifierId).contains(definition.type())) {
             return Block.NONE;
@@ -64,11 +66,20 @@ public final class ForgeInfusions {
         return present.size() >= limits.maxModifiers() || sameSide >= limits.maxPerSide() ? Block.FULL : null;
     }
 
-    static boolean infuse(Item item, Random random) {
-        if (block(item) != null) {
+    static List<ForgeChoice> choices(Item item, Source source) {
+        return block(item, source) == null ? List.of(ForgeChoice.WHOLE_ITEM) : List.of();
+    }
+
+    static String refusalReason(ForgeOperation operation, Item item, Source source) {
+        Block block = block(item, source);
+        return block == null ? null : operation.id() + "." + block.name().toLowerCase(Locale.ROOT);
+    }
+
+    static boolean infuse(Item item, Source source, Random random) {
+        if (block(item, source) != null) {
             return false;
         }
-        item.addExplicit(RolledModifier.roll(ItemModifiers.get(modifierFor(item)), random));
+        item.addExplicit(RolledModifier.roll(ItemModifiers.get(modifierFor(item, source)), random));
         return true;
     }
 }

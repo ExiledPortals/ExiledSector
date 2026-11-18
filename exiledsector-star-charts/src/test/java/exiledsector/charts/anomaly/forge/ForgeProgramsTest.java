@@ -13,11 +13,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -33,9 +31,8 @@ class ForgeProgramsTest {
         assertTrue(ForgePrograms.register(CDL.toJSONArray(csv)).isEmpty());
     }
 
-    private static JSONObject row(String id, String itemTypes, int minTier) throws Exception {
-        return new JSONObject().put("id", id).put("weight", "1").put("min_tier", Integer.toString(minTier)).put("item_types", itemTypes)
-                .put("metals", "10").put("rare_metals", "5").put("feedstock", "20");
+    private static JSONObject row(String id, String itemTypes) throws Exception {
+        return new JSONObject().put("id", id).put("item_types", itemTypes).put("feedstock", "20").put("infused_feedstock_each", "5");
     }
 
     @Test
@@ -50,7 +47,7 @@ class ForgeProgramsTest {
 
     @Test
     void rowsThatAreNotProgramsOrForgeNothingAreSkipped() throws Exception {
-        List<String> problems = ForgePrograms.register(new JSONArray().put(row("melt", "hull_item", 1)).put(row("graft", "wormhole_anchor", 1)));
+        List<String> problems = ForgePrograms.register(new JSONArray().put(row("melt", "hull_item")).put(row("graft", "wormhole_anchor")));
 
         assertEquals(3, problems.size(), "the unknown program, the unforgeable item type and the row it empties");
         assertNull(ForgePrograms.byId("melt"));
@@ -58,24 +55,35 @@ class ForgeProgramsTest {
     }
 
     @Test
-    void aRollPicksDistinctProgramsTheTierAllows() throws Exception {
-        ForgePrograms.register(new JSONArray().put(row("graft", "hull_item", 1)).put(row("excise", "hull_item", 1)).put(row("perfect", "hull_item", 8)));
+    void costsAreTheProgramsOwnAndTheCostMultiplierScalesBothFeedstocks() throws Exception {
+        ForgePrograms.register(new JSONArray().put(row("graft", "hull_item")));
+        ForgePrograms.Program graft = ForgePrograms.byId("graft");
 
-        for (long seed = 0; seed < 20; seed++) {
-            List<ForgePrograms.Program> rolled = ForgePrograms.roll(3, 3, new Random(seed));
-            assertEquals(2, rolled.size());
-            assertEquals(2, new HashSet<>(rolled).size());
-            assertTrue(rolled.stream().noneMatch(program -> program.id().equals("perfect")));
-        }
-        assertEquals(3, ForgePrograms.roll(8, 3, new Random(1L)).size());
+        assertEquals(new ForgeRules.Cost(20, 5), ForgeRules.costFor(graft, 1f));
+        assertEquals(new ForgeRules.Cost(10, 3), ForgeRules.costFor(graft, 0.5f));
+        assertEquals(new ForgeRules.Cost(40, 10), ForgeRules.costFor(graft, 2f));
+        assertEquals(new ForgeRules.Cost(0, 0), ForgeRules.costFor(graft, -1f));
     }
 
     @Test
-    void costsAreTheProgramsOwnAtEveryTierAndFollowTheCostMultiplier() throws Exception {
-        ForgePrograms.register(new JSONArray().put(row("graft", "hull_item", 1)));
-        ForgePrograms.Program graft = ForgePrograms.byId("graft");
+    void theShippedProgramsHaveFixedFeedstockCosts() throws Exception {
+        registerShipped();
 
-        assertEquals(new ForgeRules.Cost(10, 5, 20), ForgeRules.costFor(graft, 1f));
-        assertEquals(new ForgeRules.Cost(5, 3, 10), ForgeRules.costFor(graft, 0.5f));
+        assertEquals(new ForgeRules.Cost(300, 0), ForgeRules.costFor(ForgePrograms.of(ForgeOperation.GRAFT), 1f));
+        assertEquals(new ForgeRules.Cost(500, 0), ForgeRules.costFor(ForgePrograms.of(ForgeOperation.EXCISE), 1f));
+        assertEquals(new ForgeRules.Cost(1000, 0), ForgeRules.costFor(ForgePrograms.of(ForgeOperation.PERFECT), 1f));
+        assertEquals(new ForgeRules.Cost(0, 500), ForgeRules.costFor(ForgePrograms.of(ForgeOperation.BIOME_INFUSE), 1f));
+        assertEquals(new ForgeRules.Cost(500, 0), ForgeRules.costFor(ForgePrograms.of(ForgeOperation.INFUSE), 1f));
+    }
+
+    @Test
+    void theRemovedProgramsAreGone() throws Exception {
+        registerShipped();
+
+        assertNull(ForgeOperation.byIdOrNull("anchor_reroll"));
+        assertNull(ForgeOperation.byIdOrNull("retemper"));
+        assertNull(ForgePrograms.byId("anchor_reroll"));
+        assertNull(ForgePrograms.byId("retemper"));
+        assertEquals(5, ForgePrograms.all().size());
     }
 }

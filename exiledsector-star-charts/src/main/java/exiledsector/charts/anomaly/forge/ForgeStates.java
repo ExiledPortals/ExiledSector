@@ -12,6 +12,7 @@ public final class ForgeStates {
     static final String PROGRAMS_FIELD = "offered";
     static final String RUNS_FIELD = "runsLeft";
     static final String REACHED_FIELD = "reached";
+    static final String INFUSION_BIOME_FIELD = "infusionBiome";
 
     private ForgeStates() {
     }
@@ -20,9 +21,10 @@ public final class ForgeStates {
         return AnomalyState.of(run, site.anomalyId());
     }
 
-    static void record(AnomalyState state, List<ForgePrograms.Program> programs, int runs) {
+    static void record(AnomalyState state, List<ForgePrograms.Program> programs, int runs, String infusionBiome) {
         state.put(PROGRAMS_FIELD, StateFields.join(programs.stream().map(ForgePrograms.Program::id).toList()));
         state.put(RUNS_FIELD, runs);
+        state.put(INFUSION_BIOME_FIELD, infusionBiome);
     }
 
     public static List<ForgePrograms.Program> programs(ChartRun run, ForgeSite site) {
@@ -38,6 +40,10 @@ public final class ForgeStates {
 
     public static int runsLeft(ChartRun run, ForgeSite site) {
         return Math.max(0, of(run, site).integer(RUNS_FIELD));
+    }
+
+    static String infusionBiome(ChartRun run, ForgeSite site) {
+        return of(run, site).text(INFUSION_BIOME_FIELD);
     }
 
     static boolean reachControlRoom(ChartRun run, ForgeSite site, ForgePrograms.Program program) {

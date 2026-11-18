@@ -33,12 +33,10 @@ class ForgeInfusionsTest {
         ItemDefinitions.register(new JSONArray()
                 .put(row(PLATE, "FLUX_CAPACITY_MULT:4:6; FLUX_DISSIPATION_MULT:4:6; HULL_MULT:4:6", "SHIELD_DAMAGE_TAKEN_MULT:-15:-10; ARMOR_PERCENT:6:9"))
                 .put(row(RELIC, "HULL_MULT:4:6", "").put("unique", "TRUE")));
-        ForgeInfusions.use(definition -> INFUSION);
     }
 
     @AfterEach
     void tearDown() {
-        ForgeInfusions.use(null);
         ItemDefinitions.clear();
         ItemModifiers.clear();
     }
@@ -56,22 +54,28 @@ class ForgeInfusionsTest {
         return TestItems.withLines("plate", PLATE, 1L, List.of(effects));
     }
 
+    private static final ForgeInfusions.Source SOURCE = definition -> INFUSION;
+
+    private static String refusal(ForgeOperation operation, Item item, ForgeInfusions.Source source) {
+        return operation.verdict(item, source).refusalKey();
+    }
+
     private static String refusal(Item item) {
-        return ForgeOperation.INFUSE.verdict(item).refusalKey();
+        return refusal(ForgeOperation.INFUSE, item, SOURCE);
     }
 
     @Test
     void infusionAddsThePartsModifierOnceToAnItemWithRoom() {
         Item item = plate(new RolledLine("FLUX_CAPACITY_MULT", 5f));
 
-        assertTrue(ForgeOperation.INFUSE.verdict(item).allowed());
+        assertTrue(ForgeOperation.INFUSE.verdict(item, SOURCE).allowed());
         assertFalse(ForgeOperation.INFUSE.picksAChoice());
-        assertEquals(List.of(ForgeChoice.WHOLE_ITEM), ForgeOperation.INFUSE.choices(item));
-        assertTrue(ForgeOperation.INFUSE.apply(item, ForgeChoice.WHOLE_ITEM, new Random(3L)));
+        assertEquals(List.of(ForgeChoice.WHOLE_ITEM), ForgeOperation.INFUSE.choices(item, SOURCE));
+        assertTrue(ForgeOperation.INFUSE.apply(item, ForgeChoice.WHOLE_ITEM, SOURCE, new Random(3L)));
 
         assertTrue(item.explicits().stream().anyMatch(rolled -> rolled.modifierId().equals(INFUSION)));
         assertEquals(ForgeOperation.REFUSAL_PREFIX + "infuse.present", refusal(item));
-        assertFalse(ForgeOperation.INFUSE.apply(item, ForgeChoice.WHOLE_ITEM, new Random(3L)));
+        assertFalse(ForgeOperation.INFUSE.apply(item, ForgeChoice.WHOLE_ITEM, SOURCE, new Random(3L)));
     }
 
     @Test
@@ -79,18 +83,43 @@ class ForgeInfusionsTest {
         Item item = plate(new RolledLine("FLUX_CAPACITY_MULT", 5f), new RolledLine("HULL_MULT", 5f));
 
         assertEquals(ForgeOperation.REFUSAL_PREFIX + "infuse.full", refusal(item));
-        assertFalse(ForgeOperation.INFUSE.apply(item, ForgeChoice.WHOLE_ITEM, new Random(1L)));
+        assertFalse(ForgeOperation.INFUSE.apply(item, ForgeChoice.WHOLE_ITEM, SOURCE, new Random(1L)));
         assertEquals(2, item.explicits().size());
     }
 
     @Test
     void uniquesPartsWithoutAnInfusionAndClashingEffectsAreRefused() {
         assertEquals(ForgeOperation.REFUSAL_PREFIX + "infuse.unique", refusal(TestItems.withLines("relic", RELIC, 1L, List.of())));
+        assertEquals(ForgeOperation.REFUSAL_PREFIX + "infuse.clash",
+                refusal(ForgeOperation.INFUSE, plate(new RolledLine("FLUX_CAPACITY_MULT", 5f)), definition -> CLASHING_INFUSION));
+        assertEquals(ForgeOperation.REFUSAL_PREFIX + "infuse.none", refusal(ForgeOperation.INFUSE, plate(), definition -> null));
+        assertEquals(ForgeOperation.REFUSAL_PREFIX + "infuse.none", refusal(ForgeOperation.INFUSE, plate(), ForgeInfusions.Source.NONE));
+    }
 
-        ForgeInfusions.use(definition -> CLASHING_INFUSION);
-        assertEquals(ForgeOperation.REFUSAL_PREFIX + "infuse.clash", refusal(plate(new RolledLine("FLUX_CAPACITY_MULT", 5f))));
+    @Test
+    void biomeInfusionAddsTheSourcesModifierAndIsRefusedOnTheSameTermsUnderItsOwnKeys() {
+        Item item = plate(new RolledLine("FLUX_CAPACITY_MULT", 5f));
 
-        ForgeInfusions.use(definition -> null);
-        assertEquals(ForgeOperation.REFUSAL_PREFIX + "infuse.none", refusal(plate()));
+        assertFalse(ForgeOperation.BIOME_INFUSE.picksAChoice());
+        assertTrue(ForgeOperation.BIOME_INFUSE.apply(item, ForgeChoice.WHOLE_ITEM, SOURCE, new Random(3L)));
+        assertTrue(item.explicits().stream().anyMatch(rolled -> rolled.modifierId().equals(INFUSION)));
+
+        assertEquals(ForgeOperation.REFUSAL_PREFIX + "biome_infuse.present", refusal(ForgeOperation.BIOME_INFUSE, item, SOURCE));
+        assertEquals(ForgeOperation.REFUSAL_PREFIX + "biome_infuse.full",
+                refusal(ForgeOperation.BIOME_INFUSE, plate(new RolledLine("FLUX_CAPACITY_MULT", 5f), new RolledLine("HULL_MULT", 5f)), SOURCE));
+        assertEquals(ForgeOperation.REFUSAL_PREFIX + "biome_infuse.unique",
+                refusal(ForgeOperation.BIOME_INFUSE, TestItems.withLines("relic", RELIC, 1L, List.of()), SOURCE));
+        assertEquals(ForgeOperation.REFUSAL_PREFIX + "biome_infuse.clash",
+                refusal(ForgeOperation.BIOME_INFUSE, plate(new RolledLine("FLUX_CAPACITY_MULT", 5f)), definition -> CLASHING_INFUSION));
+        assertEquals(ForgeOperation.REFUSAL_PREFIX + "biome_infuse.none", refusal(ForgeOperation.BIOME_INFUSE, plate(), ForgeInfusions.Source.NONE));
+    }
+
+    @Test
+    void anInfusionWithoutASourceAddsNothing() {
+        Item item = plate(new RolledLine("FLUX_CAPACITY_MULT", 5f));
+
+        assertFalse(ForgeOperation.INFUSE.verdict(item).allowed());
+        assertFalse(ForgeOperation.BIOME_INFUSE.apply(item, ForgeChoice.WHOLE_ITEM, new Random(1L)));
+        assertEquals(1, item.explicits().size());
     }
 }

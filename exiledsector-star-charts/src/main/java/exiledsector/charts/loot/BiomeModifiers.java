@@ -123,6 +123,10 @@ public final class BiomeModifiers {
         return biomeId == null || kind == null ? null : modifiersByKey.get(new Key(biomeId, kind));
     }
 
+    public static boolean hasModifiers(String biomeId) {
+        return biomeId != null && biomeIds.contains(biomeId);
+    }
+
     public static List<String> modifiersFor(ItemKind kind) {
         List<String> modifiers = new ArrayList<>();
         modifiersByKey.forEach((key, modifierId) -> {

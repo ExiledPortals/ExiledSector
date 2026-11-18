@@ -3,12 +3,10 @@ package exiledsector.items.crafting;
 import exiledsector.items.Item;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.TestItems;
-import exiledsector.items.modifier.AffixLayout;
 import exiledsector.items.modifier.ItemImplicits;
 import exiledsector.items.modifier.RolledLine;
 import exiledsector.items.modifier.RolledModifier;
 import exiledsector.skills.skilleffect.SkillEffect;
-import exiledsector.modifiers.ModifierSlot;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -128,44 +126,6 @@ class ItemForgingTest {
         Item item = plate(new RolledLine("FLUX_CAPACITY_MULT", 7f));
 
         assertEquals(ForgeOperation.REFUSAL_PREFIX + "perfect", ForgeOperation.PERFECT.verdict(item).refusalKey());
-        Item retempered = plate();
-        retempered.replaceImplicits(List.of(retempered.implicits().get(0).withLines(List.of(new RolledLine("ARMOR_PERCENT", 25f)))));
-        assertFalse(ForgeOperation.RETEMPER.verdict(retempered).allowed());
-    }
-
-    @Test
-    void anchorRerollKeepsTheAnchorAndTheModifierCount() {
-        for (long seed = 0; seed < 20; seed++) {
-            Item item = plate(new RolledLine("FLUX_CAPACITY_MULT", 5f), new RolledLine("HULL_MULT", 5f),
-                    new RolledLine("ARMOR_PERCENT", 7f));
-            RolledModifier anchor = item.explicits().get(1);
-
-            assertTrue(ForgeOperation.ANCHOR_REROLL.apply(item, ForgeChoice.modifier(anchor), new Random(seed)));
-            assertEquals(3, item.explicits().size());
-            assertTrue(item.explicits().contains(anchor));
-            assertTrue(item.explicits().stream().filter(rolled -> rolled.slot() == ModifierSlot.PREFIX).count() <= AffixLayout.MAX_PER_SIDE);
-        }
-    }
-
-    @Test
-    void anchorRerollNeedsAnotherModifierToReroll() {
-        Item item = plate(new RolledLine("FLUX_CAPACITY_MULT", 5f));
-
-        assertEquals(ForgeOperation.REFUSAL_PREFIX + "anchor_reroll", ForgeOperation.ANCHOR_REROLL.verdict(item).refusalKey());
-    }
-
-    @Test
-    void retemperKeepsTheStrongerOfTheOldAndNewImplicitRolls() {
-        for (long seed = 0; seed < 20; seed++) {
-            Item item = plate();
-            item.replaceImplicits(List.of(item.implicits().get(0).withLines(List.of(new RolledLine("ARMOR_PERCENT", 14f)))));
-
-            assertTrue(ForgeOperation.RETEMPER.apply(item, ForgeChoice.WHOLE_ITEM, new Random(seed)));
-            assertTrue(item.implicits().get(0).lines().get(0).magnitude() >= 14f);
-        }
-        Item perfect = plate();
-        perfect.replaceImplicits(List.of(perfect.implicits().get(0).withLines(List.of(new RolledLine("ARMOR_PERCENT", 20f)))));
-        assertEquals(ForgeOperation.REFUSAL_PREFIX + "retemper", ForgeOperation.RETEMPER.verdict(perfect).refusalKey());
     }
 
     @Test
@@ -174,7 +134,6 @@ class ItemForgingTest {
 
         assertFalse(ForgeOperation.GRAFT.verdict(relic).allowed());
         assertFalse(ForgeOperation.EXCISE.verdict(relic).allowed());
-        assertFalse(ForgeOperation.ANCHOR_REROLL.verdict(relic).allowed());
         assertTrue(ForgeOperation.PERFECT.verdict(relic).allowed());
     }
 

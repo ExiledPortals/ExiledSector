@@ -1,12 +1,18 @@
 package exiledsector.charts.anomaly.forge;
 
+import exiledsector.i18n.I18n;
+import exiledsector.i18n.Message;
+import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.items.Item;
 import exiledsector.items.crafting.ForgeChoice;
 import exiledsector.items.crafting.ForgeOperation;
+import exiledsector.items.crafting.material.CraftingMaterials;
+import exiledsector.items.crafting.material.InfusedFeedstock;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public final class ForgeTexts {
 
@@ -29,9 +35,8 @@ public final class ForgeTexts {
 
     public static String costText(ForgeRules.Cost cost) {
         List<String> parts = new ArrayList<>();
-        addCostPart(parts, "metals", cost.metals());
-        addCostPart(parts, "rareMetals", cost.rareMetals());
         addCostPart(parts, "feedstock", cost.feedstock());
+        addCostPart(parts, "infusedFeedstock", cost.infusedFeedstockEach());
         if (parts.isEmpty()) {
             return Translation.text(KEY_PREFIX + "cost.free");
         }
@@ -48,6 +53,21 @@ public final class ForgeTexts {
         }
     }
 
+    static StyledText stockLine(CraftingMaterials materials, boolean withInfusedFeedstock) {
+        return I18n.forGameText(() -> {
+            Message stock = Translation.msg(KEY_PREFIX + (withInfusedFeedstock ? "stock.infused" : "stock"))
+                    .arg("feedstock", held(materials, ChartForge.FEEDSTOCK_ITEM_ID));
+            for (InfusedFeedstock feedstock : InfusedFeedstock.values()) {
+                stock.arg(feedstock.name().toLowerCase(Locale.ROOT), held(materials, feedstock.itemId()));
+            }
+            return stock.styled();
+        });
+    }
+
+    private static int held(CraftingMaterials materials, String itemId) {
+        return materials == null ? 0 : materials.count(itemId);
+    }
+
     public static String partName(String part) {
         return Translation.text(KEY_PREFIX + "part." + part);
     }
@@ -60,17 +80,13 @@ public final class ForgeTexts {
         return Translation.text(KEY_PREFIX + "choose." + operation.id());
     }
 
-    public static String choiceLabel(Item item, ForgeChoice choice, ForgeOperation operation) {
+    public static String choiceLabel(Item item, ForgeChoice choice) {
         if (choice.part() != null) {
             return partName(choice.part());
         }
         if (choice.modifier() == null || item == null) {
             return "";
         }
-        String modifierText = Translation.list(item.explicitLines(choice.modifier())).plain();
-        if (operation != ForgeOperation.ANCHOR_REROLL) {
-            return modifierText;
-        }
-        return Translation.msg(KEY_PREFIX + "keep").arg("modifier", modifierText).text();
+        return Translation.list(item.explicitLines(choice.modifier())).plain();
     }
 }

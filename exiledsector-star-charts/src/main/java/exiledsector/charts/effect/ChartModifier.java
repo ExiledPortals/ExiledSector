@@ -232,7 +232,6 @@ public enum ChartModifier implements ModifierEffect {
     CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT("storm_front.loot", AnomalyLine.PERCENT),
     CHART_STORM_STRIKE_FREQUENCY_PERCENT("storm_front.strikes", AnomalyLine.PERCENT),
     CHART_STORM_FRONT_SIZE_PERCENT("storm_front.size", AnomalyLine.PERCENT),
-    CHART_FORGE_PROGRAMS("derelict_forge.extraPrograms", AnomalyLine.COUNT),
     CHART_FORGE_RUNS("derelict_forge.extraRuns", AnomalyLine.COUNT),
     CHART_FORGE_COST_PERCENT("derelict_forge.cost", AnomalyLine.PERCENT_REDUCED_WHEN_NEGATIVE),
     CHART_LISTENING_POST_PICKETS("listening_post.pickets", AnomalyLine.COUNT),

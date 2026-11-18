@@ -83,7 +83,7 @@ class ForgeGuardsTest {
 
     private static float escortPoints(int tier) {
         ChartTier chartTier = ChartAnomalyFleets.tier(tier, ChartGenContext.none());
-        return ChartAnomalyFleets.combat(Factions.DERELICT, "patrol", chartTier, chartTier.fleetSize() * ForgeRules.ESCORT_SIZE_SHARE).strength().combatPoints();
+        return ChartAnomalyFleets.combat(Factions.DERELICT, "patrol", chartTier, ForgeRules.escortSize(chartTier)).strength().combatPoints();
     }
 
     @Test
@@ -97,6 +97,15 @@ class ForgeGuardsTest {
         assertFalse(escort.withOfficers);
         assertEquals(escortPoints(4), escort.combatPts, 0.001f);
         assertEquals(List.of(new FakeChartContentEngine.Flagship(guards, ForgeGuards.GUARDIAN_VARIANT, Commodities.ALPHA_CORE)), engine.flagships);
+    }
+
+    @Test
+    void theEscortIsMostOfTheBossSizeOrOfTheFleetSizeWhicheverIsLarger() {
+        ChartTier bossLarger = new ChartTier(5, 100f, 1, 2, 0, 0, 1f, 1, 2, 0f, 0f, 0f, 0f, true, 400f);
+        ChartTier fleetLarger = new ChartTier(5, 300f, 1, 2, 0, 0, 1f, 1, 2, 0f, 0f, 0f, 0f, false, 0f);
+
+        assertEquals(320f, ForgeRules.escortSize(bossLarger), 0.001f);
+        assertEquals(240f, ForgeRules.escortSize(fleetLarger), 0.001f);
     }
 
     @Test

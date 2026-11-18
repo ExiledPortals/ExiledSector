@@ -74,8 +74,7 @@ class AbyssalResearchComplexTest {
             addedFactions.add(invocation.getArgument(3));
             return entity;
         });
-        ForgePrograms.register(new JSONArray().put(new JSONObject().put("id", AbyssalResearchComplex.INFUSE_PROGRAM).put("weight", "0")
-                .put("min_tier", "1").put("item_types", "hull_item").put("feedstock", "500")));
+        ForgePrograms.register(new JSONArray().put(new JSONObject().put("id", AbyssalResearchComplex.INFUSE_PROGRAM).put("item_types", "hull_item").put("feedstock", "500")));
     }
 
     @AfterEach
@@ -130,7 +129,8 @@ class AbyssalResearchComplexTest {
         assertTrue(VanillaDefenders.guarded(complex));
         assertEquals(List.of(ForgePrograms.byId(AbyssalResearchComplex.INFUSE_PROGRAM)), ForgeStates.programs(run, ForgeSite.ABYSSAL_RESEARCH_COMPLEX));
         assertEquals(1, ForgeStates.runsLeft(run, ForgeSite.ABYSSAL_RESEARCH_COMPLEX));
-        assertEquals(new ForgeRules.Cost(0, 0, 500),
+        assertEquals(AbyssalResearchComplex.BIOME_ID, ForgeStates.infusionBiome(run, ForgeSite.ABYSSAL_RESEARCH_COMPLEX));
+        assertEquals(new ForgeRules.Cost(500, 0),
                 ChartForge.costFor(run, ForgeSite.ABYSSAL_RESEARCH_COMPLEX, ForgePrograms.byId(AbyssalResearchComplex.INFUSE_PROGRAM)));
         assertEquals(BenchMode.ABYSSAL_FORGE, ForgeSite.ABYSSAL_RESEARCH_COMPLEX.benchMode());
     }
