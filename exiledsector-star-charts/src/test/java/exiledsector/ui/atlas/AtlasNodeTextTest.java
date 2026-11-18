@@ -99,7 +99,7 @@ class AtlasNodeTextTest {
             String flares = AtlasNodeText.anomalyBody(StellarFlares.ANOMALY_ID).plain();
 
             assertTrue(flares.startsWith("The system's stars throw flares constantly."), flares);
-            assertTrue(flares.endsWith("\nHull items found in the system roll one modifier twice and keep the better value"), flares);
+            assertTrue(flares.endsWith("\nHull items found in the system have 1 lucky modifier\n(Lucky modifiers are rolled twice, keeping the best)"), flares);
         } finally {
             ChartTables.resetAnomalies();
         }
