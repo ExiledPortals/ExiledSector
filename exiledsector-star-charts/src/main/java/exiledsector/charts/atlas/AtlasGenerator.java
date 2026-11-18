@@ -160,6 +160,10 @@ public final class AtlasGenerator {
         return TerritoryFactions.territoryWeights(rules, regionOf(cell));
     }
 
+    public boolean isTerritoryless(AtlasCell cell) {
+        return territoryWeights(cell).isEmpty();
+    }
+
     private boolean computeVoid(AtlasCell cell) {
         if (specials.fixedCells().contains(cell.pack()) || cell.equals(AtlasCell.ORIGIN)) {
             return false;

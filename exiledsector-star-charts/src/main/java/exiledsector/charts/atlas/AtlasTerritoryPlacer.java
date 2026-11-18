@@ -53,6 +53,7 @@ public final class AtlasTerritoryPlacer {
 
     public static void place(AtlasGenerator generator, AtlasState state, Set<AtlasCell> visible, TerritoryContext context) {
         fillBoard(generator, state, context);
+        TerritorylessClaimRepair.repair(generator, state);
         OfficerSeatRepair.repair(generator, state, OfficerRanks.all(), context);
         OfficerFlagshipRepair.repair(state, OfficerRanks.all(), context);
         OfficerRewardRepair.repair(state, context);
@@ -124,7 +125,7 @@ public final class AtlasTerritoryPlacer {
 
     public static boolean canHoldTerritory(AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasCell openRunCell) {
         if (cell.equals(AtlasCell.ORIGIN) || cell.equals(openRunCell) || generator.isVoid(cell) || state.isCompleted(cell)
-                || state.isClaimed(cell) || generator.specialAt(cell) != null) {
+                || state.isClaimed(cell) || generator.specialAt(cell) != null || generator.isTerritoryless(cell)) {
             return false;
         }
         return generator.infestationAt(cell) == null || state.has(cell, AtlasState.INFESTATION_CLEARED);

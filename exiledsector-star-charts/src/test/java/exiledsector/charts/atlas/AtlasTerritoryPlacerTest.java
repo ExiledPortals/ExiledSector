@@ -3,6 +3,7 @@ package exiledsector.charts.atlas;
 import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.FlagshipCatalogue;
 import exiledsector.charts.officer.OfficerRanks;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayDeque;
@@ -35,8 +36,21 @@ class AtlasTerritoryPlacerTest {
                 new AtlasAnomalyChance(0.5f, 0f, 0.5f), AtlasAnomalyChance.NEVER, List.of(), List.of());
     }
 
+    private static AtlasRules rulesWithRemnantRegion() {
+        List<AtlasRegion> regions = List.of(
+                new AtlasRegion(AtlasRegion.NORMAL, 5f, 0, "", "", Map.of(), Map.of(), Map.of()),
+                new AtlasRegion("remnant_expanse", 5f, 0, "", "", Map.of(), Map.of("remnant", 1f), Map.of()));
+        return new AtlasRules(regions, Map.of("compact", 1f), Map.of("pirates", 5f, "hegemony", 3f, "luddic_church", 2f, "independent", 2f),
+                new AtlasAnomalyChance(0.5f, 0f, 0.5f), AtlasAnomalyChance.NEVER, List.of(), List.of());
+    }
+
     private static AtlasGenerator generator(AtlasState state) {
         return new AtlasGenerator(SEED, rules(), AtlasUnlocks.NONE, state);
+    }
+
+    @AfterEach
+    void clearExclusions() {
+        TerritoryExclusions.useForTests(Set.of());
     }
 
     private static void grow(AtlasGenerator generator, AtlasState state, TerritoryContext context, Consumer<Set<AtlasCell>> afterEachReveal) {
@@ -235,5 +249,36 @@ class AtlasTerritoryPlacerTest {
         assertTrue(state.officer(recordId).hasFled());
         assertTrue(state.claimsOf(centre).isEmpty());
         assertFalse(state.isClaimed(centre));
+    }
+
+    @Test
+    void noOfficerClaimsSystemsInARegionWhoseFactionsHoldNoTerritory() {
+        TerritoryExclusions.useForTests(Set.of("remnant"));
+        AtlasState state = new AtlasState(SEED);
+        AtlasGenerator generator = new AtlasGenerator(SEED, rulesWithRemnantRegion(), AtlasUnlocks.NONE, state);
+        Set<AtlasCell> seen = new HashSet<>();
+
+        grow(generator, state, TerritoryContext.NONE, visible -> {
+            seen.addAll(visible);
+            state.claims().keySet().forEach(cell -> assertFalse(generator.isTerritoryless(cell), cell.toString()));
+        });
+
+        assertTrue(seen.stream().anyMatch(generator::isTerritoryless));
+        assertFalse(state.claims().isEmpty());
+    }
+
+    @Test
+    void claimsAlreadyInsideATerritorylessRegionAreReleasedOnTheNextReveal() {
+        AtlasState state = new AtlasState(SEED);
+        AtlasGenerator generator = new AtlasGenerator(SEED, rulesWithRemnantRegion(), AtlasUnlocks.NONE, state);
+        grow(generator, state, TerritoryContext.NONE, visible -> { });
+        assertTrue(state.claims().keySet().stream().anyMatch(cell -> "remnant".equals(state.claimedFaction(cell))));
+
+        TerritoryExclusions.useForTests(Set.of("remnant"));
+        AtlasReach.refreshReveal(generator, state, TerritoryContext.NONE);
+
+        state.claims().keySet().forEach(cell -> assertFalse(generator.isTerritoryless(cell), cell.toString()));
+        assertTrue(state.officers().stream().filter(officer -> "remnant".equals(officer.factionId())).noneMatch(AtlasOfficer::isActive));
+        state.claims().values().forEach(centre -> assertNotNull(state.officerAt(centre), centre.toString()));
     }
 }
