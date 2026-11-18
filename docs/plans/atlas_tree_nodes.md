@@ -26,7 +26,7 @@ Shapes:
 - Property of an anomaly's part: "Spatial Breaches in your Star Charts have 20% increased maximum radius", "Spatial Breaches in your Star Charts stay open 30 additional seconds before collapsing".
 - Time: "N% faster" and "N% slower" only when the value divides a time, and "N additional seconds" for flat time.
 - Turning content off: "Your Star Charts have no chance to contain Spatial Breaches".
-- Duplication and rerolls: "N% chance to be duplicated", "rolls N twice, keeping the highest".
+- Duplication and rerolls: "N% chance to be duplicated". A double roll is lucky, with its reminder line: "Hull items found in your Star Charts with Stellar Flares have 1 additional lucky modifier" over "(Lucky modifiers are rolled twice, keeping the best)".
 - Guards: "X in your Star Charts are guarded by an additional fleet".
 - Tier gates trail in brackets: "(tier 10+)".
 
@@ -154,7 +154,7 @@ Notables:
 - Charged Fields: "Your Star Charts with a Magnetic Storm have 30% increased quantity of crafting items found" (new, joins its `effects` line).
 - Static Harvest: "Your Star Charts with a Magnetic Storm have 30% increased quantity of feedstock found" (new, `CHART_FEEDSTOCK_PERCENT` read only with a Magnetic Storm).
 - Ion Front (Storm Front): "Storm Fronts in your Star Charts with a Magnetic Storm set off auroras in the magnetic fields they cross" and "Battles in Storm Fronts in your Star Charts with a Magnetic Storm drop 50% increased quantity of crafting items" (new). Its auroras are vanilla magnetic storms, blinding sensors as usual.
-- Geomagnetic Surge (Stellar Flares): "Corona flares in your Star Charts with a Magnetic Storm set off auroras" and "Hull items dropped in your Star Charts with a Magnetic Storm and Stellar Flares roll 1 additional modifier twice, keeping the better value" (new). Its auroras are vanilla magnetic storms, blinding sensors as usual. The rolls add to Stellar Flares' own, so 2 modifiers roll twice.
+- Geomagnetic Surge (Stellar Flares): "Corona flares in your Star Charts with a Magnetic Storm set off auroras" and "Hull items found in your Star Charts with a Magnetic Storm and Stellar Flares have 1 additional lucky modifier" (new). Its auroras are vanilla magnetic storms, blinding sensors as usual. It adds to Stellar Flares' own, so 2 modifiers are lucky.
 
 Idea for a fifth, not decided:
 
@@ -164,7 +164,9 @@ Idea for a fifth, not decided:
 
 Status: off for now (2026-11-16).
 
-Reward: every hull item dropped in the system rolls one of its modifiers again and keeps the better value.
+Reward: every hull item found in the system has 1 lucky modifier.
+
+Lucky is the word for Stellar Flares' double roll in every tooltip: a lucky modifier is rolled twice, keeping the best. Every line that makes something lucky carries the bracketed reminder "(Lucky modifiers are rolled twice, keeping the best)" in muted text on the line below. Built for the anomaly's reward line on the atlas (`chart.atlas.anomaly.stellar_flares.reward`, en and zh_CN, 幸运 in the glossary); the node lines below use it when built.
 
 Small nodes:
 
@@ -173,12 +175,14 @@ Small nodes:
 
 Notables:
 
-- Solar Maximum: "Hull items dropped in your Star Charts with Stellar Flares roll 2 of their modifiers twice, keeping the better values" and "Coronas in your Star Charts with Stellar Flares throw flares 50% more often".
-- Tempered Light: "Hull items dropped in your Star Charts with Stellar Flares also roll their implicit values twice, keeping the better".
+- Solar Maximum: "Hull items found in your Star Charts with Stellar Flares have 1 additional lucky modifier" and "Coronas in your Star Charts with Stellar Flares throw flares 50% more often".
+- Tempered Light: "Implicit values of hull items found in your Star Charts with Stellar Flares are lucky".
+- Golden Hour: "Lucky modifiers in your Star Charts with Stellar Flares are rolled 4 times instead of twice, keeping the best" (new, `LuckyRolls`). It covers every lucky roll in those charts, Geomagnetic Surge's and Solar Front's too, and the reminder lines there say "rolled 4 times" while it is allocated.
+- Sunstruck Convoy (Supply Convoy): "Supply Convoys in your Star Charts with Stellar Flares route through the star's corona" and "Supply Convoys in your Star Charts with Stellar Flares start battles with -20% to combat readiness" (new). The corona's flares wear the convoy down on its way, so it arrives at the fight weakened.
 
 Keystone:
 
-- Perfect Light: "Hull items dropped in your Star Charts with Stellar Flares roll every modifier twice, keeping the better values" and "Your Star Charts with Stellar Flares have 40% reduced quantity of hull items found".
+- Perfect Light: "Every modifier on hull items found in your Star Charts with Stellar Flares is lucky" and "Your Star Charts with Stellar Flares have 40% reduced quantity of hull items found".
 
 ### Spatial Breach (`spatial_breach`)
 
@@ -349,7 +353,7 @@ Notables:
 - [REDACTED] Front: "Enemy fleets you fight in Storm Fronts in your Star Charts are joined by 5 to 10 frigates of what was left behind" (new). Remnant frigates join the enemy side when the battle in the storm starts. As with the [REDACTED] Sleepers, the tooltip never names the faction, and each joining ship counts as Remnant for the Remnant wormhole anchor's chance per 100 deployment points lost (`FleetFactions.recordMemberFactions`). The ships keep their AI core captains, so they can drop AI cores as vanilla Remnant ships do.
 - Captured Front (Black Hole): "Storm Fronts in your Star Charts with a Black Hole circle the hole instead of crossing the system" and "Hull items dropped by battles in Storm Fronts in your Star Charts with a Black Hole have 10% chance to have an immutable modifier" (new). The front orbits the hole through its derelicts for the whole run and never leaves (`StormPath`), so chart intel says where it is next rather than when it leaves.
 - Static Dust (Dense Nebula): "Battles won in Storm Fronts in your Star Charts with a Dense Nebula grant 2 additional Settling Dust stacks" and "+3 to maximum Settling Dust stacks in your Star Charts with a Storm Front" (new, adds to the stack count and `MAX_DUST`).
-- Solar Front (Stellar Flares): "Biome modifiers on hull items dropped by battles in Storm Fronts in your Star Charts with Stellar Flares roll twice, keeping the better value" (new, in `StormLoot`). The front's clouds and flashes turn red and orange, on the map and in battle (`StormFrontTerrainPlugin`, `StormOverlay`).
+- Solar Front (Stellar Flares): "Biome modifiers on hull items dropped by battles in Storm Fronts in your Star Charts with Stellar Flares are lucky" (new, in `StormLoot`). The front's clouds and flashes turn red and orange, on the map and in battle (`StormFrontTerrainPlugin`, `StormOverlay`).
 - Thunder Duel (Atlas officers): "Atlas officers you defeat in Storm Fronts in your Star Charts drop 1 additional item from their reward pool" (new). The officers don't seek out the storm: fighting them in it is up to the player.
 
 ### Derelict Forge (`derelict_forge`)
