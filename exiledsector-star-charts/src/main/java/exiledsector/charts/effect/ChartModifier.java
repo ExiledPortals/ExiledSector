@@ -6,6 +6,7 @@ import exiledsector.data.EnumKeys;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartGenerated;
 import exiledsector.charts.content.ChartPoi;
+import exiledsector.charts.anomaly.stormfront.StormRules;
 import exiledsector.effects.GrantedNodes;
 import exiledsector.i18n.Message;
 import exiledsector.i18n.StyledText;
@@ -232,6 +233,19 @@ public enum ChartModifier implements ModifierEffect {
     CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT("storm_front.loot", AnomalyLine.PERCENT),
     CHART_STORM_STRIKE_FREQUENCY_PERCENT("storm_front.strikes", AnomalyLine.PERCENT),
     CHART_STORM_FRONT_SIZE_PERCENT("storm_front.size", AnomalyLine.PERCENT),
+    CHART_STORM_FRONT_CHANCE_PERCENT(new OpeningChance("storm_front")),
+    CHART_STORM_FRONT_HELD_SPEED_PERCENT("storm_front.heldSpeed", AnomalyLine.PERCENT_INCREASED_WHEN_NEGATIVE),
+    CHART_STORM_FRONT_REDACTED_FRIGATES("storm_front.redactedFrigates", AnomalyLine.COUNT) {
+        @Override
+        public StyledText description(String baseKey, float magnitude) {
+            int most = Math.round(magnitude);
+            return Translation.msg(baseKey).count(most).arg("fewest", StormRules.redactedFrigatesFewest(most)).arg("value", most).styled();
+        }
+    },
+    CHART_STORM_FRONT_CAPTURED("storm_front.captured", AnomalyLine.FLAG),
+    CHART_STORM_FRONT_CAPTURED_IMMUTABLE_CHANCE_PERCENT("storm_front.capturedImmutableChance", AnomalyLine.PERCENT),
+    CHART_STORM_FRONT_LUCKY_BIOME_MODIFIERS("storm_front.luckyBiomeModifiers", AnomalyLine.FLAG),
+    CHART_STORM_FRONT_OFFICER_EXTRA_REWARDS("storm_front.officerExtraRewards", AnomalyLine.COUNT),
     CHART_FORGE_RUNS("derelict_forge.extraRuns", AnomalyLine.COUNT),
     CHART_FORGE_COST_PERCENT("derelict_forge.cost", AnomalyLine.PERCENT_REDUCED_WHEN_NEGATIVE),
     CHART_LISTENING_POST_PICKETS("listening_post.pickets", AnomalyLine.COUNT),

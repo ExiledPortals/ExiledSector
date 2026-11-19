@@ -2,7 +2,7 @@ package exiledsector.charts.anomaly.stormfront;
 
 import org.lwjgl.util.vector.Vector2f;
 
-record StormPath(float angleDegrees, float edgeRadius, float bandWidth, float crossingDays) {
+record StormPath(float angleDegrees, float edgeRadius, float bandWidth, float crossingDays) implements StormCourse {
 
     float directionX() {
         return (float) Math.cos(Math.toRadians(angleDegrees));
@@ -12,7 +12,8 @@ record StormPath(float angleDegrees, float edgeRadius, float bandWidth, float cr
         return (float) Math.sin(Math.toRadians(angleDegrees));
     }
 
-    float bandLength() {
+    @Override
+    public float bandLength() {
         return edgeRadius * 2f;
     }
 
@@ -31,7 +32,8 @@ record StormPath(float angleDegrees, float edgeRadius, float bandWidth, float cr
         return Math.max(0f, Math.min(1f, elapsedDays / crossingDays));
     }
 
-    boolean isDone(float elapsedDays) {
+    @Override
+    public boolean isDone(float elapsedDays) {
         return progress(elapsedDays) >= 1f;
     }
 
@@ -39,7 +41,8 @@ record StormPath(float angleDegrees, float edgeRadius, float bandWidth, float cr
         return startOffset() + (endOffset() - startOffset()) * progress(elapsedDays);
     }
 
-    Vector2f centre(float elapsedDays) {
+    @Override
+    public Vector2f centre(float elapsedDays) {
         float offset = offset(elapsedDays);
         return new Vector2f(directionX() * offset, directionY() * offset);
     }
@@ -52,7 +55,8 @@ record StormPath(float angleDegrees, float edgeRadius, float bandWidth, float cr
         return -point.x * directionY() + point.y * directionX();
     }
 
-    boolean contains(Vector2f point, float pointRadius, float elapsedDays) {
+    @Override
+    public boolean contains(Vector2f point, float pointRadius, float elapsedDays) {
         if (point == null || isDone(elapsedDays)) {
             return false;
         }
@@ -60,7 +64,8 @@ record StormPath(float angleDegrees, float edgeRadius, float bandWidth, float cr
                 && Math.abs(across(point)) <= bandLength() / 2f + pointRadius;
     }
 
-    float daysUntilReaches(Vector2f point, float elapsedDays) {
+    @Override
+    public float daysUntilReaches(Vector2f point, float elapsedDays) {
         if (point == null || Math.abs(across(point)) > bandLength() / 2f) {
             return -1f;
         }
@@ -74,7 +79,8 @@ record StormPath(float angleDegrees, float edgeRadius, float bandWidth, float cr
         return Math.max(0f, crossingDays - elapsedDays);
     }
 
-    float halfDiagonal() {
-        return (float) Math.hypot(bandWidth / 2f, bandLength() / 2f);
+    @Override
+    public float facingDegrees(float elapsedDays) {
+        return angleDegrees;
     }
 }

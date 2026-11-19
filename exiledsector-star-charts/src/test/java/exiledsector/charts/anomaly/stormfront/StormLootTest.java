@@ -24,6 +24,7 @@ import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class StormLootTest {
 
@@ -80,6 +81,40 @@ class StormLootTest {
 
     private static List<String> biomeModifiersOn(ItemData item) {
         return item.explicits().stream().map(RolledModifier::modifierId).filter(BiomeModifiers::isBiomeModifier).toList();
+    }
+
+    private static float biomeMagnitude(ItemData item) {
+        return item.explicits().stream().filter(rolled -> BiomeModifiers.isBiomeModifier(rolled.modifierId())).findFirst().orElseThrow()
+                .lines().get(0).magnitude();
+    }
+
+    private static RolledModifier ownModifier(ItemData item) {
+        return item.explicits().stream().filter(rolled -> !BiomeModifiers.isBiomeModifier(rolled.modifierId())).findFirst().orElseThrow();
+    }
+
+    @Test
+    void aSolarFrontMakesTheBiomeModifierLuckyAndLeavesTheRestAlone() {
+        int changed = 0;
+        for (long seed = 0L; seed < 100L; seed++) {
+            ItemData item = StormLoot.withBiomeModifier(dropped(BRIDGE, seed), RIFT, EVERY_BIOME_OPEN);
+
+            ItemData solar = StormLoot.shapedByFront(item, true, 0f);
+
+            assertTrue(biomeMagnitude(solar) >= biomeMagnitude(item));
+            assertEquals(ownModifier(item), ownModifier(solar));
+            changed += item.equals(solar) ? 0 : 1;
+        }
+        assertTrue(changed > 10, "changed " + changed);
+    }
+
+    @Test
+    void dropsFromACapturedFrontCanCarryAnImmutableModifier() {
+        for (long seed = 0L; seed < 20L; seed++) {
+            ItemData item = StormLoot.withBiomeModifier(dropped(BRIDGE, seed), RIFT, EVERY_BIOME_OPEN);
+
+            assertEquals(1L, StormLoot.shapedByFront(item, false, 100f).explicits().stream().filter(RolledModifier::immutable).count());
+            assertSame(item, StormLoot.shapedByFront(item, false, 0f));
+        }
     }
 
     @Test
