@@ -25,7 +25,7 @@ class ChartModifierTest {
                 assertTrue(keys.add(effect.anomalyTuningKey()), effect.name());
             }
         }
-        assertEquals(105, keys.size());
+        assertEquals(111, keys.size());
         assertNull(ChartModifier.CHART_ITEM_PERCENT.anomalyTuningKey());
     }
 
