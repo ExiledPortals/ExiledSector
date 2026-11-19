@@ -50,9 +50,11 @@ public final class AtlasBodyReader {
         AtlasBodyArt.Shape shape = new AtlasBodyArt.Shape((float) artJson.optDouble("size", AtlasBodyArt.DEFAULT_SIZE), facing,
                 (float) artJson.optDouble("spin", 1.0), (float) artJson.optDouble("heading", AtlasBodyArt.DEFAULT_HEADING));
         AtlasBodyArt.Colours colours = new AtlasBodyArt.Colours(artJson.optString("light", null), artJson.optString("tint", null));
-        AtlasBodyArt.Storm storm = enumNamed(AtlasBodyArt.Storm.class, artJson.optString("storm", "none"), AtlasBodyArt.Storm.NONE);
+        AtlasBodyArt.Weather weather = new AtlasBodyArt.Weather(
+                enumNamed(AtlasBodyArt.Storm.class, artJson.optString("storm", "none"), AtlasBodyArt.Storm.NONE),
+                enumNamed(AtlasBodyArt.Flare.class, artJson.optString("flare", "none"), AtlasBodyArt.Flare.NONE));
         return new AtlasBodyArt(kind, artJson.optString("planet", null), paths, TreeJson.stringList(artJson.optJSONArray("hulls")), shape, colours,
-                storm);
+                weather);
     }
 
     private static <E extends Enum<E>> E enumNamed(Class<E> type, String name, E fallback) {

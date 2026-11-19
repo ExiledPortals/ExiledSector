@@ -60,6 +60,16 @@ const STORM_NOTABLE_ART = {
   solar_front: () => ({ kind: 'planet', planet: 'star_yellow', storm: 'solar', size: 110 }),
   thunder_duel: () => stormGiant('gas_giant', 'duel'),
 };
+const FLARE_STAR_SIZE = 110;
+const SUNSTRUCK_CONVOY = ['colossus', 'buffalo', 'tarsus', 'phaeton', 'buffalo'];
+const flareStar = (planet, flare, size = FLARE_STAR_SIZE) => ({ kind: 'planet', planet, flare, size });
+const FLARE_NOTABLE_ART = {
+  solar_maximum: () => flareStar('star_blue_giant', 'often'),
+  golden_hour: () => flareStar('star_orange', 'warm'),
+  tempered_light: () => flareStar('star_red_dwarf', 'gentle', 95),
+  perfect_light: () => flareStar('star_white', 'perfect'),
+  sunstruck_convoy: () => ({ kind: 'crossed_planet', planet: 'star_yellow', flare: 'licking', hulls: SUNSTRUCK_CONVOY, size: 90, facing: 'travel' }),
+};
 
 function seededRandom(seed) {
   let state = seed >>> 0;
@@ -154,6 +164,13 @@ const ANOMALIES = {
     small: () => ({ kind: 'storm_cell', size: 40 }),
     notable: (notableType) => STORM_NOTABLE_ART[notableType]?.() ?? stormGiant('gas_giant', 'generic'),
   },
+  stellar_flares: {
+    colour: '#ffe4a0',
+    chance: 'stellar_flares_chance',
+    others: ['flare_hull_items'],
+    small: () => flareStar('star_yellow', 'plain', 36),
+    notable: (notableType) => FLARE_NOTABLE_ART[notableType]?.() ?? flareStar('star_yellow', 'plain'),
+  },
 };
 
 const NOTABLE_ART = {
@@ -189,6 +206,8 @@ const ANOMALY_OF = {
   garrison_pickets: 'listening_post', fortified_depot: 'listening_post', hunting_party: 'listening_post',
   lightning_rod: 'storm_front', supercell: 'storm_front', eye_of_the_storm: 'storm_front', redacted_front: 'storm_front',
   captured_front: 'storm_front', solar_front: 'storm_front', thunder_duel: 'storm_front',
+  solar_maximum: 'stellar_flares', golden_hour: 'stellar_flares', tempered_light: 'stellar_flares', sunstruck_convoy: 'stellar_flares',
+  perfect_light: 'stellar_flares',
 };
 
 const RINGS = [

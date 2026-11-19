@@ -351,10 +351,9 @@ final class AtlasSystemArt {
     private void drawFlare(Piece piece, Frame frame) {
         float cycle = frame.elapsedSeconds / FLARE_SECONDS + piece.variant() / (float) FLARES;
         float progress = cycle - (float) Math.floor(cycle);
-        double angle = Math.toRadians(piece.angle() + Math.floor(cycle) * 137.5);
-        float distance = frame.starPixels * (1f + 0.7f * progress);
-        drawGlow(frame.starX + (float) Math.cos(angle) * distance, frame.starY + (float) Math.sin(angle) * distance,
-                frame.starPixels * (0.6f + 1.4f * progress), frame.starColour, (1f - progress) * 0.9f * frame.alpha);
+        double angle = Math.toRadians(piece.angle() + Math.floor(cycle) * FlareWeather.GOLDEN_ANGLE_DEGREES);
+        StarFlareGlow.drawRising(spriteCache, frame.starX, frame.starY, frame.starPixels, angle, progress, StarFlareGlow.MAP_RISE, frame.starColour,
+                frame.alpha);
     }
 
     private void drawBreach(Piece piece, Frame frame) {

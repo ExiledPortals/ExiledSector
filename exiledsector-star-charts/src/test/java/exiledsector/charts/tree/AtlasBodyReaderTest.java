@@ -22,7 +22,12 @@ class AtlasBodyReaderTest {
                 { "id": "solar", "art": { "kind": "planet", "planet": "star_yellow", "storm": "solar", "size": 110 } },
                 { "id": "swarm", "art": { "kind": "swarmed_planet", "planet": "gas_giant", "hulls": ["glimmer", "lumen"], "size": 150 } },
                 { "id": "odd", "art": { "kind": "planet", "planet": "gas_giant", "storm": "hurricane" } },
-                { "id": "site", "art": { "kind": "planet", "planet": "barren", "light": "#ffbe5a" } }
+                { "id": "site", "art": { "kind": "planet", "planet": "barren", "light": "#ffbe5a" } },
+                { "id": "maximum", "art": { "kind": "planet", "planet": "star_blue_giant", "flare": "often", "size": 110 } },
+                { "id": "sunstruck", "art": { "kind": "crossed_planet", "planet": "star_yellow", "flare": "licking",
+                    "hulls": ["colossus", "buffalo"], "size": 90, "facing": "travel", "heading": -135 } },
+                { "id": "flaring_storm", "art": { "kind": "planet", "planet": "star_white", "storm": "solar", "flare": "perfect" } },
+                { "id": "odd_flare", "art": { "kind": "planet", "planet": "star_yellow", "flare": "supernova" } }
             ] }
             """;
 
@@ -85,7 +90,57 @@ class AtlasBodyReaderTest {
     }
 
     @Test
+    void aFlaringStarKeepsItsFlareStyleAndAnythingWithoutOneHasNone() {
+        Map<String, AtlasBody> bodies = bodies();
+        AtlasBodyArt maximum = bodies.get("maximum").art();
+
+        assertEquals(AtlasBodyArt.Kind.PLANET, maximum.kind());
+        assertEquals("star_blue_giant", maximum.planetType());
+        assertEquals(AtlasBodyArt.Flare.OFTEN, maximum.flare());
+        assertEquals(AtlasBodyArt.Storm.NONE, maximum.storm());
+        assertEquals(AtlasBodyArt.Flare.NONE, bodies.get("rod").art().flare());
+        assertEquals(AtlasBodyArt.Flare.NONE, bodies.get("cell").art().flare());
+        assertEquals(AtlasBodyArt.Flare.NONE, bodies.get("swarm").art().flare());
+    }
+
+    @Test
+    void aStormAndAFlareLoadSideBySideAndAnUnknownFlareFallsBackToNone() {
+        Map<String, AtlasBody> bodies = bodies();
+        AtlasBodyArt both = bodies.get("flaring_storm").art();
+
+        assertEquals(AtlasBodyArt.Storm.SOLAR, both.storm());
+        assertEquals(AtlasBodyArt.Flare.PERFECT, both.flare());
+        assertEquals(AtlasBodyArt.Flare.NONE, bodies.get("odd_flare").art().flare());
+        assertEquals(AtlasBodyArt.Kind.PLANET, bodies.get("odd_flare").art().kind());
+    }
+
+    @Test
+    void aCrossedPlanetIsAPlanetWithItsConvoyHullsAndTravelHeading() {
+        AtlasBodyArt sunstruck = bodies().get("sunstruck").art();
+
+        assertEquals(AtlasBodyArt.Kind.CROSSED_PLANET, sunstruck.kind());
+        assertTrue(sunstruck.isPlanet());
+        assertFalse(sunstruck.isShipGroup());
+        assertEquals(List.of("colossus", "buffalo"), sunstruck.hullIds());
+        assertEquals(AtlasBodyArt.Flare.LICKING, sunstruck.flare());
+        assertEquals(AtlasBodyArt.Facing.TRAVEL, sunstruck.facing());
+        assertEquals(-135f, sunstruck.heading());
+        assertEquals(90f, sunstruck.size());
+    }
+
+    @Test
+    void anArtBuiltWithoutWeatherHasNoStormAndNoFlare() {
+        AtlasBodyArt art = new AtlasBodyArt(AtlasBodyArt.Kind.PLANET, "star_yellow", null, null, null, null, null);
+        AtlasBodyArt.Weather halfWeather = new AtlasBodyArt.Weather(null, AtlasBodyArt.Flare.WARM);
+
+        assertEquals(AtlasBodyArt.NO_WEATHER, art.weather());
+        assertEquals(AtlasBodyArt.Storm.NONE, halfWeather.storm());
+        assertEquals(AtlasBodyArt.Flare.WARM, halfWeather.flare());
+    }
+
+    @Test
     void thePlainArtHasNoStormAndNoColours() {
+        assertEquals(AtlasBodyArt.Flare.NONE, AtlasBodyArt.PLAIN.flare());
         assertEquals(AtlasBodyArt.Storm.NONE, AtlasBodyArt.PLAIN.storm());
         assertNull(AtlasBodyArt.PLAIN.lightColour());
         assertNull(AtlasBodyArt.PLAIN.tintColour());
