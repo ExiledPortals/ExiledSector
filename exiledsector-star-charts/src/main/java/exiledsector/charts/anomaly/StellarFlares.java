@@ -15,8 +15,10 @@ import exiledsector.charts.layout.ChartLayoutGenerator;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.items.ItemData;
 import exiledsector.items.modifier.LuckyRolls;
+import exiledsector.items.modifier.RolledModifier;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 public final class StellarFlares implements LayoutShaper, ContentPlacer, AtlasRule, LootShaper {
 
@@ -62,7 +64,12 @@ public final class StellarFlares implements LayoutShaper, ContentPlacer, AtlasRu
 
     @Override
     public ItemData shapeDrop(SectorAPI sector, ItemData item, LocationAPI location) {
-        return LuckyRolls.withLuck(item, FlareLuck.dropLuck(ChartRuns.liveIn(location)));
+        return shapeDrop(sector, item, location, rolled -> false);
+    }
+
+    @Override
+    public ItemData shapeDrop(SectorAPI sector, ItemData item, LocationAPI location, Predicate<RolledModifier> alreadyLucky) {
+        return LuckyRolls.withLuck(item, FlareLuck.dropLuck(ChartRuns.liveIn(location)), alreadyLucky);
     }
 
     public static void setFlareChance(PlanetAPI star, float chance) {

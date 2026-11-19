@@ -12,6 +12,7 @@ import com.fs.starfarer.api.fleet.RepairTrackerAPI;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.content.FakeChartContentEngine;
 import exiledsector.charts.run.ChartRun;
 import org.junit.jupiter.api.AfterEach;
@@ -121,11 +122,33 @@ class SettlingDustFleetsTest {
         looted.getMemoryWithoutUpdate().set(ChartIds.LOOT_SPENT_MEMORY_KEY, true);
         CampaignFleetAPI friendly = chartFleet(run.runId(), new ArrayList<>(), 20f);
         friendly.getMemoryWithoutUpdate().unset(MemFlags.MEMORY_KEY_MAKE_HOSTILE);
+        CampaignFleetAPI bossDefenders = chartFleet(run.runId(), new ArrayList<>(), 20f);
+        bossDefenders.getMemoryWithoutUpdate().set(ChartIds.BOSS_MEMORY_KEY, true);
 
         assertTrue(SettlingDustFleets.grows(guard, run));
         assertFalse(SettlingDustFleets.grows(otherRun, run));
         assertFalse(SettlingDustFleets.grows(looted, run));
         assertFalse(SettlingDustFleets.grows(friendly, run));
+        assertFalse(SettlingDustFleets.grows(bossDefenders, run));
         assertFalse(SettlingDustFleets.grows(null, run));
+    }
+
+    @Test
+    void theBossFleetNeverGrows() {
+        ChartRun run = LiveAnomalyRuns.run();
+        run.recordContent(new ChartContent(1, LiveAnomalyRuns.PIRATES, "boss", 3, 2, List.of()));
+        CampaignFleetAPI boss = chartFleet(run.runId(), new ArrayList<>(), 20f);
+        when(boss.getId()).thenReturn("boss");
+
+        assertFalse(SettlingDustFleets.grows(boss, run));
+    }
+
+    @Test
+    void fleetsWithoutItemDropsNeverGrow() {
+        ChartRun run = LiveAnomalyRuns.run();
+        CampaignFleetAPI stationLaunch = chartFleet(run.runId(), new ArrayList<>(), 20f);
+        stationLaunch.getMemoryWithoutUpdate().unset(ChartIds.START_DP_MEMORY_KEY);
+
+        assertFalse(SettlingDustFleets.grows(stationLaunch, run));
     }
 }

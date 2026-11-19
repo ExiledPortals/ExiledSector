@@ -29,12 +29,16 @@ public final class LuckyRolls {
     }
 
     public static ItemData withLuck(ItemData item, Luck luck) {
+        return withLuck(item, luck, rolled -> false);
+    }
+
+    public static ItemData withLuck(ItemData item, Luck luck, Predicate<RolledModifier> alreadyLucky) {
         Item preview = hullItemPreview(item);
         if (preview == null || luck == null || luck.isNone()) {
             return item;
         }
         List<Integer> luckyIndices = luck.everyModifier() ? varyingIndices(preview, rolled -> true)
-                : pickedIndices(varyingIndices(preview, rolled -> true), luck.luckyModifiers(), Seeds.derived(item.seed(), LUCK_SEED_SALT));
+                : pickedIndices(varyingIndices(preview, alreadyLucky.negate()), luck.luckyModifiers(), Seeds.derived(item.seed(), LUCK_SEED_SALT));
         ItemData lucky = withLuckyExplicits(item, preview, luckyIndices, luck.rolls());
         return luck.luckyImplicits() ? withLuckyImplicits(lucky, luck.rolls()) : lucky;
     }

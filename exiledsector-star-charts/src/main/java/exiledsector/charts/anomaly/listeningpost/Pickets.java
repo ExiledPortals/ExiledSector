@@ -12,6 +12,7 @@ import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
+import exiledsector.charts.anomaly.SettlingDustFleets;
 import exiledsector.charts.content.ChartAnomalyFleets;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.ChartContentPlanner;
@@ -160,6 +161,7 @@ final class Pickets {
             addTo(guardMemory, picketMemory, ChartIds.START_DP_MEMORY_KEY);
             addTo(guardMemory, picketMemory, ChartIds.START_FP_MEMORY_KEY);
             addTo(guardMemory, picketMemory, ChartIds.LOOT_DP_PAID_MEMORY_KEY);
+            addTo(guardMemory, picketMemory, SettlingDustFleets.ADDED_FLEET_POINTS_KEY);
             guardMemory.set(ChartFleetLedger.LOOT_FLEETS_MEMORY_KEY, ChartFleetLedger.lootFleets(guard) + ChartFleetLedger.lootFleets(picket));
         }
         picket.getDropRandom().forEach(guard::addDropRandom);

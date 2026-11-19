@@ -20,11 +20,13 @@ import exiledsector.charts.anomaly.StarAnomalies;
 import exiledsector.charts.anomaly.StellarFlares;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.items.ItemData;
+import exiledsector.items.modifier.RolledModifier;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Predicate;
 
 public final class StormFront implements ContentPlacer, RunParticipant, LootShaper {
 
@@ -120,6 +122,11 @@ public final class StormFront implements ContentPlacer, RunParticipant, LootShap
     @Override
     public ItemData shapeBattleDrop(SectorAPI sector, ItemData item, LocationAPI location) {
         return StormLoot.shapedDrop(sector, item, location);
+    }
+
+    @Override
+    public Predicate<RolledModifier> battleLuckyModifiers() {
+        return StormLoot.luckyModifiers();
     }
 
     @Override

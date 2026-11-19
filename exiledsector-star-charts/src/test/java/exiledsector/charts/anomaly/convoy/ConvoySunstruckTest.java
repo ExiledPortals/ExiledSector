@@ -1,11 +1,10 @@
 package exiledsector.charts.anomaly.convoy;
 
+import com.fs.starfarer.api.campaign.BattleAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
-import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.fleet.RepairTrackerAPI;
 import exiledsector.charts.anomaly.LiveAnomalyRuns;
@@ -19,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -49,22 +49,15 @@ class ConvoySunstruckTest {
         return run;
     }
 
-    private record Ship(MutableStat maxCombatReadiness, RepairTrackerAPI repairs) {
-    }
-
-    private static Ship ship(CampaignFleetAPI fleet, float combatReadiness) {
+    private static RepairTrackerAPI ship(CampaignFleetAPI fleet, float combatReadiness) {
         FleetMemberAPI member = mock(FleetMemberAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        MutableStat maxCombatReadiness = new MutableStat(0.7f);
         RepairTrackerAPI repairs = mock(RepairTrackerAPI.class);
-        when(member.getStats()).thenReturn(stats);
-        when(stats.getMaxCombatReadiness()).thenReturn(maxCombatReadiness);
         when(member.getRepairTracker()).thenReturn(repairs);
         when(repairs.getCR()).thenReturn(combatReadiness);
         FleetDataAPI data = mock(FleetDataAPI.class);
         when(fleet.getFleetData()).thenReturn(data);
         when(data.getMembersListCopy()).thenReturn(List.of(member));
-        return new Ship(maxCombatReadiness, repairs);
+        return repairs;
     }
 
     @Test
@@ -82,27 +75,55 @@ class ConvoySunstruckTest {
     }
 
     @Test
-    void sunstruckConvoysRouteThroughTheCoronaAndLoseCombatReadinessInChartsWithTheFlares() {
+    void sunstruckConvoysRouteThroughTheCoronaInChartsWithTheFlares() {
         ConvoyState convoy = waitingConvoy(0, "planet_a", List.of("planet_x"));
-        CampaignFleetAPI fleet = mock(CampaignFleetAPI.class);
-        Ship ship = ship(fleet, 0.7f);
 
-        ConvoySunstruck.apply(run(SUNSTRUCK_CONVOY, StellarFlares.ANOMALY_ID), systemWithStar(), List.of(convoy), state -> fleet);
+        ConvoySunstruck.route(run(SUNSTRUCK_CONVOY, StellarFlares.ANOMALY_ID), systemWithStar(), List.of(convoy));
 
         assertEquals(List.of(STAR_ID, "planet_x"), convoy.waypointIds());
-        assertEquals(0.5f, ship.maxCombatReadiness().getModifiedValue(), 1e-4f);
-        verify(ship.repairs()).setCR(0.5f);
+    }
+
+    @Test
+    void aSunstruckConvoyLosesCombatReadinessOnceWhenItsFirstBattleStarts() {
+        ConvoyState convoy = waitingConvoy(0, "planet_a", List.of());
+        CampaignFleetAPI fleet = mock(CampaignFleetAPI.class);
+        RepairTrackerAPI repairs = ship(fleet, 0.7f);
+        ChartRun run = run(SUNSTRUCK_CONVOY, StellarFlares.ANOMALY_ID);
+
+        ConvoySunstruck.wearDown(fleet, convoy, run);
+        ConvoySunstruck.wearDown(fleet, convoy, run);
+
+        verify(repairs).setCR(0.5f);
+        assertTrue(convoy.isSunstruck());
     }
 
     @Test
     void combatReadinessNeverDropsBelowZero() {
         CampaignFleetAPI fleet = mock(CampaignFleetAPI.class);
-        Ship ship = ship(fleet, 0.1f);
+        RepairTrackerAPI repairs = ship(fleet, 0.1f);
 
-        ConvoySunstruck.apply(run(SUNSTRUCK_CONVOY, StellarFlares.ANOMALY_ID), systemWithStar(), List.of(waitingConvoy(0, "planet_a", List.of())),
-                state -> fleet);
+        ConvoySunstruck.wearDown(fleet, waitingConvoy(0, "planet_a", List.of()), run(SUNSTRUCK_CONVOY, StellarFlares.ANOMALY_ID));
 
-        verify(ship.repairs()).setCR(0f);
+        verify(repairs).setCR(0f);
+    }
+
+    @Test
+    void everyConvoyOnTheOpposingSideNotYetSunstruckIsWornDown() {
+        CampaignFleetAPI convoyFleet = mock(CampaignFleetAPI.class);
+        CampaignFleetAPI sunstruckFleet = mock(CampaignFleetAPI.class);
+        CampaignFleetAPI escort = mock(CampaignFleetAPI.class);
+        BattleAPI battle = mock(BattleAPI.class);
+        when(escort.getBattle()).thenReturn(battle);
+        when(battle.getNonPlayerSide()).thenReturn(List.of(escort, convoyFleet, sunstruckFleet));
+        ConvoyState convoy = waitingConvoy(0, "planet_a", List.of());
+        ConvoyState sunstruck = waitingConvoy(1, "planet_b", List.of());
+        sunstruck.markSunstruck();
+        ChartRun run = run(SUNSTRUCK_CONVOY, StellarFlares.ANOMALY_ID);
+
+        List<CampaignFleetAPI> wornDown = ConvoySunstruck.fleetsToWearDown(escort,
+                fleet -> fleet == convoyFleet ? convoy : fleet == sunstruckFleet ? sunstruck : null, fleet -> run);
+
+        assertEquals(List.of(convoyFleet), wornDown);
     }
 
     @Test
@@ -110,15 +131,17 @@ class ConvoySunstruckTest {
         ConvoyState calm = waitingConvoy(0, "planet_a", List.of("planet_x"));
         ConvoyState unallocated = waitingConvoy(1, "planet_b", List.of("planet_y"));
         CampaignFleetAPI fleet = mock(CampaignFleetAPI.class);
-        Ship ship = ship(fleet, 0.7f);
+        RepairTrackerAPI repairs = ship(fleet, 0.7f);
 
-        ConvoySunstruck.apply(run(SUNSTRUCK_CONVOY, MagneticStorm.ANOMALY_ID), systemWithStar(), List.of(calm), state -> fleet);
-        ConvoySunstruck.apply(run(List.of(), StellarFlares.ANOMALY_ID), systemWithStar(), List.of(unallocated), state -> fleet);
-        ConvoySunstruck.apply(null, systemWithStar(), List.of(unallocated), state -> fleet);
+        ConvoySunstruck.route(run(SUNSTRUCK_CONVOY, MagneticStorm.ANOMALY_ID), systemWithStar(), List.of(calm));
+        ConvoySunstruck.route(run(List.of(), StellarFlares.ANOMALY_ID), systemWithStar(), List.of(unallocated));
+        ConvoySunstruck.route(null, systemWithStar(), List.of(unallocated));
+        ConvoySunstruck.wearDown(fleet, calm, run(SUNSTRUCK_CONVOY, MagneticStorm.ANOMALY_ID));
+        ConvoySunstruck.wearDown(fleet, unallocated, run(List.of(), StellarFlares.ANOMALY_ID));
+        ConvoySunstruck.wearDown(fleet, unallocated, null);
 
         assertEquals(List.of("planet_x"), calm.waypointIds());
         assertEquals(List.of("planet_y"), unallocated.waypointIds());
-        assertEquals(0.7f, ship.maxCombatReadiness().getModifiedValue(), 1e-4f);
-        verify(ship.repairs(), never()).setCR(anyFloat());
+        verify(repairs, never()).setCR(anyFloat());
     }
 }

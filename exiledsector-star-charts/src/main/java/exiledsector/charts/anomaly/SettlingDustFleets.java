@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-final class SettlingDustFleets {
+public final class SettlingDustFleets {
 
-    static final String ADDED_FLEET_POINTS_KEY = "$exiledSector_settlingDustAddedFp";
+    public static final String ADDED_FLEET_POINTS_KEY = "$exiledSector_settlingDustAddedFp";
     static final int MOST_SHIPS_ADDED_AT_ONCE = 30;
     private static final float PERCENT = 100f;
 
@@ -38,7 +38,8 @@ final class SettlingDustFleets {
         MemoryAPI memory = fleet == null ? null : fleet.getMemoryWithoutUpdate();
         return memory != null && !fleet.isPlayerFleet() && !fleet.isStationMode() && !fleet.isDespawning() && fleet.getFleetData() != null
                 && memory.getBoolean(ChartIds.fleetRunKey(run.runId())) && memory.getBoolean(MemFlags.MEMORY_KEY_MAKE_HOSTILE)
-                && memory.contains(ChartIds.START_FP_MEMORY_KEY) && !ChartFleetLedger.lootSpent(fleet) && !ChartFleetLedger.isBoss(fleet, run);
+                && memory.contains(ChartIds.START_FP_MEMORY_KEY) && memory.contains(ChartIds.START_DP_MEMORY_KEY) && !memory.getBoolean(ChartIds.BOSS_MEMORY_KEY)
+                && !ChartFleetLedger.lootSpent(fleet) && !ChartFleetLedger.isBoss(fleet, run);
     }
 
     static void growTo(CampaignFleetAPI fleet, float sizePercent) {

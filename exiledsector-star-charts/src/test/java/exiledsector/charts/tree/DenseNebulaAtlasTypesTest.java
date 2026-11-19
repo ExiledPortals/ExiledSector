@@ -28,7 +28,7 @@ class DenseNebulaAtlasTypesTest {
             Map.entry("settling_dust_effect", List.of(ChartModifier.CHART_SETTLING_DUST_EFFECT_PERCENT)),
             Map.entry("settling_dust_stacks", List.of(ChartModifier.CHART_SETTLING_DUST_MAX_STACKS)),
             Map.entry("dust_trails", List.of(ChartModifier.CHART_SETTLING_DUST_QUANTITY_PERCENT)),
-            Map.entry("long_settling", List.of(ChartModifier.CHART_SETTLING_DUST_MAX_STACKS, ChartModifier.CHART_SETTLING_DUST_FLEET_SIZE_PERCENT)),
+            Map.entry("long_settling", List.of(ChartModifier.CHART_SETTLING_DUST_MAX_STACKS, ChartModifier.CHART_SETTLING_DUST_FLEET_SIZE_MULT)),
             Map.entry("ionized_dust", List.of(ChartModifier.CHART_SETTLING_DUST_IONIZED)));
     private static final Set<String> SMALL_TYPES = Set.of("settling_dust_effect", "settling_dust_stacks");
 

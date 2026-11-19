@@ -393,7 +393,7 @@
 					"magnitude": 5
 				},
 				{
-					"effect": "CHART_SETTLING_DUST_FLEET_SIZE_PERCENT",
+					"effect": "CHART_SETTLING_DUST_FLEET_SIZE_MULT",
 					"magnitude": 3
 				}
 			],

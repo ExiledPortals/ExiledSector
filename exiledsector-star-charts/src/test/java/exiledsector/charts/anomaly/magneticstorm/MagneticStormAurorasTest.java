@@ -118,14 +118,16 @@ class MagneticStormAurorasTest {
     }
 
     @Test
-    void anAuroraElsewhereInTheFieldGivesWayToTheNewOne() {
+    void aNewAuroraElsewhereInTheFieldReplacesTheOneShowingAndKeepsTheRestOfTheQueue() {
         MagneticFieldTerrainPlugin field = field(body(0f, 0f));
+        FlareManager.Flare queued = new FlareManager.Flare();
         Auroras.setOff(field, 0f, new Random(4L));
-        FlareManager.Flare earlier = field.getFlareManager().getActiveFlare();
+        field.getFlareManager().getFlares().add(queued);
 
         assertTrue(Auroras.setOff(field, 180f, new Random(5L)));
         assertEquals(180f, field.getFlareManager().getActiveFlare().direction, 0.001f);
-        assertSame(earlier, field.getFlareManager().getFlares().get(1));
+        assertEquals(2, field.getFlareManager().getFlares().size());
+        assertSame(queued, field.getFlareManager().getFlares().get(1));
     }
 
     @Test

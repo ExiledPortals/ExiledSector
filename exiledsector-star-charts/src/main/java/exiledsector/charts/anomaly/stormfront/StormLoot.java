@@ -16,6 +16,7 @@ import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.modifier.AffixLayout;
 import exiledsector.items.modifier.GrantedModifiers;
+import exiledsector.items.modifier.RolledModifier;
 
 import java.util.List;
 import java.util.Random;
@@ -24,6 +25,8 @@ import java.util.function.Predicate;
 public final class StormLoot {
 
     private static final long GRANT_SEED_SALT = 0x73746f726d6c6fL;
+    private static final Predicate<RolledModifier> BIOME_MODIFIERS = rolled -> BiomeModifiers.isBiomeModifier(rolled.modifierId());
+    private static final Predicate<RolledModifier> NONE = rolled -> false;
 
     private StormLoot() {
     }
@@ -39,8 +42,13 @@ public final class StormLoot {
         return shapedByFront(withBiome, run, front.solar(), immutableChancePercent);
     }
 
+    public static Predicate<RolledModifier> luckyModifiers() {
+        StormFrontTerrainPlugin front = StormBattles.playerFront();
+        return front != null && front.solar() ? BIOME_MODIFIERS : NONE;
+    }
+
     static ItemData shapedByFront(ItemData item, ChartRun run, boolean solar, float immutableChancePercent) {
-        ItemData shaped = solar ? FlareLuck.withLuckyModifiers(item, run, rolled -> BiomeModifiers.isBiomeModifier(rolled.modifierId())) : item;
+        ItemData shaped = solar ? FlareLuck.withLuckyModifiers(item, run, BIOME_MODIFIERS) : item;
         return immutableChancePercent > 0f ? ImmutableDrops.withChance(shaped, immutableChancePercent / 100f) : shaped;
     }
 

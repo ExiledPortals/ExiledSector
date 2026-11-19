@@ -51,7 +51,12 @@ public final class Auroras {
         aurora.fader = new FaderUtil(0f, between(random, field.getFlareFadeInMin(), field.getFlareFadeInMax()),
                 between(random, field.getFlareFadeOutMin(), field.getFlareFadeOutMax()), false, true);
         aurora.colors.addAll(colours);
-        flares.getFlares().add(0, aurora);
+        List<FlareManager.Flare> queue = flares.getFlares();
+        if (queue.isEmpty()) {
+            queue.add(aurora);
+        } else {
+            queue.set(0, aurora);
+        }
         aurora.fader.fadeIn();
         return true;
     }

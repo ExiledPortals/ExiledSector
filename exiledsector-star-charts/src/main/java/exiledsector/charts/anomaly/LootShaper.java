@@ -11,12 +11,14 @@ import exiledsector.charts.loot.FleetClaim;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.items.ItemData;
 import exiledsector.items.drop.ItemChances;
+import exiledsector.items.modifier.RolledModifier;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.BattleLoot;
 import exiledsector.loot.Loot;
 
 import java.util.List;
 import java.util.Random;
+import java.util.function.Predicate;
 
 public interface LootShaper extends ChartAnomaly {
 
@@ -55,8 +57,16 @@ public interface LootShaper extends ChartAnomaly {
         return item;
     }
 
+    default ItemData shapeDrop(SectorAPI sector, ItemData item, LocationAPI location, Predicate<RolledModifier> alreadyLucky) {
+        return shapeDrop(sector, item, location);
+    }
+
     default ItemData shapeBattleDrop(SectorAPI sector, ItemData item, LocationAPI location) {
         return item;
+    }
+
+    default Predicate<RolledModifier> battleLuckyModifiers() {
+        return rolled -> false;
     }
 
     default boolean overchargesHullItems(CampaignFleetAPI fleet) {

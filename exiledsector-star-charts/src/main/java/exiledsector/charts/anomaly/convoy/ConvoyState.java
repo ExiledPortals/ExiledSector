@@ -38,6 +38,7 @@ public final class ConvoyState {
     private CargoAPI cache;
     private boolean cacheTaken;
     private boolean deliveredToExcavation;
+    private boolean sunstruck;
     private int dropsRolled;
     private SectorEntityToken entryToken;
     private SectorEntityToken exitToken;
@@ -228,6 +229,18 @@ public final class ConvoyState {
 
     public boolean deliveredToExcavation() {
         return deliveredToExcavation;
+    }
+
+    boolean markSunstruck() {
+        if (sunstruck) {
+            return false;
+        }
+        sunstruck = true;
+        return true;
+    }
+
+    boolean isSunstruck() {
+        return sunstruck;
     }
 
     long nextDropSeed() {

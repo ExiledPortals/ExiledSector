@@ -145,7 +145,7 @@ class SettlingDustTest {
     void theTuningReadsEveryLine() {
         LiveAnomalyRuns.systemWith(DenseNebula.ANOMALY_ID);
         ChartRun run = withTreeLines(line(ChartModifier.CHART_SETTLING_DUST_EFFECT_PERCENT, 20f), line(ChartModifier.CHART_SETTLING_DUST_MAX_STACKS, 1f),
-                line(ChartModifier.CHART_SETTLING_DUST_QUANTITY_PERCENT, 5f), line(ChartModifier.CHART_SETTLING_DUST_FLEET_SIZE_PERCENT, 3f),
+                line(ChartModifier.CHART_SETTLING_DUST_QUANTITY_PERCENT, 5f), line(ChartModifier.CHART_SETTLING_DUST_FLEET_SIZE_MULT, 3f),
                 line(ChartModifier.CHART_SETTLING_DUST_IONIZED, 1f));
 
         SettlingDustTuning tuning = SettlingDustTuning.ofRun(run);

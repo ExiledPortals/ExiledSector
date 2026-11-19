@@ -234,7 +234,7 @@ public enum ChartModifier implements ModifierEffect {
     CHART_SETTLING_DUST_EFFECT_PERCENT("settling_dust.effect", AnomalyLine.PERCENT),
     CHART_SETTLING_DUST_MAX_STACKS("settling_dust.maxStacks", AnomalyLine.COUNT),
     CHART_SETTLING_DUST_QUANTITY_PERCENT("settling_dust.quantity", AnomalyLine.PERCENT),
-    CHART_SETTLING_DUST_FLEET_SIZE_PERCENT("settling_dust.fleetSize", AnomalyLine.PERCENT),
+    CHART_SETTLING_DUST_FLEET_SIZE_MULT("settling_dust.fleetSize", AnomalyLine.PERCENT),
     CHART_SETTLING_DUST_IONIZED("settling_dust.ionized", AnomalyLine.FLAG),
     CHART_MAGNETIC_STORM_CHANCE_PERCENT(new OpeningChance("magnetic_storm")),
     CHART_MAGNETIC_STORM_CRAFTING_ITEM_PERCENT(new AnomalyDrop("magnetic_storm", DropType.CRAFTING_ITEM)),

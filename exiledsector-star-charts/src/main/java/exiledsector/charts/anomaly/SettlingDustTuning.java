@@ -15,7 +15,7 @@ public record SettlingDustTuning(float effectPercent, int extraMaxStacks, float 
         ChartGenContext lines = ChartGenContext.orNone(context);
         return new SettlingDustTuning(percent(lines, ChartModifier.CHART_SETTLING_DUST_EFFECT_PERCENT),
                 Math.round(percent(lines, ChartModifier.CHART_SETTLING_DUST_MAX_STACKS)), percent(lines, ChartModifier.CHART_SETTLING_DUST_QUANTITY_PERCENT),
-                percent(lines, ChartModifier.CHART_SETTLING_DUST_FLEET_SIZE_PERCENT), percent(lines, ChartModifier.CHART_SETTLING_DUST_IONIZED) > 0f);
+                percent(lines, ChartModifier.CHART_SETTLING_DUST_FLEET_SIZE_MULT), percent(lines, ChartModifier.CHART_SETTLING_DUST_IONIZED) > 0f);
     }
 
     public static SettlingDustTuning ofRun(ChartRun run) {

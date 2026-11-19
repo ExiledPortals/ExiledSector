@@ -105,7 +105,7 @@ public final class ConvoyScript extends AnomalyRunScript implements FleetEventLi
             if (run != null && ConvoyBoltHole.isOn(ChartRunEffects.contextOf(run))) {
                 ConvoyBoltHole.reroute(convoys, ExcavationDeliveries.standingPlanetIds(run).stream().filter(planetId -> entity(planetId) != null).toList());
             }
-            ConvoySunstruck.apply(run, system(), convoys, this::fleet);
+            ConvoySunstruck.route(run, system(), convoys);
             convoys.forEach(convoy -> ConvoyIntel.addFor(sector, this, convoy));
         }
         holdFleets(amount);

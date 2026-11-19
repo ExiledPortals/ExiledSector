@@ -19,6 +19,7 @@ import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.effects.TechMiningItemListener;
 import exiledsector.items.drop.ItemChances;
 import exiledsector.items.ItemData;
+import exiledsector.items.modifier.RolledModifier;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
@@ -39,6 +40,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.function.Predicate;
 
 public final class StarChartLootSource implements LootSource {
 
@@ -297,20 +299,22 @@ public final class StarChartLootSource implements LootSource {
 
     private static ItemData shapedWhereFound(ItemData item, LocationAPI location) {
         SectorAPI sector = Global.getSector();
-        return shapedByRunAnomalies(sector, withBiomeModifier(sector, item, location), location);
+        return shapedByRunAnomalies(sector, withBiomeModifier(sector, item, location), location, rolled -> false);
     }
 
     private static ItemData shapedAfterBattle(ItemData item, LocationAPI location) {
         SectorAPI sector = Global.getSector();
         ItemData shaped = withBiomeModifier(sector, item, location);
+        Predicate<RolledModifier> alreadyLucky = rolled -> false;
         for (LootShaper anomaly : anomaliesHoldingBattle()) {
             try {
                 shaped = anomaly.shapeBattleDrop(sector, shaped, location);
+                alreadyLucky = alreadyLucky.or(anomaly.battleLuckyModifiers());
             } catch (RuntimeException e) {
                 LOG.error("[ExiledSector] Shaping a battle drop failed in anomaly " + anomaly.id(), e);
             }
         }
-        return shapedByRunAnomalies(sector, shaped, location);
+        return shapedByRunAnomalies(sector, shaped, location, alreadyLucky);
     }
 
     private static ItemData withBiomeModifier(SectorAPI sector, ItemData item, LocationAPI location) {
@@ -322,7 +326,7 @@ public final class StarChartLootSource implements LootSource {
         }
     }
 
-    private static ItemData shapedByRunAnomalies(SectorAPI sector, ItemData item, LocationAPI location) {
+    private static ItemData shapedByRunAnomalies(SectorAPI sector, ItemData item, LocationAPI location, Predicate<RolledModifier> alreadyLucky) {
         List<LootShaper> anomalies;
         try {
             anomalies = ChartAnomalies.inRun(ChartRuns.liveIn(location), LootShaper.class);
@@ -333,7 +337,7 @@ public final class StarChartLootSource implements LootSource {
         ItemData shaped = item;
         for (LootShaper anomaly : anomalies) {
             try {
-                shaped = anomaly.shapeDrop(sector, shaped, location);
+                shaped = anomaly.shapeDrop(sector, shaped, location, alreadyLucky);
             } catch (RuntimeException e) {
                 LOG.error("[ExiledSector] Shaping a drop failed in anomaly " + anomaly.id(), e);
             }

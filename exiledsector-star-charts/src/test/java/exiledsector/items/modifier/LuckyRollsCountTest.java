@@ -85,6 +85,21 @@ class LuckyRollsCountTest {
     }
 
     @Test
+    void aModifierThatIsAlreadyLuckyLeavesTheLuckyRollToAnother() {
+        int otherChanged = 0;
+        for (long seed = 0L; seed < SEEDS; seed++) {
+            ItemData item = dropped(seed);
+            RolledModifier alreadyLucky = item.explicits().get(0);
+
+            ItemData lucky = LuckyRolls.withLuck(item, new Luck(1, false, false, Luck.BASE_ROLLS), alreadyLucky::equals);
+
+            assertEquals(alreadyLucky, lucky.explicits().get(0));
+            otherChanged += item.explicits().get(1).equals(lucky.explicits().get(1)) ? 0 : 1;
+        }
+        assertTrue(otherChanged > SEEDS / 4, "other changed " + otherChanged);
+    }
+
+    @Test
     void noLuckyModifiersLeaveTheItemAsItIs() {
         ItemData item = dropped(7L);
 

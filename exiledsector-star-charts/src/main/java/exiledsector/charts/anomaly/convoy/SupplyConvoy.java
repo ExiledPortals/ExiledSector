@@ -1,5 +1,7 @@
 package exiledsector.charts.anomaly.convoy;
 
+import com.fs.starfarer.api.campaign.BattleCreationPlugin;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.RepLevel;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
@@ -125,5 +127,11 @@ public final class SupplyConvoy implements LayoutShaper, ContentPlacer, RunParti
             return new ConvoyEncounterDialog();
         }
         return ConvoyCacheDialog.wantsToHandle(target) ? new ConvoyCacheDialog() : null;
+    }
+
+    @Override
+    public BattleCreationPlugin battleFor(SectorEntityToken opponent) {
+        List<CampaignFleetAPI> sunstruck = ConvoySunstruck.fleetsToWearDown(opponent);
+        return sunstruck.isEmpty() ? null : new SunstruckBattleCreationPlugin(sunstruck);
     }
 }
