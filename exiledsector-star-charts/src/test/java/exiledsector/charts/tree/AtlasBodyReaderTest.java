@@ -22,7 +22,10 @@ class AtlasBodyReaderTest {
                 { "id": "solar", "art": { "kind": "planet", "planet": "star_yellow", "storm": "solar", "size": 110 } },
                 { "id": "swarm", "art": { "kind": "swarmed_planet", "planet": "gas_giant", "hulls": ["glimmer", "lumen"], "size": 150 } },
                 { "id": "odd", "art": { "kind": "planet", "planet": "gas_giant", "storm": "hurricane" } },
-                { "id": "site", "art": { "kind": "planet", "planet": "barren", "light": "#ffbe5a" } }
+                { "id": "site", "art": { "kind": "planet", "planet": "barren", "light": "#ffbe5a" } },
+                { "id": "world", "art": { "kind": "planet", "planet": "jungle", "cityLights": ["volturn", "sindria"], "size": 150 } },
+                { "id": "port", "wheel": "world", "art": { "kind": "sprite", "path": "graphics/stations/station_lowtech1.png", "size": 30,
+                    "convoys": [["buffalo", "wolf"], [], ["tarsus", "hermes", "lasher"]] } }
             ] }
             """;
 
@@ -85,9 +88,24 @@ class AtlasBodyReaderTest {
     }
 
     @Test
-    void thePlainArtHasNoStormAndNoColours() {
+    void aPopulatedWorldKeepsItsCityLightsAndItsPortKeepsEachNonEmptyConvoy() {
+        Map<String, AtlasBody> bodies = bodies();
+        AtlasBodyArt world = bodies.get("world").art();
+        AtlasBodyArt port = bodies.get("port").art();
+
+        assertEquals(List.of("volturn", "sindria"), world.cityLights());
+        assertTrue(world.convoys().isEmpty());
+        assertEquals(List.of(List.of("buffalo", "wolf"), List.of("tarsus", "hermes", "lasher")), port.convoys());
+        assertTrue(port.cityLights().isEmpty());
+        assertEquals("world", bodies.get("port").wheel());
+    }
+
+    @Test
+    void thePlainArtHasNoStormNoColoursAndNoPopulation() {
         assertEquals(AtlasBodyArt.Storm.NONE, AtlasBodyArt.PLAIN.storm());
         assertNull(AtlasBodyArt.PLAIN.lightColour());
         assertNull(AtlasBodyArt.PLAIN.tintColour());
+        assertTrue(AtlasBodyArt.PLAIN.cityLights().isEmpty());
+        assertTrue(AtlasBodyArt.PLAIN.convoys().isEmpty());
     }
 }

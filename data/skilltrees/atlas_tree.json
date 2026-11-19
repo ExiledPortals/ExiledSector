@@ -5,9 +5,9 @@
 			"id": "atlas_root",
 			"type": "atlas_root",
 			"connectedTo": [
+				"travel_boss_star_charts_6",
 				"travel_boss_star_charts_1",
-				"travel_boss_star_charts_3",
-				"travel_boss_star_charts_6"
+				"travel_boss_star_charts_4"
 			],
 			"x": 0,
 			"y": 0
@@ -21,8 +21,8 @@
 				"excavation_sites_chance_1",
 				"atlas_root"
 			],
-			"x": -36.5,
-			"y": -2081.7
+			"x": -2079.2,
+			"y": 438.9
 		},
 		{
 			"id": "travel_boss_star_charts_2",
@@ -33,8 +33,8 @@
 				"supply_convoy_chance_1",
 				"travel_boss_star_charts_20"
 			],
-			"x": 1446.2,
-			"y": -1497.8
+			"x": -1780.6,
+			"y": -1159.8
 		},
 		{
 			"id": "travel_boss_star_charts_3",
@@ -42,11 +42,10 @@
 			"connectedTo": [
 				"travel_boss_star_charts_2",
 				"travel_boss_star_charts_4",
-				"atlas_root",
 				"travel_boss_star_charts_10"
 			],
-			"x": 2081.7,
-			"y": -36.5
+			"x": -438.9,
+			"y": -2079.2
 		},
 		{
 			"id": "travel_boss_star_charts_4",
@@ -54,10 +53,11 @@
 			"connectedTo": [
 				"travel_boss_star_charts_3",
 				"travel_boss_star_charts_5",
-				"listening_post_chance_1"
+				"listening_post_chance_1",
+				"atlas_root"
 			],
-			"x": 1497.8,
-			"y": 1446.2
+			"x": 1159.8,
+			"y": -1780.6
 		},
 		{
 			"id": "travel_boss_star_charts_5",
@@ -67,8 +67,8 @@
 				"travel_boss_star_charts_6",
 				"listening_post_chance_3"
 			],
-			"x": 36.5,
-			"y": 2081.7
+			"x": 2079.2,
+			"y": -438.9
 		},
 		{
 			"id": "travel_boss_star_charts_6",
@@ -79,8 +79,8 @@
 				"spatial_breach_chance_1",
 				"atlas_root"
 			],
-			"x": -1446.2,
-			"y": 1497.8
+			"x": 1780.6,
+			"y": 1159.8
 		},
 		{
 			"id": "travel_boss_star_charts_7",
@@ -88,21 +88,21 @@
 			"connectedTo": [
 				"travel_boss_star_charts_6",
 				"travel_boss_star_charts_8",
+				"supply_convoy_chance_3",
 				"travel_boss_star_charts_16"
 			],
-			"x": -2081.7,
-			"y": 36.5
+			"x": 438.9,
+			"y": 2079.2
 		},
 		{
 			"id": "travel_boss_star_charts_8",
 			"type": "travel_boss_star_charts",
 			"connectedTo": [
 				"travel_boss_star_charts_7",
-				"travel_boss_star_charts_1",
-				"supply_convoy_chance_3"
+				"travel_boss_star_charts_1"
 			],
-			"x": -1497.8,
-			"y": -1446.2
+			"x": -1159.8,
+			"y": 1780.6
 		},
 		{
 			"id": "travel_boss_star_charts_9",
@@ -110,11 +110,10 @@
 			"connectedTo": [
 				"travel_boss_star_charts_10",
 				"travel_boss_star_charts_20",
-				"excavation_sites_chance_3",
-				"travel_catalysts_14"
+				"excavation_sites_chance_3"
 			],
-			"x": 3608.1,
-			"y": -713.6
+			"x": -1558.8,
+			"y": -3376.5
 		},
 		{
 			"id": "travel_boss_star_charts_10",
@@ -122,10 +121,11 @@
 			"connectedTo": [
 				"travel_boss_star_charts_9",
 				"travel_boss_star_charts_11",
+				"relay_network_chance_1",
 				"travel_boss_star_charts_3"
 			],
-			"x": 3481.5,
-			"y": 1186
+			"x": 338.3,
+			"y": -3703.6
 		},
 		{
 			"id": "travel_boss_star_charts_11",
@@ -133,10 +133,10 @@
 			"connectedTo": [
 				"travel_boss_star_charts_10",
 				"travel_boss_star_charts_12",
-				"relay_network_chance_1"
+				"travel_catalysts_4"
 			],
-			"x": 2422.1,
-			"y": 2767.9
+			"x": 2144.7,
+			"y": -3038.3
 		},
 		{
 			"id": "travel_boss_star_charts_12",
@@ -145,10 +145,10 @@
 				"travel_boss_star_charts_11",
 				"travel_boss_star_charts_13",
 				"anomalous_debris_chance_1",
-				"travel_catalysts_1"
+				"travel_catalysts_7"
 			],
-			"x": 713.6,
-			"y": 3608.1
+			"x": 3376.5,
+			"y": -1558.8
 		},
 		{
 			"id": "travel_boss_star_charts_13",
@@ -158,8 +158,8 @@
 				"travel_boss_star_charts_14",
 				"spatial_breach_chance_3"
 			],
-			"x": -1186,
-			"y": 3481.5
+			"x": 3703.6,
+			"y": 338.3
 		},
 		{
 			"id": "travel_boss_star_charts_14",
@@ -168,8 +168,8 @@
 				"travel_boss_star_charts_13",
 				"travel_boss_star_charts_15"
 			],
-			"x": -2767.9,
-			"y": 2422.1
+			"x": 3038.3,
+			"y": 2144.7
 		},
 		{
 			"id": "travel_boss_star_charts_15",
@@ -177,11 +177,10 @@
 			"connectedTo": [
 				"travel_boss_star_charts_14",
 				"travel_boss_star_charts_16",
-				"anomalous_debris_chance_3",
-				"travel_catalysts_4"
+				"anomalous_debris_chance_3"
 			],
-			"x": -3608.1,
-			"y": 713.6
+			"x": 1558.8,
+			"y": 3376.5
 		},
 		{
 			"id": "travel_boss_star_charts_16",
@@ -192,8 +191,8 @@
 				"relay_network_chance_3",
 				"travel_boss_star_charts_7"
 			],
-			"x": -3481.5,
-			"y": -1186
+			"x": -338.3,
+			"y": 3703.6
 		},
 		{
 			"id": "travel_boss_star_charts_17",
@@ -201,10 +200,11 @@
 			"connectedTo": [
 				"travel_boss_star_charts_16",
 				"travel_boss_star_charts_18",
-				"excavation_sites_chance_5"
+				"excavation_sites_chance_5",
+				"travel_catalysts_13"
 			],
-			"x": -2422.1,
-			"y": -2767.9
+			"x": -2144.7,
+			"y": 3038.3
 		},
 		{
 			"id": "travel_boss_star_charts_18",
@@ -212,10 +212,10 @@
 			"connectedTo": [
 				"travel_boss_star_charts_17",
 				"travel_boss_star_charts_19",
-				"supply_convoy_chance_5"
+				"travel_catalysts_16"
 			],
-			"x": -713.6,
-			"y": -3608.1
+			"x": -3376.5,
+			"y": 1558.8
 		},
 		{
 			"id": "travel_boss_star_charts_19",
@@ -223,10 +223,10 @@
 			"connectedTo": [
 				"travel_boss_star_charts_18",
 				"travel_boss_star_charts_20",
-				"travel_catalysts_10"
+				"supply_convoy_chance_5"
 			],
-			"x": 1186,
-			"y": -3481.5
+			"x": -3703.6,
+			"y": -338.3
 		},
 		{
 			"id": "travel_boss_star_charts_20",
@@ -237,8 +237,8 @@
 				"relay_network_chance_5",
 				"travel_boss_star_charts_2"
 			],
-			"x": 2767.9,
-			"y": -2422.1
+			"x": -3038.3,
+			"y": -2144.7
 		},
 		{
 			"id": "travel_catalysts_1",
@@ -246,21 +246,21 @@
 			"connectedTo": [
 				"travel_catalysts_2",
 				"travel_catalysts_18",
-				"excavation_sites_chance_7",
-				"travel_boss_star_charts_12"
+				"excavation_sites_chance_7"
 			],
-			"x": -676.3,
-			"y": 5214.3
+			"x": -3266.2,
+			"y": -4158.7
 		},
 		{
 			"id": "travel_catalysts_2",
 			"type": "travel_catalysts",
 			"connectedTo": [
 				"travel_catalysts_1",
-				"travel_catalysts_3"
+				"travel_catalysts_3",
+				"excavation_sites_chance_9"
 			],
-			"x": -2419,
-			"y": 4668.5
+			"x": -1646.8,
+			"y": -5025
 		},
 		{
 			"id": "travel_catalysts_3",
@@ -268,11 +268,10 @@
 			"connectedTo": [
 				"travel_catalysts_2",
 				"travel_catalysts_4",
-				"excavation_sites_chance_9",
-				"travel_catalysts_21"
+				"travel_catalysts_27"
 			],
-			"x": -3869.8,
-			"y": 3559.7
+			"x": 171.2,
+			"y": -5285.2
 		},
 		{
 			"id": "travel_catalysts_4",
@@ -281,31 +280,31 @@
 				"travel_catalysts_3",
 				"travel_catalysts_5",
 				"anomalous_debris_chance_6",
-				"travel_boss_star_charts_15"
+				"travel_boss_star_charts_11"
 			],
-			"x": -4853.9,
-			"y": 2021.4
+			"x": 1968.5,
+			"y": -4908
 		},
 		{
 			"id": "travel_catalysts_5",
 			"type": "travel_catalysts",
 			"connectedTo": [
 				"travel_catalysts_4",
-				"travel_catalysts_6",
-				"relay_network_chance_7"
+				"travel_catalysts_6"
 			],
-			"x": -5252.5,
-			"y": 239.4
+			"x": 3528.4,
+			"y": -3938.7
 		},
 		{
 			"id": "travel_catalysts_6",
 			"type": "travel_catalysts",
 			"connectedTo": [
 				"travel_catalysts_5",
-				"travel_catalysts_7"
+				"travel_catalysts_7",
+				"relay_network_chance_7"
 			],
-			"x": -5017.7,
-			"y": -1571.5
+			"x": 4662.7,
+			"y": -2494.4
 		},
 		{
 			"id": "travel_catalysts_7",
@@ -313,31 +312,33 @@
 			"connectedTo": [
 				"travel_catalysts_6",
 				"travel_catalysts_8",
-				"travel_catalysts_25"
+				"travel_boss_star_charts_12",
+				"travel_catalysts_31"
 			],
-			"x": -4177.6,
-			"y": -3192.9
+			"x": 5234.7,
+			"y": -749.2
 		},
 		{
 			"id": "travel_catalysts_8",
 			"type": "travel_catalysts",
 			"connectedTo": [
 				"travel_catalysts_7",
-				"travel_catalysts_9",
-				"spatial_breach_chance_5"
+				"travel_catalysts_9"
 			],
-			"x": -2833.6,
-			"y": -4429.1
+			"x": 5175.2,
+			"y": 1086.3
 		},
 		{
 			"id": "travel_catalysts_9",
 			"type": "travel_catalysts",
 			"connectedTo": [
 				"travel_catalysts_8",
-				"travel_catalysts_10"
+				"travel_catalysts_10",
+				"spatial_breach_chance_5",
+				"travel_catalysts_34"
 			],
-			"x": -1147.9,
-			"y": -5131.2
+			"x": 4491.6,
+			"y": 2790.8
 		},
 		{
 			"id": "travel_catalysts_10",
@@ -345,11 +346,10 @@
 			"connectedTo": [
 				"travel_catalysts_9",
 				"travel_catalysts_11",
-				"supply_convoy_chance_7",
-				"travel_boss_star_charts_19"
+				"supply_convoy_chance_7"
 			],
-			"x": 676.3,
-			"y": -5214.3
+			"x": 3266.2,
+			"y": 4158.7
 		},
 		{
 			"id": "travel_catalysts_11",
@@ -357,11 +357,10 @@
 			"connectedTo": [
 				"travel_catalysts_10",
 				"travel_catalysts_12",
-				"supply_convoy_chance_8",
-				"travel_catalysts_29"
+				"supply_convoy_chance_8"
 			],
-			"x": 2419,
-			"y": -4668.5
+			"x": 1646.8,
+			"y": 5025
 		},
 		{
 			"id": "travel_catalysts_12",
@@ -370,8 +369,8 @@
 				"travel_catalysts_11",
 				"travel_catalysts_13"
 			],
-			"x": 3869.8,
-			"y": -3559.7
+			"x": -171.2,
+			"y": 5285.2
 		},
 		{
 			"id": "travel_catalysts_13",
@@ -379,10 +378,10 @@
 			"connectedTo": [
 				"travel_catalysts_12",
 				"travel_catalysts_14",
-				"travel_catalysts_32"
+				"travel_boss_star_charts_17"
 			],
-			"x": 4853.9,
-			"y": -2021.4
+			"x": -1968.5,
+			"y": 4908
 		},
 		{
 			"id": "travel_catalysts_14",
@@ -390,21 +389,22 @@
 			"connectedTo": [
 				"travel_catalysts_13",
 				"travel_catalysts_15",
-				"listening_post_chance_5",
-				"travel_boss_star_charts_9"
+				"listening_post_chance_5"
 			],
-			"x": 5252.5,
-			"y": -239.4
+			"x": -3528.4,
+			"y": 3938.7
 		},
 		{
 			"id": "travel_catalysts_15",
 			"type": "travel_catalysts",
 			"connectedTo": [
 				"travel_catalysts_14",
-				"travel_catalysts_16"
+				"travel_catalysts_16",
+				"listening_post_chance_7",
+				"travel_catalysts_20"
 			],
-			"x": 5017.7,
-			"y": 1571.5
+			"x": -4662.7,
+			"y": 2494.4
 		},
 		{
 			"id": "travel_catalysts_16",
@@ -412,43 +412,42 @@
 			"connectedTo": [
 				"travel_catalysts_15",
 				"travel_catalysts_17",
-				"relay_network_chance_9"
+				"relay_network_chance_9",
+				"travel_boss_star_charts_18"
 			],
-			"x": 4177.6,
-			"y": 3192.9
+			"x": -5234.7,
+			"y": 749.2
 		},
 		{
 			"id": "travel_catalysts_17",
 			"type": "travel_catalysts",
 			"connectedTo": [
 				"travel_catalysts_16",
-				"travel_catalysts_18"
+				"travel_catalysts_18",
+				"travel_catalysts_22"
 			],
-			"x": 2833.6,
-			"y": 4429.1
+			"x": -5175.2,
+			"y": -1086.3
 		},
 		{
 			"id": "travel_catalysts_18",
 			"type": "travel_catalysts",
 			"connectedTo": [
 				"travel_catalysts_17",
-				"travel_catalysts_1",
-				"listening_post_chance_7",
-				"travel_catalysts_37"
+				"travel_catalysts_1"
 			],
-			"x": 1147.9,
-			"y": 5131.2
+			"x": -4491.6,
+			"y": -2790.8
 		},
 		{
 			"id": "travel_catalysts_19",
 			"type": "travel_catalysts",
 			"connectedTo": [
 				"travel_catalysts_20",
-				"travel_catalysts_38",
-				"travel_chart_modifier_effect_20"
+				"travel_catalysts_38"
 			],
-			"x": -1706.2,
-			"y": 6641.3
+			"x": -4444,
+			"y": 5246.9
 		},
 		{
 			"id": "travel_catalysts_20",
@@ -456,10 +455,11 @@
 			"connectedTo": [
 				"travel_catalysts_19",
 				"travel_catalysts_21",
-				"excavation_sites_chance_10"
+				"travel_catalysts_15",
+				"travel_chart_modifier_effect_1"
 			],
-			"x": -3675,
-			"y": 5789
+			"x": -5847.9,
+			"y": 3616.9
 		},
 		{
 			"id": "travel_catalysts_21",
@@ -467,21 +467,21 @@
 			"connectedTo": [
 				"travel_catalysts_20",
 				"travel_catalysts_22",
-				"anomalous_debris_chance_8",
-				"travel_catalysts_3"
+				"anomalous_debris_chance_8"
 			],
-			"x": -5284,
-			"y": 4370.1
+			"x": -6679.3,
+			"y": 1632.7
 		},
 		{
 			"id": "travel_catalysts_22",
 			"type": "travel_catalysts",
 			"connectedTo": [
 				"travel_catalysts_21",
-				"travel_catalysts_23"
+				"travel_catalysts_23",
+				"travel_catalysts_17"
 			],
-			"x": -6375.8,
-			"y": 2523.3
+			"x": -6857,
+			"y": -511.2
 		},
 		{
 			"id": "travel_catalysts_23",
@@ -489,21 +489,21 @@
 			"connectedTo": [
 				"travel_catalysts_22",
 				"travel_catalysts_24",
-				"travel_chart_modifier_effect_24"
+				"anomalous_debris_chance_10",
+				"travel_chart_modifier_effect_5"
 			],
-			"x": -6843.5,
-			"y": 429.6
+			"x": -6363.4,
+			"y": -2605.1
 		},
 		{
 			"id": "travel_catalysts_24",
 			"type": "travel_catalysts",
 			"connectedTo": [
 				"travel_catalysts_23",
-				"travel_catalysts_25",
-				"anomalous_debris_chance_10"
+				"travel_catalysts_25"
 			],
-			"x": -6641.3,
-			"y": -1706.2
+			"x": -5246.9,
+			"y": -4444
 		},
 		{
 			"id": "travel_catalysts_25",
@@ -511,21 +511,20 @@
 			"connectedTo": [
 				"travel_catalysts_24",
 				"travel_catalysts_26",
-				"travel_catalysts_7"
+				"spatial_breach_chance_9"
 			],
-			"x": -5789,
-			"y": -3675
+			"x": -3616.9,
+			"y": -5847.9
 		},
 		{
 			"id": "travel_catalysts_26",
 			"type": "travel_catalysts",
 			"connectedTo": [
 				"travel_catalysts_25",
-				"travel_catalysts_27",
-				"spatial_breach_chance_9"
+				"travel_catalysts_27"
 			],
-			"x": -4370.1,
-			"y": -5284
+			"x": -1632.7,
+			"y": -6679.3
 		},
 		{
 			"id": "travel_catalysts_27",
@@ -533,10 +532,11 @@
 			"connectedTo": [
 				"travel_catalysts_26",
 				"travel_catalysts_28",
-				"travel_chart_modifier_effect_4"
+				"travel_catalysts_3",
+				"travel_chart_modifier_effect_10"
 			],
-			"x": -2523.3,
-			"y": -6375.8
+			"x": 511.2,
+			"y": -6857
 		},
 		{
 			"id": "travel_catalysts_28",
@@ -546,20 +546,18 @@
 				"travel_catalysts_29",
 				"listening_post_chance_9"
 			],
-			"x": -429.6,
-			"y": -6843.5
+			"x": 2605.1,
+			"y": -6363.4
 		},
 		{
 			"id": "travel_catalysts_29",
 			"type": "travel_catalysts",
 			"connectedTo": [
 				"travel_catalysts_28",
-				"travel_catalysts_30",
-				"travel_catalysts_11",
-				"travel_chart_modifier_effect_8"
+				"travel_catalysts_30"
 			],
-			"x": 1706.2,
-			"y": -6641.3
+			"x": 4444,
+			"y": -5246.9
 		},
 		{
 			"id": "travel_catalysts_30",
@@ -567,20 +565,22 @@
 			"connectedTo": [
 				"travel_catalysts_29",
 				"travel_catalysts_31",
-				"spatial_breach_chance_10"
+				"spatial_breach_chance_10",
+				"travel_chart_modifier_effect_13"
 			],
-			"x": 3675,
-			"y": -5789
+			"x": 5847.9,
+			"y": -3616.9
 		},
 		{
 			"id": "travel_catalysts_31",
 			"type": "travel_catalysts",
 			"connectedTo": [
 				"travel_catalysts_30",
-				"travel_catalysts_32"
+				"travel_catalysts_32",
+				"travel_catalysts_7"
 			],
-			"x": 5284,
-			"y": -4370.1
+			"x": 6679.3,
+			"y": -1632.7
 		},
 		{
 			"id": "travel_catalysts_32",
@@ -588,11 +588,10 @@
 			"connectedTo": [
 				"travel_catalysts_31",
 				"travel_catalysts_33",
-				"travel_catalysts_13",
-				"travel_chart_modifier_effect_12"
+				"travel_chart_modifier_effect_16"
 			],
-			"x": 6375.8,
-			"y": -2523.3
+			"x": 6857,
+			"y": 511.2
 		},
 		{
 			"id": "travel_catalysts_33",
@@ -602,8 +601,8 @@
 				"travel_catalysts_34",
 				"relay_network_chance_11"
 			],
-			"x": 6843.5,
-			"y": -429.6
+			"x": 6363.4,
+			"y": 2605.1
 		},
 		{
 			"id": "travel_catalysts_34",
@@ -611,10 +610,10 @@
 			"connectedTo": [
 				"travel_catalysts_33",
 				"travel_catalysts_35",
-				"additional_site_1"
+				"travel_catalysts_9"
 			],
-			"x": 6641.3,
-			"y": 1706.2
+			"x": 5246.9,
+			"y": 4444
 		},
 		{
 			"id": "travel_catalysts_35",
@@ -623,8 +622,8 @@
 				"travel_catalysts_34",
 				"travel_catalysts_36"
 			],
-			"x": 5789,
-			"y": 3675
+			"x": 3616.9,
+			"y": 5847.9
 		},
 		{
 			"id": "travel_catalysts_36",
@@ -632,10 +631,10 @@
 			"connectedTo": [
 				"travel_catalysts_35",
 				"travel_catalysts_37",
-				"travel_chart_modifier_effect_16"
+				"additional_site_1"
 			],
-			"x": 4370.1,
-			"y": 5284
+			"x": 1632.7,
+			"y": 6679.3
 		},
 		{
 			"id": "travel_catalysts_37",
@@ -643,21 +642,22 @@
 			"connectedTo": [
 				"travel_catalysts_36",
 				"travel_catalysts_38",
-				"anomalous_debris_chance_11",
-				"travel_catalysts_18"
+				"anomalous_debris_chance_11"
 			],
-			"x": 2523.3,
-			"y": 6375.8
+			"x": -511.2,
+			"y": 6857
 		},
 		{
 			"id": "travel_catalysts_38",
 			"type": "travel_catalysts",
 			"connectedTo": [
 				"travel_catalysts_37",
-				"travel_catalysts_19"
+				"travel_catalysts_19",
+				"excavation_sites_chance_10",
+				"travel_chart_modifier_effect_23"
 			],
-			"x": 429.6,
-			"y": 6843.5
+			"x": -2605.1,
+			"y": 6363.4
 		},
 		{
 			"id": "travel_chart_modifier_effect_1",
@@ -665,31 +665,32 @@
 			"connectedTo": [
 				"travel_chart_modifier_effect_2",
 				"travel_chart_modifier_effect_24",
-				"additional_site_2"
+				"additional_site_2",
+				"travel_catalysts_20"
 			],
-			"x": -8471.2,
-			"y": -746.6
+			"x": -6567.7,
+			"y": 5299.3
 		},
 		{
 			"id": "travel_chart_modifier_effect_2",
 			"type": "travel_chart_modifier_effect",
 			"connectedTo": [
 				"travel_chart_modifier_effect_1",
-				"travel_chart_modifier_effect_3"
+				"travel_chart_modifier_effect_3",
+				"supply_convoy_chance_10"
 			],
-			"x": -7989.3,
-			"y": -2913.6
+			"x": -7715.4,
+			"y": 3418.9
 		},
 		{
 			"id": "travel_chart_modifier_effect_3",
 			"type": "travel_chart_modifier_effect",
 			"connectedTo": [
 				"travel_chart_modifier_effect_2",
-				"travel_chart_modifier_effect_4",
-				"supply_convoy_chance_10"
+				"travel_chart_modifier_effect_4"
 			],
-			"x": -6963,
-			"y": -4882.1
+			"x": -8337.4,
+			"y": 1305.5
 		},
 		{
 			"id": "travel_chart_modifier_effect_4",
@@ -697,11 +698,10 @@
 			"connectedTo": [
 				"travel_chart_modifier_effect_3",
 				"travel_chart_modifier_effect_5",
-				"breach_cache_items_1",
-				"travel_catalysts_27"
+				"breach_cache_items_1"
 			],
-			"x": -5462.1,
-			"y": -6517.9
+			"x": -8391.2,
+			"y": -896.9
 		},
 		{
 			"id": "travel_chart_modifier_effect_5",
@@ -709,20 +709,21 @@
 			"connectedTo": [
 				"travel_chart_modifier_effect_4",
 				"travel_chart_modifier_effect_6",
-				"relay_reward_rarity_1"
+				"travel_catalysts_23"
 			],
-			"x": -3589,
-			"y": -7709.5
+			"x": -7873.2,
+			"y": -3038.1
 		},
 		{
 			"id": "travel_chart_modifier_effect_6",
 			"type": "travel_chart_modifier_effect",
 			"connectedTo": [
 				"travel_chart_modifier_effect_5",
-				"travel_chart_modifier_effect_7"
+				"travel_chart_modifier_effect_7",
+				"relay_reward_rarity_1"
 			],
-			"x": -1471.4,
-			"y": -8375.7
+			"x": -6818.6,
+			"y": -4972.3
 		},
 		{
 			"id": "travel_chart_modifier_effect_7",
@@ -732,19 +733,18 @@
 				"travel_chart_modifier_effect_8",
 				"supply_convoy_chance_11"
 			],
-			"x": 746.6,
-			"y": -8471.2
+			"x": -5299.3,
+			"y": -6567.7
 		},
 		{
 			"id": "travel_chart_modifier_effect_8",
 			"type": "travel_chart_modifier_effect",
 			"connectedTo": [
 				"travel_chart_modifier_effect_7",
-				"travel_chart_modifier_effect_9",
-				"travel_catalysts_29"
+				"travel_chart_modifier_effect_9"
 			],
-			"x": 2913.6,
-			"y": -7989.3
+			"x": -3418.9,
+			"y": -7715.4
 		},
 		{
 			"id": "travel_chart_modifier_effect_9",
@@ -754,8 +754,8 @@
 				"travel_chart_modifier_effect_10",
 				"spatial_breach_chance_12"
 			],
-			"x": 4882.1,
-			"y": -6963
+			"x": -1305.5,
+			"y": -8337.4
 		},
 		{
 			"id": "travel_chart_modifier_effect_10",
@@ -763,10 +763,10 @@
 			"connectedTo": [
 				"travel_chart_modifier_effect_9",
 				"travel_chart_modifier_effect_11",
-				"additional_site_3"
+				"travel_catalysts_27"
 			],
-			"x": 6517.9,
-			"y": -5462.1
+			"x": 896.9,
+			"y": -8391.2
 		},
 		{
 			"id": "travel_chart_modifier_effect_11",
@@ -774,10 +774,10 @@
 			"connectedTo": [
 				"travel_chart_modifier_effect_10",
 				"travel_chart_modifier_effect_12",
-				"engram_quantity_1"
+				"additional_site_3"
 			],
-			"x": 7709.5,
-			"y": -3589
+			"x": 3038.1,
+			"y": -7873.2
 		},
 		{
 			"id": "travel_chart_modifier_effect_12",
@@ -785,20 +785,21 @@
 			"connectedTo": [
 				"travel_chart_modifier_effect_11",
 				"travel_chart_modifier_effect_13",
-				"travel_catalysts_32"
+				"engram_quantity_1"
 			],
-			"x": 8375.7,
-			"y": -1471.4
+			"x": 4972.3,
+			"y": -6818.6
 		},
 		{
 			"id": "travel_chart_modifier_effect_13",
 			"type": "travel_chart_modifier_effect",
 			"connectedTo": [
 				"travel_chart_modifier_effect_12",
-				"travel_chart_modifier_effect_14"
+				"travel_chart_modifier_effect_14",
+				"travel_catalysts_30"
 			],
-			"x": 8471.2,
-			"y": 746.6
+			"x": 6567.7,
+			"y": -5299.3
 		},
 		{
 			"id": "travel_chart_modifier_effect_14",
@@ -808,8 +809,8 @@
 				"travel_chart_modifier_effect_15",
 				"listening_post_chance_11"
 			],
-			"x": 7989.3,
-			"y": 2913.6
+			"x": 7715.4,
+			"y": -3418.9
 		},
 		{
 			"id": "travel_chart_modifier_effect_15",
@@ -819,8 +820,8 @@
 				"travel_chart_modifier_effect_16",
 				"relay_reward_rarity_3"
 			],
-			"x": 6963,
-			"y": 4882.1
+			"x": 8337.4,
+			"y": -1305.5
 		},
 		{
 			"id": "travel_chart_modifier_effect_16",
@@ -828,10 +829,10 @@
 			"connectedTo": [
 				"travel_chart_modifier_effect_15",
 				"travel_chart_modifier_effect_17",
-				"travel_catalysts_36"
+				"travel_catalysts_32"
 			],
-			"x": 5462.1,
-			"y": 6517.9
+			"x": 8391.2,
+			"y": 896.9
 		},
 		{
 			"id": "travel_chart_modifier_effect_17",
@@ -841,29 +842,29 @@
 				"travel_chart_modifier_effect_18",
 				"threat_feedstock_chance_1"
 			],
-			"x": 3589,
-			"y": 7709.5
+			"x": 7873.2,
+			"y": 3038.1
 		},
 		{
 			"id": "travel_chart_modifier_effect_18",
 			"type": "travel_chart_modifier_effect",
 			"connectedTo": [
 				"travel_chart_modifier_effect_17",
-				"travel_chart_modifier_effect_19"
+				"travel_chart_modifier_effect_19",
+				"engram_quantity_2"
 			],
-			"x": 1471.4,
-			"y": 8375.7
+			"x": 6818.6,
+			"y": 4972.3
 		},
 		{
 			"id": "travel_chart_modifier_effect_19",
 			"type": "travel_chart_modifier_effect",
 			"connectedTo": [
 				"travel_chart_modifier_effect_18",
-				"travel_chart_modifier_effect_20",
-				"engram_quantity_2"
+				"travel_chart_modifier_effect_20"
 			],
-			"x": -746.6,
-			"y": 8471.2
+			"x": 5299.3,
+			"y": 6567.7
 		},
 		{
 			"id": "travel_chart_modifier_effect_20",
@@ -871,11 +872,10 @@
 			"connectedTo": [
 				"travel_chart_modifier_effect_19",
 				"travel_chart_modifier_effect_21",
-				"vault_quantity_1",
-				"travel_catalysts_19"
+				"vault_quantity_1"
 			],
-			"x": -2913.6,
-			"y": 7989.3
+			"x": 3418.9,
+			"y": 7715.4
 		},
 		{
 			"id": "travel_chart_modifier_effect_21",
@@ -885,8 +885,8 @@
 				"travel_chart_modifier_effect_22",
 				"breach_cache_quantity_2"
 			],
-			"x": -4882.1,
-			"y": 6963
+			"x": 1305.5,
+			"y": 8337.4
 		},
 		{
 			"id": "travel_chart_modifier_effect_22",
@@ -895,18 +895,19 @@
 				"travel_chart_modifier_effect_21",
 				"travel_chart_modifier_effect_23"
 			],
-			"x": -6517.9,
-			"y": 5462.1
+			"x": -896.9,
+			"y": 8391.2
 		},
 		{
 			"id": "travel_chart_modifier_effect_23",
 			"type": "travel_chart_modifier_effect",
 			"connectedTo": [
 				"travel_chart_modifier_effect_22",
-				"travel_chart_modifier_effect_24"
+				"travel_chart_modifier_effect_24",
+				"travel_catalysts_38"
 			],
-			"x": -7709.5,
-			"y": 3589
+			"x": -3038.1,
+			"y": 7873.2
 		},
 		{
 			"id": "travel_chart_modifier_effect_24",
@@ -914,11 +915,10 @@
 			"connectedTo": [
 				"travel_chart_modifier_effect_23",
 				"travel_chart_modifier_effect_1",
-				"engram_quantity_3",
-				"travel_catalysts_23"
+				"engram_quantity_3"
 			],
-			"x": -8375.7,
-			"y": 1471.4
+			"x": -4972.3,
+			"y": 6818.6
 		},
 		{
 			"id": "settled_shafts_1",
@@ -926,8 +926,8 @@
 			"connectedTo": [
 				"excavation_sites_chance_2"
 			],
-			"x": -50.4,
-			"y": -2874.1,
+			"x": -2848.8,
+			"y": 601.4,
 			"tags": [
 				"excavation_sites"
 			]
@@ -939,8 +939,8 @@
 				"travel_boss_star_charts_1",
 				"excavation_sites_chance_2"
 			],
-			"x": 482.8,
-			"y": -2547.9,
+			"x": -2599.7,
+			"y": 28.1,
 			"tags": [
 				"excavation_sites"
 			]
@@ -952,8 +952,8 @@
 				"excavation_sites_chance_1",
 				"settled_shafts_1"
 			],
-			"x": 238.5,
-			"y": -3097.2,
+			"x": -3212.2,
+			"y": 567,
 			"tags": [
 				"excavation_sites"
 			]
@@ -964,8 +964,8 @@
 			"connectedTo": [
 				"supply_convoy_chance_2"
 			],
-			"x": 1042.6,
-			"y": -1079.8,
+			"x": -1164.5,
+			"y": -758.5,
 			"tags": [
 				"supply_convoy"
 			]
@@ -977,8 +977,8 @@
 				"travel_boss_star_charts_2",
 				"supply_convoy_chance_2"
 			],
-			"x": 1163.8,
-			"y": -1465.9,
+			"x": -1363.4,
+			"y": -1303.4,
 			"tags": [
 				"supply_convoy"
 			]
@@ -990,8 +990,8 @@
 				"supply_convoy_chance_1",
 				"threat_embargo_1"
 			],
-			"x": 697.7,
-			"y": -1035.3,
+			"x": -814.7,
+			"y": -771.3,
 			"tags": [
 				"supply_convoy"
 			]
@@ -1002,8 +1002,8 @@
 			"connectedTo": [
 				"listening_post_chance_2"
 			],
-			"x": 2018.7,
-			"y": 1949.1,
+			"x": 1550.2,
+			"y": -2379.8,
 			"tags": [
 				"listening_post"
 			]
@@ -1015,8 +1015,8 @@
 				"travel_boss_star_charts_4",
 				"listening_post_chance_2"
 			],
-			"x": 2154.9,
-			"y": 1408,
+			"x": 993.4,
+			"y": -2417.2,
 			"tags": [
 				"listening_post"
 			]
@@ -1028,8 +1028,8 @@
 				"listening_post_chance_1",
 				"officers_ledger_1"
 			],
-			"x": 2334.1,
-			"y": 2003.2,
+			"x": 1593.5,
+			"y": -2696.8,
 			"tags": [
 				"listening_post"
 			]
@@ -1040,8 +1040,8 @@
 			"connectedTo": [
 				"listening_post_chance_4"
 			],
-			"x": 24.1,
-			"y": 1372.2,
+			"x": 1380.3,
+			"y": -291.4,
 			"tags": [
 				"listening_post"
 			]
@@ -1053,8 +1053,8 @@
 				"travel_boss_star_charts_5",
 				"listening_post_chance_4"
 			],
-			"x": 366.1,
-			"y": 1813,
+			"x": 1739.9,
+			"y": -718.1,
 			"tags": [
 				"listening_post"
 			]
@@ -1066,8 +1066,8 @@
 				"listening_post_chance_3",
 				"stolen_charts_1"
 			],
-			"x": 340.6,
-			"y": 1325.1,
+			"x": 1088.6,
+			"y": -423,
 			"tags": [
 				"listening_post"
 			]
@@ -1078,8 +1078,8 @@
 			"connectedTo": [
 				"spatial_breach_chance_2"
 			],
-			"x": -1941.2,
-			"y": 2010.5,
+			"x": 2379.9,
+			"y": 1550.3,
 			"tags": [
 				"spatial_breach"
 			]
@@ -1091,8 +1091,8 @@
 				"travel_boss_star_charts_6",
 				"spatial_breach_chance_2"
 			],
-			"x": -1417.1,
-			"y": 2163.5,
+			"x": 2207.7,
+			"y": 1032.1,
 			"tags": [
 				"spatial_breach"
 			]
@@ -1104,8 +1104,8 @@
 				"spatial_breach_chance_1",
 				"heavy_breach_1"
 			],
-			"x": -1922.4,
-			"y": 2318,
+			"x": 2684.6,
+			"y": 1505.3,
 			"tags": [
 				"spatial_breach"
 			]
@@ -1116,8 +1116,8 @@
 			"connectedTo": [
 				"supply_convoy_chance_4"
 			],
-			"x": -1083.9,
-			"y": -1046.5,
+			"x": 287.3,
+			"y": 1361.1,
 			"tags": [
 				"supply_convoy"
 			]
@@ -1126,11 +1126,11 @@
 			"id": "supply_convoy_chance_3",
 			"type": "supply_convoy_chance",
 			"connectedTo": [
-				"travel_boss_star_charts_8",
+				"travel_boss_star_charts_7",
 				"supply_convoy_chance_4"
 			],
-			"x": -1470,
-			"y": -1167.8,
+			"x": -162.3,
+			"y": 1727.6,
 			"tags": [
 				"supply_convoy"
 			]
@@ -1142,8 +1142,8 @@
 				"supply_convoy_chance_3",
 				"shroud_embargo_1"
 			],
-			"x": -1039.4,
-			"y": -701.7,
+			"x": 129,
+			"y": 1049,
 			"tags": [
 				"supply_convoy"
 			]
@@ -1154,8 +1154,8 @@
 			"connectedTo": [
 				"excavation_sites_chance_4"
 			],
-			"x": 2812.9,
-			"y": -556.4,
+			"x": -1219.6,
+			"y": -2641.7,
 			"tags": [
 				"excavation_sites"
 			]
@@ -1167,8 +1167,8 @@
 				"travel_boss_star_charts_9",
 				"excavation_sites_chance_4"
 			],
-			"x": 3159.7,
-			"y": -1076.3,
+			"x": -977.3,
+			"y": -3217.8,
 			"tags": [
 				"excavation_sites"
 			]
@@ -1180,8 +1180,8 @@
 				"excavation_sites_chance_3",
 				"twin_shafts_1"
 			],
-			"x": 2557.6,
-			"y": -817.2,
+			"x": -856.8,
+			"y": -2601.5,
 			"tags": [
 				"excavation_sites"
 			]
@@ -1192,8 +1192,8 @@
 			"connectedTo": [
 				"relay_network_chance_2"
 			],
-			"x": 2840.3,
-			"y": 3245.9,
+			"x": 396.1,
+			"y": -4337,
 			"tags": [
 				"relay_network"
 			]
@@ -1202,11 +1202,11 @@
 			"id": "relay_network_chance_1",
 			"type": "relay_network_chance",
 			"connectedTo": [
-				"travel_boss_star_charts_11",
+				"travel_boss_star_charts_10",
 				"relay_network_chance_2"
 			],
-			"x": 2376.9,
-			"y": 3370.7,
+			"x": 677.3,
+			"y": -3948,
 			"tags": [
 				"relay_network"
 			]
@@ -1218,8 +1218,8 @@
 				"relay_network_chance_1",
 				"crowded_channel_1"
 			],
-			"x": 2957.3,
-			"y": 3471.3,
+			"x": 572.6,
+			"y": -4519.7,
 			"tags": [
 				"relay_network"
 			]
@@ -1230,8 +1230,8 @@
 			"connectedTo": [
 				"anomalous_debris_chance_2"
 			],
-			"x": 564,
-			"y": 2851.8,
+			"x": 2691.7,
+			"y": -1242.7,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -1243,8 +1243,8 @@
 				"travel_boss_star_charts_12",
 				"anomalous_debris_chance_2"
 			],
-			"x": 1101.7,
-			"y": 3104.2,
+			"x": 3249.4,
+			"y": -1038,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -1256,8 +1256,8 @@
 				"anomalous_debris_chance_1",
 				"redacted_sleepers_1"
 			],
-			"x": 828.6,
-			"y": 2625.7,
+			"x": 2646.5,
+			"y": -897.7,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -1268,8 +1268,8 @@
 			"connectedTo": [
 				"spatial_breach_chance_4"
 			],
-			"x": -1412.8,
-			"y": 4147.1,
+			"x": 4424,
+			"y": 404.1,
 			"tags": [
 				"spatial_breach"
 			]
@@ -1281,8 +1281,8 @@
 				"travel_boss_star_charts_13",
 				"spatial_breach_chance_4"
 			],
-			"x": -1814,
-			"y": 3776.8,
+			"x": 4236.7,
+			"y": -108.8,
 			"tags": [
 				"spatial_breach"
 			]
@@ -1294,8 +1294,8 @@
 				"spatial_breach_chance_3",
 				"rift_magnetism_1"
 			],
-			"x": -1700.7,
-			"y": 4256.5,
+			"x": 4641.8,
+			"y": 186.3,
 			"tags": [
 				"spatial_breach"
 			]
@@ -1306,8 +1306,8 @@
 			"connectedTo": [
 				"anomalous_debris_chance_4"
 			],
-			"x": -2871.4,
-			"y": 567.9,
+			"x": 1244.1,
+			"y": 2694.8,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -1319,8 +1319,8 @@
 				"travel_boss_star_charts_15",
 				"anomalous_debris_chance_4"
 			],
-			"x": -3260.8,
-			"y": 1016.5,
+			"x": 1836.3,
+			"y": 2647.7,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -1332,8 +1332,8 @@
 				"anomalous_debris_chance_3",
 				"veiled_sleepers_1"
 			],
-			"x": -2702.5,
-			"y": 872.2,
+			"x": 1215.3,
+			"y": 2348,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -1344,8 +1344,8 @@
 			"connectedTo": [
 				"relay_network_chance_4"
 			],
-			"x": -4097.4,
-			"y": -1395.8,
+			"x": -396.7,
+			"y": 4343.2,
 			"tags": [
 				"relay_network"
 			]
@@ -1357,8 +1357,8 @@
 				"travel_boss_star_charts_16",
 				"relay_network_chance_4"
 			],
-			"x": -3673.8,
-			"y": -1621.6,
+			"x": -761.9,
+			"y": 4031.8,
 			"tags": [
 				"relay_network"
 			]
@@ -1370,8 +1370,8 @@
 				"relay_network_chance_3",
 				"shared_broadcast_1"
 			],
-			"x": -4158.8,
-			"y": -1642.3,
+			"x": -635.3,
+			"y": 4430.4,
 			"tags": [
 				"relay_network"
 			]
@@ -1382,8 +1382,8 @@
 			"connectedTo": [
 				"excavation_sites_chance_6"
 			],
-			"x": -1904.5,
-			"y": -2176.4,
+			"x": -1679.3,
+			"y": 2378.9,
 			"tags": [
 				"excavation_sites"
 			]
@@ -1395,8 +1395,8 @@
 				"travel_boss_star_charts_17",
 				"excavation_sites_chance_6"
 			],
-			"x": -2527.9,
-			"y": -2131.6,
+			"x": -1455.5,
+			"y": 2962.5,
 			"tags": [
 				"excavation_sites"
 			]
@@ -1408,8 +1408,8 @@
 				"excavation_sites_chance_5",
 				"sapper_teams_1"
 			],
-			"x": -1942,
-			"y": -1813.4,
+			"x": -1382.9,
+			"y": 2165.9,
 			"tags": [
 				"excavation_sites"
 			]
@@ -1420,8 +1420,8 @@
 			"connectedTo": [
 				"supply_convoy_chance_6"
 			],
-			"x": -825.8,
-			"y": -4175,
+			"x": -4446.9,
+			"y": -406.2,
 			"tags": [
 				"supply_convoy"
 			]
@@ -1430,11 +1430,11 @@
 			"id": "supply_convoy_chance_5",
 			"type": "supply_convoy_chance",
 			"connectedTo": [
-				"travel_boss_star_charts_18",
+				"travel_boss_star_charts_19",
 				"supply_convoy_chance_6"
 			],
-			"x": -933.1,
-			"y": -3784.8,
+			"x": -4021.4,
+			"y": -800.3,
 			"tags": [
 				"supply_convoy"
 			]
@@ -1446,8 +1446,8 @@
 				"supply_convoy_chance_5",
 				"phase_embargo_1"
 			],
-			"x": -1091.5,
-			"y": -4399.2,
+			"x": -4756.5,
+			"y": -569.4,
 			"tags": [
 				"supply_convoy"
 			]
@@ -1458,8 +1458,8 @@
 			"connectedTo": [
 				"relay_network_chance_6"
 			],
-			"x": 3252.6,
-			"y": -2846.3,
+			"x": -3562.8,
+			"y": -2515,
 			"tags": [
 				"relay_network"
 			]
@@ -1471,8 +1471,8 @@
 				"travel_boss_star_charts_20",
 				"relay_network_chance_6"
 			],
-			"x": 2777.3,
-			"y": -2913.1,
+			"x": -3576.2,
+			"y": -2035.2,
 			"tags": [
 				"relay_network"
 			]
@@ -1484,8 +1484,8 @@
 				"relay_network_chance_5",
 				"extra_relay_1"
 			],
-			"x": 3246.6,
-			"y": -3100.2,
+			"x": -3811.7,
+			"y": -2464.5,
 			"tags": [
 				"relay_network"
 			]
@@ -1496,8 +1496,8 @@
 			"connectedTo": [
 				"excavation_sites_chance_8"
 			],
-			"x": -779.2,
-			"y": 6007.3,
+			"x": -3760.3,
+			"y": -4787.9,
 			"tags": [
 				"excavation_sites"
 			]
@@ -1509,8 +1509,8 @@
 				"travel_catalysts_1",
 				"excavation_sites_chance_8"
 			],
-			"x": -1329.3,
-			"y": 5710.6,
+			"x": -3152,
+			"y": -4644.6,
 			"tags": [
 				"excavation_sites"
 			]
@@ -1522,8 +1522,8 @@
 				"excavation_sites_chance_7",
 				"open_bores_1"
 			],
-			"x": -1005.1,
-			"y": 6294,
+			"x": -3767.1,
+			"y": -5152.9,
 			"tags": [
 				"excavation_sites"
 			]
@@ -1534,8 +1534,8 @@
 			"connectedTo": [
 				"anomalous_debris_chance_5"
 			],
-			"x": -3283.1,
-			"y": 3019.9,
+			"x": -1402,
+			"y": -4277.9,
 			"tags": [
 				"excavation_sites",
 				"anomalous_debris"
@@ -1545,11 +1545,11 @@
 			"id": "excavation_sites_chance_9",
 			"type": "excavation_sites_chance",
 			"connectedTo": [
-				"travel_catalysts_3",
+				"travel_catalysts_2",
 				"anomalous_debris_chance_5"
 			],
-			"x": -3322.2,
-			"y": 3641.7,
+			"x": -1104.2,
+			"y": -4825.2,
 			"tags": [
 				"excavation_sites"
 			]
@@ -1561,8 +1561,8 @@
 				"excavation_sites_chance_9",
 				"infested_bolt_holes_1"
 			],
-			"x": -2913.1,
-			"y": 3018.9,
+			"x": -1073.8,
+			"y": -4107.1,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -1573,8 +1573,8 @@
 			"connectedTo": [
 				"anomalous_debris_chance_7"
 			],
-			"x": -5566.2,
-			"y": 2318.1,
+			"x": 2250.7,
+			"y": -5611.6,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -1586,8 +1586,8 @@
 				"travel_catalysts_4",
 				"anomalous_debris_chance_7"
 			],
-			"x": -5127.8,
-			"y": 2718.9,
+			"x": 1705.5,
+			"y": -5375.8,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -1599,8 +1599,8 @@
 				"anomalous_debris_chance_6",
 				"threatening_sleepers_1"
 			],
-			"x": -5815.2,
-			"y": 2561.2,
+			"x": 2019,
+			"y": -5871.3,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -1611,8 +1611,8 @@
 			"connectedTo": [
 				"relay_network_chance_8"
 			],
-			"x": -4627.9,
-			"y": 210.9,
+			"x": 4106.3,
+			"y": -2196.7,
 			"tags": [
 				"relay_network"
 			]
@@ -1621,11 +1621,11 @@
 			"id": "relay_network_chance_7",
 			"type": "relay_network_chance",
 			"connectedTo": [
-				"travel_catalysts_5",
+				"travel_catalysts_6",
 				"relay_network_chance_8"
 			],
-			"x": -5017.4,
-			"y": -69.6,
+			"x": 4066.6,
+			"y": -2675.1,
 			"tags": [
 				"relay_network"
 			]
@@ -1637,8 +1637,8 @@
 				"relay_network_chance_7",
 				"scar_collector_1"
 			],
-			"x": -4434.9,
-			"y": 45.9,
+			"x": 3852.3,
+			"y": -2197,
 			"tags": [
 				"relay_network"
 			]
@@ -1649,8 +1649,8 @@
 			"connectedTo": [
 				"spatial_breach_chance_6"
 			],
-			"x": -2447.5,
-			"y": -3825.6,
+			"x": 3884.8,
+			"y": 2413.8,
 			"tags": [
 				"spatial_breach"
 			]
@@ -1659,11 +1659,11 @@
 			"id": "spatial_breach_chance_5",
 			"type": "spatial_breach_chance",
 			"connectedTo": [
-				"travel_catalysts_8",
+				"travel_catalysts_9",
 				"spatial_breach_chance_6"
 			],
-			"x": -2992.9,
-			"y": -3852.3,
+			"x": 4421.4,
+			"y": 2313,
 			"tags": [
 				"spatial_breach"
 			]
@@ -1675,8 +1675,8 @@
 				"spatial_breach_chance_5",
 				"rally_point_1"
 			],
-			"x": -2366.3,
-			"y": -3528.5,
+			"x": 3896.8,
+			"y": 2106.1,
 			"tags": [
 				"spatial_breach"
 			]
@@ -1687,8 +1687,8 @@
 			"connectedTo": [
 				"spatial_breach_chance_7"
 			],
-			"x": 778.3,
-			"y": -6000.3,
+			"x": 3744.2,
+			"y": 4767.4,
 			"tags": [
 				"supply_convoy",
 				"spatial_breach"
@@ -1701,8 +1701,8 @@
 				"travel_catalysts_10",
 				"spatial_breach_chance_7"
 			],
-			"x": 344.2,
-			"y": -5554.8,
+			"x": 3760.3,
+			"y": 4167.6,
 			"tags": [
 				"supply_convoy"
 			]
@@ -1714,8 +1714,8 @@
 				"supply_convoy_chance_7",
 				"torn_holds_1"
 			],
-			"x": 607.7,
-			"y": -6324.1,
+			"x": 4089.6,
+			"y": 4888.3,
 			"tags": [
 				"spatial_breach"
 			]
@@ -1726,8 +1726,8 @@
 			"connectedTo": [
 				"supply_convoy_chance_9"
 			],
-			"x": 2143.9,
-			"y": -4137.7,
+			"x": 1418.5,
+			"y": 4328.3,
 			"tags": [
 				"supply_convoy"
 			]
@@ -1739,8 +1739,8 @@
 				"travel_catalysts_11",
 				"supply_convoy_chance_9"
 			],
-			"x": 2149.7,
-			"y": -4542.4,
+			"x": 1943.1,
+			"y": 4575.7,
 			"tags": [
 				"supply_convoy"
 			]
@@ -1752,8 +1752,8 @@
 				"supply_convoy_chance_8",
 				"supply_lines_1"
 			],
-			"x": 1826.1,
-			"y": -3996.5,
+			"x": 1647.9,
+			"y": 4064,
 			"tags": [
 				"supply_convoy"
 			]
@@ -1764,8 +1764,8 @@
 			"connectedTo": [
 				"listening_post_chance_6"
 			],
-			"x": 5961.8,
-			"y": -271.7,
+			"x": -4003.3,
+			"y": 4468.8,
 			"tags": [
 				"listening_post"
 			]
@@ -1777,8 +1777,8 @@
 				"travel_catalysts_14",
 				"listening_post_chance_6"
 			],
-			"x": 5694.4,
-			"y": 218,
+			"x": -3457.4,
+			"y": 4353.1,
 			"tags": [
 				"listening_post"
 			]
@@ -1790,8 +1790,8 @@
 				"listening_post_chance_5",
 				"hair_trigger_1"
 			],
-			"x": 6277,
-			"y": -216.3,
+			"x": -3992.9,
+			"y": 4788.7,
 			"tags": [
 				"listening_post"
 			]
@@ -1802,8 +1802,8 @@
 			"connectedTo": [
 				"relay_network_chance_10"
 			],
-			"x": 4680.2,
-			"y": 3577,
+			"x": -5871.9,
+			"y": 840.4,
 			"tags": [
 				"relay_network"
 			]
@@ -1815,8 +1815,8 @@
 				"travel_catalysts_16",
 				"relay_network_chance_10"
 			],
-			"x": 4800.1,
-			"y": 3112.3,
+			"x": -5488.7,
+			"y": 1129.5,
 			"tags": [
 				"relay_network"
 			]
@@ -1828,8 +1828,8 @@
 				"relay_network_chance_9",
 				"early_echo_1"
 			],
-			"x": 4928.8,
-			"y": 3525.1,
+			"x": -5921.5,
+			"y": 1089.5,
 			"tags": [
 				"relay_network"
 			]
@@ -1840,8 +1840,8 @@
 			"connectedTo": [
 				"listening_post_chance_8"
 			],
-			"x": 989.5,
-			"y": 4423.5,
+			"x": -4014.3,
+			"y": 2147.5,
 			"tags": [
 				"listening_post"
 			]
@@ -1850,11 +1850,11 @@
 			"id": "listening_post_chance_7",
 			"type": "listening_post_chance",
 			"connectedTo": [
-				"travel_catalysts_18",
+				"travel_catalysts_15",
 				"listening_post_chance_8"
 			],
-			"x": 559.7,
-			"y": 4779.3,
+			"x": -4116.4,
+			"y": 2696.1,
 			"tags": [
 				"listening_post"
 			]
@@ -1866,8 +1866,8 @@
 				"listening_post_chance_7",
 				"smash_and_grab_1"
 			],
-			"x": 693.9,
-			"y": 4301,
+			"x": -3698.2,
+			"y": 2197.2,
 			"tags": [
 				"listening_post"
 			]
@@ -1878,8 +1878,8 @@
 			"connectedTo": [
 				"excavation_sites_chance_11"
 			],
-			"x": -3238.8,
-			"y": 5101.9,
+			"x": -2300.7,
+			"y": 5619.9,
 			"tags": [
 				"excavation_sites"
 			]
@@ -1888,11 +1888,11 @@
 			"id": "excavation_sites_chance_10",
 			"type": "excavation_sites_chance",
 			"connectedTo": [
-				"travel_catalysts_20",
+				"travel_catalysts_38",
 				"excavation_sites_chance_11"
 			],
-			"x": -2905.9,
-			"y": 5630.8,
+			"x": -2029.9,
+			"y": 6183.1,
 			"tags": [
 				"excavation_sites"
 			]
@@ -1904,8 +1904,8 @@
 				"excavation_sites_chance_10",
 				"widened_bores_1"
 			],
-			"x": -2926.8,
-			"y": 4912.4,
+			"x": -2011.7,
+			"y": 5396.9,
 			"tags": [
 				"excavation_sites"
 			]
@@ -1916,8 +1916,8 @@
 			"connectedTo": [
 				"anomalous_debris_chance_9"
 			],
-			"x": -5859.7,
-			"y": 4846.1,
+			"x": -7415.2,
+			"y": 1812.6,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -1929,8 +1929,8 @@
 				"travel_catalysts_21",
 				"anomalous_debris_chance_9"
 			],
-			"x": -5267.8,
-			"y": 4896.5,
+			"x": -6873.1,
+			"y": 2055.6,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -1942,8 +1942,8 @@
 				"anomalous_debris_chance_8",
 				"double_dose_1"
 			],
-			"x": -5756.1,
-			"y": 5178.4,
+			"x": -7458.3,
+			"y": 2157.9,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -1954,8 +1954,8 @@
 			"connectedTo": [
 				"spatial_breach_chance_8"
 			],
-			"x": -5876.7,
-			"y": -1509.8,
+			"x": -5647.6,
+			"y": -2312.1,
 			"tags": [
 				"anomalous_debris",
 				"spatial_breach"
@@ -1965,11 +1965,11 @@
 			"id": "anomalous_debris_chance_10",
 			"type": "anomalous_debris_chance",
 			"connectedTo": [
-				"travel_catalysts_24",
+				"travel_catalysts_23",
 				"spatial_breach_chance_8"
 			],
-			"x": -6008.3,
-			"y": -2103.4,
+			"x": -6094.1,
+			"y": -1899.4,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -1981,8 +1981,8 @@
 				"anomalous_debris_chance_10",
 				"breached_graveyard_1"
 			],
-			"x": -5512,
-			"y": -1480,
+			"x": -5447.3,
+			"y": -2005.8,
 			"tags": [
 				"spatial_breach"
 			]
@@ -1993,8 +1993,8 @@
 			"connectedTo": [
 				"breach_cache_quantity_1"
 			],
-			"x": -4826.2,
-			"y": -5835.6,
+			"x": -3985.1,
+			"y": -6443.3,
 			"tags": [
 				"spatial_breach"
 			]
@@ -2003,11 +2003,11 @@
 			"id": "spatial_breach_chance_9",
 			"type": "spatial_breach_chance",
 			"connectedTo": [
-				"travel_catalysts_26",
+				"travel_catalysts_25",
 				"breach_cache_quantity_1"
 			],
-			"x": -4897.7,
-			"y": -5294.3,
+			"x": -3439.3,
+			"y": -6458.7,
 			"tags": [
 				"spatial_breach"
 			]
@@ -2019,8 +2019,8 @@
 				"spatial_breach_chance_9",
 				"rift_duel_1"
 			],
-			"x": -5132,
-			"y": -5872.7,
+			"x": -3882.2,
+			"y": -6733.6,
 			"tags": [
 				"spatial_breach"
 			]
@@ -2031,8 +2031,8 @@
 			"connectedTo": [
 				"listening_post_chance_10"
 			],
-			"x": -475.5,
-			"y": -7574.6,
+			"x": 2878.4,
+			"y": -7031.1,
 			"tags": [
 				"listening_post"
 			]
@@ -2044,8 +2044,8 @@
 				"travel_catalysts_28",
 				"listening_post_chance_10"
 			],
-			"x": -101.1,
-			"y": -7160.9,
+			"x": 3203,
+			"y": -6577.2,
 			"tags": [
 				"listening_post"
 			]
@@ -2057,8 +2057,8 @@
 				"listening_post_chance_9",
 				"garrison_pickets_1"
 			],
-			"x": -196.1,
-			"y": -7730.7,
+			"x": 3196.1,
+			"y": -7069.6,
 			"tags": [
 				"listening_post"
 			]
@@ -2069,8 +2069,8 @@
 			"connectedTo": [
 				"spatial_breach_chance_11"
 			],
-			"x": 3257.3,
-			"y": -5131.1,
+			"x": 5191.4,
+			"y": -3210.8,
 			"tags": [
 				"black_hole",
 				"spatial_breach"
@@ -2083,8 +2083,8 @@
 				"travel_catalysts_30",
 				"spatial_breach_chance_11"
 			],
-			"x": 3014.2,
-			"y": -5684,
+			"x": 5735.7,
+			"y": -2949,
 			"tags": [
 				"spatial_breach"
 			]
@@ -2096,8 +2096,8 @@
 				"spatial_breach_chance_10",
 				"event_horizon_1"
 			],
-			"x": 2979.5,
-			"y": -4892.9,
+			"x": 5176.9,
+			"y": -2845.1,
 			"tags": [
 				"spatial_breach"
 			]
@@ -2108,8 +2108,8 @@
 			"connectedTo": [
 				"relay_network_chance_12"
 			],
-			"x": 7487.3,
-			"y": -470,
+			"x": 6954.3,
+			"y": 2847,
 			"tags": [
 				"relay_network"
 			]
@@ -2121,8 +2121,8 @@
 				"travel_catalysts_33",
 				"relay_network_chance_12"
 			],
-			"x": 7114,
-			"y": -168.2,
+			"x": 6589.7,
+			"y": 3159.2,
 			"tags": [
 				"relay_network"
 			]
@@ -2134,8 +2134,8 @@
 				"relay_network_chance_11",
 				"full_array_1"
 			],
-			"x": 7672.8,
-			"y": -296.5,
+			"x": 7087.8,
+			"y": 3063.1,
 			"tags": [
 				"relay_network"
 			]
@@ -2146,8 +2146,8 @@
 			"connectedTo": [
 				"inhibitor_quantity_1"
 			],
-			"x": 5863.8,
-			"y": 1506.5,
+			"x": 1443,
+			"y": 5903,
 			"tags": [
 				"excavation_sites"
 			]
@@ -2156,11 +2156,11 @@
 			"id": "additional_site_1",
 			"type": "additional_site",
 			"connectedTo": [
-				"travel_catalysts_34",
+				"travel_catalysts_36",
 				"inhibitor_quantity_1"
 			],
-			"x": 6249.5,
-			"y": 1014.7,
+			"x": 1036.2,
+			"y": 6377.6,
 			"tags": [
 				"excavation_sites"
 			]
@@ -2172,8 +2172,8 @@
 				"additional_site_1",
 				"needle_bores_1"
 			],
-			"x": 5520.8,
-			"y": 1381.8,
+			"x": 1117.4,
+			"y": 5738,
 			"tags": [
 				"excavation_sites"
 			]
@@ -2184,8 +2184,8 @@
 			"connectedTo": [
 				"additional_debris_1"
 			],
-			"x": 2808.2,
-			"y": 7095.8,
+			"x": -566.7,
+			"y": 7602,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -2197,8 +2197,8 @@
 				"travel_catalysts_37",
 				"additional_debris_1"
 			],
-			"x": 3249.5,
-			"y": 6698.1,
+			"x": -919.5,
+			"y": 7124.1,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -2210,8 +2210,8 @@
 				"anomalous_debris_chance_11",
 				"deep_corruption_1"
 			],
-			"x": 3080,
-			"y": 7313.2,
+			"x": -765.7,
+			"y": 7887.6,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -2222,8 +2222,8 @@
 			"connectedTo": [
 				"inhibitor_quantity_2"
 			],
-			"x": -9282.8,
-			"y": -818.1,
+			"x": -7188.5,
+			"y": 5800.3,
 			"tags": [
 				"excavation_sites"
 			]
@@ -2235,8 +2235,8 @@
 				"travel_chart_modifier_effect_1",
 				"inhibitor_quantity_2"
 			],
-			"x": -8817,
-			"y": -1234.8,
+			"x": -7063.1,
+			"y": 5188,
 			"tags": [
 				"excavation_sites"
 			]
@@ -2248,8 +2248,8 @@
 				"additional_site_2",
 				"deeper_bores_1"
 			],
-			"x": -9474,
-			"y": -1129,
+			"x": -7551.3,
+			"y": 5840.9,
 			"tags": [
 				"excavation_sites"
 			]
@@ -2260,8 +2260,8 @@
 			"connectedTo": [
 				"excavation_sites_chance_12"
 			],
-			"x": -6278.1,
-			"y": -4401.9,
+			"x": -6987.8,
+			"y": 3096.5,
 			"tags": [
 				"supply_convoy",
 				"excavation_sites"
@@ -2271,11 +2271,11 @@
 			"id": "supply_convoy_chance_10",
 			"type": "supply_convoy_chance",
 			"connectedTo": [
-				"travel_chart_modifier_effect_3",
+				"travel_chart_modifier_effect_2",
 				"excavation_sites_chance_12"
 			],
-			"x": -6154.5,
-			"y": -5034,
+			"x": -7139.1,
+			"y": 3699.8,
 			"tags": [
 				"supply_convoy"
 			]
@@ -2287,8 +2287,8 @@
 				"supply_convoy_chance_10",
 				"bolt_hole_drop_1"
 			],
-			"x": -5902.8,
-			"y": -4366.5,
+			"x": -6634.9,
+			"y": 3229.2,
 			"tags": [
 				"excavation_sites"
 			]
@@ -2299,8 +2299,8 @@
 			"connectedTo": [
 				"warped_chance_1"
 			],
-			"x": -5911.6,
-			"y": -7054.2,
+			"x": -9104.6,
+			"y": -973.1,
 			"tags": [
 				"spatial_breach"
 			]
@@ -2312,8 +2312,8 @@
 				"travel_chart_modifier_effect_4",
 				"warped_chance_1"
 			],
-			"x": -6055.6,
-			"y": -6527.6,
+			"x": -8772.4,
+			"y": -1406.4,
 			"tags": [
 				"spatial_breach"
 			]
@@ -2325,8 +2325,8 @@
 				"breach_cache_items_1",
 				"hyperspace_bleed_1"
 			],
-			"x": -6213,
-			"y": -6990.9,
+			"x": -9255.5,
+			"y": -1241.6,
 			"tags": [
 				"spatial_breach"
 			]
@@ -2337,8 +2337,8 @@
 			"connectedTo": [
 				"relay_reward_rarity_2"
 			],
-			"x": -3307.2,
-			"y": -7104.2,
+			"x": -6281.3,
+			"y": -4580.5,
 			"tags": [
 				"relay_network"
 			]
@@ -2347,11 +2347,11 @@
 			"id": "relay_reward_rarity_1",
 			"type": "relay_reward_rarity",
 			"connectedTo": [
-				"travel_chart_modifier_effect_5",
+				"travel_chart_modifier_effect_6",
 				"relay_reward_rarity_2"
 			],
-			"x": -3149.9,
-			"y": -7583,
+			"x": -6782,
+			"y": -4522.5,
 			"tags": [
 				"relay_network"
 			]
@@ -2363,8 +2363,8 @@
 				"relay_reward_rarity_1",
 				"double_down_1"
 			],
-			"x": -3086.3,
-			"y": -6935.4,
+			"x": -6296.4,
+			"y": -4302.9,
 			"tags": [
 				"relay_network"
 			]
@@ -2375,8 +2375,8 @@
 			"connectedTo": [
 				"supply_convoy_chance_12"
 			],
-			"x": 798.7,
-			"y": -9062.9,
+			"x": -5759.7,
+			"y": -7138.2,
 			"tags": [
 				"supply_convoy"
 			]
@@ -2388,8 +2388,8 @@
 				"travel_chart_modifier_effect_7",
 				"supply_convoy_chance_12"
 			],
-			"x": 586.6,
-			"y": -8718.2,
+			"x": -5949.4,
+			"y": -6590.1,
 			"tags": [
 				"supply_convoy"
 			]
@@ -2401,8 +2401,8 @@
 				"supply_convoy_chance_11",
 				"open_season_1"
 			],
-			"x": 606.2,
-			"y": -9352.4,
+			"x": -6097.3,
+			"y": -7230.3,
 			"tags": [
 				"supply_convoy"
 			]
@@ -2413,8 +2413,8 @@
 			"connectedTo": [
 				"anomalous_debris_chance_12"
 			],
-			"x": 4442.1,
-			"y": -6335.3,
+			"x": -1186.7,
+			"y": -7579,
 			"tags": [
 				"spatial_breach",
 				"anomalous_debris"
@@ -2427,8 +2427,8 @@
 				"travel_chart_modifier_effect_9",
 				"anomalous_debris_chance_12"
 			],
-			"x": 4144.9,
-			"y": -6870.4,
+			"x": -887.2,
+			"y": -8112.6,
 			"tags": [
 				"spatial_breach"
 			]
@@ -2440,8 +2440,8 @@
 				"spatial_breach_chance_12",
 				"rude_awakening_1"
 			],
-			"x": 4121.6,
-			"y": -6150.4,
+			"x": -849.2,
+			"y": -7427.4,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -2452,8 +2452,8 @@
 			"connectedTo": [
 				"inhibitor_quantity_3"
 			],
-			"x": 7139.3,
-			"y": -5982.8,
+			"x": 3325.4,
+			"y": -8617.6,
 			"tags": [
 				"excavation_sites"
 			]
@@ -2462,11 +2462,11 @@
 			"id": "additional_site_3",
 			"type": "additional_site",
 			"connectedTo": [
-				"travel_chart_modifier_effect_10",
+				"travel_chart_modifier_effect_11",
 				"inhibitor_quantity_3"
 			],
-			"x": 6562.1,
-			"y": -6222.6,
+			"x": 2704.2,
+			"y": -8548.3,
 			"tags": [
 				"excavation_sites"
 			]
@@ -2478,8 +2478,8 @@
 				"additional_site_3",
 				"pitch_black_1"
 			],
-			"x": 7098.8,
-			"y": -6345.6,
+			"x": 3158.6,
+			"y": -8942.3,
 			"tags": [
 				"excavation_sites"
 			]
@@ -2490,8 +2490,8 @@
 			"connectedTo": [
 				"additional_debris_2"
 			],
-			"x": 7015.2,
-			"y": -3265.8,
+			"x": 4528,
+			"y": -6209.3,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -2500,11 +2500,11 @@
 			"id": "engram_quantity_1",
 			"type": "engram_quantity",
 			"connectedTo": [
-				"travel_chart_modifier_effect_11",
+				"travel_chart_modifier_effect_12",
 				"additional_debris_2"
 			],
-			"x": 7130.9,
-			"y": -3848.4,
+			"x": 5094.6,
+			"y": -6387.5,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -2516,8 +2516,8 @@
 				"engram_quantity_1",
 				"lone_sleeper_1"
 			],
-			"x": 6676.7,
-			"y": -3346.4,
+			"x": 4624.8,
+			"y": -5875,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -2528,8 +2528,8 @@
 			"connectedTo": [
 				"listening_post_chance_12"
 			],
-			"x": 8699.7,
-			"y": 3172.7,
+			"x": 8412.1,
+			"y": -3727.6,
 			"tags": [
 				"listening_post"
 			]
@@ -2541,8 +2541,8 @@
 				"travel_chart_modifier_effect_14",
 				"listening_post_chance_12"
 			],
-			"x": 8502.7,
-			"y": 2603.8,
+			"x": 8260.5,
+			"y": -3145,
 			"tags": [
 				"listening_post"
 			]
@@ -2554,8 +2554,8 @@
 				"listening_post_chance_11",
 				"fortified_depot_1"
 			],
-			"x": 8959.4,
-			"y": 2917.7,
+			"x": 8774.9,
+			"y": -3757.6,
 			"tags": [
 				"listening_post"
 			]
@@ -2566,8 +2566,8 @@
 			"connectedTo": [
 				"relay_reward_rarity_4"
 			],
-			"x": 6441.2,
-			"y": 4516.3,
+			"x": 7712,
+			"y": -1207.6,
 			"tags": [
 				"relay_network"
 			]
@@ -2579,8 +2579,8 @@
 				"travel_chart_modifier_effect_15",
 				"relay_reward_rarity_4"
 			],
-			"x": 6867.9,
-			"y": 4296.4,
+			"x": 8032.6,
+			"y": -1564.9,
 			"tags": [
 				"relay_network"
 			]
@@ -2592,8 +2592,8 @@
 				"relay_reward_rarity_3",
 				"forked_trace_1"
 			],
-			"x": 6355.9,
-			"y": 4277.1,
+			"x": 7595,
+			"y": -1433,
 			"tags": [
 				"relay_network"
 			]
@@ -2604,8 +2604,8 @@
 			"connectedTo": [
 				"shroud_feedstock_chance_1"
 			],
-			"x": 3947.1,
-			"y": 8478.8,
+			"x": 8607.6,
+			"y": 3321.5,
 			"tags": [
 				"supply_convoy"
 			]
@@ -2617,8 +2617,8 @@
 				"travel_chart_modifier_effect_17",
 				"shroud_feedstock_chance_1"
 			],
-			"x": 4078.9,
-			"y": 7811.7,
+			"x": 8369.5,
+			"y": 2755.5,
 			"tags": [
 				"supply_convoy"
 			]
@@ -2630,8 +2630,8 @@
 				"threat_feedstock_chance_1",
 				"mixed_manifest_1"
 			],
-			"x": 4349.1,
-			"y": 8536.3,
+			"x": 8935.8,
+			"y": 3122.2,
 			"tags": [
 				"supply_convoy"
 			]
@@ -2642,8 +2642,8 @@
 			"connectedTo": [
 				"additional_debris_3"
 			],
-			"x": -679.3,
-			"y": 7708.3,
+			"x": 6201.8,
+			"y": 4522.5,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -2652,11 +2652,11 @@
 			"id": "engram_quantity_2",
 			"type": "engram_quantity",
 			"connectedTo": [
-				"travel_chart_modifier_effect_19",
+				"travel_chart_modifier_effect_18",
 				"additional_debris_3"
 			],
-			"x": -206.9,
-			"y": 8068.3,
+			"x": 6758.2,
+			"y": 4314.5,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -2668,8 +2668,8 @@
 				"engram_quantity_2",
 				"restless_sleepers_1"
 			],
-			"x": -496.3,
-			"y": 7412.3,
+			"x": 6047.7,
+			"y": 4210.5,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -2680,8 +2680,8 @@
 			"connectedTo": [
 				"slow_purge_1"
 			],
-			"x": -3160.4,
-			"y": 8666,
+			"x": 3711.6,
+			"y": 8375.9,
 			"tags": [
 				"listening_post"
 			]
@@ -2693,8 +2693,8 @@
 				"travel_chart_modifier_effect_20",
 				"slow_purge_1"
 			],
-			"x": -3453.8,
-			"y": 8191.3,
+			"x": 3226.5,
+			"y": 8100.1,
 			"tags": [
 				"listening_post"
 			]
@@ -2706,8 +2706,8 @@
 				"vault_quantity_1",
 				"hunting_party_1"
 			],
-			"x": -3465.5,
-			"y": 8762.7,
+			"x": 3619,
+			"y": 8682.2,
 			"tags": [
 				"listening_post"
 			]
@@ -2718,8 +2718,8 @@
 			"connectedTo": [
 				"breach_cache_items_2"
 			],
-			"x": -4468.1,
-			"y": 6372.5,
+			"x": 1190.7,
+			"y": 7604.2,
 			"tags": [
 				"spatial_breach"
 			]
@@ -2731,8 +2731,8 @@
 				"travel_chart_modifier_effect_21",
 				"breach_cache_items_2"
 			],
-			"x": -5037.3,
-			"y": 6404.1,
+			"x": 862.3,
+			"y": 8070.1,
 			"tags": [
 				"spatial_breach"
 			]
@@ -2744,8 +2744,8 @@
 				"breach_cache_quantity_2",
 				"incursion_1"
 			],
-			"x": -4449.2,
-			"y": 6041.1,
+			"x": 939.6,
+			"y": 7387,
 			"tags": [
 				"spatial_breach"
 			]
@@ -2756,8 +2756,8 @@
 			"connectedTo": [
 				"additional_debris_4"
 			],
-			"x": -9139.9,
-			"y": 1605.6,
+			"x": -5429.4,
+			"y": 7445.4,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -2769,8 +2769,8 @@
 				"travel_chart_modifier_effect_24",
 				"additional_debris_4"
 			],
-			"x": -8626.9,
-			"y": 1905,
+			"x": -4856.3,
+			"y": 7601.3,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -2782,8 +2782,8 @@
 				"engram_quantity_3",
 				"silent_choir_1"
 			],
-			"x": -9321.1,
-			"y": 1902.7,
+			"x": -5341,
+			"y": 7782,
 			"tags": [
 				"anomalous_debris"
 			]

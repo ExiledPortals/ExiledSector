@@ -71,6 +71,7 @@ final class AtlasBodyPainter {
     private static final float HALO_HALF_SIZE = 5f;
     private static final float HALO_ALPHA = 0.55f;
     private static final float STAR_CORONA_MAX_SHARE = 2.2f;
+    private static final String CITY_LIGHTS_CATEGORY = "hab_glows";
 
     private final SpriteCache sprites = new SpriteCache(AtlasBodyPainter.class);
     private final UnitSphere sphere = new UnitSphere(SPHERE_DETAIL);
@@ -80,6 +81,7 @@ final class AtlasBodyPainter {
     private final Vector3f siteOffset = new Vector3f();
     private final AtlasStormPainter storms = new AtlasStormPainter();
     private final Map<String, Color> tintsByHex = new HashMap<>();
+    private final Map<String, CategorySprite> cityLights = new HashMap<>();
 
     record Placement(float screenX, float screenY, float screenRadius, float headingDegrees, float spinDegrees, float seedDegrees,
                      float stormSeconds) {
@@ -202,6 +204,7 @@ final class AtlasBodyPainter {
         Color litTint = art.tintColour() == null ? spec.getPlanetColor()
                 : tintsByHex.computeIfAbsent(art.tintColour(), hex -> ColorUtil.parseHexColor(hex, Color.WHITE));
         PlanetSphere.draw(sphere, texture, spec, placement.screenX(), placement.screenY(), radius, turn, tintFor(lighting, litTint), alpha, 0f, 0f);
+        paintCityLights(art, spec, placement, turn, lighting, alpha);
         if (spec.isStar()) {
             paintStarCorona(spec, placement, lighting, alpha);
         }
@@ -211,6 +214,21 @@ final class AtlasBodyPainter {
             float innerRadius = radius - thickness * AtmosphereRing.INNER_INSET_MULT;
             Color atmosphereColour = spec.getAtmosphereThickness() > 0f ? spec.getAtmosphereColor() : colour;
             AtmosphereRing.draw(atmosphere, placement.screenX(), placement.screenY(), innerRadius, innerRadius + thickness, atmosphereColour, alpha);
+        }
+    }
+
+    private void paintCityLights(AtlasBodyArt art, PlanetSpecAPI spec, Placement placement, float turn, Lighting lighting, float alpha) {
+        float strength = switch (lighting) {
+            case LIT -> 1f;
+            case AVAILABLE -> 0.6f;
+            case DULL -> 0.35f;
+        };
+        for (String lightsId : art.cityLights()) {
+            SpriteAPI lights = cityLights.computeIfAbsent(lightsId, id -> new CategorySprite(CITY_LIGHTS_CATEGORY, id)).get();
+            if (lights != null) {
+                PlanetSphere.drawGlow(sphere, lights, spec, placement.screenX(), placement.screenY(), placement.screenRadius(), turn, Color.WHITE,
+                        alpha * strength);
+            }
         }
     }
 

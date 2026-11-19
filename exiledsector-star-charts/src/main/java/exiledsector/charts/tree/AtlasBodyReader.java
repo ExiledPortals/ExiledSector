@@ -2,6 +2,7 @@ package exiledsector.charts.tree;
 
 import exiledsector.skills.loader.TreeJson;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -51,8 +52,24 @@ public final class AtlasBodyReader {
                 (float) artJson.optDouble("spin", 1.0), (float) artJson.optDouble("heading", AtlasBodyArt.DEFAULT_HEADING));
         AtlasBodyArt.Colours colours = new AtlasBodyArt.Colours(artJson.optString("light", null), artJson.optString("tint", null));
         AtlasBodyArt.Storm storm = enumNamed(AtlasBodyArt.Storm.class, artJson.optString("storm", "none"), AtlasBodyArt.Storm.NONE);
+        AtlasBodyArt.Population population = new AtlasBodyArt.Population(TreeJson.stringList(artJson.optJSONArray("cityLights")),
+                convoys(artJson.optJSONArray("convoys")));
         return new AtlasBodyArt(kind, artJson.optString("planet", null), paths, TreeJson.stringList(artJson.optJSONArray("hulls")), shape, colours,
-                storm);
+                storm, population);
+    }
+
+    private static List<List<String>> convoys(JSONArray convoysJson) throws JSONException {
+        List<List<String>> convoys = new ArrayList<>();
+        if (convoysJson == null) {
+            return convoys;
+        }
+        for (int index = 0; index < convoysJson.length(); index++) {
+            List<String> hulls = TreeJson.stringList(convoysJson.optJSONArray(index));
+            if (!hulls.isEmpty()) {
+                convoys.add(hulls);
+            }
+        }
+        return convoys;
     }
 
     private static <E extends Enum<E>> E enumNamed(Class<E> type, String name, E fallback) {

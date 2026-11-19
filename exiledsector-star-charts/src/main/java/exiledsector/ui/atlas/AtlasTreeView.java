@@ -23,6 +23,7 @@ import exiledsector.ui.util.TexturedQuadBatch;
 
 import java.awt.Color;
 import java.util.Arrays;
+import java.util.function.IntToDoubleFunction;
 
 final class AtlasTreeView {
 
@@ -75,6 +76,8 @@ final class AtlasTreeView {
     private final int[] wheelAllocated;
     private final float[] stormSeconds;
     private final AtlasBodyPainter.Lighting[] lightings;
+    private final AtlasConvoyTraffic convoys;
+    private final IntToDoubleFunction portShipAlpha;
     private boolean[] allocated = new boolean[0];
     private double elapsedSeconds;
 
@@ -98,6 +101,16 @@ final class AtlasTreeView {
             shipGroups[body.index()] = shipGroupOf(body);
         }
         measureWheels();
+        this.convoys = new AtlasConvoyTraffic(bodies);
+        this.portShipAlpha = index -> shipAlpha(lightings[index]);
+    }
+
+    private static float shipAlpha(AtlasBodyPainter.Lighting lighting) {
+        return switch (lighting) {
+            case LIT -> 1f;
+            case AVAILABLE -> AVAILABLE_SHIP_ALPHA;
+            case DULL -> DULL_SHIP_ALPHA;
+        };
     }
 
     private void measureWheels() {
@@ -156,6 +169,7 @@ final class AtlasTreeView {
                 group.advance(body.art().kind() == AtlasBodyArt.Kind.SWARMED_PLANET ? amount * pace : amount, body.art().heading());
             }
         }
+        convoys.advance(amount, (float) elapsedSeconds);
     }
 
     float x(String nodeId) {
@@ -203,6 +217,7 @@ final class AtlasTreeView {
             }
         }
         renderCoronas(viewport, alpha);
+        convoys.render(viewport, seconds, portShipAlpha, alpha);
         for (Body body : bodies.bodies()) {
             renderBody(viewport, body, states, body.nodeId().equals(hoveredNodeId), seconds, alpha);
         }
@@ -347,8 +362,7 @@ final class AtlasTreeView {
         painter.paint(body.art(), colours[index], siteLights[index], placement, lighting, seconds, alpha);
         AtlasShipGroup group = shipGroups[index];
         if (group != null) {
-            float shipAlpha = lit ? 1f : available ? AVAILABLE_SHIP_ALPHA : DULL_SHIP_ALPHA;
-            group.render(screenX, screenY, viewport.zoom(), heading, alpha * shipAlpha);
+            group.render(screenX, screenY, viewport.zoom(), heading, alpha * shipAlpha(lighting));
         }
         if (body.art().kind() == AtlasBodyArt.Kind.STAR) {
             return;

@@ -17,23 +17,36 @@ public final class PlanetSphere {
                             Color colour, float alpha, float rimAlpha, float rimStep) {
         try (GlScope scope = GlScope.save(GlScope.DRAW_ATTRIBS | GL11.GL_POLYGON_BIT).enable(GL11.GL_TEXTURE_2D).normalBlend()
                 .enable(GL11.GL_CULL_FACE)) {
-            GL11.glFrontFace(GL11.GL_CW);
-            GL11.glCullFace(GL11.GL_BACK);
-            GL11.glPushMatrix();
-            GL11.glTranslatef(x, y, 0f);
-            GL11.glRotatef(spec.getTilt(), 0f, 0f, 1f);
-            GL11.glRotatef(spec.getPitch(), 1f, 0f, 0f);
-            GL11.glRotatef(rotation, 0f, 1f, 0f);
-            GL11.glRotatef(-90f, 1f, 0f, 0f);
-            texture.bindTexture();
-            Misc.setColor(colour, alpha);
-            sphere.draw(radius);
-            if (rimAlpha > 0f) {
-                Misc.setColor(colour, rimAlpha);
-                sphere.draw(radius + rimStep);
-                sphere.draw(radius + rimStep * 2f);
-            }
-            GL11.glPopMatrix();
+            drawTurned(sphere, texture, spec, x, y, radius, rotation, colour, alpha, rimAlpha, rimStep);
         }
+    }
+
+    public static void drawGlow(UnitSphere sphere, SpriteAPI texture, PlanetSpecAPI spec, float x, float y, float radius, float rotation,
+                                Color colour, float alpha) {
+        try (GlScope scope = GlScope.save(GlScope.DRAW_ATTRIBS | GL11.GL_POLYGON_BIT).enable(GL11.GL_TEXTURE_2D).additive()
+                .enable(GL11.GL_CULL_FACE)) {
+            drawTurned(sphere, texture, spec, x, y, radius, rotation, colour, alpha, 0f, 0f);
+        }
+    }
+
+    private static void drawTurned(UnitSphere sphere, SpriteAPI texture, PlanetSpecAPI spec, float x, float y, float radius, float rotation,
+                                   Color colour, float alpha, float rimAlpha, float rimStep) {
+        GL11.glFrontFace(GL11.GL_CW);
+        GL11.glCullFace(GL11.GL_BACK);
+        GL11.glPushMatrix();
+        GL11.glTranslatef(x, y, 0f);
+        GL11.glRotatef(spec.getTilt(), 0f, 0f, 1f);
+        GL11.glRotatef(spec.getPitch(), 1f, 0f, 0f);
+        GL11.glRotatef(rotation, 0f, 1f, 0f);
+        GL11.glRotatef(-90f, 1f, 0f, 0f);
+        texture.bindTexture();
+        Misc.setColor(colour, alpha);
+        sphere.draw(radius);
+        if (rimAlpha > 0f) {
+            Misc.setColor(colour, rimAlpha);
+            sphere.draw(radius + rimStep);
+            sphere.draw(radius + rimStep * 2f);
+        }
+        GL11.glPopMatrix();
     }
 }

@@ -9,16 +9,19 @@ lay-in-course arrows were removed on 2026-11-18 and every body now stays where t
   rings 3-4 Catalysts, ring 5 Star Chart Modifier Effect. The rings hold 8, 12, 18, 20 and 24 nodes; three rays leave
   the star, and 3, 4, 5 and 6 links reach rings 2 to 5. Each ring link joins one node to one node, picked as close to
   radial as it can be while clearing every wheel.
-- Every notable and keystone is its own wheel: a body (planet, fleet, derelicts, station, relay, breach) on the inside or
+- Every notable and keystone is its own wheel: a body (planet, derelicts, station, relay, breach) on the inside or
   outside of its ring, with two small nodes beside it. The path is ring node, outer small, inner small, notable, so each
   notable has exactly two lead-ups of its anomaly. The smalls sit well clear of the notable, inside the wheel circle on
   its spoke, and every link of the path spirals in towards the notable like a ship falling down a gravity well; each
   notable turns one way, so its spirals never cross.
-  Convoy fleets hold their two escort fleets beside and a little behind them, and fleets face along their ring.
+  Supply Convoy notables are populated worlds (jungle, terran, ocean, or a city-covered world) with vanilla city lights,
+  and their lead-ups are orbital stations at most a fifth the planet's size. Three convoys with escorts per station
+  shuttle to their wheel's centre and back on right-hand lanes, slipping behind the planet and fading out at the station
+  (hybrids and Mixed Manifest keep their own centre, and their convoy stations run to it).
 - Excavation notables are planets of differing non-gas-giant types with the blinking site light; Debris notables are
   dormant hulls of their sleeper faction in a debris field (Veiled Sleepers are shrouded dwellers swimming instead, and
   Silent Choir is a derelict fleet); Double Down is a binary of two relays; Fortified Depot is a
-  low-tech battlestation; Incursion a research station; Open Season a fleet of combat freighters.
+  low-tech battlestation; Incursion a research station.
 - Hybrids are planets whose two smalls come one from each parent anomaly (Event Horizon takes two breach smalls).
 - Chance nodes (+8%) fill lead-up slots first on hybrids, then from the inner ring outward, at most 12 per anomaly.
 - Harder notables sit on outer rings. An anomaly's notables are spread around and across rings, never grouped.

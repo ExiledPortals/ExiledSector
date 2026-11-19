@@ -28,17 +28,13 @@ const OUTER_SMALL_TURN = [35, 70];
 const INNER_SMALL_TURN = [60, 110];
 const SPIRAL_POINTS = 24;
 const SPIRAL_HOOK = 150;
-const ESCORT_BESIDE = [1, 0.75];
-const ESCORT_BEHIND = [0.5, 0.6];
 const SITE_LIGHT = '#ffbe5a';
 
 const MOON_PLANETS = ['barren', 'barren2', 'barren3', 'rocky_ice', 'frozen1', 'rocky_metallic'];
 const SITE_PLANETS = ['lava', 'frozen', 'frozen2', 'frozen3', 'cryovolcanic', 'barren', 'barren_castiron', 'barren2', 'barren3', 'rocky_metallic',
   'rocky_unstable', 'rocky_ice', 'barren-bombarded', 'toxic_cold', 'terran', 'terran-eccentric', 'jungle', 'water', 'tundra', 'desert', 'desert1',
   'barren-desert'];
-const CONVOY_LEADS = ['atlas', 'colossus', 'prometheus'];
-const FREIGHTERS = ['buffalo', 'tarsus', 'hermes', 'phaeton', 'dram', 'mule'];
-const COMBAT_FREIGHTERS = ['gemini', 'wayfarer', 'mule', 'cerberus', 'hound'];
+const FREIGHTERS = ['buffalo', 'tarsus', 'hermes', 'phaeton', 'dram', 'mule', 'gemini', 'wayfarer'];
 const ESCORTS = ['lasher', 'wolf', 'hound', 'vigilance', 'centurion', 'brawler', 'enforcer', 'hammerhead', 'sunder', 'monitor'];
 const DORMANT_HULLS = {
   remnant: { lead: ['brilliant', 'radiant', 'nova', 'apex'], rest: ['glimmer', 'lumen', 'fulgent', 'scintilla'] },
@@ -47,6 +43,18 @@ const DORMANT_HULLS = {
   derelict: { lead: ['guardian', 'rampart', 'bastillon', 'berserker'], rest: ['picket', 'sentry', 'warden', 'defender'] },
 };
 const DORMANT_FACTION = { redacted_sleepers: 'remnant', threatening_sleepers: 'threat', veiled_sleepers: 'dweller' };
+const POPULATED_SIZE = 150;
+const PORT_SIZE = 30;
+const CONVOYS_PER_PORT = 3;
+const PORT_STATIONS = ['graphics/stations/station_lowtech1.png', 'graphics/stations/station_lowtech2.png', 'graphics/stations/station_midline2.png',
+  'graphics/stations/station_midline3.png', 'graphics/stations/station_hightech1.png', 'graphics/stations/station_hightech2.png'];
+const POPULATED_WORLDS = [
+  { planet: 'jungle', cityLights: ['volturn'] },
+  { planet: 'terran', cityLights: ['sindria'] },
+  { planet: 'water', cityLights: ['asharu'] },
+  { planet: 'terran-eccentric', cityLights: ['volturn'] },
+  { planet: 'rocky_metallic', cityLights: ['volturn', 'sindria', 'asharu'] },
+];
 const STORM_GIANT_TINT = '#ffc4ee';
 const STORM_GIANT_SIZE = 150;
 const REDACTED_FRIGATES = ['glimmer', 'lumen', 'glimmer', 'lumen', 'glimmer'];
@@ -92,8 +100,14 @@ function shuffled(options) {
 const sitePlanets = shuffled(SITE_PLANETS);
 const nextSitePlanet = () => sitePlanets.shift();
 
-const escortFleet = () => ({ kind: 'fleet', hulls: pickSome(ESCORTS, 2, 3), size: 52, facing: 'travel' });
-const convoyFleet = (hulls) => ({ kind: 'fleet', hulls, size: 140, facing: 'travel' });
+const populatedWorlds = shuffled(POPULATED_WORLDS);
+const populatedWorld = () => ({ kind: 'planet', ...(populatedWorlds.shift() ?? pick(POPULATED_WORLDS)), size: POPULATED_SIZE });
+const portStations = shuffled(PORT_STATIONS);
+let portsMade = 0;
+const nextPortStation = () => portStations[portsMade++ % portStations.length];
+const convoy = () => [pick(FREIGHTERS), ...pickSome(FREIGHTERS, 0, 1), pick(ESCORTS)];
+const port = () => ({ kind: 'sprite', path: nextPortStation(), size: PORT_SIZE, facing: 'spin', spin: 0.15,
+  convoys: Array.from({ length: CONVOYS_PER_PORT }, convoy) });
 
 function dormantFleet(notableType) {
   const faction = DORMANT_FACTION[notableType] ?? 'derelict';
@@ -116,8 +130,8 @@ const ANOMALIES = {
     colour: '#78dc8c',
     chance: 'supply_convoy_chance',
     others: ['threat_feedstock_chance', 'shroud_feedstock_chance', 'phase_feedstock_chance', 'feedstock_duplication', 'additional_convoy_chance'],
-    small: escortFleet,
-    notable: () => convoyFleet([pick(CONVOY_LEADS), ...pickSome(FREIGHTERS, 4, 6)]),
+    small: port,
+    notable: populatedWorld,
   },
   relay_network: {
     colour: '#6ec8ff',
@@ -161,7 +175,6 @@ const NOTABLE_ART = {
   incursion: () => ({ kind: 'sprite', path: 'graphics/stations/station_side00.png', size: 128, facing: 'spin', spin: 0.3 }),
   fortified_depot: () => ({ kind: 'station', hulls: ['station2'], size: 160 }),
   double_down: () => ({ kind: 'binary', paths: ['graphics/ships/com_relay.png', 'graphics/ships/sensor_array.png'], size: 80, facing: 'spin', spin: 0.2 }),
-  open_season: () => convoyFleet(pickSome(COMBAT_FREIGHTERS, 5, 6)),
 };
 
 const HYBRIDS = {
@@ -264,18 +277,10 @@ function wheelPlan(notableType) {
 
 function shapeWheel(wheel) {
   wheel.smallArt = wheel.smallAnomalies.map((anomaly) => ANOMALIES[anomaly].small());
-  wheel.convoy = !wheel.hybrid && wheel.art.kind === 'fleet';
   const [outerSize, innerSize] = wheel.smallArt.map((art) => art.size);
-  if (wheel.convoy) {
-    const spacing = wheel.art.size + SATELLITE_GAP + Math.max(outerSize, innerSize);
-    wheel.escortSpacing = spacing;
-    const outerTrack = spacing * Math.hypot(ESCORT_BESIDE[0], ESCORT_BEHIND[0]);
-    wheel.reach = outerTrack + outerSize;
-  } else {
-    wheel.innerTrack = wheel.art.size + SATELLITE_GAP + innerSize;
-    wheel.outerTrack = wheel.innerTrack + innerSize + SATELLITE_GAP + outerSize;
-    wheel.reach = wheel.outerTrack + outerSize;
-  }
+  wheel.innerTrack = wheel.art.size + SATELLITE_GAP + innerSize;
+  wheel.outerTrack = wheel.innerTrack + innerSize + SATELLITE_GAP + outerSize;
+  wheel.reach = wheel.outerTrack + outerSize;
   wheel.spokeLength = SPOKE_CLEARANCE + random() * SPOKE_SPREAD + wheel.reach;
   wheel.extent = wheel.spokeLength + wheel.reach;
 }
@@ -351,17 +356,6 @@ function distanceToSegment(point, from, to) {
 const clearOf = (from, to, circles) => circles.every((circle) => distanceToSegment(circle, from, to) >= circle.radius);
 
 function satelliteOffsets(wheel, spokeAngle) {
-  const outwardX = Math.cos(toRadians(spokeAngle));
-  const outwardY = Math.sin(toRadians(spokeAngle));
-  if (wheel.convoy) {
-    const travelX = -outwardY;
-    const travelY = outwardX;
-    const highwaySide = wheel.inside ? 1 : -1;
-    return [highwaySide, -highwaySide].map((side, order) => ({
-      x: wheel.escortSpacing * (side * ESCORT_BESIDE[order] * outwardX - ESCORT_BEHIND[order] * travelX),
-      y: wheel.escortSpacing * (side * ESCORT_BESIDE[order] * outwardY - ESCORT_BEHIND[order] * travelY),
-    }));
-  }
   const towardSpoke = wheel.inside ? spokeAngle : spokeAngle + 180;
   const side = random() < 0.5 ? 1 : -1;
   const outerAngle = towardSpoke + side * between(OUTER_SMALL_TURN);
