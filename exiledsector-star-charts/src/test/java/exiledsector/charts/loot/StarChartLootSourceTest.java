@@ -8,12 +8,15 @@ import exiledsector.charts.anomaly.SettlingDust;
 import exiledsector.charts.anomaly.LiveAnomalyRuns;
 import exiledsector.charts.anomaly.MagneticStorm;
 import exiledsector.charts.anomaly.StellarFlares;
+import exiledsector.charts.effect.ChartModifier;
+import exiledsector.charts.generation.ChartGenContext.AppliedEffect;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemKind;
 import exiledsector.items.modifier.ItemRoll;
+import exiledsector.items.modifier.Luck;
 import exiledsector.items.modifier.LuckyRolls;
 import exiledsector.items.modifier.PoolEntry;
 import exiledsector.loot.BattleLoot;
@@ -88,6 +91,20 @@ class StarChartLootSourceTest {
                 changed += lucky.equals(item) ? 0 : 1;
             }
             assertTrue(changed > 0);
+        }
+    }
+
+    @Test
+    void theFlaresTreeLinesShapeEveryDropInTheSystem() {
+        try (MockSector ignored = new MockSector()) {
+            StarSystemAPI system = LiveAnomalyRuns.systemWith(StellarFlares.ANOMALY_ID);
+            ChartRuns.currentOrNull().recordAtlasTreeLines(List.of(new AppliedEffect(ChartModifier.CHART_STELLAR_FLARES_ALL_LUCKY, 1f),
+                    new AppliedEffect(ChartModifier.CHART_STELLAR_FLARES_LUCKY_ROLLS, 4f)));
+            for (long seed = 0L; seed < 20L; seed++) {
+                ItemData item = dropped(seed);
+
+                assertEquals(LuckyRolls.withLuck(item, new Luck(1, true, false, 4)), StarChartLootSource.INSTANCE.shape(item, DropOrigin.ANYWHERE, system));
+            }
         }
     }
 

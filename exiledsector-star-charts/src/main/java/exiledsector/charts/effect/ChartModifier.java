@@ -153,6 +153,7 @@ public enum ChartModifier implements ModifierEffect {
     CHART_ANOMALOUS_DEBRIS_CHANCE_PERCENT(new OpeningChance("anomalous_debris")),
     CHART_EXCAVATION_SITES_CHANCE_PERCENT(new OpeningChance("excavation_sites")),
     CHART_LISTENING_POST_CHANCE_PERCENT(new OpeningChance("listening_post")),
+    CHART_STELLAR_FLARES_CHANCE_PERCENT(new OpeningChance("stellar_flares")),
     CHART_BREACH_GROWTH_PERCENT("spatial_breach.growth", AnomalyLine.PERCENT),
     CHART_BREACH_CACHE_PERCENT("spatial_breach.caches", AnomalyLine.PERCENT),
     CHART_BREACH_CACHE_ITEM_PERCENT("spatial_breach.cacheItems", AnomalyLine.PERCENT),
@@ -241,7 +242,7 @@ public enum ChartModifier implements ModifierEffect {
     CHART_MAGNETIC_STORM_ION_FRONT("magnetic_storm.ionFront", AnomalyLine.FLAG),
     CHART_MAGNETIC_STORM_ION_FRONT_CRAFTING_ITEM_PERCENT("magnetic_storm.ionFrontCraftingItems", AnomalyLine.PERCENT),
     CHART_MAGNETIC_STORM_FLARE_AURORAS("magnetic_storm.flareAuroras", AnomalyLine.FLAG),
-    CHART_MAGNETIC_STORM_LUCKY_MODIFIERS("magnetic_storm.luckyModifiers", AnomalyLine.COUNT),
+    CHART_MAGNETIC_STORM_LUCKY_MODIFIERS("magnetic_storm.luckyModifiers", AnomalyLine.LUCKY_COUNT),
     CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT("storm_front.loot", AnomalyLine.PERCENT),
     CHART_STORM_STRIKE_FREQUENCY_PERCENT("storm_front.strikes", AnomalyLine.PERCENT),
     CHART_STORM_FRONT_SIZE_PERCENT("storm_front.size", AnomalyLine.PERCENT),
@@ -256,7 +257,7 @@ public enum ChartModifier implements ModifierEffect {
     },
     CHART_STORM_FRONT_CAPTURED("storm_front.captured", AnomalyLine.FLAG),
     CHART_STORM_FRONT_CAPTURED_IMMUTABLE_CHANCE_PERCENT("storm_front.capturedImmutableChance", AnomalyLine.PERCENT),
-    CHART_STORM_FRONT_LUCKY_BIOME_MODIFIERS("storm_front.luckyBiomeModifiers", AnomalyLine.FLAG),
+    CHART_STORM_FRONT_LUCKY_BIOME_MODIFIERS("storm_front.luckyBiomeModifiers", AnomalyLine.LUCKY_FLAG),
     CHART_STORM_FRONT_OFFICER_EXTRA_REWARDS("storm_front.officerExtraRewards", AnomalyLine.COUNT),
     CHART_FORGE_RUNS("derelict_forge.extraRuns", AnomalyLine.COUNT),
     CHART_FORGE_COST_PERCENT("derelict_forge.cost", AnomalyLine.PERCENT_REDUCED_WHEN_NEGATIVE),
@@ -273,7 +274,15 @@ public enum ChartModifier implements ModifierEffect {
     CHART_LISTENING_POST_ARMED_STATION("listening_post.armedStation", AnomalyLine.FLAG),
     CHART_LISTENING_POST_PURGE_HELD("listening_post.purgeHeld", AnomalyLine.FLAG),
     CHART_LISTENING_POST_OFFICER_LEDGER("listening_post.officerLedger", AnomalyLine.COUNT),
-    CHART_LISTENING_POST_STOLEN_CHARTS("listening_post.stolenCharts", AnomalyLine.COUNT);
+    CHART_LISTENING_POST_STOLEN_CHARTS("listening_post.stolenCharts", AnomalyLine.COUNT),
+    CHART_STELLAR_FLARES_HULL_ITEM_PERCENT(new AnomalyDrop("stellar_flares", DropType.HULL_ITEM, ".reduced")),
+    CHART_STELLAR_FLARES_LUCKY_MODIFIERS("stellar_flares.luckyModifiers", AnomalyLine.LUCKY_COUNT),
+    CHART_STELLAR_FLARES_FLARE_FREQUENCY_MULT("stellar_flares.flareFrequency", AnomalyLine.PERCENT),
+    CHART_STELLAR_FLARES_LUCKY_IMPLICITS("stellar_flares.luckyImplicits", AnomalyLine.LUCKY_FLAG),
+    CHART_STELLAR_FLARES_LUCKY_ROLLS("stellar_flares.luckyRolls", AnomalyLine.COUNT),
+    CHART_CONVOY_SUNSTRUCK("supply_convoy.sunstruck", AnomalyLine.FLAG),
+    CHART_CONVOY_SUNSTRUCK_COMBAT_READINESS_PERCENT("supply_convoy.sunstruckCombatReadiness", AnomalyLine.PERCENT),
+    CHART_STELLAR_FLARES_ALL_LUCKY("stellar_flares.allLucky", AnomalyLine.LUCKY_FLAG);
 
     static final String KEY_PREFIX = "chart.modifier.";
 
@@ -288,7 +297,11 @@ public enum ChartModifier implements ModifierEffect {
     private record OpeningChance(String anomalyId) {
     }
 
-    private record AnomalyDrop(String anomalyId, DropType dropType) {
+    private record AnomalyDrop(String anomalyId, DropType dropType, String negativeKeySuffix) {
+
+        AnomalyDrop(String anomalyId, DropType dropType) {
+            this(anomalyId, dropType, null);
+        }
     }
 
     private enum AnomalyLine {
@@ -296,14 +309,24 @@ public enum ChartModifier implements ModifierEffect {
         PERCENT_REDUCED_WHEN_NEGATIVE(false, ".reduced"),
         PERCENT_INCREASED_WHEN_NEGATIVE(false, ".increased"),
         COUNT(true, null),
-        FLAG(true, null);
+        FLAG(true, null, true, false),
+        LUCKY_COUNT(true, null, false, true),
+        LUCKY_FLAG(true, null, true, true);
 
         private final boolean counted;
         private final String negativeKeySuffix;
+        private final boolean flag;
+        private final boolean lucky;
 
         AnomalyLine(boolean counted, String negativeKeySuffix) {
+            this(counted, negativeKeySuffix, false, false);
+        }
+
+        AnomalyLine(boolean counted, String negativeKeySuffix, boolean flag, boolean lucky) {
             this.counted = counted;
             this.negativeKeySuffix = negativeKeySuffix;
+            this.flag = flag;
+            this.lucky = lucky;
         }
     }
 
@@ -318,6 +341,7 @@ public enum ChartModifier implements ModifierEffect {
     private final boolean flag;
     private String grantedNodeId;
     private String openingChanceAnomalyId;
+    private boolean makesLucky;
     private AnomalyDrop anomalyDrop;
 
     ChartModifier(boolean counted, Contribution contribution) {
@@ -343,7 +367,7 @@ public enum ChartModifier implements ModifierEffect {
     }
 
     ChartModifier(AnomalyDrop anomalyDrop) {
-        this(false, (context, value) -> { });
+        this(false, null, null, null, anomalyDrop.negativeKeySuffix(), (context, value) -> { }, false);
         this.anomalyDrop = anomalyDrop;
     }
 
@@ -357,7 +381,8 @@ public enum ChartModifier implements ModifierEffect {
 
     ChartModifier(String anomalyTuningKey, AnomalyLine line) {
         this(line.counted, null, null, anomalyTuningKey, line.negativeKeySuffix,
-                (context, value) -> context.addAnomalyPercent(anomalyTuningKey, line.counted ? Math.round(value) : value), line == AnomalyLine.FLAG);
+                (context, value) -> context.addAnomalyPercent(anomalyTuningKey, line.counted ? Math.round(value) : value), line.flag);
+        this.makesLucky = line.lucky;
     }
 
     ChartModifier(boolean counted, DropType dropType, ChartFleetStat fleetStat, String anomalyTuningKey, String negativeKeySuffix,
@@ -389,6 +414,10 @@ public enum ChartModifier implements ModifierEffect {
 
     public String openingChanceAnomalyId() {
         return openingChanceAnomalyId;
+    }
+
+    public boolean makesLucky() {
+        return makesLucky;
     }
 
     public ChartGenContext.AppliedEffect dropLineWith(List<String> anomalyIds, float value) {

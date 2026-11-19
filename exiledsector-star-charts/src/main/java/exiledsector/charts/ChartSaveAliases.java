@@ -20,6 +20,7 @@ import exiledsector.charts.anomaly.landmark.NexusFleetManager;
 import exiledsector.charts.anomaly.landmark.StationLaunches;
 import exiledsector.charts.anomaly.abyssstorm.AbyssalStormTerrainPlugin;
 import exiledsector.charts.anomaly.abyssstorm.StormCycle;
+import exiledsector.charts.anomaly.stellarflares.FlareTempo;
 import exiledsector.charts.anomaly.stormfront.StormFrontTerrainPlugin;
 import exiledsector.charts.layout.ChartCoronaTerrainPlugin;
 import exiledsector.charts.layout.ChartPulsarBeamTerrainPlugin;
@@ -77,7 +78,8 @@ public final class ChartSaveAliases {
             Map.entry("exiledSector.NexusFleetManager", NexusFleetManager.class),
             Map.entry("exiledSector.StationLaunches", StationLaunches.class),
             Map.entry("exiledSector.PhaseDisplacementGate", PhaseDisplacementGate.class),
-            Map.entry("exiledSector.PhaseDisplacementIntel", PhaseDisplacementIntel.class));
+            Map.entry("exiledSector.PhaseDisplacementIntel", PhaseDisplacementIntel.class),
+            Map.entry("exiledSector.FlareTempo", FlareTempo.class));
 
     private ChartSaveAliases() {
     }

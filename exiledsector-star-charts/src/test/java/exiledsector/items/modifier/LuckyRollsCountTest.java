@@ -37,6 +37,10 @@ class LuckyRollsCountTest {
         return ItemData.rolled(ItemDefinitions.get(HYBRID), seed, ItemRoll.withModifierCount(2));
     }
 
+    private static ItemData withLuckyModifiers(ItemData item, int luckyModifiers) {
+        return LuckyRolls.withLuck(item, new Luck(luckyModifiers, false, false, Luck.BASE_ROLLS));
+    }
+
     private static int changedModifiers(ItemData item, ItemData lucky) {
         int changed = 0;
         for (int modifier = 0; modifier < item.explicits().size(); modifier++) {
@@ -50,7 +54,7 @@ class LuckyRollsCountTest {
         for (long seed = 0L; seed < SEEDS; seed++) {
             ItemData item = dropped(seed);
 
-            assertEquals(LuckyRolls.withLuckyModifier(item), LuckyRolls.withLuckyModifiers(item, 1));
+            assertEquals(LuckyRolls.withLuckyModifier(item), withLuckyModifiers(item, 1));
         }
     }
 
@@ -59,7 +63,7 @@ class LuckyRollsCountTest {
         int bothChanged = 0;
         for (long seed = 0L; seed < SEEDS; seed++) {
             ItemData item = dropped(seed);
-            ItemData lucky = LuckyRolls.withLuckyModifiers(item, 2);
+            ItemData lucky = withLuckyModifiers(item, 2);
 
             for (int modifier = 0; modifier < 2; modifier++) {
                 float before = item.explicits().get(modifier).lines().get(0).magnitude();
@@ -76,7 +80,7 @@ class LuckyRollsCountTest {
         for (long seed = 0L; seed < SEEDS; seed++) {
             ItemData item = dropped(seed);
 
-            assertEquals(LuckyRolls.withLuckyModifiers(item, 2), LuckyRolls.withLuckyModifiers(item, 5));
+            assertEquals(withLuckyModifiers(item, 2), withLuckyModifiers(item, 5));
         }
     }
 
@@ -84,7 +88,7 @@ class LuckyRollsCountTest {
     void noLuckyModifiersLeaveTheItemAsItIs() {
         ItemData item = dropped(7L);
 
-        assertSame(item, LuckyRolls.withLuckyModifiers(item, 0));
-        assertSame(item, LuckyRolls.withLuckyModifiers(item, -1));
+        assertSame(item, withLuckyModifiers(item, 0));
+        assertSame(item, withLuckyModifiers(item, -1));
     }
 }

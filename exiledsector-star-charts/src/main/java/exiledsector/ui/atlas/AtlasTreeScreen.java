@@ -6,6 +6,7 @@ import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
+import exiledsector.charts.anomaly.FlareLuck;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.tree.AtlasTree;
 import exiledsector.charts.tree.AtlasTreeAllocation;
@@ -371,7 +372,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
 
     private void writeTooltip(AtlasTreeNode node) {
         tooltipTitle.setWrapped(node.getDisplayName(), tooltipText.maxTextWidth(), TOOLTIP_MAX_TEXT_HEIGHT);
-        List<StyledText> body = AtlasTreeNodeText.tooltipBody(node.type());
+        List<StyledText> body = AtlasTreeNodeText.tooltipBody(node.type(), FlareLuck.treeRolls(AtlasTree.chartLines(state)));
         tooltipBody.setParagraphs(body, tooltipText.maxTextWidth(), TOOLTIP_MAX_TEXT_HEIGHT, SkillTreePanelStyle::standardHighlightColor);
     }
 

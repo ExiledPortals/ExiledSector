@@ -1,5 +1,6 @@
 package exiledsector.ui.atlas;
 
+import exiledsector.charts.anomaly.FlareLuck;
 import exiledsector.charts.atlas.AtlasEffects;
 import exiledsector.charts.atlas.AtlasNames;
 import exiledsector.charts.generation.ChartGenContext;
@@ -8,6 +9,7 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.items.modifier.Luck;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.TooltipText;
@@ -181,8 +183,9 @@ final class AtlasTreeEffectsPanel {
         if (granted.isEmpty()) {
             sections.add(section("", List.of(StyledText.styled(Translation.text("atlasTree.effects.none"), Style.MUTED))));
         }
+        int luckyRolls = luckyRolls(granted);
         for (AtlasTreeEffectGroups.Group group : granted) {
-            sections.add(section(groupName(group), lines(group)));
+            sections.add(section(groupName(group), lines(group, luckyRolls)));
         }
         float total = 0f;
         for (Section section : sections) {
@@ -212,10 +215,20 @@ final class AtlasTreeEffectsPanel {
         return name;
     }
 
+    static int luckyRolls(List<AtlasTreeEffectGroups.Group> groups) {
+        List<ChartGenContext.AppliedEffect> chartLines = new ArrayList<>();
+        groups.forEach(group -> chartLines.addAll(group.chartLines()));
+        return FlareLuck.treeRolls(chartLines);
+    }
+
     static List<StyledText> lines(AtlasTreeEffectGroups.Group group) {
+        return lines(group, Luck.BASE_ROLLS);
+    }
+
+    static List<StyledText> lines(AtlasTreeEffectGroups.Group group, int luckyRolls) {
         List<StyledText> lines = new ArrayList<>();
         for (ChartGenContext.AppliedEffect effect : group.chartLines()) {
-            addLine(lines, AtlasTreeNodeText.chartLine(effect.effect(), effect.value()));
+            AtlasTreeNodeText.addChartLine(lines, effect.effect(), effect.value(), luckyRolls);
         }
         for (AtlasEffects.Line effect : group.atlasLines()) {
             addLine(lines, AtlasTreeNodeText.atlasLine(effect.effect(), effect.value()));

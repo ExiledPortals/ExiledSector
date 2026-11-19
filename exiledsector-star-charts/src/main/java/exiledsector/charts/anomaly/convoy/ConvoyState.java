@@ -78,6 +78,12 @@ public final class ConvoyState {
         waypointIds.remove(newDestinationId);
     }
 
+    void routeThroughFirst(String entityId) {
+        if (entityId != null && !waypointIds.contains(entityId) && !entityId.equals(destinationId)) {
+            waypointIds.add(0, entityId);
+        }
+    }
+
     float entryX() {
         return entryX;
     }

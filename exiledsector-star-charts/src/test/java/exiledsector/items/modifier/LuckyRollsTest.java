@@ -5,6 +5,8 @@ import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemKind;
 import exiledsector.modifiers.ModifierSlot;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -119,6 +121,93 @@ class LuckyRollsTest {
             changed += item.equals(LuckyRolls.withLuckyModifier(item)) ? 0 : 1;
         }
         assertTrue(changed > 0);
+    }
+
+    @Test
+    void moreRollsKeepTheBestOfThemAll() {
+        float total = 0f;
+        for (long seed = 0L; seed < DROPS; seed++) {
+            ItemData item = dropped(PLATE, seed, 1);
+            ItemData lucky = LuckyRolls.withLuck(item, new Luck(1, false, false, 4));
+            assertTrue(magnitude(lucky, 0) >= magnitude(LuckyRolls.withLuckyModifier(item), 0));
+            total += magnitude(lucky, 0);
+        }
+        assertEquals(80.2f, total / DROPS, 3f);
+    }
+
+    @Test
+    void twoLuckyModifiersRollAgainOnDifferentModifiers() {
+        int bothChanged = 0;
+        for (long seed = 0L; seed < 200L; seed++) {
+            ItemData item = dropped(HYBRID, seed, 2);
+            ItemData lucky = LuckyRolls.withLuck(item, new Luck(2, false, false, Luck.BASE_ROLLS));
+            boolean prefixChanged = !item.explicits().get(0).equals(lucky.explicits().get(0));
+            boolean suffixChanged = !item.explicits().get(1).equals(lucky.explicits().get(1));
+            bothChanged += prefixChanged && suffixChanged ? 1 : 0;
+            assertEquals(lucky, LuckyRolls.withLuck(lucky, new Luck(2, false, false, Luck.BASE_ROLLS)));
+        }
+        assertTrue(bothChanged > 25, "both changed on " + bothChanged + " drops");
+    }
+
+    @Test
+    void everyModifierIsLuckyWhenTheWholeItemIs() {
+        Luck everyModifier = new Luck(0, true, false, Luck.BASE_ROLLS);
+        int bothChanged = 0;
+        for (long seed = 0L; seed < 200L; seed++) {
+            ItemData item = dropped(HYBRID, seed, 2);
+            ItemData lucky = LuckyRolls.withLuck(item, everyModifier);
+            assertTrue(magnitude(lucky, 0) >= magnitude(item, 0));
+            assertTrue(magnitude(lucky, 1) <= magnitude(item, 1));
+            bothChanged += !item.explicits().get(0).equals(lucky.explicits().get(0)) && !item.explicits().get(1).equals(lucky.explicits().get(1)) ? 1 : 0;
+        }
+        assertTrue(bothChanged > 25, "both changed on " + bothChanged + " drops");
+    }
+
+    @Test
+    void aChosenModifierIsLuckyAndTheOthersAreLeftAlone() {
+        int changed = 0;
+        for (long seed = 0L; seed < 200L; seed++) {
+            ItemData item = dropped(HYBRID, seed, 2);
+            ItemData lucky = LuckyRolls.withLuckyModifiers(item,
+                    rolled -> rolled.lines().get(0).effectName().equals("SHIELD_DAMAGE_TAKEN_MULT"), Luck.BASE_ROLLS);
+            assertEquals(item.explicits().get(0), lucky.explicits().get(0));
+            changed += item.explicits().get(1).equals(lucky.explicits().get(1)) ? 0 : 1;
+        }
+        assertTrue(changed > 50, "changed " + changed);
+    }
+
+    @Test
+    void luckyImplicitsKeepTheBetterRollOfEachImplicit() throws Exception {
+        ItemImplicits.register(new JSONArray().put(new JSONObject().put("section", "armor_plating").put("implicits", "ARMOR_PERCENT:1:100")));
+        try {
+            float plain = 0f;
+            float lucky = 0f;
+            for (long seed = 0L; seed < DROPS; seed++) {
+                ItemData item = dropped(PLATE, seed, 1);
+                ItemData luckyItem = LuckyRolls.withLuck(item, new Luck(0, false, true, Luck.BASE_ROLLS));
+                assertEquals(item.explicits(), luckyItem.explicits());
+                assertEquals(luckyItem, LuckyRolls.withLuck(luckyItem, new Luck(0, false, true, Luck.BASE_ROLLS)));
+                plain += implicitMagnitude(item);
+                lucky += implicitMagnitude(luckyItem);
+            }
+            assertEquals(50.5f, plain / DROPS, 3f);
+            assertEquals(67f, lucky / DROPS, 3f);
+        } finally {
+            ItemImplicits.clear();
+        }
+    }
+
+    private static float implicitMagnitude(ItemData item) {
+        return item.preview().implicits().get(0).lines().get(0).magnitude();
+    }
+
+    @Test
+    void noLuckLeavesTheItemAsItIs() {
+        ItemData plate = dropped(PLATE, 3L, 1);
+
+        assertSame(plate, LuckyRolls.withLuck(plate, Luck.NONE));
+        assertSame(plate, LuckyRolls.withLuck(plate, null));
+        assertSame(plate, LuckyRolls.withLuckyModifiers(plate, null, 4));
     }
 
     @Test

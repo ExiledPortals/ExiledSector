@@ -1,14 +1,9 @@
 package exiledsector.charts.anomaly.magneticstorm;
 
-import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.impl.campaign.terrain.FlareManager;
 import com.fs.starfarer.api.impl.campaign.terrain.MagneticFieldTerrainPlugin;
 import com.fs.starfarer.api.impl.campaign.terrain.StarCoronaTerrainPlugin;
-import exiledsector.charts.anomaly.MagneticStorm;
-import exiledsector.charts.run.ChartRun;
-import exiledsector.charts.run.ChartRunEffects;
-import exiledsector.charts.run.ChartRuns;
 
 import java.util.List;
 import java.util.Random;
@@ -45,13 +40,5 @@ public final class GeomagneticSurge {
         }
         return Auroras.covers(flare, Auroras.angleDegrees(star.getLocation(), parent.getLocation()))
                 ? Auroras.angleDegrees(parent.getLocation(), star.getLocation()) : null;
-    }
-
-    public static int extraLuckyModifiers(LocationAPI location) {
-        ChartRun run = ChartRuns.liveIn(location);
-        if (run == null || !run.anomalyIds().contains(MagneticStorm.ANOMALY_ID)) {
-            return 0;
-        }
-        return MagneticStormTuning.of(ChartRunEffects.contextOf(run)).extraLuckyModifiers();
     }
 }

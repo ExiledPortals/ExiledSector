@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.anomaly.FlareLuck;
 import exiledsector.charts.anomaly.LiveAnomalyRuns;
 import exiledsector.charts.anomaly.MagneticStorm;
 import exiledsector.charts.anomaly.StellarFlares;
@@ -16,6 +17,7 @@ import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemKind;
 import exiledsector.items.modifier.ItemRoll;
+import exiledsector.items.modifier.Luck;
 import exiledsector.items.modifier.LuckyRolls;
 import exiledsector.items.modifier.PoolEntry;
 import exiledsector.modifiers.ModifierSlot;
@@ -26,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -33,6 +36,7 @@ class GeomagneticSurgeLuckTest {
 
     private static final String PLATE = "surge_plate";
     private static final AppliedEffect SURGE_LINE = new AppliedEffect(ChartModifier.CHART_MAGNETIC_STORM_LUCKY_MODIFIERS, 1f);
+    private static final AppliedEffect GOLDEN_HOUR_LINE = new AppliedEffect(ChartModifier.CHART_STELLAR_FLARES_LUCKY_ROLLS, 4f);
 
     @BeforeEach
     void setUp() {
@@ -60,16 +64,38 @@ class GeomagneticSurgeLuckTest {
         return ItemData.rolled(ItemDefinitions.get(PLATE), seed, ItemRoll.withModifierCount(2));
     }
 
+    private static Luck luckIn(StarSystemAPI system) {
+        return FlareLuck.dropLuck(ChartRuns.liveIn(system));
+    }
+
     @Test
     void theSurgeGivesFlareDropsAnotherLuckyModifierInAMagneticStorm() {
         try (MockSector sector = new MockSector()) {
             StarSystemAPI system = systemOf(List.of(SURGE_LINE), MagneticStorm.ANOMALY_ID, StellarFlares.ANOMALY_ID);
 
-            assertEquals(1, GeomagneticSurge.extraLuckyModifiers(system));
+            assertEquals(2, luckIn(system).luckyModifiers());
             for (long seed = 0L; seed < 50L; seed++) {
                 ItemData item = dropped(seed);
-                assertEquals(LuckyRolls.withLuckyModifiers(item, 2), StellarFlares.INSTANCE.shapeDrop(sector.sector, item, system));
+                assertEquals(LuckyRolls.withLuck(item, new Luck(2, false, false, Luck.BASE_ROLLS)),
+                        StellarFlares.INSTANCE.shapeDrop(sector.sector, item, system));
             }
+        }
+    }
+
+    @Test
+    void goldenHourRollsTheSurgesLuckyModifiersAsOftenAsTheFlares() {
+        try (MockSector sector = new MockSector()) {
+            StarSystemAPI system = systemOf(List.of(SURGE_LINE, GOLDEN_HOUR_LINE), MagneticStorm.ANOMALY_ID, StellarFlares.ANOMALY_ID);
+
+            assertEquals(new Luck(2, false, false, 4), luckIn(system));
+            int luckier = 0;
+            for (long seed = 0L; seed < 50L; seed++) {
+                ItemData item = dropped(seed);
+                ItemData shaped = StellarFlares.INSTANCE.shapeDrop(sector.sector, item, system);
+                assertEquals(LuckyRolls.withLuck(item, new Luck(2, false, false, 4)), shaped);
+                luckier += shaped.equals(LuckyRolls.withLuck(item, new Luck(2, false, false, Luck.BASE_ROLLS))) ? 0 : 1;
+            }
+            assertTrue(luckier > 0);
         }
     }
 
@@ -77,14 +103,14 @@ class GeomagneticSurgeLuckTest {
     void withoutTheLineOrTheStormFlareDropsKeepOneLuckyModifier() {
         try (MockSector sector = new MockSector()) {
             StarSystemAPI calm = systemOf(List.of(), MagneticStorm.ANOMALY_ID, StellarFlares.ANOMALY_ID);
-            assertEquals(0, GeomagneticSurge.extraLuckyModifiers(calm));
+            assertEquals(1, luckIn(calm).luckyModifiers());
             ItemData item = dropped(3L);
             assertEquals(LuckyRolls.withLuckyModifier(item), StellarFlares.INSTANCE.shapeDrop(sector.sector, item, calm));
 
             StarSystemAPI stormless = systemOf(List.of(SURGE_LINE), StellarFlares.ANOMALY_ID);
-            assertEquals(0, GeomagneticSurge.extraLuckyModifiers(stormless));
+            assertEquals(1, luckIn(stormless).luckyModifiers());
             assertEquals(LuckyRolls.withLuckyModifier(item), StellarFlares.INSTANCE.shapeDrop(sector.sector, item, stormless));
-            assertEquals(0, GeomagneticSurge.extraLuckyModifiers(mock(StarSystemAPI.class)));
+            assertEquals(Luck.NONE, luckIn(mock(StarSystemAPI.class)));
         }
     }
 }

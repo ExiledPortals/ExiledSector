@@ -83,18 +83,17 @@ class MagneticStormAtlasTypesTest {
     }
 
     @Test
-    void theLuckyLineCarriesTheLuckyReminder() {
+    void theLuckyLineTakesTheSharedLuckyReminderInsteadOfItsOwn() {
         Map<String, String> english = RealCatalogue.entries("en");
         Map<String, String> chinese = RealCatalogue.entries("zh_CN");
-        String reminder = english.get("chart.atlas.anomaly.stellar_flares.reward");
-        String chineseReminder = chinese.get("chart.atlas.anomaly.stellar_flares.reward");
 
+        assertTrue(ChartModifier.CHART_MAGNETIC_STORM_LUCKY_MODIFIERS.makesLucky());
         for (String key : List.of("atlasTree.line.CHART_MAGNETIC_STORM_LUCKY_MODIFIERS.one", "atlasTree.line.CHART_MAGNETIC_STORM_LUCKY_MODIFIERS.other",
                 "chart.modifier.CHART_MAGNETIC_STORM_LUCKY_MODIFIERS.other")) {
-            assertTrue(english.get(key).endsWith(reminder.substring(reminder.indexOf('\n'))), key);
+            assertTrue(english.containsKey(key) && !english.get(key).contains("<muted>"), key);
         }
         for (String key : List.of("atlasTree.line.CHART_MAGNETIC_STORM_LUCKY_MODIFIERS.other", "chart.modifier.CHART_MAGNETIC_STORM_LUCKY_MODIFIERS.other")) {
-            assertTrue(chinese.get(key).endsWith(chineseReminder.substring(chineseReminder.indexOf('\n'))), key);
+            assertTrue(chinese.containsKey(key) && !chinese.get(key).contains("<muted>"), key);
         }
     }
 

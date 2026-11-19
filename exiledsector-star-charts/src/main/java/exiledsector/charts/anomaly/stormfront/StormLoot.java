@@ -3,6 +3,7 @@ package exiledsector.charts.anomaly.stormfront;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.Seeds;
+import exiledsector.charts.anomaly.FlareLuck;
 import exiledsector.charts.atlas.AtlasData;
 import exiledsector.charts.atlas.AtlasRuntime;
 import exiledsector.charts.atlas.AtlasUnlocks;
@@ -15,7 +16,6 @@ import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.modifier.AffixLayout;
 import exiledsector.items.modifier.GrantedModifiers;
-import exiledsector.items.modifier.LuckyRolls;
 
 import java.util.List;
 import java.util.Random;
@@ -34,12 +34,13 @@ public final class StormLoot {
         if (front == null) {
             return withBiome;
         }
-        float immutableChancePercent = front.captured() ? StormTuning.of(StormBattles.runOf(front)).capturedImmutableChancePercent() : 0f;
-        return shapedByFront(withBiome, front.solar(), immutableChancePercent);
+        ChartRun run = StormBattles.runOf(front);
+        float immutableChancePercent = front.captured() ? StormTuning.of(run).capturedImmutableChancePercent() : 0f;
+        return shapedByFront(withBiome, run, front.solar(), immutableChancePercent);
     }
 
-    static ItemData shapedByFront(ItemData item, boolean solar, float immutableChancePercent) {
-        ItemData shaped = solar ? LuckyRolls.withLuckyModifiers(item, BiomeModifiers::isBiomeModifier) : item;
+    static ItemData shapedByFront(ItemData item, ChartRun run, boolean solar, float immutableChancePercent) {
+        ItemData shaped = solar ? FlareLuck.withLuckyModifiers(item, run, rolled -> BiomeModifiers.isBiomeModifier(rolled.modifierId())) : item;
         return immutableChancePercent > 0f ? ImmutableDrops.withChance(shaped, immutableChancePercent / 100f) : shaped;
     }
 

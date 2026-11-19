@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -45,6 +46,10 @@ class LuckyRollsChosenModifiersTest {
         return ItemData.rolled(ItemDefinitions.get(definitionId), seed, ItemRoll.withModifierCount(modifierCount));
     }
 
+    private static ItemData withLuckyModifiers(ItemData item, Predicate<String> luckyModifierIds) {
+        return LuckyRolls.withLuckyModifiers(item, rolled -> luckyModifierIds.test(rolled.modifierId()), Luck.BASE_ROLLS);
+    }
+
     private static boolean isHullModifier(RolledModifier rolled) {
         return rolled.lines().stream().anyMatch(line -> line.effectName().equals(HULL_EFFECT));
     }
@@ -59,7 +64,7 @@ class LuckyRollsChosenModifiersTest {
         for (long seed = 0L; seed < 200L; seed++) {
             ItemData item = dropped(HYBRID, seed, 2);
             String hullId = hullModifierId(item);
-            ItemData lucky = LuckyRolls.withLuckyModifiers(item, hullId::equals);
+            ItemData lucky = withLuckyModifiers(item, hullId::equals);
             for (int modifier = 0; modifier < 2; modifier++) {
                 RolledModifier before = item.explicits().get(modifier);
                 RolledModifier after = lucky.explicits().get(modifier);
@@ -79,7 +84,7 @@ class LuckyRollsChosenModifiersTest {
     void everyChosenModifierIsLucky() {
         float total = 0f;
         for (long seed = 0L; seed < DROPS; seed++) {
-            ItemData lucky = LuckyRolls.withLuckyModifiers(dropped(PLATE, seed, 1), modifierId -> true);
+            ItemData lucky = withLuckyModifiers(dropped(PLATE, seed, 1), modifierId -> true);
             total += lucky.explicits().get(0).lines().get(0).magnitude();
         }
         assertEquals(67f, total / DROPS, 3f);
@@ -88,10 +93,10 @@ class LuckyRollsChosenModifiersTest {
     @Test
     void theRollIsTheSameForTheSameDropAndLeavesOtherItemsAlone() {
         ItemData item = dropped(HYBRID, 7L, 2);
-        ItemData lucky = LuckyRolls.withLuckyModifiers(item, modifierId -> true);
+        ItemData lucky = withLuckyModifiers(item, modifierId -> true);
 
-        assertEquals(lucky, LuckyRolls.withLuckyModifiers(dropped(HYBRID, 7L, 2), modifierId -> true));
-        assertSame(item, LuckyRolls.withLuckyModifiers(item, modifierId -> false));
-        assertNull(LuckyRolls.withLuckyModifiers(null, modifierId -> true));
+        assertEquals(lucky, withLuckyModifiers(dropped(HYBRID, 7L, 2), modifierId -> true));
+        assertSame(item, withLuckyModifiers(item, modifierId -> false));
+        assertNull(withLuckyModifiers(null, modifierId -> true));
     }
 }
