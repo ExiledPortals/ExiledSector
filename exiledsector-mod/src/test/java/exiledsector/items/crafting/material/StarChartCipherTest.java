@@ -62,7 +62,7 @@ class StarChartCipherTest {
 
     private static final String SINGLE = "star_chart";
     private static final String GATED = StarChartFixtures.TEST_GATED;
-    private static final String FLEET_SIZE = "CHART_FLEET_SIZE_PERCENT";
+    private static final String BOSS_SIZE = "CHART_BOSS_SIZE_PERCENT";
     private static final Predicate<ItemDefinition> ANY_UNIQUE = definition -> true;
 
     private final ItemStore store = ItemStore.forStarCharts();
@@ -193,7 +193,7 @@ class StarChartCipherTest {
 
     @Test
     void tuningRerollsTheRollPositionsAndKeepsTheModifiersAndTier() {
-        StarChart chart = storedWith(SINGLE, 7, candidate -> has(candidate, FLEET_SIZE));
+        StarChart chart = storedWith(SINGLE, 7, candidate -> has(candidate, BOSS_SIZE));
         List<String> idsBefore = chart.explicits().stream().map(RolledModifier::modifierId).toList();
         List<RolledModifier> before = List.copyOf(chart.explicits());
 
@@ -240,7 +240,7 @@ class StarChartCipherTest {
         boolean beyondGroup = false;
         for (long seed = 0; seed < 300; seed++) {
             StarChart chart = StarChartFixtures.chart(SINGLE, seed, 6);
-            if (!has(chart, FLEET_SIZE)) {
+            if (!has(chart, BOSS_SIZE)) {
                 continue;
             }
             ItemCrafting.randomiseValues(chart, new Random(seed));
@@ -383,20 +383,20 @@ class StarChartCipherTest {
 
     @Test
     void cartographyRaisesTheTierAndTheRollPositionsTakeTheNewBand() {
-        StarChart chart = storedWith(SINGLE, 5, candidate -> has(candidate, FLEET_SIZE));
-        RolledModifier fleetSize = chart.explicits().stream().filter(rolled -> rolled.modifierId().equals(FLEET_SIZE)).findFirst().orElseThrow();
-        ModifierLine line = ItemDefinitions.get(SINGLE).poolEntryFor(FLEET_SIZE).modifier().line(fleetSize.lines().get(0).effectName());
-        float position = fleetSize.lines().get(0).magnitude();
+        StarChart chart = storedWith(SINGLE, 5, candidate -> has(candidate, BOSS_SIZE));
+        RolledModifier bossSize = chart.explicits().stream().filter(rolled -> rolled.modifierId().equals(BOSS_SIZE)).findFirst().orElseThrow();
+        ModifierLine line = ItemDefinitions.get(SINGLE).poolEntryFor(BOSS_SIZE).modifier().line(bossSize.lines().get(0).effectName());
+        float position = bossSize.lines().get(0).magnitude();
         float tierFiveValue = line.valueFor(position, chart.scaleContext(null));
-        assertTrue(tierFiveValue >= 4f && tierFiveValue <= 5f);
+        assertTrue(tierFiveValue >= 15f && tierFiveValue <= 22f);
 
         assertSame(chart, use(StarChartCipher.CARTOGRAPHY, chart, 1L));
 
         assertEquals(6, chart.tier());
-        RolledModifier after = chart.explicits().stream().filter(rolled -> rolled.modifierId().equals(FLEET_SIZE)).findFirst().orElseThrow();
+        RolledModifier after = chart.explicits().stream().filter(rolled -> rolled.modifierId().equals(BOSS_SIZE)).findFirst().orElseThrow();
         assertEquals(position, after.lines().get(0).magnitude());
         float tierSixValue = line.valueFor(position, chart.scaleContext(null));
-        assertTrue(tierSixValue >= 12f && tierSixValue <= 18f, "value " + tierSixValue);
+        assertTrue(tierSixValue >= 45f && tierSixValue <= 60f, "value " + tierSixValue);
         StarChart reloaded = (StarChart) ItemData.of(chart).preview();
         assertEquals(6, reloaded.tier());
     }

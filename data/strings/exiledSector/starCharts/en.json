@@ -60,6 +60,7 @@
     "chart.totals.penalty": "{name} <bad>-{value}%</bad>",
     "chart.totals.quantity": "Item quantity",
     "chart.totals.itemRarity": "Rarity of hull items, unique items and crafting items",
+    "chart.totals.fleetSize": "Enemy fleet size",
     "chart.totals.bossSpoils": "Items dropped by Star Chart Bosses",
     "chart.totals.bossStarCharts": "Star Charts dropped by Star Chart Bosses",
     "chart.dropType.HULL_ITEM": "Hull items",

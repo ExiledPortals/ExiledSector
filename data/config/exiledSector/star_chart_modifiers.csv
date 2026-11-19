@@ -1,5 +1,4 @@
 id,affix,scopes,lines,name,exclusive_groups,tags
-CHART_FLEET_SIZE_PERCENT,prefix,star_chart,CHART_FLEET_SIZE_PERCENT:low=4-5/mid=12-18/high=38-50,Fortified,,enemy;fleet_size
 CHART_EXTRA_FLEETS,prefix,star_chart,CHART_EXTRA_FLEETS:low=1/mid=2/high=3,Crowded,,enemy;fleet_size
 CHART_OFFICER_LEVEL_BONUS,prefix,star_chart,CHART_OFFICER_LEVEL_BONUS:low=1/mid=1/high=2,Veteran,,enemy;officers
 CHART_EXTRA_OFFICERS,prefix,star_chart,CHART_EXTRA_OFFICERS:low=1/mid=2/high=3,Commanded,,enemy;officers

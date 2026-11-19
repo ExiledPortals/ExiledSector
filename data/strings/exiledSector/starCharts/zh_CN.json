@@ -58,6 +58,7 @@
     "chart.totals.penalty": "{name}<bad>-{value}%</bad>",
     "chart.totals.quantity": "物品数量",
     "chart.totals.itemRarity": "船体物品、独特物品和制作物品的稀有度",
+    "chart.totals.fleetSize": "敌方舰队规模",
     "chart.totals.bossSpoils": "星图首领掉落的物品",
     "chart.totals.bossStarCharts": "星图首领掉落的星图",
     "chart.dropType.HULL_ITEM": "船体物品",

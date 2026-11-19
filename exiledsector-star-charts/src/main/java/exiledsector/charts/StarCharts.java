@@ -14,6 +14,7 @@ import exiledsector.charts.content.ChartColonyItems;
 import exiledsector.charts.content.ChartFactions;
 import exiledsector.charts.content.ChartPois;
 import exiledsector.charts.effect.ChartEffects;
+import exiledsector.charts.effect.ChartPrefixRewards;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.layout.feature.ChartFeatures;
 import exiledsector.charts.loot.ChartDropRules;
@@ -83,6 +84,7 @@ public final class StarCharts {
 
     public static void loadData() {
         ChartEffects.register();
+        ChartPrefixRewards.load();
         ChartBlockedAbilities.load();
         ChartTiers.load();
         ChartDropRules.load();

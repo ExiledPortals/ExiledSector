@@ -21,6 +21,7 @@ import exiledsector.charts.content.ChartPois;
 import exiledsector.charts.effect.ChartBattleRules;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.effect.ChartFleetStat;
+import exiledsector.charts.effect.ChartPrefixRewards;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.charts.loot.ChartLootTotals;
 import exiledsector.items.drop.ItemChances;
@@ -33,6 +34,7 @@ import exiledsector.items.starchart.StarChart;
 import exiledsector.items.starchart.StarChartFixtures;
 import exiledsector.loot.DropType;
 import exiledsector.modifiers.ModifierSlot;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,6 +71,7 @@ class ChartGenContextTest {
     @AfterEach
     void tearDown() {
         StarChartFixtures.clear();
+        ChartPrefixRewards.resetForTests();
         ChartTiers.resetForTests();
         ChartPois.resetForTests();
         ChartFactions.resetForTests();
@@ -223,12 +226,12 @@ class ChartGenContextTest {
 
         List<String> lines = ChartLootTotals.lines(context).stream().map(StyledText::plain).toList();
 
-        assertEquals(List.of("Item quantity +23%", "Crafting items +47%"), lines);
+        assertEquals(List.of("Item quantity +23%", "Enemy fleet size +30%", "Crafting items +47%"), lines);
         ChartGenContext sites = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_STATION_BUDGET_PERCENT, 30f)));
         assertEquals(List.of("Stations +30%"), ChartLootTotals.lines(sites).stream().map(StyledText::plain).toList());
         assertEquals(List.of("Rarity of hull items, unique items and crafting items +25%"),
                 ChartLootTotals.lines(with(ChartModifier.CHART_ITEM_RARITY_PERCENT, 25f)).stream().map(StyledText::plain).toList());
-        assertTrue(ChartLootTotals.lines(with(ChartModifier.CHART_FLEET_SIZE_PERCENT, 30f)).isEmpty());
+        assertTrue(ChartLootTotals.lines(with(ChartModifier.CHART_BOSS_SIZE_PERCENT, 30f)).isEmpty());
     }
 
     @Test
@@ -270,7 +273,8 @@ class ChartGenContextTest {
     }
 
     @Test
-    void modifierEffectScalesTheChartsOwnLinesAndPrefixQuantityButNotAddedLines() {
+    void modifierEffectScalesTheChartsOwnLinesAndPrefixRewardsButNotAddedLines() throws Exception {
+        ChartPrefixRewards.register(new JSONArray().put(new JSONObject().put("id", "TEST_GATED_BOSS_SIZE").put("item_quantity", "low=5/mid=15/high=25")));
         ChartGenContext plain = ChartGenContext.from(StarChartFixtures.fullChart(StarChartFixtures.TEST_GATED, 5L, 12))
                 .withEffects(List.of(new AppliedEffect(ChartModifier.CHART_BOSS_SIZE_PERCENT, 10f)));
         ChartGenContext scaled = plain.withEffects(List.of(new AppliedEffect(ChartModifier.CHART_MODIFIER_EFFECT_PERCENT, 30f),
@@ -281,7 +285,7 @@ class ChartGenContextTest {
         assertEquals(50f, scaled.modifierEffectPercent(), TOLERANCE);
         assertEquals(700f * 1.5f + 10f, scaled.bossSizePercent(), TOLERANCE);
         assertEquals(3, scaled.officerLevelBonus());
-        assertTrue(prefixQuantity > 0f);
+        assertEquals(25f, prefixQuantity, TOLERANCE);
         assertEquals(plain.quantityPercent() + prefixQuantity * 0.5f, scaled.quantityPercent(), TOLERANCE);
         assertEquals(10f, with(ChartModifier.CHART_BOSS_SIZE_PERCENT, 10f).withEffects(List.of(
                 new AppliedEffect(ChartModifier.CHART_MODIFIER_EFFECT_PERCENT, 50f))).bossSizePercent(), TOLERANCE);

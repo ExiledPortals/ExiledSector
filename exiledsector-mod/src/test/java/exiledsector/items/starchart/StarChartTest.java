@@ -39,6 +39,8 @@ import exiledsector.skills.npc.RealSkillData;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.tags.ThemeTagLine;
 import exiledsector.charts.effect.ChartModifier;
+import exiledsector.charts.effect.ChartPrefixRewards;
+import exiledsector.ProjectFiles;
 import exiledsector.charts.generation.ChartGenContext.AppliedEffect;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
@@ -89,6 +91,7 @@ class StarChartTest {
     @AfterEach
     void tearDown() {
         StarChartFixtures.clear();
+        ChartPrefixRewards.resetForTests();
         ItemDefinitions.clear();
         ItemModifiers.clear();
         ItemImplicits.clear();
@@ -200,7 +203,7 @@ class StarChartTest {
         assertEquals(TierRange.atLeast(3), single.poolEntryFor("CHART_STATION_BUDGET_PERCENT").tiers());
         assertEquals(TierRange.ANY, single.poolEntryFor("CHART_BOSS_SIZE_PERCENT").tiers());
         assertEquals(TierRange.ANY, single.poolEntryFor("CHART_BOSS_SPOILS_PERCENT").tiers());
-        assertEquals(TierRange.ANY, single.poolEntryFor("CHART_FLEET_SIZE_PERCENT").tiers());
+        assertEquals(TierRange.ANY, single.poolEntryFor("CHART_EXTRA_FLEETS").tiers());
     }
 
     @Test
@@ -537,24 +540,29 @@ class StarChartTest {
     }
 
     @Test
-    void everyPrefixAddsItemQuantityByTierGroup() {
+    void everyPrefixAddsItsListedRewardsAtTheChartsTierGroup() throws Exception {
+        ChartPrefixRewards.register(ProjectFiles.csvRows(ChartPrefixRewards.PATH));
         Set<Long> prefixCounts = new HashSet<>();
-        for (int[] tierAndPercent : new int[][] {{1, 5}, {5, 5}, {6, 15}, {10, 15}, {11, 25}, {16, 25}}) {
+        for (int tier : new int[] {1, 5, 6, 10, 11, 16}) {
             for (long seed = 0; seed < 20; seed++) {
-                StarChart chart = StarChartFixtures.chart(SINGLE, seed, tierAndPercent[0]);
-                long prefixes = chart.explicits().stream().filter(modifier -> modifier.slot() == ModifierSlot.PREFIX).count();
-                float quantity = ChartGenContext.from(chart).applied().stream()
-                        .filter(applied -> applied.effect() == ChartModifier.CHART_QUANTITY_PERCENT).map(AppliedEffect::value).reduce(0f, Float::sum);
+                StarChart chart = StarChartFixtures.chart(SINGLE, seed, tier);
+                List<RolledModifier> prefixes = chart.explicits().stream().filter(modifier -> modifier.slot() == ModifierSlot.PREFIX).toList();
+                List<AppliedEffect> applied = ChartGenContext.from(chart).applied();
 
-                assertEquals(prefixes * tierAndPercent[1], quantity, 1e-4f, "tier " + tierAndPercent[0] + " seed " + seed);
-                prefixCounts.add(prefixes);
+                for (RolledModifier prefix : prefixes) {
+                    List<AppliedEffect> rewards = ChartPrefixRewards.rewards(prefix.modifierId(), tier);
+                    assertFalse(rewards.isEmpty(), prefix.modifierId() + " at tier " + tier);
+                    assertTrue(applied.containsAll(rewards), "tier " + tier + " seed " + seed + ": " + applied);
+                }
+                prefixCounts.add((long) prefixes.size());
             }
         }
         assertTrue(prefixCounts.stream().anyMatch(count -> count > 1), prefixCounts.toString());
     }
 
     @Test
-    void aRollWhoseModifierLeftThePoolFallsBackToTheCatalogueOrIsDroppedAndFlagged() {
+    void aRollWhoseModifierLeftThePoolFallsBackToTheCatalogueOrIsDroppedAndFlagged() throws Exception {
+        ChartPrefixRewards.register(ProjectFiles.csvRows(ChartPrefixRewards.PATH));
         List<RolledModifier> movedExplicits = List.of(new RolledModifier("CHART_BOSS_SIZE_PERCENT", ModifierSlot.PREFIX,
                 List.of(new RolledLine("CHART_BOSS_SIZE_PERCENT", 100f))));
         StarChart moved = (StarChart) Item.create(null, UNGATED, 4L, movedExplicits, ItemTraits.ofTier(12));
@@ -562,7 +570,7 @@ class StarChartTest {
 
         assertNull(moved.definition().poolEntryFor("CHART_BOSS_SIZE_PERCENT"));
         assertTrue(movedContext.applied().contains(new AppliedEffect(ChartModifier.CHART_BOSS_SIZE_PERCENT, 135f)), movedContext.applied().toString());
-        assertTrue(movedContext.applied().contains(new AppliedEffect(ChartModifier.CHART_QUANTITY_PERCENT, 25f)), movedContext.applied().toString());
+        assertTrue(movedContext.applied().contains(new AppliedEffect(ChartModifier.CHART_STAR_CHART_PERCENT, 42f)), movedContext.applied().toString());
         assertTrue(moved.effectLines().get(0).plain().contains("135%"), moved.effectLines().toString());
 
         List<RolledModifier> orphanExplicits = List.of(new RolledModifier("CHART_REMOVED_MODIFIER", ModifierSlot.SUFFIX,

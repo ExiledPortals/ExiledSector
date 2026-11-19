@@ -8,6 +8,7 @@ import exiledsector.charts.effect.ChartBattleRules;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.effect.ChartFactionEffect;
 import exiledsector.charts.effect.ChartFleetStat;
+import exiledsector.charts.effect.ChartPrefixRewards;
 import exiledsector.compat.FirstFailureLog;
 import exiledsector.items.Item;
 import exiledsector.items.drop.ItemChances;
@@ -18,7 +19,6 @@ import exiledsector.modifiers.ModifierEffect;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierSlot;
 import exiledsector.modifiers.ScaleContext;
-import exiledsector.modifiers.TierGroup;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -39,7 +39,6 @@ public final class ChartGenContext {
     static final float MAX_SENSOR_RANGE_MULT = 2f;
     public static final float PERCENT = 100f;
     static final float QUANTITY_PERCENT_PER_QUALITY = 1f;
-    static final Map<TierGroup, Float> QUANTITY_PERCENT_PER_PREFIX = Map.of(TierGroup.LOW, 5f, TierGroup.MID, 15f, TierGroup.HIGH, 25f);
     private static final FirstFailureLog UNRESOLVED_ROLLS = FirstFailureLog.warnings(Logger.getLogger(ChartGenContext.class));
 
     public record AppliedEffect(ChartModifier effect, float value) {
@@ -160,21 +159,13 @@ public final class ChartGenContext {
                 }
             }
         }
-        long prefixes = chart.explicits().stream().filter(modifier -> modifier.slot() == ModifierSlot.PREFIX).count();
-        float prefixQuantityPercent = prefixes * quantityPercentPerPrefix(chart.tier());
-        if (prefixQuantityPercent > 0f) {
-            applied.add(new AppliedEffect(ChartModifier.CHART_QUANTITY_PERCENT, prefixQuantityPercent));
-        }
+        chart.explicits().stream().filter(modifier -> modifier.slot() == ModifierSlot.PREFIX)
+                .forEach(prefix -> applied.addAll(ChartPrefixRewards.rewards(prefix.modifierId(), chart.tier())));
         int chartQuantity = chart instanceof StarChart starChart ? starChart.quantity() : 0;
         if (applied.isEmpty() && chartQuantity <= 0 && factionId == null) {
             return NONE;
         }
         return new ChartGenContext(applied, List.of(), chartQuantity, factionId);
-    }
-
-    static float quantityPercentPerPrefix(int tier) {
-        TierGroup group = TierGroup.forTier(tier);
-        return group == null ? 0f : QUANTITY_PERCENT_PER_PREFIX.get(group);
     }
 
     private static void reportUnresolved(Item chart, ChartModifier effect) {

@@ -49,7 +49,7 @@ Small nodes that make up the highways between volumes. They change with distance
 | Further | `travel_catalysts` | Atlas Catalysts | 2% increased quantity of Atlas Catalysts found in the system (`CHART_CATALYST_PERCENT`) |
 | Very far | `travel_chart_modifier_effect` | Star Chart Modifier Effect | 2% increased effect of Star Chart modifiers (`CHART_MODIFIER_EFFECT_PERCENT`) |
 
-Increased effect of Star Chart modifiers scales every implicit and explicit modifier on a chart once it is opened, so 10% increased shield damage taken becomes 15% with 50% increased effect. Each prefix's hidden item quantity bonus is scaled too, so a prefix is a downside plus a loot bonus that grow together. The bonus still shows only in the totals at the top of the chart tooltip.
+Increased effect of Star Chart modifiers scales every implicit and explicit modifier on a chart once it is opened, so 10% increased shield damage taken becomes 15% with 50% increased effect. Each prefix's hidden reward (set per prefix in `star_chart_prefix_rewards.csv`) is scaled too, so a prefix is a downside plus a reward that grow together. The bonus still shows only in the totals at the top of the chart tooltip.
 
 ### Ideas
 
