@@ -104,21 +104,23 @@ Notables:
 
 ### Dense Nebula (`dense_nebula`)
 
-Status: building on branch `atlas-nodes/dense-nebula` since 2026-11-19, wiring only: the types go in `atlas_tree_types.json` without placement on the tree.
+Status: built on branch `atlas-nodes/dense-nebula` 2026-11-19, wiring only (not placed on the tree).
 
 Reward: Settling Dust, a stack for each battle won in the system, each giving 10% increased boss star charts, up to 10 stacks.
 
+The stacks are one run-level count in `SettlingDust` (`anomaly`), stored in the run's anomaly state under `settling_dust.stacks`. `ChartAnomalies.battleWon` adds a stack after the anomalies' own battle hooks, and the boss's Star Charts, Dust Trails, the chart intel's dust line and Settled Shafts all read that count. The Settling Dust lines are `ChartModifier` anomaly tuning lines read through `SettlingDustTuning`.
+
 Small nodes:
 
-- The atlas chance node.
-- Settling Dust Effect: "Settling Dust in your Star Charts has 20% increased effect" (new, scales `STAR_CHART_PERCENT_PER_DUST` and Dust Trails' per-stack quantity).
-- Settling Dust Stacks: "+1 to maximum Settling Dust stacks in your Star Charts" (new, adds to `MAX_DUST`).
+- The atlas chance node. Built: type `dense_nebula_atlas_chance` (`ATLAS_DENSE_NEBULA_CHANCE_PERCENT`), an `AtlasModifier` carrying its anomaly id; `AtlasData.rules(AtlasEffects)` multiplies that anomaly's chance rule (its own row, or the shared anomaly row) by the increase, base chance, growth and cap alike. Black Hole and Neutron Star need only their own `AtlasModifier` constant.
+- Settling Dust Effect: "Settling Dust in your Star Charts has 20% increased effect" (new, scales `STAR_CHART_PERCENT_PER_DUST` and Dust Trails' per-stack quantity). Built: type `settling_dust_effect` (`CHART_SETTLING_DUST_EFFECT_PERCENT`), read in `SettlingDust.bossStarChartPercent` and `quantityPercent`. It doesn't scale Settled Shafts, which counts stacks.
+- Settling Dust Stacks: "+1 to maximum Settling Dust stacks in your Star Charts" (new, adds to `MAX_DUST`). Built: type `settling_dust_stacks` (`CHART_SETTLING_DUST_MAX_STACKS`), adding to `SettlingDust.BASE_MAX_STACKS`.
 
 Notables:
 
-- Dust Trails: "Settling Dust in your Star Charts also grants 5% increased quantity of items found for each stack" (new). Settling Dust Effect scales the 5% as it scales the boss's Star Charts.
-- Long Settling: "+5 to maximum Settling Dust stacks in your Star Charts" and "Enemy fleets in Dense Nebulae in your Star Charts have 3% increased size for each Settling Dust stack".
-- Ionized Dust (Magnetic Storm, Storm Front): "Battles won in your Star Charts with a Magnetic Storm or Storm Front grant Settling Dust stacks" (new). Those charts gather Settling Dust as a Dense Nebula does, and every Settling Dust line applies there. A chart with a Dense Nebula too still has one count of stacks, so a battle adds one stack, not two. The stacks live on the Dense Nebula's run state today (`DenseNebula.dust`), read only when the nebula is in the run, so they move to a run count that any of the three anomalies can add to and that chart intel shows in all three.
+- Dust Trails: "Settling Dust in your Star Charts also grants 5% increased quantity of items found for each stack" (new). Settling Dust Effect scales the 5% as it scales the boss's Star Charts. Built: type `dust_trails` (`CHART_SETTLING_DUST_QUANTITY_PERCENT`), added as item quantity to the run context in `ChartRunEffects.contextOf`, which refreshes when the stack count changes, so every loot roll, salvage and the chart's totals see it.
+- Long Settling: "+5 to maximum Settling Dust stacks in your Star Charts" and "Enemy fleets in Dense Nebulae in your Star Charts have 3% increased size for each Settling Dust stack". Built: type `long_settling` (`CHART_SETTLING_DUST_MAX_STACKS`, `CHART_SETTLING_DUST_FLEET_SIZE_PERCENT`). The tree line reads "Enemy fleets in your Star Charts have 3% increased fleet size for each Settling Dust stack", since with Ionized Dust the storm charts gather stacks too. Fleets are generated before any stack exists, so `SettlingDustFleets` grows the live ones instead: each time a stack is added, every hostile, unlooted, non-boss chart fleet in the system gains copies of its own non-flagship ships until it is the stack total's share larger than it started, and its ledger's starting fleet and deployment points rise with it.
+- Ionized Dust (Magnetic Storm, Storm Front): "Battles won in your Star Charts with a Magnetic Storm or Storm Front grant Settling Dust stacks" (new). Those charts gather Settling Dust as a Dense Nebula does, and every Settling Dust line applies there. A chart with a Dense Nebula too still has one count of stacks, so a battle adds one stack, not two. The stacks live on the Dense Nebula's run state today (`DenseNebula.dust`), read only when the nebula is in the run, so they move to a run count that any of the three anomalies can add to and that chart intel shows in all three. Built: type `ionized_dust` (`CHART_SETTLING_DUST_IONIZED`), read in `SettlingDust.gathersIn`; the dust code moved out of `DenseNebula` into `SettlingDust`, and the Magnetic Storm and Storm Front classes are unchanged.
 
 ### Asteroid Storm (`asteroid_storm`)
 
@@ -325,7 +327,7 @@ More notables:
 - Widened Bores: "Cruisers can enter open shafts in your Star Charts" and "Fleets guarding open shafts in your Star Charts drop 1 additional inhibitor" (new, `ExcavationRules.MAX_SHIP_SIZE` 3 for both sides). With Needle Bores allocated too, only frigates go down, and both nodes' additional inhibitors apply. Built: type `widened_bores` (`CHART_EXCAVATION_CRUISERS_ALLOWED`), as Needle Bores.
 - Pitch Black: "Ships fighting in open shafts in your Star Charts have 70% reduced vision range" and "50% increased quantity of inhibitors from open shafts in your Star Charts" (new, the sight radius of every ship on both sides, set by the shaft's battle plugin, `ExcavationBattlePlugin`). Built: type `pitch_black` (`CHART_EXCAVATION_SIGHT_RADIUS_PERCENT`, `CHART_EXCAVATION_OPEN_SHAFT_INHIBITOR_PERCENT`), `ExcavationBattlePlugin.darken`.
 - Infested Bolt-Holes: "Fleets guarding open shafts in your Star Charts with Anomalous Debris can be corrupted with a Corrupted Nanoswarm" and "Corrupted guardian fleets in your Star Charts drop an engram and 1 additional inhibitor" (new). The site dialog offers the corruption before the fight, as the anomalous fleets' dialog does (`anomaly.debris`). Built: type `infested_bolt_holes` (`CHART_EXCAVATION_CORRUPTIBLE_GUARDIANS`, `CHART_EXCAVATION_CORRUPTED_GUARDIAN_INHIBITORS`), `ExcavationCorruption`. The debris fleets' corruption only works on dormant fleets, so the guardian fleet is built corrupted instead (`ExcavationRules.CORRUPTED_SIZE_MULT` and `CORRUPTED_STRENGTH_BONUS_PERCENT`, matching the debris placeholders), offered for either cavern before its fleet is first met, and its engram drops once (`ExcavationLoot.engramOnce`).
-- Settled Shafts: "Each Settling Dust stack in your Star Charts grants 30% increased quantity of inhibitors found at Excavation Sites" (new, read through the Dense Nebula's stacks, so the nebula's battles come before the dig). Built: type `settled_shafts` (`CHART_EXCAVATION_INHIBITOR_PERCENT_PER_DUST`), `DenseNebula.dust` read in `ExcavationLoot`.
+- Settled Shafts: "Each Settling Dust stack in your Star Charts grants 30% increased quantity of inhibitors found at Excavation Sites" (new, read through the Dense Nebula's stacks, so the nebula's battles come before the dig). Built: type `settled_shafts` (`CHART_EXCAVATION_INHIBITOR_PERCENT_PER_DUST`), `SettlingDust.stacks` read in `ExcavationLoot` (`DenseNebula.dust` until the Dense Nebula nodes moved the count to the run, so Ionized Dust's stacks count too).
 
 ### Storm Front (`storm_front`)
 

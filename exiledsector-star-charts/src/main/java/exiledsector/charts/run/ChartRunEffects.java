@@ -4,6 +4,8 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.anomaly.SettlingDust;
+import exiledsector.charts.anomaly.SettlingDustTuning;
 import exiledsector.charts.effect.ChartPlayerModifiers;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.items.Item;
@@ -21,6 +23,7 @@ public final class ChartRunEffects {
     private static String contextNodeData;
     private static String contextTreeLinesData;
     private static String contextAnomaliesData;
+    private static int contextDustStacks;
     private static ChartGenContext context = ChartGenContext.none();
 
     private ChartRunEffects() {
@@ -40,14 +43,17 @@ public final class ChartRunEffects {
             return ChartGenContext.none();
         }
         if (run != contextRun || !Objects.equals(run.chartData(), contextChartData) || !Objects.equals(run.atlasNodeData(), contextNodeData)
-                || !Objects.equals(run.atlasTreeLinesData(), contextTreeLinesData) || !Objects.equals(run.anomaliesData(), contextAnomaliesData)) {
-            context = ChartGenContext.from(chartOf(run)).withAtlasNode(run.atlasNode()).withEffects(run.atlasTreeLines())
+                || !Objects.equals(run.atlasTreeLinesData(), contextTreeLinesData) || !Objects.equals(run.anomaliesData(), contextAnomaliesData)
+                || SettlingDust.storedStacks(run) != contextDustStacks) {
+            ChartGenContext base = ChartGenContext.from(chartOf(run)).withAtlasNode(run.atlasNode()).withEffects(run.atlasTreeLines())
                     .withAnomalyEffects(run.anomalyIds());
+            context = base.plusQuantityPercent(SettlingDust.quantityPercent(run, SettlingDustTuning.of(base)));
             contextRun = run;
             contextChartData = run.chartData();
             contextNodeData = run.atlasNodeData();
             contextTreeLinesData = run.atlasTreeLinesData();
             contextAnomaliesData = run.anomaliesData();
+            contextDustStacks = SettlingDust.storedStacks(run);
         }
         return context;
     }

@@ -1,5 +1,6 @@
 package exiledsector.charts.atlas;
 
+import exiledsector.charts.anomaly.DenseNebula;
 import exiledsector.data.EnumKeys;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
@@ -7,18 +8,33 @@ import exiledsector.modifiers.ModifierEffect;
 
 public enum AtlasModifier implements ModifierEffect {
 
-    ATLAS_VISIBILITY_LANES(true);
+    ATLAS_VISIBILITY_LANES(true),
+    ATLAS_DENSE_NEBULA_CHANCE_PERCENT(new AtlasChance(DenseNebula.ANOMALY_ID));
 
     static final String KEY_PREFIX = "atlas.modifier.";
 
+    private record AtlasChance(String anomalyId) {
+    }
+
     private final boolean counted;
+    private final String atlasChanceAnomalyId;
 
     AtlasModifier(boolean counted) {
         this.counted = counted;
+        this.atlasChanceAnomalyId = null;
+    }
+
+    AtlasModifier(AtlasChance atlasChance) {
+        this.counted = false;
+        this.atlasChanceAnomalyId = atlasChance.anomalyId();
     }
 
     public boolean isCounted() {
         return counted;
+    }
+
+    public String atlasChanceAnomalyId() {
+        return atlasChanceAnomalyId;
     }
 
     public String key() {

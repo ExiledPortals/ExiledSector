@@ -24,7 +24,7 @@ public final class AtlasRuntime {
         }
         AtlasEffects effects = AtlasTree.atlasEffects(state);
         if (!sameInputs || !effects.equals(cachedGenerator.effects())) {
-            cachedGenerator = new AtlasGenerator(state.seed(), AtlasData.rules(), unlocks, effects, state);
+            cachedGenerator = new AtlasGenerator(state.seed(), AtlasData.rules(effects), unlocks, effects, state);
             cachedState = state;
             cachedFlags = unlocks.unlockedFlags();
         }

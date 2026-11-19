@@ -79,11 +79,16 @@ public final class AtlasData {
     }
 
     public static AtlasRules rules() {
+        return rules(AtlasEffects.NONE);
+    }
+
+    public static AtlasRules rules(AtlasEffects effects) {
         Map<String, Float> factionWeights = new LinkedHashMap<>();
         for (ChartFaction faction : ChartFactions.all()) {
             factionWeights.put(faction.factionId(), faction.weight());
         }
         Map<String, AtlasAnomalyChance> rules = anomalyChances;
+        AtlasAnomalyChance sharedChance = rule(rules, ANOMALY_MARKER);
         List<AtlasAnomalyCandidate> anomalies = new ArrayList<>();
         for (ChartAnomalies.Definition definition : ChartAnomalies.definitions()) {
             ChartAnomaly anomaly = ChartAnomalies.byId(definition.id());
@@ -91,10 +96,17 @@ public final class AtlasData {
                 AtlasRule rule = AtlasRule.of(anomaly);
                 anomalies.add(new AtlasAnomalyCandidate(definition.id(), definition.weight(), definition.requiredMod(), definition.replacesStar(),
                         definition.excludes(), (traits, weight) -> rule.fitsAt(traits) ? rule.atlasWeight(traits, weight) : 0f,
-                        rules.get(definition.id()), definition.biomes()));
+                        increasedChance(rules.get(definition.id()), sharedChance, effects.atlasChancePercent(definition.id())), definition.biomes()));
             }
         }
-        return new AtlasRules(regions, layoutWeights, factionWeights, rule(rules, VOID_MARKER), rule(rules, ANOMALY_MARKER), specials, anomalies);
+        return new AtlasRules(regions, layoutWeights, factionWeights, rule(rules, VOID_MARKER), sharedChance, specials, anomalies);
+    }
+
+    static AtlasAnomalyChance increasedChance(AtlasAnomalyChance ownChance, AtlasAnomalyChance sharedChance, float increasedPercent) {
+        if (increasedPercent == 0f) {
+            return ownChance;
+        }
+        return (ownChance == null ? sharedChance : ownChance).increasedBy(increasedPercent);
     }
 
     public static Color regionTint(String regionId) {
