@@ -12,6 +12,7 @@ import exiledsector.ui.belt.RingBeltRenderer;
 import exiledsector.ui.decoration.AtmosphereRing;
 import exiledsector.ui.decoration.PlanetSphere;
 import exiledsector.ui.decoration.UnitSphere;
+import exiledsector.ui.util.ColorUtil;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.HoloShapes;
 import exiledsector.ui.util.SpriteDraw;
@@ -19,7 +20,9 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.awt.Color;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 final class AtlasBodyPainter {
 
@@ -67,6 +70,7 @@ final class AtlasBodyPainter {
     private static final float HORIZON_ALPHA = 0.18f;
     private static final float HALO_HALF_SIZE = 5f;
     private static final float HALO_ALPHA = 0.55f;
+    private static final float STAR_CORONA_MAX_SHARE = 2.2f;
 
     private final SpriteCache sprites = new SpriteCache(AtlasBodyPainter.class);
     private final UnitSphere sphere = new UnitSphere(SPHERE_DETAIL);
@@ -74,8 +78,11 @@ final class AtlasBodyPainter {
     private final CategorySprite dustRings = new CategorySprite("misc", "rings_dust0");
     private final Vector2f bandCentre = new Vector2f();
     private final Vector3f siteOffset = new Vector3f();
+    private final AtlasStormPainter storms = new AtlasStormPainter();
+    private final Map<String, Color> tintsByHex = new HashMap<>();
 
-    record Placement(float screenX, float screenY, float screenRadius, float headingDegrees, float spinDegrees, float seedDegrees) {
+    record Placement(float screenX, float screenY, float screenRadius, float headingDegrees, float spinDegrees, float seedDegrees,
+                     float stormSeconds) {
     }
 
     void paint(AtlasBodyArt art, Color colour, Color siteLight, Placement placement, Lighting lighting, float seconds, float alpha) {
@@ -83,7 +90,12 @@ final class AtlasBodyPainter {
             return;
         }
         switch (art.kind()) {
-            case PLANET -> paintPlanet(art, colour, placement, lighting, seconds, alpha);
+            case PLANET -> {
+                paintPlanet(art, colour, placement, lighting, seconds, alpha);
+                storms.paintOnPlanet(art.storm(), colour, placement, lighting, seconds, alpha);
+            }
+            case SWARMED_PLANET -> paintPlanet(art, colour, placement, lighting, seconds, alpha);
+            case STORM_CELL -> storms.paintCell(colour, placement, lighting, seconds, alpha);
             case SPRITE -> paintSprite(firstPath(art), placement.screenX(), placement.screenY(), placement.screenRadius(), angleOf(art, placement),
                     lighting, alpha);
             case BINARY -> paintBinary(art, placement, lighting, seconds, alpha);
@@ -99,7 +111,7 @@ final class AtlasBodyPainter {
 
     private void paintSiteLight(AtlasBodyArt art, Color light, Placement placement, Lighting lighting, float seconds, float alpha) {
         float radius = placement.screenRadius();
-        PlanetSpecAPI spec = art.kind() == AtlasBodyArt.Kind.PLANET ? PlanetSpecs.byType(art.planetType()) : null;
+        PlanetSpecAPI spec = art.isPlanet() ? PlanetSpecs.byType(art.planetType()) : null;
         float offsetX;
         float offsetY;
         float facing;
@@ -165,7 +177,7 @@ final class AtlasBodyPainter {
         return art.facing() == AtlasBodyArt.Facing.TRAVEL ? placement.headingDegrees() + SPRITE_FACING_OFFSET : placement.spinDegrees();
     }
 
-    private static Color tintFor(Lighting lighting, Color litColour) {
+    static Color tintFor(Lighting lighting, Color litColour) {
         return switch (lighting) {
             case LIT -> litColour;
             case AVAILABLE -> AVAILABLE_TINT;
@@ -187,8 +199,12 @@ final class AtlasBodyPainter {
         }
         float radius = placement.screenRadius();
         float turn = placement.spinDegrees() + seconds * PLANET_TURN_DEGREES_PER_SECOND;
-        PlanetSphere.draw(sphere, texture, spec, placement.screenX(), placement.screenY(), radius, turn, tintFor(lighting, spec.getPlanetColor()),
-                alpha, 0f, 0f);
+        Color litTint = art.tintColour() == null ? spec.getPlanetColor()
+                : tintsByHex.computeIfAbsent(art.tintColour(), hex -> ColorUtil.parseHexColor(hex, Color.WHITE));
+        PlanetSphere.draw(sphere, texture, spec, placement.screenX(), placement.screenY(), radius, turn, tintFor(lighting, litTint), alpha, 0f, 0f);
+        if (spec.isStar()) {
+            paintStarCorona(spec, placement, lighting, alpha);
+        }
         SpriteAPI atmosphere = atmosphereTexture.get();
         if (lighting == Lighting.LIT && atmosphere != null) {
             float thickness = radius * Math.max(spec.getAtmosphereThickness(), ATMOSPHERE_MIN_SHARE);
@@ -196,6 +212,21 @@ final class AtlasBodyPainter {
             Color atmosphereColour = spec.getAtmosphereThickness() > 0f ? spec.getAtmosphereColor() : colour;
             AtmosphereRing.draw(atmosphere, placement.screenX(), placement.screenY(), innerRadius, innerRadius + thickness, atmosphereColour, alpha);
         }
+    }
+
+    private void paintStarCorona(PlanetSpecAPI spec, Placement placement, Lighting lighting, float alpha) {
+        String coronaPath = spec.getCoronaTexture();
+        if (coronaPath == null || coronaPath.isEmpty()) {
+            return;
+        }
+        float glow = switch (lighting) {
+            case LIT -> 1f;
+            case AVAILABLE -> 0.5f;
+            case DULL -> 0.25f;
+        };
+        float corona = placement.screenRadius() * Math.min(spec.getCoronaSize(), STAR_CORONA_MAX_SHARE) * 2f;
+        SpriteDraw.drawAdditiveAtCenter(sprites, coronaPath, placement.screenX(), placement.screenY(), corona, corona,
+                tintFor(lighting, spec.getCoronaColor()), alpha * glow);
     }
 
     private void paintBlackHole(SpriteAPI texture, PlanetSpecAPI spec, Placement placement, Lighting lighting, float seconds, float alpha) {

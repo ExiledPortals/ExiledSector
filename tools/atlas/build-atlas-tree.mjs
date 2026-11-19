@@ -47,6 +47,19 @@ const DORMANT_HULLS = {
   derelict: { lead: ['guardian', 'rampart', 'bastillon', 'berserker'], rest: ['picket', 'sentry', 'warden', 'defender'] },
 };
 const DORMANT_FACTION = { redacted_sleepers: 'remnant', threatening_sleepers: 'threat', veiled_sleepers: 'dweller' };
+const STORM_GIANT_TINT = '#ffc4ee';
+const STORM_GIANT_SIZE = 150;
+const REDACTED_FRIGATES = ['glimmer', 'lumen', 'glimmer', 'lumen', 'glimmer'];
+const stormGiant = (planet, storm) => ({ kind: 'planet', planet, tint: STORM_GIANT_TINT, storm, size: STORM_GIANT_SIZE });
+const STORM_NOTABLE_ART = {
+  lightning_rod: () => stormGiant('gas_giant', 'lightning_rod'),
+  supercell: () => stormGiant('gas_giant', 'supercell'),
+  eye_of_the_storm: () => stormGiant('ice_giant', 'eye'),
+  redacted_front: () => ({ kind: 'swarmed_planet', planet: 'gas_giant', tint: STORM_GIANT_TINT, hulls: REDACTED_FRIGATES, size: STORM_GIANT_SIZE }),
+  captured_front: () => stormGiant('ice_giant', 'captured'),
+  solar_front: () => ({ kind: 'planet', planet: 'star_yellow', storm: 'solar', size: 110 }),
+  thunder_duel: () => stormGiant('gas_giant', 'duel'),
+};
 
 function seededRandom(seed) {
   let state = seed >>> 0;
@@ -134,6 +147,13 @@ const ANOMALIES = {
     small: () => ({ kind: 'sprite', path: pick(['graphics/ships/wolf/wolf_base.png', 'graphics/ships/lasher/lasher_base.png']), size: 34, facing: 'travel' }),
     notable: () => ({ kind: 'sprite', path: pick(['graphics/stations/station_side01.png', 'graphics/stations/station_side02.png', 'graphics/stations/station_side03.png', 'graphics/stations/station_side04.png']), size: 116, facing: 'spin' }),
   },
+  storm_front: {
+    colour: '#ff28d2',
+    chance: 'storm_front_chance',
+    others: ['storm_item_quantity', 'storm_front_size'],
+    small: () => ({ kind: 'storm_cell', size: 40 }),
+    notable: (notableType) => STORM_NOTABLE_ART[notableType]?.() ?? stormGiant('gas_giant', 'generic'),
+  },
 };
 
 const NOTABLE_ART = {
@@ -167,6 +187,8 @@ const ANOMALY_OF = {
   restless_sleepers: 'anomalous_debris', silent_choir: 'anomalous_debris',
   officers_ledger: 'listening_post', stolen_charts: 'listening_post', smash_and_grab: 'listening_post', hair_trigger: 'listening_post',
   garrison_pickets: 'listening_post', fortified_depot: 'listening_post', hunting_party: 'listening_post',
+  lightning_rod: 'storm_front', supercell: 'storm_front', eye_of_the_storm: 'storm_front', redacted_front: 'storm_front',
+  captured_front: 'storm_front', solar_front: 'storm_front', thunder_duel: 'storm_front',
 };
 
 const RINGS = [
