@@ -73,6 +73,8 @@ final class AtlasTreeView {
     private final TexturedQuadBatch coronaBatch = new TexturedQuadBatch();
     private final int[] wheelMembers;
     private final int[] wheelAllocated;
+    private final float[] stormSeconds;
+    private final AtlasBodyPainter.Lighting[] lightings;
     private boolean[] allocated = new boolean[0];
     private double elapsedSeconds;
 
@@ -86,6 +88,9 @@ final class AtlasTreeView {
         this.shipGroups = new AtlasShipGroup[count];
         this.wheelMembers = new int[count];
         this.wheelAllocated = new int[count];
+        this.stormSeconds = new float[count];
+        this.lightings = new AtlasBodyPainter.Lighting[count];
+        Arrays.fill(lightings, AtlasBodyPainter.Lighting.DULL);
         for (Body body : bodies.bodies()) {
             colours[body.index()] = parseColour(body.colour(), DEFAULT_COLOUR);
             siteLights[body.index()] = parseColour(body.art().lightColour(), null);
@@ -122,6 +127,7 @@ final class AtlasTreeView {
             case DERELICTS -> AtlasShipGroup.Mode.DORMANT;
             case SHROUDED -> AtlasShipGroup.Mode.SWIMMING;
             case STATION -> AtlasShipGroup.Mode.STATION;
+            case SWARMED_PLANET -> AtlasShipGroup.Mode.CIRCLING;
             default -> null;
         };
         return mode == null ? null : new AtlasShipGroup(mode, art.hullIds(), art.size(), body.nodeId().hashCode());
@@ -142,9 +148,12 @@ final class AtlasTreeView {
         elapsedSeconds = (elapsedSeconds + amount) % ANIMATION_PERIOD_SECONDS;
         ringArt.advance(amount);
         for (Body body : bodies.bodies()) {
-            AtlasShipGroup group = shipGroups[body.index()];
+            int index = body.index();
+            float pace = StormWeather.pace(lightings[index]);
+            stormSeconds[index] = (float) ((stormSeconds[index] + amount * pace) % ANIMATION_PERIOD_SECONDS);
+            AtlasShipGroup group = shipGroups[index];
             if (group != null) {
-                group.advance(amount, body.art().heading());
+                group.advance(body.art().kind() == AtlasBodyArt.Kind.SWARMED_PLANET ? amount * pace : amount, body.art().heading());
             }
         }
     }
@@ -314,7 +323,7 @@ final class AtlasTreeView {
     }
 
     private static float spinSpeed(Body body) {
-        float share = body.art().kind() == AtlasBodyArt.Kind.PLANET ? 1f : OBJECT_SPIN_SHARE;
+        float share = body.art().isPlanet() ? 1f : OBJECT_SPIN_SHARE;
         return SPIN_DEGREES_PER_SECOND * share * body.art().spinRate() * (body.index() % 2 == 0 ? 1f : -1f);
     }
 
@@ -330,9 +339,11 @@ final class AtlasTreeView {
         boolean available = !lit && states.allocatable(body.nodeId());
         AtlasBodyPainter.Lighting lighting = lit ? AtlasBodyPainter.Lighting.LIT
                 : available ? AtlasBodyPainter.Lighting.AVAILABLE : AtlasBodyPainter.Lighting.DULL;
+        lightings[index] = lighting;
         float heading = body.art().heading();
         float spin = spinSeeds[index] + seconds * spinSpeed(body);
-        AtlasBodyPainter.Placement placement = new AtlasBodyPainter.Placement(screenX, screenY, screenRadius, heading, spin, spinSeeds[index]);
+        AtlasBodyPainter.Placement placement = new AtlasBodyPainter.Placement(screenX, screenY, screenRadius, heading, spin, spinSeeds[index],
+                stormSeconds[index]);
         painter.paint(body.art(), colours[index], siteLights[index], placement, lighting, seconds, alpha);
         AtlasShipGroup group = shipGroups[index];
         if (group != null) {
