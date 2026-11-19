@@ -15,6 +15,9 @@ public final class StormRules {
     static final float STRIKE_EMP = 800f;
     static final float TIER_STEP = 0.1f;
     static final float LOOT_QUANTITY_PERCENT = 50f;
+    static final float CAPTURED_ORBIT_DAYS = 30f;
+    static final float CAPTURED_INNER_GAP = 500f;
+    static final float CAPTURED_OUTER_MARGIN = 1000f;
 
     private StormRules() {
     }
@@ -50,6 +53,14 @@ public final class StormRules {
             case CAPITAL_SHIP -> 4f;
             default -> 0f;
         };
+    }
+
+    public static int redactedFrigatesFewest(int most) {
+        return Math.max(0, (most + 1) / 2);
+    }
+
+    static float heldSlowShare(float reducedSpeedPercent) {
+        return Math.min(1f, reducedSpeedPercent / 100f);
     }
 
     public static float lootQuantityPercent(ChartGenContext context) {

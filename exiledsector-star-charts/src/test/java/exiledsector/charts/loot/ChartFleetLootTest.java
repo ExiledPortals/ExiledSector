@@ -22,6 +22,7 @@ import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.DenseNebula;
+import exiledsector.charts.anomaly.SettlingDust;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.charts.run.ChartRuns;
@@ -336,8 +337,8 @@ class ChartFleetLootTest {
         run.recordContent(new ChartContent(6, "hegemony", BOSS_ID, 4, 6, List.of(DenseNebula.ANOMALY_ID)));
         run.recordArrival();
         ChartRuns.store(run);
-        for (int battle = 0; battle < DenseNebula.MAX_DUST; battle++) {
-            DenseNebula.INSTANCE.battleWon(new AnomalyRun(run, null));
+        for (int battle = 0; battle < SettlingDust.BASE_MAX_STACKS; battle++) {
+            SettlingDust.battleWon(new AnomalyRun(run, null));
         }
 
         Loot guardLoot = rollAlone(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 100f), run,

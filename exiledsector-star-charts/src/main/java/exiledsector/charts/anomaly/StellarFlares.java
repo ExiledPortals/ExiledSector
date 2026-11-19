@@ -11,7 +11,6 @@ import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.effect.ChartModifier;
-import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.layout.ChartLayoutGenerator;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.items.ItemData;
@@ -23,7 +22,6 @@ public final class StellarFlares implements LayoutShaper, ContentPlacer, AtlasRu
 
     public static final String ANOMALY_ID = "stellar_flares";
     public static final StellarFlares INSTANCE = new StellarFlares();
-    public static final String HULL_ITEM_KEY = ChartModifier.CHART_STELLAR_FLARES_HULL_ITEM_PERCENT.anomalyTuningKey();
     public static final String FLARE_FREQUENCY_KEY = ChartModifier.CHART_STELLAR_FLARES_FLARE_FREQUENCY_MULT.anomalyTuningKey();
     static final float FLARE_CHANCE = 1f;
 
@@ -60,12 +58,6 @@ public final class StellarFlares implements LayoutShaper, ContentPlacer, AtlasRu
         if (!stars.isEmpty()) {
             site.addScript(new FlareTempo(site.runId(), site.tier(), site.system(), stars, moreOftenPercent));
         }
-    }
-
-    @Override
-    public List<ChartGenContext.AppliedEffect> effectsInRun(ChartGenContext context) {
-        float hullItemPercent = context.anomalyPercent(HULL_ITEM_KEY);
-        return hullItemPercent == 0f ? List.of() : List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_ITEM_PERCENT, hullItemPercent));
     }
 
     @Override

@@ -1,5 +1,6 @@
 package exiledsector.charts.anomaly;
 
+import exiledsector.charts.anomaly.magneticstorm.MagneticStormTuning;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
@@ -33,8 +34,12 @@ public final class FlareLuck {
             return Luck.NONE;
         }
         ChartGenContext tuning = ChartGenContext.orNone(context);
-        int luckyModifiers = REWARD_LUCKY_MODIFIERS + count(tuning, LUCKY_MODIFIERS_KEY);
+        int luckyModifiers = REWARD_LUCKY_MODIFIERS + count(tuning, LUCKY_MODIFIERS_KEY) + geomagneticSurgeModifiers(tuning, anomalyIds);
         return new Luck(luckyModifiers, isOn(tuning, ALL_LUCKY_KEY), isOn(tuning, LUCKY_IMPLICITS_KEY), rolls(tuning, anomalyIds));
+    }
+
+    private static int geomagneticSurgeModifiers(ChartGenContext tuning, Collection<String> anomalyIds) {
+        return anomalyIds.contains(MagneticStorm.ANOMALY_ID) ? MagneticStormTuning.of(tuning).extraLuckyModifiers() : 0;
     }
 
     public static int rolls(ChartRun run) {

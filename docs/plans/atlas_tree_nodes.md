@@ -104,21 +104,23 @@ Notables:
 
 ### Dense Nebula (`dense_nebula`)
 
-Status: building on branch `atlas-nodes/dense-nebula` since 2026-11-19, wiring only: the types go in `atlas_tree_types.json` without placement on the tree.
+Status: built on branch `atlas-nodes/dense-nebula` 2026-11-19, wiring only (not placed on the tree).
 
 Reward: Settling Dust, a stack for each battle won in the system, each giving 10% increased boss star charts, up to 10 stacks.
 
+The stacks are one run-level count in `SettlingDust` (`anomaly`), stored in the run's anomaly state under `settling_dust.stacks`. `ChartAnomalies.battleWon` adds a stack after the anomalies' own battle hooks, and the boss's Star Charts, Dust Trails, the chart intel's dust line and Settled Shafts all read that count. The Settling Dust lines are `ChartModifier` anomaly tuning lines read through `SettlingDustTuning`.
+
 Small nodes:
 
-- The atlas chance node.
-- Settling Dust Effect: "Settling Dust in your Star Charts has 20% increased effect" (new, scales `STAR_CHART_PERCENT_PER_DUST` and Dust Trails' per-stack quantity).
-- Settling Dust Stacks: "+1 to maximum Settling Dust stacks in your Star Charts" (new, adds to `MAX_DUST`).
+- The atlas chance node. Built: type `dense_nebula_atlas_chance` (`ATLAS_DENSE_NEBULA_CHANCE_PERCENT`), an `AtlasModifier` carrying its anomaly id; `AtlasData.rules(AtlasEffects)` multiplies that anomaly's chance rule (its own row, or the shared anomaly row) by the increase, base chance, growth and cap alike. Black Hole and Neutron Star need only their own `AtlasModifier` constant.
+- Settling Dust Effect: "Settling Dust in your Star Charts has 20% increased effect" (new, scales `STAR_CHART_PERCENT_PER_DUST` and Dust Trails' per-stack quantity). Built: type `settling_dust_effect` (`CHART_SETTLING_DUST_EFFECT_PERCENT`), read in `SettlingDust.bossStarChartPercent` and `quantityPercent`. It doesn't scale Settled Shafts, which counts stacks.
+- Settling Dust Stacks: "+1 to maximum Settling Dust stacks in your Star Charts" (new, adds to `MAX_DUST`). Built: type `settling_dust_stacks` (`CHART_SETTLING_DUST_MAX_STACKS`), adding to `SettlingDust.BASE_MAX_STACKS`.
 
 Notables:
 
-- Dust Trails: "Settling Dust in your Star Charts also grants 5% increased quantity of items found for each stack" (new). Settling Dust Effect scales the 5% as it scales the boss's Star Charts.
-- Long Settling: "+5 to maximum Settling Dust stacks in your Star Charts" and "Enemy fleets in Dense Nebulae in your Star Charts have 3% increased size for each Settling Dust stack".
-- Ionized Dust (Magnetic Storm, Storm Front): "Battles won in your Star Charts with a Magnetic Storm or Storm Front grant Settling Dust stacks" (new). Those charts gather Settling Dust as a Dense Nebula does, and every Settling Dust line applies there. A chart with a Dense Nebula too still has one count of stacks, so a battle adds one stack, not two. The stacks live on the Dense Nebula's run state today (`DenseNebula.dust`), read only when the nebula is in the run, so they move to a run count that any of the three anomalies can add to and that chart intel shows in all three.
+- Dust Trails: "Settling Dust in your Star Charts also grants 5% increased quantity of items found for each stack" (new). Settling Dust Effect scales the 5% as it scales the boss's Star Charts. Built: type `dust_trails` (`CHART_SETTLING_DUST_QUANTITY_PERCENT`), added as item quantity to the run context in `ChartRunEffects.contextOf`, which refreshes when the stack count changes, so every loot roll, salvage and the chart's totals see it.
+- Long Settling: "+5 to maximum Settling Dust stacks in your Star Charts" and "Enemy fleets in Dense Nebulae in your Star Charts have 3% increased size for each Settling Dust stack". Built: type `long_settling` (`CHART_SETTLING_DUST_MAX_STACKS`, `CHART_SETTLING_DUST_FLEET_SIZE_PERCENT`). The tree line reads "Enemy fleets in your Star Charts have 3% increased fleet size for each Settling Dust stack", since with Ionized Dust the storm charts gather stacks too. Fleets are generated before any stack exists, so `SettlingDustFleets` grows the live ones instead: each time a stack is added, every hostile, unlooted, non-boss chart fleet in the system gains copies of its own non-flagship ships until it is the stack total's share larger than it started, and its ledger's starting fleet and deployment points rise with it.
+- Ionized Dust (Magnetic Storm, Storm Front): "Battles won in your Star Charts with a Magnetic Storm or Storm Front grant Settling Dust stacks" (new). Those charts gather Settling Dust as a Dense Nebula does, and every Settling Dust line applies there. A chart with a Dense Nebula too still has one count of stacks, so a battle adds one stack, not two. The stacks live on the Dense Nebula's run state today (`DenseNebula.dust`), read only when the nebula is in the run, so they move to a run count that any of the three anomalies can add to and that chart intel shows in all three. Built: type `ionized_dust` (`CHART_SETTLING_DUST_IONIZED`), read in `SettlingDust.gathersIn`; the dust code moved out of `DenseNebula` into `SettlingDust`, and the Magnetic Storm and Storm Front classes are unchanged.
 
 ### Asteroid Storm (`asteroid_storm`)
 
@@ -132,25 +134,31 @@ Retiring it:
 
 ### Magnetic Storm (`magnetic_storm`)
 
-Status: building on branch `atlas-nodes/magnetic-storm` since 2026-11-19, wiring only: the types go in `atlas_tree_types.json` without placement on the tree.
+Status: built on branch `atlas-nodes/magnetic-storm` 2026-11-19, wiring only (not placed on the tree). The types are in `atlas_tree_types.json`; Ion Front and Geomagnetic Surge read their lines once per run through `MagneticStormTuning` (`anomaly.magneticstorm`). `MagneticStorm` itself stays in the `anomaly` root so the other anomalies' branches keep compiling; it can move into `anomaly.magneticstorm` once they are merged.
 
 Reward: 20% increased quantity of crafting items found in the system, behind magnetic fields that blind sensors. No reward of its own yet.
 
-Change to the anomaly: its crafting item line drops from 50% to 20% (`CHART_CRAFTING_ITEM_PERCENT` in its `effects` in `chart_anomalies.csv`), and Charged Fields brings it back to 50%.
+Change to the anomaly: its crafting item line drops from 50% to 20% (`CHART_CRAFTING_ITEM_PERCENT` in its `effects` in `chart_anomalies.csv`), and Charged Fields brings it back to 50%. Built.
 
 Its nodes are passive like the anomaly itself: none asks the player to fly into a field or time an aurora. It gets a handful of notables rather than a full set.
 
 Small nodes:
 
-- The chance node.
-- Storm Crafting Items: "Your Star Charts with a Magnetic Storm have 10% increased quantity of crafting items found" (new, joins its `effects` line).
+- The chance node: built as `magnetic_storm_chance` (`CHART_MAGNETIC_STORM_CHANCE_PERCENT`, read by `OpeningAnomalies.rolled`).
+- Storm Crafting Items: "Your Star Charts with a Magnetic Storm have 10% increased quantity of crafting items found" (new, joins its `effects` line). Built: type `storm_crafting_items` (`CHART_MAGNETIC_STORM_CRAFTING_ITEM_PERCENT`). The line is a conditional drop line: `ChartGenContext.withAnomalyEffects` adds it as `CHART_CRAFTING_ITEM_PERCENT` only when the run has a Magnetic Storm (`ChartModifier.dropLineWith`), so it never stands in for the plain line in `ChartModifier.forDropType`.
 
 Notables:
 
-- Charged Fields: "Your Star Charts with a Magnetic Storm have 30% increased quantity of crafting items found" (new, joins its `effects` line).
-- Static Harvest: "Your Star Charts with a Magnetic Storm have 30% increased quantity of feedstock found" (new, `CHART_FEEDSTOCK_PERCENT` read only with a Magnetic Storm).
-- Ion Front (Storm Front): "Storm Fronts in your Star Charts with a Magnetic Storm set off auroras in the magnetic fields they cross" and "Battles in Storm Fronts in your Star Charts with a Magnetic Storm drop 50% increased quantity of crafting items" (new). Its auroras are vanilla magnetic storms, blinding sensors as usual.
-- Geomagnetic Surge (Stellar Flares): "Corona flares in your Star Charts with a Magnetic Storm set off auroras" and "Hull items found in your Star Charts with a Magnetic Storm and Stellar Flares have 1 additional lucky modifier" (new). Its auroras are vanilla magnetic storms, blinding sensors as usual. It adds to Stellar Flares' own, so 2 modifiers are lucky.
+- Charged Fields: "Your Star Charts with a Magnetic Storm have 30% increased quantity of crafting items found" (new, joins its `effects` line). Built: type `charged_fields`, the same line as Storm Crafting Items.
+- Static Harvest: "Your Star Charts with a Magnetic Storm have 30% increased quantity of feedstock found" (new, `CHART_FEEDSTOCK_PERCENT` read only with a Magnetic Storm). Built: type `static_harvest` (`CHART_MAGNETIC_STORM_FEEDSTOCK_PERCENT`), a conditional drop line as above that joins `CHART_FEEDSTOCK_PERCENT`.
+- Ion Front (Storm Front): "Storm Fronts in your Star Charts with a Magnetic Storm set off auroras in the magnetic fields they cross" and "Battles in Storm Fronts in your Star Charts with a Magnetic Storm drop 50% increased quantity of crafting items" (new). Its auroras are vanilla magnetic storms, blinding sensors as usual. Built: type `ion_front` (`CHART_MAGNETIC_STORM_ION_FRONT`, `CHART_MAGNETIC_STORM_ION_FRONT_CRAFTING_ITEM_PERCENT`), `IonFront`. Once a second the storm's `checkRun` samples each magnetic field's ring and sets off an aurora facing where a live Storm Front crosses it (towards the front when it covers the whole ring). The battle line goes through a new `LootShaper.battleCraftingItemPercent`, summed in `ChartFleetLoot.fleetLootContext`; the storm holds a battle when the player fights inside a Storm Front of a run with a Magnetic Storm (`StormBattles.playerFront`). No Storm Front code changed.
+- Geomagnetic Surge (Stellar Flares): "Corona flares in your Star Charts with a Magnetic Storm set off auroras" and "Hull items found in your Star Charts with a Magnetic Storm and Stellar Flares have 1 additional lucky modifier" (new). Its auroras are vanilla magnetic storms, blinding sensors as usual. It adds to Stellar Flares' own, so 2 modifiers are lucky. Built: type `geomagnetic_surge` (`CHART_MAGNETIC_STORM_FLARE_AURORAS`, `CHART_MAGNETIC_STORM_LUCKY_MODIFIERS`), `GeomagneticSurge`. While a star's corona flares, the star's own field gets an aurora in the flare's direction and a world's field gets one facing the star when the world lies within the flare's arc. The lucky line (`AnomalyLine.LUCKY_COUNT`) joins the lucky modifier count in `FlareLuck.dropLuck`, read through `MagneticStormTuning` in charts with a Magnetic Storm, so `StellarFlares.shapeDrop` rolls it with Golden Hour's roll count, and the tree adds the shared lucky reminder under the line.
+
+Built readings where the plan left room:
+
+- An aurora is a vanilla flare built from the field's own flare ranges (arc, fade, length) and colours, put ahead of the field's natural flares so it plays at once; a field already showing an aurora that faces the trigger is left alone, so a front or flare keeps one aurora going rather than restarting it every second.
+- The Geomagnetic Surge aurora line needs only a Magnetic Storm, as its wording says; corona flares exist wherever a star has a corona. The lucky line needs both anomalies. A world's field responds to a flare at any distance, as long as it lies in the flare's arc.
+- Ion Front's battle line applies to every battle the player fights inside a Storm Front in such a run, the same battles Storm Front's own battle lines take.
 
 Idea for a fifth, not decided:
 
@@ -164,12 +172,12 @@ Reward: every hull item found in the system has 1 lucky modifier.
 
 Lucky is the word for Stellar Flares' double roll in every tooltip: a lucky modifier is rolled twice, keeping the best. Every line that makes something lucky carries the bracketed reminder "(Lucky modifiers are rolled twice, keeping the best)" in muted text on the line below. Built for the anomaly's reward line on the atlas (`chart.atlas.anomaly.stellar_flares.reward`, en and zh_CN, 幸运 in the glossary); the node lines below use it when built. Built for the node lines too: a `ChartModifier` line of kind `AnomalyLine.LUCKY_COUNT` or `LUCKY_FLAG` (`makesLucky`) gets the reminder from `AtlasTreeNodeText.addChartLine`, in node tooltips and the effects panel, saying "rolled N times" with Golden Hour allocated (`FlareLuck.treeRolls`). The atlas reward line keeps "twice", since it describes the anomaly itself.
 
-Every drop's luck goes through one shared path: `FlareLuck.dropLuck` (`anomaly` root) sums the run's lucky lines into a `Luck` (lucky modifier count, every modifier, lucky implicits, roll count), and `LuckyRolls.withLuck` rolls it, read by `StellarFlares.shapeDrop` for every item found in the system. Another anomaly's lucky line adds to `FlareLuck.dropLuck`, or, for luck on chosen modifiers only, calls `FlareLuck.withLuckyModifiers(item, run, predicate)`, which takes Golden Hour's roll count from `FlareLuck.rolls`.
+Every drop's luck goes through one shared path: `FlareLuck.dropLuck` (`anomaly` root) sums the run's lucky lines into a `Luck` (lucky modifier count, every modifier, lucky implicits, roll count), and `LuckyRolls.withLuck` rolls it, read by `StellarFlares.shapeDrop` for every item found in the system. Another anomaly's lucky line adds to `FlareLuck.dropLuck`, as Geomagnetic Surge does, or, for luck on chosen modifiers only, calls `FlareLuck.withLuckyModifiers(item, run, predicate)`, as Solar Front does, which takes Golden Hour's roll count from `FlareLuck.rolls`.
 
 Small nodes:
 
 - The chance node: built as `stellar_flares_chance` (`CHART_STELLAR_FLARES_CHANCE_PERCENT`, read by `OpeningAnomalies.rolled`).
-- Flare Hull Items: "Your Star Charts with Stellar Flares have 10% increased quantity of hull items found" (new). Built: type `flare_hull_items` (`CHART_STELLAR_FLARES_HULL_ITEM_PERCENT`), turned into the run's hull item quantity only in runs with the flares by `StellarFlares.effectsInRun`, through the new `LootShaper.effectsInRun` collected in `ChartGenContext.withAnomalyEffects`.
+- Flare Hull Items: "Your Star Charts with Stellar Flares have 10% increased quantity of hull items found" (new). Built: type `flare_hull_items` (`CHART_STELLAR_FLARES_HULL_ITEM_PERCENT`), an anomaly drop line like Magnetic Storm's crafting item lines, which `ChartGenContext.withAnomalyEffects` turns into the run's hull item quantity only in runs with the flares (`ChartModifier.dropLineWith`).
 
 Notables:
 
@@ -329,31 +337,31 @@ More notables:
 - Widened Bores: "Cruisers can enter open shafts in your Star Charts" and "Fleets guarding open shafts in your Star Charts drop 1 additional inhibitor" (new, `ExcavationRules.MAX_SHIP_SIZE` 3 for both sides). With Needle Bores allocated too, only frigates go down, and both nodes' additional inhibitors apply. Built: type `widened_bores` (`CHART_EXCAVATION_CRUISERS_ALLOWED`), as Needle Bores.
 - Pitch Black: "Ships fighting in open shafts in your Star Charts have 70% reduced vision range" and "50% increased quantity of inhibitors from open shafts in your Star Charts" (new, the sight radius of every ship on both sides, set by the shaft's battle plugin, `ExcavationBattlePlugin`). Built: type `pitch_black` (`CHART_EXCAVATION_SIGHT_RADIUS_PERCENT`, `CHART_EXCAVATION_OPEN_SHAFT_INHIBITOR_PERCENT`), `ExcavationBattlePlugin.darken`.
 - Infested Bolt-Holes: "Fleets guarding open shafts in your Star Charts with Anomalous Debris can be corrupted with a Corrupted Nanoswarm" and "Corrupted guardian fleets in your Star Charts drop an engram and 1 additional inhibitor" (new). The site dialog offers the corruption before the fight, as the anomalous fleets' dialog does (`anomaly.debris`). Built: type `infested_bolt_holes` (`CHART_EXCAVATION_CORRUPTIBLE_GUARDIANS`, `CHART_EXCAVATION_CORRUPTED_GUARDIAN_INHIBITORS`), `ExcavationCorruption`. The debris fleets' corruption only works on dormant fleets, so the guardian fleet is built corrupted instead (`ExcavationRules.CORRUPTED_SIZE_MULT` and `CORRUPTED_STRENGTH_BONUS_PERCENT`, matching the debris placeholders), offered for either cavern before its fleet is first met, and its engram drops once (`ExcavationLoot.engramOnce`).
-- Settled Shafts: "Each Settling Dust stack in your Star Charts grants 30% increased quantity of inhibitors found at Excavation Sites" (new, read through the Dense Nebula's stacks, so the nebula's battles come before the dig). Built: type `settled_shafts` (`CHART_EXCAVATION_INHIBITOR_PERCENT_PER_DUST`), `DenseNebula.dust` read in `ExcavationLoot`.
+- Settled Shafts: "Each Settling Dust stack in your Star Charts grants 30% increased quantity of inhibitors found at Excavation Sites" (new, read through the Dense Nebula's stacks, so the nebula's battles come before the dig). Built: type `settled_shafts` (`CHART_EXCAVATION_INHIBITOR_PERCENT_PER_DUST`), `SettlingDust.stacks` read in `ExcavationLoot` (`DenseNebula.dust` until the Dense Nebula nodes moved the count to the run, so Ionized Dust's stacks count too).
 
 ### Storm Front (`storm_front`)
 
-Status: building on branch `atlas-nodes/storm-front` since 2026-11-19, wiring only: the types go in `atlas_tree_types.json` without placement on the tree.
+Status: built on branch `atlas-nodes/storm-front` 2026-11-19, wiring only (not placed on the tree). Every line below is a `ChartModifier` anomaly tuning line; the new ones are read through `StormTuning` (`anomaly.stormfront`), once at generation and from the run afterwards. Ion Front is not built here.
 
 Reward: every non-unique hull item from a battle in the storm carries a biome modifier, and those battles drop 50% increased quantity of items.
 
 Small nodes:
 
-- The chance node.
-- Storm Item Quantity: "15% increased quantity of items dropped by battles in Storm Fronts in your Star Charts" (`CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT`).
-- Storm Front Size: "20% increased Storm Front size in your Star Charts" (`CHART_STORM_FRONT_SIZE_PERCENT`).
+- The chance node: built as `storm_front_chance` (`CHART_STORM_FRONT_CHANCE_PERCENT`, read by `OpeningAnomalies.addedChances`).
+- Storm Item Quantity: "15% increased quantity of items dropped by battles in Storm Fronts in your Star Charts" (`CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT`). Built: type `storm_item_quantity`.
+- Storm Front Size: "20% increased Storm Front size in your Star Charts" (`CHART_STORM_FRONT_SIZE_PERCENT`). Built: type `storm_front_size`.
 
 Its nodes are about fighting in the storm. Ion Front, its pairing with the Magnetic Storm, is listed there.
 
 Notables:
 
-- Lightning Rod: "50% increased frequency of storm strikes in your Star Charts" (`CHART_STORM_STRIKE_FREQUENCY_PERCENT`) and "30% increased quantity of items dropped by battles in Storm Fronts in your Star Charts" (`CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT`).
-- Supercell: "100% increased Storm Front size in your Star Charts" (`CHART_STORM_FRONT_SIZE_PERCENT`).
-- Eye of the Storm: "Storm Fronts in your Star Charts have 80% reduced speed while your fleet is inside them" (new, slows the band's movement in `StormFrontTerrainPlugin`; the crossing still ends at the far edge, later by however long the player stayed inside, and chart intel's days follow).
-- [REDACTED] Front: "Enemy fleets you fight in Storm Fronts in your Star Charts are joined by 5 to 10 frigates of what was left behind" (new). Remnant frigates join the enemy side when the battle in the storm starts. As with the [REDACTED] Sleepers, the tooltip never names the faction, and each joining ship counts as Remnant for the Remnant wormhole anchor's chance per 100 deployment points lost (`FleetFactions.recordMemberFactions`). The ships keep their AI core captains, so they can drop AI cores as vanilla Remnant ships do.
-- Captured Front (Black Hole): "Storm Fronts in your Star Charts with a Black Hole circle the hole instead of crossing the system" and "Hull items dropped by battles in Storm Fronts in your Star Charts with a Black Hole have 10% chance to have an immutable modifier" (new). The front orbits the hole through its derelicts for the whole run and never leaves (`StormPath`), so chart intel says where it is next rather than when it leaves.
-- Solar Front (Stellar Flares): "Biome modifiers on hull items dropped by battles in Storm Fronts in your Star Charts with Stellar Flares are lucky" (new, in `StormLoot`). The front's clouds and flashes turn red and orange, on the map and in battle (`StormFrontTerrainPlugin`, `StormOverlay`).
-- Thunder Duel (Atlas officers): "Atlas officers you defeat in Storm Fronts in your Star Charts drop 1 additional item from their reward pool" (new). The officers don't seek out the storm: fighting them in it is up to the player.
+- Lightning Rod: "50% increased frequency of storm strikes in your Star Charts" (`CHART_STORM_STRIKE_FREQUENCY_PERCENT`) and "30% increased quantity of items dropped by battles in Storm Fronts in your Star Charts" (`CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT`). Built: type `lightning_rod`.
+- Supercell: "100% increased Storm Front size in your Star Charts" (`CHART_STORM_FRONT_SIZE_PERCENT`). Built: type `supercell`.
+- Eye of the Storm: "Storm Fronts in your Star Charts have 80% reduced speed while your fleet is inside them" (new, slows the band's movement in `StormFrontTerrainPlugin`; the crossing still ends at the far edge, later by however long the player stayed inside, and chart intel's days follow). Built: type `eye_of_the_storm` (`CHART_STORM_FRONT_HELD_SPEED_PERCENT`, share from `StormRules.heldSlowShare`, at most a full hold). While the player fleet is inside, `StormFrontTerrainPlugin.applyEffect` adds that share of each day to `heldDays`, and the band, its end and the intel follow `travelledDays`; a negative value speeds the front up.
+- [REDACTED] Front: "Enemy fleets you fight in Storm Fronts in your Star Charts are joined by 5 to 10 frigates of what was left behind" (new). Remnant frigates join the enemy side when the battle in the storm starts. As with the [REDACTED] Sleepers, the tooltip never names the faction, and each joining ship counts as Remnant for the Remnant wormhole anchor's chance per 100 deployment points lost (`FleetFactions.recordMemberFactions`). The ships keep their AI core captains, so they can drop AI cores as vanilla Remnant ships do. Built: type `redacted_front` (`CHART_STORM_FRONT_REDACTED_FRIGATES`, the line's value is the most, the fewest is half of it rounded up, `StormRules.redactedFrigatesFewest`), in `RedactedFront`. They join when the player opens a dialog with a hostile fleet while inside a front of the run (`StormFront.dialogFor`), once per fleet, and only the engaged fleet is reinforced, not fleets pulled into the battle; an earlier anomaly's own dialog can take the interaction first. Each is a Remnant combat-small frigate with a Remnant AI core captain at the anomalous debris' core level for the tier (`DebrisRules.coreLevel`), at full CR.
+- Captured Front (Black Hole): "Storm Fronts in your Star Charts with a Black Hole circle the hole instead of crossing the system" and "Hull items dropped by battles in Storm Fronts in your Star Charts with a Black Hole have 10% chance to have an immutable modifier" (new). The front orbits the hole through its derelicts for the whole run and never leaves (`StormPath`), so chart intel says where it is next rather than when it leaves. Built: type `captured_front` (`CHART_STORM_FRONT_CAPTURED`, `CHART_STORM_FRONT_CAPTURED_IMMUTABLE_CHANCE_PERCENT`). The path is now a `StormCourse`, either `StormPath` or `StormOrbit`: a spoke of the band's width reaching from just outside the hole (`StormRules.CAPTURED_INNER_GAP`) past the derelicts (`StarAnomalies.DERELICT_REACH` plus `CAPTURED_OUTER_MARGIN`), turning once every `CAPTURED_ORBIT_DAYS`. It only circles when the chart's planned anomalies hold the Black Hole, otherwise it crosses as usual. Intel says the front circles the hole and when it next reaches each marked world. The immutable chance goes through `ImmutableDrops.withChance` in `StormLoot.shapedDrop`.
+- Solar Front (Stellar Flares): "Biome modifiers on hull items dropped by battles in Storm Fronts in your Star Charts with Stellar Flares are lucky" (new, in `StormLoot`). The front's clouds and flashes turn red and orange, on the map and in battle (`StormFrontTerrainPlugin`, `StormOverlay`). Built: type `solar_front` (`CHART_STORM_FRONT_LUCKY_BIOME_MODIFIERS`), set at generation when the planned anomalies hold Stellar Flares. `StormLoot.shapedByFront` makes every biome modifier on the drop lucky through `FlareLuck.withLuckyModifiers`, the shared lucky path, so Golden Hour's roll count covers it; the line is `AnomalyLine.LUCKY_FLAG`, so the tree adds the shared lucky reminder under it. The colours are `StormPalette.SOLAR` for the clouds, flashes and the battle's arcs (`StormBattlePlugin`).
+- Thunder Duel (Atlas officers): "Atlas officers you defeat in Storm Fronts in your Star Charts drop 1 additional item from their reward pool" (new). The officers don't seek out the storm: fighting them in it is up to the player. Built: type `thunder_duel` (`CHART_STORM_FRONT_OFFICER_EXTRA_REWARDS`), in `ThunderDuel`, added to the carried loot in `OfficerDefeat` while the player fleet is inside a front of the run; the items are drawn like the officer's offered rewards (`OfficerRewardPool.offers`) and rolled through `OfficerRewardDrop.roll`.
 
 ### Derelict Forge (`derelict_forge`)
 

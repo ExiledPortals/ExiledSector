@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.MockSector;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.DenseNebula;
+import exiledsector.charts.anomaly.SettlingDust;
 import exiledsector.charts.anomaly.LiveAnomalyRuns;
 import exiledsector.charts.anomaly.MagneticStorm;
 import exiledsector.charts.anomaly.StellarFlares;
@@ -69,10 +70,10 @@ class StarChartLootSourceTest {
 
             StarChartLootSource.recordWin(battle(false), system);
             StarChartLootSource.recordWin(unfought, system);
-            assertEquals(0, DenseNebula.dust(ChartRuns.currentOrNull()));
+            assertEquals(0, SettlingDust.stacks(ChartRuns.currentOrNull()));
 
             StarChartLootSource.recordWin(battle(true), system);
-            assertEquals(1, DenseNebula.dust(ChartRuns.currentOrNull()));
+            assertEquals(1, SettlingDust.stacks(ChartRuns.currentOrNull()));
         }
     }
 

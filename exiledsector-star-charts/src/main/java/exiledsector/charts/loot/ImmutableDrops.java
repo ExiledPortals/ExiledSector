@@ -28,7 +28,7 @@ public final class ImmutableDrops {
         return siteMemory == null || !siteMemory.contains(CHANCE_KEY) ? item : withChance(item, siteMemory.getFloat(CHANCE_KEY));
     }
 
-    static ItemData withChance(ItemData item, float chance) {
+    public static ItemData withChance(ItemData item, float chance) {
         if (item == null || !item.isHullItem()) {
             return item;
         }

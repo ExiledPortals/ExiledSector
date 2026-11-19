@@ -6,6 +6,7 @@ import exiledsector.data.EnumKeys;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartGenerated;
 import exiledsector.charts.content.ChartPoi;
+import exiledsector.charts.anomaly.stormfront.StormRules;
 import exiledsector.effects.GrantedNodes;
 import exiledsector.i18n.Message;
 import exiledsector.i18n.StyledText;
@@ -230,9 +231,34 @@ public enum ChartModifier implements ModifierEffect {
     CHART_EXCAVATION_CORRUPTIBLE_GUARDIANS("excavation_sites.corruptibleGuardians", AnomalyLine.FLAG),
     CHART_EXCAVATION_CORRUPTED_GUARDIAN_INHIBITORS("excavation_sites.corruptedInhibitors", AnomalyLine.COUNT),
     CHART_EXCAVATION_INHIBITOR_PERCENT_PER_DUST("excavation_sites.inhibitorsPerDust", AnomalyLine.PERCENT),
+    CHART_SETTLING_DUST_EFFECT_PERCENT("settling_dust.effect", AnomalyLine.PERCENT),
+    CHART_SETTLING_DUST_MAX_STACKS("settling_dust.maxStacks", AnomalyLine.COUNT),
+    CHART_SETTLING_DUST_QUANTITY_PERCENT("settling_dust.quantity", AnomalyLine.PERCENT),
+    CHART_SETTLING_DUST_FLEET_SIZE_PERCENT("settling_dust.fleetSize", AnomalyLine.PERCENT),
+    CHART_SETTLING_DUST_IONIZED("settling_dust.ionized", AnomalyLine.FLAG),
+    CHART_MAGNETIC_STORM_CHANCE_PERCENT(new OpeningChance("magnetic_storm")),
+    CHART_MAGNETIC_STORM_CRAFTING_ITEM_PERCENT(new AnomalyDrop("magnetic_storm", DropType.CRAFTING_ITEM)),
+    CHART_MAGNETIC_STORM_FEEDSTOCK_PERCENT(new AnomalyDrop("magnetic_storm", DropType.FEEDSTOCK)),
+    CHART_MAGNETIC_STORM_ION_FRONT("magnetic_storm.ionFront", AnomalyLine.FLAG),
+    CHART_MAGNETIC_STORM_ION_FRONT_CRAFTING_ITEM_PERCENT("magnetic_storm.ionFrontCraftingItems", AnomalyLine.PERCENT),
+    CHART_MAGNETIC_STORM_FLARE_AURORAS("magnetic_storm.flareAuroras", AnomalyLine.FLAG),
+    CHART_MAGNETIC_STORM_LUCKY_MODIFIERS("magnetic_storm.luckyModifiers", AnomalyLine.LUCKY_COUNT),
     CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT("storm_front.loot", AnomalyLine.PERCENT),
     CHART_STORM_STRIKE_FREQUENCY_PERCENT("storm_front.strikes", AnomalyLine.PERCENT),
     CHART_STORM_FRONT_SIZE_PERCENT("storm_front.size", AnomalyLine.PERCENT),
+    CHART_STORM_FRONT_CHANCE_PERCENT(new OpeningChance("storm_front")),
+    CHART_STORM_FRONT_HELD_SPEED_PERCENT("storm_front.heldSpeed", AnomalyLine.PERCENT_INCREASED_WHEN_NEGATIVE),
+    CHART_STORM_FRONT_REDACTED_FRIGATES("storm_front.redactedFrigates", AnomalyLine.COUNT) {
+        @Override
+        public StyledText description(String baseKey, float magnitude) {
+            int most = Math.round(magnitude);
+            return Translation.msg(baseKey).count(most).arg("fewest", StormRules.redactedFrigatesFewest(most)).arg("value", most).styled();
+        }
+    },
+    CHART_STORM_FRONT_CAPTURED("storm_front.captured", AnomalyLine.FLAG),
+    CHART_STORM_FRONT_CAPTURED_IMMUTABLE_CHANCE_PERCENT("storm_front.capturedImmutableChance", AnomalyLine.PERCENT),
+    CHART_STORM_FRONT_LUCKY_BIOME_MODIFIERS("storm_front.luckyBiomeModifiers", AnomalyLine.LUCKY_FLAG),
+    CHART_STORM_FRONT_OFFICER_EXTRA_REWARDS("storm_front.officerExtraRewards", AnomalyLine.COUNT),
     CHART_FORGE_RUNS("derelict_forge.extraRuns", AnomalyLine.COUNT),
     CHART_FORGE_COST_PERCENT("derelict_forge.cost", AnomalyLine.PERCENT_REDUCED_WHEN_NEGATIVE),
     CHART_LISTENING_POST_PICKETS("listening_post.pickets", AnomalyLine.COUNT),
@@ -249,7 +275,7 @@ public enum ChartModifier implements ModifierEffect {
     CHART_LISTENING_POST_PURGE_HELD("listening_post.purgeHeld", AnomalyLine.FLAG),
     CHART_LISTENING_POST_OFFICER_LEDGER("listening_post.officerLedger", AnomalyLine.COUNT),
     CHART_LISTENING_POST_STOLEN_CHARTS("listening_post.stolenCharts", AnomalyLine.COUNT),
-    CHART_STELLAR_FLARES_HULL_ITEM_PERCENT("stellar_flares.hullItems", AnomalyLine.PERCENT_REDUCED_WHEN_NEGATIVE),
+    CHART_STELLAR_FLARES_HULL_ITEM_PERCENT(new AnomalyDrop("stellar_flares", DropType.HULL_ITEM, ".reduced")),
     CHART_STELLAR_FLARES_LUCKY_MODIFIERS("stellar_flares.luckyModifiers", AnomalyLine.LUCKY_COUNT),
     CHART_STELLAR_FLARES_FLARE_FREQUENCY_MULT("stellar_flares.flareFrequency", AnomalyLine.PERCENT),
     CHART_STELLAR_FLARES_LUCKY_IMPLICITS("stellar_flares.luckyImplicits", AnomalyLine.LUCKY_FLAG),
@@ -269,6 +295,13 @@ public enum ChartModifier implements ModifierEffect {
     }
 
     private record OpeningChance(String anomalyId) {
+    }
+
+    private record AnomalyDrop(String anomalyId, DropType dropType, String negativeKeySuffix) {
+
+        AnomalyDrop(String anomalyId, DropType dropType) {
+            this(anomalyId, dropType, null);
+        }
     }
 
     private enum AnomalyLine {
@@ -309,6 +342,7 @@ public enum ChartModifier implements ModifierEffect {
     private String grantedNodeId;
     private String openingChanceAnomalyId;
     private boolean makesLucky;
+    private AnomalyDrop anomalyDrop;
 
     ChartModifier(boolean counted, Contribution contribution) {
         this(counted, null, null, null, null, contribution, false);
@@ -330,6 +364,11 @@ public enum ChartModifier implements ModifierEffect {
     ChartModifier(OpeningChance openingChance) {
         this(false, (context, value) -> { });
         this.openingChanceAnomalyId = openingChance.anomalyId();
+    }
+
+    ChartModifier(AnomalyDrop anomalyDrop) {
+        this(false, null, null, null, anomalyDrop.negativeKeySuffix(), (context, value) -> { }, false);
+        this.anomalyDrop = anomalyDrop;
     }
 
     ChartModifier(HullSize bannedCombatHullSize) {
@@ -379,6 +418,13 @@ public enum ChartModifier implements ModifierEffect {
 
     public boolean makesLucky() {
         return makesLucky;
+    }
+
+    public ChartGenContext.AppliedEffect dropLineWith(List<String> anomalyIds, float value) {
+        if (anomalyDrop == null || anomalyIds == null || !anomalyIds.contains(anomalyDrop.anomalyId())) {
+            return null;
+        }
+        return new ChartGenContext.AppliedEffect(forDropType(anomalyDrop.dropType()), value);
     }
 
     public boolean canRoll(SectorAPI sector) {

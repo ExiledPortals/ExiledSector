@@ -331,6 +331,92 @@
 			]
 		},
 		{
+			"id": "dense_nebula_atlas_chance",
+			"name": "Dense Nebula Atlas Chance",
+			"effects": [
+				{
+					"effect": "ATLAS_DENSE_NEBULA_CHANCE_PERCENT",
+					"magnitude": 8
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "settling_dust_effect",
+			"name": "Settling Dust Effect",
+			"effects": [
+				{
+					"effect": "CHART_SETTLING_DUST_EFFECT_PERCENT",
+					"magnitude": 20
+				}
+			],
+			"tags": [
+				"star_chart"
+			]
+		},
+		{
+			"id": "settling_dust_stacks",
+			"name": "Settling Dust Stacks",
+			"effects": [
+				{
+					"effect": "CHART_SETTLING_DUST_MAX_STACKS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"star_chart"
+			]
+		},
+		{
+			"id": "dust_trails",
+			"name": "Dust Trails",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_SETTLING_DUST_QUANTITY_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"tags": [
+				"loot"
+			]
+		},
+		{
+			"id": "long_settling",
+			"name": "Long Settling",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_SETTLING_DUST_MAX_STACKS",
+					"magnitude": 5
+				},
+				{
+					"effect": "CHART_SETTLING_DUST_FLEET_SIZE_PERCENT",
+					"magnitude": 3
+				}
+			],
+			"tags": [
+				"star_chart",
+				"fleet_size"
+			]
+		},
+		{
+			"id": "ionized_dust",
+			"name": "Ionized Dust",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_SETTLING_DUST_IONIZED",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"star_chart"
+			]
+		},
+		{
 			"id": "threat_feedstock_chance",
 			"name": "Threat Feedstock Chance",
 			"effects": [
@@ -1027,6 +1113,96 @@
 			]
 		},
 		{
+			"id": "magnetic_storm_chance",
+			"name": "Magnetic Storm Chance",
+			"effects": [
+				{
+					"effect": "CHART_MAGNETIC_STORM_CHANCE_PERCENT",
+					"magnitude": 8
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "storm_crafting_items",
+			"name": "Storm Crafting Items",
+			"effects": [
+				{
+					"effect": "CHART_MAGNETIC_STORM_CRAFTING_ITEM_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"crafting_item"
+			]
+		},
+		{
+			"id": "charged_fields",
+			"name": "Charged Fields",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_MAGNETIC_STORM_CRAFTING_ITEM_PERCENT",
+					"magnitude": 30
+				}
+			],
+			"tags": [
+				"crafting_item"
+			]
+		},
+		{
+			"id": "static_harvest",
+			"name": "Static Harvest",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_MAGNETIC_STORM_FEEDSTOCK_PERCENT",
+					"magnitude": 30
+				}
+			],
+			"tags": [
+				"feedstock"
+			]
+		},
+		{
+			"id": "ion_front",
+			"name": "Ion Front",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_MAGNETIC_STORM_ION_FRONT",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_MAGNETIC_STORM_ION_FRONT_CRAFTING_ITEM_PERCENT",
+					"magnitude": 50
+				}
+			],
+			"tags": [
+				"crafting_item"
+			]
+		},
+		{
+			"id": "geomagnetic_surge",
+			"name": "Geomagnetic Surge",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_MAGNETIC_STORM_FLARE_AURORAS",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_MAGNETIC_STORM_LUCKY_MODIFIERS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"hull_item"
+			]
+		},
+		{
 			"id": "vault_quantity",
 			"name": "Vault Quantity",
 			"effects": [
@@ -1175,6 +1351,153 @@
 			]
 		},
 		{
+			"id": "storm_front_chance",
+			"name": "Storm Front Chance",
+			"effects": [
+				{
+					"effect": "CHART_STORM_FRONT_CHANCE_PERCENT",
+					"magnitude": 8
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "storm_item_quantity",
+			"name": "Storm Item Quantity",
+			"effects": [
+				{
+					"effect": "CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT",
+					"magnitude": 15
+				}
+			],
+			"tags": [
+				"loot"
+			]
+		},
+		{
+			"id": "storm_front_size",
+			"name": "Storm Front Size",
+			"effects": [
+				{
+					"effect": "CHART_STORM_FRONT_SIZE_PERCENT",
+					"magnitude": 20
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "lightning_rod",
+			"name": "Lightning Rod",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_STORM_STRIKE_FREQUENCY_PERCENT",
+					"magnitude": 50
+				},
+				{
+					"effect": "CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT",
+					"magnitude": 30
+				}
+			],
+			"tags": [
+				"battle_rules",
+				"loot"
+			]
+		},
+		{
+			"id": "supercell",
+			"name": "Supercell",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_STORM_FRONT_SIZE_PERCENT",
+					"magnitude": 100
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "eye_of_the_storm",
+			"name": "Eye of the Storm",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_STORM_FRONT_HELD_SPEED_PERCENT",
+					"magnitude": 80
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "redacted_front",
+			"name": "[REDACTED] Front",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_STORM_FRONT_REDACTED_FRIGATES",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"enemy"
+			]
+		},
+		{
+			"id": "captured_front",
+			"name": "Captured Front",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_STORM_FRONT_CAPTURED",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_STORM_FRONT_CAPTURED_IMMUTABLE_CHANCE_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"encounter",
+				"hull_item"
+			]
+		},
+		{
+			"id": "solar_front",
+			"name": "Solar Front",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_STORM_FRONT_LUCKY_BIOME_MODIFIERS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"hull_item"
+			]
+		},
+		{
+			"id": "thunder_duel",
+			"name": "Thunder Duel",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_STORM_FRONT_OFFICER_EXTRA_REWARDS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"officers"
+			]
+		},
+		{
 			"id": "flare_hull_items",
 			"name": "Flare Hull Items",
 			"effects": [
@@ -1268,6 +1591,6 @@
 			"tags": [
 				"hull_item"
 			]
-		}
+		}
 	]
 }

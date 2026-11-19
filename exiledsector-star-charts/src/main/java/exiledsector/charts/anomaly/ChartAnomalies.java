@@ -250,6 +250,10 @@ public final class ChartAnomalies {
                 lines.add(line);
             }
         }
+        String dustLine = askSafely(DenseNebula.INSTANCE, "settling dust intel", () -> SettlingDust.intelText(run.run()));
+        if (dustLine != null) {
+            lines.add(dustLine);
+        }
         return lines;
     }
 
@@ -294,6 +298,7 @@ public final class ChartAnomalies {
         for (LootShaper anomaly : inRun(run.run(), LootShaper.class)) {
             runSafely(anomaly, "battle won", () -> anomaly.battleWon(run));
         }
+        runSafely(DenseNebula.INSTANCE, "settling dust", () -> SettlingDust.battleWon(run));
     }
 
     public static float bossStarChartPercent(ChartRun run) {
@@ -302,7 +307,8 @@ public final class ChartAnomalies {
             Float added = askSafely(anomaly, "boss star charts", () -> anomaly.bossStarChartPercent(run));
             percent += added == null ? 0f : added;
         }
-        return percent;
+        Float dustPercent = askSafely(DenseNebula.INSTANCE, "settling dust boss star charts", () -> SettlingDust.bossStarChartPercent(run));
+        return percent + (dustPercent == null ? 0f : dustPercent);
     }
 
     public static List<LootShaper> holdingPlayerBattle() {
@@ -376,17 +382,6 @@ public final class ChartAnomalies {
             Definition definition = definition(id);
             if (definition != null) {
                 effects.addAll(definition.effects());
-            }
-        }
-        return effects;
-    }
-
-    public static List<ChartGenContext.AppliedEffect> effectsInRun(Collection<String> ids, ChartGenContext context) {
-        List<ChartGenContext.AppliedEffect> effects = new ArrayList<>();
-        for (LootShaper anomaly : among(ids, LootShaper.class)) {
-            List<ChartGenContext.AppliedEffect> added = askSafely(anomaly, "run effects", () -> anomaly.effectsInRun(context));
-            if (added != null) {
-                effects.addAll(added);
             }
         }
         return effects;

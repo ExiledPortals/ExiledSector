@@ -350,8 +350,19 @@ public final class ChartGenContext {
             return this;
         }
         List<AppliedEffect> effects = new ArrayList<>(ChartAnomalies.effectsOf(anomalyIds));
-        effects.addAll(ChartAnomalies.effectsInRun(anomalyIds, this));
+        effects.addAll(dropLinesWith(anomalyIds));
         return effects.isEmpty() ? this : derive(addedPlus(effects), factionId);
+    }
+
+    private List<AppliedEffect> dropLinesWith(List<String> anomalyIds) {
+        List<AppliedEffect> dropLines = new ArrayList<>();
+        for (AppliedEffect line : applied) {
+            AppliedEffect dropLine = line.effect().dropLineWith(anomalyIds, line.value());
+            if (dropLine != null) {
+                dropLines.add(dropLine);
+            }
+        }
+        return dropLines;
     }
 
     public ChartGenContext withEffects(List<AppliedEffect> effects) {

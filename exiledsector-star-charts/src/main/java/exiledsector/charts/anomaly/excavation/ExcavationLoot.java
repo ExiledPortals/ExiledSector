@@ -4,7 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import exiledsector.charts.anomaly.DenseNebula;
+import exiledsector.charts.anomaly.SettlingDust;
 import exiledsector.charts.loot.ChartCraftingPools;
 import exiledsector.charts.loot.ChartLootContext;
 import exiledsector.charts.run.ChartRun;
@@ -32,7 +32,7 @@ public final class ExcavationLoot {
         CargoAPI cargo = Global.getFactory().createCargo(true);
         ChartLootContext loot = ChartLootContext.of(run);
         ExcavationTuning tuning = ExcavationTuning.of(loot.effects());
-        float quantityPercent = ExcavationRules.inhibitorQuantityPercent(tuning, false, DenseNebula.dust(run)) + deliveryPercent;
+        float quantityPercent = ExcavationRules.inhibitorQuantityPercent(tuning, false, SettlingDust.stacks(run)) + deliveryPercent;
         float expectedInhibitors = expectedInhibitors(ExcavationRules.raidInhibitors(tuning), loot, quantityPercent, share);
         tagInhibitors(expectedInhibitors, loot, random).forEach((itemId, quantity) -> MaterialItems.add(cargo, itemId, quantity));
         return cargo;

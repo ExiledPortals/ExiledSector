@@ -146,7 +146,7 @@ public final class ChartFleetLedger {
         return fleetMemory != null && fleetMemory.getBoolean(ChartIds.fleetRunKey(run.runId())) ? run : null;
     }
 
-    static boolean isBoss(CampaignFleetAPI fleet, ChartRun run) {
+    public static boolean isBoss(CampaignFleetAPI fleet, ChartRun run) {
         if (fleet == null || fleet.getId() == null) {
             return false;
         }

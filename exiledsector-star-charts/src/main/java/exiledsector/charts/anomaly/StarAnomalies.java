@@ -26,7 +26,7 @@ public final class StarAnomalies {
     static final int MIN_DERELICTS = 6;
     static final int EXTRA_DERELICTS = 4;
     static final float DERELICT_GAP = 1000f;
-    static final float DERELICT_REACH = 7000f;
+    public static final float DERELICT_REACH = 7000f;
     static final float DERELICT_IMMUTABLE_CHANCE = 0.1f;
     static final float STATION_GAP = 400f;
     static final float STATION_STEP = 250f;

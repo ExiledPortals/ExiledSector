@@ -109,6 +109,21 @@ class AtlasTreeNodeTextTest {
     }
 
     @Test
+    void geomagneticSurgeAndSolarFrontTakeTheReminderWithGoldenHoursRollCount() {
+        useEnglishWith(Map.of());
+        AtlasTreeType type = new AtlasTreeType("surge_and_front", "Surge and Front", null, SkillTier.NOTABLE,
+                List.of(new AppliedEffect(ChartModifier.CHART_MAGNETIC_STORM_LUCKY_MODIFIERS, 1f),
+                        new AppliedEffect(ChartModifier.CHART_STORM_FRONT_LUCKY_BIOME_MODIFIERS, 1f)),
+                List.of(), null, List.of());
+        String reminder = "(Lucky modifiers are rolled 4 times, keeping the best)";
+
+        List<String> lines = AtlasTreeNodeText.body(type, null, 4).stream().map(StyledText::plain).toList();
+
+        assertEquals(List.of(chartLine(ChartModifier.CHART_MAGNETIC_STORM_LUCKY_MODIFIERS, 1f), reminder,
+                chartLine(ChartModifier.CHART_STORM_FRONT_LUCKY_BIOME_MODIFIERS, 1f), reminder), lines);
+    }
+
+    @Test
     void theLuckyLinesAreTheOnesThatMakeSomethingLucky() {
         assertTrue(ChartModifier.CHART_STELLAR_FLARES_LUCKY_MODIFIERS.makesLucky());
         assertTrue(ChartModifier.CHART_STELLAR_FLARES_LUCKY_IMPLICITS.makesLucky());

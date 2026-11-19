@@ -2,7 +2,7 @@ id,weight,min_tier,max_tier,requires_mod,icon,insertable,excludes,effects,biomes
 black_hole,1,1,16,,graphics/exiledSector/anomalies/black_hole.png,,,,,,"The primary star is a black hole with an event horizon, ringed by scattered derelicts"
 neutron_star,1,1,16,,graphics/exiledSector/anomalies/neutron_star.png,,,,,,"The primary star is a neutron star with a sweeping pulsar beam and a research station in orbit"
 dense_nebula,1,1,16,,graphics/exiledSector/anomalies/dense_nebula.png,,,,,,"A starless nebula system: thick nebula everywhere, no central star; each battle won adds a Settling Dust stack that raises the boss star charts (DenseNebula)"
-magnetic_storm,1,1,16,,graphics/exiledSector/anomalies/magnetic_storm.png,yes,,CHART_CRAFTING_ITEM_PERCENT:50,,0.08,"Magnetic fields around the star and several worlds that blind sensors"
+magnetic_storm,1,1,16,,graphics/exiledSector/anomalies/magnetic_storm.png,yes,,CHART_CRAFTING_ITEM_PERCENT:20,,0.08,"Magnetic fields around the star and several worlds that blind sensors"
 stellar_flares,1,1,16,,graphics/exiledSector/anomalies/stellar_flares.png,yes,,,,0.08,"Every corona throws flares constantly"
 spatial_breach,1,1,16,,graphics/exiledSector/anomalies/spatial_breach.png,yes,,,,0.08,"A growing tear into hyperspace: drains, breach caches and every fleet in the system charging it"
 holdouts,1,1,16,,graphics/exiledSector/anomalies/faction_skirmish.png,,,,,,"Placeholder icon. Holds while an officer of an outside faction owns a system in a region with its own territory factions (Pirate Badlands); never rolled; spawns 3-5 small and 1-2 large fleets of the region faction, hostile to the owner and the player"

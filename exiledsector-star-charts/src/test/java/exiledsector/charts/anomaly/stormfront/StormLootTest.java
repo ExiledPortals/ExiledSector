@@ -1,11 +1,18 @@
 package exiledsector.charts.anomaly.stormfront;
 
+import exiledsector.MockSector;
+import exiledsector.charts.anomaly.LiveAnomalyRuns;
+import exiledsector.charts.anomaly.StellarFlares;
+import exiledsector.charts.effect.ChartModifier;
+import exiledsector.charts.generation.ChartGenContext.AppliedEffect;
 import exiledsector.charts.loot.BiomeModifiers;
+import exiledsector.charts.run.ChartRun;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemKind;
 import exiledsector.items.modifier.ItemModifiers;
+import exiledsector.items.modifier.LuckyRolls;
 import exiledsector.items.modifier.ModifierSources;
 import exiledsector.items.modifier.PoolEntry;
 import exiledsector.items.modifier.RolledModifier;
@@ -24,6 +31,7 @@ import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class StormLootTest {
 
@@ -80,6 +88,61 @@ class StormLootTest {
 
     private static List<String> biomeModifiersOn(ItemData item) {
         return item.explicits().stream().map(RolledModifier::modifierId).filter(BiomeModifiers::isBiomeModifier).toList();
+    }
+
+    private static float biomeMagnitude(ItemData item) {
+        return item.explicits().stream().filter(rolled -> BiomeModifiers.isBiomeModifier(rolled.modifierId())).findFirst().orElseThrow()
+                .lines().get(0).magnitude();
+    }
+
+    private static RolledModifier ownModifier(ItemData item) {
+        return item.explicits().stream().filter(rolled -> !BiomeModifiers.isBiomeModifier(rolled.modifierId())).findFirst().orElseThrow();
+    }
+
+    @Test
+    void aSolarFrontMakesTheBiomeModifierLuckyAndLeavesTheRestAlone() {
+        int changed = 0;
+        for (long seed = 0L; seed < 100L; seed++) {
+            ItemData item = StormLoot.withBiomeModifier(dropped(BRIDGE, seed), RIFT, EVERY_BIOME_OPEN);
+
+            ItemData solar = StormLoot.shapedByFront(item, null, true, 0f);
+
+            assertTrue(biomeMagnitude(solar) >= biomeMagnitude(item));
+            assertEquals(ownModifier(item), ownModifier(solar));
+            changed += item.equals(solar) ? 0 : 1;
+        }
+        assertTrue(changed > 10, "changed " + changed);
+    }
+
+    @Test
+    void goldenHourRollsASolarFrontsBiomeModifierAsOftenAsTheFlares() {
+        try (MockSector ignored = new MockSector()) {
+            ChartRun run = LiveAnomalyRuns.run(LiveAnomalyRuns.SITE_TIER, StellarFlares.ANOMALY_ID, StormFront.ANOMALY_ID);
+            run.recordAtlasTreeLines(List.of(new AppliedEffect(ChartModifier.CHART_STORM_FRONT_LUCKY_BIOME_MODIFIERS, 1f),
+                    new AppliedEffect(ChartModifier.CHART_STELLAR_FLARES_LUCKY_ROLLS, 4f)));
+            Predicate<RolledModifier> biomeModifier = rolled -> BiomeModifiers.isBiomeModifier(rolled.modifierId());
+            int luckier = 0;
+            for (long seed = 0L; seed < 100L; seed++) {
+                ItemData item = StormLoot.withBiomeModifier(dropped(BRIDGE, seed), RIFT, EVERY_BIOME_OPEN);
+
+                ItemData solar = StormLoot.shapedByFront(item, run, true, 0f);
+
+                assertEquals(LuckyRolls.withLuckyModifiers(item, biomeModifier, 4), solar);
+                assertEquals(ownModifier(item), ownModifier(solar));
+                luckier += solar.equals(StormLoot.shapedByFront(item, null, true, 0f)) ? 0 : 1;
+            }
+            assertTrue(luckier > 0, "luckier " + luckier);
+        }
+    }
+
+    @Test
+    void dropsFromACapturedFrontCanCarryAnImmutableModifier() {
+        for (long seed = 0L; seed < 20L; seed++) {
+            ItemData item = StormLoot.withBiomeModifier(dropped(BRIDGE, seed), RIFT, EVERY_BIOME_OPEN);
+
+            assertEquals(1L, StormLoot.shapedByFront(item, null, false, 100f).explicits().stream().filter(RolledModifier::immutable).count());
+            assertSame(item, StormLoot.shapedByFront(item, null, false, 0f));
+        }
     }
 
     @Test
