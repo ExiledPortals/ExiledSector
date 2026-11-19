@@ -104,20 +104,21 @@ Notables:
 
 ### Dense Nebula (`dense_nebula`)
 
-Status: off for now (2026-11-16).
+Status: building on branch `atlas-nodes/dense-nebula` since 2026-11-19, wiring only: the types go in `atlas_tree_types.json` without placement on the tree.
 
 Reward: Settling Dust, a stack for each battle won in the system, each giving 10% increased boss star charts, up to 10 stacks.
 
 Small nodes:
 
 - The atlas chance node.
-- Settling Dust Effect: "Settling Dust in your Star Charts has 20% increased effect" (new, scales `STAR_CHART_PERCENT_PER_DUST`).
+- Settling Dust Effect: "Settling Dust in your Star Charts has 20% increased effect" (new, scales `STAR_CHART_PERCENT_PER_DUST` and Dust Trails' per-stack quantity).
 - Settling Dust Stacks: "+1 to maximum Settling Dust stacks in your Star Charts" (new, adds to `MAX_DUST`).
 
 Notables:
 
-- Dust Trails: "Settling Dust in your Star Charts also grants 3% increased quantity of items found for each stack".
+- Dust Trails: "Settling Dust in your Star Charts also grants 5% increased quantity of items found for each stack" (new). Settling Dust Effect scales the 5% as it scales the boss's Star Charts.
 - Long Settling: "+5 to maximum Settling Dust stacks in your Star Charts" and "Enemy fleets in Dense Nebulae in your Star Charts have 3% increased size for each Settling Dust stack".
+- Ionized Dust (Magnetic Storm, Storm Front): "Battles won in your Star Charts with a Magnetic Storm or Storm Front grant Settling Dust stacks" (new). Those charts gather Settling Dust as a Dense Nebula does, and every Settling Dust line applies there. A chart with a Dense Nebula too still has one count of stacks, so a battle adds one stack, not two. The stacks live on the Dense Nebula's run state today (`DenseNebula.dust`), read only when the nebula is in the run, so they move to a run count that any of the three anomalies can add to and that chart intel shows in all three.
 
 ### Asteroid Storm (`asteroid_storm`)
 
@@ -131,7 +132,7 @@ Retiring it:
 
 ### Magnetic Storm (`magnetic_storm`)
 
-Status: off for now (2026-11-16).
+Status: building on branch `atlas-nodes/magnetic-storm` since 2026-11-19, wiring only: the types go in `atlas_tree_types.json` without placement on the tree.
 
 Reward: 20% increased quantity of crafting items found in the system, behind magnetic fields that blind sensors. No reward of its own yet.
 
@@ -157,7 +158,7 @@ Idea for a fifth, not decided:
 
 ### Stellar Flares (`stellar_flares`)
 
-Status: off for now (2026-11-16).
+Status: building on branch `atlas-nodes/stellar-flares` since 2026-11-19, wiring only: the types go in `atlas_tree_types.json` without placement on the tree.
 
 Reward: every hull item found in the system has 1 lucky modifier.
 
@@ -328,7 +329,7 @@ More notables:
 
 ### Storm Front (`storm_front`)
 
-Status: off for now (2026-11-16).
+Status: building on branch `atlas-nodes/storm-front` since 2026-11-19, wiring only: the types go in `atlas_tree_types.json` without placement on the tree.
 
 Reward: every non-unique hull item from a battle in the storm carries a biome modifier, and those battles drop 50% increased quantity of items.
 
@@ -347,7 +348,6 @@ Notables:
 - Eye of the Storm: "Storm Fronts in your Star Charts have 80% reduced speed while your fleet is inside them" (new, slows the band's movement in `StormFrontTerrainPlugin`; the crossing still ends at the far edge, later by however long the player stayed inside, and chart intel's days follow).
 - [REDACTED] Front: "Enemy fleets you fight in Storm Fronts in your Star Charts are joined by 5 to 10 frigates of what was left behind" (new). Remnant frigates join the enemy side when the battle in the storm starts. As with the [REDACTED] Sleepers, the tooltip never names the faction, and each joining ship counts as Remnant for the Remnant wormhole anchor's chance per 100 deployment points lost (`FleetFactions.recordMemberFactions`). The ships keep their AI core captains, so they can drop AI cores as vanilla Remnant ships do.
 - Captured Front (Black Hole): "Storm Fronts in your Star Charts with a Black Hole circle the hole instead of crossing the system" and "Hull items dropped by battles in Storm Fronts in your Star Charts with a Black Hole have 10% chance to have an immutable modifier" (new). The front orbits the hole through its derelicts for the whole run and never leaves (`StormPath`), so chart intel says where it is next rather than when it leaves.
-- Static Dust (Dense Nebula): "Battles won in Storm Fronts in your Star Charts with a Dense Nebula grant 2 additional Settling Dust stacks" and "+3 to maximum Settling Dust stacks in your Star Charts with a Storm Front" (new, adds to the stack count and `MAX_DUST`).
 - Solar Front (Stellar Flares): "Biome modifiers on hull items dropped by battles in Storm Fronts in your Star Charts with Stellar Flares are lucky" (new, in `StormLoot`). The front's clouds and flashes turn red and orange, on the map and in battle (`StormFrontTerrainPlugin`, `StormOverlay`).
 - Thunder Duel (Atlas officers): "Atlas officers you defeat in Storm Fronts in your Star Charts drop 1 additional item from their reward pool" (new). The officers don't seek out the storm: fighting them in it is up to the player.
 
