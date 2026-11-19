@@ -158,27 +158,31 @@ Idea for a fifth, not decided:
 
 ### Stellar Flares (`stellar_flares`)
 
-Status: building on branch `atlas-nodes/stellar-flares` since 2026-11-19, wiring only: the types go in `atlas_tree_types.json` without placement on the tree.
+Status: built on branch `atlas-nodes/stellar-flares` 2026-11-19, wiring only (not placed on the tree).
 
 Reward: every hull item found in the system has 1 lucky modifier.
 
-Lucky is the word for Stellar Flares' double roll in every tooltip: a lucky modifier is rolled twice, keeping the best. Every line that makes something lucky carries the bracketed reminder "(Lucky modifiers are rolled twice, keeping the best)" in muted text on the line below. Built for the anomaly's reward line on the atlas (`chart.atlas.anomaly.stellar_flares.reward`, en and zh_CN, 幸运 in the glossary); the node lines below use it when built.
+Lucky is the word for Stellar Flares' double roll in every tooltip: a lucky modifier is rolled twice, keeping the best. Every line that makes something lucky carries the bracketed reminder "(Lucky modifiers are rolled twice, keeping the best)" in muted text on the line below. Built for the anomaly's reward line on the atlas (`chart.atlas.anomaly.stellar_flares.reward`, en and zh_CN, 幸运 in the glossary); the node lines below use it when built. Built for the node lines too: a `ChartModifier` line of kind `AnomalyLine.LUCKY_COUNT` or `LUCKY_FLAG` (`makesLucky`) gets the reminder from `AtlasTreeNodeText.addChartLine`, in node tooltips and the effects panel, saying "rolled N times" with Golden Hour allocated (`FlareLuck.treeRolls`). The atlas reward line keeps "twice", since it describes the anomaly itself.
+
+Every drop's luck goes through one shared path: `FlareLuck.dropLuck` (`anomaly` root) sums the run's lucky lines into a `Luck` (lucky modifier count, every modifier, lucky implicits, roll count), and `LuckyRolls.withLuck` rolls it, read by `StellarFlares.shapeDrop` for every item found in the system. Another anomaly's lucky line adds to `FlareLuck.dropLuck`, or, for luck on chosen modifiers only, calls `FlareLuck.withLuckyModifiers(item, run, predicate)`, which takes Golden Hour's roll count from `FlareLuck.rolls`.
 
 Small nodes:
 
-- The chance node.
-- Flare Hull Items: "Your Star Charts with Stellar Flares have 10% increased quantity of hull items found" (new).
+- The chance node: built as `stellar_flares_chance` (`CHART_STELLAR_FLARES_CHANCE_PERCENT`, read by `OpeningAnomalies.rolled`).
+- Flare Hull Items: "Your Star Charts with Stellar Flares have 10% increased quantity of hull items found" (new). Built: type `flare_hull_items` (`CHART_STELLAR_FLARES_HULL_ITEM_PERCENT`), turned into the run's hull item quantity only in runs with the flares by `StellarFlares.effectsInRun`, through the new `LootShaper.effectsInRun` collected in `ChartGenContext.withAnomalyEffects`.
 
 Notables:
 
-- Solar Maximum: "Hull items found in your Star Charts with Stellar Flares have 1 additional lucky modifier" and "Coronas in your Star Charts with Stellar Flares throw flares 50% more often".
-- Tempered Light: "Implicit values of hull items found in your Star Charts with Stellar Flares are lucky".
-- Golden Hour: "Lucky modifiers in your Star Charts with Stellar Flares are rolled 4 times instead of twice, keeping the best" (new, `LuckyRolls`). It covers every lucky roll in those charts, Geomagnetic Surge's and Solar Front's too, and the reminder lines there say "rolled 4 times" while it is allocated.
-- Sunstruck Convoy (Supply Convoy): "Supply Convoys in your Star Charts with Stellar Flares route through the star's corona" and "Supply Convoys in your Star Charts with Stellar Flares start battles with -20% to combat readiness" (new). The corona's flares wear the convoy down on its way, so it arrives at the fight weakened.
+- Solar Maximum: "Hull items found in your Star Charts with Stellar Flares have 1 additional lucky modifier" and "Coronas in your Star Charts with Stellar Flares throw flares 50% more often". Built: type `solar_maximum` (`CHART_STELLAR_FLARES_LUCKY_MODIFIERS`, read by `FlareLuck.dropLuck`; `CHART_STELLAR_FLARES_FLARE_FREQUENCY_MULT`, read by `FlareTempo` in `anomaly.stellarflares`). `FlareTempo` is added by `StellarFlares.generate` only with the line allocated, and advances each star corona's vanilla `FlareManager` by an extra 50% of every frame, so flares come and run their course 50% faster.
+- Tempered Light: "Implicit values of hull items found in your Star Charts with Stellar Flares are lucky". Built: type `tempered_light` (`CHART_STELLAR_FLARES_LUCKY_IMPLICITS`, read by `FlareLuck.dropLuck`); `LuckyRolls` rerolls each varying implicit and keeps the best.
+- Golden Hour: "Lucky modifiers in your Star Charts with Stellar Flares are rolled 4 times instead of twice, keeping the best" (new, `LuckyRolls`). It covers every lucky roll in those charts, Geomagnetic Surge's and Solar Front's too, and the reminder lines there say "rolled 4 times" while it is allocated. Built: type `golden_hour` (`CHART_STELLAR_FLARES_LUCKY_ROLLS`, read by `FlareLuck.rolls`). Its magnitude is the total roll count (4), never below the base 2, so the line shows its own number. It applies only in charts with Stellar Flares.
+- Sunstruck Convoy (Supply Convoy): "Supply Convoys in your Star Charts with Stellar Flares route through the star's corona" and "Supply Convoys in your Star Charts with Stellar Flares start battles with -20% to combat readiness" (new). The corona's flares wear the convoy down on its way, so it arrives at the fight weakened. Built: type `sunstruck_convoy` (`CHART_CONVOY_SUNSTRUCK`, `CHART_CONVOY_SUNSTRUCK_COMBAT_READINESS_PERCENT`), read by `ConvoySunstruck` in `anomaly.convoy` on the convoy script's first frame. Convoys still waiting get the system's star as their first waypoint, so the vanilla corona wears them down on the way. Every convoy ship also takes -20% maximum combat readiness and loses 20% current combat readiness at once, so every battle with them starts weakened, even before they reach the corona.
 
 Keystone:
 
-- Perfect Light: "Every modifier on hull items found in your Star Charts with Stellar Flares is lucky" and "Your Star Charts with Stellar Flares have 40% reduced quantity of hull items found".
+- Perfect Light: "Every modifier on hull items found in your Star Charts with Stellar Flares is lucky" and "Your Star Charts with Stellar Flares have 40% reduced quantity of hull items found". Built: type `perfect_light` (`CHART_STELLAR_FLARES_ALL_LUCKY`, read by `FlareLuck.dropLuck`; `CHART_STELLAR_FLARES_HULL_ITEM_PERCENT` -40, as Flare Hull Items). Every modifier means every explicit modifier; implicits stay Tempered Light's.
+
+Follow-up: move `StellarFlares` into `anomaly.stellarflares` once the parallel anomaly branches have merged (it stays in the `anomaly` root for now so their imports keep working).
 
 ### Spatial Breach (`spatial_breach`)
 

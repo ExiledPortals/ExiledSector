@@ -381,6 +381,17 @@ public final class ChartAnomalies {
         return effects;
     }
 
+    public static List<ChartGenContext.AppliedEffect> effectsInRun(Collection<String> ids, ChartGenContext context) {
+        List<ChartGenContext.AppliedEffect> effects = new ArrayList<>();
+        for (LootShaper anomaly : among(ids, LootShaper.class)) {
+            List<ChartGenContext.AppliedEffect> added = askSafely(anomaly, "run effects", () -> anomaly.effectsInRun(context));
+            if (added != null) {
+                effects.addAll(added);
+            }
+        }
+        return effects;
+    }
+
     public static List<String> planned(ChartGenContext context) {
         if (context == null) {
             return List.of();

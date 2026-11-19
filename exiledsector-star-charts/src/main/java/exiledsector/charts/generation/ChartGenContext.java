@@ -349,7 +349,8 @@ public final class ChartGenContext {
         if (anomalyIds == null || anomalyIds.isEmpty()) {
             return this;
         }
-        List<AppliedEffect> effects = ChartAnomalies.effectsOf(anomalyIds);
+        List<AppliedEffect> effects = new ArrayList<>(ChartAnomalies.effectsOf(anomalyIds));
+        effects.addAll(ChartAnomalies.effectsInRun(anomalyIds, this));
         return effects.isEmpty() ? this : derive(addedPlus(effects), factionId);
     }
 

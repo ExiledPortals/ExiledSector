@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AtlasTreeNodeTextTest {
@@ -91,13 +92,44 @@ class AtlasTreeNodeTextTest {
     }
 
     @Test
+    void everyLuckyLineCarriesTheReminderUnderItAndGoldenHourRaisesItsRollCount() {
+        useEnglishWith(Map.of());
+        AtlasTreeType type = new AtlasTreeType("perfect_light", "Perfect Light", null, SkillTier.KEYSTONE,
+                List.of(new AppliedEffect(ChartModifier.CHART_STELLAR_FLARES_ALL_LUCKY, 1f),
+                        new AppliedEffect(ChartModifier.CHART_STELLAR_FLARES_HULL_ITEM_PERCENT, -40f)),
+                List.of(), null, List.of());
+
+        assertEquals(List.of("Every modifier on hull items found in your Star Charts with Stellar Flares is lucky",
+                "(Lucky modifiers are rolled twice, keeping the best)",
+                "Your Star Charts with Stellar Flares have 40% reduced quantity of hull items found"), body(type));
+        assertEquals("(Lucky modifiers are rolled 4 times, keeping the best)",
+                AtlasTreeNodeText.body(type, null, 4).get(1).plain());
+        assertEquals("Lucky modifiers in your Star Charts with Stellar Flares are rolled 4 times instead of twice, keeping the best",
+                chartLine(ChartModifier.CHART_STELLAR_FLARES_LUCKY_ROLLS, 4f));
+    }
+
+    @Test
+    void theLuckyLinesAreTheOnesThatMakeSomethingLucky() {
+        assertTrue(ChartModifier.CHART_STELLAR_FLARES_LUCKY_MODIFIERS.makesLucky());
+        assertTrue(ChartModifier.CHART_STELLAR_FLARES_LUCKY_IMPLICITS.makesLucky());
+        assertTrue(ChartModifier.CHART_STELLAR_FLARES_ALL_LUCKY.makesLucky());
+        assertFalse(ChartModifier.CHART_STELLAR_FLARES_LUCKY_ROLLS.makesLucky());
+        assertFalse(ChartModifier.CHART_STELLAR_FLARES_HULL_ITEM_PERCENT.makesLucky());
+        assertTrue(ChartModifier.CHART_STELLAR_FLARES_ALL_LUCKY.isFlag());
+        assertFalse(ChartModifier.CHART_STELLAR_FLARES_LUCKY_MODIFIERS.isFlag());
+        Map<String, String> chinese = RealCatalogue.entries("zh_CN");
+        assertTrue(chinese.containsKey("chart.lucky.reminder") && chinese.containsKey("chart.lucky.reminder.twice"));
+    }
+
+    @Test
     void everyTravelAndChanceLineHasItsOwnTreeTextInEnglishAndChinese() {
         Map<String, String> english = RealCatalogue.entries("en");
         Map<String, String> chinese = RealCatalogue.entries("zh_CN");
         for (ChartModifier effect : List.of(ChartModifier.CHART_BOSS_STAR_CHART_PERCENT, ChartModifier.CHART_CATALYST_PERCENT,
                 ChartModifier.CHART_MODIFIER_EFFECT_PERCENT, ChartModifier.CHART_SPATIAL_BREACH_CHANCE_PERCENT, ChartModifier.CHART_RELAY_NETWORK_CHANCE_PERCENT,
                 ChartModifier.CHART_SUPPLY_CONVOY_CHANCE_PERCENT, ChartModifier.CHART_ANOMALOUS_DEBRIS_CHANCE_PERCENT,
-                ChartModifier.CHART_EXCAVATION_SITES_CHANCE_PERCENT, ChartModifier.CHART_LISTENING_POST_CHANCE_PERCENT)) {
+                ChartModifier.CHART_EXCAVATION_SITES_CHANCE_PERCENT, ChartModifier.CHART_LISTENING_POST_CHANCE_PERCENT,
+                ChartModifier.CHART_STELLAR_FLARES_CHANCE_PERCENT)) {
             String treeKey = TREE + effect.name();
             assertTrue(english.containsKey(treeKey) && chinese.containsKey(treeKey), treeKey);
             assertTrue(english.get(treeKey).contains("<good>{value}%</good>") || english.get(treeKey).contains("<good>+{value}%</good>"), treeKey);

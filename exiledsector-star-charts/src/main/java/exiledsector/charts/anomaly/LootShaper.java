@@ -44,6 +44,10 @@ public interface LootShaper extends ChartAnomaly {
         return 0f;
     }
 
+    default List<ChartGenContext.AppliedEffect> effectsInRun(ChartGenContext context) {
+        return List.of();
+    }
+
     default void engagementRecorded(BattleLoot battle, BattleEngagement engagement) {
     }
 

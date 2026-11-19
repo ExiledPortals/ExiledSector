@@ -128,6 +128,19 @@
 			]
 		},
 		{
+			"id": "stellar_flares_chance",
+			"name": "Stellar Flares Chance",
+			"effects": [
+				{
+					"effect": "CHART_STELLAR_FLARES_CHANCE_PERCENT",
+					"magnitude": 8
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
 			"id": "additional_site",
 			"name": "Additional Site",
 			"effects": [
@@ -1159,6 +1172,101 @@
 			],
 			"tags": [
 				"star_chart"
+			]
+		},
+		{
+			"id": "flare_hull_items",
+			"name": "Flare Hull Items",
+			"effects": [
+				{
+					"effect": "CHART_STELLAR_FLARES_HULL_ITEM_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"hull_item"
+			]
+		},
+		{
+			"id": "solar_maximum",
+			"name": "Solar Maximum",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_STELLAR_FLARES_LUCKY_MODIFIERS",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_STELLAR_FLARES_FLARE_FREQUENCY_MULT",
+					"magnitude": 50
+				}
+			],
+			"tags": [
+				"hull_item"
+			]
+		},
+		{
+			"id": "tempered_light",
+			"name": "Tempered Light",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_STELLAR_FLARES_LUCKY_IMPLICITS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"hull_item"
+			]
+		},
+		{
+			"id": "golden_hour",
+			"name": "Golden Hour",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_STELLAR_FLARES_LUCKY_ROLLS",
+					"magnitude": 4
+				}
+			],
+			"tags": [
+				"hull_item"
+			]
+		},
+		{
+			"id": "sunstruck_convoy",
+			"name": "Sunstruck Convoy",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_CONVOY_SUNSTRUCK",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_CONVOY_SUNSTRUCK_COMBAT_READINESS_PERCENT",
+					"magnitude": -20
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "perfect_light",
+			"name": "Perfect Light",
+			"tier": "KEYSTONE",
+			"effects": [
+				{
+					"effect": "CHART_STELLAR_FLARES_ALL_LUCKY",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_STELLAR_FLARES_HULL_ITEM_PERCENT",
+					"magnitude": -40
+				}
+			],
+			"tags": [
+				"hull_item"
 			]
 		}
 	]
