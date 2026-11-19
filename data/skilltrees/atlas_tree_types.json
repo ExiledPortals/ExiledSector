@@ -318,6 +318,92 @@
 			]
 		},
 		{
+			"id": "dense_nebula_atlas_chance",
+			"name": "Dense Nebula Atlas Chance",
+			"effects": [
+				{
+					"effect": "ATLAS_DENSE_NEBULA_CHANCE_PERCENT",
+					"magnitude": 8
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "settling_dust_effect",
+			"name": "Settling Dust Effect",
+			"effects": [
+				{
+					"effect": "CHART_SETTLING_DUST_EFFECT_PERCENT",
+					"magnitude": 20
+				}
+			],
+			"tags": [
+				"star_chart"
+			]
+		},
+		{
+			"id": "settling_dust_stacks",
+			"name": "Settling Dust Stacks",
+			"effects": [
+				{
+					"effect": "CHART_SETTLING_DUST_MAX_STACKS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"star_chart"
+			]
+		},
+		{
+			"id": "dust_trails",
+			"name": "Dust Trails",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_SETTLING_DUST_QUANTITY_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"tags": [
+				"loot"
+			]
+		},
+		{
+			"id": "long_settling",
+			"name": "Long Settling",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_SETTLING_DUST_MAX_STACKS",
+					"magnitude": 5
+				},
+				{
+					"effect": "CHART_SETTLING_DUST_FLEET_SIZE_PERCENT",
+					"magnitude": 3
+				}
+			],
+			"tags": [
+				"star_chart",
+				"fleet_size"
+			]
+		},
+		{
+			"id": "ionized_dust",
+			"name": "Ionized Dust",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_SETTLING_DUST_IONIZED",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"star_chart"
+			]
+		},
+		{
 			"id": "threat_feedstock_chance",
 			"name": "Threat Feedstock Chance",
 			"effects": [

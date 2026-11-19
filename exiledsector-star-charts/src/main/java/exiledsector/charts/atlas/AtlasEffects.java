@@ -28,4 +28,14 @@ public record AtlasEffects(Map<AtlasModifier, Float> totals) {
     public int count(AtlasModifier effect) {
         return Math.round(value(effect));
     }
+
+    public float atlasChancePercent(String anomalyId) {
+        float percent = 0f;
+        for (Map.Entry<AtlasModifier, Float> total : totals.entrySet()) {
+            if (anomalyId.equals(total.getKey().atlasChanceAnomalyId())) {
+                percent += total.getValue();
+            }
+        }
+        return percent;
+    }
 }

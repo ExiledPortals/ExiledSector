@@ -48,12 +48,12 @@ class DenseNebulaTest {
         ChartRun run = ChartRuns.currentOrNull();
 
         winBattles(system, 3);
-        assertEquals(3, DenseNebula.dust(run));
-        assertEquals(3 * DenseNebula.STAR_CHART_PERCENT_PER_DUST, ChartAnomalies.bossStarChartPercent(run));
+        assertEquals(3, SettlingDust.stacks(run));
+        assertEquals(3 * SettlingDust.STAR_CHART_PERCENT_PER_STACK, ChartAnomalies.bossStarChartPercent(run));
 
-        winBattles(system, DenseNebula.MAX_DUST);
-        assertEquals(DenseNebula.MAX_DUST, DenseNebula.dust(run));
-        assertEquals(DenseNebula.MAX_DUST * DenseNebula.STAR_CHART_PERCENT_PER_DUST, ChartAnomalies.bossStarChartPercent(run));
+        winBattles(system, SettlingDust.BASE_MAX_STACKS);
+        assertEquals(SettlingDust.BASE_MAX_STACKS, SettlingDust.stacks(run));
+        assertEquals(SettlingDust.BASE_MAX_STACKS * SettlingDust.STAR_CHART_PERCENT_PER_STACK, ChartAnomalies.bossStarChartPercent(run));
     }
 
     @Test
@@ -64,7 +64,7 @@ class DenseNebulaTest {
         winBattles(system, 2);
         winBattles(mock(StarSystemAPI.class), 2);
 
-        assertEquals(0, DenseNebula.dust(run));
+        assertEquals(0, SettlingDust.stacks(run));
         assertEquals(0f, ChartAnomalies.bossStarChartPercent(run));
     }
 
@@ -75,7 +75,7 @@ class DenseNebulaTest {
 
         LiveAnomalyRuns.systemWith(DenseNebula.ANOMALY_ID);
 
-        assertEquals(0, DenseNebula.dust(ChartRuns.currentOrNull()));
+        assertEquals(0, SettlingDust.stacks(ChartRuns.currentOrNull()));
     }
 
     @Test
@@ -83,10 +83,10 @@ class DenseNebulaTest {
         StarSystemAPI system = LiveAnomalyRuns.systemWith(DenseNebula.ANOMALY_ID);
         winBattles(system, 2);
 
-        String intel = DenseNebula.INSTANCE.intelText(new AnomalyRun(ChartRuns.currentOrNull(), system));
+        String intel = SettlingDust.intelText(ChartRuns.currentOrNull());
         String body = AtlasNodeText.anomalyBody(DenseNebula.ANOMALY_ID).plain();
 
-        assertTrue(intel.contains("2 of " + DenseNebula.MAX_DUST) && intel.contains("20%"), intel);
-        assertTrue(body.contains("Settling Dust") && body.contains("up to " + DenseNebula.MAX_DUST), body);
+        assertTrue(intel.contains("2 of " + SettlingDust.BASE_MAX_STACKS) && intel.contains("20%"), intel);
+        assertTrue(body.contains("Settling Dust") && body.contains("up to " + SettlingDust.BASE_MAX_STACKS), body);
     }
 }

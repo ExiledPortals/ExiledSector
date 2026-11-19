@@ -12,7 +12,7 @@ import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ContentPlacer;
-import exiledsector.charts.anomaly.DenseNebula;
+import exiledsector.charts.anomaly.SettlingDust;
 import exiledsector.charts.anomaly.LayoutShaper;
 import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.anomaly.RunParticipant;
@@ -91,7 +91,7 @@ public final class ExcavationSites implements LayoutShaper, ContentPlacer, RunPa
 
     @Override
     public Loot fleetLoot(FleetClaim claim, ChartLootContext loot, ChartFleetLoot.Battle battle, Random random) {
-        return ExcavationLoot.fleetItems(claim.fleet(), loot, DenseNebula.dust(ChartFleetLedger.liveRunOf(claim.fleet())), claim.mergedFleetShare(), random);
+        return ExcavationLoot.fleetItems(claim.fleet(), loot, SettlingDust.stacks(ChartFleetLedger.liveRunOf(claim.fleet())), claim.mergedFleetShare(), random);
     }
 
     @Override
