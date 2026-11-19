@@ -132,25 +132,31 @@ Retiring it:
 
 ### Magnetic Storm (`magnetic_storm`)
 
-Status: building on branch `atlas-nodes/magnetic-storm` since 2026-11-19, wiring only: the types go in `atlas_tree_types.json` without placement on the tree.
+Status: built on branch `atlas-nodes/magnetic-storm` 2026-11-19, wiring only (not placed on the tree). The types are in `atlas_tree_types.json`; Ion Front and Geomagnetic Surge read their lines once per run through `MagneticStormTuning` (`anomaly.magneticstorm`). `MagneticStorm` itself stays in the `anomaly` root so the other anomalies' branches keep compiling; it can move into `anomaly.magneticstorm` once they are merged.
 
 Reward: 20% increased quantity of crafting items found in the system, behind magnetic fields that blind sensors. No reward of its own yet.
 
-Change to the anomaly: its crafting item line drops from 50% to 20% (`CHART_CRAFTING_ITEM_PERCENT` in its `effects` in `chart_anomalies.csv`), and Charged Fields brings it back to 50%.
+Change to the anomaly: its crafting item line drops from 50% to 20% (`CHART_CRAFTING_ITEM_PERCENT` in its `effects` in `chart_anomalies.csv`), and Charged Fields brings it back to 50%. Built.
 
 Its nodes are passive like the anomaly itself: none asks the player to fly into a field or time an aurora. It gets a handful of notables rather than a full set.
 
 Small nodes:
 
-- The chance node.
-- Storm Crafting Items: "Your Star Charts with a Magnetic Storm have 10% increased quantity of crafting items found" (new, joins its `effects` line).
+- The chance node: built as `magnetic_storm_chance` (`CHART_MAGNETIC_STORM_CHANCE_PERCENT`, read by `OpeningAnomalies.rolled`).
+- Storm Crafting Items: "Your Star Charts with a Magnetic Storm have 10% increased quantity of crafting items found" (new, joins its `effects` line). Built: type `storm_crafting_items` (`CHART_MAGNETIC_STORM_CRAFTING_ITEM_PERCENT`). The line is a conditional drop line: `ChartGenContext.withAnomalyEffects` adds it as `CHART_CRAFTING_ITEM_PERCENT` only when the run has a Magnetic Storm (`ChartModifier.dropLineWith`), so it never stands in for the plain line in `ChartModifier.forDropType`.
 
 Notables:
 
-- Charged Fields: "Your Star Charts with a Magnetic Storm have 30% increased quantity of crafting items found" (new, joins its `effects` line).
-- Static Harvest: "Your Star Charts with a Magnetic Storm have 30% increased quantity of feedstock found" (new, `CHART_FEEDSTOCK_PERCENT` read only with a Magnetic Storm).
-- Ion Front (Storm Front): "Storm Fronts in your Star Charts with a Magnetic Storm set off auroras in the magnetic fields they cross" and "Battles in Storm Fronts in your Star Charts with a Magnetic Storm drop 50% increased quantity of crafting items" (new). Its auroras are vanilla magnetic storms, blinding sensors as usual.
-- Geomagnetic Surge (Stellar Flares): "Corona flares in your Star Charts with a Magnetic Storm set off auroras" and "Hull items found in your Star Charts with a Magnetic Storm and Stellar Flares have 1 additional lucky modifier" (new). Its auroras are vanilla magnetic storms, blinding sensors as usual. It adds to Stellar Flares' own, so 2 modifiers are lucky.
+- Charged Fields: "Your Star Charts with a Magnetic Storm have 30% increased quantity of crafting items found" (new, joins its `effects` line). Built: type `charged_fields`, the same line as Storm Crafting Items.
+- Static Harvest: "Your Star Charts with a Magnetic Storm have 30% increased quantity of feedstock found" (new, `CHART_FEEDSTOCK_PERCENT` read only with a Magnetic Storm). Built: type `static_harvest` (`CHART_MAGNETIC_STORM_FEEDSTOCK_PERCENT`), a conditional drop line as above that joins `CHART_FEEDSTOCK_PERCENT`.
+- Ion Front (Storm Front): "Storm Fronts in your Star Charts with a Magnetic Storm set off auroras in the magnetic fields they cross" and "Battles in Storm Fronts in your Star Charts with a Magnetic Storm drop 50% increased quantity of crafting items" (new). Its auroras are vanilla magnetic storms, blinding sensors as usual. Built: type `ion_front` (`CHART_MAGNETIC_STORM_ION_FRONT`, `CHART_MAGNETIC_STORM_ION_FRONT_CRAFTING_ITEM_PERCENT`), `IonFront`. Once a second the storm's `checkRun` samples each magnetic field's ring and sets off an aurora facing where a live Storm Front crosses it (towards the front when it covers the whole ring). The battle line goes through a new `LootShaper.battleCraftingItemPercent`, summed in `ChartFleetLoot.fleetLootContext`; the storm holds a battle when the player fights inside a Storm Front of a run with a Magnetic Storm (`StormBattles.playerFront`). No Storm Front code changed.
+- Geomagnetic Surge (Stellar Flares): "Corona flares in your Star Charts with a Magnetic Storm set off auroras" and "Hull items found in your Star Charts with a Magnetic Storm and Stellar Flares have 1 additional lucky modifier" (new). Its auroras are vanilla magnetic storms, blinding sensors as usual. It adds to Stellar Flares' own, so 2 modifiers are lucky. Built: type `geomagnetic_surge` (`CHART_MAGNETIC_STORM_FLARE_AURORAS`, `CHART_MAGNETIC_STORM_LUCKY_MODIFIERS`), `GeomagneticSurge`. While a star's corona flares, the star's own field gets an aurora in the flare's direction and a world's field gets one facing the star when the world lies within the flare's arc. The lucky line is added in `StellarFlares.shapeDrop` through `LuckyRolls.withLuckyModifiers`, so whatever changes lucky rolls there (Golden Hour) covers it too, and both lucky lines carry the "(Lucky modifiers are rolled twice, keeping the best)" reminder.
+
+Built readings where the plan left room:
+
+- An aurora is a vanilla flare built from the field's own flare ranges (arc, fade, length) and colours, put ahead of the field's natural flares so it plays at once; a field already showing an aurora that faces the trigger is left alone, so a front or flare keeps one aurora going rather than restarting it every second.
+- The Geomagnetic Surge aurora line needs only a Magnetic Storm, as its wording says; corona flares exist wherever a star has a corona. The lucky line needs both anomalies. A world's field responds to a flare at any distance, as long as it lies in the flare's arc.
+- Ion Front's battle line applies to every battle the player fights inside a Storm Front in such a run, the same battles Storm Front's own battle lines take.
 
 Idea for a fifth, not decided:
 

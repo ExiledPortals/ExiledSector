@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.impl.campaign.terrain.StarCoronaTerrainPlugin;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.charts.anomaly.magneticstorm.GeomagneticSurge;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasOpening;
@@ -44,7 +45,7 @@ public final class StellarFlares implements LayoutShaper, AtlasRule, LootShaper 
 
     @Override
     public ItemData shapeDrop(SectorAPI sector, ItemData item, LocationAPI location) {
-        return LuckyRolls.withLuckyModifier(item);
+        return LuckyRolls.withLuckyModifiers(item, 1 + GeomagneticSurge.extraLuckyModifiers(location));
     }
 
     public static void setFlareChance(PlanetAPI star, float chance) {

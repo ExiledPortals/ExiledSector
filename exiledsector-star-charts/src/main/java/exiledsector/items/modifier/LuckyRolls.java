@@ -20,7 +20,11 @@ public final class LuckyRolls {
     }
 
     public static ItemData withLuckyModifier(ItemData item) {
-        if (item == null || !item.isHullItem()) {
+        return withLuckyModifiers(item, 1);
+    }
+
+    public static ItemData withLuckyModifiers(ItemData item, int luckyModifiers) {
+        if (item == null || !item.isHullItem() || luckyModifiers <= 0) {
             return item;
         }
         Item preview = item.preview();
@@ -38,15 +42,18 @@ public final class LuckyRolls {
             return item;
         }
         Random random = Seeds.derived(item.seed(), LUCK_SEED_SALT);
-        int luckyIndex = varying.get(random.nextInt(varying.size()));
-        RolledModifier rolled = explicits.get(luckyIndex);
-        RolledModifier lucky = rolledAgain(preview, rolled, random);
-        if (lucky.equals(rolled)) {
-            return item;
-        }
         List<RolledModifier> modifiers = new ArrayList<>(explicits);
-        modifiers.set(luckyIndex, lucky);
-        return item.withExplicits(modifiers, preview.frozenName());
+        boolean changed = false;
+        for (int picked = 0; picked < luckyModifiers && !varying.isEmpty(); picked++) {
+            int luckyIndex = varying.remove(random.nextInt(varying.size()));
+            RolledModifier rolled = explicits.get(luckyIndex);
+            RolledModifier lucky = rolledAgain(preview, rolled, random);
+            if (!lucky.equals(rolled)) {
+                modifiers.set(luckyIndex, lucky);
+                changed = true;
+            }
+        }
+        return changed ? item.withExplicits(modifiers, preview.frozenName()) : item;
     }
 
     private static boolean canVary(Item item, RolledModifier rolled) {
