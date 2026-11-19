@@ -1100,6 +1100,96 @@
 			]
 		},
 		{
+			"id": "magnetic_storm_chance",
+			"name": "Magnetic Storm Chance",
+			"effects": [
+				{
+					"effect": "CHART_MAGNETIC_STORM_CHANCE_PERCENT",
+					"magnitude": 8
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "storm_crafting_items",
+			"name": "Storm Crafting Items",
+			"effects": [
+				{
+					"effect": "CHART_MAGNETIC_STORM_CRAFTING_ITEM_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"crafting_item"
+			]
+		},
+		{
+			"id": "charged_fields",
+			"name": "Charged Fields",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_MAGNETIC_STORM_CRAFTING_ITEM_PERCENT",
+					"magnitude": 30
+				}
+			],
+			"tags": [
+				"crafting_item"
+			]
+		},
+		{
+			"id": "static_harvest",
+			"name": "Static Harvest",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_MAGNETIC_STORM_FEEDSTOCK_PERCENT",
+					"magnitude": 30
+				}
+			],
+			"tags": [
+				"feedstock"
+			]
+		},
+		{
+			"id": "ion_front",
+			"name": "Ion Front",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_MAGNETIC_STORM_ION_FRONT",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_MAGNETIC_STORM_ION_FRONT_CRAFTING_ITEM_PERCENT",
+					"magnitude": 50
+				}
+			],
+			"tags": [
+				"crafting_item"
+			]
+		},
+		{
+			"id": "geomagnetic_surge",
+			"name": "Geomagnetic Surge",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_MAGNETIC_STORM_FLARE_AURORAS",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_MAGNETIC_STORM_LUCKY_MODIFIERS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"hull_item"
+			]
+		},
+		{
 			"id": "vault_quantity",
 			"name": "Vault Quantity",
 			"effects": [

@@ -7,6 +7,8 @@ import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.content.ChartContentPlanner;
 import exiledsector.charts.content.ChartFleetSpread;
+import exiledsector.charts.effect.ChartModifier;
+import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.run.ChartRun;
@@ -73,10 +75,13 @@ public final class ChartFleetLoot {
 
     static ChartLootContext fleetLootContext(ChartLootContext loot, List<LootShaper> battleAnomalies, boolean boss) {
         float battleQuantityPercent = 0f;
+        float battleCraftingItemPercent = 0f;
         for (LootShaper anomaly : battleAnomalies) {
             battleQuantityPercent += anomaly.battleQuantityPercent(loot.effects());
+            battleCraftingItemPercent += anomaly.battleCraftingItemPercent(loot.effects());
         }
-        return loot.forFleetLoot(boss).plusQuantityPercent(battleQuantityPercent);
+        return loot.forFleetLoot(boss).plusQuantityPercent(battleQuantityPercent).withEffects(battleCraftingItemPercent == 0f ? List.of()
+                : List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_CRAFTING_ITEM_PERCENT, battleCraftingItemPercent)));
     }
 
     private static Loot anomalyFleetLoot(ChartRun run, ChartLootContext loot, FleetClaim claim, Battle battle, Random random) {

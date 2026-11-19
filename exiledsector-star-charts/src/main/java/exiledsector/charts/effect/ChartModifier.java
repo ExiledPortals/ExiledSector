@@ -234,6 +234,13 @@ public enum ChartModifier implements ModifierEffect {
     CHART_SETTLING_DUST_QUANTITY_PERCENT("settling_dust.quantity", AnomalyLine.PERCENT),
     CHART_SETTLING_DUST_FLEET_SIZE_PERCENT("settling_dust.fleetSize", AnomalyLine.PERCENT),
     CHART_SETTLING_DUST_IONIZED("settling_dust.ionized", AnomalyLine.FLAG),
+    CHART_MAGNETIC_STORM_CHANCE_PERCENT(new OpeningChance("magnetic_storm")),
+    CHART_MAGNETIC_STORM_CRAFTING_ITEM_PERCENT(new AnomalyDrop("magnetic_storm", DropType.CRAFTING_ITEM)),
+    CHART_MAGNETIC_STORM_FEEDSTOCK_PERCENT(new AnomalyDrop("magnetic_storm", DropType.FEEDSTOCK)),
+    CHART_MAGNETIC_STORM_ION_FRONT("magnetic_storm.ionFront", AnomalyLine.FLAG),
+    CHART_MAGNETIC_STORM_ION_FRONT_CRAFTING_ITEM_PERCENT("magnetic_storm.ionFrontCraftingItems", AnomalyLine.PERCENT),
+    CHART_MAGNETIC_STORM_FLARE_AURORAS("magnetic_storm.flareAuroras", AnomalyLine.FLAG),
+    CHART_MAGNETIC_STORM_LUCKY_MODIFIERS("magnetic_storm.luckyModifiers", AnomalyLine.COUNT),
     CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT("storm_front.loot", AnomalyLine.PERCENT),
     CHART_STORM_STRIKE_FREQUENCY_PERCENT("storm_front.strikes", AnomalyLine.PERCENT),
     CHART_STORM_FRONT_SIZE_PERCENT("storm_front.size", AnomalyLine.PERCENT),
@@ -267,6 +274,9 @@ public enum ChartModifier implements ModifierEffect {
     private record OpeningChance(String anomalyId) {
     }
 
+    private record AnomalyDrop(String anomalyId, DropType dropType) {
+    }
+
     private enum AnomalyLine {
         PERCENT(false, null),
         PERCENT_REDUCED_WHEN_NEGATIVE(false, ".reduced"),
@@ -294,6 +304,7 @@ public enum ChartModifier implements ModifierEffect {
     private final boolean flag;
     private String grantedNodeId;
     private String openingChanceAnomalyId;
+    private AnomalyDrop anomalyDrop;
 
     ChartModifier(boolean counted, Contribution contribution) {
         this(counted, null, null, null, null, contribution, false);
@@ -315,6 +326,11 @@ public enum ChartModifier implements ModifierEffect {
     ChartModifier(OpeningChance openingChance) {
         this(false, (context, value) -> { });
         this.openingChanceAnomalyId = openingChance.anomalyId();
+    }
+
+    ChartModifier(AnomalyDrop anomalyDrop) {
+        this(false, (context, value) -> { });
+        this.anomalyDrop = anomalyDrop;
     }
 
     ChartModifier(HullSize bannedCombatHullSize) {
@@ -359,6 +375,13 @@ public enum ChartModifier implements ModifierEffect {
 
     public String openingChanceAnomalyId() {
         return openingChanceAnomalyId;
+    }
+
+    public ChartGenContext.AppliedEffect dropLineWith(List<String> anomalyIds, float value) {
+        if (anomalyDrop == null || anomalyIds == null || !anomalyIds.contains(anomalyDrop.anomalyId())) {
+            return null;
+        }
+        return new ChartGenContext.AppliedEffect(forDropType(anomalyDrop.dropType()), value);
     }
 
     public boolean canRoll(SectorAPI sector) {
