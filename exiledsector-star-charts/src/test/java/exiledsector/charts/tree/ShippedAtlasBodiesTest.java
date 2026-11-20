@@ -20,7 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ShippedAtlasBodiesTest {
 
     private static final int MAX_CHANCE_NODES_PER_ANOMALY = 12;
-    private static final List<Integer> RING_NODE_COUNTS = List.of(8, 14, 20, 24, 30);
+    private static final List<Integer> RING_NODE_COUNTS = List.of(9, 14, 20, 24, 30);
+    private static final int STAR_RAYS = 3;
+    private static final double RAY_ANGLE_TOLERANCE_DEGREES = 0.5;
     private static final float BODY_CLEARANCE = 12f;
     private static final List<String> ANOMALIES = List.of("spatial_breach", "relay_network", "supply_convoy", "anomalous_debris", "excavation_sites",
             "listening_post");
@@ -123,6 +125,28 @@ class ShippedAtlasBodiesTest {
         }
 
         assertEquals(data.topology().nodes().size(), reached.size());
+    }
+
+    @Test
+    void theStarRaysLeaveTheStarEvenlySpaced() throws Exception {
+        AtlasTreeData data = shipped();
+        AtlasTreeBodies.Body star = data.bodies().star();
+        Set<String> rayEnds = new HashSet<>();
+        data.topology().dependents(star.nodeId()).forEach(node -> rayEnds.add(node.getId()));
+        List<Double> rayAngles = new ArrayList<>();
+        for (AtlasTreeBodies.Body body : data.bodies().bodies()) {
+            if (rayEnds.contains(body.nodeId())) {
+                rayAngles.add(Math.toDegrees(Math.atan2(body.y() - star.y(), body.x() - star.x())));
+            }
+        }
+        rayAngles.sort(Double::compare);
+
+        assertEquals(STAR_RAYS, rayAngles.size());
+        double evenGap = 360.0 / STAR_RAYS;
+        for (int ray = 0; ray < rayAngles.size(); ray++) {
+            double next = ray + 1 < rayAngles.size() ? rayAngles.get(ray + 1) : rayAngles.get(0) + 360.0;
+            assertEquals(evenGap, next - rayAngles.get(ray), RAY_ANGLE_TOLERANCE_DEGREES, "ray " + ray);
+        }
     }
 
     @Test

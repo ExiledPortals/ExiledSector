@@ -13,7 +13,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid07.png",
+				"path": "graphics/asteroids/ring_asteroid11.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -24,7 +24,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid03.png",
+				"path": "graphics/asteroids/ring_asteroid10.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -35,7 +35,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid07.png",
+				"path": "graphics/asteroids/ring_asteroid05.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -46,7 +46,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid04.png",
+				"path": "graphics/asteroids/ring_asteroid02.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -57,7 +57,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid03.png",
+				"path": "graphics/asteroids/ring_asteroid08.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -68,7 +68,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid08.png",
+				"path": "graphics/asteroids/ring_asteroid03.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -79,7 +79,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid06.png",
+				"path": "graphics/asteroids/ring_asteroid01.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -90,7 +90,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid08.png",
+				"path": "graphics/asteroids/ring_asteroid11.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -101,7 +101,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid00.png",
+				"path": "graphics/asteroids/ring_asteroid01.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -112,7 +112,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid04.png",
+				"path": "graphics/asteroids/ring_asteroid00.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -123,7 +123,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid11.png",
+				"path": "graphics/asteroids/ring_asteroid04.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -134,7 +134,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid03.png",
+				"path": "graphics/asteroids/ring_asteroid05.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -145,7 +145,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid06.png",
+				"path": "graphics/asteroids/ring_asteroid04.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -156,7 +156,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid10.png",
+				"path": "graphics/asteroids/ring_asteroid08.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -167,7 +167,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid06.png",
+				"path": "graphics/asteroids/ring_asteroid02.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -178,7 +178,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid06.png",
+				"path": "graphics/asteroids/ring_asteroid04.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -189,7 +189,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid01.png",
+				"path": "graphics/asteroids/ring_asteroid09.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -200,7 +200,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid10.png",
+				"path": "graphics/asteroids/ring_asteroid01.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -211,7 +211,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid10.png",
+				"path": "graphics/asteroids/ring_asteroid09.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -222,7 +222,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid10.png",
+				"path": "graphics/asteroids/ring_asteroid04.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -233,13 +233,24 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid07.png",
+				"path": "graphics/asteroids/ring_asteroid03.png",
 				"size": 16,
 				"facing": "spin"
 			}
 		},
 		{
 			"id": "travel_boss_star_charts_22",
+			"highway": true,
+			"colour": "#ffffff",
+			"art": {
+				"kind": "sprite",
+				"path": "graphics/asteroids/ring_asteroid06.png",
+				"size": 16,
+				"facing": "spin"
+			}
+		},
+		{
+			"id": "travel_boss_star_charts_23",
 			"highway": true,
 			"colour": "#ffffff",
 			"art": {
@@ -255,7 +266,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid03.png",
+				"path": "graphics/asteroids/ring_asteroid05.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -266,7 +277,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid05.png",
+				"path": "graphics/asteroids/ring_asteroid10.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -277,7 +288,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid05.png",
+				"path": "graphics/asteroids/ring_asteroid02.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -288,7 +299,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid00.png",
+				"path": "graphics/asteroids/ring_asteroid06.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -299,7 +310,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid10.png",
+				"path": "graphics/asteroids/ring_asteroid02.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -310,7 +321,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid08.png",
+				"path": "graphics/asteroids/ring_asteroid05.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -321,7 +332,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid10.png",
+				"path": "graphics/asteroids/ring_asteroid03.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -332,7 +343,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid04.png",
+				"path": "graphics/asteroids/ring_asteroid11.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -354,7 +365,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid07.png",
+				"path": "graphics/asteroids/ring_asteroid09.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -365,7 +376,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid06.png",
+				"path": "graphics/asteroids/ring_asteroid04.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -376,7 +387,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid08.png",
+				"path": "graphics/asteroids/ring_asteroid00.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -387,7 +398,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid05.png",
+				"path": "graphics/asteroids/ring_asteroid04.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -398,7 +409,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid01.png",
+				"path": "graphics/asteroids/ring_asteroid08.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -409,7 +420,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid01.png",
+				"path": "graphics/asteroids/ring_asteroid05.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -420,7 +431,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid11.png",
+				"path": "graphics/asteroids/ring_asteroid07.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -431,7 +442,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid11.png",
+				"path": "graphics/asteroids/ring_asteroid08.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -442,7 +453,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid01.png",
+				"path": "graphics/asteroids/ring_asteroid10.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -453,7 +464,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid08.png",
+				"path": "graphics/asteroids/ring_asteroid09.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -475,7 +486,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid08.png",
+				"path": "graphics/asteroids/ring_asteroid06.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -486,7 +497,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid11.png",
+				"path": "graphics/asteroids/ring_asteroid09.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -497,7 +508,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid08.png",
+				"path": "graphics/asteroids/ring_asteroid10.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -508,7 +519,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid00.png",
+				"path": "graphics/asteroids/ring_asteroid10.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -519,7 +530,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid01.png",
+				"path": "graphics/asteroids/ring_asteroid00.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -530,7 +541,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid03.png",
+				"path": "graphics/asteroids/ring_asteroid02.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -541,7 +552,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid10.png",
+				"path": "graphics/asteroids/ring_asteroid02.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -563,7 +574,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid06.png",
+				"path": "graphics/asteroids/ring_asteroid09.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -574,7 +585,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid04.png",
+				"path": "graphics/asteroids/ring_asteroid10.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -585,7 +596,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid07.png",
+				"path": "graphics/asteroids/ring_asteroid06.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -596,7 +607,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid00.png",
+				"path": "graphics/asteroids/ring_asteroid11.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -607,7 +618,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid11.png",
+				"path": "graphics/asteroids/ring_asteroid09.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -618,7 +629,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid08.png",
+				"path": "graphics/asteroids/ring_asteroid10.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -629,7 +640,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid09.png",
+				"path": "graphics/asteroids/ring_asteroid03.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -640,7 +651,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid01.png",
+				"path": "graphics/asteroids/ring_asteroid02.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -651,7 +662,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid03.png",
+				"path": "graphics/asteroids/ring_asteroid08.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -673,7 +684,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid07.png",
+				"path": "graphics/asteroids/ring_asteroid02.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -684,7 +695,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid01.png",
+				"path": "graphics/asteroids/ring_asteroid02.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -695,7 +706,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid05.png",
+				"path": "graphics/asteroids/ring_asteroid09.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -706,7 +717,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid03.png",
+				"path": "graphics/asteroids/ring_asteroid11.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -717,7 +728,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid11.png",
+				"path": "graphics/asteroids/ring_asteroid08.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -728,7 +739,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid01.png",
+				"path": "graphics/asteroids/ring_asteroid08.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -739,7 +750,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid05.png",
+				"path": "graphics/asteroids/ring_asteroid06.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -750,7 +761,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid10.png",
+				"path": "graphics/asteroids/ring_asteroid00.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -761,7 +772,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid06.png",
+				"path": "graphics/asteroids/ring_asteroid04.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -772,7 +783,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid01.png",
+				"path": "graphics/asteroids/ring_asteroid06.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -794,7 +805,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid05.png",
+				"path": "graphics/asteroids/ring_asteroid10.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -805,7 +816,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid01.png",
+				"path": "graphics/asteroids/ring_asteroid09.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -827,7 +838,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid08.png",
+				"path": "graphics/asteroids/ring_asteroid00.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -849,7 +860,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid00.png",
+				"path": "graphics/asteroids/ring_asteroid09.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -860,7 +871,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid03.png",
+				"path": "graphics/asteroids/ring_asteroid11.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -871,7 +882,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid03.png",
+				"path": "graphics/asteroids/ring_asteroid06.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -882,7 +893,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid02.png",
+				"path": "graphics/asteroids/ring_asteroid04.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -893,7 +904,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid04.png",
+				"path": "graphics/asteroids/ring_asteroid07.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -904,7 +915,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid00.png",
+				"path": "graphics/asteroids/ring_asteroid11.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -915,7 +926,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid05.png",
+				"path": "graphics/asteroids/ring_asteroid09.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -926,7 +937,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid03.png",
+				"path": "graphics/asteroids/ring_asteroid02.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -937,7 +948,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid11.png",
+				"path": "graphics/asteroids/ring_asteroid03.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -948,7 +959,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid04.png",
+				"path": "graphics/asteroids/ring_asteroid02.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -959,7 +970,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid07.png",
+				"path": "graphics/asteroids/ring_asteroid03.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -981,7 +992,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid06.png",
+				"path": "graphics/asteroids/ring_asteroid02.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -1003,7 +1014,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid10.png",
+				"path": "graphics/asteroids/ring_asteroid11.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -1014,7 +1025,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid10.png",
+				"path": "graphics/asteroids/ring_asteroid05.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -1025,7 +1036,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid08.png",
+				"path": "graphics/asteroids/ring_asteroid11.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -1036,7 +1047,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid00.png",
+				"path": "graphics/asteroids/ring_asteroid01.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -1047,7 +1058,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid11.png",
+				"path": "graphics/asteroids/ring_asteroid07.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -1058,7 +1069,7 @@
 			"colour": "#ffffff",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/ring_asteroid08.png",
+				"path": "graphics/asteroids/ring_asteroid00.png",
 				"size": 16,
 				"facing": "spin"
 			}
@@ -1069,7 +1080,7 @@
 			"spiral": -1,
 			"art": {
 				"kind": "planet",
-				"planet": "barren",
+				"planet": "rocky_metallic",
 				"size": 150,
 				"light": "#ffbe5a"
 			}
@@ -1080,7 +1091,7 @@
 			"wheel": "settled_shafts_1",
 			"art": {
 				"kind": "planet",
-				"planet": "frozen1",
+				"planet": "barren3",
 				"size": 45
 			}
 		},
@@ -1090,7 +1101,7 @@
 			"wheel": "settled_shafts_1",
 			"art": {
 				"kind": "planet",
-				"planet": "rocky_ice",
+				"planet": "barren3",
 				"size": 45
 			}
 		},
@@ -1100,7 +1111,7 @@
 			"spiral": 1,
 			"art": {
 				"kind": "planet",
-				"planet": "jungle",
+				"planet": "frozen3",
 				"size": 150,
 				"light": "#ffbe5a"
 			}
@@ -1111,7 +1122,7 @@
 			"wheel": "sapper_teams_1",
 			"art": {
 				"kind": "planet",
-				"planet": "rocky_metallic",
+				"planet": "barren3",
 				"size": 45
 			}
 		},
@@ -1121,7 +1132,7 @@
 			"wheel": "sapper_teams_1",
 			"art": {
 				"kind": "planet",
-				"planet": "barren3",
+				"planet": "barren2",
 				"size": 45
 			}
 		},
@@ -1133,10 +1144,10 @@
 				"kind": "outpost",
 				"path": "graphics/stations/station_side02.png",
 				"hulls": [
-					"wolf",
-					"centurion",
 					"kite",
-					"wolf"
+					"lasher",
+					"kite",
+					"monitor"
 				],
 				"size": 116,
 				"facing": "spin"
@@ -1149,8 +1160,7 @@
 			"art": {
 				"kind": "patrol",
 				"hulls": [
-					"vigilance",
-					"lasher"
+					"monitor"
 				],
 				"size": 34
 			}
@@ -1162,7 +1172,8 @@
 			"art": {
 				"kind": "patrol",
 				"hulls": [
-					"wolf"
+					"centurion",
+					"lasher"
 				],
 				"size": 34
 			}
@@ -1175,10 +1186,10 @@
 				"kind": "outpost",
 				"path": "graphics/stations/station_side02.png",
 				"hulls": [
-					"wolf",
-					"brawler",
-					"tempest",
-					"wolf"
+					"kite",
+					"omen",
+					"hound",
+					"monitor"
 				],
 				"size": 116,
 				"facing": "spin"
@@ -1191,8 +1202,8 @@
 			"art": {
 				"kind": "patrol",
 				"hulls": [
-					"omen",
-					"wolf"
+					"wolf",
+					"hound"
 				],
 				"size": 34
 			}
@@ -1204,7 +1215,7 @@
 			"art": {
 				"kind": "patrol",
 				"hulls": [
-					"hound"
+					"brawler"
 				],
 				"size": 34
 			}
@@ -1239,10 +1250,10 @@
 		{
 			"id": "extra_relay_1",
 			"colour": "#6ec8ff",
-			"spiral": -1,
+			"spiral": 1,
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/ships/com_relay.png",
+				"path": "graphics/ships/sensor_array.png",
 				"size": 56,
 				"facing": "spin",
 				"spin": 0.2
@@ -1273,10 +1284,10 @@
 		{
 			"id": "twin_shafts_1",
 			"colour": "#ffaa50",
-			"spiral": -1,
+			"spiral": 1,
 			"art": {
 				"kind": "planet",
-				"planet": "barren-desert",
+				"planet": "rocky_unstable",
 				"size": 150,
 				"light": "#ffbe5a"
 			}
@@ -1307,7 +1318,7 @@
 			"spiral": -1,
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/ships/com_relay.png",
+				"path": "graphics/ships/sensor_array.png",
 				"size": 56,
 				"facing": "spin",
 				"spin": 0.2
@@ -1342,17 +1353,14 @@
 			"art": {
 				"kind": "derelicts",
 				"hulls": [
-					"brilliant",
-					"fulgent",
+					"apex",
 					"scintilla",
 					"scintilla",
-					"glimmer",
-					"glimmer",
-					"scintilla",
-					"scintilla"
+					"lumen",
+					"glimmer"
 				],
 				"size": 140,
-				"heading": -260.3
+				"heading": -330.4
 			}
 		},
 		{
@@ -1361,7 +1369,7 @@
 			"wheel": "redacted_sleepers_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid4.png",
+				"path": "graphics/asteroids/asteroid1.png",
 				"size": 38,
 				"facing": "spin"
 			}
@@ -1372,7 +1380,7 @@
 			"wheel": "redacted_sleepers_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid4.png",
+				"path": "graphics/asteroids/asteroid1.png",
 				"size": 38,
 				"facing": "spin"
 			}
@@ -1380,7 +1388,7 @@
 		{
 			"id": "lightning_rod_1",
 			"colour": "#ff28d2",
-			"spiral": 1,
+			"spiral": -1,
 			"art": {
 				"kind": "planet",
 				"planet": "gas_giant",
@@ -1410,7 +1418,7 @@
 		{
 			"id": "rift_magnetism_1",
 			"colour": "#be78ff",
-			"spiral": 1,
+			"spiral": -1,
 			"art": {
 				"kind": "breach",
 				"size": 104
@@ -1437,11 +1445,12 @@
 		{
 			"id": "veiled_sleepers_1",
 			"colour": "#ff6e5a",
-			"spiral": -1,
+			"spiral": 1,
 			"art": {
 				"kind": "shrouded",
 				"hulls": [
 					"shrouded_maelstrom",
+					"shrouded_eye",
 					"shrouded_eye",
 					"shrouded_tendril"
 				],
@@ -1465,7 +1474,7 @@
 			"wheel": "veiled_sleepers_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid4.png",
+				"path": "graphics/asteroids/asteroid3.png",
 				"size": 38,
 				"facing": "spin"
 			}
@@ -1473,7 +1482,7 @@
 		{
 			"id": "shared_broadcast_1",
 			"colour": "#6ec8ff",
-			"spiral": -1,
+			"spiral": 1,
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/ships/com_relay.png",
@@ -1521,7 +1530,7 @@
 			"wheel": "charged_fields_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid_big02.png",
+				"path": "graphics/asteroids/asteroid_big01.png",
 				"size": 34,
 				"facing": "spin"
 			}
@@ -1532,7 +1541,7 @@
 			"wheel": "charged_fields_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid_big00.png",
+				"path": "graphics/asteroids/asteroid_big02.png",
 				"size": 34,
 				"facing": "spin"
 			}
@@ -1546,14 +1555,13 @@
 				"hulls": [
 					"bastillon",
 					"picket",
-					"sentry",
 					"picket",
-					"defender",
-					"sentry",
-					"sentry"
+					"picket",
+					"picket",
+					"defender"
 				],
 				"size": 140,
-				"heading": -491.7
+				"heading": -561.9
 			}
 		},
 		{
@@ -1562,7 +1570,7 @@
 			"wheel": "restless_sleepers_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid2.png",
+				"path": "graphics/asteroids/asteroid1.png",
 				"size": 38,
 				"facing": "spin"
 			}
@@ -1573,7 +1581,7 @@
 			"wheel": "restless_sleepers_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid4.png",
+				"path": "graphics/asteroids/asteroid2.png",
 				"size": 38,
 				"facing": "spin"
 			}
@@ -1615,10 +1623,10 @@
 		{
 			"id": "open_bores_1",
 			"colour": "#ffaa50",
-			"spiral": 1,
+			"spiral": -1,
 			"art": {
 				"kind": "planet",
-				"planet": "rocky_ice",
+				"planet": "cryovolcanic",
 				"size": 150,
 				"light": "#ffbe5a"
 			}
@@ -1629,7 +1637,7 @@
 			"wheel": "open_bores_1",
 			"art": {
 				"kind": "planet",
-				"planet": "rocky_metallic",
+				"planet": "barren2",
 				"size": 45
 			}
 		},
@@ -1639,7 +1647,7 @@
 			"wheel": "open_bores_1",
 			"art": {
 				"kind": "planet",
-				"planet": "frozen1",
+				"planet": "barren",
 				"size": 45
 			}
 		},
@@ -1676,7 +1684,7 @@
 		{
 			"id": "infested_bolt_holes_1",
 			"colour": "#ff8c55",
-			"spiral": 1,
+			"spiral": -1,
 			"art": {
 				"kind": "planet",
 				"planet": "toxic",
@@ -1690,7 +1698,7 @@
 			"wheel": "infested_bolt_holes_1",
 			"art": {
 				"kind": "planet",
-				"planet": "barren2",
+				"planet": "frozen1",
 				"size": 45
 			}
 		},
@@ -1700,7 +1708,7 @@
 			"wheel": "infested_bolt_holes_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid3.png",
+				"path": "graphics/asteroids/asteroid2.png",
 				"size": 38,
 				"facing": "spin"
 			}
@@ -1713,13 +1721,16 @@
 				"kind": "derelicts",
 				"hulls": [
 					"standoff_unit",
-					"assault_unit",
+					"skirmish_unit",
 					"assault_unit",
 					"skirmish_unit",
-					"overseer_unit"
+					"overseer_unit",
+					"skirmish_unit",
+					"overseer_unit",
+					"skirmish_unit"
 				],
 				"size": 140,
-				"heading": -505.6
+				"heading": -362
 			}
 		},
 		{
@@ -1728,7 +1739,7 @@
 			"wheel": "threatening_sleepers_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid4.png",
+				"path": "graphics/asteroids/asteroid2.png",
 				"size": 38,
 				"facing": "spin"
 			}
@@ -1739,7 +1750,7 @@
 			"wheel": "threatening_sleepers_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid2.png",
+				"path": "graphics/asteroids/asteroid1.png",
 				"size": 38,
 				"facing": "spin"
 			}
@@ -1780,7 +1791,7 @@
 			"spiral": -1,
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/ships/sensor_array.png",
+				"path": "graphics/ships/com_relay.png",
 				"size": 56,
 				"facing": "spin",
 				"spin": 0.2
@@ -1811,7 +1822,7 @@
 		{
 			"id": "rally_point_1",
 			"colour": "#be78ff",
-			"spiral": 1,
+			"spiral": -1,
 			"art": {
 				"kind": "breach",
 				"size": 104
@@ -1851,42 +1862,43 @@
 			"wheel": "torn_holds_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/stations/station_midline2.png",
+				"path": "graphics/stations/station_lowtech2.png",
 				"size": 30,
 				"facing": "spin",
 				"spin": 0.15,
 				"convoys": [
 					[
-						"wayfarer",
-						"gemini",
 						"phaeton",
-						"tarsus",
-						"tarsus",
+						"phaeton",
+						"wayfarer",
 						"mule",
-						"wayfarer",
-						"monitor",
-						"monitor"
-					],
-					[
-						"wayfarer",
 						"gemini",
 						"mule",
-						"wayfarer",
-						"wayfarer",
-						"tarsus",
-						"enforcer",
+						"dram",
+						"monitor",
+						"hound",
 						"hound"
 					],
 					[
-						"buffalo",
-						"phaeton",
-						"wayfarer",
 						"gemini",
+						"phaeton",
 						"tarsus",
+						"wayfarer",
+						"tarsus",
+						"gemini",
+						"enforcer",
+						"monitor",
+						"centurion"
+					],
+					[
+						"dram",
 						"phaeton",
-						"phaeton",
-						"sunder",
-						"monitor"
+						"buffalo",
+						"dram",
+						"tarsus",
+						"dram",
+						"monitor",
+						"sunder"
 					]
 				],
 				"haulers": [
@@ -1929,7 +1941,7 @@
 		{
 			"id": "golden_hour_1",
 			"colour": "#ffe4a0",
-			"spiral": 1,
+			"spiral": -1,
 			"art": {
 				"kind": "planet",
 				"planet": "star_orange",
@@ -1962,14 +1974,12 @@
 		{
 			"id": "supply_lines_1",
 			"colour": "#78dc8c",
-			"spiral": -1,
+			"spiral": 1,
 			"art": {
 				"kind": "planet",
-				"planet": "rocky_metallic",
+				"planet": "jungle",
 				"cityLights": [
-					"volturn",
-					"sindria",
-					"asharu"
+					"volturn"
 				],
 				"size": 150
 			}
@@ -1980,44 +1990,41 @@
 			"wheel": "supply_lines_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/stations/station_lowtech2.png",
+				"path": "graphics/stations/station_midline2.png",
 				"size": 30,
 				"facing": "spin",
 				"spin": 0.15,
 				"convoys": [
 					[
-						"buffalo",
-						"buffalo",
-						"hermes",
-						"gemini",
-						"buffalo",
-						"phaeton",
-						"hermes",
-						"wolf",
-						"enforcer",
-						"hound"
-					],
-					[
-						"buffalo",
-						"gemini",
-						"hermes",
+						"mule",
 						"dram",
-						"dram",
+						"tarsus",
+						"mule",
 						"buffalo",
 						"mule",
-						"wolf",
-						"lasher",
+						"centurion",
 						"wolf"
 					],
 					[
+						"wayfarer",
+						"buffalo",
+						"hermes",
+						"gemini",
+						"phaeton",
+						"hound",
+						"monitor",
+						"wolf"
+					],
+					[
+						"gemini",
+						"phaeton",
 						"tarsus",
-						"tarsus",
-						"mule",
 						"hermes",
 						"mule",
-						"wolf",
-						"centurion",
-						"hound"
+						"dram",
+						"gemini",
+						"sunder",
+						"monitor"
 					]
 				],
 				"haulers": [
@@ -2060,34 +2067,37 @@
 				"spin": 0.15,
 				"convoys": [
 					[
-						"tarsus",
-						"tarsus",
 						"phaeton",
-						"tarsus",
-						"dram",
-						"buffalo",
-						"hound",
-						"centurion"
-					],
-					[
-						"buffalo",
-						"phaeton",
-						"wayfarer",
+						"gemini",
 						"hermes",
 						"wayfarer",
-						"brawler",
-						"hammerhead"
+						"buffalo",
+						"wayfarer",
+						"phaeton",
+						"enforcer",
+						"enforcer",
+						"hound"
 					],
 					[
-						"phaeton",
+						"wayfarer",
+						"mule",
 						"hermes",
-						"hermes",
+						"buffalo",
 						"tarsus",
-						"tarsus",
-						"hermes",
-						"vigilance",
 						"wolf",
-						"sunder"
+						"lasher",
+						"brawler"
+					],
+					[
+						"tarsus",
+						"wayfarer",
+						"buffalo",
+						"tarsus",
+						"wayfarer",
+						"mule",
+						"wolf",
+						"hammerhead",
+						"vigilance"
 					]
 				],
 				"haulers": [
@@ -2122,15 +2132,15 @@
 		{
 			"id": "hair_trigger_1",
 			"colour": "#f0dc6e",
-			"spiral": -1,
+			"spiral": 1,
 			"art": {
 				"kind": "outpost",
-				"path": "graphics/stations/station_side01.png",
+				"path": "graphics/stations/station_side03.png",
 				"hulls": [
-					"monitor",
 					"omen",
 					"vigilance",
-					"brawler"
+					"kite",
+					"vigilance"
 				],
 				"size": 116,
 				"facing": "spin"
@@ -2143,7 +2153,7 @@
 			"art": {
 				"kind": "patrol",
 				"hulls": [
-					"brawler"
+					"lasher"
 				],
 				"size": 34
 			}
@@ -2155,7 +2165,7 @@
 			"art": {
 				"kind": "patrol",
 				"hulls": [
-					"monitor"
+					"kite"
 				],
 				"size": 34
 			}
@@ -2177,7 +2187,7 @@
 			"wheel": "static_harvest_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid_big00.png",
+				"path": "graphics/asteroids/asteroid_big01.png",
 				"size": 34,
 				"facing": "spin"
 			}
@@ -2188,7 +2198,7 @@
 			"wheel": "static_harvest_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid_big00.png",
+				"path": "graphics/asteroids/asteroid_big01.png",
 				"size": 34,
 				"facing": "spin"
 			}
@@ -2196,7 +2206,7 @@
 		{
 			"id": "early_echo_1",
 			"colour": "#6ec8ff",
-			"spiral": 1,
+			"spiral": -1,
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/ships/sensor_array.png",
@@ -2230,15 +2240,15 @@
 		{
 			"id": "smash_and_grab_1",
 			"colour": "#f0dc6e",
-			"spiral": -1,
+			"spiral": 1,
 			"art": {
 				"kind": "outpost",
-				"path": "graphics/stations/station_side04.png",
+				"path": "graphics/stations/station_side03.png",
 				"hulls": [
-					"omen",
-					"wolf",
-					"brawler",
-					"lasher"
+					"tempest",
+					"hound",
+					"kite",
+					"vigilance"
 				],
 				"size": 116,
 				"facing": "spin"
@@ -2251,7 +2261,8 @@
 			"art": {
 				"kind": "patrol",
 				"hulls": [
-					"omen"
+					"brawler",
+					"centurion"
 				],
 				"size": 34
 			}
@@ -2263,7 +2274,7 @@
 			"art": {
 				"kind": "patrol",
 				"hulls": [
-					"vigilance"
+					"brawler"
 				],
 				"size": 34
 			}
@@ -2271,10 +2282,10 @@
 		{
 			"id": "widened_bores_1",
 			"colour": "#ffaa50",
-			"spiral": 1,
+			"spiral": -1,
 			"art": {
 				"kind": "planet",
-				"planet": "barren_castiron",
+				"planet": "desert",
 				"size": 150,
 				"light": "#ffbe5a"
 			}
@@ -2295,7 +2306,7 @@
 			"wheel": "widened_bores_1",
 			"art": {
 				"kind": "planet",
-				"planet": "barren3",
+				"planet": "barren2",
 				"size": 45
 			}
 		},
@@ -2339,16 +2350,16 @@
 					"bastillon",
 					"picket",
 					"warden",
+					"picket",
 					"warden",
-					"warden",
-					"defender",
+					"picket",
 					"sentry",
-					"warden",
 					"sentry",
-					"defender"
+					"picket",
+					"warden"
 				],
 				"size": 140,
-				"heading": -168.1
+				"heading": -146.3
 			}
 		},
 		{
@@ -2357,7 +2368,7 @@
 			"wheel": "double_dose_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid3.png",
+				"path": "graphics/asteroids/asteroid2.png",
 				"size": 38,
 				"facing": "spin"
 			}
@@ -2376,7 +2387,7 @@
 		{
 			"id": "tempered_light_1",
 			"colour": "#ffe4a0",
-			"spiral": 1,
+			"spiral": -1,
 			"art": {
 				"kind": "planet",
 				"planet": "star_red_dwarf",
@@ -2409,7 +2420,7 @@
 		{
 			"id": "breached_graveyard_1",
 			"colour": "#e070b0",
-			"spiral": 1,
+			"spiral": -1,
 			"art": {
 				"kind": "planet",
 				"planet": "barren_venuslike",
@@ -2422,7 +2433,7 @@
 			"wheel": "breached_graveyard_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid2.png",
+				"path": "graphics/asteroids/asteroid4.png",
 				"size": 38,
 				"facing": "spin"
 			}
@@ -2466,7 +2477,7 @@
 		{
 			"id": "long_settling_1",
 			"colour": "#c8a082",
-			"spiral": 1,
+			"spiral": -1,
 			"art": {
 				"kind": "nebula",
 				"nebula": "settling",
@@ -2496,15 +2507,15 @@
 		{
 			"id": "garrison_pickets_1",
 			"colour": "#f0dc6e",
-			"spiral": -1,
+			"spiral": 1,
 			"art": {
 				"kind": "outpost",
-				"path": "graphics/stations/station_side03.png",
+				"path": "graphics/stations/station_side01.png",
 				"hulls": [
-					"vigilance",
 					"kite",
+					"wolf",
 					"vigilance",
-					"monitor"
+					"omen"
 				],
 				"size": 116,
 				"facing": "spin"
@@ -2517,8 +2528,8 @@
 			"art": {
 				"kind": "patrol",
 				"hulls": [
-					"vigilance",
-					"wolf"
+					"monitor",
+					"hound"
 				],
 				"size": 34
 			}
@@ -2530,7 +2541,7 @@
 			"art": {
 				"kind": "patrol",
 				"hulls": [
-					"vigilance"
+					"hound"
 				],
 				"size": 34
 			}
@@ -2672,7 +2683,7 @@
 			"spiral": 1,
 			"art": {
 				"kind": "planet",
-				"planet": "lava",
+				"planet": "tundra",
 				"size": 150,
 				"light": "#ffbe5a"
 			}
@@ -2683,7 +2694,7 @@
 			"wheel": "needle_bores_1",
 			"art": {
 				"kind": "planet",
-				"planet": "frozen1",
+				"planet": "rocky_ice",
 				"size": 45
 			}
 		},
@@ -2693,14 +2704,14 @@
 			"wheel": "needle_bores_1",
 			"art": {
 				"kind": "planet",
-				"planet": "barren3",
+				"planet": "frozen1",
 				"size": 45
 			}
 		},
 		{
 			"id": "ion_front_1",
 			"colour": "#3ce6d2",
-			"spiral": 1,
+			"spiral": -1,
 			"art": {
 				"kind": "planet",
 				"planet": "water",
@@ -2715,7 +2726,7 @@
 			"wheel": "ion_front_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid_big00.png",
+				"path": "graphics/asteroids/asteroid_big02.png",
 				"size": 34,
 				"facing": "spin"
 			}
@@ -2726,7 +2737,7 @@
 			"wheel": "ion_front_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid_big00.png",
+				"path": "graphics/asteroids/asteroid_big02.png",
 				"size": 34,
 				"facing": "spin"
 			}
@@ -2734,22 +2745,21 @@
 		{
 			"id": "deep_corruption_1",
 			"colour": "#ff6e5a",
-			"spiral": 1,
+			"spiral": -1,
 			"art": {
 				"kind": "derelicts",
 				"hulls": [
-					"berserker",
-					"picket",
+					"bastillon",
 					"defender",
+					"sentry",
+					"warden",
+					"sentry",
+					"sentry",
 					"picket",
-					"picket",
-					"warden",
-					"warden",
-					"warden",
-					"picket"
+					"defender"
 				],
 				"size": 140,
-				"heading": -453.1
+				"heading": -446.3
 			}
 		},
 		{
@@ -2758,7 +2768,7 @@
 			"wheel": "deep_corruption_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid3.png",
+				"path": "graphics/asteroids/asteroid4.png",
 				"size": 38,
 				"facing": "spin"
 			}
@@ -2769,7 +2779,7 @@
 			"wheel": "deep_corruption_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid2.png",
+				"path": "graphics/asteroids/asteroid4.png",
 				"size": 38,
 				"facing": "spin"
 			}
@@ -2780,9 +2790,11 @@
 			"spiral": -1,
 			"art": {
 				"kind": "planet",
-				"planet": "terran-eccentric",
+				"planet": "rocky_metallic",
 				"cityLights": [
-					"volturn"
+					"volturn",
+					"sindria",
+					"asharu"
 				],
 				"size": 150
 			}
@@ -2800,31 +2812,35 @@
 				"convoys": [
 					[
 						"gemini",
+						"phaeton",
+						"phaeton",
 						"mule",
-						"gemini",
-						"gemini",
-						"gemini",
+						"wayfarer",
 						"lasher",
+						"monitor",
+						"sunder"
+					],
+					[
+						"mule",
+						"wayfarer",
+						"phaeton",
+						"buffalo",
+						"hermes",
+						"hermes",
+						"hammerhead",
 						"hound"
 					],
 					[
-						"tarsus",
+						"buffalo",
+						"phaeton",
+						"gemini",
+						"gemini",
+						"gemini",
+						"dram",
 						"wayfarer",
-						"buffalo",
-						"buffalo",
-						"gemini",
-						"hound",
-						"vigilance",
-						"brawler"
-					],
-					[
-						"gemini",
-						"wayfarer",
-						"buffalo",
-						"buffalo",
-						"gemini",
-						"hound",
-						"brawler"
+						"enforcer",
+						"centurion",
+						"hound"
 					]
 				],
 				"haulers": [
@@ -2866,38 +2882,36 @@
 				"spin": 0.15,
 				"convoys": [
 					[
-						"gemini",
-						"dram",
-						"gemini",
-						"mule",
-						"hermes",
+						"buffalo",
+						"tarsus",
 						"phaeton",
-						"hermes",
-						"hound",
-						"centurion",
-						"enforcer"
+						"phaeton",
+						"phaeton",
+						"mule",
+						"enforcer",
+						"vigilance",
+						"monitor"
 					],
 					[
-						"mule",
-						"mule",
-						"dram",
+						"phaeton",
+						"buffalo",
 						"gemini",
-						"phaeton",
-						"phaeton",
+						"mule",
+						"buffalo",
+						"tarsus",
+						"hermes",
+						"centurion",
+						"hound"
+					],
+					[
+						"gemini",
 						"wayfarer",
-						"centurion",
-						"hound"
-					],
-					[
-						"mule",
-						"gemini",
+						"buffalo",
 						"tarsus",
-						"hermes",
+						"buffalo",
 						"tarsus",
-						"gemini",
-						"hammerhead",
-						"sunder",
-						"hound"
+						"enforcer",
+						"vigilance"
 					]
 				],
 				"haulers": [
@@ -2934,9 +2948,9 @@
 			"spiral": 1,
 			"art": {
 				"kind": "planet",
-				"planet": "water",
+				"planet": "terran",
 				"cityLights": [
-					"asharu"
+					"sindria"
 				],
 				"size": 150
 			}
@@ -2953,35 +2967,39 @@
 				"spin": 0.15,
 				"convoys": [
 					[
-						"gemini",
+						"phaeton",
+						"tarsus",
 						"wayfarer",
 						"dram",
-						"gemini",
-						"wayfarer",
-						"mule",
-						"sunder",
-						"centurion",
-						"lasher"
-					],
-					[
-						"wayfarer",
-						"wayfarer",
 						"phaeton",
 						"buffalo",
 						"gemini",
-						"hound",
-						"monitor",
-						"lasher"
+						"sunder",
+						"lasher",
+						"vigilance"
 					],
 					[
-						"hermes",
-						"buffalo",
-						"tarsus",
-						"buffalo",
-						"tarsus",
+						"mule",
 						"wayfarer",
+						"hermes",
+						"wayfarer",
+						"dram",
+						"buffalo",
+						"tarsus",
 						"centurion",
-						"enforcer"
+						"sunder"
+					],
+					[
+						"dram",
+						"wayfarer",
+						"mule",
+						"phaeton",
+						"tarsus",
+						"dram",
+						"mule",
+						"centurion",
+						"wolf",
+						"brawler"
 					]
 				],
 				"haulers": [
@@ -3019,38 +3037,43 @@
 			"wheel": "shroud_embargo_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/stations/station_midline2.png",
+				"path": "graphics/stations/station_lowtech2.png",
 				"size": 30,
 				"facing": "spin",
 				"spin": 0.15,
 				"convoys": [
 					[
-						"dram",
-						"gemini",
-						"gemini",
-						"tarsus",
-						"phaeton",
-						"enforcer",
-						"centurion"
-					],
-					[
-						"tarsus",
-						"gemini",
-						"wayfarer",
-						"dram",
 						"buffalo",
+						"buffalo",
+						"wayfarer",
+						"tarsus",
+						"hermes",
+						"phaeton",
 						"monitor",
 						"sunder"
 					],
 					[
-						"hermes",
-						"hermes",
-						"mule",
-						"phaeton",
 						"tarsus",
-						"brawler",
-						"wolf",
-						"monitor"
+						"tarsus",
+						"dram",
+						"phaeton",
+						"phaeton",
+						"hermes",
+						"phaeton",
+						"enforcer",
+						"hammerhead"
+					],
+					[
+						"gemini",
+						"wayfarer",
+						"tarsus",
+						"hermes",
+						"tarsus",
+						"mule",
+						"gemini",
+						"vigilance",
+						"lasher",
+						"lasher"
 					]
 				],
 				"haulers": [
@@ -3086,9 +3109,9 @@
 			"spiral": 1,
 			"art": {
 				"kind": "planet",
-				"planet": "terran",
+				"planet": "terran-eccentric",
 				"cityLights": [
-					"sindria"
+					"volturn"
 				],
 				"size": 150
 			}
@@ -3099,41 +3122,39 @@
 			"wheel": "phase_embargo_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/stations/station_lowtech2.png",
+				"path": "graphics/stations/station_midline2.png",
 				"size": 30,
 				"facing": "spin",
 				"spin": 0.15,
 				"convoys": [
 					[
+						"hermes",
+						"tarsus",
+						"wayfarer",
 						"phaeton",
 						"tarsus",
-						"mule",
-						"phaeton",
-						"dram",
-						"brawler",
-						"enforcer",
-						"enforcer"
+						"centurion",
+						"wolf"
 					],
 					[
-						"hermes",
-						"mule",
-						"phaeton",
-						"gemini",
+						"dram",
 						"wayfarer",
-						"gemini",
-						"wolf",
+						"dram",
+						"tarsus",
+						"wayfarer",
+						"monitor",
 						"centurion",
 						"hammerhead"
 					],
 					[
 						"gemini",
+						"phaeton",
+						"mule",
+						"wayfarer",
 						"hermes",
-						"dram",
-						"buffalo",
-						"hermes",
-						"buffalo",
-						"lasher",
-						"enforcer"
+						"wayfarer",
+						"centurion",
+						"hammerhead"
 					]
 				],
 				"haulers": [
@@ -3176,36 +3197,37 @@
 				"spin": 0.15,
 				"convoys": [
 					[
-						"buffalo",
 						"mule",
-						"dram",
-						"dram",
-						"buffalo",
-						"hermes",
-						"vigilance",
-						"sunder"
-					],
-					[
-						"gemini",
 						"mule",
+						"wayfarer",
 						"tarsus",
-						"buffalo",
 						"mule",
-						"mule",
-						"buffalo",
-						"wolf",
-						"hound"
+						"monitor",
+						"vigilance",
+						"vigilance"
 					],
 					[
 						"gemini",
-						"buffalo",
+						"phaeton",
+						"gemini",
 						"dram",
 						"phaeton",
-						"wayfarer",
+						"hermes",
+						"enforcer",
+						"hammerhead",
+						"monitor"
+					],
+					[
 						"gemini",
-						"lasher",
-						"hound",
-						"hound"
+						"tarsus",
+						"tarsus",
+						"buffalo",
+						"hermes",
+						"phaeton",
+						"tarsus",
+						"sunder",
+						"sunder",
+						"sunder"
 					]
 				],
 				"haulers": [
@@ -3263,14 +3285,14 @@
 			"wheel": "deeper_bores_1",
 			"art": {
 				"kind": "planet",
-				"planet": "barren",
+				"planet": "frozen1",
 				"size": 45
 			}
 		},
 		{
 			"id": "solar_front_1",
 			"colour": "#ff28d2",
-			"spiral": 1,
+			"spiral": -1,
 			"art": {
 				"kind": "planet",
 				"planet": "star_yellow",
@@ -3320,35 +3342,36 @@
 				"convoys": [
 					[
 						"wayfarer",
-						"phaeton",
-						"tarsus",
-						"mule",
-						"wayfarer",
-						"tarsus",
-						"brawler",
-						"centurion",
-						"centurion"
+						"dram",
+						"hermes",
+						"buffalo",
+						"buffalo",
+						"hermes",
+						"hammerhead",
+						"hound",
+						"enforcer"
 					],
 					[
-						"hermes",
 						"dram",
 						"phaeton",
-						"tarsus",
+						"wayfarer",
+						"hermes",
 						"buffalo",
-						"tarsus",
-						"enforcer",
-						"hound",
-						"centurion"
+						"dram",
+						"gemini",
+						"vigilance",
+						"lasher"
 					],
 					[
 						"wayfarer",
 						"tarsus",
+						"dram",
+						"mule",
 						"buffalo",
-						"wayfarer",
-						"buffalo",
-						"tarsus",
+						"mule",
+						"mule",
 						"centurion",
-						"centurion"
+						"brawler"
 					]
 				],
 				"haulers": [
@@ -3386,14 +3409,14 @@
 			"wheel": "bolt_hole_drop_1",
 			"art": {
 				"kind": "planet",
-				"planet": "rocky_ice",
+				"planet": "barren3",
 				"size": 45
 			}
 		},
 		{
 			"id": "hyperspace_bleed_1",
 			"colour": "#be78ff",
-			"spiral": -1,
+			"spiral": 1,
 			"art": {
 				"kind": "breach",
 				"size": 104
@@ -3490,9 +3513,9 @@
 			"spiral": -1,
 			"art": {
 				"kind": "planet",
-				"planet": "jungle",
+				"planet": "water",
 				"cityLights": [
-					"volturn"
+					"asharu"
 				],
 				"size": 150
 			}
@@ -3509,35 +3532,38 @@
 				"spin": 0.15,
 				"convoys": [
 					[
-						"phaeton",
-						"mule",
-						"phaeton",
+						"tarsus",
+						"dram",
+						"wayfarer",
+						"buffalo",
+						"buffalo",
+						"dram",
+						"hammerhead",
+						"enforcer",
+						"enforcer"
+					],
+					[
+						"buffalo",
+						"gemini",
 						"hermes",
+						"phaeton",
+						"tarsus",
+						"gemini",
 						"dram",
-						"wolf",
-						"monitor"
+						"sunder",
+						"enforcer"
 					],
 					[
 						"dram",
 						"wayfarer",
-						"phaeton",
-						"phaeton",
 						"dram",
-						"phaeton",
-						"brawler",
-						"centurion"
-					],
-					[
-						"phaeton",
+						"buffalo",
+						"buffalo",
 						"tarsus",
-						"tarsus",
-						"phaeton",
-						"tarsus",
-						"phaeton",
-						"wayfarer",
-						"centurion",
-						"centurion",
-						"monitor"
+						"hermes",
+						"enforcer",
+						"lasher",
+						"hound"
 					]
 				],
 				"haulers": [
@@ -3579,33 +3605,35 @@
 				"spin": 0.15,
 				"convoys": [
 					[
-						"wayfarer",
-						"buffalo",
-						"dram",
 						"tarsus",
+						"dram",
 						"gemini",
+						"buffalo",
+						"buffalo",
+						"centurion",
+						"monitor"
+					],
+					[
+						"tarsus",
+						"wayfarer",
+						"wayfarer",
+						"dram",
+						"buffalo",
 						"gemini",
-						"vigilance",
+						"tarsus",
+						"wolf",
+						"wolf",
 						"enforcer"
 					],
 					[
-						"mule",
-						"buffalo",
-						"dram",
-						"mule",
-						"buffalo",
-						"vigilance",
-						"hammerhead"
-					],
-					[
-						"mule",
+						"tarsus",
+						"wayfarer",
+						"wayfarer",
 						"mule",
 						"dram",
-						"gemini",
-						"gemini",
-						"sunder",
-						"monitor",
-						"enforcer"
+						"mule",
+						"enforcer",
+						"centurion"
 					]
 				],
 				"haulers": [
@@ -3669,7 +3697,7 @@
 		{
 			"id": "rude_awakening_1",
 			"colour": "#e070b0",
-			"spiral": 1,
+			"spiral": -1,
 			"art": {
 				"kind": "planet",
 				"planet": "irradiated",
@@ -3691,7 +3719,7 @@
 			"wheel": "rude_awakening_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid1.png",
+				"path": "graphics/asteroids/asteroid4.png",
 				"size": 38,
 				"facing": "spin"
 			}
@@ -3699,10 +3727,10 @@
 		{
 			"id": "pitch_black_1",
 			"colour": "#ffaa50",
-			"spiral": -1,
+			"spiral": 1,
 			"art": {
 				"kind": "planet",
-				"planet": "water",
+				"planet": "rocky_ice",
 				"size": 150,
 				"light": "#ffbe5a"
 			}
@@ -3713,7 +3741,7 @@
 			"wheel": "pitch_black_1",
 			"art": {
 				"kind": "planet",
-				"planet": "barren2",
+				"planet": "rocky_metallic",
 				"size": 45
 			}
 		},
@@ -3723,7 +3751,7 @@
 			"wheel": "pitch_black_1",
 			"art": {
 				"kind": "planet",
-				"planet": "barren",
+				"planet": "frozen1",
 				"size": 45
 			}
 		},
@@ -3744,7 +3772,7 @@
 				],
 				"size": 90,
 				"facing": "travel",
-				"heading": -473.2
+				"heading": -434
 			}
 		},
 		{
@@ -3772,35 +3800,24 @@
 		{
 			"id": "lone_sleeper_1",
 			"colour": "#ff6e5a",
-			"spiral": 1,
+			"spiral": -1,
 			"art": {
 				"kind": "derelicts",
 				"hulls": [
-					"bastillon",
-					"picket",
+					"berserker",
+					"sentry",
+					"sentry",
 					"warden",
 					"defender",
 					"defender",
-					"sentry",
 					"defender"
 				],
 				"size": 140,
-				"heading": -497.2
+				"heading": -458
 			}
 		},
 		{
 			"id": "engram_quantity_2",
-			"colour": "#ff6e5a",
-			"wheel": "lone_sleeper_1",
-			"art": {
-				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid1.png",
-				"size": 38,
-				"facing": "spin"
-			}
-		},
-		{
-			"id": "additional_debris_3",
 			"colour": "#ff6e5a",
 			"wheel": "lone_sleeper_1",
 			"art": {
@@ -3811,20 +3828,31 @@
 			}
 		},
 		{
+			"id": "additional_debris_3",
+			"colour": "#ff6e5a",
+			"wheel": "lone_sleeper_1",
+			"art": {
+				"kind": "sprite",
+				"path": "graphics/asteroids/asteroid2.png",
+				"size": 38,
+				"facing": "spin"
+			}
+		},
+		{
 			"id": "fortified_depot_1",
 			"colour": "#f0dc6e",
-			"spiral": -1,
+			"spiral": 1,
 			"art": {
 				"kind": "station",
 				"hulls": [
 					"station2",
-					"monitor",
-					"vigilance",
-					"brawler",
-					"omen"
+					"hound",
+					"tempest",
+					"hound",
+					"wolf"
 				],
 				"size": 160,
-				"heading": -509.2
+				"heading": -470
 			}
 		},
 		{
@@ -3834,7 +3862,7 @@
 			"art": {
 				"kind": "patrol",
 				"hulls": [
-					"kite"
+					"centurion"
 				],
 				"size": 34
 			}
@@ -3846,7 +3874,7 @@
 			"art": {
 				"kind": "patrol",
 				"hulls": [
-					"tempest"
+					"wolf"
 				],
 				"size": 34
 			}
@@ -3869,7 +3897,7 @@
 			"wheel": "geomagnetic_surge_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid_big00.png",
+				"path": "graphics/asteroids/asteroid_big02.png",
 				"size": 34,
 				"facing": "spin"
 			}
@@ -3880,7 +3908,7 @@
 			"wheel": "geomagnetic_surge_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid_big01.png",
+				"path": "graphics/asteroids/asteroid_big02.png",
 				"size": 34,
 				"facing": "spin"
 			}
@@ -3888,7 +3916,7 @@
 		{
 			"id": "mixed_manifest_1",
 			"colour": "#78dc8c",
-			"spiral": -1,
+			"spiral": 1,
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/stations/station_midline1.png",
@@ -3902,40 +3930,43 @@
 			"wheel": "mixed_manifest_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/stations/station_midline2.png",
+				"path": "graphics/stations/station_lowtech2.png",
 				"size": 30,
 				"facing": "spin",
 				"spin": 0.15,
 				"convoys": [
 					[
-						"phaeton",
-						"wayfarer",
-						"phaeton",
-						"wayfarer",
-						"phaeton",
-						"phaeton",
-						"hammerhead",
-						"brawler",
-						"lasher"
-					],
-					[
 						"mule",
-						"dram",
+						"gemini",
 						"tarsus",
-						"wayfarer",
+						"buffalo",
+						"gemini",
 						"mule",
-						"wolf",
-						"vigilance",
+						"hermes",
+						"lasher",
 						"centurion"
 					],
 					[
-						"buffalo",
-						"wayfarer",
+						"hermes",
+						"hermes",
+						"mule",
+						"phaeton",
+						"gemini",
+						"tarsus",
+						"vigilance",
+						"hound",
+						"lasher"
+					],
+					[
+						"phaeton",
 						"gemini",
 						"wayfarer",
-						"mule",
-						"wolf",
-						"vigilance"
+						"phaeton",
+						"wayfarer",
+						"tarsus",
+						"dram",
+						"hound",
+						"hammerhead"
 					]
 				],
 				"haulers": [
@@ -3973,44 +4004,39 @@
 			"wheel": "mixed_manifest_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/stations/station_lowtech2.png",
+				"path": "graphics/stations/station_midline2.png",
 				"size": 30,
 				"facing": "spin",
 				"spin": 0.15,
 				"convoys": [
 					[
 						"mule",
-						"mule",
-						"gemini",
-						"mule",
-						"hermes",
-						"mule",
+						"phaeton",
 						"buffalo",
-						"enforcer",
-						"hound",
-						"vigilance"
-					],
-					[
-						"phaeton",
-						"tarsus",
-						"gemini",
-						"gemini",
-						"gemini",
-						"tarsus",
-						"phaeton",
-						"vigilance",
-						"enforcer"
-					],
-					[
-						"gemini",
-						"gemini",
 						"wayfarer",
-						"gemini",
-						"mule",
 						"wayfarer",
-						"hermes",
+						"tarsus",
 						"sunder",
-						"enforcer"
+						"monitor"
+					],
+					[
+						"wayfarer",
+						"dram",
+						"wayfarer",
+						"phaeton",
+						"gemini",
+						"vigilance",
+						"brawler"
+					],
+					[
+						"phaeton",
+						"phaeton",
+						"buffalo",
+						"phaeton",
+						"hermes",
+						"hermes",
+						"lasher",
+						"sunder"
 					]
 				],
 				"haulers": [
@@ -4043,7 +4069,7 @@
 		{
 			"id": "captured_front_1",
 			"colour": "#ff28d2",
-			"spiral": -1,
+			"spiral": 1,
 			"art": {
 				"kind": "planet",
 				"planet": "ice_giant",
@@ -4073,14 +4099,14 @@
 		{
 			"id": "hunting_party_1",
 			"colour": "#f0dc6e",
-			"spiral": -1,
+			"spiral": 1,
 			"art": {
 				"kind": "outpost",
-				"path": "graphics/stations/station_side04.png",
+				"path": "graphics/stations/station_side03.png",
 				"hulls": [
-					"kite",
-					"omen",
-					"hound",
+					"wolf",
+					"brawler",
+					"tempest",
 					"lasher"
 				],
 				"size": 116,
@@ -4095,7 +4121,7 @@
 				"kind": "patrol",
 				"hulls": [
 					"centurion",
-					"kite"
+					"wolf"
 				],
 				"size": 34
 			}
@@ -4107,7 +4133,8 @@
 			"art": {
 				"kind": "patrol",
 				"hulls": [
-					"hound"
+					"tempest",
+					"omen"
 				],
 				"size": 34
 			}
@@ -4115,7 +4142,7 @@
 		{
 			"id": "incursion_1",
 			"colour": "#be78ff",
-			"spiral": -1,
+			"spiral": 1,
 			"art": {
 				"kind": "sprite",
 				"path": "graphics/stations/station_side00.png",
@@ -4145,7 +4172,7 @@
 		{
 			"id": "perfect_light_1",
 			"colour": "#ffe4a0",
-			"spiral": -1,
+			"spiral": 1,
 			"art": {
 				"kind": "planet",
 				"planet": "star_white",
@@ -4178,22 +4205,23 @@
 		{
 			"id": "silent_choir_1",
 			"colour": "#ff6e5a",
-			"spiral": -1,
+			"spiral": 1,
 			"art": {
 				"kind": "derelicts",
 				"hulls": [
-					"rampart",
-					"defender",
+					"bastillon",
 					"picket",
-					"sentry",
-					"defender",
 					"defender",
 					"warden",
+					"picket",
+					"picket",
 					"sentry",
+					"sentry",
+					"defender",
 					"defender"
 				],
 				"size": 140,
-				"heading": -641.2
+				"heading": -602
 			}
 		},
 		{
@@ -4202,7 +4230,7 @@
 			"wheel": "silent_choir_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid4.png",
+				"path": "graphics/asteroids/asteroid1.png",
 				"size": 38,
 				"facing": "spin"
 			}
@@ -4213,7 +4241,7 @@
 			"wheel": "silent_choir_1",
 			"art": {
 				"kind": "sprite",
-				"path": "graphics/asteroids/asteroid4.png",
+				"path": "graphics/asteroids/asteroid1.png",
 				"size": 38,
 				"facing": "spin"
 			}

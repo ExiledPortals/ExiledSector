@@ -11,7 +11,7 @@ const STAR_RADIUS = 520;
 const STAR_CLEARANCE = 260;
 const HIGHWAY_HALF_WIDTH = 75;
 const WHEEL_PAIR_CLEARANCE = 950;
-const RING_NODE_COUNTS = [8, 14, 20, 24, 30];
+const RING_NODE_COUNTS = [9, 14, 20, 24, 30];
 const RING_HIGHWAYS = ['travel_boss_star_charts', 'travel_boss_star_charts', 'travel_catalysts', 'travel_catalysts', 'travel_chart_modifier_effect'];
 const HIGHWAY_COLOUR = '#ffffff';
 const HIGHWAY_ROCKS = Array.from({ length: 12 }, (_, index) => `graphics/asteroids/ring_asteroid${String(index).padStart(2, '0')}.png`);
@@ -30,7 +30,6 @@ const SPIRAL_POINTS = 24;
 const SPIRAL_HOOK = 150;
 const BOW_SHARE = 0.12;
 const BOW_POINTS = 16;
-const LOWEST_ROOT_RAY_SHIFT = 2;
 const SITE_LIGHT = '#ffbe5a';
 
 const MOON_PLANETS = ['barren', 'barren2', 'barren3', 'rocky_ice', 'frozen1', 'rocky_metallic'];
@@ -112,7 +111,7 @@ function seededRandom(seed) {
   };
 }
 
-const random = seededRandom(20261112);
+const random = seededRandom(20261154);
 const haulerRandom = seededRandom(20261120);
 const pickHaulers = (options, low, high) => Array.from({ length: low + Math.floor(haulerRandom() * (high - low + 1)) },
   () => options[Math.floor(haulerRandom() * options.length)]);
@@ -413,6 +412,11 @@ const rings = ringRadii.map((radius, ringIndex) => {
   return { radius, nodes: ringNodes, wheels: [], spokes: new Set() };
 });
 
+const rootRayStep = RING_NODE_COUNTS[0] / ROOT_RAYS;
+if (!Number.isInteger(rootRayStep)) throw new Error('The innermost ring must hold a whole number of nodes per star ray');
+const rootRayAnchors = Array.from({ length: ROOT_RAYS }, (_, ray) => rings[0].nodes[ray * rootRayStep]);
+rootRayAnchors.forEach((anchor) => rings[0].spokes.add(rings[0].nodes.indexOf(anchor)));
+
 const slotsByAnomaly = new Map();
 const orderedForChance = [...plannedWheels.filter((wheel) => wheel.hybrid), ...plannedWheels.filter((wheel) => !wheel.hybrid)];
 for (const wheel of orderedForChance) {
@@ -592,18 +596,13 @@ function spreadRingLinks(ringIndex, count) {
   return chosen;
 }
 
-function shiftLowestRay(rays) {
-  const ringNodes = rings[0].nodes;
-  const lowest = rays.reduce((low, ray) => (ray.anchor.node.y > low.anchor.node.y ? ray : low));
-  const shifted = ringNodes[(ringNodes.indexOf(lowest.anchor) - LOWEST_ROOT_RAY_SHIFT + ringNodes.length) % ringNodes.length];
-  if (rays.some((ray) => ray.anchor === shifted) || !clearOf(shifted.node, root, allWheels)) throw new Error('The lowest root ray cannot shift');
-  return rays.map((ray) => (ray === lowest ? { ...ray, anchor: shifted } : ray));
-}
-
-rings.forEach((_, ringIndex) => {
-  const count = ringIndex === 0 ? ROOT_RAYS : LINKS_INTO_RING[ringIndex];
-  const chosen = spreadRingLinks(ringIndex, count);
-  (ringIndex === 0 ? shiftLowestRay(chosen) : chosen).forEach(({ anchor, landing }) => link(anchor.node, landing.node));
+rootRayAnchors.forEach((anchor) => {
+  if (!clearOf(anchor.node, root, allWheels)) throw new Error('A star ray crosses a wheel');
+  link(anchor.node, root);
+});
+rings.slice(1).forEach((_, index) => {
+  const ringIndex = index + 1;
+  spreadRingLinks(ringIndex, LINKS_INTO_RING[ringIndex]).forEach(({ anchor, landing }) => link(anchor.node, landing.node));
 });
 
 const sameRing = (first, second) => bodyById.get(first.id).highway && bodyById.get(second.id).highway
