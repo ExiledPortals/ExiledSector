@@ -322,8 +322,7 @@
 			"type": "travel_catalysts",
 			"connectedTo": [
 				"travel_catalysts_4",
-				"travel_catalysts_6",
-				"travel_catalysts_36"
+				"travel_catalysts_6"
 			],
 			"x": -1679.9,
 			"y": -5869.3
@@ -675,7 +674,6 @@
 			"connectedTo": [
 				"travel_catalysts_35",
 				"travel_catalysts_37",
-				"travel_catalysts_5",
 				"travel_chart_modifier_effect_6"
 			],
 			"x": -4465.1,
@@ -3700,9 +3698,6 @@
 			]
 		}
 	],
-	"connectorCurves": [],
-	"hiddenConnectors": [],
-	"orbitAnchors": [],
 	"decorations": [
 		{
 			"kind": "star",
