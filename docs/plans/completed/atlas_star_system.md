@@ -6,7 +6,7 @@ lay-in-course arrows were removed on 2026-11-18 and every body now stays where t
 ## Layout (done: `tools/atlas/build-atlas-tree.mjs`)
 
 - The root is the central star. Five highway rings of small nodes with no anomaly circle it: rings 1-2 Boss Star Charts,
-  rings 3-4 Catalysts, ring 5 Star Chart Modifier Effect. The rings hold 8, 12, 18, 20 and 24 nodes; three rays leave
+  rings 3-4 Catalysts, ring 5 Star Chart Modifier Effect. The rings hold 8, 14, 20, 24 and 30 nodes; three rays leave
   the star, and 3, 4, 5 and 6 links reach rings 2 to 5. Each ring link joins one node to one node, picked as close to
   radial as it can be while clearing every wheel.
 - Every notable and keystone is its own wheel: a body (planet, derelicts, station, relay, breach) on the inside or

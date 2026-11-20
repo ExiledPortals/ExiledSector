@@ -10,8 +10,8 @@ const ROOT_ID = 'atlas_root';
 const STAR_RADIUS = 520;
 const STAR_CLEARANCE = 260;
 const HIGHWAY_HALF_WIDTH = 75;
-const WHEEL_PAIR_CLEARANCE = 160;
-const RING_NODE_COUNTS = [8, 12, 18, 20, 24];
+const WHEEL_PAIR_CLEARANCE = 950;
+const RING_NODE_COUNTS = [8, 14, 20, 24, 30];
 const RING_HIGHWAYS = ['travel_boss_star_charts', 'travel_boss_star_charts', 'travel_catalysts', 'travel_catalysts', 'travel_chart_modifier_effect'];
 const HIGHWAY_COLOUR = '#ffffff';
 const HIGHWAY_ROCKS = Array.from({ length: 12 }, (_, index) => `graphics/asteroids/ring_asteroid${String(index).padStart(2, '0')}.png`);
@@ -112,7 +112,7 @@ function seededRandom(seed) {
   };
 }
 
-const random = seededRandom(20261117);
+const random = seededRandom(20261112);
 const haulerRandom = seededRandom(20261120);
 const pickHaulers = (options, low, high) => Array.from({ length: low + Math.floor(haulerRandom() * (high - low + 1)) },
   () => options[Math.floor(haulerRandom() * options.length)]);
@@ -269,14 +269,16 @@ const ANOMALY_OF = {
 
 const RINGS = [
   ['settled_shafts o', 'sapper_teams i', 'officers_ledger o', 'stolen_charts i', 'heavy_breach o', 'extra_relay i'],
-  ['twin_shafts i', 'crowded_channel o', 'redacted_sleepers i', 'rift_magnetism o', 'veiled_sleepers i', 'shared_broadcast o',
-    'restless_sleepers i', 'forked_trace o'],
-  ['open_bores o', 'infested_bolt_holes i', 'threatening_sleepers o', 'scar_collector i', 'rally_point i', 'torn_holds o', 'supply_lines i',
-    'hair_trigger o', 'early_echo o', 'smash_and_grab i'],
-  ['widened_bores i', 'double_dose o', 'breached_graveyard i', 'rift_duel o', 'garrison_pickets o', 'event_horizon i', 'full_array o',
-    'needle_bores i', 'deep_corruption o'],
-  ['deeper_bores o', 'bolt_hole_drop i', 'hyperspace_bleed o', 'double_down i', 'open_season o', 'rude_awakening i', 'pitch_black o',
-    'lone_sleeper i', 'fortified_depot o', 'mixed_manifest o', 'hunting_party o', 'incursion i', 'silent_choir o'],
+  ['twin_shafts i', 'crowded_channel o', 'redacted_sleepers i', 'lightning_rod o', 'rift_magnetism o', 'veiled_sleepers i', 'shared_broadcast o',
+    'charged_fields i', 'restless_sleepers i', 'forked_trace o'],
+  ['open_bores o', 'supercell i', 'infested_bolt_holes i', 'threatening_sleepers o', 'dust_trails o', 'scar_collector i', 'rally_point i',
+    'torn_holds o', 'golden_hour i', 'supply_lines i', 'hair_trigger o', 'static_harvest i', 'early_echo o', 'smash_and_grab i'],
+  ['widened_bores i', 'eye_of_the_storm o', 'double_dose o', 'tempered_light i', 'breached_graveyard i', 'rift_duel o', 'long_settling i',
+    'garrison_pickets o', 'event_horizon i', 'solar_maximum o', 'full_array o', 'redacted_front i', 'needle_bores i', 'ion_front o',
+    'deep_corruption o'],
+  ['deeper_bores o', 'solar_front i', 'bolt_hole_drop i', 'hyperspace_bleed o', 'ionized_dust o', 'double_down i', 'open_season o',
+    'thunder_duel i', 'rude_awakening i', 'pitch_black o', 'sunstruck_convoy o', 'lone_sleeper i', 'fortified_depot o', 'geomagnetic_surge i',
+    'mixed_manifest o', 'captured_front i', 'hunting_party o', 'incursion i', 'perfect_light o', 'silent_choir o'],
 ];
 
 const FORK = {
@@ -292,6 +294,8 @@ const FORK = {
 };
 
 const MAX_CHANCE_NODES = 12;
+const MAX_BRIDGE_TURN = 20;
+const BUSY_LANDING_COST = 30;
 
 const nodes = [];
 const bodies = [];
@@ -422,8 +426,9 @@ for (const wheel of orderedForChance) {
 }
 for (const [anomaly, slots] of slotsByAnomaly) {
   const others = ANOMALIES[anomaly].others;
+  const chanceSlots = Math.max(1, Math.min(MAX_CHANCE_NODES, slots.length - others.length));
   slots.forEach(({ wheel, index }, order) => {
-    wheel.smallTypes[index] = order < MAX_CHANCE_NODES ? ANOMALIES[anomaly].chance : others[(order - MAX_CHANCE_NODES) % others.length];
+    wheel.smallTypes[index] = order < chanceSlots ? ANOMALIES[anomaly].chance : others[(order - chanceSlots) % others.length];
   });
 }
 
@@ -604,19 +609,7 @@ rings.forEach((_, ringIndex) => {
 const sameRing = (first, second) => bodyById.get(first.id).highway && bodyById.get(second.id).highway
   && Math.abs(Math.hypot(first.x, first.y) - Math.hypot(second.x, second.y)) < 1;
 const wheelLinkOf = (first, second) => (bodyById.get(first.id).wheel ? wheelOf.get(first.id) : bodyById.get(second.id).wheel ? wheelOf.get(second.id) : null);
-const crossings = [];
-const drawnLinks = nodes.flatMap((node) => node.connectedTo.map((id) => nodeById.get(id))
-  .filter((other) => node.id < other.id && !sameRing(node, other)).map((other) => {
-    const wheel = wheelLinkOf(node, other);
-    return { ends: [node, other], bowed: !wheel, points: wheel ? spiralPath(node, other, wheel.centre, wheel.turn) : bowedPath(node, other) };
-  }));
 const segmentsOf = (points) => points.slice(1).map((point, index) => [points[index], point]);
-for (const { ends, points } of drawnLinks) {
-  const blocking = nodes.filter((body) => !ends.includes(body) && body.id !== ROOT_ID)
-    .filter((body) => segmentsOf(points).some(([from, to]) => distanceToSegment(body, from, to) < bodyById.get(body.id).art.size + BODY_CLEARANCE));
-  if (blocking.length > 0) crossings.push(`${ends[0].id}-${ends[1].id} crosses ${blocking.map((body) => body.id).join(', ')}`);
-}
-const bowedLinks = drawnLinks.filter(({ bowed }) => bowed);
 function crossesCircle(from, to, radius) {
   const deltaX = to.x - from.x;
   const deltaY = to.y - from.y;
@@ -628,25 +621,65 @@ function crossesCircle(from, to, radius) {
   const edge = 1 / Math.sqrt(a);
   return [(-b - Math.sqrt(discriminant)) / (2 * a), (-b + Math.sqrt(discriminant)) / (2 * a)].some((share) => share > edge && share < 1 - edge);
 }
-for (const { ends: [from, to], points } of bowedLinks) {
-  const crossed = ringRadii.filter((radius) => segmentsOf(points).some(([start, end]) => crossesCircle(start, end, radius)));
-  if (crossed.length > 0) crossings.push(`${from.id}-${to.id} crosses the ring at ${crossed.join(', ')}`);
-}
 const cross = (a, b, c) => (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
 const segmentsCross = ([first, second], [third, fourth]) => (cross(first, second, third) > 0) !== (cross(first, second, fourth) > 0)
   && (cross(third, fourth, first) > 0) !== (cross(third, fourth, second) > 0);
-drawnLinks.forEach((link, index) => drawnLinks.slice(index + 1).forEach((other) => {
-  if (link.ends.some((end) => other.ends.includes(end))) return;
-  if (segmentsOf(link.points).some((segment) => segmentsOf(other.points).some((otherSegment) => segmentsCross(segment, otherSegment)))) {
-    crossings.push(`${link.ends[0].id}-${link.ends[1].id} crosses ${other.ends[0].id}-${other.ends[1].id}`);
-  }
+
+function drawnLinkOf(node, other) {
+  const wheel = wheelLinkOf(node, other);
+  return { ends: [node, other], bowed: !wheel, points: wheel ? spiralPath(node, other, wheel.centre, wheel.turn) : bowedPath(node, other) };
+}
+const currentDrawnLinks = () => nodes.flatMap((node) => node.connectedTo.map((id) => nodeById.get(id))
+  .filter((other) => node.id < other.id && !sameRing(node, other)).map((other) => drawnLinkOf(node, other)));
+const blockingBodies = ({ ends, points }) => nodes.filter((body) => !ends.includes(body) && body.id !== ROOT_ID)
+  .filter((body) => segmentsOf(points).some(([from, to]) => distanceToSegment(body, from, to) < bodyById.get(body.id).art.size + BODY_CLEARANCE));
+const crossedRings = ({ points }) => ringRadii.filter((radius) => segmentsOf(points).some(([start, end]) => crossesCircle(start, end, radius)));
+const crossedLinks = (drawn, others) => others.filter((other) => !drawn.ends.some((end) => other.ends.includes(end))
+  && segmentsOf(drawn.points).some((segment) => segmentsOf(other.points).some((otherSegment) => segmentsCross(segment, otherSegment))));
+
+const leadsOffRing = (node) => node.connectedTo.some((id) => !sameRing(node, nodeById.get(id)));
+const ringOfHighway = new Map(rings.flatMap((ring, ringIndex) => ring.nodes.map((highway) => [highway, ringIndex])));
+const bareHighways = () => [...ringOfHighway.keys()].filter(({ node }) => !leadsOffRing(node));
+
+function bridgeBareHighway(anchor) {
+  const ringIndex = ringOfHighway.get(anchor);
+  const existing = currentDrawnLinks();
+  const landings = [ringIndex - 1, ringIndex + 1].filter((index) => rings[index]).flatMap((index) => rings[index].nodes)
+    .filter((landing) => angularGap(anchor.angle, landing.angle) <= MAX_BRIDGE_TURN)
+    .map((landing) => ({ landing, cost: angularGap(anchor.angle, landing.angle) + (leadsOffRing(landing.node) ? BUSY_LANDING_COST : 0) }))
+    .sort((first, second) => first.cost - second.cost);
+  const clear = landings.find(({ landing }) => {
+    const drawn = drawnLinkOf(anchor.node, landing.node);
+    return blockingBodies(drawn).length === 0 && crossedRings(drawn).length === 0 && crossedLinks(drawn, existing).length === 0;
+  });
+  if (clear) link(anchor.node, clear.landing.node);
+}
+
+bareHighways().forEach((anchor) => {
+  if (!leadsOffRing(anchor.node)) bridgeBareHighway(anchor);
+});
+const stillBare = bareHighways();
+
+const crossings = [];
+const drawnLinks = currentDrawnLinks();
+for (const drawn of drawnLinks) {
+  const blocking = blockingBodies(drawn);
+  if (blocking.length > 0) crossings.push(`${drawn.ends[0].id}-${drawn.ends[1].id} crosses ${blocking.map((body) => body.id).join(', ')}`);
+}
+for (const drawn of drawnLinks.filter(({ bowed }) => bowed)) {
+  const crossed = crossedRings(drawn);
+  if (crossed.length > 0) crossings.push(`${drawn.ends[0].id}-${drawn.ends[1].id} crosses the ring at ${crossed.join(', ')}`);
+}
+drawnLinks.forEach((drawn, index) => crossedLinks(drawn, drawnLinks.slice(index + 1)).forEach((other) => {
+  crossings.push(`${drawn.ends[0].id}-${drawn.ends[1].id} crosses ${other.ends[0].id}-${other.ends[1].id}`);
 }));
 if (crossings.length > 0) throw new Error(`Links cross: ${crossings.join('; ')}`);
 
-const chanceCounts = {};
+const smallTypes = new Set(Object.values(ANOMALIES).flatMap((anomaly) => [anomaly.chance, ...anomaly.others]));
+const smallCounts = {};
 for (const node of nodes) {
-  if (node.type.endsWith('_chance') && ANOMALIES[node.type.replace(/_chance$/, '')]) {
-    chanceCounts[node.type] = (chanceCounts[node.type] ?? 0) + 1;
+  if (smallTypes.has(node.type)) {
+    smallCounts[node.type] = (smallCounts[node.type] ?? 0) + 1;
   }
 }
 
@@ -661,4 +694,5 @@ writeFileSync(TREE_PATH, withCrlf(tree));
 writeFileSync(BODIES_PATH, withCrlf({ bodies }));
 
 console.log(`${nodes.length} nodes, ${plannedWheels.length} wheels, rings ${rings.map((ring) => `${ring.nodes.length}@${ring.radius}`).join(' / ')}`);
-console.log('chance nodes', chanceCounts);
+console.log('small nodes', smallCounts);
+console.log(`highway nodes with no wheel or link off their ring: ${stillBare.length}`);

@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ShippedAtlasBodiesTest {
 
     private static final int MAX_CHANCE_NODES_PER_ANOMALY = 12;
-    private static final List<Integer> RING_NODE_COUNTS = List.of(8, 12, 18, 20, 24);
+    private static final List<Integer> RING_NODE_COUNTS = List.of(8, 14, 20, 24, 30);
     private static final float BODY_CLEARANCE = 12f;
     private static final List<String> ANOMALIES = List.of("spatial_breach", "relay_network", "supply_convoy", "anomalous_debris", "excavation_sites",
             "listening_post");
