@@ -237,17 +237,28 @@ const ANOMALY_OF = {
 };
 
 const RINGS = [
-  ['settled_shafts o', 'threat_embargo i', 'officers_ledger o', 'stolen_charts i', 'heavy_breach o', 'shroud_embargo i'],
-  ['twin_shafts i', 'crowded_channel o', 'redacted_sleepers i', 'rift_magnetism o', 'veiled_sleepers i', 'shared_broadcast o', 'sapper_teams i',
-    'phase_embargo o', 'extra_relay o'],
+  ['settled_shafts o', 'sapper_teams i', 'officers_ledger o', 'stolen_charts i', 'heavy_breach o', 'extra_relay i'],
+  ['twin_shafts i', 'crowded_channel o', 'redacted_sleepers i', 'rift_magnetism o', 'veiled_sleepers i', 'shared_broadcast o',
+    'restless_sleepers i', 'forked_trace o'],
   ['open_bores o', 'infested_bolt_holes i', 'threatening_sleepers o', 'scar_collector i', 'rally_point i', 'torn_holds o', 'supply_lines i',
     'hair_trigger o', 'early_echo o', 'smash_and_grab i'],
   ['widened_bores i', 'double_dose o', 'breached_graveyard i', 'rift_duel o', 'garrison_pickets o', 'event_horizon i', 'full_array o',
     'needle_bores i', 'deep_corruption o'],
   ['deeper_bores o', 'bolt_hole_drop i', 'hyperspace_bleed o', 'double_down i', 'open_season o', 'rude_awakening i', 'pitch_black o',
-    'lone_sleeper i', 'fortified_depot o', 'forked_trace i', 'mixed_manifest o', 'restless_sleepers i', 'hunting_party o', 'incursion i',
-    'silent_choir o'],
+    'lone_sleeper i', 'fortified_depot o', 'mixed_manifest o', 'hunting_party o', 'incursion i', 'silent_choir o'],
 ];
+
+const FORK = {
+  ringIndex: 4,
+  angle: 135,
+  outerTurn: 50,
+  innerTurn: 85,
+  wheels: [
+    { notableType: 'threat_embargo', offset: 35, spokeLength: 1825, side: -1 },
+    { notableType: 'shroud_embargo', offset: 0, spokeLength: 725, side: 1 },
+    { notableType: 'phase_embargo', offset: -35, spokeLength: 1825, side: 1 },
+  ],
+};
 
 const MAX_CHANCE_NODES = 12;
 
@@ -317,11 +328,18 @@ function shapeWheel(wheel) {
   wheel.extent = wheel.spokeLength + wheel.reach;
 }
 
-const plannedWheels = RINGS.flatMap((entries, ringIndex) => entries.map((entry, slot) => {
-  const [notableType, side] = entry.split(' ');
-  return { ...wheelPlan(notableType), ringIndex, slot, slotCount: entries.length, inside: side === 'i' };
-}));
+const plannedWheels = RINGS.flatMap((entries, ringIndex) => [
+  ...(ringIndex === FORK.ringIndex ? FORK.wheels.map((fork) => ({ ...wheelPlan(fork.notableType), ringIndex, inside: false, fork })) : []),
+  ...entries.map((entry, slot) => {
+    const [notableType, side] = entry.split(' ');
+    return { ...wheelPlan(notableType), ringIndex, slot, slotCount: entries.length, inside: side === 'i' };
+  }),
+]);
 plannedWheels.forEach(shapeWheel);
+plannedWheels.filter((wheel) => wheel.fork).forEach((wheel) => {
+  wheel.spokeLength = wheel.fork.spokeLength;
+  wheel.extent = wheel.spokeLength + wheel.reach;
+});
 
 const extentOf = (ringIndex, inside) => Math.max(HIGHWAY_HALF_WIDTH,
   ...plannedWheels.filter((wheel) => wheel.ringIndex === ringIndex && wheel.inside === inside).map((wheel) => wheel.extent));
@@ -387,11 +405,10 @@ function distanceToSegment(point, from, to) {
 
 const clearOf = (from, to, circles) => circles.every((circle) => distanceToSegment(circle, from, to) >= circle.radius);
 
-function satelliteOffsets(wheel, spokeAngle) {
-  const towardSpoke = wheel.inside ? spokeAngle : spokeAngle + 180;
-  const side = random() < 0.5 ? 1 : -1;
-  const outerAngle = towardSpoke + side * between(OUTER_SMALL_TURN);
-  const innerAngle = outerAngle + side * between(INNER_SMALL_TURN);
+function satelliteOffsets(wheel, towardSpoke) {
+  const side = wheel.fork ? wheel.fork.side : random() < 0.5 ? 1 : -1;
+  const outerAngle = towardSpoke + side * (wheel.fork ? FORK.outerTurn : between(OUTER_SMALL_TURN));
+  const innerAngle = outerAngle + side * (wheel.fork ? FORK.innerTurn : between(INNER_SMALL_TURN));
   return [[wheel.outerTrack, outerAngle], [wheel.innerTrack, innerAngle]]
     .map(([track, angle]) => ({ x: track * Math.cos(toRadians(angle)), y: track * Math.sin(toRadians(angle)) }));
 }
@@ -441,8 +458,30 @@ const placedWheels = [];
 const wheelOf = new Map();
 const clashes = ({ x, y }, reach) => placedWheels.some((other) => Math.hypot(other.x - x, other.y - y) < reach + other.reach + WHEEL_CLEARANCE);
 
+function forkSpokeIndex(ring) {
+  const free = ring.nodes.map((node, index) => ({ index, gap: angularGap(node.angle, FORK.angle) })).filter(({ index }) => !ring.spokes.has(index));
+  return free.reduce((closest, candidate) => (candidate.gap < closest.gap ? candidate : closest)).index;
+}
+
+let forkSpoke;
+function placeFork(wheel) {
+  const ring = rings[wheel.ringIndex];
+  forkSpoke ??= forkSpokeIndex(ring);
+  ring.spokes.add(forkSpoke);
+  const spoke = ring.nodes[forkSpoke];
+  const angle = spoke.angle + wheel.fork.offset;
+  const centre = { x: spoke.node.x + wheel.spokeLength * Math.cos(toRadians(angle)), y: spoke.node.y + wheel.spokeLength * Math.sin(toRadians(angle)) };
+  if (clashes(centre, wheel.reach)) throw new Error(`The ${wheel.notableType} fork clashes with another wheel`);
+  return { spoke, centre };
+}
+
 for (const wheel of plannedWheels) {
   const ring = rings[wheel.ringIndex];
+  if (wheel.fork) {
+    const { spoke, centre } = placeFork(wheel);
+    placeWheel(wheel, ring, spoke, centre);
+    continue;
+  }
   const step = ring.nodes.length / wheel.slotCount;
   const jitter = (random() - 0.5) * step * 0.35;
   const target = Math.round(wheel.slot * step + jitter + ring.nodes.length) % ring.nodes.length;
@@ -458,10 +497,13 @@ for (const wheel of plannedWheels) {
   const spokeIndex = candidates.find((index) => !clashes(centreOf(index), wheel.reach));
   if (spokeIndex === undefined) throw new Error(`No clear spoke for ${wheel.notableType} on ring ${wheel.ringIndex}`);
   ring.spokes.add(spokeIndex);
-  const spoke = ring.nodes[spokeIndex];
-  const centre = centreOf(spokeIndex);
+  placeWheel(wheel, ring, ring.nodes[spokeIndex], centreOf(spokeIndex));
+}
+
+function placeWheel(wheel, ring, spoke, centre) {
   placedWheels.push({ x: centre.x, y: centre.y, reach: wheel.reach });
-  const offsets = satelliteOffsets(wheel, spoke.angle);
+  const towardSpoke = Math.atan2(spoke.node.y - centre.y, spoke.node.x - centre.x) * 180 / Math.PI;
+  const offsets = satelliteOffsets(wheel, towardSpoke);
   const turn = turnOf(centre, spoke.node, { x: centre.x + offsets[0].x, y: centre.y + offsets[0].y });
   const notable = addNode(wheel.notableType, centre.x, centre.y, wheel.tags, {
     colour: wheel.colour, spiral: turn, art: withHeading(wheel.art, spoke.angle),
