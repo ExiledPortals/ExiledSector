@@ -10,6 +10,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.charts.anomaly.FlareLuck;
 import exiledsector.charts.atlas.AtlasCatalysts;
+import exiledsector.charts.atlas.AtlasNames;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.tree.AtlasTree;
 import exiledsector.charts.tree.AtlasTreeAllocation;
@@ -111,7 +112,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
     private int unspentPoints;
     private PositionAPI panelPosition;
     private AtlasTreeNode hoveredNode;
-    private AtlasTreeNode tooltipSubject;
+    private Object tooltipSubject;
     private AtlasCatalysts.Catalyst hoveredCatalyst;
     private float mouseX;
     private float mouseY;
@@ -315,6 +316,11 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
             event.consume();
             return;
         }
+        if (event.isLMBDownEvent() && catalystColumn.catalystAt(x, y) != null) {
+            catalystColumn.toggle(catalystColumn.catalystAt(x, y));
+            event.consume();
+            return;
+        }
         if (overChrome(x, y) && (event.isMouseDownEvent() || event.isMouseScrollEvent())) {
             event.consume();
             return;
@@ -408,7 +414,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         searchBar.advance(amount);
         placeCatalystColumn();
         hoveredCatalyst = mouseKnown ? catalystColumn.catalystAt(mouseX, mouseY) : null;
-        search.focusAnomalies(AtlasTreeCatalystColumn.anomaliesOf(hoveredCatalyst));
+        search.focusAnomalies(catalystColumn.focusedAnomalies(hoveredCatalyst));
         camera.advanceZoom(amount);
         camera.advancePan(amount);
         treeView.advance(amount);
@@ -435,6 +441,8 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
                 frame.chromeBottom() + PANEL_GAP, alpha);
         if (hoveredNode != null) {
             drawTooltip(hoveredNode, alpha);
+        } else if (hoveredCatalyst != null) {
+            drawCatalystTooltip(hoveredCatalyst, alpha);
         }
     }
 
@@ -463,6 +471,20 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
             I18n.forGameText(() -> writeTooltip(node));
         }
         panelStyle.drawTitleBodyTooltip(tooltipTitle, tooltipBody, mouseX, mouseY, alpha);
+    }
+
+    private void drawCatalystTooltip(AtlasCatalysts.Catalyst catalyst, float alpha) {
+        if (catalyst != tooltipSubject) {
+            tooltipSubject = catalyst;
+            I18n.forGameText(() -> writeCatalystTooltip(catalyst.anomalyId()));
+        }
+        panelStyle.drawTitleBodyTooltip(tooltipTitle, tooltipBody, mouseX, mouseY, alpha);
+    }
+
+    private void writeCatalystTooltip(String anomalyId) {
+        tooltipTitle.setWrapped(AtlasNames.anomaly(anomalyId), tooltipText.maxTextWidth(), TOOLTIP_MAX_TEXT_HEIGHT);
+        tooltipBody.setParagraphs(List.of(AtlasNodeText.anomalyBody(anomalyId)), tooltipText.maxTextWidth(), TOOLTIP_MAX_TEXT_HEIGHT,
+                SkillTreePanelStyle::standardHighlightColor);
     }
 
     private void writeTooltip(AtlasTreeNode node) {

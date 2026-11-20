@@ -41,7 +41,24 @@ class AtlasTreeCatalystColumnTest {
 
     @Test
     void aHoveredCatalystFocusesItsAnomalyAndNoHoverFocusesNothing() {
-        assertEquals(Set.of("spatial_breach"), AtlasTreeCatalystColumn.anomaliesOf(BREACH));
-        assertEquals(Set.of(), AtlasTreeCatalystColumn.anomaliesOf(null));
+        AtlasTreeCatalystColumn column = new AtlasTreeCatalystColumn(List.of(BREACH, RELAY));
+
+        assertEquals(Set.of("spatial_breach"), column.focusedAnomalies(BREACH));
+        assertEquals(Set.of(), column.focusedAnomalies(null));
+    }
+
+    @Test
+    void clickingACatalystTogglesItsFocusAndKeepsItWhileHoveringAnother() {
+        AtlasTreeCatalystColumn column = new AtlasTreeCatalystColumn(List.of(BREACH, RELAY));
+
+        column.toggle(BREACH);
+        assertTrue(column.isToggled(BREACH));
+        assertEquals(Set.of("spatial_breach"), column.focusedAnomalies(null));
+        assertEquals(Set.of("spatial_breach", "relay_network"), column.focusedAnomalies(RELAY));
+
+        column.toggle(RELAY);
+        column.toggle(BREACH);
+        assertFalse(column.isToggled(BREACH));
+        assertEquals(Set.of("relay_network"), column.focusedAnomalies(null));
     }
 }
