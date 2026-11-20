@@ -124,6 +124,7 @@ class FlareWeatherTest {
         assertSame(FlareWeather.GENTLE, FlareWeather.styleOf(Flare.GENTLE));
         assertSame(FlareWeather.PERFECT, FlareWeather.styleOf(Flare.PERFECT));
         assertSame(FlareWeather.LICKING, FlareWeather.styleOf(Flare.LICKING));
+        assertSame(FlareWeather.SURGE, FlareWeather.styleOf(Flare.SURGE));
         assertTrue(FlareWeather.PERFECT.arched());
         assertNull(FlareWeather.PERFECT.rise());
         assertNotNull(FlareWeather.GENTLE.rise());

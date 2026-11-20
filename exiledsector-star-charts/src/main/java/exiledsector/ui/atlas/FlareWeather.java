@@ -33,6 +33,7 @@ final class FlareWeather {
     static final Style PERFECT = new Style(1, 6.5f, 0.4f, 0.8f, new Color(255, 252, 245), null);
     static final Style LICKING = new Style(2, 2f, 0.65f, 0.7f, new Color(255, 200, 120),
             new Rise(ConvoyCrossing.LANE_SHARE - 1f + LICK_PAST_LANE, 0.2f, 0.35f, 0.9f, 3));
+    static final Style SURGE = new Style(2, 2.4f, 0.55f, 0.75f, new Color(255, 150, 110), new Rise(0.8f, 0.24f, 0.4f, 0.85f, 2));
 
     private FlareWeather() {
     }
@@ -44,6 +45,7 @@ final class FlareWeather {
             case GENTLE -> GENTLE;
             case PERFECT -> PERFECT;
             case LICKING -> LICKING;
+            case SURGE -> SURGE;
             case NONE, PLAIN -> PLAIN;
         };
     }

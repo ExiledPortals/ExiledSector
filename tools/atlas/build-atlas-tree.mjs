@@ -85,6 +85,21 @@ const FLARE_NOTABLE_ART = {
   perfect_light: () => flareStar('star_white', 'perfect'),
   sunstruck_convoy: () => ({ kind: 'crossed_planet', planet: 'star_yellow', flare: 'licking', hulls: SUNSTRUCK_CONVOY, size: 90, facing: 'travel' }),
 };
+const MAGNETIC_ROCKS = ['graphics/asteroids/asteroid_big00.png', 'graphics/asteroids/asteroid_big01.png', 'graphics/asteroids/asteroid_big02.png'];
+const MAGNETIC_PLANET_SIZE = 88;
+const magneticPlanet = (planet, field, size = MAGNETIC_PLANET_SIZE) => ({ kind: 'planet', planet, field, size });
+const MAGNETIC_NOTABLE_ART = {
+  charged_fields: () => magneticPlanet('rocky_metallic', 'charged', 84),
+  static_harvest: () => magneticPlanet('cryovolcanic', 'harvest', 92),
+  ion_front: () => ({ ...magneticPlanet('water', 'ion', 90), storm: 'generic' }),
+  geomagnetic_surge: () => ({ ...magneticPlanet('star_red_giant', 'surge', 86), flare: 'surge' }),
+};
+const nebulaStack = (nebula, size) => ({ kind: 'nebula', nebula, size });
+const NEBULA_NOTABLE_ART = {
+  dust_trails: () => nebulaStack('trails', 120),
+  long_settling: () => nebulaStack('settling', 134),
+  ionized_dust: () => nebulaStack('ionized', 116),
+};
 
 function seededRandom(seed) {
   let state = seed >>> 0;
@@ -198,6 +213,20 @@ const ANOMALIES = {
     small: () => flareStar('star_yellow', 'plain', 36),
     notable: (notableType) => FLARE_NOTABLE_ART[notableType]?.() ?? flareStar('star_yellow', 'plain'),
   },
+  magnetic_storm: {
+    colour: '#3ce6d2',
+    chance: 'magnetic_storm_chance',
+    others: ['storm_crafting_items'],
+    small: () => ({ kind: 'sprite', path: pick(MAGNETIC_ROCKS), size: 34, facing: 'spin' }),
+    notable: (notableType) => MAGNETIC_NOTABLE_ART[notableType]?.() ?? magneticPlanet('barren', 'plain'),
+  },
+  dense_nebula: {
+    colour: '#c8a082',
+    chance: 'dense_nebula_atlas_chance',
+    others: ['settling_dust_effect', 'settling_dust_stacks'],
+    small: () => nebulaStack('puff', 42),
+    notable: (notableType) => NEBULA_NOTABLE_ART[notableType]?.() ?? nebulaStack('puff', 120),
+  },
 };
 
 const NOTABLE_ART = {
@@ -234,6 +263,8 @@ const ANOMALY_OF = {
   captured_front: 'storm_front', solar_front: 'storm_front', thunder_duel: 'storm_front',
   solar_maximum: 'stellar_flares', golden_hour: 'stellar_flares', tempered_light: 'stellar_flares', sunstruck_convoy: 'stellar_flares',
   perfect_light: 'stellar_flares',
+  charged_fields: 'magnetic_storm', static_harvest: 'magnetic_storm', ion_front: 'magnetic_storm', geomagnetic_surge: 'magnetic_storm',
+  dust_trails: 'dense_nebula', long_settling: 'dense_nebula', ionized_dust: 'dense_nebula',
 };
 
 const RINGS = [
