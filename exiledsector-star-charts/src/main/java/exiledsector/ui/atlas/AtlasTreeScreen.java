@@ -348,7 +348,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         DecorationScene scene = new DecorationScene(viewport, alpha, treeAlpha, hyperspace.anchorIds(),
                 new DecorationScene.StarMap(hyperspace.starRadius(), hyperspace.mapAmount(), hyperspace.hiddenStarIds()));
         decorations.renderBehindTree(scene);
-        treeView.render(viewport, nodeStates, hoveredNode == null ? null : hoveredNode.getId(), alpha * treeAlpha);
+        treeView.render(viewport, nodeStates, alpha * treeAlpha);
         decorations.renderOverTree(scene);
         if (hyperspace.isActive()) {
             hyperspace.render(viewport, alpha, mouseKnown, mouseX, mouseY);

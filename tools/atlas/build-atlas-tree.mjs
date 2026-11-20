@@ -35,6 +35,8 @@ const SITE_PLANETS = ['lava', 'frozen', 'frozen2', 'frozen3', 'cryovolcanic', 'b
   'rocky_unstable', 'rocky_ice', 'barren-bombarded', 'toxic_cold', 'terran', 'terran-eccentric', 'jungle', 'water', 'tundra', 'desert', 'desert1',
   'barren-desert'];
 const FREIGHTERS = ['buffalo', 'tarsus', 'hermes', 'phaeton', 'dram', 'mule', 'gemini', 'wayfarer'];
+const PICKETS = ['wolf', 'lasher', 'hound', 'kite', 'vigilance', 'tempest', 'brawler', 'centurion', 'monitor', 'omen'];
+const GUARDS_PER_DEPOT = 4;
 const ESCORTS = ['lasher', 'wolf', 'hound', 'vigilance', 'centurion', 'brawler', 'enforcer', 'hammerhead', 'sunder', 'monitor'];
 const DORMANT_HULLS = {
   remnant: { lead: ['brilliant', 'radiant', 'nova', 'apex'], rest: ['glimmer', 'lumen', 'fulgent', 'scintilla'] },
@@ -115,9 +117,11 @@ const populatedWorld = () => ({ kind: 'planet', ...(populatedWorlds.shift() ?? p
 const portStations = shuffled(PORT_STATIONS);
 let portsMade = 0;
 const nextPortStation = () => portStations[portsMade++ % portStations.length];
-const convoy = () => [pick(FREIGHTERS), ...pickSome(FREIGHTERS, 0, 1), pick(ESCORTS)];
+const convoy = () => [...pickSome(FREIGHTERS, 5, 7), ...pickSome(ESCORTS, 2, 3)];
 const port = () => ({ kind: 'sprite', path: nextPortStation(), size: PORT_SIZE, facing: 'spin', spin: 0.15,
   convoys: Array.from({ length: CONVOYS_PER_PORT }, convoy) });
+
+const depotGuards = () => pickSome(PICKETS, GUARDS_PER_DEPOT, GUARDS_PER_DEPOT);
 
 function dormantFleet(notableType) {
   const faction = DORMANT_FACTION[notableType] ?? 'derelict';
@@ -125,7 +129,7 @@ function dormantFleet(notableType) {
   if (faction === 'dweller') {
     return { kind: 'shrouded', hulls: [pick(hulls.lead), ...pickSome(hulls.rest, 2, 3)], size: 140 };
   }
-  return { kind: 'derelicts', hulls: [pick(hulls.lead), ...pickSome(hulls.rest, 3, 5)], size: 140 };
+  return { kind: 'derelicts', hulls: [pick(hulls.lead), ...pickSome(hulls.rest, 4, 9)], size: 140 };
 }
 
 const ANOMALIES = {
@@ -168,8 +172,8 @@ const ANOMALIES = {
     colour: '#f0dc6e',
     chance: 'listening_post_chance',
     others: ['vault_quantity', 'slow_purge'],
-    small: () => ({ kind: 'sprite', path: pick(['graphics/ships/wolf/wolf_base.png', 'graphics/ships/lasher/lasher_base.png']), size: 34, facing: 'travel' }),
-    notable: () => ({ kind: 'sprite', path: pick(['graphics/stations/station_side01.png', 'graphics/stations/station_side02.png', 'graphics/stations/station_side03.png', 'graphics/stations/station_side04.png']), size: 116, facing: 'spin' }),
+    small: () => ({ kind: 'patrol', hulls: pickSome(PICKETS, 1, 2), size: 34 }),
+    notable: () => ({ kind: 'outpost', path: pick(['graphics/stations/station_side01.png', 'graphics/stations/station_side02.png', 'graphics/stations/station_side03.png', 'graphics/stations/station_side04.png']), hulls: depotGuards(), size: 116, facing: 'spin' }),
   },
   storm_front: {
     colour: '#ff28d2',
@@ -190,7 +194,7 @@ const ANOMALIES = {
 const NOTABLE_ART = {
   mixed_manifest: () => ({ kind: 'sprite', path: 'graphics/stations/station_midline1.png', size: 184, facing: 'spin' }),
   incursion: () => ({ kind: 'sprite', path: 'graphics/stations/station_side00.png', size: 128, facing: 'spin', spin: 0.3 }),
-  fortified_depot: () => ({ kind: 'station', hulls: ['station2'], size: 160 }),
+  fortified_depot: () => ({ kind: 'station', hulls: ['station2', ...depotGuards()], size: 160 }),
   double_down: () => ({ kind: 'binary', paths: ['graphics/ships/com_relay.png', 'graphics/ships/sensor_array.png'], size: 80, facing: 'spin', spin: 0.2 }),
 };
 

@@ -59,6 +59,14 @@ public final class NodeBeams {
         return ringRadius + ringEdge(ringWidthScale) * RING_VISIBLE_SHARE;
     }
 
+    public static float huggingLaneRingRadius(float iconRadius, float widthScale) {
+        return iconRadius + laneEdge(widthScale) * RING_HUG_SHARE;
+    }
+
+    public static float laneRingOuterEdge(float ringRadius, float widthScale) {
+        return ringRadius + laneEdge(widthScale) * LANE_VISIBLE_SHARE;
+    }
+
     public static float laneReach(float ringOuterEdge, float laneWidthScale) {
         float laneHalf = laneEdge(laneWidthScale) * LANE_VISIBLE_SHARE;
         return (float) Math.sqrt(Math.max(0f, ringOuterEdge * ringOuterEdge - laneHalf * laneHalf));
@@ -84,9 +92,19 @@ public final class NodeBeams {
     }
 
     public void pulse(float cx, float cy, float radius, float[] outlineRadii, Color colour, String pulseKey, float alpha, float widthScale) {
+        pulse(cx, cy, radius, outlineRadii, RING_STYLE, colour, pulseKey, alpha, widthScale);
+    }
+
+    public void lanePulse(float cx, float cy, float radius, float[] outlineRadii, Color colour, String pulseKey, float alpha, float widthScale) {
+        pulse(cx, cy, radius, outlineRadii, LANE_STYLE, colour, pulseKey, alpha, widthScale);
+    }
+
+    private void pulse(float cx, float cy, float radius, float[] outlineRadii, BeamStroke.Style style, Color colour, String pulseKey, float alpha,
+                       float widthScale) {
         float progress = ringArt.pulseProgress(pulseKey);
         if (progress >= 0f) {
-            ring(cx, cy, radius * NodeRingArt.pulseRadiusFraction(progress), outlineRadii, lit(colour), (1f - progress) * alpha, widthScale);
+            stroke.addRing(cx, cy, radius * NodeRingArt.pulseRadiusFraction(progress), outlineRadii, style, lit(colour), (1f - progress) * alpha,
+                    ringArt.elapsedSeconds(), widthScale);
         }
     }
 
@@ -101,6 +119,10 @@ public final class NodeBeams {
 
     public void ring(float cx, float cy, float radius, float[] outlineRadii, BeamStroke.Look look, float alpha, float widthScale) {
         stroke.addRing(cx, cy, radius, outlineRadii, RING_STYLE, look, alpha, ringArt.elapsedSeconds(), widthScale);
+    }
+
+    public void laneRing(float cx, float cy, float radius, float[] outlineRadii, BeamStroke.Look look, float alpha, float widthScale) {
+        stroke.addRing(cx, cy, radius, outlineRadii, LANE_STYLE, look, alpha, ringArt.elapsedSeconds(), widthScale);
     }
 
     public boolean connector(float fromX, float fromY, float fromRadius, float toX, float toY, float toRadius, BeamStroke.Look look, float startAlpha,

@@ -9,6 +9,7 @@ import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.belt.AuroraBeltRenderer;
 import exiledsector.ui.belt.RadialBand;
 import exiledsector.ui.belt.RingBeltRenderer;
+import exiledsector.ui.decoration.AtlasShipGroup;
 import exiledsector.ui.decoration.AtmosphereRing;
 import exiledsector.ui.decoration.PlanetSphere;
 import exiledsector.ui.decoration.UnitSphere;
@@ -101,9 +102,11 @@ final class AtlasBodyPainter {
             case STORM_CELL -> storms.paintCell(colour, placement, lighting, seconds, alpha);
             case SPRITE -> paintSprite(firstPath(art), placement.screenX(), placement.screenY(), placement.screenRadius(), angleOf(art, placement),
                     lighting, alpha);
+            case OUTPOST -> paintSprite(firstPath(art), placement.screenX(), placement.screenY(), placement.screenRadius() * AtlasShipGroup.STATION_SHARE,
+                    angleOf(art, placement), lighting, alpha);
             case BINARY -> paintBinary(art, placement, lighting, seconds, alpha);
             case BREACH -> paintBreach(colour, placement, lighting, seconds, alpha);
-            case FLEET, DERELICTS, SHROUDED, STATION -> {
+            case FLEET, DERELICTS, SHROUDED, STATION, PATROL -> {
             }
             default -> paintPlain(colour, placement, lighting, alpha);
         }

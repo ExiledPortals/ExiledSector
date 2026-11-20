@@ -15,7 +15,7 @@ public record AtlasBodyArt(Kind kind, String planetType, List<String> spritePath
             UNPOPULATED);
 
     public enum Kind {
-        STAR, PLANET, SWARMED_PLANET, CROSSED_PLANET, SPRITE, BINARY, FLEET, DERELICTS, SHROUDED, STATION, BREACH, STORM_CELL, PLAIN
+        STAR, PLANET, SWARMED_PLANET, CROSSED_PLANET, SPRITE, BINARY, FLEET, DERELICTS, SHROUDED, STATION, OUTPOST, PATROL, BREACH, STORM_CELL, PLAIN
     }
 
     public enum Facing { SPIN, TRAVEL }
@@ -100,6 +100,7 @@ public record AtlasBodyArt(Kind kind, String planetType, List<String> spritePath
     }
 
     public boolean isShipGroup() {
-        return kind == Kind.FLEET || kind == Kind.DERELICTS || kind == Kind.SHROUDED || kind == Kind.STATION;
+        return kind == Kind.FLEET || kind == Kind.DERELICTS || kind == Kind.SHROUDED || kind == Kind.STATION || kind == Kind.OUTPOST
+                || kind == Kind.PATROL;
     }
 }

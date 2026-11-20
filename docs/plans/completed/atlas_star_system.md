@@ -15,13 +15,15 @@ lay-in-course arrows were removed on 2026-11-18 and every body now stays where t
   its spoke, and every link of the path spirals in towards the notable like a ship falling down a gravity well; each
   notable turns one way, so its spirals never cross.
   Supply Convoy notables are populated worlds (jungle, terran, ocean, or a city-covered world) with vanilla city lights,
-  and their lead-ups are orbital stations at most a fifth the planet's size. Three convoys with escorts per station
-  shuttle to their wheel's centre and back on right-hand lanes, slipping behind the planet and fading out at the station
+  and their lead-ups are orbital stations at most a fifth the planet's size. Three convoys of seven to ten ships per station
+  follow the wheel's connectors to its centre and back on right-hand lanes, slipping behind the planet and fading out at the station
   (hybrids and Mixed Manifest keep their own centre, and their convoy stations run to it).
 - Excavation notables are planets of differing non-gas-giant types with the blinking site light; Debris notables are
   dormant hulls of their sleeper faction in a debris field (Veiled Sleepers are shrouded dwellers swimming instead, and
-  Silent Choir is a derelict fleet); Double Down is a binary of two relays; Fortified Depot is a
-  low-tech battlestation; Incursion a research station.
+  Silent Choir is a derelict fleet); Double Down is a binary of two relays; Incursion is a research station.
+  Depot Vault notables are small stations (a quarter of the body, Fortified Depot a low-tech battlestation) with four
+  little frigates swimming round them; their lead-ups are one or two little frigates flying about inside the node ring
+  under engine power, each sending out a small sensor-burst ping every few seconds.
 - Hybrids are planets whose two smalls come one from each parent anomaly (Event Horizon takes two breach smalls).
 - Chance nodes (+8%) fill lead-up slots first on hybrids, then from the inner ring outward, at most 12 per anomaly.
 - Harder notables sit on outer rings. An anomaly's notables are spread around and across rings, never grouped.
@@ -35,14 +37,15 @@ lay-in-course arrows were removed on 2026-11-18 and every body now stays where t
 - The art is the node: dull when unallocated, brighter with a breathing ring when allocatable, full colour when
   allocated. Excavation planets carry a bright blinking site light fixed to the surface, turning with the planet and
   hidden while it is on the far side. Breach bodies sit on a pitch-black disc that hides the starscape, with their
-  corona peeking out round it. Every body but the star wears the ship tree's node ring in its anomaly colour (white on
-  highways), and connectors stop at the ring's edge as they do in the ship tree. Hover shows the node tooltip.
-- Each notable sits in a soft corona of its colour a little wider than the body, dull while untouched and brighter
-  for each of its wheel's three nodes allocated.
+  corona peeking out round it. Every body but the star wears a node ring drawn with the connectors' beam, in its anomaly colour
+  (white on highways), and connectors stop at the ring's edge as they do in the ship tree. Hover shows the node tooltip.
+- A wheel's three rings (its notable and both smalls) are always in their anomaly colour: faint while the wheel is
+  untouched and brighter for each of its nodes allocated, breathing while allocatable. There is no corona glow.
 - Links along a ring are connector beams following the ring's circle, wheel links follow their spiral
   (`charts.tree.AtlasLinkPath`), and the rays between the star and the rings are straight.
 - Fleets, derelicts and the battlestation are drawn from vanilla hulls (`ui.decoration.AtlasShipGroup`); fleets drift
-  in formation with engine flames, derelicts lie still in a vanilla-style debris field (`ui.decoration.AtlasDebrisField`:
+  in formation with engine flames, derelict fleets of 5-10 small, unpowered hulls weave slowly back and forth in formation, without engine flames, in a
+  vanilla-style debris field (`ui.decoration.AtlasDebrisField`:
   drifting, spinning sheet pieces, some glowing, some bracketed), and the shrouded dwellers swim loops trailing their
   shroud (`ui.decoration.AtlasShroudedPod`). Stations, relays and other non-planet bodies turn at a fifth of a planet's
   speed.

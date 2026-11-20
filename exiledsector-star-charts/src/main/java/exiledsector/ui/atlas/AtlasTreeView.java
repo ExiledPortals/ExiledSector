@@ -1,15 +1,14 @@
 package exiledsector.ui.atlas;
 
-import com.fs.starfarer.api.graphics.SpriteAPI;
 import exiledsector.charts.tree.AtlasBodyArt;
 import exiledsector.charts.tree.AtlasLinkPath;
 import exiledsector.charts.tree.AtlasTreeBodies;
 import exiledsector.charts.tree.AtlasTreeBodies.Body;
 import exiledsector.charts.tree.AtlasTreeBodies.Link;
-import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.decoration.AtlasShipGroup;
+import exiledsector.ui.node.BeamStroke;
 import exiledsector.ui.node.ConnectorKind;
 import exiledsector.ui.node.ConnectorPainter;
 import exiledsector.ui.node.ConnectorPainter.ConnectorEndpoint;
@@ -19,7 +18,6 @@ import exiledsector.ui.node.ConnectorPainter.EdgeFill;
 import exiledsector.ui.node.NodeBeams;
 import exiledsector.ui.node.NodeRingArt;
 import exiledsector.ui.node.SkillTreeNodeGeometry;
-import exiledsector.ui.util.TexturedQuadBatch;
 
 import java.awt.Color;
 import java.util.Arrays;
@@ -35,7 +33,6 @@ final class AtlasTreeView {
     }
 
     private static final Color DEFAULT_COLOUR = new Color(200, 210, 230);
-    private static final Color HOVER_COLOUR = Color.WHITE;
     private static final float MIN_BODY_PIXELS = 2.5f;
     private static final float MIN_HIT_PIXELS = 8f;
     private static final float HIT_SCALE = 1.15f;
@@ -45,19 +42,14 @@ final class AtlasTreeView {
     private static final float BODY_RING_SCALE = 1.12f;
     private static final float MIN_PATH_STEP_PIXELS = 4f;
     private static final int MAX_PATH_POINTS = 32;
-    private static final float HOVER_RING_SCALE = 1.25f;
-    private static final float HOVER_RING_ALPHA = 0.8f;
+    private static final float VISIBLE_REACH_SCALE = 2.5f;
     private static final float SPIN_DEGREES_PER_SECOND = 12f;
     private static final float OBJECT_SPIN_SHARE = 0.2f;
     private static final float DULL_SHIP_ALPHA = 0.55f;
     private static final float AVAILABLE_SHIP_ALPHA = 0.8f;
     private static final double ANIMATION_PERIOD_SECONDS = 3600.0;
     private static final float[] CIRCLE = NodeRingArt.outlineRadii((cos, sin) -> 1f);
-    private static final String CORONA_PATH = "graphics/fx/hit_glow.png";
-    private static final float CORONA_SCALE = 2.8f;
-    private static final float BREACH_CORONA_SCALE = 3.8f;
-    private static final float DULL_CORONA_ALPHA = 0.16f;
-    private static final float FULL_CORONA_ALPHA = 0.55f;
+    private static final float UNTOUCHED_WHEEL_RING_ALPHA = 0.3f;
 
     private final AtlasTreeBodies bodies;
     private final AtlasBodyPainter painter = new AtlasBodyPainter();
@@ -70,8 +62,6 @@ final class AtlasTreeView {
     private final AtlasShipGroup[] shipGroups;
     private final float[] pathXs = new float[MAX_PATH_POINTS];
     private final float[] pathYs = new float[MAX_PATH_POINTS];
-    private final SpriteCache spriteCache = new SpriteCache(AtlasTreeView.class);
-    private final TexturedQuadBatch coronaBatch = new TexturedQuadBatch();
     private final int[] wheelMembers;
     private final int[] wheelAllocated;
     private final float[] stormSeconds;
@@ -142,9 +132,11 @@ final class AtlasTreeView {
             case STATION -> AtlasShipGroup.Mode.STATION;
             case SWARMED_PLANET -> AtlasShipGroup.Mode.CIRCLING;
             case CROSSED_PLANET -> AtlasShipGroup.Mode.CROSSING;
+            case OUTPOST -> AtlasShipGroup.Mode.GUARDING;
+            case PATROL -> AtlasShipGroup.Mode.PATROLLING;
             default -> null;
         };
-        return mode == null ? null : new AtlasShipGroup(mode, art.hullIds(), art.size(), body.nodeId().hashCode());
+        return mode == null ? null : new AtlasShipGroup(mode, art.hullIds(), art.size(), body.nodeId().hashCode(), parseColour(body.colour(), DEFAULT_COLOUR));
     }
 
     private static Color parseColour(String hex, Color fallback) {
@@ -201,7 +193,7 @@ final class AtlasTreeView {
         return closest;
     }
 
-    void render(TreeViewport viewport, States states, String hoveredNodeId, float alpha) {
+    void render(TreeViewport viewport, States states, float alpha) {
         if (alpha <= 0f) {
             return;
         }
@@ -217,40 +209,14 @@ final class AtlasTreeView {
                 wheelAllocated[centre]++;
             }
         }
-        renderCoronas(viewport, alpha);
         convoys.render(viewport, seconds, portShipAlpha, alpha);
         for (Body body : bodies.bodies()) {
-            renderBody(viewport, body, states, body.nodeId().equals(hoveredNodeId), seconds, alpha);
+            renderBody(viewport, body, states, seconds, alpha);
         }
         for (Link link : bodies.links()) {
             addLink(viewport, link, alpha);
         }
         beams.flush();
-    }
-
-    private void renderCoronas(TreeViewport viewport, float alpha) {
-        SpriteAPI glow = spriteCache.texture(CORONA_PATH);
-        if (glow == null) {
-            return;
-        }
-        try (TexturedQuadBatch quads = coronaBatch.beginAdditive(glow)) {
-            for (Body body : bodies.bodies()) {
-                int index = body.index();
-                if (wheelMembers[index] == 0) {
-                    continue;
-                }
-                float screenX = viewport.screenX(body.x());
-                float screenY = viewport.screenY(body.y());
-                float scale = body.art().kind() == AtlasBodyArt.Kind.BREACH ? BREACH_CORONA_SCALE : CORONA_SCALE;
-                float size = screenRadiusOf(body, viewport) * scale;
-                if (!viewport.isVisible(screenX, screenY, size / 2f)) {
-                    continue;
-                }
-                float share = wheelAllocated[index] / (float) wheelMembers[index];
-                float coronaAlpha = DULL_CORONA_ALPHA + (FULL_CORONA_ALPHA - DULL_CORONA_ALPHA) * share;
-                quads.quadAtCenter(screenX, screenY, size, size, 0f, colours[index], alpha * coronaAlpha);
-            }
-        }
     }
 
     private void addLink(TreeViewport viewport, Link link, float alpha) {
@@ -327,14 +293,14 @@ final class AtlasTreeView {
 
     private static float ringRadiusOf(Body body, TreeViewport viewport) {
         float scale = body.highway() ? HIGHWAY_RING_SCALE : BODY_RING_SCALE;
-        return NodeBeams.huggingRingRadius(screenRadiusOf(body, viewport) * scale, NodeBeams.widthScale(viewport.zoom()));
+        return NodeBeams.huggingLaneRingRadius(screenRadiusOf(body, viewport) * scale, NodeBeams.widthScale(viewport.zoom()));
     }
 
     private static float gapOf(Body body, TreeViewport viewport) {
         if (body.art().kind() == AtlasBodyArt.Kind.STAR) {
             return screenRadiusOf(body, viewport) * STAR_GAP_SCALE;
         }
-        float ringOuterEdge = NodeBeams.ringOuterEdge(ringRadiusOf(body, viewport), NodeBeams.widthScale(viewport.zoom()));
+        float ringOuterEdge = NodeBeams.laneRingOuterEdge(ringRadiusOf(body, viewport), NodeBeams.widthScale(viewport.zoom()));
         return NodeBeams.laneReach(ringOuterEdge, SkillTreeNodeGeometry.laneWidthScale(viewport.zoom()));
     }
 
@@ -343,12 +309,12 @@ final class AtlasTreeView {
         return SPIN_DEGREES_PER_SECOND * share * body.art().spinRate() * (body.index() % 2 == 0 ? 1f : -1f);
     }
 
-    private void renderBody(TreeViewport viewport, Body body, States states, boolean hovered, float seconds, float alpha) {
+    private void renderBody(TreeViewport viewport, Body body, States states, float seconds, float alpha) {
         int index = body.index();
         float screenX = viewport.screenX(body.x());
         float screenY = viewport.screenY(body.y());
         float screenRadius = screenRadiusOf(body, viewport);
-        if (!viewport.isVisible(screenX, screenY, screenRadius * HOVER_RING_SCALE * 2f)) {
+        if (!viewport.isVisible(screenX, screenY, screenRadius * VISIBLE_REACH_SCALE)) {
             return;
         }
         boolean lit = allocated[index];
@@ -371,9 +337,21 @@ final class AtlasTreeView {
         float widthScale = NodeBeams.widthScale(viewport.zoom());
         float ringRadius = ringRadiusOf(body, viewport);
         NodeBeams.RingLight light = lit ? NodeBeams.RingLight.LIT : available ? NodeBeams.RingLight.BREATHING : NodeBeams.RingLight.DULL;
-        beams.nodeRing(screenX, screenY, ringRadius, CIRCLE, light, colours[index], body.nodeId(), alpha, widthScale);
-        if (hovered) {
-            beams.ring(screenX, screenY, ringRadius * HOVER_RING_SCALE, CIRCLE, beams.lit(HOVER_COLOUR), alpha * HOVER_RING_ALPHA, widthScale);
-        }
+        int centre = wheelCentreOf(body);
+        boolean inWheel = centre != AtlasTreeBodies.NO_WHEEL;
+        BeamStroke.Look look = inWheel || light != NodeBeams.RingLight.DULL ? beams.lit(colours[index]) : NodeBeams.DULL_LOOK;
+        float ringAlpha = inWheel ? wheelRingAlpha(centre, available) : beams.lightAlpha(light);
+        beams.laneRing(screenX, screenY, ringRadius, CIRCLE, look, alpha * ringAlpha, widthScale);
+        beams.lanePulse(screenX, screenY, ringRadius, CIRCLE, colours[index], body.nodeId(), alpha, widthScale);
+    }
+
+    private float wheelRingAlpha(int centre, boolean available) {
+        float ringAlpha = wheelRingAlpha(wheelAllocated[centre], wheelMembers[centre]);
+        return available ? Math.max(ringAlpha, beams.lightAlpha(NodeBeams.RingLight.BREATHING)) : ringAlpha;
+    }
+
+    static float wheelRingAlpha(int allocatedMembers, int members) {
+        float share = members <= 0 ? 0f : Math.min(1f, allocatedMembers / (float) members);
+        return UNTOUCHED_WHEEL_RING_ALPHA + (1f - UNTOUCHED_WHEEL_RING_ALPHA) * share;
     }
 }

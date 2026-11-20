@@ -70,4 +70,33 @@ class ConvoyRunTest {
 
         assertEquals(-90f, northward.at(travelSeconds() / 2f).headingDegrees(), DELTA);
     }
+
+    private static ConvoyRun aroundACorner() {
+        return new ConvoyRun(ConvoyRoute.through(new float[]{0f, LENGTH, LENGTH}, new float[]{0f, 0f, LENGTH}), 0, 1);
+    }
+
+    @Test
+    void aConvoyFollowsEveryLegOfABentRoute() {
+        ConvoyRun run = aroundACorner();
+
+        ConvoyRun.Position secondLeg = run.at(LENGTH * 1.5f / ConvoyRun.SPEED);
+
+        assertEquals(2f * LENGTH, run.length(), DELTA);
+        assertEquals(LENGTH + ConvoyRun.LANE_OFFSET, secondLeg.x(), DELTA);
+        assertEquals(LENGTH / 2f, secondLeg.y(), DELTA);
+        assertEquals(-90f, secondLeg.headingDegrees(), DELTA);
+    }
+
+    @Test
+    void itsLaneBendsSmoothlyRoundTheCorner() {
+        ConvoyRun run = aroundACorner();
+        float atCorner = LENGTH / ConvoyRun.SPEED;
+        float moment = 0.02f / ConvoyRun.SPEED;
+
+        ConvoyRun.Position before = run.at(atCorner - moment);
+        ConvoyRun.Position after = run.at(atCorner + moment);
+
+        assertTrue(Math.hypot(after.x() - before.x(), after.y() - before.y()) < 0.1f);
+        assertEquals(-45f, run.at(atCorner).headingDegrees(), 0.5f);
+    }
 }

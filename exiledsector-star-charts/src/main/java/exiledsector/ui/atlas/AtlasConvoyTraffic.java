@@ -11,9 +11,11 @@ import java.util.function.IntToDoubleFunction;
 
 final class AtlasConvoyTraffic {
 
-    static final float SHIP_SCALE_SHARE = 0.5f;
-    private static final float CONVOY_RADIUS = 24f;
-    private static final float CULL_RADIUS = 60f;
+    static final float SHIP_SCALE_SHARE = 0.15f;
+    private static final float CONVOY_RADIUS = 60f;
+    private static final float CULL_RADIUS = 30f;
+    static final float HIDDEN_BELOW_ZOOM = 0.3f;
+    static final float SHOWN_FROM_ZOOM = 0.45f;
 
     private record Convoy(int portIndex, ConvoyRun run, AtlasShipGroup ships) {
     }
@@ -26,9 +28,9 @@ final class AtlasConvoyTraffic {
             if (fleets.isEmpty() || port.wheel() == AtlasTreeBodies.NO_WHEEL) {
                 continue;
             }
-            Body world = bodies.bodies().get(port.wheel());
+            ConvoyRoute route = ConvoyRoute.fromPortToWheelCentre(bodies, port);
             for (int order = 0; order < fleets.size(); order++) {
-                ConvoyRun run = new ConvoyRun(port.x(), port.y(), world.x(), world.y(), order, fleets.size());
+                ConvoyRun run = new ConvoyRun(route, order, fleets.size());
                 long seed = 31L * port.nodeId().hashCode() + order;
                 convoys.add(new Convoy(port.index(), run, new AtlasShipGroup(AtlasShipGroup.Mode.UNDER_WAY, fleets.get(order), CONVOY_RADIUS, seed)));
             }
@@ -46,6 +48,10 @@ final class AtlasConvoyTraffic {
     }
 
     void render(TreeViewport viewport, float seconds, IntToDoubleFunction portAlpha, float alpha) {
+        float zoomShare = zoomVisibility(viewport.zoom());
+        if (zoomShare <= 0f) {
+            return;
+        }
         float shipZoom = viewport.zoom() * SHIP_SCALE_SHARE;
         for (Convoy convoy : convoys) {
             ConvoyRun.Position position = convoy.run().at(seconds);
@@ -57,8 +63,12 @@ final class AtlasConvoyTraffic {
             if (!viewport.isVisible(screenX, screenY, CULL_RADIUS * viewport.zoom())) {
                 continue;
             }
-            float shipAlpha = alpha * position.visibility() * (float) portAlpha.applyAsDouble(convoy.portIndex());
+            float shipAlpha = alpha * zoomShare * position.visibility() * (float) portAlpha.applyAsDouble(convoy.portIndex());
             convoy.ships().render(screenX, screenY, shipZoom, position.headingDegrees(), shipAlpha);
         }
+    }
+
+    static float zoomVisibility(float zoom) {
+        return Math.max(0f, Math.min(1f, (zoom - HIDDEN_BELOW_ZOOM) / (SHOWN_FROM_ZOOM - HIDDEN_BELOW_ZOOM)));
     }
 }
