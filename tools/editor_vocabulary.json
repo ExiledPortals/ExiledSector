@@ -251,6 +251,7 @@
     {"name": "FLUX_DISSIPATION_WHILE_VENTING_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},
     {"name": "FLUX_DISSIPATION_WITHOUT_HARD_FLUX_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},
     {"name": "FRAGMENTATION_ARMOR_HULL_DAMAGE_TAKEN_PERCENT", "statMode": "PERCENT", "lowerIsBetter": true},
+    {"name": "FRAGMENTATION_DAMAGE_MULT", "statMode": null, "lowerIsBetter": false},
     {"name": "FRAGMENTATION_DAMAGE_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "FRAGMENTATION_DAMAGE_TAKEN_PERCENT", "statMode": "PERCENT", "lowerIsBetter": true},
     {"name": "FRAGMENT_REPLACEMENT_RATE_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},

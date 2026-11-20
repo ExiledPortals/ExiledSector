@@ -66,6 +66,12 @@ public final class HitDamageRestorer implements DamageListener {
         return damage.isDps() ? hitDamage * damage.getDpsDuration() : hitDamage;
     }
 
+    public static DamageType originalHitType(DamageAPI damage) {
+        HitDamageRestorer restorer = SkillEffectSupport.existingEngineListener(HitDamageRestorer.class);
+        PendingRestore entry = restorer == null ? null : restorer.entryFor(damage);
+        return entry == null ? damage.getType() : entry.type();
+    }
+
     private static void track(DamageAPI damage, CombatEntityAPI target) {
         HitDamageRestorer restorer = SkillEffectSupport.ensureEngineListener(HitDamageRestorer.class, HitDamageRestorer::new);
         boolean tracked = false;

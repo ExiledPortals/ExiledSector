@@ -118,6 +118,12 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
     HIGH_EXPLOSIVE_DAMAGE_PERCENT(damageType(DamageTypeListener.HIGH_EXPLOSIVE_PERCENT_KEY, "stat.highExplosiveDamage")),
     ENERGY_DAMAGE_PERCENT(damageType(DamageTypeListener.ENERGY_PERCENT_KEY, "stat.energyDamage")),
     FRAGMENTATION_DAMAGE_PERCENT(damageType(DamageTypeListener.FRAGMENTATION_PERCENT_KEY, "stat.fragmentationDamage")),
+    FRAGMENTATION_DAMAGE_MULT(listener(DamageTypeListener.FRAGMENTATION_MORE_PERCENT_KEY, DamageTypeListener.class, DamageTypeListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return StatMode.MULT.describeStat(magnitude, "stat.fragmentationDamage");
+        }
+    },
     DAMAGE_TO_DISTANT_TARGETS_PERCENT(listener(DistantTargetDamageListener.DAMAGE_PERCENT_KEY, DistantTargetDamageListener.class,
             DistantTargetDamageListener::new)) {
         @Override

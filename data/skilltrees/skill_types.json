@@ -8129,6 +8129,10 @@
 				{
 					"effect": "ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT_PER_HIGH_TECH_AFFINITY",
 					"magnitude": 1
+				},
+				{
+					"effect": "FRAGMENTATION_DAMAGE_MULT",
+					"magnitude": -40
 				}
 			],
 			"integrated": {
@@ -8136,6 +8140,10 @@
 					{
 						"effect": "ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT_PER_HIGH_TECH_AFFINITY",
 						"magnitude": 1.5
+					},
+					{
+						"effect": "FRAGMENTATION_DAMAGE_MULT",
+						"magnitude": -40
 					}
 				]
 			},

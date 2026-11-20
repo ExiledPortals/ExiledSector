@@ -1486,6 +1486,12 @@ effect|FRAGMENTATION_ARMOR_HULL_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> i
 effect|FRAGMENTATION_ARMOR_HULL_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased fragmentation damage taken by armor and hull.
 effect|FRAGMENTATION_ARMOR_HULL_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced fragmentation damage taken by armor and hull.
 effect|FRAGMENTATION_ARMOR_HULL_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced fragmentation damage taken by armor and hull.
+effect|FRAGMENTATION_DAMAGE_MULT|1.0	0	<good>1%</good> more fragmentation damage.
+effect|FRAGMENTATION_DAMAGE_MULT|10.0	0	<good>10%</good> more fragmentation damage.
+effect|FRAGMENTATION_DAMAGE_MULT|12.5	0	<good>12.5%</good> more fragmentation damage.
+effect|FRAGMENTATION_DAMAGE_MULT|100.0	0	<good>100%</good> more fragmentation damage.
+effect|FRAGMENTATION_DAMAGE_MULT|-10.0	0	<bad>10%</bad> less fragmentation damage.
+effect|FRAGMENTATION_DAMAGE_MULT|-12.5	0	<bad>12.5%</bad> less fragmentation damage.
 effect|FRAGMENTATION_DAMAGE_PERCENT|1.0	0	<good>1%</good> increased fragmentation damage.
 effect|FRAGMENTATION_DAMAGE_PERCENT|10.0	0	<good>10%</good> increased fragmentation damage.
 effect|FRAGMENTATION_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> increased fragmentation damage.
@@ -4072,40 +4078,55 @@ type|acceleration|CRUISER|0	0	<good>10%</good> increased acceleration.
 type|acceleration|CAPITAL_SHIP|0	0	<good>10%</good> increased acceleration.
 flavour|adaptive_munitions	0	Remnant drones match each round to whatever it is about to hit.
 type|adaptive_munitions|null|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every <hl>5</hl> High Tech Affinity.
+type|adaptive_munitions|null|1	0	<bad>40%</bad> less fragmentation damage.
 type|adaptive_munitions|FRIGATE|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every <hl>5</hl> High Tech Affinity.
+type|adaptive_munitions|FRIGATE|1	0	<bad>40%</bad> less fragmentation damage.
 type|adaptive_munitions|DESTROYER|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every <hl>5</hl> High Tech Affinity.
+type|adaptive_munitions|DESTROYER|1	0	<bad>40%</bad> less fragmentation damage.
 type|adaptive_munitions|CRUISER|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every <hl>5</hl> High Tech Affinity.
+type|adaptive_munitions|CRUISER|1	0	<bad>40%</bad> less fragmentation damage.
 type|adaptive_munitions|CAPITAL_SHIP|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every <hl>5</hl> High Tech Affinity.
+type|adaptive_munitions|CAPITAL_SHIP|1	0	<bad>40%</bad> less fragmentation damage.
 integrable|adaptive_munitions|null|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every <hl>5</hl> High Tech Affinity.
-integrable|adaptive_munitions|null|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
-integrable|adaptive_munitions|null|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|adaptive_munitions|null|3	0	Instead grants <builtIn>1.5%</builtIn> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every <hl>5</hl> High Tech Affinity.
+integrable|adaptive_munitions|null|1	0	<bad>40%</bad> less fragmentation damage.
+integrable|adaptive_munitions|null|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|adaptive_munitions|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|adaptive_munitions|null|4	0	Instead grants <builtIn>1.5%</builtIn> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every <hl>5</hl> High Tech Affinity.
 integrable|adaptive_munitions|FRIGATE|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every <hl>5</hl> High Tech Affinity.
-integrable|adaptive_munitions|FRIGATE|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
-integrable|adaptive_munitions|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|adaptive_munitions|FRIGATE|3	0	Instead grants <builtIn>1.5%</builtIn> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every <hl>5</hl> High Tech Affinity.
+integrable|adaptive_munitions|FRIGATE|1	0	<bad>40%</bad> less fragmentation damage.
+integrable|adaptive_munitions|FRIGATE|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|adaptive_munitions|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|adaptive_munitions|FRIGATE|4	0	Instead grants <builtIn>1.5%</builtIn> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every <hl>5</hl> High Tech Affinity.
 integrable|adaptive_munitions|DESTROYER|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every <hl>5</hl> High Tech Affinity.
-integrable|adaptive_munitions|DESTROYER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
-integrable|adaptive_munitions|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|adaptive_munitions|DESTROYER|3	0	Instead grants <builtIn>1.5%</builtIn> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every <hl>5</hl> High Tech Affinity.
+integrable|adaptive_munitions|DESTROYER|1	0	<bad>40%</bad> less fragmentation damage.
+integrable|adaptive_munitions|DESTROYER|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|adaptive_munitions|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|adaptive_munitions|DESTROYER|4	0	Instead grants <builtIn>1.5%</builtIn> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every <hl>5</hl> High Tech Affinity.
 integrable|adaptive_munitions|CRUISER|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every <hl>5</hl> High Tech Affinity.
-integrable|adaptive_munitions|CRUISER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
-integrable|adaptive_munitions|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|adaptive_munitions|CRUISER|3	0	Instead grants <builtIn>1.5%</builtIn> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every <hl>5</hl> High Tech Affinity.
+integrable|adaptive_munitions|CRUISER|1	0	<bad>40%</bad> less fragmentation damage.
+integrable|adaptive_munitions|CRUISER|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|adaptive_munitions|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|adaptive_munitions|CRUISER|4	0	Instead grants <builtIn>1.5%</builtIn> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every <hl>5</hl> High Tech Affinity.
 integrable|adaptive_munitions|CAPITAL_SHIP|0	0	<good>1%</good> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every <hl>5</hl> High Tech Affinity.
-integrable|adaptive_munitions|CAPITAL_SHIP|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
-integrable|adaptive_munitions|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|adaptive_munitions|CAPITAL_SHIP|3	0	Instead grants <builtIn>1.5%</builtIn> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every <hl>5</hl> High Tech Affinity.
+integrable|adaptive_munitions|CAPITAL_SHIP|1	0	<bad>40%</bad> less fragmentation damage.
+integrable|adaptive_munitions|CAPITAL_SHIP|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|adaptive_munitions|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|adaptive_munitions|CAPITAL_SHIP|4	0	Instead grants <builtIn>1.5%</builtIn> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every <hl>5</hl> High Tech Affinity.
 integrated|adaptive_munitions|null|0	0	<builtIn>Integrated</builtIn>
 integrated|adaptive_munitions|null|1	0	<builtIn>1.5%</builtIn> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every <hl>5</hl> High Tech Affinity.
+integrated|adaptive_munitions|null|2	0	<bad>40%</bad> less fragmentation damage.
 integrated|adaptive_munitions|FRIGATE|0	0	<builtIn>Integrated</builtIn>
 integrated|adaptive_munitions|FRIGATE|1	0	<builtIn>1.5%</builtIn> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every <hl>5</hl> High Tech Affinity.
+integrated|adaptive_munitions|FRIGATE|2	0	<bad>40%</bad> less fragmentation damage.
 integrated|adaptive_munitions|DESTROYER|0	0	<builtIn>Integrated</builtIn>
 integrated|adaptive_munitions|DESTROYER|1	0	<builtIn>1.5%</builtIn> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every <hl>5</hl> High Tech Affinity.
+integrated|adaptive_munitions|DESTROYER|2	0	<bad>40%</bad> less fragmentation damage.
 integrated|adaptive_munitions|CRUISER|0	0	<builtIn>Integrated</builtIn>
 integrated|adaptive_munitions|CRUISER|1	0	<builtIn>1.5%</builtIn> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every <hl>5</hl> High Tech Affinity.
+integrated|adaptive_munitions|CRUISER|2	0	<bad>40%</bad> less fragmentation damage.
 integrated|adaptive_munitions|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|adaptive_munitions|CAPITAL_SHIP|1	0	<builtIn>1.5%</builtIn> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every <hl>5</hl> High Tech Affinity.
+integrated|adaptive_munitions|CAPITAL_SHIP|2	0	<bad>40%</bad> less fragmentation damage.
 flavour|adaptive_phase_coils	0	Phase coils lose their grip on normal space as hard flux builds. A crew willing to rewind them by hand can keep that grip a while longer.
 flavourAutomated|adaptive_phase_coils	0	Phase coils lose their grip on normal space as hard flux builds. The ship's core models the slip from its own coil telemetry and corrects for it faster than any hand could rewind them, keeping that grip a while longer.
 type|adaptive_phase_coils|null|0	0	<good>40%</good> increased hard flux level at which phased speed reaches its minimum.
