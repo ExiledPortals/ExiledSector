@@ -373,6 +373,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     private void handleRootChoiceEvent(InputEventAPI event, CanvasMode mode) {
         if (event.isLMBDownEvent() && canvasPosition.containsEvent(event)) {
+            treeSession.hurryStartingRootFlight();
             if (!chrome.press(canvasPosition, mode, event.getX(), event.getY())) {
                 pressTarget(mode, nodeDrawer.findNodeAt(layers(), event.getX(), event.getY()), event, false);
             }

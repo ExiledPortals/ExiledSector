@@ -96,6 +96,35 @@ class StartingRootChoiceTest {
     }
 
     @Test
+    void hurryingAFlightRunsTheRestOfItFaster() {
+        StartingRootChoice choice = pending();
+        choice.choose(highTech);
+        choice.advance(StartingRootChoice.FLIGHT_SECONDS / 2f);
+
+        choice.hurryFlight();
+        float remaining = StartingRootChoice.FLIGHT_SECONDS / 2f / StartingRootChoice.HURRIED_FLIGHT_SPEED;
+        choice.advance(remaining * 0.9f);
+        assertEquals(StartingRootChoice.Phase.FLYING, choice.phase());
+
+        choice.advance(remaining * 0.2f);
+        assertEquals(StartingRootChoice.Phase.CHOSEN, choice.phase());
+    }
+
+    @Test
+    void hurryingOnlyAffectsTheFlightOut() {
+        StartingRootChoice choosing = pending();
+        choosing.hurryFlight();
+        choosing.choose(highTech);
+        choosing.advance(StartingRootChoice.FLIGHT_SECONDS * 0.9f);
+        assertEquals(StartingRootChoice.Phase.FLYING, choosing.phase());
+
+        StartingRootChoice returning = StartingRootChoice.returning(List.of(lowTech, midline, highTech), lowTech);
+        returning.hurryFlight();
+        returning.advance(StartingRootChoice.FLIGHT_SECONDS * 0.9f);
+        assertEquals(StartingRootChoice.Phase.RETURNING, returning.phase());
+    }
+
+    @Test
     void returningFliesEveryRootBackIntoTheClusterAndReopensTheChoice() {
         StartingRootChoice clustered = pending();
         StartingRootChoice choice = StartingRootChoice.returning(List.of(lowTech, midline, highTech), lowTech);

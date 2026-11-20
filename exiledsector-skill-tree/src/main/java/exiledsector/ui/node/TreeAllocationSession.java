@@ -206,6 +206,10 @@ public final class TreeAllocationSession {
         return rootChoice.phase() == StartingRootChoice.Phase.FLYING;
     }
 
+    public void hurryStartingRootFlight() {
+        rootChoice.hurryFlight();
+    }
+
     public float startingRootCameraProgress() {
         return rootChoice.cameraProgress();
     }
