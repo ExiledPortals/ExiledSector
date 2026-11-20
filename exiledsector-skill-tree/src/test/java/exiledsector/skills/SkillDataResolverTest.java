@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.persistence.ShipRecords;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.npc.NpcTreeTag;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -76,6 +77,24 @@ class SkillDataResolverTest {
         ShipSkillData second = SkillDataResolver.resolve(null, variantWithTags(NPC_TAG));
 
         assertSame(first, second);
+    }
+
+    @Test
+    void aDecodeThatLooksUpAnotherNpcTreeKeepsBothCached() {
+        String innerTag = "exiledSector_npcTree|inner|2|root,a";
+        ShipSkillData inner = SkillDataResolver.resolve(null, variantWithTags(innerTag));
+        SkillDataResolver.resolve(null, variantWithTags("exiledSector_npcTree|filler|2|root,a"));
+        ShipSkillData outer;
+        try (MockedStatic<NpcTreeTag> tagMock = Mockito.mockStatic(NpcTreeTag.class, Mockito.CALLS_REAL_METHODS)) {
+            tagMock.when(() -> NpcTreeTag.decode(NPC_TAG)).thenAnswer(invocation -> {
+                SkillDataResolver.resolve(null, variantWithTags(innerTag));
+                return invocation.callRealMethod();
+            });
+            outer = SkillDataResolver.resolve(null, variantWithTags(NPC_TAG));
+        }
+
+        assertSame(outer, SkillDataResolver.resolve(null, variantWithTags(NPC_TAG)));
+        assertSame(inner, SkillDataResolver.resolve(null, variantWithTags(innerTag)));
     }
 
     @Test

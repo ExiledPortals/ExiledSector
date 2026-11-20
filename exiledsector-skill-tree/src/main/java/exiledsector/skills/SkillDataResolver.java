@@ -8,6 +8,7 @@ import exiledsector.skills.npc.NpcSkillTreeBuilder;
 import exiledsector.skills.npc.NpcTreeTag;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,12 +17,12 @@ public final class SkillDataResolver {
 
     private static final String OP_COST_REFRESH_MOD_ID = "exiledSector_opCostRefresh";
     private static final int MAX_CACHED_NPC_TREES = 1024;
-    private static final Map<String, ShipSkillData> NPC_TREES = new LinkedHashMap<>(16, 0.75f, true) {
+    private static final Map<String, ShipSkillData> NPC_TREES = Collections.synchronizedMap(new LinkedHashMap<>(16, 0.75f, true) {
         @Override
         protected boolean removeEldestEntry(Map.Entry<String, ShipSkillData> eldest) {
             return size() > MAX_CACHED_NPC_TREES;
         }
-    };
+    });
 
     private SkillDataResolver() {
     }
@@ -32,7 +33,16 @@ public final class SkillDataResolver {
 
     public static ShipSkillData npcRecord(ShipVariantAPI variant) {
         String npcTag = NpcTreeTag.find(variant);
-        return npcTag == null ? null : NPC_TREES.computeIfAbsent(npcTag, SkillDataResolver::decodeOrEmpty);
+        if (npcTag == null) {
+            return null;
+        }
+        ShipSkillData cached = NPC_TREES.get(npcTag);
+        if (cached != null) {
+            return cached;
+        }
+        ShipSkillData decoded = decodeOrEmpty(npcTag);
+        ShipSkillData decodedMeanwhile = NPC_TREES.putIfAbsent(npcTag, decoded);
+        return decodedMeanwhile != null ? decodedMeanwhile : decoded;
     }
 
     public static boolean borrowsShipTree(FleetMemberAPI member, ShipVariantAPI variant) {
