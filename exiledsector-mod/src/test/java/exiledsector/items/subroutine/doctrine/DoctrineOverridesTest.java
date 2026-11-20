@@ -485,6 +485,30 @@ class DoctrineOverridesTest {
         assertEquals(doctrine.firmwareRevision(), DoctrineOverrides.rewrite(data, nearNotable.getId()).revision());
     }
 
+    @Test
+    void infestedArchivesShowTheirOwnRollLineAndConvertNodesWithoutARevision() throws Exception {
+        ItemDefinitions.register(new JSONArray()
+                .put(ItemFixtures.subroutineRow(REWRITE, SubroutineKind.DOCTRINE))
+                .put(ItemFixtures.subroutineRow("seed", SubroutineKind.DOCTRINE).put("name", "Seed"))
+                .put(ItemFixtures.subroutineRow("graft", SubroutineKind.DOCTRINE).put("name", "Graft")));
+        DoctrineArchives.register(new JSONArray()
+                .put(archiveRow(REWRITE, "REWRITE", "medium").put("notables", String.join("; ", NOTABLE_POOL)))
+                .put(archiveRow("seed", "REWRITE", "medium").put("notables", String.join("; ", NOTABLE_POOL)).put("infestation", "threat"))
+                .put(archiveRow("graft", "REWRITE", "medium").put("notables", String.join("; ", NOTABLE_POOL)).put("infestation", "shroud")));
+
+        assertEquals("Firmware revision: Rev. 7", DoctrineText.revisionLine(REWRITE, 7).plain());
+        assertEquals("Fragment pattern: 7", DoctrineText.revisionLine("seed", 7).plain());
+        assertEquals("Frequency: 7", DoctrineText.revisionLine("graft", 7).plain());
+        assertEquals("codex.doctrine.rewrites", DoctrineText.rewritesCodexKey(DoctrineArchives.get(REWRITE)));
+        assertEquals("codex.doctrine.converts", DoctrineText.rewritesCodexKey(DoctrineArchives.get("seed")));
+
+        DoctrineRewrite seedRewrite = DoctrineOverrides.rewrite(shipWith("seed", 3L, nearNotable), nearNotable.getId());
+        assertEquals("Converted by Seed", DoctrineText.rewrittenBy(seedRewrite).plain());
+        DoctrineRewrite factionRewrite = DoctrineOverrides.rewrite(shipWith(REWRITE, 3L, nearNotable), nearNotable.getId());
+        assertEquals("Rewritten by " + ItemDefinitions.get(REWRITE).displayName() + ", Rev. " + factionRewrite.revision(),
+                DoctrineText.rewrittenBy(factionRewrite).plain());
+    }
+
     private static void assertNotSameLayer(DoctrineLayer first, DoctrineLayer second) {
         assertFalse(first == second);
     }

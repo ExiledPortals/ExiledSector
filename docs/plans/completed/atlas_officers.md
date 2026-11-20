@@ -131,7 +131,7 @@ The three offers are drawn without repeats from one pool, weighted by each item'
 - crafting items (by their `chart_materials.csv` share at the run tier), each offered as a single item with no count shown;
 - Prefix and Suffix Inhibitors, each offered as a single item;
 - Engrams (by their `engrams.csv` weight, from their `min_tier`);
-- Doctrine Archives, by their weight in `atlas_officer_rewards.csv`, from every faction whatever the officer's faction (built 2026-11-18);
+- Doctrine Archives, by their weight in `atlas_officer_rewards.csv`, from every faction whatever the officer's faction (built 2026-11-18), the Fabricator Seed and Shroud Graft among them (2026-11-21);
 - rarely, a unique hull item or subroutine (`unique` true, by `rarity`), leaning towards uniques whose `source` is the officer's faction.
 
 The tables use different scales, so each category gets a share of the pool before the item weights apply within it: 35 hull item base types, 15 biome hull items, 30 crafting items, 7 inhibitors, 8 Engrams, 8 feedstock, 18 Star Charts, 5 Doctrine Archives and 5 uniques, as relative weights (placeholders). These shares and each crafting item's tier (low, mid or high) sit in a new `atlas_officer_rewards.csv`.

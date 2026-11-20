@@ -305,7 +305,7 @@ class DoctrineArchiveDataTest {
     }
 
     @Test
-    void theInfestedArchivesDropOnlyFromTheirOwnFleetsAndAreBornCorrupted() throws Exception {
+    void theInfestedArchivesDropOnlyFromTheirOwnFleetsAndAreNotBornCorrupted() throws Exception {
         loadShippedDoctrines();
         try {
             assertEquals(DoctrineInfestation.THREAT, DoctrineArchives.get("doctrine_archive_threat").infestation());
@@ -326,7 +326,7 @@ class DoctrineArchiveDataTest {
                 boolean infested = INFESTED_DOCTRINES.contains(definitionId);
                 assertEquals(infested, DoctrineArchives.infested(definitionId), definitionId);
                 assertEquals(infested, FactionFleetDrops.source(definitionId) != null, definitionId);
-                assertEquals(infested, Item.create("archive_" + definitionId, definitionId, 9L, List.of()).corrupted(), definitionId);
+                assertFalse(Item.create("archive_" + definitionId, definitionId, 9L, List.of()).corrupted(), definitionId);
             }
         } finally {
             NpcFactionVolumes.clear();

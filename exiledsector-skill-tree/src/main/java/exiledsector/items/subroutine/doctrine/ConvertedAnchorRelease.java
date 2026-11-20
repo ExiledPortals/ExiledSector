@@ -31,7 +31,7 @@ public final class ConvertedAnchorRelease {
         persistentData.put(DONE_KEY, Boolean.TRUE);
         if (!releasedItemIds.isEmpty()) {
             LOG.info("[ExiledSector] Returned " + releasedItemIds.size()
-                    + " Threat and Shrouded Wormhole Anchors to storage as Infested Doctrine Archives: " + releasedItemIds);
+                    + " Threat and Shrouded Wormhole Anchors to storage as Fabricator Seeds and Shroud Grafts: " + releasedItemIds);
         }
     }
 

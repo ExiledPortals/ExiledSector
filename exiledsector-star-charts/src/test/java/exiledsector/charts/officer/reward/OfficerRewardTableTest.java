@@ -133,7 +133,8 @@ class OfficerRewardTableTest {
         List<String> archiveIds = OfficerRewardTable.itemsIn(RewardKind.DOCTRINE_ARCHIVE);
 
         assertEquals(List.of("doctrine_archive_hegemony", "doctrine_archive_tritachyon", "doctrine_archive_luddic", "doctrine_archive_sindrian_diktat",
-                "doctrine_archive_pirate", "doctrine_archive_persean_league", "doctrine_archive_remnant"), archiveIds);
+                "doctrine_archive_pirate", "doctrine_archive_persean_league", "doctrine_archive_remnant", "doctrine_archive_threat",
+                "doctrine_archive_shrouded"), archiveIds);
         for (String archiveId : archiveIds) {
             assertEquals(1f, OfficerRewardTable.weightOf(archiveId), archiveId);
         }

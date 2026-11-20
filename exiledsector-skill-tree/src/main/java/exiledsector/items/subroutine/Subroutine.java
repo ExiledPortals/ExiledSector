@@ -131,8 +131,12 @@ public final class Subroutine extends Item implements NodeSocketable {
         if (kind == null) {
             return;
         }
-        if ((kind.bornCorrupted() || EmptyShells.emptyShells(definition()) || DoctrineArchives.infested(definitionId())) && corruption() == null) {
+        boolean infested = DoctrineArchives.infested(definitionId());
+        if ((kind.bornCorrupted() || EmptyShells.emptyShells(definition())) && !infested && corruption() == null) {
             corrupt(CorruptionOutcome.INNATE);
+        }
+        if (infested && corruption() == CorruptionOutcome.INNATE) {
+            corrupt(null);
         }
         if (kind.rollsNode() && rolledNodeIds == null) {
             List<String> rolled = SubroutineNodePools.roll(definition(), seed());
@@ -332,7 +336,7 @@ public final class Subroutine extends Item implements NodeSocketable {
             return List.of();
         }
         List<StyledText> lines = new ArrayList<>();
-        lines.add(Translation.msg("socketable.doctrine.revision").arg("revision", String.valueOf(firmwareRevision())).styled());
+        lines.add(DoctrineText.revisionLine(definitionId(), firmwareRevision()));
         DoctrineArchive archive = DoctrineArchives.get(definitionId());
         if (archive == null) {
             lines.add(Translation.styled("socketable.doctrine.inert"));
