@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public final class AtlasShipGroup {
+public final class AtlasShipGroup implements AtlasShipScene {
 
     public enum Mode { UNDER_WAY, DORMANT, STATION, SWIMMING, CIRCLING, CROSSING, GUARDING, PATROLLING }
 
@@ -74,6 +74,7 @@ public final class AtlasShipGroup {
         this.pingColour = pingColour;
     }
 
+    @Override
     public void advance(float amount, float headingDeg) {
         seconds += amount;
         if (ships == null) {
@@ -86,6 +87,7 @@ public final class AtlasShipGroup {
         }
     }
 
+    @Override
     public void render(float screenX, float screenY, float zoom, float headingDeg, float alpha) {
         if (alpha <= 0f) {
             return;
@@ -267,7 +269,7 @@ public final class AtlasShipGroup {
         }
     }
 
-    private static ShipHullSpecAPI hullSpec(String hullId) {
+    static ShipHullSpecAPI hullSpec(String hullId) {
         try {
             return Global.getSettings().getHullSpec(hullId);
         } catch (RuntimeException e) {

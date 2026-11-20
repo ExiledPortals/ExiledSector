@@ -11,36 +11,49 @@ import exiledsector.charts.officer.OfficerScavenging;
 import exiledsector.charts.officer.OfficerStartingItems;
 import exiledsector.charts.officer.ScavengeRoll;
 import exiledsector.charts.officer.StartingItemRoll;
+import exiledsector.charts.officer.OfficerTrophyRefits;
+import exiledsector.charts.officer.TrophyRefit;
+import exiledsector.charts.officer.turn.OfficerBoons;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
+import exiledsector.charts.tree.AtlasTree;
 
 import java.util.Set;
 
 public record TerritoryContext(String excludedFactionId, AtlasCell openRunCell, FlagshipCatalogue catalogue, StartingItemRoll startingItems,
-                               ScavengeRoll scavenges, Set<Integer> openRunOfficerIds) {
+                               ScavengeRoll scavenges, Set<Integer> openRunOfficerIds, OfficerBoons boons, TrophyRefit refits) {
 
     public static final TerritoryContext NONE = new TerritoryContext(null, null, FlagshipCatalogue.NONE);
 
     public TerritoryContext {
         openRunOfficerIds = openRunOfficerIds == null ? Set.of() : Set.copyOf(openRunOfficerIds);
+        boons = boons == null ? OfficerBoons.NONE : boons;
+        refits = refits == null ? TrophyRefit.NONE : refits;
     }
 
     public TerritoryContext(String excludedFactionId, AtlasCell openRunCell, FlagshipCatalogue catalogue) {
         this(excludedFactionId, openRunCell, catalogue, StartingItemRoll.NONE, ScavengeRoll.NONE, Set.of());
     }
 
+    public TerritoryContext(String excludedFactionId, AtlasCell openRunCell, FlagshipCatalogue catalogue, StartingItemRoll startingItems,
+                            ScavengeRoll scavenges, Set<Integer> openRunOfficerIds) {
+        this(excludedFactionId, openRunCell, catalogue, startingItems, scavenges, openRunOfficerIds, OfficerBoons.NONE, TrophyRefit.NONE);
+    }
+
     public static TerritoryContext current() {
         SectorAPI sector = Global.getSector();
+        OfficerBoons boons = boonsOrNone(sector);
         return new TerritoryContext(commissionFactionId(), openRunCellOrNull(), FactionFlagships.INSTANCE, OfficerStartingItems.forSector(sector),
-                OfficerScavenging.forSector(sector), openRunOfficerIdsOrNone());
+                OfficerScavenging.forSector(sector, boons.luckyScavenging()), openRunOfficerIdsOrNone(), boons,
+                boons.trophyRefit() ? OfficerTrophyRefits.forSector(sector) : TrophyRefit.NONE);
     }
 
     public TerritoryContext withoutOpenRun() {
-        return new TerritoryContext(excludedFactionId, null, catalogue, startingItems, scavenges, Set.of());
+        return new TerritoryContext(excludedFactionId, null, catalogue, startingItems, scavenges, Set.of(), boons, refits);
     }
 
     public TerritoryContext withOpenRun(AtlasCell cell, Set<Integer> officerRecordIds) {
-        return new TerritoryContext(excludedFactionId, cell, catalogue, startingItems, scavenges, officerRecordIds);
+        return new TerritoryContext(excludedFactionId, cell, catalogue, startingItems, scavenges, officerRecordIds, boons, refits);
     }
 
     public boolean takesPartInOpenRun(AtlasState state, AtlasOfficer officer) {
@@ -49,6 +62,15 @@ public record TerritoryContext(String excludedFactionId, AtlasCell openRunCell, 
         }
         return openRunCell != null && officer.isActive()
                 && (officer.commandCentre().equals(openRunCell) || officer.commandCentre().equals(state.commandCentreOf(openRunCell)));
+    }
+
+    private static OfficerBoons boonsOrNone(SectorAPI sector) {
+        try {
+            AtlasState state = AtlasState.getIfCreated(sector);
+            return state == null ? OfficerBoons.NONE : OfficerBoons.of(AtlasTree.atlasEffects(state));
+        } catch (RuntimeException e) {
+            return OfficerBoons.NONE;
+        }
     }
 
     private static String commissionFactionId() {

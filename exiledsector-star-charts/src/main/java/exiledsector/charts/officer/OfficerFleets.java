@@ -36,6 +36,7 @@ public final class OfficerFleets {
     public static final String RECORD_MEMORY_KEY = "$exiledSector_officerRecord";
     public static final String FLAGSHIP_MEMORY_KEY = "$exiledSector_officerFlagship";
     public static final String TREE_SEED_MEMORY_KEY = "$exiledSector_officerTreeSeed";
+    public static final String BONUS_LEVELS_MEMORY_KEY = "$exiledSector_officerBonusLevels";
     static final String TREE_SEED_PREFIX = "officer|";
     static final Set<String> FIGHTING_TRAITS = Set.of(Personalities.AGGRESSIVE, Personalities.RECKLESS);
 
@@ -106,18 +107,22 @@ public final class OfficerFleets {
     public static void dress(CampaignFleetAPI fleet, ChartGenContext context) {
         AtlasOfficer officer = officerOf(context);
         if (fleet != null && officer != null) {
-            dress(fleet, officer, factionOf(officer, fleet));
+            dress(fleet, officer, factionOf(officer, fleet), OfficerFleetBoons.atCommandCentre(context).flagshipLevels());
         }
     }
 
-    public static void dress(CampaignFleetAPI fleet, int officerRecordId) {
+    public static void dress(CampaignFleetAPI fleet, int officerRecordId, ChartGenContext context) {
         AtlasOfficer officer = record(officerRecordId);
         if (fleet != null && officer != null) {
-            dress(fleet, officer, factionOf(officer, fleet));
+            dress(fleet, officer, factionOf(officer, fleet), OfficerFleetBoons.inSkirmish(context).flagshipLevels());
         }
     }
 
     static void dress(CampaignFleetAPI fleet, AtlasOfficer officer, FactionAPI faction) {
+        dress(fleet, officer, faction, 0);
+    }
+
+    static void dress(CampaignFleetAPI fleet, AtlasOfficer officer, FactionAPI faction, int bonusLevels) {
         PersonAPI commander = fleet.getCommander();
         FleetMemberAPI flagship = officer.hasFlagship() ? addFlagship(fleet, officer, commander, faction) : fleet.getFlagship();
         if (commander != null) {
@@ -130,6 +135,9 @@ public final class OfficerFleets {
             memory.set(FLAGSHIP_MEMORY_KEY, flagship.getId());
             memory.set(TREE_SEED_MEMORY_KEY, Long.toString(officer.treeSeed(), Character.MAX_RADIX));
             Scars.grant(fleet, flagship.getId(), officer.scars());
+            if (bonusLevels > 0) {
+                memory.set(BONUS_LEVELS_MEMORY_KEY, bonusLevels);
+            }
         }
         OfficerRank rank = OfficerRanks.rank(officer.rankId());
         if (rank.fleetStrengthPercent() > 0) {
@@ -152,7 +160,8 @@ public final class OfficerFleets {
         if (member == null || !member.getId().equals(ScarMemory.flagshipId(fleetMemory))) {
             return 0;
         }
-        return Scars.extraLevels(ScarMemory.scars(fleetMemory));
+        Object bonusLevels = fleetMemory.get(BONUS_LEVELS_MEMORY_KEY);
+        return Scars.extraLevels(ScarMemory.scars(fleetMemory)) + (bonusLevels instanceof Number number ? number.intValue() : 0);
     }
 
     static HullFacts flagshipHull(AtlasOfficer officer) {

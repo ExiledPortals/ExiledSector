@@ -37,7 +37,14 @@ class AtlasBodyReaderTest {
                 { "id": "odd_field", "art": { "kind": "planet", "planet": "barren", "field": "monopole" } },
                 { "id": "puff", "colour": "#c8a082", "art": { "kind": "nebula", "nebula": "puff", "size": 42 } },
                 { "id": "ionized", "art": { "kind": "nebula", "nebula": "ionized", "size": 116 } },
-                { "id": "odd_nebula", "art": { "kind": "nebula", "nebula": "thick_soup" } }
+                { "id": "odd_nebula", "art": { "kind": "nebula", "nebula": "thick_soup" } },
+                { "id": "command", "colour": "#ffc850", "art": { "kind": "flagship", "scene": "command",
+                    "hulls": ["onslaught", "enforcer", "lasher", "wolf"], "size": 130, "facing": "travel", "heading": 45 } },
+                { "id": "trophy", "art": { "kind": "flagship", "scene": "trophy", "hulls": ["paragon", "omen"], "wrecks": ["dominator"] } },
+                { "id": "warfare", "art": { "kind": "flagship", "scene": "standoff", "hulls": ["odyssey", "tempest"],
+                    "rivals": ["retribution", "lasher"], "rivalColour": "#ff5a50" } },
+                { "id": "bare_flagship", "art": { "kind": "flagship", "hulls": ["conquest"] } },
+                { "id": "odd_scene", "art": { "kind": "flagship", "scene": "parade", "hulls": ["conquest"] } }
             ] }
             """;
 
@@ -209,11 +216,12 @@ class AtlasBodyReaderTest {
 
     @Test
     void anArtBuiltWithoutWeatherOrPopulationHasNeither() {
-        AtlasBodyArt art = new AtlasBodyArt(AtlasBodyArt.Kind.PLANET, "star_yellow", null, null, null, null, null, null);
+        AtlasBodyArt art = new AtlasBodyArt(AtlasBodyArt.Kind.PLANET, "star_yellow", null, null, null, null, null, null, null);
         AtlasBodyArt.Weather halfWeather = new AtlasBodyArt.Weather(null, AtlasBodyArt.Flare.WARM, null, null);
 
         assertEquals(AtlasBodyArt.NO_WEATHER, art.weather());
         assertEquals(AtlasBodyArt.UNPOPULATED, art.population());
+        assertEquals(AtlasBodyArt.NO_FLAGSHIP, art.flagship());
         assertEquals(AtlasBodyArt.Storm.NONE, halfWeather.storm());
         assertEquals(AtlasBodyArt.Flare.WARM, halfWeather.flare());
         assertEquals(AtlasBodyArt.Field.NONE, halfWeather.field());
@@ -231,5 +239,57 @@ class AtlasBodyReaderTest {
         assertTrue(AtlasBodyArt.PLAIN.cityLights().isEmpty());
         assertTrue(AtlasBodyArt.PLAIN.convoys().isEmpty());
         assertTrue(AtlasBodyArt.PLAIN.haulers().isEmpty());
+        assertEquals(AtlasBodyArt.Scene.NONE, AtlasBodyArt.PLAIN.scene());
+        assertTrue(AtlasBodyArt.PLAIN.wreckHulls().isEmpty());
+        assertTrue(AtlasBodyArt.PLAIN.rivalHulls().isEmpty());
+        assertNull(AtlasBodyArt.PLAIN.rivalColour());
+    }
+
+    @Test
+    void aFlagshipLoadsAsAShipGroupWithItsSceneHullsAndTravelHeading() {
+        Map<String, AtlasBody> bodies = bodies();
+        AtlasBodyArt command = bodies.get("command").art();
+
+        assertEquals(AtlasBodyArt.Kind.FLAGSHIP, command.kind());
+        assertEquals(AtlasBodyArt.Scene.COMMAND, command.scene());
+        assertEquals(List.of("onslaught", "enforcer", "lasher", "wolf"), command.hullIds());
+        assertEquals(130f, command.size());
+        assertEquals(AtlasBodyArt.Facing.TRAVEL, command.facing());
+        assertEquals(45f, command.heading());
+        assertEquals("#ffc850", bodies.get("command").colour());
+        assertTrue(command.isShipGroup());
+        assertFalse(command.isPlanet());
+        assertNull(command.planetType());
+        assertTrue(command.wreckHulls().isEmpty());
+        assertTrue(command.rivalHulls().isEmpty());
+        assertNull(command.rivalColour());
+    }
+
+    @Test
+    void aTrophyFlagshipKeepsItsWreckAndAStandoffKeepsItsRivalsAndTheirColour() {
+        Map<String, AtlasBody> bodies = bodies();
+        AtlasBodyArt trophy = bodies.get("trophy").art();
+        AtlasBodyArt warfare = bodies.get("warfare").art();
+
+        assertEquals(AtlasBodyArt.Scene.TROPHY, trophy.scene());
+        assertEquals(List.of("dominator"), trophy.wreckHulls());
+        assertEquals(List.of("paragon", "omen"), trophy.hullIds());
+        assertEquals(AtlasBodyArt.Scene.STANDOFF, warfare.scene());
+        assertEquals(List.of("odyssey", "tempest"), warfare.hullIds());
+        assertEquals(List.of("retribution", "lasher"), warfare.rivalHulls());
+        assertEquals("#ff5a50", warfare.rivalColour());
+        assertTrue(warfare.wreckHulls().isEmpty());
+    }
+
+    @Test
+    void aFlagshipWithoutAKnownSceneHasNoneAndAnythingElseHasNoScene() {
+        Map<String, AtlasBody> bodies = bodies();
+
+        assertEquals(AtlasBodyArt.Scene.NONE, bodies.get("bare_flagship").art().scene());
+        assertEquals(AtlasBodyArt.Kind.FLAGSHIP, bodies.get("bare_flagship").art().kind());
+        assertEquals(AtlasBodyArt.Scene.NONE, bodies.get("odd_scene").art().scene());
+        assertEquals(List.of("conquest"), bodies.get("odd_scene").art().hullIds());
+        assertEquals(AtlasBodyArt.Scene.NONE, bodies.get("rod").art().scene());
+        assertEquals(AtlasBodyArt.NO_FLAGSHIP, bodies.get("rod").art().flagship());
     }
 }

@@ -118,7 +118,7 @@ final class SkirmishBattle {
         if (fleet == null) {
             return null;
         }
-        OfficerFleets.dress(fleet, officerRecordId);
+        OfficerFleets.dress(fleet, officerRecordId, site.context());
         takeSide(fleet, side);
         ChartAnomalyFleets.arm(fleet, true, site.context(), site.tier());
         Vector2f holdPoint = attacking ? stagingPoint() : defendedPoint();

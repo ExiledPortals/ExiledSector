@@ -44,7 +44,8 @@ final class AtlasDebrisField {
     private final TexturedQuadBatch quadBatch = new TexturedQuadBatch();
     private final float radius;
     private final int seed;
-    private final Piece[] pieces = new Piece[PIECES];
+    private final float pieceScale;
+    private final Piece[] pieces;
 
     private static final class Piece {
         private float x;
@@ -58,10 +59,16 @@ final class AtlasDebrisField {
     }
 
     AtlasDebrisField(SpriteCache spriteCache, float radius, long seed) {
+        this(spriteCache, radius, seed, PIECES, 1f);
+    }
+
+    AtlasDebrisField(SpriteCache spriteCache, float radius, long seed, int pieceCount, float pieceScale) {
         this.spriteCache = spriteCache;
         this.radius = radius;
         this.seed = (int) (seed ^ (seed >>> 32));
-        for (int slot = 0; slot < PIECES; slot++) {
+        this.pieceScale = pieceScale;
+        this.pieces = new Piece[Math.max(0, pieceCount)];
+        for (int slot = 0; slot < pieces.length; slot++) {
             pieces[slot] = new Piece();
         }
     }
@@ -71,7 +78,7 @@ final class AtlasDebrisField {
         if (sheet == null || alpha <= 0f) {
             return;
         }
-        for (int slot = 0; slot < PIECES; slot++) {
+        for (int slot = 0; slot < pieces.length; slot++) {
             place(pieces[slot], slot, seconds);
         }
         try (TexturedQuadBatch quads = quadBatch.beginNormal(sheet)) {
@@ -148,7 +155,7 @@ final class AtlasDebrisField {
         float fade = Math.min(1f, Math.min(age / FADE_SECONDS, (cycleSeconds - age) / FADE_SECONDS));
         piece.x = spawnX + travelX * age;
         piece.y = spawnY + travelY * age;
-        piece.size = MIN_SIZE + SIZE_SPREAD * hash(slot, life, 8);
+        piece.size = (MIN_SIZE + SIZE_SPREAD * hash(slot, life, 8)) * pieceScale;
         piece.angleDeg = 360f * hash(slot, life, 9) + spin * age;
         piece.cell = (int) (hash(slot, life, 10) * SHEET_SIDE * SHEET_SIDE);
         piece.alpha = Math.max(0f, fade);

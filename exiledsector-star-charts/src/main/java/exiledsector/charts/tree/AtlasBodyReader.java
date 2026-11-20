@@ -58,8 +58,12 @@ public final class AtlasBodyReader {
                 enumNamed(AtlasBodyArt.Nebula.class, artJson.optString("nebula", "none"), AtlasBodyArt.Nebula.NONE));
         AtlasBodyArt.Population population = new AtlasBodyArt.Population(TreeJson.stringList(artJson.optJSONArray("cityLights")),
                 fleets(artJson.optJSONArray("convoys")), fleets(artJson.optJSONArray("haulers")));
+        AtlasBodyArt.Flagship flagship = new AtlasBodyArt.Flagship(
+                enumNamed(AtlasBodyArt.Scene.class, artJson.optString("scene", "none"), AtlasBodyArt.Scene.NONE),
+                TreeJson.stringList(artJson.optJSONArray("wrecks")), TreeJson.stringList(artJson.optJSONArray("rivals")),
+                artJson.optString("rivalColour", null));
         return new AtlasBodyArt(kind, artJson.optString("planet", null), paths, TreeJson.stringList(artJson.optJSONArray("hulls")), shape, colours,
-                weather, population);
+                weather, population, flagship);
     }
 
     private static List<List<String>> fleets(JSONArray fleetsJson) throws JSONException {

@@ -6,6 +6,7 @@ import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.officer.reward.CarriedItem;
 import exiledsector.charts.officer.reward.OfficerRewardPool;
 import exiledsector.charts.officer.reward.RewardContext;
+import exiledsector.charts.officer.reward.StartingItemOdds;
 import exiledsector.loot.LootMultipliers;
 import org.apache.log4j.Logger;
 
@@ -19,16 +20,21 @@ public final class OfficerScavenging {
     }
 
     public static ScavengeRoll forSector(SectorAPI sector) {
-        return (officer, random) -> rolled(sector, officer, random);
+        return forSector(sector, false);
     }
 
-    private static CarriedItem rolled(SectorAPI sector, AtlasOfficer officer, Random random) {
+    public static ScavengeRoll forSector(SectorAPI sector, boolean lucky) {
+        return (officer, random) -> rolled(sector, officer, lucky, random);
+    }
+
+    private static CarriedItem rolled(SectorAPI sector, AtlasOfficer officer, boolean lucky, Random random) {
         try {
             int tier = OfficerStartingItems.tierFor(officer.rankId());
             String commandCentreBiomeId = officer.isActive() ? AtlasRuntime.generator(sector).node(officer.commandCentre()).regionId() : null;
             RewardContext context = RewardContext.forSector(sector, tier, officer.factionId(), commandCentreBiomeId,
                     LootMultipliers.atTierCraftingRarity(ChartTiers.craftingRarity(tier)));
-            return OfficerRewardPool.startingItem(context, OfficerRanks.startingOdds(officer.rankId()), random);
+            StartingItemOdds odds = OfficerRanks.startingOdds(officer.rankId());
+            return lucky ? OfficerRewardPool.luckyStartingItem(context, odds, random) : OfficerRewardPool.startingItem(context, odds, random);
         } catch (RuntimeException | LinkageError e) {
             LOG.error("[ExiledSector] Rolling the scavenged item of Atlas officer " + officer.recordId() + " failed", e);
             return null;

@@ -54,6 +54,7 @@ public final class AtlasState implements AtlasMemory {
     private List<String> lastTurnResult = new ArrayList<>();
     private List<String> leftBehindItems = new ArrayList<>();
     private Map<String, Boolean> decidedContests = new HashMap<>();
+    private Set<String> contestsWithLoserBeatenByPlayer = new HashSet<>();
     private int atlasPoints;
     private Set<String> atlasTreeNodeIds;
     private List<TreeSet<String>> atlasTreeLoadouts = emptyLoadouts();
@@ -126,6 +127,9 @@ public final class AtlasState implements AtlasMemory {
         }
         if (decidedContests == null) {
             decidedContests = new HashMap<>();
+        }
+        if (contestsWithLoserBeatenByPlayer == null) {
+            contestsWithLoserBeatenByPlayer = new HashSet<>();
         }
         repairLoadouts();
         if (treeEffectSnapshots == null) {
@@ -547,11 +551,25 @@ public final class AtlasState implements AtlasMemory {
     }
 
     public void decideContest(String intentLine, boolean attackerWins) {
+        decideContest(intentLine, attackerWins, false);
+    }
+
+    public void decideContest(String intentLine, boolean attackerWins, boolean loserBeatenByPlayer) {
         decidedContests.put(intentLine, attackerWins);
+        if (loserBeatenByPlayer) {
+            contestsWithLoserBeatenByPlayer.add(intentLine);
+        } else {
+            contestsWithLoserBeatenByPlayer.remove(intentLine);
+        }
+    }
+
+    public boolean contestLoserBeatenByPlayer(String intentLine) {
+        return contestsWithLoserBeatenByPlayer.contains(intentLine);
     }
 
     public void clearDecidedContests() {
         decidedContests.clear();
+        contestsWithLoserBeatenByPlayer.clear();
     }
 
     public List<String> lastTurnResult() {

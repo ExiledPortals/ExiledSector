@@ -3,6 +3,7 @@ package exiledsector.charts.content;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTier;
+import exiledsector.charts.officer.OfficerFleetBoons;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.content.ChartContentPlan.FleetRole;
 import exiledsector.charts.content.ChartContentPlan.PlannedFleet;
@@ -78,9 +79,10 @@ public final class ChartContentPlanner {
             bossType = ChartBossType.FLEET;
         }
         List<PlannedFleet> plannedFleets = new ArrayList<>();
-        plannedPois = planFleets(tier, plannedPois, plannedFleets, Seeds.derived(seed, FLEET_SALT),
+        ChartTier bossTier = OfficerFleetBoons.atCommandCentre(context).strengthen(tier);
+        plannedPois = planFleets(tier, bossTier, plannedPois, plannedFleets, Seeds.derived(seed, FLEET_SALT),
                 context.extraFleets(), fleetLimit, bossType);
-        PlannedStation bossStation = stationVariant == null ? null : plannedStation(tier, stationVariant, plannedFleets);
+        PlannedStation bossStation = stationVariant == null ? null : plannedStation(bossTier, stationVariant, plannedFleets);
         ChartContentPlan plan = new ChartContentPlan(tier.tier(), faction, plannedPois, plannedFleets, plannedAnomalies, bossType, bossStation);
         for (ContentPlacer placer : placers) {
             plan = placer.adjustPlan(plan, new ContentPlanSite(placer.id(), seed, tier, context, factions, factionLoaded));
@@ -190,6 +192,11 @@ public final class ChartContentPlanner {
 
     static List<PlannedPoi> planFleets(ChartTier tier, List<PlannedPoi> pois,
                                        List<PlannedFleet> fleets, Random random, int extraFleets, int fleetLimit, ChartBossType bossType) {
+        return planFleets(tier, tier, pois, fleets, random, extraFleets, fleetLimit, bossType);
+    }
+
+    static List<PlannedPoi> planFleets(ChartTier tier, ChartTier bossTier, List<PlannedPoi> pois,
+                                       List<PlannedFleet> fleets, Random random, int extraFleets, int fleetLimit, ChartBossType bossType) {
         int rolledFleets = tier.fleetsMin() + random.nextInt(tier.fleetsMax() - tier.fleetsMin() + 1);
         ChartFleetSpread spread = ChartFleetSpread.of(rolledFleets, tier.fleetSize(), extraFleets, fleetLimit);
         int fleetCount = spread.fleets();
@@ -217,7 +224,7 @@ public final class ChartContentPlanner {
             }
         }
         if (tier.boss()) {
-            fleets.add(plannedBoss(tier, mostValuableIndex(guardedPois), bossType));
+            fleets.add(plannedBoss(bossTier, mostValuableIndex(guardedPois), bossType));
         }
         return guardedPois;
     }

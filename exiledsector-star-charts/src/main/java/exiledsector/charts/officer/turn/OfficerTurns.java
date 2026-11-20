@@ -108,8 +108,9 @@ public final class OfficerTurns {
                 ? CommissionHandover.handOver(generator, state, AtlasReach.visible(generator, state), context)
                 : List.of();
         AtlasCell openRunCell = context.openRunCell();
-        TurnSetup setup = new TurnSetup(OfficerTurnTables.rules(), OfficerRanks.all(), resolvers, openRunCell, openRunOfficerIds(state, cause,
-                openRunCell, context.openRunOfficerIds()), context.catalogue(), context.startingItems(), context.scavenges());
+        TurnSetup setup = new TurnSetup(context.boons().applyTo(OfficerTurnTables.rules()), OfficerRanks.all(), resolvers, openRunCell,
+                openRunOfficerIds(state, cause, openRunCell, context.openRunOfficerIds()), context.catalogue(), context.startingItems(),
+                context.scavenges(), context.boons(), context.refits());
         TurnResult result = OfficerTurn.take(TurnTerrain.of(generator, state, openRunCell), state, cause, setup);
         OfficerPortraits.assign(state, context);
         if (!handovers.isEmpty()) {

@@ -9,7 +9,13 @@ import exiledsector.modifiers.ModifierEffect;
 public enum AtlasModifier implements ModifierEffect {
 
     ATLAS_VISIBILITY_LANES(true),
-    ATLAS_DENSE_NEBULA_CHANCE_PERCENT(new AtlasChance(DenseNebula.ANOMALY_ID));
+    ATLAS_DENSE_NEBULA_CHANCE_PERCENT(new AtlasChance(DenseNebula.ANOMALY_ID)),
+    ATLAS_OFFICER_TROPHY_DUPLICATION_PERCENT(false),
+    ATLAS_OFFICER_SCAVENGE_DUPLICATION_PERCENT(false),
+    ATLAS_OFFICER_TROPHY_REFIT(false),
+    ATLAS_OFFICER_FIGHT_FREQUENCY_PERCENT(false),
+    ATLAS_OFFICER_SCAVENGERS_PERCENT(false),
+    ATLAS_OFFICER_LUCKY_SCAVENGING(false);
 
     static final String KEY_PREFIX = "atlas.modifier.";
 

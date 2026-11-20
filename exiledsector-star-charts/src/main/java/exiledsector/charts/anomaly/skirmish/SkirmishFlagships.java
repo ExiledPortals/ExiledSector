@@ -60,4 +60,13 @@ record SkirmishFlagships(SkirmishFlagship attacker, SkirmishFlagship defender) {
         }
         return firstFallen.side() == FightingSide.ATTACKER ? SkirmishResult.DEFENDER_WINS : SkirmishResult.ATTACKER_WINS;
     }
+
+    boolean loserBeatenByPlayer() {
+        SkirmishFlagship loser = switch (result()) {
+            case ATTACKER_WINS -> defender;
+            case DEFENDER_WINS -> attacker;
+            default -> null;
+        };
+        return loser != null && loser.fall() == FlagshipFall.BEATEN_BY_PLAYER;
+    }
 }

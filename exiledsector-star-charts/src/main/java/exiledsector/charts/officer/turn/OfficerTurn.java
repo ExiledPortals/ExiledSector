@@ -41,6 +41,7 @@ public final class OfficerTurn {
     private static final long TURN_SALT = 0x4f4654555246L;
     private static final long CHALLENGE_LOSS_SALT = 0x4f43484c4f5353L;
     private static final long SCAVENGE_SALT = 0x4f534341564eL;
+    private static final long TROPHY_SALT = 0x4f54524f504859L;
     private static final Comparator<AtlasCell> CELL_ORDER = Comparator.comparingLong(AtlasCell::pack);
 
     private final TurnTerrain terrain;
@@ -274,13 +275,23 @@ public final class OfficerTurn {
         boolean loserWasLowestRank = setup.rankOrder(loser.rankId()) == 0;
         boolean lowerRankWon = setup.rankOrder(winner.rankId()) < setup.rankOrder(loser.rankId());
         int renownGained = rules.renownPerChallengeWon() + (!attackerWins && defended ? rules.renownPerDefendHeld() : 0);
+        Random trophyRandom = Seeds.derived(state.seed(),
+                TROPHY_SALT + state.officerTurn() * Seeds.GOLDEN_GAMMA + ((long) winner.recordId() << 20) + loser.recordId());
+        boolean loserBeatenByPlayer = state.contestLoserBeatenByPlayer(intent.encode());
+        List<CarriedItem> taken = loserBeatenByPlayer ? List.of() : setup.boons().withTrophyDuplicates(loser.carried(), trophyRandom);
         state.putOfficer(withChallengeHistory(winner.withRenown(winner.renown() + renownGained).withLastChance(false)
-                .withCarried(CarriedItem.joined(winner.carried(), loser.carried())), CHALLENGE_WON_HISTORY, loser));
-        state.putOfficer(withChallengeHistory(loser.withCarried(List.of()), CHALLENGE_LOST_HISTORY, winner));
+                .withCarried(CarriedItem.joined(winner.carried(), taken)), CHALLENGE_WON_HISTORY, loser));
+        state.putOfficer(withChallengeHistory(loserBeatenByPlayer ? loser : loser.withCarried(List.of()), CHALLENGE_LOST_HISTORY, winner));
         if (lowerRankWon && !beatenThisTurn.contains(winner.recordId()) && !beatenThisTurn.contains(loser.recordId())) {
             swapRanks(winner.recordId(), loser.recordId());
         }
-        dealFreshReward(loser.recordId());
+        if (setup.boons().trophyRefit()) {
+            AtlasOfficer refitting = state.officer(winner.recordId());
+            state.putOfficer(refitting.withCarried(setup.refits().refitted(refitting, trophyRandom)));
+        }
+        if (!loserBeatenByPlayer || state.officer(loser.recordId()).carried().isEmpty()) {
+            dealFreshReward(loser.recordId());
+        }
         boolean died = loseFight(loser.recordId(), loserWasLowestRank);
         losses.add(new OfficerLoss(loser.recordId(), LossKind.LOST_CHALLENGE, winner.recordId(), loser.commandCentre(), false, died));
         resolvedIntents.add(new ResolvedIntent(IntentKind.CHALLENGE, attacker.recordId(), defender.recordId(), null, attackerWins, defended));
@@ -357,10 +368,10 @@ public final class OfficerTurn {
                 weights.put(IntentKind.EXPAND, rules.expandWeight(officer.rankId(), officer.traitId(), territory.size()));
             }
             if (!pushes.isEmpty()) {
-                weights.put(IntentKind.PUSH, rules.intentWeight(officer.rankId(), officer.traitId(), IntentKind.PUSH));
+                weights.put(IntentKind.PUSH, fightWeight(officer, IntentKind.PUSH));
             }
             if (!challenges.isEmpty()) {
-                weights.put(IntentKind.CHALLENGE, rules.intentWeight(officer.rankId(), officer.traitId(), IntentKind.CHALLENGE));
+                weights.put(IntentKind.CHALLENGE, fightWeight(officer, IntentKind.CHALLENGE));
             }
             weights.put(IntentKind.HOLD, rules.intentWeight(officer.rankId(), officer.traitId(), IntentKind.HOLD));
             Intent intent = switch (pick(weights)) {
@@ -373,6 +384,10 @@ public final class OfficerTurn {
             intents.add(intent);
         }
         return intents;
+    }
+
+    private float fightWeight(AtlasOfficer officer, IntentKind kind) {
+        return rules.intentWeight(officer.rankId(), officer.traitId(), kind) * setup.boons().fightWeightMult();
     }
 
     private void noteDeclared(Intent intent) {
@@ -479,7 +494,7 @@ public final class OfficerTurn {
         int scavengers = Math.min(rules.scavengerCount(random), idle.size());
         for (AtlasOfficer officer : idle.subList(0, scavengers)) {
             Random lootRandom = Seeds.derived(state.seed(), SCAVENGE_SALT + state.officerTurn() * Seeds.GOLDEN_GAMMA + officer.recordId());
-            CarriedItem item = setup.scavenges().roll(officer, lootRandom);
+            CarriedItem item = setup.boons().withScavengeDuplicates(setup.scavenges().roll(officer, lootRandom), lootRandom);
             if (item != null) {
                 state.putOfficer(officer.withCarried(CarriedItem.joined(officer.carried(), List.of(item))));
                 scavengerRecordIds.add(officer.recordId());

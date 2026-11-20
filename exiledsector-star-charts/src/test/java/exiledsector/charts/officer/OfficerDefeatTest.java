@@ -1,14 +1,19 @@
 package exiledsector.charts.officer;
 
 import exiledsector.charts.atlas.AtlasState;
+import exiledsector.charts.effect.ChartModifier;
+import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.generation.ChartGenContext.AppliedEffect;
 import exiledsector.charts.officer.reward.CarriedItem;
 import exiledsector.charts.officer.reward.RewardKind;
 import exiledsector.charts.officer.scar.ScarTable;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -61,6 +66,39 @@ class OfficerDefeatTest {
         assertNull(OfficerDefeat.challengeLost(state, 4, "hegemony", new Random(1L)));
         assertNull(OfficerDefeat.challengeLost(null, 4, "hegemony", new Random(1L)));
         assertTrue(state.officers().isEmpty());
+    }
+
+    @Test
+    void ironGripRemovesExactlyOneRewardTypeAndKeepsTheRest() {
+        CarriedItem engram = CarriedItem.of(RewardKind.ENGRAM, "engram_a");
+        CarriedItem otherEngram = CarriedItem.of(RewardKind.ENGRAM, "engram_b");
+        CarriedItem feedstock = new CarriedItem(RewardKind.FEEDSTOCK, "threat_feedstock", null, 30);
+        List<CarriedItem> carried = List.of(KERNELS, engram, feedstock, otherEngram);
+        Set<List<CarriedItem>> outcomes = new HashSet<>();
+        Random random = new Random(5L);
+        for (int defeat = 0; defeat < 60; defeat++) {
+            outcomes.add(OfficerDefeat.withoutOneRewardType(carried, random));
+        }
+
+        assertEquals(Set.of(List.of(engram, feedstock, otherEngram), List.of(KERNELS, feedstock), List.of(KERNELS, engram, otherEngram)), outcomes);
+    }
+
+    @Test
+    void ironGripOnASingleRewardTypeTakesEverything() {
+        List<CarriedItem> carried = List.of(CarriedItem.of(RewardKind.ENGRAM, "engram_a"), CarriedItem.of(RewardKind.ENGRAM, "engram_b"));
+
+        assertEquals(List.of(), OfficerDefeat.withoutOneRewardType(carried, new Random(1L)));
+        assertEquals(List.of(), OfficerDefeat.withoutOneRewardType(List.of(), new Random(1L)));
+    }
+
+    @Test
+    void withoutIronGripADefeatKeepsNothing() {
+        List<CarriedItem> carried = List.of(KERNELS, CarriedItem.of(RewardKind.ENGRAM, "engram_a"));
+
+        assertEquals(List.of(), OfficerDefeat.keptAfterDefeat(carried, ChartGenContext.of(List.of()), new Random(1L)));
+        assertEquals(List.of(), OfficerDefeat.keptAfterDefeat(carried, null, new Random(1L)));
+        ChartGenContext ironGrip = ChartGenContext.of(List.of(new AppliedEffect(ChartModifier.CHART_OFFICER_LOSES_ONE_REWARD_TYPE, 1f)));
+        assertEquals(1, OfficerDefeat.keptAfterDefeat(carried, ironGrip, new Random(1L)).size());
     }
 
     @Test

@@ -31,6 +31,16 @@ class SkirmishFlagshipsTest {
     }
 
     @Test
+    void theLoserCountsAsBeatenByThePlayerOnlyWhenThePlayerFelledIt() {
+        assertTrue(new SkirmishFlagships(ATTACKER, DEFENDER.fallen(FlagshipFall.BEATEN_BY_PLAYER, 1)).loserBeatenByPlayer());
+        assertTrue(new SkirmishFlagships(ATTACKER.fallen(FlagshipFall.BEATEN_BY_PLAYER, 1), DEFENDER).loserBeatenByPlayer());
+        assertFalse(new SkirmishFlagships(ATTACKER.fallen(FlagshipFall.LOST_TO_RIVAL, 1), DEFENDER).loserBeatenByPlayer());
+        assertFalse(new SkirmishFlagships(ATTACKER.fallen(FlagshipFall.BEATEN_BY_PLAYER, 2),
+                DEFENDER.fallen(FlagshipFall.LOST_TO_RIVAL, 1)).loserBeatenByPlayer());
+        assertFalse(new SkirmishFlagships(ATTACKER, DEFENDER).loserBeatenByPlayer());
+    }
+
+    @Test
     void theFightEndsOnlyOnceEveryTrackedFlagshipHasFallen() {
         SkirmishFlagships oneDown = new SkirmishFlagships(ATTACKER.fallen(FlagshipFall.BEATEN_BY_PLAYER, 1), DEFENDER);
 

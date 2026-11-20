@@ -281,7 +281,14 @@ public enum ChartModifier implements ModifierEffect {
     CHART_STELLAR_FLARES_LUCKY_ROLLS("stellar_flares.luckyRolls", AnomalyLine.COUNT),
     CHART_CONVOY_SUNSTRUCK("supply_convoy.sunstruck", AnomalyLine.FLAG),
     CHART_CONVOY_SUNSTRUCK_COMBAT_READINESS_PERCENT("supply_convoy.sunstruckCombatReadiness", AnomalyLine.PERCENT),
-    CHART_STELLAR_FLARES_ALL_LUCKY("stellar_flares.allLucky", AnomalyLine.LUCKY_FLAG);
+    CHART_STELLAR_FLARES_ALL_LUCKY("stellar_flares.allLucky", AnomalyLine.LUCKY_FLAG),
+    CHART_OFFICER_FLEET_SIZE_PERCENT("atlas_officer.fleetSize", AnomalyLine.PERCENT),
+    CHART_OFFICER_LEVELS("atlas_officer.levels", AnomalyLine.COUNT),
+    CHART_OFFICER_FLEET_QUALITY_PERCENT("atlas_officer.fleetQuality", AnomalyLine.PERCENT),
+    CHART_OFFICER_ESCORT_OFFICER_LEVELS("atlas_officer.escortOfficerLevels", AnomalyLine.COUNT),
+    CHART_OFFICER_LOSES_ONE_REWARD_TYPE("atlas_officer.losesOneRewardType", AnomalyLine.FLAG),
+    CHART_SKIRMISH_OFFICER_EXTRA_REWARDS("faction_skirmish.officerExtraRewards", AnomalyLine.COUNT),
+    CHART_SKIRMISH_OFFICER_FLEET_SIZE_PERCENT("faction_skirmish.officerFleetSize", AnomalyLine.PERCENT);
 
     static final String KEY_PREFIX = "chart.modifier.";
 

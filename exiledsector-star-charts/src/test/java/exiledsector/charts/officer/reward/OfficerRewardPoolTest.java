@@ -372,4 +372,20 @@ class OfficerRewardPoolTest {
         assertNull(OfficerRewardPool.biomeFor(ItemDefinitions.get(EMITTER), context(RIFT, biomeId -> true), random));
         assertNull(OfficerRewardPool.biomeFor(ItemDefinitions.get(BRIDGE), context(null, biomeId -> false), random));
     }
+
+    @Test
+    void theRarerOfTwoItemsIsTheOneLessLikelyToBeDrawn() {
+        CarriedItem common = CarriedItem.of(RewardKind.ENGRAM, "common_engram");
+        CarriedItem rare = CarriedItem.of(RewardKind.ENGRAM, "rare_engram");
+        CarriedItem doctrine = CarriedItem.of(RewardKind.DOCTRINE_ARCHIVE, "doctrine");
+        Map<RewardKind, List<RewardCandidate>> candidates = Map.of(
+                RewardKind.ENGRAM, List.of(new RewardCandidate(common, 9f), new RewardCandidate(rare, 1f)),
+                RewardKind.DOCTRINE_ARCHIVE, List.of(new RewardCandidate(doctrine, 1f)));
+        Map<RewardKind, Float> shares = Map.of(RewardKind.ENGRAM, 90f, RewardKind.DOCTRINE_ARCHIVE, 1f);
+
+        assertEquals(rare, OfficerRewardPool.rarer(common, rare, candidates, shares));
+        assertEquals(rare, OfficerRewardPool.rarer(rare, common, candidates, shares));
+        assertEquals(doctrine, OfficerRewardPool.rarer(rare, doctrine, candidates, shares));
+        assertEquals(common, OfficerRewardPool.rarer(common, common, candidates, shares));
+    }
 }

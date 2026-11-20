@@ -7,6 +7,7 @@ import exiledsector.charts.content.ChartContentPlan.FleetRole;
 import exiledsector.charts.content.ChartContentPlan.PlannedFleet;
 import exiledsector.charts.content.ChartContentPlanner;
 import exiledsector.charts.generation.ChartTier;
+import exiledsector.charts.officer.OfficerFleetBoons;
 import exiledsector.charts.officer.OfficerRanks;
 
 final class SkirmishPlanner {
@@ -20,9 +21,13 @@ final class SkirmishPlanner {
             return plan;
         }
         SkirmishPlan skirmish = new SkirmishPlan(fight.attackerFactionId(), fight.attackerRecordId(), fight.defenderRecordId(),
-                officerFleet(site.tier(), fight.attackerRankId()), officerFleet(site.tier(), fight.defenderRankId()));
+                officerFleet(site, fight.attackerRankId()), officerFleet(site, fight.defenderRankId()));
         return plan.withFleets(plan.fleets().stream().filter(planned -> planned.role() != FleetRole.BOSS).toList())
                 .withAnomalyPlan(FactionSkirmish.ANOMALY_ID, skirmish);
+    }
+
+    private static PlannedFleet officerFleet(ContentPlanSite site, String rankId) {
+        return officerFleet(OfficerFleetBoons.inSkirmish(site.context()).strengthen(site.tier()), rankId);
     }
 
     static PlannedFleet officerFleet(ChartTier tier, String rankId) {

@@ -86,6 +86,17 @@ class ContestOutcomesTest {
     }
 
     @Test
+    void aChallengeVerdictRemembersWhetherThePlayerBeatTheLoserUntilCleared() {
+        declare(state, challenge());
+
+        ContestOutcomes.settle(generator, state, challenge(), border.contested(), true, true);
+        assertTrue(state.contestLoserBeatenByPlayer(challenge().encode()));
+
+        state.clearDecidedContests();
+        assertFalse(state.contestLoserBeatenByPlayer(challenge().encode()));
+    }
+
+    @Test
     void aDroppedFightLeavesTheOtherDeclaredIntentsAndStoresNoVerdict() {
         Intent defend = Intent.defend(border.defender().recordId());
         declare(state, challenge(), defend);

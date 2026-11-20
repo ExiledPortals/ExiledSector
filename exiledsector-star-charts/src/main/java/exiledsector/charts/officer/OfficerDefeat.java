@@ -5,11 +5,16 @@ import exiledsector.Seeds;
 import exiledsector.charts.anomaly.breach.RiftDuel;
 import exiledsector.charts.anomaly.stormfront.ThunderDuel;
 import exiledsector.charts.atlas.AtlasState;
+import exiledsector.charts.effect.ChartModifier;
+import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.officer.reward.CarriedItem;
 import exiledsector.charts.officer.reward.OfficerRewardDrop;
+import exiledsector.charts.officer.reward.RewardGroup;
 import exiledsector.charts.officer.scar.HullFacts;
 import exiledsector.charts.officer.scar.Scars;
 import exiledsector.charts.phasing.DisplacementTheorem;
 import exiledsector.charts.run.ChartRun;
+import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.loot.Loot;
 import org.apache.log4j.Logger;
 
@@ -20,6 +25,7 @@ import java.util.Random;
 public final class OfficerDefeat {
 
     static final String SEED_PREFIX = "officerDefeat|";
+    static final String LOSES_ONE_REWARD_TYPE_KEY = ChartModifier.CHART_OFFICER_LOSES_ONE_REWARD_TYPE.anomalyTuningKey();
     private static final Logger LOG = Logger.getLogger(OfficerDefeat.class);
 
     private OfficerDefeat() {
@@ -62,8 +68,22 @@ public final class OfficerDefeat {
         AtlasOfficer scarred = scarred(officer, scarId, dModFor(scarId, officer, hull, random));
         Loot carriedLoot = OfficerRewardDrop.roll(officer.carried(), run, random).plus(RiftDuel.at(sector, run).duplicatedLoot(officer, run))
                 .plus(ThunderDuel.at(sector, run).extraLoot(sector, officer, run));
-        state.putOfficer(scarred.withCarried(List.of()));
+        state.putOfficer(scarred.withCarried(keptAfterDefeat(officer.carried(), ChartRunEffects.contextOf(run), random)));
         return carriedLoot.plus(List.of(), List.of(), theorem);
+    }
+
+    static List<CarriedItem> keptAfterDefeat(List<CarriedItem> carried, ChartGenContext context, Random random) {
+        boolean losesOneType = context != null && context.anomalyPercent(LOSES_ONE_REWARD_TYPE_KEY) > 0f;
+        return losesOneType ? withoutOneRewardType(carried, random) : List.of();
+    }
+
+    static List<CarriedItem> withoutOneRewardType(List<CarriedItem> carried, Random random) {
+        List<RewardGroup> groups = carried.stream().map(RewardGroup::of).distinct().toList();
+        if (groups.size() <= 1) {
+            return List.of();
+        }
+        RewardGroup lost = groups.get(random.nextInt(groups.size()));
+        return carried.stream().filter(item -> RewardGroup.of(item) != lost).toList();
     }
 
     public static AtlasOfficer challengeLost(AtlasState state, int loserOfficerId, String winnerFactionId, Random random) {

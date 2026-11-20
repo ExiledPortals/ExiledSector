@@ -46,6 +46,11 @@ public final class ContestOutcomes {
     }
 
     public static boolean settle(AtlasGenerator generator, AtlasState state, Intent intent, AtlasCell contestedCell, boolean attackerWins) {
+        return settle(generator, state, intent, contestedCell, attackerWins, false);
+    }
+
+    public static boolean settle(AtlasGenerator generator, AtlasState state, Intent intent, AtlasCell contestedCell, boolean attackerWins,
+                                 boolean loserBeatenByPlayer) {
         AtlasOfficer attacker = state.officer(intent.officerRecordId());
         AtlasOfficer defender = state.officer(intent.targetRecordId());
         List<Intent> declared = OfficerTurns.declaredIntents(state);
@@ -60,7 +65,7 @@ public final class ContestOutcomes {
             }
             drop(state, intent);
         } else if (intent.kind() == IntentKind.CHALLENGE && declared.contains(intent)) {
-            state.decideContest(intent.encode(), attackerWins);
+            state.decideContest(intent.encode(), attackerWins, loserBeatenByPlayer);
         }
         return moved;
     }

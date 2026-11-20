@@ -1587,6 +1587,143 @@
 			"tags": [
 				"hull_item"
 			]
+		},
+		{
+			"id": "trophy_duplication",
+			"name": "Trophy Duplication",
+			"effects": [
+				{
+					"effect": "ATLAS_OFFICER_TROPHY_DUPLICATION_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"tags": [
+				"officers",
+				"loot"
+			]
+		},
+		{
+			"id": "scavenge_duplication",
+			"name": "Scavenge Duplication",
+			"effects": [
+				{
+					"effect": "ATLAS_OFFICER_SCAVENGE_DUPLICATION_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"tags": [
+				"officers",
+				"loot"
+			]
+		},
+		{
+			"id": "spoils_of_war",
+			"name": "Spoils of War",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_SKIRMISH_OFFICER_EXTRA_REWARDS",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_SKIRMISH_OFFICER_FLEET_SIZE_PERCENT",
+					"magnitude": 30
+				}
+			],
+			"tags": [
+				"officers",
+				"fleet_size"
+			]
+		},
+		{
+			"id": "hardened_command",
+			"name": "Hardened Command",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_OFFICER_FLEET_SIZE_PERCENT",
+					"magnitude": 25
+				},
+				{
+					"effect": "CHART_OFFICER_LEVELS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"officers",
+				"fleet_size"
+			]
+		},
+		{
+			"id": "trophy_refit",
+			"name": "Trophy Refit",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "ATLAS_OFFICER_TROPHY_REFIT",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"officers",
+				"loot"
+			]
+		},
+		{
+			"id": "open_warfare",
+			"name": "Open Warfare",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "ATLAS_OFFICER_FIGHT_FREQUENCY_PERCENT",
+					"magnitude": 100
+				}
+			],
+			"tags": [
+				"officers"
+			]
+		},
+		{
+			"id": "scrappers_fortune",
+			"name": "Scrapper's Fortune",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "ATLAS_OFFICER_SCAVENGERS_PERCENT",
+					"magnitude": 100
+				},
+				{
+					"effect": "ATLAS_OFFICER_LUCKY_SCAVENGING",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"officers",
+				"loot"
+			]
+		},
+		{
+			"id": "iron_grip",
+			"name": "Iron Grip",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_OFFICER_LOSES_ONE_REWARD_TYPE",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_OFFICER_FLEET_QUALITY_PERCENT",
+					"magnitude": 50
+				},
+				{
+					"effect": "CHART_OFFICER_ESCORT_OFFICER_LEVELS",
+					"magnitude": 2
+				}
+			],
+			"tags": [
+				"officers",
+				"enemy"
+			]
 		}
 	]
 }

@@ -125,14 +125,19 @@ public final class FactionSkirmish implements AtlasRule, RunParticipant, Content
         SkirmishFight fight = SkirmishFight.of(run.atlasNode());
         SkirmishFlagships flagships = SkirmishFlagships.of(run);
         if (fight != null && fight.contest() != null && flagships != null) {
-            settle(AtlasRuntime.generator(sector), AtlasState.get(sector), AtlasCell.unpack(run.atlasNode().cell()), fight.contest(), flagships.result());
+            settle(AtlasRuntime.generator(sector), AtlasState.get(sector), AtlasCell.unpack(run.atlasNode().cell()), fight.contest(), flagships.result(),
+                    flagships.loserBeatenByPlayer());
         }
     }
 
     static boolean settle(AtlasGenerator generator, AtlasState state, AtlasCell cell, Intent contest, SkirmishResult result) {
+        return settle(generator, state, cell, contest, result, false);
+    }
+
+    static boolean settle(AtlasGenerator generator, AtlasState state, AtlasCell cell, Intent contest, SkirmishResult result, boolean loserBeatenByPlayer) {
         return switch (result) {
-            case ATTACKER_WINS -> ContestOutcomes.settle(generator, state, contest, cell, true);
-            case DEFENDER_WINS -> ContestOutcomes.settle(generator, state, contest, cell, false);
+            case ATTACKER_WINS -> ContestOutcomes.settle(generator, state, contest, cell, true, loserBeatenByPlayer);
+            case DEFENDER_WINS -> ContestOutcomes.settle(generator, state, contest, cell, false, loserBeatenByPlayer);
             case DROPPED -> {
                 ContestOutcomes.drop(state, contest);
                 yield false;

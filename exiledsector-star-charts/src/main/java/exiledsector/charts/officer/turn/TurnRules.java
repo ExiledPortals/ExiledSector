@@ -18,6 +18,12 @@ public record TurnRules(int otherBossKillsPerTurn, float expandBrakeSize, float 
                 weights);
     }
 
+    public TurnRules withCounts(int conflictsPerTurn, int fewestScavengers, int mostScavengers) {
+        return new TurnRules(otherBossKillsPerTurn, expandBrakeSize, evenChancePercent, chancePerRankPercent, defendBonusPercent, renownPerClaim,
+                renownPerChallengeWon, renownPerDefendHeld, systemsPerRenown, renownKeptOnLossPercent, conflictsPerTurn, fewestScavengers, mostScavengers,
+                intentWeights);
+    }
+
     public int scavengerCount(Random random) {
         int fewest = Math.max(0, scavengersMin);
         int most = Math.max(fewest, scavengersMax);

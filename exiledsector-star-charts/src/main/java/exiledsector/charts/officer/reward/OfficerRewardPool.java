@@ -58,6 +58,38 @@ public final class OfficerRewardPool {
         return startingItem(candidates(context, random), OfficerRewardTable.shares(), odds, random);
     }
 
+    public static CarriedItem luckyStartingItem(RewardContext context, StartingItemOdds odds, Random random) {
+        Map<RewardKind, List<RewardCandidate>> candidates = candidates(context, random);
+        Map<RewardKind, Float> poolShares = OfficerRewardTable.shares();
+        CarriedItem first = startingItem(candidates, poolShares, odds, random);
+        CarriedItem second = startingItem(candidates, poolShares, odds, random);
+        if (first == null || second == null) {
+            return first == null ? second : first;
+        }
+        return rarer(first, second, odds.reweighted(candidates), odds.shares(poolShares));
+    }
+
+    static CarriedItem rarer(CarriedItem first, CarriedItem second, Map<RewardKind, List<RewardCandidate>> candidates, Map<RewardKind, Float> shares) {
+        Map<RewardGroup, List<RewardCandidate>> grouped = grouped(candidates);
+        Map<RewardGroup, Float> groupShares = groupShares(grouped, shares);
+        return drawChance(second, grouped, groupShares) < drawChance(first, grouped, groupShares) ? second : first;
+    }
+
+    private static float drawChance(CarriedItem item, Map<RewardGroup, List<RewardCandidate>> grouped, Map<RewardGroup, Float> groupShares) {
+        RewardGroup group = RewardGroup.of(item);
+        List<RewardCandidate> groupCandidates = grouped.getOrDefault(group, List.of());
+        float totalShare = 0f;
+        for (float share : groupShares.values()) {
+            totalShare += share;
+        }
+        float groupWeight = totalWeight(groupCandidates);
+        if (totalShare <= 0f || groupWeight <= 0f) {
+            return 0f;
+        }
+        float itemWeight = totalWeight(groupCandidates.stream().filter(candidate -> candidate.item().sameItemAs(item)).toList());
+        return groupShares.getOrDefault(group, 0f) / totalShare * itemWeight / groupWeight;
+    }
+
     public static CarriedItem picked(CarriedItem offer, Random random) {
         boolean counted = OfficerRewardTable.categoryOf(offer.id()) == offer.kind();
         return offer.withCount(counted ? OfficerRewardTable.rollCount(offer.id(), random) : 1);

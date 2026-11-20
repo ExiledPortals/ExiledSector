@@ -99,6 +99,33 @@ const NEBULA_NOTABLE_ART = {
   long_settling: () => nebulaStack('settling', 134),
   ionized_dust: () => nebulaStack('ionized', 116),
 };
+const OFFICER_COLOUR = '#ffc850';
+const OFFICER_RIVAL_COLOUR = '#ff5a50';
+const OFFICER_NOTABLE_SIZE = 132;
+const OFFICER_SMALL_SIZE = 42;
+const flagshipScene = (scene, hulls, size, extra = {}) => ({ kind: 'flagship', scene, hulls, size, facing: 'travel', ...extra });
+const OFFICER_NOTABLE_ART = {
+  hardened_command: () => flagshipScene('command', ['onslaught', 'enforcer', 'enforcer', 'hammerhead', 'lasher', 'lasher', 'brawler'], 138),
+  iron_grip: () => flagshipScene('guard_ring', ['legion', 'centurion', 'centurion', 'monitor', 'monitor', 'lasher'], 126),
+  open_warfare: () => flagshipScene('standoff', ['odyssey', 'medusa', 'tempest'], 140,
+    { rivals: ['retribution', 'enforcer', 'lasher'], rivalColour: OFFICER_RIVAL_COLOUR }),
+  trophy_refit: () => flagshipScene('trophy', ['paragon', 'omen'], 130, { wrecks: ['dominator'] }),
+  scrappers_fortune: () => flagshipScene('scrappers', ['astral', 'shepherd', 'kite', 'shepherd', 'kite'], 132),
+  spoils_of_war: () => flagshipScene('spoils', ['conquest', 'hammerhead', 'wolf', 'wolf'], 134, { wrecks: ['eagle', 'enforcer', 'lasher'] }),
+};
+const OFFICER_SMALL_ART = {
+  trophy_duplication: () => flagshipScene('tow', ['hammerhead'], OFFICER_SMALL_SIZE, { wrecks: ['lasher'] }),
+  scavenge_duplication: () => flagshipScene('salvage', ['condor', 'shepherd'], OFFICER_SMALL_SIZE),
+};
+const OFFICERS = {
+  colour: OFFICER_COLOUR,
+  small: (smallType) => OFFICER_SMALL_ART[smallType]?.() ?? flagshipScene('escort', ['sunder', 'wolf'], OFFICER_SMALL_SIZE),
+  notable: (notableType) => OFFICER_NOTABLE_ART[notableType]?.()
+    ?? flagshipScene('command', ['invictus', 'enforcer', 'lasher', 'wolf', 'hound'], OFFICER_NOTABLE_SIZE),
+};
+const OFFICER_NOTABLES = ['spoils_of_war', 'hardened_command', 'trophy_refit', 'open_warfare', 'scrappers_fortune', 'iron_grip'];
+const OFFICER_SMALLS = ['trophy_duplication', 'scavenge_duplication'];
+const OFFICER_TAG = 'faction_skirmish';
 
 function seededRandom(seed) {
   let state = seed >>> 0;
@@ -269,14 +296,14 @@ const ANOMALY_OF = {
 const RINGS = [
   ['settled_shafts o', 'sapper_teams i', 'officers_ledger o', 'stolen_charts i', 'heavy_breach o', 'extra_relay i'],
   ['twin_shafts i', 'crowded_channel o', 'redacted_sleepers i', 'lightning_rod o', 'rift_magnetism o', 'veiled_sleepers i', 'shared_broadcast o',
-    'charged_fields i', 'restless_sleepers i', 'forked_trace o'],
-  ['open_bores o', 'supercell i', 'infested_bolt_holes i', 'threatening_sleepers o', 'dust_trails o', 'scar_collector i', 'rally_point i',
-    'torn_holds o', 'golden_hour i', 'supply_lines i', 'hair_trigger o', 'static_harvest i', 'early_echo o', 'smash_and_grab i'],
-  ['widened_bores i', 'eye_of_the_storm o', 'double_dose o', 'tempered_light i', 'breached_graveyard i', 'rift_duel o', 'long_settling i',
-    'garrison_pickets o', 'event_horizon i', 'solar_maximum o', 'full_array o', 'redacted_front i', 'needle_bores i', 'ion_front o',
+    'spoils_of_war o', 'charged_fields i', 'restless_sleepers i', 'forked_trace o'],
+  ['open_bores o', 'supercell i', 'infested_bolt_holes i', 'hardened_command o', 'threatening_sleepers o', 'dust_trails o', 'scar_collector i', 'rally_point i',
+    'torn_holds o', 'golden_hour i', 'supply_lines i', 'hair_trigger o', 'trophy_refit i', 'static_harvest i', 'early_echo o', 'smash_and_grab i'],
+  ['widened_bores i', 'eye_of_the_storm o', 'double_dose o', 'tempered_light i', 'breached_graveyard i', 'rift_duel o', 'open_warfare i', 'long_settling i',
+    'garrison_pickets o', 'event_horizon i', 'solar_maximum o', 'full_array o', 'redacted_front i', 'needle_bores i', 'scrappers_fortune o', 'ion_front o',
     'deep_corruption o'],
   ['deeper_bores o', 'solar_front i', 'bolt_hole_drop i', 'hyperspace_bleed o', 'ionized_dust o', 'double_down i', 'open_season o',
-    'thunder_duel i', 'rude_awakening i', 'pitch_black o', 'sunstruck_convoy o', 'lone_sleeper i', 'fortified_depot o', 'geomagnetic_surge i',
+    'thunder_duel i', 'rude_awakening i', 'pitch_black o', 'iron_grip i', 'sunstruck_convoy o', 'lone_sleeper i', 'fortified_depot o', 'geomagnetic_surge i',
     'mixed_manifest o', 'captured_front i', 'hunting_party o', 'incursion i', 'perfect_light o', 'silent_choir o'],
 ];
 
@@ -326,7 +353,14 @@ function link(first, second) {
   if (!second.connectedTo.includes(first.id)) second.connectedTo.push(first.id);
 }
 
+let officerWheels = 0;
+function officerWheelPlan(notableType) {
+  const smallTypes = officerWheels++ % 2 === 0 ? OFFICER_SMALLS : [...OFFICER_SMALLS].reverse();
+  return { notableType, tags: [OFFICER_TAG], colour: OFFICERS.colour, art: OFFICERS.notable(notableType), smallAnomalies: [], smallTypes, officer: true, hybrid: false };
+}
+
 function wheelPlan(notableType) {
+  if (OFFICER_NOTABLES.includes(notableType)) return officerWheelPlan(notableType);
   const hybrid = HYBRIDS[notableType];
   if (hybrid) {
     const art = { kind: 'planet', planet: hybrid.planet, size: 162 };
@@ -353,7 +387,7 @@ function wheelPlan(notableType) {
 }
 
 function shapeWheel(wheel) {
-  wheel.smallArt = wheel.smallAnomalies.map((anomaly) => ANOMALIES[anomaly].small());
+  wheel.smallArt = wheel.officer ? wheel.smallTypes.map(OFFICERS.small) : wheel.smallAnomalies.map((anomaly) => ANOMALIES[anomaly].small());
   const [outerSize, innerSize] = wheel.smallArt.map((art) => art.size);
   wheel.innerTrack = wheel.art.size + SATELLITE_GAP + innerSize;
   wheel.outerTrack = wheel.innerTrack + innerSize + SATELLITE_GAP + outerSize;
@@ -419,7 +453,7 @@ rootRayAnchors.forEach((anchor) => rings[0].spokes.add(rings[0].nodes.indexOf(an
 
 const slotsByAnomaly = new Map();
 const orderedForChance = [...plannedWheels.filter((wheel) => wheel.hybrid), ...plannedWheels.filter((wheel) => !wheel.hybrid)];
-for (const wheel of orderedForChance) {
+for (const wheel of orderedForChance.filter((planned) => !planned.officer)) {
   wheel.smallTypes = [];
   wheel.smallAnomalies.forEach((anomaly) => {
     const slots = slotsByAnomaly.get(anomaly) ?? [];
@@ -490,7 +524,7 @@ function bowedPath(from, to) {
 const travelHeading = (angle) => round(-angle - 90);
 
 function withHeading(art, angle) {
-  const travels = art.facing === 'travel' || art.kind === 'fleet' || art.kind === 'derelicts' || art.kind === 'station';
+  const travels = art.facing === 'travel' || art.kind === 'fleet' || art.kind === 'derelicts' || art.kind === 'station' || art.kind === 'flagship';
   return travels ? { ...art, heading: travelHeading(angle) } : art;
 }
 
@@ -551,8 +585,8 @@ function placeWheel(wheel, ring, spoke, centre) {
   wheelOf.set(notable.id, { centre: notable, turn });
   const satellites = offsets.map((offset, order) => {
     const smallAnomaly = wheel.smallAnomalies[order];
-    const small = addNode(wheel.smallTypes[order], centre.x + offset.x, centre.y + offset.y, [smallAnomaly], {
-      colour: ANOMALIES[smallAnomaly].colour, wheel: notable.id, art: withHeading(wheel.smallArt[order], spoke.angle),
+    const small = addNode(wheel.smallTypes[order], centre.x + offset.x, centre.y + offset.y, wheel.officer ? [OFFICER_TAG] : [smallAnomaly], {
+      colour: wheel.officer ? OFFICERS.colour : ANOMALIES[smallAnomaly].colour, wheel: notable.id, art: withHeading(wheel.smallArt[order], spoke.angle),
     });
     wheelOf.set(small.id, { centre: notable, turn });
     return small;
@@ -674,7 +708,7 @@ drawnLinks.forEach((drawn, index) => crossedLinks(drawn, drawnLinks.slice(index 
 }));
 if (crossings.length > 0) throw new Error(`Links cross: ${crossings.join('; ')}`);
 
-const smallTypes = new Set(Object.values(ANOMALIES).flatMap((anomaly) => [anomaly.chance, ...anomaly.others]));
+const smallTypes = new Set([...Object.values(ANOMALIES).flatMap((anomaly) => [anomaly.chance, ...anomaly.others]), ...OFFICER_SMALLS]);
 const smallCounts = {};
 for (const node of nodes) {
   if (smallTypes.has(node.type)) {

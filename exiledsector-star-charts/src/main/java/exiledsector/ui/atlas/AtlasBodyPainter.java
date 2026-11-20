@@ -110,7 +110,7 @@ final class AtlasBodyPainter {
                     angleOf(art, placement), lighting, alpha);
             case BINARY -> paintBinary(art, placement, lighting, seconds, alpha);
             case BREACH -> paintBreach(colour, placement, lighting, seconds, alpha);
-            case FLEET, DERELICTS, SHROUDED, STATION, PATROL -> {
+            case FLEET, DERELICTS, SHROUDED, STATION, PATROL, FLAGSHIP -> {
             }
             default -> paintPlain(colour, placement, lighting, alpha);
         }

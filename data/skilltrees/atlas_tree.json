@@ -30,8 +30,7 @@
 			"connectedTo": [
 				"travel_boss_star_charts_1",
 				"travel_boss_star_charts_3",
-				"excavation_sites_chance_3",
-				"travel_boss_star_charts_14"
+				"excavation_sites_chance_3"
 			],
 			"x": 30.2,
 			"y": -2239.8
@@ -64,7 +63,8 @@
 			"connectedTo": [
 				"travel_boss_star_charts_4",
 				"travel_boss_star_charts_6",
-				"listening_post_chance_3"
+				"listening_post_chance_3",
+				"travel_boss_star_charts_19"
 			],
 			"x": 1924.6,
 			"y": 1146.1
@@ -165,8 +165,7 @@
 			"connectedTo": [
 				"travel_boss_star_charts_13",
 				"travel_boss_star_charts_15",
-				"storm_front_chance_1",
-				"travel_boss_star_charts_2"
+				"storm_front_chance_1"
 			],
 			"x": -279.9,
 			"y": -4167.6
@@ -177,7 +176,7 @@
 			"connectedTo": [
 				"travel_boss_star_charts_14",
 				"travel_boss_star_charts_16",
-				"travel_catalysts_7"
+				"spatial_breach_chance_3"
 			],
 			"x": 1556.1,
 			"y": -3876.3
@@ -188,7 +187,7 @@
 			"connectedTo": [
 				"travel_boss_star_charts_15",
 				"travel_boss_star_charts_17",
-				"spatial_breach_chance_3"
+				"travel_catalysts_8"
 			],
 			"x": 3083.9,
 			"y": -2817.3
@@ -221,8 +220,8 @@
 			"connectedTo": [
 				"travel_boss_star_charts_18",
 				"travel_boss_star_charts_20",
-				"magnetic_storm_chance_1",
-				"travel_catalysts_12"
+				"trophy_duplication_1",
+				"travel_boss_star_charts_5"
 			],
 			"x": 3432.9,
 			"y": 2379.6
@@ -233,7 +232,7 @@
 			"connectedTo": [
 				"travel_boss_star_charts_19",
 				"travel_boss_star_charts_21",
-				"travel_catalysts_15"
+				"travel_catalysts_13"
 			],
 			"x": 2060.4,
 			"y": 3633.4
@@ -244,6 +243,7 @@
 			"connectedTo": [
 				"travel_boss_star_charts_20",
 				"travel_boss_star_charts_22",
+				"relay_network_chance_7",
 				"travel_boss_star_charts_7"
 			],
 			"x": 279.9,
@@ -255,8 +255,7 @@
 			"connectedTo": [
 				"travel_boss_star_charts_21",
 				"travel_boss_star_charts_23",
-				"anomalous_debris_chance_5",
-				"travel_catalysts_18"
+				"magnetic_storm_chance_1"
 			],
 			"x": -1556.1,
 			"y": 3876.3
@@ -267,7 +266,8 @@
 			"connectedTo": [
 				"travel_boss_star_charts_22",
 				"travel_boss_star_charts_10",
-				"relay_network_chance_7"
+				"anomalous_debris_chance_5",
+				"travel_catalysts_19"
 			],
 			"x": -3083.9,
 			"y": 2817.3
@@ -280,8 +280,8 @@
 				"travel_catalysts_20",
 				"excavation_sites_chance_7"
 			],
-			"x": -6101.2,
-			"y": -216
+			"x": -6095.2,
+			"y": -215.8
 		},
 		{
 			"id": "travel_catalysts_2",
@@ -289,10 +289,11 @@
 			"connectedTo": [
 				"travel_catalysts_1",
 				"travel_catalysts_3",
-				"travel_boss_star_charts_12"
+				"travel_boss_star_charts_12",
+				"travel_catalysts_33"
 			],
-			"x": -5735.8,
-			"y": -2090.8
+			"x": -5730.2,
+			"y": -2088.8
 		},
 		{
 			"id": "travel_catalysts_3",
@@ -300,11 +301,10 @@
 			"connectedTo": [
 				"travel_catalysts_2",
 				"travel_catalysts_4",
-				"storm_front_chance_3",
-				"travel_catalysts_35"
+				"storm_front_chance_3"
 			],
-			"x": -4809,
-			"y": -3760.9
+			"x": -4804.3,
+			"y": -3757.3
 		},
 		{
 			"id": "travel_catalysts_4",
@@ -312,20 +312,23 @@
 			"connectedTo": [
 				"travel_catalysts_3",
 				"travel_catalysts_5",
-				"excavation_sites_chance_9"
+				"excavation_sites_chance_9",
+				"travel_catalysts_36"
 			],
-			"x": -3411.4,
-			"y": -5062.9
+			"x": -3408.1,
+			"y": -5058
 		},
 		{
 			"id": "travel_catalysts_5",
 			"type": "travel_catalysts",
 			"connectedTo": [
 				"travel_catalysts_4",
-				"travel_catalysts_6"
+				"travel_catalysts_6",
+				"scavenge_duplication_2",
+				"travel_catalysts_37"
 			],
-			"x": -1679.9,
-			"y": -5869.3
+			"x": -1678.3,
+			"y": -5863.6
 		},
 		{
 			"id": "travel_catalysts_6",
@@ -335,8 +338,8 @@
 				"travel_catalysts_7",
 				"anomalous_debris_chance_8"
 			],
-			"x": 216,
-			"y": -6101.2
+			"x": 215.8,
+			"y": -6095.2
 		},
 		{
 			"id": "travel_catalysts_7",
@@ -344,11 +347,10 @@
 			"connectedTo": [
 				"travel_catalysts_6",
 				"travel_catalysts_8",
-				"dense_nebula_atlas_chance_1",
-				"travel_boss_star_charts_15"
+				"dense_nebula_atlas_chance_1"
 			],
-			"x": 2090.8,
-			"y": -5735.8
+			"x": 2088.8,
+			"y": -5730.2
 		},
 		{
 			"id": "travel_catalysts_8",
@@ -356,10 +358,10 @@
 			"connectedTo": [
 				"travel_catalysts_7",
 				"travel_catalysts_9",
-				"travel_catalysts_40"
+				"travel_boss_star_charts_16"
 			],
-			"x": 3760.9,
-			"y": -4809
+			"x": 3757.3,
+			"y": -4804.3
 		},
 		{
 			"id": "travel_catalysts_9",
@@ -367,10 +369,10 @@
 			"connectedTo": [
 				"travel_catalysts_8",
 				"travel_catalysts_10",
-				"travel_catalysts_42"
+				"relay_network_chance_9"
 			],
-			"x": 5062.9,
-			"y": -3411.4
+			"x": 5058,
+			"y": -3408.1
 		},
 		{
 			"id": "travel_catalysts_10",
@@ -378,11 +380,11 @@
 			"connectedTo": [
 				"travel_catalysts_9",
 				"travel_catalysts_11",
-				"relay_network_chance_9",
+				"spatial_breach_chance_5",
 				"travel_catalysts_43"
 			],
-			"x": 5869.3,
-			"y": -1679.9
+			"x": 5863.6,
+			"y": -1678.3
 		},
 		{
 			"id": "travel_catalysts_11",
@@ -392,8 +394,8 @@
 				"travel_catalysts_12",
 				"supply_convoy_chance_1"
 			],
-			"x": 6101.2,
-			"y": 216
+			"x": 6095.2,
+			"y": 215.8
 		},
 		{
 			"id": "travel_catalysts_12",
@@ -401,10 +403,10 @@
 			"connectedTo": [
 				"travel_catalysts_11",
 				"travel_catalysts_13",
-				"travel_boss_star_charts_19"
+				"travel_catalysts_21"
 			],
-			"x": 5735.8,
-			"y": 2090.8
+			"x": 5730.2,
+			"y": 2088.8
 		},
 		{
 			"id": "travel_catalysts_13",
@@ -412,10 +414,11 @@
 			"connectedTo": [
 				"travel_catalysts_12",
 				"travel_catalysts_14",
-				"spatial_breach_chance_5"
+				"travel_boss_star_charts_20",
+				"travel_catalysts_23"
 			],
-			"x": 4809,
-			"y": 3760.9
+			"x": 4804.3,
+			"y": 3757.3
 		},
 		{
 			"id": "travel_catalysts_14",
@@ -423,11 +426,10 @@
 			"connectedTo": [
 				"travel_catalysts_13",
 				"travel_catalysts_15",
-				"stellar_flares_chance_1",
-				"travel_catalysts_24"
+				"stellar_flares_chance_1"
 			],
-			"x": 3411.4,
-			"y": 5062.9
+			"x": 3408.1,
+			"y": 5058
 		},
 		{
 			"id": "travel_catalysts_15",
@@ -435,11 +437,10 @@
 			"connectedTo": [
 				"travel_catalysts_14",
 				"travel_catalysts_16",
-				"supply_convoy_chance_2",
-				"travel_boss_star_charts_20"
+				"supply_convoy_chance_2"
 			],
-			"x": 1679.9,
-			"y": 5869.3
+			"x": 1678.3,
+			"y": 5863.6
 		},
 		{
 			"id": "travel_catalysts_16",
@@ -449,8 +450,8 @@
 				"travel_catalysts_17",
 				"listening_post_chance_5"
 			],
-			"x": -216,
-			"y": 6101.2
+			"x": -215.8,
+			"y": 6095.2
 		},
 		{
 			"id": "travel_catalysts_17",
@@ -458,10 +459,11 @@
 			"connectedTo": [
 				"travel_catalysts_16",
 				"travel_catalysts_18",
-				"magnetic_storm_chance_3"
+				"trophy_duplication_3",
+				"travel_catalysts_27"
 			],
-			"x": -2090.8,
-			"y": 5735.8
+			"x": -2088.8,
+			"y": 5730.2
 		},
 		{
 			"id": "travel_catalysts_18",
@@ -469,11 +471,10 @@
 			"connectedTo": [
 				"travel_catalysts_17",
 				"travel_catalysts_19",
-				"relay_network_chance_11",
-				"travel_boss_star_charts_22"
+				"magnetic_storm_chance_3"
 			],
-			"x": -3760.9,
-			"y": 4809
+			"x": -3757.3,
+			"y": 4804.3
 		},
 		{
 			"id": "travel_catalysts_19",
@@ -481,10 +482,11 @@
 			"connectedTo": [
 				"travel_catalysts_18",
 				"travel_catalysts_20",
-				"travel_catalysts_30"
+				"relay_network_chance_11",
+				"travel_boss_star_charts_23"
 			],
-			"x": -5062.9,
-			"y": 3411.4
+			"x": -5058,
+			"y": 3408.1
 		},
 		{
 			"id": "travel_catalysts_20",
@@ -494,8 +496,8 @@
 				"travel_catalysts_1",
 				"listening_post_chance_7"
 			],
-			"x": -5869.3,
-			"y": 1679.9
+			"x": -5863.6,
+			"y": 1678.3
 		},
 		{
 			"id": "travel_catalysts_21",
@@ -503,10 +505,12 @@
 			"connectedTo": [
 				"travel_catalysts_22",
 				"travel_catalysts_44",
-				"travel_chart_modifier_effect_17"
+				"storm_front_chance_5",
+				"travel_catalysts_12",
+				"travel_chart_modifier_effect_18"
 			],
-			"x": 7897,
-			"y": 1582.4
+			"x": 7896,
+			"y": 1582.2
 		},
 		{
 			"id": "travel_catalysts_22",
@@ -515,10 +519,10 @@
 				"travel_catalysts_21",
 				"travel_catalysts_23",
 				"excavation_sites_chance_10",
-				"travel_chart_modifier_effect_19"
+				"travel_chart_modifier_effect_20"
 			],
-			"x": 7218.4,
-			"y": 3572.4
+			"x": 7217.5,
+			"y": 3571.9
 		},
 		{
 			"id": "travel_catalysts_23",
@@ -526,10 +530,10 @@
 			"connectedTo": [
 				"travel_catalysts_22",
 				"travel_catalysts_24",
-				"storm_front_chance_5"
+				"travel_catalysts_13"
 			],
-			"x": 6047.8,
-			"y": 5318.9
+			"x": 6047.1,
+			"y": 5318.3
 		},
 		{
 			"id": "travel_catalysts_24",
@@ -537,12 +541,10 @@
 			"connectedTo": [
 				"travel_catalysts_23",
 				"travel_catalysts_25",
-				"anomalous_debris_chance_10",
-				"travel_catalysts_14",
-				"travel_chart_modifier_effect_21"
+				"anomalous_debris_chance_10"
 			],
-			"x": 4465.1,
-			"y": 6703
+			"x": 4464.6,
+			"y": 6702.1
 		},
 		{
 			"id": "travel_catalysts_25",
@@ -550,10 +552,11 @@
 			"connectedTo": [
 				"travel_catalysts_24",
 				"travel_catalysts_26",
-				"stellar_flares_chance_3"
+				"stellar_flares_chance_3",
+				"travel_chart_modifier_effect_23"
 			],
-			"x": 2578.1,
-			"y": 7630.2
+			"x": 2577.8,
+			"y": 7629.3
 		},
 		{
 			"id": "travel_catalysts_26",
@@ -561,10 +564,10 @@
 			"connectedTo": [
 				"travel_catalysts_25",
 				"travel_catalysts_27",
-				"travel_chart_modifier_effect_24"
+				"travel_chart_modifier_effect_26"
 			],
 			"x": 515.4,
-			"y": 8037.5
+			"y": 8036.5
 		},
 		{
 			"id": "travel_catalysts_27",
@@ -572,10 +575,11 @@
 			"connectedTo": [
 				"travel_catalysts_26",
 				"travel_catalysts_28",
-				"travel_chart_modifier_effect_27"
+				"spatial_breach_chance_9",
+				"travel_catalysts_17"
 			],
-			"x": -1582.4,
-			"y": 7897
+			"x": -1582.2,
+			"y": 7896
 		},
 		{
 			"id": "travel_catalysts_28",
@@ -585,8 +589,8 @@
 				"travel_catalysts_29",
 				"anomalous_debris_chance_11"
 			],
-			"x": -3572.4,
-			"y": 7218.4
+			"x": -3571.9,
+			"y": 7217.5
 		},
 		{
 			"id": "travel_catalysts_29",
@@ -594,10 +598,11 @@
 			"connectedTo": [
 				"travel_catalysts_28",
 				"travel_catalysts_30",
-				"spatial_breach_chance_9"
+				"scavenge_duplication_4",
+				"travel_chart_modifier_effect_28"
 			],
-			"x": -5318.9,
-			"y": 6047.8
+			"x": -5318.3,
+			"y": 6047.1
 		},
 		{
 			"id": "travel_catalysts_30",
@@ -605,11 +610,10 @@
 			"connectedTo": [
 				"travel_catalysts_29",
 				"travel_catalysts_31",
-				"travel_catalysts_19",
-				"travel_chart_modifier_effect_29"
+				"travel_chart_modifier_effect_30"
 			],
-			"x": -6703,
-			"y": 4465.1
+			"x": -6702.1,
+			"y": 4464.6
 		},
 		{
 			"id": "travel_catalysts_31",
@@ -617,10 +621,12 @@
 			"connectedTo": [
 				"travel_catalysts_30",
 				"travel_catalysts_32",
-				"dense_nebula_atlas_chance_3"
+				"dense_nebula_atlas_chance_3",
+				"travel_chart_modifier_effect_1",
+				"travel_chart_modifier_effect_2"
 			],
-			"x": -7630.2,
-			"y": 2578.1
+			"x": -7629.3,
+			"y": 2577.8
 		},
 		{
 			"id": "travel_catalysts_32",
@@ -630,7 +636,7 @@
 				"travel_catalysts_33",
 				"listening_post_chance_9"
 			],
-			"x": -8037.5,
+			"x": -8036.5,
 			"y": 515.4
 		},
 		{
@@ -639,10 +645,10 @@
 			"connectedTo": [
 				"travel_catalysts_32",
 				"travel_catalysts_34",
-				"travel_chart_modifier_effect_2"
+				"travel_catalysts_2"
 			],
-			"x": -7897,
-			"y": -1582.4
+			"x": -7896,
+			"y": -1582.2
 		},
 		{
 			"id": "travel_catalysts_34",
@@ -650,11 +656,10 @@
 			"connectedTo": [
 				"travel_catalysts_33",
 				"travel_catalysts_35",
-				"spatial_breach_chance_10",
-				"travel_chart_modifier_effect_5"
+				"spatial_breach_chance_10"
 			],
-			"x": -7218.4,
-			"y": -3572.4
+			"x": -7217.5,
+			"y": -3571.9
 		},
 		{
 			"id": "travel_catalysts_35",
@@ -662,11 +667,10 @@
 			"connectedTo": [
 				"travel_catalysts_34",
 				"travel_catalysts_36",
-				"stellar_flares_chance_5",
-				"travel_catalysts_3"
+				"stellar_flares_chance_5"
 			],
-			"x": -6047.8,
-			"y": -5318.9
+			"x": -6047.1,
+			"y": -5318.3
 		},
 		{
 			"id": "travel_catalysts_36",
@@ -674,10 +678,12 @@
 			"connectedTo": [
 				"travel_catalysts_35",
 				"travel_catalysts_37",
+				"relay_reward_rarity_1",
+				"travel_catalysts_4",
 				"travel_chart_modifier_effect_6"
 			],
-			"x": -4465.1,
-			"y": -6703
+			"x": -4464.6,
+			"y": -6702.1
 		},
 		{
 			"id": "travel_catalysts_37",
@@ -685,11 +691,10 @@
 			"connectedTo": [
 				"travel_catalysts_36",
 				"travel_catalysts_38",
-				"relay_reward_rarity_1",
-				"travel_chart_modifier_effect_8"
+				"travel_catalysts_5"
 			],
-			"x": -2578.1,
-			"y": -7630.2
+			"x": -2577.8,
+			"y": -7629.3
 		},
 		{
 			"id": "travel_catalysts_38",
@@ -697,10 +702,10 @@
 			"connectedTo": [
 				"travel_catalysts_37",
 				"travel_catalysts_39",
-				"travel_chart_modifier_effect_10"
+				"travel_chart_modifier_effect_9"
 			],
 			"x": -515.4,
-			"y": -8037.5
+			"y": -8036.5
 		},
 		{
 			"id": "travel_catalysts_39",
@@ -708,10 +713,10 @@
 			"connectedTo": [
 				"travel_catalysts_38",
 				"travel_catalysts_40",
-				"travel_chart_modifier_effect_12"
+				"travel_chart_modifier_effect_10"
 			],
-			"x": 1582.4,
-			"y": -7897
+			"x": 1582.2,
+			"y": -7896
 		},
 		{
 			"id": "travel_catalysts_40",
@@ -719,10 +724,11 @@
 			"connectedTo": [
 				"travel_catalysts_39",
 				"travel_catalysts_41",
-				"travel_catalysts_8"
+				"trophy_duplication_5",
+				"travel_chart_modifier_effect_12"
 			],
-			"x": 3572.4,
-			"y": -7218.4
+			"x": 3571.9,
+			"y": -7217.5
 		},
 		{
 			"id": "travel_catalysts_41",
@@ -732,8 +738,8 @@
 				"travel_catalysts_42",
 				"storm_front_chance_7"
 			],
-			"x": 5318.9,
-			"y": -6047.8
+			"x": 5318.3,
+			"y": -6047.1
 		},
 		{
 			"id": "travel_catalysts_42",
@@ -742,11 +748,10 @@
 				"travel_catalysts_41",
 				"travel_catalysts_43",
 				"additional_site_1",
-				"travel_chart_modifier_effect_14",
-				"travel_catalysts_9"
+				"travel_chart_modifier_effect_14"
 			],
-			"x": 6703,
-			"y": -4465.1
+			"x": 6702.1,
+			"y": -4464.6
 		},
 		{
 			"id": "travel_catalysts_43",
@@ -757,8 +762,8 @@
 				"magnetic_storm_chance_5",
 				"travel_catalysts_10"
 			],
-			"x": 7630.2,
-			"y": -2578.1
+			"x": 7629.3,
+			"y": -2577.8
 		},
 		{
 			"id": "travel_catalysts_44",
@@ -766,9 +771,10 @@
 			"connectedTo": [
 				"travel_catalysts_43",
 				"travel_catalysts_21",
-				"engram_quantity_1"
+				"engram_quantity_1",
+				"travel_chart_modifier_effect_16"
 			],
-			"x": 8037.5,
+			"x": 8036.5,
 			"y": -515.4
 		},
 		{
@@ -777,10 +783,11 @@
 			"connectedTo": [
 				"travel_chart_modifier_effect_2",
 				"travel_chart_modifier_effect_30",
-				"additional_site_2"
+				"additional_site_2",
+				"travel_catalysts_31"
 			],
-			"x": -9567.3,
-			"y": 2743.9
+			"x": -9577.9,
+			"y": 2746.9
 		},
 		{
 			"id": "travel_chart_modifier_effect_2",
@@ -788,10 +795,10 @@
 			"connectedTo": [
 				"travel_chart_modifier_effect_1",
 				"travel_chart_modifier_effect_3",
-				"travel_catalysts_33"
+				"travel_catalysts_31"
 			],
-			"x": -9928.7,
-			"y": 694.8
+			"x": -9939.7,
+			"y": 695.5
 		},
 		{
 			"id": "travel_chart_modifier_effect_3",
@@ -801,8 +808,8 @@
 				"travel_chart_modifier_effect_4",
 				"storm_front_chance_9"
 			],
-			"x": -9856.2,
-			"y": -1384.7
+			"x": -9867.1,
+			"y": -1386.2
 		},
 		{
 			"id": "travel_chart_modifier_effect_4",
@@ -812,8 +819,8 @@
 				"travel_chart_modifier_effect_5",
 				"supply_convoy_chance_9"
 			],
-			"x": -9352.9,
-			"y": -3403.7
+			"x": -9363.3,
+			"y": -3407.4
 		},
 		{
 			"id": "travel_chart_modifier_effect_5",
@@ -821,11 +828,10 @@
 			"connectedTo": [
 				"travel_chart_modifier_effect_4",
 				"travel_chart_modifier_effect_6",
-				"breach_cache_items_1",
-				"travel_catalysts_34"
+				"breach_cache_items_1"
 			],
-			"x": -8440.9,
-			"y": -5273.9
+			"x": -8450.2,
+			"y": -5279.7
 		},
 		{
 			"id": "travel_chart_modifier_effect_6",
@@ -835,8 +841,8 @@
 				"travel_chart_modifier_effect_7",
 				"travel_catalysts_36"
 			],
-			"x": -7159.9,
-			"y": -6913.6
+			"x": -7167.8,
+			"y": -6921.2
 		},
 		{
 			"id": "travel_chart_modifier_effect_7",
@@ -846,8 +852,8 @@
 				"travel_chart_modifier_effect_8",
 				"settling_dust_effect_1"
 			],
-			"x": -5566.1,
-			"y": -8251.1
+			"x": -5572.2,
+			"y": -8260.3
 		},
 		{
 			"id": "travel_chart_modifier_effect_8",
@@ -855,10 +861,10 @@
 			"connectedTo": [
 				"travel_chart_modifier_effect_7",
 				"travel_chart_modifier_effect_9",
-				"travel_catalysts_37"
+				"relay_reward_rarity_3"
 			],
-			"x": -3728.9,
-			"y": -9228.1
+			"x": -3733,
+			"y": -9238.3
 		},
 		{
 			"id": "travel_chart_modifier_effect_9",
@@ -866,10 +872,11 @@
 			"connectedTo": [
 				"travel_chart_modifier_effect_8",
 				"travel_chart_modifier_effect_10",
-				"relay_reward_rarity_3"
+				"shroud_feedstock_chance_1",
+				"travel_catalysts_38"
 			],
-			"x": -1728.8,
-			"y": -9801.7
+			"x": -1730.7,
+			"y": -9812.5
 		},
 		{
 			"id": "travel_chart_modifier_effect_10",
@@ -877,11 +884,10 @@
 			"connectedTo": [
 				"travel_chart_modifier_effect_9",
 				"travel_chart_modifier_effect_11",
-				"shroud_feedstock_chance_1",
-				"travel_catalysts_38"
+				"travel_catalysts_39"
 			],
-			"x": 346.9,
-			"y": -9947
+			"x": 347.2,
+			"y": -9957.9
 		},
 		{
 			"id": "travel_chart_modifier_effect_11",
@@ -891,8 +897,8 @@
 				"travel_chart_modifier_effect_12",
 				"storm_front_chance_11"
 			],
-			"x": 2407.4,
-			"y": -9657.5
+			"x": 2410,
+			"y": -9668.1
 		},
 		{
 			"id": "travel_chart_modifier_effect_12",
@@ -900,10 +906,10 @@
 			"connectedTo": [
 				"travel_chart_modifier_effect_11",
 				"travel_chart_modifier_effect_13",
-				"travel_catalysts_39"
+				"travel_catalysts_40"
 			],
-			"x": 4362.7,
-			"y": -8945.9
+			"x": 4367.5,
+			"y": -8955.8
 		},
 		{
 			"id": "travel_chart_modifier_effect_13",
@@ -913,8 +919,8 @@
 				"travel_chart_modifier_effect_14",
 				"spatial_breach_chance_12"
 			],
-			"x": 6127.3,
-			"y": -7843.4
+			"x": 6134.1,
+			"y": -7852
 		},
 		{
 			"id": "travel_chart_modifier_effect_14",
@@ -922,10 +928,11 @@
 			"connectedTo": [
 				"travel_chart_modifier_effect_13",
 				"travel_chart_modifier_effect_15",
+				"additional_site_3",
 				"travel_catalysts_42"
 			],
-			"x": 7624.1,
-			"y": -6398
+			"x": 7632.6,
+			"y": -6405.1
 		},
 		{
 			"id": "travel_chart_modifier_effect_15",
@@ -933,10 +940,10 @@
 			"connectedTo": [
 				"travel_chart_modifier_effect_14",
 				"travel_chart_modifier_effect_16",
-				"additional_site_3"
+				"scavenge_duplication_6"
 			],
-			"x": 8787.7,
-			"y": -4673.1
+			"x": 8797.5,
+			"y": -4678.2
 		},
 		{
 			"id": "travel_chart_modifier_effect_16",
@@ -944,10 +951,10 @@
 			"connectedTo": [
 				"travel_chart_modifier_effect_15",
 				"travel_chart_modifier_effect_17",
-				"stellar_flares_chance_7"
+				"travel_catalysts_44"
 			],
-			"x": 9567.3,
-			"y": -2743.9
+			"x": 9577.9,
+			"y": -2746.9
 		},
 		{
 			"id": "travel_chart_modifier_effect_17",
@@ -955,10 +962,10 @@
 			"connectedTo": [
 				"travel_chart_modifier_effect_16",
 				"travel_chart_modifier_effect_18",
-				"travel_catalysts_21"
+				"stellar_flares_chance_7"
 			],
-			"x": 9928.7,
-			"y": -694.8
+			"x": 9939.7,
+			"y": -695.5
 		},
 		{
 			"id": "travel_chart_modifier_effect_18",
@@ -966,10 +973,10 @@
 			"connectedTo": [
 				"travel_chart_modifier_effect_17",
 				"travel_chart_modifier_effect_19",
-				"engram_quantity_2"
+				"travel_catalysts_21"
 			],
-			"x": 9856.2,
-			"y": 1384.7
+			"x": 9867.1,
+			"y": 1386.2
 		},
 		{
 			"id": "travel_chart_modifier_effect_19",
@@ -977,11 +984,10 @@
 			"connectedTo": [
 				"travel_chart_modifier_effect_18",
 				"travel_chart_modifier_effect_20",
-				"listening_post_chance_11",
-				"travel_catalysts_22"
+				"engram_quantity_2"
 			],
-			"x": 9352.9,
-			"y": 3403.7
+			"x": 9363.3,
+			"y": 3407.4
 		},
 		{
 			"id": "travel_chart_modifier_effect_20",
@@ -989,10 +995,11 @@
 			"connectedTo": [
 				"travel_chart_modifier_effect_19",
 				"travel_chart_modifier_effect_21",
-				"magnetic_storm_chance_7"
+				"listening_post_chance_11",
+				"travel_catalysts_22"
 			],
-			"x": 8440.9,
-			"y": 5273.9
+			"x": 8450.2,
+			"y": 5279.7
 		},
 		{
 			"id": "travel_chart_modifier_effect_21",
@@ -1000,10 +1007,10 @@
 			"connectedTo": [
 				"travel_chart_modifier_effect_20",
 				"travel_chart_modifier_effect_22",
-				"travel_catalysts_24"
+				"magnetic_storm_chance_7"
 			],
-			"x": 7159.9,
-			"y": 6913.6
+			"x": 7167.8,
+			"y": 6921.2
 		},
 		{
 			"id": "travel_chart_modifier_effect_22",
@@ -1013,8 +1020,8 @@
 				"travel_chart_modifier_effect_23",
 				"feedstock_duplication_1"
 			],
-			"x": 5566.1,
-			"y": 8251.1
+			"x": 5572.2,
+			"y": 8260.3
 		},
 		{
 			"id": "travel_chart_modifier_effect_23",
@@ -1022,10 +1029,10 @@
 			"connectedTo": [
 				"travel_chart_modifier_effect_22",
 				"travel_chart_modifier_effect_24",
-				"storm_item_quantity_1"
+				"travel_catalysts_25"
 			],
-			"x": 3728.9,
-			"y": 9228.1
+			"x": 3733,
+			"y": 9238.3
 		},
 		{
 			"id": "travel_chart_modifier_effect_24",
@@ -1033,10 +1040,10 @@
 			"connectedTo": [
 				"travel_chart_modifier_effect_23",
 				"travel_chart_modifier_effect_25",
-				"travel_catalysts_26"
+				"storm_item_quantity_1"
 			],
-			"x": 1728.8,
-			"y": 9801.7
+			"x": 1730.7,
+			"y": 9812.5
 		},
 		{
 			"id": "travel_chart_modifier_effect_25",
@@ -1046,8 +1053,8 @@
 				"travel_chart_modifier_effect_26",
 				"vault_quantity_1"
 			],
-			"x": -346.9,
-			"y": 9947
+			"x": -347.2,
+			"y": 9957.9
 		},
 		{
 			"id": "travel_chart_modifier_effect_26",
@@ -1055,10 +1062,10 @@
 			"connectedTo": [
 				"travel_chart_modifier_effect_25",
 				"travel_chart_modifier_effect_27",
-				"breach_cache_quantity_2"
+				"travel_catalysts_26"
 			],
-			"x": -2407.4,
-			"y": 9657.5
+			"x": -2410,
+			"y": 9668.1
 		},
 		{
 			"id": "travel_chart_modifier_effect_27",
@@ -1066,10 +1073,10 @@
 			"connectedTo": [
 				"travel_chart_modifier_effect_26",
 				"travel_chart_modifier_effect_28",
-				"travel_catalysts_27"
+				"breach_cache_quantity_2"
 			],
-			"x": -4362.7,
-			"y": 8945.9
+			"x": -4367.5,
+			"y": 8955.8
 		},
 		{
 			"id": "travel_chart_modifier_effect_28",
@@ -1077,10 +1084,11 @@
 			"connectedTo": [
 				"travel_chart_modifier_effect_27",
 				"travel_chart_modifier_effect_29",
-				"stellar_flares_chance_9"
+				"stellar_flares_chance_9",
+				"travel_catalysts_29"
 			],
-			"x": -6127.3,
-			"y": 7843.4
+			"x": -6134.1,
+			"y": 7852
 		},
 		{
 			"id": "travel_chart_modifier_effect_29",
@@ -1090,11 +1098,10 @@
 				"travel_chart_modifier_effect_30",
 				"supply_convoy_chance_4",
 				"supply_convoy_chance_6",
-				"supply_convoy_chance_8",
-				"travel_catalysts_30"
+				"supply_convoy_chance_8"
 			],
-			"x": -7624.1,
-			"y": 6398
+			"x": -7632.6,
+			"y": 6405.1
 		},
 		{
 			"id": "travel_chart_modifier_effect_30",
@@ -1102,10 +1109,11 @@
 			"connectedTo": [
 				"travel_chart_modifier_effect_29",
 				"travel_chart_modifier_effect_1",
-				"engram_quantity_3"
+				"engram_quantity_3",
+				"travel_catalysts_30"
 			],
-			"x": -8787.7,
-			"y": 4673.1
+			"x": -8797.5,
+			"y": 4678.2
 		},
 		{
 			"id": "settled_shafts_1",
@@ -1493,8 +1501,8 @@
 			"connectedTo": [
 				"spatial_breach_chance_4"
 			],
-			"x": 3600.7,
-			"y": -3289.5,
+			"x": 1816.9,
+			"y": -4526,
 			"tags": [
 				"spatial_breach"
 			]
@@ -1503,11 +1511,11 @@
 			"id": "spatial_breach_chance_3",
 			"type": "spatial_breach_chance",
 			"connectedTo": [
-				"travel_boss_star_charts_16",
+				"travel_boss_star_charts_15",
 				"spatial_breach_chance_4"
 			],
-			"x": 3490.7,
-			"y": -2754.7,
+			"x": 1949.9,
+			"y": -3996.4,
 			"tags": [
 				"spatial_breach"
 			]
@@ -1519,8 +1527,8 @@
 				"spatial_breach_chance_3",
 				"rift_magnetism_1"
 			],
-			"x": 3882.5,
-			"y": -3165.2,
+			"x": 2124.7,
+			"y": -4536.3,
 			"tags": [
 				"spatial_breach"
 			]
@@ -1602,13 +1610,51 @@
 			]
 		},
 		{
+			"id": "spoils_of_war_1",
+			"type": "spoils_of_war",
+			"connectedTo": [
+				"scavenge_duplication_1"
+			],
+			"x": 4068.2,
+			"y": 2820,
+			"tags": [
+				"faction_skirmish"
+			]
+		},
+		{
+			"id": "trophy_duplication_1",
+			"type": "trophy_duplication",
+			"connectedTo": [
+				"travel_boss_star_charts_19",
+				"scavenge_duplication_1"
+			],
+			"x": 3495.3,
+			"y": 2998.4,
+			"tags": [
+				"faction_skirmish"
+			]
+		},
+		{
+			"id": "scavenge_duplication_1",
+			"type": "scavenge_duplication",
+			"connectedTo": [
+				"trophy_duplication_1",
+				"spoils_of_war_1"
+			],
+			"x": 4088.4,
+			"y": 3165.4,
+			"tags": [
+				"faction_skirmish"
+			]
+		},
+		{
 			"id": "charged_fields_1",
 			"type": "charged_fields",
 			"connectedTo": [
 				"magnetic_storm_chance_2"
 			],
-			"x": 2877.4,
-			"y": 1994.6,
+			"x": -1304.5,
+			"y": 3249.5,
 			"tags": [
 				"magnetic_storm"
 			]
@@ -1617,11 +1663,11 @@
 			"id": "magnetic_storm_chance_1",
 			"type": "magnetic_storm_chance",
 			"connectedTo": [
-				"travel_boss_star_charts_19",
+				"travel_boss_star_charts_22",
 				"magnetic_storm_chance_2"
 			],
-			"x": 3379.6,
-			"y": 1838.1,
+			"x": -949.7,
+			"y": 3637.9,
 			"tags": [
 				"magnetic_storm"
 			]
@@ -1633,8 +1679,8 @@
 				"magnetic_storm_chance_1",
 				"charged_fields_1"
 			],
-			"x": 2860.5,
-			"y": 1707.1,
+			"x": -1032.9,
+			"y": 3153.6,
 			"tags": [
 				"magnetic_storm"
 			]
@@ -1645,8 +1691,8 @@
 			"connectedTo": [
 				"anomalous_debris_chance_6"
 			],
-			"x": -1269.2,
-			"y": 3161.8,
+			"x": -2531.2,
+			"y": 2312.4,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -1655,11 +1701,11 @@
 			"id": "anomalous_debris_chance_5",
 			"type": "anomalous_debris_chance",
 			"connectedTo": [
-				"travel_boss_star_charts_22",
+				"travel_boss_star_charts_23",
 				"anomalous_debris_chance_6"
 			],
-			"x": -868.6,
-			"y": 3600.3,
+			"x": -2531.6,
+			"y": 2906.4,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -1671,8 +1717,8 @@
 				"anomalous_debris_chance_5",
 				"restless_sleepers_1"
 			],
-			"x": -941.1,
-			"y": 3045.8,
+			"x": -2183.3,
+			"y": 2304.3,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -1683,8 +1729,8 @@
 			"connectedTo": [
 				"relay_network_chance_8"
 			],
-			"x": -3544.9,
-			"y": 3238.5,
+			"x": 322.2,
+			"y": 4798.2,
 			"tags": [
 				"relay_network"
 			]
@@ -1693,11 +1739,11 @@
 			"id": "relay_network_chance_7",
 			"type": "relay_network_chance",
 			"connectedTo": [
-				"travel_boss_star_charts_23",
+				"travel_boss_star_charts_21",
 				"relay_network_chance_8"
 			],
-			"x": -3544.7,
-			"y": 2758.5,
+			"x": -105.6,
+			"y": 4580.6,
 			"tags": [
 				"relay_network"
 			]
@@ -1709,8 +1755,8 @@
 				"relay_network_chance_7",
 				"forked_trace_1"
 			],
-			"x": -3798.9,
-			"y": 3244.5,
+			"x": 192.3,
+			"y": 5016.4,
 			"tags": [
 				"relay_network"
 			]
@@ -1721,8 +1767,8 @@
 			"connectedTo": [
 				"excavation_sites_chance_8"
 			],
-			"x": -6894.8,
-			"y": -244.1,
+			"x": -6900.9,
+			"y": -244.3,
 			"tags": [
 				"excavation_sites"
 			]
@@ -1734,8 +1780,8 @@
 				"travel_catalysts_1",
 				"excavation_sites_chance_8"
 			],
-			"x": -6556,
-			"y": -769.4,
+			"x": -6614.1,
+			"y": 311,
 			"tags": [
 				"excavation_sites"
 			]
@@ -1747,8 +1793,8 @@
 				"excavation_sites_chance_7",
 				"open_bores_1"
 			],
-			"x": -7187.7,
-			"y": -461.9,
+			"x": -7261.9,
+			"y": -190.1,
 			"tags": [
 				"excavation_sites"
 			]
@@ -1759,8 +1805,8 @@
 			"connectedTo": [
 				"storm_front_chance_4"
 			],
-			"x": -4189.7,
-			"y": -3276.6,
+			"x": -4184.1,
+			"y": -3272.3,
 			"tags": [
 				"storm_front"
 			]
@@ -1772,8 +1818,8 @@
 				"travel_catalysts_3",
 				"storm_front_chance_4"
 			],
-			"x": -4097.6,
-			"y": -3879.6,
+			"x": -4793.9,
+			"y": -3254.1,
 			"tags": [
 				"storm_front"
 			]
@@ -1785,8 +1831,8 @@
 				"storm_front_chance_3",
 				"supercell_1"
 			],
-			"x": -3870.2,
-			"y": -3110.7,
+			"x": -4265.8,
+			"y": -2921.7,
 			"tags": [
 				"storm_front"
 			]
@@ -1797,8 +1843,8 @@
 			"connectedTo": [
 				"anomalous_debris_chance_7"
 			],
-			"x": -2960.4,
-			"y": -4393.6,
+			"x": -2963.8,
+			"y": -4398.6,
 			"tags": [
 				"excavation_sites",
 				"anomalous_debris"
@@ -1811,8 +1857,8 @@
 				"travel_catalysts_4",
 				"anomalous_debris_chance_7"
 			],
-			"x": -3558.4,
-			"y": -4568.4,
+			"x": -3576.2,
+			"y": -4284.4,
 			"tags": [
 				"excavation_sites"
 			]
@@ -1824,10 +1870,48 @@
 				"excavation_sites_chance_9",
 				"infested_bolt_holes_1"
 			],
-			"x": -3151.6,
-			"y": -4076.9,
+			"x": -2844.3,
+			"y": -4048.4,
 			"tags": [
 				"anomalous_debris"
+			]
+		},
+		{
+			"id": "hardened_command_1",
+			"type": "hardened_command",
+			"connectedTo": [
+				"trophy_duplication_2"
+			],
+			"x": -1889,
+			"y": -6599.8,
+			"tags": [
+				"faction_skirmish"
+			]
+		},
+		{
+			"id": "scavenge_duplication_2",
+			"type": "scavenge_duplication",
+			"connectedTo": [
+				"travel_catalysts_5",
+				"trophy_duplication_2"
+			],
+			"x": -1305.5,
+			"y": -6443.8,
+			"tags": [
+				"faction_skirmish"
+			]
+		},
+		{
+			"id": "trophy_duplication_2",
+			"type": "trophy_duplication",
+			"connectedTo": [
+				"scavenge_duplication_2",
+				"hardened_command_1"
+			],
+			"x": -1890.3,
+			"y": -6949.8,
+			"tags": [
+				"faction_skirmish"
 			]
 		},
 		{
@@ -1836,8 +1920,8 @@
 			"connectedTo": [
 				"anomalous_debris_chance_9"
 			],
-			"x": 243.4,
-			"y": -6874.9,
+			"x": 242.3,
+			"y": -6843.9,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -1849,8 +1933,8 @@
 				"travel_catalysts_6",
 				"anomalous_debris_chance_9"
 			],
-			"x": 779.8,
-			"y": -6619.6,
+			"x": 588.7,
+			"y": -6361.4,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -1862,8 +1946,8 @@
 				"anomalous_debris_chance_8",
 				"threatening_sleepers_1"
 			],
-			"x": 346.1,
-			"y": -7207.4,
+			"x": 511.4,
+			"y": -7064.6,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -1874,8 +1958,8 @@
 			"connectedTo": [
 				"dense_nebula_atlas_chance_2"
 			],
-			"x": 2354,
-			"y": -6457.7,
+			"x": 2349.4,
+			"y": -6445.1,
 			"tags": [
 				"dense_nebula"
 			]
@@ -1887,8 +1971,8 @@
 				"travel_catalysts_7",
 				"dense_nebula_atlas_chance_2"
 			],
-			"x": 2723,
-			"y": -6002.5,
+			"x": 2720.4,
+			"y": -5991.5,
 			"tags": [
 				"dense_nebula"
 			]
@@ -1900,8 +1984,8 @@
 				"dense_nebula_atlas_chance_1",
 				"dust_trails_1"
 			],
-			"x": 2548.1,
-			"y": -6727,
+			"x": 2670.9,
+			"y": -6527.6,
 			"tags": [
 				"dense_nebula"
 			]
@@ -1912,8 +1996,8 @@
 			"connectedTo": [
 				"relay_network_chance_10"
 			],
-			"x": 5268.2,
-			"y": -1507.9,
+			"x": 4518.4,
+			"y": -3044.5,
 			"tags": [
 				"relay_network"
 			]
@@ -1922,11 +2006,11 @@
 			"id": "relay_network_chance_9",
 			"type": "relay_network_chance",
 			"connectedTo": [
-				"travel_catalysts_10",
+				"travel_catalysts_9",
 				"relay_network_chance_10"
 			],
-			"x": 5552.6,
-			"y": -1894.6,
+			"x": 4997.7,
+			"y": -3017.7,
 			"tags": [
 				"relay_network"
 			]
@@ -1938,8 +2022,8 @@
 				"relay_network_chance_9",
 				"scar_collector_1"
 			],
-			"x": 5054.4,
-			"y": -1644.9,
+			"x": 4512.6,
+			"y": -2790.6,
 			"tags": [
 				"relay_network"
 			]
@@ -1950,8 +2034,8 @@
 			"connectedTo": [
 				"spatial_breach_chance_6"
 			],
-			"x": 4247.4,
-			"y": 3321.8,
+			"x": 5181,
+			"y": -1482.9,
 			"tags": [
 				"spatial_breach"
 			]
@@ -1960,11 +2044,11 @@
 			"id": "spatial_breach_chance_5",
 			"type": "spatial_breach_chance",
 			"connectedTo": [
-				"travel_catalysts_13",
+				"travel_catalysts_10",
 				"spatial_breach_chance_6"
 			],
-			"x": 4756.2,
-			"y": 3123.6,
+			"x": 5432.3,
+			"y": -1967.6,
 			"tags": [
 				"spatial_breach"
 			]
@@ -1976,8 +2060,8 @@
 				"spatial_breach_chance_5",
 				"rally_point_1"
 			],
-			"x": 4266.8,
-			"y": 3014.4,
+			"x": 5000.1,
+			"y": -1732.2,
 			"tags": [
 				"spatial_breach"
 			]
@@ -1988,8 +2072,8 @@
 			"connectedTo": [
 				"spatial_breach_chance_7"
 			],
-			"x": 6864.2,
-			"y": 243,
+			"x": 6861.4,
+			"y": 242.9,
 			"tags": [
 				"supply_convoy",
 				"spatial_breach"
@@ -2002,8 +2086,8 @@
 				"travel_catalysts_11",
 				"spatial_breach_chance_7"
 			],
-			"x": 6399.3,
-			"y": -136.2,
+			"x": 6498.4,
+			"y": -234.8,
 			"tags": [
 				"supply_convoy"
 			]
@@ -2015,8 +2099,8 @@
 				"supply_convoy_chance_1",
 				"torn_holds_1"
 			],
-			"x": 7086.1,
-			"y": -48.1,
+			"x": 7118.8,
+			"y": -17.3,
 			"tags": [
 				"spatial_breach"
 			]
@@ -2027,8 +2111,8 @@
 			"connectedTo": [
 				"stellar_flares_chance_2"
 			],
-			"x": 3012.3,
-			"y": 4470.7,
+			"x": 3001.6,
+			"y": 4454.8,
 			"tags": [
 				"stellar_flares"
 			]
@@ -2040,8 +2124,8 @@
 				"travel_catalysts_14",
 				"stellar_flares_chance_2"
 			],
-			"x": 3562.8,
-			"y": 4561.8,
+			"x": 2887,
+			"y": 5000.9,
 			"tags": [
 				"stellar_flares"
 			]
@@ -2053,8 +2137,8 @@
 				"stellar_flares_chance_1",
 				"golden_hour_1"
 			],
-			"x": 3198.2,
-			"y": 4215.1,
+			"x": 2699.4,
+			"y": 4362.3,
 			"tags": [
 				"stellar_flares"
 			]
@@ -2065,8 +2149,8 @@
 			"connectedTo": [
 				"supply_convoy_chance_3"
 			],
-			"x": 1475.7,
-			"y": 5156,
+			"x": 1477.2,
+			"y": 5161.2,
 			"tags": [
 				"supply_convoy"
 			]
@@ -2078,8 +2162,8 @@
 				"travel_catalysts_15",
 				"supply_convoy_chance_3"
 			],
-			"x": 1144.9,
-			"y": 5632.4,
+			"x": 1120.9,
+			"y": 5618.9,
 			"tags": [
 				"supply_convoy"
 			]
@@ -2091,8 +2175,8 @@
 				"supply_convoy_chance_2",
 				"supply_lines_1"
 			],
-			"x": 1163,
-			"y": 4998.8,
+			"x": 1174.9,
+			"y": 4985,
 			"tags": [
 				"supply_convoy"
 			]
@@ -2103,8 +2187,8 @@
 			"connectedTo": [
 				"listening_post_chance_6"
 			],
-			"x": -241.3,
-			"y": 6813.8,
+			"x": -241.2,
+			"y": 6812.3,
 			"tags": [
 				"listening_post"
 			]
@@ -2116,8 +2200,8 @@
 				"travel_catalysts_16",
 				"listening_post_chance_6"
 			],
-			"x": 172.5,
-			"y": 6439.4,
+			"x": -567.4,
+			"y": 6359.6,
 			"tags": [
 				"listening_post"
 			]
@@ -2129,10 +2213,48 @@
 				"listening_post_chance_5",
 				"hair_trigger_1"
 			],
-			"x": -48.7,
-			"y": 7069.4,
+			"x": -535.8,
+			"y": 6937.2,
 			"tags": [
 				"listening_post"
+			]
+		},
+		{
+			"id": "trophy_refit_1",
+			"type": "trophy_refit",
+			"connectedTo": [
+				"scavenge_duplication_3"
+			],
+			"x": -1829.1,
+			"y": 5017.9,
+			"tags": [
+				"faction_skirmish"
+			]
+		},
+		{
+			"id": "trophy_duplication_3",
+			"type": "trophy_duplication",
+			"connectedTo": [
+				"travel_catalysts_17",
+				"scavenge_duplication_3"
+			],
+			"x": -2324.8,
+			"y": 5348.9,
+			"tags": [
+				"faction_skirmish"
+			]
+		},
+		{
+			"id": "scavenge_duplication_3",
+			"type": "scavenge_duplication",
+			"connectedTo": [
+				"trophy_duplication_3",
+				"trophy_refit_1"
+			],
+			"x": -2132.9,
+			"y": 4860.7,
+			"tags": [
+				"faction_skirmish"
 			]
 		},
 		{
@@ -2141,8 +2263,8 @@
 			"connectedTo": [
 				"magnetic_storm_chance_4"
 			],
-			"x": -1855.1,
-			"y": 5089.3,
+			"x": -3324.5,
+			"y": 4250.9,
 			"tags": [
 				"magnetic_storm"
 			]
@@ -2151,11 +2273,11 @@
 			"id": "magnetic_storm_chance_3",
 			"type": "magnetic_storm_chance",
 			"connectedTo": [
-				"travel_catalysts_17",
+				"travel_catalysts_18",
 				"magnetic_storm_chance_4"
 			],
-			"x": -2368.2,
-			"y": 5237.3,
+			"x": -3282.5,
+			"y": 4783.3,
 			"tags": [
 				"magnetic_storm"
 			]
@@ -2167,8 +2289,8 @@
 				"magnetic_storm_chance_3",
 				"static_harvest_1"
 			],
-			"x": -1974.4,
-			"y": 4818.4,
+			"x": -3052.6,
+			"y": 4134,
 			"tags": [
 				"magnetic_storm"
 			]
@@ -2179,8 +2301,8 @@
 			"connectedTo": [
 				"relay_network_chance_12"
 			],
-			"x": -4157.3,
-			"y": 5315.8,
+			"x": -5593.9,
+			"y": 3769.2,
 			"tags": [
 				"relay_network"
 			]
@@ -2189,11 +2311,11 @@
 			"id": "relay_network_chance_11",
 			"type": "relay_network_chance",
 			"connectedTo": [
-				"travel_catalysts_18",
+				"travel_catalysts_19",
 				"relay_network_chance_12"
 			],
-			"x": -4155.4,
-			"y": 4835.8,
+			"x": -5137,
+			"y": 3916.4,
 			"tags": [
 				"relay_network"
 			]
@@ -2205,8 +2327,8 @@
 				"relay_network_chance_11",
 				"early_echo_1"
 			],
-			"x": -4404.8,
-			"y": 5258.5,
+			"x": -5574.5,
+			"y": 4022.4,
 			"tags": [
 				"relay_network"
 			]
@@ -2217,8 +2339,8 @@
 			"connectedTo": [
 				"listening_post_chance_8"
 			],
-			"x": -5175.4,
-			"y": 1481.3,
+			"x": -5176.7,
+			"y": 1481.7,
 			"tags": [
 				"listening_post"
 			]
@@ -2230,8 +2352,8 @@
 				"travel_catalysts_20",
 				"listening_post_chance_8"
 			],
-			"x": -5698.9,
-			"y": 1288.1,
+			"x": -5295.7,
+			"y": 2026.8,
 			"tags": [
 				"listening_post"
 			]
@@ -2243,8 +2365,8 @@
 				"listening_post_chance_7",
 				"smash_and_grab_1"
 			],
-			"x": -5223.5,
-			"y": 1164.9,
+			"x": -4865.2,
+			"y": 1555.2,
 			"tags": [
 				"listening_post"
 			]
@@ -2255,8 +2377,8 @@
 			"connectedTo": [
 				"excavation_sites_chance_11"
 			],
-			"x": 6498.5,
-			"y": 3216.1,
+			"x": 6502.7,
+			"y": 3218.2,
 			"tags": [
 				"excavation_sites"
 			]
@@ -2268,8 +2390,8 @@
 				"travel_catalysts_22",
 				"excavation_sites_chance_11"
 			],
-			"x": 7098.6,
-			"y": 3041.6,
+			"x": 6998.1,
+			"y": 2837.1,
 			"tags": [
 				"excavation_sites"
 			]
@@ -2281,8 +2403,8 @@
 				"excavation_sites_chance_10",
 				"widened_bores_1"
 			],
-			"x": 6289.4,
-			"y": 2917,
+			"x": 6334.6,
+			"y": 2894.2,
 			"tags": [
 				"excavation_sites"
 			]
@@ -2293,8 +2415,8 @@
 			"connectedTo": [
 				"storm_front_chance_6"
 			],
-			"x": 6623.3,
-			"y": 5825,
+			"x": 8669.3,
+			"y": 1737.2,
 			"tags": [
 				"storm_front"
 			]
@@ -2303,11 +2425,11 @@
 			"id": "storm_front_chance_5",
 			"type": "storm_front_chance",
 			"connectedTo": [
-				"travel_catalysts_23",
+				"travel_catalysts_21",
 				"storm_front_chance_6"
 			],
-			"x": 6656.9,
-			"y": 5215.9,
+			"x": 8283.6,
+			"y": 2209.7,
 			"tags": [
 				"storm_front"
 			]
@@ -2319,8 +2441,8 @@
 				"storm_front_chance_5",
 				"eye_of_the_storm_1"
 			],
-			"x": 6963.5,
-			"y": 5707.4,
+			"x": 8879.3,
+			"y": 2029.6,
 			"tags": [
 				"storm_front"
 			]
@@ -2331,8 +2453,8 @@
 			"connectedTo": [
 				"additional_debris_1"
 			],
-			"x": 4879.7,
-			"y": 7325.3,
+			"x": 4892.7,
+			"y": 7344.8,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -2344,8 +2466,8 @@
 				"travel_catalysts_24",
 				"additional_debris_1"
 			],
-			"x": 4288.3,
-			"y": 7381,
+			"x": 5154,
+			"y": 6811.4,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -2357,8 +2479,8 @@
 				"anomalous_debris_chance_10",
 				"double_dose_1"
 			],
-			"x": 4906.5,
-			"y": 7672.2,
+			"x": 5224.8,
+			"y": 7448.7,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -2369,8 +2491,8 @@
 			"connectedTo": [
 				"stellar_flares_chance_4"
 			],
-			"x": 2346.9,
-			"y": 6945.9,
+			"x": 2353,
+			"y": 6964,
 			"tags": [
 				"stellar_flares"
 			]
@@ -2382,8 +2504,8 @@
 				"travel_catalysts_25",
 				"stellar_flares_chance_4"
 			],
-			"x": 2885.3,
-			"y": 7016.1,
+			"x": 2884.5,
+			"y": 7075.4,
 			"tags": [
 				"stellar_flares"
 			]
@@ -2395,8 +2517,8 @@
 				"stellar_flares_chance_3",
 				"tempered_light_1"
 			],
-			"x": 2437.8,
-			"y": 6659,
+			"x": 2397.6,
+			"y": 6666.3,
 			"tags": [
 				"stellar_flares"
 			]
@@ -2407,8 +2529,8 @@
 			"connectedTo": [
 				"spatial_breach_chance_8"
 			],
-			"x": -3231.2,
-			"y": 6529,
+			"x": -3223.3,
+			"y": 6513.1,
 			"tags": [
 				"anomalous_debris",
 				"spatial_breach"
@@ -2421,8 +2543,8 @@
 				"travel_catalysts_28",
 				"spatial_breach_chance_8"
 			],
-			"x": -2875.7,
-			"y": 7022.2,
+			"x": -3820.6,
+			"y": 6626.8,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -2434,8 +2556,8 @@
 				"anomalous_debris_chance_11",
 				"breached_graveyard_1"
 			],
-			"x": -2888.8,
-			"y": 6399.7,
+			"x": -3417.3,
+			"y": 6202.7,
 			"tags": [
 				"spatial_breach"
 			]
@@ -2446,8 +2568,8 @@
 			"connectedTo": [
 				"breach_cache_quantity_1"
 			],
-			"x": -5782.9,
-			"y": 6575.3,
+			"x": -1722.5,
+			"y": 8596.2,
 			"tags": [
 				"spatial_breach"
 			]
@@ -2456,11 +2578,11 @@
 			"id": "spatial_breach_chance_9",
 			"type": "spatial_breach_chance",
 			"connectedTo": [
-				"travel_catalysts_29",
+				"travel_catalysts_27",
 				"breach_cache_quantity_1"
 			],
-			"x": -5247.1,
-			"y": 6680.4,
+			"x": -1203.5,
+			"y": 8426.7,
 			"tags": [
 				"spatial_breach"
 			]
@@ -2472,10 +2594,48 @@
 				"spatial_breach_chance_9",
 				"rift_duel_1"
 			],
-			"x": -5795.6,
-			"y": 6883.1,
+			"x": -1685,
+			"y": 8901.9,
 			"tags": [
 				"spatial_breach"
+			]
+		},
+		{
+			"id": "open_warfare_1",
+			"type": "open_warfare",
+			"connectedTo": [
+				"trophy_duplication_4"
+			],
+			"x": -4797.5,
+			"y": 5454.9,
+			"tags": [
+				"faction_skirmish"
+			]
+		},
+		{
+			"id": "scavenge_duplication_4",
+			"type": "scavenge_duplication",
+			"connectedTo": [
+				"travel_catalysts_29",
+				"trophy_duplication_4"
+			],
+			"x": -5403.1,
+			"y": 5434.5,
+			"tags": [
+				"faction_skirmish"
+			]
+		},
+		{
+			"id": "trophy_duplication_4",
+			"type": "trophy_duplication",
+			"connectedTo": [
+				"scavenge_duplication_4",
+				"open_warfare_1"
+			],
+			"x": -4874.4,
+			"y": 5111.4,
+			"tags": [
+				"faction_skirmish"
 			]
 		},
 		{
@@ -2484,8 +2644,8 @@
 			"connectedTo": [
 				"dense_nebula_atlas_chance_4"
 			],
-			"x": -6889.4,
-			"y": 2327.8,
+			"x": -6906,
+			"y": 2333.4,
 			"tags": [
 				"dense_nebula"
 			]
@@ -2497,8 +2657,8 @@
 				"travel_catalysts_31",
 				"dense_nebula_atlas_chance_4"
 			],
-			"x": -7012.5,
-			"y": 2915,
+			"x": -7054.3,
+			"y": 2914.8,
 			"tags": [
 				"dense_nebula"
 			]
@@ -2510,8 +2670,8 @@
 				"dense_nebula_atlas_chance_3",
 				"long_settling_1"
 			],
-			"x": -6547.2,
-			"y": 2379.1,
+			"x": -6560.3,
+			"y": 2320.7,
 			"tags": [
 				"dense_nebula"
 			]
@@ -2522,8 +2682,8 @@
 			"connectedTo": [
 				"listening_post_chance_10"
 			],
-			"x": -8757.7,
-			"y": 561.6,
+			"x": -8768.1,
+			"y": 562.3,
 			"tags": [
 				"listening_post"
 			]
@@ -2535,8 +2695,8 @@
 				"travel_catalysts_32",
 				"listening_post_chance_10"
 			],
-			"x": -8393.3,
-			"y": 984.1,
+			"x": -8360,
+			"y": 942.8,
 			"tags": [
 				"listening_post"
 			]
@@ -2548,8 +2708,8 @@
 				"listening_post_chance_9",
 				"garrison_pickets_1"
 			],
-			"x": -8907.9,
-			"y": 844.2,
+			"x": -8967,
+			"y": 813,
 			"tags": [
 				"listening_post"
 			]
@@ -2560,8 +2720,8 @@
 			"connectedTo": [
 				"spatial_breach_chance_11"
 			],
-			"x": -6527.8,
-			"y": -3230.6,
+			"x": -6526.1,
+			"y": -3229.8,
 			"tags": [
 				"black_hole",
 				"spatial_breach"
@@ -2574,8 +2734,8 @@
 				"travel_catalysts_34",
 				"spatial_breach_chance_11"
 			],
-			"x": -6560.2,
-			"y": -3833.7,
+			"x": -6783.3,
+			"y": -3776.3,
 			"tags": [
 				"spatial_breach"
 			]
@@ -2587,8 +2747,8 @@
 				"spatial_breach_chance_10",
 				"event_horizon_1"
 			],
-			"x": -6165.3,
-			"y": -3179.6,
+			"x": -6253.6,
+			"y": -3474.2,
 			"tags": [
 				"spatial_breach"
 			]
@@ -2599,8 +2759,8 @@
 			"connectedTo": [
 				"stellar_flares_chance_6"
 			],
-			"x": -6599.8,
-			"y": -5804.4,
+			"x": -6583,
+			"y": -5789.6,
 			"tags": [
 				"stellar_flares"
 			]
@@ -2612,8 +2772,8 @@
 				"travel_catalysts_35",
 				"stellar_flares_chance_6"
 			],
-			"x": -6618.6,
-			"y": -5246.7,
+			"x": -6025.1,
+			"y": -5779.3,
 			"tags": [
 				"stellar_flares"
 			]
@@ -2625,8 +2785,8 @@
 				"stellar_flares_chance_5",
 				"solar_maximum_1"
 			],
-			"x": -6908.2,
-			"y": -5735.3,
+			"x": -6612.2,
+			"y": -6104.3,
 			"tags": [
 				"stellar_flares"
 			]
@@ -2637,8 +2797,8 @@
 			"connectedTo": [
 				"relay_reward_rarity_2"
 			],
-			"x": -2783.4,
-			"y": -8237.9,
+			"x": -4820,
+			"y": -7235.7,
 			"tags": [
 				"relay_network"
 			]
@@ -2647,11 +2807,11 @@
 			"id": "relay_reward_rarity_1",
 			"type": "relay_reward_rarity",
 			"connectedTo": [
-				"travel_catalysts_37",
+				"travel_catalysts_36",
 				"relay_reward_rarity_2"
 			],
-			"x": -2318.3,
-			"y": -8119.2,
+			"x": -4366.1,
+			"y": -7079.4,
 			"tags": [
 				"relay_network"
 			]
@@ -2663,8 +2823,8 @@
 				"relay_reward_rarity_1",
 				"full_array_1"
 			],
-			"x": -2792.7,
-			"y": -8491.7,
+			"x": -4695,
+			"y": -7456.8,
 			"tags": [
 				"relay_network"
 			]
@@ -2675,8 +2835,8 @@
 			"connectedTo": [
 				"storm_front_chance_8"
 			],
-			"x": 4810.6,
-			"y": -5469.8,
+			"x": 4799.3,
+			"y": -5456.9,
 			"tags": [
 				"storm_front"
 			]
@@ -2688,8 +2848,8 @@
 				"travel_catalysts_41",
 				"storm_front_chance_8"
 			],
-			"x": 5420.2,
-			"y": -5491.2,
+			"x": 4704.4,
+			"y": -6059.5,
 			"tags": [
 				"storm_front"
 			]
@@ -2701,8 +2861,8 @@
 				"storm_front_chance_7",
 				"redacted_front_1"
 			],
-			"x": 4851.8,
-			"y": -5112.2,
+			"x": 4472.9,
+			"y": -5305,
 			"tags": [
 				"storm_front"
 			]
@@ -2713,8 +2873,8 @@
 			"connectedTo": [
 				"inhibitor_quantity_1"
 			],
-			"x": 6025.1,
-			"y": -4013.5,
+			"x": 6027.3,
+			"y": -4015,
 			"tags": [
 				"excavation_sites"
 			]
@@ -2726,8 +2886,8 @@
 				"travel_catalysts_42",
 				"inhibitor_quantity_1"
 			],
-			"x": 6647.9,
-			"y": -3961.3,
+			"x": 6176.6,
+			"y": -4621.9,
 			"tags": [
 				"excavation_sites"
 			]
@@ -2739,10 +2899,48 @@
 				"additional_site_1",
 				"needle_bores_1"
 			],
-			"x": 6100.2,
-			"y": -3656.4,
+			"x": 5663.3,
+			"y": -3987.5,
 			"tags": [
 				"excavation_sites"
+			]
+		},
+		{
+			"id": "scrappers_fortune_1",
+			"type": "scrappers_fortune",
+			"connectedTo": [
+				"scavenge_duplication_5"
+			],
+			"x": 3908,
+			"y": -7896.6,
+			"tags": [
+				"faction_skirmish"
+			]
+		},
+		{
+			"id": "trophy_duplication_5",
+			"type": "trophy_duplication",
+			"connectedTo": [
+				"travel_catalysts_40",
+				"scavenge_duplication_5"
+			],
+			"x": 4197.5,
+			"y": -7373.3,
+			"tags": [
+				"faction_skirmish"
+			]
+		},
+		{
+			"id": "scavenge_duplication_5",
+			"type": "scavenge_duplication",
+			"connectedTo": [
+				"trophy_duplication_5",
+				"scrappers_fortune_1"
+			],
+			"x": 4251.7,
+			"y": -7912.9,
+			"tags": [
+				"faction_skirmish"
 			]
 		},
 		{
@@ -2751,8 +2949,8 @@
 			"connectedTo": [
 				"magnetic_storm_chance_6"
 			],
-			"x": 8278,
-			"y": -2797,
+			"x": 8294.3,
+			"y": -2802.5,
 			"tags": [
 				"magnetic_storm"
 			]
@@ -2764,8 +2962,8 @@
 				"travel_catalysts_43",
 				"magnetic_storm_chance_6"
 			],
-			"x": 8003.5,
-			"y": -2341.2,
+			"x": 7821.9,
+			"y": -3047.1,
 			"tags": [
 				"magnetic_storm"
 			]
@@ -2777,8 +2975,8 @@
 				"magnetic_storm_chance_5",
 				"ion_front_1"
 			],
-			"x": 8545.1,
-			"y": -2674.1,
+			"x": 8426.2,
+			"y": -3065.2,
 			"tags": [
 				"magnetic_storm"
 			]
@@ -2789,8 +2987,8 @@
 			"connectedTo": [
 				"additional_debris_2"
 			],
-			"x": 8803.8,
-			"y": -564.6,
+			"x": 8794.2,
+			"y": -563.9,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -2802,8 +3000,8 @@
 				"travel_catalysts_44",
 				"additional_debris_2"
 			],
-			"x": 8355.6,
-			"y": -174.8,
+			"x": 8471.8,
+			"y": -65,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -2815,8 +3013,8 @@
 				"engram_quantity_1",
 				"deep_corruption_1"
 			],
-			"x": 8980.7,
-			"y": -264.8,
+			"x": 9107.4,
+			"y": -412.3,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -2827,8 +3025,8 @@
 			"connectedTo": [
 				"supply_convoy_chance_5"
 			],
-			"x": -9442.1,
-			"y": 6557.1,
+			"x": -9450.6,
+			"y": 6564.2,
 			"tags": [
 				"supply_convoy"
 			]
@@ -2840,8 +3038,8 @@
 				"travel_chart_modifier_effect_29",
 				"supply_convoy_chance_5"
 			],
-			"x": -9109.5,
-			"y": 6082,
+			"x": -9118,
+			"y": 6089.1,
 			"tags": [
 				"supply_convoy"
 			]
@@ -2853,8 +3051,8 @@
 				"supply_convoy_chance_4",
 				"threat_embargo_1"
 			],
-			"x": -9710.3,
-			"y": 6332.2,
+			"x": -9718.8,
+			"y": 6339.3,
 			"tags": [
 				"supply_convoy"
 			]
@@ -2865,8 +3063,8 @@
 			"connectedTo": [
 				"supply_convoy_chance_7"
 			],
-			"x": -8179.5,
-			"y": 6864,
+			"x": -8188,
+			"y": 6871.1,
 			"tags": [
 				"supply_convoy"
 			]
@@ -2878,8 +3076,8 @@
 				"travel_chart_modifier_effect_29",
 				"supply_convoy_chance_7"
 			],
-			"x": -7608.3,
-			"y": 6964.7,
+			"x": -7616.8,
+			"y": 6971.8,
 			"tags": [
 				"supply_convoy"
 			]
@@ -2891,8 +3089,8 @@
 				"supply_convoy_chance_6",
 				"shroud_embargo_1"
 			],
-			"x": -8209.9,
-			"y": 7212.7,
+			"x": -8218.4,
+			"y": 7219.8,
 			"tags": [
 				"supply_convoy"
 			]
@@ -2903,8 +3101,8 @@
 			"connectedTo": [
 				"threat_feedstock_chance_1"
 			],
-			"x": -8096.4,
-			"y": 8160.8,
+			"x": -8104.9,
+			"y": 8167.9,
 			"tags": [
 				"supply_convoy"
 			]
@@ -2916,8 +3114,8 @@
 				"travel_chart_modifier_effect_29",
 				"threat_feedstock_chance_1"
 			],
-			"x": -7570.7,
-			"y": 7915.7,
+			"x": -7579.2,
+			"y": 7922.8,
 			"tags": [
 				"supply_convoy"
 			]
@@ -2929,8 +3127,8 @@
 				"supply_convoy_chance_8",
 				"phase_embargo_1"
 			],
-			"x": -7921.3,
-			"y": 8463.9,
+			"x": -7929.8,
+			"y": 8471,
 			"tags": [
 				"supply_convoy"
 			]
@@ -2941,8 +3139,8 @@
 			"connectedTo": [
 				"inhibitor_quantity_2"
 			],
-			"x": -10341.3,
-			"y": 2965.9,
+			"x": -10351.9,
+			"y": 2968.9,
 			"tags": [
 				"excavation_sites"
 			]
@@ -2954,8 +3152,8 @@
 				"travel_chart_modifier_effect_1",
 				"inhibitor_quantity_2"
 			],
-			"x": -10089.8,
-			"y": 2393.7,
+			"x": -9882.4,
+			"y": 3381.6,
 			"tags": [
 				"excavation_sites"
 			]
@@ -2967,8 +3165,8 @@
 				"additional_site_2",
 				"deeper_bores_1"
 			],
-			"x": -10703,
-			"y": 2916.9,
+			"x": -10551.2,
+			"y": 3274.6,
 			"tags": [
 				"excavation_sites"
 			]
@@ -2979,8 +3177,8 @@
 			"connectedTo": [
 				"storm_front_chance_10"
 			],
-			"x": -9111.2,
-			"y": -1280,
+			"x": -9122.1,
+			"y": -1281.6,
 			"tags": [
 				"storm_front"
 			]
@@ -2992,8 +3190,8 @@
 				"travel_chart_modifier_effect_3",
 				"storm_front_chance_10"
 			],
-			"x": -9580.9,
-			"y": -957.1,
+			"x": -9451.5,
+			"y": -816.4,
 			"tags": [
 				"storm_front"
 			]
@@ -3005,8 +3203,8 @@
 				"storm_front_chance_9",
 				"solar_front_1"
 			],
-			"x": -8856.8,
-			"y": -1085.9,
+			"x": -8886.3,
+			"y": -1065.2,
 			"tags": [
 				"storm_front"
 			]
@@ -3017,8 +3215,8 @@
 			"connectedTo": [
 				"excavation_sites_chance_12"
 			],
-			"x": -8627.5,
-			"y": -3139.7,
+			"x": -8637.8,
+			"y": -3143.4,
 			"tags": [
 				"supply_convoy",
 				"excavation_sites"
@@ -3031,8 +3229,8 @@
 				"travel_chart_modifier_effect_4",
 				"excavation_sites_chance_12"
 			],
-			"x": -9135.3,
-			"y": -2780.4,
+			"x": -8881.6,
+			"y": -3715.7,
 			"tags": [
 				"supply_convoy"
 			]
@@ -3044,8 +3242,8 @@
 				"supply_convoy_chance_9",
 				"bolt_hole_drop_1"
 			],
-			"x": -8568.3,
-			"y": -2767.4,
+			"x": -8278.2,
+			"y": -3256.4,
 			"tags": [
 				"excavation_sites"
 			]
@@ -3056,8 +3254,8 @@
 			"connectedTo": [
 				"warped_chance_1"
 			],
-			"x": -9035.3,
-			"y": -5645.3,
+			"x": -9044.6,
+			"y": -5651.1,
 			"tags": [
 				"spatial_breach"
 			]
@@ -3069,8 +3267,8 @@
 				"travel_chart_modifier_effect_5",
 				"warped_chance_1"
 			],
-			"x": -8922.2,
-			"y": -5111.1,
+			"x": -8530,
+			"y": -5833.6,
 			"tags": [
 				"spatial_breach"
 			]
@@ -3082,8 +3280,8 @@
 				"breach_cache_items_1",
 				"hyperspace_bleed_1"
 			],
-			"x": -9335.8,
-			"y": -5577.7,
+			"x": -9193.6,
+			"y": -5920.6,
 			"tags": [
 				"spatial_breach"
 			]
@@ -3094,8 +3292,8 @@
 			"connectedTo": [
 				"settling_dust_stacks_1"
 			],
-			"x": -5980.7,
-			"y": -8865.8,
+			"x": -5986.8,
+			"y": -8874.9,
 			"tags": [
 				"dense_nebula"
 			]
@@ -3107,8 +3305,8 @@
 				"travel_chart_modifier_effect_7",
 				"settling_dust_stacks_1"
 			],
-			"x": -5399.3,
-			"y": -8840,
+			"x": -6028.7,
+			"y": -8294.4,
 			"tags": [
 				"dense_nebula"
 			]
@@ -3120,8 +3318,8 @@
 				"settling_dust_effect_1",
 				"ionized_dust_1"
 			],
-			"x": -6006.4,
-			"y": -9192.8,
+			"x": -6295.7,
+			"y": -8985.4,
 			"tags": [
 				"dense_nebula"
 			]
@@ -3132,8 +3330,8 @@
 			"connectedTo": [
 				"relay_reward_rarity_4"
 			],
-			"x": -1614.4,
-			"y": -9152.9,
+			"x": -3486.2,
+			"y": -8627.5,
 			"tags": [
 				"relay_network"
 			]
@@ -3142,11 +3340,11 @@
 			"id": "relay_reward_rarity_3",
 			"type": "relay_reward_rarity",
 			"connectedTo": [
-				"travel_chart_modifier_effect_9",
+				"travel_chart_modifier_effect_8",
 				"relay_reward_rarity_4"
 			],
-			"x": -1243.9,
-			"y": -9494.6,
+			"x": -3151.3,
+			"y": -9004.1,
 			"tags": [
 				"relay_network"
 			]
@@ -3158,8 +3356,8 @@
 				"relay_reward_rarity_3",
 				"double_down_1"
 			],
-			"x": -1398.7,
-			"y": -8977.6,
+			"x": -3263.4,
+			"y": -8461.3,
 			"tags": [
 				"relay_network"
 			]
@@ -3170,8 +3368,8 @@
 			"connectedTo": [
 				"phase_feedstock_chance_1"
 			],
-			"x": 372.2,
-			"y": -10673.2,
+			"x": -1856.9,
+			"y": -10528.2,
 			"tags": [
 				"supply_convoy"
 			]
@@ -3180,11 +3378,11 @@
 			"id": "shroud_feedstock_chance_1",
 			"type": "shroud_feedstock_chance",
 			"connectedTo": [
-				"travel_chart_modifier_effect_10",
+				"travel_chart_modifier_effect_9",
 				"phase_feedstock_chance_1"
 			],
-			"x": 877.9,
-			"y": -10389.3,
+			"x": -1403.5,
+			"y": -10166.6,
 			"tags": [
 				"supply_convoy"
 			]
@@ -3196,8 +3394,8 @@
 				"shroud_feedstock_chance_1",
 				"open_season_1"
 			],
-			"x": 580.6,
-			"y": -10954.4,
+			"x": -1630.7,
+			"y": -10795.3,
 			"tags": [
 				"supply_convoy"
 			]
@@ -3208,8 +3406,8 @@
 			"connectedTo": [
 				"storm_front_chance_12"
 			],
-			"x": 2219.8,
-			"y": -8905,
+			"x": 2222.5,
+			"y": -8915.7,
 			"tags": [
 				"storm_front"
 			]
@@ -3221,8 +3419,8 @@
 				"travel_chart_modifier_effect_11",
 				"storm_front_chance_12"
 			],
-			"x": 2753,
-			"y": -9201.4,
+			"x": 2814.4,
+			"y": -9063.1,
 			"tags": [
 				"storm_front"
 			]
@@ -3234,8 +3432,8 @@
 				"storm_front_chance_11",
 				"thunder_duel_1"
 			],
-			"x": 2363,
-			"y": -8574.8,
+			"x": 2245.7,
+			"y": -8556.5,
 			"tags": [
 				"storm_front"
 			]
@@ -3246,8 +3444,8 @@
 			"connectedTo": [
 				"anomalous_debris_chance_12"
 			],
-			"x": 5643.2,
-			"y": -7223.7,
+			"x": 5649.9,
+			"y": -7232.3,
 			"tags": [
 				"spatial_breach",
 				"anomalous_debris"
@@ -3260,8 +3458,8 @@
 				"travel_chart_modifier_effect_13",
 				"anomalous_debris_chance_12"
 			],
-			"x": 5500,
-			"y": -7818.7,
+			"x": 5572.3,
+			"y": -7839.4,
 			"tags": [
 				"spatial_breach"
 			]
@@ -3273,8 +3471,8 @@
 				"spatial_breach_chance_12",
 				"rude_awakening_1"
 			],
-			"x": 5302.4,
-			"y": -7079.5,
+			"x": 5281.1,
+			"y": -7261.7,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -3285,8 +3483,8 @@
 			"connectedTo": [
 				"inhibitor_quantity_3"
 			],
-			"x": 9481,
-			"y": -5041.7,
+			"x": 8234,
+			"y": -6909.8,
 			"tags": [
 				"excavation_sites"
 			]
@@ -3295,11 +3493,11 @@
 			"id": "additional_site_3",
 			"type": "additional_site",
 			"connectedTo": [
-				"travel_chart_modifier_effect_15",
+				"travel_chart_modifier_effect_14",
 				"inhibitor_quantity_3"
 			],
-			"x": 8865.7,
-			"y": -5151.7,
+			"x": 7609,
+			"y": -6900.5,
 			"tags": [
 				"excavation_sites"
 			]
@@ -3311,10 +3509,48 @@
 				"additional_site_3",
 				"pitch_black_1"
 			],
-			"x": 9639.2,
-			"y": -5370.6,
+			"x": 8070.1,
+			"y": -7236,
 			"tags": [
 				"excavation_sites"
+			]
+		},
+		{
+			"id": "iron_grip_1",
+			"type": "iron_grip",
+			"connectedTo": [
+				"trophy_duplication_6"
+			],
+			"x": 8122.3,
+			"y": -4319.2,
+			"tags": [
+				"faction_skirmish"
+			]
+		},
+		{
+			"id": "scavenge_duplication_6",
+			"type": "scavenge_duplication",
+			"connectedTo": [
+				"travel_chart_modifier_effect_15",
+				"trophy_duplication_6"
+			],
+			"x": 8586.3,
+			"y": -3951.6,
+			"tags": [
+				"faction_skirmish"
+			]
+		},
+		{
+			"id": "trophy_duplication_6",
+			"type": "trophy_duplication",
+			"connectedTo": [
+				"scavenge_duplication_6",
+				"iron_grip_1"
+			],
+			"x": 7922,
+			"y": -4046.9,
+			"tags": [
+				"faction_skirmish"
 			]
 		},
 		{
@@ -3323,8 +3559,8 @@
 			"connectedTo": [
 				"stellar_flares_chance_8"
 			],
-			"x": 10244.7,
-			"y": -2938.2,
+			"x": 10656.5,
+			"y": -745.7,
 			"tags": [
 				"stellar_flares"
 			]
@@ -3333,11 +3569,11 @@
 			"id": "stellar_flares_chance_7",
 			"type": "stellar_flares_chance",
 			"connectedTo": [
-				"travel_chart_modifier_effect_16",
+				"travel_chart_modifier_effect_17",
 				"stellar_flares_chance_8"
 			],
-			"x": 9882.3,
-			"y": -3335.8,
+			"x": 10218.8,
+			"y": -1058.5,
 			"tags": [
 				"stellar_flares"
 			]
@@ -3349,8 +3585,8 @@
 				"stellar_flares_chance_7",
 				"sunstruck_convoy_1"
 			],
-			"x": 10445.5,
-			"y": -3155.7,
+			"x": 10872.4,
+			"y": -948.3,
 			"tags": [
 				"stellar_flares"
 			]
@@ -3361,8 +3597,8 @@
 			"connectedTo": [
 				"additional_debris_3"
 			],
-			"x": 9098.4,
-			"y": 1278.2,
+			"x": 8653.1,
+			"y": 3149,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -3371,11 +3607,11 @@
 			"id": "engram_quantity_2",
 			"type": "engram_quantity",
 			"connectedTo": [
-				"travel_chart_modifier_effect_18",
+				"travel_chart_modifier_effect_19",
 				"additional_debris_3"
 			],
-			"x": 9594.2,
-			"y": 951,
+			"x": 8760.6,
+			"y": 3733.2,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -3387,8 +3623,8 @@
 				"engram_quantity_2",
 				"lone_sleeper_1"
 			],
-			"x": 8915.4,
-			"y": 982.3,
+			"x": 8315.9,
+			"y": 3235,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -3399,8 +3635,8 @@
 			"connectedTo": [
 				"listening_post_chance_12"
 			],
-			"x": 10061.1,
-			"y": 3661.4,
+			"x": 9105.9,
+			"y": 5689.4,
 			"tags": [
 				"listening_post"
 			]
@@ -3409,11 +3645,11 @@
 			"id": "listening_post_chance_11",
 			"type": "listening_post_chance",
 			"connectedTo": [
-				"travel_chart_modifier_effect_19",
+				"travel_chart_modifier_effect_20",
 				"listening_post_chance_12"
 			],
-			"x": 9977.6,
-			"y": 3065.2,
+			"x": 9123.1,
+			"y": 5087.6,
 			"tags": [
 				"listening_post"
 			]
@@ -3425,8 +3661,8 @@
 				"listening_post_chance_11",
 				"fortified_depot_1"
 			],
-			"x": 10424.8,
-			"y": 3676,
+			"x": 9457.6,
+			"y": 5595.4,
 			"tags": [
 				"listening_post"
 			]
@@ -3437,8 +3673,8 @@
 			"connectedTo": [
 				"storm_crafting_items_1"
 			],
-			"x": 7850.7,
-			"y": 4905.2,
+			"x": 6666,
+			"y": 6436.7,
 			"tags": [
 				"magnetic_storm"
 			]
@@ -3447,11 +3683,11 @@
 			"id": "magnetic_storm_chance_7",
 			"type": "magnetic_storm_chance",
 			"connectedTo": [
-				"travel_chart_modifier_effect_20",
+				"travel_chart_modifier_effect_21",
 				"storm_crafting_items_1"
 			],
-			"x": 8364.6,
-			"y": 4783.8,
+			"x": 6635.4,
+			"y": 6963.8,
 			"tags": [
 				"magnetic_storm"
 			]
@@ -3463,8 +3699,8 @@
 				"magnetic_storm_chance_7",
 				"geomagnetic_surge_1"
 			],
-			"x": 7843.4,
-			"y": 4615.2,
+			"x": 6377.2,
+			"y": 6410.2,
 			"tags": [
 				"magnetic_storm"
 			]
@@ -3475,8 +3711,8 @@
 			"connectedTo": [
 				"additional_convoy_chance_1"
 			],
-			"x": 6002.1,
-			"y": 8897.5,
+			"x": 6008.2,
+			"y": 8906.6,
 			"tags": [
 				"supply_convoy"
 			]
@@ -3488,8 +3724,8 @@
 				"travel_chart_modifier_effect_22",
 				"additional_convoy_chance_1"
 			],
-			"x": 6057.2,
-			"y": 8286,
+			"x": 5398.8,
+			"y": 8981.2,
 			"tags": [
 				"supply_convoy"
 			]
@@ -3501,8 +3737,8 @@
 				"feedstock_duplication_1",
 				"mixed_manifest_1"
 			],
-			"x": 6361.4,
-			"y": 8762,
+			"x": 6152.2,
+			"y": 9262.6,
 			"tags": [
 				"supply_convoy"
 			]
@@ -3513,8 +3749,8 @@
 			"connectedTo": [
 				"storm_front_size_1"
 			],
-			"x": 3435.9,
-			"y": 8503,
+			"x": 1594.9,
+			"y": 9042.4,
 			"tags": [
 				"storm_front"
 			]
@@ -3523,11 +3759,11 @@
 			"id": "storm_item_quantity_1",
 			"type": "storm_item_quantity",
 			"connectedTo": [
-				"travel_chart_modifier_effect_23",
+				"travel_chart_modifier_effect_24",
 				"storm_front_size_1"
 			],
-			"x": 3009.2,
-			"y": 8938.9,
+			"x": 2084,
+			"y": 9406.9,
 			"tags": [
 				"storm_front"
 			]
@@ -3539,8 +3775,8 @@
 				"storm_item_quantity_1",
 				"captured_front_1"
 			],
-			"x": 3169.8,
-			"y": 8260.6,
+			"x": 1817.9,
+			"y": 8759.8,
 			"tags": [
 				"storm_front"
 			]
@@ -3551,8 +3787,8 @@
 			"connectedTo": [
 				"slow_purge_1"
 			],
-			"x": -372.4,
-			"y": 10678,
+			"x": -372.7,
+			"y": 10689,
 			"tags": [
 				"listening_post"
 			]
@@ -3564,8 +3800,8 @@
 				"travel_chart_modifier_effect_25",
 				"slow_purge_1"
 			],
-			"x": -2.2,
-			"y": 10260.5,
+			"x": 131.7,
+			"y": 10450.4,
 			"tags": [
 				"listening_post"
 			]
@@ -3577,8 +3813,8 @@
 				"vault_quantity_1",
 				"hunting_party_1"
 			],
-			"x": -179,
-			"y": 10933,
+			"x": -226.4,
+			"y": 10973.6,
 			"tags": [
 				"listening_post"
 			]
@@ -3589,8 +3825,8 @@
 			"connectedTo": [
 				"breach_cache_items_2"
 			],
-			"x": -2232.3,
-			"y": 8955.2,
+			"x": -4050.2,
+			"y": 8305.2,
 			"tags": [
 				"spatial_breach"
 			]
@@ -3599,11 +3835,11 @@
 			"id": "breach_cache_quantity_2",
 			"type": "breach_cache_quantity",
 			"connectedTo": [
-				"travel_chart_modifier_effect_26",
+				"travel_chart_modifier_effect_27",
 				"breach_cache_items_2"
 			],
-			"x": -2779,
-			"y": 9116.4,
+			"x": -3890.3,
+			"y": 8852.4,
 			"tags": [
 				"spatial_breach"
 			]
@@ -3615,8 +3851,8 @@
 				"breach_cache_quantity_2",
 				"incursion_1"
 			],
-			"x": -2347.6,
-			"y": 8643.8,
+			"x": -3723.3,
+			"y": 8247.6,
 			"tags": [
 				"spatial_breach"
 			]
@@ -3627,8 +3863,8 @@
 			"connectedTo": [
 				"flare_hull_items_1"
 			],
-			"x": -6565.4,
-			"y": 8404.2,
+			"x": -6572.2,
+			"y": 8412.8,
 			"tags": [
 				"stellar_flares"
 			]
@@ -3640,8 +3876,8 @@
 				"travel_chart_modifier_effect_28",
 				"flare_hull_items_1"
 			],
-			"x": -6012.3,
-			"y": 8478.3,
+			"x": -6015.8,
+			"y": 8370.1,
 			"tags": [
 				"stellar_flares"
 			]
@@ -3653,8 +3889,8 @@
 				"stellar_flares_chance_9",
 				"perfect_light_1"
 			],
-			"x": -6516.2,
-			"y": 8716.3,
+			"x": -6540,
+			"y": 8727.2,
 			"tags": [
 				"stellar_flares"
 			]
@@ -3665,8 +3901,8 @@
 			"connectedTo": [
 				"additional_debris_4"
 			],
-			"x": -9461.5,
-			"y": 5031.4,
+			"x": -9471.2,
+			"y": 5036.5,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -3678,8 +3914,8 @@
 				"travel_chart_modifier_effect_30",
 				"additional_debris_4"
 			],
-			"x": -8908.2,
-			"y": 5247.4,
+			"x": -8917.5,
+			"y": 5251.4,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -3691,8 +3927,8 @@
 				"engram_quantity_3",
 				"silent_choir_1"
 			],
-			"x": -9598.8,
-			"y": 5351.2,
+			"x": -9592.4,
+			"y": 5362.8,
 			"tags": [
 				"anomalous_debris"
 			]
@@ -3707,5 +3943,7 @@
 			"radius": 520,
 			"starType": "star_yellow"
 		}
-	]
+	],
+	"connectorCurves": [],
+	"hiddenConnectors": []
 }

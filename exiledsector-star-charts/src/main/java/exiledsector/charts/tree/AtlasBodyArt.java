@@ -3,7 +3,7 @@ package exiledsector.charts.tree;
 import java.util.List;
 
 public record AtlasBodyArt(Kind kind, String planetType, List<String> spritePaths, List<String> hullIds, Shape shape, Colours colours,
-                           Weather weather, Population population) {
+                           Weather weather, Population population, Flagship flagship) {
 
     public static final float DEFAULT_SIZE = 20f;
     public static final float DEFAULT_HEADING = 90f;
@@ -11,12 +11,16 @@ public record AtlasBodyArt(Kind kind, String planetType, List<String> spritePath
     public static final Colours NO_COLOURS = new Colours(null, null);
     public static final Weather NO_WEATHER = new Weather(Storm.NONE, Flare.NONE, Field.NONE, Nebula.NONE);
     public static final Population UNPOPULATED = new Population(List.of(), List.of(), List.of());
+    public static final Flagship NO_FLAGSHIP = new Flagship(Scene.NONE, List.of(), List.of(), null);
     public static final AtlasBodyArt PLAIN = new AtlasBodyArt(Kind.PLAIN, null, List.of(), List.of(), DEFAULT_SHAPE, NO_COLOURS, NO_WEATHER,
-            UNPOPULATED);
+            UNPOPULATED, NO_FLAGSHIP);
 
     public enum Kind {
-        STAR, PLANET, SWARMED_PLANET, CROSSED_PLANET, SPRITE, BINARY, FLEET, DERELICTS, SHROUDED, STATION, OUTPOST, PATROL, BREACH, STORM_CELL, NEBULA, PLAIN
+        STAR, PLANET, SWARMED_PLANET, CROSSED_PLANET, SPRITE, BINARY, FLEET, DERELICTS, SHROUDED, STATION, OUTPOST, PATROL, BREACH, STORM_CELL, NEBULA,
+        FLAGSHIP, PLAIN
     }
+
+    public enum Scene { NONE, COMMAND, ESCORT, GUARD_RING, STANDOFF, TROPHY, SCRAPPERS, SPOILS, TOW, SALVAGE }
 
     public enum Facing { SPIN, TRAVEL }
 
@@ -53,6 +57,15 @@ public record AtlasBodyArt(Kind kind, String planetType, List<String> spritePath
         }
     }
 
+    public record Flagship(Scene scene, List<String> wreckHulls, List<String> rivalHulls, String rivalColour) {
+
+        public Flagship {
+            scene = scene == null ? Scene.NONE : scene;
+            wreckHulls = wreckHulls == null ? List.of() : List.copyOf(wreckHulls);
+            rivalHulls = rivalHulls == null ? List.of() : List.copyOf(rivalHulls);
+        }
+    }
+
     public AtlasBodyArt {
         spritePaths = spritePaths == null ? List.of() : List.copyOf(spritePaths);
         hullIds = hullIds == null ? List.of() : List.copyOf(hullIds);
@@ -60,6 +73,7 @@ public record AtlasBodyArt(Kind kind, String planetType, List<String> spritePath
         colours = colours == null ? NO_COLOURS : colours;
         weather = weather == null ? NO_WEATHER : weather;
         population = population == null ? UNPOPULATED : population;
+        flagship = flagship == null ? NO_FLAGSHIP : flagship;
     }
 
     public float size() {
@@ -114,12 +128,28 @@ public record AtlasBodyArt(Kind kind, String planetType, List<String> spritePath
         return population.haulers();
     }
 
+    public Scene scene() {
+        return flagship.scene();
+    }
+
+    public List<String> wreckHulls() {
+        return flagship.wreckHulls();
+    }
+
+    public List<String> rivalHulls() {
+        return flagship.rivalHulls();
+    }
+
+    public String rivalColour() {
+        return flagship.rivalColour();
+    }
+
     public boolean isPlanet() {
         return kind == Kind.PLANET || kind == Kind.SWARMED_PLANET || kind == Kind.CROSSED_PLANET;
     }
 
     public boolean isShipGroup() {
         return kind == Kind.FLEET || kind == Kind.DERELICTS || kind == Kind.SHROUDED || kind == Kind.STATION || kind == Kind.OUTPOST
-                || kind == Kind.PATROL;
+                || kind == Kind.PATROL || kind == Kind.FLAGSHIP;
     }
 }

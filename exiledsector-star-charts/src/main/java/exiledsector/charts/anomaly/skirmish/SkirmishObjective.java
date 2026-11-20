@@ -7,6 +7,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.charts.anomaly.AnomalyState;
 import exiledsector.charts.atlas.AtlasRuntime;
 import exiledsector.charts.atlas.AtlasState;
+import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.OfficerDefeat;
 import exiledsector.charts.officer.turn.OfficerTurns;
 import exiledsector.charts.run.ChartRun;
@@ -72,15 +73,29 @@ public final class SkirmishObjective {
         SkirmishFlagships.record(AnomalyState.of(run, FactionSkirmish.ANOMALY_ID), flagship.fallen(how, fallOrder));
 
         boolean beatenByPlayer = how == FlagshipFall.BEATEN_BY_PLAYER;
-        Loot officerLoot = beatenByPlayer
-                ? OfficerDefeat.officerBeaten(sector, run, flagship.officerRecordId(), flagship.flagshipId())
-                : Loot.NONE;
+        Loot officerLoot = beatenByPlayer ? beatenOfficerLoot(sector, run, flagship) : Loot.NONE;
         SkirmishFlagships after = SkirmishFlagships.of(run);
         boolean bothFallen = after == null || after.allFallen();
         if (beatenByPlayer && !bothFallen) {
             takeTurnAfterDefeat(sector, flagship.officerRecordId());
         }
         return new SkirmishProgress(true, officerLoot, bothFallen, beatenByPlayer ? flagship.officerRecordId() : null);
+    }
+
+    private static Loot beatenOfficerLoot(SectorAPI sector, ChartRun run, SkirmishFlagship flagship) {
+        return spoilsOfWar(sector, run, flagship.officerRecordId())
+                .plus(OfficerDefeat.officerBeaten(sector, run, flagship.officerRecordId(), flagship.flagshipId()));
+    }
+
+    private static Loot spoilsOfWar(SectorAPI sector, ChartRun run, int officerRecordId) {
+        try {
+            AtlasState state = AtlasState.getIfCreated(sector);
+            AtlasOfficer officer = state == null ? null : state.officer(officerRecordId);
+            return SpoilsOfWar.of(run).extraLoot(sector, officer, run);
+        } catch (RuntimeException | LinkageError e) {
+            LOG.error("[ExiledSector] Rolling the Spoils of War of Atlas officer " + officerRecordId + " failed", e);
+            return Loot.NONE;
+        }
     }
 
     private static void takeTurnAfterDefeat(SectorAPI sector, int officerRecordId) {

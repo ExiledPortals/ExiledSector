@@ -7,16 +7,24 @@ import exiledsector.charts.officer.OfficerRank;
 import exiledsector.charts.officer.OfficerRanks;
 import exiledsector.charts.officer.ScavengeRoll;
 import exiledsector.charts.officer.StartingItemRoll;
+import exiledsector.charts.officer.TrophyRefit;
 
 import java.util.List;
 import java.util.Set;
 
 public record TurnSetup(TurnRules rules, List<OfficerRank> ranks, IntentResolvers resolvers, AtlasCell openRunCell, Set<Integer> openRunOfficerIds,
-                        FlagshipCatalogue catalogue, StartingItemRoll startingItems, ScavengeRoll scavenges) {
+                        FlagshipCatalogue catalogue, StartingItemRoll startingItems, ScavengeRoll scavenges, OfficerBoons boons, TrophyRefit refits) {
 
     public TurnSetup {
         ranks = List.copyOf(ranks);
         openRunOfficerIds = openRunOfficerIds == null ? Set.of() : Set.copyOf(openRunOfficerIds);
+        boons = boons == null ? OfficerBoons.NONE : boons;
+        refits = refits == null ? TrophyRefit.NONE : refits;
+    }
+
+    public TurnSetup(TurnRules rules, List<OfficerRank> ranks, IntentResolvers resolvers, AtlasCell openRunCell, Set<Integer> openRunOfficerIds,
+                     FlagshipCatalogue catalogue, StartingItemRoll startingItems, ScavengeRoll scavenges) {
+        this(rules, ranks, resolvers, openRunCell, openRunOfficerIds, catalogue, startingItems, scavenges, OfficerBoons.NONE, TrophyRefit.NONE);
     }
 
     public TurnSetup(TurnRules rules, List<OfficerRank> ranks, IntentResolvers resolvers, AtlasCell openRunCell, Set<Integer> openRunOfficerIds,
