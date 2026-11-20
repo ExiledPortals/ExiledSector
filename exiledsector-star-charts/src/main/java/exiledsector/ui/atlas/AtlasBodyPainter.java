@@ -81,6 +81,7 @@ final class AtlasBodyPainter {
     private final Vector2f bandCentre = new Vector2f();
     private final Vector3f siteOffset = new Vector3f();
     private final AtlasStormPainter storms = new AtlasStormPainter();
+    private final AtlasCloudPainter clouds = new AtlasCloudPainter();
     private final AtlasFlarePainter flares = new AtlasFlarePainter();
     private final AtlasFieldPainter fields = new AtlasFieldPainter();
     private final AtlasNebulaPainter nebulae = new AtlasNebulaPainter();
@@ -218,6 +219,7 @@ final class AtlasBodyPainter {
         Color bodyTint = spec.isStar() ? starShade.of(litTint, lighting) : tintFor(lighting, litTint);
         PlanetSphere.draw(sphere, texture, spec, placement.screenX(), placement.screenY(), radius, turn, bodyTint, alpha, 0f, 0f);
         paintCityLights(art, spec, placement, turn, lighting, alpha);
+        clouds.paint(art, colour, spec, sphere, placement, turn, lighting, seconds, alpha);
         SpriteAPI atmosphere = atmosphereTexture.get();
         if (lighting == Lighting.LIT && atmosphere != null) {
             float thickness = radius * Math.max(spec.getAtmosphereThickness(), ATMOSPHERE_MIN_SHARE);

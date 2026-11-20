@@ -59,7 +59,6 @@ final class AtlasStormPainter {
     private static final float ROD_EMBER_SIZE = 0.35f;
     private static final float ROD_EMBER_ALPHA = 0.3f;
 
-    private static final int SUPERCELL_BACKGROUND_PUFFS = 4;
     private static final int SUPERCELL_MASS_PUFFS = 3;
     private static final float SUPERCELL_MASS_REACH = 0.28f;
     private static final float SUPERCELL_MASS_SPREAD = 0.18f;
@@ -137,7 +136,7 @@ final class AtlasStormPainter {
             case CAPTURED -> paintCaptured(centreX, centreY, radius);
             case SOLAR -> paintSolar(centreX, centreY, radius);
             case DUEL -> paintDuel(centreX, centreY, radius);
-            default -> paintScattered(centreX, centreY, radius, SCATTERED_PUFFS, true);
+            default -> paintScattered(centreX, centreY, radius);
         }
     }
 
@@ -191,13 +190,13 @@ final class AtlasStormPainter {
         }
     }
 
-    private void paintScattered(float centreX, float centreY, float radius, int puffs, boolean flashes) {
-        float strength = flashes ? StormWeather.flash(seed, seconds, StormWeather.SCATTERED_FLASH_SECONDS, flashChance) : 0f;
-        int flashing = strength > 0f ? StormWeather.pick(seed, StormWeather.slotOf(seed, seconds, StormWeather.SCATTERED_FLASH_SECONDS), puffs) : -1;
+    private void paintScattered(float centreX, float centreY, float radius) {
+        float strength = StormWeather.flash(seed, seconds, StormWeather.SCATTERED_FLASH_SECONDS, flashChance);
+        int flashing = strength > 0f ? StormWeather.pick(seed, StormWeather.slotOf(seed, seconds, StormWeather.SCATTERED_FLASH_SECONDS), SCATTERED_PUFFS) : -1;
         flashPlaced = false;
-        for (int puff = 0; puff < puffs; puff++) {
+        for (int puff = 0; puff < SCATTERED_PUFFS; puff++) {
             float reach = radius * (SCATTERED_INNER + SCATTERED_SPREAD * StormWeather.unit(seed, puff, 2));
-            double angle = Math.toRadians(seed * 7f + puff * 360f / puffs + StormWeather.signedUnit(seed, puff, 3) * 25f
+            double angle = Math.toRadians(seed * 7f + puff * 360f / SCATTERED_PUFFS + StormWeather.signedUnit(seed, puff, 3) * 25f
                     + stormSeconds * SCATTERED_TURN_DEGREES_PER_SECOND);
             float puffX = centreX + (float) Math.cos(angle) * reach;
             float puffY = centreY + (float) Math.sin(angle) * reach;
@@ -212,7 +211,6 @@ final class AtlasStormPainter {
     }
 
     private void paintLightningRod(float centreX, float centreY, float radius) {
-        paintScattered(centreX, centreY, radius, SCATTERED_PUFFS - 1, false);
         double rodAngle = Math.toRadians(seed * 3f + 40f);
         float rodX = centreX + (float) Math.cos(rodAngle) * radius * ROD_REACH;
         float rodY = centreY + (float) Math.sin(rodAngle) * radius * ROD_REACH;
@@ -249,7 +247,6 @@ final class AtlasStormPainter {
     }
 
     private void paintSupercell(float centreX, float centreY, float radius) {
-        paintScattered(centreX, centreY, radius, SUPERCELL_BACKGROUND_PUFFS, false);
         double massAngle = Math.toRadians(seed + stormSeconds * SUPERCELL_TURN_DEGREES_PER_SECOND);
         float massX = centreX + (float) Math.cos(massAngle) * radius * SUPERCELL_MASS_REACH;
         float massY = centreY + (float) Math.sin(massAngle) * radius * SUPERCELL_MASS_REACH;
