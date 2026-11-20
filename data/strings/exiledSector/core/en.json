@@ -203,6 +203,9 @@
     "ui.socketPanel.tab.hullItems": "Hull Items",
     "ui.socketPanel.tab.hullUpgrades": "Hull Upgrades",
     "ui.socketPanel.tab.hullPatterns": "Hull Patterns",
+    "ui.socketPanel.tab.hullItems.short": "Items",
+    "ui.socketPanel.tab.hullUpgrades.short": "Upgrades",
+    "ui.socketPanel.tab.hullPatterns.short": "Patterns",
 
     "settings.interface.header": "Interface",
     "settings.tab.items": "Items",

@@ -332,17 +332,24 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
         return replaceElement(previousHeader, element, PAD, PAD);
     }
 
+    record TabRowFit(List<String> labels, int fontIndex) {
+    }
+
     private void addTabs(TooltipMakerAPI element) {
         List<SocketPanelTab> rowTabs = new ArrayList<>();
-        List<String> labels = new ArrayList<>();
+        List<String> fullLabels = new ArrayList<>();
+        List<String> shortLabels = new ArrayList<>();
         for (SocketPanelTab panelTab : SocketPanelTab.values()) {
             if (shownTabs.contains(panelTab) || panelTab == tab()) {
                 rowTabs.add(panelTab);
-                labels.add(panelTab.label());
+                fullLabels.add(panelTab.label());
+                shortLabels.add(panelTab.shortLabel());
             }
         }
         float tabRoom = panelWidth - PAD * 2f - CLOSE_BUTTON_WIDTH - GAP - headerToolsWidth();
-        int fontIndex = fittingTabFontIndex(labels, tabRoom, (label, font) -> Global.getSettings().computeStringWidth(label, font));
+        TabRowFit rowFit = fittingTabRow(fullLabels, shortLabels, tabRoom, (label, font) -> Global.getSettings().computeStringWidth(label, font));
+        List<String> labels = rowFit.labels();
+        int fontIndex = rowFit.fontIndex();
         String tabFont = TAB_FONTS.get(fontIndex);
         if (fontIndex > 0) {
             element.setAreaCheckboxFont(tabFont);
@@ -366,14 +373,15 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
         }
     }
 
-    static int fittingTabFontIndex(List<String> labels, float tabRoom, BiFunction<String, String, Float> measure) {
-        int lastIndex = TAB_FONTS.size() - 1;
-        for (int fontIndex = 0; fontIndex < lastIndex; fontIndex++) {
-            if (tabRowWidth(labels, fontIndex, measure) <= tabRoom) {
-                return fontIndex;
+    static TabRowFit fittingTabRow(List<String> fullLabels, List<String> shortLabels, float tabRoom, BiFunction<String, String, Float> measure) {
+        for (List<String> labels : List.of(fullLabels, shortLabels)) {
+            for (int fontIndex = 0; fontIndex < TAB_FONTS.size(); fontIndex++) {
+                if (tabRowWidth(labels, fontIndex, measure) <= tabRoom) {
+                    return new TabRowFit(labels, fontIndex);
+                }
             }
         }
-        return lastIndex;
+        return new TabRowFit(shortLabels, TAB_FONTS.size() - 1);
     }
 
     private static float tabRowWidth(List<String> labels, int fontIndex, BiFunction<String, String, Float> measure) {

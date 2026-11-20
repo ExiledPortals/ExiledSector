@@ -17,7 +17,15 @@ public enum SocketPanelTab {
         return labelKey;
     }
 
+    String shortLabelKey() {
+        return labelKey + ".short";
+    }
+
     String label() {
         return Translation.text(labelKey);
+    }
+
+    String shortLabel() {
+        return Translation.text(shortLabelKey());
     }
 }

@@ -26,19 +26,22 @@ class SocketPanelTabTest {
         Map<String, String> catalogue = RealCatalogue.entries(language);
         for (SocketPanelTab tab : SocketPanelTab.values()) {
             assertNotNull(catalogue.get(tab.labelKey()), tab + " in " + language);
+            assertNotNull(catalogue.get(tab.shortLabelKey()), tab + " short in " + language);
         }
     }
 
     @Test
-    void theTabRowFallsBackToNarrowerFontsWhenThreeTabsDoNotFitBesideClose() {
-        List<String> labels = List.of("Hull Items", "Hull Upgrades", "Star Charts");
+    void theTabRowFallsBackToNarrowerFontsThenShortLabelsWhenThreeTabsDoNotFitBesideClose() {
+        List<String> fullLabels = List.of("Hull Items", "Hull Upgrades", "Hull Patterns");
+        List<String> shortLabels = List.of("Items", "Upgrades", "Patterns");
         BiFunction<String, String, Float> measure = (label, font) -> label.length() * charWidth(font);
 
-        assertEquals(0, HoloPanel.fittingTabFontIndex(labels, 1000f, measure));
-        assertEquals(1, HoloPanel.fittingTabFontIndex(labels, 420f, measure));
-        assertEquals(2, HoloPanel.fittingTabFontIndex(labels, 300f, measure));
-        assertEquals(2, HoloPanel.fittingTabFontIndex(labels, 10f, measure));
-        assertEquals(0, HoloPanel.fittingTabFontIndex(List.of(), 0f, measure));
+        assertEquals(new HoloPanel.TabRowFit(fullLabels, 0), HoloPanel.fittingTabRow(fullLabels, shortLabels, 1000f, measure));
+        assertEquals(new HoloPanel.TabRowFit(fullLabels, 1), HoloPanel.fittingTabRow(fullLabels, shortLabels, 440f, measure));
+        assertEquals(new HoloPanel.TabRowFit(fullLabels, 2), HoloPanel.fittingTabRow(fullLabels, shortLabels, 300f, measure));
+        assertEquals(new HoloPanel.TabRowFit(shortLabels, 2), HoloPanel.fittingTabRow(fullLabels, shortLabels, 200f, measure));
+        assertEquals(new HoloPanel.TabRowFit(shortLabels, 2), HoloPanel.fittingTabRow(fullLabels, shortLabels, 10f, measure));
+        assertEquals(new HoloPanel.TabRowFit(List.of(), 0), HoloPanel.fittingTabRow(List.of(), List.of(), 0f, measure));
     }
 
     private static float charWidth(String font) {
