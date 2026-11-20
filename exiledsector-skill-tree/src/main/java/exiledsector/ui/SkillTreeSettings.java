@@ -13,6 +13,7 @@ import exiledsector.skills.npc.NpcTreeConfig;
 import exiledsector.skills.npc.NpcTreeSize;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.SkillNodeOpCost;
+import exiledsector.skills.template.AutoAllocateSetting;
 import exiledsector.skills.tags.VolumeToggles;
 import exiledsector.skills.unlock.HiddenNodeDisplayConfig;
 import exiledsector.skills.unlock.UnlockConditionOverrides;
@@ -37,6 +38,8 @@ public final class SkillTreeSettings {
         registerSkillTree();
         registerNpc();
         ModSettingsListener.onReload(NpcBonusScale.class, NpcBonusScale::reloadSettings);
+        ModSettingsListener.onReload(AutoAllocateSetting.class, AutoAllocateSetting::reloadSettings);
+        AutoAllocateSetting.reloadSettings();
     }
 
     private static void registerSkillTree() {
@@ -83,6 +86,8 @@ public final class SkillTreeSettings {
         treePage.intSetting(SkillNodeOpCost.UNDEFINED_FIELD_ID, untipped("settings.opCost.other"), SkillNodeOpCost.DEFAULT_UNDEFINED, 0, 100);
         treePage.radioSetting(IntegrationCostSetting.FIELD_ID, "settings.integrationCost", IntegrationCostSetting.DEFAULT,
                 IntegrationCostSetting.OPTIONS);
+        treePage.booleanSetting(AutoAllocateSetting.FREE_ALLOCATIONS_ONLY_FIELD_ID, "settings.autoAllocate.freeAllocationsOnly",
+                AutoAllocateSetting.DEFAULT_FREE_ALLOCATIONS_ONLY);
 
         treePage.header("exiledSector_modulesHeader", "settings.modules.header");
         treePage.intSetting(ModuleShareSetting.FIELD_ID, "settings.modules.share",

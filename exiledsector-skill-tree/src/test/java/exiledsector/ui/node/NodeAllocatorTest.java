@@ -42,6 +42,7 @@ import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -571,9 +572,13 @@ class NodeAllocatorTest {
     }
 
     private TemplateStepExecutor executor(List<SkillNode> allocated) {
+        return executor(allocated, () -> false);
+    }
+
+    private TemplateStepExecutor executor(List<SkillNode> allocated, BooleanSupplier freeAllocationsOnly) {
         ShipTrees.chooseStartingRoot(data(), root);
         NodeAllocator allocator = allocatorStartingAt(root);
-        return new TemplateStepExecutor(allocator, allocator::snapshot, allocated::add);
+        return new TemplateStepExecutor(allocator, allocator::snapshot, allocated::add, freeAllocationsOnly);
     }
 
     @Test
@@ -624,5 +629,18 @@ class NodeAllocatorTest {
 
         when(variant.computeOPCost(any())).thenReturn(99);
         assertFalse(executor.hasPointsLeft());
+    }
+
+    @Test
+    void pointsRunOutWithoutFreeAllocationsWhenAutoAllocateMayNotSpendOp() {
+        boolean[] freeAllocationsOnly = {false};
+        TemplateStepExecutor executor = executor(new ArrayList<>(), () -> freeAllocationsOnly[0]);
+        assertTrue(executor.hasPointsLeft());
+
+        freeAllocationsOnly[0] = true;
+        assertFalse(executor.hasPointsLeft());
+
+        data().addFreeAllocation();
+        assertTrue(executor.hasPointsLeft());
     }
 }

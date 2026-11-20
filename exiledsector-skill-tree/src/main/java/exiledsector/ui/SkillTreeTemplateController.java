@@ -11,6 +11,7 @@ import exiledsector.skills.ShipHullSizes;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.template.AutoAllocateRun;
+import exiledsector.skills.template.AutoAllocateSetting;
 import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.TemplateNames;
 import exiledsector.skills.template.TemplateStep;
@@ -90,7 +91,7 @@ final class SkillTreeTemplateController {
         SkillTreeTemplate template = treeSession.template();
         boolean planning = treeSession.isPlanning();
         barState = TemplateBarState.of(templateRootId != null, treeSession.allocatedNodeCount(), template != null,
-                !barLive, planning, treeSession.isAutoAllocateOn());
+                !barLive, planning, treeSession.isAutoAllocateOn(), AutoAllocateSetting.freeAllocationsOnly());
         templateBar.update(barState, statusText(template, planning));
         AutoAllocateRun.Summary summary = treeSession.takeLastRunSummary();
         if (summary != null) {

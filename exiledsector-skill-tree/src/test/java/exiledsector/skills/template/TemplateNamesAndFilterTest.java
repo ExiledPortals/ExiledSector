@@ -70,11 +70,19 @@ class TemplateNamesAndFilterTest {
 
     @Test
     void pointsAreLeftWhileThereIsRoomAndEitherACreditOrEnoughOrdnancePoints() {
-        assertTrue(TemplateBudget.hasPointsLeft(5, 60, 1, 30, 3, 30));
-        assertTrue(TemplateBudget.hasPointsLeft(5, 60, 0, 27, 3, 30));
-        assertFalse(TemplateBudget.hasPointsLeft(5, 60, 0, 28, 3, 30));
-        assertTrue(TemplateBudget.hasPointsLeft(5, 60, 0, 99, 0, 30));
-        assertFalse(TemplateBudget.hasPointsLeft(60, 60, 4, 0, 3, 99));
+        assertTrue(TemplateBudget.hasPointsLeft(5, 60, 1, 30, 3, 30, false));
+        assertTrue(TemplateBudget.hasPointsLeft(5, 60, 0, 27, 3, 30, false));
+        assertFalse(TemplateBudget.hasPointsLeft(5, 60, 0, 28, 3, 30, false));
+        assertTrue(TemplateBudget.hasPointsLeft(5, 60, 0, 99, 0, 30, false));
+        assertFalse(TemplateBudget.hasPointsLeft(60, 60, 4, 0, 3, 99, false));
+    }
+
+    @Test
+    void onlyFreeAllocationsCountAsPointsLeftWhenAutoAllocateMayNotSpendOp() {
+        assertTrue(TemplateBudget.hasPointsLeft(5, 60, 1, 0, 3, 30, true));
+        assertFalse(TemplateBudget.hasPointsLeft(5, 60, 0, 0, 3, 30, true));
+        assertTrue(TemplateBudget.hasPointsLeft(5, 60, 0, 0, 0, 30, true));
+        assertFalse(TemplateBudget.hasPointsLeft(60, 60, 4, 0, 3, 30, true));
     }
 
     @Test

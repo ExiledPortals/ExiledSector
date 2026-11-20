@@ -24,6 +24,7 @@ import exiledsector.skills.SkillType;
 import exiledsector.skills.layout.TreeTopology;
 import exiledsector.skills.progression.ShipOpBudget;
 import exiledsector.skills.template.AutoAllocateRun;
+import exiledsector.skills.template.AutoAllocateSetting;
 import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.StepVerdict;
 import exiledsector.skills.template.TemplateAnchors;
@@ -98,7 +99,8 @@ public final class TreeAllocationSession {
         this.nodeSearch = nodeSearch;
         this.rootChoice = initialRootChoice(ShipSkillDataManager.get(member.getId()));
         this.allocator = new NodeAllocator(member, variant, () -> rootChoice.rootForAllocation());
-        this.stepExecutor = new TemplateStepExecutor(allocator, this::snapshot, node -> settleAllocation());
+        this.stepExecutor = new TemplateStepExecutor(allocator, this::snapshot, node -> settleAllocation(),
+                AutoAllocateSetting::freeAllocationsOnly);
         this.attemptStep = stepExecutor::attempt;
         this.pointsLeftCheck = stepExecutor::hasPointsLeft;
         this.planner = new TemplatePlanner(allocator, this::snapshot);
