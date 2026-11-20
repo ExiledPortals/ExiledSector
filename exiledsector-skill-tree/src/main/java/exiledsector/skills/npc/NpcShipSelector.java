@@ -2,6 +2,7 @@ package exiledsector.skills.npc;
 
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.compat.SymbioticVoidCreaturesCompat;
 
 import java.util.Random;
 
@@ -12,7 +13,7 @@ public final class NpcShipSelector {
 
     public static boolean isCandidate(FleetMemberAPI member) {
         return member != null && !member.isFighterWing() && (!member.isStation() || NpcTreeConfig.levelsStations()) && !member.isCivilian()
-                && !member.isMothballed() && member.getVariant() != null;
+                && !member.isMothballed() && member.getVariant() != null && !SymbioticVoidCreaturesCompat.stripsOtherHullMods(member.getVariant());
     }
 
     public static boolean isChosen(FleetMemberAPI member, Random random) {

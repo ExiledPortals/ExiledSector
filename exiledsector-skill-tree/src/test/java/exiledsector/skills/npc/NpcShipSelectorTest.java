@@ -4,6 +4,7 @@ import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.MockShips;
+import exiledsector.compat.SymbioticVoidCreaturesCompat;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,6 +58,14 @@ class NpcShipSelectorTest {
     @Test
     void ordinaryCombatShipsAreCandidates() {
         assertTrue(NpcShipSelector.isCandidate(member(false, false)));
+    }
+
+    @Test
+    void voidCreaturesWhoseCarapaceStripsOtherHullModsAreNotCandidates() {
+        FleetMemberAPI voidCreature = member(false, false);
+        when(voidCreature.getVariant().hasHullMod(SymbioticVoidCreaturesCompat.CARAPACE_HULL_MOD_ID)).thenReturn(true);
+
+        assertFalse(NpcShipSelector.isCandidate(voidCreature));
     }
 
     @Test
