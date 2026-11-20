@@ -18,4 +18,8 @@ public interface AtlasMemory {
     default String territoryAt(AtlasCell cell) {
         return null;
     }
+
+    default AtlasEffects revealedWith(AtlasCell cell) {
+        return null;
+    }
 }

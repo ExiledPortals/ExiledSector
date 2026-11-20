@@ -6,6 +6,8 @@ import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
+import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
 import exiledsector.charts.anomaly.FlareLuck;
 import exiledsector.charts.atlas.AtlasCatalysts;
 import exiledsector.charts.atlas.AtlasState;
@@ -32,10 +34,13 @@ import exiledsector.ui.UiFonts;
 import exiledsector.ui.decoration.DecorationScene;
 import exiledsector.ui.decoration.StarfieldRenderer;
 import exiledsector.ui.decoration.TreeDecorations;
+import exiledsector.ui.socket.GameTextTooltip;
 import exiledsector.ui.util.GlScope;
+import exiledsector.ui.util.Rects;
 import exiledsector.ui.util.TextLabel;
 import org.lwjgl.input.Keyboard;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -49,8 +54,13 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
     private static final float START_ZOOM = 0.3f;
     private static final float TITLE_GAP = 8f;
     private static final float TOOLTIP_MAX_TEXT_HEIGHT = AtlasScreen.TOOLTIP_MAX_TEXT_HEIGHT;
+    private static final float LOADOUT_ROW_GAP = 8f;
+    private static final float LOADOUT_TOOLTIP_WIDTH = 360f;
 
     private enum Control { BACK, EFFECTS }
+
+    private record LoadoutButton(int loadout) {
+    }
 
     private final CampaignOverlay.Host host;
     private final AtlasState state;
@@ -96,6 +106,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         }
     };
     private ButtonAPI effectsButton;
+    private final List<ButtonAPI> loadoutButtons = new ArrayList<>();
     private AtlasTreeAllocation allocation;
     private int unspentPoints;
     private PositionAPI panelPosition;
@@ -152,8 +163,13 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         catalystColumn.place(frame.chromeLeft(), columnTop, frame.chromeBottom() + PANEL_GAP);
     }
 
+    private float loadoutRowBottom() {
+        return searchBarBottom() - LOADOUT_ROW_GAP - ChromeMetrics.CONTROL_HEIGHT;
+    }
+
     private boolean overChrome(float x, float y) {
-        return searchBar.contains(searchBarLeft(), searchBarBottom(), x, y) || catalystColumn.contains(x, y);
+        return searchBar.contains(searchBarLeft(), searchBarBottom(), x, y) || catalystColumn.contains(x, y)
+                || Rects.contains(searchBarLeft(), loadoutRowBottom(), searchBar.barWidth(), ChromeMetrics.CONTROL_HEIGHT, x, y);
     }
 
     private void buildChrome(CustomPanelAPI panel) {
@@ -161,6 +177,48 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         refreshPointsLabel();
         AtlasOverlayFrame.addTopRightButton(panel, Translation.text("atlasTree.back"), Control.BACK, BACK_WIDTH);
         effectsButton = AtlasOverlayFrame.addTopRightButton(panel, effectsButtonText(), Control.EFFECTS, EFFECTS_WIDTH, BACK_WIDTH + BUTTON_GAP);
+        addLoadoutButtons(panel);
+    }
+
+    private void addLoadoutButtons(CustomPanelAPI panel) {
+        float rowWidth = searchBar.barWidth();
+        float buttonWidth = (rowWidth - BUTTON_GAP * (AtlasState.ATLAS_LOADOUTS - 1)) / AtlasState.ATLAS_LOADOUTS;
+        TooltipMakerAPI element = panel.createUIElement(rowWidth, ChromeMetrics.CONTROL_HEIGHT, false);
+        for (int loadout = 0; loadout < AtlasState.ATLAS_LOADOUTS; loadout++) {
+            ButtonAPI button = element.addAreaCheckbox(Translation.text("atlasTree.loadout." + (loadout + 1)), new LoadoutButton(loadout),
+                    Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(), Misc.getBrightPlayerColor(), buttonWidth, ChromeMetrics.CONTROL_HEIGHT, 0f);
+            button.getPosition().inTL(loadout * (buttonWidth + BUTTON_GAP), 0f);
+            int tooltipLoadout = loadout;
+            element.addTooltipToPrevious(new GameTextTooltip(LOADOUT_TOOLTIP_WIDTH, tooltip -> writeLoadoutTooltip(tooltip, tooltipLoadout)),
+                    TooltipMakerAPI.TooltipLocation.BELOW);
+            loadoutButtons.add(button);
+        }
+        float rowTop = AtlasScreen.PANEL_MARGIN + AtlasScreen.CHROME_PAD + ChromeMetrics.CONTROL_HEIGHT + LOADOUT_ROW_GAP;
+        panel.addUIElement(element).inTL((panel.getPosition().getWidth() - rowWidth) / 2f, rowTop);
+        checkActiveLoadout();
+    }
+
+    private void writeLoadoutTooltip(TooltipMakerAPI tooltip, int loadout) {
+        tooltip.addPara(Translation.msg("atlasTree.loadout.spent").arg("spent", AtlasTree.spentPoints(state, loadout))
+                .arg("earned", state.atlasPoints()).text(), 0f);
+        tooltip.addPara(Translation.text("atlasTree.loadout.hint"), Misc.getGrayColor(), ChromeMetrics.CONTROL_HEIGHT / 4f);
+    }
+
+    private void checkActiveLoadout() {
+        for (int loadout = 0; loadout < loadoutButtons.size(); loadout++) {
+            loadoutButtons.get(loadout).setChecked(loadout == state.activeAtlasLoadout());
+        }
+    }
+
+    private void selectLoadout(int loadout) {
+        if (state.selectAtlasLoadout(loadout)) {
+            refreshAllocation();
+            refreshPointsLabel();
+            indexSearch();
+            effectsPanel.invalidate();
+            tooltipSubject = null;
+        }
+        checkActiveLoadout();
     }
 
     private String effectsButtonText() {
@@ -192,6 +250,8 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
             back();
         } else if (buttonId == Control.EFFECTS) {
             toggleEffects();
+        } else if (buttonId instanceof LoadoutButton loadoutButton) {
+            selectLoadout(loadoutButton.loadout());
         }
     }
 

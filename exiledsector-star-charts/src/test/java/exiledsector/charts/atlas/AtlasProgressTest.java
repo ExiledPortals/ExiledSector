@@ -68,6 +68,34 @@ class AtlasProgressTest {
     }
 
     @Test
+    void aCompletedRunRevealsWithTheAtlasItWasOpenedWithNotTheOneSelectedNow() {
+        AtlasRuntime.invalidate();
+        try (MockSector mockSector = new MockSector()) {
+            SectorAPI sector = mockSector.sector;
+            MemoryAPI sectorMemory = MapMemory.create();
+            MemoryAPI playerMemory = MapMemory.create();
+            when(sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
+            when(sector.getPlayerMemoryWithoutUpdate()).thenReturn(playerMemory);
+            AtlasState state = new AtlasState(TestBorders.SEED);
+            mockSector.persistentData.put(AtlasState.PERSISTENT_KEY, state);
+            AtlasCell cell = new AtlasCell(2, 0);
+            AtlasEffects openedWith = AtlasEffects.of(List.of(new AtlasEffects.Line(AtlasModifier.ATLAS_VISIBILITY_LANES, 1f)));
+            ChartRun run = new ChartRun("lockedRun", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
+            run.recordContent(new ChartContent(5, "hegemony", "boss", 4, 6));
+            run.recordAtlasNode(new AtlasRunNode(cell.pack(), "hegemony", List.of(), List.of()));
+            run.recordAtlasMapEffects(openedWith);
+
+            AtlasProgress.completed(sector, run, null);
+
+            assertEquals(openedWith, run.atlasMapEffects());
+            assertEquals(openedWith, state.completedWith(cell));
+            assertEquals(AtlasEffects.NONE, AtlasRuntime.generator(sector).effects());
+        } finally {
+            AtlasRuntime.invalidate();
+        }
+    }
+
+    @Test
     void aSystemChangesHandsWhenTheRunLeavesItWithANewHolder() {
         AtlasCell defenderCentre = new AtlasCell(0, 0);
         AtlasCell attackerCentre = new AtlasCell(4, 0);

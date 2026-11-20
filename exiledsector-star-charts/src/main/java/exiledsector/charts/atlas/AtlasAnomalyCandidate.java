@@ -45,6 +45,12 @@ public record AtlasAnomalyCandidate(String id, float weight, String requiredMod,
         return ownChance == null ? shared : ownChance;
     }
 
+    public AtlasAnomalyChance chanceRule(AtlasAnomalyChance shared, AtlasEffects treeEffects) {
+        AtlasAnomalyChance rule = chanceRule(shared);
+        float increasedPercent = treeEffects.atlasChancePercent(id);
+        return increasedPercent == 0f || rule == null ? rule : rule.increasedBy(increasedPercent);
+    }
+
     public boolean placedPerBiome() {
         return !biomes.isEmpty();
     }

@@ -157,6 +157,7 @@ final class AtlasMapCanvas {
         this.reachable = AtlasReach.reachable(generator, state);
         OfficerSightings.identifyInView(state, visible);
         this.shown = shownCells(visible, OfficerSightings.shownSystems(state));
+        state.recordSighting(generator, shown);
         for (AtlasCell cell : shown) {
             nodes.put(cell, generator.node(cell));
         }

@@ -1,5 +1,6 @@
 package exiledsector.charts.run;
 
+import exiledsector.charts.atlas.AtlasEffects;
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.ChartBossType;
@@ -48,6 +49,7 @@ public final class ChartRun {
     private String anomalies;
     private String atlasNode;
     private String atlasTreeLines;
+    private String atlasMapEffects;
     private String originEntityId;
     private String anomalyStates;
     private transient Map<String, String> parsedAnomalyStates;
@@ -191,6 +193,14 @@ public final class ChartRun {
 
     String atlasTreeLinesData() {
         return atlasTreeLines;
+    }
+
+    public void recordAtlasMapEffects(AtlasEffects effects) {
+        atlasMapEffects = effects == null ? null : effects.encode();
+    }
+
+    public AtlasEffects atlasMapEffects() {
+        return atlasMapEffects == null ? null : AtlasEffects.decode(atlasMapEffects);
     }
 
     public String chartData() {

@@ -7,6 +7,7 @@ import exiledsector.charts.atlas.AtlasModifier;
 import exiledsector.charts.atlas.AtlasRuntime;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.effect.ChartModifier;
+import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.generation.ChartGenContext.AppliedEffect;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -116,6 +117,64 @@ class AtlasTreeTest {
 
         assertEquals(Set.of("a", "b"), state.atlasTreeNodeIds());
         assertEquals(1, AtlasTree.unspentPoints(state, AtlasTree.allocation(state)));
+    }
+
+    @Test
+    void everyAtlasCanSpendEveryEarnedPointOnItsOwnNodes() {
+        state.addAtlasPoints(3);
+        AtlasTree.allocatePath(state, data.node("c"));
+
+        state.selectAtlasLoadout(1);
+
+        assertFalse(AtlasTree.allocation(state).isAllocated("a"));
+        assertEquals(3, AtlasTree.unspentPoints(state, AtlasTree.allocation(state)));
+        assertTrue(AtlasTree.allocatePath(state, data.node("c")));
+        assertTrue(AtlasTree.refund(state, data.node("c")));
+        assertEquals(2, AtlasTree.spentPoints(state, 1));
+        assertEquals(3, AtlasTree.spentPoints(state, 0));
+        assertEquals(0, AtlasTree.spentPoints(state, 2));
+    }
+
+    @Test
+    void switchingAtlasSwitchesTheAtlasLinesTheGeneratorUses() {
+        SectorAPI sector = mock(SectorAPI.class);
+        when(sector.getPersistentData()).thenReturn(new HashMap<>(Map.of(AtlasState.PERSISTENT_KEY, state)));
+        AtlasRuntime.invalidate();
+        try {
+            state.addAtlasPoints(3);
+            AtlasTree.allocatePath(state, data.node("c"));
+            assertEquals(1, AtlasRuntime.generator(sector).effects().count(AtlasModifier.ATLAS_VISIBILITY_LANES));
+
+            state.selectAtlasLoadout(2);
+            assertEquals(AtlasEffects.NONE, AtlasRuntime.generator(sector).effects());
+
+            state.selectAtlasLoadout(0);
+            assertEquals(1, AtlasRuntime.generator(sector).effects().count(AtlasModifier.ATLAS_VISIBILITY_LANES));
+        } finally {
+            AtlasRuntime.invalidate();
+        }
+    }
+
+    @Test
+    void aRunOpenedBeforeAtlasesExistedRevealsWithTheFirstAtlas() {
+        SectorAPI sector = mock(SectorAPI.class);
+        when(sector.getPersistentData()).thenReturn(new HashMap<>(Map.of(AtlasState.PERSISTENT_KEY, state)));
+        AtlasRuntime.invalidate();
+        try {
+            state.addAtlasPoints(3);
+            AtlasTree.allocatePath(state, data.node("c"));
+            state.selectAtlasLoadout(1);
+            ChartRun oldRun = new ChartRun("oldRun", "hyperspace", 0f, 0f, 1);
+            ChartRun lockedRun = new ChartRun("lockedRun", "hyperspace", 0f, 0f, 1);
+            lockedRun.recordAtlasMapEffects(AtlasEffects.NONE);
+
+            assertEquals(1, AtlasRuntime.generatorFor(sector, oldRun).effects().count(AtlasModifier.ATLAS_VISIBILITY_LANES));
+            assertEquals(AtlasEffects.NONE, AtlasRuntime.generatorFor(sector, lockedRun).effects());
+            assertEquals(1, AtlasTree.atlasEffects(state, 0).count(AtlasModifier.ATLAS_VISIBILITY_LANES));
+            assertEquals(AtlasEffects.NONE, AtlasTree.atlasEffects(state));
+        } finally {
+            AtlasRuntime.invalidate();
+        }
     }
 
     @Test

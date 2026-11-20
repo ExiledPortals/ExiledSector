@@ -30,6 +30,7 @@ public final class AtlasState implements AtlasMemory {
     public static final int LANES_REVEALED = 32;
     public static final int MAX_ATLAS_SKILL_POINTS = 100;
     public static final int FLAGSHIP_ROLL = 1;
+    public static final int ATLAS_LOADOUTS = 3;
     static final String FLAG_SEPARATOR = ",";
     private static final Random SEEDS = new Random();
     private static final Set<String> REMOVED_ANOMALY_IDS = Set.of("powerful_boss", "asteroid_storm");
@@ -54,13 +55,19 @@ public final class AtlasState implements AtlasMemory {
     private List<String> leftBehindItems = new ArrayList<>();
     private Map<String, Boolean> decidedContests = new HashMap<>();
     private int atlasPoints;
-    private Set<String> atlasTreeNodeIds = new TreeSet<>();
+    private Set<String> atlasTreeNodeIds;
+    private List<TreeSet<String>> atlasTreeLoadouts = emptyLoadouts();
+    private int activeAtlasLoadout;
+    private List<String> treeEffectSnapshots = new ArrayList<>();
+    private Map<Long, Integer> revealSnapshots = new HashMap<>();
+    private Map<Long, Integer> completionSnapshots = new HashMap<>();
     private int keyFragments;
     private int flagshipRoll;
     private Set<String> activeCatalystIds = new LinkedHashSet<>();
     private transient Map<Integer, AtlasOfficer> decodedOfficers;
     private transient Map<Long, AtlasOfficer> activeOfficersByCentre;
     private transient long fillFingerprint;
+    private transient List<AtlasEffects> decodedSnapshots;
 
     public AtlasState(long seed) {
         this.seed = seed;
@@ -120,14 +127,46 @@ public final class AtlasState implements AtlasMemory {
         if (decidedContests == null) {
             decidedContests = new HashMap<>();
         }
-        if (atlasTreeNodeIds == null) {
-            atlasTreeNodeIds = new TreeSet<>();
+        repairLoadouts();
+        if (treeEffectSnapshots == null) {
+            treeEffectSnapshots = new ArrayList<>();
+        }
+        if (revealSnapshots == null) {
+            revealSnapshots = new HashMap<>();
+        }
+        if (completionSnapshots == null) {
+            completionSnapshots = new HashMap<>();
         }
         if (activeCatalystIds == null) {
             activeCatalystIds = new LinkedHashSet<>();
         }
         atlasPoints = Math.min(MAX_ATLAS_SKILL_POINTS, atlasPoints);
         return this;
+    }
+
+    private static List<TreeSet<String>> emptyLoadouts() {
+        List<TreeSet<String>> loadouts = new ArrayList<>();
+        for (int loadout = 0; loadout < ATLAS_LOADOUTS; loadout++) {
+            loadouts.add(new TreeSet<>());
+        }
+        return loadouts;
+    }
+
+    private void repairLoadouts() {
+        if (atlasTreeLoadouts == null) {
+            atlasTreeLoadouts = emptyLoadouts();
+        }
+        atlasTreeLoadouts.replaceAll(loadout -> loadout == null ? new TreeSet<>() : loadout);
+        while (atlasTreeLoadouts.size() < ATLAS_LOADOUTS) {
+            atlasTreeLoadouts.add(new TreeSet<>());
+        }
+        if (atlasTreeNodeIds != null) {
+            atlasTreeLoadouts.get(0).addAll(atlasTreeNodeIds);
+            atlasTreeNodeIds = null;
+        }
+        if (activeAtlasLoadout < 0 || activeAtlasLoadout >= ATLAS_LOADOUTS) {
+            activeAtlasLoadout = 0;
+        }
     }
 
     private static boolean isRemovedAnomaly(AtlasAnomalyRecord record) {
@@ -209,6 +248,8 @@ public final class AtlasState implements AtlasMemory {
     }
 
     public void recordReveal(AtlasGenerator generator, Collection<AtlasCell> revealed) {
+        recordSnapshots(revealSnapshots, revealed, generator.effects());
+        recordSnapshots(completionSnapshots, completedCells(), generator.effects());
         String flags = String.join(FLAG_SEPARATOR, new TreeSet<>(generator.unlockFlags()));
         for (AtlasCell cell : revealed) {
             for (AtlasBiome biome : generator.biomeContenders(cell)) {
@@ -253,11 +294,77 @@ public final class AtlasState implements AtlasMemory {
     }
 
     public Set<String> atlasTreeNodeIds() {
-        return Collections.unmodifiableSet(atlasTreeNodeIds);
+        return atlasTreeNodeIds(activeAtlasLoadout);
+    }
+
+    public Set<String> atlasTreeNodeIds(int loadout) {
+        return Collections.unmodifiableSet(atlasTreeLoadouts.get(loadout));
     }
 
     public void setAtlasTreeNodeIds(Collection<String> nodeIds) {
-        atlasTreeNodeIds = new TreeSet<>(nodeIds);
+        atlasTreeLoadouts.set(activeAtlasLoadout, new TreeSet<>(nodeIds));
+    }
+
+    public int activeAtlasLoadout() {
+        return activeAtlasLoadout;
+    }
+
+    public boolean selectAtlasLoadout(int loadout) {
+        if (loadout < 0 || loadout >= ATLAS_LOADOUTS || loadout == activeAtlasLoadout) {
+            return false;
+        }
+        activeAtlasLoadout = loadout;
+        return true;
+    }
+
+    @Override
+    public AtlasEffects revealedWith(AtlasCell cell) {
+        return snapshot(revealSnapshots.get(cell.pack()));
+    }
+
+    public AtlasEffects completedWith(AtlasCell cell) {
+        return snapshot(completionSnapshots.get(cell.pack()));
+    }
+
+    public void recordSighting(AtlasGenerator generator, Collection<AtlasCell> sighted) {
+        recordSnapshots(revealSnapshots, sighted, generator.effects());
+    }
+
+    public void recordCompletion(AtlasCell cell, AtlasEffects treeEffects) {
+        recordSnapshots(completionSnapshots, List.of(cell), treeEffects);
+    }
+
+    private void recordSnapshots(Map<Long, Integer> snapshots, Collection<AtlasCell> cells, AtlasEffects treeEffects) {
+        Integer snapshotIndex = null;
+        for (AtlasCell cell : cells) {
+            if (!snapshots.containsKey(cell.pack())) {
+                if (snapshotIndex == null) {
+                    snapshotIndex = snapshotIndex(treeEffects);
+                }
+                snapshots.put(cell.pack(), snapshotIndex);
+            }
+        }
+    }
+
+    private int snapshotIndex(AtlasEffects treeEffects) {
+        String encoded = treeEffects.encode();
+        int existing = treeEffectSnapshots.indexOf(encoded);
+        if (existing >= 0) {
+            return existing;
+        }
+        treeEffectSnapshots.add(encoded);
+        decodedSnapshots = null;
+        return treeEffectSnapshots.size() - 1;
+    }
+
+    private AtlasEffects snapshot(Integer snapshotIndex) {
+        if (snapshotIndex == null || snapshotIndex < 0 || snapshotIndex >= treeEffectSnapshots.size()) {
+            return null;
+        }
+        if (decodedSnapshots == null) {
+            decodedSnapshots = treeEffectSnapshots.stream().map(AtlasEffects::decode).toList();
+        }
+        return decodedSnapshots.get(snapshotIndex);
     }
 
     public List<String> activeCatalystIds() {

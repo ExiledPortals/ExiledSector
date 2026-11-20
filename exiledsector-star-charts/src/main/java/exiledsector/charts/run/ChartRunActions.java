@@ -22,6 +22,7 @@ import exiledsector.items.ItemData;
 import exiledsector.items.ItemStore;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.atlas.AtlasCell;
+import exiledsector.charts.atlas.AtlasEffects;
 import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.charts.atlas.AtlasProgress;
@@ -101,7 +102,7 @@ public final class ChartRunActions {
         AtlasRunNode opened = AtlasOpening.openedRunNode(generator, state, cell, chart.seed(), ActiveCatalysts.anomalyIds(catalysts), treeLines);
         AtlasRunNode runNode = ChartAnomalies.joinRunNode(opened, generator, state, cell, choice);
         OpenResult result = openBesidePlayer(sector, entriesAllowed, random, AtlasOpening.request(generator, state, cell, chart, runNode, treeLines),
-                ItemData.of(chart).encode(), runNode, treeLines);
+                ItemData.of(chart).encode(), runNode, treeLines, generator.effects());
         if (result == OpenResult.OPENED) {
             store.remove(chart);
             ActiveCatalysts.spend(state, catalysts, materials);
@@ -123,11 +124,12 @@ public final class ChartRunActions {
 
     private static OpenResult openBesidePlayer(SectorAPI sector, int entriesAllowed, Random random, ChartLayoutRequest layoutRequest,
                                                String chartData) {
-        return openBesidePlayer(sector, entriesAllowed, random, layoutRequest, chartData, null, List.of());
+        return openBesidePlayer(sector, entriesAllowed, random, layoutRequest, chartData, null, List.of(), null);
     }
 
     private static OpenResult openBesidePlayer(SectorAPI sector, int entriesAllowed, Random random, ChartLayoutRequest layoutRequest,
-                                               String chartData, AtlasRunNode atlasNode, List<ChartGenContext.AppliedEffect> treeLines) {
+                                               String chartData, AtlasRunNode atlasNode, List<ChartGenContext.AppliedEffect> treeLines,
+                                               AtlasEffects mapEffects) {
         if (ChartRuns.hasRun()) {
             return OpenResult.RUN_EXISTS;
         }
@@ -144,6 +146,7 @@ public final class ChartRunActions {
         run.recordChart(chartData);
         run.recordAtlasNode(atlasNode);
         run.recordAtlasTreeLines(treeLines);
+        run.recordAtlasMapEffects(mapEffects);
         ChartRuns.store(run);
         try {
             ChartSystemFactory.ChartSystem created = ChartSystemFactory.createSystem(sector, run.runId(), layoutRequest);

@@ -126,6 +126,11 @@ Killing a system's boss, its flagship or station, is the only way to complete it
 Atlas Skill Point, up to 100. A run that ends without killing the boss uses up the system's anomalies, except star
 anomalies, so the next run there is an ordinary system.
 
+The Atlas Tree has three Atlases, each with its own nodes, and switching between them is free. A chart keeps the Atlas
+you had selected when you opened it: the systems it reveals roll their anomalies with that Atlas, and the lanes of
+visibility around it once completed come from that Atlas too. Switching later changes only the charts you open after,
+and systems already on the atlas keep what they have.
+
 ### Rarity
 
 A higher chart tier makes rarer crafting items a larger share of what its fleets, sites and bosses drop, without

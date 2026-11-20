@@ -30,8 +30,8 @@ public final class AtlasGenerator {
     private final AtlasMemory memory;
     private final AtlasTerrain terrain;
     private final AtlasBiomeAnomalies biomeAnomalies;
-    private final Map<Long, List<AtlasCell>> laneCache = AtlasPositions.boundedCache(CACHE_LIMIT_CELLS);
-    private final Map<Long, Boolean> voidCache = AtlasPositions.boundedCache(CACHE_LIMIT_CELLS);
+    private final Map<Long, List<AtlasCell>> laneCache;
+    private final Map<Long, Boolean> voidCache;
 
     public AtlasGenerator(long seed, AtlasRules rules, AtlasUnlocks unlocks, AtlasMemory memory) {
         this(seed, rules, unlocks, AtlasEffects.NONE, memory);
@@ -42,6 +42,8 @@ public final class AtlasGenerator {
         this.rules = rules;
         this.unlocks = unlocks;
         this.effects = effects;
+        laneCache = AtlasPositions.boundedCache(CACHE_LIMIT_CELLS);
+        voidCache = AtlasPositions.boundedCache(CACHE_LIMIT_CELLS);
         positions = new AtlasPositions(seed);
         specials = new AtlasSpecialPlacer(seed, rules, unlocks, memory, positions, this::isVoid);
         biomes = new AtlasBiomes(seed, rules, unlocks, memory, positions);
@@ -50,6 +52,25 @@ public final class AtlasGenerator {
         biomeAnomalies = new AtlasBiomeAnomalies(seed,
                 rules.anomalies().stream().filter(candidate -> unlocks.allows(candidate.requiredMod(), "")).toList(), biomes::biomeOf,
                 this::canHoldBiomeAnomaly);
+    }
+
+    private AtlasGenerator(AtlasGenerator source, AtlasEffects effects) {
+        seed = source.seed;
+        rules = source.rules;
+        unlocks = source.unlocks;
+        this.effects = effects;
+        positions = source.positions;
+        specials = source.specials;
+        biomes = source.biomes;
+        memory = source.memory;
+        terrain = source.terrain;
+        biomeAnomalies = source.biomeAnomalies;
+        laneCache = source.laneCache;
+        voidCache = source.voidCache;
+    }
+
+    public AtlasGenerator withEffects(AtlasEffects treeEffects) {
+        return treeEffects == null || treeEffects.equals(effects) ? this : new AtlasGenerator(this, treeEffects);
     }
 
     public long seed() {
@@ -307,11 +328,12 @@ public final class AtlasGenerator {
 
     private List<AtlasAnomalyCandidate> rollAnomalies(AtlasCell cell, AtlasTraits traits, AtlasRegion region) {
         AnomalyRolls<AtlasAnomalyCandidate> rolls = new AnomalyRolls<>();
+        AtlasEffects treeEffects = treeEffectsAt(cell);
         for (AtlasAnomalyCandidate candidate : rules.anomalies()) {
             if (candidate.placedPerBiome() || !unlocks.allows(candidate.requiredMod(), "")) {
                 continue;
             }
-            float chance = candidate.chanceRule(rules.anomalyRule()).chanceAt(traits.distance());
+            float chance = candidate.chanceRule(rules.anomalyRule(), treeEffects).chanceAt(traits.distance());
             if (chance <= 0f) {
                 continue;
             }
@@ -320,6 +342,11 @@ public final class AtlasGenerator {
             rolls.offer(candidate, candidate.id(), roll, chance * weight);
         }
         return addCompatible(new ArrayList<>(), rolls.lowestFirst());
+    }
+
+    public AtlasEffects treeEffectsAt(AtlasCell cell) {
+        AtlasEffects revealedWith = memory.revealedWith(cell);
+        return revealedWith == null ? effects : revealedWith;
     }
 
     private static List<AtlasAnomalyCandidate> addCompatible(List<AtlasAnomalyCandidate> kept, List<AtlasAnomalyCandidate> candidates) {

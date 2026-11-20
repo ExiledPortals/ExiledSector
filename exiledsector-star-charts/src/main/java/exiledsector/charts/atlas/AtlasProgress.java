@@ -27,7 +27,7 @@ public final class AtlasProgress {
         }
         try {
             AtlasState state = AtlasState.get(sector);
-            AtlasGenerator generator = AtlasRuntime.generator(sector);
+            AtlasGenerator generator = AtlasRuntime.generatorFor(sector, run);
             AtlasCell cell = AtlasCell.unpack(node.cell());
             boolean newlyCompleted = !state.isCompleted(cell);
             AtlasCell holderBeforeRunEnd = state.commandCentreOf(cell);
@@ -78,6 +78,7 @@ public final class AtlasProgress {
             return;
         }
         state.add(cell, AtlasState.COMPLETED);
+        state.recordCompletion(cell, generator.effects());
         state.spendUnchainedAnomalies(cell);
         state.clearTier(tier);
         state.addAtlasPoints(1);
@@ -111,7 +112,7 @@ public final class AtlasProgress {
                 return false;
             }
             state.add(cell, AtlasState.LANES_REVEALED);
-            AtlasReach.refreshReveal(AtlasRuntime.generator(sector), state);
+            AtlasReach.refreshReveal(AtlasRuntime.generatorFor(sector, run), state);
             return true;
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Revealing the atlas lanes around run " + run.runId() + " failed", e);

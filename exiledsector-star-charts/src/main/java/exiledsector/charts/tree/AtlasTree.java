@@ -21,6 +21,10 @@ public final class AtlasTree {
         return AtlasTreeAllocation.of(AtlasTreeData.get().topology(), state.atlasTreeNodeIds());
     }
 
+    public static int spentPoints(AtlasState state, int loadout) {
+        return AtlasTreeAllocation.of(AtlasTreeData.get().topology(), state.atlasTreeNodeIds(loadout)).spentPoints();
+    }
+
     public static List<AppliedEffect> chartLines(AtlasState state) {
         Map<ChartModifier, Float> totals = new LinkedHashMap<>();
         for (AtlasTreeType type : allocatedTypes(state)) {
@@ -32,8 +36,12 @@ public final class AtlasTree {
     }
 
     public static AtlasEffects atlasEffects(AtlasState state) {
+        return atlasEffects(state, state.activeAtlasLoadout());
+    }
+
+    public static AtlasEffects atlasEffects(AtlasState state, int loadout) {
         List<AtlasEffects.Line> lines = new ArrayList<>();
-        allocatedTypes(state).forEach(type -> lines.addAll(type.atlasEffects()));
+        allocatedNodes(state.atlasTreeNodeIds(loadout)).forEach(node -> lines.addAll(node.type().atlasEffects()));
         return AtlasEffects.of(lines);
     }
 
@@ -46,9 +54,13 @@ public final class AtlasTree {
     }
 
     private static List<AtlasTreeNode> allocatedNodes(AtlasState state) {
+        return allocatedNodes(state.atlasTreeNodeIds());
+    }
+
+    private static List<AtlasTreeNode> allocatedNodes(Set<String> storedNodeIds) {
         AtlasTreeData data = AtlasTreeData.get();
         Set<String> allocatedIds = new LinkedHashSet<>(data.topology().rootIds());
-        allocatedIds.addAll(allocation(state).storedNodeIds());
+        allocatedIds.addAll(AtlasTreeAllocation.of(data.topology(), storedNodeIds).storedNodeIds());
         List<AtlasTreeNode> nodes = new ArrayList<>();
         for (String nodeId : allocatedIds) {
             AtlasTreeNode node = data.node(nodeId);
