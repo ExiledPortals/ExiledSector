@@ -13,9 +13,29 @@ final class AtlasFlarePainter {
     private static final String SHIMMER_PATH = "graphics/fx/hit_glow.png";
     private static final float SHIMMER_SIZE = 2.8f;
     private static final float SHIMMER_ALPHA = 0.18f;
+    private static final float GLINT_SIZE = 2.6f;
+    private static final float GLINT_CORE_SIZE = 0.9f;
 
     private final SpriteCache sprites = new SpriteCache(AtlasFlarePainter.class);
     private final StarShade starShade = new StarShade();
+
+    void paintGlint(Flare flare, Color colour, Placement placement, Lighting lighting, float alpha) {
+        if (flare == Flare.NONE || alpha <= 0f) {
+            return;
+        }
+        FlareWeather.Style style = FlareWeather.styleOf(flare);
+        int streamSeed = FlareWeather.streamSeed((int) placement.seedDegrees(), 0);
+        float glint = FlareWeather.glint(FlareWeather.progress(streamSeed, placement.stormSeconds(), style));
+        if (glint <= 0f) {
+            return;
+        }
+        Color glintColour = starShade.of(style.colourOr(colour), lighting);
+        float glintAlpha = alpha * FlareWeather.glowShare(lighting) * glint;
+        float outer = placement.screenRadius() * GLINT_SIZE;
+        float core = placement.screenRadius() * GLINT_CORE_SIZE;
+        SpriteDraw.drawAdditiveAtCenter(sprites, SHIMMER_PATH, placement.screenX(), placement.screenY(), outer, outer, glintColour, glintAlpha * 0.6f);
+        SpriteDraw.drawAdditiveAtCenter(sprites, SHIMMER_PATH, placement.screenX(), placement.screenY(), core, core, Color.WHITE, glintAlpha);
+    }
 
     void paint(Flare flare, Color colour, Placement placement, Lighting lighting, float alpha) {
         if (flare == Flare.NONE || alpha <= 0f) {

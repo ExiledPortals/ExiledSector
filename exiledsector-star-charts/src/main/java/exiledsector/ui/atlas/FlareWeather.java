@@ -79,6 +79,10 @@ final class FlareWeather {
         };
     }
 
+    static float glint(float progress) {
+        return progress < 0f || progress >= 1f ? 0f : (float) Math.sin(Math.PI * progress);
+    }
+
     static float shimmer(int seed, float flareSeconds) {
         return 0.5f + 0.25f * (float) Math.sin(flareSeconds * 1.3f + seed) + 0.25f * (float) Math.sin(flareSeconds * 0.47f + seed * 2f);
     }

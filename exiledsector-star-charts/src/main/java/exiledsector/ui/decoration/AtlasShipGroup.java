@@ -23,7 +23,7 @@ public final class AtlasShipGroup implements AtlasShipScene {
     private static final float DORMANT_FORMATION_SHARE = 0.5f;
     private static final float STATION_TURN_DEGREES_PER_SECOND = 0.3f;
     static final float PICKET_SHIP_SHARE = 0.37f;
-    static final float CONVOY_SHIP_SHARE = 0.55f;
+    static final float CONVOY_SHIP_SHARE = 0.4f;
     public static final float STATION_SHARE = 0.25f;
     static final float GUARD_ORBIT_SHARE = 0.45f;
     static final float PATROL_ORBIT_SHARE = 0.4f;

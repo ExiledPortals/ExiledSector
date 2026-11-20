@@ -2,8 +2,8 @@ package exiledsector.ui.decoration;
 
 public final class ConvoyOrbit {
 
-    public static final float ORBIT_SHARE = 2.2f;
-    static final float FLEET_SPREAD_SHARE = 0.6f;
+    public static final float ORBIT_SHARE = 1.7f;
+    static final float FLEET_SPREAD_SHARE = 0.25f;
     static final float SECONDS_PER_LAP = 45f;
     private static final float TANGENT_DEGREES = 90f;
 

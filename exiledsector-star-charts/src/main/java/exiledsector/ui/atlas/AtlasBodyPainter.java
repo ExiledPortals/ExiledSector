@@ -12,6 +12,7 @@ import exiledsector.ui.belt.RingBeltRenderer;
 import exiledsector.ui.decoration.AtlasShipGroup;
 import exiledsector.ui.decoration.AtmosphereRing;
 import exiledsector.ui.decoration.PlanetSphere;
+import exiledsector.ui.decoration.StarAurora;
 import exiledsector.ui.decoration.UnitSphere;
 import exiledsector.ui.util.ColorUtil;
 import exiledsector.ui.util.GlScope;
@@ -73,11 +74,14 @@ final class AtlasBodyPainter {
     private static final float HALO_ALPHA = 0.55f;
     private static final float STAR_CORONA_MAX_SHARE = 3f;
     private static final String CITY_LIGHTS_CATEGORY = "hab_glows";
+    private static final float AURORA_DETAIL_RADIUS = 400f;
+    private static final float AURORA_MIN_PIXELS = 5f;
 
     private final SpriteCache sprites = new SpriteCache(AtlasBodyPainter.class);
     private final UnitSphere sphere = new UnitSphere(SPHERE_DETAIL);
     private final CategorySprite atmosphereTexture = new CategorySprite(AtmosphereRing.TEXTURE_CATEGORY, AtmosphereRing.TEXTURE_ID);
     private final CategorySprite dustRings = new CategorySprite("misc", "rings_dust0");
+    private final CategorySprite auroraTexture = new CategorySprite(StarAurora.TEXTURE_CATEGORY, StarAurora.TEXTURE_ID);
     private final Vector2f bandCentre = new Vector2f();
     private final Vector3f siteOffset = new Vector3f();
     private final AtlasStormPainter storms = new AtlasStormPainter();
@@ -87,6 +91,7 @@ final class AtlasBodyPainter {
     private final AtlasNebulaPainter nebulae = new AtlasNebulaPainter();
     private final Map<String, Color> tintsByHex = new HashMap<>();
     private final StarShade starShade = new StarShade();
+    private final Map<String, Color> tintedCoronasByHex = new HashMap<>();
     private final Map<String, CategorySprite> cityLights = new HashMap<>();
 
     record Placement(float screenX, float screenY, float screenRadius, float headingDegrees, float spinDegrees, float seedDegrees,
@@ -106,8 +111,11 @@ final class AtlasBodyPainter {
             }
             case STORM_CELL -> storms.paintCell(colour, placement, lighting, seconds, alpha);
             case NEBULA -> nebulae.paint(art.nebula(), colour, placement, lighting, seconds, alpha);
-            case SPRITE -> paintSprite(firstPath(art), placement.screenX(), placement.screenY(), placement.screenRadius(), angleOf(art, placement),
-                    lighting, alpha);
+            case SPRITE -> {
+                paintSprite(firstPath(art), placement.screenX(), placement.screenY(), placement.screenRadius(), angleOf(art, placement), lighting,
+                        alpha);
+                flares.paintGlint(art.flare(), colour, placement, lighting, alpha);
+            }
             case OUTPOST -> paintSprite(firstPath(art), placement.screenX(), placement.screenY(), placement.screenRadius() * AtlasShipGroup.STATION_SHARE,
                     angleOf(art, placement), lighting, alpha);
             case BINARY -> paintBinary(art, placement, lighting, seconds, alpha);
@@ -214,7 +222,7 @@ final class AtlasBodyPainter {
         Color litTint = art.tintColour() == null ? spec.getPlanetColor()
                 : tintsByHex.computeIfAbsent(art.tintColour(), hex -> ColorUtil.parseHexColor(hex, Color.WHITE));
         if (spec.isStar()) {
-            paintStarCorona(spec, placement, lighting, alpha);
+            paintStarCorona(coronaColourOf(art, spec), spec, placement, lighting, alpha);
         }
         Color bodyTint = spec.isStar() ? starShade.of(litTint, lighting) : tintFor(lighting, litTint);
         PlanetSphere.draw(sphere, texture, spec, placement.screenX(), placement.screenY(), radius, turn, bodyTint, alpha, 0f, 0f);
@@ -244,13 +252,34 @@ final class AtlasBodyPainter {
         }
     }
 
-    private void paintStarCorona(PlanetSpecAPI spec, Placement placement, Lighting lighting, float alpha) {
+    void paintStarAurora(AtlasBodyArt art, StarAurora aurora, Placement placement, Lighting lighting, float alpha) {
+        PlanetSpecAPI spec = PlanetSpecs.byType(art.planetType());
+        SpriteAPI texture = auroraTexture.get();
+        if (spec == null || texture == null || alpha <= 0f || placement.screenRadius() < AURORA_MIN_PIXELS) {
+            return;
+        }
+        aurora.render(texture, placement.screenX(), placement.screenY(), AURORA_DETAIL_RADIUS, placement.screenRadius() / AURORA_DETAIL_RADIUS,
+                coronaColourOf(art, spec), alpha * FlareWeather.glowShare(lighting));
+    }
+
+    private Color coronaColourOf(AtlasBodyArt art, PlanetSpecAPI spec) {
+        Color coronaColour = spec.getCoronaColor() == null ? Color.WHITE : spec.getCoronaColor();
+        if (art.tintColour() == null) {
+            return coronaColour;
+        }
+        return tintedCoronasByHex.computeIfAbsent(art.tintColour(), hex -> {
+            Color tint = ColorUtil.parseHexColor(hex, Color.WHITE);
+            return new Color(tint.getRed(), tint.getGreen(), tint.getBlue(), coronaColour.getAlpha());
+        });
+    }
+
+    private void paintStarCorona(Color coronaColour, PlanetSpecAPI spec, Placement placement, Lighting lighting, float alpha) {
         String coronaPath = spec.getCoronaTexture();
         if (coronaPath == null || coronaPath.isEmpty()) {
             return;
         }
         float corona = placement.screenRadius() * Math.min(spec.getCoronaSize(), STAR_CORONA_MAX_SHARE) * 2f;
-        SpriteDraw.drawAdditiveAtCenter(sprites, coronaPath, placement.screenX(), placement.screenY(), corona, corona, spec.getCoronaColor(),
+        SpriteDraw.drawAdditiveAtCenter(sprites, coronaPath, placement.screenX(), placement.screenY(), corona, corona, coronaColour,
                 alpha * FlareWeather.glowShare(lighting));
     }
 

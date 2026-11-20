@@ -18,11 +18,11 @@ final class MagneticWeather {
     private static final float FIRST_DOT_ALONG = 0.06f;
     private static final float PULSE_SALT_OFFSET = 0.37f;
 
-    static final Style PLAIN = new Style(2, 1.55f, 0.35f, 3f, 1f, 1.3f, 0.45f, Surge.NONE, false, false);
-    static final Style CHARGED = new Style(3, 1.35f, 0.22f, 1.4f, 1f, 1.22f, 0.5f, Surge.NONE, false, true);
-    static final Style HARVEST = new Style(2, 1.6f, 0.45f, 4.5f, 1f, 1.45f, 0.6f, Surge.NONE, true, false);
-    static final Style ION = new Style(2, 1.5f, 0.4f, 2.5f, 1f, 1.35f, 0.25f, Surge.STORM, false, false);
-    static final Style SURGE = new Style(3, 1.45f, 0.3f, 2.2f, 1.05f, 1.5f, 0.35f, Surge.FLARE, true, false);
+    static final Style PLAIN = new Style(2, 1.55f, 0.35f, 3f, 1f, 1.4f, 0.6f, Surge.NONE, false, false);
+    static final Style CHARGED = new Style(3, 1.35f, 0.22f, 1.4f, 1f, 1.32f, 0.65f, Surge.NONE, false, true);
+    static final Style HARVEST = new Style(2, 1.6f, 0.45f, 4.5f, 1f, 1.55f, 0.75f, Surge.NONE, true, false);
+    static final Style ION = new Style(2, 1.5f, 0.4f, 2.5f, 1f, 1.45f, 0.4f, Surge.STORM, false, false);
+    static final Style SURGE = new Style(3, 1.45f, 0.3f, 2.2f, 1.05f, 1.6f, 0.5f, Surge.FLARE, true, false);
 
     private MagneticWeather() {
     }

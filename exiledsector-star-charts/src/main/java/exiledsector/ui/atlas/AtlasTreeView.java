@@ -1,5 +1,7 @@
 package exiledsector.ui.atlas;
 
+import com.fs.starfarer.api.campaign.PlanetSpecAPI;
+import exiledsector.PlanetSpecs;
 import exiledsector.charts.tree.AtlasBodyArt;
 import exiledsector.charts.tree.AtlasLinkPath;
 import exiledsector.charts.tree.AtlasTreeBodies;
@@ -10,6 +12,7 @@ import exiledsector.ui.TreeViewport;
 import exiledsector.ui.decoration.AtlasFlagshipScene;
 import exiledsector.ui.decoration.AtlasShipGroup;
 import exiledsector.ui.decoration.AtlasShipScene;
+import exiledsector.ui.decoration.StarAurora;
 import exiledsector.ui.node.BeamStroke;
 import exiledsector.ui.node.ConnectorKind;
 import exiledsector.ui.node.ConnectorPainter;
@@ -46,6 +49,8 @@ final class AtlasTreeView {
     private static final float STAR_GAP_SCALE = 1f;
     private static final float HIGHWAY_RING_SCALE = 1.35f;
     private static final float BODY_RING_SCALE = 1.12f;
+    static final float STAR_BODY_SHARE = 0.45f;
+    static final float FIELD_BODY_SHARE = 0.5f;
     private static final float MIN_PATH_STEP_PIXELS = 4f;
     private static final int MAX_PATH_POINTS = 32;
     private static final float VISIBLE_REACH_SCALE = 2.5f;
@@ -65,6 +70,8 @@ final class AtlasTreeView {
     private final Color[] colours;
     private final Color[] siteLights;
     private final float[] spinSeeds;
+    private final float[] bodyShares;
+    private final StarAurora[] auroras;
     private final AtlasShipScene[] shipScenes;
     private final float[] pathXs = new float[MAX_PATH_POINTS];
     private final float[] pathYs = new float[MAX_PATH_POINTS];
@@ -84,6 +91,8 @@ final class AtlasTreeView {
         this.colours = new Color[count];
         this.siteLights = new Color[count];
         this.spinSeeds = new float[count];
+        this.bodyShares = new float[count];
+        this.auroras = new StarAurora[count];
         this.shipScenes = new AtlasShipScene[count];
         this.wheelMembers = new int[count];
         this.wheelAllocated = new int[count];
@@ -94,6 +103,8 @@ final class AtlasTreeView {
             colours[body.index()] = parseColour(body.colour(), DEFAULT_COLOUR);
             siteLights[body.index()] = parseColour(body.art().lightColour(), null);
             spinSeeds[body.index()] = Math.floorMod(body.nodeId().hashCode(), 360);
+            bodyShares[body.index()] = bodyShareOf(body.art());
+            auroras[body.index()] = isStar(body.art()) ? new StarAurora() : null;
             shipScenes[body.index()] = shipSceneOf(body);
         }
         measureWheels();
@@ -145,7 +156,20 @@ final class AtlasTreeView {
             case PATROL -> AtlasShipGroup.Mode.PATROLLING;
             default -> null;
         };
-        return mode == null ? null : new AtlasShipGroup(mode, art.hullIds(), art.size(), body.nodeId().hashCode(), parseColour(body.colour(), DEFAULT_COLOUR));
+        return mode == null ? null : new AtlasShipGroup(mode, art.hullIds(), art.size() * bodyShareOf(art), body.nodeId().hashCode(),
+                parseColour(body.colour(), DEFAULT_COLOUR));
+    }
+
+    private static boolean isStar(AtlasBodyArt art) {
+        PlanetSpecAPI spec = art.isPlanet() ? PlanetSpecs.byType(art.planetType()) : null;
+        return spec != null && spec.isStar() && !spec.isBlackHole();
+    }
+
+    private static float bodyShareOf(AtlasBodyArt art) {
+        if (isStar(art)) {
+            return STAR_BODY_SHARE;
+        }
+        return art.isPlanet() && art.field() != AtlasBodyArt.Field.NONE ? FIELD_BODY_SHARE : 1f;
     }
 
     private static AtlasFlagshipScene flagshipSceneOf(Body body) {
@@ -184,6 +208,9 @@ final class AtlasTreeView {
             int index = body.index();
             float pace = StormWeather.pace(lightings[index]);
             stormSeconds[index] = (float) ((stormSeconds[index] + amount * pace) % ANIMATION_PERIOD_SECONDS);
+            if (auroras[index] != null) {
+                auroras[index].advance(amount * pace);
+            }
             AtlasShipScene shipScene = shipScenes[index];
             if (shipScene != null) {
                 shipScene.advance(body.art().isPlanet() ? amount * pace : amount, body.art().heading());
@@ -353,8 +380,11 @@ final class AtlasTreeView {
         lightings[index] = lighting;
         float heading = body.art().heading();
         float spin = spinSeeds[index] + seconds * spinSpeed(body);
-        AtlasBodyPainter.Placement placement = new AtlasBodyPainter.Placement(screenX, screenY, screenRadius, heading, spin, spinSeeds[index],
-                stormSeconds[index]);
+        AtlasBodyPainter.Placement placement = new AtlasBodyPainter.Placement(screenX, screenY, screenRadius * bodyShares[index], heading, spin,
+                spinSeeds[index], stormSeconds[index]);
+        if (auroras[index] != null) {
+            painter.paintStarAurora(body.art(), auroras[index], placement, lighting, alpha);
+        }
         painter.paint(body.art(), colours[index], siteLights[index], placement, lighting, seconds, alpha);
         AtlasShipScene shipScene = shipScenes[index];
         if (shipScene != null) {

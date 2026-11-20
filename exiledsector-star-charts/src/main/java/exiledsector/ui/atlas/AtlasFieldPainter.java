@@ -29,17 +29,17 @@ final class AtlasFieldPainter {
     private static final float AXIS_WOBBLE_RATE = 0.15f;
     private static final float LOOP_BREATH = 0.04f;
     private static final float LOOP_BREATH_RATE = 0.9f;
-    private static final float DOT_SIZE = 0.11f;
+    private static final float DOT_SIZE = 0.24f;
     private static final float DOT_PULSE_GROWTH = 1.2f;
-    private static final float DOT_BASE_ALPHA = 0.16f;
-    private static final float DOT_PULSE_ALPHA = 0.75f;
-    private static final float POLE_SIZE = 0.75f;
-    private static final float POLE_BASE_ALPHA = 0.25f;
+    private static final float DOT_BASE_ALPHA = 0.3f;
+    private static final float DOT_PULSE_ALPHA = 0.9f;
+    private static final float POLE_SIZE = 1.2f;
+    private static final float POLE_BASE_ALPHA = 0.4f;
     private static final float POLE_ARRIVAL_ALPHA = 0.55f;
     private static final float POLE_SURGE_ALPHA = 0.6f;
     private static final float SPARK_SLOT_SECONDS = 0.6f;
     private static final float SPARK_CHANCE_MULT = 0.5f;
-    private static final float SPARK_SIZE = 0.4f;
+    private static final float SPARK_SIZE = 0.7f;
     private static final int SPARK_SALT = 23;
 
     private final SpriteCache sprites = new SpriteCache(AtlasFieldPainter.class);

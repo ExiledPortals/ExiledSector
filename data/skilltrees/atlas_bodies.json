@@ -2059,7 +2059,7 @@
 				"kind": "planet",
 				"planet": "star_orange",
 				"flare": "warm",
-				"size": 55
+				"size": 110
 			}
 		},
 		{
@@ -2067,8 +2067,8 @@
 			"colour": "#ffe4a0",
 			"wheel": "golden_hour_1",
 			"art": {
-				"kind": "planet",
-				"planet": "star_yellow",
+				"kind": "sprite",
+				"path": "graphics/stations/stellar_mirror.png",
 				"flare": "plain",
 				"size": 36
 			}
@@ -2078,8 +2078,8 @@
 			"colour": "#ffe4a0",
 			"wheel": "golden_hour_1",
 			"art": {
-				"kind": "planet",
-				"planet": "star_yellow",
+				"kind": "sprite",
+				"path": "graphics/stations/stellar_mirror.png",
 				"flare": "plain",
 				"size": 36
 			}
@@ -2556,7 +2556,7 @@
 				"kind": "planet",
 				"planet": "star_red_dwarf",
 				"flare": "gentle",
-				"size": 48
+				"size": 95
 			}
 		},
 		{
@@ -2564,8 +2564,8 @@
 			"colour": "#ffe4a0",
 			"wheel": "tempered_light_1",
 			"art": {
-				"kind": "planet",
-				"planet": "star_yellow",
+				"kind": "sprite",
+				"path": "graphics/stations/stellar_mirror.png",
 				"flare": "plain",
 				"size": 36
 			}
@@ -2575,8 +2575,8 @@
 			"colour": "#ffe4a0",
 			"wheel": "tempered_light_1",
 			"art": {
-				"kind": "planet",
-				"planet": "star_yellow",
+				"kind": "sprite",
+				"path": "graphics/stations/stellar_mirror.png",
 				"flare": "plain",
 				"size": 36
 			}
@@ -2802,7 +2802,7 @@
 				"kind": "planet",
 				"planet": "star_blue_giant",
 				"flare": "often",
-				"size": 55
+				"size": 110
 			}
 		},
 		{
@@ -2810,8 +2810,8 @@
 			"colour": "#ffe4a0",
 			"wheel": "solar_maximum_1",
 			"art": {
-				"kind": "planet",
-				"planet": "star_yellow",
+				"kind": "sprite",
+				"path": "graphics/stations/stellar_mirror.png",
 				"flare": "plain",
 				"size": 36
 			}
@@ -2821,8 +2821,8 @@
 			"colour": "#ffe4a0",
 			"wheel": "solar_maximum_1",
 			"art": {
-				"kind": "planet",
-				"planet": "star_yellow",
+				"kind": "sprite",
+				"path": "graphics/stations/stellar_mirror.png",
 				"flare": "plain",
 				"size": 36
 			}
@@ -3567,7 +3567,7 @@
 				"kind": "planet",
 				"planet": "star_yellow",
 				"storm": "solar",
-				"size": 55
+				"size": 110
 			}
 		},
 		{
@@ -4086,6 +4086,7 @@
 			"art": {
 				"kind": "orbited_planet",
 				"planet": "star_yellow",
+				"tint": "#ffb036",
 				"flare": "licking",
 				"hulls": [
 					"colossus",
@@ -4094,7 +4095,7 @@
 					"phaeton",
 					"buffalo"
 				],
-				"size": 45,
+				"size": 90,
 				"facing": "travel",
 				"heading": -446
 			}
@@ -4104,8 +4105,8 @@
 			"colour": "#ffe4a0",
 			"wheel": "sunstruck_convoy_1",
 			"art": {
-				"kind": "planet",
-				"planet": "star_yellow",
+				"kind": "sprite",
+				"path": "graphics/stations/stellar_mirror.png",
 				"flare": "plain",
 				"size": 36
 			}
@@ -4115,8 +4116,8 @@
 			"colour": "#ffe4a0",
 			"wheel": "sunstruck_convoy_1",
 			"art": {
-				"kind": "planet",
-				"planet": "star_yellow",
+				"kind": "sprite",
+				"path": "graphics/stations/stellar_mirror.png",
 				"flare": "plain",
 				"size": 36
 			}
@@ -4212,7 +4213,7 @@
 				"kind": "planet",
 				"planet": "star_red_giant",
 				"field": "surge",
-				"size": 43,
+				"size": 86,
 				"flare": "surge"
 			}
 		},
@@ -4500,7 +4501,7 @@
 				"kind": "planet",
 				"planet": "star_white",
 				"flare": "perfect",
-				"size": 55
+				"size": 110
 			}
 		},
 		{
@@ -4508,8 +4509,8 @@
 			"colour": "#ffe4a0",
 			"wheel": "perfect_light_1",
 			"art": {
-				"kind": "planet",
-				"planet": "star_yellow",
+				"kind": "sprite",
+				"path": "graphics/stations/stellar_mirror.png",
 				"flare": "plain",
 				"size": 36
 			}
@@ -4519,8 +4520,8 @@
 			"colour": "#ffe4a0",
 			"wheel": "perfect_light_1",
 			"art": {
-				"kind": "planet",
-				"planet": "star_yellow",
+				"kind": "sprite",
+				"path": "graphics/stations/stellar_mirror.png",
 				"flare": "plain",
 				"size": 36
 			}

@@ -104,6 +104,15 @@ class FlareWeatherTest {
     }
 
     @Test
+    void aMirrorGlintsOnlyWhileAFlareBurstsAndPeaksMidway() {
+        assertEquals(0f, FlareWeather.glint(-1f));
+        assertEquals(0f, FlareWeather.glint(0f));
+        assertEquals(0f, FlareWeather.glint(1f));
+        assertEquals(1f, FlareWeather.glint(0.5f), 0.0001f);
+        assertTrue(FlareWeather.glint(0.2f) < FlareWeather.glint(0.5f));
+    }
+
+    @Test
     void otherFlaresLeaveFromAllRoundTheStar() {
         Set<Integer> quarters = new HashSet<>();
         int streamSeed = FlareWeather.streamSeed(SEED, 0);
