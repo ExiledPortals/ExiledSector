@@ -5,6 +5,7 @@ import exiledsector.ui.atlas.AtlasBodyPainter.Lighting;
 final class StormWeather {
 
     static final float FLASH_SHARE_OF_SLOT = 0.35f;
+    static final float NO_BURST = -1f;
     private static final int SLOT_OFFSET_SALT = 0x51ed27;
     private static final int UNIT_BITS = 24;
     private static final float UNIT_SCALE = 1f / (1 << UNIT_BITS);
@@ -49,17 +50,22 @@ final class StormWeather {
     }
 
     static float flash(int seed, float seconds, float slotSeconds, float chance) {
+        float progress = burstProgress(seed, seconds, slotSeconds, chance, FLASH_SHARE_OF_SLOT);
+        if (progress < 0f) {
+            return 0f;
+        }
+        float fade = 1f - progress;
+        return fade * fade;
+    }
+
+    static float burstProgress(int seed, float seconds, float slotSeconds, float chance, float burstShareOfSlot) {
         float position = slotPosition(seed, seconds, slotSeconds);
         int slot = (int) Math.floor(position);
         if (unit(seed, slot, 0) >= chance) {
-            return 0f;
+            return NO_BURST;
         }
-        float share = (position - slot) / FLASH_SHARE_OF_SLOT;
-        if (share >= 1f) {
-            return 0f;
-        }
-        float fade = 1f - share;
-        return fade * fade;
+        float progress = (position - slot) / Math.max(burstShareOfSlot, 0.01f);
+        return progress >= 1f ? NO_BURST : progress;
     }
 
     static int pick(int seed, int slot, int count) {

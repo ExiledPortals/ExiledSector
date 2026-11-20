@@ -80,6 +80,7 @@ final class AtlasBodyPainter {
     private final Vector2f bandCentre = new Vector2f();
     private final Vector3f siteOffset = new Vector3f();
     private final AtlasStormPainter storms = new AtlasStormPainter();
+    private final AtlasFlarePainter flares = new AtlasFlarePainter();
     private final Map<String, Color> tintsByHex = new HashMap<>();
     private final Map<String, CategorySprite> cityLights = new HashMap<>();
 
@@ -92,11 +93,11 @@ final class AtlasBodyPainter {
             return;
         }
         switch (art.kind()) {
-            case PLANET -> {
+            case PLANET, SWARMED_PLANET, CROSSED_PLANET -> {
                 paintPlanet(art, colour, placement, lighting, seconds, alpha);
                 storms.paintOnPlanet(art.storm(), colour, placement, lighting, seconds, alpha);
+                flares.paint(art.flare(), colour, placement, lighting, alpha);
             }
-            case SWARMED_PLANET -> paintPlanet(art, colour, placement, lighting, seconds, alpha);
             case STORM_CELL -> storms.paintCell(colour, placement, lighting, seconds, alpha);
             case SPRITE -> paintSprite(firstPath(art), placement.screenX(), placement.screenY(), placement.screenRadius(), angleOf(art, placement),
                     lighting, alpha);

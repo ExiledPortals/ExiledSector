@@ -1,0 +1,51 @@
+package exiledsector.ui.atlas;
+
+import exiledsector.charts.tree.AtlasBodyArt.Flare;
+import exiledsector.skills.skilleffect.render.SpriteCache;
+import exiledsector.ui.atlas.AtlasBodyPainter.Lighting;
+import exiledsector.ui.atlas.AtlasBodyPainter.Placement;
+import exiledsector.ui.util.SpriteDraw;
+
+import java.awt.Color;
+
+final class AtlasFlarePainter {
+
+    private static final String SHIMMER_PATH = "graphics/fx/hit_glow.png";
+    private static final float SHIMMER_SIZE = 2.8f;
+    private static final float SHIMMER_ALPHA = 0.18f;
+
+    private final SpriteCache sprites = new SpriteCache(AtlasFlarePainter.class);
+
+    void paint(Flare flare, Color colour, Placement placement, Lighting lighting, float alpha) {
+        if (flare == Flare.NONE || alpha <= 0f) {
+            return;
+        }
+        FlareWeather.Style style = FlareWeather.styleOf(flare);
+        Color flareColour = AtlasBodyPainter.tintFor(lighting, style.colourOr(colour));
+        float glowAlpha = alpha * FlareWeather.glowShare(lighting);
+        int seed = (int) placement.seedDegrees();
+        float flareSeconds = placement.stormSeconds();
+        float starX = placement.screenX();
+        float starY = placement.screenY();
+        float starRadius = placement.screenRadius();
+        if (!style.arched()) {
+            float shimmerSize = starRadius * SHIMMER_SIZE;
+            SpriteDraw.drawAdditiveAtCenter(sprites, SHIMMER_PATH, starX, starY, shimmerSize, shimmerSize, flareColour,
+                    glowAlpha * SHIMMER_ALPHA * FlareWeather.shimmer(seed, flareSeconds));
+        }
+        for (int stream = 0; stream < style.streams(); stream++) {
+            int streamSeed = FlareWeather.streamSeed(seed, stream);
+            float progress = FlareWeather.progress(streamSeed, flareSeconds, style);
+            if (progress < 0f) {
+                continue;
+            }
+            int slot = FlareWeather.slotOf(streamSeed, flareSeconds, style);
+            double angle = Math.toRadians(FlareWeather.angleDegrees(flare, streamSeed, slot, placement.headingDegrees()));
+            if (style.arched()) {
+                StarFlareGlow.drawArch(sprites, starX, starY, starRadius, angle, progress, flareColour, glowAlpha);
+            } else {
+                StarFlareGlow.drawRising(sprites, starX, starY, starRadius, angle, progress, style.rise(), flareColour, glowAlpha);
+            }
+        }
+    }
+}

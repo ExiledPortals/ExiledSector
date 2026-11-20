@@ -36,6 +36,23 @@ class StormWeatherTest {
     }
 
     @Test
+    void aBurstRunsFromStartToFinishOverItsShareOfTheSlotAndTheFlashIsItsFadingStart() {
+        float slotStart = nextSlotStart();
+        float burstShare = 0.6f;
+        float early = StormWeather.burstProgress(SEED, slotStart + 0.0001f, SLOT_SECONDS, 1f, burstShare);
+        float middle = StormWeather.burstProgress(SEED, slotStart + SLOT_SECONDS * burstShare / 2f, SLOT_SECONDS, 1f, burstShare);
+        float over = StormWeather.burstProgress(SEED, slotStart + SLOT_SECONDS * (burstShare + 0.05f), SLOT_SECONDS, 1f, burstShare);
+        float flashMoment = slotStart + SLOT_SECONDS * StormWeather.FLASH_SHARE_OF_SLOT / 3f;
+        float flashProgress = StormWeather.burstProgress(SEED, flashMoment, SLOT_SECONDS, 1f, StormWeather.FLASH_SHARE_OF_SLOT);
+
+        assertTrue(early >= 0f && early < 0.01f, "early " + early);
+        assertEquals(0.5f, middle, 0.001f);
+        assertEquals(StormWeather.NO_BURST, over);
+        assertEquals(StormWeather.NO_BURST, StormWeather.burstProgress(SEED, slotStart + 0.1f, SLOT_SECONDS, 0f, burstShare));
+        assertEquals((1f - flashProgress) * (1f - flashProgress), StormWeather.flash(SEED, flashMoment, SLOT_SECONDS, 1f), 0.0001f);
+    }
+
+    @Test
     void noChanceMeansNoFlashAndAFlashIsTheSameEveryTimeTheSameMomentIsDrawn() {
         for (float seconds = 0f; seconds < 50f; seconds += 0.13f) {
             assertEquals(0f, StormWeather.flash(SEED, seconds, SLOT_SECONDS, 0f));

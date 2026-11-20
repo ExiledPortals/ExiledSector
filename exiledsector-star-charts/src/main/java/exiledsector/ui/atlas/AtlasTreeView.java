@@ -141,6 +141,7 @@ final class AtlasTreeView {
             case SHROUDED -> AtlasShipGroup.Mode.SWIMMING;
             case STATION -> AtlasShipGroup.Mode.STATION;
             case SWARMED_PLANET -> AtlasShipGroup.Mode.CIRCLING;
+            case CROSSED_PLANET -> AtlasShipGroup.Mode.CROSSING;
             default -> null;
         };
         return mode == null ? null : new AtlasShipGroup(mode, art.hullIds(), art.size(), body.nodeId().hashCode());
@@ -166,7 +167,7 @@ final class AtlasTreeView {
             stormSeconds[index] = (float) ((stormSeconds[index] + amount * pace) % ANIMATION_PERIOD_SECONDS);
             AtlasShipGroup group = shipGroups[index];
             if (group != null) {
-                group.advance(body.art().kind() == AtlasBodyArt.Kind.SWARMED_PLANET ? amount * pace : amount, body.art().heading());
+                group.advance(body.art().isPlanet() ? amount * pace : amount, body.art().heading());
             }
         }
         convoys.advance(amount, (float) elapsedSeconds);
