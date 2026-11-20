@@ -2,7 +2,7 @@ package exiledsector.ui.atlas;
 
 import exiledsector.charts.tree.AtlasBodyArt.Flare;
 import exiledsector.ui.atlas.AtlasBodyPainter.Lighting;
-import exiledsector.ui.decoration.ConvoyCrossing;
+import exiledsector.ui.decoration.ConvoyOrbit;
 import org.junit.jupiter.api.Test;
 
 import java.awt.Color;
@@ -83,23 +83,24 @@ class FlareWeatherTest {
     void perfectFlaresStepRoundTheStarByTheGoldenAngle() {
         int streamSeed = FlareWeather.streamSeed(SEED, 0);
         for (int slot = 0; slot < 20; slot++) {
-            float angle = FlareWeather.angleDegrees(Flare.PERFECT, streamSeed, slot, 0f);
-            float next = FlareWeather.angleDegrees(Flare.PERFECT, streamSeed, slot + 1, 0f);
+            float angle = FlareWeather.angleDegrees(Flare.PERFECT, streamSeed, slot, 0f, 0f);
+            float next = FlareWeather.angleDegrees(Flare.PERFECT, streamSeed, slot + 1, 0f, 0f);
             assertEquals(FlareWeather.GOLDEN_ANGLE_DEGREES, next - angle, 0.01f);
         }
     }
 
     @Test
-    void lickingFlaresReachOutTowardTheConvoyLaneAndPastIt() {
+    void lickingFlaresReachOutTowardTheOrbitingConvoyAndPastIt() {
         float headingDegrees = -40f;
-        float laneDegrees = headingDegrees + ConvoyCrossing.LANE_SIDE_DEGREES;
         int streamSeed = FlareWeather.streamSeed(SEED, 1);
         for (int slot = -20; slot < 200; slot++) {
-            float angle = FlareWeather.angleDegrees(Flare.LICKING, streamSeed, slot, headingDegrees);
-            assertTrue(Math.abs(angle - laneDegrees) <= FlareWeather.LICK_SPREAD_DEGREES, "slot " + slot + " at " + angle);
+            float flareSeconds = slot * 1.3f;
+            float convoyDegrees = ConvoyOrbit.angleDegreesAt(headingDegrees, flareSeconds);
+            float angle = FlareWeather.angleDegrees(Flare.LICKING, streamSeed, slot, headingDegrees, flareSeconds);
+            assertTrue(Math.abs(angle - convoyDegrees) <= FlareWeather.LICK_SPREAD_DEGREES, "slot " + slot + " at " + angle);
         }
 
-        assertTrue(1f + FlareWeather.LICKING.rise().lift() > ConvoyCrossing.LANE_SHARE);
+        assertTrue(1f + FlareWeather.LICKING.rise().lift() > ConvoyOrbit.ORBIT_SHARE);
     }
 
     @Test
@@ -107,7 +108,7 @@ class FlareWeatherTest {
         Set<Integer> quarters = new HashSet<>();
         int streamSeed = FlareWeather.streamSeed(SEED, 0);
         for (int slot = 0; slot < 40; slot++) {
-            float angle = FlareWeather.angleDegrees(Flare.PLAIN, streamSeed, slot, 0f);
+            float angle = FlareWeather.angleDegrees(Flare.PLAIN, streamSeed, slot, 0f, 0f);
             assertTrue(angle >= 0f && angle < 360f);
             quarters.add((int) (angle / 90f));
         }

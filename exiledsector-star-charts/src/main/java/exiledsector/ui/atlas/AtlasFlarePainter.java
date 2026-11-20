@@ -15,13 +15,14 @@ final class AtlasFlarePainter {
     private static final float SHIMMER_ALPHA = 0.18f;
 
     private final SpriteCache sprites = new SpriteCache(AtlasFlarePainter.class);
+    private final StarShade starShade = new StarShade();
 
     void paint(Flare flare, Color colour, Placement placement, Lighting lighting, float alpha) {
         if (flare == Flare.NONE || alpha <= 0f) {
             return;
         }
         FlareWeather.Style style = FlareWeather.styleOf(flare);
-        Color flareColour = AtlasBodyPainter.tintFor(lighting, style.colourOr(colour));
+        Color flareColour = starShade.of(style.colourOr(colour), lighting);
         float glowAlpha = alpha * FlareWeather.glowShare(lighting);
         int seed = (int) placement.seedDegrees();
         float flareSeconds = placement.stormSeconds();
@@ -40,7 +41,7 @@ final class AtlasFlarePainter {
                 continue;
             }
             int slot = FlareWeather.slotOf(streamSeed, flareSeconds, style);
-            double angle = Math.toRadians(FlareWeather.angleDegrees(flare, streamSeed, slot, placement.headingDegrees()));
+            double angle = Math.toRadians(FlareWeather.angleDegrees(flare, streamSeed, slot, placement.headingDegrees(), flareSeconds));
             if (style.arched()) {
                 StarFlareGlow.drawArch(sprites, starX, starY, starRadius, angle, progress, flareColour, glowAlpha);
             } else {

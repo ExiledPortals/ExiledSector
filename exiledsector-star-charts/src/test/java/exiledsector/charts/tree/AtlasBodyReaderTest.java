@@ -27,7 +27,7 @@ class AtlasBodyReaderTest {
                 { "id": "port", "wheel": "world", "art": { "kind": "sprite", "path": "graphics/stations/station_lowtech1.png", "size": 30,
                     "convoys": [["buffalo", "wolf"], [], ["tarsus", "hermes", "lasher"]], "haulers": [["colossus", "eagle"], []] } },
                 { "id": "maximum", "art": { "kind": "planet", "planet": "star_blue_giant", "flare": "often", "size": 110 } },
-                { "id": "sunstruck", "art": { "kind": "crossed_planet", "planet": "star_yellow", "flare": "licking",
+                { "id": "sunstruck", "art": { "kind": "orbited_planet", "planet": "star_yellow", "flare": "licking",
                     "hulls": ["colossus", "buffalo"], "size": 90, "facing": "travel", "heading": -135 } },
                 { "id": "flaring_storm", "art": { "kind": "planet", "planet": "star_white", "storm": "solar", "flare": "perfect" } },
                 { "id": "odd_flare", "art": { "kind": "planet", "planet": "star_yellow", "flare": "supernova" } },
@@ -147,10 +147,10 @@ class AtlasBodyReaderTest {
     }
 
     @Test
-    void aCrossedPlanetIsAPlanetWithItsConvoyHullsAndTravelHeading() {
+    void anOrbitedPlanetIsAPlanetWithItsConvoyHullsAndHeading() {
         AtlasBodyArt sunstruck = bodies().get("sunstruck").art();
 
-        assertEquals(AtlasBodyArt.Kind.CROSSED_PLANET, sunstruck.kind());
+        assertEquals(AtlasBodyArt.Kind.ORBITED_PLANET, sunstruck.kind());
         assertTrue(sunstruck.isPlanet());
         assertFalse(sunstruck.isShipGroup());
         assertEquals(List.of("colossus", "buffalo"), sunstruck.hullIds());

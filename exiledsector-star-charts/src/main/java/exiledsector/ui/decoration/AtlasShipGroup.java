@@ -14,7 +14,7 @@ import java.util.Random;
 
 public final class AtlasShipGroup implements AtlasShipScene {
 
-    public enum Mode { UNDER_WAY, DORMANT, STATION, SWIMMING, CIRCLING, CROSSING, GUARDING, PATROLLING }
+    public enum Mode { UNDER_WAY, DORMANT, STATION, SWIMMING, CIRCLING, ORBITING, GUARDING, PATROLLING }
 
     static final float SHIP_SCALE = 4.4f;
     private static final float ENGINE_LEVEL = 0.6f;
@@ -23,6 +23,7 @@ public final class AtlasShipGroup implements AtlasShipScene {
     private static final float DORMANT_FORMATION_SHARE = 0.5f;
     private static final float STATION_TURN_DEGREES_PER_SECOND = 0.3f;
     static final float PICKET_SHIP_SHARE = 0.37f;
+    static final float CONVOY_SHIP_SHARE = 0.55f;
     public static final float STATION_SHARE = 0.25f;
     static final float GUARD_ORBIT_SHARE = 0.45f;
     static final float PATROL_ORBIT_SHARE = 0.4f;
@@ -43,7 +44,6 @@ public final class AtlasShipGroup implements AtlasShipScene {
     private final Color pingColour;
     private List<RoamingShip> ships;
     private List<ErraticOrbit> orbits;
-    private ConvoyCrossing crossing;
     private List<Wreck> wrecks;
     private AtlasDebrisField debris;
     private AtlasShroudedPod pod;
@@ -82,7 +82,7 @@ public final class AtlasShipGroup implements AtlasShipScene {
         }
         float shipAmount = mode == Mode.DORMANT ? amount * DORMANT_PACE : amount;
         for (int index = 0; index < ships.size(); index++) {
-            float facingDeg = orbits == null ? headingDeg : orbits.get(index).headingDegreesAt(seconds);
+            float facingDeg = facingOf(index, headingDeg);
             ships.get(index).drift().advance(shipAmount, facingDeg);
         }
     }
@@ -117,12 +117,11 @@ public final class AtlasShipGroup implements AtlasShipScene {
             float scale = ship.drift().motion().scaleMult() * SHIP_SCALE * shipZoom;
             float x = screenX + offsetXOf(index, ship, headingDeg) * zoom;
             float y = screenY + offsetYOf(index, ship, headingDeg) * zoom;
-            float shipAlpha = crossing == null ? alpha : alpha * crossing.visibilityAt(index, seconds);
-            if (drawnShips.add(ship, x, y, scale, dormant ? 0f : ENGINE_LEVEL, shipAlpha)) {
-                ship.drawHull(spriteCache, x, y, scale, shipAlpha);
+            if (drawnShips.add(ship, x, y, scale, dormant ? 0f : ENGINE_LEVEL, alpha)) {
+                ship.drawHull(spriteCache, x, y, scale, alpha);
             }
             if (index < pings.size()) {
-                renderPing(pings.get(index), x, y, zoom, shipAlpha);
+                renderPing(pings.get(index), x, y, zoom, alpha);
             }
         }
         if (!dormant && !drawnShips.isEmpty()) {
@@ -135,6 +134,7 @@ public final class AtlasShipGroup implements AtlasShipScene {
         return switch (mode) {
             case DORMANT -> DORMANT_SHIP_SHARE;
             case STATION, GUARDING, PATROLLING -> PICKET_SHIP_SHARE;
+            case ORBITING -> CONVOY_SHIP_SHARE;
             default -> 1f;
         };
     }
@@ -148,18 +148,27 @@ public final class AtlasShipGroup implements AtlasShipScene {
         SpriteDraw.drawAdditiveAtCenter(spriteCache, PING_TEXTURE, x, y, size, size, pingColour, alpha * PING_ALPHA * (1f - progress));
     }
 
+    private float facingOf(int index, float headingDeg) {
+        if (orbits != null) {
+            return orbits.get(index).headingDegreesAt(seconds);
+        }
+        return mode == Mode.ORBITING ? ConvoyOrbit.headingDegreesAt(headingDeg, seconds) : headingDeg;
+    }
+
     private float offsetXOf(int index, RoamingShip ship, float headingDeg) {
         if (orbits != null) {
             return orbits.get(index).xAt(seconds);
         }
-        return crossing == null ? ship.drift().offsetX() : crossing.xAt(index, seconds, headingDeg);
+        float convoyX = mode == Mode.ORBITING ? ConvoyOrbit.xAt(radius, headingDeg, seconds) : 0f;
+        return convoyX + ship.drift().offsetX();
     }
 
     private float offsetYOf(int index, RoamingShip ship, float headingDeg) {
         if (orbits != null) {
             return orbits.get(index).yAt(seconds);
         }
-        return crossing == null ? -ship.drift().offsetY() : crossing.yAt(index, seconds, headingDeg);
+        float convoyY = mode == Mode.ORBITING ? ConvoyOrbit.yAt(radius, headingDeg, seconds) : 0f;
+        return convoyY - ship.drift().offsetY();
     }
 
     private void build(float headingDeg) {
@@ -187,20 +196,13 @@ public final class AtlasShipGroup implements AtlasShipScene {
             case CIRCLING -> buildCircling(hulls, radius, random);
             case GUARDING -> buildCircling(hulls, radius * GUARD_ORBIT_SHARE, random);
             case PATROLLING -> buildPatrol(hulls, random);
-            case CROSSING -> buildCrossing(hulls, headingDeg, random);
+            case ORBITING -> buildConvoy(hulls, headingDeg, random);
         }
     }
 
-    private void buildCrossing(List<ShipHullSpecAPI> hulls, float headingDeg, Random random) {
-        for (ShipHullSpecAPI hull : hulls) {
-            String spritePath = hull.getSpriteName();
-            SpriteAPI texture = spritePath == null ? null : spriteCache.texture(spritePath);
-            if (texture != null) {
-                FleetShipDrift drift = new FleetShipDrift(FleetShipDrift.HullMotion.of(hull.getHullSize()), 0f, headingDeg, random);
-                ships.add(new RoamingShip(spritePath, texture.getWidth(), texture.getHeight(), hull.getHullSize(), drift, HullEngines.of(hull)));
-            }
-        }
-        crossing = new ConvoyCrossing(radius, ships.size());
+    private void buildConvoy(List<ShipHullSpecAPI> hulls, float headingDeg, Random random) {
+        FleetFormation formation = FleetFormation.of(hulls, radius * ConvoyOrbit.FLEET_SPREAD_SHARE);
+        ships.addAll(formation.shipsLargestFirst(hulls, spriteCache, ConvoyOrbit.headingDegreesAt(headingDeg, seconds), random));
     }
 
     private void buildPatrol(List<ShipHullSpecAPI> hulls, Random random) {

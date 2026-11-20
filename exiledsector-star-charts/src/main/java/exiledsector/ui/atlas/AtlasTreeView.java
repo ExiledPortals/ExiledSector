@@ -140,7 +140,7 @@ final class AtlasTreeView {
             case SHROUDED -> AtlasShipGroup.Mode.SWIMMING;
             case STATION -> AtlasShipGroup.Mode.STATION;
             case SWARMED_PLANET -> AtlasShipGroup.Mode.CIRCLING;
-            case CROSSED_PLANET -> AtlasShipGroup.Mode.CROSSING;
+            case ORBITED_PLANET -> AtlasShipGroup.Mode.ORBITING;
             case OUTPOST -> AtlasShipGroup.Mode.GUARDING;
             case PATROL -> AtlasShipGroup.Mode.PATROLLING;
             default -> null;

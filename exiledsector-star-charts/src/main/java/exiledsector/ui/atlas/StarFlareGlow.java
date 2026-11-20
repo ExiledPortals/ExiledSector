@@ -13,13 +13,13 @@ final class StarFlareGlow {
     static final Rise MAP_RISE = new Rise(0.7f, 0.6f, 1.4f, 0.9f, 0);
     static final int ARCH_GLOWS = 9;
     static final float ARCH_HALF_SPAN_DEGREES = 22f;
-    static final float ARCH_HEIGHT = 0.55f;
+    static final float ARCH_HEIGHT = 1.1f;
     private static final String GLOW_PATH = AtlasSystemArt.GLOW;
     private static final float TRAIL_SIZE_FROM = 0.45f;
     private static final float TRAIL_SIZE_TO = 0.8f;
     private static final float TRAIL_ALPHA = 0.75f;
-    private static final float ARCH_GLOW_SIZE = 0.22f;
-    private static final float ARCH_FOOT_GLOW_SIZE = 0.3f;
+    private static final float ARCH_GLOW_SIZE = 0.44f;
+    private static final float ARCH_FOOT_GLOW_SIZE = 0.6f;
 
     private StarFlareGlow() {
     }

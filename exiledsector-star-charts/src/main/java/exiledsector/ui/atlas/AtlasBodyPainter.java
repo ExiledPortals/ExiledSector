@@ -71,7 +71,7 @@ final class AtlasBodyPainter {
     private static final float HORIZON_ALPHA = 0.18f;
     private static final float HALO_HALF_SIZE = 5f;
     private static final float HALO_ALPHA = 0.55f;
-    private static final float STAR_CORONA_MAX_SHARE = 2.2f;
+    private static final float STAR_CORONA_MAX_SHARE = 3f;
     private static final String CITY_LIGHTS_CATEGORY = "hab_glows";
 
     private final SpriteCache sprites = new SpriteCache(AtlasBodyPainter.class);
@@ -85,6 +85,7 @@ final class AtlasBodyPainter {
     private final AtlasFieldPainter fields = new AtlasFieldPainter();
     private final AtlasNebulaPainter nebulae = new AtlasNebulaPainter();
     private final Map<String, Color> tintsByHex = new HashMap<>();
+    private final StarShade starShade = new StarShade();
     private final Map<String, CategorySprite> cityLights = new HashMap<>();
 
     record Placement(float screenX, float screenY, float screenRadius, float headingDegrees, float spinDegrees, float seedDegrees,
@@ -96,7 +97,7 @@ final class AtlasBodyPainter {
             return;
         }
         switch (art.kind()) {
-            case PLANET, SWARMED_PLANET, CROSSED_PLANET -> {
+            case PLANET, SWARMED_PLANET, ORBITED_PLANET -> {
                 paintPlanet(art, colour, placement, lighting, seconds, alpha);
                 storms.paintOnPlanet(art.storm(), colour, placement, lighting, seconds, alpha);
                 flares.paint(art.flare(), colour, placement, lighting, alpha);
@@ -211,11 +212,12 @@ final class AtlasBodyPainter {
         float turn = placement.spinDegrees() + seconds * PLANET_TURN_DEGREES_PER_SECOND;
         Color litTint = art.tintColour() == null ? spec.getPlanetColor()
                 : tintsByHex.computeIfAbsent(art.tintColour(), hex -> ColorUtil.parseHexColor(hex, Color.WHITE));
-        PlanetSphere.draw(sphere, texture, spec, placement.screenX(), placement.screenY(), radius, turn, tintFor(lighting, litTint), alpha, 0f, 0f);
-        paintCityLights(art, spec, placement, turn, lighting, alpha);
         if (spec.isStar()) {
             paintStarCorona(spec, placement, lighting, alpha);
         }
+        Color bodyTint = spec.isStar() ? starShade.of(litTint, lighting) : tintFor(lighting, litTint);
+        PlanetSphere.draw(sphere, texture, spec, placement.screenX(), placement.screenY(), radius, turn, bodyTint, alpha, 0f, 0f);
+        paintCityLights(art, spec, placement, turn, lighting, alpha);
         SpriteAPI atmosphere = atmosphereTexture.get();
         if (lighting == Lighting.LIT && atmosphere != null) {
             float thickness = radius * Math.max(spec.getAtmosphereThickness(), ATMOSPHERE_MIN_SHARE);
@@ -245,14 +247,9 @@ final class AtlasBodyPainter {
         if (coronaPath == null || coronaPath.isEmpty()) {
             return;
         }
-        float glow = switch (lighting) {
-            case LIT -> 1f;
-            case AVAILABLE -> 0.5f;
-            case DULL -> 0.25f;
-        };
         float corona = placement.screenRadius() * Math.min(spec.getCoronaSize(), STAR_CORONA_MAX_SHARE) * 2f;
-        SpriteDraw.drawAdditiveAtCenter(sprites, coronaPath, placement.screenX(), placement.screenY(), corona, corona,
-                tintFor(lighting, spec.getCoronaColor()), alpha * glow);
+        SpriteDraw.drawAdditiveAtCenter(sprites, coronaPath, placement.screenX(), placement.screenY(), corona, corona, spec.getCoronaColor(),
+                alpha * FlareWeather.glowShare(lighting));
     }
 
     private void paintBlackHole(SpriteAPI texture, PlanetSpecAPI spec, Placement placement, Lighting lighting, float seconds, float alpha) {

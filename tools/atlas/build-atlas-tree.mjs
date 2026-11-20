@@ -61,6 +61,9 @@ const POPULATED_WORLDS = [
   { planet: 'terran-eccentric', cityLights: ['volturn'] },
   { planet: 'rocky_metallic', cityLights: ['volturn', 'sindria', 'asharu'] },
 ];
+const STAR_DRAWN_SHARE = 0.5;
+const drawnStar = (art) => ({ ...art, size: Math.round(art.size * STAR_DRAWN_SHARE), footprint: art.size });
+const withoutFootprint = ({ footprint, ...art }) => art;
 const STORM_GIANT_TINT = '#ffc4ee';
 const STORM_GIANT_SIZE = 150;
 const REDACTED_FRIGATES = ['glimmer', 'lumen', 'glimmer', 'lumen', 'glimmer'];
@@ -71,18 +74,18 @@ const STORM_NOTABLE_ART = {
   eye_of_the_storm: () => stormGiant('ice_giant', 'eye'),
   redacted_front: () => ({ kind: 'swarmed_planet', planet: 'gas_giant', tint: STORM_GIANT_TINT, hulls: REDACTED_FRIGATES, size: STORM_GIANT_SIZE }),
   captured_front: () => stormGiant('ice_giant', 'captured'),
-  solar_front: () => ({ kind: 'planet', planet: 'star_yellow', storm: 'solar', size: 110 }),
+  solar_front: () => drawnStar({ kind: 'planet', planet: 'star_yellow', storm: 'solar', size: 110 }),
   thunder_duel: () => stormGiant('gas_giant', 'duel'),
 };
 const FLARE_STAR_SIZE = 110;
 const SUNSTRUCK_CONVOY = ['colossus', 'buffalo', 'tarsus', 'phaeton', 'buffalo'];
-const flareStar = (planet, flare, size = FLARE_STAR_SIZE) => ({ kind: 'planet', planet, flare, size });
+const flareStar = (planet, flare, size = FLARE_STAR_SIZE) => drawnStar({ kind: 'planet', planet, flare, size });
 const FLARE_NOTABLE_ART = {
   solar_maximum: () => flareStar('star_blue_giant', 'often'),
   golden_hour: () => flareStar('star_orange', 'warm'),
   tempered_light: () => flareStar('star_red_dwarf', 'gentle', 95),
   perfect_light: () => flareStar('star_white', 'perfect'),
-  sunstruck_convoy: () => ({ kind: 'crossed_planet', planet: 'star_yellow', flare: 'licking', hulls: SUNSTRUCK_CONVOY, size: 90, facing: 'travel' }),
+  sunstruck_convoy: () => drawnStar({ kind: 'orbited_planet', planet: 'star_yellow', flare: 'licking', hulls: SUNSTRUCK_CONVOY, size: 90, facing: 'travel' }),
 };
 const MAGNETIC_ROCKS = ['graphics/asteroids/asteroid_big00.png', 'graphics/asteroids/asteroid_big01.png', 'graphics/asteroids/asteroid_big02.png'];
 const MAGNETIC_PLANET_SIZE = 88;
@@ -91,7 +94,7 @@ const MAGNETIC_NOTABLE_ART = {
   charged_fields: () => magneticPlanet('rocky_metallic', 'charged', 84),
   static_harvest: () => magneticPlanet('cryovolcanic', 'harvest', 92),
   ion_front: () => ({ ...magneticPlanet('water', 'ion', 90), storm: 'generic' }),
-  geomagnetic_surge: () => ({ ...magneticPlanet('star_red_giant', 'surge', 86), flare: 'surge' }),
+  geomagnetic_surge: () => drawnStar({ ...magneticPlanet('star_red_giant', 'surge', 86), flare: 'surge' }),
 };
 const nebulaStack = (nebula, size) => ({ kind: 'nebula', nebula, size });
 const NEBULA_NOTABLE_ART = {
@@ -236,7 +239,7 @@ const ANOMALIES = {
     colour: '#ffe4a0',
     chance: 'stellar_flares_chance',
     others: ['flare_hull_items'],
-    small: () => flareStar('star_yellow', 'plain', 36),
+    small: () => ({ kind: 'planet', planet: 'star_yellow', flare: 'plain', size: 36 }),
     notable: (notableType) => FLARE_NOTABLE_ART[notableType]?.() ?? flareStar('star_yellow', 'plain'),
   },
   magnetic_storm: {
@@ -389,7 +392,7 @@ function wheelPlan(notableType) {
 function shapeWheel(wheel) {
   wheel.smallArt = wheel.officer ? wheel.smallTypes.map(OFFICERS.small) : wheel.smallAnomalies.map((anomaly) => ANOMALIES[anomaly].small());
   const [outerSize, innerSize] = wheel.smallArt.map((art) => art.size);
-  wheel.innerTrack = wheel.art.size + SATELLITE_GAP + innerSize;
+  wheel.innerTrack = (wheel.art.footprint ?? wheel.art.size) + SATELLITE_GAP + innerSize;
   wheel.outerTrack = wheel.innerTrack + innerSize + SATELLITE_GAP + outerSize;
   wheel.reach = wheel.outerTrack + outerSize;
   wheel.spokeLength = SPOKE_CLEARANCE + random() * SPOKE_SPREAD + wheel.reach;
@@ -580,7 +583,7 @@ function placeWheel(wheel, ring, spoke, centre) {
   const offsets = satelliteOffsets(wheel, towardSpoke);
   const turn = turnOf(centre, spoke.node, { x: centre.x + offsets[0].x, y: centre.y + offsets[0].y });
   const notable = addNode(wheel.notableType, centre.x, centre.y, wheel.tags, {
-    colour: wheel.colour, spiral: turn, art: withHeading(wheel.art, spoke.angle),
+    colour: wheel.colour, spiral: turn, art: withHeading(withoutFootprint(wheel.art), spoke.angle),
   });
   wheelOf.set(notable.id, { centre: notable, turn });
   const satellites = offsets.map((offset, order) => {

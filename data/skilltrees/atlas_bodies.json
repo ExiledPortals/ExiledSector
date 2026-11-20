@@ -2059,7 +2059,7 @@
 				"kind": "planet",
 				"planet": "star_orange",
 				"flare": "warm",
-				"size": 110
+				"size": 55
 			}
 		},
 		{
@@ -2556,7 +2556,7 @@
 				"kind": "planet",
 				"planet": "star_red_dwarf",
 				"flare": "gentle",
-				"size": 95
+				"size": 48
 			}
 		},
 		{
@@ -2802,7 +2802,7 @@
 				"kind": "planet",
 				"planet": "star_blue_giant",
 				"flare": "often",
-				"size": 110
+				"size": 55
 			}
 		},
 		{
@@ -3567,7 +3567,7 @@
 				"kind": "planet",
 				"planet": "star_yellow",
 				"storm": "solar",
-				"size": 110
+				"size": 55
 			}
 		},
 		{
@@ -4084,7 +4084,7 @@
 			"colour": "#ffe4a0",
 			"spiral": 1,
 			"art": {
-				"kind": "crossed_planet",
+				"kind": "orbited_planet",
 				"planet": "star_yellow",
 				"flare": "licking",
 				"hulls": [
@@ -4094,7 +4094,7 @@
 					"phaeton",
 					"buffalo"
 				],
-				"size": 90,
+				"size": 45,
 				"facing": "travel",
 				"heading": -446
 			}
@@ -4212,7 +4212,7 @@
 				"kind": "planet",
 				"planet": "star_red_giant",
 				"field": "surge",
-				"size": 86,
+				"size": 43,
 				"flare": "surge"
 			}
 		},
@@ -4500,7 +4500,7 @@
 				"kind": "planet",
 				"planet": "star_white",
 				"flare": "perfect",
-				"size": 110
+				"size": 55
 			}
 		},
 		{
