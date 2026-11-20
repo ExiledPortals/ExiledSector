@@ -30,7 +30,6 @@ import exiledsector.ui.UiFonts;
 import exiledsector.ui.decoration.DecorationScene;
 import exiledsector.ui.decoration.StarfieldRenderer;
 import exiledsector.ui.decoration.TreeDecorations;
-import exiledsector.ui.hyperspace.HyperspaceMode;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.TextLabel;
 import org.lwjgl.input.Keyboard;
@@ -48,7 +47,6 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
     private static final float START_ZOOM = 0.3f;
     private static final float TITLE_GAP = 8f;
     private static final float TOOLTIP_MAX_TEXT_HEIGHT = AtlasScreen.TOOLTIP_MAX_TEXT_HEIGHT;
-    private static final String VOLUME_KEY_PREFIX = "atlasTree.volume.";
 
     private enum Control { BACK, EFFECTS }
 
@@ -63,7 +61,6 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
     private final AtlasOverlayFrame frame = new AtlasOverlayFrame();
     private final TreeDecorations decorations;
     private final AtlasTreeView treeView = new AtlasTreeView(data.bodies(), panelStyle);
-    private final HyperspaceMode hyperspace;
     private final TextLabel titleLabel = new TextLabel(UiFonts.TITLE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
     private final TextLabel pointsLabel = new TextLabel(UiFonts.HINT, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
     private final TooltipText tooltipText = SkillTreePanelStyle.tooltipText();
@@ -98,17 +95,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         this.state = AtlasState.get(Global.getSector());
         this.decorations = TreeDecorations.of(data.decorations());
         this.effectsPanel = new AtlasTreeEffectsPanel(() -> AtlasTree.effectGroups(state));
-        this.hyperspace = new HyperspaceMode(camera, this::hyperspaceContent, HyperspaceMode.Framing.ALL_VOLUMES, AtlasTreeScreen::volumeLabel, () -> { });
         refreshAllocation();
-    }
-
-    private HyperspaceMode.MapContent hyperspaceContent() {
-        return new HyperspaceMode.MapContent(data.decorations(), Set.of(), data.topology().wormholePairs());
-    }
-
-    private static String volumeLabel(String volumeId) {
-        String key = VOLUME_KEY_PREFIX + volumeId;
-        return Translation.has(key) ? Translation.text(key) : volumeId;
     }
 
     @Override
@@ -155,7 +142,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         }
         if (buttonId == Control.BACK) {
             back();
-        } else if (buttonId == Control.EFFECTS && !hyperspace.isActive()) {
+        } else if (buttonId == Control.EFFECTS) {
             toggleEffects();
         }
     }
@@ -185,7 +172,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
             if (fade.closing()) {
                 event.consume();
             } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
-                if (event.isKeyDownEvent() && effectsPanel.isOpen() && !hyperspace.isActive()) {
+                if (event.isKeyDownEvent() && effectsPanel.isOpen()) {
                     toggleEffects();
                 } else if (event.isKeyDownEvent()) {
                     back();
@@ -193,9 +180,6 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
                 event.consume();
             } else if (event.isMouseMoveEvent()) {
                 mouseMoved(event);
-            } else if (hyperspace.isActive()) {
-                hyperspace.handleEvent(event, panelPosition, false);
-                event.consume();
             } else if (event.isMouseEvent()) {
                 treeInput(event);
             } else {
@@ -239,20 +223,9 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         } else if (event.isRMBDownEvent()) {
             travelThroughWormhole(nodeAt(x, y));
         } else if (event.isMouseScrollEvent()) {
-            scrolled(event);
+            camera.scrollAt(event.getEventValue() > 0, x, y, panelPosition);
         }
         event.consume();
-    }
-
-    private void scrolled(InputEventAPI event) {
-        boolean scrollingIn = event.getEventValue() > 0;
-        if (!scrollingIn && camera.isSettledAtMinimum() && !camera.isPanning()) {
-            if (hyperspace.enter(panelPosition)) {
-                gesture.clear();
-            }
-        } else {
-            camera.scrollAt(scrollingIn, event.getX(), event.getY(), panelPosition);
-        }
     }
 
     private void clicked(AtlasTreeNode node, boolean wholePath) {
@@ -311,12 +284,11 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         }
         starfield.advance(amount);
         decorations.advance(amount);
-        hyperspace.advance(amount);
         camera.advanceZoom(amount);
         camera.advancePan(amount);
         treeView.advance(amount);
         effectsPanel.advance(amount);
-        boolean hovering = mouseKnown && !hyperspace.isActive() && !camera.isDragging() && !gesture.isPanning() && !effectsPanel.contains(mouseX, mouseY);
+        boolean hovering = mouseKnown && !camera.isDragging() && !gesture.isPanning() && !effectsPanel.contains(mouseX, mouseY);
         hoveredNode = hovering ? nodeAt(mouseX, mouseY) : null;
     }
 
@@ -335,7 +307,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         }
         drawChrome(alpha);
         effectsPanel.render(frame.chromeRight(), frame.chromeTop() - ChromeMetrics.CONTROL_HEIGHT - PANEL_GAP,
-                frame.chromeBottom() + PANEL_GAP, alpha * hyperspace.treeAlpha());
+                frame.chromeBottom() + PANEL_GAP, alpha);
         if (hoveredNode != null) {
             drawTooltip(hoveredNode, alpha);
         }
@@ -343,16 +315,11 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
 
     private void renderCanvas(float alpha) {
         TreeViewport viewport = viewport();
-        float treeAlpha = hyperspace.treeAlpha();
         starfield.render(panelPosition, camera.panX(), camera.panY(), alpha);
-        DecorationScene scene = new DecorationScene(viewport, alpha, treeAlpha, hyperspace.anchorIds(),
-                new DecorationScene.StarMap(hyperspace.starRadius(), hyperspace.mapAmount(), hyperspace.hiddenStarIds()));
+        DecorationScene scene = new DecorationScene(viewport, alpha, 1f, Set.of(), DecorationScene.StarMap.NONE);
         decorations.renderBehindTree(scene);
-        treeView.render(viewport, nodeStates, alpha * treeAlpha);
+        treeView.render(viewport, nodeStates, alpha);
         decorations.renderOverTree(scene);
-        if (hyperspace.isActive()) {
-            hyperspace.render(viewport, alpha, mouseKnown, mouseX, mouseY);
-        }
     }
 
     private void drawChrome(float alpha) {

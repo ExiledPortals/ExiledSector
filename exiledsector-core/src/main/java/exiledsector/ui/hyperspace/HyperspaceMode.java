@@ -24,8 +24,6 @@ public final class HyperspaceMode {
     }
 
     public record Framing(String centreVolume, Set<String> offScreenVolumes) {
-
-        public static final Framing ALL_VOLUMES = new Framing(null, Set.of());
     }
 
     private static final float MARGIN = 60f;
