@@ -46,7 +46,6 @@ final class AtlasStormPainter {
     private static final float SCATTERED_SPREAD = 0.42f;
     private static final float SCATTERED_PUFF_SIZE = 0.62f;
     private static final float SCATTERED_TURN_DEGREES_PER_SECOND = 4f;
-    private static final float SCATTERED_FLASH_SECONDS = 1.4f;
     private static final float SCATTERED_FLASH_SIZE = 0.9f;
 
     private static final float ROD_REACH = 0.38f;
@@ -193,8 +192,8 @@ final class AtlasStormPainter {
     }
 
     private void paintScattered(float centreX, float centreY, float radius, int puffs, boolean flashes) {
-        float strength = flashes ? StormWeather.flash(seed, seconds, SCATTERED_FLASH_SECONDS, flashChance) : 0f;
-        int flashing = strength > 0f ? StormWeather.pick(seed, StormWeather.slotOf(seed, seconds, SCATTERED_FLASH_SECONDS), puffs) : -1;
+        float strength = flashes ? StormWeather.flash(seed, seconds, StormWeather.SCATTERED_FLASH_SECONDS, flashChance) : 0f;
+        int flashing = strength > 0f ? StormWeather.pick(seed, StormWeather.slotOf(seed, seconds, StormWeather.SCATTERED_FLASH_SECONDS), puffs) : -1;
         flashPlaced = false;
         for (int puff = 0; puff < puffs; puff++) {
             float reach = radius * (SCATTERED_INNER + SCATTERED_SPREAD * StormWeather.unit(seed, puff, 2));

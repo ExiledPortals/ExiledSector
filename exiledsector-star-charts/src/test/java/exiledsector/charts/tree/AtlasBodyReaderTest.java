@@ -30,7 +30,14 @@ class AtlasBodyReaderTest {
                 { "id": "sunstruck", "art": { "kind": "crossed_planet", "planet": "star_yellow", "flare": "licking",
                     "hulls": ["colossus", "buffalo"], "size": 90, "facing": "travel", "heading": -135 } },
                 { "id": "flaring_storm", "art": { "kind": "planet", "planet": "star_white", "storm": "solar", "flare": "perfect" } },
-                { "id": "odd_flare", "art": { "kind": "planet", "planet": "star_yellow", "flare": "supernova" } }
+                { "id": "odd_flare", "art": { "kind": "planet", "planet": "star_yellow", "flare": "supernova" } },
+                { "id": "charged", "art": { "kind": "planet", "planet": "rocky_metallic", "field": "charged", "size": 84 } },
+                { "id": "ion", "art": { "kind": "planet", "planet": "water", "field": "ion", "storm": "generic", "size": 90 } },
+                { "id": "surge", "art": { "kind": "planet", "planet": "star_red_giant", "field": "surge", "flare": "surge" } },
+                { "id": "odd_field", "art": { "kind": "planet", "planet": "barren", "field": "monopole" } },
+                { "id": "puff", "colour": "#c8a082", "art": { "kind": "nebula", "nebula": "puff", "size": 42 } },
+                { "id": "ionized", "art": { "kind": "nebula", "nebula": "ionized", "size": 116 } },
+                { "id": "odd_nebula", "art": { "kind": "nebula", "nebula": "thick_soup" } }
             ] }
             """;
 
@@ -147,20 +154,78 @@ class AtlasBodyReaderTest {
     }
 
     @Test
+    void aMagneticPlanetKeepsItsFieldBesideAnyStormOrFlareAndAnythingWithoutOneHasNone() {
+        Map<String, AtlasBody> bodies = bodies();
+        AtlasBodyArt charged = bodies.get("charged").art();
+        AtlasBodyArt ion = bodies.get("ion").art();
+        AtlasBodyArt surge = bodies.get("surge").art();
+
+        assertEquals(AtlasBodyArt.Kind.PLANET, charged.kind());
+        assertEquals(AtlasBodyArt.Field.CHARGED, charged.field());
+        assertEquals(84f, charged.size());
+        assertEquals(AtlasBodyArt.Storm.NONE, charged.storm());
+        assertEquals(AtlasBodyArt.Field.ION, ion.field());
+        assertEquals(AtlasBodyArt.Storm.GENERIC, ion.storm());
+        assertEquals(AtlasBodyArt.Field.SURGE, surge.field());
+        assertEquals(AtlasBodyArt.Flare.SURGE, surge.flare());
+        assertEquals(AtlasBodyArt.Field.NONE, bodies.get("rod").art().field());
+        assertEquals(AtlasBodyArt.Field.NONE, bodies.get("maximum").art().field());
+        assertEquals(AtlasBodyArt.Nebula.NONE, charged.nebula());
+    }
+
+    @Test
+    void anUnknownFieldFallsBackToNoFieldOnAPlanetThatStillLoads() {
+        AtlasBodyArt odd = bodies().get("odd_field").art();
+
+        assertEquals(AtlasBodyArt.Field.NONE, odd.field());
+        assertEquals(AtlasBodyArt.Kind.PLANET, odd.kind());
+        assertEquals("barren", odd.planetType());
+    }
+
+    @Test
+    void aNebulaLoadsAsItsOwnKindWithItsStyleAndNoPlanet() {
+        Map<String, AtlasBody> bodies = bodies();
+        AtlasBodyArt puff = bodies.get("puff").art();
+
+        assertEquals(AtlasBodyArt.Kind.NEBULA, puff.kind());
+        assertEquals(AtlasBodyArt.Nebula.PUFF, puff.nebula());
+        assertEquals(42f, puff.size());
+        assertEquals("#c8a082", bodies.get("puff").colour());
+        assertNull(puff.planetType());
+        assertFalse(puff.isPlanet());
+        assertFalse(puff.isShipGroup());
+        assertEquals(AtlasBodyArt.Field.NONE, puff.field());
+        assertEquals(AtlasBodyArt.Nebula.IONIZED, bodies.get("ionized").art().nebula());
+        assertEquals(AtlasBodyArt.Nebula.NONE, bodies.get("cell").art().nebula());
+    }
+
+    @Test
+    void anUnknownNebulaStyleFallsBackToNoneButStaysANebula() {
+        AtlasBodyArt odd = bodies().get("odd_nebula").art();
+
+        assertEquals(AtlasBodyArt.Kind.NEBULA, odd.kind());
+        assertEquals(AtlasBodyArt.Nebula.NONE, odd.nebula());
+    }
+
+    @Test
     void anArtBuiltWithoutWeatherOrPopulationHasNeither() {
         AtlasBodyArt art = new AtlasBodyArt(AtlasBodyArt.Kind.PLANET, "star_yellow", null, null, null, null, null, null);
-        AtlasBodyArt.Weather halfWeather = new AtlasBodyArt.Weather(null, AtlasBodyArt.Flare.WARM);
+        AtlasBodyArt.Weather halfWeather = new AtlasBodyArt.Weather(null, AtlasBodyArt.Flare.WARM, null, null);
 
         assertEquals(AtlasBodyArt.NO_WEATHER, art.weather());
         assertEquals(AtlasBodyArt.UNPOPULATED, art.population());
         assertEquals(AtlasBodyArt.Storm.NONE, halfWeather.storm());
         assertEquals(AtlasBodyArt.Flare.WARM, halfWeather.flare());
+        assertEquals(AtlasBodyArt.Field.NONE, halfWeather.field());
+        assertEquals(AtlasBodyArt.Nebula.NONE, halfWeather.nebula());
     }
 
     @Test
     void thePlainArtHasNoWeatherNoColoursAndNoPopulation() {
         assertEquals(AtlasBodyArt.Flare.NONE, AtlasBodyArt.PLAIN.flare());
         assertEquals(AtlasBodyArt.Storm.NONE, AtlasBodyArt.PLAIN.storm());
+        assertEquals(AtlasBodyArt.Field.NONE, AtlasBodyArt.PLAIN.field());
+        assertEquals(AtlasBodyArt.Nebula.NONE, AtlasBodyArt.PLAIN.nebula());
         assertNull(AtlasBodyArt.PLAIN.lightColour());
         assertNull(AtlasBodyArt.PLAIN.tintColour());
         assertTrue(AtlasBodyArt.PLAIN.cityLights().isEmpty());

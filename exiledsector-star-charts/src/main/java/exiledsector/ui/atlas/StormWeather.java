@@ -6,6 +6,7 @@ final class StormWeather {
 
     static final float FLASH_SHARE_OF_SLOT = 0.35f;
     static final float NO_BURST = -1f;
+    static final float SCATTERED_FLASH_SECONDS = 1.4f;
     private static final int SLOT_OFFSET_SALT = 0x51ed27;
     private static final int UNIT_BITS = 24;
     private static final float UNIT_SCALE = 1f / (1 << UNIT_BITS);

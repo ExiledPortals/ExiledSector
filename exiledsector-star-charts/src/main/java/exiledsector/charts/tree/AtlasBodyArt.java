@@ -9,20 +9,24 @@ public record AtlasBodyArt(Kind kind, String planetType, List<String> spritePath
     public static final float DEFAULT_HEADING = 90f;
     public static final Shape DEFAULT_SHAPE = new Shape(DEFAULT_SIZE, Facing.SPIN, 1f, DEFAULT_HEADING);
     public static final Colours NO_COLOURS = new Colours(null, null);
-    public static final Weather NO_WEATHER = new Weather(Storm.NONE, Flare.NONE);
+    public static final Weather NO_WEATHER = new Weather(Storm.NONE, Flare.NONE, Field.NONE, Nebula.NONE);
     public static final Population UNPOPULATED = new Population(List.of(), List.of(), List.of());
     public static final AtlasBodyArt PLAIN = new AtlasBodyArt(Kind.PLAIN, null, List.of(), List.of(), DEFAULT_SHAPE, NO_COLOURS, NO_WEATHER,
             UNPOPULATED);
 
     public enum Kind {
-        STAR, PLANET, SWARMED_PLANET, CROSSED_PLANET, SPRITE, BINARY, FLEET, DERELICTS, SHROUDED, STATION, OUTPOST, PATROL, BREACH, STORM_CELL, PLAIN
+        STAR, PLANET, SWARMED_PLANET, CROSSED_PLANET, SPRITE, BINARY, FLEET, DERELICTS, SHROUDED, STATION, OUTPOST, PATROL, BREACH, STORM_CELL, NEBULA, PLAIN
     }
 
     public enum Facing { SPIN, TRAVEL }
 
     public enum Storm { NONE, GENERIC, LIGHTNING_ROD, SUPERCELL, EYE, CAPTURED, SOLAR, DUEL }
 
-    public enum Flare { NONE, PLAIN, OFTEN, WARM, GENTLE, PERFECT, LICKING }
+    public enum Flare { NONE, PLAIN, OFTEN, WARM, GENTLE, PERFECT, LICKING, SURGE }
+
+    public enum Field { NONE, PLAIN, CHARGED, HARVEST, ION, SURGE }
+
+    public enum Nebula { NONE, PUFF, TRAILS, SETTLING, IONIZED }
 
     public record Shape(float size, Facing facing, float spinRate, float heading) {
     }
@@ -30,11 +34,13 @@ public record AtlasBodyArt(Kind kind, String planetType, List<String> spritePath
     public record Colours(String light, String tint) {
     }
 
-    public record Weather(Storm storm, Flare flare) {
+    public record Weather(Storm storm, Flare flare, Field field, Nebula nebula) {
 
         public Weather {
             storm = storm == null ? Storm.NONE : storm;
             flare = flare == null ? Flare.NONE : flare;
+            field = field == null ? Field.NONE : field;
+            nebula = nebula == null ? Nebula.NONE : nebula;
         }
     }
 
@@ -86,6 +92,14 @@ public record AtlasBodyArt(Kind kind, String planetType, List<String> spritePath
 
     public Flare flare() {
         return weather.flare();
+    }
+
+    public Field field() {
+        return weather.field();
+    }
+
+    public Nebula nebula() {
+        return weather.nebula();
     }
 
     public List<String> cityLights() {

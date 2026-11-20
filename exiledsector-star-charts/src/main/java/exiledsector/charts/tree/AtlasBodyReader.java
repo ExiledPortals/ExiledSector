@@ -53,7 +53,9 @@ public final class AtlasBodyReader {
         AtlasBodyArt.Colours colours = new AtlasBodyArt.Colours(artJson.optString("light", null), artJson.optString("tint", null));
         AtlasBodyArt.Weather weather = new AtlasBodyArt.Weather(
                 enumNamed(AtlasBodyArt.Storm.class, artJson.optString("storm", "none"), AtlasBodyArt.Storm.NONE),
-                enumNamed(AtlasBodyArt.Flare.class, artJson.optString("flare", "none"), AtlasBodyArt.Flare.NONE));
+                enumNamed(AtlasBodyArt.Flare.class, artJson.optString("flare", "none"), AtlasBodyArt.Flare.NONE),
+                enumNamed(AtlasBodyArt.Field.class, artJson.optString("field", "none"), AtlasBodyArt.Field.NONE),
+                enumNamed(AtlasBodyArt.Nebula.class, artJson.optString("nebula", "none"), AtlasBodyArt.Nebula.NONE));
         AtlasBodyArt.Population population = new AtlasBodyArt.Population(TreeJson.stringList(artJson.optJSONArray("cityLights")),
                 fleets(artJson.optJSONArray("convoys")), fleets(artJson.optJSONArray("haulers")));
         return new AtlasBodyArt(kind, artJson.optString("planet", null), paths, TreeJson.stringList(artJson.optJSONArray("hulls")), shape, colours,

@@ -82,6 +82,8 @@ final class AtlasBodyPainter {
     private final Vector3f siteOffset = new Vector3f();
     private final AtlasStormPainter storms = new AtlasStormPainter();
     private final AtlasFlarePainter flares = new AtlasFlarePainter();
+    private final AtlasFieldPainter fields = new AtlasFieldPainter();
+    private final AtlasNebulaPainter nebulae = new AtlasNebulaPainter();
     private final Map<String, Color> tintsByHex = new HashMap<>();
     private final Map<String, CategorySprite> cityLights = new HashMap<>();
 
@@ -98,8 +100,10 @@ final class AtlasBodyPainter {
                 paintPlanet(art, colour, placement, lighting, seconds, alpha);
                 storms.paintOnPlanet(art.storm(), colour, placement, lighting, seconds, alpha);
                 flares.paint(art.flare(), colour, placement, lighting, alpha);
+                fields.paint(art.field(), art.flare(), colour, placement, lighting, seconds, alpha);
             }
             case STORM_CELL -> storms.paintCell(colour, placement, lighting, seconds, alpha);
+            case NEBULA -> nebulae.paint(art.nebula(), colour, placement, lighting, seconds, alpha);
             case SPRITE -> paintSprite(firstPath(art), placement.screenX(), placement.screenY(), placement.screenRadius(), angleOf(art, placement),
                     lighting, alpha);
             case OUTPOST -> paintSprite(firstPath(art), placement.screenX(), placement.screenY(), placement.screenRadius() * AtlasShipGroup.STATION_SHARE,
