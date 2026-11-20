@@ -15,7 +15,6 @@ import exiledsector.charts.run.ChartRuns;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.CampaignOverlay;
 import exiledsector.ui.SkillTreePanelStyle;
-import exiledsector.ui.atlas.OfficerRewardPicker;
 import exiledsector.ui.util.BorderedPanel;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.HoloFrame;
@@ -104,9 +103,6 @@ public final class ChartInfoTab implements CampaignUIRenderingListener, Campaign
             float eventY = event.getY();
             if (event.isLMBDownEvent() && overTab(eventX, eventY)) {
                 toggle();
-                event.consume();
-            } else if (event.isLMBDownEvent() && frame.isVisible() && window.rewardButtonAt(eventX, eventY)) {
-                OfficerRewardPicker.openUnchosen(Global.getSector());
                 event.consume();
             } else if (frame.isVisible() && overWindow(eventX, eventY)) {
                 if (event.isMouseScrollEvent()) {

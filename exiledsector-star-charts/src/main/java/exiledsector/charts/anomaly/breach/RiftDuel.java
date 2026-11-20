@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public record RiftDuel(int duplicatedRewards, int extraOffers) {
+public record RiftDuel(int duplicatedRewards) {
 
-    public static final RiftDuel NONE = new RiftDuel(0, 0);
+    public static final RiftDuel NONE = new RiftDuel(0);
     static final String SEED_PREFIX = "riftDuel|";
 
     public static RiftDuel at(SectorAPI sector, ChartRun run) {
@@ -30,7 +30,7 @@ public record RiftDuel(int duplicatedRewards, int extraOffers) {
     }
 
     static RiftDuel of(ChartGenContext context) {
-        return new RiftDuel(BreachLines.count(context, BreachLines.OFFICER_DUPLICATES_KEY), BreachLines.count(context, BreachLines.OFFICER_OFFERS_KEY));
+        return new RiftDuel(BreachLines.count(context, BreachLines.OFFICER_DUPLICATES_KEY));
     }
 
     public Loot duplicatedLoot(AtlasOfficer officer, ChartRun run) {

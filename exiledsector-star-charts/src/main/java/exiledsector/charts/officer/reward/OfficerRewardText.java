@@ -31,10 +31,6 @@ public final class OfficerRewardText {
         return groupName(RewardGroup.of(item));
     }
 
-    public static String groupNameInText(CarriedItem item) {
-        return Translation.text(RewardGroup.of(item).inTextKey());
-    }
-
     public static String groupCount(RewardGroup group, int count) {
         String nameKey = count > 1 ? group.pluralLabelKey() : group.labelKey();
         return Translation.msg(GROUP_COUNT_KEY).arg("count", count).arg("group", Translation.text(nameKey)).text();

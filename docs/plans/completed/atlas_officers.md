@@ -49,7 +49,7 @@ Each officer has one flagship for life, picked when the officer is generated: a 
 
 An officer never moves on a turn. Expanding, pushing and challenging change claims and ranks, never command centres, and a challenge winner keeps their own command centre. An officer changes system only when they lose their command centre (see Officers losing), so a player heading for an officer always closes in.
 
-An officer record is one encoded string in `AtlasState` (as inserted anomaly records and capture records are), storing only ids and numbers: record id, faction id, name and portrait seeds, rank, command centre cell, trait id, flagship hull, variant and name seed, tree seed, d-mod ids, scars (scar id and stack count each), carried items (id and base count each), pending choice, defeat count, the Lieutenant's last-chance mark, status (active, waiting) and the last three history entries.
+An officer record is one encoded string in `AtlasState` (as inserted anomaly records and capture records are), storing only ids and numbers: record id, faction id, name and portrait seeds, rank, command centre cell, trait id, flagship hull, variant and name seed, tree seed, d-mod ids, scars (scar id and stack count each), carried items (id and base count each), defeat count, the Lieutenant's last-chance mark, status (active, waiting) and the last three history entries.
 
 The comms greeting and the system tooltip refer to that history ("You ran me out of Kesteven's Reach"), templated through i18n with the atlas system names.
 
@@ -103,7 +103,7 @@ The turn is a pure function of the saved state, the seed and a turn counter in `
 Skirmishes move from generator rolls on today's territory borders to the world's inserted records on the borders between neighbouring officers' territories. The attacker's commander is the attacking officer, and the defender's station guards the contested system.
 
 - Siding with the attacker and winning moves the system and counts as the attacker winning the push or challenge.
-- Siding with the defender and killing the attacking officer counts as the player defeating that officer (reward choice, scar, flight).
+- Siding with the defender and killing the attacking officer counts as the player defeating that officer (carried items, scar, flight).
 - Staying out resolves the push on its roll when the run closes, whatever the player destroyed.
 
 ## Officers losing
@@ -117,6 +117,8 @@ Fleeing can't outrun the player. A fled officer's new system must be within a fe
 A Lieutenant beaten by the player flees once and dies on their next loss (see Ranks).
 
 ## Reward choice
+
+Removed 2026-11-20: the choice, its picker, the pending choice on the record and the `ExiledSectorOfficerRewards` console command are gone. A defeat drops what the officer carries, and `OfficerRewardRepair` deals them a new starting item on the next turn. The pool below still feeds starting items, scavenging, relays and Thunder Duel.
 
 After the player defeats an officer, a prompt offers three items. The player must pick one, since picking has no downside, and the officer carries it: the next time the player defeats that officer, it drops in addition to their usual boss loot. Each defeat drops everything the officer carries and then offers a new choice. A player who loses, retreats or leaves without the kill gets no choice.
 

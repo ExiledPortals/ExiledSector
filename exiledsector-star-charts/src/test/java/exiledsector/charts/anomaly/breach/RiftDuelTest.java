@@ -20,12 +20,11 @@ class RiftDuelTest {
             CarriedItem.of(RewardKind.UNIQUE, "unique_b"), CarriedItem.of(RewardKind.STAR_CHART, "chart_c"));
 
     @Test
-    void theDuelReadsHowManyRewardsAreDuplicatedAndHowManyExtraOffersAreMade() {
+    void theDuelReadsHowManyRewardsAreDuplicated() {
         ChartGenContext context = ChartGenContext.of(List.of(
-                new ChartGenContext.AppliedEffect(ChartModifier.CHART_BREACH_OFFICER_DUPLICATED_REWARDS, 2f),
-                new ChartGenContext.AppliedEffect(ChartModifier.CHART_BREACH_OFFICER_EXTRA_OFFERS, 1f)));
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_BREACH_OFFICER_DUPLICATED_REWARDS, 2f)));
 
-        assertEquals(new RiftDuel(2, 1), RiftDuel.of(context));
+        assertEquals(new RiftDuel(2), RiftDuel.of(context));
         assertEquals(RiftDuel.NONE, RiftDuel.of(ChartGenContext.none()));
         assertEquals(RiftDuel.NONE, RiftDuel.at(null, null));
     }

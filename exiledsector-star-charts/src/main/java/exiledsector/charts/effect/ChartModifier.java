@@ -168,7 +168,6 @@ public enum ChartModifier implements ModifierEffect {
     CHART_BREACH_WAKES_ANOMALOUS_FLEETS("spatial_breach.wakesAnomalous", AnomalyLine.FLAG),
     CHART_BREACH_ANOMALOUS_FLEETS_WARPED("spatial_breach.anomalousWarped", AnomalyLine.FLAG),
     CHART_BREACH_OFFICER_DUPLICATED_REWARDS("spatial_breach.officerDuplicates", AnomalyLine.COUNT),
-    CHART_BREACH_OFFICER_EXTRA_OFFERS("spatial_breach.officerOffers", AnomalyLine.COUNT),
     CHART_BLACK_HOLE_EVENT_HORIZON("black_hole.eventHorizon", AnomalyLine.FLAG),
     CHART_BLACK_HOLE_WARPED_DERELICTS("black_hole.warpedDerelicts", AnomalyLine.FLAG),
     CHART_RELAY_COST_PERCENT("relay_network.cost", AnomalyLine.PERCENT_REDUCED_WHEN_NEGATIVE),

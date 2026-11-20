@@ -919,10 +919,6 @@
 				{
 					"effect": "CHART_BREACH_OFFICER_DUPLICATED_REWARDS",
 					"magnitude": 2
-				},
-				{
-					"effect": "CHART_BREACH_OFFICER_EXTRA_OFFERS",
-					"magnitude": 1
 				}
 			],
 			"tags": [
@@ -1496,7 +1492,7 @@
 			"tags": [
 				"officers"
 			]
-		},
+		},
 		{
 			"id": "flare_hull_items",
 			"name": "Flare Hull Items",
@@ -1591,6 +1587,6 @@
 			"tags": [
 				"hull_item"
 			]
-		}
+		}
 	]
 }

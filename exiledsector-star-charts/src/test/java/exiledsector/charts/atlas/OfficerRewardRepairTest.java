@@ -24,7 +24,6 @@ class OfficerRewardRepairTest {
             new OfficerRank("admiral", 60, 50, 3, 1));
     private static final CarriedItem KERNELS = new CarriedItem(RewardKind.CRAFTING_ITEM, "kernel", null, 2);
     private static final CarriedItem WARDS = new CarriedItem(RewardKind.CRAFTING_ITEM, "ward", null, 1);
-    private static final CarriedItem ENGRAM = CarriedItem.of(RewardKind.ENGRAM, "engram_a");
     private static final TerritoryContext CONTEXT = new TerritoryContext(null, null, FlagshipCatalogue.NONE, (officer, random) -> WARDS,
             ScavengeRoll.NONE, Set.of());
 
@@ -34,20 +33,17 @@ class OfficerRewardRepairTest {
     }
 
     @Test
-    void onlyOfficersCarryingNothingAndChoosingNothingAreDealtAReward() {
+    void onlyOfficersCarryingNothingAreDealtAReward() {
         AtlasState state = new AtlasState(TestBorders.SEED);
         List<AtlasOfficer> officers = board(state);
         int emptyId = officers.get(0).recordId();
         int carryingId = officers.get(1).recordId();
-        int choosingId = officers.get(2).recordId();
         state.putOfficer(state.officer(carryingId).withCarried(List.of(KERNELS)));
-        state.putOfficer(state.officer(choosingId).withPendingOffers(List.of(ENGRAM)));
 
         assertTrue(OfficerRewardRepair.repair(state, CONTEXT));
 
         assertEquals(List.of(WARDS), state.officer(emptyId).carried());
         assertEquals(List.of(KERNELS), state.officer(carryingId).carried());
-        assertTrue(state.officer(choosingId).carried().isEmpty());
         assertFalse(OfficerRewardRepair.repair(state, CONTEXT));
     }
 }

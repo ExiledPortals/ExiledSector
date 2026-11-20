@@ -16,7 +16,7 @@ public final class OfficerRewardRepair {
     public static boolean repair(AtlasState state, TerritoryContext context) {
         boolean changed = false;
         for (AtlasOfficer officer : state.officers()) {
-            if (officer.carried().isEmpty() && !officer.hasPendingChoice()) {
+            if (officer.carried().isEmpty()) {
                 Random random = Seeds.derived(state.seed(), REFILL_SALT ^ officer.recordId());
                 AtlasOfficer dealt = OfficerStartingItems.dealt(officer, context.startingItems(), random);
                 state.putOfficer(dealt);

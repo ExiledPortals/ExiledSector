@@ -116,7 +116,6 @@ public final class OfficerSeatRepair {
     private static Comparator<AtlasOfficer> keepOrder(AtlasState state, TerritoryContext context) {
         return Comparator.<AtlasOfficer>comparingInt(officer -> context.takesPartInOpenRun(state, officer) ? 0 : 1)
                 .thenComparingInt(officer -> officer.isActive() ? 0 : officer.hasFled() ? 1 : 2)
-                .thenComparingInt(officer -> officer.hasPendingChoice() ? 0 : 1)
                 .thenComparing(Comparator.comparingInt(AtlasOfficer::renown).reversed())
                 .thenComparingInt(AtlasOfficer::recordId);
     }

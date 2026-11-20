@@ -12,25 +12,18 @@ import java.util.function.Consumer;
 
 public record AtlasOfficer(int recordId, String factionId, long nameSeed, long portraitSeed, String rankId, AtlasCell commandCentre,
                            String traitId, String flagshipHullId, String flagshipVariantId, long shipNameSeed, long treeSeed,
-                           List<String> dmodIds, Map<String, Integer> scars, List<String> carriedItems, List<String> pendingChoice,
-                           int defeats, boolean lastChance, Status status, boolean heldCommand, List<String> history, int renown,
+                           List<String> dmodIds, Map<String, Integer> scars, List<String> carriedItems, int defeats, boolean lastChance, Status status, boolean heldCommand, List<String> history, int renown,
                            boolean identified, int seat, String portraitPath, Map<String, String> dmodScars) {
 
     public static final String RUN_DATA_KEY = "atlas_officer";
     public static final String FIGHTING_DATA_KEY = "atlas_officer_fighting";
     public static final int HISTORY_LENGTH = 3;
     public static final int UNSEATED = -1;
-    static final String FORMAT = "o4";
-    static final String UNATTRIBUTED_FORMAT = "o3";
-    static final String PORTRAITLESS_FORMAT = "o2";
-    static final String SEATLESS_FORMAT = "o1";
+    static final String FORMAT = "o5";
     static final String FIELD_SEPARATOR = "|";
     static final String LIST_SEPARATOR = ",";
     static final String COUNT_SEPARATOR = "=";
-    private static final int FIELD_COUNT = 25;
-    private static final int UNATTRIBUTED_FIELD_COUNT = 24;
-    private static final int PORTRAITLESS_FIELD_COUNT = 23;
-    private static final int SEATLESS_FIELD_COUNT = 22;
+    private static final int FIELD_COUNT = 24;
 
     public enum Status {
         ACTIVE,
@@ -42,7 +35,6 @@ public record AtlasOfficer(int recordId, String factionId, long nameSeed, long p
         scars = Map.copyOf(scars);
         carriedItems = List.copyOf(carriedItems);
         history = List.copyOf(history.subList(Math.max(0, history.size() - HISTORY_LENGTH), history.size()));
-        pendingChoice = List.copyOf(pendingChoice);
         portraitPath = portraitPath == null || portraitPath.contains(FIELD_SEPARATOR) ? "" : portraitPath;
         dmodScars = Map.copyOf(dmodScars);
     }
@@ -51,7 +43,7 @@ public record AtlasOfficer(int recordId, String factionId, long nameSeed, long p
                                        FlagshipCatalogue.Flagship flagship) {
         return new AtlasOfficer(recordId, factionId, seeds.nameSeed(), seeds.portraitSeed(), rankId, null, traitId,
                 flagship == null ? "" : flagship.hullId(), flagship == null ? "" : flagship.variantId(), seeds.shipNameSeed(), seeds.treeSeed(),
-                List.of(), Map.of(), List.of(), List.of(), 0, false, Status.WAITING, false, List.of(), 0, false, UNSEATED, "", Map.of());
+                List.of(), Map.of(), List.of(), 0, false, Status.WAITING, false, List.of(), 0, false, UNSEATED, "", Map.of());
     }
 
     public record OfficerSeeds(long nameSeed, long portraitSeed, long shipNameSeed, long treeSeed) {
@@ -91,7 +83,6 @@ public record AtlasOfficer(int recordId, String factionId, long nameSeed, long p
             draft.rankId = predecessor.rankId;
             draft.commandCentre = predecessor.commandCentre;
             draft.carriedItems = predecessor.carriedItems;
-            draft.pendingChoice = predecessor.pendingChoice;
             draft.status = Status.ACTIVE;
             draft.heldCommand = true;
             draft.history = appended(historyEntry);
@@ -105,7 +96,6 @@ public record AtlasOfficer(int recordId, String factionId, long nameSeed, long p
         return copyWith(draft -> {
             draft.rankId = predecessor.rankId;
             draft.commandCentre = null;
-            draft.pendingChoice = predecessor.pendingChoice;
             draft.status = Status.WAITING;
             draft.heldCommand = false;
             draft.renown = predecessor.renown;
@@ -203,10 +193,6 @@ public record AtlasOfficer(int recordId, String factionId, long nameSeed, long p
         return copyWith(draft -> draft.portraitPath = newPortraitPath);
     }
 
-    public AtlasOfficer withPendingOffers(List<CarriedItem> newOffers) {
-        return copyWith(draft -> draft.pendingChoice = tokens(newOffers));
-    }
-
     private AtlasOfficer copyWith(Consumer<Draft> change) {
         Draft draft = new Draft(this);
         change.accept(draft);
@@ -228,7 +214,6 @@ public record AtlasOfficer(int recordId, String factionId, long nameSeed, long p
         private List<String> dmodIds;
         private Map<String, Integer> scars;
         private List<String> carriedItems;
-        private List<String> pendingChoice;
         private int defeats;
         private boolean lastChance;
         private Status status;
@@ -255,7 +240,6 @@ public record AtlasOfficer(int recordId, String factionId, long nameSeed, long p
             dmodIds = officer.dmodIds;
             scars = officer.scars;
             carriedItems = officer.carriedItems;
-            pendingChoice = officer.pendingChoice;
             defeats = officer.defeats;
             lastChance = officer.lastChance;
             status = officer.status;
@@ -270,21 +254,13 @@ public record AtlasOfficer(int recordId, String factionId, long nameSeed, long p
 
         private AtlasOfficer toOfficer() {
             return new AtlasOfficer(recordId, factionId, nameSeed, portraitSeed, rankId, commandCentre, traitId, flagshipHullId, flagshipVariantId,
-                    shipNameSeed, treeSeed, dmodIds, scars, carriedItems, pendingChoice, defeats, lastChance, status, heldCommand, history, renown,
+                    shipNameSeed, treeSeed, dmodIds, scars, carriedItems, defeats, lastChance, status, heldCommand, history, renown,
                     identified, seat, portraitPath, dmodScars);
         }
     }
 
     public List<CarriedItem> carried() {
         return items(carriedItems);
-    }
-
-    public List<CarriedItem> pendingOffers() {
-        return items(pendingChoice);
-    }
-
-    public boolean hasPendingChoice() {
-        return !pendingOffers().isEmpty();
     }
 
     private static List<String> tokens(List<CarriedItem> items) {
@@ -318,7 +294,6 @@ public record AtlasOfficer(int recordId, String factionId, long nameSeed, long p
         return String.join(FIELD_SEPARATOR, FORMAT, factionId, seed(nameSeed), seed(portraitSeed), rankId,
                 commandCentre == null ? "" : Long.toString(commandCentre.pack()), traitId, flagshipHullId, flagshipVariantId,
                 seed(shipNameSeed), seed(treeSeed), String.join(LIST_SEPARATOR, dmodIds), counts(scars), String.join(LIST_SEPARATOR, carriedItems),
-                String.join(LIST_SEPARATOR, pendingChoice),
                 Integer.toString(defeats), flag(lastChance), status.name(), flag(heldCommand), String.join(LIST_SEPARATOR, history),
                 Integer.toString(renown), flag(identified), Integer.toString(seat), portraitPath, pairs(dmodScars));
     }
@@ -328,20 +303,15 @@ public record AtlasOfficer(int recordId, String factionId, long nameSeed, long p
             return null;
         }
         String[] fields = text.split("\\" + FIELD_SEPARATOR, -1);
-        boolean current = fields.length == FIELD_COUNT && FORMAT.equals(fields[0]);
-        boolean unattributed = fields.length == UNATTRIBUTED_FIELD_COUNT && UNATTRIBUTED_FORMAT.equals(fields[0]);
-        boolean portraitless = fields.length == PORTRAITLESS_FIELD_COUNT && PORTRAITLESS_FORMAT.equals(fields[0]);
-        boolean seatless = fields.length == SEATLESS_FIELD_COUNT && SEATLESS_FORMAT.equals(fields[0]);
-        if (!current && !unattributed && !portraitless && !seatless || fields[1].isEmpty()) {
+        if (fields.length != FIELD_COUNT || !FORMAT.equals(fields[0]) || fields[1].isEmpty()) {
             return null;
         }
         try {
             return new AtlasOfficer(recordId, fields[1], unseed(fields[2]), unseed(fields[3]), fields[4],
-                    fields[5].isEmpty() ? null : AtlasCell.unpack(Long.parseLong(fields[5])), fields[6], fields[7], fields[8], unseed(fields[9]),
-                    unseed(fields[10]), list(fields[11]), uncounts(fields[12]), list(fields[13]), list(fields[14]), Integer.parseInt(fields[15]),
-                    unflag(fields[16]), Status.valueOf(fields[17]), unflag(fields[18]), list(fields[19]), Integer.parseInt(fields[20]),
-                    unflag(fields[21]), seatless ? UNSEATED : Integer.parseInt(fields[22]), current || unattributed ? fields[23] : "",
-                    current ? unpairs(fields[24]) : Map.of());
+                    fields[5].isEmpty() ? null : AtlasCell.unpack(Long.parseLong(fields[5])), fields[6], fields[7], fields[8],
+                    unseed(fields[9]), unseed(fields[10]), list(fields[11]), uncounts(fields[12]), list(fields[13]),
+                    Integer.parseInt(fields[14]), unflag(fields[15]), Status.valueOf(fields[16]), unflag(fields[17]), list(fields[18]),
+                    Integer.parseInt(fields[19]), unflag(fields[20]), Integer.parseInt(fields[21]), fields[22], unpairs(fields[23]));
         } catch (IllegalArgumentException e) {
             return null;
         }
