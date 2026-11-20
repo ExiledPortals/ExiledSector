@@ -30,6 +30,10 @@ final class AtlasTreeView {
         boolean allocated(String nodeId);
 
         boolean allocatable(String nodeId);
+
+        float emphasis(String nodeId);
+
+        float backgroundEmphasis();
     }
 
     private static final Color DEFAULT_COLOUR = new Color(200, 210, 230);
@@ -37,7 +41,7 @@ final class AtlasTreeView {
     private static final float MIN_HIT_PIXELS = 8f;
     private static final float HIT_SCALE = 1.15f;
     private static final float SHIP_GROUP_HIT_SCALE = 1.1f;
-    private static final float STAR_GAP_SCALE = 1.05f;
+    private static final float STAR_GAP_SCALE = 1f;
     private static final float HIGHWAY_RING_SCALE = 1.35f;
     private static final float BODY_RING_SCALE = 1.12f;
     private static final float MIN_PATH_STEP_PIXELS = 4f;
@@ -209,12 +213,14 @@ final class AtlasTreeView {
                 wheelAllocated[centre]++;
             }
         }
-        convoys.render(viewport, seconds, portShipAlpha, alpha);
+        convoys.render(viewport, seconds, portShipAlpha, alpha * states.backgroundEmphasis());
         for (Body body : bodies.bodies()) {
             renderBody(viewport, body, states, seconds, alpha);
         }
         for (Link link : bodies.links()) {
-            addLink(viewport, link, alpha);
+            float linkEmphasis = Math.min(states.emphasis(bodies.bodies().get(link.first()).nodeId()),
+                    states.emphasis(bodies.bodies().get(link.second()).nodeId()));
+            addLink(viewport, link, alpha * linkEmphasis);
         }
         beams.flush();
     }
@@ -300,8 +306,7 @@ final class AtlasTreeView {
         if (body.art().kind() == AtlasBodyArt.Kind.STAR) {
             return screenRadiusOf(body, viewport) * STAR_GAP_SCALE;
         }
-        float ringOuterEdge = NodeBeams.laneRingOuterEdge(ringRadiusOf(body, viewport), NodeBeams.widthScale(viewport.zoom()));
-        return NodeBeams.laneReach(ringOuterEdge, SkillTreeNodeGeometry.laneWidthScale(viewport.zoom()));
+        return NodeBeams.laneReach(ringRadiusOf(body, viewport), SkillTreeNodeGeometry.laneWidthScale(viewport.zoom()));
     }
 
     private static float spinSpeed(Body body) {
@@ -309,8 +314,9 @@ final class AtlasTreeView {
         return SPIN_DEGREES_PER_SECOND * share * body.art().spinRate() * (body.index() % 2 == 0 ? 1f : -1f);
     }
 
-    private void renderBody(TreeViewport viewport, Body body, States states, float seconds, float alpha) {
+    private void renderBody(TreeViewport viewport, Body body, States states, float seconds, float sceneAlpha) {
         int index = body.index();
+        float alpha = sceneAlpha * states.emphasis(body.nodeId());
         float screenX = viewport.screenX(body.x());
         float screenY = viewport.screenY(body.y());
         float screenRadius = screenRadiusOf(body, viewport);

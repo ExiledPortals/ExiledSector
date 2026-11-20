@@ -7,7 +7,7 @@
 			"connectedTo": [
 				"travel_boss_star_charts_7",
 				"travel_boss_star_charts_2",
-				"travel_boss_star_charts_6"
+				"travel_boss_star_charts_4"
 			],
 			"x": 0,
 			"y": 0
@@ -52,7 +52,8 @@
 			"type": "travel_boss_star_charts",
 			"connectedTo": [
 				"travel_boss_star_charts_3",
-				"travel_boss_star_charts_5"
+				"travel_boss_star_charts_5",
+				"atlas_root"
 			],
 			"x": 2009,
 			"y": 710.6
@@ -75,8 +76,7 @@
 			"connectedTo": [
 				"travel_boss_star_charts_5",
 				"travel_boss_star_charts_7",
-				"spatial_breach_chance_1",
-				"atlas_root"
+				"spatial_breach_chance_1"
 			],
 			"x": -710.6,
 			"y": 2009

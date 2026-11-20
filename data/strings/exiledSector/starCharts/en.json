@@ -421,6 +421,7 @@
     "atlasTree.effects.title": "Atlas Tree Effects",
     "atlasTree.effects.show": "Show Effects",
     "atlasTree.effects.hide": "Hide Effects",
+    "atlasTree.search.placeholder": "Search nodes...",
     "atlasTree.effects.everyChart": "Every Star Chart",
     "atlasTree.effects.hybrid": "{first} and {second}",
     "atlasTree.effects.none": "No allocated node grants an effect yet.",

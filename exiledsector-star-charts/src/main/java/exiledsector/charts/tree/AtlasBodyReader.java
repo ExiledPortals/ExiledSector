@@ -55,23 +55,23 @@ public final class AtlasBodyReader {
                 enumNamed(AtlasBodyArt.Storm.class, artJson.optString("storm", "none"), AtlasBodyArt.Storm.NONE),
                 enumNamed(AtlasBodyArt.Flare.class, artJson.optString("flare", "none"), AtlasBodyArt.Flare.NONE));
         AtlasBodyArt.Population population = new AtlasBodyArt.Population(TreeJson.stringList(artJson.optJSONArray("cityLights")),
-                convoys(artJson.optJSONArray("convoys")));
+                fleets(artJson.optJSONArray("convoys")), fleets(artJson.optJSONArray("haulers")));
         return new AtlasBodyArt(kind, artJson.optString("planet", null), paths, TreeJson.stringList(artJson.optJSONArray("hulls")), shape, colours,
                 weather, population);
     }
 
-    private static List<List<String>> convoys(JSONArray convoysJson) throws JSONException {
-        List<List<String>> convoys = new ArrayList<>();
-        if (convoysJson == null) {
-            return convoys;
+    private static List<List<String>> fleets(JSONArray fleetsJson) throws JSONException {
+        List<List<String>> fleets = new ArrayList<>();
+        if (fleetsJson == null) {
+            return fleets;
         }
-        for (int index = 0; index < convoysJson.length(); index++) {
-            List<String> hulls = TreeJson.stringList(convoysJson.optJSONArray(index));
+        for (int index = 0; index < fleetsJson.length(); index++) {
+            List<String> hulls = TreeJson.stringList(fleetsJson.optJSONArray(index));
             if (!hulls.isEmpty()) {
-                convoys.add(hulls);
+                fleets.add(hulls);
             }
         }
-        return convoys;
+        return fleets;
     }
 
     private static <E extends Enum<E>> E enumNamed(Class<E> type, String name, E fallback) {

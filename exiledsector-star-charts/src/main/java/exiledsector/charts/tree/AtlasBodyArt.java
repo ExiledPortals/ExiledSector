@@ -10,7 +10,7 @@ public record AtlasBodyArt(Kind kind, String planetType, List<String> spritePath
     public static final Shape DEFAULT_SHAPE = new Shape(DEFAULT_SIZE, Facing.SPIN, 1f, DEFAULT_HEADING);
     public static final Colours NO_COLOURS = new Colours(null, null);
     public static final Weather NO_WEATHER = new Weather(Storm.NONE, Flare.NONE);
-    public static final Population UNPOPULATED = new Population(List.of(), List.of());
+    public static final Population UNPOPULATED = new Population(List.of(), List.of(), List.of());
     public static final AtlasBodyArt PLAIN = new AtlasBodyArt(Kind.PLAIN, null, List.of(), List.of(), DEFAULT_SHAPE, NO_COLOURS, NO_WEATHER,
             UNPOPULATED);
 
@@ -38,11 +38,12 @@ public record AtlasBodyArt(Kind kind, String planetType, List<String> spritePath
         }
     }
 
-    public record Population(List<String> cityLights, List<List<String>> convoys) {
+    public record Population(List<String> cityLights, List<List<String>> convoys, List<List<String>> haulers) {
 
         public Population {
             cityLights = cityLights == null ? List.of() : List.copyOf(cityLights);
             convoys = convoys == null ? List.of() : convoys.stream().map(List::copyOf).toList();
+            haulers = haulers == null ? List.of() : haulers.stream().map(List::copyOf).toList();
         }
     }
 
@@ -93,6 +94,10 @@ public record AtlasBodyArt(Kind kind, String planetType, List<String> spritePath
 
     public List<List<String>> convoys() {
         return population.convoys();
+    }
+
+    public List<List<String>> haulers() {
+        return population.haulers();
     }
 
     public boolean isPlanet() {

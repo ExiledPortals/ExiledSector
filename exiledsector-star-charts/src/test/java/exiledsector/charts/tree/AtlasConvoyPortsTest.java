@@ -30,6 +30,7 @@ class AtlasConvoyPortsTest {
 
         assertFalse(convoyNodes.isEmpty());
         assertTrue(convoyNodes.stream().allMatch(body -> !body.art().convoys().isEmpty()));
+        assertTrue(convoyNodes.stream().allMatch(body -> body.art().haulers().size() == body.art().convoys().size()));
         assertTrue(bodies.values().stream().noneMatch(body -> body.art().kind() == AtlasBodyArt.Kind.FLEET));
     }
 

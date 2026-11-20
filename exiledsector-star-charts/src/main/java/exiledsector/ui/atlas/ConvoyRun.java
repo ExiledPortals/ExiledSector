@@ -67,6 +67,10 @@ final class ConvoyRun {
         return length;
     }
 
+    Position along(float distance) {
+        return onLane(Math.max(0f, Math.min(length, distance)), true, true);
+    }
+
     Position at(float seconds) {
         float cycle = ((seconds + phaseSeconds) % cycleSeconds + cycleSeconds) % cycleSeconds;
         if (cycle < travelSeconds) {

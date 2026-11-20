@@ -67,13 +67,33 @@ class AtlasTreeBodiesTest {
     }
 
     @Test
-    void ringNeighboursFollowTheRingWheelLinksSpiralIntoTheirCentreAndEveryOtherLinkIsStraight() {
+    void ringNeighboursFollowTheRingWheelLinksSpiralIntoTheirCentreAndEveryOtherLinkBows() {
         AtlasTreeBodies bodies = data().bodies();
 
         assertEquals(Set.of("a1-a2", "a2-a3", "b1-b2"), describe(bodies, AtlasTreeBodies.Shape.ALONG_RING));
         assertEquals(Set.of("a3-out", "in-out", "in-planet"), describe(bodies, AtlasTreeBodies.Shape.SPIRAL));
-        assertEquals(Set.of("a1-root", "a1-b2"), describe(bodies, AtlasTreeBodies.Shape.STRAIGHT));
+        assertEquals(Set.of("a1-root", "a1-b2"), describe(bodies, AtlasTreeBodies.Shape.BOWED));
         assertEquals(100f, bodies.ringRadius(bodies.links().stream().filter(Link::alongRing).findFirst().orElseThrow()), 0.01f);
+    }
+
+    @Test
+    void aBowedLinkRunsFromBodyToBodyAndBulgesToOneSide() {
+        AtlasLinkPath path = AtlasLinkPath.bowed(0f, 300f, 0f, 100f, 0f, 0f);
+        int middle = path.size() / 2;
+
+        assertEquals(0f, path.x(0), 0.01f);
+        assertEquals(300f, path.y(0), 0.01f);
+        assertEquals(0f, path.x(path.size() - 1), 0.01f);
+        assertEquals(100f, path.y(path.size() - 1), 0.01f);
+        assertTrue(Math.abs(path.x(middle)) > 200f * AtlasLinkPath.BOW_SHARE * 0.9f);
+    }
+
+    @Test
+    void bowedLinksTurnTheSameWayAroundTheStarWhicheverEndTheyStartFrom() {
+        AtlasLinkPath inward = AtlasLinkPath.bowed(0f, 300f, 0f, 100f, 0f, 0f);
+        AtlasLinkPath outward = AtlasLinkPath.bowed(0f, 100f, 0f, 300f, 0f, 0f);
+
+        assertEquals(inward.x(inward.size() / 2), outward.x(outward.size() / 2), 1f);
     }
 
     @Test

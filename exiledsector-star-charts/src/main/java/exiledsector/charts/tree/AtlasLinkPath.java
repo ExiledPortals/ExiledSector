@@ -7,6 +7,8 @@ public final class AtlasLinkPath {
     private static final double SPIRAL_HOOK_RADIANS = Math.toRadians(150.0);
     private static final double FULL_TURN = Math.PI * 2.0;
     private static final float CENTRE_RADIUS = 1f;
+    private static final int BOW_POINTS = 16;
+    static final float BOW_SHARE = 0.12f;
 
     private final float[] xs;
     private final float[] ys;
@@ -36,6 +38,29 @@ public final class AtlasLinkPath {
 
     static AtlasLinkPath straight(float fromX, float fromY, float toX, float toY) {
         return new AtlasLinkPath(new float[]{fromX, toX}, new float[]{fromY, toY});
+    }
+
+    static AtlasLinkPath bowed(float fromX, float fromY, float toX, float toY, float centreX, float centreY) {
+        float deltaX = toX - fromX;
+        float deltaY = toY - fromY;
+        float length = (float) Math.hypot(deltaX, deltaY);
+        if (length <= 0f) {
+            return straight(fromX, fromY, toX, toY);
+        }
+        boolean outward = Math.hypot(toX - centreX, toY - centreY) > Math.hypot(fromX - centreX, fromY - centreY);
+        float sense = outward ? -1f : 1f;
+        float normalX = -deltaY / length * sense;
+        float normalY = deltaX / length * sense;
+        float bow = length * BOW_SHARE;
+        float[] xs = new float[BOW_POINTS];
+        float[] ys = new float[BOW_POINTS];
+        for (int point = 0; point < BOW_POINTS; point++) {
+            float share = (float) point / (BOW_POINTS - 1);
+            float bulge = bow * (float) Math.sin(Math.PI * share);
+            xs[point] = fromX + deltaX * share + normalX * bulge;
+            ys[point] = fromY + deltaY * share + normalY * bulge;
+        }
+        return new AtlasLinkPath(xs, ys);
     }
 
     static AtlasLinkPath arc(float centreX, float centreY, float radius, float fromX, float fromY, float toX, float toY) {

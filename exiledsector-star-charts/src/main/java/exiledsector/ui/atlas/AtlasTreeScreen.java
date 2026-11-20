@@ -7,6 +7,7 @@ import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.charts.anomaly.FlareLuck;
+import exiledsector.charts.atlas.AtlasCatalysts;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.tree.AtlasTree;
 import exiledsector.charts.tree.AtlasTreeAllocation;
@@ -19,6 +20,7 @@ import exiledsector.skills.SkillTier;
 import exiledsector.ui.CampaignOverlay;
 import exiledsector.ui.CanvasCamera;
 import exiledsector.ui.CanvasDrag;
+import exiledsector.ui.CanvasSearchBar;
 import exiledsector.ui.ChromeMetrics;
 import exiledsector.ui.OverlayFade;
 import exiledsector.ui.PointerGesture;
@@ -68,6 +70,9 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
     private final TextLabel tooltipBody = new TextLabel(tooltipText.body(), SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
     private final OverlayFade fade = new OverlayFade(OPEN_SECONDS);
     private final AtlasTreeEffectsPanel effectsPanel;
+    private final AtlasTreeSearch search = new AtlasTreeSearch();
+    private final CanvasSearchBar searchBar;
+    private final AtlasTreeCatalystColumn catalystColumn = new AtlasTreeCatalystColumn(AtlasTreeCatalystColumn.shown());
     private final AtlasTreeView.States nodeStates = new AtlasTreeView.States() {
         @Override
         public boolean allocated(String nodeId) {
@@ -79,6 +84,16 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
             AtlasTreeNode node = data.node(nodeId);
             return unspentPoints > 0 && node != null && allocation.canAllocate(node);
         }
+
+        @Override
+        public float emphasis(String nodeId) {
+            return search.nodeAlpha(nodeId);
+        }
+
+        @Override
+        public float backgroundEmphasis() {
+            return search.backgroundAlpha();
+        }
     };
     private ButtonAPI effectsButton;
     private AtlasTreeAllocation allocation;
@@ -86,6 +101,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
     private PositionAPI panelPosition;
     private AtlasTreeNode hoveredNode;
     private AtlasTreeNode tooltipSubject;
+    private AtlasCatalysts.Catalyst hoveredCatalyst;
     private float mouseX;
     private float mouseY;
     private boolean mouseKnown;
@@ -95,6 +111,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         this.state = AtlasState.get(Global.getSector());
         this.decorations = TreeDecorations.of(data.decorations());
         this.effectsPanel = new AtlasTreeEffectsPanel(() -> AtlasTree.effectGroups(state));
+        this.searchBar = new CanvasSearchBar(search, I18n.forGameText(() -> Translation.text("atlasTree.search.placeholder")), this::jumpToNextSearchMatch);
         refreshAllocation();
     }
 
@@ -106,6 +123,37 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
             camera.centreOn(treeView.x(roots.get(0).getId()), treeView.y(roots.get(0).getId()));
         }
         I18n.forGameText(() -> buildChrome(panel));
+        indexSearch();
+    }
+
+    private void indexSearch() {
+        search.index(I18n.forGameText(() -> AtlasTreeSearchTerms.of(data.topology().nodes(), FlareLuck.treeRolls(AtlasTree.chartLines(state)))));
+    }
+
+    private void jumpToNextSearchMatch() {
+        String match = search.nextMatch();
+        if (match == null) {
+            SkillTreeSounds.refused();
+            return;
+        }
+        camera.panTo(treeView.x(match), treeView.y(match));
+    }
+
+    private float searchBarLeft() {
+        return frame.innerLeft() + (frame.innerWidth() - searchBar.barWidth()) / 2f;
+    }
+
+    private float searchBarBottom() {
+        return frame.chromeTop() - ChromeMetrics.CONTROL_HEIGHT;
+    }
+
+    private void placeCatalystColumn() {
+        float columnTop = frame.chromeTop() - titleLabel.height() - TITLE_GAP - pointsLabel.height() - PANEL_GAP;
+        catalystColumn.place(frame.chromeLeft(), columnTop, frame.chromeBottom() + PANEL_GAP);
+    }
+
+    private boolean overChrome(float x, float y) {
+        return searchBar.contains(searchBarLeft(), searchBarBottom(), x, y) || catalystColumn.contains(x, y);
     }
 
     private void buildChrome(CustomPanelAPI panel) {
@@ -172,11 +220,15 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
             if (fade.closing()) {
                 event.consume();
             } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
-                if (event.isKeyDownEvent() && effectsPanel.isOpen()) {
-                    toggleEffects();
-                } else if (event.isKeyDownEvent()) {
-                    back();
+                if (event.isKeyDownEvent() && !searchBar.escape()) {
+                    if (effectsPanel.isOpen()) {
+                        toggleEffects();
+                    } else {
+                        back();
+                    }
                 }
+                event.consume();
+            } else if (event.isKeyboardEvent() && searchBar.handleKey(event)) {
                 event.consume();
             } else if (event.isMouseMoveEvent()) {
                 mouseMoved(event);
@@ -199,6 +251,14 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
     private void treeInput(InputEventAPI event) {
         float x = event.getX();
         float y = event.getY();
+        if (event.isLMBDownEvent() && searchBar.handleClick(searchBarLeft(), searchBarBottom(), x, y)) {
+            event.consume();
+            return;
+        }
+        if (overChrome(x, y) && (event.isMouseDownEvent() || event.isMouseScrollEvent())) {
+            event.consume();
+            return;
+        }
         if (effectsPanel.contains(x, y) && (event.isMouseDownEvent() || event.isMouseScrollEvent())) {
             if (event.isMouseScrollEvent()) {
                 effectsPanel.scroll(x, y, event.getEventValue());
@@ -244,6 +304,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         }
         refreshAllocation();
         refreshPointsLabel();
+        indexSearch();
         effectsPanel.invalidate();
         tooltipSubject = null;
         if (allocating) {
@@ -284,11 +345,15 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         }
         starfield.advance(amount);
         decorations.advance(amount);
+        searchBar.advance(amount);
+        placeCatalystColumn();
+        hoveredCatalyst = mouseKnown ? catalystColumn.catalystAt(mouseX, mouseY) : null;
+        search.focusAnomalies(AtlasTreeCatalystColumn.anomaliesOf(hoveredCatalyst));
         camera.advanceZoom(amount);
         camera.advancePan(amount);
         treeView.advance(amount);
         effectsPanel.advance(amount);
-        boolean hovering = mouseKnown && !camera.isDragging() && !gesture.isPanning() && !effectsPanel.contains(mouseX, mouseY);
+        boolean hovering = mouseKnown && !camera.isDragging() && !gesture.isPanning() && !effectsPanel.contains(mouseX, mouseY) && !overChrome(mouseX, mouseY);
         hoveredNode = hovering ? nodeAt(mouseX, mouseY) : null;
     }
 
@@ -315,8 +380,9 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
 
     private void renderCanvas(float alpha) {
         TreeViewport viewport = viewport();
-        starfield.render(panelPosition, camera.panX(), camera.panY(), alpha);
-        DecorationScene scene = new DecorationScene(viewport, alpha, 1f, Set.of(), DecorationScene.StarMap.NONE);
+        float backgroundAlpha = alpha * search.backgroundAlpha();
+        starfield.render(panelPosition, camera.panX(), camera.panY(), backgroundAlpha);
+        DecorationScene scene = new DecorationScene(viewport, backgroundAlpha, 1f, Set.of(), DecorationScene.StarMap.NONE);
         decorations.renderBehindTree(scene);
         treeView.render(viewport, nodeStates, alpha);
         decorations.renderOverTree(scene);
@@ -327,6 +393,8 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         float top = frame.chromeTop();
         titleLabel.setAlpha(alpha).draw(left, top);
         pointsLabel.setAlpha(alpha).draw(left, top - titleLabel.height() - TITLE_GAP);
+        searchBar.render(searchBarLeft(), searchBarBottom(), alpha);
+        catalystColumn.render(hoveredCatalyst, alpha);
     }
 
     private void drawTooltip(AtlasTreeNode node, float alpha) {

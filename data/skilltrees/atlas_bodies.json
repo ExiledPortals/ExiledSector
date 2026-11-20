@@ -995,6 +995,32 @@
 						"enforcer",
 						"brawler"
 					]
+				],
+				"haulers": [
+					[
+						"colossus",
+						"colossus",
+						"colossus",
+						"atlas",
+						"conquest",
+						"champion",
+						"heron"
+					],
+					[
+						"colossus",
+						"starliner",
+						"atlas",
+						"conquest",
+						"falcon"
+					],
+					[
+						"prometheus",
+						"prometheus",
+						"starliner",
+						"starliner",
+						"eagle",
+						"champion"
+					]
 				]
 			}
 		},
@@ -1040,6 +1066,32 @@
 						"buffalo",
 						"monitor",
 						"enforcer"
+					]
+				],
+				"haulers": [
+					[
+						"prometheus",
+						"colossus",
+						"prometheus",
+						"starliner",
+						"eagle",
+						"falcon"
+					],
+					[
+						"starliner",
+						"colossus",
+						"prometheus",
+						"atlas",
+						"champion",
+						"heron"
+					],
+					[
+						"starliner",
+						"starliner",
+						"colossus",
+						"dominator",
+						"falcon",
+						"heron"
 					]
 				]
 			}
@@ -1213,6 +1265,33 @@
 						"lasher",
 						"hammerhead"
 					]
+				],
+				"haulers": [
+					[
+						"colossus",
+						"colossus",
+						"colossus",
+						"colossus",
+						"eagle",
+						"eagle",
+						"conquest"
+					],
+					[
+						"colossus",
+						"atlas",
+						"colossus",
+						"conquest",
+						"dominator",
+						"dominator"
+					],
+					[
+						"starliner",
+						"starliner",
+						"prometheus",
+						"colossus",
+						"heron",
+						"conquest"
+					]
 				]
 			}
 		},
@@ -1257,6 +1336,31 @@
 						"gemini",
 						"monitor",
 						"brawler"
+					]
+				],
+				"haulers": [
+					[
+						"starliner",
+						"colossus",
+						"starliner",
+						"dominator",
+						"dominator",
+						"dominator"
+					],
+					[
+						"starliner",
+						"atlas",
+						"prometheus",
+						"dominator",
+						"heron"
+					],
+					[
+						"colossus",
+						"starliner",
+						"colossus",
+						"starliner",
+						"dominator",
+						"dominator"
 					]
 				]
 			}
@@ -1551,6 +1655,32 @@
 						"hammerhead",
 						"brawler"
 					]
+				],
+				"haulers": [
+					[
+						"colossus",
+						"starliner",
+						"colossus",
+						"dominator",
+						"falcon"
+					],
+					[
+						"colossus",
+						"colossus",
+						"prometheus",
+						"atlas",
+						"conquest",
+						"eagle",
+						"dominator"
+					],
+					[
+						"colossus",
+						"colossus",
+						"starliner",
+						"starliner",
+						"heron",
+						"conquest"
+					]
 				]
 			}
 		},
@@ -1597,6 +1727,33 @@
 						"brawler",
 						"sunder",
 						"monitor"
+					]
+				],
+				"haulers": [
+					[
+						"starliner",
+						"colossus",
+						"atlas",
+						"atlas",
+						"heron",
+						"dominator",
+						"heron"
+					],
+					[
+						"prometheus",
+						"colossus",
+						"starliner",
+						"atlas",
+						"dominator",
+						"falcon"
+					],
+					[
+						"atlas",
+						"prometheus",
+						"prometheus",
+						"falcon",
+						"falcon",
+						"champion"
 					]
 				]
 			}
@@ -1854,6 +2011,31 @@
 						"centurion",
 						"centurion"
 					]
+				],
+				"haulers": [
+					[
+						"prometheus",
+						"prometheus",
+						"prometheus",
+						"heron",
+						"eagle"
+					],
+					[
+						"starliner",
+						"atlas",
+						"prometheus",
+						"colossus",
+						"champion",
+						"heron"
+					],
+					[
+						"starliner",
+						"prometheus",
+						"colossus",
+						"falcon",
+						"eagle",
+						"dominator"
+					]
 				]
 			}
 		},
@@ -1923,6 +2105,32 @@
 						"vigilance",
 						"hammerhead"
 					]
+				],
+				"haulers": [
+					[
+						"atlas",
+						"prometheus",
+						"prometheus",
+						"conquest",
+						"dominator",
+						"heron"
+					],
+					[
+						"prometheus",
+						"colossus",
+						"prometheus",
+						"heron",
+						"champion",
+						"falcon"
+					],
+					[
+						"colossus",
+						"atlas",
+						"starliner",
+						"atlas",
+						"dominator",
+						"conquest"
+					]
 				]
 			}
 		},
@@ -1970,6 +2178,32 @@
 						"vigilance",
 						"monitor",
 						"centurion"
+					]
+				],
+				"haulers": [
+					[
+						"atlas",
+						"colossus",
+						"colossus",
+						"champion",
+						"falcon"
+					],
+					[
+						"starliner",
+						"starliner",
+						"atlas",
+						"prometheus",
+						"falcon",
+						"champion",
+						"dominator"
+					],
+					[
+						"colossus",
+						"atlas",
+						"atlas",
+						"falcon",
+						"conquest",
+						"eagle"
 					]
 				]
 			}
@@ -2482,6 +2716,33 @@
 						"centurion",
 						"enforcer"
 					]
+				],
+				"haulers": [
+					[
+						"prometheus",
+						"colossus",
+						"atlas",
+						"starliner",
+						"conquest",
+						"heron",
+						"dominator"
+					],
+					[
+						"starliner",
+						"prometheus",
+						"starliner",
+						"eagle",
+						"falcon"
+					],
+					[
+						"starliner",
+						"colossus",
+						"colossus",
+						"atlas",
+						"falcon",
+						"heron",
+						"heron"
+					]
 				]
 			}
 		},
@@ -2616,6 +2877,31 @@
 						"enforcer",
 						"centurion"
 					]
+				],
+				"haulers": [
+					[
+						"prometheus",
+						"starliner",
+						"starliner",
+						"starliner",
+						"dominator",
+						"eagle"
+					],
+					[
+						"starliner",
+						"starliner",
+						"colossus",
+						"atlas",
+						"falcon",
+						"conquest"
+					],
+					[
+						"colossus",
+						"starliner",
+						"colossus",
+						"falcon",
+						"champion"
+					]
 				]
 			}
 		},
@@ -2659,6 +2945,32 @@
 						"wayfarer",
 						"monitor",
 						"lasher"
+					]
+				],
+				"haulers": [
+					[
+						"colossus",
+						"colossus",
+						"prometheus",
+						"champion",
+						"heron",
+						"dominator"
+					],
+					[
+						"prometheus",
+						"prometheus",
+						"prometheus",
+						"colossus",
+						"falcon",
+						"eagle",
+						"conquest"
+					],
+					[
+						"starliner",
+						"colossus",
+						"starliner",
+						"falcon",
+						"falcon"
 					]
 				]
 			}
@@ -2900,6 +3212,33 @@
 						"monitor",
 						"brawler"
 					]
+				],
+				"haulers": [
+					[
+						"starliner",
+						"atlas",
+						"prometheus",
+						"conquest",
+						"dominator",
+						"falcon"
+					],
+					[
+						"prometheus",
+						"colossus",
+						"starliner",
+						"heron",
+						"dominator",
+						"conquest"
+					],
+					[
+						"colossus",
+						"starliner",
+						"prometheus",
+						"atlas",
+						"conquest",
+						"eagle",
+						"champion"
+					]
 				]
 			}
 		},
@@ -2943,6 +3282,31 @@
 						"phaeton",
 						"vigilance",
 						"vigilance"
+					]
+				],
+				"haulers": [
+					[
+						"colossus",
+						"atlas",
+						"starliner",
+						"eagle",
+						"conquest",
+						"conquest"
+					],
+					[
+						"atlas",
+						"atlas",
+						"atlas",
+						"falcon",
+						"eagle",
+						"falcon"
+					],
+					[
+						"starliner",
+						"atlas",
+						"starliner",
+						"falcon",
+						"falcon"
 					]
 				]
 			}

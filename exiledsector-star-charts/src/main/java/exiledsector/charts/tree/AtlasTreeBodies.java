@@ -20,6 +20,7 @@ public final class AtlasTreeBodies {
 
     public enum Shape {
         STRAIGHT,
+        BOWED,
         ALONG_RING,
         SPIRAL
     }
@@ -98,6 +99,9 @@ public final class AtlasTreeBodies {
             int turn = centre.spiral() == 0 ? 1 : centre.spiral();
             return new Link(first.index(), second.index(), Shape.SPIRAL, AtlasLinkPath.spiral(centre.x(), centre.y(), turn, first.x(), first.y(),
                     second.x(), second.y()));
+        }
+        if (star != null) {
+            return new Link(first.index(), second.index(), Shape.BOWED, AtlasLinkPath.bowed(first.x(), first.y(), second.x(), second.y(), star.x(), star.y()));
         }
         return new Link(first.index(), second.index(), Shape.STRAIGHT, AtlasLinkPath.straight(first.x(), first.y(), second.x(), second.y()));
     }

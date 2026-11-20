@@ -25,7 +25,7 @@ class AtlasBodyReaderTest {
                 { "id": "site", "art": { "kind": "planet", "planet": "barren", "light": "#ffbe5a" } },
                 { "id": "world", "art": { "kind": "planet", "planet": "jungle", "cityLights": ["volturn", "sindria"], "size": 150 } },
                 { "id": "port", "wheel": "world", "art": { "kind": "sprite", "path": "graphics/stations/station_lowtech1.png", "size": 30,
-                    "convoys": [["buffalo", "wolf"], [], ["tarsus", "hermes", "lasher"]] } },
+                    "convoys": [["buffalo", "wolf"], [], ["tarsus", "hermes", "lasher"]], "haulers": [["colossus", "eagle"], []] } },
                 { "id": "maximum", "art": { "kind": "planet", "planet": "star_blue_giant", "flare": "often", "size": 110 } },
                 { "id": "sunstruck", "art": { "kind": "crossed_planet", "planet": "star_yellow", "flare": "licking",
                     "hulls": ["colossus", "buffalo"], "size": 90, "facing": "travel", "heading": -135 } },
@@ -101,6 +101,8 @@ class AtlasBodyReaderTest {
         assertEquals(List.of("volturn", "sindria"), world.cityLights());
         assertTrue(world.convoys().isEmpty());
         assertEquals(List.of(List.of("buffalo", "wolf"), List.of("tarsus", "hermes", "lasher")), port.convoys());
+        assertEquals(List.of(List.of("colossus", "eagle")), port.haulers());
+        assertTrue(world.haulers().isEmpty());
         assertTrue(port.cityLights().isEmpty());
         assertEquals("world", bodies.get("port").wheel());
     }
@@ -163,5 +165,6 @@ class AtlasBodyReaderTest {
         assertNull(AtlasBodyArt.PLAIN.tintColour());
         assertTrue(AtlasBodyArt.PLAIN.cityLights().isEmpty());
         assertTrue(AtlasBodyArt.PLAIN.convoys().isEmpty());
+        assertTrue(AtlasBodyArt.PLAIN.haulers().isEmpty());
     }
 }

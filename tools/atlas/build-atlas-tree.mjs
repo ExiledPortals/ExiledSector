@@ -28,6 +28,9 @@ const OUTER_SMALL_TURN = [35, 70];
 const INNER_SMALL_TURN = [60, 110];
 const SPIRAL_POINTS = 24;
 const SPIRAL_HOOK = 150;
+const BOW_SHARE = 0.12;
+const BOW_POINTS = 16;
+const LOWEST_ROOT_RAY_SHIFT = 2;
 const SITE_LIGHT = '#ffbe5a';
 
 const MOON_PLANETS = ['barren', 'barren2', 'barren3', 'rocky_ice', 'frozen1', 'rocky_metallic'];
@@ -48,6 +51,8 @@ const DORMANT_FACTION = { redacted_sleepers: 'remnant', threatening_sleepers: 't
 const POPULATED_SIZE = 150;
 const PORT_SIZE = 30;
 const CONVOYS_PER_PORT = 3;
+const HAULER_FREIGHTERS = ['atlas', 'prometheus', 'colossus', 'starliner'];
+const HAULER_ESCORTS = ['eagle', 'falcon', 'dominator', 'champion', 'heron', 'conquest'];
 const PORT_STATIONS = ['graphics/stations/station_lowtech1.png', 'graphics/stations/station_lowtech2.png', 'graphics/stations/station_midline2.png',
   'graphics/stations/station_midline3.png', 'graphics/stations/station_hightech1.png', 'graphics/stations/station_hightech2.png'];
 const POPULATED_WORLDS = [
@@ -93,6 +98,9 @@ function seededRandom(seed) {
 }
 
 const random = seededRandom(20261117);
+const haulerRandom = seededRandom(20261120);
+const pickHaulers = (options, low, high) => Array.from({ length: low + Math.floor(haulerRandom() * (high - low + 1)) },
+  () => options[Math.floor(haulerRandom() * options.length)]);
 const between = ([low, high]) => low + (high - low) * random();
 const pick = (options) => options[Math.floor(random() * options.length)];
 const pickSome = (options, low, high) => Array.from({ length: low + Math.floor(random() * (high - low + 1)) }, () => pick(options));
@@ -118,8 +126,9 @@ const portStations = shuffled(PORT_STATIONS);
 let portsMade = 0;
 const nextPortStation = () => portStations[portsMade++ % portStations.length];
 const convoy = () => [...pickSome(FREIGHTERS, 5, 7), ...pickSome(ESCORTS, 2, 3)];
+const hauler = () => [...pickHaulers(HAULER_FREIGHTERS, 3, 4), ...pickHaulers(HAULER_ESCORTS, 2, 3)];
 const port = () => ({ kind: 'sprite', path: nextPortStation(), size: PORT_SIZE, facing: 'spin', spin: 0.15,
-  convoys: Array.from({ length: CONVOYS_PER_PORT }, convoy) });
+  convoys: Array.from({ length: CONVOYS_PER_PORT }, convoy), haulers: Array.from({ length: CONVOYS_PER_PORT }, hauler) });
 
 const depotGuards = () => pickSome(PICKETS, GUARDS_PER_DEPOT, GUARDS_PER_DEPOT);
 
@@ -408,6 +417,19 @@ function spiralPath(from, to, centre, turn) {
   return inward ? points : points.reverse();
 }
 
+function bowedPath(from, to) {
+  const deltaX = to.x - from.x;
+  const deltaY = to.y - from.y;
+  const length = Math.hypot(deltaX, deltaY);
+  const sense = Math.hypot(to.x, to.y) > Math.hypot(from.x, from.y) ? -1 : 1;
+  const normal = { x: (-deltaY / length) * sense, y: (deltaX / length) * sense };
+  return Array.from({ length: BOW_POINTS }, (_, index) => {
+    const share = index / (BOW_POINTS - 1);
+    const bulge = length * BOW_SHARE * Math.sin(Math.PI * share);
+    return { x: from.x + deltaX * share + normal.x * bulge, y: from.y + deltaY * share + normal.y * bulge };
+  });
+}
+
 const travelHeading = (angle) => round(-angle - 90);
 
 function withHeading(art, angle) {
@@ -492,9 +514,18 @@ function spreadRingLinks(ringIndex, count) {
   return chosen;
 }
 
+function shiftLowestRay(rays) {
+  const ringNodes = rings[0].nodes;
+  const lowest = rays.reduce((low, ray) => (ray.anchor.node.y > low.anchor.node.y ? ray : low));
+  const shifted = ringNodes[(ringNodes.indexOf(lowest.anchor) - LOWEST_ROOT_RAY_SHIFT + ringNodes.length) % ringNodes.length];
+  if (rays.some((ray) => ray.anchor === shifted) || !clearOf(shifted.node, root, allWheels)) throw new Error('The lowest root ray cannot shift');
+  return rays.map((ray) => (ray === lowest ? { ...ray, anchor: shifted } : ray));
+}
+
 rings.forEach((_, ringIndex) => {
   const count = ringIndex === 0 ? ROOT_RAYS : LINKS_INTO_RING[ringIndex];
-  spreadRingLinks(ringIndex, count).forEach(({ anchor, landing }) => link(anchor.node, landing.node));
+  const chosen = spreadRingLinks(ringIndex, count);
+  (ringIndex === 0 ? shiftLowestRay(chosen) : chosen).forEach(({ anchor, landing }) => link(anchor.node, landing.node));
 });
 
 const sameRing = (first, second) => bodyById.get(first.id).highway && bodyById.get(second.id).highway
@@ -504,7 +535,7 @@ const crossings = [];
 const drawnLinks = nodes.flatMap((node) => node.connectedTo.map((id) => nodeById.get(id))
   .filter((other) => node.id < other.id && !sameRing(node, other)).map((other) => {
     const wheel = wheelLinkOf(node, other);
-    return { ends: [node, other], points: wheel ? spiralPath(node, other, wheel.centre, wheel.turn) : [node, other] };
+    return { ends: [node, other], bowed: !wheel, points: wheel ? spiralPath(node, other, wheel.centre, wheel.turn) : bowedPath(node, other) };
   }));
 const segmentsOf = (points) => points.slice(1).map((point, index) => [points[index], point]);
 for (const { ends, points } of drawnLinks) {
@@ -512,7 +543,7 @@ for (const { ends, points } of drawnLinks) {
     .filter((body) => segmentsOf(points).some(([from, to]) => distanceToSegment(body, from, to) < bodyById.get(body.id).art.size + BODY_CLEARANCE));
   if (blocking.length > 0) crossings.push(`${ends[0].id}-${ends[1].id} crosses ${blocking.map((body) => body.id).join(', ')}`);
 }
-const straightLinks = drawnLinks.filter(({ points }) => points.length === 2).map(({ ends }) => ends);
+const bowedLinks = drawnLinks.filter(({ bowed }) => bowed);
 function crossesCircle(from, to, radius) {
   const deltaX = to.x - from.x;
   const deltaY = to.y - from.y;
@@ -524,8 +555,8 @@ function crossesCircle(from, to, radius) {
   const edge = 1 / Math.sqrt(a);
   return [(-b - Math.sqrt(discriminant)) / (2 * a), (-b + Math.sqrt(discriminant)) / (2 * a)].some((share) => share > edge && share < 1 - edge);
 }
-for (const [from, to] of straightLinks) {
-  const crossed = ringRadii.filter((radius) => crossesCircle(from, to, radius));
+for (const { ends: [from, to], points } of bowedLinks) {
+  const crossed = ringRadii.filter((radius) => segmentsOf(points).some(([start, end]) => crossesCircle(start, end, radius)));
   if (crossed.length > 0) crossings.push(`${from.id}-${to.id} crosses the ring at ${crossed.join(', ')}`);
 }
 const cross = (a, b, c) => (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);

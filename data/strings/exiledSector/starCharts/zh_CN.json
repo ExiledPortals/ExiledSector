@@ -412,6 +412,7 @@
     "atlasTree.effects.title": "星图册技能树效果",
     "atlasTree.effects.show": "显示效果",
     "atlasTree.effects.hide": "隐藏效果",
+    "atlasTree.search.placeholder": "搜索节点...",
     "atlasTree.effects.everyChart": "所有星图",
     "atlasTree.effects.hybrid": "{first}与{second}",
     "atlasTree.effects.none": "已分配的节点尚未提供任何效果。",

@@ -93,13 +93,17 @@ public final class HyperspaceMode {
         }
     }
 
+    static boolean isLocked(Set<String> lockedVolumes, String volume) {
+        return volume != null && lockedVolumes.contains(volume);
+    }
+
     public boolean enter(PositionAPI canvasPosition) {
         MapContent content = mapContent.get();
         Set<String> lockedVolumes = content.lockedVolumes();
         Decorations decorations = content.decorations();
-        hiddenStarIds = decorations.stars().stream().filter(star -> lockedVolumes.contains(star.getVolume())).map(Star::getId)
+        hiddenStarIds = decorations.stars().stream().filter(star -> isLocked(lockedVolumes, star.getVolume())).map(Star::getId)
                 .collect(Collectors.toUnmodifiableSet());
-        anchors = HyperspaceAnchor.collect(decorations).stream().filter(anchor -> !lockedVolumes.contains(anchor.volume())).toList();
+        anchors = HyperspaceAnchor.collect(decorations).stream().filter(anchor -> !isLocked(lockedVolumes, anchor.volume())).toList();
         if (anchors.isEmpty()) {
             return false;
         }

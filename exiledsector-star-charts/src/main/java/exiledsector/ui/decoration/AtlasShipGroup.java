@@ -178,7 +178,10 @@ public final class AtlasShipGroup {
             case UNDER_WAY -> buildUnderWay(hulls, headingDeg, random);
             case DORMANT -> buildDormant(hulls, headingDeg, random);
             case STATION -> buildStation(hulls, random);
-            case SWIMMING -> pod = new AtlasShroudedPod(spriteCache, hulls, radius, random);
+            case SWIMMING -> {
+                pod = new AtlasShroudedPod(spriteCache, hulls, radius, random);
+                debris = new AtlasDebrisField(spriteCache, radius, seed);
+            }
             case CIRCLING -> buildCircling(hulls, radius, random);
             case GUARDING -> buildCircling(hulls, radius * GUARD_ORBIT_SHARE, random);
             case PATROLLING -> buildPatrol(hulls, random);

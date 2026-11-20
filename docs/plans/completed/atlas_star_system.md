@@ -18,8 +18,13 @@ lay-in-course arrows were removed on 2026-11-18 and every body now stays where t
   and their lead-ups are orbital stations at most a fifth the planet's size. Three convoys of seven to ten ships per station
   follow the wheel's connectors to its centre and back on right-hand lanes, slipping behind the planet and fading out at the station
   (hybrids and Mixed Manifest keep their own centre, and their convoy stations run to it).
+  Each station also has three larger hauler fleets (Atlases, Prometheuses, Colossi and Starliners with heavier escorts) that
+  cross-fade in as the zoom drops below where the small convoys fade out. Every convoy wheel's outermost lead-up (the one on
+  the highway spoke) is a terminal: every two to five minutes it sends a fleet, drawn small or large by zoom, along the
+  connectors onto the highway and across the atlas to a random other terminal, using highway bodies only and never the star.
+  Traffic is pre-run on opening so some is already under way.
 - Excavation notables are planets of differing non-gas-giant types with the blinking site light; Debris notables are
-  dormant hulls of their sleeper faction in a debris field (Veiled Sleepers are shrouded dwellers swimming instead, and
+  dormant hulls of their sleeper faction in a debris field (Veiled Sleepers are shrouded dwellers swimming in theirs instead, and
   Silent Choir is a derelict fleet); Double Down is a binary of two relays; Incursion is a research station.
   Depot Vault notables are small stations (a quarter of the body, Fortified Depot a low-tech battlestation) with four
   little frigates swimming round them; their lead-ups are one or two little frigates flying about inside the node ring
@@ -42,7 +47,8 @@ lay-in-course arrows were removed on 2026-11-18 and every body now stays where t
 - A wheel's three rings (its notable and both smalls) are always in their anomaly colour: faint while the wheel is
   untouched and brighter for each of its nodes allocated, breathing while allocatable. There is no corona glow.
 - Links along a ring are connector beams following the ring's circle, wheel links follow their spiral
-  (`charts.tree.AtlasLinkPath`), and the rays between the star and the rings are straight.
+  (`charts.tree.AtlasLinkPath`), and the links between rings and the rays from the star bow gently, all turning the same way
+  around the star. Connector beams end on the middle of a node's ring so they run into it without a gap.
 - Fleets, derelicts and the battlestation are drawn from vanilla hulls (`ui.decoration.AtlasShipGroup`); fleets drift
   in formation with engine flames, derelict fleets of 5-10 small, unpowered hulls weave slowly back and forth in formation, without engine flames, in a
   vanilla-style debris field (`ui.decoration.AtlasDebrisField`:
