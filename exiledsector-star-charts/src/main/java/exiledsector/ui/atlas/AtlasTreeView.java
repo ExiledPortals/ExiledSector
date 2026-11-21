@@ -64,6 +64,7 @@ final class AtlasTreeView {
 
     private final AtlasTreeBodies bodies;
     private final AtlasBodyPainter painter = new AtlasBodyPainter();
+    private final AtlasRingPainter ringPainter = new AtlasRingPainter();
     private final NodeRingArt ringArt = new NodeRingArt();
     private final NodeBeams beams = new NodeBeams(ringArt);
     private final ConnectorPainter connectors;
@@ -72,6 +73,7 @@ final class AtlasTreeView {
     private final float[] spinSeeds;
     private final float[] bodyShares;
     private final StarAurora[] auroras;
+    private final AtlasPlanetRings[] planetRings;
     private final AtlasShipScene[] shipScenes;
     private final float[] pathXs = new float[MAX_PATH_POINTS];
     private final float[] pathYs = new float[MAX_PATH_POINTS];
@@ -93,6 +95,7 @@ final class AtlasTreeView {
         this.spinSeeds = new float[count];
         this.bodyShares = new float[count];
         this.auroras = new StarAurora[count];
+        this.planetRings = new AtlasPlanetRings[count];
         this.shipScenes = new AtlasShipScene[count];
         this.wheelMembers = new int[count];
         this.wheelAllocated = new int[count];
@@ -103,7 +106,8 @@ final class AtlasTreeView {
             colours[body.index()] = parseColour(body.colour(), DEFAULT_COLOUR);
             siteLights[body.index()] = parseColour(body.art().lightColour(), null);
             spinSeeds[body.index()] = Math.floorMod(body.nodeId().hashCode(), 360);
-            bodyShares[body.index()] = bodyShareOf(body.art());
+            planetRings[body.index()] = ringsOf(body);
+            bodyShares[body.index()] = planetRings[body.index()] == null ? bodyShareOf(body.art()) : planetRings[body.index()].bodyShare();
             auroras[body.index()] = isStar(body.art()) ? new StarAurora() : null;
             shipScenes[body.index()] = shipSceneOf(body);
         }
@@ -163,6 +167,16 @@ final class AtlasTreeView {
     private static boolean isStar(AtlasBodyArt art) {
         PlanetSpecAPI spec = art.isPlanet() ? PlanetSpecs.byType(art.planetType()) : null;
         return spec != null && spec.isStar() && !spec.isBlackHole();
+    }
+
+    private static AtlasPlanetRings ringsOf(Body body) {
+        AtlasBodyArt art = body.art();
+        PlanetSpecAPI spec = art.isPlanet() ? PlanetSpecs.byType(art.planetType()) : null;
+        if (spec == null || spec.isStar() || spec.isBlackHole()) {
+            return null;
+        }
+        AtlasPlanetRings.Kind kind = AtlasPlanetRings.kindOf(spec.isGasGiant(), art.lightColour(), art.field());
+        return AtlasPlanetRings.of(kind, art.planetType().contains("ice"), body.nodeId().hashCode());
     }
 
     private static float bodyShareOf(AtlasBodyArt art) {
@@ -385,6 +399,7 @@ final class AtlasTreeView {
         if (auroras[index] != null) {
             painter.paintStarAurora(body.art(), auroras[index], placement, lighting, alpha);
         }
+        ringPainter.paint(planetRings[index], colours[index], screenX, screenY, screenRadius, lighting, seconds, alpha);
         painter.paint(body.art(), colours[index], siteLights[index], placement, lighting, seconds, alpha);
         AtlasShipScene shipScene = shipScenes[index];
         if (shipScene != null) {
