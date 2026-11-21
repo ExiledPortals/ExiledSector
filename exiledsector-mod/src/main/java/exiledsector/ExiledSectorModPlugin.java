@@ -58,6 +58,7 @@ import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.CraftingBenchRefitButton;
 import exiledsector.ui.cargo.CargoCraftingTabListener;
 import exiledsector.ui.cargo.LootAlertListener;
+import exiledsector.ui.decoration.FleetHulls;
 import exiledsector.ui.util.TexturePreloader;
 
 import java.util.ArrayList;
@@ -104,6 +105,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         CompatChecks.logAtStartup(compatTargets());
         GraphicsLibCompat.loadLightData(LIGHT_DATA_PATH);
         TexturePreloader.preloadAll();
+        FleetHulls.preloadHullFiles();
     }
 
     public static List<CompatTarget> compatTargets() {

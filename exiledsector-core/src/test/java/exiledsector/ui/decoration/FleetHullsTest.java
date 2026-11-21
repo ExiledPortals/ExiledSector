@@ -5,10 +5,12 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI.ShipTypeHints;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -50,6 +52,25 @@ class FleetHullsTest {
         ShipHullSpecAPI freighter = hull("buffalo", HullSize.DESTROYER);
         when(freighter.isCivilianNonCarrier()).thenReturn(true);
         assertFalse(FleetHulls.roams(freighter));
+    }
+
+    @Test
+    void preloadsHullFilesOnlyForHullsThatCanRoamAndCarriesOnPastFailures() {
+        ShipHullSpecAPI wolf = hull("wolf", HullSize.FRIGATE);
+        ShipHullSpecAPI talon = hull("talon", HullSize.FIGHTER);
+        ShipHullSpecAPI broken = hull("broken", HullSize.DESTROYER);
+        ShipHullSpecAPI onslaught = hull("onslaught", HullSize.CAPITAL_SHIP);
+        List<String> read = new ArrayList<>();
+
+        int readCount = FleetHulls.preloadHullFiles(List.of(wolf, talon, broken, onslaught), hull -> {
+            read.add(hull.getHullId());
+            if (hull == broken) {
+                throw new IllegalStateException("unreadable");
+            }
+        });
+
+        assertEquals(2, readCount);
+        assertEquals(List.of("wolf", "broken", "onslaught"), read);
     }
 
     private static ShipHullSpecAPI hull(String hullId, HullSize hullSize) {

@@ -27,6 +27,7 @@ import exiledsector.charts.atlas.AtlasRuntime;
 import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasNames;
 import exiledsector.charts.atlas.AtlasState;
+import exiledsector.charts.layout.sketch.ChartSystemSketch;
 import exiledsector.charts.layout.sketch.SectorSystemSketcher;
 import exiledsector.charts.officer.AtlasOfficer;
 import exiledsector.charts.officer.OfficerText;
@@ -57,6 +58,7 @@ import exiledsector.ui.socket.BenchMode;
 import exiledsector.ui.socket.BenchModeSupport;
 import exiledsector.ui.socket.GameTextTooltip;
 import exiledsector.ui.socket.SocketPanelPlacement;
+import exiledsector.ui.perf.ScreenPerformance;
 import exiledsector.ui.socket.CraftingBenchPanel;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.TextLabel;
@@ -186,12 +188,14 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     public void attach(CustomPanelAPI panel) {
         panelRoot = panel;
         SectorAPI sector = Global.getSector();
-        AtlasGenerator generator = AtlasRuntime.generator(sector);
+        AtlasGenerator generator = ScreenPerformance.phase("atlas generator", () -> AtlasRuntime.generator(sector));
         searchBar = new CanvasSearchBar(search, I18n.forGameText(() -> Translation.text("chart.atlas.search.placeholder")), this::jumpToNextSearchMatch,
                 SEARCH_WIDTH);
-        map = new AtlasMapCanvas(generator, AtlasState.get(sector), new AtlasScenery(generator.seed()),
-                SectorSystemSketcher.sketch(WormholeGateway.playerGatewaySystem(sector)));
-        indexSearch();
+        AtlasScenery scenery = ScreenPerformance.phase("scenery", () -> new AtlasScenery(generator.seed()));
+        ChartSystemSketch gatewaySketch = ScreenPerformance.phase("gateway sketch",
+                () -> SectorSystemSketcher.sketch(WormholeGateway.playerGatewaySystem(sector)));
+        map = ScreenPerformance.phase("map canvas", () -> new AtlasMapCanvas(generator, AtlasState.get(sector), scenery, gatewaySketch));
+        ScreenPerformance.phase("search index", this::indexSearch);
         showOverlay(true);
         camera.jumpZoomTo(AtlasMapCanvas.MIN_ZOOM);
         AtlasCameraMemory.Centre remembered = AtlasCameraMemory.recall(sector);
@@ -200,7 +204,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         } else {
             camera.centreOn(map.gatewayX(), map.gatewayY());
         }
-        I18n.forGameText(this::buildChrome);
+        ScreenPerformance.phase("chrome", () -> I18n.forGameText(this::buildChrome));
     }
 
     private void buildChrome() {

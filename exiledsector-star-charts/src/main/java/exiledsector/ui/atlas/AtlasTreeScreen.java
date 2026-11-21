@@ -35,6 +35,7 @@ import exiledsector.ui.UiFonts;
 import exiledsector.ui.decoration.DecorationScene;
 import exiledsector.ui.decoration.StarfieldRenderer;
 import exiledsector.ui.decoration.TreeDecorations;
+import exiledsector.ui.perf.ScreenPerformance;
 import exiledsector.ui.socket.GameTextTooltip;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.Rects;
@@ -66,15 +67,16 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
 
     private final CampaignOverlay.Host host;
     private final AtlasState state;
-    private final AtlasTreeData data = AtlasTreeData.get();
+    private final AtlasTreeData data = ScreenPerformance.phase("tree data", AtlasTreeData::get);
     private final SkillTreePanelStyle panelStyle = new SkillTreePanelStyle();
-    private final StarfieldRenderer starfield = new StarfieldRenderer(panelStyle);
+    private final StarfieldRenderer starfield = ScreenPerformance.phase("starfield", () -> new StarfieldRenderer(panelStyle));
     private final CanvasCamera camera = new CanvasCamera();
     private final CanvasDrag<Void> drag = new CanvasDrag<>(camera);
     private final PointerGesture<Void> gesture = drag.gesture();
     private final AtlasOverlayFrame frame = new AtlasOverlayFrame();
     private final TreeDecorations decorations;
-    private final AtlasTreeView treeView = new AtlasTreeView(data.bodies().withRolledWheels(new Random()), panelStyle);
+    private final AtlasTreeView treeView = ScreenPerformance.phase("tree view",
+            () -> new AtlasTreeView(data.bodies().withRolledWheels(new Random()), panelStyle));
     private final TextLabel titleLabel = new TextLabel(UiFonts.TITLE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
     private final TextLabel pointsLabel = new TextLabel(UiFonts.HINT, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
     private final TooltipText tooltipText = SkillTreePanelStyle.tooltipText();
@@ -122,10 +124,10 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
     AtlasTreeScreen(CampaignOverlay.Host host) {
         this.host = host;
         this.state = AtlasState.get(Global.getSector());
-        this.decorations = TreeDecorations.of(data.decorations());
+        this.decorations = ScreenPerformance.phase("decorations", () -> TreeDecorations.of(data.decorations()));
         this.effectsPanel = new AtlasTreeEffectsPanel(() -> AtlasTree.effectGroups(state));
         this.searchBar = new CanvasSearchBar(search, I18n.forGameText(() -> Translation.text("atlasTree.search.placeholder")), this::jumpToNextSearchMatch);
-        refreshAllocation();
+        ScreenPerformance.phase("allocation", this::refreshAllocation);
     }
 
     @Override
@@ -135,8 +137,8 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         if (!roots.isEmpty()) {
             camera.centreOn(treeView.x(roots.get(0).getId()), treeView.y(roots.get(0).getId()));
         }
-        I18n.forGameText(() -> buildChrome(panel));
-        indexSearch();
+        ScreenPerformance.phase("chrome", () -> I18n.forGameText(() -> buildChrome(panel)));
+        ScreenPerformance.phase("search index", this::indexSearch);
     }
 
     private void indexSearch() {

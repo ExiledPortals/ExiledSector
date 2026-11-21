@@ -8,10 +8,12 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI.ShipTypeHints;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public final class FleetHulls {
 
@@ -20,6 +22,28 @@ public final class FleetHulls {
     private static final Logger LOG = Logger.getLogger(FleetHulls.class);
 
     private FleetHulls() {
+    }
+
+    public static void preloadHullFiles() {
+        long startNanos = System.nanoTime();
+        int readCount = preloadHullFiles(Global.getSettings().getAllShipHullSpecs(), FleetHullVisuals::of);
+        LOG.info("Read hull files for " + readCount + " roaming hulls in " + (System.nanoTime() - startNanos) / 1_000_000L + " ms");
+    }
+
+    static int preloadHullFiles(Collection<ShipHullSpecAPI> hullSpecs, Consumer<ShipHullSpecAPI> reader) {
+        int readCount = 0;
+        for (ShipHullSpecAPI hullSpec : hullSpecs) {
+            if (!roams(hullSpec)) {
+                continue;
+            }
+            try {
+                reader.accept(hullSpec);
+                readCount++;
+            } catch (RuntimeException e) {
+                LOG.warn("Couldn't read the hull file of " + hullSpec.getHullId() + "; it is read when its fleet sprite first appears", e);
+            }
+        }
+        return readCount;
     }
 
     public static boolean roams(ShipHullSpecAPI hullSpec) {

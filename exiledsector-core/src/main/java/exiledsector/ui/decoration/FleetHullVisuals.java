@@ -3,6 +3,7 @@ package exiledsector.ui.decoration;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.EngineSlotAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import exiledsector.ui.perf.LoadCounters;
 import exiledsector.ui.refit.UiReflection;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -27,6 +28,12 @@ record FleetHullVisuals(float centerX, float centerY, List<EngineFlame> flames, 
     private static final String HULL_FILE_FOLDER = "data/hulls/";
     private static final String HULL_FILE_SUFFIX = ".ship";
     private static final Map<String, FleetHullVisuals> VISUALS_BY_HULL = new HashMap<>();
+    private static final Map<String, HullFile> HULL_FILES_BY_ID = new HashMap<>();
+
+    private record HullFile(float centerX, float centerY, List<HullPoint> outline) {
+
+        static final HullFile MISSING = new HullFile(Float.NaN, Float.NaN, List.of());
+    }
 
     boolean hasCenter() {
         return !Float.isNaN(centerX) && !Float.isNaN(centerY);
@@ -40,30 +47,47 @@ record FleetHullVisuals(float centerX, float centerY, List<EngineFlame> flames, 
     }
 
     private static FleetHullVisuals read(ShipHullSpecAPI hullSpec) {
-        JSONObject hullFile = hullFile(hullSpec);
-        JSONArray center = hullFile == null ? null : hullFile.optJSONArray("center");
+        HullFile hullFile = hullFile(hullSpec);
+        return new FleetHullVisuals(hullFile.centerX(), hullFile.centerY(), flames(hullSpec), hullFile.outline());
+    }
+
+    private static HullFile hullFile(ShipHullSpecAPI hullSpec) {
+        for (String hullId : new String[]{hullSpec.getHullId(), hullSpec.getBaseHullId()}) {
+            HullFile hullFile = hullId == null ? HullFile.MISSING : HULL_FILES_BY_ID.computeIfAbsent(hullId, FleetHullVisuals::readHullFile);
+            if (hullFile != HullFile.MISSING) {
+                return hullFile;
+            }
+        }
+        return HullFile.MISSING;
+    }
+
+    private static HullFile readHullFile(String hullId) {
+        String path = HULL_FILE_FOLDER + hullId + HULL_FILE_SUFFIX;
+        JSONObject hullJson;
+        long startNanos = System.nanoTime();
+        try {
+            hullJson = Global.getSettings().loadJSON(path);
+        } catch (Exception e) {
+            LOG.debug("No hull file at " + path + ": " + e.getMessage());
+            return HullFile.MISSING;
+        } finally {
+            LoadCounters.hullFileRead(System.nanoTime() - startNanos);
+        }
+        if (hullJson == null) {
+            return HullFile.MISSING;
+        }
+        JSONArray center = hullJson.optJSONArray("center");
         float centerX = Float.NaN;
         float centerY = Float.NaN;
         if (center != null && center.length() == 2) {
             centerX = (float) center.optDouble(0, Float.NaN);
             centerY = (float) center.optDouble(1, Float.NaN);
         }
-        return new FleetHullVisuals(centerX, centerY, flames(hullSpec), outline(hullFile));
-    }
-
-    private static JSONObject hullFile(ShipHullSpecAPI hullSpec) {
-        for (String hullId : new String[]{hullSpec.getHullId(), hullSpec.getBaseHullId()}) {
-            try {
-                return Global.getSettings().loadJSON(HULL_FILE_FOLDER + hullId + HULL_FILE_SUFFIX);
-            } catch (Exception e) {
-                LOG.debug("No hull file at " + HULL_FILE_FOLDER + hullId + HULL_FILE_SUFFIX + ": " + e.getMessage());
-            }
-        }
-        return null;
+        return new HullFile(centerX, centerY, outline(hullJson));
     }
 
     private static List<HullPoint> outline(JSONObject hullFile) {
-        JSONArray bounds = hullFile == null ? null : hullFile.optJSONArray("bounds");
+        JSONArray bounds = hullFile.optJSONArray("bounds");
         if (bounds == null || bounds.length() < 6) {
             return List.of();
         }

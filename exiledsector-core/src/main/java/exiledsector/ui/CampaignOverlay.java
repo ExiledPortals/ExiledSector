@@ -7,6 +7,8 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
 import exiledsector.effects.TransientScripts;
+import exiledsector.ui.perf.ScreenPerformance;
+import exiledsector.ui.perf.TimedPanelPlugin;
 import exiledsector.ui.refit.UiReflection;
 import org.apache.log4j.Logger;
 
@@ -65,20 +67,44 @@ public final class CampaignOverlay {
     // java:S1181: UiReflection declares Throwable, and a changed engine may only cost this overlay, never the game
     @SuppressWarnings("java:S1181")
     private static boolean openOver(UIPanelAPI hostPanel, Function<Host, Screen> screenFor, Runnable afterClose, CustomPanelAPI replacedPanel) {
+        ScreenPerformance performance = null;
         try {
             if (hostPanel == null || overlayOpenIn(hostPanel, replacedPanel)) return false;
-            OverlayHost host = new OverlayHost(hostPanel, afterClose, replacedPanel);
+            performance = ScreenPerformance.begin();
+            OverlayHost host = new OverlayHost(hostPanel, afterClose, replacedPanel, performance);
             Screen screen = screenFor.apply(host);
-            CustomPanelAPI panel = Global.getSettings().createCustom(Global.getSettings().getScreenWidth(), Global.getSettings().getScreenHeight(), screen);
+            TimedScreen timedScreen = new TimedScreen(screen, performance);
+            CustomPanelAPI panel = Global.getSettings().createCustom(Global.getSettings().getScreenWidth(), Global.getSettings().getScreenHeight(),
+                    timedScreen);
             host.overlayPanel = panel;
             hostPanel.addComponent(panel).inTL(0f, 0f);
             OPEN_HOSTS.add(host);
             screen.attach(panel);
             SkillTreeSounds.play(CLICK_SOUND);
+            performance.opened(screen.getClass().getSimpleName());
             return true;
         } catch (Throwable e) {
             LOG.error("[ExiledSector] Could not open a full-screen window over the campaign screens", e);
             return false;
+        } finally {
+            if (performance != null) {
+                performance.abandonIfUnopened();
+            }
+        }
+    }
+
+    private static final class TimedScreen extends TimedPanelPlugin implements Screen {
+
+        private final Screen screen;
+
+        private TimedScreen(Screen screen, ScreenPerformance performance) {
+            super(screen, performance);
+            this.screen = screen;
+        }
+
+        @Override
+        public void attach(CustomPanelAPI panel) {
+            screen.attach(panel);
         }
     }
 
@@ -114,14 +140,16 @@ public final class CampaignOverlay {
 
         private final UIPanelAPI hostPanel;
         private final Runnable afterClose;
+        private final ScreenPerformance performance;
         private CustomPanelAPI overlayPanel;
         private CustomPanelAPI replacedPanel;
         private boolean replacedPanelLeaving;
 
-        private OverlayHost(UIPanelAPI hostPanel, Runnable afterClose, CustomPanelAPI replacedPanel) {
+        private OverlayHost(UIPanelAPI hostPanel, Runnable afterClose, CustomPanelAPI replacedPanel, ScreenPerformance performance) {
             this.hostPanel = hostPanel;
             this.afterClose = afterClose;
             this.replacedPanel = replacedPanel;
+            this.performance = performance;
         }
 
         @Override
@@ -157,6 +185,7 @@ public final class CampaignOverlay {
         @Override
         public void switchTo(Function<Host, Screen> nextScreen) {
             TransientScripts.nextFrame(Global.getSector(), () -> {
+                performance.closed();
                 removeReplacedPanel();
                 CustomPanelAPI shownPanel = overlayPanel;
                 overlayPanel = null;
@@ -173,6 +202,7 @@ public final class CampaignOverlay {
         }
 
         private void remove(String wormholeMessage) {
+            performance.closed();
             removeReplacedPanel();
             if (overlayPanel != null) {
                 hostPanel.removeComponent(overlayPanel);

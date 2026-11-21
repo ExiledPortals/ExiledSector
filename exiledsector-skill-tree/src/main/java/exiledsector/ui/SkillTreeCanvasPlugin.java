@@ -37,6 +37,7 @@ import exiledsector.ui.node.NodeRadiusRingRenderer;
 import exiledsector.ui.node.NodeSearch;
 import exiledsector.ui.node.SkillTreeNodeDrawer;
 import exiledsector.ui.node.TreeAllocationSession;
+import exiledsector.ui.perf.ScreenPerformance;
 import exiledsector.ui.refit.RefitButtonColumn;
 import exiledsector.ui.util.GLDraw;
 import lunalib.lunaRefit.BaseRefitButton;
@@ -86,28 +87,36 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     public SkillTreeCanvasPlugin(FleetMemberAPI member, ShipVariantAPI variant, float shipCardHeight, BaseRefitButton refitButton,
                                  CustomPanelAPI hostPanel, Consumer<FleetMemberAPI> shipSwitcher) {
-        OpReserveParity.warnIfOutOfSync(member, variant, "before the skill tree re-synced it");
-        PhantomConflictWatch.applyPendingReverts(member.getId());
-        if (ShipTreeSync.memberChanged(member, variant) && refitButton != null) {
-            refitButton.refreshVariant();
-        }
-        SocketCustody.reconcile();
+        ScreenPerformance.phase("ship sync", () -> {
+            OpReserveParity.warnIfOutOfSync(member, variant, "before the skill tree re-synced it");
+            PhantomConflictWatch.applyPendingReverts(member.getId());
+            if (ShipTreeSync.memberChanged(member, variant) && refitButton != null) {
+                refitButton.refreshVariant();
+            }
+            SocketCustody.reconcile();
+        });
         SkillTreePanelStyle panelStyle = new SkillTreePanelStyle();
-        this.starfieldRenderer = new StarfieldRenderer(panelStyle);
-        this.fleetRenderer = SkillTreeFleetRenderer.forPlayerFleet(member.getId());
-        exoshipView.setPlayerShip(member);
-        this.nodeSearch = new NodeSearch(member.getHullSpec().getHullSize());
+        this.starfieldRenderer = ScreenPerformance.phase("starfield", () -> new StarfieldRenderer(panelStyle));
+        this.fleetRenderer = ScreenPerformance.phase("fleet", () -> SkillTreeFleetRenderer.forPlayerFleet(member.getId()));
+        ScreenPerformance.phase("exoship", () -> exoshipView.setPlayerShip(member));
+        NodeSearch shipNodeSearch = new NodeSearch(member.getHullSpec().getHullSize());
+        this.nodeSearch = shipNodeSearch;
         this.searchBar = new CanvasSearchBar(nodeSearch, Translation.text("ui.search.placeholder"), this::jumpToNextSearchMatch);
-        this.treeSession = new TreeAllocationSession(member, variant, refitButton, nodeSearch);
-        this.decorations = ShipTreeDecorations.forActiveTree(treeSession::isLocked, treeSession::isConcealed);
-        this.nodeDrawer = SkillTreeNodeDrawer.attachedTo(treeSession, member, panelStyle, nodeSearch);
-        this.templateUi = new SkillTreeTemplateController(member, treeSession, panelStyle);
-        this.statPanel = new SkillTreeStatPanel(member, variant, panelStyle);
+        TreeAllocationSession session = ScreenPerformance.phase("tree session",
+                () -> new TreeAllocationSession(member, variant, refitButton, shipNodeSearch));
+        this.treeSession = session;
+        this.decorations = ScreenPerformance.phase("decorations",
+                () -> ShipTreeDecorations.forActiveTree(session::isLocked, session::isConcealed));
+        this.nodeDrawer = ScreenPerformance.phase("node drawer", () -> SkillTreeNodeDrawer.attachedTo(session, member, panelStyle, shipNodeSearch));
+        this.templateUi = ScreenPerformance.phase("templates", () -> new SkillTreeTemplateController(member, session, panelStyle));
+        SkillTreeStatPanel shipStatPanel = ScreenPerformance.phase("stat panel", () -> new SkillTreeStatPanel(member, variant, panelStyle));
+        this.statPanel = shipStatPanel;
         this.hyperspaceMode = ShipHyperspace.mode(camera, statPanel, treeSession);
         this.socketPlacement = new SocketPlacement(hostPanel, treeSession, nodeSearch, searchBar);
         this.schematicButtons = new SchematicButtons(new LogisticsSlots(member.getId()),
                 new IntegrationResetButton(member.getId(), treeSession::refreshAfterIntegrationReset));
-        this.chrome = new SkillTreeChrome(member, panelStyle, statPanel, searchBar, templateUi, socketPlacement, schematicButtons, shipCardHeight);
+        this.chrome = ScreenPerformance.phase("chrome", () -> new SkillTreeChrome(member, panelStyle, shipStatPanel, searchBar, templateUi,
+                socketPlacement, schematicButtons, shipCardHeight));
         this.shipList = new FleetShipList(hostPanel, shipCardHeight, shipSwitcher);
         this.refitButton = refitButton;
 

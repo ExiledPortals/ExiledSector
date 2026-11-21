@@ -2,6 +2,7 @@ package exiledsector.skills.skilleffect.render;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.graphics.SpriteAPI;
+import exiledsector.ui.perf.LoadCounters;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -26,7 +27,9 @@ public final class SpriteCache {
         if (loadedSprites.contains(path)) return true;
         if (failedSprites.contains(path)) return false;
         try {
+            long startNanos = System.nanoTime();
             Global.getSettings().loadTexture(path);
+            LoadCounters.textureLoaded(System.nanoTime() - startNanos);
             loadedSprites.add(path);
             return true;
         } catch (IOException | RuntimeException e) {

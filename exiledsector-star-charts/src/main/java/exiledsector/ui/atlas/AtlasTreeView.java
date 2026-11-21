@@ -12,6 +12,7 @@ import exiledsector.ui.TreeViewport;
 import exiledsector.ui.decoration.AtlasFlagshipScene;
 import exiledsector.ui.decoration.AtlasShipGroup;
 import exiledsector.ui.decoration.AtlasShipScene;
+import exiledsector.ui.decoration.DecorationWarmup;
 import exiledsector.ui.decoration.StarAurora;
 import exiledsector.ui.node.BeamStroke;
 import exiledsector.ui.node.ConnectorKind;
@@ -82,6 +83,7 @@ final class AtlasTreeView {
     private final float[] stormSeconds;
     private final AtlasBodyPainter.Lighting[] lightings;
     private final AtlasConvoyTraffic convoys;
+    private final DecorationWarmup warmup;
     private final IntToDoubleFunction portShipAlpha;
     private boolean[] allocated = new boolean[0];
     private double elapsedSeconds;
@@ -113,6 +115,7 @@ final class AtlasTreeView {
         }
         measureWheels();
         this.convoys = new AtlasConvoyTraffic(bodies);
+        this.warmup = AtlasTreeWarmup.of(bodies);
         this.portShipAlpha = index -> shipAlpha(lightings[index]);
     }
 
@@ -216,6 +219,7 @@ final class AtlasTreeView {
     }
 
     void advance(float amount) {
+        warmup.advance();
         elapsedSeconds = (elapsedSeconds + amount) % ANIMATION_PERIOD_SECONDS;
         ringArt.advance(amount);
         for (Body body : bodies.bodies()) {

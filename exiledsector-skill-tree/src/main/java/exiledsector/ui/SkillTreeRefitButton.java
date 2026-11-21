@@ -14,6 +14,8 @@ import exiledsector.items.schematic.MasterSchematic;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillTreeSetting;
 import exiledsector.ui.hyperspace.HyperspaceCamera;
+import exiledsector.ui.perf.ScreenPerformance;
+import exiledsector.ui.perf.TimedPanelPlugin;
 import exiledsector.ui.refit.RefitButtonColumn;
 import exiledsector.ui.refit.RefitButtonConfig;
 import exiledsector.ui.refit.RefitModuleTabs;
@@ -31,6 +33,8 @@ public class SkillTreeRefitButton extends FullScreenRefitButton {
             BUTTON_KEY, RefitButtonConfig::skillTreeKey, RefitButtonConfig::buttonUnderHullMods, () -> openPanel(null));
     static final float SHIP_CARD_ICON_SIZE = 128f;
     private static final String LOCKED_SOUND = "ui_button_disabled_pressed";
+
+    private ScreenPerformance shownPerformance;
 
     public static void addButton() {
         LunaRefitManager.addRefitButton(new SkillTreeRefitButton());
@@ -95,8 +99,34 @@ public class SkillTreeRefitButton extends FullScreenRefitButton {
         buildPanel(backgroundPanel, member, variant, market, null);
     }
 
+    @Override
+    public void onPanelClose(FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
+        super.onPanelClose(member, variant, market);
+        closeShownPerformance();
+    }
+
+    private void closeShownPerformance() {
+        if (shownPerformance != null) {
+            shownPerformance.closed();
+            shownPerformance = null;
+        }
+    }
+
     private void buildPanel(CustomPanelAPI backgroundPanel, FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market,
                             HyperspaceCamera carriedCamera) {
+        closeShownPerformance();
+        ScreenPerformance performance = ScreenPerformance.begin();
+        try {
+            buildTimedPanel(backgroundPanel, member, variant, market, carriedCamera, performance);
+            performance.opened("Skill tree");
+            shownPerformance = performance;
+        } finally {
+            performance.abandonIfUnopened();
+        }
+    }
+
+    private void buildTimedPanel(CustomPanelAPI backgroundPanel, FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market,
+                                 HyperspaceCamera carriedCamera, ScreenPerformance performance) {
         RefitModuleTabs.adoptDockedShip(member, variant);
         float panelWidth = getPanelWidth(member, variant);
         float panelHeight = getPanelHeight(member, variant);
@@ -121,7 +151,7 @@ public class SkillTreeRefitButton extends FullScreenRefitButton {
         });
         canvasHolder[0] = canvasPlugin;
         canvasPlugin.carryCamera(carriedCamera);
-        CustomPanelAPI canvasPanel = Global.getSettings().createCustom(panelWidth, panelHeight, canvasPlugin);
+        CustomPanelAPI canvasPanel = Global.getSettings().createCustom(panelWidth, panelHeight, new TimedPanelPlugin(canvasPlugin, performance));
         canvasElement.addCustom(canvasPanel, 0f).getPosition().inTL(0f, 0f);
 
         contentPanel.addUIElement(shipCard);

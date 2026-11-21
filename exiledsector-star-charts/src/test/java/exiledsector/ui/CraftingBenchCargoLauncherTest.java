@@ -11,6 +11,7 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
 import exiledsector.MockSector;
 import exiledsector.items.custody.SocketCustody;
+import exiledsector.ui.perf.TimedPanelPlugin;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -109,7 +110,7 @@ class CraftingBenchCargoLauncherTest {
         assertTrue(CraftingBenchCargoLauncher.open(campaignUI, null));
 
         verify(settings).createCustom(SCREEN_WIDTH, SCREEN_HEIGHT, benchPlugin);
-        assertInstanceOf(CraftingBenchScreen.class, benchPlugin);
+        assertInstanceOf(CraftingBenchScreen.class, assertInstanceOf(TimedPanelPlugin.class, benchPlugin).timedPlugin());
         verify(placement).inTL(0f, 0f);
 
         assertFalse(CraftingBenchCargoLauncher.open(campaignUI, null));
