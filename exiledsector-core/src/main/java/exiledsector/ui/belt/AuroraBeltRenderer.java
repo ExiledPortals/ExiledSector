@@ -20,16 +20,21 @@ public final class AuroraBeltRenderer {
 
     public static void render(SpriteAPI texture, RadialBand band, Color color, float alphaMult, float elapsedSeconds,
                               float detailScale) {
-        render(texture, band, color, alphaMult, elapsedSeconds, detailScale, GL11.GL_ONE);
+        render(texture, band, color, alphaMult, elapsedSeconds, detailScale, GL11.GL_ONE, BandArc.WHOLE);
+    }
+
+    public static void renderArc(SpriteAPI texture, RadialBand band, Color color, float alphaMult, float elapsedSeconds,
+                                 float detailScale, BandArc arc) {
+        render(texture, band, color, alphaMult, elapsedSeconds, detailScale, GL11.GL_ONE, arc);
     }
 
     public static void renderShaded(SpriteAPI texture, RadialBand band, Color color, float alphaMult, float elapsedSeconds,
                                     float detailScale) {
-        render(texture, band, color, alphaMult, elapsedSeconds, detailScale, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        render(texture, band, color, alphaMult, elapsedSeconds, detailScale, GL11.GL_ONE_MINUS_SRC_ALPHA, BandArc.WHOLE);
     }
 
     private static void render(SpriteAPI texture, RadialBand band, Color color, float alphaMult, float elapsedSeconds,
-                               float detailScale, int blendDstFactor) {
+                               float detailScale, int blendDstFactor, BandArc arc) {
         float phaseRad = RadialBandMaths.phaseRad(elapsedSeconds, PHASE_DEG_PER_SEC);
 
         float circumference = RadialBandMaths.circumference(band);
@@ -46,6 +51,7 @@ public final class AuroraBeltRenderer {
         RadialBandGL.begin(texture, band.center().x, band.center().y, GL11.GL_SRC_ALPHA, blendDstFactor, color, alphaMult);
 
         for (int iter = 0; iter < 2; iter++) {
+            int[] vertexRange = arc.vertexRange(iter * 180f, segments);
             float bandIndex = iter == 0 ? 1f : 0f;
             float innerTexX = RadialBandMaths.slotInnerTexX(texture, bandIndex, BAND_WIDTH_IN_TEXTURE);
             float outerTexX = RadialBandMaths.slotOuterTexX(texture, bandIndex, BAND_WIDTH_IN_TEXTURE);
@@ -53,7 +59,7 @@ public final class AuroraBeltRenderer {
                     ? new RingWave(FIRST_PASS_WOBBLE_CYCLES, phaseRad, wobble)
                     : new RingWave(SECOND_PASS_WOBBLE_CYCLES, -phaseRad, wobble);
 
-            RadialBandGL.strip(circle, 0, segments, new RadialBandGL.StripSpec(band.innerRadius(), band.outerRadius(), innerTexX,
+            RadialBandGL.strip(circle, vertexRange, new RadialBandGL.StripSpec(band.innerRadius(), band.outerRadius(), innerTexX,
                     outerTexX, texPerSegment, RingWave.NONE, outerWave));
             GL11.glRotatef(180f, 0f, 0f, 1f);
         }

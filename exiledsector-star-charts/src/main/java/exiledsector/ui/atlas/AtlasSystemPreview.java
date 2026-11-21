@@ -11,6 +11,7 @@ import exiledsector.charts.layout.sketch.ChartSystemSketch.Belt;
 import exiledsector.charts.layout.sketch.ChartSystemSketch.Body;
 import exiledsector.charts.layout.sketch.ChartSystemSketch.Moon;
 import exiledsector.charts.layout.sketch.ChartSystemSketch.PlanetRing;
+import exiledsector.ui.belt.BandArc;
 import exiledsector.ui.belt.RadialBand;
 import exiledsector.ui.belt.RingBeltRenderer;
 import exiledsector.ui.decoration.AtmosphereRing;
@@ -20,10 +21,12 @@ import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.HoloShapes;
 import exiledsector.ui.util.SpriteDraw;
 import exiledsector.ui.util.UnitCircle;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +47,16 @@ final class AtlasSystemPreview {
             }
             return new Prepared(sketch, Math.max(MIN_OUTER_RADIUS, sketch.outerRadius()), List.copyOf(starKeys),
                     AtlasSystemArt.layout(key.hashCode(), sketch, anomalyIds));
+        }
+    }
+
+    enum Layer {
+        BELT(5f), PHOTOSPHERE(4f), NEBULA(3f), STAR(2f), PLANET(1f), PLANET_RING(0f), MOON(-1f), ANOMALY(-2f);
+
+        final float untiltedDepth;
+
+        Layer(float untiltedDepth) {
+            this.untiltedDepth = untiltedDepth;
         }
     }
 
@@ -84,6 +97,7 @@ final class AtlasSystemPreview {
     static final int MIN_DISC_SEGMENTS = 16;
     static final int MAX_DISC_SEGMENTS = 128;
     static final float PIXELS_PER_DISC_SEGMENT = 3f;
+    static final int BAND_DEPTH_ARCS = 12;
     static final Color FALLBACK_STAR_COLOUR = new Color(255, 240, 210);
     static final Color FALLBACK_PLANET_COLOUR = new Color(170, 170, 180);
     static final String ASTEROID_RINGS = "graphics/planets/rings_asteroids0.png";
@@ -91,18 +105,30 @@ final class AtlasSystemPreview {
     static final String ICE_RINGS = "graphics/planets/rings_ice0.png";
     static final String SPECIAL_RINGS = "graphics/planets/rings_special0.png";
     private static final UnitCircle GLOW_CIRCLE = UnitCircle.of(64);
+    private static final BandArc[] WHOLE_BAND = {BandArc.WHOLE};
+    private static final BandArc[] BAND_ARCS = BandArc.split(BAND_DEPTH_ARCS);
 
     private final SpriteCache spriteCache = new SpriteCache(AtlasSystemPreview.class);
     private final UnitSphere unitSphere = new UnitSphere();
     private final UnitSphere detailedSphere = new UnitSphere(DETAILED_SPHERE_DETAIL);
     private final AtlasSystemArt art = new AtlasSystemArt();
-    private final AtlasSystemArt.Frame frame = new AtlasSystemArt.Frame();
     private final Map<String, StarAurora> auroras = new HashMap<>();
     private final Vector2f bandCentre = new Vector2f();
     private final CategorySprite auroraTexture = new CategorySprite(StarAurora.TEXTURE_CATEGORY, StarAurora.TEXTURE_ID);
     private final CategorySprite atmosphereTexture = new CategorySprite(AtmosphereRing.TEXTURE_CATEGORY, AtmosphereRing.TEXTURE_ID);
-    private float bodyX;
-    private float bodyY;
+    private final OrbitalPlaneCamera camera = new OrbitalPlaneCamera();
+    private final float[] planeMatrixValues = new float[OrbitalPlaneCamera.MATRIX_VALUES];
+    private final FloatBuffer planeMatrix = BufferUtils.createFloatBuffer(OrbitalPlaneCamera.MATRIX_VALUES);
+    private final AtlasSystemArt.Frame frame = new AtlasSystemArt.Frame(camera, planeMatrix);
+    private final DepthOrder<Layer> drawOrder = new DepthOrder<>();
+    private final Spots stars = new Spots();
+    private final Spots planets = new Spots();
+    private final Spots moons = new Spots();
+    private BandArc[] bandArcs = WHOLE_BAND;
+    private float centreScreenX;
+    private float centreScreenY;
+    private float orbitX;
+    private float orbitY;
 
     void advance(float amount) {
         for (StarAurora aurora : auroras.values()) {
@@ -115,38 +141,25 @@ final class AtlasSystemPreview {
     }
 
     void render(Prepared prepared, float cx, float cy, float radius, float outerRadius, float elapsedSeconds, float alpha) {
-        render(prepared, cx, cy, radius, outerRadius, elapsedSeconds, alpha, Spotlight.NONE);
+        render(prepared, cx, cy, radius, outerRadius, elapsedSeconds, alpha, Spotlight.NONE, 0f);
     }
 
-    void render(Prepared prepared, float cx, float cy, float radius, float outerRadius, float elapsedSeconds, float alpha, Spotlight spotlight) {
+    void render(Prepared prepared, float cx, float cy, float radius, float outerRadius, float elapsedSeconds, float alpha, Spotlight spotlight,
+                float tiltLevel) {
         if (radius <= 0f || alpha <= 0f || outerRadius <= 0f) {
             return;
         }
         ChartSystemSketch sketch = prepared.sketch();
         Fit fit = new Fit(cx, cy, radius, radius * ORBIT_REACH_SHARE, outerRadius, elapsedSeconds);
+        aimCamera(fit, tiltLevel);
         float bodyAlpha = alpha * (1f - spotlight.level());
         startFrame(fit, sketch.planets().size(), bodyAlpha);
-        if (bodyAlpha > 0f) {
-            for (int i = 0; i < sketch.belts().size(); i++) {
-                drawBelt(sketch.belts().get(i), i, fit, bodyAlpha);
-            }
-        }
-        if (sketch.photosphere() != null) {
-            float photosphereRadius = spotlight.starPixels() > 0f
-                    ? AtlasMapCanvas.lerp(fit.radius(), spotlight.starPixels() * PHOTOSPHERE_SPOTLIGHT_SHARE, spotlight.level()) : fit.radius();
-            drawPhotosphere(sketch.photosphere(), fit.cx(), fit.cy(), photosphereRadius, alpha);
-        }
-        art.renderNebula(prepared.art(), frame);
-        for (int i = 0; i < sketch.stars().size(); i++) {
-            drawStar(prepared.starKeys().get(i), sketch.stars().get(i), fit, i == 0 ? alpha : bodyAlpha, i == 0, spotlight);
-        }
-        if (bodyAlpha > 0f) {
-            for (int i = 0; i < sketch.planets().size(); i++) {
-                drawPlanet(sketch.planets().get(i), i, fit, bodyAlpha);
-            }
-            drawPlanetRings(sketch, fit, bodyAlpha);
-            drawMoons(sketch, fit, bodyAlpha);
-            art.renderAnomalies(prepared.art(), frame);
+        placeStars(sketch, fit, spotlight);
+        placePlanets(sketch, fit);
+        placeMoons(sketch);
+        queueScene(prepared, fit, bodyAlpha);
+        for (int rank = 0; rank < drawOrder.size(); rank++) {
+            drawItem(prepared, drawOrder.kind(rank), drawOrder.index(rank), drawOrder.part(rank), fit, alpha, bodyAlpha, spotlight);
         }
     }
 
@@ -155,16 +168,62 @@ final class AtlasSystemPreview {
         static final Spotlight NONE = new Spotlight(0f, 0f);
     }
 
-    private void startFrame(Fit fit, int planets, float alpha) {
+    private static final class Spots {
+        float[] planeX = new float[0];
+        float[] planeY = new float[0];
+        float[] planePixels = new float[0];
+        float[] screenX = new float[0];
+        float[] screenY = new float[0];
+        float[] screenPixels = new float[0];
+        boolean[] shown = new boolean[0];
+
+        void ensure(int count) {
+            if (planeX.length < count) {
+                planeX = new float[count];
+                planeY = new float[count];
+                planePixels = new float[count];
+                screenX = new float[count];
+                screenY = new float[count];
+                screenPixels = new float[count];
+                shown = new boolean[count];
+            }
+        }
+
+        void place(int index, OrbitalPlaneCamera camera, float x, float y, float pixels) {
+            planeX[index] = x;
+            planeY[index] = y;
+            planePixels[index] = pixels;
+            screenX[index] = camera.screenX(x, y);
+            screenY[index] = camera.screenY(y);
+            screenPixels[index] = pixels * camera.sizeAt(y);
+            shown[index] = true;
+        }
+    }
+
+    private void aimCamera(Fit fit, float tiltLevel) {
+        camera.aim(fit.cx(), fit.cy(), fit.reach(), tiltLevel);
+        camera.writePlaneMatrix(planeMatrixValues);
+        for (int index = 0; index < planeMatrixValues.length; index++) {
+            planeMatrix.put(index, planeMatrixValues[index]);
+        }
+        bandArcs = camera.tilted() ? BAND_ARCS : WHOLE_BAND;
+        centreScreenX = camera.screenX(0f, 0f);
+        centreScreenY = camera.screenY(0f);
+    }
+
+    private void startFrame(Fit fit, int planetCount, float alpha) {
         frame.radius = fit.radius();
         frame.reach = fit.reach();
-        frame.starX = fit.cx();
-        frame.starY = fit.cy();
+        frame.starX = centreScreenX;
+        frame.starY = centreScreenY;
         frame.starPixels = fit.radius() * MIN_STAR_SHARE;
+        frame.starPlaneX = 0f;
+        frame.starPlaneY = 0f;
+        frame.starPlanePixels = fit.radius() * MIN_STAR_SHARE;
         frame.starColour = FALLBACK_STAR_COLOUR;
         frame.elapsedSeconds = fit.elapsedSeconds();
         frame.alpha = alpha;
-        frame.ensurePlanets(planets);
+        frame.ensurePlanets(planetCount);
     }
 
     private record Fit(float cx, float cy, float radius, float reach, float outer, float elapsedSeconds) {
@@ -172,6 +231,10 @@ final class AtlasSystemPreview {
         float scaled(float orbitRadius) {
             return reach * (float) Math.sqrt(Math.max(0f, orbitRadius) / outer);
         }
+    }
+
+    static float arcDepth(float centreDepth, float bandRadius, BandArc arc) {
+        return centreDepth + bandRadius * (float) Math.sin(Math.toRadians(arc.middleDegrees()));
     }
 
     static float angleAt(float startAngle, float orbitDays, float elapsedSeconds) {
@@ -211,69 +274,220 @@ final class AtlasSystemPreview {
         return Math.max(0f, Math.min(SHADOW_MAX, SHADOW_FLOOR - facing * SHADOW_SLOPE));
     }
 
-    private void place(Body body, Fit fit) {
+    private void orbit(Body body, Fit fit) {
         double angle = Math.toRadians(angleAt(body.startAngle(), body.orbitDays(), fit.elapsedSeconds()));
         float distance = fit.scaled(body.orbitRadius());
-        bodyX = fit.cx() + (float) Math.cos(angle) * distance;
-        bodyY = fit.cy() + (float) Math.sin(angle) * distance;
+        orbitX = (float) Math.cos(angle) * distance;
+        orbitY = (float) Math.sin(angle) * distance;
     }
 
-    private void drawBelt(Belt belt, int index, Fit fit, float alpha) {
-        SpriteAPI texture = spriteCache.texture(ringTexture(belt.typeId()));
+    private void placeStars(ChartSystemSketch sketch, Fit fit, Spotlight spotlight) {
+        stars.ensure(sketch.stars().size());
+        for (int index = 0; index < sketch.stars().size(); index++) {
+            Body star = sketch.stars().get(index);
+            orbit(star, fit);
+            stars.place(index, camera, orbitX, orbitY, starPixels(star, fit.radius()));
+            PlanetSpecAPI spec = spec(star.typeId());
+            if (index == 0 && (spec == null || !spec.isNebulaCenter())) {
+                spotlightPrimary(spotlight, fit);
+                frame.starX = stars.screenX[0];
+                frame.starY = stars.screenY[0];
+                frame.starPixels = stars.screenPixels[0];
+                frame.starPlaneX = stars.planeX[0];
+                frame.starPlaneY = stars.planeY[0];
+                frame.starPlanePixels = stars.planePixels[0];
+                frame.starColour = corona(spec);
+            }
+        }
+    }
+
+    private void spotlightPrimary(Spotlight spotlight, Fit fit) {
+        if (spotlight.level() <= 0f) {
+            return;
+        }
+        stars.screenX[0] = AtlasMapCanvas.lerp(stars.screenX[0], fit.cx(), spotlight.level());
+        stars.screenY[0] = AtlasMapCanvas.lerp(stars.screenY[0], fit.cy(), spotlight.level());
+        if (spotlight.starPixels() > 0f) {
+            stars.screenPixels[0] = AtlasMapCanvas.lerp(stars.screenPixels[0], spotlight.starPixels(), spotlight.level());
+        }
+    }
+
+    private static Color corona(PlanetSpecAPI spec) {
+        return spec == null || spec.getCoronaColor() == null ? FALLBACK_STAR_COLOUR : spec.getCoronaColor();
+    }
+
+    private void placePlanets(ChartSystemSketch sketch, Fit fit) {
+        planets.ensure(sketch.planets().size());
+        for (int index = 0; index < sketch.planets().size(); index++) {
+            Body planet = sketch.planets().get(index);
+            orbit(planet, fit);
+            float pixels = planet.orbitRadius() <= 0f ? starPixels(planet, fit.radius()) : planetPixels(planet, fit.radius());
+            planets.place(index, camera, orbitX, orbitY, pixels);
+            frame.planetX[index] = planets.screenX[index];
+            frame.planetY[index] = planets.screenY[index];
+            frame.planetPixels[index] = planets.screenPixels[index];
+            frame.planetPlaneX[index] = planets.planeX[index];
+            frame.planetPlaneY[index] = planets.planeY[index];
+            frame.planetPlanePixels[index] = planets.planePixels[index];
+        }
+    }
+
+    private void placeMoons(ChartSystemSketch sketch) {
+        moons.ensure(sketch.moons().size());
+        for (int index = 0; index < sketch.moons().size(); index++) {
+            Moon moon = sketch.moons().get(index);
+            int parent = moon.planet();
+            moons.shown[index] = showsSatellites(sketch, parent);
+            if (moons.shown[index]) {
+                Body parentBody = sketch.planets().get(parent);
+                float parentPixels = planets.planePixels[parent];
+                double angle = Math.toRadians(angleAt(moon.body().startAngle(), moon.body().orbitDays(), frame.elapsedSeconds));
+                float distance = satelliteDistance(moon.body().orbitRadius(), parentBody.radius(), parentPixels);
+                moons.place(index, camera, planets.planeX[parent] + (float) Math.cos(angle) * distance,
+                        planets.planeY[parent] + (float) Math.sin(angle) * distance, moonPixels(moon.body(), parentBody, parentPixels));
+            }
+        }
+    }
+
+    private float depth(Layer layer, float planeY) {
+        return camera.tilted() ? planeY : layer.untiltedDepth;
+    }
+
+    private void queueScene(Prepared prepared, Fit fit, float bodyAlpha) {
+        ChartSystemSketch sketch = prepared.sketch();
+        drawOrder.clear();
+        if (bodyAlpha > 0f) {
+            for (int index = 0; index < sketch.belts().size(); index++) {
+                queueBand(Layer.BELT, index, 0f, fit.scaled(sketch.belts().get(index).orbitRadius()));
+            }
+        }
+        if (sketch.photosphere() != null) {
+            drawOrder.add(Layer.PHOTOSPHERE, 0, 0, depth(Layer.PHOTOSPHERE, 0f));
+        }
+        if (prepared.art().nebulaSheet() != null) {
+            drawOrder.add(Layer.NEBULA, 0, 0, camera.tilted() ? Float.MAX_VALUE : Layer.NEBULA.untiltedDepth);
+        }
+        for (int index = 0; index < sketch.stars().size(); index++) {
+            drawOrder.add(Layer.STAR, index, 0, depth(Layer.STAR, stars.planeY[index]));
+        }
+        if (bodyAlpha <= 0f) {
+            drawOrder.sortBackToFront();
+            return;
+        }
+        for (int index = 0; index < sketch.planets().size(); index++) {
+            drawOrder.add(Layer.PLANET, index, 0, depth(Layer.PLANET, planets.planeY[index]));
+        }
+        for (int index = 0; index < sketch.planetRings().size(); index++) {
+            PlanetRing ring = sketch.planetRings().get(index);
+            int parent = ring.planet();
+            if (showsSatellites(sketch, parent)) {
+                float ringRadius = satelliteDistance(ring.belt().orbitRadius(), sketch.planets().get(parent).radius(), planets.planePixels[parent]);
+                queueBand(Layer.PLANET_RING, index, planets.planeY[parent], ringRadius);
+            }
+        }
+        for (int index = 0; index < sketch.moons().size(); index++) {
+            if (moons.shown[index]) {
+                drawOrder.add(Layer.MOON, index, 0, depth(Layer.MOON, moons.planeY[index]));
+            }
+        }
+        art.queueAnomalies(prepared.art(), frame, drawOrder);
+        drawOrder.sortBackToFront();
+    }
+
+    private void queueBand(Layer layer, int index, float centreDepth, float bandRadius) {
+        for (int arc = 0; arc < bandArcs.length; arc++) {
+            drawOrder.add(layer, index, arc, camera.tilted() ? arcDepth(centreDepth, bandRadius, bandArcs[arc]) : layer.untiltedDepth);
+        }
+    }
+
+    private void drawItem(Prepared prepared, Layer layer, int index, int part, Fit fit, float alpha, float bodyAlpha, Spotlight spotlight) {
+        ChartSystemSketch sketch = prepared.sketch();
+        switch (layer) {
+            case BELT -> drawBelt(sketch.belts().get(index), index, bandArcs[part], fit, bodyAlpha);
+            case PHOTOSPHERE -> drawPhotosphere(sketch.photosphere(), fit, spotlight, alpha);
+            case NEBULA -> art.renderNebula(prepared.art(), frame);
+            case STAR -> drawStar(prepared.starKeys().get(index), sketch.stars().get(index), index, fit, index == 0 ? alpha : bodyAlpha);
+            case PLANET -> drawWorld(sketch.planets().get(index), planets.screenX[index], planets.screenY[index], planets.screenPixels[index], fit,
+                    bodyAlpha);
+            case PLANET_RING -> drawPlanetRing(sketch, sketch.planetRings().get(index), bandArcs[part], fit, bodyAlpha);
+            case MOON -> drawWorld(sketch.moons().get(index).body(), moons.screenX[index], moons.screenY[index], moons.screenPixels[index], fit,
+                    bodyAlpha);
+            case ANOMALY -> art.renderPiece(prepared.art(), index, part, frame);
+            default -> {
+            }
+        }
+    }
+
+    private void drawBelt(Belt belt, int index, BandArc arc, Fit fit, float alpha) {
+        float inner = fit.scaled(belt.orbitRadius() - belt.width() / 2f);
+        float outer = Math.max(inner + MIN_BAND_PIXELS, fit.scaled(belt.orbitRadius() + belt.width() / 2f));
+        drawBand(belt, belt.variant() + index, 0f, 0f, inner, outer, arc, fit, alpha);
+    }
+
+    private void drawPlanetRing(ChartSystemSketch sketch, PlanetRing ring, BandArc arc, Fit fit, float alpha) {
+        int parent = ring.planet();
+        Belt band = ring.belt();
+        float parentRadius = sketch.planets().get(parent).radius();
+        float parentPixels = planets.planePixels[parent];
+        float inner = satelliteDistance(band.orbitRadius() - band.width() / 2f, parentRadius, parentPixels);
+        float outer = Math.max(inner + MIN_BAND_PIXELS, satelliteDistance(band.orbitRadius() + band.width() / 2f, parentRadius, parentPixels));
+        drawBand(band, band.variant(), planets.planeX[parent], planets.planeY[parent], inner, outer, arc, fit, alpha);
+    }
+
+    private void drawBand(Belt band, int variant, float planeCentreX, float planeCentreY, float inner, float outer, BandArc arc, Fit fit,
+                          float alpha) {
+        SpriteAPI texture = spriteCache.texture(ringTexture(band.typeId()));
         if (texture == null || texture.getWidth() <= 0f) {
             return;
         }
-        float inner = fit.scaled(belt.orbitRadius() - belt.width() / 2f);
-        float outer = Math.max(inner + MIN_BAND_PIXELS, fit.scaled(belt.orbitRadius() + belt.width() / 2f));
         int slots = Math.max(1, Math.round(texture.getWidth() / RING_SLOT_WIDTH));
-        bandCentre.set(fit.cx(), fit.cy());
-        RingBeltRenderer.renderSlot(texture, new RadialBand(bandCentre, inner, outer), (belt.variant() + index) % slots, RING_SLOT_WIDTH,
-                Color.WHITE, alpha, angleAt(0f, belt.orbitDays(), fit.elapsedSeconds()));
+        bandCentre.set(planeCentreX, planeCentreY);
+        GL11.glPushMatrix();
+        GL11.glMultMatrix(planeMatrix);
+        RingBeltRenderer.renderSlotArc(texture, new RadialBand(bandCentre, inner, outer), variant % slots, RING_SLOT_WIDTH, Color.WHITE, alpha,
+                angleAt(0f, band.orbitDays(), fit.elapsedSeconds()), arc);
+        GL11.glPopMatrix();
     }
 
-    private void drawStar(String auroraKey, Body star, Fit fit, float alpha, boolean primary, Spotlight spotlight) {
+    private void drawStar(String auroraKey, Body star, int index, Fit fit, float alpha) {
         if (alpha <= 0f) {
             return;
         }
         PlanetSpecAPI spec = spec(star.typeId());
-        place(star, fit);
-        Color corona = spec == null || spec.getCoronaColor() == null ? FALLBACK_STAR_COLOUR : spec.getCoronaColor();
         if (spec != null && spec.isNebulaCenter()) {
             return;
         }
-        float pixels = starPixels(star, fit.radius());
-        if (primary && spotlight.level() > 0f) {
-            bodyX = AtlasMapCanvas.lerp(bodyX, fit.cx(), spotlight.level());
-            bodyY = AtlasMapCanvas.lerp(bodyY, fit.cy(), spotlight.level());
-            pixels = spotlight.starPixels() > 0f ? AtlasMapCanvas.lerp(pixels, spotlight.starPixels(), spotlight.level()) : pixels;
-        }
-        if (primary) {
-            frame.starX = bodyX;
-            frame.starY = bodyY;
-            frame.starPixels = pixels;
-            frame.starColour = corona;
-        }
+        Color corona = corona(spec);
+        float x = stars.screenX[index];
+        float y = stars.screenY[index];
+        float pixels = stars.screenPixels[index];
         String coronaPath = spec == null ? null : spec.getCoronaTexture();
         if (coronaPath != null && !coronaPath.isEmpty()) {
             float halo = Math.min(fit.radius() * MAX_CORONA_SHARE, pixels * Math.max(1f, spec.getCoronaSize()));
-            SpriteDraw.drawAdditiveAtCenter(spriteCache, coronaPath, bodyX, bodyY, halo * 2f, halo * 2f, corona, alpha);
+            SpriteDraw.drawAdditiveAtCenter(spriteCache, coronaPath, x, y, halo * 2f, halo * 2f, corona, alpha);
         }
         SpriteAPI auroraSprite = auroraTexture.get();
         if (auroraSprite != null && pixels >= AURORA_MIN_PIXELS) {
             StarAurora aurora = auroras.computeIfAbsent(auroraKey, id -> new StarAurora());
-            aurora.render(auroraSprite, bodyX, bodyY, AURORA_DETAIL_RADIUS, pixels / AURORA_DETAIL_RADIUS, corona, alpha);
+            aurora.render(auroraSprite, x, y, AURORA_DETAIL_RADIUS, pixels / AURORA_DETAIL_RADIUS, corona, alpha);
         }
-        drawBody(spec, bodyX, bodyY, pixels, star.startAngle(), fit.elapsedSeconds(), FALLBACK_STAR_COLOUR, alpha, true);
+        drawBody(spec, x, y, pixels, star.startAngle(), fit.elapsedSeconds(), FALLBACK_STAR_COLOUR, alpha, true);
     }
 
-    private static void drawPhotosphere(Color colour, float cx, float cy, float radius, float alpha) {
+    private void drawPhotosphere(Color colour, Fit fit, Spotlight spotlight, float alpha) {
+        float x = AtlasMapCanvas.lerp(centreScreenX, fit.cx(), spotlight.level());
+        float y = AtlasMapCanvas.lerp(centreScreenY, fit.cy(), spotlight.level());
+        float radius = fit.radius() * camera.sizeAt(0f);
+        if (spotlight.starPixels() > 0f) {
+            radius = AtlasMapCanvas.lerp(radius, spotlight.starPixels() * PHOTOSPHERE_SPOTLIGHT_SHARE, spotlight.level());
+        }
         try (GlScope glow = GlScope.flat().blend(GL11.GL_SRC_ALPHA, GL11.GL_ONE)) {
-            HoloShapes.centreGlow(cx, cy, radius * PHOTOSPHERE_GLOW_SHARE, GLOW_CIRCLE, colour, PHOTOSPHERE_GLOW_ALPHA * alpha);
-            HoloShapes.centreGlow(cx, cy, radius * PHOTOSPHERE_HEART_SHARE, GLOW_CIRCLE, colour, alpha);
+            HoloShapes.centreGlow(x, y, radius * PHOTOSPHERE_GLOW_SHARE, GLOW_CIRCLE, colour, PHOTOSPHERE_GLOW_ALPHA * alpha);
+            HoloShapes.centreGlow(x, y, radius * PHOTOSPHERE_HEART_SHARE, GLOW_CIRCLE, colour, alpha);
         }
         try (GlScope flat = GlScope.flat()) {
             float coreRadius = Math.max(MIN_BODY_PIXELS, radius * PHOTOSPHERE_CORE_SHARE);
-            HoloShapes.disc(cx, cy, coreRadius, discSegments(coreRadius), whitened(colour), alpha);
+            HoloShapes.disc(x, y, coreRadius, discSegments(coreRadius), whitened(colour), alpha);
         }
     }
 
@@ -283,40 +497,6 @@ final class AtlasSystemPreview {
 
     private static int whiten(int channel) {
         return Math.round(channel + (255 - channel) * PHOTOSPHERE_CORE_WHITENING);
-    }
-
-    private void drawPlanet(Body planet, int index, Fit fit, float alpha) {
-        place(planet, fit);
-        float pixels = planet.orbitRadius() <= 0f ? starPixels(planet, fit.radius()) : planetPixels(planet, fit.radius());
-        frame.planetX[index] = bodyX;
-        frame.planetY[index] = bodyY;
-        frame.planetPixels[index] = pixels;
-        drawWorld(planet, bodyX, bodyY, pixels, fit, alpha);
-    }
-
-    private void drawPlanetRings(ChartSystemSketch sketch, Fit fit, float alpha) {
-        for (PlanetRing ring : sketch.planetRings()) {
-            int parent = ring.planet();
-            if (showsSatellites(sketch, parent)) {
-                drawPlanetRing(ring.belt(), sketch.planets().get(parent), frame.planetX[parent], frame.planetY[parent], frame.planetPixels[parent],
-                        fit, alpha);
-            }
-        }
-    }
-
-    private void drawMoons(ChartSystemSketch sketch, Fit fit, float alpha) {
-        for (Moon moon : sketch.moons()) {
-            int parent = moon.planet();
-            if (showsSatellites(sketch, parent)) {
-                Body parentBody = sketch.planets().get(parent);
-                float parentPixels = frame.planetPixels[parent];
-                double angle = Math.toRadians(angleAt(moon.body().startAngle(), moon.body().orbitDays(), fit.elapsedSeconds()));
-                float distance = satelliteDistance(moon.body().orbitRadius(), parentBody.radius(), parentPixels);
-                float moonX = frame.planetX[parent] + (float) Math.cos(angle) * distance;
-                float moonY = frame.planetY[parent] + (float) Math.sin(angle) * distance;
-                drawWorld(moon.body(), moonX, moonY, moonPixels(moon.body(), parentBody, parentPixels), fit, alpha);
-            }
-        }
     }
 
     private boolean showsSatellites(ChartSystemSketch sketch, int parent) {
@@ -332,24 +512,11 @@ final class AtlasSystemPreview {
         return Math.max(MIN_BODY_PIXELS, parentPixels * (float) Math.sqrt(moon.radius() / Math.max(1f, parent.radius())));
     }
 
-    private void drawPlanetRing(Belt ring, Body parent, float parentX, float parentY, float parentPixels, Fit fit, float alpha) {
-        SpriteAPI texture = spriteCache.texture(ringTexture(ring.typeId()));
-        if (texture == null || texture.getWidth() <= 0f) {
-            return;
-        }
-        float inner = satelliteDistance(ring.orbitRadius() - ring.width() / 2f, parent.radius(), parentPixels);
-        float outer = Math.max(inner + MIN_BAND_PIXELS, satelliteDistance(ring.orbitRadius() + ring.width() / 2f, parent.radius(), parentPixels));
-        int slots = Math.max(1, Math.round(texture.getWidth() / RING_SLOT_WIDTH));
-        bandCentre.set(parentX, parentY);
-        RingBeltRenderer.renderSlot(texture, new RadialBand(bandCentre, inner, outer), ring.variant() % slots, RING_SLOT_WIDTH, Color.WHITE, alpha,
-                angleAt(0f, ring.orbitDays(), fit.elapsedSeconds()));
-    }
-
     private void drawWorld(Body world, float x, float y, float pixels, Fit fit, float alpha) {
         PlanetSpecAPI spec = spec(world.typeId());
         drawBody(spec, x, y, pixels, world.startAngle(), fit.elapsedSeconds(), FALLBACK_PLANET_COLOUR, alpha, false);
-        float dx = fit.cx() - x;
-        float dy = fit.cy() - y;
+        float dx = centreScreenX - x;
+        float dy = centreScreenY - y;
         float length = (float) Math.sqrt(dx * dx + dy * dy);
         if (length > 0f && pixels >= SHADOW_MIN_PIXELS) {
             try (GlScope flat = GlScope.flat()) {

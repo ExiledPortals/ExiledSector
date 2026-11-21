@@ -46,6 +46,16 @@ final class RadialBandGL {
                      RingWave outerWave) {
     }
 
+    static void strip(UnitCircle circle, int[] vertexRange, StripSpec spec) {
+        int segments = circle.segments();
+        if (vertexRange[1] <= segments) {
+            strip(circle, vertexRange[0], vertexRange[1], spec);
+        } else {
+            strip(circle, vertexRange[0], segments, spec);
+            strip(circle, 0, vertexRange[1] - segments, spec);
+        }
+    }
+
     static void strip(UnitCircle circle, int first, int last, StripSpec spec) {
         int segments = circle.segments();
         RingWave radialWave = spec.radialWave();

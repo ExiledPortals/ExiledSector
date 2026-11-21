@@ -4,6 +4,7 @@ import exiledsector.charts.layout.sketch.ChartSystemSketch;
 import exiledsector.charts.layout.sketch.ChartSystemSketch.Body;
 import org.junit.jupiter.api.Test;
 
+import java.nio.FloatBuffer;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -75,5 +76,75 @@ class AtlasSystemArtTest {
         ChartSystemSketch sketch = system("nebula_center_young", 3);
 
         assertEquals(AtlasSystemArt.layout(11L, sketch, ALL_ANOMALIES), AtlasSystemArt.layout(11L, sketch, ALL_ANOMALIES));
+    }
+
+    private static AtlasSystemArt.Frame frame(float tiltLevel) {
+        OrbitalPlaneCamera camera = new OrbitalPlaneCamera();
+        camera.aim(500f, 400f, 300f, tiltLevel);
+        AtlasSystemArt.Frame frame = new AtlasSystemArt.Frame(camera, FloatBuffer.allocate(OrbitalPlaneCamera.MATRIX_VALUES));
+        frame.radius = 400f;
+        frame.reach = 300f;
+        return frame;
+    }
+
+    private static AtlasSystemArt.Piece orbiting(AtlasSystemArt.Kind kind, float angle) {
+        return new AtlasSystemArt.Piece(kind, -1, 0.8f, angle, 0.05f, 0f, 0);
+    }
+
+    @Test
+    void untiltedAnomaliesQueueInLayoutOrderWithTheRelayLinksLast() {
+        AtlasSystemArt.Layout layout = new AtlasSystemArt.Layout(null, List.of(orbiting(AtlasSystemArt.Kind.WRECK, 0f),
+                orbiting(AtlasSystemArt.Kind.RELAY, 90f), orbiting(AtlasSystemArt.Kind.RELAY, 270f)));
+        DepthOrder<AtlasSystemPreview.Layer> order = new DepthOrder<>();
+
+        new AtlasSystemArt().queueAnomalies(layout, frame(0f), order);
+        order.sortBackToFront();
+
+        assertEquals(4, order.size());
+        int[] expectedPieces = {0, 1, 2, 1};
+        int[] expectedParts = {0, AtlasSystemArt.RELAY_SPRITE_PART, AtlasSystemArt.RELAY_SPRITE_PART, AtlasSystemArt.RELAY_LINK_PART};
+        for (int rank = 0; rank < order.size(); rank++) {
+            assertEquals(AtlasSystemPreview.Layer.ANOMALY, order.kind(rank));
+            assertEquals(expectedPieces[rank], order.index(rank), "piece at rank " + rank);
+            assertEquals(expectedParts[rank], order.part(rank), "part at rank " + rank);
+        }
+    }
+
+    @Test
+    void tiltedAnomaliesAtTheBackOfTheirOrbitQueueBehindThoseAtTheFront() {
+        AtlasSystemArt.Layout layout = new AtlasSystemArt.Layout(null, List.of(orbiting(AtlasSystemArt.Kind.WRECK, -90f),
+                orbiting(AtlasSystemArt.Kind.WRECK, 90f)));
+        DepthOrder<AtlasSystemPreview.Layer> order = new DepthOrder<>();
+
+        new AtlasSystemArt().queueAnomalies(layout, frame(1f), order);
+        order.sortBackToFront();
+
+        assertEquals(1, order.index(0));
+        assertEquals(0, order.index(1));
+    }
+
+    @Test
+    void anAccretionDiscSplitsIntoAHalfBehindTheStarAndAHalfInFrontOnceTilted() {
+        AtlasSystemArt.Layout layout = new AtlasSystemArt.Layout(null, List.of(orbiting(AtlasSystemArt.Kind.ACCRETION, 0f)));
+        AtlasSystemArt.Frame frame = frame(1f);
+        frame.starPlanePixels = 40f;
+        DepthOrder<AtlasSystemPreview.Layer> order = new DepthOrder<>();
+
+        new AtlasSystemArt().queueAnomalies(layout, frame, order);
+        order.sortBackToFront();
+
+        assertEquals(2, order.size());
+        assertTrue(order.depth(0) * order.depth(1) < 0f, "one half on each side of the star");
+    }
+
+    @Test
+    void anomaliesStayOffSystemsTooSmallForArt() {
+        AtlasSystemArt.Frame frame = frame(1f);
+        frame.radius = AtlasSystemArt.MIN_ART_RADIUS - 1f;
+        DepthOrder<AtlasSystemPreview.Layer> order = new DepthOrder<>();
+
+        new AtlasSystemArt().queueAnomalies(new AtlasSystemArt.Layout(null, List.of(orbiting(AtlasSystemArt.Kind.WRECK, 0f))), frame, order);
+
+        assertEquals(0, order.size());
     }
 }

@@ -2,6 +2,7 @@ package exiledsector.ui.atlas;
 
 import exiledsector.charts.layout.sketch.ChartSystemSketch;
 import exiledsector.charts.layout.sketch.ChartSystemSketch.Body;
+import exiledsector.ui.belt.BandArc;
 import exiledsector.ui.node.NodeMetrics;
 import exiledsector.ui.node.NodeRingArt;
 import org.junit.jupiter.api.Test;
@@ -60,6 +61,31 @@ class AtlasSystemPreviewTest {
         assertEquals(255, core.getRed());
         assertEquals(Math.round(255 * AtlasSystemPreview.PHOTOSPHERE_CORE_WHITENING), core.getGreen());
         assertTrue(core.getBlue() > 50 && core.getBlue() < 255);
+    }
+
+    @Test
+    void theBackArcsOfABandSortBehindItsCentreAndTheFrontArcsInFront() {
+        BandArc[] arcs = BandArc.split(AtlasSystemPreview.BAND_DEPTH_ARCS);
+
+        assertEquals(AtlasSystemPreview.BAND_DEPTH_ARCS, arcs.length);
+        for (BandArc arc : arcs) {
+            float depth = AtlasSystemPreview.arcDepth(40f, 100f, arc);
+            if (arc.middleDegrees() < 180f) {
+                assertTrue(depth > 40f, "arc " + arc.index());
+            } else {
+                assertTrue(depth < 40f, "arc " + arc.index());
+            }
+        }
+        assertEquals(40f + 100f * (float) Math.sin(Math.toRadians(135)), AtlasSystemPreview.arcDepth(40f, 100f, new BandArc(1, 4)), 0.01f);
+    }
+
+    @Test
+    void untiltedLayersKeepTheTopDownDrawingOrder() {
+        AtlasSystemPreview.Layer[] layers = AtlasSystemPreview.Layer.values();
+
+        for (int index = 1; index < layers.length; index++) {
+            assertTrue(layers[index - 1].untiltedDepth > layers[index].untiltedDepth, layers[index].name());
+        }
     }
 
     @Test
