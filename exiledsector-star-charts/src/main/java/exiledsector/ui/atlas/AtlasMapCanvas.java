@@ -130,6 +130,9 @@ final class AtlasMapCanvas {
     private final Map<Color, NodeRingArt.NotableLook[]> notableLooks = new HashMap<>();
     private Color lookAccent;
     private AtlasSearch search = new AtlasSearch();
+    private AtlasCell catalystCell;
+    private List<String> catalystAnomalyIds = List.of();
+    private AtlasSystemPreview.Prepared catalystSketch;
 
     AtlasMapCanvas(AtlasGenerator generator, AtlasState state) {
         this(generator, state, new AtlasScenery(generator.seed()));
@@ -166,14 +169,11 @@ final class AtlasMapCanvas {
                 nodes.computeIfAbsent(neighbour, generator::node);
             }
         }
-        ChartSketchPalette palette = ChartSketchPalette.get();
         for (AtlasCell cell : shown) {
             AtlasNode node = nodes.get(cell);
             if (!node.isVoid() && !node.isOrigin()) {
                 List<String> anomalyIds = AtlasAnomalies.effective(generator, state, cell);
-                ChartSystemSketch sketch = ChartSystemSketcher.sketch(AtlasOpening.layoutSeed(state, cell),
-                        AtlasData.recipeFor(node.regionId(), node.layoutId()), anomalyIds, palette);
-                sketches.put(cell, AtlasSystemPreview.Prepared.of(nodeKey(cell), sketch, anomalyIds));
+                sketches.put(cell, prepare(cell, node, anomalyIds));
                 for (int slot = 0; slot < anomalyIds.size(); slot++) {
                     String anomalyId = anomalyIds.get(slot);
                     ChartAnomalies.Definition definition = ChartAnomalies.definition(anomalyId);
@@ -190,6 +190,31 @@ final class AtlasMapCanvas {
         }
         addChains();
         scenery.attach(this);
+    }
+
+    private AtlasSystemPreview.Prepared prepare(AtlasCell cell, AtlasNode node, List<String> anomalyIds) {
+        ChartSystemSketch sketch = ChartSystemSketcher.sketch(AtlasOpening.layoutSeed(state, cell), AtlasData.recipeFor(node.regionId(), node.layoutId()),
+                anomalyIds, ChartSketchPalette.get());
+        return AtlasSystemPreview.Prepared.of(nodeKey(cell), sketch, anomalyIds);
+    }
+
+    void previewCatalysts(AtlasCell cell, List<String> addedAnomalyIds) {
+        if (cell.equals(catalystCell) && addedAnomalyIds.equals(catalystAnomalyIds)) {
+            return;
+        }
+        catalystCell = cell;
+        catalystAnomalyIds = List.copyOf(addedAnomalyIds);
+        AtlasNode node = nodes.get(cell);
+        catalystSketch = null;
+        if (!addedAnomalyIds.isEmpty() && node != null && sketches.containsKey(cell) && !node.isVoid() && !node.isOrigin()) {
+            List<String> anomalyIds = new ArrayList<>(AtlasAnomalies.effective(generator, state, cell));
+            anomalyIds.addAll(addedAnomalyIds);
+            catalystSketch = prepare(cell, node, anomalyIds);
+        }
+    }
+
+    AtlasSystemPreview.Prepared focusSketch(AtlasCell cell) {
+        return catalystSketch != null && cell.equals(catalystCell) ? catalystSketch : sketches.get(cell);
     }
 
     AtlasOfficer shownOfficerAt(AtlasCell cell) {
@@ -411,7 +436,7 @@ final class AtlasMapCanvas {
     }
 
     void renderFocus(TreeViewport view, AtlasCell cell, Focus focus, float alphaMult) {
-        AtlasSystemPreview.Prepared sketch = sketches.get(cell);
+        AtlasSystemPreview.Prepared sketch = focusSketch(cell);
         float openness = openness(cell);
         if (sketch == null || openness <= 0f) {
             return;

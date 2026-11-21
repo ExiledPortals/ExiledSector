@@ -44,6 +44,7 @@ A scenario with a `"newGame"` object starts a new game instead of loading a save
 | `openAtlas`, `openAtlasTree` | | the screen opened over the campaign |
 | `openSkillTree` | `ship`: `flagship` (default), a fleet index, a hull id or a ship name | the refit screen opened on that ship and its skill tree is showing |
 | `closeScreen` | | the top Exiled Sector screen closed |
+| `focusAtlasSystem` | `system` (0), `anomalies`, `catalysts` | the nth system nearest the atlas origin (no specials) was reached, the anomalies were inserted into it regardless of its star, the player got one of each catalyst adding a `catalysts` anomaly and switched it on, and the atlas opened focused on it; the cell and each insertion's verdict go under `data.focusedSystem` |
 | `zoom` | `to` | the top screen's camera jumped to that zoom, keeping its centre |
 | `screenshot` | `name` | the frame was saved as `screenshots\<name>.png` |
 | `expectScreen` | `name`: `atlas`, `atlasTree`, `skillTree`, `craftingBench`, a screen class name or `none` | the top Exiled Sector screen matches |

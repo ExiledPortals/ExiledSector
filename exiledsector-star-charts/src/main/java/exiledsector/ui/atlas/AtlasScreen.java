@@ -288,6 +288,15 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         return panelRoot.getPosition().getHeight() - PANEL_MARGIN - CHROME_PAD - CHOOSE_HEIGHT;
     }
 
+    public boolean focusOn(AtlasCell cell) {
+        if (map == null || focusedCell != null || !map.canFocus(cell)) {
+            return false;
+        }
+        camera.centreOn(map.displayX(cell), map.displayY(cell));
+        enterFocus(cell);
+        return true;
+    }
+
     private void enterFocus(AtlasCell cell) {
         focusedCell = cell;
         focusing = true;
@@ -549,7 +558,9 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         }
         List<AtlasAnomalyPanel.Entry> catalysts = new ArrayList<>();
         CraftingMaterials materials = CraftingMaterials.forPlayer(PlayerFleet.cargoOrNull());
-        for (ActiveCatalysts.Planned planned : ActiveCatalysts.plan(map.generator(), map.state(), focusedCell, materials::count)) {
+        List<ActiveCatalysts.Planned> plan = ActiveCatalysts.plan(map.generator(), map.state(), focusedCell, materials::count);
+        map.previewCatalysts(focusedCell, ActiveCatalysts.anomalyIds(plan));
+        for (ActiveCatalysts.Planned planned : plan) {
             String anomalyId = planned.catalyst().anomalyId();
             if (present.contains(anomalyId)) {
                 continue;

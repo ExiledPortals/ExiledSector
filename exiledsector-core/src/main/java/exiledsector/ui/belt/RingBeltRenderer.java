@@ -20,25 +20,30 @@ public final class RingBeltRenderer {
     }
 
     public static void render(SpriteAPI texture, RadialBand band, Color color, float alphaMult, float rotationDeg, TreeViewport clip) {
-        render(texture, band, color, alphaMult, rotationDeg, clip, BandArc.WHOLE, new TextureSlot(0f, 1f, texture.getHeight() / texture.getWidth()));
+        render(texture, band, color, alphaMult, rotationDeg, clip, BandArc.WHOLE, new TextureSlot(0f, 1f, texture.getHeight() / texture.getWidth()),
+                null);
     }
 
     public static void renderSlot(SpriteAPI texture, RadialBand band, int slot, float slotWidthInImage, Color color, float alphaMult,
                                   float rotationDeg) {
-        renderSlotArc(texture, band, slot, slotWidthInImage, color, alphaMult, rotationDeg, BandArc.WHOLE);
+        render(texture, band, color, alphaMult, rotationDeg, null, BandArc.WHOLE, slot(texture, slot, slotWidthInImage), null);
     }
 
-    public static void renderSlotArc(SpriteAPI texture, RadialBand band, int slot, float slotWidthInImage, Color color, float alphaMult,
-                                     float rotationDeg, BandArc arc) {
-        render(texture, band, color, alphaMult, rotationDeg, null, arc, new TextureSlot(RadialBandMaths.slotInnerTexX(texture, slot, slotWidthInImage),
-                RadialBandMaths.slotOuterTexX(texture, slot, slotWidthInImage), texture.getHeight() / slotWidthInImage));
+    public static void renderSlotArcOnPlane(SpriteAPI texture, RadialBand planeBand, int slot, float slotWidthInImage, Color color, float alphaMult,
+                                            float rotationDeg, BandArc arc, PlaneProjection projection) {
+        render(texture, planeBand, color, alphaMult, rotationDeg, null, arc, slot(texture, slot, slotWidthInImage), projection);
+    }
+
+    private static TextureSlot slot(SpriteAPI texture, int slot, float slotWidthInImage) {
+        return new TextureSlot(RadialBandMaths.slotInnerTexX(texture, slot, slotWidthInImage), RadialBandMaths.slotOuterTexX(texture, slot, slotWidthInImage),
+                texture.getHeight() / slotWidthInImage);
     }
 
     private record TextureSlot(float innerTexX, float outerTexX, float aspectRatio) {
     }
 
     private static void render(SpriteAPI texture, RadialBand band, Color color, float alphaMult, float rotationDeg, TreeViewport clip, BandArc arc,
-                               TextureSlot slot) {
+                               TextureSlot slot, PlaneProjection projection) {
         if (alphaMult <= 0f) {
             return;
         }
@@ -56,12 +61,14 @@ public final class RingBeltRenderer {
                 RadialBandMaths.MAX_TILE_COUNT);
         float texPerSegment = tileCount / segments;
 
-        RadialBandGL.begin(texture, band.center().x, band.center().y, GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, color, alphaMult);
-        GL11.glRotatef(rotationDeg, 0f, 0f, 1f);
         UnitCircle circle = UnitCircle.of(segments);
-        RadialBandGL.strip(circle, range, new RadialBandGL.StripSpec(innerRadius, outerRadius, slot.innerTexX(), slot.outerTexX(), texPerSegment,
-                RingWave.NONE, RingWave.NONE));
-        RadialBandGL.end();
+        RadialBandGL.StripSpec spec = new RadialBandGL.StripSpec(innerRadius, outerRadius, slot.innerTexX(), slot.outerTexX(), texPerSegment,
+                RingWave.NONE, RingWave.NONE);
+        BandPlacement placement = BandPlacement.of(projection, band.center().x, band.center().y);
+        placement.begin(texture, GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, color, alphaMult);
+        placement.turnBy(rotationDeg);
+        RadialBandGL.strip(circle, range, spec, placement);
+        placement.end();
     }
 
     static int[] visibleVertexRange(float cx, float cy, float innerRadius, float outerRadius, float rotationDeg, int segments,

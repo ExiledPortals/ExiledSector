@@ -1,10 +1,10 @@
 package exiledsector.ui.atlas;
 
+import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
 import exiledsector.charts.layout.sketch.ChartSystemSketch;
 import exiledsector.charts.layout.sketch.ChartSystemSketch.Body;
 import org.junit.jupiter.api.Test;
 
-import java.nio.FloatBuffer;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -47,6 +47,18 @@ class AtlasSystemArtTest {
     }
 
     @Test
+    void aMagneticStormRingsOnlyARealStarNeverABlackHoleOrANebulaCentre() {
+        assertEquals(1, count(AtlasSystemArt.layout(5L, system("star_yellow", 0), List.of("magnetic_storm")), AtlasSystemArt.Kind.AURORA));
+        assertEquals(0, count(AtlasSystemArt.layout(5L, system("black_hole", 0), List.of("magnetic_storm")), AtlasSystemArt.Kind.AURORA));
+        ChartSystemSketch nebula = new ChartSystemSketch(StarSystemType.NEBULA, List.of(new Body("nebula_center_old", 600f, 0f, 0f, 0f)),
+                List.of(new Body("barren", 100f, 2000f, 0f, 0f)), List.of());
+        List<AtlasSystemArt.Piece> auroras = AtlasSystemArt.layout(5L, nebula, List.of("magnetic_storm")).pieces().stream()
+                .filter(piece -> piece.kind() == AtlasSystemArt.Kind.AURORA).toList();
+        assertEquals(1, auroras.size());
+        assertEquals(0, auroras.get(0).planet());
+    }
+
+    @Test
     void everyAnomalyAddsItsOwnVignetteWithinTheSystem() {
         ChartSystemSketch sketch = system("star_yellow", 4);
         for (String anomalyId : ALL_ANOMALIES) {
@@ -81,7 +93,7 @@ class AtlasSystemArtTest {
     private static AtlasSystemArt.Frame frame(float tiltLevel) {
         OrbitalPlaneCamera camera = new OrbitalPlaneCamera();
         camera.aim(500f, 400f, 300f, tiltLevel);
-        AtlasSystemArt.Frame frame = new AtlasSystemArt.Frame(camera, FloatBuffer.allocate(OrbitalPlaneCamera.MATRIX_VALUES));
+        AtlasSystemArt.Frame frame = new AtlasSystemArt.Frame(camera);
         frame.radius = 400f;
         frame.reach = 300f;
         return frame;

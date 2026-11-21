@@ -2,6 +2,8 @@ package exiledsector.ui.atlas;
 
 import com.fs.starfarer.api.campaign.PlanetSpecAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
+import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
+import exiledsector.ui.decoration.PlanetClouds;
 import exiledsector.ui.decoration.PlanetSphere;
 import exiledsector.PlanetSpecs;
 import exiledsector.skills.skilleffect.render.CategorySprite;
@@ -21,12 +23,10 @@ import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.HoloShapes;
 import exiledsector.ui.util.SpriteDraw;
 import exiledsector.ui.util.UnitCircle;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
-import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -117,9 +117,7 @@ final class AtlasSystemPreview {
     private final CategorySprite auroraTexture = new CategorySprite(StarAurora.TEXTURE_CATEGORY, StarAurora.TEXTURE_ID);
     private final CategorySprite atmosphereTexture = new CategorySprite(AtmosphereRing.TEXTURE_CATEGORY, AtmosphereRing.TEXTURE_ID);
     private final OrbitalPlaneCamera camera = new OrbitalPlaneCamera();
-    private final float[] planeMatrixValues = new float[OrbitalPlaneCamera.MATRIX_VALUES];
-    private final FloatBuffer planeMatrix = BufferUtils.createFloatBuffer(OrbitalPlaneCamera.MATRIX_VALUES);
-    private final AtlasSystemArt.Frame frame = new AtlasSystemArt.Frame(camera, planeMatrix);
+    private final AtlasSystemArt.Frame frame = new AtlasSystemArt.Frame(camera);
     private final DepthOrder<Layer> drawOrder = new DepthOrder<>();
     private final Spots stars = new Spots();
     private final Spots planets = new Spots();
@@ -153,7 +151,7 @@ final class AtlasSystemPreview {
         Fit fit = new Fit(cx, cy, radius, radius * ORBIT_REACH_SHARE, outerRadius, elapsedSeconds);
         aimCamera(fit, tiltLevel);
         float bodyAlpha = alpha * (1f - spotlight.level());
-        startFrame(fit, sketch.planets().size(), bodyAlpha);
+        startFrame(fit, sketch, bodyAlpha);
         placeStars(sketch, fit, spotlight);
         placePlanets(sketch, fit);
         placeMoons(sketch);
@@ -202,16 +200,12 @@ final class AtlasSystemPreview {
 
     private void aimCamera(Fit fit, float tiltLevel) {
         camera.aim(fit.cx(), fit.cy(), fit.reach(), tiltLevel);
-        camera.writePlaneMatrix(planeMatrixValues);
-        for (int index = 0; index < planeMatrixValues.length; index++) {
-            planeMatrix.put(index, planeMatrixValues[index]);
-        }
         bandArcs = camera.tilted() ? BAND_ARCS : WHOLE_BAND;
         centreScreenX = camera.screenX(0f, 0f);
         centreScreenY = camera.screenY(0f);
     }
 
-    private void startFrame(Fit fit, int planetCount, float alpha) {
+    private void startFrame(Fit fit, ChartSystemSketch sketch, float alpha) {
         frame.radius = fit.radius();
         frame.reach = fit.reach();
         frame.starX = centreScreenX;
@@ -222,8 +216,9 @@ final class AtlasSystemPreview {
         frame.starPlanePixels = fit.radius() * MIN_STAR_SHARE;
         frame.starColour = FALLBACK_STAR_COLOUR;
         frame.elapsedSeconds = fit.elapsedSeconds();
+        frame.stillOrbits = sketch.systemType() == StarSystemType.NEBULA;
         frame.alpha = alpha;
-        frame.ensurePlanets(planetCount);
+        frame.ensurePlanets(sketch.planets().size());
     }
 
     private record Fit(float cx, float cy, float radius, float reach, float outer, float elapsedSeconds) {
@@ -442,11 +437,8 @@ final class AtlasSystemPreview {
         }
         int slots = Math.max(1, Math.round(texture.getWidth() / RING_SLOT_WIDTH));
         bandCentre.set(planeCentreX, planeCentreY);
-        GL11.glPushMatrix();
-        GL11.glMultMatrix(planeMatrix);
-        RingBeltRenderer.renderSlotArc(texture, new RadialBand(bandCentre, inner, outer), variant % slots, RING_SLOT_WIDTH, Color.WHITE, alpha,
-                angleAt(0f, band.orbitDays(), fit.elapsedSeconds()), arc);
-        GL11.glPopMatrix();
+        RingBeltRenderer.renderSlotArcOnPlane(texture, new RadialBand(bandCentre, inner, outer), variant % slots, RING_SLOT_WIDTH, Color.WHITE,
+                alpha, angleAt(0f, band.orbitDays(), fit.elapsedSeconds()), arc, camera);
     }
 
     private void drawStar(String auroraKey, Body star, int index, Fit fit, float alpha) {
@@ -467,11 +459,18 @@ final class AtlasSystemPreview {
             SpriteDraw.drawAdditiveAtCenter(spriteCache, coronaPath, x, y, halo * 2f, halo * 2f, corona, alpha);
         }
         SpriteAPI auroraSprite = auroraTexture.get();
-        if (auroraSprite != null && pixels >= AURORA_MIN_PIXELS) {
-            StarAurora aurora = auroras.computeIfAbsent(auroraKey, id -> new StarAurora());
-            aurora.render(auroraSprite, x, y, AURORA_DETAIL_RADIUS, pixels / AURORA_DETAIL_RADIUS, corona, alpha);
+        boolean magnetic = spec == null || !spec.isBlackHole();
+        StarAurora aurora = magnetic && auroraSprite != null && pixels >= AURORA_MIN_PIXELS ? auroras.computeIfAbsent(auroraKey, id -> new StarAurora()) : null;
+        boolean splitAurora = camera.tilted();
+        if (aurora != null) {
+            aurora.render(auroraSprite, x, y, AURORA_DETAIL_RADIUS, pixels / AURORA_DETAIL_RADIUS, camera.flattening(),
+                    splitAurora ? StarAurora.Side.BACK : StarAurora.Side.WHOLE, corona, alpha);
         }
         drawBody(spec, x, y, pixels, star.startAngle(), fit.elapsedSeconds(), FALLBACK_STAR_COLOUR, alpha, true);
+        if (aurora != null && splitAurora) {
+            aurora.render(auroraSprite, x, y, AURORA_DETAIL_RADIUS, pixels / AURORA_DETAIL_RADIUS, camera.flattening(), StarAurora.Side.FRONT, corona,
+                    alpha);
+        }
     }
 
     private void drawPhotosphere(Color colour, Fit fit, Spotlight spotlight, float alpha) {
@@ -547,6 +546,11 @@ final class AtlasSystemPreview {
         float rotation = startAngle + spec.getRotation() * elapsedSeconds;
         UnitSphere sphere = pixels >= DETAILED_SPHERE_PIXELS ? detailedSphere : unitSphere;
         PlanetSphere.draw(sphere, texture, spec, x, y, pixels, rotation, colour, alpha, rim ? alpha * RIM_ALPHA_MULT : 0f, pixels * 0.03f);
+        String cloudPath = PlanetClouds.texturePath(spec);
+        SpriteAPI clouds = cloudPath == null ? null : spriteCache.texture(cloudPath);
+        if (clouds != null) {
+            PlanetClouds.draw(sphere, clouds, spec, x, y, pixels, startAngle, elapsedSeconds, spec.getCloudColor(), alpha);
+        }
     }
 
     private static void drawShadow(float x, float y, float radius, float lightX, float lightY, float alpha) {

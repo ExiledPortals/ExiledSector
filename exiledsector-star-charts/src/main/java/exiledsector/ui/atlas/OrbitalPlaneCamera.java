@@ -1,12 +1,11 @@
 package exiledsector.ui.atlas;
 
-import java.util.Arrays;
+import exiledsector.ui.belt.PlaneProjection;
 
-final class OrbitalPlaneCamera {
+final class OrbitalPlaneCamera implements PlaneProjection {
 
     static final float MAX_TILT_DEGREES = 60f;
     static final float CAMERA_DISTANCE_REACHES = 3f;
-    static final int MATRIX_VALUES = 16;
     private static final float MIN_PERSPECTIVE_DIVISOR = 0.1f;
     private static final float HEADING_STEP = 1f;
 
@@ -30,6 +29,10 @@ final class OrbitalPlaneCamera {
         liftY = Math.max(0f, reach) * fitScale * cosTilt * cameraDistance * sinTilt / foreshortenedDistance;
     }
 
+    float flattening() {
+        return cosTilt;
+    }
+
     boolean tilted() {
         return depthPerPlaneUnit > 0f;
     }
@@ -42,8 +45,14 @@ final class OrbitalPlaneCamera {
         return fitScale * perspective(planeY);
     }
 
-    float screenX(float planeX, float planeY) {
+    @Override
+    public float screenX(float planeX, float planeY) {
         return centreX + planeX * sizeAt(planeY);
+    }
+
+    @Override
+    public float screenY(float planeX, float planeY) {
+        return screenY(planeY);
     }
 
     float screenY(float planeY) {
@@ -60,18 +69,5 @@ final class OrbitalPlaneCamera {
         float acrossX = screenX(planeX + stepX, planeY + stepY) - screenX(planeX - stepX, planeY - stepY);
         float acrossY = screenY(planeY + stepY) - screenY(planeY - stepY);
         return (float) Math.toDegrees(Math.atan2(acrossY, acrossX));
-    }
-
-    void writePlaneMatrix(float[] columnMajor) {
-        float liftedCentreY = centreY + liftY;
-        Arrays.fill(columnMajor, 0, MATRIX_VALUES, 0f);
-        columnMajor[0] = fitScale;
-        columnMajor[4] = centreX * depthPerPlaneUnit;
-        columnMajor[5] = liftedCentreY * depthPerPlaneUnit + fitScale * cosTilt;
-        columnMajor[7] = depthPerPlaneUnit;
-        columnMajor[10] = 1f;
-        columnMajor[12] = centreX;
-        columnMajor[13] = liftedCentreY;
-        columnMajor[15] = 1f;
     }
 }

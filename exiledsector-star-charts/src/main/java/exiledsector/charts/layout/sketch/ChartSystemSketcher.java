@@ -101,11 +101,11 @@ public final class ChartSystemSketcher {
             centreReach = placeCentre(centreKinds, random, layout.stars);
         }
 
-        float outermost = Math.max(centreReach, addOrbits(layoutRecipe, palette, random, centreReach, layout));
+        float outermost = Math.max(centreReach, addOrbits(layoutRecipe, palette, random, centreReach, nebula, layout));
         ChartFeature feature = ChartFeatures.byId(layoutRecipe.shape().featureId());
         if (feature != null) {
             FeaturePlan plan = feature.plan(new FeatureRolls(random, outermost));
-            addFeature(plan, layout);
+            addFeature(plan, nebula, layout);
             outermost = Math.max(outermost, plan.reach());
         }
 
@@ -174,7 +174,7 @@ public final class ChartSystemSketcher {
         return circle + largest;
     }
 
-    private static float addOrbits(ChartLayoutRecipe recipe, ChartSketchPalette palette, Random random, float centreReach, Layout layout) {
+    private static float addOrbits(ChartLayoutRecipe recipe, ChartSketchPalette palette, Random random, float centreReach, boolean nebula, Layout layout) {
         ChartShape shape = recipe.shape();
         int orbits = shape.setsOrbits()
                 ? shape.minOrbits() + random.nextInt(shape.maxOrbits() - shape.minOrbits() + 1)
@@ -184,18 +184,18 @@ public final class ChartSystemSketcher {
         float outermost = centreReach;
         for (int i = 0; i < orbits && orbit < limit; i++) {
             String category = pickCategory(recipe, palette, null, true, random);
-            BodyKind kind = category == null || NOTHING.equals(category) ? null : pickKind(palette, category, null, random);
+            BodyKind kind = category == null || NOTHING.equals(category) ? null : pickKind(palette, category, null, nebula, random);
             if (kind != null && RINGS.equals(category)) {
                 float width = BELT_WIDTH_BASE + BELT_WIDTH_RANGE * random.nextFloat();
                 float middle = orbit + width / 2f;
-                layout.belts.add(new Belt(kind.typeId(), middle, width, orbitDays(middle, random), random.nextInt(BELT_VARIANTS)));
+                layout.belts.add(new Belt(kind.typeId(), middle, width, centreOrbitDays(middle, nebula, random), random.nextInt(BELT_VARIANTS)));
                 outermost = orbit + width;
                 orbit += width;
             } else if (kind != null) {
                 float radius = planetRadius(kind, random);
                 float reach = addMoons(recipe, palette, random, layout, category, kind, radius);
                 float middle = orbit + reach;
-                layout.planets.add(new Body(kind.typeId(), radius, middle, orbitDays(middle, random), random.nextFloat() * 360f));
+                layout.planets.add(new Body(kind.typeId(), radius, middle, centreOrbitDays(middle, nebula, random), random.nextFloat() * 360f));
                 outermost = orbit + reach * 2f;
                 orbit += reach * 2f;
             }
@@ -219,7 +219,7 @@ public final class ChartSystemSketcher {
         float lastIncrementExtra = 0f;
         for (int orbitIndex = 0; orbitIndex < moonOrbits; orbitIndex++) {
             String category = pickCategory(recipe, palette, parentCategory, orbitIndex > 0, random);
-            BodyKind kind = category == null || NOTHING.equals(category) ? null : pickKind(palette, category, parentCategory, random);
+            BodyKind kind = category == null || NOTHING.equals(category) ? null : pickKind(palette, category, parentCategory, false, random);
             float placedWidth = NOTHING_PLACED;
             if (kind != null && RINGS.equals(category)) {
                 placedWidth = addPlanetRing(layout, planetIndex, kind, current, random);
@@ -271,11 +271,12 @@ public final class ChartSystemSketcher {
         return radius;
     }
 
-    private static void addFeature(FeaturePlan plan, Layout layout) {
+    private static void addFeature(FeaturePlan plan, boolean nebula, Layout layout) {
         int[] planetIndexOf = new int[plan.worlds().size()];
         for (int index = 0; index < plan.worlds().size(); index++) {
             FeaturePlan.World world = plan.worlds().get(index);
-            Body body = new Body(world.typeId(), world.radius(), world.orbitRadius(), world.orbitDays(), world.startAngle());
+            boolean still = nebula && world.focus() == FeaturePlan.CENTRE;
+            Body body = new Body(world.typeId(), world.radius(), world.orbitRadius(), still ? 0f : world.orbitDays(), world.startAngle());
             planetIndexOf[index] = -1;
             if (world.focus() == FeaturePlan.CENTRE) {
                 planetIndexOf[index] = layout.planets.size();
@@ -285,7 +286,8 @@ public final class ChartSystemSketcher {
             }
         }
         for (FeaturePlan.RingBand band : plan.ringBands()) {
-            Belt belt = new Belt(band.texture(), band.middleRadius(), band.width(), band.orbitDays(), band.variant());
+            boolean still = nebula && band.focus() == FeaturePlan.CENTRE;
+            Belt belt = new Belt(band.texture(), band.middleRadius(), band.width(), still ? 0f : band.orbitDays(), band.variant());
             if (band.focus() == FeaturePlan.CENTRE) {
                 layout.belts.add(belt);
             } else if (planetIndexOf[band.focus()] >= 0) {
@@ -293,8 +295,13 @@ public final class ChartSystemSketcher {
             }
         }
         for (FeaturePlan.AsteroidBelt belt : plan.asteroidBelts()) {
-            layout.belts.add(new Belt(ASTEROID_BELT, belt.orbitRadius(), belt.width(), belt.orbitDays(), 0));
+            layout.belts.add(new Belt(ASTEROID_BELT, belt.orbitRadius(), belt.width(), nebula ? 0f : belt.orbitDays(), 0));
         }
+    }
+
+    private static float centreOrbitDays(float orbitRadius, boolean nebula, Random random) {
+        float days = orbitDays(orbitRadius, random);
+        return nebula ? 0f : days;
     }
 
     private static float orbitDays(float orbitRadius, Random random) {
@@ -327,10 +334,10 @@ public final class ChartSystemSketcher {
         return false;
     }
 
-    private static BodyKind pickKind(ChartSketchPalette palette, String category, String parentCategory, Random random) {
+    private static BodyKind pickKind(ChartSketchPalette palette, String category, String parentCategory, boolean nebulaCentre, Random random) {
         List<BodyKind> weighted = new ArrayList<>();
         for (BodyKind kind : palette.bodies().getOrDefault(category, List.of())) {
-            if (kindWeight(kind, parentCategory) > 0f) {
+            if (kindWeight(kind, parentCategory) > 0f && !(nebulaCentre && kind.nebulaMoonOnly())) {
                 weighted.add(kind);
             }
         }

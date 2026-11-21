@@ -6,6 +6,7 @@ import com.fs.starfarer.api.impl.campaign.procgen.CategoryGenDataSpec;
 import com.fs.starfarer.api.impl.campaign.procgen.PlanetGenDataSpec;
 import com.fs.starfarer.api.impl.campaign.procgen.StarAge;
 import com.fs.starfarer.api.impl.campaign.procgen.StarGenDataSpec;
+import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
 import com.fs.starfarer.api.impl.campaign.procgen.TerrainGenDataSpec;
 import org.apache.log4j.Logger;
@@ -39,11 +40,15 @@ public record ChartSketchPalette(List<StarKind> stars, Map<String, Float> catego
     }
 
     public record BodyKind(String typeId, float frequency, float minRadius, float maxRadius, MoonOdds moons,
-                           Map<String, Float> parentMultipliers) {
+                           Map<String, Float> parentMultipliers, boolean nebulaMoonOnly) {
 
         public BodyKind {
             moons = moons == null ? MoonOdds.NONE : moons;
             parentMultipliers = Map.copyOf(parentMultipliers);
+        }
+
+        public BodyKind(String typeId, float frequency, float minRadius, float maxRadius, MoonOdds moons, Map<String, Float> parentMultipliers) {
+            this(typeId, frequency, minRadius, maxRadius, moons, parentMultipliers, false);
         }
 
         public BodyKind(String typeId, float frequency, float minRadius, float maxRadius) {
@@ -110,11 +115,12 @@ public record ChartSketchPalette(List<StarKind> stars, Map<String, Float> catego
             Map<String, List<BodyKind>> bodies = new LinkedHashMap<>();
             for (PlanetGenDataSpec data : settings.getAllSpecs(PlanetGenDataSpec.class)) {
                 addBody(bodies, data.getCategory(), new BodyKind(data.getId(), data.getFrequency(), data.getMinRadius(), data.getMaxRadius(),
-                        new MoonOdds(data.getProbOrbits(), data.getMinOrbits(), data.getMaxOrbits()), parentMultipliers(data.getMultipliers())));
+                        new MoonOdds(data.getProbOrbits(), data.getMinOrbits(), data.getMaxOrbits()), parentMultipliers(data.getMultipliers()),
+                        data.hasTag(StarSystemGenerator.TAG_NOT_NEBULA_UNLESS_MOON)));
             }
             for (TerrainGenDataSpec data : settings.getAllSpecs(TerrainGenDataSpec.class)) {
                 addBody(bodies, data.getCategory(), new BodyKind(data.getId(), data.getFrequency(), data.getMinRadius(), data.getMaxRadius(),
-                        MoonOdds.NONE, parentMultipliers(data.getMultipliers())));
+                        MoonOdds.NONE, parentMultipliers(data.getMultipliers()), data.hasTag(StarSystemGenerator.TAG_NOT_NEBULA_UNLESS_MOON)));
             }
             return new ChartSketchPalette(stars, categories, bodies, categoryParentMultipliers);
         } catch (RuntimeException e) {

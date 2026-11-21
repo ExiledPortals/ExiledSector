@@ -13,7 +13,7 @@ import java.util.Map;
 
 record HarnessScenario(List<HarnessStep> steps, boolean quitWhenDone, NewGameSetup newGame) {
 
-    static final String KNOWN_STEPS = "wait, mark, openAtlas, openAtlasTree, openSkillTree, closeScreen, zoom, screenshot, expectScreen, "
+    static final String KNOWN_STEPS = "wait, mark, openAtlas, openAtlasTree, openSkillTree, closeScreen, zoom, focusAtlasSystem, screenshot, expectScreen, "
             + "expectNoErrors, ignoreErrorsSoFar, expectLog, simulate, spawn, autopilot, speed, recordStats, recordDamage, endSimulation, "
             + "addShip, saveGame, addCargo, foundColony, openChart, lockPhasePlanet, defeatChartBoss, leaveChart, passDays, expectPhasePull, "
             + "expectPhasedPlanet";
@@ -47,6 +47,8 @@ record HarnessScenario(List<HarnessStep> steps, boolean quitWhenDone, NewGameSet
             case "openSkillTree" -> new OpenSkillTreeStep(step.optString("ship", OpenSkillTreeStep.FLAGSHIP));
             case "closeScreen" -> new CloseScreenStep();
             case "zoom" -> new ZoomStep((float) step.getDouble("to"));
+            case "focusAtlasSystem" -> new FocusAtlasSystemStep(step.optInt("system", 0), strings(step.optJSONArray("anomalies")),
+                    strings(step.optJSONArray("catalysts")));
             case "screenshot" -> new ScreenshotStep(step.getString("name"));
             case "expectScreen" -> new ExpectScreenStep(step.getString("name"));
             case "expectNoErrors" -> ErrorCheckStep.expectNoErrors(errorCursor);

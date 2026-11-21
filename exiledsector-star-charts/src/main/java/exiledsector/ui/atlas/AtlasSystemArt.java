@@ -1,23 +1,23 @@
 package exiledsector.ui.atlas;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
+import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.skilleffect.render.Fade;
 import exiledsector.skills.skilleffect.render.SpriteCache;
+import exiledsector.charts.anomaly.StarAnomalies;
 import exiledsector.charts.anomaly.breach.BreachFieldRenderer;
 import exiledsector.charts.layout.sketch.ChartSystemSketch;
 import exiledsector.ui.belt.AuroraBeltRenderer;
 import exiledsector.ui.belt.BandArc;
 import exiledsector.ui.belt.RadialBand;
 import exiledsector.ui.util.GlScope;
-import exiledsector.ui.util.HoloShapes;
 import exiledsector.ui.util.SpriteDraw;
 import exiledsector.ui.util.UnitCircle;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
-import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -43,7 +43,6 @@ final class AtlasSystemArt {
 
     static final class Frame {
         final OrbitalPlaneCamera camera;
-        final FloatBuffer planeMatrix;
         float radius;
         float reach;
         float starX;
@@ -54,6 +53,7 @@ final class AtlasSystemArt {
         float starPlanePixels;
         Color starColour = Color.WHITE;
         float elapsedSeconds;
+        boolean stillOrbits;
         float alpha;
         float[] planetX = new float[0];
         float[] planetY = new float[0];
@@ -62,9 +62,8 @@ final class AtlasSystemArt {
         float[] planetPlaneY = new float[0];
         float[] planetPlanePixels = new float[0];
 
-        Frame(OrbitalPlaneCamera camera, FloatBuffer planeMatrix) {
+        Frame(OrbitalPlaneCamera camera) {
             this.camera = camera;
-            this.planeMatrix = planeMatrix;
         }
 
         void ensurePlanets(int count) {
@@ -108,6 +107,8 @@ final class AtlasSystemArt {
     static final int SHEET_CELLS = 16;
     static final float FLARE_SECONDS = 2.4f;
     static final int FLARES = 3;
+    static final float AURORA_INNER_SHARE = 1.1f;
+    static final float AURORA_OUTER_SHARE = 1.7f;
     static final int CONVOY_SHIPS = 3;
     static final float CONVOY_SPACING_DEGREES = 7f;
     static final float STORM_ARC_DEGREES = 80f;
@@ -169,7 +170,7 @@ final class AtlasSystemArt {
             addNebula(new Random(seed), anomalyIds.contains("dense_nebula") ? DENSE_NEBULA_PUFFS : NEBULA_PUFFS, pieces);
         }
         for (String anomalyId : anomalyIds) {
-            addAnomaly(anomalyId, new Random(seed ^ ((long) anomalyId.hashCode() << 32)), orbiting, pieces);
+            addAnomaly(anomalyId, new Random(seed ^ ((long) anomalyId.hashCode() << 32)), orbiting, hasMagneticStar(sketch), pieces);
         }
         return new Layout(nebulaSheet, pieces);
     }
@@ -196,7 +197,14 @@ final class AtlasSystemArt {
         return orbiting.isEmpty() ? -1 : orbiting.get(random.nextInt(orbiting.size()));
     }
 
-    private static void addAnomaly(String anomalyId, Random random, List<Integer> orbiting, List<Piece> pieces) {
+    static boolean hasMagneticStar(ChartSystemSketch sketch) {
+        if (sketch.systemType() == StarSystemType.NEBULA || sketch.stars().isEmpty()) {
+            return false;
+        }
+        return !StarAnomalies.BLACK_HOLE.primaryStar().equals(sketch.stars().get(0).typeId());
+    }
+
+    private static void addAnomaly(String anomalyId, Random random, List<Integer> orbiting, boolean magneticStar, List<Piece> pieces) {
         switch (anomalyId) {
             case "black_hole" -> {
                 pieces.add(new Piece(Kind.ACCRETION, -1, 0f, 0f, 0f, 0f, 0));
@@ -210,7 +218,9 @@ final class AtlasSystemArt {
                 pieces.add(new Piece(Kind.RESEARCH_STATION, -1, 0.3f, random.nextFloat() * 360f, 0.06f, 8f, 0));
             }
             case "magnetic_storm" -> {
-                pieces.add(new Piece(Kind.AURORA, -1, 0f, 0f, 0f, 0f, 0));
+                if (magneticStar) {
+                    pieces.add(new Piece(Kind.AURORA, -1, 0f, 0f, 0f, 0f, 0));
+                }
                 int planet = pickPlanet(random, orbiting);
                 if (planet >= 0) {
                     pieces.add(new Piece(Kind.AURORA, planet, 0f, 0f, 0f, 0f, 1));
@@ -294,8 +304,9 @@ final class AtlasSystemArt {
                     queue(order, frame, index, side, frame.starPlaneY + (float) Math.sin(beam) * pulsarLength(piece, frame) / 2f);
                 }
             }
-            case AURORA -> queue(order, frame, index, 0, onPlanet(piece, frame) ? frame.planetPlaneY[piece.planet()] : frame.starPlaneY);
-            case FLARE -> queue(order, frame, index, 0, frame.starPlaneY);
+            case AURORA -> queueAround(order, frame, index, onPlanet(piece, frame) ? frame.planetPlaneY[piece.planet()] : frame.starPlaneY,
+                    auroraBodyPlanePixels(piece, frame) * (AURORA_INNER_SHARE + AURORA_OUTER_SHARE) / 2f);
+            case FLARE -> queue(order, frame, index, 0, frame.starPlaneY + (float) Math.sin(flareAngle(piece, frame)) * frame.starPlanePixels);
             case EXCAVATION -> {
                 if (onPlanet(piece, frame)) {
                     queueAround(order, frame, index, frame.planetPlaneY[piece.planet()],
@@ -365,7 +376,7 @@ final class AtlasSystemArt {
             case WRECK -> drawWreck(piece, frame);
             case PULSAR -> drawPulsarBeam(piece, frame, part);
             case RESEARCH_STATION -> drawOrbitingSprite(piece, frame, RESEARCH_STATION_SPRITE, 1f, null);
-            case AURORA -> drawAurora(piece, frame);
+            case AURORA -> drawAurora(piece, frame, arcs(frame)[part]);
             case FLARE -> drawFlare(piece, frame);
             case BREACH -> drawBreach(piece, frame);
             case BATTLE -> drawBattle(piece, frame);
@@ -382,6 +393,10 @@ final class AtlasSystemArt {
     }
 
     private static float orbitAngle(Piece piece, Frame frame, float degreesPerSecond) {
+        return frame.stillOrbits ? piece.angle() : travelAngle(piece, frame, degreesPerSecond);
+    }
+
+    private static float travelAngle(Piece piece, Frame frame, float degreesPerSecond) {
         return piece.angle() + frame.elapsedSeconds * degreesPerSecond;
     }
 
@@ -410,13 +425,8 @@ final class AtlasSystemArt {
         return frame.camera.screenHeading(piecePlaneX, piecePlaneY, orbitAngleDegrees + 90f);
     }
 
-    private static void beginPlane(Frame frame) {
-        GL11.glPushMatrix();
-        GL11.glMultMatrix(frame.planeMatrix);
-    }
-
-    private static void endPlane() {
-        GL11.glPopMatrix();
+    private static void planeVertex(Frame frame, float planeX, float planeY) {
+        GL11.glVertex2f(frame.camera.screenX(planeX, planeY), frame.camera.screenY(planeY));
     }
 
     private static void drawCell(SpriteAPI sheet, int cell, float x, float y, float size, float angle, Color tint, float alpha, boolean additive) {
@@ -437,10 +447,8 @@ final class AtlasSystemArt {
             return;
         }
         bandCentre.set(frame.starPlaneX, frame.starPlaneY);
-        beginPlane(frame);
-        AuroraBeltRenderer.renderArc(texture, new RadialBand(bandCentre, frame.starPlanePixels * ACCRETION_INNER_SHARE,
-                frame.starPlanePixels * ACCRETION_OUTER_SHARE), ACCRETION_COLOUR, 0.8f * frame.alpha, frame.elapsedSeconds * 3f, 1f, arc);
-        endPlane();
+        AuroraBeltRenderer.renderArcOnPlane(texture, new RadialBand(bandCentre, frame.starPlanePixels * ACCRETION_INNER_SHARE,
+                frame.starPlanePixels * ACCRETION_OUTER_SHARE), ACCRETION_COLOUR, 0.8f * frame.alpha, frame.elapsedSeconds * 3f, 1f, arc, frame.camera);
     }
 
     private void drawWreck(Piece piece, Frame frame) {
@@ -464,40 +472,47 @@ final class AtlasSystemArt {
         double centre = Math.toRadians(pulsarSweep(piece, frame) + side * 180f);
         double half = Math.toRadians(PULSAR_WIDTH_DEGREES);
         float length = pulsarLength(piece, frame);
-        beginPlane(frame);
         try (GlScope beam = GlScope.flat().additive()) {
             GL11.glBegin(GL11.GL_TRIANGLES);
             Misc.setColor(PULSAR_COLOUR, 0.55f * frame.alpha);
-            GL11.glVertex2f(frame.starPlaneX, frame.starPlaneY);
+            planeVertex(frame, frame.starPlaneX, frame.starPlaneY);
             Misc.setColor(PULSAR_COLOUR, 0f);
-            GL11.glVertex2f(frame.starPlaneX + (float) Math.cos(centre - half) * length, frame.starPlaneY + (float) Math.sin(centre - half) * length);
-            GL11.glVertex2f(frame.starPlaneX + (float) Math.cos(centre + half) * length, frame.starPlaneY + (float) Math.sin(centre + half) * length);
+            planeVertex(frame, frame.starPlaneX + (float) Math.cos(centre - half) * length, frame.starPlaneY + (float) Math.sin(centre - half) * length);
+            planeVertex(frame, frame.starPlaneX + (float) Math.cos(centre + half) * length, frame.starPlaneY + (float) Math.sin(centre + half) * length);
             GL11.glEnd();
         }
-        endPlane();
     }
 
-    private void drawAurora(Piece piece, Frame frame) {
+    private static float auroraBodyPlanePixels(Piece piece, Frame frame) {
+        return onPlanet(piece, frame) ? frame.planetPlanePixels[piece.planet()] : frame.starPlanePixels;
+    }
+
+    private void drawAurora(Piece piece, Frame frame, BandArc arc) {
         SpriteAPI texture = spriteCache.texture(AURORA_TEXTURE);
         if (texture == null) {
             return;
         }
         boolean onPlanet = onPlanet(piece, frame);
-        float bodyX = onPlanet ? frame.planetX[piece.planet()] : frame.starX;
-        float bodyY = onPlanet ? frame.planetY[piece.planet()] : frame.starY;
-        float bodyPixels = onPlanet ? frame.planetPixels[piece.planet()] : frame.starPixels;
+        float bodyPlanePixels = auroraBodyPlanePixels(piece, frame);
         float shift = Fade.pulse(frame.elapsedSeconds * 0.7f + piece.variant());
-        bandCentre.set(bodyX, bodyY);
-        AuroraBeltRenderer.render(texture, new RadialBand(bandCentre, bodyPixels * 1.1f, bodyPixels * 1.7f),
-                Misc.interpolateColor(AURORA_COLOUR, AURORA_SHIFT_COLOUR, shift), 0.75f * frame.alpha, frame.elapsedSeconds, 1f);
+        bandCentre.set(onPlanet ? frame.planetPlaneX[piece.planet()] : frame.starPlaneX, onPlanet ? frame.planetPlaneY[piece.planet()] : frame.starPlaneY);
+        AuroraBeltRenderer.renderArcOnPlane(texture, new RadialBand(bandCentre, bodyPlanePixels * AURORA_INNER_SHARE, bodyPlanePixels * AURORA_OUTER_SHARE),
+                Misc.interpolateColor(AURORA_COLOUR, AURORA_SHIFT_COLOUR, shift), 0.75f * frame.alpha, frame.elapsedSeconds, 1f, arc, frame.camera);
+    }
+
+    private static float flareCycle(Piece piece, Frame frame) {
+        return frame.elapsedSeconds / FLARE_SECONDS + piece.variant() / (float) FLARES;
+    }
+
+    private static double flareAngle(Piece piece, Frame frame) {
+        return Math.toRadians(piece.angle() + Math.floor(flareCycle(piece, frame)) * FlareWeather.GOLDEN_ANGLE_DEGREES);
     }
 
     private void drawFlare(Piece piece, Frame frame) {
-        float cycle = frame.elapsedSeconds / FLARE_SECONDS + piece.variant() / (float) FLARES;
+        float cycle = flareCycle(piece, frame);
         float progress = cycle - (float) Math.floor(cycle);
-        double angle = Math.toRadians(piece.angle() + Math.floor(cycle) * FlareWeather.GOLDEN_ANGLE_DEGREES);
-        StarFlareGlow.drawRising(spriteCache, frame.starX, frame.starY, frame.starPixels, angle, progress, StarFlareGlow.MAP_RISE, frame.starColour,
-                frame.alpha);
+        StarFlareGlow.drawRising(spriteCache, frame.starX, frame.starY, frame.starPixels, flareAngle(piece, frame), frame.camera.flattening(), progress,
+                StarFlareGlow.MAP_RISE, frame.starColour, frame.alpha);
     }
 
     private void drawBreach(Piece piece, Frame frame) {
@@ -576,17 +591,15 @@ final class AtlasSystemArt {
         }
         int next = (link + 1) % relayCount;
         float pulse = (float) Math.sin(frame.elapsedSeconds * 2.5f) * 0.15f + 0.3f;
-        beginPlane(frame);
         try (GlScope links = GlScope.flat().additive().lineWidth(1f)) {
             GL11.glBegin(GL11.GL_LINES);
             Misc.setColor(RELAY_LINK_COLOUR, pulse * frame.alpha);
-            drawDashes(relayPlaneX[link], relayPlaneY[link], relayPlaneX[next], relayPlaneY[next]);
+            drawDashes(frame, relayPlaneX[link], relayPlaneY[link], relayPlaneX[next], relayPlaneY[next]);
             GL11.glEnd();
         }
-        endPlane();
     }
 
-    private static void drawDashes(float fromX, float fromY, float toX, float toY) {
+    private static void drawDashes(Frame frame, float fromX, float fromY, float toX, float toY) {
         float deltaX = toX - fromX;
         float deltaY = toY - fromY;
         float length = (float) Math.hypot(deltaX, deltaY);
@@ -597,13 +610,13 @@ final class AtlasSystemArt {
         float stepY = deltaY / length;
         for (float start = 0f; start < length; start += RELAY_DASH_LENGTH * 2f) {
             float end = Math.min(start + RELAY_DASH_LENGTH, length);
-            GL11.glVertex2f(fromX + stepX * start, fromY + stepY * start);
-            GL11.glVertex2f(fromX + stepX * end, fromY + stepY * end);
+            planeVertex(frame, fromX + stepX * start, fromY + stepY * start);
+            planeVertex(frame, fromX + stepX * end, fromY + stepY * end);
         }
     }
 
     private static float convoyShipAngle(Piece piece, Frame frame, int ship) {
-        return orbitAngle(piece, frame, piece.speed()) - ship * CONVOY_SPACING_DEGREES;
+        return travelAngle(piece, frame, piece.speed()) - ship * CONVOY_SPACING_DEGREES;
     }
 
     private void drawConvoyShip(Piece piece, Frame frame, int ship) {
@@ -646,11 +659,9 @@ final class AtlasSystemArt {
         float cycle = frame.elapsedSeconds / SCAN_SECONDS + piece.variant() * 0.5f;
         float progress = cycle - (float) Math.floor(cycle);
         float ringRadius = frame.planetPlanePixels[planet] * (SCAN_START_SHARE + SCAN_GROWTH_SHARE * progress);
-        beginPlane(frame);
         try (GlScope scan = GlScope.flat().additive()) {
-            drawScanArc(frame.planetPlaneX[planet], frame.planetPlaneY[planet], ringRadius, arcs[part], (1f - progress) * 0.7f * frame.alpha);
+            drawScanArc(frame, frame.planetPlaneX[planet], frame.planetPlaneY[planet], ringRadius, arcs[part], (1f - progress) * 0.7f * frame.alpha);
         }
-        endPlane();
         if (part == arcs.length - 1) {
             float planetPixels = frame.planetPixels[planet];
             double siteAngle = Math.toRadians(piece.angle());
@@ -661,11 +672,7 @@ final class AtlasSystemArt {
         }
     }
 
-    private static void drawScanArc(float planeX, float planeY, float radius, BandArc arc, float alpha) {
-        if (arc.whole()) {
-            HoloShapes.circle(planeX, planeY, radius, RING_CIRCLE, SCAN_COLOUR, 1.5f, alpha);
-            return;
-        }
+    private static void drawScanArc(Frame frame, float planeX, float planeY, float radius, BandArc arc, float alpha) {
         int segments = RING_CIRCLE.segments();
         int first = arc.index() * segments / arc.count();
         int last = (arc.index() + 1) * segments / arc.count();
@@ -674,7 +681,7 @@ final class AtlasSystemArt {
         GL11.glBegin(GL11.GL_LINE_STRIP);
         for (int step = first; step <= last; step++) {
             int point = step % segments;
-            GL11.glVertex2f(planeX + RING_CIRCLE.cos(point) * radius, planeY + RING_CIRCLE.sin(point) * radius);
+            planeVertex(frame, planeX + RING_CIRCLE.cos(point) * radius, planeY + RING_CIRCLE.sin(point) * radius);
         }
         GL11.glEnd();
         GL11.glLineWidth(1f);
@@ -684,7 +691,7 @@ final class AtlasSystemArt {
         float size = piece.size() * frame.radius * 2f;
         float across = puff / (float) (STORM_PUFFS - 1) * 2f - 1f;
         float wobble = (float) Math.sin(puff * 1.7f + frame.elapsedSeconds * 0.5f) * size * 0.15f;
-        aroundStar(orbitAngle(piece, frame, piece.speed()) + across * STORM_ARC_DEGREES / 2f, piece.orbit() * frame.reach + wobble, frame);
+        aroundStar(travelAngle(piece, frame, piece.speed()) + across * STORM_ARC_DEGREES / 2f, piece.orbit() * frame.reach + wobble, frame);
         return across;
     }
 
@@ -710,19 +717,17 @@ final class AtlasSystemArt {
         float sweepRadius = piece.size() * frame.radius * 2.2f;
         float sweep = frame.elapsedSeconds * RADAR_DEGREES_PER_SECOND;
         int steps = 8;
-        beginPlane(frame);
         try (GlScope radar = GlScope.flat().additive()) {
             GL11.glBegin(GL11.GL_TRIANGLE_FAN);
             Misc.setColor(RADAR_COLOUR, 0.35f * frame.alpha);
-            GL11.glVertex2f(piecePlaneX, piecePlaneY);
+            planeVertex(frame, piecePlaneX, piecePlaneY);
             for (int step = 0; step <= steps; step++) {
                 float share = step / (float) steps;
                 double angle = Math.toRadians(sweep - RADAR_WIDTH_DEGREES * share);
                 Misc.setColor(RADAR_COLOUR, 0.3f * (1f - share) * frame.alpha);
-                GL11.glVertex2f(piecePlaneX + (float) Math.cos(angle) * sweepRadius, piecePlaneY + (float) Math.sin(angle) * sweepRadius);
+                planeVertex(frame, piecePlaneX + (float) Math.cos(angle) * sweepRadius, piecePlaneY + (float) Math.sin(angle) * sweepRadius);
             }
             GL11.glEnd();
         }
-        endPlane();
     }
 }

@@ -26,12 +26,17 @@ final class StarFlareGlow {
 
     static void drawRising(SpriteCache sprites, float starX, float starY, float starRadius, double angleRadians, float progress, Rise rise,
                            Color colour, float alpha) {
+        drawRising(sprites, starX, starY, starRadius, angleRadians, 1f, progress, rise, colour, alpha);
+    }
+
+    static void drawRising(SpriteCache sprites, float starX, float starY, float starRadius, double angleRadians, float flattening, float progress,
+                           Rise rise, Color colour, float alpha) {
         float headAlpha = (1f - progress) * rise.peakAlpha() * alpha;
         if (headAlpha <= 0f) {
             return;
         }
         float cos = (float) Math.cos(angleRadians);
-        float sin = (float) Math.sin(angleRadians);
+        float sin = (float) Math.sin(angleRadians) * flattening;
         float headDistance = starRadius * (1f + rise.lift() * progress);
         float headSize = starRadius * (rise.startSize() + rise.growth() * progress);
         for (int trail = 1; trail <= rise.trailGlows(); trail++) {

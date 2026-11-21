@@ -83,23 +83,6 @@ class OrbitalPlaneCameraTest {
     }
 
     @Test
-    void thePlaneMatrixProjectsEveryPointWhereTheCameraDoes() {
-        OrbitalPlaneCamera camera = aimed(0.8f);
-        float[] matrix = new float[OrbitalPlaneCamera.MATRIX_VALUES];
-        camera.writePlaneMatrix(matrix);
-
-        for (float[] point : new float[][]{{0f, 0f}, {REACH, 0f}, {-120f, REACH}, {80f, -REACH}, {-200f, -150f}}) {
-            float x = matrix[0] * point[0] + matrix[4] * point[1] + matrix[12];
-            float y = matrix[1] * point[0] + matrix[5] * point[1] + matrix[13];
-            float w = matrix[3] * point[0] + matrix[7] * point[1] + matrix[15];
-
-            assertEquals(camera.screenX(point[0], point[1]), x / w, 0.01f);
-            assertEquals(camera.screenY(point[1]), y / w, 0.01f);
-        }
-        assertEquals(1f, matrix[10]);
-    }
-
-    @Test
     void headingsFollowTheProjectedOrbit() {
         OrbitalPlaneCamera untilted = aimed(0f);
         OrbitalPlaneCamera tilted = aimed(1f);

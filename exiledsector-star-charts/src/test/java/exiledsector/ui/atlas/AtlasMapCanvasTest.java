@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -126,6 +127,30 @@ class AtlasMapCanvasTest {
         } finally {
             ChartTables.resetAnomalies();
         }
+    }
+
+    @Test
+    void aToggledCatalystShowsItsAnomalyInTheFocusedSystemUntilItIsToggledOff() throws Exception {
+        ChartTables.loadAnomalies();
+        try {
+            AtlasState state = new AtlasState(SEED);
+            AtlasGenerator generator = generator(state);
+            AtlasCell bastion = AtlasDevTools.nearestOpenSite(generator, state, "bastion");
+            AtlasDevTools.reach(generator, state, bastion);
+            AtlasMapCanvas canvas = new AtlasMapCanvas(generator, state);
+
+            assertFalse(showsBreach(canvas, bastion));
+            canvas.previewCatalysts(bastion, List.of(SpatialBreach.ANOMALY_ID));
+            assertTrue(showsBreach(canvas, bastion));
+            canvas.previewCatalysts(bastion, List.of());
+            assertFalse(showsBreach(canvas, bastion));
+        } finally {
+            ChartTables.resetAnomalies();
+        }
+    }
+
+    private static boolean showsBreach(AtlasMapCanvas canvas, AtlasCell cell) {
+        return canvas.focusSketch(cell).art().pieces().stream().anyMatch(piece -> piece.kind() == AtlasSystemArt.Kind.BREACH);
     }
 
     @Test

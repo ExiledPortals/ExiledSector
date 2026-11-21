@@ -9,6 +9,7 @@ import exiledsector.charts.layout.ChartLook;
 import exiledsector.charts.layout.ChartShape;
 import exiledsector.charts.layout.abyss.AbyssPalette;
 import exiledsector.charts.layout.abyss.ChartAbyss;
+import exiledsector.charts.ChartTables;
 import exiledsector.charts.layout.sketch.ChartSketchPalette.BodyKind;
 import exiledsector.charts.layout.sketch.ChartSketchPalette.MoonOdds;
 import exiledsector.charts.layout.sketch.ChartSketchPalette.StarKind;
@@ -45,6 +46,34 @@ class ChartSystemSketcherTest {
     private static ChartLayoutRecipe recipe(Map<String, Float> starWeights, Map<String, Float> planetWeights, ChartShape shape) {
         ChartLook look = new ChartLook(List.of(), List.of(), Float.NaN, null, 0f, starWeights, planetWeights, false, "");
         return new ChartLayoutRecipe(look, shape);
+    }
+
+    @Test
+    void aNebulaKeepsBeltsOffItsCentreAndHoldsItsWorldsStill() throws Exception {
+        ChartTables.loadAnomalies();
+        try {
+            assertNebulaKeepsBeltsOffItsCentreAndHoldsItsWorldsStill();
+        } finally {
+            ChartTables.resetAnomalies();
+        }
+    }
+
+    private static void assertNebulaKeepsBeltsOffItsCentreAndHoldsItsWorldsStill() {
+        ChartSketchPalette palette = new ChartSketchPalette(List.of(new StarKind("nebula_center_old", 1f, 1f, 1f, 0f, 0f, true)),
+                Map.of("cat_giant", 100f, "cat_terrain_rings", 200f),
+                Map.of("cat_giant", List.of(new BodyKind("gas_giant", 10f, 250f, 350f)),
+                        "cat_terrain_rings", List.of(new BodyKind("asteroid_belt", 150f, 0f, 0f, MoonOdds.NONE, Map.of(), true))));
+        ChartLayoutRecipe sixOrbits = recipe(Map.of(), Map.of(), new ChartShape(Map.of(), 6, 6, Float.NaN, Map.of(), ""));
+        int worlds = 0;
+        for (long seed = 0; seed < 20; seed++) {
+            ChartSystemSketch sketch = ChartSystemSketcher.sketch(seed, sixOrbits, List.of("dense_nebula"), palette);
+
+            assertEquals(StarSystemType.NEBULA, sketch.systemType());
+            assertTrue(sketch.belts().isEmpty());
+            assertTrue(sketch.planets().stream().allMatch(planet -> planet.orbitDays() == 0f));
+            worlds += sketch.planets().size();
+        }
+        assertTrue(worlds > 0);
     }
 
     @Test
