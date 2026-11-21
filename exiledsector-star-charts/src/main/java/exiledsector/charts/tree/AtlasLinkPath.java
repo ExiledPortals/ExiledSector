@@ -8,6 +8,9 @@ public final class AtlasLinkPath {
     private static final double FULL_TURN = Math.PI * 2.0;
     private static final float CENTRE_RADIUS = 1f;
     private static final int BOW_POINTS = 16;
+    public static final int MAX_WHEEL_SPIRAL_POINTS = 128;
+    private static final double WHEEL_SPIRAL_STEP_RADIANS = Math.toRadians(8.0);
+    private static final float WHEEL_SPIRAL_STEP_LENGTH = 40f;
     static final float BOW_SHARE = 0.12f;
 
     private final float[] xs;
@@ -95,6 +98,24 @@ public final class AtlasLinkPath {
             int slot = inward ? point : SPIRAL_POINTS - 1 - point;
             xs[slot] = centreX + (float) (radius * Math.cos(angle));
             ys[slot] = centreY + (float) (radius * Math.sin(angle));
+        }
+        return new AtlasLinkPath(xs, ys);
+    }
+
+    static AtlasLinkPath alongSpiral(AtlasWheelSpiral spiral, double fromSweep, double toSweep) {
+        double largestStep = WHEEL_SPIRAL_STEP_RADIANS;
+        double longestStep = WHEEL_SPIRAL_STEP_LENGTH;
+        double[] sweeps = spiral.sampleSweeps(fromSweep, toSweep, largestStep, longestStep);
+        while (sweeps.length > MAX_WHEEL_SPIRAL_POINTS) {
+            largestStep *= 1.5;
+            longestStep *= 1.5;
+            sweeps = spiral.sampleSweeps(fromSweep, toSweep, largestStep, longestStep);
+        }
+        float[] xs = new float[sweeps.length];
+        float[] ys = new float[sweeps.length];
+        for (int point = 0; point < sweeps.length; point++) {
+            xs[point] = spiral.xAt(sweeps[point]);
+            ys[point] = spiral.yAt(sweeps[point]);
         }
         return new AtlasLinkPath(xs, ys);
     }

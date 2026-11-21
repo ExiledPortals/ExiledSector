@@ -52,7 +52,7 @@ final class AtlasTreeView {
     static final float STAR_BODY_SHARE = 0.45f;
     static final float FIELD_BODY_SHARE = 0.5f;
     private static final float MIN_PATH_STEP_PIXELS = 4f;
-    private static final int MAX_PATH_POINTS = 32;
+    private static final int MAX_PATH_POINTS = AtlasLinkPath.MAX_WHEEL_SPIRAL_POINTS;
     private static final float VISIBLE_REACH_SCALE = 2.5f;
     private static final float SPIN_DEGREES_PER_SECOND = 12f;
     private static final float OBJECT_SPIN_SHARE = 0.2f;

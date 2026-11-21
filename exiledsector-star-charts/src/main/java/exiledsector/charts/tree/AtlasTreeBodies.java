@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 public final class AtlasTreeBodies {
@@ -86,6 +87,32 @@ public final class AtlasTreeBodies {
             }
         }
         return new AtlasTreeBodies(bodies, links, star);
+    }
+
+    public AtlasTreeBodies withRolledWheels(Random random) {
+        Map<Integer, AtlasWheelRolls.Placement> placements = AtlasWheelRolls.roll(this, random);
+        if (placements.isEmpty()) {
+            return this;
+        }
+        List<Body> moved = new ArrayList<>(bodies);
+        for (AtlasWheelRolls.Placement placement : placements.values()) {
+            for (int member : placement.members()) {
+                Body body = moved.get(member);
+                moved.set(member, new Body(body.nodeId(), body.index(), placement.x(member), placement.y(member), body.highway(), body.art(),
+                        body.colour(), body.wheel(), body.spiral()));
+            }
+        }
+        List<Link> rolledLinks = new ArrayList<>(links.size());
+        for (Link link : links) {
+            AtlasWheelRolls.Placement placement = placements.get(wheelOf(moved.get(link.first()), moved.get(link.second())));
+            boolean rolled = placement != null && placement.holds(link.first()) && placement.holds(link.second());
+            rolledLinks.add(rolled ? new Link(link.first(), link.second(), Shape.SPIRAL, placement.path(link.first(), link.second())) : link);
+        }
+        return new AtlasTreeBodies(moved, rolledLinks, star);
+    }
+
+    private static int wheelOf(Body first, Body second) {
+        return first.wheel() != NO_WHEEL ? first.wheel() : second.wheel();
     }
 
     private static Link link(List<Body> bodies, Body first, Body second, Body star) {
