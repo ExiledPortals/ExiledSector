@@ -12,6 +12,8 @@ import java.lang.invoke.MethodType;
 final class HarnessMouse {
 
     static final int LEFT_BUTTON_MASK = 1 << 10;
+    static final int RIGHT_BUTTON_MASK = 1 << 12;
+    static final int CONTROL_KEY = 17;
     static final int CALIBRATION_STRIDE = 200;
     static final int SETTLE_FRAMES = 3;
     static final float[] DESKTOP_SCALES = {1f, 1.25f, 1.5f, 1.75f, 2f, 2.25f, 2.5f, 3f};
@@ -20,6 +22,8 @@ final class HarnessMouse {
     private static MethodHandle mousePress;
     private static MethodHandle mouseRelease;
     private static MethodHandle mouseWheel;
+    private static MethodHandle keyPress;
+    private static MethodHandle keyRelease;
     private static Object robot;
     private static Calibration calibration;
     private static Calibrator calibrator;
@@ -116,14 +120,24 @@ final class HarnessMouse {
         move(calibration.robotX(uiX * uiScale), calibration.robotY(windowYFromTop(uiY * uiScale)));
     }
 
-    static void pressLeft() throws Throwable {
+    static void press(int buttonMask) throws Throwable {
         Object activeRobot = robot();
-        mousePress.invoke(activeRobot, LEFT_BUTTON_MASK);
+        mousePress.invoke(activeRobot, buttonMask);
     }
 
-    static void releaseLeft() throws Throwable {
+    static void release(int buttonMask) throws Throwable {
         Object activeRobot = robot();
-        mouseRelease.invoke(activeRobot, LEFT_BUTTON_MASK);
+        mouseRelease.invoke(activeRobot, buttonMask);
+    }
+
+    static void pressKey(int keyCode) throws Throwable {
+        Object activeRobot = robot();
+        keyPress.invoke(activeRobot, keyCode);
+    }
+
+    static void releaseKey(int keyCode) throws Throwable {
+        Object activeRobot = robot();
+        keyRelease.invoke(activeRobot, keyCode);
     }
 
     static void wheel(int notches) throws Throwable {
@@ -148,6 +162,8 @@ final class HarnessMouse {
             mousePress = lookup.findVirtual(robotClass, "mousePress", MethodType.methodType(void.class, int.class));
             mouseRelease = lookup.findVirtual(robotClass, "mouseRelease", MethodType.methodType(void.class, int.class));
             mouseWheel = lookup.findVirtual(robotClass, "mouseWheel", MethodType.methodType(void.class, int.class));
+            keyPress = lookup.findVirtual(robotClass, "keyPress", MethodType.methodType(void.class, int.class));
+            keyRelease = lookup.findVirtual(robotClass, "keyRelease", MethodType.methodType(void.class, int.class));
             robot = lookup.findConstructor(robotClass, MethodType.methodType(void.class)).invoke();
         }
         return robot;

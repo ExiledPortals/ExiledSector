@@ -26,17 +26,22 @@ final class BuildTreeStep implements HarnessStep {
 
     private final String rootTypeId;
     private final List<String> goalTypeIds;
+    private final int nodeLimit;
     private int goalIndex;
     private boolean allocatedThisPass;
     private boolean filling;
     private int filledNodes;
 
-    BuildTreeStep(String rootTypeId, List<String> goalTypeIds) {
+    BuildTreeStep(String rootTypeId, List<String> goalTypeIds, int nodeLimit) {
         if (goalTypeIds.isEmpty()) {
             throw new IllegalArgumentException("buildTree needs at least one goal node type");
         }
+        if (nodeLimit < 0) {
+            throw new IllegalArgumentException("buildTree needs a node limit of 0 (none) or more, not " + nodeLimit);
+        }
         this.rootTypeId = rootTypeId;
         this.goalTypeIds = List.copyOf(goalTypeIds);
+        this.nodeLimit = nodeLimit;
     }
 
     @Override
@@ -60,6 +65,9 @@ final class BuildTreeStep implements HarnessStep {
         }
         if (!session.getStartingRoot().getType().getId().equals(rootTypeId)) {
             return StepOutcome.failed("the ship already grows from " + session.getStartingRoot().getType().getId() + ", not " + rootTypeId);
+        }
+        if (nodeLimit > 0 && session.allocatedNodeCount() >= nodeLimit) {
+            return StepOutcome.passed(summary(session));
         }
         if (session.hasPointsLeft() && !filling) {
             filling = passFinishedWithoutProgress();

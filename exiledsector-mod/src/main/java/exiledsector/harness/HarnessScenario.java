@@ -16,7 +16,7 @@ record HarnessScenario(List<HarnessStep> steps, boolean quitWhenDone, NewGameSet
 
     static final String KNOWN_STEPS = "wait, mark, startClip, endClip, showcase, openAtlas, openAtlasTree, openSkillTree, openRefit, closeScreen, zoom, focusAtlasSystem, screenshot, expectScreen, "
             + "expectNoErrors, ignoreErrorsSoFar, expectLog, simulate, spawn, autopilot, speed, recordStats, recordDamage, endSimulation, "
-            + "moveMouse, click, scroll, addShip, levelShip, buildTree, clearFleets, readyFleet, saveGame, addCargo, foundColony, openChart, lockPhasePlanet, defeatChartBoss, leaveChart, passDays, expectPhasePull, "
+            + "moveMouse, click, scroll, addShip, levelShip, buildTree, clearFleets, readyFleet, saveGame, addItem, addCargo, foundColony, openChart, lockPhasePlanet, defeatChartBoss, leaveChart, passDays, expectPhasePull, "
             + "expectPhasedPlanet";
     static final int DEFAULT_COLONY_SIZE = 4;
     static final long DEFAULT_CHART_SEED = 1L;
@@ -59,7 +59,7 @@ record HarnessScenario(List<HarnessStep> steps, boolean quitWhenDone, NewGameSet
             case "openSkillTree" -> new OpenSkillTreeStep(step.optString("ship", OpenSkillTreeStep.FLAGSHIP));
             case "openRefit" -> new OpenSkillTreeStep(step.optString("ship", OpenSkillTreeStep.FLAGSHIP), false);
             case "moveMouse" -> new MoveMouseStep(step.getString("to"), (float) step.optDouble("seconds", 0d));
-            case "click" -> new ClickStep();
+            case "click" -> new ClickStep(step.optString("button", ClickStep.LEFT), step.optBoolean("ctrl", false));
             case "scroll" -> new ScrollStep(ScrollStep.scrollsOut(step.optString("direction", "out")), step.optInt("notches", 1), (float) step.optDouble("seconds", 0d));
             case "closeScreen" -> new CloseScreenStep();
             case "zoom" -> new ZoomStep((float) step.getDouble("to"));
@@ -84,10 +84,11 @@ record HarnessScenario(List<HarnessStep> steps, boolean quitWhenDone, NewGameSet
             case "endSimulation" -> new EndSimulationStep();
             case "addShip" -> new AddShipStep(step.getString("variant"), step.optInt("count", 1), AddShipStep.Loadout.parse(step));
             case "levelShip" -> new LevelShipStep(step.optString("ship", OpenSkillTreeStep.FLAGSHIP), step.getInt("level"));
-            case "buildTree" -> new BuildTreeStep(step.getString("root"), strings(step.getJSONArray("goals")));
+            case "buildTree" -> new BuildTreeStep(step.getString("root"), strings(step.getJSONArray("goals")), step.optInt("nodes", 0));
             case "clearFleets" -> new ClearFleetsStep((float) step.optDouble("radius", 0d));
             case "readyFleet" -> new ReadyFleetStep((float) step.optDouble("suppliesShare", READY_SUPPLIES_SHARE));
             case "saveGame" -> new SaveGameStep();
+            case "addItem" -> new AddItemStep(step.getString("item"));
             case "addCargo" -> new AddCargoStep(step.getString("commodity"), step.getInt("amount"));
             case "foundColony" -> new FoundColonyStep(step.optInt("size", DEFAULT_COLONY_SIZE), strings(step.optJSONArray("industries")),
                     amounts(step.optJSONObject("supply")), step.optBoolean("nearHypershunt", false));

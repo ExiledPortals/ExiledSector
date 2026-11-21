@@ -123,6 +123,9 @@ class HarnessScenarioTest {
                 () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"addShip\", \"variant\": \"x\", \"count\": 2, \"flagship\": true}]}"));
         assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"levelShip\", \"level\": 0}]}"));
         assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"buildTree\", \"root\": \"r\", \"goals\": []}]}"));
+        assertThrows(IllegalArgumentException.class,
+                () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"buildTree\", \"root\": \"r\", \"goals\": [\"g\"], \"nodes\": -1}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"addItem\", \"item\": \" \"}]}"));
         assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"readyFleet\", \"suppliesShare\": 2}]}"));
         assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"clearFleets\", \"radius\": -1}]}"));
     }
@@ -136,13 +139,17 @@ class HarnessScenarioTest {
                   {"step": "moveMouse", "to": "node:root_high_tech"},
                   {"step": "moveMouse", "to": "1250, 420.5", "seconds": 1},
                   {"step": "click"},
+                  {"step": "click", "ctrl": true},
+                  {"step": "click", "button": "right"},
+                  {"step": "moveMouse", "to": "item:wormhole_anchor_hegemony"},
                   {"step": "scroll", "notches": 12, "seconds": 3},
                   {"step": "scroll", "direction": "in"}
                 ]}""");
 
         List<String> names = scenario.steps().stream().map(HarnessStep::name).toList();
         assertEquals(List.of("openRefit ISS Tereshkova III", "moveMouse to skillTreeButton over 0.8 s", "moveMouse to node:root_high_tech over 0.0 s",
-                "moveMouse to 1250, 420.5 over 1.0 s", "click", "scroll out 12 notches over 3.0 s", "scroll in 1 notches over 0.0 s"), names);
+                "moveMouse to 1250, 420.5 over 1.0 s", "click", "ctrl-click", "click right",
+                "moveMouse to item:wormhole_anchor_hegemony over 0.0 s", "scroll out 12 notches over 3.0 s", "scroll in 1 notches over 0.0 s"), names);
     }
 
     @Test
@@ -153,6 +160,7 @@ class HarnessScenarioTest {
                 () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"moveMouse\", \"to\": \"centre\", \"seconds\": -1}]}"));
         assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"scroll\", \"direction\": \"up\"}]}"));
         assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"scroll\", \"notches\": 0}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"click\", \"button\": \"middle\"}]}"));
     }
 
     @Test
