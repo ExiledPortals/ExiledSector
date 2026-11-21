@@ -82,8 +82,8 @@ Built in order; later ones lean on earlier ones.
 
 ### A. Foundations
 
-1. `openChart` parameters: `anomalies`, `tier`, `region`, `layout`, `seed`, `anomalyData` and `atlasNodes` (node ids). It fails when a forced anomaly isn't in `run.anomalyIds()`, because conflicting, mod-gated and unshaped anomalies are dropped silently. A scenario can mark an anomaly as needing a mod (AotD Vaults of Knowledge for the facility, RAT for the shipyard, research complex and abyssal storm) so it skips instead of failing.
-2. Log scan: every scenario ends by checking `starsector.log` for `ChartAnomalies` first-failure lines naming its anomalies, since `askSafely` swallows hook exceptions.
+1. `openChart` parameters: `anomalies`, `tier`, `region`, `layout`, `seed`, `anomalyData` and `atlasNodes` (node ids). It fails when a forced anomaly isn't in `run.anomalyIds()`, because conflicting, mod-gated and unshaped anomalies are dropped silently. A scenario can mark an anomaly as needing a mod (AotD Vaults of Knowledge for the facility, RAT for the shipyard, research complex and abyssal storm) so it skips instead of failing. Built: `OpenChartStep.Options`, through the `ChartRunActions.openBesidePlayer` overload that takes tree lines and `AtlasTree.chartLinesOf`; mods are named per group (`requiresMods`).
+2. Log scan: every scenario ends by checking `starsector.log` for `ChartAnomalies` first-failure lines naming its anomalies, since `askSafely` swallows hook exceptions. Built: every suite case ends with `expectNoErrors`, and teardown calls `ChartAnomalies.forgetHookFailures` so a repeat failure in a later case is logged again.
 3. Checks:
    - `expectAnomalyState` (fields of `AnomalyState.of(run, id)`, polled because staged state is committed later)
    - `expectContext` (tuning values the run sees)
@@ -95,7 +95,7 @@ Built in order; later ones lean on earlier ones.
 5. Fleet movement: teleport beside an entity or point (extends `HarnessCampaign.movePlayerFleetBeside`), hold still, follow a moving terrain (storm front, drifting breach), and fly to an entity to interact with it the way a click does. `passDays` gains an option to allow engagements; today `CampaignTimeSkip` sets no-engaging every iteration.
 6. Dialog driver, extracted from `TitleNewGameDriver.offeredOptions`: open a dialog on an entity through the normal plugin pick, list options with enabled state and tooltips, pick by option data or visible text, re-read `dialog.getPlugin()` after every pick (hand-offs swap it), and close the loot screen. Package-private choice records (relay offers, prototype picks) are picked by index or text.
 7. Auto-resolve battle against a fleet found by tag, memory key or side.
-8. Suite runner, as described in Suites and groups: suite files with groups, cases and tags; baseline capture, per-case seeds, teardown and restore, the leak check, relaunch after a broken teardown, and the `-Group`, `-Case` and `-Tag` filters.
+8. Suite runner, as described in Suites and groups: suite files with groups, cases and tags; baseline capture, per-case seeds, teardown and restore, the leak check, relaunch after a broken teardown, and the `-Group`, `-Case` and `-Tag` filters. Built: `HarnessSuite`, `SuiteCase`, `SuiteSteps`, `HarnessBaseline` and `PersistentSnapshot` in `exiledsector.harness`, and `run-harness.ps1` (`-Group`, `-Case`, `-Tag`, `-StartAfter`, `-MaxRelaunches`).
 
 ### B. Real battles
 

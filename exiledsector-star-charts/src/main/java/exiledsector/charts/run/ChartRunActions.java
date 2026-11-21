@@ -61,7 +61,12 @@ public final class ChartRunActions {
     }
 
     public static OpenResult openBesidePlayer(SectorAPI sector, int entriesAllowed, Random random, ChartLayoutRequest layoutRequest) {
-        return openBesidePlayer(sector, entriesAllowed, random, layoutRequest, null);
+        return openBesidePlayer(sector, entriesAllowed, random, layoutRequest, List.of());
+    }
+
+    public static OpenResult openBesidePlayer(SectorAPI sector, int entriesAllowed, Random random, ChartLayoutRequest layoutRequest,
+                                              List<ChartGenContext.AppliedEffect> treeLines) {
+        return openBesidePlayer(sector, entriesAllowed, random, layoutRequest.withEffects(treeLines), null, null, treeLines, null);
     }
 
     public static OpenResult openWithChart(SectorAPI sector, int entriesAllowed, Random random, StarChart chart) {

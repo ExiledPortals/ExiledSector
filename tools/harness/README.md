@@ -62,7 +62,7 @@ A scenario with a `"newGame"` object starts a new game instead of loading a save
 | `saveGame` | | the campaign saved |
 | `addCargo` | `commodity`, `amount` | the commodity was added to the player fleet's cargo |
 | `foundColony` | `size` (4), `industries`, `supply` (commodity id to amount), `nearHypershunt` (false) | a player colony was founded on the nearest uncolonised planet (to the player, or within range of the nearest coronal hypershunt, which is made usable), with those industries and extra supply, the player faction counts as named, and the player fleet moved beside it; details go under `data.colony` |
-| `openChart` | `seed` (1) | a Star Chart run opened beside the player fleet with one entry, and the fleet jumped inside; details go under `data.chartRun` |
+| `openChart` | `seed` (1, or the case seed in a suite), `tier` (1), `anomalies`, `region`, `layout`, `anomalyData` (anomaly id to data), `atlasNodes` | a Star Chart run opened beside the player fleet with one entry and the fleet jumped inside, and every forced anomaly is in the run (conflicting or mod-gated ones are dropped silently, so this fails); the atlas nodes add their chart lines as if allocated, without touching the atlas; details go under `data.chartRun` |
 | `lockPhasePlanet` | | the first planet in the run that can be locked was surveyed and locked for the Phase Displacement Gate; the lock goes under `data.phaseLock` |
 | `defeatChartBoss` | | the run's boss fleet was destroyed outside battle and the run's objective counts as complete |
 | `leaveChart` | | the player fleet jumped back out of the run and the run closed |
@@ -75,3 +75,21 @@ A scenario with a `"newGame"` object starts a new game instead of loading a save
 Combat steps run between `simulate` and `endSimulation`; `examples/simulate-combat.json` runs a short fight. Combat screenshots are taken below the combat HUD.
 
 Each step times out after 30 seconds unless it waits longer by design. A failing step doesn't stop the run. Screen opens record the `[perf]` timing line in the step detail.
+
+## Suites
+
+A scenario with `"groups"` instead of `"steps"` is a suite: many cases that run one after another in one game session. A group is usually one anomaly; its `setup` steps run at the start of each of its cases, and `requiresMods` lists mod ids it needs, so its cases are skipped when one is missing. Each case has an `id`, optional `tags` and `seed`, and its `steps`. A case's full id is `group/case`, and its seed defaults to a hash of that id; `openChart` without a `seed` uses it.
+
+```json
+{
+  "groups": [
+    {"id": "excavation_sites", "tags": ["dense_nebula"], "setup": [{"step": "wait", "frames": 5}], "cases": [
+      {"id": "open_shaft", "steps": [{"step": "openChart"}, {"step": "leaveChart"}]}
+    ]}
+  ]
+}
+```
+
+Before the first case the harness records a baseline: the player fleet's location, members, CR, hull and cargo, the transponder, the atlas and item state, and a census of Star Chart content. Every case starts with `ignoreErrorsSoFar`, ends with `expectNoErrors`, and then tears down: it ends any combat, closes any dialog, restores the baseline, closes any open run, and fails when the run stays open or Star Chart content is left behind. A failing step skips the rest of its case and goes straight to the teardown. A failing teardown stops the session, because the cases after it would start from a dirty game; the script then relaunches the game for the remaining cases, at most `-MaxRelaunches` (10) times.
+
+`-Group excavation_sites`, `-Case excavation_sites/open_shaft` and `-Tag dense_nebula` run only the matching cases, and `-StartAfter` skips every case up to and including the named one. The script prints a CASE PASS, FAIL, SKIP or NOT RUN line per case and a total per group, and `results.json` lists them under `cases`, `skippedCases`, `notRunCases` and `abortedAfterCase`.

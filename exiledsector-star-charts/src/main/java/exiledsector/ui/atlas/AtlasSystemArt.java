@@ -6,7 +6,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.skilleffect.render.Fade;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.charts.anomaly.StarAnomalies;
-import exiledsector.charts.anomaly.breach.BreachFieldRenderer;
+import exiledsector.charts.anomaly.breach.BreachCorePlugin;
 import exiledsector.charts.layout.sketch.ChartSystemSketch;
 import exiledsector.ui.belt.AuroraBeltRenderer;
 import exiledsector.ui.belt.BandArc;
@@ -146,6 +146,7 @@ final class AtlasSystemArt {
 
     private final SpriteCache spriteCache = new SpriteCache(AtlasSystemArt.class);
     private final Vector2f breachCentre = new Vector2f();
+    private SpriteAPI breachRing;
     private final Vector2f bandCentre = new Vector2f();
     private final float[] relayPlaneX = new float[RELAY_SPRITES.size()];
     private final float[] relayPlaneY = new float[RELAY_SPRITES.size()];
@@ -516,9 +517,17 @@ final class AtlasSystemArt {
     }
 
     private void drawBreach(Piece piece, Frame frame) {
+        SpriteAPI halo = spriteCache.sprite(BreachCorePlugin.HALO_TEXTURE);
+        if (breachRing == null) {
+            breachRing = BreachCorePlugin.loadRing();
+        }
+        if (halo == null || breachRing == null) {
+            return;
+        }
         aroundStar(piece, frame, piece.speed());
         breachCentre.set(pieceX, pieceY);
-        BreachFieldRenderer.render(breachCentre, piece.size() * frame.radius * pieceScale, frame.alpha, frame.elapsedSeconds, 1f);
+        float haloDiameter = 2f * piece.size() * frame.radius * pieceScale;
+        BreachCorePlugin.drawCore(halo, breachRing, breachCentre, haloDiameter / BreachCorePlugin.HALO_SIZE, frame.alpha, frame.elapsedSeconds);
     }
 
     private void drawOrbitingSprite(Piece piece, Frame frame, String path, float aspect, Color glow) {

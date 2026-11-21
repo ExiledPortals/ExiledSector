@@ -57,13 +57,16 @@ final class HarnessCampaign {
     }
 
     static void movePlayerFleetBeside(SectorAPI sector, SectorEntityToken target) {
+        movePlayerFleetTo(sector, target.getContainingLocation(), target.getLocation().x + target.getRadius() + FLEET_GAP, target.getLocation().y);
+    }
+
+    static void movePlayerFleetTo(SectorAPI sector, LocationAPI destination, float x, float y) {
         CampaignFleetAPI playerFleet = sector.getPlayerFleet();
-        LocationAPI destination = target.getContainingLocation();
         if (playerFleet.getContainingLocation() != destination) {
             playerFleet.getContainingLocation().removeEntity(playerFleet);
             destination.addEntity(playerFleet);
             sector.setCurrentLocation(destination);
         }
-        playerFleet.setLocation(target.getLocation().x + target.getRadius() + FLEET_GAP, target.getLocation().y);
+        playerFleet.setLocation(x, y);
     }
 }

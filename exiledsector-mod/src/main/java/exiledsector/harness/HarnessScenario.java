@@ -10,8 +10,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
-record HarnessScenario(List<HarnessStep> steps, boolean quitWhenDone, NewGameSetup newGame) {
+record HarnessScenario(List<HarnessStep> steps, boolean quitWhenDone, NewGameSetup newGame, List<String> skippedCases) {
 
     static final String KNOWN_STEPS = "wait, mark, openAtlas, openAtlasTree, openSkillTree, closeScreen, zoom, focusAtlasSystem, screenshot, expectScreen, "
             + "expectNoErrors, ignoreErrorsSoFar, expectLog, simulate, spawn, autopilot, speed, recordStats, recordDamage, endSimulation, "
@@ -22,22 +23,29 @@ record HarnessScenario(List<HarnessStep> steps, boolean quitWhenDone, NewGameSet
     static final float DEFAULT_LOG_WAIT_SECONDS = 10f;
 
     HarnessScenario(List<HarnessStep> steps, boolean quitWhenDone) {
-        this(steps, quitWhenDone, null);
+        this(steps, quitWhenDone, null, List.of());
     }
 
     static HarnessScenario parse(String scenarioText) throws JSONException {
+        return parse(scenarioText, SuiteCase.Filter.ALL, modId -> true);
+    }
+
+    static HarnessScenario parse(String scenarioText, SuiteCase.Filter filter, Predicate<String> modEnabled) throws JSONException {
         JSONObject scenario = new JSONObject(scenarioText);
+        if (HarnessSuite.isSuite(scenario)) {
+            return HarnessSuite.parse(scenario, filter, modEnabled);
+        }
         JSONArray stepArray = scenario.getJSONArray("steps");
         ErrorCheckStep.Cursor errorCursor = new ErrorCheckStep.Cursor();
         List<HarnessStep> steps = new ArrayList<>();
         for (int index = 0; index < stepArray.length(); index++) {
-            steps.add(step(stepArray.getJSONObject(index), errorCursor));
+            steps.add(step(stepArray.getJSONObject(index), errorCursor, DEFAULT_CHART_SEED));
         }
         JSONObject newGame = scenario.optJSONObject("newGame");
-        return new HarnessScenario(List.copyOf(steps), scenario.optBoolean("quitWhenDone", true), newGame == null ? null : NewGameSetup.parse(newGame));
+        return new HarnessScenario(List.copyOf(steps), scenario.optBoolean("quitWhenDone", true), newGame == null ? null : NewGameSetup.parse(newGame), List.of());
     }
 
-    private static HarnessStep step(JSONObject step, ErrorCheckStep.Cursor errorCursor) throws JSONException {
+    static HarnessStep step(JSONObject step, ErrorCheckStep.Cursor errorCursor, long defaultSeed) throws JSONException {
         String stepType = step.getString("step");
         return switch (stepType) {
             case "wait" -> new WaitStep(step.optInt("frames", 0), (float) step.optDouble("seconds", 0d));
@@ -71,7 +79,7 @@ record HarnessScenario(List<HarnessStep> steps, boolean quitWhenDone, NewGameSet
             case "addCargo" -> new AddCargoStep(step.getString("commodity"), step.getInt("amount"));
             case "foundColony" -> new FoundColonyStep(step.optInt("size", DEFAULT_COLONY_SIZE), strings(step.optJSONArray("industries")),
                     amounts(step.optJSONObject("supply")), step.optBoolean("nearHypershunt", false));
-            case "openChart" -> new OpenChartStep(step.optLong("seed", DEFAULT_CHART_SEED));
+            case "openChart" -> new OpenChartStep(OpenChartStep.Options.parse(step, defaultSeed));
             case "lockPhasePlanet" -> new LockPhasePlanetStep();
             case "defeatChartBoss" -> new DefeatChartBossStep();
             case "leaveChart" -> new LeaveChartStep();
@@ -82,7 +90,7 @@ record HarnessScenario(List<HarnessStep> steps, boolean quitWhenDone, NewGameSet
         };
     }
 
-    private static List<String> strings(JSONArray array) throws JSONException {
+    static List<String> strings(JSONArray array) throws JSONException {
         List<String> values = new ArrayList<>();
         for (int index = 0; array != null && index < array.length(); index++) {
             values.add(array.getString(index));

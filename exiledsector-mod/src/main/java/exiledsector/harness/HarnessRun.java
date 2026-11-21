@@ -4,6 +4,7 @@ import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 
 final class HarnessRun implements EveryFrameScript {
@@ -31,6 +32,7 @@ final class HarnessRun implements EveryFrameScript {
         this.results = results;
         this.quit = quit;
         this.capture = new ScreenCapture(results);
+        results.skipCases(scenario.skippedCases());
         Global.getSector().getListenerManager().addListener(capture, true);
         startStep();
     }
@@ -59,6 +61,7 @@ final class HarnessRun implements EveryFrameScript {
         }
         HarnessStep step = steps.get(stepIndex);
         float seconds = (System.nanoTime() - stepStartNanos) / NANOS_PER_SECOND;
+        String caseId = results.currentCase();
         StepOutcome outcome;
         try {
             outcome = step.advance(new StepContext(stepFrame, seconds, log, stepFirstLogLine, capture, results));
@@ -72,10 +75,36 @@ final class HarnessRun implements EveryFrameScript {
         stepFrame++;
         if (outcome.finished()) {
             long millis = (System.nanoTime() - stepStartNanos) / NANOS_PER_MILLI;
-            results.add(new HarnessResults.StepResult(stepIndex, step.name(), outcome.passed(), outcome.detail(), millis));
-            stepIndex++;
+            caseId = caseId != null ? caseId : results.currentCase();
+            results.add(new HarnessResults.StepResult(stepIndex, step.name(), outcome.passed(), outcome.detail(), millis, caseId));
+            if (!outcome.passed() && caseId != null && step instanceof SuiteSteps.TeardownStep) {
+                abortAfter(caseId);
+                return;
+            }
+            stepIndex = !outcome.passed() && caseId != null ? teardownIndexFrom(stepIndex + 1) : stepIndex + 1;
             startStep();
         }
+    }
+
+    private int teardownIndexFrom(int fromIndex) {
+        for (int index = fromIndex; index < steps.size(); index++) {
+            if (steps.get(index) instanceof SuiteSteps.TeardownStep) {
+                return index;
+            }
+        }
+        return steps.size();
+    }
+
+    private void abortAfter(String caseId) {
+        List<String> notRun = new ArrayList<>();
+        for (int index = stepIndex + 1; index < steps.size(); index++) {
+            if (steps.get(index) instanceof SuiteSteps.StartCaseStep start) {
+                notRun.add(start.suiteCase().id());
+            }
+        }
+        LOG.error(Harness.LOG_TAG + "teardown of " + caseId + " failed, so the remaining " + notRun.size() + " cases are not run in this session");
+        results.abortAfter(caseId, notRun);
+        finish();
     }
 
     void renderInCombat() {

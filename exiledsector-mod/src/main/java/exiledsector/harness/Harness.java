@@ -46,7 +46,8 @@ public final class Harness {
         LOG.info(LOG_TAG + "launched to " + (newGame ? "start " + NEW_GAME : "load " + saveDir));
         Global.getSettings().setBoolean(IDLE_WHILE_UNFOCUSED_SETTING, false);
         try {
-            harness.scenario = HarnessScenario.parse(HarnessFiles.readScenario());
+            harness.scenario = HarnessScenario.parse(HarnessFiles.readScenario(), SuiteCase.Filter.fromSystemProperties(),
+                    modId -> Global.getSettings().getModManager().isModEnabled(modId));
             LOG.info(LOG_TAG + "scenario has " + harness.scenario.steps().size() + " steps");
         } catch (IOException | JSONException | IllegalArgumentException e) {
             LOG.error(LOG_TAG + "could not read the scenario", e);

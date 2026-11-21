@@ -6,6 +6,7 @@ import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext.AppliedEffect;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -26,9 +27,17 @@ public final class AtlasTree {
     }
 
     public static List<AppliedEffect> chartLines(AtlasState state) {
+        return summedLines(allocatedNodes(state));
+    }
+
+    public static List<AppliedEffect> chartLinesOf(Collection<String> nodeIds) {
+        return summedLines(nodesWithRoots(nodeIds));
+    }
+
+    private static List<AppliedEffect> summedLines(List<AtlasTreeNode> nodes) {
         Map<ChartModifier, Float> totals = new LinkedHashMap<>();
-        for (AtlasTreeType type : allocatedTypes(state)) {
-            type.effects().forEach(line -> totals.merge(line.effect(), line.value(), Float::sum));
+        for (AtlasTreeNode node : nodes) {
+            node.type().effects().forEach(line -> totals.merge(line.effect(), line.value(), Float::sum));
         }
         List<AppliedEffect> lines = new ArrayList<>();
         totals.forEach((effect, value) -> lines.add(new AppliedEffect(effect, value)));
@@ -49,18 +58,18 @@ public final class AtlasTree {
         return AtlasTreeEffectGroups.of(allocatedNodes(state));
     }
 
-    private static List<AtlasTreeType> allocatedTypes(AtlasState state) {
-        return allocatedNodes(state).stream().map(AtlasTreeNode::type).toList();
-    }
-
     private static List<AtlasTreeNode> allocatedNodes(AtlasState state) {
         return allocatedNodes(state.atlasTreeNodeIds());
     }
 
     private static List<AtlasTreeNode> allocatedNodes(Set<String> storedNodeIds) {
+        return nodesWithRoots(AtlasTreeAllocation.of(AtlasTreeData.get().topology(), storedNodeIds).storedNodeIds());
+    }
+
+    private static List<AtlasTreeNode> nodesWithRoots(Collection<String> nodeIds) {
         AtlasTreeData data = AtlasTreeData.get();
         Set<String> allocatedIds = new LinkedHashSet<>(data.topology().rootIds());
-        allocatedIds.addAll(AtlasTreeAllocation.of(data.topology(), storedNodeIds).storedNodeIds());
+        allocatedIds.addAll(nodeIds);
         List<AtlasTreeNode> nodes = new ArrayList<>();
         for (String nodeId : allocatedIds) {
             AtlasTreeNode node = data.node(nodeId);

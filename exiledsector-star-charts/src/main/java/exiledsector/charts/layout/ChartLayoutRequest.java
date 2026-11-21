@@ -44,6 +44,10 @@ public record ChartLayoutRequest(long seed, StarSystemType systemType, int tier,
         return new ChartLayoutRequest(seed, systemType, tier, chartContext.withAnomalies(anomalyIds), recipe, chartSeed);
     }
 
+    public ChartLayoutRequest withEffects(List<ChartGenContext.AppliedEffect> effects) {
+        return new ChartLayoutRequest(seed, systemType, tier, chartContext.withEffects(effects), recipe, chartSeed);
+    }
+
     public ChartLayoutRequest withAnomalyData(String anomalyId, String data) {
         return new ChartLayoutRequest(seed, systemType, tier, chartContext.withAnomalyData(anomalyId, data), recipe, chartSeed);
     }

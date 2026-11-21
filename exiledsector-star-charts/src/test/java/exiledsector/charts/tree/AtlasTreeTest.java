@@ -66,6 +66,12 @@ class AtlasTreeTest {
     }
 
     @Test
+    void namedNodesGiveTheirChartLinesWithoutAPathOrPoints() {
+        assertEquals(List.of(new AppliedEffect(ChartModifier.CHART_ITEM_PERCENT, 20f)), AtlasTree.chartLinesOf(List.of("b", "d", "not_a_node")));
+        assertEquals(List.of(), AtlasTree.chartLinesOf(List.of()));
+    }
+
+    @Test
     void atlasLinesAreSummedApartFromTheChartLines() {
         assertEquals(AtlasEffects.NONE, AtlasTree.atlasEffects(state));
 
