@@ -85,6 +85,10 @@ public final class AtlasTreeAllocation {
         return connectedToRoots(remaining, node.getId()).containsAll(remaining);
     }
 
+    public boolean canRefundBranch(AtlasTreeNode node) {
+        return node != null && isAllocated(node.getId()) && node.getTier() != SkillTier.ROOT;
+    }
+
     public AtlasTreeAllocation with(Collection<AtlasTreeNode> added) {
         Set<String> allocated = new LinkedHashSet<>(allocatedIds);
         added.forEach(node -> allocated.add(node.getId()));
@@ -95,6 +99,13 @@ public final class AtlasTreeAllocation {
         Set<String> allocated = new LinkedHashSet<>(allocatedIds);
         allocated.remove(removed.getId());
         return new AtlasTreeAllocation(topology, allocated);
+    }
+
+    public AtlasTreeAllocation withoutBranch(AtlasTreeNode removed) {
+        Set<String> remaining = new LinkedHashSet<>(allocatedIds);
+        remaining.remove(removed.getId());
+        remaining.retainAll(connectedToRoots(remaining, removed.getId()));
+        return new AtlasTreeAllocation(topology, remaining);
     }
 
     private Set<String> connectedToRoots(Set<String> allocated, String excludedNodeId) {

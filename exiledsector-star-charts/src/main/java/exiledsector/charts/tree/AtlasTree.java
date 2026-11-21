@@ -94,6 +94,15 @@ public final class AtlasTree {
         return true;
     }
 
+    public static boolean refundBranch(AtlasState state, AtlasTreeNode node) {
+        AtlasTreeAllocation allocation = allocation(state);
+        if (!allocation.canRefundBranch(node)) {
+            return false;
+        }
+        state.setAtlasTreeNodeIds(allocation.withoutBranch(node).storedNodeIds());
+        return true;
+    }
+
     public static boolean refund(AtlasState state, AtlasTreeNode node) {
         AtlasTreeAllocation allocation = allocation(state);
         if (!allocation.canRefund(node)) {

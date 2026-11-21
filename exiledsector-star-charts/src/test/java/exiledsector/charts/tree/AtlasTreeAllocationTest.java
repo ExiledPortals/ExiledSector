@@ -60,6 +60,19 @@ class AtlasTreeAllocationTest {
     }
 
     @Test
+    void refundingABranchAlsoDropsEveryNodeThatLosesItsWayBackToTheRoot() {
+        AtlasTreeAllocation allocation = allocation("a", "b", "c", "d");
+
+        assertTrue(allocation.canRefundBranch(node("a")));
+        assertEquals(Set.of(), allocation.withoutBranch(node("a")).storedNodeIds());
+        assertEquals(Set.of("a", "b", "d"), allocation.withoutBranch(node("c")).storedNodeIds());
+        assertEquals(Set.of("a", "d"), allocation.withoutBranch(node("b")).storedNodeIds());
+        assertFalse(allocation.canRefundBranch(node("root")));
+        assertFalse(allocation.canRefundBranch(node("e")));
+        assertEquals(Set.of("a", "b", "c", "d"), allocation.storedNodeIds());
+    }
+
+    @Test
     void addingAndRemovingNodesLeavesTheOriginalUntouched() {
         AtlasTreeAllocation original = allocation("a");
 

@@ -359,7 +359,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         boolean changed;
         boolean allocating = !allocation.isAllocated(node.getId());
         if (!allocating) {
-            changed = AtlasTree.refund(state, node);
+            changed = wholePath ? AtlasTree.refundBranch(state, node) : AtlasTree.refund(state, node);
         } else if (wholePath) {
             changed = AtlasTree.allocatePath(state, node);
         } else {
