@@ -6,7 +6,6 @@ import exiledsector.ui.cargo.ItemAnimationSetting;
 import org.junit.jupiter.api.Test;
 
 import java.awt.Color;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,10 +33,19 @@ class OverchargeBreathTest {
     }
 
     @Test
-    void onlyOverchargedSpansBreathe() {
+    void onlyOverchargedHighlightsBreathe() {
         StyledText text = StyledText.styled("7%", Style.OVERCHARGED).append(StyledText.styled(" more hull points.", Style.IMMUTABLE));
+        VanillaText.Prepared prepared = VanillaText.prepare(text, SkillTreePanelStyle::standardHighlightColor);
 
-        assertArrayEquals(new int[]{0}, OverchargeBreath.overchargedSpans(text.spans()));
-        assertArrayEquals(new int[0], OverchargeBreath.overchargedSpans(List.of()));
+        assertArrayEquals(new int[]{0}, OverchargeBreath.overchargedHighlights(prepared.styles()));
+        assertArrayEquals(new int[0], OverchargeBreath.overchargedHighlights(new Style[0]));
+    }
+
+    @Test
+    void breathingFollowsTheHighlightsThatSurvivePreparation() {
+        StyledText text = StyledText.styled(" ", Style.IMMUTABLE).append(StyledText.styled("7%", Style.OVERCHARGED));
+        VanillaText.Prepared prepared = VanillaText.prepare(text, SkillTreePanelStyle::standardHighlightColor);
+
+        assertArrayEquals(new int[]{0}, OverchargeBreath.overchargedHighlights(prepared.styles()));
     }
 }

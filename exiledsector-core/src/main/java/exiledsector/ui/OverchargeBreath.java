@@ -7,12 +7,10 @@ import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import exiledsector.i18n.Style;
-import exiledsector.i18n.StyledText;
 import exiledsector.ui.cargo.IconFxClock;
 import exiledsector.ui.cargo.ItemAnimationSetting;
 
 import java.awt.Color;
-import java.util.List;
 import java.util.stream.IntStream;
 
 public final class OverchargeBreath extends BaseCustomUIPanelPlugin {
@@ -34,8 +32,8 @@ public final class OverchargeBreath extends BaseCustomUIPanelPlugin {
         this.breathingSpans = breathingSpans;
     }
 
-    static void attach(TooltipMakerAPI tooltip, LabelAPI label, StyledText text, Color[] colors) {
-        int[] breathingSpans = overchargedSpans(text.spans());
+    static void attach(TooltipMakerAPI tooltip, LabelAPI label, VanillaText.Prepared prepared) {
+        int[] breathingSpans = overchargedHighlights(prepared.styles());
         if (label == null || breathingSpans.length == 0 || ItemAnimationSetting.mode() == ItemAnimationSetting.Mode.OFF) {
             return;
         }
@@ -43,14 +41,14 @@ public final class OverchargeBreath extends BaseCustomUIPanelPlugin {
         if (labelComponent == null) {
             return;
         }
-        CustomPanelAPI anchor = Global.getSettings().createCustom(ANCHOR_SIZE, ANCHOR_SIZE, new OverchargeBreath(label, colors, breathingSpans));
+        CustomPanelAPI anchor = Global.getSettings().createCustom(ANCHOR_SIZE, ANCHOR_SIZE, new OverchargeBreath(label, prepared.colors(), breathingSpans));
         if (anchor != null) {
             tooltip.addCustomDoNotSetPosition(anchor).getPosition().rightOfTop(labelComponent, -ANCHOR_SIZE);
         }
     }
 
-    static int[] overchargedSpans(List<StyledText.Span> spans) {
-        return IntStream.range(0, spans.size()).filter(index -> spans.get(index).style() == Style.OVERCHARGED).toArray();
+    static int[] overchargedHighlights(Style[] highlightStyles) {
+        return IntStream.range(0, highlightStyles.length).filter(index -> highlightStyles[index] == Style.OVERCHARGED).toArray();
     }
 
     static float glow(float seconds, ItemAnimationSetting.Mode mode) {
