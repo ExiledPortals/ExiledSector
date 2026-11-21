@@ -425,7 +425,7 @@ final class AtlasMapCanvas {
         float radius = boardRadius * (float) Math.pow(focusRadius / boardRadius, level);
         float outer = sketch.outerRadius() * (float) Math.pow(focusOuter / sketch.outerRadius(), level);
         float alpha = lerp(previewAlpha(cell) * openness, 1f, level) * alphaMult;
-        preview.render(sketch, x, y, radius, outer, ringArt.elapsedSeconds(), alpha, focus.spotlight());
+        preview.render(sketch, x, y, radius, outer, ringArt.elapsedSeconds(), alpha, focus.spotlight(), level);
     }
 
     static float lerp(float from, float to, float level) {
