@@ -98,4 +98,15 @@ class OrbitalPlaneCameraTest {
         }
         assertEquals(1f, matrix[10]);
     }
+
+    @Test
+    void headingsFollowTheProjectedOrbit() {
+        OrbitalPlaneCamera untilted = aimed(0f);
+        OrbitalPlaneCamera tilted = aimed(1f);
+
+        assertEquals(37f, untilted.screenHeading(120f, -80f, 37f));
+        assertEquals(0f, tilted.screenHeading(0f, -REACH, 0f), 0.01f);
+        assertEquals(90f, tilted.screenHeading(0f, 0f, 90f), 0.01f);
+        assertTrue(tilted.screenHeading(REACH, 0f, 90f) > 90f, "a heading away from the camera leans towards the vanishing point");
+    }
 }

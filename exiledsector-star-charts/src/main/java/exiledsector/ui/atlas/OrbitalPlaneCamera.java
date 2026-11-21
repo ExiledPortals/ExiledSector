@@ -8,6 +8,7 @@ final class OrbitalPlaneCamera {
     static final float CAMERA_DISTANCE_REACHES = 3f;
     static final int MATRIX_VALUES = 16;
     private static final float MIN_PERSPECTIVE_DIVISOR = 0.1f;
+    private static final float HEADING_STEP = 1f;
 
     private float centreX;
     private float centreY;
@@ -47,6 +48,18 @@ final class OrbitalPlaneCamera {
 
     float screenY(float planeY) {
         return centreY + liftY + planeY * cosTilt * sizeAt(planeY);
+    }
+
+    float screenHeading(float planeX, float planeY, float planeHeadingDegrees) {
+        if (!tilted()) {
+            return planeHeadingDegrees;
+        }
+        double heading = Math.toRadians(planeHeadingDegrees);
+        float stepX = (float) Math.cos(heading) * HEADING_STEP;
+        float stepY = (float) Math.sin(heading) * HEADING_STEP;
+        float acrossX = screenX(planeX + stepX, planeY + stepY) - screenX(planeX - stepX, planeY - stepY);
+        float acrossY = screenY(planeY + stepY) - screenY(planeY - stepY);
+        return (float) Math.toDegrees(Math.atan2(acrossY, acrossX));
     }
 
     void writePlaneMatrix(float[] columnMajor) {

@@ -2,7 +2,7 @@ package exiledsector.ui.atlas;
 
 import exiledsector.charts.layout.sketch.ChartSystemSketch;
 import exiledsector.charts.layout.sketch.ChartSystemSketch.Body;
-import exiledsector.ui.belt.RingBeltRenderer;
+import exiledsector.ui.belt.BandArc;
 import exiledsector.ui.node.NodeMetrics;
 import exiledsector.ui.node.NodeRingArt;
 import org.junit.jupiter.api.Test;
@@ -65,10 +65,10 @@ class AtlasSystemPreviewTest {
 
     @Test
     void theBackArcsOfABandSortBehindItsCentreAndTheFrontArcsInFront() {
-        RingBeltRenderer.Arc[] arcs = AtlasSystemPreview.bandArcs(AtlasSystemPreview.BAND_DEPTH_ARCS);
+        BandArc[] arcs = BandArc.split(AtlasSystemPreview.BAND_DEPTH_ARCS);
 
         assertEquals(AtlasSystemPreview.BAND_DEPTH_ARCS, arcs.length);
-        for (RingBeltRenderer.Arc arc : arcs) {
+        for (BandArc arc : arcs) {
             float depth = AtlasSystemPreview.arcDepth(40f, 100f, arc);
             if (arc.middleDegrees() < 180f) {
                 assertTrue(depth > 40f, "arc " + arc.index());
@@ -76,7 +76,7 @@ class AtlasSystemPreviewTest {
                 assertTrue(depth < 40f, "arc " + arc.index());
             }
         }
-        assertEquals(40f + 100f * (float) Math.sin(Math.toRadians(135)), AtlasSystemPreview.arcDepth(40f, 100f, new RingBeltRenderer.Arc(1, 4)), 0.01f);
+        assertEquals(40f + 100f * (float) Math.sin(Math.toRadians(135)), AtlasSystemPreview.arcDepth(40f, 100f, new BandArc(1, 4)), 0.01f);
     }
 
     @Test

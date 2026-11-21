@@ -11,6 +11,7 @@ import exiledsector.charts.layout.sketch.ChartSystemSketch.Belt;
 import exiledsector.charts.layout.sketch.ChartSystemSketch.Body;
 import exiledsector.charts.layout.sketch.ChartSystemSketch.Moon;
 import exiledsector.charts.layout.sketch.ChartSystemSketch.PlanetRing;
+import exiledsector.ui.belt.BandArc;
 import exiledsector.ui.belt.RadialBand;
 import exiledsector.ui.belt.RingBeltRenderer;
 import exiledsector.ui.decoration.AtmosphereRing;
@@ -50,7 +51,7 @@ final class AtlasSystemPreview {
     }
 
     enum Layer {
-        BELT(5f), PHOTOSPHERE(4f), NEBULA(3f), STAR(2f), PLANET(1f), PLANET_RING(0f), MOON(-1f);
+        BELT(5f), PHOTOSPHERE(4f), NEBULA(3f), STAR(2f), PLANET(1f), PLANET_RING(0f), MOON(-1f), ANOMALY(-2f);
 
         final float untiltedDepth;
 
@@ -104,14 +105,13 @@ final class AtlasSystemPreview {
     static final String ICE_RINGS = "graphics/planets/rings_ice0.png";
     static final String SPECIAL_RINGS = "graphics/planets/rings_special0.png";
     private static final UnitCircle GLOW_CIRCLE = UnitCircle.of(64);
-    private static final RingBeltRenderer.Arc[] WHOLE_BAND = {RingBeltRenderer.WHOLE_RING};
-    private static final RingBeltRenderer.Arc[] BAND_ARCS = bandArcs(BAND_DEPTH_ARCS);
+    private static final BandArc[] WHOLE_BAND = {BandArc.WHOLE};
+    private static final BandArc[] BAND_ARCS = BandArc.split(BAND_DEPTH_ARCS);
 
     private final SpriteCache spriteCache = new SpriteCache(AtlasSystemPreview.class);
     private final UnitSphere unitSphere = new UnitSphere();
     private final UnitSphere detailedSphere = new UnitSphere(DETAILED_SPHERE_DETAIL);
     private final AtlasSystemArt art = new AtlasSystemArt();
-    private final AtlasSystemArt.Frame frame = new AtlasSystemArt.Frame();
     private final Map<String, StarAurora> auroras = new HashMap<>();
     private final Vector2f bandCentre = new Vector2f();
     private final CategorySprite auroraTexture = new CategorySprite(StarAurora.TEXTURE_CATEGORY, StarAurora.TEXTURE_ID);
@@ -119,11 +119,12 @@ final class AtlasSystemPreview {
     private final OrbitalPlaneCamera camera = new OrbitalPlaneCamera();
     private final float[] planeMatrixValues = new float[OrbitalPlaneCamera.MATRIX_VALUES];
     private final FloatBuffer planeMatrix = BufferUtils.createFloatBuffer(OrbitalPlaneCamera.MATRIX_VALUES);
+    private final AtlasSystemArt.Frame frame = new AtlasSystemArt.Frame(camera, planeMatrix);
     private final DepthOrder<Layer> drawOrder = new DepthOrder<>();
     private final Spots stars = new Spots();
     private final Spots planets = new Spots();
     private final Spots moons = new Spots();
-    private RingBeltRenderer.Arc[] bandArcs = WHOLE_BAND;
+    private BandArc[] bandArcs = WHOLE_BAND;
     private float centreScreenX;
     private float centreScreenY;
     private float orbitX;
@@ -159,9 +160,6 @@ final class AtlasSystemPreview {
         queueScene(prepared, fit, bodyAlpha);
         for (int rank = 0; rank < drawOrder.size(); rank++) {
             drawItem(prepared, drawOrder.kind(rank), drawOrder.index(rank), drawOrder.part(rank), fit, alpha, bodyAlpha, spotlight);
-        }
-        if (bodyAlpha > 0f) {
-            art.renderAnomalies(prepared.art(), frame);
         }
     }
 
@@ -219,6 +217,9 @@ final class AtlasSystemPreview {
         frame.starX = centreScreenX;
         frame.starY = centreScreenY;
         frame.starPixels = fit.radius() * MIN_STAR_SHARE;
+        frame.starPlaneX = 0f;
+        frame.starPlaneY = 0f;
+        frame.starPlanePixels = fit.radius() * MIN_STAR_SHARE;
         frame.starColour = FALLBACK_STAR_COLOUR;
         frame.elapsedSeconds = fit.elapsedSeconds();
         frame.alpha = alpha;
@@ -232,15 +233,7 @@ final class AtlasSystemPreview {
         }
     }
 
-    static RingBeltRenderer.Arc[] bandArcs(int count) {
-        RingBeltRenderer.Arc[] arcs = new RingBeltRenderer.Arc[count];
-        for (int index = 0; index < count; index++) {
-            arcs[index] = new RingBeltRenderer.Arc(index, count);
-        }
-        return arcs;
-    }
-
-    static float arcDepth(float centreDepth, float bandRadius, RingBeltRenderer.Arc arc) {
+    static float arcDepth(float centreDepth, float bandRadius, BandArc arc) {
         return centreDepth + bandRadius * (float) Math.sin(Math.toRadians(arc.middleDegrees()));
     }
 
@@ -300,6 +293,9 @@ final class AtlasSystemPreview {
                 frame.starX = stars.screenX[0];
                 frame.starY = stars.screenY[0];
                 frame.starPixels = stars.screenPixels[0];
+                frame.starPlaneX = stars.planeX[0];
+                frame.starPlaneY = stars.planeY[0];
+                frame.starPlanePixels = stars.planePixels[0];
                 frame.starColour = corona(spec);
             }
         }
@@ -330,6 +326,9 @@ final class AtlasSystemPreview {
             frame.planetX[index] = planets.screenX[index];
             frame.planetY[index] = planets.screenY[index];
             frame.planetPixels[index] = planets.screenPixels[index];
+            frame.planetPlaneX[index] = planets.planeX[index];
+            frame.planetPlaneY[index] = planets.planeY[index];
+            frame.planetPlanePixels[index] = planets.planePixels[index];
         }
     }
 
@@ -391,6 +390,7 @@ final class AtlasSystemPreview {
                 drawOrder.add(Layer.MOON, index, 0, depth(Layer.MOON, moons.planeY[index]));
             }
         }
+        art.queueAnomalies(prepared.art(), frame, drawOrder);
         drawOrder.sortBackToFront();
     }
 
@@ -412,18 +412,19 @@ final class AtlasSystemPreview {
             case PLANET_RING -> drawPlanetRing(sketch, sketch.planetRings().get(index), bandArcs[part], fit, bodyAlpha);
             case MOON -> drawWorld(sketch.moons().get(index).body(), moons.screenX[index], moons.screenY[index], moons.screenPixels[index], fit,
                     bodyAlpha);
+            case ANOMALY -> art.renderPiece(prepared.art(), index, part, frame);
             default -> {
             }
         }
     }
 
-    private void drawBelt(Belt belt, int index, RingBeltRenderer.Arc arc, Fit fit, float alpha) {
+    private void drawBelt(Belt belt, int index, BandArc arc, Fit fit, float alpha) {
         float inner = fit.scaled(belt.orbitRadius() - belt.width() / 2f);
         float outer = Math.max(inner + MIN_BAND_PIXELS, fit.scaled(belt.orbitRadius() + belt.width() / 2f));
         drawBand(belt, belt.variant() + index, 0f, 0f, inner, outer, arc, fit, alpha);
     }
 
-    private void drawPlanetRing(ChartSystemSketch sketch, PlanetRing ring, RingBeltRenderer.Arc arc, Fit fit, float alpha) {
+    private void drawPlanetRing(ChartSystemSketch sketch, PlanetRing ring, BandArc arc, Fit fit, float alpha) {
         int parent = ring.planet();
         Belt band = ring.belt();
         float parentRadius = sketch.planets().get(parent).radius();
@@ -433,7 +434,7 @@ final class AtlasSystemPreview {
         drawBand(band, band.variant(), planets.planeX[parent], planets.planeY[parent], inner, outer, arc, fit, alpha);
     }
 
-    private void drawBand(Belt band, int variant, float planeCentreX, float planeCentreY, float inner, float outer, RingBeltRenderer.Arc arc, Fit fit,
+    private void drawBand(Belt band, int variant, float planeCentreX, float planeCentreY, float inner, float outer, BandArc arc, Fit fit,
                           float alpha) {
         SpriteAPI texture = spriteCache.texture(ringTexture(band.typeId()));
         if (texture == null || texture.getWidth() <= 0f) {
