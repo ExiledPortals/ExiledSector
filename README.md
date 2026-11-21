@@ -183,7 +183,7 @@ It should be safe to add to an existing save.
 
 Nodes that copy a vanilla hullmod also put the real hullmod on the ship as a phantom. It costs no OP and does nothing by itself, but other mods that look for that hullmod will find it, so most mods should work with the tree without needing special support.
 
-I have done specific compatibility checks for multiple mods at this stage, but with the ever-changing nature of the mod scene there may be incompatibilities. If one doesn't, `starsector.log` will hopefully say so at startup, or by crashing you to desktop. Please send me that log if it does.
+I have done specific compatibility checks for multiple mods at this stage, but with the ever-changing nature of the mod scene there may be incompatibilities. If you hit one, `starsector.log` will hopefully say so at startup, or by crashing you to desktop. Please send me that log if it does.
 
 Some modded weapons break (often hilariously) when their beams get split, their shots chain or their shells pierce. Those weapons are listed in:
 
@@ -288,7 +288,7 @@ Both are meant for the late game. Refit Schematics and unique hull items start d
 <details>
 <summary><b>How do Star Charts get harder?</b></summary>
 
-Each tier has more fleets, bigger fleets, better ships, more and better officers, and ships further along their skill trees. Every chart also has a Star Chart Boss, either a large fleet or a station, which gets stronger each tier. Chart modifiers can make it harder again, by adding fleets, officers, officer levels or fleet quality, or by making the boss bigger or giving you two of them. Higher tiers drop more loot to make up for it, including a small chance of colony items from tier 6.
+Each tier has more fleets, bigger fleets, better ships, more and better officers, and ships further along their skill trees. Every chart also has a Star Chart Boss, either a large fleet or a station, which gets stronger each tier. Chart modifiers can make it harder again, by adding fleets, officers, elite skills or fleet quality, or by making the boss bigger or giving you two of them. Higher tiers drop more loot to make up for it, including a small chance of colony items from tier 6.
 
 Some example tiers (the numbers are still being balanced):
 
@@ -298,7 +298,8 @@ Some example tiers (the numbers are still being balanced):
 | Number of fleets | 4–6 | 6–8 | 10–12 | 13–14 |
 | Fleet quality | 60 | 90 | 150 | 200 |
 | Ship skill tree level | 26–29 | 31–34 | 40–43 | 47–50 |
-| Officer level / extra officers | +0 / +0 | +2 / +2 | +6 / +6 | +10 / +10 |
+| Extra officers (each fleet) | +0 | +2 | +6 | +10 |
+| Extra elite skills (each officer) | +0 | +2 | +6 | +10 |
 | Boss fleet size | 270 | 450 | 990 | 1650 |
 | Colony item chance | 0 | 0 | 0.3% | 0.8% |
 
@@ -306,7 +307,7 @@ Anomalies add hazards and fleets of their own, like holdouts, convoys, depots an
 
 Atlas Officers inhabit various systems in the atlas. These slippery veterans gain "scars" when defeated granting them a bonus based on the way they lost the fight, which make the next time you encounter them more difficult.
 
-From tier 11, chart modifiers can also give enemy ships notable nodes or cripple your own fleet, for example by banning a hull size, lowering your fleets armor by 90% or turning off ship systems for your fleet only.
+From tier 11, chart modifiers can also give enemy ships notable nodes or cripple your own fleet, for example by banning a hull size, lowering your fleet's armor by 90% or turning off ship systems for your fleet only.
 
 Battles outside charts drop charts up to tier 6, based on the strongest NPC ship you beat. To go higher you have to work your way up from inside the charts. Killing a chart's boss drops another chart of the same tier or up to two higher, and chart fleets and salvage drop charts from two tiers below to one above.
 

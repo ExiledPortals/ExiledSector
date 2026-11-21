@@ -113,21 +113,7 @@ It should be safe to add to an existing save.
 
 Nodes that copy a vanilla hullmod also put the real hullmod on the ship as a phantom. It costs no OP and does nothing by itself, but other mods that look for that hullmod will find it, so most mods should work with the tree without needing special support.
 
-The mods below have specific compatibility work. The version listed is the last one I tested. Newer versions usually work, and if one doesn't, [tt]starsector.log[/tt] will say so at startup and list what Exiled Sector couldn't find.
-
-[table]
-[tr][td][b]Mod[/b][/td][td][b]Tested version[/b][/td][td][b]What Exiled Sector does with it[/b][/td][/tr]
-[tr][td][url=https://fractalsoftworks.com/forum/index.php?topic=30407.0]Second-in-Command[/url][/td][td]2.1.1[/td][td]Its skills recognise the hullmods your nodes replace, and Reconfiguration removes the Converted Hangar penalties.[/td][/tr]
-[tr][td]Lost Sector[/td][td]0.6.2d, 1.0.b[/td][td]REDACTED[/td][/tr]
-[tr][td][url=https://fractalsoftworks.com/forum/index.php?topic=25868.0]MagicLib[/url][/td][td]1.5.6[/td][td]Required. If a hullmod tries to remove one of your nodes' hullmods through MagicLib, that hullmod gets removed instead.[/td][/tr]
-[tr][td]Exotica Technologies[/td][td]1.8.7[/td][td]The Skill Tree button moves down one slot on the refit screen so it doesn't cover the Exotica button.[/td][/tr]
-[tr][td]Random Assortment of Things[/td][td]3.3.1[/td][td]REDACTED[/td][/tr]
-[tr][td]Nightcross Armory[/td][td]2.1.7[/td][td]REDACTED[/td][/tr]
-[tr][td]Nexerelin[/td][td]0.12.2d[/td][td]The faction fleets that fly around the skill tree also visit the volumes of factions they're allied with.[/td][/tr]
-[tr][td][url=https://fractalsoftworks.com/forum/index.php?topic=10982.0]GraphicsLib[/url][/td][td]1.12.2[/td][td]Optional. With its lighting and distortion turned on, a lot of the combat effects get shockwaves, glows, lights and distortion. You can turn almost all of it off in the Exiled Sector settings.[/td][/tr]
-[tr][td]Secrets of the Frontier[/td][td]0.15.1[/td][td]Its scripted story fights don't drop any salvage, so they don't drop Exiled Sector loot either.[/td][/tr]
-[tr][td]DIY Planets[/td][td]1.0.30[/td][td]Its bar quests won't put their stations inside a Star Chart, where they'd be deleted when the chart closes.[/td][/tr]
-[/table]
+I have done specific compatibility checks for multiple mods at this stage, but with the ever-changing nature of the mod scene there may be incompatibilities. If you hit one, [tt]starsector.log[/tt] will hopefully say so at startup, or by crashing you to desktop. Please send me that log if it does.
 
 Some modded weapons break (often hilariously) when their beams get split, their shots chain or their shells pierce. Those weapons are listed in:
 [list]
@@ -137,7 +123,7 @@ Some modded weapons break (often hilariously) when their beams get split, their 
 [/list]
 All three files merge across mods, so other mods can add their own weapons to them (and you can take weapons back out, at your own risk).
 
-Many nodes put a vanilla hull mod on the ship, such as Shield Conversion - Omni or Integrated Targeting Unit. If a hull mod in your mod removes or blocks vanilla hull mods, add it to [tt]data/config/exiledSector/hullmod_conflicts.csv[/tt] in your mod. Put your hull mod id in the [tt]hullmod[/tt] column, the vanilla ids it conflicts with in [tt]conflicts[/tt] (separated by [tt];[/tt]), and whatever you like in [tt]notes[/tt]. Ships with your hull mod will then never get those nodes, NPC ships included, and the node tooltips will show the conflict. The file merges across mods by the [tt]hullmod[/tt] column, so your row replaces any row Exiled Sector has for the same hull mod.
+For mod authors: many nodes put a vanilla hull mod on the ship, such as Shield Conversion - Omni or Integrated Targeting Unit. If a hull mod in your mod removes or blocks vanilla hull mods, add it to [tt]data/config/exiledSector/hullmod_conflicts.csv[/tt] in your mod. Put your hull mod id in the [tt]hullmod[/tt] column, the vanilla ids it conflicts with in [tt]conflicts[/tt] (separated by [tt];[/tt]), and whatever you like in [tt]notes[/tt]. Ships with your hull mod will then never get those nodes, NPC ships included, and the node tooltips will show the conflict. The file merges across mods by the [tt]hullmod[/tt] column, so your row replaces any row Exiled Sector has for the same hull mod.
 [code]hullmod,conflicts,notes
 my_frontal_emitter,frontemitter; adaptiveshields; extendedshieldemitter,My Mod[/code]
 [/spoiler]
@@ -146,10 +132,6 @@ my_frontal_emitter,frontemitter; adaptiveshields; extendedshieldemitter,My Mod[/
 
 [b]How do I earn and spend points?[/b]
 [spoiler]
-Open a ship's refit screen and click the [b]Skill Tree[/b] button under the hullmods, or press [b]K[/b]. If you prefer the old LunaLib Additional Options entry, turn the button off in LunaLib settings.
-
-The first time you open a ship's tree you pick its starting point: Low Tech, Midline or High Tech.
-
 Nodes initially cost 1/2/3/5 unused ordnance points based on hull size (by default).
 
 After each battle, every ship in your fleet gets XP based on the deployment points of the enemy ships destroyed or disabled, whether it was deployed or not. Harder fights give more XP. If you lose, you get half.
@@ -159,8 +141,6 @@ Each level makes the last node you allocated free and refunds any spent OP. If a
 New ships don't start from zero. A ship's level is never lower than your character level, so a ship you buy or recover at level 12 starts at level 12. Ships below your highest-level ship also get 10% more XP for each level they're behind, up to 4×. You can change both of these in LunaLib settings.
 
 Ctrl-Shift-click an allocated node to remove it and every node that depends on it. Doing this on your starting node clears the whole tree and lets you pick a new start.
-
-Ctrl-Shift-click an unallocated node to take the shortest path to it. The path goes through wormholes if that's shorter, and stops if you run out of OP or nodes. Multi-choice nodes along the way use your last choice, or what you picked on an earlier node of the same kind, or a random option if there's neither. If the node can only be reached through a wormhole, a spare Wormhole Anchor for it goes into the nearest Subroutine Socket, and the socket is allocated first if needed.
 [/spoiler]
 
 [b]Do I have to build a tree for every ship?[/b]
@@ -222,37 +202,34 @@ Both are meant for the late game. Refit Schematics and unique hull items start d
 
 [b]How do Star Charts get harder?[/b]
 [spoiler]
-Each tier has more fleets, bigger fleets, better ships, more and better officers, and ships further along their skill trees. Every chart also has a Star Chart Boss, either a large fleet or a station, which gets stronger each tier. Chart modifiers can make it harder again, by adding fleet size, quality or strength or by making the boss bigger. Higher tiers drop more loot to make up for it, including a small chance of colony items from tier 6.
+Each tier has more fleets, bigger fleets, better ships, more and better officers, and ships further along their skill trees. Every chart also has a Star Chart Boss, either a large fleet or a station, which gets stronger each tier. Chart modifiers can make it harder again, by adding fleets, officers, elite skills or fleet quality, or by making the boss bigger or giving you two of them. Higher tiers drop more loot to make up for it, including a small chance of colony items from tier 6.
 
 Some example tiers (the numbers are still being balanced):
 
 [table]
 [tr][td][/td][td][b]Tier 1[/b][/td][td][b]Tier 4[/b][/td][td][b]Tier 10[/b][/td][td][b]Tier 15[/b][/td][/tr]
-[tr][td]Fleet size (each fleet)[/td][td]200[/td][td]320[/td][td]670[/td][td]1100[/td][/tr]
+[tr][td]Fleet size (each fleet)[/td][td]75[/td][td]120[/td][td]255[/td][td]413[/td][/tr]
 [tr][td]Number of fleets[/td][td]4–6[/td][td]6–8[/td][td]10–12[/td][td]13–14[/td][/tr]
 [tr][td]Fleet quality[/td][td]60[/td][td]90[/td][td]150[/td][td]200[/td][/tr]
 [tr][td]Ship skill tree level[/td][td]26–29[/td][td]31–34[/td][td]40–43[/td][td]47–50[/td][/tr]
-[tr][td]Officer level / extra officers[/td][td]+0 / +0[/td][td]+2 / +2[/td][td]+6 / +6[/td][td]+10 / +10[/td][/tr]
-[tr][td]Boss fleet size[/td][td]720[/td][td]1200[/td][td]2640[/td][td]4400[/td][/tr]
+[tr][td]Extra officers (each fleet)[/td][td]+0[/td][td]+2[/td][td]+6[/td][td]+10[/td][/tr]
+[tr][td]Extra elite skills (each officer)[/td][td]+0[/td][td]+2[/td][td]+6[/td][td]+10[/td][/tr]
+[tr][td]Boss fleet size[/td][td]270[/td][td]450[/td][td]990[/td][td]1650[/td][/tr]
 [tr][td]Colony item chance[/td][td]0[/td][td]0[/td][td]0.3%[/td][td]0.8%[/td][/tr]
 [/table]
 
-Battles outside charts drop charts up to tier 6, based on the strongest NPC ship you beat. To go higher you have to work your way up from inside the charts. Killing a chart's boss drops another chart, often one tier higher, and chart fleets and salvage drop charts of the same tier.
-[/spoiler]
+Anomalies add hazards and fleets of their own, like holdouts, convoys, depots and a Remnant Nexus, and those fleets grow with the tier too.
 
-[b]Does it work with faction mods?[/b]
-[spoiler]
-Most of it should just work. Nodes that copy a hullmod put the real hullmod on the ship (see Compatibility), so mods that check for it, like Second-in-Command, still see it. Nexerelin fleets get skill trees like any other NPC fleet. Random Assortment of Things, Nightcross Armory, Navarchy of Tania and LOST_SECTOR each have their own volume on the tree, unlocked by playing their content. Exiled Sector loot also shows up in other mods' loot pools, such as Industrial.evolution and RAT's Abyss. Mods I haven't tested will probably work, but if one doesn't, please report it.
-[/spoiler]
+Atlas Officers inhabit various systems in the atlas. These slippery veterans gain "scars" when defeated granting them a bonus based on the way they lost the fight, which make the next time you encounter them more difficult.
 
-[b]Can I add my favourite faction to the tree?[/b]
-[spoiler]
-Not easily yet. Each volume needs a spot on the tree, circular icons, descriptions, new effect code and a wormhole anchor, and the existing ones have custom visuals I'd like to keep. There's an editor in [tt]tools/editor[/tt], but the format will change before 1.0. Suggestions and pull requests are welcome in the meantime, and I'll add more faction volumes as mod authors give permission.
+From tier 11, chart modifiers can also give enemy ships notable nodes or cripple your own fleet, for example by banning a hull size, lowering your fleet's armor by 90% or turning off ship systems for your fleet only.
+
+Battles outside charts drop charts up to tier 6, based on the strongest NPC ship you beat. To go higher you have to work your way up from inside the charts. Killing a chart's boss drops another chart of the same tier or up to two higher, and chart fleets and salvage drop charts from two tiers below to one above.
 [/spoiler]
 
 [b]Can I update mid-run?[/b]
 [spoiler]
-Every GitHub release ends with "Save compatible." or "Not save compatible." When you update, LunaLib keeps your old values for any settings I've rebalanced, so reset the Exiled Sector settings to default in LunaLib to get the new ones. If you're not sure, load your save, have a look around and quit without saving.
+Every GitHub release says "Save compatible." or "Not save compatible." When you update, LunaLib keeps your old values for any settings I've rebalanced, so reset the Exiled Sector settings to default in LunaLib to get the new ones. If you're not sure, load your save, have a look around and quit without saving.
 [/spoiler]
 
 [b]How does this fit into the lore?[/b]
@@ -285,11 +262,11 @@ The Chinese translation is a first draft written by an LLM, so if you speak Chin
 [size=14pt][b]Disclaimer[/b][/size]
 
 [spoiler]
-This mod is in early development.
+This mod is in development.
 
 It is my first mod and my first foray into OpenGL/game development, and is by no means feature complete or bug free.
 
-AI usage: I am a Java software engineer working in the regulatory sector where AI use is heavily restricted at this stage. I started this project as a way to educate myself on the capabilities of LLMs for clean, maintainable code, so that when people asked my opinion I can definitively state that LLMs are not the godsend Sam Altman claims. I still think giving inexperienced devs access to an LLM is like giving an 8 year old a powerdrill. Claude's Opus 5.5 was used for this project.
+AI usage: I am a Java software engineer working in the regulatory sector where AI use is heavily restricted at this stage. I started this project as a way to educate myself on the capabilities of LLMs for clean, maintainable code, so that when people asked my opinion I can give an educated one. I still think giving inexperienced devs access to an LLM is like giving an 8 year old a powerdrill. Claude's Opus 5.5 was used for this project.
 
 The art in the mod comes from starsector-core, royalty-free sources and other mods whose authors kindly gave permission (see Credits).
 
