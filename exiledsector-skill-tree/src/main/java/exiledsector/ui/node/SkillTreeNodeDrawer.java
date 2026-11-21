@@ -23,6 +23,7 @@ import exiledsector.ui.UiFonts;
 import exiledsector.ui.decoration.SensorGhostRenderer;
 import exiledsector.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;
+import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -320,6 +321,15 @@ public final class SkillTreeNodeDrawer {
         } else {
             tooltipRenderer.endHover();
         }
+    }
+
+    public Vector2f screenCentre(TreeLayers layers, SkillNode node) {
+        if (!layers.isInteractive(node) || session.isConcealed(node)) {
+            return null;
+        }
+        StartingRootChoice rootChoice = session.rootChoice();
+        TreeViewport viewport = layers.viewportFor(node);
+        return new Vector2f(viewport.screenX(rootChoice.offsetX(node)), viewport.screenY(rootChoice.offsetY(node)));
     }
 
     public SkillNode findNodeAt(TreeLayers layers, float screenX, float screenY) {

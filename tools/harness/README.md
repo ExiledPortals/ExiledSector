@@ -52,7 +52,11 @@ A scenario with a `"newGame"` object starts a new game instead of loading a save
 | `showcase` | `hideUI` (false), `paused` (false) | always; hides the version and FPS readout and, in the campaign, clears the message log, unpauses unless `paused` is set, and hides the campaign UI when `hideUI` is set |
 | `openAtlas`, `openAtlasTree` | | the screen opened over the campaign |
 | `openSkillTree` | `ship`: `flagship` (default), a fleet index, a hull id or a ship name | the refit screen opened on that ship and its skill tree is showing |
+| `openRefit` | `ship`, as for `openSkillTree` | the refit screen opened on that ship, without opening its skill tree |
 | `closeScreen` | | the top Exiled Sector screen closed |
+| `moveMouse` | `to`: `centre`, `skillTreeButton`, `node:<node id or type>` or a screen point `"x,y"` (UI coordinates from the bottom left); `seconds` (0) | the real cursor glided there over that time, easing in and out, and stopped on it; the first move calibrates the cursor against the game window by moving it twice |
+| `click` | | the left button was pressed and released where the cursor is |
+| `scroll` | `direction`: `out` (default) or `in`, `notches` (1), `seconds` (0) | that many wheel notches were sent, spread over that time |
 | `focusAtlasSystem` | `system` (0), `anomalies`, `catalysts` | the nth system nearest the atlas origin (no specials) was reached, the anomalies were inserted into it regardless of its star, the player got one of each catalyst adding a `catalysts` anomaly and switched it on, and the atlas opened focused on it; the cell and each insertion's verdict go under `data.focusedSystem` |
 | `zoom` | `to` | the top screen's camera jumped to that zoom, keeping its centre |
 | `screenshot` | `name` | the frame was saved as `screenshots\<name>.png` |
@@ -114,6 +118,8 @@ Before the first case the harness records a baseline: the player fleet's locatio
 The whole run lands in `recording.mp4` in the run folder. Every `startClip` and `endClip` pair is also cut into `clips\NN_<name>.mp4` with half a second of padding on each side, so a scenario can stage several shots in one launch. Clip times come from the wall clock, matched to the recording's length, so they stay within a frame or two.
 
 Start a take with a `showcase` step so the shot has no version readout, Version Checker messages or pause banner. Clips play at a constant frame rate.
+
+The mouse steps drive the real cursor, so leave the mouse alone while such a take runs. A scenario with a `moveMouse` step records the cursor; others leave it out. `examples/record-skill-tree.json` films `art/description/skill_tree.gif`: it clicks the Skill Tree button on a fresh ship, picks a starting root and zooms out to the volumes. Put a short `wait` after the last `endClip`, since the clip's padding would otherwise catch the game closing. Turn a clip into a GIF with `tools\make-gif.ps1`.
 
 ```powershell
 .\tools\harness\run-harness.ps1 -Scenario tools\harness\examples\record-atlas.json -Record

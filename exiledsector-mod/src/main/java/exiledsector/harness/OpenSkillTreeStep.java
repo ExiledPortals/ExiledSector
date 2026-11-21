@@ -17,17 +17,23 @@ final class OpenSkillTreeStep implements HarnessStep {
     static final String FLAGSHIP = "flagship";
 
     private final String shipSelector;
+    private final boolean openTree;
     private FleetMemberAPI member;
     private boolean refitRequested;
     private boolean panelRequested;
 
     OpenSkillTreeStep(String shipSelector) {
+        this(shipSelector, true);
+    }
+
+    OpenSkillTreeStep(String shipSelector, boolean openTree) {
         this.shipSelector = shipSelector;
+        this.openTree = openTree;
     }
 
     @Override
     public String name() {
-        return "openSkillTree " + shipSelector;
+        return (openTree ? "openSkillTree " : "openRefit ") + shipSelector;
     }
 
     @Override
@@ -51,6 +57,11 @@ final class OpenSkillTreeStep implements HarnessStep {
             campaignUi.showCoreUITab(CoreUITabId.REFIT, member);
             refitRequested = true;
             return StepOutcome.RUNNING;
+        }
+        if (!openTree) {
+            return Global.getSector().getCampaignUI().getCurrentCoreTab() == CoreUITabId.REFIT
+                    ? StepOutcome.passed("the refit screen opened on " + shipName())
+                    : new StepOutcome(false, false, "the refit screen never opened on " + shipName());
         }
         if (!panelRequested) {
             panelRequested = SkillTreeRefitButton.openPanel(null);

@@ -42,6 +42,7 @@ import exiledsector.ui.refit.RefitButtonColumn;
 import exiledsector.ui.util.GLDraw;
 import lunalib.lunaRefit.BaseRefitButton;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
 import java.util.List;
@@ -132,6 +133,10 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin implements Zo
 
     public TreeAllocationSession treeSession() {
         return treeSession;
+    }
+
+    public Vector2f nodeScreenCentre(SkillNode node) {
+        return nodeDrawer.screenCentre(layers(), node);
     }
 
     @Override

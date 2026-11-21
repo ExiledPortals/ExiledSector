@@ -128,6 +128,45 @@ class HarnessScenarioTest {
     }
 
     @Test
+    void mouseStepsParseTheirTargetsAndDefaults() throws JSONException {
+        HarnessScenario scenario = HarnessScenario.parse("""
+                {"steps": [
+                  {"step": "openRefit", "ship": "ISS Tereshkova III"},
+                  {"step": "moveMouse", "to": "skillTreeButton", "seconds": 0.8},
+                  {"step": "moveMouse", "to": "node:root_high_tech"},
+                  {"step": "moveMouse", "to": "1250, 420.5", "seconds": 1},
+                  {"step": "click"},
+                  {"step": "scroll", "notches": 12, "seconds": 3},
+                  {"step": "scroll", "direction": "in"}
+                ]}""");
+
+        List<String> names = scenario.steps().stream().map(HarnessStep::name).toList();
+        assertEquals(List.of("openRefit ISS Tereshkova III", "moveMouse to skillTreeButton over 0.8 s", "moveMouse to node:root_high_tech over 0.0 s",
+                "moveMouse to 1250, 420.5 over 1.0 s", "click", "scroll out 12 notches over 3.0 s", "scroll in 1 notches over 0.0 s"), names);
+    }
+
+    @Test
+    void mouseStepsRejectUnknownTargetsAndDirections() {
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"moveMouse\", \"to\": \"somewhere\"}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"moveMouse\", \"to\": \"12,ab\"}]}"));
+        assertThrows(IllegalArgumentException.class,
+                () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"moveMouse\", \"to\": \"centre\", \"seconds\": -1}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"scroll\", \"direction\": \"up\"}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"scroll\", \"notches\": 0}]}"));
+    }
+
+    @Test
+    void theMouseCalibrationMapsRobotPointsOntoWindowPixels() {
+        HarnessMouse.Calibration calibration = HarnessMouse.Calibration.between(1000, 600, 300f, 200f, 1200, 800, 600f, 500f);
+
+        assertEquals(1.5f, calibration.scaleX());
+        assertEquals(1000, calibration.robotX(300f));
+        assertEquals(1100, calibration.robotX(450f));
+        assertEquals(700, calibration.robotY(350f));
+        assertNull(HarnessMouse.Calibration.between(1000, 600, 300f, 200f, 1200, 800, 300f, 500f));
+    }
+
+    @Test
     void aNewGameDefaultsToTheVanillaDevStartAndASaveScenarioHasNone() throws JSONException {
         HarnessScenario newGame = HarnessScenario.parse("{\"newGame\": {}, \"steps\": []}");
         HarnessScenario loadSave = HarnessScenario.parse("{\"steps\": []}");

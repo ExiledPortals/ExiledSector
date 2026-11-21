@@ -79,7 +79,7 @@ function Start-FfmpegProcess([string]$Ffmpeg, [string[]]$Arguments) {
 }
 
 function Start-HarnessRecording {
-    param([System.Diagnostics.Process]$GameProcess, [string]$Resolution, [string]$RunDir, [int]$Fps, [int]$WindowTimeoutSeconds = 180)
+    param([System.Diagnostics.Process]$GameProcess, [string]$Resolution, [string]$RunDir, [int]$Fps, [switch]$ShowCursor, [int]$WindowTimeoutSeconds = 180)
 
     [HarnessGameWindow]::SetProcessDPIAware() | Out-Null
     $window = Wait-GameWindow $GameProcess $WindowTimeoutSeconds
@@ -93,7 +93,7 @@ function Start-HarnessRecording {
     }
     $ffmpeg = Find-Ffmpeg
     $file = Join-Path $RunDir "recording.mkv"
-    $grab = "ddagrab=output_idx=0:framerate=${Fps}:offset_x=$($area.X):offset_y=$($area.Y):video_size=$($area.Width)x$($area.Height):draw_mouse=0"
+    $grab = "ddagrab=output_idx=0:framerate=${Fps}:offset_x=$($area.X):offset_y=$($area.Y):video_size=$($area.Width)x$($area.Height):draw_mouse=$([int][bool]$ShowCursor)"
     $encoders = @(
         @("-c:v", "h264_nvenc", "-preset", "p5", "-cq", "18"),
         @("-vf", "hwdownload,format=bgra", "-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-pix_fmt", "yuv420p")

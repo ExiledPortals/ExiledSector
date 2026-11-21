@@ -14,9 +14,9 @@ import java.util.function.Predicate;
 
 record HarnessScenario(List<HarnessStep> steps, boolean quitWhenDone, NewGameSetup newGame, List<String> skippedCases) {
 
-    static final String KNOWN_STEPS = "wait, mark, startClip, endClip, showcase, openAtlas, openAtlasTree, openSkillTree, closeScreen, zoom, focusAtlasSystem, screenshot, expectScreen, "
+    static final String KNOWN_STEPS = "wait, mark, startClip, endClip, showcase, openAtlas, openAtlasTree, openSkillTree, openRefit, closeScreen, zoom, focusAtlasSystem, screenshot, expectScreen, "
             + "expectNoErrors, ignoreErrorsSoFar, expectLog, simulate, spawn, autopilot, speed, recordStats, recordDamage, endSimulation, "
-            + "addShip, levelShip, buildTree, clearFleets, readyFleet, saveGame, addCargo, foundColony, openChart, lockPhasePlanet, defeatChartBoss, leaveChart, passDays, expectPhasePull, "
+            + "moveMouse, click, scroll, addShip, levelShip, buildTree, clearFleets, readyFleet, saveGame, addCargo, foundColony, openChart, lockPhasePlanet, defeatChartBoss, leaveChart, passDays, expectPhasePull, "
             + "expectPhasedPlanet";
     static final int DEFAULT_COLONY_SIZE = 4;
     static final long DEFAULT_CHART_SEED = 1L;
@@ -57,6 +57,10 @@ record HarnessScenario(List<HarnessStep> steps, boolean quitWhenDone, NewGameSet
             case "openAtlas" -> new OpenOverlayStep(stepType, "AtlasScreen", AtlasScreen::open);
             case "openAtlasTree" -> new OpenOverlayStep(stepType, "AtlasTreeScreen", AtlasTreeScreen::open);
             case "openSkillTree" -> new OpenSkillTreeStep(step.optString("ship", OpenSkillTreeStep.FLAGSHIP));
+            case "openRefit" -> new OpenSkillTreeStep(step.optString("ship", OpenSkillTreeStep.FLAGSHIP), false);
+            case "moveMouse" -> new MoveMouseStep(step.getString("to"), (float) step.optDouble("seconds", 0d));
+            case "click" -> new ClickStep();
+            case "scroll" -> new ScrollStep(ScrollStep.scrollsOut(step.optString("direction", "out")), step.optInt("notches", 1), (float) step.optDouble("seconds", 0d));
             case "closeScreen" -> new CloseScreenStep();
             case "zoom" -> new ZoomStep((float) step.getDouble("to"));
             case "focusAtlasSystem" -> new FocusAtlasSystemStep(step.optInt("system", 0), strings(step.optJSONArray("anomalies")),

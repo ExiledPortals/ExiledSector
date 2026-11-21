@@ -138,7 +138,10 @@ if ($newGame) { Write-Host "Starting a new game" } else { Write-Host "Loading $s
 $gameProcess = Start-Process -FilePath $javaExe -ArgumentList $arguments -WorkingDirectory $coreDir -PassThru `
     -RedirectStandardOutput (Join-Path $runDir "console.log") -RedirectStandardError (Join-Path $runDir "console-errors.log")
 $recording = $null
-if ($Record) { $recording = Start-HarnessRecording -GameProcess $gameProcess -Resolution $Resolution -RunDir $runDir -Fps $RecordFps }
+if ($Record) {
+    $drivesCursor = $scenarioText -match '"step"\s*:\s*"moveMouse"'
+    $recording = Start-HarnessRecording -GameProcess $gameProcess -Resolution $Resolution -RunDir $runDir -Fps $RecordFps -ShowCursor:$drivesCursor
+}
 $timedOut = -not $gameProcess.WaitForExit($TimeoutSeconds * 1000)
 if ($timedOut) {
     Write-Warning "The game was still running after $TimeoutSeconds s; stopping it."
