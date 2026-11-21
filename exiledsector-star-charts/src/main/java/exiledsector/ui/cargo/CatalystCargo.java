@@ -1,6 +1,5 @@
 package exiledsector.ui.cargo;
 
-import com.fs.starfarer.api.campaign.SpecialItemSpecAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.charts.atlas.AtlasCatalysts;
@@ -26,11 +25,6 @@ public final class CatalystCargo {
         VanillaText.plainPara(tooltip, Translation.text("catalyst.category"), CATEGORY_PAD, Misc.getGrayColor());
         if (catalyst != null) {
             VanillaText.plainPara(tooltip, AtlasCatalystItems.addsLine(catalyst), pad, Misc.getTextColor());
-        }
-        SpecialItemSpecAPI spec = MaterialItems.spec(itemId);
-        String flavour = spec == null ? null : spec.getDesc();
-        if (flavour != null && !flavour.isEmpty()) {
-            VanillaText.plainPara(tooltip, flavour, pad, Misc.getGrayColor());
         }
     }
 }

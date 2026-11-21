@@ -59,16 +59,11 @@ public final class AtlasCatalystItems {
         return Translation.msg("catalyst.adds").arg("anomaly", AtlasNames.anomaly(catalyst.anomalyId())).text();
     }
 
-    public static String flavourKey(AtlasCatalysts.Family family) {
-        return "catalyst.family." + family.key() + ".flavour";
-    }
-
     public static void localise() {
         for (AtlasCatalysts.Catalyst catalyst : AtlasCatalysts.all()) {
             SpecialItemSpecAPI spec = MaterialItems.spec(catalyst.itemId());
             if (spec != null) {
                 spec.setName(Translation.data("catalyst." + catalyst.itemId() + ".name", spec.getName()));
-                spec.setDesc(Translation.text(flavourKey(catalyst.family())));
             }
         }
     }

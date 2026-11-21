@@ -44,7 +44,7 @@ class StarChartUiStringKeysTest {
             }
         }
         for (String key : List.of("chart.intel.officerAttacks", "chart.intel.officerDefends", "chart.atlas.node.skirmish", "chart.atlas.skirmish.final",
-                CoronalHypershunt.TOO_CLOSE_KEY, "catalyst.cell.on", "catalyst.cell.off", "chart.atlas.focus.catalysts", "chart.atlas.confirm.catalyst")) {
+                CoronalHypershunt.TOO_CLOSE_KEY, "catalyst.cell.on", "chart.atlas.focus.catalysts", "chart.atlas.confirm.catalyst")) {
             require(catalogue, key, missing);
         }
         for (OpenResult result : OpenResult.values()) {

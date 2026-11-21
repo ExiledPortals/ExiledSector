@@ -72,7 +72,12 @@ final class CraftingBenchTile extends BaseCustomUIPanelPlugin {
     }
 
     static CraftingBenchTile selectable(String iconPath, CargoIconLook iconLook, BooleanSupplier selected, TileInput.Handler tileHandler) {
-        return new CraftingBenchTile(List.of(iconPath), iconLook, ALWAYS, selected, SELECTION_STYLE, tileHandler);
+        return selectable(iconPath, iconLook, ALWAYS, selected, tileHandler);
+    }
+
+    static CraftingBenchTile selectable(String iconPath, CargoIconLook iconLook, BooleanSupplier available, BooleanSupplier selected,
+                                        TileInput.Handler tileHandler) {
+        return new CraftingBenchTile(List.of(iconPath), iconLook, available, selected, SELECTION_STYLE, tileHandler);
     }
 
     @Override

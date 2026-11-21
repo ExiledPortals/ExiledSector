@@ -84,8 +84,4 @@ final class AtlasOverlayFrame {
     GlScope clipContent() {
         return UiClip.clipUi(innerLeft() + BORDER_INSET, innerBottom(), innerWidth() - BORDER_INSET * 2f, innerHeight());
     }
-
-    void drawFooterHint(TextLabel hintLabel, float alpha) {
-        hintLabel.setAlpha(alpha).draw(chromeLeft(), innerBottom() + CHROME_PAD + hintLabel.height());
-    }
 }

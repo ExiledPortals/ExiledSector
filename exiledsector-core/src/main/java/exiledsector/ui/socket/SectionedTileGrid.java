@@ -52,16 +52,23 @@ final class SectionedTileGrid {
             element.setParaFont(Fonts.ORBITRON_12);
             VanillaText.plainPara(element, section.title(), element.getHeightSoFar() > 0f ? HoloPanel.GAP : 0f, section.titleColor());
             element.setParaFontDefault();
-            List<Tile> tiles = section.tiles();
-            for (int start = 0; start < tiles.size(); start += columns) {
-                element.addCustom(rowPanel(tiles.subList(start, Math.min(tiles.size(), start + columns)), gridWidth, cellSize), HoloPanel.GAP);
-            }
+            addRows(element, section.tiles(), columns, gridWidth - ItemGrid.SCROLLBAR_ROOM, cellSize);
         }
         return element;
     }
 
-    private static CustomPanelAPI rowPanel(List<Tile> row, float gridWidth, float cellSize) {
-        CustomPanelAPI rowPanel = Global.getSettings().createCustom(gridWidth - ItemGrid.SCROLLBAR_ROOM, cellSize, null);
+    static float cellSizeFor(float rowWidth, int columns) {
+        return (rowWidth - (columns - 1) * HoloPanel.GAP) / columns;
+    }
+
+    static void addRows(TooltipMakerAPI element, List<Tile> tiles, int columns, float rowWidth, float cellSize) {
+        for (int start = 0; start < tiles.size(); start += columns) {
+            element.addCustom(rowPanel(tiles.subList(start, Math.min(tiles.size(), start + columns)), rowWidth, cellSize), HoloPanel.GAP);
+        }
+    }
+
+    private static CustomPanelAPI rowPanel(List<Tile> row, float rowWidth, float cellSize) {
+        CustomPanelAPI rowPanel = Global.getSettings().createCustom(rowWidth, cellSize, null);
         for (int index = 0; index < row.size(); index++) {
             Tile tile = row.get(index);
             float cellLeft = index * (cellSize + HoloPanel.GAP);

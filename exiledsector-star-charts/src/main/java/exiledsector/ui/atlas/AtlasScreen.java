@@ -53,7 +53,6 @@ import exiledsector.ui.cargo.CatalystCargo;
 import exiledsector.ui.chart.StarChartCraftingBench;
 import exiledsector.ui.decoration.StarfieldRenderer;
 import exiledsector.ui.socket.AtlasAnomalyPanel;
-import exiledsector.ui.socket.AtlasCatalystPanel;
 import exiledsector.ui.socket.BenchLayout;
 import exiledsector.ui.socket.BenchMode;
 import exiledsector.ui.socket.BenchModeSupport;
@@ -123,7 +122,6 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     private final PointerGesture<Void> gesture = drag.gesture();
     private final AtlasOverlayFrame frame = new AtlasOverlayFrame();
     private final TextLabel titleLabel = new TextLabel(UiFonts.TITLE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
-    private final TextLabel hintLabel = new TextLabel(UiFonts.HINT, HINT_COLOUR);
     private final TooltipText tooltipText = SkillTreePanelStyle.tooltipText();
     private final TextLabel tooltipTitle = new TextLabel(tooltipText.title(), SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
     private final TextLabel tooltipBody = new TextLabel(tooltipText.body(), SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
@@ -134,7 +132,6 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     private PositionAPI panelPosition;
     private ButtonAPI bordersButton;
     private ButtonAPI biomesButton;
-    private AtlasCatalystPanel catalystPanel;
     private AtlasAnomalyPanel anomalyPanel;
     private TooltipMakerAPI chooseElement;
     private ButtonAPI chooseButton;
@@ -215,7 +212,6 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
 
     private void buildChrome() {
         titleLabel.set(Translation.text("chart.atlas.title"));
-        hintLabel.set(Translation.text("chart.atlas.hint"));
         PositionAPI position = panelRoot.getPosition();
         AtlasOverlayFrame.addTopRightButton(panelRoot, Translation.text("chart.atlas.close"), Control.CLOSE, CLOSE_WIDTH);
         TooltipMakerAPI toggles = panelRoot.createUIElement(BORDERS_WIDTH, ChromeMetrics.CONTROL_HEIGHT, false);
@@ -295,34 +291,6 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         return panelRoot.getPosition().getHeight() - PANEL_MARGIN - CHROME_PAD - CHOOSE_HEIGHT;
     }
 
-    private void openCatalysts() {
-        if (catalystPanel != null) {
-            return;
-        }
-        PositionAPI position = panelRoot.getPosition();
-        float left = position.getWidth() - PANEL_MARGIN - CHROME_PAD - AtlasCatalystPanel.PANEL_WIDTH;
-        float maxHeight = sidePanelHeight() - ChromeMetrics.CONTROL_HEIGHT - BUTTON_GAP;
-        catalystPanel = AtlasCatalystPanel.open(panelRoot, left, sidePanelTop(), maxHeight, map.state(), new AtlasCatalystPanel.Listener() {
-            @Override
-            public void toggled() {
-                if (anomalyPanel != null) {
-                    anomalyPanel.refresh();
-                }
-            }
-
-            @Override
-            public void closed() {
-                catalystPanel = null;
-            }
-        });
-    }
-
-    private void closeCatalysts() {
-        if (catalystPanel != null) {
-            catalystPanel.close();
-        }
-    }
-
     private void enterFocus(AtlasCell cell) {
         focusedCell = cell;
         focusing = true;
@@ -335,12 +303,11 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         I18n.forGameText(() -> {
             addChooseButton(cell);
             openAnomalyPanel();
-            openCatalysts();
         });
     }
 
     private void openAnomalyPanel() {
-        anomalyPanel = AtlasAnomalyPanel.open(panelRoot, PANEL_MARGIN + CHROME_PAD, sidePanelTop(), sidePanelHeight(), this::focusedAnomalies, () -> {
+        anomalyPanel = AtlasAnomalyPanel.open(panelRoot, PANEL_MARGIN + CHROME_PAD, sidePanelTop(), sidePanelHeight(), map.state(), this::focusedAnomalies, () -> {
             anomalyPanel = null;
             if (!chartMode) {
                 leaveFocus();
@@ -383,7 +350,6 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         if (anomalyPanel != null) {
             anomalyPanel.close();
         }
-        closeCatalysts();
     }
 
     private void enterChartMode() {
@@ -400,7 +366,6 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         if (anomalyPanel != null) {
             anomalyPanel.close();
         }
-        closeCatalysts();
         I18n.forGameText(() -> {
             openChartParts(focusedCell);
             chooseButton.setText(Translation.text("chart.atlas.focus.viewAnomalies"));
@@ -417,7 +382,6 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         SkillTreeSounds.panelOpened();
         I18n.forGameText(() -> {
             openAnomalyPanel();
-            openCatalysts();
             if (chooseButton != null) {
                 chooseButton.setText(Translation.text("chart.atlas.focus.chooseChart"));
                 chooseButton.setEnabled(map.isReachable(focusedCell));
@@ -575,7 +539,8 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             return new AtlasAnomalyPanel.Listing(List.of(), List.of());
         }
         List<AtlasAnomalyPanel.Entry> system = new ArrayList<>();
-        for (String anomalyId : AtlasAnomalies.effective(map.generator(), map.state(), focusedCell)) {
+        List<String> present = AtlasAnomalies.effective(map.generator(), map.state(), focusedCell);
+        for (String anomalyId : present) {
             system.add(new AtlasAnomalyPanel.Entry(AtlasNames.anomaly(anomalyId), anomalyIcon(anomalyId),
                     AtlasNodeText.anomalyBody(map.generator(), map.state(), focusedCell, anomalyId)));
         }
@@ -588,6 +553,9 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         CraftingMaterials materials = CraftingMaterials.forPlayer(PlayerFleet.cargoOrNull());
         for (ActiveCatalysts.Planned planned : ActiveCatalysts.plan(map.generator(), map.state(), focusedCell, materials::count)) {
             String anomalyId = planned.catalyst().anomalyId();
+            if (present.contains(anomalyId)) {
+                continue;
+            }
             String refusal = planned.verdict().text(MaterialItems.displayName(planned.catalyst().itemId()), systemName(focusedCell));
             catalysts.add(new AtlasAnomalyPanel.Entry(AtlasNames.anomaly(anomalyId), planned.catalyst().iconPath(),
                     CatalystCargo.look(planned.catalyst().family()), AtlasNodeText.anomalyBody(anomalyId), refusal));
@@ -791,7 +759,6 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         officerBoard.close();
         officerTooltip.cleanup();
         leaveFocus();
-        closeCatalysts();
     }
 
     @Override
@@ -1013,7 +980,6 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
 
     private void drawChrome(float alpha) {
         titleLabel.setAlpha(alpha).draw(frame.chromeLeft(), frame.chromeTop());
-        frame.drawFooterHint(hintLabel, alpha);
         float searchOpacity = searchBarOpacity();
         if (searchOpacity > 0f) {
             searchBar.render(searchBarLeft(), searchBarBottom(), searchOpacity * alpha);
