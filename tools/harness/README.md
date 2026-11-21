@@ -59,6 +59,17 @@ A scenario with a `"newGame"` object starts a new game instead of loading a save
 | `endSimulation` | | the simulator closed and the campaign is back |
 | `addShip` | `variant`, `count` (1) | the ships joined the player fleet at full CR |
 | `saveGame` | | the campaign saved |
+| `addCargo` | `commodity`, `amount` | the commodity was added to the player fleet's cargo |
+| `foundColony` | `size` (4), `industries`, `supply` (commodity id to amount), `nearHypershunt` (false) | a player colony was founded on the nearest uncolonised planet (to the player, or within range of the nearest coronal hypershunt, which is made usable), with those industries and extra supply, the player faction counts as named, and the player fleet moved beside it; details go under `data.colony` |
+| `openChart` | `seed` (1) | a Star Chart run opened beside the player fleet with one entry, and the fleet jumped inside; details go under `data.chartRun` |
+| `lockPhasePlanet` | | the first planet in the run that can be locked was surveyed and locked for the Phase Displacement Gate; the lock goes under `data.phaseLock` |
+| `defeatChartBoss` | | the run's boss fleet was destroyed outside battle and the run's objective counts as complete |
+| `leaveChart` | | the player fleet jumped back out of the run and the run closed |
+| `passDays` | `days`, `speed` (50) | that many campaign days passed, with the engine stepped `speed` times a frame in 0.1 s steps, like fast-forward, and the player fleet left alone by other fleets |
+| `expectPhasePull` | `name` (`phasePull`) | the gate has a pull job that isn't paused; its days, pause and wormhole radius go under `data.<name>` |
+| `expectPhasedPlanet` | | the pull finished, its wormhole is gone, and the locked planet orbits in the gate's system with its type, kept conditions and traits; details go under `data.phasedPlanet` |
+
+`examples/phase-pull.json` drags a Star Chart planet into a new colony's system: it founds the colony with a Phase Displacement Gate, locks a planet in a run, clears the run, and passes the 120-day pull.
 
 Combat steps run between `simulate` and `endSimulation`; `examples/simulate-combat.json` runs a short fight. Combat screenshots are taken below the combat HUD.
 

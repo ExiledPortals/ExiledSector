@@ -1,0 +1,29 @@
+{
+  "steps": [
+    {"step": "wait", "seconds": 3},
+    {"step": "ignoreErrorsSoFar"},
+    {"step": "addShip", "variant": "prometheus_Super"},
+    {"step": "addCargo", "commodity": "fuel", "amount": 1500},
+    {"step": "addCargo", "commodity": "supplies", "amount": 1000},
+    {"step": "foundColony", "nearHypershunt": true, "size": 4,
+     "industries": ["exiledSector_wormhole_gateway_perfected", "exiledSector_phase_displacement_gate"],
+     "supply": {"rare_metals": 12, "volatiles": 10}},
+    {"step": "wait", "frames": 30},
+    {"step": "openChart", "seed": 1},
+    {"step": "wait", "frames": 30},
+    {"step": "screenshot", "name": "inside_run"},
+    {"step": "lockPhasePlanet"},
+    {"step": "defeatChartBoss"},
+    {"step": "leaveChart"},
+    {"step": "passDays", "days": 2},
+    {"step": "expectPhasePull", "name": "pull_start"},
+    {"step": "passDays", "days": 60},
+    {"step": "expectPhasePull", "name": "pull_halfway"},
+    {"step": "screenshot", "name": "pull_halfway"},
+    {"step": "passDays", "days": 60},
+    {"step": "wait", "frames": 30},
+    {"step": "expectPhasedPlanet"},
+    {"step": "screenshot", "name": "planet_arrived"},
+    {"step": "expectNoErrors"}
+  ]
+}

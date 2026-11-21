@@ -101,6 +101,34 @@ class HarnessScenarioTest {
     }
 
     @Test
+    void thePhasePullStepsParseWithTheirDefaults() throws JSONException {
+        HarnessScenario scenario = HarnessScenario.parse("""
+                {"steps": [
+                  {"step": "foundColony", "nearHypershunt": true, "industries": ["exiledSector_phase_displacement_gate"], "supply": {"volatiles": 10}},
+                  {"step": "foundColony", "size": 6},
+                  {"step": "addCargo", "commodity": "fuel", "amount": 1500},
+                  {"step": "openChart"},
+                  {"step": "openChart", "seed": 7},
+                  {"step": "lockPhasePlanet"},
+                  {"step": "defeatChartBoss"},
+                  {"step": "leaveChart"},
+                  {"step": "passDays", "days": 60},
+                  {"step": "passDays", "days": 2.5, "speed": 10},
+                  {"step": "expectPhasePull"},
+                  {"step": "expectPhasePull", "name": "halfway"},
+                  {"step": "expectPhasedPlanet"}
+                ]}""");
+
+        assertEquals(List.of("foundColony size 4 near a hypershunt", "foundColony size 6", "addCargo 1500 fuel", "openChart seed 1", "openChart seed 7", "lockPhasePlanet",
+                "defeatChartBoss", "leaveChart", "passDays 60.0 at x50", "passDays 2.5 at x10", "expectPhasePull phasePull", "expectPhasePull halfway",
+                "expectPhasedPlanet"), scenario.steps().stream().map(HarnessStep::name).toList());
+        assertTrue(scenario.steps().get(8).timeoutSeconds() > HarnessStep.DEFAULT_TIMEOUT_SECONDS);
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"foundColony\", \"size\": 2}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"passDays\", \"days\": 0}]}"));
+        assertThrows(JSONException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"passDays\"}]}"));
+    }
+
+    @Test
     void anUnknownStepNamesTheKnownOnes() {
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
                 () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"openEverything\"}]}"));

@@ -51,6 +51,10 @@ final class HarnessResults {
         write();
     }
 
+    JSONObject data(String name) {
+        return data.get(name);
+    }
+
     void failRun(String failure) {
         runFailure = failure;
         finished = true;

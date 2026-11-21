@@ -7,13 +7,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 record HarnessScenario(List<HarnessStep> steps, boolean quitWhenDone, NewGameSetup newGame) {
 
     static final String KNOWN_STEPS = "wait, mark, openAtlas, openAtlasTree, openSkillTree, closeScreen, zoom, screenshot, expectScreen, "
             + "expectNoErrors, ignoreErrorsSoFar, expectLog, simulate, spawn, autopilot, speed, recordStats, recordDamage, endSimulation, "
-            + "addShip, saveGame";
+            + "addShip, saveGame, addCargo, foundColony, openChart, lockPhasePlanet, defeatChartBoss, leaveChart, passDays, expectPhasePull, "
+            + "expectPhasedPlanet";
+    static final int DEFAULT_COLONY_SIZE = 4;
+    static final long DEFAULT_CHART_SEED = 1L;
     static final float DEFAULT_LOG_WAIT_SECONDS = 10f;
 
     HarnessScenario(List<HarnessStep> steps, boolean quitWhenDone) {
@@ -61,7 +66,34 @@ record HarnessScenario(List<HarnessStep> steps, boolean quitWhenDone, NewGameSet
             case "endSimulation" -> new EndSimulationStep();
             case "addShip" -> new AddShipStep(step.getString("variant"), step.optInt("count", 1));
             case "saveGame" -> new SaveGameStep();
+            case "addCargo" -> new AddCargoStep(step.getString("commodity"), step.getInt("amount"));
+            case "foundColony" -> new FoundColonyStep(step.optInt("size", DEFAULT_COLONY_SIZE), strings(step.optJSONArray("industries")),
+                    amounts(step.optJSONObject("supply")), step.optBoolean("nearHypershunt", false));
+            case "openChart" -> new OpenChartStep(step.optLong("seed", DEFAULT_CHART_SEED));
+            case "lockPhasePlanet" -> new LockPhasePlanetStep();
+            case "defeatChartBoss" -> new DefeatChartBossStep();
+            case "leaveChart" -> new LeaveChartStep();
+            case "passDays" -> new PassDaysStep((float) step.getDouble("days"), step.optInt("speed", PassDaysStep.DEFAULT_SPEED));
+            case "expectPhasePull" -> new ExpectPhasePullStep(step.optString("name", "phasePull"));
+            case "expectPhasedPlanet" -> new ExpectPhasedPlanetStep();
             default -> throw new IllegalArgumentException("unknown step \"" + stepType + "\"; known steps: " + KNOWN_STEPS);
         };
+    }
+
+    private static List<String> strings(JSONArray array) throws JSONException {
+        List<String> values = new ArrayList<>();
+        for (int index = 0; array != null && index < array.length(); index++) {
+            values.add(array.getString(index));
+        }
+        return values;
+    }
+
+    private static Map<String, Integer> amounts(JSONObject object) throws JSONException {
+        Map<String, Integer> values = new LinkedHashMap<>();
+        String[] keys = object == null ? null : JSONObject.getNames(object);
+        for (int index = 0; keys != null && index < keys.length; index++) {
+            values.put(keys[index], object.getInt(keys[index]));
+        }
+        return values;
     }
 }
