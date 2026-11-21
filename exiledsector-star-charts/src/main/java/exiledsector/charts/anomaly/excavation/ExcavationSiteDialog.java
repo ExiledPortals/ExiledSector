@@ -2,12 +2,15 @@ package exiledsector.charts.anomaly.excavation;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
+import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.OptionPanelAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.TextPanelAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.RuleBasedInteractionDialogPluginImpl;
 import com.fs.starfarer.api.impl.campaign.graid.GroundRaidObjectivePlugin;
+import com.fs.starfarer.api.impl.campaign.rulecmd.FireAll;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.PlayerFleet;
 import exiledsector.i18n.I18n;
@@ -26,10 +29,12 @@ import java.util.function.Consumer;
 
 public class ExcavationSiteDialog extends PlanetSiteDialog {
 
+    public static final String PLANET_OPTION = "exiledSector_excavation";
+    static final String POPULATE_OPTIONS = "PopulateOptions";
     static final String DESCEND = "exiledSector_excavationDescend";
     static final String CORRUPT_DESCEND = "exiledSector_excavationCorruptDescend";
     static final String RAID_OPTION = "exiledSector_excavationRaid";
-    static final String CONTINUE = "exiledSector_excavationContinue";
+    static final String BACK = "exiledSector_excavationBack";
     static final String DEEPER = "exiledSector_excavationDeeper";
     static final String CORRUPT_DEEPER = "exiledSector_excavationCorruptDeeper";
     static final String SURFACE = "exiledSector_excavationSurface";
@@ -39,10 +44,55 @@ public class ExcavationSiteDialog extends PlanetSiteDialog {
     static final String CRUISERS_SUFFIX = ".cruisers";
 
     private final ChartRaid.Session raid = new ChartRaid.Session(closedDialog -> showMain());
+    private final InteractionDialogPlugin planetMenu;
     private boolean secondCavernOffered;
 
-    public static boolean wantsToHandle(ChartRun run, SectorEntityToken target) {
-        return target instanceof PlanetAPI planet && !planet.isStar() && ExcavationStates.standingAt(run, planet.getId()) != null;
+    ExcavationSiteDialog(InteractionDialogPlugin planetMenu) {
+        this.planetMenu = planetMenu;
+    }
+
+    static ExcavationSite surveyedSiteAt(ChartRun run, SectorEntityToken target) {
+        if (run == null || !(target instanceof PlanetAPI planet) || planet.isStar() || !ExcavationSites.fullySurveyed(planet)) {
+            return null;
+        }
+        return ExcavationStates.at(run, planet.getId());
+    }
+
+    public static boolean addPlanetOption(ChartRun run, InteractionDialogAPI dialog) {
+        SectorEntityToken planet = dialog.getInteractionTarget();
+        ExcavationSite site = surveyedSiteAt(run, planet);
+        if (site == null) {
+            return false;
+        }
+        String planetName = planet.getName();
+        if (site.cleared()) {
+            VanillaText.plainPara(dialog.getTextPanel(), clearedText(planetName));
+            return true;
+        }
+        boolean scouted = ExcavationStates.scouted(run, site);
+        String descriptionKey = scouted ? descriptionKey(site.access()) : "chart.anomaly.excavation_sites.dialog.found";
+        VanillaText.plainPara(dialog.getTextPanel(), I18n.forGameText(() -> Translation.msg(descriptionKey).arg("planet", planetName).text()));
+        OptionPanelAPI options = dialog.getOptionPanel();
+        if (!options.hasOption(PLANET_OPTION)) {
+            options.addOption(Translation.gameText(scouted ? "chart.anomaly.excavation_sites.dialog.option.explore"
+                    : "chart.anomaly.excavation_sites.dialog.option.investigate"), PLANET_OPTION);
+        }
+        return true;
+    }
+
+    public static boolean openFromPlanet(ChartRun run, InteractionDialogAPI dialog) {
+        ExcavationSite site = surveyedSiteAt(run, dialog.getInteractionTarget());
+        if (site == null || site.cleared()) {
+            return false;
+        }
+        ExcavationSiteDialog excavation = new ExcavationSiteDialog(dialog.getPlugin());
+        dialog.setPlugin(excavation);
+        excavation.init(dialog);
+        return true;
+    }
+
+    private static String clearedText(String planetName) {
+        return I18n.forGameText(() -> Translation.msg("chart.anomaly.excavation_sites.dialog.cleared").arg("planet", planetName).text());
     }
 
     static boolean hasExcavationShips(List<FleetMemberAPI> combatReady, int maxShipSize) {
@@ -95,19 +145,16 @@ public class ExcavationSiteDialog extends PlanetSiteDialog {
         OptionPanelAPI options = options();
         options.clearOptions();
         ExcavationSite site = site();
-        String planetName = planet().getName();
         if (site == null || site.cleared()) {
             secondCavernOffered = false;
-            VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg("chart.anomaly.excavation_sites.dialog.cleared").arg("planet", planetName).text()));
+            VanillaText.plainPara(text, clearedText(planet().getName()));
         } else if (secondCavernOffered && site.hasOpenShaft()) {
             showSecondCavern();
             return;
         } else {
             secondCavernOffered = false;
             if (ExcavationStates.scout(run(), site)) {
-                describeFirstSighting(text, site, planetName);
-            } else {
-                VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg(descriptionKey(site.access())).arg("planet", planetName).text()));
+                describeFirstSighting(text, site);
             }
             VanillaText.addPara(text, findsLine(), Misc.getTextColor());
             if (site.hasOpenShaft()) {
@@ -119,7 +166,7 @@ public class ExcavationSiteDialog extends PlanetSiteDialog {
                 options.addOption(Translation.gameText("chart.anomaly.excavation_sites.dialog.option.raid"), RAID_OPTION);
             }
         }
-        options.addOption(Translation.gameText("chart.anomaly.excavation_sites.dialog.option.continue"), CONTINUE);
+        options.addOption(Translation.gameText("chart.anomaly.excavation_sites.dialog.option.back"), BACK);
         addLeaveOption();
     }
 
@@ -144,8 +191,7 @@ public class ExcavationSiteDialog extends PlanetSiteDialog {
         }
     }
 
-    private static void describeFirstSighting(TextPanelAPI text, ExcavationSite site, String planetName) {
-        VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg("chart.anomaly.excavation_sites.dialog.found").arg("planet", planetName).text()));
+    private static void describeFirstSighting(TextPanelAPI text, ExcavationSite site) {
         VanillaText.plainPara(text, Translation.gameText("chart.anomaly.excavation_sites.dialog.identified"));
         VanillaText.plainPara(text, Translation.gameText(scoutedKey(site.access())));
         VanillaText.plainPara(text, Translation.gameText("chart.anomaly.excavation_sites.dialog.stores"));
@@ -171,14 +217,26 @@ public class ExcavationSiteDialog extends PlanetSiteDialog {
             showMain();
         } else if (RAID_OPTION.equals(optionData) && site != null && site.hasCollapsedShaft() && !secondCavernOffered) {
             raid.launch(dialog(), run().tier(), ExcavationDeliveries.raidDifficultyMult(planet()), site.seed() * 31L, this::objectives);
-        } else if (CONTINUE.equals(optionData)) {
-            continueAfter(ExcavationSites.INSTANCE, planet());
+        } else if (BACK.equals(optionData)) {
+            backToPlanet();
         } else {
             if (secondCavernOffered) {
                 closeOpenShaft();
             }
             dialog().dismiss();
         }
+    }
+
+    private void backToPlanet() {
+        InteractionDialogAPI dialog = dialog();
+        dialog.setInteractionTarget(planet());
+        if (planetMenu == null) {
+            handOff(new RuleBasedInteractionDialogPluginImpl());
+            return;
+        }
+        dialog.setPlugin(planetMenu);
+        dialog.getOptionPanel().clearOptions();
+        FireAll.fire(null, dialog, planetMenu.getMemoryMap(), POPULATE_OPTIONS);
     }
 
     private void descend(ExcavationSite site, ExcavationGuardians guardians, boolean corrupt) {

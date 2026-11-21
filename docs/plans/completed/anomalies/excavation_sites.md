@@ -10,7 +10,7 @@ During the AI Wars, frontier garrisons that couldn't hold orbit dug bolt-holes: 
 
 ## How it plays
 
-The chart marks one to three planets with an excavation site (placeholder count), shown in the chart's intel and the planet's dialog. Interacting with the planet offers the site, says which way in it has and hints at what it holds (a leaning toward one `DropType`, placeholder), and lets you go in or leave. A site you clear is spent; one you leave stays until the run closes.
+The chart marks one to three planets with an excavation site (placeholder count). A site stays hidden until its planet has a full survey; from then on it shows in the chart's intel and as an option in the planet's own dialog, like vanilla ruins (`ExiledSectorExcavationOption`, a `PopulateOptions` rule, so it appears as soon as the survey screen closes). The option opens the site, which says which way in it has and hints at what it holds (a leaning toward one `DropType`, placeholder), and lets you go in or go back to the planet. A site you clear is spent and frees the planet for a phase lock; one you leave stays until the run closes.
 
 ### Open shaft: the fight below
 

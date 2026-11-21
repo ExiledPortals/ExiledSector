@@ -1,19 +1,25 @@
 package exiledsector.charts.anomaly.excavation;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.PluginPick;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.CampaignPlugin;
+import com.fs.starfarer.api.campaign.CharacterDataAPI;
+import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
+import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.OptionPanelAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
+import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
+import com.fs.starfarer.api.campaign.TextPanelAPI;
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.campaign.econ.MarketAPI.SurveyLevel;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl.OptionId;
+import com.fs.starfarer.api.impl.campaign.rulecmd.FireAll;
 import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.LiveAnomalyRuns;
@@ -35,7 +41,12 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,9 +60,12 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -186,24 +200,104 @@ class ExcavationSiteDialogTest {
         return memory;
     }
 
+    private PlanetAPI surveyedPlanet(String id, SurveyLevel surveyLevel) {
+        PlanetAPI planet = planet(id, system);
+        MarketAPI market = mock(MarketAPI.class);
+        when(market.getSurveyLevel()).thenReturn(surveyLevel);
+        when(planet.getMarket()).thenReturn(market);
+        when(planet.getName()).thenReturn("Rock");
+        when(planet.getFaction()).thenReturn(mock(FactionAPI.class));
+        return planet;
+    }
+
+    private static InteractionDialogAPI planetDialog(SectorEntityToken planet) {
+        InteractionDialogAPI dialog = mock(InteractionDialogAPI.class, RETURNS_DEEP_STUBS);
+        when(dialog.getInteractionTarget()).thenReturn(planet);
+        return dialog;
+    }
+
+    private static void verifyPara(TextPanelAPI text, String paragraph) {
+        verify(text).addPara(eq("%s"), ArgumentMatchers.<Color>any(), ArgumentMatchers.<Color>any(), eq(paragraph));
+    }
+
+    private static String planetText(String key) {
+        return Translation.msg(key).arg("planet", "Rock").text();
+    }
+
     @Test
-    void theCampaignPluginOpensTheSiteOnlyWhileItStands() {
+    void theSiteIsOfferedInThePlanetMenuOnlyOnceThePlanetIsFullySurveyed() {
+        mockSector.global.when(Global::getSettings).thenReturn(mock(SettingsAPI.class));
         ExcavationSite site = new ExcavationSite(0, "rock", ExcavationSite.Access.OPEN, 1L, false);
         ExcavationStates.record(ExcavationStates.of(run), site);
-        PlanetAPI rock = planet("rock", system);
-        PlanetAPI bare = planet("bare", system);
-        PlanetAPI elsewhere = planet("rock", mock(StarSystemAPI.class));
+        PlanetAPI rock = surveyedPlanet("rock", SurveyLevel.SEEN);
 
-        PluginPick<InteractionDialogPlugin> pick = new ChartCampaignPlugin().pickInteractionDialogPlugin(rock);
-        assertInstanceOf(ExcavationSiteDialog.class, pick.plugin);
-        assertEquals(CampaignPlugin.PickPriority.MOD_SPECIFIC, pick.priority);
-        assertFalse(ExcavationSiteDialog.wantsToHandle(run, bare));
-        assertNull(new ChartCampaignPlugin().pickInteractionDialogPlugin(elsewhere));
-        assertFalse(ExcavationSiteDialog.wantsToHandle(run, mock(CampaignFleetAPI.class)));
+        assertNull(new ChartCampaignPlugin().pickInteractionDialogPlugin(rock));
+        for (SurveyLevel unsurveyed : List.of(SurveyLevel.NONE, SurveyLevel.SEEN, SurveyLevel.PRELIMINARY)) {
+            when(rock.getMarket().getSurveyLevel()).thenReturn(unsurveyed);
+            InteractionDialogAPI dialog = planetDialog(rock);
+            assertFalse(ExcavationSiteDialog.addPlanetOption(run, dialog), unsurveyed.name());
+            assertFalse(ExcavationSiteDialog.openFromPlanet(run, dialog), unsurveyed.name());
+            verify(dialog.getOptionPanel(), never()).addOption(anyString(), any());
+        }
+
+        when(rock.getMarket().getSurveyLevel()).thenReturn(SurveyLevel.FULL);
+        InteractionDialogAPI justSurveyed = planetDialog(rock);
+        assertTrue(ExcavationSiteDialog.addPlanetOption(run, justSurveyed));
+        verifyPara(justSurveyed.getTextPanel(), planetText("chart.anomaly.excavation_sites.dialog.found"));
+        verify(justSurveyed.getOptionPanel()).addOption(Translation.gameText("chart.anomaly.excavation_sites.dialog.option.investigate"),
+                ExcavationSiteDialog.PLANET_OPTION);
+
+        ExcavationStates.scout(run, site);
+        InteractionDialogAPI scouted = planetDialog(rock);
+        assertTrue(ExcavationSiteDialog.addPlanetOption(run, scouted));
+        verifyPara(scouted.getTextPanel(), planetText(ExcavationSiteDialog.descriptionKey(ExcavationSite.Access.OPEN)));
+        verify(scouted.getOptionPanel()).addOption(Translation.gameText("chart.anomaly.excavation_sites.dialog.option.explore"),
+                ExcavationSiteDialog.PLANET_OPTION);
+
+        assertFalse(ExcavationSiteDialog.addPlanetOption(run, planetDialog(surveyedPlanet("bare", SurveyLevel.FULL))));
+        assertFalse(ExcavationSiteDialog.addPlanetOption(run, planetDialog(mock(CampaignFleetAPI.class))));
+        assertFalse(ExcavationSiteDialog.addPlanetOption(null, planetDialog(rock)));
 
         ExcavationStates.clear(run, site);
-        assertFalse(ExcavationSiteDialog.wantsToHandle(run, rock));
-        assertNull(new ChartCampaignPlugin().pickInteractionDialogPlugin(rock));
+        InteractionDialogAPI cleared = planetDialog(rock);
+        assertTrue(ExcavationSiteDialog.addPlanetOption(run, cleared));
+        verifyPara(cleared.getTextPanel(), planetText("chart.anomaly.excavation_sites.dialog.cleared"));
+        verify(cleared.getOptionPanel(), never()).addOption(anyString(), any());
+        assertFalse(ExcavationSiteDialog.openFromPlanet(run, cleared));
+        verify(cleared, never()).setPlugin(any());
+    }
+
+    @Test
+    void theSiteOpensFromThePlanetMenuAndGoesBackToIt() {
+        mockSector.global.when(Global::getSettings).thenReturn(mock(SettingsAPI.class));
+        when(mockSector.sector.getCharacterData()).thenReturn(mock(CharacterDataAPI.class));
+        ExcavationSite site = new ExcavationSite(0, "rock", ExcavationSite.Access.COLLAPSED, 1L, false);
+        ExcavationStates.record(ExcavationStates.of(run), site);
+        PlanetAPI rock = surveyedPlanet("rock", SurveyLevel.FULL);
+        InteractionDialogAPI dialog = planetDialog(rock);
+        InteractionDialogPlugin planetMenu = mock(InteractionDialogPlugin.class);
+        Map<String, MemoryAPI> planetMemory = Map.of();
+        when(planetMenu.getMemoryMap()).thenReturn(planetMemory);
+        when(dialog.getPlugin()).thenReturn(planetMenu);
+
+        assertTrue(ExcavationSiteDialog.openFromPlanet(run, dialog));
+        ArgumentCaptor<InteractionDialogPlugin> opened = ArgumentCaptor.forClass(InteractionDialogPlugin.class);
+        verify(dialog).setPlugin(opened.capture());
+        ExcavationSiteDialog excavation = assertInstanceOf(ExcavationSiteDialog.class, opened.getValue());
+        assertTrue(ExcavationStates.scouted(run, site));
+        verifyPara(dialog.getTextPanel(), Translation.gameText(ExcavationSiteDialog.scoutedKey(ExcavationSite.Access.COLLAPSED)));
+        verify(dialog.getOptionPanel()).addOption(Translation.gameText("chart.anomaly.excavation_sites.dialog.option.raid"), ExcavationSiteDialog.RAID_OPTION);
+        verify(dialog.getOptionPanel()).addOption(Translation.gameText("chart.anomaly.excavation_sites.dialog.option.back"), ExcavationSiteDialog.BACK);
+
+        try (MockedStatic<FireAll> fireAll = Mockito.mockStatic(FireAll.class)) {
+            excavation.optionSelected(null, ExcavationSiteDialog.BACK);
+
+            verify(dialog).setPlugin(planetMenu);
+            verify(dialog).setInteractionTarget(rock);
+            verify(dialog.getOptionPanel(), times(2)).clearOptions();
+            fireAll.verify(() -> FireAll.fire(null, dialog, planetMemory, ExcavationSiteDialog.POPULATE_OPTIONS));
+        }
+        verify(dialog, never()).dismiss();
     }
 
     @Test

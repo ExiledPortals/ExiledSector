@@ -13,6 +13,10 @@ import com.fs.starfarer.api.characters.MarketConditionSpecAPI;
 import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.StarChartSettings;
+import exiledsector.charts.anomaly.AnomalyState;
+import exiledsector.charts.anomaly.excavation.ExcavationSite;
+import exiledsector.charts.anomaly.excavation.ExcavationSites;
+import exiledsector.charts.anomaly.excavation.ExcavationStates;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
@@ -150,6 +154,16 @@ class PhaseLockTest {
         assertNull(PhaseLock.offerFor(mockSector.sector, site));
         assertNull(PhaseLock.offerFor(mockSector.sector, elsewhere));
         assertNull(PhaseLock.offerFor(mockSector.sector, null));
+    }
+
+    @Test
+    void aBoltHolePlanetIsOfferedOnlyOnceItsSiteIsCleared() {
+        AnomalyState excavations = AnomalyState.of(run, ExcavationSites.ANOMALY_ID);
+        ExcavationStates.record(excavations, new ExcavationSite(0, planet.getId(), ExcavationSite.Access.BOTH, 1L, false));
+        assertNull(PhaseLock.offerFor(mockSector.sector, planet));
+
+        ExcavationStates.record(excavations, new ExcavationSite(0, planet.getId(), ExcavationSite.Access.BOTH, 1L, true));
+        assertEquals(PhaseLock.Offer.AVAILABLE, PhaseLock.offerFor(mockSector.sector, planet));
     }
 
     @Test

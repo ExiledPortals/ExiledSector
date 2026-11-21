@@ -18,7 +18,7 @@ public final class ExcavationStates {
         return AnomalyState.of(run, ExcavationSites.ANOMALY_ID);
     }
 
-    static void record(AnomalyState state, ExcavationSite site) {
+    public static void record(AnomalyState state, ExcavationSite site) {
         state.put(Integer.toString(site.index()), site.encode());
     }
 
@@ -56,6 +56,10 @@ public final class ExcavationStates {
     public static ExcavationSite standingAt(ChartRun run, String planetId) {
         ExcavationSite site = at(run, planetId);
         return site == null || site.cleared() ? null : site;
+    }
+
+    static boolean scouted(ChartRun run, ExcavationSite site) {
+        return StateFields.list(of(run).text(SCOUTED_FIELD)).contains(site.planetId());
     }
 
     static boolean scout(ChartRun run, ExcavationSite site) {

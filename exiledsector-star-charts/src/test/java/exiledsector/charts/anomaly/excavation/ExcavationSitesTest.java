@@ -1,6 +1,8 @@
 package exiledsector.charts.anomaly.excavation;
 
 import com.fs.starfarer.api.campaign.PlanetAPI;
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.campaign.econ.MarketAPI.SurveyLevel;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
@@ -62,6 +64,13 @@ class ExcavationSitesTest {
         when(planet.isGasGiant()).thenReturn(gasGiant);
         when(system.getEntityById(id)).thenReturn(planet);
         planets.add(planet);
+        return planet;
+    }
+
+    private static PlanetAPI surveyed(PlanetAPI planet, SurveyLevel surveyLevel) {
+        MarketAPI market = mock(MarketAPI.class);
+        when(market.getSurveyLevel()).thenReturn(surveyLevel);
+        when(planet.getMarket()).thenReturn(market);
         return planet;
     }
 
@@ -166,7 +175,7 @@ class ExcavationSitesTest {
 
     @Test
     void generatingRecordsTheSitesInTheCurrentRun() {
-        planet("rock", false, false);
+        surveyed(planet("rock", false, false), SurveyLevel.FULL);
         ChartRun run = run();
         AnomalyContentSite site = site(ChartGenContext.none(), 1L);
 
@@ -238,19 +247,24 @@ class ExcavationSitesTest {
     }
 
     @Test
-    void theIntelNamesThePlanetsWhoseSitesStillStand() {
-        planet("rock", false, false);
-        planet("stone", false, false);
+    void theIntelNamesTheSurveyedPlanetsWhoseSitesStillStand() {
+        surveyed(planet("rock", false, false), SurveyLevel.FULL);
+        PlanetAPI stone = surveyed(planet("stone", false, false), SurveyLevel.PRELIMINARY);
         ChartRun run = run();
         ExcavationSite rock = new ExcavationSite(0, "rock", ExcavationSite.Access.OPEN, 1L, false);
         ExcavationStates.record(ExcavationStates.of(run), rock);
         ExcavationStates.record(ExcavationStates.of(run), new ExcavationSite(1, "stone", ExcavationSite.Access.COLLAPSED, 2L, false));
 
+        String surveyedOnly = ExcavationSites.INSTANCE.intelText(new AnomalyRun(run, system));
+        assertTrue(surveyedOnly.contains("Planet rock") && !surveyedOnly.contains("Planet stone"), surveyedOnly);
+        when(stone.getMarket().getSurveyLevel()).thenReturn(SurveyLevel.FULL);
         String both = ExcavationSites.INSTANCE.intelText(new AnomalyRun(run, system));
         assertTrue(both.contains("Planet rock") && both.contains("Planet stone"), both);
         ExcavationStates.clear(run, rock);
         String one = ExcavationSites.INSTANCE.intelText(new AnomalyRun(run, system));
         assertFalse(one.contains("Planet rock"), one);
         assertTrue(one.contains("Planet stone"), one);
+        ExcavationStates.clear(run, ExcavationStates.at(run, "stone"));
+        assertNull(ExcavationSites.INSTANCE.intelText(new AnomalyRun(run, system)));
     }
 }

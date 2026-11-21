@@ -14,6 +14,7 @@ import exiledsector.Seeds;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.anomaly.excavation.ExcavationStates;
 import exiledsector.charts.atlas.AtlasRuntime;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
@@ -49,7 +50,8 @@ public final class PhaseLock {
         if (planet.hasTag(ChartIds.CONTENT_TAG) || planet.hasTag(Tags.NON_CLICKABLE)) {
             return false;
         }
-        return ChartRuns.liveIn(planet.getContainingLocation()) != null && ChartAnomalies.dialogFor(planet) == null;
+        ChartRun run = ChartRuns.liveIn(planet.getContainingLocation());
+        return run != null && ExcavationStates.standingAt(run, planet.getId()) == null && ChartAnomalies.dialogFor(planet) == null;
     }
 
     public static Offer offerFor(SectorAPI sector, SectorEntityToken target) {

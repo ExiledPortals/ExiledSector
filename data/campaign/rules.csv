@@ -6,5 +6,8 @@ $faction.id == player",ExiledSectorAtlasOption,,,
 exiledSector_gatewayViewAtlasSel,DialogOptionSelected,$option == exiledSector_viewAtlas,ExiledSectorAtlasOption open,,,
 exiledSector_phaseLockOption,PopulateOptions,$market.isPlanetConditionMarketOnly,ExiledSectorPhaseLockOption,,,"Offers the Phase Displacement Gate's lock on eligible Star Chart planets; the command checks the run, the gate and the planet"
 exiledSector_phaseLockSel,DialogOptionSelected,$option == exiledSector_phaseLock,ExiledSectorPhaseLockOption lock,,,
+exiledSector_excavationOption,PopulateOptions,"$market.isPlanetConditionMarketOnly
+$market.isSurveyed",ExiledSectorExcavationOption,,,"Offers a Star Chart excavation site on its planet once the planet is fully surveyed, like vanilla ruins; the command checks the run and the site"
+exiledSector_excavationSel,DialogOptionSelected,$option == exiledSector_excavation,ExiledSectorExcavationOption open,,,
 exiledSector_officerGreeting,OpenCommLink,$entity.exiledSector_officerFleet score:20000,"ShowDefaultVisual
 ExiledSectorOfficerGreeting",,,"An atlas officer greets the player with their latest history, then cuts the link, since chart fleets ignore comms"

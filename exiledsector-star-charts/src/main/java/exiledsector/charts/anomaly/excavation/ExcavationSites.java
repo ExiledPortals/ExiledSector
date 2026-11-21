@@ -1,9 +1,9 @@
 package exiledsector.charts.anomaly.excavation;
 
 import com.fs.starfarer.api.campaign.BattleCreationPlugin;
-import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
+import com.fs.starfarer.api.campaign.econ.MarketAPI.SurveyLevel;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
@@ -75,9 +75,8 @@ public final class ExcavationSites implements LayoutShaper, ContentPlacer, RunPa
         return placed;
     }
 
-    @Override
-    public InteractionDialogPlugin dialogFor(AnomalyRun run, SectorEntityToken target) {
-        return ExcavationSiteDialog.wantsToHandle(run.run(), target) ? new ExcavationSiteDialog() : null;
+    static boolean fullySurveyed(SectorEntityToken planet) {
+        return planet != null && planet.getMarket() != null && planet.getMarket().getSurveyLevel() == SurveyLevel.FULL;
     }
 
     @Override
@@ -99,7 +98,7 @@ public final class ExcavationSites implements LayoutShaper, ContentPlacer, RunPa
         List<StyledText> planets = new ArrayList<>();
         for (ExcavationSite site : ExcavationStates.standing(run.run())) {
             SectorEntityToken planet = run.system().getEntityById(site.planetId());
-            if (planet != null) {
+            if (fullySurveyed(planet)) {
                 planets.add(StyledText.styled(planet.getName(), Style.HIGHLIGHT));
             }
         }
