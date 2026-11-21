@@ -28,6 +28,7 @@ import exiledsector.ui.CanvasSearchBar;
 import exiledsector.ui.ChromeMetrics;
 import exiledsector.ui.OverlayFade;
 import exiledsector.ui.PointerGesture;
+import exiledsector.ui.ReadoutBar;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.TooltipText;
@@ -61,6 +62,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
     private static final float TOOLTIP_MAX_TEXT_HEIGHT = AtlasScreen.TOOLTIP_MAX_TEXT_HEIGHT;
     private static final float LOADOUT_ROW_GAP = 8f;
     private static final float LOADOUT_TOOLTIP_WIDTH = 360f;
+    static final float POINTS_BAR_WIDTH = 360f;
 
     private enum Control { BACK, EFFECTS }
 
@@ -80,7 +82,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
     private final AtlasTreeView treeView = ScreenPerformance.phase("tree view",
             () -> new AtlasTreeView(data.bodies().withRolledWheels(new Random()), panelStyle));
     private final TextLabel titleLabel = new TextLabel(UiFonts.TITLE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
-    private final TextLabel pointsLabel = new TextLabel(UiFonts.HINT, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
+    private final ReadoutBar pointsBar = new ReadoutBar(AtlasTreeScreen.class, POINTS_BAR_WIDTH, null, null);
     private final TooltipText tooltipText = SkillTreePanelStyle.tooltipText();
     private final TextLabel tooltipTitle = new TextLabel(tooltipText.title(), SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
     private final TextLabel tooltipBody = new TextLabel(tooltipText.body(), SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
@@ -115,6 +117,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
     private final List<ButtonAPI> loadoutButtons = new ArrayList<>();
     private AtlasTreeAllocation allocation;
     private int unspentPoints;
+    private String pointsBarLabel;
     private PositionAPI panelPosition;
     private AtlasTreeNode hoveredNode;
     private Object tooltipSubject;
@@ -174,8 +177,15 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
     }
 
     private void placeCatalystColumn() {
-        float columnTop = frame.chromeTop() - titleLabel.height() - TITLE_GAP - pointsLabel.height() - PANEL_GAP;
-        catalystColumn.place(frame.chromeLeft(), columnTop, frame.chromeBottom() + PANEL_GAP);
+        catalystColumn.place(frame.chromeLeft(), pointsBarBottom() - PANEL_GAP, frame.chromeBottom() + PANEL_GAP);
+    }
+
+    private float pointsBarBottom() {
+        return frame.chromeTop() - titleLabel.height() - TITLE_GAP - ReadoutBar.BAR_HEIGHT;
+    }
+
+    private boolean overPointsBar(float x, float y) {
+        return pointsBar.contains(frame.chromeLeft(), pointsBarBottom(), x, y);
     }
 
     private float loadoutRowBottom() {
@@ -183,7 +193,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
     }
 
     private boolean overChrome(float x, float y) {
-        return searchBar.contains(searchBarLeft(), searchBarBottom(), x, y) || catalystColumn.contains(x, y)
+        return searchBar.contains(searchBarLeft(), searchBarBottom(), x, y) || catalystColumn.contains(x, y) || overPointsBar(x, y)
                 || Rects.contains(searchBarLeft(), loadoutRowBottom(), searchBar.barWidth(), ChromeMetrics.CONTROL_HEIGHT, x, y);
     }
 
@@ -253,7 +263,12 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
     }
 
     private void refreshPointsLabel() {
-        I18n.forGameText(() -> pointsLabel.set(Translation.msg("atlasTree.points").arg("unspent", unspentPoints).arg("earned", state.atlasPoints()).text()));
+        pointsBarLabel = I18n.forGameText(() -> Translation.msg(pointsBarKey(unspentPoints)).arg("earned", state.atlasPoints())
+                .arg("max", AtlasState.MAX_ATLAS_SKILL_POINTS).arg("unspent", unspentPoints).text());
+    }
+
+    static String pointsBarKey(int unspentPoints) {
+        return unspentPoints > 0 ? "atlasTree.pointsBarUnused" : "atlasTree.pointsBar";
     }
 
     @Override
@@ -427,6 +442,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         decorations.advance(amount);
         searchBar.advance(amount);
         placeCatalystColumn();
+        pointsBar.advance(amount, state.atlasPoints(), AtlasState.MAX_ATLAS_SKILL_POINTS, mouseKnown && overPointsBar(mouseX, mouseY));
         hoveredCatalyst = mouseKnown ? catalystColumn.catalystAt(mouseX, mouseY) : null;
         search.focusAnomalies(catalystColumn.focusedAnomalies(hoveredCatalyst));
         camera.advanceZoom(amount);
@@ -474,7 +490,7 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         float left = frame.chromeLeft();
         float top = frame.chromeTop();
         titleLabel.setAlpha(alpha).draw(left, top);
-        pointsLabel.setAlpha(alpha).draw(left, top - titleLabel.height() - TITLE_GAP);
+        pointsBar.render(left, pointsBarBottom(), alpha, pointsBarLabel);
         searchBar.render(searchBarLeft(), searchBarBottom(), alpha);
         catalystColumn.render(hoveredCatalyst, alpha);
     }

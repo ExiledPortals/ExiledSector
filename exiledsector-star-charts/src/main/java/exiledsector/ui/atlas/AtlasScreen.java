@@ -77,7 +77,6 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     static final float CLOSE_WIDTH = 120f;
     static final float BORDERS_WIDTH = 160f;
     static final float BIOMES_WIDTH = 120f;
-    static final float TREE_WIDTH = 140f;
     static final float BUTTON_GAP = 10f;
     static final float SEARCH_WIDTH = 280f;
     static final float OPEN_SECONDS = 0.2f;
@@ -140,6 +139,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     private TooltipMakerAPI debugElement;
     private BenchLayout chartLayout;
     private final OfficerBoard officerBoard = new OfficerBoard();
+    private final AtlasTreeButton treeButton = new AtlasTreeButton();
     private TooltipMakerAPI officersElement;
     private ButtonAPI officersButton;
     private TooltipMakerAPI replayElement;
@@ -225,10 +225,8 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
                 Misc.getDarkPlayerColor(), Misc.getBrightPlayerColor(), BIOMES_WIDTH, ChromeMetrics.CONTROL_HEIGHT, 0f);
         biomesButton.setChecked(OVERLAY_SHOWN.get() == Overlay.BIOMES);
         panelRoot.addUIElement(biomeToggle).inTL(bordersLeft - BUTTON_GAP - BIOMES_WIDTH, PANEL_MARGIN + CHROME_PAD);
-        TooltipMakerAPI treeElement = panelRoot.createUIElement(TREE_WIDTH, ChromeMetrics.CONTROL_HEIGHT, false);
-        treeElement.addButton(Translation.text("chart.atlas.tree"), Control.TREE, TREE_WIDTH, ChromeMetrics.CONTROL_HEIGHT, 0f);
-        float treeLeft = position.getWidth() - PANEL_MARGIN - CHROME_PAD - CLOSE_WIDTH - BORDERS_WIDTH - BIOMES_WIDTH - TREE_WIDTH - BUTTON_GAP * 3f;
-        panelRoot.addUIElement(treeElement).inTL(treeLeft, PANEL_MARGIN + CHROME_PAD);
+        treeButton.add(panelRoot, Translation.text("chart.atlas.tree"), Control.TREE, PANEL_MARGIN + CHROME_PAD);
+        treeButton.refresh(map.state());
         float bottomRowTop = position.getHeight() - PANEL_MARGIN - CHROME_PAD - ChromeMetrics.CONTROL_HEIGHT;
         float officersLeft = officersLeft(position);
         officersElement = panelRoot.createUIElement(OFFICERS_WIDTH, ChromeMetrics.CONTROL_HEIGHT, false);
@@ -263,8 +261,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     }
 
     private float searchBarLeft() {
-        float treeLeft = panelPosition.getWidth() - PANEL_MARGIN - CHROME_PAD - CLOSE_WIDTH - BORDERS_WIDTH - BIOMES_WIDTH - TREE_WIDTH - BUTTON_GAP * 3f;
-        return panelPosition.getX() + treeLeft - BUTTON_GAP - SEARCH_WIDTH;
+        return panelPosition.getX() + AtlasTreeButton.searchBarLeft(panelPosition.getWidth(), SEARCH_WIDTH);
     }
 
     private float searchBarBottom() {
@@ -498,6 +495,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
 
     private void debugCompleted(AtlasCell cell) {
         map = map.rebuilt();
+        treeButton.refresh(map.state());
         indexSearch();
         tooltipSubject = null;
         map.pulse(cell);
@@ -893,6 +891,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         camera.advancePan(amount);
         advanceSpotlight(amount);
         advanceOfficerBoard(amount);
+        treeButton.advance(amount, 1f - Fade.smooth(focusLevel), !focusing);
         if (panelPosition != null) {
             boolean hovering = focusedCell == null && !officerBoard.isShowing() && !camera.isDragging() && !overSearchBar(mouseX, mouseY);
             hoveredAnomaly = hovering ? map.anomalyAt(viewport(), mouseX, mouseY) : null;
@@ -965,6 +964,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
                 map.renderFocus(viewport(), focusedCell, focus(), alpha);
             }
         }
+        treeButton.render(alpha);
         drawChrome(alpha);
         renderChartCount(alpha);
         officerBoard.render(alpha, mouseX, mouseY, panelStyle.getAccentColor());
