@@ -232,12 +232,12 @@ class RelayChoicesTest {
         RelayChoices.storeOffers(run, RelaySlot.of(RelayKind.COMM_RELAY), STORED_OFFERS);
 
         RelayChoices.pick(sector, run, RelaySlot.of(RelayKind.NAV_BUOY), 0);
-        assertEquals(Map.of("kited", 1), ScarMemory.scarsOn(bossMemory, "boss-flagship"));
+        assertEquals(Map.of("kited", 1), ScarMemory.fleetScars(bossMemory));
         RelayChoices.pick(sector, run, RelaySlot.of(RelayKind.COMM_RELAY), 0);
 
         assertEquals("boss-flagship", ScarMemory.runFlagshipId(bossMemory));
         assertNull(Scars.flagshipIdOf(boss));
-        assertEquals(Map.of("kited", 2), ScarMemory.scarsOn(bossMemory, "boss-flagship"));
+        assertEquals(Map.of("kited", 2), ScarMemory.fleetScars(bossMemory));
         assertEquals(Map.of(), Scars.scarsOf(boss));
         verify(flagshipVariant, atLeastOnce()).addMod(SkillTreeHullMod.ID);
     }

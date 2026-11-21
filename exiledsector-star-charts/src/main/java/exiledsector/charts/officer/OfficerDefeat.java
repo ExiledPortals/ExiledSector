@@ -86,13 +86,13 @@ public final class OfficerDefeat {
         return carried.stream().filter(item -> RewardGroup.of(item) != lost).toList();
     }
 
-    public static AtlasOfficer challengeLost(AtlasState state, int loserOfficerId, String winnerFactionId, Random random) {
+    public static AtlasOfficer challengeLost(AtlasState state, int loserOfficerId, Random random) {
         AtlasOfficer loser = state == null ? null : state.officer(loserOfficerId);
         if (loser == null) {
             return null;
         }
         HullFacts hull = OfficerFleets.flagshipHull(loser);
-        String scarId = Scars.pickAfterChallengeLoss(winnerFactionId, loser.scars(), hull);
+        String scarId = Scars.pickAfterChallengeLoss(loser.scars(), hull, random);
         AtlasOfficer scarred = scarred(loser, scarId, dModFor(scarId, loser, hull, random));
         state.putOfficer(scarred);
         return scarred;

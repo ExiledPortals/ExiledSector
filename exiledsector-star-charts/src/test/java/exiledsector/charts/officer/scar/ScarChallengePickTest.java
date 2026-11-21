@@ -1,64 +1,54 @@
 package exiledsector.charts.officer.scar;
 
-import exiledsector.charts.ChartTables;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.LinkedHashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ScarChallengePickTest {
 
     @BeforeEach
     void loadTables() throws Exception {
         ScarFixtures.loadShipped();
-        assertEquals(List.of(), ScarChallengePick.register(ChartTables.csvRows(ScarChallengePick.FOCUS_PATH)));
-    }
-
-    @AfterEach
-    void clearFocus() {
-        ScarChallengePick.clear();
     }
 
     @Test
-    void focusTagsAreOrderedStrongestFirstWithTiesInListedOrder() {
-        Map<String, Float> weights = new LinkedHashMap<>();
-        weights.put("shield", 1.5f);
-        weights.put("flux", 2f);
-        weights.put("phase", 1.5f);
-        weights.put("energy", 2f);
-        assertEquals(List.of("flux", "energy", "shield", "phase"), ScarChallengePick.strongestFirst(weights));
+    void aChallengeLossPicksAnEligibleScarAtRandom() {
+        Random random = new Random(7L);
+        Set<String> picked = new HashSet<>();
+        for (int roll = 0; roll < 200; roll++) {
+            String scarId = ScarChallengePick.pick(Map.of(), ScarFixtures.SHIELDED_WARSHIP, random);
+            assertNotEquals(ScarTable.FALLBACK_SCAR_ID, scarId);
+            assertTrue(ScarScoring.eligible(ScarTable.row(scarId), Map.of(), ScarFixtures.SHIELDED_WARSHIP), scarId);
+            picked.add(scarId);
+        }
+        assertTrue(picked.size() > 10, picked.toString());
     }
 
     @Test
-    void theWinnersStrongestFocusPicksTheFirstScarWithThatTag() {
-        assertEquals("overloaded", ScarChallengePick.pick("tritachyon", Map.of(), ScarFixtures.SHIELDED_WARSHIP));
-        assertEquals("ironbreaker", ScarChallengePick.pick("hegemony", Map.of(), ScarFixtures.SHIELDED_WARSHIP));
-    }
-
-    @Test
-    void aCappedScarPassesToTheNextOneWithTheTag() {
-        Map<String, Integer> capped = Map.of("overloaded", ScarTable.STACK_CAP);
-        assertEquals("flux_pinned", ScarChallengePick.pick("tritachyon", capped, ScarFixtures.SHIELDED_WARSHIP));
-    }
-
-    @Test
-    void aSpentTagPassesToTheNextFocusTag() {
+    void aCappedScarIsNeverPicked() {
         List<ScarRow> rows = List.of(ScarFixtures.row("overloaded", ScarDetector.OVERLOADS, 1f, "flux"),
-                ScarFixtures.row("ghost_haunted", ScarDetector.PHASE_ATTACKER_SHARE, 0.3f, "phase"), ScarFixtures.fallback());
-        assertEquals("ghost_haunted", ScarChallengePick.pick(List.of("flux", "phase"), rows,
-                Map.of("overloaded", ScarTable.STACK_CAP), ScarFixtures.SHIELDED_WARSHIP));
+                ScarFixtures.row("flux_pinned", ScarDetector.HIGH_FLUX_SECONDS, 20f, "flux"), ScarFixtures.fallback());
+        Map<String, Integer> capped = Map.of("overloaded", ScarTable.STACK_CAP);
+        Random random = new Random(3L);
+        for (int roll = 0; roll < 20; roll++) {
+            assertEquals("flux_pinned", ScarChallengePick.pick(rows, capped, ScarFixtures.SHIELDED_WARSHIP, random));
+        }
     }
 
     @Test
-    void aFactionWithoutFocusOrScarsToGiveTakesTheFallback() {
-        assertEquals(ScarTable.FALLBACK_SCAR_ID, ScarChallengePick.pick("no_such_faction", Map.of(), ScarFixtures.SHIELDED_WARSHIP));
-        assertEquals(ScarTable.FALLBACK_SCAR_ID, ScarChallengePick.pick(null, Map.of(), ScarFixtures.SHIELDED_WARSHIP));
-        assertEquals(ScarTable.FALLBACK_SCAR_ID, ScarChallengePick.pick(List.of("ballistic"), ScarTable.rows(), Map.of(),
-                ScarFixtures.SHIELDED_WARSHIP));
+    void withNoEligibleScarOrNoFlagshipItTakesTheFallback() {
+        List<ScarRow> rows = List.of(ScarFixtures.row("overloaded", ScarDetector.OVERLOADS, 1f, "flux"), ScarFixtures.fallback());
+        assertEquals(ScarTable.FALLBACK_SCAR_ID, ScarChallengePick.pick(rows, Map.of("overloaded", ScarTable.STACK_CAP),
+                ScarFixtures.SHIELDED_WARSHIP, new Random(1L)));
+        assertEquals(ScarTable.FALLBACK_SCAR_ID, ScarChallengePick.pick(Map.of(), null, new Random(1L)));
     }
 }

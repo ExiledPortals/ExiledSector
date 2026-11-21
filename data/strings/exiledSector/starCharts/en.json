@@ -1028,7 +1028,7 @@
     "chart.anomaly.relay_network.message.traced": "Their trace leads to stage {stage} of {stages} in another Atlas system",
     "chart.anomaly.relay_network.message.choice": "{relay} can send one order to the Star Chart Boss",
     "chart.anomaly.relay_network.choice.intro": "The relay still holds a channel to the Star Chart Boss's fleet. Your comms officer drafts {orders} forged orders, and there is time to send one.",
-    "chart.anomaly.relay_network.choice.rule": "The Star Chart Boss drops the order's reward when destroyed, and its flagship gains the order's scar.",
+    "chart.anomaly.relay_network.choice.rule": "The Star Chart Boss drops the order's reward when destroyed, and its fleet gains the order's scar.",
     "chart.anomaly.relay_network.choice.offer": "<hl>{reward}</hl>",
     "chart.anomaly.relay_network.choice.picked": "Order sent: <hl>{reward}</hl>",
     "chart.anomaly.relay_network.option.choice": "Send the order: {reward}, {scar}",

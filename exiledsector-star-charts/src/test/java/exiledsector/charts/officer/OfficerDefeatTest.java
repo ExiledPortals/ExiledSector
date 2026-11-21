@@ -52,7 +52,7 @@ class OfficerDefeatTest {
         AtlasState state = new AtlasState(9L);
         state.putOfficer(officer(4).withCarried(List.of(KERNELS)));
 
-        AtlasOfficer loser = OfficerDefeat.challengeLost(state, 4, "faction_with_no_focus", new Random(1L));
+        AtlasOfficer loser = OfficerDefeat.challengeLost(state, 4, new Random(1L));
 
         assertEquals(Map.of(ScarTable.FALLBACK_SCAR_ID, 1), loser.scars());
         assertEquals(List.of(KERNELS), loser.carried());
@@ -63,8 +63,8 @@ class OfficerDefeatTest {
     void aChallengeLostByAnUnknownOfficerChangesNothing() {
         AtlasState state = new AtlasState(9L);
 
-        assertNull(OfficerDefeat.challengeLost(state, 4, "hegemony", new Random(1L)));
-        assertNull(OfficerDefeat.challengeLost(null, 4, "hegemony", new Random(1L)));
+        assertNull(OfficerDefeat.challengeLost(state, 4, new Random(1L)));
+        assertNull(OfficerDefeat.challengeLost(null, 4, new Random(1L)));
         assertTrue(state.officers().isEmpty());
     }
 
