@@ -1,5 +1,6 @@
 {
 	"plugins":{
+		"exiledSector_harnessCombatPlugin":"exiledsector.harness.HarnessCombatPlugin",
 		"exiledSector_chartBattlePlugin":"exiledsector.charts.effect.ChartBattlePlugin",
 		"exiledSector_chartAutopilotPlugin":"exiledsector.charts.effect.ChartAutopilotPlugin",
 		"exiledSector_chartArcStrikePlugin":"exiledsector.charts.effect.ChartArcStrikePlugin",

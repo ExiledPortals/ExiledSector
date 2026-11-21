@@ -47,7 +47,7 @@ import java.awt.Color;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
+public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin implements ZoomableScreen {
 
     private static final float CRAFTING_BENCH_DIM_SECONDS = 0.25f;
     private static final float CRAFTING_BENCH_DIM_ALPHA = 0.45f;
@@ -128,6 +128,11 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             camera.jumpZoomTo(SmoothZoom.MIN_ZOOM);
             camera.centreOn(startingRoot.getOffsetX(), startingRoot.getOffsetY());
         }
+    }
+
+    @Override
+    public CanvasCamera camera() {
+        return camera;
     }
 
     @Override

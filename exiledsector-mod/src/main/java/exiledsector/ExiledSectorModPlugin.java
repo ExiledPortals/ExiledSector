@@ -28,6 +28,7 @@ import exiledsector.effects.PlayerEngagementPipeline;
 import exiledsector.effects.ResolvedTree;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.effects.TechMiningItemListener;
+import exiledsector.harness.Harness;
 import exiledsector.items.drop.CraftingDrops;
 import exiledsector.items.hull.HullUpgradesDomain;
 import exiledsector.items.crafting.InfusedCraftCosts;
@@ -56,6 +57,7 @@ import exiledsector.skills.SkillTreeDomain;
 import exiledsector.skills.tags.ThemeTags;
 import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.CraftingBenchRefitButton;
+import exiledsector.ui.ShownScreens;
 import exiledsector.ui.cargo.CargoCraftingTabListener;
 import exiledsector.ui.cargo.LootAlertListener;
 import exiledsector.ui.decoration.FleetHulls;
@@ -79,6 +81,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
 
     @Override
     public void onApplicationLoad() throws Exception {
+        Harness.startIfLaunched();
         loadLanguage();
         Global.getLogger(ExiledSectorModPlugin.class).info(ExiledSector.LOG_TAG + " loaded");
         localiseGameText();
@@ -176,6 +179,8 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         SectionFitMigration.run();
         SocketCustody.reconcile();
         DOMAINS.forEach(ExiledSectorDomain::afterSocketCustody);
+        ShownScreens.clear();
+        Harness.runIfLaunched(sector);
     }
 
     @Override

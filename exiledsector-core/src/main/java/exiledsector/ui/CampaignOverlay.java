@@ -80,6 +80,8 @@ public final class CampaignOverlay {
             hostPanel.addComponent(panel).inTL(0f, 0f);
             OPEN_HOSTS.add(host);
             screen.attach(panel);
+            host.shownScreen = screen;
+            ShownScreens.shown(screen, host::close);
             SkillTreeSounds.play(CLICK_SOUND);
             performance.opened(screen.getClass().getSimpleName());
             return true;
@@ -142,6 +144,7 @@ public final class CampaignOverlay {
         private final Runnable afterClose;
         private final ScreenPerformance performance;
         private CustomPanelAPI overlayPanel;
+        private Screen shownScreen;
         private CustomPanelAPI replacedPanel;
         private boolean replacedPanelLeaving;
 
@@ -186,6 +189,7 @@ public final class CampaignOverlay {
         public void switchTo(Function<Host, Screen> nextScreen) {
             TransientScripts.nextFrame(Global.getSector(), () -> {
                 performance.closed();
+                ShownScreens.hidden(shownScreen);
                 removeReplacedPanel();
                 CustomPanelAPI shownPanel = overlayPanel;
                 overlayPanel = null;
@@ -203,6 +207,7 @@ public final class CampaignOverlay {
 
         private void remove(String wormholeMessage) {
             performance.closed();
+            ShownScreens.hidden(shownScreen);
             removeReplacedPanel();
             if (overlayPanel != null) {
                 hostPanel.removeComponent(overlayPanel);

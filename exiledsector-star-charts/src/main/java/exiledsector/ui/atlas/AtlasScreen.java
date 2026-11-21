@@ -48,6 +48,7 @@ import exiledsector.ui.TooltipText;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.UiFonts;
 import exiledsector.ui.VanillaText;
+import exiledsector.ui.ZoomableScreen;
 import exiledsector.ui.cargo.CatalystCargo;
 import exiledsector.ui.chart.StarChartCraftingBench;
 import exiledsector.ui.decoration.StarfieldRenderer;
@@ -69,7 +70,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-public final class AtlasScreen extends BaseCustomUIPanelPlugin implements CampaignOverlay.Screen {
+public final class AtlasScreen extends BaseCustomUIPanelPlugin implements CampaignOverlay.Screen, ZoomableScreen {
 
     static final float PANEL_MARGIN = 20f;
     static final float BORDER_INSET = 16f;
@@ -182,6 +183,11 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
 
     static boolean openIn(InteractionDialogAPI dialog, Runnable afterClose) {
         return CampaignOverlay.openIn(dialog, AtlasScreen::new, afterClose);
+    }
+
+    @Override
+    public CanvasCamera camera() {
+        return camera;
     }
 
     @Override

@@ -1,0 +1,25 @@
+{
+  "steps": [
+    {"step": "wait", "seconds": 3},
+    {"step": "ignoreErrorsSoFar"},
+    {"step": "screenshot", "name": "campaign"},
+    {"step": "openAtlas"},
+    {"step": "wait", "frames": 30},
+    {"step": "expectScreen", "name": "atlas"},
+    {"step": "screenshot", "name": "atlas"},
+    {"step": "closeScreen"},
+    {"step": "openAtlasTree"},
+    {"step": "wait", "frames": 30},
+    {"step": "screenshot", "name": "atlas_tree"},
+    {"step": "zoom", "to": 0.1},
+    {"step": "wait", "frames": 30},
+    {"step": "screenshot", "name": "atlas_tree_zoomed_out"},
+    {"step": "closeScreen"},
+    {"step": "openSkillTree", "ship": "flagship"},
+    {"step": "wait", "frames": 30},
+    {"step": "screenshot", "name": "skill_tree"},
+    {"step": "closeScreen"},
+    {"step": "expectScreen", "name": "none"},
+    {"step": "expectNoErrors"}
+  ]
+}

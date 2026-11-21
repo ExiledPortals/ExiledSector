@@ -2,6 +2,7 @@ package exiledsector.ui.atlas;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
+import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
@@ -32,6 +33,7 @@ import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.TooltipText;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.UiFonts;
+import exiledsector.ui.ZoomableScreen;
 import exiledsector.ui.decoration.DecorationScene;
 import exiledsector.ui.decoration.StarfieldRenderer;
 import exiledsector.ui.decoration.TreeDecorations;
@@ -47,7 +49,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements CampaignOverlay.Screen {
+public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements CampaignOverlay.Screen, ZoomableScreen {
 
     private static final float BACK_WIDTH = 160f;
     private static final float EFFECTS_WIDTH = 160f;
@@ -128,6 +130,15 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
         this.effectsPanel = new AtlasTreeEffectsPanel(() -> AtlasTree.effectGroups(state));
         this.searchBar = new CanvasSearchBar(search, I18n.forGameText(() -> Translation.text("atlasTree.search.placeholder")), this::jumpToNextSearchMatch);
         ScreenPerformance.phase("allocation", this::refreshAllocation);
+    }
+
+    public static boolean open(CampaignUIAPI campaignUI) {
+        return CampaignOverlay.open(campaignUI, AtlasTreeScreen::new, null);
+    }
+
+    @Override
+    public CanvasCamera camera() {
+        return camera;
     }
 
     @Override

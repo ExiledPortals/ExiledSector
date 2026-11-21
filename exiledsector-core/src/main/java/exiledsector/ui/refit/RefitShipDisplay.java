@@ -51,7 +51,7 @@ public final class RefitShipDisplay {
         return true;
     }
 
-    static Object refitPanelOf(Object refitTab) throws Throwable {
+    public static Object refitPanelOf(Object refitTab) throws Throwable {
         Object refitPanel = UiReflection.call(refitTab, "getRefitPanel");
         return refitPanel != null ? refitPanel : UiReflection.childWithMethod(refitTab, GET_SHIP_DISPLAY, 0);
     }
