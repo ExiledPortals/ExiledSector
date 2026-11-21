@@ -296,6 +296,7 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
         for (LayoutShaper anomaly : shapers) {
             shapeOrDrop(anomaly, BuiltInTable.rollFor(shapeSeed, anomaly.id(), SHAPE_SALT));
         }
+        NebulaCentre.holdStill(system);
         if (abyss != null) {
             ChartAbyss.dress(system, abyss, abyssalCentre, ChartWormholePlacement.outermost(system, List.of()), starId, random);
         }
@@ -365,11 +366,6 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
         }
         system.setStar(null);
         system.initNonStarCenter();
-        for (SectorEntityToken entity : new ArrayList<>(system.getAllEntities())) {
-            if (entity.getOrbitFocus() == centreStar || entity.getOrbitFocus() == system.getCenter()) {
-                entity.setOrbit(null);
-            }
-        }
         system.getCenter().addTag(Tags.AMBIENT_LS);
         system.setStar(centreStar);
         systemCenter = system.getCenter();

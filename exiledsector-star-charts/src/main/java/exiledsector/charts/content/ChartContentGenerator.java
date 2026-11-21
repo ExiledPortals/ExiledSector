@@ -20,6 +20,7 @@ import com.fs.starfarer.api.impl.campaign.terrain.BaseRingTerrain;
 import com.fs.starfarer.api.impl.campaign.terrain.StarCoronaTerrainPlugin;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.layout.ChartGeometry;
+import exiledsector.charts.layout.NebulaCentre;
 import exiledsector.compat.FirstFailureLog;
 import exiledsector.charts.effect.ChartEnemyShipEffects;
 import exiledsector.charts.generation.ChartGenContext;
@@ -131,6 +132,7 @@ public final class ChartContentGenerator {
             build.spawnFleets(plan);
             build.generateAnomalies(plan);
             build.placeColonyItem(plan);
+            NebulaCentre.holdStill(system);
             ChartContent content = build.settle(plan);
             build.commitAnomalyStates();
             return content;
