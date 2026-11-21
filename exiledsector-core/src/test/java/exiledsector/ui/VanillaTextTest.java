@@ -48,6 +48,28 @@ class VanillaTextTest {
     }
 
     @Test
+    void touchingHighlightsAreSplitByAnUnhighlightedSpaceSoEachKeepsItsColour() {
+        StyledText line = StyledText.parse("<good>1%</good> increased flux dissipation for every <hl>5%</hl> hard flux level.")
+                .withUnstyledAs(Style.IMMUTABLE);
+
+        VanillaText.Prepared prepared = VanillaText.prepare(line, PALETTE);
+
+        assertEquals("1% increased flux dissipation for every 5% hard flux level.", prepared.text());
+        assertArrayEquals(new String[]{"1%", "increased flux dissipation for every", "5%", "hard flux level."}, prepared.highlights());
+        assertArrayEquals(new Style[]{Style.GOOD, Style.IMMUTABLE, Style.HIGHLIGHT, Style.IMMUTABLE}, prepared.styles());
+    }
+
+    @Test
+    void punctuationRightAfterAHighlightStaysUnhighlightedInsteadOfGainingASpace() {
+        StyledText line = StyledText.parse("<good>10%</good>, then more").withUnstyledAs(Style.IMMUTABLE);
+
+        VanillaText.Prepared prepared = VanillaText.prepare(line, PALETTE);
+
+        assertEquals("10%, then more", prepared.text());
+        assertArrayEquals(new String[]{"10%", "then more"}, prepared.highlights());
+    }
+
+    @Test
     void aParagraphWithHighlightsKeepsItsBaseColourForTheRestOfTheText() {
         TooltipMakerAPI tooltip = mock(TooltipMakerAPI.class);
         LabelAPI label = mock(LabelAPI.class);

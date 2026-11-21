@@ -16,22 +16,23 @@ import java.util.function.Function;
 
 public final class VanillaText {
 
-    public record Prepared(String text, String[] highlights, Color[] colors) {
+    public record Prepared(String text, String[] highlights, Color[] colors, Style[] styles) {
 
         @Override
         public boolean equals(Object other) {
             return other instanceof Prepared prepared && Objects.equals(text, prepared.text)
-                    && Arrays.equals(highlights, prepared.highlights) && Arrays.equals(colors, prepared.colors);
+                    && Arrays.equals(highlights, prepared.highlights) && Arrays.equals(colors, prepared.colors)
+                    && Arrays.equals(styles, prepared.styles);
         }
 
         @Override
         public int hashCode() {
-            return 31 * (31 * Objects.hashCode(text) + Arrays.hashCode(highlights)) + Arrays.hashCode(colors);
+            return 31 * (31 * (31 * Objects.hashCode(text) + Arrays.hashCode(highlights)) + Arrays.hashCode(colors)) + Arrays.hashCode(styles);
         }
 
         @Override
         public String toString() {
-            return "Prepared[" + text + ", " + Arrays.toString(highlights) + ", " + Arrays.toString(colors) + "]";
+            return "Prepared[" + text + ", " + Arrays.toString(highlights) + ", " + Arrays.toString(colors) + ", " + Arrays.toString(styles) + "]";
         }
     }
 
@@ -48,7 +49,7 @@ public final class VanillaText {
         Prepared prepared = prepare(text, palette);
         LabelAPI label = plainPara(tooltip, prepared.text(), pad, base);
         highlight(label, prepared);
-        OverchargeBreath.attach(tooltip, label, text, prepared.colors());
+        OverchargeBreath.attach(tooltip, label, prepared);
         return label;
     }
 
@@ -77,23 +78,59 @@ public final class VanillaText {
         StringBuilder preparedText = new StringBuilder(plain.length() + text.spans().size() * 2);
         List<String> highlights = new ArrayList<>();
         List<Color> colors = new ArrayList<>();
+        List<Style> styles = new ArrayList<>();
         int cursor = 0;
+        int previousHighlightEnd = -1;
         for (StyledText.Span span : text.spans()) {
-            preparedText.append(plain, cursor, span.start());
+            int start = skipWhitespace(plain, Math.max(cursor, span.start()), span.end());
+            int end = trimWhitespace(plain, start, span.end());
+            if (start == cursor && preparedText.length() == previousHighlightEnd) {
+                start = skipBoundaries(plain, start, end);
+            }
+            if (start >= end) {
+                continue;
+            }
+            preparedText.append(plain, cursor, start);
             if (!preparedText.isEmpty() && !isHighlightBoundary(preparedText.charAt(preparedText.length() - 1))) {
                 preparedText.append(' ');
             }
-            String highlighted = plain.substring(span.start(), span.end());
+            String highlighted = plain.substring(start, end);
             preparedText.append(highlighted);
+            previousHighlightEnd = preparedText.length();
             highlights.add(highlighted);
             colors.add(palette.apply(span.style()));
-            cursor = span.end();
+            styles.add(span.style());
+            cursor = end;
             if (cursor < plain.length() && !isHighlightBoundary(plain.charAt(cursor))) {
                 preparedText.append(' ');
             }
         }
         preparedText.append(plain.substring(cursor));
-        return new Prepared(preparedText.toString(), highlights.toArray(new String[0]), colors.toArray(new Color[0]));
+        return new Prepared(preparedText.toString(), highlights.toArray(new String[0]), colors.toArray(new Color[0]), styles.toArray(new Style[0]));
+    }
+
+    private static int skipWhitespace(String text, int from, int limit) {
+        int position = from;
+        while (position < limit && Character.isWhitespace(text.charAt(position))) {
+            position++;
+        }
+        return position;
+    }
+
+    private static int trimWhitespace(String text, int from, int end) {
+        int position = end;
+        while (position > from && Character.isWhitespace(text.charAt(position - 1))) {
+            position--;
+        }
+        return position;
+    }
+
+    private static int skipBoundaries(String text, int from, int limit) {
+        int position = from;
+        while (position < limit && isHighlightBoundary(text.charAt(position))) {
+            position++;
+        }
+        return position;
     }
 
     static boolean isHighlightBoundary(char c) {
