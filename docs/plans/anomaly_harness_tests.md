@@ -6,6 +6,8 @@ The goal is a live harness scenario for every Star Chart anomaly, and one for ev
 
 The harness (`tools/harness/`, code in `exiledsector-mod` under `exiledsector.harness`) runs one scenario per game launch against a copy of a save. Today it can open a free chart beside the player, pass days, despawn the boss and leave the run. It cannot apply atlas tree nodes, open from the atlas, drive anomaly dialogs or fight a campaign battle.
 
+The scenarios are not 66 separate launches. They are cases grouped by anomaly, and the whole suite runs in one game session without restarting the game. A single anomaly's group, or a single case, can also be run on its own (see Suites and groups).
+
 ## What gets a scenario
 
 All 22 anomalies in `chart_anomalies.csv` get a base scenario. Eleven have no atlas nodes of their own, so the base scenario is their whole test: holdouts, abyssal_storm, pre_collapse_facility, derelict_forge, abyssal_research_complex, coronal_hypershunt, abyssal_shipyard, remnant_nexus_station, domain_mothership, black_hole (apart from event_horizon) and neutron_star.
@@ -41,6 +43,39 @@ Battles get two levels.
 
 The outcome is forced from inside combat. A win kills every enemy ship the way Console Commands' Nuke does (`Kill.killShip`: hitpoints 1, armour cell zeroed, a huge OTHER damage hit), so kills count for loot per DP and for objectives. A loss does the same to the player's ships. `engine.endCombat(delay, side)` is the fallback for a named winner with no kills.
 
+## Suites and groups
+
+A case is one test: a base scenario, a value scenario or a node scenario. A group holds every case for one anomaly. A suite is a list of groups. The anomaly sections below are the groups, and each line in them is a case.
+
+### One game session
+
+One launch loads the save once and runs every selected case in order. Between cases the game is not restarted; instead each case starts from the same baseline.
+
+- After the save loads, the runner captures the baseline. It records the player fleet's location, position, members, CR and cargo (commodities, crafting materials and items), the atlas state (points, allocation, loadouts, anomaly records, catalysts, officers, intents, cell flags, seed), the star chart store and the sector's harness-relevant memory.
+- Each case gets its own seed. The chart seed, run id random and atlas reset all come from it, so a case gives the same result whichever cases ran before it.
+- After each case, teardown runs whether the case passed or failed. It closes any open chart run and waits until `ChartRuns.unclosed(runId)` is null, closes any open dialog or core UI, ends any combat, returns the player fleet to its baseline location, and restores fleet, cargo, atlas state and the chart store from the baseline.
+- Then a leak check compares `ChartCensus.take()` with the baseline (`changesSince`). A leak fails that case, not the suite. Star Chart runs are meant to leave no trace in the save, so this also tests that.
+- If teardown itself fails, the session can't be trusted. The runner marks the remaining cases as not run, writes results and quits, and the script relaunches the game from the save and carries on from the next case. A restart only happens after a broken teardown.
+- The sector clock keeps moving across cases. Every anomaly timer counts from its run's own start, so that is safe; any case that depends on the date sets up its own.
+
+### Grouping inside a group
+
+- Cases in a group run cheapest first: value scenario, then state and dialog cases, then battle cases, then atlas cases.
+- Cases that don't interfere can share one opened run. The value scenario and the plain state checks of an anomaly usually fit in one run; a case that changes the run (an alarm, a corruption, a collapse) gets its own.
+- A cross-anomaly node case belongs to the group of the anomaly whose tree branch holds the node (bolt_hole_drop sits under Supply Convoy) and is tagged with the other anomaly too. Selecting by tag picks it up when either anomaly is tested.
+- Groups whose anomaly needs a missing mod are skipped as a whole and reported as skipped.
+
+### Running a subset
+
+`run-harness.ps1` takes a suite file and filters:
+
+- `-Group <anomaly>` runs one anomaly's group.
+- `-Case <id>` runs one case, with its group's shared setup.
+- `-Tag <anomaly>` runs every case tagged with that anomaly, across groups.
+- No filter runs the whole suite.
+
+Results go into one `results.json`, with an entry per group and per case (steps, details, recorded values, leak check, teardown). The script prints one PASS, FAIL or SKIP line per case and a total per group.
+
 ## Harness capabilities
 
 Built in order; later ones lean on earlier ones.
@@ -60,7 +95,7 @@ Built in order; later ones lean on earlier ones.
 5. Fleet movement: teleport beside an entity or point (extends `HarnessCampaign.movePlayerFleetBeside`), hold still, follow a moving terrain (storm front, drifting breach), and fly to an entity to interact with it the way a click does. `passDays` gains an option to allow engagements; today `CampaignTimeSkip` sets no-engaging every iteration.
 6. Dialog driver, extracted from `TitleNewGameDriver.offeredOptions`: open a dialog on an entity through the normal plugin pick, list options with enabled state and tooltips, pick by option data or visible text, re-read `dialog.getPlugin()` after every pick (hand-offs swap it), and close the loot screen. Package-private choice records (relay offers, prototype picks) are picked by index or text.
 7. Auto-resolve battle against a fleet found by tag, memory key or side.
-8. Suite runner: `run-harness.ps1` runs a folder of scenarios, one launch each from the same save, and prints one line per scenario. About 66 launches is too many to start by hand.
+8. Suite runner, as described in Suites and groups: suite files with groups, cases and tags; baseline capture, per-case seeds, teardown and restore, the leak check, relaunch after a broken teardown, and the `-Group`, `-Case` and `-Tag` filters.
 
 ### B. Real battles
 
@@ -85,7 +120,7 @@ Built in order; later ones lean on earlier ones.
 
 ## Scenarios by anomaly
 
-Each line names what it checks and the capabilities it needs.
+Each section is one group, and each line is a case: what it checks and the capabilities it needs. Every group also has a value case for its number nodes, run first.
 
 ### Excavation Sites
 
@@ -208,7 +243,7 @@ Each base scenario finds the site, fights or bypasses its guards, takes the rewa
 
 ## Build order
 
-1. A1–A8, then every base scenario that needs no real battle and every value scenario. About 12 new steps and 30 scenario files. Also covers about 22 scenario nodes: twin_shafts state, the deeper_bores dialog, double_dose, silent_choir, restless_sleepers, breached_graveyard, extra_relay, full_array, hair_trigger, fortified_depot purge hold, heavy_breach, rift_magnetism, incursion, rude_awakening wake-up, eye_of_the_storm, redacted_front, captured_front, open_season, bolt_hole_drop, the sunstruck route, ion_front and geomagnetic_surge auroras, long_settling, ionized_dust and event_horizon.
+1. A1–A8, with the suite runner and teardown built first so every later case is written as part of a group. Then every base scenario that needs no real battle and every value scenario. About 12 new steps and a suite file per anomaly. Also covers about 22 scenario nodes: twin_shafts state, the deeper_bores dialog, double_dose, silent_choir, restless_sleepers, breached_graveyard, extra_relay, full_array, hair_trigger, fortified_depot purge hold, heavy_breach, rift_magnetism, incursion, rude_awakening wake-up, eye_of_the_storm, redacted_front, captured_front, open_season, bolt_hole_drop, the sunstruck route, ion_front and geomagnetic_surge auroras, long_settling, ionized_dust and event_horizon.
 2. B, then the scenarios that need real combat: cavern fights (needle_bores, widened_bores, pitch_black, infested_bolt_holes), hyperspace_bleed, storm strikes, sunstruck CR, solar_front loot, Depot engage and the armed station, hunting_party, convoy attack and pods, engram drops, the Nexus overcharge and real guard fights. The largest step and the likeliest to stall.
 3. C, then the atlas scenarios: the Relay chain and forked_trace, shared_broadcast, officers_ledger, supply_lines, the Depot lane reveal, every Skirmish outcome and spoils_of_war, the officer base scenario, iron_grip, rift_duel, thunder_duel, opening-chance nodes and dense_nebula_atlas_chance.
 4. D, then the raid scenarios (collapsed shaft, convoy cache, smash_and_grab, the collapsed half of twin_shafts) and the statistical officer turns.
@@ -217,9 +252,10 @@ Each base scenario finds the site, fights or bypasses its guards, takes the rewa
 
 - Randomness: battle loot (`ItemLootListener` uses its own unseeded random), combat AI, lightning, storm strikes, auroras and the abyssal storm cycle aren't seeded. Those checks use ranges or presence; only generation output is compared exactly. An injectable random would make them exact, but it's an optional production change.
 - Timing: the breach runs in campaign seconds, convoys take more than 5 days plus travel, the storm front 30 days and may never reach the planets. Fast-forward changes frame sizes, so timed checks allow slack.
-- Atlas side effects: an atlas node faked onto a free run makes run close touch a cell that doesn't match the atlas, so atlas scenarios use the real path and start from a fixed save.
+- Atlas side effects: an atlas node faked onto a free run makes run close touch a cell that doesn't match the atlas, so atlas cases use the real path and start from the restored atlas baseline.
 - Real combat UI: the deployment, loot and recovery screens are obfuscated widgets, and Nexerelin changes the encounter dialog.
-- Run time: about 66 launches of a few minutes each, so the suite runner is part of the first step.
+- Isolation: anything teardown doesn't restore leaks into later cases. The baseline covers what the cases touch, and the leak check catches chart content left behind, but other state (faction relations changed by a fight, intel added, sector memory flags) needs adding to the baseline as cases start touching it. A case that passes alone but fails in the full suite points at a gap in teardown.
+- Run time: one session for about 66 cases is long, so the cases in a group share runs wherever they can, and the filters keep a single anomaly's run short.
 
 ## Side findings
 
