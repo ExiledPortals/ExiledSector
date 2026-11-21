@@ -34,7 +34,8 @@ lay-in-course arrows were removed on 2026-11-18 and every body now stays where t
 - Chance nodes (+8%) fill lead-up slots first on hybrids, then from the inner ring outward, at most 12 per anomaly.
 - Harder notables sit on outer rings. An anomaly's notables are spread around and across rings, never grouped, except the
   three Embargoes: forks off one outermost highway node at the bottom left, one straight out and two on longer spokes at
-  35 degrees either side, their spirals curving away from the middle wheel.
+  35 degrees either side, their spirals curving away from the middle wheel, and Widened and Needle Bores, which fork the same
+  way off the outermost highway node opposite them, 35 degrees either side.
 - The generator checks that no wheels overlap, no link passes over a body and no two links cross, and writes
   `data/skilltrees/atlas_tree.json` (nodes as the editor knows them) and `data/skilltrees/atlas_bodies.json` (per node:
   colour, art, heading, whether it is a highway node, the wheel a small belongs to and which way a notable spirals). Rerun it with `node tools/atlas/build-atlas-tree.mjs`; it is

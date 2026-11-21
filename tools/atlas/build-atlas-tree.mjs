@@ -296,30 +296,44 @@ const ANOMALY_OF = {
 };
 
 const RINGS = [
-  ['settled_shafts o', 'sapper_teams i', 'officers_ledger o', 'stolen_charts i', 'heavy_breach o', 'extra_relay i'],
+  ['settled_shafts o', 'sapper_teams i', 'officers_ledger o @351', 'stolen_charts i', 'heavy_breach o', 'extra_relay i'],
   ['twin_shafts i', 'crowded_channel o', 'redacted_sleepers i', 'lightning_rod o', 'rift_magnetism o', 'veiled_sleepers i', 'shared_broadcast o',
     'spoils_of_war o', 'charged_fields i', 'restless_sleepers i', 'forked_trace o'],
   ['open_bores o', 'supercell i', 'infested_bolt_holes i', 'hardened_command o', 'threatening_sleepers o', 'dust_trails o', 'scar_collector i', 'rally_point i',
     'torn_holds o', 'golden_hour i', 'supply_lines i', 'hair_trigger o', 'trophy_refit i', 'static_harvest i', 'early_echo o', 'smash_and_grab i'],
-  ['widened_bores i', 'eye_of_the_storm o', 'double_dose o', 'tempered_light i', 'breached_graveyard i', 'rift_duel o', 'open_warfare i', 'long_settling i',
-    'garrison_pickets o', 'event_horizon i', 'solar_maximum o', 'full_array o', 'redacted_front i', 'needle_bores i', 'scrappers_fortune o', 'ion_front o',
+  ['eye_of_the_storm o', 'double_dose o', 'tempered_light i', 'breached_graveyard i', 'rift_duel o', 'open_warfare i', 'long_settling i',
+    'garrison_pickets o', 'event_horizon i', 'solar_maximum o', 'full_array o', 'redacted_front i', 'scrappers_fortune o', 'ion_front o',
     'deep_corruption o'],
   ['deeper_bores o', 'solar_front i', 'bolt_hole_drop i', 'hyperspace_bleed o', 'ionized_dust o', 'double_down i', 'open_season o',
     'thunder_duel i', 'rude_awakening i', 'pitch_black o', 'iron_grip i', 'sunstruck_convoy o', 'lone_sleeper i', 'fortified_depot o', 'geomagnetic_surge i',
     'mixed_manifest o', 'captured_front i', 'hunting_party o', 'incursion i', 'perfect_light o', 'silent_choir o'],
 ];
 
-const FORK = {
-  ringIndex: 4,
-  angle: 135,
-  outerTurn: 50,
-  innerTurn: 85,
-  wheels: [
-    { notableType: 'threat_embargo', offset: 35, spokeLength: 1825, side: -1 },
-    { notableType: 'shroud_embargo', offset: 0, spokeLength: 725, side: 1 },
-    { notableType: 'phase_embargo', offset: -35, spokeLength: 1825, side: 1 },
-  ],
-};
+const FORKS = [
+  {
+    ringIndex: 4,
+    angle: 135,
+    outerTurn: 50,
+    innerTurn: 85,
+    wheels: [
+      { notableType: 'threat_embargo', offset: 35, spokeLength: 1825, side: -1 },
+      { notableType: 'shroud_embargo', offset: 0, spokeLength: 725, side: 1 },
+      { notableType: 'phase_embargo', offset: -35, spokeLength: 1825, side: 1 },
+    ],
+  },
+  {
+    ringIndex: 4,
+    angle: 315,
+    outerTurn: 50,
+    innerTurn: 85,
+    wheels: [
+      { notableType: 'widened_bores', offset: 35, spokeLength: 1300, side: -1 },
+      { notableType: 'needle_bores', offset: -35, spokeLength: 1300, side: 1 },
+    ],
+  },
+];
+
+const PINNED_RING_LINKS = [{ ringIndex: 1, angle: 311 }];
 
 const MAX_CHANCE_NODES = 12;
 const MAX_BRIDGE_TURN = 20;
@@ -399,15 +413,16 @@ function shapeWheel(wheel) {
 }
 
 const plannedWheels = RINGS.flatMap((entries, ringIndex) => [
-  ...(ringIndex === FORK.ringIndex ? FORK.wheels.map((fork) => ({ ...wheelPlan(fork.notableType), ringIndex, inside: false, fork })) : []),
+  ...FORKS.filter((fork) => fork.ringIndex === ringIndex)
+    .flatMap((fork) => fork.wheels.map((branch) => ({ ...wheelPlan(branch.notableType), ringIndex, inside: false, fork, branch }))),
   ...entries.map((entry, slot) => {
-    const [notableType, side] = entry.split(' ');
-    return { ...wheelPlan(notableType), ringIndex, slot, slotCount: entries.length, inside: side === 'i' };
+    const [notableType, side, at] = entry.split(' ');
+    return { ...wheelPlan(notableType), ringIndex, slot, slotCount: entries.length, inside: side === 'i', at: at && Number(at.slice(1)) };
   }),
 ]);
 plannedWheels.forEach(shapeWheel);
 plannedWheels.filter((wheel) => wheel.fork).forEach((wheel) => {
-  wheel.spokeLength = wheel.fork.spokeLength;
+  wheel.spokeLength = wheel.branch.spokeLength;
   wheel.extent = wheel.spokeLength + wheel.reach;
 });
 
@@ -445,13 +460,15 @@ const rings = ringRadii.map((radius, ringIndex) => {
     ringNodes.push({ node, angle });
   }
   ringNodes.forEach(({ node }, index) => link(node, ringNodes[(index + 1) % count].node));
-  return { radius, nodes: ringNodes, wheels: [], spokes: new Set() };
+  return { radius, nodes: ringNodes, wheels: [], spokes: new Set(), starRays: new Set() };
 });
+
+const ringLinkTargets = (ringIndex) => (ringIndex === 0 ? [{ node: root, angle: null }] : rings[ringIndex - 1].nodes);
 
 const rootRayStep = RING_NODE_COUNTS[0] / ROOT_RAYS;
 if (!Number.isInteger(rootRayStep)) throw new Error('The innermost ring must hold a whole number of nodes per star ray');
 const rootRayAnchors = Array.from({ length: ROOT_RAYS }, (_, ray) => rings[0].nodes[ray * rootRayStep]);
-rootRayAnchors.forEach((anchor) => rings[0].spokes.add(rings[0].nodes.indexOf(anchor)));
+rootRayAnchors.forEach((anchor) => rings[0].starRays.add(rings[0].nodes.indexOf(anchor)));
 
 const slotsByAnomaly = new Map();
 const orderedForChance = [...plannedWheels.filter((wheel) => wheel.hybrid), ...plannedWheels.filter((wheel) => !wheel.hybrid)];
@@ -482,9 +499,9 @@ function distanceToSegment(point, from, to) {
 const clearOf = (from, to, circles) => circles.every((circle) => distanceToSegment(circle, from, to) >= circle.radius);
 
 function satelliteOffsets(wheel, towardSpoke) {
-  const side = wheel.fork ? wheel.fork.side : random() < 0.5 ? 1 : -1;
-  const outerAngle = towardSpoke + side * (wheel.fork ? FORK.outerTurn : between(OUTER_SMALL_TURN));
-  const innerAngle = outerAngle + side * (wheel.fork ? FORK.innerTurn : between(INNER_SMALL_TURN));
+  const side = wheel.fork ? wheel.branch.side : random() < 0.5 ? 1 : -1;
+  const outerAngle = towardSpoke + side * (wheel.fork ? wheel.fork.outerTurn : between(OUTER_SMALL_TURN));
+  const innerAngle = outerAngle + side * (wheel.fork ? wheel.fork.innerTurn : between(INNER_SMALL_TURN));
   return [[wheel.outerTrack, outerAngle], [wheel.innerTrack, innerAngle]]
     .map(([track, angle]) => ({ x: track * Math.cos(toRadians(angle)), y: track * Math.sin(toRadians(angle)) }));
 }
@@ -532,20 +549,29 @@ function withHeading(art, angle) {
 
 const placedWheels = [];
 const wheelOf = new Map();
-const clashes = ({ x, y }, reach) => placedWheels.some((other) => Math.hypot(other.x - x, other.y - y) < reach + other.reach + WHEEL_CLEARANCE);
+const nearestByAngle = (ringNodes, angle) => ringNodes.reduce((closest, candidate) => (angularGap(candidate.angle, angle) < angularGap(closest.angle, angle) ? candidate : closest));
+const pinnedLinks = PINNED_RING_LINKS.map(({ ringIndex, angle }) => ({
+  anchor: nearestByAngle(rings[ringIndex].nodes, angle),
+  landing: nearestByAngle(ringLinkTargets(ringIndex), angle),
+  ringIndex,
+}));
+const crossesPinnedLink = (centre, reach) => pinnedLinks.some(({ anchor, landing }) => distanceToSegment(centre, anchor.node, landing.node) < reach + WHEEL_CLEARANCE);
+const clashes = (centre, reach) => crossesPinnedLink(centre, reach)
+  || placedWheels.some((other) => Math.hypot(other.x - centre.x, other.y - centre.y) < reach + other.reach + WHEEL_CLEARANCE);
 
-function forkSpokeIndex(ring) {
-  const free = ring.nodes.map((node, index) => ({ index, gap: angularGap(node.angle, FORK.angle) })).filter(({ index }) => !ring.spokes.has(index));
+function forkSpokeIndex(ring, fork) {
+  const free = ring.nodes.map((node, index) => ({ index, gap: angularGap(node.angle, fork.angle) })).filter(({ index }) => !ring.spokes.has(index));
   return free.reduce((closest, candidate) => (candidate.gap < closest.gap ? candidate : closest)).index;
 }
 
-let forkSpoke;
+const forkSpokes = new Map();
 function placeFork(wheel) {
   const ring = rings[wheel.ringIndex];
-  forkSpoke ??= forkSpokeIndex(ring);
+  if (!forkSpokes.has(wheel.fork)) forkSpokes.set(wheel.fork, forkSpokeIndex(ring, wheel.fork));
+  const forkSpoke = forkSpokes.get(wheel.fork);
   ring.spokes.add(forkSpoke);
   const spoke = ring.nodes[forkSpoke];
-  const angle = spoke.angle + wheel.fork.offset;
+  const angle = spoke.angle + wheel.branch.offset;
   const centre = { x: spoke.node.x + wheel.spokeLength * Math.cos(toRadians(angle)), y: spoke.node.y + wheel.spokeLength * Math.sin(toRadians(angle)) };
   if (clashes(centre, wheel.reach)) throw new Error(`The ${wheel.notableType} fork clashes with another wheel`);
   return { spoke, centre };
@@ -566,10 +592,12 @@ for (const wheel of plannedWheels) {
     x: centreDistance * Math.cos(toRadians(ring.nodes[spokeIndex].angle)),
     y: centreDistance * Math.sin(toRadians(ring.nodes[spokeIndex].angle)),
   });
-  const candidates = Array.from({ length: ring.nodes.length * 2 }, (_, offset) => {
+  const takesRayNode = (index) => ring.starRays.has(index) && (wheel.inside || wheel.at === undefined);
+  const freeSpokes = ring.nodes.filter((_, index) => !ring.spokes.has(index) && !takesRayNode(index));
+  const candidates = wheel.at !== undefined ? [ring.nodes.indexOf(nearestByAngle(freeSpokes, wheel.at))] : Array.from({ length: ring.nodes.length * 2 }, (_, offset) => {
     const shift = offset % 2 === 0 ? offset / 2 : -(offset + 1) / 2;
     return (target + shift + ring.nodes.length * 4) % ring.nodes.length;
-  }).filter((index, order, all) => all.indexOf(index) === order && !ring.spokes.has(index));
+  }).filter((index, order, all) => all.indexOf(index) === order && !ring.spokes.has(index) && !takesRayNode(index));
   const spokeIndex = candidates.find((index) => !clashes(centreOf(index), wheel.reach));
   if (spokeIndex === undefined) throw new Error(`No clear spoke for ${wheel.notableType} on ring ${wheel.ringIndex}`);
   ring.spokes.add(spokeIndex);
@@ -607,8 +635,6 @@ allWheels.forEach((first, index) => allWheels.slice(index + 1).forEach((second) 
 }));
 if (overlaps.length > 0) throw new Error(`Wheels overlap: ${overlaps.join(', ')}`);
 
-const ringLinkTargets = (ringIndex) => (ringIndex === 0 ? [{ node: root, angle: null }] : rings[ringIndex - 1].nodes);
-
 function spreadRingLinks(ringIndex, count) {
   const pairs = [];
   for (const anchor of rings[ringIndex].nodes) {
@@ -618,10 +644,13 @@ function spreadRingLinks(ringIndex, count) {
       }
     }
   }
-  const chosen = [];
-  const phase = random() * 360;
-  for (let index = 0; index < count; index++) {
-    const target = phase + index * 360 / count;
+  const pinned = pinnedLinks.filter((pin) => pin.ringIndex === ringIndex);
+  const chosen = [...pinned];
+  const randomPhase = random() * 360;
+  const phase = pinned.length > 0 ? pinned[0].anchor.angle : randomPhase;
+  const spacing = 360 / (count + pinned.length);
+  for (let index = pinned.length; index < count + pinned.length; index++) {
+    const target = phase + index * spacing;
     const free = pairs.filter((pair) => !chosen.some((picked) => picked.anchor === pair.anchor
       || (pair.landing.angle !== null && picked.landing === pair.landing)));
     if (free.length === 0) throw new Error(`No clear link into ring ${ringIndex}`);
