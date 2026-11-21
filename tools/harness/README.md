@@ -20,6 +20,12 @@ The game runs whatever is deployed to `E:\Dev\Starsector\mods\ExiledSector`, so 
 
 A scenario with a `"newGame"` object starts a new game instead of loading a save. `choices` lists the new game dialog options to pick in order after the character screen; an option the dialog only shows in dev mode can still be picked. It defaults to `["ngcDevStart"]`, the vanilla quick start, and `fixture.json` uses `nex_NGCDevStart` because the test install runs Nexerelin. `characterName` defaults to `Harness`. `"writeFixture": "name"` copies the save the run made to `saves\<name>` once every step passed.
 
+`showcase-fixture.json` builds `saves\showcase_fixture` for recordings: a fleet rebuilt from an older playthrough, with its loadouts, levels and skill tree builds redone on the current tree, a ready fleet and no other fleets nearby. It isn't rebuilt automatically, so run it again after tree changes:
+
+```powershell
+.\tools\harness\run-harness.ps1 -Scenario tools\harness\showcase-fixture.json
+```
+
 ## Scenario
 
 ```json
@@ -41,6 +47,9 @@ A scenario with a `"newGame"` object starts a new game instead of loading a save
 |---|---|---|
 | `wait` | `frames`, `seconds` | both have passed |
 | `mark` | `text` | always; logs `[ExiledSector] [harness] mark: text` |
+| `startClip` | `name` | always; a recorded run cuts a clip from here (ending any open clip) |
+| `endClip` | | a clip was open; the run ending also ends an open clip |
+| `showcase` | `hideUI` (false), `paused` (false) | always; hides the version and FPS readout and, in the campaign, clears the message log, unpauses unless `paused` is set, and hides the campaign UI when `hideUI` is set |
 | `openAtlas`, `openAtlasTree` | | the screen opened over the campaign |
 | `openSkillTree` | `ship`: `flagship` (default), a fleet index, a hull id or a ship name | the refit screen opened on that ship and its skill tree is showing |
 | `closeScreen` | | the top Exiled Sector screen closed |
@@ -58,7 +67,11 @@ A scenario with a `"newGame"` object starts a new game instead of loading a save
 | `recordStats` | `ship`: `player` (default), `enemy`, a hull id, a variant id or a ship name; `name` | the ship's modified stats, with each mod by source, are in `results.json` under `data.<name>` |
 | `recordDamage` | `name` (`damage`), `seconds` of combat time (20), `untilNoEnemies`, `minEnemyDamage` (0) | the time is up or no enemy is left, and the enemy side took at least `minEnemyDamage`; hull, armor, shield and EMP damage per side and per ship go under `data.<name>` |
 | `endSimulation` | | the simulator closed and the campaign is back |
-| `addShip` | `variant`, `count` (1) | the ships joined the player fleet at full CR |
+| `addShip` | `variant`, `count` (1), `name`, `strip` (false), `weapons` (slot id to weapon id), `wings`, `hullMods`, `vents`, `capacitors`, `flagship` (false), `replaceFleet` (false) | the ships joined the player fleet at full CR; `strip` first removes the variant's weapons, wings, hull mods, vents and capacitors like the refit screen's Strip, then the given weapons, wings, hull mods, vents and capacitors are fitted (given weapons replace all of the variant's, unknown ones are skipped and listed); the ship became the flagship when set, and every ship the fleet had before was removed when `replaceFleet` is set |
+| `levelShip` | `ship`, as for `openSkillTree`; `level` | the ship reached that level, or the level cap |
+| `buildTree` | `root` (a root node type such as `root_high_tech`), `goals` (node type ids) | with the skill tree open, the root was chosen if the ship had none, and paths were allocated as a player would to the nearest node of each goal type in turn, cycling through the goals until the points ran out or a pass allocated nothing, and any points left went to small nodes next to the build, goal types first; goal types with no node allocated are listed as out of reach |
+| `clearFleets` | `radius` (0, the whole location) | every other fleet in the player's location within the radius, stations aside, was despawned |
+| `readyFleet` | `suppliesShare` (0.6) | every ship was repaired to full CR, crew was set to the fleet's minimum plus a tenth, fuel filled, and supplies set to that share of the free cargo space |
 | `saveGame` | | the campaign saved |
 | `addCargo` | `commodity`, `amount` | the commodity was added to the player fleet's cargo |
 | `foundColony` | `size` (4), `industries`, `supply` (commodity id to amount), `nearHypershunt` (false) | a player colony was founded on the nearest uncolonised planet (to the player, or within range of the nearest coronal hypershunt, which is made usable), with those industries and extra supply, the player faction counts as named, and the player fleet moved beside it; details go under `data.colony` |
@@ -93,3 +106,15 @@ A scenario with `"groups"` instead of `"steps"` is a suite: many cases that run 
 Before the first case the harness records a baseline: the player fleet's location, members, CR, hull and cargo, the transponder, the atlas and item state, and a census of Star Chart content. Every case starts with `ignoreErrorsSoFar`, ends with `expectNoErrors`, and then tears down: it ends any combat, closes any dialog, restores the baseline, closes any open run, and fails when the run stays open or Star Chart content is left behind. A failing step skips the rest of its case and goes straight to the teardown. A failing teardown stops the session, because the cases after it would start from a dirty game; the script then relaunches the game for the remaining cases, at most `-MaxRelaunches` (10) times.
 
 `-Group excavation_sites`, `-Case excavation_sites/open_shaft` and `-Tag dense_nebula` run only the matching cases, and `-StartAfter` skips every case up to and including the named one. The script prints a CASE PASS, FAIL, SKIP or NOT RUN line per case and a total per group, and `results.json` lists them under `cases`, `skippedCases`, `notRunCases` and `abortedAfterCase`.
+
+## Recording
+
+`-Record` films the game window for showcase videos. Once the window appears the script centres it on the primary monitor, keeps it on top, and records its 1920x1080 client area with ffmpeg's Desktop Duplication grab (`ddagrab`) at `-RecordFps` (60), without the mouse cursor or sound, on the NVIDIA encoder or `libx264` when that fails. The game has to stay windowed: Starsector breaks screen capture in full screen and borderless modes. Keep the window uncovered and the mouse off it while a take runs, since a hovering cursor opens tooltips in the shot.
+
+The whole run lands in `recording.mp4` in the run folder. Every `startClip` and `endClip` pair is also cut into `clips\NN_<name>.mp4` with half a second of padding on each side, so a scenario can stage several shots in one launch. Clip times come from the wall clock, matched to the recording's length, so they stay within a frame or two.
+
+Start a take with a `showcase` step so the shot has no version readout, Version Checker messages or pause banner. Clips play at a constant frame rate.
+
+```powershell
+.\tools\harness\run-harness.ps1 -Scenario tools\harness\examples\record-atlas.json -Record
+```

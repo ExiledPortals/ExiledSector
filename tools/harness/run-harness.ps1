@@ -9,10 +9,13 @@ param(
     [string]$Tag,
     [string]$StartAfter,
     [int]$MaxRelaunches = 10,
+    [switch]$Record,
+    [int]$RecordFps = 60,
     [switch]$RebuildFixture
 )
 
 $ErrorActionPreference = "Stop"
+if ($Record) { . (Join-Path $PSScriptRoot "recording.ps1") }
 
 $maxWidth = 1920
 $maxHeight = 1080
@@ -134,12 +137,15 @@ if ($newGame) { Write-Host "Starting a new game" } else { Write-Host "Loading $s
 
 $gameProcess = Start-Process -FilePath $javaExe -ArgumentList $arguments -WorkingDirectory $coreDir -PassThru `
     -RedirectStandardOutput (Join-Path $runDir "console.log") -RedirectStandardError (Join-Path $runDir "console-errors.log")
+$recording = $null
+if ($Record) { $recording = Start-HarnessRecording -GameProcess $gameProcess -Resolution $Resolution -RunDir $runDir -Fps $RecordFps }
 $timedOut = -not $gameProcess.WaitForExit($TimeoutSeconds * 1000)
 if ($timedOut) {
     Write-Warning "The game was still running after $TimeoutSeconds s; stopping it."
     $gameProcess.Kill()
     $gameProcess.WaitForExit()
 }
+if ($recording) { Stop-HarnessRecording $recording | Out-Null }
 
 $shotParts = Get-ChildItem -LiteralPath $runCommon -Filter "exiledsector_harness_shot_*.data" | ForEach-Object {
     if ($_.BaseName -match '^exiledsector_harness_shot_(.+)_(\d+)$') {
@@ -170,7 +176,7 @@ $loadFailed = -not $timedOut -and ((-not $results) -or ([string]$results.runFail
 if ($loadFailed -and $usesFixture -and -not $fixtureRebuilt) {
     Write-Host "$fixtureName did not load with this build; rebuilding it and running again."
     & $PSCommandPath -Scenario $scenarioFile -Save $Save -Resolution $Resolution -TimeoutSeconds $TimeoutSeconds -GameDir $GameDir `
-        -Group $Group -Case $Case -Tag $Tag -StartAfter $StartAfter -MaxRelaunches $MaxRelaunches -RebuildFixture
+        -Group $Group -Case $Case -Tag $Tag -StartAfter $StartAfter -MaxRelaunches $MaxRelaunches -Record:$Record -RecordFps $RecordFps -RebuildFixture
     exit $LASTEXITCODE
 }
 
@@ -178,6 +184,7 @@ if (-not $results) {
     Write-Host "No results were written. The game log is $logFile ($logErrors ERROR lines)."
     exit 2
 }
+if ($recording -and (Test-Path -LiteralPath $recording.File)) { Export-HarnessClips $recording $results.clips $runDir }
 foreach ($step in $results.steps) {
     $verdict = if ($step.passed) { "PASS" } else { "FAIL" }
     Write-Host ("{0} {1,2} {2} ({3} ms): {4}" -f $verdict, $step.index, $step.step, $step.millis, $step.detail)
@@ -214,7 +221,7 @@ if ($results.abortedAfterCase) {
     }
     Write-Host "Teardown of $($results.abortedAfterCase) failed; relaunching the game for the $notRunCount cases after it."
     & $PSCommandPath -Scenario $scenarioFile -Save $Save -Resolution $Resolution -TimeoutSeconds $TimeoutSeconds -GameDir $GameDir `
-        -Group $Group -Case $Case -Tag $Tag -StartAfter $results.abortedAfterCase -MaxRelaunches ($MaxRelaunches - 1)
+        -Group $Group -Case $Case -Tag $Tag -StartAfter $results.abortedAfterCase -MaxRelaunches ($MaxRelaunches - 1) -Record:$Record -RecordFps $RecordFps
     exit 1
 }
 if (-not $results.finished -or -not $results.passed) { exit 1 }

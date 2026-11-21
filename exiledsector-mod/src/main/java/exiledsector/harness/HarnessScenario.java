@@ -14,13 +14,14 @@ import java.util.function.Predicate;
 
 record HarnessScenario(List<HarnessStep> steps, boolean quitWhenDone, NewGameSetup newGame, List<String> skippedCases) {
 
-    static final String KNOWN_STEPS = "wait, mark, openAtlas, openAtlasTree, openSkillTree, closeScreen, zoom, focusAtlasSystem, screenshot, expectScreen, "
+    static final String KNOWN_STEPS = "wait, mark, startClip, endClip, showcase, openAtlas, openAtlasTree, openSkillTree, closeScreen, zoom, focusAtlasSystem, screenshot, expectScreen, "
             + "expectNoErrors, ignoreErrorsSoFar, expectLog, simulate, spawn, autopilot, speed, recordStats, recordDamage, endSimulation, "
-            + "addShip, saveGame, addCargo, foundColony, openChart, lockPhasePlanet, defeatChartBoss, leaveChart, passDays, expectPhasePull, "
+            + "addShip, levelShip, buildTree, clearFleets, readyFleet, saveGame, addCargo, foundColony, openChart, lockPhasePlanet, defeatChartBoss, leaveChart, passDays, expectPhasePull, "
             + "expectPhasedPlanet";
     static final int DEFAULT_COLONY_SIZE = 4;
     static final long DEFAULT_CHART_SEED = 1L;
     static final float DEFAULT_LOG_WAIT_SECONDS = 10f;
+    static final double READY_SUPPLIES_SHARE = 0.6d;
 
     HarnessScenario(List<HarnessStep> steps, boolean quitWhenDone) {
         this(steps, quitWhenDone, null, List.of());
@@ -50,6 +51,9 @@ record HarnessScenario(List<HarnessStep> steps, boolean quitWhenDone, NewGameSet
         return switch (stepType) {
             case "wait" -> new WaitStep(step.optInt("frames", 0), (float) step.optDouble("seconds", 0d));
             case "mark" -> new MarkStep(step.optString("text", ""));
+            case "startClip" -> ClipStep.start(step.getString("name"));
+            case "endClip" -> ClipStep.end();
+            case "showcase" -> new ShowcaseStep(step.optBoolean("hideUI", false), step.optBoolean("paused", false));
             case "openAtlas" -> new OpenOverlayStep(stepType, "AtlasScreen", AtlasScreen::open);
             case "openAtlasTree" -> new OpenOverlayStep(stepType, "AtlasTreeScreen", AtlasTreeScreen::open);
             case "openSkillTree" -> new OpenSkillTreeStep(step.optString("ship", OpenSkillTreeStep.FLAGSHIP));
@@ -74,7 +78,11 @@ record HarnessScenario(List<HarnessStep> steps, boolean quitWhenDone, NewGameSet
             case "recordDamage" -> new RecordDamageStep(step.optString("name", "damage"), (float) step.optDouble("seconds", RecordDamageStep.DEFAULT_COMBAT_SECONDS),
                     step.optBoolean("untilNoEnemies", false), (float) step.optDouble("minEnemyDamage", 0d));
             case "endSimulation" -> new EndSimulationStep();
-            case "addShip" -> new AddShipStep(step.getString("variant"), step.optInt("count", 1));
+            case "addShip" -> new AddShipStep(step.getString("variant"), step.optInt("count", 1), AddShipStep.Loadout.parse(step));
+            case "levelShip" -> new LevelShipStep(step.optString("ship", OpenSkillTreeStep.FLAGSHIP), step.getInt("level"));
+            case "buildTree" -> new BuildTreeStep(step.getString("root"), strings(step.getJSONArray("goals")));
+            case "clearFleets" -> new ClearFleetsStep((float) step.optDouble("radius", 0d));
+            case "readyFleet" -> new ReadyFleetStep((float) step.optDouble("suppliesShare", READY_SUPPLIES_SHARE));
             case "saveGame" -> new SaveGameStep();
             case "addCargo" -> new AddCargoStep(step.getString("commodity"), step.getInt("amount"));
             case "foundColony" -> new FoundColonyStep(step.optInt("size", DEFAULT_COLONY_SIZE), strings(step.optJSONArray("industries")),

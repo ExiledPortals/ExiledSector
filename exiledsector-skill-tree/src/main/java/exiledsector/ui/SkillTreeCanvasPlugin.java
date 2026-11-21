@@ -130,6 +130,10 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin implements Zo
         }
     }
 
+    public TreeAllocationSession treeSession() {
+        return treeSession;
+    }
+
     @Override
     public CanvasCamera camera() {
         return camera;

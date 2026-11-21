@@ -1,9 +1,11 @@
 package exiledsector.harness;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -87,6 +89,42 @@ class HarnessScenarioTest {
 
         assertEquals(new NewGameSetup(List.of("nex_NGCDevStart"), "Tester"), scenario.newGame());
         assertEquals(List.of("addShip 2 eagle_Assault", "saveGame"), scenario.steps().stream().map(HarnessStep::name).toList());
+    }
+
+    @Test
+    void fleetSetupStepsParseTheirLoadoutsAndDefaults() throws JSONException {
+        HarnessScenario scenario = HarnessScenario.parse("""
+                {"steps": [
+                  {"step": "addShip", "variant": "astral_Elite", "name": "ISS Aldebaran Rising", "weapons": {"WS 001": "harpoon"},
+                   "wings": ["dagger_wing"], "hullMods": ["eccm"], "flagship": true, "replaceFleet": true},
+                  {"step": "levelShip", "ship": "0", "level": 15},
+                  {"step": "buildTree", "root": "root_midline", "goals": ["expanded_deck_crew", "armor"]},
+                  {"step": "readyFleet"},
+                  {"step": "clearFleets"},
+                  {"step": "clearFleets", "radius": 2000}
+                ]}""");
+
+        List<String> names = scenario.steps().stream().map(HarnessStep::name).toList();
+        assertEquals(List.of("addShip 1 astral_Elite as ISS Aldebaran Rising (flagship)", "levelShip 0 to 15", "buildTree from root_midline toward 2 goals",
+                "readyFleet", "clearFleets", "clearFleets within 2000"), names);
+        AddShipStep.Fitting fitting = new AddShipStep.Fitting(true, Map.of("WS 001", "harpoon"), List.of("dagger_wing"), List.of("eccm"), 44, 0);
+        assertEquals(new AddShipStep.Loadout("ISS Aldebaran Rising", fitting, true, true), AddShipStep.Loadout.parse(new JSONObject("""
+                {"name": "ISS Aldebaran Rising", "strip": true, "weapons": {"WS 001": "harpoon"}, "wings": ["dagger_wing"], "hullMods": ["eccm"],
+                 "vents": 44, "capacitors": 0, "flagship": true, "replaceFleet": true}""")));
+        assertEquals(AddShipStep.Loadout.STOCK, AddShipStep.Loadout.parse(new JSONObject("{}")));
+        assertFalse(AddShipStep.Fitting.STOCK.customisesVariant());
+        assertTrue(AddShipStep.Fitting.parse(new JSONObject("{\"strip\": true}")).customisesVariant());
+        assertTrue(AddShipStep.Fitting.parse(new JSONObject("{\"vents\": 0}")).customisesVariant());
+    }
+
+    @Test
+    void fleetSetupStepsRejectImpossibleSettings() {
+        assertThrows(IllegalArgumentException.class,
+                () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"addShip\", \"variant\": \"x\", \"count\": 2, \"flagship\": true}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"levelShip\", \"level\": 0}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"buildTree\", \"root\": \"r\", \"goals\": []}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"readyFleet\", \"suppliesShare\": 2}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"clearFleets\", \"radius\": -1}]}"));
     }
 
     @Test

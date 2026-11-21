@@ -2,11 +2,13 @@ package exiledsector.harness;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.CoreUITabId;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.ui.ShownScreens;
 import exiledsector.ui.SkillTreeCanvasPlugin;
 import exiledsector.ui.SkillTreeRefitButton;
+import exiledsector.ui.refit.CoreUiDismissal;
 
 import java.util.List;
 
@@ -16,6 +18,7 @@ final class OpenSkillTreeStep implements HarnessStep {
 
     private final String shipSelector;
     private FleetMemberAPI member;
+    private boolean refitRequested;
     private boolean panelRequested;
 
     OpenSkillTreeStep(String shipSelector) {
@@ -34,7 +37,19 @@ final class OpenSkillTreeStep implements HarnessStep {
             if (member == null) {
                 return StepOutcome.failed("no fleet member matches \"" + shipSelector + "\"; use flagship, a fleet index, a hull id or a ship name");
             }
-            Global.getSector().getCampaignUI().showCoreUITab(CoreUITabId.REFIT, member);
+            CampaignUIAPI campaignUi = Global.getSector().getCampaignUI();
+            if (campaignUi.getCurrentCoreTab() != null && !CoreUiDismissal.dismiss(campaignUi)) {
+                return StepOutcome.failed("the open " + campaignUi.getCurrentCoreTab() + " screen would not close before switching to " + shipName());
+            }
+            return StepOutcome.RUNNING;
+        }
+        if (!refitRequested) {
+            CampaignUIAPI campaignUi = Global.getSector().getCampaignUI();
+            if (campaignUi.getCurrentCoreTab() != null) {
+                return new StepOutcome(false, false, "the open " + campaignUi.getCurrentCoreTab() + " screen never closed");
+            }
+            campaignUi.showCoreUITab(CoreUITabId.REFIT, member);
+            refitRequested = true;
             return StepOutcome.RUNNING;
         }
         if (!panelRequested) {
