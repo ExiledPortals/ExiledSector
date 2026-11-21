@@ -16,7 +16,7 @@ public class BreachCorePlugin extends BaseCustomEntityPlugin {
 
     static final float HOLE_RADIUS = 40f;
     static final float HOLE_FADE_SHARE = 1.3f;
-    static final float HALO_SIZE = 410f;
+    public static final float HALO_SIZE = 410f;
     static final float RING_SIZE = HOLE_RADIUS * 2.6f;
     static final float PULSE_SECONDS = 3f;
     static final float PULSE_DEPTH = 0.2f;
@@ -24,7 +24,7 @@ public class BreachCorePlugin extends BaseCustomEntityPlugin {
     static final int HOLE_SEGMENTS = 64;
     static final Color HALO_COLOUR = new Color(255, 170, 255);
     static final Color RING_COLOUR = new Color(255, 170, 255);
-    static final String HALO_TEXTURE = "graphics/fx/star_halo.png";
+    public static final String HALO_TEXTURE = "graphics/fx/star_halo.png";
     private static final SpriteCache SPRITES = new SpriteCache(BreachCorePlugin.class);
 
     private transient float shrink;
@@ -56,21 +56,31 @@ public class BreachCorePlugin extends BaseCustomEntityPlugin {
         if (entity == null || scale <= 0f || !loadSprites()) {
             return;
         }
-        Vector2f at = entity.getLocation();
-        float alpha = viewport.getAlphaMult();
+        drawCore(haloSprite, ringSprite, entity.getLocation(), scale, viewport.getAlphaMult(), elapsedSeconds);
+    }
+
+    public static void drawCore(SpriteAPI halo, SpriteAPI ring, Vector2f at, float scale, float alpha, float elapsedSeconds) {
         float pulse = 1f - PULSE_DEPTH + PULSE_DEPTH * (float) Math.sin(elapsedSeconds / PULSE_SECONDS * Math.PI * 2d);
-        haloSprite.setSize(HALO_SIZE * pulse * scale, HALO_SIZE * pulse * scale);
-        haloSprite.setColor(HALO_COLOUR);
-        haloSprite.setAlphaMult(alpha);
-        haloSprite.setAdditiveBlend();
-        haloSprite.renderAtCenter(at.x, at.y);
+        halo.setSize(HALO_SIZE * pulse * scale, HALO_SIZE * pulse * scale);
+        halo.setColor(HALO_COLOUR);
+        halo.setAlphaMult(alpha);
+        halo.setAdditiveBlend();
+        halo.renderAtCenter(at.x, at.y);
         drawHole(at, HOLE_RADIUS * scale, alpha);
-        ringSprite.setSize(RING_SIZE * scale, RING_SIZE * scale);
-        ringSprite.setColor(RING_COLOUR);
-        ringSprite.setAlphaMult(alpha);
-        ringSprite.setAdditiveBlend();
-        ringSprite.setAngle(elapsedSeconds * RING_DEGREES_PER_SECOND);
-        ringSprite.renderAtCenter(at.x, at.y);
+        ring.setSize(RING_SIZE * scale, RING_SIZE * scale);
+        ring.setColor(RING_COLOUR);
+        ring.setAlphaMult(alpha);
+        ring.setAdditiveBlend();
+        ring.setAngle(elapsedSeconds * RING_DEGREES_PER_SECOND);
+        ring.renderAtCenter(at.x, at.y);
+    }
+
+    public static SpriteAPI loadRing() {
+        try {
+            return Global.getSettings().getSprite("misc", "wormhole_ring");
+        } catch (RuntimeException e) {
+            return null;
+        }
     }
 
     private static void drawHole(Vector2f at, float holeRadius, float alpha) {
@@ -86,11 +96,10 @@ public class BreachCorePlugin extends BaseCustomEntityPlugin {
         }
         try {
             haloSprite = SPRITES.sprite(HALO_TEXTURE);
-            ringSprite = Global.getSettings().getSprite("misc", "wormhole_ring");
         } catch (RuntimeException e) {
             haloSprite = null;
-            ringSprite = null;
         }
+        ringSprite = loadRing();
         return haloSprite != null && ringSprite != null;
     }
 }
