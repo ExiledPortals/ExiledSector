@@ -16,7 +16,7 @@ final class HarnessResults {
     static final int MAX_REPORTED_ERRORS = 40;
     private static final Logger LOG = Logger.getLogger(HarnessResults.class);
 
-    record StepResult(int index, String step, boolean passed, String detail, long millis) {
+    record StepResult(int index, String step, boolean passed, String detail, long millis, String caseId) {
     }
 
     record Screenshot(String name, int width, int height, int parts, String source) {
@@ -27,6 +27,10 @@ final class HarnessResults {
     private final List<StepResult> steps = new ArrayList<>();
     private final List<Screenshot> screenshots = new ArrayList<>();
     private final Map<String, JSONObject> data = new LinkedHashMap<>();
+    private final List<String> skippedCases = new ArrayList<>();
+    private final List<String> notRunCases = new ArrayList<>();
+    private String currentCase;
+    private String abortedAfterCase;
     private String runFailure;
     private boolean finished;
 
@@ -39,6 +43,29 @@ final class HarnessResults {
         steps.add(result);
         LOG.info(Harness.LOG_TAG + "step " + result.index() + " " + result.step() + (result.passed() ? " passed" : " FAILED") + ": "
                 + result.detail());
+        write();
+    }
+
+    void startCase(String caseId) {
+        currentCase = caseId;
+    }
+
+    void endCase() {
+        currentCase = null;
+    }
+
+    String currentCase() {
+        return currentCase;
+    }
+
+    void skipCases(List<String> skipped) {
+        skippedCases.addAll(skipped);
+    }
+
+    void abortAfter(String caseId, List<String> notRun) {
+        abortedAfterCase = caseId;
+        notRunCases.addAll(notRun);
+        currentCase = null;
         write();
     }
 
@@ -74,20 +101,49 @@ final class HarnessResults {
         }
     }
 
+    private JSONArray casesJson() throws JSONException {
+        Map<String, JSONObject> cases = new LinkedHashMap<>();
+        for (StepResult step : steps) {
+            if (step.caseId() == null) {
+                continue;
+            }
+            JSONObject caseJson = cases.computeIfAbsent(step.caseId(), HarnessResults::newCase);
+            caseJson.put("steps", caseJson.getInt("steps") + 1);
+            if (!step.passed() && caseJson.getBoolean("passed")) {
+                caseJson.put("passed", false).put("failedStep", step.step()).put("failure", step.detail());
+            }
+        }
+        return new JSONArray(cases.values());
+    }
+
+    private static JSONObject newCase(String caseId) {
+        try {
+            return new JSONObject().put("id", caseId).put("passed", true).put("steps", 0);
+        } catch (JSONException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
     JSONObject toJson() throws JSONException {
         JSONObject json = new JSONObject();
         json.put("save", saveDir);
         json.put("finished", finished);
-        json.put("passed", finished && runFailure == null && steps.stream().allMatch(StepResult::passed));
+        json.put("passed", finished && runFailure == null && abortedAfterCase == null && steps.stream().allMatch(StepResult::passed));
         if (runFailure != null) {
             json.put("runFailure", runFailure);
         }
         JSONArray stepArray = new JSONArray();
         for (StepResult step : steps) {
             stepArray.put(new JSONObject().put("index", step.index()).put("step", step.step()).put("passed", step.passed())
-                    .put("detail", step.detail()).put("millis", step.millis()));
+                    .put("detail", step.detail()).put("millis", step.millis()).put("case", step.caseId() == null ? JSONObject.NULL : step.caseId()));
         }
         json.put("steps", stepArray);
+        json.put("cases", casesJson());
+        json.put("skippedCases", new JSONArray(skippedCases));
+        json.put("notRunCases", new JSONArray(notRunCases));
+        if (abortedAfterCase != null) {
+            json.put("abortedAfterCase", abortedAfterCase);
+        }
         JSONArray screenshotArray = new JSONArray();
         for (Screenshot screenshot : screenshots) {
             screenshotArray.put(new JSONObject().put("name", screenshot.name()).put("width", screenshot.width()).put("height", screenshot.height())

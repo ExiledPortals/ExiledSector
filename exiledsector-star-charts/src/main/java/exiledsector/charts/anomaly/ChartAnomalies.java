@@ -322,6 +322,10 @@ public final class ChartAnomalies {
         });
     }
 
+    public static void forgetHookFailures() {
+        HOOK_FAILURES.reset();
+    }
+
     private static <T> T askSafely(ChartAnomaly anomaly, String hook, Supplier<T> call) {
         try {
             return call.get();

@@ -4,6 +4,11 @@ param(
     [string]$Resolution = "1920x1080",
     [int]$TimeoutSeconds = 600,
     [string]$GameDir = "E:\Dev\Starsector",
+    [string]$Group,
+    [string]$Case,
+    [string]$Tag,
+    [string]$StartAfter,
+    [int]$MaxRelaunches = 10,
     [switch]$RebuildFixture
 )
 
@@ -115,6 +120,10 @@ $harnessOptions = @(
     "-DstartSound=false",
     $startOption
 )
+$suiteFilters = [ordered]@{ group = $Group; case = $Case; tag = $Tag; startAfter = $StartAfter }
+foreach ($suiteFilter in $suiteFilters.GetEnumerator()) {
+    if ($suiteFilter.Value) { $harnessOptions += "-Dexiledsector.harness.$($suiteFilter.Key)=$($suiteFilter.Value)" }
+}
 $arguments = (@($jvmOptions) + $harnessOptions + $vmTokens[$classpathIndex..($vmTokens.Length - 1)] | ForEach-Object { & $quote $_ }) -join ' '
 
 $deployedJar = Get-ChildItem -LiteralPath (Join-Path $GameDir "mods\ExiledSector\jars") -Filter "*.jar" -ErrorAction SilentlyContinue |
@@ -160,7 +169,8 @@ if (Test-Path -LiteralPath $resultsSource) {
 $loadFailed = -not $timedOut -and ((-not $results) -or ([string]$results.runFailure -like "Could not load the save*"))
 if ($loadFailed -and $usesFixture -and -not $fixtureRebuilt) {
     Write-Host "$fixtureName did not load with this build; rebuilding it and running again."
-    & $PSCommandPath -Scenario $scenarioFile -Save $Save -Resolution $Resolution -TimeoutSeconds $TimeoutSeconds -GameDir $GameDir -RebuildFixture
+    & $PSCommandPath -Scenario $scenarioFile -Save $Save -Resolution $Resolution -TimeoutSeconds $TimeoutSeconds -GameDir $GameDir `
+        -Group $Group -Case $Case -Tag $Tag -StartAfter $StartAfter -MaxRelaunches $MaxRelaunches -RebuildFixture
     exit $LASTEXITCODE
 }
 
@@ -173,6 +183,20 @@ foreach ($step in $results.steps) {
     Write-Host ("{0} {1,2} {2} ({3} ms): {4}" -f $verdict, $step.index, $step.step, $step.millis, $step.detail)
 }
 if ($results.runFailure) { Write-Host "Run failure: $($results.runFailure)" }
+$suiteCases = @($results.cases | Where-Object { $_ })
+foreach ($suiteCase in $suiteCases) {
+    if ($suiteCase.passed) {
+        Write-Host ("CASE PASS {0} ({1} steps)" -f $suiteCase.id, $suiteCase.steps)
+    } else {
+        Write-Host ("CASE FAIL {0} at {1}: {2}" -f $suiteCase.id, $suiteCase.failedStep, $suiteCase.failure)
+    }
+}
+foreach ($skippedCase in @($results.skippedCases | Where-Object { $_ })) { Write-Host "CASE SKIP $skippedCase" }
+foreach ($notRunCase in @($results.notRunCases | Where-Object { $_ })) { Write-Host "CASE NOT RUN $notRunCase" }
+foreach ($caseGroup in ($suiteCases | Group-Object { ($_.id -split '/')[0] })) {
+    $groupPassed = @($caseGroup.Group | Where-Object { $_.passed }).Count
+    Write-Host ("Group {0}: {1} of {2} cases passed" -f $caseGroup.Name, $groupPassed, $caseGroup.Count)
+}
 if ($results.data) {
     $dataNames = @($results.data.PSObject.Properties | ForEach-Object { $_.Name })
     if ($dataNames.Count -gt 0) { Write-Host ("Recorded data: " + ($dataNames -join ", ")) }
@@ -181,6 +205,18 @@ Write-Host "Results $resultsFile"
 Write-Host "Game log $logFile ($logErrors ERROR lines, $($results.errorsLogged) while the harness listened)"
 
 if ($timedOut) { exit 3 }
+if ($results.abortedAfterCase) {
+    $notRunCount = @($results.notRunCases | Where-Object { $_ }).Count
+    if ($notRunCount -eq 0) { exit 1 }
+    if ($MaxRelaunches -le 0) {
+        Write-Host "Teardown of $($results.abortedAfterCase) failed and no relaunches are left; $notRunCount cases did not run."
+        exit 1
+    }
+    Write-Host "Teardown of $($results.abortedAfterCase) failed; relaunching the game for the $notRunCount cases after it."
+    & $PSCommandPath -Scenario $scenarioFile -Save $Save -Resolution $Resolution -TimeoutSeconds $TimeoutSeconds -GameDir $GameDir `
+        -Group $Group -Case $Case -Tag $Tag -StartAfter $results.abortedAfterCase -MaxRelaunches ($MaxRelaunches - 1)
+    exit 1
+}
 if (-not $results.finished -or -not $results.passed) { exit 1 }
 
 if ($writeFixture) {

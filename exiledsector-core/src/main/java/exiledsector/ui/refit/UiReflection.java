@@ -32,6 +32,8 @@ public final class UiReflection {
     private static final MethodHandle FIELD_MODIFIERS = virtual(FIELD, "getModifiers", int.class);
     private static final MethodHandle METHOD_MODIFIERS = virtual(METHOD, "getModifiers", int.class);
     private static final int STATIC_MODIFIER = 0x0008;
+    private static final int FINAL_MODIFIER = 0x0010;
+    private static final int TRANSIENT_MODIFIER = 0x0080;
 
     private static final int MAX_PARAMETER_COUNT = 3;
     private static final Object[] NO_ARGS = new Object[0];
@@ -156,6 +158,30 @@ public final class UiReflection {
         if (field == NONE) return null;
         Object value = FIELD_GET.invoke(field, target);
         return type.isInstance(value) ? type.cast(value) : null;
+    }
+
+    public record DeclaredField(Class<?> owner, String name, Class<?> type, int modifiers) {
+
+        public boolean isFinal() {
+            return (modifiers & FINAL_MODIFIER) != 0;
+        }
+
+        public boolean isTransient() {
+            return (modifiers & TRANSIENT_MODIFIER) != 0;
+        }
+    }
+
+    public static List<DeclaredField> instanceFields(Class<?> type) throws Throwable {
+        List<DeclaredField> fields = new ArrayList<>();
+        for (Class<?> current = type; current != null && current != Object.class; current = current.getSuperclass()) {
+            for (Object candidate : (Object[]) GET_DECLARED_FIELDS.invoke(current)) {
+                int modifiers = (int) FIELD_MODIFIERS.invoke(candidate);
+                if ((modifiers & STATIC_MODIFIER) == 0) {
+                    fields.add(new DeclaredField(current, (String) FIELD_NAME.invoke(candidate), (Class<?>) FIELD_TYPE.invoke(candidate), modifiers));
+                }
+            }
+        }
+        return fields;
     }
 
     static float[] declaredFloats(Object target) throws Throwable {
