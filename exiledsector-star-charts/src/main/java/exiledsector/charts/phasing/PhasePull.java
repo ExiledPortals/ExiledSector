@@ -94,7 +94,7 @@ public final class PhasePull {
     static float orbitFor(MarketAPI market, StarSystemAPI system, SectorEntityToken focus, PhasedPlanetRecord job) {
         float orbitRadius = PhaseGateState.jobOrbit(market);
         if (orbitRadius <= 0f) {
-            orbitRadius = PhaseDestination.orbitRadius(system, focus, job.radius());
+            orbitRadius = PhaseDestination.orbitRadiusNear(system, focus, market.getPrimaryEntity(), job.radius());
             PhaseGateState.setJobOrbit(market, orbitRadius);
         }
         return orbitRadius;

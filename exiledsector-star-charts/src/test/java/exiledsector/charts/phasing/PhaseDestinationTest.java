@@ -48,13 +48,14 @@ class PhaseDestinationTest {
         terrain.add(corona);
     }
 
-    private void orbiting(SectorEntityToken focus, float orbitRadius, float radius) {
+    private PlanetAPI orbiting(SectorEntityToken focus, float orbitRadius, float radius) {
         PlanetAPI planet = mock(PlanetAPI.class);
         when(planet.getOrbitFocus()).thenReturn(focus);
         when(planet.getCircularOrbitRadius()).thenReturn(orbitRadius);
         when(planet.getRadius()).thenReturn(radius);
         when(planet.getContainingLocation()).thenReturn(system);
         planets.add(planet);
+        return planet;
     }
 
     @Test
@@ -73,22 +74,44 @@ class PhaseDestinationTest {
     }
 
     @Test
-    void thePlanetGoesInTheMiddleOfTheWidestGap() {
+    void thePlanetTakesTheFreeOrbitClosestToTheGatePlanet() {
         orbiting(star, 2000f, 100f);
         orbiting(star, 6000f, 100f);
-        orbiting(star, 8000f, 100f);
+        PlanetAPI gatePlanet = orbiting(star, 8000f, 100f);
 
-        assertEquals(4000f, PhaseDestination.orbitRadius(system, star, PLANET_RADIUS));
+        float orbit = PhaseDestination.orbitRadiusNear(system, star, gatePlanet, PLANET_RADIUS);
+
+        assertEquals(7900f - PLANET_RADIUS - PhaseDestination.CLEARANCE, orbit);
+    }
+
+    @Test
+    void aFarOutlierDoesNotDragThePlanetOutward() {
+        orbiting(star, 3200f, 100f);
+        PlanetAPI gatePlanet = orbiting(star, 4000f, 100f);
+        CustomCampaignEntityAPI outlier = stationary(mock(CustomCampaignEntityAPI.class), 150000f, 0f, 50f);
+        when(system.getEntities(CustomCampaignEntityAPI.class)).thenReturn(new ArrayList<>(List.of(outlier)));
+
+        float orbit = PhaseDestination.orbitRadiusNear(system, star, gatePlanet, PLANET_RADIUS);
+
+        assertEquals(4100f + PLANET_RADIUS + PhaseDestination.CLEARANCE, orbit);
     }
 
     @Test
     void aGapTooNarrowForThePlanetIsSkipped() {
         orbiting(star, 2000f, 200f);
         orbiting(star, 2600f, 200f);
-        orbiting(star, 3200f, 200f);
+        PlanetAPI gatePlanet = orbiting(star, 3200f, 200f);
 
         float expected = 3400f + PLANET_RADIUS + PhaseDestination.FALLBACK_CLEARANCE;
-        assertEquals(expected, PhaseDestination.orbitRadius(system, star, PLANET_RADIUS));
+        assertEquals(expected, PhaseDestination.orbitRadiusNear(system, star, gatePlanet, PLANET_RADIUS));
+    }
+
+    @Test
+    void aGateMoonCountsFromItsParentsOrbit() {
+        PlanetAPI parent = orbiting(star, 5000f, 300f);
+        PlanetAPI moon = orbiting(parent, 700f, 60f);
+
+        assertEquals(5000f, PhaseDestination.distanceFromFocus(star, moon), 0.01f);
     }
 
     private SectorEntityToken nebulaCentre() {
@@ -124,9 +147,9 @@ class PhaseDestinationTest {
         when(system.getJumpPoints()).thenReturn(new ArrayList<>(List.of(jumpPoint)));
 
         assertSame(centre, PhaseDestination.focusOf(system));
-        float orbit = PhaseDestination.orbitRadius(system, centre, PLANET_RADIUS);
+        float orbit = PhaseDestination.orbitRadius(system, centre, PLANET_RADIUS, 3300f);
 
-        assertEquals((3430f + 6850f) * 0.5f, orbit, 0.01f);
+        assertEquals(3430f + PLANET_RADIUS + PhaseDestination.CLEARANCE, orbit, 0.01f);
     }
 
     @Test
@@ -138,16 +161,16 @@ class PhaseDestinationTest {
         JumpPointAPI jumpPoint = stationary(mock(JumpPointAPI.class), 0f, -2600f, 100f);
         when(system.getJumpPoints()).thenReturn(new ArrayList<>(List.of(jumpPoint)));
 
-        float orbit = PhaseDestination.orbitRadius(system, centre, PLANET_RADIUS);
+        float orbit = PhaseDestination.orbitRadius(system, centre, PLANET_RADIUS, 1600f);
 
         assertEquals(2700f + PLANET_RADIUS + PhaseDestination.FALLBACK_CLEARANCE, orbit, 0.01f);
     }
 
     @Test
     void anEmptySystemPlacesThePlanetClearOfTheCorona() {
-        float orbit = PhaseDestination.orbitRadius(system, star, PLANET_RADIUS);
+        float orbit = PhaseDestination.orbitRadius(system, star, PLANET_RADIUS, 0f);
 
-        float minPad = 300f + PLANET_RADIUS + PhaseDestination.CLEARANCE;
-        assertEquals(STAR_RADIUS + minPad + PLANET_RADIUS + PhaseDestination.FALLBACK_CLEARANCE, orbit);
+        float clearOfCorona = Math.max(PhaseDestination.MIN_PAD, 300f) + PLANET_RADIUS + PhaseDestination.CLEARANCE;
+        assertEquals(STAR_RADIUS + clearOfCorona, orbit);
     }
 }

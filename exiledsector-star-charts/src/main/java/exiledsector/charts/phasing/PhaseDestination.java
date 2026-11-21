@@ -38,25 +38,42 @@ public final class PhaseDestination {
         return system.getCenter() != null ? system.getCenter() : star;
     }
 
-    public static float orbitRadius(StarSystemAPI system, SectorEntityToken focus, float planetRadius) {
-        float innermostOrbit = focus.getRadius() + Math.max(MIN_PAD, coronaReach(system, focus) + planetRadius + CLEARANCE);
-        float neededGap = planetRadius * 2f + CLEARANCE * 2f;
+    public static float orbitRadiusNear(StarSystemAPI system, SectorEntityToken focus, SectorEntityToken gatePlanet, float planetRadius) {
+        return orbitRadius(system, focus, planetRadius, distanceFromFocus(focus, gatePlanet));
+    }
+
+    public static float distanceFromFocus(SectorEntityToken focus, SectorEntityToken entity) {
+        if (entity == null) {
+            return 0f;
+        }
+        Vector2f focusLocation = focus.getLocation() != null ? focus.getLocation() : new Vector2f();
+        Band band = ChartWormholePlacement.centreBand(entity, focusLocation, 0);
+        return (band.inner() + band.outer()) * 0.5f;
+    }
+
+    public static float orbitRadius(StarSystemAPI system, SectorEntityToken focus, float planetRadius, float preferredRadius) {
+        float innermostOrbit = focus.getRadius() + Math.max(MIN_PAD, coronaReach(system, focus)) + planetRadius + CLEARANCE;
+        float margin = planetRadius + CLEARANCE;
         List<Band> occupied = occupiedBands(system, focus);
         occupied.sort(Comparator.comparingDouble(Band::inner));
-        float widestStart = 0f;
-        float widestEnd = 0f;
-        float freeFrom = innermostOrbit;
+        float closest = Float.NaN;
+        float lowestFreeOrbit = innermostOrbit;
+        float outermostEdge = Float.NEGATIVE_INFINITY;
         for (Band band : occupied) {
-            if (band.inner() - freeFrom > widestEnd - widestStart) {
-                widestStart = freeFrom;
-                widestEnd = band.inner();
-            }
-            freeFrom = Math.max(freeFrom, band.outer());
+            closest = closerTo(preferredRadius, closest, lowestFreeOrbit, band.inner() - margin);
+            lowestFreeOrbit = Math.max(lowestFreeOrbit, band.outer() + margin);
+            outermostEdge = Math.max(outermostEdge, band.outer());
         }
-        if (widestEnd - widestStart >= neededGap) {
-            return (widestStart + widestEnd) * 0.5f;
+        float pastEveryBody = Math.max(innermostOrbit, outermostEdge + planetRadius + FALLBACK_CLEARANCE);
+        return closerTo(preferredRadius, closest, pastEveryBody, Float.MAX_VALUE);
+    }
+
+    private static float closerTo(float preferredRadius, float closest, float lowestOrbit, float highestOrbit) {
+        if (lowestOrbit > highestOrbit) {
+            return closest;
         }
-        return freeFrom + planetRadius + FALLBACK_CLEARANCE;
+        float candidate = Math.min(Math.max(preferredRadius, lowestOrbit), highestOrbit);
+        return Float.isNaN(closest) || Math.abs(candidate - preferredRadius) < Math.abs(closest - preferredRadius) ? candidate : closest;
     }
 
     public static float orbitDays(float orbitRadius) {
