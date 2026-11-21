@@ -138,7 +138,7 @@ public final class AtlasAnomalyPanel extends HoloPanel {
             catalystElement = null;
         }
         catalystsHeight = 0f;
-        List<AtlasCatalysts.Catalyst> catalysts = List.copyOf(AtlasCatalysts.all());
+        List<AtlasCatalysts.Catalyst> catalysts = AtlasCatalysts.all().stream().filter(catalyst -> catalyst.weight() > 0f || carried(catalyst) > 0).toList();
         if (catalysts.isEmpty()) {
             return;
         }
@@ -149,6 +149,7 @@ public final class AtlasAnomalyPanel extends HoloPanel {
         List<SectionedTileGrid.Tile> tiles = catalysts.stream()
                 .map(catalyst -> new SectionedTileGrid.Tile(catalystTile(catalyst), carried(catalyst))).toList();
         SectionedTileGrid.addRows(element, tiles, columns, innerWidth(), cellSize);
+        element.addSectionHeading(Translation.text("chart.atlas.focus.system"), Alignment.MID, PAD);
         catalystsHeight = element.getHeightSoFar();
         element.getPosition().setSize(innerWidth(), catalystsHeight);
         catalystElement = replaceElement(null, element, PAD, catalystsTop());
@@ -202,7 +203,7 @@ public final class AtlasAnomalyPanel extends HoloPanel {
     }
 
     private void rebuildList() {
-        float listTop = catalystsTop() + (catalystsHeight > 0f ? catalystsHeight + PAD : 0f);
+        float listTop = catalystsTop() + (catalystsHeight > 0f ? catalystsHeight + GAP : 0f);
         TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), Math.max(0f, panelHeight - listTop - PAD), true);
         Listing shown = entries.get();
         if (shown.system().isEmpty()) {

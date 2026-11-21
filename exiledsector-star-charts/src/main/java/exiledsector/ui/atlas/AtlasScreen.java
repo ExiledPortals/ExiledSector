@@ -94,7 +94,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     static final float CHART_STAR_SHARE = 1.35f;
     static final float CHART_STAR_HEADROOM = 1.3f;
     static final float CHART_DETAILS_GAP = 14f;
-    static final float CHART_DETAILS_MAX_WIDTH = 520f;
+    static final float CHART_DETAILS_MAX_WIDTH = 760f;
     static final float CHART_NOTICE_HEIGHT = 40f;
     static final float CHART_OPEN_HEIGHT = 40f;
     static final float CHART_FX_ROOM = 16f;

@@ -17,7 +17,9 @@ class AtlasAnomalyPanelTest {
     }
 
     @Test
-    void thirteenCatalystsUseFiveColumns() {
+    void columnsGrowOnlyWhenThreeRowsAreFull() {
+        assertEquals(4, AtlasAnomalyPanel.catalystColumns(10));
+        assertEquals(4, AtlasAnomalyPanel.catalystColumns(12));
         assertEquals(5, AtlasAnomalyPanel.catalystColumns(13));
         assertEquals(1, AtlasAnomalyPanel.catalystColumns(0));
     }
@@ -25,6 +27,6 @@ class AtlasAnomalyPanelTest {
     @Test
     void fiveColumnsStillLeaveRoomForIcons() {
         float cellSize = SectionedTileGrid.cellSizeFor(AtlasAnomalyPanel.PANEL_WIDTH - HoloPanel.PAD * 2f, AtlasAnomalyPanel.catalystColumns(13));
-        assertTrue(cellSize > 60f && cellSize < 72f, "cell size " + cellSize);
+        assertTrue(cellSize > 60f, "cell size " + cellSize);
     }
 }

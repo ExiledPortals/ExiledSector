@@ -1,6 +1,7 @@
 package exiledsector.items.starchart;
 
 import com.fs.starfarer.api.campaign.SpecialItemSpecAPI;
+import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.atlas.AtlasCatalysts;
 import exiledsector.charts.atlas.AtlasNames;
@@ -55,8 +56,8 @@ public final class AtlasCatalystItems {
         return Translation.text("catalyst.family." + family.key() + ".name");
     }
 
-    public static String addsLine(AtlasCatalysts.Catalyst catalyst) {
-        return Translation.msg("catalyst.adds").arg("anomaly", AtlasNames.anomaly(catalyst.anomalyId())).text();
+    public static StyledText addsLine(AtlasCatalysts.Catalyst catalyst) {
+        return Translation.msg("catalyst.adds").arg("anomaly", AtlasNames.anomaly(catalyst.anomalyId())).styled();
     }
 
     public static void localise() {

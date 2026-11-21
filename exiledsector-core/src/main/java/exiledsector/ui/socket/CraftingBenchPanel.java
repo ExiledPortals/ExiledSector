@@ -1456,7 +1456,7 @@ public final class CraftingBenchPanel extends HoloPanel {
             if (displayName.baseName() != null) {
                 centred(VanillaText.plainPara(element, displayName.baseName(), LINE_PAD, Misc.getTextColor()));
             }
-            StyledText flavour = support().flavourLine(loadedItem);
+            StyledText flavour = embeddedLayout == null ? support().flavourLine(loadedItem) : null;
             if (flavour != null) {
                 centred(VanillaText.addPara(element, flavour, LINE_PAD, Misc.getGrayColor()));
             }

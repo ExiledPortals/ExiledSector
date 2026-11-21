@@ -24,7 +24,8 @@ public final class CatalystCargo {
         tooltip.addTitle(MaterialItems.displayName(itemId), AtlasCatalystItems.color(catalyst == null ? null : catalyst.family()));
         VanillaText.plainPara(tooltip, Translation.text("catalyst.category"), CATEGORY_PAD, Misc.getGrayColor());
         if (catalyst != null) {
-            VanillaText.plainPara(tooltip, AtlasCatalystItems.addsLine(catalyst), pad, Misc.getTextColor());
+            VanillaText.addPara(tooltip, AtlasCatalystItems.addsLine(catalyst), pad, Misc.getTextColor());
+            VanillaText.plainPara(tooltip, Translation.text("catalyst.consumes"), pad, Misc.getTextColor());
         }
     }
 }
