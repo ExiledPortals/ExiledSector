@@ -84,7 +84,6 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     static final float OPEN_SECONDS = 0.2f;
     static final float BACKDROP_ALPHA = 0.8f;
     static final float FOCUS_SECONDS = 0.6f;
-    static final float FOCUS_DIM_ALPHA = 0.85f;
     static final float CHOOSE_WIDTH = 320f;
     static final float CHOOSE_HEIGHT = 50f;
     static final float SIDE_PANEL_WIDTH = AtlasAnomalyPanel.PANEL_WIDTH;
@@ -118,6 +117,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     private final CampaignOverlay.Host host;
     private final SkillTreePanelStyle panelStyle = new SkillTreePanelStyle();
     private final StarfieldRenderer starfield = new StarfieldRenderer(panelStyle);
+    private final StarfieldRenderer focusStarscape = new StarfieldRenderer(panelStyle);
     private final CanvasCamera camera = new CanvasCamera(AtlasMapCanvas.MIN_ZOOM, AtlasMapCanvas.MAX_ZOOM);
     private final CanvasDrag<Void> drag = new CanvasDrag<>(camera);
     private final PointerGesture<Void> gesture = drag.gesture();
@@ -919,6 +919,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             return;
         }
         starfield.advance(amount);
+        focusStarscape.advance(amount);
         searchBar.advance(amount);
         map.advance(amount);
         camera.advanceZoom(amount);
@@ -985,12 +986,15 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         }
         frame.drawBackdrop(alpha, !host.replacing());
         try (GlScope clip = frame.clipContent()) {
-            starfield.render(panelPosition, camera.panX(), camera.panY(), search.backgroundAlpha() * alpha);
-            map.render(viewport(), panelStyle.getAccentColor(), alpha, focusedCell);
-            renderSpotlight(alpha);
+            float level = focusedCell == null ? 0f : Fade.smooth(focusLevel);
+            if (level < 1f) {
+                starfield.render(panelPosition, camera.panX(), camera.panY(), search.backgroundAlpha() * alpha);
+                map.render(viewport(), panelStyle.getAccentColor(), alpha, focusedCell);
+                renderSpotlight(alpha);
+            }
             if (focusedCell != null) {
-                float level = Fade.smooth(focusLevel);
-                frame.fillInner(Color.BLACK, FOCUS_DIM_ALPHA * level * alpha);
+                frame.fillInner(Color.BLACK, level * alpha);
+                focusStarscape.renderInside(frame.contentLeft(), frame.innerBottom(), frame.contentWidth(), frame.innerHeight(), level * alpha);
                 map.renderFocus(viewport(), focusedCell, focus(), alpha);
             }
         }

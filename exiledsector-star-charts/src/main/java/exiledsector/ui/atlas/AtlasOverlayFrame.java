@@ -53,6 +53,14 @@ final class AtlasOverlayFrame {
         return panelPosition.getHeight() - PANEL_MARGIN * 2f;
     }
 
+    float contentLeft() {
+        return innerLeft() + BORDER_INSET;
+    }
+
+    float contentWidth() {
+        return innerWidth() - BORDER_INSET * 2f;
+    }
+
     float chromeLeft() {
         return innerLeft() + CHROME_PAD;
     }
@@ -82,7 +90,7 @@ final class AtlasOverlayFrame {
     }
 
     GlScope clipContent() {
-        return UiClip.clipUi(innerLeft() + BORDER_INSET, innerBottom(), innerWidth() - BORDER_INSET * 2f, innerHeight());
+        return UiClip.clipUi(contentLeft(), innerBottom(), contentWidth(), innerHeight());
     }
 
     void drawFooterHint(TextLabel hintLabel, float alpha) {
