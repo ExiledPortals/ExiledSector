@@ -15,6 +15,9 @@
 		"exiledsector.ui.chart",
 	],
 	"graphics":{
+		"illustrations":{
+			"exiledSector_depot_assault":"graphics/exiledSector/campaign/illustrations/depot_assault.jpg",
+		},
 		"ui_icons_tech_tree":{
 			"exiledSector_wormhole_gateway":"graphics/exiledSector/colony/tech/wormhole_gateway.png",
 			"exiledSector_wormhole_gateway_advanced":"graphics/exiledSector/colony/tech/wormhole_gateway_advanced.png",

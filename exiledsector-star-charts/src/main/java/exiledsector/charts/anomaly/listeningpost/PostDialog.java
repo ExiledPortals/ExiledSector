@@ -50,7 +50,9 @@ public class PostDialog extends AnomalyDialog {
             "chart.anomaly.listening_post.dialog.infiltrate.vault"
     };
 
-    private final ChartRaid.Session raid = new ChartRaid.Session(closedDialog -> raidClosed());
+    private static final ChartRaid.Illustration ASSAULT_ILLUSTRATION = new ChartRaid.Illustration("illustrations", "exiledSector_depot_assault", 480f, 300f);
+
+    private final ChartRaid.Session raid = new ChartRaid.Session(closedDialog -> raidClosed(), ASSAULT_ILLUSTRATION);
     private SectorEntityToken post;
     private List<ItemData> raidedPrototypes = List.of();
 
@@ -178,7 +180,7 @@ public class PostDialog extends AnomalyDialog {
             showMain();
             return;
         }
-        showEntityVisual(post);
+        ASSAULT_ILLUSTRATION.show(dialog());
         showPrototypes(raidedPrototypes);
     }
 
@@ -191,6 +193,7 @@ public class PostDialog extends AnomalyDialog {
     }
 
     void infiltrate() {
+        ASSAULT_ILLUSTRATION.show(dialog());
         TextPanelAPI text = text();
         for (String key : INFILTRATION_KEYS) {
             VanillaText.plainPara(text, Translation.gameText(key));
