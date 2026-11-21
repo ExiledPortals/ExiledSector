@@ -1,9 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { buildVocabulary } from '../../../api/vocabulary.ts';
 import {
   definitionWarnings,
   formatPool,
-  markDefinitionsSaved,
   newItemDefinition,
   parseItemDefinitions,
   parsePool,
@@ -13,19 +11,15 @@ import {
   setDefinitionKind,
   validateItemDefinitions,
   type ItemDefinition,
-  type ItemDefinitionsModel,
 } from './definitions.ts';
 import { modifierById, parseModifiersCsv } from './modifiers.ts';
+import { testVocabulary } from '../../../test/testVocabulary.ts';
 
-const vocabulary = buildVocabulary({
+const vocabulary = testVocabulary({
   effects: [
     { name: 'HULL_MULT', statMode: 'MULT', lowerIsBetter: false },
     { name: 'ARMOR_FLAT', statMode: 'FLAT', lowerIsBetter: false },
   ],
-  tags: { theme: [], volume: [], requirement: [] },
-  tiers: [],
-  unlockConditionTypes: [],
-  blueprintCategories: [],
   itemTypes: ['subroutine', 'hull_item'],
   itemKinds: [
     { id: 'subroutine', type: 'subroutine' },
@@ -76,21 +70,6 @@ describe('item definitions', () => {
     expect(poolShares(parsePool('@HULL_MULT:3; @ARMOR_FLAT'))).toEqual([0.75, 0.25]);
   });
 
-  it('marks the ids that were saved, not ids renamed or added after the save started', () => {
-    const saved: Pick<ItemDefinitionsModel, 'definitions'> = {
-      definitions: [definition({ id: 'renamed', loadedId: 'loaded' }), definition({ id: 'added_before_save' })],
-    };
-    const current: Pick<ItemDefinitionsModel, 'definitions'> = {
-      definitions: [
-        definition({ id: 'renamed_again', loadedId: 'loaded' }),
-        definition({ id: 'added_before_save' }),
-        definition({ id: 'added_during_save' }),
-      ],
-    };
-    markDefinitionsSaved(current, saved);
-    expect(current.definitions.map((entry) => entry.loadedId)).toEqual(['renamed', 'added_before_save', undefined]);
-  });
-
   it('reports every rule the game would reject', () => {
     expect(validateItemDefinitions([definition({})], vocabulary, catalogue)).toEqual([]);
     const issues = validateItemDefinitions(
@@ -98,7 +77,7 @@ describe('item definitions', () => {
         definition({
           id: 'Bad Id',
           kind: 'nope',
-          icon: 'graphics/unused/x.png',
+          icon: 'art/unused/x.png',
           rarity: '-1',
           unlock: 'mystery',
           prefixes: parsePool('@HULL_MULT; @HULL_MULT_BRIDGE; @NOT_THERE:0; ARMOR_FLAT:1:2'),
@@ -111,7 +90,7 @@ describe('item definitions', () => {
     expect(issues).toEqual([
       'Bad Id: id must use only lowercase letters, digits and underscores',
       'Bad Id: kind must be one of subroutine, bridge',
-      'Bad Id: icon graphics/unused/x.png is in a folder that is not deployed',
+      'Bad Id: icon art/unused/x.png is in a folder that is not deployed',
       'Bad Id: rarity must be zero or more',
       'Bad Id: unknown drop condition mystery',
       'Bad Id: HULL_MULT is listed twice, as HULL_MULT and HULL_MULT_BRIDGE',

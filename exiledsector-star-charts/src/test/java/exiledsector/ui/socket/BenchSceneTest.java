@@ -1,7 +1,7 @@
 package exiledsector.ui.socket;
 
-import exiledsector.items.Nanoswarm;
-import exiledsector.items.StarChartCipher;
+import exiledsector.items.crafting.material.Nanoswarm;
+import exiledsector.items.crafting.material.StarChartCipher;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -49,9 +49,8 @@ class BenchSceneTest {
             centres[index] = new float[]{centreX, centreY};
             String tile = mode + " tile " + index;
             assertTrue(centreY + halfTile < BenchScene.detailsTop(mode), tile + " overlaps the details plate");
-            assertTrue(centreY - halfTile > BenchScene.NOTICE_TOP + BenchScene.NOTICE_HEIGHT, tile + " overlaps the notice");
-            assertTrue(centreX - halfTile > mode.leftInhibitorX() + halfTile, tile + " overlaps the left inhibitor");
-            assertTrue(centreX + halfTile < mode.rightInhibitorX() - halfTile, tile + " overlaps the right inhibitor");
+            assertTrue(centreY - halfTile >= 0f, tile + " leaves the top of the art");
+            assertTrue(centreX - halfTile >= 0f && centreX + halfTile <= BenchScene.ART_WIDTH, tile + " leaves the art");
         }
         for (int index = 1; index < tileCount; index++) {
             float gapX = Math.abs(centres[index][0] - centres[index - 1][0]);
@@ -62,30 +61,19 @@ class BenchSceneTest {
 
     @Test
     void theDetailsPlateStartsJustUnderTheSocketGraphicInEveryModeAndFitsTheArt() {
-        assertEquals(111f, BenchScene.detailsTop(BenchMode.HULL_ITEMS), 0.1f, "the hull bench plate keeps its place");
+        assertEquals(87.7f, BenchScene.detailsTop(BenchMode.HULL_ITEMS), 0.1f, "the hull bench plate starts high to leave room for long items");
         for (BenchMode mode : BenchMode.values()) {
             float gap = BenchScene.detailsTop(mode) - (mode.socketY() + BenchScene.SLOT_RADIUS * 1.05f);
             assertTrue(gap > 0f && gap < 3f, mode + " plate does not start just under its socket graphic");
             assertTrue(BenchScene.detailsTop(mode) < BenchScene.CHART_DETAILS_BOTTOM, mode + " plate has no height");
         }
         assertTrue(BenchScene.DETAILS_BOTTOM <= BenchScene.ART_HEIGHT);
-        for (BenchMode mode : BenchMode.values()) {
-            assertTrue(BenchScene.detailsLeft(mode) - BenchScene.TILE_SIZE / 2f > mode.leftInhibitorX(), mode + " left inhibitor overlaps the plate");
-            assertTrue(BenchScene.detailsLeft(mode) + BenchScene.DETAILS_WIDTH + BenchScene.TILE_SIZE / 2f < mode.rightInhibitorX(),
-                    mode + " right inhibitor overlaps the plate");
-        }
     }
 
     @Test
-    void theStarfieldBenchesCentreTheSocketAndMirrorTheInhibitorsBesideIt() {
+    void theStarfieldBenchesCentreTheSocket() {
         for (BenchMode mode : new BenchMode[]{BenchMode.HULL_ITEMS, BenchMode.STAR_CHARTS}) {
             assertEquals(BenchScene.ART_WIDTH / 2f, mode.socketX(), 1e-6f, mode + " socket is off-centre");
-            assertEquals(mode.socketX() - mode.leftInhibitorX(), mode.rightInhibitorX() - mode.socketX(), 1e-6f, mode + " inhibitors are lopsided");
-            assertEquals(mode.socketY(), mode.inhibitorY(), 1e-6f, mode + " inhibitors are not level with the socket");
-        }
-        for (BenchMode mode : BenchMode.values()) {
-            float halfTile = BenchScene.TILE_SIZE / 2f;
-            assertTrue(mode.leftInhibitorX() - halfTile >= 0f && mode.rightInhibitorX() + halfTile <= BenchScene.ART_WIDTH, mode + " inhibitor tile leaves the art");
         }
     }
 

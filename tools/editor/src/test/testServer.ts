@@ -24,7 +24,7 @@ export function startTestServer(copiedFiles: string[], options: Pick<EditorServe
     fs.copyFileSync(path.join(REPOSITORY_ROOT, relativePath), target);
   }
   const paths = { projectRoot, vanillaCoreDir: path.join(projectRoot, 'vanilla-core') };
-  const app = createEditorServer({ ...options, paths, port: PORT, describe: new DescribeService(paths, { javaHome: null, maven: null }) });
+  const app = createEditorServer({ ...options, paths, port: PORT, describe: new DescribeService(paths, { javaHome: null, maven: null }, Date.now, path.join(projectRoot, 'tooltip-code')) });
   vi.stubGlobal('fetch', async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = typeof input === 'string' ? input : input instanceof URL ? input.pathname + input.search : input.url;
     const response = await app.inject({
@@ -50,6 +50,13 @@ export function startTestServer(copiedFiles: string[], options: Pick<EditorServe
   };
 }
 
-export function readRepositoryFile(relativePath: string): string {
-  return fs.readFileSync(path.join(REPOSITORY_ROOT, relativePath), 'utf8');
+const BYTE_ORDER_MARK = String.fromCharCode(0xfeff);
+
+export interface RepositoryFileOptions {
+  stripByteOrderMark?: boolean;
+}
+
+export function readRepositoryFile(relativePath: string, options: RepositoryFileOptions = {}): string {
+  const text = fs.readFileSync(path.join(REPOSITORY_ROOT, relativePath), 'utf8');
+  return options.stripByteOrderMark && text.startsWith(BYTE_ORDER_MARK) ? text.slice(1) : text;
 }

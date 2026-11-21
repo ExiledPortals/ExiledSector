@@ -3,6 +3,7 @@ package exiledsector.charts.anomaly;
 import com.fs.starfarer.api.campaign.BattleCreationPlugin;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
+import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import exiledsector.ModCsv;
@@ -18,6 +19,7 @@ import exiledsector.charts.anomaly.listeningpost.ListeningPost;
 import exiledsector.charts.anomaly.hypershunt.CoronalHypershunt;
 import exiledsector.charts.anomaly.relay.RelayNetwork;
 import exiledsector.charts.anomaly.shipyard.AbyssalShipyard;
+import exiledsector.charts.anomaly.holdouts.Holdouts;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
 import exiledsector.charts.anomaly.landmark.DomainMothership;
 import exiledsector.charts.anomaly.landmark.RemnantNexusStation;
@@ -28,6 +30,7 @@ import exiledsector.charts.atlas.AtlasRunChoice;
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.compat.ChartModGates;
+import exiledsector.compat.FirstFailureLog;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
@@ -54,22 +57,21 @@ public final class ChartAnomalies {
 
     public static final String PATH = "data/config/exiledSector/chart_anomalies.csv";
     static final String ID_COLUMN = "id";
-    static final List<ChartAnomaly> BUILT_IN = List.of(StarAnomalies.BLACK_HOLE, StarAnomalies.NEUTRON_STAR, StarAnomalies.DENSE_NEBULA,
-            AsteroidStorm.INSTANCE, MagneticStorm.INSTANCE, StellarFlares.INSTANCE, SpatialBreach.INSTANCE, FactionSkirmish.INSTANCE,
+    static final List<ChartAnomaly> BUILT_IN = List.of(StarAnomalies.BLACK_HOLE, StarAnomalies.NEUTRON_STAR, DenseNebula.INSTANCE,
+            MagneticStorm.INSTANCE, StellarFlares.INSTANCE, SpatialBreach.INSTANCE, FactionSkirmish.INSTANCE, Holdouts.INSTANCE,
             RelayNetwork.INSTANCE, ExcavationSites.INSTANCE, SupplyConvoy.INSTANCE, AnomalousDebris.INSTANCE,
             StormFront.INSTANCE,
             DerelictForge.INSTANCE, ListeningPost.INSTANCE, PreCollapseFacility.INSTANCE, CoronalHypershunt.INSTANCE,
-            RemnantNexusStation.INSTANCE, DomainMothership.INSTANCE, AbyssalShipyard.INSTANCE, AbyssalResearchComplex.INSTANCE, AbyssalStorm.INSTANCE,
-            PowerfulBoss.INSTANCE);
+            RemnantNexusStation.INSTANCE, DomainMothership.INSTANCE, AbyssalShipyard.INSTANCE, AbyssalResearchComplex.INSTANCE, AbyssalStorm.INSTANCE);
     private static final Logger LOG = Logger.getLogger(ChartAnomalies.class);
     private static volatile List<ChartAnomaly> anomalies = BUILT_IN;
     private static volatile Map<String, Definition> definitions = Map.of();
     private static final Map<Class<?>, List<?>> ROLES = new ConcurrentHashMap<>();
-    private static final Set<String> REPORTED_FAILURES = ConcurrentHashMap.newKeySet();
+    private static final FirstFailureLog HOOK_FAILURES = FirstFailureLog.errors(LOG);
 
     public record Definition(String id, float weight, int minTier, int maxTier, String requiredMod, String icon, boolean insertable,
                              Set<String> excludes, boolean replacesStar, List<ChartGenContext.AppliedEffect> effects, Set<String> biomes,
-                             float fleetLoot) {
+                             float openingChance) implements ExclusiveAnomaly {
 
         public Definition {
             requiredMod = requiredMod == null ? "" : requiredMod;
@@ -79,12 +81,12 @@ public final class ChartAnomalies {
             biomes = biomes == null ? Set.of() : Set.copyOf(biomes);
             insertable = insertable && !replacesStar && biomes.isEmpty();
             effects = effects == null ? List.of() : List.copyOf(effects);
-            fleetLoot = Float.isFinite(fleetLoot) ? Math.max(0f, fleetLoot) : 1f;
+            openingChance = Float.isFinite(openingChance) && !replacesStar && biomes.isEmpty() ? Math.max(0f, Math.min(1f, openingChance)) : 0f;
         }
 
         public Definition(String id, float weight, int minTier, int maxTier, String requiredMod, String icon, boolean insertable,
                           Set<String> excludes, boolean replacesStar, List<ChartGenContext.AppliedEffect> effects, Set<String> biomes) {
-            this(id, weight, minTier, maxTier, requiredMod, icon, insertable, excludes, replacesStar, effects, biomes, 1f);
+            this(id, weight, minTier, maxTier, requiredMod, icon, insertable, excludes, replacesStar, effects, biomes, 0f);
         }
 
         public Definition(String id, float weight, int minTier, int maxTier, String requiredMod, String icon, boolean insertable,
@@ -105,13 +107,14 @@ public final class ChartAnomalies {
             return !biomes.isEmpty();
         }
 
+        public boolean rollsOnOpening() {
+            return openingChance > 0f;
+        }
+
         public boolean keptWhenSpent() {
             return replacesStar || perBiome();
         }
 
-        public boolean conflictsWith(Definition other) {
-            return other != null && !id.equals(other.id) && (replacesStar && other.replacesStar || excludes.contains(other.id) || other.excludes.contains(id));
-        }
     }
 
     private ChartAnomalies() {
@@ -159,8 +162,12 @@ public final class ChartAnomalies {
                 effects.add(new ChartGenContext.AppliedEffect(effect, value));
             }
         });
+        float openingChance = csv.number(row, "opening_chance", 0f, id);
+        if (openingChance > 0f && (replacesStar || !biomes.isEmpty())) {
+            csv.problem(id, "opening_chance", openingChance + " (an anomaly that replaces the star or is placed once per biome can't roll when a chart opens)");
+        }
         return new Definition(id, csv.number(row, "weight", 1f, id), tiers.minTier(), tiers.maxTier(), ModCsv.text(row, "requires_mod"),
-                ModCsv.text(row, "icon"), insertable, excludes, replacesStar, effects, biomes, csv.number(row, "fleet_loot", 1f, id));
+                ModCsv.text(row, "icon"), insertable, excludes, replacesStar, effects, biomes, openingChance);
     }
 
     public static ChartAnomaly byId(String id) {
@@ -243,6 +250,10 @@ public final class ChartAnomalies {
                 lines.add(line);
             }
         }
+        String dustLine = askSafely(DenseNebula.INSTANCE, "settling dust intel", () -> SettlingDust.intelText(run.run()));
+        if (dustLine != null) {
+            lines.add(dustLine);
+        }
         return lines;
     }
 
@@ -279,6 +290,27 @@ public final class ChartAnomalies {
         }
     }
 
+    public static void battleWon(LocationAPI location) {
+        AnomalyRun run = AnomalyRun.in(location);
+        if (run == null) {
+            return;
+        }
+        for (LootShaper anomaly : inRun(run.run(), LootShaper.class)) {
+            runSafely(anomaly, "battle won", () -> anomaly.battleWon(run));
+        }
+        runSafely(DenseNebula.INSTANCE, "settling dust", () -> SettlingDust.battleWon(run));
+    }
+
+    public static float bossStarChartPercent(ChartRun run) {
+        float percent = 0f;
+        for (LootShaper anomaly : inRun(run, LootShaper.class)) {
+            Float added = askSafely(anomaly, "boss star charts", () -> anomaly.bossStarChartPercent(run));
+            percent += added == null ? 0f : added;
+        }
+        Float dustPercent = askSafely(DenseNebula.INSTANCE, "settling dust boss star charts", () -> SettlingDust.bossStarChartPercent(run));
+        return percent + (dustPercent == null ? 0f : dustPercent);
+    }
+
     public static List<LootShaper> holdingPlayerBattle() {
         return with(LootShaper.class).stream().filter(LootShaper::holdsPlayerBattle).toList();
     }
@@ -294,9 +326,8 @@ public final class ChartAnomalies {
         try {
             return call.get();
         } catch (RuntimeException | LinkageError e) {
-            if (REPORTED_FAILURES.add(anomaly.id() + ":" + hook)) {
-                LOG.error("[ExiledSector] The " + anomaly.id() + " anomaly's " + hook + " failed; it is skipped until the next try", e);
-            }
+            HOOK_FAILURES.report(anomaly.id() + ":" + hook,
+                    "[ExiledSector] The " + anomaly.id() + " anomaly's " + hook + " failed; it is skipped until the next try", e);
             return null;
         }
     }
@@ -343,10 +374,6 @@ public final class ChartAnomalies {
 
     public static <R extends ChartAnomaly> List<R> anomaliesOf(Collection<String> ids, Class<R> role) {
         return ids.stream().map(id -> role(id, role)).filter(Objects::nonNull).toList();
-    }
-
-    public static boolean guaranteeBossTierUp(Collection<String> ids) {
-        return ids != null && anomaliesOf(ids, LootShaper.class).stream().anyMatch(LootShaper::guaranteesBossTierUp);
     }
 
     public static List<ChartGenContext.AppliedEffect> effectsOf(Collection<String> ids) {

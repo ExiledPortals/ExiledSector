@@ -1,7 +1,7 @@
 package exiledsector.effects;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledsector.items.HullUpgradeEffectSource;
+import exiledsector.items.hull.HullUpgradeEffectSource;
 import exiledsector.skills.DiminishingReturns;
 import exiledsector.skills.EffectContribution;
 import exiledsector.skills.ShipSections;

@@ -47,25 +47,29 @@ public final class ChartRelays {
         if (playerFleet == null || playerFleet.getContainingLocation() != system || playerFleet.isInHyperspaceTransition()) {
             return false;
         }
-        if (RelayStates.isWoken(run, RelayKind.COMM_RELAY)) {
+        if (fullArrayRevealing(run)) {
             revealFleets(system);
         }
         boolean changed = false;
         for (SectorEntityToken relay : system.getEntitiesWithTag(RelayNetwork.RELAY_TAG)) {
-            RelayKind kind = RelayKind.of(relay);
-            if (kind == null || RelayStates.has(run, kind, RelayStates.SYNCED)) {
+            RelaySlot slot = RelaySlot.of(relay);
+            if (slot == null || RelayStates.has(run, slot, RelayStates.SYNCED)) {
                 continue;
             }
-            if (synced(sector.getClock(), playerFleet, relay, kind)) {
-                RelayStates.add(run, kind, RelayStates.SYNCED);
+            if (synced(sector.getClock(), playerFleet, relay, slot.kind())) {
+                RelayStates.add(run, slot, RelayStates.SYNCED);
                 announce("chart.anomaly.relay_network.message.synced", relay);
-                if (wakeIfReady(run, system, relay, kind)) {
+                if (wakeIfReady(run, system, relay, slot)) {
                     RelayLogIntel.report(sector, run);
                 }
                 changed = true;
             }
         }
         return changed;
+    }
+
+    static boolean fullArrayRevealing(ChartRun run) {
+        return RelayTuning.fullArray(RelayTuning.of(run)) && RelayStates.allWoken(run);
     }
 
     static boolean synced(CampaignClockAPI clock, CampaignFleetAPI playerFleet, SectorEntityToken relay, RelayKind kind) {
@@ -114,23 +118,29 @@ public final class ChartRelays {
         return cargo != null && cargo.getSupplies() >= cost.supplies() && cargo.getCommodityQuantity(Commodities.HEAVY_MACHINERY) >= cost.machinery();
     }
 
-    public static boolean restorePower(ChartRun run, CargoAPI cargo, LocationAPI system, SectorEntityToken relay, RelayKind kind, RelayRules.Cost cost) {
-        if (RelayStates.has(run, kind, RelayStates.PAID) || RelayStates.isWoken(run, kind) || !canAfford(cargo, cost)) {
+    public static boolean restorePower(ChartRun run, CargoAPI cargo, LocationAPI system, SectorEntityToken relay, RelaySlot slot, RelayRules.Cost cost) {
+        if (RelayStates.has(run, slot, RelayStates.PAID) || RelayStates.isWoken(run, slot) || !canAfford(cargo, cost)) {
             return false;
         }
         cargo.removeSupplies(cost.supplies());
         cargo.removeCommodity(Commodities.HEAVY_MACHINERY, cost.machinery());
-        RelayStates.add(run, kind, RelayStates.PAID);
-        wakeIfReady(run, system, relay, kind);
+        RelayStates.add(run, slot, RelayStates.PAID);
+        wakeIfReady(run, system, relay, slot);
         return true;
     }
 
-    static boolean wakeIfReady(ChartRun run, LocationAPI system, SectorEntityToken relay, RelayKind kind) {
-        if (!RelayStates.readyToWake(run, kind) || !wake(run, system, relay, kind)) {
+    static boolean wakeIfReady(ChartRun run, LocationAPI system, SectorEntityToken relay, RelaySlot slot) {
+        if (!RelayStates.readyToWake(run, slot) || !wake(run, system, relay, slot)) {
             return false;
         }
         for (String message : RelayText.wokenMessages(run, relay.getName(), RelayStages.liveStage(Global.getSector(), run))) {
             CampaignMessages.plain(message, MESSAGE_COLOUR);
+        }
+        if (fullArrayRevealing(run)) {
+            CampaignMessages.plain(Translation.gameText(RelayText.PREFIX + "message.fullArray"), MESSAGE_COLOUR);
+        }
+        if (!RelayChoices.offers(Global.getSector(), run, slot).isEmpty()) {
+            CampaignMessages.plain(RelayText.choiceMessage(relay.getName()), MESSAGE_COLOUR);
         }
         return true;
     }
@@ -140,23 +150,23 @@ public final class ChartRelays {
         CampaignMessages.plain(I18n.forGameText(() -> Translation.msg(key).arg("relay", relayName).text()), MESSAGE_COLOUR);
     }
 
-    static boolean wake(ChartRun run, LocationAPI system, SectorEntityToken relay, RelayKind kind) {
-        if (!RelayStates.add(run, kind, RelayStates.WOKEN)) {
+    static boolean wake(ChartRun run, LocationAPI system, SectorEntityToken relay, RelaySlot slot) {
+        if (!RelayStates.add(run, slot, RelayStates.WOKEN)) {
             return false;
         }
-        applyWoken(system, relay, kind);
+        applyWoken(relay, slot.kind());
+        if (fullArrayRevealing(run)) {
+            revealFleets(system);
+        }
         return true;
     }
 
-    static void applyWoken(LocationAPI system, SectorEntityToken relay, RelayKind kind) {
+    static void applyWoken(SectorEntityToken relay, RelayKind kind) {
         relay.setFaction(Factions.PLAYER);
         relay.getMemoryWithoutUpdate().unset(SYNC_SINCE_MEMORY_KEY);
         relay.getMemoryWithoutUpdate().unset(SYNC_SEEN_MEMORY_KEY);
         if (kind.givesVanillaBonus()) {
             relay.getMemoryWithoutUpdate().unset(MemFlags.OBJECTIVE_NON_FUNCTIONAL);
-        }
-        if (kind == RelayKind.COMM_RELAY) {
-            revealFleets(system);
         }
     }
 

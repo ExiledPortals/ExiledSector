@@ -1,8 +1,11 @@
 package exiledsector.modifiers;
 
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
-public record Modifier(String id, ModifierSlot slot, List<ModifierLine> lines) {
+public record Modifier(String id, ModifierSlot slot, List<ModifierLine> lines, Set<String> tags, boolean tagless) {
 
     public Modifier {
         if (id == null || id.isEmpty()) {
@@ -15,6 +18,14 @@ public record Modifier(String id, ModifierSlot slot, List<ModifierLine> lines) {
             throw new IllegalArgumentException("modifier " + id + " needs at least one line");
         }
         lines = List.copyOf(lines);
+        tags = tags == null ? Set.of() : Collections.unmodifiableSet(new LinkedHashSet<>(tags));
+        if (tagless && !tags.isEmpty()) {
+            throw new IllegalArgumentException("modifier " + id + " is tagless, so it cannot also list tags " + tags);
+        }
+    }
+
+    public Modifier(String id, ModifierSlot slot, List<ModifierLine> lines) {
+        this(id, slot, lines, Set.of(), false);
     }
 
     public static Modifier single(ModifierSlot slot, ModifierLine line) {

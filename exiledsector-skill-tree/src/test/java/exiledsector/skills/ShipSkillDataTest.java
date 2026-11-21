@@ -3,9 +3,8 @@ package exiledsector.skills;
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.layout.SkillNodeDecoration;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,22 +17,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class ShipSkillDataTest {
 
     private static final int AMPLE_BUDGET = 100;
     private static final int AMPLE_NODE_CAP = 1000;
-
-    @BeforeEach
-    void setUp() {
-        SkillTree.clearTypes();
-        SkillTree.clearNodes();
-    }
-
-    @AfterEach
-    void tearDown() {
-        SkillTree.clearTypes();
-        SkillTree.clearNodes();
-    }
 
     private static AllocationCheck gate(ShipSkillData data, Collection<SkillNode> allNodes, String rootId, int totalOp, int opCost,
                                        int maxAllocatedNodes) {
@@ -813,6 +801,47 @@ class ShipSkillDataTest {
     }
 
     @Test
+    void refundBankedFreeAllocationAsOpSpendsTheBankedAllocationOnTheNewestPaidNode() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode a = node("a", List.of());
+        SkillNode b = node("b", List.of());
+        ShipTrees.allocate(data, a, 3);
+        ShipTrees.allocate(data, b, 3);
+        data.addFreeAllocation();
+
+        ShipTrees.refundBankedFreeAllocationAsOp(data, List.of(a, b));
+
+        assertTrue(data.isFreeNode("b"));
+        assertFalse(data.isFreeNode("a"));
+        assertEquals(0, data.getBankedFreeAllocations());
+    }
+
+    @Test
+    void refundBankedFreeAllocationAsOpKeepsTheAllocationBankedWhenNoNodeIsPaid() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode root = rootNode("root_low_tech_1", List.of());
+        ShipTrees.allocate(data, root, 0);
+        data.addFreeAllocation();
+
+        ShipTrees.refundBankedFreeAllocationAsOp(data, List.of(root));
+
+        assertEquals(1, data.getBankedFreeAllocations());
+        assertFalse(data.isFreeNode("root_low_tech_1"));
+    }
+
+    @Test
+    void refundBankedFreeAllocationAsOpDoesNothingWithoutABankedAllocation() {
+        ShipSkillData data = new ShipSkillData();
+        SkillNode a = node("a", List.of());
+        ShipTrees.allocate(data, a, 3);
+
+        ShipTrees.refundBankedFreeAllocationAsOp(data, List.of(a));
+
+        assertFalse(data.isFreeNode("a"));
+        assertEquals(0, data.getBankedFreeAllocations());
+    }
+
+    @Test
     void allocateConsumesABankedFreeAllocationInsteadOfSpendingOp() {
         ShipSkillData data = new ShipSkillData();
         data.addFreeAllocation();
@@ -876,6 +905,23 @@ class ShipSkillDataTest {
 
         assertEquals(1, data.getBankedFreeAllocations());
         assertEquals(0, ShipTrees.getSpentOp(data, 3));
+    }
+
+    @Test
+    void forgettingAnUnknownFreeNodeReturnsOpBeforeTheFreeAllocation() {
+        ShipSkillData data = new ShipSkillData();
+        data.addFreeAllocation();
+        SkillNode a = node("a", List.of());
+        SkillNode b = node("b", List.of());
+        SkillNode c = node("c", List.of());
+        ShipTrees.allocate(data, a, 3);
+        ShipTrees.allocate(data, b, 3);
+        ShipTrees.allocate(data, c, 3);
+
+        assertEquals(List.of("a"), ShipTrees.forgetUnknownNodes(data, Map.of("b", b, "c", c), Map.of()));
+
+        assertEquals(0, data.getBankedFreeAllocations());
+        assertEquals(3, ShipTrees.getSpentOp(data, 3));
     }
 
     @Test
@@ -1196,8 +1242,8 @@ class ShipSkillDataTest {
 
         assertEquals(List.of("gone", "free_gone"), ShipTrees.forgetUnknownNodes(data, tree, Map.of()));
         assertEquals(List.of("root", "kept"), List.copyOf(data.getAllocatedNodeIds()));
-        assertEquals(1, data.getBankedFreeAllocations());
-        assertEquals(3, ShipTrees.getSpentOp(data, 3));
+        assertEquals(0, data.getBankedFreeAllocations());
+        assertEquals(0, ShipTrees.getSpentOp(data, 3));
         assertFalse(ShipTrees.hasLostStartingRoot(data, tree));
         assertEquals(List.of(), ShipTrees.forgetUnknownNodes(data, tree, Map.of()));
     }
@@ -1309,7 +1355,8 @@ class ShipSkillDataTest {
 
         assertEquals(List.of("refused"), DormantNodes.wakeDormantNodes(data, declared, 10, dormantNode -> false));
         assertFalse(data.isAllocated("refused"));
-        assertEquals(1, data.getBankedFreeAllocations());
+        assertTrue(data.isFreeNode("bridge"));
+        assertEquals(0, data.getBankedFreeAllocations());
     }
 
     @Test
@@ -1452,8 +1499,8 @@ class ShipSkillDataTest {
 
         assertEquals(List.of("unchosen", "unlisted", "missing_type"), ShipTrees.forgetUnknownNodes(data, tree, Map.of("hull", hull, "armor", armor)));
         assertEquals(List.of("root", "kept", "plain"), List.copyOf(data.getAllocatedNodeIds()));
-        assertEquals(1, data.getBankedFreeAllocations());
-        assertEquals(6, ShipTrees.getSpentOp(data, 3));
+        assertEquals(0, data.getBankedFreeAllocations());
+        assertEquals(3, ShipTrees.getSpentOp(data, 3));
         assertEquals("hull", data.getChoiceSelection("kept"));
         assertNull(data.getChoiceSelection("plain"));
     }

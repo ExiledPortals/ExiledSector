@@ -1,0 +1,114 @@
+package exiledsector.items.modifier;
+
+import exiledsector.items.Item;
+import exiledsector.items.ItemDefinition;
+import exiledsector.items.ItemDefinitions;
+import exiledsector.items.ItemFixtures;
+import exiledsector.items.ItemKind;
+import exiledsector.items.TestItems;
+import exiledsector.items.hull.HullItem;
+import exiledsector.items.subroutine.SubroutineDefinitions;
+import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.skilleffect.EffectAliases;
+import exiledsector.modifiers.Modifier;
+import exiledsector.modifiers.ModifierCategory;
+import exiledsector.modifiers.ModifierSlot;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static exiledsector.ProjectFiles.csvRows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+class ItemImplicitsTest {
+
+    @BeforeEach
+    void loadRealData() throws Exception {
+        EffectAliases.register(csvRows(EffectAliases.dataPath()));
+        ItemModifiers.register(csvRows(ItemModifiers.dataPath()));
+        ItemDefinitions.register(csvRows(SubroutineDefinitions.dataPath()), csvRows(HullItem.definitionsPath()));
+        ItemImplicits.register(csvRows(ItemImplicits.dataPath()));
+    }
+
+    @AfterEach
+    void clear() {
+        ItemImplicits.clear();
+        ItemDefinitions.clear();
+        ItemModifiers.clear();
+    }
+
+    @Test
+    void everyHullSocketTypeHasImplicitsThatRollRangesOfKnownEffects() {
+        for (ItemKind type : ItemKind.sectionItemTypes()) {
+            List<Modifier> implicits = ItemImplicits.forType(type);
+            assertFalse(implicits.isEmpty(), type.id() + " has no implicits");
+            for (Modifier implicit : implicits) {
+                assertFalse(implicit.line().scalesWithHullSize(), implicit.id());
+                assertTrue(implicit.line().canVary(), implicit.id() + " should roll a range");
+            }
+        }
+        assertTrue(ItemImplicits.forType(ItemKind.SUBROUTINE).isEmpty());
+    }
+
+    @Test
+    void subroutinesCannotBeGivenImplicits() {
+        assertThrows(IllegalArgumentException.class, () -> ItemImplicits.parseImplicits(ItemKind.SUBROUTINE, "HULL_PERCENT:5:10"));
+        assertThrows(IllegalArgumentException.class,
+                () -> ItemImplicits.parseImplicits(ItemKind.ARMOR_PLATING, "ARMOR_FLAT:10/15/20/30"));
+    }
+
+    @Test
+    void anItemRollsTheSameImplicitsFromItsSeedAndKeepsThemFrozen() throws Exception {
+        Item shieldItem = TestItems.withLines("item", "shield_generator_emitter", 42L, List.of());
+        List<RolledLine> firstRoll = RolledModifier.lines(shieldItem.implicits());
+        Item sameSeed = TestItems.withLines("other", "shield_generator_emitter", 42L, List.of());
+
+        assertEquals(2, firstRoll.size());
+        assertEquals(magnitudes(firstRoll), magnitudes(RolledModifier.lines(sameSeed.implicits())));
+        ItemImplicits.register(new JSONArray().put(new JSONObject().put("section", "shield_generator").put("implicits", "HULL_PERCENT:50:60")));
+        assertEquals(magnitudes(firstRoll), magnitudes(RolledModifier.lines(shieldItem.implicits())), "already-rolled implicits stay frozen");
+    }
+
+    @Test
+    void uniquesGetTheirTypeImplicitsAndSubroutinesGetNone() throws Exception {
+        ItemDefinitions.register(new JSONArray().put(ItemFixtures.subroutineRow(ItemFixtures.SUBROUTINE)), csvRows(HullItem.definitionsPath()));
+        ItemDefinition unique = ItemDefinitions.all().stream()
+                .filter(definition -> definition.unique() && definition.kind() == ItemKind.WEAPON_MOUNT).findFirst().orElseThrow();
+        ItemDefinition subroutine = ItemDefinitions.get(ItemFixtures.SUBROUTINE);
+
+        assertEquals(1, TestItems.withLines("u", unique.id(), 7L, List.of()).implicits().size());
+        assertTrue(TestItems.withLines("s", subroutine.id(), 7L, List.of()).implicits().isEmpty());
+    }
+
+    @Test
+    void implicitsApplyAlongsideExplicitsWithoutChangingRarity() {
+        Item plate = TestItems.withLines("plate", "armor_plate", 9L, List.of(new RolledLine("HULL_PERCENT", 5f)));
+        List<SkillTypeEffect> applied = plate.skillEffects();
+
+        assertEquals(2, applied.size());
+        assertEquals("ARMOR_PERCENT", applied.get(0).effect().name());
+        assertEquals(ItemRarity.COMMON, plate.rarity());
+    }
+
+    @Test
+    void anItemGroupsItsRollsIntoImplicitAndExplicitWithPrefixesAndSuffixesUnderExplicit() {
+        Item plate = TestItems.withLines("plate", "armor_plate", 9L,
+                List.of(new RolledLine("HULL_PERCENT", 5f), new RolledLine("KINETIC_DAMAGE_TAKEN_PERCENT", -5f)));
+
+        assertEquals(List.of(ModifierSlot.IMPLICIT), plate.rolls(ModifierCategory.IMPLICIT).stream().map(SlottedRoll::slot).toList());
+        assertEquals(List.of(ModifierSlot.PREFIX, ModifierSlot.SUFFIX),
+                plate.rolls(ModifierCategory.EXPLICIT).stream().map(SlottedRoll::slot).toList());
+    }
+
+    private static List<Float> magnitudes(List<RolledLine> effects) {
+        return effects.stream().map(RolledLine::magnitude).toList();
+    }
+
+}

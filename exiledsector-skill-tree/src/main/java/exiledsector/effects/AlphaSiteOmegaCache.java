@@ -12,11 +12,15 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
-import exiledsector.items.WormholeAnchorDefinitions;
+import exiledsector.items.anchor.WormholeAnchorDefinitions;
+import exiledsector.loot.DropOrigin;
+import exiledsector.loot.Loot;
+import exiledsector.loot.LootDelivery;
 import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.tags.SkillTags;
 
 import java.util.List;
+import java.util.Map;
 
 public final class AlphaSiteOmegaCache implements ShowLootListener {
 
@@ -45,7 +49,7 @@ public final class AlphaSiteOmegaCache implements ShowLootListener {
         }
         cacheMemory.set(ANCHOR_ADDED_KEY, true);
         ItemData anchor = ItemData.rolled(definition, Misc.getSalvageSeed(cache) ^ ANCHOR_SEED_SALT);
-        loot.addSpecial(anchor.toSpecialItem(), 1f);
+        LootDelivery.toLootScreen(loot, new Loot(List.of(anchor), List.of(), Map.of()), DropOrigin.site(cache));
         WormholeAnchorDefinitions.recordFound(List.of(anchor), sector, "the Alpha Site cache");
     }
 }

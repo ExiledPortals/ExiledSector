@@ -1,24 +1,20 @@
 package exiledsector.charts.anomaly.forge;
 
 import exiledsector.ModCsv;
-import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.table.BuiltInTable;
 import exiledsector.data.CsvRows;
-import exiledsector.items.ForgeOperation;
 import exiledsector.items.ItemType;
-import exiledsector.items.WeightedPick;
+import exiledsector.items.crafting.ForgeOperation;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 public final class ForgePrograms {
@@ -28,8 +24,7 @@ public final class ForgePrograms {
     private static final Logger LOG = Logger.getLogger(ForgePrograms.class);
     private static volatile Map<String, Program> programs = Map.of();
 
-    public record Program(String id, ForgeOperation operation, float weight, int minTier, Set<ItemType> itemTypes, int metals, int rareMetals,
-                          int feedstock) {
+    public record Program(String id, ForgeOperation operation, Set<ItemType> itemTypes, int feedstock, int infusedFeedstockEach) {
 
         public Program {
             itemTypes = itemTypes.isEmpty() ? Set.of() : Collections.unmodifiableSet(EnumSet.copyOf(itemTypes));
@@ -70,10 +65,8 @@ public final class ForgePrograms {
             csv.skipRow(id, "no item type it can forge");
             return null;
         }
-        int minTier = ChartTiers.clamp(csv.integer(row, "min_tier", ChartTiers.LOWEST_TIER, id));
-        return new Program(id, ForgeOperation.byIdOrNull(id), Math.max(0f, csv.number(row, "weight", 1f, id)), minTier, itemTypes,
-                Math.max(0, csv.integer(row, "metals", 0, id)), Math.max(0, csv.integer(row, "rare_metals", 0, id)),
-                Math.max(0, csv.integer(row, "feedstock", 0, id)));
+        return new Program(id, ForgeOperation.byIdOrNull(id), itemTypes, Math.max(0, csv.integer(row, "feedstock", 0, id)),
+                Math.max(0, csv.integer(row, "infused_feedstock_each", 0, id)));
     }
 
     public static Collection<Program> all() {
@@ -84,16 +77,8 @@ public final class ForgePrograms {
         return id == null ? null : programs.get(id);
     }
 
-    public static List<Program> roll(int tier, int count, Random random) {
-        List<Program> candidates = new ArrayList<>(programs.values().stream()
-                .filter(program -> program.weight() > 0f && tier >= program.minTier()).toList());
-        List<Program> rolled = new ArrayList<>();
-        while (rolled.size() < count && !candidates.isEmpty()) {
-            Program picked = WeightedPick.pick(candidates, Program::weight, random);
-            rolled.add(picked);
-            candidates.remove(picked);
-        }
-        return rolled;
+    public static Program of(ForgeOperation operation) {
+        return operation == null ? null : byId(operation.id());
     }
 
     static void resetForTests() {

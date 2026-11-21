@@ -1,12 +1,14 @@
 import { Avatar, Group, Stack, Text } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
-import { fetchDescription, stringsRevision } from '../../../api/describe.ts';
+import { stringsRevision } from '../../../api/describe.ts';
+import { codeRevision, DescribedTypesCache, hullSizesRequest, typeTooltip, type TypeTooltip } from '../../../api/tooltipCode.ts';
+import { splitList } from '../../../shared/csv.ts';
+import { doctrineTypeIconDestination } from '../../../shared/imageFolders.ts';
 import { fileUrl } from '../../../shared/imagePaths.ts';
 import { ImagePickButton } from '../../../shared/ImagePickButton.tsx';
 import { TooltipEffects } from '../../../shared/TooltipBody.tsx';
-import { mergeDescriptions, type LabelledDescription, type TooltipContent } from '../../../shared/tooltipContent.ts';
 import { HULL_SIZE_OPTIONS, type SkillType } from '../../tree/model/types.ts';
-import { DOCTRINE_POOL_TIERS, listEntries, type DoctrineArchive, type DoctrinePoolKey } from '../model/doctrines.ts';
+import { DOCTRINE_POOL_TIERS, type DoctrineArchive, type DoctrinePoolKey } from '../model/doctrines.ts';
 
 const RETRY_DELAY_MS = 1500;
 const ICON_SIZE = 56;
@@ -23,22 +25,12 @@ export interface DoctrineTypeSource {
   onIconPicked: (typeId: string, iconPath: string) => void;
 }
 
-type TypeTooltip = { content: TooltipContent } | { note: string; pending: boolean };
+const describedTypes = new DescribedTypesCache(hullSizesRequest(HULL_SIZE_OPTIONS.map((option) => option.value)));
 
 function useTypeTooltip(typeId: string, source: DoctrineTypeSource) {
   return useQuery({
-    queryKey: ['doctrineTypeTooltip', source.typesKey, typeId, stringsRevision()],
-    queryFn: async (): Promise<TypeTooltip> => {
-      const entries: LabelledDescription[] = [];
-      for (const size of HULL_SIZE_OPTIONS) {
-        const described = await fetchDescription({ typesJson: source.typesJson, typeId, hullSize: size.value });
-        if (described.pending || described.error) {
-          return { note: described.message || described.error || 'Preparing in-game descriptions...', pending: Boolean(described.pending) };
-        }
-        entries.push({ label: size.label, described });
-      }
-      return { content: mergeDescriptions(entries) };
-    },
+    queryKey: ['doctrineTypeTooltip', source.typesKey, typeId, stringsRevision(), codeRevision()],
+    queryFn: async (): Promise<TypeTooltip> => typeTooltip(await describedTypes.describe(source.typesJson), typeId, HULL_SIZE_OPTIONS),
     refetchInterval: (query) => (query.state.data && 'pending' in query.state.data && query.state.data.pending ? RETRY_DELAY_MS : false),
     staleTime: Infinity,
   });
@@ -95,6 +87,8 @@ function ReplacementRow({ typeId, source, listedTypes }: { typeId: string; sourc
         <ImagePickButton
           size="xs"
           label="Change image"
+          destination={doctrineTypeIconDestination(type.id)}
+          currentPath={type.icon}
           aria-label={`Change image of ${type.name || type.id}`}
           onPicked={(iconPath) => source.onIconPicked(type.id, iconPath)}
         />
@@ -113,7 +107,7 @@ function ReplacementRow({ typeId, source, listedTypes }: { typeId: string; sourc
 
 export function DoctrineReplacementPools({ archive, source }: { archive: DoctrineArchive; source: DoctrineTypeSource }) {
   const pools = (Object.keys(DOCTRINE_POOL_TIERS) as DoctrinePoolKey[])
-    .map((poolKey) => ({ poolKey, typeIds: listEntries(archive[poolKey]) }))
+    .map((poolKey) => ({ poolKey, typeIds: splitList(archive[poolKey]) }))
     .filter(({ typeIds }) => typeIds.length > 0);
   const listedTypes = pools.flatMap(({ typeIds }) => typeIds.map((typeId) => source.typesById.get(typeId))).filter((type): type is SkillType => type !== undefined);
   return (

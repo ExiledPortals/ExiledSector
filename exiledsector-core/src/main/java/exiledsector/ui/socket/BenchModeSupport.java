@@ -4,14 +4,14 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-import exiledsector.items.CraftingMaterials;
-import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.Item;
-import exiledsector.items.CraftingMaterialFamily;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemStore;
 import exiledsector.items.ItemType;
 import exiledsector.items.UseVerdict;
+import exiledsector.items.crafting.material.CraftingInhibitor;
+import exiledsector.items.crafting.material.CraftingMaterialFamily;
+import exiledsector.items.crafting.material.CraftingMaterials;
 import exiledsector.ui.SkillTreeSounds;
 
 import java.util.List;
@@ -131,6 +131,10 @@ public interface BenchModeSupport {
 
     default boolean reservesColumn() {
         return craftingItems().stream().anyMatch(craftingItem -> !inOrbit(craftingItem));
+    }
+
+    default List<BenchTray> trays() {
+        return List.of();
     }
 
     Refusal refusal(CraftingMaterialFamily craftingItem, Item loaded, ItemStore store, CraftingMaterials materials, Predicate<ItemDefinition> allowedUniques,

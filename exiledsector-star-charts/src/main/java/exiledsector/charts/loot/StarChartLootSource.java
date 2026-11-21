@@ -11,29 +11,28 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.PlayerFleet;
 import exiledsector.Seeds;
-import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
-import exiledsector.charts.effect.ChartEnemyShipEffects;
-import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.LootShaper;
-import exiledsector.effects.ItemLootListener;
+import exiledsector.charts.anomaly.breach.EventHorizon;
+import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.effects.TechMiningItemListener;
-import exiledsector.items.ItemChances;
+import exiledsector.items.drop.ItemChances;
 import exiledsector.items.ItemData;
-import exiledsector.items.ItemDrops;
-import exiledsector.items.MaterialItems;
+import exiledsector.items.modifier.RolledModifier;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.charts.run.ChartRunEffects;
+import exiledsector.charts.run.ChartRuns;
 import exiledsector.loot.BattleLoot;
 import exiledsector.loot.BattleLootRates;
-import exiledsector.loot.FleetDifficulty;
-import exiledsector.loot.FleetLevelRange;
+import exiledsector.loot.DropOrigin;
+import exiledsector.loot.DropType;
+import exiledsector.loot.FleetDifficulties;
 import exiledsector.loot.FleetLootRules;
+import exiledsector.loot.Loot;
+import exiledsector.loot.LootDelivery;
 import exiledsector.loot.LootMultipliers;
 import exiledsector.loot.LootSource;
-import exiledsector.loot.LootSources;
 import exiledsector.ui.cargo.MaterialDropAnnouncer;
 import org.apache.log4j.Logger;
 
@@ -41,8 +40,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.function.Predicate;
 
-public final class StarChartLootSource implements LootSource, FleetDifficulty {
+public final class StarChartLootSource implements LootSource {
 
     public static final StarChartLootSource INSTANCE = new StarChartLootSource();
     static final long SALVAGE_SEED_SALT = 0x63686172746470L;
@@ -72,13 +72,20 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
         if (losses.battleAnomalies == null) {
             losses.battleAnomalies = anomaliesHoldingBattle();
         }
+        for (LootShaper anomaly : losses.battleAnomalies) {
+            try {
+                anomaly.engagementRecorded(battle, engagement);
+            } catch (RuntimeException e) {
+                LOG.error("[ExiledSector] Recording an engagement failed in anomaly " + anomaly.id(), e);
+            }
+        }
         float spentDeploymentPoints = 0f;
         for (Map.Entry<CampaignFleetAPI, List<FleetMemberAPI>> fleetLosses : engagement.lostEnemiesBySourceFleet().entrySet()) {
             CampaignFleetAPI sourceFleet = fleetLosses.getKey();
             List<FleetMemberAPI> members = fleetLosses.getValue();
             float deploymentPoints = BattleEngagement.deploymentPoints(members);
-            boolean spent = ChartFleetLoot.lootSpent(sourceFleet);
-            if (ChartFleetLoot.isChartFleet(sourceFleet) || adoptedAsDefender(sourceFleet)) {
+            boolean spent = ChartFleetLedger.lootSpent(sourceFleet);
+            if (ChartFleetLedger.hasLootLedger(sourceFleet) || adoptedAsDefender(sourceFleet)) {
                 losses.shipSalvage.record(sourceFleet, members);
                 if (!spent) {
                     losses.chartFleetDeploymentPoints.merge(sourceFleet, deploymentPoints, Float::sum);
@@ -91,12 +98,13 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
                 continue;
             }
             for (FleetMemberAPI member : members) {
-                losses.highestDefeatedLevel = Math.max(losses.highestDefeatedLevel, LootSources.shipLevel(member));
+                losses.highestDefeatedLevel = Math.max(losses.highestDefeatedLevel, FleetDifficulties.shipLevel(member));
             }
         }
         if (engagement.defeatedDeploymentPoints() > 0f) {
             losses.deploymentPointsDefeated += engagement.defeatedDeploymentPoints();
-            losses.chartDpDefeated += Math.max(0f, engagement.defeatedDeploymentPoints() - spentDeploymentPoints) * engagement.difficultyMultiplier();
+            losses.chartDpDefeated += Math.max(0f, engagement.defeatedDeploymentPoints() - spentDeploymentPoints)
+                    * BattleLootRates.difficulty(engagement.difficultyMultiplier());
         }
     }
 
@@ -115,7 +123,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
             return false;
         }
         try {
-            return ChartFleetLoot.adoptDefender(sourceFleet, playerFleet.getContainingLocation());
+            return ChartFleetLedger.adoptDefender(sourceFleet, playerFleet.getContainingLocation());
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Checking whether a fleet defends a Star Chart site failed", e);
             return false;
@@ -124,7 +132,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
 
     @Override
     public void addEncounterLoot(BattleLoot battle, CargoAPI loot) {
-        ItemLootListener.addSiteLoot(loot, battleLoot(battle));
+        LootDelivery.toLootScreen(loot, battleLoot(battle), DropOrigin.BATTLE);
         try {
             losses(battle).shipSalvage.addTo(loot, battle.encounterSalvage(), battle.random());
         } catch (RuntimeException e) {
@@ -134,22 +142,22 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
 
     @Override
     public void deliverBattleLoot(BattleLoot battle, CargoAPI playerCargo) {
-        ItemLootListener.deliverSiteLoot(playerCargo, battleLoot(battle));
+        LootDelivery.deliver(playerCargo, battleLoot(battle), DropOrigin.BATTLE);
     }
 
-    private ItemDrops.SiteLoot battleLoot(BattleLoot battle) {
+    private Loot battleLoot(BattleLoot battle) {
         Losses losses = losses(battle);
         SectorAPI sector = Global.getSector();
         CampaignFleetAPI playerFleet = PlayerFleet.orNull();
         if (sector == null || playerFleet == null || !(losses.deploymentPointsDefeated > 0f)) {
-            return ItemDrops.SiteLoot.NONE;
+            return Loot.NONE;
         }
-        ItemDrops.SiteLoot chartLoot = ItemDrops.SiteLoot.NONE;
+        Loot chartLoot = Loot.NONE;
         if (battle.playerWon()) {
             try {
-                ChartDrops.Loot battleLoot = ChartDrops.forBattle(playerFleet.getContainingLocation(), losses.chartDpDefeated,
+                ChartDrops.Rolled battleLoot = ChartDrops.forBattle(playerFleet.getContainingLocation(), losses.chartDpDefeated,
                         losses.highestDefeatedLevel, battle.independentRandom());
-                chartLoot = chartLoot.plus(battleLoot.charts(), List.of(), battleLoot.materials());
+                chartLoot = chartLoot.plus(battleLoot.asLoot());
             } catch (RuntimeException e) {
                 LOG.error("[ExiledSector] Rolling Star Chart battle drops failed", e);
             }
@@ -165,99 +173,103 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
                 LOG.error("[ExiledSector] Rolling Star Chart fleet loot failed for fleet " + fleetLosses.getKey().getId(), e);
             }
         }
-        if (battle.playerWon() && !losses.chartFleetDeploymentPoints.isEmpty() && losses.battleAnomalies != null) {
-            for (LootShaper anomaly : losses.battleAnomalies) {
-                try {
-                    chartLoot = chartLoot.plus(anomaly.battleBonus(sector, battle.independentRandom()));
-                } catch (RuntimeException e) {
-                    LOG.error("[ExiledSector] Rolling an anomaly's battle bonus failed", e);
-                }
-            }
-        }
+        recordWin(battle, playerFleet.getContainingLocation());
         return chartLoot;
     }
 
-    @Override
-    public ItemChances itemChancesFor(CampaignFleetAPI fleet) {
+    static void recordWin(BattleLoot battle, LocationAPI location) {
+        if (!battle.playerWon() || battle.unfought()) {
+            return;
+        }
         try {
-            return LootContexts.forFleet(fleet).itemChances();
+            ChartAnomalies.battleWon(location);
         } catch (RuntimeException e) {
-            LOG.error("[ExiledSector] Reading the item chances of a defeated fleet failed", e);
-            return LootContexts.global().itemChances();
+            LOG.error("[ExiledSector] Recording a won battle for the run's anomalies failed", e);
         }
     }
 
     @Override
     public FleetLootRules fleetLootRules(CampaignFleetAPI fleet) {
         try {
-            ChartRun run = fleet == null ? null : ChartFleetLoot.liveRunOf(fleet);
+            ChartRun run = fleet == null ? null : ChartFleetLedger.liveRunOf(fleet);
             if (run == null) {
                 return null;
             }
-            if (ChartFleetLoot.lootSpent(fleet)) {
-                return FleetLootRules.NONE;
+            if (ChartFleetLedger.lootSpent(fleet)) {
+                return FleetLootRules.SPENT;
             }
             if (fleet.getMemoryWithoutUpdate().getBoolean(ChartIds.FEEDSTOCK_ONLY_MEMORY_KEY)) {
                 return FleetLootRules.FEEDSTOCK_ONLY;
             }
-            if (!ChartFleetLoot.isChartFleet(fleet)) {
+            if (!ChartFleetLedger.hasLootLedger(fleet)) {
                 return null;
             }
-            ChartGenContext context = ChartRunEffects.contextOf(run);
-            float battleLootMult = ChartFleetLoot.battleLootMult(anomaliesHoldingBattle(), context);
-            LootMultipliers multipliers = BlackHoleHullItems.withBonusWherePlayerIs(context.lootMultipliers(battleLootMult));
-            return new FleetLootRules(FleetLootRules.Rates.FULL, true, multipliers,
-                    ChartFleetLoot.isBoss(fleet, run) ? context.bossSpoilsMult() : ChartFleetLoot.anomalyFleetLoot(fleet, run));
+            ChartLootContext loot = ChartLootContext.of(run);
+            List<LootShaper> battleAnomalies = anomaliesHoldingBattle();
+            ChartLootContext fleetLoot = ChartFleetLoot.fleetLootContext(loot, battleAnomalies, ChartFleetLedger.isBoss(fleet, run));
+            LootMultipliers multipliers = withBattleHullItems(BlackHoleHullItems.withBonusWherePlayerIs(fleetLoot.multipliers(1f)),
+                    battleAnomalies, loot.effects());
+            FleetLootRules rules = FleetLootRules.ownLedger(multipliers);
+            return ChartFleetLoot.overchargesHullItems(fleet, run) ? rules.overchargingHullItems() : rules;
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Reading the loot rules of a defeated fleet failed", e);
             return null;
         }
     }
 
-    @Override
-    public LootMultipliers modifiersAt(LocationAPI location) {
-        ChartGenContext context;
-        try {
-            context = ChartDrops.liveContextAt(location);
-        } catch (RuntimeException e) {
-            LOG.error("[ExiledSector] Reading the Star Chart loot bonuses failed", e);
-            context = ChartGenContext.none();
+    static LootMultipliers withBattleHullItems(LootMultipliers multipliers, List<LootShaper> battleAnomalies, ChartGenContext context) {
+        float percent = 0f;
+        for (LootShaper anomaly : battleAnomalies) {
+            percent += anomaly.battleHullItemPercent(context);
         }
-        return BlackHoleHullItems.withBonus(context.lootMultipliers(1f), location);
+        ItemChances chances = multipliers.chances();
+        ItemChances boosted = chances.plusPercent(DropType.HULL_ITEM, percent);
+        return boosted == chances ? multipliers : multipliers.withChances(boosted);
     }
 
     @Override
-    public LootMultipliers modifiersFor(SectorEntityToken site) {
-        LootMultipliers modifiers = site == null ? null : modifiersAt(site.getContainingLocation());
-        MemoryAPI memory = site == null ? null : site.getMemoryWithoutUpdate();
-        if (modifiers == null || memory == null) {
-            return modifiers;
+    public LootMultipliers lootMultipliersAt(LocationAPI location) {
+        LootMultipliers multipliers;
+        try {
+            multipliers = ChartLootContext.at(location).multipliers(1f);
+        } catch (RuntimeException e) {
+            LOG.error("[ExiledSector] Reading the Star Chart loot bonuses failed", e);
+            multipliers = LootMultipliers.NONE;
         }
-        ItemChances chances = modifiers.itemChances();
+        return BlackHoleHullItems.withBonus(multipliers, location);
+    }
+
+    @Override
+    public LootMultipliers lootMultipliersFor(SectorEntityToken site) {
+        LootMultipliers multipliers = site == null ? null : lootMultipliersAt(site.getContainingLocation());
+        MemoryAPI memory = site == null ? null : site.getMemoryWithoutUpdate();
+        if (multipliers == null || memory == null) {
+            return multipliers;
+        }
+        ItemChances chances = multipliers.chances();
         for (LootShaper anomaly : ChartAnomalies.with(LootShaper.class)) {
             chances = anomaly.siteChances(memory, chances);
         }
-        return chances == modifiers.itemChances() ? modifiers : new LootMultipliers(chances, modifiers.feedstockMult(), modifiers.craftingItemMult());
+        return chances == multipliers.chances() ? multipliers : multipliers.withChances(chances);
     }
 
     @Override
     public void addSalvageLoot(SectorAPI sector, SectorEntityToken salvageEntity, CargoAPI loot) {
-        ChartDrops.Loot chartLoot = salvageLoot(sector, salvageEntity);
-        chartLoot.charts().forEach(chart -> loot.addSpecial(chart.toSpecialItem(), 1f));
-        chartLoot.materials().forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
-        MaterialDropAnnouncer.announceOnLootScreen(chartLoot.craftingItems());
+        ChartDrops.Rolled chartLoot = salvageLoot(sector, salvageEntity);
+        LootDelivery.toLootScreen(loot, chartLoot.asLoot(), DropOrigin.site(salvageEntity));
+        MaterialDropAnnouncer.announceOnLootScreen(chartLoot.ciphers());
     }
 
-    public static ChartDrops.Loot salvageLoot(SectorAPI sector, SectorEntityToken salvageEntity) {
+    public static ChartDrops.Rolled salvageLoot(SectorAPI sector, SectorEntityToken salvageEntity) {
         if (sector == null) {
-            return ChartDrops.Loot.NONE;
+            return ChartDrops.Rolled.NONE;
         }
         try {
             Random chartRandom = new Random(Misc.getSalvageSeed(salvageEntity) ^ SALVAGE_SEED_SALT);
             return ChartDrops.forSalvage(sector, salvageEntity.getContainingLocation(), chartRandom);
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Rolling Star Chart salvage drops failed", e);
-            return ChartDrops.Loot.NONE;
+            return ChartDrops.Rolled.NONE;
         }
     }
 
@@ -277,28 +289,69 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
     }
 
     @Override
-    public ItemData shapeDrop(ItemData item, LocationAPI location) {
+    public ItemData shape(ItemData item, DropOrigin origin, LocationAPI location) {
+        return switch (origin.kind()) {
+            case ANYWHERE -> shapedWhereFound(item, location);
+            case BATTLE -> shapedAfterBattle(item, location);
+            case SITE -> immutableAtSite(item, origin.site());
+        };
+    }
+
+    private static ItemData shapedWhereFound(ItemData item, LocationAPI location) {
+        SectorAPI sector = Global.getSector();
+        return shapedByRunAnomalies(sector, withBiomeModifier(sector, item, location), location, rolled -> false);
+    }
+
+    private static ItemData shapedAfterBattle(ItemData item, LocationAPI location) {
+        SectorAPI sector = Global.getSector();
+        ItemData shaped = withBiomeModifier(sector, item, location);
+        Predicate<RolledModifier> alreadyLucky = rolled -> false;
+        for (LootShaper anomaly : anomaliesHoldingBattle()) {
+            try {
+                shaped = anomaly.shapeBattleDrop(sector, shaped, location);
+                alreadyLucky = alreadyLucky.or(anomaly.battleLuckyModifiers());
+            } catch (RuntimeException e) {
+                LOG.error("[ExiledSector] Shaping a battle drop failed in anomaly " + anomaly.id(), e);
+            }
+        }
+        return shapedByRunAnomalies(sector, shaped, location, alreadyLucky);
+    }
+
+    private static ItemData withBiomeModifier(SectorAPI sector, ItemData item, LocationAPI location) {
         try {
-            return BiomeModifiers.onDrop(Global.getSector(), item, location);
+            return BiomeModifiers.onDrop(sector, item, location);
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Adding a biome modifier to a dropped item failed", e);
             return item;
         }
     }
 
-    @Override
-    public FleetLevelRange levelRange(MemoryAPI fleetMemory) {
-        return ChartTiers.fleetStrengthRangeFor(fleetMemory);
+    private static ItemData shapedByRunAnomalies(SectorAPI sector, ItemData item, LocationAPI location, Predicate<RolledModifier> alreadyLucky) {
+        List<LootShaper> anomalies;
+        try {
+            anomalies = ChartAnomalies.inRun(ChartRuns.liveIn(location), LootShaper.class);
+        } catch (RuntimeException e) {
+            LOG.error("[ExiledSector] Checking which anomalies shape a drop failed", e);
+            return item;
+        }
+        ItemData shaped = item;
+        for (LootShaper anomaly : anomalies) {
+            try {
+                shaped = anomaly.shapeDrop(sector, shaped, location, alreadyLucky);
+            } catch (RuntimeException e) {
+                LOG.error("[ExiledSector] Shaping a drop failed in anomaly " + anomaly.id(), e);
+            }
+        }
+        return shaped;
     }
 
-    @Override
-    public String levelSeed(MemoryAPI fleetMemory) {
-        return ChartIds.fleetSeed(fleetMemory);
-    }
-
-    @Override
-    public List<String> grantedNodeIds(MemoryAPI fleetMemory) {
-        List<String> nodeIds = ChartEnemyShipEffects.grantedNodeIds(fleetMemory);
-        return nodeIds.isEmpty() ? null : nodeIds;
+    private static ItemData immutableAtSite(ItemData item, SectorEntityToken site) {
+        try {
+            MemoryAPI memory = site.getMemoryWithoutUpdate();
+            return ImmutableDrops.onSiteDrop(EventHorizon.onSiteDrop(item, memory), memory);
+        } catch (RuntimeException e) {
+            LOG.error("[ExiledSector] Making a modifier of a salvaged item immutable failed", e);
+            return item;
+        }
     }
 }

@@ -1,6 +1,5 @@
 package exiledsector.skills.skilleffect;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.BeamAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
@@ -8,13 +7,13 @@ import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.EmpArcEntityAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
+import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.combat.systems.EmpArcEntity;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.lwjgl.util.vector.Vector2f;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
+import org.mockito.ArgumentCaptor;
 import org.objenesis.ObjenesisStd;
 
 import java.util.ArrayList;
@@ -25,14 +24,19 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class EmpOnlyHitsTest {
 
-    private MockedStatic<Global> globalMock;
+    @RegisterExtension
+    final CombatEngineExtension combat = new CombatEngineExtension();
     private CombatEngineAPI engine;
     private EmpOnlyHits router;
     private ShipAPI dealer;
@@ -40,17 +44,16 @@ class EmpOnlyHitsTest {
 
     @BeforeEach
     void setUp() {
-        engine = mock(CombatEngineAPI.class);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getCombatEngine).thenReturn(engine);
+        engine = combat.engine();
         router = new EmpOnlyHits();
         dealer = mock(ShipAPI.class);
         router.addHandler(dealer, seen::add);
     }
 
-    @AfterEach
-    void tearDown() {
-        globalMock.close();
+    private DamageDealtModifier dealersModifierPass() {
+        ArgumentCaptor<Object> listener = ArgumentCaptor.forClass(Object.class);
+        verify(dealer).addListener(listener.capture());
+        return (DamageDealtModifier) listener.getValue();
     }
 
     private static ShipAPI target(Object param, float empTakenMult) {
@@ -114,7 +117,7 @@ class EmpOnlyHitsTest {
         EmpArcEntityAPI arc = arcLandingAt(new Vector2f());
         ShipAPI target = target(arc, 1f);
 
-        router.modifyDamageDealt(arc, target, mock(DamageAPI.class), new Vector2f(), false);
+        dealersModifierPass().modifyDamageDealt(arc, target, mock(DamageAPI.class), new Vector2f(), false);
         router.reportDamageApplied(dealer, target, empApplied(100f));
 
         assertTrue(seen.isEmpty());
@@ -125,8 +128,35 @@ class EmpOnlyHitsTest {
         EmpArcEntityAPI arc = arcLandingAt(new Vector2f());
         ShipAPI target = target(arc, 1f);
 
-        router.modifyDamageDealt(arc, target, mock(DamageAPI.class), new Vector2f(), false);
+        dealersModifierPass().modifyDamageDealt(arc, target, mock(DamageAPI.class), new Vector2f(), false);
         when(engine.getTotalElapsedTime(false)).thenReturn(1f);
+        router.reportDamageApplied(dealer, target, empApplied(100f));
+
+        assertEquals(1, seen.size());
+    }
+
+    @Test
+    void onlyDealersWithAHandlerRecordTheirModifiedHits() {
+        ShipAPI unhandledShip = mock(ShipAPI.class);
+        router.addHandler(dealer, seen::add);
+
+        verify(dealer, times(1)).addListener(any());
+        verify(unhandledShip, never()).addListener(any());
+        assertFalse(DamageDealtModifier.class.isAssignableFrom(EmpOnlyHits.class));
+
+        ShipAPI target = target(arcLandingAt(new Vector2f()), 1f);
+        router.reportDamageApplied(unhandledShip, target, empApplied(100f));
+
+        verify(target, never()).getParamAboutToApplyDamage();
+        assertTrue(seen.isEmpty());
+    }
+
+    @Test
+    void aModifierPassOnAnotherTargetDoesNotHideAHit() {
+        EmpArcEntityAPI arc = arcLandingAt(new Vector2f());
+        ShipAPI target = target(arc, 1f);
+
+        dealersModifierPass().modifyDamageDealt(arc, mock(ShipAPI.class), mock(DamageAPI.class), new Vector2f(), false);
         router.reportDamageApplied(dealer, target, empApplied(100f));
 
         assertEquals(1, seen.size());

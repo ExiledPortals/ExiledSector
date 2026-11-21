@@ -21,8 +21,8 @@ import exiledsector.skills.npc.NpcTreeTag;
 import exiledsector.skills.tags.SkillTags;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.ShipLevelSystem;
-import exiledsector.items.NpcItems;
-import exiledsector.items.MasterSchematic;
+import exiledsector.items.drop.NpcItems;
+import exiledsector.items.schematic.MasterSchematic;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;

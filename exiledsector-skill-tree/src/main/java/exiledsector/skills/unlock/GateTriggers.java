@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.BattleAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import exiledsector.loot.FleetFactions;
 import org.apache.log4j.Logger;
 
 import java.util.List;
@@ -34,7 +35,8 @@ public final class GateTriggers {
             return false;
         }
         for (CampaignFleetAPI fleet : fleets) {
-            if (fleet != null && fleet.getFaction() != null && factionMatches.test(fleet.getFaction().getId())) {
+            String factionId = FleetFactions.realFactionIdOf(fleet);
+            if (factionId != null && factionMatches.test(factionId)) {
                 return true;
             }
         }

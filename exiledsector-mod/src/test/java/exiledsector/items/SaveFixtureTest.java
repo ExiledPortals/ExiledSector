@@ -15,6 +15,13 @@ import exiledsector.charts.wormhole.WormholeGateway;
 import exiledsector.charts.atlas.AtlasAnomalyRecord;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasState;
+import exiledsector.items.anchor.WormholeAnchor;
+import exiledsector.items.anchor.WormholeAnchorDefinitions;
+import exiledsector.items.hull.HullItem;
+import exiledsector.items.modifier.ItemModifiers;
+import exiledsector.items.starchart.StarChart;
+import exiledsector.items.starchart.StarChartFixtures;
+import exiledsector.items.subroutine.Subroutine;
 import exiledsector.skills.ShipSkillData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -135,8 +142,6 @@ class SaveFixtureTest {
         assertEquals(1, atlas.keyFragments());
         assertEquals("fixture_region", atlas.recordedRegion(77L));
         assertEquals(Boolean.TRUE, atlas.unlockedAtReveal(0L, "fixture_unlock"));
-        assertEquals("pirates", atlas.recordedFaction("0:0"));
-        assertEquals("hegemony", atlas.capturedBy(new AtlasCell(1, 0)));
         assertEquals(List.of("spatial_breach"), atlas.anomalyRecords(new AtlasCell(2, -1)).stream().map(AtlasAnomalyRecord::anomalyId).toList());
 
         String resaved = xstream().toXML(saved);

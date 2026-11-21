@@ -8,7 +8,7 @@ import com.fs.starfarer.api.campaign.SpecialItemData;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemStore;
-import exiledsector.items.WormholeAnchorDefinitions;
+import exiledsector.items.anchor.WormholeAnchorDefinitions;
 import exiledsector.loot.LootTakenListener;
 import exiledsector.skills.tags.SkillTags;
 

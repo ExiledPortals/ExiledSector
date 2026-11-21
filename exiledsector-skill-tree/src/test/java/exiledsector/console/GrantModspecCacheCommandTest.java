@@ -2,8 +2,8 @@ package exiledsector.console;
 
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
-import exiledsector.items.ModspecCaches;
-import exiledsector.items.SubroutineKind;
+import exiledsector.items.subroutine.ModspecCaches;
+import exiledsector.items.subroutine.SubroutineKind;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;

@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.content.FakeChartContentEngine;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
+import exiledsector.loot.DropType;
 import exiledsector.loot.LootMultipliers;
 import org.junit.jupiter.api.Test;
 
@@ -24,26 +25,27 @@ class StarChartSiteModifiersTest {
 
     @Test
     void anOrdinarySiteGetsTheLocationsModifiers() {
-        LootMultipliers modifiers = StarChartLootSource.INSTANCE.modifiersFor(site(FakeChartContentEngine.memory()));
+        LootMultipliers multipliers = StarChartLootSource.INSTANCE.lootMultipliersFor(site(FakeChartContentEngine.memory()));
 
-        assertEquals(1f, modifiers.itemChances().general());
-        assertEquals(1f, modifiers.itemChances().rarity());
+        assertEquals(1f, multipliers.quantity(DropType.ITEM));
+        assertEquals(1f, multipliers.rarity(DropType.ITEM));
     }
 
     @Test
-    void breachRarityAndCacheQuantityRaiseTheSitesItemChances() {
+    void breachCacheQuantityRaisesTheSitesItemQuantityAndEveryTypeUnderIt() {
         MemoryAPI memory = FakeChartContentEngine.memory();
-        memory.set(SpatialBreach.RARITY_KEY, 50f);
         memory.set(SpatialBreach.ITEM_MULT_KEY, 2f);
 
-        LootMultipliers modifiers = StarChartLootSource.INSTANCE.modifiersFor(site(memory));
+        LootMultipliers multipliers = StarChartLootSource.INSTANCE.lootMultipliersFor(site(memory));
 
-        assertEquals(2f, modifiers.itemChances().general(), 0.001f);
-        assertEquals(1.5f, modifiers.itemChances().rarity(), 0.001f);
+        assertEquals(2f, multipliers.quantity(DropType.ITEM), 0.001f);
+        assertEquals(2f, multipliers.quantity(DropType.BRIDGE), 0.001f);
+        assertEquals(2f, multipliers.quantity(DropType.CRAFTING_ITEM), 0.001f);
+        assertEquals(1f, multipliers.rarity(DropType.ITEM), 0.001f);
     }
 
     @Test
     void noSiteHasNoModifiers() {
-        assertSame(null, StarChartLootSource.INSTANCE.modifiersFor(null));
+        assertSame(null, StarChartLootSource.INSTANCE.lootMultipliersFor(null));
     }
 }

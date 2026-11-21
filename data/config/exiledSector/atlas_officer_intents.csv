@@ -1,0 +1,10 @@
+id,expand,push,challenge,defend,hold,note
+lieutenant,4,2,1,2,3,"Placeholder magnitudes; an officer's weight is its rank row times its trait row"
+commander,4,3,1.5,2,2,
+captain,3,3,2,2,2,
+commodore,3,4,2.5,2,1.5,
+admiral,2,4,3,2,1,
+cautious,1,0.5,0.25,2,2,
+steady,1,1,1,1,1,
+aggressive,1,1.5,2,0.75,0.5,
+reckless,1,2,3,0.25,0.25,

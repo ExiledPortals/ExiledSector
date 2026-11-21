@@ -1,13 +1,26 @@
 # Chart loot estimates
 
-Average drops per Star Chart run by tier, modelled on 2026-11-03 from the data and loot code as of commit a22099f9.
+Average drops per Star Chart run by tier, modelled on 2026-11-17 from the data and loot code after the completion reward, the boss's
+guaranteed hull items and the boss's chest were removed.
 They are estimates for balancing, not measurements.
 
 - `chart_hull_items.csv`: basic hull items, plus unique hull items with the best modifiers.
 - `chart_crafting_items.csv`: nanoswarms, inhibitors, ciphers and feedstock. The per-item columns are for the six random modifiers case.
 - `chart_catalysts.csv`: Atlas Catalysts.
-- `chart_loot_model.js`: the model that writes all three; run `node docs/analysis/chart_loot/chart_loot_model.js` (about a minute).
+- `chart_star_charts.csv`: Star Charts from fleets, the boss and salvage.
+- `chart_loot_model.js`: the model that writes all four; run `node docs/analysis/chart_loot/chart_loot_model.js` (about a minute).
   Its tier table, drop rates, site rows and modifier rolls are copied from the data files, so update them there first when those change.
+  Crafting items and battle feedstock are read straight from `crafting_drops.csv`, the `crafting_item` and `feedstock` rows of
+  `battle_loot.csv` and the `crafting_rarity` column of `star_chart_tiers.csv`.
+- `crafting_rarity_model.js`: the rarity curve in `docs/plans/completed/crafting_rarity_curve.md` against the band shifts it replaced; run
+  `node docs/analysis/chart_loot/crafting_rarity_model.js`. It prints the crafting rarity that gives each tier the same average drop rarity as its old
+  band shift (the values in `star_chart_tiers.csv`) and writes `crafting_rarity_tiers.csv` (each tier, bands against the curve) and
+  `crafting_rarity_sweep.csv` (tier 15 from 0% to 800% increased rarity).
+- `rarity_band_model.js`: the band system the rarity curve replaced. Crafting drops under `docs/plans/completed/rarity_drop_bands.md` against the drops before it, with the old
+  `chart_materials.csv` amounts and `battle_loot.csv` crafting rows kept in the script and the chart tiers read from the data files; run
+  `node docs/analysis/chart_loot/rarity_band_model.js`. It writes `rarity_band_tiers.csv` (totals at the planned rate, Augmentation, Corrupted, the unique band and
+  Immutable, common share), `rarity_band_items.csv` (each item at tiers 1, 8 and 15) and `rarity_band_outside.csv` (a 300 DP fight at player level 1 and the level cap
+  outside charts).
 
 Columns:
 
@@ -21,4 +34,7 @@ Assumptions:
 - Enemy deployment points are 1.2x fleet points for patrols and 1.3x for the boss, from vanilla combat hulls.
 - Each fleet is its own battle, the boss is a fleet, there is no anomaly, chart quality is 0 and the fleet limit setting is the default 14.
 - Sites are planned by the same budget spending as `ChartContentPlanner`; vanilla salvage defenders' loot is left out.
-- Hull items include the boss's guaranteed one and leave out Refit and Master Schematics.
+- Hull items leave out Refit and Master Schematics. The boss guarantees no hull item; its uniques drop by chance like any other.
+- The boss drops from the shared pool by its deployment points like any fleet; the Hoard adds to the quantity of its own loot only.
+- A Twinned boss is a second boss: it counts in the shared pool, takes the Hoard and drops its own guaranteed chart.
+- Star Charts count every chart dropped, whatever its tier, including the boss's one guaranteed chart.

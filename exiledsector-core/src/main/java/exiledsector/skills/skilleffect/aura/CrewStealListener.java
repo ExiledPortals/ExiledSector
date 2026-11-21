@@ -1,7 +1,6 @@
 package exiledsector.skills.skilleffect.aura;
 
 import com.fs.starfarer.api.combat.ShipAPI;
-import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.NearbyDestructionListener;
 import exiledsector.skills.skilleffect.logistics.FleetCrewLedger;
 
@@ -15,7 +14,7 @@ final class CrewStealListener extends NearbyDestructionListener {
     private final FleetCrewLedger.Lazy crewLedger = new FleetCrewLedger.Lazy();
 
     CrewStealListener(ShipAPI ownerShip) {
-        super(ownerShip, other -> CombatQueries.isHostile(ownerShip, other) && isCrewedHull(other));
+        super(ownerShip, destroyed -> destroyed.wasHostileTo(ownerShip) && isCrewedHull(destroyed.wreck()));
     }
 
     @Override

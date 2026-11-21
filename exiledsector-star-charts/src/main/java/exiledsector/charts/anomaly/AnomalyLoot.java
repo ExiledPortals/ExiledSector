@@ -1,38 +1,32 @@
 package exiledsector.charts.anomaly;
 
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.ChartCargoLoot;
-import exiledsector.charts.loot.ChartVanillaLoot;
-import exiledsector.charts.loot.DropType;
+import exiledsector.charts.loot.ChartLootContext;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.charts.run.ChartRunEffects;
-import exiledsector.items.ItemDrops;
+import exiledsector.loot.DropType;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public record AnomalyLoot(String scope, String siteId, float baseSteps, float stepsPerTier, float itemMult, String quantityKey, float leanPercent) {
+public record AnomalyLoot(String scope, String siteId, float baseSteps, float stepsPerTier, float siteQuantityPercent, String quantityKey,
+                          float leanPercent) {
 
-    public float quantityMult(ChartGenContext context) {
-        return quantityKey == null ? 1f : (context == null ? ChartGenContext.none() : context).anomalyMult(quantityKey);
+    public float quantityPercent(ChartGenContext context) {
+        float linePercent = quantityKey == null ? 0f : ChartGenContext.orNone(context).anomalyPercent(quantityKey);
+        return siteQuantityPercent + linePercent;
     }
 
-    public float steps(int tier, float quantityMult) {
-        return (baseSteps + stepsPerTier * (ChartTiers.clamp(tier) - ChartTiers.LOWEST_TIER)) * Math.max(0f, quantityMult);
+    public float steps(int tier) {
+        return baseSteps + stepsPerTier * (ChartTiers.clamp(tier) - ChartTiers.LOWEST_TIER);
     }
 
-    public float items(float quantityMult) {
-        return itemMult * Math.max(0f, quantityMult);
-    }
-
-    public ChartGenContext leaning(ChartGenContext context, List<DropType> leans) {
-        ChartGenContext base = context == null ? ChartGenContext.none() : context;
+    public ChartLootContext withQuantityAndLeans(ChartLootContext loot, List<DropType> leans) {
         List<ChartGenContext.AppliedEffect> effects = new ArrayList<>();
         for (DropType lean : leans) {
             ChartModifier effect = ChartModifier.forDropType(lean);
@@ -40,23 +34,11 @@ public record AnomalyLoot(String scope, String siteId, float baseSteps, float st
                 effects.add(new ChartGenContext.AppliedEffect(effect, leanPercent));
             }
         }
-        return effects.isEmpty() ? base : base.withEffects(effects);
+        return loot.plusQuantityPercent(quantityPercent(loot.effects())).withEffects(effects);
     }
 
     public CargoAPI roll(SectorAPI sector, ChartRun run, List<DropType> leans, float share, Random random) {
-        ChartGenContext runContext = ChartRunEffects.contextOf(run);
-        float quantity = quantityMult(runContext);
-        return ChartCargoLoot.roll(sector, run, leaning(runContext, leans), scope, siteId, steps(run.tier(), quantity) * share, items(quantity) * share,
-                random);
-    }
-
-    public ItemDrops.SiteLoot fleetItems(SectorAPI sector, ChartRun run, ChartGenContext context, List<DropType> leans, float share, Random random) {
-        return ChartCargoLoot.rollItems(sector, run, leaning(context, leans), siteId, items(quantityMult(context)) * share, random);
-    }
-
-    public void addVanillaDrops(CampaignFleetAPI fleet, ChartGenContext runContext, List<DropType> leans, int tier) {
-        ChartVanillaLoot.SiteDrops drops = ChartVanillaLoot.drops(scope, tier, steps(tier, quantityMult(runContext)), leaning(runContext, leans));
-        drops.random().forEach(fleet::addDropRandom);
-        drops.value().forEach(fleet::addDropValue);
+        ChartLootContext runLoot = ChartLootContext.of(run);
+        return ChartCargoLoot.roll(sector, withQuantityAndLeans(runLoot, leans), scope, siteId, steps(runLoot.tier()) * share, share, random);
     }
 }

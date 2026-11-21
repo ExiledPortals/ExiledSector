@@ -14,7 +14,7 @@ public record NodeEntry(String nodeId, String optionId) {
         }
         String optionId = entry.substring(separator + 1);
         return new NodeEntry(NodeReplacements.current(entry.substring(0, separator)),
-                optionId.isEmpty() ? null : AffinityOptions.currentOptionId(optionId));
+                optionId.isEmpty() ? null : NodeReplacements.currentTypeId(optionId));
     }
 
     public String format() {

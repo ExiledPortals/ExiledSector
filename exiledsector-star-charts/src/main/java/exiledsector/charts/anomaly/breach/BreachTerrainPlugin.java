@@ -17,7 +17,6 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.PlayerFleet;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.generation.ChartGenContext;
-import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.ChartAnomalyTerrain;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
@@ -48,7 +47,12 @@ public class BreachTerrainPlugin extends ChartAnomalyTerrain {
     private static final EnumSet<CampaignEngineLayers> LAYERS = EnumSet.of(CampaignEngineLayers.TERRAIN_1);
     private static final Logger LOG = Logger.getLogger(BreachTerrainPlugin.class);
 
-    public record Params(String runId, int tier, BreachRules.Growth growth, List<BreachRules.CacheSite> caches, float cacheItemMult, long seed) {
+    public record Params(String runId, int tier, BreachRules.Growth growth, List<BreachRules.CacheSite> caches, float cacheItemMult, long seed,
+                         BreachTuning tuning) {
+
+        public Params(String runId, int tier, BreachRules.Growth growth, List<BreachRules.CacheSite> caches, float cacheItemMult, long seed) {
+            this(runId, tier, growth, caches, cacheItemMult, seed, BreachTuning.NONE);
+        }
     }
 
     private String runId;
@@ -63,12 +67,20 @@ public class BreachTerrainPlugin extends ChartAnomalyTerrain {
     private long seed;
     private float[] cacheX;
     private float[] cacheY;
-    private float[] cacheDepth;
     private boolean[] cacheFormed;
     private boolean closed;
+    private float holdSeconds;
+    private float heldDrainPercent;
+    private boolean drifts;
+    private boolean wakesAnomalousFleets;
+    private float incursionX;
+    private float incursionY;
+    private int incursionStage;
     private transient boolean coreChecked;
     private transient RadialBand rimBand;
     private transient BreachCorePlugin corePlugin;
+    private transient SectorEntityToken driftCore;
+    private transient SectorEntityToken driftStation;
     private transient float daysSinceTick;
     private transient float elapsedSeconds;
     private transient SpriteAPI bodySprite;
@@ -84,22 +96,34 @@ public class BreachTerrainPlugin extends ChartAnomalyTerrain {
             collapseSeconds = params.growth().collapseSeconds();
             cacheItemBonus = params.cacheItemMult() - 1f;
             seed = params.seed();
+            holdSeconds = params.growth().holdSeconds();
+            BreachTuning tuning = params.tuning() == null ? BreachTuning.NONE : params.tuning();
+            heldDrainPercent = tuning.heldDrainPercent();
+            drifts = tuning.drifts();
+            wakesAnomalousFleets = tuning.wakesAnomalousFleets();
+            if (tuning.incursionAt() != null) {
+                incursionX = tuning.incursionAt().x;
+                incursionY = tuning.incursionAt().y;
+                incursionStage = BreachIncursion.WAITING;
+            }
             int count = params.caches() == null ? 0 : params.caches().size();
             cacheX = new float[count];
             cacheY = new float[count];
-            cacheDepth = new float[count];
             cacheFormed = new boolean[count];
             for (int i = 0; i < count; i++) {
                 BreachRules.CacheSite site = params.caches().get(i);
                 cacheX[i] = site.x();
                 cacheY[i] = site.y();
-                cacheDepth[i] = site.depth();
             }
         }
     }
 
     BreachRules.Growth growth() {
-        return new BreachRules.Growth(maxRadius, openSeconds, collapseSeconds);
+        return new BreachRules.Growth(maxRadius, openSeconds, collapseSeconds, holdSeconds);
+    }
+
+    float drainMult() {
+        return BreachRules.drainMult(heldDrainPercent, growth().heldSeconds(secondsOpen));
     }
 
     public String runId() {
@@ -120,6 +144,10 @@ public class BreachTerrainPlugin extends ChartAnomalyTerrain {
 
     public boolean isOpened() {
         return opened;
+    }
+
+    public boolean holds(CampaignFleetAPI fleet) {
+        return fleet != null && fleet.getLocation() != null && containsPoint(fleet.getLocation(), fleet.getRadius());
     }
 
     float cacheItemMult() {
@@ -157,6 +185,9 @@ public class BreachTerrainPlugin extends ChartAnomalyTerrain {
         daysSinceTick += Global.getSector().getClock().convertToDays(amount);
         try {
             elapse(amount);
+            if (drifts && !closed) {
+                driftTowardPlayer(amount);
+            }
             if (closed || daysSinceTick < TICK_DAYS) {
                 return;
             }
@@ -179,6 +210,62 @@ public class BreachTerrainPlugin extends ChartAnomalyTerrain {
         CampaignFleetAPI player = PlayerFleet.orNull();
         return PlayerFleet.isIn(entity.getContainingLocation()) && player.getLocation() != null
                 && BreachRules.triggers(Misc.getDistance(entity.getLocation(), player.getLocation()), player.getRadius());
+    }
+
+    private void driftTowardPlayer(float seconds) {
+        CampaignFleetAPI player = PlayerFleet.orNull();
+        if (player != null && player.getLocation() != null && PlayerFleet.isIn(entity.getContainingLocation())) {
+            drift(player.getLocation(), seconds);
+        }
+    }
+
+    void drift(Vector2f target, float seconds) {
+        Vector2f from = entity.getLocation();
+        Vector2f to = BreachRules.drifted(from, target, seconds);
+        float shiftX = to.x - from.x;
+        float shiftY = to.y - from.y;
+        if (shiftX == 0f && shiftY == 0f) {
+            return;
+        }
+        entity.setFixedLocation(to.x, to.y);
+        SectorEntityToken core = driftedCore();
+        if (core != null) {
+            core.setFixedLocation(to.x, to.y);
+        }
+        driftIncursion(shiftX, shiftY);
+        for (int i = 0; cacheFormed != null && i < cacheFormed.length; i++) {
+            if (!cacheFormed[i]) {
+                cacheX[i] += shiftX;
+                cacheY[i] += shiftY;
+            }
+        }
+    }
+
+    Vector2f incursionPoint() {
+        return new Vector2f(incursionX, incursionY);
+    }
+
+    private SectorEntityToken driftedCore() {
+        if (driftCore == null || !driftCore.isAlive()) {
+            driftCore = entity.getContainingLocation().getEntityById(SpatialBreach.coreId(runId));
+        }
+        return driftCore;
+    }
+
+    private void driftIncursion(float shiftX, float shiftY) {
+        if (incursionStage != BreachIncursion.WAITING && incursionStage != BreachIncursion.GUARDED) {
+            return;
+        }
+        incursionX += shiftX;
+        incursionY += shiftY;
+        if (incursionStage == BreachIncursion.GUARDED) {
+            if (driftStation == null || !driftStation.isAlive()) {
+                driftStation = BreachIncursion.stationIn(entity.getContainingLocation());
+            }
+            if (driftStation != null) {
+                driftStation.setFixedLocation(incursionX, incursionY);
+            }
+        }
     }
 
     void elapse(float seconds) {
@@ -210,10 +297,14 @@ public class BreachTerrainPlugin extends ChartAnomalyTerrain {
         if (growth().isCollapsing(secondsOpen)) {
             dissolveCaches(location);
         }
-        touchSites(location);
-        BreachCharge.rally(location, entity);
-        for (CampaignFleetAPI fleet : location.getFleets()) {
-            applyTo(fleet, days);
+        BreachCharge.rally(location, entity, wakesAnomalousFleets);
+        if (incursionStage != BreachIncursion.NONE && location instanceof StarSystemAPI system) {
+            BreachIncursion.Spawn spawn = new BreachIncursion.Spawn(runId, tier, runContext(), seed, new Vector2f(incursionX, incursionY));
+            incursionStage = BreachIncursion.update(incursionStage, system, spawn, entity.getLocation(), radius, growth().isCollapsing(secondsOpen));
+        }
+        float drainMult = drainMult();
+        for (CampaignFleetAPI fleet : new ArrayList<>(location.getFleets())) {
+            applyTo(fleet, days, drainMult);
         }
     }
 
@@ -240,17 +331,16 @@ public class BreachTerrainPlugin extends ChartAnomalyTerrain {
             Random random = new Random(seed ^ (index * 0x9E3779B97F4A7C15L));
             SectorEntityToken cache = ChartSites.addCache(system, runId, tier, context, new Vector2f(cacheX[index], cacheY[index]), random);
             if (cache != null) {
-                markCache(cache, index);
+                markCache(cache);
             }
         } catch (RuntimeException | LinkageError e) {
             LOG.error("[ExiledSector] A Spatial Breach cache could not form in Star Chart run " + runId, e);
         }
     }
 
-    void markCache(SectorEntityToken cache, int index) {
+    void markCache(SectorEntityToken cache) {
         cache.addTag(SpatialBreach.CACHE_TAG);
         MemoryAPI memory = cache.getMemoryWithoutUpdate();
-        memory.set(SpatialBreach.RARITY_KEY, new BreachRules.CacheSite(cacheX[index], cacheY[index], cacheDepth[index]).rarityPercent());
         if (cacheItemBonus != 0f) {
             memory.set(SpatialBreach.ITEM_MULT_KEY, cacheItemMult());
         }
@@ -265,37 +355,21 @@ public class BreachTerrainPlugin extends ChartAnomalyTerrain {
         }
     }
 
-    private void touchSites(LocationAPI location) {
-        Vector2f centre = entity.getLocation();
-        for (SectorEntityToken site : location.getEntitiesWithTag(ChartIds.CONTENT_TAG)) {
-            if (site instanceof CampaignFleetAPI || site.hasTag(SpatialBreach.CACHE_TAG) || site.getLocation() == null) {
-                continue;
-            }
-            MemoryAPI memory = site.getMemoryWithoutUpdate();
-            if (memory == null || memory.contains(SpatialBreach.RARITY_KEY) || Misc.getDistance(centre, site.getLocation()) > radius) {
-                continue;
-            }
-            memory.set(SpatialBreach.RARITY_KEY, BreachRules.TOUCHED_RARITY_PERCENT);
-        }
-    }
-
-    private void applyTo(CampaignFleetAPI fleet, float days) {
+    private void applyTo(CampaignFleetAPI fleet, float days, float drainMult) {
         if (fleet == null || !fleet.isPlayerFleet() || fleet.getLocation() == null) {
             return;
         }
-        float intensity = BreachRules.intensity(Misc.getDistance(entity.getLocation(), fleet.getLocation()) - fleet.getRadius(), radius);
-        if (intensity <= 0f) {
+        if (!BreachRules.inside(Misc.getDistance(entity.getLocation(), fleet.getLocation()) - fleet.getRadius(), radius)) {
             return;
         }
-        raiseSupplyUse(fleet, intensity, getTerrainName());
-        drainFuel(fleet, intensity, days);
+        raiseSupplyUse(fleet, getTerrainName(), BreachRules.SUPPLY_USE_PERCENT * drainMult);
+        drainFuel(fleet, days * drainMult);
     }
 
-    private static void raiseSupplyUse(CampaignFleetAPI fleet, float intensity, String source) {
+    private static void raiseSupplyUse(CampaignFleetAPI fleet, String source, float percent) {
         if (fleet.getFleetData() == null) {
             return;
         }
-        float percent = BreachRules.supplyUsePercent(intensity);
         for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
             if (member.getBuffManager() != null) {
                 member.getBuffManager().addBuffOnlyUpdateStat(new BreachSupplyBuff(SUPPLY_BUFF_ID, percent, source, MOD_DAYS));
@@ -303,11 +377,11 @@ public class BreachTerrainPlugin extends ChartAnomalyTerrain {
         }
     }
 
-    private static void drainFuel(CampaignFleetAPI fleet, float intensity, float days) {
+    private static void drainFuel(CampaignFleetAPI fleet, float days) {
         if (fleet.getLogistics() == null || fleet.getCargo() == null) {
             return;
         }
-        float fuel = fleet.getLogistics().getFuelCostPerLightYear() * BreachRules.FUEL_LIGHT_YEARS_PER_DAY * intensity * days;
+        float fuel = fleet.getLogistics().getFuelCostPerLightYear() * BreachRules.FUEL_LIGHT_YEARS_PER_DAY * days;
         float held = fleet.getCargo().getFuel();
         if (fuel > 0f && held > 0f) {
             fleet.getCargo().removeFuel(Math.min(fuel, held));
@@ -316,7 +390,7 @@ public class BreachTerrainPlugin extends ChartAnomalyTerrain {
 
     private ChartGenContext runContext() {
         ChartRun run = ChartRuns.live(runId);
-        return run == null ? ChartGenContext.none() : ChartRunEffects.contextOf(run);
+        return ChartRunEffects.contextOf(run);
     }
 
     void collapse() {
@@ -329,6 +403,7 @@ public class BreachTerrainPlugin extends ChartAnomalyTerrain {
             return;
         }
         BreachCharge.release(location, entity);
+        incursionStage = BreachIncursion.collapse(incursionStage, location);
         for (CampaignFleetAPI fleet : location.getFleets()) {
             liftFrom(fleet);
         }
@@ -410,11 +485,13 @@ public class BreachTerrainPlugin extends ChartAnomalyTerrain {
     protected void tooltipLines(TooltipMakerAPI tooltip) {
         Color text = Misc.getTextColor();
         VanillaText.plainPara(tooltip, Translation.gameText("chart.anomaly.spatial_breach.description"), TOOLTIP_PAD, text);
-        int supplyIncrease = Math.round(BreachRules.SUPPLY_USE_PERCENT);
+        int supplyIncrease = Math.round(BreachRules.SUPPLY_USE_PERCENT * drainMult());
         VanillaText.addPara(tooltip, Translation.msg("chart.anomaly.spatial_breach.effect.supplies").arg("value", supplyIncrease).styled(), TOOLTIP_PAD, text);
         VanillaText.addPara(tooltip, Translation.msg("chart.anomaly.spatial_breach.effect.fuel").styled(), TOOLTIP_PAD, text);
         VanillaText.plainPara(tooltip, Translation.gameText("chart.anomaly.spatial_breach.effect.charge"), TOOLTIP_PAD, text);
-        VanillaText.plainPara(tooltip, Translation.gameText("chart.anomaly.spatial_breach.effect.depth"), TOOLTIP_PAD, Misc.getGrayColor());
+        int warpedChance = Math.round(BreachRules.warpedChance(runContext().anomalyPercent(BreachLines.WARPED_KEY)) * ChartGenContext.PERCENT);
+        VanillaText.addPara(tooltip, Translation.msg("chart.anomaly.spatial_breach.effect.warped").arg("value", warpedChance).styled(), TOOLTIP_PAD, text);
+        VanillaText.plainPara(tooltip, Translation.gameText("chart.anomaly.spatial_breach.effect.caches"), TOOLTIP_PAD, Misc.getGrayColor());
     }
 
     @Override

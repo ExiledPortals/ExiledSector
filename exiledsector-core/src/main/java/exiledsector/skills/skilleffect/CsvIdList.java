@@ -2,6 +2,7 @@ package exiledsector.skills.skilleffect;
 
 import exiledsector.ExiledSector;
 import exiledsector.ModCsv;
+import exiledsector.data.CsvRows;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -49,12 +50,7 @@ public final class CsvIdList {
     private void load() {
         ModCsv.load(idColumn, ExiledSector.configPath(csvFile), Logger.getLogger(CsvIdList.class), rows -> {
             Set<String> loaded = new HashSet<>();
-            ModCsv.forEach(rows, (index, row) -> {
-                String id = ModCsv.text(row, idColumn);
-                if (!id.isEmpty()) {
-                    loaded.add(id);
-                }
-            });
+            CsvRows.forEachIdRow(rows, idColumn, (id, row) -> loaded.add(id));
             ids.set(Set.copyOf(loaded));
         });
     }

@@ -8,6 +8,7 @@ import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BreachRulesTest {
@@ -53,20 +54,11 @@ class BreachRulesTest {
     }
 
     @Test
-    void effectsAreStrongestAtTheCoreAndStopOutsideTheField() {
-        assertEquals(1f, BreachRules.intensity(0f, 1000f));
-        assertEquals(BreachRules.EDGE_INTENSITY, BreachRules.intensity(1000f, 1000f), 0.001f);
-        assertEquals(0f, BreachRules.intensity(1001f, 1000f));
-        assertEquals(0f, BreachRules.intensity(10f, 0f));
-        assertTrue(BreachRules.intensity(200f, 1000f) > BreachRules.intensity(800f, 1000f));
-    }
-
-    @Test
-    void supplyUseRisesTowardTheCoreInWholeSteps() {
-        assertEquals(BreachRules.SUPPLY_USE_PERCENT, BreachRules.supplyUsePercent(1f));
-        assertEquals(25f, BreachRules.supplyUsePercent(BreachRules.EDGE_INTENSITY));
-        assertEquals(0f, BreachRules.supplyUsePercent(0f));
-        assertEquals(0f, BreachRules.supplyUsePercent(0.62f) % BreachRules.SUPPLY_USE_STEP);
+    void effectsApplyEverywhereInsideTheFieldAndStopOutsideIt() {
+        assertTrue(BreachRules.inside(0f, 1000f));
+        assertTrue(BreachRules.inside(1000f, 1000f));
+        assertFalse(BreachRules.inside(1001f, 1000f));
+        assertFalse(BreachRules.inside(10f, 0f));
     }
 
     @Test
@@ -107,8 +99,7 @@ class BreachRulesTest {
     }
 
     @Test
-    void deeperCachesAreRarerAndFormOnlyOnceTheFieldReachesThem() {
-        assertTrue(new BreachRules.CacheSite(0f, 0f, 0.2f).rarityPercent() > new BreachRules.CacheSite(0f, 0f, 0.9f).rarityPercent());
+    void aCacheIsReachedOnlyOnceTheFieldPassesItsMargin() {
         assertTrue(BreachRules.reached(500f, 1000f));
         assertFalse(BreachRules.reached(950f, 1000f));
     }
@@ -119,5 +110,64 @@ class BreachRulesTest {
         assertEquals(1f, BreachRules.coreScale(BreachCorePlugin.HALO_SIZE * 3f, true));
         assertEquals(0.5f, BreachRules.coreScale(BreachCorePlugin.HALO_SIZE / 2f, true), 0.001f);
         assertEquals(0f, BreachRules.coreScale(0f, true));
+    }
+
+    @Test
+    void aHoldKeepsTheBreachAtFullSizeAndDelaysTheCollapseByTheHold() {
+        BreachRules.Growth held = new BreachRules.Growth(2000f, 60f, 60f, 30f);
+
+        assertEquals(2000f, held.radiusAt(60f), 0.01f);
+        assertEquals(2000f, held.radiusAt(89f), 0.01f);
+        assertFalse(held.isCollapsing(89f));
+        assertTrue(held.isCollapsing(90f));
+        assertEquals(1000f, held.radiusAt(120f), 0.01f);
+        assertFalse(held.isCollapsed(149f));
+        assertTrue(held.isCollapsed(150f));
+        assertEquals(0f, held.heldSeconds(30f));
+        assertEquals(15f, held.heldSeconds(75f));
+        assertEquals(30f, held.heldSeconds(140f));
+        assertEquals(0f, new BreachRules.Growth(2000f, 60f, 60f).heldSeconds(100f));
+        assertEquals(30f, BreachRules.growth(5, 1f, 30f).holdSeconds());
+        assertEquals(0f, BreachRules.growth(5, 1f, -5f).holdSeconds());
+    }
+
+    @Test
+    void theDrainRisesWithEverySecondHeldAndNeverGoesNegative() {
+        assertEquals(1f, BreachRules.drainMult(3f, 0f));
+        assertEquals(1.9f, BreachRules.drainMult(3f, 30f), 0.0001f);
+        assertEquals(1f, BreachRules.drainMult(0f, 30f));
+        assertEquals(0f, BreachRules.drainMult(-10f, 30f));
+    }
+
+    @Test
+    void warpedChanceScalesTheBaseChanceAndAnAlwaysWarpedShareFillsTheRest() {
+        assertEquals(BreachRules.WARPED_CHANCE, BreachRules.warpedChance(0f), 0.0001f);
+        assertEquals(0.45f, BreachRules.warpedChance(50f), 0.0001f);
+        assertEquals(1f, BreachRules.warpedChance(1000f));
+        assertEquals(0f, BreachRules.warpedChance(-200f));
+        assertEquals(0.6f, BreachRules.battleWarpedChance(100f, 0f), 0.0001f);
+        assertEquals(0.8f, BreachRules.battleWarpedChance(100f, 0.5f), 0.0001f);
+        assertEquals(1f, BreachRules.battleWarpedChance(0f, 1f), 0.0001f);
+    }
+
+    @Test
+    void aDriftingBreachStepsTowardItsTargetWithoutOvershooting() {
+        Vector2f stepped = BreachRules.drifted(new Vector2f(), new Vector2f(1000f, 0f), 2f);
+        assertEquals(BreachRules.DRIFT_SPEED * 2f, stepped.x, 0.01f);
+        assertEquals(0f, stepped.y, 0.01f);
+        Vector2f arrived = BreachRules.drifted(new Vector2f(), new Vector2f(10f, 0f), 2f);
+        assertEquals(10f, arrived.x, 0.01f);
+    }
+
+    @Test
+    void theIncursionStationSitsInsideTheFullBreachAwayFromTheCoreAndCanBeBlocked() {
+        Vector2f centre = new Vector2f(500f, 500f);
+        for (long seed = 0L; seed < 50L; seed++) {
+            Vector2f at = BreachRules.incursionSite(centre, 2000f, point -> true, new Random(seed));
+            float distance = Vector2f.sub(at, centre, new Vector2f()).length();
+            assertTrue(distance >= 2000f * BreachRules.MIN_INCURSION_DEPTH - 0.01f && distance <= 2000f * BreachRules.MAX_INCURSION_DEPTH + 0.01f);
+            assertEquals(at, BreachRules.incursionSite(centre, 2000f, point -> true, new Random(seed)));
+        }
+        assertNull(BreachRules.incursionSite(centre, 2000f, point -> false, new Random(1L)));
     }
 }

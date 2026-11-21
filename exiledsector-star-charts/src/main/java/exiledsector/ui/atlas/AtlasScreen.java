@@ -15,30 +15,31 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.PlayerFleet;
 import exiledsector.i18n.I18n;
-import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.skilleffect.render.Fade;
+import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.OverlayFade;
+import exiledsector.charts.atlas.ActiveCatalysts;
 import exiledsector.charts.atlas.AtlasAnomalies;
-import exiledsector.charts.atlas.AtlasCatalystUse;
-import exiledsector.charts.atlas.AtlasCatalysts;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasRuntime;
 import exiledsector.charts.atlas.AtlasGenerator;
-import exiledsector.charts.atlas.AtlasLine;
 import exiledsector.charts.atlas.AtlasNames;
 import exiledsector.charts.atlas.AtlasState;
+import exiledsector.charts.layout.sketch.ChartSystemSketch;
 import exiledsector.charts.layout.sketch.SectorSystemSketcher;
+import exiledsector.charts.officer.AtlasOfficer;
+import exiledsector.charts.officer.OfficerText;
 import exiledsector.charts.wormhole.WormholeGateway;
 import exiledsector.charts.anomaly.ChartAnomalies;
-import exiledsector.items.AtlasCatalystItems;
-import exiledsector.items.CraftingMaterials;
+import exiledsector.items.crafting.material.CraftingMaterials;
 import exiledsector.items.Item;
-import exiledsector.items.MaterialItems;
-import exiledsector.items.UseVerdict;
+import exiledsector.items.crafting.material.MaterialItems;
 import exiledsector.ui.CampaignOverlay;
 import exiledsector.ui.CanvasCamera;
+import exiledsector.ui.CanvasDrag;
+import exiledsector.ui.CanvasSearchBar;
 import exiledsector.ui.ChromeMetrics;
 import exiledsector.ui.PointerGesture;
 import exiledsector.ui.SkillTreePanelStyle;
@@ -47,18 +48,18 @@ import exiledsector.ui.TooltipText;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.UiFonts;
 import exiledsector.ui.VanillaText;
+import exiledsector.ui.ZoomableScreen;
+import exiledsector.ui.cargo.CatalystCargo;
 import exiledsector.ui.chart.StarChartCraftingBench;
 import exiledsector.ui.decoration.StarfieldRenderer;
 import exiledsector.ui.socket.AtlasAnomalyPanel;
-import exiledsector.ui.socket.AtlasCatalystPanel;
 import exiledsector.ui.socket.BenchLayout;
 import exiledsector.ui.socket.BenchMode;
 import exiledsector.ui.socket.BenchModeSupport;
 import exiledsector.ui.socket.GameTextTooltip;
 import exiledsector.ui.socket.SocketPanelPlacement;
+import exiledsector.ui.perf.ScreenPerformance;
 import exiledsector.ui.socket.CraftingBenchPanel;
-import exiledsector.ui.util.BorderedPanel;
-import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.TextLabel;
 import org.lwjgl.input.Keyboard;
@@ -68,7 +69,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-public final class AtlasScreen extends BaseCustomUIPanelPlugin implements CampaignOverlay.Screen {
+public final class AtlasScreen extends BaseCustomUIPanelPlugin implements CampaignOverlay.Screen, ZoomableScreen {
 
     static final float PANEL_MARGIN = 20f;
     static final float BORDER_INSET = 16f;
@@ -76,12 +77,11 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     static final float CLOSE_WIDTH = 120f;
     static final float BORDERS_WIDTH = 160f;
     static final float BIOMES_WIDTH = 120f;
-    static final float CATALYSTS_WIDTH = 150f;
     static final float BUTTON_GAP = 10f;
+    static final float SEARCH_WIDTH = 280f;
     static final float OPEN_SECONDS = 0.2f;
     static final float BACKDROP_ALPHA = 0.8f;
     static final float FOCUS_SECONDS = 0.6f;
-    static final float FOCUS_DIM_ALPHA = 0.85f;
     static final float CHOOSE_WIDTH = 320f;
     static final float CHOOSE_HEIGHT = 50f;
     static final float SIDE_PANEL_WIDTH = AtlasAnomalyPanel.PANEL_WIDTH;
@@ -92,7 +92,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     static final float CHART_STAR_SHARE = 1.35f;
     static final float CHART_STAR_HEADROOM = 1.3f;
     static final float CHART_DETAILS_GAP = 14f;
-    static final float CHART_DETAILS_MAX_WIDTH = 520f;
+    static final float CHART_DETAILS_MAX_WIDTH = 760f;
     static final float CHART_NOTICE_HEIGHT = 40f;
     static final float CHART_OPEN_HEIGHT = 40f;
     static final float CHART_FX_ROOM = 16f;
@@ -103,7 +103,10 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     static final float TOOLTIP_MAX_TEXT_HEIGHT = 800f;
     static final Color HINT_COLOUR = new Color(150, 150, 150);
 
-    private enum Control { CLOSE, BORDERS, BIOMES, CATALYSTS, FOCUS_SWITCH, DEBUG_COMPLETE }
+    static final float OFFICERS_WIDTH = 120f;
+    static final float REPLAY_WIDTH = 100f;
+
+    private enum Control { CLOSE, BORDERS, BIOMES, TREE, FOCUS_SWITCH, DEBUG_COMPLETE, OFFICERS, OFFICERS_REPLAY }
 
     enum Overlay { NONE, FACTIONS, BIOMES }
 
@@ -112,22 +115,22 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     private final CampaignOverlay.Host host;
     private final SkillTreePanelStyle panelStyle = new SkillTreePanelStyle();
     private final StarfieldRenderer starfield = new StarfieldRenderer(panelStyle);
+    private final StarfieldRenderer focusStarscape = new StarfieldRenderer(panelStyle);
     private final CanvasCamera camera = new CanvasCamera(AtlasMapCanvas.MIN_ZOOM, AtlasMapCanvas.MAX_ZOOM);
-    private final PointerGesture<Void> gesture = new PointerGesture<>();
+    private final CanvasDrag<Void> drag = new CanvasDrag<>(camera);
+    private final PointerGesture<Void> gesture = drag.gesture();
+    private final AtlasOverlayFrame frame = new AtlasOverlayFrame();
     private final TextLabel titleLabel = new TextLabel(UiFonts.TITLE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
-    private final TextLabel hintLabel = new TextLabel(UiFonts.HINT, HINT_COLOUR);
     private final TooltipText tooltipText = SkillTreePanelStyle.tooltipText();
     private final TextLabel tooltipTitle = new TextLabel(tooltipText.title(), SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
     private final TextLabel tooltipBody = new TextLabel(tooltipText.body(), SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
+    private final AtlasSearch search = new AtlasSearch();
+    private CanvasSearchBar searchBar;
     private AtlasMapCanvas map;
     private CustomPanelAPI panelRoot;
     private PositionAPI panelPosition;
     private ButtonAPI bordersButton;
     private ButtonAPI biomesButton;
-    private TooltipMakerAPI catalystToggleElement;
-    private ButtonAPI catalystsButton;
-    private AtlasCatalystPanel catalystPanel;
-    private AtlasCatalysts.Catalyst selectedCatalyst;
     private AtlasAnomalyPanel anomalyPanel;
     private TooltipMakerAPI chooseElement;
     private ButtonAPI chooseButton;
@@ -135,17 +138,25 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     private BenchModeSupport.PickerSession chartPicker;
     private TooltipMakerAPI debugElement;
     private BenchLayout chartLayout;
+    private final OfficerBoard officerBoard = new OfficerBoard();
+    private final AtlasTreeButton treeButton = new AtlasTreeButton();
+    private TooltipMakerAPI officersElement;
+    private ButtonAPI officersButton;
+    private TooltipMakerAPI replayElement;
+    private ButtonAPI replayButton;
     private AtlasCell focusedCell;
     private boolean focusing;
-    private boolean focusOpenedCatalysts;
     private boolean chartMode;
-    private boolean catalystsOpenedByUser;
     private boolean closingChartParts;
     private float focusLevel;
     private float chartLevel;
     private Object tooltipSubject;
     private AtlasCell hoveredCell;
+    private final AtlasSpotlight spotlight = new AtlasSpotlight();
     private AtlasMapCanvas.AnomalyIcon hoveredAnomaly;
+    private final SpriteCache spriteCache = new SpriteCache(AtlasScreen.class);
+    private final OfficerBoardTooltip officerTooltip = new OfficerBoardTooltip(spriteCache);
+    private final AtlasSystemCard systemCard = new AtlasSystemCard(spriteCache);
     private String wormholeMessage;
     private float mouseX;
     private float mouseY;
@@ -153,6 +164,10 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
 
     private AtlasScreen(CampaignOverlay.Host host) {
         this.host = host;
+    }
+
+    static AtlasScreen create(CampaignOverlay.Host host) {
+        return new AtlasScreen(host);
     }
 
     public static boolean open(CampaignUIAPI campaignUI) {
@@ -168,12 +183,22 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     }
 
     @Override
+    public CanvasCamera camera() {
+        return camera;
+    }
+
+    @Override
     public void attach(CustomPanelAPI panel) {
         panelRoot = panel;
         SectorAPI sector = Global.getSector();
-        AtlasGenerator generator = AtlasRuntime.generator(sector);
-        map = new AtlasMapCanvas(generator, AtlasState.get(sector), new AtlasScenery(generator.seed()),
-                SectorSystemSketcher.sketch(WormholeGateway.playerGatewaySystem(sector)));
+        AtlasGenerator generator = ScreenPerformance.phase("atlas generator", () -> AtlasRuntime.generator(sector));
+        searchBar = new CanvasSearchBar(search, I18n.forGameText(() -> Translation.text("chart.atlas.search.placeholder")), this::jumpToNextSearchMatch,
+                SEARCH_WIDTH);
+        AtlasScenery scenery = ScreenPerformance.phase("scenery", () -> new AtlasScenery(generator.seed()));
+        ChartSystemSketch gatewaySketch = ScreenPerformance.phase("gateway sketch",
+                () -> SectorSystemSketcher.sketch(WormholeGateway.playerGatewaySystem(sector)));
+        map = ScreenPerformance.phase("map canvas", () -> new AtlasMapCanvas(generator, AtlasState.get(sector), scenery, gatewaySketch));
+        ScreenPerformance.phase("search index", this::indexSearch);
         showOverlay(true);
         camera.jumpZoomTo(AtlasMapCanvas.MIN_ZOOM);
         AtlasCameraMemory.Centre remembered = AtlasCameraMemory.recall(sector);
@@ -182,16 +207,13 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         } else {
             camera.centreOn(map.gatewayX(), map.gatewayY());
         }
-        I18n.forGameText(this::buildChrome);
+        ScreenPerformance.phase("chrome", () -> I18n.forGameText(this::buildChrome));
     }
 
     private void buildChrome() {
         titleLabel.set(Translation.text("chart.atlas.title"));
-        hintLabel.set(Translation.text("chart.atlas.hint"));
         PositionAPI position = panelRoot.getPosition();
-        TooltipMakerAPI element = panelRoot.createUIElement(CLOSE_WIDTH, ChromeMetrics.CONTROL_HEIGHT, false);
-        element.addButton(Translation.text("chart.atlas.close"), Control.CLOSE, CLOSE_WIDTH, ChromeMetrics.CONTROL_HEIGHT, 0f);
-        panelRoot.addUIElement(element).inTL(position.getWidth() - PANEL_MARGIN - CHROME_PAD - CLOSE_WIDTH, PANEL_MARGIN + CHROME_PAD);
+        AtlasOverlayFrame.addTopRightButton(panelRoot, Translation.text("chart.atlas.close"), Control.CLOSE, CLOSE_WIDTH);
         TooltipMakerAPI toggles = panelRoot.createUIElement(BORDERS_WIDTH, ChromeMetrics.CONTROL_HEIGHT, false);
         bordersButton = toggles.addAreaCheckbox(Translation.text("chart.atlas.borders"), Control.BORDERS, Misc.getBasePlayerColor(),
                 Misc.getDarkPlayerColor(), Misc.getBrightPlayerColor(), BORDERS_WIDTH, ChromeMetrics.CONTROL_HEIGHT, 0f);
@@ -203,34 +225,55 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
                 Misc.getDarkPlayerColor(), Misc.getBrightPlayerColor(), BIOMES_WIDTH, ChromeMetrics.CONTROL_HEIGHT, 0f);
         biomesButton.setChecked(OVERLAY_SHOWN.get() == Overlay.BIOMES);
         panelRoot.addUIElement(biomeToggle).inTL(bordersLeft - BUTTON_GAP - BIOMES_WIDTH, PANEL_MARGIN + CHROME_PAD);
-        addCatalystToggle();
+        treeButton.add(panelRoot, Translation.text("chart.atlas.tree"), Control.TREE, PANEL_MARGIN + CHROME_PAD);
+        treeButton.refresh(map.state());
+        float bottomRowTop = position.getHeight() - PANEL_MARGIN - CHROME_PAD - ChromeMetrics.CONTROL_HEIGHT;
+        float officersLeft = officersLeft(position);
+        officersElement = panelRoot.createUIElement(OFFICERS_WIDTH, ChromeMetrics.CONTROL_HEIGHT, false);
+        officersButton = officersElement.addButton(Translation.text("chart.atlas.officers"), Control.OFFICERS, OFFICERS_WIDTH,
+                ChromeMetrics.CONTROL_HEIGHT, 0f);
+        panelRoot.addUIElement(officersElement).inTL(officersLeft, bottomRowTop);
+        replayElement = panelRoot.createUIElement(REPLAY_WIDTH, ChromeMetrics.CONTROL_HEIGHT, false);
+        replayButton = replayElement.addButton(Translation.text("chart.atlas.officers.replay"), Control.OFFICERS_REPLAY, REPLAY_WIDTH,
+                ChromeMetrics.CONTROL_HEIGHT, 0f);
+        panelRoot.addUIElement(replayElement).inTL(officersLeft - BUTTON_GAP - REPLAY_WIDTH, bottomRowTop);
+        replayElement.setOpacity(0f);
+        replayButton.setEnabled(false);
     }
 
-    private void addCatalystToggle() {
-        if (catalystToggleElement != null) {
+    private static float officersLeft(PositionAPI position) {
+        return position.getWidth() - PANEL_MARGIN - CHROME_PAD - OFFICERS_WIDTH;
+    }
+
+    private void indexSearch() {
+        map.highlight(search);
+        search.index(I18n.forGameText(() -> map.searchTerms()));
+    }
+
+    private void jumpToNextSearchMatch() {
+        AtlasCell match = search.nextMatch();
+        if (match == null) {
+            SkillTreeSounds.refused();
             return;
         }
-        PositionAPI position = panelRoot.getPosition();
-        TooltipMakerAPI catalystToggle = panelRoot.createUIElement(CATALYSTS_WIDTH, ChromeMetrics.CONTROL_HEIGHT, false);
-        catalystsButton = catalystToggle.addAreaCheckbox(catalystsLabel(), Control.CATALYSTS, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
-                Misc.getBrightPlayerColor(), CATALYSTS_WIDTH, ChromeMetrics.CONTROL_HEIGHT, 0f);
-        catalystsButton.setChecked(catalystPanel != null);
-        float left = position.getWidth() - PANEL_MARGIN - CHROME_PAD - CLOSE_WIDTH - BORDERS_WIDTH - BIOMES_WIDTH - CATALYSTS_WIDTH - BUTTON_GAP * 3f;
-        panelRoot.addUIElement(catalystToggle).inTL(left, PANEL_MARGIN + CHROME_PAD);
-        catalystToggleElement = catalystToggle;
+        camera.panTo(map.displayX(match), map.displayY(match));
+        map.pulse(match);
     }
 
-    private void removeCatalystToggle() {
-        if (catalystToggleElement != null) {
-            panelRoot.removeComponent(catalystToggleElement);
-            catalystToggleElement = null;
-            catalystsButton = null;
-        }
+    private float searchBarLeft() {
+        return panelPosition.getX() + AtlasTreeButton.searchBarLeft(panelPosition.getWidth(), SEARCH_WIDTH);
     }
 
-    private static String catalystsLabel() {
-        int carried = AtlasCatalystItems.carriedTotal(CraftingMaterials.forPlayer(PlayerFleet.cargoOrNull()));
-        return Translation.msg("chart.atlas.catalysts").arg("count", carried).text();
+    private float searchBarBottom() {
+        return panelPosition.getY() + panelPosition.getHeight() - PANEL_MARGIN - CHROME_PAD - ChromeMetrics.CONTROL_HEIGHT;
+    }
+
+    private float searchBarOpacity() {
+        return officerBoard.isShowing() ? 0f : 1f - Fade.smooth(focusLevel);
+    }
+
+    private boolean overSearchBar(float x, float y) {
+        return searchBarOpacity() > 0f && searchBar.contains(searchBarLeft(), searchBarBottom(), x, y);
     }
 
     private float sidePanelTop() {
@@ -245,70 +288,24 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         return panelRoot.getPosition().getHeight() - PANEL_MARGIN - CHROME_PAD - CHOOSE_HEIGHT;
     }
 
-    private void toggleCatalysts() {
-        if (catalystPanel != null) {
-            catalystPanel.close();
-            return;
+    public boolean focusOn(AtlasCell cell) {
+        if (map == null || focusedCell != null || !map.canFocus(cell)) {
+            return false;
         }
-        PositionAPI position = panelRoot.getPosition();
-        float left = position.getWidth() - PANEL_MARGIN - CHROME_PAD - AtlasCatalystPanel.PANEL_WIDTH;
-        catalystPanel = AtlasCatalystPanel.open(panelRoot, left, sidePanelTop(), sidePanelHeight(), new AtlasCatalystPanel.Listener() {
-            @Override
-            public void selected(AtlasCatalysts.Catalyst catalyst) {
-                selectedCatalyst = catalyst;
-                retarget();
-                if (catalyst != null && focusing) {
-                    targetPicked(focusedCell);
-                }
-            }
-
-            @Override
-            public void used(AtlasCell cell) {
-                map = map.rebuilt();
-                map.pulse(cell);
-                retarget();
-                if (catalystsButton != null) {
-                    catalystsButton.setText(catalystsLabel());
-                }
-                if (anomalyPanel != null) {
-                    anomalyPanel.refresh();
-                }
-            }
-
-            @Override
-            public void closed() {
-                catalystPanel = null;
-                focusOpenedCatalysts = false;
-                selectedCatalyst = null;
-                retarget();
-                if (catalystsButton != null) {
-                    catalystsButton.setChecked(false);
-                }
-            }
-
-            @Override
-            public void pressedInside() {
-            }
-        });
-        SkillTreeSounds.panelOpened();
+        camera.centreOn(map.displayX(cell), map.displayY(cell));
+        enterFocus(cell);
+        return true;
     }
 
     private void enterFocus(AtlasCell cell) {
-        if (catalystPanel != null && catalystPanel.confirming()) {
-            return;
-        }
         focusedCell = cell;
         focusing = true;
         tooltipSubject = null;
+        searchBar.unfocus();
         gesture.clear();
         camera.stopMoving();
         map.pulse(cell);
         SkillTreeSounds.panelOpened();
-        if (catalystPanel == null) {
-            openFocusCatalysts();
-        } else if (catalystPanel.selected() != null) {
-            catalystPanel.escape();
-        }
         I18n.forGameText(() -> {
             addChooseButton(cell);
             openAnomalyPanel();
@@ -316,20 +313,12 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     }
 
     private void openAnomalyPanel() {
-        anomalyPanel = AtlasAnomalyPanel.open(panelRoot, PANEL_MARGIN + CHROME_PAD, sidePanelTop(), sidePanelHeight(), this::focusedAnomalies, () -> {
+        anomalyPanel = AtlasAnomalyPanel.open(panelRoot, PANEL_MARGIN + CHROME_PAD, sidePanelTop(), sidePanelHeight(), map.state(), this::focusedAnomalies, () -> {
             anomalyPanel = null;
             if (!chartMode) {
                 leaveFocus();
             }
         });
-    }
-
-    private void openFocusCatalysts() {
-        toggleCatalysts();
-        focusOpenedCatalysts = true;
-        if (catalystsButton != null) {
-            catalystsButton.setChecked(true);
-        }
     }
 
     private void addChooseButton(AtlasCell cell) {
@@ -360,10 +349,6 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         if (chartMode) {
             closeChartParts();
             chartMode = false;
-            if (!fade.closing()) {
-                I18n.forGameText(this::addCatalystToggle);
-                restoreUserCatalysts();
-            }
         }
         if (chooseButton != null) {
             chooseButton.setEnabled(false);
@@ -371,16 +356,10 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         if (anomalyPanel != null) {
             anomalyPanel.close();
         }
-        if (catalystPanel != null && focusOpenedCatalysts) {
-            catalystPanel.close();
-        } else if (catalystPanel != null && catalystPanel.selected() != null) {
-            catalystPanel.escape();
-        }
-        focusOpenedCatalysts = false;
     }
 
     private void enterChartMode() {
-        if (!focusing || chartMode || focusedCell == null || catalystPanel != null && catalystPanel.confirming()) {
+        if (!focusing || chartMode || focusedCell == null) {
             return;
         }
         if (!map.isReachable(focusedCell)) {
@@ -388,17 +367,11 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             return;
         }
         chartMode = true;
-        catalystsOpenedByUser = catalystPanel != null && !focusOpenedCatalysts;
         map.pulse(focusedCell);
         SkillTreeSounds.panelOpened();
         if (anomalyPanel != null) {
             anomalyPanel.close();
         }
-        if (catalystPanel != null) {
-            catalystPanel.close();
-        }
-        focusOpenedCatalysts = false;
-        removeCatalystToggle();
         I18n.forGameText(() -> {
             openChartParts(focusedCell);
             chooseButton.setText(Translation.text("chart.atlas.focus.viewAnomalies"));
@@ -414,33 +387,18 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         chartMode = false;
         SkillTreeSounds.panelOpened();
         I18n.forGameText(() -> {
-            addCatalystToggle();
             openAnomalyPanel();
             if (chooseButton != null) {
                 chooseButton.setText(Translation.text("chart.atlas.focus.chooseChart"));
                 chooseButton.setEnabled(map.isReachable(focusedCell));
             }
         });
-        if (catalystPanel == null) {
-            openFocusCatalysts();
-            focusOpenedCatalysts = !catalystsOpenedByUser;
-        }
-    }
-
-    private void restoreUserCatalysts() {
-        if (catalystsOpenedByUser && catalystPanel == null) {
-            toggleCatalysts();
-            if (catalystsButton != null) {
-                catalystsButton.setChecked(true);
-            }
-        }
-        catalystsOpenedByUser = false;
     }
 
     private void openChartParts(AtlasCell cell) {
         BenchLayout layout = chartLayout();
         BenchModeSupport.OpenTarget target = new BenchModeSupport.OpenTarget(cell,
-                () -> AtlasNodeText.confirmLines(map.generator(), map.state(), cell), () -> AtlasNodeText.entryChoices(map.generator(), map.state(), cell));
+                () -> AtlasNodeText.confirmLines(map.generator(), map.state(), cell, CraftingMaterials.forPlayer(PlayerFleet.cargoOrNull())::count), () -> AtlasNodeText.entryChoices(map.generator(), map.state(), cell));
         chartBench = CraftingBenchPanel.openEmbedded(panelRoot, BenchMode.STAR_CHARTS, layout, new CraftingBenchPanel.Listener() {
             @Override
             public void changed(Item loaded) {
@@ -546,6 +504,8 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
 
     private void debugCompleted(AtlasCell cell) {
         map = map.rebuilt();
+        treeButton.refresh(map.state());
+        indexSearch();
         tooltipSubject = null;
         map.pulse(cell);
         leaveFocus();
@@ -581,29 +541,52 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         return chartLayout;
     }
 
-    private List<AtlasAnomalyPanel.Entry> focusedAnomalies() {
-        List<AtlasAnomalyPanel.Entry> entries = new ArrayList<>();
+    private AtlasAnomalyPanel.Listing focusedAnomalies() {
         if (focusedCell == null) {
-            return entries;
+            return new AtlasAnomalyPanel.Listing(List.of(), List.of());
         }
-        for (String anomalyId : AtlasAnomalies.effective(map.generator(), map.state(), focusedCell)) {
-            ChartAnomalies.Definition definition = ChartAnomalies.definition(anomalyId);
-            entries.add(new AtlasAnomalyPanel.Entry(AtlasNames.anomaly(anomalyId), definition == null ? "" : definition.icon(),
+        List<AtlasAnomalyPanel.Entry> system = new ArrayList<>();
+        List<String> present = AtlasAnomalies.effective(map.generator(), map.state(), focusedCell);
+        for (String anomalyId : present) {
+            system.add(new AtlasAnomalyPanel.Entry(AtlasNames.anomaly(anomalyId), anomalyIcon(anomalyId),
                     AtlasNodeText.anomalyBody(map.generator(), map.state(), focusedCell, anomalyId)));
         }
-        return entries;
+        AtlasOfficer officer = map.shownOfficerAt(focusedCell);
+        if (officer != null) {
+            String portraitPath = OfficerText.portraitPath(officer);
+            system.add(new AtlasAnomalyPanel.Entry(OfficerText.title(officer), portraitPath == null ? "" : portraitPath, AtlasNodeText.officerBody(officer)));
+        }
+        List<AtlasAnomalyPanel.Entry> catalysts = new ArrayList<>();
+        CraftingMaterials materials = CraftingMaterials.forPlayer(PlayerFleet.cargoOrNull());
+        List<ActiveCatalysts.Planned> plan = ActiveCatalysts.plan(map.generator(), map.state(), focusedCell, materials::count);
+        map.previewCatalysts(focusedCell, ActiveCatalysts.anomalyIds(plan));
+        for (ActiveCatalysts.Planned planned : plan) {
+            String anomalyId = planned.catalyst().anomalyId();
+            if (present.contains(anomalyId)) {
+                continue;
+            }
+            String refusal = planned.verdict().text(MaterialItems.displayName(planned.catalyst().itemId()), systemName(focusedCell));
+            catalysts.add(new AtlasAnomalyPanel.Entry(AtlasNames.anomaly(anomalyId), planned.catalyst().iconPath(),
+                    CatalystCargo.look(planned.catalyst().family()), AtlasNodeText.anomalyBody(anomalyId), refusal));
+        }
+        return new AtlasAnomalyPanel.Listing(system, catalysts);
+    }
+
+    private static String anomalyIcon(String anomalyId) {
+        ChartAnomalies.Definition definition = ChartAnomalies.definition(anomalyId);
+        return definition == null ? "" : definition.icon();
     }
 
     private float focusCentreX() {
-        return innerLeft() + innerWidth() / 2f;
+        return frame.innerLeft() + frame.innerWidth() / 2f;
     }
 
     private float focusCentreY() {
-        return innerBottom() + innerHeight() / 2f;
+        return frame.innerBottom() + frame.innerHeight() / 2f;
     }
 
     private float focusReach() {
-        return Math.min(innerWidth() / 2f - BORDER_INSET, innerHeight() / 2f);
+        return Math.min(frame.innerWidth() / 2f - BORDER_INSET, frame.innerHeight() / 2f);
     }
 
     private AtlasMapCanvas.Focus focus() {
@@ -619,37 +602,8 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
                 focusReach(), level, new AtlasSystemPreview.Spotlight(chart, layout.socketRadius() * CHART_STAR_SHARE));
     }
 
-    private AtlasCatalystUse catalystUse() {
-        return selectedCatalyst == null ? null
-                : AtlasCatalystUse.of(selectedCatalyst, map.generator(), map.state(), AtlasAnomalies.openRunCell(), map.visibleCells());
-    }
-
-    private void retarget() {
-        AtlasCatalystUse use = catalystUse();
-        I18n.forGameText(() -> map.target(use));
-        tooltipSubject = null;
-    }
-
     private String systemName(AtlasCell cell) {
-        List<AtlasLine> lines = AtlasNodeText.describe(map.generator(), map.state(), cell, map.isReachable(cell));
-        return lines.isEmpty() ? "" : lines.get(0).text();
-    }
-
-    private void targetPicked(AtlasCell cell) {
-        AtlasCatalystUse use = catalystUse();
-        UseVerdict verdict = map.targetVerdict(cell);
-        if (use == null || catalystPanel == null || catalystPanel.confirming() || verdict == null) {
-            return;
-        }
-        map.pulse(cell);
-        String systemName = I18n.forGameText(() -> systemName(cell));
-        if (verdict.allowed()) {
-            SkillTreeSounds.panelOpened();
-            catalystPanel.requestUse(use, cell, systemName);
-        } else {
-            SkillTreeSounds.refused();
-            catalystPanel.showRefusal(I18n.forGameText(() -> verdict.text(MaterialItems.displayName(use.itemId()), systemName)));
-        }
+        return AtlasNodeText.title(map.generator(), cell);
     }
 
     private void showOverlay(boolean instantly) {
@@ -668,22 +622,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     @Override
     public void positionChanged(PositionAPI position) {
         panelPosition = position;
-    }
-
-    private float innerLeft() {
-        return panelPosition.getX() + PANEL_MARGIN;
-    }
-
-    private float innerBottom() {
-        return panelPosition.getY() + PANEL_MARGIN;
-    }
-
-    private float innerWidth() {
-        return panelPosition.getWidth() - PANEL_MARGIN * 2f;
-    }
-
-    private float innerHeight() {
-        return panelPosition.getHeight() - PANEL_MARGIN * 2f;
+        frame.place(position);
     }
 
     private TreeViewport viewport() {
@@ -692,15 +631,30 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
 
     @Override
     public void buttonPressed(Object buttonId) {
+        if (fade.handedOver()) {
+            return;
+        }
+        if (buttonId == Control.OFFICERS) {
+            toggleOfficers();
+            return;
+        }
+        if (buttonId == Control.OFFICERS_REPLAY) {
+            if (officerBoard.isOpen()) {
+                officerBoard.replay();
+            }
+            return;
+        }
+        if (officerBoard.isOpen()) {
+            officerBoard.close();
+        }
         if (buttonId == Control.CLOSE) {
-            close();
+            closeByPlayer();
         } else if (buttonId == Control.BORDERS && bordersButton != null) {
             toggleOverlay(Overlay.FACTIONS, bordersButton, biomesButton);
         } else if (buttonId == Control.BIOMES && biomesButton != null) {
             toggleOverlay(Overlay.BIOMES, biomesButton, bordersButton);
-        } else if (buttonId == Control.CATALYSTS && catalystsButton != null) {
-            toggleCatalysts();
-            catalystsButton.setChecked(catalystPanel != null);
+        } else if (buttonId == Control.TREE && !focusing && !fade.closing() && !host.replacing()) {
+            openAtlasTree();
         } else if (buttonId == Control.FOCUS_SWITCH && focusing) {
             if (chartMode) {
                 leaveChartMode();
@@ -712,17 +666,113 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         }
     }
 
+    private void toggleOfficers() {
+        if (officerBoard.isOpen()) {
+            officerBoard.close();
+            return;
+        }
+        if (focusing || fade.closing()) {
+            return;
+        }
+        drag.release();
+        hoveredCell = null;
+        hoveredAnomaly = null;
+        searchBar.unfocus();
+        officerBoard.open(map.generator(), map.state());
+        placeOfficerBoard();
+        SkillTreeSounds.panelOpened();
+    }
+
+    private void placeOfficerBoard() {
+        float boardBottom = panelPosition.getY() + PANEL_MARGIN + CHROME_PAD + ChromeMetrics.CONTROL_HEIGHT + BUTTON_GAP;
+        float boardTop = panelPosition.getY() + panelPosition.getHeight() - sidePanelTop();
+        officerBoard.place(frame.innerLeft() + CHROME_PAD, boardBottom, frame.innerWidth() - CHROME_PAD * 2f, boardTop - boardBottom);
+    }
+
+    private void officerBoardInput(InputEventAPI event) {
+        if (event.isMouseMoveEvent()) {
+            mouseX = event.getX();
+            mouseY = event.getY();
+            dragMapUnderBoard(event);
+        } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
+            if (event.isKeyDownEvent()) {
+                officerBoard.close();
+            }
+        } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_F2) {
+            if (event.isKeyDownEvent()) {
+                officerBoard.openHoveredCodex();
+            }
+        } else if (event.isMouseDownEvent() && event.isLMBEvent()) {
+            if (!officerBoard.contains(event.getX(), event.getY())) {
+                gesture.pressTarget(null, officerBoard, event.getX(), event.getY(), false, false, true);
+            }
+        } else if (event.isMouseUpEvent() && event.isLMBUpEvent()) {
+            officerBoardReleased(event.getX(), event.getY());
+        } else if (event.isMouseScrollEvent() && !officerBoard.contains(event.getX(), event.getY())) {
+            camera.scrollAt(event.getEventValue() > 0, event.getX(), event.getY(), panelPosition);
+        }
+        event.consume();
+    }
+
+    private void dragMapUnderBoard(InputEventAPI event) {
+        drag.pointerMoved(event.getX(), event.getY(), event.getDX(), event.getDY());
+    }
+
+    private void officerBoardReleased(float x, float y) {
+        boolean pressedOutside = gesture.isActive();
+        boolean clickedOutside = gesture.releasedOn(officerBoard) && !officerBoard.contains(x, y);
+        drag.release();
+        if (clickedOutside) {
+            officerBoard.close();
+        } else if (!pressedOutside && officerBoard.contains(x, y)) {
+            officerBoardClicked(x, y);
+        }
+    }
+
+    private void officerBoardClicked(float x, float y) {
+        AtlasCell battleCell = officerBoard.clickedBattleCell(x, y);
+        AtlasCell commandCentre = officerBoard.clickedCommandCentre(x, y);
+        if (battleCell != null) {
+            spotlightFromBoard(battleCell);
+        } else if (commandCentre != null) {
+            spotlightFromBoard(commandCentre);
+        } else if (officerBoard.clickedOfficer(x, y)) {
+            SkillTreeSounds.refused();
+        }
+    }
+
+    private void spotlightFromBoard(AtlasCell cell) {
+        float visibleCentreX = (frame.innerLeft() + officerBoard.left()) / 2f;
+        float panelCentreX = panelPosition.getX() + panelPosition.getWidth() / 2f;
+        camera.panTo(map.displayX(cell) + (panelCentreX - visibleCentreX) / camera.zoom(), map.displayY(cell));
+        spotlight.start(cell);
+        SkillTreeSounds.panelOpened();
+    }
+
+    private void openAtlasTree() {
+        AtlasCameraMemory.remember(Global.getSector(), camera.centreTreeX(), camera.centreTreeY());
+        officerBoard.close();
+        officerTooltip.cleanup();
+        fade.handOver();
+        host.switchTo(AtlasTreeScreen::new);
+    }
+
+    private void closeByPlayer() {
+        if (!host.replacing()) {
+            close();
+        }
+    }
+
     private void close() {
         fade.close();
+        officerBoard.close();
+        officerTooltip.cleanup();
         leaveFocus();
-        if (catalystPanel != null) {
-            catalystPanel.close();
-        }
     }
 
     @Override
     public void processInput(List<InputEventAPI> events) {
-        if (panelPosition == null || map == null) {
+        if (panelPosition == null || map == null || fade.handedOver()) {
             return;
         }
         for (InputEventAPI event : events) {
@@ -731,11 +781,20 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             }
             if (fade.closing()) {
                 event.consume();
+            } else if (officerBoard.isOpen()) {
+                officerBoardInput(event);
             } else if (focusedCell != null) {
                 focusInput(event);
             } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
-                if (event.isKeyDownEvent()) {
-                    escape();
+                if (event.isKeyDownEvent() && !searchBar.escape()) {
+                    closeByPlayer();
+                }
+                event.consume();
+            } else if (event.isKeyboardEvent() && searchBar.handleKey(event)) {
+                event.consume();
+            } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_F2) {
+                if (event.isKeyDownEvent() && hoveredAnomaly != null && hoveredAnomaly.isOfficer()) {
+                    officerTooltip.openCodex(hoveredAnomaly.officer().recordId());
                 }
                 event.consume();
             } else if (event.isMouseEvent()) {
@@ -743,14 +802,6 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             } else {
                 event.consume();
             }
-        }
-    }
-
-    private void escape() {
-        if (catalystPanel == null) {
-            close();
-        } else if (!catalystPanel.escape()) {
-            catalystPanel.close();
         }
     }
 
@@ -771,8 +822,6 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             if (!handled) {
                 leaveChartMode();
             }
-        } else if (catalystPanel != null && catalystPanel.confirming()) {
-            catalystPanel.escape();
         } else {
             leaveFocus();
         }
@@ -784,39 +833,34 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         if (event.isMouseMoveEvent()) {
             mouseX = x;
             mouseY = y;
-            if (gesture.moveTo(x, y)) {
-                camera.startDrag();
-                camera.dragBy(x - gesture.pressX(), y - gesture.pressY());
-            } else {
-                camera.dragBy(event.getDX(), event.getDY());
-            }
+            drag.pointerMoved(x, y, event.getDX(), event.getDY());
         } else if (event.isMouseDownEvent() && event.isLMBEvent()) {
-            AtlasCell target = map.cellAt(viewport(), x, y);
-            if (target != null) {
-                gesture.pressTarget(null, target, x, y, event.isCtrlDown(), event.isShiftDown(), true);
-            } else {
-                gesture.pressPan(null, x, y);
-                camera.startDrag();
+            if (!searchBar.handleClick(searchBarLeft(), searchBarBottom(), x, y)) {
+                pressMap(event, x, y);
             }
         } else if (event.isMouseUpEvent() && event.isLMBUpEvent()) {
             AtlasCell released = map.cellAt(viewport(), x, y);
             if (released != null && gesture.releasedOn(released)) {
                 clicked(released);
             }
-            gesture.clear();
-            camera.stopDrag();
-        } else if (event.isRMBDownEvent() && map.isTargeting() && catalystPanel != null) {
-            catalystPanel.escape();
+            drag.release();
         } else if (event.isMouseScrollEvent()) {
             camera.scrollAt(event.getEventValue() > 0, x, y, panelPosition);
         }
         event.consume();
     }
 
+    private void pressMap(InputEventAPI event, float x, float y) {
+        AtlasCell target = map.cellAt(viewport(), x, y);
+        if (target != null) {
+            gesture.pressTarget(null, target, x, y, event.isCtrlDown(), event.isShiftDown(), true);
+        } else {
+            drag.pressPan(null, x, y);
+        }
+    }
+
     private void clicked(AtlasCell cell) {
-        if (map.isTargeting()) {
-            targetPicked(cell);
-        } else if (map.canFocus(cell)) {
+        if (map.canFocus(cell)) {
             enterFocus(cell);
         } else {
             SkillTreeSounds.refused();
@@ -829,6 +873,9 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             return;
         }
         boolean finishedClosing = fade.advance(amount);
+        if (fade.fullyOpen()) {
+            host.shown();
+        }
         focusLevel = Fade.step(focusLevel, focusing, amount / FOCUS_SECONDS);
         chartLevel = Fade.step(chartLevel, chartMode, amount / FOCUS_SECONDS);
         if (!focusing && focusLevel <= 0f) {
@@ -848,17 +895,60 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             return;
         }
         starfield.advance(amount);
+        focusStarscape.advance(amount);
+        searchBar.advance(amount);
         map.advance(amount);
         camera.advanceZoom(amount);
         camera.advancePan(amount);
+        advanceSpotlight(amount);
+        advanceOfficerBoard(amount);
+        treeButton.advance(amount, 1f - Fade.smooth(focusLevel), !focusing);
         if (panelPosition != null) {
-            boolean hovering = focusedCell == null && !camera.isDragging() && (catalystPanel == null || !catalystPanel.contains(mouseX, mouseY));
+            boolean hovering = focusedCell == null && !officerBoard.isShowing() && !camera.isDragging() && !overSearchBar(mouseX, mouseY);
             hoveredAnomaly = hovering ? map.anomalyAt(viewport(), mouseX, mouseY) : null;
+            if (hoveredAnomaly == null || !hoveredAnomaly.isOfficer()) {
+                officerTooltip.cleanup();
+            }
             AtlasCell hovered = hovering && hoveredAnomaly == null ? map.cellAt(viewport(), mouseX, mouseY) : null;
             if (hovered != null && !hovered.equals(hoveredCell)) {
                 map.pulse(hovered);
             }
             hoveredCell = hovered;
+        }
+    }
+
+    private void advanceSpotlight(float amount) {
+        spotlight.advance(amount, camera.isPanning());
+    }
+
+    private void renderSpotlight(float alpha) {
+        AtlasCell cell = spotlight.cell();
+        if (cell != null) {
+            TreeViewport view = viewport();
+            spotlight.render(map.screenX(view, cell), map.screenY(view, cell), AtlasMapCanvas.footprint(view), panelStyle.getAccentColor(), alpha);
+        }
+    }
+
+    private void renderChartCount(float alpha) {
+        float countRight = panelPosition.getX() + officersLeft(panelPosition) - BUTTON_GAP * 2f - REPLAY_WIDTH;
+        float rowCentreY = panelPosition.getY() + PANEL_MARGIN + CHROME_PAD + ChromeMetrics.CONTROL_HEIGHT / 2f;
+        officerBoard.renderChartCount(countRight, rowCentreY, alpha);
+    }
+
+    private void advanceOfficerBoard(float amount) {
+        if (panelPosition != null && officerBoard.isShowing()) {
+            placeOfficerBoard();
+        }
+        officerBoard.advance(amount, mouseX, mouseY);
+        float officersOpacity = 1f - Fade.smooth(focusLevel);
+        if (officersElement != null) {
+            officersElement.setOpacity(officersOpacity);
+            officersButton.setEnabled(!focusing);
+        }
+        if (replayElement != null) {
+            boolean replayShown = officerBoard.isOpen() && officerBoard.canReplay();
+            replayElement.setOpacity(replayShown ? officersOpacity : 0f);
+            replayButton.setEnabled(replayShown);
         }
     }
 
@@ -871,34 +961,44 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         if (alpha <= 0f) {
             return;
         }
-        GLDraw.fillQuad(panelPosition.getX(), panelPosition.getY(), panelPosition.getWidth(), panelPosition.getHeight(), Color.BLACK,
-                BACKDROP_ALPHA * alpha);
-        GLDraw.fillQuad(innerLeft(), innerBottom(), innerWidth(), innerHeight(), Color.BLACK, alpha);
-        BorderedPanel.draw(innerLeft(), innerBottom(), innerWidth(), innerHeight(), alpha);
-        float screenScale = Global.getSettings().getScreenScaleMult();
-        try (GlScope clip = GlScope.clip((int) ((innerLeft() + BORDER_INSET) * screenScale), (int) (innerBottom() * screenScale),
-                (int) ((innerWidth() - BORDER_INSET * 2f) * screenScale), (int) (innerHeight() * screenScale))) {
-            starfield.render(panelPosition, camera.panX(), camera.panY(), alpha);
-            map.render(viewport(), panelStyle.getAccentColor(), alpha, focusedCell);
+        frame.drawBackdrop(alpha, !host.replacing());
+        try (GlScope clip = frame.clipContent()) {
+            float level = focusedCell == null ? 0f : Fade.smooth(focusLevel);
+            if (level < 1f) {
+                starfield.render(panelPosition, camera.panX(), camera.panY(), search.backgroundAlpha() * alpha);
+                map.render(viewport(), panelStyle.getAccentColor(), alpha, focusedCell);
+                renderSpotlight(alpha);
+            }
             if (focusedCell != null) {
-                float level = Fade.smooth(focusLevel);
-                GLDraw.fillQuad(innerLeft(), innerBottom(), innerWidth(), innerHeight(), Color.BLACK, FOCUS_DIM_ALPHA * level * alpha);
+                frame.fillInner(Color.BLACK, level * alpha);
+                focusStarscape.renderInside(frame.contentLeft(), frame.innerBottom(), frame.contentWidth(), frame.innerHeight(), level * alpha);
                 map.renderFocus(viewport(), focusedCell, focus(), alpha);
             }
         }
+        treeButton.render(alpha);
         drawChrome(alpha);
-        if (hoveredAnomaly != null && !gesture.isPanning()) {
+        renderChartCount(alpha);
+        officerBoard.render(alpha, mouseX, mouseY, panelStyle.getAccentColor());
+        if (hoveredAnomaly != null && hoveredAnomaly.isOfficer() && !gesture.isPanning()) {
+            officerTooltip.show(hoveredAnomaly.officer());
+            officerTooltip.draw(panelStyle.getAccentColor(), mouseX, mouseY, alpha);
+        } else if (hoveredAnomaly != null && !gesture.isPanning()) {
             drawTooltip(hoveredAnomaly, this::writeAnomalyTooltip, alpha);
         } else if (hoveredCell != null && !gesture.isPanning()) {
-            drawTooltip(hoveredCell, this::writeTooltip, alpha);
+            if (!hoveredCell.equals(tooltipSubject)) {
+                tooltipSubject = hoveredCell;
+                I18n.forGameText(this::writeSystemCard);
+            }
+            systemCard.draw(mouseX, mouseY, alpha);
         }
     }
 
     private void drawChrome(float alpha) {
-        float left = innerLeft() + CHROME_PAD;
-        float top = innerBottom() + innerHeight() - CHROME_PAD;
-        titleLabel.setAlpha(alpha).draw(left, top);
-        hintLabel.setAlpha(alpha).draw(left, innerBottom() + CHROME_PAD + hintLabel.height());
+        titleLabel.setAlpha(alpha).draw(frame.chromeLeft(), frame.chromeTop());
+        float searchOpacity = searchBarOpacity();
+        if (searchOpacity > 0f) {
+            searchBar.render(searchBarLeft(), searchBarBottom(), searchOpacity * alpha);
+        }
     }
 
     private void drawTooltip(Object subject, Runnable writer, float alpha) {
@@ -920,19 +1020,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
                 SkillTreePanelStyle::standardHighlightColor);
     }
 
-    private void writeTooltip() {
-        List<AtlasLine> lines = AtlasNodeText.describe(map.generator(), map.state(), hoveredCell, map.isReachable(hoveredCell));
-        String title = lines.isEmpty() ? "" : lines.get(0).text();
-        List<StyledText> body = new ArrayList<>();
-        for (AtlasLine line : lines.subList(Math.min(1, lines.size()), lines.size())) {
-            body.add(line.styled());
-        }
-        UseVerdict verdict = map.targetVerdict(hoveredCell);
-        AtlasCatalystUse use = catalystUse();
-        if (verdict != null && use != null) {
-            body.add(0, verdict.allowed() ? StyledText.styled(use.usableText(), Style.GOOD)
-                    : StyledText.styled(verdict.text(MaterialItems.displayName(use.itemId()), title), Style.BAD));
-        }
-        writeTooltipText(title, StyledText.join(StyledText.of("\n"), body));
+    private void writeSystemCard() {
+        systemCard.write(AtlasNodeText.card(map.generator(), map.state(), hoveredCell, map.isReachable(hoveredCell)));
     }
 }

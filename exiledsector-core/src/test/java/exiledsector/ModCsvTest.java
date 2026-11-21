@@ -95,6 +95,34 @@ class ModCsvTest {
     }
 
     @Test
+    void missingRowsVisitNothing() throws Exception {
+        List<String> visited = new ArrayList<>();
+
+        ModCsv.forEach(null, (index, row) -> visited.add("row"));
+
+        assertEquals(List.of(), visited);
+    }
+
+    @Test
+    void rowsOrEmptyLogsAnUnreadableSheetAndHandsBackNoRows() throws Exception {
+        IOException missing = new IOException("missing");
+        when(settings.getMergedSpreadsheetDataForMod("id", PATH, "exiledSector")).thenThrow(missing);
+        Logger log = mock(Logger.class);
+
+        assertEquals(0, ModCsv.rowsOrEmpty("id", PATH, log).length());
+        verify(log).error("Failed to load " + PATH, missing);
+    }
+
+    @Test
+    void rowsOrEmptyTurnsAMissingSheetIntoNoRows() throws Exception {
+        JSONArray rows = new JSONArray().put(new JSONObject().put("id", "a"));
+        when(settings.getMergedSpreadsheetDataForMod("id", PATH, "exiledSector")).thenReturn(null, rows);
+
+        assertEquals(0, ModCsv.rowsOrEmpty("id", PATH, mock(Logger.class)).length());
+        assertSame(rows, ModCsv.rowsOrEmpty("id", PATH, mock(Logger.class)));
+    }
+
+    @Test
     void cellTextIsTrimmedAndMissingCellsAreEmpty() throws Exception {
         JSONObject row = new JSONObject().put("id", "  padded \t").put("blank", "   ");
 

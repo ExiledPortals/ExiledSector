@@ -1,5 +1,6 @@
 package exiledsector.ui.util;
 
+import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.util.Misc;
 import org.lwjgl.opengl.GL11;
 
@@ -8,6 +9,10 @@ import java.awt.Color;
 public final class GLDraw {
 
     private GLDraw() {
+    }
+
+    public static void fillQuad(PositionAPI area, Color color, float alphaMult) {
+        fillQuad(area.getX(), area.getY(), area.getWidth(), area.getHeight(), color, alphaMult);
     }
 
     public static void fillQuad(float x, float y, float width, float height, Color color, float alphaMult) {

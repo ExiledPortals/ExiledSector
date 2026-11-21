@@ -1,5 +1,11 @@
 package exiledsector.items;
 
+import exiledsector.items.crafting.CorruptionOutcome;
+import exiledsector.items.modifier.ItemModifiers;
+import exiledsector.items.modifier.ModifierFlags;
+import exiledsector.items.modifier.RolledLine;
+import exiledsector.items.modifier.RolledModifier;
+import exiledsector.items.name.FrozenName;
 import exiledsector.modifiers.ModifierSlot;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,6 +40,9 @@ public final class ItemCodec {
     private static final String CORRUPTED_KEY = "c";
     private static final String IMPLICITS_KEY = "i";
     private static final String MIRRORED_KEY = "m";
+    private static final String IMMUTABLE_FLAG = "i";
+    private static final String OVERCHARGED_FLAG = "o";
+    private static final String WARPED_FLAG = "w";
 
     private ItemCodec() {
     }
@@ -98,7 +107,7 @@ public final class ItemCodec {
             if (!encoded.isEmpty()) {
                 encoded.append(EFFECT_SEPARATOR);
             }
-            encoded.append(slotCode(modifier.slot())).append(MODIFIER_FIELD_SEPARATOR);
+            encoded.append(slotCode(modifier.slot())).append(flagsCode(modifier.flags())).append(MODIFIER_FIELD_SEPARATOR);
             if (!isCompact(modifier)) {
                 encoded.append(modifier.modifierId()).append(MODIFIER_FIELD_SEPARATOR);
             }
@@ -112,6 +121,14 @@ public final class ItemCodec {
             }
         }
         return encoded.toString();
+    }
+
+    private static String flagsCode(ModifierFlags flags) {
+        return (flags.immutable() ? IMMUTABLE_FLAG : "") + (flags.overcharged() ? OVERCHARGED_FLAG : "") + (flags.warped() ? WARPED_FLAG : "");
+    }
+
+    private static ModifierFlags flagsOf(String code) {
+        return new ModifierFlags(code.contains(IMMUTABLE_FLAG), code.contains(OVERCHARGED_FLAG), code.contains(WARPED_FLAG));
     }
 
     private static boolean isCompact(RolledModifier modifier) {
@@ -141,39 +158,30 @@ public final class ItemCodec {
             return null;
         }
         List<RolledModifier> modifiers = new ArrayList<>();
-        List<RolledLine> legacyEffects = new ArrayList<>();
         for (String entry : encoded.split(EFFECT_SEPARATOR)) {
             if (entry.isEmpty()) {
                 continue;
             }
-            if (entry.contains(MODIFIER_FIELD_SEPARATOR)) {
-                RolledModifier modifier = decodeModifier(entry);
-                if (modifier == null) {
-                    return null;
-                }
-                modifiers.add(modifier);
-            } else {
-                RolledLine effect = decodeEffect(entry);
-                if (effect == null) {
-                    return null;
-                }
-                legacyEffects.add(effect);
+            RolledModifier modifier = entry.contains(MODIFIER_FIELD_SEPARATOR) ? decodeModifier(entry) : null;
+            if (modifier == null) {
+                return null;
             }
+            modifiers.add(modifier);
         }
         ItemDefinition definition = ItemDefinitions.get(definitionId);
-        modifiers.addAll(RolledModifier.fromLegacyEffects(definition, legacyEffects));
         return definition == null ? modifiers : definition.withCurrentIds(modifiers);
     }
 
     private static RolledModifier decodeModifier(String entry) {
         String[] fields = entry.split(MODIFIER_FIELD_SEPARATOR, 3);
-        ModifierSlot slot = slotOf(fields[0]);
+        ModifierSlot slot = fields[0].isEmpty() ? null : slotOf(fields[0].substring(0, 1));
         if (slot == null) {
             return null;
         }
+        ModifierFlags flags = flagsOf(fields[0].substring(1));
         if (fields.length == 2) {
             RolledLine line = decodeEffect(fields[1]);
-            return line == null ? null : RolledModifier.single(slot, line);
+            return line == null ? null : new RolledModifier(line.effectName(), slot, List.of(line), flags);
         }
         if (!ItemModifiers.ID_PATTERN.matcher(fields[1]).matches()) {
             return null;
@@ -186,7 +194,7 @@ public final class ItemCodec {
             }
             lines.add(line);
         }
-        return new RolledModifier(RolledLine.currentName(fields[1]), slot, lines);
+        return new RolledModifier(RolledLine.currentName(fields[1]), slot, lines, flags);
     }
 
     private static RolledLine decodeEffect(String entry) {
@@ -277,16 +285,13 @@ public final class ItemCodec {
     }
 
     private static CorruptionOutcome corruption(JSONObject json) {
-        Object stored = json.opt(CORRUPTED_KEY);
-        if (stored == null || Boolean.FALSE.equals(stored)) {
-            return null;
-        }
+        String stored = json.optString(CORRUPTED_KEY, "");
         for (CorruptionOutcome outcome : CorruptionOutcome.values()) {
-            if (outcome.name().equals(String.valueOf(stored))) {
+            if (outcome.name().equals(stored)) {
                 return outcome;
             }
         }
-        return CorruptionOutcome.NOTHING;
+        return null;
     }
 
     private static FrozenName frozenName(JSONObject json) {

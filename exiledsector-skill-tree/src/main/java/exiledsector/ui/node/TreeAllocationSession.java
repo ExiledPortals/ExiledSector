@@ -21,8 +21,10 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillTreeTopology;
 import exiledsector.skills.SkillType;
+import exiledsector.skills.layout.TreeTopology;
 import exiledsector.skills.progression.ShipOpBudget;
 import exiledsector.skills.template.AutoAllocateRun;
+import exiledsector.skills.template.AutoAllocateSetting;
 import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.StepVerdict;
 import exiledsector.skills.template.TemplateAnchors;
@@ -31,17 +33,19 @@ import exiledsector.skills.template.TemplateCapture;
 import exiledsector.skills.template.TemplateStep;
 import exiledsector.skills.unlock.NodeGates;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
-import exiledsector.items.SocketCustody;
+import exiledsector.items.custody.SocketCustody;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
-import exiledsector.items.Subroutine;
-import exiledsector.items.SubroutineKind;
-import exiledsector.items.SubroutineRadius;
-import exiledsector.items.SubroutineSocketLimits;
-import exiledsector.items.NodeGrantLinks;
-import exiledsector.items.WormholeAnchor;
-import exiledsector.items.WormholeAnchorLinks;
-import exiledsector.items.WormholeAnchorSocketLimits;
+import exiledsector.items.subroutine.Subroutine;
+import exiledsector.items.subroutine.SubroutineKind;
+import exiledsector.items.subroutine.SubroutineRadius;
+import exiledsector.items.subroutine.SubroutineSocketLimits;
+import exiledsector.items.subroutine.NodeGrantLinks;
+import exiledsector.items.subroutine.doctrine.DoctrineLayer;
+import exiledsector.items.subroutine.doctrine.DoctrineOverrides;
+import exiledsector.items.anchor.WormholeAnchor;
+import exiledsector.items.anchor.WormholeAnchorLinks;
+import exiledsector.items.anchor.WormholeAnchorSocketLimits;
 import exiledsector.items.UseVerdict;
 import exiledsector.ui.SkillTreeSounds;
 import lunalib.lunaRefit.BaseRefitButton;
@@ -75,6 +79,7 @@ public final class TreeAllocationSession {
     private final IntegrationHold integrationHold = new IntegrationHold();
     private final IntegrationHold integrationMarkHold = new IntegrationHold(IntegrationHold.MARK_HOLD_SECONDS);
     private final Random pathRandom = new Random();
+    private final DoctrineRemovalWarningCache doctrineRemovalWarnings = new DoctrineRemovalWarningCache(this::buildDoctrineRemovalWarning);
 
     private TreeFeedback feedback = TreeFeedback.NONE;
     private StartingRootChoice rootChoice;
@@ -94,7 +99,8 @@ public final class TreeAllocationSession {
         this.nodeSearch = nodeSearch;
         this.rootChoice = initialRootChoice(ShipSkillDataManager.get(member.getId()));
         this.allocator = new NodeAllocator(member, variant, () -> rootChoice.rootForAllocation());
-        this.stepExecutor = new TemplateStepExecutor(allocator, this::snapshot, node -> settleAllocation());
+        this.stepExecutor = new TemplateStepExecutor(allocator, this::snapshot, node -> settleAllocation(),
+                AutoAllocateSetting::freeAllocationsOnly);
         this.attemptStep = stepExecutor::attempt;
         this.pointsLeftCheck = stepExecutor::hasPointsLeft;
         this.planner = new TemplatePlanner(allocator, this::snapshot);
@@ -202,6 +208,10 @@ public final class TreeAllocationSession {
         return rootChoice.phase() == StartingRootChoice.Phase.FLYING;
     }
 
+    public void hurryStartingRootFlight() {
+        rootChoice.hurryFlight();
+    }
+
     public float startingRootCameraProgress() {
         return rootChoice.cameraProgress();
     }
@@ -262,12 +272,16 @@ public final class TreeAllocationSession {
         return ShipTreeLinks.wormholePartner(allocator.data(), node);
     }
 
-    public List<SkillTreeTopology.WormholePair> wormholePairs() {
+    public List<TreeTopology.WormholePair<SkillNode>> wormholePairs() {
         return ShipTreeLinks.wormholePairs(viewSnapshot().skillData(), SkillTree.topology());
     }
 
     public Item socketedItem(SkillNode node) {
         return node == null ? null : ItemStore.lookup(allocator.data().getSocketedItem(node.getId()));
+    }
+
+    public DoctrineLayer doctrineLayer() {
+        return DoctrineOverrides.layer(allocator.data());
     }
 
     public SubroutineRadius.Footprint socketedRadiusFootprint() {
@@ -281,6 +295,10 @@ public final class TreeAllocationSession {
     }
 
     public String doctrineRemovalWarning(SkillNode socket) {
+        return doctrineRemovalWarnings.warningFor(socket, snapshot());
+    }
+
+    private String buildDoctrineRemovalWarning(SkillNode socket) {
         List<String> lostHullModNames = allocator.hullModNamesLostOnDoctrineRemoval(socket);
         return lostHullModNames.isEmpty() ? null
                 : Translation.msg("socketable.doctrine.revertConflict").arg("hullMods", String.join(", ", lostHullModNames)).text();

@@ -6,10 +6,10 @@ import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.intel.PersonBountyIntel;
-import exiledsector.items.FactionFleetDrops;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
-import exiledsector.items.WormholeAnchorDefinitions;
+import exiledsector.items.anchor.WormholeAnchorDefinitions;
+import exiledsector.items.drop.FactionFleetDrops;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.BattleLoot;
 

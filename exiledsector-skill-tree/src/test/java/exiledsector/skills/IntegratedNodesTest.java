@@ -6,15 +6,19 @@ import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static exiledsector.skills.TestTrees.node;
+import static exiledsector.skills.TestTrees.type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class IntegratedNodesTest {
 
     private static final SkillTypeEffect NORMAL_HULL = new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f);
@@ -27,26 +31,18 @@ class IntegratedNodesTest {
     @BeforeEach
     void setUp() {
         mockSector = new MockSector();
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
-        SkillType integrable = new SkillType.Builder("bulkheads", "Bulkheads", "a.png", SkillTier.NOTABLE)
+        notable = node("bulkheads_1", type("bulkheads", SkillTier.NOTABLE)
                 .effects(List.of(NORMAL_HULL))
                 .integratedEffects(new IntegratedEffects(List.of(INTEGRATED_HULL),
                         List.of(new HullSizeSkillEffect(DefenseSkillEffect.ARMOR_FLAT, 0f, 0f, 50f, 100f))))
-                .build();
-        SkillType ordinary = new SkillType.Builder("hull", "Hull", "a.png", SkillTier.SMALL).effects(List.of(NORMAL_HULL)).build();
-        notable = new SkillNode("bulkheads_1", integrable, List.of(), 0f, 0f);
-        plain = new SkillNode("hull_1", ordinary, List.of(), 0f, 0f);
-        SkillTree.register(notable);
-        SkillTree.register(plain);
+                .build());
+        plain = node("hull_1", type("hull", SkillTier.SMALL).effects(List.of(NORMAL_HULL)).build());
     }
 
     @AfterEach
     void tearDown() {
         IntegrationCostSetting.setModeForTests(IntegrationCostSetting.Mode.EXPONENTIAL);
         mockSector.close();
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
     }
 
     private ShipSkillData withNotable() {

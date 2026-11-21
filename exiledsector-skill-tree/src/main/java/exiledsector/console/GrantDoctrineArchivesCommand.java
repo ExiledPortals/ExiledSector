@@ -1,10 +1,10 @@
 package exiledsector.console;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import exiledsector.items.DoctrineArchives;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
-import exiledsector.items.SubroutineKind;
+import exiledsector.items.subroutine.SubroutineKind;
+import exiledsector.items.subroutine.doctrine.DoctrineArchives;
 import org.lazywizard.console.Console;
 
 import java.util.List;

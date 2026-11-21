@@ -1,0 +1,152 @@
+package exiledsector.items.modifier;
+
+import exiledsector.modifiers.Modifier;
+import exiledsector.modifiers.ModifierCategory;
+import exiledsector.modifiers.ModifierLine;
+import exiledsector.modifiers.ModifierSlot;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
+import java.util.function.Function;
+import java.util.function.UnaryOperator;
+
+public final class RolledModifier {
+
+    private final String modifierId;
+    private final ModifierSlot slot;
+    private final List<RolledLine> lines;
+    private final boolean immutable;
+    private final boolean overcharged;
+    private final boolean warped;
+
+    public RolledModifier(String modifierId, ModifierSlot slot, List<RolledLine> lines) {
+        this(modifierId, slot, lines, ModifierFlags.NONE);
+    }
+
+    public RolledModifier(String modifierId, ModifierSlot slot, List<RolledLine> lines, ModifierFlags flags) {
+        this.modifierId = modifierId;
+        this.slot = slot;
+        this.lines = new ArrayList<>(lines);
+        this.immutable = flags.immutable();
+        this.overcharged = flags.overcharged();
+        this.warped = flags.warped();
+    }
+
+    public static RolledModifier single(ModifierSlot slot, RolledLine line) {
+        return new RolledModifier(line.effectName(), slot, List.of(line));
+    }
+
+    public static RolledModifier roll(Modifier modifier, Random random) {
+        List<RolledLine> rolledLines = new ArrayList<>(modifier.lines().size());
+        for (ModifierLine line : modifier.lines()) {
+            rolledLines.add(new RolledLine(line.effectName(), line.roll(random)));
+        }
+        return new RolledModifier(modifier.id(), modifier.slot(), rolledLines);
+    }
+
+    public static List<RolledLine> lines(List<RolledModifier> modifiers) {
+        List<RolledLine> flattened = new ArrayList<>();
+        modifiers.forEach(modifier -> flattened.addAll(modifier.lines()));
+        return flattened;
+    }
+
+    private Object readResolve() {
+        String currentId = RolledLine.currentName(modifierId);
+        return Objects.equals(currentId, modifierId) ? this : withModifierId(currentId);
+    }
+
+    public String modifierId() {
+        return modifierId;
+    }
+
+    public ModifierSlot slot() {
+        return slot;
+    }
+
+    public ModifierCategory category() {
+        return slot.category();
+    }
+
+    public List<RolledLine> lines() {
+        return lines == null ? List.of() : Collections.unmodifiableList(lines);
+    }
+
+    public ModifierFlags flags() {
+        return new ModifierFlags(immutable, overcharged, warped);
+    }
+
+    public boolean immutable() {
+        return immutable;
+    }
+
+    public RolledModifier asImmutable() {
+        return withFlags(flags().asImmutable());
+    }
+
+    public boolean overcharged() {
+        return overcharged;
+    }
+
+    public RolledModifier overchargedWith(List<RolledLine> overchargedLines) {
+        return new RolledModifier(modifierId, slot, overchargedLines, flags().asOvercharged());
+    }
+
+    public boolean warped() {
+        return warped;
+    }
+
+    public RolledModifier asWarped() {
+        return withFlags(flags().asWarped());
+    }
+
+    public RolledModifier withModifierId(String currentId) {
+        return new RolledModifier(currentId, slot, lines(), flags());
+    }
+
+    public boolean isHybrid() {
+        return lines().size() > 1;
+    }
+
+    public RolledModifier withLines(List<RolledLine> replacementLines) {
+        return new RolledModifier(modifierId, slot, replacementLines, flags());
+    }
+
+    private RolledModifier withFlags(ModifierFlags changedFlags) {
+        return new RolledModifier(modifierId, slot, lines(), changedFlags);
+    }
+
+    public RolledModifier mapLines(UnaryOperator<RolledLine> lineMapper) {
+        List<RolledLine> mappedLines = new ArrayList<>(lines.size());
+        for (RolledLine line : lines) {
+            mappedLines.add(lineMapper.apply(line));
+        }
+        return withLines(mappedLines);
+    }
+
+    public RolledModifier rerolled(Function<String, ModifierLine> lineDefinitions, Random random) {
+        RolledModifier rerolled = mapLines(line -> {
+            ModifierLine lineDefinition = lineDefinitions.apply(line.effectName());
+            return lineDefinition == null ? line : new RolledLine(line.effectName(), lineDefinition.roll(random));
+        });
+        return rerolled.withFlags(flags().withoutOvercharge());
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof RolledModifier rolled && Objects.equals(modifierId, rolled.modifierId) && slot == rolled.slot
+                && lines().equals(rolled.lines()) && flags().equals(rolled.flags());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(modifierId, slot, lines(), flags());
+    }
+
+    @Override
+    public String toString() {
+        return slot + " " + modifierId + lines();
+    }
+}

@@ -1,40 +1,82 @@
 package exiledsector.charts.anomaly.excavation;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledsector.charts.anomaly.AnomalyLoot;
-import exiledsector.charts.generation.ChartGenContext;
-import exiledsector.charts.loot.DropType;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import exiledsector.charts.anomaly.SettlingDust;
+import exiledsector.charts.loot.ChartCraftingPools;
+import exiledsector.charts.loot.ChartLootContext;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.items.ItemDrops;
+import exiledsector.items.crafting.material.Engram;
+import exiledsector.items.crafting.material.Engrams;
+import exiledsector.items.crafting.material.MaterialItems;
+import exiledsector.loot.DropType;
+import exiledsector.loot.Loot;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public final class ExcavationLoot {
 
-    static final AnomalyLoot LOOT = new AnomalyLoot(ExcavationRules.LOOT_SCOPE, ExcavationRules.LOOT_SITE, ExcavationRules.LOOT_STEPS,
-            ExcavationRules.LOOT_STEPS_PER_TIER, ExcavationRules.ITEM_MULT, ExcavationSites.LOOT_KEY, ExcavationRules.LEAN_PERCENT);
-
     private ExcavationLoot() {
     }
 
-    static List<DropType> leaning(DropType lean) {
-        return lean == null ? List.of() : List.of(lean);
+    public static CargoAPI raidCargo(ChartRun run, float share, Random random) {
+        return raidCargo(run, share, 0f, random);
     }
 
-    public static CargoAPI raidCargo(SectorAPI sector, ChartRun run, ExcavationSite site, float share, Random random) {
-        return LOOT.roll(sector, run, leaning(site.lean()), share, random);
+    static CargoAPI raidCargo(ChartRun run, float share, float deliveryPercent, Random random) {
+        CargoAPI cargo = Global.getFactory().createCargo(true);
+        ChartLootContext loot = ChartLootContext.of(run);
+        ExcavationTuning tuning = ExcavationTuning.of(loot.effects());
+        float quantityPercent = ExcavationRules.inhibitorQuantityPercent(tuning, false, SettlingDust.stacks(run)) + deliveryPercent;
+        float expectedInhibitors = expectedInhibitors(ExcavationRules.raidInhibitors(tuning), loot, quantityPercent, share);
+        tagInhibitors(expectedInhibitors, loot, random).forEach((itemId, quantity) -> MaterialItems.add(cargo, itemId, quantity));
+        return cargo;
     }
 
-    public static void addToFleet(CampaignFleetAPI fleet, DropType lean, ChartGenContext runContext, int tier) {
-        LOOT.addVanillaDrops(fleet, runContext, leaning(lean), tier);
+    static float quantityMult(ChartLootContext loot, float extraSitePercent) {
+        return loot.quantityMult(DropType.INHIBITOR, loot.effects().anomalyPercent(ExcavationSites.LOOT_KEY) + extraSitePercent);
     }
 
-    public static ItemDrops.SiteLoot fleetItems(SectorAPI sector, CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, float share,
-                                                Random random) {
-        DropType lean = ExcavationFleets.leanOf(fleet);
-        return lean == null ? null : LOOT.fleetItems(sector, run, context, leaning(lean), share, random);
+    static float expectedInhibitors(float baseInhibitors, ChartLootContext loot, float extraSitePercent, float share) {
+        return Math.max(0f, baseInhibitors) * quantityMult(loot, extraSitePercent) * Math.max(0f, share);
+    }
+
+    static Map<String, Integer> tagInhibitors(float expectedCount, ChartLootContext loot, Random random) {
+        return loot.craftingSplit(ChartCraftingPools.TAG_INHIBITORS).roll(expectedCount, random);
+    }
+
+    public static Loot fleetItems(CampaignFleetAPI fleet, ChartLootContext loot, int dustStacks, float share, Random random) {
+        if (!ExcavationFleets.isExcavationFleet(fleet)) {
+            return Loot.NONE;
+        }
+        ExcavationTuning tuning = ExcavationTuning.of(loot.effects());
+        ExcavationGuardians guardians = ExcavationFleets.guardiansOf(fleet);
+        float quantityPercent = ExcavationRules.inhibitorQuantityPercent(tuning, true, dustStacks) + ExcavationDeliveries.lootPercent(fleet);
+        Map<String, Integer> found = new LinkedHashMap<>(tagInhibitors(
+                expectedInhibitors(ExcavationRules.guardianInhibitors(guardians, tuning), loot, quantityPercent, share), loot, random));
+        if (guardians.corrupted() && share > 0f) {
+            String engramId = engramOnce(fleet.getMemoryWithoutUpdate(), loot.tier(), random);
+            if (engramId != null) {
+                found.merge(engramId, 1, Integer::sum);
+            }
+        }
+        return found.isEmpty() ? Loot.NONE : new Loot(List.of(), List.of(), found);
+    }
+
+    static String engramOnce(MemoryAPI memory, int chartTier, Random random) {
+        if (memory == null || memory.getBoolean(ExcavationFleets.ENGRAM_DROPPED_KEY)) {
+            return null;
+        }
+        Engram engram = Engrams.pick(chartTier, random);
+        if (engram == null) {
+            return null;
+        }
+        memory.set(ExcavationFleets.ENGRAM_DROPPED_KEY, true);
+        return engram.itemId();
     }
 }

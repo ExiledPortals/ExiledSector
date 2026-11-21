@@ -3,7 +3,8 @@ package exiledsector.charts.anomaly.debris;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import exiledsector.charts.content.ChartContentPlanner;
 import exiledsector.charts.generation.ChartTier;
-import exiledsector.items.WeightedPick;
+import exiledsector.data.WeightedPick;
+import exiledsector.data.RandomRounding;
 
 import java.util.List;
 import java.util.Random;
@@ -15,12 +16,13 @@ public final class DebrisRules {
     static final float MIN_FIELD_RADIUS = 300f;
     static final float MAX_FIELD_RADIUS = 450f;
     static final float REVEAL_MARGIN = 600f;
-    static final float BOSS_SHARE = 1.1f;
+    static final float BOSS_SHARE = 0.5f;
     static final float CORRUPTED_SIZE_MULT = 1.5f;
     static final float CORRUPTED_QUALITY_PERCENT = 30f;
     static final int CORRUPTED_CORE_STEPS = 1;
     static final int CORRUPTED_STRENGTH_BONUS_PERCENT = 20;
-    static final float CRAFTING_ITEM_PER_FLEET = 1f;
+    static final int CRAFTING_ITEM_PER_FLEET = 1;
+    public static final int MOST_CORRUPTIONS = 2;
     static final float MAX_QUALITY = 1f;
     static final List<String> CORE_LEVELS = List.of(Commodities.GAMMA_CORE, Commodities.BETA_CORE, Commodities.ALPHA_CORE);
     static final List<CoreBand> CORE_BANDS = List.of(
@@ -38,6 +40,11 @@ public final class DebrisRules {
         return MIN_FIELDS + random.nextInt(MAX_FIELDS - MIN_FIELDS + 1) + Math.max(0, extraFields);
     }
 
+    public static int fieldCount(Random random, int extraFields, boolean singleField) {
+        int count = fieldCount(random, extraFields);
+        return singleField ? MIN_FIELDS : count;
+    }
+
     public static float fieldRadius(Random random) {
         return MIN_FIELD_RADIUS + random.nextFloat() * (MAX_FIELD_RADIUS - MIN_FIELD_RADIUS);
     }
@@ -50,21 +57,27 @@ public final class DebrisRules {
         return distance - Math.max(0f, fleetRadius) <= revealRange(fieldRadius);
     }
 
-    static float fleetSize(ChartTier adjustedTier, boolean corrupted) {
-        return Math.max(adjustedTier.bossSize(), adjustedTier.fleetSize()) * BOSS_SHARE * (corrupted ? CORRUPTED_SIZE_MULT : 1f);
+    static int corruptionSteps(int corruptions) {
+        return Math.max(0, Math.min(MOST_CORRUPTIONS, corruptions));
     }
 
-    public static float fleetPoints(ChartTier adjustedTier, boolean corrupted) {
-        return ChartTier.fleetPoints(Math.min(ChartContentPlanner.BOSS_SIZE_CAP, fleetSize(adjustedTier, corrupted)));
+    static float fleetSize(ChartTier adjustedTier, int corruptions, float increasedSizePercent) {
+        float increasedSize = Math.max(0f, 1f + increasedSizePercent / ChartTier.PERCENT);
+        return Math.max(adjustedTier.bossSize(), adjustedTier.fleetSize()) * BOSS_SHARE * (float) Math.pow(CORRUPTED_SIZE_MULT, corruptionSteps(corruptions))
+                * increasedSize;
     }
 
-    public static int strengthBonus(ChartTier adjustedTier, boolean corrupted) {
-        return ChartContentPlanner.overflowStrength(fleetSize(adjustedTier, corrupted), ChartContentPlanner.BOSS_SIZE_CAP)
-                + (corrupted ? CORRUPTED_STRENGTH_BONUS_PERCENT : 0);
+    public static float fleetPoints(ChartTier adjustedTier, int corruptions, float increasedSizePercent) {
+        return ChartTier.fleetPoints(Math.min(ChartContentPlanner.BOSS_SIZE_CAP, fleetSize(adjustedTier, corruptions, increasedSizePercent)));
     }
 
-    public static float quality(ChartTier adjustedTier, boolean corrupted) {
-        float percent = ChartContentPlanner.bossQuality(ChartContentPlanner.fleetQuality(adjustedTier)) + (corrupted ? CORRUPTED_QUALITY_PERCENT : 0f);
+    public static int strengthBonus(ChartTier adjustedTier, int corruptions, float increasedSizePercent) {
+        return ChartContentPlanner.overflowStrength(fleetSize(adjustedTier, corruptions, increasedSizePercent), ChartContentPlanner.BOSS_SIZE_CAP)
+                + corruptionSteps(corruptions) * CORRUPTED_STRENGTH_BONUS_PERCENT;
+    }
+
+    public static float quality(ChartTier adjustedTier, int corruptions) {
+        float percent = ChartContentPlanner.bossQuality(ChartContentPlanner.fleetQuality(adjustedTier)) + corruptionSteps(corruptions) * CORRUPTED_QUALITY_PERCENT;
         return Math.max(0f, Math.min(MAX_QUALITY, percent / ChartTier.PERCENT));
     }
 
@@ -78,10 +91,8 @@ public final class DebrisRules {
         return chosen;
     }
 
-    public static int craftingItemCount(float quantityMult, Random random) {
-        float expected = CRAFTING_ITEM_PER_FLEET * Math.max(0f, quantityMult);
-        int whole = (int) expected;
-        return whole + (random.nextFloat() < expected - whole ? 1 : 0);
+    public static int craftingItemCount(int engrams, float quantityMult, Random random) {
+        return RandomRounding.roundWithOneDraw(Math.max(0, engrams) * Math.max(0f, quantityMult), random);
     }
 
     public static int coreLevel(int tier, Random random) {
@@ -90,8 +101,8 @@ public final class DebrisRules {
         return WeightedPick.pick(levels, level -> weights.get(level), random);
     }
 
-    public static String coreId(int coreLevel, boolean corrupted) {
-        int level = Math.max(0, Math.min(CORE_LEVELS.size() - 1, coreLevel + (corrupted ? CORRUPTED_CORE_STEPS : 0)));
+    public static String coreId(int coreLevel, int corruptions) {
+        int level = Math.max(0, Math.min(CORE_LEVELS.size() - 1, coreLevel + corruptionSteps(corruptions) * CORRUPTED_CORE_STEPS));
         return CORE_LEVELS.get(level);
     }
 }

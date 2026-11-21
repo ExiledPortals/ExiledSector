@@ -25,13 +25,15 @@ import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.loading.VariantSource;
 import exiledsector.MockSector;
 import exiledsector.ExiledSector;
+import exiledsector.MockShips;
 import exiledsector.charts.ChartIds;
-import exiledsector.items.NpcItems;
-import exiledsector.items.MasterSchematic;
-import exiledsector.items.WormholeAnchorDefinitions;
-import exiledsector.items.WormholeAnchorLinks;
+import exiledsector.items.drop.NpcItems;
+import exiledsector.items.schematic.MasterSchematic;
+import exiledsector.items.anchor.WormholeAnchorDefinitions;
+import exiledsector.items.anchor.WormholeAnchorLinks;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AnchorLinks;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.ShipTrees;
@@ -39,7 +41,6 @@ import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
-import exiledsector.skills.SkillType;
 import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.npc.NpcFactionVolumes;
 import exiledsector.skills.npc.NpcLevelCaps;
@@ -54,6 +55,7 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -65,6 +67,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static exiledsector.skills.TestTrees.type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -75,6 +78,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class NpcFleetLevellerTest {
 
     private MockSector mockSector;
@@ -86,8 +90,6 @@ class NpcFleetLevellerTest {
     @BeforeEach
     void setUp() {
         SkillDataResolver.clearCache();
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
         SkillTree.register(new SkillNode("root_1", type("root", SkillTier.ROOT).build(), List.of(), 0f, 0f));
         SkillTree.register(new SkillNode("a_1", type("a", SkillTier.SMALL).build(), List.of("root_1"), 0f, 0f));
         SkillTree.register(new SkillNode("armor_1", type("heavyarmor", SkillTier.NOTABLE)
@@ -115,12 +117,6 @@ class NpcFleetLevellerTest {
         mockSector.close();
         NpcFactionVolumes.clear();
         SkillDataResolver.clearCache();
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
-    }
-
-    private static SkillType.Builder type(String id, SkillTier tier) {
-        return new SkillType.Builder(id, id, "a.png", tier);
     }
 
     private static ShipVariantAPI statefulVariant(Set<String> hullMods, List<String> tags) {
@@ -141,9 +137,7 @@ class NpcFleetLevellerTest {
     }
 
     private static FleetMemberAPI member(String id, ShipVariantAPI variant, boolean officered) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getId()).thenReturn(id);
-        when(member.getVariant()).thenReturn(variant);
+        FleetMemberAPI member = MockShips.member(id).variant(variant).build();
         ShipHullSpecAPI hullSpec = variant.getHullSpec();
         when(member.getHullSpec()).thenReturn(hullSpec);
         PersonAPI captain = mock(PersonAPI.class);
@@ -357,17 +351,6 @@ class NpcFleetLevellerTest {
     }
 
     @Test
-    void aTreeTaggedBeforeTheNpcRenameIsRetaggedWithTheCurrentPrefix() {
-        List<String> tags = new ArrayList<>(List.of("exiledSector_enemyTree|bulwark|2|root_1,a_1,armor_1"));
-        FleetMemberAPI officered = member("m1", statefulVariant(new LinkedHashSet<>(Set.of(SkillTreeHullMod.ID)), tags), true);
-
-        NpcFleetLeveller.ensure(fleetOf(officered));
-
-        assertEquals(List.of(NpcLevelCaps.TAG_PREFIX + "25"), tags.stream().filter(tag -> !tag.startsWith(NpcTreeTag.PREFIX)).toList());
-        assertEquals(1, tags.stream().filter(tag -> tag.startsWith(NpcTreeTag.PREFIX)).count());
-    }
-
-    @Test
     void yourShipsDetachedIntoATaskGroupKeepTheirOwnTreeAndHullMods() {
         Set<String> hullMods = new LinkedHashSet<>(List.of("heavyarmor", SkillTreeHullMod.ID));
         ShipVariantAPI yourVariant = statefulVariant(hullMods, new ArrayList<>());
@@ -448,6 +431,74 @@ class NpcFleetLevellerTest {
     }
 
     @Test
+    void theSweepSkipsAFleetWhoseMembersAndVariantsAreUnchanged() {
+        FleetMemberAPI near = member("near", statefulVariant(new LinkedHashSet<>(), new ArrayList<>()), true);
+        CampaignFleetAPI nearFleet = fleet("near-fleet", List.of(near), location, new Vector2f(100f, 0f));
+        when(location.getFleets()).thenReturn(List.of(nearFleet));
+        NpcFleetSweepScript script = new NpcFleetSweepScript();
+        script.advance(0f);
+        Mockito.clearInvocations(nearFleet.getMemoryWithoutUpdate());
+
+        script.advance(NpcFleetSweepScript.CHECK_INTERVAL_SECONDS);
+
+        Mockito.verify(nearFleet.getMemoryWithoutUpdate(), Mockito.never()).get(NpcTreeRecords.MEMORY_KEY);
+    }
+
+    @Test
+    void theSweepLevelsAMemberThatJoinedSinceTheLastSweep() {
+        FleetMemberAPI first = member("first", statefulVariant(new LinkedHashSet<>(), new ArrayList<>()), true);
+        List<FleetMemberAPI> members = new ArrayList<>(List.of(first));
+        CampaignFleetAPI nearFleet = fleet("near-fleet", members, location, new Vector2f(100f, 0f));
+        when(location.getFleets()).thenReturn(List.of(nearFleet));
+        NpcFleetSweepScript script = new NpcFleetSweepScript();
+        script.advance(0f);
+        FleetMemberAPI joined = member("joined", statefulVariant(new LinkedHashSet<>(), new ArrayList<>()), true);
+        members.add(joined);
+
+        script.advance(NpcFleetSweepScript.CHECK_INTERVAL_SECONDS);
+
+        assertNotNull(NpcTreeTag.find(joined.getVariant()));
+    }
+
+    @Test
+    void theSweepRetagsAMemberWhoseVariantWasSwappedOrStrippedOfItsTree() {
+        FleetMemberAPI near = member("near", statefulVariant(new LinkedHashSet<>(), new ArrayList<>()), true);
+        CampaignFleetAPI nearFleet = fleet("near-fleet", List.of(near), location, new Vector2f(100f, 0f));
+        when(location.getFleets()).thenReturn(List.of(nearFleet));
+        NpcFleetSweepScript script = new NpcFleetSweepScript();
+        script.advance(0f);
+        String treeTag = NpcTreeTag.find(near.getVariant());
+        ShipVariantAPI swappedVariant = statefulVariant(new LinkedHashSet<>(), new ArrayList<>());
+        when(near.getVariant()).thenReturn(swappedVariant);
+
+        script.advance(NpcFleetSweepScript.CHECK_INTERVAL_SECONDS);
+
+        assertEquals(treeTag, NpcTreeTag.find(swappedVariant));
+        NpcTreeTag.removeAll(swappedVariant);
+        swappedVariant.removeMod(SkillTreeHullMod.ID);
+
+        script.advance(NpcFleetSweepScript.CHECK_INTERVAL_SECONDS);
+
+        assertEquals(treeTag, NpcTreeTag.find(swappedVariant));
+    }
+
+    @Test
+    void theSweepLevelsAFleetOnceNpcTreesAreSwitchedBackOn() {
+        FleetMemberAPI near = member("near", statefulVariant(new LinkedHashSet<>(), new ArrayList<>()), true);
+        CampaignFleetAPI nearFleet = fleet("near-fleet", List.of(near), location, new Vector2f(100f, 0f));
+        when(location.getFleets()).thenReturn(List.of(nearFleet));
+        NpcFleetSweepScript script = new NpcFleetSweepScript();
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", NpcTreeConfig.ENABLED_FIELD_ID)).thenReturn(false);
+        script.advance(0f);
+        assertNull(NpcTreeTag.find(near.getVariant()));
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", NpcTreeConfig.ENABLED_FIELD_ID)).thenReturn(true);
+
+        script.advance(NpcFleetSweepScript.CHECK_INTERVAL_SECONDS);
+
+        assertNotNull(NpcTreeTag.find(near.getVariant()));
+    }
+
+    @Test
     void openingAnEncounterDialogWithAFleetLevelsTheFleetsAroundThePlayer() {
         FleetMemberAPI near = member("near", statefulVariant(new LinkedHashSet<>(), new ArrayList<>()), true);
         CampaignFleetAPI target = fleet("target", List.of(near), location, new Vector2f(50f, 0f));
@@ -493,7 +544,7 @@ class NpcFleetLevellerTest {
                 SkillNodeDecoration.NONE, List.of("hegemony")));
         NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"hegemony\", \"volume\": \"hegemony\"}]"));
         WormholeAnchorDefinitions.register(new JSONArray().put(new JSONObject().put("id", "wormhole_anchor_hegemony").put("volume", "hegemony")
-                .put("exit_node", "gate_far").put("name", "Hegemony Anchor").put("icon", "graphics/icons/nav_relay.png").put("rarity", "10")
+                .put("exit_node", "gate_far").put("name", "Hegemony Anchor").put("icon", "graphics/exiledSector/tree/base/nav_relay.png").put("rarity", "10")
                 .put("description", "Opens a wormhole.")));
         WormholeAnchorLinks.install();
         try {
@@ -545,7 +596,7 @@ class NpcFleetLevellerTest {
 
     @Test
     void aShipFittedWithConvertedHangarSwapsItForTheHangarNode() {
-        SkillTree.register(new SkillNode("hangar_1", type("hangar", SkillTier.KEYSTONE).tags(List.of("req_no_fighter_bays"))
+        SkillTree.register(new SkillNode("hangar_1", type("hangar", SkillTier.KEYSTONE).tags(List.of("req_no_strikecraft_bays"))
                 .exclusiveHullModIds(List.of("converted_hangar")).build(), List.of("root_1"), 0f, 0f));
         Set<String> hullMods = new LinkedHashSet<>(List.of("converted_hangar"));
         FleetMemberAPI officered = member("m1", statefulVariant(hullMods, new ArrayList<>()), true);

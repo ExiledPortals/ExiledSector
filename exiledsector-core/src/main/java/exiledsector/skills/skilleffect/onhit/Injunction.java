@@ -36,7 +36,7 @@ final class Injunction implements AdvanceableListener {
     }
 
     static float slowdownTimeMult(float slowdownPercent) {
-        return 1f + slowdownPercent / 100f;
+        return SkillEffectSupport.multFrom(slowdownPercent);
     }
 
     int stacks() {

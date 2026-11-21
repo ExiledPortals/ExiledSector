@@ -7,6 +7,8 @@ public enum Style {
     HULLMOD("hullmod"),
     NODE("node"),
     IMMUTABLE("immutable"),
+    OVERCHARGED("overcharged"),
+    WARPED("warped"),
     MUTED("muted"),
     BUILT_IN("builtIn");
 

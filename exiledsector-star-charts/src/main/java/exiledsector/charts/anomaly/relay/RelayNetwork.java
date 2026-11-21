@@ -25,6 +25,7 @@ import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.content.ChartSites;
 import exiledsector.charts.run.ChartRun;
+import exiledsector.loot.Loot;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ public final class RelayNetwork implements ContentPlacer, RunParticipant, LootSh
     public static final String STAGES_KEY = ChartModifier.CHART_RELAY_CHAIN_STAGES.anomalyTuningKey();
     public static final String RELAY_TAG = ChartIds.PREFIX + "relay";
     public static final String KIND_MEMORY_KEY = "$exiledSector_chartRelayKind";
+    public static final String SLOT_MEMORY_KEY = "$exiledSector_chartRelaySlot";
     public static final RelayNetwork INSTANCE = new RelayNetwork();
     static final long PLACEMENT_SALT = 0x52454c4159504cL;
 
@@ -89,8 +91,8 @@ public final class RelayNetwork implements ContentPlacer, RunParticipant, LootSh
     }
 
     @Override
-    public boolean holdsBackBossUnique(ChartRun run) {
-        return !RelayStates.allWoken(run);
+    public Loot bossDefeatedLoot(SectorAPI sector, ChartRun run) {
+        return RelayBossReward.bossReward(sector, run);
     }
 
     @Override
@@ -99,12 +101,11 @@ public final class RelayNetwork implements ContentPlacer, RunParticipant, LootSh
         Random random = site.random(PLACEMENT_SALT);
         List<SectorEntityToken> guarded = new ArrayList<>(site.guardedPois());
         Collections.shuffle(guarded, random);
-        List<RelayKind> kinds = new ArrayList<>(List.of(RelayKind.values()));
-        Collections.shuffle(kinds, random);
+        List<RelaySlot> slots = slots(site, random);
         Set<Integer> usedBands = new HashSet<>();
         List<Vector2f> placedAt = new ArrayList<>();
-        for (int slot = 0; slot < kinds.size(); slot++) {
-            RelayKind kind = kinds.get(slot);
+        for (int slotIndex = 0; slotIndex < slots.size(); slotIndex++) {
+            RelaySlot slot = slots.get(slotIndex);
             ChartSites.Orbit orbit = null;
             if (!guarded.isEmpty() && random.nextFloat() < RelayRules.GUARDED_CHANCE) {
                 SectorEntityToken poi = guarded.remove(0);
@@ -112,14 +113,26 @@ public final class RelayNetwork implements ContentPlacer, RunParticipant, LootSh
                         position -> clearOfRelays(position, placedAt), random);
             }
             if (orbit == null && centre != null) {
-                orbit = bandOrbit(site, centre, RelayRules.FIRST_HOME_BAND + slot, usedBands, placedAt, random);
+                orbit = bandOrbit(site, centre, RelayRules.FIRST_HOME_BAND + slotIndex, usedBands, placedAt, random);
             }
             if (orbit == null) {
-                throw new IllegalStateException("no clear orbit for the " + kind.key());
+                throw new IllegalStateException("no clear orbit for the " + slot.key());
             }
-            addRelay(site, kind, orbit);
+            addRelay(site, slot, orbit);
             placedAt.add(orbit.position());
         }
+    }
+
+    static List<RelaySlot> slots(AnomalyContentSite site, Random random) {
+        List<RelayKind> kinds = new ArrayList<>(List.of(RelayKind.values()));
+        Collections.shuffle(kinds, random);
+        List<RelaySlot> slots = new ArrayList<>(kinds.stream().map(RelaySlot::of).toList());
+        if (RelayTuning.extraRelays(site.context()) > 0) {
+            RelayKind extraKind = RelayKind.values()[random.nextInt(RelayKind.values().length)];
+            slots.add(RelaySlot.extraOf(extraKind));
+            RelayStates.recordExtraRelay(site.state(ANOMALY_ID), extraKind);
+        }
+        return slots;
     }
 
     static List<Integer> bandOrder(int homeBand) {
@@ -156,18 +169,20 @@ public final class RelayNetwork implements ContentPlacer, RunParticipant, LootSh
         return true;
     }
 
-    static SectorEntityToken addRelay(AnomalyContentSite site, RelayKind kind, ChartSites.Orbit orbit) {
-        SectorEntityToken relay = site.addEntity(relayId(site.runId(), kind), Translation.gameText("chart.anomaly.relay_network." + kind.key() + ".name"),
+    static SectorEntityToken addRelay(AnomalyContentSite site, RelaySlot slot, ChartSites.Orbit orbit) {
+        RelayKind kind = slot.kind();
+        SectorEntityToken relay = site.addEntity(relayId(site.runId(), slot), Translation.gameText("chart.anomaly.relay_network." + kind.key() + ".name"),
                 kind.entityType(), Factions.NEUTRAL, orbit);
         relay.addTag(RELAY_TAG);
         MemoryAPI memory = relay.getMemoryWithoutUpdate();
         memory.set(KIND_MEMORY_KEY, kind.key());
+        memory.set(SLOT_MEMORY_KEY, slot.key());
         memory.set(MemFlags.OBJECTIVE_NON_FUNCTIONAL, true);
         return relay;
     }
 
-    public static String relayId(String runId, RelayKind kind) {
-        return ChartIds.PREFIX + "relay_" + kind.key() + "_" + runId;
+    public static String relayId(String runId, RelaySlot slot) {
+        return ChartIds.PREFIX + "relay_" + slot.key() + "_" + runId;
     }
 
     public static boolean isRelay(SectorEntityToken entity) {

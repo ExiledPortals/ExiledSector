@@ -1,15 +1,19 @@
 package exiledsector.charts.atlas;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
+import exiledsector.charts.officer.AtlasOfficer;
+import exiledsector.charts.officer.reward.CarriedItem;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
@@ -24,25 +28,52 @@ public final class AtlasState implements AtlasMemory {
     public static final int INFESTATION_CLEARED = 8;
     public static final int ATTEMPTED = 16;
     public static final int LANES_REVEALED = 32;
+    public static final int MAX_ATLAS_SKILL_POINTS = 100;
+    public static final int FLAGSHIP_ROLL = 1;
+    public static final int ATLAS_LOADOUTS = 3;
     static final String FLAG_SEPARATOR = ",";
     private static final Random SEEDS = new Random();
+    private static final Set<String> REMOVED_ANOMALY_IDS = Set.of("powerful_boss", "asteroid_storm");
 
     private final long seed;
     private final int generatorVersion;
     private Map<Long, Integer> cellFlags = new HashMap<>();
     private Map<Long, String> siteRegions = new HashMap<>();
     private Map<Long, String> chunkUnlocks = new HashMap<>();
-    private Map<String, String> territoryFactions = new HashMap<>();
     private Set<Integer> clearedTiers = new HashSet<>();
     private Map<Integer, String> anomalyRecords = new TreeMap<>();
     private int nextAnomalyRecord;
-    private Map<Long, String> capturedSystems = new HashMap<>();
+    private Map<Long, Long> territoryClaims = new HashMap<>();
+    private Set<Long> decidedChunks = new HashSet<>();
+    private Map<Integer, String> officerRecords = new TreeMap<>();
+    private int lastOfficerRecordId;
+    private int officerTurn;
+    private int seenOfficerTurn;
+    private int otherBossKills;
+    private List<String> declaredIntents = new ArrayList<>();
+    private List<String> lastTurnResult = new ArrayList<>();
+    private List<String> leftBehindItems = new ArrayList<>();
+    private Map<String, Boolean> decidedContests = new HashMap<>();
+    private Set<String> contestsWithLoserBeatenByPlayer = new HashSet<>();
     private int atlasPoints;
+    private Set<String> atlasTreeNodeIds;
+    private List<TreeSet<String>> atlasTreeLoadouts = emptyLoadouts();
+    private int activeAtlasLoadout;
+    private List<String> treeEffectSnapshots = new ArrayList<>();
+    private Map<Long, Integer> revealSnapshots = new HashMap<>();
+    private Map<Long, Integer> completionSnapshots = new HashMap<>();
     private int keyFragments;
+    private int flagshipRoll;
+    private Set<String> activeCatalystIds = new LinkedHashSet<>();
+    private transient Map<Integer, AtlasOfficer> decodedOfficers;
+    private transient Map<Long, AtlasOfficer> activeOfficersByCentre;
+    private transient long fillFingerprint;
+    private transient List<AtlasEffects> decodedSnapshots;
 
     public AtlasState(long seed) {
         this.seed = seed;
         this.generatorVersion = AtlasGenerator.VERSION;
+        this.flagshipRoll = FLAGSHIP_ROLL;
     }
 
     public static AtlasState get(SectorAPI sector) {
@@ -69,19 +100,81 @@ public final class AtlasState implements AtlasMemory {
         if (chunkUnlocks == null) {
             chunkUnlocks = new HashMap<>();
         }
-        if (territoryFactions == null) {
-            territoryFactions = new HashMap<>();
-        }
         if (clearedTiers == null) {
             clearedTiers = new HashSet<>();
         }
         if (anomalyRecords == null) {
             anomalyRecords = new TreeMap<>();
         }
-        if (capturedSystems == null) {
-            capturedSystems = new HashMap<>();
+        anomalyRecords.entrySet().removeIf(entry -> isRemovedAnomaly(AtlasAnomalyRecord.decode(entry.getKey(), entry.getValue())));
+        if (territoryClaims == null) {
+            territoryClaims = new HashMap<>();
         }
+        if (decidedChunks == null) {
+            decidedChunks = new HashSet<>();
+        }
+        if (officerRecords == null) {
+            officerRecords = new TreeMap<>();
+        }
+        if (declaredIntents == null) {
+            declaredIntents = new ArrayList<>();
+        }
+        if (lastTurnResult == null) {
+            lastTurnResult = new ArrayList<>();
+        }
+        if (leftBehindItems == null) {
+            leftBehindItems = new ArrayList<>();
+        }
+        if (decidedContests == null) {
+            decidedContests = new HashMap<>();
+        }
+        if (contestsWithLoserBeatenByPlayer == null) {
+            contestsWithLoserBeatenByPlayer = new HashSet<>();
+        }
+        repairLoadouts();
+        if (treeEffectSnapshots == null) {
+            treeEffectSnapshots = new ArrayList<>();
+        }
+        if (revealSnapshots == null) {
+            revealSnapshots = new HashMap<>();
+        }
+        if (completionSnapshots == null) {
+            completionSnapshots = new HashMap<>();
+        }
+        if (activeCatalystIds == null) {
+            activeCatalystIds = new LinkedHashSet<>();
+        }
+        atlasPoints = Math.min(MAX_ATLAS_SKILL_POINTS, atlasPoints);
         return this;
+    }
+
+    private static List<TreeSet<String>> emptyLoadouts() {
+        List<TreeSet<String>> loadouts = new ArrayList<>();
+        for (int loadout = 0; loadout < ATLAS_LOADOUTS; loadout++) {
+            loadouts.add(new TreeSet<>());
+        }
+        return loadouts;
+    }
+
+    private void repairLoadouts() {
+        if (atlasTreeLoadouts == null) {
+            atlasTreeLoadouts = emptyLoadouts();
+        }
+        atlasTreeLoadouts.replaceAll(loadout -> loadout == null ? new TreeSet<>() : loadout);
+        while (atlasTreeLoadouts.size() < ATLAS_LOADOUTS) {
+            atlasTreeLoadouts.add(new TreeSet<>());
+        }
+        if (atlasTreeNodeIds != null) {
+            atlasTreeLoadouts.get(0).addAll(atlasTreeNodeIds);
+            atlasTreeNodeIds = null;
+        }
+        if (activeAtlasLoadout < 0 || activeAtlasLoadout >= ATLAS_LOADOUTS) {
+            activeAtlasLoadout = 0;
+        }
+    }
+
+    private static boolean isRemovedAnomaly(AtlasAnomalyRecord record) {
+        return record != null && REMOVED_ANOMALY_IDS.contains(record.anomalyId());
     }
 
     public long seed() {
@@ -142,11 +235,25 @@ public final class AtlasState implements AtlasMemory {
     }
 
     @Override
-    public String recordedFaction(String territoryKey) {
-        return territoryFactions.get(territoryKey);
+    public String claimedFaction(AtlasCell cell) {
+        AtlasOfficer holder = holderOf(cell);
+        return holder == null ? null : holder.factionId();
+    }
+
+    @Override
+    public String territoryAt(AtlasCell cell) {
+        AtlasOfficer holder = holderOf(cell);
+        return holder == null ? null : TerritoryFactions.territoryId(holder.factionId(), holder.commandCentre());
+    }
+
+    private AtlasOfficer holderOf(AtlasCell cell) {
+        Long centre = territoryClaims.get(cell.pack());
+        return centre == null ? null : activeOfficersByCentre().get(centre);
     }
 
     public void recordReveal(AtlasGenerator generator, Collection<AtlasCell> revealed) {
+        recordSnapshots(revealSnapshots, revealed, generator.effects());
+        recordSnapshots(completionSnapshots, completedCells(), generator.effects());
         String flags = String.join(FLAG_SEPARATOR, new TreeSet<>(generator.unlockFlags()));
         for (AtlasCell cell : revealed) {
             for (AtlasBiome biome : generator.biomeContenders(cell)) {
@@ -160,7 +267,6 @@ public final class AtlasState implements AtlasMemory {
                 }
             }
         }
-        generator.factionDecisions(revealed).forEach(territoryFactions::putIfAbsent);
     }
 
     private void recordChunkSites(AtlasGenerator generator, int chunkX, int chunkY) {
@@ -176,11 +282,7 @@ public final class AtlasState implements AtlasMemory {
     }
 
     public boolean clearTier(int tier) {
-        if (!clearedTiers.add(tier)) {
-            return false;
-        }
-        atlasPoints++;
-        return true;
+        return clearedTiers.add(tier);
     }
 
     public Set<Integer> clearedTiers() {
@@ -188,11 +290,97 @@ public final class AtlasState implements AtlasMemory {
     }
 
     public void addAtlasPoints(int points) {
-        atlasPoints += Math.max(0, points);
+        atlasPoints = Math.min(MAX_ATLAS_SKILL_POINTS, atlasPoints + Math.max(0, points));
     }
 
     public int atlasPoints() {
         return atlasPoints;
+    }
+
+    public Set<String> atlasTreeNodeIds() {
+        return atlasTreeNodeIds(activeAtlasLoadout);
+    }
+
+    public Set<String> atlasTreeNodeIds(int loadout) {
+        return Collections.unmodifiableSet(atlasTreeLoadouts.get(loadout));
+    }
+
+    public void setAtlasTreeNodeIds(Collection<String> nodeIds) {
+        atlasTreeLoadouts.set(activeAtlasLoadout, new TreeSet<>(nodeIds));
+    }
+
+    public int activeAtlasLoadout() {
+        return activeAtlasLoadout;
+    }
+
+    public boolean selectAtlasLoadout(int loadout) {
+        if (loadout < 0 || loadout >= ATLAS_LOADOUTS || loadout == activeAtlasLoadout) {
+            return false;
+        }
+        activeAtlasLoadout = loadout;
+        return true;
+    }
+
+    @Override
+    public AtlasEffects revealedWith(AtlasCell cell) {
+        return snapshot(revealSnapshots.get(cell.pack()));
+    }
+
+    public AtlasEffects completedWith(AtlasCell cell) {
+        return snapshot(completionSnapshots.get(cell.pack()));
+    }
+
+    public void recordSighting(AtlasGenerator generator, Collection<AtlasCell> sighted) {
+        recordSnapshots(revealSnapshots, sighted, generator.effects());
+    }
+
+    public void recordCompletion(AtlasCell cell, AtlasEffects treeEffects) {
+        recordSnapshots(completionSnapshots, List.of(cell), treeEffects);
+    }
+
+    private void recordSnapshots(Map<Long, Integer> snapshots, Collection<AtlasCell> cells, AtlasEffects treeEffects) {
+        Integer snapshotIndex = null;
+        for (AtlasCell cell : cells) {
+            if (!snapshots.containsKey(cell.pack())) {
+                if (snapshotIndex == null) {
+                    snapshotIndex = snapshotIndex(treeEffects);
+                }
+                snapshots.put(cell.pack(), snapshotIndex);
+            }
+        }
+    }
+
+    private int snapshotIndex(AtlasEffects treeEffects) {
+        String encoded = treeEffects.encode();
+        int existing = treeEffectSnapshots.indexOf(encoded);
+        if (existing >= 0) {
+            return existing;
+        }
+        treeEffectSnapshots.add(encoded);
+        decodedSnapshots = null;
+        return treeEffectSnapshots.size() - 1;
+    }
+
+    private AtlasEffects snapshot(Integer snapshotIndex) {
+        if (snapshotIndex == null || snapshotIndex < 0 || snapshotIndex >= treeEffectSnapshots.size()) {
+            return null;
+        }
+        if (decodedSnapshots == null) {
+            decodedSnapshots = treeEffectSnapshots.stream().map(AtlasEffects::decode).toList();
+        }
+        return decodedSnapshots.get(snapshotIndex);
+    }
+
+    public List<String> activeCatalystIds() {
+        return List.copyOf(activeCatalystIds);
+    }
+
+    public boolean isCatalystOn(String itemId) {
+        return activeCatalystIds.contains(itemId);
+    }
+
+    public boolean setCatalystOn(String itemId, boolean on) {
+        return on ? activeCatalystIds.add(itemId) : activeCatalystIds.remove(itemId);
     }
 
     public void addKeyFragment() {
@@ -262,25 +450,214 @@ public final class AtlasState implements AtlasMemory {
         anomalyRecords(cell).stream().filter(record -> record.chain() == null).forEach(record -> anomalyRecords.remove(record.recordId()));
     }
 
-    public String capturedBy(AtlasCell cell) {
-        return capturedSystems.get(cell.pack());
+    public List<AtlasOfficer> officers() {
+        return List.copyOf(decodedOfficers().values());
     }
 
-    public Map<AtlasCell, String> captures() {
-        Map<AtlasCell, String> captures = new LinkedHashMap<>();
-        new TreeMap<>(capturedSystems).forEach((packed, factionId) -> captures.put(AtlasCell.unpack(packed), factionId));
-        return captures;
+    public AtlasOfficer officer(int recordId) {
+        return decodedOfficers().get(recordId);
     }
 
-    public void capture(AtlasGenerator generator, AtlasCell cell, String factionId) {
-        if (factionId.equals(generator.factionAt(cell))) {
-            capturedSystems.remove(cell.pack());
+    public AtlasOfficer officerAt(AtlasCell commandCentre) {
+        return activeOfficersByCentre().get(commandCentre.pack());
+    }
+
+    public void putOfficer(AtlasOfficer officer) {
+        officerRecords.put(officer.recordId(), officer.encode());
+        lastOfficerRecordId = Math.max(lastOfficerRecordId, officer.recordId());
+        forgetDecodedOfficers();
+    }
+
+    public boolean removeOfficer(int recordId) {
+        boolean removed = officerRecords.remove(recordId) != null;
+        forgetDecodedOfficers();
+        return removed;
+    }
+
+    public int newOfficerRecordId() {
+        int highestHeld = officerRecords.keySet().stream().mapToInt(Integer::intValue).max().orElse(0);
+        lastOfficerRecordId = Math.max(lastOfficerRecordId, highestHeld) + 1;
+        return lastOfficerRecordId;
+    }
+
+    public int flagshipRoll() {
+        return flagshipRoll;
+    }
+
+    void setFlagshipRoll(int roll) {
+        flagshipRoll = roll;
+    }
+
+    public int officerTurn() {
+        return officerTurn;
+    }
+
+    public int advanceOfficerTurn() {
+        return ++officerTurn;
+    }
+
+    public int seenOfficerTurn() {
+        return seenOfficerTurn;
+    }
+
+    public void markOfficerTurnSeen() {
+        seenOfficerTurn = officerTurn;
+    }
+
+    public void markOfficerTurnUnseen() {
+        seenOfficerTurn = Math.min(seenOfficerTurn, officerTurn - 1);
+    }
+
+    public void leaveBehind(List<CarriedItem> items) {
+        List<CarriedItem> joined = CarriedItem.joined(leftBehind(), items);
+        leftBehindItems = new ArrayList<>(joined.stream().map(CarriedItem::toToken).toList());
+    }
+
+    public List<CarriedItem> leftBehind() {
+        return leftBehindItems.stream().map(CarriedItem::fromToken).filter(Objects::nonNull).toList();
+    }
+
+    public AtlasOfficer withLeftBehindItems(AtlasOfficer newcomer) {
+        if (leftBehindItems.isEmpty()) {
+            return newcomer;
+        }
+        AtlasOfficer carrying = newcomer.withCarried(CarriedItem.joined(newcomer.carried(), leftBehind()));
+        leftBehindItems = new ArrayList<>();
+        return carrying;
+    }
+
+    public int otherBossKills() {
+        return otherBossKills;
+    }
+
+    public int addOtherBossKill() {
+        return ++otherBossKills;
+    }
+
+    public void clearOtherBossKills() {
+        otherBossKills = 0;
+    }
+
+    public List<String> declaredIntents() {
+        return List.copyOf(declaredIntents);
+    }
+
+    public void setDeclaredIntents(List<String> intentLines) {
+        declaredIntents = new ArrayList<>(intentLines);
+    }
+
+    public Boolean decidedContest(String intentLine) {
+        return decidedContests.get(intentLine);
+    }
+
+    public void decideContest(String intentLine, boolean attackerWins) {
+        decideContest(intentLine, attackerWins, false);
+    }
+
+    public void decideContest(String intentLine, boolean attackerWins, boolean loserBeatenByPlayer) {
+        decidedContests.put(intentLine, attackerWins);
+        if (loserBeatenByPlayer) {
+            contestsWithLoserBeatenByPlayer.add(intentLine);
         } else {
-            capturedSystems.put(cell.pack(), factionId);
+            contestsWithLoserBeatenByPlayer.remove(intentLine);
         }
     }
 
+    public boolean contestLoserBeatenByPlayer(String intentLine) {
+        return contestsWithLoserBeatenByPlayer.contains(intentLine);
+    }
+
+    public void clearDecidedContests() {
+        decidedContests.clear();
+        contestsWithLoserBeatenByPlayer.clear();
+    }
+
+    public List<String> lastTurnResult() {
+        return List.copyOf(lastTurnResult);
+    }
+
+    public void setLastTurnResult(List<String> resultLines) {
+        lastTurnResult = new ArrayList<>(resultLines);
+    }
+
+    private Map<Integer, AtlasOfficer> decodedOfficers() {
+        if (decodedOfficers == null) {
+            Map<Integer, AtlasOfficer> decoded = new LinkedHashMap<>();
+            officerRecords.forEach((recordId, text) -> {
+                AtlasOfficer officer = AtlasOfficer.decode(recordId, text);
+                if (officer != null) {
+                    decoded.put(recordId, officer);
+                }
+            });
+            decodedOfficers = decoded;
+        }
+        return decodedOfficers;
+    }
+
+    private Map<Long, AtlasOfficer> activeOfficersByCentre() {
+        if (activeOfficersByCentre == null) {
+            Map<Long, AtlasOfficer> byCentre = new HashMap<>();
+            for (AtlasOfficer officer : decodedOfficers().values()) {
+                if (officer.isActive()) {
+                    byCentre.putIfAbsent(officer.commandCentre().pack(), officer);
+                }
+            }
+            activeOfficersByCentre = byCentre;
+        }
+        return activeOfficersByCentre;
+    }
+
+    private void forgetDecodedOfficers() {
+        decodedOfficers = null;
+        activeOfficersByCentre = null;
+    }
+
+    public AtlasCell commandCentreOf(AtlasCell cell) {
+        AtlasOfficer holder = holderOf(cell);
+        return holder == null ? null : holder.commandCentre();
+    }
+
+    public boolean isClaimed(AtlasCell cell) {
+        return holderOf(cell) != null;
+    }
+
+    public void claim(AtlasCell cell, AtlasCell commandCentre) {
+        territoryClaims.put(cell.pack(), commandCentre.pack());
+    }
+
     public boolean release(AtlasCell cell) {
-        return capturedSystems.remove(cell.pack()) != null;
+        return territoryClaims.remove(cell.pack()) != null;
+    }
+
+    public Set<AtlasCell> claimsOf(AtlasCell commandCentre) {
+        Set<AtlasCell> claims = new LinkedHashSet<>();
+        new TreeMap<>(territoryClaims).forEach((packed, centre) -> {
+            if (centre == commandCentre.pack()) {
+                claims.add(AtlasCell.unpack(packed));
+            }
+        });
+        return claims;
+    }
+
+    public Map<AtlasCell, AtlasCell> claims() {
+        Map<AtlasCell, AtlasCell> claims = new LinkedHashMap<>();
+        new TreeMap<>(territoryClaims).forEach((packed, centre) -> claims.put(AtlasCell.unpack(packed), AtlasCell.unpack(centre)));
+        return claims;
+    }
+
+    public void breakUp(AtlasCell commandCentre) {
+        territoryClaims.values().removeIf(centre -> centre == commandCentre.pack());
+    }
+
+    boolean decideChunk(long chunkKey) {
+        return decidedChunks.add(chunkKey);
+    }
+
+    boolean fillFingerprintChanged(long fingerprint) {
+        if (fingerprint == fillFingerprint) {
+            return false;
+        }
+        fillFingerprint = fingerprint;
+        return true;
     }
 }

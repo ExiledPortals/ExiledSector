@@ -4,7 +4,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.TextWrapper;
 import exiledsector.i18n.Translation;
-import exiledsector.items.HullUpgradesSetting;
+import exiledsector.items.hull.HullUpgradesSetting;
 import exiledsector.ui.refit.RefitScreenLayout;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.TextFont;

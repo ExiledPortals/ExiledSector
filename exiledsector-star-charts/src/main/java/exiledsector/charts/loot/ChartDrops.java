@@ -2,53 +2,36 @@ package exiledsector.charts.loot;
 
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
-import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
-import exiledsector.data.EnumKeys;
-import exiledsector.charts.atlas.AtlasCatalysts;
-import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
-import exiledsector.charts.run.ChartRun;
-import exiledsector.charts.run.ChartRunEffects;
-import exiledsector.charts.run.ChartRuns;
-import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.StarChartSettings;
-import exiledsector.data.CsvRows;
-import exiledsector.ModCsv;
-import exiledsector.items.CraftingMaterialFamilies;
+import exiledsector.charts.atlas.AtlasCatalysts;
+import exiledsector.charts.generation.ChartTiers;
+import exiledsector.charts.run.ChartRun;
+import exiledsector.charts.run.ChartRuns;
+import exiledsector.data.EnumKeys;
+import exiledsector.data.RandomRounding;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemTypes;
-import exiledsector.items.WeightedPick;
-import exiledsector.loot.LootSources;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
+import exiledsector.items.drop.DroppableDefinitions;
+import exiledsector.items.modifier.ItemRoll;
+import exiledsector.loot.FleetDifficulties;
+import exiledsector.loot.Loot;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
 public final class ChartDrops {
 
-    static final String PATH = "data/config/exiledSector/chart_drops.csv";
-    static final String SOURCE_COLUMN = "source";
     static final int NO_TIER = 0;
     static final float BATTLE_DEPLOYMENT_POINTS_PER_CHANCE = 100f;
-    static final List<String> TIER_OFFSET_COLUMNS = List.of("minus_2", "minus_1", "same_tier", "plus_1", "plus_2");
-    static final int LOWEST_TIER_OFFSET = -2;
-    static final List<Float> SAME_TIER_ONLY = List.of(0f, 0f, 1f, 0f, 0f);
-    private static final Logger LOG = Logger.getLogger(ChartDrops.class);
-    private static volatile Map<Source, Rule> rules = Map.of();
 
     public enum Source {
-        RUN_REWARD(true),
         SYSTEM_SALVAGE(true),
         CHART_FLEET(true),
         CHART_BOSS(true),
@@ -76,190 +59,119 @@ public final class ChartDrops {
         }
     }
 
-    record Rule(float chance, float extraChance, List<Float> tierWeights, float craftingItemChance, float catalystChance, float minDefeatedDp,
-                float defeatedDpPerTier, int maxTier) {
-
-        Rule {
-            chance = Math.max(0f, chance);
-            extraChance = Math.max(0f, extraChance);
-            tierWeights = tierWeights == null || tierWeights.size() != TIER_OFFSET_COLUMNS.size()
-                    || tierWeights.stream().noneMatch(weight -> weight > 0f) ? SAME_TIER_ONLY : List.copyOf(tierWeights);
-            craftingItemChance = Math.max(0f, craftingItemChance);
-            catalystChance = Math.max(0f, catalystChance);
-            minDefeatedDp = Math.max(0f, minDefeatedDp);
-            defeatedDpPerTier = Math.max(0f, defeatedDpPerTier);
-            maxTier = ChartTiers.clamp(maxTier);
-        }
-
-        int pickTierOffset(Random random) {
-            int index = WeightedPick.index(tierWeights, weight -> Math.max(0f, weight), random.nextFloat());
-            return index + LOWEST_TIER_OFFSET;
-        }
-    }
-
-    public record Mults(float chart, float craftingItem, float catalyst) {
-
-        public static Mults uniform(float mult) {
-            return new Mults(mult, mult, mult);
-        }
-
-        public static Mults of(ChartGenContext context, float scale) {
-            return new Mults(context.dropMult(DropType.STAR_CHART) * scale, context.dropMult(DropType.CRAFTING_ITEM) * scale,
-                    context.dropMult(DropType.CATALYST) * scale);
-        }
-
-        public static Mults ofReward(ChartGenContext context) {
-            return new Mults(context.rewardDropMult(DropType.STAR_CHART), context.rewardDropMult(DropType.CRAFTING_ITEM),
-                    context.rewardDropMult(DropType.CATALYST));
-        }
+    public record Mults(float chart, float cipher, float catalyst) {
 
         boolean any() {
-            return chart > 0f || craftingItem > 0f || catalyst > 0f;
+            return chart > 0f || cipher > 0f || catalyst > 0f;
         }
     }
 
-    public record Loot(List<ItemData> charts, Map<String, Integer> craftingItems, Map<String, Integer> catalysts) {
+    public record Rolled(List<ItemData> charts, Map<String, Integer> ciphers, Map<String, Integer> catalysts) {
 
-        public static final Loot NONE = new Loot(List.of(), Map.of(), Map.of());
+        public static final Rolled NONE = new Rolled(List.of(), Map.of(), Map.of());
 
-        public Loot {
+        public Rolled {
             charts = List.copyOf(charts);
-            craftingItems = Map.copyOf(craftingItems);
+            ciphers = Map.copyOf(ciphers);
             catalysts = Map.copyOf(catalysts);
         }
 
         public Map<String, Integer> materials() {
             if (catalysts.isEmpty()) {
-                return craftingItems;
+                return ciphers;
             }
-            Map<String, Integer> materials = new LinkedHashMap<>(craftingItems);
+            Map<String, Integer> materials = new LinkedHashMap<>(ciphers);
             catalysts.forEach((itemId, quantity) -> materials.merge(itemId, quantity, Integer::sum));
             return materials;
         }
 
         public boolean isEmpty() {
-            return charts.isEmpty() && craftingItems.isEmpty() && catalysts.isEmpty();
+            return charts.isEmpty() && ciphers.isEmpty() && catalysts.isEmpty();
         }
+
+        public Loot asLoot() {
+            return new Loot(charts, List.of(), materials());
+        }
+    }
+
+    private record RunExtras(Map<String, Integer> ciphers, Map<String, Integer> catalysts) {
+
+        static final RunExtras NONE = new RunExtras(Map.of(), Map.of());
     }
 
     private ChartDrops() {
     }
 
-    public static void load() {
-        ModCsv.load(SOURCE_COLUMN, PATH, LOG, ChartDrops::register);
+    public static Rolled roll(Source source, int tier, float chanceMult, Random random) {
+        ChartLootContext atTier = ChartLootContext.atTier(tier);
+        return roll(source, atTier, atTier.chartDropMults(chanceMult), random);
     }
 
-    public static void register(JSONArray rows) throws JSONException {
-        Map<Source, Rule> loaded = new EnumMap<>(Source.class);
-        CsvRows csv = new CsvRows(PATH);
-        if (rows != null) {
-            ModCsv.forEach(rows, (index, row) -> {
-                String sourceText = ModCsv.text(row, SOURCE_COLUMN);
-                if (sourceText.isEmpty()) {
-                    return;
-                }
-                String rowLabel = "row " + (index + 1);
-                Source source = Source.byId(sourceText.toLowerCase(Locale.ROOT));
-                if (source == null) {
-                    csv.skipRow(rowLabel, "unknown source " + sourceText);
-                    return;
-                }
-                float craftingItemChance = csv.number(row, "crafting_item_chance", 0f, sourceText);
-                if (craftingItemChance > 0f && !source.insideSystem()) {
-                    csv.problem(rowLabel, "crafting_item_chance", sourceText + " is outside a chart system, where chart crafting items never drop");
-                    craftingItemChance = 0f;
-                }
-                float catalystChance = csv.number(row, "catalyst_chance", 0f, sourceText);
-                if (catalystChance > 0f && !source.insideSystem()) {
-                    csv.problem(rowLabel, "catalyst_chance", sourceText + " is outside a chart system, where Atlas Catalysts never drop");
-                    catalystChance = 0f;
-                }
-                List<Float> tierWeights = new ArrayList<>();
-                for (String column : TIER_OFFSET_COLUMNS) {
-                    tierWeights.add(csv.number(row, column, 0f, sourceText));
-                }
-                loaded.put(source, new Rule(csv.number(row, "chance", 0f, sourceText), csv.number(row, "extra_chance", 0f, sourceText),
-                        tierWeights, craftingItemChance, catalystChance,
-                        csv.number(row, "min_defeated_dp", 0f, sourceText), csv.number(row, "defeated_dp_per_tier", 0f, sourceText),
-                        csv.integer(row, "max_tier", ChartTiers.HIGHEST_TIER, sourceText)));
-            });
+    public static Rolled roll(Source source, int tier, Mults mults, Random random) {
+        return roll(source, ChartLootContext.atTier(tier), mults, random);
+    }
+
+    public static Rolled roll(Source source, ChartLootContext context, Mults mults, Random random) {
+        ChartDropRules.Rule rule = ChartDropRules.rule(source);
+        if (!StarChartSettings.enabled() || rule == null || context.tier() == NO_TIER || !mults.any()) {
+            return Rolled.NONE;
         }
-        csv.report(LOG);
-        rules = Map.copyOf(loaded);
+        List<ItemData> charts = mults.chart() > 0f ? rollCharts(rule, baseTier(source, rule, context), chartCount(rule, mults.chart(), random), random)
+                : List.of();
+        RunExtras extras = source.insideSystem() ? rollRunExtras(rule, context, mults, random) : RunExtras.NONE;
+        return charts.isEmpty() && extras.ciphers().isEmpty() && extras.catalysts().isEmpty() ? Rolled.NONE
+                : new Rolled(charts, extras.ciphers(), extras.catalysts());
     }
 
-    public static void clear() {
-        rules = Map.of();
-    }
-
-    static Rule rule(Source source) {
-        return source == null ? null : rules.get(source);
-    }
-
-    public static boolean hasRule(Source source) {
-        return rule(source) != null;
-    }
-
-    public static Loot roll(Source source, int tier, float chanceMult, Random random) {
-        return roll(source, tier, Mults.uniform(chanceMult), random);
-    }
-
-    public static Loot roll(Source source, int tier, Mults mults, Random random) {
-        return roll(source, tier, mults, random, false);
-    }
-
-    public static Loot roll(Source source, int tier, Mults mults, Random random, boolean guaranteedTierUp) {
-        Rule rule = rule(source);
-        if (!StarChartSettings.enabled() || rule == null || tier == NO_TIER || !mults.any()) {
-            return Loot.NONE;
+    public static List<ItemData> guaranteedCharts(Source source, ChartLootContext context, Random random) {
+        ChartDropRules.Rule rule = ChartDropRules.rule(source);
+        if (!StarChartSettings.enabled() || rule == null || context.tier() == NO_TIER) {
+            return List.of();
         }
-        int naturalTier = Math.min(ChartTiers.HIGHEST_TIER, ChartTiers.clamp(tier));
-        int baseTier = source.insideSystem() ? naturalTier : Math.min(rule.maxTier(), naturalTier);
+        return rollCharts(rule, baseTier(source, rule, context), rule.guaranteed(), random);
+    }
+
+    private static int baseTier(Source source, ChartDropRules.Rule rule, ChartLootContext context) {
+        int naturalTier = ChartTiers.clampDropTier(context.tier());
+        return source.insideSystem() ? naturalTier : Math.min(rule.maxTier(), naturalTier);
+    }
+
+    private static List<ItemData> rollCharts(ChartDropRules.Rule rule, int baseTier, int chartCount, Random random) {
         List<ItemData> charts = new ArrayList<>();
-        int chartCount = mults.chart() > 0f ? chartCount(rule, mults.chart(), random) : 0;
-        if (guaranteedTierUp) {
-            chartCount = Math.max(1, chartCount);
-        }
         for (int i = 0; i < chartCount; i++) {
-            boolean forced = guaranteedTierUp && i == 0;
-            int dropTier = forced ? Math.min(ChartTiers.HIGHEST_TIER, baseTier + 1) : dropTier(rule, baseTier, rule.pickTierOffset(random));
+            int dropTier = dropTier(rule, baseTier, rule.pickTierOffset(random));
             ItemDefinition definition = pickChartAtTier(random, dropTier);
             if (definition != null) {
-                charts.add(ItemData.rolledAtTier(definition, random.nextLong(), dropTier));
+                charts.add(ItemData.rolled(definition, random.nextLong(), ItemRoll.atTier(dropTier)));
             }
         }
-        Map<String, Integer> craftingItems = new LinkedHashMap<>();
-        if (source.insideSystem()) {
-            ItemDrops.rollEachCraftingItem(chartCraftingItemDrops(), rule.craftingItemChance() * Math.max(0f, mults.craftingItem()), random, craftingItems);
-        }
+        return charts;
+    }
+
+    private static RunExtras rollRunExtras(ChartDropRules.Rule rule, ChartLootContext run, Mults mults, Random random) {
+        float expectedCiphers = rule.cipherChance() * Math.max(0f, mults.cipher());
+        Map<String, Integer> ciphers = run.craftingSplit(ChartCraftingPools.CIPHERS).roll(expectedCiphers, random);
         Map<String, Integer> catalysts = new LinkedHashMap<>();
-        int catalystCount = source.insideSystem() && !AtlasCatalysts.all().isEmpty()
-                ? ItemDrops.wholeFeedstock(rule.catalystChance() * Math.max(0f, mults.catalyst()), random) : 0;
+        int catalystCount = AtlasCatalysts.all().isEmpty() ? 0 : RandomRounding.round(rule.catalystChance() * Math.max(0f, mults.catalyst()), random);
+        int catalystTier = ChartTiers.clampDropTier(run.tier());
         for (int i = 0; i < catalystCount; i++) {
-            AtlasCatalysts.Catalyst catalyst = AtlasCatalysts.pickDrop(baseTier, random);
+            AtlasCatalysts.Catalyst catalyst = AtlasCatalysts.pickDrop(catalystTier, random);
             if (catalyst != null) {
                 catalysts.merge(catalyst.itemId(), 1, Integer::sum);
             }
         }
-        return charts.isEmpty() && craftingItems.isEmpty() && catalysts.isEmpty() ? Loot.NONE : new Loot(charts, craftingItems, catalysts);
+        return new RunExtras(ciphers, catalysts);
     }
 
-    static int dropTier(Rule rule, int baseTier, int offset) {
+    static int dropTier(ChartDropRules.Rule rule, int baseTier, int offset) {
         return Math.max(ChartTiers.LOWEST_TIER, Math.min(Math.max(baseTier, rule.maxTier()), baseTier + offset));
     }
 
     public static ItemDefinition pickChartAtTier(Random random, int tier) {
-        return ItemDrops.pickOfType(random, ItemType.STAR_CHART, definition -> ItemTypes.rollsAtTier(definition, tier));
+        return DroppableDefinitions.pickOfType(random, ItemType.STAR_CHART, definition -> ItemTypes.rollsAtTier(definition, tier));
     }
 
-    public static List<ItemDrops.MaterialDrop> chartCraftingItemDrops() {
-        return CraftingMaterialFamilies.forType(ItemType.STAR_CHART).stream()
-                .filter(craftingItem -> !craftingItem.dropsFromShipLoot() && craftingItem.dropWeight() > 0f)
-                .map(craftingItem -> new ItemDrops.MaterialDrop(craftingItem.itemId(), craftingItem.dropWeight()))
-                .toList();
-    }
-
-    static int chartCount(Rule rule, float chanceMult, Random random) {
+    static int chartCount(ChartDropRules.Rule rule, float chanceMult, Random random) {
         float expected = rule.chance() * chanceMult;
         int count = (int) expected;
         if (random.nextFloat() < expected - count) {
@@ -272,7 +184,7 @@ public final class ChartDrops {
     }
 
     public static int tierForDefeatedDp(Source source, float defeatedDp) {
-        Rule rule = rule(source);
+        ChartDropRules.Rule rule = ChartDropRules.rule(source);
         if (rule == null || !(defeatedDp >= rule.minDefeatedDp()) || defeatedDp <= 0f) {
             return NO_TIER;
         }
@@ -280,17 +192,10 @@ public final class ChartDrops {
         return Math.min(rule.maxTier(), ChartTiers.clamp(ChartTiers.LOWEST_TIER + steps));
     }
 
-    public static Loot forRunReward(ChartRun run, Random random) {
-        if (run == null) {
-            return Loot.NONE;
-        }
-        return roll(Source.RUN_REWARD, run.tier(), Mults.ofReward(ChartRunEffects.contextOf(run)), random);
-    }
-
-    public static Loot forBattle(LocationAPI battleLocation, float difficultyScaledDeploymentPoints, int highestDefeatedLevel,
-                                 Random random) {
-        if (isSystem(battleLocation)) {
-            return Loot.NONE;
+    public static Rolled forBattle(LocationAPI battleLocation, float difficultyScaledDeploymentPoints, int highestDefeatedLevel,
+                                   Random random) {
+        if (ChartIds.isChartSystem(battleLocation)) {
+            return Rolled.NONE;
         }
         return roll(Source.BATTLE, battleTier(difficultyScaledDeploymentPoints, highestDefeatedLevel),
                 difficultyScaledDeploymentPoints / BATTLE_DEPLOYMENT_POINTS_PER_CHANCE, random);
@@ -301,17 +206,17 @@ public final class ChartDrops {
         if (defeatedDpTier == NO_TIER) {
             return NO_TIER;
         }
-        return LootSources.shipLevelsRated() ? ChartTiers.tierForLevel(highestDefeatedLevel) : defeatedDpTier;
+        return FleetDifficulties.shipLevelsRated() ? ChartTiers.tierForLevel(highestDefeatedLevel) : defeatedDpTier;
     }
 
-    public static Loot forSalvage(SectorAPI sector, LocationAPI salvageLocation, Random random) {
-        if (isSystem(salvageLocation)) {
+    public static Rolled forSalvage(SectorAPI sector, LocationAPI salvageLocation, Random random) {
+        if (ChartIds.isChartSystem(salvageLocation)) {
             return forSystem(Source.SYSTEM_SALVAGE, ChartRuns.liveIn(salvageLocation), random);
         }
         return roll(Source.SALVAGE, tierForDefeatedDp(Source.SALVAGE, playerLevel(sector)), 1f, random);
     }
 
-    public static Loot forTechMining(SectorAPI sector, boolean firstFind, float chanceMult, Random random) {
+    public static Rolled forTechMining(SectorAPI sector, boolean firstFind, float chanceMult, Random random) {
         Source source = firstFind ? Source.TECHMINING_FIRST_FIND : Source.TECHMINING_MONTHLY;
         return roll(source, tierForDefeatedDp(source, playerLevel(sector)), chanceMult, random);
     }
@@ -321,20 +226,11 @@ public final class ChartDrops {
         return playerStats == null ? 0 : playerStats.getLevel();
     }
 
-    private static Loot forSystem(Source source, ChartRun systemRun, Random random) {
+    private static Rolled forSystem(Source source, ChartRun systemRun, Random random) {
         if (systemRun == null) {
-            return Loot.NONE;
+            return Rolled.NONE;
         }
-        ChartGenContext context = ChartRunEffects.contextOf(systemRun);
-        return roll(source, systemRun.tier(), Mults.of(context, 1f), random);
-    }
-
-    public static ChartGenContext liveContextAt(LocationAPI location) {
-        ChartRun run = ChartRuns.liveIn(location);
-        return run == null ? LootContexts.global() : ChartRunEffects.contextOf(run);
-    }
-
-    static boolean isSystem(LocationAPI location) {
-        return location instanceof StarSystemAPI system && system.hasTag(ChartIds.SYSTEM_TAG);
+        ChartLootContext run = ChartLootContext.of(systemRun);
+        return roll(source, run, run.chartDropMults(1f), random);
     }
 }

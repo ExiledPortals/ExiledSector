@@ -9,8 +9,9 @@ import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.combat.WeaponAPI;
-import com.fs.starfarer.api.util.DynamicStatsAPI;
 import exiledsector.MockSector;
+import exiledsector.skills.skilleffect.CombatTestShips;
+import exiledsector.skills.skilleffect.CombatTestShips.ShipBuilder;
 import exiledsector.skills.skilleffect.logistics.FleetCrewLedger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,17 +62,12 @@ class LiveMunitionsTest {
     }
 
     private static Armed armed(float deathChancePerStack, int stackCount) {
-        ShipAPI ship = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
-        when(ship.getId()).thenReturn("ship");
-        when(ship.isAlive()).thenReturn(true);
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(stats.getDynamic()).thenReturn(dynamic);
-        Map.of(LiveMunitionsListener.CREW_DEATH_CHANCE_PERCENT_PER_STACK_KEY, deathChancePerStack,
-                LiveMunitionsListener.MISSILE_DAMAGE_PERCENT_PER_STACK_KEY, 3f,
-                LiveMunitionsListener.MISSILE_SPEED_PERCENT_PER_STACK_KEY, 3f)
-                .forEach((key, value) -> when(dynamic.getValue(key, 0f)).thenReturn(value));
+        ShipBuilder builder = CombatTestShips.ship().id("ship").alive()
+                .dynamic(Map.of(LiveMunitionsListener.CREW_DEATH_CHANCE_PERCENT_PER_STACK_KEY, deathChancePerStack,
+                        LiveMunitionsListener.MISSILE_DAMAGE_PERCENT_PER_STACK_KEY, 3f,
+                        LiveMunitionsListener.MISSILE_SPEED_PERCENT_PER_STACK_KEY, 3f));
+        ShipAPI ship = builder.build();
+        MutableShipStatsAPI stats = builder.stats();
         MutableStat damage = mock(MutableStat.class);
         StatBonus speed = mock(StatBonus.class);
         when(stats.getMissileWeaponDamageMult()).thenReturn(damage);

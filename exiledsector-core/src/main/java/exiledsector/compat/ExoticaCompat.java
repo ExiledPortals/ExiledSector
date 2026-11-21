@@ -1,7 +1,5 @@
 package exiledsector.compat;
 
-import com.fs.starfarer.api.Global;
-
 import java.util.List;
 
 public final class ExoticaCompat {
@@ -20,11 +18,9 @@ public final class ExoticaCompat {
     }
 
     static List<String> missingFeatures() {
-        try {
-            Class.forName(REFIT_BUTTON_CLASS, false, Global.getSettings().getScriptClassLoader());
+        if (CompatTarget.classExists(REFIT_BUTTON_CLASS)) {
             return List.of();
-        } catch (ClassNotFoundException | LinkageError e) {
-            return List.of("its refit Exotica button (" + REFIT_BUTTON_CLASS + "), which the Skill Tree button makes room for under Build In");
         }
+        return List.of("its refit Exotica button (" + REFIT_BUTTON_CLASS + "), which the Skill Tree button makes room for under Build In");
     }
 }

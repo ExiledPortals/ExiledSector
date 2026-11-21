@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.ui.util.ClickSwallow;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.Rects;
 
@@ -25,7 +26,7 @@ final class ShipCardClickTarget extends BaseCustomUIPanelPlugin {
     private PositionAPI visibleArea;
     private PositionAPI targetPosition;
     private boolean hovered;
-    private boolean swallowMouseUp;
+    private final ClickSwallow clickSwallow = new ClickSwallow();
     private ShipCardTooltip tooltip = ShipCardTooltip.NONE;
     private BooleanSupplier tooltipAllowed = () -> false;
     private boolean tooltipDismissed;
@@ -85,10 +86,7 @@ final class ShipCardClickTarget extends BaseCustomUIPanelPlugin {
                 leave();
             }
             if (event.isLMBUpEvent()) {
-                if (swallowMouseUp && !event.isConsumed()) {
-                    event.consume();
-                }
-                swallowMouseUp = false;
+                clickSwallow.released(event);
                 continue;
             }
             if (event.isConsumed()) {
@@ -100,7 +98,7 @@ final class ShipCardClickTarget extends BaseCustomUIPanelPlugin {
             } else if (event.isMouseMoveEvent()) {
                 leave();
             } else if (inside && event.isLMBDownEvent() && live.getAsBoolean()) {
-                swallowMouseUp = true;
+                clickSwallow.swallowNextRelease();
                 tooltipDismissed = true;
                 event.consume();
                 clicked.run();

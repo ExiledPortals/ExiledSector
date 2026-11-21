@@ -3,6 +3,7 @@ package exiledsector.skills.npc;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import exiledsector.skills.NodeReplacements;
 import exiledsector.skills.AnchorLinks;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.IntegratedEffects;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTreeLinks;
@@ -14,22 +15,24 @@ import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.skilleffect.shield.ShieldSkillEffect;
-import exiledsector.items.HullUpgradePoints;
-import exiledsector.items.NpcItems;
-import exiledsector.items.WormholeAnchorDefinitions;
-import exiledsector.items.WormholeAnchorLinks;
+import exiledsector.items.hull.HullUpgradePoints;
+import exiledsector.items.drop.NpcItems;
+import exiledsector.items.anchor.WormholeAnchorDefinitions;
+import exiledsector.items.anchor.WormholeAnchorLinks;
 import exiledsector.items.ItemDefinitions;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import static exiledsector.skills.TestTrees.registered;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -37,17 +40,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class NpcTreeTagTest {
 
     private static final String HEGEMONY_ANCHOR = "npc:wormhole_anchor_hegemony/0";
 
     @BeforeEach
     void setUp() throws Exception {
-        RealSkillData.clear();
         register("root", type("root_type", SkillTier.ROOT));
         register("a", type("a_type", SkillTier.SMALL), "root");
-        registerType(type("hull_option", SkillTier.SMALL));
-        registerType(type("flux_option", SkillTier.SMALL));
+        registered(type("hull_option", SkillTier.SMALL));
+        registered(type("flux_option", SkillTier.SMALL));
         register("optional_1", new SkillType.Builder("optional", "optional", "a.png", SkillTier.SMALL)
                 .choiceOptionIds(List.of("flux_option", "hull_option")).build(), "a");
         register("b", type("b_type", SkillTier.NOTABLE), "optional_1");
@@ -61,7 +64,6 @@ class NpcTreeTagTest {
         WormholeAnchorDefinitions.clear();
         NpcItems.clearCache();
         ItemDefinitions.clear();
-        RealSkillData.clear();
     }
 
     private static SkillType type(String id, SkillTier tier) {
@@ -73,23 +75,18 @@ class NpcTreeTagTest {
     }
 
     private static void registerHegemonyAnchor() throws Exception {
-        SkillTree.register(new SkillNode("hegemony_2", registerType(type("wormhole_exit", SkillTier.WORMHOLE_EXIT)), List.of(), 0f, 0f,
+        SkillTree.register(new SkillNode("hegemony_2", registered(type("wormhole_exit", SkillTier.WORMHOLE_EXIT)), List.of(), 0f, 0f,
                 SkillNodeDecoration.NONE, List.of("hegemony")));
-        SkillTree.register(new SkillNode("pride", registerType(type("pride_type", SkillTier.NOTABLE)), List.of("hegemony_2"), 0f, 0f,
+        SkillTree.register(new SkillNode("pride", registered(type("pride_type", SkillTier.NOTABLE)), List.of("hegemony_2"), 0f, 0f,
                 SkillNodeDecoration.NONE, List.of("hegemony")));
         WormholeAnchorDefinitions.register(new JSONArray().put(new JSONObject().put("id", "wormhole_anchor_hegemony").put("volume", "hegemony")
-                .put("exit_node", "hegemony_2").put("name", "Hegemony Anchor").put("icon", "graphics/icons/nav_relay.png").put("rarity", "10")
+                .put("exit_node", "hegemony_2").put("name", "Hegemony Anchor").put("icon", "graphics/exiledSector/tree/base/nav_relay.png").put("rarity", "10")
                 .put("description", "Opens a wormhole.")));
         WormholeAnchorLinks.install();
     }
 
-    private static SkillType registerType(SkillType type) {
-        SkillTree.registerType(type);
-        return type;
-    }
-
     private static void register(String id, SkillType type, String... connectedTo) {
-        registerType(type);
+        registered(type);
         SkillTree.register(new SkillNode(id, type, List.of(connectedTo), 0f, 0f));
     }
 
@@ -134,28 +131,13 @@ class NpcTreeTagTest {
         ShipSkillData data = withOpenHegemonyVolume();
 
         String tag = NpcTreeTag.encode(data);
-        ShipSkillData decoded = NpcTreeTag.decode(tag);
-        ShipSkillData legacy = NpcTreeTag.decode(NpcTreeTag.LEGACY_PREFIX + tag.substring(NpcTreeTag.PREFIX.length()));
+        ShipSkillData restored = NpcTreeTag.decode(tag);
 
         assertEquals("exiledSector_npcTree|generated|2|root,a,socket_1,hegemony_2,pride|sockets:socket_1=" + HEGEMONY_ANCHOR, tag);
-        for (ShipSkillData restored : List.of(decoded, legacy)) {
-            assertEquals(Map.of("socket_1", HEGEMONY_ANCHOR), restored.getSocketedItems());
-            assertEquals(List.copyOf(data.getAllocatedNodeIds()), List.copyOf(restored.getAllocatedNodeIds()));
-            assertTrue(restored.isFreeNode("hegemony_2"));
-            assertEquals("socket_1", ShipTreeLinks.wormholePartner(restored, SkillTree.get("hegemony_2")));
-        }
-    }
-
-    @Test
-    void anOldImplicitAnchorDecodesAsTheVolumesRealAnchor() {
-        withSocket();
-
-        ShipSkillData decoded = NpcTreeTag.decode("exiledSector_npcTree|generated|2|root,a,socket_1,hegemony_2,pride|anchors:socket_1=hegemony_2");
-
-        assertEquals(Map.of("socket_1", HEGEMONY_ANCHOR), decoded.getSocketedItems());
-        assertTrue(decoded.isFreeNode("hegemony_2"));
-        assertEquals("exiledSector_npcTree|generated|2|root,a,socket_1,hegemony_2,pride|sockets:socket_1=" + HEGEMONY_ANCHOR,
-                NpcTreeTag.encode(decoded));
+        assertEquals(Map.of("socket_1", HEGEMONY_ANCHOR), restored.getSocketedItems());
+        assertEquals(List.copyOf(data.getAllocatedNodeIds()), List.copyOf(restored.getAllocatedNodeIds()));
+        assertTrue(restored.isFreeNode("hegemony_2"));
+        assertEquals("socket_1", ShipTreeLinks.wormholePartner(restored, SkillTree.get("hegemony_2")));
     }
 
     @Test
@@ -299,16 +281,6 @@ class NpcTreeTagTest {
         assertEquals(tag, NpcTreeTag.find(variantWithTags("exiledSector_installed_x", tag)));
         assertNull(NpcTreeTag.find(variantWithTags("exiledSector_installed_x")));
         assertNull(NpcTreeTag.find(null));
-    }
-
-    @Test
-    void tagsSavedBeforeTheNpcRenameAreStillFoundAndDecoded() {
-        String current = NpcTreeTag.encode(build(5));
-        String legacy = NpcTreeTag.LEGACY_PREFIX + current.substring(NpcTreeTag.PREFIX.length());
-
-        assertEquals(legacy, NpcTreeTag.find(variantWithTags(legacy)));
-        assertEquals(List.copyOf(NpcTreeTag.decode(current).getAllocatedNodeIds()),
-                List.copyOf(NpcTreeTag.decode(legacy).getAllocatedNodeIds()));
     }
 
     @Test

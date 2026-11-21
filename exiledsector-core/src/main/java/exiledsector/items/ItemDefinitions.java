@@ -7,7 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -31,23 +30,13 @@ public final class ItemDefinitions {
         Map<ItemType, JSONArray> rowsByType = new EnumMap<>(ItemType.class);
         for (ItemTypeSupport support : ItemTypes.all()) {
             if (support.definitionsPath() != null) {
-                rowsByType.put(support.type(), rows(support.definitionsPath()));
+                rowsByType.put(support.type(), ModCsv.rowsOrEmpty(ID_COLUMN, support.definitionsPath(), LOG));
             }
         }
         try {
             register(rowsByType);
         } catch (JSONException e) {
             LOG.error("Failed to load the item definitions", e);
-        }
-    }
-
-    private static JSONArray rows(String path) {
-        try {
-            JSONArray rows = ModCsv.rows(ID_COLUMN, path);
-            return rows == null ? new JSONArray() : rows;
-        } catch (IOException | JSONException e) {
-            LOG.error("Failed to load " + path, e);
-            return new JSONArray();
         }
     }
 
@@ -87,9 +76,6 @@ public final class ItemDefinitions {
 
     private static void addRows(Map<String, ItemDefinition> loaded, JSONArray rows, String source,
                                 Function<JSONObject, ItemDefinition> parser) throws JSONException {
-        if (rows == null) {
-            return;
-        }
         CsvRows.forEachRow(rows, source, LOG, (index, row) -> {
             ItemDefinition definition = parser.apply(row);
             if (!ItemVolumes.loads(definition)) {

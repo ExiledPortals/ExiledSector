@@ -3,6 +3,7 @@ package exiledsector.ui.cargo;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.skills.skilleffect.render.Fade;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.HoloShapes;
@@ -77,14 +78,9 @@ public final class CargoIconFx {
     private static final float LATTICE_ROW_SHARE = 0.5f;
     private static final Color SPARK_COLOR = new Color(255, 250, 235);
     private static final Color ARC_CORE_COLOR = new Color(235, 245, 255);
-    private static final long START_NANOS = System.nanoTime();
     private static final Map<String, Float> ASPECTS = new HashMap<>();
 
     private CargoIconFx() {
-    }
-
-    public static float seconds() {
-        return (System.nanoTime() - START_NANOS) / 1_000_000_000f;
     }
 
     public static void render(SpriteCache sprites, String iconPath, CargoIconLook look, float x, float y, float w, float h,
@@ -103,7 +99,7 @@ public final class CargoIconFx {
         }
         boolean full = mode == ItemAnimationSetting.Mode.FULL;
         float half = size / 2f;
-        float t = seconds() + hash(phaseSeed, 1, 1) * SPARKLE_PERIOD * 4f;
+        float t = IconFxClock.phasedSeconds(phaseSeed, SPARKLE_PERIOD * 4f);
         drawBackLayer(look, cx, cy, half, t, full, alphaMult, glowMult);
         float iconSize = look.framed() ? size * ICON_INSET : size;
         drawIcon(sprites, iconPath, cx, cy, iconSize, alphaMult);
@@ -117,7 +113,7 @@ public final class CargoIconFx {
         if (ItemAnimationSetting.mode() != ItemAnimationSetting.Mode.FULL) {
             return;
         }
-        float t = seconds() + hash(phaseSeed, 1, 1) * SPARKLE_PERIOD * 4f;
+        float t = IconFxClock.phasedSeconds(phaseSeed, SPARKLE_PERIOD * 4f);
         try (GlScope scope = GlScope.flat().additive()) {
             drawArcs(color, cx, cy, boxHalf, t, phaseSeed, alphaMult);
         }
@@ -150,7 +146,7 @@ public final class CargoIconFx {
         if (look.heartbeat()) {
             return 0.55f + 0.45f * heartbeat(t);
         }
-        return 1f - BREATH_DEPTH * (0.5f + 0.5f * (float) Math.sin(t * BREATH_SPEED));
+        return 1f - BREATH_DEPTH * Fade.pulse(t * BREATH_SPEED);
     }
 
     static float heartbeat(float t) {
@@ -495,15 +491,5 @@ public final class CargoIconFx {
         mixed *= 0x81DADEF4BC2DD44DL;
         mixed ^= mixed >>> 33;
         return (mixed >>> 40) / (float) (1 << 24);
-    }
-
-    static Color mix(Color base, Color other, float amount) {
-        return new Color(Math.round(base.getRed() + (other.getRed() - base.getRed()) * amount),
-                Math.round(base.getGreen() + (other.getGreen() - base.getGreen()) * amount),
-                Math.round(base.getBlue() + (other.getBlue() - base.getBlue()) * amount));
-    }
-
-    static Color lighten(Color color, float amount) {
-        return mix(color, Color.WHITE, amount);
     }
 }

@@ -4,6 +4,7 @@ import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.skilleffect.render.Fade;
 import exiledsector.skills.skilleffect.render.SpriteCache;
+import exiledsector.ui.util.ColorUtil;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.HoloShapes;
 import exiledsector.ui.util.SpriteDraw;
@@ -13,9 +14,9 @@ import java.awt.Color;
 
 public final class DoctrineIconFx {
 
-    public static final String STILL_PREFIX = "graphics/icons/socketables/exiledSector_doctrine_archive_";
+    public static final String STILL_PREFIX = "graphics/exiledSector/items/doctrine_archives/doctrine_archive_";
     static final String FRAME_PATH = STILL_PREFIX + "frame.png";
-    public static final String EMBLEM_PREFIX = "graphics/icons/socketables/exiledSector_doctrine_emblem_";
+    public static final String EMBLEM_PREFIX = "graphics/exiledSector/items/doctrine_archives/emblems/";
     static final float CYCLE_SECONDS = 6f;
     static final float SEAL_KEY = 0.55f;
     static final float STAMP_DROP = 0.04f;
@@ -138,14 +139,14 @@ public final class DoctrineIconFx {
             IconFxKit.drawStill(sprites, iconPath, color, cx, cy, scale, unit, framed, alphaMult);
             return;
         }
-        float t = CargoIconFx.seconds() + CargoIconFx.hash(phaseSeed, 1, 1) * CYCLE_SECONDS;
+        float t = IconFxClock.phasedSeconds(phaseSeed, CYCLE_SECONDS);
         float cycle = Fade.cycle(t, CYCLE_SECONDS);
         float key = keyMoment(screen);
         float flash = IconFxKit.flash(cycle, key);
         int seed = doctrine.factionId().hashCode();
         SpriteAPI frame = sprites.sprite(FRAME_PATH);
         if (frame != null) {
-            SpriteDraw.drawAtCenter(frame, cx, cy, DESIGN_SIZE * scale, DESIGN_SIZE * scale, CargoIconFx.mix(Color.WHITE, color, FRAME_TINT), alphaMult, 0f);
+            SpriteDraw.drawAtCenter(frame, cx, cy, DESIGN_SIZE * scale, DESIGN_SIZE * scale, ColorUtil.mix(Color.WHITE, color, FRAME_TINT), alphaMult, 0f);
         }
         placeScreen(cx, cy, scale);
         try (GlScope scope = GlScope.flat().additive()) {
@@ -411,7 +412,7 @@ public final class DoctrineIconFx {
                 continue;
             }
             float blipV = ROW_TOP + (ROW_BOTTOM - ROW_TOP - 0.03f) * CargoIconFx.hash(seed, 71 + blip, round);
-            Misc.setColor(CargoIconFx.lighten(color, 0.5f), (1f - age / BLIP_LIFE) * alphaMult);
+            Misc.setColor(ColorUtil.lighten(color, 0.5f), (1f - age / BLIP_LIFE) * alphaMult);
             screenQuad(0.955f, blipV, 0.975f, blipV + 0.03f);
         }
     }
@@ -429,14 +430,14 @@ public final class DoctrineIconFx {
             float fromU = indented ? INDENT : TEXT_LEFT;
             float written = Math.min(1f, progress - row);
             if (opensParagraph) {
-                Misc.setColor(CargoIconFx.lighten(color, 0.3f), 0.85f * page * alphaMult);
+                Misc.setColor(ColorUtil.lighten(color, 0.3f), 0.85f * page * alphaMult);
                 screenQuad(TEXT_LEFT, v - ROW_THICKNESS, TEXT_LEFT + DROP_CAP_WIDTH, v + ROW_PITCH + ROW_THICKNESS / 2f);
             }
             float revealU = fromU + (TEXT_RIGHT - fromU) * written;
             Misc.setColor(color, TEXT_ALPHA * page * alphaMult);
             words(seed, row, v, fromU, TEXT_RIGHT, revealU, 0f, ROW_THICKNESS, WOBBLE);
             if (written < 1f && t * 4f % 1f < 0.6f) {
-                Misc.setColor(CargoIconFx.lighten(color, 0.6f), alphaMult);
+                Misc.setColor(ColorUtil.lighten(color, 0.6f), alphaMult);
                 screenQuad(revealU, v - 0.025f, revealU + 0.015f, v + 0.025f);
             }
         }
@@ -627,7 +628,7 @@ public final class DoctrineIconFx {
             float halo = (float) Math.exp(-Math.pow(IconFxKit.cyclicDistance(cycle, MANUSCRIPT_KEY) / HALO_WIDTH, 2));
             if (halo > 0.01f) {
                 SpriteDraw.drawAdditiveAtCenter(sprites, IconFxKit.LIGHT_TEXTURE, centreX, centreY, radius * 4f, radius * 4f,
-                        CargoIconFx.lighten(color, 0.4f), halo * alphaMult);
+                        ColorUtil.lighten(color, 0.4f), halo * alphaMult);
             }
         }
         SpriteAPI emblem = sprites.texture(doctrine.emblemPath());
@@ -640,7 +641,7 @@ public final class DoctrineIconFx {
         float textureHeight = emblem.getTexHeight();
         try (GlScope scope = GlScope.textured(GL11.GL_SRC_ALPHA, GL11.GL_ONE)) {
             emblem.bindTexture();
-            Misc.setColor(CargoIconFx.lighten(color, EMBLEM_LIFT), emblemAlpha * alphaMult);
+            Misc.setColor(ColorUtil.lighten(color, EMBLEM_LIFT), emblemAlpha * alphaMult);
             GL11.glBegin(GL11.GL_QUADS);
             GL11.glTexCoord2f(textureLeft, textureBottom + textureHeight);
             vertex(centreU - halfU, EMBLEM_V - halfV);

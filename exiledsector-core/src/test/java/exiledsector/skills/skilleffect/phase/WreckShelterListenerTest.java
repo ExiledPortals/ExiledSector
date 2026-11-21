@@ -3,12 +3,12 @@ package exiledsector.skills.skilleffect.phase;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipSystemAPI;
 import com.fs.starfarer.api.combat.StatBonus;
-import com.fs.starfarer.api.util.DynamicStatsAPI;
 import exiledsector.MockSector;
+import exiledsector.skills.skilleffect.CombatTestShips;
+import exiledsector.skills.skilleffect.CombatTestShips.ShipBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,15 +47,9 @@ class WreckShelterListenerTest {
     }
 
     private static ShipAPI ship(float x) {
-        ShipAPI ship = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        when(stats.getDynamic()).thenReturn(mock(DynamicStatsAPI.class));
-        when(stats.getPhaseCloakUpkeepCostBonus()).thenReturn(mock(StatBonus.class));
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(ship.getId()).thenReturn("ship" + x);
-        when(ship.getLocation()).thenReturn(new Vector2f(x, 0f));
-        when(ship.isAlive()).thenReturn(true);
-        return ship;
+        ShipBuilder ship = CombatTestShips.ship().id("ship" + x).at(new Vector2f(x, 0f)).alive();
+        when(ship.stats().getPhaseCloakUpkeepCostBonus()).thenReturn(mock(StatBonus.class));
+        return ship.build();
     }
 
     private static ShipAPI wreck(float x) {
@@ -87,6 +81,30 @@ class WreckShelterListenerTest {
         when(wreck.getLocation()).thenReturn(new Vector2f(600f, 0f));
         listener.advance(0.3f);
         verify(upkeep).unmodifyMult("exiledSector_noPhaseUpkeepNearWreck_ship0.0");
+    }
+
+    @Test
+    void theCappedShelterLastsFiveSecondsPerPhaseAndResetsOnUnphasing() {
+        ShipAPI phaseShip = phaseShip(0f);
+        when(phaseShip.getMutableStats().getDynamic().getValue(WreckShelterListener.CAPPED_RANGE_KEY, 0f)).thenReturn(500f);
+        when(phaseShip.isPhased()).thenReturn(true);
+        gridShips.addAll(List.of(phaseShip, wreck(400f)));
+        StatBonus upkeep = phaseShip.getMutableStats().getPhaseCloakUpkeepCostBonus();
+        WreckShelterListener listener = new WreckShelterListener(phaseShip);
+        int checksInCap = Math.round(WreckShelterListener.CAPPED_SECONDS / 0.25f);
+
+        for (int check = 0; check < checksInCap; check++) {
+            listener.advance(0.25f);
+        }
+        verify(upkeep, times(1)).modifyMult("exiledSector_noPhaseUpkeepNearWreck_ship0.0", 0f);
+        verify(upkeep, never()).unmodifyMult(anyString());
+
+        listener.advance(0.25f);
+        verify(upkeep).unmodifyMult("exiledSector_noPhaseUpkeepNearWreck_ship0.0");
+
+        when(phaseShip.isPhased()).thenReturn(false);
+        listener.advance(0.25f);
+        verify(upkeep, times(2)).modifyMult("exiledSector_noPhaseUpkeepNearWreck_ship0.0", 0f);
     }
 
     @Test

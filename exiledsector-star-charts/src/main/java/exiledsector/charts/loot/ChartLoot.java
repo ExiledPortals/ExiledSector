@@ -10,6 +10,7 @@ import exiledsector.charts.generation.ChartTiers;
 import exiledsector.compat.CompatTarget;
 import exiledsector.data.CsvRows;
 import exiledsector.ModCsv;
+import exiledsector.loot.DropType;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,7 +31,6 @@ public final class ChartLoot {
     static final String PATH = "data/config/exiledSector/chart_loot.csv";
     static final String ID_COLUMN = "id";
     static final String FLEET_SCOPE = "fleet";
-    static final String BOSS_SCOPE = "boss";
     static final Set<String> COLONY_ITEM_GROUPS = Set.of("rare_tech", "rare_tech_low", "rare_tech_mothership", "nanoforge_always");
     static final List<String> VANILLA_TYPE_NAMES = Arrays.stream(DropType.values()).filter(DropType::isVanilla)
             .map(type -> type.name().toLowerCase(Locale.ROOT)).toList();
@@ -65,7 +65,6 @@ public final class ChartLoot {
     static List<String> scopes() {
         List<String> scopes = new ArrayList<>(ChartPois.KIND_NAMES);
         scopes.add(FLEET_SCOPE);
-        scopes.add(BOSS_SCOPE);
         for (LootShaper anomaly : ChartAnomalies.with(LootShaper.class)) {
             scopes.addAll(anomaly.lootScopes());
         }
@@ -90,14 +89,7 @@ public final class ChartLoot {
         List<Entry> entries = new ArrayList<>();
         CsvRows csv = new CsvRows(PATH);
         List<String> scopes = scopes();
-        if (rows != null) {
-            ModCsv.forEach(rows, (index, row) -> {
-                String id = ModCsv.text(row, ID_COLUMN);
-                if (!id.isEmpty()) {
-                    parse(csv, row, id, groupExists, scopes, groupTypes, entries);
-                }
-            });
-        }
+        CsvRows.forEachIdRow(rows, ID_COLUMN, (id, row) -> parse(csv, row, id, groupExists, scopes, groupTypes, entries));
         csv.report(LOG);
         table = new Table(groupTypes, entries);
         return csv.problems();

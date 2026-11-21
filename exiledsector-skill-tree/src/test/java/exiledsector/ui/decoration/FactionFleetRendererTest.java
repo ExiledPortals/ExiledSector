@@ -3,6 +3,7 @@ package exiledsector.ui.decoration;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.decoration.Star;
 import exiledsector.skills.layout.SkillNodeDecoration;
+import exiledsector.skills.tags.SkillTags;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -18,7 +19,7 @@ class FactionFleetRendererTest {
 
     @Test
     void aFactionVolumeCirclesTheVolumeStarOutToItsNodesIgnoringStrayNodes() {
-        List<Star> stars = List.of(new Star("pirate_star", 1000f, 0f, 200f, "star_red", null, List.of("pirate")));
+        List<Star> stars = List.of(new Star("pirate_star", 1000f, 0f, 200f, "star_red", null, SkillTags.treeTags(List.of("pirate"))));
         List<SkillNode> nodes = List.of(node("a", 1500f, 0f, "pirate"), node("b", 1000f, 800f, "pirate"), node("c", 1000f, -1000f, "pirate"),
                 node("stray", 9000f, 0f, "pirate"), node("core", 0f, 0f, "core"));
 

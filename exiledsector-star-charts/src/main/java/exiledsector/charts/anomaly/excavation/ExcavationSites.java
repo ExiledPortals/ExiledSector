@@ -1,12 +1,9 @@
 package exiledsector.charts.anomaly.excavation;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BattleCreationPlugin;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.PlanetAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
+import com.fs.starfarer.api.campaign.econ.MarketAPI.SurveyLevel;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
@@ -15,13 +12,16 @@ import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ContentPlacer;
+import exiledsector.charts.anomaly.SettlingDust;
 import exiledsector.charts.anomaly.LayoutShaper;
 import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.anomaly.StateFields;
-import exiledsector.charts.generation.ChartGenContext;
-import exiledsector.charts.run.ChartRun;
-import exiledsector.items.ItemDrops;
+import exiledsector.charts.loot.ChartFleetLedger;
+import exiledsector.charts.loot.ChartFleetLoot;
+import exiledsector.charts.loot.ChartLootContext;
+import exiledsector.charts.loot.FleetClaim;
+import exiledsector.loot.Loot;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -47,31 +47,27 @@ public final class ExcavationSites implements LayoutShaper, ContentPlacer, RunPa
     }
 
     @Override
-    public List<String> lootScopes() {
-        return List.of(ExcavationRules.LOOT_SCOPE);
-    }
-
-    @Override
     public int minPlanets() {
         return ExcavationRules.MIN_PLANETS;
     }
 
     @Override
     public void generate(AnomalyContentSite site) {
-        if (place(site, Global.getSector()).isEmpty()) {
+        if (place(site).isEmpty()) {
             throw new IllegalStateException("no planet for an excavation site");
         }
     }
 
-    static List<ExcavationSite> place(AnomalyContentSite site, SectorAPI sector) {
+    static List<ExcavationSite> place(AnomalyContentSite site) {
         Random random = site.random(PLACEMENT_SALT);
         List<PlanetAPI> planets = new ArrayList<>(site.freePlanets(true).stream().filter(planet -> StateFields.fits(planet.getId())).toList());
         Collections.shuffle(planets, random);
         int count = Math.min(planets.size(), ExcavationRules.siteCount(random, Math.round(site.context().anomalyPercent(EXTRA_KEY))));
+        ExcavationTuning tuning = ExcavationTuning.of(site.context());
         List<ExcavationSite> placed = new ArrayList<>();
         for (int index = 0; index < count; index++) {
-            ExcavationSite placedSite = new ExcavationSite(index, planets.get(index).getId(), ExcavationRules.access(random),
-                    ExcavationRules.lean(sector, random), random.nextLong(), false);
+            ExcavationSite placedSite = new ExcavationSite(index, planets.get(index).getId(), ExcavationRules.access(random, tuning), random.nextLong(),
+                    false);
             ExcavationStates.record(site.state(ANOMALY_ID), placedSite);
             site.claim(planets.get(index));
             placed.add(placedSite);
@@ -79,9 +75,8 @@ public final class ExcavationSites implements LayoutShaper, ContentPlacer, RunPa
         return placed;
     }
 
-    @Override
-    public InteractionDialogPlugin dialogFor(AnomalyRun run, SectorEntityToken target) {
-        return ExcavationSiteDialog.wantsToHandle(run.run(), target) ? new ExcavationSiteDialog() : null;
+    static boolean fullySurveyed(SectorEntityToken planet) {
+        return planet != null && planet.getMarket() != null && planet.getMarket().getSurveyLevel() == SurveyLevel.FULL;
     }
 
     @Override
@@ -94,8 +89,8 @@ public final class ExcavationSites implements LayoutShaper, ContentPlacer, RunPa
     }
 
     @Override
-    public ItemDrops.SiteLoot fleetItems(SectorAPI sector, CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, float share, Random random) {
-        return ExcavationLoot.fleetItems(sector, fleet, run, context, share, random);
+    public Loot fleetLoot(FleetClaim claim, ChartLootContext loot, ChartFleetLoot.Battle battle, Random random) {
+        return ExcavationLoot.fleetItems(claim.fleet(), loot, SettlingDust.stacks(ChartFleetLedger.liveRunOf(claim.fleet())), claim.mergedFleetShare(), random);
     }
 
     @Override
@@ -103,7 +98,7 @@ public final class ExcavationSites implements LayoutShaper, ContentPlacer, RunPa
         List<StyledText> planets = new ArrayList<>();
         for (ExcavationSite site : ExcavationStates.standing(run.run())) {
             SectorEntityToken planet = run.system().getEntityById(site.planetId());
-            if (planet != null) {
+            if (fullySurveyed(planet)) {
                 planets.add(StyledText.styled(planet.getName(), Style.HIGHLIGHT));
             }
         }

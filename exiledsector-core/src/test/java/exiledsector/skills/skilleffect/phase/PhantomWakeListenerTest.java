@@ -16,15 +16,14 @@ import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.fleet.FleetMemberType;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
+import exiledsector.skills.skilleffect.CombatEngineExtension;
 import exiledsector.skills.skilleffect.CombatQueries;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.util.List;
 
@@ -48,7 +47,8 @@ class PhantomWakeListenerTest {
     private static final int PLAYER_SIDE = 0;
     private static final float LIFETIME_SECONDS = 3f;
 
-    private MockedStatic<Global> globalMock;
+    @RegisterExtension
+    final CombatEngineExtension combat = new CombatEngineExtension();
     private CombatEngineAPI engine;
     private CombatFleetManagerAPI fleetManager;
     private ShipVariantAPI afterimageVariant;
@@ -59,7 +59,7 @@ class PhantomWakeListenerTest {
 
     @BeforeEach
     void setUp() {
-        engine = mock(CombatEngineAPI.class);
+        engine = combat.engine();
         fleetManager = mock(CombatFleetManagerAPI.class);
         when(engine.getFleetManager(PLAYER_SIDE)).thenReturn(fleetManager);
         SettingsAPI settings = mock(SettingsAPI.class);
@@ -68,10 +68,8 @@ class PhantomWakeListenerTest {
         temporaryMember = mock(FleetMemberAPI.class, RETURNS_DEEP_STUBS);
         when(settings.createEmptyVariant(anyString(), any(ShipHullSpecAPI.class))).thenReturn(afterimageVariant);
         when(factory.createFleetMember(FleetMemberType.SHIP, afterimageVariant)).thenReturn(temporaryMember);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getCombatEngine).thenReturn(engine);
-        globalMock.when(Global::getSettings).thenReturn(settings);
-        globalMock.when(Global::getFactory).thenReturn(factory);
+        combat.global().when(Global::getSettings).thenReturn(settings);
+        combat.global().when(Global::getFactory).thenReturn(factory);
 
         ownerShip = mock(ShipAPI.class);
         ShipHullSpecAPI hullSpec = mock(ShipHullSpecAPI.class);
@@ -89,11 +87,6 @@ class PhantomWakeListenerTest {
         when(afterimage.getLocation()).thenReturn(new Vector2f());
         when(afterimage.getVelocity()).thenReturn(new Vector2f());
         when(engine.isEntityInPlay(afterimage)).thenReturn(true);
-    }
-
-    @AfterEach
-    void tearDown() {
-        globalMock.close();
     }
 
     private void spawnsAs(ShipAPI spawned) {

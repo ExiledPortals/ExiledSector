@@ -8,11 +8,11 @@ import exiledsector.charts.anomaly.forge.ChartForge;
 import exiledsector.charts.anomaly.forge.ForgeSite;
 import exiledsector.charts.anomaly.forge.ForgeTexts;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.items.CraftingMaterials;
-import exiledsector.items.CraftingInhibitor;
-import exiledsector.items.ForgeChoice;
+import exiledsector.items.crafting.material.CraftingMaterials;
+import exiledsector.items.crafting.material.CraftingInhibitor;
+import exiledsector.items.crafting.ForgeChoice;
 import exiledsector.items.Item;
-import exiledsector.items.CraftingMaterialFamily;
+import exiledsector.items.crafting.material.CraftingMaterialFamily;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemStore;
 import exiledsector.items.ItemType;
@@ -133,9 +133,7 @@ public final class ForgeCraftingBench implements BenchModeSupport {
         if (!(target instanceof ChartForge.Order order)) {
             return openCheck(sector, store, loaded);
         }
-        CargoAPI cargo = PlayerFleet.cargoOrNull();
-        UseVerdict verdict = ChartForge.verdict(ChartForge.liveRun(order.runId(), order.site()), order.site(), order.program(), loaded, cargo,
-                materials(cargo));
+        UseVerdict verdict = ChartForge.verdict(ChartForge.liveRun(order.runId(), order.site()), order.site(), order.program(), loaded, materials());
         return new OpenCheck(verdict.allowed(), verdict.refusalKey());
     }
 
@@ -162,12 +160,13 @@ public final class ForgeCraftingBench implements BenchModeSupport {
             return List.of();
         }
         return order.program().operation().choices(loaded).stream()
-                .map(choice -> new OpenChoice(ForgeTexts.choiceLabel(loaded, choice, order.program().operation()), null,
+                .map(choice -> new OpenChoice(ForgeTexts.choiceLabel(loaded, choice), null,
                         new ChartForge.Pick(order, choice)))
                 .toList();
     }
 
-    private static CraftingMaterials materials(CargoAPI cargo) {
+    private static CraftingMaterials materials() {
+        CargoAPI cargo = PlayerFleet.cargoOrNull();
         return cargo == null ? null : CraftingMaterials.forPlayer(cargo);
     }
 
@@ -195,11 +194,11 @@ public final class ForgeCraftingBench implements BenchModeSupport {
         }
         ForgeSite site = pick.order().site();
         ChartRun run = ChartForge.liveRun(pick.order().runId(), site);
-        CargoAPI cargo = PlayerFleet.cargoOrNull();
-        if (ChartForge.run(run, site, pick.order().program(), loaded, pick.choice(), cargo, materials(cargo), random)) {
+        CraftingMaterials materials = materials();
+        if (ChartForge.run(run, site, pick.order().program(), loaded, pick.choice(), materials, random)) {
             return new OpenOutcome(true, RAN_PREFIX + pick.order().program().operation().id());
         }
-        UseVerdict verdict = ChartForge.verdict(run, site, pick.order().program(), loaded, cargo, materials(cargo));
+        UseVerdict verdict = ChartForge.verdict(run, site, pick.order().program(), loaded, materials);
         return new OpenOutcome(false, verdict.allowed() ? ChartForge.FAILED.refusalKey() : verdict.refusalKey());
     }
 }

@@ -18,7 +18,7 @@ final class SkillTreeChrome {
     private static final int READOUT_ROWS = 3;
 
     private final SkillTreeStatPanel statPanel;
-    private final SkillTreeSearchBar searchBar;
+    private final CanvasSearchBar searchBar;
     private final SkillTreeTemplateController templateUi;
     private final SocketPlacement socketPlacement;
     private final SchematicButtons schematicButtons;
@@ -41,7 +41,7 @@ final class SkillTreeChrome {
     private UIComponentAPI shipCard;
     private boolean shipCardHidden;
 
-    SkillTreeChrome(FleetMemberAPI member, SkillTreePanelStyle panelStyle, SkillTreeStatPanel statPanel, SkillTreeSearchBar searchBar,
+    SkillTreeChrome(FleetMemberAPI member, SkillTreePanelStyle panelStyle, SkillTreeStatPanel statPanel, CanvasSearchBar searchBar,
                     SkillTreeTemplateController templateUi, SocketPlacement socketPlacement, SchematicButtons schematicButtons, float shipCardHeight) {
         this.member = member;
         this.statPanel = statPanel;
@@ -94,7 +94,7 @@ final class SkillTreeChrome {
                 || ordnancePointsBar.isHovered(canvasPosition, x, y)
                 || levelBar.isHovered(canvasPosition, x, y)
                 || nodesBar.isHovered(canvasPosition, x, y)
-                || (mode.shows(CanvasMode.Chrome.SEARCH) && SkillTreeSearchBar.contains(canvasPosition, x, y))
+                || (mode.shows(CanvasMode.Chrome.SEARCH) && searchBar.contains(canvasPosition, x, y))
                 || (mode.shows(CanvasMode.Chrome.TEMPLATE_BAR) && templateUi.barContains(x, y))
                 || (mode.shows(CanvasMode.Chrome.STORAGE_BUTTON) && socketPlacement.buttonContains(x, y))
                 || (mode.shows(CanvasMode.Chrome.SCHEMATIC_BUTTONS) && schematicButtons.contains(x, y))
@@ -159,7 +159,7 @@ final class SkillTreeChrome {
         schematicButtons.renderButtons(mouseX, mouseY, alphaMult * visibility.alpha(CanvasMode.Chrome.SCHEMATIC_BUTTONS),
                 mode.enables(CanvasMode.Chrome.SCHEMATIC_BUTTONS));
         ScreenRect frame = shipCardFrame(canvasPosition);
-        BorderedPanel.draw(frame.left(), frame.bottom(), frame.width(), frame.height(), alphaMult);
+        BorderedPanel.draw(frame, alphaMult);
         statPanel.renderSheet(canvasPosition, mouseX, mouseY, alphaMult * visibility.alpha(CanvasMode.Chrome.STATS_TOGGLE) * (1f - craftingBenchDim),
                 statsToggleLive(mode));
     }

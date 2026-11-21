@@ -1,21 +1,27 @@
 {
 	"plugins":{
+		"exiledSector_harnessCombatPlugin":"exiledsector.harness.HarnessCombatPlugin",
 		"exiledSector_chartBattlePlugin":"exiledsector.charts.effect.ChartBattlePlugin",
 		"exiledSector_chartAutopilotPlugin":"exiledsector.charts.effect.ChartAutopilotPlugin",
 		"exiledSector_chartArcStrikePlugin":"exiledsector.charts.effect.ChartArcStrikePlugin",
 		"exiledSector_chartMisfirePlugin":"exiledsector.charts.effect.ChartMisfirePlugin",
 		"exiledSector_stormFrontBattlePlugin":"exiledsector.charts.anomaly.stormfront.StormBattlePlugin",
+		"exiledSector_breachLightningPlugin":"exiledsector.charts.anomaly.breach.BreachLightningPlugin",
 		"exiledSector_shaftBattlePlugin":"exiledsector.charts.anomaly.excavation.ExcavationBattlePlugin",
+		"exiledSector_scarCombatPlugin":"exiledsector.charts.officer.scar.ScarCombatPlugin",
 	},
 	"ruleCommandPackages":[
 		"exiledsector.charts.run",
 		"exiledsector.ui.chart",
 	],
 	"graphics":{
+		"illustrations":{
+			"exiledSector_depot_assault":"graphics/exiledSector/campaign/illustrations/depot_assault.jpg",
+		},
 		"ui_icons_tech_tree":{
-			"exiledSector_wormhole_gateway":"graphics/icons/tech/exiledSector_wormhole_gateway.png",
-			"exiledSector_wormhole_gateway_advanced":"graphics/icons/tech/exiledSector_wormhole_gateway_advanced.png",
-			"exiledSector_wormhole_gateway_perfected":"graphics/icons/tech/exiledSector_wormhole_gateway_perfected.png",
+			"exiledSector_wormhole_gateway":"graphics/exiledSector/colony/tech/wormhole_gateway.png",
+			"exiledSector_wormhole_gateway_advanced":"graphics/exiledSector/colony/tech/wormhole_gateway_advanced.png",
+			"exiledSector_wormhole_gateway_perfected":"graphics/exiledSector/colony/tech/wormhole_gateway_perfected.png",
 		},
 	},
 }

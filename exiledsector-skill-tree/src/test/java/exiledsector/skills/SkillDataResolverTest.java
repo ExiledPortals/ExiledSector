@@ -3,17 +3,21 @@ package exiledsector.skills;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.MockShips;
 import exiledsector.persistence.ShipRecords;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.npc.NpcTreeTag;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.List;
 
+import static exiledsector.skills.TestTrees.node;
+import static exiledsector.skills.TestTrees.small;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
@@ -24,6 +28,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class SkillDataResolverTest {
 
     private static final String NPC_TAG = "exiledSector_npcTree|bulwark|2|root,a";
@@ -33,12 +38,8 @@ class SkillDataResolverTest {
     @BeforeEach
     void setUp() {
         SkillDataResolver.clearCache();
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
-        SkillType rootType = new SkillType.Builder("root_type", "Root", "a.png", SkillTier.ROOT).build();
-        SkillType smallType = new SkillType.Builder("a_type", "A", "a.png", SkillTier.SMALL).build();
-        SkillTree.register(new SkillNode("root", rootType, List.of(), 0f, 0f));
-        SkillTree.register(new SkillNode("a", smallType, List.of("root"), 0f, 0f));
+        node("root", SkillTier.ROOT);
+        small("a", "root");
         dataManagerMock = Mockito.mockStatic(ShipSkillDataManager.class);
     }
 
@@ -46,8 +47,6 @@ class SkillDataResolverTest {
     void tearDown() {
         dataManagerMock.close();
         SkillDataResolver.clearCache();
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
     }
 
     private static ShipVariantAPI variantWithTags(String... tags) {
@@ -57,9 +56,7 @@ class SkillDataResolverTest {
     }
 
     private static FleetMemberAPI member(String id) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getId()).thenReturn(id);
-        return member;
+        return MockShips.member(id).build();
     }
 
     @Test

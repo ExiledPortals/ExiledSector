@@ -46,8 +46,7 @@ public class ChartStatusCommand extends CampaignCommand {
         if (!run.hasBoss()) {
             return "Objective: none.";
         }
-        return "Objective: destroy the boss " + run.bossType().key() + " " + run.bossFleetId() + (run.isObjectiveComplete() ? ", complete" : "")
-                + (run.isRewardClaimed() ? ", reward delivered" : run.isObjectiveComplete() ? ", reward NOT delivered" : "") + ".";
+        return "Objective: destroy the boss " + run.bossType().key() + " " + run.bossFleetId() + (run.isObjectiveComplete() ? ", complete" : "") + ".";
     }
 
     static String describeLiveContent(StarSystemAPI system) {

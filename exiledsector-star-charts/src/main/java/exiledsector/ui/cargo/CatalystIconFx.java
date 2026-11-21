@@ -5,6 +5,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.skilleffect.render.Fade;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.charts.atlas.AtlasCatalysts;
+import exiledsector.ui.util.ColorUtil;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.SpriteDraw;
 import org.lwjgl.opengl.GL11;
@@ -104,7 +105,7 @@ public final class CatalystIconFx {
         boolean full = mode == ItemAnimationSetting.Mode.FULL;
         AtlasCatalysts.Family family = catalyst.family() == null ? AtlasCatalysts.Family.TERMINUS : catalyst.family();
         float seconds = cycleSeconds(family) * (full ? 1f : CALM_SLOWDOWN);
-        float t = CargoIconFx.seconds() + CargoIconFx.hash(phaseSeed, 1, 1) * seconds;
+        float t = IconFxClock.phasedSeconds(phaseSeed, seconds);
         float cycle = Fade.cycle(t, seconds);
         int round = (int) Math.floor(t / seconds);
         Color color = look.color();
@@ -186,7 +187,7 @@ public final class CatalystIconFx {
             float wobble = full ? STRAIN_WOBBLE * strain * (float) Math.sin(t * STRAIN_WOBBLE_HZ * Math.PI * 2.0) : 0f;
             float diameter = strainRadius(full ? cycle : Math.min(cycle, STRAIN_PEAK)) * 2f * unit;
             SpriteDraw.drawAdditiveAtCenter(FX_SPRITES, STRAIN_TEXTURE, cx, cy, diameter * (1f + wobble), diameter * (1f - wobble),
-                    CargoIconFx.lighten(color, 0.3f), ringAlpha, t * 20f % 360f);
+                    ColorUtil.lighten(color, 0.3f), ringAlpha, t * 20f % 360f);
         }
         if (!full) {
             return;
@@ -194,7 +195,7 @@ public final class CatalystIconFx {
         float collapse = collapseProgress(cycle);
         if (collapse > 0f && collapse < 1f) {
             float collapseSize = (COLLAPSE_FROM - (COLLAPSE_FROM - COLLAPSE_TO) * collapse) * unit;
-            SpriteDraw.drawAdditiveAtCenter(FX_SPRITES, COLLAPSE_TEXTURE, cx, cy, collapseSize, collapseSize, CargoIconFx.lighten(color, 0.5f),
+            SpriteDraw.drawAdditiveAtCenter(FX_SPRITES, COLLAPSE_TEXTURE, cx, cy, collapseSize, collapseSize, ColorUtil.lighten(color, 0.5f),
                     0.9f * (1f - collapse) * alphaMult);
         }
         float scar = scarAlpha(cycle) * alphaMult;
@@ -219,7 +220,7 @@ public final class CatalystIconFx {
         if (sweep > 0f && sweep < 1f) {
             float sweepY = cy + iconSize / 2f - sweep * iconSize;
             float sweepAlpha = (full ? 0.9f : CALM_SWEEP_ALPHA) * (float) Math.sin(sweep * Math.PI);
-            SpriteDraw.drawAdditiveAtCenter(FX_SPRITES, SWEEP_TEXTURE, cx, sweepY, iconSize, SWEEP_HEIGHT * unit, CargoIconFx.lighten(color, 0.4f),
+            SpriteDraw.drawAdditiveAtCenter(FX_SPRITES, SWEEP_TEXTURE, cx, sweepY, iconSize, SWEEP_HEIGHT * unit, ColorUtil.lighten(color, 0.4f),
                     sweepAlpha * alphaMult);
         }
     }
@@ -253,7 +254,7 @@ public final class CatalystIconFx {
         double angle = Math.toRadians(STREAK_ANGLE);
         float alongX = (float) Math.cos(angle);
         float alongY = (float) Math.sin(angle);
-        Color tint = CargoIconFx.lighten(color, 0.3f);
+        Color tint = ColorUtil.lighten(color, 0.3f);
         int streaks = full ? STREAK_STARTS.length : 1;
         for (int streak = 0; streak < streaks; streak++) {
             float progress = streakProgress(cycle, streak);
@@ -283,7 +284,7 @@ public final class CatalystIconFx {
         float reach = Math.min(distance, HALF - 1f) * unit;
         float arm = BRACKET_ARM * unit;
         try (GlScope scope = GlScope.flat().additive().lineWidth(Math.max(1f, 1.4f * unit))) {
-            Misc.setColor(CargoIconFx.lighten(color, 0.35f), alpha);
+            Misc.setColor(ColorUtil.lighten(color, 0.35f), alpha);
             GL11.glBegin(GL11.GL_LINES);
             for (int corner = 0; corner < 4; corner++) {
                 float signX = corner % 2 == 0 ? -1f : 1f;

@@ -1,7 +1,9 @@
 package exiledsector.ui.util;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
+import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.skills.skilleffect.render.SpriteCache;
+import exiledsector.ui.ScreenRect;
 
 import java.awt.Color;
 import java.util.HashSet;
@@ -28,9 +30,20 @@ public final class BorderedPanel {
     private BorderedPanel() {
     }
 
+    public static void draw(PositionAPI area, float alphaMult) {
+        draw(area.getX(), area.getY(), area.getWidth(), area.getHeight(), alphaMult);
+    }
+
+    public static void draw(ScreenRect area, float alphaMult) {
+        draw(area.left(), area.bottom(), area.width(), area.height(), alphaMult);
+    }
+
     public static void draw(float x, float y, float width, float height, float alphaMult) {
         GLDraw.fillQuad(x, y, width, height, BACKGROUND_COLOR, alphaMult);
+        drawEdges(x, y, width, height, alphaMult);
+    }
 
+    public static void drawEdges(float x, float y, float width, float height, float alphaMult) {
         float edgeWidth = Math.min(BORDER_EDGE_WIDTH, width / 2f);
         float capHeight = Math.min(BORDER_CAP_HEIGHT, height / 2f);
         float midHeight = Math.max(0f, height - capHeight * 2f);

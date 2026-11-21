@@ -1,7 +1,7 @@
 package exiledsector.charts.anomaly.excavation;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
+import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.MarketCMD.RaidDangerLevel;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -37,19 +37,24 @@ public class ExcavationSiteObjective extends ChartRaidObjective {
     @Override
     protected void describe(TooltipMakerAPI tooltip) {
         VanillaText.plainPara(tooltip, Translation.gameText("chart.anomaly.excavation_sites.objective.tooltip"), 0f, Misc.getTextColor());
-        VanillaText.addPara(tooltip, ExcavationSiteDialog.leanLine(site.lean()), PARAGRAPH_PAD, Misc.getTextColor());
+        VanillaText.addPara(tooltip, ExcavationSiteDialog.findsLine(), PARAGRAPH_PAD, Misc.getTextColor());
     }
 
     @Override
     protected CargoAPI take(Random random) {
         ChartRun run = ChartRuns.live();
         ExcavationSite current = run == null ? null : ExcavationStates.standingAt(run, site.planetId());
-        if (current == null || current.access() != ExcavationSite.Access.COLLAPSED) {
+        if (current == null || !current.hasCollapsedShaft()) {
             return null;
         }
         float share = ExcavationRules.raidShare((float) raidEffectiveness.getAsDouble());
-        CargoAPI cargo = ExcavationLoot.raidCargo(Global.getSector(), run, current, share, random);
-        ExcavationStates.clear(run, current);
+        SectorEntityToken planet = getMarket() == null ? null : getMarket().getPrimaryEntity();
+        CargoAPI cargo = ExcavationLoot.raidCargo(run, share, ExcavationDeliveries.lootPercent(planet), random);
+        CargoAPI delivered = ExcavationDeliveries.takeCache(planet);
+        if (delivered != null) {
+            cargo.addAll(delivered);
+        }
+        ExcavationStates.clearShaft(run, current, ExcavationSite.Access.COLLAPSED);
         return cargo;
     }
 }

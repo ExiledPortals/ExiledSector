@@ -37,8 +37,11 @@ final class TileChrome {
 
     static void drawIcon(SpriteCache icons, String iconPath, CargoIconLook look, PositionAPI tilePosition, float iconSize, float alphaMult,
                          float glowMult, int phaseSeed) {
-        float centreX = tilePosition.getCenterX();
-        float centreY = tilePosition.getCenterY();
+        drawIcon(icons, iconPath, look, tilePosition.getCenterX(), tilePosition.getCenterY(), iconSize, alphaMult, glowMult, phaseSeed);
+    }
+
+    static void drawIcon(SpriteCache icons, String iconPath, CargoIconLook look, float centreX, float centreY, float iconSize, float alphaMult,
+                         float glowMult, int phaseSeed) {
         if (look == null) {
             AnimatedItemIcons.drawAtCenter(icons, iconPath, centreX, centreY, iconSize, iconSize, Color.WHITE, alphaMult);
             return;

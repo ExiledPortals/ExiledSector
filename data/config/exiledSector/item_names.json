@@ -11,8 +11,8 @@
 	},
 	"specialist_crew": {
 		"style": "codename",
-		"first": ["Bunk", "Galley", "Mess", "Hammock", "Billet", "Muster"],
-		"second": ["Hands", "Gang", "Detail", "Company", "Shift", "Roster"]
+		"first": ["Synapse", "Cortex", "Myo", "Optic", "Neural", "Spinal"],
+		"second": ["Weave", "Mesh", "Lace", "Splice", "Graft", "Implant"]
 	},
 	"engine_room_drive": {
 		"style": "product",

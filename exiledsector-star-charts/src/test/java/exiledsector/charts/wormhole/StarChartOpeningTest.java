@@ -17,8 +17,9 @@ import exiledsector.charts.StarChartSettings;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
+import exiledsector.items.modifier.ItemRoll;
 import exiledsector.items.ItemStore;
-import exiledsector.items.StarChartFixtures;
+import exiledsector.items.starchart.StarChartFixtures;
 import exiledsector.charts.wormhole.WormholeOpenCheck.Blocker;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
@@ -56,7 +57,7 @@ class StarChartOpeningTest {
         lunaMock = Mockito.mockStatic(LunaSettings.class);
         StarChartSettings.setNoColonyForTests(true);
         store = ItemStore.starCharts();
-        chart = store.add(ItemData.rolledAtTier(ItemDefinitions.get("star_chart"), 12L, 4));
+        chart = store.add(ItemData.rolled(ItemDefinitions.get("star_chart"), 12L, ItemRoll.atTier(4)));
     }
 
     @AfterEach

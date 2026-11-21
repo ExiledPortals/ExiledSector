@@ -10,11 +10,15 @@ import exiledsector.skills.skilleffect.StatMode;
 
 import java.util.function.Function;
 
-record TargetDamageBonusEffect(ListenerEffect<? extends TargetDamageBonusListener> listener, String statKey) implements EffectBacking {
+record TargetDamageBonusEffect(ListenerEffect<?> listener, String statKey) implements EffectBacking {
 
     static <T extends TargetDamageBonusListener> TargetDamageBonusEffect targetDamage(String damagePercentKey, Class<T> listenerType,
             Function<ShipAPI, T> listenerFactory, String statKey) {
         return new TargetDamageBonusEffect(new ListenerEffect<>(damagePercentKey, listenerType, listenerFactory), statKey);
+    }
+
+    static TargetDamageBonusEffect damageType(String damagePercentKey, String statKey) {
+        return new TargetDamageBonusEffect(new ListenerEffect<>(damagePercentKey, DamageTypeListener.class, DamageTypeListener::new), statKey);
     }
 
     @Override

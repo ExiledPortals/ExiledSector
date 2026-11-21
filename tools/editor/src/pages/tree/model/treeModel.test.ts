@@ -1,6 +1,5 @@
 import { produce } from 'immer';
 import { describe, expect, it } from 'vitest';
-import { buildVocabulary } from '../../../api/vocabulary.ts';
 import {
   connectNodes,
   curveKey,
@@ -26,22 +25,22 @@ import {
   snapAngleToTargets,
   snapNodeToAnchor,
 } from './geometry.ts';
-import { serializeUnlockConditions } from './serialization.ts';
+import { serializeUnlockConditions } from './fieldSchema.ts';
 import { replaceGroupTags, tagGroupOf } from './tags.ts';
 import { nameSlug, nodeById, nodeIdStem, type SkillType, type TreeDocument, type TreeNode } from './types.ts';
 import { validateTree } from './validation.ts';
+import { renameVolume, volumeIdProblem, volumeUseCount } from './volumes.ts';
+import { ATLAS_TREE_KIND } from '../treeKinds.ts';
+import { testVocabulary, type TestVocabularyOverrides } from '../../../test/testVocabulary.ts';
 
-const vocabularyFile = {
+const vocabularyFields: TestVocabularyOverrides = {
   effects: [{ name: 'HULL_PERCENT', statMode: 'PERCENT', lowerIsBetter: false }],
   tags: { theme: ['armor'], volume: ['north', 'south'], requirement: ['req_civilian_hull'] },
   tiers: ['SMALL', 'NOTABLE', 'KEYSTONE', 'WORMHOLE', 'WORMHOLE_EXIT', 'ROOT', 'SOCKET'],
   unlockConditionTypes: ['blueprint'],
   blueprintCategories: ['hullmod'],
-  itemTypes: [],
-  itemKinds: [],
-  itemUnlocks: [],
 };
-const vocabulary = buildVocabulary(vocabularyFile);
+const vocabulary = testVocabulary(vocabularyFields);
 
 function node(id: string, x: number, y: number, connectedTo: string[] = [], extra: Partial<TreeNode> = {}): TreeNode {
   return { id, type: 'small', connectedTo, x, y, tags: ['north'], ...extra };
@@ -54,6 +53,7 @@ function makeDocument(nodes: TreeNode[], extra: Partial<TreeDocument> = {}): Tre
       { id: 'hole', name: 'Hole', icon: '', tier: 'WORMHOLE' },
       { id: 'exit', name: 'Exit', icon: '', tier: 'WORMHOLE_EXIT' },
     ],
+    volumes: [],
     nodes,
     curves: [],
     hiddenConnectors: [],
@@ -186,13 +186,13 @@ describe('validation and tags', () => {
     ]);
     document.types[0].tags = ['north'];
     document.types[0].effects = [{ effect: 'NOPE', magnitude: 1 }];
-    document.types[0].icon = 'graphics/unused/x.png';
+    document.types[0].icon = 'art/unused/x.png';
     expect(validateTree(document, vocabulary)).toEqual([
       'Duplicate node id: a',
       'Node "a" uses unknown type "missing"',
       'Node "a" connection "ghost" does not exist',
       'Wormhole node "w" has no paired wormhole set',
-      'Type "small" icon graphics/unused/x.png is in a folder that is not deployed',
+      'Type "small" icon art/unused/x.png is in a folder that is not deployed',
       'Type "small" uses unknown effect "NOPE"',
       'Node "a" has no volume tag',
       'Node "w" has 2 volume tags (north, south), needs exactly one',
@@ -217,6 +217,65 @@ describe('validation and tags', () => {
     expect(validateTree(document, vocabulary, new Set(['old_1']))).toEqual([
       'Node id "old_1" was retired in node_replacements.csv; give the node a new id',
     ]);
+  });
+
+  it('checks atlas nodes against the declared volumes, anomalies, chart and atlas effects and atlas tiers without requiring a volume', () => {
+    const atlasVocabulary = ATLAS_TREE_KIND.editorVocabulary(
+      { ...vocabulary, chartEffectNames: ['CHART_EXTRA_FLEETS'], atlasEffectNames: ['ATLAS_VISIBILITY_LANES'], chartAnomalyIds: ['spatial_breach'] },
+      ['crafting', 'crafting'],
+    );
+    const document = makeDocument(
+      [node('a', 0, 0, [], { tags: ['crafting', 'spatial_breach'] }), node('b', 1, 0, [], { tags: ['north'] }), node('c', 2, 0, [], { tags: ['spatial_breach'] })],
+      { volumes: ['crafting', 'crafting'] },
+    );
+    document.types[0].effects = [
+      { effect: 'CHART_EXTRA_FLEETS', magnitude: 1 },
+      { effect: 'ATLAS_VISIBILITY_LANES', magnitude: 1 },
+      { effect: 'HULL_PERCENT', magnitude: 5 },
+    ];
+    expect(validateTree(document, atlasVocabulary, new Set(), ATLAS_TREE_KIND.requiresVolumeTag)).toEqual([
+      'Type "small" uses unknown effect "HULL_PERCENT"',
+      'Volume "crafting" is declared more than once',
+      'Type "exit" has tier "WORMHOLE_EXIT", which this tree does not use',
+      'Node "b" has unknown tag "north"',
+    ]);
+    expect(tagGroupOf(atlasVocabulary, 'spatial_breach')).toBe('anomaly');
+    expect(tagGroupOf(vocabulary, 'spatial_breach')).toBe('theme');
+  });
+
+  it('takes atlas type tags from the star chart theme tags and flags a tag beside its own ancestor', () => {
+    const taggedVocabulary = testVocabulary({
+      ...vocabularyFields,
+      tags: { ...vocabularyFields.tags, theme: ['armor', 'defence', 'logistics'] },
+      themeTags: [
+        { id: 'armor', parent: 'defence', scopes: ['ship', 'star_chart'] },
+        { id: 'defence', parent: null, scopes: ['ship', 'star_chart'] },
+        { id: 'logistics', parent: null, scopes: ['ship'] },
+        { id: 'loot', parent: null, scopes: ['star_chart'] },
+      ],
+    });
+    const atlasVocabulary = ATLAS_TREE_KIND.editorVocabulary(taggedVocabulary, ['crafting']);
+    const shipDocument = makeDocument([node('a', 0, 0)]);
+    shipDocument.types[0].tags = ['defence', 'armor', 'req_civilian_hull'];
+    const atlasDocument = makeDocument([node('a', 0, 0, [], { tags: ['crafting'] })], { volumes: ['crafting'] });
+    atlasDocument.types = atlasDocument.types.filter((type) => type.tier !== 'WORMHOLE_EXIT');
+    atlasDocument.types[0].tags = ['loot', 'logistics'];
+
+    expect(atlasVocabulary.themeTags).toEqual(['armor', 'defence', 'loot']);
+    expect(tagGroupOf(atlasVocabulary, 'loot')).toBe('theme');
+    expect(validateTree(shipDocument, taggedVocabulary)).toEqual(['Type "small" lists "armor" beside its ancestor "defence", which it already counts as']);
+    expect(validateTree(atlasDocument, atlasVocabulary)).toEqual(['Type "small" has unknown tag "logistics"']);
+  });
+
+  it('renames a volume on every node and decoration that carries it', () => {
+    const star = { kind: 'star' as const, id: 'star', x: 0, y: 0, radius: 100, starType: 'star_yellow', color: null, tags: ['crafting'] };
+    const document = makeDocument([node('a', 0, 0, [], { tags: ['crafting'] }), node('b', 1, 0, [], { tags: ['charts'] })], { volumes: ['crafting', 'charts'], decorations: [star] });
+    expect(volumeUseCount(document, 'crafting')).toBe(2);
+    expect(volumeIdProblem(document, 'charts')).toBe('Volume "charts" already exists');
+    const renamed = produce(document, (draft) => renameVolume(draft, 'crafting', 'crafting_items'));
+    expect(renamed.volumes).toEqual(['crafting_items', 'charts']);
+    expect(renamed.nodes.map((each) => each.tags)).toEqual([['crafting_items'], ['charts']]);
+    expect(renamed.decorations[0].tags).toEqual(['crafting_items']);
   });
 
   it('replaces only the tags of one group and keeps the rest in order', () => {
@@ -245,7 +304,7 @@ describe('validation and tags', () => {
 
   it('reads the parameterless unlock condition list from the vocabulary and tolerates an older file without it', () => {
     expect(vocabulary.parameterlessUnlockConditionTypes).toEqual([]);
-    const withGates = buildVocabulary({ ...vocabularyFile, parameterlessUnlockConditionTypes: ['ratPlayerExoship'] });
+    const withGates = testVocabulary({ ...vocabularyFields, parameterlessUnlockConditionTypes: ['ratPlayerExoship'] });
     expect(withGates.parameterlessUnlockConditionTypes).toEqual(['ratPlayerExoship']);
   });
 });
@@ -303,7 +362,7 @@ describe('new node ids', () => {
 
 describe('rule tags', () => {
   it('groups rule tags apart and accepts them as known', () => {
-    const withRules = buildVocabulary({ ...vocabularyFile, tags: { ...vocabularyFile.tags, rule: ['logistics_cap'] } });
+    const withRules = testVocabulary({ ...vocabularyFields, tags: { ...vocabularyFields.tags, rule: ['logistics_cap'] } });
 
     expect(tagGroupOf(withRules, 'logistics_cap')).toBe('rule');
     expect(withRules.allTags).toContain('logistics_cap');

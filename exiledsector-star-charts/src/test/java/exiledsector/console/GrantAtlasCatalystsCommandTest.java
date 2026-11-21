@@ -26,8 +26,8 @@ class GrantAtlasCatalystsCommandTest {
 
     private static final AtlasCatalysts.Catalyst BREACH = new AtlasCatalysts.Catalyst("exiledSector_breach_terminus", "spatial_breach",
             AtlasCatalysts.Family.TERMINUS, 1f, 1);
-    private static final AtlasCatalysts.Catalyst REDEPLOYMENT = new AtlasCatalysts.Catalyst("exiledSector_redeployment_orders", "",
-            AtlasCatalysts.Family.ORDERS, 1f, 1, AtlasCatalysts.Effect.REDEPLOY, "graphics/test.png");
+    private static final AtlasCatalysts.Catalyst CONVOY = new AtlasCatalysts.Catalyst("exiledSector_convoy_orders", "supply_convoy",
+            AtlasCatalysts.Family.ORDERS, 1f, 1);
 
     private ConsoleFixture fixture;
 
@@ -35,7 +35,7 @@ class GrantAtlasCatalystsCommandTest {
     void setUp() {
         fixture = new ConsoleFixture();
         when(fixture.sector.getPersistentData()).thenReturn(new HashMap<>());
-        AtlasCatalysts.useForTests(List.of(BREACH, REDEPLOYMENT));
+        AtlasCatalysts.useForTests(List.of(BREACH, CONVOY));
     }
 
     @AfterEach
@@ -56,15 +56,15 @@ class GrantAtlasCatalystsCommandTest {
         assertEquals(new GrantAtlasCatalystsCommand.GrantArguments(5, null, null), GrantAtlasCatalystsCommand.GrantArguments.parse("5"));
         assertEquals(new GrantAtlasCatalystsCommand.GrantArguments(3, BREACH, null),
                 GrantAtlasCatalystsCommand.GrantArguments.parse("breach_terminus 3"));
-        assertEquals(new GrantAtlasCatalystsCommand.GrantArguments(1, REDEPLOYMENT, null),
-                GrantAtlasCatalystsCommand.GrantArguments.parse(" exiledSector_Redeployment_Orders "));
+        assertEquals(new GrantAtlasCatalystsCommand.GrantArguments(1, CONVOY, null),
+                GrantAtlasCatalystsCommand.GrantArguments.parse(" exiledSector_Convoy_Orders "));
         assertNotNull(GrantAtlasCatalystsCommand.GrantArguments.parse("0").problem());
         assertNotNull(GrantAtlasCatalystsCommand.GrantArguments.parse("101").problem());
         assertNotNull(GrantAtlasCatalystsCommand.GrantArguments.parse("2 3").problem());
-        assertNotNull(GrantAtlasCatalystsCommand.GrantArguments.parse("breach_terminus redeployment_orders").problem());
+        assertNotNull(GrantAtlasCatalystsCommand.GrantArguments.parse("breach_terminus convoy_orders").problem());
         assertNotNull(GrantAtlasCatalystsCommand.GrantArguments.parse("1 2 3").problem());
         String unknown = GrantAtlasCatalystsCommand.GrantArguments.parse("storm_terminus").problem();
-        assertTrue(unknown.contains("breach_terminus, redeployment_orders"), unknown);
+        assertTrue(unknown.contains("breach_terminus, convoy_orders"), unknown);
     }
 
     @Test
@@ -72,10 +72,10 @@ class GrantAtlasCatalystsCommandTest {
         assertEquals(CommandResult.SUCCESS, new GrantAtlasCatalystsCommand().runCommand("4", campaign()));
         ArgumentCaptor<SpecialItemData> added = ArgumentCaptor.forClass(SpecialItemData.class);
         verify(fixture.cargo, times(2)).addSpecial(added.capture(), eq(4f));
-        assertEquals(List.of(BREACH.itemId(), REDEPLOYMENT.itemId()), added.getAllValues().stream().map(SpecialItemData::getId).toList());
+        assertEquals(List.of(BREACH.itemId(), CONVOY.itemId()), added.getAllValues().stream().map(SpecialItemData::getId).toList());
 
-        assertEquals(CommandResult.SUCCESS, new GrantAtlasCatalystsCommand().runCommand("redeployment_orders 2", campaign()));
-        verify(fixture.cargo).addSpecial(argThat(special -> REDEPLOYMENT.itemId().equals(special.getId())), eq(2f));
+        assertEquals(CommandResult.SUCCESS, new GrantAtlasCatalystsCommand().runCommand("convoy_orders 2", campaign()));
+        verify(fixture.cargo).addSpecial(argThat(special -> CONVOY.itemId().equals(special.getId())), eq(2f));
     }
 
     @Test

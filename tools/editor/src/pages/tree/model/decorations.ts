@@ -115,7 +115,19 @@ export const SHROUDED_MAW_SPRITE_PATH = 'graphics/ships/shroud/maw_base.png';
 export const SHROUDED_MAW_HEIGHT_PER_LENGTH = 256 / 384;
 export const HYPERSHUNT_SPRITE_PATH = 'graphics/stations/coronal_shunt2.png';
 export const DEFAULT_HYPERSHUNT_SIZE = 300;
-export const MIN_DECORATION_SIZE = 20;
+const MIN_DECORATION_SIZE = 20;
+
+export function clampDecorationSize(size: number): number {
+  return Math.max(MIN_DECORATION_SIZE, size);
+}
+
+export function setRingInnerRadius(belt: Pick<RingBeltDecoration, 'innerRadius' | 'outerRadius'>, radius: number): void {
+  belt.innerRadius = Math.max(0, Math.min(radius, belt.outerRadius - MIN_DECORATION_SIZE));
+}
+
+export function setRingOuterRadius(belt: Pick<RingBeltDecoration, 'innerRadius' | 'outerRadius'>, radius: number): void {
+  belt.outerRadius = Math.max(belt.innerRadius + MIN_DECORATION_SIZE, radius);
+}
 const ROTATE_HANDLE_GAP = 24;
 
 export const VANILLA_STAR_TYPES = [
@@ -220,7 +232,7 @@ function dragLengthOrRotation(decoration: LengthAndRotation, handle: string, wor
   if (handle === 'rotate') {
     decoration.rotation = rotationTowards(decoration, world);
   } else {
-    decoration.length = Math.max(MIN_DECORATION_SIZE, Math.round(distance(decoration, world) * 2));
+    decoration.length = clampDecorationSize(Math.round(distance(decoration, world) * 2));
   }
 }
 
@@ -259,7 +271,7 @@ function dragOrbitHandle(orbit: CentredOrbit, handle: string, world: Point): voi
   if (handle === 'start') {
     orbit.startAngle = Math.round(normalizeDegrees(angleDegrees(orbit.x, orbit.y, world.x, world.y)));
   } else {
-    orbit.orbitRadius = Math.max(MIN_DECORATION_SIZE, Math.round(distance(orbit, world)));
+    orbit.orbitRadius = clampDecorationSize(Math.round(distance(orbit, world)));
   }
 }
 
@@ -288,7 +300,7 @@ const STAR: DecorationKindSpec<'star'> = {
   },
   handles: (star) => [{ name: 'radius', x: star.x + star.radius, y: star.y, rotates: false }],
   dragHandle: (star, _handle, world) => {
-    star.radius = Math.max(MIN_DECORATION_SIZE, Math.round(distance(star, world)));
+    star.radius = clampDecorationSize(Math.round(distance(star, world)));
   },
   reach: (star) => star.radius,
 };
@@ -332,8 +344,8 @@ const IMAGE: DecorationKindSpec<'image'> = {
       return;
     }
     const local = rotateAroundOrigin(world.x - image.x, world.y - image.y, -(image.rotation || 0));
-    image.width = Math.max(MIN_DECORATION_SIZE, Math.round(Math.abs(local.x) * 2));
-    image.height = Math.max(MIN_DECORATION_SIZE, Math.round(Math.abs(local.y) * 2));
+    image.width = clampDecorationSize(Math.round(Math.abs(local.x) * 2));
+    image.height = clampDecorationSize(Math.round(Math.abs(local.y) * 2));
   },
   reach: (image) => Math.hypot(image.width, image.height) / 2,
 };
@@ -370,9 +382,9 @@ const RING_BELT: DecorationKindSpec<'ringBelt'> = {
   dragHandle: (belt, handle, world) => {
     const radius = Math.round(distance(belt, world));
     if (handle === 'inner') {
-      belt.innerRadius = Math.max(0, Math.min(radius, belt.outerRadius - MIN_DECORATION_SIZE));
+      setRingInnerRadius(belt, radius);
     } else {
-      belt.outerRadius = Math.max(belt.innerRadius + MIN_DECORATION_SIZE, radius);
+      setRingOuterRadius(belt, radius);
     }
   },
   reach: (belt) => belt.outerRadius,
@@ -487,7 +499,7 @@ const HYPERSHUNT: DecorationKindSpec<'hypershunt'> = {
   },
   dragHandle: (hypershunt, handle, world) => {
     if (handle === 'size') {
-      hypershunt.size = Math.max(MIN_DECORATION_SIZE, Math.round(distance(hypershuntPosition(hypershunt), world) * 2));
+      hypershunt.size = clampDecorationSize(Math.round(distance(hypershuntPosition(hypershunt), world) * 2));
     } else {
       dragOrbitHandle(hypershunt, handle, world);
     }
@@ -517,14 +529,14 @@ function isDecorationKind(value: unknown): value is DecorationKind {
 
 export const RETIRED_DECORATION_LISTS = ['stars', 'staticImages', 'ringBelts', 'threatUnits'];
 
-export function parseDecorations(entries: unknown): Decoration[] {
+export function parseDecorations(entries: unknown, fileName: string): Decoration[] {
   if (!Array.isArray(entries)) {
     return [];
   }
   return entries.flatMap((entry): Decoration[] => {
     const json = (entry ?? {}) as JsonRecord;
     if (!isDecorationKind(json.kind)) {
-      throw new Error(`ship_skill_tree.json has decoration "${String(json.id)}" of unknown kind "${String(json.kind)}"; the editor would drop it on save`);
+      throw new Error(`${fileName} has decoration "${String(json.id)}" of unknown kind "${String(json.kind)}"; the editor would drop it on save`);
     }
     const base = {
       id: typeof json.id === 'string' ? json.id : '',

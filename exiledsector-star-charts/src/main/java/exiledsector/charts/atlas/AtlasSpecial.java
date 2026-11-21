@@ -2,7 +2,7 @@ package exiledsector.charts.atlas;
 
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.data.EnumKeys;
-import exiledsector.items.StarChart;
+import exiledsector.items.starchart.StarChart;
 
 public record AtlasSpecial(String id, Kind kind, Placement placement, float chance, float minSteps, float radius, int count, float steps,
                            String requiredMod, String unlock, String factionId) {
@@ -32,7 +32,7 @@ public record AtlasSpecial(String id, Kind kind, Placement placement, float chan
 
         AtlasOpening.Blocker openBlocker(StarChart chart) {
             return switch (this) {
-                case BASTION -> chart == null || chart.tier() < ChartTiers.HIGHEST_TIER ? AtlasOpening.Blocker.BASTION_NEEDS_TOP_TIER : null;
+                case BASTION -> chart == null || chart.tier() < ChartTiers.HIGHEST_DROP_TIER ? AtlasOpening.Blocker.BASTION_NEEDS_TOP_TIER : null;
                 case INFESTATION -> AtlasOpening.explicitModifiers(chart) < AtlasOpening.INFESTATION_MODIFIERS ? AtlasOpening.Blocker.INFESTATION_NEEDS_MODIFIERS : null;
                 default -> null;
             };
@@ -44,9 +44,6 @@ public record AtlasSpecial(String id, Kind kind, Placement placement, float chan
                 case BASTION -> state.addKeyFragment();
                 default -> {
                 }
-            }
-            if (this != UNIQUE) {
-                state.addAtlasPoints(1);
             }
         }
 

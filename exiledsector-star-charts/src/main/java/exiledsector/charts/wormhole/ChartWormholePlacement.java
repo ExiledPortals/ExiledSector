@@ -8,7 +8,7 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.terrain.BaseRingTerrain;
 import com.fs.starfarer.api.impl.campaign.terrain.FlareManager.FlareManagerDelegate;
 import com.fs.starfarer.api.impl.campaign.terrain.PulsarBeamTerrainPlugin;
-import exiledsector.charts.content.ChartSites;
+import exiledsector.charts.layout.ChartGeometry;
 import exiledsector.charts.generation.ChartSystemFactory;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -70,7 +70,7 @@ public final class ChartWormholePlacement {
     }
 
     private static Vector2f polar(double angle, float radius) {
-        return ChartSites.pointAround(new Vector2f(), angle, radius);
+        return ChartGeometry.pointAround(new Vector2f(), angle, radius);
     }
 
     static boolean isClear(List<Band> blocked, float distance) {
@@ -139,17 +139,21 @@ public final class ChartWormholePlacement {
     }
 
     public static Band centreBand(SectorEntityToken entity, int depth) {
+        return centreBand(entity, new Vector2f(), depth);
+    }
+
+    public static Band centreBand(SectorEntityToken entity, Vector2f origin, int depth) {
         SectorEntityToken focus = entity.getOrbitFocus();
         if (focus == null || focus == entity || depth >= MAX_ORBIT_DEPTH) {
             Vector2f location = entity.getLocation();
-            float distance = location == null ? 0f : location.length();
+            float distance = location == null ? 0f : Vector2f.sub(location, origin, new Vector2f()).length();
             return new Band(distance, distance);
         }
         float orbitRadius = entity.getCircularOrbitRadius();
         if (orbitRadius <= 0f && entity.getLocation() != null && focus.getLocation() != null) {
             orbitRadius = Vector2f.sub(entity.getLocation(), focus.getLocation(), new Vector2f()).length();
         }
-        return centreBand(focus, depth + 1).sweptAt(orbitRadius, orbitRadius);
+        return centreBand(focus, origin, depth + 1).sweptAt(orbitRadius, orbitRadius);
     }
 
     public record Band(float inner, float outer) {

@@ -2,6 +2,7 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.skills.skilleffect.render.Fade;
+import exiledsector.ui.hyperspace.HyperspaceCamera;
 
 public class CanvasCamera {
 
@@ -157,6 +158,15 @@ public class CanvasCamera {
 
     public boolean isSettledAtMinimum() {
         return smoothZoom.isSettledAtMinimum();
+    }
+
+    public void jumpTo(HyperspaceCamera hyperspaceCamera) {
+        jumpZoomTo(hyperspaceCamera.zoom());
+        centreOn(hyperspaceCamera.x(), hyperspaceCamera.y());
+    }
+
+    public HyperspaceCamera current() {
+        return new HyperspaceCamera(centreTreeX(), centreTreeY(), zoom());
     }
 
     public float zoom() {

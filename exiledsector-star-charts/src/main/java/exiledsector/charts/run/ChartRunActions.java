@@ -6,28 +6,34 @@ import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
+import exiledsector.charts.atlas.ActiveCatalysts;
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartSystemFactory;
 import exiledsector.charts.layout.ChartLayoutRequest;
 import exiledsector.charts.objective.ChartObjectiveIntel;
 import exiledsector.charts.run.cleanup.ChartRunCloser;
+import exiledsector.charts.tree.AtlasTree;
 import exiledsector.compat.DiyPlanetsCompat;
+import exiledsector.items.crafting.material.CraftingMaterials;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemStore;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.atlas.AtlasCell;
+import exiledsector.charts.atlas.AtlasEffects;
 import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.charts.atlas.AtlasProgress;
 import exiledsector.charts.atlas.AtlasRunChoice;
 import exiledsector.charts.atlas.AtlasRuntime;
 import exiledsector.charts.atlas.AtlasState;
-import exiledsector.items.StarChart;
+import exiledsector.items.starchart.StarChart;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
+import java.util.List;
 import java.util.Random;
 
 public final class ChartRunActions {
@@ -80,6 +86,8 @@ public final class ChartRunActions {
         if (playerBlocker != null) {
             return playerBlocker;
         }
+        CraftingMaterials materials = CraftingMaterials.forPlayer(sector.getPlayerFleet().getCargo());
+        List<ActiveCatalysts.Planned> shownCatalysts = ActiveCatalysts.plan(generator, state, cell, materials::count);
         ChartRun previous = ChartRuns.currentOrNull();
         if (previous != null) {
             LOG.info("[ExiledSector] Closing Star Chart run " + previous.runId() + " to open another from the atlas");
@@ -89,11 +97,15 @@ public final class ChartRunActions {
                 return ChartRuns.hasRun() ? OpenResult.RUN_EXISTS : OpenResult.NOT_REACHABLE;
             }
         }
-        AtlasRunNode runNode = ChartAnomalies.joinRunNode(AtlasOpening.runNode(generator, state, cell), generator, state, cell, choice);
-        OpenResult result = openBesidePlayer(sector, entriesAllowed, random, AtlasOpening.request(generator, state, cell, chart, runNode),
-                ItemData.of(chart).encode(), runNode);
+        List<ActiveCatalysts.Planned> catalysts = ActiveCatalysts.alsoApplyingIn(ActiveCatalysts.plan(generator, state, cell, materials::count), shownCatalysts);
+        List<ChartGenContext.AppliedEffect> treeLines = AtlasTree.chartLines(state);
+        AtlasRunNode opened = AtlasOpening.openedRunNode(generator, state, cell, chart.seed(), ActiveCatalysts.anomalyIds(catalysts), treeLines);
+        AtlasRunNode runNode = ChartAnomalies.joinRunNode(opened, generator, state, cell, choice);
+        OpenResult result = openBesidePlayer(sector, entriesAllowed, random, AtlasOpening.request(generator, state, cell, chart, runNode, treeLines),
+                ItemData.of(chart).encode(), runNode, treeLines, generator.effects());
         if (result == OpenResult.OPENED) {
             store.remove(chart);
+            ActiveCatalysts.spend(state, catalysts, materials);
             AtlasProgress.opened(sector, generator, cell);
         }
         return result;
@@ -112,11 +124,12 @@ public final class ChartRunActions {
 
     private static OpenResult openBesidePlayer(SectorAPI sector, int entriesAllowed, Random random, ChartLayoutRequest layoutRequest,
                                                String chartData) {
-        return openBesidePlayer(sector, entriesAllowed, random, layoutRequest, chartData, null);
+        return openBesidePlayer(sector, entriesAllowed, random, layoutRequest, chartData, null, List.of(), null);
     }
 
     private static OpenResult openBesidePlayer(SectorAPI sector, int entriesAllowed, Random random, ChartLayoutRequest layoutRequest,
-                                               String chartData, AtlasRunNode atlasNode) {
+                                               String chartData, AtlasRunNode atlasNode, List<ChartGenContext.AppliedEffect> treeLines,
+                                               AtlasEffects mapEffects) {
         if (ChartRuns.hasRun()) {
             return OpenResult.RUN_EXISTS;
         }
@@ -132,6 +145,8 @@ public final class ChartRunActions {
         run.recordOriginEntity(anchor == null ? null : anchor.getId());
         run.recordChart(chartData);
         run.recordAtlasNode(atlasNode);
+        run.recordAtlasTreeLines(treeLines);
+        run.recordAtlasMapEffects(mapEffects);
         ChartRuns.store(run);
         try {
             ChartSystemFactory.ChartSystem created = ChartSystemFactory.createSystem(sector, run.runId(), layoutRequest);

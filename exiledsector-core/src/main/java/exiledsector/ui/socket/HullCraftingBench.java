@@ -2,22 +2,24 @@ package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.ExiledSector;
+import exiledsector.domain.DomainContributions;
+import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-import exiledsector.items.CorruptionOutcome;
-import exiledsector.items.Nanoswarm;
-import exiledsector.items.CraftingMaterials;
-import exiledsector.items.CraftingInhibitor;
 import exiledsector.items.Item;
-import exiledsector.items.ItemCrafting;
-import exiledsector.items.CraftingMaterialFamily;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemNature;
 import exiledsector.items.ItemStore;
 import exiledsector.items.ItemType;
-import exiledsector.items.MaterialItems;
-import exiledsector.items.SocketCustody;
 import exiledsector.items.UseVerdict;
+import exiledsector.items.crafting.CorruptionOutcome;
+import exiledsector.items.crafting.ItemCrafting;
+import exiledsector.items.crafting.material.CraftingInhibitor;
+import exiledsector.items.crafting.material.CraftingMaterialFamily;
+import exiledsector.items.crafting.material.CraftingMaterials;
+import exiledsector.items.crafting.material.MaterialItems;
+import exiledsector.items.crafting.material.Nanoswarm;
+import exiledsector.items.custody.SocketCustody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +34,7 @@ public final class HullCraftingBench implements BenchModeSupport {
     public static final HullCraftingBench INSTANCE = new HullCraftingBench();
     private static final UseVerdict LOAD_FIRST = UseVerdict.refused("ui.craftingBench.notice.loadFirst");
     private static final UseVerdict CANNOT_USE = UseVerdict.refused("ui.craftingBench.notice.cannotUse");
+    private static final DomainContributions<BenchTray> DOMAIN_TRAYS = new DomainContributions<>(ExiledSectorDomain::hullCraftingBenchTrays);
 
     private HullCraftingBench() {
     }
@@ -81,6 +84,18 @@ public final class HullCraftingBench implements BenchModeSupport {
         List<CraftingMaterialFamily> offered = new ArrayList<>();
         ExiledSector.enabledDomains().forEach(domain -> offered.addAll(domain.hullCraftingBenchCraftingItems()));
         return hullCraftingBenchCraftingItems(offered, HoloPanel.playerMaterials()::count);
+    }
+
+    @Override
+    public List<BenchTray> trays() {
+        return hullCraftingBenchTrays(DOMAIN_TRAYS.all());
+    }
+
+    static List<BenchTray> hullCraftingBenchTrays(List<BenchTray> domainTrays) {
+        List<BenchTray> trays = new ArrayList<>();
+        trays.add(InhibitorTray.INSTANCE);
+        trays.addAll(domainTrays);
+        return trays;
     }
 
     static List<CraftingMaterialFamily> hullCraftingBenchCraftingItems(List<CraftingMaterialFamily> registered, ToIntFunction<String> owned) {

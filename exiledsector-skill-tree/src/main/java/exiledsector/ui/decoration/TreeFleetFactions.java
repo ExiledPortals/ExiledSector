@@ -1,6 +1,7 @@
 package exiledsector.ui.decoration;
 
 import exiledsector.ModCsv;
+import exiledsector.data.CsvRows;
 import exiledsector.skills.npc.NpcFactionVolumes;
 import exiledsector.skills.tags.SkillTags;
 import org.apache.log4j.Logger;
@@ -30,12 +31,8 @@ public final class TreeFleetFactions {
 
     public static void register(JSONArray rows) throws JSONException {
         Map<String, String> loaded = new HashMap<>();
-        ModCsv.forEach(rows, (index, row) -> {
-            String faction = ModCsv.text(row, FACTION_COLUMN);
+        CsvRows.forEachIdRow(rows, FACTION_COLUMN, (faction, row) -> {
             String volume = ModCsv.text(row, VOLUME_COLUMN);
-            if (faction.isEmpty()) {
-                return;
-            }
             if (!SkillTags.isVolume(volume) || SkillTags.CORE_VOLUME.equals(volume)) {
                 LOG.warn("Ignoring faction " + faction + " in " + DATA_PATH + ": '" + volume + "' is not a faction volume");
                 return;

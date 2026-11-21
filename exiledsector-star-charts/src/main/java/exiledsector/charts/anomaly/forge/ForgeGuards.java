@@ -29,8 +29,7 @@ public final class ForgeGuards {
     static CampaignFleetAPI create(int runTier, ChartGenContext context, long seed) {
         Random random = new Random(seed);
         ChartTier tier = ChartAnomalyFleets.tier(runTier, context);
-        ChartAnomalyFleets.Spec escort = ChartAnomalyFleets.combat(Factions.DERELICT, FleetTypes.PATROL_MEDIUM, tier,
-                tier.fleetSize() * ForgeRules.ESCORT_SIZE_SHARE);
+        ChartAnomalyFleets.Spec escort = ChartAnomalyFleets.combat(Factions.DERELICT, FleetTypes.PATROL_MEDIUM, tier, ForgeRules.escortSize(tier));
         CampaignFleetAPI guards = ChartAnomalyFleets.create(escort, random, ForgeRules.ESCORT_MAX_SHIP_SIZE, false);
         if (guards == null) {
             guards = ChartAnomalyFleets.emptyFleet(Factions.DERELICT, FleetTypes.PATROL_MEDIUM);

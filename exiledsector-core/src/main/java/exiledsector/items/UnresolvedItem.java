@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import exiledsector.items.modifier.RolledModifier;
 import java.util.List;
 
 public final class UnresolvedItem extends Item {

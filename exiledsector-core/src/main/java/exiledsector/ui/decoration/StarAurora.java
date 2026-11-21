@@ -12,6 +12,10 @@ import java.awt.Color;
 
 public final class StarAurora {
 
+    public enum Side {
+        WHOLE, BACK, FRONT
+    }
+
     public static final String TEXTURE_CATEGORY = "terrain";
     public static final String TEXTURE_ID = "aurora";
     static final float INNER_RADIUS_MULT = 1.1f;
@@ -21,6 +25,7 @@ public final class StarAurora {
     static final float SHORTEN_MULT = 0.85f;
     static final int BAND_ALPHA = 25;
     static final float BAND_WIDTH_IN_TEXTURE = 256f;
+    static final float SIDE_BLEND_SINE = 0.2f;
 
     private final Delegate delegate = new Delegate();
     private final AuroraRenderer renderer = new AuroraRenderer(delegate);
@@ -36,18 +41,33 @@ public final class StarAurora {
     }
 
     public void render(SpriteAPI texture, float screenX, float screenY, float detailRadius, float screenScale, Color coronaColor, float alphaMult) {
+        render(texture, screenX, screenY, detailRadius, screenScale, 1f, Side.WHOLE, coronaColor, alphaMult);
+    }
+
+    public void render(SpriteAPI texture, float screenX, float screenY, float detailRadius, float screenScale, float flattening, Side side,
+                       Color coronaColor, float alphaMult) {
         delegate.centerLoc.set(0f, 0f);
         delegate.innerRadius = detailRadius * INNER_RADIUS_MULT;
         delegate.outerRadius = detailRadius * OUTER_RADIUS_MULT;
         delegate.useCoronaColor(coronaColor);
         delegate.bandTexture = texture;
+        delegate.side = side;
         try (GlScope scope = GlScope.save(GlScope.DRAW_ATTRIBS)) {
             GL11.glPushMatrix();
             GL11.glTranslatef(screenX, screenY, 0f);
-            GL11.glScalef(screenScale, screenScale, 1f);
+            GL11.glScalef(screenScale, screenScale * flattening, 1f);
             renderer.render(alphaMult);
             GL11.glPopMatrix();
         }
+    }
+
+    static float sideAlpha(Side side, float angleDegrees) {
+        if (side == Side.WHOLE) {
+            return 1f;
+        }
+        float sine = (float) Math.sin(Math.toRadians(angleDegrees));
+        float backShare = Math.max(0f, Math.min(1f, 0.5f + sine / (2f * SIDE_BLEND_SINE)));
+        return side == Side.BACK ? backShare : 1f - backShare;
     }
 
     private static final class Delegate implements AuroraRenderer.AuroraRendererDelegate {
@@ -57,6 +77,7 @@ public final class StarAurora {
         private Color coronaColor;
         private Color bandColor = Color.WHITE;
         private SpriteAPI bandTexture;
+        private Side side = Side.WHOLE;
 
         private void useCoronaColor(Color color) {
             if (color != coronaColor) {
@@ -87,7 +108,7 @@ public final class StarAurora {
 
         @Override
         public float getAuroraAlphaMultForAngle(float angle) {
-            return 1f;
+            return sideAlpha(side, angle);
         }
 
         @Override

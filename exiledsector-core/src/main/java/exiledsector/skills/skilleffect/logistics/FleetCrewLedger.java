@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import exiledsector.PlayerFleet;
+import exiledsector.persistence.CombatData;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -57,9 +58,10 @@ public final class FleetCrewLedger {
         if (engine == null) {
             return new FleetCrewLedger(0, false, false);
         }
-        if (engine.getCustomData().get(LEDGER_KEY) instanceof FleetCrewLedger existing) {
-            return existing;
-        }
+        return CombatData.getOrCreate(engine, LEDGER_KEY, FleetCrewLedger.class, () -> openedFor(engine));
+    }
+
+    private static FleetCrewLedger openedFor(CombatEngineAPI engine) {
         CampaignFleetAPI playerFleet = PlayerFleet.orNull();
         boolean recorded = playerFleet != null && engine.isInCampaign() && !engine.isInCampaignSim() && !engine.isSimulation();
         int crew = playerFleet == null ? 0 : (int) playerFleet.getCargo().getCrew();
@@ -67,7 +69,6 @@ public final class FleetCrewLedger {
         if (recorded) {
             discardPending();
         }
-        engine.getCustomData().put(LEDGER_KEY, ledger);
         return ledger;
     }
 

@@ -76,7 +76,8 @@ final class HardlightMarking extends ShipCombatListener {
 
         @Override
         public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
-            if (!(target instanceof ShipAPI targetShip) || !CombatQueries.isHostile(marks.ownerShip, targetShip)) {
+            ShipAPI targetShip = CombatQueries.hostileShip(marks.ownerShip, target);
+            if (targetShip == null) {
                 return null;
             }
             float appliedPercent = marks.hit(targetShip, damage.isDps() ? damage.getDpsDuration() : 1f);

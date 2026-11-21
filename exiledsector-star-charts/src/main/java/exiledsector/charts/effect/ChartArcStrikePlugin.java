@@ -6,7 +6,8 @@ import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import exiledsector.ModSounds;
-import exiledsector.charts.content.ChartSites;
+import exiledsector.charts.layout.ChartGeometry;
+import exiledsector.compat.FirstFailureLog;
 import exiledsector.skills.skilleffect.CombatQueries;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
@@ -24,8 +25,7 @@ public class ChartArcStrikePlugin extends BaseEveryFrameCombatPlugin {
     static final String IMPACT_SOUND = "tachyon_lance_emp_impact";
     static final Color ARC_FRINGE = new Color(110, 130, 255, 255);
     static final Color ARC_CORE = new Color(235, 240, 255, 255);
-    private static final Logger LOG = Logger.getLogger(ChartArcStrikePlugin.class);
-    private static boolean failureReported;
+    private static final FirstFailureLog FAILURES = FirstFailureLog.errors(Logger.getLogger(ChartArcStrikePlugin.class));
 
     private final Random random;
     private CombatEngineAPI engine;
@@ -44,8 +44,7 @@ public class ChartArcStrikePlugin extends BaseEveryFrameCombatPlugin {
     public void init(CombatEngineAPI engine) {
         this.engine = engine;
         secondsToStrike = INTERVAL_SECONDS;
-        boolean campaignBattle = engine != null && engine.isInCampaign() && !engine.isSimulation() && !engine.isInCampaignSim();
-        emp = campaignBattle ? ChartPlayerModifiers.arcStrikeEmp() : 0f;
+        emp = ChartCombatPlugins.isCampaignBattle(engine) ? ChartPlayerModifiers.battleRules().arcStrikeEmp() : 0f;
     }
 
     @Override
@@ -62,10 +61,7 @@ public class ChartArcStrikePlugin extends BaseEveryFrameCombatPlugin {
             strike(pickTarget(engine.getShips(), random));
         } catch (RuntimeException | LinkageError e) {
             emp = 0f;
-            if (!failureReported) {
-                failureReported = true;
-                LOG.error("[ExiledSector] The Star Chart's EMP arc strikes failed; they are off for this battle", e);
-            }
+            FAILURES.report("[ExiledSector] The Star Chart's EMP arc strikes failed; they are off for this battle", e);
         }
     }
 
@@ -83,8 +79,7 @@ public class ChartArcStrikePlugin extends BaseEveryFrameCombatPlugin {
         if (target == null) {
             return;
         }
-        Vector2f origin = ChartSites.pointAround(target.getLocation(), random.nextDouble() * Math.PI * 2d,
-                target.getCollisionRadius() + ORIGIN_DISTANCE);
+        Vector2f origin = ChartGeometry.pointAtRandomAngle(target.getLocation(), target.getCollisionRadius() + ORIGIN_DISTANCE, random);
         engine.spawnEmpArcPierceShields(null, origin, null, target, DamageType.ENERGY, 0f, emp, ARC_RANGE, ModSounds.orSilent(IMPACT_SOUND), ARC_THICKNESS,
                 ARC_FRINGE, ARC_CORE);
     }

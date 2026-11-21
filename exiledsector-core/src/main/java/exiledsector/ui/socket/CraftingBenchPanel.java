@@ -14,21 +14,23 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-import exiledsector.items.MaterialItems;
-import exiledsector.items.CraftingInhibitor;
-import exiledsector.items.GrowableMaterial;
-import exiledsector.items.CraftingMaterials;
+import exiledsector.items.crafting.material.MaterialItemPlugin;
+import exiledsector.items.crafting.material.MaterialItems;
+import exiledsector.items.crafting.material.CraftingInhibitor;
+import exiledsector.items.crafting.material.GrowableMaterial;
+import exiledsector.items.crafting.material.CraftingMaterials;
 import exiledsector.items.Item;
-import exiledsector.items.ItemCrafting;
-import exiledsector.items.CraftingMaterialFamily;
+import exiledsector.items.crafting.ItemCrafting;
+import exiledsector.items.crafting.material.CraftingMaterialFamily;
 import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemName;
+import exiledsector.items.name.ItemName;
 import exiledsector.items.ItemStore;
 import exiledsector.items.ItemVolumes;
 import exiledsector.items.ItemUnlock;
-import exiledsector.items.SlottedLine;
-import exiledsector.items.SlottedRows;
+import exiledsector.items.modifier.SlottedLine;
+import exiledsector.items.modifier.SlottedRows;
 import exiledsector.items.UseVerdict;
+import exiledsector.skills.tags.ThemeTags;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.TooltipExpansion;
@@ -37,12 +39,12 @@ import exiledsector.ui.VanillaText;
 import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.cargo.CargoIconLooks;
 import exiledsector.ui.decoration.StarfieldRenderer;
+import exiledsector.ui.util.BorderedPanel;
 import exiledsector.ui.util.GLDraw;
 import com.fs.starfarer.api.input.InputEventAPI;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -90,15 +92,18 @@ public final class CraftingBenchPanel extends HoloPanel {
     }
 
     static final float FRAME_INSET = 8f;
+    static final float TRAY_SIDE_INSET = 20f;
     static final float PLATE_PAD = 6f;
     private static final float COUNT_INSET = 4f;
     private static final float PLATE_ALPHA = 0.62f;
     private static final float CONTRACT_SECONDS = 0.3f;
+    private static final float TRAY_SECONDS = 0.3f;
+    private static final float TRAY_FILTER_DELAY_SECONDS = 0.25f;
     private static final float VIGNETTE_SHARE = 0.06f;
     private static final float PICK_BUTTON_WIDTH = 120f;
     private static final float TOOLTIP_WIDTH = 340f;
     private static final float LARGE_TEXT_TOOLTIP_WIDTH = 530f;
-    private static final float SLOT_TAG_WIDTH = 20f;
+    private static final float CAPTION_TAG_GAP = 12f;
     private static final float SCROLLBAR_ROOM = 20f;
     private static final float MIN_OPEN_BUTTON_HEIGHT = 26f;
     private static final float OPEN_CONFIRM_HEIGHT = 170f;
@@ -107,7 +112,7 @@ public final class CraftingBenchPanel extends HoloPanel {
     private static final Color PLATE_COLOR = Color.BLACK;
     private static final String FALLBACK_ICON = ItemDefinition.FALLBACK_ICON;
 
-    private enum Control {CLOSE, PICK, CONFIRM_USE, CONFIRM_GROW, CANCEL_CONFIRM, OPEN_WORMHOLE, CONFIRM_OPEN, DEBUG_ACTION}
+    private enum Control {CLOSE, PICK, CONFIRM_USE, CONFIRM_GROW, CONFIRM_TRAY, CANCEL_CONFIRM, OPEN_WORMHOLE, CONFIRM_OPEN, DEBUG_ACTION}
 
     private record OpenChoiceButton(Object target) {
     }
@@ -137,16 +142,32 @@ public final class CraftingBenchPanel extends HoloPanel {
     private boolean wormholeOpened;
     private Item loadedItem;
     private CargoIconLook loadedLook;
-    private final Set<CraftingInhibitor> activeInhibitors = EnumSet.noneOf(CraftingInhibitor.class);
+    private final ActiveInhibitors activeInhibitors = new ActiveInhibitors();
+    private final InhibitorOrbit inhibitorOrbit = new InhibitorOrbit();
+    private final BenchTrays trays = new BenchTrays();
+    private final BenchTrayContext trayContext = new TrayContext();
+    private TooltipMakerAPI trayElement;
+    private float trayProgress;
+    private float trayFromWidth;
+    private float trayToWidth;
+    private float trayResizeProgress = 1f;
+    private Runnable pendingTrayConfirm;
+    private BenchTrayList.FilterBar trayFilterBar;
+    private String trayFilterText = "";
+    private String typedTrayFilter = "";
+    private float trayFilterDelay;
+    private boolean trayBuiltWithLargeText;
     private final WormholeButtonFx openFx = new WormholeButtonFx();
     private BenchLayout embeddedLayout;
     private BenchMaterialsPanel materialsPanel;
     private boolean openAllowed;
     private String noticeText;
+    private float headerNoticeLeft;
+    private float headerNoticeRight;
     private boolean noticeIsWarning;
     private final List<TileSpot> tileSpots = new ArrayList<>();
+    private BenchSpread.Contents spreadContents;
     private BenchSpread spread;
-    private BenchSpread contractedSpread;
     private float contractProgress;
     private boolean contractWanted;
     private Runnable contractSettled;
@@ -161,7 +182,7 @@ public final class CraftingBenchPanel extends HoloPanel {
         craftingBenchPanel.benchMode = mode;
         craftingBenchPanel.embeddedLayout = layout;
         craftingBenchPanel.sceneScale = layout.socketRadius() / BenchScene.SLOT_RADIUS;
-        craftingBenchPanel.spread = BenchSpread.full(mode, craftingBenchPanel.sceneScale);
+        craftingBenchPanel.refreshSpreadContents();
         BenchLayout.Rect panel = layout.panel();
         craftingBenchPanel.attach(panel.left(), panel.top(), panel.width(), panel.height(), false);
         return craftingBenchPanel;
@@ -176,7 +197,7 @@ public final class CraftingBenchPanel extends HoloPanel {
         CraftingBenchPanel craftingBenchPanel = new CraftingBenchPanel(hostPanel, craftingBenchListener);
         craftingBenchPanel.benchMode = mode;
         craftingBenchPanel.sceneScale = scaleFor(area.panelWidth(), area.panelHeight());
-        craftingBenchPanel.spread = BenchSpread.full(mode, craftingBenchPanel.sceneScale);
+        craftingBenchPanel.refreshSpreadContents();
         float width = sizeFor(craftingBenchPanel.sceneScale, BenchScene.ART_WIDTH);
         float height = sizeFor(craftingBenchPanel.sceneScale, BenchScene.ART_HEIGHT);
         float left = centred ? area.panelLeft() + (area.panelWidth() - width) / 2f : area.panelLeft();
@@ -265,8 +286,8 @@ public final class CraftingBenchPanel extends HoloPanel {
         queue(() -> {
             cancelConfirm();
             hoverTooltip.hide();
-            if (wanted && contractProgress == 0f) {
-                contractedSpread = BenchSpread.contracted(benchMode, sceneScale, spreadContents());
+            if (wanted) {
+                closeTray();
             }
             contractWanted = wanted;
             contractSettled = settled;
@@ -276,23 +297,68 @@ public final class CraftingBenchPanel extends HoloPanel {
         });
     }
 
-    private BenchSpread.Contents spreadContents() {
+    private void refreshSpreadContents() {
         BenchModeSupport support = support();
         boolean orbit = support.craftingItems().stream().anyMatch(support::inOrbit);
-        return new BenchSpread.Contents(support.usesInhibitors(), orbit, support.reservesColumn());
+        spreadContents = new BenchSpread.Contents(orbit, support.reservesColumn(), embeddedLayout == null && !support.trays().isEmpty());
+        spread = currentSpread();
+    }
+
+    private BenchSpread currentSpread() {
+        BenchSpread full = BenchSpread.full(benchMode, sceneScale, spreadContents);
+        BenchSpread contracted = full.towards(BenchSpread.contracted(benchMode, sceneScale, spreadContents), BenchSpread.eased(contractProgress));
+        return contracted.towards(BenchSpread.trayOpen(benchMode, sceneScale, spreadContents, shownTrayWidth()), BenchSpread.eased(trayProgress));
+    }
+
+    private float shownTrayWidth() {
+        return trayFromWidth + (trayToWidth - trayFromWidth) * BenchSpread.eased(trayResizeProgress);
+    }
+
+    private float wantedTrayWidth(BenchTray tray) {
+        if (tray.iconColumns() > 0) {
+            return TRAY_SIDE_INSET * 2f + BenchTrayList.tileColumnsWidth(tray.iconColumns(), tileSize());
+        }
+        return BenchSpread.maxTrayWidth(benchMode, sceneScale, spreadContents);
     }
 
     private float contractTarget() {
         return contractWanted ? 1f : 0f;
     }
 
+    private float trayTarget() {
+        return trays.isOpen() ? 1f : 0f;
+    }
+
     private boolean reshaping() {
-        return contractProgress != contractTarget();
+        return contractProgress != contractTarget() || trayProgress != trayTarget() || trayResizeProgress < 1f;
+    }
+
+    private boolean traysUsable() {
+        return !contractWanted && contractProgress == 0f;
+    }
+
+    private void advanceTray(float amount) {
+        float target = trayTarget();
+        if (trayProgress == target && trayResizeProgress == 1f) {
+            return;
+        }
+        float step = amount / TRAY_SECONDS;
+        trayProgress = target > trayProgress ? Math.min(target, trayProgress + step) : Math.max(target, trayProgress - step);
+        trayResizeProgress = Math.min(1f, trayResizeProgress + step);
+        I18n.forGameText(this::applySpread);
+        if (trayProgress == 1f && trayResizeProgress == 1f) {
+            I18n.forGameText(() -> {
+                rebuildTray();
+                refreshOpacity();
+            });
+        } else if (trayProgress == 0f) {
+            I18n.forGameText(this::rebuildNotice);
+        }
     }
 
     private void advanceContraction(float amount) {
         float target = contractTarget();
-        if (contractProgress == target || contractedSpread == null) {
+        if (contractProgress == target) {
             return;
         }
         float step = amount / CONTRACT_SECONDS;
@@ -312,9 +378,8 @@ public final class CraftingBenchPanel extends HoloPanel {
     }
 
     private void applySpread() {
-        spread = BenchSpread.full(benchMode, sceneScale).towards(contractedSpread, BenchSpread.eased(contractProgress));
-        float width = spread.artWidth() + FRAME_INSET * 2f;
-        reshape(panelLeft + panelWidth - width, width);
+        float previousArtWidth = spread.artWidth();
+        spread = currentSpread();
         if (recipesElement != null) {
             recipesElement.getPosition().setSize(spread.artWidth(), BenchScene.ART_HEIGHT * sceneScale);
         }
@@ -325,10 +390,14 @@ public final class CraftingBenchPanel extends HoloPanel {
         if (openElement != null) {
             openElement.getPosition().inTL(detailsLeftX(), openButtonTop());
         }
-        buildHeader();
-        rebuildNotice();
+        if (spread.artWidth() != previousArtWidth) {
+            float width = spread.artWidth() + FRAME_INSET * 2f;
+            reshape(panelLeft + panelWidth - width, width);
+            buildHeader();
+            rebuildNotice();
+            craftingBenchListener.reshaped(panelLeft);
+        }
         refreshOpacity();
-        craftingBenchListener.reshaped(panelLeft);
     }
 
     public void refresh() {
@@ -379,7 +448,8 @@ public final class CraftingBenchPanel extends HoloPanel {
 
     @Override
     protected UIComponentAPI[] contentComponents() {
-        return new UIComponentAPI[]{recipesElement, detailsElement, noticeElement, openElement};
+        return new UIComponentAPI[]{recipesElement, detailsElement, noticeElement, openElement, placedComponent(trayElement),
+                trayFilterBar == null ? null : trayFilterBar.element()};
     }
 
     @Override
@@ -401,7 +471,7 @@ public final class CraftingBenchPanel extends HoloPanel {
         float artWidth = spread.artWidth();
         float fullArtWidth = BenchScene.ART_WIDTH * sceneScale;
         float artHeight = BenchScene.ART_HEIGHT * sceneScale;
-        float artShift = spread.artShift(benchMode, sceneScale);
+        float artShift = spread.artShift();
         if (benchMode.drawsStarfield()) {
             GLDraw.fillQuad(artLeft, artBottom, artWidth, artHeight, PLATE_COLOR, contentAlpha);
             starfield.renderWindow(artLeft + artShift, artBottom, fullArtWidth, artHeight, -artShift, artWidth, contentAlpha);
@@ -412,9 +482,20 @@ public final class CraftingBenchPanel extends HoloPanel {
         float vignette = Math.min(fullArtWidth, artHeight) * VIGNETTE_SHARE;
         GLDraw.innerGlow(artLeft, artBottom, artWidth, artHeight, vignette, PLATE_COLOR, contentAlpha);
         drawPlate(detailsLeftX(), BenchScene.detailsTop(benchMode), BenchScene.DETAILS_WIDTH, detailsArtHeight(), contentAlpha);
+        drawTrayPlate(contentAlpha);
         Color subjectColor = loadedItem == null ? null : loadedItem.frameColor();
         socketFlair.render(socketScreenX(), socketScreenY(), slotRadius(), SkillTreePanelStyle.GLOW_COLOR, subjectColor,
                 loadedItem == null ? null : loadedItem.iconPath(), loadedLook, contentAlpha);
+        inhibitorOrbit.render(socketScreenX(), socketScreenY(), slotRadius(), appliedInhibitors(), contentAlpha);
+    }
+
+    private void drawTrayPlate(float alpha) {
+        float trayWidth = spread.trayWidth();
+        if (trayWidth <= 0f) {
+            return;
+        }
+        float trayBottom = panelPosition.getY() + panelHeight - trayPlateTop() - trayHeight();
+        BorderedPanel.draw(panelPosition.getX() + FRAME_INSET + spread.trayLeft(), trayBottom, trayWidth, trayHeight(), alpha);
     }
 
     private void renderEmbedded(float alpha) {
@@ -474,6 +555,11 @@ public final class CraftingBenchPanel extends HoloPanel {
     @Override
     protected void advanceOpen(float amount) {
         advanceContraction(amount);
+        advanceTray(amount);
+        advanceTrayFilter(amount);
+        if (trayElement != null && trayBuiltWithLargeText != TooltipTextSize.large()) {
+            I18n.forGameText(this::rebuildTray);
+        }
         hoverTooltip.refreshIfExpansionChanged();
         if (detailsShowRollRanges != TooltipExpansion.isExpandedOrHeld()) {
             rebuildDetails();
@@ -486,6 +572,9 @@ public final class CraftingBenchPanel extends HoloPanel {
         socketFlair.advance(amount, loadedItem != null);
         starfield.advance(amount);
         openFx.advance(amount);
+        if (!activeInhibitors.isEmpty()) {
+            inhibitorOrbit.advance(amount);
+        }
     }
 
     @Override
@@ -514,6 +603,12 @@ public final class CraftingBenchPanel extends HoloPanel {
             if (material != null && growable(material)) {
                 applyGrowth(material);
             }
+        } else if (id == Control.CONFIRM_TRAY) {
+            Runnable confirmed = pendingTrayConfirm;
+            cancelConfirm();
+            if (confirmed != null && loadedItem != null) {
+                confirmed.run();
+            }
         } else if (id == Control.CANCEL_CONFIRM) {
             cancelConfirm();
         } else if (isConfirmOpen()) {
@@ -541,6 +636,7 @@ public final class CraftingBenchPanel extends HoloPanel {
         pendingCraftingItem = null;
         pendingGrowth = null;
         pendingOpenItem = null;
+        pendingTrayConfirm = null;
         closeConfirm();
     }
 
@@ -575,7 +671,7 @@ public final class CraftingBenchPanel extends HoloPanel {
 
     private void openUseConfirm(CraftingMaterialFamily craftingItem) {
         pendingCraftingItem = craftingItem;
-        Set<CraftingInhibitor> spentInhibitors = ItemCrafting.inhibitorsSpentBy(craftingItem, loadedItem, activeInhibitors);
+        Set<CraftingInhibitor> spentInhibitors = ItemCrafting.inhibitorsSpentBy(craftingItem, loadedItem, appliedInhibitors());
         String name = recipeName(craftingItem);
         openConfirm(USE_CONFIRM_HEIGHT + spentInhibitors.size() * INHIBITOR_LINE_HEIGHT,
                 element -> writeCraftConfirm(element, Translation.msg("ui.craftingBench.confirm.useTitle").arg("name", name).arg("target", loadedItem.name()).text(),
@@ -629,7 +725,7 @@ public final class CraftingBenchPanel extends HoloPanel {
 
     private boolean usable(CraftingMaterialFamily craftingItem) {
         CraftingMaterials materials = playerMaterials();
-        BenchModeSupport.Refusal refusal = support().refusal(craftingItem, loadedItem, support().store(), materials, allowedUniques(), activeInhibitors);
+        BenchModeSupport.Refusal refusal = support().refusal(craftingItem, loadedItem, support().store(), materials, allowedUniques(), appliedInhibitors());
         if (refusal.checksInhibitors() && droppedMissingInhibitors(materials)) {
             return false;
         }
@@ -640,12 +736,18 @@ public final class CraftingBenchPanel extends HoloPanel {
         return false;
     }
 
+    private Set<CraftingInhibitor> appliedInhibitors() {
+        return support().usesInhibitors() ? activeInhibitors.view() : Set.of();
+    }
+
     private boolean droppedMissingInhibitors(CraftingMaterials materials) {
-        List<CraftingInhibitor> missingInhibitors = activeInhibitors.stream().filter(inhibitor -> materials.count(inhibitor.itemId()) < 1).toList();
+        if (!support().usesInhibitors()) {
+            return false;
+        }
+        List<CraftingInhibitor> missingInhibitors = activeInhibitors.dropMissing(materials::count);
         if (missingInhibitors.isEmpty()) {
             return false;
         }
-        missingInhibitors.forEach(activeInhibitors::remove);
         showNotice(Translation.msg("ui.craftingBench.notice.inhibitorMissing").arg("name", MaterialItems.displayName(missingInhibitors.get(0).itemId())).text());
         return true;
     }
@@ -660,14 +762,14 @@ public final class CraftingBenchPanel extends HoloPanel {
 
     private void applyUse(CraftingMaterialFamily craftingItem) {
         String nameBefore = loadedItem.name();
-        Set<CraftingInhibitor> spentInhibitors = ItemCrafting.inhibitorsSpentBy(craftingItem, loadedItem, activeInhibitors);
+        Set<CraftingInhibitor> spentInhibitors = ItemCrafting.inhibitorsSpentBy(craftingItem, loadedItem, appliedInhibitors());
         BenchModeSupport.Use used = support().use(craftingItem, loadedItem, support().store(), playerMaterials(), craftingRandom,
-                allowedUniques(), activeInhibitors, nameBefore);
+                allowedUniques(), appliedInhibitors(), nameBefore);
         if (used == null) {
             showNotice(refusalText(craftingItem, support().cannotUse()));
             return;
         }
-        activeInhibitors.removeAll(spentInhibitors);
+        activeInhibitors.spend(spentInhibitors);
         loadedItem = used.selectedAfter();
         noticeText = withSpentInhibitors(used.notice(), spentInhibitors);
         SkillTreeSounds.socketed();
@@ -726,12 +828,17 @@ public final class CraftingBenchPanel extends HoloPanel {
                     .getPosition().inTR(feedstockRight, 0f);
             feedstockRight += PICK_BUTTON_WIDTH + GAP * 2f;
         }
-        addFeedstockCount(element, feedstockRight);
+        float countsReach = addCraftingBenchFeedstockCounts(element, feedstockRight);
+        String titleKey = support().titleKey();
+        float titleWidth = titleKey == null ? 0f : Global.getSettings().computeStringWidth(Translation.text(titleKey), Fonts.ORBITRON_20AABOLD);
+        headerNoticeLeft = PAD + titleWidth + GAP * 2f;
+        headerNoticeRight = Math.max(headerNoticeLeft, PAD + innerWidth() - countsReach);
         headerElement = finishHeader(element, headerElement);
     }
 
     private void rebuildContent() {
         rebuildTiles();
+        rebuildTray();
         rebuildDetails();
         rebuildNotice();
         rebuildOpenButton();
@@ -929,6 +1036,8 @@ public final class CraftingBenchPanel extends HoloPanel {
 
     private void rebuildTiles() {
         hoverTooltip.hide();
+        trays.keepOnly(support().trays());
+        refreshSpreadContents();
         if (embeddedLayout != null) {
             rebuildMaterials();
             return;
@@ -954,23 +1063,218 @@ public final class CraftingBenchPanel extends HoloPanel {
             float tileTop = columnTileTop(i, columnCraftingItems.size(), socketY, tileSize, columnGap, artHeight);
             addTile(element, columnCraftingItems.get(i), BenchSpread::columnLeft, tileTop, tileSize, materials);
         }
-        if (support.usesInhibitors()) {
-            addInhibitorTiles(element, tileSize, materials);
+        List<BenchTray> offeredTrays = spreadContents.trays() ? support.trays() : List.of();
+        for (int i = 0; i < offeredTrays.size(); i++) {
+            float tileTop = columnTileTop(i, offeredTrays.size(), socketY, tileSize, columnGap, artHeight);
+            addTrayControl(element, offeredTrays.get(i), tileTop, tileSize);
         }
         recipesElement = replaceElement(recipesElement, element, FRAME_INSET, FRAME_INSET);
     }
 
-    private void addInhibitorTiles(TooltipMakerAPI element, float tileSize, CraftingMaterials materials) {
-        float inhibitorTop = benchMode.inhibitorY() * sceneScale - tileSize / 2f;
-        addInhibitorTile(element, CraftingInhibitor.PREFIX, placed -> placed.prefixX() - tileSize / 2f, inhibitorTop, tileSize, materials);
-        addInhibitorTile(element, CraftingInhibitor.SUFFIX, placed -> placed.suffixX() - tileSize / 2f, inhibitorTop, tileSize, materials);
+    private void addTrayControl(TooltipMakerAPI element, BenchTray tray, float tileTop, float tileSize) {
+        CraftingBenchTile control = CraftingBenchTile.entry(BenchTrayEntry.shownIcons(tray.iconPaths()), null, this::traysUsable,
+                () -> trays.isOpen(tray), tileHandler(tray, anchor -> showTrayControlTooltip(tray, anchor), skipConfirm -> toggleTray(tray),
+                        skipConfirm -> {
+                        }));
+        PositionAPI tile = element.addCustom(Global.getSettings().createCustom(tileSize, tileSize, control), 0f).getPosition();
+        tileSpots.add(new TileSpot(tile, null, BenchSpread::controlsLeft, tileTop, tileSize));
+        tile.inTL(spread.controlsLeft(), tileTop);
+    }
+
+    private void toggleTray(BenchTray tray) {
+        hoverTooltip.hide();
+        if (wormholeOpened || isConfirmOpen() || isClosing() || !traysUsable()) {
+            return;
+        }
+        float shownWidth = shownTrayWidth();
+        trays.toggle(tray);
+        if (trays.isOpen()) {
+            float wantedWidth = wantedTrayWidth(trays.open());
+            trayFromWidth = trayProgress > 0f ? shownWidth : wantedWidth;
+            trayToWidth = wantedWidth;
+            trayResizeProgress = trayFromWidth == trayToWidth ? 1f : 0f;
+            removeTrayElement();
+            rebuildTray();
+        } else {
+            removeTrayElement();
+        }
+        rebuildNotice();
+        refreshOpacity();
+    }
+
+    private void closeTray() {
+        trays.close();
+        removeTrayElement();
+    }
+
+    private void removeTrayElement() {
+        if (trayElement != null) {
+            panelRoot.removeComponent(placedComponent(trayElement));
+            trayElement = null;
+        }
+        removeTrayFilter();
+    }
+
+    private void removeTrayFilter() {
+        if (trayFilterBar != null) {
+            trayFilterText = trayFilterBar.field().getText();
+            panelRoot.removeComponent(trayFilterBar.element());
+            trayFilterBar = null;
+        }
+    }
+
+    private void rebuildTray() {
+        BenchTray openTray = trays.open();
+        if (openTray == null || trayProgress < 1f || trayResizeProgress < 1f || embeddedLayout != null || isClosing()) {
+            removeTrayElement();
+            return;
+        }
+        trayBuiltWithLargeText = TooltipTextSize.large();
+        if (openTray.iconColumns() > 0) {
+            removeTrayFilter();
+            TooltipMakerAPI element = BenchTrayList.tiles(panelRoot, trayListWidth(), trayHeight() - PAD * 2f, openTray, trayContext,
+                    this::trayEntryHandler, tileSize());
+            trayElement = replaceElement(placedComponent(trayElement), element, trayLeft(), trayTop());
+            return;
+        }
+        rebuildTrayFilter();
+        rebuildTrayList(openTray, true);
+    }
+
+    private float trayPlateTop() {
+        return PAD + HEADER_HEIGHT + GAP;
+    }
+
+    private float trayHeight() {
+        return artY(BenchScene.TRAY_BOTTOM) - trayPlateTop();
+    }
+
+    private float trayLeft() {
+        return FRAME_INSET + spread.trayLeft() + TRAY_SIDE_INSET;
+    }
+
+    private float trayTop() {
+        return trayPlateTop() + PAD;
+    }
+
+    private float trayListWidth() {
+        return spread.trayWidth() - TRAY_SIDE_INSET * 2f;
+    }
+
+    private void rebuildTrayFilter() {
+        boolean focused = false;
+        if (trayFilterBar != null) {
+            focused = trayFilterBar.field().hasFocus();
+            removeTrayFilter();
+        }
+        typedTrayFilter = trayFilterText;
+        trayFilterDelay = 0f;
+        trayFilterBar = BenchTrayList.filterBar(panelRoot, trayListWidth(), trayFilterText);
+        panelRoot.addUIElement(trayFilterBar.element()).inTL(trayLeft(), trayTop());
+        if (focused) {
+            trayFilterBar.field().grabFocus();
+        }
+    }
+
+    private void rebuildTrayList(BenchTray openTray, boolean keepScroll) {
+        float restoredScroll = keepScroll && trayElement != null && trayElement.getExternalScroller() != null
+                ? trayElement.getExternalScroller().getYOffset() : 0f;
+        float listHeight = trayHeight() - PAD * 2f - BenchTrayList.FILTER_HEIGHT - GAP;
+        TooltipMakerAPI element = BenchTrayList.rows(panelRoot, trayListWidth(), listHeight, openTray, trayContext,
+                this::trayEntryHandler, this::trayMaterialHandler, trayFilterText);
+        trayElement = replaceElement(placedComponent(trayElement), element, trayLeft(), trayTop() + BenchTrayList.FILTER_HEIGHT + GAP);
+        if (restoredScroll > 0f && element.getExternalScroller() != null) {
+            element.getExternalScroller().setYOffset(Math.min(restoredScroll, Math.max(0f, element.getHeightSoFar() - listHeight)));
+        }
+    }
+
+    private void advanceTrayFilter(float amount) {
+        if (trayFilterBar == null || isConfirmOpen()) {
+            return;
+        }
+        String typed = trayFilterBar.field().getText();
+        if (!typed.equals(typedTrayFilter)) {
+            typedTrayFilter = typed;
+            trayFilterDelay = TRAY_FILTER_DELAY_SECONDS;
+        } else if (trayFilterDelay > 0f) {
+            trayFilterDelay -= amount;
+            BenchTray openTray = trays.open();
+            if (trayFilterDelay <= 0f && openTray != null) {
+                trayFilterText = typed;
+                hoverTooltip.hide();
+                I18n.forGameText(() -> rebuildTrayList(openTray, false));
+            }
+        }
+    }
+
+    private TileInput.Handler trayEntryHandler(BenchTrayEntry entry) {
+        return tileHandler(entry, anchor -> showTrayEntryTooltip(entry, anchor), skipConfirm -> useTrayEntry(entry, skipConfirm, false),
+                skipConfirm -> useTrayEntry(entry, skipConfirm, true));
+    }
+
+    private TileInput.Handler trayMaterialHandler(String materialId) {
+        Object tooltipKey = new Object();
+        return TileInput.Handler.of(anchor -> queue(() -> showMaterialTooltip(tooltipKey, materialId, anchor)), () -> queue(() -> {
+            if (hoverTooltip.isShowing(tooltipKey)) {
+                hoverTooltip.hide();
+            }
+        }), () -> false, () -> false);
+    }
+
+    private void showMaterialTooltip(Object tooltipKey, String materialId, PositionAPI anchor) {
+        if (isClosing()) {
+            hoverTooltip.hide();
+            return;
+        }
+        hoverTooltip.show(tooltipKey, itemTooltipWidth(), (element, expanded) -> MaterialItemPlugin.writeTooltip(element, materialId), anchor,
+                ItemHoverTooltip.Placement.BELOW, PAD);
+    }
+
+    private void useTrayEntry(BenchTrayEntry entry, boolean skipConfirm, boolean alternate) {
+        hoverTooltip.hide();
+        if (trayContext.busy()) {
+            return;
+        }
+        if (alternate) {
+            entry.useAlternate(trayContext, skipConfirm);
+        } else {
+            entry.use(trayContext, skipConfirm);
+        }
+    }
+
+    private void showTrayEntryTooltip(BenchTrayEntry entry, PositionAPI anchor) {
+        if (isClosing()) {
+            hoverTooltip.hide();
+            return;
+        }
+        if (!entry.hasTooltip()) {
+            return;
+        }
+        hoverTooltip.show(entry, itemTooltipWidth(), (element, expanded) -> entry.writeTooltip(element, trayContext), anchor,
+                ItemHoverTooltip.Placement.BELOW, PAD);
+    }
+
+    private void showTrayControlTooltip(BenchTray tray, PositionAPI anchor) {
+        if (isClosing()) {
+            hoverTooltip.hide();
+            return;
+        }
+        hoverTooltip.show(tray, TOOLTIP_WIDTH, (element, expanded) -> {
+            TooltipTextSize.applyNameFont(element);
+            VanillaText.plainPara(element, Translation.text(tray.titleKey()), 0f, Misc.getBasePlayerColor());
+            TooltipTextSize.applyBodyFont(element);
+            VanillaText.plainPara(element, Translation.text(trays.isOpen(tray) ? "ui.craftingBench.tray.close" : "ui.craftingBench.tray.open"), GAP,
+                    Misc.getGrayColor());
+        }, anchor, ItemHoverTooltip.Placement.BELOW, PAD);
     }
 
     private void placeTiles() {
         for (TileSpot spot : tileSpots) {
             float tileLeft = spot.left().in(spread);
             spot.tile().inTL(tileLeft, spot.top());
-            placeCount(spot.count(), tileLeft, spot.top(), spot.size());
+            if (spot.count() != null) {
+                placeCount(spot.count(), tileLeft, spot.top(), spot.size());
+            }
         }
     }
 
@@ -985,13 +1289,6 @@ public final class CraftingBenchPanel extends HoloPanel {
         }
         List<SectionedTileGrid.Section> sections = new ArrayList<>();
         sections.add(new SectionedTileGrid.Section(Translation.text("ui.craftingBench.materials.craftingItems"), Misc.getBasePlayerColor(), craftingItemTiles));
-        if (support().usesInhibitors()) {
-            List<SectionedTileGrid.Tile> inhibitorTiles = new ArrayList<>();
-            for (CraftingInhibitor inhibitor : List.of(CraftingInhibitor.PREFIX, CraftingInhibitor.SUFFIX)) {
-                inhibitorTiles.add(new SectionedTileGrid.Tile(inhibitorTile(inhibitor), materials.count(inhibitor.itemId())));
-            }
-            sections.add(new SectionedTileGrid.Section(Translation.text("ui.craftingBench.materials.inhibitors"), Misc.getBasePlayerColor(), inhibitorTiles));
-        }
         if (materialsPanel == null) {
             materialsPanel = BenchMaterialsPanel.open(hostPanel, embeddedLayout.materials(), sections, () -> queue(hoverTooltip::hide));
         } else {
@@ -999,25 +1296,9 @@ public final class CraftingBenchPanel extends HoloPanel {
         }
     }
 
-    private static List<String> inhibitorIcons(CraftingInhibitor inhibitor) {
-        String iconPath = MaterialItems.loadedIconPath(inhibitor.itemId());
-        return List.of(iconPath == null ? FALLBACK_ICON : iconPath);
-    }
-
-    private TileInput.Handler inhibitorHandler(CraftingInhibitor inhibitor) {
-        return tileHandler(inhibitor, anchor -> showInhibitorTooltip(inhibitor, anchor), skipConfirm -> toggleInhibitor(inhibitor),
-                skipConfirm -> tileRightClicked(inhibitor, skipConfirm));
-    }
-
     private TileInput.Handler craftingItemHandler(CraftingMaterialFamily craftingItem) {
         return tileHandler(craftingItem, anchor -> showTooltip(craftingItem, anchor), skipConfirm -> tileClicked(craftingItem, skipConfirm),
                 skipConfirm -> tileRightClicked(craftingItem, skipConfirm));
-    }
-
-    private void addInhibitorTile(TooltipMakerAPI element, CraftingInhibitor inhibitor, TileLeft tileLeft, float tileTop, float tileSize,
-                                  CraftingMaterials materials) {
-        CustomPanelAPI tilePanel = Global.getSettings().createCustom(tileSize, tileSize, inhibitorTile(inhibitor));
-        addSpot(element, tilePanel, inhibitor.itemId(), tileLeft, tileTop, tileSize, materials);
     }
 
     private void addSpot(TooltipMakerAPI element, CustomPanelAPI tilePanel, String itemId, TileLeft tileLeft, float tileTop, float tileSize,
@@ -1028,10 +1309,6 @@ public final class CraftingBenchPanel extends HoloPanel {
         float left = tileLeft.in(spread);
         tile.inTL(left, tileTop);
         placeCount(count, left, tileTop, tileSize);
-    }
-
-    private CraftingBenchTile inhibitorTile(CraftingInhibitor inhibitor) {
-        return CraftingBenchTile.toggle(inhibitorIcons(inhibitor), CargoIconLooks.forMaterial(inhibitor.itemId()), () -> activeInhibitors.contains(inhibitor), inhibitorHandler(inhibitor));
     }
 
     private CraftingBenchTile craftingItemTile(CraftingMaterialFamily craftingItem, CraftingMaterials materials) {
@@ -1045,48 +1322,22 @@ public final class CraftingBenchPanel extends HoloPanel {
             return;
         }
         String inhibitorName = MaterialItems.displayName(inhibitor.itemId());
-        if (activeInhibitors.remove(inhibitor)) {
-            showNotice(Translation.msg("ui.craftingBench.notice.inhibitorOff").arg("name", inhibitorName).text());
-            return;
-        }
-        if (playerMaterials().count(inhibitor.itemId()) < 1) {
-            showNotice(Translation.msg(inhibitor.growable() ? "ui.craftingBench.notice.noneOwned" : "ui.craftingBench.notice.noneFound").arg("name", inhibitorName).text());
-            return;
-        }
-        activeInhibitors.add(inhibitor);
-        showNotice(Translation.msg("ui.craftingBench.notice.inhibitorOn." + inhibitor.name().toLowerCase(Locale.ROOT)).arg("name", inhibitorName).text());
+        String noticeKey = switch (activeInhibitors.toggle(inhibitor, playerMaterials().count(inhibitor.itemId()))) {
+            case OFF -> "ui.craftingBench.notice.inhibitorOff";
+            case NONE_OWNED -> inhibitor.growable() ? "ui.craftingBench.notice.noneOwned" : "ui.craftingBench.notice.noneFound";
+            case FULL -> "ui.craftingBench.notice.inhibitorsFull";
+            case ON -> inhibitorOnKey(inhibitor);
+        };
+        String inhibitedTagName = inhibitor.inhibitsTag() ? ThemeTags.displayName(inhibitor.inhibitedTag()).toLowerCase(Locale.ROOT) : "";
+        showNotice(Translation.msg(noticeKey).arg("name", inhibitorName).arg("count", activeInhibitors.maxActive()).arg("tag", inhibitedTagName).text());
     }
 
-    private void showInhibitorTooltip(CraftingInhibitor inhibitor, PositionAPI anchor) {
-        if (isClosing()) {
-            hoverTooltip.hide();
-            return;
-        }
-        hoverTooltip.show(inhibitor, itemTooltipWidth(), (element, expanded) -> writeInhibitorTooltip(element, inhibitor), anchor,
-                ItemHoverTooltip.Placement.BELOW, PAD);
-    }
-
-    private void writeInhibitorTooltip(TooltipMakerAPI element, CraftingInhibitor inhibitor) {
-        TooltipTextSize.applyNameFont(element);
-        VanillaText.plainPara(element, MaterialItems.displayName(inhibitor.itemId()), 0f, inhibitor.color());
-        TooltipTextSize.applyBodyFont(element);
-        VanillaText.addPara(element, Translation.styled(inhibitorDescriptionKey(inhibitor)), GAP, Misc.getTextColor());
-        int ownedCount = playerMaterials().count(inhibitor.itemId());
-        VanillaText.plainPara(element, Translation.msg("ui.craftingBench.tile.inStorage").arg("count", ownedCount).text(), GAP, Misc.getGrayColor());
-        if (activeInhibitors.contains(inhibitor)) {
-            VanillaText.plainPara(element, Translation.text("ui.craftingBench.inhibitor.on"), GAP, Misc.getGrayColor());
-        } else if (ownedCount > 0) {
-            VanillaText.plainPara(element, Translation.text("ui.craftingBench.inhibitor.off"), GAP, Misc.getGrayColor());
-        }
-        VanillaText.plainPara(element, growHint(inhibitor), GAP, Misc.getGrayColor());
+    static String inhibitorOnKey(CraftingInhibitor inhibitor) {
+        return "ui.craftingBench.notice.inhibitorOn." + (inhibitor.inhibitsTag() ? "tag" : inhibitor.name().toLowerCase(Locale.ROOT));
     }
 
     private static float itemTooltipWidth() {
         return TooltipTextSize.large() ? LARGE_TEXT_TOOLTIP_WIDTH : TOOLTIP_WIDTH;
-    }
-
-    static String inhibitorDescriptionKey(CraftingInhibitor inhibitor) {
-        return MaterialItems.descriptionKey(inhibitor.itemId());
     }
 
     private TileInput.Handler tileHandler(Object tooltipKey, Consumer<PositionAPI> showTooltip, Consumer<Boolean> clicked,
@@ -1161,7 +1412,7 @@ public final class CraftingBenchPanel extends HoloPanel {
             }
         } else {
             BenchModeSupport.Refusal refusal = support().refusal(craftingItem, loadedItem, support().store(), playerMaterials(), allowedUniques(),
-                    activeInhibitors);
+                    appliedInhibitors());
             hints.add(refusal.allowed()
                     ? Translation.msg(support().useHintKey()).arg("target", loadedItem.name()).text() : refusalText(craftingItem, refusal.verdict()));
         }
@@ -1169,7 +1420,7 @@ public final class CraftingBenchPanel extends HoloPanel {
         return hints;
     }
 
-    private static String growHint(GrowableMaterial material) {
+    static String growHint(GrowableMaterial material) {
         return material.growable()
                 ? Translation.msg("ui.craftingBench.tile.grow").arg("cost", material.feedstockCost()).text()
                 : Translation.text("ui.craftingBench.tile.notGrowable");
@@ -1205,7 +1456,7 @@ public final class CraftingBenchPanel extends HoloPanel {
             if (displayName.baseName() != null) {
                 centred(VanillaText.plainPara(element, displayName.baseName(), LINE_PAD, Misc.getTextColor()));
             }
-            StyledText flavour = support().flavourLine(loadedItem);
+            StyledText flavour = embeddedLayout == null ? support().flavourLine(loadedItem) : null;
             if (flavour != null) {
                 centred(VanillaText.addPara(element, flavour, LINE_PAD, Misc.getGrayColor()));
             }
@@ -1218,13 +1469,12 @@ public final class CraftingBenchPanel extends HoloPanel {
                 centred(VanillaText.addPara(element, line, linePad, Misc.getTextColor()));
                 linePad = LINE_PAD;
             }
-            List<SlottedLine> implicitLines = new ArrayList<>();
-            loadedItem.implicitLines(detailsShowRollRanges).forEach(line -> implicitLines.add(new SlottedLine(null, line)));
-            addDetailSection(element, "item.tooltip.implicit", implicitLines, paraPad);
             if (detailsShowRollRanges) {
+                addSlottedDetailSection(element, "item.tooltip.implicit", loadedItem.implicitSlottedLines(true), paraPad, detailsWidth);
                 addSlottedDetailSection(element, "item.tooltip.explicit", loadedItem.slottedEffectLines(true, null), paraPad,
                         detailsWidth);
             } else {
+                addDetailSection(element, "item.tooltip.implicit", loadedItem.implicitSlottedLines(false), paraPad);
                 addDetailSection(element, "item.tooltip.explicit", loadedItem.slottedEffectLines(false, null), paraPad);
             }
         }
@@ -1271,7 +1521,7 @@ public final class CraftingBenchPanel extends HoloPanel {
             return;
         }
         element.addSectionHeading(Translation.text(headingKey), Alignment.MID, headingPad);
-        SlottedRows.Layout layout = new SlottedRows.Layout(sectionWidth - SCROLLBAR_ROOM, SLOT_TAG_WIDTH, GAP, TooltipTextSize::applyBodyFont);
+        SlottedRows.Layout layout = new SlottedRows.Layout(sectionWidth - SCROLLBAR_ROOM, CAPTION_TAG_GAP, GAP, TooltipTextSize::applyBodyFont);
         SlottedRows.add(element, lines, layout, GAP, LINE_PAD, line -> addLineDetailTooltip(element, line));
     }
 
@@ -1282,8 +1532,7 @@ public final class CraftingBenchPanel extends HoloPanel {
     }
 
     private void rebuildNotice() {
-        BenchLayout.Rect notice = embeddedLayout != null ? embeddedLayout.notice()
-                : new BenchLayout.Rect(PAD, artY(BenchScene.NOTICE_TOP), innerWidth(), BenchScene.NOTICE_HEIGHT * sceneScale);
+        BenchLayout.Rect notice = embeddedLayout != null ? embeddedLayout.notice() : benchNotice();
         TooltipMakerAPI element = panelRoot.createUIElement(notice.width(), notice.height(), false);
         if (noticeText != null) {
             Color noticeColor = noticeIsWarning ? Misc.getNegativeHighlightColor() : Misc.getPositiveHighlightColor();
@@ -1292,4 +1541,88 @@ public final class CraftingBenchPanel extends HoloPanel {
         noticeElement = replaceElement(noticeElement, element, notice.left(), notice.top());
     }
 
+    private BenchLayout.Rect benchNotice() {
+        return new BenchLayout.Rect(headerNoticeLeft, PAD + FEEDSTOCK_TEXT_TOP, headerNoticeRight - headerNoticeLeft, HEADER_HEIGHT - FEEDSTOCK_TEXT_TOP);
+    }
+
+    private final class TrayContext implements BenchTrayContext {
+
+        @Override
+        public Item loaded() {
+            return loadedItem;
+        }
+
+        @Override
+        public ItemStore store() {
+            return support().store();
+        }
+
+        @Override
+        public CraftingMaterials materials() {
+            return playerMaterials();
+        }
+
+        @Override
+        public Set<CraftingInhibitor> activeInhibitors() {
+            return activeInhibitors.view();
+        }
+
+        @Override
+        public Random random() {
+            return craftingRandom;
+        }
+
+        @Override
+        public boolean busy() {
+            return wormholeOpened || isConfirmOpen() || isClosing() || reshaping();
+        }
+
+        @Override
+        public void useCraftingItem(CraftingMaterialFamily craftingItem, boolean skipConfirm) {
+            tileClicked(craftingItem, skipConfirm);
+        }
+
+        @Override
+        public void growMaterial(GrowableMaterial material, boolean skipConfirm) {
+            tileRightClicked(material, skipConfirm);
+        }
+
+        @Override
+        public void toggleInhibitor(CraftingInhibitor inhibitor) {
+            CraftingBenchPanel.this.toggleInhibitor(inhibitor);
+        }
+
+        @Override
+        public void writeCraftingItemTooltip(TooltipMakerAPI tooltip, CraftingMaterialFamily craftingItem) {
+            writeTooltip(tooltip, craftingItem);
+        }
+
+        @Override
+        public boolean droppedMissingInhibitors() {
+            return CraftingBenchPanel.this.droppedMissingInhibitors(playerMaterials());
+        }
+
+        @Override
+        public void confirmCraft(String title, StyledText body, Set<CraftingInhibitor> spentInhibitors, Runnable confirmed) {
+            pendingTrayConfirm = confirmed;
+            openConfirm(USE_CONFIRM_HEIGHT + spentInhibitors.size() * INHIBITOR_LINE_HEIGHT,
+                    element -> writeCraftConfirm(element, title, body, spentInhibitors),
+                    "ui.craftingBench.confirm.use", Control.CONFIRM_TRAY, "ui.craftingBench.confirm.cancel", Control.CANCEL_CONFIRM);
+        }
+
+        @Override
+        public void crafted(Item selectedAfter, Color flash, String notice, Set<CraftingInhibitor> spentInhibitors) {
+            activeInhibitors.spend(spentInhibitors);
+            loadedItem = selectedAfter;
+            noticeText = withSpentInhibitors(notice, spentInhibitors);
+            SkillTreeSounds.socketed();
+            socketFlair.flash(flash == null ? SkillTreePanelStyle.GLOW_COLOR : flash);
+            afterChange();
+        }
+
+        @Override
+        public void notice(String text) {
+            showNotice(text);
+        }
+    }
 }

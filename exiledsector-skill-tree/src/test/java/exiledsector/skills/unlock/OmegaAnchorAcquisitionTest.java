@@ -5,7 +5,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.items.Item;
 import exiledsector.items.ItemDefinitions;
-import exiledsector.items.WormholeAnchorDefinitions;
+import exiledsector.items.anchor.WormholeAnchorDefinitions;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;

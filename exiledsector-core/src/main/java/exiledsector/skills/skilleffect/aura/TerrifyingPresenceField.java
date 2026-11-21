@@ -1,7 +1,10 @@
 package exiledsector.skills.skilleffect.aura;
 
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import exiledsector.skills.skilleffect.CombatQueries;
+import exiledsector.skills.skilleffect.StatMode;
+import exiledsector.skills.skilleffect.StatTarget;
 
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -12,6 +15,7 @@ final class TerrifyingPresenceField extends AuraField<TerrifyingPresenceListener
     static final float RANGE = 1000f;
     static final String MOD_ID = "exiledSector_terrifyingPresence";
     private static final String CUSTOM_DATA_KEY = "exiledSector_terrifyingPresenceField";
+    private static final StatTarget AUTOFIRE_ACCURACY_PENALTY = StatTarget.scaled(StatTarget.liveStat(MutableShipStatsAPI::getAutofireAimAccuracy), -1f);
 
     private final AppliedAuraValues appliedPenalty = new AppliedAuraValues(AppliedAuraValues.Change.EXACT);
 
@@ -25,9 +29,7 @@ final class TerrifyingPresenceField extends AuraField<TerrifyingPresenceListener
 
     @Override
     void update(float elapsedSeconds) {
-        appliedPenalty.update(penaltyPerTarget(sources, ENGINE_SHIPS_NEAR),
-                target -> target.getMutableStats().getAutofireAimAccuracy().unmodify(MOD_ID),
-                (target, penalty) -> target.getMutableStats().getAutofireAimAccuracy().modifyFlat(MOD_ID, -penalty));
+        appliedPenalty.update(penaltyPerTarget(sources, ENGINE_SHIPS_NEAR), AUTOFIRE_ACCURACY_PENALTY, StatMode.FLAT, MOD_ID);
     }
 
     static Map<ShipAPI, Float> penaltyPerTarget(List<TerrifyingPresenceListener> sources, ShipsNear shipsNear) {

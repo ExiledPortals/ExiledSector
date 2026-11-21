@@ -23,7 +23,6 @@ import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunState;
 import exiledsector.charts.wormhole.ChartWormholePlugin;
 import org.junit.jupiter.api.Test;
-import org.mockito.InOrder;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -43,7 +42,6 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -58,7 +56,7 @@ class ChartPersistenceGuardTest {
             "exiledsector.charts.run.ChartContentListener", "registered as a transient listener",
             "exiledsector.charts.run.ChartTransverseJumpAbility", "swapped back to the vanilla ability before every save",
             "exiledsector.charts.run.diagnostics.ChartSoakScript", "added as a transient sector script",
-            "exiledsector.charts.objective.GatewayUpgradeNotice", "added as a transient sector script",
+            "exiledsector.charts.wormhole.GatewayUpgradeNotice", "added as a transient sector script",
             "exiledsector.charts.wormhole.LimboBlueprintCache$Watch", "added as a transient sector script");
     private static final Set<Class<?>> FORBIDDEN_TYPES = Set.of(StarSystemAPI.class, SectorEntityToken.class, CampaignFleetAPI.class,
             LocationAPI.class);
@@ -186,29 +184,13 @@ class ChartPersistenceGuardTest {
     }
 
     @Test
-    void readsMovedClassesUnderTheirOldNamesButWritesTheStableAlias() {
-        XStream xstream = mock(XStream.class);
-        InOrder order = inOrder(xstream);
-
-        ChartSaveAliases.register(xstream);
-
-        ChartSaveAliases.MOVED.forEach((oldName, type) -> {
-            assertTrue(ChartSaveAliases.ALIASES.containsValue(type), type.getName());
-            order.verify(xstream).alias(oldName, type);
-        });
-        ChartSaveAliases.ALIASES.forEach((alias, type) -> {
-            if (ChartSaveAliases.MOVED.containsValue(type)) {
-                order.verify(xstream).alias(alias, type);
-            }
-        });
-    }
-
-    @Test
     void theObjectiveIntelSavesOnlyItsRunIdSoItNeverHoldsTheSystem() {
         List<String> saved = new ArrayList<>();
-        for (Field field : ChartObjectiveIntel.class.getDeclaredFields()) {
-            if (!Modifier.isStatic(field.getModifiers()) && !Modifier.isTransient(field.getModifiers())) {
-                saved.add(field.getName() + ": " + field.getType().getSimpleName());
+        for (Class<?> declaring = ChartObjectiveIntel.class; declaring.getName().startsWith("exiledsector."); declaring = declaring.getSuperclass()) {
+            for (Field field : declaring.getDeclaredFields()) {
+                if (!Modifier.isStatic(field.getModifiers()) && !Modifier.isTransient(field.getModifiers())) {
+                    saved.add(field.getName() + ": " + field.getType().getSimpleName());
+                }
             }
         }
         assertEquals(List.of("runId: String"), saved);

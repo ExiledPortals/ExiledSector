@@ -4,15 +4,13 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.PlayerFleet;
 import exiledsector.domain.DomainContributions;
 import exiledsector.domain.ExiledSectorDomain;
-import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemDrops;
+import exiledsector.items.drop.ItemQuantity;
+import exiledsector.items.drop.SalvageSiteDrops;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,83 +21,64 @@ import java.util.function.Predicate;
 public final class LootSources {
 
     private static final DomainContributions<LootSource> SOURCES = new DomainContributions<>(ExiledSectorDomain::lootSources);
-    private static final DomainContributions<FleetDifficulty> DIFFICULTIES = DomainContributions.fromEveryDomain(ExiledSectorDomain::fleetDifficulties);
+    private static final List<LootSource> CORE_SOURCES_AFTER_DOMAINS = List.of(CraftingLootSource.INSTANCE);
 
     private LootSources() {
     }
 
     public static List<LootSource> all() {
-        return SOURCES.all();
-    }
-
-    public static ItemChances itemChancesFor(CampaignFleetAPI fleet) {
-        return SOURCES.firstOr(source -> source.itemChancesFor(fleet), LootMultipliers.NONE.itemChances());
+        List<LootSource> sources = new ArrayList<>(SOURCES.all());
+        sources.addAll(CORE_SOURCES_AFTER_DOMAINS);
+        return sources;
     }
 
     public static FleetLootRules fleetLootRules(CampaignFleetAPI fleet) {
-        return SOURCES.firstOr(source -> source.fleetLootRules(fleet), FleetLootRules.REGULAR);
+        return SOURCES.firstOr(source -> source.fleetLootRules(fleet), FleetLootRules.LEVEL_SCALED);
     }
 
-    public static LootMultipliers modifiersFor(SectorEntityToken site) {
-        return SOURCES.firstOr(source -> source.modifiersFor(site), LootMultipliers.NONE);
+    public static LootMultipliers lootMultipliersFor(SectorEntityToken site) {
+        return SOURCES.firstOr(source -> source.lootMultipliersFor(site), LootMultipliers.NONE);
     }
 
-    public static ItemDrops.SiteLoot rollSite(SectorAPI sector, String siteId, Random random, LootMultipliers modifiers) {
-        ItemDrops.SiteLoot baseLoot = ItemDrops.rollSite(siteId, random, modifiers.itemChances(), modifiers.feedstockMult(), modifiers.craftingItemMult());
-        SiteFind find = new SiteFind(sector, siteId, random, modifiers.itemChances(), new ArrayList<>(), new ArrayList<>());
+    public static Loot rollSite(SectorAPI sector, String siteId, Random random, LootMultipliers multipliers) {
+        Loot baseLoot = SalvageSiteDrops.rollSite(siteId, random, multipliers);
+        SiteFind find = new SiteFind(sector, siteId, random, multipliers.chances(), new ArrayList<>(), new ArrayList<>());
         SOURCES.all().forEach(source -> source.addSiteFinds(find));
-        return baseLoot.plus(find.items(), find.upgrades(), Map.of());
+        return baseLoot.plus(find.items(), find.schematics(), Map.of());
     }
 
-    public static List<ItemData> bossDrops(int chartTier, String bossFactionId, float chanceMult, Random random,
+    public static List<ItemData> bossDrops(int chartTier, String bossFactionId, ItemQuantity quantity, Random random,
                                              Predicate<ItemDefinition> allowed) {
         List<ItemData> drops = new ArrayList<>();
-        SOURCES.all().forEach(source -> drops.addAll(source.bossDrops(chartTier, bossFactionId, chanceMult, random, allowed)));
+        SOURCES.all().forEach(source -> drops.addAll(source.bossDrops(chartTier, bossFactionId, quantity, random, allowed)));
         return drops;
     }
 
-    public static List<ItemData> shapeDrops(List<ItemData> items) {
-        CampaignFleetAPI playerFleet = PlayerFleet.orNull();
-        LocationAPI location = playerFleet == null ? null : playerFleet.getContainingLocation();
-        if (location == null || items.isEmpty()) {
+    public static List<ItemData> shape(List<ItemData> items, DropOrigin origin) {
+        if (items.isEmpty()) {
             return items;
         }
+        CampaignFleetAPI playerFleet = PlayerFleet.orNull();
+        return shape(items, origin, playerFleet == null ? null : playerFleet.getContainingLocation());
+    }
+
+    public static List<ItemData> shape(List<ItemData> items, DropOrigin origin, LocationAPI foundAt) {
+        if (items.isEmpty()) {
+            return items;
+        }
+        List<ItemData> shapedWhereFound = foundAt == null ? items : shapeEach(items, origin.whereThePlayerIs(), foundAt);
+        return origin.kind() == DropOrigin.Kind.SITE ? shapeEach(shapedWhereFound, origin, foundAt) : shapedWhereFound;
+    }
+
+    private static List<ItemData> shapeEach(List<ItemData> items, DropOrigin origin, LocationAPI foundAt) {
         List<ItemData> shaped = new ArrayList<>(items.size());
         for (ItemData item : items) {
             ItemData shapedItem = item;
             for (LootSource source : SOURCES.all()) {
-                shapedItem = source.shapeDrop(shapedItem, location);
+                shapedItem = source.shape(shapedItem, origin, foundAt);
             }
             shaped.add(shapedItem);
         }
         return shaped;
-    }
-
-    public static float difficultyMultiplier(float battleDifficulty) {
-        return DIFFICULTIES.firstOr(difficulty -> difficulty.difficultyMultiplier(battleDifficulty), 1f);
-    }
-
-    public static boolean shipLevelsRated() {
-        return DIFFICULTIES.all().stream().anyMatch(FleetDifficulty::ratesShipLevels);
-    }
-
-    public static int shipLevel(FleetMemberAPI member) {
-        int level = 0;
-        for (FleetDifficulty difficulty : DIFFICULTIES.all()) {
-            level = Math.max(level, difficulty.shipLevel(member));
-        }
-        return level;
-    }
-
-    public static FleetLevelRange levelRange(MemoryAPI fleetMemory) {
-        return DIFFICULTIES.first(difficulty -> difficulty.levelRange(fleetMemory));
-    }
-
-    public static String levelSeed(MemoryAPI fleetMemory) {
-        return DIFFICULTIES.first(difficulty -> difficulty.levelSeed(fleetMemory));
-    }
-
-    public static List<String> grantedNodeIds(MemoryAPI fleetMemory) {
-        return DIFFICULTIES.firstOr(difficulty -> difficulty.grantedNodeIds(fleetMemory), List.of());
     }
 }

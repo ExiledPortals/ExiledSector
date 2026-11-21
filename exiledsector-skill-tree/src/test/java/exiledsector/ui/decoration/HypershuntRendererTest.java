@@ -2,6 +2,7 @@ package exiledsector.ui.decoration;
 
 import exiledsector.skills.decoration.Hypershunt;
 import exiledsector.skills.decoration.Orbit;
+import exiledsector.skills.tags.SkillTags;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -13,7 +14,7 @@ class HypershuntRendererTest {
     private static final float TOLERANCE = 0.01f;
 
     private static Hypershunt hypershunt(boolean clockwise) {
-        return new Hypershunt("shunt", 1000f, 2000f, new Orbit(100f, 40f, clockwise, 0f), 300f, List.of("omega"));
+        return new Hypershunt("shunt", 1000f, 2000f, new Orbit(100f, 40f, clockwise, 0f), 300f, SkillTags.treeTags(List.of("omega")));
     }
 
     private static void assertPose(float treeX, float treeY, float spriteAngleDeg, HypershuntRenderer.Pose pose) {

@@ -1,23 +1,19 @@
-import fs from 'node:fs';
-import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { lineEndingOf, withLineEnding } from '../../../shared/lineEndings.ts';
+import { readRepositoryFile } from '../../../test/testServer.ts';
 import { parseTreeDocument, serializeTreeFiles, serializeType } from './serialization.ts';
-
-const BYTE_ORDER_MARK = String.fromCharCode(0xfeff);
-const PROJECT_ROOT = path.resolve(import.meta.dirname, '../../../../../..');
+import { SHIP_TREE_FILES } from './treeFiles.ts';
 
 function readProjectFile(relativePath: string): string {
-  const text = fs.readFileSync(path.join(PROJECT_ROOT, relativePath), 'utf8');
-  return text.startsWith(BYTE_ORDER_MARK) ? text.slice(1) : text;
+  return readRepositoryFile(relativePath, { stripByteOrderMark: true });
 }
 
 describe('tree files round-trip', () => {
   it('serialises skill_types.json and ship_skill_tree.json back to the same bytes', () => {
     const typesText = readProjectFile('data/skilltrees/skill_types.json');
     const treeText = readProjectFile('data/skilltrees/ship_skill_tree.json');
-    const document = parseTreeDocument(typesText, treeText);
-    const texts = serializeTreeFiles(document, { types: lineEndingOf(typesText), tree: lineEndingOf(treeText) });
+    const document = parseTreeDocument(SHIP_TREE_FILES, typesText, treeText);
+    const texts = serializeTreeFiles(SHIP_TREE_FILES, document, { types: lineEndingOf(typesText), tree: lineEndingOf(treeText) });
     expect(texts.types).toBe(typesText);
     expect(texts.tree).toBe(treeText);
   });
@@ -30,7 +26,7 @@ describe('tree files round-trip', () => {
     const withoutDecorations = Object.fromEntries(Object.entries(treeJson).filter(([key]) => key !== 'decorations'));
     for (const json of [treeJson, withoutDecorations]) {
       const text = withLineEnding(JSON.stringify(json, null, '\t'), lineEnding);
-      const texts = serializeTreeFiles(parseTreeDocument(typesText, text), { types: lineEndingOf(typesText), tree: lineEnding });
+      const texts = serializeTreeFiles(SHIP_TREE_FILES, parseTreeDocument(SHIP_TREE_FILES, typesText, text), { types: lineEndingOf(typesText), tree: lineEnding });
       expect(texts.tree).toBe(text);
     }
   });
@@ -86,8 +82,8 @@ describe('decoration serialisation', () => {
   const nodes = [{ id: 'a', type: 'small', connectedTo: [], x: 0, y: 0 }];
 
   function serializedDecorations(decorations: Record<string, unknown>[]): Record<string, unknown>[] {
-    const document = parseTreeDocument(typesText, JSON.stringify({ nodes, decorations }));
-    const tree = JSON.parse(serializeTreeFiles(document, { types: '\n', tree: '\n' }).tree) as Record<string, unknown>;
+    const document = parseTreeDocument(SHIP_TREE_FILES, typesText, JSON.stringify({ nodes, decorations }));
+    const tree = JSON.parse(serializeTreeFiles(SHIP_TREE_FILES, document, { types: '\n', tree: '\n' }).tree) as Record<string, unknown>;
     return (tree.decorations ?? []) as Record<string, unknown>[];
   }
 
@@ -95,7 +91,7 @@ describe('decoration serialisation', () => {
     const out = serializedDecorations([
       { kind: 'threatUnit', tags: ['threat'], rotation: 90, length: 700, unitType: 'hive', y: 2, x: 1, id: 'threat_unit_1' },
       { kind: 'serpent', id: 'worm', x: 0, y: 0, orbitRadius: 1663, orbitSeconds: 190, clockwise: false, startAngle: 180, wobble: 0.15, wobbleWaves: 7, wobblePhase: 74.5, tags: ['abyss'] },
-      { kind: 'ringBelt', id: 'belt', x: 0, y: 0, innerRadius: 2900, outerRadius: 3250, ringArtPath: 'graphics/planets/ring_band_dust.png', rotationSpeed: 0.6 },
+      { kind: 'ringBelt', id: 'belt', x: 0, y: 0, innerRadius: 2900, outerRadius: 3250, ringArtPath: 'graphics/exiledSector/scenery/rings/ring_band_dust.png', rotationSpeed: 0.6 },
       { kind: 'shroudedMaw', tags: ['shrouded'], rotation: 15, length: 620, y: 6, x: 5, id: 'shrouded_maw' },
       { kind: 'hypershunt', tags: ['omega'], size: 300, startAngle: 40, clockwise: true, orbitSeconds: 550, orbitRadius: 1100, y: 8, x: 7, id: 'shunt' },
       { kind: 'star', id: 'star_1', x: 0, y: 0, radius: 400, starType: 'star_yellow' },
@@ -117,7 +113,7 @@ describe('decoration serialisation', () => {
     expect(out[0]).toEqual({ kind: 'threatUnit', id: 'threat_unit_2', x: 3, y: 4, unitType: 'fabricator', length: 600 });
     expect(out[1]).toEqual({ kind: 'serpent', id: 'plain', x: 0, y: 0, orbitRadius: 500, orbitSeconds: 100, clockwise: true });
     expect(out[2]).toEqual({ kind: 'hypershunt', id: 'still', x: 0, y: 0, orbitRadius: 1100, orbitSeconds: 550, size: 300 });
-    const empty = JSON.parse(serializeTreeFiles(parseTreeDocument(typesText, JSON.stringify({ nodes })), { types: '\n', tree: '\n' }).tree) as Record<string, unknown>;
+    const empty = JSON.parse(serializeTreeFiles(SHIP_TREE_FILES, parseTreeDocument(SHIP_TREE_FILES, typesText, JSON.stringify({ nodes })), { types: '\n', tree: '\n' }).tree) as Record<string, unknown>;
     expect(empty).not.toHaveProperty('decorations');
   });
 
@@ -140,7 +136,62 @@ describe('decoration serialisation', () => {
   });
 
   it('refuses to load an unknown kind or a retired per-kind list rather than dropping them on save', () => {
-    expect(() => parseTreeDocument(typesText, JSON.stringify({ nodes, decorations: [{ kind: 'comet', id: 'c', x: 0, y: 0 }] }))).toThrow(/unknown kind "comet"/);
-    expect(() => parseTreeDocument(typesText, JSON.stringify({ nodes, stars: [{ id: 's', x: 0, y: 0, radius: 100 }] }))).toThrow(/still has stars/);
+    expect(() => parseTreeDocument(SHIP_TREE_FILES, typesText, JSON.stringify({ nodes, decorations: [{ kind: 'comet', id: 'c', x: 0, y: 0 }] }))).toThrow(/unknown kind "comet"/);
+    expect(() => parseTreeDocument(SHIP_TREE_FILES, typesText, JSON.stringify({ nodes, stars: [{ id: 's', x: 0, y: 0, radius: 100 }] }))).toThrow(/still has stars/);
+  });
+});
+
+describe('field schema', () => {
+  const type = { id: 'small', name: 'Small', icon: '' };
+  const node = { id: 'a', type: 'small', connectedTo: [], x: 0, y: 0 };
+
+  function load(types: Record<string, unknown>[], tree: Record<string, unknown>): void {
+    parseTreeDocument(SHIP_TREE_FILES, JSON.stringify({ skillTypes: types }), JSON.stringify(tree));
+  }
+
+  it('loads a tree that only uses known fields', () => {
+    expect(() => load([type], { nodes: [node], orbitAnchors: [{ id: 'anchor', x: 0, y: 0, radius: 10, shape: 'square', rotation: 5 }] })).not.toThrow();
+  });
+
+  it('refuses a field the serialisers do not know rather than dropping it on save', () => {
+    expect(() => load([{ ...type, cooldown: 3 }], { nodes: [node] })).toThrow('skill_types.json has unknown field "cooldown" in skill type "small"; the editor would drop it on save');
+    expect(() => load([{ ...type, integrated: { effects: [], stacks: 2 } }], { nodes: [node] })).toThrow(/unknown field "stacks" in the integrated block of skill type "small"/);
+    expect(() => load([type], { nodes: [{ ...node, glow: true, pulse: 1 }] })).toThrow(/ship_skill_tree.json has unknown fields "glow", "pulse" in node "a"; the editor would drop them/);
+    expect(() => load([type], { nodes: [node], orbitAnchors: [{ id: 'anchor', x: 0, y: 0, radius: 10, spin: 1 }] })).toThrow(/unknown field "spin" in orbit anchor "anchor"/);
+    expect(() => load([type], { nodes: [node], connectorCurves: [{ a: 'a', b: 'b', controlX: 0, controlY: 0, bend: 1 }] })).toThrow(/unknown field "bend" in the connector curve between "a" and "b"/);
+    expect(() => load([type], { nodes: [node], comets: [] })).toThrow(/unknown field "comets" in the top level/);
+    expect(() => parseTreeDocument(SHIP_TREE_FILES, JSON.stringify({ skillTypes: [type], version: 2 }), JSON.stringify({ nodes: [node] }))).toThrow(/skill_types.json has unknown field "version" in the top level/);
+  });
+
+  it('writes every field it reads, so a schema entry cannot be read but never saved', () => {
+    const fullType = {
+      ...type,
+      tier: 'NOTABLE',
+      effects: [{ effect: 'ARMOR_FLAT', magnitude: 1 }],
+      hullSizeEffects: [{ effect: 'ARMOR_FLAT', frigate: 1, destroyer: 2, cruiser: 3, capitalShip: 4 }],
+      integrated: { effects: [{ effect: 'HULL_PERCENT', magnitude: 1 }], hullSizeEffects: [{ effect: 'HULL_PERCENT', frigate: 1, destroyer: 2, cruiser: 3, capitalShip: 4 }], effectText: ['b'] },
+      vanillaHullMod: 'heavyarmor',
+      itemCost: { itemId: 'alpha_core', quantity: 1 },
+      temporaryAfterDeploymentSeconds: 30,
+      requiredHullSizes: ['FRIGATE'],
+      unlockConditions: [{ type: 'threatFought' }],
+      exclusiveHullMods: ['a'],
+      phantomHullMods: ['b'],
+      exclusiveSkillTypes: ['c'],
+      options: ['d'],
+      flavour: 'e',
+      flavourAutomated: 'f',
+      effectText: ['g'],
+      todo: 'h',
+      tags: ['armor'],
+      moduleShare: 'all',
+    };
+    const fullNode = { ...node, orbitAnchorId: 'anchor', orbitAngle: 0, ringBeltPath: 'p', ringBeltColor: '#fff', ringBeltWidth: 1.2, wormholeColor: '#000', pairedWith: 'b', tags: ['x'] };
+    const fullAnchor = { id: 'anchor', x: 0, y: 0, radius: 10, shape: 'rectangle', aspectRatio: 1.8, rotation: 5 };
+    const treeText = JSON.stringify({ nodes: [fullNode, { ...node, id: 'b', connectedTo: [] }], orbitAnchors: [fullAnchor] }, null, '\t');
+    const typesText = JSON.stringify({ skillTypes: [fullType] }, null, '\t');
+    const texts = serializeTreeFiles(SHIP_TREE_FILES, parseTreeDocument(SHIP_TREE_FILES, typesText, treeText), { types: '\n', tree: '\n' });
+    expect(texts.types).toBe(typesText);
+    expect(texts.tree).toBe(treeText);
   });
 });

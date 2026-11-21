@@ -14,10 +14,8 @@ import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
-import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
-import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.charts.atlas.AtlasData;
-import exiledsector.items.StarChart;
+import exiledsector.items.starchart.StarChart;
 import org.lazywizard.console.Console;
 
 import java.util.ArrayList;
@@ -32,7 +30,7 @@ public class ChartOpenCommand extends CampaignCommand {
     static final int DEFAULT_TIER = ChartTiers.LOWEST_TIER;
     static final String BREACH_WORD = "breach";
     static final Pattern EXPLICIT_TIER = Pattern.compile("(?:tier|t)=?(-?\\d+)", Pattern.CASE_INSENSITIVE);
-    static final Pattern ATLAS_SETTING = Pattern.compile("(region|layout|anomaly|side)=(\\S+)", Pattern.CASE_INSENSITIVE);
+    static final Pattern ATLAS_SETTING = Pattern.compile("(region|layout|anomaly)=(\\S+)", Pattern.CASE_INSENSITIVE);
 
     private final Random random;
 
@@ -49,9 +47,9 @@ public class ChartOpenCommand extends CampaignCommand {
         OpenArguments arguments = OpenArguments.parse(args);
         if (arguments.problem() != null) {
             Console.showMessage(arguments.problem() + "\nUsage: ExiledSectorChartOpen [seed] [type] [tier] [breach], where type is one of "
-                    + ChartLayoutGenerator.ALLOWED_TYPES + ", tier is " + ChartTiers.LOWEST_TIER + " to " + ChartTiers.CORRUPTED_TIER
+                    + ChartLayoutGenerator.ALLOWED_TYPES + ", tier is " + ChartTiers.LOWEST_TIER + " to " + ChartTiers.HIGHEST_TIER
                     + " (default " + DEFAULT_TIER + "), breach adds a Spatial Breach, region=ID and layout=ID build the system from the"
-                    + " atlas tables, each anomaly=ID adds that anomaly, and side=defender|attacker|neither adds a Faction Skirmish joined on that side."
+                    + " atlas tables, and each anomaly=ID adds that anomaly."
                     + " All are optional and can come in any order; write the tier as tier=N when the seed is also a"
                     + " small number.");
             return CommandResult.BAD_SYNTAX;
@@ -64,9 +62,6 @@ public class ChartOpenCommand extends CampaignCommand {
         List<String> anomalyIds = arguments.forcedAnomalyIds();
         if (!anomalyIds.isEmpty()) {
             layoutRequest = layoutRequest.withAnomalies(anomalyIds);
-        }
-        if (arguments.side() != null) {
-            layoutRequest = FactionSkirmish.joinedOn(layoutRequest, arguments.side());
         }
         int entries = StarChartSettings.wormholeEntries(arguments.tierOrDefault());
         OpenResult result = ChartRunActions.openBesidePlayer(Global.getSector(), entries, random, layoutRequest);
@@ -118,15 +113,10 @@ public class ChartOpenCommand extends CampaignCommand {
     }
 
     record OpenArguments(Long seed, StarSystemType systemType, Integer tier, String problem, boolean breach, String regionId, String layoutId,
-                         List<String> anomalyIds, SkirmishSide side) {
+                         List<String> anomalyIds) {
 
         OpenArguments {
             anomalyIds = anomalyIds == null ? List.of() : List.copyOf(anomalyIds);
-        }
-
-        OpenArguments(Long seed, StarSystemType systemType, Integer tier, String problem, boolean breach, String regionId, String layoutId,
-                      List<String> anomalyIds) {
-            this(seed, systemType, tier, problem, breach, regionId, layoutId, anomalyIds, null);
         }
 
         OpenArguments(Long seed, StarSystemType systemType, Integer tier, String problem, boolean breach) {
@@ -141,7 +131,6 @@ public class ChartOpenCommand extends CampaignCommand {
             String regionId = null;
             String layoutId = null;
             List<String> anomalyIds = new ArrayList<>();
-            SkirmishSide side = null;
             List<String> rest = new ArrayList<>();
             for (String token : ConsoleArgs.tokens(args)) {
                 Matcher atlas = ATLAS_SETTING.matcher(token);
@@ -157,11 +146,6 @@ public class ChartOpenCommand extends CampaignCommand {
                         return problem("Can't use \"" + token + "\": give one layout from atlas_layouts.csv.");
                     }
                     layoutId = atlas.group(2);
-                } else if (atlas.group(1).equalsIgnoreCase("side")) {
-                    if (side != null || SkirmishSide.parse(atlas.group(2)) == null) {
-                        return problem("Can't use \"" + token + "\": give one side, defender, attacker or neither.");
-                    }
-                    side = SkirmishSide.parse(atlas.group(2));
                 } else {
                     if (anomalyIds.contains(atlas.group(2)) || ChartAnomalies.definition(atlas.group(2)) == null) {
                         return problem("Can't use \"" + token + "\": give an anomaly from chart_anomalies.csv, once each.");
@@ -171,7 +155,7 @@ public class ChartOpenCommand extends CampaignCommand {
             }
             OpenArguments parsed = parseSettings(rest);
             return parsed.problem() != null ? parsed
-                    : new OpenArguments(parsed.seed(), parsed.systemType(), parsed.tier(), null, parsed.breach(), regionId, layoutId, anomalyIds, side);
+                    : new OpenArguments(parsed.seed(), parsed.systemType(), parsed.tier(), null, parsed.breach(), regionId, layoutId, anomalyIds);
         }
 
         private static OpenArguments parseSettings(List<String> tokens) {
@@ -190,7 +174,7 @@ public class ChartOpenCommand extends CampaignCommand {
                 } else if (tierMatch.matches() && explicitTier == null) {
                     Long tierNumber = parseNumber(tierMatch.group(1));
                     if (tierNumber == null || !ChartTiers.isValid(tierNumber.intValue()) || tierNumber.intValue() != tierNumber) {
-                        return problem("The tier in \"" + token + "\" must be " + ChartTiers.LOWEST_TIER + " to " + ChartTiers.CORRUPTED_TIER + ".");
+                        return problem("The tier in \"" + token + "\" must be " + ChartTiers.LOWEST_TIER + " to " + ChartTiers.HIGHEST_TIER + ".");
                     }
                     explicitTier = tierNumber.intValue();
                 } else if (number != null) {
@@ -222,11 +206,11 @@ public class ChartOpenCommand extends CampaignCommand {
             if (isTier(first)) {
                 return new OpenArguments(second, systemType, (int) first, null);
             }
-            return problem("Neither " + first + " nor " + second + " is a tier from " + ChartTiers.LOWEST_TIER + " to " + ChartTiers.CORRUPTED_TIER + ".");
+            return problem("Neither " + first + " nor " + second + " is a tier from " + ChartTiers.LOWEST_TIER + " to " + ChartTiers.HIGHEST_TIER + ".");
         }
 
         private static boolean isTier(long number) {
-            return number >= ChartTiers.LOWEST_TIER && number <= ChartTiers.CORRUPTED_TIER;
+            return number >= ChartTiers.LOWEST_TIER && number <= ChartTiers.HIGHEST_TIER;
         }
 
         private static OpenArguments problem(String problem) {

@@ -1,20 +1,17 @@
 package exiledsector.charts.anomaly.forge;
 
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
-import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AbyssOrbits;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ContentPlacer;
+import exiledsector.charts.anomaly.GuardedStation;
 import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.anomaly.VanillaDefenders;
 import exiledsector.charts.content.ChartSites;
-import exiledsector.charts.loot.BiomeModifiers;
-import exiledsector.items.ForgeInfusions;
 
 import java.util.List;
 
@@ -24,6 +21,8 @@ public final class AbyssalResearchComplex implements ContentPlacer, RunParticipa
     public static final String COMPLEX_TAG = ChartIds.PREFIX + "abyssal_research_complex";
     public static final AbyssalResearchComplex INSTANCE = new AbyssalResearchComplex();
     static final String ENTITY_TYPE = ChartIds.PREFIX + "abyssal_research_complex";
+    public static final GuardedStation STATION = new GuardedStation(ENTITY_TYPE, COMPLEX_TAG, ChartIds.PREFIX + "abyssal_research_complex_",
+            "chart.anomaly.abyssal_research_complex.name", ComplexGuards.GUARD_SALT);
     static final String BIOME_ID = "abyssal_rift";
     static final String INFUSE_PROGRAM = "infuse";
     static final int RUNS = 1;
@@ -40,28 +39,11 @@ public final class AbyssalResearchComplex implements ContentPlacer, RunParticipa
     }
 
     @Override
-    public void loadItems() {
-        ForgeInfusions.use(definition -> BiomeModifiers.modifierFor(BIOME_ID, definition.kind()));
-    }
-
-    @Override
     public void generate(AnomalyContentSite site) {
         ChartSites.Orbit orbit = AbyssOrbits.nearPhotosphere(site, MIN_ORBIT_GAP, MAX_ORBIT_GAP, site.random(PLACEMENT_SALT));
-        SectorEntityToken complex = site.addEntity(complexId(site.runId()), Translation.gameText("chart.anomaly.abyssal_research_complex.name"),
-                ENTITY_TYPE, Factions.NEUTRAL, orbit);
-        complex.addTag(COMPLEX_TAG);
-        VanillaDefenders.arm(complex, site.random(ComplexGuards.GUARD_SALT).nextLong());
+        STATION.place(site, orbit);
         ForgePrograms.Program infuse = ForgePrograms.byId(INFUSE_PROGRAM);
-        ForgeStates.record(site.state(ANOMALY_ID), infuse == null ? List.of() : List.of(infuse), RUNS);
-    }
-
-    public static String complexId(String runId) {
-        return ChartIds.PREFIX + "abyssal_research_complex_" + runId;
-    }
-
-    static SectorEntityToken complexIn(LocationAPI location) {
-        List<SectorEntityToken> found = location == null ? List.of() : location.getEntitiesWithTag(COMPLEX_TAG);
-        return found.isEmpty() ? null : found.get(0);
+        ForgeStates.record(site.state(ANOMALY_ID), infuse == null ? List.of() : List.of(infuse), RUNS, BIOME_ID);
     }
 
     @Override
@@ -71,7 +53,7 @@ public final class AbyssalResearchComplex implements ContentPlacer, RunParticipa
 
     @Override
     public String intelText(AnomalyRun run) {
-        SectorEntityToken complex = complexIn(run.system());
+        SectorEntityToken complex = STATION.in(run.system());
         if (complex == null || ForgeStates.runsLeft(run.run(), ForgeSite.ABYSSAL_RESEARCH_COMPLEX) <= 0) {
             return null;
         }

@@ -1,16 +1,18 @@
 import { Button, Checkbox, ColorInput, Divider, Group, Select, Stack, Text, TextInput } from '@mantine/core';
-import { IconPlus, IconTrash } from '@tabler/icons-react';
-import { useCallback, useState } from 'react';
+import { IconPlus } from '@tabler/icons-react';
+import { useState } from 'react';
+import { withCurrentOption } from '../../../shared/arrays.ts';
 import { DecimalInput } from '../../../shared/DecimalInput.tsx';
-import { confirmAction } from '../../../shared/dialogs.tsx';
-import { DescriptionField, IconField, IdField, ItemList, ListDetail, NameAndRarity, type ListedItem } from '../components/ItemFields.tsx';
+import { itemIconDestination } from '../../../shared/imageFolders.ts';
+import { DeleteRowButton, DescriptionField, IconField, IdField, ItemList, ListDetail, NameAndRarity, type ListedItem } from '../components/ItemFields.tsx';
 import { unlockOptions } from '../itemOptions.ts';
 import type { ItemsPanelProps } from '../itemsDocument.ts';
 import { anchorVolumes, exitCandidates, newWormholeAnchor, type WormholeAnchor } from '../model/anchors.ts';
-import { otherItemIds } from '../model/workspace.ts';
+import { otherItemIds, type ItemsModel } from '../model/workspace.ts';
+import { useRowEdit } from '../useRowEdit.ts';
 
-function withCurrent(options: string[], current: string): string[] {
-  return current === '' || options.includes(current) ? options : [current, ...options];
+function anchorRows(model: ItemsModel): WormholeAnchor[] {
+  return model.anchors.anchors;
 }
 
 export function WormholeAnchorsPanel({ document, model, vocabulary }: ItemsPanelProps) {
@@ -63,27 +65,14 @@ interface AnchorFormProps extends ItemsPanelProps {
 
 function AnchorForm({ document, model, vocabulary, anchor, index, onSelect }: AnchorFormProps) {
   const updateDocument = document.update;
-  const edit = useCallback((recipe: (draft: WormholeAnchor) => void) => updateDocument((draft) => recipe(draft.anchors.anchors[index])), [updateDocument, index]);
+  const edit = useRowEdit(updateDocument, anchorRows, index);
 
-  const remove = async () => {
-    const confirmed = await confirmAction({
-      title: `Delete "${anchor.id}"?`,
-      message: 'Anchors players already own will show as unrecognised, and nothing will lead to this volume.',
-      confirmLabel: 'Delete',
-      danger: true,
-    });
-    if (confirmed) {
-      document.update((draft) => void draft.anchors.anchors.splice(index, 1));
-      onSelect(Math.max(0, index - 1));
-    }
-  };
-
-  const volumes = withCurrent(anchorVolumes(vocabulary), anchor.volume);
-  const exits = withCurrent(exitCandidates(model.nodeFacts, anchor.volume), anchor.exitNode);
+  const volumes = withCurrentOption(anchorVolumes(vocabulary), anchor.volume);
+  const exits = withCurrentOption(exitCandidates(model.nodeFacts, anchor.volume), anchor.exitNode);
 
   return (
     <Stack gap="sm" maw={1100}>
-      <IconField icon={anchor.icon} targetFolder="graphics/icons/" onChange={(icon) => edit((draft) => void (draft.icon = icon))} />
+      <IconField icon={anchor.icon} destination={itemIconDestination('anchors', anchor.id)} onChange={(icon) => edit((draft) => void (draft.icon = icon))} />
       <IdField
         id={anchor.id}
         loadedId={anchor.loadedId}
@@ -191,9 +180,14 @@ function AnchorForm({ document, model, vocabulary, anchor, index, onSelect }: An
       <DescriptionField description={anchor.description} onChange={(description) => edit((draft) => void (draft.description = description))} />
       <Divider />
       <Group>
-        <Button color="red" variant="light" leftSection={<IconTrash size={14} />} onClick={() => void remove()}>
-          Delete this anchor
-        </Button>
+        <DeleteRowButton
+          noun="anchor"
+          rowId={anchor.id}
+          message="Anchors players already own will show as unrecognised, and nothing will lead to this volume."
+          index={index}
+          onDelete={() => document.update((draft) => void draft.anchors.anchors.splice(index, 1))}
+          onSelect={onSelect}
+        />
       </Group>
     </Stack>
   );

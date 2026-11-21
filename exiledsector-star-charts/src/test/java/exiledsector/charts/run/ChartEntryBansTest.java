@@ -3,8 +3,8 @@ package exiledsector.charts.run;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.MockShips;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -18,10 +18,7 @@ import static org.mockito.Mockito.when;
 class ChartEntryBansTest {
 
     private static FleetMemberAPI member(HullSize hullSize, boolean civilian) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        ShipHullSpecAPI hullSpec = mock(ShipHullSpecAPI.class);
-        when(hullSpec.getHullSize()).thenReturn(hullSize);
-        when(member.getHullSpec()).thenReturn(hullSpec);
+        FleetMemberAPI member = MockShips.member().hullSize(hullSize).build();
         when(member.isCivilian()).thenReturn(civilian);
         return member;
     }

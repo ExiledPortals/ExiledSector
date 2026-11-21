@@ -140,7 +140,7 @@ final class FleetShipList extends BaseCustomUIPanelPlugin {
     @Override
     public void renderBelow(float alphaMult) {
         if (listPosition != null) {
-            BorderedPanel.draw(listPosition.getX(), listPosition.getY(), listPosition.getWidth(), listPosition.getHeight(), alphaMult);
+            BorderedPanel.draw(listPosition, alphaMult);
         }
     }
 

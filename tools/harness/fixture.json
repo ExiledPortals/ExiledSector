@@ -1,0 +1,15 @@
+{
+  "newGame": {"choices": ["nex_NGCDevStart"], "characterName": "Harness"},
+  "writeFixture": "harness_fixture",
+  "steps": [
+    {"step": "wait", "seconds": 3},
+    {"step": "ignoreErrorsSoFar"},
+    {"step": "addShip", "variant": "wolf_Assault"},
+    {"step": "addShip", "variant": "hammerhead_Balanced"},
+    {"step": "addShip", "variant": "eagle_Assault"},
+    {"step": "addShip", "variant": "onslaught_Standard"},
+    {"step": "saveGame"},
+    {"step": "wait", "frames": 30},
+    {"step": "expectNoErrors"}
+  ]
+}

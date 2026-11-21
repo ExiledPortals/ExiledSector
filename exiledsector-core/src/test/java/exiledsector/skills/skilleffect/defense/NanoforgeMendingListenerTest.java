@@ -1,12 +1,10 @@
 package exiledsector.skills.skilleffect.defense;
 
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.skills.skilleffect.CombatTestShips;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.ArgumentMatchers.anyFloat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -15,14 +13,7 @@ import static org.mockito.Mockito.when;
 class NanoforgeMendingListenerTest {
 
     private static ShipAPI shipWithDynamicValue(String key, float value) {
-        ShipAPI ship = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(stats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getValue(key, 0f)).thenReturn(value);
-        when(ship.isAlive()).thenReturn(true);
-        return ship;
+        return CombatTestShips.ship().dynamic(key, value).alive().build();
     }
 
     @Test

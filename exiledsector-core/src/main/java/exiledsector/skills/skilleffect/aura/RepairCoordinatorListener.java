@@ -2,13 +2,12 @@ package exiledsector.skills.skilleffect.aura;
 
 import com.fs.starfarer.api.combat.ShipAPI;
 import exiledsector.skills.skilleffect.CombatQueries;
-import exiledsector.skills.skilleffect.ShipCombatListener;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
 
-final class RepairCoordinatorListener extends ShipCombatListener implements AuraField.Source {
+final class RepairCoordinatorListener extends AuraSourceListener {
 
     static final String ARMOR_REPAIR_PERCENT_KEY = "exiledSector_repairCoordinatorArmorPercent";
 
@@ -20,11 +19,6 @@ final class RepairCoordinatorListener extends ShipCombatListener implements Aura
     RepairCoordinatorListener(ShipAPI ownerShip) {
         super(ownerShip);
         RepairCoordinatorField.register(this);
-    }
-
-    @Override
-    public ShipAPI source() {
-        return ownerShip;
     }
 
     float armorRepairPercentPerSecond() {

@@ -38,10 +38,9 @@ class NodeGatesDataTest {
     private static final String ABYSS_GATE = "gate_singularity_defeated";
     private static final String PASCAL_GATE = "gate_pascal_visited";
     private static final String EXISTENTIAL_THREAT_GATE = "gate_existential_threat_defeated";
-    private static final String THREAT_GATE = "gate_threat_fought";
     private static final String REMNANT_GATE = "gate_remnant_fought";
-    private static final String DWELLER_GATE = "gate_dweller_fought";
     private static final String OMEGA_GATE = "gate_omega_found";
+    private static final String MOTHERSHIP_GATE = "gate_mothership_defeated";
     private static final String FROZEN_HEART_GATE = "gate_frozen_heart_visited";
     private static final String PROTOTYPE_GATE = "gate_ancient_prototype_found";
     private static final String CANDLES_GRACE_NODE_ID = "candles_grace_replica_1";
@@ -67,7 +66,7 @@ class NodeGatesDataTest {
     @Test
     void eachWormholeGateHandsOutItsAnchorsByItsOwnRule() {
         assertEquals(NodeGates.AnchorRule.FREE, NodeGates.gate(PASCAL_GATE).anchorRule());
-        for (String withheldGate : List.of(ABYSS_GATE, EXISTENTIAL_THREAT_GATE, FROZEN_HEART_GATE, THREAT_GATE, REMNANT_GATE, OMEGA_GATE)) {
+        for (String withheldGate : List.of(ABYSS_GATE, EXISTENTIAL_THREAT_GATE, FROZEN_HEART_GATE, REMNANT_GATE, OMEGA_GATE)) {
             assertEquals(NodeGates.AnchorRule.WITHHELD, NodeGates.gate(withheldGate).anchorRule(), withheldGate);
         }
         Set<String> rewardGates = NodeGates.all().keySet().stream().filter(gateTag -> NodeGates.gate(gateTag).rewardAnchor())
@@ -108,19 +107,6 @@ class NodeGatesDataTest {
     }
 
     @Test
-    void everyThreatNodeAndTheWormholeIntoItWaitUntilTheThreatIsFought() {
-        assertTrue(ungatedIn("threat", THREAT_GATE).isEmpty(), "Threat nodes without the gate: " + ungatedIn("threat", THREAT_GATE));
-    }
-
-    @Test
-    void everyShroudedNodeAndTheWormholeIntoItWaitUntilTheDwellersAreFought() {
-        assertEquals(List.of(UnlockConditionType.DWELLER_FOUGHT),
-                NodeGates.all().get(DWELLER_GATE).stream().map(UnlockCondition::getType).toList());
-        assertTrue(ungatedIn(SkillTags.SHROUDED_VOLUME, DWELLER_GATE).isEmpty(),
-                "Shrouded nodes without the gate: " + ungatedIn(SkillTags.SHROUDED_VOLUME, DWELLER_GATE));
-    }
-
-    @Test
     void everyEnigmaNodeAndTheWormholeIntoItWaitForTheFrozenHeartSystemToBeVisited() {
         assertEquals(List.of(UnlockConditionType.LOST_SECTOR_FROZEN_HEART_VISITED),
                 NodeGates.all().get(FROZEN_HEART_GATE).stream().map(UnlockCondition::getType).toList());
@@ -133,6 +119,16 @@ class NodeGatesDataTest {
                 NodeGates.all().get(REMNANT_GATE).stream().map(UnlockCondition::getType).toList());
         assertTrue(ungatedIn(SkillTags.REDACTED_VOLUME, REMNANT_GATE).isEmpty(),
                 "Remnant nodes without the gate: " + ungatedIn(SkillTags.REDACTED_VOLUME, REMNANT_GATE));
+    }
+
+    @Test
+    void everyDomainDronesNodeAndTheWormholeIntoItWaitUntilAMothershipIsBeaten() {
+        assertEquals(List.of(UnlockConditionType.MOTHERSHIP_DEFEATED),
+                NodeGates.all().get(MOTHERSHIP_GATE).stream().map(UnlockCondition::getType).toList());
+        assertEquals(NodeGates.AnchorRule.WITHHELD, NodeGates.gate(MOTHERSHIP_GATE).anchorRule());
+        assertTrue(SkillTree.getAllNodes().values().stream().anyMatch(node -> SkillTags.DOMAIN_DRONES_VOLUME.equals(node.getVolume())));
+        assertTrue(ungatedIn(SkillTags.DOMAIN_DRONES_VOLUME, MOTHERSHIP_GATE).isEmpty(),
+                "Explorarium nodes without the gate: " + ungatedIn(SkillTags.DOMAIN_DRONES_VOLUME, MOTHERSHIP_GATE));
     }
 
     @Test

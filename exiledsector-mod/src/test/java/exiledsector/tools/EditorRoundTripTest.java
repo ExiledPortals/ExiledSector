@@ -28,6 +28,7 @@ class EditorRoundTripTest {
     private static final Path EDITOR_SOURCES = Path.of("tools/editor/src");
 
     private static final String TREE_SERIALIZATION = "pages/tree/model/serialization.ts";
+    private static final String TREE_FIELD_SCHEMA = "pages/tree/model/fieldSchema.ts";
     private static final String TREE_DECORATIONS = "pages/tree/model/decorations.ts";
     private static final String ITEM_DEFINITIONS_MODEL = "pages/items/model/definitions.ts";
     private static final String HULL_ITEM_IMPLICITS_MODEL = "pages/items/model/implicits.ts";
@@ -37,29 +38,31 @@ class EditorRoundTripTest {
 
     private static final String TYPE_LOADER = "exiledsector/skills/loader/SkillTypeLoader.java";
     private static final String TREE_LOADER = "exiledsector/skills/loader/SkillTreeLoader.java";
+    private static final String TREE_LAYOUT_READER = "exiledsector/skills/loader/TreeLayoutReader.java";
     private static final String DECORATION_LOADER = "exiledsector/skills/loader/DecorationLoader.java";
+    private static final String ATLAS_TREE_DATA = "exiledsector/charts/tree/AtlasTreeData.java";
     private static final String ITEM_DEFINITIONS = "exiledsector/items/ItemDefinitions.java";
     private static final String ITEM_DEFINITION = "exiledsector/items/ItemDefinition.java";
-    private static final String SUBROUTINE_DEFINITIONS = "exiledsector/items/SubroutineDefinitions.java";
-    private static final String HULL_ITEM = "exiledsector/items/HullItem.java";
-    private static final String HULL_ITEM_IMPLICITS = "exiledsector/items/ItemImplicits.java";
-    private static final String ITEM_MODIFIERS = "exiledsector/items/ItemModifiers.java";
-    private static final String STAR_CHART_DEFINITIONS = "exiledsector/items/StarChartDefinitions.java";
-    private static final String STAR_CHART_IMPLICITS = "exiledsector/items/StarChartImplicits.java";
-    private static final String SUBROUTINE_IMPLICITS = "exiledsector/items/SubroutineImplicits.java";
-    private static final String CORRUPTION_IMPLICIT_POOL = "exiledsector/items/CorruptionImplicitPool.java";
-    private static final String STAR_CHART_ITEMS = "exiledsector/items/StarChartItems.java";
-    private static final String WORMHOLE_ANCHOR_DEFINITIONS = "exiledsector/items/WormholeAnchorDefinitions.java";
-    private static final String DOCTRINE_ARCHIVES = "exiledsector/items/DoctrineArchives.java";
-    private static final String MODSPEC_CACHES = "exiledsector/items/ModspecCaches.java";
-    private static final String UNIQUE_SUBROUTINE_RADII = "exiledsector/items/UniqueSubroutineRadii.java";
+    private static final String SUBROUTINE_DEFINITIONS = "exiledsector/items/subroutine/SubroutineDefinitions.java";
+    private static final String HULL_ITEM = "exiledsector/items/hull/HullItem.java";
+    private static final String HULL_ITEM_IMPLICITS = "exiledsector/items/modifier/ItemImplicits.java";
+    private static final String ITEM_MODIFIERS = "exiledsector/items/modifier/ItemModifiers.java";
+    private static final String STAR_CHART_DEFINITIONS = "exiledsector/items/starchart/StarChartDefinitions.java";
+    private static final String STAR_CHART_IMPLICITS = "exiledsector/items/starchart/StarChartImplicits.java";
+    private static final String SUBROUTINE_IMPLICITS = "exiledsector/items/subroutine/SubroutineImplicits.java";
+    private static final String CORRUPTION_IMPLICIT_POOL = "exiledsector/items/modifier/CorruptionImplicitPool.java";
+    private static final String STAR_CHART_ITEMS = "exiledsector/items/starchart/StarChartItems.java";
+    private static final String WORMHOLE_ANCHOR_DEFINITIONS = "exiledsector/items/anchor/WormholeAnchorDefinitions.java";
+    private static final String DOCTRINE_ARCHIVES = "exiledsector/items/subroutine/doctrine/DoctrineArchives.java";
+    private static final String MODSPEC_CACHES = "exiledsector/items/subroutine/ModspecCaches.java";
+    private static final String UNIQUE_SUBROUTINE_RADII = "exiledsector/items/subroutine/UniqueSubroutineRadii.java";
 
-    private static final List<String> LOADERS = List.of(TYPE_LOADER, TREE_LOADER, DECORATION_LOADER, ITEM_DEFINITIONS, ITEM_DEFINITION, SUBROUTINE_DEFINITIONS,
+    private static final List<String> LOADERS = List.of(TYPE_LOADER, TREE_LOADER, TREE_LAYOUT_READER, DECORATION_LOADER, ATLAS_TREE_DATA, ITEM_DEFINITIONS, ITEM_DEFINITION, SUBROUTINE_DEFINITIONS,
             HULL_ITEM, HULL_ITEM_IMPLICITS, ITEM_MODIFIERS, STAR_CHART_DEFINITIONS, STAR_CHART_IMPLICITS, STAR_CHART_ITEMS,
             WORMHOLE_ANCHOR_DEFINITIONS, DOCTRINE_ARCHIVES, MODSPEC_CACHES, UNIQUE_SUBROUTINE_RADII, SUBROUTINE_IMPLICITS,
             CORRUPTION_IMPLICIT_POOL);
 
-    private static final List<String> EDITED_DATA_PATHS = List.of("data/skilltrees/skill_types.json", "data/skilltrees/ship_skill_tree.json",
+    private static final List<String> EDITED_DATA_PATHS = List.of("data/skilltrees/skill_types.json", "data/skilltrees/ship_skill_tree.json", "data/skilltrees/atlas_tree",
             "data/config/exiledSector/item_modifiers", "data/config/exiledSector/hull_item", "data/config/exiledSector/subroutines",
             "data/config/exiledSector/star_charts", "data/config/exiledSector/star_chart_modifiers", "data/config/exiledSector/star_chart_implicits",
             "data/config/exiledSector/wormhole_anchors", "data/config/exiledSector/doctrine_archives", "data/config/exiledSector/subroutine_corruption_implicits");
@@ -80,6 +83,10 @@ class EditorRoundTripTest {
         return new EditorSource(TREE_SERIALIZATION, symbol);
     }
 
+    private static EditorSource schema(String symbol) {
+        return new EditorSource(TREE_FIELD_SCHEMA, symbol);
+    }
+
     private static List<EditorSource> decoration(String kindSymbol) {
         return List.of(new EditorSource(TREE_DECORATIONS, "serializeDecoration"), new EditorSource(TREE_DECORATIONS, kindSymbol));
     }
@@ -87,17 +94,21 @@ class EditorRoundTripTest {
     private static final List<Pin> PINS = List.of(
             new Pin("skill_types.json root", TYPE_LOADER, List.of("loadAll", "parseSkillTypes"),
                     List.of(tree("skillTypesFileObject")), false),
-            new Pin("skill_types.json skill type", TYPE_LOADER, List.of("parseSkillType", "parseTemporaryAfterDeploymentSeconds", "entryLabel"),
-                    List.of(tree("serializeType")), false),
-            new Pin("skill_types.json itemCost", TYPE_LOADER, List.of("parseItemCost"), List.of(tree("serializeType")), false),
+            new Pin("skill_types.json skill type", TYPE_LOADER, List.of("parseSkillType", "parseTemporaryAfterDeploymentSeconds"),
+                    List.of(schema("SKILL_TYPE_FIELDS")), false),
+            new Pin("skill_types.json itemCost", TYPE_LOADER, List.of("parseItemCost"), List.of(schema("SKILL_TYPE_FIELDS")), false),
             new Pin("skill_types.json effects and hullSizeEffects", TYPE_LOADER, List.of("parseEffects", "parseHullSizeEffects"),
-                    List.of(tree("serializeEffects"), tree("serializeHullSizeEffects")), false),
-            new Pin("skill_types.json integrated", TYPE_LOADER, List.of("parseIntegratedEffects"), List.of(tree("serializeIntegrated")), false),
+                    List.of(schema("serializeEffects"), schema("serializeHullSizeEffects")), false),
+            new Pin("skill_types.json integrated", TYPE_LOADER, List.of("parseIntegratedEffects"), List.of(schema("INTEGRATED_EFFECTS_FIELDS")), false),
             new Pin("skill_types.json unlockConditions", TYPE_LOADER, List.of("parseUnlockCondition"),
-                    List.of(tree("serializeUnlockConditions")), false),
-            new Pin("ship_skill_tree.json root, connectorCurves and hiddenConnectors", TREE_LOADER,
-                    List.of("loadAll", "parseNodes", "parseConnectorCurves", "parseHiddenConnectors"), List.of(tree("treeFileObject")), false),
-            new Pin("ship_skill_tree.json node", TREE_LOADER, List.of("parseNode"), List.of(tree("serializeTreeNode")), false),
+                    List.of(schema("serializeUnlockConditions")), false),
+            new Pin("ship_skill_tree.json and atlas_tree.json root, volumes, connectorCurves and hiddenConnectors", TREE_LAYOUT_READER,
+                    List.of("read", "parseVolumes", "parseNodes", "parseConnectorCurves", "parseHiddenConnectors"),
+                    List.of(tree("treeFileObject"), schema("CONNECTOR_CURVE_FIELDS"), schema("NODE_PAIR_FIELDS")), false),
+            new Pin("ship_skill_tree.json and atlas_tree.json node", TREE_LAYOUT_READER, List.of("parseNode"), List.of(schema("TREE_NODE_FIELDS")), false),
+            new Pin("atlas_tree_types.json root", ATLAS_TREE_DATA, List.of("parseTypes"), List.of(tree("skillTypesFileObject")), false),
+            new Pin("atlas_tree_types.json type", ATLAS_TREE_DATA, List.of("parseType"), List.of(schema("SKILL_TYPE_FIELDS")), false),
+            new Pin("atlas_tree_types.json effects", ATLAS_TREE_DATA, List.of("parseEffects"), List.of(schema("serializeEffects")), false),
             new Pin("ship_skill_tree.json decorations list", DECORATION_LOADER, List.of("parse", "parseDecoration", "tags"),
                     List.of(tree("treeFileObject"), new EditorSource(TREE_DECORATIONS, "serializeDecoration")), true),
             new Pin("ship_skill_tree.json star decoration", DECORATION_LOADER, List.of("parseStar"), decoration("STAR"), true),
@@ -107,7 +118,7 @@ class EditorRoundTripTest {
             new Pin("ship_skill_tree.json serpent decoration", DECORATION_LOADER, List.of("parseSerpent", "parseOrbit"), decoration("SERPENT"), true),
             new Pin("ship_skill_tree.json shrouded maw decoration", DECORATION_LOADER, List.of("parseShroudedMaw"), decoration("SHROUDED_MAW"), true),
             new Pin("ship_skill_tree.json hypershunt decoration", DECORATION_LOADER, List.of("parseHypershunt", "parseOrbit"), decoration("HYPERSHUNT"), true),
-            new Pin("subroutines.csv and hull_items.csv row key", ITEM_DEFINITIONS, List.of("rows"),
+            new Pin("subroutines.csv and hull_items.csv row key", ITEM_DEFINITIONS, List.of("load"),
                     List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "SUBROUTINE_COLUMNS"), new EditorSource(ITEM_DEFINITIONS_MODEL, "HULL_ITEM_COLUMNS")), true),
             new Pin("subroutines.csv columns", SUBROUTINE_DEFINITIONS, List.of("parse"),
                     List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "SUBROUTINE_COLUMNS")), true),
@@ -118,7 +129,7 @@ class EditorRoundTripTest {
             new Pin("hull_items.csv shared item columns", ITEM_DEFINITION, List.of("parsePools", "definitionId", "parseShared", "parseCommon", "parseBasics"),
                     List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "HULL_ITEM_COLUMNS")), true),
             new Pin("item_modifiers.csv columns", ITEM_MODIFIERS, List.of("load", "catalogueOf", "parse"),
-                    List.of(new EditorSource(ITEM_MODIFIERS_MODEL, "serializeModifiersCsv")), true),
+                    List.of(new EditorSource(ITEM_MODIFIERS_MODEL, "MODIFIER_COLUMNS")), true),
             new Pin("hull_item_implicits.csv columns", HULL_ITEM_IMPLICITS, List.of("load", "register"),
                     List.of(new EditorSource(HULL_ITEM_IMPLICITS_MODEL, "serializeImplicitsCsv")), true),
             new Pin("star_charts.csv columns", STAR_CHART_DEFINITIONS, List.of("load", "register"),
@@ -126,9 +137,9 @@ class EditorRoundTripTest {
             new Pin("star_charts.csv shared item columns", ITEM_DEFINITION, List.of("parsePools", "definitionId", "parseBasics"),
                     List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "STAR_CHART_COLUMNS")), true),
             new Pin("star_chart_modifiers.csv columns", STAR_CHART_ITEMS, List.of("load"),
-                    List.of(new EditorSource(ITEM_MODIFIERS_MODEL, "serializeModifiersCsv")), true),
+                    List.of(new EditorSource(ITEM_MODIFIERS_MODEL, "MODIFIER_COLUMNS")), true),
             new Pin("star_chart_modifiers.csv shared modifier columns", ITEM_MODIFIERS, List.of("catalogueOf", "parse"),
-                    List.of(new EditorSource(ITEM_MODIFIERS_MODEL, "serializeModifiersCsv")), true),
+                    List.of(new EditorSource(ITEM_MODIFIERS_MODEL, "MODIFIER_COLUMNS")), true),
             new Pin("star_chart_implicits.csv columns", STAR_CHART_IMPLICITS, List.of("load", "register"),
                     List.of(new EditorSource(HULL_ITEM_IMPLICITS_MODEL, "serializeStarChartImplicitsCsv")), true),
             new Pin("subroutine_corruption_implicits.csv and hull_item_corruption_implicits.csv columns", CORRUPTION_IMPLICIT_POOL,
@@ -138,7 +149,7 @@ class EditorRoundTripTest {
                     List.of(new EditorSource(WORMHOLE_ANCHORS_MODEL, "WORMHOLE_ANCHOR_COLUMNS")), true),
             new Pin("wormhole_anchors.csv shared item columns", ITEM_DEFINITION, List.of("definitionId", "parseCommon", "parseBasics"),
                     List.of(new EditorSource(WORMHOLE_ANCHORS_MODEL, "WORMHOLE_ANCHOR_COLUMNS")), true),
-            new Pin("doctrine_archives.csv columns", DOCTRINE_ARCHIVES, List.of("load", "parse", "problems"),
+            new Pin("doctrine_archives.csv columns", DOCTRINE_ARCHIVES, List.of("load", "parse", "problems", "dropProblems", "fleetDrop"),
                     List.of(new EditorSource(DOCTRINE_ARCHIVES_MODEL, "DOCTRINE_ARCHIVE_COLUMNS")), true),
             new Pin("subroutines.csv modspec cache columns", MODSPEC_CACHES, List.of("load", "register", "parse"),
                     List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "SUBROUTINE_COLUMNS")), true),
@@ -146,7 +157,7 @@ class EditorRoundTripTest {
                     List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "SUBROUTINE_COLUMNS")), true));
 
     private static final String JAVA_KEY_READ_PREFIX = "(?:\\.\\s*(?:opt|get|has|isNull)[A-Za-z]*\\s*\\(\\s*"
-            + "|\\bModCsv\\.text\\s*\\([^,()\"]*,\\s*|\\bModCsv\\.(?:load|rows)\\s*\\(\\s*|\\bcsv\\.(?:integer|number|flag)\\s*\\([^,()\"]*,\\s*)";
+            + "|\\bModCsv\\.text\\s*\\([^,()\"]*,\\s*|\\bModCsv\\.(?:load|rows(?:OrEmpty)?)\\s*\\(\\s*|\\bcsv\\.(?:integer|number|flag)\\s*\\([^,()\"]*,\\s*)";
     private static final Pattern JAVA_KEY_READ = Pattern.compile(JAVA_KEY_READ_PREFIX + "\"([^\"\\\\]*)\"");
     private static final Pattern JAVA_CONSTANT_KEY_READ = Pattern.compile(JAVA_KEY_READ_PREFIX + "([A-Z][A-Z0-9_]*)\\s*[,)]");
     private static final Pattern JAVA_STRING_CONSTANT = Pattern.compile("\\bstatic\\s+final\\s+String\\s+([A-Z][A-Z0-9_]*)\\s*=\\s*\"([^\"\\\\]*)\"\\s*;");
@@ -155,6 +166,7 @@ class EditorRoundTripTest {
             "else", "try", "do", "throw", "yield", "assert", "case", "throws");
     private static final Pattern JS_OBJECT_KEY = Pattern.compile("[{,]\\s*([A-Za-z_$][\\w$]*)\\s*:(?!:)");
     private static final Pattern JS_MEMBER_ASSIGNMENT = Pattern.compile("\\.\\s*([A-Za-z_$][\\w$]*)\\s*=(?![=>])");
+    private static final Pattern JS_SCHEMA_KEY_LABEL = Pattern.compile("[{,]\\s*key\\s*:\\s*$");
     private static final Pattern NAME_LIST = Pattern.compile("[A-Za-z_$][\\w$]*(?:,[A-Za-z_$][\\w$]*)*");
 
     @Test
@@ -301,9 +313,11 @@ class EditorRoundTripTest {
                 "  out.later = 1;",
                 "  return out;",
                 "}",
-                "export const COLUMNS = ['id', 'kind'] as const;");
+                "export const COLUMNS = ['id', 'kind'] as const;",
+                "export const FIELDS = [{ key: 'id', keep: always }, { key : 'tier', write: (type) => type.tier || 'SMALL' }];");
         assertEquals(Set.of("kept", "later"), editorKeys(ts, "typed", "sample", false));
         assertEquals(Set.of("id", "kind"), editorKeys(ts, "COLUMNS", "sample", true));
+        assertEquals(Set.of("key", "keep", "write", "id", "tier"), editorKeys(ts, "FIELDS", "sample", false));
     }
 
     private static String loaderName(String loader) {
@@ -400,7 +414,9 @@ class EditorRoundTripTest {
             char after = nextNonSpace(scan.masked, literal[1]);
             if ((before == '{' || before == ',') && after == ':') {
                 keys.add(value);
-            } else if (before == '[' && after == ']' && assignedAfterBracket(scan.masked, literal[1])) {
+            } else if (before == ':' && JS_SCHEMA_KEY_LABEL.matcher(scan.masked.substring(range[0], literal[0])).find()) {
+                keys.add(value);
+            } else if (before == '['&& after == ']' && assignedAfterBracket(scan.masked, literal[1])) {
                 keys.add(value);
             } else if (nameLiterals && NAME_LIST.matcher(value).matches()) {
                 keys.addAll(List.of(value.split(",")));

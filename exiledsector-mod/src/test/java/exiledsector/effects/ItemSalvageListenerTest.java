@@ -7,24 +7,27 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Entities;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
+import com.fs.starfarer.api.impl.campaign.terrain.DebrisFieldTerrainPlugin;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.MockSector;
+import exiledsector.ProjectFiles;
 import exiledsector.charts.loot.StarChartLootSource;
-import exiledsector.charts.loot.DropType;
+import exiledsector.items.drop.SalvageSiteDrops;
 import exiledsector.loot.LootMultipliers;
 import exiledsector.charts.ChartIds;
-import exiledsector.items.AnchorJanusGate;
+import exiledsector.items.anchor.AnchorJanusGate;
+import exiledsector.items.drop.CraftingDrops;
 import exiledsector.items.ItemDefinitions;
-import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemUnlock;
-import exiledsector.items.MaterialItems;
-import exiledsector.items.WormholeAnchorDefinitions;
-import exiledsector.items.StarChartCipher;
-import exiledsector.items.StarChartFixtures;
+import exiledsector.items.crafting.material.MaterialItems;
+import exiledsector.items.anchor.WormholeAnchorDefinitions;
+import exiledsector.items.crafting.material.StarChartCipher;
+import exiledsector.items.starchart.StarChartFixtures;
 import exiledsector.charts.content.ChartContent;
-import exiledsector.charts.loot.ChartDrops;
+import exiledsector.charts.loot.ChartDropRules;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
@@ -68,14 +71,16 @@ class ItemSalvageListenerTest {
         miscMock.when(() -> Misc.getSalvageSeed(any())).thenReturn(42L);
         ItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "volume_subroutine").put("kind", "MODSPEC_CACHE")
                 .put("rarity", "10")));
-        ItemDrops.register(new JSONArray()
-                .put(new JSONObject().put("site", "station_research").put("chances", "1").put("uniqueChance", "0")));
+        SalvageSiteDrops.register(new JSONArray()
+                .put(new JSONObject().put("site", "station_research").put("chances", "1").put("hullItemUniqueChance", "0")));
+        CraftingDrops.register(ProjectFiles.csvRows(CraftingDrops.DATA_PATH));
     }
 
     @AfterEach
     void tearDown() {
-        ItemDrops.clear();
+        SalvageSiteDrops.clear();
         ItemDefinitions.clear();
+        CraftingDrops.clear();
         miscMock.close();
     }
 
@@ -118,16 +123,67 @@ class ItemSalvageListenerTest {
         assertEquals("custom_station", ItemSalvageListener.siteId(site("custom_station", null)));
     }
 
+    private static SectorEntityToken scavengedDebris(DebrisFieldTerrainPlugin.DebrisFieldSource source) {
+        SectorEntityToken debris = site(Entities.DEBRIS_FIELD_SHARED, null);
+        DebrisFieldTerrainPlugin.DebrisFieldParams params = new DebrisFieldTerrainPlugin.DebrisFieldParams(200f, 1f, 10f, 5f);
+        params.source = source;
+        DebrisFieldTerrainPlugin field = mock(DebrisFieldTerrainPlugin.class);
+        when(field.getParams()).thenReturn(params);
+        when(debris.getMemoryWithoutUpdate().get(MemFlags.SALVAGE_DEBRIS_FIELD)).thenReturn(field);
+        return debris;
+    }
+
+    @Test
+    void everyDebrisFieldButBattleAndSalvagedWreckDebrisIsASalvageSite() {
+        for (DebrisFieldTerrainPlugin.DebrisFieldSource source : List.of(DebrisFieldTerrainPlugin.DebrisFieldSource.GEN,
+                DebrisFieldTerrainPlugin.DebrisFieldSource.MIXED)) {
+            assertEquals(Entities.DEBRIS_FIELD_SHARED, ItemSalvageListener.siteId(scavengedDebris(source)), source.name());
+        }
+        for (DebrisFieldTerrainPlugin.DebrisFieldSource source : List.of(DebrisFieldTerrainPlugin.DebrisFieldSource.BATTLE,
+                DebrisFieldTerrainPlugin.DebrisFieldSource.SALVAGE, DebrisFieldTerrainPlugin.DebrisFieldSource.PLAYER_SALVAGE)) {
+            assertEquals(null, ItemSalvageListener.siteId(scavengedDebris(source)), source.name());
+        }
+        assertEquals(null, ItemSalvageListener.siteId(scavengedDebris(null)));
+        assertEquals(null, ItemSalvageListener.siteId(site(Entities.DEBRIS_FIELD_SHARED, null)));
+    }
+
+    @Test
+    void aChartDebrisRingRollsItsSalvageOnceOnTheFieldsOwnMemory() throws Exception {
+        SalvageSiteDrops.register(new JSONArray().put(new JSONObject().put("site", Entities.DEBRIS_FIELD_SHARED).put("chances", "1")
+                .put("hullItemUniqueChance", "0").put("feedstockMin", "5").put("feedstockMax", "5")));
+        SectorEntityToken ring = scavengedDebris(DebrisFieldTerrainPlugin.DebrisFieldSource.MIXED);
+        CargoAPI loot = mock(CargoAPI.class);
+
+        listener.reportAboutToShowLootToPlayer(loot, dialogFor(ring));
+        listener.reportAboutToShowLootToPlayer(loot, dialogFor(ring));
+
+        verify(ring.getMemoryWithoutUpdate(), times(1)).set(ItemSalvageListener.ROLLED_KEY, true);
+        assertFalse(ItemSalvageListener.canShowcase(ring));
+    }
+
+    @Test
+    void theShippedTableListsDebrisFieldsLikeAWreck() throws Exception {
+        SalvageSiteDrops.register(ProjectFiles.csvRows("data/config/exiledSector/item_salvage.csv"));
+        CargoAPI battleDebrisLoot = mock(CargoAPI.class);
+
+        assertTrue(SalvageSiteDrops.hasRule(Entities.DEBRIS_FIELD_SHARED));
+        assertTrue(ItemSalvageListener.canShowcase(scavengedDebris(DebrisFieldTerrainPlugin.DebrisFieldSource.GEN)));
+        assertTrue(ItemSalvageListener.canShowcase(scavengedDebris(DebrisFieldTerrainPlugin.DebrisFieldSource.MIXED)));
+        assertFalse(ItemSalvageListener.canShowcase(scavengedDebris(DebrisFieldTerrainPlugin.DebrisFieldSource.PLAYER_SALVAGE)));
+        assertFalse(ItemSalvageListener.canShowcase(scavengedDebris(DebrisFieldTerrainPlugin.DebrisFieldSource.BATTLE)));
+        listener.reportAboutToShowLootToPlayer(battleDebrisLoot, dialogFor(scavengedDebris(DebrisFieldTerrainPlugin.DebrisFieldSource.BATTLE)));
+        Mockito.verifyNoInteractions(battleDebrisLoot);
+    }
+
     @Test
     void salvageOutsideALiveChartSystemGetsNoChartBonuses() {
         SectorEntityToken outside = mock(SectorEntityToken.class);
         when(outside.getContainingLocation()).thenReturn(mock(LocationAPI.class));
         SectorEntityToken nowhere = mock(SectorEntityToken.class);
 
-        LootMultipliers none = new LootMultipliers(ChartGenContext.none().itemChances(), ChartGenContext.none().dropMult(DropType.FEEDSTOCK),
-                ChartGenContext.none().dropMult(DropType.CRAFTING_ITEM));
-        assertEquals(none, StarChartLootSource.INSTANCE.modifiersAt(outside.getContainingLocation()));
-        assertEquals(none, StarChartLootSource.INSTANCE.modifiersAt(nowhere.getContainingLocation()));
+        LootMultipliers none = new LootMultipliers(ChartGenContext.none().itemChances(), CraftingDrops.BASE_RARITY);
+        assertEquals(none, StarChartLootSource.INSTANCE.lootMultipliersAt(outside.getContainingLocation()));
+        assertEquals(none, StarChartLootSource.INSTANCE.lootMultipliersAt(nowhere.getContainingLocation()));
     }
 
     @Test
@@ -145,7 +201,7 @@ class ItemSalvageListenerTest {
     void aSalvagedSystemsiteCanAlsoHoldAStarChartAndAChartCraftingItem() throws Exception {
         StarChartFixtures.registerShipped();
         StarChartCipher.registerAll();
-        ChartDrops.register(new JSONArray().put(new JSONObject().put("source", "system_salvage").put("chance", "1").put("crafting_item_chance", "10")));
+        ChartDropRules.register(new JSONArray().put(new JSONObject().put("source", "system_salvage").put("chance", "1").put("cipher_chance", "200")));
         try (MockSector mockSector = new MockSector()) {
             ChartRun run = new ChartRun("salvageRun", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
             run.recordContent(new ChartContent(6, "hegemony", "boss", 4, 6));
@@ -168,7 +224,7 @@ class ItemSalvageListenerTest {
             assertEquals(6, ItemData.ofStarChart(charts.get(0)).preview().tier());
             assertEquals(StarChartCipher.values().length, specials.getAllValues().stream().filter(special -> StarChartCipher.byItemId(special.getId()) != null).count());
         } finally {
-            ChartDrops.clear();
+            ChartDropRules.clear();
             StarChartFixtures.unregisterCraftingItems();
             StarChartFixtures.clear();
         }

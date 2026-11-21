@@ -9,6 +9,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
+import exiledsector.skills.skilleffect.CombatTestShips;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,11 +51,8 @@ class PristineShipDamageListenerTest {
     }
 
     private static ShipAPI ship(String id, int owner, String... hullMods) {
-        ShipAPI ship = mock(ShipAPI.class);
+        ShipAPI ship = CombatTestShips.ship(mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS)).id(id).owner(owner).build();
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
-        when(ship.getId()).thenReturn(id);
-        when(ship.getOwner()).thenReturn(owner);
-        when(ship.getMutableStats()).thenReturn(mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS));
         when(ship.getVariant()).thenReturn(variant);
         when(variant.getHullMods()).thenReturn(List.of(hullMods));
         return ship;

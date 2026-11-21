@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class ShipTreeRenamesTest {
 
     private static final SkillItemCost LOBSTERS = new SkillItemCost("lobster", 50f);
@@ -33,8 +35,6 @@ class ShipTreeRenamesTest {
     @BeforeEach
     void setUp() throws Exception {
         mockSector = new MockSector();
-        SkillTree.clearTypes();
-        SkillTree.clearNodes();
         SkillType rootType = type(new SkillType.Builder("root_type", "Root", "", SkillTier.ROOT));
         plainType = type(new SkillType.Builder("plain_type", "Plain", "", SkillTier.SMALL));
         socketType = type(new SkillType.Builder("socket_type", "Socket", "", SkillTier.SOCKET));
@@ -61,8 +61,6 @@ class ShipTreeRenamesTest {
     @AfterEach
     void tearDown() {
         NodeReplacements.clear();
-        SkillTree.clearTypes();
-        SkillTree.clearNodes();
         mockSector.close();
     }
 
@@ -100,7 +98,7 @@ class ShipTreeRenamesTest {
     }
 
     private List<SkillItemCost> loadSave() {
-        AffinityOptions.migrateAll(ShipSkillDataManager.all().values());
+        OptionRenames.applyAll(ShipSkillDataManager.all().values());
         ShipTreeRepairs.replaceRemovedNodes(declaredTree, NodeReplacements.all());
         Map<String, SkillNode> effectiveTree = new LinkedHashMap<>(declaredTree);
         effectiveTree.remove("new_dormant");

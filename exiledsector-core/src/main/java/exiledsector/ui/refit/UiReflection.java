@@ -30,6 +30,7 @@ public final class UiReflection {
     private static final MethodHandle FIELD_TRY_SET_ACCESSIBLE = virtual(FIELD, "trySetAccessible", boolean.class);
     private static final MethodHandle FIELD_GET = virtual(FIELD, "get", Object.class, Object.class);
     private static final MethodHandle FIELD_MODIFIERS = virtual(FIELD, "getModifiers", int.class);
+    private static final MethodHandle METHOD_MODIFIERS = virtual(METHOD, "getModifiers", int.class);
     private static final int STATIC_MODIFIER = 0x0008;
 
     private static final int MAX_PARAMETER_COUNT = 3;
@@ -66,6 +67,42 @@ public final class UiReflection {
         return method == NONE ? null : METHOD_INVOKE.invoke(method, target, args);
     }
 
+    public static Object callStatic(Class<?> type, String name, Object... args) throws Throwable {
+        Object method = method(type, name, args.length);
+        if (method == NONE) {
+            throw new NoSuchMethodException(type.getName() + "." + name + " with " + args.length + " parameters");
+        }
+        return METHOD_INVOKE.invoke(method, (Object) null, args);
+    }
+
+    public static Object callOnlyStaticAccepting(Class<?> type, Class<?> returnType, Object... args) throws Throwable {
+        Object found = null;
+        for (Object candidate : (Object[]) GET_METHODS.invoke(type)) {
+            if (((int) METHOD_MODIFIERS.invoke(candidate) & STATIC_MODIFIER) != 0 && returnType.equals(METHOD_RETURN_TYPE.invoke(candidate))
+                    && accepts((Class<?>[]) METHOD_PARAMETER_TYPES.invoke(candidate), args)) {
+                if (found != null) {
+                    throw new IllegalStateException("More than one static method of " + type.getName() + " accepts these arguments");
+                }
+                found = candidate;
+            }
+        }
+        if (found == null) {
+            throw new NoSuchMethodException("No static method of " + type.getName() + " returning " + returnType.getSimpleName()
+                    + " accepts these arguments");
+        }
+        METHOD_TRY_SET_ACCESSIBLE.invoke(found);
+        return METHOD_INVOKE.invoke(found, (Object) null, args);
+    }
+
+    private static boolean accepts(Class<?>[] parameterTypes, Object[] args) {
+        if (parameterTypes.length != args.length) return false;
+        for (int index = 0; index < args.length; index++) {
+            boolean fits = args[index] == null ? !parameterTypes[index].isPrimitive() : parameterTypes[index].isInstance(args[index]);
+            if (!fits) return false;
+        }
+        return true;
+    }
+
     public static boolean hasMethod(Object target, String name, int parameterCount) throws Throwable {
         return target != null && method(target.getClass(), name, parameterCount) != NONE;
     }
@@ -79,6 +116,17 @@ public final class UiReflection {
             }
         }
         return parameterTypes;
+    }
+
+    public static List<String> noArgMethodNamesReturning(Class<?> type, Class<?> returnType) throws Throwable {
+        List<String> names = new ArrayList<>();
+        for (Object candidate : (Object[]) GET_METHODS.invoke(type)) {
+            if ((int) METHOD_PARAMETER_COUNT.invoke(candidate) == 0 && returnType.isAssignableFrom((Class<?>) METHOD_RETURN_TYPE.invoke(candidate))) {
+                names.add((String) METHOD_NAME.invoke(candidate));
+            }
+        }
+        names.sort(null);
+        return names;
     }
 
     public static List<?> children(Object panel) throws Throwable {

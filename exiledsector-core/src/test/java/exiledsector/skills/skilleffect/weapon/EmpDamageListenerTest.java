@@ -1,20 +1,19 @@
 package exiledsector.skills.skilleffect.weapon;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.CombatListenerManagerAPI;
+import exiledsector.skills.skilleffect.CombatEngineExtension;
 import exiledsector.skills.skilleffect.EmpOnlyHits;
 import exiledsector.skills.skilleffect.HitDamageRestorer;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.AdditionalMatchers;
-import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.List;
@@ -32,22 +31,16 @@ import static org.mockito.Mockito.when;
 
 class EmpDamageListenerTest {
 
-    private MockedStatic<Global> globalMock;
+    @RegisterExtension
+    final CombatEngineExtension combat = new CombatEngineExtension();
     private CombatEngineAPI engine;
 
     @BeforeEach
     void setUp() {
-        engine = mock(CombatEngineAPI.class);
+        engine = combat.engine();
         CombatListenerManagerAPI listeners = mock(CombatListenerManagerAPI.class);
         when(engine.getListenerManager()).thenReturn(listeners);
         when(listeners.getListeners(HitDamageRestorer.class)).thenReturn(List.of());
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getCombatEngine).thenReturn(engine);
-    }
-
-    @AfterEach
-    void tearDown() {
-        globalMock.close();
     }
 
     private static EmpDamageListener listener(float morePercent) {

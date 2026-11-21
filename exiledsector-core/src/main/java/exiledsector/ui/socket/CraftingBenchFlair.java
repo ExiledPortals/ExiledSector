@@ -61,7 +61,7 @@ final class CraftingBenchFlair {
     private void renderLayers(GlScope scope, float cx, float cy, float radius, Color accent, Color subjectColor, String iconPath,
                               CargoIconLook iconLook, float alpha) {
         float easedLoad = 1f - (1f - loadProgress) * (1f - loadProgress);
-        float pulse = 0.5f + 0.5f * (float) Math.sin(elapsedSeconds * 2.2f);
+        float pulse = Fade.pulse(elapsedSeconds * 2.2f);
         float half = HoloSocketFrame.socketHalf(radius);
         Color coreColor = subjectColor == null ? accent : subjectColor;
 

@@ -7,13 +7,17 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.ai.CampaignFleetAIAPI;
 import com.fs.starfarer.api.campaign.ai.FleetAssignmentDataAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import com.fs.starfarer.api.combat.StatBonus;
 import exiledsector.charts.anomaly.debris.DormantFleets;
 import exiledsector.charts.content.ChartContentGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -21,6 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -97,6 +102,34 @@ class BreachChargeTest {
             assertFalse(BreachCharge.canCharge(fleet));
             verify(fleet, never()).addAssignmentAtStart(any(), any(), anyFloat(), anyString(), any());
         }
+    }
+
+    @Test
+    void rudeAwakeningWakesDormantDebrisSoItChargesTooAndTheIncursionGuardNeverCharges() {
+        CampaignFleetAPI dormant = fleet(List.of());
+        when(dormant.hasTag(DormantFleets.FLEET_TAG)).thenReturn(true);
+        Map<String, Object> stored = new HashMap<>();
+        stored.put(DormantFleets.DORMANT_KEY, true);
+        MemoryAPI memory = mock(MemoryAPI.class);
+        when(memory.getBoolean(anyString())).thenAnswer(invocation -> Boolean.TRUE.equals(stored.get((String) invocation.getArgument(0))));
+        doAnswer(invocation -> stored.remove((String) invocation.getArgument(0))).when(memory).unset(anyString());
+        when(dormant.getMemoryWithoutUpdate()).thenReturn(memory);
+        when(dormant.getDetectedRangeMod()).thenReturn(new StatBonus());
+        when(dormant.getLocation()).thenReturn(new Vector2f());
+        when(dormant.getContainingLocation()).thenReturn(system);
+        CampaignFleetAPI guard = fleet(List.of());
+        when(guard.hasTag(BreachIncursion.GUARD_TAG)).thenReturn(true);
+
+        BreachCharge.rally(system, breach);
+        verify(dormant, never()).addAssignmentAtStart(any(), any(), anyFloat(), anyString(), any());
+
+        BreachCharge.rally(system, breach, true);
+
+        assertFalse(DormantFleets.isDormant(dormant));
+        verify(dormant).addAssignmentAtStart(eq(FleetAssignment.ATTACK_LOCATION), eq(breach), eq(ChartContentGenerator.ASSIGNMENT_DAYS), anyString(), any());
+        verify(dormant, never()).addAssignment(eq(FleetAssignment.PATROL_SYSTEM), any(), anyFloat());
+        assertFalse(BreachCharge.canCharge(guard));
+        verify(guard, never()).addAssignmentAtStart(any(), any(), anyFloat(), anyString(), any());
     }
 
     @Test

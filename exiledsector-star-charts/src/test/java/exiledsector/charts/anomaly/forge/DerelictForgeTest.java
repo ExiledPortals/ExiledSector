@@ -11,14 +11,21 @@ import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.anomaly.LiveAnomalyRuns;
 import exiledsector.charts.anomaly.VanillaDefenders;
 import exiledsector.charts.content.ChartSpot;
 import exiledsector.charts.content.FakeChartContentEngine;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.loot.BiomeModifiers;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.i18n.Translation;
+import exiledsector.items.crafting.ForgeOperation;
+import exiledsector.items.modifier.ItemModifiers;
+import exiledsector.items.modifier.ModifierSources;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,12 +34,14 @@ import org.lwjgl.util.vector.Vector2f;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import static exiledsector.charts.anomaly.LiveAnomalyRuns.RUN_ID;
+import static exiledsector.charts.anomaly.LiveAnomalyRuns.run;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -47,7 +56,8 @@ import static org.mockito.Mockito.when;
 
 class DerelictForgeTest {
 
-    private static final String RUN_ID = "run1";
+    private static final String BIOME = "storm_belt";
+    private static final String BIOME_MODIFIER = "TIMEFLOW_PERCENT_TEST_BIOME";
 
     private MockSector mockSector;
     private StarSystemAPI system;
@@ -78,6 +88,9 @@ class DerelictForgeTest {
     @AfterEach
     void tearDown() {
         ForgePrograms.resetForTests();
+        BiomeModifiers.unregisterAll();
+        ModifierSources.clear();
+        ItemModifiers.clear();
         mockSector.close();
     }
 
@@ -91,17 +104,23 @@ class DerelictForgeTest {
         return entity;
     }
 
+    private static void registerBiomeModifier() throws Exception {
+        ItemModifiers.register(new JSONArray().put(new JSONObject().put("id", BIOME_MODIFIER).put("affix", "prefix").put("scopes", "hull_item")
+                .put("lines", "TIMEFLOW_PERCENT:3:5").put("name", "Chronal")));
+        BiomeModifiers.register(new JSONArray().put(new JSONObject().put("modifier", BIOME_MODIFIER).put("biome", BIOME).put("item", "bridge")));
+    }
+
+    private static List<ForgeOperation> offered(ChartRun run) {
+        return ForgeStates.programs(run, ForgeSite.DERELICT_FORGE).stream().map(ForgePrograms.Program::operation).toList();
+    }
+
     private AnomalyContentSite site(ChartGenContext context, Predicate<ChartSpot> clear) {
-        return new AnomalyContentSite(system, RUN_ID, 4, "pirates", context, List.of(), null, clear, salt -> new Random(salt));
+        return LiveAnomalyRuns.site(system, "pirates", context, clear);
     }
 
     private static void generateInto(ChartRun run, AnomalyContentSite site) {
         DerelictForge.INSTANCE.generate(site);
         site.commitStates(run);
-    }
-
-    private static ChartRun run() {
-        return new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
     }
 
     @Test
@@ -114,11 +133,42 @@ class DerelictForgeTest {
         assertEquals(DerelictForge.ENTITY_TYPE, addedTypes.get(0));
         assertEquals(Factions.NEUTRAL, addedFactions.get(0));
         SectorEntityToken forge = added.get(0);
-        assertTrue(DerelictForge.isForge(forge));
+        assertTrue(DerelictForge.STATION.holds(forge));
         assertTrue(forge.hasTag(ChartIds.runTag(RUN_ID)));
         verify(forge).setCircularOrbitPointingDown(eq(star), anyFloat(), anyFloat(), anyFloat());
-        assertEquals(ForgeRules.BASE_PROGRAMS, ForgeStates.programs(run, ForgeSite.DERELICT_FORGE).size());
         assertEquals(ForgeRules.BASE_RUNS, ForgeStates.runsLeft(run, ForgeSite.DERELICT_FORGE));
+    }
+
+    @Test
+    void theForgeOffersGraftExciseAndPerfectOutsideABiomeSystem() {
+        ChartRun run = run();
+
+        generateInto(run, site(ChartGenContext.none(), spot -> true));
+
+        assertEquals(List.of(ForgeOperation.GRAFT, ForgeOperation.EXCISE, ForgeOperation.PERFECT), offered(run));
+        assertNull(ForgeStates.infusionBiome(run, ForgeSite.DERELICT_FORGE));
+    }
+
+    @Test
+    void biomeInfusionReplacesGraftInASystemWhoseRegionHasBiomeModifiers() throws Exception {
+        registerBiomeModifier();
+        ChartRun run = run();
+
+        generateInto(run, site(ChartGenContext.none().withBiome(BIOME), spot -> true));
+
+        assertEquals(List.of(ForgeOperation.BIOME_INFUSE, ForgeOperation.EXCISE, ForgeOperation.PERFECT), offered(run));
+        assertEquals(BIOME, ForgeStates.infusionBiome(run, ForgeSite.DERELICT_FORGE));
+    }
+
+    @Test
+    void aRegionWithoutBiomeModifiersKeepsGraft() throws Exception {
+        registerBiomeModifier();
+        ChartRun run = run();
+
+        generateInto(run, site(ChartGenContext.none().withBiome("core_worlds"), spot -> true));
+
+        assertEquals(List.of(ForgeOperation.GRAFT, ForgeOperation.EXCISE, ForgeOperation.PERFECT), offered(run));
+        assertNull(ForgeStates.infusionBiome(run, ForgeSite.DERELICT_FORGE));
     }
 
     @Test
@@ -133,14 +183,13 @@ class DerelictForgeTest {
     }
 
     @Test
-    void chartLinesAddProgramsAndRuns() {
+    void chartLinesAddRunsButNeverPrograms() {
         ChartRun run = run();
-        ChartGenContext context = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_FORGE_PROGRAMS, 1f),
-                new ChartGenContext.AppliedEffect(ChartModifier.CHART_FORGE_RUNS, 2f)));
+        ChartGenContext context = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_FORGE_RUNS, 2f)));
 
         generateInto(run, site(context, spot -> true));
 
-        assertEquals(ForgeRules.BASE_PROGRAMS + 1, ForgeStates.programs(run, ForgeSite.DERELICT_FORGE).size());
+        assertEquals(3, ForgeStates.programs(run, ForgeSite.DERELICT_FORGE).size());
         assertEquals(ForgeRules.BASE_RUNS + 2, ForgeStates.runsLeft(run, ForgeSite.DERELICT_FORGE));
     }
 
@@ -162,7 +211,7 @@ class DerelictForgeTest {
     @Test
     void spendingTheLastRunDarkensTheForge() {
         ChartRun run = run();
-        ForgeStates.record(ForgeStates.of(run, ForgeSite.DERELICT_FORGE), List.of(ForgePrograms.byId("graft")), 1);
+        ForgeStates.record(ForgeStates.of(run, ForgeSite.DERELICT_FORGE), List.of(ForgePrograms.byId("graft")), 1, null);
 
         assertTrue(ForgeStates.spendRun(run, ForgeSite.DERELICT_FORGE));
         assertEquals(0, ForgeStates.runsLeft(run, ForgeSite.DERELICT_FORGE));

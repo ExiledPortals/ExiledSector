@@ -1,6 +1,7 @@
 package exiledsector.charts.anomaly.breach;
 
-import exiledsector.charts.content.ChartSites;
+import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.layout.ChartGeometry;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
@@ -16,9 +17,7 @@ public final class BreachRules {
     static final float COLLAPSE_SECONDS = 60f;
     static final float TRIGGER_REACH = 150f;
     static final float MIN_GROWTH_MULT = 0.1f;
-    static final float EDGE_INTENSITY = 0.25f;
     static final float SUPPLY_USE_PERCENT = 100f;
-    static final float SUPPLY_USE_STEP = 5f;
     static final float FUEL_LIGHT_YEARS_PER_DAY = 0.5f;
     static final float BASE_CACHES = 2f;
     static final float CACHES_PER_TIER = 1f / 3f;
@@ -28,11 +27,20 @@ public final class BreachRules {
     static final float CACHE_DEPTH_BIAS = 1.5f;
     static final float CACHE_MARGIN = 150f;
     static final int CACHE_PLACEMENT_ATTEMPTS = 8;
-    static final float CACHE_BASE_RARITY_PERCENT = 25f;
-    static final float CACHE_DEEP_RARITY_PERCENT = 75f;
-    static final float TOUCHED_RARITY_PERCENT = 30f;
+    static final float WARPED_CHANCE = 0.3f;
+    static final float DRIFT_SPEED = 40f;
+    static final float LIGHTNING_INTERVAL_SECONDS = 6f;
+    static final float LIGHTNING_DAMAGE = 300f;
+    static final float LIGHTNING_EMP = 600f;
+    static final float INCURSION_GUARD_BOSS_SHARE = 1.1f;
+    static final float MIN_INCURSION_DEPTH = 0.3f;
+    static final float MAX_INCURSION_DEPTH = 0.8f;
 
-    record Growth(float maxRadius, float openSeconds, float collapseSeconds) {
+    record Growth(float maxRadius, float openSeconds, float collapseSeconds, float holdSeconds) {
+
+        Growth(float maxRadius, float openSeconds, float collapseSeconds) {
+            this(maxRadius, openSeconds, collapseSeconds, 0f);
+        }
 
         float radiusAt(float seconds) {
             if (seconds <= 0f || isCollapsed(seconds)) {
@@ -41,15 +49,26 @@ public final class BreachRules {
             if (seconds < openSeconds) {
                 return maxRadius * ease(seconds / openSeconds);
             }
-            return maxRadius * (1f - ease((seconds - openSeconds) / collapseSeconds));
+            if (seconds < collapseStart()) {
+                return maxRadius;
+            }
+            return maxRadius * (1f - ease((seconds - collapseStart()) / collapseSeconds));
         }
 
         boolean isCollapsing(float seconds) {
-            return seconds >= openSeconds;
+            return seconds >= collapseStart();
         }
 
         boolean isCollapsed(float seconds) {
-            return seconds >= openSeconds + collapseSeconds;
+            return seconds >= collapseStart() + collapseSeconds;
+        }
+
+        float heldSeconds(float seconds) {
+            return Math.max(0f, Math.min(holdSeconds, seconds - openSeconds));
+        }
+
+        private float collapseStart() {
+            return openSeconds + Math.max(0f, holdSeconds);
         }
 
         private static float ease(float progress) {
@@ -59,18 +78,42 @@ public final class BreachRules {
     }
 
     record CacheSite(float x, float y, float depth) {
-
-        float rarityPercent() {
-            return CACHE_BASE_RARITY_PERCENT + CACHE_DEEP_RARITY_PERCENT * (1f - depth);
-        }
     }
 
     private BreachRules() {
     }
 
     static Growth growth(int tier, float growthMult) {
+        return growth(tier, growthMult, 0f);
+    }
+
+    static Growth growth(int tier, float growthMult, float holdSeconds) {
         float maxRadius = BASE_MAX_RADIUS + MAX_RADIUS_PER_TIER * Math.max(0, tier);
-        return new Growth(maxRadius, OPEN_SECONDS / Math.max(MIN_GROWTH_MULT, growthMult), COLLAPSE_SECONDS);
+        return new Growth(maxRadius, OPEN_SECONDS / Math.max(MIN_GROWTH_MULT, growthMult), COLLAPSE_SECONDS, Math.max(0f, holdSeconds));
+    }
+
+    static float drainMult(float heldDrainPercent, float heldSeconds) {
+        return Math.max(0f, 1f + heldDrainPercent * heldSeconds / ChartGenContext.PERCENT);
+    }
+
+    static float warpedChance(float increasedPercent) {
+        return Math.max(0f, Math.min(1f, WARPED_CHANCE * (1f + increasedPercent / ChartGenContext.PERCENT)));
+    }
+
+    static float battleWarpedChance(float increasedPercent, float alwaysWarpedShare) {
+        float share = Math.max(0f, Math.min(1f, alwaysWarpedShare));
+        return share + (1f - share) * warpedChance(increasedPercent);
+    }
+
+    static Vector2f drifted(Vector2f centre, Vector2f target, float seconds) {
+        Vector2f towards = Vector2f.sub(target, centre, new Vector2f());
+        float gap = towards.length();
+        float step = DRIFT_SPEED * Math.max(0f, seconds);
+        if (gap <= step) {
+            return new Vector2f(target);
+        }
+        towards.scale(step / gap);
+        return Vector2f.add(centre, towards, new Vector2f());
     }
 
     static float coreScale(float radius, boolean collapsing) {
@@ -81,16 +124,8 @@ public final class BreachRules {
         return distance <= Math.max(0f, fleetRadius) + TRIGGER_REACH;
     }
 
-    static float intensity(float distance, float radius) {
-        if (radius <= 0f || distance > radius) {
-            return 0f;
-        }
-        float depth = 1f - Math.max(0f, distance) / radius;
-        return EDGE_INTENSITY + (1f - EDGE_INTENSITY) * depth;
-    }
-
-    static float supplyUsePercent(float intensity) {
-        return Math.round(SUPPLY_USE_PERCENT * Math.max(0f, Math.min(1f, intensity)) / SUPPLY_USE_STEP) * SUPPLY_USE_STEP;
+    static boolean inside(float distance, float radius) {
+        return radius > 0f && distance <= radius;
     }
 
     static int cacheCount(int tier, float cacheMult) {
@@ -104,8 +139,7 @@ public final class BreachRules {
             float deepest = Math.max(MIN_CACHE_DEPTH, Math.min(MIN_CACHE_DEPTH + CACHE_DEPTH_RANGE, (maxRadius - CACHE_MARGIN - 1f) / maxRadius));
             float depth = MIN_CACHE_DEPTH + (deepest - MIN_CACHE_DEPTH) * (float) Math.pow(random.nextFloat(), CACHE_DEPTH_BIAS);
             for (int attempt = 0; attempt < CACHE_PLACEMENT_ATTEMPTS; attempt++) {
-                double angle = random.nextDouble() * Math.PI * 2d;
-                Vector2f at = ChartSites.pointAround(centre, angle, depth * maxRadius);
+                Vector2f at = ChartGeometry.pointAtRandomAngle(centre, depth * maxRadius, random);
                 if (clear == null || clear.test(at)) {
                     sites.add(new CacheSite(at.x, at.y, depth));
                     break;
@@ -113,6 +147,17 @@ public final class BreachRules {
             }
         }
         return sites;
+    }
+
+    static Vector2f incursionSite(Vector2f centre, float maxRadius, Predicate<Vector2f> clear, Random random) {
+        for (int attempt = 0; attempt < CACHE_PLACEMENT_ATTEMPTS; attempt++) {
+            float depth = MIN_INCURSION_DEPTH + (MAX_INCURSION_DEPTH - MIN_INCURSION_DEPTH) * random.nextFloat();
+            Vector2f at = ChartGeometry.pointAtRandomAngle(centre, depth * maxRadius, random);
+            if (clear == null || clear.test(at)) {
+                return at;
+            }
+        }
+        return null;
     }
 
     static boolean reached(float distance, float radius) {

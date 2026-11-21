@@ -3,7 +3,6 @@ package exiledsector.charts.anomaly;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasAnomalyRecord;
-import exiledsector.charts.atlas.AtlasCatalystUse;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasLine;
@@ -12,6 +11,7 @@ import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.atlas.AtlasTraits;
 import exiledsector.charts.run.ChartRun;
+import exiledsector.i18n.StyledText;
 import exiledsector.items.UseVerdict;
 import exiledsector.ui.socket.BenchModeSupport;
 
@@ -31,16 +31,24 @@ public interface AtlasRule extends ChartAnomaly {
         return true;
     }
 
+    default boolean derivedFromAtlas() {
+        return false;
+    }
+
     default boolean holdsAt(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
         return true;
     }
 
     default UseVerdict insertVerdict(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
         return fitsAt(generator.traits(cell)) && holdsAt(generator, state, cell) ? UseVerdict.ALLOW
-                : UseVerdict.refused(AtlasCatalystUse.refusalKey(AtlasAnomalies.InsertCheck.DOES_NOT_FIT));
+                : UseVerdict.refused(AtlasAnomalies.InsertCheck.DOES_NOT_FIT.refusalKey());
     }
 
     default List<AtlasLine> atlasLines(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
+        return List.of();
+    }
+
+    default List<StyledText> rewardLines() {
         return List.of();
     }
 

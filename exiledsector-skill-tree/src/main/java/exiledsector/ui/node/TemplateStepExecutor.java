@@ -10,6 +10,7 @@ import exiledsector.skills.template.TemplateStep;
 import exiledsector.skills.template.TemplateStepRules;
 import org.apache.log4j.Logger;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -18,13 +19,17 @@ final class TemplateStepExecutor {
     private final NodeAllocator allocator;
     private final Supplier<NodeAllocator.Snapshot> snapshotSupplier;
     private final Consumer<SkillNode> onAllocated;
+    private final BooleanSupplier freeAllocationsOnlySetting;
     private NodeAllocator.Snapshot pointsLeftSnapshot;
+    private boolean pointsLeftFreeAllocationsOnly;
     private boolean cachedPointsLeft;
 
-    TemplateStepExecutor(NodeAllocator allocator, Supplier<NodeAllocator.Snapshot> snapshotSupplier, Consumer<SkillNode> onAllocated) {
+    TemplateStepExecutor(NodeAllocator allocator, Supplier<NodeAllocator.Snapshot> snapshotSupplier, Consumer<SkillNode> onAllocated,
+                         BooleanSupplier freeAllocationsOnlySetting) {
         this.allocator = allocator;
         this.snapshotSupplier = snapshotSupplier;
         this.onAllocated = onAllocated;
+        this.freeAllocationsOnlySetting = freeAllocationsOnlySetting;
     }
 
     StepVerdict attempt(TemplateStep step) {
@@ -46,12 +51,14 @@ final class TemplateStepExecutor {
 
     boolean hasPointsLeft() {
         NodeAllocator.Snapshot currentSnapshot = snapshotSupplier.get();
-        if (currentSnapshot != pointsLeftSnapshot) {
+        boolean freeAllocationsOnly = freeAllocationsOnlySetting.getAsBoolean();
+        if (currentSnapshot != pointsLeftSnapshot || freeAllocationsOnly != pointsLeftFreeAllocationsOnly) {
             pointsLeftSnapshot = currentSnapshot;
+            pointsLeftFreeAllocationsOnly = freeAllocationsOnly;
             ShipSkillData skillData = currentSnapshot.skillData();
             cachedPointsLeft = TemplateBudget.hasPointsLeft(skillData.usedNodeSlots(), currentSnapshot.maxAllocatedNodes(),
                     skillData.getBankedFreeAllocations(), currentSnapshot.gate().spentOp(), currentSnapshot.opCostPerNode(),
-                    currentSnapshot.totalOpBudget());
+                    currentSnapshot.totalOpBudget(), freeAllocationsOnly);
         }
         return cachedPointsLeft;
     }

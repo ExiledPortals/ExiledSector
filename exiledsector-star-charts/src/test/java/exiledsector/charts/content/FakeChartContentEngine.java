@@ -4,6 +4,7 @@ import exiledsector.charts.anomaly.RunFactionDress;
 import com.fs.starfarer.api.Script;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
+import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.campaign.FleetAssignment;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
@@ -58,7 +59,7 @@ public final class FakeChartContentEngine implements ChartContentEngine {
     public final List<CampaignFleetAPI> emptyFleetsCreated = new ArrayList<>();
     public final List<Flagship> flagships = new ArrayList<>();
     public final List<Flagship> coreShips = new ArrayList<>();
-    public String alliesFactionId = "allies";
+    public boolean runFactionsMissing;
     public String convoyFactionId = "convoy";
     public int fleetPoints;
     public boolean failSiteDrops;
@@ -67,6 +68,7 @@ public final class FakeChartContentEngine implements ChartContentEngine {
     boolean emptyFleets;
     boolean missingFlagships;
     boolean fleetsHaveFlagships;
+    float shipDeploymentPoints;
     int spotCalls;
 
     public static FakeChartContentEngine install(FakeChartContentEngine engine) {
@@ -76,6 +78,11 @@ public final class FakeChartContentEngine implements ChartContentEngine {
 
     public FakeChartContentEngine withEmptyFleets() {
         emptyFleets = true;
+        return this;
+    }
+
+    public FakeChartContentEngine withShips(float deploymentPoints) {
+        shipDeploymentPoints = deploymentPoints;
         return this;
     }
 
@@ -191,7 +198,10 @@ public final class FakeChartContentEngine implements ChartContentEngine {
     @Override
     public String dress(String runFactionId, RunFactionDress dress) {
         dressedFactions.add(dress.likenessFactionId());
-        return RunFactionDress.ALLY_FACTION_ID.equals(runFactionId) ? alliesFactionId : convoyFactionId;
+        if (!RunFactionDress.SKIRMISH_FACTION_IDS.contains(runFactionId)) {
+            return convoyFactionId;
+        }
+        return runFactionsMissing ? null : runFactionId;
     }
 
     @Override
@@ -255,6 +265,13 @@ public final class FakeChartContentEngine implements ChartContentEngine {
             FleetMemberAPI flagship = mock(FleetMemberAPI.class);
             when(flagship.getId()).thenReturn(id + "-flagship");
             when(fleet.getFlagship()).thenReturn(flagship);
+        }
+        if (shipDeploymentPoints > 0f) {
+            FleetMemberAPI ship = mock(FleetMemberAPI.class);
+            when(ship.getDeploymentPointsCost()).thenReturn(shipDeploymentPoints);
+            FleetDataAPI fleetData = mock(FleetDataAPI.class);
+            when(fleetData.getMembersListCopy()).thenReturn(List.of(ship));
+            when(fleet.getFleetData()).thenReturn(fleetData);
         }
         MemoryAPI memory = memory();
         when(fleet.getMemoryWithoutUpdate()).thenReturn(memory);

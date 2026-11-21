@@ -2,7 +2,7 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
 import exiledsector.i18n.Translation;
-import exiledsector.items.LogisticsSchematic;
+import exiledsector.items.schematic.LogisticsSchematic;
 import exiledsector.skills.LogisticsNodes;
 import exiledsector.skills.ShipSkillData;
 

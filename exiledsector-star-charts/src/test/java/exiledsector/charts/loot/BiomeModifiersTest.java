@@ -7,11 +7,12 @@ import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemKind;
-import exiledsector.items.ItemModifiers;
-import exiledsector.items.ModifierSources;
-import exiledsector.items.PoolEntry;
-import exiledsector.items.RolledModifier;
+import exiledsector.items.modifier.ItemModifiers;
+import exiledsector.items.modifier.ModifierSources;
+import exiledsector.items.modifier.PoolEntry;
+import exiledsector.items.modifier.RolledModifier;
 import exiledsector.modifiers.ModifierSlot;
+import exiledsector.ui.inspect.CodexModifierTable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -75,6 +76,14 @@ class BiomeModifiersTest {
 
     private static boolean carries(ItemData item, String modifierId) {
         return item.explicits().stream().map(RolledModifier::modifierId).anyMatch(modifierId::equals);
+    }
+
+    @Test
+    void theCodexTableListsEachBiomesModifierForItsPartOnly() throws Exception {
+        BiomeModifiers.register(new JSONArray().put(biomeRow(PLASMATIC, "storm_belt", "bridge")).put(biomeRow(CHRONAL, RIFT, "bridge")));
+
+        assertEquals(List.of(CHRONAL, PLASMATIC), BiomeModifiers.CODEX_TABLE.rows(ItemKind.BRIDGE).stream().map(CodexModifierTable.Row::modifierId).toList());
+        assertEquals(List.of(), BiomeModifiers.CODEX_TABLE.rows(ItemKind.REACTOR));
     }
 
     @Test
@@ -182,5 +191,15 @@ class BiomeModifiersTest {
 
         assertFalse(ModifierSources.isReserved(CHRONAL));
         assertNull(BiomeModifiers.modifierFor(RIFT, ItemKind.BRIDGE));
+    }
+
+    @Test
+    void aPartListsTheModifiersEveryBiomeGivesIt() throws Exception {
+        BiomeModifiers.register(new JSONArray().put(biomeRow(PLASMATIC, "test_nebula", "bridge")).put(biomeRow(CHRONAL, RIFT, "bridge"))
+                .put(biomeRow(CHRONAL, RIFT, "shield_generator")));
+
+        assertEquals(List.of(PLASMATIC, CHRONAL), BiomeModifiers.modifiersFor(ItemKind.BRIDGE));
+        assertEquals(List.of(CHRONAL), BiomeModifiers.modifiersFor(ItemKind.SHIELD_GENERATOR));
+        assertEquals(List.of(), BiomeModifiers.modifiersFor(ItemKind.REACTOR));
     }
 }

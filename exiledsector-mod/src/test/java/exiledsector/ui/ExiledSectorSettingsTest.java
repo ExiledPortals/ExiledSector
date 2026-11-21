@@ -14,8 +14,8 @@ import exiledsector.skills.npc.NpcTreeConfig;
 import exiledsector.skills.npc.NpcTreeSize;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.tags.VolumeToggles;
-import exiledsector.items.HullUpgradesSetting;
-import exiledsector.items.UniqueSubroutinesSetting;
+import exiledsector.items.hull.HullUpgradesSetting;
+import exiledsector.items.subroutine.UniqueSubroutinesSetting;
 import exiledsector.ui.inspect.NpcInspectConfig;
 import exiledsector.ui.refit.RefitButtonConfig;
 import lunalib.lunaSettings.LunaSettings;
@@ -109,11 +109,19 @@ class ExiledSectorSettingsTest {
     }
 
     @Test
-    void registersTheBattleDifficultyXpSettingsWithDefaultsThatMatchVanilla() {
+    void registersTheBattleDifficultyXpSettingsSwitchedOffWithVanillasCap() {
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addDouble(eq("exiledSector"),
-                eq(ShipLevelConfig.XP_DIFFICULTY_STRENGTH_FIELD_ID), anyString(), anyString(), eq(1.0), eq(0.0), eq(5.0), eq(SkillTreeSettings.skillTreeTab())));
+                eq(ShipLevelConfig.XP_DIFFICULTY_STRENGTH_FIELD_ID), anyString(), anyString(), eq(0.0), eq(0.0), eq(5.0), eq(SkillTreeSettings.skillTreeTab())));
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addDouble(eq("exiledSector"),
                 eq(ShipLevelConfig.XP_DIFFICULTY_MAX_MULTIPLIER_FIELD_ID), anyString(), anyString(), eq(6.0), eq(1.0), eq(20.0), eq(SkillTreeSettings.skillTreeTab())));
+    }
+
+    @Test
+    void registersTheXpGrowthRampSettingsStartingAtLevel35() {
+        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addInt(eq("exiledSector"),
+                eq(ShipLevelConfig.XP_GROWTH_RAMP_START_LEVEL_FIELD_ID), anyString(), anyString(), eq(35), eq(1), eq(200), eq(SkillTreeSettings.skillTreeTab())));
+        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addDouble(eq("exiledSector"),
+                eq(ShipLevelConfig.XP_GROWTH_RAMP_PERCENT_FIELD_ID), anyString(), anyString(), eq(0.75), eq(0.0), eq(10.0), eq(SkillTreeSettings.skillTreeTab())));
     }
 
     @Test

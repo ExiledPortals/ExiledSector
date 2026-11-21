@@ -14,6 +14,7 @@ import exiledsector.skills.skilleffect.flux.FluxSkillEffect;
 import exiledsector.skills.skilleffect.weapon.WeaponSkillEffect;
 import exiledsector.effects.ResolvedTree;
 import exiledsector.effects.StatSheetTreeFixture;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
@@ -29,6 +30,7 @@ import exiledsector.ui.stats.ShipStatSheet.ValueRow;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -41,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class ShipStatSheetsTest {
 
     private MockedStatic<Global> globalMock;
@@ -55,8 +58,6 @@ class ShipStatSheetsTest {
     void setUp() {
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSettings).thenReturn(mock(SettingsAPI.class));
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
         SkillNode root = new SkillNode("root_1", new SkillType.Builder("root", "Low Tech", "a.png", SkillTier.ROOT).build(), List.of(), 0f, 0f);
         SkillNode capacitors = new SkillNode("capacitors_1", new SkillType.Builder("capacitors", "Capacitor Banks", "a.png", SkillTier.NOTABLE)
                 .effects(List.of(new SkillTypeEffect(FluxSkillEffect.FLUX_CAPACITY_PERCENT, 20f),
@@ -86,8 +87,6 @@ class ShipStatSheetsTest {
     @AfterEach
     void tearDown() {
         globalMock.close();
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
     }
 
     @Test

@@ -44,7 +44,7 @@ public final class FacilityGuards {
         }
         guards.setName(Translation.gameText("chart.anomaly.pre_collapse_facility.guards.name"));
         guards.setNoFactionInName(true);
-        ChartAnomalyFleets.prepare(guards, run.runId(), run.tier(), random.nextLong(), false, context);
+        ChartAnomalyFleets.prepare(guards, run.runId(), run.tier(), random.nextLong(), true, context);
         guards.getMemoryWithoutUpdate().set(MemFlags.MEMORY_KEY_NO_REP_IMPACT, true);
         return guards;
     }

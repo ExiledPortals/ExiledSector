@@ -3,14 +3,16 @@ package exiledsector.items;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.security.AnyTypePermission;
+import exiledsector.items.hull.HullItem;
+import exiledsector.items.modifier.RolledLine;
+import exiledsector.items.modifier.RolledModifier;
+import exiledsector.items.name.FrozenName;
 import exiledsector.skills.skilleffect.EffectAliases;
 import exiledsector.modifiers.ModifierSlot;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -43,36 +45,17 @@ class ItemSaveTest {
     }
 
     @Test
-    void itemsSavedAsLooseEffectsLoadAsModifiersWithSlotsFromTheirDefinition() throws Exception {
-        HullItemRows.registerMilitary();
-        String legacyXml = "<exiledSector.SocketableStore><owned><exiledSector.Socketable>"
-                + "<id>socketable_1</id><definitionId>" + HullItemRows.MILITARY + "</definitionId><seed>5</seed><effects>"
-                + "<exiledSector.RolledEffect><effectName>FLUX_CAPACITY_MULT</effectName><magnitude>5.0</magnitude></exiledSector.RolledEffect>"
-                + "<exiledSector.RolledEffect><effectName>HULL_MULT</effectName><magnitude>6.0</magnitude></exiledSector.RolledEffect>"
-                + "</effects></exiledSector.Socketable></owned><nextId>2</nextId></exiledSector.SocketableStore>";
+    void anItemLoadedWhileItsDefinitionIsMissingKeepsItsModifiersForWhenTheDefinitionReturns() throws Exception {
+        ItemStore store = new ItemStore();
+        Item saved = store.add(HullItemRows.registerMilitary(), 5L);
+        String xml = xstream().toXML(store);
+        ItemDefinitions.clear();
 
-        ItemStore loaded = (ItemStore) xstream().fromXML(legacyXml);
-        Item restored = loaded.owned().get(0);
+        Item restored = ((ItemStore) xstream().fromXML(xml)).owned().get(0);
 
-        assertEquals(List.of(RolledModifier.single(ModifierSlot.PREFIX, new RolledLine("FLUX_CAPACITY_MULT", 5f)),
-                RolledModifier.single(ModifierSlot.SUFFIX, new RolledLine("HULL_MULT", 6f))), restored.explicits());
-        String resaved = xstream().toXML(loaded);
-        assertTrue(resaved.contains("<explicitModifiers>") && resaved.contains("<exiledSector.RolledModifier>"), resaved);
-        assertFalse(resaved.contains("<effects>"), resaved);
-    }
-
-    @Test
-    void anOldItemLoadedWhileItsDefinitionIsMissingKeepsItsSlotsForWhenTheDefinitionReturns() throws Exception {
-        String legacyXml = "<exiledSector.SocketableStore><owned><exiledSector.Socketable>"
-                + "<id>socketable_1</id><definitionId>" + HullItemRows.MILITARY + "</definitionId><seed>5</seed><effects>"
-                + "<exiledSector.RolledEffect><effectName>FLUX_CAPACITY_MULT</effectName><magnitude>5.0</magnitude></exiledSector.RolledEffect>"
-                + "</effects></exiledSector.Socketable></owned><nextId>2</nextId></exiledSector.SocketableStore>";
-        Item restored = ((ItemStore) xstream().fromXML(legacyXml)).owned().get(0);
-
-        assertEquals(ModifierSlot.SUFFIX, restored.explicits().get(0).slot(), "without a definition the slot cannot be known yet");
         assertEquals(UnresolvedItem.class, restored.getClass());
+        assertEquals(saved.explicits(), restored.explicits());
         HullItemRows.registerMilitary();
-        assertEquals(ModifierSlot.PREFIX, restored.explicits().get(0).slot());
         String resaved = xstream().toXML(restored);
         assertTrue(resaved.startsWith("<exiledSector.Socketable>"), resaved);
         assertEquals(HullItem.class, xstream().fromXML(resaved).getClass());
@@ -130,25 +113,20 @@ class ItemSaveTest {
     }
 
     @Test
-    void itemsSavedUnderLegacyNamesLoadAsTheTypeTheirDefinitionGives() throws Exception {
+    void anItemSavedWhileItsDefinitionWasMissingLoadsAsTheTypeItsDefinitionGives() throws Exception {
         HullItemRows.registerMilitary();
         ItemStore store = new ItemStore();
         Item saved = store.add(ItemDefinitions.get(HullItemRows.MILITARY), 3L);
-        String currentXml = xstream().toXML(store);
+        String unresolvedXml = xstream().toXML(store).replace("exiledSector.HullItem>", ItemSaveAliases.UNRESOLVED_ITEM_ALIAS + ">");
 
-        List<String> legacyAliases = new java.util.ArrayList<>(ItemSaveAliases.LEGACY_ITEM_ALIASES);
-        legacyAliases.add(ItemSaveAliases.UNRESOLVED_ITEM_ALIAS);
-        for (String legacyAlias : legacyAliases) {
-            String legacyXml = currentXml.replace("exiledSector.HullItem>", legacyAlias + ">");
-            ItemStore loaded = (ItemStore) xstream().fromXML(legacyXml);
+        ItemStore loaded = (ItemStore) xstream().fromXML(unresolvedXml);
 
-            assertTrue(legacyXml.contains("<" + legacyAlias + ">"), legacyXml);
-            Item restored = loaded.owned().get(0);
-            assertEquals(HullItem.class, restored.getClass());
-            assertEquals(saved.effects(), restored.effects());
-            assertEquals(ItemKind.BRIDGE, restored.kind());
-            assertTrue(xstream().toXML(loaded).contains("<exiledSector.HullItem>"));
-        }
+        assertTrue(unresolvedXml.contains("<" + ItemSaveAliases.UNRESOLVED_ITEM_ALIAS + ">"), unresolvedXml);
+        Item restored = loaded.owned().get(0);
+        assertEquals(HullItem.class, restored.getClass());
+        assertEquals(saved.effects(), restored.effects());
+        assertEquals(ItemKind.BRIDGE, restored.kind());
+        assertTrue(xstream().toXML(loaded).contains("<exiledSector.HullItem>"));
     }
 
     @Test

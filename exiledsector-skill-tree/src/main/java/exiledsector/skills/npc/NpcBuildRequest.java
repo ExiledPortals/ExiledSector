@@ -9,7 +9,7 @@ import java.util.function.Predicate;
 
 public record NpcBuildRequest(ShipProfile profile, String designType, String factionVolume, NpcHullMods hullMods,
                               NpcFreedOp freedOp, int nodeCount, String factionAnchorItemId, Predicate<SkillType> lockedTypes, String hullId,
-                              Map<String, Float> focus, List<String> grantedNodeIds) {
+                              List<Map<String, Float>> focusSources, List<String> grantedNodeIds) {
 
     private static final Predicate<SkillType> NOTHING_LOCKED = type -> false;
 
@@ -17,13 +17,13 @@ public record NpcBuildRequest(ShipProfile profile, String designType, String fac
         hullMods = hullMods == null ? NpcHullMods.NONE : hullMods;
         freedOp = freedOp == null ? NpcFreedOp.NONE : freedOp;
         lockedTypes = lockedTypes == null ? NOTHING_LOCKED : lockedTypes;
-        focus = focus == null ? Map.of() : Map.copyOf(focus);
+        focusSources = focusSources == null ? List.of() : List.copyOf(focusSources);
         grantedNodeIds = grantedNodeIds == null ? List.of() : List.copyOf(grantedNodeIds);
     }
 
     public NpcBuildRequest(ShipProfile profile, String designType, String factionVolume, NpcHullMods hullMods, NpcFreedOp freedOp,
-                           int nodeCount, String factionAnchorItemId, Predicate<SkillType> lockedTypes, String hullId, Map<String, Float> focus) {
-        this(profile, designType, factionVolume, hullMods, freedOp, nodeCount, factionAnchorItemId, lockedTypes, hullId, focus, null);
+                           int nodeCount, String factionAnchorItemId, Predicate<SkillType> lockedTypes, String hullId, List<Map<String, Float>> focusSources) {
+        this(profile, designType, factionVolume, hullMods, freedOp, nodeCount, factionAnchorItemId, lockedTypes, hullId, focusSources, null);
     }
 
     public NpcBuildRequest(ShipProfile profile, String designType, String factionVolume, NpcHullMods hullMods, NpcFreedOp freedOp,

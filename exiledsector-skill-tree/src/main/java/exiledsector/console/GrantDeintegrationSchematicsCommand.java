@@ -1,22 +1,12 @@
 package exiledsector.console;
 
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import exiledsector.items.DeintegrationSchematic;
-import org.lazywizard.console.Console;
+import exiledsector.items.schematic.DeintegrationSchematic;
 
-public class GrantDeintegrationSchematicsCommand extends PlayerFleetCommand {
+import java.util.List;
 
-    static final int DEFAULT_COPIES = 1;
-    static final int MAX_COPIES = 50;
+public class GrantDeintegrationSchematicsCommand extends GrantSchematicsCommand {
 
-    @Override
-    protected CommandResult runForFleet(String args, CampaignFleetAPI playerFleet) {
-        Integer copies = ConsoleArgs.copiesOrComplain(args, DEFAULT_COPIES, MAX_COPIES);
-        if (copies == null) {
-            return CommandResult.BAD_SYNTAX;
-        }
-        playerFleet.getCargo().addSpecial(DeintegrationSchematic.INSTANCE.toSpecialItem(), copies);
-        Console.showMessage("Added " + counted(copies, "Deintegration Schematic", "Deintegration Schematics") + " to your cargo.");
-        return CommandResult.SUCCESS;
+    public GrantDeintegrationSchematicsCommand() {
+        super(List.of(DeintegrationSchematic.INSTANCE), 1, "Deintegration Schematic", "Deintegration Schematics");
     }
 }

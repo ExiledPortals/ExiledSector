@@ -7,18 +7,19 @@ import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.CombatListenerManagerAPI;
-import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.skills.skilleffect.CombatEngineExtension;
+import exiledsector.skills.skilleffect.CombatTestShips;
 import exiledsector.skills.skilleffect.CsvIdList;
 import exiledsector.skills.skilleffect.weapon.BallisticAsEnergy;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
@@ -40,7 +41,8 @@ import static org.mockito.Mockito.when;
 
 class RefractionListenerTest {
 
-    private MockedStatic<Global> global;
+    @RegisterExtension
+    final CombatEngineExtension combat = new CombatEngineExtension();
     private MockedStatic<WeaponDroneFactory> factory;
     private MockedStatic<LunaSettings> luna;
     private CombatEngineAPI engine;
@@ -52,10 +54,8 @@ class RefractionListenerTest {
     void setUp() {
         luna = Mockito.mockStatic(LunaSettings.class);
         luna.when(() -> LunaSettings.getInt(anyString(), anyString())).thenReturn(MaxRefractionCountConfig.DEFAULT);
-        engine = mock(CombatEngineAPI.class);
+        engine = combat.engine();
         when(engine.getListenerManager()).thenReturn(mock(CombatListenerManagerAPI.class));
-        global = Mockito.mockStatic(Global.class);
-        global.when(Global::getCombatEngine).thenReturn(engine);
         factory = Mockito.mockStatic(WeaponDroneFactory.class);
         factory.when(() -> WeaponDroneFactory.supportsProjectile(any())).thenReturn(true);
         ship = firingShip(20f);
@@ -66,21 +66,14 @@ class RefractionListenerTest {
     @AfterEach
     void tearDown() {
         factory.close();
-        global.close();
         luna.close();
     }
 
     private static ShipAPI firingShip(float falloffPercent) {
-        ShipAPI ship = mock(ShipAPI.class);
-        when(ship.getOwner()).thenReturn(0);
-        when(ship.isAlive()).thenReturn(true);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(stats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getValue(RefractionListener.CHANCE_KEY, 0f)).thenReturn(100f);
-        when(dynamic.getValue(RefractionListener.FALLOFF_KEY, 0f)).thenReturn(falloffPercent);
-        return ship;
+        return CombatTestShips.ship().owner(0).alive()
+                .dynamic(RefractionListener.CHANCE_KEY, 100f)
+                .dynamic(RefractionListener.FALLOFF_KEY, falloffPercent)
+                .build();
     }
 
     private static ShipAPI enemy(Vector2f location) {
@@ -274,7 +267,7 @@ class RefractionListenerTest {
                 .thenReturn(new org.json.JSONArray());
         when(settings.getMergedSpreadsheetDataForMod("hullmod", "data/config/exiledSector/drone_marker_hullmods.csv", "exiledSector"))
                 .thenReturn(new org.json.JSONArray());
-        global.when(Global::getSettings).thenReturn(settings);
+        combat.global().when(Global::getSettings).thenReturn(settings);
         when(settings.getMergedSpreadsheetDataForMod("weapon", "data/config/exiledSector/ballistic_pierce_blocklist.csv", "exiledSector"))
                 .thenReturn(new org.json.JSONArray());
         when(settings.getMergedSpreadsheetDataForMod("hullmod", "data/config/exiledSector/logistics_dmods.csv", "exiledSector"))

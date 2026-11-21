@@ -28,6 +28,16 @@ public final class ColorUtil {
         }
     }
 
+    public static Color mix(Color base, Color other, float amount) {
+        return new Color(Math.round(base.getRed() + (other.getRed() - base.getRed()) * amount),
+                Math.round(base.getGreen() + (other.getGreen() - base.getGreen()) * amount),
+                Math.round(base.getBlue() + (other.getBlue() - base.getBlue()) * amount));
+    }
+
+    public static Color lighten(Color color, float amount) {
+        return mix(color, Color.WHITE, amount);
+    }
+
     public static Color parseHexColorOrNull(String hex) {
         return parseHexColor(hex, null);
     }

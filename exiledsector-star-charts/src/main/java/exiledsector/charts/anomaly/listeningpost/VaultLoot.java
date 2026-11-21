@@ -10,7 +10,7 @@ import java.util.Random;
 public final class VaultLoot {
 
     static final AnomalyLoot LOOT = new AnomalyLoot(ListeningPostRules.LOOT_SCOPE, ListeningPostRules.LOOT_SITE, ListeningPostRules.LOOT_STEPS, ListeningPostRules.LOOT_STEPS_PER_TIER,
-            ListeningPostRules.ITEM_MULT, ListeningPost.LOOT_KEY, ListeningPostRules.LEAN_PERCENT);
+            ListeningPostRules.VAULT_QUANTITY_PERCENT, ListeningPost.LOOT_KEY, ListeningPostRules.LEAN_PERCENT);
 
     private VaultLoot() {
     }

@@ -5,9 +5,9 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.template.TemplateCapture;
 import exiledsector.skills.template.TemplateStep;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class WormholePartnersTest {
 
     private SkillNode root;
@@ -31,20 +32,12 @@ class WormholePartnersTest {
 
     @BeforeEach
     void setUp() {
-        SkillTree.clearTypes();
-        SkillTree.clearNodes();
         root = node("root", SkillTier.ROOT);
         socket = node("socket", SkillTier.SMALL, "root");
         farSide = node("far_side", SkillTier.SMALL);
         exit = node("exit", SkillTier.SMALL, "far_side");
         beyondExit = node("beyond_exit", SkillTier.SMALL, "exit");
         topology = SkillTreeTopology.of(List.of(root, socket, farSide, exit, beyondExit));
-    }
-
-    @AfterEach
-    void tearDown() {
-        SkillTree.clearTypes();
-        SkillTree.clearNodes();
     }
 
     private static SkillNode node(String id, SkillTier tier, String... prerequisiteIds) {

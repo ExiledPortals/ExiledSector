@@ -5,8 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 public record ChartContentPlan(int tier, ChartFaction faction, List<PlannedPoi> pois, List<PlannedFleet> fleets,
-                               List<String> anomalies, ChartBossType bossType, PlannedStation bossStation, boolean alliedStation,
-                               Map<String, Object> anomalyPlans) {
+                               List<String> anomalies, ChartBossType bossType, PlannedStation bossStation, Map<String, Object> anomalyPlans) {
 
     public enum FleetRole {
         GUARD,
@@ -22,11 +21,14 @@ public record ChartContentPlan(int tier, ChartFaction faction, List<PlannedPoi> 
     public record PlannedPoi(ChartPoi poi, boolean guarded) {
     }
 
-    public record PlannedFleet(FleetRole role, int poiIndex, float combatPoints, float quality, int officerLevelBonus, int officerCountBonus,
-                               int strengthBonus, int averageSMods) {
+    public record PlannedFleet(FleetRole role, int poiIndex, FleetStrength strength, int strengthBonus) {
 
         public boolean guardsPoi() {
             return poiIndex >= 0;
+        }
+
+        public PlannedFleet withRole(FleetRole changedRole) {
+            return new PlannedFleet(changedRole, poiIndex, strength, strengthBonus);
         }
     }
 
@@ -43,17 +45,17 @@ public record ChartContentPlan(int tier, ChartFaction faction, List<PlannedPoi> 
 
     public ChartContentPlan(int tier, ChartFaction faction, List<PlannedPoi> pois, List<PlannedFleet> fleets, List<String> anomalies,
                             ChartBossType bossType, PlannedStation bossStation) {
-        this(tier, faction, pois, fleets, anomalies, bossType, bossStation, false, Map.of());
+        this(tier, faction, pois, fleets, anomalies, bossType, bossStation, Map.of());
     }
 
-    public ChartContentPlan withDefenders(List<PlannedFleet> changedFleets, PlannedStation changedStation, boolean allied) {
-        return new ChartContentPlan(tier, faction, pois, changedFleets, anomalies, bossType, changedStation, allied, anomalyPlans);
+    public ChartContentPlan withFleets(List<PlannedFleet> changedFleets) {
+        return new ChartContentPlan(tier, faction, pois, changedFleets, anomalies, bossType, bossStation, anomalyPlans);
     }
 
     public ChartContentPlan withAnomalyPlan(String anomalyId, Object anomalyPlan) {
         Map<String, Object> changed = new LinkedHashMap<>(anomalyPlans);
         changed.put(anomalyId, anomalyPlan);
-        return new ChartContentPlan(tier, faction, pois, fleets, anomalies, bossType, bossStation, alliedStation, changed);
+        return new ChartContentPlan(tier, faction, pois, fleets, anomalies, bossType, bossStation, changed);
     }
 
     public Object anomalyPlan(String anomalyId) {
@@ -72,7 +74,7 @@ public record ChartContentPlan(int tier, ChartFaction faction, List<PlannedPoi> 
         float points = 0f;
         for (PlannedFleet fleet : fleets) {
             if (fleet.role() == role) {
-                points += fleet.combatPoints();
+                points += fleet.strength().combatPoints();
             }
         }
         return points;

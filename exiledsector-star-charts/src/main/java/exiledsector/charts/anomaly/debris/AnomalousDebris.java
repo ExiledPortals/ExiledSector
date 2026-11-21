@@ -12,9 +12,10 @@ import exiledsector.charts.anomaly.AnomalyTerrains;
 import exiledsector.charts.anomaly.ContentPlacer;
 import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.anomaly.RunParticipant;
-import exiledsector.charts.generation.ChartGenContext;
-import exiledsector.charts.run.ChartRun;
-import exiledsector.items.ItemDrops;
+import exiledsector.charts.loot.ChartFleetLoot;
+import exiledsector.charts.loot.ChartLootContext;
+import exiledsector.charts.loot.FleetClaim;
+import exiledsector.loot.Loot;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
@@ -56,28 +57,43 @@ public final class AnomalousDebris implements ContentPlacer, RunParticipant, Loo
     @Override
     public void generate(AnomalyContentSite site) {
         Random layout = site.random(LAYOUT_SALT);
-        int count = DebrisRules.fieldCount(layout, Math.round(site.context().anomalyPercent(EXTRA_KEY)));
-        List<Field> fields = pickFields(site, count, layout);
+        DebrisTuning tuning = DebrisTuning.of(site.context());
+        int count = DebrisRules.fieldCount(layout, tuning.extraFields(), tuning.singleField());
+        List<Field> fields = pickFields(site, count, BreachedGraveyard.breachFieldFor(site, tuning, layout), layout);
         if (fields.isEmpty()) {
             throw new IllegalStateException("no clear spot for anomalous debris");
         }
         for (int index = 0; index < fields.size(); index++) {
-            placeField(site, fields.get(index), site.random(FLEET_SALT + index).nextLong());
+            placeField(site, tuning, fields.get(index), site.random(FLEET_SALT + index).nextLong());
         }
     }
 
-    private static void placeField(AnomalyContentSite site, Field field, long seed) {
+    private static void placeField(AnomalyContentSite site, DebrisTuning tuning, Field field, long seed) {
         CampaignFleetAPI fleet = DormantFleets.create(site.runId(), site.tier(), site.context(), seed);
         if (fleet == null) {
             return;
         }
         site.addFleet(fleet, field.centre());
         site.addTerrain(TERRAIN_ID, new AnomalousDebrisTerrainPlugin.Params(site.runId(), fleet.getId(), field.radius(), seed), field.centre(), FIELD_TAG);
+        wakeIfRestless(fleet, tuning);
+    }
+
+    static void wakeIfRestless(CampaignFleetAPI fleet, DebrisTuning tuning) {
+        if (tuning.awake()) {
+            DormantFleets.wake(fleet, tuning.roaming());
+        }
     }
 
     static List<Field> pickFields(AnomalyContentSite site, int count, Random random) {
+        return pickFields(site, count, null, random);
+    }
+
+    static List<Field> pickFields(AnomalyContentSite site, int count, Field firstField, Random random) {
         List<Field> fields = new ArrayList<>();
-        for (int field = 0; field < count; field++) {
+        if (firstField != null) {
+            fields.add(firstField);
+        }
+        for (int field = fields.size(); field < count; field++) {
             float radius = DebrisRules.fieldRadius(random);
             Vector2f centre = site.findSpot((poi, spotRandom) -> poi.getRadius() + radius + POI_GAP + spotRandom.nextFloat() * POI_SPREAD,
                     candidate -> fits(site, fields, candidate, radius), random);
@@ -116,8 +132,8 @@ public final class AnomalousDebris implements ContentPlacer, RunParticipant, Loo
     }
 
     @Override
-    public ItemDrops.SiteLoot extraFleetLoot(CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, Random random) {
-        return DormantFleetLoot.craftingItemFor(fleet, run.tier(), context, random);
+    public Loot fleetLoot(FleetClaim claim, ChartLootContext loot, ChartFleetLoot.Battle battle, Random random) {
+        return DormantFleetLoot.craftingItemFor(claim.fleet(), loot, random);
     }
 
     public static List<AnomalousDebrisTerrainPlugin> fieldsIn(LocationAPI location) {

@@ -1,9 +1,15 @@
 package exiledsector.items;
 
 import exiledsector.ProjectFiles;
+import exiledsector.items.hull.HullItem;
+import exiledsector.items.modifier.ItemModifiers;
+import exiledsector.items.modifier.PoolEntry;
+import exiledsector.items.modifier.RolledLine;
+import exiledsector.items.name.ItemNames;
+import exiledsector.items.starchart.StarChartFixtures;
+import exiledsector.items.subroutine.SubroutineDefinitions;
 import exiledsector.skills.skilleffect.EffectAliases;
 import exiledsector.modifiers.ModifierSlot;
-import org.json.CDL;
 import org.json.JSONArray;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +25,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import static exiledsector.ProjectFiles.csvRows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -68,11 +75,6 @@ class ReleasedItemsTest {
         EffectAliases.clear();
     }
 
-    private static JSONArray csvRows(String dataPath) throws Exception {
-        String csv = Files.readString(ProjectFiles.projectRoot().resolve(dataPath), StandardCharsets.UTF_8);
-        return CDL.toJSONArray(csv.replace("\r\n", "\n"));
-    }
-
     private static List<ReleasedPoolEffect> ledger() throws IOException {
         List<String> lines = Files.readAllLines(ProjectFiles.projectRoot().resolve(LEDGER), StandardCharsets.UTF_8);
         assertEquals(LEDGER_HEADER, lines.get(0).trim());
@@ -91,7 +93,6 @@ class ReleasedItemsTest {
     @Test
     void everyItemIdAliasPointsAtALoadedDefinitionAndNoAliasIsStillADefinition() throws Exception {
         JSONArray aliases = csvRows(ItemIdAliases.dataPath());
-        assertTrue(aliases.length() > 0);
         for (int i = 0; i < aliases.length(); i++) {
             String alias = aliases.getJSONObject(i).getString("alias");
             String currentId = aliases.getJSONObject(i).getString("id");

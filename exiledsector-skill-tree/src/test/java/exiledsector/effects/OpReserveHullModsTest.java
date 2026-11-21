@@ -1,6 +1,5 @@
 package exiledsector.effects;
 
-import exiledsector.persistence.RetiredReserveIds;
 import org.json.CDL;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -38,9 +37,8 @@ class OpReserveHullModsTest {
     }
 
     @Test
-    void bothCoinsAndRetiredSlotsCountAsReserves() {
+    void onlyCoinsCountAsReserves() {
         assertTrue(OpReserveHullMods.isReserveHullMod("exiledSector_opReserve_40"));
-        assertTrue(OpReserveHullMods.isReserveHullMod("exiledSector_opSpent_12"));
         assertFalse(OpReserveHullMods.isReserveHullMod("heavyarmor"));
     }
 
@@ -57,18 +55,6 @@ class OpReserveHullModsTest {
                 }
             }
         }
-    }
-
-    @Test
-    void theOneRetiredReserveOldSavesLoadAsStaysDefinedAndCostsNothing() throws Exception {
-        Map<String, JSONObject> rowsById = hullModRows();
-        JSONObject retired = rowsById.get(RetiredReserveIds.RETIRED_ID);
-        assertNotNull(retired, RetiredReserveIds.RETIRED_ID + " must stay in " + HULL_MODS + " so older saves load");
-        for (String costColumn : List.of("cost_frigate", "cost_dest", "cost_cruiser", "cost_capital")) {
-            assertEquals("0", retired.getString(costColumn));
-        }
-        long retiredRows = rowsById.keySet().stream().filter(id -> id.startsWith(RetiredReserveIds.LEGACY_PREFIX)).count();
-        assertEquals(1, retiredRows);
     }
 
     private static Map<String, JSONObject> hullModRows() throws Exception {

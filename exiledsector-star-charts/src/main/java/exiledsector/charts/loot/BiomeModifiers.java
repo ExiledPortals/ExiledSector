@@ -3,30 +3,36 @@ package exiledsector.charts.loot;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.ModCsv;
+import exiledsector.Seeds;
 import exiledsector.charts.atlas.AtlasRuntime;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.data.CsvRows;
-import exiledsector.items.AffixLayout;
-import exiledsector.items.GrantedModifiers;
+import exiledsector.i18n.Translation;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemKind;
-import exiledsector.items.ItemModifiers;
 import exiledsector.items.ItemType;
-import exiledsector.items.ModifierScope;
-import exiledsector.items.ModifierSources;
-import exiledsector.items.RolledModifier;
+import exiledsector.items.modifier.AffixLayout;
+import exiledsector.items.modifier.GrantedModifiers;
+import exiledsector.items.modifier.ItemModifiers;
+import exiledsector.items.modifier.ModifierScope;
+import exiledsector.items.modifier.ModifierSources;
+import exiledsector.items.modifier.RolledModifier;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierSlot;
+import exiledsector.ui.inspect.CodexModifierTable;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -38,8 +44,10 @@ public final class BiomeModifiers {
     public static final String OWNER_PREFIX = "biome:";
     public static final String HEADER_KEY_PREFIX = "chart.biomeModifier.header.";
     static final float DROP_CHANCE = 0.3f;
+    public static final int MAX_PER_ITEM = 2;
     private static final long GRANT_SEED_SALT = 0x62696F6D65L;
     private static final Logger LOG = Logger.getLogger(BiomeModifiers.class);
+    public static final CodexModifierTable CODEX_TABLE = new CodexModifierTable("chart.codex.biomeModifiers", BiomeModifiers::codexRows);
 
     private record Key(String biomeId, ItemKind kind) {
     }
@@ -115,24 +123,70 @@ public final class BiomeModifiers {
         return biomeId == null || kind == null ? null : modifiersByKey.get(new Key(biomeId, kind));
     }
 
+    public static boolean hasModifiers(String biomeId) {
+        return biomeId != null && biomeIds.contains(biomeId);
+    }
+
+    public static List<String> modifiersFor(ItemKind kind) {
+        List<String> modifiers = new ArrayList<>();
+        modifiersByKey.forEach((key, modifierId) -> {
+            if (key.kind() == kind) {
+                modifiers.add(modifierId);
+            }
+        });
+        modifiers.sort(null);
+        return modifiers;
+    }
+
+    static List<CodexModifierTable.Row> codexRows(ItemKind kind) {
+        return modifiersByKey.entrySet().stream().filter(entry -> entry.getKey().kind() == kind)
+                .sorted(Comparator.comparing(entry -> entry.getKey().biomeId()))
+                .map(entry -> new CodexModifierTable.Row(entry.getValue(), Translation.styled(headerKey(entry.getKey().biomeId()))))
+                .toList();
+    }
+
+    public static boolean isBiomeModifier(String modifierId) {
+        return biomeOfModifier(modifierId) != null;
+    }
+
+    public static boolean hasRoomFor(List<RolledModifier> modifiers, String modifierId) {
+        if (!isBiomeModifier(modifierId) || modifiers.stream().anyMatch(rolled -> rolled.modifierId().equals(modifierId))) {
+            return true;
+        }
+        return modifiers.stream().filter(rolled -> isBiomeModifier(rolled.modifierId())).count() < MAX_PER_ITEM;
+    }
+
     public static String biomeOf(Item item) {
         for (RolledModifier rolledModifier : item.explicits()) {
-            String owner = ModifierSources.owner(rolledModifier.modifierId());
-            if (owner != null && owner.startsWith(OWNER_PREFIX)) {
-                return owner.substring(OWNER_PREFIX.length());
+            String biomeId = biomeOfModifier(rolledModifier.modifierId());
+            if (biomeId != null) {
+                return biomeId;
             }
         }
         return null;
     }
 
+    public static String biomeOfModifier(String modifierId) {
+        String owner = ModifierSources.owner(modifierId);
+        return owner != null && owner.startsWith(OWNER_PREFIX) ? owner.substring(OWNER_PREFIX.length()) : null;
+    }
+
     public static ItemData onDrop(ItemData item, String biomeId) {
-        ItemDefinition definition = item == null ? null : item.definition();
-        String modifierId = definition == null ? null : modifierFor(biomeId, definition.kind());
-        Random random = new Random(item.seed() ^ GRANT_SEED_SALT);
-        if (modifierId == null || random.nextFloat() >= DROP_CHANCE) {
+        if (modifierOn(item, biomeId) == null) {
             return item;
         }
-        return GrantedModifiers.add(item, modifierId, AffixLayout.dropLimits(definition.type()), random);
+        Random random = Seeds.derived(item.seed(), GRANT_SEED_SALT);
+        return random.nextFloat() < DROP_CHANCE ? grant(item, biomeId, random) : item;
+    }
+
+    public static ItemData grant(ItemData item, String biomeId, Random random) {
+        String modifierId = modifierOn(item, biomeId);
+        return modifierId == null ? item : GrantedModifiers.add(item, modifierId, AffixLayout.dropLimits(item.definition().type()), random);
+    }
+
+    private static String modifierOn(ItemData item, String biomeId) {
+        ItemDefinition definition = item == null ? null : item.definition();
+        return definition == null ? null : modifierFor(biomeId, definition.kind());
     }
 
     public static ItemData onDrop(SectorAPI sector, ItemData item, LocationAPI location) {

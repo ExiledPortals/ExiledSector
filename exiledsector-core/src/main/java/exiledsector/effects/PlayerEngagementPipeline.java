@@ -4,7 +4,7 @@ import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import exiledsector.skills.skilleffect.logistics.FleetWideEffects;
 import exiledsector.ExiledSector;
-import exiledsector.items.SocketLossListener;
+import exiledsector.items.custody.SocketLossListener;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -17,6 +17,7 @@ public final class PlayerEngagementPipeline extends BaseCampaignEventListener {
         AWARD_XP,
         SETTLE_CREW,
         HOLD_LOOT,
+        RECORD_OBJECTIVES,
         SALVAGE_BONUS
     }
 

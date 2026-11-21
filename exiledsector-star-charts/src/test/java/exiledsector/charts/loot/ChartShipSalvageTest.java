@@ -15,9 +15,11 @@ import com.fs.starfarer.api.loading.FighterWingSpecAPI;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
 import exiledsector.MockSector;
+import exiledsector.MockShips;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartGenContext.AppliedEffect;
+import exiledsector.loot.DropType;
 import exiledsector.loot.EncounterSalvage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -76,8 +78,7 @@ class ChartShipSalvageTest {
     }
 
     private static FleetMemberAPI member(ShipVariantAPI variant, int fleetPoints) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getVariant()).thenReturn(variant);
+        FleetMemberAPI member = MockShips.member().variant(variant).build();
         when(member.getFleetPointCost()).thenReturn(fleetPoints);
         when(member.getHullSpec()).thenReturn(mock(ShipHullSpecAPI.class));
         return member;

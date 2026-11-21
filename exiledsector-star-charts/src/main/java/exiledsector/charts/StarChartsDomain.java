@@ -8,15 +8,21 @@ import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.layout.abyss.AbyssArt;
 import exiledsector.charts.effect.ChartEnemyInflationListener;
 import exiledsector.charts.effect.ChartEnemyShipEffects;
+import exiledsector.charts.effect.ChartFleetDifficulty;
 import exiledsector.charts.effect.ChartPlayerModifierSource;
 import exiledsector.charts.loot.BiomeModifiers;
 import exiledsector.charts.loot.ChartStorageTransfer;
 import exiledsector.charts.loot.StarChartLootSource;
-import exiledsector.charts.objective.ChartRewardLootSource;
-import exiledsector.charts.objective.GatewayUpgradeRewards;
+import exiledsector.charts.objective.BossDefeatLootSource;
+import exiledsector.charts.objective.ChartObjectives;
+import exiledsector.charts.officer.scar.ScarEffectSource;
+import exiledsector.charts.phasing.DisplacementTheorem;
+import exiledsector.charts.phasing.PhaseDisplacementGate;
+import exiledsector.charts.phasing.PhasedPlanetTraits;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.run.ChartTransverseJump;
 import exiledsector.charts.wormhole.ColonyFreeAtlas;
+import exiledsector.charts.wormhole.GatewayUpgradeRewards;
 import exiledsector.charts.wormhole.LimboBlueprintCache;
 import exiledsector.charts.wormhole.WormholeGateway;
 import exiledsector.compat.DiyPlanetsCompat;
@@ -25,34 +31,45 @@ import exiledsector.compat.RuthlessSectorCompat;
 import exiledsector.compat.UnknownSkiesCompat;
 import exiledsector.compat.VaultsOfKnowledgeCompat;
 import exiledsector.domain.ExiledSectorDomain;
+import exiledsector.effects.PlayerEngagementPipeline;
 import exiledsector.effects.ShipEffectSource;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.SpecLocalisation;
 import exiledsector.i18n.Translation;
-import exiledsector.items.Engrams;
-import exiledsector.items.AtlasCatalystItems;
-import exiledsector.items.CraftingMaterialFamily;
+import exiledsector.items.crafting.material.Engrams;
+import exiledsector.items.starchart.AtlasCatalystItems;
+import exiledsector.charts.officer.scar.ScarBattleResults;
+import exiledsector.items.crafting.BiomeCraft;
+import exiledsector.items.crafting.material.DomainMaterial;
+import exiledsector.items.crafting.material.InfusedFeedstock;
 import exiledsector.items.ItemDataRules;
 import exiledsector.items.ItemTypeSupport;
-import exiledsector.items.MaterialItems;
-import exiledsector.items.StarChart;
-import exiledsector.items.StarChartCipher;
-import exiledsector.items.StarChartDataRules;
-import exiledsector.items.StarChartItems;
-import exiledsector.items.WormholeTechItems;
+import exiledsector.items.crafting.material.MaterialItems;
+import exiledsector.items.starchart.StarChart;
+import exiledsector.items.crafting.material.StarChartCipher;
+import exiledsector.items.starchart.StarChartDataRules;
+import exiledsector.items.starchart.StarChartItems;
+import exiledsector.items.starchart.WormholeTechItems;
 import exiledsector.loot.FleetDifficulty;
 import exiledsector.loot.LootSource;
 import exiledsector.loot.LootTakenListener;
 import exiledsector.ui.cargo.BiomeItemIconLooks;
 import exiledsector.ui.cargo.CatalystIconFx;
+import exiledsector.ui.cargo.InfusedFeedstockIconLooks;
 import exiledsector.ui.cargo.ItemIconLooks;
+import exiledsector.ui.inspect.CodexModifierTable;
 import exiledsector.ui.chart.ForgeCraftingBench;
 import exiledsector.ui.chart.StarChartCraftingBench;
 import exiledsector.ui.chart.WormholeGatewayOption;
 import exiledsector.ui.socket.BenchModeSupport;
+import exiledsector.ui.socket.BenchTray;
+import exiledsector.ui.socket.EngramTray;
+import exiledsector.ui.socket.InfusedCraftingTray;
 import lunalib.lunaSettings.LunaSettings.SettingsCreator;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static exiledsector.ExiledSector.MOD_ID;
 
@@ -65,17 +82,22 @@ public final class StarChartsDomain implements ExiledSectorDomain {
 
     @Override
     public List<ShipEffectSource> shipEffectSources() {
-        return List.of(ChartPlayerModifierSource.INSTANCE, ChartEnemyShipEffects.INSTANCE);
+        return List.of(ChartPlayerModifierSource.INSTANCE, ChartEnemyShipEffects.INSTANCE, ScarEffectSource.INSTANCE);
     }
 
     @Override
     public List<ItemIconLooks> itemIconLooks() {
-        return List.of(BiomeItemIconLooks.INSTANCE);
+        return List.of(BiomeItemIconLooks.INSTANCE, InfusedFeedstockIconLooks.INSTANCE);
     }
 
     @Override
     public List<LootSource> lootSources() {
-        return List.of(StarChartLootSource.INSTANCE, ChartRewardLootSource.INSTANCE);
+        return List.of(StarChartLootSource.INSTANCE, BossDefeatLootSource.INSTANCE);
+    }
+
+    @Override
+    public Map<PlayerEngagementPipeline.Stage, PlayerEngagementPipeline.Step> engagementSteps() {
+        return Map.of(PlayerEngagementPipeline.Stage.RECORD_OBJECTIVES, ChartObjectives::afterPlayerEngagement);
     }
 
     @Override
@@ -85,7 +107,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
 
     @Override
     public List<FleetDifficulty> fleetDifficulties() {
-        return List.of(StarChartLootSource.INSTANCE);
+        return List.of(ChartFleetDifficulty.INSTANCE);
     }
 
     @Override
@@ -98,7 +120,11 @@ public final class StarChartsDomain implements ExiledSectorDomain {
             for (StarChartCipher craftingItem : StarChartCipher.values()) {
                 MaterialItems.localise(craftingItem.itemId());
             }
+            for (InfusedFeedstock feedstock : InfusedFeedstock.values()) {
+                MaterialItems.localise(feedstock.itemId());
+            }
             WormholeGateway.INDUSTRY_IDS.forEach(SpecLocalisation::industry);
+            SpecLocalisation.industry(PhaseDisplacementGate.INDUSTRY_ID);
         });
     }
 
@@ -142,6 +168,8 @@ public final class StarChartsDomain implements ExiledSectorDomain {
         I18n.forGameText(Engrams::localise);
         I18n.forGameText(AtlasCatalystItems::localise);
         I18n.forGameText(WormholeTechItems::localise);
+        I18n.forGameText(DisplacementTheorem::localise);
+        I18n.forGameText(PhasedPlanetTraits::localise);
     }
 
     @Override
@@ -157,6 +185,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
 
     @Override
     public void afterSocketCustody() {
+        ScarBattleResults.clear();
         StarCharts.onGameLoad(Global.getSector());
         if (enabled()) {
             LimboBlueprintCache.onGameLoad(Global.getSector());
@@ -176,8 +205,23 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     }
 
     @Override
-    public List<CraftingMaterialFamily> hullCraftingBenchCraftingItems() {
-        return List.copyOf(Engrams.all());
+    public List<BenchTray> hullCraftingBenchTrays() {
+        return List.of(EngramTray.INSTANCE, InfusedCraftingTray.INSTANCE);
+    }
+
+    @Override
+    public List<CodexModifierTable> codexModifierTables() {
+        return List.of(BiomeModifiers.CODEX_TABLE, Engrams.CODEX_TABLE);
+    }
+
+    @Override
+    public List<String> craftingBenchFeedstockIds() {
+        return BiomeCraft.feedstockIds();
+    }
+
+    @Override
+    public List<DomainMaterial> materialItems() {
+        return Arrays.stream(InfusedFeedstock.values()).map(feedstock -> new DomainMaterial(feedstock.itemId(), InfusedFeedstock.TIER, feedstock.color())).toList();
     }
 
     @Override

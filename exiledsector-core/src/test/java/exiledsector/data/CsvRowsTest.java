@@ -61,4 +61,15 @@ class CsvRowsTest {
         assertFalse(CsvRows.isValidChance("-1"));
         assertFalse(CsvRows.isValidChance("Infinity"));
     }
+
+    @Test
+    void aFractionOutsideZeroToOneIsKeptButReported() throws Exception {
+        CsvRows csv = new CsvRows("data/test.csv");
+        JSONObject row = new JSONObject().put("inside", "0.5").put("outside", "1.5");
+
+        assertEquals(0.5f, csv.fraction(row, "inside", 0f, "region"));
+        assertEquals(1.5f, csv.fraction(row, "outside", 0f, "region"));
+        assertEquals(0.25f, csv.fraction(row, "missing", 0.25f, "region"));
+        assertEquals(List.of("region outside = '1.5 (needs 0 to 1)'"), csv.problems());
+    }
 }

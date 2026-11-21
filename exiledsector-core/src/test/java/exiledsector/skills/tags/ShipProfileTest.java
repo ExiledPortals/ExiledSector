@@ -16,6 +16,7 @@ import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
+import exiledsector.MockShips;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -36,13 +37,10 @@ class ShipProfileTest {
 
     private static FleetMemberAPI member(HullSize hullSize, ShieldType shieldType, int fighterBays,
                                          ShipVariantAPI variant, boolean flagship) {
-        ShipHullSpecAPI hullSpec = mock(ShipHullSpecAPI.class);
-        when(hullSpec.getHullSize()).thenReturn(hullSize);
-        when(hullSpec.getShieldType()).thenReturn(shieldType);
-        when(hullSpec.getFighterBays()).thenReturn(fighterBays);
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getHullSpec()).thenReturn(hullSpec);
-        when(member.getVariant()).thenReturn(variant);
+        MockShips.MemberBuilder builder = MockShips.member().hullSize(hullSize).variant(variant);
+        when(builder.hullSpec().getShieldType()).thenReturn(shieldType);
+        when(builder.hullSpec().getFighterBays()).thenReturn(fighterBays);
+        FleetMemberAPI member = builder.build();
         when(member.isFlagship()).thenReturn(flagship);
         return member;
     }
@@ -102,6 +100,20 @@ class ShipProfileTest {
     }
 
     @Test
+    void onlyAConcordShiftSystemLetsANonPhaseHullTakePhaseNodes() {
+        FleetMemberAPI concord = member(HullSize.DESTROYER, ShieldType.OMNI, 0, variant(), false);
+        when(concord.getHullSpec().getShipSystemId()).thenReturn("sotf_concordshift");
+        FleetMemberAPI otherSystem = member(HullSize.DESTROYER, ShieldType.OMNI, 0, variant(), false);
+        when(otherSystem.getHullSpec().getShipSystemId()).thenReturn("phaseteleporter");
+
+        ShipProfile concordProfile = ShipProfile.of(concord);
+        assertTrue(concordProfile.concordShift());
+        assertTrue(concordProfile.allowsPhaseNodes());
+        assertFalse(concordProfile.phaseHull());
+        assertFalse(ShipProfile.of(otherSystem).allowsPhaseNodes());
+    }
+
+    @Test
     void aFittedShieldShuntLeavesTheNpcShipWithoutShields() {
         ShipVariantAPI variant = variant();
         when(variant.hasHullMod(HullMods.SHIELD_SHUNT)).thenReturn(true);
@@ -147,7 +159,7 @@ class ShipProfileTest {
         ShipProfile profile = ShipProfile.of(withFlightDecks(member(HullSize.CRUISER, ShieldType.FRONT, 0, variant(), false), 1));
 
         assertEquals(1, profile.fighterBays());
-        assertTrue(NodeRequirements.isSatisfiedBy(List.of("req_fighter_bays"), profile));
+        assertTrue(NodeRequirements.isSatisfiedBy(List.of("req_strikecraft_bays"), profile));
     }
 
     @Test

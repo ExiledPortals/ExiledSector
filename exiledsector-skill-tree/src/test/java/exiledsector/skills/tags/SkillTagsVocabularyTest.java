@@ -36,10 +36,11 @@ class SkillTagsVocabularyTest {
     }
 
     private static void collectUnknownTags(JSONArray entries, String kind, List<String> problems) throws Exception {
+        List<String> vocabulary = SkillTags.all();
         for (int i = 0; i < entries.length(); i++) {
             JSONObject entry = entries.getJSONObject(i);
             for (String tag : tags(entry)) {
-                if (!SkillTags.ALL.contains(tag)) {
+                if (!vocabulary.contains(tag)) {
                     problems.add(kind + " " + entry.optString("id") + " has unknown tag " + tag);
                 }
             }

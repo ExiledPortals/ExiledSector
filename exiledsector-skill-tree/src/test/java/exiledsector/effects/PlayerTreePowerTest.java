@@ -2,7 +2,8 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.MockSector;
-import exiledsector.items.MasterSchematic;
+import exiledsector.MockShips;
+import exiledsector.items.schematic.MasterSchematic;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
@@ -20,7 +21,6 @@ import org.mockito.Mockito;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class PlayerTreePowerTest {
@@ -132,8 +132,6 @@ class PlayerTreePowerTest {
     }
 
     private static FleetMemberAPI member(String shipId) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getId()).thenReturn(shipId);
-        return member;
+        return MockShips.member(shipId).build();
     }
 }

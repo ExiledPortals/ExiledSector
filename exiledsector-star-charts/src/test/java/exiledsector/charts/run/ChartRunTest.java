@@ -43,15 +43,6 @@ class ChartRunTest {
     }
 
     @Test
-    void theGuaranteedBossTierUpIsRememberedOnceGranted() {
-        ChartRun run = run(1);
-
-        assertFalse(run.isBossTierUpGranted());
-        run.grantBossTierUp();
-        assertTrue(run.isBossTierUpGranted());
-    }
-
-    @Test
     void aNewRunIsOpenWithEveryEntryLeftAndDerivesItsIdsFromTheRunId() {
         ChartRun run = run(2);
 
@@ -234,11 +225,8 @@ class ChartRunTest {
         assertEquals("b", run.bossFleetId());
         assertEquals(5, run.contentFleets());
         assertEquals(9, run.contentPois());
-        assertFalse(run.claimReward());
         assertTrue(run.markObjectiveComplete());
         assertFalse(run.markObjectiveComplete());
-        assertTrue(run.claimReward());
-        assertFalse(run.claimReward());
     }
 
     @Test
@@ -248,27 +236,9 @@ class ChartRunTest {
         assertEquals(List.of(), ChartRun.split(null));
         ChartRun run = new ChartRun("abc", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
         run.recordContent(new ChartContent(40, null, null, 0, 0));
-        assertEquals(ChartTiers.CORRUPTED_TIER, run.tier());
+        assertEquals(ChartTiers.HIGHEST_TIER, run.tier());
         assertFalse(run.hasBoss());
         assertFalse(run.markObjectiveComplete());
-    }
-
-    @Test
-    void aRunSavedWithAnOldObjectiveLoadsAsABossRun() {
-        XStream xstream = new XStream(new DomDriver());
-        XStream.setupDefaultSecurity(xstream);
-        xstream.addPermission(AnyTypePermission.ANY);
-        xstream.ignoreUnknownElements();
-        ChartRun run = new ChartRun("abc", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        run.recordContent(new ChartContent(5, "pirates", "b", 2, 4));
-        String oldXml = xstream.toXML(run)
-                .replace("<bossFleetId>", "<objective>CLEAR</objective><objectiveTargets>g1</objectiveTargets><bossFleetId>");
-
-        ChartRun loaded = (ChartRun) xstream.fromXML(oldXml);
-
-        assertEquals(5, loaded.tier());
-        assertEquals("b", loaded.bossFleetId());
-        assertTrue(loaded.markObjectiveComplete());
     }
 
     @Test
@@ -291,8 +261,5 @@ class ChartRunTest {
         loaded.recordAnomalyState("relay_network.nav_buoy", null);
         assertNull(loaded.anomalyState("relay_network.nav_buoy"));
         assertEquals("2", loaded.anomalyState("relay_network.comm_relay"));
-        assertFalse(loaded.isBossUniqueGranted());
-        loaded.grantBossUnique();
-        assertTrue(loaded.isBossUniqueGranted());
     }
 }

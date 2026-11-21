@@ -1,5 +1,6 @@
 import type { Vocabulary } from '../../../api/vocabulary.ts';
 import { isUnshippedImagePath } from '../../../shared/imagePaths.ts';
+import { ancestorsListedBeside } from '../../../shared/themeTags.ts';
 import { isVolumeTag } from './tags.ts';
 import { tierOf, type TreeDocument } from './types.ts';
 
@@ -38,11 +39,29 @@ function validateWormholes(document: TreeDocument, issues: string[]): void {
   }
 }
 
-function validateTags(document: TreeDocument, vocabulary: Vocabulary, issues: string[]): void {
+function validateVolumes(document: TreeDocument, issues: string[]): void {
+  const seen = new Set<string>();
+  for (const volume of document.volumes) {
+    if (seen.has(volume)) {
+      issues.push(`Volume "${volume}" is declared more than once`);
+    }
+    seen.add(volume);
+  }
+}
+
+function validateTiers(document: TreeDocument, vocabulary: Vocabulary, issues: string[]): void {
+  for (const type of document.types) {
+    if (type.tier && !vocabulary.tiers.includes(type.tier)) {
+      issues.push(`Type "${type.id}" has tier "${type.tier}", which this tree does not use`);
+    }
+  }
+}
+
+function validateTags(document: TreeDocument, vocabulary: Vocabulary, requiresVolumeTag: boolean, issues: string[]): void {
   for (const node of document.nodes) {
     const nodeTags = node.tags ?? [];
     const volumeTags = nodeTags.filter((tag) => isVolumeTag(vocabulary, tag));
-    if (volumeTags.length === 0) {
+    if (volumeTags.length === 0 && requiresVolumeTag) {
       issues.push(`Node "${node.id}" has no volume tag`);
     } else if (volumeTags.length > 1) {
       issues.push(`Node "${node.id}" has ${volumeTags.length} volume tags (${volumeTags.join(', ')}), needs exactly one`);
@@ -54,17 +73,21 @@ function validateTags(document: TreeDocument, vocabulary: Vocabulary, issues: st
     }
   }
   for (const type of document.types) {
-    for (const tag of type.tags ?? []) {
+    const typeTags = type.tags ?? [];
+    for (const tag of typeTags) {
       if (!vocabulary.allTags.includes(tag)) {
         issues.push(`Type "${type.id}" has unknown tag "${tag}"`);
       } else if (isVolumeTag(vocabulary, tag)) {
         issues.push(`Type "${type.id}" carries volume tag "${tag}", volume tags belong on nodes`);
       }
+      for (const ancestor of ancestorsListedBeside(vocabulary, tag, typeTags)) {
+        issues.push(`Type "${type.id}" lists "${tag}" beside its ancestor "${ancestor}", which it already counts as`);
+      }
     }
   }
 }
 
-export function validateTree(document: TreeDocument, vocabulary: Vocabulary | null, replacedNodeIds: ReadonlySet<string> = new Set()): string[] {
+export function validateTree(document: TreeDocument, vocabulary: Vocabulary | null, replacedNodeIds: ReadonlySet<string> = new Set(), requiresVolumeTag = true): string[] {
   const issues: string[] = [];
   const idCounts = new Map<string, number>();
   for (const node of document.nodes) {
@@ -113,8 +136,10 @@ export function validateTree(document: TreeDocument, vocabulary: Vocabulary | nu
       }
     }
   }
+  validateVolumes(document, issues);
   if (vocabulary) {
-    validateTags(document, vocabulary, issues);
+    validateTiers(document, vocabulary, issues);
+    validateTags(document, vocabulary, requiresVolumeTag, issues);
   }
   return issues;
 }

@@ -8,6 +8,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
+import exiledsector.skills.skilleffect.CombatTestShips;
 import exiledsector.skills.skilleffect.SkillEffectSupport;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
@@ -34,17 +35,13 @@ class DModAuraFieldTest {
     }
 
     private static ShipAPI ship(int owner, Vector2f location, int dMods, float armorPercentPerDMod, float topSpeedPercentPerDMod) {
-        ShipAPI ship = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS);
+        ShipAPI ship = CombatTestShips.ship(mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS)).owner(owner).alive().at(location)
+                .dynamic(DModAuraListener.ARMOR_PERCENT_PER_DMOD_KEY, armorPercentPerDMod)
+                .dynamic(DModAuraListener.TOP_SPEED_PERCENT_PER_DMOD_KEY, topSpeedPercentPerDMod)
+                .build();
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(variant.getHullMods()).thenReturn(IntStream.range(0, dMods).mapToObj(i -> "dmod_" + i).toList());
         when(ship.getVariant()).thenReturn(variant);
-        when(ship.getOwner()).thenReturn(owner);
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(stats.getDynamic().getValue(DModAuraListener.ARMOR_PERCENT_PER_DMOD_KEY, 0f)).thenReturn(armorPercentPerDMod);
-        when(stats.getDynamic().getValue(DModAuraListener.TOP_SPEED_PERCENT_PER_DMOD_KEY, 0f)).thenReturn(topSpeedPercentPerDMod);
-        when(ship.isAlive()).thenReturn(true);
-        when(ship.getLocation()).thenReturn(location);
         return ship;
     }
 

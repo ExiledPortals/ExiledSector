@@ -3,7 +3,7 @@
 		{
 			"id": "flux_capacity",
 			"name": "Flux Capacity",
-			"icon": "graphics/icons/flux_capacity.png",
+			"icon": "graphics/exiledSector/tree/base/flux_capacity.png",
 			"effects": [
 				{
 					"effect": "FLUX_CAPACITY_MULT",
@@ -17,7 +17,7 @@
 		{
 			"id": "flux_dissipation",
 			"name": "Flux Dissipation",
-			"icon": "graphics/icons/flux_dissipation.png",
+			"icon": "graphics/exiledSector/tree/base/flux_dissipation.png",
 			"effects": [
 				{
 					"effect": "FLUX_DISSIPATION_MULT",
@@ -31,7 +31,7 @@
 		{
 			"id": "flux_capacity_and_dissipation",
 			"name": "Flux Capacity and Dissipation",
-			"icon": "graphics/icons/hybrid_flux.png",
+			"icon": "graphics/exiledSector/tree/base/flux_capacity_and_dissipation.png",
 			"tags": [
 				"flux"
 			]
@@ -39,7 +39,7 @@
 		{
 			"id": "increased_hull",
 			"name": "Increased Hull",
-			"icon": "graphics/icons/hull.png",
+			"icon": "graphics/exiledSector/tree/tania/increased_hull.png",
 			"effects": [
 				{
 					"effect": "HULL_MULT",
@@ -53,7 +53,7 @@
 		{
 			"id": "armor",
 			"name": "Armor",
-			"icon": "graphics/icons/armor.png",
+			"icon": "graphics/exiledSector/tree/base/armor.png",
 			"hullSizeEffects": [
 				{
 					"effect": "ARMOR_FLAT",
@@ -70,7 +70,7 @@
 		{
 			"id": "ballistic_weapon_damage",
 			"name": "Ballistic Weapon Damage",
-			"icon": "graphics/icons/ballistic_damage.png",
+			"icon": "graphics/exiledSector/tree/base/ballistic_weapon_damage.png",
 			"effects": [
 				{
 					"effect": "BALLISTIC_WEAPON_DAMAGE_PERCENT",
@@ -79,13 +79,14 @@
 			],
 			"tags": [
 				"ballistic",
+				"damage",
 				"req_ballistic"
 			]
 		},
 		{
 			"id": "ballistic_projectile_speed",
 			"name": "Ballistic Projectile Speed",
-			"icon": "graphics/icons/ballistic_projectile_speed.png",
+			"icon": "graphics/exiledSector/tree/base/ballistic_projectile_speed.png",
 			"effects": [
 				{
 					"effect": "BALLISTIC_WEAPON_PROJECTILE_SPEED_PERCENT",
@@ -100,7 +101,7 @@
 		{
 			"id": "missile_top_speed",
 			"name": "Missile Top Speed",
-			"icon": "graphics/icons/missile_top_speed.png",
+			"icon": "graphics/exiledSector/tree/hegemony/missile_top_speed.png",
 			"effects": [
 				{
 					"effect": "MISSILE_WEAPON_PROJECTILE_SPEED_PERCENT",
@@ -115,7 +116,7 @@
 		{
 			"id": "reduced_d_mod_effect",
 			"name": "Reduced D-Mod Effect",
-			"icon": "graphics/icons/reduced_D_mod_effect.png",
+			"icon": "graphics/exiledSector/tree/base/reduced_d_mod_effect.png",
 			"effects": [
 				{
 					"effect": "DMOD_EFFECT_MULT",
@@ -129,7 +130,7 @@
 		{
 			"id": "heavy_ballistics_integration",
 			"name": "Heavy Ballistics Integration",
-			"icon": "graphics/icons/heavy_ballistics_integration.png",
+			"icon": "graphics/exiledSector/tree/hegemony/heavy_ballistics_integration.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -162,7 +163,7 @@
 		{
 			"id": "ground_support",
 			"name": "Ground Support",
-			"icon": "graphics/icons/ground_support.png",
+			"icon": "graphics/exiledSector/tree/pirate/ground_support.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -184,7 +185,7 @@
 			"flavour": "Raids flown alongside pirate crews teach the crew to turn spare berths and cargo lifts into a drop platform for the marines, and to keep a few guns pointed at the ground while they work.",
 			"flavourAutomated": "The ship's core logs every pirate raid it flies beside, down to where the guns point while the marines are on the ground. The refit crew turns its cargo lifts into a drop platform, and the core keeps the guns where the logs say.",
 			"tags": [
-				"logistics",
+				"crew",
 				"campaign_only",
 				"logistics_cap"
 			]
@@ -192,7 +193,7 @@
 		{
 			"id": "cheap_shots",
 			"name": "Cheap Shots",
-			"icon": "graphics/icons/evasive_maneuvering_shifted.png",
+			"icon": "graphics/exiledSector/tree/pirate/cheap_shots.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -215,13 +216,14 @@
 			"flavour": "Pirate fire control holds until a target's shields collapse or its drives gutter out. Fair fights are for the naive.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapons"
+				"damage",
+				"on_kill"
 			]
 		},
 		{
 			"id": "running_dark",
 			"name": "Running Dark",
-			"icon": "graphics/icons/transponder_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/pirate/running_dark.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -244,7 +246,7 @@
 			"flavour": "Pirate captains run with their transponders dark and their drive plumes baffled behind scrap plating.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"logistics",
+				"sensors",
 				"campaign_only",
 				"logistics_cap"
 			]
@@ -252,7 +254,7 @@
 		{
 			"id": "blood_in_the_water",
 			"name": "Blood in the Water",
-			"icon": "graphics/icons/pirate_frenzy_shifted.png",
+			"icon": "graphics/exiledSector/tree/pirate/blood_in_the_water.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -275,13 +277,15 @@
 			"flavour": "A good pirate doesn't wait for their prey to recover.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapons"
+				"rate_of_fire",
+				"on_kill",
+				"nearby_ships"
 			]
 		},
 		{
 			"id": "cut_and_run",
 			"name": "Cut and Run",
-			"icon": "graphics/icons/officer_training_shifted_shifted_shifted_z.png",
+			"icon": "graphics/exiledSector/tree/pirate/cut_and_run.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -304,13 +308,14 @@
 			"flavour": "Acquiring plunder is sometimes not as important as making it home.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"speed"
+				"mobility",
+				"damage_taken"
 			]
 		},
 		{
 			"id": "haul_the_prize",
 			"name": "Haul the Prize",
-			"icon": "graphics/icons/carrier_command_shifted_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/pirate/haul_the_prize.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -334,6 +339,7 @@
 			"todo": "Needs an icon.",
 			"tags": [
 				"logistics",
+				"mobility",
 				"campaign_only",
 				"logistics_cap"
 			]
@@ -341,7 +347,7 @@
 		{
 			"id": "pick_off_the_stragglers",
 			"name": "Pick Off The Stragglers",
-			"icon": "graphics/icons/wolfpack_circular_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/pirate/pick_off_the_stragglers.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -360,13 +366,14 @@
 			"flavour": "A convoy is only as safe as its slowest freighter.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapons"
+				"damage",
+				"nearby_ships"
 			]
 		},
 		{
 			"id": "tripad_backdoor",
 			"name": "TriPad Backdoor",
-			"icon": "graphics/icons/tactical_superiority.png",
+			"icon": "graphics/exiledSector/tree/tritachyon/tripad_backdoor.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -391,7 +398,7 @@
 		{
 			"id": "objective_capture_range",
 			"name": "Objective Capture Range",
-			"icon": "graphics/icons/objective_capture_range.png",
+			"icon": "graphics/exiledSector/tree/base/objective_capture_range.png",
 			"effects": [
 				{
 					"effect": "OBJECTIVE_CAPTURE_RANGE_FLAT",
@@ -405,7 +412,7 @@
 		{
 			"id": "combat_readiness",
 			"name": "Combat Readiness",
-			"icon": "graphics/icons/combat_readiness.png",
+			"icon": "graphics/exiledSector/tree/base/combat_readiness.png",
 			"effects": [
 				{
 					"effect": "MAX_COMBAT_READINESS_PERCENT",
@@ -419,7 +426,7 @@
 		{
 			"id": "nanoforge_mending",
 			"name": "Nanoforge Mending",
-			"icon": "graphics/icons/nanoforge_mending.png",
+			"icon": "graphics/exiledSector/tree/redacted/nanoforge_mending.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -449,7 +456,7 @@
 		{
 			"id": "disintegration",
 			"name": "Disintegration",
-			"icon": "graphics/icons/disintegration.png",
+			"icon": "graphics/exiledSector/tree/omega/disintegration.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -468,14 +475,15 @@
 			"flavour": "\"And what the defiler builds shall be unmade around its every wound, so that no part remains to be mended.\"\n- Attributed to the Book of Ludd, apocrypha",
 			"tags": [
 				"energy",
-				"armour",
+				"damage",
+				"on_hit",
 				"req_energy"
 			]
 		},
 		{
 			"id": "machine_precision",
 			"name": "Machine Precision",
-			"icon": "graphics/icons/machine_precision.png",
+			"icon": "graphics/exiledSector/tree/redacted/machine_precision.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -518,14 +526,13 @@
 			"flavour": "A recovered gamma core, kept powered just long enough to be questioned, gives up the targeting routines Remnant drones use to lead a target.",
 			"flavourAutomated": "A recovered gamma core holds the targeting routines Remnant drones use to lead a target. The ship's core copies them across in a fraction of a second.",
 			"tags": [
-				"weapons",
 				"range"
 			]
 		},
 		{
 			"id": "terrifying_presence",
 			"name": "Terrifying Presence",
-			"icon": "graphics/icons/terrifying_presence.png",
+			"icon": "graphics/exiledSector/tree/redacted/terrifying_presence.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -547,13 +554,14 @@
 			},
 			"flavour": "Sensor logs from fights with Remnant fleets show how the drones flood the spectrum with false returns, and rebuilding the ship's ECM suite around those recordings feeds enemy fire control a target that is never quite where it seems.",
 			"tags": [
-				"fleet_support"
+				"fleet_support",
+				"nearby_ships"
 			]
 		},
 		{
 			"id": "xiv_torpedo_doctrine",
 			"name": "XIV Torpedo Doctrine",
-			"icon": "graphics/icons/torpedo_specialisation.png",
+			"icon": "graphics/exiledSector/tree/hegemony/xiv_torpedo_doctrine.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -591,7 +599,7 @@
 		{
 			"id": "missile_weapon_damage",
 			"name": "Missile Weapon Damage",
-			"icon": "graphics/icons/missile_damage.png",
+			"icon": "graphics/exiledSector/tree/base/missile_weapon_damage.png",
 			"effects": [
 				{
 					"effect": "MISSILE_WEAPON_DAMAGE_PERCENT",
@@ -600,13 +608,14 @@
 			],
 			"tags": [
 				"missile",
+				"damage",
 				"req_missile"
 			]
 		},
 		{
 			"id": "non_beam_energy_weapon_damage",
 			"name": "Non-Beam Energy Weapon Damage",
-			"icon": "graphics/icons/non_beam_energy_damage.png",
+			"icon": "graphics/exiledSector/tree/base/non_beam_energy_weapon_damage.png",
 			"effects": [
 				{
 					"effect": "NON_BEAM_ENERGY_WEAPON_DAMAGE_PERCENT",
@@ -614,14 +623,15 @@
 				}
 			],
 			"tags": [
-				"energy",
+				"non_beam_energy",
+				"damage",
 				"req_non_beam_energy"
 			]
 		},
 		{
 			"id": "beam_weapon_damage",
 			"name": "Beam Weapon Damage",
-			"icon": "graphics/icons/beam_damage.png",
+			"icon": "graphics/exiledSector/tree/base/beam_weapon_damage.png",
 			"effects": [
 				{
 					"effect": "BEAM_WEAPON_DAMAGE_PERCENT",
@@ -629,31 +639,38 @@
 				}
 			],
 			"tags": [
-				"energy",
 				"beam",
+				"damage",
 				"req_beam"
 			]
 		},
 		{
 			"id": "energy_weapon_damage",
 			"name": "Energy Weapon Damage",
-			"icon": "graphics/icons/energy_damage.png",
+			"icon": "graphics/exiledSector/tree/base/energy_weapon_damage.png",
 			"tags": [
-				"energy"
+				"energy",
+				"damage"
 			]
 		},
 		{
 			"id": "all_weapon_damage",
 			"name": "All Weapon Damage",
-			"icon": "graphics/icons/weapon_damage.png",
+			"icon": "graphics/exiledSector/tree/domain_drones/all_weapon_damage.png",
+			"effects": [
+				{
+					"effect": "WEAPON_DAMAGE_PERCENT",
+					"magnitude": 2
+				}
+			],
 			"tags": [
-				"weapons"
+				"damage"
 			]
 		},
 		{
 			"id": "repair_time",
 			"name": "Repair Time",
-			"icon": "graphics/icons/repair_time.png",
+			"icon": "graphics/exiledSector/tree/base/repair_time.png",
 			"effects": [
 				{
 					"effect": "REPAIR_TIME_MULT",
@@ -667,7 +684,7 @@
 		{
 			"id": "weapon_turn_rate",
 			"name": "Weapon Turn Rate",
-			"icon": "graphics/icons/weapon_turn_rate.png",
+			"icon": "graphics/exiledSector/tree/base/weapon_turn_rate.png",
 			"effects": [
 				{
 					"effect": "WEAPON_TURN_RATE_PERCENT",
@@ -675,13 +692,13 @@
 				}
 			],
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
 			"id": "more_hull",
 			"name": "More Hull",
-			"icon": "graphics/icons/hull_multi.png",
+			"icon": "graphics/exiledSector/tree/base/more_hull.png",
 			"effects": [
 				{
 					"effect": "HULL_MULT",
@@ -695,7 +712,7 @@
 		{
 			"id": "lions_gaze",
 			"name": "Lion's Gaze",
-			"icon": "graphics/icons/beam_split.png",
+			"icon": "graphics/exiledSector/tree/sindrian_dictat/lions_gaze.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -714,7 +731,6 @@
 			"flavour": "Diktat propaganda insists that the Lion's gaze falls on every citizen at once, and the engineer-technicians of the Lion's Guard took the slogan literally. Studying the Executors they refit teaches the crew to split this ship's beams across the target and the enemy ships around it.",
 			"flavourAutomated": "Diktat propaganda insists that the Lion's gaze falls on every citizen at once, and the engineer-technicians of the Lion's Guard took the slogan literally. The ship's core records how a Lion's Guard Executor divides its beams across a target and the ships around it, and splits its own the same way. It does not record the slogan.",
 			"tags": [
-				"energy",
 				"beam",
 				"req_beam"
 			]
@@ -722,7 +738,7 @@
 		{
 			"id": "flux_coil_adjunct",
 			"name": "Flux Coil Adjunct",
-			"icon": "graphics/icons/flux_coil_adjunct.png",
+			"icon": "graphics/exiledSector/tree/base/flux_coil_adjunct.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -767,7 +783,7 @@
 		{
 			"id": "safety_overrides",
 			"name": "Safety Overrides",
-			"icon": "graphics/icons/safety_overrides.png",
+			"icon": "graphics/exiledSector/tree/base/safety_overrides.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -836,13 +852,14 @@
 			],
 			"tags": [
 				"flux",
-				"speed"
+				"mobility",
+				"combat_readiness"
 			]
 		},
 		{
 			"id": "ludds_light",
 			"name": "Ludd's Light",
-			"icon": "graphics/icons/fuel_core_overload.png",
+			"icon": "graphics/exiledSector/tree/luddic/ludds_light.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -861,12 +878,16 @@
 						"magnitude": 100
 					}
 				]
-			}
+			},
+			"tags": [
+				"high_explosive",
+				"damage"
+			]
 		},
 		{
 			"id": "at_any_cost",
 			"name": "At Any Cost",
-			"icon": "graphics/icons/exposed_fuel_lines.png",
+			"icon": "graphics/exiledSector/tree/luddic/at_any_cost.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -889,12 +910,16 @@
 						"magnitude": 0
 					}
 				]
-			}
+			},
+			"tags": [
+				"hull",
+				"damage"
+			]
 		},
 		{
 			"id": "refracting_projectiles",
 			"name": "Refracting Projectiles",
-			"icon": "graphics/icons/energy_chain.png",
+			"icon": "graphics/exiledSector/tree/tritachyon/refracting_projectiles.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -925,14 +950,15 @@
 			"flavour": "Pulling apart the energy converters of wrecked Tri-Tachyon warships shows the crew how to tune this ship's energy bolts to glance off an enemy shield and carry on to another target. Tri-Tachyon sales literature calls this efficiency.",
 			"flavourAutomated": "Pulling apart the energy converters of wrecked Tri-Tachyon warships shows the refit crew how to tune this ship's energy bolts to glance off an enemy shield and carry on to another target. Tri-Tachyon sales literature calls this efficiency.",
 			"tags": [
-				"energy",
+				"non_beam_energy",
+				"on_hit",
 				"req_non_beam_energy"
 			]
 		},
 		{
 			"id": "hullbreacher_rounds",
 			"name": "Hullbreacher Rounds",
-			"icon": "graphics/icons/explosion3_shifted.png",
+			"icon": "graphics/exiledSector/tree/hegemony/hullbreacher_rounds.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -956,13 +982,14 @@
 			"flavourAutomated": "The Hegemony Navy keeps breacher loads for boarding actions, shells hardened to punch through plating instead of bursting on it. The ship's core finds their specifications in a seized Navy ordnance manifest and loads them for every fight.",
 			"tags": [
 				"ballistic",
+				"on_hit",
 				"req_ballistic"
 			]
 		},
 		{
 			"id": "navy_heartbeat",
 			"name": "Navy Heartbeat",
-			"icon": "graphics/icons/ballistic_momentum.png",
+			"icon": "graphics/exiledSector/tree/hegemony/navy_heartbeat.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -986,14 +1013,15 @@
 			"flavourAutomated": "The ship's core logs hours of Hegemony line engagements and reproduces the Navy's habit of arriving at speed and firing before the enemy has settled, guns thumping out what the Navy calls its heartbeat. The core keeps time more evenly than any Navy gunner.",
 			"tags": [
 				"ballistic",
-				"speed",
+				"damage",
+				"mobility",
 				"req_ballistic"
 			]
 		},
 		{
 			"id": "comsec_discipline",
 			"name": "COMSEC Discipline",
-			"icon": "graphics/icons/eccm_shifted.png",
+			"icon": "graphics/exiledSector/tree/persean_league/comsec_discipline.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1023,14 +1051,14 @@
 			},
 			"flavour": "In a joint League fleet, every member world jams anyone it suspects of listening, which is everyone. Most of the noise comes from allies.",
 			"tags": [
-				"weapons",
-				"range"
+				"electronic_warfare",
+				"sensors"
 			]
 		},
 		{
 			"id": "defensive_compact",
 			"name": "Defensive Compact",
-			"icon": "graphics/icons/coordinated_maneuvers2_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/persean_league/defensive_compact.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1052,13 +1080,14 @@
 			},
 			"flavour": "Under the League's founding compact, every member world must defend whatever the League holds.",
 			"tags": [
+				"damage_taken",
 				"fleet_support"
 			]
 		},
 		{
 			"id": "joint_strike_package",
 			"name": "Joint Strike Package",
-			"icon": "graphics/icons/joint_strike_package.png",
+			"icon": "graphics/exiledSector/tree/persean_league/joint_strike_package.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1080,14 +1109,16 @@
 			},
 			"flavour": "No League detachment will launch second, so joint fleets launch every wing at once.",
 			"tags": [
-				"fighter",
-				"req_fighter_bays"
+				"strikecraft",
+				"damage",
+				"nearby_ships",
+				"req_strikecraft_bays"
 			]
 		},
 		{
 			"id": "league_requisitions",
 			"name": "League Requisitions",
-			"icon": "graphics/icons/fleet_logistics_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/base/league_requisitions.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1109,7 +1140,8 @@
 			},
 			"flavour": "Every League depot stocks spares for its own world's hulls and nothing else. The paperwork for a mixed fleet runs to several volumes, one per world.",
 			"tags": [
-				"logistics",
+				"supplies",
+				"fuel",
 				"campaign_only",
 				"logistics_cap"
 			]
@@ -1117,7 +1149,7 @@
 		{
 			"id": "kazeron_recovery_standards",
 			"name": "Kazeron Recovery Standards",
-			"icon": "graphics/icons/recovery_shuttles_shifted.png",
+			"icon": "graphics/exiledSector/tree/base/kazeron_recovery_standards.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1135,7 +1167,8 @@
 			},
 			"flavour": "Kazeron's orbital yards will not certify a recovered hull until every frame weld has been inspected.",
 			"tags": [
-				"logistics",
+				"salvage",
+				"d_mods",
 				"campaign_only",
 				"logistics_cap"
 			]
@@ -1143,7 +1176,7 @@
 		{
 			"id": "domain_pattern_laminate",
 			"name": "Domain-Pattern Laminate",
-			"icon": "graphics/icons/fleet_logistics_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/base/league_requisitions.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1173,13 +1206,16 @@
 			},
 			"flavour": "Hegemony refit yards still harden hulls to Domain specifications, emitter and plate alike, unchanged since before the Collapse.",
 			"tags": [
-				"armour"
+				"armour",
+				"kinetic",
+				"high_explosive",
+				"damage_taken"
 			]
 		},
 		{
 			"id": "flak_screen_doctrine",
 			"name": "Flak Screen Doctrine",
-			"icon": "graphics/icons/pointdefenseai_shifted.png",
+			"icon": "graphics/exiledSector/tree/hegemony/flak_screen_doctrine.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1203,13 +1239,14 @@
 			"flavourAutomated": "Hegemony point defense crews pack their flak loads for a wide burst, on the theory that a missile is rarely alone. The ship's core records the pattern while escorting a Dominator through a missile strike, and the refit crew repacks the magazines to match.",
 			"tags": [
 				"point_defense",
-				"weapons"
+				"fragmentation",
+				"on_kill"
 			]
 		},
 		{
 			"id": "hold_the_line",
 			"name": "Hold the Line",
-			"icon": "graphics/icons/coordinated_maneuvers_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/hegemony/hold_the_line.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1232,13 +1269,14 @@
 			"flavour": "Hegemony line drill holds that a battle line which keeps station cannot be broken, only worn down. The crew posts damage-control teams behind the forward armor and learns to stop the ship when the shooting starts. Navy instructors call this courage. Navy accountants call it cheaper than engines.",
 			"flavourAutomated": "Hegemony line drill holds that a battle line which keeps station cannot be broken, only worn down. The ship's core studies recordings of Navy lines under fire, and the refit crew braces the forward armor for a ship that stops when the shooting starts. Navy instructors call this courage. Navy accountants call it cheaper than engines.",
 			"tags": [
-				"armour"
+				"armour",
+				"damage_taken"
 			]
 		},
 		{
 			"id": "auxiliary_screen",
 			"name": "Auxiliary Screen",
-			"icon": "graphics/icons/escort_package.png",
+			"icon": "graphics/exiledSector/tree/base/escort_package.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1266,13 +1304,15 @@
 			"flavour": "Hegemony auxiliary fleets are made of whatever the Navy can requisition, and the battle line is expected to shelter them. A cycle of convoy duty out of Jangala teaches the crew to keep the ship between the enemy and the smaller hulls. The auxiliaries are grateful, in the manner of people who have been told to be.",
 			"flavourAutomated": "Hegemony auxiliary fleets are made of whatever the Navy can requisition, and the battle line is expected to shelter them. The ship's core logs a cycle of convoy duty out of Jangala and learns to keep its hull between the enemy and the smaller ships. The auxiliaries are grateful, in the manner of people who have been told to be.",
 			"tags": [
-				"fleet_support"
+				"fleet_support",
+				"damage_taken",
+				"nearby_ships"
 			]
 		},
 		{
 			"id": "concussion_shells",
 			"name": "Concussion Shells",
-			"icon": "graphics/icons/explosion2_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/hegemony/concussion_shells.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1296,13 +1336,14 @@
 			"flavourAutomated": "Planetary defense batteries on Eventide fire heavy shells with a delayed charge that bursts just inside the plating, shaking loose whatever is mounted nearby. The ship's core copies the fusing tables from a salvaged battery fire-control unit, and the refit crew packs the shells to match.",
 			"tags": [
 				"ballistic",
+				"on_hit",
 				"req_ballistic"
 			]
 		},
 		{
 			"id": "league_picket_targeting",
 			"name": "League Picket Targeting",
-			"icon": "graphics/icons/attuned_sensors.png",
+			"icon": "graphics/exiledSector/tree/persean_league/league_picket_targeting.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1327,13 +1368,14 @@
 			"tags": [
 				"energy",
 				"range",
+				"sensors",
 				"req_energy"
 			]
 		},
 		{
 			"id": "accelerated_shields",
 			"name": "Accelerated Shields",
-			"icon": "graphics/icons/advancedshieldemitter.png",
+			"icon": "graphics/exiledSector/tree/base/accelerated_shields.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1383,7 +1425,7 @@
 		{
 			"id": "adaptive_phase_coils",
 			"name": "Adaptive Phase Coils",
-			"icon": "graphics/icons/adaptive_coils.png",
+			"icon": "graphics/exiledSector/tree/base/adaptive_phase_coils.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1412,15 +1454,15 @@
 			"flavour": "Phase coils lose their grip on normal space as hard flux builds. A crew willing to rewind them by hand can keep that grip a while longer.",
 			"flavourAutomated": "Phase coils lose their grip on normal space as hard flux builds. The ship's core models the slip from its own coil telemetry and corrects for it faster than any hand could rewind them, keeping that grip a while longer.",
 			"tags": [
-				"flux",
 				"phase",
+				"flux",
 				"req_phase"
 			]
 		},
 		{
 			"id": "advanced_optics",
 			"name": "Advanced Optics",
-			"icon": "graphics/icons/advancedoptics.png",
+			"icon": "graphics/exiledSector/tree/base/advanced_optics.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1451,15 +1493,15 @@
 				"advancedoptics"
 			],
 			"tags": [
-				"energy",
 				"beam",
+				"range",
 				"req_beam"
 			]
 		},
 		{
 			"id": "advanced_turret_gyros",
 			"name": "Advanced Turret Gyros",
-			"icon": "graphics/icons/turretgyros.png",
+			"icon": "graphics/exiledSector/tree/base/advanced_turret_gyros.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1517,13 +1559,13 @@
 				"turretgyros"
 			],
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
 			"id": "armored_weapon_mounts",
 			"name": "Armored Weapon Mounts",
-			"icon": "graphics/icons/armoredweapons.png",
+			"icon": "graphics/exiledSector/tree/base/armored_weapon_mounts.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1576,14 +1618,14 @@
 			],
 			"tags": [
 				"armour",
-				"weapons"
+				"weapon"
 			],
 			"moduleShare": "all"
 		},
 		{
 			"id": "automated_repair_unit",
 			"name": "Automated Repair Unit",
-			"icon": "graphics/icons/autorepair.png",
+			"icon": "graphics/exiledSector/tree/base/automated_repair_unit.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1624,7 +1666,7 @@
 		{
 			"id": "auxiliary_thrusters",
 			"name": "Auxiliary Thrusters",
-			"icon": "graphics/icons/auxiliarythrusters.png",
+			"icon": "graphics/exiledSector/tree/base/auxiliary_thrusters.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1652,13 +1694,13 @@
 				"auxiliarythrusters"
 			],
 			"tags": [
-				"speed"
+				"mobility"
 			]
 		},
 		{
 			"id": "ballistic_rangefinder",
 			"name": "Ballistic Rangefinder",
-			"icon": "graphics/icons/ballistic_rangefinder.png",
+			"icon": "graphics/exiledSector/tree/base/ballistic_rangefinder.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -1694,7 +1736,7 @@
 		{
 			"id": "blast_doors",
 			"name": "Blast Doors",
-			"icon": "graphics/icons/blast_doors.png",
+			"icon": "graphics/exiledSector/tree/base/blast_doors.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -1726,13 +1768,14 @@
 				"blast_doors"
 			],
 			"tags": [
-				"hull"
+				"hull",
+				"crew"
 			]
 		},
 		{
 			"id": "converted_hangar",
 			"name": "Converted Hangar",
-			"icon": "graphics/icons/converted_hangar.png",
+			"icon": "graphics/exiledSector/tree/base/converted_hangar.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -1813,14 +1856,14 @@
 				"converted_hangar"
 			],
 			"tags": [
-				"fighter",
-				"req_no_fighter_bays"
+				"strikecraft",
+				"req_no_strikecraft_bays"
 			]
 		},
 		{
 			"id": "converted_fighter_bay",
 			"name": "Converted Fighter Bay",
-			"icon": "graphics/icons/converted_fighterbay.png",
+			"icon": "graphics/exiledSector/tree/base/converted_fighter_bay.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -1866,8 +1909,9 @@
 			],
 			"flavour": "The built-in bays are stripped of launch rails and chassis forges, leaving a great deal of oddly shaped cargo space.",
 			"tags": [
-				"logistics",
-				"req_fighter_bays",
+				"cargo",
+				"crew",
+				"req_strikecraft_bays",
 				"campaign_only",
 				"logistics_cap"
 			]
@@ -1875,7 +1919,7 @@
 		{
 			"id": "dedicated_targeting_core",
 			"name": "Dedicated Targeting Core",
-			"icon": "graphics/icons/dedicated_targeting_core.png",
+			"icon": "graphics/exiledSector/tree/base/dedicated_targeting_core.png",
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -1925,7 +1969,7 @@
 		{
 			"id": "defensive_targeting_array",
 			"name": "Defensive Targeting Array",
-			"icon": "graphics/icons/defensive_targeting_array.png",
+			"icon": "graphics/exiledSector/tree/base/defensive_targeting_array.png",
 			"tier": "KEYSTONE",
 			"integrated": {
 				"effects": [
@@ -1950,15 +1994,15 @@
 			"flavourAutomated": "Wing datalinks rewired to carry the ship's own point-defense solutions. If the pilots complain about the short leash, nobody aboard hears it.",
 			"todo": "Deliberately kept on vanillaHullMod passthrough as a design choice, not a technical limitation - the fighter-spawn hook needed to convert this now exists (see FIGHTER_PD_DAMAGE_BONUS_PERCENT, reused by other nodes). Real vanilla effect also zeroes the launched fighters' patrol range (locking them near the ship) and tags certain fighter types to stay in front of the ship; neither of those is implemented as a reusable effect yet.",
 			"tags": [
-				"fighter",
+				"strikecraft",
 				"point_defense",
-				"req_fighter_bays"
+				"req_strikecraft_bays"
 			]
 		},
 		{
 			"id": "eccm_package",
 			"name": "ECCM Package",
-			"icon": "graphics/icons/eccm.png",
+			"icon": "graphics/exiledSector/tree/base/eccm_package.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2041,14 +2085,15 @@
 				"eccm"
 			],
 			"tags": [
-				"missile"
+				"missile",
+				"electronic_warfare"
 			],
 			"moduleShare": "all"
 		},
 		{
 			"id": "ecm_package",
 			"name": "ECM Package",
-			"icon": "graphics/icons/ecm.png",
+			"icon": "graphics/exiledSector/tree/base/ecm_package.png",
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -2082,13 +2127,13 @@
 			],
 			"flavour": "Jammers, decoy emitters and a deliberately noisy reactor or two, tuned so that enemy fire control never quite trusts its own solutions.",
 			"tags": [
-				"fleet_support"
+				"electronic_warfare"
 			]
 		},
 		{
 			"id": "escort_package",
 			"name": "Escort Package",
-			"icon": "graphics/icons/escort_package.png",
+			"icon": "graphics/exiledSector/tree/base/escort_package.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2140,13 +2185,14 @@
 			],
 			"tags": [
 				"fleet_support",
-				"speed"
+				"mobility",
+				"range"
 			]
 		},
 		{
 			"id": "expanded_deck_crew",
 			"name": "Expanded Deck Crew",
-			"icon": "graphics/icons/expanded_deck_crew.png",
+			"icon": "graphics/exiledSector/tree/base/expanded_deck_crew.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2189,14 +2235,14 @@
 				"expanded_deck_crew"
 			],
 			"tags": [
-				"fighter",
-				"req_fighter_bays"
+				"strikecraft",
+				"req_strikecraft_bays"
 			]
 		},
 		{
 			"id": "hybrid_p_space_shrouding",
 			"name": "Hybrid P-space Shrouding",
-			"icon": "graphics/icons/phase_sensor_upgrades.png",
+			"icon": "graphics/exiledSector/tree/tritachyon/hybrid_p_space_shrouding.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2227,6 +2273,7 @@
 			"flavourAutomated": "Leaked papers from Tri-Tachyon's Hybrid Physics Division (on phase work the corporation swears it abandoned under the Treaty of Thule) describe how to bleed a ship's sensor emissions into the masking field phase ships throw over a fleet. Tri-Tachyon maintains the papers are forgeries.",
 			"tags": [
 				"phase",
+				"sensors",
 				"req_phase",
 				"player_only"
 			]
@@ -2234,7 +2281,7 @@
 		{
 			"id": "league_reload_drill",
 			"name": "League Reload Drill",
-			"icon": "graphics/icons/hoarded_arms.png",
+			"icon": "graphics/exiledSector/tree/persean_league/league_reload_drill.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2265,15 +2312,15 @@
 			"flavour": "League fleets drawn from a dozen squabbling polities still share one reload drill, so that any ship can rearm any other. Serving under a League commission drills it into the crew.",
 			"flavourAutomated": "League fleets drawn from a dozen squabbling polities still share one reload drill, so that any ship can rearm any other. The ship's core records it from the League ships it serves beside and runs it perfectly every time, a feat no League crew has ever managed.",
 			"tags": [
+				"ammo",
 				"ballistic",
-				"energy",
-				"ammo"
+				"energy"
 			]
 		},
 		{
 			"id": "expanded_magazines",
 			"name": "Expanded Magazines",
-			"icon": "graphics/icons/magazines.png",
+			"icon": "graphics/exiledSector/tree/base/expanded_magazines.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2316,15 +2363,15 @@
 				"magazines"
 			],
 			"tags": [
+				"ammo",
 				"ballistic",
-				"energy",
-				"ammo"
+				"energy"
 			]
 		},
 		{
 			"id": "expanded_missile_racks",
 			"name": "Expanded Missile Racks",
-			"icon": "graphics/icons/missleracks.png",
+			"icon": "graphics/exiledSector/tree/base/expanded_missile_racks.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2356,13 +2403,14 @@
 			],
 			"tags": [
 				"missile",
+				"ammo",
 				"req_missile"
 			]
 		},
 		{
 			"id": "extended_shields",
 			"name": "Extended Shields",
-			"icon": "graphics/icons/extendedshieldemitter.png",
+			"icon": "graphics/exiledSector/tree/base/extended_shields.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2400,7 +2448,7 @@
 		{
 			"id": "shield_shunt",
 			"name": "Shield Shunt",
-			"icon": "graphics/icons/shield_shunt.png",
+			"icon": "graphics/exiledSector/tree/base/shield_shunt.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2438,6 +2486,7 @@
 			],
 			"tags": [
 				"armour",
+				"shieldless",
 				"req_shields",
 				"req_unscripted_hull"
 			]
@@ -2445,7 +2494,7 @@
 		{
 			"id": "makeshift_shield_generator",
 			"name": "Makeshift Shield Generator",
-			"icon": "graphics/icons/frontshield.png",
+			"icon": "graphics/exiledSector/tree/base/makeshift_shield_generator.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -2470,7 +2519,7 @@
 				"frontshield"
 			],
 			"tags": [
-				"shield",
+				"front_shield",
 				"req_no_shields",
 				"req_unscripted_hull"
 			]
@@ -2478,7 +2527,7 @@
 		{
 			"id": "missile_autoloader",
 			"name": "Missile Autoloader",
-			"icon": "graphics/icons/missile_autoloader.png",
+			"icon": "graphics/exiledSector/tree/base/missile_autoloader.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -2515,13 +2564,14 @@
 			"flavour": "Rack-side autoloaders that refill the small launchers from a common magazine, for as long as the magazine lasts.",
 			"tags": [
 				"missile",
+				"ammo",
 				"req_missile"
 			]
 		},
 		{
 			"id": "neural_interface",
 			"name": "Neural Interface",
-			"icon": "graphics/icons/neural_interface.png",
+			"icon": "graphics/exiledSector/tree/base/neural_interface.png",
 			"tier": "KEYSTONE",
 			"integrated": {
 				"effects": [
@@ -2551,13 +2601,15 @@
 				"Transferring to either linked ship resets its ship system cooldown and adds a charge."
 			],
 			"tags": [
+				"ship_system",
+				"fleet_support",
 				"player_only"
 			]
 		},
 		{
 			"id": "hardened_shields",
 			"name": "Hardened Shields",
-			"icon": "graphics/icons/hardenedshieldemitter.png",
+			"icon": "graphics/exiledSector/tree/base/hardened_shields.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2593,13 +2645,14 @@
 			],
 			"tags": [
 				"shield",
+				"damage_taken",
 				"req_shields"
 			]
 		},
 		{
 			"id": "hardened_subsystems",
 			"name": "Hardened Subsystems",
-			"icon": "graphics/icons/hardened_subsystems.png",
+			"icon": "graphics/exiledSector/tree/base/hardened_subsystems.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2625,7 +2678,7 @@
 		{
 			"id": "heavy_armor",
 			"name": "Heavy Armor",
-			"icon": "graphics/icons/heavyarmor.png",
+			"icon": "graphics/exiledSector/tree/base/heavy_armor.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2670,7 +2723,7 @@
 		{
 			"id": "nskr_criticalArmor",
 			"name": "Critical Point Refit",
-			"icon": "graphics/icons/nskr_criticalArmor_shifted.png",
+			"icon": "graphics/exiledSector/tree/kesteven/nskr_criticalArmor.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2702,7 +2755,7 @@
 		{
 			"id": "nskr_inertial",
 			"name": "Inertial Supercharging",
-			"icon": "graphics/icons/nskr_inertial.png",
+			"icon": "graphics/exiledSector/tree/kesteven/nskr_inertial.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2741,14 +2794,14 @@
 			"flavour": "A Kesteven R&D modspec lets the crew feed the ship's own momentum into its guns. Kesteven's notes recommend never slowing down.",
 			"flavourAutomated": "A Kesteven R&D modspec lets the refit crew feed the ship's own momentum into its guns. Kesteven's notes recommend never slowing down.",
 			"tags": [
-				"weapons",
-				"speed"
+				"damage",
+				"mobility"
 			]
 		},
 		{
 			"id": "nskr_acoils",
 			"name": "Kesteven High-Energy Weapon Systems",
-			"icon": "graphics/icons/nskr_acoils_shifted.png",
+			"icon": "graphics/exiledSector/tree/kesteven/nskr_acoils.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2778,6 +2831,7 @@
 			"tags": [
 				"energy",
 				"range",
+				"flux",
 				"req_energy"
 			],
 			"moduleShare": "all"
@@ -2785,7 +2839,7 @@
 		{
 			"id": "energy_weapon_flux_cost",
 			"name": "Energy Weapon Flux Cost",
-			"icon": "graphics/icons/power_grid_manipulation_shifted_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/base/energy_weapon_flux_cost.png",
 			"effects": [
 				{
 					"effect": "ENERGY_WEAPON_FLUX_COST_PERCENT",
@@ -2801,7 +2855,7 @@
 		{
 			"id": "energy_weapon_fire_rate",
 			"name": "Energy Weapon Fire Rate",
-			"icon": "graphics/icons/evasive_maneuvering_shifted_blue.png",
+			"icon": "graphics/exiledSector/tree/base/energy_weapon_fire_rate.png",
 			"effects": [
 				{
 					"effect": "ENERGY_WEAPON_RATE_OF_FIRE_PERCENT",
@@ -2810,13 +2864,14 @@
 			],
 			"tags": [
 				"energy",
+				"rate_of_fire",
 				"req_energy"
 			]
 		},
 		{
 			"id": "nskr_absorption",
 			"name": "ABSORB Reserve",
-			"icon": "graphics/icons/frozen_heart_shifted.png",
+			"icon": "graphics/exiledSector/tree/kesteven/nskr_absorption.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2843,14 +2898,14 @@
 			"flavourAutomated": "Disassembling the ABSORB loop from a Kingstork showed the refit crew how to bank the energy the shields block instead of venting it. The ship's core decides when to spend it on the guns.",
 			"tags": [
 				"shield",
-				"weapons",
+				"rate_of_fire",
 				"req_shields"
 			]
 		},
 		{
 			"id": "live_munitions",
 			"name": "Live Munitions",
-			"icon": "graphics/icons/officer_training_shifted_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/enigma/live_munitions.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2884,13 +2939,15 @@
 			},
 			"tags": [
 				"missile",
+				"damage",
+				"on_kill",
 				"req_missile"
 			]
 		},
 		{
 			"id": "all_must_serve",
 			"name": "All Must Serve",
-			"icon": "graphics/icons/recovery_shuttles_shifted.png",
+			"icon": "graphics/exiledSector/tree/base/kazeron_recovery_standards.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2915,14 +2972,15 @@
 				]
 			},
 			"tags": [
-				"logistics",
+				"crew",
+				"on_kill",
 				"player_only"
 			]
 		},
 		{
 			"id": "husk_plating",
 			"name": "Husk Plating",
-			"icon": "graphics/icons/armor_shifted.png",
+			"icon": "graphics/exiledSector/tree/enigma/husk_plating.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -2955,13 +3013,15 @@
 				]
 			},
 			"tags": [
-				"armour"
+				"armour",
+				"repair",
+				"on_kill"
 			]
 		},
 		{
 			"id": "nskr_volatile",
 			"name": "Volatile Flux Tuning",
-			"icon": "graphics/icons/nskr_volatile.png",
+			"icon": "graphics/exiledSector/tree/kesteven/nskr_volatile.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3054,15 +3114,16 @@
 			"flavourAutomated": "A prototype flux injector from Kesteven R&D lets the refit crew trade staying power for tempo. The modspec describes the side effects as manageable. With nobody aboard, there's nothing living to manage.",
 			"tags": [
 				"flux",
-				"speed",
-				"weapons",
+				"flux_level",
+				"rate_of_fire",
+				"mobility",
 				"req_non_phase_hull"
 			]
 		},
 		{
 			"id": "nskr_bigBats",
 			"name": "High Capacitance Banks",
-			"icon": "graphics/icons/nskr_bigBats.png",
+			"icon": "graphics/exiledSector/tree/kesteven/nskr_bigBats.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3091,13 +3152,14 @@
 			],
 			"flavour": "A Kesteven R&D modspec for capacitor banks far larger than any sane design would carry. The ship's systems rarely run dry.",
 			"tags": [
+				"ship_system",
 				"req_system_charges"
 			]
 		},
 		{
 			"id": "frozen_heart",
 			"name": "Frozen Heart",
-			"icon": "graphics/icons/frozen_heart2_shifted.png",
+			"icon": "graphics/exiledSector/tree/enigma/frozen_heart.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -3147,14 +3209,15 @@
 			},
 			"flavour": "query. hull?. scanning. [HULL] collect, amass, gather, fuse, keep. The core does not stop. Neither does anything it holds.",
 			"tags": [
+				"combat_readiness",
 				"armour",
-				"combat_readiness"
+				"on_kill"
 			]
 		},
 		{
 			"id": "high_scatter_amplifier",
 			"name": "High Scatter Amplifier",
-			"icon": "graphics/icons/high_scatter_amp.png",
+			"icon": "graphics/exiledSector/tree/base/high_scatter_amplifier.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3202,15 +3265,15 @@
 			],
 			"todo": "Placeholder magnitudes (50% hard flux, -25% range) pending real balance numbers. Reimplemented as a scalable percentage instead of vanilla's all-or-nothing forced-hard-flux-on-every-beam-hit, and the range reduction is a flat percentage instead of vanilla's reduce-only-the-portion-past-200-units logic - deliberate simplifications, not oversights.",
 			"tags": [
-				"energy",
 				"beam",
+				"damage",
 				"req_beam"
 			]
 		},
 		{
 			"id": "integrated_point_defense_ai",
 			"name": "Integrated Point Defense AI",
-			"icon": "graphics/icons/pointdefenseai.png",
+			"icon": "graphics/exiledSector/tree/base/integrated_point_defense_ai.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3220,7 +3283,8 @@
 					"effect": "PD_BEST_TARGET_LEADING"
 				},
 				{
-					"effect": "PD_RECLASSIFY_SMALL_WEAPONS"
+					"effect": "PD_DAMAGE_TO_MISSILES_PERCENT",
+					"magnitude": 50
 				}
 			],
 			"integrated": {
@@ -3232,11 +3296,11 @@
 						"effect": "PD_BEST_TARGET_LEADING"
 					},
 					{
-						"effect": "PD_RECLASSIFY_SMALL_WEAPONS"
+						"effect": "PD_DAMAGE_TO_MISSILES_PERCENT",
+						"magnitude": 50
 					},
 					{
-						"effect": "PD_DAMAGE_TO_MISSILES_PERCENT",
-						"magnitude": 25
+						"effect": "PD_RECLASSIFY_SMALL_WEAPONS"
 					}
 				]
 			},
@@ -3257,7 +3321,7 @@
 		{
 			"id": "integrated_targeting_unit",
 			"name": "Integrated Targeting Unit",
-			"icon": "graphics/icons/targetingunit.png",
+			"icon": "graphics/exiledSector/tree/base/integrated_targeting_unit.png",
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -3310,7 +3374,7 @@
 		{
 			"id": "nav_relay",
 			"name": "Nav Relay",
-			"icon": "graphics/icons/nav_relay.png",
+			"icon": "graphics/exiledSector/tree/base/nav_relay.png",
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -3343,14 +3407,14 @@
 				"nav_relay"
 			],
 			"tags": [
-				"speed",
-				"fleet_support"
+				"fleet_support",
+				"mobility"
 			]
 		},
 		{
 			"id": "shield_conversion_front",
 			"name": "Shield Conversion - Front",
-			"icon": "graphics/icons/frontemitter.png",
+			"icon": "graphics/exiledSector/tree/base/shield_conversion_front.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3390,14 +3454,14 @@
 			],
 			"flavour": "The omni-directional emitter is locked forward and its projectors refocused into one wide arc.",
 			"tags": [
-				"shield",
+				"front_shield",
 				"req_shields"
 			]
 		},
 		{
 			"id": "shield_conversion_omni",
 			"name": "Shield Conversion - Omni",
-			"icon": "graphics/icons/adaptiveshields.png",
+			"icon": "graphics/exiledSector/tree/base/shield_conversion_omni.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -3429,14 +3493,14 @@
 			],
 			"flavour": "The fixed frontal emitter is replaced with a rotating mount salvaged from an omni-shield hull, which never quite covers what the old one did.",
 			"tags": [
-				"shield",
+				"omni_shield",
 				"req_shields"
 			]
 		},
 		{
 			"id": "operations_center",
 			"name": "Operations Center",
-			"icon": "graphics/icons/operations_center.png",
+			"icon": "graphics/exiledSector/tree/base/operations_center.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -3470,7 +3534,7 @@
 		{
 			"id": "phase_anchor",
 			"name": "Phase Anchor",
-			"icon": "graphics/icons/phase_anchor.png",
+			"icon": "graphics/exiledSector/tree/base/phase_anchor.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -3517,8 +3581,8 @@
 				"phase_anchor"
 			],
 			"tags": [
-				"flux",
 				"phase",
+				"while_phased",
 				"req_phase",
 				"player_only"
 			]
@@ -3526,7 +3590,7 @@
 		{
 			"id": "recovery_shuttles",
 			"name": "Recovery Shuttles",
-			"icon": "graphics/icons/recovery_shuttles.png",
+			"icon": "graphics/exiledSector/tree/base/recovery_shuttles.png",
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -3559,8 +3623,8 @@
 				"recovery_shuttles"
 			],
 			"tags": [
-				"fighter",
-				"logistics",
+				"strikecraft",
+				"crew",
 				"req_crewed",
 				"campaign_only",
 				"logistics_cap"
@@ -3569,7 +3633,7 @@
 		{
 			"id": "reinforced_bulkheads",
 			"name": "Reinforced Bulkheads",
-			"icon": "graphics/icons/reinforcedhull.png",
+			"icon": "graphics/exiledSector/tree/base/reinforced_bulkheads.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3617,13 +3681,14 @@
 				"reinforcedhull"
 			],
 			"tags": [
-				"hull"
+				"hull",
+				"salvage"
 			]
 		},
 		{
 			"id": "resistant_flux_conduits",
 			"name": "Resistant Flux Conduits",
-			"icon": "graphics/icons/fluxbreakers.png",
+			"icon": "graphics/exiledSector/tree/base/resistant_flux_conduits.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3662,14 +3727,16 @@
 				"fluxbreakers"
 			],
 			"tags": [
-				"flux"
+				"flux",
+				"emp",
+				"damage_taken"
 			],
 			"moduleShare": "all"
 		},
 		{
 			"id": "stabilized_shields",
 			"name": "Stabilized Shields",
-			"icon": "graphics/icons/stabilizedshieldemitter.png",
+			"icon": "graphics/exiledSector/tree/base/stabilized_shields.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3707,7 +3774,7 @@
 		{
 			"id": "unstable_injector",
 			"name": "Unstable Injector",
-			"icon": "graphics/icons/unstable_injector.png",
+			"icon": "graphics/exiledSector/tree/base/unstable_injector.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -3736,15 +3803,14 @@
 				"unstable_injector"
 			],
 			"tags": [
-				"speed",
-				"range"
+				"mobility"
 			],
 			"moduleShare": "none"
 		},
 		{
 			"id": "additional_berthing",
 			"name": "Additional Berthing",
-			"icon": "graphics/icons/additional_berthing.png",
+			"icon": "graphics/exiledSector/tree/base/additional_berthing.png",
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -3770,7 +3836,7 @@
 				"additional_berthing"
 			],
 			"tags": [
-				"logistics",
+				"crew",
 				"campaign_only",
 				"logistics_cap"
 			]
@@ -3778,7 +3844,7 @@
 		{
 			"id": "augmented_drive_field",
 			"name": "Augmented Drive Field",
-			"icon": "graphics/icons/augmentedengines.png",
+			"icon": "graphics/exiledSector/tree/base/augmented_drive_field.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3809,14 +3875,15 @@
 				"augmentedengines"
 			],
 			"tags": [
-				"logistics",
+				"mobility",
+				"fuel",
 				"logistics_cap"
 			]
 		},
 		{
 			"id": "auxiliary_fuel_tanks",
 			"name": "Auxiliary Fuel Tanks",
-			"icon": "graphics/icons/auxiliary_fuel_tanks.png",
+			"icon": "graphics/exiledSector/tree/base/auxiliary_fuel_tanks.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3854,14 +3921,14 @@
 				"auxiliary_fuel_tanks"
 			],
 			"tags": [
-				"logistics",
+				"fuel",
 				"logistics_cap"
 			]
 		},
 		{
 			"id": "efficiency_overhaul",
 			"name": "Efficiency Overhaul",
-			"icon": "graphics/icons/efficiency_overhaul.png",
+			"icon": "graphics/exiledSector/tree/base/efficiency_overhaul.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -3932,7 +3999,9 @@
 				"efficiency_overhaul"
 			],
 			"tags": [
-				"logistics",
+				"supplies",
+				"fuel",
+				"crew",
 				"campaign_only",
 				"logistics_cap"
 			]
@@ -3940,7 +4009,7 @@
 		{
 			"id": "expanded_cargo_holds",
 			"name": "Expanded Cargo Holds",
-			"icon": "graphics/icons/expanded_cargo_holds.png",
+			"icon": "graphics/exiledSector/tree/base/expanded_cargo_holds.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -3978,7 +4047,7 @@
 				"expanded_cargo_holds"
 			],
 			"tags": [
-				"logistics",
+				"cargo",
 				"campaign_only",
 				"logistics_cap"
 			]
@@ -3986,7 +4055,7 @@
 		{
 			"id": "high_resolution_sensors",
 			"name": "High Resolution Sensors",
-			"icon": "graphics/icons/hiressensors.png",
+			"icon": "graphics/exiledSector/tree/base/high_resolution_sensors.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4038,14 +4107,14 @@
 				"hiressensors"
 			],
 			"tags": [
-				"logistics",
+				"sensors",
 				"logistics_cap"
 			]
 		},
 		{
 			"id": "insulated_engine_assembly",
 			"name": "Insulated Engine Assembly",
-			"icon": "graphics/icons/insulatedengine.png",
+			"icon": "graphics/exiledSector/tree/base/insulated_engine_assembly.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4092,6 +4161,7 @@
 				"insulatedengine"
 			],
 			"tags": [
+				"sensors",
 				"hull",
 				"logistics_cap"
 			]
@@ -4099,7 +4169,7 @@
 		{
 			"id": "militarized_subsystems",
 			"name": "Militarized Subsystems",
-			"icon": "graphics/icons/militarized_subsystems.png",
+			"icon": "graphics/exiledSector/tree/base/militarized_subsystems.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4130,6 +4200,7 @@
 			],
 			"tags": [
 				"logistics",
+				"mobility",
 				"req_civilian_hull",
 				"campaign_only",
 				"logistics_cap"
@@ -4138,7 +4209,7 @@
 		{
 			"id": "solar_shielding",
 			"name": "Solar Shielding",
-			"icon": "graphics/icons/solar_shielding.png",
+			"icon": "graphics/exiledSector/tree/base/solar_shielding.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4173,7 +4244,7 @@
 		{
 			"id": "surveying_equipment",
 			"name": "Surveying Equipment",
-			"icon": "graphics/icons/surveying_equipment.png",
+			"icon": "graphics/exiledSector/tree/base/surveying_equipment.png",
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -4228,43 +4299,52 @@
 		{
 			"id": "root_low_tech",
 			"name": "Low Tech",
-			"icon": "graphics/icons/root_low_tech.png",
+			"icon": "graphics/exiledSector/tree/roots/root_low_tech.png",
 			"tier": "ROOT",
 			"effects": [
 				{
 					"effect": "LOW_TECH_AFFINITY_FLAT",
 					"magnitude": 10
 				}
+			],
+			"tags": [
+				"low_tech"
 			]
 		},
 		{
 			"id": "root_midline",
 			"name": "Midline",
-			"icon": "graphics/icons/root_midline.png",
+			"icon": "graphics/exiledSector/tree/roots/root_midline.png",
 			"tier": "ROOT",
 			"effects": [
 				{
 					"effect": "MIDLINE_AFFINITY_FLAT",
 					"magnitude": 10
 				}
+			],
+			"tags": [
+				"midline"
 			]
 		},
 		{
 			"id": "root_high_tech",
 			"name": "High Tech",
-			"icon": "graphics/icons/root_high_tech.png",
+			"icon": "graphics/exiledSector/tree/roots/root_high_tech.png",
 			"tier": "ROOT",
 			"effects": [
 				{
 					"effect": "HIGH_TECH_AFFINITY_FLAT",
 					"magnitude": 10
 				}
+			],
+			"tags": [
+				"high_tech"
 			]
 		},
 		{
 			"id": "strikecraft_weapon_damage",
 			"name": "Strikecraft Weapon Damage",
-			"icon": "graphics/icons/fighter_weapon_damage_shifted.png",
+			"icon": "graphics/exiledSector/tree/base/strikecraft_weapon_damage.png",
 			"effects": [
 				{
 					"effect": "FIGHTER_WEAPON_DAMAGE_PERCENT",
@@ -4272,14 +4352,15 @@
 				}
 			],
 			"tags": [
-				"fighter",
-				"req_fighter_bays"
+				"strikecraft",
+				"damage",
+				"req_strikecraft_bays"
 			]
 		},
 		{
 			"id": "strikecraft_speed",
 			"name": "Strikecraft Speed",
-			"icon": "graphics/icons/fighter_speed.png",
+			"icon": "graphics/exiledSector/tree/base/strikecraft_speed.png",
 			"effects": [
 				{
 					"effect": "FIGHTER_TOP_SPEED_PERCENT",
@@ -4287,28 +4368,29 @@
 				}
 			],
 			"tags": [
-				"fighter",
-				"req_fighter_bays"
+				"strikecraft",
+				"req_strikecraft_bays"
 			]
 		},
 		{
 			"id": "affinity",
 			"name": "Affinity",
-			"icon": "graphics/icons/small_flux_optional.png",
+			"icon": "graphics/exiledSector/tree/base/affinity.png",
 			"options": [
 				"high_tech_affinity",
 				"midline_affinity",
 				"low_tech_affinity"
 			],
 			"tags": [
-				"flux",
-				"hull"
+				"low_tech",
+				"midline",
+				"high_tech"
 			]
 		},
 		{
 			"id": "low_tech_affinity",
 			"name": "Low Tech Affinity",
-			"icon": "graphics/icons/root_low_tech.png",
+			"icon": "graphics/exiledSector/tree/roots/root_low_tech.png",
 			"effects": [
 				{
 					"effect": "LOW_TECH_AFFINITY_FLAT",
@@ -4316,14 +4398,13 @@
 				}
 			],
 			"tags": [
-				"hull",
-				"armour"
+				"low_tech"
 			]
 		},
 		{
 			"id": "high_tech_affinity",
 			"name": "High Tech Affinity",
-			"icon": "graphics/icons/root_high_tech.png",
+			"icon": "graphics/exiledSector/tree/roots/root_high_tech.png",
 			"effects": [
 				{
 					"effect": "HIGH_TECH_AFFINITY_FLAT",
@@ -4331,13 +4412,13 @@
 				}
 			],
 			"tags": [
-				"flux"
+				"high_tech"
 			]
 		},
 		{
 			"id": "midline_affinity",
 			"name": "Midline Affinity",
-			"icon": "graphics/icons/root_midline.png",
+			"icon": "graphics/exiledSector/tree/roots/root_midline.png",
 			"effects": [
 				{
 					"effect": "MIDLINE_AFFINITY_FLAT",
@@ -4345,14 +4426,13 @@
 				}
 			],
 			"tags": [
-				"flux",
-				"hull"
+				"midline"
 			]
 		},
 		{
 			"id": "flux_distributor",
 			"name": "Flux Distributor",
-			"icon": "graphics/icons/flux_distributor.png",
+			"icon": "graphics/exiledSector/tree/base/flux_distributor.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4397,7 +4477,7 @@
 		{
 			"id": "shared_fate",
 			"name": "Shared Fate",
-			"icon": "graphics/icons/shared_fate.png",
+			"icon": "graphics/exiledSector/tree/persean_league/shared_fate.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4424,13 +4504,15 @@
 			"flavour": "League battle lines drawn from rival polities learned to stand or fall together, if only because none would let another take the credit for retreating first.",
 			"tags": [
 				"shield",
+				"damage_taken",
+				"nearby_ships",
 				"req_shields"
 			]
 		},
 		{
 			"id": "shared_damage_taken",
 			"name": "Shared Damage Taken",
-			"icon": "graphics/icons/shared_damage_taken.png",
+			"icon": "graphics/exiledSector/tree/persean_league/shared_damage_taken.png",
 			"effects": [
 				{
 					"effect": "SHIELD_DAMAGE_SHARED_PERCENT",
@@ -4439,13 +4521,15 @@
 			],
 			"tags": [
 				"shield",
+				"damage_taken",
+				"nearby_ships",
 				"req_shields"
 			]
 		},
 		{
 			"id": "survey_heavy_machinery_cost_reduction",
 			"name": "Survey Heavy Machinery Cost Reduction",
-			"icon": "graphics/icons/survey_mach_cost.png",
+			"icon": "graphics/exiledSector/tree/base/survey_heavy_machinery_cost_reduction.png",
 			"hullSizeEffects": [
 				{
 					"effect": "SURVEY_COST_REDUCTION_HEAVY_MACHINERY",
@@ -4463,7 +4547,7 @@
 		{
 			"id": "survey_supplies_cost_reduction",
 			"name": "Survey Supplies Cost Reduction",
-			"icon": "graphics/icons/survey_supplies_cost_reduction.png",
+			"icon": "graphics/exiledSector/tree/base/survey_supplies_cost_reduction.png",
 			"hullSizeEffects": [
 				{
 					"effect": "SURVEY_COST_REDUCTION_SUPPLIES",
@@ -4481,7 +4565,7 @@
 		{
 			"id": "survey_cost_reduction",
 			"name": "Survey Cost Reduction",
-			"icon": "graphics/icons/survey_generic_cost_reduction.png",
+			"icon": "graphics/exiledSector/tree/base/survey_cost_reduction.png",
 			"hullSizeEffects": [
 				{
 					"effect": "SURVEY_COST_REDUCTION_HEAVY_MACHINERY",
@@ -4506,7 +4590,7 @@
 		{
 			"id": "sensor_strength",
 			"name": "Sensor Strength",
-			"icon": "graphics/icons/increased_sensor_strength.png",
+			"icon": "graphics/exiledSector/tree/base/sensor_strength.png",
 			"hullSizeEffects": [
 				{
 					"effect": "SENSOR_STRENGTH_FLAT",
@@ -4517,13 +4601,13 @@
 				}
 			],
 			"tags": [
-				"logistics"
+				"sensors"
 			]
 		},
 		{
 			"id": "increased_sensor_strength",
 			"name": "Increased Sensor Strength",
-			"icon": "graphics/icons/sensors_circular_shifted.png",
+			"icon": "graphics/exiledSector/tree/persean_league/increased_sensor_strength.png",
 			"effects": [
 				{
 					"effect": "SENSOR_STRENGTH_PERCENT",
@@ -4531,13 +4615,13 @@
 				}
 			],
 			"tags": [
-				"logistics"
+				"sensors"
 			]
 		},
 		{
 			"id": "knights_charge",
 			"name": "Knight's Charge",
-			"icon": "graphics/icons/violence_of_action.png",
+			"icon": "graphics/exiledSector/tree/luddic/knights_charge.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4565,13 +4649,13 @@
 			"flavour": "The Knights of Ludd hold that a righteous ship meets its enemy at full burn, and drilling alongside them at Ceyx teaches the crew to trim the engines and controls for the charge.",
 			"flavourAutomated": "The Knights of Ludd hold that a righteous ship meets its enemy at full burn. The ship's core logs their charges at Ceyx and trims its engines and controls to match. The Knights would not call the result righteous.",
 			"tags": [
-				"speed"
+				"mobility"
 			]
 		},
 		{
 			"id": "martyrs_payload",
 			"name": "Martyr's Payload",
-			"icon": "graphics/icons/martyrs_payload.png",
+			"icon": "graphics/exiledSector/tree/luddic/martyrs_payload.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4610,14 +4694,14 @@
 			"flavour": "Picking through the wrecks of Luddic Path carriers showed the crew how the Path tears the engine governors out of its bombers and arms their warheads the moment they leave the deck. The faithful accept that some payloads go off before they ever reach the enemy.",
 			"flavourAutomated": "Flight recorders from wrecked Luddic Path carriers show how the Path tears the engine governors out of its bombers and arms their warheads the moment they leave the deck. The ship's core applies the same settings to its own bombers, and logs the ones that go off early without comment.",
 			"tags": [
-				"fighter",
-				"req_fighter_bays"
+				"strikecraft",
+				"req_strikecraft_bays"
 			]
 		},
 		{
 			"id": "restriction_breeds_creativity",
 			"name": "Restriction Breeds Creativity",
-			"icon": "graphics/icons/restriction_breeds_creativity.png",
+			"icon": "graphics/exiledSector/tree/pirate/restriction_breeds_creativity.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4641,13 +4725,14 @@
 			"flavourAutomated": "Captured pirate hulls show the refit crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Pirates call this maintenance.",
 			"tags": [
 				"d_mods",
-				"armour"
+				"armour",
+				"damage_taken"
 			]
 		},
 		{
 			"id": "perseverance_through_faith",
 			"name": "Perseverance Through Faith",
-			"icon": "graphics/icons/perseverence_through_faith.png",
+			"icon": "graphics/exiledSector/tree/luddic/perseverance_through_faith.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4675,13 +4760,13 @@
 			"flavourAutomated": "Luddic faithful hold that a scarred ship, like a penitent, finds its strength in hardship. The ship's core holds no faith, only damage logs showing the battered guns of Luddic ships firing long past the point they should have failed. It keeps its own guns fighting the same way.",
 			"tags": [
 				"d_mods",
-				"weapons"
+				"damage"
 			]
 		},
 		{
 			"id": "increased_mass",
 			"name": "Increased Mass",
-			"icon": "graphics/icons/mass_shifted.png",
+			"icon": "graphics/exiledSector/tree/luddic/increased_mass.png",
 			"effects": [
 				{
 					"effect": "SHIP_MASS_PERCENT",
@@ -4696,7 +4781,7 @@
 		{
 			"id": "pathers_prow",
 			"name": "Pather's Prow",
-			"icon": "graphics/icons/bulk_transport_shifted.png",
+			"icon": "graphics/exiledSector/tree/luddic/pathers_prow.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4721,7 +4806,7 @@
 		{
 			"id": "litany_of_the_fallen",
 			"name": "Litany of the Fallen",
-			"icon": "graphics/icons/luddic_pilgrims_path_gold_circular.png",
+			"icon": "graphics/exiledSector/tree/luddic/litany_of_the_fallen.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4745,13 +4830,14 @@
 			"todo": "Needs an icon.",
 			"tags": [
 				"hull",
+				"damage_taken",
 				"req_crewed"
 			]
 		},
 		{
 			"id": "sanctified_scars",
 			"name": "Sanctified Scars",
-			"icon": "graphics/icons/scars_shifted.png",
+			"icon": "graphics/exiledSector/tree/luddic/sanctified_scars.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4781,7 +4867,7 @@
 		{
 			"id": "rite_of_mortification",
 			"name": "Rite of Mortification",
-			"icon": "graphics/icons/shieldsmaybe_shifted.png",
+			"icon": "graphics/exiledSector/tree/luddic/rite_of_mortification.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4809,13 +4895,14 @@
 			"todo": "Needs an icon.",
 			"tags": [
 				"flux",
+				"hull",
 				"req_shields"
 			]
 		},
 		{
 			"id": "crustacean_integration",
 			"name": "Crustacean Integration",
-			"icon": "graphics/icons/crustacean_integration.png",
+			"icon": "graphics/exiledSector/tree/sindrian_dictat/crustacean_integration.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4858,14 +4945,14 @@
 			"flavour": "You control the speed at which these lobsters die.",
 			"tags": [
 				"combat_readiness",
-				"speed",
+				"mobility",
 				"player_only"
 			]
 		},
 		{
 			"id": "waste_not",
 			"name": "Waste Not",
-			"icon": "graphics/icons/waste_not.png",
+			"icon": "graphics/exiledSector/tree/pirate/waste_not.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4903,13 +4990,14 @@
 			"flavourAutomated": "The ship's core logs how freebooters strip every wreck to the frame and patch their ships back to fighting trim from whatever a battle leaves behind. Its repair drones do the same. Nothing is wasted, least of all the dead.",
 			"tags": [
 				"combat_readiness",
+				"salvage",
 				"player_only"
 			]
 		},
 		{
 			"id": "crew_capacity",
 			"name": "Crew Capacity",
-			"icon": "graphics/icons/crew_capacity_flat.png",
+			"icon": "graphics/exiledSector/tree/base/crew_capacity.png",
 			"hullSizeEffects": [
 				{
 					"effect": "CREW_CAPACITY_FLAT",
@@ -4920,14 +5008,14 @@
 				}
 			],
 			"tags": [
-				"logistics",
+				"crew",
 				"campaign_only"
 			]
 		},
 		{
 			"id": "engine_durability_and_sensor_profile",
 			"name": "Engine Durability and Sensor Profile",
-			"icon": "graphics/icons/engine_durability.png",
+			"icon": "graphics/exiledSector/tree/base/engine_durability_and_sensor_profile.png",
 			"effects": [
 				{
 					"effect": "ENGINE_DURABILITY_PERCENT",
@@ -4939,13 +5027,14 @@
 				}
 			],
 			"tags": [
+				"sensors",
 				"hull"
 			]
 		},
 		{
 			"id": "cargo_capacity",
 			"name": "Cargo Capacity",
-			"icon": "graphics/icons/cargo_capacity_flat.png",
+			"icon": "graphics/exiledSector/tree/base/cargo_capacity.png",
 			"hullSizeEffects": [
 				{
 					"effect": "CARGO_CAPACITY_FLAT",
@@ -4956,14 +5045,14 @@
 				}
 			],
 			"tags": [
-				"logistics",
+				"cargo",
 				"campaign_only"
 			]
 		},
 		{
 			"id": "fuel",
 			"name": "Fuel",
-			"icon": "graphics/icons/fuel_flat.png",
+			"icon": "graphics/exiledSector/tree/base/fuel.png",
 			"hullSizeEffects": [
 				{
 					"effect": "FUEL_CAPACITY_FLAT",
@@ -4974,13 +5063,13 @@
 				}
 			],
 			"tags": [
-				"logistics"
+				"fuel"
 			]
 		},
 		{
 			"id": "shield_arc",
 			"name": "Shield Arc",
-			"icon": "graphics/icons/shield_arc.png",
+			"icon": "graphics/exiledSector/tree/base/shield_arc.png",
 			"effects": [
 				{
 					"effect": "SHIELD_ARC_FLAT",
@@ -4995,7 +5084,7 @@
 		{
 			"id": "shield_raise_rate",
 			"name": "Shield Raise Rate",
-			"icon": "graphics/icons/shield_raise_rate.png",
+			"icon": "graphics/exiledSector/tree/base/shield_raise_rate.png",
 			"effects": [
 				{
 					"effect": "SHIELD_RAISE_RATE_PERCENT",
@@ -5010,7 +5099,7 @@
 		{
 			"id": "shield_turn_rate",
 			"name": "Shield Turn Rate",
-			"icon": "graphics/icons/shield_turn_rate.png",
+			"icon": "graphics/exiledSector/tree/base/shield_turn_rate.png",
 			"effects": [
 				{
 					"effect": "SHIELD_TURN_RATE_PERCENT",
@@ -5018,14 +5107,14 @@
 				}
 			],
 			"tags": [
-				"shield",
+				"omni_shield",
 				"req_shields"
 			]
 		},
 		{
 			"id": "shield_raise_rate_or_shield_turn_rate",
 			"name": "Shield Raise Rate or Shield Turn Rate",
-			"icon": "graphics/icons/shield_turn_raise_rate_optional.png",
+			"icon": "graphics/exiledSector/tree/base/shield_raise_rate_or_shield_turn_rate.png",
 			"options": [
 				"shield_raise_rate",
 				"shield_turn_rate"
@@ -5038,20 +5127,21 @@
 		{
 			"id": "ballistic_or_energy_weapon_damage",
 			"name": "Ballistic or Energy Weapon Damage",
-			"icon": "graphics/icons/ballistic_damage.png",
+			"icon": "graphics/exiledSector/tree/base/ballistic_weapon_damage.png",
 			"options": [
 				"ballistic_weapon_damage",
 				"non_beam_energy_weapon_damage"
 			],
 			"tags": [
 				"ballistic",
-				"energy"
+				"energy",
+				"damage"
 			]
 		},
 		{
 			"id": "ballistic_and_energy_weapon_range",
 			"name": "Ballistic and Energy Weapon Range",
-			"icon": "graphics/icons/ballistic_and_energy_weapon_range.png",
+			"icon": "graphics/exiledSector/tree/base/ballistic_and_energy_weapon_range.png",
 			"hullSizeEffects": [
 				{
 					"effect": "BALLISTIC_WEAPON_RANGE_PERCENT",
@@ -5075,7 +5165,7 @@
 		{
 			"id": "shield_flux_damage_reduction",
 			"name": "Shield Flux/Damage Reduction",
-			"icon": "graphics/icons/shield_damage_taken_multi.png",
+			"icon": "graphics/exiledSector/tree/base/shield_flux_damage_reduction.png",
 			"effects": [
 				{
 					"effect": "SHIELD_DAMAGE_TAKEN_MULT",
@@ -5084,13 +5174,14 @@
 			],
 			"tags": [
 				"shield",
+				"damage_taken",
 				"req_shields"
 			]
 		},
 		{
 			"id": "shield_upkeep_reduction",
 			"name": "Shield Upkeep Reduction",
-			"icon": "graphics/icons/shield_upkeep_multi.png",
+			"icon": "graphics/exiledSector/tree/base/shield_upkeep_reduction.png",
 			"effects": [
 				{
 					"effect": "SHIELD_UPKEEP_MULT",
@@ -5105,7 +5196,7 @@
 		{
 			"id": "top_speed",
 			"name": "Top Speed",
-			"icon": "graphics/icons/top_speed.png",
+			"icon": "graphics/exiledSector/tree/base/top_speed.png",
 			"hullSizeEffects": [
 				{
 					"effect": "TOP_SPEED_FLAT",
@@ -5116,13 +5207,13 @@
 				}
 			],
 			"tags": [
-				"speed"
+				"mobility"
 			]
 		},
 		{
 			"id": "phase_cloak_flux_threshold",
 			"name": "Phase Cloak Flux Threshold",
-			"icon": "graphics/icons/phase_cloak_flux_threshold.png",
+			"icon": "graphics/exiledSector/tree/base/phase_cloak_flux_threshold.png",
 			"effects": [
 				{
 					"effect": "PHASE_CLOAK_FLUX_THRESHOLD_PERCENT",
@@ -5137,7 +5228,7 @@
 		{
 			"id": "less_emp_damage_taken",
 			"name": "Less EMP Damage Taken",
-			"icon": "graphics/icons/emp_damage_taken_multi.png",
+			"icon": "graphics/exiledSector/tree/base/less_emp_damage_taken.png",
 			"effects": [
 				{
 					"effect": "EMP_DAMAGE_TAKEN_MULT",
@@ -5145,13 +5236,14 @@
 				}
 			],
 			"tags": [
-				"hull"
+				"emp",
+				"damage_taken"
 			]
 		},
 		{
 			"id": "increased_vent_rate",
 			"name": "Increased Vent Rate",
-			"icon": "graphics/icons/increased_vent_rate.png",
+			"icon": "graphics/exiledSector/tree/base/increased_vent_rate.png",
 			"effects": [
 				{
 					"effect": "VENT_RATE_PERCENT",
@@ -5165,7 +5257,7 @@
 		{
 			"id": "vent_rate_and_emp_damage",
 			"name": "Vent Rate and EMP Damage",
-			"icon": "graphics/icons/vent_rate_and_emp_damage.png",
+			"icon": "graphics/exiledSector/tree/base/vent_rate_and_emp_damage.png",
 			"effects": [
 				{
 					"effect": "VENT_RATE_PERCENT",
@@ -5177,14 +5269,16 @@
 				}
 			],
 			"tags": [
-				"flux"
+				"flux",
+				"emp",
+				"damage_taken"
 			],
 			"moduleShare": "all"
 		},
 		{
 			"id": "weapon_durability",
 			"name": "Weapon Durability",
-			"icon": "graphics/icons/weapon_durability.png",
+			"icon": "graphics/exiledSector/tree/base/weapon_durability.png",
 			"effects": [
 				{
 					"effect": "WEAPON_DURABILITY_PERCENT",
@@ -5192,7 +5286,7 @@
 				}
 			],
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
@@ -5249,7 +5343,7 @@
 		{
 			"id": "point_defense_damage_to_missiles_and_fighters",
 			"name": "Point Defense Damage to Missiles and Fighters",
-			"icon": "graphics/icons/pd_damage_to_missiles.png",
+			"icon": "graphics/exiledSector/tree/base/point_defense_damage_to_missiles_and_fighters.png",
 			"effects": [
 				{
 					"effect": "PD_DAMAGE_TO_MISSILES_PERCENT",
@@ -5267,7 +5361,7 @@
 		{
 			"id": "damage_to_helpless_ships",
 			"name": "Damage to Helpless Ships",
-			"icon": "graphics/icons/emergency_burn_shifted.png",
+			"icon": "graphics/exiledSector/tree/pirate/damage_to_helpless_ships.png",
 			"effects": [
 				{
 					"effect": "DAMAGE_TO_HELPLESS_SHIP_PERCENT",
@@ -5277,13 +5371,13 @@
 			"flavour": "Fire-control software lifted from a pirate wreck, written to mark any target with failing shields or dead drives. The rest of its memory is gambling ledgers.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapons"
+				"damage"
 			]
 		},
 		{
 			"id": "weapon_flux_cost",
 			"name": "Weapon Flux Cost",
-			"icon": "graphics/icons/energy_weapon_mastery_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/pirate/weapon_flux_cost.png",
 			"effects": [
 				{
 					"effect": "WEAPON_FLUX_COST_PERCENT",
@@ -5293,14 +5387,14 @@
 			"flavour": "Pirate refits run every weapon mount with its capacitor safeties bypassed. The safeties go in a crate, in case of inspection.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapons",
+				"weapon",
 				"flux"
 			]
 		},
 		{
 			"id": "acceleration",
 			"name": "Acceleration",
-			"icon": "graphics/icons/engine_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/pirate/acceleration.png",
 			"effects": [
 				{
 					"effect": "ACCELERATION_PERCENT",
@@ -5310,13 +5404,13 @@
 			"flavour": "Drive injectors rebored the pirate way, wide and rough, for a fast start from a standing burn. The tolerances are approximate.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"speed"
+				"mobility"
 			]
 		},
 		{
 			"id": "damage_to_slower_ships",
 			"name": "Damage to Slower Ships",
-			"icon": "graphics/icons/coordinated_maneuvers2_shifted_shifted_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/pirate/damage_to_slower_ships.png",
 			"effects": [
 				{
 					"effect": "DAMAGE_TO_SLOWER_SHIP_PERCENT",
@@ -5326,13 +5420,13 @@
 			"flavour": "Targeting tables from a raider's fire-control core weight every shot toward whatever can't outrun the ship.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapons"
+				"damage"
 			]
 		},
 		{
 			"id": "maneuverability",
 			"name": "Maneuverability",
-			"icon": "graphics/icons/maneuverability_percent.png",
+			"icon": "graphics/exiledSector/tree/base/maneuverability.png",
 			"effects": [
 				{
 					"effect": "MANEUVERABILITY_PERCENT",
@@ -5340,13 +5434,13 @@
 				}
 			],
 			"tags": [
-				"speed"
+				"mobility"
 			]
 		},
 		{
 			"id": "strikecraft_replacement",
 			"name": "Strikecraft Replacement",
-			"icon": "graphics/icons/fighter_replacement.png",
+			"icon": "graphics/exiledSector/tree/base/strikecraft_replacement.png",
 			"effects": [
 				{
 					"effect": "FIGHTER_REPLACEMENT_RECOVERY_PERCENT",
@@ -5358,14 +5452,14 @@
 				}
 			],
 			"tags": [
-				"fighter",
-				"req_fighter_bays"
+				"strikecraft",
+				"req_strikecraft_bays"
 			]
 		},
 		{
 			"id": "reduced_monthly_supplies",
 			"name": "Reduced Monthly Supplies",
-			"icon": "graphics/icons/reduced_monthly_supplies.png",
+			"icon": "graphics/exiledSector/tree/base/reduced_monthly_supplies.png",
 			"effects": [
 				{
 					"effect": "SUPPLIES_PER_MONTH_MULT",
@@ -5373,14 +5467,14 @@
 				}
 			],
 			"tags": [
-				"logistics",
+				"supplies",
 				"campaign_only"
 			]
 		},
 		{
 			"id": "rationing",
 			"name": "Rationing",
-			"icon": "graphics/icons/rationing.png",
+			"icon": "graphics/exiledSector/tree/base/rationing.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -5405,7 +5499,8 @@
 				]
 			},
 			"tags": [
-				"logistics",
+				"supplies",
+				"fuel",
 				"campaign_only",
 				"logistics_cap"
 			]
@@ -5413,7 +5508,7 @@
 		{
 			"id": "additional_beam_splits",
 			"name": "Additional Beam Splits",
-			"icon": "graphics/icons/beam_split_reduced_damage.png",
+			"icon": "graphics/exiledSector/tree/sindrian_dictat/additional_beam_splits.png",
 			"effects": [
 				{
 					"effect": "BEAM_WEAPON_SPLIT_TARGETS_FLAT",
@@ -5421,7 +5516,6 @@
 				}
 			],
 			"tags": [
-				"energy",
 				"beam",
 				"req_beam"
 			]
@@ -5429,7 +5523,7 @@
 		{
 			"id": "sindrian_shielding",
 			"name": "Sindrian Shielding",
-			"icon": "graphics/icons/sindrian_shielding.png",
+			"icon": "graphics/exiledSector/tree/sindrian_dictat/sindrian_shielding.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -5457,13 +5551,14 @@
 			"flavourAutomated": "Sindria's day side is scoured by radiation, and the emitters on its orbital arrays are hardened against it. The refit crew copies the shielding pattern from a derelict Askonian array onto this ship's emitters. Whoever designed it learned the hard way, as most Sindrians learn most things.",
 			"tags": [
 				"shield",
+				"damage_taken",
 				"req_shields"
 			]
 		},
 		{
 			"id": "lions_guard_arsenal",
 			"name": "Lion's Guard Arsenal",
-			"icon": "graphics/icons/ballistic_and_energy_weapon_range.png",
+			"icon": "graphics/exiledSector/tree/base/ballistic_and_energy_weapon_range.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -5496,7 +5591,7 @@
 		{
 			"id": "strategic_fuel_reserve",
 			"name": "Strategic Fuel Reserve",
-			"icon": "graphics/icons/loadout_design_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/sindrian_dictat/strategic_fuel_reserve.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -5514,7 +5609,7 @@
 			},
 			"flavour": "Diktat burn tables treat every unit of fuel aboard as state property on loan. Repayment is expected in full.",
 			"tags": [
-				"logistics",
+				"fuel",
 				"campaign_only",
 				"logistics_cap"
 			]
@@ -5522,7 +5617,7 @@
 		{
 			"id": "executors_decree",
 			"name": "Executor's Decree",
-			"icon": "graphics/icons/safety_overrides_shifted.png",
+			"icon": "graphics/exiledSector/tree/sindrian_dictat/executors_decree.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -5556,13 +5651,14 @@
 			},
 			"flavour": "A standing decree of the Supreme Executor names retreat as treason. It has no provision for appeal.",
 			"tags": [
-				"weapons"
+				"damage",
+				"damage_taken"
 			]
 		},
 		{
 			"id": "lions_roar",
 			"name": "Lion's Roar",
-			"icon": "graphics/icons/sensors_circular_shifted_1.png",
+			"icon": "graphics/exiledSector/tree/sindrian_dictat/lions_roar.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -5580,13 +5676,14 @@
 			},
 			"flavour": "Diktat warships broadcast the Supreme Executor's addresses on open channels as they close, at a volume the comm filter can't fully block. Sindrian citizens are required to listen to the end.",
 			"tags": [
-				"fleet_support"
+				"fleet_support",
+				"nearby_ships"
 			]
 		},
 		{
 			"id": "honor_guard",
 			"name": "Honor Guard",
-			"icon": "graphics/icons/leadership2_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/sindrian_dictat/honor_guard.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -5608,13 +5705,14 @@
 			},
 			"flavour": "The Lion's Guard keeps pace with the Supreme Executor's flagship, never the other way round. Most of its recorded maneuvers are parades.",
 			"tags": [
-				"speed"
+				"mobility",
+				"damage_taken"
 			]
 		},
 		{
 			"id": "energy_damage_resistance",
 			"name": "Energy Damage Resistance",
-			"icon": "graphics/icons/less_energy_damage_taken.png",
+			"icon": "graphics/exiledSector/tree/sindrian_dictat/energy_damage_resistance.png",
 			"effects": [
 				{
 					"effect": "ENERGY_DAMAGE_TAKEN_PERCENT",
@@ -5622,13 +5720,14 @@
 				}
 			],
 			"tags": [
-				"dmgtypeenergy"
+				"energy_damage",
+				"damage_taken"
 			]
 		},
 		{
 			"id": "fragmentation_damage_resistance",
 			"name": "Fragmentation Damage Resistance",
-			"icon": "graphics/icons/repair_coordinator_shifted_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/hegemony/fragmentation_damage_resistance.png",
 			"effects": [
 				{
 					"effect": "FRAGMENTATION_DAMAGE_TAKEN_PERCENT",
@@ -5636,13 +5735,14 @@
 				}
 			],
 			"tags": [
-				"armour"
+				"fragmentation",
+				"damage_taken"
 			]
 		},
 		{
 			"id": "ammo_capacity",
 			"name": "Ammo Capacity",
-			"icon": "graphics/icons/ammo_capacity.png",
+			"icon": "graphics/exiledSector/tree/persean_league/ammo_capacity.png",
 			"effects": [
 				{
 					"effect": "BALLISTIC_WEAPON_AMMO_PERCENT",
@@ -5654,13 +5754,15 @@
 				}
 			],
 			"tags": [
-				"ammo"
+				"ammo",
+				"ballistic",
+				"energy"
 			]
 		},
 		{
 			"id": "peak_cr_duration",
 			"name": "Peak CR Duration",
-			"icon": "graphics/icons/peak_cr_duration.png",
+			"icon": "graphics/exiledSector/tree/base/peak_cr_duration.png",
 			"effects": [
 				{
 					"effect": "PEAK_CR_DURATION_PERCENT",
@@ -5674,7 +5776,7 @@
 		{
 			"id": "temporary_maneuverability",
 			"name": "Temporary Maneuverability",
-			"icon": "graphics/icons/temporary_acceleration.png",
+			"icon": "graphics/exiledSector/tree/luddic/temporary_maneuverability.png",
 			"effects": [
 				{
 					"effect": "MANEUVERABILITY_PERCENT",
@@ -5683,13 +5785,13 @@
 			],
 			"temporaryAfterDeploymentSeconds": 90,
 			"tags": [
-				"speed"
+				"mobility"
 			]
 		},
 		{
 			"id": "freebooters_charge",
 			"name": "Freebooter's Charge",
-			"icon": "graphics/icons/reckless_assault.png",
+			"icon": "graphics/exiledSector/tree/pirate/freebooters_charge.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -5728,24 +5830,27 @@
 			"flavour": "Pirate captains who joined the crew drill the habits that make freebooters so dangerous up close: charge in, fire everything and count the casualties later. They rarely do the counting.",
 			"flavourAutomated": "The ship's core logs every fight it sees freebooters win up close: charge in, fire everything and count the casualties later. It copies the first two steps exactly. It always does the counting.",
 			"tags": [
-				"weapons"
+				"damage"
 			]
 		},
 		{
 			"id": "ecm_resistance",
 			"name": "ECM Resistance",
-			"icon": "graphics/icons/cybernetic_augmentation_shifted.png",
+			"icon": "graphics/exiledSector/tree/base/ecm_resistance.png",
 			"effects": [
 				{
 					"effect": "ELECTRONIC_WARFARE_PENALTY_MULT",
 					"magnitude": -10
 				}
+			],
+			"tags": [
+				"electronic_warfare"
 			]
 		},
 		{
 			"id": "ballistic_and_energy_weapon_range_while_escorting",
 			"name": "Ballistic and Energy Weapon Range While Escorting",
-			"icon": "graphics/icons/gunnery_implants_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/base/ballistic_and_energy_weapon_range_while_escorting.png",
 			"effects": [
 				{
 					"effect": "ESCORT_WEAPON_RANGE_BONUS_PERCENT",
@@ -5757,13 +5862,14 @@
 				"CRUISER"
 			],
 			"tags": [
-				"range"
+				"range",
+				"fleet_support"
 			]
 		},
 		{
 			"id": "top_speed_while_escorting",
 			"name": "Top Speed While Escorting",
-			"icon": "graphics/icons/engine3_shifted.png",
+			"icon": "graphics/exiledSector/tree/base/top_speed_while_escorting.png",
 			"effects": [
 				{
 					"effect": "ESCORT_SPEED_BONUS_PERCENT",
@@ -5775,13 +5881,14 @@
 				"CRUISER"
 			],
 			"tags": [
-				"speed"
+				"mobility",
+				"fleet_support"
 			]
 		},
 		{
 			"id": "dynamic_grid",
 			"name": "Dynamic Grid",
-			"icon": "graphics/icons/na_dynamic_grid.png",
+			"icon": "graphics/exiledSector/tree/nightcross/na_dynamic_grid.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -5833,15 +5940,16 @@
 			"flavour": "Nightcross Armory fits its dynamic coils to almost every hull it builds and never sells them on their own, so the crew pulls a set from a boarded Nightcross wreck. The warranty, naturally, does not cover third-party installation.",
 			"flavourAutomated": "Nightcross Armory fits its dynamic coils to almost every hull it builds and never sells them on their own, so the refit crew pulls a set from a boarded Nightcross wreck. The warranty, naturally, does not cover third-party installation, least of all into a machine.",
 			"tags": [
-				"shield",
 				"energy",
+				"rate_of_fire",
+				"shield",
 				"req_shields"
 			]
 		},
 		{
 			"id": "ion_bolter_rounds",
 			"name": "Ion Bolter Rounds",
-			"icon": "graphics/icons/na_ion_rounds.png",
+			"icon": "graphics/exiledSector/tree/nightcross/na_ion_bolter_rounds.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -5860,14 +5968,16 @@
 			"flavour": "The NCA Vendor sells Ion Bolters to any well-funded mercenary, and taking one apart shows the crew how to overdrive this ship's energy shots the same way. The terms of sale forbid exactly this, in very small print.",
 			"flavourAutomated": "The NCA Vendor sells Ion Bolters to any well-funded mercenary, and taking one apart shows the refit crew how to overdrive this ship's energy shots the same way. The terms of sale forbid exactly this, in very small print.",
 			"tags": [
-				"energy",
+				"non_beam_energy",
+				"emp",
+				"on_hit",
 				"req_non_beam_energy"
 			]
 		},
 		{
 			"id": "hardlight_marking",
 			"name": "Hardlight Marking",
-			"icon": "graphics/icons/na_hardlight_infusion.png",
+			"icon": "graphics/exiledSector/tree/nightcross/na_hardlight_marking.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -5894,14 +6004,16 @@
 			"flavour": "Nightcross Restricted Hardlight Rifles, looted from a hidden NCA research outpost, keep count of every hit they land on a target, and the crew learns to port that counter into this carrier's wing datalink.",
 			"flavourAutomated": "Nightcross Restricted Hardlight Rifles, looted from a hidden NCA research outpost, keep count of every hit they land on a target. The ship's core reads the counter's firmware and ports it into its own wing datalink.",
 			"tags": [
-				"fighter",
-				"req_fighter_bays"
+				"strikecraft",
+				"damage",
+				"on_hit",
+				"req_strikecraft_bays"
 			]
 		},
 		{
 			"id": "phase_entangled_wings",
 			"name": "Phase-Entangled Wings",
-			"icon": "graphics/icons/field_modulation_circular_alt1.png",
+			"icon": "graphics/exiledSector/tree/tritachyon/phase_entangled_wings.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -5928,14 +6040,15 @@
 			"flavour": "Tri-Tachyon's phase labs learned to lock the coils of a strike craft wing into one shared state, so a hit on one craft bleeds through p-space into the whole wing. A defector from those labs, smuggled out at no small cost, walks the crew through retuning this carrier's strike craft coils to the same entangled frequency.",
 			"flavourAutomated": "Tri-Tachyon's phase labs learned to lock the coils of a strike craft wing into one shared state, so a hit on one craft bleeds through p-space into the whole wing. A defector from those labs, smuggled out at no small cost, walks the refit crew through retuning this carrier's strike craft coils to the same entangled frequency.",
 			"tags": [
-				"fighter",
-				"req_fighter_bays"
+				"strikecraft",
+				"damage_taken",
+				"req_strikecraft_bays"
 			]
 		},
 		{
 			"id": "repair_coordinator",
 			"name": "Repair Coordinator",
-			"icon": "graphics/icons/repair_coordinator_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/nightcross/repair_coordinator.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -5962,7 +6075,7 @@
 		{
 			"id": "coalition_flight_doctrine",
 			"name": "Coalition Flight Doctrine",
-			"icon": "graphics/icons/fighter_doctrine_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/persean_league/coalition_flight_doctrine.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -5986,14 +6099,14 @@
 			"flavourAutomated": "Every League member world sends its own carrier detachment to a joint fleet, and the League's flight doctrine makes them fly as one. The ship's core records the doctrine from joint fleet comm traffic and flies its own wings by it. It has no rival world to report back to.",
 			"todo": "Prototype: wings never grow beyond their normal size; copies are retrained from the wing's own natives, and a copy lost or sent to rearm comes back when the host bay rebuilds a native that is retrained into it. Still to check in game: rearm cycles of copies and the replacement rate during long fights.",
 			"tags": [
-				"fighter",
-				"req_fighter_bays"
+				"strikecraft",
+				"req_strikecraft_bays"
 			]
 		},
 		{
 			"id": "candles_grace_replica",
 			"name": "Candle's Grace Replica",
-			"icon": "graphics/icons/na_gravitational_drag.png",
+			"icon": "graphics/exiledSector/tree/stargazer/na_candles_grace_replica.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6015,13 +6128,14 @@
 			"flavour": "Inside a recovered Ancient Prototype, where every conduit converges on a perfectly spherical void, the crew finds the Candle's Grace device that drags at the timeflow of anything near it. Who or what Candle's Grace was is not recorded, and the replica is mostly guesswork.",
 			"flavourAutomated": "Inside a recovered Ancient Prototype, where every conduit converges on a perfectly spherical void, the refit crew finds the Candle's Grace device that drags at the timeflow of anything near it. Who or what Candle's Grace was is not recorded, and the replica is mostly guesswork.",
 			"tags": [
-				"speed"
+				"mobility",
+				"nearby_ships"
 			]
 		},
 		{
 			"id": "beautiful_nightmare",
 			"name": "Beautiful Nightmare",
-			"icon": "graphics/icons/na_beautiful_nightmare.png",
+			"icon": "graphics/exiledSector/tree/stargazer/na_beautiful_nightmare.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -6060,14 +6174,16 @@
 			"flavour": "Stargazers fight hardest when they are dying, and the Stardust Core recovered from one, the remains of what was once a person, shows the crew how to strip the ship's safeties the moment its hull starts to fail.",
 			"flavourAutomated": "Stargazers fight hardest when they are dying. The Stardust Core recovered from one, the remains of what was once a person, holds the routine that strips a ship's safeties the moment its hull starts to fail. The ship's core runs it without hesitation.",
 			"tags": [
+				"low_hull",
 				"hull",
+				"damage_taken",
 				"combat_readiness"
 			]
 		},
 		{
 			"id": "furor_machinae",
 			"name": "Furor Machinae",
-			"icon": "graphics/icons/na_furor_machinae.png",
+			"icon": "graphics/exiledSector/tree/stargazer/na_furor_machinae.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6086,13 +6202,14 @@
 			"flavour": "Combat recordings pulled from a Stargazer's data core show its fire rate climbing with every hit, as if something inside it were growing angrier. The crew rewires this ship's fire control to chase the same rhythm, and tries not to wonder what it is chasing.",
 			"flavourAutomated": "Combat recordings pulled from a Stargazer's data core show its fire rate climbing with every hit, as if something inside it were growing angrier. The ship's core matches the rhythm exactly. It does not wonder what it is matching.",
 			"tags": [
-				"weapons"
+				"rate_of_fire",
+				"on_hit"
 			]
 		},
 		{
 			"id": "language_of_the_lost",
 			"name": "Language of the Lost",
-			"icon": "graphics/icons/na_language_of_the_lost.png",
+			"icon": "graphics/exiledSector/tree/stargazer/na_language_of_the_lost.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6119,13 +6236,14 @@
 			"flavour": "The broken transmissions Stargazer fleets whisper across every channel carry fragments of intrusion code. The crew learns to strip that code out and fire it back.",
 			"flavourAutomated": "The broken transmissions Stargazer fleets whisper across every channel carry fragments of intrusion code. The ship's core strips that code out and fires it back.",
 			"tags": [
-				"fleet_support"
+				"electronic_warfare",
+				"nearby_ships"
 			]
 		},
 		{
 			"id": "corrosion_beam",
 			"name": "Corrosion Beam",
-			"icon": "graphics/icons/na_corrosion_beam.png",
+			"icon": "graphics/exiledSector/tree/stargazer/na_corrosion_beam.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6148,15 +6266,15 @@
 			"flavour": "A corrosion emitter salvaged from a Stargazer wreck still drags stardust through whatever it touches, and the crew tunes this ship's beams to do the same.",
 			"flavourAutomated": "A corrosion emitter salvaged from a Stargazer wreck still drags stardust through whatever it touches, and the refit crew tunes this ship's beams to do the same.",
 			"tags": [
-				"energy",
 				"beam",
+				"on_hit",
 				"req_beam"
 			]
 		},
 		{
 			"id": "exo_tech_grid_splice",
 			"name": "Exo-Tech Grid Splice",
-			"icon": "graphics/icons/rat_exogrid.png",
+			"icon": "graphics/exiledSector/tree/exotech/rat_exo_tech_grid_splice.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -6214,15 +6332,16 @@
 			"flavour": "Under Exo-Tech instruction, the crew splices phase-coil components into the ship's power lattice, fusing it with the flux grid the way Exo-Tech builds its own hulls.",
 			"flavourAutomated": "Under Exo-Tech instruction, the refit crew splices phase-coil components into the ship's power lattice, fusing it with the flux grid the way Exo-Tech builds its own hulls.",
 			"tags": [
-				"flux",
-				"speed"
+				"mobility",
+				"sensors",
+				"flux"
 			],
 			"moduleShare": "all"
 		},
 		{
 			"id": "exo_tech_coil_tuning",
 			"name": "Exo-Tech Coil Tuning",
-			"icon": "graphics/icons/rat_coil_efficiency.png",
+			"icon": "graphics/exiledSector/tree/exotech/rat_exo_tech_coil_tuning.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6251,13 +6370,14 @@
 			"tags": [
 				"phase",
 				"flux",
+				"while_phased",
 				"req_phase"
 			]
 		},
 		{
 			"id": "phase_fed_magazines",
 			"name": "Phase-Fed Magazines",
-			"icon": "graphics/icons/magazines.png",
+			"icon": "graphics/exiledSector/tree/base/expanded_magazines.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6286,13 +6406,14 @@
 			"tags": [
 				"phase",
 				"ammo",
+				"while_phased",
 				"req_phase"
 			]
 		},
 		{
 			"id": "hypatia_pattern_warpfield",
 			"name": "Hypatia-Pattern Warpfield",
-			"icon": "graphics/icons/rat_warpfield.png",
+			"icon": "graphics/exiledSector/tree/exotech/rat_hypatia_pattern_warpfield.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6331,13 +6452,15 @@
 			"flavourAutomated": "Exo-Tech engineers walk the refit crew through scaling down the Hypatia's warp field to wrap the energy mounts. It was not designed to be scaled down.",
 			"tags": [
 				"energy",
+				"damage",
+				"rate_of_fire",
 				"req_energy"
 			]
 		},
 		{
 			"id": "timeflow",
 			"name": "Timeflow",
-			"icon": "graphics/icons/rat_hyperspatial_reconfiguration.png",
+			"icon": "graphics/exiledSector/tree/exotech/rat_timeflow.png",
 			"effects": [
 				{
 					"effect": "TIMEFLOW_PERCENT",
@@ -6345,13 +6468,13 @@
 				}
 			],
 			"tags": [
-				"speed"
+				"mobility"
 			]
 		},
 		{
 			"id": "sensor_profile",
 			"name": "Sensor Profile",
-			"icon": "graphics/icons/rat_undetectable.png",
+			"icon": "graphics/exiledSector/tree/base/rat_sensor_profile.png",
 			"effects": [
 				{
 					"effect": "SENSOR_PROFILE_PERCENT",
@@ -6359,13 +6482,13 @@
 				}
 			],
 			"tags": [
-				"logistics"
+				"sensors"
 			]
 		},
 		{
 			"id": "borrowed_grace",
 			"name": "Borrowed Grace",
-			"icon": "graphics/icons/rat_seraphs_grace.png",
+			"icon": "graphics/exiledSector/tree/abyss/rat_borrowed_grace.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -6412,15 +6535,17 @@
 			"flavour": "Having taken apart enough Seraph hulls to see how they feed on their own wounds, the crew rewires the ship to do the same. The shield emitters were never built for that load.",
 			"flavourAutomated": "Having taken apart enough Seraph hulls to see how they feed on their own wounds, the refit crew rewires the ship to do the same. The shield emitters were never built for that load.",
 			"tags": [
-				"armour",
-				"weapons"
+				"damage_taken",
+				"mobility",
+				"rate_of_fire",
+				"flux"
 			],
 			"moduleShare": "all"
 		},
 		{
 			"id": "salvaged_abyssal_grid",
 			"name": "Salvaged Abyssal Grid",
-			"icon": "graphics/icons/rat_abyssal_grid.png",
+			"icon": "graphics/exiledSector/tree/abyss/rat_salvaged_abyssal_grid.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6471,13 +6596,16 @@
 			"flavourAutomated": "Picking apart the power grids of abyssal drone wrecks, the refit crew works out how their couplings survive the storms of abyssal hyperspace and rebuilds the ship's energy mounts to match.",
 			"tags": [
 				"energy",
+				"range",
+				"flux",
+				"emp",
 				"req_energy"
 			]
 		},
 		{
 			"id": "seraph_hunting_routines",
 			"name": "Seraph Hunting Routines",
-			"icon": "graphics/icons/rat_skill_seraph.png",
+			"icon": "graphics/exiledSector/tree/abyss/rat_seraph_hunting_routines.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6533,14 +6661,15 @@
 			},
 			"flavour": "Code pulled from a dissected Seraph core, pieced back together and patched into the damage-control software. It mends the ship on what the guns take from others.",
 			"tags": [
-				"weapons",
-				"repair"
+				"repair",
+				"damage",
+				"on_hit"
 			]
 		},
 		{
 			"id": "fragment_swarm",
 			"name": "Fragment Swarm",
-			"icon": "graphics/icons/fragment_swarm.png",
+			"icon": "graphics/exiledSector/tree/threat/fragment_swarm.png",
 			"tier": "NOTABLE",
 			"integrated": {
 				"effects": [
@@ -6567,14 +6696,14 @@
 			],
 			"flavour": "A fabricator pulled from a Threat wreck still builds fragments when it is fed. Seated in the hull, it keeps a swarm of them roiling around the ship to feed fragment weapons.",
 			"tags": [
-				"weapons",
+				"weapon",
 				"req_non_phase_hull"
 			]
 		},
 		{
 			"id": "secondary_fabricator",
 			"name": "Secondary Fabricator",
-			"icon": "graphics/icons/secondary_fabricator.png",
+			"icon": "graphics/exiledSector/tree/threat/secondary_fabricator.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6606,13 +6735,13 @@
 			],
 			"flavour": "A second Threat fabricator wired in beside the first replaces fragments as fast as the fighting destroys them.",
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
 			"id": "fragment_coordinator",
 			"name": "Fragment Coordinator",
-			"icon": "graphics/icons/fragment_coordinator.png",
+			"icon": "graphics/exiledSector/tree/threat/fragment_coordinator.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6644,13 +6773,13 @@
 			],
 			"flavour": "Processing units taken from Threat wrecks let the ship's swarm hold together in far greater numbers.",
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
 			"id": "fragment_swarm_size",
 			"name": "Fragment Swarm Size",
-			"icon": "graphics/icons/fragment_coordinator.png",
+			"icon": "graphics/exiledSector/tree/threat/fragment_coordinator.png",
 			"effects": [
 				{
 					"effect": "FRAGMENT_SWARM_SIZE_PERCENT",
@@ -6658,13 +6787,13 @@
 				}
 			],
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
 			"id": "fragment_replacement_rate",
 			"name": "Fragment Replacement Rate",
-			"icon": "graphics/icons/secondary_fabricator.png",
+			"icon": "graphics/exiledSector/tree/threat/secondary_fabricator.png",
 			"effects": [
 				{
 					"effect": "FRAGMENT_REPLACEMENT_RATE_PERCENT",
@@ -6672,13 +6801,13 @@
 				}
 			],
 			"tags": [
-				"weapons"
+				"weapon"
 			]
 		},
 		{
 			"id": "shrouded_lens",
 			"name": "Shrouded Lens",
-			"icon": "graphics/icons/shrouded_lens.png",
+			"icon": "graphics/exiledSector/tree/shrouded/shrouded_lens.png",
 			"tier": "NOTABLE",
 			"integrated": {
 				"effects": [
@@ -6702,14 +6831,15 @@
 				"<bad>50%</bad> increased crew casualties."
 			],
 			"tags": [
-				"weapons",
+				"damage",
+				"nearby_ships",
 				"req_non_phase_hull"
 			]
 		},
 		{
 			"id": "shrouded_mantle",
 			"name": "Shrouded Mantle",
-			"icon": "graphics/icons/shrouded_mantle.png",
+			"icon": "graphics/exiledSector/tree/shrouded/shrouded_mantle.png",
 			"tier": "NOTABLE",
 			"integrated": {
 				"effects": [
@@ -6729,13 +6859,14 @@
 			],
 			"tags": [
 				"hull",
+				"repair",
 				"req_non_phase_hull"
 			]
 		},
 		{
 			"id": "shrouded_thunderhead",
 			"name": "Shrouded Thunderhead",
-			"icon": "graphics/icons/shrouded_thunderhead.png",
+			"icon": "graphics/exiledSector/tree/shrouded/shrouded_thunderhead.png",
 			"tier": "NOTABLE",
 			"integrated": {
 				"effects": [
@@ -6759,14 +6890,15 @@
 				"<bad>50%</bad> increased crew casualties."
 			],
 			"tags": [
-				"weapons",
+				"damage",
+				"on_hit",
 				"req_non_phase_hull"
 			]
 		},
 		{
 			"id": "shrouded_lens_damage",
 			"name": "Shrouded Lens Damage",
-			"icon": "graphics/icons/shrouded_lens_damage.png",
+			"icon": "graphics/exiledSector/tree/shrouded/shrouded_lens_damage.png",
 			"effects": [
 				{
 					"effect": "SHROUDED_LENS_DAMAGE_PERCENT",
@@ -6774,13 +6906,13 @@
 				}
 			],
 			"tags": [
-				"weapons"
+				"damage"
 			]
 		},
 		{
 			"id": "rift_lightning_damage",
 			"name": "Rift Lightning Damage",
-			"icon": "graphics/icons/rift_lightning_damage.png",
+			"icon": "graphics/exiledSector/tree/shrouded/rift_lightning_damage.png",
 			"effects": [
 				{
 					"effect": "RIFT_LIGHTNING_DAMAGE_PERCENT",
@@ -6788,13 +6920,13 @@
 				}
 			],
 			"tags": [
-				"weapons"
+				"damage"
 			]
 		},
 		{
 			"id": "rift_explosion_damage",
 			"name": "Rift Explosion Damage",
-			"icon": "graphics/icons/rift_explosion_starscape_shifted.png",
+			"icon": "graphics/exiledSector/tree/omega/rift_explosion_damage.png",
 			"effects": [
 				{
 					"effect": "RIFT_EXPLOSION_DAMAGE_PERCENT",
@@ -6807,13 +6939,13 @@
 			],
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapons"
+				"damage"
 			]
 		},
 		{
 			"id": "rift_harmonics",
 			"name": "Rift Harmonics",
-			"icon": "graphics/icons/rift_explosion_multiple_shifted.png",
+			"icon": "graphics/exiledSector/tree/omega/rift_harmonics.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6837,13 +6969,15 @@
 			"todo": "Needs an icon.",
 			"tags": [
 				"energy",
+				"damage",
+				"on_hit",
 				"req_energy"
 			]
 		},
 		{
 			"id": "hungering_rift_healing",
 			"name": "Hungering Rift Healing",
-			"icon": "graphics/icons/hungering_rift_healing.png",
+			"icon": "graphics/exiledSector/tree/shrouded/hungering_rift_healing.png",
 			"effects": [
 				{
 					"effect": "HUNGERING_RIFT_HEALING_PERCENT",
@@ -6851,13 +6985,14 @@
 				}
 			],
 			"tags": [
+				"hull",
 				"repair"
 			]
 		},
 		{
 			"id": "chronos_rhythms",
 			"name": "Chronos Rhythms",
-			"icon": "graphics/icons/rat_skill_time.png",
+			"icon": "graphics/exiledSector/tree/abyss/rat_chronos_rhythms.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6889,23 +7024,29 @@
 				"rat_abyssal_core"
 			],
 			"flavour": "After long hours with a recovered Chronos core, the crew decodes how it times its own systems and rewrites the ship system's control loop to match, cycling it faster than its makers ever intended.",
-			"flavourAutomated": "Linked to a recovered Chronos core, the ship's core logs how it times its own systems and rewrites the ship system's control loop to match, cycling it faster than its makers ever intended."
+			"flavourAutomated": "Linked to a recovered Chronos core, the ship's core logs how it times its own systems and rewrites the ship system's control loop to match, cycling it faster than its makers ever intended.",
+			"tags": [
+				"ship_system"
+			]
 		},
 		{
 			"id": "ship_system_cooldown",
 			"name": "Ship System Cooldown",
-			"icon": "graphics/icons/rat_supercharged.png",
+			"icon": "graphics/exiledSector/tree/base/rat_ship_system_cooldown.png",
 			"effects": [
 				{
 					"effect": "SYSTEM_COOLDOWN_PERCENT",
 					"magnitude": -5
 				}
+			],
+			"tags": [
+				"ship_system"
 			]
 		},
 		{
 			"id": "doctrine_alpha_grade_fire_control",
 			"name": "Alpha-Grade Fire Control",
-			"icon": "graphics/icons/doctrine_tt_alpha_fire_control.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_alpha_grade_fire_control.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6931,7 +7072,6 @@
 			},
 			"flavour": "Fire-control routines lifted from a Tri-Tachyon line ship, written by an alpha core that never meant to share them.",
 			"tags": [
-				"weapons",
 				"energy",
 				"range"
 			]
@@ -6939,7 +7079,7 @@
 		{
 			"id": "doctrine_flux_arbitrage",
 			"name": "Flux Arbitrage",
-			"icon": "graphics/icons/doctrine_tt_flux_arbitrage.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_flux_arbitrage.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6972,7 +7112,7 @@
 		{
 			"id": "doctrine_quarterly_targets",
 			"name": "Quarterly Targets",
-			"icon": "graphics/icons/doctrine_tt_quarterly_targets.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_quarterly_targets.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -6999,13 +7139,13 @@
 			"flavour": "Tri-Tachyon fleet doctrine ranks every target by the value it carries, and its threat tables push gunners toward the largest hulls on the field. Frigates, the tables note, are rarely worth the ammunition.",
 			"flavourAutomated": "Tri-Tachyon fleet doctrine ranks every target by the value it carries, and its threat tables push fire control toward the largest hulls on the field. The ship's core loads the tables unedited. Frigates, the tables note, are rarely worth the ammunition.",
 			"tags": [
-				"weapons"
+				"damage"
 			]
 		},
 		{
 			"id": "doctrine_tachyon_lance_licensing",
 			"name": "Tachyon Lance Licensing",
-			"icon": "graphics/icons/doctrine_tt_tachyon_lance_licensing.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_tachyon_lance_licensing.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7032,8 +7172,8 @@
 			"flavour": "A Tri-Tachyon commission hands its captains a binder of licensed beam calibration tables, each page watermarked and every one of them copied by a crew that never planned to renew.",
 			"flavourAutomated": "A Tri-Tachyon commission hands its captains a binder of licensed beam calibration tables, each page watermarked. The ship's core scans every page once.",
 			"tags": [
-				"energy",
-				"weapons",
+				"beam",
+				"damage",
 				"range",
 				"req_beam"
 			]
@@ -7041,7 +7181,7 @@
 		{
 			"id": "doctrine_black_ledger_coil_tuning",
 			"name": "Black Ledger Coil Tuning",
-			"icon": "graphics/icons/doctrine_tt_black_ledger_coils.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_black_ledger_coil_tuning.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7069,13 +7209,15 @@
 			"flavourAutomated": "Maintenance notes recovered from a Tri-Tachyon phase frigate's wreck, filed under a cost center that officially does not exist, show the refit crew how to slip this ship's coils into p-space cheaply and shed heat while it waits there.",
 			"tags": [
 				"phase",
+				"flux",
+				"while_phased",
 				"req_phase"
 			]
 		},
 		{
 			"id": "doctrine_escrowed_emitters",
 			"name": "Escrowed Emitters",
-			"icon": "graphics/icons/doctrine_tt_escrowed_emitters.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_escrowed_emitters.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7103,13 +7245,14 @@
 			"flavourAutomated": "Tri-Tachyon sells its shield emitters with firmware locked behind subscription keys. The ship's core breaks the lock on a salvaged emitter by brute force and finds the full rated performance sitting under it.",
 			"tags": [
 				"shield",
+				"damage_taken",
 				"req_shields"
 			]
 		},
 		{
 			"id": "doctrine_hostile_takeover",
 			"name": "Hostile Takeover",
-			"icon": "graphics/icons/tactical_superiority.png",
+			"icon": "graphics/exiledSector/tree/tritachyon/tripad_backdoor.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -7144,13 +7287,15 @@
 			"flavour": "Tri-Tachyon's boardroom answer to every fight: commit everything and win before the bill arrives. The bill always arrives.",
 			"tags": [
 				"energy",
+				"damage",
+				"mobility",
 				"combat_readiness"
 			]
 		},
 		{
 			"id": "doctrine_blessed_plating",
 			"name": "Blessed Plating",
-			"icon": "graphics/icons/doctrine_luddic_blessed_plating.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_blessed_plating.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7183,7 +7328,7 @@
 		{
 			"id": "doctrine_faithful_hands",
 			"name": "Faithful Hands",
-			"icon": "graphics/icons/doctrine_luddic_faithful_hands.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_faithful_hands.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7217,7 +7362,7 @@
 		{
 			"id": "doctrine_pilgrims_burn",
 			"name": "Pilgrim's Burn",
-			"icon": "graphics/icons/doctrine_luddic_pilgrims_burn.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_pilgrims_burn.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7244,15 +7389,15 @@
 			"flavour": "Pilgrim fleets cross the Sector on whatever drives they can keep lit. Their frugal burn discipline is learned between stations, with the tanks running low.",
 			"flavourAutomated": "Pilgrim fleets cross the Sector on whatever drives they can keep lit. The ship's core logs their burn profiles between stations and flies the same frugal burn, tanks running low.",
 			"tags": [
-				"logistics",
-				"speed",
+				"mobility",
+				"fuel",
 				"logistics_cap"
 			]
 		},
 		{
 			"id": "doctrine_righteous_fury",
 			"name": "Righteous Fury",
-			"icon": "graphics/icons/doctrine_luddic_righteous_fury.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_righteous_fury.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7281,13 +7426,13 @@
 			"tags": [
 				"ballistic",
 				"missile",
-				"weapons"
+				"damage"
 			]
 		},
 		{
 			"id": "doctrine_penitent_hulls",
 			"name": "Penitent Hulls",
-			"icon": "graphics/icons/doctrine_luddic_penitent_hulls.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_penitent_hulls.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7314,14 +7459,14 @@
 			"flavour": "Church salvage yards on Asher send no ship to the breakers while it can still fly, and keep their scarred hulls flying on patience and very little else.",
 			"tags": [
 				"d_mods",
-				"logistics",
+				"supplies",
 				"logistics_cap"
 			]
 		},
 		{
 			"id": "doctrine_pilgrim_volunteers",
 			"name": "Pilgrim Volunteers",
-			"icon": "graphics/icons/Pilgrim_volunteers_shifted.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_pilgrim_volunteers.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7348,19 +7493,23 @@
 			"flavour": "Pilgrims who sign on at Hesperus count it a blessing to stand their stations through the worst of a fight and keep vigil without complaint.",
 			"flavourAutomated": "Pilgrims who sign on at Hesperus stand their stations through the worst of a fight and keep vigil without complaint. This ship has no stations to stand, so its core logs their watch rotations and runs its systems on the same unbroken vigil.",
 			"tags": [
-				"combat_readiness"
+				"combat_readiness",
+				"crew"
 			]
 		},
 		{
 			"id": "doctrine_plain_rites",
 			"name": "Plain Rites",
-			"icon": "graphics/icons/plain_rites_shifted.png",
-			"flavour": "Luddic doctrine calls a ship system's refinements vanity. Stripped back to plain, honest machinery, it does what it was built to do and nothing more."
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_plain_rites.png",
+			"flavour": "Luddic doctrine calls a ship system's refinements vanity. Stripped back to plain, honest machinery, it does what it was built to do and nothing more.",
+			"tags": [
+				"low_tech"
+			]
 		},
 		{
 			"id": "doctrine_swarm_logic",
 			"name": "Swarm Logic",
-			"icon": "graphics/icons/doctrine_remnant_swarm_logic.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_swarm_logic.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7386,14 +7535,15 @@
 			},
 			"flavour": "Remnant carriers launch their drones like a single thought spread across many bodies. Rebuilding this ship's flight control around their coordination routines lets its wings regroup faster and strike harder.",
 			"tags": [
-				"fighter",
-				"req_fighter_bays"
+				"strikecraft",
+				"damage",
+				"req_strikecraft_bays"
 			]
 		},
 		{
 			"id": "doctrine_unblinking_watch",
 			"name": "Unblinking Watch",
-			"icon": "graphics/icons/doctrine_remnant_unblinking_watch.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_unblinking_watch.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7419,15 +7569,14 @@
 			},
 			"flavour": "Remnant point defense never tires and never flinches. Its tracking routines, recovered from a gutted drone, carry none of the hesitation a human gunner would add.",
 			"tags": [
-				"point_defense",
-				"weapons"
+				"point_defense"
 			],
 			"moduleShare": "all"
 		},
 		{
 			"id": "doctrine_cold_logic",
 			"name": "Cold Logic",
-			"icon": "graphics/icons/doctrine_remnant_cold_logic.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_cold_logic.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7460,7 +7609,7 @@
 		{
 			"id": "doctrine_fortress_lattice",
 			"name": "Fortress Lattice",
-			"icon": "graphics/icons/doctrine_remnant_fortress_lattice.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_fortress_lattice.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7496,6 +7645,8 @@
 			"flavourAutomated": "Remnant warships throw their shields up and around faster than any human crew can react. The projector timings, copied from a wrecked one, run in this ship's core at the same speed and harden its emitters against ion fire.",
 			"tags": [
 				"shield",
+				"emp",
+				"damage_taken",
 				"req_shields"
 			],
 			"moduleShare": "all"
@@ -7503,7 +7654,7 @@
 		{
 			"id": "doctrine_lumen_harmonics",
 			"name": "Lumen Harmonics",
-			"icon": "graphics/icons/doctrine_remnant_lumen_harmonics.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_lumen_harmonics.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7530,14 +7681,15 @@
 			"flavour": "Energy mounts pulled from Remnant wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.",
 			"tags": [
 				"energy",
-				"weapons",
+				"rate_of_fire",
+				"flux",
 				"req_energy"
 			]
 		},
 		{
 			"id": "doctrine_ordo_signal_mesh",
 			"name": "Ordo Signal Mesh",
-			"icon": "graphics/icons/doctrine_remnant_ordo_signal_mesh.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_ordo_signal_mesh.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7574,13 +7726,14 @@
 			"flavour": "A Remnant ordo moves as one mind, its ships murmuring to each other across a constant web of signals. One of the crew's aspiring scientists swears they can decode that chatter, tune this ship's sensors to it and turn it against enemy targeting.",
 			"flavourAutomated": "A Remnant ordo moves as one mind, its ships murmuring to each other across a constant web of signals. The ship's core listens long enough to parse the chatter, tunes its sensors to it and turns it against enemy targeting.",
 			"tags": [
-				"fleet_support"
+				"electronic_warfare",
+				"sensors"
 			]
 		},
 		{
 			"id": "doctrine_tireless_cadence",
 			"name": "Tireless Cadence",
-			"icon": "graphics/icons/doctrine_remnant_automated_command.png",
+			"icon": "graphics/exiledSector/tree/doctrine/doctrine_tireless_cadence.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -7614,6 +7767,7 @@
 			},
 			"flavour": "Remnant warships never stand down, their systems cycling at a tempo built for machines that never tire. Copied into this ship's reactor and fire control, that tempo is easy to keep in battle and hard to recover from afterwards.",
 			"tags": [
+				"mobility",
 				"flux",
 				"combat_readiness"
 			]
@@ -7621,7 +7775,7 @@
 		{
 			"id": "tania_weapon_fire_rate",
 			"name": "Weapon Fire Rate",
-			"icon": "graphics/icons/tania_weapon_fire_rate.png",
+			"icon": "graphics/exiledSector/tree/tania/tania_weapon_fire_rate.png",
 			"effects": [
 				{
 					"effect": "WEAPON_RATE_OF_FIRE_PERCENT",
@@ -7629,13 +7783,13 @@
 				}
 			],
 			"tags": [
-				"weapons"
+				"rate_of_fire"
 			]
 		},
 		{
 			"id": "tania_fafnir_breeches",
 			"name": "Dual-Feed Mounts",
-			"icon": "graphics/icons/tania_fafnir_breeches.png",
+			"icon": "graphics/exiledSector/tree/tania/tania_fafnir_breeches.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -7659,14 +7813,15 @@
 			},
 			"flavour": "Desperation leads to innovation, and the pressure of an incoming war brought Farige engineers to the limit, with them bringing up unusual techniques to modernize recently found early epoch Domain designs. Mount plans traded by Navarchy quartermasters had a complete data basis of prototype adaptive weapon mounts, allowing ballistic weapon systems to draw harder from the ship's flux grid in order to field energy based weaponry.",
 			"tags": [
-				"weapons",
+				"ballistic",
+				"energy",
 				"player_only"
 			]
 		},
 		{
 			"id": "tania_dysis_drive",
 			"name": "Dysis Drive",
-			"icon": "graphics/icons/tania_dysis_drive.png",
+			"icon": "graphics/exiledSector/tree/tania/tania_dysis_drive.png",
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -7690,14 +7845,14 @@
 			},
 			"flavour": "The Black Hawk's Dysis Drive throws the ship forward hardest while its flux grid runs cold. Analysis over its ancient design allowed the crew to tune this ship's engines the same way, so it is able to fly bright at low flux and drags once the grid fills.",
 			"tags": [
-				"speed",
-				"flux"
+				"mobility",
+				"flux_level"
 			]
 		},
 		{
 			"id": "tania_carina_charge",
 			"name": "Carina Charge",
-			"icon": "graphics/icons/tania_carina_charge.png",
+			"icon": "graphics/exiledSector/tree/tania/tania_carina_charge.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7715,14 +7870,14 @@
 			},
 			"flavour": "War, war never changes. In order to survive the Luddic Path mayhem, Carina Forces had to act fast, or expire. Your crew learns from these hit and run tactics, and by executing them at high speeds, they exploit enemy weaknesses.",
 			"tags": [
-				"weapons",
-				"speed"
+				"damage",
+				"mobility"
 			]
 		},
 		{
 			"id": "tania_solaris_overdrive",
 			"name": "Solaris Overdrive",
-			"icon": "graphics/icons/tania_solaris_overdrive.png",
+			"icon": "graphics/exiledSector/tree/tania/tania_solaris_overdrive.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7756,14 +7911,15 @@
 			},
 			"flavour": "The Aracari is a prime example of antique thermo-dynamic engineering, with its Solaris Phalanx system allowing weapons to fire without directly drawing from the main flux grid. By analyzing old Farige databanks, your crew is now able to mimic its functionality in a small scale basis.",
 			"tags": [
-				"weapons",
-				"flux"
+				"ship_system",
+				"flux",
+				"rate_of_fire"
 			]
 		},
 		{
 			"id": "tania_rise_from_the_ashes",
 			"name": "Rise From the Ashes",
-			"icon": "graphics/icons/tania_rise_from_the_ashes.png",
+			"icon": "graphics/exiledSector/tree/tania/tania_rise_from_the_ashes.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7799,13 +7955,14 @@
 			"tags": [
 				"hull",
 				"armour",
+				"low_hull",
 				"req_non_phase_hull"
 			]
 		},
 		{
 			"id": "tania_thermo_accelerator",
 			"name": "Thermo-Accelerator",
-			"icon": "graphics/icons/tania_thermo_accelerator.png",
+			"icon": "graphics/exiledSector/tree/tania/tania_thermo_accelerator.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
@@ -7823,14 +7980,15 @@
 			},
 			"flavour": "The legendary NTS Endurance, an Aetos Class Destroyer, managed to nail down multiple enemy frigates at once, protecting its fleet from terrific flankers, thanks to its Thermo-Accelerator system. By understanding the tactics employed by its captain and the ship's overengineered ammo feeders, your crew is now able to draw power from hardpoint weapon mounts so its turret weapons fire cooler in a similar fashion.",
 			"tags": [
-				"weapons",
+				"weapon",
+				"flux",
 				"player_only"
 			]
 		},
 		{
 			"id": "tania_merite_lunge",
 			"name": "Merite Lunge",
-			"icon": "graphics/icons/tania_merite_lunge.png",
+			"icon": "graphics/exiledSector/tree/tania/tania_merite_lunge.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7856,13 +8014,14 @@
 			},
 			"flavour": "The Merite Class Destroyer is often praised by its ability to assault enemy ships by sheer brute force, thanks to its Jump Jets ship system. By listening to \"sage\" advice from fellow Navarchy of Tania officers, you order your crew to refit the ship with increased weight and improved protection against collateral effects from excessive G-force.",
 			"tags": [
-				"hull"
+				"hull",
+				"mobility"
 			]
 		},
 		{
 			"id": "emp_damage",
 			"name": "EMP Damage",
-			"icon": "graphics/icons/idk_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/base/emp_damage.png",
 			"effects": [
 				{
 					"effect": "EMP_DAMAGE_PERCENT",
@@ -7872,13 +8031,14 @@
 			"flavour": "Capacitor banks rewound to Tri-Tachyon specifications put more charge behind every hit. The specifications were not for sale, strictly speaking.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapons"
+				"emp",
+				"damage"
 			]
 		},
 		{
 			"id": "ion_cascade",
 			"name": "Ion Cascade",
-			"icon": "graphics/icons/mechanical_engineering_shifted.png",
+			"icon": "graphics/exiledSector/tree/tritachyon/ion_cascade.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7901,13 +8061,15 @@
 			"flavour": "Once a target's systems are dead, Tri-Tachyon ion firmware moves on to the hull.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapons"
+				"emp",
+				"high_explosive",
+				"on_hit"
 			]
 		},
 		{
 			"id": "relay_protocols",
 			"name": "Relay Protocols",
-			"icon": "graphics/icons/sensors_circular.png",
+			"icon": "graphics/exiledSector/tree/redacted/relay_protocols.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -7938,14 +8100,15 @@
 			"flavour": "Remnant battlegroups keep station through relay protocols that are only dimly understood. The recovered fragment has never stopped transmitting.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"flux",
-				"fleet_support"
+				"high_tech",
+				"fleet_support",
+				"mobility"
 			]
 		},
 		{
 			"id": "greater_high_tech_affinity",
 			"name": "Greater High Tech Affinity",
-			"icon": "graphics/icons/root_high_tech.png",
+			"icon": "graphics/exiledSector/tree/roots/root_high_tech.png",
 			"effects": [
 				{
 					"effect": "HIGH_TECH_AFFINITY_FLAT",
@@ -7954,18 +8117,22 @@
 			],
 			"flavour": "Flux lattices stripped from Remnant drones are a generation ahead of anything in the Tri-Tachyon catalogue. Tri-Tachyon is said to disagree.",
 			"tags": [
-				"flux"
+				"high_tech"
 			]
 		},
 		{
 			"id": "adaptive_munitions",
 			"name": "Adaptive Munitions",
-			"icon": "graphics/icons/advanced_tactics_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/redacted/adaptive_munitions.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
 					"effect": "ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT_PER_HIGH_TECH_AFFINITY",
 					"magnitude": 1
+				},
+				{
+					"effect": "FRAGMENTATION_DAMAGE_MULT",
+					"magnitude": -40
 				}
 			],
 			"integrated": {
@@ -7973,21 +8140,26 @@
 					{
 						"effect": "ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT_PER_HIGH_TECH_AFFINITY",
 						"magnitude": 1.5
+					},
+					{
+						"effect": "FRAGMENTATION_DAMAGE_MULT",
+						"magnitude": -40
 					}
 				]
 			},
 			"flavour": "Remnant drones match each round to whatever it is about to hit.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapons",
-				"dmgtypekinetic",
-				"dmgtypehighexplosive"
+				"kinetic",
+				"high_explosive",
+				"high_tech",
+				"on_hit"
 			]
 		},
 		{
 			"id": "equilibrium_protocol",
 			"name": "Equilibrium Protocol",
-			"icon": "graphics/icons/frozen_heart2_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/redacted/equilibrium_protocol.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8010,27 +8182,28 @@
 			"flavour": "Remnant hulls are rumored to hold every lineage of Domain design in a balance their cores never let slip.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapons"
+				"damage"
 			]
 		},
 		{
 			"id": "beam_or_non_beam_energy_weapon_damage",
 			"name": "Beam or Non-Beam Energy Weapon Damage",
-			"icon": "graphics/icons/beam_damage.png",
+			"icon": "graphics/exiledSector/tree/base/beam_weapon_damage.png",
 			"options": [
 				"beam_weapon_damage",
 				"non_beam_energy_weapon_damage"
 			],
 			"flavour": "Emitter coils salvaged from Remnant wrecks can be wound for a steady beam or a hard pulse, but not both. Remnant drones never seem to need the choice.",
 			"tags": [
-				"energy",
-				"beam"
+				"beam",
+				"non_beam_energy",
+				"damage"
 			]
 		},
 		{
 			"id": "ion_spill",
 			"name": "Ion Spill",
-			"icon": "graphics/icons/slipsurge_shifted_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/redacted/ion_spill.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8049,14 +8222,15 @@
 			"flavour": "Remnant ion bolts leave some of their charge in the shield projector as heat.",
 			"todo": "Needs an icon.",
 			"tags": [
-				"weapons",
-				"shield"
+				"emp",
+				"energy_damage",
+				"on_hit"
 			]
 		},
 		{
 			"id": "dormant_repair_cycle",
 			"name": "Dormant Repair Cycle",
-			"icon": "graphics/icons/mechanical_engineering_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/redacted/dormant_repair_cycle.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8082,7 +8256,7 @@
 		{
 			"id": "phase_cloak_activation_cost",
 			"name": "Phase Cloak Activation Cost",
-			"icon": "graphics/icons/phase_field_shifted.png",
+			"icon": "graphics/exiledSector/tree/tritachyon/phase_cloak_activation_cost.png",
 			"effects": [
 				{
 					"effect": "PHASE_CLOAK_ACTIVATION_COST_MULT",
@@ -8093,13 +8267,14 @@
 			"todo": "Needs an icon.",
 			"tags": [
 				"phase",
+				"flux",
 				"req_phase"
 			]
 		},
 		{
 			"id": "phase_ambush_doctrine",
 			"name": "Phase Ambush Doctrine",
-			"icon": "graphics/icons/EW_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/tritachyon/phase_ambush_doctrine.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8123,13 +8298,14 @@
 			"todo": "Needs an icon.",
 			"tags": [
 				"phase",
+				"damage",
 				"req_phase"
 			]
 		},
 		{
 			"id": "phase_cloak_cooldown",
 			"name": "Phase Cloak Cooldown",
-			"icon": "graphics/icons/field_repairs_shifted_phase.png",
+			"icon": "graphics/exiledSector/tree/tritachyon/phase_cloak_cooldown.png",
 			"effects": [
 				{
 					"effect": "PHASE_CLOAK_COOLDOWN_PERCENT",
@@ -8146,7 +8322,7 @@
 		{
 			"id": "phantom_wake",
 			"name": "Phantom Wake",
-			"icon": "graphics/icons/go_dark_shifted.png",
+			"icon": "graphics/exiledSector/tree/tritachyon/phantom_wake.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8176,7 +8352,7 @@
 		{
 			"id": "cease_and_desist",
 			"name": "Cease and Desist",
-			"icon": "graphics/icons/systems_expertise_circular_alt1.png",
+			"icon": "graphics/exiledSector/tree/tritachyon/cease_and_desist.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8200,13 +8376,14 @@
 			"todo": "Needs an icon.",
 			"tags": [
 				"energy",
+				"on_hit",
 				"req_energy"
 			]
 		},
 		{
 			"id": "strikecraft_weapon_range",
 			"name": "Strikecraft Weapon Range",
-			"icon": "graphics/icons/fighter3_shifted_shifted.png",
+			"icon": "graphics/exiledSector/tree/omega/strikecraft_weapon_range.png",
 			"effects": [
 				{
 					"effect": "FIGHTER_WEAPON_RANGE_PERCENT",
@@ -8215,14 +8392,30 @@
 			],
 			"todo": "Needs an icon.",
 			"tags": [
-				"fighter",
-				"req_fighter_bays"
+				"strikecraft",
+				"range",
+				"req_strikecraft_bays"
+			]
+		},
+		{
+			"id": "strikecraft_armor",
+			"name": "Strikecraft Armor",
+			"icon": "graphics/exiledSector/tree/domain_drones/strikecraft_armor.png",
+			"effects": [
+				{
+					"effect": "FIGHTER_ARMOR_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"tags": [
+				"strikecraft",
+				"armour"
 			]
 		},
 		{
 			"id": "spark_rift",
 			"name": "Spark Rift",
-			"icon": "graphics/icons/wing_commander_rift_shifted.png",
+			"icon": "graphics/exiledSector/tree/omega/spark_rift.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8241,14 +8434,15 @@
 			"flavour": "\"Recovered three of the little ones intact. By the time the bench clamps were on, there were two.\"\n- Hegemony salvage inventory, amended",
 			"todo": "Needs an icon.",
 			"tags": [
-				"fighter",
-				"req_fighter_bays"
+				"strikecraft",
+				"on_hit",
+				"req_strikecraft_bays"
 			]
 		},
 		{
 			"id": "temporal_exhaust",
 			"name": "Temporal Exhaust",
-			"icon": "graphics/icons/rift_engines_shifted.png",
+			"icon": "graphics/exiledSector/tree/omega/temporal_exhaust.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8271,13 +8465,14 @@
 			"flavour": "\"The plume showed up on our scopes before the drive lit. I have checked the clocks. Please stop asking me to check the clocks.\"\n- Sensor officer's log, Tri-Tachyon picket, name withheld",
 			"todo": "Needs an icon.",
 			"tags": [
-				"speed"
+				"ship_system",
+				"mobility"
 			]
 		},
 		{
 			"id": "resonator_payload",
 			"name": "Resonator Payload",
-			"icon": "graphics/icons/rift_missile_shifted.png",
+			"icon": "graphics/exiledSector/tree/omega/resonator_payload.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -8301,7 +8496,263 @@
 			"todo": "Needs an icon.",
 			"tags": [
 				"missile",
+				"on_hit",
 				"req_missile"
+			]
+		},
+		{
+			"id": "rugged_drone_frame",
+			"name": "Rugged Drone Frame",
+			"icon": "graphics/exiledSector/tree/domain_drones/rugged_drone_frame.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "DMOD_EFFECT_MULT",
+					"magnitude": -50
+				},
+				{
+					"effect": "DMOD_ACQUIRE_CHANCE_MULT",
+					"magnitude": -50
+				},
+				{
+					"effect": "SHIP_RECOVERY_CHANCE_BONUS",
+					"magnitude": 1000
+				},
+				{
+					"effect": "SUPPLIES_TO_RECOVER_MULT",
+					"magnitude": -50
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "DMOD_EFFECT_MULT",
+						"magnitude": -50
+					},
+					{
+						"effect": "DMOD_ACQUIRE_CHANCE_MULT",
+						"magnitude": -50
+					},
+					{
+						"effect": "SHIP_RECOVERY_CHANCE_BONUS",
+						"magnitude": 1000
+					},
+					{
+						"effect": "SUPPLIES_TO_RECOVER_MULT",
+						"magnitude": -50
+					},
+					{
+						"effect": "HULL_PERCENT",
+						"magnitude": 10
+					}
+				]
+			},
+			"phantomHullMods": [
+				"rugged"
+			],
+			"flavour": "Stripping a Bastillon wreck shows the crew why Domain war drones keep fighting long after they should have broken apart: every strut is doubled, and nothing vital sits where a single hit can reach it. The crew learns to rebuild a frame the same way.",
+			"flavourAutomated": "The ship's core indexes the frame of a Bastillon wreck strut by strut and records which doubled members kept it fighting after the hits that should have broken it. The refit crew learns to rebuild a frame to match the index.",
+			"tags": [
+				"d_mods",
+				"salvage"
+			]
+		},
+		{
+			"id": "countless_cycles",
+			"name": "Countless Cycles",
+			"icon": "graphics/exiledSector/tree/domain_drones/countless_cycles.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "DEPLOYMENT_POINTS_PERCENT_PER_DMOD",
+					"magnitude": -2
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "DEPLOYMENT_POINTS_PERCENT_PER_DMOD",
+						"magnitude": -3
+					}
+				]
+			},
+			"flavour": "The derelict drones still on patrol have flown countless cycles on patchwork and failing parts. Copying how their maintenance routines route around each broken system, the crew learns to field a worn ship with far less ceremony.",
+			"flavourAutomated": "The ship's core logs the maintenance routines recovered from a drone that has flown countless cycles on failing parts, and indexes how each one routes around a broken system. It indexes the routines for its own systems without comment.",
+			"tags": [
+				"d_mods",
+				"logistics"
+			]
+		},
+		{
+			"id": "retaliatory_routines",
+			"name": "Retaliatory Routines",
+			"icon": "graphics/exiledSector/tree/domain_drones/retaliatory_routines.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "WEAPON_DAMAGE_AND_RATE_OF_FIRE_PERCENT_PER_NEARBY_ALLY_LOST",
+					"magnitude": 5
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "WEAPON_DAMAGE_AND_RATE_OF_FIRE_PERCENT_PER_NEARBY_ALLY_LOST",
+						"magnitude": 7
+					}
+				]
+			},
+			"flavour": "The combat logic pulled from a Berserker's core treats every lost ally as a figure in a sum of attrition, and fights harder to keep that sum in its favor. The crew learns to wire the same logic into a ship's fire control.",
+			"flavourAutomated": "The ship's core records the attrition logic pulled from a Berserker's core. Each lost ally was a figure in a sum, and the Berserker's fire control worked harder to keep the sum in its favor.",
+			"tags": [
+				"damage",
+				"rate_of_fire",
+				"nearby_ships"
+			]
+		},
+		{
+			"id": "autoforge_escorts",
+			"name": "Autoforge Escorts",
+			"icon": "graphics/exiledSector/tree/domain_drones/autoforge_escorts.png",
+			"tier": "NOTABLE",
+			"hullSizeEffects": [
+				{
+					"effect": "AUTOFORGE_ESCORT_DRONES_FLAT",
+					"frigate": 1,
+					"destroyer": 2,
+					"cruiser": 3,
+					"capitalShip": 4
+				}
+			],
+			"integrated": {
+				"hullSizeEffects": [
+					{
+						"effect": "AUTOFORGE_ESCORT_DRONES_FLAT",
+						"frigate": 2,
+						"destroyer": 3,
+						"cruiser": 4,
+						"capitalShip": 5
+					}
+				]
+			},
+			"flavour": "Stripping the autoforge of a drifting survey mothership teaches the crew how it builds the small drones that once guarded it, and how to keep a smaller forge running aboard a warship.",
+			"flavourAutomated": "The ship's core indexes the build queue of an autoforge salvaged from a survey mothership and finds the escort drones still listed first. It leaves the order unchanged.",
+			"tags": [
+				"strikecraft",
+				"point_defense"
+			]
+		},
+		{
+			"id": "feed_the_forges",
+			"name": "Feed the Forges",
+			"icon": "graphics/exiledSector/tree/domain_drones/feed_the_forges.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "POST_BATTLE_SUPPLIES_PERCENT_OF_DEFEATED_DEPLOYMENT_POINTS",
+					"magnitude": 10
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "POST_BATTLE_SUPPLIES_PERCENT_OF_DEFEATED_DEPLOYMENT_POINTS",
+						"magnitude": 15
+					}
+				]
+			},
+			"flavour": "A survey mothership's autoforge was built to feed itself from whatever it found. Studying one, the crew learns to break wrecks down into the supplies a fleet runs on.",
+			"flavourAutomated": "The ship's core records the feedstock tables of a survey mothership's autoforge and indexes which parts of a wreck become which supplies.",
+			"tags": [
+				"supplies",
+				"salvage",
+				"campaign_only",
+				"player_only"
+			]
+		},
+		{
+			"id": "sentry_reserve_racks",
+			"name": "Sentry Reserve Racks",
+			"icon": "graphics/exiledSector/tree/domain_drones/sentry_reserve_racks.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "MISSILE_RESERVE_RELOAD_PERCENT",
+					"magnitude": 100
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "MISSILE_RESERVE_RELOAD_PERCENT",
+						"magnitude": 100
+					},
+					{
+						"effect": "MISSILE_WEAPON_AMMO_PERCENT",
+						"magnitude": 10
+					}
+				]
+			},
+			"flavour": "Sentry drones carry a sealed second rack behind the first, opened only once the first runs empty. The crew copies the layout from a wreck and learns where to find the room for it.",
+			"flavourAutomated": "The ship's core logs the sealed second rack of a Sentry drone and the moment the drone starts feeding from it. The refit crew learns to build the same rack.",
+			"tags": [
+				"missile",
+				"ammo",
+				"req_missile"
+			]
+		},
+		{
+			"id": "defender_flare_bays",
+			"name": "Defender Flare Bays",
+			"icon": "graphics/exiledSector/tree/domain_drones/defender_flare_bays.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "AUTO_FLARES_PER_BURST_FLAT",
+					"magnitude": 6
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "AUTO_FLARES_PER_BURST_FLAT",
+						"magnitude": 8
+					}
+				]
+			},
+			"flavour": "A Defender drone fires its flares without waiting for an order: its sensors spot an incoming missile and the bays answer. The crew rebuilds the trigger circuit from a wreck and learns to wire it to a ship's own launchers.",
+			"flavourAutomated": "The ship's core records how a Defender drone's sensors trigger its flare bays the moment a missile locks on, with no order in between. It indexes the circuit for its own launchers.",
+			"tags": [
+				"defence",
+				"point_defense"
+			]
+		},
+		{
+			"id": "mothership_uplink",
+			"name": "Mothership Uplink",
+			"icon": "graphics/exiledSector/tree/domain_drones/mothership_uplink.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "STRIKECRAFT_SHARE_OF_CARRIER_WEAPON_BONUSES_PERCENT",
+					"magnitude": 25
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "STRIKECRAFT_SHARE_OF_CARRIER_WEAPON_BONUSES_PERCENT",
+						"magnitude": 35
+					}
+				]
+			},
+			"flavour": "Drones launched from a survey mothership share its targeting data from the moment they clear the bay. The crew rebuilds the uplink from a drifting hulk and learns to patch a carrier's strike craft into it.",
+			"flavourAutomated": "The ship's core logs the uplink a survey mothership keeps with its drones and records that they share its targeting data from launch. It indexes the link for its own strike craft.",
+			"tags": [
+				"strikecraft",
+				"damage",
+				"rate_of_fire",
+				"req_strikecraft_bays"
 			]
 		}
 	]

@@ -1,0 +1,89 @@
+package exiledsector.items.name;
+
+import exiledsector.items.modifier.RolledLine;
+import java.util.Objects;
+
+public final class FrozenName {
+
+    public static final FrozenName NONE = new FrozenName(null, null, null, null);
+
+    private final String prefixEffect;
+    private final String suffixEffect;
+    private final String rareFirst;
+    private final String rareSecond;
+    private final String rareBrand;
+    private final String rareModel;
+    private final boolean product;
+
+    public FrozenName(String prefixEffect, String suffixEffect, String rareFirst, String rareSecond) {
+        this(prefixEffect, suffixEffect, rareFirst, rareSecond, null, null, false);
+    }
+
+    private FrozenName(String prefixEffect, String suffixEffect, String rareFirst, String rareSecond, String rareBrand, String rareModel,
+                       boolean product) {
+        this.prefixEffect = RolledLine.currentName(prefixEffect);
+        this.suffixEffect = RolledLine.currentName(suffixEffect);
+        this.rareFirst = rareFirst;
+        this.rareSecond = rareSecond;
+        this.rareBrand = rareBrand;
+        this.rareModel = rareModel;
+        this.product = product;
+    }
+
+    private Object readResolve() {
+        boolean renamed = !Objects.equals(RolledLine.currentName(prefixEffect), prefixEffect)
+                || !Objects.equals(RolledLine.currentName(suffixEffect), suffixEffect);
+        return renamed ? new FrozenName(prefixEffect, suffixEffect, rareFirst, rareSecond, rareBrand, rareModel, product) : this;
+    }
+
+    public static FrozenName product(String firstWord, String brandWord, String secondWord, String modelWord) {
+        return new FrozenName(null, null, firstWord, secondWord, brandWord, modelWord, true);
+    }
+
+    public String prefixModifierId() {
+        return prefixEffect;
+    }
+
+    public String suffixModifierId() {
+        return suffixEffect;
+    }
+
+    public String rareFirst() {
+        return rareFirst;
+    }
+
+    public String rareSecond() {
+        return rareSecond;
+    }
+
+    public String rareBrand() {
+        return rareBrand;
+    }
+
+    public String rareModel() {
+        return rareModel;
+    }
+
+    public boolean isProduct() {
+        return product;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof FrozenName otherName && Objects.equals(prefixEffect, otherName.prefixEffect)
+                && Objects.equals(suffixEffect, otherName.suffixEffect) && Objects.equals(rareFirst, otherName.rareFirst)
+                && Objects.equals(rareSecond, otherName.rareSecond) && Objects.equals(rareBrand, otherName.rareBrand)
+                && Objects.equals(rareModel, otherName.rareModel) && product == otherName.product;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(prefixEffect, suffixEffect, rareFirst, rareSecond, rareBrand, rareModel, product);
+    }
+
+    @Override
+    public String toString() {
+        return "FrozenName[" + prefixEffect + ", " + suffixEffect + ", " + rareFirst + ", " + rareSecond + ", " + rareBrand + ", "
+                + rareModel + (product ? ", product" : "") + "]";
+    }
+}

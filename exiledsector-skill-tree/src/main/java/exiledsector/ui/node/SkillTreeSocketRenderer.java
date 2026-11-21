@@ -4,6 +4,7 @@ import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.cargo.AnimatedItemIcons;
+import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.SpriteDraw;
 import org.lwjgl.opengl.GL11;
 
@@ -26,8 +27,6 @@ final class SkillTreeSocketRenderer {
     private static final String BOTTOM_RIGHT = FRAME_PREFIX + "bot_right.png";
     private static final float CORNER_RATIO = 0.25f;
     private static final float CONTENT_RATIO = 0.7f;
-    private static final float EDGE_MARGIN_RATIO = 10f / 31f;
-    private static final float BEVEL_RATIO = 30f / 31f;
 
     private static final Color UNALLOCATED_TINT = new Color(120, 120, 120);
     private static final float UNALLOCATED_ALPHA = 0.6f;
@@ -51,10 +50,7 @@ final class SkillTreeSocketRenderer {
     }
 
     static float visibleEdgeDistance(float frameSize, float towardX, float towardY) {
-        float halfSize = frameSize / 2f;
-        float corner = frameSize * CORNER_RATIO;
-        return SkillTreeNodeGeometry.octagonEdgeDistance(halfSize - corner * EDGE_MARGIN_RATIO, 2f * halfSize - corner * BEVEL_RATIO,
-                towardX, towardY);
+        return SkillTreeNodeGeometry.socketEdgeDistance(frameSize, towardX, towardY);
     }
 
     void drawFrame(float cx, float cy, float frameSize, boolean allocated, Color accent, float alphaMult) {
@@ -88,18 +84,15 @@ final class SkillTreeSocketRenderer {
         SpriteAPI core = spriteCache.texture(ARC_CORE_TEXTURE);
         if (fringe == null || core == null) return;
         float halfSize = frameSize / 2f;
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-        for (SocketArcs.Arc arc : socketArcs.arcs(nodeId)) {
-            float alpha = arc.alpha() * alphaMult;
-            Misc.setColor(accent, alpha);
-            drawArcStrip(fringe, arc, cx, cy, halfSize, frameSize * ARC_FRINGE_WIDTH_RATIO);
-            Misc.setColor(ARC_CORE_COLOR, alpha);
-            drawArcStrip(core, arc, cx, cy, halfSize, frameSize * ARC_CORE_WIDTH_RATIO);
+        try (GlScope scope = GlScope.textured(GL11.GL_SRC_ALPHA, GL11.GL_ONE)) {
+            for (SocketArcs.Arc arc : socketArcs.arcs(nodeId)) {
+                float alpha = arc.alpha() * alphaMult;
+                Misc.setColor(accent, alpha);
+                drawArcStrip(fringe, arc, cx, cy, halfSize, frameSize * ARC_FRINGE_WIDTH_RATIO);
+                Misc.setColor(ARC_CORE_COLOR, alpha);
+                drawArcStrip(core, arc, cx, cy, halfSize, frameSize * ARC_CORE_WIDTH_RATIO);
+            }
         }
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
     }
 
     private static void drawArcStrip(SpriteAPI texture, SocketArcs.Arc arc, float cx, float cy, float halfSize, float stripWidth) {

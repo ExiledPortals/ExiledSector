@@ -6,7 +6,7 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
-import exiledsector.items.StarChart;
+import exiledsector.items.starchart.StarChart;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +15,7 @@ import java.util.List;
 public final class StarChartBrowser {
 
     public static final int LOWEST_TIER = StarChart.LOWEST_TIER;
-    public static final int HIGHEST_TIER = StarChart.CORRUPTED_TIER;
+    public static final int HIGHEST_TIER = StarChart.HIGHEST_TIER;
 
     private final int[] tierCounts = new int[HIGHEST_TIER + 1];
     private List<Item> storedCharts = List.of();

@@ -6,7 +6,8 @@ import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemType;
-import exiledsector.items.StarChart;
+import exiledsector.items.modifier.ItemRoll;
+import exiledsector.items.starchart.StarChart;
 import org.lazywizard.console.Console;
 
 import java.util.ArrayList;
@@ -34,13 +35,13 @@ public class GrantStarChartsCommand extends RandomPlayerFleetCommand {
                 return problem("Give at most a count and a tier.");
             }
             Integer count = !tokens.isEmpty() ? ConsoleArgs.wholeNumber(tokens.get(0), 1, MAX_COUNT) : Integer.valueOf(DEFAULT_COUNT);
-            Integer tier = tokens.size() > 1 ? ConsoleArgs.wholeNumber(tokens.get(1), StarChart.LOWEST_TIER, StarChart.CORRUPTED_TIER)
+            Integer tier = tokens.size() > 1 ? ConsoleArgs.wholeNumber(tokens.get(1), StarChart.LOWEST_TIER, StarChart.HIGHEST_TIER)
                     : Integer.valueOf(DEFAULT_TIER);
             if (count == null) {
                 return problem("The count must be a whole number from 1 to " + MAX_COUNT + ".");
             }
             if (tier == null) {
-                return problem("The tier must be a whole number from " + StarChart.LOWEST_TIER + " to " + StarChart.CORRUPTED_TIER + ".");
+                return problem("The tier must be a whole number from " + StarChart.LOWEST_TIER + " to " + StarChart.HIGHEST_TIER + ".");
             }
             return new GrantArguments(count, tier, null);
         }
@@ -55,7 +56,7 @@ public class GrantStarChartsCommand extends RandomPlayerFleetCommand {
         GrantArguments arguments = GrantArguments.parse(args);
         if (arguments.problem() != null) {
             Console.showMessage(arguments.problem() + "\nUsage: ExiledSectorGrantStarCharts [count] [tier], count 1 to " + MAX_COUNT
-                    + " (default " + DEFAULT_COUNT + "), tier " + StarChart.LOWEST_TIER + " to " + StarChart.CORRUPTED_TIER + " (default "
+                    + " (default " + DEFAULT_COUNT + "), tier " + StarChart.LOWEST_TIER + " to " + StarChart.HIGHEST_TIER + " (default "
                     + DEFAULT_TIER + ").");
             return CommandResult.BAD_SYNTAX;
         }
@@ -69,7 +70,7 @@ public class GrantStarChartsCommand extends RandomPlayerFleetCommand {
             if (definition == null) {
                 break;
             }
-            ItemData chart = ItemData.rolledAtTier(definition, random.nextLong(), arguments.tier());
+            ItemData chart = ItemData.rolled(definition, random.nextLong(), ItemRoll.atTier(arguments.tier()));
             playerFleet.getCargo().addSpecial(chart.toSpecialItem(), 1f);
             names.add(chart.preview() == null ? definition.id() : chart.preview().name());
         }

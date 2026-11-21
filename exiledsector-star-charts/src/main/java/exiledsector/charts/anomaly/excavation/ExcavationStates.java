@@ -18,7 +18,7 @@ public final class ExcavationStates {
         return AnomalyState.of(run, ExcavationSites.ANOMALY_ID);
     }
 
-    static void record(AnomalyState state, ExcavationSite site) {
+    public static void record(AnomalyState state, ExcavationSite site) {
         state.put(Integer.toString(site.index()), site.encode());
     }
 
@@ -58,6 +58,10 @@ public final class ExcavationStates {
         return site == null || site.cleared() ? null : site;
     }
 
+    static boolean scouted(ChartRun run, ExcavationSite site) {
+        return StateFields.list(of(run).text(SCOUTED_FIELD)).contains(site.planetId());
+    }
+
     static boolean scout(ChartRun run, ExcavationSite site) {
         AnomalyState state = of(run);
         List<String> scouted = StateFields.list(state.text(SCOUTED_FIELD));
@@ -75,6 +79,19 @@ public final class ExcavationStates {
             return false;
         }
         record(of(run), current.asCleared());
+        return true;
+    }
+
+    static boolean clearShaft(ChartRun run, ExcavationSite site, ExcavationSite.Access shaft) {
+        ExcavationSite current = run == null || site == null ? null : at(run, site.planetId());
+        if (current == null || current.cleared()) {
+            return false;
+        }
+        ExcavationSite remaining = current.withoutShaft(shaft);
+        if (remaining.equals(current)) {
+            return false;
+        }
+        record(of(run), remaining);
         return true;
     }
 }

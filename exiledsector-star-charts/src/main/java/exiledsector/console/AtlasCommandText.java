@@ -6,6 +6,7 @@ import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasNode;
 import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.charts.atlas.AtlasState;
+import exiledsector.charts.officer.AtlasOfficer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,16 @@ final class AtlasCommandText {
         parts.add(node.regionId());
         String owner = AtlasOpening.territoryOwnerOf(generator, state, cell);
         if (owner != null) {
-            parts.add(state.capturedBy(cell) == null ? owner : owner + " (captured from " + node.factionId() + ")");
+            parts.add(owner);
+        }
+        AtlasCell commandCentre = state.commandCentreOf(cell);
+        if (commandCentre == null) {
+            parts.add("unclaimed");
+        } else if (commandCentre.equals(cell)) {
+            AtlasOfficer officer = state.officerAt(cell);
+            parts.add("command centre of " + officer.rankId() + " #" + officer.recordId() + " (" + state.claimsOf(cell).size() + " systems)");
+        } else {
+            parts.add("claimed from " + cell(commandCentre));
         }
         if (node.layoutId() != null) {
             parts.add(node.layoutId());

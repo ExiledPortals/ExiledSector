@@ -43,6 +43,19 @@ public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax,
         boss = boss && bossSize > 0f;
     }
 
+    public ChartTier withExtraBossSize(float extraBossSizePercent) {
+        return withStrongerBoss(extraBossSizePercent, 0f, 0);
+    }
+
+    public ChartTier withStrongerBoss(float extraBossSizePercent, float extraFleetQualityPercent, int extraOfficerLevels) {
+        if (extraBossSizePercent == 0f && extraFleetQualityPercent == 0f && extraOfficerLevels == 0) {
+            return this;
+        }
+        return new ChartTier(tier, fleetSize, fleetsMin, fleetsMax, officerLevelBonus + extraOfficerLevels, officerCountBonus,
+                fleetQuality + extraFleetQualityPercent, levelMin, levelMax, cacheBudget, domainBudget, stationBudget, derelictBudget, boss,
+                bossSize + extraBossSizePercent);
+    }
+
     public static float fleetPoints(float sizePercent) {
         return FLEET_SIZE_BASE_POINTS * Math.max(0f, sizePercent) / PERCENT;
     }

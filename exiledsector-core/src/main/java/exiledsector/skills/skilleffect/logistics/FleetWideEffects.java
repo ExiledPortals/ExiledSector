@@ -16,11 +16,12 @@ import exiledsector.i18n.Translation;
 import exiledsector.skills.skilleffect.shipsystem.FragmentSwarms;
 
 import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.skills.skilleffect.SkillEffectSupport;
+import exiledsector.skills.skilleffect.StatMods;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.ToDoubleFunction;
 
 public final class FleetWideEffects {
 
@@ -78,12 +79,46 @@ public final class FleetWideEffects {
                 .modifyFlat(ExiledSector.key(POST_BATTLE_SALVAGE_FLEET_MOD), totalPercent / 100f);
     }
 
+    public static void applyFleetSyncEffects(CampaignFleetAPI fleet, List<FleetMemberAPI> members) {
+        applyAlwaysCountingSensorStrength(fleet, members);
+        applyMoveSlowBurnLevel(fleet, members);
+        applyTransponderOffSensorProfile(fleet, members);
+        applyTransponderOffBurnLevel(fleet, members);
+        setCoronaResistance(members, coronaResistancePercent(members));
+        setSwarmSensorStrength(fleet, swarmSensorStrengthPercent(members));
+        setTerrainMovementPenalty(fleet, terrainMovementPenaltyPercent(members));
+        applySupplyUsePerHullType(fleet, members);
+        applyFuelUsePerHullType(fleet, members);
+        TowLines.apply(members);
+    }
+
+    public static void clearFleetSyncEffects(CampaignFleetAPI fleet, List<FleetMemberAPI> members) {
+        setAlwaysCountingSensorStrength(fleet, 0f);
+        setMoveSlowBurnLevel(fleet, 0f);
+        setTransponderOffSensorProfile(fleet, 0f);
+        setTransponderOffBurnLevel(fleet, 0f);
+        setCoronaResistance(members, 0f);
+        setSwarmSensorStrength(fleet, 0f);
+        setTerrainMovementPenalty(fleet, 0f);
+        if (fleet.isPlayerFleet()) {
+            setSupplyUsePerHullType(members, 0f);
+            setFuelUsePerHullType(members, 0f);
+        }
+        TowLines.clear(members);
+    }
+
     public static void applyAlwaysCountingSensorStrength(CampaignFleetAPI fleet) {
         if (fleet == null || fleet.getFleetData() == null) {
             return;
         }
-        List<FleetMemberAPI> members = fleet.getFleetData().getMembersListCopy();
-        float extra = anyAlwaysCounts(members) ? alwaysCountingStrength(members) : 0f;
+        applyAlwaysCountingSensorStrength(fleet, fleet.getFleetData().getMembersListCopy());
+    }
+
+    private static void applyAlwaysCountingSensorStrength(CampaignFleetAPI fleet, List<FleetMemberAPI> members) {
+        setAlwaysCountingSensorStrength(fleet, anyAlwaysCounts(members) ? alwaysCountingStrength(members) : 0f);
+    }
+
+    private static void setAlwaysCountingSensorStrength(CampaignFleetAPI fleet, float extra) {
         if (extra > 0f) {
             fleet.getStats().getSensorStrengthMod().modifyFlat(ExiledSector.key(SENSOR_STRENGTH_ALWAYS_COUNTS_FLEET_MOD), extra,
                     Translation.gameText("fleet.sensorStrengthAlwaysCounts"));
@@ -93,11 +128,21 @@ public final class FleetWideEffects {
     }
 
     public static void applyMoveSlowBurnLevel(CampaignFleetAPI fleet) {
-        DynamicStatsAPI fleetDynamic = fleet == null || fleet.getStats() == null ? null : fleet.getStats().getDynamic();
-        if (fleetDynamic == null || fleet.getFleetData() == null) {
+        if (fleet == null || fleet.getFleetData() == null) {
             return;
         }
-        float bonus = moveSlowBurnLevelBonus(fleet.getFleetData().getMembersListCopy());
+        applyMoveSlowBurnLevel(fleet, fleet.getFleetData().getMembersListCopy());
+    }
+
+    private static void applyMoveSlowBurnLevel(CampaignFleetAPI fleet, List<FleetMemberAPI> members) {
+        setMoveSlowBurnLevel(fleet, moveSlowBurnLevelBonus(members));
+    }
+
+    private static void setMoveSlowBurnLevel(CampaignFleetAPI fleet, float bonus) {
+        DynamicStatsAPI fleetDynamic = fleet.getStats() == null ? null : fleet.getStats().getDynamic();
+        if (fleetDynamic == null) {
+            return;
+        }
         StatBonus moveSlowMod = fleetDynamic.getMod(Stats.MOVE_SLOW_SPEED_BONUS_MOD);
         if (bonus > 0f) {
             moveSlowMod.modifyFlat(ExiledSector.key(MOVE_SLOW_BURN_LEVEL_FLEET_MOD), bonus, Translation.gameText("fleet.moveSlowBurnLevel"));
@@ -111,11 +156,22 @@ public final class FleetWideEffects {
     }
 
     public static void applyTransponderOffSensorProfile(CampaignFleetAPI fleet) {
-        StatBonus detectedRangeMod = fleet == null || fleet.getStats() == null ? null : fleet.getStats().getDetectedRangeMod();
-        if (detectedRangeMod == null || fleet.getFleetData() == null) {
+        if (fleet == null || fleet.getFleetData() == null) {
             return;
         }
-        float percent = fleet.isTransponderOn() ? 0f : transponderOffSensorProfilePercent(fleet.getFleetData().getMembersListCopy());
+        setTransponderOffSensorProfile(fleet, fleet.isTransponderOn() ? 0f
+                : transponderOffSensorProfilePercent(fleet.getFleetData().getMembersListCopy()));
+    }
+
+    private static void applyTransponderOffSensorProfile(CampaignFleetAPI fleet, List<FleetMemberAPI> members) {
+        setTransponderOffSensorProfile(fleet, fleet.isTransponderOn() ? 0f : transponderOffSensorProfilePercent(members));
+    }
+
+    private static void setTransponderOffSensorProfile(CampaignFleetAPI fleet, float percent) {
+        StatBonus detectedRangeMod = fleet.getStats() == null ? null : fleet.getStats().getDetectedRangeMod();
+        if (detectedRangeMod == null) {
+            return;
+        }
         if (percent < 0f) {
             detectedRangeMod.modifyPercent(ExiledSector.key(TRANSPONDER_OFF_SENSOR_PROFILE_FLEET_MOD), percent,
                     Translation.gameText("fleet.transponderOffSensorProfile"));
@@ -130,11 +186,22 @@ public final class FleetWideEffects {
     }
 
     public static void applyTransponderOffBurnLevel(CampaignFleetAPI fleet) {
-        StatBonus fleetBurnMod = fleet == null || fleet.getStats() == null ? null : fleet.getStats().getFleetwideMaxBurnMod();
-        if (fleetBurnMod == null || fleet.getFleetData() == null) {
+        if (fleet == null || fleet.getFleetData() == null) {
             return;
         }
-        float bonus = fleet.isTransponderOn() ? 0f : transponderOffBurnLevelBonus(fleet.getFleetData().getMembersListCopy());
+        setTransponderOffBurnLevel(fleet, fleet.isTransponderOn() ? 0f
+                : transponderOffBurnLevelBonus(fleet.getFleetData().getMembersListCopy()));
+    }
+
+    private static void applyTransponderOffBurnLevel(CampaignFleetAPI fleet, List<FleetMemberAPI> members) {
+        setTransponderOffBurnLevel(fleet, fleet.isTransponderOn() ? 0f : transponderOffBurnLevelBonus(members));
+    }
+
+    private static void setTransponderOffBurnLevel(CampaignFleetAPI fleet, float bonus) {
+        StatBonus fleetBurnMod = fleet.getStats() == null ? null : fleet.getStats().getFleetwideMaxBurnMod();
+        if (fleetBurnMod == null) {
+            return;
+        }
         if (bonus > 0f) {
             fleetBurnMod.modifyFlat(ExiledSector.key(TRANSPONDER_OFF_BURN_LEVEL_FLEET_MOD), bonus, Translation.gameText("fleet.transponderOffBurnLevel"));
         } else {
@@ -151,7 +218,10 @@ public final class FleetWideEffects {
             return;
         }
         List<FleetMemberAPI> members = fleet.getFleetData().getMembersListCopy();
-        float resistancePercent = coronaResistancePercent(members);
+        setCoronaResistance(members, coronaResistancePercent(members));
+    }
+
+    private static void setCoronaResistance(List<FleetMemberAPI> members, float resistancePercent) {
         String modId = ExiledSector.key(CORONA_RESISTANCE_FLEET_MOD);
         if (resistancePercent <= 0f) {
             for (FleetMemberAPI member : members) {
@@ -161,7 +231,7 @@ public final class FleetWideEffects {
         }
         String source = Translation.gameText("fleet.coronaResistance");
         for (FleetMemberAPI member : members) {
-            member.getStats().getDynamic().getStat(Stats.CORONA_EFFECT_MULT).modifyMult(modId, 1f - resistancePercent / 100f, source);
+            member.getStats().getDynamic().getStat(Stats.CORONA_EFFECT_MULT).modifyMult(modId, SkillEffectSupport.reductionMult(resistancePercent), source);
         }
     }
 
@@ -169,21 +239,30 @@ public final class FleetWideEffects {
         return Math.min(MAX_CORONA_RESISTANCE_PERCENT, FleetContributions.sum(members, CORONA_RESISTANCE_CONTRIBUTION_KEY));
     }
 
+    public static void applyPlayerFleetConditions(CampaignFleetAPI fleet, boolean slowMoving, boolean halfFueled) {
+        if (fleet == null || fleet.getFleetData() == null) {
+            return;
+        }
+        List<FleetMemberAPI> members = fleet.getFleetData().getMembersListCopy();
+        setMoveSlowSupplyUse(members, slowMoving ? strongestMoveSlowSupplyUse(members) : 0f);
+        if (fleet.isPlayerFleet() && fleet.getCargo() != null) {
+            setHalfFueledFuelUse(members, halfFueled);
+        }
+    }
+
     public static void applyMoveSlowSupplyUse(CampaignFleetAPI fleet) {
         if (fleet == null || fleet.getFleetData() == null) {
             return;
         }
         List<FleetMemberAPI> members = fleet.getFleetData().getMembersListCopy();
-        float percent = Misc.isSlowMoving(fleet) ? strongestMoveSlowSupplyUse(members) : 0f;
+        setMoveSlowSupplyUse(members, Misc.isSlowMoving(fleet) ? strongestMoveSlowSupplyUse(members) : 0f);
+    }
+
+    private static void setMoveSlowSupplyUse(List<FleetMemberAPI> members, float percent) {
         String modId = ExiledSector.key(MOVE_SLOW_SUPPLY_USE_MEMBER_MOD);
         String source = percent != 0f ? Translation.gameText("fleet.moveSlowSupplyUse") : null;
         for (FleetMemberAPI member : members) {
-            MutableStat suppliesPerMonth = member.getStats().getSuppliesPerMonth();
-            if (percent != 0f) {
-                suppliesPerMonth.modifyMult(modId, 1f + percent / 100f, source);
-            } else {
-                suppliesPerMonth.unmodifyMult(modId);
-            }
+            StatMods.setMult(member.getStats().getSuppliesPerMonth(), modId, SkillEffectSupport.multFrom(percent), source);
         }
     }
 
@@ -192,9 +271,21 @@ public final class FleetWideEffects {
     }
 
     public static void applySupplyUsePerHullType(CampaignFleetAPI fleet) {
-        applyPerHullTypeReduction(fleet, FleetWideEffects::supplyUsePerHullTypeReduction, SUPPLY_USE_PER_HULL_TYPE_MEMBER_MOD,
-                "fleet.supplyUsePerHullType", (member, modId, percent, source) ->
-                        setPercent(member.getStats().getSuppliesPerMonth(), modId, percent, source));
+        if (fleet == null || fleet.getFleetData() == null) {
+            return;
+        }
+        applySupplyUsePerHullType(fleet, fleet.getFleetData().getMembersListCopy());
+    }
+
+    private static void applySupplyUsePerHullType(CampaignFleetAPI fleet, List<FleetMemberAPI> members) {
+        if (fleet.isPlayerFleet()) {
+            setSupplyUsePerHullType(members, supplyUsePerHullTypeReduction(members));
+        }
+    }
+
+    private static void setSupplyUsePerHullType(List<FleetMemberAPI> members, float reductionPercent) {
+        setMemberReduction(members, reductionPercent, SUPPLY_USE_PER_HULL_TYPE_MEMBER_MOD, "fleet.supplyUsePerHullType",
+                (member, modId, percent, source) -> StatMods.setPercent(member.getStats().getSuppliesPerMonth(), modId, percent, source));
     }
 
     static float supplyUsePerHullTypeReduction(List<FleetMemberAPI> members) {
@@ -202,9 +293,21 @@ public final class FleetWideEffects {
     }
 
     public static void applyFuelUsePerHullType(CampaignFleetAPI fleet) {
-        applyPerHullTypeReduction(fleet, FleetWideEffects::fuelUsePerHullTypeReduction, FUEL_USE_PER_HULL_TYPE_MEMBER_MOD,
-                "fleet.fuelUsePerHullType", (member, modId, percent, source) ->
-                        setPercent(member.getStats().getFuelUseMod(), modId, percent, source));
+        if (fleet == null || fleet.getFleetData() == null) {
+            return;
+        }
+        applyFuelUsePerHullType(fleet, fleet.getFleetData().getMembersListCopy());
+    }
+
+    private static void applyFuelUsePerHullType(CampaignFleetAPI fleet, List<FleetMemberAPI> members) {
+        if (fleet.isPlayerFleet()) {
+            setFuelUsePerHullType(members, fuelUsePerHullTypeReduction(members));
+        }
+    }
+
+    private static void setFuelUsePerHullType(List<FleetMemberAPI> members, float reductionPercent) {
+        setMemberReduction(members, reductionPercent, FUEL_USE_PER_HULL_TYPE_MEMBER_MOD, "fleet.fuelUsePerHullType",
+                (member, modId, percent, source) -> StatMods.setPercent(member.getStats().getFuelUseMod(), modId, percent, source));
     }
 
     static float fuelUsePerHullTypeReduction(List<FleetMemberAPI> members) {
@@ -215,33 +318,12 @@ public final class FleetWideEffects {
         void set(FleetMemberAPI member, String modId, float percent, String source);
     }
 
-    private static void applyPerHullTypeReduction(CampaignFleetAPI fleet, ToDoubleFunction<List<FleetMemberAPI>> reduction, String memberMod,
-                                                  String sourceKey, MemberPercentStat stat) {
-        if (fleet == null || !fleet.isPlayerFleet() || fleet.getFleetData() == null) {
-            return;
-        }
-        List<FleetMemberAPI> members = fleet.getFleetData().getMembersListCopy();
-        float percent = (float) reduction.applyAsDouble(members);
+    private static void setMemberReduction(List<FleetMemberAPI> members, float reductionPercent, String memberMod, String sourceKey,
+                                           MemberPercentStat stat) {
         String modId = ExiledSector.key(memberMod);
-        String source = percent > 0f ? Translation.gameText(sourceKey) : null;
+        String source = reductionPercent > 0f ? Translation.gameText(sourceKey) : null;
         for (FleetMemberAPI member : members) {
-            stat.set(member, modId, -percent, source);
-        }
-    }
-
-    private static void setPercent(MutableStat stat, String modId, float percent, String source) {
-        if (percent != 0f) {
-            stat.modifyPercent(modId, percent, source);
-        } else {
-            stat.unmodifyPercent(modId);
-        }
-    }
-
-    private static void setPercent(StatBonus stat, String modId, float percent, String source) {
-        if (percent != 0f) {
-            stat.modifyPercent(modId, percent, source);
-        } else {
-            stat.unmodifyPercent(modId);
+            stat.set(member, modId, -reductionPercent, source);
         }
     }
 
@@ -267,13 +349,20 @@ public final class FleetWideEffects {
         if (fleet == null || !fleet.isPlayerFleet() || fleet.getFleetData() == null || fleet.getCargo() == null) {
             return;
         }
-        boolean halfFueled = isHalfFueled(fleet.getCargo().getFuel(), fleet.getCargo().getMaxFuel());
+        setHalfFueledFuelUse(fleet.getFleetData().getMembersListCopy(), isHalfFueled(fleet));
+    }
+
+    private static void setHalfFueledFuelUse(List<FleetMemberAPI> members, boolean halfFueled) {
         String modId = ExiledSector.key(HALF_FUELED_FUEL_USE_MEMBER_MOD);
         String source = halfFueled ? Translation.gameText("fleet.halfFueledFuelUse") : null;
-        for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
+        for (FleetMemberAPI member : members) {
             float percent = halfFueled ? member.getStats().getDynamic().getValue(HALF_FUELED_FUEL_USE_KEY, 0f) : 0f;
-            setPercent(member.getStats().getFuelUseMod(), modId, -Math.max(0f, percent), source);
+            StatMods.setPercent(member.getStats().getFuelUseMod(), modId, -Math.max(0f, percent), source);
         }
+    }
+
+    public static boolean isHalfFueled(CampaignFleetAPI fleet) {
+        return fleet.getCargo() != null && isHalfFueled(fleet.getCargo().getFuel(), fleet.getCargo().getMaxFuel());
     }
 
     static boolean isHalfFueled(float fuel, float maxFuel) {
@@ -281,10 +370,16 @@ public final class FleetWideEffects {
     }
 
     public static void applySwarmSensorStrength(CampaignFleetAPI fleet) {
-        if (fleet == null || fleet.getStats() == null || fleet.getFleetData() == null) {
+        if (fleet == null || fleet.getFleetData() == null) {
             return;
         }
-        float percent = swarmSensorStrengthPercent(fleet.getFleetData().getMembersListCopy());
+        setSwarmSensorStrength(fleet, swarmSensorStrengthPercent(fleet.getFleetData().getMembersListCopy()));
+    }
+
+    private static void setSwarmSensorStrength(CampaignFleetAPI fleet, float percent) {
+        if (fleet.getStats() == null) {
+            return;
+        }
         StatBonus sensorStrengthMod = fleet.getStats().getSensorStrengthMod();
         if (percent > 0f) {
             sensorStrengthMod.modifyPercent(ExiledSector.key(SWARM_SENSOR_STRENGTH_FLEET_MOD), percent, Translation.gameText("fleet.swarmSensorStrength"));
@@ -304,11 +399,17 @@ public final class FleetWideEffects {
     }
 
     public static void applyTerrainMovementPenalty(CampaignFleetAPI fleet) {
-        MutableCharacterStatsAPI commanderStats = fleet == null ? null : fleet.getCommanderStats();
-        if (commanderStats == null || commanderStats.getDynamic() == null || fleet.getFleetData() == null) {
+        if (fleet == null || fleet.getFleetData() == null) {
             return;
         }
-        float percent = terrainMovementPenaltyPercent(fleet.getFleetData().getMembersListCopy());
+        setTerrainMovementPenalty(fleet, terrainMovementPenaltyPercent(fleet.getFleetData().getMembersListCopy()));
+    }
+
+    private static void setTerrainMovementPenalty(CampaignFleetAPI fleet, float percent) {
+        MutableCharacterStatsAPI commanderStats = fleet.getCommanderStats();
+        if (commanderStats == null || commanderStats.getDynamic() == null) {
+            return;
+        }
         MutableStat penaltyMult = commanderStats.getDynamic().getStat(Stats.NAVIGATION_PENALTY_MULT);
         if (percent != 0f) {
             penaltyMult.modifyFlat(ExiledSector.key(TERRAIN_MOVEMENT_PENALTY_FLEET_MOD), percent / 100f,

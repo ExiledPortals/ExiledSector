@@ -3,8 +3,8 @@ package exiledsector.ui.cargo;
 import exiledsector.ModSounds;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
-import exiledsector.items.MaterialItems;
-import exiledsector.items.MaterialTier;
+import exiledsector.items.crafting.material.MaterialItems;
+import exiledsector.items.crafting.material.MaterialTier;
 import exiledsector.ui.CampaignMessages;
 
 import java.util.Map;

@@ -2,10 +2,9 @@ package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledsector.skills.npc.RealSkillData;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 
@@ -14,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class LogisticsNodeCapTest {
 
     private static final ShipFacts FRIGATE = new ShipFacts(HullSize.FRIGATE, ShieldType.FRONT, false, 100f, hullModId -> false);
@@ -23,15 +23,9 @@ class LogisticsNodeCapTest {
 
     @BeforeEach
     void setUp() {
-        RealSkillData.clear();
         SkillNode root = node("root", type("root_type", SkillTier.ROOT, List.of()));
         data = new ShipSkillData();
         ShipTrees.chooseStartingRoot(data, root);
-    }
-
-    @AfterEach
-    void tearDown() {
-        RealSkillData.clear();
     }
 
     private static SkillType type(String id, SkillTier tier, List<String> tags) {

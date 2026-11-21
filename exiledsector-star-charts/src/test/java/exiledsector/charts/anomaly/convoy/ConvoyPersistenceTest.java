@@ -15,6 +15,10 @@ class ConvoyPersistenceTest {
 
     private static List<String> savedFields(Class<?> type) {
         List<String> saved = new ArrayList<>();
+        Class<?> parent = type.getSuperclass();
+        if (parent != null && parent.getName().startsWith("exiledsector.")) {
+            saved.addAll(savedFields(parent));
+        }
         for (Field field : type.getDeclaredFields()) {
             if (!Modifier.isStatic(field.getModifiers()) && !Modifier.isTransient(field.getModifiers())) {
                 saved.add(field.getName() + ": " + field.getType().getSimpleName());

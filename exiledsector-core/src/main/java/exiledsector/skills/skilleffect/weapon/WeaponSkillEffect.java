@@ -32,6 +32,7 @@ import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
 import static exiledsector.skills.skilleffect.StatTarget.dynamicMod;
 import static exiledsector.skills.skilleffect.StatTarget.stat;
+import static exiledsector.skills.skilleffect.weapon.TargetDamageBonusEffect.damageType;
 import static exiledsector.skills.skilleffect.weapon.TargetDamageBonusEffect.targetDamage;
 
 public enum WeaponSkillEffect implements BackedSkillEffect {
@@ -100,6 +101,8 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
             return Set.of(AuraSkillEffect.PIRATE_FRENZY_ON_NEARBY_DESTRUCTION_RANGE_FLAT, HELPLESS_KILL_PIRATE_FRENZY_STACKS_FLAT);
         }
     },
+    PIRATE_FRENZY_FLUX_DISSIPATION_PERCENT_PER_STACK(listener(PirateFrenzy.FLUX_DISSIPATION_PERCENT_PER_STACK_KEY, PirateFrenzy.class,
+            PirateFrenzy::new)),
     OPENING_WEAPON_DAMAGE_PERCENT(new ConditionalStatEffect(PERCENT, WeaponStatFamily.DAMAGE.target(WeaponScope.ALL), "weapon.stat.DAMAGE",
             OpeningVolley::isUnderway)) {
         @Override
@@ -111,6 +114,16 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
             SharedTargetDamageListener::new)),
     EMP_DAMAGE_PERCENT(listener(EmpDamageListener.EMP_INCREASED_PERCENT_KEY, EmpDamageListener.class, EmpDamageListener::new)),
     EMP_DAMAGE_MULT(listener(EmpDamageListener.EMP_MORE_PERCENT_KEY, EmpDamageListener.class, EmpDamageListener::new)),
+    KINETIC_DAMAGE_PERCENT(damageType(DamageTypeListener.KINETIC_PERCENT_KEY, "stat.kineticDamage")),
+    HIGH_EXPLOSIVE_DAMAGE_PERCENT(damageType(DamageTypeListener.HIGH_EXPLOSIVE_PERCENT_KEY, "stat.highExplosiveDamage")),
+    ENERGY_DAMAGE_PERCENT(damageType(DamageTypeListener.ENERGY_PERCENT_KEY, "stat.energyDamage")),
+    FRAGMENTATION_DAMAGE_PERCENT(damageType(DamageTypeListener.FRAGMENTATION_PERCENT_KEY, "stat.fragmentationDamage")),
+    FRAGMENTATION_DAMAGE_MULT(listener(DamageTypeListener.FRAGMENTATION_MORE_PERCENT_KEY, DamageTypeListener.class, DamageTypeListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return StatMode.MULT.describeStat(magnitude, "stat.fragmentationDamage");
+        }
+    },
     DAMAGE_TO_DISTANT_TARGETS_PERCENT(listener(DistantTargetDamageListener.DAMAGE_PERCENT_KEY, DistantTargetDamageListener.class,
             DistantTargetDamageListener::new)) {
         @Override
@@ -164,6 +177,7 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
             BallisticRangefinderListener.class, BallisticRangefinderListener::new)),
     MISSILE_AUTOLOADER_CAPACITY_PERCENT(listener(MissileAutoloaderListener.CAPACITY_PERCENT_KEY,
             MissileAutoloaderListener.class, MissileAutoloaderListener::new)),
+    MISSILE_RESERVE_RELOAD_PERCENT(listener(ReserveRacksListener.RELOAD_PERCENT_KEY, ReserveRacksListener.class, ReserveRacksListener::new)),
     MISSILE_AUTOLOADER_COOLDOWN_FLAT(listener(MissileAutoloaderListener.COOLDOWN_SECONDS_KEY,
             MissileAutoloaderListener.class, MissileAutoloaderListener::new)) {
         @Override

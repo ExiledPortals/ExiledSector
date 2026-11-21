@@ -39,6 +39,15 @@ class NodeBeamsTest {
     }
 
     @Test
+    void connectorStyleRingsHugTheIconInsideTheWiderConnectorBeam() {
+        float ringRadius = NodeBeams.huggingLaneRingRadius(30f, 1f);
+
+        assertTrue(ringRadius > NodeBeams.huggingRingRadius(30f, 1f));
+        assertTrue(ringRadius - NodeBeams.laneEdge(1f) < 30f);
+        assertTrue(NodeBeams.laneRingOuterEdge(ringRadius, 1f) < ringRadius + NodeBeams.laneEdge(1f));
+    }
+
+    @Test
     void lanesStopWhereTheirVisibleEdgesMeetTheRing() {
         float laneHalf = NodeBeams.laneEdge(1f) * NodeBeams.LANE_VISIBLE_SHARE;
         float reach = NodeBeams.laneReach(40f, 1f);

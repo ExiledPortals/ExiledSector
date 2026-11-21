@@ -20,7 +20,7 @@ import java.util.Map;
 final class RepairDroneRenderer extends BaseCombatLayeredRenderingPlugin {
 
     static final int DRONES_PER_COORDINATOR = 2;
-    static final String SPRITE_PATH = "graphics/fx/na_repair_drone.png";
+    static final String SPRITE_PATH = "graphics/exiledSector/fx/na_repair_drone.png";
     static final float DRONE_SIZE = 20f;
     static final float SPARK_INTERVAL_SECONDS = 0.4f;
     private static final float RENDER_RADIUS = 1_000_000f;

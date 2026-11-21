@@ -2,7 +2,7 @@ package exiledsector.ui.node;
 
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
-import exiledsector.items.NodeGrantStatus;
+import exiledsector.items.subroutine.NodeGrantStatus;
 import exiledsector.skills.NodeGrants;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTreeLinks;

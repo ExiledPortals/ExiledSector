@@ -1,14 +1,24 @@
 package exiledsector.items;
 
 import exiledsector.ModCsv;
+import exiledsector.data.CsvRows;
 import exiledsector.domain.DomainContributions;
 import exiledsector.domain.ExiledSectorDomain;
+import exiledsector.items.drop.UniqueSource;
+import exiledsector.items.modifier.CorruptionImplicitPool;
+import exiledsector.items.modifier.ItemModifiers;
+import exiledsector.items.modifier.ModifierReference;
+import exiledsector.items.modifier.ModifierScope;
+import exiledsector.items.modifier.PrototypeImplicits;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
+import exiledsector.skills.tags.ThemeTagScope;
+import exiledsector.skills.tags.ThemeTags;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,6 +28,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -34,12 +45,13 @@ public final class ItemDataIntegrity {
     }
 
     static final String HYBRID_ID_PREFIX = "HYBRID_";
-    static final String ENTRY_SEPARATOR = ";";
-    static final int FIRST_DATA_LINE = 2;
+    public static final String ENTRY_SEPARATOR = ";";
+    public static final int FIRST_DATA_LINE = 2;
+    static final String TAG_BESIDE_ANCESTOR = " beside its ancestor ";
     private static final Logger LOG = Logger.getLogger(ItemDataIntegrity.class);
     private static final DomainContributions<ItemDataRules> RULES = DomainContributions.fromEveryDomain(ExiledSectorDomain::itemDataRules);
 
-    record ModifierRow(String id, ModifierSlot slot, Set<ModifierScope> scopes, List<String> effectNames, boolean named, int line,
+    public record ModifierRow(String id, ModifierSlot slot, Set<ModifierScope> scopes, List<String> effectNames, boolean named, int line,
                        String file) {
     }
 
@@ -82,6 +94,8 @@ public final class ItemDataIntegrity {
             for (Violation violation : violations) {
                 if (violation.severity() == Severity.ERROR) {
                     LOG.error(violation);
+                } else {
+                    LOG.warn(violation);
                 }
             }
         } catch (IOException | JSONException e) {
@@ -100,33 +114,29 @@ public final class ItemDataIntegrity {
         return List.copyOf(violations);
     }
 
-    void clearViolations() {
+    public void clearViolations() {
         violations.clear();
     }
 
-    Map<String, ModifierRow> modifiersById() {
+    public Map<String, ModifierRow> modifiersById() {
         return modifiersById;
     }
 
-    boolean isReferenced(String modifierId) {
+    public boolean isReferenced(String modifierId) {
         return referencedIds.contains(modifierId);
     }
 
-    static JSONArray orEmpty(JSONArray rows) {
-        return rows == null ? new JSONArray() : rows;
-    }
-
-    void checkVolume(String file, int line, String definitionId, String volume) {
+    public void checkVolume(String file, int line, String definitionId, String volume) {
         if (!volume.isEmpty() && !ItemVolumes.isKnown(volume)) {
             error(file, line, definitionId + " names the volume \"" + volume + "\"; expected one of " + ItemVolumes.known().stream().sorted().toList());
         }
     }
 
-    void error(String file, int line, String message) {
+    public void error(String file, int line, String message) {
         violations.add(new Violation(Severity.ERROR, file, line, message));
     }
 
-    void warning(String file, int line, String message) {
+    public void warning(String file, int line, String message) {
         violations.add(new Violation(Severity.WARNING, file, line, message));
     }
 
@@ -168,6 +178,7 @@ public final class ItemDataIntegrity {
                 rules.checkModifierRow(this, file, line, modifierId, scopes, parsedLines);
             }
             checkIdConvention(file, line, modifierId, effectNames);
+            checkTags(file, line, modifierId, row, scopes);
             modifiersById.put(modifierId, new ModifierRow(modifierId, slot, scopes, effectNames,
                     !ModCsv.text(row, "name").isEmpty(), line, file));
         });
@@ -235,7 +246,7 @@ public final class ItemDataIntegrity {
         return effectNames;
     }
 
-    void checkEffectName(String file, int line, String modifierId, ModifierEffects effects, String effectName) {
+    public void checkEffectName(String file, int line, String modifierId, ModifierEffects effects, String effectName) {
         String currentName = effects.currentName(effectName);
         if (currentName == null) {
             error(file, line, modifierId + " uses " + effectName + ", which is not a skill effect");
@@ -252,6 +263,34 @@ public final class ItemDataIntegrity {
             }
         } else if (effectNames.size() > 1 && !modifierId.startsWith(HYBRID_ID_PREFIX)) {
             error(file, line, modifierId + " has several effects, so its id must start with " + HYBRID_ID_PREFIX);
+        }
+    }
+
+    private void checkTags(String file, int line, String modifierId, JSONObject row, Set<ModifierScope> scopes) {
+        if (!row.has(ItemModifiers.TAGS_COLUMN)) {
+            return;
+        }
+        List<String> tags = CsvRows.entries(ModCsv.text(row, ItemModifiers.TAGS_COLUMN));
+        if (tags.isEmpty()) {
+            error(file, line, modifierId + " has no tags; list its theme tags, or " + ItemModifiers.TAGLESS + " for a tagless modifier");
+            return;
+        }
+        if (tags.equals(List.of(ItemModifiers.TAGLESS))) {
+            return;
+        }
+        ThemeTagScope tagScope = scopes.contains(ModifierScope.STAR_CHART) ? ThemeTagScope.STAR_CHART : ThemeTagScope.SHIP;
+        for (String tag : tags) {
+            if (tag.equals(ItemModifiers.TAGLESS)) {
+                error(file, line, modifierId + " lists " + ItemModifiers.TAGLESS + " beside other tags; " + ItemModifiers.TAGLESS
+                        + " marks a modifier with no tags");
+            } else if (!ThemeTags.isThemeTag(tag)) {
+                error(file, line, modifierId + " lists the tag \"" + tag + "\", which is not in " + ThemeTags.PATH);
+            } else if (!ThemeTags.allows(tag, tagScope)) {
+                error(file, line, modifierId + " lists the tag \"" + tag + "\", which is not a " + tagScope.id() + " tag in " + ThemeTags.PATH);
+            }
+            for (String ancestor : ThemeTags.ancestorsListedBeside(tag, tags)) {
+                warning(file, line, modifierId + " lists the tag \"" + tag + "\"" + TAG_BESIDE_ANCESTOR + "\"" + ancestor + "\", which it already counts as");
+            }
         }
     }
 
@@ -298,7 +337,7 @@ public final class ItemDataIntegrity {
         }
     }
 
-    void checkUniqueSources(String file, int line, String definitionId, String sourcesText) {
+    public void checkUniqueSources(String file, int line, String definitionId, String sourcesText) {
         try {
             UniqueSource.parseList(sourcesText);
         } catch (IllegalArgumentException e) {
@@ -349,7 +388,7 @@ public final class ItemDataIntegrity {
         }
     }
 
-    void checkWeight(String file, int line, String definitionId, String entryText, String weightText) {
+    public void checkWeight(String file, int line, String definitionId, String entryText, String weightText) {
         try {
             if (!(Float.parseFloat(weightText.trim()) > 0f)) {
                 error(file, line, definitionId + " entry \"" + entryText + "\" needs a weight above zero");
@@ -359,7 +398,7 @@ public final class ItemDataIntegrity {
         }
     }
 
-    ModifierRow referencedModifier(String file, int line, String ownerId, String referenceId, ModifierSlot slot, ModifierScope scope) {
+    public ModifierRow referencedModifier(String file, int line, String ownerId, String referenceId, ModifierSlot slot, ModifierScope scope) {
         ModifierRow modifier = modifiersById.get(referenceId);
         if (modifier == null) {
             error(file, line, ownerId + " references " + referenceId + ", which is not in " + modifierFileFor(scope));
@@ -385,7 +424,7 @@ public final class ItemDataIntegrity {
         return ItemModifiers.dataPath();
     }
 
-    void checkRepeats(String file, int line, String ownerId, ModifierRow modifier, List<ModifierRow> pool) {
+    public void checkRepeats(String file, int line, String ownerId, ModifierRow modifier, List<ModifierRow> pool) {
         for (ModifierRow listed : pool) {
             if (listed.id().equals(modifier.id())) {
                 error(file, line, ownerId + " lists " + modifier.id() + " more than once");
@@ -418,11 +457,55 @@ public final class ItemDataIntegrity {
 
     public void checkCorruptionPool(JSONArray rows, String file, String poolName, ItemType itemType) throws JSONException {
         List<ModifierRow> implicits = new ArrayList<>();
-        ModCsv.forEach(orEmpty(rows), (index, row) -> checkImplicitEntry(file, index + FIRST_DATA_LINE, poolName,
+        ModCsv.forEach(rows, (index, row) -> checkImplicitEntry(file, index + FIRST_DATA_LINE, poolName,
                 ModCsv.text(row, CorruptionImplicitPool.IMPLICIT_COLUMN), implicits, itemType));
     }
 
-    void checkImplicitEntry(String file, int line, String typeId, String entryText, List<ModifierRow> implicits, ItemType itemType) {
+    public void checkPrototypeImplicits(JSONArray rows, String file, JSONArray hullItemRows, JSONArray kindImplicitRows) throws JSONException {
+        Map<String, List<String>> kindImplicitIdsBySection = new HashMap<>();
+        ModCsv.forEach(kindImplicitRows, (index, row) -> kindImplicitIdsBySection.put(ModCsv.text(row, "section"),
+                CsvRows.entries(ModCsv.text(row, "implicits")).stream().map(String::trim).filter(ItemModifiers::isReference)
+                        .map(entry -> ModifierReference.parse(entry).id()).toList()));
+        Map<String, String> sectionsByBase = new HashMap<>();
+        ModCsv.forEach(hullItemRows, (index, row) -> {
+            if (!"true".equalsIgnoreCase(ModCsv.text(row, "unique"))) {
+                sectionsByBase.put(ModCsv.text(row, "id"), ModCsv.text(row, "section"));
+            }
+        });
+        Map<String, Integer> linesByBase = new HashMap<>();
+        Map<String, String> basesByImplicit = new HashMap<>();
+        ModCsv.forEach(rows, (index, row) -> {
+            int line = index + FIRST_DATA_LINE;
+            String baseId = ModCsv.text(row, PrototypeImplicits.BASE_COLUMN);
+            String section = sectionsByBase.get(baseId);
+            if (section == null) {
+                error(file, line, "\"" + baseId + "\" is not a hull item base; prototypes need a non-unique hull item");
+                return;
+            }
+            Integer earlierLine = linesByBase.putIfAbsent(baseId, line);
+            if (earlierLine != null) {
+                error(file, line, baseId + " is already listed on line " + earlierLine);
+            }
+            List<ModifierRow> implicits = new ArrayList<>();
+            kindImplicitIdsBySection.getOrDefault(section, List.of()).stream().map(modifiersById::get)
+                    .filter(Objects::nonNull).forEach(implicits::add);
+            int ownCount = implicits.size();
+            for (String entryText : CsvRows.entries(ModCsv.text(row, PrototypeImplicits.IMPLICITS_COLUMN))) {
+                checkImplicitEntry(file, line, baseId, entryText.trim(), implicits, ItemType.HULL_ITEM);
+            }
+            if (implicits.size() == ownCount) {
+                error(file, line, baseId + " has no prototype implicits");
+            }
+            for (ModifierRow prototype : implicits.subList(ownCount, implicits.size())) {
+                String otherBase = basesByImplicit.putIfAbsent(prototype.id(), baseId);
+                if (otherBase != null && !otherBase.equals(baseId)) {
+                    error(file, line, prototype.id() + " is already a prototype implicit of " + otherBase);
+                }
+            }
+        });
+    }
+
+    public void checkImplicitEntry(String file, int line, String typeId, String entryText, List<ModifierRow> implicits, ItemType itemType) {
         if (entryText.isEmpty()) {
             return;
         }

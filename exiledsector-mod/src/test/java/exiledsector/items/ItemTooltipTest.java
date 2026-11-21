@@ -9,6 +9,8 @@ import com.fs.starfarer.api.ui.UIComponentAPI;
 import exiledsector.i18n.Catalogue;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
+import exiledsector.items.modifier.RolledLine;
+import exiledsector.items.modifier.SlottedLine;
 import exiledsector.modifiers.ModifierSlot;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -44,7 +46,7 @@ class ItemTooltipTest {
     @Test
     void theTooltipListsEachRolledLineWithoutAKindLine() throws Exception {
         HullItemRows.registerMilitary();
-        Item item = Item.withEffects("socketable_1", HullItemRows.MILITARY, 1L,
+        Item item = TestItems.withLines("socketable_1", HullItemRows.MILITARY, 1L,
                 List.of(new RolledLine("BEAM_WEAPON_DAMAGE_PERCENT", 12f), new RolledLine("REMOVED_EFFECT", 3f)));
 
         List<String> lines = item.tooltipLines().stream().map(StyledText::plain).toList();
@@ -56,46 +58,49 @@ class ItemTooltipTest {
     @Test
     void expandedEffectLinesShowTheRollRangeInBracketsAfterTheValue() throws Exception {
         HullItemRows.registerMilitary();
-        Item item = Item.withEffects("socketable_4", HullItemRows.MILITARY, 1L,
+        Item item = TestItems.withLines("socketable_4", HullItemRows.MILITARY, 1L,
                 List.of(new RolledLine("BEAM_WEAPON_DAMAGE_PERCENT", 12f), new RolledLine("SHIELD_DAMAGE_TAKEN_MULT", -12f),
                         new RolledLine("REMOVED_EFFECT", 3f)));
 
         List<StyledText> expanded = item.effectLines(true);
 
-        assertEquals(List.of("12% (10%-15%) increased beam weapon damage.", "12% (10%-15%) less damage taken by shields."),
+        assertEquals(List.of("Prefix", "12% (10%-15%) increased beam weapon damage.", "Suffix", "12% (10%-15%) less damage taken by shields."),
                 expanded.stream().map(StyledText::plain).toList());
-        assertEquals("<good>12%</good> (10%-15%) less damage taken by shields.", expanded.get(1).toMarkup());
+        assertEquals("<good>12%</good> (10%-15%) less damage taken by shields.", expanded.get(3).toMarkup());
         assertEquals(List.of("12% increased beam weapon damage.", "12% less damage taken by shields."),
                 item.effectLines(false).stream().map(StyledText::plain).toList());
     }
 
     @Test
-    void slottedEffectLinesTagEachExplicitAsPrefixOrSuffix() throws Exception {
+    void slottedEffectLinesCaptionEachExplicitAsPrefixOrSuffix() throws Exception {
         HullItemRows.registerMilitary();
-        Item item = Item.withEffects("socketable_6", HullItemRows.MILITARY, 1L,
+        Item item = TestItems.withLines("socketable_6", HullItemRows.MILITARY, 1L,
                 List.of(new RolledLine("BEAM_WEAPON_DAMAGE_PERCENT", 12f), new RolledLine("SHIELD_DAMAGE_TAKEN_MULT", -12f)));
 
         List<SlottedLine> lines = item.slottedEffectLines(true, null);
 
-        assertEquals(List.of(ModifierSlot.PREFIX, ModifierSlot.SUFFIX), lines.stream().map(SlottedLine::slot).toList());
+        assertEquals(List.of(true, false, true, false), lines.stream().map(SlottedLine::caption).toList());
+        assertEquals(List.of(ModifierSlot.PREFIX, ModifierSlot.PREFIX, ModifierSlot.SUFFIX, ModifierSlot.SUFFIX),
+                lines.stream().map(SlottedLine::slot).toList());
+        assertEquals(List.of("Prefix", "Suffix"), lines.stream().filter(SlottedLine::caption).map(line -> line.text().plain()).toList());
         assertEquals(item.effectLines(true).stream().map(StyledText::plain).toList(),
-                lines.stream().map(line -> line.text().plain()).toList());
+                lines.stream().map(line -> line.inlineText().plain()).toList());
     }
 
     @Test
     void anEffectNoLongerInItsPoolOrWithAFixedValueShowsNoRange() throws Exception {
         ItemDefinitions.register(new org.json.JSONArray().put(HullItemRows.row("fixed", "bridge", "HULL_MULT:5:5")));
-        Item item = Item.withEffects("socketable_5", "fixed", 1L,
+        Item item = TestItems.withLines("socketable_5", "fixed", 1L,
                 List.of(new RolledLine("HULL_MULT", 5f), new RolledLine("ARMOR_PERCENT", 7f)));
 
-        assertEquals(List.of("5% more hull points.", "7% increased armor."),
+        assertEquals(List.of("Prefix", "5% more hull points.", "Suffix", "7% increased armor."),
                 item.effectLines(true).stream().map(StyledText::plain).toList());
     }
 
     @Test
     void onAKnownHullSizeTheTooltipShowsOnlyThatSizesValue() throws Exception {
         ItemDefinitions.register(new org.json.JSONArray().put(HullItemRows.row("plating", "bridge", "ARMOR_FLAT:5/10/15/20")));
-        Item item = Item.withEffects("socketable_6", "plating", 1L, List.of(new RolledLine("ARMOR_FLAT", 5f)));
+        Item item = TestItems.withLines("socketable_6", "plating", 1L, List.of(new RolledLine("ARMOR_FLAT", 5f)));
 
         List<String> onCapital = writtenParagraphs(item, HullSize.CAPITAL_SHIP, List::of, true);
         List<String> withoutShip = writtenParagraphs(item, null, List::of, true);
@@ -115,23 +120,23 @@ class ItemTooltipTest {
     }
 
     @Test
-    void theExpandedCargoTooltipMarksEachExplicitAsPrefixOrSuffixAndTheCompactOneDoesNot() throws Exception {
+    void theExpandedCargoTooltipCaptionsEachExplicitAsPrefixOrSuffixAndTheCompactOneDoesNot() throws Exception {
         HullItemRows.registerMilitary();
-        Item item = Item.withEffects("socketable_7", HullItemRows.MILITARY, 1L,
+        Item item = TestItems.withLines("socketable_7", HullItemRows.MILITARY, 1L,
                 List.of(new RolledLine("BEAM_WEAPON_DAMAGE_PERCENT", 12f), new RolledLine("SHIELD_DAMAGE_TAKEN_MULT", -12f)));
-        String prefixTag = I18n.forGameText(() -> exiledsector.i18n.Translation.text(SlottedRows.slotTagKey(ModifierSlot.PREFIX)));
-        String suffixTag = I18n.forGameText(() -> exiledsector.i18n.Translation.text(SlottedRows.slotTagKey(ModifierSlot.SUFFIX)));
+        String prefixCaption = I18n.forGameText(() -> exiledsector.i18n.Translation.text(Item.captionSlotKey(ModifierSlot.PREFIX)));
+        String suffixCaption = I18n.forGameText(() -> exiledsector.i18n.Translation.text(Item.captionSlotKey(ModifierSlot.SUFFIX)));
 
         List<String> expanded = writtenParagraphs(item, null, List::of, true);
         List<String> compact = writtenParagraphs(item, null, List::of, false);
 
+        int prefixLine = expanded.indexOf(prefixCaption);
         int beamLine = expanded.indexOf("12% (10%-15%) increased beam weapon damage.");
+        int suffixLine = expanded.indexOf(suffixCaption);
         int shieldLine = expanded.indexOf("12% (10%-15%) less damage taken by shields.");
-        assertTrue(beamLine >= 0 && shieldLine >= 0, expanded.toString());
-        assertEquals(prefixTag, expanded.get(beamLine + 1));
-        assertEquals(suffixTag, expanded.get(shieldLine + 1));
+        assertTrue(prefixLine >= 0 && prefixLine < beamLine && beamLine < suffixLine && suffixLine < shieldLine, expanded.toString());
         assertTrue(compact.contains("12% increased beam weapon damage."), compact.toString());
-        assertFalse(compact.contains(prefixTag) || compact.contains(suffixTag), compact.toString());
+        assertFalse(compact.contains(prefixCaption) || compact.contains(suffixCaption), compact.toString());
     }
 
     private static List<String> writtenParagraphs(Item item, HullSize hullSize, Supplier<List<StyledText>> footer, boolean expanded) {
@@ -162,7 +167,7 @@ class ItemTooltipTest {
     void theDescriptionIsTheOnlyLineAboveTheEffects() throws Exception {
         ItemDefinitions.register(new org.json.JSONArray().put(HullItemRows.row("described", "bridge", "HULL_MULT:4:6")
                 .put("description", "Pulled from a Domain-era warship.")));
-        Item item = Item.withEffects("socketable_3", "described", 1L, List.of());
+        Item item = TestItems.withLines("socketable_3", "described", 1L, List.of());
 
         List<String> lines = item.tooltipLines().stream().map(StyledText::plain).toList();
 
@@ -171,7 +176,7 @@ class ItemTooltipTest {
 
     @Test
     void anItemWhoseDefinitionIsGoneKeepsItsEffectsButShowsAsUnrecognised() {
-        Item item = Item.withEffects("socketable_2", "removed_mod_item", 1L,
+        Item item = TestItems.withLines("socketable_2", "removed_mod_item", 1L,
                 List.of(new RolledLine("BEAM_WEAPON_DAMAGE_PERCENT", 12f)));
 
         assertEquals("Unrecognised hull item", item.name());

@@ -4,7 +4,8 @@ import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemStore;
-import exiledsector.items.StarChartFixtures;
+import exiledsector.items.modifier.ItemRoll;
+import exiledsector.items.starchart.StarChartFixtures;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,7 +33,7 @@ class StarChartBrowserTest {
     }
 
     private Item stored(String definitionId, long seed, int tier) {
-        return store.add(ItemData.rolledAtTier(ItemDefinitions.get(definitionId), seed, tier));
+        return store.add(ItemData.rolled(ItemDefinitions.get(definitionId), seed, ItemRoll.atTier(tier)));
     }
 
     @Test
@@ -110,7 +111,7 @@ class StarChartBrowserTest {
     @Test
     void selectingIgnoresChartsOutsideStorageAndNothingClears() {
         Item chart = stored("star_chart", 1L, 4);
-        Item loose = ItemData.rolledAtTier(ItemDefinitions.get("star_chart"), 5L, 4).preview();
+        Item loose = ItemData.rolled(ItemDefinitions.get("star_chart"), 5L, ItemRoll.atTier(4)).preview();
         StarChartBrowser browser = new StarChartBrowser();
         browser.reload(store.owned());
 

@@ -15,7 +15,7 @@ import java.util.Random;
 public final class FacilityLoot {
 
     static final AnomalyLoot LOOT = new AnomalyLoot(FacilityRules.LOOT_SCOPE, FacilityRules.LOOT_SITE, FacilityRules.LOOT_STEPS,
-            FacilityRules.LOOT_STEPS_PER_TIER, FacilityRules.ITEM_MULT, null, 0f);
+            FacilityRules.LOOT_STEPS_PER_TIER, 0f, null, 0f);
 
     private FacilityLoot() {
     }

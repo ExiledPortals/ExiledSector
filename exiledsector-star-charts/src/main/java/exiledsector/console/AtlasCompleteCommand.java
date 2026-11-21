@@ -5,7 +5,7 @@ import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasDevTools;
 import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasState;
-import exiledsector.items.StarChart;
+import exiledsector.items.starchart.StarChart;
 import org.lazywizard.console.Console;
 
 import java.util.List;
@@ -23,12 +23,12 @@ public class AtlasCompleteCommand extends AtlasTargetCommand {
             return null;
         }
         String text = rest.get(0).toLowerCase(Locale.ROOT).startsWith("tier=") ? rest.get(0).substring("tier=".length()) : rest.get(0);
-        return ConsoleArgs.wholeNumber(text, StarChart.LOWEST_TIER, StarChart.HIGHEST_TIER);
+        return ConsoleArgs.wholeNumber(text, StarChart.LOWEST_TIER, StarChart.HIGHEST_DROP_TIER);
     }
 
     @Override
     protected String usage() {
-        return "ExiledSectorAtlasComplete <x> <y> | <site id> [tier], tier " + StarChart.LOWEST_TIER + " to " + StarChart.HIGHEST_TIER
+        return "ExiledSectorAtlasComplete <x> <y> | <site id> [tier], tier " + StarChart.LOWEST_TIER + " to " + StarChart.HIGHEST_DROP_TIER
                 + " (default " + DEFAULT_TIER + ").";
     }
 

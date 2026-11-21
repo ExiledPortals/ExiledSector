@@ -1,10 +1,9 @@
 package exiledsector.skills.skilleffect.aura;
 
 import com.fs.starfarer.api.combat.ShipAPI;
-import exiledsector.skills.skilleffect.ShipCombatListener;
 import exiledsector.skills.skilleffect.SkillEffectSupport;
 
-final class DModAuraListener extends ShipCombatListener implements AuraField.Source {
+final class DModAuraListener extends AuraSourceListener {
 
     static final String ARMOR_PERCENT_PER_DMOD_KEY = "exiledSector_dModArmorAuraPercent";
     static final String TOP_SPEED_PERCENT_PER_DMOD_KEY = "exiledSector_dModTopSpeedAuraPercent";
@@ -19,11 +18,6 @@ final class DModAuraListener extends ShipCombatListener implements AuraField.Sou
         }
     }
 
-    @Override
-    public ShipAPI source() {
-        return ownerShip;
-    }
-
     float armorDamageTakenReductionPercent() {
         return percentForEachDMod(ARMOR_PERCENT_PER_DMOD_KEY);
     }
@@ -33,6 +27,6 @@ final class DModAuraListener extends ShipCombatListener implements AuraField.Sou
     }
 
     private float percentForEachDMod(String percentPerDModKey) {
-        return ownerShip.isRetreating() ? 0f : magnitude(percentPerDModKey) * countedDMods;
+        return unlessRetreating(magnitude(percentPerDModKey) * countedDMods);
     }
 }

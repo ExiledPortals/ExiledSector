@@ -1,34 +1,41 @@
 package exiledsector.effects;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.FleetEncounterContext;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.compat.NightcrossCompat;
 import exiledsector.compat.NightcrossUnlocks;
 import exiledsector.compat.RandomAssortmentCompat;
-import exiledsector.items.AnchorJanusGate;
-import exiledsector.items.DoctrineArchives;
-import exiledsector.items.FactionFleetDrops;
-import exiledsector.items.FactionlessAnchors;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemType;
-import exiledsector.items.SubroutineKind;
-import exiledsector.items.WormholeAnchorDefinitions;
+import exiledsector.items.anchor.AnchorJanusGate;
+import exiledsector.items.anchor.FactionlessAnchors;
+import exiledsector.items.anchor.WormholeAnchorDefinitions;
+import exiledsector.items.drop.FactionFleetDrops;
+import exiledsector.items.drop.ItemQuantity;
+import exiledsector.items.subroutine.SubroutineKind;
+import exiledsector.items.subroutine.doctrine.DoctrineArchives;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.BattleLoot;
+import exiledsector.loot.DropOrigin;
+import exiledsector.loot.DropType;
 import exiledsector.loot.FleetDifficulty;
+import exiledsector.loot.Loot;
+import exiledsector.loot.LootDelivery;
 import exiledsector.loot.LootSource;
+import exiledsector.loot.LootSources;
 import exiledsector.loot.MarketStock;
 import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.npc.NpcTreeTag;
-import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.ShipLevelSystem;
 import org.apache.log4j.Logger;
 
@@ -48,7 +55,11 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty, M
             RandomAssortmentCompat.EXOSHIP_SUBMARKET, 1f);
     private static final long ANCHOR_SALVAGE_SEED_SALT = 0x616E63686F7273L;
     private static final String BATTLE_FIND = "battle loot";
+    private static final float FULL_DIFFICULTY_STRENGTH = 1f;
     private static final Logger LOG = Logger.getLogger(SkillTreeLootSource.class);
+
+    private static final Object FLEET_FACTION_STATE = new Object();
+    private static final Object SUBROUTINE_QUANTITY_FACTION_STATE = new Object();
 
     private SkillTreeLootSource() {
     }
@@ -57,11 +68,29 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty, M
         return battle.state(this, LinkedHashMap::new);
     }
 
+    private static Map<String, Float> defeatedDeploymentPointsByFleetFaction(BattleLoot battle) {
+        return battle.state(FLEET_FACTION_STATE, LinkedHashMap::new);
+    }
+
+    private static Map<String, Float> subroutineQuantityWeightedDeploymentPointsByFaction(BattleLoot battle) {
+        return battle.state(SUBROUTINE_QUANTITY_FACTION_STATE, LinkedHashMap::new);
+    }
+
+    private static float subroutineQuantity(CampaignFleetAPI sourceFleet) {
+        return LootSources.fleetLootRules(sourceFleet).multipliers().quantity(DropType.SUBROUTINE);
+    }
+
     @Override
     public void recordEngagement(BattleLoot battle, BattleEngagement engagement) {
         Map<String, Float> defeatedDeploymentPointsByFaction = defeatedDeploymentPointsByFaction(battle);
         engagement.deploymentPointsLostByFaction().forEach((factionId, deploymentPoints) ->
                 defeatedDeploymentPointsByFaction.merge(factionId, deploymentPoints, Float::sum));
+        Map<String, Float> defeatedDeploymentPointsByFleetFaction = defeatedDeploymentPointsByFleetFaction(battle);
+        engagement.deploymentPointsLostByFleetFaction().forEach((factionId, deploymentPoints) ->
+                defeatedDeploymentPointsByFleetFaction.merge(factionId, deploymentPoints, Float::sum));
+        Map<String, Float> subroutineQuantityWeightedByFaction = subroutineQuantityWeightedDeploymentPointsByFaction(battle);
+        engagement.deploymentPointsLostByFaction(SkillTreeLootSource::subroutineQuantity).forEach((factionId, deploymentPoints) ->
+                subroutineQuantityWeightedByFaction.merge(factionId, deploymentPoints, Float::sum));
         GateRewardAnchors.recordEngagement(battle, engagement);
         DeserterBountyAnchors.recordEngagement(battle, engagement, Global.getSector());
         if (NightcrossCompat.isModEnabled()) {
@@ -72,14 +101,14 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty, M
     @Override
     public void addEncounterLoot(BattleLoot battle, CargoAPI loot) {
         List<ItemData> drops = battleDrops(battle);
-        drops.forEach(item -> loot.addSpecial(item.toSpecialItem(), 1f));
+        LootDelivery.toLootScreen(loot, new Loot(drops, List.of(), Map.of()), DropOrigin.ANYWHERE);
         WormholeAnchorDefinitions.recordFound(drops, Global.getSector(), BATTLE_FIND);
     }
 
     @Override
     public void deliverBattleLoot(BattleLoot battle, CargoAPI playerCargo) {
         List<ItemData> drops = battleDrops(battle);
-        ItemLootListener.deliverItems(playerCargo, drops);
+        LootDelivery.deliver(playerCargo, new Loot(drops, List.of(), Map.of()), DropOrigin.ANYWHERE);
         WormholeAnchorDefinitions.recordFound(drops, Global.getSector(), BATTLE_FIND);
     }
 
@@ -95,7 +124,9 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty, M
             return List.of();
         }
         try {
-            return FactionFleetDrops.roll(defeatedDeploymentPointsByFaction(battle), battle.random(), FactionFleetDrops::available);
+            return FactionFleetDrops.roll(defeatedDeploymentPointsByFaction(battle), defeatedDeploymentPointsByFleetFaction(battle),
+                    subroutineQuantityWeightedDeploymentPointsByFaction(battle), battle.random(),
+                    FactionFleetDrops::available);
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Rolling faction fleet item drops failed", e);
             return List.of();
@@ -103,9 +134,9 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty, M
     }
 
     @Override
-    public List<ItemData> bossDrops(int chartTier, String bossFactionId, float chanceMult, Random random,
+    public List<ItemData> bossDrops(int chartTier, String bossFactionId, ItemQuantity quantity, Random random,
                                       Predicate<ItemDefinition> allowed) {
-        ItemData doctrine = DoctrineArchives.rollForBoss(chartTier, bossFactionId, chanceMult, random, allowed);
+        ItemData doctrine = DoctrineArchives.rollForBoss(chartTier, bossFactionId, quantity, random, allowed);
         return doctrine == null ? List.of() : List.of(doctrine);
     }
 
@@ -114,7 +145,7 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty, M
         Random random = new Random(Misc.getSalvageSeed(salvageEntity) ^ ANCHOR_SALVAGE_SEED_SALT);
         ItemData anchor = FactionlessAnchors.roll(ItemSalvageListener.siteId(salvageEntity), random, sector);
         if (anchor != null) {
-            loot.addSpecial(anchor.toSpecialItem(), 1f);
+            LootDelivery.toLootScreen(loot, new Loot(List.of(anchor), List.of(), Map.of()), DropOrigin.site(salvageEntity));
             WormholeAnchorDefinitions.recordFound(List.of(anchor), sector, "salvage");
         }
     }
@@ -134,13 +165,16 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty, M
     }
 
     @Override
-    public void addShowcaseLoot(CargoAPI loot, Random random) {
+    public void addShowcaseLoot(CargoAPI loot, SectorEntityToken salvageEntity, Random random) {
+        List<ItemData> shown = new ArrayList<>();
         List<ItemDefinition> doctrines = new ArrayList<>();
         for (ItemDefinition definition : ItemDefinitions.ofType(ItemType.SUBROUTINE)) {
             if (SubroutineKind.of(definition) == SubroutineKind.DOCTRINE) {
-                doctrines.add(definition);
+                if (!DoctrineArchives.infested(definition.id())) {
+                    doctrines.add(definition);
+                }
             } else if (!definition.unique()) {
-                loot.addSpecial(ItemData.rolled(definition, random.nextLong()).toSpecialItem(), 1f);
+                shown.add(ItemData.rolled(definition, random.nextLong()));
             }
         }
         List<ItemDefinition> anchors = List.copyOf(ItemDefinitions.ofType(ItemType.WORMHOLE_ANCHOR));
@@ -148,18 +182,19 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty, M
         List<ItemDefinition> offeredAnchors = activeAnchors.isEmpty()
                 ? anchors.stream().filter(anchor -> !AnchorJanusGate.withholds(anchor.id(), Global.getSector())).toList()
                 : activeAnchors.stream().filter(anchor -> WormholeAnchorDefinitions.obtainable(anchor.id(), Global.getSector())).toList();
-        addRandomPicks(loot, doctrines, random);
-        WormholeAnchorDefinitions.recordFound(addRandomPicks(loot, offeredAnchors, random), Global.getSector(), "showcase salvage");
+        shown.addAll(randomPicks(doctrines, random));
+        List<ItemData> anchorPicks = randomPicks(offeredAnchors, random);
+        shown.addAll(anchorPicks);
+        LootDelivery.toLootScreen(loot, new Loot(shown, List.of(), Map.of()), DropOrigin.site(salvageEntity));
+        WormholeAnchorDefinitions.recordFound(anchorPicks, Global.getSector(), "showcase salvage");
     }
 
-    private static List<ItemData> addRandomPicks(CargoAPI loot, List<ItemDefinition> definitions, Random random) {
+    private static List<ItemData> randomPicks(List<ItemDefinition> definitions, Random random) {
         List<ItemDefinition> shuffled = new ArrayList<>(definitions);
         Collections.shuffle(shuffled, random);
         List<ItemData> picks = new ArrayList<>();
         for (ItemDefinition definition : shuffled.subList(0, Math.min(SHOWCASE_PICKS, shuffled.size()))) {
-            ItemData pick = ItemData.rolled(definition, random.nextLong());
-            loot.addSpecial(pick.toSpecialItem(), 1f);
-            picks.add(pick);
+            picks.add(ItemData.rolled(definition, random.nextLong()));
         }
         return picks;
     }
@@ -185,8 +220,7 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty, M
 
     @Override
     public Float difficultyMultiplier(float battleDifficulty) {
-        return ShipLevelSystem.difficultyMultiplier(battleDifficulty, ShipLevelConfig.xpDifficultyStrength(),
-                ShipLevelConfig.xpDifficultyMaxMultiplier());
+        return ShipLevelSystem.difficultyMultiplier(battleDifficulty, FULL_DIFFICULTY_STRENGTH, FleetEncounterContext.MAX_XP_MULT);
     }
 
     @Override

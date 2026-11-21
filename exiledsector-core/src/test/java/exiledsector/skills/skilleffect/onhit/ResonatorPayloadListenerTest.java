@@ -1,6 +1,5 @@
 package exiledsector.skills.skilleffect.onhit;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
@@ -11,14 +10,14 @@ import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.WeaponAPI.DerivedWeaponStatsAPI;
 import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
+import exiledsector.skills.skilleffect.CombatEngineExtension;
+import exiledsector.skills.skilleffect.CombatTestShips;
 import exiledsector.skills.skilleffect.weapon.RiftExplosions;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.ArgumentCaptor;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.util.Random;
 
@@ -40,30 +39,18 @@ class ResonatorPayloadListenerTest {
 
     private CombatEngineAPI engine;
     private MissileAPI rift;
-    private MockedStatic<Global> globalMock;
+    @RegisterExtension
+    final CombatEngineExtension combat = new CombatEngineExtension();
 
     @BeforeEach
     void setUp() {
         rift = mock(MissileAPI.class, RETURNS_DEEP_STUBS);
-        engine = mock(CombatEngineAPI.class);
+        engine = combat.engine();
         when(engine.spawnProjectile(any(), any(), anyString(), any(), anyFloat(), any())).thenReturn(rift);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getCombatEngine).thenReturn(engine);
-    }
-
-    @AfterEach
-    void tearDown() {
-        globalMock.close();
     }
 
     private static ShipAPI ship(int owner, float chancePercent) {
-        ShipAPI ship = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS);
-        when(ship.getOwner()).thenReturn(owner);
-        when(ship.isAlive()).thenReturn(true);
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(stats.getDynamic().getValue(ResonatorPayloadListener.CHANCE_PERCENT_KEY, 0f)).thenReturn(chancePercent);
-        return ship;
+        return CombatTestShips.ship(mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS)).owner(owner).alive().dynamic(ResonatorPayloadListener.CHANCE_PERCENT_KEY, chancePercent).build();
     }
 
     private static WeaponSpecAPI spec(float damagePerShot) {

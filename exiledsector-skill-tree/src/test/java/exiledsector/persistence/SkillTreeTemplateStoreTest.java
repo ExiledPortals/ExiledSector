@@ -2,6 +2,7 @@ package exiledsector.persistence;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.MockSector;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.NodeReplacements;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -14,6 +15,7 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -26,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class SkillTreeTemplateStoreTest {
 
     private static final List<TemplateStep> STEPS = List.of(new TemplateStep("armor_1", null), new TemplateStep("slot_2", "low_tech_affinity"));
@@ -47,7 +50,6 @@ class SkillTreeTemplateStoreTest {
     void tearDown() {
         SkillTreeTemplateStore.useCommonFolder();
         NodeReplacements.clear();
-        SkillTree.clearNodes();
         mockSector.close();
     }
 

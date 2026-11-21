@@ -46,6 +46,12 @@ class ColorUtilTest {
     }
 
     @Test
+    void lighteningMovesEachChannelTowardsWhite() {
+        assertEquals(new Color(250, 203, 143), ColorUtil.lighten(new Color(245, 150, 30), 0.5f));
+        assertEquals(Color.WHITE, ColorUtil.lighten(Color.BLACK, 1f));
+    }
+
+    @Test
     void loggingOverloadReturnsFallbackAndDoesNotThrowOnInvalidHex() {
         Color color = ColorUtil.parseHexColor("not-a-color", FALLBACK, LOGGER, "testField");
 

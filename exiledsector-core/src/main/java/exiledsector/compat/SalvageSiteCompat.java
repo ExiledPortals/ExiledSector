@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec;
 import exiledsector.ModCsv;
 import exiledsector.ModSettings;
+import exiledsector.data.CsvRows;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -62,9 +63,8 @@ public final class SalvageSiteCompat {
     private static List<String> missingSites(Source source) {
         List<String> missing = new ArrayList<>();
         try {
-            ModCsv.forEach(rows(source), (index, row) -> {
-                String site = ModCsv.text(row, "site");
-                if (!site.isEmpty() && !hasEntitySpec(site)) {
+            CsvRows.forEachIdRow(rows(source), "site", (site, row) -> {
+                if (!hasEntitySpec(site)) {
                     missing.add("the salvage site " + site);
                 }
             });
@@ -75,26 +75,7 @@ public final class SalvageSiteCompat {
     }
 
     private static boolean hasEntitySpec(String site) {
-        return hasCustomEntitySpec(site) || hasSalvageSpec(site);
-    }
-
-    // java:S1181: an unknown custom entity id can surface as any RuntimeException from the game, and it only means the site is missing
-    @SuppressWarnings("java:S1181")
-    private static boolean hasCustomEntitySpec(String site) {
-        try {
-            return Global.getSettings().getCustomEntitySpec(site) != null;
-        } catch (Throwable e) {
-            return false;
-        }
-    }
-
-    // java:S1181: an unknown salvage spec id can surface as any RuntimeException from the game, and it only means the site is missing
-    @SuppressWarnings("java:S1181")
-    private static boolean hasSalvageSpec(String site) {
-        try {
-            return Global.getSettings().getSpec(SalvageEntityGenDataSpec.class, site, true) != null;
-        } catch (Throwable e) {
-            return false;
-        }
+        return CompatTarget.specExists(() -> Global.getSettings().getCustomEntitySpec(site))
+                || CompatTarget.specExists(() -> Global.getSettings().getSpec(SalvageEntityGenDataSpec.class, site, true));
     }
 }

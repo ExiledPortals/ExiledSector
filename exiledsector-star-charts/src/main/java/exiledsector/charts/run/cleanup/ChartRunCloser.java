@@ -25,6 +25,7 @@ import exiledsector.charts.run.ChartRunBound;
 import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.atlas.AtlasProgress;
+import exiledsector.charts.phasing.PhaseLock;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -63,6 +64,11 @@ public final class ChartRunCloser {
             AtlasProgress.closed(sector, run);
         } catch (RuntimeException e) {
             LOG.warn("[ExiledSector] Recording the failed atlas system for run " + run.runId() + " failed", e);
+        }
+        try {
+            PhaseLock.runClosing(sector, run);
+        } catch (RuntimeException e) {
+            LOG.warn("[ExiledSector] Handing the phase lock of run " + run.runId() + " to the Phase Displacement Gate failed", e);
         }
         StarSystemAPI system = sector.getStarSystem(run.systemId());
         return close(sector, run.runId(), system);

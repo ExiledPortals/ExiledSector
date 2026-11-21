@@ -3,9 +3,9 @@ package exiledsector.ui.socket;
 import exiledsector.i18n.StyledText;
 import exiledsector.items.Item;
 import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemName;
-import exiledsector.items.ItemRarity;
 import exiledsector.items.ItemStatTotals;
+import exiledsector.items.modifier.ItemRarity;
+import exiledsector.items.name.ItemName;
 
 import java.util.ArrayList;
 import java.util.List;

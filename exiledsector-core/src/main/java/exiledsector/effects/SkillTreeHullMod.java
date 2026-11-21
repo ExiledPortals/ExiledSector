@@ -21,7 +21,7 @@ import exiledsector.skills.StatBaseline;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.fighter.AffinityStrikecraft;
 import exiledsector.skills.skilleffect.logistics.FleetWideEffects;
-import exiledsector.skills.skilleffect.logistics.TowLines;
+import exiledsector.skills.skilleffect.logistics.PlayerFleetConditionScript;
 import exiledsector.skills.skilleffect.weapon.SlotConversionBacking;
 import exiledsector.skills.skilleffect.weapon.WeaponSlotConversion;
 import exiledsector.ExiledSector;
@@ -249,18 +249,28 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
     public void onFleetSync(CampaignFleetAPI fleet) {
         if (fleet != null && fleet.isPlayerFleet()) {
             FleetWideEffects.markPhaseFieldStale();
+            PlayerFleetConditionScript.markPlayerFleetSynced();
             ExiledSector.domains().forEach(ExiledSectorDomain::playerFleetSynced);
         }
-        FleetWideEffects.applyAlwaysCountingSensorStrength(fleet);
-        FleetWideEffects.applyMoveSlowBurnLevel(fleet);
-        FleetWideEffects.applyTransponderOffSensorProfile(fleet);
-        FleetWideEffects.applyTransponderOffBurnLevel(fleet);
-        FleetWideEffects.applyCoronaResistance(fleet);
-        FleetWideEffects.applySwarmSensorStrength(fleet);
-        FleetWideEffects.applyTerrainMovementPenalty(fleet);
-        FleetWideEffects.applySupplyUsePerHullType(fleet);
-        FleetWideEffects.applyFuelUsePerHullType(fleet);
-        TowLines.apply(fleet);
+        if (fleet == null || fleet.getFleetData() == null) {
+            return;
+        }
+        List<FleetMemberAPI> members = fleet.getFleetData().getMembersListCopy();
+        if (anyCarriesTree(members)) {
+            FleetWideEffects.applyFleetSyncEffects(fleet, members);
+        } else {
+            FleetWideEffects.clearFleetSyncEffects(fleet, members);
+        }
+    }
+
+    private static boolean anyCarriesTree(List<FleetMemberAPI> members) {
+        for (FleetMemberAPI member : members) {
+            ShipVariantAPI variant = member.getVariant();
+            if (variant != null && variant.hasHullMod(ID)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

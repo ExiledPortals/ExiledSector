@@ -10,7 +10,7 @@ import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.FakeChartContentEngine;
 import exiledsector.charts.generation.ChartGenContext;
-import exiledsector.charts.loot.ChartFleetLoot;
+import exiledsector.charts.loot.ChartFleetLedger;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import org.junit.jupiter.api.AfterEach;
@@ -26,6 +26,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyFloat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -52,7 +54,7 @@ class ConvoyDeliveryTest {
         destination = convoySystem.entities.get(convoy.destinationId());
         script.depart(convoy);
         cargoRolls = mockStatic(ConvoyCargo.class);
-        cargoRolls.when(() -> ConvoyCargo.deliveredCache(any(), any(), any(), any(), any())).thenReturn(rolledCache);
+        cargoRolls.when(() -> ConvoyCargo.deliveredCache(any(), any(), any(), any(), anyFloat(), any())).thenReturn(rolledCache);
     }
 
     @AfterEach
@@ -73,10 +75,11 @@ class ConvoyDeliveryTest {
 
         assertEquals(ConvoyState.Phase.DELIVERED, convoy.phase());
         assertEquals(1f, convoy.deliveredShare(), 0.001f);
-        cargoRolls.verify(() -> ConvoyCargo.deliveredCache(any(), any(), same(convoy), same(fleet), any()));
+        cargoRolls.verify(() -> ConvoyCargo.deliveredCache(any(), any(), same(convoy), same(fleet), eq(1f), any()));
+        assertFalse(convoy.deliveredToExcavation());
         assertEquals(List.of(convoy), script.cachesAt(destination));
         assertTrue(ConvoyCacheDialog.wantsToHandle(destination));
-        assertTrue(ChartFleetLoot.lootSpent(fleet), "the convoy dropped its Exiled Sector loot with the cache");
+        assertTrue(ChartFleetLedger.lootSpent(fleet), "the convoy dropped its Exiled Sector loot with the cache");
         List<FakeChartContentEngine.Assignment> orders = convoySystem.assignments(fleet);
         assertEquals(new FakeChartContentEngine.Assignment(FleetAssignment.GO_TO_LOCATION_AND_DESPAWN, convoy.exitToken()), orders.get(orders.size() - 1));
         assertFalse(ConvoyCacheDialog.wantsToHandle(convoySystem.entities.get(convoy.waypointIds().get(0))));
@@ -121,7 +124,7 @@ class ConvoyDeliveryTest {
         SupplyConvoy.INSTANCE.generate(other.site(ChartGenContext.none()));
         cargoRolls = mockStatic(ConvoyCargo.class);
         ConvoyState lost = other.script().convoys().get(0);
-        lost.loadCargo(100f, 1f, 1f);
+        lost.loadCargo(100f);
         other.script().depart(lost);
         other.script().reportFleetDespawnedToListener(other.fleet(lost), FleetDespawnReason.DESTROYED_BY_BATTLE, null);
         other.script().unloaded(lost);

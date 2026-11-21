@@ -6,13 +6,21 @@ import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
+import exiledsector.compat.SecretsOfTheFrontierCompat;
 
 import java.util.List;
 import java.util.function.Predicate;
 
 public record ShipFacts(HullSize hullSize, ShieldType hullShieldType, boolean phaseHull, float baseArmor,
                         boolean limitedSystemCharges, Predicate<String> hasHullMod, boolean onlyBuiltInWings, String hullId,
-                        Predicate<String> hasFixedHullMod, boolean hasModules) {
+                        Predicate<String> hasFixedHullMod, boolean hasModules, boolean concordShift) {
+
+    public ShipFacts(HullSize hullSize, ShieldType hullShieldType, boolean phaseHull, float baseArmor,
+                     boolean limitedSystemCharges, Predicate<String> hasHullMod, boolean onlyBuiltInWings, String hullId,
+                     Predicate<String> hasFixedHullMod, boolean hasModules) {
+        this(hullSize, hullShieldType, phaseHull, baseArmor, limitedSystemCharges, hasHullMod, onlyBuiltInWings, hullId, hasFixedHullMod,
+                hasModules, false);
+    }
 
     public ShipFacts(HullSize hullSize, ShieldType hullShieldType, boolean phaseHull, float baseArmor,
                      boolean limitedSystemCharges, Predicate<String> hasHullMod, boolean onlyBuiltInWings, String hullId,
@@ -47,7 +55,11 @@ public record ShipFacts(HullSize hullSize, ShieldType hullShieldType, boolean ph
     public static ShipFacts of(ShipHullSpecAPI hullSpec, Predicate<String> hasHullMod, Predicate<String> hasFixedHullMod) {
         return new ShipFacts(hullSpec.getHullSize(), hullSpec.getShieldType(), hullSpec.isPhase(), hullSpec.getArmorRating(),
                 ShipSystemCharges.limited(hullSpec), hasHullMod, onlyBuiltInWings(hullSpec), hullSpec.getHullId(), hasFixedHullMod,
-                hasModuleSlots(hullSpec));
+                hasModuleSlots(hullSpec), SecretsOfTheFrontierCompat.hasConcordShift(hullSpec));
+    }
+
+    public boolean allowsPhaseNodes() {
+        return phaseHull || concordShift;
     }
 
     public static boolean hasModuleSlots(String hullId) {

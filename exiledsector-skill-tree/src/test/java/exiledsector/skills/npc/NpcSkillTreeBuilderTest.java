@@ -2,6 +2,7 @@ package exiledsector.skills.npc;
 
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.shield.ShieldSkillEffect;
@@ -17,6 +18,7 @@ import exiledsector.skills.tags.WeaponKind;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,10 +26,13 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import static exiledsector.skills.TestTrees.registered;
+import static exiledsector.skills.TestTrees.type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class NpcSkillTreeBuilderTest {
 
     private static final ShipProfile BALLISTIC_FRIGATE =
@@ -38,23 +43,12 @@ class NpcSkillTreeBuilderTest {
 
     @BeforeEach
     void setUp() {
-        RealSkillData.clear();
         NpcTestAnchors.install();
     }
 
     @AfterEach
     void tearDown() {
-        RealSkillData.clear();
         NpcTestAnchors.uninstall();
-    }
-
-    private static SkillType.Builder builder(String typeId, SkillTier tier) {
-        return new SkillType.Builder(typeId, typeId + " name", "a.png", tier);
-    }
-
-    private static SkillType registerType(SkillType type) {
-        SkillTree.registerType(type);
-        return type;
     }
 
     private static SkillNode node(String id, SkillType type, List<String> tags, String... connectedTo) {
@@ -68,15 +62,15 @@ class NpcSkillTreeBuilderTest {
     }
 
     private static void root() {
-        node(ROOT, registerType(builder("root_type", SkillTier.ROOT).build()));
+        node(ROOT, registered(type("root_type", SkillTier.ROOT).build()));
     }
 
     private static SkillNode small(String id, String... connectedTo) {
-        return node(id, registerType(builder(id + "_type", SkillTier.SMALL).build()), connectedTo);
+        return node(id, registered(type(id + "_type", SkillTier.SMALL).build()), connectedTo);
     }
 
     private static SkillNode notable(String id, String... connectedTo) {
-        return node(id, registerType(builder(id + "_type", SkillTier.NOTABLE).build()), connectedTo);
+        return node(id, registered(type(id + "_type", SkillTier.NOTABLE).build()), connectedTo);
     }
 
     private static void chain(String prefix, int length, String from) {
@@ -88,9 +82,9 @@ class NpcSkillTreeBuilderTest {
     }
 
     private static void anchorVolume(String socketId, String coreLink, String exitId, String volume) {
-        SkillType socket = SkillTree.getType("socket") != null ? SkillTree.getType("socket") : registerType(builder("socket", SkillTier.SOCKET).build());
+        SkillType socket = SkillTree.getType("socket") != null ? SkillTree.getType("socket") : registered(type("socket", SkillTier.SOCKET).build());
         SkillType exit = SkillTree.getType("wormhole_exit") != null ? SkillTree.getType("wormhole_exit")
-                : registerType(builder("wormhole_exit", SkillTier.WORMHOLE_EXIT).build());
+                : registered(type("wormhole_exit", SkillTier.WORMHOLE_EXIT).build());
         if (socketId != null) {
             node(socketId, socket, List.of("core"), coreLink);
         }
@@ -99,7 +93,7 @@ class NpcSkillTreeBuilderTest {
 
     private static void wormholePair(String core, String far, String coreVolume, String farVolume, String coreLink) {
         SkillType wormhole = SkillTree.getType("wormhole") != null ? SkillTree.getType("wormhole")
-                : registerType(builder("wormhole", SkillTier.WORMHOLE).build());
+                : registered(type("wormhole", SkillTier.WORMHOLE).build());
         SkillTree.register(new SkillNode(core, wormhole, List.of(coreLink, far), 0f, 0f,
                 new SkillNodeDecoration(null, null, null, null, far), List.of(coreVolume)));
         SkillTree.register(new SkillNode(far, wormhole, List.of(core), 0f, 0f,
@@ -128,7 +122,7 @@ class NpcSkillTreeBuilderTest {
     @Test
     void theBuilderNeverAimsForASocketOfItsOwn() {
         root();
-        SkillType socket = registerType(builder("socket", SkillTier.SOCKET).build());
+        SkillType socket = registered(type("socket", SkillTier.SOCKET).build());
         node("lonely_socket", socket, ROOT);
         chain("a", 3, ROOT);
 
@@ -140,7 +134,7 @@ class NpcSkillTreeBuilderTest {
     @Test
     void theRootMatchesTheHullsDesignType() {
         for (String type : List.of("root_low_tech", "root_midline", "root_high_tech")) {
-            node(type + "_1", registerType(builder(type, SkillTier.ROOT).build()));
+            node(type + "_1", registered(type(type, SkillTier.ROOT).build()));
         }
 
         assertEquals("root_midline_1", allocated(generate(BALLISTIC_FRIGATE, "Midline", 0, null, NpcHullMods.NONE,
@@ -154,7 +148,7 @@ class NpcSkillTreeBuilderTest {
     @Test
     void anUnknownDesignTypeStartsAtARandomRootThatTheSeedDecides() {
         for (String type : List.of("root_low_tech", "root_midline", "root_high_tech")) {
-            node(type + "_1", registerType(builder(type, SkillTier.ROOT).build()));
+            node(type + "_1", registered(type(type, SkillTier.ROOT).build()));
         }
 
         String first = allocated(generate(BALLISTIC_FRIGATE, "Pirate", 0, null, NpcHullMods.NONE, NpcFreedOp.NONE, 7L)).get(0);
@@ -167,7 +161,7 @@ class NpcSkillTreeBuilderTest {
     @Test
     void npcsPassThroughASocketOnTheWayButNeverAimForOne() {
         root();
-        SkillType socket = registerType(builder("socket", SkillTier.SOCKET).build());
+        SkillType socket = registered(type("socket", SkillTier.SOCKET).build());
         node("socket_1", socket, ROOT);
         notable("behind_socket", "socket_1");
         node("dead_end_socket", socket, ROOT);
@@ -203,7 +197,7 @@ class NpcSkillTreeBuilderTest {
     @Test
     void strippingAHullmodTheTreeReplacesBuysExtraNodesWithItsOp() {
         root();
-        node("armor_node", registerType(builder("armor_node_type", SkillTier.NOTABLE).exclusiveHullModIds(List.of("heavyarmor")).build()), ROOT);
+        node("armor_node", registered(type("armor_node_type", SkillTier.NOTABLE).exclusiveHullModIds(List.of("heavyarmor")).build()), ROOT);
         chain("n", 10, "armor_node");
         NpcFreedOp freedOp = new NpcFreedOp(2, Map.of("heavyarmor", 6), 60);
 
@@ -219,7 +213,7 @@ class NpcSkillTreeBuilderTest {
     void aHullmodWhoseNodeIsOutOfReachIsPutBackAndItsOpIsNotSpent() {
         root();
         chain("n", 5, ROOT);
-        node("armor_node", registerType(builder("armor_node_type", SkillTier.NOTABLE).exclusiveHullModIds(List.of("heavyarmor")).build()), "n5");
+        node("armor_node", registered(type("armor_node_type", SkillTier.NOTABLE).exclusiveHullModIds(List.of("heavyarmor")).build()), "n5");
         NpcFreedOp freedOp = new NpcFreedOp(2, Map.of("heavyarmor", 2), 60);
 
         NpcTreeBuild build = generate(2, null, new NpcHullMods(Set.of("heavyarmor"), Set.of()), freedOp, 1L);
@@ -263,7 +257,7 @@ class NpcSkillTreeBuilderTest {
     @Test
     void anotherRootIsBoughtAsAPaidNodeOnTheWayToANotableAndSurvivesTheTag() {
         root();
-        node("other_root", registerType(builder("other_root_type", SkillTier.ROOT).build()), ROOT);
+        node("other_root", registered(type("other_root_type", SkillTier.ROOT).build()), ROOT);
         notable("notable", "other_root");
 
         NpcTreeBuild build = generate(2);
@@ -278,7 +272,7 @@ class NpcSkillTreeBuilderTest {
     @Test
     void anotherRootCanFillTheBudgetLikeASmallNode() {
         root();
-        node("other_root", registerType(builder("other_root_type", SkillTier.ROOT).build()), ROOT);
+        node("other_root", registered(type("other_root_type", SkillTier.ROOT).build()), ROOT);
 
         assertEquals(List.of(ROOT, "other_root"), allocated(generate(1)));
     }
@@ -289,7 +283,7 @@ class NpcSkillTreeBuilderTest {
         root();
         small("s1", ROOT);
         anchorVolume("socket", "s1", "gate_far", "hegemony");
-        node("pride", registerType(builder("pride_type", SkillTier.NOTABLE).build()), List.of("hegemony"), "gate_far");
+        node("pride", registered(type("pride_type", SkillTier.NOTABLE).build()), List.of("hegemony"), "gate_far");
         notable("core_notable", ROOT);
 
         NpcTreeBuild build = generate(1, "hegemony", NpcHullMods.NONE, NpcFreedOp.NONE, 1L);
@@ -303,13 +297,13 @@ class NpcSkillTreeBuilderTest {
         root();
         chain("c", 3, ROOT);
         anchorVolume("socket", "c1", "heg_far", "hegemony");
-        node("heg_notable", registerType(builder("heg_type", SkillTier.NOTABLE).build()), List.of("hegemony"), "heg_far");
+        node("heg_notable", registered(type("heg_type", SkillTier.NOTABLE).build()), List.of("hegemony"), "heg_far");
         anchorVolume(null, null, "tt_far", "tritachyon");
-        node("tt_notable", registerType(builder("tt_type", SkillTier.NOTABLE).build()), List.of("tritachyon"), "tt_far");
+        node("tt_notable", registered(type("tt_type", SkillTier.NOTABLE).build()), List.of("tritachyon"), "tt_far");
         wormholePair("short_a", "short_b", "core", "core", "c3");
-        node("beyond_shortcut", registerType(builder("beyond_type", SkillTier.NOTABLE).build()), List.of("core"), "short_b");
+        node("beyond_shortcut", registered(type("beyond_type", SkillTier.NOTABLE).build()), List.of("core"), "short_b");
         anchorVolume(null, null, "lost_far", "enigma");
-        node("enigma_notable", registerType(builder("enigma_type", SkillTier.NOTABLE).build()), List.of("enigma"), "lost_far");
+        node("enigma_notable", registered(type("enigma_type", SkillTier.NOTABLE).build()), List.of("enigma"), "lost_far");
 
         NpcTreeBuild hegemony = generate(30, "hegemony", NpcHullMods.NONE, NpcFreedOp.NONE, 1L);
         NpcTreeBuild independent = generate(30, null, NpcHullMods.NONE, NpcFreedOp.NONE, 1L);
@@ -327,9 +321,9 @@ class NpcSkillTreeBuilderTest {
     @Test
     void nodesTheShipCannotUseAreNeverTaken() {
         root();
-        node("missile_notable", registerType(builder("missile_notable_type", SkillTier.NOTABLE).tags(List.of("req_missile")).build()), ROOT);
-        node("first", registerType(builder("first_type", SkillTier.NOTABLE).exclusiveSkillTypeIds(List.of("second_type")).build()), ROOT);
-        node("second", registerType(builder("second_type", SkillTier.NOTABLE).build()), ROOT);
+        node("missile_notable", registered(type("missile_notable_type", SkillTier.NOTABLE).tags(List.of("req_missile")).build()), ROOT);
+        node("first", registered(type("first_type", SkillTier.NOTABLE).exclusiveSkillTypeIds(List.of("second_type")).build()), ROOT);
+        node("second", registered(type("second_type", SkillTier.NOTABLE).build()), ROOT);
 
         NpcTreeBuild build = generate(10);
 
@@ -340,9 +334,9 @@ class NpcSkillTreeBuilderTest {
     @Test
     void choiceNodesOnlyPickOptionsTheShipCanUse() {
         root();
-        registerType(builder("missile_option", SkillTier.SMALL).tags(List.of("req_missile")).build());
-        registerType(builder("hull_option", SkillTier.SMALL).build());
-        node("optional", registerType(builder("optional_type", SkillTier.SMALL)
+        registered(type("missile_option", SkillTier.SMALL).tags(List.of("req_missile")).build());
+        registered(type("hull_option", SkillTier.SMALL).build());
+        node("optional", registered(type("optional_type", SkillTier.SMALL)
                 .choiceOptionIds(List.of("missile_option", "hull_option")).build()), ROOT);
 
         for (long seed = 1; seed <= 10; seed++) {
@@ -354,7 +348,7 @@ class NpcSkillTreeBuilderTest {
 
     private static NpcTreeBuild generateFocused(int nodeCount, Map<String, Float> focus, long seed) {
         return NpcSkillTreeBuilder.generate(new NpcBuildRequest(BALLISTIC_FRIGATE, null, null, NpcHullMods.NONE, NpcFreedOp.NONE, nodeCount,
-                null, null, null, focus), new Random(seed));
+                null, null, null, List.of(focus)), new Random(seed));
     }
 
     private static int countSelections(String nodeId, String optionId, Map<String, Float> focus) {
@@ -370,9 +364,9 @@ class NpcSkillTreeBuilderTest {
     @Test
     void factionFocusSteersWhichOptionAChoiceNodeTakes() {
         root();
-        registerType(builder("armour_option", SkillTier.SMALL).tags(List.of("armour")).build());
-        registerType(builder("flux_option", SkillTier.SMALL).tags(List.of("flux")).build());
-        node("optional", registerType(builder("optional_type", SkillTier.SMALL)
+        registered(type("armour_option", SkillTier.SMALL).tags(List.of("armour")).build());
+        registered(type("flux_option", SkillTier.SMALL).tags(List.of("flux")).build());
+        node("optional", registered(type("optional_type", SkillTier.SMALL)
                 .choiceOptionIds(List.of("armour_option", "flux_option")).build()), ROOT);
 
         int unfocused = countSelections("optional", "armour_option", Map.of());
@@ -385,11 +379,11 @@ class NpcSkillTreeBuilderTest {
     @Test
     void factionFocusWeighsAChoiceNotableByTheOptionItWouldTake() {
         root();
-        registerType(builder("armour_notable_option", SkillTier.NOTABLE).tags(List.of("armour")).build());
-        registerType(builder("missile_notable_option", SkillTier.NOTABLE).tags(List.of("armour", "missile", "req_missile")).build());
-        node("optional_notable", registerType(builder("optional_notable_type", SkillTier.NOTABLE)
+        registered(type("armour_notable_option", SkillTier.NOTABLE).tags(List.of("armour")).build());
+        registered(type("missile_notable_option", SkillTier.NOTABLE).tags(List.of("armour", "missile", "req_missile")).build());
+        node("optional_notable", registered(type("optional_notable_type", SkillTier.NOTABLE)
                 .choiceOptionIds(List.of("armour_notable_option", "missile_notable_option")).build()), ROOT);
-        node("flux_notable", registerType(builder("flux_notable_type", SkillTier.NOTABLE).tags(List.of("flux")).build()), ROOT);
+        node("flux_notable", registered(type("flux_notable_type", SkillTier.NOTABLE).tags(List.of("flux")).build()), ROOT);
 
         int unfocused = 0;
         int focused = 0;
@@ -409,11 +403,46 @@ class NpcSkillTreeBuilderTest {
     @Test
     void focusMultipliesTheShipsOwnTagWeights() {
         NpcRelevance plain = NpcRelevance.of(BALLISTIC_FRIGATE, Set.of());
-        NpcRelevance focused = NpcRelevance.of(BALLISTIC_FRIGATE, Set.of(), Map.of("ballistic", 2f, "fighter", 3f));
+        NpcRelevance focused = NpcRelevance.of(BALLISTIC_FRIGATE, Set.of(), List.of(Map.of("ballistic", 2f, "strikecraft", 3f)));
 
         assertEquals(plain.of(List.of("ballistic")) * 2f, focused.of(List.of("ballistic")), 0.001f);
-        assertEquals(plain.of(List.of("fighter")) * 3f, focused.of(List.of("fighter")), 0.001f);
+        assertEquals(plain.of(List.of("strikecraft")) * 3f, focused.of(List.of("strikecraft")), 0.001f);
         assertEquals(plain.of(List.of("flux")), focused.of(List.of("flux")), 0.001f);
+    }
+
+    @Test
+    void eachFocusSourceAppliesItsStrongestMatchAndSourcesMultiply() {
+        NpcRelevance plain = NpcRelevance.of(BALLISTIC_FRIGATE, Set.of());
+        NpcRelevance faction = NpcRelevance.of(BALLISTIC_FRIGATE, Set.of(), List.of(Map.of("armour", 2f, "hull", 1.5f)));
+        NpcRelevance factionAndSystem = NpcRelevance.of(BALLISTIC_FRIGATE, Set.of(),
+                List.of(Map.of("armour", 2f, "hull", 1.5f), Map.of("hull", 3f)));
+        List<String> armourAndHull = List.of("armour", "hull");
+
+        assertEquals(plain.of(armourAndHull) * 2f, faction.of(armourAndHull), 0.001f);
+        assertEquals(plain.of(armourAndHull) * 6f, factionAndSystem.of(armourAndHull), 0.001f);
+    }
+
+    @Test
+    void focusOnAParentTagReachesNodesWithItsChildTags() {
+        NpcRelevance plain = NpcRelevance.of(BALLISTIC_FRIGATE, Set.of());
+        NpcRelevance weaponFocus = NpcRelevance.of(BALLISTIC_FRIGATE, Set.of(), List.of(Map.of("weapon", 2f)));
+
+        assertEquals(plain.of(List.of("ballistic")) * 2f, weaponFocus.of(List.of("ballistic")), 0.001f);
+        assertEquals(plain.of(List.of("kinetic")), weaponFocus.of(List.of("kinetic")), 0.001f);
+    }
+
+    @Test
+    void relevanceFavoursTheShipsOwnShieldType() {
+        ShipProfile omniFrigate = new ShipProfile(HullSize.FRIGATE, ShieldType.OMNI, 0, Set.of(WeaponKind.BALLISTIC), false, 0f, false);
+        ShipProfile shieldlessFrigate = new ShipProfile(HullSize.FRIGATE, ShieldType.NONE, 0, Set.of(WeaponKind.BALLISTIC), false, 0f, false);
+        NpcRelevance front = NpcRelevance.of(BALLISTIC_FRIGATE, Set.of());
+        NpcRelevance omni = NpcRelevance.of(omniFrigate, Set.of());
+        NpcRelevance shieldless = NpcRelevance.of(shieldlessFrigate, Set.of());
+
+        assertTrue(front.of(List.of("front_shield")) > front.of(List.of("omni_shield")));
+        assertTrue(omni.of(List.of("omni_shield")) > omni.of(List.of("front_shield")));
+        assertTrue(shieldless.of(List.of("shieldless")) > front.of(List.of("shieldless")));
+        assertTrue(shieldless.of(List.of("shieldless")) > shieldless.of(List.of("shield")));
     }
 
     @Test
@@ -442,18 +471,27 @@ class NpcSkillTreeBuilderTest {
         NpcRelevance relevance = NpcRelevance.of(BALLISTIC_FRIGATE, Set.of());
 
         assertTrue(relevance.of(List.of("ballistic")) > relevance.of(List.of("missile")));
-        assertTrue(relevance.of(List.of("shield")) > relevance.of(List.of("fighter")));
+        assertTrue(relevance.of(List.of("shield")) > relevance.of(List.of("strikecraft")));
         assertEquals(NpcRelevance.UNTHEMED, relevance.of(List.of("core")));
+    }
+
+    @Test
+    void aChildTagTakesItsNearestWeightedAncestorsWeight() {
+        NpcRelevance relevance = NpcRelevance.of(BALLISTIC_FRIGATE, Set.of());
+
+        assertEquals(relevance.of(List.of("weapon")), relevance.of(List.of("damage")), 0.001f);
+        assertEquals(relevance.of(List.of("logistics")), relevance.of(List.of("sensors")), 0.001f);
+        assertTrue(relevance.of(List.of("ballistic")) > relevance.of(List.of("weapon")), "a tag with its own weight keeps it");
     }
 
     @Test
     void aShipNeverPairsShieldShuntWithShieldNodes() {
         root();
-        node("shunt", registerType(builder("shunt_type", SkillTier.NOTABLE)
+        node("shunt", registered(type("shunt_type", SkillTier.NOTABLE)
                 .effects(List.of(new SkillTypeEffect(ShieldSkillEffect.REMOVE_SHIELD, 1f))).build()), ROOT);
-        node("emitter", registerType(builder("emitter_type", SkillTier.NOTABLE).tags(List.of("shield", "req_shields")).build()), ROOT);
+        node("emitter", registered(type("emitter_type", SkillTier.NOTABLE).tags(List.of("shield", "req_shields")).build()), ROOT);
         small("arc", "emitter");
-        node("raise", registerType(builder("raise_type", SkillTier.SMALL).tags(List.of("req_shields")).build()), "shunt");
+        node("raise", registered(type("raise_type", SkillTier.SMALL).tags(List.of("req_shields")).build()), "shunt");
 
         for (long seed = 1; seed <= 30; seed++) {
             ShipSkillData data = generate(4, null, NpcHullMods.NONE, NpcFreedOp.NONE, seed).shipData();
@@ -465,7 +503,7 @@ class NpcSkillTreeBuilderTest {
     @Test
     void aShipWithConvertedHangarCanTradeItForTheNoFighterBaysNode() {
         root();
-        node("hangar", registerType(builder("hangar_type", SkillTier.KEYSTONE).tags(List.of("fighter", "req_no_fighter_bays"))
+        node("hangar", registered(type("hangar_type", SkillTier.KEYSTONE).tags(List.of("strikecraft", "req_no_strikecraft_bays"))
                 .exclusiveHullModIds(List.of("converted_hangar")).build()), ROOT);
         ShipProfile hangarShip = new ShipProfile(HullSize.DESTROYER, ShieldType.FRONT, 1, Set.of(WeaponKind.BALLISTIC), false, 0f, false);
         NpcHullMods hullMods = new NpcHullMods(Set.of("converted_hangar"), Set.of());
@@ -483,7 +521,7 @@ class NpcSkillTreeBuilderTest {
     void theFactionPickCanLandOnAKeystone() {
         root();
         anchorVolume("socket", ROOT, "gate_far", "sindrian_dictat");
-        node("lions_gaze", registerType(builder("lions_gaze_type", SkillTier.KEYSTONE).build()), List.of("sindrian_dictat"), "gate_far");
+        node("lions_gaze", registered(type("lions_gaze_type", SkillTier.KEYSTONE).build()), List.of("sindrian_dictat"), "gate_far");
 
         NpcTreeBuild build = generate(2, "sindrian_dictat", NpcHullMods.NONE, NpcFreedOp.NONE, 1L);
 
@@ -495,7 +533,7 @@ class NpcSkillTreeBuilderTest {
 
     private static SkillType effectType(String typeId, SkillTier tier, String... effectNames) {
         List<SkillTypeEffect> effects = Arrays.stream(effectNames).map(name -> new SkillTypeEffect(SkillEffect.byName(name), 10f)).toList();
-        return registerType(builder(typeId, tier).effects(effects).build());
+        return registered(type(typeId, tier).effects(effects).build());
     }
 
     private static void stationChoices() {
@@ -551,7 +589,7 @@ class NpcSkillTreeBuilderTest {
         root();
         effectType("speed_option", SkillTier.SMALL, "TOP_SPEED_PERCENT");
         effectType("flux_option", SkillTier.SMALL, "FLUX_CAPACITY_PERCENT");
-        node("optional", registerType(builder("optional_type", SkillTier.SMALL)
+        node("optional", registered(type("optional_type", SkillTier.SMALL)
                 .choiceOptionIds(List.of("speed_option", "flux_option")).build()), ROOT);
 
         for (long seed = 1; seed <= 10; seed++) {

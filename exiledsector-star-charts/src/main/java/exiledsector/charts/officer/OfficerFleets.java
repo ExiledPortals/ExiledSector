@@ -1,0 +1,246 @@
+package exiledsector.charts.officer;
+
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.SettingsAPI;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.FactionAPI;
+import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import com.fs.starfarer.api.characters.PersonAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.fleet.FleetMemberType;
+import com.fs.starfarer.api.impl.campaign.ids.Personalities;
+import com.fs.starfarer.api.impl.campaign.ids.Tags;
+import com.fs.starfarer.api.loading.VariantSource;
+import exiledsector.charts.anomaly.StateFields;
+import exiledsector.charts.atlas.AtlasRunNode;
+import exiledsector.charts.atlas.AtlasState;
+import exiledsector.charts.content.ChartAnomalyFleets;
+import exiledsector.charts.content.ChartFleetMarks;
+import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.officer.scar.HullFacts;
+import exiledsector.charts.officer.scar.ScarMemory;
+import exiledsector.charts.officer.scar.Scars;
+import exiledsector.i18n.I18n;
+import exiledsector.i18n.Translation;
+
+import java.util.Arrays;
+import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
+
+public final class OfficerFleets {
+
+    public static final String OFFICER_FLEET_MEMORY_KEY = "$exiledSector_officerFleet";
+    public static final String RECORD_MEMORY_KEY = "$exiledSector_officerRecord";
+    public static final String FLAGSHIP_MEMORY_KEY = "$exiledSector_officerFlagship";
+    public static final String TREE_SEED_MEMORY_KEY = "$exiledSector_officerTreeSeed";
+    public static final String BONUS_LEVELS_MEMORY_KEY = "$exiledSector_officerBonusLevels";
+    static final String TREE_SEED_PREFIX = "officer|";
+    static final Set<String> FIGHTING_TRAITS = Set.of(Personalities.AGGRESSIVE, Personalities.RECKLESS);
+
+    private OfficerFleets() {
+    }
+
+    public static AtlasOfficer officerOf(ChartGenContext context) {
+        return officerOf(context == null ? null : context.anomalyData(AtlasOfficer.RUN_DATA_KEY));
+    }
+
+    public static AtlasOfficer officerOf(AtlasRunNode node) {
+        return officerOf(node == null ? null : node.anomalyData(AtlasOfficer.RUN_DATA_KEY));
+    }
+
+    public static AtlasOfficer officerOf(MemoryAPI fleetMemory) {
+        Object recordId = fleetMemory == null ? null : fleetMemory.get(RECORD_MEMORY_KEY);
+        return recordId instanceof Number number ? record(number.intValue()) : null;
+    }
+
+    private static AtlasOfficer officerOf(String runData) {
+        Integer recordId = recordIdOfRunData(runData);
+        return recordId == null ? null : record(recordId);
+    }
+
+    private static AtlasOfficer record(int recordId) {
+        AtlasState state = AtlasState.getIfCreated(Global.getSector());
+        return state == null ? null : state.officer(recordId);
+    }
+
+    public static Integer recordIdOf(AtlasRunNode node) {
+        return recordIdOfRunData(node == null ? null : node.anomalyData(AtlasOfficer.RUN_DATA_KEY));
+    }
+
+    public static Set<Integer> fightingRecordIdsOf(AtlasRunNode node) {
+        if (node == null) {
+            return Set.of();
+        }
+        Set<Integer> recordIds = new TreeSet<>();
+        Integer runOfficer = recordIdOf(node);
+        if (runOfficer != null) {
+            recordIds.add(runOfficer);
+        }
+        String fighting = node.anomalyData(AtlasOfficer.FIGHTING_DATA_KEY);
+        for (String runData : StateFields.list(fighting)) {
+            Integer recordId = recordIdOfRunData(runData);
+            if (recordId != null) {
+                recordIds.add(recordId);
+            }
+        }
+        return recordIds;
+    }
+
+    public static String fightingRunData(int... recordIds) {
+        return StateFields.join(Arrays.stream(recordIds).mapToObj(String::valueOf).toList());
+    }
+
+    static Integer recordIdOfRunData(String runData) {
+        if (runData == null) {
+            return null;
+        }
+        try {
+            return Integer.valueOf(runData.trim());
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    public static void dress(CampaignFleetAPI fleet, ChartGenContext context) {
+        AtlasOfficer officer = officerOf(context);
+        if (fleet != null && officer != null) {
+            dress(fleet, officer, factionOf(officer, fleet), OfficerFleetBoons.atCommandCentre(context).flagshipLevels());
+        }
+    }
+
+    public static void dress(CampaignFleetAPI fleet, int officerRecordId, ChartGenContext context) {
+        AtlasOfficer officer = record(officerRecordId);
+        if (fleet != null && officer != null) {
+            dress(fleet, officer, factionOf(officer, fleet), OfficerFleetBoons.inSkirmish(context).flagshipLevels());
+        }
+    }
+
+    static void dress(CampaignFleetAPI fleet, AtlasOfficer officer, FactionAPI faction) {
+        dress(fleet, officer, faction, 0);
+    }
+
+    static void dress(CampaignFleetAPI fleet, AtlasOfficer officer, FactionAPI faction, int bonusLevels) {
+        PersonAPI commander = fleet.getCommander();
+        FleetMemberAPI flagship = officer.hasFlagship() ? addFlagship(fleet, officer, commander, faction) : fleet.getFlagship();
+        if (commander != null) {
+            dressCommander(commander, officer, faction);
+        }
+        MemoryAPI memory = fleet.getMemoryWithoutUpdate();
+        memory.set(OFFICER_FLEET_MEMORY_KEY, true);
+        memory.set(RECORD_MEMORY_KEY, officer.recordId());
+        if (flagship != null) {
+            memory.set(FLAGSHIP_MEMORY_KEY, flagship.getId());
+            memory.set(TREE_SEED_MEMORY_KEY, Long.toString(officer.treeSeed(), Character.MAX_RADIX));
+            Scars.grant(fleet, flagship.getId(), officer.scars());
+            if (bonusLevels > 0) {
+                memory.set(BONUS_LEVELS_MEMORY_KEY, bonusLevels);
+            }
+        }
+        OfficerRank rank = OfficerRanks.rank(officer.rankId());
+        if (rank.fleetStrengthPercent() > 0) {
+            ChartFleetMarks.addStrengthBonus(memory, rank.fleetStrengthPercent());
+        }
+        String commanderName = commander == null ? "" : commander.getNameString();
+        fleet.setName(I18n.forGameText(() -> Translation.msg("chart.officer.fleet.name").arg("rank", rank.displayName())
+                .arg("name", commanderName).text()));
+    }
+
+    public static String flagshipTreeSeed(MemoryAPI fleetMemory, FleetMemberAPI member) {
+        if (fleetMemory == null || member == null || !member.getId().equals(fleetMemory.getString(FLAGSHIP_MEMORY_KEY))) {
+            return null;
+        }
+        String treeSeed = fleetMemory.getString(TREE_SEED_MEMORY_KEY);
+        return treeSeed == null ? null : TREE_SEED_PREFIX + treeSeed;
+    }
+
+    public static int flagshipExtraLevels(MemoryAPI fleetMemory, FleetMemberAPI member) {
+        if (member == null || !member.getId().equals(ScarMemory.flagshipId(fleetMemory))) {
+            return 0;
+        }
+        Object bonusLevels = fleetMemory.get(BONUS_LEVELS_MEMORY_KEY);
+        return Scars.extraLevels(ScarMemory.scars(fleetMemory)) + (bonusLevels instanceof Number number ? number.intValue() : 0);
+    }
+
+    static HullFacts flagshipHull(AtlasOfficer officer) {
+        return HullFacts.of(flagshipVariant(officer));
+    }
+
+    public static ShipVariantAPI flagshipVariant(AtlasOfficer officer) {
+        SettingsAPI settings = Global.getSettings();
+        if (settings == null || !officer.hasFlagship()) {
+            return null;
+        }
+        try {
+            return settings.getVariant(officer.flagshipVariantId());
+        } catch (RuntimeException e) {
+            return null;
+        }
+    }
+
+    public static FleetMemberAPI previewFlagship(AtlasOfficer officer) {
+        ShipVariantAPI base = flagshipVariant(officer);
+        if (base == null) {
+            return null;
+        }
+        FleetMemberAPI member = Global.getFactory().createFleetMember(FleetMemberType.SHIP, refitWithDmods(base, officer));
+        FactionAPI faction = OfficerText.faction(officer);
+        if (faction != null) {
+            member.setShipName(flagshipName(officer, faction));
+        }
+        return member;
+    }
+
+    private static ShipVariantAPI refitWithDmods(ShipVariantAPI base, AtlasOfficer officer) {
+        ShipVariantAPI variant = base.clone();
+        variant.setSource(VariantSource.REFIT);
+        for (String dmodId : officer.dmodIds()) {
+            variant.addPermaMod(dmodId, false);
+        }
+        return variant;
+    }
+
+    public static String flagshipName(AtlasOfficer officer, FactionAPI faction) {
+        return faction.pickRandomShipName(new Random(officer.shipNameSeed()));
+    }
+
+    private static FactionAPI factionOf(AtlasOfficer officer, CampaignFleetAPI fleet) {
+        SectorAPI sector = Global.getSector();
+        FactionAPI faction = sector == null ? null : sector.getFaction(officer.factionId());
+        return faction != null ? faction : fleet.getFaction();
+    }
+
+    private static FleetMemberAPI addFlagship(CampaignFleetAPI fleet, AtlasOfficer officer, PersonAPI commander, FactionAPI faction) {
+        FleetMemberAPI previous = fleet.getFlagship();
+        if (!ChartAnomalyFleets.addCoreFlagship(fleet, officer.flagshipVariantId(), null, new Random(officer.shipNameSeed()))) {
+            return previous;
+        }
+        FleetMemberAPI flagship = fleet.getFlagship();
+        if (flagship == null) {
+            return previous;
+        }
+        if (commander != null && previous != null && previous != flagship) {
+            previous.setCaptain(flagship.getCaptain());
+            flagship.setCaptain(commander);
+            fleet.setCommander(commander);
+        }
+        flagship.setShipName(flagshipName(officer, faction));
+        ShipVariantAPI variant = refitWithDmods(flagship.getVariant(), officer);
+        variant.addTag(Tags.VARIANT_UNBOARDABLE);
+        flagship.setVariant(variant, false, true);
+        return flagship;
+    }
+
+    private static void dressCommander(PersonAPI commander, AtlasOfficer officer, FactionAPI faction) {
+        PersonAPI named = OfficerText.namedPerson(faction, officer);
+        commander.setName(named.getName());
+        commander.setGender(named.getGender());
+        commander.setPortraitSprite(OfficerText.portraitPath(faction, named, officer));
+        if (FIGHTING_TRAITS.contains(officer.traitId())) {
+            commander.setPersonality(officer.traitId());
+        }
+        commander.getMemoryWithoutUpdate().set(RECORD_MEMORY_KEY, officer.recordId());
+    }
+}

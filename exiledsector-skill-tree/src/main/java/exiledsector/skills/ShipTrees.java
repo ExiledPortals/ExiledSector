@@ -1,6 +1,6 @@
 package exiledsector.skills;
 
-import exiledsector.items.DoctrineOverrides;
+import exiledsector.items.subroutine.doctrine.DoctrineOverrides;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -197,12 +197,8 @@ public final class ShipTrees {
     }
 
     public static void refundBankedFreeAllocationAsOp(ShipSkillData data, Collection<SkillNode> allNodes) {
-        if (data.bankedFreeAllocations <= 0) {
-            return;
-        }
-        data.bankedFreeAllocations--;
-        if (!convertMostRecentAllocationToFree(data, allNodes)) {
-            data.bankedFreeAllocations++;
+        if (data.bankedFreeAllocations > 0) {
+            spendBankedFreeAllocationOnNewestPaidNode(data, resolveStartingRootId(data, allNodes));
         }
     }
 
@@ -328,8 +324,7 @@ public final class ShipTrees {
         String startingRoot = resolveStartingRootId(data, tree.values());
         List<String> removedNodeIds = new ArrayList<>();
         while (paidNodeCount(data) > 0) {
-            if (data.bankedFreeAllocations > 0 && convertMostRecentAllocationToFree(data, tree.values())) {
-                data.bankedFreeAllocations--;
+            if (spendBankedFreeAllocationOnNewestPaidNode(data, startingRoot)) {
                 continue;
             }
             SkillNode removable = newestRemovableNode(data, tree, topology, startingRoot);
@@ -381,6 +376,14 @@ public final class ShipTrees {
 
     public static boolean convertMostRecentAllocationToFree(ShipSkillData data, Collection<SkillNode> allNodes) {
         return convertNewestPaidNodeToFree(data, resolveStartingRootId(data, allNodes));
+    }
+
+    private static boolean spendBankedFreeAllocationOnNewestPaidNode(ShipSkillData data, String startingRoot) {
+        if (data.bankedFreeAllocations <= 0 || !convertNewestPaidNodeToFree(data, startingRoot)) {
+            return false;
+        }
+        data.bankedFreeAllocations--;
+        return true;
     }
 
     private static boolean convertNewestPaidNodeToFree(ShipSkillData data, String startingRoot) {
@@ -442,9 +445,13 @@ public final class ShipTrees {
     }
 
     private static void moveReturnedFreeAllocationsOntoPaidNodes(ShipSkillData data, int returnedFreeAllocations) {
-        String startingRoot = resolveStartingRootId(data);
-        for (int i = 0; i < returnedFreeAllocations && convertNewestPaidNodeToFree(data, startingRoot); i++) {
-            data.bankedFreeAllocations--;
+        moveReturnedFreeAllocationsOntoPaidNodes(data, returnedFreeAllocations, resolveStartingRootId(data));
+    }
+
+    static void moveReturnedFreeAllocationsOntoPaidNodes(ShipSkillData data, int returnedFreeAllocations, String startingRoot) {
+        int movedFreeAllocations = 0;
+        while (movedFreeAllocations < returnedFreeAllocations && spendBankedFreeAllocationOnNewestPaidNode(data, startingRoot)) {
+            movedFreeAllocations++;
         }
     }
 
@@ -580,6 +587,7 @@ public final class ShipTrees {
     public static List<String> forgetUnknownNodes(ShipSkillData data, Map<String, SkillNode> tree, Map<String, SkillNode> declaredTree, Map<String, SkillType> types) {
         data.revision++;
         ItemCostLedger.ensure(data);
+        int bankedBefore = data.bankedFreeAllocations;
         List<String> forgotten = new ArrayList<>();
         for (String nodeId : List.copyOf(data.getDormantNodeIds())) {
             SkillNode declaredNode = declaredTree.get(nodeId);
@@ -608,6 +616,7 @@ public final class ShipTrees {
                 }
             }
         }
+        moveReturnedFreeAllocationsOntoPaidNodes(data, data.bankedFreeAllocations - bankedBefore, resolveStartingRootId(data, tree.values()));
         return forgotten;
     }
 

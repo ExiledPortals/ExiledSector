@@ -194,7 +194,7 @@ class ChartSoakScriptTest {
     @Test
     void soaksSystemsOpenedFromRolledChartsAndStillLeavesEveryCountUnchanged() throws Exception {
         ChartTables.loadShipped();
-        exiledsector.items.StarChartFixtures.registerShipped();
+        exiledsector.items.starchart.StarChartFixtures.registerShipped();
         FakeChartContentEngine.install(new FakeChartContentEngine().offering(-4000f, 0f, 0f, 5000f));
         when(sector.getFaction(anyString())).thenReturn(mock(FactionAPI.class));
         try {
@@ -211,7 +211,7 @@ class ChartSoakScriptTest {
             assertTrue(ChartSoakScript.chartForIteration(1, new Random(1)) != null);
             assertNull(ChartSoakScript.chartForIteration(2, new Random(1)));
         } finally {
-            exiledsector.items.StarChartFixtures.clear();
+            exiledsector.items.starchart.StarChartFixtures.clear();
             ChartContentGenerator.resetForTests();
             ChartTiers.resetForTests();
             ChartPois.resetForTests();
@@ -222,7 +222,7 @@ class ChartSoakScriptTest {
     @Test
     void aChartSystemThatFailsToOpenIsNotCountedAsOpened() throws Exception {
         ChartTables.loadShipped();
-        exiledsector.items.StarChartFixtures.registerShipped();
+        exiledsector.items.starchart.StarChartFixtures.registerShipped();
         FakeChartContentEngine.install(new FakeChartContentEngine().offering(-4000f, 0f, 0f, 5000f));
         when(sector.getFaction(anyString())).thenReturn(mock(FactionAPI.class));
         try {
@@ -242,7 +242,7 @@ class ChartSoakScriptTest {
             assertTrue(reports.get(0).contains("returned RUN_EXISTS"), reports.get(0));
             assertTrue(reports.get(0).contains("0 system(s) opened from rolled Star Charts"), reports.get(0));
         } finally {
-            exiledsector.items.StarChartFixtures.clear();
+            exiledsector.items.starchart.StarChartFixtures.clear();
             ChartContentGenerator.resetForTests();
             ChartTiers.resetForTests();
             ChartPois.resetForTests();

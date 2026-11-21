@@ -4,29 +4,30 @@ import exiledsector.MockSector;
 import exiledsector.items.Item;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemStore;
-import exiledsector.items.WormholeAnchor;
-import exiledsector.items.WormholeAnchorDefinitions;
+import exiledsector.items.anchor.WormholeAnchor;
+import exiledsector.items.anchor.WormholeAnchorDefinitions;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
-import exiledsector.skills.SkillTree;
-import exiledsector.skills.SkillType;
-import exiledsector.skills.layout.SkillNodeDecoration;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static exiledsector.skills.TestTrees.taggedNode;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class TemplateAnchorsTest {
 
     private static final String ANCHOR_ID = "wormhole_anchor_abyss";
@@ -40,11 +41,10 @@ class TemplateAnchorsTest {
     @BeforeEach
     void setUp() throws Exception {
         mockSector = new MockSector();
-        SkillTree.clearNodes();
-        root = node("root", SkillTier.ROOT);
-        socket = node("socket_a", SkillTier.SOCKET, "root");
-        secondSocket = node("socket_b", SkillTier.SOCKET, "root");
-        node("abyss_exit", SkillTier.WORMHOLE_EXIT);
+        root = taggedNode("root", SkillTier.ROOT, "core");
+        socket = taggedNode("socket_a", SkillTier.SOCKET, "core", "root");
+        secondSocket = taggedNode("socket_b", SkillTier.SOCKET, "core", "root");
+        taggedNode("abyss_exit", SkillTier.WORMHOLE_EXIT, "core");
         WormholeAnchorDefinitions.register(new JSONArray().put(new JSONObject().put("id", ANCHOR_ID).put("volume", "abyss")
                 .put("exit_node", "abyss_exit").put("name", "Abyss Wormhole Anchor").put("description", "Opens a wormhole.")));
     }
@@ -53,15 +53,7 @@ class TemplateAnchorsTest {
     void tearDown() {
         WormholeAnchorDefinitions.clear();
         ItemDefinitions.clear();
-        SkillTree.clearNodes();
         mockSector.close();
-    }
-
-    private static SkillNode node(String id, SkillTier tier, String... connectedTo) {
-        SkillType type = new SkillType.Builder(id + "_type", id, "a.png", tier).effects(List.of()).build();
-        SkillNode node = new SkillNode(id, type, List.of(connectedTo), 0f, 0f, SkillNodeDecoration.NONE, List.of("core"));
-        SkillTree.register(node);
-        return node;
     }
 
     private ShipSkillData ship(String shipId, SkillNode... allocated) {

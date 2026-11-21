@@ -1,6 +1,11 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.SpecialItemData;
+import exiledsector.items.modifier.ItemRoll;
+import exiledsector.items.modifier.ItemRoller;
+import exiledsector.items.modifier.RolledModifier;
+import exiledsector.items.name.FrozenName;
+import exiledsector.items.name.ItemNames;
 
 import java.util.List;
 
@@ -24,32 +29,18 @@ public record ItemData(String definitionId, long seed, List<RolledModifier> expl
     }
 
     public static ItemData rolled(ItemDefinition definition, long seed) {
-        if (ItemTypes.tiered(definition.type())) {
-            return rolledAtTier(definition, seed, ItemTraits.LOWEST_TIER);
-        }
-        List<RolledModifier> modifiers = ItemRoller.roll(definition, seed);
-        return new ItemData(definition.id(), seed, modifiers, ItemNames.freeze(definition, seed, modifiers));
+        return rolled(definition, seed, ItemRoll.PLAIN);
     }
 
-    public static ItemData rolledWithRarity(ItemDefinition definition, long seed, float rarity) {
-        if (ItemTypes.tiered(definition.type())) {
-            return rolled(definition, seed);
-        }
-        List<RolledModifier> modifiers = ItemRoller.rollWithRarity(definition, seed, rarity);
-        return new ItemData(definition.id(), seed, modifiers, ItemNames.freeze(definition, seed, modifiers));
+    public static ItemData rolled(ItemDefinition definition, long seed, ItemRoll roll) {
+        ItemRoll resolvedRoll = roll.startingAtLowestTierFor(definition).resolvedFor(definition);
+        List<RolledModifier> modifiers = ItemRoller.rollResolved(definition, seed, resolvedRoll);
+        return new ItemData(definition.id(), seed, modifiers, ItemNames.freeze(definition, seed, modifiers), traitsAt(definition, seed, resolvedRoll));
     }
 
-    public static ItemData rolledWithModifierCount(ItemDefinition definition, long seed, int modifierCount) {
-        List<RolledModifier> modifiers = ItemRoller.rollWithModifierCount(definition, seed, modifierCount);
-        return new ItemData(definition.id(), seed, modifiers, ItemNames.freeze(definition, seed, modifiers));
-    }
-
-    public static ItemData rolledAtTier(ItemDefinition definition, long seed, int tier) {
+    private static ItemTraits traitsAt(ItemDefinition definition, long seed, ItemRoll resolvedRoll) {
         ItemTypeSupport support = ItemTypes.of(definition.type());
-        int rolledTier = support == null ? tier : support.rolledTier(definition.id(), tier);
-        List<RolledModifier> modifiers = ItemRoller.rollAtTier(definition, seed, rolledTier);
-        ItemTraits tierTraits = support == null ? null : support.traitsAtTier(definition, seed, rolledTier);
-        return new ItemData(definition.id(), seed, modifiers, ItemNames.freeze(definition, seed, modifiers), tierTraits);
+        return support == null || !resolvedRoll.hasTier() ? null : support.traitsAtTier(definition, seed, resolvedRoll.tier());
     }
 
     public static ItemData of(Item item) {
@@ -75,6 +66,15 @@ public record ItemData(String definitionId, long seed, List<RolledModifier> expl
     public boolean isStarChart() {
         ItemDefinition itemDefinition = definition();
         return itemDefinition != null ? itemDefinition.type() == ItemType.STAR_CHART : traits != null;
+    }
+
+    public boolean isHullItem() {
+        ItemDefinition itemDefinition = definition();
+        return itemDefinition != null && itemDefinition.isHullItem();
+    }
+
+    public ItemData withExplicits(List<RolledModifier> replacementExplicits, FrozenName replacementName) {
+        return new ItemData(definitionId, seed, replacementExplicits, replacementName, traits);
     }
 
     public ItemData withTraits(ItemTraits replacementTraits) {
@@ -124,12 +124,7 @@ public record ItemData(String definitionId, long seed, List<RolledModifier> expl
     }
 
     private List<RolledModifier> rolledModifiers(ItemDefinition itemDefinition) {
-        if (traits != null) {
-            return ItemRoller.rollAtTier(itemDefinition, seed, traits.tier());
-        }
-        if (ItemTypes.tiered(itemDefinition.type())) {
-            return ItemRoller.rollAtTier(itemDefinition, seed, ItemTraits.LOWEST_TIER);
-        }
-        return ItemRoller.roll(itemDefinition, seed);
+        ItemRoll savedRoll = traits != null ? ItemRoll.atTier(traits.tier()) : ItemRoll.PLAIN.startingAtLowestTierFor(itemDefinition);
+        return ItemRoller.roll(itemDefinition, seed, savedRoll);
     }
 }

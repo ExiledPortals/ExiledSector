@@ -6,6 +6,8 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.impl.campaign.intel.misc.GateHaulerIntel;
 import exiledsector.compat.RandomAssortmentCompat;
+import exiledsector.items.crafting.material.CraftingMaterialFamilies;
+import exiledsector.items.crafting.material.CraftingMaterialFamily;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -113,7 +115,7 @@ public enum ItemUnlock {
         }
         try {
             int tier = Integer.parseInt(unlockId.substring(CLEARED_CHART_TIER_PREFIX.length()));
-            return tier >= ItemTraits.LOWEST_TIER && tier <= ItemTraits.HIGHEST_TIER ? tier : NO_CLEARED_TIER;
+            return tier >= ItemTraits.LOWEST_TIER && tier <= ItemTraits.HIGHEST_DROP_TIER ? tier : NO_CLEARED_TIER;
         } catch (NumberFormatException e) {
             return NO_CLEARED_TIER;
         }
@@ -126,7 +128,7 @@ public enum ItemUnlock {
 
     public static boolean recordChartCleared(SectorAPI sector, int tier) {
         MemoryAPI sectorMemory = sector == null ? null : sector.getMemoryWithoutUpdate();
-        int clearedTier = Math.max(ItemTraits.LOWEST_TIER, Math.min(ItemTraits.HIGHEST_TIER, tier));
+        int clearedTier = Math.max(ItemTraits.LOWEST_TIER, Math.min(ItemTraits.HIGHEST_DROP_TIER, tier));
         int previousTier = highestClearedChartTier(sector);
         if (sectorMemory == null || previousTier >= clearedTier) {
             return false;

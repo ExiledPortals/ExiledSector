@@ -3,8 +3,8 @@ package exiledsector.console;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
-import exiledsector.items.ModspecCaches;
-import exiledsector.items.SubroutineKind;
+import exiledsector.items.subroutine.ModspecCaches;
+import exiledsector.items.subroutine.SubroutineKind;
 import org.lazywizard.console.Console;
 
 import java.util.List;

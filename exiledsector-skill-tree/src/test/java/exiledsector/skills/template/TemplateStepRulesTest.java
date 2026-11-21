@@ -1,6 +1,7 @@
 package exiledsector.skills.template;
 
 import exiledsector.skills.AllocationCheck;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillItemCost;
@@ -8,17 +9,19 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledsector.skills.npc.RealSkillData;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 import java.util.ArrayList;
 import java.util.function.BiFunction;
 
+import static exiledsector.skills.TestTrees.registered;
+import static exiledsector.skills.TestTrees.type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class TemplateStepRulesTest {
 
     private static final BiFunction<SkillNode, SkillType, AllocationCheck.Verdict> ALLOWED = (node, option) -> AllocationCheck.Verdict.GRANTED;
@@ -27,24 +30,14 @@ class TemplateStepRulesTest {
 
     @BeforeEach
     void setUp() {
-        RealSkillData.clear();
         SkillNode root = node("root", type("root", SkillTier.ROOT).build());
         node("armor", type("armor_type", SkillTier.SMALL).build());
         node("lobster", type("lobster_type", SkillTier.SMALL).itemCost(new SkillItemCost("lobster", 1000f)).build());
-        SkillTree.registerType(type("hull", SkillTier.SMALL).build());
-        SkillTree.registerType(type("pricey", SkillTier.SMALL).itemCost(new SkillItemCost("alpha_core", 1f)).build());
+        registered(type("hull", SkillTier.SMALL).build());
+        registered(type("pricey", SkillTier.SMALL).itemCost(new SkillItemCost("alpha_core", 1f)).build());
         node("slot", type("slot_type", SkillTier.SMALL).choiceOptionIds(List.of("hull", "pricey")).build());
         data = new ShipSkillData();
         ShipTrees.chooseStartingRoot(data, root);
-    }
-
-    @AfterEach
-    void tearDown() {
-        RealSkillData.clear();
-    }
-
-    private static SkillType.Builder type(String id, SkillTier tier) {
-        return new SkillType.Builder(id, id, "a.png", tier).effects(List.of());
     }
 
     private static SkillNode node(String id, SkillType type) {

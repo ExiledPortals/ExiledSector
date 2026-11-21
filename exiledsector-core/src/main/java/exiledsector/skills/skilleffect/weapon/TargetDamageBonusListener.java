@@ -22,7 +22,8 @@ public abstract class TargetDamageBonusListener extends DamagePercentListener {
 
     @Override
     protected final float damagePercent(Object param, CombatEntityAPI target) {
-        if (!(target instanceof ShipAPI targetShip) || !CombatQueries.isHostile(ownerShip, targetShip)) {
+        ShipAPI targetShip = CombatQueries.hostileShip(ownerShip, target);
+        if (targetShip == null) {
             return 0f;
         }
         float percent = magnitude(damagePercentKey);

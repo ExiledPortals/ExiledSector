@@ -2,6 +2,7 @@ package exiledsector.skills.radius;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -11,6 +12,7 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -22,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class SkillTreeRadiiTest {
 
     private static final SkillType HULL = new SkillType.Builder("hull", "Hull", "a.png", SkillTier.SMALL).build();
@@ -34,7 +37,6 @@ class SkillTreeRadiiTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        SkillTree.clearNodes();
         NodeRadii.register(new JSONObject("{ \"small\": 150, \"medium\": 250, \"large\": 350, \"extra_large\": 450 }"));
     }
 

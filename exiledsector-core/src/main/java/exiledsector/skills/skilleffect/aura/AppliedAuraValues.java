@@ -1,6 +1,8 @@
 package exiledsector.skills.skilleffect.aura;
 
 import com.fs.starfarer.api.combat.ShipAPI;
+import exiledsector.skills.skilleffect.StatMode;
+import exiledsector.skills.skilleffect.StatTarget;
 
 import java.util.IdentityHashMap;
 import java.util.Iterator;
@@ -29,6 +31,11 @@ final class AppliedAuraValues {
 
     AppliedAuraValues(Change change) {
         this.change = change;
+    }
+
+    void update(Map<ShipAPI, Float> wantedByTarget, StatTarget stat, StatMode mode, String modId) {
+        update(wantedByTarget, target -> stat.remove(target.getMutableStats(), modId),
+                (target, value) -> stat.apply(target.getMutableStats(), modId, mode, value));
     }
 
     void update(Map<ShipAPI, Float> wantedByTarget, Consumer<ShipAPI> remove, Apply apply) {

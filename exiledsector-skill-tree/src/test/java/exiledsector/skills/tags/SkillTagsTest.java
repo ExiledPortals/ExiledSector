@@ -13,25 +13,34 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class SkillTagsTest {
 
     @Test
-    void allIsThemeThenVolumeThenRequirementThenGateThenRule() {
-        List<String> expected = new ArrayList<>(SkillTags.THEME);
+    void allIsShipThemeThenVolumeThenRequirementThenGateThenRule() {
+        List<String> expected = new ArrayList<>(ThemeTags.ids(ThemeTagScope.SHIP));
         expected.addAll(SkillTags.VOLUME);
         expected.addAll(SkillTags.REQUIREMENT);
         expected.addAll(SkillTags.GATE);
         expected.addAll(SkillTags.RULE);
 
-        assertEquals(expected, SkillTags.ALL);
+        assertEquals(expected, SkillTags.all());
     }
 
     @Test
     void noTagBelongsToMoreThanOneGroup() {
-        assertEquals(SkillTags.ALL.size(), new HashSet<>(SkillTags.ALL).size());
+        List<String> vocabulary = SkillTags.all();
+
+        assertEquals(vocabulary.size(), new HashSet<>(vocabulary).size());
     }
 
     @Test
     void theRetiredLuddicPathTagIsNotInTheVocabulary() {
-        assertFalse(SkillTags.ALL.contains("luddic_path"));
+        assertFalse(SkillTags.all().contains("luddic_path"));
         assertTrue(SkillTags.isVolume("luddic"));
+    }
+
+    @Test
+    void starChartOnlyThemeTagsAreNotSkillTags() {
+        assertTrue(ThemeTags.isThemeTag("enemy"));
+        assertFalse(SkillTags.all().contains("enemy"));
+        assertTrue(SkillTags.all().contains("logistics"));
     }
 
     @Test

@@ -15,14 +15,14 @@ class TemplateUiStateTest {
 
     @Test
     void theBarIsHiddenUntilAStartingRootIsChosen() {
-        assertFalse(TemplateBarState.of(false, 5, true, false, false, false).visible());
-        assertTrue(TemplateBarState.of(true, 1, false, false, false, false).visible());
+        assertFalse(TemplateBarState.of(false, 5, true, false, false, false, false).visible());
+        assertTrue(TemplateBarState.of(true, 1, false, false, false, false, false).visible());
     }
 
     @Test
     void saveNeedsANodeBeyondTheRootAndExplainsWhyWhenDisabled() {
-        TemplateBarState rootOnly = TemplateBarState.of(true, 1, false, false, false, false);
-        TemplateBarState withNodes = TemplateBarState.of(true, 4, false, false, false, false);
+        TemplateBarState rootOnly = TemplateBarState.of(true, 1, false, false, false, false, false);
+        TemplateBarState withNodes = TemplateBarState.of(true, 4, false, false, false, false, false);
 
         assertFalse(rootOnly.saveEnabled());
         assertEquals("ui.template.hint.saveEmpty", rootOnly.saveHintKey());
@@ -32,13 +32,13 @@ class TemplateUiStateTest {
 
     @Test
     void theAutoAllocateToggleNeedsATemplateToTurnOnButCanAlwaysBeTurnedOff() {
-        TemplateBarState noTemplate = TemplateBarState.of(true, 4, false, false, false, false);
+        TemplateBarState noTemplate = TemplateBarState.of(true, 4, false, false, false, false, false);
         assertFalse(noTemplate.autoEnabled());
         assertEquals("ui.template.hint.autoNoTemplate", noTemplate.autoHintKey());
-        assertTrue(TemplateBarState.of(true, 4, false, false, false, true).autoEnabled());
+        assertTrue(TemplateBarState.of(true, 4, false, false, false, true, false).autoEnabled());
 
-        TemplateBarState off = TemplateBarState.of(true, 4, true, false, false, false);
-        TemplateBarState on = TemplateBarState.of(true, 4, true, false, false, true);
+        TemplateBarState off = TemplateBarState.of(true, 4, true, false, false, false, false);
+        TemplateBarState on = TemplateBarState.of(true, 4, true, false, false, true, false);
         assertTrue(off.autoEnabled());
         assertEquals("ui.template.hint.autoOff", off.autoHintKey());
         assertTrue(on.autoOn());
@@ -46,9 +46,16 @@ class TemplateUiStateTest {
     }
 
     @Test
+    void theAutoAllocateHintSaysWhenOnlyFreeAllocationsAreSpent() {
+        assertEquals("ui.template.hint.autoOffFreeAllocationsOnly",
+                TemplateBarState.of(true, 4, true, false, false, false, true).autoHintKey());
+        assertEquals("ui.template.hint.autoOn", TemplateBarState.of(true, 4, true, false, false, true, true).autoHintKey());
+    }
+
+    @Test
     void templateModeTurnsSaveIntoRenameAndLocksTheToggle() {
-        TemplateBarState newPlan = TemplateBarState.of(true, 4, false, false, true, false);
-        TemplateBarState editing = TemplateBarState.of(true, 4, true, false, true, true);
+        TemplateBarState newPlan = TemplateBarState.of(true, 4, false, false, true, false, false);
+        TemplateBarState editing = TemplateBarState.of(true, 4, true, false, true, true, false);
 
         assertTrue(newPlan.planning());
         assertTrue(newPlan.templateModeEnabled());
@@ -103,8 +110,8 @@ class TemplateUiStateTest {
 
     @Test
     void anInertBarGreysOutEveryButtonButKeepsItsHints() {
-        TemplateBarState inert = TemplateBarState.of(true, 4, true, true, false, false);
-        TemplateBarState live = TemplateBarState.of(true, 4, true, false, false, false);
+        TemplateBarState inert = TemplateBarState.of(true, 4, true, true, false, false, false);
+        TemplateBarState live = TemplateBarState.of(true, 4, true, false, false, false, false);
 
         assertTrue(live.saveEnabled() && live.loadEnabled() && live.autoEnabled());
         assertTrue(inert.visible());

@@ -21,6 +21,7 @@ import exiledsector.compat.NexerelinCompat;
 import exiledsector.compat.NightcrossCompat;
 import exiledsector.compat.NightcrossUnlocks;
 import exiledsector.compat.RandomAssortmentCompat;
+import exiledsector.compat.SymbioticVoidCreaturesCompat;
 import exiledsector.compat.TaniaCompat;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.effects.AlphaSiteOmegaCache;
@@ -32,7 +33,6 @@ import exiledsector.effects.NpcBonusScale;
 import exiledsector.effects.NpcFleetDialogListener;
 import exiledsector.effects.NpcFleetInflationListener;
 import exiledsector.effects.NpcFleetSweepScript;
-import exiledsector.effects.OpReserveHullMods;
 import exiledsector.effects.PhantomConflictWatch;
 import exiledsector.effects.PhantomHullMods;
 import exiledsector.effects.PlayerEngagementPipeline;
@@ -49,37 +49,35 @@ import exiledsector.effects.TemplateDockingRetry;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.SpecLocalisation;
 import exiledsector.items.ItemVolumes;
-import exiledsector.items.AnchorFindMigration;
-import exiledsector.items.DeletedSubroutines;
-import exiledsector.items.DoctrineArchives;
-import exiledsector.items.DoctrineOverrides;
-import exiledsector.items.FactionlessAnchors;
+import exiledsector.items.custody.CargoRefund;
+import exiledsector.items.subroutine.doctrine.ConvertedAnchorRelease;
+import exiledsector.items.subroutine.doctrine.DoctrineArchives;
+import exiledsector.items.subroutine.doctrine.DoctrineOverrides;
+import exiledsector.items.anchor.FactionlessAnchors;
 import exiledsector.items.ItemDataRules;
 import exiledsector.items.ItemTypeSupport;
-import exiledsector.items.ModspecCaches;
-import exiledsector.items.RootConduits;
-import exiledsector.items.NodeGrantLinks;
-import exiledsector.items.NodeGrantStatus;
-import exiledsector.items.NpcItems;
-import exiledsector.items.MasterSchematic;
-import exiledsector.items.ShipCustody;
-import exiledsector.items.SocketCustody;
-import exiledsector.items.Subroutine;
-import exiledsector.items.SubroutineDataRules;
-import exiledsector.items.SubroutineImplicits;
-import exiledsector.items.TreeSocketCustody;
-import exiledsector.items.UniqueSubroutineRadii;
-import exiledsector.items.UniqueSubroutinesSetting;
-import exiledsector.items.WormholeAnchor;
-import exiledsector.items.WormholeAnchorDataRules;
-import exiledsector.items.WormholeAnchorDefinitions;
-import exiledsector.items.WormholeAnchorLinks;
-import exiledsector.items.WormholeAnchorMigration;
+import exiledsector.items.subroutine.ModspecCaches;
+import exiledsector.items.subroutine.RootConduits;
+import exiledsector.items.subroutine.NodeGrantLinks;
+import exiledsector.items.subroutine.NodeGrantStatus;
+import exiledsector.items.drop.NpcItems;
+import exiledsector.items.schematic.MasterSchematic;
+import exiledsector.items.custody.ShipCustody;
+import exiledsector.items.custody.SocketCustody;
+import exiledsector.items.subroutine.Subroutine;
+import exiledsector.items.subroutine.SubroutineDataRules;
+import exiledsector.items.subroutine.SubroutineImplicits;
+import exiledsector.items.custody.TreeSocketCustody;
+import exiledsector.items.subroutine.UniqueSubroutineRadii;
+import exiledsector.items.subroutine.UniqueSubroutinesSetting;
+import exiledsector.items.anchor.WormholeAnchor;
+import exiledsector.items.anchor.WormholeAnchorDataRules;
+import exiledsector.items.anchor.WormholeAnchorDefinitions;
+import exiledsector.items.anchor.WormholeAnchorLinks;
 import exiledsector.loot.FleetDifficulty;
 import exiledsector.loot.LootSource;
 import exiledsector.loot.LootTakenListener;
 import exiledsector.loot.MarketStock;
-import exiledsector.persistence.RetiredReserveIds;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
 import exiledsector.skills.npc.NpcFactionVolumes;
@@ -88,6 +86,7 @@ import exiledsector.skills.npc.NpcLevelCaps;
 import exiledsector.skills.radius.NodeRadii;
 import exiledsector.skills.tags.VolumeToggles;
 import exiledsector.skills.unlock.FactionEncounterGate;
+import exiledsector.skills.unlock.MothershipGate;
 import exiledsector.skills.unlock.NodeGates;
 import exiledsector.skills.unlock.OmegaAnchorAcquisition;
 import exiledsector.skills.unlock.UnlockConditionOverrides;
@@ -209,7 +208,6 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
 
     @Override
     public void configureXStream(XStream xstream) {
-        RetiredReserveIds.register(xstream);
     }
 
     @Override
@@ -223,20 +221,17 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
         TreeCameraMemory.forgetAll();
         NpcBonusScale.invalidate();
         NpcItems.clearCache();
-        SectorAPI sector = Global.getSector();
-        DeletedSubroutines.removeFromSave(savedCargoes);
-        OpReserveHullMods.forgetLegacySlots(sector.getPersistentData());
+        ConvertedAnchorRelease.releaseOnce(Global.getSector(), ShipSkillDataManager.all());
     }
 
     @Override
     public void afterSaveRepair() {
-        AffinityOptions.migrateAll(ShipSkillDataManager.all().values());
+        OptionRenames.applyAll(ShipSkillDataManager.all().values());
         forgetUnknownNodes();
         SkillTreeTemplateStore.reload();
         SkillTreeTemplateStore.moveSavedTemplatesToFile();
         SkillTreeTemplateStore.pruneAssignments(ShipSkillDataManager::hasProgress);
         SectorAPI sector = Global.getSector();
-        sector.removeScriptsOfClass(SkillTreeInstaller.class);
         sector.addTransientScript(new SkillTreeInstaller());
         sector.addTransientScript(new NpcFleetSweepScript());
         sector.addTransientListener(new NpcFleetDialogListener());
@@ -251,6 +246,7 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
     public void afterLootListeners() {
         SectorAPI sector = Global.getSector();
         sector.addTransientListener(new FactionEncounterGate.BattleListener());
+        sector.addTransientListener(new MothershipGate.BattleListener());
         sector.getListenerManager().addListener(new AlphaSiteOmegaCache(), true);
         if (LostSectorCompat.isModEnabled()) {
             sector.getListenerManager().addListener(new LostSectorUnlocks.LocationListener(), true);
@@ -267,12 +263,11 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
 
     @Override
     public void afterSocketCustody() {
-        WormholeAnchorMigration.run();
+        WormholeAnchorLinks.refresh();
         SectorAPI sector = Global.getSector();
         if (sector == null) {
             return;
         }
-        AnchorFindMigration.run(sector);
         GateRewardAnchors.markOpenGatesGrantedOnce(sector);
         sector.getListenerManager().addListener(new GateRewardAnchors(), true);
         GateRewardAnchors.grantMissed(sector);
@@ -363,7 +358,7 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
     @Override
     public List<CompatTarget> compatTargets() {
         return List.of(LostSectorCompat.TARGET, MagicLibCompat.TARGET, NightcrossCompat.TARGET, TaniaCompat.TARGET,
-                NexerelinCompat.TARGET);
+                NexerelinCompat.TARGET, SymbioticVoidCreaturesCompat.TARGET);
     }
 
     private static Set<String> phantomHullModIds() {
@@ -381,7 +376,7 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
         }
         ShipTreeRepairs.replaceRemovedNodes(SkillTree.getDeclaredNodes(), NodeReplacements.all());
         ShipTreeRepairs.forgetUnknownNodes(SkillTree.getAllNodes(), SkillTree.getDeclaredNodes(), SkillTree.getAllTypes(),
-                new OwnedShips(), charged -> charged.refundTo(PlayerFleet.cargoOrNull()), NodeIntegration::refundStoryPoints);
+                new OwnedShips(), CargoRefund::refundToPlayer, NodeIntegration::refundStoryPoints);
     }
 
     private static final class OwnedShips implements Predicate<String> {

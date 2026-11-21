@@ -3,20 +3,30 @@ package exiledsector.charts;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
+import exiledsector.DockedStorage;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.atlas.AtlasCatalysts;
 import exiledsector.charts.atlas.AtlasData;
+import exiledsector.charts.atlas.TerritoryExclusions;
 import exiledsector.charts.content.ChartBosses;
 import exiledsector.charts.content.ChartColonyItems;
 import exiledsector.charts.content.ChartFactions;
 import exiledsector.charts.content.ChartPois;
 import exiledsector.charts.effect.ChartEffects;
+import exiledsector.charts.effect.ChartPrefixRewards;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.layout.feature.ChartFeatures;
-import exiledsector.charts.loot.ChartDrops;
+import exiledsector.charts.loot.ChartDropRules;
 import exiledsector.charts.loot.ChartLoot;
-import exiledsector.charts.loot.ChartMaterials;
+import exiledsector.charts.officer.OfficerRanks;
+import exiledsector.charts.officer.reward.OfficerRewardTable;
+import exiledsector.charts.officer.scar.ScarChallengePick;
+import exiledsector.charts.officer.scar.ScarTable;
+import exiledsector.charts.officer.turn.ChallengeLossScars;
+import exiledsector.charts.anomaly.skirmish.SkirmishRecords;
+import exiledsector.charts.officer.turn.OfficerTurnTables;
+import exiledsector.charts.phasing.PhasedPlanetTraits;
 import exiledsector.charts.run.ChartBlockedAbilities;
 import exiledsector.charts.run.ChartCampaignPlugin;
 import exiledsector.charts.run.ChartContentListener;
@@ -24,8 +34,8 @@ import exiledsector.charts.run.ChartRunScript;
 import exiledsector.charts.run.cleanup.ChartDefenderTallies;
 import exiledsector.charts.run.cleanup.ChartLoadSweep;
 import exiledsector.charts.run.diagnostics.ChartSoakScript;
+import exiledsector.charts.tree.AtlasTreeData;
 import exiledsector.items.ItemStore;
-import exiledsector.items.RetiredUniqueCharts;
 import exiledsector.ui.chart.ChartInfoTab;
 import org.apache.log4j.Logger;
 
@@ -50,7 +60,7 @@ public final class StarCharts {
             sector.getListenerManager().removeListenerOfClass(ChartInfoTab.class);
             sector.getListenerManager().addListener(new ChartInfoTab(), true);
         }
-        RetiredUniqueCharts.removeFrom(sector);
+        SkirmishRecords.dropPlayerInserted(sector);
         absorbCharts(sector);
     }
 
@@ -61,8 +71,11 @@ public final class StarCharts {
             if (existing != null) {
                 existing.freezeNames();
             }
-            CargoAPI cargo = playerFleet == null ? null : playerFleet.getCargo();
-            return ItemStore.carriesStarCharts(cargo) ? ItemStore.starCharts().absorbFrom(cargo) : 0;
+            int movedCount = 0;
+            for (CargoAPI cargo : DockedStorage.withPlayerCargo(playerFleet == null ? null : playerFleet.getCargo())) {
+                movedCount += ItemStore.carriesStarCharts(cargo) ? ItemStore.starCharts().absorbFrom(cargo) : 0;
+            }
+            return movedCount;
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Moving Star Charts from cargo into storage failed", e);
             return 0;
@@ -71,10 +84,11 @@ public final class StarCharts {
 
     public static void loadData() {
         ChartEffects.register();
+        ChartPrefixRewards.load();
         ChartBlockedAbilities.load();
         ChartTiers.load();
-        ChartDrops.load();
-        ChartMaterials.load();
+        ChartDropRules.load();
+        OfficerRewardTable.load();
         ChartPois.load();
         ChartLoot.load();
         ChartColonyItems.load();
@@ -85,5 +99,14 @@ public final class StarCharts {
         ChartAnomalies.all().forEach(ChartAnomaly::loadData);
         ChartFeatures.load();
         AtlasData.load();
+        TerritoryExclusions.load();
+        OfficerRanks.load();
+        OfficerTurnTables.load();
+        ChallengeLossScars.register();
+        SkirmishRecords.register();
+        AtlasTreeData.load();
+        ScarTable.load();
+        ScarChallengePick.load();
+        PhasedPlanetTraits.load();
     }
 }

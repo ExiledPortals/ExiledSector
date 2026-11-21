@@ -3,10 +3,10 @@ package exiledsector.skills.skilleffect.aura;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.skills.skilleffect.CombatTestShips;
+import exiledsector.skills.skilleffect.CombatTestShips.ShipBuilder;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.MockedStatic;
@@ -28,26 +28,14 @@ import static org.mockito.Mockito.when;
 class TerrifyingPresenceFieldTest {
 
     private static TerrifyingPresenceListener source(float penaltyPercent) {
-        ShipAPI ship = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(stats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getValue(TerrifyingPresenceListener.ACCURACY_PENALTY_PERCENT_KEY, 0f)).thenReturn(penaltyPercent);
-        when(ship.isAlive()).thenReturn(true);
-        when(ship.getLocation()).thenReturn(new Vector2f());
+        ShipAPI ship = CombatTestShips.ship().dynamic(TerrifyingPresenceListener.ACCURACY_PENALTY_PERCENT_KEY, penaltyPercent).alive().at(new Vector2f()).build();
         return new TerrifyingPresenceListener(ship);
     }
 
     private static ShipAPI shipAt(Vector2f location, int owner, MutableStat accuracy) {
-        ShipAPI ship = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(stats.getAutofireAimAccuracy()).thenReturn(accuracy);
-        when(ship.isAlive()).thenReturn(true);
-        when(ship.getOwner()).thenReturn(owner);
-        when(ship.getLocation()).thenReturn(location);
-        return ship;
+        ShipBuilder ship = CombatTestShips.ship().alive().owner(owner).at(location);
+        when(ship.stats().getAutofireAimAccuracy()).thenReturn(accuracy);
+        return ship.build();
     }
 
     private static AuraField.ShipsNear among(List<ShipAPI> ships) {

@@ -10,7 +10,6 @@ import exiledsector.ui.util.SpriteDraw;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Iterator;
@@ -29,8 +28,6 @@ final class StormOverlay extends BaseCombatLayeredRenderingPlugin {
     static final float FLASH_SIZE = 500f;
     static final float GLOW_SIZE = 200f;
     static final float RENDER_RADIUS = 1_000_000f;
-    static final Color CLOUD_COLOUR = StormFrontTerrainPlugin.CLOUD_COLOUR;
-    static final Color FLASH_COLOUR = StormFrontTerrainPlugin.FLASH_COLOUR;
     private static final Logger LOG = Logger.getLogger(StormOverlay.class);
     private static final EnumSet<CombatEngineLayers> LAYERS = EnumSet.of(CombatEngineLayers.BELOW_SHIPS_LAYER,
             CombatEngineLayers.ABOVE_SHIPS_AND_MISSILES_LAYER);
@@ -60,6 +57,7 @@ final class StormOverlay extends BaseCombatLayeredRenderingPlugin {
         }
     }
 
+    private final StormPalette palette;
     private final float mapWidth;
     private final float mapHeight;
     private final float driftX;
@@ -72,7 +70,8 @@ final class StormOverlay extends BaseCombatLayeredRenderingPlugin {
     private SpriteAPI glowSprite;
     private boolean spritesFailed;
 
-    StormOverlay(float mapWidth, float mapHeight, long seed) {
+    StormOverlay(float mapWidth, float mapHeight, long seed, StormPalette palette) {
+        this.palette = palette;
         this.mapWidth = Math.max(1f, mapWidth);
         this.mapHeight = Math.max(1f, mapHeight);
         Random random = new Random(seed);
@@ -178,7 +177,7 @@ final class StormOverlay extends BaseCombatLayeredRenderingPlugin {
                 continue;
             }
             SpriteDraw.drawCellAtCenter(cloudSheet, StormFrontTerrainPlugin.SHEET_COLUMNS, StormFrontTerrainPlugin.SHEET_ROWS, cloud.cell, cloud.x, cloud.y,
-                    cloud.size, cloud.size, cloud.facing, CLOUD_COLOUR, alpha * CLOUD_ALPHA, true);
+                    cloud.size, cloud.size, cloud.facing, palette.cloud(), alpha * CLOUD_ALPHA, true);
         }
     }
 
@@ -189,12 +188,12 @@ final class StormOverlay extends BaseCombatLayeredRenderingPlugin {
             }
             float strength = 1f - flash.age / FLASH_SECONDS;
             flashSprite.setSize(FLASH_SIZE, FLASH_SIZE);
-            flashSprite.setColor(FLASH_COLOUR);
+            flashSprite.setColor(palette.flash());
             flashSprite.setAdditiveBlend();
             flashSprite.setAlphaMult(alpha * strength);
             flashSprite.renderAtCenter(flash.point.x, flash.point.y);
             glowSprite.setSize(GLOW_SIZE, GLOW_SIZE);
-            glowSprite.setColor(FLASH_COLOUR);
+            glowSprite.setColor(palette.flash());
             glowSprite.setAdditiveBlend();
             glowSprite.setAlphaMult(alpha * strength);
             glowSprite.renderAtCenter(flash.point.x, flash.point.y);

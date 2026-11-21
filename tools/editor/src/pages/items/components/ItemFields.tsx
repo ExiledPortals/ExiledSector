@@ -1,8 +1,10 @@
-import { Avatar, Box, Checkbox, Divider, Group, NavLink, ScrollArea, Select, Stack, Text, Textarea, TextInput } from '@mantine/core';
+import { Avatar, Box, Button, Checkbox, Divider, Group, NavLink, ScrollArea, Select, Stack, Text, Textarea, TextInput } from '@mantine/core';
+import { IconTrash } from '@tabler/icons-react';
 import { useEffect, useState, type ReactNode } from 'react';
 import type { Vocabulary } from '../../../api/vocabulary.ts';
 import { DecimalInput } from '../../../shared/DecimalInput.tsx';
-import { confirmAction } from '../../../shared/dialogs.tsx';
+import { confirmAction, notifyError } from '../../../shared/dialogs.tsx';
+import type { ImageDestination } from '../../../shared/imageFolders.ts';
 import { fileUrl } from '../../../shared/imagePaths.ts';
 import { ImagePickButton } from '../../../shared/ImagePickButton.tsx';
 import { unlockOptions } from '../itemOptions.ts';
@@ -66,12 +68,12 @@ export function ItemList({ items, selectedIndex, onSelect, emptyText }: ItemList
   );
 }
 
-export function IconField({ icon, targetFolder, onChange }: { icon: string; targetFolder: string; onChange: (icon: string) => void }) {
+export function IconField({ icon, destination, onChange }: { icon: string; destination: ImageDestination; onChange: (icon: string) => void }) {
   return (
     <Group align="flex-end" wrap="nowrap">
       <Avatar src={fileUrl(icon)} radius="sm" size={64} />
       <TextInput style={{ flex: 1 }} label="Icon path" value={icon} onChange={(event) => onChange(event.currentTarget.value)} />
-      <ImagePickButton targetFolder={targetFolder} onPicked={onChange} />
+      <ImagePickButton destination={destination} currentPath={icon} onPicked={onChange} />
     </Group>
   );
 }
@@ -160,4 +162,33 @@ export function NameAndRarity({ name, rarity, onName, onRarity }: { name: string
 
 export function DescriptionField({ description, onChange }: { description: string; onChange: (description: string) => void }) {
   return <Textarea label="Tooltip description (optional)" autosize minRows={3} value={description} onChange={(event) => onChange(event.currentTarget.value)} />;
+}
+
+interface DeleteRowButtonProps {
+  noun: string;
+  rowId: string;
+  message: string;
+  index: number;
+  refusal?: string;
+  onDelete: () => void;
+  onSelect: (index: number) => void;
+}
+
+export function DeleteRowButton({ noun, rowId, message, index, refusal, onDelete, onSelect }: DeleteRowButtonProps) {
+  const remove = async () => {
+    if (refusal) {
+      notifyError(refusal);
+      return;
+    }
+    const confirmed = await confirmAction({ title: `Delete "${rowId}"?`, message, confirmLabel: 'Delete', danger: true });
+    if (confirmed) {
+      onDelete();
+      onSelect(Math.max(0, index - 1));
+    }
+  };
+  return (
+    <Button color="red" variant="light" leftSection={<IconTrash size={14} />} onClick={() => void remove()}>
+      {`Delete this ${noun}`}
+    </Button>
+  );
 }

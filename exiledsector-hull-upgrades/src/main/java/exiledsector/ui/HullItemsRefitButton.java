@@ -4,7 +4,7 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
-import exiledsector.items.HullUpgradesSetting;
+import exiledsector.items.hull.HullUpgradesSetting;
 import exiledsector.ui.refit.RefitButtonColumn;
 import exiledsector.ui.refit.RefitButtonConfig;
 import exiledsector.ui.refit.RefitScreenLayout;
@@ -15,7 +15,7 @@ public class HullItemsRefitButton extends FullScreenRefitButton {
     static final String BUTTON_KEY = "ui.hullItemsRefitButton";
     public static final RefitButtonColumn.ButtonSpec COLUMN_BUTTON = new RefitButtonColumn.ButtonSpec("exiledSector_hullUpgradesButton",
             BUTTON_KEY, RefitButtonConfig::hullItemsKey, RefitButtonConfig::buttonUnderHullMods, () -> openPanel(null));
-    static final String ICON_PATH = "graphics/icons/hull_upgrades/hull_upgrade_cruiser_unique.png";
+    static final String ICON_PATH = "graphics/exiledSector/ui/hull_items_button.png";
 
     public static void addButton() {
         LunaRefitManager.addRefitButton(new HullItemsRefitButton());

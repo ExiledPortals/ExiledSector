@@ -1,16 +1,17 @@
 package exiledsector.skills.skilleffect.onhit;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.skills.skilleffect.CombatEngineExtension;
+import exiledsector.skills.skilleffect.CombatTestShips;
+import exiledsector.skills.skilleffect.CombatTestShips.ShipBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -29,7 +30,8 @@ import static org.mockito.Mockito.when;
 
 class BallisticPierceListenerTest {
 
-    private MockedStatic<Global> global;
+    @RegisterExtension
+    final CombatEngineExtension combat = new CombatEngineExtension();
     private MockedStatic<WeaponDroneFactory> factory;
     private DynamicStatsAPI dynamic;
     private PierceDrones drones;
@@ -39,18 +41,11 @@ class BallisticPierceListenerTest {
 
     @BeforeEach
     void setUp() {
-        global = Mockito.mockStatic(Global.class);
-        global.when(Global::getCombatEngine).thenReturn(mock(CombatEngineAPI.class));
         factory = Mockito.mockStatic(WeaponDroneFactory.class);
         factory.when(() -> WeaponDroneFactory.supportsProjectile(any())).thenReturn(true);
-        ship = mock(ShipAPI.class);
-        when(ship.getOwner()).thenReturn(0);
-        when(ship.isAlive()).thenReturn(true);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        dynamic = mock(DynamicStatsAPI.class);
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(stats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getValue(BallisticPierceListener.CHANCE_KEY, 0f)).thenReturn(100f);
+        ShipBuilder shooter = CombatTestShips.ship().owner(0).alive().dynamic(BallisticPierceListener.CHANCE_KEY, 100f);
+        ship = shooter.build();
+        dynamic = shooter.dynamicStats();
         enemy = mock(ShipAPI.class);
         when(enemy.getOwner()).thenReturn(1);
         when(enemy.isAlive()).thenReturn(true);
@@ -61,7 +56,6 @@ class BallisticPierceListenerTest {
     @AfterEach
     void tearDown() {
         factory.close();
-        global.close();
     }
 
     private static WeaponAPI weapon(WeaponAPI.WeaponType type, boolean beam) {

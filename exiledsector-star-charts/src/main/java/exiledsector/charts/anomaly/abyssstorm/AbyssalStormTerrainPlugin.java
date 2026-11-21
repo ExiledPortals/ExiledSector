@@ -3,7 +3,6 @@ package exiledsector.charts.anomaly.abyssstorm;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignEngineLayers;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.CampaignTerrainAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.combat.ViewportAPI;
@@ -11,12 +10,12 @@ import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.impl.campaign.terrain.BaseTerrain;
 import exiledsector.i18n.Translation;
+import exiledsector.charts.anomaly.AnomalyTerrains;
 import exiledsector.charts.layout.abyss.AbyssArt;
 import exiledsector.charts.layout.abyss.AbyssalFogTerrainPlugin;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
@@ -85,10 +84,10 @@ public class AbyssalStormTerrainPlugin extends BaseTerrain {
     }
 
     static void expose(LocationAPI location, float brightness) {
-        List<AbyssalFogTerrainPlugin> fog = fogIn(location);
+        List<AbyssalFogTerrainPlugin> fog = AnomalyTerrains.in(location, AbyssalFogTerrainPlugin.class);
         String description = Translation.gameText("chart.anomaly.abyssal_storm.detected");
         for (CampaignFleetAPI fleet : location.getFleets()) {
-            if (hiddenInFog(fleet, fog)) {
+            if (AnomalyTerrains.holding(fleet, fog) != null) {
                 continue;
             }
             MutableFleetStatsAPI stats = fleet.getStats();
@@ -99,25 +98,6 @@ public class AbyssalStormTerrainPlugin extends BaseTerrain {
 
     static float detectedRangeMult(float brightness) {
         return 1f + DETECTED_RANGE_MULT_PER_BRIGHTNESS * brightness;
-    }
-
-    static List<AbyssalFogTerrainPlugin> fogIn(LocationAPI location) {
-        List<AbyssalFogTerrainPlugin> fog = new ArrayList<>();
-        for (CampaignTerrainAPI terrain : location.getTerrainCopy()) {
-            if (terrain.getPlugin() instanceof AbyssalFogTerrainPlugin plugin) {
-                fog.add(plugin);
-            }
-        }
-        return fog;
-    }
-
-    static boolean hiddenInFog(CampaignFleetAPI fleet, List<AbyssalFogTerrainPlugin> fog) {
-        for (AbyssalFogTerrainPlugin plugin : fog) {
-            if (plugin.containsEntity(fleet)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override

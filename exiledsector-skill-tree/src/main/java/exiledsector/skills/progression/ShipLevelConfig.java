@@ -8,6 +8,8 @@ public final class ShipLevelConfig {
     public static final String XP_BASE_FIELD_ID = "exiledSector_levelXpBase";
     public static final String XP_GROWTH_PERCENT_FIELD_ID = "exiledSector_levelXpGrowthPercent";
     public static final String XP_GROWTH_CUTOFF_LEVEL_FIELD_ID = "exiledSector_levelXpGrowthCutoffLevel";
+    public static final String XP_GROWTH_RAMP_START_LEVEL_FIELD_ID = "exiledSector_levelXpGrowthRampStartLevel";
+    public static final String XP_GROWTH_RAMP_PERCENT_FIELD_ID = "exiledSector_levelXpGrowthRampPercent";
     public static final String XP_PER_DEPLOYMENT_POINT_FIELD_ID = "exiledSector_levelXpPerDeploymentPoint";
     public static final String XP_LOSS_MULTIPLIER_FIELD_ID = "exiledSector_levelXpLossMultiplier";
     public static final String XP_DIFFICULTY_STRENGTH_FIELD_ID = "exiledSector_levelXpDifficultyStrength";
@@ -21,9 +23,11 @@ public final class ShipLevelConfig {
     public static final int DEFAULT_XP_BASE = 60;
     public static final int DEFAULT_XP_GROWTH_PERCENT = 13;
     public static final int DEFAULT_XP_GROWTH_CUTOFF_LEVEL = 0;
+    public static final int DEFAULT_XP_GROWTH_RAMP_START_LEVEL = 35;
+    public static final float DEFAULT_XP_GROWTH_RAMP_PERCENT = 0.75f;
     public static final float DEFAULT_XP_PER_DEPLOYMENT_POINT = 1f;
     public static final float DEFAULT_XP_LOSS_MULTIPLIER = 0.5f;
-    public static final float DEFAULT_XP_DIFFICULTY_STRENGTH = 1f;
+    public static final float DEFAULT_XP_DIFFICULTY_STRENGTH = 0f;
     public static final float DEFAULT_XP_DIFFICULTY_MAX_MULTIPLIER = 6f;
     public static final int DEFAULT_MAX_ALLOCATED_NODES = 60;
     public static final int DEFAULT_CATCH_UP_PERCENT_PER_LEVEL = 10;
@@ -47,6 +51,14 @@ public final class ShipLevelConfig {
 
     public static int xpGrowthCutoffLevel() {
         return ModSettings.intOr(XP_GROWTH_CUTOFF_LEVEL_FIELD_ID, DEFAULT_XP_GROWTH_CUTOFF_LEVEL);
+    }
+
+    public static int xpGrowthRampStartLevel() {
+        return ModSettings.intOr(XP_GROWTH_RAMP_START_LEVEL_FIELD_ID, DEFAULT_XP_GROWTH_RAMP_START_LEVEL);
+    }
+
+    public static float xpGrowthRamp() {
+        return ModSettings.floatOr(XP_GROWTH_RAMP_PERCENT_FIELD_ID, DEFAULT_XP_GROWTH_RAMP_PERCENT) / 100f;
     }
 
     public static float xpPerDeploymentPoint() {

@@ -10,6 +10,7 @@ import exiledsector.skills.skilleffect.movement.MovementSkillEffect;
 import exiledsector.skills.skilleffect.onhit.OnHitSkillEffect;
 import exiledsector.skills.skilleffect.phase.PhaseSkillEffect;
 import exiledsector.skills.skilleffect.readiness.ReadinessSkillEffect;
+import exiledsector.skills.skilleffect.scar.ScarSkillEffect;
 import exiledsector.skills.skilleffect.shield.ShieldSkillEffect;
 import exiledsector.skills.skilleffect.shipsystem.ShipSystemSkillEffect;
 import exiledsector.skills.skilleffect.special.SlotItemEffect;
@@ -60,7 +61,8 @@ final class SkillEffectRegistry {
                 BattleSkillEffect.values(),
                 ReadinessSkillEffect.values(),
                 LogisticsSkillEffect.values(),
-                SpecialSkillEffect.values()
+                SpecialSkillEffect.values(),
+                ScarSkillEffect.values()
         };
         for (SkillEffect[] group : groups) {
             for (SkillEffect effect : group) {

@@ -11,10 +11,11 @@ import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
 import exiledsector.MockSector;
+import exiledsector.MockShips;
 import exiledsector.skills.skilleffect.logistics.FleetWideEffects;
 import exiledsector.effects.PlayerEngagementPipeline.Stage;
 import exiledsector.effects.PlayerEngagementPipeline.Step;
-import exiledsector.items.SocketLossListener;
+import exiledsector.items.custody.SocketLossListener;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,8 +68,7 @@ class PlayerEngagementPipelineTest {
     }
 
     private static FleetMemberAPI ship(String id, float deploymentPoints) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getId()).thenReturn(id);
+        FleetMemberAPI member = MockShips.member(id).build();
         when(member.getDeploymentPointsCost()).thenReturn(deploymentPoints);
         return member;
     }
@@ -89,7 +89,8 @@ class PlayerEngagementPipelineTest {
 
     @Test
     void theStagesRunInTheirDeclaredOrder() {
-        assertEquals(List.of(Stage.RECORD_LOSSES, Stage.SYNC_TREES, Stage.AWARD_XP, Stage.SETTLE_CREW, Stage.HOLD_LOOT, Stage.SALVAGE_BONUS),
+        assertEquals(List.of(Stage.RECORD_LOSSES, Stage.SYNC_TREES, Stage.AWARD_XP, Stage.SETTLE_CREW, Stage.HOLD_LOOT, Stage.RECORD_OBJECTIVES,
+                        Stage.SALVAGE_BONUS),
                 List.of(Stage.values()));
     }
 
@@ -186,10 +187,9 @@ class PlayerEngagementPipelineTest {
     }
 
     private static FleetMemberAPI memberContributing(String id, float percent) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
+        FleetMemberAPI member = MockShips.member(id).build();
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
-        when(member.getId()).thenReturn(id);
         when(member.getStats()).thenReturn(stats);
         when(stats.getDynamic()).thenReturn(dynamic);
         when(dynamic.getValue("exiledSector_postBattleSalvageContribution", 0f)).thenReturn(percent);

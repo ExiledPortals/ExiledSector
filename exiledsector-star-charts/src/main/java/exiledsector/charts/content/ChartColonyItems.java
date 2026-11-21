@@ -2,8 +2,8 @@ package exiledsector.charts.content;
 
 import exiledsector.data.CsvRows;
 import exiledsector.ModCsv;
-import exiledsector.items.MaterialItems;
-import exiledsector.items.WeightedPick;
+import exiledsector.data.WeightedPick;
+import exiledsector.items.crafting.material.MaterialItems;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;

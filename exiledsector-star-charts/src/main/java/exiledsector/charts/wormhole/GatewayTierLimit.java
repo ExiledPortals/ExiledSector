@@ -13,14 +13,14 @@ public final class GatewayTierLimit {
 
     public static int maxTier(SectorAPI sector) {
         if (sector == null || !WormholeGateway.researchGated()) {
-            return ChartTiers.CORRUPTED_TIER;
+            return ChartTiers.HIGHEST_TIER;
         }
         return maxTierFor(WormholeGateway.playerGatewayId(sector));
     }
 
     static int maxTierFor(String industryId) {
         if (WormholeGateway.NEXUS_INDUSTRY_ID.equals(industryId)) {
-            return ChartTiers.CORRUPTED_TIER;
+            return ChartTiers.HIGHEST_TIER;
         }
         return WormholeGateway.ARRAY_INDUSTRY_ID.equals(industryId) ? ARRAY_MAX_TIER : BASE_MAX_TIER;
     }

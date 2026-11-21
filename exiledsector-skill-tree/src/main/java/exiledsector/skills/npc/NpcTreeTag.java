@@ -1,6 +1,7 @@
 package exiledsector.skills.npc;
 
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import exiledsector.items.drop.NpcItems;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.NodeEntry;
 import exiledsector.skills.NodeReplacements;
@@ -11,7 +12,6 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledsector.items.NpcItems;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -22,7 +22,6 @@ import java.util.Set;
 public final class NpcTreeTag {
 
     public static final String PREFIX = "exiledSector_npcTree|";
-    static final String LEGACY_PREFIX = "exiledSector_enemyTree|";
     private static final String FIELD_SEPARATOR = "|";
     private static final String NODE_SEPARATOR = ",";
     private static final String OPTION_SEPARATOR = "=";
@@ -31,7 +30,6 @@ public final class NpcTreeTag {
     static final String SOCKETS_MARKER = "sockets:";
     static final String GRANTED_MARKER = "granted:";
     static final String INTEGRATED_MARKER = "integrated:";
-    static final String LEGACY_ANCHORS_MARKER = "anchors:";
     private static final int MIN_FIELDS = 3;
     private static final int MAX_FIELDS = 8;
     private static final String[] NO_FIELDS = new String[0];
@@ -120,8 +118,6 @@ public final class NpcTreeTag {
                 restoreGrants(shipData, tagFields[fieldIndex].substring(GRANTED_MARKER.length()));
             } else if (tagFields[fieldIndex].startsWith(SOCKETS_MARKER)) {
                 readAnchors(anchorsBySocketId, tagFields[fieldIndex].substring(SOCKETS_MARKER.length()));
-            } else if (tagFields[fieldIndex].startsWith(LEGACY_ANCHORS_MARKER)) {
-                readLegacyAnchors(anchorsBySocketId, tagFields[fieldIndex].substring(LEGACY_ANCHORS_MARKER.length()));
             }
         }
         for (int i = 1; i < nodeEntries.length; i++) {
@@ -151,17 +147,6 @@ public final class NpcTreeTag {
             String itemId = separator <= 0 ? null : entry.substring(separator + 1);
             if (itemId != null && NpcItems.isAnchor(itemId)) {
                 anchorsBySocketId.putIfAbsent(NodeReplacements.current(entry.substring(0, separator)), itemId);
-            }
-        }
-    }
-
-    private static void readLegacyAnchors(Map<String, String> anchorsBySocketId, String anchorEntries) {
-        for (String entry : anchorEntries.split(NODE_SEPARATOR)) {
-            int separator = entry.indexOf(OPTION_SEPARATOR);
-            SkillNode exit = separator <= 0 ? null : SkillTree.get(entry.substring(separator + 1));
-            String anchorItemId = exit == null || exit.getType().getTier() != SkillTier.WORMHOLE_EXIT ? null : NpcItems.anchorFor(exit.getVolume());
-            if (anchorItemId != null) {
-                anchorsBySocketId.putIfAbsent(NodeReplacements.current(entry.substring(0, separator)), anchorItemId);
             }
         }
     }
@@ -205,12 +190,6 @@ public final class NpcTreeTag {
     }
 
     private static int prefixLength(String tag) {
-        if (tag == null) {
-            return 0;
-        }
-        if (tag.startsWith(PREFIX)) {
-            return PREFIX.length();
-        }
-        return tag.startsWith(LEGACY_PREFIX) ? LEGACY_PREFIX.length() : 0;
+        return tag != null && tag.startsWith(PREFIX) ? PREFIX.length() : 0;
     }
 }

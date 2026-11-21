@@ -45,7 +45,7 @@ public final class ModdedChartFactions {
     }
 
     static Set<String> ownFactions() {
-        Set<String> own = new HashSet<>(Set.of(RunFactionDress.ALLY_FACTION_ID));
+        Set<String> own = new HashSet<>(RunFactionDress.SKIRMISH_FACTION_IDS);
         ChartAnomalies.all().forEach(anomaly -> own.addAll(anomaly.runFactionIds()));
         return own;
     }

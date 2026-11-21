@@ -3,15 +3,12 @@ package exiledsector.ui.chart;
 import exiledsector.charts.run.ChartRunActions.OpenResult;
 import exiledsector.i18n.RealCatalogue;
 import exiledsector.charts.anomaly.hypershunt.CoronalHypershunt;
-import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
 import exiledsector.charts.atlas.AtlasAnomalies;
-import exiledsector.charts.atlas.AtlasCatalystUse;
-import exiledsector.charts.atlas.RedeploymentCatalystUse;
 import exiledsector.charts.wormhole.StarChartOpening;
 import exiledsector.charts.wormhole.WormholeOpenCheck;
-import exiledsector.items.Nanoswarm;
-import exiledsector.items.StarChartCrafting;
-import exiledsector.items.StarChartCipher;
+import exiledsector.items.crafting.material.Nanoswarm;
+import exiledsector.items.crafting.StarChartCrafting;
+import exiledsector.items.crafting.material.StarChartCipher;
 import exiledsector.items.UseVerdict;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -43,12 +40,11 @@ class StarChartUiStringKeysTest {
         }
         for (AtlasAnomalies.InsertCheck check : AtlasAnomalies.InsertCheck.values()) {
             if (!check.allows()) {
-                require(catalogue, AtlasCatalystUse.refusalKey(check), missing);
+                require(catalogue, check.refusalKey(), missing);
             }
         }
-        for (String key : List.of(AtlasCatalystUse.FOGGED_KEY, RedeploymentCatalystUse.SPECIAL_KEY, RedeploymentCatalystUse.INFESTED_KEY,
-                RedeploymentCatalystUse.NO_FACTION_KEY, FactionSkirmish.NO_SIDE_KEY, FactionSkirmish.NO_ATTACKER_KEY, CoronalHypershunt.TOO_CLOSE_KEY, "catalyst.redeploys", "catalyst.target.redeploy", "catalyst.confirm.redeploy",
-                "catalyst.window.redeployed")) {
+        for (String key : List.of("chart.intel.officerAttacks", "chart.intel.officerDefends", "chart.atlas.node.skirmish", "chart.atlas.skirmish.final",
+                CoronalHypershunt.TOO_CLOSE_KEY, "catalyst.cell.on", "chart.atlas.focus.catalysts", "chart.atlas.confirm.catalyst")) {
             require(catalogue, key, missing);
         }
         for (OpenResult result : OpenResult.values()) {

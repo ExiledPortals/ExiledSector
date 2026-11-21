@@ -3,7 +3,6 @@ package exiledsector.skills.skilleffect.defense;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ArmorGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.impl.campaign.skills.NeuralLinkScript;
@@ -13,13 +12,11 @@ import exiledsector.skills.skilleffect.PlayerStatus;
 import exiledsector.skills.skilleffect.ScaledBonus;
 import exiledsector.skills.skilleffect.ShipCombatListener;
 import exiledsector.skills.skilleffect.StatMode;
+import exiledsector.skills.skilleffect.StatTarget;
 import exiledsector.skills.skilleffect.special.LethalHitArbiter;
 
 import java.awt.Color;
 import java.util.Map;
-
-import static exiledsector.skills.skilleffect.StatTarget.all;
-import static exiledsector.skills.skilleffect.StatTarget.stat;
 
 final class RiseFromTheAshesListener extends ShipCombatListener implements LethalHitArbiter.Saver, AdvanceableListener {
 
@@ -33,9 +30,8 @@ final class RiseFromTheAshesListener extends ShipCombatListener implements Letha
     private static final Color EMBER_COLOR = new Color(255, 140, 60);
     private static final Color JITTER_COLOR = new Color(255, 120, 40, 90);
     private static final CombatGlow.Burst RISE_GLOW = new CombatGlow.Burst(EMBER_COLOR, 3f, 1.2f, 1.5f, 2.5f, 0.25f, 1f, false);
-    private static final ScaledBonus DAMAGE_TAKEN = new ScaledBonus(new ScaledBonus.Part(all(stat(MutableShipStatsAPI::getHullDamageTakenMult),
-            stat(MutableShipStatsAPI::getArmorDamageTakenMult), stat(MutableShipStatsAPI::getShieldDamageTakenMult)),
-            DAMAGE_TAKEN_PERCENT_KEY, StatMode.MULT, 1f));
+    private static final ScaledBonus DAMAGE_TAKEN = new ScaledBonus(new ScaledBonus.Part(StatTarget.DAMAGE_TAKEN, DAMAGE_TAKEN_PERCENT_KEY,
+            StatMode.MULT, 1f));
 
     private final PlayerStatus status;
     private float remainingSeconds;

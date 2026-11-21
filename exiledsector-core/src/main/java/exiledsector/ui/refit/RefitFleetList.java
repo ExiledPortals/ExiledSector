@@ -8,6 +8,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
+import exiledsector.compat.FirstFailureLog;
 import exiledsector.ui.util.Rects;
 import org.apache.log4j.Logger;
 
@@ -25,8 +26,7 @@ public final class RefitFleetList {
     public record Shown(FleetMemberAPI member, ShipVariantAPI variant) {
     }
 
-    private static final Logger LOG = Logger.getLogger(RefitFleetList.class);
-    private static boolean failureLogged;
+    private static final FirstFailureLog FAILURES = FirstFailureLog.warnings(Logger.getLogger(RefitFleetList.class));
 
     private RefitFleetList() {
     }
@@ -144,9 +144,6 @@ public final class RefitFleetList {
     }
 
     private static void logFailure(Throwable e) {
-        if (!failureLogged) {
-            failureLogged = true;
-            LOG.warn("[ExiledSector] Couldn't read the refit screen's fleet list; switching ships from Exiled Sector screens stays off", e);
-        }
+        FAILURES.report("[ExiledSector] Couldn't read the refit screen's fleet list; switching ships from Exiled Sector screens stays off", e);
     }
 }

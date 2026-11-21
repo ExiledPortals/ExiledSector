@@ -10,19 +10,19 @@ import com.fs.starfarer.api.ui.TextFieldAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.DockedStorage;
 import exiledsector.PlayerFleet;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-import exiledsector.items.SocketCustody;
-import exiledsector.items.CraftingMaterials;
-import exiledsector.items.ItemKind;
-import exiledsector.items.ItemTypes;
 import exiledsector.items.Item;
-import exiledsector.items.ItemDisassembly;
-import exiledsector.items.ItemRarity;
+import exiledsector.items.ItemKind;
 import exiledsector.items.ItemStore;
-import exiledsector.items.MaterialMigration;
+import exiledsector.items.ItemTypes;
+import exiledsector.items.crafting.ItemDisassembly;
+import exiledsector.items.crafting.material.CraftingMaterials;
+import exiledsector.items.custody.SocketCustody;
+import exiledsector.items.modifier.ItemRarity;
 import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.cargo.CargoIconLooks;
@@ -186,8 +186,11 @@ public final class ItemStoragePanel extends HoloPanel {
     }
 
     private static int absorbPlayerCargo() {
-        CargoAPI cargo = PlayerFleet.cargoOrNull();
-        return cargo == null ? 0 : ItemStore.get().absorbFrom(cargo);
+        int movedCount = 0;
+        for (CargoAPI cargo : DockedStorage.withPlayerCargo(PlayerFleet.cargoOrNull())) {
+            movedCount += ItemStore.get().absorbFrom(cargo);
+        }
+        return movedCount;
     }
 
     private String cargoNotice() {
@@ -200,7 +203,6 @@ public final class ItemStoragePanel extends HoloPanel {
     }
 
     private static String settleMaterials() {
-        MaterialMigration.convert(PlayerFleet.cargoOrNull());
         CraftingMaterials materials = playerMaterials();
         int movedCount = materials.settle();
         if (movedCount <= 0) {
@@ -237,7 +239,7 @@ public final class ItemStoragePanel extends HoloPanel {
 
     @Override
     protected float headerToolsWidth() {
-        return PARTS_ROOM + GAP;
+        return FEEDSTOCK_ROOM + GAP;
     }
 
     @Override
@@ -772,9 +774,9 @@ public final class ItemStoragePanel extends HoloPanel {
     }
 
     private void rebuildFeedstock() {
-        TooltipMakerAPI element = panelRoot.createUIElement(PARTS_ROOM, HEADER_HEIGHT, false);
+        TooltipMakerAPI element = panelRoot.createUIElement(FEEDSTOCK_ROOM, HEADER_HEIGHT, false);
         addFeedstockCount(element, 0f);
-        feedstockElement = replaceElement(feedstockElement, element, PAD + innerWidth() - CLOSE_BUTTON_WIDTH - GAP - PARTS_ROOM, PAD);
+        feedstockElement = replaceElement(feedstockElement, element, PAD + innerWidth() - CLOSE_BUTTON_WIDTH - GAP - FEEDSTOCK_ROOM, PAD);
         refreshOpacity();
     }
 

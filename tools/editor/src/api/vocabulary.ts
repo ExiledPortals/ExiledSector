@@ -20,9 +20,18 @@ const DEFAULT_CHART_TIER_GROUPS: ChartTierGroup[] = [
   { id: 'high', minTier: 11, maxTier: 16 },
 ];
 
-interface VocabularyFile {
+export type ThemeTagScope = 'ship' | 'star_chart';
+
+export interface ThemeTagInfo {
+  id: string;
+  parent: string | null;
+  scopes: ThemeTagScope[];
+}
+
+export interface VocabularyFile {
   effects: EffectInfo[];
   tags: { theme: string[]; volume: string[]; requirement: string[]; gate?: string[]; rule?: string[] };
+  themeTags?: ThemeTagInfo[];
   tiers: string[];
   unlockConditionTypes: string[];
   parameterlessUnlockConditionTypes?: string[];
@@ -33,6 +42,7 @@ interface VocabularyFile {
   modifierScopes?: string[];
   doctrineBehaviours?: string[];
   radiusSizes?: string[];
+  doctrineInfestations?: string[];
   uniqueSourceKinds?: string[];
   hullItemMechanics?: string[];
   hullItemCrew?: string[];
@@ -42,6 +52,8 @@ interface VocabularyFile {
   chartTierRange?: [number, number];
   chartTierGroups?: ChartTierGroup[];
   chartEffects?: string[];
+  atlasEffects?: string[];
+  chartAnomalies?: string[];
   chartSystemTypes?: string[];
 }
 
@@ -49,10 +61,12 @@ export interface Vocabulary {
   effectNames: string[];
   effectInfo: Map<string, EffectInfo>;
   themeTags: string[];
+  themeTagInfo: Map<string, ThemeTagInfo>;
   volumeTags: string[];
   requirementTags: string[];
   gateTags: string[];
   ruleTags: string[];
+  anomalyTags: string[];
   allTags: string[];
   tiers: string[];
   unlockConditionTypes: string[];
@@ -65,6 +79,7 @@ export interface Vocabulary {
   modifierScopes: string[];
   doctrineBehaviours: string[];
   radiusSizes: string[];
+  doctrineInfestations: string[];
   uniqueSourceKinds: string[];
   hullItemMechanics: string[];
   hullItemCrew: string[];
@@ -75,7 +90,14 @@ export interface Vocabulary {
   highestChartTier: number;
   chartTierGroups: ChartTierGroup[];
   chartEffectNames: string[];
+  atlasEffectNames: string[];
+  chartAnomalyIds: string[];
   chartSystemTypes: string[];
+}
+
+function themeTagInfoOf(file: VocabularyFile): ThemeTagInfo[] {
+  const shipOnly = file.tags.theme.map((id): ThemeTagInfo => ({ id, parent: null, scopes: ['ship'] }));
+  return (file.themeTags ?? shipOnly).map((tag) => ({ ...tag, scopes: tag.scopes.slice() }));
 }
 
 export function buildVocabulary(file: VocabularyFile): Vocabulary {
@@ -83,10 +105,12 @@ export function buildVocabulary(file: VocabularyFile): Vocabulary {
     effectNames: file.effects.map((effect) => effect.name).sort(compareText),
     effectInfo: new Map(file.effects.map((effect) => [effect.name, effect])),
     themeTags: file.tags.theme.slice(),
+    themeTagInfo: new Map(themeTagInfoOf(file).map((tag) => [tag.id, tag])),
     volumeTags: file.tags.volume.slice(),
     requirementTags: file.tags.requirement.slice(),
     gateTags: (file.tags.gate ?? []).slice(),
     ruleTags: (file.tags.rule ?? []).slice(),
+    anomalyTags: [],
     allTags: [...file.tags.theme, ...file.tags.volume, ...file.tags.requirement, ...(file.tags.gate ?? []), ...(file.tags.rule ?? [])],
     tiers: file.tiers.slice(),
     unlockConditionTypes: file.unlockConditionTypes.slice(),
@@ -99,6 +123,7 @@ export function buildVocabulary(file: VocabularyFile): Vocabulary {
     modifierScopes: (file.modifierScopes ?? file.itemTypes).slice(),
     doctrineBehaviours: (file.doctrineBehaviours ?? ['REWRITE', 'AUGMENT']).slice(),
     radiusSizes: (file.radiusSizes ?? ['small', 'medium', 'large']).slice(),
+    doctrineInfestations: (file.doctrineInfestations ?? ['threat', 'shroud']).slice(),
     uniqueSourceKinds: (file.uniqueSourceKinds ?? ['faction', 'site']).slice(),
     hullItemMechanics: (file.hullItemMechanics ?? ['one_of']).slice(),
     hullItemCrew: (file.hullItemCrew ?? ['crewed', 'automated']).slice(),
@@ -109,6 +134,8 @@ export function buildVocabulary(file: VocabularyFile): Vocabulary {
     highestChartTier: file.chartTierRange?.[1] ?? 15,
     chartTierGroups: (file.chartTierGroups ?? DEFAULT_CHART_TIER_GROUPS).map((group) => ({ ...group })),
     chartEffectNames: (file.chartEffects ?? []).slice(),
+    atlasEffectNames: (file.atlasEffects ?? []).slice(),
+    chartAnomalyIds: (file.chartAnomalies ?? []).slice(),
     chartSystemTypes: (file.chartSystemTypes ?? []).slice(),
   };
 }

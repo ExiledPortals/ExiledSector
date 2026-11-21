@@ -185,9 +185,11 @@ public class NpcFleetInspectDialog implements CustomVisualDialogDelegate {
             @Override
             public void processInput(List<InputEventAPI> events) {
                 for (InputEventAPI event : events) {
-                    if (!event.isConsumed() && event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
+                    if (!event.isConsumed() && event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
+                        if (event.isKeyDownEvent()) {
+                            close();
+                        }
                         event.consume();
-                        close();
                     }
                 }
             }

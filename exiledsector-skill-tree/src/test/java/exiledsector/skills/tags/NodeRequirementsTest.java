@@ -72,6 +72,22 @@ class NodeRequirementsTest {
     }
 
     @Test
+    void reqFrontShieldIsMetByFrontShieldsOnly() {
+        assertTrue(met("req_front_shield", shield(ShieldType.FRONT)));
+        assertFalse(met("req_front_shield", shield(ShieldType.OMNI)));
+        assertFalse(met("req_front_shield", shield(ShieldType.NONE)));
+        assertFalse(met("req_front_shield", shield(ShieldType.PHASE)));
+    }
+
+    @Test
+    void reqOmniShieldIsMetByOmniShieldsOnly() {
+        assertTrue(met("req_omni_shield", shield(ShieldType.OMNI)));
+        assertFalse(met("req_omni_shield", shield(ShieldType.FRONT)));
+        assertFalse(met("req_omni_shield", shield(ShieldType.NONE)));
+        assertFalse(met("req_omni_shield", shield(ShieldType.PHASE)));
+    }
+
+    @Test
     void reqNoShieldsIsMetOnlyWithoutAnyShieldOrPhaseCloak() {
         assertTrue(met("req_no_shields", shield(ShieldType.NONE)));
         assertFalse(met("req_no_shields", shield(ShieldType.FRONT)));
@@ -93,15 +109,26 @@ class NodeRequirementsTest {
     }
 
     @Test
+    void concordShiftHullsMeetReqPhaseButStillCountAsNonPhaseHulls() {
+        ShipProfile concordShift = new ShipProfile(HullSize.DESTROYER, ShieldType.OMNI, 0, Set.of(), false, 0f, false, false, false, false,
+                false, false, true);
+
+        assertTrue(met("req_phase", concordShift));
+        assertTrue(met("req_omni_shield", concordShift));
+        assertNull(NodeRequirements.firstUnmetHullRequirement(List.of("req_non_phase_hull"), concordShift.facts(id -> false)));
+        assertTrue(concordShift.facts(id -> false).allowsPhaseNodes());
+    }
+
+    @Test
     void reqFighterBaysNeedsAtLeastOneBay() {
-        assertTrue(met("req_fighter_bays", bays(1)));
-        assertFalse(met("req_fighter_bays", bays(0)));
+        assertTrue(met("req_strikecraft_bays", bays(1)));
+        assertFalse(met("req_strikecraft_bays", bays(0)));
     }
 
     @Test
     void reqNoFighterBaysNeedsZeroBays() {
-        assertTrue(met("req_no_fighter_bays", bays(0)));
-        assertFalse(met("req_no_fighter_bays", bays(2)));
+        assertTrue(met("req_no_strikecraft_bays", bays(0)));
+        assertFalse(met("req_no_strikecraft_bays", bays(2)));
     }
 
     @Test
@@ -173,7 +200,7 @@ class NodeRequirementsTest {
 
     @Test
     void themeAndVolumeTagsImposeNoRequirement() {
-        List<String> tags = new ArrayList<>(SkillTags.THEME);
+        List<String> tags = new ArrayList<>(ThemeTags.ids());
         tags.addAll(SkillTags.VOLUME);
         ShipProfile bare = profile(HullSize.FRIGATE, ShieldType.NONE, 0, Set.of(), false);
 

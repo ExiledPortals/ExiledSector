@@ -4,6 +4,8 @@ import exiledsector.ProjectFiles;
 import exiledsector.data.CsvRows;
 import exiledsector.skills.npc.RealSkillData;
 import exiledsector.skills.tags.SkillTags;
+import exiledsector.skills.tags.ThemeTagScope;
+import exiledsector.skills.tags.ThemeTags;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
@@ -23,6 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SkillTypesDataConsistencyTest {
+
+    private static final Set<String> STRUCTURAL_TYPE_IDS = Set.of("wormhole", "wormhole_exit", "exoship", "subroutine_socket");
 
     private static Map<String, JSONObject> loadTypes() throws Exception {
         String json = Files.readString(Path.of("data/skilltrees/skill_types.json"), StandardCharsets.UTF_8);
@@ -220,9 +224,10 @@ class SkillTypesDataConsistencyTest {
     @Test
     void everySkillTypeAndNodeTagIsInTheTagVocabulary() throws Exception {
         List<String> unknown = new ArrayList<>();
+        List<String> vocabulary = SkillTags.all();
         for (JSONObject type : loadTypes().values()) {
             for (String tag : strings(type, "tags")) {
-                if (!SkillTags.ALL.contains(tag)) {
+                if (!vocabulary.contains(tag)) {
                     unknown.add("type " + type.getString("id") + ": " + tag);
                 }
             }
@@ -232,12 +237,42 @@ class SkillTypesDataConsistencyTest {
         for (int i = 0; i < nodes.length(); i++) {
             JSONObject node = nodes.getJSONObject(i);
             for (String tag : strings(node, "tags")) {
-                if (!SkillTags.ALL.contains(tag)) {
+                if (!vocabulary.contains(tag)) {
                     unknown.add("node " + node.getString("id") + ": " + tag);
                 }
             }
         }
         assertTrue(unknown.isEmpty(), "Tags outside the vocabulary: " + unknown);
+    }
+
+    @Test
+    void everySkillTypeHasAThemeTagExceptRootsAndStructuralTypes() throws Exception {
+        List<String> untagged = new ArrayList<>();
+        for (JSONObject type : loadTypes().values()) {
+            String typeId = type.getString("id");
+            boolean exempt = SkillTier.ROOT.name().equals(type.optString("tier")) || STRUCTURAL_TYPE_IDS.contains(typeId);
+            if (!exempt && strings(type, "tags").stream().noneMatch(ThemeTags::isThemeTag)) {
+                untagged.add(typeId);
+            }
+        }
+        assertTrue(untagged.isEmpty(), "Skill types without a theme tag: " + untagged.stream().sorted().toList());
+    }
+
+    @Test
+    void everyThemeTagOnASkillTypeIsAShipTagAndNotListedBesideItsAncestor() throws Exception {
+        List<String> problems = new ArrayList<>();
+        for (JSONObject type : loadTypes().values()) {
+            Set<String> tags = strings(type, "tags");
+            for (String tag : tags) {
+                if (ThemeTags.isThemeTag(tag) && !ThemeTags.allows(tag, ThemeTagScope.SHIP)) {
+                    problems.add(type.getString("id") + " lists " + tag + ", which is not a ship tag");
+                }
+                for (String ancestor : ThemeTags.ancestorsListedBeside(tag, tags)) {
+                    problems.add(type.getString("id") + " lists " + tag + " beside its ancestor " + ancestor);
+                }
+            }
+        }
+        assertTrue(problems.isEmpty(), String.join("\n", problems));
     }
 
     @Test

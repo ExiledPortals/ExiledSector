@@ -3,9 +3,9 @@ package exiledsector.skills;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.security.AnyTypePermission;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 import java.util.Map;
@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class ShipSkillDataSocketTest {
 
     private SkillNode root;
@@ -22,18 +23,10 @@ class ShipSkillDataSocketTest {
 
     @BeforeEach
     void setUp() {
-        SkillTree.clearTypes();
-        SkillTree.clearNodes();
         root = node("root", SkillTier.ROOT, List.of());
         socket = node("socket", SkillTier.SOCKET, List.of("root"));
         SkillTree.register(root);
         SkillTree.register(socket);
-    }
-
-    @AfterEach
-    void tearDown() {
-        SkillTree.clearTypes();
-        SkillTree.clearNodes();
     }
 
     private static SkillNode node(String id, SkillTier tier, List<String> connected) {

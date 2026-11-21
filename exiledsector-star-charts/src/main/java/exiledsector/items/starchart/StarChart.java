@@ -1,0 +1,291 @@
+package exiledsector.items.starchart;
+
+import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
+import exiledsector.charts.StarChartSettings;
+import exiledsector.items.BasicItemTypeSupport;
+import exiledsector.items.Item;
+import exiledsector.items.ItemDefinition;
+import exiledsector.items.ItemTooltip;
+import exiledsector.items.ItemTraits;
+import exiledsector.items.ItemType;
+import exiledsector.items.ItemTypeSupport;
+import exiledsector.items.UnresolvedItem;
+import exiledsector.items.crafting.CorruptionOutcome;
+import exiledsector.items.crafting.StarChartCorruption;
+import exiledsector.items.modifier.AffixLayout;
+import exiledsector.items.modifier.ItemModifiers;
+import exiledsector.items.modifier.ModifierScope;
+import exiledsector.items.modifier.RolledLine;
+import exiledsector.items.modifier.RolledModifier;
+import exiledsector.modifiers.Modifier;
+import exiledsector.modifiers.ModifierEffects;
+import exiledsector.modifiers.ModifierLine;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Random;
+import java.util.function.Function;
+
+public final class StarChart extends Item {
+
+    public static final int LOWEST_TIER = ItemTraits.LOWEST_TIER;
+    public static final int HIGHEST_DROP_TIER = ItemTraits.HIGHEST_DROP_TIER;
+    public static final int HIGHEST_TIER = ItemTraits.HIGHEST_TIER;
+    public static final int LOWEST_QUANTITY = 0;
+    public static final int HIGHEST_QUANTITY = 20;
+    static final String LOW_TIER_ICON = "graphics/exiledSector/items/charts/star_chart_white.png";
+    static final String HIGH_TIER_ICON = "graphics/exiledSector/items/charts/star_chart_red.png";
+    private static final int LAST_LOW_TIER = 5;
+    private static final int FIRST_HIGH_TIER = 11;
+    static final AffixLayout.Limits AFFIX_LIMITS = new AffixLayout.Limits(2, 6, 3, List.of(0.2f, 0.25f, 0.2f, 0.15f, 0.1f));
+
+    public static final ItemTypeSupport SUPPORT = new BasicItemTypeSupport(ItemType.STAR_CHART, StarChart.class, "exiledSector.StarChart",
+            StarChart::new, StarChart::new) {
+        @Override
+        public boolean available(SectorAPI sector) {
+            return StarChartSettings.enabled();
+        }
+
+        @Override
+        public int lowestTier(String definitionId) {
+            return StarChartDefinitions.minTier(definitionId);
+        }
+
+        @Override
+        public int rolledTier(String definitionId, int tier) {
+            return StarChartDefinitions.tierAtLeastMinimum(definitionId, tier);
+        }
+
+        @Override
+        public boolean rollsAtTier(String definitionId, int tier) {
+            return StarChartDefinitions.rollsAtTier(definitionId, tier);
+        }
+
+        @Override
+        public ItemTraits traitsAtTier(ItemDefinition definition, long seed, int tier) {
+            List<RolledModifier> implicits = StarChartImplicits.isLoaded()
+                    ? StarChartImplicits.roll(StarChartDefinitions.systemType(definition.id()), seed) : List.of();
+            return new ItemTraits(tier, 0, null, implicits.isEmpty() ? null : implicits);
+        }
+
+        @Override
+        public Item corrupt(CorruptionOutcome outcome, Item item, Random random) {
+            return StarChartCorruption.corrupt(outcome, item, random);
+        }
+
+        @Override
+        public List<CorruptionOutcome> corruptionOutcomes(Item item) {
+            return CorruptionOutcome.STAR_CHART_OUTCOMES;
+        }
+
+        @Override
+        public boolean tiered() {
+            return true;
+        }
+
+        @Override
+        public AffixLayout.Limits affixLimits() {
+            return AFFIX_LIMITS;
+        }
+    };
+
+    private static volatile Function<StarChart, List<StyledText>> lootTotals = chart -> List.of();
+
+    private int tier = LOWEST_TIER;
+    private int quantity;
+
+    StarChart(String id, String definitionId, long seed, List<RolledModifier> explicitModifiers) {
+        super(id, definitionId, seed, explicitModifiers);
+    }
+
+    StarChart(Item source) {
+        super(source);
+        if (source instanceof StarChart chart) {
+            tier = chart.tier;
+            quantity = chart.quantity;
+        } else if (source instanceof UnresolvedItem unresolved) {
+            tier = unresolved.chartTier(LOWEST_TIER);
+            quantity = unresolved.chartQuantity(LOWEST_QUANTITY);
+        }
+    }
+
+    public static int clampTier(int tier) {
+        return ItemTraits.clampTier(tier);
+    }
+
+    public static int clampQuantity(int quantity) {
+        return Math.max(LOWEST_QUANTITY, Math.min(HIGHEST_QUANTITY, quantity));
+    }
+
+    @Override
+    public void keepWhenUnresolved(UnresolvedItem unresolved) {
+        unresolved.keepChart(tier(), quantity());
+    }
+
+    @Override
+    public void writeTooltipSections(TooltipMakerAPI tooltip, HullSize hullSize, boolean showRollRanges) {
+        ItemTooltip.addCentredLines(tooltip, lootTotalLines());
+    }
+
+    @Override
+    public ItemType type() {
+        return ItemType.STAR_CHART;
+    }
+
+    @Override
+    public int tier() {
+        return StarChartDefinitions.tierAtLeastMinimum(definitionId(), tier);
+    }
+
+    @Override
+    public String iconPath() {
+        int chartTier = tier();
+        if (chartTier <= LAST_LOW_TIER) {
+            return LOW_TIER_ICON;
+        }
+        if (chartTier >= FIRST_HIGH_TIER) {
+            return HIGH_TIER_ICON;
+        }
+        return super.iconPath();
+    }
+
+    public int quantity() {
+        return clampQuantity(quantity);
+    }
+
+    public String systemType() {
+        return StarChartDefinitions.systemType(definitionId());
+    }
+
+    @Override
+    public void applyTraits(ItemTraits traits) {
+        super.applyTraits(traits);
+        tier = StarChartDefinitions.tierAtLeastMinimum(definitionId(), traits.tier());
+        quantity = clampQuantity(traits.quantity());
+    }
+
+    @Override
+    public void copyTraitsFrom(Item source) {
+        if (source instanceof StarChart chart) {
+            tier = chart.tier();
+            quantity = chart.quantity();
+        }
+    }
+
+    @Override
+    public ItemTraits traits() {
+        List<RolledModifier> currentImplicits = implicits();
+        return new ItemTraits(tier(), quantity(), corruption(), currentImplicits.isEmpty() ? null : currentImplicits, mirrored());
+    }
+
+    @Override
+    public List<RolledModifier> implicits() {
+        List<RolledModifier> stored = storedImplicits();
+        if (stored != null && !(StarChartImplicits.isLoaded() && noneResolve(stored))) {
+            return Collections.unmodifiableList(stored);
+        }
+        List<RolledModifier> rolled = StarChartImplicits.roll(systemType(), seed());
+        if (StarChartImplicits.isLoaded()) {
+            replaceImplicits(rolled);
+        }
+        return rolled;
+    }
+
+    private boolean noneResolve(List<RolledModifier> stored) {
+        return stored.stream().noneMatch(implicit -> implicitModifier(implicit.modifierId()) != null);
+    }
+
+    @Override
+    public Modifier implicitModifier(String modifierId) {
+        Modifier systemImplicit = Modifier.byId(StarChartImplicits.forSystemType(systemType()), modifierId);
+        if (systemImplicit != null) {
+            return systemImplicit;
+        }
+        Modifier corruptionImplicit = StarChartImplicits.anyById(modifierId);
+        return corruptionImplicit != null ? corruptionImplicit : catalogueModifier(modifierId);
+    }
+
+    @Override
+    public Modifier explicitModifier(String modifierId) {
+        Modifier poolModifier = super.explicitModifier(modifierId);
+        return poolModifier != null ? poolModifier : catalogueModifier(modifierId);
+    }
+
+    private static Modifier catalogueModifier(String modifierId) {
+        return ItemModifiers.scopes(modifierId).contains(ModifierScope.STAR_CHART) ? ItemModifiers.get(modifierId) : null;
+    }
+
+    @Override
+    public StyledText unresolvedLine(ModifierEffects effects, RolledLine effect) {
+        return effect.effect(effects) == null ? null : Translation.styled("chart.item.unresolvedModifier");
+    }
+
+    @Override
+    public ModifierLine implicitLine(String effectName) {
+        return StarChartImplicits.line(systemType(), effectName);
+    }
+
+    @Override
+    public List<Modifier> implicitCorruptionPool() {
+        return StarChartImplicits.corruptionPool();
+    }
+
+    @Override
+    public boolean implicitCanVary(RolledModifier implicit) {
+        if (StarChartImplicits.sharedChoice(implicit.modifierId()) != null) {
+            return StarChartImplicits.sharedChoiceCanVary(implicit.modifierId());
+        }
+        return super.implicitCanVary(implicit);
+    }
+
+    @Override
+    public RolledModifier rerolledImplicit(RolledModifier implicit, Random random) {
+        if (StarChartImplicits.sharedChoice(implicit.modifierId()) != null) {
+            RolledModifier rerolled = StarChartImplicits.rollSharedChoice(random);
+            return rerolled == null ? implicit : rerolled;
+        }
+        return super.rerolledImplicit(implicit, random);
+    }
+
+    @Override
+    public List<StyledText> headerLines() {
+        List<StyledText> lines = new ArrayList<>(chartLines());
+        lines.addAll(super.headerLines());
+        return lines;
+    }
+
+    @Override
+    public List<StyledText> detailLines() {
+        List<StyledText> lines = new ArrayList<>(chartLines());
+        lines.addAll(super.detailLines());
+        return lines;
+    }
+
+    private List<StyledText> chartLines() {
+        List<StyledText> lines = new ArrayList<>();
+        lines.add(Translation.msg("chart.item.tier").arg("tier", tier()).arg("systemType", systemTypeName(systemType())).styled());
+        if (quantity() > 0) {
+            lines.add(Translation.msg("chart.item.quantity").arg("quantity", quantity()).styled());
+        }
+        return lines;
+    }
+
+    public static void useLootTotals(Function<StarChart, List<StyledText>> totals) {
+        lootTotals = totals == null ? chart -> List.of() : totals;
+    }
+
+    public List<StyledText> lootTotalLines() {
+        return lootTotals.apply(this);
+    }
+
+    public static String systemTypeName(String systemType) {
+        String key = systemType == null ? StarChartDefinitions.ANY_SYSTEM_TYPE : systemType.toLowerCase(Locale.ROOT);
+        return Translation.text("chart.systemType." + key);
+    }
+}

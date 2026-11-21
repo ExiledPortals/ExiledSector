@@ -1,15 +1,21 @@
 package exiledsector.charts.anomaly;
 
 import com.fs.starfarer.api.campaign.PlanetAPI;
+import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.impl.campaign.ids.Terrain;
 import com.fs.starfarer.api.impl.campaign.terrain.MagneticFieldTerrainPlugin.MagneticFieldParams;
+import exiledsector.charts.anomaly.magneticstorm.Auroras;
+import exiledsector.charts.anomaly.magneticstorm.IonFront;
+import exiledsector.charts.anomaly.magneticstorm.MagneticStormTuning;
+import exiledsector.charts.generation.ChartGenContext;
 
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
-public final class MagneticStorm implements LayoutShaper {
+public final class MagneticStorm implements LayoutShaper, RunParticipant, LootShaper {
 
     public static final String ANOMALY_ID = "magnetic_storm";
     public static final MagneticStorm INSTANCE = new MagneticStorm();
@@ -19,6 +25,8 @@ public final class MagneticStorm implements LayoutShaper {
     static final Color BASE = new Color(50, 20, 110, 130);
     static final Color[] AURORA = {new Color(150, 30, 120, 150), new Color(200, 50, 130, 190), new Color(250, 70, 150, 240),
         new Color(200, 80, 130, 255), new Color(75, 0, 160), new Color(127, 0, 255)};
+
+    private final Random auroraRandom = new Random();
 
     private MagneticStorm() {
     }
@@ -30,9 +38,11 @@ public final class MagneticStorm implements LayoutShaper {
 
     @Override
     public void shape(AnomalyLayoutSite site) {
-        SectorEntityToken star = site.stars().isEmpty() ? site.centre() : site.stars().get(0);
-        float starEdge = star.getRadius() + site.between(500f, 900f);
-        addField(site, star, STAR_WIDTH, starEdge + STAR_WIDTH / 2f, starEdge, starEdge + STAR_WIDTH, 1f);
+        PlanetAPI star = fieldStar(site.stars());
+        if (star != null) {
+            float starEdge = star.getRadius() + site.between(500f, 900f);
+            addField(site, star, STAR_WIDTH, starEdge + STAR_WIDTH / 2f, starEdge, starEdge + STAR_WIDTH, 1f);
+        }
         List<PlanetAPI> worlds = new ArrayList<>(site.worlds());
         for (int count = 0; count < MAX_WORLDS && !worlds.isEmpty(); count++) {
             PlanetAPI world = worlds.remove(site.random().nextInt(worlds.size()));
@@ -41,10 +51,34 @@ public final class MagneticStorm implements LayoutShaper {
         }
     }
 
+    static PlanetAPI fieldStar(List<PlanetAPI> stars) {
+        for (PlanetAPI star : stars) {
+            if (!star.isBlackHole()) {
+                return star;
+            }
+        }
+        return null;
+    }
+
     private static void addField(AnomalyLayoutSite site, SectorEntityToken parent, float bandWidth, float middleRadius, float visualStart,
                                  float visualEnd, float auroraChance) {
         SectorEntityToken field = site.system().addTerrain(Terrain.MAGNETIC_FIELD,
                 new MagneticFieldParams(bandWidth, middleRadius, parent, visualStart, visualEnd, BASE, auroraChance, AURORA));
         field.setCircularOrbit(parent, 0, 0, 100);
+    }
+
+    @Override
+    public void checkRun(SectorAPI sector, AnomalyRun run) {
+        Auroras.setOffIn(run.system(), MagneticStormTuning.of(run.context()), auroraRandom);
+    }
+
+    @Override
+    public boolean holdsPlayerBattle() {
+        return IonFront.holdsPlayerBattle();
+    }
+
+    @Override
+    public float battleCraftingItemPercent(ChartGenContext context) {
+        return MagneticStormTuning.of(context).ionFrontCraftingItemPercent();
     }
 }

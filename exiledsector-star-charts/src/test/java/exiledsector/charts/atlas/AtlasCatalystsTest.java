@@ -10,6 +10,7 @@ import exiledsector.charts.anomaly.facility.PreCollapseFacility;
 import exiledsector.charts.anomaly.hypershunt.CoronalHypershunt;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.compat.VaultsOfKnowledgeCompat;
+import exiledsector.items.RetiredItems;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -22,6 +23,7 @@ import java.util.Random;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -32,6 +34,7 @@ class AtlasCatalystsTest {
 
     private static final String FACILITY_SURVEY = "exiledSector_facility_survey";
     private static final String HYPERSHUNT_SURVEY = "exiledSector_hypershunt_survey";
+    private static final String SHATTERED_TERMINUS = "exiledSector_shattered_terminus";
 
     @BeforeEach
     void setUp() throws Exception {
@@ -49,14 +52,9 @@ class AtlasCatalystsTest {
         List<String> problems = AtlasCatalysts.register(ChartTables.csvRows(AtlasCatalysts.PATH));
 
         assertEquals(List.of(), problems);
-        assertEquals(Set.of("spatial_breach", "asteroid_storm", "magnetic_storm", "stellar_flares", "anomalous_debris", "excavation_sites",
-                "relay_network", "supply_convoy", "storm_front", "derelict_forge", "listening_post", "faction_skirmish", "powerful_boss"), Set.copyOf(AtlasCatalysts.all().stream().filter(catalyst -> catalyst.effect() == AtlasCatalysts.Effect.ANOMALY)
+        assertEquals(Set.of("spatial_breach", "magnetic_storm", "stellar_flares", "anomalous_debris", "excavation_sites",
+                "relay_network", "supply_convoy", "storm_front", "derelict_forge", "listening_post"), Set.copyOf(AtlasCatalysts.all().stream().filter(catalyst -> catalyst.effect() == AtlasCatalysts.Effect.ANOMALY)
                 .map(AtlasCatalysts.Catalyst::anomalyId).toList()));
-        AtlasCatalysts.Catalyst redeployment = AtlasCatalysts.byItemId("exiledSector_redeployment_orders");
-        assertNotNull(redeployment);
-        assertEquals(AtlasCatalysts.Effect.REDEPLOY, redeployment.effect());
-        assertEquals(AtlasCatalysts.Family.ORDERS, redeployment.family());
-        assertEquals("graphics/icons/catalysts/redeployment_orders.png", redeployment.iconPath());
         JSONArray specialItems = ChartTables.csvRows("data/campaign/special_items.csv");
         Set<String> specialItemIds = new HashSet<>();
         for (int index = 0; index < specialItems.length(); index++) {
@@ -75,11 +73,33 @@ class AtlasCatalystsTest {
         assertEquals(AtlasCatalysts.Family.ORDERS, picket.family());
         assertEquals("listening_post", picket.anomalyId());
         assertEquals(ChartAnomalies.definition("listening_post").icon(), picket.iconPath());
-        AtlasCatalysts.Catalyst flagship = AtlasCatalysts.byItemId("exiledSector_flagship_orders");
-        assertNotNull(flagship);
-        assertEquals(AtlasCatalysts.Family.ORDERS, flagship.family());
-        assertEquals("powerful_boss", flagship.anomalyId());
-        assertEquals("graphics/icons/anomalies/powerful_boss.png", flagship.iconPath());
+        assertNull(AtlasCatalysts.byItemId("exiledSector_flagship_orders"));
+        assertNull(AtlasCatalysts.byItemId("exiledSector_shattered_terminus"));
+    }
+
+    @Test
+    void theShatteredTerminusKeepsOnlyARetiredRowSoTheLoadSweepRemovesHeldOnes() throws Exception {
+        JSONArray catalystRows = ChartTables.csvRows(AtlasCatalysts.PATH);
+        Set<String> catalystIds = new HashSet<>();
+        for (int index = 0; index < catalystRows.length(); index++) {
+            catalystIds.add(catalystRows.getJSONObject(index).optString("id"));
+        }
+        JSONArray specialItems = ChartTables.csvRows("data/campaign/special_items.csv");
+        JSONObject shattered = null;
+        for (int index = 0; index < specialItems.length(); index++) {
+            JSONObject row = specialItems.getJSONObject(index);
+            if (row.optString("plugin").endsWith(".AtlasCatalystItemPlugin")) {
+                assertTrue(catalystIds.contains(row.optString("id")), row.optString("id") + " uses the catalyst plugin but has no catalyst row");
+            }
+            if (SHATTERED_TERMINUS.equals(row.optString("id"))) {
+                shattered = row;
+            }
+        }
+
+        assertNotNull(shattered);
+        assertFalse(catalystIds.contains(SHATTERED_TERMINUS));
+        Set<String> tags = Set.of(shattered.optString("tags").replace(" ", "").split(","));
+        assertTrue(tags.containsAll(Set.of("hide_in_codex", RetiredItems.RETIRED_ID_TAG)), tags.toString());
     }
 
     @Test
@@ -101,7 +121,7 @@ class AtlasCatalystsTest {
             assertEquals(0f, survey.weight());
             Random random = new Random(5L);
             for (int roll = 0; roll < 2000; roll++) {
-                AtlasCatalysts.Catalyst dropped = AtlasCatalysts.pickDrop(ChartTiers.HIGHEST_TIER, random);
+                AtlasCatalysts.Catalyst dropped = AtlasCatalysts.pickDrop(ChartTiers.HIGHEST_DROP_TIER, random);
                 assertTrue(dropped == null || !FACILITY_SURVEY.equals(dropped.itemId()));
             }
         }
@@ -120,7 +140,7 @@ class AtlasCatalystsTest {
         assertEquals(0f, survey.weight());
         Random random = new Random(7L);
         for (int roll = 0; roll < 2000; roll++) {
-            AtlasCatalysts.Catalyst dropped = AtlasCatalysts.pickDrop(ChartTiers.HIGHEST_TIER, random);
+            AtlasCatalysts.Catalyst dropped = AtlasCatalysts.pickDrop(ChartTiers.HIGHEST_DROP_TIER, random);
             assertTrue(dropped == null || !HYPERSHUNT_SURVEY.equals(dropped.itemId()));
         }
     }
@@ -162,16 +182,15 @@ class AtlasCatalystsTest {
     }
 
     @Test
-    void aRedeployCatalystNeedsAnIconAndAnUnknownEffectIsSkipped() throws Exception {
+    void anUnknownEffectIsSkipped() throws Exception {
         JSONArray rows = new JSONArray()
-                .put(new JSONObject().put("id", "test_iconless").put("family", "orders").put("effect", "redeploy"))
                 .put(new JSONObject().put("id", "test_unknown").put("anomaly", "spatial_breach").put("family", "terminus").put("effect", "teleport"))
-                .put(new JSONObject().put("id", "test_redeploy").put("family", "orders").put("effect", "redeploy").put("icon", "graphics/test.png"));
+                .put(new JSONObject().put("id", "test_retired").put("family", "orders").put("effect", "redeploy").put("icon", "graphics/test.png"));
 
         List<String> problems = AtlasCatalysts.register(rows);
 
-        assertEquals(List.of("test_iconless skipped: a redeploy catalyst needs an icon",
-                "test_unknown skipped: effect 'teleport' is not anomaly, star or redeploy"), problems);
-        assertEquals(List.of("test_redeploy"), AtlasCatalysts.all().stream().map(AtlasCatalysts.Catalyst::itemId).toList());
+        assertEquals(List.of("test_unknown skipped: effect 'teleport' is not anomaly or star",
+                "test_retired skipped: effect 'redeploy' is not anomaly or star"), problems);
+        assertTrue(AtlasCatalysts.all().isEmpty());
     }
 }

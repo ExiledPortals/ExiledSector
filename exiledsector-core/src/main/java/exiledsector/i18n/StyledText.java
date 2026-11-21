@@ -46,6 +46,16 @@ public record StyledText(String plain, List<Span> spans) {
         return new StyledText(plain, inverted);
     }
 
+    public StyledText withFirstSpanAs(Style style) {
+        if (spans.isEmpty()) {
+            return this;
+        }
+        List<Span> restyled = new ArrayList<>(spans);
+        Span first = spans.get(0);
+        restyled.set(0, new Span(first.start(), first.end(), style));
+        return new StyledText(plain, restyled);
+    }
+
     public StyledText withUnstyledAs(Style style) {
         List<Span> filled = new ArrayList<>(spans.size() * 2 + 1);
         int position = 0;

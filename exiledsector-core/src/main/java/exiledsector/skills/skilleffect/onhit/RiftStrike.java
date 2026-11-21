@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
 import exiledsector.i18n.Message;
 import exiledsector.i18n.StyledText;
+import exiledsector.skills.skilleffect.SkillEffectSupport;
 import exiledsector.skills.skilleffect.weapon.BallisticAsEnergy;
 
 public final class RiftStrike {
@@ -54,6 +55,6 @@ public final class RiftStrike {
     }
 
     public static float riftDamage(WeaponSpecAPI weaponSpec, float increasedRiftDamagePercent) {
-        return baseRiftDamage(weaponSpec) * (1f + increasedRiftDamagePercent / 100f);
+        return baseRiftDamage(weaponSpec) * SkillEffectSupport.multFrom(increasedRiftDamagePercent);
     }
 }

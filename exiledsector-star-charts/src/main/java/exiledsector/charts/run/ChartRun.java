@@ -1,9 +1,12 @@
 package exiledsector.charts.run;
 
+import exiledsector.charts.atlas.AtlasEffects;
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.ChartBossType;
 import exiledsector.charts.content.ChartContent;
+import exiledsector.charts.generation.AppliedEffectCodec;
+import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.layout.ChartLayout;
 
@@ -42,15 +45,11 @@ public final class ChartRun {
     private int contentFleets;
     private int contentPois;
     private boolean objectiveComplete;
-    private boolean objectiveLost;
-    private String protectedFleetId;
-    private boolean rewardClaimed;
-    private boolean bossTierUpGranted;
-    private boolean bossUniqueGranted;
-    private boolean bossLootGuaranteed;
     private String chartData;
     private String anomalies;
     private String atlasNode;
+    private String atlasTreeLines;
+    private String atlasMapEffects;
     private String originEntityId;
     private String anomalyStates;
     private transient Map<String, String> parsedAnomalyStates;
@@ -157,10 +156,7 @@ public final class ChartRun {
         contentFleets = content.fleets();
         contentPois = content.pois();
         anomalies = join(content.anomalies());
-        protectedFleetId = content.protectedFleetId();
         objectiveComplete = false;
-        objectiveLost = false;
-        rewardClaimed = false;
     }
 
     public int tier() {
@@ -181,6 +177,30 @@ public final class ChartRun {
 
     String atlasNodeData() {
         return atlasNode;
+    }
+
+    public void recordAtlasTreeLines(List<ChartGenContext.AppliedEffect> lines) {
+        atlasTreeLines = lines == null || lines.isEmpty() ? null : AppliedEffectCodec.encode(lines);
+    }
+
+    public List<ChartGenContext.AppliedEffect> atlasTreeLines() {
+        try {
+            return AppliedEffectCodec.decode(atlasTreeLines);
+        } catch (NumberFormatException e) {
+            return List.of();
+        }
+    }
+
+    String atlasTreeLinesData() {
+        return atlasTreeLines;
+    }
+
+    public void recordAtlasMapEffects(AtlasEffects effects) {
+        atlasMapEffects = effects == null ? null : effects.encode();
+    }
+
+    public AtlasEffects atlasMapEffects() {
+        return atlasMapEffects == null ? null : AtlasEffects.decode(atlasMapEffects);
     }
 
     public String chartData() {
@@ -229,64 +249,20 @@ public final class ChartRun {
         return split(anomalies);
     }
 
+    String anomaliesData() {
+        return anomalies;
+    }
+
     public boolean isObjectiveComplete() {
         return objectiveComplete;
     }
 
-    public String protectedFleetId() {
-        return protectedFleetId;
-    }
-
-    public boolean isObjectiveLost() {
-        return objectiveLost;
-    }
-
-    public boolean markObjectiveLost() {
-        if (objectiveComplete || objectiveLost) {
-            return false;
-        }
-        objectiveLost = true;
-        return true;
-    }
-
     public boolean markObjectiveComplete() {
-        if (objectiveComplete || objectiveLost || !hasBoss()) {
+        if (objectiveComplete || !hasBoss()) {
             return false;
         }
         objectiveComplete = true;
         return true;
-    }
-
-    public boolean claimReward() {
-        if (!objectiveComplete || rewardClaimed) {
-            return false;
-        }
-        rewardClaimed = true;
-        return true;
-    }
-
-    public boolean isBossTierUpGranted() {
-        return bossTierUpGranted;
-    }
-
-    public void grantBossTierUp() {
-        bossTierUpGranted = true;
-    }
-
-    public boolean isBossUniqueGranted() {
-        return bossUniqueGranted;
-    }
-
-    public void grantBossUnique() {
-        bossUniqueGranted = true;
-    }
-
-    public boolean isBossLootGuaranteed() {
-        return bossLootGuaranteed;
-    }
-
-    public void guaranteeBossLoot() {
-        bossLootGuaranteed = true;
     }
 
     public String anomalyState(String key) {
@@ -319,10 +295,6 @@ public final class ChartRun {
             }
         }
         return parsedAnomalyStates;
-    }
-
-    public boolean isRewardClaimed() {
-        return rewardClaimed;
     }
 
     static String join(List<String> ids) {

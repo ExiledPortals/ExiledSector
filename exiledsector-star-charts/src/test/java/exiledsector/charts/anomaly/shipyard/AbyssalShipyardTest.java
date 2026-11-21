@@ -14,8 +14,8 @@ import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.CoredLineup;
+import exiledsector.charts.anomaly.LiveAnomalyRuns;
 import exiledsector.charts.anomaly.VanillaDefenders;
-import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.FakeChartContentEngine;
 import exiledsector.charts.generation.ChartGenContext;
@@ -31,9 +31,9 @@ import org.lwjgl.util.vector.Vector2f;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
+import static exiledsector.charts.anomaly.LiveAnomalyRuns.RUN_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -54,7 +54,6 @@ import static org.mockito.Mockito.when;
 
 class AbyssalShipyardTest {
 
-    private static final String RUN_ID = "run1";
     private static final float CORE_RADIUS = 600f;
 
     private MockSector mockSector;
@@ -103,13 +102,11 @@ class AbyssalShipyardTest {
     }
 
     private AnomalyContentSite site() {
-        return new AnomalyContentSite(system, RUN_ID, 4, "rat_abyssals", ChartGenContext.none(), List.of(), null, spot -> true, salt -> new Random(salt));
+        return LiveAnomalyRuns.site(system, "rat_abyssals", ChartGenContext.none(), spot -> true);
     }
 
     private static ChartRun run() {
-        ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        run.recordContent(new ChartContent(4, "rat_abyssals", null, 3, 2, List.of(AbyssalShipyard.ANOMALY_ID)));
-        return run;
+        return LiveAnomalyRuns.run(4, "rat_abyssals", List.of(AbyssalShipyard.ANOMALY_ID));
     }
 
     @Test
@@ -121,6 +118,11 @@ class AbyssalShipyardTest {
         assertEquals(Set.of("abyssal_rift"), definition.biomes());
         assertFalse(definition.insertable());
         assertFalse(definition.icon().isEmpty());
+    }
+
+    @Test
+    void theShipyardsLootAddsItsOwnQuantityIntoTheChartsItemQuantity() {
+        assertEquals(ShipyardDialog.LOOT_QUANTITY_PERCENT, ShipyardDialog.LOOT.quantityPercent(ChartGenContext.none()));
     }
 
     @Test
@@ -166,8 +168,8 @@ class AbyssalShipyardTest {
     void theGuardsGrowFromThreeEscortsToTheFullLineupWithTier() {
         CoredLineup lineup = ShipyardGuards.LINEUP;
         assertEquals(3, lineup.escortCount(ChartTiers.LOWEST_TIER));
-        assertEquals(lineup.escorts().size(), lineup.escortCount(ChartTiers.HIGHEST_TIER));
-        for (int tier = ChartTiers.LOWEST_TIER; tier < ChartTiers.HIGHEST_TIER; tier++) {
+        assertEquals(lineup.escorts().size(), lineup.escortCount(ChartTiers.HIGHEST_DROP_TIER));
+        for (int tier = ChartTiers.LOWEST_TIER; tier < ChartTiers.HIGHEST_DROP_TIER; tier++) {
             assertTrue(lineup.escortCount(tier + 1) >= lineup.escortCount(tier));
         }
     }

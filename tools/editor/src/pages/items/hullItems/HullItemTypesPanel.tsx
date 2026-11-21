@@ -1,8 +1,8 @@
 import { Button, Divider, Group, Select, Stack, Text, TextInput, Title } from '@mantine/core';
-import { IconCopy, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
-import { useCallback, useState } from 'react';
-import { confirmAction } from '../../../shared/dialogs.tsx';
-import { DescriptionField, IconField, IdField, ItemList, ListDetail, NameAndRarity, UniqueFields, type ListedItem } from '../components/ItemFields.tsx';
+import { IconCopy, IconPlus, IconSearch } from '@tabler/icons-react';
+import { useState } from 'react';
+import { itemIconDestination } from '../../../shared/imageFolders.ts';
+import { DeleteRowButton, DescriptionField, IconField, IdField, ItemList, ListDetail, NameAndRarity, UniqueFields, type ListedItem } from '../components/ItemFields.tsx';
 import { DescriptionNote, GameLines, MissingModifier } from '../components/GameText.tsx';
 import { ModifierPool } from '../components/ModifierPool.tsx';
 import { modifierLinesOf, useLineDescriptions, type LineDescriptions } from '../describedLines.ts';
@@ -21,7 +21,8 @@ import {
 } from '../model/definitions.ts';
 import { MODIFIER_FILE_NAMES } from '../model/itemFamily.ts';
 import type { ItemModifier } from '../model/modifiers.ts';
-import { otherItemIds, type ItemsModel } from '../model/workspace.ts';
+import { otherItemIds, shipDefinitionRows, type ItemsModel } from '../model/workspace.ts';
+import { useRowEdit } from '../useRowEdit.ts';
 
 const UNIQUE_FILTER = 'unique';
 const COMMON_FILTER = 'common';
@@ -164,7 +165,7 @@ function ImplicitLines({ model, section, descriptions }: { model: ItemsModel; se
 
 function HullItemForm({ document, model, vocabulary, definition, index, descriptions, onSelect }: HullItemFormProps) {
   const updateDocument = document.update;
-  const edit = useCallback((recipe: (draft: ItemDefinition) => void) => updateDocument((draft) => recipe(draft.ship.definitions[index])), [updateDocument, index]);
+  const edit = useRowEdit(updateDocument, shipDefinitionRows, index);
   const unique = isTrueText(definition.unique);
   const kinds = hullItemKinds(vocabulary);
 
@@ -178,22 +179,9 @@ function HullItemForm({ document, model, vocabulary, definition, index, descript
     onSelect(index + 1);
   };
 
-  const remove = async () => {
-    const confirmed = await confirmAction({
-      title: `Delete "${definition.id}"?`,
-      message: 'Items players already own keep their rolls but will show as unrecognised.',
-      confirmLabel: 'Delete',
-      danger: true,
-    });
-    if (confirmed) {
-      document.update((draft) => void draft.ship.definitions.splice(index, 1));
-      onSelect(Math.max(0, index - 1));
-    }
-  };
-
   return (
     <Stack gap="sm" maw={1100}>
-      <IconField icon={definition.icon} targetFolder="graphics/icons/socketables/" onChange={(icon) => edit((draft) => void (draft.icon = icon))} />
+      <IconField icon={definition.icon} destination={itemIconDestination('hull_items', definition.id)} onChange={(icon) => edit((draft) => void (draft.icon = icon))} />
       <Group grow align="flex-start">
         <IdField
           id={definition.id}
@@ -307,9 +295,14 @@ function HullItemForm({ document, model, vocabulary, definition, index, descript
         <Button variant="default" leftSection={<IconCopy size={14} />} onClick={duplicate}>
           Duplicate
         </Button>
-        <Button color="red" variant="light" leftSection={<IconTrash size={14} />} onClick={() => void remove()}>
-          Delete this item
-        </Button>
+        <DeleteRowButton
+          noun="item"
+          rowId={definition.id}
+          message="Items players already own keep their rolls but will show as unrecognised."
+          index={index}
+          onDelete={() => document.update((draft) => void draft.ship.definitions.splice(index, 1))}
+          onSelect={onSelect}
+        />
       </Group>
     </Stack>
   );

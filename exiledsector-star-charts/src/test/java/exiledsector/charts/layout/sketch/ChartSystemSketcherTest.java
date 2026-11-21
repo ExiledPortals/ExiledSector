@@ -9,16 +9,23 @@ import exiledsector.charts.layout.ChartLook;
 import exiledsector.charts.layout.ChartShape;
 import exiledsector.charts.layout.abyss.AbyssPalette;
 import exiledsector.charts.layout.abyss.ChartAbyss;
+import exiledsector.charts.ChartTables;
 import exiledsector.charts.layout.sketch.ChartSketchPalette.BodyKind;
+import exiledsector.charts.layout.sketch.ChartSketchPalette.MoonOdds;
 import exiledsector.charts.layout.sketch.ChartSketchPalette.StarKind;
 import exiledsector.charts.layout.sketch.ChartSystemSketch.Body;
+import exiledsector.charts.layout.sketch.ChartSystemSketch.Moon;
+import exiledsector.charts.layout.sketch.ChartSystemSketch.PlanetRing;
 import org.junit.jupiter.api.Test;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,6 +46,34 @@ class ChartSystemSketcherTest {
     private static ChartLayoutRecipe recipe(Map<String, Float> starWeights, Map<String, Float> planetWeights, ChartShape shape) {
         ChartLook look = new ChartLook(List.of(), List.of(), Float.NaN, null, 0f, starWeights, planetWeights, false, "");
         return new ChartLayoutRecipe(look, shape);
+    }
+
+    @Test
+    void aNebulaKeepsBeltsOffItsCentreAndHoldsItsWorldsStill() throws Exception {
+        ChartTables.loadAnomalies();
+        try {
+            assertNebulaKeepsBeltsOffItsCentreAndHoldsItsWorldsStill();
+        } finally {
+            ChartTables.resetAnomalies();
+        }
+    }
+
+    private static void assertNebulaKeepsBeltsOffItsCentreAndHoldsItsWorldsStill() {
+        ChartSketchPalette palette = new ChartSketchPalette(List.of(new StarKind("nebula_center_old", 1f, 1f, 1f, 0f, 0f, true)),
+                Map.of("cat_giant", 100f, "cat_terrain_rings", 200f),
+                Map.of("cat_giant", List.of(new BodyKind("gas_giant", 10f, 250f, 350f)),
+                        "cat_terrain_rings", List.of(new BodyKind("asteroid_belt", 150f, 0f, 0f, MoonOdds.NONE, Map.of(), true))));
+        ChartLayoutRecipe sixOrbits = recipe(Map.of(), Map.of(), new ChartShape(Map.of(), 6, 6, Float.NaN, Map.of(), ""));
+        int worlds = 0;
+        for (long seed = 0; seed < 20; seed++) {
+            ChartSystemSketch sketch = ChartSystemSketcher.sketch(seed, sixOrbits, List.of("dense_nebula"), palette);
+
+            assertEquals(StarSystemType.NEBULA, sketch.systemType());
+            assertTrue(sketch.belts().isEmpty());
+            assertTrue(sketch.planets().stream().allMatch(planet -> planet.orbitDays() == 0f));
+            worlds += sketch.planets().size();
+        }
+        assertTrue(worlds > 0);
     }
 
     @Test
@@ -148,6 +183,74 @@ class ChartSystemSketcherTest {
         assertEquals(List.of(new Body(ChartSystemSketcher.FALLBACK_STAR, ChartSystemSketcher.FALLBACK_STAR_RADIUS, 0f, 0f, 0f)), sketch.stars());
         assertTrue(sketch.planets().isEmpty());
         assertFalse(sketch.outerRadius() <= 0f);
+    }
+
+    @Test
+    void giantsGetMoonsAndRingsTheVanillaWayAndArePushedOutSoNeighboursNeverOverlap() {
+        ChartSketchPalette palette = new ChartSketchPalette(PALETTE.stars(),
+                Map.of("cat_giant", 100f, "cat_barren", 60f, "cat_terrain_rings", 60f, "cat_nothing", 40f),
+                Map.of("cat_giant", List.of(new BodyKind("gas_giant", 10f, 250f, 400f, new MoonOdds(1f, 2f, 4f), Map.of())),
+                        "cat_barren", List.of(new BodyKind("barren", 10f, 90f, 150f)),
+                        "cat_terrain_rings", List.of(new BodyKind("ring_ice", 100f, 0f, 0f, MoonOdds.NONE, Map.of("cat_giant", 2f)),
+                                new BodyKind("asteroid_belt", 150f, 0f, 0f, MoonOdds.NONE, Map.of("cat_giant", 0f)))),
+                Map.of("cat_giant", Map.of("cat_giant", 0f)));
+        ChartLayoutRecipe fourOrbits = recipe(Map.of(), Map.of(), new ChartShape(Map.of(StarSystemType.SINGLE, 1f), 4, 4, Float.NaN, Map.of(), ""));
+        int moonsSeen = 0;
+        int ringsSeen = 0;
+
+        for (long seed = 0; seed < 100; seed++) {
+            ChartSystemSketch sketch = ChartSystemSketcher.sketch(seed, fourOrbits, List.of(), palette);
+
+            for (Moon moon : sketch.moons()) {
+                Body parent = sketch.planets().get(moon.planet());
+                assertEquals("gas_giant", parent.typeId());
+                assertEquals("barren", moon.body().typeId());
+                assertTrue(moon.body().radius() >= ChartSystemSketcher.MOON_MIN_RADIUS);
+                assertTrue(moon.body().radius() <= parent.radius() * ChartSystemSketcher.MOON_MAX_FRACTION_OF_PARENT + 0.01f);
+                assertTrue(moon.body().orbitRadius() - moon.body().radius() >= parent.radius() + ChartSystemSketcher.MOON_START_BASE);
+                moonsSeen++;
+            }
+            for (PlanetRing ring : sketch.planetRings()) {
+                Body parent = sketch.planets().get(ring.planet());
+                assertEquals("gas_giant", parent.typeId());
+                assertEquals("ring_ice", ring.belt().typeId());
+                assertTrue(ring.belt().orbitRadius() - ring.belt().width() / 2f >= parent.radius() + ChartSystemSketcher.MOON_START_BASE);
+                ringsSeen++;
+            }
+            List<Integer> byOrbit = new ArrayList<>();
+            for (int index = 0; index < sketch.planets().size(); index++) {
+                byOrbit.add(index);
+            }
+            byOrbit.sort(Comparator.comparingDouble(index -> sketch.planets().get(index).orbitRadius()));
+            for (int i = 1; i < byOrbit.size(); i++) {
+                int inner = byOrbit.get(i - 1);
+                int outer = byOrbit.get(i);
+                assertTrue(sketch.planets().get(inner).orbitRadius() + sketch.reachAround(inner)
+                        <= sketch.planets().get(outer).orbitRadius() - sketch.reachAround(outer), "planet systems overlap at seed " + seed);
+            }
+        }
+        assertTrue(moonsSeen > 0);
+        assertTrue(ringsSeen > 0);
+    }
+
+    @Test
+    void aWorldWithoutMoonOddsNeverGetsMoons() {
+        for (long seed = 0; seed < 50; seed++) {
+            ChartSystemSketch sketch = ChartSystemSketcher.sketch(seed, ChartLayoutRecipe.ORDINARY, List.of(), PALETTE);
+
+            assertTrue(sketch.moons().isEmpty());
+            assertTrue(sketch.planetRings().isEmpty());
+        }
+    }
+
+    @Test
+    void theSketchedMoonCountFollowsTheVanillaBellBetweenTheMinimumAndMaximum() {
+        Random random = new Random(3L);
+        for (int roll = 0; roll < 1000; roll++) {
+            float moons = ChartSystemSketcher.normalBetween(2f, 4f, random);
+
+            assertTrue(moons >= 2f && moons <= 4f);
+        }
     }
 
     @Test

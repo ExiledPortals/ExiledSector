@@ -1,6 +1,7 @@
 package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 
@@ -15,6 +16,10 @@ public final class ShipHullSizes {
 
     public static boolean isShipSize(HullSize hullSize) {
         return hullSize != null && ORDER.contains(hullSize);
+    }
+
+    public static HullSize of(FleetMemberAPI member) {
+        return member.getHullSpec() == null ? null : member.getHullSpec().getHullSize();
     }
 
     public static HullSize byName(String hullSizeName) {

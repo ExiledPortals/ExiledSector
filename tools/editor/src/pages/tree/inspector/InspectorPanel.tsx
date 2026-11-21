@@ -2,7 +2,8 @@ import { ActionIcon, Box, ScrollArea, Text, Tooltip } from '@mantine/core';
 import { IconLayoutSidebarRightCollapse, IconLayoutSidebarRightExpand } from '@tabler/icons-react';
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import type { Vocabulary } from '../../../api/vocabulary.ts';
-import { selectionCount, useTreeStore } from '../state/treeStore.ts';
+import { useTreeState } from '../state/treeEditorContext.ts';
+import { selectionCount } from '../state/treeStore.ts';
 import classes from './InspectorPanel.module.css';
 import { NodeInspector } from './NodeInspector.tsx';
 import { DecorationInspector } from './DecorationInspector.tsx';
@@ -28,7 +29,7 @@ function readPanelLayout(): PanelLayout {
 }
 
 function SelectionInspector({ vocabulary }: { vocabulary: Vocabulary }) {
-  const selection = useTreeStore((state) => state.selection);
+  const selection = useTreeState((state) => state.selection);
   const total = selectionCount(selection);
   if (total === 0) {
     return (

@@ -43,14 +43,37 @@ public class ChartRaid {
         void raidClosed(InteractionDialogAPI dialog);
     }
 
+    public record Illustration(String category, String key, float imageWidth, float imageHeight) {
+
+        static final float SHOWN_WIDTH = 480f;
+        static final float SHOWN_HEIGHT = 300f;
+        static final float VANILLA_WIDTH = 640f;
+        static final float VANILLA_HEIGHT = 400f;
+        static final Illustration VANILLA_PREPARE = vanilla("raid_prepare");
+
+        static Illustration vanilla(String key) {
+            return new Illustration("illustrations", key, VANILLA_WIDTH, VANILLA_HEIGHT);
+        }
+
+        public void show(InteractionDialogAPI dialog) {
+            dialog.getVisualPanel().showImagePortion(category, key, imageWidth, imageHeight, 0f, 0f, SHOWN_WIDTH, SHOWN_HEIGHT);
+        }
+    }
+
     public static final class Session {
 
         private final Host host;
+        private final Illustration screenIllustration;
         private ChartRaid raid;
         private int raidsLaunched;
 
         public Session(Host host) {
+            this(host, null);
+        }
+
+        public Session(Host host, Illustration screenIllustration) {
             this.host = host;
+            this.screenIllustration = screenIllustration;
         }
 
         public boolean handles(Object optionData) {
@@ -62,7 +85,11 @@ public class ChartRaid {
         }
 
         public void launch(InteractionDialogAPI dialog, int tier, long seed, Supplier<List<GroundRaidObjectivePlugin>> objectives) {
-            raid = new ChartRaid(dialog, difficulty(tier), objectives, new Random(seed + raidsLaunched++), closedDialog -> {
+            launch(dialog, tier, 1f, seed, objectives);
+        }
+
+        public void launch(InteractionDialogAPI dialog, int tier, float difficultyMult, long seed, Supplier<List<GroundRaidObjectivePlugin>> objectives) {
+            raid = new ChartRaid(dialog, difficulty(tier) * Math.max(0f, difficultyMult), objectives, new Random(seed + raidsLaunched++), screenIllustration, closedDialog -> {
                 raid = null;
                 host.raidClosed(closedDialog);
             });
@@ -103,6 +130,7 @@ public class ChartRaid {
     private final float difficulty;
     private final Supplier<List<GroundRaidObjectivePlugin>> objectiveSource;
     private final Random random;
+    private final Illustration screenIllustration;
     private final Host host;
     private float raidMult;
     private List<GroundRaidObjectivePlugin> objectives = new ArrayList<>();
@@ -110,7 +138,7 @@ public class ChartRaid {
     private int xpGained;
     private String contText;
 
-    public ChartRaid(InteractionDialogAPI dialog, float difficulty, Supplier<List<GroundRaidObjectivePlugin>> objectiveSource, Random random, Host host) {
+    public ChartRaid(InteractionDialogAPI dialog, float difficulty, Supplier<List<GroundRaidObjectivePlugin>> objectiveSource, Random random, Illustration screenIllustration, Host host) {
         this.dialog = dialog;
         this.entity = dialog.getInteractionTarget();
         this.market = entity == null ? null : entity.getMarket();
@@ -120,7 +148,19 @@ public class ChartRaid {
         this.difficulty = difficulty;
         this.objectiveSource = objectiveSource;
         this.random = random;
+        this.screenIllustration = screenIllustration;
         this.host = host;
+    }
+
+    private Illustration prepareIllustration() {
+        return screenIllustration == null ? Illustration.VANILLA_PREPARE : screenIllustration;
+    }
+
+    private Illustration resultIllustration(CargoAPI result) {
+        if (screenIllustration != null) {
+            return screenIllustration;
+        }
+        return Illustration.vanilla(result.getTotalCrew() + result.getSpaceUsed() + result.getFuel() < 10 ? "raid_covert_result" : "raid_valuables_result");
     }
 
     public static float difficulty(int tier) {
@@ -217,7 +257,7 @@ public class ChartRaid {
     }
 
     public void open() {
-        dialog.getVisualPanel().showImagePortion("illustrations", "raid_prepare", 640, 400, 0, 0, 480, 300);
+        prepareIllustration().show(dialog);
         float marines = playerFleet.getCargo().getMarines();
         float support = Math.min(marines, Misc.getFleetwideTotalMod(playerFleet, Stats.FLEET_GROUND_SUPPORT, 0f));
         StatBonus attackerBase = new StatBonus();
@@ -466,8 +506,7 @@ public class ChartRaid {
         if (xpGained > 0) {
             Global.getSector().getPlayerStats().addXP(xpGained, text);
         }
-        String illustration = result.getTotalCrew() + result.getSpaceUsed() + result.getFuel() < 10 ? "raid_covert_result" : "raid_valuables_result";
-        dialog.getVisualPanel().showImagePortion("illustrations", illustration, 640, 400, 0, 0, 480, 300);
+        resultIllustration(result).show(dialog);
         boolean withContinue = objectives.stream().anyMatch(GroundRaidObjectivePlugin::withContinueBeforeResult);
         if (withContinue) {
             options.clearOptions();

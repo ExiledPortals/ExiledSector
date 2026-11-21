@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { buildVocabulary } from '../../../api/vocabulary.ts';
 import { parseCsvTable, serializeCsvTable } from '../../../shared/csv.ts';
 import {
   definitionWarnings,
@@ -25,13 +24,10 @@ import {
   type ItemModifier,
   type ModifierLine,
 } from './modifiers.ts';
+import { testVocabulary } from '../../../test/testVocabulary.ts';
 
-const vocabulary = buildVocabulary({
+const vocabulary = testVocabulary({
   effects: [{ name: 'HULL_MULT', statMode: 'MULT', lowerIsBetter: false }],
-  tags: { theme: [], volume: [], requirement: [] },
-  tiers: [],
-  unlockConditionTypes: [],
-  blueprintCategories: [],
   itemTypes: ['subroutine', 'hull_item', 'star_chart'],
   itemKinds: [
     { id: 'subroutine', type: 'subroutine' },
@@ -97,11 +93,11 @@ describe('star chart modifiers', () => {
     const [fixed] = parseModifierLines('CHART_POI_BUDGET_PERCENT:4:4');
     togglePerTierGroup(fixed, true, GROUP_IDS);
     expect(formatModifierLines([fixed])).toBe('CHART_POI_BUDGET_PERCENT:low=4/mid=4/high=4');
-    const [grouped] = parseModifierLines('CHART_REWARD_PERCENT:mid=10-20/high=20-35');
+    const [grouped] = parseModifierLines('CHART_BOSS_SPOILS_PERCENT:mid=10-20/high=20-35');
     togglePerTierGroup(grouped, false, GROUP_IDS);
-    expect(formatModifierLines([grouped])).toBe('CHART_REWARD_PERCENT:10:20');
+    expect(formatModifierLines([grouped])).toBe('CHART_BOSS_SPOILS_PERCENT:10:20');
     togglePerTierGroup(grouped, true, GROUP_IDS);
-    expect(formatModifierLines([grouped])).toBe('CHART_REWARD_PERCENT:mid=10-20/high=20-35');
+    expect(formatModifierLines([grouped])).toBe('CHART_BOSS_SPOILS_PERCENT:mid=10-20/high=20-35');
     const [hullSized] = parseModifierLines('CHART_EXTRA_POIS:1/2/3/4');
     togglePerTierGroup(hullSized, true, GROUP_IDS);
     expect(formatModifierLines([hullSized])).toBe('CHART_EXTRA_POIS:low=1/mid=1/high=1');
@@ -109,24 +105,24 @@ describe('star chart modifiers', () => {
   });
 
   it('keeps the groups a contiguous run up to high when switching one on or off, and remembers switched-off values', () => {
-    const [line] = parseModifierLines('CHART_REWARD_PERCENT:low=1-2/mid=3-4/high=5-6');
+    const [line] = parseModifierLines('CHART_BOSS_SPOILS_PERCENT:low=1-2/mid=3-4/high=5-6');
     setTierGroupEnabled(line, GROUP_IDS, 'mid', false);
-    expect(formatModifierLines([line])).toBe('CHART_REWARD_PERCENT:high=5-6');
+    expect(formatModifierLines([line])).toBe('CHART_BOSS_SPOILS_PERCENT:high=5-6');
     setTierGroupEnabled(line, GROUP_IDS, 'high', false);
-    expect(formatModifierLines([line])).toBe('CHART_REWARD_PERCENT:high=5-6');
+    expect(formatModifierLines([line])).toBe('CHART_BOSS_SPOILS_PERCENT:high=5-6');
     setTierGroupEnabled(line, GROUP_IDS, 'mid', true);
-    expect(formatModifierLines([line])).toBe('CHART_REWARD_PERCENT:mid=3-4/high=5-6');
+    expect(formatModifierLines([line])).toBe('CHART_BOSS_SPOILS_PERCENT:mid=3-4/high=5-6');
     setTierGroupEnabled(line, GROUP_IDS, 'low', true);
-    expect(formatModifierLines([line])).toBe('CHART_REWARD_PERCENT:low=1-2/mid=3-4/high=5-6');
+    expect(formatModifierLines([line])).toBe('CHART_BOSS_SPOILS_PERCENT:low=1-2/mid=3-4/high=5-6');
     expect(line.switchedOffTierGroups).toBeUndefined();
 
-    const [fresh] = parseModifierLines('CHART_REWARD_PERCENT:high=5-6');
+    const [fresh] = parseModifierLines('CHART_BOSS_SPOILS_PERCENT:high=5-6');
     setTierGroupEnabled(fresh, GROUP_IDS, 'low', true);
-    expect(formatModifierLines([fresh])).toBe('CHART_REWARD_PERCENT:low=5-6/mid=5-6/high=5-6');
+    expect(formatModifierLines([fresh])).toBe('CHART_BOSS_SPOILS_PERCENT:low=5-6/mid=5-6/high=5-6');
 
-    const [gapped] = parseModifierLines('CHART_REWARD_PERCENT:low=1/high=3');
+    const [gapped] = parseModifierLines('CHART_BOSS_SPOILS_PERCENT:low=1/high=3');
     setTierGroupEnabled(gapped, GROUP_IDS, 'mid', true);
-    expect(formatModifierLines([gapped])).toBe('CHART_REWARD_PERCENT:low=1/mid=1/high=3');
+    expect(formatModifierLines([gapped])).toBe('CHART_BOSS_SPOILS_PERCENT:low=1/mid=1/high=3');
   });
 
   it('keeps an unreadable group as written, flags it, and moves it to the end when a group is switched', () => {

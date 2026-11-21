@@ -1,6 +1,5 @@
 package exiledsector.skills.skilleffect.onhit;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
@@ -13,9 +12,11 @@ import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.loading.ProjectileSpecAPI;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
+import exiledsector.skills.skilleffect.CombatEngineExtension;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.lwjgl.util.vector.Vector2f;
 import org.magiclib.plugins.MagicFakeBeamPlugin;
 import org.mockito.MockedStatic;
@@ -44,7 +45,8 @@ class RefractionDroneTest {
 
     private static final float FRAME = 0.016f;
 
-    private MockedStatic<Global> global;
+    @RegisterExtension
+    final CombatEngineExtension combat = new CombatEngineExtension();
     private MockedStatic<WeaponDroneStats> stats;
     private MockedStatic<MagicFakeBeamPlugin> fakeBeams;
     private CombatEngineAPI engine;
@@ -63,12 +65,10 @@ class RefractionDroneTest {
     @BeforeEach
     void setUp() {
         fakeBeams = Mockito.mockStatic(MagicFakeBeamPlugin.class);
-        engine = mock(CombatEngineAPI.class);
+        engine = combat.engine();
         objectGrid = mock(CollisionGridAPI.class);
         when(engine.getAllObjectGrid()).thenReturn(objectGrid);
         when(objectGrid.getCheckIterator(any(), anyFloat(), anyFloat())).thenAnswer(invocation -> new ArrayList<Object>(projectiles).iterator());
-        global = Mockito.mockStatic(Global.class);
-        global.when(Global::getCombatEngine).thenReturn(engine);
         stats = Mockito.mockStatic(WeaponDroneStats.class);
 
         weapon = mock(WeaponAPI.class);
@@ -109,7 +109,6 @@ class RefractionDroneTest {
     @AfterEach
     void tearDown() {
         stats.close();
-        global.close();
         fakeBeams.close();
     }
 

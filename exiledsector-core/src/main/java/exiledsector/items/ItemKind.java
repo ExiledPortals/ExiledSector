@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import exiledsector.i18n.Translation;
+import exiledsector.items.modifier.ItemImplicits;
 import exiledsector.modifiers.Modifier;
 
 import java.util.Arrays;

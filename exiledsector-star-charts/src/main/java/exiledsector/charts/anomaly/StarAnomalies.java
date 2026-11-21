@@ -1,11 +1,16 @@
 package exiledsector.charts.anomaly;
 
 import com.fs.starfarer.api.campaign.PlanetAPI;
+import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
+import exiledsector.charts.anomaly.breach.EventHorizon;
 import exiledsector.charts.content.ChartPoi;
 import exiledsector.charts.content.ChartPois;
 import exiledsector.charts.content.ChartSites;
+import exiledsector.charts.loot.ImmutableDrops;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 
@@ -15,15 +20,14 @@ public final class StarAnomalies {
     public static final ForcedStar BLACK_HOLE = new ForcedStar("black_hole", "black_hole", StarSystemType.SINGLE, 0, StarAnomalies::scatterDerelicts);
     public static final ForcedStar NEUTRON_STAR = new ForcedStar("neutron_star", "star_neutron", StarSystemType.SINGLE, NEUTRON_STAR_MIN_PLANETS,
             StarAnomalies::placeResearchStation);
-    public static final ForcedStar DENSE_NEBULA = new ForcedStar("dense_nebula", null, StarSystemType.NEBULA, 0, site -> {
-    });
     public static final String RESEARCH_STATION = "research_station";
     static final long DERELICT_SALT = 0x424c4b44524c43L;
     static final long STATION_SALT = 0x4e5452535441L;
     static final int MIN_DERELICTS = 6;
     static final int EXTRA_DERELICTS = 4;
     static final float DERELICT_GAP = 1000f;
-    static final float DERELICT_REACH = 7000f;
+    public static final float DERELICT_REACH = 7000f;
+    static final float DERELICT_IMMUTABLE_CHANCE = 0.1f;
     static final float STATION_GAP = 400f;
     static final float STATION_STEP = 250f;
     static final float STATION_REACH = 6000f;
@@ -47,13 +51,19 @@ public final class StarAnomalies {
         }
         Random random = site.random(DERELICT_SALT);
         int count = MIN_DERELICTS + random.nextInt(EXTRA_DERELICTS);
+        List<SectorEntityToken> derelicts = new ArrayList<>();
+        float farthestReach = 0f;
         for (int i = 0; i < count; i++) {
             ChartPoi derelict = ChartSites.pick(ChartPoi.Kind.DERELICT, site.tier(), random);
             ChartSites.Orbit orbit = site.clearOrbit(star, star.getRadius() + DERELICT_GAP, DERELICT_REACH, random);
-            if (derelict != null && orbit != null) {
-                site.addSite(derelict, orbit, random);
+            SectorEntityToken placed = derelict == null || orbit == null ? null : site.addSite(derelict, orbit, random);
+            if (placed != null) {
+                ImmutableDrops.mark(placed, DERELICT_IMMUTABLE_CHANCE);
+                derelicts.add(placed);
+                farthestReach = Math.max(farthestReach, orbit.radius() + placed.getRadius());
             }
         }
+        EventHorizon.surround(site, star, derelicts, farthestReach);
     }
 
     static void placeResearchStation(AnomalyContentSite site) {

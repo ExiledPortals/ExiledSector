@@ -17,13 +17,14 @@ import exiledsector.charts.ChartIds;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.anomaly.LiveAnomalyRuns;
 import exiledsector.charts.atlas.AtlasCatalysts;
 import exiledsector.charts.content.ChartAnomalyFleets;
-import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.FakeChartContentEngine;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTier;
+import exiledsector.charts.loot.ChartFleetLoot;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunBound;
 import exiledsector.charts.run.ChartRuns;
@@ -39,6 +40,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import static exiledsector.charts.anomaly.LiveAnomalyRuns.RUN_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -58,8 +60,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class LaunchingStationTest {
-
-    private static final String RUN_ID = "run1";
 
     private MockSector mockSector;
     private FakeChartContentEngine engine;
@@ -93,8 +93,7 @@ class LaunchingStationTest {
     }
 
     private static ChartRun run(int tier) {
-        ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        run.recordContent(new ChartContent(tier, "remnant", null, 3, 2));
+        ChartRun run = LiveAnomalyRuns.run(tier, "remnant", List.of());
         ChartRuns.store(run);
         return run;
     }
@@ -108,7 +107,7 @@ class LaunchingStationTest {
 
     private static float launchPoints(int tier, int lost) {
         ChartTier chartTier = ChartAnomalyFleets.tier(tier, ChartGenContext.none());
-        return ChartAnomalyFleets.combat(Factions.REMNANTS, "patrol", chartTier, chartTier.fleetSize() * StationRules.fleetShare(lost)).combatPoints();
+        return ChartAnomalyFleets.combat(Factions.REMNANTS, "patrol", chartTier, chartTier.fleetSize() * StationRules.fleetShare(lost)).strength().combatPoints();
     }
 
     @Test
@@ -185,6 +184,19 @@ class LaunchingStationTest {
         assertEquals(1, manager.getTotalLost());
         assertEquals(launchPoints(6, 1), engine.fleetParams.get(1).combatPts, 0.001f);
         assertTrue(engine.fleetParams.get(1).combatPts > params.combatPts);
+    }
+
+    @Test
+    void onlyTheNexusStationItselfOverchargesTheHullItemsItDrops() {
+        ChartRun run = LiveAnomalyRuns.run(6, "remnant", List.of(RemnantNexusStation.ANOMALY_ID, DomainMothership.ANOMALY_ID));
+        ChartRuns.store(run);
+        CampaignFleetAPI nexus = placed(RemnantNexusStation.INSTANCE, 6);
+        CampaignFleetAPI launched = ((NexusFleetManager) systemScripts.get(0)).spawnFleet();
+        CampaignFleetAPI mothership = placed(DomainMothership.INSTANCE, 6);
+
+        assertTrue(ChartFleetLoot.overchargesHullItems(nexus, run));
+        assertFalse(ChartFleetLoot.overchargesHullItems(launched, run));
+        assertFalse(ChartFleetLoot.overchargesHullItems(mothership, run));
     }
 
     @Test

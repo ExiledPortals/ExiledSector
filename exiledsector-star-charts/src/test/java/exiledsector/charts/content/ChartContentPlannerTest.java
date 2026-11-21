@@ -2,7 +2,7 @@ package exiledsector.charts.content;
 
 import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.anomaly.ChartAnomalies;
-import exiledsector.charts.anomaly.PowerfulBoss;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.generation.ChartTier;
@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ChartContentPlannerTest {
 
     private static final Predicate<String> EVERY_FACTION = factionId -> true;
+    private static final String BOSS_SIZE_ANOMALY = "boss_size_test";
 
     @BeforeEach
     void setUp() throws Exception {
@@ -64,7 +65,7 @@ class ChartContentPlannerTest {
                     plan.fleetPoints(FleetRole.STATION_GUARD), 0.001f);
             PlannedFleet fallback = plan.bossStation().fallbackBoss();
             assertEquals(FleetRole.BOSS, fallback.role());
-            assertEquals(ChartTier.fleetPoints(Math.min(ChartContentPlanner.BOSS_SIZE_CAP, tier.bossSize())), fallback.combatPoints(), 0.001f);
+            assertEquals(ChartTier.fleetPoints(Math.min(ChartContentPlanner.BOSS_SIZE_CAP, tier.bossSize())), fallback.strength().combatPoints(), 0.001f);
         } finally {
             ChartBosses.resetForTests();
         }
@@ -125,7 +126,7 @@ class ChartContentPlannerTest {
 
     @Test
     void theSameSeedAndTierAlwaysPlanTheSameContent() {
-        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_TIER; tier++) {
+        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_DROP_TIER; tier++) {
             assertEquals(plan(1234L, tier), plan(1234L, tier), "tier " + tier);
         }
     }
@@ -167,7 +168,7 @@ class ChartContentPlannerTest {
 
     @Test
     void eachCategoryOverspendsByLessThanOneCheapestSiteAndOnlyUsesPointsOfInterestAllowedAtTheTier() {
-        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_TIER; tier++) {
+        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_DROP_TIER; tier++) {
             ChartTier tierData = ChartTiers.forTier(tier);
             for (long seed = 0; seed < 30; seed++) {
                 ChartContentPlan plan = plan(seed, tier);
@@ -254,7 +255,7 @@ class ChartContentPlannerTest {
 
     @Test
     void fleetsStayWithinTheTierRangeAndTheSizeCapsAndAverageTheTierFleetSize() {
-        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_TIER; tier++) {
+        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_DROP_TIER; tier++) {
             ChartTier tierData = ChartTiers.forTier(tier);
             for (long seed = 0; seed < 20; seed++) {
                 ChartContentPlan plan = plan(seed, tier);
@@ -272,11 +273,11 @@ class ChartContentPlannerTest {
                 }
                 for (PlannedFleet fleet : plan.fleets()) {
                     float cap = ChartTier.fleetPoints(fleet.role() == FleetRole.BOSS ? ChartContentPlanner.BOSS_SIZE_CAP : ChartContentPlanner.FLEET_SIZE_CAP);
-                    assertTrue(fleet.combatPoints() <= cap, fleet.toString());
-                    assertTrue(fleet.combatPoints() >= minimumPoints, fleet.toString());
-                    assertTrue(fleet.quality() <= ChartContentPlanner.MAX_QUALITY / ChartTier.PERCENT);
+                    assertTrue(fleet.strength().combatPoints() <= cap, fleet.toString());
+                    assertTrue(fleet.strength().combatPoints() >= minimumPoints, fleet.toString());
+                    assertTrue(fleet.strength().quality() <= ChartContentPlanner.MAX_QUALITY / ChartTier.PERCENT);
                     if (fleet.strengthBonus() > 0) {
-                        assertEquals(cap, fleet.combatPoints(), 0.01f, fleet.toString());
+                        assertEquals(cap, fleet.strength().combatPoints(), 0.01f, fleet.toString());
                     }
                 }
             }
@@ -292,11 +293,11 @@ class ChartContentPlannerTest {
         assertEquals(2, plan.count(FleetRole.GUARD) + plan.count(FleetRole.PATROL));
         for (PlannedFleet fleet : plan.fleets()) {
             boolean boss = fleet.role() == FleetRole.BOSS;
-            assertEquals(ChartTier.fleetPoints(boss ? ChartContentPlanner.BOSS_SIZE_CAP : ChartContentPlanner.FLEET_SIZE_CAP), fleet.combatPoints(), 0.01f);
+            assertEquals(ChartTier.fleetPoints(boss ? ChartContentPlanner.BOSS_SIZE_CAP : ChartContentPlanner.FLEET_SIZE_CAP), fleet.strength().combatPoints(), 0.01f);
             assertTrue(fleet.strengthBonus() > 0, fleet.toString());
             assertTrue(fleet.strengthBonus() <= ChartContentPlanner.MAX_OVERFLOW_STRENGTH, fleet.toString());
-            assertEquals(boss ? 0.65f : 0.5f, fleet.quality(), 0.001f);
-            assertEquals(boss ? 1 + ChartContentPlanner.BOSS_OFFICER_LEVEL_BONUS : 1, fleet.officerLevelBonus());
+            assertEquals(boss ? 0.65f : 0.5f, fleet.strength().quality(), 0.001f);
+            assertEquals(boss ? 1 + ChartContentPlanner.BOSS_OFFICER_LEVEL_BONUS : 1, fleet.strength().officerLevelBonus());
         }
         assertEquals(ChartContentPlanner.MAX_OVERFLOW_STRENGTH, ChartContentPlanner.overflowStrength(2f * ChartContentPlanner.BOSS_SIZE_CAP, ChartContentPlanner.BOSS_SIZE_CAP));
         assertEquals(25, ChartContentPlanner.overflowStrength(1.25f * ChartContentPlanner.FLEET_SIZE_CAP, ChartContentPlanner.FLEET_SIZE_CAP));
@@ -361,20 +362,21 @@ class ChartContentPlannerTest {
 
     @Test
     void thePlannedAnomaliesEffectsSizeTheBoss() throws Exception {
-        ChartTables.loadAnomalies();
+        float bossSizePercent = 50f;
+        ChartTables.useAnomalies(List.of(new ChartAnomalies.Definition(BOSS_SIZE_ANOMALY, 1f, 1, 16, "", "", true, Set.of(), false,
+                List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_BOSS_SIZE_PERCENT, bossSizePercent)), Set.of(), 1f)));
         try {
             ChartTier tier = ChartTiers.forTier(10);
-            float bossSizePercent = ChartAnomalies.definition(PowerfulBoss.ANOMALY_ID).effects().get(0).value();
             ChartContentPlan ordinary = ChartContentPlanner.plan(5L, tier, ChartPois.all(), ChartFactions.all(), EVERY_FACTION, ChartGenContext.none(),
                     StarChartSettings.DEFAULT_FLEET_LIMIT, List.of());
-            ChartContentPlan powerful = ChartContentPlanner.plan(5L, tier, ChartPois.all(), ChartFactions.all(), EVERY_FACTION, ChartGenContext.none(),
-                    StarChartSettings.DEFAULT_FLEET_LIMIT, List.of(PowerfulBoss.ANOMALY_ID));
+            ChartContentPlan larger = ChartContentPlanner.plan(5L, tier, ChartPois.all(), ChartFactions.all(), EVERY_FACTION, ChartGenContext.none(),
+                    StarChartSettings.DEFAULT_FLEET_LIMIT, List.of(BOSS_SIZE_ANOMALY));
 
             assertTrue(tier.boss());
             assertEquals(ChartTier.fleetPoints(Math.min(ChartContentPlanner.BOSS_SIZE_CAP, tier.bossSize())), ordinary.fleetPoints(FleetRole.BOSS), 0.01f);
             assertEquals(ChartTier.fleetPoints(Math.min(ChartContentPlanner.BOSS_SIZE_CAP, tier.bossSize() + bossSizePercent)),
-                    powerful.fleetPoints(FleetRole.BOSS), 0.01f);
-            assertEquals(List.of(PowerfulBoss.ANOMALY_ID), powerful.anomalies());
+                    larger.fleetPoints(FleetRole.BOSS), 0.01f);
+            assertEquals(List.of(BOSS_SIZE_ANOMALY), larger.anomalies());
         } finally {
             ChartTables.resetAnomalies();
         }

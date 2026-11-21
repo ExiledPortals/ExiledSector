@@ -1,0 +1,128 @@
+package exiledsector.ui.atlas;
+
+import exiledsector.charts.officer.OfficerRank;
+import exiledsector.charts.officer.turn.TurnResult;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+class OfficerBoardShuffleTest {
+
+    private static final List<OfficerRank> RANKS = OfficerBoardLayoutTest.RANKS;
+
+    private static Map<Integer, OfficerBoardShuffle.Mover> movers(OfficerBoardShuffle shuffle) {
+        return shuffle.movers().stream().collect(Collectors.toMap(OfficerBoardShuffle.Mover::recordId, Function.identity()));
+    }
+
+    @Test
+    void aPromotedOfficerSlidesUpARowWithARisingMark() {
+        OfficerBoardShuffle shuffle = OfficerBoardShuffle.of(RANKS, List.of(new OfficerBoardLayout.Entry(1, "commander", 3, 1)),
+                List.of(new TurnResult.StandingChange(1, new TurnResult.Standing("lieutenant", 2, 3), new TurnResult.Standing("commander", 3, 1))),
+                Set.of());
+
+        OfficerBoardShuffle.Mover mover = movers(shuffle).get(1);
+        assertEquals(2, mover.from().row());
+        assertEquals(1, mover.to().row());
+        assertEquals(OfficerBoardShuffle.RankMark.ROSE, mover.mark());
+    }
+
+    @Test
+    void aDemotedOfficerGetsAFallingMark() {
+        OfficerBoardShuffle shuffle = OfficerBoardShuffle.of(RANKS, List.of(new OfficerBoardLayout.Entry(1, "commander", 0, 0)),
+                List.of(new TurnResult.StandingChange(1, new TurnResult.Standing("admiral", 9, 0), new TurnResult.Standing("commander", 0, 0))),
+                Set.of());
+
+        assertEquals(OfficerBoardShuffle.RankMark.FELL, movers(shuffle).get(1).mark());
+    }
+
+    @Test
+    void aSwapMovesBothOfficersToEachOthersSeat() {
+        OfficerBoardShuffle shuffle = OfficerBoardShuffle.of(RANKS,
+                List.of(new OfficerBoardLayout.Entry(1, "commander", 5, 1), new OfficerBoardLayout.Entry(2, "lieutenant", 3, 2)),
+                List.of(new TurnResult.StandingChange(1, new TurnResult.Standing("lieutenant", 5, 2), new TurnResult.Standing("commander", 5, 1)),
+                        new TurnResult.StandingChange(2, new TurnResult.Standing("commander", 3, 1), new TurnResult.Standing("lieutenant", 3, 2))),
+                Set.of());
+
+        Map<Integer, OfficerBoardShuffle.Mover> movers = movers(shuffle);
+        assertEquals(movers.get(1).from(), movers.get(2).to());
+        assertEquals(movers.get(2).from(), movers.get(1).to());
+        assertEquals(OfficerBoardShuffle.RankMark.ROSE, movers.get(1).mark());
+        assertEquals(OfficerBoardShuffle.RankMark.FELL, movers.get(2).mark());
+    }
+
+    @Test
+    void theFallenDepartAndTheirReplacementsArrive() {
+        OfficerBoardShuffle shuffle = OfficerBoardShuffle.of(RANKS, List.of(new OfficerBoardLayout.Entry(2, "lieutenant", 0, 1)),
+                List.of(new TurnResult.StandingChange(1, new TurnResult.Standing("lieutenant", 4, 1), null),
+                        new TurnResult.StandingChange(2, null, new TurnResult.Standing("lieutenant", 0, 1))), Set.of());
+
+        Map<Integer, OfficerBoardShuffle.Mover> movers = movers(shuffle);
+        assertTrue(movers.get(1).departs());
+        assertTrue(movers.get(2).arrives());
+        assertNull(shuffle.after().seat(1));
+        assertNull(shuffle.before().seat(2));
+    }
+
+    @Test
+    void anUnchangedOfficerStaysPut() {
+        OfficerBoardShuffle shuffle = OfficerBoardShuffle.of(RANKS, List.of(new OfficerBoardLayout.Entry(3, "admiral", 1, 0)), List.of(), Set.of());
+
+        OfficerBoardShuffle.Mover mover = movers(shuffle).get(3);
+        assertEquals(mover.from(), mover.to());
+    }
+
+    @Test
+    void onlyAScavengerStillOnTheBoardGetsTheLootMark() {
+        OfficerBoardShuffle shuffle = OfficerBoardShuffle.of(RANKS,
+                List.of(new OfficerBoardLayout.Entry(2, "lieutenant", 0, 1), new OfficerBoardLayout.Entry(3, "admiral", 1, 0)),
+                List.of(new TurnResult.StandingChange(1, new TurnResult.Standing("lieutenant", 4, 1), null),
+                        new TurnResult.StandingChange(2, null, new TurnResult.Standing("lieutenant", 0, 1))),
+                Set.of(1, 2));
+
+        Map<Integer, OfficerBoardShuffle.Mover> movers = movers(shuffle);
+        assertFalse(movers.get(1).scavenged());
+        assertTrue(movers.get(2).scavenged());
+        assertFalse(movers.get(3).scavenged());
+    }
+
+    @Test
+    void theLootMarkPopsRisesAndFadesBeforeTheShuffleEnds() {
+        assertEquals(0f, OfficerBoardShuffle.lootAlpha(OfficerBoardShuffle.LOOT_START));
+        assertEquals(1f, OfficerBoardShuffle.lootAlpha(OfficerBoardShuffle.LOOT_START + OfficerBoardShuffle.LOOT_SECONDS / 2f));
+        assertEquals(0f, OfficerBoardShuffle.lootAlpha(OfficerBoardShuffle.DURATION_SECONDS));
+        assertEquals(0f, OfficerBoardShuffle.lootScale(OfficerBoardShuffle.LOOT_START), 1e-6f);
+        assertTrue(OfficerBoardShuffle.lootScale(OfficerBoardShuffle.LOOT_START + OfficerBoardShuffle.LOOT_SECONDS * 0.2f) > 1f);
+        assertEquals(1f, OfficerBoardShuffle.lootScale(OfficerBoardShuffle.DURATION_SECONDS), 1e-6f);
+        assertEquals(0f, OfficerBoardShuffle.lootRise(0f));
+        assertEquals(1f, OfficerBoardShuffle.lootRise(OfficerBoardShuffle.DURATION_SECONDS));
+    }
+
+    @Test
+    void theShuffleRunsDepartSlideArriveThenArrows() {
+        assertEquals(1f, OfficerBoardShuffle.departAlpha(0f));
+        assertEquals(0f, OfficerBoardShuffle.departAlpha(OfficerBoardShuffle.DEPART_START + OfficerBoardShuffle.DEPART_SECONDS));
+        assertEquals(0f, OfficerBoardShuffle.slideProgress(OfficerBoardShuffle.SLIDE_START));
+        assertEquals(0.5f, OfficerBoardShuffle.slideProgress(OfficerBoardShuffle.SLIDE_START + OfficerBoardShuffle.SLIDE_SECONDS / 2f), 1e-6f);
+        assertEquals(1f, OfficerBoardShuffle.slideProgress(OfficerBoardShuffle.DURATION_SECONDS));
+        assertEquals(0f, OfficerBoardShuffle.arriveAlpha(OfficerBoardShuffle.SLIDE_START));
+        assertEquals(1f, OfficerBoardShuffle.arriveAlpha(OfficerBoardShuffle.DURATION_SECONDS));
+        assertEquals(0f, OfficerBoardShuffle.arrowAlpha(OfficerBoardShuffle.SETTLE_START));
+        assertEquals(1f, OfficerBoardShuffle.arrowAlpha(OfficerBoardShuffle.DURATION_SECONDS));
+    }
+
+    @Test
+    void rankMarksShowOnlyMidShuffle() {
+        assertEquals(0f, OfficerBoardShuffle.markAlpha(0f));
+        assertEquals(1f, OfficerBoardShuffle.markAlpha(2f));
+        assertEquals(0f, OfficerBoardShuffle.markAlpha(OfficerBoardShuffle.DURATION_SECONDS));
+    }
+}

@@ -8,9 +8,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public record ContentForces(Map<CampaignFleetAPI, FleetRole> fleetRoles, CampaignFleetAPI boss, ChartBossType bossType, String allyFactionId) {
+public record ContentForces(Map<CampaignFleetAPI, FleetRole> fleetRoles, CampaignFleetAPI boss, ChartBossType bossType) {
 
-    public static final ContentForces NONE = new ContentForces(Map.of(), null, ChartBossType.FLEET, null);
+    public static final ContentForces NONE = new ContentForces(Map.of(), null, ChartBossType.FLEET);
 
     public ContentForces {
         fleetRoles = fleetRoles == null ? Map.of() : Collections.unmodifiableMap(new LinkedHashMap<>(fleetRoles));

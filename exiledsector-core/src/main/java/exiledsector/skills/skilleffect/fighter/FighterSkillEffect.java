@@ -282,6 +282,24 @@ public enum FighterSkillEffect implements BackedSkillEffect {
             }
         }
     },
+    AUTOFORGE_ESCORT_DRONES_FLAT(listener(AutoforgeEscortsListener.DRONES_KEY, AutoforgeEscortsListener.class, AutoforgeEscortsListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", AutoforgeEscortsListener.droneCount(magnitude))
+                    .arg("seconds", AutoforgeEscortsListener.REBUILD_SECONDS).styled();
+        }
+    },
+    STRIKECRAFT_SHARE_OF_CARRIER_WEAPON_BONUSES_PERCENT {
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            MothershipUplink.share(parentShip.getMutableStats(), fighter.getMutableStats(), modId, magnitude);
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).styled();
+        }
+    },
     FIGHTER_WING_SHARED_DAMAGE_PERCENT(new FighterListenerEffect<>(PhaseEntangledWingsListener.SHARED_PERCENT_KEY, PhaseEntangledWingsListener.class,
             PhaseEntangledWingsListener::new)) {
 

@@ -1,13 +1,13 @@
 import { ActionIcon, Badge, Button, Checkbox, Divider, Group, Paper, Select, Stack, Text, Title, Tooltip } from '@mantine/core';
 import { IconCopy, IconEdit, IconExchange, IconTrash, IconX } from '@tabler/icons-react';
 import { useMemo } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import type { Vocabulary } from '../../../api/vocabulary.ts';
 import { CommitNumberInput, CommitTextInput } from '../../../shared/CommitInputs.tsx';
 import { notifyError, notifyInfo } from '../../../shared/dialogs.tsx';
 import { ImagePickButton } from '../../../shared/ImagePickButton.tsx';
 import { openTypeEditor, openTypePicker } from '../dialogs/treeDialogs.tsx';
 import { connectNodes, isConnectorHidden, pairWormholes, renameNode, toggleConnectorHidden, unlinkNodes } from '../model/connectors.ts';
-import { NODE_TAG_GROUPS } from '../model/tags.ts';
 import {
   AURORA_RING_BELT_PATH,
   isAuroraBelt,
@@ -16,18 +16,33 @@ import {
   TIER_COLOR_VARIABLES,
   tierOf,
   typeById,
+  type SkillType,
   type TreeDocument,
   type TreeNode,
 } from '../model/types.ts';
-import { deleteSelection, duplicateNode } from '../state/treeActions.ts';
-import { editDocument, isReservedNodeId, setSelection, useTreeStore } from '../state/treeStore.ts';
+import type { TreeActions } from '../state/treeActions.ts';
+import { useTreeEditor, useTreeState } from '../state/treeEditorContext.ts';
+import { isReservedNodeId } from '../state/treeStore.ts';
 import { CommitColorInput } from './CommitColorInput.tsx';
+import { PositionFields } from './PositionFields.tsx';
 import { TagGroupsField } from './TagGroupsField.tsx';
 import { TypeForm, type TypeRecipe } from './TypeForm.tsx';
-import { INSPECTOR_TYPE_SECTIONS } from './typeFormSections.ts';
 
-function editNode(nodeId: string, change: (node: TreeNode, document: TreeDocument) => void): void {
-  editDocument((document) => {
+type NodeDetails = Omit<TreeNode, 'x' | 'y' | 'orbitAngle'>;
+
+function nodeDetails(node: TreeNode | undefined): NodeDetails | undefined {
+  if (!node) {
+    return undefined;
+  }
+  const details: Partial<TreeNode> = { ...node };
+  delete details.x;
+  delete details.y;
+  delete details.orbitAngle;
+  return details as NodeDetails;
+}
+
+function editNode(actions: TreeActions, nodeId: string, change: (node: TreeNode, document: TreeDocument) => void): void {
+  actions.editDocument((document) => {
     const node = nodeById(document, nodeId);
     if (node) {
       change(node, document);
@@ -35,8 +50,7 @@ function editNode(nodeId: string, change: (node: TreeNode, document: TreeDocumen
   });
 }
 
-function typeHint(node: TreeNode, document: TreeDocument): string {
-  const type = typeById(document, node.type);
+function typeHint(node: NodeDetails, type: SkillType | undefined): string {
   let hint = `Type "${node.type}"`;
   if (type?.vanillaHullMod) {
     hint += `, vanillaHullMod: ${type.vanillaHullMod}`;
@@ -50,9 +64,12 @@ function typeHint(node: TreeNode, document: TreeDocument): string {
   return hint;
 }
 
-function ConnectionList({ node, document }: { node: TreeNode; document: TreeDocument }) {
-  const nodeIds = useMemo(() => new Set(document.nodes.map((other) => other.id)), [document.nodes]);
-  const otherOptions = useMemo(() => document.nodes.filter((other) => other.id !== node.id).map((other) => other.id), [document.nodes, node.id]);
+function ConnectionList({ node }: { node: NodeDetails }) {
+  const { actions } = useTreeEditor();
+  const allNodeIds = useTreeState(useShallow((state) => state.document.nodes.map((other) => other.id)));
+  const hiddenConnectors = useTreeState((state) => state.document.hiddenConnectors);
+  const nodeIds = useMemo(() => new Set(allNodeIds), [allNodeIds]);
+  const otherOptions = useMemo(() => allNodeIds.filter((otherId) => otherId !== node.id), [allNodeIds, node.id]);
   return (
     <Stack gap={4}>
       <Text size="sm" fw={500}>
@@ -71,7 +88,7 @@ function ConnectionList({ node, document }: { node: TreeNode; document: TreeDocu
                 {connectedId}
                 {nodeIds.has(connectedId) ? '' : ' (missing!)'}
               </Text>
-              <ActionIcon size="xs" variant="subtle" color="gray" aria-label="Remove connection" onClick={() => editNode(node.id, (draft, doc) => unlinkNodes(doc, draft, connectedId))}>
+              <ActionIcon size="xs" variant="subtle" color="gray" aria-label="Remove connection" onClick={() => editNode(actions, node.id, (draft, doc) => unlinkNodes(doc, draft, connectedId))}>
                 <IconX size={12} />
               </ActionIcon>
             </Group>
@@ -80,8 +97,8 @@ function ConnectionList({ node, document }: { node: TreeNode; document: TreeDocu
             <Checkbox
               size="xs"
               aria-label="Hide connector"
-              checked={isConnectorHidden(document, node.id, connectedId)}
-              onChange={() => editDocument((doc) => toggleConnectorHidden(doc, node.id, connectedId))}
+              checked={isConnectorHidden({ hiddenConnectors }, node.id, connectedId)}
+              onChange={() => actions.editDocument((doc) => toggleConnectorHidden(doc, node.id, connectedId))}
             />
           </Tooltip>
         </Group>
@@ -95,7 +112,7 @@ function ConnectionList({ node, document }: { node: TreeNode; document: TreeDocu
         limit={60}
         onChange={(otherId) => {
           if (otherId) {
-            editNode(node.id, (draft, doc) => connectNodes(doc, draft, otherId));
+            editNode(actions, node.id, (draft, doc) => connectNodes(doc, draft, otherId));
           }
         }}
       />
@@ -103,7 +120,8 @@ function ConnectionList({ node, document }: { node: TreeNode; document: TreeDocu
   );
 }
 
-function KeystoneFields({ node }: { node: TreeNode }) {
+function KeystoneFields({ node }: { node: NodeDetails }) {
+  const { actions } = useTreeEditor();
   return (
     <Stack gap={6}>
       <Group gap={6} align="flex-end" wrap="nowrap">
@@ -114,7 +132,7 @@ function KeystoneFields({ node }: { node: TreeNode }) {
           placeholder={AURORA_RING_BELT_PATH}
           value={node.ringBeltPath ?? ''}
           onCommit={(text) =>
-            editNode(node.id, (draft) => {
+            editNode(actions, node.id, (draft) => {
               if (text.trim()) {
                 draft.ringBeltPath = text.trim();
               } else {
@@ -125,9 +143,9 @@ function KeystoneFields({ node }: { node: TreeNode }) {
         />
         <ImagePickButton
           size="xs"
-          targetFolder={null}
+          destination={null}
           onPicked={(path) => {
-            editNode(node.id, (draft) => {
+            editNode(actions, node.id, (draft) => {
               draft.ringBeltPath = path;
             });
             notifyInfo(`Ring belt art set to "${path}"`);
@@ -140,7 +158,7 @@ function KeystoneFields({ node }: { node: TreeNode }) {
           label="Aurora colour"
           value={node.ringBeltColor || '#8c78ff'}
           onCommit={(colour) =>
-            editNode(node.id, (draft) => {
+            editNode(actions, node.id, (draft) => {
               draft.ringBeltColor = colour;
             })
           }
@@ -152,7 +170,7 @@ function KeystoneFields({ node }: { node: TreeNode }) {
         placeholder={String(KEYSTONE_BELT_DEFAULT_WIDTH)}
         value={node.ringBeltWidth || null}
         onCommit={(width) =>
-          editNode(node.id, (draft) => {
+          editNode(actions, node.id, (draft) => {
             if (width > 0) {
               draft.ringBeltWidth = width;
             } else {
@@ -165,8 +183,11 @@ function KeystoneFields({ node }: { node: TreeNode }) {
   );
 }
 
-function WormholeFields({ node, document }: { node: TreeNode; document: TreeDocument }) {
-  const partners = document.nodes.filter((other) => other.id !== node.id && tierOf(typeById(document, other.type)) === 'WORMHOLE').map((other) => other.id);
+function WormholeFields({ node }: { node: NodeDetails }) {
+  const { actions } = useTreeEditor();
+  const partners = useTreeState(
+    useShallow((state) => state.document.nodes.filter((other) => other.id !== node.id && tierOf(typeById(state.document, other.type)) === 'WORMHOLE').map((other) => other.id)),
+  );
   return (
     <Stack gap={6}>
       <CommitColorInput
@@ -174,7 +195,7 @@ function WormholeFields({ node, document }: { node: TreeNode; document: TreeDocu
         label="Wormhole colour"
         value={node.wormholeColor || '#ffffff'}
         onCommit={(colour) =>
-          editNode(node.id, (draft) => {
+          editNode(actions, node.id, (draft) => {
             draft.wormholeColor = colour;
           })
         }
@@ -185,24 +206,37 @@ function WormholeFields({ node, document }: { node: TreeNode; document: TreeDocu
         data={[{ value: '', label: 'None (invalid)' }, ...partners.map((id) => ({ value: id, label: id }))]}
         value={node.pairedWith ?? ''}
         allowDeselect={false}
-        onChange={(partnerId) => editNode(node.id, (draft, doc) => pairWormholes(doc, draft, partnerId ?? ''))}
+        onChange={(partnerId) => editNode(actions, node.id, (draft, doc) => pairWormholes(doc, draft, partnerId ?? ''))}
       />
     </Stack>
   );
 }
 
+function NodePositionFields({ nodeId }: { nodeId: string }) {
+  const { actions } = useTreeEditor();
+  const position = useTreeState(
+    useShallow((state) => {
+      const node = nodeById(state.document, nodeId);
+      return { x: node?.x ?? 0, y: node?.y ?? 0 };
+    }),
+  );
+  return <PositionFields x={position.x} y={position.y} onEdit={(change) => editNode(actions, nodeId, (draft) => change(draft))} />;
+}
+
 export function NodeInspector({ nodeId, vocabulary }: { nodeId: string; vocabulary: Vocabulary }) {
-  const document = useTreeStore((state) => state.document);
-  const node = nodeById(document, nodeId);
-  const typeOptions = useMemo(() => document.types.map((type) => ({ value: type.id, label: `${type.name} (${type.id})` })), [document.types]);
+  const editor = useTreeEditor();
+  const { kind, store, actions } = editor;
+  const node = useTreeState(useShallow((state) => nodeDetails(nodeById(state.document, nodeId))));
+  const types = useTreeState((state) => state.document.types);
+  const typeOptions = useMemo(() => types.map((type) => ({ value: type.id, label: `${type.name} (${type.id})` })), [types]);
   if (!node) {
     return null;
   }
-  const type = typeById(document, node.type);
+  const type = typeById({ types }, node.type);
   const tier = tierOf(type);
   const sharedNote = type ? ` - shared by every "${type.id}" node` : '';
   const editType = (recipe: TypeRecipe) =>
-    editDocument((doc) => {
+    actions.editDocument((doc) => {
       const target = typeById(doc, node.type);
       if (target) {
         recipe(target);
@@ -211,16 +245,16 @@ export function NodeInspector({ nodeId, vocabulary }: { nodeId: string; vocabula
 
   const rename = (text: string) => {
     const newId = text.trim();
-    if (!newId || nodeById(document, newId)) {
+    if (!newId || nodeById(store.getState().document, newId)) {
       notifyError('Id must be unique and non-empty');
       return;
     }
-    if (isReservedNodeId(useTreeStore.getState(), newId)) {
+    if (isReservedNodeId(store.getState(), newId)) {
       notifyError(`${newId} belonged to a released or retired node. Old saves may still point at it, so pick another id.`);
       return;
     }
-    editNode(node.id, (draft, doc) => renameNode(doc, draft, newId));
-    setSelection({ nodes: [newId] });
+    editNode(actions, node.id, (draft, doc) => renameNode(doc, draft, newId));
+    actions.setSelection({ nodes: [newId] });
   };
 
   return (
@@ -233,14 +267,14 @@ export function NodeInspector({ nodeId, vocabulary }: { nodeId: string; vocabula
           {tier}
         </Badge>
       </Group>
-      {type ? <TypeForm type={type} onEdit={editType} sections={['tags']} vocabulary={vocabulary} allTypes={document.types} note={sharedNote} /> : null}
+      {type && kind.typeSections.nodeHeader.length > 0 ? <TypeForm type={type} onEdit={editType} sections={kind.typeSections.nodeHeader} vocabulary={vocabulary} allTypes={types} note={sharedNote} /> : null}
       <TagGroupsField
         label="Node tags (this node only)"
         vocabulary={vocabulary}
         tags={node.tags ?? []}
-        groups={NODE_TAG_GROUPS}
+        groups={kind.nodeTagGroups}
         onChange={(tags) =>
-          editNode(node.id, (draft) => {
+          editNode(actions, node.id, (draft) => {
             if (tags.length) {
               draft.tags = tags;
             } else {
@@ -259,47 +293,26 @@ export function NodeInspector({ nodeId, vocabulary }: { nodeId: string; vocabula
         allowDeselect={false}
         onChange={(typeId) => {
           if (typeId) {
-            editNode(node.id, (draft) => {
+            editNode(actions, node.id, (draft) => {
               draft.type = typeId;
             });
           }
         }}
       />
-      <Group grow gap={6}>
-        <CommitNumberInput
-          size="xs"
-          label="X"
-          value={node.x}
-          onCommit={(value) =>
-            editNode(node.id, (draft) => {
-              draft.x = value || 0;
-            })
-          }
-        />
-        <CommitNumberInput
-          size="xs"
-          label="Y"
-          value={node.y}
-          onCommit={(value) =>
-            editNode(node.id, (draft) => {
-              draft.y = value || 0;
-            })
-          }
-        />
-      </Group>
+      <NodePositionFields nodeId={node.id} />
       {tier === 'KEYSTONE' ? <KeystoneFields node={node} /> : null}
-      {tier === 'WORMHOLE' ? <WormholeFields node={node} document={document} /> : null}
+      {tier === 'WORMHOLE' ? <WormholeFields node={node} /> : null}
       <Divider />
       {type ? (
         <>
-          <TypeForm type={type} onEdit={editType} sections={INSPECTOR_TYPE_SECTIONS} vocabulary={vocabulary} allTypes={document.types} note={sharedNote} />
+          <TypeForm type={type} onEdit={editType} sections={kind.typeSections.inspector} vocabulary={vocabulary} allTypes={types} note={sharedNote} />
           <Divider />
         </>
       ) : null}
-      <ConnectionList node={node} document={document} />
+      <ConnectionList node={node} />
       <Divider />
       <Text size="xs" c="dimmed">
-        {typeHint(node, document)}
+        {typeHint(node, type)}
       </Text>
       <Group gap={6}>
         <Button
@@ -307,8 +320,8 @@ export function NodeInspector({ nodeId, vocabulary }: { nodeId: string; vocabula
           variant="default"
           leftSection={<IconExchange size={14} />}
           onClick={() =>
-            openTypePicker(node.type, (typeId) => {
-              editNode(node.id, (draft) => {
+            openTypePicker(editor, node.type, (typeId) => {
+              editNode(actions, node.id, (draft) => {
                 draft.type = typeId;
               });
               notifyInfo(`Type changed to "${typeId}"`);
@@ -317,13 +330,15 @@ export function NodeInspector({ nodeId, vocabulary }: { nodeId: string; vocabula
         >
           Change type
         </Button>
-        <Button size="xs" variant="default" leftSection={<IconEdit size={14} />} disabled={!type} onClick={() => openTypeEditor(vocabulary, node.type)}>
+        <Button size="xs" variant="default" leftSection={<IconEdit size={14} />} disabled={!type} onClick={() => openTypeEditor(editor, vocabulary, node.type)}>
           Edit type
         </Button>
         {type ? (
           <ImagePickButton
             size="xs"
             label="Select icon"
+            destination={kind.typeIconDestination(type.id)}
+            currentPath={type.icon}
             onPicked={(path) => {
               editType((draft) => {
                 draft.icon = path;
@@ -332,11 +347,11 @@ export function NodeInspector({ nodeId, vocabulary }: { nodeId: string; vocabula
             }}
           />
         ) : null}
-        <Button size="xs" variant="default" leftSection={<IconCopy size={14} />} onClick={() => duplicateNode(node.id)}>
+        <Button size="xs" variant="default" leftSection={<IconCopy size={14} />} onClick={() => actions.duplicateNode(node.id)}>
           Duplicate (Ctrl+D)
         </Button>
       </Group>
-      <Button size="xs" color="red" variant="light" leftSection={<IconTrash size={14} />} onClick={deleteSelection}>
+      <Button size="xs" color="red" variant="light" leftSection={<IconTrash size={14} />} onClick={actions.deleteSelection}>
         Delete this node (Q)
       </Button>
     </Stack>

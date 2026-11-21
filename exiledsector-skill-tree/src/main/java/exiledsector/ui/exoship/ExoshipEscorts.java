@@ -23,10 +23,10 @@ final class ExoshipEscorts {
     }
 
     static final Escort[] ESCORTS = {
-            escort("graphics/fx/rat_hypatia.png", "rat_hypatia", HullSize.DESTROYER, 108f, 160f, 0.04f, 0.85f, 0.5f, 24f, 1f, 0f, 20f, 0.06f, 3),
-            escort("graphics/fx/rat_dawnblade.png", "rat_dawnblade", HullSize.FIGHTER, 60f, 60f, 0.035f, 0.62f, 0.55f, 13f, -1f, 2f, -35f, 0.1f, 4),
-            escort("graphics/fx/rat_nightblade.png", "rat_nightblade", HullSize.FIGHTER, 60f, 60f, 0.035f, 0.72f, 0.45f, 15f, 1f, 4f, 60f, 0.08f, 5),
-            escort("graphics/fx/rat_protostar.png", "rat_protostar", HullSize.FIGHTER, 60f, 60f, 0.03f, 0.56f, 0.6f, 11f, -1f, 1f, 110f, 0.12f, 3)
+            escort("graphics/exiledSector/scenery/exoship/rat_hypatia.png", "rat_hypatia", HullSize.DESTROYER, 108f, 160f, 0.04f, 0.85f, 0.5f, 24f, 1f, 0f, 20f, 0.06f, 3),
+            escort("graphics/exiledSector/scenery/exoship/rat_dawnblade.png", "rat_dawnblade", HullSize.FIGHTER, 60f, 60f, 0.035f, 0.62f, 0.55f, 13f, -1f, 2f, -35f, 0.1f, 4),
+            escort("graphics/exiledSector/scenery/exoship/rat_nightblade.png", "rat_nightblade", HullSize.FIGHTER, 60f, 60f, 0.035f, 0.72f, 0.45f, 15f, 1f, 4f, 60f, 0.08f, 5),
+            escort("graphics/exiledSector/scenery/exoship/rat_protostar.png", "rat_protostar", HullSize.FIGHTER, 60f, 60f, 0.03f, 0.56f, 0.6f, 11f, -1f, 1f, 110f, 0.12f, 3)
     };
     static final int MAX_ESCORTS = ESCORTS.length + 1;
     static final float BEHIND_ALPHA = 0.7f;

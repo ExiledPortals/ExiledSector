@@ -9,6 +9,7 @@ import exiledsector.charts.content.ChartPoi;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.effect.ChartModifier;
+import exiledsector.loot.DropType;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -53,7 +54,7 @@ class ChartLootTest {
                 .put(row("derelict_weapons1", "weapon", "derelict", "weapons1", "random", "2", "1"))
                 .put(row("derelict_basic", "resource", "derelict", "basic", "value", "1500", "6"))
                 .put(row("fleet_weapons1", "weapon", "fleet", "weapons1", "random", "1", "1"))
-                .put(row("boss_ai_cores3", "ai_core", "boss", "ai_cores3", "random", "2", "1")), KNOWN_GROUPS::contains);
+                .put(row("fleet_ai_cores3", "ai_core", "fleet", "ai_cores3", "random", "2", "1")), KNOWN_GROUPS::contains);
     }
 
     private static DropData drop(String group, int chances, int value) {
@@ -91,11 +92,10 @@ class ChartLootTest {
             }
         }
         for (String scope : ChartLoot.scopes()) {
-            for (ChartLoot.Entry entry : ChartLoot.entriesFor(scope, ChartTiers.HIGHEST_TIER)) {
+            for (ChartLoot.Entry entry : ChartLoot.entriesFor(scope, ChartTiers.HIGHEST_DROP_TIER)) {
                 assertEquals(entry.type(), ChartLoot.typeOfGroup(entry.group()), entry.toString());
             }
         }
-        assertTrue(ChartLoot.entriesFor(ChartLoot.BOSS_SCOPE, ChartTiers.HIGHEST_TIER).size() >= 4);
         assertNull(ChartLoot.typeOfGroup("rare_tech"), "colony item groups are never mapped, so no bonus scales them");
     }
 
@@ -196,7 +196,7 @@ class ChartLootTest {
     }
 
     @Test
-    void fleetEntriesScaleWithFleetPointsAndOnlyTheBossGetsSpoilsScaledByTheHoard() throws Exception {
+    void fleetEntriesScaleWithFleetPointsAndTheHoardRaisesOnlyTheBosssQuantity() throws Exception {
         registerTable();
         CampaignFleetAPI guard = mock(CampaignFleetAPI.class);
         when(guard.getFleetPoints()).thenReturn(250);
@@ -208,12 +208,14 @@ class ChartLootTest {
         ChartVanillaLoot.addToFleet(boss, true, hoard, 8);
 
         List<DropData> guardDrops = randomDropsAddedTo(guard);
-        assertEquals(1, guardDrops.size());
+        assertEquals(2, guardDrops.size());
         assertEquals("weapons1", guardDrops.get(0).group);
         assertEquals(2.5f, guardDrops.get(0).valueMult, 1e-5f);
+        assertEquals(2f * 2.5f, guardDrops.get(1).valueMult, 1e-5f);
         List<DropData> bossDrops = randomDropsAddedTo(boss);
         assertEquals(2, bossDrops.size());
-        assertEquals(4f, bossDrops.get(0).valueMult, 1e-5f);
+        assertEquals("weapons1", bossDrops.get(0).group);
+        assertEquals(4f * 1.5f, bossDrops.get(0).valueMult, 1e-5f);
         assertEquals("ai_cores3", bossDrops.get(1).group);
         assertEquals(2f * 4f * 1.5f, bossDrops.get(1).valueMult, 1e-5f);
     }
@@ -254,16 +256,5 @@ class ChartLootTest {
         List<DropData> valueCopies = valueDropsAddedTo(wreck);
         assertEquals(4000, valueCopies.get(0).value);
         assertEquals(0.25f, valueCopies.get(0).valueMult, 1e-5f);
-    }
-
-    @Test
-    void fractionalExtraChancesRoundUpAsOftenAsTheirFraction() {
-        Random random = new Random(7L);
-        int total = 0;
-        for (int i = 0; i < 10000; i++) {
-            total += ChartVanillaLoot.stochasticRound(2.3f, random);
-        }
-        assertEquals(2.3f, total / 10000f, 0.03f);
-        assertEquals(0, ChartVanillaLoot.stochasticRound(-1f, random));
     }
 }

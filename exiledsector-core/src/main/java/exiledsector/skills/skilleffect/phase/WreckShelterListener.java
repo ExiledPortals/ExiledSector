@@ -3,21 +3,24 @@ package exiledsector.skills.skilleffect.phase;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
-import com.fs.starfarer.api.util.IntervalUtil;
 import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.ShipCombatListener;
+import exiledsector.skills.skilleffect.StatMods;
+import exiledsector.skills.skilleffect.TickTimer;
 import org.lwjgl.util.vector.Vector2f;
 
 final class WreckShelterListener extends ShipCombatListener implements AdvanceableListener {
 
     static final String RANGE_KEY = "exiledSector_noPhaseUpkeepNearWreckRange";
+    static final String CAPPED_RANGE_KEY = "exiledSector_noPhaseUpkeepNearWreckCappedRange";
+    static final float CAPPED_SECONDS = 5f;
     private static final String MOD_ID_PREFIX = "exiledSector_noPhaseUpkeepNearWreck_";
     private static final float CHECK_SECONDS = 0.25f;
 
-    private final IntervalUtil checkInterval = new IntervalUtil(CHECK_SECONDS, CHECK_SECONDS);
+    private final TickTimer checkTimer = new TickTimer(CHECK_SECONDS);
     private boolean sheltered;
+    private float cappedSecondsUsed;
 
     WreckShelterListener(ShipAPI ownerShip) {
         super(ownerShip, MOD_ID_PREFIX);
@@ -28,22 +31,34 @@ final class WreckShelterListener extends ShipCombatListener implements Advanceab
         if (ownerShip.getPhaseCloak() == null) {
             return;
         }
-        checkInterval.advance(amount);
-        if (!checkInterval.intervalElapsed()) {
+        if (!checkTimer.advance(amount)) {
             return;
         }
-        float range = magnitude(RANGE_KEY);
-        boolean nearWreck = range > 0f && ownerIsAliveNotHulk() && wreckWithin(ownerShip, range);
+        boolean nearWreck = ownerIsAliveNotHulk() && isSheltered(CHECK_SECONDS);
         if (nearWreck == sheltered) {
             return;
         }
         sheltered = nearWreck;
-        StatBonus upkeep = ownerShip.getMutableStats().getPhaseCloakUpkeepCostBonus();
-        if (nearWreck) {
-            upkeep.modifyMult(modId, 0f);
-        } else {
-            upkeep.unmodifyMult(modId);
+        StatMods.setMult(ownerShip.getMutableStats().getPhaseCloakUpkeepCostBonus(), modId, nearWreck ? 0f : 1f);
+    }
+
+    private boolean isSheltered(float elapsedSeconds) {
+        boolean phased = ownerShip.isPhased();
+        if (!phased) {
+            cappedSecondsUsed = 0f;
         }
+        float range = magnitude(RANGE_KEY);
+        if (range > 0f && wreckWithin(ownerShip, range)) {
+            return true;
+        }
+        float cappedRange = magnitude(CAPPED_RANGE_KEY);
+        if (cappedRange <= 0f || cappedSecondsUsed >= CAPPED_SECONDS || !wreckWithin(ownerShip, cappedRange)) {
+            return false;
+        }
+        if (phased) {
+            cappedSecondsUsed += elapsedSeconds;
+        }
+        return true;
     }
 
     static boolean wreckWithin(ShipAPI ship, float range) {

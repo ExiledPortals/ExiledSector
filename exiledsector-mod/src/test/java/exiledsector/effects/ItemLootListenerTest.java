@@ -9,15 +9,17 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import data.scripts.campaign.plugins.amemory.SotfAMemoryFEContext;
 import exiledsector.MockSector;
-import exiledsector.items.MaterialItems;
+import exiledsector.MockShips;
+import exiledsector.items.crafting.material.MaterialItems;
+import exiledsector.items.drop.CraftingDrops;
 import exiledsector.charts.content.ChartContent;
-import exiledsector.charts.loot.ChartDrops;
+import exiledsector.charts.loot.ChartDropRules;
 import exiledsector.charts.loot.ChartFleetFixtures;
 import exiledsector.charts.loot.ChartFleetLoot;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
-import exiledsector.items.StarChartFixtures;
+import exiledsector.items.starchart.StarChartFixtures;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import org.json.JSONArray;
@@ -26,23 +28,26 @@ import com.fs.starfarer.api.campaign.EngagementResultForFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.campaign.FleetEncounterContextPlugin;
 import com.fs.starfarer.api.campaign.SpecialItemData;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledsector.skills.npc.RealSkillData;
 import exiledsector.loot.BattleLootRates;
-import exiledsector.items.FactionFleetDrops;
+import exiledsector.loot.FleetFactions;
+import exiledsector.items.drop.FactionFleetDrops;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import exiledsector.items.ItemDisassembly;
+import org.junit.jupiter.api.extension.ExtendWith;
+import exiledsector.items.crafting.ItemDisassembly;
 import lunalib.lunaSettings.LunaSettings;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
@@ -51,6 +56,7 @@ import org.mockito.Mockito;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -60,6 +66,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class ItemLootListenerTest {
 
     private static final String TAG = "exiledSector_npcTree|generated|1|root,socket_1|sockets:socket_1=npc:volume_subroutine/12";
@@ -93,7 +100,6 @@ class ItemLootListenerTest {
     void tearDown() {
         FactionFleetDrops.clear(TEST_DROPS);
         ItemDefinitions.clear();
-        RealSkillData.clear();
         mockSector.close();
         lunaSettingsMock.close();
     }
@@ -105,10 +111,7 @@ class ItemLootListenerTest {
     private static FleetMemberAPI flagship(String id, String tag) {
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(variant.getTags()).thenReturn(List.of(tag));
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getId()).thenReturn(id);
-        when(member.getVariant()).thenReturn(variant);
-        return member;
+        return MockShips.member(id).variant(variant).build();
     }
 
     private static EngagementResultAPI engagement(BattleAPI battle, List<FleetMemberAPI> destroyed, List<FleetMemberAPI> disabled) {
@@ -309,31 +312,75 @@ class ItemLootListenerTest {
     }
 
     private static FleetMemberAPI warship(String id, float deploymentPoints) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getId()).thenReturn(id);
-        when(member.getVariant()).thenReturn(mock(ShipVariantAPI.class));
+        FleetMemberAPI member = MockShips.member(id).variant(mock(ShipVariantAPI.class)).build();
         when(member.getDeploymentPointsCost()).thenReturn(deploymentPoints);
         return member;
     }
 
-    @Test
-    void wonBattlesAddPartsForTheEnemyDeploymentPointsDefeated() {
-        BattleAPI battle = mock(BattleAPI.class);
-        listener.holdLoot(PlayerEngagement.of(engagement(battle, List.of(warship("a", 120f)), List.of(warship("b", 80f))), 1f));
-        CargoAPI loot = mock(CargoAPI.class);
-
-        listener.reportEncounterLootGenerated(context(battle), loot);
-
-        verify(loot).addSpecial(MaterialItems.data(ItemDisassembly.FEEDSTOCK_ITEM_ID), 10);
+    private static Random rollingAt(float roll) {
+        return new Random() {
+            @Override
+            public float nextFloat() {
+                return roll;
+            }
+        };
     }
 
     @Test
-    void wonBattlesDropCraftingMaterialsPerDeploymentPointAtTheRegularShareAndNoChartOnlyOnes() throws Exception {
+    void shipsBorrowedIntoAnotherFactionsFleetRollTheirOwnFactionsDropButNeverAGuaranteeMeantForThatFactionsFleets() throws Exception {
+        FactionFleetDrops.clear(TEST_DROPS);
+        ItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "remnant_drop").put("kind", "MODSPEC_CACHE").put("rarity", "10"))
+                .put(new JSONObject().put("id", "dweller_drop").put("kind", "MODSPEC_CACHE").put("rarity", "10")));
+        FactionFleetDrops.register(TEST_DROPS, Map.of("remnant_drop", FactionFleetDrops.Source.forVolume("REDACTED", Set.of("remnant"), 1f),
+                "dweller_drop", FactionFleetDrops.Source.forVolume("shrouded", Set.of("dweller"), 0.01f, true)));
+        BattleAPI battle = mock(BattleAPI.class);
+        FactionAPI anomalous = mock(FactionAPI.class);
+        when(anomalous.getId()).thenReturn("exiledSector_dormant");
+        MemoryAPI memory = mock(MemoryAPI.class);
+        when(memory.get(FleetFactions.MEMBER_FACTIONS_MEMORY_KEY)).thenReturn(Map.of("remnant_ship", "remnant", "dweller_ship", "dweller"));
+        CampaignFleetAPI fleet = mock(CampaignFleetAPI.class);
+        when(fleet.getFaction()).thenReturn(anomalous);
+        when(fleet.getMemoryWithoutUpdate()).thenReturn(memory);
+        FleetMemberAPI remnantShip = warship("remnant_ship", 100f);
+        FleetMemberAPI dwellerShip = warship("dweller_ship", 100f);
+        when(battle.getSourceFleet(remnantShip)).thenReturn(fleet);
+        when(battle.getSourceFleet(dwellerShip)).thenReturn(fleet);
+        ItemLootListener rollingListener = new ItemLootListener(rollingAt(0.4f));
+        rollingListener.holdLoot(PlayerEngagement.of(engagement(battle, List.of(remnantShip), List.of(dwellerShip)), 1f));
+        CargoAPI loot = mock(CargoAPI.class);
+
+        rollingListener.reportEncounterLootGenerated(context(battle), loot);
+
+        List<String> dropped = lootData(loot, 1);
+        assertEquals("remnant_drop", ItemData.parse(dropped.get(0)).definition().id());
+    }
+
+    @Test
+    void wonBattlesAddPartsForTheEnemyDeploymentPointsDefeated() throws Exception {
         BattleLootRates.register(new JSONArray()
-                .put(new JSONObject().put("drop", "exiledSector_augmentation_nanoswarm").put("per_100_dp", "1").put("curve", "linear")
-                        .put("regular_share", "0.5"))
-                .put(new JSONObject().put("drop", "exiledSector_fundamental_nanoswarm").put("per_100_dp", "1").put("curve", "linear")
-                        .put("regular_share", "0")));
+                .put(new JSONObject().put("drop", BattleLootRates.FEEDSTOCK_RATE).put("per_100_dp", "5").put("curve", "linear")
+                        .put("difficulty_scaling", "1")));
+        try {
+            BattleAPI battle = mock(BattleAPI.class);
+            listener.holdLoot(PlayerEngagement.of(engagement(battle, List.of(warship("a", 120f)), List.of(warship("b", 80f))), 1f));
+            CargoAPI loot = mock(CargoAPI.class);
+
+            listener.reportEncounterLootGenerated(context(battle), loot);
+
+            verify(loot).addSpecial(MaterialItems.data(ItemDisassembly.FEEDSTOCK_ITEM_ID), 10);
+        } finally {
+            BattleLootRates.clear();
+        }
+    }
+
+    @Test
+    void wonBattlesDropCraftingMaterialsPerDeploymentPointAtTheLevelOneShareAndNoChartOnlyOnes() throws Exception {
+        BattleLootRates.register(new JSONArray()
+                .put(new JSONObject().put("drop", BattleLootRates.CRAFTING_ITEM_RATE).put("per_100_dp", "1").put("curve", "linear")
+                        .put("difficulty_scaling", "0")));
+        CraftingDrops.register(new JSONArray()
+                .put(new JSONObject().put("item", "exiledSector_augmentation_nanoswarm").put("weight", "1").put("chart_only", "false"))
+                .put(new JSONObject().put("item", "exiledSector_reforge_cipher").put("weight", "100").put("chart_only", "true")));
         try {
             ItemLootListener unluckyListener = new ItemLootListener(neverLucky());
             BattleAPI battle = mock(BattleAPI.class);
@@ -343,9 +390,10 @@ class ItemLootListenerTest {
             unluckyListener.reportEncounterLootGenerated(context(battle), loot);
 
             verify(loot).addSpecial(MaterialItems.data("exiledSector_augmentation_nanoswarm"), 2);
-            verify(loot, never()).addSpecial(Mockito.eq(MaterialItems.data("exiledSector_fundamental_nanoswarm")), anyFloat());
+            verify(loot, never()).addSpecial(Mockito.eq(MaterialItems.data("exiledSector_reforge_cipher")), anyFloat());
         } finally {
             BattleLootRates.clear();
+            CraftingDrops.clear();
         }
     }
 
@@ -371,8 +419,8 @@ class ItemLootListenerTest {
     @Test
     void wonBattlesRollStarChartsFromChartFleetsAtTheRunTierAndOutsideOnlyFromStrongEnemies() throws Exception {
         StarChartFixtures.registerShipped();
-        ChartDrops.register(new JSONArray()
-                .put(new JSONObject().put("source", "chart_fleet").put("chance", String.valueOf(ChartFleetLoot.expectedFleetPoints(8) / 20f)))
+        ChartDropRules.register(new JSONArray()
+                .put(new JSONObject().put("source", "chart_fleet").put("chance", String.valueOf(ChartFleetLoot.expectedFleetPoints(8, false) / 20f)))
                 .put(new JSONObject().put("source", "battle").put("chance", "0.25").put("min_defeated_dp", "150").put("defeated_dp_per_tier", "100")
                         .put("max_tier", "6")));
         try {
@@ -418,7 +466,7 @@ class ItemLootListenerTest {
             assertEquals(1, strongCharts.size());
             assertEquals(1, ItemData.ofStarChart(strongCharts.get(0)).preview().tier(), "ships without NPC trees count as level 0");
         } finally {
-            ChartDrops.clear();
+            ChartDropRules.clear();
             StarChartFixtures.clear();
         }
     }
@@ -444,8 +492,7 @@ class ItemLootListenerTest {
         when(mockSector.sector.getPlayerStats()).thenReturn(playerStats);
         ItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "test_bridge").put("section", "bridge").put("rarity", "10")
                 .put("prefixes", "HULL_PERCENT:4:6")));
-        BattleLootRates.register(new JSONArray().put(new JSONObject().put("drop", "hull_item").put("per_100_dp", "3").put("curve", "linear")
-                .put("regular_share", "1")));
+        BattleLootRates.register(new JSONArray().put(new JSONObject().put("drop", "hull_item").put("per_100_dp", "3").put("curve", "linear")));
         try {
             ItemLootListener unluckyListener = new ItemLootListener(neverLucky());
             BattleAPI battle = mock(BattleAPI.class);

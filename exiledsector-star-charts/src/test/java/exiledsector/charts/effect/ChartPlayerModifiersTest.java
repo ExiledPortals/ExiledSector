@@ -218,7 +218,7 @@ class ChartPlayerModifiersTest {
 
     @Test
     void tarnishedCutsTheDamageOfPlayerFleetShipsAndTheirFightersByItsPercentForEachSMod() {
-        ChartPlayerModifiers.setDamagePercentPerSMod(-5f);
+        ChartPlayerModifiers.setBattleRules(new ChartBattleRules(0, false, false, 0f, 0f, -5f));
         ShipVariantAPI threeSMods = mock(ShipVariantAPI.class);
         when(threeSMods.getSMods()).thenReturn(new LinkedHashSet<>(List.of("a", "b", "c")));
         ShipAPI playerShip = mock(ShipAPI.class);
@@ -256,7 +256,7 @@ class ChartPlayerModifiersTest {
 
     @Test
     void inertDisablesTheShipSystemsOfPlayerFleetShipsOnlyAndClearsWithTheRun() {
-        ChartPlayerModifiers.setShipSystemsDisabled(true);
+        ChartPlayerModifiers.setBattleRules(new ChartBattleRules(0, true, false, 0f, 0f, 0f));
         ShipAPI playerShip = mock(ShipAPI.class);
         when(playerShip.getFleetMember()).thenReturn(playerMember);
         ShipAPI otherShip = mock(ShipAPI.class);

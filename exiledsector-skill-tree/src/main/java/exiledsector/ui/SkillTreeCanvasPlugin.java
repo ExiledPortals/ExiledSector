@@ -9,11 +9,13 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import exiledsector.skills.skilleffect.render.Fade;
 import exiledsector.effects.OpReserveParity;
+import exiledsector.i18n.Translation;
 import exiledsector.effects.PhantomConflictWatch;
 import exiledsector.effects.ShipTreeSync;
 import exiledsector.items.Item;
-import exiledsector.items.SocketCustody;
-import exiledsector.items.SubroutineRadius;
+import exiledsector.items.custody.SocketCustody;
+import exiledsector.items.subroutine.SubroutineRadius;
+import exiledsector.items.subroutine.doctrine.DoctrineLayer;
 import exiledsector.skills.ExoshipNodes;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
@@ -21,16 +23,21 @@ import exiledsector.skills.SkillType;
 import exiledsector.skills.radius.RadiusSize;
 import exiledsector.ui.decoration.AbyssDarknessRenderer;
 import exiledsector.ui.decoration.DecorationScene;
+import exiledsector.ui.decoration.ShipTreeDecorations;
 import exiledsector.ui.decoration.SkillTreeFleetRenderer;
 import exiledsector.ui.decoration.StarfieldRenderer;
 import exiledsector.ui.decoration.TreeDecorations;
 import exiledsector.ui.hyperspace.HyperspaceCamera;
+import exiledsector.ui.hyperspace.HyperspaceMode;
 import exiledsector.ui.inspect.ItemCodex;
 import exiledsector.ui.node.DoctrineColors;
+import exiledsector.ui.infestation.InfestationEffects;
+import exiledsector.ui.infestation.InfestedDoctrine;
 import exiledsector.ui.node.NodeRadiusRingRenderer;
 import exiledsector.ui.node.NodeSearch;
 import exiledsector.ui.node.SkillTreeNodeDrawer;
 import exiledsector.ui.node.TreeAllocationSession;
+import exiledsector.ui.perf.ScreenPerformance;
 import exiledsector.ui.refit.RefitButtonColumn;
 import exiledsector.ui.util.GLDraw;
 import lunalib.lunaRefit.BaseRefitButton;
@@ -40,7 +47,7 @@ import java.awt.Color;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
+public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin implements ZoomableScreen {
 
     private static final float CRAFTING_BENCH_DIM_SECONDS = 0.25f;
     private static final float CRAFTING_BENCH_DIM_ALPHA = 0.45f;
@@ -51,18 +58,22 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final ExoshipView exoshipView = new ExoshipView();
     private final SkillTreeFleetRenderer fleetRenderer;
     private final NodeRadiusRingRenderer radiusRingRenderer = new NodeRadiusRingRenderer();
+    private final InfestationEffects infestationEffects = new InfestationEffects();
+    private DoctrineLayer shownInfestationLayer;
+    private InfestedDoctrine shownInfestation;
     private final TreeAllocationSession treeSession;
     private final SkillTreeNodeDrawer nodeDrawer;
     private final SkillTreeStatPanel statPanel;
     private final NodeSearch nodeSearch;
-    private final SkillTreeSearchBar searchBar;
+    private final CanvasSearchBar searchBar;
     private final SkillTreeTemplateController templateUi;
     private final TreeCamera camera = new TreeCamera();
     private final HyperspaceMode hyperspaceMode;
     private final SocketPlacement socketPlacement;
     private final SchematicButtons schematicButtons;
     private final SkillTreeChrome chrome;
-    private final PointerGesture<CanvasMode> gesture = new PointerGesture<>();
+    private final CanvasDrag<CanvasMode> drag = new CanvasDrag<>(camera);
+    private final PointerGesture<CanvasMode> gesture = drag.gesture();
     private final TreeCameraMemory.View cameraMemory;
     private final FleetShipList shipList;
     private final BaseRefitButton refitButton;
@@ -71,34 +82,41 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private float mouseX = 0f;
     private float mouseY = 0f;
     private boolean mouseKnown = false;
-    private boolean swallowEscapeUp;
     private float craftingBenchDimProgress;
     private boolean hoverRingShown;
 
     public SkillTreeCanvasPlugin(FleetMemberAPI member, ShipVariantAPI variant, float shipCardHeight, BaseRefitButton refitButton,
                                  CustomPanelAPI hostPanel, Consumer<FleetMemberAPI> shipSwitcher) {
-        OpReserveParity.warnIfOutOfSync(member, variant, "before the skill tree re-synced it");
-        PhantomConflictWatch.applyPendingReverts(member.getId());
-        if (ShipTreeSync.memberChanged(member, variant) && refitButton != null) {
-            refitButton.refreshVariant();
-        }
-        SocketCustody.reconcile();
+        ScreenPerformance.phase("ship sync", () -> {
+            OpReserveParity.warnIfOutOfSync(member, variant, "before the skill tree re-synced it");
+            PhantomConflictWatch.applyPendingReverts(member.getId());
+            if (ShipTreeSync.memberChanged(member, variant) && refitButton != null) {
+                refitButton.refreshVariant();
+            }
+            SocketCustody.reconcile();
+        });
         SkillTreePanelStyle panelStyle = new SkillTreePanelStyle();
-        this.starfieldRenderer = new StarfieldRenderer(panelStyle);
-        this.fleetRenderer = SkillTreeFleetRenderer.forPlayerFleet(member.getId());
-        exoshipView.setPlayerShip(member);
-        this.nodeSearch = new NodeSearch(member.getHullSpec().getHullSize());
-        this.searchBar = new SkillTreeSearchBar(nodeSearch, this::jumpToNextSearchMatch);
-        this.treeSession = new TreeAllocationSession(member, variant, refitButton, nodeSearch);
-        this.decorations = TreeDecorations.forActiveTree(treeSession::isLocked, treeSession::isConcealed);
-        this.nodeDrawer = SkillTreeNodeDrawer.attachedTo(treeSession, member, panelStyle, nodeSearch);
-        this.templateUi = new SkillTreeTemplateController(member, treeSession, panelStyle);
-        this.statPanel = new SkillTreeStatPanel(member, variant, panelStyle);
-        this.hyperspaceMode = new HyperspaceMode(camera, statPanel, treeSession::isHidden, treeSession::wormholePairs);
+        this.starfieldRenderer = ScreenPerformance.phase("starfield", () -> new StarfieldRenderer(panelStyle));
+        this.fleetRenderer = ScreenPerformance.phase("fleet", () -> SkillTreeFleetRenderer.forPlayerFleet(member.getId()));
+        ScreenPerformance.phase("exoship", () -> exoshipView.setPlayerShip(member));
+        NodeSearch shipNodeSearch = new NodeSearch(member.getHullSpec().getHullSize());
+        this.nodeSearch = shipNodeSearch;
+        this.searchBar = new CanvasSearchBar(nodeSearch, Translation.text("ui.search.placeholder"), this::jumpToNextSearchMatch);
+        TreeAllocationSession session = ScreenPerformance.phase("tree session",
+                () -> new TreeAllocationSession(member, variant, refitButton, shipNodeSearch));
+        this.treeSession = session;
+        this.decorations = ScreenPerformance.phase("decorations",
+                () -> ShipTreeDecorations.forActiveTree(session::isLocked, session::isConcealed));
+        this.nodeDrawer = ScreenPerformance.phase("node drawer", () -> SkillTreeNodeDrawer.attachedTo(session, member, panelStyle, shipNodeSearch));
+        this.templateUi = ScreenPerformance.phase("templates", () -> new SkillTreeTemplateController(member, session, panelStyle));
+        SkillTreeStatPanel shipStatPanel = ScreenPerformance.phase("stat panel", () -> new SkillTreeStatPanel(member, variant, panelStyle));
+        this.statPanel = shipStatPanel;
+        this.hyperspaceMode = ShipHyperspace.mode(camera, statPanel, treeSession);
         this.socketPlacement = new SocketPlacement(hostPanel, treeSession, nodeSearch, searchBar);
         this.schematicButtons = new SchematicButtons(new LogisticsSlots(member.getId()),
                 new IntegrationResetButton(member.getId(), treeSession::refreshAfterIntegrationReset));
-        this.chrome = new SkillTreeChrome(member, panelStyle, statPanel, searchBar, templateUi, socketPlacement, schematicButtons, shipCardHeight);
+        this.chrome = ScreenPerformance.phase("chrome", () -> new SkillTreeChrome(member, panelStyle, shipStatPanel, searchBar, templateUi,
+                socketPlacement, schematicButtons, shipCardHeight));
         this.shipList = new FleetShipList(hostPanel, shipCardHeight, shipSwitcher);
         this.refitButton = refitButton;
 
@@ -110,6 +128,11 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             camera.jumpZoomTo(SmoothZoom.MIN_ZOOM);
             camera.centreOn(startingRoot.getOffsetX(), startingRoot.getOffsetY());
         }
+    }
+
+    @Override
+    public CanvasCamera camera() {
+        return camera;
     }
 
     @Override
@@ -192,6 +215,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         nodeDrawer.advance(amount);
         refreshSocketedRadiusRing();
         radiusRingRenderer.advance(amount);
+        infestationEffects.advance(amount);
         camera.applyStartingRootFollow(treeSession, followingStartingRoot);
         CanvasMode mode = mode();
         dropStaleGesture(mode);
@@ -233,11 +257,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void dropStaleGesture(CanvasMode mode) {
-        if (gesture.isStaleIn(mode)) {
-            if (gesture.isPanning()) {
-                camera.stopDrag();
-            }
-            gesture.clear();
+        if (drag.dropIfStaleIn(mode)) {
             treeSession.cancelIntegrationHold();
         }
     }
@@ -256,19 +276,10 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private void handleEvent(InputEventAPI event) {
         CanvasMode mode = mode();
         dropStaleGesture(mode);
-        boolean escapeUp = event.isKeyUpEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE;
         if (event.isMouseMoveEvent()) {
             handleMouseMove(event);
-        } else if (escapeUp && (swallowEscapeUp || socketPlacement.isEngaged())) {
-            swallowEscapeUp = false;
-            event.consume();
-        } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE && shipList.isOpen()) {
-            shipList.close();
-            consume(event);
-        } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE && escape(mode)) {
-            consume(event);
-        } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE && mode != CanvasMode.MODAL && statPanel.collapse()) {
-            consume(event);
+        } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
+            handleEscapeKey(event, mode);
         } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_F2 && openHoveredItemCodex(mode)) {
             event.consume();
         } else if (isOpenShortcut(event) && closesOnOpenShortcut(mode)) {
@@ -313,7 +324,40 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         return socketed != null && ItemCodex.open(socketed.definitionId());
     }
 
-    private boolean escape(CanvasMode mode) {
+    private void handleEscapeKey(InputEventAPI event, CanvasMode mode) {
+        if (event.isKeyDownEvent() && !escapeTopmost(mode) && refitButton != null) {
+            refitButton.closePanel();
+        }
+        event.consume();
+    }
+
+    private boolean escapeTopmost(CanvasMode mode) {
+        if (shipList.isOpen()) {
+            shipList.close();
+            return true;
+        }
+        if (performEscapeAction(mode)) {
+            return true;
+        }
+        if (mode == CanvasMode.MODAL) {
+            escapeModal();
+            return true;
+        }
+        if (statPanel.collapse()) {
+            return true;
+        }
+        return (mode == CanvasMode.TREE || mode == CanvasMode.EXOSHIP_VIEW) && searchBar.escape();
+    }
+
+    private void escapeModal() {
+        if (schematicButtons.isDialogBlocking()) {
+            schematicButtons.escape();
+        } else {
+            templateUi.escape();
+        }
+    }
+
+    private boolean performEscapeAction(CanvasMode mode) {
         EscapeAction action = EscapeAction.resolve(mode, socketPlacement.isEngaged(), treeSession.isChoicePickerOpen(),
                 templateUi.isPlanning() && !searchBar.isFocused());
         switch (action) {
@@ -332,18 +376,18 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         mouseX = event.getX();
         mouseY = event.getY();
         mouseKnown = true;
-        if (gesture.moveTo(mouseX, mouseY)) {
+        CanvasDrag.Move move = drag.pointerMoved(mouseX, mouseY, event.getDX(), event.getDY());
+        if (move == CanvasDrag.Move.STARTED_PANNING) {
             treeSession.cancelIntegrationHold();
-            camera.startDrag();
-            camera.dragBy(mouseX - gesture.pressX(), mouseY - gesture.pressY());
-            event.consume();
-        } else if (camera.dragBy(event.getDX(), event.getDY())) {
+        }
+        if (move != CanvasDrag.Move.NONE) {
             event.consume();
         }
     }
 
     private void handleRootChoiceEvent(InputEventAPI event, CanvasMode mode) {
         if (event.isLMBDownEvent() && canvasPosition.containsEvent(event)) {
+            treeSession.hurryStartingRootFlight();
             if (!chrome.press(canvasPosition, mode, event.getX(), event.getY())) {
                 pressTarget(mode, nodeDrawer.findNodeAt(layers(), event.getX(), event.getY()), event, false);
             }
@@ -373,7 +417,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         } else if (event.isKeyboardEvent()) {
             templateUi.handleKey(event);
         }
-        consume(event);
+        event.consume();
     }
 
     private void handleCraftingBenchEvent(InputEventAPI event, CanvasMode mode) {
@@ -381,7 +425,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             if (event.isLMBDownEvent()) {
                 chrome.press(canvasPosition, mode, event.getX(), event.getY());
             }
-            consume(event);
+            event.consume();
         }
     }
 
@@ -390,8 +434,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             return;
         }
         stopFollowing();
-        gesture.clear();
-        camera.stopDrag();
+        drag.release();
         treeSession.closeChoicePicker();
         exoshipView.enter();
         camera.startFollowing(exoshipView.fitZoom(canvasPosition));
@@ -420,15 +463,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         } else if (event.isMouseScrollEvent() && canvasPosition.containsEvent(event)) {
             handleMouseScroll(event, mode);
         } else if (event.isKeyboardEvent() && searchBar.handleKey(event)) {
-            consume(event);
+            event.consume();
         }
-    }
-
-    private void consume(InputEventAPI event) {
-        if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
-            swallowEscapeUp = true;
-        }
-        event.consume();
     }
 
     private boolean travelledThroughWormholeAt(CanvasMode mode, float x, float y) {
@@ -461,8 +497,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         } else {
             Object target = treeTargetAt(x, y);
             if (!pressTarget(mode, target, event, true)) {
-                gesture.pressPan(mode, x, y);
-                camera.startDrag();
+                drag.pressPan(mode, x, y);
             } else if (target instanceof SkillNode pressedNode && !event.isCtrlDown() && !event.isShiftDown()) {
                 treeSession.beginIntegrationHold(pressedNode);
             }
@@ -603,15 +638,16 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             refreshRadiusRing(layers, treeHovered);
             radiusRingRenderer.renderSocketed(layers);
             radiusRingRenderer.render(layers);
+            infestationEffects.renderUnderNodes(layers);
             nodeDrawer.render(layers, mouseX, mouseY, treeHovered);
+            infestationEffects.renderOverNodes(layers);
         }
         fleetRenderer.render(viewport, backgroundAlpha * treeAlpha * exoshipFade);
         float shipAlpha = backgroundAlpha + (alphaMult * treeSession.treeAlpha() - backgroundAlpha) * exoshipView.viewLevel();
         exoshipView.render(viewport, shipAlpha * treeAlpha);
         decorations.renderOverTree(decorationScene);
         if (craftingBenchDimProgress > 0f) {
-            GLDraw.fillQuad(canvasPosition.getX(), canvasPosition.getY(), canvasPosition.getWidth(), canvasPosition.getHeight(), Color.BLACK,
-                    CRAFTING_BENCH_DIM_ALPHA * craftingBenchDimProgress * alphaMult);
+            GLDraw.fillQuad(canvasPosition, Color.BLACK, CRAFTING_BENCH_DIM_ALPHA * craftingBenchDimProgress * alphaMult);
         }
         if (hyperspaceMode.isActive()) {
             hyperspaceMode.render(viewport, alphaMult, pointerOverTree, mouseX, mouseY);
@@ -636,6 +672,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             footprint = socketPlacement.hoveredStorageFootprint();
         }
         SkillNode centre = footprint == null ? null : SkillTree.get(footprint.centreNodeId());
+        if (centre != null && shownInfestation != null && shownInfestation.scene().socket() == centre) {
+            centre = null;
+        }
         if (centre != null) {
             radiusRingRenderer.setHighlightedRadius(centre, footprint.size());
             hoverRingShown = true;
@@ -646,10 +685,24 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void refreshSocketedRadiusRing() {
+        InfestedDoctrine infestation = refreshInfestation();
         SubroutineRadius.Footprint footprint = treeSession.socketedRadiusFootprint();
-        SkillNode centre = footprint == null ? null : SkillTree.get(footprint.centreNodeId());
+        boolean infestationDrawsTheRim = infestation != null && footprint != null
+                && infestation.scene().socket().getId().equals(footprint.centreNodeId());
+        SkillNode centre = footprint == null || infestationDrawsTheRim ? null : SkillTree.get(footprint.centreNodeId());
         Color factionColor = footprint == null ? null : DoctrineColors.forFaction(footprint.factionId());
         radiusRingRenderer.setSocketedRadius(centre, footprint == null ? null : footprint.size(), factionColor);
+    }
+
+    private InfestedDoctrine refreshInfestation() {
+        DoctrineLayer doctrineLayer = treeSession.doctrineLayer();
+        if (doctrineLayer != shownInfestationLayer) {
+            shownInfestationLayer = doctrineLayer;
+            shownInfestation = InfestedDoctrine.of(doctrineLayer);
+            infestationEffects.show(shownInfestation == null ? null : shownInfestation.look(),
+                    shownInfestation == null ? null : shownInfestation.scene());
+        }
+        return shownInfestation;
     }
 
     private SubroutineRadius.Footprint socketFootprint(SkillNode socket) {

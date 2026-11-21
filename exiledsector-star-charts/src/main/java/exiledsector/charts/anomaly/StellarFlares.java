@@ -1,18 +1,30 @@
 package exiledsector.charts.anomaly;
 
+import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
+import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.impl.campaign.terrain.StarCoronaTerrainPlugin;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.charts.anomaly.stellarflares.FlareTempo;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.charts.atlas.AtlasState;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.layout.ChartLayoutGenerator;
+import exiledsector.charts.run.ChartRuns;
+import exiledsector.items.ItemData;
+import exiledsector.items.modifier.LuckyRolls;
+import exiledsector.items.modifier.RolledModifier;
 
-public final class StellarFlares implements LayoutShaper, AtlasRule {
+import java.util.List;
+import java.util.function.Predicate;
+
+public final class StellarFlares implements LayoutShaper, ContentPlacer, AtlasRule, LootShaper {
 
     public static final String ANOMALY_ID = "stellar_flares";
     public static final StellarFlares INSTANCE = new StellarFlares();
+    public static final String FLARE_FREQUENCY_KEY = ChartModifier.CHART_STELLAR_FLARES_FLARE_FREQUENCY_MULT.anomalyTuningKey();
     static final float FLARE_CHANCE = 1f;
 
     private StellarFlares() {
@@ -36,6 +48,28 @@ public final class StellarFlares implements LayoutShaper, AtlasRule {
         for (PlanetAPI star : site.stars()) {
             setFlareChance(star, FLARE_CHANCE);
         }
+    }
+
+    @Override
+    public void generate(AnomalyContentSite site) {
+        float moreOftenPercent = site.context().anomalyPercent(FLARE_FREQUENCY_KEY);
+        if (moreOftenPercent <= 0f) {
+            return;
+        }
+        List<PlanetAPI> stars = site.system().getPlanets().stream().filter(PlanetAPI::isStar).toList();
+        if (!stars.isEmpty()) {
+            site.addScript(new FlareTempo(site.runId(), site.tier(), site.system(), stars, moreOftenPercent));
+        }
+    }
+
+    @Override
+    public ItemData shapeDrop(SectorAPI sector, ItemData item, LocationAPI location) {
+        return shapeDrop(sector, item, location, rolled -> false);
+    }
+
+    @Override
+    public ItemData shapeDrop(SectorAPI sector, ItemData item, LocationAPI location, Predicate<RolledModifier> alreadyLucky) {
+        return LuckyRolls.withLuck(item, FlareLuck.dropLuck(ChartRuns.liveIn(location)), alreadyLucky);
     }
 
     public static void setFlareChance(PlanetAPI star, float chance) {

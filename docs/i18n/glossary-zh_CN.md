@@ -57,6 +57,7 @@ The zh_CN catalogue was drafted by Claude and still needs review by a native spe
 |---|---|---|
 | Exiled Sector | Exiled Sector | The mod name is kept in English |
 | Skill tree | 技能树 | |
+| Atlas Tree / Atlas Skill Point | 星图册技能树 / 星图册技能点 | The save-wide tree on the Outer Reach Atlas (外缘星图册) |
 | Node | 节点 | |
 | Notable / keystone | 重要节点 / 基石节点 | |
 | Root (where a ship's tree starts) | 起点 | |
@@ -75,8 +76,14 @@ The zh_CN catalogue was drafted by Claude and still needs review by a native spe
 | Nanite Feedstock / disassemble | 纳米原料 / 拆解 | What disassembling a hull item gives |
 | Crafting Bench | 制作台 | The panel for growing materials and modifying hull items and Star Charts |
 | Augmentation / Tuning / Fundamental / Reshaping / Metamorph / Immutable / Annulment / Corrupted Nanoswarm | 增幅 / 调校 / 本源 / 重塑 / 变形 / 恒固 / 废除 / 腐化纳米群 | Crafting materials that change a hull item's modifiers |
+| Adaptive Reforge / Biome Graft | 适应重铸 / 星域嫁接 | Infused crafts that add a biome (星域) modifier to a hull item |
+| Biome Infusion / Abyssal Infusion | 星域注入 / 深渊注入 | Derelict Forge and Abyssal Research Complex programs that add a biome modifier |
+| Threat- / Shroud- / Phase-infused Feedstock / infused craft | 威胁 / 幽影 / 相位灌注原料 / 灌注制作 | Supply Convoy cargo spent on infused crafts |
 | Prefix / Suffix Inhibitor | 前缀 / 后缀抑制程序 | Crafting materials that protect one affix side |
 | Erasure Cipher | 抹除密码 | Removes every modifier from a Star Chart |
+| Overcharged (modifier) | 超载 | A modifier rolled past its top roll; kept apart from 过载 (overloaded) |
+| Warped | 扭曲 | A hull item modifier from another section's pool, found in a Spatial Breach |
+| Lucky (modifier) | 幸运 | A modifier rolled twice, keeping the best, from Stellar Flares |
 | Grow | 培育 | Making a crafting material from Nanite Feedstock |
 | Escort | 护航 | |
 | Refraction / refract | 折射 | Refracting Projectiles' shots, matching its name 折射弹体 |

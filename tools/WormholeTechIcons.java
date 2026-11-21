@@ -16,14 +16,14 @@ import java.util.Map;
 
 public final class WormholeTechIcons {
 
-    private static final String DEFAULT_SOURCE = "graphics/unused/wormhole_tech_item_source.png";
+    private static final String DEFAULT_SOURCE = "art/unused/wormhole_tech_item_source.png";
     private static final String DEFAULT_SHEET_DIR = "docs/plans/art_options";
-    private static final String CARGO_DIR = "graphics/icons/cargo";
-    private static final String TECH_DIR = "graphics/icons/tech";
-    private static final List<String> ITEM_FILES = List.of("exiledSector_wormhole_blueprint.png", "exiledSector_gateway_upgrade_advanced.png",
-            "exiledSector_gateway_upgrade_perfected.png");
-    private static final List<String> TREE_FILES = List.of("exiledSector_wormhole_gateway.png", "exiledSector_wormhole_gateway_advanced.png",
-            "exiledSector_wormhole_gateway_perfected.png");
+    private static final String CARGO_DIR = "graphics/exiledSector/items/gateway";
+    private static final String TECH_DIR = "graphics/exiledSector/colony/tech";
+    private static final List<String> ITEM_FILES = List.of("wormhole_blueprint.png", "gateway_upgrade_advanced.png",
+            "gateway_upgrade_perfected.png");
+    private static final List<String> TREE_FILES = List.of("wormhole_gateway.png", "wormhole_gateway_advanced.png",
+            "wormhole_gateway_perfected.png");
     private static final List<Color> TIER_COLOURS = List.of(new Color(235, 240, 250), new Color(255, 205, 70), new Color(255, 80, 70));
     private static final List<String> TIER_NAMES = List.of("white (blueprint)", "yellow (Advanced)", "red (Perfected)");
     private static final int TREE_SIZE = 320;

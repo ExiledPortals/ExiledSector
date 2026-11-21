@@ -32,14 +32,33 @@ describe('hull item modifiers', () => {
 
     fireEvent.click(tab('Item types'));
     const itemTypes = panel('Item types');
-    fireEvent.click(await within(itemTypes).findByText('Specialist Crew', undefined, LOAD_TIMEOUT));
+    fireEvent.click(await within(itemTypes).findByText('Crew Cybernetics', undefined, LOAD_TIMEOUT));
     expect((await within(itemTypes).findAllByText('-15 to -9', undefined, LOAD_TIMEOUT)).length).toBeGreaterThan(0);
 
     await save('Saved item_modifiers.csv');
     expect(readProjectFile(MODIFIERS_FILE)).toBe(
-      modifiersBefore.replace('CREW_LOSS_PERCENT,prefix,hull_item,CREW_LOSS_PERCENT:-15:-10,Sheltered', 'CREW_LOSS_PERCENT,prefix,hull_item,CREW_LOSS_PERCENT:-15:-9,Sheltered'),
+      modifiersBefore.replace('CREW_LOSS_PERCENT,prefix,hull_item,CREW_LOSS_PERCENT:-15:-10,Subdermal', 'CREW_LOSS_PERCENT,prefix,hull_item,CREW_LOSS_PERCENT:-15:-9,Subdermal'),
     );
     expect(readProjectFile(HULL_ITEMS_FILE)).toBe(hullItemsBefore);
+  }, 90000);
+
+  it('edits the tags of a modifier and saves them in a new tags column', async () => {
+    const modifiersBefore = readProjectFile(MODIFIERS_FILE);
+    const modifiers = await openItems('Modifiers');
+    fireEvent.change(await findLabelled('Search modifiers', modifiers), { target: { value: 'CREW_LOSS_PERCENT' } });
+    fireEvent.click(await findLabelled('Select CREW_LOSS_PERCENT', modifiers));
+
+    const tagsInput = await findLabelled('Tags', modifiers);
+    for (const tag of ['crew', 'on_hit']) {
+      fireEvent.change(tagsInput, { target: { value: tag } });
+      fireEvent.keyDown(tagsInput, { key: 'Enter' });
+    }
+    await save('Saved item_modifiers.csv');
+
+    const savedRows = readProjectFile(MODIFIERS_FILE).split(/\r?\n/);
+    expect(savedRows[0].split(',').at(-1)).toBe('tags');
+    expect(savedRows).toContain('CREW_LOSS_PERCENT,prefix,hull_item,CREW_LOSS_PERCENT:-15:-10,Subdermal,crew;on_hit');
+    expect(savedRows.length).toBe(modifiersBefore.split(/\r?\n/).length);
   }, 90000);
 
   it('renames a modifier and its references and saves every changed file', async () => {

@@ -10,7 +10,9 @@ public final class BattleLoot {
     private final Random random;
     private final Random independentRandom;
     private final Map<Object, Object> states = new IdentityHashMap<>();
+    private final FleetLossTally losses = new FleetLossTally();
     private boolean playerWon;
+    private boolean unfought;
     private EncounterSalvage encounterSalvage = EncounterSalvage.FULL;
 
     public BattleLoot(Random random, Random independentRandom) {
@@ -24,6 +26,14 @@ public final class BattleLoot {
 
     public void setPlayerWon(boolean playerWon) {
         this.playerWon = playerWon;
+    }
+
+    public boolean unfought() {
+        return unfought;
+    }
+
+    public void markUnfought() {
+        unfought = true;
     }
 
     public EncounterSalvage encounterSalvage() {
@@ -40,6 +50,10 @@ public final class BattleLoot {
 
     public Random independentRandom() {
         return independentRandom;
+    }
+
+    public FleetLossTally losses() {
+        return losses;
     }
 
     // each key is only ever stored with the one type its supplier creates

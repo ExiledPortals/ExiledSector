@@ -1,9 +1,10 @@
 package exiledsector.ui.cargo;
 
-import exiledsector.items.Nanoswarm;
-import exiledsector.items.CraftingInhibitor;
-import exiledsector.items.ItemDisassembly;
-import exiledsector.items.MaterialTier;
+import exiledsector.items.crafting.ItemDisassembly;
+import exiledsector.items.crafting.material.CraftingInhibitor;
+import exiledsector.items.crafting.material.MaterialItems;
+import exiledsector.items.crafting.material.MaterialTier;
+import exiledsector.items.crafting.material.Nanoswarm;
 import org.junit.jupiter.api.Test;
 
 import java.awt.Color;
@@ -66,24 +67,35 @@ class CargoIconFxTest {
     @Test
     void looksGetLouderWithEachTier() {
         Color color = Color.CYAN;
-        CargoIconLook basic = CargoIconLooks.forMaterial(MaterialTier.BASIC, color);
-        CargoIconLook minor = CargoIconLooks.forMaterial(MaterialTier.MINOR, color);
-        CargoIconLook major = CargoIconLooks.forMaterial(MaterialTier.MAJOR, color);
-        CargoIconLook exotic = CargoIconLooks.forMaterial(MaterialTier.EXOTIC, color);
+        CargoIconLook common = CargoIconLooks.forMaterial(MaterialTier.COMMON, color);
+        CargoIconLook rare = CargoIconLooks.forMaterial(MaterialTier.RARE, color);
+        CargoIconLook unique = CargoIconLooks.forMaterial(MaterialTier.UNIQUE, color);
         CargoIconLook mythic = CargoIconLooks.forMaterial(MaterialTier.MYTHIC, color);
 
-        assertFalse(CargoIconLooks.celebratesDrop(basic));
-        assertTrue(CargoIconLooks.celebratesDrop(minor));
-        assertTrue(minor.glow() < major.glow() && major.glow() < exotic.glow() && exotic.glow() < mythic.glow());
-        assertFalse(minor.rings());
-        assertTrue(major.rings() && !major.arcs());
-        assertTrue(exotic.arcs() && exotic.heartbeat() && !exotic.prismatic());
+        assertTrue(CargoIconLooks.celebratesDrop(common));
+        assertTrue(common.glow() < rare.glow() && rare.glow() < unique.glow() && unique.glow() < mythic.glow());
+        assertFalse(common.rings());
+        assertTrue(rare.rings() && !rare.arcs());
+        assertTrue(unique.arcs() && unique.heartbeat() && !unique.prismatic());
         assertTrue(mythic.prismatic());
     }
 
     @Test
+    void feedstockAnimatesLikeAugmentationInItsOwnColour() {
+        CargoIconLook feedstock = CargoIconLooks.forMaterial(ItemDisassembly.FEEDSTOCK_ITEM_ID);
+        CargoIconLook augmentation = CargoIconLooks.forMaterial(Nanoswarm.AUGMENTATION.itemId());
+
+        assertEquals(augmentation.glow(), feedstock.glow());
+        assertEquals(augmentation.swarm(), feedstock.swarm());
+        assertEquals(augmentation.rings(), feedstock.rings());
+        assertEquals(augmentation.prismatic(), feedstock.prismatic());
+        assertEquals(MaterialItems.color(ItemDisassembly.FEEDSTOCK_ITEM_ID), feedstock.color());
+    }
+
+    @Test
     void eachMaterialGetsItsOwnSwarmMotion() {
-        assertEquals(SwarmMotion.SLURRY, CargoIconLooks.swarmFor(ItemDisassembly.FEEDSTOCK_ITEM_ID));
+        assertEquals(SwarmMotion.ORBIT, CargoIconLooks.swarmFor(ItemDisassembly.FEEDSTOCK_ITEM_ID));
+        assertEquals(SwarmMotion.SLURRY, CargoIconLooks.swarmFor("unknown_material"));
         assertEquals(SwarmMotion.ORBIT, CargoIconLooks.swarmFor(Nanoswarm.AUGMENTATION.itemId()));
         assertEquals(SwarmMotion.FERAL, CargoIconLooks.swarmFor(Nanoswarm.CORRUPTION.itemId()));
         assertEquals(SwarmMotion.REPLICATING, CargoIconLooks.swarmFor(Nanoswarm.REPLICATION.itemId()));
@@ -94,15 +106,15 @@ class CargoIconFxTest {
     @Test
     void busierAndFasterSwarmsAtHigherTiers() {
         Color color = Color.CYAN;
-        CargoIconLook minor = CargoIconLooks.forMaterial(MaterialTier.MINOR, color);
-        CargoIconLook major = CargoIconLooks.forMaterial(MaterialTier.MAJOR, color);
-        CargoIconLook exotic = CargoIconLooks.forMaterial(MaterialTier.EXOTIC, color);
+        CargoIconLook common = CargoIconLooks.forMaterial(MaterialTier.COMMON, color);
+        CargoIconLook rare = CargoIconLooks.forMaterial(MaterialTier.RARE, color);
+        CargoIconLook unique = CargoIconLooks.forMaterial(MaterialTier.UNIQUE, color);
         CargoIconLook mythic = CargoIconLooks.forMaterial(MaterialTier.MYTHIC, color);
 
-        assertTrue(CargoIconFx.speckCount(minor) < CargoIconFx.speckCount(major));
-        assertTrue(CargoIconFx.speckCount(major) < CargoIconFx.speckCount(exotic));
-        assertTrue(CargoIconFx.speckCount(exotic) < CargoIconFx.speckCount(mythic));
-        assertTrue(CargoIconFx.swarmSpeed(minor) < CargoIconFx.swarmSpeed(mythic));
+        assertTrue(CargoIconFx.speckCount(common) < CargoIconFx.speckCount(rare));
+        assertTrue(CargoIconFx.speckCount(rare) < CargoIconFx.speckCount(unique));
+        assertTrue(CargoIconFx.speckCount(unique) < CargoIconFx.speckCount(mythic));
+        assertTrue(CargoIconFx.swarmSpeed(common) < CargoIconFx.swarmSpeed(mythic));
     }
 
     @Test
@@ -116,10 +128,11 @@ class CargoIconFxTest {
     @Test
     void dropAnnouncementsUseTheRarestMaterialFound() {
         assertNull(MaterialDropAnnouncer.bestTier(Map.of()));
-        assertEquals(MaterialTier.BASIC, MaterialDropAnnouncer.bestTier(Map.of(ItemDisassembly.FEEDSTOCK_ITEM_ID, 4)));
-        assertEquals(MaterialTier.EXOTIC, MaterialDropAnnouncer.bestTier(Map.of(ItemDisassembly.FEEDSTOCK_ITEM_ID, 4,
-                Nanoswarm.CORRUPTION.itemId(), 1, Nanoswarm.AUGMENTATION.itemId(), 1)));
+        assertEquals(MaterialTier.COMMON, MaterialDropAnnouncer.bestTier(Map.of(ItemDisassembly.FEEDSTOCK_ITEM_ID, 4)));
+        assertEquals(MaterialTier.UNIQUE, MaterialDropAnnouncer.bestTier(Map.of(ItemDisassembly.FEEDSTOCK_ITEM_ID, 4,
+                Nanoswarm.TUNING.itemId(), 1, Nanoswarm.CORRUPTION.itemId(), 1, Nanoswarm.AUGMENTATION.itemId(), 1)));
         assertTrue(MaterialTier.MYTHIC.announced());
-        assertFalse(MaterialTier.MAJOR.announced());
+        assertTrue(MaterialTier.UNIQUE.announced());
+        assertFalse(MaterialTier.RARE.announced());
     }
 }

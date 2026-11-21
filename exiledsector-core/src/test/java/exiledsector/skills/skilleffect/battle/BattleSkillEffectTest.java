@@ -3,7 +3,6 @@ package exiledsector.skills.skilleffect.battle;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
-import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -11,11 +10,10 @@ import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
-import org.junit.jupiter.api.AfterEach;
+import exiledsector.skills.skilleffect.CombatEngineExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -26,7 +24,8 @@ class BattleSkillEffectTest {
 
     private static final float EPSILON = 1e-4f;
 
-    private MockedStatic<Global> globalMock;
+    @RegisterExtension
+    final CombatEngineExtension combat = new CombatEngineExtension();
 
     private SettingsAPI settings;
 
@@ -39,20 +38,12 @@ class BattleSkillEffectTest {
     @BeforeEach
     void setUp() {
         settings = mock(SettingsAPI.class);
-        CombatEngineAPI engine = mock(CombatEngineAPI.class);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSettings).thenReturn(settings);
-        globalMock.when(Global::getCombatEngine).thenReturn(engine);
+        combat.global().when(Global::getSettings).thenReturn(settings);
         stats = mock(MutableShipStatsAPI.class);
         dynamic = mock(DynamicStatsAPI.class);
         ship = mock(ShipAPI.class);
         when(stats.getDynamic()).thenReturn(dynamic);
         when(ship.getMutableStats()).thenReturn(stats);
-    }
-
-    @AfterEach
-    void tearDown() {
-        globalMock.close();
     }
 
     private StatBonus realDynamicMod(String key) {

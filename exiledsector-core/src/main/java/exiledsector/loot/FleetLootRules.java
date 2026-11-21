@@ -1,41 +1,44 @@
 package exiledsector.loot;
 
-public record FleetLootRules(Rates rates, boolean sourceRollsMaterials, LootMultipliers multipliers, float deploymentPointsMult) {
+public record FleetLootRules(Kind kind, LootMultipliers multipliers, boolean overchargesHullItems) {
 
-    public enum Rates {
-        REGULAR,
-        FULL,
+    public enum Kind {
+        LEVEL_SCALED,
+        OWN_LEDGER,
         FEEDSTOCK_ONLY,
-        NONE
+        SPENT;
+
+        public float itemShare(float levelScaledShare) {
+            return switch (this) {
+                case LEVEL_SCALED -> levelScaledShare;
+                case OWN_LEDGER -> 1f;
+                case FEEDSTOCK_ONLY, SPENT -> 0f;
+            };
+        }
+
+        public boolean rollsBattleCraftingItems() {
+            return this == LEVEL_SCALED;
+        }
     }
 
-    public static final FleetLootRules REGULAR = new FleetLootRules(Rates.REGULAR, false, LootMultipliers.NONE, 1f);
-    public static final FleetLootRules FEEDSTOCK_ONLY = new FleetLootRules(Rates.FEEDSTOCK_ONLY, false, LootMultipliers.NONE, 1f);
-    public static final FleetLootRules NONE = new FleetLootRules(Rates.NONE, false, LootMultipliers.NONE, 1f);
+    public static final FleetLootRules LEVEL_SCALED = new FleetLootRules(Kind.LEVEL_SCALED, LootMultipliers.NONE, false);
+    public static final FleetLootRules FEEDSTOCK_ONLY = new FleetLootRules(Kind.FEEDSTOCK_ONLY, LootMultipliers.NONE, false);
+    public static final FleetLootRules SPENT = new FleetLootRules(Kind.SPENT, LootMultipliers.NONE, false);
 
     public FleetLootRules {
-        rates = rates == null ? Rates.REGULAR : rates;
+        kind = kind == null ? Kind.LEVEL_SCALED : kind;
         multipliers = multipliers == null ? LootMultipliers.NONE : multipliers;
-        deploymentPointsMult = Math.max(0f, deploymentPointsMult);
     }
 
-    public static FleetLootRules full(LootMultipliers multipliers) {
-        return new FleetLootRules(Rates.FULL, false, multipliers, 1f);
+    public static FleetLootRules ownLedger(LootMultipliers multipliers) {
+        return new FleetLootRules(Kind.OWN_LEDGER, multipliers, false);
     }
 
-    public float share(BattleLootRates.Rate rate) {
-        return switch (rates) {
-            case FULL -> 1f;
-            case REGULAR -> rate.regularShare();
-            case FEEDSTOCK_ONLY, NONE -> 0f;
-        };
+    public FleetLootRules overchargingHullItems() {
+        return new FleetLootRules(kind, multipliers, true);
     }
 
-    public boolean feedstockOnly() {
-        return rates == Rates.FEEDSTOCK_ONLY;
-    }
-
-    public boolean paysNothing() {
-        return rates == Rates.NONE;
+    public float itemShare(float levelScaledShare) {
+        return kind.itemShare(levelScaledShare);
     }
 }

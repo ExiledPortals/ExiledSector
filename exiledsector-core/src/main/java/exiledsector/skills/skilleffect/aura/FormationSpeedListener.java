@@ -7,6 +7,7 @@ import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.ScaledBonus;
 import exiledsector.skills.skilleffect.ShipCombatListener;
 import exiledsector.skills.skilleffect.StatTarget;
+import exiledsector.skills.skilleffect.TickTimer;
 
 final class FormationSpeedListener extends ShipCombatListener implements AdvanceableListener {
 
@@ -18,7 +19,7 @@ final class FormationSpeedListener extends ShipCombatListener implements Advance
     private static final ScaledBonus FORMATION_SPEED = new ScaledBonus(ScaledBonus.percent(StatTarget.liveStat(MutableShipStatsAPI::getMaxSpeed)));
 
     private final ScaledBonus.Tracker formationSpeed = FORMATION_SPEED.tracker();
-    private float secondsSinceScan = SCAN_INTERVAL_SECONDS;
+    private final TickTimer scanTimer = TickTimer.dueOnFirstAdvance(SCAN_INTERVAL_SECONDS);
 
     FormationSpeedListener(ShipAPI ownerShip) {
         super(ownerShip, MOD_ID_PREFIX);
@@ -30,11 +31,9 @@ final class FormationSpeedListener extends ShipCombatListener implements Advance
 
     @Override
     public void advance(float amount) {
-        secondsSinceScan += amount;
-        if (secondsSinceScan < SCAN_INTERVAL_SECONDS) {
+        if (!scanTimer.advance(amount)) {
             return;
         }
-        secondsSinceScan = 0f;
         int nearbyAllies = ownerIsAliveNotHulk() ? CombatQueries.shipsWithin(ownerShip.getLocation(), RANGE, this::isFormationAlly).size() : 0;
         formationSpeed.apply(ownerShip.getMutableStats(), modId, speedPercent(magnitude(SPEED_PERCENT_PER_ALLY_KEY), nearbyAllies));
     }

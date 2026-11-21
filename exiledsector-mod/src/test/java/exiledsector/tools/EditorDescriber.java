@@ -8,9 +8,11 @@ import exiledsector.i18n.LocaleChain;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.effect.ChartEffects;
+import exiledsector.charts.tree.AtlasTreeData;
+import exiledsector.charts.tree.AtlasTreeType;
 import exiledsector.items.ItemEffects;
 import exiledsector.items.ItemType;
-import exiledsector.items.RolledLine;
+import exiledsector.items.modifier.RolledLine;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.TierGroup;
@@ -21,6 +23,7 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.loader.SkillTypeLoader;
+import exiledsector.ui.atlas.AtlasTreeNodeText;
 import org.json.CDL;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -64,12 +67,48 @@ public final class EditorDescriber {
         if (modifierLines != null) {
             return describeModifierLines(modifierLines);
         }
+        JSONObject atlasTypes = request.optJSONObject("atlasTypes");
+        if (atlasTypes != null) {
+            return describeEveryAtlasType(atlasTypes);
+        }
         registerTypes(request.getJSONObject("types"));
+        JSONArray hullSizes = request.optJSONArray("hullSizes");
+        if (hullSizes != null) {
+            return describeEveryType(hullSizes);
+        }
         SkillType type = SkillTree.getType(request.getString("typeId"));
         if (type == null) {
             return new JSONObject().put("error", "Unknown or invalid type \"" + request.getString("typeId") + "\"");
         }
         HullSize hullSize = request.isNull("hullSize") ? null : HullSize.valueOf(request.getString("hullSize"));
+        return describeType(type, hullSize);
+    }
+
+    private static JSONObject describeEveryType(JSONArray hullSizeNames) throws JSONException {
+        List<HullSize> hullSizes = new ArrayList<>();
+        for (int index = 0; index < hullSizeNames.length(); index++) {
+            hullSizes.add(HullSize.valueOf(hullSizeNames.getString(index)));
+        }
+        JSONObject descriptions = new JSONObject();
+        for (SkillType type : SkillTree.getAllTypes().values()) {
+            JSONObject byHullSize = new JSONObject();
+            for (HullSize hullSize : hullSizes) {
+                byHullSize.put(hullSize.name(), describeTypeOrError(type, hullSize));
+            }
+            descriptions.put(type.getId(), byHullSize);
+        }
+        return new JSONObject().put("descriptions", descriptions);
+    }
+
+    private static JSONObject describeTypeOrError(SkillType type, HullSize hullSize) throws JSONException {
+        try {
+            return describeType(type, hullSize);
+        } catch (JSONException | RuntimeException e) {
+            return new JSONObject().put("error", e.getMessage() == null ? "Could not describe this type" : e.getMessage());
+        }
+    }
+
+    private static JSONObject describeType(SkillType type, HullSize hullSize) throws JSONException {
         boolean choiceHint = type.isChoice() && type.getFlavourText() == null;
         NodeDescription description = choiceHint
                 ? new NodeDescription(List.of(new DescriptionLine(Translation.styled("ui.node.choiceHint"), false)), List.of())
@@ -87,6 +126,31 @@ public final class EditorDescriber {
                 .put("effects", markup(description.effects()))
                 .put("details", markup(description.details()))
                 .put("expandHint", Translation.text("ui.tooltip.expandHint"));
+    }
+
+    private static JSONObject describeEveryAtlasType(JSONObject typesJson) throws JSONException {
+        JSONObject descriptions = new JSONObject();
+        for (AtlasTreeType type : AtlasTreeData.parseTypes(typesJson).values()) {
+            descriptions.put(type.id(), describeAtlasTypeOrError(type));
+        }
+        return new JSONObject().put("descriptions", descriptions);
+    }
+
+    private static JSONObject describeAtlasTypeOrError(AtlasTreeType type) throws JSONException {
+        try {
+            JSONArray body = new JSONArray();
+            for (StyledText line : AtlasTreeNodeText.tooltipBody(type)) {
+                body.put(line.toMarkup());
+            }
+            return new JSONObject()
+                    .put("title", type.displayName())
+                    .put("flavour", JSONObject.NULL)
+                    .put("effects", body)
+                    .put("details", new JSONArray())
+                    .put("expandHint", "");
+        } catch (JSONException | RuntimeException e) {
+            return new JSONObject().put("error", e.getMessage() == null ? "Could not describe this type" : e.getMessage());
+        }
     }
 
     private static JSONObject describeModifierLines(JSONArray modifierLines) throws JSONException {

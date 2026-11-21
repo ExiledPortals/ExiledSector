@@ -2,7 +2,7 @@ package exiledsector.ui.node;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.i18n.StyledText;
-import exiledsector.items.DoctrineOverrides;
+import exiledsector.items.subroutine.doctrine.DoctrineOverrides;
 import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.LogisticsNodes;
 import exiledsector.skills.ShipSkillData;
@@ -11,6 +11,7 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
+import exiledsector.ui.SearchQuery;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -20,7 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 
-public final class NodeSearch {
+public final class NodeSearch implements SearchQuery {
 
     static final float DIM_ALPHA = 0.2f;
 
@@ -44,10 +45,12 @@ public final class NodeSearch {
         this.hullSize = hullSize;
     }
 
+    @Override
     public String getQuery() {
         return query;
     }
 
+    @Override
     public void setQuery(String query) {
         this.query = query == null ? "" : query;
         this.needle = this.query.toLowerCase(Locale.ROOT);

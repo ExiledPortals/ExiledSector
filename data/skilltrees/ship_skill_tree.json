@@ -3996,8 +3996,8 @@
 				"combat_readiness_2",
 				"affinity_154"
 			],
-			"x": 25255,
-			"y": -21208,
+			"x": 2318,
+			"y": -39358,
 			"tags": [
 				"omega",
 				"gate_omega_found"
@@ -4010,8 +4010,8 @@
 				"combat_readiness_1",
 				"disintegration_1"
 			],
-			"x": 25645,
-			"y": -21433,
+			"x": 2708,
+			"y": -39583,
 			"tags": [
 				"omega",
 				"gate_omega_found"
@@ -4023,8 +4023,8 @@
 			"connectedTo": [
 				"combat_readiness_2"
 			],
-			"x": 26035,
-			"y": -21658,
+			"x": 3098,
+			"y": -39808,
 			"tags": [
 				"omega",
 				"gate_omega_found"
@@ -4629,8 +4629,8 @@
 				"kesteven_wormhole1",
 				"nskr_criticalArmor_1"
 			],
-			"x": -24260,
-			"y": 16326,
+			"x": -30005,
+			"y": 18415,
 			"tags": [
 				"kesteven"
 			]
@@ -4642,8 +4642,8 @@
 				"nskr_criticalArmor_1",
 				"affinity_68"
 			],
-			"x": -24874,
-			"y": 16940,
+			"x": -30619,
+			"y": 19029,
 			"tags": [
 				"kesteven"
 			]
@@ -4655,8 +4655,8 @@
 				"armor_6",
 				"armor_7"
 			],
-			"x": -24339,
-			"y": 16861,
+			"x": -30084,
+			"y": 18950,
 			"tags": [
 				"kesteven"
 			]
@@ -4729,8 +4729,8 @@
 			"connectedTo": [
 				"frozen_heart_1"
 			],
-			"x": 13695,
-			"y": -25481,
+			"x": 22836,
+			"y": -30007,
 			"orbitAnchorId": "anchor_51",
 			"orbitAngle": 90,
 			"wormholeColor": "#3254fb",
@@ -4746,8 +4746,8 @@
 				"top_speed_6",
 				"top_speed_7"
 			],
-			"x": -27027,
-			"y": 16861,
+			"x": -32772,
+			"y": 18950,
 			"tags": [
 				"kesteven"
 			]
@@ -4759,8 +4759,8 @@
 				"affinity_70",
 				"nskr_volatile_1"
 			],
-			"x": -24874,
-			"y": 14094,
+			"x": -30619,
+			"y": 16183,
 			"tags": [
 				"kesteven"
 			]
@@ -4772,8 +4772,8 @@
 				"nskr_volatile_1",
 				"kesteven_wormhole1"
 			],
-			"x": -24260,
-			"y": 14708,
+			"x": -30005,
+			"y": 16797,
 			"tags": [
 				"kesteven"
 			]
@@ -4785,8 +4785,8 @@
 				"energy_weapon_flux_cost_1",
 				"energy_weapon_flux_cost_2"
 			],
-			"x": -24339,
-			"y": 14173,
+			"x": -30084,
+			"y": 16262,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#642ac9",
 			"tags": [
@@ -4802,8 +4802,8 @@
 				"weapon_durability_4",
 				"crew_capacity_6"
 			],
-			"x": 13695,
-			"y": -26685,
+			"x": 22836,
+			"y": -31211,
 			"ringBeltPath": "graphics/planets/aurorae.png",
 			"ringBeltColor": "#c2f8ff",
 			"tags": [
@@ -4818,8 +4818,8 @@
 				"crew_capacity_5",
 				"crew_capacity_7"
 			],
-			"x": 12633,
-			"y": -26680,
+			"x": 21774,
+			"y": -31206,
 			"orbitAnchorId": "anchor_56",
 			"orbitAngle": 180,
 			"tags": [
@@ -4834,8 +4834,8 @@
 				"missile_weapon_damage_6",
 				"missile_weapon_damage_8"
 			],
-			"x": 14713,
-			"y": -26679,
+			"x": 23854,
+			"y": -31205,
 			"orbitAnchorId": "anchor_19",
 			"orbitAngle": 0,
 			"tags": [
@@ -4850,8 +4850,8 @@
 				"weapon_durability_3",
 				"weapon_durability_5"
 			],
-			"x": 13690,
-			"y": -27700,
+			"x": 22831,
+			"y": -32226,
 			"orbitAnchorId": "anchor_55",
 			"orbitAngle": 270,
 			"tags": [
@@ -4866,8 +4866,8 @@
 				"shield_flux_damage_reduction_3",
 				"shield_flux_damage_reduction_4"
 			],
-			"x": -27027,
-			"y": 14173,
+			"x": -32772,
+			"y": 16262,
 			"tags": [
 				"kesteven"
 			]
@@ -4879,8 +4879,8 @@
 				"affinity_69",
 				"nskr_absorption_1"
 			],
-			"x": -27106,
-			"y": 14708,
+			"x": -32851,
+			"y": 16797,
 			"tags": [
 				"kesteven"
 			]
@@ -4892,8 +4892,8 @@
 				"affinity_68",
 				"nskr_inertial_1"
 			],
-			"x": -26492,
-			"y": 16940,
+			"x": -32237,
+			"y": 19029,
 			"tags": [
 				"kesteven"
 			]
@@ -4905,8 +4905,8 @@
 				"nskr_absorption_1",
 				"affinity_70"
 			],
-			"x": -26492,
-			"y": 14094,
+			"x": -32237,
+			"y": 16183,
 			"tags": [
 				"kesteven"
 			]
@@ -4918,8 +4918,8 @@
 				"nskr_inertial_1",
 				"affinity_69"
 			],
-			"x": -27106,
-			"y": 16326,
+			"x": -32851,
+			"y": 18415,
 			"tags": [
 				"kesteven"
 			]
@@ -4933,8 +4933,8 @@
 				"kesteven_wormhole1",
 				"top_speed_6"
 			],
-			"x": -25683,
-			"y": 16537,
+			"x": -31428,
+			"y": 18626,
 			"tags": [
 				"kesteven"
 			]
@@ -4948,8 +4948,8 @@
 				"affinity_69",
 				"energy_weapon_flux_cost_1"
 			],
-			"x": -25683,
-			"y": 14497,
+			"x": -31428,
+			"y": 16586,
 			"tags": [
 				"kesteven"
 			]
@@ -4963,8 +4963,8 @@
 				"affinity_68",
 				"energy_weapon_flux_cost_2"
 			],
-			"x": -24663,
-			"y": 15517,
+			"x": -30408,
+			"y": 17606,
 			"wormholeColor": "#fbb434",
 			"tags": [
 				"kesteven"
@@ -5097,8 +5097,8 @@
 				"missile_weapon_damage_7",
 				"live_munitions_1"
 			],
-			"x": 14533,
-			"y": -26499,
+			"x": 23674,
+			"y": -31025,
 			"orbitAnchorId": "anchor_19",
 			"orbitAngle": 90,
 			"tags": [
@@ -5114,8 +5114,8 @@
 				"frozen_heart_1",
 				"missile_weapon_damage_8"
 			],
-			"x": 14353,
-			"y": -26679,
+			"x": 23494,
+			"y": -31205,
 			"orbitAnchorId": "anchor_19",
 			"orbitAngle": 180,
 			"tags": [
@@ -5175,8 +5175,8 @@
 				"weapon_durability_4",
 				"husk_plating_1"
 			],
-			"x": 13510,
-			"y": -27520,
+			"x": 22651,
+			"y": -32046,
 			"orbitAnchorId": "anchor_55",
 			"orbitAngle": 180,
 			"tags": [
@@ -5192,8 +5192,8 @@
 				"frozen_heart_1",
 				"weapon_durability_5"
 			],
-			"x": 13690,
-			"y": -27340,
+			"x": 22831,
+			"y": -31866,
 			"orbitAnchorId": "anchor_55",
 			"orbitAngle": 90,
 			"tags": [
@@ -5208,8 +5208,8 @@
 				"all_must_serve_1",
 				"crew_capacity_6"
 			],
-			"x": 12813,
-			"y": -26860,
+			"x": 21954,
+			"y": -31386,
 			"orbitAnchorId": "anchor_56",
 			"orbitAngle": 270,
 			"tags": [
@@ -5225,8 +5225,8 @@
 				"frozen_heart_1",
 				"crew_capacity_7"
 			],
-			"x": 12993,
-			"y": -26680,
+			"x": 22134,
+			"y": -31206,
 			"orbitAnchorId": "anchor_56",
 			"orbitAngle": 0,
 			"tags": [
@@ -5375,8 +5375,8 @@
 				"top_speed_7",
 				"affinity_70"
 			],
-			"x": -26703,
-			"y": 15517,
+			"x": -32448,
+			"y": 17606,
 			"tags": [
 				"kesteven"
 			]
@@ -5431,8 +5431,8 @@
 				"crew_capacity_6",
 				"all_must_serve_1"
 			],
-			"x": 12813,
-			"y": -26500,
+			"x": 21954,
+			"y": -31026,
 			"orbitAnchorId": "anchor_56",
 			"orbitAngle": 90,
 			"tags": [
@@ -5447,8 +5447,8 @@
 				"weapon_durability_4",
 				"husk_plating_1"
 			],
-			"x": 13870,
-			"y": -27520,
+			"x": 23011,
+			"y": -32046,
 			"orbitAnchorId": "anchor_55",
 			"orbitAngle": 0,
 			"tags": [
@@ -5463,8 +5463,8 @@
 				"missile_weapon_damage_7",
 				"live_munitions_1"
 			],
-			"x": 14533,
-			"y": -26859,
+			"x": 23674,
+			"y": -31385,
 			"orbitAnchorId": "anchor_19",
 			"orbitAngle": 270,
 			"tags": [
@@ -5586,8 +5586,8 @@
 				"affinity_74",
 				"energy_weapon_fire_rate_1"
 			],
-			"x": -30008,
-			"y": -5153,
+			"x": -34796,
+			"y": -6546,
 			"tags": [
 				"nightcross",
 				"gate_pascal_visited"
@@ -5601,8 +5601,8 @@
 				"nightcross_wormhole_1",
 				"more_hull_7"
 			],
-			"x": -30008,
-			"y": -6553,
+			"x": -34796,
+			"y": -7946,
 			"tags": [
 				"nightcross",
 				"gate_pascal_visited"
@@ -5616,8 +5616,8 @@
 				"nightcross_wormhole_1",
 				"strikecraft_weapon_damage_3"
 			],
-			"x": -28968,
-			"y": -4281,
+			"x": -33756,
+			"y": -5674,
 			"tags": [
 				"nightcross",
 				"gate_pascal_visited"
@@ -5631,8 +5631,8 @@
 				"affinity_74",
 				"dynamic_grid_1"
 			],
-			"x": -28968,
-			"y": -5681,
+			"x": -33756,
+			"y": -7074,
 			"tags": [
 				"nightcross",
 				"gate_pascal_visited"
@@ -5646,8 +5646,8 @@
 				"affinity_107",
 				"energy_weapon_fire_rate_3"
 			],
-			"x": -30330,
-			"y": -5423,
+			"x": -35118,
+			"y": -6816,
 			"tags": [
 				"nightcross",
 				"gate_pascal_visited"
@@ -5660,8 +5660,8 @@
 				"energy_weapon_fire_rate_1",
 				"ion_bolter_rounds_1"
 			],
-			"x": -30738,
-			"y": -5466,
+			"x": -35526,
+			"y": -6859,
 			"tags": [
 				"nightcross",
 				"gate_pascal_visited"
@@ -5674,8 +5674,8 @@
 				"energy_weapon_fire_rate_2",
 				"energy_weapon_fire_rate_3"
 			],
-			"x": -30851,
-			"y": -5860,
+			"x": -35639,
+			"y": -7253,
 			"tags": [
 				"nightcross",
 				"gate_pascal_visited"
@@ -5689,8 +5689,8 @@
 				"strikecraft_weapon_damage_4",
 				"strikecraft_weapon_damage_5"
 			],
-			"x": -28646,
-			"y": -4011,
+			"x": -33434,
+			"y": -5404,
 			"tags": [
 				"nightcross",
 				"gate_pascal_visited"
@@ -5703,8 +5703,8 @@
 				"strikecraft_weapon_damage_3",
 				"hardlight_marking_1"
 			],
-			"x": -28534,
-			"y": -3616,
+			"x": -33322,
+			"y": -5009,
 			"tags": [
 				"nightcross",
 				"gate_pascal_visited"
@@ -5717,8 +5717,8 @@
 				"strikecraft_weapon_damage_4",
 				"strikecraft_weapon_damage_5"
 			],
-			"x": -28125,
-			"y": -3574,
+			"x": -32913,
+			"y": -4967,
 			"tags": [
 				"nightcross",
 				"gate_pascal_visited"
@@ -5730,8 +5730,8 @@
 			"connectedTo": [
 				"nightcross_wormhole_1"
 			],
-			"x": -28125,
-			"y": -4974,
+			"x": -32913,
+			"y": -6367,
 			"tags": [
 				"nightcross",
 				"gate_pascal_visited"
@@ -5745,8 +5745,8 @@
 				"maneuverability_4",
 				"affinity_108"
 			],
-			"x": 29837,
-			"y": -8169,
+			"x": 37846,
+			"y": -15655,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -5759,8 +5759,8 @@
 				"maneuverability_3",
 				"maneuverability_4"
 			],
-			"x": 29611,
-			"y": -7943,
+			"x": 37620,
+			"y": -15429,
 			"tags": [
 				"stargazer",
 				"gate_ancient_prototype_found",
@@ -5774,8 +5774,8 @@
 				"top_speed_8",
 				"candles_grace_replica_1"
 			],
-			"x": 29611,
-			"y": -8169,
+			"x": 37620,
+			"y": -15655,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -5788,8 +5788,8 @@
 				"energy_weapon_fire_rate_1",
 				"ion_bolter_rounds_1"
 			],
-			"x": -30442,
-			"y": -5818,
+			"x": -35230,
+			"y": -7211,
 			"tags": [
 				"nightcross",
 				"gate_pascal_visited"
@@ -5802,8 +5802,8 @@
 				"strikecraft_weapon_damage_3",
 				"hardlight_marking_1"
 			],
-			"x": -28238,
-			"y": -3968,
+			"x": -33026,
+			"y": -5361,
 			"tags": [
 				"nightcross",
 				"gate_pascal_visited"
@@ -5816,8 +5816,8 @@
 				"top_speed_8",
 				"candles_grace_replica_1"
 			],
-			"x": 29837,
-			"y": -7943,
+			"x": 37846,
+			"y": -15429,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -5831,8 +5831,8 @@
 				"affinity_108",
 				"ecm_resistance_3"
 			],
-			"x": 27804,
-			"y": -8776,
+			"x": 35813,
+			"y": -16262,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -5846,8 +5846,8 @@
 				"energy_weapon_fire_rate_4",
 				"affinity_157"
 			],
-			"x": 27804,
-			"y": -6176,
+			"x": 35813,
+			"y": -13662,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -5861,8 +5861,8 @@
 				"top_speed_8",
 				"affinity_157"
 			],
-			"x": 30304,
-			"y": -8776,
+			"x": 38313,
+			"y": -16262,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -5876,8 +5876,8 @@
 				"affinity_75",
 				"beautiful_nightmare_1"
 			],
-			"x": 26254,
-			"y": -7476,
+			"x": 34263,
+			"y": -14962,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -5891,8 +5891,8 @@
 				"beam_weapon_damage_8",
 				"affinity_157"
 			],
-			"x": 29637,
-			"y": -6783,
+			"x": 37646,
+			"y": -14269,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -5905,8 +5905,8 @@
 				"beam_weapon_damage_2",
 				"corrosion_beam_1"
 			],
-			"x": 29411,
-			"y": -6783,
+			"x": 37420,
+			"y": -14269,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -5919,8 +5919,8 @@
 				"beam_weapon_damage_7",
 				"beam_weapon_damage_8"
 			],
-			"x": 29411,
-			"y": -7009,
+			"x": 37420,
+			"y": -14495,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -5934,8 +5934,8 @@
 				"energy_weapon_fire_rate_5",
 				"energy_weapon_fire_rate_6"
 			],
-			"x": 28401,
-			"y": -6783,
+			"x": 36410,
+			"y": -14269,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -5948,8 +5948,8 @@
 				"energy_weapon_fire_rate_4",
 				"furor_machinae_1"
 			],
-			"x": 28627,
-			"y": -6783,
+			"x": 36636,
+			"y": -14269,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -5962,8 +5962,8 @@
 				"energy_weapon_fire_rate_5",
 				"energy_weapon_fire_rate_6"
 			],
-			"x": 28627,
-			"y": -7009,
+			"x": 36636,
+			"y": -14495,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -5975,8 +5975,8 @@
 			"connectedTo": [
 				"stargazer_wormhole_1"
 			],
-			"x": 29054,
-			"y": -7476,
+			"x": 37063,
+			"y": -14962,
 			"orbitAnchorId": "mod_star_ring",
 			"orbitAngle": -14.429304149647674,
 			"ringBeltColor": "#840b1d",
@@ -5993,8 +5993,8 @@
 				"ecm_resistance_4",
 				"ecm_resistance_5"
 			],
-			"x": 28301,
-			"y": -8169,
+			"x": 36310,
+			"y": -15655,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -6007,8 +6007,8 @@
 				"ecm_resistance_3",
 				"language_of_the_lost_1"
 			],
-			"x": 28527,
-			"y": -8169,
+			"x": 36536,
+			"y": -15655,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -6021,8 +6021,8 @@
 				"ecm_resistance_4",
 				"ecm_resistance_5"
 			],
-			"x": 28527,
-			"y": -7943,
+			"x": 36536,
+			"y": -15429,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -6606,8 +6606,8 @@
 				"corrosion_beam_1",
 				"beam_weapon_damage_2"
 			],
-			"x": 29637,
-			"y": -7009,
+			"x": 37646,
+			"y": -14495,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -6620,8 +6620,8 @@
 				"ecm_resistance_3",
 				"language_of_the_lost_1"
 			],
-			"x": 28301,
-			"y": -7943,
+			"x": 36310,
+			"y": -15429,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -6634,8 +6634,8 @@
 				"energy_weapon_fire_rate_4",
 				"furor_machinae_1"
 			],
-			"x": 28401,
-			"y": -7009,
+			"x": 36410,
+			"y": -14495,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
@@ -6649,8 +6649,8 @@
 				"armor_10",
 				"armor_11"
 			],
-			"x": -30330,
-			"y": -6823,
+			"x": -35118,
+			"y": -8216,
 			"tags": [
 				"nightcross",
 				"gate_pascal_visited"
@@ -6663,8 +6663,8 @@
 				"more_hull_7",
 				"repair_coordinator_1"
 			],
-			"x": -30738,
-			"y": -6866,
+			"x": -35526,
+			"y": -8259,
 			"tags": [
 				"nightcross",
 				"gate_pascal_visited"
@@ -6677,8 +6677,8 @@
 				"more_hull_7",
 				"repair_coordinator_1"
 			],
-			"x": -30442,
-			"y": -7218,
+			"x": -35230,
+			"y": -8611,
 			"tags": [
 				"nightcross",
 				"gate_pascal_visited"
@@ -6691,8 +6691,8 @@
 				"armor_10",
 				"armor_11"
 			],
-			"x": -30851,
-			"y": -7260,
+			"x": -35639,
+			"y": -8653,
 			"tags": [
 				"nightcross",
 				"gate_pascal_visited"
@@ -6924,130 +6924,6 @@
 			"orbitAngle": 270,
 			"tags": [
 				"core"
-			]
-		},
-		{
-			"id": "threat_wormhole_1",
-			"type": "wormhole_exit",
-			"connectedTo": [
-				"fragment_swarm_1"
-			],
-			"x": -51529,
-			"y": 24247,
-			"tags": [
-				"threat",
-				"gate_threat_fought"
-			]
-		},
-		{
-			"id": "fragment_swarm_1",
-			"type": "fragment_swarm",
-			"connectedTo": [
-				"threat_wormhole_1",
-				"fragment_swarm_size_1",
-				"fragment_replacement_rate_1"
-			],
-			"x": -51529,
-			"y": 24537,
-			"orbitAnchorId": "anchor_80",
-			"orbitAngle": 270,
-			"tags": [
-				"threat",
-				"gate_threat_fought"
-			]
-		},
-		{
-			"id": "fragment_swarm_size_1",
-			"type": "fragment_swarm_size",
-			"connectedTo": [
-				"fragment_swarm_1",
-				"fragment_swarm_size_2"
-			],
-			"x": -52023,
-			"y": 24739,
-			"orbitAnchorId": "anchor_80",
-			"orbitAngle": -134.55804991720726,
-			"tags": [
-				"threat",
-				"gate_threat_fought"
-			]
-		},
-		{
-			"id": "fragment_coordinator_1",
-			"type": "fragment_coordinator",
-			"connectedTo": [
-				"fragment_swarm_size_2"
-			],
-			"x": -51991,
-			"y": 25772,
-			"orbitAnchorId": "anchor_80",
-			"orbitAngle": 131.02510146841402,
-			"tags": [
-				"threat",
-				"gate_threat_fought"
-			]
-		},
-		{
-			"id": "fragment_replacement_rate_1",
-			"type": "fragment_replacement_rate",
-			"connectedTo": [
-				"fragment_swarm_1",
-				"fragment_replacement_rate_2"
-			],
-			"x": -50990,
-			"y": 24788,
-			"orbitAnchorId": "anchor_80",
-			"orbitAngle": -40.08871116139717,
-			"tags": [
-				"threat",
-				"gate_threat_fought"
-			]
-		},
-		{
-			"id": "secondary_fabricator_1",
-			"type": "secondary_fabricator",
-			"connectedTo": [
-				"fragment_replacement_rate_2"
-			],
-			"x": -51054,
-			"y": 25761,
-			"orbitAnchorId": "anchor_80",
-			"orbitAngle": 47.57358898926441,
-			"tags": [
-				"threat",
-				"gate_threat_fought"
-			]
-		},
-		{
-			"id": "fragment_replacement_rate_2",
-			"type": "fragment_replacement_rate",
-			"connectedTo": [
-				"fragment_replacement_rate_1",
-				"secondary_fabricator_1"
-			],
-			"x": -50825,
-			"y": 25241,
-			"orbitAnchorId": "anchor_80",
-			"orbitAngle": 0,
-			"tags": [
-				"threat",
-				"gate_threat_fought"
-			]
-		},
-		{
-			"id": "fragment_swarm_size_2",
-			"type": "fragment_swarm_size",
-			"connectedTo": [
-				"fragment_swarm_size_1",
-				"fragment_coordinator_1"
-			],
-			"x": -52233,
-			"y": 25241,
-			"orbitAnchorId": "anchor_80",
-			"orbitAngle": 180,
-			"tags": [
-				"threat",
-				"gate_threat_fought"
 			]
 		},
 		{
@@ -7473,282 +7349,6 @@
 			"y": 31385,
 			"tags": [
 				"tania"
-			]
-		},
-		{
-			"id": "shrouded_wormhole_1",
-			"type": "wormhole_exit",
-			"connectedTo": [
-				"affinity_80"
-			],
-			"x": -43293,
-			"y": 34856,
-			"tags": [
-				"shrouded",
-				"gate_dweller_fought"
-			]
-		},
-		{
-			"id": "shrouded_mantle_1",
-			"type": "shrouded_mantle",
-			"connectedTo": [
-				"hungering_rift_healing_1",
-				"hungering_rift_healing_3"
-			],
-			"x": -43491,
-			"y": 35852,
-			"orbitAnchorId": "anchor_82",
-			"orbitAngle": 0,
-			"tags": [
-				"shrouded",
-				"gate_dweller_fought"
-			]
-		},
-		{
-			"id": "hungering_rift_healing_1",
-			"type": "hungering_rift_healing",
-			"connectedTo": [
-				"hungering_rift_healing_2",
-				"shrouded_mantle_1"
-			],
-			"x": -43641,
-			"y": 35702,
-			"orbitAnchorId": "anchor_82",
-			"orbitAngle": 270,
-			"tags": [
-				"shrouded",
-				"gate_dweller_fought"
-			]
-		},
-		{
-			"id": "shrouded_lens_damage_1",
-			"type": "shrouded_lens_damage",
-			"connectedTo": [
-				"shrouded_lens_damage_2",
-				"shrouded_lens_damage_3",
-				"affinity_103"
-			],
-			"x": -42818,
-			"y": 35852,
-			"orbitAnchorId": "anchor_87",
-			"orbitAngle": 0,
-			"tags": [
-				"shrouded",
-				"gate_dweller_fought"
-			]
-		},
-		{
-			"id": "shrouded_lens_damage_2",
-			"type": "shrouded_lens_damage",
-			"connectedTo": [
-				"shrouded_lens_damage_1",
-				"shrouded_lens_1"
-			],
-			"x": -42968,
-			"y": 35702,
-			"orbitAnchorId": "anchor_87",
-			"orbitAngle": 270,
-			"tags": [
-				"shrouded",
-				"gate_dweller_fought"
-			]
-		},
-		{
-			"id": "shrouded_lens_1",
-			"type": "shrouded_lens",
-			"connectedTo": [
-				"shrouded_lens_damage_2",
-				"shrouded_lens_damage_3"
-			],
-			"x": -43118,
-			"y": 35852,
-			"orbitAnchorId": "anchor_87",
-			"orbitAngle": 180,
-			"tags": [
-				"shrouded",
-				"gate_dweller_fought"
-			]
-		},
-		{
-			"id": "hungering_rift_healing_2",
-			"type": "hungering_rift_healing",
-			"connectedTo": [
-				"hungering_rift_healing_1",
-				"affinity_81",
-				"hungering_rift_healing_3"
-			],
-			"x": -43791,
-			"y": 35852,
-			"orbitAnchorId": "anchor_82",
-			"orbitAngle": 180,
-			"tags": [
-				"shrouded",
-				"gate_dweller_fought"
-			]
-		},
-		{
-			"id": "rift_lightning_damage_1",
-			"type": "rift_lightning_damage",
-			"connectedTo": [
-				"rift_lightning_damage_2",
-				"affinity_104",
-				"rift_lightning_damage_3"
-			],
-			"x": -43291,
-			"y": 36306,
-			"orbitAnchorId": "anchor_86",
-			"orbitAngle": 90,
-			"tags": [
-				"shrouded",
-				"gate_dweller_fought"
-			]
-		},
-		{
-			"id": "rift_lightning_damage_2",
-			"type": "rift_lightning_damage",
-			"connectedTo": [
-				"rift_lightning_damage_1",
-				"shrouded_thunderhead_1"
-			],
-			"x": -43441,
-			"y": 36156,
-			"orbitAnchorId": "anchor_86",
-			"orbitAngle": 180,
-			"tags": [
-				"shrouded",
-				"gate_dweller_fought"
-			]
-		},
-		{
-			"id": "shrouded_thunderhead_1",
-			"type": "shrouded_thunderhead",
-			"connectedTo": [
-				"rift_lightning_damage_2",
-				"rift_lightning_damage_3"
-			],
-			"x": -43291,
-			"y": 36006,
-			"orbitAnchorId": "anchor_86",
-			"orbitAngle": 270,
-			"tags": [
-				"shrouded",
-				"gate_dweller_fought"
-			]
-		},
-		{
-			"id": "affinity_80",
-			"type": "affinity",
-			"connectedTo": [
-				"shrouded_wormhole_1",
-				"affinity_81",
-				"affinity_103"
-			],
-			"x": -43293,
-			"y": 35146,
-			"orbitAnchorId": "anchor_85",
-			"orbitAngle": 270,
-			"tags": [
-				"shrouded",
-				"gate_dweller_fought"
-			]
-		},
-		{
-			"id": "affinity_81",
-			"type": "affinity",
-			"connectedTo": [
-				"affinity_80",
-				"affinity_104",
-				"hungering_rift_healing_2"
-			],
-			"x": -43997,
-			"y": 35850,
-			"orbitAnchorId": "anchor_85",
-			"orbitAngle": 180,
-			"tags": [
-				"shrouded",
-				"gate_dweller_fought"
-			]
-		},
-		{
-			"id": "affinity_103",
-			"type": "affinity",
-			"connectedTo": [
-				"affinity_80",
-				"affinity_104",
-				"shrouded_lens_damage_1"
-			],
-			"x": -42589,
-			"y": 35850,
-			"orbitAnchorId": "anchor_85",
-			"orbitAngle": 0,
-			"tags": [
-				"shrouded",
-				"gate_dweller_fought"
-			]
-		},
-		{
-			"id": "affinity_104",
-			"type": "affinity",
-			"connectedTo": [
-				"affinity_81",
-				"affinity_103",
-				"rift_lightning_damage_1"
-			],
-			"x": -43293,
-			"y": 36554,
-			"orbitAnchorId": "anchor_85",
-			"orbitAngle": 90,
-			"tags": [
-				"shrouded",
-				"gate_dweller_fought"
-			]
-		},
-		{
-			"id": "rift_lightning_damage_3",
-			"type": "rift_lightning_damage",
-			"connectedTo": [
-				"rift_lightning_damage_1",
-				"shrouded_thunderhead_1"
-			],
-			"x": -43141,
-			"y": 36156,
-			"orbitAnchorId": "anchor_86",
-			"orbitAngle": 0,
-			"tags": [
-				"shrouded",
-				"gate_dweller_fought"
-			]
-		},
-		{
-			"id": "hungering_rift_healing_3",
-			"type": "hungering_rift_healing",
-			"connectedTo": [
-				"hungering_rift_healing_2",
-				"shrouded_mantle_1"
-			],
-			"x": -43641,
-			"y": 36002,
-			"orbitAnchorId": "anchor_82",
-			"orbitAngle": 90,
-			"tags": [
-				"shrouded",
-				"gate_dweller_fought"
-			]
-		},
-		{
-			"id": "shrouded_lens_damage_3",
-			"type": "shrouded_lens_damage",
-			"connectedTo": [
-				"shrouded_lens_damage_1",
-				"shrouded_lens_1"
-			],
-			"x": -42968,
-			"y": 36002,
-			"orbitAnchorId": "anchor_87",
-			"orbitAngle": 90,
-			"tags": [
-				"shrouded",
-				"gate_dweller_fought"
 			]
 		},
 		{
@@ -9412,8 +9012,8 @@
 				"rift_explosion_damage_2",
 				"affinity_152"
 			],
-			"x": 19973,
-			"y": -21208,
+			"x": -2964,
+			"y": -39358,
 			"tags": [
 				"omega",
 				"gate_omega_found"
@@ -9426,8 +9026,8 @@
 				"rift_explosion_damage_1",
 				"rift_harmonics_1"
 			],
-			"x": 19583,
-			"y": -21433,
+			"x": -3354,
+			"y": -39583,
 			"tags": [
 				"omega",
 				"gate_omega_found"
@@ -9439,8 +9039,8 @@
 			"connectedTo": [
 				"rift_explosion_damage_2"
 			],
-			"x": 19193,
-			"y": -21658,
+			"x": -3744,
+			"y": -39808,
 			"tags": [
 				"omega",
 				"gate_omega_found"
@@ -9629,8 +9229,8 @@
 				"affinity_150",
 				"affinity_151"
 			],
-			"x": 22614,
-			"y": -17083,
+			"x": -323,
+			"y": -35233,
 			"tags": [
 				"omega",
 				"gate_omega_found"
@@ -9644,8 +9244,8 @@
 				"affinity_154",
 				"rift_explosion_damage_5"
 			],
-			"x": 24866,
-			"y": -18383,
+			"x": 1929,
+			"y": -36533,
 			"tags": [
 				"omega",
 				"gate_omega_found"
@@ -9659,8 +9259,8 @@
 				"omega_wormhole_1",
 				"strikecraft_weapon_range_1"
 			],
-			"x": 20362,
-			"y": -18383,
+			"x": -2575,
+			"y": -36533,
 			"tags": [
 				"omega",
 				"gate_omega_found"
@@ -9674,8 +9274,8 @@
 				"affinity_151",
 				"rift_explosion_damage_1"
 			],
-			"x": 20362,
-			"y": -20983,
+			"x": -2575,
+			"y": -39133,
 			"tags": [
 				"omega",
 				"gate_omega_found"
@@ -9689,8 +9289,8 @@
 				"affinity_152",
 				"ship_system_cooldown_4"
 			],
-			"x": 22614,
-			"y": -22283,
+			"x": -323,
+			"y": -40433,
 			"tags": [
 				"omega",
 				"gate_omega_found"
@@ -9704,8 +9304,8 @@
 				"affinity_153",
 				"combat_readiness_1"
 			],
-			"x": 24866,
-			"y": -20983,
+			"x": 1929,
+			"y": -39133,
 			"tags": [
 				"omega",
 				"gate_omega_found"
@@ -9762,8 +9362,8 @@
 				"rift_explosion_damage_3",
 				"affinity_151"
 			],
-			"x": 20709,
-			"y": -18583,
+			"x": -2228,
+			"y": -36733,
 			"tags": [
 				"omega",
 				"gate_omega_found"
@@ -9776,8 +9376,8 @@
 				"strikecraft_weapon_range_1",
 				"spark_rift_1"
 			],
-			"x": 21055,
-			"y": -18783,
+			"x": -1882,
+			"y": -36933,
 			"tags": [
 				"omega",
 				"gate_omega_found"
@@ -9789,8 +9389,8 @@
 			"connectedTo": [
 				"rift_explosion_damage_3"
 			],
-			"x": 21402,
-			"y": -18983,
+			"x": -1535,
+			"y": -37133,
 			"tags": [
 				"omega",
 				"gate_omega_found"
@@ -9803,8 +9403,8 @@
 				"rift_explosion_damage_4",
 				"affinity_153"
 			],
-			"x": 22614,
-			"y": -21883,
+			"x": -323,
+			"y": -40033,
 			"tags": [
 				"omega",
 				"gate_omega_found"
@@ -9817,8 +9417,8 @@
 				"ship_system_cooldown_4",
 				"temporal_exhaust_1"
 			],
-			"x": 22614,
-			"y": -21483,
+			"x": -323,
+			"y": -39633,
 			"tags": [
 				"omega",
 				"gate_omega_found"
@@ -9830,8 +9430,8 @@
 			"connectedTo": [
 				"rift_explosion_damage_4"
 			],
-			"x": 22614,
-			"y": -21083,
+			"x": -323,
+			"y": -39233,
 			"tags": [
 				"omega",
 				"gate_omega_found"
@@ -9844,8 +9444,8 @@
 				"rift_explosion_damage_6",
 				"affinity_150"
 			],
-			"x": 24519,
-			"y": -18583,
+			"x": 1582,
+			"y": -36733,
 			"tags": [
 				"omega",
 				"gate_omega_found"
@@ -9858,8 +9458,8 @@
 				"rift_explosion_damage_5",
 				"resonator_payload_1"
 			],
-			"x": 24173,
-			"y": -18783,
+			"x": 1236,
+			"y": -36933,
 			"tags": [
 				"omega",
 				"gate_omega_found"
@@ -9871,8 +9471,8 @@
 			"connectedTo": [
 				"rift_explosion_damage_6"
 			],
-			"x": 23826,
-			"y": -18983,
+			"x": 889,
+			"y": -37133,
 			"tags": [
 				"omega",
 				"gate_omega_found"
@@ -9901,11 +9501,573 @@
 				"affinity_76",
 				"beam_weapon_damage_2"
 			],
-			"x": 30304,
-			"y": -6176,
+			"x": 38313,
+			"y": -13662,
 			"tags": [
 				"stargazer",
 				"gate_existential_threat_defeated"
+			]
+		},
+		{
+			"id": "affinity_145",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_146",
+				"strikecraft_armor_1",
+				"affinity_160",
+				"all_weapon_damage_1"
+			],
+			"x": 39323,
+			"y": 6811,
+			"orbitAnchorId": "anchor_52",
+			"orbitAngle": -45.06732755950782,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "affinity_146",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_145",
+				"strikecraft_armor_2",
+				"cargo_capacity_4",
+				"affinity_147"
+			],
+			"x": 39323,
+			"y": 7659,
+			"orbitAnchorId": "anchor_52",
+			"orbitAngle": 44.79706420335207,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "domain_drones_wormhole_1",
+			"type": "wormhole_exit",
+			"connectedTo": [
+				"affinity_147",
+				"affinity_159",
+				"affinity_165"
+			],
+			"x": 37485,
+			"y": 8649,
+			"orbitAnchorId": "anchor_48",
+			"orbitAngle": 135,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "affinity_147",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_160",
+				"reduced_d_mod_effect_12",
+				"domain_drones_wormhole_1",
+				"cargo_capacity_3",
+				"affinity_146"
+			],
+			"x": 38475,
+			"y": 7659,
+			"orbitAnchorId": "anchor_52",
+			"orbitAngle": 135.06780562457436,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "all_weapon_damage_1",
+			"type": "all_weapon_damage",
+			"connectedTo": [
+				"affinity_145",
+				"retaliatory_routines_1"
+			],
+			"x": 39039,
+			"y": 6355,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "all_weapon_damage_2",
+			"type": "all_weapon_damage",
+			"connectedTo": [
+				"retaliatory_routines_1",
+				"affinity_160"
+			],
+			"x": 38759,
+			"y": 6355,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "retaliatory_routines_1",
+			"type": "retaliatory_routines",
+			"connectedTo": [
+				"all_weapon_damage_2",
+				"all_weapon_damage_1"
+			],
+			"x": 38899,
+			"y": 5985,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "missile_weapon_damage_9",
+			"type": "missile_weapon_damage",
+			"connectedTo": [
+				"sentry_reserve_racks_1",
+				"affinity_158"
+			],
+			"x": 41219,
+			"y": 7425,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "missile_weapon_damage_10",
+			"type": "missile_weapon_damage",
+			"connectedTo": [
+				"sentry_reserve_racks_1",
+				"affinity_163"
+			],
+			"x": 41219,
+			"y": 7045,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "sentry_reserve_racks_1",
+			"type": "sentry_reserve_racks",
+			"connectedTo": [
+				"missile_weapon_damage_10",
+				"missile_weapon_damage_9"
+			],
+			"x": 41599,
+			"y": 7235,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "point_defense_damage_to_missiles_and_fighters_5",
+			"type": "point_defense_damage_to_missiles_and_fighters",
+			"connectedTo": [
+				"defender_flare_bays_1",
+				"affinity_159"
+			],
+			"x": 38709,
+			"y": 9555,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "point_defense_damage_to_missiles_and_fighters_6",
+			"type": "point_defense_damage_to_missiles_and_fighters",
+			"connectedTo": [
+				"defender_flare_bays_1",
+				"affinity_161"
+			],
+			"x": 39089,
+			"y": 9555,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "defender_flare_bays_1",
+			"type": "defender_flare_bays",
+			"connectedTo": [
+				"point_defense_damage_to_missiles_and_fighters_6",
+				"point_defense_damage_to_missiles_and_fighters_5"
+			],
+			"x": 38899,
+			"y": 9935,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "reduced_d_mod_effect_11",
+			"type": "reduced_d_mod_effect",
+			"connectedTo": [
+				"rugged_drone_frame_1",
+				"affinity_160"
+			],
+			"x": 38019,
+			"y": 7095,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "reduced_d_mod_effect_12",
+			"type": "reduced_d_mod_effect",
+			"connectedTo": [
+				"rugged_drone_frame_1",
+				"affinity_147"
+			],
+			"x": 38019,
+			"y": 7375,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "rugged_drone_frame_1",
+			"type": "rugged_drone_frame",
+			"connectedTo": [
+				"reduced_d_mod_effect_12",
+				"reduced_d_mod_effect_11"
+			],
+			"x": 37649,
+			"y": 7235,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "strikecraft_weapon_damage_8",
+			"type": "strikecraft_weapon_damage",
+			"connectedTo": [
+				"affinity_149",
+				"mothership_uplink_1"
+			],
+			"x": 39089,
+			"y": 4915,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "strikecraft_weapon_damage_9",
+			"type": "strikecraft_weapon_damage",
+			"connectedTo": [
+				"mothership_uplink_1",
+				"affinity_164"
+			],
+			"x": 38709,
+			"y": 4915,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "mothership_uplink_1",
+			"type": "mothership_uplink",
+			"connectedTo": [
+				"strikecraft_weapon_damage_9",
+				"strikecraft_weapon_damage_8"
+			],
+			"x": 38899,
+			"y": 4535,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "strikecraft_armor_1",
+			"type": "strikecraft_armor",
+			"connectedTo": [
+				"autoforge_escorts_1",
+				"affinity_145"
+			],
+			"x": 39779,
+			"y": 7095,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "strikecraft_armor_2",
+			"type": "strikecraft_armor",
+			"connectedTo": [
+				"autoforge_escorts_1",
+				"affinity_146"
+			],
+			"x": 39779,
+			"y": 7375,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "autoforge_escorts_1",
+			"type": "autoforge_escorts",
+			"connectedTo": [
+				"strikecraft_armor_2",
+				"strikecraft_armor_1"
+			],
+			"x": 40149,
+			"y": 7235,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "cargo_capacity_3",
+			"type": "cargo_capacity",
+			"connectedTo": [
+				"feed_the_forges_1",
+				"affinity_147"
+			],
+			"x": 38759,
+			"y": 8115,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "cargo_capacity_4",
+			"type": "cargo_capacity",
+			"connectedTo": [
+				"feed_the_forges_1",
+				"affinity_146"
+			],
+			"x": 39039,
+			"y": 8115,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "feed_the_forges_1",
+			"type": "feed_the_forges",
+			"connectedTo": [
+				"cargo_capacity_4",
+				"cargo_capacity_3"
+			],
+			"x": 38899,
+			"y": 8485,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "reduced_monthly_supplies_5",
+			"type": "reduced_monthly_supplies",
+			"connectedTo": [
+				"countless_cycles_1",
+				"affinity_165"
+			],
+			"x": 36579,
+			"y": 7425,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "reduced_monthly_supplies_6",
+			"type": "reduced_monthly_supplies",
+			"connectedTo": [
+				"countless_cycles_1",
+				"affinity_148"
+			],
+			"x": 36579,
+			"y": 7045,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "countless_cycles_1",
+			"type": "countless_cycles",
+			"connectedTo": [
+				"reduced_monthly_supplies_6",
+				"reduced_monthly_supplies_5"
+			],
+			"x": 36199,
+			"y": 7235,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "affinity_148",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_164",
+				"affinity_165",
+				"reduced_monthly_supplies_6"
+			],
+			"x": 36997,
+			"y": 6617,
+			"orbitAnchorId": "anchor_48",
+			"orbitAngle": -161.92767785104053,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "affinity_149",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_164",
+				"strikecraft_weapon_damage_8",
+				"affinity_163"
+			],
+			"x": 39517,
+			"y": 5333,
+			"orbitAnchorId": "anchor_48",
+			"orbitAngle": -71.96318347697847,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "affinity_158",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_161",
+				"affinity_163",
+				"missile_weapon_damage_9"
+			],
+			"x": 40801,
+			"y": 7853,
+			"orbitAnchorId": "anchor_48",
+			"orbitAngle": 17.927919762007235,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "affinity_159",
+			"type": "affinity",
+			"connectedTo": [
+				"point_defense_damage_to_missiles_and_fighters_5",
+				"affinity_161",
+				"domain_drones_wormhole_1"
+			],
+			"x": 38281,
+			"y": 9137,
+			"orbitAnchorId": "anchor_48",
+			"orbitAngle": 107.96323995337737,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "affinity_160",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_145",
+				"affinity_147",
+				"reduced_d_mod_effect_11",
+				"all_weapon_damage_2"
+			],
+			"x": 38475,
+			"y": 6811,
+			"orbitAnchorId": "anchor_52",
+			"orbitAngle": -134.7975422577818,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "affinity_161",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_159",
+				"affinity_158",
+				"point_defense_damage_to_missiles_and_fighters_6"
+			],
+			"x": 39517,
+			"y": 9137,
+			"orbitAnchorId": "anchor_48",
+			"orbitAngle": 71.92767785104051,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "affinity_163",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_158",
+				"missile_weapon_damage_10",
+				"affinity_149"
+			],
+			"x": 40801,
+			"y": 6617,
+			"orbitAnchorId": "anchor_48",
+			"orbitAngle": -18.036816523021535,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "affinity_164",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_149",
+				"affinity_148",
+				"strikecraft_weapon_damage_9"
+			],
+			"x": 38281,
+			"y": 5333,
+			"orbitAnchorId": "anchor_48",
+			"orbitAngle": -107.92791976200725,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
+			]
+		},
+		{
+			"id": "affinity_165",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_148",
+				"reduced_monthly_supplies_5",
+				"domain_drones_wormhole_1"
+			],
+			"x": 36997,
+			"y": 7853,
+			"orbitAnchorId": "anchor_48",
+			"orbitAngle": 162.03676004662265,
+			"tags": [
+				"domain_drones",
+				"gate_mothership_defeated"
 			]
 		}
 	],
@@ -10813,14 +10975,14 @@
 		{
 			"a": "missile_weapon_damage_6",
 			"b": "missile_weapon_damage_7",
-			"controlX": 14406,
-			"controlY": -26552
+			"controlX": 23547,
+			"controlY": -31078
 		},
 		{
 			"a": "live_munitions_1",
 			"b": "missile_weapon_damage_6",
-			"controlX": 14660,
-			"controlY": -26552
+			"controlX": 23801,
+			"controlY": -31078
 		},
 		{
 			"a": "strikecraft_weapon_damage_1",
@@ -10855,26 +11017,26 @@
 		{
 			"a": "weapon_durability_3",
 			"b": "weapon_durability_4",
-			"controlX": 13563,
-			"controlY": -27393
+			"controlX": 22704,
+			"controlY": -31919
 		},
 		{
 			"a": "husk_plating_1",
 			"b": "weapon_durability_3",
-			"controlX": 13563,
-			"controlY": -27647
+			"controlX": 22704,
+			"controlY": -32173
 		},
 		{
 			"a": "all_must_serve_1",
 			"b": "crew_capacity_5",
-			"controlX": 12686,
-			"controlY": -26807
+			"controlX": 21827,
+			"controlY": -31333
 		},
 		{
 			"a": "crew_capacity_5",
 			"b": "crew_capacity_6",
-			"controlX": 12940,
-			"controlY": -26807
+			"controlX": 22081,
+			"controlY": -31333
 		},
 		{
 			"a": "automated_repair_unit_1",
@@ -10993,38 +11155,38 @@
 		{
 			"a": "crew_capacity_6",
 			"b": "crew_capacity_7",
-			"controlX": 12940,
-			"controlY": -26553
+			"controlX": 22081,
+			"controlY": -31079
 		},
 		{
 			"a": "all_must_serve_1",
 			"b": "crew_capacity_7",
-			"controlX": 12686,
-			"controlY": -26553
+			"controlX": 21827,
+			"controlY": -31079
 		},
 		{
 			"a": "weapon_durability_4",
 			"b": "weapon_durability_5",
-			"controlX": 13817,
-			"controlY": -27393
+			"controlX": 22958,
+			"controlY": -31919
 		},
 		{
 			"a": "husk_plating_1",
 			"b": "weapon_durability_5",
-			"controlX": 13817,
-			"controlY": -27647
+			"controlX": 22958,
+			"controlY": -32173
 		},
 		{
 			"a": "missile_weapon_damage_7",
 			"b": "missile_weapon_damage_8",
-			"controlX": 14406,
-			"controlY": -26806
+			"controlX": 23547,
+			"controlY": -31332
 		},
 		{
 			"a": "live_munitions_1",
 			"b": "missile_weapon_damage_8",
-			"controlX": 14660,
-			"controlY": -26806
+			"controlX": 23801,
+			"controlY": -31332
 		},
 		{
 			"a": "heavy_armor_1",
@@ -11621,42 +11783,6 @@
 			"controlY": 15492
 		},
 		{
-			"a": "fragment_replacement_rate_1",
-			"b": "fragment_swarm_1",
-			"controlX": -51232,
-			"controlY": 24603
-		},
-		{
-			"a": "fragment_replacement_rate_1",
-			"b": "fragment_replacement_rate_2",
-			"controlX": -50868,
-			"controlY": 25000
-		},
-		{
-			"a": "fragment_replacement_rate_2",
-			"b": "secondary_fabricator_1",
-			"controlX": -50885,
-			"controlY": 25525
-		},
-		{
-			"a": "fragment_swarm_1",
-			"b": "fragment_swarm_size_1",
-			"controlX": -51796,
-			"controlY": 24590
-		},
-		{
-			"a": "fragment_swarm_size_1",
-			"b": "fragment_swarm_size_2",
-			"controlX": -52178,
-			"controlY": 24969
-		},
-		{
-			"a": "fragment_coordinator_1",
-			"b": "fragment_swarm_size_2",
-			"controlX": -52170,
-			"controlY": 25533
-		},
-		{
 			"a": "weapon_turn_rate_1",
 			"b": "weapon_turn_rate_3",
 			"controlX": -1887,
@@ -11715,102 +11841,6 @@
 			"b": "affinity_89",
 			"controlX": -347,
 			"controlY": 4062
-		},
-		{
-			"a": "shrouded_lens_damage_1",
-			"b": "shrouded_lens_damage_2",
-			"controlX": -42862,
-			"controlY": 35746
-		},
-		{
-			"a": "shrouded_lens_1",
-			"b": "shrouded_lens_damage_2",
-			"controlX": -43074,
-			"controlY": 35746
-		},
-		{
-			"a": "rift_lightning_damage_1",
-			"b": "rift_lightning_damage_2",
-			"controlX": -43397,
-			"controlY": 36262
-		},
-		{
-			"a": "rift_lightning_damage_2",
-			"b": "shrouded_thunderhead_1",
-			"controlX": -43397,
-			"controlY": 36050
-		},
-		{
-			"a": "affinity_80",
-			"b": "affinity_81",
-			"controlX": -43791,
-			"controlY": 35352
-		},
-		{
-			"a": "affinity_103",
-			"b": "affinity_80",
-			"controlX": -42795,
-			"controlY": 35352
-		},
-		{
-			"a": "affinity_104",
-			"b": "affinity_81",
-			"controlX": -43791,
-			"controlY": 36348
-		},
-		{
-			"a": "affinity_103",
-			"b": "affinity_104",
-			"controlX": -42795,
-			"controlY": 36348
-		},
-		{
-			"a": "hungering_rift_healing_1",
-			"b": "hungering_rift_healing_2",
-			"controlX": -43747,
-			"controlY": 35746
-		},
-		{
-			"a": "hungering_rift_healing_1",
-			"b": "shrouded_mantle_1",
-			"controlX": -43535,
-			"controlY": 35746
-		},
-		{
-			"a": "rift_lightning_damage_1",
-			"b": "rift_lightning_damage_3",
-			"controlX": -43185,
-			"controlY": 36262
-		},
-		{
-			"a": "rift_lightning_damage_3",
-			"b": "shrouded_thunderhead_1",
-			"controlX": -43185,
-			"controlY": 36050
-		},
-		{
-			"a": "hungering_rift_healing_2",
-			"b": "hungering_rift_healing_3",
-			"controlX": -43747,
-			"controlY": 35958
-		},
-		{
-			"a": "hungering_rift_healing_3",
-			"b": "shrouded_mantle_1",
-			"controlX": -43535,
-			"controlY": 35958
-		},
-		{
-			"a": "shrouded_lens_damage_1",
-			"b": "shrouded_lens_damage_3",
-			"controlX": -42862,
-			"controlY": 35958
-		},
-		{
-			"a": "shrouded_lens_1",
-			"b": "shrouded_lens_damage_3",
-			"controlX": -43074,
-			"controlY": 35958
 		},
 		{
 			"a": "affinity_130",
@@ -12481,152 +12511,422 @@
 		{
 			"a": "affinity_68",
 			"b": "affinity_69",
-			"controlX": -26235,
-			"controlY": 16069
+			"controlX": -31980,
+			"controlY": 18158
 		},
 		{
 			"a": "affinity_69",
 			"b": "shield_flux_damage_reduction_3",
-			"controlX": -26960,
-			"controlY": 15094
+			"controlX": -32705,
+			"controlY": 17183
 		},
 		{
 			"a": "shield_flux_damage_reduction_3",
 			"b": "nskr_absorption_1",
-			"controlX": -27129,
-			"controlY": 14392
+			"controlX": -32874,
+			"controlY": 16481
 		},
 		{
 			"a": "nskr_absorption_1",
 			"b": "shield_flux_damage_reduction_4",
-			"controlX": -26808,
-			"controlY": 14071
+			"controlX": -32553,
+			"controlY": 16160
 		},
 		{
 			"a": "shield_flux_damage_reduction_4",
 			"b": "affinity_70",
-			"controlX": -26106,
-			"controlY": 14240
+			"controlX": -31851,
+			"controlY": 16329
 		},
 		{
 			"a": "affinity_70",
 			"b": "kesteven_wormhole1",
-			"controlX": -25131,
-			"controlY": 14965
+			"controlX": -30876,
+			"controlY": 17054
 		},
 		{
 			"a": "kesteven_wormhole1",
 			"b": "armor_6",
-			"controlX": -24406,
-			"controlY": 15940
+			"controlX": -30151,
+			"controlY": 18029
 		},
 		{
 			"a": "armor_6",
 			"b": "nskr_criticalArmor_1",
-			"controlX": -24237,
-			"controlY": 16642
+			"controlX": -29982,
+			"controlY": 18731
 		},
 		{
 			"a": "nskr_criticalArmor_1",
 			"b": "armor_7",
-			"controlX": -24558,
-			"controlY": 16963
+			"controlX": -30303,
+			"controlY": 19052
 		},
 		{
 			"a": "armor_7",
 			"b": "affinity_68",
-			"controlX": -25260,
-			"controlY": 16794
+			"controlX": -31005,
+			"controlY": 18883
 		},
 		{
 			"a": "kesteven_wormhole1",
 			"b": "affinity_68",
-			"controlX": -25131,
-			"controlY": 16069
+			"controlX": -30876,
+			"controlY": 18158
 		},
 		{
 			"a": "affinity_68",
 			"b": "top_speed_6",
-			"controlX": -26106,
-			"controlY": 16794
+			"controlX": -31851,
+			"controlY": 18883
 		},
 		{
 			"a": "top_speed_6",
 			"b": "nskr_inertial_1",
-			"controlX": -26808,
-			"controlY": 16963
+			"controlX": -32553,
+			"controlY": 19052
 		},
 		{
 			"a": "nskr_inertial_1",
 			"b": "top_speed_7",
-			"controlX": -27129,
-			"controlY": 16642
+			"controlX": -32874,
+			"controlY": 18731
 		},
 		{
 			"a": "top_speed_7",
 			"b": "affinity_69",
-			"controlX": -26960,
-			"controlY": 15940
+			"controlX": -32705,
+			"controlY": 18029
 		},
 		{
 			"a": "affinity_69",
 			"b": "affinity_70",
-			"controlX": -26235,
-			"controlY": 14965
+			"controlX": -31980,
+			"controlY": 17054
 		},
 		{
 			"a": "affinity_70",
 			"b": "energy_weapon_flux_cost_1",
-			"controlX": -25260,
-			"controlY": 14240
+			"controlX": -31005,
+			"controlY": 16329
 		},
 		{
 			"a": "energy_weapon_flux_cost_1",
 			"b": "nskr_volatile_1",
-			"controlX": -24558,
-			"controlY": 14071
+			"controlX": -30303,
+			"controlY": 16160
 		},
 		{
 			"a": "nskr_volatile_1",
 			"b": "energy_weapon_flux_cost_2",
-			"controlX": -24237,
-			"controlY": 14392
+			"controlX": -29982,
+			"controlY": 16481
 		},
 		{
 			"a": "energy_weapon_flux_cost_2",
 			"b": "kesteven_wormhole1",
-			"controlX": -24406,
-			"controlY": 15094
+			"controlX": -30151,
+			"controlY": 17183
 		},
 		{
 			"a": "stargazer_wormhole_1",
 			"b": "affinity_75",
-			"controlX": 26967,
-			"controlY": -8251
+			"controlX": 34976,
+			"controlY": -15737
 		},
 		{
 			"a": "affinity_75",
 			"b": "affinity_108",
-			"controlX": 29054,
-			"controlY": -9001
+			"controlX": 37063,
+			"controlY": -16487
 		},
 		{
 			"a": "affinity_108",
 			"b": "affinity_157",
-			"controlX": 31529,
-			"controlY": -7476
+			"controlX": 39538,
+			"controlY": -14962
 		},
 		{
 			"a": "affinity_157",
 			"b": "affinity_76",
-			"controlX": 29054,
-			"controlY": -5951
+			"controlX": 37063,
+			"controlY": -13437
 		},
 		{
 			"a": "affinity_76",
 			"b": "stargazer_wormhole_1",
-			"controlX": 26967,
-			"controlY": -6701
+			"controlX": 34976,
+			"controlY": -14187
+		},
+		{
+			"a": "affinity_145",
+			"b": "affinity_146",
+			"controlX": 39499,
+			"controlY": 7235
+		},
+		{
+			"a": "affinity_146",
+			"b": "affinity_147",
+			"controlX": 38899,
+			"controlY": 7835
+		},
+		{
+			"a": "affinity_147",
+			"b": "affinity_160",
+			"controlX": 38299,
+			"controlY": 7235
+		},
+		{
+			"a": "affinity_160",
+			"b": "affinity_145",
+			"controlX": 38899,
+			"controlY": 6635
+		},
+		{
+			"a": "affinity_149",
+			"b": "affinity_164",
+			"controlX": 38899,
+			"controlY": 5235
+		},
+		{
+			"a": "affinity_158",
+			"b": "affinity_163",
+			"controlX": 40899,
+			"controlY": 7235
+		},
+		{
+			"a": "affinity_159",
+			"b": "affinity_161",
+			"controlX": 38899,
+			"controlY": 9235
+		},
+		{
+			"a": "affinity_148",
+			"b": "affinity_165",
+			"controlX": 36899,
+			"controlY": 7235
+		},
+		{
+			"a": "affinity_149",
+			"b": "affinity_163",
+			"controlX": 40313,
+			"controlY": 5821
+		},
+		{
+			"a": "affinity_158",
+			"b": "affinity_161",
+			"controlX": 40313,
+			"controlY": 8649
+		},
+		{
+			"a": "affinity_159",
+			"b": "domain_drones_wormhole_1",
+			"controlX": 37854,
+			"controlY": 8940
+		},
+		{
+			"a": "domain_drones_wormhole_1",
+			"b": "affinity_165",
+			"controlX": 37194,
+			"controlY": 8280
+		},
+		{
+			"a": "affinity_148",
+			"b": "affinity_164",
+			"controlX": 37485,
+			"controlY": 5821
+		},
+		{
+			"a": "affinity_145",
+			"b": "strikecraft_armor_1",
+			"controlX": 39546,
+			"controlY": 6963
+		},
+		{
+			"a": "strikecraft_armor_1",
+			"b": "autoforge_escorts_1",
+			"controlX": 39959,
+			"controlY": 7175
+		},
+		{
+			"a": "affinity_146",
+			"b": "strikecraft_armor_2",
+			"controlX": 39546,
+			"controlY": 7507
+		},
+		{
+			"a": "strikecraft_armor_2",
+			"b": "autoforge_escorts_1",
+			"controlX": 39959,
+			"controlY": 7295
+		},
+		{
+			"a": "affinity_146",
+			"b": "cargo_capacity_4",
+			"controlX": 39171,
+			"controlY": 7882
+		},
+		{
+			"a": "cargo_capacity_4",
+			"b": "feed_the_forges_1",
+			"controlX": 38959,
+			"controlY": 8295
+		},
+		{
+			"a": "affinity_147",
+			"b": "cargo_capacity_3",
+			"controlX": 38627,
+			"controlY": 7882
+		},
+		{
+			"a": "cargo_capacity_3",
+			"b": "feed_the_forges_1",
+			"controlX": 38839,
+			"controlY": 8295
+		},
+		{
+			"a": "affinity_160",
+			"b": "reduced_d_mod_effect_11",
+			"controlX": 38252,
+			"controlY": 6963
+		},
+		{
+			"a": "reduced_d_mod_effect_11",
+			"b": "rugged_drone_frame_1",
+			"controlX": 37839,
+			"controlY": 7175
+		},
+		{
+			"a": "affinity_147",
+			"b": "reduced_d_mod_effect_12",
+			"controlX": 38252,
+			"controlY": 7507
+		},
+		{
+			"a": "reduced_d_mod_effect_12",
+			"b": "rugged_drone_frame_1",
+			"controlX": 37839,
+			"controlY": 7295
+		},
+		{
+			"a": "affinity_145",
+			"b": "all_weapon_damage_1",
+			"controlX": 39171,
+			"controlY": 6588
+		},
+		{
+			"a": "all_weapon_damage_1",
+			"b": "retaliatory_routines_1",
+			"controlX": 38959,
+			"controlY": 6175
+		},
+		{
+			"a": "affinity_160",
+			"b": "all_weapon_damage_2",
+			"controlX": 38627,
+			"controlY": 6588
+		},
+		{
+			"a": "all_weapon_damage_2",
+			"b": "retaliatory_routines_1",
+			"controlX": 38839,
+			"controlY": 6175
+		},
+		{
+			"a": "affinity_158",
+			"b": "missile_weapon_damage_9",
+			"controlX": 40996,
+			"controlY": 7624
+		},
+		{
+			"a": "missile_weapon_damage_9",
+			"b": "sentry_reserve_racks_1",
+			"controlX": 41398,
+			"controlY": 7312
+		},
+		{
+			"a": "affinity_163",
+			"b": "missile_weapon_damage_10",
+			"controlX": 40996,
+			"controlY": 6846
+		},
+		{
+			"a": "missile_weapon_damage_10",
+			"b": "sentry_reserve_racks_1",
+			"controlX": 41398,
+			"controlY": 7158
+		},
+		{
+			"a": "affinity_159",
+			"b": "point_defense_damage_to_missiles_and_fighters_5",
+			"controlX": 38510,
+			"controlY": 9332
+		},
+		{
+			"a": "point_defense_damage_to_missiles_and_fighters_5",
+			"b": "defender_flare_bays_1",
+			"controlX": 38822,
+			"controlY": 9734
+		},
+		{
+			"a": "affinity_161",
+			"b": "point_defense_damage_to_missiles_and_fighters_6",
+			"controlX": 39288,
+			"controlY": 9332
+		},
+		{
+			"a": "point_defense_damage_to_missiles_and_fighters_6",
+			"b": "defender_flare_bays_1",
+			"controlX": 38976,
+			"controlY": 9734
+		},
+		{
+			"a": "affinity_165",
+			"b": "reduced_monthly_supplies_5",
+			"controlX": 36802,
+			"controlY": 7624
+		},
+		{
+			"a": "reduced_monthly_supplies_5",
+			"b": "countless_cycles_1",
+			"controlX": 36400,
+			"controlY": 7312
+		},
+		{
+			"a": "affinity_148",
+			"b": "reduced_monthly_supplies_6",
+			"controlX": 36802,
+			"controlY": 6846
+		},
+		{
+			"a": "reduced_monthly_supplies_6",
+			"b": "countless_cycles_1",
+			"controlX": 36400,
+			"controlY": 7158
+		},
+		{
+			"a": "affinity_149",
+			"b": "strikecraft_weapon_damage_8",
+			"controlX": 39288,
+			"controlY": 5138
+		},
+		{
+			"a": "strikecraft_weapon_damage_8",
+			"b": "mothership_uplink_1",
+			"controlX": 38976,
+			"controlY": 4736
+		},
+		{
+			"a": "affinity_164",
+			"b": "strikecraft_weapon_damage_9",
+			"controlX": 38510,
+			"controlY": 5138
+		},
+		{
+			"a": "strikecraft_weapon_damage_9",
+			"b": "mothership_uplink_1",
+			"controlX": 38822,
+			"controlY": 4736
 		}
 	],
 	"hiddenConnectors": [
@@ -13046,14 +13346,14 @@
 		},
 		{
 			"id": "anchor_51",
-			"x": 13695,
-			"y": -26685,
+			"x": 22836,
+			"y": -31211,
 			"radius": 1204
 		},
 		{
 			"id": "anchor_19",
-			"x": 14533,
-			"y": -26679,
+			"x": 23674,
+			"y": -31205,
 			"radius": 180
 		},
 		{
@@ -13064,14 +13364,14 @@
 		},
 		{
 			"id": "anchor_55",
-			"x": 13690,
-			"y": -27520,
+			"x": 22831,
+			"y": -32046,
 			"radius": 180
 		},
 		{
 			"id": "anchor_56",
-			"x": 12813,
-			"y": -26680,
+			"x": 21954,
+			"y": -31206,
 			"radius": 180
 		},
 		{
@@ -13327,6 +13627,18 @@
 			"radius": 175,
 			"shape": "triangle",
 			"rotation": 59.6
+		},
+		{
+			"id": "anchor_48",
+			"x": 38897,
+			"y": 7237,
+			"radius": 1996
+		},
+		{
+			"id": "anchor_52",
+			"x": 38898,
+			"y": 7237,
+			"radius": 599
 		}
 	],
 	"decorations": [
@@ -13349,7 +13661,7 @@
 			"radius": 400,
 			"starType": "star_blue_giant",
 			"color": "#00479e",
-			"overlayPath": "graphics/fx/tritachyon_logo.png",
+			"overlayPath": "graphics/exiledSector/scenery/logos/tritachyon_logo.png",
 			"overlaySize": 0.95,
 			"overlayAlpha": 0.45,
 			"tags": [
@@ -13374,7 +13686,7 @@
 			"y": 4228,
 			"radius": 400,
 			"starType": "star_red_dwarf",
-			"overlayPath": "graphics/fx/pirates_logo.png",
+			"overlayPath": "graphics/exiledSector/scenery/logos/pirates_logo.png",
 			"overlaySize": 0.75,
 			"overlayAlpha": 0.45,
 			"tags": [
@@ -13389,7 +13701,7 @@
 			"radius": 400,
 			"starType": "star_red_supergiant",
 			"color": "#ff4900",
-			"overlayPath": "graphics/fx/hegemony_logo.png",
+			"overlayPath": "graphics/exiledSector/scenery/logos/hegemony_logo.png",
 			"overlaySize": 0.95,
 			"overlayAlpha": 0.7,
 			"tags": [
@@ -13404,7 +13716,7 @@
 			"radius": 400,
 			"starType": "star_browndwarf",
 			"color": "#780039",
-			"overlayPath": "graphics/fx/sindrian_diktat_logo.png",
+			"overlayPath": "graphics/exiledSector/scenery/logos/sindrian_diktat_logo.png",
 			"overlaySize": 0.95,
 			"overlayAlpha": 0.45,
 			"tags": [
@@ -13419,7 +13731,7 @@
 			"radius": 400,
 			"starType": "star_orange",
 			"color": "#f4c537",
-			"overlayPath": "graphics/fx/persean_league_logo.png",
+			"overlayPath": "graphics/exiledSector/scenery/logos/persean_league_logo.png",
 			"overlaySize": 0.7,
 			"overlayAlpha": 0.3,
 			"tags": [
@@ -13429,8 +13741,8 @@
 		{
 			"kind": "star",
 			"id": "frozen_heart_star",
-			"x": 13695,
-			"y": -26685,
+			"x": 22836,
+			"y": -31211,
 			"radius": 400,
 			"starType": "star_blue_supergiant",
 			"tags": [
@@ -13440,8 +13752,8 @@
 		{
 			"kind": "star",
 			"id": "kesteven_star",
-			"x": -25683,
-			"y": 15517,
+			"x": -31428,
+			"y": 17606,
 			"radius": 400,
 			"starType": "star_yellow",
 			"color": "#fbb434",
@@ -13452,8 +13764,8 @@
 		{
 			"kind": "star",
 			"id": "nightcross_star",
-			"x": -29488,
-			"y": -5417,
+			"x": -34276,
+			"y": -6810,
 			"radius": 400,
 			"starType": "star_yellow",
 			"color": "#5f62cd",
@@ -13464,8 +13776,8 @@
 		{
 			"kind": "star",
 			"id": "stargazer_star",
-			"x": 29054,
-			"y": -7476,
+			"x": 37063,
+			"y": -14962,
 			"radius": 400,
 			"starType": "star_yellow",
 			"color": "#960a1e",
@@ -13493,7 +13805,7 @@
 			"radius": 400,
 			"starType": "star_orange",
 			"color": "#f08a3c",
-			"overlayPath": "graphics/fx/tania_logo.png",
+			"overlayPath": "graphics/exiledSector/scenery/logos/tania_logo.png",
 			"overlaySize": 0.95,
 			"overlayAlpha": 0.45,
 			"tags": [
@@ -13503,8 +13815,8 @@
 		{
 			"kind": "star",
 			"id": "omega_star",
-			"x": 22614,
-			"y": -19683,
+			"x": -323,
+			"y": -37833,
 			"radius": 850,
 			"starType": "star_blue_supergiant",
 			"tags": [
@@ -13518,7 +13830,7 @@
 			"y": -1374,
 			"width": 763,
 			"height": 468,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_01.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/hyperspace_cloud_01.png",
 			"rotation": 264,
 			"tags": [
 				"core"
@@ -13531,7 +13843,7 @@
 			"y": 776,
 			"width": 757,
 			"height": 724,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_07_lowtech.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/hyperspace_cloud_07_lowtech.png",
 			"rotation": 307,
 			"tags": [
 				"core"
@@ -13544,7 +13856,7 @@
 			"y": 795,
 			"width": 548,
 			"height": 485,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_10_orange.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/hyperspace_cloud_10_orange.png",
 			"tags": [
 				"core"
 			]
@@ -13556,7 +13868,7 @@
 			"y": 1153,
 			"width": 501,
 			"height": 533,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_06_lowtech.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/hyperspace_cloud_06_lowtech.png",
 			"rotation": 203,
 			"tags": [
 				"core"
@@ -13569,7 +13881,7 @@
 			"y": 677,
 			"width": 526,
 			"height": 602,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_04_lowtech.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/hyperspace_cloud_04_lowtech.png",
 			"rotation": 253,
 			"tags": [
 				"core"
@@ -13582,7 +13894,7 @@
 			"y": 527,
 			"width": 519,
 			"height": 656,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_09_lowtech.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/hyperspace_cloud_09_lowtech.png",
 			"rotation": 164,
 			"tags": [
 				"core"
@@ -13595,7 +13907,7 @@
 			"y": 577,
 			"width": 749,
 			"height": 889,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_04_orange.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/hyperspace_cloud_04_orange.png",
 			"rotation": 237,
 			"tags": [
 				"core"
@@ -13608,7 +13920,7 @@
 			"y": 1085,
 			"width": 615,
 			"height": 560,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_09_orange.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/hyperspace_cloud_09_orange.png",
 			"rotation": 294,
 			"tags": [
 				"core"
@@ -13621,7 +13933,7 @@
 			"y": 1010,
 			"width": 626,
 			"height": 491,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_07_blend_b75.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/hyperspace_cloud_07_blend_b75.png",
 			"rotation": 94,
 			"tags": [
 				"core"
@@ -13634,7 +13946,7 @@
 			"y": -1594,
 			"width": 561,
 			"height": 549,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_04.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/hyperspace_cloud_04.png",
 			"rotation": 179,
 			"tags": [
 				"core"
@@ -13647,7 +13959,7 @@
 			"y": -1673,
 			"width": 587,
 			"height": 680,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_01.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/hyperspace_cloud_01.png",
 			"rotation": 261,
 			"tags": [
 				"core"
@@ -13660,7 +13972,7 @@
 			"y": -1646,
 			"width": 886,
 			"height": 508,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_05.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/hyperspace_cloud_05.png",
 			"rotation": 230,
 			"tags": [
 				"core"
@@ -13673,7 +13985,7 @@
 			"y": 17640,
 			"width": 1700,
 			"height": 1700,
-			"imagePath": "graphics/backgrounds/nebula_blobs/luddic_nebula_back_1.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/luddic_nebula_back_1.png",
 			"rotation": 285,
 			"parallax": 0.9,
 			"tags": [
@@ -13687,7 +13999,7 @@
 			"y": 18043,
 			"width": 1700,
 			"height": 1700,
-			"imagePath": "graphics/backgrounds/nebula_blobs/luddic_nebula_back_2.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/luddic_nebula_back_2.png",
 			"rotation": 285,
 			"parallax": 0.9,
 			"tags": [
@@ -13701,7 +14013,7 @@
 			"y": 17871,
 			"width": 1700,
 			"height": 1700,
-			"imagePath": "graphics/backgrounds/nebula_blobs/luddic_nebula_back_3.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/luddic_nebula_back_3.png",
 			"rotation": 285,
 			"parallax": 0.9,
 			"tags": [
@@ -13715,7 +14027,7 @@
 			"y": 16666,
 			"width": 1700,
 			"height": 1700,
-			"imagePath": "graphics/backgrounds/nebula_blobs/luddic_nebula_back_4.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/luddic_nebula_back_4.png",
 			"rotation": 285,
 			"parallax": 0.9,
 			"tags": [
@@ -13729,7 +14041,7 @@
 			"y": 16541,
 			"width": 1700,
 			"height": 1700,
-			"imagePath": "graphics/backgrounds/nebula_blobs/luddic_nebula_back_5.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/luddic_nebula_back_5.png",
 			"rotation": 285,
 			"parallax": 0.9,
 			"tags": [
@@ -13743,7 +14055,7 @@
 			"y": 17119,
 			"width": 3400,
 			"height": 3400,
-			"imagePath": "graphics/backgrounds/static_images/luddic_nebula.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/luddic_nebula.png",
 			"rotation": 285,
 			"tags": [
 				"luddic"
@@ -13756,7 +14068,7 @@
 			"y": 16881,
 			"width": 1700,
 			"height": 1700,
-			"imagePath": "graphics/backgrounds/nebula_blobs/luddic_nebula_front_1.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/luddic_nebula_front_1.png",
 			"rotation": 285,
 			"parallax": 1.1,
 			"tags": [
@@ -13770,7 +14082,7 @@
 			"y": 17538,
 			"width": 1700,
 			"height": 1700,
-			"imagePath": "graphics/backgrounds/nebula_blobs/luddic_nebula_front_2.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/luddic_nebula_front_2.png",
 			"rotation": 285,
 			"parallax": 1.1,
 			"tags": [
@@ -13784,7 +14096,7 @@
 			"y": 17969,
 			"width": 1700,
 			"height": 1700,
-			"imagePath": "graphics/backgrounds/nebula_blobs/luddic_nebula_front_3.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/luddic_nebula_front_3.png",
 			"rotation": 285,
 			"parallax": 1.1,
 			"tags": [
@@ -13798,7 +14110,7 @@
 			"y": 17593,
 			"width": 1700,
 			"height": 1700,
-			"imagePath": "graphics/backgrounds/nebula_blobs/luddic_nebula_front_4.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/luddic_nebula_front_4.png",
 			"rotation": 285,
 			"parallax": 1.1,
 			"tags": [
@@ -13812,7 +14124,7 @@
 			"y": 17889,
 			"width": 1700,
 			"height": 1700,
-			"imagePath": "graphics/backgrounds/nebula_blobs/luddic_nebula_front_5.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/luddic_nebula_front_5.png",
 			"rotation": 285,
 			"parallax": 1.1,
 			"tags": [
@@ -13826,7 +14138,7 @@
 			"y": 29877,
 			"width": 6400,
 			"height": 6400,
-			"imagePath": "graphics/backgrounds/nebula_blobs/tania_nebula_back_1.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/tania_nebula_back_1.png",
 			"behindStars": true,
 			"parallax": 0.85,
 			"tags": [
@@ -13840,7 +14152,7 @@
 			"y": 28635,
 			"width": 6400,
 			"height": 6400,
-			"imagePath": "graphics/backgrounds/nebula_blobs/tania_nebula_back_2.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/tania_nebula_back_2.png",
 			"behindStars": true,
 			"parallax": 0.85,
 			"tags": [
@@ -13854,7 +14166,7 @@
 			"y": 35203,
 			"width": 6400,
 			"height": 6400,
-			"imagePath": "graphics/backgrounds/nebula_blobs/tania_nebula_back_3.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/tania_nebula_back_3.png",
 			"behindStars": true,
 			"parallax": 0.85,
 			"tags": [
@@ -13868,7 +14180,7 @@
 			"y": 26293,
 			"width": 6400,
 			"height": 6400,
-			"imagePath": "graphics/backgrounds/nebula_blobs/tania_nebula_back_4.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/tania_nebula_back_4.png",
 			"behindStars": true,
 			"parallax": 0.85,
 			"tags": [
@@ -13882,7 +14194,7 @@
 			"y": 30750,
 			"width": 12800,
 			"height": 12800,
-			"imagePath": "graphics/backgrounds/static_images/tania_nebula.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/tania_nebula.png",
 			"behindStars": true,
 			"tags": [
 				"tania"
@@ -13895,7 +14207,7 @@
 			"y": 29172,
 			"width": 6400,
 			"height": 6400,
-			"imagePath": "graphics/backgrounds/nebula_blobs/tania_nebula_front_1.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/tania_nebula_front_1.png",
 			"behindStars": true,
 			"parallax": 1.15,
 			"tags": [
@@ -13909,7 +14221,7 @@
 			"y": 32441,
 			"width": 6400,
 			"height": 6400,
-			"imagePath": "graphics/backgrounds/nebula_blobs/tania_nebula_front_2.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/tania_nebula_front_2.png",
 			"behindStars": true,
 			"parallax": 1.15,
 			"tags": [
@@ -13923,7 +14235,7 @@
 			"y": 32806,
 			"width": 6400,
 			"height": 6400,
-			"imagePath": "graphics/backgrounds/nebula_blobs/tania_nebula_front_3.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/tania_nebula_front_3.png",
 			"behindStars": true,
 			"parallax": 1.15,
 			"tags": [
@@ -13937,7 +14249,7 @@
 			"y": 29108,
 			"width": 6400,
 			"height": 6400,
-			"imagePath": "graphics/backgrounds/nebula_blobs/tania_nebula_front_4.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/tania_nebula_front_4.png",
 			"behindStars": true,
 			"parallax": 1.15,
 			"tags": [
@@ -13951,7 +14263,7 @@
 			"y": 30995,
 			"width": 6400,
 			"height": 6400,
-			"imagePath": "graphics/backgrounds/nebula_blobs/tania_nebula_front_5.png",
+			"imagePath": "graphics/exiledSector/scenery/nebulae/tania_nebula_front_5.png",
 			"behindStars": true,
 			"parallax": 1.15,
 			"tags": [
@@ -13965,7 +14277,7 @@
 			"y": 36429,
 			"width": 927,
 			"height": 830,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_01.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_01.png",
 			"rotation": 173,
 			"tags": [
 				"abyss"
@@ -13978,7 +14290,7 @@
 			"y": 37831,
 			"width": 923,
 			"height": 806,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_02.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_02.png",
 			"rotation": 28,
 			"tags": [
 				"abyss"
@@ -13991,7 +14303,7 @@
 			"y": 38252,
 			"width": 906,
 			"height": 899,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_03.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_03.png",
 			"rotation": 5,
 			"tags": [
 				"abyss"
@@ -14004,7 +14316,7 @@
 			"y": 37356,
 			"width": 1009,
 			"height": 936,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_05.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_05.png",
 			"rotation": 186,
 			"tags": [
 				"abyss"
@@ -14017,7 +14329,7 @@
 			"y": 35330,
 			"width": 1032,
 			"height": 1082,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_06.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_06.png",
 			"rotation": 2,
 			"tags": [
 				"abyss"
@@ -14030,7 +14342,7 @@
 			"y": 35337,
 			"width": 1003,
 			"height": 1040,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_07.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_07.png",
 			"rotation": 1,
 			"tags": [
 				"abyss"
@@ -14043,7 +14355,7 @@
 			"y": 35183,
 			"width": 901,
 			"height": 1017,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_12.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_12.png",
 			"rotation": 153,
 			"tags": [
 				"abyss"
@@ -14056,7 +14368,7 @@
 			"y": 37186,
 			"width": 1097,
 			"height": 1227,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_14.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_14.png",
 			"rotation": 219,
 			"tags": [
 				"abyss"
@@ -14069,7 +14381,7 @@
 			"y": 36666,
 			"width": 1129,
 			"height": 1072,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_01.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_01.png",
 			"rotation": 290,
 			"tags": [
 				"abyss"
@@ -14082,7 +14394,7 @@
 			"y": 37479,
 			"width": 1135,
 			"height": 982,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_02.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_02.png",
 			"rotation": 107,
 			"tags": [
 				"abyss"
@@ -14095,7 +14407,7 @@
 			"y": 38097,
 			"width": 1183,
 			"height": 1023,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_03.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_03.png",
 			"rotation": 296,
 			"tags": [
 				"abyss"
@@ -14108,7 +14420,7 @@
 			"y": 38112,
 			"width": 1471,
 			"height": 1399,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_05.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_05.png",
 			"rotation": 43,
 			"tags": [
 				"abyss"
@@ -14121,7 +14433,7 @@
 			"y": 37752,
 			"width": 1235,
 			"height": 1298,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_06.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_06.png",
 			"rotation": 20,
 			"tags": [
 				"abyss"
@@ -14134,7 +14446,7 @@
 			"y": 36632,
 			"width": 1332,
 			"height": 1350,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_07.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_07.png",
 			"rotation": 276,
 			"tags": [
 				"abyss"
@@ -14147,7 +14459,7 @@
 			"y": 35776,
 			"width": 1474,
 			"height": 1615,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_12.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_12.png",
 			"rotation": 349,
 			"tags": [
 				"abyss"
@@ -14160,7 +14472,7 @@
 			"y": 34999,
 			"width": 1398,
 			"height": 1449,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_14.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_14.png",
 			"rotation": 159,
 			"tags": [
 				"abyss"
@@ -14173,7 +14485,7 @@
 			"y": 34783,
 			"width": 1325,
 			"height": 1310,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_01.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_01.png",
 			"rotation": 81,
 			"tags": [
 				"abyss"
@@ -14186,10 +14498,135 @@
 			"y": 35853,
 			"width": 1123,
 			"height": 1173,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_02.png",
+			"imagePath": "graphics/exiledSector/scenery/clouds/rat_abyss_cloud_02.png",
 			"rotation": 44,
 			"tags": [
 				"abyss"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "domain_drones_mothership",
+			"x": 38899,
+			"y": 7235,
+			"width": 330,
+			"height": 330,
+			"imagePath": "graphics/stations/survey_mothership.png",
+			"rotationSpeed": 0.4,
+			"tags": [
+				"domain_drones"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "domain_drones_survey_ship_1",
+			"x": 39407,
+			"y": 8432,
+			"width": 150,
+			"height": 150,
+			"imagePath": "graphics/stations/survey_ship.png",
+			"rotation": 40,
+			"rotationSpeed": 1.2,
+			"tags": [
+				"domain_drones"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "domain_drones_survey_ship_2",
+			"x": 38332,
+			"y": 5900,
+			"width": 150,
+			"height": 150,
+			"imagePath": "graphics/stations/survey_ship.png",
+			"rotation": 215,
+			"rotationSpeed": -1,
+			"tags": [
+				"domain_drones"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "domain_drones_survey_ship_3",
+			"x": 41395,
+			"y": 8248,
+			"width": 150,
+			"height": 150,
+			"imagePath": "graphics/stations/survey_ship.png",
+			"rotation": 300,
+			"rotationSpeed": 0.9,
+			"tags": [
+				"domain_drones"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "domain_drones_probe_1",
+			"x": 37840,
+			"y": 7684,
+			"width": 80,
+			"height": 80,
+			"imagePath": "graphics/stations/survey_probe.png",
+			"rotation": 80,
+			"rotationSpeed": -2.2,
+			"tags": [
+				"domain_drones"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "domain_drones_probe_2",
+			"x": 40372,
+			"y": 6610,
+			"width": 80,
+			"height": 80,
+			"imagePath": "graphics/stations/survey_probe.png",
+			"rotation": 140,
+			"rotationSpeed": 1.8,
+			"tags": [
+				"domain_drones"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "domain_drones_probe_3",
+			"x": 36349,
+			"y": 6205,
+			"width": 80,
+			"height": 80,
+			"imagePath": "graphics/stations/survey_probe.png",
+			"rotation": 20,
+			"rotationSpeed": 2.5,
+			"tags": [
+				"domain_drones"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "domain_drones_probe_4",
+			"x": 39985,
+			"y": 4546,
+			"width": 80,
+			"height": 80,
+			"imagePath": "graphics/stations/survey_probe.png",
+			"rotation": 250,
+			"rotationSpeed": -1.6,
+			"tags": [
+				"domain_drones"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "domain_drones_probe_5",
+			"x": 37499,
+			"y": 9660,
+			"width": 80,
+			"height": 80,
+			"imagePath": "graphics/stations/survey_probe.png",
+			"rotation": 170,
+			"rotationSpeed": 2,
+			"tags": [
+				"domain_drones"
 			]
 		},
 		{
@@ -14199,7 +14636,7 @@
 			"y": 0,
 			"innerRadius": 2900,
 			"outerRadius": 3250,
-			"ringArtPath": "graphics/planets/ring_band_dust.png",
+			"ringArtPath": "graphics/exiledSector/scenery/rings/ring_band_dust.png",
 			"rotationSpeed": 0.6,
 			"tags": [
 				"core"
@@ -14212,7 +14649,7 @@
 			"y": 0,
 			"innerRadius": 4350,
 			"outerRadius": 4800,
-			"ringArtPath": "graphics/planets/ring_band_dust.png",
+			"ringArtPath": "graphics/exiledSector/scenery/rings/ring_band_dust.png",
 			"rotationSpeed": -0.8,
 			"tags": [
 				"core"
@@ -14225,7 +14662,7 @@
 			"y": -18999,
 			"innerRadius": 2900,
 			"outerRadius": 3100,
-			"ringArtPath": "graphics/planets/ring_band_ice.png",
+			"ringArtPath": "graphics/exiledSector/scenery/rings/ring_band_ice.png",
 			"rotationSpeed": -0.8,
 			"tags": [
 				"tritachyon"
@@ -14234,25 +14671,27 @@
 		{
 			"kind": "ringBelt",
 			"id": "stargazer_iris",
-			"x": 29054,
-			"y": -7476,
+			"x": 37063,
+			"y": -14962,
 			"innerRadius": 640,
 			"outerRadius": 1000,
-			"ringArtPath": "graphics/planets/ring_band_dust.png",
+			"ringArtPath": "graphics/exiledSector/scenery/rings/ring_band_dust.png",
 			"rotationSpeed": 0.4,
 			"tags": [
 				"stargazer"
 			]
 		},
 		{
-			"kind": "threatUnit",
-			"id": "threat_unit_1",
-			"x": -51529,
-			"y": 25241,
-			"unitType": "fabricator",
-			"length": 600,
+			"kind": "ringBelt",
+			"id": "domain_drones_asteroid_belt",
+			"x": 38899,
+			"y": 7235,
+			"innerRadius": 1880,
+			"outerRadius": 2120,
+			"ringArtPath": "graphics/exiledSector/scenery/rings/ring_band_asteroids.png",
+			"rotationSpeed": 0.3,
 			"tags": [
-				"threat"
+				"domain_drones"
 			]
 		},
 		{
@@ -14286,20 +14725,10 @@
 			]
 		},
 		{
-			"kind": "shroudedMaw",
-			"id": "shrouded_maw",
-			"x": -43293,
-			"y": 35850,
-			"length": 620,
-			"tags": [
-				"shrouded"
-			]
-		},
-		{
 			"kind": "hypershunt",
 			"id": "omega_hypershunt",
-			"x": 22614,
-			"y": -19683,
+			"x": -323,
+			"y": -37833,
 			"orbitRadius": 1100,
 			"orbitSeconds": 550,
 			"startAngle": 45,

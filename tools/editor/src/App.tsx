@@ -4,6 +4,7 @@ import { Notifications } from '@mantine/notifications';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router';
 import { EditorLayout } from './layout/EditorLayout.tsx';
+import { AtlasTreePage } from './pages/atlasTree/AtlasTreePage.tsx';
 import { ImagesPage } from './pages/images/ImagesPage.tsx';
 import { ItemsPage } from './pages/items/ItemsPage.tsx';
 import { TextPage } from './pages/text/TextPage.tsx';
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="/tree" replace /> },
       { path: '/tree', element: <TreePage /> },
+      { path: '/atlas-tree', element: <AtlasTreePage /> },
       { path: '/images', element: <ImagesPage /> },
       { path: '/items', element: <ItemsPage /> },
       { path: '/hull-items', element: <Navigate to="/items" replace /> },

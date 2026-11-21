@@ -14,6 +14,8 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.ExiledSector;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.generation.ChartTiers;
+import exiledsector.charts.phasing.HypershuntPower;
+import exiledsector.charts.phasing.PhaseGateRules;
 import exiledsector.compat.VaultsOfKnowledgeCompat;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.ui.VanillaText;
@@ -229,9 +231,13 @@ public class WormholeGateway extends BaseIndustry {
         VanillaText.plainPara(tooltip, Translation.gameText("chart.gateway.tooltip.opens"), TOOLTIP_PAD, Misc.getTextColor());
         if (researchGated()) {
             int maxTier = GatewayTierLimit.maxTierFor(getId());
-            VanillaText.plainPara(tooltip, maxTier >= ChartTiers.CORRUPTED_TIER ? Translation.gameText("chart.gateway.tooltip.everyTier")
+            VanillaText.plainPara(tooltip, maxTier >= ChartTiers.HIGHEST_TIER ? Translation.gameText("chart.gateway.tooltip.everyTier")
                     : I18n.forGameText(() -> Translation.msg("chart.gateway.tooltip.tierLimit").arg("tier", maxTier).text()), TOOLTIP_PAD,
                     Misc.getTextColor());
+        }
+        if (market != null && PhaseGateRules.isUnlockedFor(market) && !HypershuntPower.reaches(market)) {
+            VanillaText.plainPara(tooltip, I18n.forGameText(() -> Translation.msg("chart.phasing.gatewayTooltip.noHypershunt")
+                    .arg("range", HypershuntPower.rangeLightYears()).text()), TOOLTIP_PAD, Misc.getTextColor());
         }
     }
 }

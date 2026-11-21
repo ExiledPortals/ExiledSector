@@ -2,27 +2,30 @@ package exiledsector.skills.npc;
 
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
-import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
-import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.tags.ShipProfile;
 import exiledsector.skills.tags.WeaponKind;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import static exiledsector.skills.TestTrees.node;
+import static exiledsector.skills.TestTrees.registered;
+import static exiledsector.skills.TestTrees.type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class NpcFleetGrantTest {
 
     private static final ShipProfile BALLISTIC_FRIGATE =
@@ -31,38 +34,24 @@ class NpcFleetGrantTest {
 
     @BeforeEach
     void setUp() {
-        RealSkillData.clear();
         NpcTestAnchors.install();
     }
 
     @AfterEach
     void tearDown() {
-        RealSkillData.clear();
         NpcTestAnchors.uninstall();
     }
 
     private static SkillType registerType(SkillType.Builder builder) {
-        SkillType type = builder.build();
-        SkillTree.registerType(type);
-        return type;
-    }
-
-    private static SkillType.Builder builder(String typeId, SkillTier tier) {
-        return new SkillType.Builder(typeId, typeId + " name", "a.png", tier);
-    }
-
-    private static SkillNode node(String id, SkillType type, String... connectedTo) {
-        SkillNode node = new SkillNode(id, type, List.of(connectedTo), 0f, 0f, SkillNodeDecoration.NONE, List.of());
-        SkillTree.register(node);
-        return node;
+        return registered(builder.build());
     }
 
     private static void small(String id, String... connectedTo) {
-        node(id, registerType(builder(id + "_type", SkillTier.SMALL)), connectedTo);
+        node(id, registerType(type(id + "_type", SkillTier.SMALL)), connectedTo);
     }
 
     private static void root() {
-        node(ROOT, registerType(builder("root_type", SkillTier.ROOT)));
+        node(ROOT, registerType(type("root_type", SkillTier.ROOT)));
     }
 
     private static NpcTreeBuild generate(int nodeCount, String... grantedNodeIds) {
@@ -76,7 +65,7 @@ class NpcFleetGrantTest {
         small("a1", ROOT);
         small("a2", "a1");
         small("a3", "a2");
-        node("granted", registerType(builder("granted_type", SkillTier.NOTABLE)), "beyond");
+        node("granted", registerType(type("granted_type", SkillTier.NOTABLE)), "beyond");
         small("beyond", "granted");
 
         ShipSkillData shipData = generate(2, "granted").shipData();
@@ -91,7 +80,7 @@ class NpcFleetGrantTest {
     void aGrantedNodeOnTheBuildersPathIsTakenOnceAndBridgesOnward() {
         root();
         small("a1", ROOT);
-        node("granted", registerType(builder("granted_type", SkillTier.SMALL)), "a1", "a2");
+        node("granted", registerType(type("granted_type", SkillTier.SMALL)), "a1", "a2");
         small("a2", "granted");
 
         ShipSkillData shipData = generate(2, "granted").shipData();
@@ -103,8 +92,8 @@ class NpcFleetGrantTest {
     @Test
     void theBuilderAvoidsNodesThatConflictWithAGrant() {
         root();
-        node("rival", registerType(builder("rival_type", SkillTier.NOTABLE)), ROOT);
-        node("granted", registerType(builder("granted_type", SkillTier.NOTABLE).exclusiveSkillTypeIds(List.of("rival_type"))));
+        node("rival", registerType(type("rival_type", SkillTier.NOTABLE)), ROOT);
+        node("granted", registerType(type("granted_type", SkillTier.NOTABLE).exclusiveSkillTypeIds(List.of("rival_type"))));
 
         ShipSkillData shipData = generate(1, "granted").shipData();
 
@@ -116,7 +105,7 @@ class NpcFleetGrantTest {
     void aGrantTheHullCannotTakeIsSkipped() {
         root();
         small("a1", ROOT);
-        node("granted", registerType(builder("granted_type", SkillTier.NOTABLE).requiredHullSizes(List.of(HullSize.CAPITAL_SHIP))));
+        node("granted", registerType(type("granted_type", SkillTier.NOTABLE).requiredHullSizes(List.of(HullSize.CAPITAL_SHIP))));
 
         NpcTreeBuild build = generate(1, "granted");
 
@@ -128,7 +117,7 @@ class NpcFleetGrantTest {
     void theTreeTagKeepsGrantsAndTheNodesBridgedThroughThem() {
         root();
         small("a1", ROOT);
-        node("granted", registerType(builder("granted_type", SkillTier.SMALL)), "a1", "a2");
+        node("granted", registerType(type("granted_type", SkillTier.SMALL)), "a1", "a2");
         small("a2", "granted");
         String tag = NpcTreeTag.encode(generate(2, "granted").shipData());
 
@@ -143,7 +132,7 @@ class NpcFleetGrantTest {
     void droppingGrantsReleasesThemAndTheNodesBridgedThroughThem() {
         root();
         small("a1", ROOT);
-        node("granted", registerType(builder("granted_type", SkillTier.SMALL)), "a1", "a2");
+        node("granted", registerType(type("granted_type", SkillTier.SMALL)), "a1", "a2");
         small("a2", "granted");
         ShipSkillData shipData = generate(2, "granted").shipData();
 

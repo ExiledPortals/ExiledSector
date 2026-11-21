@@ -19,7 +19,8 @@ public class ShipyardDialog extends GuardedSiteDialog {
     static final String SALVAGE = "exiledSector_shipyardSalvage";
     static final String LOOT_SITE = "exiledSector_chart_abyssal_shipyard";
     static final String LOOT_SCOPE = "abyssal_shipyard";
-    static final AnomalyLoot LOOT = new AnomalyLoot(LOOT_SCOPE, LOOT_SITE, 2f, 0.35f, 1.5f, null, 0f);
+    static final float LOOT_QUANTITY_PERCENT = 50f;
+    static final AnomalyLoot LOOT = new AnomalyLoot(LOOT_SCOPE, LOOT_SITE, 2f, 0.35f, LOOT_QUANTITY_PERCENT, null, 0f);
     static final long LOOT_SALT = 0x5348504c4f4fL;
 
     @Override

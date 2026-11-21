@@ -49,7 +49,7 @@ class SkillTreeLoaderTest {
                 + "\"connectedTo\": [\"vents_1\"],"
                 + "\"x\": -180,"
                 + "\"y\": 180,"
-                + "\"ringBeltPath\": \"graphics/planets/ring_band_ice.png\","
+                + "\"ringBeltPath\": \"graphics/exiledSector/scenery/rings/ring_band_ice.png\","
                 + "\"ringBeltColor\": \"#8c78ff\","
                 + "\"ringBeltWidth\": 1.4,"
                 + "\"wormholeColor\": \"#ff5ad1\","
@@ -66,7 +66,7 @@ class SkillTreeLoaderTest {
         assertEquals(List.of("vents_1"), node.getConnectedNodeIds());
         assertEquals(-180f, node.getOffsetX());
         assertEquals(180f, node.getOffsetY());
-        assertEquals("graphics/planets/ring_band_ice.png", node.getRingBeltPath());
+        assertEquals("graphics/exiledSector/scenery/rings/ring_band_ice.png", node.getRingBeltPath());
         assertEquals("#8c78ff", node.getRingBeltColor());
         assertEquals(1.4f, node.getRingBeltWidth());
         assertEquals("#ff5ad1", node.getWormholeColor());

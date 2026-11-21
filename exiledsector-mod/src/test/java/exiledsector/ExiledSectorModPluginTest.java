@@ -15,14 +15,16 @@ import exiledsector.effects.PlayerEngagementPipeline;
 import exiledsector.effects.SkillTreeInstaller;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemKind;
-import exiledsector.items.ItemNames;
-import exiledsector.items.SocketLossListener;
-import exiledsector.items.StarChartCipher;
-import exiledsector.items.StarChartFixtures;
-import exiledsector.items.SubroutineKind;
+import exiledsector.items.name.ItemNames;
+import exiledsector.items.ItemVolumes;
+import exiledsector.items.custody.SocketLossListener;
+import exiledsector.items.crafting.material.StarChartCipher;
+import exiledsector.items.starchart.StarChartFixtures;
+import exiledsector.items.subroutine.SubroutineKind;
 import exiledsector.persistence.InMemoryTemplateFile;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillDataResolver;
@@ -32,6 +34,8 @@ import exiledsector.skills.npc.NpcFactionVolumes;
 import exiledsector.skills.npc.NpcFocus;
 import exiledsector.skills.npc.NpcLevelCaps;
 import exiledsector.skills.npc.NpcLevelCategory;
+import exiledsector.skills.tags.RealThemeTags;
+import exiledsector.skills.tags.ThemeTags;
 import exiledsector.skills.unlock.FactionEncounterGate;
 import exiledsector.ui.SkillTreeRefitButton;
 import exiledsector.ui.decoration.TreeFleetFactions;
@@ -46,16 +50,15 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -68,6 +71,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class ExiledSectorModPluginTest {
 
     private static final String TYPES = "{ \"skillTypes\": [ { \"id\": \"root_type\", \"name\": \"Root\", \"icon\": \"a.png\", \"tier\": \"ROOT\" },"
@@ -110,6 +114,7 @@ class ExiledSectorModPluginTest {
                 .thenReturn(new JSONArray("[{\"faction\": \"hegemony\", \"volume\": \"hegemony\"}]"));
         when(settings.getMergedSpreadsheetDataForMod("faction", "data/config/exiledSector/tree_fleet_factions.csv", "exiledSector"))
                 .thenReturn(new JSONArray("[{\"faction\": \"threat\", \"volume\": \"threat\"}]"));
+        when(settings.getMergedSpreadsheetDataForMod("tag", ThemeTags.PATH, "exiledSector")).thenReturn(RealThemeTags.rows());
         when(settings.getMergedSpreadsheetDataForMod("faction", "data/config/exiledSector/npc_faction_focus.csv", "exiledSector"))
                 .thenReturn(new JSONArray("[{\"faction\": \"hegemony\", \"focus\": \"armour:2\"}]"));
         when(settings.getMergedSpreadsheetDataForMod("system", "data/config/exiledSector/npc_ship_system_focus.csv", "exiledSector"))
@@ -150,13 +155,13 @@ class ExiledSectorModPluginTest {
     void tearDown() throws Exception {
         SkillTreeTemplateStore.useCommonFolder();
         loadTree("");
-        SkillTree.clearTypes();
         NpcFactionVolumes.clear();
         TreeFleetFactions.clear();
         NpcFocus.clear();
         NpcLevelCaps.clear();
         ItemDefinitions.clear();
         ItemNames.clear();
+        ItemVolumes.bind(null);
         StarChartFixtures.unregisterCraftingItems();
         settingsCreatorMock.close();
         mockSector.close();
@@ -291,15 +296,6 @@ class ExiledSectorModPluginTest {
     }
 
     @Test
-    void onGameLoadRemovesInstallerCopiesPersistedByOlderSavesBeforeAddingTheTransientOne() {
-        new ExiledSectorModPlugin().onGameLoad(false);
-
-        InOrder order = inOrder(sector);
-        order.verify(sector).removeScriptsOfClass(SkillTreeInstaller.class);
-        order.verify(sector).addTransientScript(any(SkillTreeInstaller.class));
-    }
-
-    @Test
     void onGameLoadDropsTemplateAssignmentsForShipsWithNoProgressOrDeletedTemplates() {
         String templateId = SkillTreeTemplateStore.save("Brawler", "root_low_tech_1", HullSize.CRUISER, List.of()).id();
         ShipSkillDataManager.get("kept").addXp(5f);
@@ -314,18 +310,14 @@ class ExiledSectorModPluginTest {
     }
 
     @Test
-    void onGameLoadForgetsTheRetiredReserveSlotsAndDropsBlankRecordsLeftByShipsWithNoProgress() {
+    void onGameLoadDropsBlankRecordsLeftByShipsWithNoProgress() {
         ShipSkillDataManager.get("temporary-copy");
         ShipSkillDataManager.get("levelled").addXp(5f);
-        persistentData.put("exiledSector_opSpentSlots", new HashMap<>(Map.of("temporary-copy", 0, "levelled", 1, "sold", 2)));
-        persistentData.put("exiledSector_opSpentNextSlot", 3);
 
         new ExiledSectorModPlugin().onGameLoad(false);
 
-        assertFalse(persistentData.containsKey("exiledSector_opSpentSlots"));
         assertNull(ShipSkillDataManager.find("temporary-copy"));
         assertNotNull(ShipSkillDataManager.find("levelled"));
-        assertFalse(persistentData.containsKey("exiledSector_opSpentNextSlot"));
     }
 
     @Test
@@ -387,7 +379,7 @@ class ExiledSectorModPluginTest {
     void onApplicationLoadLoadsTheNpcFocusMergedAcrossMods() throws Exception {
         new ExiledSectorModPlugin().onApplicationLoad();
 
-        assertEquals(Map.of("armour", 4f), NpcFocus.of("hegemony", "damper"));
+        assertEquals(List.of(Map.of("armour", 2f), Map.of("armour", 2f)), NpcFocus.of("hegemony", "damper"));
     }
 
     @Test

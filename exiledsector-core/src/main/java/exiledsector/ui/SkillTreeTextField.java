@@ -1,0 +1,148 @@
+package exiledsector.ui;
+
+import com.fs.starfarer.api.input.InputEventAPI;
+import exiledsector.ui.util.TextFont;
+import exiledsector.ui.util.TextLabel;
+import org.lazywizard.lazylib.ui.LazyFont;
+import org.lwjgl.input.Keyboard;
+
+import java.awt.Color;
+import java.util.function.ToDoubleFunction;
+
+public final class SkillTreeTextField {
+
+    public enum KeyResult {
+        IGNORED, CONSUMED, EDITED, SUBMIT
+    }
+
+    private static final float CARET_BLINK_SECONDS = 0.5f;
+    private static final String CARET = "|";
+    private static final Color PLACEHOLDER_COLOR = new Color(130, 130, 130);
+
+    private final int maxLength;
+    private final TextFont font;
+    private final Color textColor;
+    private final TextLabel displayLine;
+
+    private String enteredText = "";
+    private boolean focused;
+    private float caretSeconds;
+    private String fittedText;
+    private String fittedPlaceholder;
+    private boolean fittedFocused;
+    private float fittedWidth;
+    private String fittedWithCaret;
+    private String fittedWithoutCaret;
+
+    public SkillTreeTextField(int maxLength, TextFont font, Color textColor) {
+        this.maxLength = maxLength;
+        this.font = font;
+        this.textColor = textColor;
+        this.displayLine = new TextLabel(font, textColor);
+    }
+
+    public String text() {
+        return enteredText;
+    }
+
+    public void setText(String value) {
+        enteredText = value == null ? "" : value;
+    }
+
+    public void focus(boolean value) {
+        focused = value;
+        caretSeconds = 0f;
+    }
+
+    public boolean isFocused() {
+        return focused;
+    }
+
+    public KeyResult handleKey(InputEventAPI event) {
+        if (!focused) {
+            return KeyResult.IGNORED;
+        }
+        boolean repeated = event.isRepeat();
+        if (!event.isKeyDownEvent() && !repeated) {
+            return KeyResult.CONSUMED;
+        }
+        caretSeconds = 0f;
+        int keyCode = event.getEventValue();
+        if (keyCode == Keyboard.KEY_BACK) {
+            if (enteredText.isEmpty()) {
+                return KeyResult.CONSUMED;
+            }
+            enteredText = event.isShiftDown() ? "" : withoutLastCodePoint(enteredText);
+            return KeyResult.EDITED;
+        }
+        if (keyCode == Keyboard.KEY_RETURN || keyCode == Keyboard.KEY_NUMPADENTER) {
+            return repeated ? KeyResult.CONSUMED : KeyResult.SUBMIT;
+        }
+        char character = event.getEventChar();
+        if (!Character.isISOControl(character) && enteredText.length() < maxLength) {
+            enteredText = enteredText + character;
+            return KeyResult.EDITED;
+        }
+        return KeyResult.CONSUMED;
+    }
+
+    public void advance(float amount) {
+        caretSeconds += amount;
+    }
+
+    public void render(float x, float bottom, float width, float height, String placeholder, float alphaMult) {
+        LazyFont loadedFont = font.font();
+        if (loadedFont == null) {
+            return;
+        }
+        displayLine.set(displayText(loadedFont, width, placeholder));
+        displayLine.setColor(enteredText.isEmpty() && !focused ? PLACEHOLDER_COLOR : textColor);
+        displayLine.setAlpha(alphaMult);
+        displayLine.draw(x, bottom + height / 2f + font.size() / 2f);
+    }
+
+    private String displayText(LazyFont loadedFont, float width, String placeholder) {
+        boolean stale = !enteredText.equals(fittedText) || focused != fittedFocused || width != fittedWidth
+                || !placeholder.equals(fittedPlaceholder);
+        if (stale) {
+            refit(width, placeholder, value -> loadedFont.calcWidth(value, font.size()));
+        }
+        boolean caretVisible = focused && ((int) (caretSeconds / CARET_BLINK_SECONDS)) % 2 == 0;
+        return caretVisible ? fittedWithCaret : fittedWithoutCaret;
+    }
+
+    private void refit(float width, String placeholder, ToDoubleFunction<String> widthOf) {
+        fittedText = enteredText;
+        fittedFocused = focused;
+        fittedWidth = width;
+        fittedPlaceholder = placeholder;
+        if (!focused) {
+            fittedWithoutCaret = enteredText.isEmpty() ? fitStart(placeholder, width, widthOf) : fitEnd(enteredText, width, widthOf);
+            fittedWithCaret = fittedWithoutCaret;
+            return;
+        }
+        fittedWithCaret = fitEnd(enteredText + CARET, width, widthOf);
+        fittedWithoutCaret = fittedWithCaret.endsWith(CARET)
+                ? fittedWithCaret.substring(0, fittedWithCaret.length() - CARET.length()) : fittedWithCaret;
+    }
+
+    public static String fitEnd(String value, double maxWidth, ToDoubleFunction<String> widthOf) {
+        String fitted = value;
+        while (!fitted.isEmpty() && widthOf.applyAsDouble(fitted) > maxWidth) {
+            fitted = fitted.substring(Character.charCount(fitted.codePointAt(0)));
+        }
+        return fitted;
+    }
+
+    public static String fitStart(String value, double maxWidth, ToDoubleFunction<String> widthOf) {
+        String fitted = value;
+        while (!fitted.isEmpty() && widthOf.applyAsDouble(fitted) > maxWidth) {
+            fitted = withoutLastCodePoint(fitted);
+        }
+        return fitted;
+    }
+
+    private static String withoutLastCodePoint(String value) {
+        return value.substring(0, value.length() - Character.charCount(value.codePointBefore(value.length())));
+    }
+}

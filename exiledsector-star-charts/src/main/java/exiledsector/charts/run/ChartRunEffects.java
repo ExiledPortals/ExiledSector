@@ -4,13 +4,14 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.anomaly.SettlingDust;
+import exiledsector.charts.anomaly.SettlingDustTuning;
 import exiledsector.charts.effect.ChartPlayerModifiers;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
-import exiledsector.items.StarChart;
+import exiledsector.items.starchart.StarChart;
 
-import java.util.List;
 import java.util.Objects;
 
 public final class ChartRunEffects {
@@ -20,7 +21,9 @@ public final class ChartRunEffects {
     private static ChartRun contextRun;
     private static String contextChartData;
     private static String contextNodeData;
-    private static List<String> contextAnomalies;
+    private static String contextTreeLinesData;
+    private static String contextAnomaliesData;
+    private static int contextDustStacks;
     private static ChartGenContext context = ChartGenContext.none();
 
     private ChartRunEffects() {
@@ -40,12 +43,17 @@ public final class ChartRunEffects {
             return ChartGenContext.none();
         }
         if (run != contextRun || !Objects.equals(run.chartData(), contextChartData) || !Objects.equals(run.atlasNodeData(), contextNodeData)
-                || !run.anomalyIds().equals(contextAnomalies)) {
-            context = ChartGenContext.from(chartOf(run)).withAtlasNode(run.atlasNode()).withAnomalyEffects(run.anomalyIds());
+                || !Objects.equals(run.atlasTreeLinesData(), contextTreeLinesData) || !Objects.equals(run.anomaliesData(), contextAnomaliesData)
+                || SettlingDust.storedStacks(run) != contextDustStacks) {
+            ChartGenContext base = ChartGenContext.from(chartOf(run)).withAtlasNode(run.atlasNode()).withEffects(run.atlasTreeLines())
+                    .withAnomalyEffects(run.anomalyIds());
+            context = base.plusQuantityPercent(SettlingDust.quantityPercent(run, SettlingDustTuning.of(base)));
             contextRun = run;
             contextChartData = run.chartData();
             contextNodeData = run.atlasNodeData();
-            contextAnomalies = run.anomalyIds();
+            contextTreeLinesData = run.atlasTreeLinesData();
+            contextAnomaliesData = run.anomaliesData();
+            contextDustStacks = SettlingDust.storedStacks(run);
         }
         return context;
     }
@@ -60,12 +68,7 @@ public final class ChartRunEffects {
             }
         }
         ChartPlayerModifiers.set(runContext.fleetStatMults(), fleet);
-        ChartPlayerModifiers.setBattleSizeBonus(runContext.battleSizeBonus());
-        ChartPlayerModifiers.setShipSystemsDisabled(runContext.shipSystemsDisabled());
-        ChartPlayerModifiers.setAutopilotForced(runContext.autopilotForced());
-        ChartPlayerModifiers.setArcStrikeEmp(runContext.arcStrikeEmp());
-        ChartPlayerModifiers.setWeaponMisfireRate(runContext.weaponMisfireRate());
-        ChartPlayerModifiers.setDamagePercentPerSMod(runContext.damagePercentPerSMod());
+        ChartPlayerModifiers.setBattleRules(runContext.battleRules());
     }
 
     public static void lift(CampaignFleetAPI fleet) {

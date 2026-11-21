@@ -7,11 +7,12 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import exiledsector.ModSounds;
 import exiledsector.compat.CombatGlow;
+import exiledsector.compat.FirstFailureLog;
+import exiledsector.charts.effect.ChartCombatPlugins;
 import exiledsector.charts.run.ChartRun;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
-import java.awt.Color;
 import java.util.List;
 import java.util.Random;
 
@@ -24,10 +25,7 @@ public class StormBattlePlugin extends BaseEveryFrameCombatPlugin {
     static final float LIGHT_SIZE = 600f;
     static final float LIGHT_INTENSITY = 1f;
     static final float LIGHT_SECONDS = 0.5f;
-    static final Color ARC_FRINGE = new Color(110, 130, 255, 255);
-    static final Color ARC_CORE = new Color(235, 240, 255, 255);
-    private static final Logger LOG = Logger.getLogger(StormBattlePlugin.class);
-    private static boolean failureReported;
+    private static final FirstFailureLog FAILURES = FirstFailureLog.errors(Logger.getLogger(StormBattlePlugin.class));
 
     private CombatEngineAPI engine;
     private boolean active;
@@ -35,6 +33,7 @@ public class StormBattlePlugin extends BaseEveryFrameCombatPlugin {
     private float strikeSeconds;
     private float secondsToStrike;
     private Random random;
+    private StormPalette palette = StormPalette.ION;
     private StormOverlay overlay;
 
     @Override
@@ -43,7 +42,7 @@ public class StormBattlePlugin extends BaseEveryFrameCombatPlugin {
         active = false;
         overlay = null;
         try {
-            if (engine == null || !engine.isInCampaign() || engine.isSimulation() || engine.isInCampaignSim()) {
+            if (!ChartCombatPlugins.isCampaignBattle(engine)) {
                 return;
             }
             StormFrontTerrainPlugin front = StormBattles.playerFront();
@@ -55,7 +54,8 @@ public class StormBattlePlugin extends BaseEveryFrameCombatPlugin {
             strikeSeconds = StormRules.strikeSeconds(StormBattles.contextOf(run).anomalyMult(StormFront.STRIKE_KEY));
             secondsToStrike = strikeSeconds;
             random = new Random();
-            overlay = new StormOverlay(engine.getMapWidth(), engine.getMapHeight(), random.nextLong());
+            palette = front.palette();
+            overlay = new StormOverlay(engine.getMapWidth(), engine.getMapHeight(), random.nextLong(), palette);
             engine.addLayeredRenderingPlugin(overlay);
             active = true;
         } catch (RuntimeException | LinkageError e) {
@@ -92,16 +92,13 @@ public class StormBattlePlugin extends BaseEveryFrameCombatPlugin {
         }
         Vector2f origin = StormStrikes.origin(target.getLocation(), random);
         engine.spawnEmpArc(null, origin, null, target, DamageType.ENERGY, StormRules.strikeDamage(tier), StormRules.strikeEmp(tier), ARC_RANGE,
-                ModSounds.orSilent(IMPACT_SOUND), ARC_THICKNESS, ARC_FRINGE, ARC_CORE);
+                ModSounds.orSilent(IMPACT_SOUND), ARC_THICKNESS, palette.arcFringe(), palette.arcCore());
         ModSounds.playAt(THUNDER_SOUND, 1f, origin, new Vector2f());
         overlay.flash(target.getLocation());
-        CombatGlow.flash(new Vector2f(target.getLocation()), null, ARC_FRINGE, LIGHT_SIZE, LIGHT_INTENSITY, LIGHT_SECONDS);
+        CombatGlow.flash(new Vector2f(target.getLocation()), null, palette.arcFringe(), LIGHT_SIZE, LIGHT_INTENSITY, LIGHT_SECONDS);
     }
 
     private static void reportFailure(Throwable failure) {
-        if (!failureReported) {
-            failureReported = true;
-            LOG.error("[ExiledSector] The Storm Front's battle strikes failed; they are off for this battle", failure);
-        }
+        FAILURES.report("[ExiledSector] The Storm Front's battle strikes failed; they are off for this battle", failure);
     }
 }

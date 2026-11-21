@@ -6,6 +6,8 @@ import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec.DropD
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.content.ChartPoi;
 
+import exiledsector.data.RandomRounding;
+import exiledsector.loot.DropType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -58,7 +60,7 @@ public final class ChartVanillaLoot {
         for (ChartLoot.Entry entry : ChartLoot.entriesFor(kind.name().toLowerCase(Locale.ROOT), tier)) {
             float mult = context.dropMult(entry.type());
             if (entry.mode() == ChartLoot.Mode.RANDOM) {
-                int chances = stochasticRound(entry.amount() * mult, random);
+                int chances = RandomRounding.round(entry.amount() * mult, random);
                 if (chances > 0) {
                     site.addDropRandom(randomDrop(entry.group(), chances, 1f));
                 }
@@ -70,7 +72,7 @@ public final class ChartVanillaLoot {
 
     private static float extraShare(DropData existingDrop, ChartGenContext context) {
         DropType type = existingDrop == null ? null : ChartLoot.typeOfGroup(existingDrop.group);
-        return type == null ? 0f : context.dropMult(type) - 1f;
+        return type == null ? 0f : context.extraDropShare(type);
     }
 
     static DropData scaledRandomCopy(DropData existingDrop, ChartGenContext context, Random random) {
@@ -78,7 +80,7 @@ public final class ChartVanillaLoot {
         if (existingDrop == null || !(extraShare > 0f) || existingDrop.chances <= 0) {
             return null;
         }
-        int chances = stochasticRound(existingDrop.chances * extraShare, random);
+        int chances = RandomRounding.round(existingDrop.chances * extraShare, random);
         int maxChances = existingDrop.maxChances > existingDrop.chances ? Math.max(chances, Math.round(existingDrop.maxChances * extraShare)) : -1;
         if (chances <= 0 && maxChances <= 0) {
             return null;
@@ -99,25 +101,13 @@ public final class ChartVanillaLoot {
         return extraDrop;
     }
 
-    public static int stochasticRound(float expected, Random random) {
-        if (!(expected > 0f)) {
-            return 0;
-        }
-        int whole = (int) expected;
-        return whole + (random.nextFloat() < expected - whole ? 1 : 0);
-    }
-
     public static void addToFleet(CampaignFleetAPI fleet, boolean boss, ChartGenContext context, int tier) {
         addToFleet(fleet, boss, context, tier, Set.of());
     }
 
     public static void addToFleet(CampaignFleetAPI fleet, boolean boss, ChartGenContext context, int tier, Set<DropType> withheld) {
         float fleetPointSteps = fleet.getFleetPoints() / FLEET_POINTS_PER_STEP;
-        SiteDrops fleetDrops = drops(ChartLoot.FLEET_SCOPE, tier, fleetPointSteps, context, withheld);
-        if (boss) {
-            SiteDrops spoils = drops(ChartLoot.BOSS_SCOPE, tier, fleetPointSteps * context.bossSpoilsMult(), context, withheld);
-            fleetDrops = fleetDrops.plus(spoils.random(), spoils.value());
-        }
+        SiteDrops fleetDrops = drops(ChartLoot.FLEET_SCOPE, tier, fleetPointSteps, context.forFleetLoot(boss), withheld);
         fleetDrops.random().forEach(fleet::addDropRandom);
         fleetDrops.value().forEach(fleet::addDropValue);
     }

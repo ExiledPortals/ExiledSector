@@ -14,15 +14,23 @@ final class RadialBandGL {
     }
 
     static void begin(SpriteAPI texture, float cx, float cy, int blendSrcFactor, int blendDstFactor, Color color, float alphaMult) {
-        GlScope.textured(blendSrcFactor, blendDstFactor);
-        texture.bindTexture();
-        Misc.setColor(color, alphaMult);
+        beginTextured(texture, blendSrcFactor, blendDstFactor, color, alphaMult);
         GL11.glPushMatrix();
         GL11.glTranslatef(cx, cy, 0f);
     }
 
     static void end() {
         GL11.glPopMatrix();
+        GlScope.restore();
+    }
+
+    static void beginTextured(SpriteAPI texture, int blendSrcFactor, int blendDstFactor, Color color, float alphaMult) {
+        GlScope.textured(blendSrcFactor, blendDstFactor);
+        texture.bindTexture();
+        Misc.setColor(color, alphaMult);
+    }
+
+    static void endTextured() {
         GlScope.restore();
     }
 
@@ -46,7 +54,25 @@ final class RadialBandGL {
                      RingWave outerWave) {
     }
 
+    static void strip(UnitCircle circle, int[] vertexRange, StripSpec spec) {
+        strip(circle, vertexRange, spec, BandPlacement.LOCAL);
+    }
+
+    static void strip(UnitCircle circle, int[] vertexRange, StripSpec spec, BandPlacement placement) {
+        int segments = circle.segments();
+        if (vertexRange[1] <= segments) {
+            strip(circle, vertexRange[0], vertexRange[1], spec, placement);
+        } else {
+            strip(circle, vertexRange[0], segments, spec, placement);
+            strip(circle, 0, vertexRange[1] - segments, spec, placement);
+        }
+    }
+
     static void strip(UnitCircle circle, int first, int last, StripSpec spec) {
+        strip(circle, first, last, spec, BandPlacement.LOCAL);
+    }
+
+    static void strip(UnitCircle circle, int first, int last, StripSpec spec, BandPlacement placement) {
         int segments = circle.segments();
         RingWave radialWave = spec.radialWave();
         RingWave outerWave = spec.outerWave();
@@ -61,9 +87,9 @@ final class RadialBandGL {
             float texY = spec.texPerSegment() * i;
 
             GL11.glTexCoord2f(spec.innerTexX(), texY);
-            GL11.glVertex2f(cos * inner, sin * inner);
+            placement.vertex(cos * inner, sin * inner);
             GL11.glTexCoord2f(spec.outerTexX(), texY);
-            GL11.glVertex2f(cos * outer + outerWave.cosAt(circle, segment), sin * outer + outerWave.sinAt(circle, segment));
+            placement.vertex(cos * outer + outerWave.cosAt(circle, segment), sin * outer + outerWave.sinAt(circle, segment));
         }
         GL11.glEnd();
     }

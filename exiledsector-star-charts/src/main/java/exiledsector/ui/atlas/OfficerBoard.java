@@ -1,0 +1,565 @@
+package exiledsector.ui.atlas;
+
+import com.fs.starfarer.api.campaign.FactionAPI;
+import exiledsector.charts.anomaly.skirmish.SkirmishContests;
+import exiledsector.charts.atlas.AtlasCell;
+import exiledsector.charts.atlas.AtlasGenerator;
+import exiledsector.charts.atlas.AtlasState;
+import exiledsector.charts.officer.AtlasOfficer;
+import exiledsector.charts.officer.OfficerRanks;
+import exiledsector.charts.officer.OfficerText;
+import exiledsector.charts.officer.turn.OfficerTurnTables;
+import exiledsector.charts.officer.turn.OfficerTurns;
+import exiledsector.charts.officer.turn.TurnResult;
+import exiledsector.i18n.I18n;
+import exiledsector.i18n.Translation;
+import exiledsector.skills.skilleffect.render.Fade;
+import exiledsector.skills.skilleffect.render.SpriteCache;
+import exiledsector.ui.SkillTreePanelStyle;
+import exiledsector.ui.UiFonts;
+import exiledsector.ui.decoration.SensorGhostRenderer;
+import exiledsector.ui.util.BorderedPanel;
+import exiledsector.ui.util.GLDraw;
+import exiledsector.ui.util.SpriteDraw;
+import exiledsector.ui.util.TextLabel;
+
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
+final class OfficerBoard {
+
+    static final float OPEN_SECONDS = 0.2f;
+    static final float INSET = 16f;
+    static final float HEADER_HEIGHT = 40f;
+    static final float MAX_LABEL_WIDTH = 104f;
+    static final float BACKGROUND_ALPHA = 0.8f;
+    static final int GHOST_COUNT = 7;
+    static final float GHOST_SIZE_RATIO = 0.3f;
+    static final float GHOST_SCATTER_RATIO = 0.35f;
+    static final String GHOST_SEED_PREFIX = "officer_";
+    static final float DIMMED_ALPHA = 0.4f;
+    static final float FRAME_WIDTH = 1.5f;
+    static final float HOVERED_FRAME_WIDTH = 3f;
+    static final float ARROW_TRIM_SHARE = 0.6f;
+    static final float SOLID_BULGE = 0.1f;
+    static final float DASHED_BULGE = 0.2f;
+    static final int ARROW_SEGMENTS = 24;
+    static final float ARROWHEAD_SHARE = 0.18f;
+    static final float MARK_SHARE = 0.25f;
+    static final float DEFEND_MARK_SHARE = 0.28f;
+    static final String RANK_MARK_PATH = "graphics/icons/ranks/rank1.png";
+    static final float RANK_MARK_ASPECT = 11f / 16f;
+    static final String DEFEND_MARK_PATH = "graphics/warroom/taskicons/icon_defend.png";
+    static final float BATTLE_MARK_SHARE = 0.3f;
+    static final float HOVERED_BATTLE_MARK_SCALE = 1.3f;
+    static final String BATTLE_MARK_PATH = "graphics/warroom/taskicons/icon_assault.png";
+    static final float LOOT_MARK_SHARE = 0.45f;
+    static final float LOOT_RISE_SHARE = 0.55f;
+    static final String LOOT_MARK_PATH = "graphics/icons/intel/log_treasure.png";
+    static final String HELP_ICON_PATH = "graphics/ui/icons/fleettab/more_info.png";
+    static final float HELP_ICON_SIZE = 24f;
+    static final Color SLOT_FILL = new Color(20, 24, 30);
+    static final Color DIMMED_TINT = new Color(150, 150, 150);
+    static final Color ROSE_COLOUR = SkillTreePanelStyle.POSITIVE_STAT_COLOR;
+    static final Color FELL_COLOUR = SkillTreePanelStyle.NEGATIVE_STAT_COLOR;
+    static final Color FALLBACK_FRAME_COLOUR = new Color(150, 150, 150);
+
+    private record Face(boolean identified, boolean dimmed, String portraitPath, Color frameColour, AtlasCell commandCentre) {
+    }
+
+    private record ShownLink(OfficerBoardLayout.Link link, boolean subordinateIdentified, boolean superiorIdentified) {
+    }
+
+    private record BattleMark(OfficerBoardArrows.Arrow arrow, float centreX, float centreY) {
+    }
+
+    private record ArrowShape(OfficerBoardArrows.Arrow arrow, float[] points) {
+
+        @Override
+        public boolean equals(Object other) {
+            return other instanceof ArrowShape shape && arrow.equals(shape.arrow) && Arrays.equals(points, shape.points);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(arrow, Arrays.hashCode(points));
+        }
+
+        @Override
+        public String toString() {
+            return "ArrowShape[arrow=" + arrow + ", points=" + Arrays.toString(points) + "]";
+        }
+    }
+
+    private final SpriteCache sprites = new SpriteCache(OfficerBoard.class);
+    private final SensorGhostRenderer ghosts = new SensorGhostRenderer(GHOST_COUNT, GHOST_SIZE_RATIO, GHOST_SCATTER_RATIO);
+    private final OfficerBoardBeams beams = new OfficerBoardBeams();
+    private final OfficerBoardLegend legend = new OfficerBoardLegend(ghosts, beams, sprites);
+    private final OfficerBoardTooltip tooltip = new OfficerBoardTooltip(sprites);
+    private final TextLabel titleLabel = new TextLabel(UiFonts.TITLE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
+    private final TextLabel chartCountLabel = new TextLabel(UiFonts.BODY, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
+    private final List<TextLabel> rankLabels = new ArrayList<>();
+    private final Map<Integer, AtlasOfficer> records = new HashMap<>();
+    private final Map<Integer, Face> faces = new HashMap<>();
+    private OfficerBoardShuffle shuffle;
+    private List<ShownLink> shownLinks = List.of();
+    private List<OfficerBoardArrows.Arrow> arrows = List.of();
+    private Set<Integer> shields = Set.of();
+    private List<ArrowShape> arrowShapes = List.of();
+    private List<BattleMark> battleMarks = List.of();
+    private BattleMark hoveredBattleMark;
+    private boolean replayable;
+    private boolean open;
+    private float openLevel;
+    private float shuffleSeconds = OfficerBoardShuffle.DURATION_SECONDS;
+    private Integer hoveredRecordId;
+    private boolean helpHovered;
+    private float regionLeft;
+    private float regionBottom;
+    private float regionWidth;
+    private float regionHeight;
+    private float availableLeft;
+    private float availableBottom;
+    private float availableWidth;
+    private float availableHeight;
+    private float labelColumnWidth;
+    private OfficerBoardGeometry geometry;
+
+    void open(AtlasGenerator generator, AtlasState state) {
+        TurnResult lastTurn = OfficerTurns.lastTurn(state);
+        records.clear();
+        faces.clear();
+        List<OfficerBoardLayout.Entry> entries = new ArrayList<>();
+        for (AtlasOfficer officer : state.officers()) {
+            records.put(officer.recordId(), officer);
+            entries.add(new OfficerBoardLayout.Entry(officer.recordId(), officer.rankId(), officer.renown(), officer.seat()));
+        }
+        lastTurn.fallen().forEach(records::putIfAbsent);
+        shuffle = OfficerBoardShuffle.of(OfficerRanks.all(), entries, lastTurn.standingChanges(), Set.copyOf(lastTurn.scavengerRecordIds()));
+        records.forEach((recordId, officer) -> faces.put(recordId, face(officer)));
+        shownLinks = linksTouchingIdentified(shuffle.after());
+        arrows = OfficerBoardArrows.arrows(lastTurn.resolvedIntents(), OfficerTurns.declaredIntents(state), this::settledAndIdentified,
+                intent -> SkirmishContests.battleCell(generator, state, intent));
+        shields = OfficerBoardArrows.shields(OfficerTurns.declaredIntents(state), this::settledAndIdentified);
+        replayable = lastTurn.turn() > 0;
+        boolean unseen = OfficerTurns.hasUnseenTurn(state);
+        shuffleSeconds = unseen && replayable ? 0f : OfficerBoardShuffle.DURATION_SECONDS;
+        if (unseen) {
+            state.markOfficerTurnSeen();
+        }
+        int chartsPerTurn = OfficerTurnTables.rules().otherBossKillsPerTurn();
+        int chartsCounted = Math.min(state.otherBossKills(), chartsPerTurn);
+        I18n.forGameText(() -> writeLabels(shuffle.after(), chartsCounted, chartsPerTurn));
+        geometry = null;
+        hoveredRecordId = null;
+        hoveredBattleMark = null;
+        helpHovered = false;
+        open = true;
+    }
+
+    private List<ShownLink> linksTouchingIdentified(OfficerBoardLayout layout) {
+        List<ShownLink> links = new ArrayList<>();
+        for (OfficerBoardLayout.Link link : layout.links()) {
+            boolean subordinateIdentified = identified(layout.recordIdAt(link.subordinate()));
+            boolean superiorIdentified = identified(layout.recordIdAt(link.superior()));
+            if (subordinateIdentified || superiorIdentified) {
+                links.add(new ShownLink(link, subordinateIdentified, superiorIdentified));
+            }
+        }
+        return List.copyOf(links);
+    }
+
+    private boolean identified(Integer recordId) {
+        Face face = recordId == null ? null : faces.get(recordId);
+        return face != null && face.identified();
+    }
+
+    private boolean settledAndIdentified(int recordId) {
+        AtlasOfficer officer = records.get(recordId);
+        return officer != null && officer.identified() && shuffle.after().contains(recordId);
+    }
+
+    private Face face(AtlasOfficer officer) {
+        FactionAPI faction = OfficerText.faction(officer);
+        return new Face(officer.identified(), !officer.isActive(), officer.identified() ? OfficerText.portraitPath(officer) : null,
+                faction == null ? FALLBACK_FRAME_COLOUR : faction.getBaseUIColor(), officer.isActive() ? officer.commandCentre() : null);
+    }
+
+    private void writeLabels(OfficerBoardLayout layout, int chartsCounted, int chartsPerTurn) {
+        titleLabel.set(Translation.text("chart.officer.board.title"));
+        chartCountLabel.set(Translation.msg("chart.officer.board.chartCount").arg("counted", chartsCounted).arg("needed", chartsPerTurn).text());
+        rankLabels.clear();
+        float widestLabel = 0f;
+        for (int row = 0; row < layout.rowCount(); row++) {
+            TextLabel label = new TextLabel(UiFonts.BODY, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
+            label.setWrapped(OfficerRanks.rank(layout.rankIdOfRow(row)).displayName(), MAX_LABEL_WIDTH, HEADER_HEIGHT);
+            rankLabels.add(label);
+            widestLabel = Math.max(widestLabel, label.width());
+        }
+        labelColumnWidth = (float) Math.ceil(widestLabel) + INSET;
+        legend.write(chartsPerTurn);
+    }
+
+    void close() {
+        open = false;
+        hoveredRecordId = null;
+        hoveredBattleMark = null;
+        helpHovered = false;
+        tooltip.cleanup();
+    }
+
+    void openHoveredCodex() {
+        if (open && hoveredRecordId != null) {
+            tooltip.openCodex(hoveredRecordId);
+        }
+    }
+
+    boolean isOpen() {
+        return open;
+    }
+
+    boolean isShowing() {
+        return open || openLevel > 0f;
+    }
+
+    boolean canReplay() {
+        return replayable;
+    }
+
+    void replay() {
+        shuffleSeconds = 0f;
+    }
+
+    void place(float left, float bottom, float width, float height) {
+        if (geometry != null && left == availableLeft && bottom == availableBottom && width == availableWidth && height == availableHeight) {
+            return;
+        }
+        availableLeft = left;
+        availableBottom = bottom;
+        availableWidth = width;
+        availableHeight = height;
+        float rowsPreferredWidth = OfficerBoardGeometry.preferredRowsWidth(shuffle.widestRow());
+        float contentWidth = Math.max(titleLabel.width() + INSET + HELP_ICON_SIZE, labelColumnWidth + rowsPreferredWidth);
+        regionWidth = Math.min(width, contentWidth + INSET * 2f);
+        regionHeight = Math.min(height, OfficerBoardGeometry.preferredRowsHeight(shuffle.after().rowCount()) + INSET * 2f + HEADER_HEIGHT);
+        regionLeft = left + width - regionWidth;
+        regionBottom = bottom;
+        geometry = OfficerBoardGeometry.fit(rowsLeft(), rowsBottom(), rowsWidth(), rowsHeight(), shuffle.after().rowCount(), shuffle.widestRow());
+        arrowShapes = arrowShapes();
+        battleMarks = battleMarks();
+    }
+
+    float left() {
+        return regionLeft;
+    }
+
+    private float rowsLeft() {
+        return regionLeft + INSET + labelColumnWidth;
+    }
+
+    private float rowsBottom() {
+        return regionBottom + INSET;
+    }
+
+    private float rowsWidth() {
+        return regionWidth - INSET * 2f - labelColumnWidth;
+    }
+
+    private float rowsHeight() {
+        return regionHeight - INSET * 2f - HEADER_HEIGHT;
+    }
+
+    boolean contains(float x, float y) {
+        return x >= regionLeft && x <= regionLeft + regionWidth && y >= regionBottom && y <= regionBottom + regionHeight;
+    }
+
+    private List<ArrowShape> arrowShapes() {
+        List<ArrowShape> shapes = new ArrayList<>();
+        float trim = geometry.portraitSize() * ARROW_TRIM_SHARE;
+        for (OfficerBoardArrows.Arrow arrow : arrows) {
+            OfficerBoardLayout.Seat from = shuffle.after().seat(arrow.fromRecordId());
+            OfficerBoardLayout.Seat to = shuffle.after().seat(arrow.toRecordId());
+            float bulge = arrow.style() == OfficerBoardArrows.Style.SOLID ? SOLID_BULGE : DASHED_BULGE;
+            float[] points = OfficerBoardArrows.curve(geometry.centreX(from), geometry.centreY(from), geometry.centreX(to), geometry.centreY(to), trim,
+                    bulge, ARROW_SEGMENTS);
+            if (points.length > 0) {
+                shapes.add(new ArrowShape(arrow, points));
+            }
+        }
+        return List.copyOf(shapes);
+    }
+
+    private List<BattleMark> battleMarks() {
+        List<BattleMark> marks = new ArrayList<>();
+        for (ArrowShape shape : arrowShapes) {
+            if (shape.arrow().battleCell() != null) {
+                int middle = shape.points().length / 4;
+                marks.add(new BattleMark(shape.arrow(), shape.points()[middle * 2], shape.points()[middle * 2 + 1]));
+            }
+        }
+        return List.copyOf(marks);
+    }
+
+    void advance(float amount, float mouseX, float mouseY) {
+        openLevel = Fade.step(openLevel, open, amount / OPEN_SECONDS);
+        if (!isShowing()) {
+            return;
+        }
+        ghosts.advance(amount);
+        beams.advance(amount);
+        if (shuffleSeconds < OfficerBoardShuffle.DURATION_SECONDS) {
+            shuffleSeconds = Math.min(OfficerBoardShuffle.DURATION_SECONDS, shuffleSeconds + amount);
+        }
+        hoveredBattleMark = open && geometry != null ? battleMarkAt(mouseX, mouseY) : null;
+        hoveredRecordId = open && geometry != null && hoveredBattleMark == null ? officerAt(mouseX, mouseY) : null;
+        helpHovered = open && geometry != null && Math.abs(mouseX - helpIconCentreX()) <= HELP_ICON_SIZE / 2f
+                && Math.abs(mouseY - helpIconCentreY()) <= HELP_ICON_SIZE / 2f;
+    }
+
+    private float helpIconCentreX() {
+        return regionLeft + regionWidth - INSET - HELP_ICON_SIZE / 2f;
+    }
+
+    private float helpIconCentreY() {
+        return regionBottom + regionHeight - INSET - titleLabel.height() / 2f;
+    }
+
+    private Integer officerAt(float x, float y) {
+        float half = geometry.portraitSize() / 2f;
+        for (OfficerBoardShuffle.Mover mover : shuffle.movers()) {
+            Face face = faces.get(mover.recordId());
+            if (mover.departs() || face == null || !face.identified()) {
+                continue;
+            }
+            float centreX = centreX(mover);
+            float centreY = centreY(mover);
+            if (Math.abs(x - centreX) <= half && Math.abs(y - centreY) <= half) {
+                return mover.recordId();
+            }
+        }
+        return null;
+    }
+
+    private BattleMark battleMarkAt(float x, float y) {
+        float half = geometry.portraitSize() * BATTLE_MARK_SHARE / 2f;
+        for (BattleMark mark : battleMarks) {
+            if (Math.abs(x - mark.centreX()) <= half && Math.abs(y - mark.centreY()) <= half) {
+                return mark;
+            }
+        }
+        return null;
+    }
+
+    AtlasCell clickedBattleCell(float x, float y) {
+        BattleMark mark = geometry == null ? null : battleMarkAt(x, y);
+        return mark == null ? null : mark.arrow().battleCell();
+    }
+
+    AtlasCell clickedCommandCentre(float x, float y) {
+        Integer recordId = geometry == null ? null : officerAt(x, y);
+        Face face = recordId == null ? null : faces.get(recordId);
+        return face == null ? null : face.commandCentre();
+    }
+
+    boolean clickedOfficer(float x, float y) {
+        return geometry != null && officerAt(x, y) != null;
+    }
+
+    private float centreX(OfficerBoardShuffle.Mover mover) {
+        if (mover.arrives()) {
+            return geometry.centreX(mover.to());
+        }
+        if (mover.departs()) {
+            return geometry.centreX(mover.from());
+        }
+        return OfficerBoardShuffle.lerp(geometry.centreX(mover.from()), geometry.centreX(mover.to()), OfficerBoardShuffle.slideProgress(shuffleSeconds));
+    }
+
+    private float centreY(OfficerBoardShuffle.Mover mover) {
+        if (mover.arrives()) {
+            return geometry.centreY(mover.to());
+        }
+        if (mover.departs()) {
+            return geometry.centreY(mover.from());
+        }
+        return OfficerBoardShuffle.lerp(geometry.centreY(mover.from()), geometry.centreY(mover.to()), OfficerBoardShuffle.slideProgress(shuffleSeconds));
+    }
+
+    private float moverAlpha(OfficerBoardShuffle.Mover mover) {
+        if (mover.arrives()) {
+            return OfficerBoardShuffle.arriveAlpha(shuffleSeconds);
+        }
+        if (mover.departs()) {
+            return OfficerBoardShuffle.departAlpha(shuffleSeconds);
+        }
+        return 1f;
+    }
+
+    void render(float alphaMult, float mouseX, float mouseY, Color accent) {
+        float alpha = Fade.smooth(openLevel) * alphaMult;
+        if (alpha <= 0f || geometry == null) {
+            return;
+        }
+        GLDraw.fillQuad(regionLeft, regionBottom, regionWidth, regionHeight, Color.BLACK, BACKGROUND_ALPHA * alpha);
+        BorderedPanel.drawEdges(regionLeft, regionBottom, regionWidth, regionHeight, alpha);
+        titleLabel.setAlpha(alpha).draw(regionLeft + INSET, regionBottom + regionHeight - INSET);
+        SpriteDraw.drawAtCenter(sprites, HELP_ICON_PATH, helpIconCentreX(), helpIconCentreY(), HELP_ICON_SIZE, HELP_ICON_SIZE, Color.WHITE, alpha);
+        drawRows(alpha);
+        drawLinks(alpha);
+        drawArrows(alpha * OfficerBoardShuffle.arrowAlpha(shuffleSeconds));
+        for (OfficerBoardShuffle.Mover mover : shuffle.movers()) {
+            float moverAlpha = moverAlpha(mover) * alpha;
+            if (moverAlpha > 0f) {
+                drawOfficer(mover.recordId(), centreX(mover), centreY(mover), moverAlpha);
+            }
+        }
+        drawShields(alpha * OfficerBoardShuffle.arrowAlpha(shuffleSeconds));
+        drawBattleMarks(alpha * OfficerBoardShuffle.arrowAlpha(shuffleSeconds));
+        drawRankMarks(alpha * OfficerBoardShuffle.markAlpha(shuffleSeconds));
+        drawLootMarks(alpha * OfficerBoardShuffle.lootAlpha(shuffleSeconds));
+        if (open && hoveredRecordId != null) {
+            AtlasOfficer hovered = records.get(hoveredRecordId);
+            tooltip.show(hovered);
+            tooltip.draw(accent, mouseX, mouseY, alpha);
+        } else if (helpHovered) {
+            legend.drawTooltip(accent, mouseX, mouseY, alpha);
+        }
+    }
+
+    void renderChartCount(float right, float centreY, float alphaMult) {
+        float alpha = Fade.smooth(openLevel) * alphaMult;
+        if (alpha > 0f) {
+            chartCountLabel.setAlpha(alpha).draw(right - chartCountLabel.width(), centreY + chartCountLabel.height() / 2f);
+        }
+    }
+
+    private void drawRows(float alpha) {
+        float labelLeft = regionLeft + INSET;
+        for (int row = 0; row < rankLabels.size(); row++) {
+            TextLabel label = rankLabels.get(row);
+            label.setAlpha(alpha).draw(labelLeft, geometry.rowCentreY(row) + label.height() / 2f);
+        }
+    }
+
+    private void drawLinks(float alpha) {
+        float half = geometry.portraitSize() / 2f;
+        OfficerBoardLayout.Seat hoveredSeat = hoveredRecordId == null ? null : shuffle.after().seat(hoveredRecordId);
+        for (ShownLink shown : shownLinks) {
+            OfficerBoardLayout.Link link = shown.link();
+            float fromX = geometry.centreX(link.subordinate());
+            float fromY = geometry.centreY(link.subordinate()) + half;
+            float toX = geometry.centreX(link.superior());
+            float toY = geometry.centreY(link.superior()) - half;
+            boolean highlighted = hoveredSeat != null && link.touches(hoveredSeat);
+            if (shown.subordinateIdentified() && shown.superiorIdentified()) {
+                beams.link(fromX, fromY, toX, toY, highlighted, alpha);
+            } else {
+                beams.fadingLink(fromX, fromY, toX, toY, shown.subordinateIdentified(), highlighted, alpha);
+            }
+        }
+        beams.flush();
+    }
+
+    private void drawOfficer(int recordId, float centreX, float centreY, float alpha) {
+        float size = geometry.portraitSize();
+        float left = centreX - size / 2f;
+        float bottom = centreY - size / 2f;
+        Face face = faces.get(recordId);
+        if (face == null || !face.identified()) {
+            ghosts.draw(centreX, centreY, size, alpha, GHOST_SEED_PREFIX + recordId);
+            return;
+        }
+        float shown = face.dimmed() ? alpha * DIMMED_ALPHA : alpha;
+        Color tint = face.dimmed() ? DIMMED_TINT : Color.WHITE;
+        GLDraw.fillQuad(left, bottom, size, size, SLOT_FILL, alpha);
+        if (face.portraitPath() != null) {
+            SpriteDraw.drawAtCenter(sprites, face.portraitPath(), centreX, centreY, size, size, tint, shown);
+        }
+        boolean hovered = Integer.valueOf(recordId).equals(hoveredRecordId);
+        GLDraw.strokeQuad(left, bottom, size, size, face.frameColour(), hovered ? HOVERED_FRAME_WIDTH : FRAME_WIDTH, shown);
+    }
+
+    private void drawArrows(float alpha) {
+        if (alpha <= 0f || arrowShapes.isEmpty()) {
+            return;
+        }
+        float headLength = geometry.portraitSize() * ARROWHEAD_SHARE;
+        for (ArrowShape shape : arrowShapes) {
+            beams.arrow(shape.points(), shape.arrow().style(), headLength, alpha * OfficerBoardArrows.alpha(shape.arrow(), hoveredRecordId));
+        }
+        beams.flush();
+    }
+
+    private void drawShields(float alpha) {
+        if (alpha <= 0f || shields.isEmpty()) {
+            return;
+        }
+        float size = geometry.portraitSize();
+        for (int recordId : shields) {
+            OfficerBoardLayout.Seat seat = shuffle.after().seat(recordId);
+            defendMark(sprites, geometry.centreX(seat) + size / 2f, geometry.centreY(seat) + size / 2f, size * DEFEND_MARK_SHARE, alpha);
+        }
+    }
+
+    private void drawBattleMarks(float alpha) {
+        if (alpha <= 0f || battleMarks.isEmpty()) {
+            return;
+        }
+        float size = geometry.portraitSize() * BATTLE_MARK_SHARE;
+        for (BattleMark mark : battleMarks) {
+            boolean hovered = mark.equals(hoveredBattleMark);
+            float markAlpha = hovered ? OfficerBoardArrows.HOVERED_ALPHA : OfficerBoardArrows.alpha(mark.arrow(), hoveredRecordId);
+            battleMark(sprites, mark.centreX(), mark.centreY(), hovered ? size * HOVERED_BATTLE_MARK_SCALE : size, alpha * markAlpha);
+        }
+    }
+
+    static void battleMark(SpriteCache sprites, float centreX, float centreY, float size, float alpha) {
+        SpriteDraw.drawAtCenter(sprites, BATTLE_MARK_PATH, centreX, centreY, size, size, Color.WHITE, alpha);
+    }
+
+    static void defendMark(SpriteCache sprites, float centreX, float centreY, float size, float alpha) {
+        SpriteDraw.drawAtCenter(sprites, DEFEND_MARK_PATH, centreX, centreY, size, size, Color.WHITE, alpha);
+    }
+
+    private void drawRankMarks(float alpha) {
+        if (alpha <= 0f) {
+            return;
+        }
+        float size = geometry.portraitSize();
+        for (OfficerBoardShuffle.Mover mover : shuffle.movers()) {
+            if (mover.mark() != OfficerBoardShuffle.RankMark.NONE) {
+                rankMark(sprites, centreX(mover) - size / 2f, centreY(mover) + size / 2f, size * MARK_SHARE,
+                        mover.mark() == OfficerBoardShuffle.RankMark.ROSE, alpha);
+            }
+        }
+    }
+
+    private void drawLootMarks(float alpha) {
+        if (alpha <= 0f) {
+            return;
+        }
+        float portraitSize = geometry.portraitSize();
+        float markSize = portraitSize * LOOT_MARK_SHARE * OfficerBoardShuffle.lootScale(shuffleSeconds);
+        float rise = portraitSize * LOOT_RISE_SHARE * OfficerBoardShuffle.lootRise(shuffleSeconds);
+        for (OfficerBoardShuffle.Mover mover : shuffle.movers()) {
+            if (mover.scavenged()) {
+                lootMark(sprites, centreX(mover), centreY(mover) + rise, markSize, alpha);
+            }
+        }
+    }
+
+    static void lootMark(SpriteCache sprites, float centreX, float centreY, float size, float alpha) {
+        SpriteDraw.drawAtCenter(sprites, LOOT_MARK_PATH, centreX, centreY, size, size, Color.WHITE, alpha);
+    }
+
+    static void rankMark(SpriteCache sprites, float centreX, float centreY, float width, boolean rose, float alpha) {
+        SpriteDraw.drawAtCenter(sprites, RANK_MARK_PATH, centreX, centreY, width, width * RANK_MARK_ASPECT, rose ? ROSE_COLOUR : FELL_COLOUR, alpha,
+                rose ? 0f : 180f);
+    }
+}

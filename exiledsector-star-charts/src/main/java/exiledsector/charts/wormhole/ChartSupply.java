@@ -6,7 +6,8 @@ import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemStore;
-import exiledsector.items.StarChart;
+import exiledsector.items.modifier.ItemRoll;
+import exiledsector.items.starchart.StarChart;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -21,7 +22,7 @@ public final class ChartSupply {
     }
 
     public static List<Item> combinable(ItemStore store, int tier, Item kept) {
-        if (store == null || tier >= ChartTiers.HIGHEST_TIER) {
+        if (store == null || tier >= ChartTiers.HIGHEST_DROP_TIER) {
             return List.of();
         }
         List<Item> candidates = new ArrayList<>();
@@ -42,6 +43,6 @@ public final class ChartSupply {
             return null;
         }
         spent.forEach(store::remove);
-        return store.add(ItemData.rolledAtTier(definition, random.nextLong(), tier + 1));
+        return store.add(ItemData.rolled(definition, random.nextLong(), ItemRoll.atTier(tier + 1)));
     }
 }

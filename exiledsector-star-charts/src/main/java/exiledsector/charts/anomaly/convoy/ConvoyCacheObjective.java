@@ -33,8 +33,9 @@ public class ConvoyCacheObjective extends ChartRaidObjective {
     @Override
     protected void describe(TooltipMakerAPI tooltip) {
         int tier = script.tier();
+        ConvoyState convoy = script.convoy(convoyIndex);
         VanillaText.plainPara(tooltip, Translation.gameText("chart.anomaly.supply_convoy.cache.objective.tooltip"), 0f, Misc.getTextColor());
-        VanillaText.addPara(tooltip, I18n.forGameText(() -> Translation.msg("chart.anomaly.supply_convoy.intel.manifest").arg("cargo", ConvoyCargo.manifest(tier))
+        VanillaText.addPara(tooltip, I18n.forGameText(() -> Translation.msg("chart.anomaly.supply_convoy.intel.manifest").arg("cargo", ConvoyCargo.manifest(tier, convoy))
                 .styled()), ConvoyIntel.PARAGRAPH_PAD, Misc.getTextColor());
     }
 

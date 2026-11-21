@@ -43,7 +43,7 @@ final class PhaseAnchorDiveListener implements LethalHitArbiter.Saver, Advanceab
 
     @Override
     public boolean saveFromLethalHit(ShipAPI damagedShip, float damageAmount) {
-        if (damagedShip.getPhaseCloak() == null) {
+        if (PhaseCloak.of(damagedShip) == null) {
             return false;
         }
 
@@ -74,7 +74,7 @@ final class PhaseAnchorDiveListener implements LethalHitArbiter.Saver, Advanceab
         if (!diving) {
             return;
         }
-        ShipSystemAPI phaseCloak = ownerShip.getPhaseCloak();
+        ShipSystemAPI phaseCloak = PhaseCloak.of(ownerShip);
         if (phaseCloak == null) {
             return;
         }

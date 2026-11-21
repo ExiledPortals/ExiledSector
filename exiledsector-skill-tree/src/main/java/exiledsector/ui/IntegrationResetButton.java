@@ -2,7 +2,7 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
 import exiledsector.i18n.Translation;
-import exiledsector.items.DeintegrationSchematic;
+import exiledsector.items.schematic.DeintegrationSchematic;
 import exiledsector.skills.ShipSkillData;
 
 final class IntegrationResetButton extends SchematicButton {

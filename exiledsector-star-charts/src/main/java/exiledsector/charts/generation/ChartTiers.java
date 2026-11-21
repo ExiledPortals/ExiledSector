@@ -4,6 +4,8 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.ChartIds;
 import exiledsector.data.CsvRows;
 import exiledsector.ModCsv;
+import exiledsector.items.drop.CraftingDrops;
+import exiledsector.items.ItemTraits;
 import exiledsector.loot.FleetLevelRange;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -16,18 +18,22 @@ import java.util.Map;
 
 public final class ChartTiers {
 
-    public static final int LOWEST_TIER = 1;
-    public static final int HIGHEST_TIER = 15;
-    public static final int CORRUPTED_TIER = HIGHEST_TIER + 1;
+    public static final int LOWEST_TIER = ItemTraits.LOWEST_TIER;
+    public static final int HIGHEST_DROP_TIER = ItemTraits.HIGHEST_DROP_TIER;
+    public static final int HIGHEST_TIER = ItemTraits.HIGHEST_TIER;
     public static final String PATH = "data/config/exiledSector/star_chart_tiers.csv";
     static final String TIER_COLUMN = "tier";
     private static final Logger LOG = Logger.getLogger(ChartTiers.class);
     static final float MAX_COLONY_ITEM_CHANCE = 1f;
     static final int BOSS_EXTRA_LEVELS = 1;
     static final String TREE_SHARE_COLUMN = "tree_share";
+    static final String CRAFTING_RARITY_COLUMN = "crafting_rarity";
     private static volatile Map<Integer, ChartTier> tiers = Map.of();
-    private static volatile Map<Integer, Float> colonyItemChances = Map.of();
-    private static volatile Map<Integer, Float> treeShares = Map.of();
+    private static volatile Map<Integer, ChartTierExtras> tierExtras = Map.of();
+
+    private record ChartTierExtras(float colonyItemChance, float treeShare, float craftingRarity) {
+        static final ChartTierExtras MISSING = new ChartTierExtras(0f, 1f, CraftingDrops.BASE_RARITY);
+    }
 
     private ChartTiers() {
     }
@@ -38,8 +44,7 @@ public final class ChartTiers {
 
     public static void register(JSONArray rows) throws JSONException {
         Map<Integer, ChartTier> loaded = new HashMap<>();
-        Map<Integer, Float> loadedColonyItemChances = new HashMap<>();
-        Map<Integer, Float> loadedTreeShares = new HashMap<>();
+        Map<Integer, ChartTierExtras> loadedExtras = new HashMap<>();
         CsvRows csv = new CsvRows(PATH);
         if (rows != null) {
             ModCsv.forEach(rows, (index, row) -> {
@@ -47,7 +52,7 @@ public final class ChartTiers {
                 int tier = csv.integer(row, TIER_COLUMN, 0, rowLabel);
                 if (!isValid(tier)) {
                     if (!ModCsv.text(row, TIER_COLUMN).isEmpty()) {
-                        csv.skipRow(rowLabel, "tier must be " + LOWEST_TIER + " to " + CORRUPTED_TIER);
+                        csv.skipRow(rowLabel, "tier must be " + LOWEST_TIER + " to " + HIGHEST_TIER);
                     }
                     return;
                 }
@@ -72,17 +77,21 @@ public final class ChartTiers {
                 if (colonyItemChance < 0f || colonyItemChance > MAX_COLONY_ITEM_CHANCE) {
                     csv.problem(label, "colony_item_chance", colonyItemChance + " is outside 0 to 1 (a fraction, so 0.04 is 4%)");
                 }
-                loadedColonyItemChances.put(tier, Math.max(0f, Math.min(MAX_COLONY_ITEM_CHANCE, colonyItemChance)));
                 float treeShare = csv.number(row, TREE_SHARE_COLUMN, 1f, label);
                 if (treeShare < 0f || treeShare > 1f) {
                     csv.problem(label, TREE_SHARE_COLUMN, treeShare + " is outside 0 to 1 (a fraction, so 0.5 is 50%)");
                 }
-                loadedTreeShares.put(tier, Math.max(0f, Math.min(1f, treeShare)));
+                float craftingRarity = csv.number(row, CRAFTING_RARITY_COLUMN, CraftingDrops.BASE_RARITY, label);
+                if (craftingRarity < 0f) {
+                    csv.problem(label, CRAFTING_RARITY_COLUMN, craftingRarity + " is below 0");
+                }
+                loadedExtras.put(tier, new ChartTierExtras(Math.max(0f, Math.min(MAX_COLONY_ITEM_CHANCE, colonyItemChance)),
+                        Math.max(0f, Math.min(1f, treeShare)), Math.max(0f, craftingRarity)));
             });
         }
         csv.report(LOG);
         List<Integer> missing = new ArrayList<>();
-        for (int tier = LOWEST_TIER; tier <= CORRUPTED_TIER; tier++) {
+        for (int tier = LOWEST_TIER; tier <= HIGHEST_TIER; tier++) {
             if (!loaded.containsKey(tier)) {
                 missing.add(tier);
             }
@@ -91,16 +100,23 @@ public final class ChartTiers {
             LOG.warn("[ExiledSector] " + PATH + " has no row for tier(s) " + missing + "; those tiers use built-in values and have no colony item chance");
         }
         tiers = Map.copyOf(loaded);
-        colonyItemChances = Map.copyOf(loadedColonyItemChances);
-        treeShares = Map.copyOf(loadedTreeShares);
+        tierExtras = Map.copyOf(loadedExtras);
     }
 
     public static float treeShare(int tier) {
-        return treeShares.getOrDefault(clamp(tier), 1f);
+        return extrasAt(tier).treeShare();
+    }
+
+    public static float craftingRarity(int tier) {
+        return extrasAt(tier).craftingRarity();
     }
 
     public static float colonyItemChance(int tier) {
-        return colonyItemChances.getOrDefault(clamp(tier), 0f);
+        return extrasAt(tier).colonyItemChance();
+    }
+
+    private static ChartTierExtras extrasAt(int tier) {
+        return tierExtras.getOrDefault(clamp(tier), ChartTierExtras.MISSING);
     }
 
     public static int firstColonyItemTier() {
@@ -114,7 +130,7 @@ public final class ChartTiers {
 
     public static int tierForLevel(int level) {
         int matchingTier = LOWEST_TIER;
-        for (int tier = LOWEST_TIER; tier <= HIGHEST_TIER; tier++) {
+        for (int tier = LOWEST_TIER; tier <= HIGHEST_DROP_TIER; tier++) {
             if (forTier(tier).levelMin() <= level) {
                 matchingTier = tier;
             }
@@ -123,17 +139,25 @@ public final class ChartTiers {
     }
 
     public static int clamp(int tier) {
-        return Math.max(LOWEST_TIER, Math.min(CORRUPTED_TIER, tier));
+        return ItemTraits.clampTier(tier);
+    }
+
+    public static int clampDropTier(int tier) {
+        return Math.min(HIGHEST_DROP_TIER, clamp(tier));
     }
 
     public static boolean isValid(int tier) {
-        return tier >= LOWEST_TIER && tier <= CORRUPTED_TIER;
+        return tier >= LOWEST_TIER && tier <= HIGHEST_TIER;
     }
 
     public static ChartTier forTier(int tier) {
         int clamped = clamp(tier);
         ChartTier loaded = tiers.get(clamped);
         return loaded != null ? loaded : ChartTier.fallback(clamped);
+    }
+
+    public static ChartTier adjusted(int tier, ChartGenContext context) {
+        return (context == null ? ChartGenContext.none() : context).adjust(forTier(tier));
     }
 
     public static FleetLevelRange fleetStrengthRangeFor(MemoryAPI fleetMemory) {
@@ -154,7 +178,6 @@ public final class ChartTiers {
 
     public static void resetForTests() {
         tiers = Map.of();
-        colonyItemChances = Map.of();
-        treeShares = Map.of();
+        tierExtras = Map.of();
     }
 }

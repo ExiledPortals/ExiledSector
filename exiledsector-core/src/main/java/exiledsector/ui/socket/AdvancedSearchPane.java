@@ -13,8 +13,8 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.items.ItemKind;
-import exiledsector.items.ItemRarity;
 import exiledsector.items.ItemStatPool;
+import exiledsector.items.modifier.ItemRarity;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.util.GLDraw;
 import org.lwjgl.input.Keyboard;
@@ -98,9 +98,6 @@ final class AdvancedSearchPane extends HoloPanel {
     }
 
     private record RemoveRow(ModifierSearch.Group group, ModifierSearch.Row row) {
-    }
-
-    private record ClearStat(ModifierSearch.Row row) {
     }
 
     private static final class PolledField {
@@ -381,9 +378,6 @@ final class AdvancedSearchPane extends HoloPanel {
         float controlsTop = rowTop + columns.controlsTop();
         ChipFlow.Colors colors = ChipFlow.Colors.player();
         element.setAreaCheckboxFont(Fonts.DEFAULT_SMALL);
-        element.addAreaCheckbox(Translation.text("ui.advancedSearch.clear"), new ClearStat(row), colors.base(), colors.dark(), colors.bright(),
-                AdvancedSearchLayout.CLEAR_BUTTON_WIDTH, AdvancedSearchLayout.CONTROL_HEIGHT, 0f).getPosition().inTL(columns.clearLeft(), rowTop);
-        element.addTooltipToPrevious(tooltip("ui.advancedSearch.clear.tooltip"), TooltipMakerAPI.TooltipLocation.BELOW);
         addBoundField(element, row.minText, text -> row.minText = text, columns.minLeft(), controlsTop, columns.boundWidth(),
                 "ui.advancedSearch.min.tooltip");
         addBoundField(element, row.maxText, text -> row.maxText = text, columns.maxLeft(), controlsTop, columns.boundWidth(),
@@ -441,8 +435,6 @@ final class AdvancedSearchPane extends HoloPanel {
         if (id instanceof StatPicker.Choice choice) {
             choice.row().statName = choice.statName();
             rebuild();
-        } else if (id instanceof ClearStat clear) {
-            clearStat(clear.row());
         } else if (id instanceof AddRow add) {
             search.addRow(add.group());
             rebuild();
@@ -464,16 +456,6 @@ final class AdvancedSearchPane extends HoloPanel {
             filtersPicked(false);
         } else if (id instanceof Action action) {
             actionPressed(action);
-        }
-    }
-
-    private void clearStat(ModifierSearch.Row row) {
-        row.statName = null;
-        rebuild();
-        for (StatPicker picker : pickers) {
-            if (picker.isFor(row)) {
-                picker.focus();
-            }
         }
     }
 
@@ -636,8 +618,7 @@ final class AdvancedSearchPane extends HoloPanel {
     @Override
     public void renderBelow(float alphaMult) {
         if (panelPosition != null) {
-            GLDraw.fillQuad(panelPosition.getX(), panelPosition.getY(), panelPosition.getWidth(), panelPosition.getHeight(), Color.BLACK,
-                    contentAlpha() * alphaMult);
+            GLDraw.fillQuad(panelPosition, Color.BLACK, contentAlpha() * alphaMult);
         }
         super.renderBelow(alphaMult);
     }

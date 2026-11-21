@@ -11,6 +11,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public final class AtlasAnomalies {
@@ -36,6 +37,10 @@ public final class AtlasAnomalies {
         public boolean allows() {
             return this == ALLOWED;
         }
+
+        public String refusalKey() {
+            return "catalyst.refused." + name().toLowerCase(Locale.ROOT);
+        }
     }
 
     public record Insertion(InsertCheck check, int recordId) {
@@ -60,6 +65,11 @@ public final class AtlasAnomalies {
         for (AtlasAnomalyRecord record : state.anomalyRecords(cell)) {
             if (accepted.size() < MAX_PER_SYSTEM && accepts(generator, state, cell, accepted, record.anomalyId())) {
                 accepted.add(record.anomalyId());
+            }
+        }
+        for (AtlasRule derived : ChartAnomalies.with(AtlasRule.class)) {
+            if (derived.derivedFromAtlas() && accepted.size() < MAX_PER_SYSTEM && !spent && accepts(generator, state, cell, accepted, derived.id())) {
+                accepted.add(derived.id());
             }
         }
         return List.copyOf(accepted);

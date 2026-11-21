@@ -8,7 +8,7 @@ import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.Translation;
 import exiledsector.items.ItemKind;
-import exiledsector.items.ItemRarity;
+import exiledsector.items.modifier.ItemRarity;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.util.FramedPanelPlugin;
 

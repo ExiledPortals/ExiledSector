@@ -55,7 +55,7 @@ class SocketPlacementRefusalTest {
         when(treeSession.installInSocket(socket, secondBypass)).thenReturn(false);
         when(treeSession.socketRefusal(socket, secondBypass)).thenReturn(REFUSAL);
         when(treeSession.installInSocket(socket, volume)).thenReturn(true);
-        placement = new SocketPlacement(mock(CustomPanelAPI.class), treeSession, mock(NodeSearch.class), mock(SkillTreeSearchBar.class));
+        placement = new SocketPlacement(mock(CustomPanelAPI.class), treeSession, mock(NodeSearch.class), mock(CanvasSearchBar.class));
         placement.handleSocketClick(socket, true, mock(PositionAPI.class), ScreenRect.NONE);
     }
 

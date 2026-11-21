@@ -15,7 +15,7 @@ import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemUnlock;
-import exiledsector.items.WormholeAnchorDefinitions;
+import exiledsector.items.anchor.WormholeAnchorDefinitions;
 import exiledsector.loot.LootTaken;
 import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.tags.SkillTags;

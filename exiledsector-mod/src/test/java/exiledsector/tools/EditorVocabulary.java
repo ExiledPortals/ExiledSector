@@ -3,22 +3,28 @@ package exiledsector.tools;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.SkillEffectNames;
 import exiledsector.skills.skilleffect.StatMode;
+import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.atlas.AtlasModifier;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartTiers;
-import exiledsector.items.DoctrineBehaviour;
-import exiledsector.items.HullItem;
+import exiledsector.items.subroutine.doctrine.DoctrineBehaviour;
+import exiledsector.items.subroutine.doctrine.DoctrineInfestation;
+import exiledsector.items.hull.HullItem;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemUnlock;
-import exiledsector.items.ModifierScope;
-import exiledsector.items.StarChartDefinitions;
-import exiledsector.items.SubroutineKind;
-import exiledsector.items.UniqueSource;
+import exiledsector.items.modifier.ModifierScope;
+import exiledsector.items.starchart.StarChartDefinitions;
+import exiledsector.items.subroutine.SubroutineKind;
+import exiledsector.items.drop.UniqueSource;
 import exiledsector.modifiers.TierGroup;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.radius.RadiusSize;
 import exiledsector.skills.tags.VolumeToggles;
 import exiledsector.skills.tags.SkillTags;
+import exiledsector.skills.tags.ThemeTagScope;
+import exiledsector.skills.tags.ThemeTags;
 import exiledsector.skills.unlock.BlueprintCategory;
 import exiledsector.skills.unlock.UnlockConditionType;
 import org.json.JSONObject;
@@ -49,12 +55,14 @@ final class EditorVocabulary {
         }
         json.append(String.join(",\n", effectLines)).append("\n  ],\n");
         json.append("  \"tags\": {\n");
-        json.append("    \"theme\": ").append(list(SkillTags.THEME)).append(",\n");
+        json.append("    \"theme\": ").append(list(ThemeTags.ids(ThemeTagScope.SHIP))).append(",\n");
         json.append("    \"volume\": ").append(list(SkillTags.VOLUME)).append(",\n");
         json.append("    \"requirement\": ").append(list(SkillTags.REQUIREMENT)).append(",\n");
         json.append("    \"gate\": ").append(list(SkillTags.GATE)).append(",\n");
         json.append("    \"rule\": ").append(list(SkillTags.RULE)).append("\n");
         json.append("  },\n");
+        json.append("  \"themeTags\": [\n");
+        json.append(ThemeTags.ids().stream().map(EditorVocabulary::themeTagLine).collect(Collectors.joining(",\n"))).append("\n  ],\n");
         json.append("  \"tiers\": ").append(list(Arrays.stream(SkillTier.values()).map(Enum::name).toList())).append(",\n");
         json.append("  \"unlockConditionTypes\": ")
                 .append(list(Arrays.stream(UnlockConditionType.values()).map(type -> camelCase(type.name())).toList())).append(",\n");
@@ -72,6 +80,8 @@ final class EditorVocabulary {
         json.append("  \"modifierScopes\": ").append(list(Arrays.stream(ModifierScope.values()).map(ModifierScope::id).toList())).append(",\n");
         json.append("  \"doctrineBehaviours\": ").append(list(Arrays.stream(DoctrineBehaviour.values()).map(DoctrineBehaviour::id).toList())).append(",\n");
         json.append("  \"radiusSizes\": ").append(list(Arrays.stream(RadiusSize.values()).map(RadiusSize::dataKey).toList())).append(",\n");
+        json.append("  \"doctrineInfestations\": ")
+                .append(list(Arrays.stream(DoctrineInfestation.values()).map(DoctrineInfestation::dataKey).toList())).append(",\n");
         json.append("  \"uniqueSourceKinds\": ")
                 .append(list(Arrays.stream(UniqueSource.Kind.values()).map(UniqueSource.Kind::prefix).toList())).append(",\n");
         json.append("  \"hullItemMechanics\": ").append(list(HullItem.MECHANICS)).append(",\n");
@@ -80,14 +90,22 @@ final class EditorVocabulary {
         json.append("  \"itemUnlocks\": ")
                 .append(list(Arrays.stream(ItemUnlock.values()).map(ItemUnlock::id).toList())).append(",\n");
         json.append("  \"clearedChartTierPrefix\": ").append(quote(ItemUnlock.CLEARED_CHART_TIER_PREFIX)).append(",\n");
-        json.append("  \"chartTierRange\": [").append(ChartTiers.LOWEST_TIER).append(", ").append(ChartTiers.HIGHEST_TIER).append("],\n");
+        json.append("  \"chartTierRange\": [").append(ChartTiers.LOWEST_TIER).append(", ").append(ChartTiers.HIGHEST_DROP_TIER).append("],\n");
         json.append("  \"chartTierGroups\": [")
                 .append(Arrays.stream(TierGroup.values()).map(group -> "{\"id\": " + quote(group.id()) + ", \"minTier\": " + group.tiers().minTier()
-                        + ", \"maxTier\": " + Math.min(ChartTiers.CORRUPTED_TIER, group.tiers().maxTier()) + "}").collect(Collectors.joining(", ")))
+                        + ", \"maxTier\": " + Math.min(ChartTiers.HIGHEST_TIER, group.tiers().maxTier()) + "}").collect(Collectors.joining(", ")))
                 .append("],\n");
         json.append("  \"chartEffects\": ").append(list(Arrays.stream(ChartModifier.values()).map(Enum::name).toList())).append(",\n");
+        json.append("  \"atlasEffects\": ").append(list(Arrays.stream(AtlasModifier.values()).map(Enum::name).toList())).append(",\n");
+        json.append("  \"chartAnomalies\": ").append(list(ChartAnomalies.all().stream().map(ChartAnomaly::id).toList())).append(",\n");
         json.append("  \"chartSystemTypes\": ").append(list(StarChartDefinitions.SYSTEM_TYPES)).append("\n");
         return json.append("}\n").toString();
+    }
+
+    private static String themeTagLine(String tag) {
+        String parent = ThemeTags.parent(tag);
+        List<String> scopeIds = ThemeTags.scopes(tag).stream().map(ThemeTagScope::id).toList();
+        return "    {\"id\": " + quote(tag) + ", \"parent\": " + (parent == null ? "null" : quote(parent)) + ", \"scopes\": " + list(scopeIds) + "}";
     }
 
     static String camelCase(String enumName) {

@@ -2,13 +2,16 @@ package exiledsector.charts.atlas;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
-import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.layout.ChartLayoutGenerator;
 import exiledsector.charts.layout.ChartLayoutRequest;
 import exiledsector.charts.generation.ChartTiers;
+import exiledsector.charts.officer.AtlasOfficer;
+import exiledsector.charts.officer.OfficerRank;
+import exiledsector.charts.officer.OfficerRanks;
 import exiledsector.charts.wormhole.GatewayTierLimit;
-import exiledsector.items.StarChart;
+import exiledsector.items.starchart.StarChart;
 import exiledsector.modifiers.ModifierSlot;
 
 import java.util.ArrayList;
@@ -46,7 +49,7 @@ public final class AtlasOpening {
     }
 
     public static Blocker check(AtlasGenerator generator, AtlasState state, AtlasCell cell, StarChart chart) {
-        return check(generator, state, cell, chart, chart == null ? ChartTiers.CORRUPTED_TIER : GatewayTierLimit.maxTier(Global.getSector()));
+        return check(generator, state, cell, chart, chart == null ? ChartTiers.HIGHEST_TIER : GatewayTierLimit.maxTier(Global.getSector()));
     }
 
     static Blocker check(AtlasGenerator generator, AtlasState state, AtlasCell cell, StarChart chart, int maxTier) {
@@ -72,6 +75,26 @@ public final class AtlasOpening {
     }
 
     public static AtlasRunNode runNode(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
+        return withOfficer(state, cell, runNode(generator, state, cell, AtlasAnomalies.effective(generator, state, cell)));
+    }
+
+    public static AtlasRunNode openedRunNode(AtlasGenerator generator, AtlasState state, AtlasCell cell, long chartSeed) {
+        return openedRunNode(generator, state, cell, chartSeed, List.of());
+    }
+
+    public static AtlasRunNode openedRunNode(AtlasGenerator generator, AtlasState state, AtlasCell cell, long chartSeed, List<String> catalystAnomalyIds) {
+        return openedRunNode(generator, state, cell, chartSeed, catalystAnomalyIds, List.of());
+    }
+
+    public static AtlasRunNode openedRunNode(AtlasGenerator generator, AtlasState state, AtlasCell cell, long chartSeed, List<String> catalystAnomalyIds,
+                                             List<ChartGenContext.AppliedEffect> treeLines) {
+        List<String> anomalyIds = new ArrayList<>(AtlasAnomalies.effective(generator, state, cell));
+        anomalyIds.addAll(catalystAnomalyIds);
+        anomalyIds.addAll(OpeningAnomalies.rolled(generator, state, cell, chartSeed, anomalyIds, treeLines));
+        return withOfficer(state, cell, runNode(generator, state, cell, anomalyIds));
+    }
+
+    private static AtlasRunNode runNode(AtlasGenerator generator, AtlasState state, AtlasCell cell, List<String> anomalyIds) {
         AtlasNode node = generator.node(cell);
         List<ChartGenContext.AppliedEffect> effects = new ArrayList<>();
         AtlasSpecial special = generator.specialAt(cell);
@@ -81,29 +104,34 @@ public final class AtlasOpening {
         if (special != null) {
             effects.addAll(AtlasData.nodeEffects(special.kind().nodeEffectsId()));
         }
-        List<String> anomalyIds = AtlasAnomalies.effective(generator, state, cell);
-        return new AtlasRunNode(cell.pack(), factionFor(generator, state, cell, node), effects, anomalyIds, ChartAnomalies.guaranteeBossTierUp(anomalyIds));
+        return new AtlasRunNode(cell.pack(), factionFor(generator, state, cell, node), effects, anomalyIds);
+    }
+
+    private static AtlasRunNode withOfficer(AtlasState state, AtlasCell cell, AtlasRunNode runNode) {
+        AtlasOfficer officer = state.officerAt(cell);
+        if (officer == null) {
+            return runNode;
+        }
+        OfficerRank rank = OfficerRanks.rank(officer.rankId());
+        return runNode.withExtraEffects(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_BOSS_SIZE_PERCENT, rank.bossSizePercent())))
+                .withAnomalyData(AtlasOfficer.RUN_DATA_KEY, Integer.toString(officer.recordId()));
     }
 
     public static String factionFor(AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasNode node) {
-        return owner(generator, state, cell, node.factionId(), node.infestationId());
+        return owner(generator, state, cell, node.infestationId());
     }
 
     public static String ownerOf(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
-        return owner(generator, state, cell, generator.factionAt(cell), generator.infestationAt(cell));
+        return owner(generator, state, cell, generator.infestationAt(cell));
     }
 
     public static String territoryOwnerOf(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
-        return held(state, cell, generator.factionAt(cell));
+        String claimed = state.claimedFaction(cell);
+        return claimed != null ? claimed : generator.unclaimedFactionAt(cell);
     }
 
-    private static String held(AtlasState state, AtlasCell cell, String factionId) {
-        String captor = state.capturedBy(cell);
-        return captor == null ? factionId : captor;
-    }
-
-    private static String owner(AtlasGenerator generator, AtlasState state, AtlasCell cell, String factionId, String infestationId) {
-        String holder = held(state, cell, factionId);
+    private static String owner(AtlasGenerator generator, AtlasState state, AtlasCell cell, String infestationId) {
+        String holder = territoryOwnerOf(generator, state, cell);
         if (infestationId == null || state.has(cell, AtlasState.INFESTATION_CLEARED)) {
             return holder;
         }
@@ -123,10 +151,11 @@ public final class AtlasOpening {
         return ChartLayoutGenerator.systemTypeFor(request, anomalyIds);
     }
 
-    public static ChartLayoutRequest request(AtlasGenerator generator, AtlasState state, AtlasCell cell, StarChart chart, AtlasRunNode runNode) {
+    public static ChartLayoutRequest request(AtlasGenerator generator, AtlasState state, AtlasCell cell, StarChart chart, AtlasRunNode runNode,
+                                             List<ChartGenContext.AppliedEffect> treeLines) {
         AtlasNode node = generator.node(cell);
-        ChartGenContext context = ChartGenContext.from(chart).withAtlasNode(runNode).withStationBossBarred(AtlasData.ambience(node.regionId()).abyss())
-                .withBiome(node.regionId());
+        ChartGenContext context = ChartGenContext.from(chart).withAtlasNode(runNode).withEffects(treeLines)
+                .withStationBossBarred(AtlasData.ambience(node.regionId()).abyss()).withBiome(node.regionId());
         return new ChartLayoutRequest(layoutSeed(state, cell), null, chart.tier(), context, AtlasData.recipeFor(node.regionId(), node.layoutId()), chart.seed());
     }
 }

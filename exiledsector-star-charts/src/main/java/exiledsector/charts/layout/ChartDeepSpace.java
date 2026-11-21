@@ -1,7 +1,7 @@
 package exiledsector.charts.layout;
 
 import com.fs.starfarer.api.impl.campaign.procgen.StarAge;
-import exiledsector.items.WeightedPick;
+import exiledsector.data.WeightedPick;
 
 import java.awt.Color;
 import java.util.Collections;

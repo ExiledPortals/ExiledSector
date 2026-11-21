@@ -15,15 +15,16 @@ import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.wormhole.StarChartOpening;
 import exiledsector.charts.wormhole.WormholeOpenCheck;
 import exiledsector.i18n.StyledText;
-import exiledsector.items.CraftingMaterials;
-import exiledsector.items.CraftingInhibitor;
+import exiledsector.items.drop.CraftingDrops;
+import exiledsector.items.crafting.material.CraftingMaterials;
+import exiledsector.items.crafting.material.CraftingInhibitor;
 import exiledsector.items.Item;
-import exiledsector.items.CraftingMaterialFamily;
+import exiledsector.items.crafting.material.CraftingMaterialFamily;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemStore;
 import exiledsector.items.ItemType;
-import exiledsector.items.StarChart;
-import exiledsector.items.StarChartCrafting;
+import exiledsector.items.starchart.StarChart;
+import exiledsector.items.crafting.StarChartCrafting;
 import exiledsector.items.UseVerdict;
 import exiledsector.ui.socket.BenchMode;
 import exiledsector.ui.socket.BenchModeSupport;
@@ -58,6 +59,11 @@ public final class StarChartCraftingBench implements BenchModeSupport {
     }
 
     @Override
+    public boolean usesInhibitors() {
+        return false;
+    }
+
+    @Override
     public ItemStore store() {
         return ItemStore.starChartsIfCreated();
     }
@@ -89,7 +95,8 @@ public final class StarChartCraftingBench implements BenchModeSupport {
 
     @Override
     public List<CraftingMaterialFamily> craftingItems() {
-        return StarChartCrafting.craftingItems().stream().sorted(Comparator.comparingDouble(CraftingMaterialFamily::dropWeight).reversed()).toList();
+        Comparator<CraftingMaterialFamily> commonestFirst = Comparator.comparingDouble(craftingItem -> -CraftingDrops.weight(craftingItem.itemId()));
+        return StarChartCrafting.craftingItems().stream().sorted(commonestFirst).toList();
     }
 
     @Override

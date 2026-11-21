@@ -25,25 +25,42 @@ const HULL_ITEM_RATE = 0.066;
 const UNIQUE_HULL_ITEM_RATE = 0.006;
 const HULL_ITEM_SALVAGE_SHARE = 0.5;
 const SITE_CRAFTING_ITEM_SHARE = 0.7;
-const FEEDSTOCK_PER_100_DP = 5;
-const REWARD_ITEM_CHANCE_PER_TIER = 0.1;
-const REWARD_FEEDSTOCK = 25;
 const CHART_DROPS = {
-  systemSalvage: { ciphers: 0.48, catalysts: 0.06 },
-  runReward: { ciphers: 3, catalysts: 0.5 },
+  systemSalvage: { charts: 0.04, ciphers: 0.48, catalysts: 0.06 },
+  chartFleet: { charts: 1.5 },
+  chartBoss: { guaranteed: 1, charts: 1.75 },
 };
 
-const CHART_MATERIALS = {
-  aug: [2.07, 9.16], fund: [0.075, 1.34], resh: [1.47, 9.15], corr: [0.735, 9.72], meta: [0.138, 2.13], annul: [0.147, 1.03],
-  tune: [0.147, 1.03], immut: [0.069, 0.781], repl: [0.014, 0.187], pinh: [0.129, 0.954], sinh: [0.129, 0.954],
-};
-const SITE_MATERIAL_WEIGHTS = {
-  aug: 6, fund: 4, resh: 3, corr: 1.5, meta: 0.4, annul: 0.3, tune: 0.3, immut: 0.2, repl: 0.035, pinh: 0.5, sinh: 0.5,
-};
-const SITE_MATERIAL_WEIGHT_TOTAL = Object.values(SITE_MATERIAL_WEIGHTS).reduce((sum, weight) => sum + weight, 0);
-const CIPHERS = { reforge: { rate: 0.15, diminishing: false, weight: 5 }, erasure: { rate: 0.15, diminishing: false, weight: 3 },
-  carto: { rate: 0.045, diminishing: true, weight: 2 } };
-const CIPHER_WEIGHT_TOTAL = Object.values(CIPHERS).reduce((sum, cipher) => sum + cipher.weight, 0);
+const CONFIG = path.join(__dirname, '..', '..', '..', 'data', 'config', 'exiledSector');
+function readCsv(file) {
+  const lines = fs.readFileSync(path.join(CONFIG, file), 'utf8').split(/\r?\n/).filter(line => line && !line.startsWith('#'));
+  const header = lines[0].split(',');
+  return lines.slice(1).map(line => Object.fromEntries(line.split(',').slice(0, header.length).map((cell, index) => [header[index], cell])));
+}
+
+const RARITY_FLATTENING = 0.4;
+const CIPHER_KEYS = new Set(['reforge', 'erasure', 'cartographer']);
+const shortKey = itemId => itemId.replace('exiledSector_', '').replace(/_(nanoswarm|nanoseed|inhibitor|cipher)$/, '');
+const CRAFTING_DROPS = readCsv('crafting_drops.csv').map(row => ({
+  key: shortKey(row.item), weight: +row.weight, chartOnly: row.chart_only.toUpperCase() === 'TRUE',
+}));
+const CRAFTING_KEYS = CRAFTING_DROPS.map(drop => drop.key);
+const BATTLE_LOOT = readCsv('battle_loot.csv');
+const CRAFTING_ITEMS_PER_100_DP = +BATTLE_LOOT.find(row => row.drop === 'crafting_item').per_100_dp;
+const FEEDSTOCK_PER_100_DP = +BATTLE_LOOT.find(row => row.drop === 'feedstock').per_100_dp;
+const TABLE_WEIGHT = CRAFTING_DROPS.reduce((sum, drop) => sum + drop.weight, 0);
+const CRAFTING_RARITIES = Object.fromEntries(readCsv('star_chart_tiers.csv').map(row => [+row.tier, +row.crafting_rarity || 1]));
+
+function craftingMix(rarity, allowed) {
+  const pool = CRAFTING_DROPS.filter(allowed);
+  const exponent = Math.pow(Math.max(0.01, rarity), -RARITY_FLATTENING);
+  const reshaped = pool.map(drop => TABLE_WEIGHT * Math.pow(drop.weight / TABLE_WEIGHT, exponent));
+  const total = reshaped.reduce((sum, weight) => sum + weight, 0);
+  return Object.fromEntries(pool.map((drop, index) => [drop.key, reshaped[index] / total]));
+}
+const ANY_ITEM = () => true;
+const OUTSIDE_CHARTS = drop => !drop.chartOnly;
+const CIPHERS_ONLY = drop => CIPHER_KEYS.has(drop.key);
 
 const POIS = [
   ['cache', 'supply_cache_small', 1, 10, 1, 8], ['cache', 'supply_cache', 2, 8, 1, 16],
@@ -68,11 +85,11 @@ const TOP_ROLLS = {
   fortified: [20, 70, 200], crowded: [1, 2, 3], warded: [90, 240, 540], prefixQuantity: [5, 15, 25],
   plenty: [20, 30, 40], cacheB: [30, 45, 60], domainB: [30, 45, 60], stationB: [30, 45, 60], derelictB: [30, 45, 60], discovery: [1, 2, 3],
   item: [25, 40, 60], rarity: [25, 40, 60], targeted: [40, 60, 80], craftingItem: [30, 45, 60], feedstock: [35, 50, 70], catalyst: [30, 45, 60],
-  hoard: [30, 50, 75], bounty: [20, 35, 50],
+  hoard: [30, 50, 75], cartography: [30, 45, 60],
 };
 const MODIFIER_NAMES = {
   fortified: 'Fortified', crowded: 'Crowded', warded: 'Warded', twinned: 'Twinned', filler: '', item: 'Salvage', targeted: 'section suffix',
-  hoard: 'the Hoard', bounty: 'Bounty', plenty: 'Plenty', discovery: 'Discovery', cacheB: 'Stockpiles', domainB: 'Relics', stationB: 'Outposts',
+  hoard: 'the Hoard', cartography: 'Cartography', plenty: 'Plenty', discovery: 'Discovery', cacheB: 'Stockpiles', domainB: 'Relics', stationB: 'Outposts',
   derelictB: 'Wreckage', craftingItem: 'Swarming', catalyst: 'Catalysis',
 };
 
@@ -136,18 +153,14 @@ function planPois(tier, budgets, extraPois, random) {
   return planned;
 }
 
-function expectedFleetPoints(tier) {
+function expectedFleetPoints(tier, twinnedBoss) {
   const spread = rolledFleets => {
     const kept = Math.min(FLEET_LIMIT, rolledFleets);
     const cutShare = (rolledFleets - kept) / kept;
     return kept * Math.min(FLEET_SIZE_CAP, tier.fleetSize * (1 + 0.75 * cutShare)) * FLEET_POINTS_PER_PERCENT;
   };
-  return (spread(tier.fleetsMin) + spread(tier.fleetsMax)) / 2 + Math.min(BOSS_SIZE_CAP, tier.bossSize) * FLEET_POINTS_PER_PERCENT;
-}
-
-function chartMaterialAmount(material, tier) {
-  const [lowestTierAmount, highestTierAmount] = CHART_MATERIALS[material];
-  return lowestTierAmount + (highestTierAmount - lowestTierAmount) * (tier - 1) / 14;
+  const bosses = twinnedBoss ? 2 : 1;
+  return (spread(tier.fleetsMin) + spread(tier.fleetsMax)) / 2 + bosses * Math.min(BOSS_SIZE_CAP, tier.bossSize) * FLEET_POINTS_PER_PERCENT;
 }
 
 function simulateChart(tier, modifiers, samples) {
@@ -166,35 +179,39 @@ function simulateChart(tier, modifiers, samples) {
   const craftingItemMult = 1 + (suffixRoll('craftingItem') + quantity) / 100;
   const feedstockMult = 1 + (suffixRoll('feedstock') + quantity) / 100;
   const catalystMult = 1 + (suffixRoll('catalyst') + quantity) / 100;
-  const spoilsMult = 1 + suffixRoll('hoard') / 100;
-  const rewardMult = 1 + (suffixRoll('bounty') + quantity) / 100;
-  const rewardCraftingItemMult = 1 + (suffixRoll('bounty') + suffixRoll('craftingItem') + quantity) / 100;
-  const rewardCatalystMult = 1 + (suffixRoll('bounty') + suffixRoll('catalyst') + quantity) / 100;
+  const bossQuantity = suffixRoll('hoard') / 100;
+  const starChartMult = 1 + (suffixRoll('cartography') + quantity) / 100;
   const budgets = {};
   for (const kind of ['cache', 'domain', 'station', 'derelict']) {
     budgets[kind] = tier.budget[kind] * (1 + (suffixRoll('plenty') + suffixRoll(kind + 'B')) / 100);
   }
   const extraPois = suffixRoll('discovery');
-  const tierFleetPoints = expectedFleetPoints(tier);
+  const tierFleetPoints = expectedFleetPoints(tier, twinnedBoss);
+  const craftingRarity = (CRAFTING_RARITIES[tier.tier] || 1) * rarityMult;
+  const fleetMix = craftingMix(craftingRarity, ANY_ITEM);
+  const siteMix = craftingMix(craftingRarity, OUTSIDE_CHARTS);
+  const cipherMix = craftingMix(craftingRarity, CIPHERS_ONLY);
+  const addCraftingItems = (count, mix) => {
+    for (const [key, share] of Object.entries(mix)) {
+      totals[key] += count * share;
+    }
+  };
 
-  const totals = { hull: 0, unique: 0, cat: 0, feed: 0, pois: 0, fleets: 0 };
-  for (const key of Object.keys(CHART_MATERIALS).concat(Object.keys(CIPHERS))) {
+  const totals = { hull: 0, unique: 0, cat: 0, charts: 0, feed: 0, pois: 0, fleets: 0 };
+  for (const key of CRAFTING_KEYS) {
     totals[key] = 0;
   }
   const random = seededRandom(tier.tier * 7919 + 13);
 
-  const addBattle = (dp, lootDp, fleetPointShare, weight) => {
-    const hullFactor = lootDp / 100 * diminishingFactor(dp);
-    totals.hull += weight * HULL_ITEM_RATE * hullFactor * (itemMult + targetedShare);
-    totals.unique += weight * UNIQUE_HULL_ITEM_RATE * hullFactor * itemMult * rarityMult;
-    for (const material of Object.keys(CHART_MATERIALS)) {
-      totals[material] += weight * chartMaterialAmount(material, tier.tier) * fleetPointShare * craftingItemMult;
-    }
-    for (const [cipher, { rate, diminishing }] of Object.entries(CIPHERS)) {
-      totals[cipher] += weight * rate * lootDp / 100 * (diminishing ? diminishingFactor(dp) : 1) * craftingItemMult;
-    }
-    totals.feed += weight * FEEDSTOCK_PER_100_DP * lootDp / 100 * feedstockMult;
-    totals.cat += weight * catalystMult * fleetPointShare;
+  const addBattle = (dp, fleetPointShare, weight, extraQuantity = 0) => {
+    const hullFactor = dp / 100 * diminishingFactor(dp);
+    const hullItems = weight * (HULL_ITEM_RATE + UNIQUE_HULL_ITEM_RATE) * hullFactor * (itemMult + extraQuantity + targetedShare);
+    const uniqueShare = Math.min(1, UNIQUE_HULL_ITEM_RATE / (HULL_ITEM_RATE + UNIQUE_HULL_ITEM_RATE) * rarityMult);
+    totals.hull += hullItems * (1 - uniqueShare);
+    totals.unique += hullItems * uniqueShare;
+    addCraftingItems(weight * CRAFTING_ITEMS_PER_100_DP * dp / 100 * (craftingItemMult + extraQuantity), fleetMix);
+    totals.feed += weight * FEEDSTOCK_PER_100_DP * dp / 100 * (feedstockMult + extraQuantity);
+    totals.cat += weight * (catalystMult + extraQuantity) * fleetPointShare;
   };
 
   for (let sample = 0; sample < samples; sample++) {
@@ -209,44 +226,31 @@ function simulateChart(tier, modifiers, samples) {
     for (const share of shares) {
       const fleetPoints = Math.min(FLEET_SIZE_CAP, Math.max(MIN_FLEET_SIZE, fleetSize * share * fleetCount / shareTotal)) * FLEET_POINTS_PER_PERCENT;
       const dp = fleetPoints * DP_PER_FLEET_POINT_PATROL;
-      addBattle(dp, dp, fleetPoints / tierFleetPoints, weight);
+      addBattle(dp, fleetPoints / tierFleetPoints, weight);
+      totals.charts += weight * CHART_DROPS.chartFleet.charts * fleetPoints / tierFleetPoints * starChartMult;
     }
     const pois = planPois(tier.tier, budgets, extraPois, random);
     totals.pois += weight * pois.length;
     for (const poi of pois) {
       const [chances, feedstockMin, feedstockMax] = SITES[poi.site];
       totals.hull += weight * HULL_ITEM_SALVAGE_SHARE * (expectedCascadeCount(chances, itemMult) + expectedCascadeCount(chances, 1) * targetedShare);
-      const siteCraftingItems = chances[0] * SITE_CRAFTING_ITEM_SHARE * craftingItemMult;
-      for (const [material, materialWeight] of Object.entries(SITE_MATERIAL_WEIGHTS)) {
-        totals[material] += weight * siteCraftingItems * materialWeight / SITE_MATERIAL_WEIGHT_TOTAL;
-      }
-      for (const [cipher, { weight: cipherWeight }] of Object.entries(CIPHERS)) {
-        totals[cipher] += weight * CHART_DROPS.systemSalvage.ciphers * craftingItemMult * cipherWeight / CIPHER_WEIGHT_TOTAL;
-      }
+      addCraftingItems(weight * chances[0] * SITE_CRAFTING_ITEM_SHARE * craftingItemMult, siteMix);
+      addCraftingItems(weight * CHART_DROPS.systemSalvage.ciphers * craftingItemMult, cipherMix);
       totals.feed += weight * (feedstockMin + feedstockMax) / 2 * feedstockMult;
       totals.cat += weight * CHART_DROPS.systemSalvage.catalysts * catalystMult;
+      totals.charts += weight * CHART_DROPS.systemSalvage.charts * starChartMult;
     }
   }
 
   const bossFleetPoints = bossSize * FLEET_POINTS_PER_PERCENT;
   const bossDp = bossFleetPoints * DP_PER_FLEET_POINT_BOSS;
-  const hullBeforeBoss = totals.hull;
-  addBattle(bossDp, bossDp * spoilsMult, bossFleetPoints / tierFleetPoints * spoilsMult, 1);
-  totals.hull += Math.exp(-(totals.hull - hullBeforeBoss));
-  if (twinnedBoss) {
-    addBattle(bossDp, bossDp, bossFleetPoints / tierFleetPoints, 1);
+  for (let boss = 0; boss < (twinnedBoss ? 2 : 1); boss++) {
+    addBattle(bossDp, bossFleetPoints / tierFleetPoints, 1, bossQuantity);
+    totals.charts += CHART_DROPS.chartBoss.guaranteed
+      + CHART_DROPS.chartBoss.charts * bossFleetPoints / tierFleetPoints * (starChartMult + bossQuantity);
   }
 
-  const rewardChance = (1 + REWARD_ITEM_CHANCE_PER_TIER * (tier.tier - 1)) * rewardMult;
-  for (const [material, materialWeight] of Object.entries(SITE_MATERIAL_WEIGHTS)) {
-    totals[material] += SITE_CRAFTING_ITEM_SHARE * rewardChance * materialWeight / SITE_MATERIAL_WEIGHT_TOTAL;
-  }
-  for (const [cipher, { weight: cipherWeight }] of Object.entries(CIPHERS)) {
-    totals[cipher] += CHART_DROPS.runReward.ciphers * rewardCraftingItemMult * cipherWeight / CIPHER_WEIGHT_TOTAL;
-  }
-  totals.feed += REWARD_FEEDSTOCK * rewardChance;
-  totals.cat += CHART_DROPS.runReward.catalysts * rewardCatalystMult;
-  totals.crafting = Object.keys(CHART_MATERIALS).concat(Object.keys(CIPHERS)).reduce((sum, key) => sum + totals[key], 0);
+  totals.crafting = CRAFTING_KEYS.reduce((sum, key) => sum + totals[key], 0);
   return totals;
 }
 
@@ -263,9 +267,10 @@ function combinations(list, size, start = 0, chosen = [], found = []) {
 
 const PREFIX_POOL = ['fortified', 'crowded', 'warded', 'twinned', 'filler', 'filler2', 'filler3'];
 const SUFFIX_POOLS = {
-  hull: ['item', 'targeted', 'targeted2', 'targeted3', 'hoard', 'bounty', 'plenty', 'discovery', 'cacheB', 'stationB', 'domainB', 'derelictB'],
-  crafting: ['craftingItem', 'hoard', 'bounty', 'plenty', 'discovery', 'cacheB', 'stationB', 'domainB', 'derelictB'],
-  cat: ['catalyst', 'hoard', 'bounty', 'plenty', 'discovery', 'cacheB', 'stationB', 'domainB', 'derelictB'],
+  hull: ['item', 'targeted', 'targeted2', 'targeted3', 'hoard', 'plenty', 'discovery', 'cacheB', 'stationB', 'domainB', 'derelictB'],
+  crafting: ['craftingItem', 'hoard', 'plenty', 'discovery', 'cacheB', 'stationB', 'domainB', 'derelictB'],
+  cat: ['catalyst', 'hoard', 'plenty', 'discovery', 'cacheB', 'stationB', 'domainB', 'derelictB'],
+  charts: ['cartography', 'hoard', 'plenty', 'discovery', 'cacheB', 'stationB', 'domainB', 'derelictB'],
 };
 const modifierKey = poolEntry => poolEntry.replace(/[23]$/, '');
 
@@ -296,25 +301,32 @@ const SIX_RANDOM = { prefixes: ['filler', 'filler', 'filler'], suffixes: [] };
 
 const hullRows = ['tier,fleets,sites,none,six_random,best,best_uniques,best_modifiers'];
 const craftingRows = ['tier,none_total,six_random_total,best_total,augmentation,fundamental,reshaping,corrupted,metamorph,annulment,tuning,immutable,'
-  + 'replicator,inhibitors,reforging_cipher,annulment_cipher,cartographers_cipher,feedstock,best_modifiers'];
+  + 'replicator,inhibitors,reforge_cipher,erasure_cipher,cartographer_cipher,feedstock,best_modifiers'];
+const INHIBITOR_KEYS = ['prefix', 'suffix', 'beam', 'non_beam_energy', 'ballistic', 'missile', 'shield', 'armour', 'phase'];
 const catalystRows = ['tier,none,six_random,best,best_modifiers'];
+const starChartRows = ['tier,none,six_random,best,best_modifiers'];
 for (const tier of TIERS) {
   const none = simulateChart(tier, NO_MODIFIERS, 4000);
   const sixRandom = simulateChart(tier, SIX_RANDOM, 4000);
   const bestHull = bestModifiers(tier, 'hull');
   const bestCrafting = bestModifiers(tier, 'crafting');
   const bestCatalysts = bestModifiers(tier, 'cat');
+  const bestStarCharts = bestModifiers(tier, 'charts');
   hullRows.push([tier.tier, none.fleets.toFixed(1), none.pois.toFixed(1), none.hull.toFixed(1), sixRandom.hull.toFixed(1),
     bestHull.totals.hull.toFixed(1), bestHull.totals.unique.toFixed(2), modifierList(bestHull.modifiers)].join(','));
   craftingRows.push([tier.tier, none.crafting.toFixed(0), sixRandom.crafting.toFixed(0), bestCrafting.totals.crafting.toFixed(0),
-    sixRandom.aug.toFixed(1), sixRandom.fund.toFixed(2), sixRandom.resh.toFixed(1), sixRandom.corr.toFixed(1), sixRandom.meta.toFixed(2),
-    sixRandom.annul.toFixed(2), sixRandom.tune.toFixed(2), sixRandom.immut.toFixed(2), sixRandom.repl.toFixed(3),
-    (sixRandom.pinh + sixRandom.sinh).toFixed(2), sixRandom.reforge.toFixed(1), sixRandom.erasure.toFixed(1), sixRandom.carto.toFixed(1),
+    sixRandom.augmentation.toFixed(1), sixRandom.fundamental.toFixed(2), sixRandom.reshaping.toFixed(1), sixRandom.corrupted.toFixed(1),
+    sixRandom.metamorph.toFixed(2), sixRandom.annulment.toFixed(2), sixRandom.tuning.toFixed(2), sixRandom.immutable.toFixed(2),
+    sixRandom.replicator.toFixed(3), INHIBITOR_KEYS.reduce((sum, key) => sum + sixRandom[key], 0).toFixed(2),
+    sixRandom.reforge.toFixed(1), sixRandom.erasure.toFixed(1), sixRandom.cartographer.toFixed(1),
     sixRandom.feed.toFixed(0), modifierList(bestCrafting.modifiers)].join(','));
   catalystRows.push([tier.tier, none.cat.toFixed(2), sixRandom.cat.toFixed(2), bestCatalysts.totals.cat.toFixed(2),
     modifierList(bestCatalysts.modifiers)].join(','));
+  starChartRows.push([tier.tier, none.charts.toFixed(2), sixRandom.charts.toFixed(2), bestStarCharts.totals.charts.toFixed(2),
+    modifierList(bestStarCharts.modifiers)].join(','));
 }
 const writeTable = (fileName, rows) => fs.writeFileSync(path.join(__dirname, fileName), rows.join('\n') + '\n');
 writeTable('chart_hull_items.csv', hullRows);
 writeTable('chart_crafting_items.csv', craftingRows);
 writeTable('chart_catalysts.csv', catalystRows);
+writeTable('chart_star_charts.csv', starChartRows);

@@ -14,9 +14,9 @@ import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.SalvageGenFromSeed.SDM
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.SalvageGenFromSeed.SalvageDefenderModificationPlugin;
 import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.anomaly.LiveAnomalyRuns;
 import exiledsector.charts.anomaly.VanillaDefenders;
 import exiledsector.charts.content.ChartAnomalyFleets;
-import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.FakeChartContentEngine;
 import exiledsector.charts.generation.ChartGenContext;
@@ -31,6 +31,7 @@ import org.lwjgl.util.vector.Vector2f;
 
 import java.util.List;
 
+import static exiledsector.charts.anomaly.LiveAnomalyRuns.RUN_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -44,7 +45,6 @@ import static org.mockito.Mockito.when;
 
 class ForgeGuardsTest {
 
-    private static final String RUN_ID = "run1";
     private static final long SEED = 42L;
     private static final String DERELICT_TALLY_KEY = SalvageGenFromSeed.DEFEATED_DERELICT_STR;
 
@@ -76,15 +76,14 @@ class ForgeGuardsTest {
     }
 
     private static ChartRun run(int tier) {
-        ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        run.recordContent(new ChartContent(tier, "pirates", null, 3, 2));
+        ChartRun run = LiveAnomalyRuns.run(tier);
         ChartRuns.store(run);
         return run;
     }
 
     private static float escortPoints(int tier) {
         ChartTier chartTier = ChartAnomalyFleets.tier(tier, ChartGenContext.none());
-        return ChartAnomalyFleets.combat(Factions.DERELICT, "patrol", chartTier, chartTier.fleetSize() * ForgeRules.ESCORT_SIZE_SHARE).combatPoints();
+        return ChartAnomalyFleets.combat(Factions.DERELICT, "patrol", chartTier, ForgeRules.escortSize(chartTier)).strength().combatPoints();
     }
 
     @Test
@@ -98,6 +97,15 @@ class ForgeGuardsTest {
         assertFalse(escort.withOfficers);
         assertEquals(escortPoints(4), escort.combatPts, 0.001f);
         assertEquals(List.of(new FakeChartContentEngine.Flagship(guards, ForgeGuards.GUARDIAN_VARIANT, Commodities.ALPHA_CORE)), engine.flagships);
+    }
+
+    @Test
+    void theEscortIsMostOfTheBossSizeOrOfTheFleetSizeWhicheverIsLarger() {
+        ChartTier bossLarger = new ChartTier(5, 100f, 1, 2, 0, 0, 1f, 1, 2, 0f, 0f, 0f, 0f, true, 400f);
+        ChartTier fleetLarger = new ChartTier(5, 300f, 1, 2, 0, 0, 1f, 1, 2, 0f, 0f, 0f, 0f, false, 0f);
+
+        assertEquals(320f, ForgeRules.escortSize(bossLarger), 0.001f);
+        assertEquals(240f, ForgeRules.escortSize(fleetLarger), 0.001f);
     }
 
     @Test

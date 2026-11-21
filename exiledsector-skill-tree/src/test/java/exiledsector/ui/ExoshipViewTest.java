@@ -31,11 +31,10 @@ class ExoshipViewTest {
     private static final SkillNode CORE_NOTABLE = node("core_notable", NOTABLE, 0f, 0f, SkillTags.CORE_VOLUME);
     private static final SkillNode FAR_NOTABLE = node("far_notable", NOTABLE, 9000f, 0f, "pirate");
     private static final SkillNode ABYSS_NOTABLE = node("abyss_notable", NOTABLE, -45000f, 27000f, SkillTags.ABYSS_VOLUME);
-    private static final SkillNode THREAT_NOTABLE = node("threat_notable", NOTABLE, -41802f, 18563f, SkillTags.THREAT_VOLUME);
     private static final SkillNode BLACK_HOLE_NOTABLE = node("black_hole_notable", NOTABLE, 10164f, -8105f, SkillTags.REDACTED_VOLUME);
     private static final SkillNode CORE_SMALL = node("core_small", SMALL, 100f, 100f, SkillTags.CORE_VOLUME);
     private static final List<SkillNode> NODES = List.of(EXOSHIP_NODE, CARRIED_NODE, CARRIED_NOTABLE, CORE_NOTABLE, FAR_NOTABLE,
-            ABYSS_NOTABLE, THREAT_NOTABLE, BLACK_HOLE_NOTABLE, CORE_SMALL);
+            ABYSS_NOTABLE, BLACK_HOLE_NOTABLE, CORE_SMALL);
 
     private static SkillNode node(String id, SkillType type, float treeX, float treeY, String volume) {
         return new SkillNode(id, type, List.of(), treeX, treeY, SkillNodeDecoration.NONE, List.of(volume));

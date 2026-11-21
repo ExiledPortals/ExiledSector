@@ -1,10 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { buildVocabulary } from '../../../api/vocabulary.ts';
+import { markRowsSaved } from '../../../shared/rowIds.ts';
 import {
   anchorVolumes,
   exitCandidates,
   isKnownAnchorUnlock,
-  markAnchorsSaved,
   missingVolumes,
   newWormholeAnchor,
   parseWormholeAnchorsCsv,
@@ -14,13 +13,11 @@ import {
   type WormholeAnchor,
 } from './anchors.ts';
 import { shipItemTypes, validateModifiers, type ItemModifier } from './modifiers.ts';
+import { testVocabulary } from '../../../test/testVocabulary.ts';
 
-const vocabulary = buildVocabulary({
+const vocabulary = testVocabulary({
   effects: [{ name: 'HULL_MULT', statMode: 'MULT', lowerIsBetter: false }],
-  tags: { theme: [], volume: ['core', 'hegemony', 'pirate', 'exotech'], requirement: [] },
-  tiers: [],
-  unlockConditionTypes: [],
-  blueprintCategories: [],
+  tags: { volume: ['core', 'hegemony', 'pirate', 'exotech'] },
   itemTypes: ['subroutine', 'hull_item', 'star_chart', 'wormhole_anchor'],
   itemKinds: [{ id: 'bridge', type: 'hull_item' }],
   itemUnlocks: ['rat_player_exoship'],
@@ -50,8 +47,8 @@ const nodeFacts = treeNodeFacts(TREE, TYPES, vocabulary);
 
 const CSV =
   'id,volume,exit_node,name,icon,color,crest_faction,rarity,description,unlock,drop_factions,drop_chance,market_chance,price\r\n' +
-  'wormhole_anchor_hegemony,hegemony,hegemony_2,Hegemony Corridor Lock,graphics/icons/nav_relay.png,#F5961E,hegemony,10,"A lock, with a comma.",,,0.06,0.1,100000\r\n' +
-  'wormhole_anchor_exotech,exotech,exoship,Hyper-Nav Beacon,graphics/icons/rat_exogrid.png,,,10,A beacon.,rat_player_exoship,rat_exotech;other_exotech,0.02,,\r\n';
+  'wormhole_anchor_hegemony,hegemony,hegemony_2,Hegemony Corridor Lock,graphics/exiledSector/tree/base/nav_relay.png,#F5961E,hegemony,10,"A lock, with a comma.",,,0.06,0.1,100000\r\n' +
+  'wormhole_anchor_exotech,exotech,exoship,Hyper-Nav Beacon,graphics/exiledSector/tree/exotech/rat_exo_tech_grid_splice.png,,,10,A beacon.,rat_player_exoship,rat_exotech;other_exotech,0.02,,\r\n';
 
 function anchor(overrides: Partial<WormholeAnchor>): WormholeAnchor {
   return {
@@ -60,7 +57,7 @@ function anchor(overrides: Partial<WormholeAnchor>): WormholeAnchor {
     volume: 'pirate',
     exitNode: 'pirate_wormhole_2',
     name: 'Raider Run Lock',
-    icon: 'graphics/icons/nav_relay.png',
+    icon: 'graphics/exiledSector/tree/base/nav_relay.png',
     color: '',
     crestFaction: '',
     rarity: '10',
@@ -218,7 +215,7 @@ describe('wormhole anchors', () => {
     model.anchors.push(anchor({}));
     const saved = structuredClone(model);
 
-    markAnchorsSaved(model, saved);
+    markRowsSaved(model.anchors, saved.anchors);
 
     expect(model.anchors.map((marked) => marked.loadedId)).toEqual(['wormhole_anchor_hegemony', 'wormhole_anchor_exotech', 'wormhole_anchor_pirate']);
   });

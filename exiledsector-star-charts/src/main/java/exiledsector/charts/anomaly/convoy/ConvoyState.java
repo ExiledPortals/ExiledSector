@@ -4,7 +4,10 @@ import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class ConvoyState {
 
@@ -19,7 +22,7 @@ public final class ConvoyState {
     private final int index;
     private String fleetId;
     private final List<String> waypointIds;
-    private final String destinationId;
+    private String destinationId;
     private final float entryX;
     private final float entryY;
     private final float exitX;
@@ -27,14 +30,15 @@ public final class ConvoyState {
     private final long cargoSeed;
     private float startFreighterPoints;
     private float carriedFreighterPoints;
-    private float cargoSteps;
     private boolean civilianOnly;
-    private float itemChanceMult;
+    private Map<String, Float> feedstock;
     private Phase phase = Phase.WAITING;
     private boolean hostile;
     private float deliveredShare;
     private CargoAPI cache;
     private boolean cacheTaken;
+    private boolean deliveredToExcavation;
+    private boolean sunstruck;
     private int dropsRolled;
     private SectorEntityToken entryToken;
     private SectorEntityToken exitToken;
@@ -70,6 +74,17 @@ public final class ConvoyState {
         return destinationId;
     }
 
+    void routeTo(String newDestinationId) {
+        destinationId = newDestinationId;
+        waypointIds.remove(newDestinationId);
+    }
+
+    void routeThroughFirst(String entityId) {
+        if (entityId != null && !waypointIds.contains(entityId) && !entityId.equals(destinationId)) {
+            waypointIds.add(0, entityId);
+        }
+    }
+
     float entryX() {
         return entryX;
     }
@@ -103,19 +118,21 @@ public final class ConvoyState {
         return exitToken;
     }
 
-    void loadCargo(float freighterPoints, float steps, float chanceMult) {
+    void loadCargo(float freighterPoints) {
         startFreighterPoints = Math.max(0f, freighterPoints);
         carriedFreighterPoints = startFreighterPoints;
-        cargoSteps = Math.max(0f, steps);
-        itemChanceMult = Math.max(0f, chanceMult);
     }
 
     public float cargoSteps() {
-        return cargoSteps;
+        return ConvoyRules.cargoSteps(startFreighterPoints);
     }
 
-    public float itemChanceMult() {
-        return itemChanceMult;
+    void loadFeedstock(Map<String, Float> amounts) {
+        feedstock = new LinkedHashMap<>(amounts);
+    }
+
+    Map<String, Float> feedstock() {
+        return feedstock == null ? Map.of() : Collections.unmodifiableMap(feedstock);
     }
 
     void countCivilianOnly(boolean civilianOnly) {
@@ -204,6 +221,26 @@ public final class ConvoyState {
 
     public boolean isCacheTaken() {
         return cacheTaken;
+    }
+
+    void markDeliveredToExcavation() {
+        deliveredToExcavation = true;
+    }
+
+    public boolean deliveredToExcavation() {
+        return deliveredToExcavation;
+    }
+
+    boolean markSunstruck() {
+        if (sunstruck) {
+            return false;
+        }
+        sunstruck = true;
+        return true;
+    }
+
+    boolean isSunstruck() {
+        return sunstruck;
     }
 
     long nextDropSeed() {

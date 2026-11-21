@@ -3,7 +3,7 @@ package exiledsector.charts.layout;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTiers;
-import exiledsector.items.StarChart;
+import exiledsector.items.starchart.StarChart;
 
 import java.util.List;
 import java.util.Random;
@@ -16,7 +16,7 @@ public record ChartLayoutRequest(long seed, StarSystemType systemType, int tier,
             systemType = null;
         }
         tier = ChartTiers.clamp(tier);
-        chartContext = chartContext == null ? ChartGenContext.none() : chartContext;
+        chartContext = ChartGenContext.orNone(chartContext);
         recipe = recipe == null ? ChartLayoutRecipe.ORDINARY : recipe;
     }
 

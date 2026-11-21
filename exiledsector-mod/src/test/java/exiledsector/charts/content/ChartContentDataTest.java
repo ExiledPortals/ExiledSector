@@ -6,8 +6,7 @@ import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.effect.ChartEffects;
 import exiledsector.charts.effect.ChartFactionEffect;
-import exiledsector.charts.objective.ChartRewards;
-import exiledsector.items.StarChartImplicits;
+import exiledsector.items.starchart.StarChartImplicits;
 import exiledsector.modifiers.Modifier;
 import exiledsector.skills.progression.ShipLevelConfig;
 import org.json.JSONArray;
@@ -45,7 +44,7 @@ class ChartContentDataTest {
             List<ChartPoi> members = ChartPois.ofKind(ChartPois.inBiome(ChartPois.all(), null), kind);
             assertFalse(members.isEmpty(), kind + " has no point of interest");
             int firstTier = members.stream().mapToInt(ChartPoi::minTier).min().orElseThrow();
-            for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_TIER; tier++) {
+            for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_DROP_TIER; tier++) {
                 float budget = ChartTiers.forTier(tier).siteBudget(kind);
                 assertTrue(tier < firstTier ? budget == 0f : budget > 0f, kind + " budget " + budget + " at tier " + tier);
             }
@@ -60,7 +59,7 @@ class ChartContentDataTest {
         ChartTiers.register(ChartTables.csvRows(ChartTiers.PATH));
 
         ChartTier previous = null;
-        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_TIER; tier++) {
+        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_DROP_TIER; tier++) {
             ChartTier current = ChartTiers.forTier(tier);
             assertEquals(tier, current.tier());
             assertNotEquals(ChartTier.fallback(tier), current, "tier " + tier + " should come from the CSV");
@@ -92,7 +91,7 @@ class ChartContentDataTest {
         assertEquals(3, second.fleetsMin());
         assertEquals(ChartTier.fallback(2).boss(), second.boss());
         assertEquals(ChartTier.fallback(7), ChartTiers.forTier(7));
-        assertEquals(ChartTiers.forTier(ChartTiers.CORRUPTED_TIER), ChartTiers.forTier(99));
+        assertEquals(ChartTiers.forTier(ChartTiers.HIGHEST_TIER), ChartTiers.forTier(99));
         assertEquals(ChartTiers.forTier(ChartTiers.LOWEST_TIER), ChartTiers.forTier(-3));
     }
 
@@ -100,14 +99,14 @@ class ChartContentDataTest {
     void anUnloadedTableStillGivesEveryTierUsableValues() throws Exception {
         ChartTiers.register(null);
 
-        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_TIER; tier++) {
+        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_DROP_TIER; tier++) {
             ChartTier fallback = ChartTiers.forTier(tier);
             assertTrue(fallback.fleetSize() > 0f);
             assertTrue(fallback.fleetsMax() >= fallback.fleetsMin());
             assertTrue(fallback.levelMin() <= fallback.levelMax());
         }
         assertEquals(26, ChartTiers.forTier(ChartTiers.LOWEST_TIER).levelMin());
-        assertEquals(ShipLevelConfig.DEFAULT_MAX_LEVEL, ChartTiers.forTier(ChartTiers.HIGHEST_TIER).levelMax());
+        assertEquals(ShipLevelConfig.DEFAULT_MAX_LEVEL, ChartTiers.forTier(ChartTiers.HIGHEST_DROP_TIER).levelMax());
     }
 
     @Test
@@ -138,7 +137,6 @@ class ChartContentDataTest {
             Set<String> sites = poi.requiredMod().isEmpty() ? dropSites : compatDropSites(poi.requiredMod());
             assertTrue(sites.contains(poi.specForSalvage()), poi.id() + " drops no hull items: " + poi.specForSalvage());
         }
-        assertTrue(dropSites.contains(ChartRewards.REWARD_SITE));
     }
 
     @Test

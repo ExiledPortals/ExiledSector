@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { buildVocabulary } from '../../../api/vocabulary.ts';
 import { parseItemDefinitions } from './definitions.ts';
 import { parseImplicitsCsv } from './implicits.ts';
 import { modifierUsage, referenceIssues, renameModifierReferences } from './modifierUsage.ts';
@@ -12,27 +11,24 @@ import {
   serializeModifiersCsv,
   shipItemTypes,
   suggestedModifierId,
+  TAGLESS,
   togglePerHullSize,
   validateModifiers,
 } from './modifiers.ts';
+import { testVocabulary } from '../../../test/testVocabulary.ts';
 
-const vocabulary = buildVocabulary({
+const vocabulary = testVocabulary({
   effects: [
     { name: 'HULL_MULT', statMode: 'MULT', lowerIsBetter: false },
     { name: 'ARMOR_FLAT', statMode: 'FLAT', lowerIsBetter: false },
     { name: 'ARMOR_PERCENT', statMode: 'PERCENT', lowerIsBetter: false },
   ],
-  tags: { theme: [], volume: [], requirement: [] },
-  tiers: [],
-  unlockConditionTypes: [],
-  blueprintCategories: [],
   itemTypes: ['subroutine', 'hull_item'],
   itemKinds: [
     { id: 'subroutine', type: 'subroutine' },
     { id: 'armor_plating', type: 'hull_item' },
   ],
   subroutineKinds: ['MODSPEC_CACHE', 'DOCTRINE', 'BYPASS', 'UNIQUE'],
-  itemUnlocks: [],
 });
 
 const SUBROUTINES_CSV = 'id,name,icon,rarity,unique,kind,description,unlock\ncache,Cache,,10,,MODSPEC_CACHE,,\n';
@@ -79,6 +75,35 @@ describe('item modifiers', () => {
     expect(validateModifiers(ungrouped.modifiers, vocabulary, modifierUsage(definitions(), []))).toContain(
       'HULL_MULT: exclusive group "bad group" must be letters, digits and underscores',
     );
+  });
+
+  it('reads and writes tags, keeping none and blank apart and adding the column only once a modifier has tags', () => {
+    const text =
+      'id,affix,scopes,lines,name,tags\nHULL_MULT,prefix,hull_item,HULL_MULT:4:6,Reinforced,hull;defence\nARMOR_PERCENT,prefix,hull_item,ARMOR_PERCENT:4:6,Plated,none\nHULL_PERCENT,prefix,hull_item,HULL_PERCENT:4:6,Sturdy,\n';
+    const model = parseModifiersCsv(text);
+    const untagged = parseModifiersCsv('id,affix,scopes,lines,name\nHULL_MULT,prefix,hull_item,HULL_MULT:4:6,Reinforced\n');
+
+    expect(model.modifiers.map((modifier) => modifier.tags)).toEqual([['hull', 'defence'], [TAGLESS], []]);
+    expect(serializeModifiersCsv(model)).toBe(text);
+    expect(serializeModifiersCsv(untagged)).toBe('id,affix,scopes,lines,name\nHULL_MULT,prefix,hull_item,HULL_MULT:4:6,Reinforced\n');
+    untagged.modifiers[0].tags = ['hull'];
+    expect(serializeModifiersCsv(untagged)).toBe('id,affix,scopes,lines,name,tags\nHULL_MULT,prefix,hull_item,HULL_MULT:4:6,Reinforced,hull\n');
+    untagged.modifiers[0].tags = [TAGLESS, 'low hull'];
+    expect(validateModifiers(untagged.modifiers, vocabulary, modifierUsage(definitions(), []))).toEqual(
+      expect.arrayContaining([
+        'HULL_MULT: none marks a modifier with no tags, so it cannot sit beside other tags',
+        'HULL_MULT: tag "low hull" must be letters, digits and underscores',
+      ]),
+    );
+  });
+
+  it('keeps star chart modifier tags beside their exclusive groups', () => {
+    const text =
+      'id,affix,scopes,lines,name,exclusive_groups,tags\nCHART_EXTRA_FLEETS,prefix,star_chart,CHART_EXTRA_FLEETS:low=1/mid=2/high=3,Crowded,fleets,enemy;fleet_size\n';
+    const model = parseModifiersCsv(text);
+
+    expect(model.modifiers[0]).toMatchObject({ exclusiveGroups: ['fleets'], tags: ['enemy', 'fleet_size'] });
+    expect(serializeModifiersCsv(model)).toBe(text);
   });
 
   it('suggests ids that follow the naming convention', () => {
@@ -138,15 +163,10 @@ describe('item modifiers', () => {
   });
 
   it('keeps star chart modifiers out of item_modifiers.csv', () => {
-    const withCharts = buildVocabulary({
+    const withCharts = testVocabulary({
       effects: [{ name: 'HULL_MULT', statMode: 'MULT', lowerIsBetter: false }],
-      tags: { theme: [], volume: [], requirement: [] },
-      tiers: [],
-      unlockConditionTypes: [],
-      blueprintCategories: [],
       itemTypes: ['subroutine', 'hull_item', 'star_chart'],
       itemKinds: [{ id: 'subroutine', type: 'subroutine' }],
-      itemUnlocks: [],
     });
     expect(shipItemTypes(withCharts)).toEqual(['hull_item']);
     expect(newModifier([], 'prefix', withCharts).itemTypes).toEqual(['hull_item']);
@@ -178,16 +198,11 @@ describe('item modifiers', () => {
   });
 
   it('counts unique subroutine lines as unique_subroutine uses, renames them and checks their scope', () => {
-    const withUniques = buildVocabulary({
+    const withUniques = testVocabulary({
       effects: [{ name: 'HULL_MULT', statMode: 'MULT', lowerIsBetter: false }],
-      tags: { theme: [], volume: [], requirement: [] },
-      tiers: [],
-      unlockConditionTypes: [],
-      blueprintCategories: [],
       itemTypes: ['subroutine', 'hull_item', 'star_chart'],
       itemKinds: [{ id: 'subroutine', type: 'subroutine' }],
       modifierScopes: ['subroutine', 'unique_subroutine', 'hull_item', 'star_chart'],
-      itemUnlocks: [],
     });
     const items = parseItemDefinitions(
       'id,name,icon,rarity,unique,kind,description,lines,source,unlock\nlattice,Lattice,,10,true,UNIQUE,,@HULL_MULT_RELIC; HULL_MULT:1:1,site:wreck,\n',

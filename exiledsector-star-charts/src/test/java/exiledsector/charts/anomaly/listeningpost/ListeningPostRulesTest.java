@@ -1,7 +1,13 @@
 package exiledsector.charts.anomaly.listeningpost;
 
+import exiledsector.charts.effect.ChartModifier;
+import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.generation.ChartTiers;
+import exiledsector.charts.loot.ChartLootContext;
+import exiledsector.loot.DropType;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,10 +51,35 @@ class ListeningPostRulesTest {
     }
 
     @Test
-    void theVaultGrowsWithTierAndQuantity() {
-        assertEquals(ListeningPostRules.LOOT_STEPS, VaultLoot.LOOT.steps(1, 1f), EPSILON);
-        assertTrue(VaultLoot.LOOT.steps(10, 1f) > VaultLoot.LOOT.steps(1, 1f));
-        assertEquals(VaultLoot.LOOT.steps(5, 1f) * 2f, VaultLoot.LOOT.steps(5, 2f), EPSILON);
-        assertEquals(0f, VaultLoot.LOOT.items(-1f));
+    void stolenChartsNumberOneToTheLineAndSitWithinTwoTiersOfTheRun() {
+        Random random = new Random(5L);
+        boolean sawLowest = false;
+        boolean sawHighest = false;
+        for (int roll = 0; roll < 200; roll++) {
+            int count = ListeningPostRules.stolenChartCount(random, 3);
+            assertTrue(count >= 1 && count <= 3, String.valueOf(count));
+            int tier = ListeningPostRules.stolenChartTier(random, 8);
+            assertTrue(tier >= 6 && tier <= 10, String.valueOf(tier));
+            sawLowest |= tier == 6;
+            sawHighest |= tier == 10;
+            int lowTier = ListeningPostRules.stolenChartTier(random, 1);
+            assertTrue(lowTier >= ChartTiers.LOWEST_TIER && lowTier <= 3, String.valueOf(lowTier));
+            int topTier = ListeningPostRules.stolenChartTier(random, ChartTiers.HIGHEST_DROP_TIER);
+            assertTrue(topTier >= ChartTiers.HIGHEST_DROP_TIER - 2 && topTier <= ChartTiers.HIGHEST_DROP_TIER, String.valueOf(topTier));
+        }
+        assertTrue(sawLowest && sawHighest);
+        assertEquals(0, ListeningPostRules.stolenChartCount(random, 0));
+    }
+
+    @Test
+    void theVaultGrowsWithTierAndItsOwnAndItsLinesQuantityJoinTheChartsItemQuantity() {
+        assertEquals(ListeningPostRules.LOOT_STEPS, VaultLoot.LOOT.steps(1), EPSILON);
+        assertTrue(VaultLoot.LOOT.steps(10) > VaultLoot.LOOT.steps(1));
+        ChartGenContext context = ChartGenContext.none().withEffects(List.of(
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_QUANTITY_PERCENT, 20f),
+                new ChartGenContext.AppliedEffect(ChartModifier.CHART_LISTENING_POST_LOOT_QUANTITY_PERCENT, 30f)));
+        ChartLootContext vaultLoot = VaultLoot.LOOT.withQuantityAndLeans(new ChartLootContext(context, 1), List.of());
+        assertEquals(1f + (20f + 30f + ListeningPostRules.VAULT_QUANTITY_PERCENT) / 100f, vaultLoot.quantityMult(DropType.ITEM), EPSILON);
+        assertEquals(ListeningPostRules.VAULT_QUANTITY_PERCENT, VaultLoot.LOOT.quantityPercent(ChartGenContext.none()), EPSILON);
     }
 }

@@ -7,8 +7,9 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec.DropData;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.anomaly.SettlingDustFleets;
 import exiledsector.charts.content.FakeChartContentEngine;
-import exiledsector.charts.loot.ChartFleetLoot;
+import exiledsector.charts.loot.ChartFleetLedger;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -71,11 +72,23 @@ class PicketsTest {
         MemoryAPI memory = guard.fleet().getMemoryWithoutUpdate();
         assertEquals(70f, memory.getFloat(ChartIds.START_DP_MEMORY_KEY), EPSILON);
         assertEquals(10f, memory.getFloat(ChartIds.LOOT_DP_PAID_MEMORY_KEY), EPSILON);
-        assertEquals(2, ChartFleetLoot.lootFleets(guard.fleet()));
+        assertEquals(2, ChartFleetLedger.lootFleets(guard.fleet()));
         verify(picket.fleet()).despawn(FleetDespawnReason.OTHER, null);
 
         Pickets.merge(fleet(20f, 0f, 1).fleet(), guard.fleet());
-        assertEquals(3, ChartFleetLoot.lootFleets(guard.fleet()));
-        assertEquals(1, ChartFleetLoot.lootFleets(picket.fleet()));
+        assertEquals(3, ChartFleetLedger.lootFleets(guard.fleet()));
+        assertEquals(1, ChartFleetLedger.lootFleets(picket.fleet()));
+    }
+
+    @Test
+    void shipsSettlingDustAddedToAMergedPicketStayCountedAsAdded() {
+        Fleet guard = fleet(40f, 0f, 2);
+        Fleet picket = fleet(30f, 0f, 3);
+        guard.fleet().getMemoryWithoutUpdate().set(SettlingDustFleets.ADDED_FLEET_POINTS_KEY, 4f);
+        picket.fleet().getMemoryWithoutUpdate().set(SettlingDustFleets.ADDED_FLEET_POINTS_KEY, 6f);
+
+        Pickets.merge(picket.fleet(), guard.fleet());
+
+        assertEquals(10f, guard.fleet().getMemoryWithoutUpdate().getFloat(SettlingDustFleets.ADDED_FLEET_POINTS_KEY), EPSILON);
     }
 }

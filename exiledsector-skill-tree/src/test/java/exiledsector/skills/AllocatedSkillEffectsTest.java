@@ -1,23 +1,25 @@
 package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.MockSector;
+import exiledsector.MockShips;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
 import exiledsector.persistence.ShipSkillDataManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 
+import static exiledsector.skills.TestTrees.node;
+import static exiledsector.skills.TestTrees.type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class AllocatedSkillEffectsTest {
 
     private MockSector mockSector;
@@ -25,36 +27,24 @@ class AllocatedSkillEffectsTest {
     @BeforeEach
     void setUp() {
         mockSector = new MockSector();
-
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
     }
 
     @AfterEach
     void tearDown() {
         mockSector.close();
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
     }
 
     private FleetMemberAPI memberWithHullSize(HullSize hullSize) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getId()).thenReturn("ship-a");
-        ShipHullSpecAPI hullSpec = mock(ShipHullSpecAPI.class);
-        when(hullSpec.getHullSize()).thenReturn(hullSize);
-        when(member.getHullSpec()).thenReturn(hullSpec);
-        return member;
+        return MockShips.member("ship-a").hullSize(hullSize).build();
     }
 
     @Test
     void includesHullSizeScaledEffectsNotJustFlatEffects() {
         HullSizeSkillEffect hullSizeEffect = new HullSizeSkillEffect(DefenseSkillEffect.ARMOR_PERCENT, 5f, 10f, 15f, 20f);
-        SkillType type = new SkillType.Builder("hull", "Hull", "a.png", SkillTier.SMALL)
+        SkillNode node = node("hull_1", type("hull", SkillTier.SMALL)
                 .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)))
                 .hullSizeEffects(List.of(hullSizeEffect))
-                .build();
-        SkillNode node = new SkillNode("hull_1", type, List.of(), 0f, 0f);
-        SkillTree.register(node);
+                .build());
 
         FleetMemberAPI member = memberWithHullSize(HullSize.CRUISER);
         ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), node, 1);
@@ -67,12 +57,10 @@ class AllocatedSkillEffectsTest {
 
     @Test
     void appliesTheOwnEffectsOfANodeBackedByAVanillaHullMod() {
-        SkillType type = new SkillType.Builder("hull", "Hull", "a.png", SkillTier.SMALL)
+        SkillNode node = node("hull_1", type("hull", SkillTier.SMALL)
                 .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)))
                 .vanillaHullModId("some_vanilla_hullmod")
-                .build();
-        SkillNode node = new SkillNode("hull_1", type, List.of(), 0f, 0f);
-        SkillTree.register(node);
+                .build());
 
         FleetMemberAPI member = memberWithHullSize(HullSize.CRUISER);
         ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), node, 1);

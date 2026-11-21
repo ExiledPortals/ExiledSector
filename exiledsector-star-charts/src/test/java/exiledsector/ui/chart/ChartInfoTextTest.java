@@ -8,12 +8,13 @@ import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.loot.ChartLootTotals;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
+import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.items.ItemData;
-import exiledsector.items.SlottedLine;
-import exiledsector.items.StarChart;
-import exiledsector.items.StarChartFixtures;
+import exiledsector.items.modifier.SlottedLine;
+import exiledsector.items.starchart.StarChart;
+import exiledsector.items.starchart.StarChartFixtures;
 import exiledsector.ui.socket.AtlasAnomalyPanel.Entry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -72,16 +73,28 @@ class ChartInfoTextTest {
     }
 
     @Test
-    void theObjectiveNamesTheBossAndShowsTheRewardUntilTheRunEnds() {
+    void theObjectiveNamesTheBossAndShowsItsDescriptionUntilItIsComplete() {
         ChartRun run = run(List.of());
 
         ChartInfoText.Objective objective = ChartInfoText.objective(run);
 
         assertEquals(Translation.gameText("chart.objective.boss.name"), objective.name());
-        assertEquals(Translation.gameText("chart.objective.boss.fleet.description") + "\n" + Translation.gameText("chart.intel.reward"),
-                objective.body().plain());
+        assertEquals(Translation.gameText("chart.objective.boss.fleet.description"), objective.body().plain());
         run.markObjectiveComplete();
         assertTrue(ChartInfoText.objective(run).body().plain().endsWith(Translation.gameText("chart.intel.complete")));
+    }
+
+    @Test
+    void theObjectiveHasNoStatusUntilCompleteThenAGreenOne() {
+        ChartRun run = run(List.of());
+        String complete = Translation.gameText("chart.intel.complete");
+
+        StyledText pending = ChartInfoText.objective(run).body();
+        run.markObjectiveComplete();
+        StyledText done = ChartInfoText.objective(run).body();
+
+        assertEquals(List.of(), pending.spans());
+        assertEquals(List.of(new StyledText.Span(done.plain().length() - complete.length(), done.plain().length(), Style.GOOD)), done.spans());
     }
 
     @Test

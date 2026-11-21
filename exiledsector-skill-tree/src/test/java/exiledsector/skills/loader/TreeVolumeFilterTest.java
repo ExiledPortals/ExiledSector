@@ -15,6 +15,7 @@ import exiledsector.skills.decoration.ThreatUnit;
 import exiledsector.skills.layout.ConnectorCurve;
 import exiledsector.skills.layout.Rotation;
 import exiledsector.skills.layout.SkillNodeDecoration;
+import exiledsector.skills.tags.SkillTags;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedHashMap;
@@ -51,14 +52,14 @@ class TreeVolumeFilterTest {
         return new SkillTreeLoader.ParsedTree(nodes, nodes.size(), curves,
                 Set.of(SkillTree.curveKey("root", "gate_out"), SkillTree.curveKey("root", "plain")),
                 new Decorations(List.of(
-                        new StaticImage("cloud", 0f, 0f, new StaticImage.Shape(1f, 1f, "a.png", new Rotation(0f, 0f)), List.of("core")),
-                        new StaticImage("untagged", 0f, 0f, new StaticImage.Shape(1f, 1f, "a.png", new Rotation(0f, 0f)), List.of()),
-                        new RingBelt("belt", 0f, 0f, new RingBelt.Shape(1f, 2f, "a.png", new Rotation(0f, 0f)), List.of("enigma")),
-                        new Star("sun", 0f, 0f, 1f, "star_yellow", null, List.of("core")),
-                        new Star("frozen", 0f, 0f, 1f, "star_yellow", null, List.of("enigma")),
-                        new ThreatUnit("hive", 0f, 0f, ThreatUnit.HIVE, 1f, 0f, List.of("core")),
-                        new ThreatUnit("lost_fabricator", 0f, 0f, ThreatUnit.FABRICATOR, 1f, 0f, List.of("enigma")),
-                        new AbyssSerpent("worm", 0f, 0f, new Orbit(1f, 1f, true, 0f), AbyssSerpent.Wobble.NONE, List.of("enigma")))));
+                        new StaticImage("cloud", 0f, 0f, new StaticImage.Shape(1f, 1f, "a.png", new Rotation(0f, 0f)), SkillTags.treeTags(List.of("core"))),
+                        new StaticImage("untagged", 0f, 0f, new StaticImage.Shape(1f, 1f, "a.png", new Rotation(0f, 0f)), SkillTags.treeTags(List.of())),
+                        new RingBelt("belt", 0f, 0f, new RingBelt.Shape(1f, 2f, "a.png", new Rotation(0f, 0f)), SkillTags.treeTags(List.of("enigma"))),
+                        new Star("sun", 0f, 0f, 1f, "star_yellow", null, SkillTags.treeTags(List.of("core"))),
+                        new Star("frozen", 0f, 0f, 1f, "star_yellow", null, SkillTags.treeTags(List.of("enigma"))),
+                        new ThreatUnit("hive", 0f, 0f, ThreatUnit.HIVE, 1f, 0f, SkillTags.treeTags(List.of("core"))),
+                        new ThreatUnit("lost_fabricator", 0f, 0f, ThreatUnit.FABRICATOR, 1f, 0f, SkillTags.treeTags(List.of("enigma"))),
+                        new AbyssSerpent("worm", 0f, 0f, new Orbit(1f, 1f, true, 0f), AbyssSerpent.Wobble.NONE, SkillTags.treeTags(List.of("enigma"))))));
     }
 
     @Test

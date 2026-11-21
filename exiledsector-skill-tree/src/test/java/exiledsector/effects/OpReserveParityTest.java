@@ -8,6 +8,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.MockSector;
+import exiledsector.MockShips;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
@@ -71,21 +72,17 @@ class OpReserveParityTest {
     }
 
     private static FleetMemberAPI member(String id, ShipVariantAPI variant) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getId()).thenReturn(id);
-        when(member.getShipName()).thenReturn("ISS " + id);
-        when(member.getVariant()).thenReturn(variant);
-        return member;
+        return MockShips.member(id).shipName("ISS " + id).variant(variant).build();
     }
 
     @Test
     void reservedOpAddsUpEveryReserveOnTheVariantAtItsHullSizeCost() {
-        reserveCosts("exiledSector_opSpent_0", 9);
-        reserveCosts("exiledSector_opSpent_7", 3);
+        reserveCosts("exiledSector_opReserve_9", 9);
+        reserveCosts("exiledSector_opReserve_3", 3);
         reserveCosts("heavyarmor", 20);
 
-        assertEquals(12, OpReserveParity.reservedOp(cruiserWith("heavyarmor", "exiledSector_opSpent_0", "exiledSector_opSpent_7")));
-        assertEquals(0, OpReserveParity.reservedOp(cruiserWith("heavyarmor", "exiledSector_opSpent_1000")));
+        assertEquals(12, OpReserveParity.reservedOp(cruiserWith("heavyarmor", "exiledSector_opReserve_9", "exiledSector_opReserve_3")));
+        assertEquals(0, OpReserveParity.reservedOp(cruiserWith("heavyarmor", "exiledSector_opReserve_1000")));
     }
 
     @Test
@@ -100,7 +97,7 @@ class OpReserveParityTest {
 
     @Test
     void aReserveThatMatchesThePaidNodesIsNotReported() {
-        ShipVariantAPI variant = cruiserWith("exiledSector_opSpent_0");
+        ShipVariantAPI variant = cruiserWith("exiledSector_opReserve_9");
 
         OpReserveParity.warnIfOutOfSync(member("in-sync", variant), variant, 9, 9, "while allocating nodes");
 
@@ -109,14 +106,14 @@ class OpReserveParityTest {
 
     @Test
     void aMismatchIsReportedOnceWithTheShipTheCostsAndTheReservesFound() {
-        ShipVariantAPI variant = cruiserWith("exiledSector_opSpent_4");
+        ShipVariantAPI variant = cruiserWith("exiledSector_opReserve_4");
         FleetMemberAPI member = member("missing-reserve", variant);
 
         OpReserveParity.warnIfOutOfSync(member, variant, 12, 0, "while allocating nodes");
         OpReserveParity.warnIfOutOfSync(member, variant, 12, 0, "while allocating nodes");
 
         verify(logger, times(1)).warn(contains("OP reserve out of sync while allocating nodes on ISS missing-reserve"));
-        verify(logger).warn(contains("its paid nodes cost 12 OP but the variant reserves 0 OP [exiledSector_opSpent_4]."));
+        verify(logger).warn(contains("its paid nodes cost 12 OP but the variant reserves 0 OP [exiledSector_opReserve_4]."));
     }
 
     @Test
@@ -148,9 +145,9 @@ class OpReserveParityTest {
 
     @Test
     void npcShipsAreNeverChecked() {
-        ShipVariantAPI variant = cruiserWith("exiledSector_opSpent_2");
+        ShipVariantAPI variant = cruiserWith("exiledSector_opReserve_2");
         when(variant.getTags()).thenReturn(Set.of("exiledSector_npcTree|bulwark|3|root_low_tech_1"));
-        reserveCosts("exiledSector_opSpent_2", 5);
+        reserveCosts("exiledSector_opReserve_2", 2);
 
         OpReserveParity.warnIfOutOfSync(member("npc-ship", variant), variant, "before the skill tree re-synced it");
 

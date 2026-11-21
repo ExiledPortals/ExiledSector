@@ -1,0 +1,1729 @@
+{
+	"skillTypes": [
+		{
+			"id": "atlas_root",
+			"name": "Wormhole Gateway",
+			"icon": "graphics/exiledSector/campaign/abilities/outer_reach_atlas.png",
+			"tier": "ROOT"
+		},
+		{
+			"id": "travel_boss_star_charts",
+			"name": "Boss Star Charts",
+			"icon": "graphics/exiledSector/items/charts/star_chart.png",
+			"effects": [
+				{
+					"effect": "CHART_BOSS_STAR_CHART_PERCENT",
+					"magnitude": 2
+				}
+			],
+			"tags": [
+				"star_chart"
+			]
+		},
+		{
+			"id": "travel_catalysts",
+			"name": "Atlas Catalysts",
+			"icon": "graphics/exiledSector/items/charts/star_chart.png",
+			"effects": [
+				{
+					"effect": "CHART_CATALYST_PERCENT",
+					"magnitude": 2
+				}
+			],
+			"tags": [
+				"loot"
+			]
+		},
+		{
+			"id": "travel_chart_modifier_effect",
+			"name": "Star Chart Modifier Effect",
+			"icon": "graphics/exiledSector/items/charts/star_chart.png",
+			"effects": [
+				{
+					"effect": "CHART_MODIFIER_EFFECT_PERCENT",
+					"magnitude": 2
+				}
+			],
+			"tags": [
+				"encounter",
+				"loot"
+			]
+		},
+		{
+			"id": "spatial_breach_chance",
+			"name": "Spatial Breach Chance",
+			"effects": [
+				{
+					"effect": "CHART_SPATIAL_BREACH_CHANCE_PERCENT",
+					"magnitude": 8
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "relay_network_chance",
+			"name": "Relay Network Chance",
+			"effects": [
+				{
+					"effect": "CHART_RELAY_NETWORK_CHANCE_PERCENT",
+					"magnitude": 8
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "supply_convoy_chance",
+			"name": "Supply Convoy Chance",
+			"effects": [
+				{
+					"effect": "CHART_SUPPLY_CONVOY_CHANCE_PERCENT",
+					"magnitude": 8
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "anomalous_debris_chance",
+			"name": "Anomalous Debris Chance",
+			"effects": [
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_CHANCE_PERCENT",
+					"magnitude": 8
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "excavation_sites_chance",
+			"name": "Excavation Sites Chance",
+			"effects": [
+				{
+					"effect": "CHART_EXCAVATION_SITES_CHANCE_PERCENT",
+					"magnitude": 8
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "listening_post_chance",
+			"name": "Depot Chance",
+			"effects": [
+				{
+					"effect": "CHART_LISTENING_POST_CHANCE_PERCENT",
+					"magnitude": 8
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "stellar_flares_chance",
+			"name": "Stellar Flares Chance",
+			"effects": [
+				{
+					"effect": "CHART_STELLAR_FLARES_CHANCE_PERCENT",
+					"magnitude": 8
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "additional_site",
+			"name": "Additional Site",
+			"effects": [
+				{
+					"effect": "CHART_EXTRA_EXCAVATION_SITES",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"crafting_item"
+			]
+		},
+		{
+			"id": "inhibitor_quantity",
+			"name": "Inhibitor Quantity",
+			"effects": [
+				{
+					"effect": "CHART_EXCAVATION_LOOT_QUANTITY_PERCENT",
+					"magnitude": 20
+				}
+			],
+			"tags": [
+				"crafting_item"
+			]
+		},
+		{
+			"id": "open_bores",
+			"name": "Open Bores",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_EXCAVATION_OPEN_SHAFTS",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_EXCAVATION_GUARDIAN_INHIBITORS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"encounter",
+				"crafting_item"
+			]
+		},
+		{
+			"id": "sapper_teams",
+			"name": "Sapper Teams",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_EXCAVATION_COLLAPSED_SHAFTS",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_EXCAVATION_RAID_INHIBITORS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"crafting_item"
+			]
+		},
+		{
+			"id": "twin_shafts",
+			"name": "Twin Shafts",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_EXCAVATION_TWIN_SHAFTS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"crafting_item"
+			]
+		},
+		{
+			"id": "deeper_bores",
+			"name": "Deeper Bores",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_EXCAVATION_SECOND_CAVERN",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_EXCAVATION_SECOND_CAVERN_FLEET_SIZE_MULT",
+					"magnitude": 50
+				},
+				{
+					"effect": "CHART_EXCAVATION_SECOND_CAVERN_INHIBITORS",
+					"magnitude": 2
+				}
+			],
+			"tags": [
+				"fleet_size",
+				"crafting_item"
+			]
+		},
+		{
+			"id": "needle_bores",
+			"name": "Needle Bores",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_EXCAVATION_FRIGATES_ONLY",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_EXCAVATION_GUARDIAN_INHIBITORS",
+					"magnitude": 2
+				}
+			],
+			"tags": [
+				"battle_rules",
+				"crafting_item"
+			]
+		},
+		{
+			"id": "widened_bores",
+			"name": "Widened Bores",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_EXCAVATION_CRUISERS_ALLOWED",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_EXCAVATION_GUARDIAN_INHIBITORS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"battle_rules",
+				"crafting_item"
+			]
+		},
+		{
+			"id": "pitch_black",
+			"name": "Pitch Black",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_EXCAVATION_SIGHT_RADIUS_PERCENT",
+					"magnitude": -70
+				},
+				{
+					"effect": "CHART_EXCAVATION_OPEN_SHAFT_INHIBITOR_PERCENT",
+					"magnitude": 50
+				}
+			],
+			"tags": [
+				"battle_rules",
+				"crafting_item"
+			]
+		},
+		{
+			"id": "infested_bolt_holes",
+			"name": "Infested Bolt-Holes",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_EXCAVATION_CORRUPTIBLE_GUARDIANS",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_EXCAVATION_CORRUPTED_GUARDIAN_INHIBITORS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"encounter",
+				"crafting_item"
+			]
+		},
+		{
+			"id": "settled_shafts",
+			"name": "Settled Shafts",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_EXCAVATION_INHIBITOR_PERCENT_PER_DUST",
+					"magnitude": 30
+				}
+			],
+			"tags": [
+				"crafting_item"
+			]
+		},
+		{
+			"id": "dense_nebula_atlas_chance",
+			"name": "Dense Nebula Atlas Chance",
+			"effects": [
+				{
+					"effect": "ATLAS_DENSE_NEBULA_CHANCE_PERCENT",
+					"magnitude": 8
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "settling_dust_effect",
+			"name": "Settling Dust Effect",
+			"effects": [
+				{
+					"effect": "CHART_SETTLING_DUST_EFFECT_PERCENT",
+					"magnitude": 20
+				}
+			],
+			"tags": [
+				"star_chart"
+			]
+		},
+		{
+			"id": "settling_dust_stacks",
+			"name": "Settling Dust Stacks",
+			"effects": [
+				{
+					"effect": "CHART_SETTLING_DUST_MAX_STACKS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"star_chart"
+			]
+		},
+		{
+			"id": "dust_trails",
+			"name": "Dust Trails",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_SETTLING_DUST_QUANTITY_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"tags": [
+				"loot"
+			]
+		},
+		{
+			"id": "long_settling",
+			"name": "Long Settling",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_SETTLING_DUST_MAX_STACKS",
+					"magnitude": 5
+				},
+				{
+					"effect": "CHART_SETTLING_DUST_FLEET_SIZE_MULT",
+					"magnitude": 3
+				}
+			],
+			"tags": [
+				"star_chart",
+				"fleet_size"
+			]
+		},
+		{
+			"id": "ionized_dust",
+			"name": "Ionized Dust",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_SETTLING_DUST_IONIZED",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"star_chart"
+			]
+		},
+		{
+			"id": "threat_feedstock_chance",
+			"name": "Threat Feedstock Chance",
+			"effects": [
+				{
+					"effect": "CHART_CONVOY_THREAT_FEEDSTOCK_CHANCE_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"feedstock"
+			]
+		},
+		{
+			"id": "shroud_feedstock_chance",
+			"name": "Shroud Feedstock Chance",
+			"effects": [
+				{
+					"effect": "CHART_CONVOY_SHROUD_FEEDSTOCK_CHANCE_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"feedstock"
+			]
+		},
+		{
+			"id": "phase_feedstock_chance",
+			"name": "Phase Feedstock Chance",
+			"effects": [
+				{
+					"effect": "CHART_CONVOY_PHASE_FEEDSTOCK_CHANCE_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"feedstock"
+			]
+		},
+		{
+			"id": "feedstock_duplication",
+			"name": "Feedstock Duplication",
+			"effects": [
+				{
+					"effect": "CHART_CONVOY_DOUBLE_FEEDSTOCK_CHANCE_PERCENT",
+					"magnitude": 25
+				}
+			],
+			"tags": [
+				"feedstock"
+			]
+		},
+		{
+			"id": "additional_convoy_chance",
+			"name": "Additional Convoy Chance",
+			"effects": [
+				{
+					"effect": "CHART_EXTRA_CONVOY_CHANCE_PERCENT",
+					"magnitude": 30
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "threat_embargo",
+			"name": "Threat Embargo",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_CONVOY_THREAT_FEEDSTOCK_CHANCE_PERCENT",
+					"magnitude": 25
+				}
+			],
+			"tags": [
+				"feedstock"
+			]
+		},
+		{
+			"id": "shroud_embargo",
+			"name": "Shroud Embargo",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_CONVOY_SHROUD_FEEDSTOCK_CHANCE_PERCENT",
+					"magnitude": 25
+				}
+			],
+			"tags": [
+				"feedstock"
+			]
+		},
+		{
+			"id": "phase_embargo",
+			"name": "Phase Embargo",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_CONVOY_PHASE_FEEDSTOCK_CHANCE_PERCENT",
+					"magnitude": 25
+				}
+			],
+			"tags": [
+				"feedstock"
+			]
+		},
+		{
+			"id": "torn_holds",
+			"name": "Torn Holds",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_CONVOY_BREACH_FEEDSTOCK_PERCENT",
+					"magnitude": 50
+				}
+			],
+			"tags": [
+				"feedstock"
+			]
+		},
+		{
+			"id": "supply_lines",
+			"name": "Supply Lines",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_CONVOY_OFFICER_FEEDSTOCK",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"feedstock",
+				"officers"
+			]
+		},
+		{
+			"id": "bolt_hole_drop",
+			"name": "Bolt-Hole Drop",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_CONVOY_EXCAVATION_DELIVERY",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_CONVOY_EXCAVATION_RAID_DIFFICULTY_PERCENT",
+					"magnitude": 100
+				},
+				{
+					"effect": "CHART_CONVOY_EXCAVATION_LOOT_PERCENT",
+					"magnitude": 30
+				}
+			],
+			"tags": [
+				"feedstock",
+				"crafting_item",
+				"encounter"
+			]
+		},
+		{
+			"id": "open_season",
+			"name": "Open Season",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_HOSTILE_CONVOYS",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_CONVOY_FEEDSTOCK_PERCENT",
+					"magnitude": 20
+				}
+			],
+			"tags": [
+				"feedstock",
+				"encounter"
+			]
+		},
+		{
+			"id": "mixed_manifest",
+			"name": "Mixed Manifest",
+			"tier": "KEYSTONE",
+			"effects": [
+				{
+					"effect": "CHART_CONVOY_MIXED_MANIFEST",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_CONVOY_FLEET_SIZE_PERCENT",
+					"magnitude": 20
+				}
+			],
+			"tags": [
+				"crafting_item",
+				"fleet_size"
+			]
+		},
+		{
+			"id": "relay_reward_rarity",
+			"name": "Relay Reward Rarity",
+			"effects": [
+				{
+					"effect": "CHART_RELAY_REWARD_RARITY_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"loot"
+			]
+		},
+		{
+			"id": "forked_trace",
+			"name": "Forked Trace",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_RELAY_ONWARD_SYSTEMS",
+					"magnitude": 2
+				}
+			],
+			"tags": [
+				"boss",
+				"loot"
+			]
+		},
+		{
+			"id": "crowded_channel",
+			"name": "Crowded Channel",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_RELAY_EXTRA_CHOICES",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"loot"
+			]
+		},
+		{
+			"id": "double_down",
+			"name": "Double Down",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_RELAY_EXTRA_REWARD_COPIES",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_RELAY_EXTRA_SCARS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"loot",
+				"boss"
+			]
+		},
+		{
+			"id": "extra_relay",
+			"name": "Extra Relay",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_RELAY_EXTRA_RELAYS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"encounter",
+				"loot"
+			]
+		},
+		{
+			"id": "scar_collector",
+			"name": "Scar Collector",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_RELAY_SCAR_REWARDS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"loot",
+				"boss"
+			]
+		},
+		{
+			"id": "early_echo",
+			"name": "Early Echo",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_RELAY_STAGE_UNIQUE_CHANCE",
+					"magnitude": 15
+				}
+			],
+			"tags": [
+				"hull_item",
+				"subroutine",
+				"boss"
+			]
+		},
+		{
+			"id": "shared_broadcast",
+			"name": "Shared Broadcast",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_RELAY_SHARED_BROADCAST",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"officers",
+				"loot"
+			]
+		},
+		{
+			"id": "full_array",
+			"name": "Full Array",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_RELAY_FULL_ARRAY",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "breach_cache_quantity",
+			"name": "Breach Cache Quantity",
+			"effects": [
+				{
+					"effect": "CHART_BREACH_CACHE_PERCENT",
+					"magnitude": 20
+				}
+			],
+			"tags": [
+				"loot"
+			]
+		},
+		{
+			"id": "breach_cache_items",
+			"name": "Breach Cache Items",
+			"effects": [
+				{
+					"effect": "CHART_BREACH_CACHE_ITEM_PERCENT",
+					"magnitude": 20
+				}
+			],
+			"tags": [
+				"loot"
+			]
+		},
+		{
+			"id": "warped_chance",
+			"name": "Warped Chance",
+			"effects": [
+				{
+					"effect": "CHART_BREACH_WARPED_CHANCE_PERCENT",
+					"magnitude": 50
+				}
+			],
+			"tags": [
+				"loot"
+			]
+		},
+		{
+			"id": "heavy_breach",
+			"name": "Heavy Breach",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_BREACH_HOLD_SECONDS",
+					"magnitude": 30
+				},
+				{
+					"effect": "CHART_BREACH_HELD_DRAIN_PERCENT",
+					"magnitude": 3
+				}
+			],
+			"tags": [
+				"loot"
+			]
+		},
+		{
+			"id": "rift_magnetism",
+			"name": "Rift Magnetism",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_BREACH_DRIFT",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_BREACH_CACHE_ITEM_PERCENT",
+					"magnitude": 40
+				}
+			],
+			"tags": [
+				"loot"
+			]
+		},
+		{
+			"id": "hyperspace_bleed",
+			"name": "Hyperspace Bleed",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_BREACH_LIGHTNING",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_BREACH_BATTLE_HULL_ITEM_PERCENT",
+					"magnitude": 50
+				}
+			],
+			"tags": [
+				"encounter",
+				"loot"
+			]
+		},
+		{
+			"id": "rally_point",
+			"name": "Rally Point",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_BREACH_FLEET_WARPED_CHANCE_PERCENT",
+					"magnitude": 50
+				}
+			],
+			"tags": [
+				"encounter",
+				"loot"
+			]
+		},
+		{
+			"id": "incursion",
+			"name": "Incursion",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_BREACH_INCURSION",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"encounter",
+				"loot"
+			]
+		},
+		{
+			"id": "event_horizon",
+			"name": "Event Horizon",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_BLACK_HOLE_EVENT_HORIZON",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_BLACK_HOLE_WARPED_DERELICTS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"loot"
+			]
+		},
+		{
+			"id": "rude_awakening",
+			"name": "Rude Awakening",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_BREACH_WAKES_ANOMALOUS_FLEETS",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_BREACH_ANOMALOUS_FLEETS_WARPED",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"encounter",
+				"loot"
+			]
+		},
+		{
+			"id": "rift_duel",
+			"name": "Rift Duel",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_BREACH_OFFICER_DUPLICATED_REWARDS",
+					"magnitude": 2
+				}
+			],
+			"tags": [
+				"encounter",
+				"loot"
+			]
+		},
+		{
+			"id": "additional_debris",
+			"name": "Additional Debris",
+			"effects": [
+				{
+					"effect": "CHART_EXTRA_ANOMALOUS_DEBRIS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "engram_quantity",
+			"name": "Engram Quantity",
+			"effects": [
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_CRAFTING_ITEM_QUANTITY_PERCENT",
+					"magnitude": 20
+				}
+			],
+			"tags": [
+				"crafting_item"
+			]
+		},
+		{
+			"id": "deep_corruption",
+			"name": "Deep Corruption",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_CORRUPTED_FLEET_SIZE_PERCENT",
+					"magnitude": 30
+				},
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_CORRUPTED_ENGRAMS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"fleet_size",
+				"crafting_item"
+			]
+		},
+		{
+			"id": "double_dose",
+			"name": "Double Dose",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_SECOND_CORRUPTION",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_TWICE_CORRUPTED_ENGRAMS",
+					"magnitude": 2
+				}
+			],
+			"tags": [
+				"fleet_size",
+				"crafting_item"
+			]
+		},
+		{
+			"id": "lone_sleeper",
+			"name": "Lone Sleeper",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_SINGLE_FIELD",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_FLEET_SIZE_PERCENT",
+					"magnitude": 100
+				},
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_CORRUPTED_ENGRAMS",
+					"magnitude": 3
+				}
+			],
+			"tags": [
+				"fleet_size",
+				"crafting_item"
+			]
+		},
+		{
+			"id": "breached_graveyard",
+			"name": "Breached Graveyard",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_BREACH_FIELD",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"encounter",
+				"hull_item"
+			]
+		},
+		{
+			"id": "restless_sleepers",
+			"name": "Restless Sleepers",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_AWAKE",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_ROAMING",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"enemy",
+				"encounter"
+			]
+		},
+		{
+			"id": "redacted_sleepers",
+			"name": "[REDACTED] Sleepers",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_REMNANT_SHIP_SHARE",
+					"magnitude": 30
+				}
+			],
+			"tags": [
+				"enemy"
+			]
+		},
+		{
+			"id": "threatening_sleepers",
+			"name": "Threatening Sleepers",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_THREAT_SHIP_SHARE",
+					"magnitude": 30
+				}
+			],
+			"tags": [
+				"enemy"
+			]
+		},
+		{
+			"id": "veiled_sleepers",
+			"name": "Veiled Sleepers",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_DWELLER_SHIP_SHARE",
+					"magnitude": 30
+				}
+			],
+			"tags": [
+				"enemy"
+			]
+		},
+		{
+			"id": "silent_choir",
+			"name": "Silent Choir",
+			"tier": "KEYSTONE",
+			"effects": [
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_ALWAYS_TWICE_CORRUPTED",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_ANOMALOUS_DEBRIS_FLEET_SIZE_PERCENT",
+					"magnitude": 50
+				}
+			],
+			"tags": [
+				"fleet_size",
+				"crafting_item"
+			]
+		},
+		{
+			"id": "magnetic_storm_chance",
+			"name": "Magnetic Storm Chance",
+			"effects": [
+				{
+					"effect": "CHART_MAGNETIC_STORM_CHANCE_PERCENT",
+					"magnitude": 8
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "storm_crafting_items",
+			"name": "Storm Crafting Items",
+			"effects": [
+				{
+					"effect": "CHART_MAGNETIC_STORM_CRAFTING_ITEM_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"crafting_item"
+			]
+		},
+		{
+			"id": "charged_fields",
+			"name": "Charged Fields",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_MAGNETIC_STORM_CRAFTING_ITEM_PERCENT",
+					"magnitude": 30
+				}
+			],
+			"tags": [
+				"crafting_item"
+			]
+		},
+		{
+			"id": "static_harvest",
+			"name": "Static Harvest",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_MAGNETIC_STORM_FEEDSTOCK_PERCENT",
+					"magnitude": 30
+				}
+			],
+			"tags": [
+				"feedstock"
+			]
+		},
+		{
+			"id": "ion_front",
+			"name": "Ion Front",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_MAGNETIC_STORM_ION_FRONT",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_MAGNETIC_STORM_ION_FRONT_CRAFTING_ITEM_PERCENT",
+					"magnitude": 50
+				}
+			],
+			"tags": [
+				"crafting_item"
+			]
+		},
+		{
+			"id": "geomagnetic_surge",
+			"name": "Geomagnetic Surge",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_MAGNETIC_STORM_FLARE_AURORAS",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_MAGNETIC_STORM_LUCKY_MODIFIERS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"hull_item"
+			]
+		},
+		{
+			"id": "vault_quantity",
+			"name": "Vault Quantity",
+			"effects": [
+				{
+					"effect": "CHART_LISTENING_POST_LOOT_QUANTITY_PERCENT",
+					"magnitude": 20
+				}
+			],
+			"tags": [
+				"loot"
+			]
+		},
+		{
+			"id": "slow_purge",
+			"name": "Slow Purge",
+			"effects": [
+				{
+					"effect": "CHART_LISTENING_POST_PURGE_PERCENT",
+					"magnitude": 25
+				}
+			],
+			"tags": [
+				"loot"
+			]
+		},
+		{
+			"id": "garrison_pickets",
+			"name": "Garrison Pickets",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_LISTENING_POST_GARRISON_PICKETS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"fleet_size",
+				"loot"
+			]
+		},
+		{
+			"id": "hair_trigger",
+			"name": "Hair Trigger",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_LISTENING_POST_INSTANT_ALARM",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_LISTENING_POST_UNSEEN_PROTOTYPES",
+					"magnitude": 2
+				}
+			],
+			"tags": [
+				"encounter",
+				"hull_item"
+			]
+		},
+		{
+			"id": "smash_and_grab",
+			"name": "Smash and Grab",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_LISTENING_POST_RAID_ONLY",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_LISTENING_POST_LOOT_QUANTITY_PERCENT",
+					"magnitude": 30
+				},
+				{
+					"effect": "CHART_LISTENING_POST_PROTOTYPES",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"hull_item"
+			]
+		},
+		{
+			"id": "hunting_party",
+			"name": "Hunting Party",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_LISTENING_POST_HUNTING_PICKETS",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_LISTENING_POST_PICKET_PROTOTYPES",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"encounter",
+				"hull_item"
+			]
+		},
+		{
+			"id": "fortified_depot",
+			"name": "Fortified Depot",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_LISTENING_POST_ARMED_STATION",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_LISTENING_POST_PURGE_HELD",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"encounter",
+				"loot"
+			]
+		},
+		{
+			"id": "officers_ledger",
+			"name": "Officer's Ledger",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_LISTENING_POST_OFFICER_LEDGER",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"loot"
+			]
+		},
+		{
+			"id": "stolen_charts",
+			"name": "Stolen Charts",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_LISTENING_POST_STOLEN_CHARTS",
+					"magnitude": 3
+				}
+			],
+			"tags": [
+				"star_chart"
+			]
+		},
+		{
+			"id": "storm_front_chance",
+			"name": "Storm Front Chance",
+			"effects": [
+				{
+					"effect": "CHART_STORM_FRONT_CHANCE_PERCENT",
+					"magnitude": 8
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "storm_item_quantity",
+			"name": "Storm Item Quantity",
+			"effects": [
+				{
+					"effect": "CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT",
+					"magnitude": 15
+				}
+			],
+			"tags": [
+				"loot"
+			]
+		},
+		{
+			"id": "storm_front_size",
+			"name": "Storm Front Size",
+			"effects": [
+				{
+					"effect": "CHART_STORM_FRONT_SIZE_PERCENT",
+					"magnitude": 20
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "lightning_rod",
+			"name": "Lightning Rod",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_STORM_STRIKE_FREQUENCY_PERCENT",
+					"magnitude": 50
+				},
+				{
+					"effect": "CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT",
+					"magnitude": 30
+				}
+			],
+			"tags": [
+				"battle_rules",
+				"loot"
+			]
+		},
+		{
+			"id": "supercell",
+			"name": "Supercell",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_STORM_FRONT_SIZE_PERCENT",
+					"magnitude": 100
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "eye_of_the_storm",
+			"name": "Eye of the Storm",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_STORM_FRONT_HELD_SPEED_PERCENT",
+					"magnitude": 80
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "redacted_front",
+			"name": "[REDACTED] Front",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_STORM_FRONT_REDACTED_FRIGATES",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"enemy"
+			]
+		},
+		{
+			"id": "captured_front",
+			"name": "Captured Front",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_STORM_FRONT_CAPTURED",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_STORM_FRONT_CAPTURED_IMMUTABLE_CHANCE_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"encounter",
+				"hull_item"
+			]
+		},
+		{
+			"id": "solar_front",
+			"name": "Solar Front",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_STORM_FRONT_LUCKY_BIOME_MODIFIERS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"hull_item"
+			]
+		},
+		{
+			"id": "thunder_duel",
+			"name": "Thunder Duel",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_STORM_FRONT_OFFICER_EXTRA_REWARDS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"officers"
+			]
+		},
+		{
+			"id": "flare_hull_items",
+			"name": "Flare Hull Items",
+			"effects": [
+				{
+					"effect": "CHART_STELLAR_FLARES_HULL_ITEM_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"hull_item"
+			]
+		},
+		{
+			"id": "solar_maximum",
+			"name": "Solar Maximum",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_STELLAR_FLARES_LUCKY_MODIFIERS",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_STELLAR_FLARES_FLARE_FREQUENCY_MULT",
+					"magnitude": 50
+				}
+			],
+			"tags": [
+				"hull_item"
+			]
+		},
+		{
+			"id": "tempered_light",
+			"name": "Tempered Light",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_STELLAR_FLARES_LUCKY_IMPLICITS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"hull_item"
+			]
+		},
+		{
+			"id": "golden_hour",
+			"name": "Golden Hour",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_STELLAR_FLARES_LUCKY_ROLLS",
+					"magnitude": 4
+				}
+			],
+			"tags": [
+				"hull_item"
+			]
+		},
+		{
+			"id": "sunstruck_convoy",
+			"name": "Sunstruck Convoy",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_CONVOY_SUNSTRUCK",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_CONVOY_SUNSTRUCK_COMBAT_READINESS_PERCENT",
+					"magnitude": -20
+				}
+			],
+			"tags": [
+				"encounter"
+			]
+		},
+		{
+			"id": "perfect_light",
+			"name": "Perfect Light",
+			"tier": "KEYSTONE",
+			"effects": [
+				{
+					"effect": "CHART_STELLAR_FLARES_ALL_LUCKY",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_STELLAR_FLARES_HULL_ITEM_PERCENT",
+					"magnitude": -40
+				}
+			],
+			"tags": [
+				"hull_item"
+			]
+		},
+		{
+			"id": "trophy_duplication",
+			"name": "Trophy Duplication",
+			"effects": [
+				{
+					"effect": "ATLAS_OFFICER_TROPHY_DUPLICATION_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"tags": [
+				"officers",
+				"loot"
+			]
+		},
+		{
+			"id": "scavenge_duplication",
+			"name": "Scavenge Duplication",
+			"effects": [
+				{
+					"effect": "ATLAS_OFFICER_SCAVENGE_DUPLICATION_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"tags": [
+				"officers",
+				"loot"
+			]
+		},
+		{
+			"id": "spoils_of_war",
+			"name": "Spoils of War",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_SKIRMISH_OFFICER_EXTRA_REWARDS",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_SKIRMISH_OFFICER_FLEET_SIZE_PERCENT",
+					"magnitude": 30
+				}
+			],
+			"tags": [
+				"officers",
+				"fleet_size"
+			]
+		},
+		{
+			"id": "hardened_command",
+			"name": "Hardened Command",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_OFFICER_FLEET_SIZE_PERCENT",
+					"magnitude": 25
+				},
+				{
+					"effect": "CHART_OFFICER_LEVELS",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"officers",
+				"fleet_size"
+			]
+		},
+		{
+			"id": "trophy_refit",
+			"name": "Trophy Refit",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "ATLAS_OFFICER_TROPHY_REFIT",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"officers",
+				"loot"
+			]
+		},
+		{
+			"id": "open_warfare",
+			"name": "Open Warfare",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "ATLAS_OFFICER_FIGHT_FREQUENCY_PERCENT",
+					"magnitude": 100
+				}
+			],
+			"tags": [
+				"officers"
+			]
+		},
+		{
+			"id": "scrappers_fortune",
+			"name": "Scrapper's Fortune",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "ATLAS_OFFICER_SCAVENGERS_PERCENT",
+					"magnitude": 100
+				},
+				{
+					"effect": "ATLAS_OFFICER_LUCKY_SCAVENGING",
+					"magnitude": 1
+				}
+			],
+			"tags": [
+				"officers",
+				"loot"
+			]
+		},
+		{
+			"id": "iron_grip",
+			"name": "Iron Grip",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "CHART_OFFICER_LOSES_ONE_REWARD_TYPE",
+					"magnitude": 1
+				},
+				{
+					"effect": "CHART_OFFICER_FLEET_QUALITY_PERCENT",
+					"magnitude": 50
+				},
+				{
+					"effect": "CHART_OFFICER_ESCORT_OFFICER_LEVELS",
+					"magnitude": 2
+				}
+			],
+			"tags": [
+				"officers",
+				"enemy"
+			]
+		}
+	]
+}

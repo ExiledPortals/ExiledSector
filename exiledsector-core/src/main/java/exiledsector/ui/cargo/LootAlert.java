@@ -2,14 +2,14 @@ package exiledsector.ui.cargo;
 
 import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
-import exiledsector.items.Nanoswarm;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
-import exiledsector.items.ItemDisassembly;
-import exiledsector.items.ItemRarity;
-import exiledsector.items.MasterSchematic;
-import exiledsector.items.MaterialItems;
-import exiledsector.items.RefitSchematic;
+import exiledsector.items.crafting.ItemDisassembly;
+import exiledsector.items.crafting.material.MaterialItems;
+import exiledsector.items.crafting.material.Nanoswarm;
+import exiledsector.items.modifier.ItemRarity;
+import exiledsector.items.schematic.MasterSchematic;
+import exiledsector.items.schematic.RefitSchematic;
 
 import java.util.Set;
 

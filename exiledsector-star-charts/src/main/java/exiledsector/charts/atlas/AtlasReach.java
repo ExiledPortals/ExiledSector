@@ -1,5 +1,7 @@
 package exiledsector.charts.atlas;
 
+import exiledsector.charts.officer.turn.OfficerTurns;
+
 import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -42,7 +44,7 @@ public final class AtlasReach {
         Map<AtlasCell, Integer> remaining = new HashMap<>();
         ArrayDeque<AtlasCell> frontier = new ArrayDeque<>();
         for (AtlasCell completed : state.completedCells()) {
-            int reach = Math.max(VISIBLE_LANES, revealLanes(generator, completed));
+            int reach = Math.max(visibleLanesAround(generator, state, completed), revealLanes(generator, completed));
             if (reach > remaining.getOrDefault(completed, -1)) {
                 remaining.put(completed, reach);
                 frontier.add(completed);
@@ -70,6 +72,19 @@ public final class AtlasReach {
         return new LinkedHashSet<>(remaining.keySet());
     }
 
+    public static int visibleLanes(AtlasGenerator generator) {
+        return visibleLanes(generator.effects());
+    }
+
+    static int visibleLanes(AtlasEffects treeEffects) {
+        return Math.max(0, VISIBLE_LANES + treeEffects.count(AtlasModifier.ATLAS_VISIBILITY_LANES));
+    }
+
+    static int visibleLanesAround(AtlasGenerator generator, AtlasState state, AtlasCell completed) {
+        AtlasEffects completedWith = state.completedWith(completed);
+        return visibleLanes(completedWith == null ? generator.effects() : completedWith);
+    }
+
     static int revealLanes(AtlasGenerator generator, AtlasCell completed) {
         AtlasSpecial special = generator.specialAt(completed);
         return special != null && special.kind().revealsLanes() ? Math.round(special.radius()) : 0;
@@ -81,8 +96,16 @@ public final class AtlasReach {
     }
 
     public static Set<AtlasCell> refreshReveal(AtlasGenerator generator, AtlasState state) {
+        return refreshReveal(generator, state, TerritoryContext.current());
+    }
+
+    public static Set<AtlasCell> refreshReveal(AtlasGenerator generator, AtlasState state, TerritoryContext territoryContext) {
         Set<AtlasCell> visible = visible(generator, state);
         state.recordReveal(generator, visible);
+        if (CommissionHandover.isNeeded(state, territoryContext.excludedFactionId())) {
+            OfficerTurns.handOverCommission(generator, state, visible, territoryContext);
+        }
+        AtlasTerritoryPlacer.place(generator, state, visible, territoryContext);
         return visible;
     }
 }

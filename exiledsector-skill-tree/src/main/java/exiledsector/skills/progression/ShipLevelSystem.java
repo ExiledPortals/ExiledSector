@@ -46,14 +46,9 @@ public final class ShipLevelSystem {
         awardXp(ShipSkillDataManager.get(member.getId()), xpAmount, currentCurve(), SkillTree.getAllNodes().values());
     }
 
-    private static LevelCurve currentCurve() {
-        return new LevelCurve(ShipLevelConfig.xpBase(), ShipLevelConfig.xpGrowth(),
-                ShipLevelConfig.xpGrowthCutoffLevel(), ShipLevelConfig.maxLevel());
-    }
-
-    public static float xpToReachNextLevel(int currentLevel, float xpBase, float xpGrowth, int growthCutoffLevel) {
-        int cappedLevel = growthCutoffLevel <= 0 ? currentLevel : Math.min(currentLevel, growthCutoffLevel - 1);
-        return xpBase * (float) Math.pow(xpGrowth, cappedLevel);
+    public static LevelCurve currentCurve() {
+        return new LevelCurve(ShipLevelConfig.xpBase(), ShipLevelConfig.xpGrowth(), ShipLevelConfig.xpGrowthCutoffLevel(),
+                ShipLevelConfig.xpGrowthRamp(), ShipLevelConfig.xpGrowthRampStartLevel(), ShipLevelConfig.maxLevel());
     }
 
     public static float difficultyMultiplier(float difficulty, float strength, float maxMultiplier) {
@@ -90,7 +85,7 @@ public final class ShipLevelSystem {
 
         shipData.addXp(xpAmount);
         while (shipData.getLevel() < levelCurve.maxLevel()) {
-            float requiredXp = xpToReachNextLevel(shipData.getLevel(), levelCurve.xpBase(), levelCurve.xpGrowth(), levelCurve.growthCutoffLevel());
+            float requiredXp = levelCurve.xpToReachNextLevel(shipData.getLevel());
             if (shipData.getXp() < requiredXp) break;
 
             shipData.subtractXp(requiredXp);
@@ -107,6 +102,16 @@ public final class ShipLevelSystem {
         }
     }
 
-    public record LevelCurve(float xpBase, float xpGrowth, int growthCutoffLevel, int maxLevel) {
+    public record LevelCurve(float xpBase, float xpGrowth, int growthCutoffLevel, float growthRamp, int growthRampStartLevel,
+                             int maxLevel) {
+
+        public float xpToReachNextLevel(int currentLevel) {
+            int growingLevels = growthCutoffLevel <= 0 ? currentLevel : Math.min(currentLevel, growthCutoffLevel - 1);
+            double requiredXp = xpBase;
+            for (int level = 1; level <= growingLevels; level++) {
+                requiredXp *= xpGrowth + growthRamp * Math.max(0, level - growthRampStartLevel + 1);
+            }
+            return (float) requiredXp;
+        }
     }
 }

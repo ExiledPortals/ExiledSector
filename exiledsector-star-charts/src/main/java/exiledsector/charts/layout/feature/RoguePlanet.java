@@ -1,6 +1,6 @@
 package exiledsector.charts.layout.feature;
 
-import com.fs.starfarer.api.campaign.SectorEntityToken;
+import exiledsector.charts.layout.feature.FeaturePlan.World;
 
 import java.util.List;
 
@@ -20,8 +20,9 @@ public final class RoguePlanet implements ChartFeature {
     }
 
     @Override
-    public SectorEntityToken build(FeatureSite site) {
-        float orbit = site.orbitBeyond(GAP, 2000f);
-        return site.addPlanet("rogue", site.centre(), site.pick(ROGUE_TYPES), site.between(90f, 140f), orbit, orbit * 2f);
+    public FeaturePlan plan(FeatureRolls rolls) {
+        float orbit = rolls.orbitBeyond(GAP, 2000f);
+        World rogue = new World("rogue", FeaturePlan.CENTRE, rolls.pick(ROGUE_TYPES), rolls.between(90f, 140f), orbit, orbit * 2f, rolls.angle());
+        return new FeaturePlan(List.of(rogue), List.of(), List.of());
     }
 }

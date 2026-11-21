@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import type { Vocabulary } from '../../api/vocabulary.ts';
 import { useDataDocument, type DataDocument } from '../../shared/useDataDocument.ts';
-import { reloadTreeIfUnchanged } from '../tree/state/treePersistence.ts';
+import { shipTreeEditor } from '../tree/state/treeEditor.ts';
 import {
   changedItemFiles,
   ITEMS_RESOURCES,
@@ -39,7 +39,7 @@ export function useItemsDocument(vocabulary: Vocabulary): ItemsDocument {
   const typesSaveCount = document.state.status === 'ready' ? document.state.model.typesSaveCount : 0;
   useEffect(() => {
     if (typesSaveCount > 0) {
-      void reloadTreeIfUnchanged();
+      void shipTreeEditor.persistence.reloadTreeIfUnchanged();
     }
   }, [typesSaveCount]);
   return document;

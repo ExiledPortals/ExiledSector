@@ -25,14 +25,18 @@ final class IconTileCell extends BaseCustomUIPanelPlugin {
     }
 
     private final String iconPath;
-    private final Color accent;
+    private final TileChrome.Frame hoverFrame;
+    private final TileChrome.Frame idleFrame;
     private final boolean blocked;
     private final TileInput tileInput;
     private PositionAPI cellPosition;
 
     IconTileCell(String iconPath, Color accent, boolean blocked, Hooks hooks) {
         this.iconPath = iconPath;
-        this.accent = accent;
+        Color shownAccent = blocked ? BLOCKED_COLOR : accent;
+        this.hoverFrame = blocked ? new TileChrome.Frame(shownAccent, GLOW_WIDTH, GLOW_ALPHA, BORDER_WIDTH, 1f)
+                : new TileChrome.Frame(shownAccent, GLOW_WIDTH, GLOW_ALPHA * 1.4f, HOVER_BORDER_WIDTH, 1f);
+        this.idleFrame = new TileChrome.Frame(shownAccent, GLOW_WIDTH, GLOW_ALPHA, BORDER_WIDTH, IDLE_BORDER_ALPHA);
         this.blocked = blocked;
         this.tileInput = TileInput.forHooks(hooks, blocked);
     }
@@ -47,11 +51,7 @@ final class IconTileCell extends BaseCustomUIPanelPlugin {
         if (cellPosition == null) {
             return;
         }
-        Color shownAccent = blocked ? BLOCKED_COLOR : accent;
-        boolean hovered = tileInput.isHovered();
-        boolean lit = hovered && !blocked;
-        TileChrome.draw(cellPosition, new TileChrome.Frame(shownAccent, GLOW_WIDTH, GLOW_ALPHA * (lit ? 1.4f : 1f), lit ? HOVER_BORDER_WIDTH : BORDER_WIDTH,
-                hovered ? 1f : IDLE_BORDER_ALPHA), alphaMult);
+        TileChrome.draw(cellPosition, tileInput.isHovered() ? hoverFrame : idleFrame, alphaMult);
     }
 
     @Override

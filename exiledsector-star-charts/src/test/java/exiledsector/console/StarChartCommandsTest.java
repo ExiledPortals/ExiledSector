@@ -2,7 +2,7 @@ package exiledsector.console;
 
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import exiledsector.items.ItemData;
-import exiledsector.items.StarChartFixtures;
+import exiledsector.items.starchart.StarChartFixtures;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

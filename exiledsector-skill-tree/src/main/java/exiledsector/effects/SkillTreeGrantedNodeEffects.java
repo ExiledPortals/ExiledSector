@@ -4,7 +4,7 @@ import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
-import exiledsector.items.MasterSchematic;
+import exiledsector.items.schematic.MasterSchematic;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.AllocatedSkillEffects;
 import exiledsector.skills.EffectContribution;

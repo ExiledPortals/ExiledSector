@@ -12,12 +12,15 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.PlayerFleet;
+import exiledsector.domain.DomainContributions;
+import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.i18n.I18n;
+import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-import exiledsector.items.CraftingMaterials;
-import exiledsector.items.ItemCrafting;
-import exiledsector.items.ItemDisassembly;
-import exiledsector.items.MaterialItems;
+import exiledsector.items.crafting.ItemCrafting;
+import exiledsector.items.crafting.ItemDisassembly;
+import exiledsector.items.crafting.material.CraftingMaterials;
+import exiledsector.items.crafting.material.MaterialItems;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.util.FramedPanelPlugin;
@@ -42,12 +45,13 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
     static final float CLOSE_BUTTON_WIDTH = 70f;
     private static final float FEEDSTOCK_ICON_SIZE = 24f;
     static final float FEEDSTOCK_TEXT_TOP = 5f;
-    private static final float PARTS_TOOLTIP_WIDTH = 300f;
+    private static final float FEEDSTOCK_TOOLTIP_WIDTH = 300f;
+    private static final DomainContributions<String> DOMAIN_FEEDSTOCKS = new DomainContributions<>(ExiledSectorDomain::craftingBenchFeedstockIds);
     private static final float CONFIRM_BUTTON_HEIGHT = 26f;
     private static final float TAB_TEXT_PADDING = 24f;
     private static final float NARROW_TAB_TEXT_PADDING = 16f;
     static final List<String> TAB_FONTS = List.of(Fonts.ORBITRON_20AABOLD, Fonts.ORBITRON_20AA, Fonts.ORBITRON_12);
-    static final float PARTS_ROOM = 80f;
+    static final float FEEDSTOCK_ROOM = 80f;
 
     private record TabButton(SocketPanelTab tab) {
     }
@@ -328,17 +332,24 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
         return replaceElement(previousHeader, element, PAD, PAD);
     }
 
+    record TabRowFit(List<String> labels, int fontIndex) {
+    }
+
     private void addTabs(TooltipMakerAPI element) {
         List<SocketPanelTab> rowTabs = new ArrayList<>();
-        List<String> labels = new ArrayList<>();
+        List<String> fullLabels = new ArrayList<>();
+        List<String> shortLabels = new ArrayList<>();
         for (SocketPanelTab panelTab : SocketPanelTab.values()) {
             if (shownTabs.contains(panelTab) || panelTab == tab()) {
                 rowTabs.add(panelTab);
-                labels.add(panelTab.label());
+                fullLabels.add(panelTab.label());
+                shortLabels.add(panelTab.shortLabel());
             }
         }
         float tabRoom = panelWidth - PAD * 2f - CLOSE_BUTTON_WIDTH - GAP - headerToolsWidth();
-        int fontIndex = fittingTabFontIndex(labels, tabRoom, (label, font) -> Global.getSettings().computeStringWidth(label, font));
+        TabRowFit rowFit = fittingTabRow(fullLabels, shortLabels, tabRoom, (label, font) -> Global.getSettings().computeStringWidth(label, font));
+        List<String> labels = rowFit.labels();
+        int fontIndex = rowFit.fontIndex();
         String tabFont = TAB_FONTS.get(fontIndex);
         if (fontIndex > 0) {
             element.setAreaCheckboxFont(tabFont);
@@ -362,14 +373,15 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
         }
     }
 
-    static int fittingTabFontIndex(List<String> labels, float tabRoom, BiFunction<String, String, Float> measure) {
-        int lastIndex = TAB_FONTS.size() - 1;
-        for (int fontIndex = 0; fontIndex < lastIndex; fontIndex++) {
-            if (tabRowWidth(labels, fontIndex, measure) <= tabRoom) {
-                return fontIndex;
+    static TabRowFit fittingTabRow(List<String> fullLabels, List<String> shortLabels, float tabRoom, BiFunction<String, String, Float> measure) {
+        for (List<String> labels : List.of(fullLabels, shortLabels)) {
+            for (int fontIndex = 0; fontIndex < TAB_FONTS.size(); fontIndex++) {
+                if (tabRowWidth(labels, fontIndex, measure) <= tabRoom) {
+                    return new TabRowFit(labels, fontIndex);
+                }
             }
         }
-        return lastIndex;
+        return new TabRowFit(shortLabels, TAB_FONTS.size() - 1);
     }
 
     private static float tabRowWidth(List<String> labels, int fontIndex, BiFunction<String, String, Float> measure) {
@@ -417,9 +429,7 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
         if (confirmPanel != null) {
             return;
         }
-        hoverTooltip.hide();
-        confirmBlocker = Global.getSettings().createCustom(panelWidth, panelHeight, new InputBlocker());
-        panelRoot.addComponent(confirmBlocker).inTL(0f, 0f);
+        blockForConfirm();
         float confirmWidth = confirmWidth();
         confirmPanel = Global.getSettings().createCustom(confirmWidth, confirmHeight, new FramedPanelPlugin(this::buttonPressed));
         TooltipMakerAPI element = confirmPanel.createUIElement(confirmWidth - PAD * 2f, confirmHeight - PAD * 2f, false);
@@ -429,9 +439,7 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
         confirmButton.setShortcut(Keyboard.KEY_RETURN, false);
         confirmButton.getPosition().inBR(0f, 0f);
         element.addButton(Translation.text(cancelKey), cancelId, buttonWidth, CONFIRM_BUTTON_HEIGHT, 0f).getPosition().inBL(0f, 0f);
-        confirmPanel.addUIElement(element).inTL(PAD, PAD);
-        panelRoot.addComponent(confirmPanel).inTL((panelWidth - confirmWidth) / 2f, (panelHeight - confirmHeight) / 2f);
-        refreshOpacity();
+        mountConfirm(element, confirmWidth, confirmHeight);
     }
 
     final void openChoiceConfirm(Consumer<TooltipMakerAPI> bodyWriter, List<String> choiceLabels, List<Object> choiceIds, String cancelKey,
@@ -439,9 +447,7 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
         if (confirmPanel != null) {
             return;
         }
-        hoverTooltip.hide();
-        confirmBlocker = Global.getSettings().createCustom(panelWidth, panelHeight, new InputBlocker());
-        panelRoot.addComponent(confirmBlocker).inTL(0f, 0f);
+        blockForConfirm();
         float confirmWidth = confirmWidth();
         float innerWidth = confirmWidth - PAD * 2f;
         confirmPanel = Global.getSettings().createCustom(confirmWidth, panelHeight, new FramedPanelPlugin(this::buttonPressed));
@@ -455,6 +461,16 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
         element.addButton(Translation.text(cancelKey), cancelId, innerWidth, CONFIRM_BUTTON_HEIGHT, 0f).getPosition().inTL(0f, buttonTop);
         float confirmHeight = Math.min(panelHeight, buttonTop + CONFIRM_BUTTON_HEIGHT + PAD * 2f);
         confirmPanel.getPosition().setSize(confirmWidth, confirmHeight);
+        mountConfirm(element, confirmWidth, confirmHeight);
+    }
+
+    private void blockForConfirm() {
+        hoverTooltip.hide();
+        confirmBlocker = Global.getSettings().createCustom(panelWidth, panelHeight, new InputBlocker());
+        panelRoot.addComponent(confirmBlocker).inTL(0f, 0f);
+    }
+
+    private void mountConfirm(TooltipMakerAPI element, float confirmWidth, float confirmHeight) {
         confirmPanel.addUIElement(element).inTL(PAD, PAD);
         panelRoot.addComponent(confirmPanel).inTL((panelWidth - confirmWidth) / 2f, (panelHeight - confirmHeight) / 2f);
         refreshOpacity();
@@ -489,21 +505,43 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
         return CraftingMaterials.forPlayer(PlayerFleet.cargoOrNull());
     }
 
-    static void addFeedstockCount(TooltipMakerAPI element, float countRight) {
-        String feedstockIconPath = MaterialItems.loadedIconPath(ItemDisassembly.FEEDSTOCK_ITEM_ID);
+    static float addFeedstockCount(TooltipMakerAPI element, float countRight) {
         String feedstockName = MaterialItems.displayName(ItemDisassembly.FEEDSTOCK_ITEM_ID);
-        String countText = String.valueOf(ItemCrafting.feedstock(playerMaterials()));
+        return addMaterialCount(element, ItemDisassembly.FEEDSTOCK_ITEM_ID, countRight,
+                tooltip -> VanillaText.plainPara(tooltip, Translation.msg("ui.socketStorage.feedstock.tooltip").arg("name", feedstockName).text(),
+                        0f, Misc.getTextColor()));
+    }
+
+    static float addCraftingBenchFeedstockCounts(TooltipMakerAPI element, float countRight) {
+        float nextRight = addFeedstockCount(element, countRight);
+        for (String feedstockId : DOMAIN_FEEDSTOCKS.all()) {
+            String feedstockName = MaterialItems.displayName(feedstockId);
+            StyledText description = Translation.dataStyled(MaterialItems.descriptionKey(feedstockId), null);
+            nextRight = addMaterialCount(element, feedstockId, nextRight, tooltip -> {
+                VanillaText.plainPara(tooltip, Translation.msg("ui.craftingBench.heldFeedstock.tooltip").arg("name", feedstockName).text(),
+                        0f, Misc.getTextColor());
+                if (description != null) {
+                    VanillaText.addPara(tooltip, description, LINE_PAD * 2f, Misc.getTextColor());
+                }
+            });
+        }
+        return nextRight;
+    }
+
+    private static float addMaterialCount(TooltipMakerAPI element, String itemId, float countRight, Consumer<TooltipMakerAPI> tooltipBody) {
+        String iconPath = MaterialItems.loadedIconPath(itemId);
+        String countText = String.valueOf(playerMaterials().count(itemId));
         float countWidth = Global.getSettings().computeStringWidth(countText, Fonts.ORBITRON_12) + LINE_PAD;
         element.setParaFont(Fonts.ORBITRON_12);
         LabelAPI countLabel = VanillaText.plainPara(element, countText, 0f, Misc.getTextColor());
         countLabel.autoSizeToWidth(countWidth).inTR(countRight, FEEDSTOCK_TEXT_TOP);
-        if (feedstockIconPath != null) {
-            element.addImage(feedstockIconPath, FEEDSTOCK_ICON_SIZE, FEEDSTOCK_ICON_SIZE, 0f);
+        float pairWidth = countWidth;
+        if (iconPath != null) {
+            element.addCustom(Global.getSettings().createCustom(FEEDSTOCK_ICON_SIZE, FEEDSTOCK_ICON_SIZE, CargoLookIcon.forMaterial(itemId, iconPath)), 0f);
             element.getPrev().getPosition().inTR(countRight + countWidth + LINE_PAD, 0f);
+            pairWidth += LINE_PAD + FEEDSTOCK_ICON_SIZE;
         }
-        element.addTooltipToPrevious(new GameTextTooltip(PARTS_TOOLTIP_WIDTH,
-                tooltip -> VanillaText.plainPara(tooltip, Translation.msg("ui.socketStorage.feedstock.tooltip").arg("name", feedstockName).text(),
-                        0f, Misc.getTextColor())),
-                TooltipMakerAPI.TooltipLocation.BELOW);
+        element.addTooltipToPrevious(new GameTextTooltip(FEEDSTOCK_TOOLTIP_WIDTH, tooltipBody), TooltipMakerAPI.TooltipLocation.BELOW);
+        return countRight + pairWidth + GAP * 2f;
     }
 }

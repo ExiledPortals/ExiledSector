@@ -3,6 +3,12 @@ package exiledsector.items;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.security.AnyTypePermission;
+import exiledsector.items.drop.NpcItems;
+import exiledsector.items.modifier.ItemModifiers;
+import exiledsector.items.modifier.RolledLine;
+import exiledsector.items.modifier.RolledModifier;
+import exiledsector.items.name.FrozenName;
+import exiledsector.items.name.ItemNames;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -54,7 +60,7 @@ class ItemFreezingTest {
 
     private static ItemData frozen(List<RolledLine> effects) {
         ItemDefinition definition = ItemDefinitions.get("sub");
-        List<RolledModifier> modifiers = RolledModifier.fromLegacyEffects(definition, effects);
+        List<RolledModifier> modifiers = TestItems.explicits(definition, effects);
         return new ItemData("sub", 42L, modifiers, ItemNames.freeze(definition, 42L, modifiers));
     }
 
@@ -85,22 +91,12 @@ class ItemFreezingTest {
     @Test
     void consumerProductNamesFreezeTheirWordsSoTheyCanBeTranslated() throws Exception {
         registerGadget();
-        List<RolledModifier> rare = RolledModifier.fromLegacyEffects(ItemDefinitions.get("gadget"), RARE);
+        List<RolledModifier> rare = TestItems.explicits(ItemDefinitions.get("gadget"), RARE);
         ItemData item = new ItemData("gadget", 42L, rare, ItemNames.freeze(ItemDefinitions.get("gadget"), 42L, rare));
 
         assertEquals(FrozenName.product("Sunny", null, "Pal", null), item.frozenName());
         assertEquals(item, ItemData.of(item.toSpecialItem()));
         assertEquals("Sunny Pal", item.preview().name());
-    }
-
-    @Test
-    void anAssembledProductNameFromAnOlderSaveIsRefrozenFromItsSeed() throws Exception {
-        registerGadget();
-        Item owned = Item.withEffects("socketable_1", "gadget", 42L, RARE);
-        owned.freezeName(new FrozenName(null, null, "Sunny Pal", null));
-
-        assertEquals("Sunny Pal", owned.name());
-        assertEquals(FrozenName.product("Sunny", null, "Pal", null), owned.frozenName());
     }
 
     @Test
@@ -146,13 +142,13 @@ class ItemFreezingTest {
 
     @Test
     void anOwnedHullItemFromAnOlderSaveFreezesItsNameOnceAndKeepsIt() throws Exception {
-        Item owned = Item.withEffects("socketable_1", "sub", 42L, RARE);
+        Item owned = TestItems.withLines("socketable_1", "sub", 42L, RARE);
         String before = owned.name();
 
         rebalance();
 
         assertEquals(before, owned.name());
-        assertNotEquals(before, Item.withEffects("socketable_2", "sub", 42L, RARE).name());
+        assertNotEquals(before, TestItems.withLines("socketable_2", "sub", 42L, RARE).name());
     }
 
     @Test
@@ -181,7 +177,7 @@ class ItemFreezingTest {
     @Test
     void missingNameWordsAreNotFrozenSoTheNameAppearsOnceTheWordsLoad() throws Exception {
         ItemNames.registerWords(new JSONObject());
-        Item owned = Item.withEffects("socketable_1", "sub", 42L, RARE);
+        Item owned = TestItems.withLines("socketable_1", "sub", 42L, RARE);
         ItemData dropped = ItemData.of(frozen(RARE).toSpecialItem());
         assertEquals("Military-grade Bridge", owned.name());
 

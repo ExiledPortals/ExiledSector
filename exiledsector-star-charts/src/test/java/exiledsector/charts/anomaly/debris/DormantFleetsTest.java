@@ -17,18 +17,22 @@ import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl.FIDCo
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.loading.VariantSource;
-import exiledsector.charts.loot.DropType;
 import exiledsector.MockSector;
 import exiledsector.charts.anomaly.AnomalyEncounters;
+import exiledsector.charts.effect.ChartModifier;
+import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.loot.DropType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -69,6 +73,7 @@ class DormantFleetsTest {
         doAnswer(invocation -> stored.remove((String) invocation.getArgument(0))).when(memory).unset(anyString());
         when(memory.getBoolean(anyString())).thenAnswer(invocation -> Boolean.TRUE.equals(stored.get((String) invocation.getArgument(0))));
         when(memory.contains(anyString())).thenAnswer(invocation -> stored.containsKey((String) invocation.getArgument(0)));
+        when(memory.getInt(anyString())).thenAnswer(invocation -> stored.get((String) invocation.getArgument(0)) instanceof Integer count ? count : 0);
         return memory;
     }
 
@@ -128,6 +133,96 @@ class DormantFleetsTest {
         assertTrue(DormantFleets.isHidden(other));
         verify(other, never()).setAI(any());
         assertFalse(DormantFleets.wake(attacked));
+    }
+
+    @Test
+    void aRoamingFleetPatrolsItsSystemWhenItWakes() {
+        CampaignFleetAPI restless = dormantFleet();
+        SectorEntityToken centre = mock(SectorEntityToken.class);
+        when(system.getCenter()).thenReturn(centre);
+        when(factory.createFleetAI(restless)).thenReturn(mock(CampaignFleetAIAPI.class));
+
+        assertTrue(DormantFleets.wake(restless, true));
+
+        verify(restless).addAssignment(eq(FleetAssignment.PATROL_SYSTEM), eq(centre), anyFloat());
+        verify(restless, never()).addAssignment(eq(FleetAssignment.ORBIT_AGGRESSIVE), any(SectorEntityToken.class), anyFloat());
+        assertTrue(restless.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_MAKE_HOSTILE));
+    }
+
+    private static ChartGenContext withLines(ChartModifier... effects) {
+        List<ChartGenContext.AppliedEffect> applied = new ArrayList<>();
+        for (ChartModifier effect : effects) {
+            applied.add(new ChartGenContext.AppliedEffect(effect, 1f));
+        }
+        return ChartGenContext.of(applied);
+    }
+
+    @Test
+    void aFleetCorruptsOnceUnlessASecondCorruptionIsAllowed() {
+        CampaignFleetAPI fleet = dormantFleet();
+        ChartGenContext doubleDose = withLines(ChartModifier.CHART_ANOMALOUS_DEBRIS_SECOND_CORRUPTION);
+
+        assertEquals(0, DormantFleets.corruptionsOf(fleet));
+        assertEquals(1, DormantFleets.corruptionsLeft(fleet, ChartGenContext.none()));
+        assertEquals(2, DormantFleets.corruptionsLeft(fleet, doubleDose));
+        assertFalse(DormantFleets.corrupt(fleet, ChartGenContext.none(), 2));
+
+        DormantFleets.markCorrupted(fleet, 1);
+        assertEquals(1, DormantFleets.corruptionsOf(fleet));
+        assertEquals(0, DormantFleets.corruptionsLeft(fleet, ChartGenContext.none()));
+        assertEquals(1, DormantFleets.corruptionsLeft(fleet, doubleDose));
+        assertFalse(DormantFleets.corrupt(fleet, doubleDose, 2));
+
+        DormantFleets.markCorrupted(fleet, 2);
+        assertEquals(2, DormantFleets.corruptionsOf(fleet));
+        assertEquals(0, DormantFleets.corruptionsLeft(fleet, doubleDose));
+    }
+
+    @Test
+    void silentChoirFleetsAreAlreadyCorruptedTwiceAndAnAwakeFleetCannotBeCorrupted() {
+        CampaignFleetAPI choir = dormantFleet();
+        DormantFleets.markCorrupted(choir, 2);
+        CampaignFleetAPI awake = dormantFleet();
+        when(factory.createFleetAI(awake)).thenReturn(mock(CampaignFleetAIAPI.class));
+        DormantFleets.wake(awake);
+
+        assertEquals(0, DormantFleets.corruptionsLeft(choir, withLines(ChartModifier.CHART_ANOMALOUS_DEBRIS_ALWAYS_TWICE_CORRUPTED)));
+        assertEquals(0, DormantFleets.corruptionsLeft(awake, withLines(ChartModifier.CHART_ANOMALOUS_DEBRIS_SECOND_CORRUPTION)));
+    }
+
+    @Test
+    void aSilentChoirFleetWokenByRestlessSleepersStaysCorruptedTwiceAndPatrolsItsSystem() {
+        CampaignFleetAPI choir = dormantFleet();
+        DormantFleets.markCorrupted(choir, 2);
+        when(system.getCenter()).thenReturn(mock(SectorEntityToken.class));
+        when(factory.createFleetAI(choir)).thenReturn(mock(CampaignFleetAIAPI.class));
+        DebrisTuning tuning = DebrisTuning.of(withLines(ChartModifier.CHART_ANOMALOUS_DEBRIS_ALWAYS_TWICE_CORRUPTED,
+                ChartModifier.CHART_ANOMALOUS_DEBRIS_AWAKE, ChartModifier.CHART_ANOMALOUS_DEBRIS_ROAMING));
+
+        AnomalousDebris.wakeIfRestless(choir, tuning);
+
+        assertFalse(DormantFleets.isDormant(choir));
+        assertEquals(2, DormantFleets.corruptionsOf(choir));
+        verify(choir).addAssignment(eq(FleetAssignment.PATROL_SYSTEM), any(SectorEntityToken.class), anyFloat());
+        verify(choir, never()).addAssignment(eq(FleetAssignment.ORBIT_AGGRESSIVE), any(SectorEntityToken.class), anyFloat());
+    }
+
+    @Test
+    void withoutRestlessSleepersAFieldsFleetStaysDormant() {
+        CampaignFleetAPI sleeper = dormantFleet();
+
+        AnomalousDebris.wakeIfRestless(sleeper, DebrisTuning.of(withLines(ChartModifier.CHART_ANOMALOUS_DEBRIS_ALWAYS_TWICE_CORRUPTED)));
+
+        assertTrue(DormantFleets.isDormant(sleeper));
+        verify(sleeper, never()).addAssignment(any(), any(SectorEntityToken.class), anyFloat());
+    }
+
+    @Test
+    void aFleetCorruptedBeforeTheCountWasStoredCountsAsCorruptedOnce() {
+        CampaignFleetAPI legacy = dormantFleet();
+        legacy.getMemoryWithoutUpdate().set(DormantFleets.CORRUPTED_KEY, true);
+
+        assertEquals(1, DormantFleets.corruptionsOf(legacy));
     }
 
     @Test

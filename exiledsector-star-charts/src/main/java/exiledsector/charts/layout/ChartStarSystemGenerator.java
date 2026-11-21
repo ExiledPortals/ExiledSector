@@ -31,7 +31,7 @@ import exiledsector.charts.anomaly.StarRule;
 import exiledsector.charts.anomaly.StellarFlares;
 import exiledsector.charts.table.BuiltInTable;
 import exiledsector.compat.UnknownSkiesCompat;
-import exiledsector.items.WeightedPick;
+import exiledsector.data.WeightedPick;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -296,6 +296,7 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
         for (LayoutShaper anomaly : shapers) {
             shapeOrDrop(anomaly, BuiltInTable.rollFor(shapeSeed, anomaly.id(), SHAPE_SALT));
         }
+        NebulaCentre.holdStill(system);
         if (abyss != null) {
             ChartAbyss.dress(system, abyss, abyssalCentre, ChartWormholePlacement.outermost(system, List.of()), starId, random);
         }
@@ -305,7 +306,7 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
     private void shapeOrDrop(LayoutShaper anomaly, Random anomalyRandom) {
         Set<SectorEntityToken> before = new HashSet<>(system.getAllEntities());
         try {
-            anomaly.shape(new AnomalyLayoutSite(system, centre(), visibleStars(), ChartWormholePlacement.outermost(system, List.of()), anomalyRandom));
+            anomaly.shape(new AnomalyLayoutSite(system, centre(), visibleStars(), anomalyRandom));
         } catch (RuntimeException | LinkageError e) {
             LOG.warn("[ExiledSector] Shaping the " + anomaly.id() + " anomaly failed; the Star Chart is generated without it", e);
             for (SectorEntityToken added : new ArrayList<>(system.getAllEntities())) {
@@ -365,11 +366,6 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
         }
         system.setStar(null);
         system.initNonStarCenter();
-        for (SectorEntityToken entity : new ArrayList<>(system.getAllEntities())) {
-            if (entity.getOrbitFocus() == centreStar || entity.getOrbitFocus() == system.getCenter()) {
-                entity.setOrbit(null);
-            }
-        }
         system.getCenter().addTag(Tags.AMBIENT_LS);
         system.setStar(centreStar);
         systemCenter = system.getCenter();

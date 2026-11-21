@@ -1,8 +1,8 @@
 package exiledsector.charts.anomaly.stormfront;
 
 import com.fs.starfarer.api.combat.ShipAPI;
-import exiledsector.charts.content.ChartSites;
-import exiledsector.items.WeightedPick;
+import exiledsector.charts.layout.ChartGeometry;
+import exiledsector.data.WeightedPick;
 import exiledsector.skills.skilleffect.CombatQueries;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -29,6 +29,6 @@ final class StormStrikes {
     static Vector2f origin(Vector2f target, Random random) {
         double angle = random.nextDouble() * Math.PI * 2d;
         float distance = MIN_ORIGIN_DISTANCE + random.nextFloat() * (MAX_ORIGIN_DISTANCE - MIN_ORIGIN_DISTANCE);
-        return ChartSites.pointAround(target, angle, distance);
+        return ChartGeometry.pointAround(target, angle, distance);
     }
 }

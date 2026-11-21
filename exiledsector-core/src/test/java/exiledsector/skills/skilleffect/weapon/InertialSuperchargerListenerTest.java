@@ -3,26 +3,23 @@ package exiledsector.skills.skilleffect.weapon;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ModManagerAPI;
 import com.fs.starfarer.api.SettingsAPI;
-import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
-import com.fs.starfarer.api.util.DynamicStatsAPI;
 import exiledsector.compat.LostSectorCompat;
-import org.junit.jupiter.api.AfterEach;
+import exiledsector.skills.skilleffect.CombatEngineExtension;
+import exiledsector.skills.skilleffect.CombatTestShips;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.lwjgl.util.vector.Vector2f;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -35,37 +32,21 @@ class InertialSuperchargerListenerTest {
 
     private final List<Object> gridShips = new ArrayList<>();
 
-    private MockedStatic<Global> globalMock;
+    @RegisterExtension
+    final CombatEngineExtension combat = new CombatEngineExtension();
 
     private CombatEngineAPI combatEngine;
 
     @BeforeEach
     void setUp() {
-        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+        CombatEngineAPI engine = combat.engine();
         combatEngine = engine;
-        CollisionGridAPI shipGrid = mock(CollisionGridAPI.class);
-        when(engine.getShipGrid()).thenReturn(shipGrid);
-        when(shipGrid.getCheckIterator(any(), anyFloat(), anyFloat())).thenAnswer(invocation -> new ArrayList<>(gridShips).iterator());
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getCombatEngine).thenReturn(engine);
-    }
-
-    @AfterEach
-    void tearDown() {
-        globalMock.close();
+        combat.shipGridOver(gridShips);
     }
 
     private static ShipAPI ship(String id, float x, Map<String, Float> dynamicValues) {
-        ShipAPI ship = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
-        when(ship.getId()).thenReturn(id);
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(stats.getDynamic()).thenReturn(dynamic);
-        dynamicValues.forEach((key, value) -> when(dynamic.getValue(key, 0f)).thenReturn(value));
-        when(ship.getLocation()).thenReturn(new Vector2f(x, 0f));
+        ShipAPI ship = CombatTestShips.ship().id(id).dynamic(dynamicValues).at(new Vector2f(x, 0f)).alive().build();
         when(ship.getVelocity()).thenReturn(new Vector2f());
-        when(ship.isAlive()).thenReturn(true);
         return ship;
     }
 
@@ -102,7 +83,7 @@ class InertialSuperchargerListenerTest {
         ModManagerAPI mods = mock(ModManagerAPI.class);
         when(settings.getModManager()).thenReturn(mods);
         when(mods.isModEnabled("lost_sector")).thenReturn(enabled);
-        globalMock.when(Global::getSettings).thenReturn(settings);
+        combat.global().when(Global::getSettings).thenReturn(settings);
     }
 
     private static ShipAPI augmentedInertialShip() {

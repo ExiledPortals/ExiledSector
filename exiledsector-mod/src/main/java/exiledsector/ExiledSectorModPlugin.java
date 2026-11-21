@@ -11,6 +11,7 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.LanguageSetting;
 import exiledsector.i18n.Languages;
 import exiledsector.i18n.SpecLocalisation;
+import exiledsector.items.drop.SalvageSiteDrops;
 import exiledsector.skills.skilleffect.CsvIdList;
 import exiledsector.skills.skilleffect.EffectAliases;
 import exiledsector.skills.skilleffect.logistics.FleetCrewLedger;
@@ -27,34 +28,39 @@ import exiledsector.effects.PlayerEngagementPipeline;
 import exiledsector.effects.ResolvedTree;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.effects.TechMiningItemListener;
-import exiledsector.items.HullUpgradesDomain;
-import exiledsector.items.ItemCraftingCosts;
+import exiledsector.harness.Harness;
+import exiledsector.items.drop.CraftingDrops;
+import exiledsector.items.hull.HullUpgradesDomain;
+import exiledsector.items.crafting.InfusedCraftCosts;
+import exiledsector.items.crafting.ItemCraftingCosts;
 import exiledsector.items.ItemDataIntegrity;
 import exiledsector.items.ItemDefinitions;
-import exiledsector.items.ItemDrops;
 import exiledsector.loot.BattleLootRates;
 import exiledsector.loot.BattleLootTrigger;
 import exiledsector.loot.LootScreenTrigger;
+import exiledsector.items.modifier.ItemImplicits;
+import exiledsector.items.modifier.ItemModifiers;
+import exiledsector.items.name.ItemNames;
 import exiledsector.items.ItemIdAliases;
-import exiledsector.items.ItemImplicits;
-import exiledsector.items.ItemModifiers;
-import exiledsector.items.ItemNames;
 import exiledsector.items.ItemSaveAliases;
 import exiledsector.items.ItemStore;
-import exiledsector.items.MaterialIdAliases;
-import exiledsector.items.MaterialItems;
-import exiledsector.items.MaterialMigration;
-import exiledsector.items.SocketCustody;
-import exiledsector.items.SocketLossListener;
-import exiledsector.items.SectionFitMigration;
-import exiledsector.items.UniqueSourceCheck;
+import exiledsector.items.crafting.material.MaterialItems;
+import exiledsector.items.RetiredItems;
+import exiledsector.items.custody.SavedCargo;
+import exiledsector.items.custody.SocketCustody;
+import exiledsector.items.custody.SocketLossListener;
+import exiledsector.items.hull.SectionFitMigration;
+import exiledsector.items.drop.UniqueSourceCheck;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillTreeDomain;
+import exiledsector.skills.tags.ThemeTags;
 import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.CraftingBenchRefitButton;
+import exiledsector.ui.ShownScreens;
 import exiledsector.ui.cargo.CargoCraftingTabListener;
 import exiledsector.ui.cargo.LootAlertListener;
+import exiledsector.ui.decoration.FleetHulls;
 import exiledsector.ui.util.TexturePreloader;
 
 import java.util.ArrayList;
@@ -65,8 +71,6 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
 
     public static final String LIGHT_DATA_PATH = "data/lights/exiledsector_lights.csv";
     static final String SHIP_SKILL_DATA_ALIAS = "exiledSector.ShipSkillData";
-    static final String RETIRED_LIBRARY_PACKAGE = "exiledlib";
-    static final String ROOT_PACKAGE = "exiledsector";
     public static final List<String> LOCALISED_HULLMODS = List.of(SkillTreeHullMod.ID);
     public static final List<ExiledSectorDomain> DOMAINS;
 
@@ -77,6 +81,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
 
     @Override
     public void onApplicationLoad() throws Exception {
+        Harness.startIfLaunched();
         loadLanguage();
         Global.getLogger(ExiledSectorModPlugin.class).info(ExiledSector.LOG_TAG + " loaded");
         localiseGameText();
@@ -85,22 +90,25 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         ExiledSectorSettings.register(DOMAINS);
         EffectAliases.load();
         CsvIdList.loadAll();
+        ThemeTags.load();
         DOMAINS.forEach(ExiledSectorDomain::loadData);
         ItemIdAliases.load();
-        MaterialIdAliases.load();
         ItemModifiers.load();
         ItemDefinitions.load();
         ItemImplicits.load();
         DOMAINS.forEach(ExiledSectorDomain::loadItems);
         ItemDataIntegrity.logLoaded();
         ItemCraftingCosts.load();
+        InfusedCraftCosts.load();
         ItemNames.load();
-        ItemDrops.load();
+        SalvageSiteDrops.load();
         BattleLootRates.load();
+        CraftingDrops.load();
         UniqueSourceCheck.logUnreachableSources();
         CompatChecks.logAtStartup(compatTargets());
         GraphicsLibCompat.loadLightData(LIGHT_DATA_PATH);
         TexturePreloader.preloadAll();
+        FleetHulls.preloadHullFiles();
     }
 
     public static List<CompatTarget> compatTargets() {
@@ -134,8 +142,6 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
 
     @Override
     public void configureXStream(XStream xStream) {
-        xStream.aliasPackage(RETIRED_LIBRARY_PACKAGE, ROOT_PACKAGE);
-        xStream.aliasPackage(ROOT_PACKAGE, ROOT_PACKAGE);
         ItemSaveAliases.register(xStream);
         DOMAINS.forEach(domain -> domain.configureXStream(xStream));
         xStream.alias(SHIP_SKILL_DATA_ALIAS, ShipSkillData.class);
@@ -147,10 +153,10 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         SectorAPI sector = Global.getSector();
         ResolvedTree.clearCache();
         FleetCrewLedger.discardPending();
-        List<CargoAPI> savedCargoes = MaterialMigration.savedCargoes(sector);
+        List<CargoAPI> savedCargoes = SavedCargo.cargoes(sector);
         DOMAINS.forEach(domain -> domain.onGameLoad(newGame, savedCargoes));
         ItemStore.get().freezeNames();
-        MaterialMigration.run(savedCargoes);
+        RetiredItems.removeFrom(sector, savedCargoes);
         ShipSkillDataManager.removeBlankRecords();
         FleetWideEffects.markPhaseFieldStale();
         sector.addTransientScript(new PlayerFleetConditionScript());
@@ -173,6 +179,8 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         SectionFitMigration.run();
         SocketCustody.reconcile();
         DOMAINS.forEach(ExiledSectorDomain::afterSocketCustody);
+        ShownScreens.clear();
+        Harness.runIfLaunched(sector);
     }
 
     @Override

@@ -19,6 +19,9 @@ import com.fs.starfarer.api.impl.campaign.ids.Personalities;
 import com.fs.starfarer.api.impl.campaign.terrain.BaseRingTerrain;
 import com.fs.starfarer.api.impl.campaign.terrain.StarCoronaTerrainPlugin;
 import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.layout.ChartGeometry;
+import exiledsector.charts.layout.NebulaCentre;
+import exiledsector.compat.FirstFailureLog;
 import exiledsector.charts.effect.ChartEnemyShipEffects;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
@@ -32,18 +35,18 @@ import exiledsector.charts.content.ChartContentPlan.PlannedStation;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.anomaly.ContentPlacer;
+import exiledsector.charts.officer.OfficerFleets;
+import exiledsector.data.WeightedPick;
 import exiledsector.i18n.Translation;
-import exiledsector.charts.loot.ChartFleetLoot;
+import exiledsector.charts.loot.ChartFleetLedger;
 import exiledsector.charts.loot.ChartVanillaLoot;
-import exiledsector.charts.loot.DropType;
 import exiledsector.charts.objective.ChartObjectives;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.table.BuiltInTable;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.run.cleanup.ChartRunCloser;
-import exiledsector.items.WeightedPick;
 import exiledsector.Seeds;
-import exiledsector.charts.anomaly.RunFactionDress;
+import exiledsector.loot.DropType;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -81,15 +84,13 @@ public final class ChartContentGenerator {
     static final long STATION_SALT = 0x43485354415449L;
     static final long TWIN_SALT = 0x43485457494e4eL;
     static final String BOSS_REVEAL_MOD_ID = ChartIds.PREFIX + "boss_reveal";
-    static final String MAKE_NON_HOSTILE = "$cfai_makeNonHostile";
-    static final String NON_HOSTILE_TAKES_PRIORITY = "$makeNonHostileTakesPriority";
     static final List<String> HOSTILITY_FLAGS = List.of(MemFlags.MEMORY_KEY_MAKE_HOSTILE, MemFlags.MEMORY_KEY_ALLOW_LONG_PURSUIT, MemFlags.MEMORY_KEY_NO_JUMP, MemFlags.MEMORY_KEY_SAW_PLAYER_WITH_TRANSPONDER_ON,
             MemFlags.MEMORY_KEY_NO_REP_IMPACT, MemFlags.MEMORY_KEY_LOW_REP_IMPACT, MemFlags.MEMORY_KEY_IGNORE_PLAYER_COMMS);
     static final List<String> REMOVED_ABILITIES = List.of(Abilities.GO_DARK, Abilities.TRANSVERSE_JUMP);
     static final Set<String> MEEK_PERSONALITIES = Set.of(Personalities.TIMID, Personalities.CAUTIOUS, Personalities.STEADY);
     private static final Logger LOG = Logger.getLogger(ChartContentGenerator.class);
     private static final ChartContentEngine VANILLA_ENGINE = new VanillaChartContentEngine();
-    private static final Set<String> REPORTED_FAILURES = new HashSet<>();
+    private static final FirstFailureLog FAILURES = FirstFailureLog.errors(LOG);
     private static ChartContentEngine engine = VANILLA_ENGINE;
 
     public record Hazard(Vector2f centre, float radius) {
@@ -125,12 +126,13 @@ public final class ChartContentGenerator {
             return ChartContent.none(clampedTier);
         }
         Build build = new Build(system, runId, clampedTier, seed, innerWormhole,
-                (chartContext == null ? ChartGenContext.none() : chartContext).withAnomalyEffects(plan.anomalies()), featureAnchor);
+                ChartGenContext.orNone(chartContext).withAnomalyEffects(plan.anomalies()), featureAnchor);
         try {
             build.placePois(plan);
             build.spawnFleets(plan);
             build.generateAnomalies(plan);
             build.placeColonyItem(plan);
+            NebulaCentre.holdStill(system);
             ChartContent content = build.settle(plan);
             build.commitAnomalyStates();
             return content;
@@ -209,15 +211,7 @@ public final class ChartContentGenerator {
     }
 
     static FleetParamsV3 fleetParams(String factionId, PlannedFleet planned, Random fleetRandom) {
-        FleetParamsV3 params = new FleetParamsV3(null, factionId, planned.quality(), fleetType(planned.role()), planned.combatPoints(),
-                0f, 0f, 0f, 0f, 0f, 0f);
-        params.random = fleetRandom;
-        params.ignoreMarketFleetSizeMult = true;
-        params.doNotPrune = true;
-        params.withOfficers = true;
-        params.officerLevelBonus = planned.officerLevelBonus();
-        params.officerNumberBonus = planned.officerCountBonus();
-        params.averageSMods = planned.averageSMods() > 0 ? planned.averageSMods() : null;
+        FleetParamsV3 params = planned.strength().toParams(factionId, fleetType(planned.role()), fleetRandom);
         if (planned.role().bossFleet()) {
             params.forceAllowPhaseShipsEtc = true;
         }
@@ -244,24 +238,6 @@ public final class ChartContentGenerator {
         ChartVanillaLoot.addToFleet(fleet, boss, context, tier);
     }
 
-    static String dressAlliesOf(String factionId) {
-        String dressed = engine.dress(RunFactionDress.ALLY_FACTION_ID, RunFactionDress.alliesOf(factionId));
-        return dressed != null ? dressed : RunFactionDress.ALLY_FACTION_ID;
-    }
-
-    static void joinPlayer(CampaignFleetAPI fleet, String allyFactionId) {
-        MemoryAPI memory = fleet.getMemoryWithoutUpdate();
-        memory.unset(MemFlags.MEMORY_KEY_MAKE_HOSTILE);
-        memory.unset(MemFlags.MEMORY_KEY_MAKE_AGGRESSIVE);
-        memory.unset(MemFlags.MEMORY_KEY_IGNORE_PLAYER_COMMS);
-        memory.set(MAKE_NON_HOSTILE, true);
-        memory.set(NON_HOSTILE_TAKES_PRIORITY, true);
-        memory.unset(ChartIds.START_DP_MEMORY_KEY);
-        if (allyFactionId != null) {
-            fleet.setFaction(allyFactionId, true);
-        }
-    }
-
     static void prepareFleet(CampaignFleetAPI fleet, String runId, int tier, FleetRole role, int strengthBonus, long fleetSeed) {
         markContent(fleet, runId, tier, strengthBonus, fleetSeed, role.bossFleet());
         if (role == FleetRole.STATION_GUARD) {
@@ -286,6 +262,11 @@ public final class ChartContentGenerator {
         ChartFleetVisibility.reveal(boss, BOSS_REVEAL_MOD_ID);
     }
 
+    static void unmarkBossStation(CampaignFleetAPI station) {
+        ChartFleetVisibility.conceal(station, BOSS_REVEAL_MOD_ID);
+        station.setName(Translation.gameText("chart.fleet.unnamed.station"));
+    }
+
     static void prepareStation(CampaignFleetAPI station, String runId, int tier, long stationSeed) {
         markContent(station, runId, tier, 0, stationSeed, true);
         station.setName(Translation.gameText("chart.fleet.bossStation.name"));
@@ -296,16 +277,14 @@ public final class ChartContentGenerator {
         memory.set(ChartIds.TIER_MEMORY_KEY, tier);
         memory.set(ChartIds.SEED_MEMORY_KEY, Long.toString(fleetSeed, Character.MAX_RADIX));
         memory.set(ChartIds.fleetRunKey(runId), true);
-        ChartFleetLoot.recordStart(fleet);
+        ChartFleetLedger.recordStart(fleet);
         fleet.setNoAutoDespawn(true);
         tagContent(fleet, runId);
     }
 
     private static void markContent(CampaignFleetAPI fleet, String runId, int tier, int strengthBonus, long fleetSeed, boolean boss) {
         MemoryAPI memory = fleet.getMemoryWithoutUpdate();
-        if (strengthBonus > 0) {
-            memory.set(ChartIds.STRENGTH_BONUS_MEMORY_KEY, strengthBonus);
-        }
+        ChartFleetMarks.setStrengthBonus(memory, strengthBonus);
         for (String flag : HOSTILITY_FLAGS) {
             memory.set(flag, true);
         }
@@ -318,22 +297,21 @@ public final class ChartContentGenerator {
     }
 
     public static void tagContent(SectorEntityToken entity, String runId) {
-        entity.addTag(ChartIds.ENTITY_TAG);
-        entity.addTag(ChartIds.runTag(runId));
+        ChartIds.tagForRun(entity, runId);
         entity.addTag(ChartIds.CONTENT_TAG);
     }
 
+    public static void patrolSystem(CampaignFleetAPI fleet, StarSystemAPI system) {
+        SectorEntityToken patrolCentre = ChartSites.centreOf(system);
+        if (patrolCentre != null) {
+            fleet.addAssignment(FleetAssignment.PATROL_SYSTEM, patrolCentre, ASSIGNMENT_DAYS);
+        }
+    }
+
     private static void report(String what, long seed, Throwable cause) {
-        boolean first;
-        synchronized (REPORTED_FAILURES) {
-            first = REPORTED_FAILURES.add(what);
-        }
-        if (first) {
-            LOG.error("[ExiledSector] A Star Chart system (seed " + seed + ") could not " + what
-                    + "; the system gets less content. Later failures of this kind are logged at debug level", cause);
-        } else {
-            LOG.debug("[ExiledSector] A Star Chart system (seed " + seed + ") could not " + what + " again", cause);
-        }
+        String failure = "[ExiledSector] A Star Chart system (seed " + seed + ") could not " + what;
+        FAILURES.reportThenDebug(what, failure + "; the system gets less content. Later failures of this kind are logged at debug level",
+                failure + " again", cause);
     }
 
     static ChartContentEngine engine() {
@@ -342,12 +320,12 @@ public final class ChartContentGenerator {
 
     static void useEngineForTests(ChartContentEngine testEngine) {
         engine = testEngine;
-        REPORTED_FAILURES.clear();
+        FAILURES.reset();
     }
 
     public static void resetForTests() {
         engine = VANILLA_ENGINE;
-        REPORTED_FAILURES.clear();
+        FAILURES.reset();
     }
 
     private static final class Build {
@@ -373,8 +351,6 @@ public final class ChartContentGenerator {
         private List<Hazard> hazards = List.of();
         private CampaignFleetAPI bossFleet;
         private ChartBossType bossType = ChartBossType.FLEET;
-        private String allyFactionId;
-        private SettledObjective settledObjective;
 
         Build(StarSystemAPI system, String runId, int tier, long seed, Vector2f innerWormhole, ChartGenContext chartContext,
               SectorEntityToken featureAnchor) {
@@ -442,7 +418,7 @@ public final class ChartContentGenerator {
         }
 
         private SectorEntityToken colonyItemHolder(ChartContentPlan plan, Random colonyItemRandom) {
-            if (bossFleet != null && !bossFleet.getMemoryWithoutUpdate().getBoolean(MAKE_NON_HOSTILE)) {
+            if (bossFleet != null) {
                 return bossFleet;
             }
             List<SectorEntityToken> stationsAndDomainSites = new ArrayList<>();
@@ -463,9 +439,6 @@ public final class ChartContentGenerator {
         }
 
         void spawnFleets(ChartContentPlan plan) {
-            if (plan.alliedStation()) {
-                allyFactionId = dressAllies(plan.faction().factionId());
-            }
             for (PlannedFleet planned : plan.fleets()) {
                 long fleetSeed = fleetRandom.nextLong();
                 try {
@@ -473,15 +446,6 @@ public final class ChartContentGenerator {
                 } catch (RuntimeException | LinkageError e) {
                     report("spawn a " + planned.role().name().toLowerCase(Locale.ROOT) + " fleet", seed, e);
                 }
-            }
-        }
-
-        private String dressAllies(String factionId) {
-            try {
-                return dressAlliesOf(factionId);
-            } catch (RuntimeException | LinkageError e) {
-                report("dress the allied fleets", seed, e);
-                return RunFactionDress.ALLY_FACTION_ID;
             }
         }
 
@@ -502,11 +466,12 @@ public final class ChartContentGenerator {
             }
             FleetRole role = built.role();
             SectorEntityToken holdPoint = guarded;
-            CampaignFleetAPI fleet = launchBuilt(plan, built, guarded, fleetSeed, oneFleetRandom, () -> spawnLocation(role, holdPoint, oneFleetRandom));
+            CampaignFleetAPI fleet = launchBuilt(plan, built, guarded, fleetSeed, oneFleetRandom, () -> spawnLocation(role, holdPoint, oneFleetRandom),
+                    role == FleetRole.BOSS);
             if (fleet == null) {
                 return;
             }
-            if (role.bossFleet() && chartContext.twinnedBoss() && !plan.alliedStation()) {
+            if (role.bossFleet() && chartContext.twinnedBoss()) {
                 launchTwin(plan, built, guarded, fleetSeed, fleet.getLocation());
             }
             if (role == FleetRole.GUARD) {
@@ -521,18 +486,17 @@ public final class ChartContentGenerator {
         }
 
         private CampaignFleetAPI launchBuilt(ChartContentPlan plan, PlannedFleet built, SectorEntityToken guarded, long fleetSeed,
-                                             Random buildRandom, Supplier<Vector2f> spawnPoint) {
+                                             Random buildRandom, Supplier<Vector2f> spawnPoint, boolean officerFlagship) {
             FleetRole role = built.role();
             CampaignFleetAPI fleet = engine.createFleet(fleetParams(plan.faction().factionId(), built, buildRandom));
             if (fleet == null || fleet.isEmpty()) {
                 return null;
             }
             prepareFleet(fleet, runId, tier, role, built.strengthBonus(), fleetSeed);
-            if (plan.alliedStation()) {
-                joinPlayer(fleet, allyFactionId);
-            } else {
-                arm(fleet, role);
+            if (officerFlagship) {
+                dressOfficer(fleet);
             }
+            arm(fleet, role);
             Vector2f spawnAt = spawnPoint.get();
             launch(fleet, role, () -> {
                 fleet.setLocation(spawnAt.x, spawnAt.y);
@@ -543,15 +507,24 @@ public final class ChartContentGenerator {
 
         private void launchTwin(ChartContentPlan plan, PlannedFleet built, SectorEntityToken guarded, long fleetSeed, Vector2f originalAt) {
             Random twinRandom = Seeds.derived(fleetSeed, TWIN_SALT);
-            Vector2f twinAt = ChartSites.pointAround(originalAt, twinRandom.nextDouble() * Math.PI * 2d, TWIN_OFFSET);
+            Vector2f twinAt = ChartGeometry.pointAtRandomAngle(originalAt, TWIN_OFFSET, twinRandom);
             long twinSeed = twinRandom.nextLong();
             try {
-                CampaignFleetAPI twin = launchBuilt(plan, built, guarded, twinSeed, new Random(twinSeed), () -> twinAt);
+                CampaignFleetAPI twin = launchBuilt(plan, built, guarded, twinSeed, new Random(twinSeed), () -> twinAt, false);
                 if (twin != null && built.role() == FleetRole.BOSS) {
+                    ChartFleetMarks.markTwinBoss(twin, ChartObjectives.flagshipIdOf(twin));
                     revealBoss(twin);
                 }
             } catch (RuntimeException | LinkageError e) {
                 report("spawn a twinned boss fleet", seed, e);
+            }
+        }
+
+        private void dressOfficer(CampaignFleetAPI fleet) {
+            try {
+                OfficerFleets.dress(fleet, chartContext);
+            } catch (RuntimeException | LinkageError e) {
+                report("dress the officer's flagship", seed, e);
             }
         }
 
@@ -578,8 +551,7 @@ public final class ChartContentGenerator {
             if (station != null && station.fallbackBoss() != null) {
                 return station.fallbackBoss();
             }
-            return new PlannedFleet(FleetRole.BOSS, guard.poiIndex(), guard.combatPoints(), guard.quality(), guard.officerLevelBonus(),
-                    guard.officerCountBonus(), guard.strengthBonus(), guard.averageSMods());
+            return guard.withRole(FleetRole.BOSS);
         }
 
         private CampaignFleetAPI spawnStation(ChartContentPlan plan, SectorEntityToken anchor, long fleetSeed) {
@@ -596,12 +568,8 @@ public final class ChartContentGenerator {
                     return null;
                 }
                 prepareStation(station, runId, tier, stationSeed);
-                if (plan.alliedStation()) {
-                    joinPlayer(station, allyFactionId);
-                } else {
-                    ChartEnemyShipEffects.grant(station, chartContext);
-                    addStationLoot(station);
-                }
+                ChartEnemyShipEffects.grant(station, chartContext);
+                addStationLoot(station);
                 launch(station, FleetRole.STATION_GUARD, () -> {
                     station.setAI(null);
                     anchorStation(station, anchor, stationRandom);
@@ -632,14 +600,14 @@ public final class ChartContentGenerator {
             }
             float angle = stationRandom.nextFloat() * 360f;
             float orbitRadius = anchor.getRadius() + STATION_ORBIT_GAP;
-            Vector2f at = ChartSites.pointAround(anchor.getLocation(), Math.toRadians(angle), orbitRadius);
+            Vector2f at = ChartGeometry.pointAround(anchor.getLocation(), Math.toRadians(angle), orbitRadius);
             station.setLocation(at.x, at.y);
             station.setCircularOrbitWithSpin(anchor, angle, orbitRadius, STATION_ORBIT_DAYS, STATION_SPIN, STATION_SPIN);
         }
 
         private Vector2f spawnLocation(FleetRole role, SectorEntityToken guarded, Random oneFleetRandom) {
             if (guarded != null && guarded.getLocation() != null) {
-                return ChartSites.pointAround(guarded.getLocation(), oneFleetRandom.nextDouble() * Math.PI * 2d, GUARD_OFFSET);
+                return ChartGeometry.pointAtRandomAngle(guarded.getLocation(), GUARD_OFFSET, oneFleetRandom);
             }
             if (role == FleetRole.PATROL) {
                 List<ChartSpot> clear = clearSpots(engine.spots(system, oneFleetRandom, null, POI_GAP), hazards, innerWormhole,
@@ -662,14 +630,11 @@ public final class ChartContentGenerator {
                 FleetAssignment hold = role == FleetRole.STATION_GUARD ? FleetAssignment.ORBIT_PASSIVE : FleetAssignment.ORBIT_AGGRESSIVE;
                 fleet.addAssignment(hold, holdPoint, ASSIGNMENT_DAYS);
             }
-            SectorEntityToken patrolCentre = ChartSites.centreOf(system);
-            if (patrolCentre != null) {
-                fleet.addAssignment(FleetAssignment.PATROL_SYSTEM, patrolCentre, ASSIGNMENT_DAYS);
-            }
+            patrolSystem(fleet, system);
         }
 
         void generateAnomalies(ChartContentPlan plan) {
-            ContentForces forces = new ContentForces(fleets, bossFleet, bossType, allyFactionId);
+            ContentForces forces = new ContentForces(fleets, bossFleet, bossType);
             for (String anomalyId : plan.anomalies()) {
                 ChartAnomaly anomaly = ChartAnomalies.byId(anomalyId);
                 if (anomaly == null) {
@@ -684,7 +649,6 @@ public final class ChartContentGenerator {
                         salt -> BuiltInTable.rollFor(seed, anomalyId, salt), claimedPlanetIds, forces, plan.anomalyPlan(anomalyId));
                 try {
                     placer.generate(site);
-                    site.placed().forEach(entity -> ChartFleetLoot.tagAnomaly(entity, anomalyId));
                     anomalies.add(anomalyId);
                 } catch (RuntimeException | LinkageError e) {
                     site.rollBack();
@@ -699,7 +663,6 @@ public final class ChartContentGenerator {
         }
 
         private void takeObjective(SettledObjective settled) {
-            settledObjective = settled;
             bossFleet = settled.boss();
             bossType = settled.bossType();
         }
@@ -715,9 +678,7 @@ public final class ChartContentGenerator {
         ChartContent settle(ChartContentPlan plan) {
             String bossFleetId = bossFleet == null ? null : bossFleet.getId();
             String bossFlagshipId = ChartObjectives.flagshipIdOf(bossFleet);
-            String protectedFleetId = settledObjective == null ? null : settledObjective.protectedFleetId();
-            return new ChartContent(tier, plan.faction().factionId(), bossFleetId, bossType, fleetCount(), placedPois(), anomalies, protectedFleetId,
-                    bossFlagshipId);
+            return new ChartContent(tier, plan.faction().factionId(), bossFleetId, bossType, fleetCount(), placedPois(), anomalies, bossFlagshipId);
         }
 
         private int fleetCount() {

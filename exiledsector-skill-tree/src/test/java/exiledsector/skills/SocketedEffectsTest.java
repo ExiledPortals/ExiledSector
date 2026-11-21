@@ -5,20 +5,23 @@ import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemStore;
-import exiledsector.items.RolledLine;
-import exiledsector.items.RolledModifier;
+import exiledsector.items.modifier.RolledLine;
+import exiledsector.items.modifier.RolledModifier;
 import exiledsector.modifiers.ModifierSlot;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 
+import static exiledsector.skills.TestTrees.node;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class SocketedEffectsTest {
 
     private MockSector mockSector;
@@ -27,15 +30,12 @@ class SocketedEffectsTest {
     @BeforeEach
     void setUp() throws Exception {
         mockSector = new MockSector();
-        SkillTree.clearNodes();
-        socket = new SkillNode("socket", new SkillType.Builder("socket_type", "Socket", "", SkillTier.SOCKET).build(), List.of(), 0f, 0f);
-        SkillTree.register(socket);
+        socket = node("socket", SkillTier.SOCKET);
         ItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "chip").put("kind", "UNIQUE").put("unique", "true")));
     }
 
     @AfterEach
     void tearDown() {
-        SkillTree.clearNodes();
         ItemDefinitions.clear();
         mockSector.close();
     }

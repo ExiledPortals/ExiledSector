@@ -6,24 +6,25 @@ record TemplateBarState(boolean visible, boolean templateModeEnabled, boolean pl
     static final TemplateBarState HIDDEN = new TemplateBarState(false, false, false, false, false, false, false,
             "ui.template.button.save", "ui.template.hint.save", "ui.template.hint.autoOff");
 
-    private static final TemplateBarState[] VISIBLE_STATES = new TemplateBarState[32];
+    private static final TemplateBarState[] VISIBLE_STATES = new TemplateBarState[64];
 
     static {
         for (int i = 0; i < VISIBLE_STATES.length; i++) {
-            VISIBLE_STATES[i] = visible((i & 1) != 0, (i & 2) != 0, (i & 4) != 0, (i & 8) != 0, (i & 16) != 0);
+            VISIBLE_STATES[i] = visible((i & 1) != 0, (i & 2) != 0, (i & 4) != 0, (i & 8) != 0, (i & 16) != 0, (i & 32) != 0);
         }
     }
 
     static TemplateBarState of(boolean rootChosen, int allocatedCount, boolean hasTemplate, boolean inert, boolean planning,
-                               boolean autoOn) {
+                               boolean autoOn, boolean freeAllocationsOnly) {
         if (!rootChosen) {
             return HIDDEN;
         }
         return VISIBLE_STATES[(allocatedCount > 1 ? 1 : 0) | (hasTemplate ? 2 : 0) | (inert ? 4 : 0) | (planning ? 8 : 0)
-                | (autoOn ? 16 : 0)];
+                | (autoOn ? 16 : 0) | (freeAllocationsOnly ? 32 : 0)];
     }
 
-    private static TemplateBarState visible(boolean hasNodes, boolean hasTemplate, boolean inert, boolean planning, boolean autoOn) {
+    private static TemplateBarState visible(boolean hasNodes, boolean hasTemplate, boolean inert, boolean planning, boolean autoOn,
+                                            boolean freeAllocationsOnly) {
         boolean live = !inert;
         String saveLabel;
         String saveHint;
@@ -42,8 +43,10 @@ record TemplateBarState(boolean visible, boolean templateModeEnabled, boolean pl
             autoHint = "ui.template.hint.autoNoTemplate";
         } else if (planning) {
             autoHint = "ui.template.hint.autoPlanning";
+        } else if (autoOn) {
+            autoHint = "ui.template.hint.autoOn";
         } else {
-            autoHint = autoOn ? "ui.template.hint.autoOn" : "ui.template.hint.autoOff";
+            autoHint = freeAllocationsOnly ? "ui.template.hint.autoOffFreeAllocationsOnly" : "ui.template.hint.autoOff";
         }
         boolean autoEnabled = live && !planning && (hasTemplate || autoOn);
         return new TemplateBarState(true, live, planning, saveEnabled, live, autoEnabled, autoOn,

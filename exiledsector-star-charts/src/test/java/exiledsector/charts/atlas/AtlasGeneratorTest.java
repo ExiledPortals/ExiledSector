@@ -260,8 +260,16 @@ class AtlasGeneratorTest {
         AtlasAnomalyCandidate borderLoving = new AtlasAnomalyCandidate("relay", 1f, "", (traits, weight) -> traits.bordersOtherTerritory() ? weight * 4f : 0f);
         List<AtlasRegion> withExtra = new ArrayList<>(REGIONS);
         withExtra.add(region("furnace", 6f, 0, "", "", Map.of("hegemony", 1f), Map.of()));
-        List<AtlasNode> before = scan(generator(withAnomalies(rules(), List.of(borderLoving))));
-        List<AtlasNode> after = scan(generator(withAnomalies(rules(withExtra), List.of(borderLoving))));
+        AtlasState state = new AtlasState(SEED);
+        List<AtlasNode> unclaimed = scan(generator(rules()));
+        for (int index = 0; index < unclaimed.size(); index += 37) {
+            AtlasNode node = unclaimed.get(index);
+            if (!node.isVoid() && !node.isOrigin()) {
+                TestTerritories.establish(state, node.cell(), index % 2 == 0 ? "hegemony" : "pirates");
+            }
+        }
+        List<AtlasNode> before = scan(new AtlasGenerator(SEED, withAnomalies(rules(), List.of(borderLoving)), AtlasUnlocks.NONE, state));
+        List<AtlasNode> after = scan(new AtlasGenerator(SEED, withAnomalies(rules(withExtra), List.of(borderLoving)), AtlasUnlocks.NONE, state));
         int bordered = 0;
         for (int index = 0; index < before.size(); index++) {
             AtlasNode was = before.get(index);
@@ -539,27 +547,35 @@ class AtlasGeneratorTest {
     }
 
     @Test
-    void biomesHoldOnlyTheirMappedFactionsAndTerritoriesDrawFromNormalSpace() {
+    void biomesHoldOnlyTheirMappedFactionsWhileUnclaimedSpaceIsIndependentAndTerritoriesDrawFromNormalSpace() {
         AtlasRegion normal = new AtlasRegion(AtlasRegion.NORMAL, 2f, 0, "", "", Map.of(), Map.of("pirates", 1f, "hegemony", 1f), Map.of());
         AtlasRegion graveyard = new AtlasRegion("graveyard", 1f, 0, "", "", Map.of(), Map.of("derelict", 1f), Map.of());
         AtlasRegion storm = new AtlasRegion("storm", 1f, 0, "", "", Map.of(), Map.of(), Map.of());
         AtlasGenerator generator = generator(rules(List.of(normal, graveyard, storm)));
         int held = 0;
+        Set<String> unclaimedFactions = new HashSet<>();
         Set<String> territoryFactions = new HashSet<>();
-        for (AtlasNode node : scan(generator)) {
-            if (node.isVoid() || node.isOrigin()) {
-                continue;
+        TerritoryExclusions.useForTests(Set.of("derelict"));
+        try {
+            for (AtlasNode node : scan(generator)) {
+                if (node.isVoid() || node.isOrigin()) {
+                    continue;
+                }
+                assertEquals(node.factionId(), generator.factionAt(node.cell()));
+                if ("graveyard".equals(node.regionId())) {
+                    held++;
+                    assertEquals("derelict", node.factionId(), node.cell().toString());
+                } else {
+                    unclaimedFactions.add(node.factionId());
+                    territoryFactions.addAll(generator.territoryWeights(node.cell()).keySet());
+                }
             }
-            assertEquals(node.factionId(), generator.factionAt(node.cell()));
-            if ("graveyard".equals(node.regionId())) {
-                held++;
-                assertEquals("derelict", node.factionId(), node.cell().toString());
-            } else {
-                territoryFactions.add(node.factionId());
-            }
+        } finally {
+            TerritoryExclusions.useForTests(Set.of());
         }
 
         assertTrue(held > 20);
+        assertEquals(Set.of("independent", "mercenary"), unclaimedFactions);
         assertEquals(Set.of("pirates", "hegemony"), territoryFactions);
     }
 
@@ -619,34 +635,27 @@ class AtlasGeneratorTest {
     }
 
     @Test
-    void aFactionAddedMidSaveOnlyClaimsSpaceRevealedAfterIt() {
+    void claimedSystemsKeepTheirOfficersFactionWhenTheFactionListChanges() {
         List<AtlasRegion> before = List.of(region(AtlasRegion.NORMAL, 10f, 0, "", "", Map.of("pirates", 1f, "hegemony", 1f), Map.of()),
                 region("graveyard", 10f, 0, "", "", Map.of("derelict", 1f, "pirates", 1f), Map.of()));
         List<AtlasRegion> added = List.of(region(AtlasRegion.NORMAL, 10f, 0, "", "", Map.of("pirates", 1f, "hegemony", 1f, "kesteven", 1f), Map.of()),
                 region("graveyard", 10f, 0, "", "", Map.of("derelict", 1f, "pirates", 1f, "kesteven", 1f), Map.of()));
+        List<AtlasRegion> removed = List.of(region(AtlasRegion.NORMAL, 10f, 0, "", "", Map.of("pirates", 1f), Map.of()),
+                region("graveyard", 10f, 0, "", "", Map.of("derelict", 1f), Map.of()));
         AtlasState state = new AtlasState(SEED);
-        AtlasGenerator original = generator(rules(before));
-        List<AtlasCell> revealed = AtlasCell.ORIGIN.around(10);
-        state.recordReveal(original, revealed);
-        AtlasGenerator remembered = new AtlasGenerator(SEED, rules(added), AtlasUnlocks.NONE, state);
-        AtlasGenerator fresh = generator(rules(added));
-        Set<AtlasCell> shown = new HashSet<>();
-        revealed.forEach(cell -> shown.addAll(cell.around(1)));
-        int claimedIfFresh = 0;
+        AtlasGenerator original = new AtlasGenerator(SEED, rules(before), AtlasUnlocks.NONE, state);
+        AtlasCell held = AtlasCell.ORIGIN.around(3).stream().filter(cell -> !original.isVoid(cell) && !cell.equals(AtlasCell.ORIGIN)).findFirst().orElseThrow();
+        TestTerritories.establish(state, held, "hegemony");
 
-        for (AtlasCell cell : shown) {
-            assertEquals(original.factionAt(cell), remembered.factionAt(cell), cell.toString());
-            assertEquals(original.territoryAt(cell), remembered.territoryAt(cell), cell.toString());
-            claimedIfFresh += "kesteven".equals(fresh.factionAt(cell)) ? 1 : 0;
-        }
-        assertTrue(claimedIfFresh > 0);
-        assertTrue(AtlasCell.ORIGIN.around(SCAN_RADIUS).stream().filter(cell -> !shown.contains(cell))
-                .anyMatch(cell -> "kesteven".equals(remembered.factionAt(cell))));
+        AtlasGenerator withKesteven = new AtlasGenerator(SEED, rules(added), AtlasUnlocks.NONE, state);
+        AtlasGenerator withoutHegemony = new AtlasGenerator(SEED, rules(removed), AtlasUnlocks.NONE, state);
 
-        AtlasGenerator removed = new AtlasGenerator(SEED, rules(List.of(region(AtlasRegion.NORMAL, 10f, 0, "", "", Map.of("pirates", 1f), Map.of()),
-                region("graveyard", 10f, 0, "", "", Map.of("derelict", 1f), Map.of()))), AtlasUnlocks.NONE, state);
-        for (AtlasCell cell : shown) {
-            assertTrue(Set.of("pirates", "derelict").contains(removed.factionAt(cell)), cell + " " + removed.factionAt(cell));
+        assertEquals("hegemony", withKesteven.factionAt(held));
+        assertEquals("hegemony", withoutHegemony.factionAt(held));
+        for (AtlasCell cell : AtlasCell.ORIGIN.around(10)) {
+            if (!cell.equals(held)) {
+                assertEquals(withoutHegemony.unclaimedFactionAt(cell), withoutHegemony.factionAt(cell), cell.toString());
+            }
         }
     }
 
@@ -704,29 +713,29 @@ class AtlasGeneratorTest {
     }
 
     @Test
-    void aRegionWithAFactionPoolKeepsItsSystemsToThatPoolInTerritories() {
-        int pairs = 0;
-        int split = 0;
+    void aRegionWithAFactionPoolWeightsItsTerritoriesToThatPoolWhileItsUnclaimedSystemsStayIndependent() {
         AtlasGenerator generator = generator(rules());
-        for (AtlasNode node : scan(generator)) {
-            if ("badlands".equals(node.regionId())) {
-                assertEquals("pirates", node.factionId());
-            }
-            if (!"graveyard".equals(node.regionId())) {
-                continue;
-            }
-            assertTrue(Set.of("derelict", "pirates", "independent").contains(node.factionId()), node.factionId());
-            for (AtlasCell neighbour : node.lanes()) {
-                AtlasNode other = generator.node(neighbour);
-                if ("graveyard".equals(other.regionId())) {
-                    pairs++;
-                    split += node.factionId().equals(other.factionId()) ? 0 : 1;
+        int graveyardSystems = 0;
+        TerritoryExclusions.useForTests(Set.of("derelict", "remnant"));
+        try {
+            for (AtlasNode node : scan(generator)) {
+                if (node.isVoid() || node.isOrigin()) {
+                    continue;
+                }
+                if ("badlands".equals(node.regionId())) {
+                    assertEquals(Set.of("pirates"), generator.territoryWeights(node.cell()).keySet());
+                }
+                if ("graveyard".equals(node.regionId())) {
+                    graveyardSystems++;
+                    assertEquals(Set.of("pirates"), generator.territoryWeights(node.cell()).keySet());
+                    assertTrue(Set.of("independent", "mercenary").contains(node.factionId()), node.factionId());
                 }
             }
+        } finally {
+            TerritoryExclusions.useForTests(Set.of());
         }
 
-        assertTrue(pairs > 0);
-        assertTrue(split < pairs * 0.25, split + " of " + pairs + " lanes cross a faction border");
+        assertTrue(graveyardSystems > 0);
     }
 
     @Test

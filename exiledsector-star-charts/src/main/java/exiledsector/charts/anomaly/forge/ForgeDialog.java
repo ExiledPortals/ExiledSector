@@ -5,7 +5,6 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.OptionPanelAPI;
 import com.fs.starfarer.api.campaign.TextPanelAPI;
-import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.PlayerFleet;
 import exiledsector.i18n.I18n;
@@ -14,7 +13,7 @@ import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.GuardedSiteDialog;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.items.CraftingMaterials;
+import exiledsector.items.crafting.material.CraftingMaterials;
 import exiledsector.ui.CraftingBenchCargoLauncher;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.socket.BenchModeSupport;
@@ -81,27 +80,28 @@ public class ForgeDialog extends GuardedSiteDialog {
     private void describePrograms(ChartRun run, TextPanelAPI text) {
         int runsLeft = ForgeStates.runsLeft(run, forgeSite);
         VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg("chart.anomaly.derelict_forge.runsLeft").count(runsLeft).arg("count", runsLeft).text()));
+        boolean costsInfusedFeedstock = false;
         for (ForgePrograms.Program program : ForgeStates.programs(run, forgeSite)) {
             ForgeRules.Cost cost = ChartForge.costFor(run, forgeSite, program);
+            costsInfusedFeedstock |= cost.infusedFeedstockEach() > 0;
             VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg("chart.anomaly.derelict_forge.programLine").arg("program", ForgeTexts.programName(program))
                     .arg("description", ForgeTexts.programDescription(program)).arg("cost", ForgeTexts.costText(cost)).text()));
         }
+        VanillaText.addPara(text, ForgeTexts.stockLine(playerMaterials(), costsInfusedFeedstock), Misc.getGrayColor());
+    }
+
+    private static CraftingMaterials playerMaterials() {
         CargoAPI cargo = PlayerFleet.cargoOrNull();
-        int metals = cargo == null ? 0 : Math.round(cargo.getCommodityQuantity(Commodities.METALS));
-        int rareMetals = cargo == null ? 0 : Math.round(cargo.getCommodityQuantity(Commodities.RARE_METALS));
-        int feedstock = cargo == null ? 0 : CraftingMaterials.forPlayer(cargo).count(ChartForge.FEEDSTOCK_ITEM_ID);
-        VanillaText.addPara(text, I18n.forGameText(() -> Translation.msg("chart.anomaly.derelict_forge.stock").arg("metals", metals).arg("rareMetals", rareMetals)
-                .arg("feedstock", feedstock).styled()), Misc.getGrayColor());
+        return cargo == null ? null : CraftingMaterials.forPlayer(cargo);
     }
 
     private void addProgramOptions(ChartRun run, OptionPanelAPI options) {
-        CargoAPI cargo = PlayerFleet.cargoOrNull();
-        CraftingMaterials materials = cargo == null ? null : CraftingMaterials.forPlayer(cargo);
+        CraftingMaterials materials = playerMaterials();
         for (ForgePrograms.Program program : ForgeStates.programs(run, forgeSite)) {
             RunOption option = new RunOption(program);
             options.addOption(I18n.forGameText(() -> Translation.msg("chart.anomaly.derelict_forge.option.run").arg("program", ForgeTexts.programName(program)).text()),
                     option);
-            options.setEnabled(option, ChartForge.canAfford(cargo, materials, ChartForge.costFor(run, forgeSite, program)));
+            options.setEnabled(option, ChartForge.canAfford(materials, ChartForge.costFor(run, forgeSite, program)));
         }
     }
 

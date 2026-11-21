@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import exiledsector.items.crafting.material.CraftingMaterials;
 import java.util.Collection;
 
 public final class Consumables {

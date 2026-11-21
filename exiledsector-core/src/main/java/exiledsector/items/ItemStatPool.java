@@ -2,6 +2,7 @@ package exiledsector.items;
 
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
+import exiledsector.items.modifier.ModifierParts;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierEffect;
 import exiledsector.modifiers.ModifierEffects;

@@ -145,6 +145,66 @@ export function csvTableFromRows<Row extends { cells: string[] }>(
   return out;
 }
 
+export interface CsvColumn<Row> {
+  column: string;
+  field: keyof Row & string;
+  read?: (trimmedText: string) => unknown;
+  write?: (row: Row) => unknown;
+  optional?: boolean;
+  legacy?: boolean;
+}
+
+export function readCsvRow<Row>(table: CsvTable, cells: string[], columns: readonly CsvColumn<Row>[]): Partial<Row> {
+  const fields: Record<string, unknown> = {};
+  for (const column of columns) {
+    const text = csvCell(table, cells, column.column).trim();
+    fields[column.field] = column.read ? column.read(text) : text;
+  }
+  return fields as Partial<Row>;
+}
+
+export function blankCsvRow<Row>(columns: readonly CsvColumn<Row>[]): Partial<Row> {
+  return readCsvRow({ header: [], rows: [], lineEnding: '\n' }, [], columns);
+}
+
+function columnValue<Row>(row: Row, column: CsvColumn<Row>): unknown {
+  return column.write ? column.write(row) : row[column.field];
+}
+
+export function csvColumnValues<Row>(row: Row, columns: readonly CsvColumn<Row>[]): Record<string, unknown> {
+  return Object.fromEntries(columns.map((column) => [column.column, columnValue(row, column)]));
+}
+
+function hasText(value: unknown): boolean {
+  return value !== undefined && value !== null && String(value) !== '';
+}
+
+export function writtenCsvColumns<Row>(table: CsvTable, rows: readonly Row[], columns: readonly CsvColumn<Row>[]): CsvColumn<Row>[] {
+  return columns.filter((column) => {
+    if (table.header.includes(column.column)) {
+      return true;
+    }
+    if (column.legacy) {
+      return false;
+    }
+    return !column.optional || rows.some((row) => hasText(columnValue(row, column)));
+  });
+}
+
+export function csvTableFromColumns<Row extends { cells: string[] }>(table: CsvTable, rows: readonly Row[], columns: readonly CsvColumn<Row>[]): CsvTable {
+  const written = writtenCsvColumns(table, rows, columns);
+  return csvTableFromRows(table, rows, (row) => csvColumnValues(row, written));
+}
+
+export const LIST_SEPARATOR = ';';
+
+export function splitList(text: string | undefined): string[] {
+  return String(text ?? '')
+    .split(LIST_SEPARATOR)
+    .map((entry) => entry.trim())
+    .filter((entry) => entry !== '');
+}
+
 export function dropCsvColumn(table: CsvTable, column: string): void {
   const index = table.header.indexOf(column);
   if (index < 0) {

@@ -4,13 +4,14 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SoundPlayerAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.FluxTrackerAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.skills.skilleffect.CombatEngineExtension;
 import exiledsector.skills.skilleffect.CombatQueries;
+import exiledsector.skills.skilleffect.CombatTestShips;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -29,7 +30,8 @@ import static org.mockito.Mockito.when;
 
 class DisplacerFailsafeListenerTest {
 
-    private MockedStatic<Global> global;
+    @RegisterExtension
+    final CombatEngineExtension combat = new CombatEngineExtension();
     private MockedStatic<CombatQueries> queries;
     private ShipAPI ship;
     private ShipAPI enemy;
@@ -38,22 +40,14 @@ class DisplacerFailsafeListenerTest {
 
     @BeforeEach
     void setUp() {
-        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+        CombatEngineAPI engine = combat.engine();
         when(engine.getMapWidth()).thenReturn(20000f);
         when(engine.getMapHeight()).thenReturn(20000f);
-        global = Mockito.mockStatic(Global.class);
-        global.when(Global::getCombatEngine).thenReturn(engine);
-        global.when(Global::getSoundPlayer).thenReturn(mock(SoundPlayerAPI.class));
-        ship = mock(ShipAPI.class);
+        combat.global().when(Global::getSoundPlayer).thenReturn(mock(SoundPlayerAPI.class));
+        ship = CombatTestShips.ship().at(new Vector2f(0f, 0f)).dynamic(DisplacerFailsafeListener.HULL_PERCENT_KEY, 30f).build();
         enemy = mock(ShipAPI.class);
-        when(ship.getLocation()).thenReturn(new Vector2f(0f, 0f));
         when(ship.getVelocity()).thenReturn(new Vector2f(50f, 0f));
         when(enemy.getLocation()).thenReturn(new Vector2f(500f, 0f));
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(stats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getValue(DisplacerFailsafeListener.HULL_PERCENT_KEY, 0f)).thenReturn(30f);
         flux = mock(FluxTrackerAPI.class);
         when(ship.getFluxTracker()).thenReturn(flux);
         when(flux.getCurrFlux()).thenReturn(500f);
@@ -66,7 +60,6 @@ class DisplacerFailsafeListenerTest {
     @AfterEach
     void tearDown() {
         queries.close();
-        global.close();
     }
 
     @Test

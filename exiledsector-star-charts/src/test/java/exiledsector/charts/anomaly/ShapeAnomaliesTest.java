@@ -17,13 +17,9 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyFloat;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -53,26 +49,7 @@ class ShapeAnomaliesTest {
     }
 
     private AnomalyLayoutSite site() {
-        return new AnomalyLayoutSite(system, star, List.of(star), 9000f, new Random(4));
-    }
-
-    @Test
-    void anAsteroidStormAddsBeltsAndFields() {
-        AsteroidStorm.INSTANCE.shape(site());
-
-        verify(system, times(AsteroidStorm.BELTS)).addAsteroidBelt(eq(star), anyInt(), anyFloat(), eq(AsteroidStorm.BELT_WIDTH), anyFloat(), anyFloat(),
-                eq(Terrain.ASTEROID_BELT), isNull());
-        assertEquals(AsteroidStorm.FIELDS, terrainAdded.stream().filter(Terrain.ASTEROID_FIELD::equals).count());
-    }
-
-    @Test
-    void anAsteroidStormTagsItsBeltsSoItsCachesCanFindThem() {
-        SectorEntityToken belt = mock(SectorEntityToken.class);
-        when(system.addAsteroidBelt(eq(star), anyInt(), anyFloat(), anyFloat(), anyFloat(), anyFloat(), anyString(), isNull())).thenReturn(belt);
-
-        AsteroidStorm.INSTANCE.shape(site());
-
-        verify(belt, times(AsteroidStorm.BELTS)).addTag(AsteroidStorm.BELT_TAG);
+        return new AnomalyLayoutSite(system, star, List.of(star), new Random(4));
     }
 
     @Test
@@ -93,7 +70,7 @@ class ShapeAnomaliesTest {
             return field;
         });
 
-        MagneticStorm.INSTANCE.shape(new AnomalyLayoutSite(system, barycentre, List.of(star, mock(PlanetAPI.class)), 9000f, new Random(4)));
+        MagneticStorm.INSTANCE.shape(new AnomalyLayoutSite(system, barycentre, List.of(star, mock(PlanetAPI.class)), new Random(4)));
 
         verify(fields.get(0)).setCircularOrbit(star, 0, 0, 100);
     }
@@ -101,16 +78,16 @@ class ShapeAnomaliesTest {
     @Test
     void stellarFlaresRefuseASystemWithNoVisibleStar() {
         assertThrows(IllegalStateException.class,
-                () -> StellarFlares.INSTANCE.shape(new AnomalyLayoutSite(system, star, List.of(), 9000f, new Random(4))));
+                () -> StellarFlares.INSTANCE.shape(new AnomalyLayoutSite(system, star, List.of(), new Random(4))));
     }
 
     @Test
     void starAnomaliesForceTheirStarOrSystemTypeAndShapeAnomaliesDoNot() {
         assertEquals("black_hole", StarAnomalies.BLACK_HOLE.primaryStar());
         assertEquals("star_neutron", StarAnomalies.NEUTRON_STAR.primaryStar());
-        assertEquals(com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType.NEBULA, StarAnomalies.DENSE_NEBULA.systemType());
+        assertEquals(com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType.NEBULA, DenseNebula.INSTANCE.systemType());
         assertNull(ChartAnomalies.role(StellarFlares.ANOMALY_ID, StarRule.class));
-        assertNull(ChartAnomalies.role(AsteroidStorm.ANOMALY_ID, StarRule.class));
+        assertNull(ChartAnomalies.role(MagneticStorm.ANOMALY_ID, StarRule.class));
         assertSame(StarAnomalies.BLACK_HOLE, ChartAnomalies.role(StarAnomalies.BLACK_HOLE.id(), StarRule.class));
     }
 }

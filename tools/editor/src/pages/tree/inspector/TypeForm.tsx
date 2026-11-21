@@ -1,11 +1,11 @@
 import { Button, Checkbox, Group, Input, MultiSelect, Paper, Select, Stack, Text } from '@mantine/core';
-import { IconPlus } from '@tabler/icons-react';
 import type { Vocabulary } from '../../../api/vocabulary.ts';
-import { moveItem } from '../../../shared/arrays.ts';
+import { withCurrentOption } from '../../../shared/arrays.ts';
 import { CommitNumberInput, CommitTextarea, CommitTextInput } from '../../../shared/CommitInputs.tsx';
+import { EditableRows } from '../../../shared/EditableRows.tsx';
 import { EffectSelect } from '../../../shared/EffectSelect.tsx';
+import { shipTreeIconDestination, type ImageDestination } from '../../../shared/imageFolders.ts';
 import { ImagePickButton } from '../../../shared/ImagePickButton.tsx';
-import { RowButtons } from '../../../shared/MoveButtons.tsx';
 import { TYPE_TAG_GROUPS } from '../model/tags.ts';
 import {
   HULL_SIZE_OPTIONS,
@@ -16,6 +16,7 @@ import {
   type SkillType,
   type UnlockCondition,
 } from '../model/types.ts';
+import { numberOrZero } from './inspectorEdits.ts';
 import { TagGroupsField } from './TagGroupsField.tsx';
 import type { TypeFormSection } from './typeFormSections.ts';
 
@@ -30,6 +31,7 @@ interface TypeFormProps {
   note?: string;
   idEditable?: boolean;
   onEditOptionType?: (typeId: string) => void;
+  iconDestination?: ImageDestination;
 }
 
 function idListText(ids: string[] | undefined): string {
@@ -50,10 +52,6 @@ function effectTextLines(text: string): string[] {
     .filter(Boolean);
 }
 
-function numberOrZero(value: number): number {
-  return Number.isNaN(value) ? 0 : value;
-}
-
 function defaultEffectName(vocabulary: Vocabulary): string {
   return vocabulary.effectInfo.has('HULL_PERCENT') ? 'HULL_PERCENT' : (vocabulary.effectNames[0] ?? '');
 }
@@ -68,62 +66,28 @@ interface EffectHolderProps {
 }
 
 function EffectRows({ holder, onEditHolder, vocabulary, label }: EffectHolderProps) {
-  const effects = holder.effects ?? [];
   return (
-    <Input.Wrapper label={label}>
-      <Stack gap={6} mt={4}>
-        {effects.length === 0 ? (
-          <Text size="xs" c="dimmed">
-            No effects yet.
-          </Text>
-        ) : null}
-        {effects.map((entry, index) => (
-          <Group key={index} gap={6} wrap="nowrap" align="flex-end">
-            <EffectSelect
-              size="xs"
-              style={{ flex: 2 }}
-              vocabulary={vocabulary}
-              value={entry.effect}
-              onChange={(effect) =>
-                onEditHolder((draft) => {
-                  draft.effects![index].effect = effect;
-                })
-              }
-            />
-            <CommitNumberInput
-              size="xs"
-              style={{ flex: 1 }}
-              aria-label="Magnitude"
-              value={entry.magnitude}
-              onCommit={(value) =>
-                onEditHolder((draft) => {
-                  draft.effects![index].magnitude = numberOrZero(value);
-                })
-              }
-            />
-            <RowButtons
-              index={index}
-              count={effects.length}
-              onMove={(from, to) => onEditHolder((draft) => moveItem(draft.effects!, from, to))}
-              onRemove={() => onEditHolder((draft) => {
-                draft.effects!.splice(index, 1);
-              })}
-            />
-          </Group>
-        ))}
-        <Button
-          size="xs"
-          variant="default"
-          w="fit-content"
-          leftSection={<IconPlus size={14} />}
-          onClick={() => onEditHolder((draft) => {
-            (draft.effects ??= []).push({ effect: defaultEffectName(vocabulary), magnitude: 10 });
-          })}
-        >
-          Add effect
-        </Button>
-      </Stack>
-    </Input.Wrapper>
+    <EditableRows
+      label={label}
+      rows={holder.effects ?? []}
+      emptyText="No effects yet."
+      addLabel="Add effect"
+      newRow={() => ({ effect: defaultEffectName(vocabulary), magnitude: 10 })}
+      onEditRows={(recipe) => onEditHolder((draft) => recipe((draft.effects ??= [])))}
+      renderRow={(entry, _index, { editRow, rowButtons }) => (
+        <Group gap={6} wrap="nowrap" align="flex-end">
+          <EffectSelect size="xs" style={{ flex: 2 }} vocabulary={vocabulary} value={entry.effect} onChange={(effect) => editRow((draft) => void (draft.effect = effect))} />
+          <CommitNumberInput
+            size="xs"
+            style={{ flex: 1 }}
+            aria-label="Magnitude"
+            value={entry.magnitude}
+            onCommit={(value) => editRow((draft) => void (draft.magnitude = numberOrZero(value)))}
+          />
+          {rowButtons}
+        </Group>
+      )}
+    />
   );
 }
 
@@ -135,70 +99,34 @@ const HULL_SIZE_FIELDS = [
 ] as const;
 
 function HullSizeEffectRows({ holder, onEditHolder, vocabulary, label }: EffectHolderProps) {
-  const entries = holder.hullSizeEffects ?? [];
   return (
-    <Input.Wrapper label={label}>
-      <Stack gap={6} mt={4}>
-        {entries.length === 0 ? (
-          <Text size="xs" c="dimmed">
-            No hull-size-dependent effects.
-          </Text>
-        ) : null}
-        {entries.map((entry, index) => (
-          <Paper key={index} withBorder p={6}>
-            <Group gap={6} wrap="nowrap" align="flex-end">
-              <EffectSelect
+    <EditableRows
+      label={label}
+      rows={holder.hullSizeEffects ?? []}
+      emptyText="No hull-size-dependent effects."
+      addLabel="Add hull-size effect"
+      newRow={() => ({ effect: defaultEffectName(vocabulary), frigate: 0, destroyer: 0, cruiser: 0, capitalShip: 0 })}
+      onEditRows={(recipe) => onEditHolder((draft) => recipe((draft.hullSizeEffects ??= [])))}
+      renderRow={(entry, _index, { editRow, rowButtons }) => (
+        <Paper withBorder p={6}>
+          <Group gap={6} wrap="nowrap" align="flex-end">
+            <EffectSelect size="xs" style={{ flex: 1 }} vocabulary={vocabulary} value={entry.effect} onChange={(effect) => editRow((draft) => void (draft.effect = effect))} />
+            {rowButtons}
+          </Group>
+          <Group gap={6} grow mt={6}>
+            {HULL_SIZE_FIELDS.map((field) => (
+              <CommitNumberInput
+                key={field.key}
                 size="xs"
-                style={{ flex: 1 }}
-                vocabulary={vocabulary}
-                value={entry.effect}
-                onChange={(effect) =>
-                  onEditHolder((draft) => {
-                    draft.hullSizeEffects![index].effect = effect;
-                  })
-                }
+                label={field.label}
+                value={entry[field.key]}
+                onCommit={(value) => editRow((draft) => void (draft[field.key] = numberOrZero(value)))}
               />
-              <RowButtons
-                index={index}
-                count={entries.length}
-                onMove={(from, to) => onEditHolder((draft) => moveItem(draft.hullSizeEffects!, from, to))}
-                onRemove={() => onEditHolder((draft) => {
-                  draft.hullSizeEffects!.splice(index, 1);
-                })}
-              />
-            </Group>
-            <Group gap={6} grow mt={6}>
-              {HULL_SIZE_FIELDS.map((field) => (
-                <CommitNumberInput
-                  key={field.key}
-                  size="xs"
-                  label={field.label}
-                  value={entry[field.key]}
-                  onCommit={(value) =>
-                    onEditHolder((draft) => {
-                      draft.hullSizeEffects![index][field.key] = numberOrZero(value);
-                    })
-                  }
-                />
-              ))}
-            </Group>
-          </Paper>
-        ))}
-        <Button
-          size="xs"
-          variant="default"
-          w="fit-content"
-          leftSection={<IconPlus size={14} />}
-          onClick={() =>
-            onEditHolder((draft) => {
-              (draft.hullSizeEffects ??= []).push({ effect: defaultEffectName(vocabulary), frigate: 0, destroyer: 0, cruiser: 0, capitalShip: 0 });
-            })
-          }
-        >
-          Add hull-size effect
-        </Button>
-      </Stack>
-    </Input.Wrapper>
+            ))}
+          </Group>
+        </Paper>
+      )}
+    />
   );
 }
 
@@ -297,57 +225,30 @@ function UnlockConditionParameters({ condition, index, onEdit, vocabulary }: { c
 }
 
 function UnlockConditionRows({ type, onEdit, vocabulary }: Pick<TypeFormProps, 'type' | 'onEdit' | 'vocabulary'>) {
-  const conditions = type.unlockConditions ?? [];
   return (
-    <Input.Wrapper label="Unlock conditions">
-      <Stack gap={6} mt={4}>
-        {conditions.length === 0 ? (
-          <Text size="xs" c="dimmed">
-            No unlock conditions.
-          </Text>
-        ) : null}
-        {conditions.map((condition, index) => {
-          const types = condition.type && !vocabulary.unlockConditionTypes.includes(condition.type) ? [condition.type, ...vocabulary.unlockConditionTypes] : vocabulary.unlockConditionTypes;
-          return (
-            <Group key={index} gap={6} wrap="nowrap" align="flex-end">
-              <Select
-                size="xs"
-                style={{ flex: 1 }}
-                label={`Condition ${index + 1}`}
-                data={types.map((value) => ({ value, label: UNLOCK_CONDITION_LABELS[value] ?? value }))}
-                value={condition.type}
-                allowDeselect={false}
-                onChange={(value) =>
-                  onEdit((draft) => {
-                    draft.unlockConditions![index].type = value ?? 'blueprint';
-                  })
-                }
-              />
-              <UnlockConditionParameters condition={condition} index={index} onEdit={onEdit} vocabulary={vocabulary} />
-              <RowButtons
-                index={index}
-                count={conditions.length}
-                onMove={(from, to) => onEdit((draft) => moveItem(draft.unlockConditions!, from, to))}
-                onRemove={() => onEdit((draft) => {
-                  draft.unlockConditions!.splice(index, 1);
-                })}
-              />
-            </Group>
-          );
-        })}
-        <Button
-          size="xs"
-          variant="default"
-          w="fit-content"
-          leftSection={<IconPlus size={14} />}
-          onClick={() => onEdit((draft) => {
-            (draft.unlockConditions ??= []).push({ type: 'blueprint', category: 'hullmod', id: '', statId: '', level: 1, key: '', volume: '' });
-          })}
-        >
-          Add condition
-        </Button>
-      </Stack>
-    </Input.Wrapper>
+    <EditableRows
+      label="Unlock conditions"
+      rows={type.unlockConditions ?? []}
+      emptyText="No unlock conditions."
+      addLabel="Add condition"
+      newRow={() => ({ type: 'blueprint', category: 'hullmod', id: '', statId: '', level: 1, key: '', volume: '' })}
+      onEditRows={(recipe) => onEdit((draft) => recipe((draft.unlockConditions ??= [])))}
+      renderRow={(condition, index, { editRow, rowButtons }) => (
+        <Group gap={6} wrap="nowrap" align="flex-end">
+          <Select
+            size="xs"
+            style={{ flex: 1 }}
+            label={`Condition ${index + 1}`}
+            data={withCurrentOption(vocabulary.unlockConditionTypes, condition.type).map((value) => ({ value, label: UNLOCK_CONDITION_LABELS[value] ?? value }))}
+            value={condition.type}
+            allowDeselect={false}
+            onChange={(value) => editRow((draft) => void (draft.type = value ?? 'blueprint'))}
+          />
+          <UnlockConditionParameters condition={condition} index={index} onEdit={onEdit} vocabulary={vocabulary} />
+          {rowButtons}
+        </Group>
+      )}
+    />
   );
 }
 
@@ -394,8 +295,22 @@ function OptionalOptions({ type, onEdit, allTypes, onEditOptionType }: Pick<Type
   );
 }
 
+function FlavourField({ type, onEdit, note }: Pick<TypeFormProps, 'type' | 'onEdit' | 'note'>) {
+  return (
+    <CommitTextarea
+      size="xs"
+      label={`Flavour text (optional, italic text under the title)${note ?? ''}`}
+      minRows={3}
+      value={type.flavour ?? ''}
+      onCommit={(text) => onEdit((draft) => {
+        draft.flavour = text.trim();
+      })}
+    />
+  );
+}
+
 export function TypeForm(props: TypeFormProps) {
-  const { type, onEdit, sections, vocabulary, note = '', idEditable = false } = props;
+  const { type, onEdit, sections, vocabulary, note = '', idEditable = false, iconDestination = shipTreeIconDestination(type.id) } = props;
   const renderSection = (section: TypeFormSection) => {
     switch (section) {
       case 'identity':
@@ -411,7 +326,7 @@ export function TypeForm(props: TypeFormProps) {
               <CommitTextInput size="xs" style={{ flex: 1 }} label="Icon path" value={type.icon ?? ''} onCommit={(text) => onEdit((draft) => {
                 draft.icon = text.trim();
               })} />
-              <ImagePickButton size="xs" onPicked={(path) => onEdit((draft) => {
+              <ImagePickButton size="xs" destination={iconDestination} currentPath={type.icon} onPicked={(path) => onEdit((draft) => {
                 draft.icon = path;
               })} />
             </Group>
@@ -563,18 +478,12 @@ export function TypeForm(props: TypeFormProps) {
         );
       case 'options':
         return <OptionalOptions key={section} type={type} onEdit={onEdit} allTypes={props.allTypes} onEditOptionType={props.onEditOptionType} />;
+      case 'flavour':
+        return <FlavourField key={section} type={type} onEdit={onEdit} note={note} />;
       case 'texts':
         return (
           <Stack gap={6} key={section}>
-            <CommitTextarea
-              size="xs"
-              label={`Flavour text (optional, italic text under the title)${note}`}
-              minRows={3}
-              value={type.flavour ?? ''}
-              onCommit={(text) => onEdit((draft) => {
-                draft.flavour = text.trim();
-              })}
-            />
+            <FlavourField type={type} onEdit={onEdit} note={note} />
             <CommitTextarea
               size="xs"
               label={`Automated flavour text (optional, replaces the flavour on automated ships)${note}`}

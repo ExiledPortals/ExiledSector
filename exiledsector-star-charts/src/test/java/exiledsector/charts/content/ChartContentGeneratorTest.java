@@ -32,11 +32,13 @@ import exiledsector.charts.anomaly.ContentPlacer;
 import exiledsector.charts.anomaly.RunFactionDress;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
-import exiledsector.charts.anomaly.skirmish.SkirmishJoin;
-import exiledsector.charts.anomaly.skirmish.SkirmishSide;
+import exiledsector.charts.anomaly.skirmish.SkirmishFight;
+import exiledsector.i18n.Translation;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.loot.ChartLoot;
 import exiledsector.charts.loot.ChartVanillaLoot;
+import exiledsector.charts.officer.OfficerRanks;
+import exiledsector.charts.officer.turn.Intent;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -71,6 +73,7 @@ class ChartContentGeneratorTest {
 
     private static final String RUN_ID = "run1";
     private static final Vector2f WORMHOLE = new Vector2f(6000f, 0f);
+    private static final String HOSTILE_TO = "$cfai_makeHostile_";
 
     private SectorAPI sector;
     private StarSystemAPI system;
@@ -311,126 +314,80 @@ class ChartContentGeneratorTest {
         }
     }
 
-    private ChartContent skirmish(SkirmishSide side) {
-        ChartGenContext context = ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of(FactionSkirmish.ANOMALY_ID), false)
-                .withAnomalyData(FactionSkirmish.ANOMALY_ID, new SkirmishJoin(side, "tritachyon").encode()));
-        return ChartContentGenerator.generate(sector, system, RUN_ID, 11L, 8, WORMHOLE, context, null, List.of(FactionSkirmish.ANOMALY_ID));
+    private ChartContent skirmish() {
+        return skirmish(skirmishContext());
+    }
+
+    private ChartContent skirmish(ChartGenContext context) {
+        try (MockSector mockSector = new MockSector()) {
+            ChartRuns.store(new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1));
+            return ChartContentGenerator.generate(sector, system, RUN_ID, 11L, 8, WORMHOLE, context, null, List.of(FactionSkirmish.ANOMALY_ID));
+        }
+    }
+
+    private static ChartGenContext skirmishContext() {
+        String rankId = OfficerRanks.lowest().id();
+        return ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of(FactionSkirmish.ANOMALY_ID))
+                .withAnomalyData(FactionSkirmish.ANOMALY_ID, new SkirmishFight("tritachyon", rankId, rankId, Intent.challenge(1, 2)).encode()));
     }
 
     private String factionOf(CampaignFleetAPI fleet) {
         return engine.fleetParams.get(engine.fleets.indexOf(fleet)).factionId;
     }
 
+    private static String sideOf(CampaignFleetAPI fleet) {
+        return fleet.getMemoryWithoutUpdate().getString(ChartIds.SKIRMISH_SIDE_MEMORY_KEY);
+    }
+
     @Test
-    void aSkirmishSetsTheDefendersStationAndBothSidesAgainstEachOther() {
+    void aSkirmishSetsBothOfficersFleetsAgainstEachOtherInHiddenCopiesOfTheirFactions() {
         useStationBosses();
+        engine.fleetsHaveFlagships = true;
         try {
-            ChartContent content = skirmish(SkirmishSide.NEITHER);
+            ChartContent content = skirmish();
 
             CampaignFleetAPI station = engine.stations.get(0);
-            assertEquals(station.getId(), content.bossFleetId());
-            assertTrue(station.getMemoryWithoutUpdate().getBoolean("$cfai_makeHostile_tritachyon"));
-            assertEquals(List.of(), engine.dressedFactions);
+            CampaignFleetAPI defender = engine.fleets.stream().filter(fleet -> fleet.getId().equals(content.bossFleetId())).findFirst().orElseThrow();
             List<CampaignFleetAPI> attackers = engine.fleets.stream().filter(fleet -> factionOf(fleet).equals("tritachyon")).toList();
-            List<CampaignFleetAPI> defenders = engine.fleets.stream().filter(fleet -> factionOf(fleet).equals("hegemony")).toList();
-            assertFalse(attackers.isEmpty());
-            for (CampaignFleetAPI attacker : attackers) {
-                MemoryAPI memory = attacker.getMemoryWithoutUpdate();
-                assertTrue(memory.getBoolean("$cfai_makeHostile_hegemony"));
-                assertTrue(memory.getBoolean(MemFlags.MEMORY_KEY_MAKE_HOSTILE));
-                assertEquals(SkirmishSide.ATTACKER.key(), memory.getString(ChartIds.SKIRMISH_SIDE_MEMORY_KEY));
-                FleetAssignment first = engine.assignments.get(attacker).get(0).assignment();
-                if (memory.getBoolean(ChartIds.SKIRMISH_COMMANDER_MEMORY_KEY)) {
-                    assertEquals(FleetAssignment.ORBIT_PASSIVE, first);
-                } else {
-                    assertEquals(FleetAssignment.ORBIT_AGGRESSIVE, first);
-                    assertSame(station, engine.assignments.get(attacker).get(0).target());
-                    assertEquals(FleetAssignment.PATROL_SYSTEM, engine.assignments.get(attacker).get(1).assignment());
-                }
+            assertEquals(1, attackers.size());
+            CampaignFleetAPI attacker = attackers.get(0);
+            assertEquals(ChartBossType.FLEET, content.bossType());
+            assertEquals(List.of("hegemony", "tritachyon"), engine.dressedFactions);
+            for (CampaignFleetAPI fleet : engine.fleets) {
+                boolean attacking = fleet == attacker;
+                MemoryAPI memory = fleet.getMemoryWithoutUpdate();
+                assertEquals(attacking ? "attacker" : "defender", sideOf(fleet));
+                assertEquals(attacking ? "tritachyon" : "hegemony", memory.getString(ChartIds.REAL_FACTION_MEMORY_KEY));
+                assertTrue(memory.getBoolean(HOSTILE_TO + (attacking ? RunFactionDress.DEFENDER_FACTION_ID : RunFactionDress.ATTACKER_FACTION_ID)));
+                verify(fleet).setFaction(attacking ? RunFactionDress.ATTACKER_FACTION_ID : RunFactionDress.DEFENDER_FACTION_ID, true);
             }
-            assertEquals(1, attackers.stream().filter(fleet -> fleet.getMemoryWithoutUpdate().getBoolean(ChartIds.SKIRMISH_COMMANDER_MEMORY_KEY)).count());
-            for (CampaignFleetAPI defender : defenders) {
-                assertTrue(defender.getMemoryWithoutUpdate().getBoolean("$cfai_makeHostile_tritachyon"));
-            }
-            assertTrue(defenders.stream().anyMatch(fleet -> engine.assignments.get(fleet).get(0).assignment() == FleetAssignment.ORBIT_AGGRESSIVE
-                    && engine.assignments.get(fleet).get(0).target() == station));
-            assertTrue(attackers.stream().allMatch(fleet -> Vector2f.sub(fleet.getLocation(), station.getLocation(), new Vector2f()).length()
-                    > ChartContentGenerator.GUARD_OFFSET * 2f));
+            verify(station).setFaction(RunFactionDress.DEFENDER_FACTION_ID, true);
+            assertEquals("defender", sideOf(station));
+            verify(station).setExtendedDetectedAtRange(null);
+            verify(station).setName(Translation.gameText("chart.fleet.unnamed.station"));
+            assertEquals(FleetAssignment.ORBIT_AGGRESSIVE, engine.assignments.get(defender).get(0).assignment());
+            assertSame(station, engine.assignments.get(defender).get(0).target());
+            assertEquals(FleetAssignment.PATROL_SYSTEM, engine.assignments.get(defender).get(1).assignment());
+            assertEquals(FleetAssignment.ORBIT_PASSIVE, engine.assignments.get(attacker).get(0).assignment());
+            assertTrue(Vector2f.sub(attacker.getLocation(), station.getLocation(), new Vector2f()).length() > ChartContentGenerator.GUARD_OFFSET * 2f);
+            verify(defender).setExtendedDetectedAtRange(ChartFleetVisibility.REVEAL_EXTENDED_RANGE);
+            verify(attacker).setExtendedDetectedAtRange(ChartFleetVisibility.REVEAL_EXTENDED_RANGE);
         } finally {
             ChartBosses.resetForTests();
         }
     }
 
     @Test
-    void eachSideGetsItsOwnBossObjective() {
+    void copiesThatCannotBeDressedLeaveBothSidesInTheirRealFactionsButStillAtWar() {
         useStationBosses();
+        engine.runFactionsMissing = true;
         try {
-            for (SkirmishSide side : List.of(SkirmishSide.ATTACKER, SkirmishSide.NEITHER)) {
-                ChartContent content = skirmish(side);
-                String stationId = engine.stations.get(engine.stations.size() - 1).getId();
-                assertEquals(stationId, content.bossFleetId());
-                assertNull(content.protectedFleetId());
-            }
+            skirmish();
 
-            ChartContent defending = skirmish(SkirmishSide.DEFENDER);
-            CampaignFleetAPI station = engine.stations.get(engine.stations.size() - 1);
-            CampaignFleetAPI commander = engine.fleets.stream()
-                    .filter(fleet -> fleet.getMemoryWithoutUpdate().getBoolean(ChartIds.SKIRMISH_COMMANDER_MEMORY_KEY)).reduce((first, last) -> last)
-                    .orElseThrow();
-            assertEquals(commander.getId(), defending.bossFleetId());
-            assertEquals(ChartBossType.FLEET, defending.bossType());
-            assertEquals(station.getId(), defending.protectedFleetId());
-        } finally {
-            ChartBosses.resetForTests();
-        }
-    }
-
-    @Test
-    void theAlliedSideIsFriendlyToThePlayerAndCarriesNoLoot() {
-        useStationBosses();
-        try {
-            skirmish(SkirmishSide.DEFENDER);
-
-            CampaignFleetAPI station = engine.stations.get(0);
-            List<CampaignFleetAPI> allies = new ArrayList<>(engine.fleets.stream().filter(fleet -> factionOf(fleet).equals("hegemony")).toList());
-            allies.add(station);
-            for (CampaignFleetAPI ally : allies) {
-                MemoryAPI memory = ally.getMemoryWithoutUpdate();
-                assertFalse(memory.getBoolean(MemFlags.MEMORY_KEY_MAKE_HOSTILE));
-                assertFalse(memory.getBoolean(MemFlags.MEMORY_KEY_IGNORE_PLAYER_COMMS));
-                assertTrue(memory.getBoolean(ChartContentGenerator.MAKE_NON_HOSTILE));
-                assertTrue(memory.getBoolean(ChartContentGenerator.NON_HOSTILE_TAKES_PRIORITY));
-                assertFalse(memory.contains(ChartIds.START_DP_MEMORY_KEY));
-                assertTrue(memory.getBoolean("$cfai_makeHostile_tritachyon"));
-                verify(ally).setFaction("allies", true);
-            }
-            assertEquals(List.of("hegemony"), engine.dressedFactions);
-            for (CampaignFleetAPI enemy : engine.fleets.stream().filter(fleet -> factionOf(fleet).equals("tritachyon")).toList()) {
-                assertTrue(enemy.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_MAKE_HOSTILE));
-                assertFalse(enemy.getMemoryWithoutUpdate().getBoolean(ChartContentGenerator.MAKE_NON_HOSTILE));
-                assertTrue(enemy.getMemoryWithoutUpdate().getBoolean("$cfai_makeHostile_hegemony"));
-                assertTrue(enemy.getMemoryWithoutUpdate().getBoolean("$cfai_makeHostile_allies"));
-                verify(enemy, never()).setFaction(anyString(), Mockito.anyBoolean());
-            }
-        } finally {
-            ChartBosses.resetForTests();
-        }
-    }
-
-    @Test
-    void alliesThatCannotBeDressedStillLeaveTheirRealFaction() {
-        useStationBosses();
-        engine.alliesFactionId = null;
-        try {
-            skirmish(SkirmishSide.DEFENDER);
-
-            List<CampaignFleetAPI> allies = new ArrayList<>(engine.fleets.stream().filter(fleet -> factionOf(fleet).equals("hegemony")).toList());
-            allies.add(engine.stations.get(0));
-            for (CampaignFleetAPI ally : allies) {
-                verify(ally).setFaction(RunFactionDress.ALLY_FACTION_ID, true);
-            }
-            for (CampaignFleetAPI enemy : engine.fleets.stream().filter(fleet -> factionOf(fleet).equals("tritachyon")).toList()) {
-                assertTrue(enemy.getMemoryWithoutUpdate().getBoolean("$cfai_makeHostile_" + RunFactionDress.ALLY_FACTION_ID));
+            for (CampaignFleetAPI fleet : engine.fleets) {
+                boolean attacking = "attacker".equals(sideOf(fleet));
+                verify(fleet, never()).setFaction(anyString(), Mockito.anyBoolean());
+                assertTrue(fleet.getMemoryWithoutUpdate().getBoolean(HOSTILE_TO + (attacking ? "hegemony" : "tritachyon")));
             }
         } finally {
             ChartBosses.resetForTests();
@@ -457,7 +414,7 @@ class ChartContentGeneratorTest {
 
     @Test
     void fleetParametersFollowThePlanWithoutAnyMarketOrHyperspaceLocation() {
-        PlannedFleet planned = new PlannedFleet(FleetRole.BOSS, 0, 250f, 0.9f, 3, 2, 2, 0);
+        PlannedFleet planned = new PlannedFleet(FleetRole.BOSS, 0, new FleetStrength(250f, 0.9f, 3, 2, 0), 2);
 
         FleetParamsV3 params = ChartContentGenerator.fleetParams("hegemony", planned, new Random(5));
 
@@ -472,6 +429,18 @@ class ChartContentGeneratorTest {
         assertEquals(Boolean.TRUE, params.ignoreMarketFleetSizeMult);
         assertEquals(Boolean.TRUE, params.doNotPrune);
         assertNotNull(params.random);
+    }
+
+    @Test
+    void endgameChartFleetsAskForTheirTiersOfficerLevelBonus() {
+        generate(15L, 15);
+
+        assertFalse(engine.fleetParams.isEmpty());
+        int tierBonus = ChartTiers.forTier(15).officerLevelBonus();
+        assertTrue(tierBonus > 0);
+        for (FleetParamsV3 params : engine.fleetParams) {
+            assertTrue(params.officerLevelBonus >= tierBonus, "bonus " + params.officerLevelBonus);
+        }
     }
 
     @Test
@@ -795,6 +764,7 @@ class ChartContentGeneratorTest {
 
     @Test
     void aTwinnedBossAddsARevealedBossSizedFleetFromItsOwnSeedThatTheObjectiveIgnores() {
+        engine.fleetsHaveFlagships = true;
         ChartGenContext twinned = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_TWINNED_BOSS, 1f)));
         ChartContent content = ChartContentGenerator.generate(sector, system, RUN_ID, 11L, 8, WORMHOLE, twinned, null, List.of());
         ChartContentPlan plan = ChartContentPlanner.plan(11L, ChartTiers.forTier(8), ChartPois.all(), ChartFactions.all(), id -> true);
@@ -809,21 +779,21 @@ class ChartContentGeneratorTest {
         assertTrue(inSystem.contains(twin));
         verify(twin).setExtendedDetectedAtRange(ChartFleetVisibility.REVEAL_EXTENDED_RANGE);
         assertEquals(ChartContentGenerator.TWIN_OFFSET, Vector2f.sub(boss.getLocation(), twin.getLocation(), new Vector2f()).length(), 1f);
+        assertEquals(twin.getId() + "-flagship", ChartFleetMarks.twinBossFlagshipId(twin));
+        assertNull(ChartFleetMarks.twinBossFlagshipId(boss));
     }
 
     @Test
-    void anAlliedBossIsNeverTwinned() {
+    void aTwinnedBossTwinsOnlyTheStationGuardAndNeverAnOfficerFleet() {
         useStationBosses();
         try {
-            skirmish(SkirmishSide.DEFENDER);
-            int alliedPlanFleets = engine.fleets.size();
+            skirmish();
+            int skirmishFleets = engine.fleets.size();
             engine = FakeChartContentEngine.install(new FakeChartContentEngine().offering(-4000f, 0f, 0f, 5000f, 0f, -5000f, 6500f, 0f));
-            ChartGenContext context = ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of(FactionSkirmish.ANOMALY_ID), false)
-                    .withAnomalyData(FactionSkirmish.ANOMALY_ID, new SkirmishJoin(SkirmishSide.DEFENDER, "tritachyon").encode()))
-                    .withEffects(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_TWINNED_BOSS, 1f)));
-            ChartContentGenerator.generate(sector, system, RUN_ID, 11L, 8, WORMHOLE, context, null, List.of(FactionSkirmish.ANOMALY_ID));
+            skirmish(skirmishContext().withEffects(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_TWINNED_BOSS, 1f))));
 
-            assertEquals(alliedPlanFleets, engine.fleets.size());
+            assertEquals(skirmishFleets + 1, engine.fleets.size());
+            assertEquals(1, engine.fleets.stream().filter(fleet -> factionOf(fleet).equals("tritachyon")).count());
         } finally {
             ChartBosses.resetForTests();
         }

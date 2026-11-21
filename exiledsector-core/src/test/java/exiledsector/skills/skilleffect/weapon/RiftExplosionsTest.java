@@ -9,6 +9,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.impl.combat.RiftTorpedoEffect;
 import com.fs.starfarer.api.loading.DamagingExplosionSpec;
 import com.fs.starfarer.api.loading.MissileSpecAPI;
+import exiledsector.skills.skilleffect.CombatTestShips;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -41,11 +42,8 @@ class RiftExplosionsTest {
     }
 
     private static RiftExplosionDamageListener listener(float percent) {
-        ShipAPI owner = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS);
-        when(owner.getId()).thenReturn("rift_ship");
-        when(owner.getMutableStats()).thenReturn(stats);
-        when(stats.getDynamic().getValue(RiftExplosions.DAMAGE_PERCENT_KEY, 0f)).thenReturn(percent);
+        ShipAPI owner = CombatTestShips.ship(mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS)).id("rift_ship")
+                .dynamic(RiftExplosions.DAMAGE_PERCENT_KEY, percent).build();
         return RiftExplosionDamageListener.forShip(owner);
     }
 

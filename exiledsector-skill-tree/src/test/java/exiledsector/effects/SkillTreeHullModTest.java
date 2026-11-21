@@ -25,6 +25,7 @@ import exiledsector.skills.skilleffect.flux.FluxSkillEffect;
 import exiledsector.skills.skilleffect.logistics.LogisticsSkillEffect;
 import exiledsector.skills.skilleffect.phase.PhaseSkillEffect;
 import exiledsector.ExiledSector;
+import exiledsector.MockShips;
 import exiledsector.persistence.ShipRecords;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedNode;
@@ -474,9 +475,7 @@ class SkillTreeHullModTest {
     }
 
     private static FleetMemberAPI memberWithId(String id) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getId()).thenReturn(id);
-        return member;
+        return MockShips.member(id).build();
     }
 
     @Test
@@ -800,12 +799,12 @@ class SkillTreeHullModTest {
         when(stats.getFleetMember()).thenReturn(member);
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(stats.getVariant()).thenReturn(variant);
-        when(variant.getHullMods()).thenReturn(List.of("exiledSector_opReserve_5", "exiledSector_opSpent_0"));
+        when(variant.getHullMods()).thenReturn(List.of("exiledSector_opReserve_5", "exiledSector_opReserve_1"));
 
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
 
         verify(variant).removeMod("exiledSector_opReserve_5");
-        verify(variant).removeMod("exiledSector_opSpent_0");
+        verify(variant).removeMod("exiledSector_opReserve_1");
         verify(variant, never()).addMod(startsWith("exiledSector_opReserve_"));
     }
 
@@ -824,14 +823,13 @@ class SkillTreeHullModTest {
     }
 
     @Test
-    void aCopyWithoutARecordKeepsTheReservesOfTheShipWhoseVariantItSharesButDropsRetiredSlots() {
+    void aCopyWithoutARecordKeepsTheReservesOfTheShipWhoseVariantItShares() {
         ShipVariantAPI sharedVariant = mock(ShipVariantAPI.class);
-        when(sharedVariant.getHullMods()).thenReturn(List.of("exiledSector_opReserve_4", "exiledSector_opSpent_4"));
+        when(sharedVariant.getHullMods()).thenReturn(List.of("exiledSector_opReserve_4"));
 
         OpReserveHullMods.sync(memberWithId("temporary-copy"), sharedVariant);
 
-        verify(sharedVariant).removeMod("exiledSector_opSpent_4");
-        verify(sharedVariant, never()).removeMod("exiledSector_opReserve_4");
+        verify(sharedVariant, never()).removeMod(anyString());
         verify(sharedVariant, never()).addMod(anyString());
     }
 
@@ -839,12 +837,12 @@ class SkillTreeHullModTest {
     void aShipWithARecordButNoPaidNodesDropsEveryReserveAndNothingElse() {
         ShipSkillDataManager.get("reset-ship");
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
-        when(variant.getHullMods()).thenReturn(List.of("exiledSector_opReserve_4", "exiledSector_opSpent_9", "hardenedshieldemitter"));
+        when(variant.getHullMods()).thenReturn(List.of("exiledSector_opReserve_4", "exiledSector_opReserve_90", "hardenedshieldemitter"));
 
         OpReserveHullMods.sync(memberWithId("reset-ship"), variant);
 
         verify(variant).removeMod("exiledSector_opReserve_4");
-        verify(variant).removeMod("exiledSector_opSpent_9");
+        verify(variant).removeMod("exiledSector_opReserve_90");
         verify(variant, never()).removeMod("hardenedshieldemitter");
     }
 
@@ -857,14 +855,14 @@ class SkillTreeHullModTest {
         SkillType type = new SkillType.Builder("t", "t", "a.png", SkillTier.SMALL).effects(List.of()).build();
         ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), new SkillNode("armor_1", type, List.of(), 0f, 0f), 1);
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
-        when(variant.getHullMods()).thenReturn(List.of("hardenedshieldemitter", "exiledSector_opSpent_7", "exiledSector_opReserve_30"));
+        when(variant.getHullMods()).thenReturn(List.of("hardenedshieldemitter", "exiledSector_opReserve_7", "exiledSector_opReserve_30"));
         SettingsAPI settings = mock(SettingsAPI.class);
         mockSector.global.when(Global::getSettings).thenReturn(settings);
         when(settings.getHullModSpec("exiledSector_opReserve_1")).thenReturn(mock(HullModSpecAPI.class));
 
         OpReserveHullMods.sync(member, variant);
 
-        verify(variant).removeMod("exiledSector_opSpent_7");
+        verify(variant).removeMod("exiledSector_opReserve_7");
         verify(variant).removeMod("exiledSector_opReserve_30");
         verify(variant, never()).removeMod("hardenedshieldemitter");
         verify(variant).addMod("exiledSector_opReserve_1");

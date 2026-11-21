@@ -6,9 +6,9 @@ import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import exiledsector.effects.TechMiningItemListener;
-import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
+import exiledsector.items.drop.ItemQuantity;
 
 import java.util.List;
 import java.util.Random;
@@ -25,31 +25,27 @@ public interface LootSource {
     default void deliverBattleLoot(BattleLoot battle, CargoAPI playerCargo) {
     }
 
-    default ItemChances itemChancesFor(CampaignFleetAPI fleet) {
-        return null;
-    }
-
     default FleetLootRules fleetLootRules(CampaignFleetAPI fleet) {
         return null;
     }
 
-    default LootMultipliers modifiersAt(LocationAPI location) {
+    default LootMultipliers lootMultipliersAt(LocationAPI location) {
         return null;
     }
 
-    default LootMultipliers modifiersFor(SectorEntityToken site) {
-        return site == null ? null : modifiersAt(site.getContainingLocation());
+    default LootMultipliers lootMultipliersFor(SectorEntityToken site) {
+        return site == null ? null : lootMultipliersAt(site.getContainingLocation());
     }
 
     default void addSalvageLoot(SectorAPI sector, SectorEntityToken salvageEntity, CargoAPI loot) {
     }
 
-    default List<ItemData> bossDrops(int chartTier, String bossFactionId, float chanceMult, Random random,
+    default List<ItemData> bossDrops(int chartTier, String bossFactionId, ItemQuantity quantity, Random random,
                                        Predicate<ItemDefinition> allowed) {
         return List.of();
     }
 
-    default void addShowcaseLoot(CargoAPI loot, Random random) {
+    default void addShowcaseLoot(CargoAPI loot, SectorEntityToken salvageEntity, Random random) {
     }
 
     default void addSiteFinds(SiteFind find) {
@@ -61,7 +57,7 @@ public interface LootSource {
     default void itemsBought(List<ItemData> boughtItems) {
     }
 
-    default ItemData shapeDrop(ItemData item, LocationAPI location) {
+    default ItemData shape(ItemData item, DropOrigin origin, LocationAPI location) {
         return item;
     }
 }

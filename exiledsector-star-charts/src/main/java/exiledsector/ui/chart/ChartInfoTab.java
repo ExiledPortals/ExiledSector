@@ -9,10 +9,11 @@ import com.fs.starfarer.api.campaign.listeners.CampaignUIRenderingListener;
 import com.fs.starfarer.api.combat.ViewportAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import exiledsector.ModSounds;
-import exiledsector.charts.objective.ChartObjectiveIntel;
 import exiledsector.charts.run.ChartRun;
+import exiledsector.charts.run.ChartRunIntel;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.skills.skilleffect.render.SpriteCache;
+import exiledsector.ui.CampaignOverlay;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.util.BorderedPanel;
 import exiledsector.ui.util.GLDraw;
@@ -121,7 +122,7 @@ public final class ChartInfoTab implements CampaignUIRenderingListener, Campaign
     static ChartRun shownRun(SectorAPI sector) {
         CampaignUIAPI campaignUI = sector == null ? null : sector.getCampaignUI();
         if (campaignUI == null || campaignUI.isShowingDialog() || campaignUI.isShowingMenu() || campaignUI.getCurrentCoreTab() != null
-                || campaignUI.isHideUI()) {
+                || campaignUI.isHideUI() || CampaignOverlay.isOpenOver(campaignUI)) {
             return null;
         }
         CampaignFleetAPI playerFleet = sector.getPlayerFleet();
@@ -163,7 +164,7 @@ public final class ChartInfoTab implements CampaignUIRenderingListener, Campaign
         }
         GLDraw.strokeQuad(left, bottom, TAB_WIDTH, TAB_HEIGHT, ACCENT, 1f, (hovered ? 1f : IDLE_EDGE_ALPHA) * alphaMult);
         float centerX = left + TAB_WIDTH / 2f;
-        SpriteDraw.drawAtCenter(spriteCache, ChartObjectiveIntel.iconPath(), centerX, bottom + TAB_HEIGHT * 0.7f, TAB_ICON_SIZE, TAB_ICON_SIZE,
+        SpriteDraw.drawAtCenter(spriteCache, ChartRunIntel.iconPath(), centerX, bottom + TAB_HEIGHT * 0.7f, TAB_ICON_SIZE, TAB_ICON_SIZE,
                 Color.WHITE, alphaMult);
         GLDraw.chevron(centerX, bottom + TAB_HEIGHT * 0.3f, CHEVRON_HALF_WIDTH, CHEVRON_HALF_HEIGHT, !expanded, ACCENT, CHEVRON_LINE_WIDTH, alphaMult);
     }

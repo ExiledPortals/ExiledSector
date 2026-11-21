@@ -2,8 +2,8 @@ package exiledsector.skills.template;
 
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
-import exiledsector.items.WormholeAnchor;
-import exiledsector.items.WormholeAnchorSocketLimits;
+import exiledsector.items.anchor.WormholeAnchor;
+import exiledsector.items.anchor.WormholeAnchorSocketLimits;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;

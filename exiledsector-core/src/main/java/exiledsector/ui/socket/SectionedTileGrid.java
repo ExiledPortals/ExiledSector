@@ -15,7 +15,11 @@ import java.util.List;
 
 final class SectionedTileGrid {
 
-    record Tile(CustomUIPanelPlugin plugin, int count) {
+    record Tile(CustomUIPanelPlugin plugin, String badge, boolean bright) {
+
+        Tile(CustomUIPanelPlugin plugin, int count) {
+            this(plugin, String.valueOf(count), count > 0);
+        }
     }
 
     record Section(String title, Color titleColor, List<Tile> tiles) {
@@ -48,24 +52,31 @@ final class SectionedTileGrid {
             element.setParaFont(Fonts.ORBITRON_12);
             VanillaText.plainPara(element, section.title(), element.getHeightSoFar() > 0f ? HoloPanel.GAP : 0f, section.titleColor());
             element.setParaFontDefault();
-            List<Tile> tiles = section.tiles();
-            for (int start = 0; start < tiles.size(); start += columns) {
-                element.addCustom(rowPanel(tiles.subList(start, Math.min(tiles.size(), start + columns)), gridWidth, cellSize), HoloPanel.GAP);
-            }
+            addRows(element, section.tiles(), columns, gridWidth - ItemGrid.SCROLLBAR_ROOM, cellSize);
         }
         return element;
     }
 
-    private static CustomPanelAPI rowPanel(List<Tile> row, float gridWidth, float cellSize) {
-        CustomPanelAPI rowPanel = Global.getSettings().createCustom(gridWidth - ItemGrid.SCROLLBAR_ROOM, cellSize, null);
+    static float cellSizeFor(float rowWidth, int columns) {
+        return (rowWidth - (columns - 1) * HoloPanel.GAP) / columns;
+    }
+
+    static void addRows(TooltipMakerAPI element, List<Tile> tiles, int columns, float rowWidth, float cellSize) {
+        for (int start = 0; start < tiles.size(); start += columns) {
+            element.addCustom(rowPanel(tiles.subList(start, Math.min(tiles.size(), start + columns)), rowWidth, cellSize), HoloPanel.GAP);
+        }
+    }
+
+    private static CustomPanelAPI rowPanel(List<Tile> row, float rowWidth, float cellSize) {
+        CustomPanelAPI rowPanel = Global.getSettings().createCustom(rowWidth, cellSize, null);
         for (int index = 0; index < row.size(); index++) {
             Tile tile = row.get(index);
             float cellLeft = index * (cellSize + HoloPanel.GAP);
             rowPanel.addComponent(Global.getSettings().createCustom(cellSize, cellSize, tile.plugin())).inTL(cellLeft, 0f);
             TooltipMakerAPI countElement = rowPanel.createUIElement(cellSize - COUNT_INSET * 2f, COUNT_HEIGHT, false);
             countElement.setParaFont(Fonts.ORBITRON_12);
-            Color countColor = tile.count() > 0 ? Misc.getBrightPlayerColor() : Misc.getGrayColor();
-            LabelAPI countLabel = VanillaText.plainPara(countElement, String.valueOf(tile.count()), 0f, countColor);
+            Color countColor = tile.bright() ? Misc.getBrightPlayerColor() : Misc.getGrayColor();
+            LabelAPI countLabel = VanillaText.plainPara(countElement, tile.badge(), 0f, countColor);
             countLabel.setAlignment(Alignment.RMID);
             countElement.setParaFontDefault();
             rowPanel.addUIElement(countElement).inTL(cellLeft + COUNT_INSET, cellSize - COUNT_HEIGHT - COUNT_INSET);

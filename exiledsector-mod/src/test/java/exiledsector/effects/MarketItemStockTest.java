@@ -14,11 +14,13 @@ import com.fs.starfarer.api.impl.campaign.submarkets.BaseSubmarketPlugin;
 import exiledsector.MockSector;
 import exiledsector.compat.RandomAssortmentCompat;
 import exiledsector.items.ItemData;
-import exiledsector.items.HullUpgradesSetting;
 import exiledsector.items.ItemDefinitions;
-import exiledsector.items.JanusDevice;
-import exiledsector.items.MarketHullItems;
-import exiledsector.items.WormholeAnchorDefinitions;
+import exiledsector.items.anchor.JanusDevice;
+import exiledsector.items.anchor.WormholeAnchorDefinitions;
+import exiledsector.items.drop.MarketHullItems;
+import exiledsector.items.hull.HullUpgradesSetting;
+import exiledsector.items.modifier.ItemRoll;
+import exiledsector.skills.ClearedSkillTreeExtension;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -30,6 +32,7 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 
 import java.util.ArrayList;
@@ -50,6 +53,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class MarketItemStockTest {
 
     private static final String HEGEMONY_ANCHOR = "wormhole_anchor_hegemony";
@@ -83,7 +87,7 @@ class MarketItemStockTest {
         SkillTree.register(new SkillNode("hegemony_2", exitType, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of("hegemony")));
         NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"hegemony\", \"volume\": \"hegemony\"}]"));
         WormholeAnchorDefinitions.register(new JSONArray().put(new JSONObject().put("id", HEGEMONY_ANCHOR).put("volume", "hegemony")
-                .put("exit_node", "hegemony_2").put("name", "Hegemony Anchor").put("icon", "graphics/icons/nav_relay.png").put("rarity", "10")
+                .put("exit_node", "hegemony_2").put("name", "Hegemony Anchor").put("icon", "graphics/exiledSector/tree/base/nav_relay.png").put("rarity", "10")
                 .put("description", "Opens a wormhole.").put("market_chance", "0.3")));
         ItemDefinitions.register(new JSONArray()
                 .put(new JSONObject().put("id", "bridge_basic").put("section", "bridge").put("rarity", "10")
@@ -101,8 +105,6 @@ class MarketItemStockTest {
         ItemDefinitions.clear();
         WormholeAnchorDefinitions.clear();
         NpcFactionVolumes.clear();
-        SkillTree.clearNodes();
-        SkillTree.clearTypes();
     }
 
     private SubmarketAPI submarket(String specId, String factionId, float sinceStockRefresh, CargoAPI cargo) {
@@ -209,8 +211,8 @@ class MarketItemStockTest {
     @Test
     void aMarketRestocksHullItemsWithOneModifierAndNoUniquesReplacingTheOldOnes() {
         CargoAPI cargo = mock(CargoAPI.class);
-        CargoStackAPI oldStock = specialStack(ItemData.rolledWithModifierCount(ItemDefinitions.get("bridge_basic"), 1L, 1).toMarketListing());
-        CargoStackAPI soldHullItem = specialStack(ItemData.rolledWithModifierCount(ItemDefinitions.get("bridge_basic"), 3L, 1).toSpecialItem());
+        CargoStackAPI oldStock = specialStack(ItemData.rolled(ItemDefinitions.get("bridge_basic"), 1L, ItemRoll.withModifierCount(1)).toMarketListing());
+        CargoStackAPI soldHullItem = specialStack(ItemData.rolled(ItemDefinitions.get("bridge_basic"), 3L, ItemRoll.withModifierCount(1)).toSpecialItem());
         CargoStackAPI oldAnchor = specialStack(ItemData.rolled(ItemDefinitions.get(HEGEMONY_ANCHOR), 2L).toMarketListing());
         when(cargo.getStacksCopy()).thenReturn(List.of(oldStock, soldHullItem, oldAnchor));
 
@@ -231,7 +233,7 @@ class MarketItemStockTest {
     @Test
     void aSwitchedOffDomainsListingsAreClearedOnRestockAndNotReplaced() {
         CargoAPI cargo = mock(CargoAPI.class);
-        CargoStackAPI oldStock = specialStack(ItemData.rolledWithModifierCount(ItemDefinitions.get("bridge_basic"), 1L, 1).toMarketListing());
+        CargoStackAPI oldStock = specialStack(ItemData.rolled(ItemDefinitions.get("bridge_basic"), 1L, ItemRoll.withModifierCount(1)).toMarketListing());
         when(cargo.getStacksCopy()).thenReturn(List.of(oldStock));
         HullUpgradesSetting.setEnabledForTests(false);
         try {

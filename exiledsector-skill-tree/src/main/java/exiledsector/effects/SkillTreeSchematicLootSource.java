@@ -1,22 +1,21 @@
 package exiledsector.effects;
 
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledsector.items.ShipSchematic;
-import exiledsector.items.SkillTreeSchematicDrops;
-import exiledsector.loot.BattleEngagement;
-import exiledsector.loot.BattleItemDropSetting;
+import exiledsector.items.drop.SkillTreeSchematicDrops;
+import exiledsector.items.schematic.ShipSchematic;
 import exiledsector.loot.BattleLoot;
-import exiledsector.loot.BattleLootRates;
+import exiledsector.loot.DropOrigin;
+import exiledsector.loot.FleetLoss;
+import exiledsector.loot.Loot;
+import exiledsector.loot.LootDelivery;
 import exiledsector.loot.LootSource;
 import exiledsector.loot.LootSources;
+import exiledsector.loot.OutsideChartShare;
 import exiledsector.loot.SiteFind;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,52 +24,24 @@ public final class SkillTreeSchematicLootSource implements LootSource {
     public static final SkillTreeSchematicLootSource INSTANCE = new SkillTreeSchematicLootSource();
     private static final Logger LOG = Logger.getLogger(SkillTreeSchematicLootSource.class);
 
-    private static final class FleetLosses {
-        private float deploymentPoints;
-        private float difficultyWeighted;
-    }
-
     private SkillTreeSchematicLootSource() {
-    }
-
-    private Map<CampaignFleetAPI, FleetLosses> losses(BattleLoot battle) {
-        return battle.state(this, LinkedHashMap::new);
-    }
-
-    @Override
-    public void recordEngagement(BattleLoot battle, BattleEngagement engagement) {
-        Map<CampaignFleetAPI, FleetLosses> losses = losses(battle);
-        float difficulty = BattleLootRates.difficulty(engagement.difficultyMultiplier());
-        engagement.lostEnemiesBySourceFleet().forEach((sourceFleet, members) -> {
-            for (FleetMemberAPI member : members) {
-                float deploymentPoints = member.getDeploymentPointsCost();
-                if (deploymentPoints > 0f) {
-                    FleetLosses fleetLosses = losses.computeIfAbsent(sourceFleet, fleet -> new FleetLosses());
-                    fleetLosses.deploymentPoints += deploymentPoints;
-                    fleetLosses.difficultyWeighted += deploymentPoints * difficulty;
-                }
-            }
-        });
     }
 
     @Override
     public void addEncounterLoot(BattleLoot battle, CargoAPI loot) {
-        ItemLootListener.addItems(loot, List.of(), battleDrops(battle));
+        LootDelivery.toLootScreen(loot, new Loot(List.of(), battleDrops(battle), Map.of()), DropOrigin.ANYWHERE);
     }
 
     @Override
     public void deliverBattleLoot(BattleLoot battle, CargoAPI playerCargo) {
-        for (ShipSchematic schematic : battleDrops(battle)) {
-            playerCargo.addSpecial(schematic.toSpecialItem(), 1f);
-            ItemLootListener.announceSalvaged(schematic::displayName);
-        }
+        LootDelivery.deliver(playerCargo, new Loot(List.of(), battleDrops(battle), Map.of()), DropOrigin.ANYWHERE);
     }
 
     @Override
     public void addSiteFinds(SiteFind find) {
         for (SkillTreeSchematicDrops drop : SkillTreeSchematicDrops.values()) {
             if (SkillTreeSchematicDrops.rollSiteFind(find.dropSite(), find.random(), find.chances())) {
-                find.upgrades().add(drop.schematic());
+                find.schematics().add(drop.schematic());
             }
         }
     }
@@ -81,11 +52,11 @@ public final class SkillTreeSchematicLootSource implements LootSource {
         }
         List<ShipSchematic> drops = new ArrayList<>();
         try {
-            List<SkillTreeSchematicDrops.SourceLoss> sources = new ArrayList<>();
-            losses(battle).forEach((fleet, fleetLosses) -> sources.add(new SkillTreeSchematicDrops.SourceLoss(fleetLosses.deploymentPoints,
-                    fleetLosses.difficultyWeighted / fleetLosses.deploymentPoints, LootSources.fleetLootRules(fleet))));
+            List<FleetLoss> fleetLosses = battle.losses().fleetLosses(LootSources::fleetLootRules);
+            float levelScaledShare = OutsideChartShare.current();
             for (SkillTreeSchematicDrops drop : SkillTreeSchematicDrops.values()) {
-                drops.addAll(Collections.nCopies(drop.rollBattle(sources, BattleItemDropSetting.multiplier(), battle.random()), drop.schematic()));
+                drops.addAll(Collections.nCopies(drop.rollBattle(fleetLosses, levelScaledShare, battle.random()),
+                        drop.schematic()));
             }
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Rolling skill tree schematic battle drops failed", e);

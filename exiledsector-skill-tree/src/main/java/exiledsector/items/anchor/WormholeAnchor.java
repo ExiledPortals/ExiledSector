@@ -1,0 +1,321 @@
+package exiledsector.items.anchor;
+
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.SectorAPI;
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
+import exiledsector.items.BasicItemTypeSupport;
+import exiledsector.items.Item;
+import exiledsector.items.ItemDefinition;
+import exiledsector.items.ItemDefinitions;
+import exiledsector.items.ItemKind;
+import exiledsector.items.ItemStore;
+import exiledsector.items.ItemTraits;
+import exiledsector.items.ItemType;
+import exiledsector.items.ItemTypeSupport;
+import exiledsector.items.ItemUnlock;
+import exiledsector.items.NodeSocketable;
+import exiledsector.items.UseVerdict;
+import exiledsector.items.crafting.CorruptionOutcome;
+import exiledsector.items.custody.SocketCustody;
+import exiledsector.items.modifier.RolledModifier;
+import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTreeLinks;
+import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillTier;
+import exiledsector.skills.SkillTree;
+import exiledsector.skills.unlock.NodeGates;
+import exiledsector.skills.unlock.SkillTypeUnlockStatus;
+
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+public final class WormholeAnchor extends Item implements NodeSocketable {
+
+    public enum Inertness {
+        VOLUME_OFF, JANUS, LOCKED, GATED, EXIT_LOCKED
+    }
+
+    public static final ItemTypeSupport SUPPORT = new BasicItemTypeSupport(ItemType.WORMHOLE_ANCHOR, WormholeAnchor.class, "exiledSector.WormholeAnchor",
+            (id, definitionId, seed, explicitModifiers) -> new WormholeAnchor(id, definitionId, seed), WormholeAnchor::new) {
+        @Override
+        public boolean uniqueRarity(ItemDefinition definition) {
+            return true;
+        }
+
+        @Override
+        public boolean inGenericPools(ItemDefinition definition) {
+            return false;
+        }
+
+        @Override
+        public Integer cargoPrice(Item item, boolean forSale) {
+            WormholeAnchorDefinitions.AnchorMarket anchorMarket = WormholeAnchorDefinitions.market(item.definitionId());
+            if (anchorMarket == null) {
+                return null;
+            }
+            return forSale ? anchorMarket.price() : WormholeAnchorDefinitions.sellBaseValue(anchorMarket.price(),
+                    Global.getSettings().getFloat(BUY_PRICE_MULT_SETTING), Global.getSettings().getFloat(SELL_PRICE_MULT_SETTING));
+        }
+
+        @Override
+        public boolean takesCraftingItem() {
+            return false;
+        }
+
+        @Override
+        public ItemKind listedKind(Item item) {
+            return ItemKind.SUBROUTINE;
+        }
+
+        @Override
+        public boolean stacksInStorage() {
+            return true;
+        }
+    };
+
+    static final String BUY_PRICE_MULT_SETTING = "nonEconItemBuyPriceMult";
+    static final String SELL_PRICE_MULT_SETTING = "nonEconItemSellPriceMult";
+
+    WormholeAnchor(String id, String definitionId, long seed) {
+        super(id, definitionId, seed, List.of());
+    }
+
+    WormholeAnchor(Item source) {
+        super(source);
+    }
+
+    public static List<WormholeAnchor> unusedInStorage() {
+        Set<String> installedItemIds = SocketCustody.installations(ShipSkillDataManager.all()).keySet();
+        List<WormholeAnchor> unused = new ArrayList<>();
+        for (Item item : ItemStore.get().owned()) {
+            if (item instanceof WormholeAnchor anchor && !installedItemIds.contains(anchor.id())) {
+                unused.add(anchor);
+            }
+        }
+        return unused;
+    }
+
+    @Override
+    public ItemType type() {
+        return ItemType.WORMHOLE_ANCHOR;
+    }
+
+    public String volume() {
+        return WormholeAnchorDefinitions.volume(definitionId());
+    }
+
+    public String exitNodeId() {
+        return WormholeAnchorDefinitions.exitNodeId(definitionId());
+    }
+
+    public boolean volumeActive() {
+        return WormholeAnchorDefinitions.volumeActive(definitionId());
+    }
+
+    public Color color() {
+        return WormholeAnchorDefinitions.style(definitionId()).color();
+    }
+
+    public String crestFactionId() {
+        return WormholeAnchorDefinitions.style(definitionId()).crestFactionId();
+    }
+
+    @Override
+    public Color frameColor() {
+        return color();
+    }
+
+    public boolean unlocked(SectorAPI sector) {
+        return unlocked(definitionId(), sector);
+    }
+
+    private static boolean unlocked(String definitionId, SectorAPI sector) {
+        ItemDefinition definition = ItemDefinitions.get(definitionId);
+        return definition != null && ItemUnlock.unlockConditionMet(definition, sector);
+    }
+
+    public Inertness inertness(SectorAPI sector) {
+        return inertness(definitionId(), sector);
+    }
+
+    static Inertness inertness(String definitionId, SectorAPI sector) {
+        SkillNode exitNode = exitNode(definitionId);
+        if (exitNode == null) {
+            return Inertness.VOLUME_OFF;
+        }
+        if (AnchorJanusGate.withholds(definitionId, sector)) {
+            return Inertness.JANUS;
+        }
+        if (!unlocked(definitionId, sector)) {
+            return Inertness.LOCKED;
+        }
+        if (NodeGates.isLocked(exitNode, null)) {
+            return Inertness.GATED;
+        }
+        return exitTypeLocked(exitNode) ? Inertness.EXIT_LOCKED : null;
+    }
+
+    static boolean obtainable(String definitionId, SectorAPI sector) {
+        Inertness inertness = inertness(definitionId, sector);
+        if (inertness != Inertness.GATED) {
+            return inertness == null;
+        }
+        SkillNode exitNode = exitNode(definitionId);
+        return !NodeGates.withholdsAnchor(exitNode) && !exitTypeLocked(exitNode);
+    }
+
+    private static boolean exitTypeLocked(SkillNode exitNode) {
+        return SkillTypeUnlockStatus.isLocked(exitNode.getType(), null);
+    }
+
+    public String linkedExitNodeId() {
+        return exitNode(definitionId()) == null ? null : exitNodeId();
+    }
+
+    public boolean canOpen(SectorAPI sector) {
+        return inertness(sector) == null;
+    }
+
+    private SkillNode exitNode() {
+        return exitNode(definitionId());
+    }
+
+    private static SkillNode exitNode(String definitionId) {
+        String exitNodeId = WormholeAnchorDefinitions.exitNodeId(definitionId);
+        SkillNode exitNode = exitNodeId == null ? null : SkillTree.get(exitNodeId);
+        return exitNode != null && exitNode.getType().getTier() == SkillTier.WORMHOLE_EXIT ? exitNode : null;
+    }
+
+    @Override
+    public void applyTraits(ItemTraits traits) {
+    }
+
+    @Override
+    public List<RolledModifier> explicits() {
+        return List.of();
+    }
+
+    @Override
+    public List<RolledModifier> implicits() {
+        return List.of();
+    }
+
+    @Override
+    public boolean mirrored() {
+        return false;
+    }
+
+    @Override
+    public boolean corrupted() {
+        return false;
+    }
+
+    @Override
+    public CorruptionOutcome corruption() {
+        return null;
+    }
+
+    @Override
+    public boolean canSocketInto(SkillNode socket) {
+        return socket != null && socket.getType().getTier() == SkillTier.SOCKET && volumeActive();
+    }
+
+    public UseVerdict socketRefusal() {
+        String volume = volume();
+        if (volume == null || volumeActive()) {
+            return UseVerdict.ALLOW;
+        }
+        return UseVerdict.refused("socketable.anchor.volumeOffRefusal").with("volume", volumeName(volume));
+    }
+
+    @Override
+    public StyledText flavourLine() {
+        return null;
+    }
+
+    @Override
+    public List<StyledText> detailLines() {
+        List<StyledText> lines = new ArrayList<>();
+        ItemDefinition definition = definition();
+        StyledText description = definition == null ? null : definition.descriptionText();
+        if (description != null) {
+            lines.add(description);
+        }
+        lines.addAll(statusLines(description == null));
+        return lines;
+    }
+
+    public List<StyledText> statusLines() {
+        return statusLines(true);
+    }
+
+    private List<StyledText> statusLines(boolean includeVolumeLine) {
+        List<StyledText> lines = new ArrayList<>();
+        String volume = volume();
+        if (volume != null && includeVolumeLine) {
+            lines.add(Translation.msg("socketable.anchor.volume").arg("volume", volumeName(volume)).styled());
+        }
+        SectorAPI sector = Global.getSector();
+        Inertness inertness = inertness(sector);
+        if (inertness != null) {
+            lines.add(inertLine(inertness, volume));
+        }
+        return lines;
+    }
+
+    public List<StyledText> socketStatusLines(ShipSkillData shipData, String socketNodeId) {
+        String exitNodeId = exitNodeId();
+        if (shipData == null || exitNodeId == null) {
+            return statusLines();
+        }
+        List<StyledText> lines = new ArrayList<>();
+        String volume = volume();
+        String volumeName = volumeName(volume);
+        lines.add(Translation.msg("socketable.anchor.volume").arg("volume", volumeName).styled());
+        boolean linked = exitNodeId.equals(ShipTreeLinks.anchorExit(shipData, socketNodeId));
+        Inertness inertness = inertness(Global.getSector());
+        if (linked && shipData.isAllocated(exitNodeId)) {
+            lines.add(Translation.msg("socketable.anchor.open").arg("volume", volumeName).styled());
+        } else if (inertness != null) {
+            lines.add(inertLine(inertness, volume));
+        } else if (!linked) {
+            lines.add(Translation.msg("socketable.anchor.duplicate").arg("volume", volumeName).styled());
+        } else {
+            lines.add(Translation.msg("socketable.anchor.noFreeSlot").arg("volume", volumeName).styled());
+        }
+        return lines;
+    }
+
+    private StyledText inertLine(Inertness inertness, String volume) {
+        String volumeName = volume == null ? "" : volumeName(volume);
+        return switch (inertness) {
+            case VOLUME_OFF -> Translation.msg("socketable.anchor.volumeOff").arg("volume", volumeName).styled();
+            case JANUS -> Translation.styled("socketable.anchor.janus");
+            case LOCKED -> {
+                ItemDefinition definition = definition();
+                boolean exoship = definition != null && ItemUnlock.RAT_PLAYER_EXOSHIP.id().equals(definition.unlock());
+                yield Translation.styled(exoship ? "socketable.anchor.lockedUntilExoship" : "socketable.anchor.locked");
+            }
+            case GATED -> gateLine(volumeName);
+            case EXIT_LOCKED -> Translation.msg("socketable.anchor.exitLocked").arg("volume", volumeName).styled();
+        };
+    }
+
+    private StyledText gateLine(String volumeName) {
+        SkillNode exitNode = exitNode();
+        String gateTag = exitNode == null ? null : NodeGates.lockingGateTag(exitNode, null);
+        String gateKey = "socketable.anchor.gate." + gateTag;
+        if (gateTag != null && Translation.has(gateKey)) {
+            return Translation.styled(gateKey);
+        }
+        return Translation.msg("socketable.anchor.exitLocked").arg("volume", volumeName).styled();
+    }
+
+    static String volumeName(String volume) {
+        return Translation.text("hyperspace.volume." + volume);
+    }
+}

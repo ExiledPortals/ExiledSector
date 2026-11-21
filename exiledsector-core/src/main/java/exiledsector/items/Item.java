@@ -5,9 +5,25 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.items.crafting.CorruptionOutcome;
+import exiledsector.items.modifier.AffixLayout;
+import exiledsector.items.modifier.ItemImplicits;
+import exiledsector.items.modifier.ItemModifiers;
+import exiledsector.items.modifier.ItemRarity;
+import exiledsector.items.modifier.ModifierSources;
+import exiledsector.items.modifier.PoolEntry;
+import exiledsector.items.modifier.PrototypeImplicits;
+import exiledsector.items.modifier.RolledLine;
+import exiledsector.items.modifier.RolledModifier;
+import exiledsector.items.modifier.SlottedLine;
+import exiledsector.items.modifier.SlottedRoll;
+import exiledsector.items.name.FrozenName;
+import exiledsector.items.name.ItemName;
+import exiledsector.items.name.ItemNames;
 import exiledsector.modifiers.ModifierEffect;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.skills.tags.ThemeTagLine;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierCategory;
 import exiledsector.modifiers.ModifierEffects;
@@ -29,8 +45,6 @@ public abstract class Item {
     private final String id;
     private String definitionId;
     private long seed;
-    private List<RolledLine> effects;
-    private List<RolledLine> implicits;
     private List<RolledModifier> explicitModifiers;
     private List<RolledModifier> implicitModifiers;
     private FrozenName frozenName;
@@ -50,8 +64,6 @@ public abstract class Item {
         this.id = source.id;
         this.definitionId = source.definitionId;
         this.seed = source.seed;
-        this.effects = source.effects;
-        this.implicits = source.implicits;
         this.explicitModifiers = source.explicitModifiers;
         this.implicitModifiers = source.implicitModifiers;
         this.frozenName = source.frozenName;
@@ -93,10 +105,6 @@ public abstract class Item {
     public ItemTraits traits() {
         List<RolledModifier> currentImplicits = implicits();
         return new ItemTraits(tier(), 0, corruption, currentImplicits.isEmpty() ? null : currentImplicits, mirrored);
-    }
-
-    public static Item withEffects(String id, String definitionId, long seed, List<RolledLine> effects) {
-        return create(id, definitionId, seed, RolledModifier.fromLegacyEffects(ItemDefinitions.get(definitionId), effects));
     }
 
     public abstract ItemType type();
@@ -155,20 +163,11 @@ public abstract class Item {
 
     public List<RolledModifier> explicits() {
         ItemDefinition definition = definition();
-        if (explicitModifiers != null) {
-            if (!explicitIdsCurrent && definition != null) {
-                explicitModifiers = new ArrayList<>(definition.withCurrentUniquePool(definition.withCurrentIds(explicitModifiers), seed));
-                explicitIdsCurrent = true;
-            }
-            return Collections.unmodifiableList(explicitModifiers);
+        if (!explicitIdsCurrent && definition != null) {
+            explicitModifiers = new ArrayList<>(definition.withCurrentUniquePool(definition.withCurrentIds(explicitModifiers), seed));
+            explicitIdsCurrent = true;
         }
-        List<RolledModifier> converted = RolledModifier.fromLegacyEffects(definition, effects == null ? List.of() : effects);
-        if (definition != null || effects == null) {
-            explicitModifiers = new ArrayList<>(converted);
-            explicitIdsCurrent = definition != null;
-            effects = null;
-        }
-        return Collections.unmodifiableList(converted);
+        return Collections.unmodifiableList(explicitModifiers);
     }
 
     public List<RolledLine> effects() {
@@ -176,30 +175,23 @@ public abstract class Item {
     }
 
     public List<RolledModifier> implicits() {
-        if (implicitModifiers != null) {
-            if (!implicitIdsCurrent && corruption != CorruptionOutcome.IMPLICIT_REPLACED && ItemImplicits.isLoaded() && kind() != null && !kind().implicits().isEmpty()) {
-                implicitModifiers = new ArrayList<>(ItemImplicits.withCurrentIds(kind(), implicitModifiers, seed));
-                implicitIdsCurrent = true;
+        if (implicitModifiers == null) {
+            List<RolledModifier> rolled = ItemImplicits.roll(kind(), seed);
+            if (ItemImplicits.isLoaded() && kind() != null) {
+                implicitModifiers = new ArrayList<>(rolled);
+                implicitIdsCurrent = !kind().implicits().isEmpty();
             }
-            return Collections.unmodifiableList(implicitModifiers);
+            return rolled;
         }
-        boolean resolvable = ItemImplicits.isLoaded() && kind() != null;
-        List<RolledModifier> rolled = implicits == null ? ItemImplicits.roll(kind(), seed)
-                : resolvable ? ItemImplicits.withCurrentIds(kind(), implicitsFromLegacy(implicits), seed) : implicitsFromLegacy(implicits);
-        if (implicits != null || resolvable) {
-            implicitModifiers = new ArrayList<>(rolled);
-            implicitIdsCurrent = resolvable && !kind().implicits().isEmpty();
-            implicits = null;
+        if (!implicitIdsCurrent && corruption != CorruptionOutcome.IMPLICIT_REPLACED && ItemImplicits.isLoaded() && kind() != null && !kind().implicits().isEmpty()) {
+            implicitModifiers = new ArrayList<>(ItemImplicits.withCurrentIds(kind(), implicitModifiers, seed));
+            implicitIdsCurrent = true;
         }
-        return rolled;
+        return Collections.unmodifiableList(implicitModifiers);
     }
 
     public List<RolledModifier> storedImplicits() {
         return implicitModifiers;
-    }
-
-    private static List<RolledModifier> implicitsFromLegacy(List<RolledLine> legacyImplicits) {
-        return legacyImplicits.stream().map(implicit -> RolledModifier.single(ModifierSlot.IMPLICIT, implicit)).toList();
     }
 
     public ItemDefinition definition() {
@@ -216,11 +208,8 @@ public abstract class Item {
     }
 
     private FrozenName frozenName(ItemDefinition definition) {
-        if (definition != null && (frozenName == null || frozenName.isAssembledText())) {
-            FrozenName freshName = ItemNames.freeze(definition, seed, explicits());
-            if (freshName != null || frozenName == null) {
-                frozenName = freshName;
-            }
+        if (definition != null && frozenName == null) {
+            frozenName = ItemNames.freeze(definition, seed, explicits());
         }
         return frozenName;
     }
@@ -237,7 +226,6 @@ public abstract class Item {
 
     public void replaceExplicits(List<RolledModifier> replacementModifiers) {
         explicitModifiers = new ArrayList<>(replacementModifiers);
-        effects = null;
     }
 
     public void addExplicit(RolledModifier added) {
@@ -267,10 +255,9 @@ public abstract class Item {
 
     public void replaceImplicits(List<RolledModifier> replacementImplicits) {
         implicitModifiers = new ArrayList<>(replacementImplicits);
-        implicits = null;
     }
 
-    Item mirrorAs(String copyId) {
+    public Item mirrorAs(String copyId) {
         Item copy = create(copyId, definitionId, seed, explicits());
         copy.copyTraitsFrom(this);
         copy.implicitModifiers = new ArrayList<>(implicits());
@@ -298,6 +285,14 @@ public abstract class Item {
 
     public boolean hasImmutableModifier() {
         return explicits().stream().anyMatch(RolledModifier::immutable);
+    }
+
+    public boolean isWarped() {
+        return explicits().stream().anyMatch(RolledModifier::warped);
+    }
+
+    private boolean carriesWarped(String modifierId) {
+        return explicits().stream().anyMatch(rolled -> rolled.warped() && rolled.modifierId().equals(modifierId));
     }
 
     public void refreezeName() {
@@ -364,6 +359,9 @@ public abstract class Item {
         if (corruption != null) {
             lines.add(Translation.styled("socketable.tooltip.corrupted"));
         }
+        if (isWarped()) {
+            lines.add(Translation.styled("socketable.tooltip.warped"));
+        }
         return lines;
     }
 
@@ -408,11 +406,16 @@ public abstract class Item {
             return null;
         }
         Modifier ownImplicit = Modifier.byId(type.implicits(), modifierId);
-        return ownImplicit != null ? ownImplicit : ItemImplicits.anyById(modifierId);
+        if (ownImplicit != null) {
+            return ownImplicit;
+        }
+        Modifier prototypeImplicit = PrototypeImplicits.byId(modifierId);
+        return prototypeImplicit != null ? prototypeImplicit : ItemImplicits.anyById(modifierId);
     }
 
     public ModifierLine implicitLine(String effectName) {
-        return ItemImplicits.line(kind(), effectName);
+        ModifierLine ownLine = ItemImplicits.line(kind(), effectName);
+        return ownLine != null ? ownLine : PrototypeImplicits.line(definitionId, effectName);
     }
 
     public List<Modifier> implicitCorruptionPool() {
@@ -439,9 +442,9 @@ public abstract class Item {
         if (entry != null) {
             return entry.modifier();
         }
-        boolean reservedForType = definition != null && ModifierSources.isReserved(modifierId)
+        boolean resolvableForType = definition != null && (ModifierSources.isReserved(modifierId) || carriesWarped(modifierId))
                 && ItemModifiers.itemTypes(modifierId).contains(definition.type());
-        return reservedForType ? ItemModifiers.get(modifierId) : null;
+        return resolvableForType ? ItemModifiers.get(modifierId) : null;
     }
 
     public List<SlottedRoll> rolls(ModifierCategory category) {
@@ -464,13 +467,27 @@ public abstract class Item {
     }
 
     public List<StyledText> implicitLines(boolean withRollRanges) {
+        return inlineTexts(implicitRows(withRollRanges));
+    }
+
+    public List<SlottedLine> implicitRows(boolean withRollRanges) {
+        return rows(implicitSlottedLines(withRollRanges), withRollRanges);
+    }
+
+    public List<SlottedLine> implicitSlottedLines(boolean withRollRanges) {
         List<SlottedLine> lines = new ArrayList<>();
         ModifierEffects effects = modifierEffects();
         ScaleContext context = scaleContext(null);
         for (RolledModifier implicit : implicits()) {
             addModifierLines(lines, implicit, implicitModifier(implicit.modifierId()), effects, withRollRanges, context);
         }
-        return texts(lines, withRollRanges);
+        return lines;
+    }
+
+    public List<StyledText> implicitLines(RolledModifier implicit) {
+        List<SlottedLine> lines = new ArrayList<>();
+        addModifierLines(lines, implicit, implicitModifier(implicit.modifierId()), modifierEffects(), false, scaleContext(null));
+        return texts(lines, false);
     }
 
     public List<StyledText> effectLines() {
@@ -512,42 +529,64 @@ public abstract class Item {
             StyledText description = explicitLine(effects, effect, modifier == null ? null : modifier.line(effect.effectName()),
                     withRollRanges, context);
             if (description != null) {
-                StyledText shown = rolledModifier.immutable() ? description.withUnstyledAs(Style.IMMUTABLE) : description;
+                StyledText shown = shownAs(rolledModifier, description);
                 ModifierEffect resolvedEffect = effect.effect(effects);
                 described.add(resolvedEffect == null ? new SlottedLine(rolledModifier.slot(), shown)
                         : new SlottedLine(rolledModifier.slot(), shown, resolvedEffect.detailTitle(), resolvedEffect.detailLines()));
             }
         }
-        List<String> headerKeys = withRollRanges && !described.isEmpty() ? headerKeys(rolledModifier, described.size() > 1) : List.of();
-        if (headerKeys.isEmpty()) {
-            lines.addAll(described);
+        if (described.isEmpty()) {
             return;
         }
-        ModifierSlot headerSlot = rolledModifier.slot();
-        for (String headerKey : headerKeys) {
-            lines.add(new SlottedLine(headerSlot, Translation.styled(headerKey)));
-            headerSlot = null;
+        SlottedLine caption = withRollRanges ? caption(rolledModifier, modifier) : null;
+        if (caption != null) {
+            lines.add(caption);
         }
-        for (SlottedLine line : described) {
-            lines.add(new SlottedLine(null, Translation.msg("socketable.tooltip.hybridLine").arg("line", line.text()).styled(),
-                    line.detailTitle(), line.details()));
-        }
+        lines.addAll(described);
     }
 
-    private static List<String> headerKeys(RolledModifier rolledModifier, boolean hybrid) {
-        List<String> headerKeys = new ArrayList<>(2);
+    private static StyledText shownAs(RolledModifier rolledModifier, StyledText description) {
+        StyledText shown = rolledModifier.overcharged() ? description.withFirstSpanAs(Style.OVERCHARGED) : description;
+        return rolledModifier.immutable() ? shown.withUnstyledAs(Style.IMMUTABLE) : shown;
+    }
+
+    private static SlottedLine caption(RolledModifier rolledModifier, Modifier modifier) {
+        List<StyledText> labels = new ArrayList<>(4);
+        String slotKey = captionSlotKey(rolledModifier.slot());
+        if (slotKey != null) {
+            labels.add(Translation.styled(slotKey));
+        }
         String originHeaderKey = ModifierSources.headerKey(rolledModifier.modifierId());
         if (originHeaderKey != null) {
-            headerKeys.add(originHeaderKey);
+            labels.add(Translation.styled(originHeaderKey));
         }
-        if (hybrid) {
-            headerKeys.add("socketable.tooltip.hybrid");
+        if (rolledModifier.warped()) {
+            labels.add(Translation.styled("socketable.tooltip.warped"));
         }
-        return headerKeys;
+        if (rolledModifier.overcharged()) {
+            labels.add(Translation.styled("socketable.tooltip.overcharged"));
+        }
+        StyledText tags = modifier == null ? null : ThemeTagLine.of(modifier.tags());
+        if (labels.isEmpty() && tags == null) {
+            return null;
+        }
+        StyledText labelText = labels.isEmpty() ? StyledText.EMPTY : Translation.list(labels).withUnstyledAs(Style.MUTED);
+        return SlottedLine.caption(rolledModifier.slot(), labelText, tags);
+    }
+
+    public static String captionSlotKey(ModifierSlot slot) {
+        if (slot == ModifierSlot.PREFIX) {
+            return "item.tooltip.caption.prefix";
+        }
+        return slot == ModifierSlot.SUFFIX ? "item.tooltip.caption.suffix" : null;
     }
 
     private static List<StyledText> texts(List<SlottedLine> lines, boolean withDetails) {
-        return rows(lines, withDetails).stream().map(SlottedLine::text).toList();
+        return inlineTexts(rows(lines, withDetails));
+    }
+
+    private static List<StyledText> inlineTexts(List<SlottedLine> rows) {
+        return rows.stream().map(SlottedLine::inlineText).toList();
     }
 
     private static List<SlottedLine> rows(List<SlottedLine> lines, boolean withDetails) {

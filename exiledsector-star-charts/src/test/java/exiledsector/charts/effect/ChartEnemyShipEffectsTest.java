@@ -14,10 +14,10 @@ import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.MockShips;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartGenContext.AppliedEffect;
-import exiledsector.charts.loot.StarChartLootSource;
 import exiledsector.effects.GrantedNodeOrigin;
 import exiledsector.effects.GrantedNodes;
 import exiledsector.effects.ResolvedTree;
@@ -79,9 +79,7 @@ class ChartEnemyShipEffectsTest {
     }
 
     private static FleetMemberAPI memberWith(ShipVariantAPI variant) {
-        FleetMemberAPI member = mock(FleetMemberAPI.class);
-        when(member.getVariant()).thenReturn(variant);
-        return member;
+        return MockShips.member().variant(variant).build();
     }
 
     @Test
@@ -152,7 +150,8 @@ class ChartEnemyShipEffectsTest {
 
         ChartEnemyShipEffects.grant(fleet, context);
 
-        assertEquals(Set.of("freebooters_charge_1", "hullbreacher_rounds_1"), Set.copyOf(StarChartLootSource.INSTANCE.grantedNodeIds(fleet.getMemoryWithoutUpdate())));
+        assertEquals(Set.of("freebooters_charge_1", "hullbreacher_rounds_1"),
+                Set.copyOf(ChartFleetDifficulty.INSTANCE.grantedNodeIds(fleet.getMemoryWithoutUpdate())));
         assertEquals(Map.of(ChartFleetStat.ENEMY_KINETIC_DAMAGE_DEALT, 1.2f), ChartEnemyShipEffects.grantedTo(member).statMults());
         verify(variant).addMod(SkillTreeHullMod.ID);
     }
@@ -165,7 +164,7 @@ class ChartEnemyShipEffectsTest {
 
         ChartEnemyShipEffects.grant(fleet, enemyRules());
 
-        assertNull(StarChartLootSource.INSTANCE.grantedNodeIds(fleet.getMemoryWithoutUpdate()));
+        assertNull(ChartFleetDifficulty.INSTANCE.grantedNodeIds(fleet.getMemoryWithoutUpdate()));
     }
 
     @Test

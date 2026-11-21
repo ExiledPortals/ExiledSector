@@ -1,9 +1,8 @@
 package exiledsector.ui.node;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.graphics.SpriteAPI;
-import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.SkillNode;
+import exiledsector.skills.skilleffect.render.CategorySprite;
 import exiledsector.skills.radius.NodeRadii;
 import exiledsector.skills.radius.NodeRadiusCache;
 import exiledsector.skills.radius.RadiusSize;
@@ -12,6 +11,7 @@ import exiledsector.ui.TreeLayers;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.belt.RingWave;
 import exiledsector.ui.util.GlScope;
+import exiledsector.ui.util.HoloShapes;
 import exiledsector.ui.util.UnitCircle;
 import org.lwjgl.opengl.GL11;
 
@@ -19,14 +19,11 @@ import java.awt.Color;
 
 public final class NodeRadiusRingRenderer {
 
-    private static final int RING_SEGMENTS = 128;
-    private static final UnitCircle RING_CIRCLE = UnitCircle.of(RING_SEGMENTS);
+    private static final UnitCircle RING_CIRCLE = UnitCircle.of(128);
     private static final Color RING_COLOR = SkillTreePanelStyle.GLOW_COLOR;
     private static final float RING_FILL_ALPHA = 0.06f;
     private static final float RING_LINE_ALPHA = 0.8f;
     private static final float RING_LINE_THICKNESS = 2f;
-    private static final String BAND_TEXTURE_CATEGORY = "abilities";
-    private static final String BAND_TEXTURE_ID = "neutrino_detector";
     private static final float BAND_WIDTH_IN_TEXTURE = 256f;
     private static final int BAND_SEGMENTS = 256;
     private static final UnitCircle BAND_CIRCLE = UnitCircle.of(BAND_SEGMENTS);
@@ -45,7 +42,7 @@ public final class NodeRadiusRingRenderer {
     private float socketedWorldRadius;
     private Color socketedColor = RING_COLOR;
     private float bandPhaseDegrees;
-    private SpriteAPI bandTexture;
+    private final CategorySprite bandTexture = new CategorySprite("abilities", "neutrino_detector");
 
     public void setHighlightedRadius(SkillNode centre, RadiusSize size) {
         if (centre == null || size == null || NodeRadiusCache.isExcluded(centre)) {
@@ -89,18 +86,16 @@ public final class NodeRadiusRingRenderer {
         if (!viewport.isVisible(centreX, centreY, screenRadius)) {
             return;
         }
-        if (bandTexture == null) {
-            bandTexture = Global.getSettings().getSprite(BAND_TEXTURE_CATEGORY, BAND_TEXTURE_ID);
-        }
-        if (bandTexture != null) {
+        SpriteAPI bandSprite = bandTexture.get();
+        if (bandSprite != null) {
             try (GlScope scope = GlScope.textured(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)) {
                 GL11.glPushMatrix();
                 GL11.glTranslatef(centreX, centreY, 0f);
                 GL11.glScalef(viewport.zoom(), viewport.zoom(), 1f);
-                bandTexture.bindTexture();
-                drawBand(bandTexture, 1, FIRST_BAND_WAVES, bandPhaseDegrees, 0f, layerAlpha);
+                bandSprite.bindTexture();
+                drawBand(bandSprite, 1, FIRST_BAND_WAVES, bandPhaseDegrees, 0f, layerAlpha);
                 GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-                drawBand(bandTexture, 0, SECOND_BAND_WAVES, -bandPhaseDegrees, 0.5f, layerAlpha);
+                drawBand(bandSprite, 0, SECOND_BAND_WAVES, -bandPhaseDegrees, 0.5f, layerAlpha);
                 GL11.glPopMatrix();
             }
         }
@@ -155,24 +150,9 @@ public final class NodeRadiusRingRenderer {
         if (!viewport.isVisible(centreX, centreY, screenRadius)) {
             return;
         }
-        try (GlScope scope = GlScope.flat().lineWidth(RING_LINE_THICKNESS)) {
-            Misc.setColor(RING_COLOR, RING_FILL_ALPHA * ringAlpha);
-            GL11.glBegin(GL11.GL_TRIANGLE_FAN);
-            GL11.glVertex2f(centreX, centreY);
-            for (int i = 0; i <= RING_SEGMENTS; i++) {
-                circleVertex(i % RING_SEGMENTS, centreX, centreY, screenRadius);
-            }
-            GL11.glEnd();
-            Misc.setColor(RING_COLOR, RING_LINE_ALPHA * ringAlpha);
-            GL11.glBegin(GL11.GL_LINE_LOOP);
-            for (int i = 0; i < RING_SEGMENTS; i++) {
-                circleVertex(i, centreX, centreY, screenRadius);
-            }
-            GL11.glEnd();
+        try (GlScope scope = GlScope.flat()) {
+            HoloShapes.disc(centreX, centreY, screenRadius, RING_CIRCLE, RING_COLOR, RING_FILL_ALPHA * ringAlpha);
+            HoloShapes.circle(centreX, centreY, screenRadius, RING_CIRCLE, RING_COLOR, RING_LINE_THICKNESS, RING_LINE_ALPHA * ringAlpha);
         }
-    }
-
-    private static void circleVertex(int index, float centreX, float centreY, float screenRadius) {
-        GL11.glVertex2f(centreX + RING_CIRCLE.cos(index) * screenRadius, centreY + RING_CIRCLE.sin(index) * screenRadius);
     }
 }

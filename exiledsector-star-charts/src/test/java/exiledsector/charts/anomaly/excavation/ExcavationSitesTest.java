@@ -1,6 +1,8 @@
 package exiledsector.charts.anomaly.excavation;
 
 import com.fs.starfarer.api.campaign.PlanetAPI;
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.campaign.econ.MarketAPI.SurveyLevel;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
@@ -10,7 +12,6 @@ import exiledsector.charts.anomaly.StateFields;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
-import exiledsector.charts.loot.DropType;
 import exiledsector.charts.run.ChartRun;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +24,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import static exiledsector.charts.anomaly.LiveAnomalyRuns.RUN_ID;
+import static exiledsector.charts.anomaly.LiveAnomalyRuns.run;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -34,8 +37,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class ExcavationSitesTest {
-
-    private static final String RUN_ID = "run1";
 
     private MockSector mockSector;
     private StarSystemAPI system;
@@ -66,19 +67,22 @@ class ExcavationSitesTest {
         return planet;
     }
 
+    private static PlanetAPI surveyed(PlanetAPI planet, SurveyLevel surveyLevel) {
+        MarketAPI market = mock(MarketAPI.class);
+        when(market.getSurveyLevel()).thenReturn(surveyLevel);
+        when(planet.getMarket()).thenReturn(market);
+        return planet;
+    }
+
     private AnomalyContentSite site(ChartGenContext context, long seed) {
         return new AnomalyContentSite(system, RUN_ID, 4, "pirates", context, List.of(), new Vector2f(), spot -> true,
                 salt -> new Random(seed ^ salt));
     }
 
     private List<ExcavationSite> placeIn(ChartRun run, AnomalyContentSite site) {
-        List<ExcavationSite> placed = ExcavationSites.place(site, mockSector.sector);
+        List<ExcavationSite> placed = ExcavationSites.place(site);
         site.commitStates(run);
         return placed;
-    }
-
-    private static ChartRun run() {
-        return new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
     }
 
     @Test
@@ -105,7 +109,6 @@ class ExcavationSitesTest {
                 assertTrue(site.planetId().startsWith("rock"), site.planetId());
                 assertTrue(planetIds.add(site.planetId()));
                 assertFalse(site.cleared());
-                assertTrue(ExcavationRules.LEANS.contains(site.lean()));
             }
         }
     }
@@ -118,7 +121,7 @@ class ExcavationSitesTest {
             AnomalyContentSite site = site(ChartGenContext.none(), seed);
             site.claim(facility);
 
-            List<ExcavationSite> placed = ExcavationSites.place(site, mockSector.sector);
+            List<ExcavationSite> placed = ExcavationSites.place(site);
 
             assertEquals(List.of("rock"), placed.stream().map(ExcavationSite::planetId).toList());
             assertTrue(site.isClaimed(rock));
@@ -130,7 +133,7 @@ class ExcavationSitesTest {
         Random random = new Random(7L);
         int open = 0;
         for (int roll = 0; roll < 2000; roll++) {
-            open += ExcavationRules.access(random) == ExcavationSite.Access.OPEN ? 1 : 0;
+            open += ExcavationRules.access(random, ExcavationTuning.NONE) == ExcavationSite.Access.OPEN ? 1 : 0;
         }
         assertTrue(open > 900 && open < 1100, String.valueOf(open));
     }
@@ -148,7 +151,7 @@ class ExcavationSitesTest {
         assertTrue(placed.size() >= ExcavationRules.MIN_SITES + 2 && placed.size() <= ExcavationRules.MAX_SITES + 2);
         planets.clear();
         planet("only", false, false);
-        assertEquals(1, ExcavationSites.place(site(context, 3L), mockSector.sector).size());
+        assertEquals(1, ExcavationSites.place(site(context, 3L)).size());
     }
 
     @Test
@@ -172,7 +175,7 @@ class ExcavationSitesTest {
 
     @Test
     void generatingRecordsTheSitesInTheCurrentRun() {
-        planet("rock", false, false);
+        surveyed(planet("rock", false, false), SurveyLevel.FULL);
         ChartRun run = run();
         AnomalyContentSite site = site(ChartGenContext.none(), 1L);
 
@@ -186,9 +189,9 @@ class ExcavationSitesTest {
     @Test
     void aClearedSiteStaysRecordedButNoLongerStands() {
         ChartRun run = run();
-        ExcavationSite site = new ExcavationSite(0, "rock", ExcavationSite.Access.COLLAPSED, DropType.WEAPON, 42L, false);
+        ExcavationSite site = new ExcavationSite(0, "rock", ExcavationSite.Access.COLLAPSED, 42L, false);
         ExcavationStates.record(ExcavationStates.of(run), site);
-        ExcavationStates.record(ExcavationStates.of(run), new ExcavationSite(1, "stone", ExcavationSite.Access.OPEN, DropType.AI_CORE, -9L, false));
+        ExcavationStates.record(ExcavationStates.of(run), new ExcavationSite(1, "stone", ExcavationSite.Access.OPEN, -9L, false));
 
         assertTrue(ExcavationStates.clear(run, site));
         assertFalse(ExcavationStates.clear(run, site));
@@ -200,31 +203,68 @@ class ExcavationSitesTest {
     }
 
     @Test
+    void twinShaftsGiveEverySiteBothShaftsAndEachClosesOnItsOwn() {
+        for (int index = 0; index < 4; index++) {
+            planet("rock" + index, false, false);
+        }
+        ChartGenContext twin = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_EXCAVATION_TWIN_SHAFTS, 1f)));
+        assertTrue(ExcavationSites.place(site(twin, 5L)).stream().allMatch(placed -> placed.access() == ExcavationSite.Access.BOTH));
+
+        ChartRun run = run();
+        ExcavationSite site = new ExcavationSite(0, "rock", ExcavationSite.Access.BOTH, 42L, false);
+        ExcavationStates.record(ExcavationStates.of(run), site);
+        assertTrue(site.hasOpenShaft() && site.hasCollapsedShaft());
+
+        assertTrue(ExcavationStates.clearShaft(run, site, ExcavationSite.Access.OPEN));
+        assertFalse(ExcavationStates.clearShaft(run, site, ExcavationSite.Access.OPEN));
+        ExcavationSite raidLeft = ExcavationStates.at(run, "rock");
+        assertEquals(ExcavationSite.Access.COLLAPSED, raidLeft.access());
+        assertFalse(raidLeft.hasOpenShaft());
+        assertTrue(raidLeft.hasCollapsedShaft());
+        assertNotNull(ExcavationStates.standingAt(run, "rock"));
+
+        assertTrue(ExcavationStates.clearShaft(run, site, ExcavationSite.Access.COLLAPSED));
+        assertTrue(ExcavationStates.at(run, "rock").cleared());
+        assertNull(ExcavationStates.standingAt(run, "rock"));
+        assertFalse(ExcavationStates.clearShaft(run, site, ExcavationSite.Access.COLLAPSED));
+
+        assertEquals(site.asCleared(), site.withoutShaft(ExcavationSite.Access.BOTH));
+        ExcavationSite open = new ExcavationSite(1, "stone", ExcavationSite.Access.OPEN, 1L, false);
+        assertSame(open, open.withoutShaft(ExcavationSite.Access.COLLAPSED));
+        assertFalse(open.asCleared().hasOpenShaft());
+        assertEquals(site, ExcavationSite.decode(0, site.encode()));
+    }
+
+    @Test
     void aSiteSurvivesEncodingAndRejectsBrokenText() {
-        ExcavationSite site = new ExcavationSite(2, "planet_7", ExcavationSite.Access.OPEN, DropType.BLUEPRINT, Long.MIN_VALUE, true);
+        ExcavationSite site = new ExcavationSite(2, "planet_7", ExcavationSite.Access.OPEN, Long.MIN_VALUE, true);
 
         assertEquals(site, ExcavationSite.decode(2, site.encode()));
-        assertNull(ExcavationSite.decode(0, "planet,OPEN,NOT_A_TYPE,1,0"));
-        assertNull(ExcavationSite.decode(0, "planet,SIDEWAYS,WEAPON,1,0"));
+        assertNull(ExcavationSite.decode(0, "planet,SIDEWAYS,1,0"));
         assertNull(ExcavationSite.decode(0, "planet,OPEN,WEAPON"));
         assertFalse(StateFields.fits("a,b"));
         assertFalse(StateFields.fits("a=b"));
     }
 
     @Test
-    void theIntelNamesThePlanetsWhoseSitesStillStand() {
-        planet("rock", false, false);
-        planet("stone", false, false);
+    void theIntelNamesTheSurveyedPlanetsWhoseSitesStillStand() {
+        surveyed(planet("rock", false, false), SurveyLevel.FULL);
+        PlanetAPI stone = surveyed(planet("stone", false, false), SurveyLevel.PRELIMINARY);
         ChartRun run = run();
-        ExcavationSite rock = new ExcavationSite(0, "rock", ExcavationSite.Access.OPEN, DropType.WEAPON, 1L, false);
+        ExcavationSite rock = new ExcavationSite(0, "rock", ExcavationSite.Access.OPEN, 1L, false);
         ExcavationStates.record(ExcavationStates.of(run), rock);
-        ExcavationStates.record(ExcavationStates.of(run), new ExcavationSite(1, "stone", ExcavationSite.Access.COLLAPSED, DropType.WEAPON, 2L, false));
+        ExcavationStates.record(ExcavationStates.of(run), new ExcavationSite(1, "stone", ExcavationSite.Access.COLLAPSED, 2L, false));
 
+        String surveyedOnly = ExcavationSites.INSTANCE.intelText(new AnomalyRun(run, system));
+        assertTrue(surveyedOnly.contains("Planet rock") && !surveyedOnly.contains("Planet stone"), surveyedOnly);
+        when(stone.getMarket().getSurveyLevel()).thenReturn(SurveyLevel.FULL);
         String both = ExcavationSites.INSTANCE.intelText(new AnomalyRun(run, system));
         assertTrue(both.contains("Planet rock") && both.contains("Planet stone"), both);
         ExcavationStates.clear(run, rock);
         String one = ExcavationSites.INSTANCE.intelText(new AnomalyRun(run, system));
         assertFalse(one.contains("Planet rock"), one);
         assertTrue(one.contains("Planet stone"), one);
+        ExcavationStates.clear(run, ExcavationStates.at(run, "stone"));
+        assertNull(ExcavationSites.INSTANCE.intelText(new AnomalyRun(run, system)));
     }
 }

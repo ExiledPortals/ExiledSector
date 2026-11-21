@@ -5,7 +5,7 @@ import exiledsector.charts.content.ChartFactions;
 import exiledsector.charts.loot.ChartLootTotals;
 import exiledsector.items.ItemEffects;
 import exiledsector.items.ItemType;
-import exiledsector.items.StarChart;
+import exiledsector.items.starchart.StarChart;
 import exiledsector.modifiers.ModifierEffect;
 import exiledsector.modifiers.ModifierEffects;
 

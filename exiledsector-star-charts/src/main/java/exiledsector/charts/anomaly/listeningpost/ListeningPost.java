@@ -1,7 +1,12 @@
 package exiledsector.charts.anomaly.listeningpost;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
+import exiledsector.charts.loot.ChartFleetLoot;
+import exiledsector.charts.loot.ChartLootContext;
+import exiledsector.charts.loot.FleetClaim;
+import exiledsector.loot.Loot;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.effect.ChartModifier;
@@ -29,6 +34,7 @@ public final class ListeningPost implements AtlasRule, ContentPlacer, RunPartici
     public static final ListeningPost INSTANCE = new ListeningPost();
     static final long PLACEMENT_SALT = 0x4c495354454e50L;
     static final long PICKET_SALT = 0x5049434b455453L;
+    static final long ARMED_POST_SALT = 0x41524d4544504fL;
 
     private ListeningPost() {
     }
@@ -41,6 +47,15 @@ public final class ListeningPost implements AtlasRule, ContentPlacer, RunPartici
     @Override
     public List<String> lootScopes() {
         return List.of(ListeningPostRules.LOOT_SCOPE);
+    }
+
+    @Override
+    public Loot fleetLoot(FleetClaim claim, ChartLootContext loot, ChartFleetLoot.Battle battle, Random random) {
+        if (!PicketPrototypes.dropsFrom(claim.fleet(), loot.effects())) {
+            return Loot.NONE;
+        }
+        return PicketPrototypes.roll(Global.getSector(), loot.effects(), claim.lootDeploymentPoints(), battle.deploymentPoints(),
+                battle.difficultyMultiplier(), random);
     }
 
     @Override
@@ -75,6 +90,9 @@ public final class ListeningPost implements AtlasRule, ContentPlacer, RunPartici
         }
         if (script.stations().isEmpty()) {
             throw new IllegalStateException("no picket could be formed");
+        }
+        if (DepotTuning.of(site.context()).armedPost()) {
+            script.arm(ArmedPost.spawn(site, post, script, site.random(ARMED_POST_SALT)));
         }
         PostState.record(site.state(ANOMALY_ID), PostState.fresh(random.nextLong()));
         return site.addScript(script);

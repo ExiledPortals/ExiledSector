@@ -3,6 +3,8 @@ package exiledsector.charts.anomaly.convoy;
 import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.generation.ChartTiers;
 
+import java.util.Random;
+
 public final class ConvoyRules {
 
     public static final String FACTION_ID = "exiledSector_convoy";
@@ -28,6 +30,7 @@ public final class ConvoyRules {
     static final float TERRAIN_BURN = 0.8f;
     static final float DELIVERED_SHARE = 0.8f;
     static final float PULSE_REPEAT_DAYS = 0.15f;
+    static final float PERCENT = 100f;
 
     private ConvoyRules() {
     }
@@ -44,11 +47,24 @@ public final class ConvoyRules {
         return Math.max(1, Math.min(MAX_CONVOYS, 1 + Math.round(extraConvoys)));
     }
 
-    static float cargoSteps(float freighterPoints, float cargoMult) {
-        return Math.max(0f, freighterPoints) * CARGO_STEPS_PER_FREIGHTER_POINT * Math.max(0f, cargoMult);
+    static int convoyCount(float extraConvoys, float extraConvoyChancePercent, Random random) {
+        float chance = Math.max(0f, extraConvoyChancePercent) / PERCENT;
+        int chanced = (int) Math.floor(chance);
+        if (random.nextFloat() < chance - chanced) {
+            chanced++;
+        }
+        return convoyCount(Math.round(extraConvoys) + (float) chanced);
     }
 
-    static float itemChanceMult(int tier, float cargoMult) {
-        return (1f + ITEM_CHANCE_PER_TIER * (ChartTiers.clamp(tier) - 1)) * Math.max(0f, cargoMult);
+    static float escortMult(float escortPercent, float fleetSizePercent) {
+        return Math.max(0f, 1f + (escortPercent + fleetSizePercent) / PERCENT);
+    }
+
+    static float cargoSteps(float freighterPoints) {
+        return Math.max(0f, freighterPoints) * CARGO_STEPS_PER_FREIGHTER_POINT;
+    }
+
+    static float itemChanceMult(int tier) {
+        return 1f + ITEM_CHANCE_PER_TIER * (ChartTiers.clamp(tier) - 1);
     }
 }

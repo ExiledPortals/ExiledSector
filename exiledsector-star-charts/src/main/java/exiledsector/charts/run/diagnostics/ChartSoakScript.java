@@ -15,8 +15,9 @@ import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
+import exiledsector.items.modifier.ItemRoll;
 import exiledsector.items.ItemType;
-import exiledsector.items.StarChart;
+import exiledsector.items.starchart.StarChart;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -155,12 +156,12 @@ public class ChartSoakScript implements EveryFrameScript {
             return null;
         }
         ItemDefinition definition = charts.get((iteration / 2) % charts.size());
-        Item preview = ItemData.rolledAtTier(definition, random.nextLong(), tierForIteration(iteration)).preview();
+        Item preview = ItemData.rolled(definition, random.nextLong(), ItemRoll.atTier(tierForIteration(iteration))).preview();
         return preview instanceof StarChart chart ? chart : null;
     }
 
     static int tierForIteration(int iteration) {
-        int tierCount = ChartTiers.HIGHEST_TIER - ChartTiers.LOWEST_TIER + 1;
+        int tierCount = ChartTiers.HIGHEST_DROP_TIER - ChartTiers.LOWEST_TIER + 1;
         return ChartTiers.LOWEST_TIER + Math.floorMod(iteration, tierCount);
     }
 

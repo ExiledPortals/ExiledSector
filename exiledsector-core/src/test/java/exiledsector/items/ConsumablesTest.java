@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import exiledsector.items.crafting.material.CraftingMaterials;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;

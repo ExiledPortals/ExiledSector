@@ -6,6 +6,7 @@ import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillTreeTopology;
+import exiledsector.skills.layout.TreeTopology;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -113,7 +114,7 @@ final class ConnectorFlow {
             this.skillData = skillData;
             this.rootId = rootId;
             this.plannedOnlyNodeIds = plannedOnlyNodeIds;
-            for (SkillTreeTopology.WormholePair pair : ShipTreeLinks.wormholePairs(skillData, topology)) {
+            for (TreeTopology.WormholePair<SkillNode> pair : ShipTreeLinks.wormholePairs(skillData, topology)) {
                 wormholePartners.put(pair.first().getId(), pair.second().getId());
                 wormholePartners.put(pair.second().getId(), pair.first().getId());
             }

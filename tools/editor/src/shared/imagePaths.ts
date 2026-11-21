@@ -1,3 +1,5 @@
+import { isSourceArtPath } from './imageFolders.ts';
+
 export const FALLBACK_ICON = 'graphics/icons/cargo/chip1.png';
 
 export function fileUrl(projectPath: string | null | undefined): string {
@@ -6,7 +8,7 @@ export function fileUrl(projectPath: string | null | undefined): string {
 }
 
 export function isUnshippedImagePath(path: string | null | undefined): boolean {
-  return /^graphics\/(unused|description)\//.test(path ?? '');
+  return isSourceArtPath(path);
 }
 
 export function imageFolder(path: string): string {

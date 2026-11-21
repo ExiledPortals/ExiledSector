@@ -16,6 +16,7 @@ final class StartingRootChoice {
     enum Phase { CHOOSING, FLYING, CHOSEN, RETURNING }
 
     static final float FLIGHT_SECONDS = 1.5f;
+    static final float HURRIED_FLIGHT_SPEED = 1.9f;
     static final float ROOT_FOOTPRINT = NODE_SIZE * SkillTier.ROOT.getSizeMultiplier();
     static final float CLUSTER_RADIUS = ROOT_FOOTPRINT * 0.7f;
     static final float PROMPT_GAP = 30f;
@@ -25,6 +26,7 @@ final class StartingRootChoice {
     private Phase phase;
     private SkillNode chosenRoot;
     private float flightElapsed;
+    private float flightSpeed = 1f;
 
     private StartingRootChoice(Map<String, Vector2f> clusterOffsets, Phase phase, SkillNode chosenRoot) {
         this.clusterOffsets = clusterOffsets;
@@ -79,6 +81,13 @@ final class StartingRootChoice {
         chosenRoot = root;
         phase = Phase.FLYING;
         flightElapsed = 0f;
+        flightSpeed = 1f;
+    }
+
+    void hurryFlight() {
+        if (phase == Phase.FLYING) {
+            flightSpeed = HURRIED_FLIGHT_SPEED;
+        }
     }
 
     static StartingRootChoice returning(List<SkillNode> roots, SkillNode chosenRoot) {
@@ -102,7 +111,7 @@ final class StartingRootChoice {
         if (!isMoving()) {
             return;
         }
-        flightElapsed = Math.min(FLIGHT_SECONDS, flightElapsed + amount);
+        flightElapsed = Math.min(FLIGHT_SECONDS, flightElapsed + amount * flightSpeed);
         if (flightElapsed < FLIGHT_SECONDS) {
             return;
         }

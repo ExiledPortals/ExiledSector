@@ -1,15 +1,24 @@
 package exiledsector.charts.anomaly;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.loot.ChartFleetLoot;
+import exiledsector.charts.loot.ChartLootContext;
+import exiledsector.charts.loot.FleetClaim;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.items.ItemChances;
-import exiledsector.items.ItemDrops;
+import exiledsector.items.ItemData;
+import exiledsector.items.drop.ItemChances;
+import exiledsector.items.modifier.RolledModifier;
+import exiledsector.loot.BattleEngagement;
+import exiledsector.loot.BattleLoot;
+import exiledsector.loot.Loot;
 
 import java.util.List;
 import java.util.Random;
+import java.util.function.Predicate;
 
 public interface LootShaper extends ChartAnomaly {
 
@@ -17,32 +26,58 @@ public interface LootShaper extends ChartAnomaly {
         return List.of();
     }
 
-    default ItemDrops.SiteLoot fleetItems(SectorAPI sector, CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, float share, Random random) {
-        return null;
+    default Loot fleetLoot(FleetClaim claim, ChartLootContext loot, ChartFleetLoot.Battle battle, Random random) {
+        return Loot.NONE;
     }
 
-    default ItemDrops.SiteLoot extraFleetLoot(CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, Random random) {
-        return ItemDrops.SiteLoot.NONE;
-    }
-
-    default boolean holdsBackBossUnique(ChartRun run) {
-        return false;
-    }
-
-    default boolean guaranteesBossTierUp() {
-        return false;
+    default Loot bossDefeatedLoot(SectorAPI sector, ChartRun run) {
+        return Loot.NONE;
     }
 
     default boolean holdsPlayerBattle() {
         return false;
     }
 
-    default float battleLootMult(ChartGenContext context) {
-        return 1f;
+    default float battleQuantityPercent(ChartGenContext context) {
+        return 0f;
     }
 
-    default ItemDrops.SiteLoot battleBonus(SectorAPI sector, Random random) {
-        return ItemDrops.SiteLoot.NONE;
+    default float battleHullItemPercent(ChartGenContext context) {
+        return 0f;
+    }
+
+    default float battleCraftingItemPercent(ChartGenContext context) {
+        return 0f;
+    }
+
+    default void engagementRecorded(BattleLoot battle, BattleEngagement engagement) {
+    }
+
+    default ItemData shapeDrop(SectorAPI sector, ItemData item, LocationAPI location) {
+        return item;
+    }
+
+    default ItemData shapeDrop(SectorAPI sector, ItemData item, LocationAPI location, Predicate<RolledModifier> alreadyLucky) {
+        return shapeDrop(sector, item, location);
+    }
+
+    default ItemData shapeBattleDrop(SectorAPI sector, ItemData item, LocationAPI location) {
+        return item;
+    }
+
+    default Predicate<RolledModifier> battleLuckyModifiers() {
+        return rolled -> false;
+    }
+
+    default boolean overchargesHullItems(CampaignFleetAPI fleet) {
+        return false;
+    }
+
+    default void battleWon(AnomalyRun run) {
+    }
+
+    default float bossStarChartPercent(ChartRun run) {
+        return 0f;
     }
 
     default ItemChances siteChances(MemoryAPI siteMemory, ItemChances chances) {

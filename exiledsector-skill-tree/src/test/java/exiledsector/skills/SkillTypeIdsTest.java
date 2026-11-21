@@ -1,15 +1,16 @@
 package exiledsector.skills;
 
 import exiledsector.skills.npc.RealSkillData;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ExtendWith(ClearedSkillTreeExtension.class)
 class SkillTypeIdsTest {
 
     private static final List<String> KEPT_ID_PREFIXES = List.of("nskr_", "rat_", "tania_");
@@ -18,11 +19,6 @@ class SkillTypeIdsTest {
     @BeforeEach
     void setUp() throws Exception {
         RealSkillData.load();
-    }
-
-    @AfterEach
-    void tearDown() {
-        RealSkillData.clear();
     }
 
     static String slug(String displayName) {

@@ -1,6 +1,7 @@
 package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.skills.skilleffect.render.Fade;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.SpriteDraw;
@@ -8,20 +9,26 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 
-final class WormholeButtonFx {
+public final class WormholeButtonFx {
+
+    public record Intensity(float strength, float pulseDepth) {
+
+        public static final Intensity READY = new Intensity(1f, 0.25f);
+        public static final Intensity IDLE = new Intensity(0.5f, 0.25f);
+    }
 
     static final String CORONA_TEXTURE = "graphics/fx/wormhole_corona.png";
     static final Color VIOLET = new Color(170, 110, 255);
     static final Color CYAN = new Color(110, 210, 255);
-    static final Color TEXT_COLOR = new Color(215, 195, 255);
-    static final Color BACKGROUND_COLOR = new Color(40, 22, 70);
-    static final float GLOW_REACH = 18f;
+    public static final Color TEXT_COLOR = new Color(215, 195, 255);
+    public static final Color BACKGROUND_COLOR = new Color(40, 22, 70);
+    public static final float GLOW_REACH = 18f;
     static final float GLOW_UNDERLAP = 4f;
     static final float GLOW_ALPHA = 0.5f;
-    static final float MOUTH_SIZE_SHARE = 2.4f;
+    public static final float MOUTH_SIZE_SHARE = 2.4f;
     static final float MOUTH_SPIN_DEGREES = 40f;
     static final float MOUTH_ALPHA = 0.8f;
-    static final float IDLE_ALPHA = 0.5f;
+    static final float MOUTH_PULSE_SHARE = 0.32f;
     static final float CORNER_CUT = 7f;
     static final float OUTSET_CUT_SHARE = 0.4142f;
     static final int OUTLINE_POINTS = 8;
@@ -30,24 +37,37 @@ final class WormholeButtonFx {
 
     private float elapsedSeconds;
 
-    void advance(float amount) {
+    public void advance(float amount) {
         elapsedSeconds += amount;
     }
 
     void render(float left, float bottom, float width, float height, boolean active, float alpha) {
+        render(left, bottom, width, height, active ? Intensity.READY : Intensity.IDLE, alpha);
+    }
+
+    public void render(float left, float bottom, float width, float height, Intensity intensity, float alpha) {
         if (alpha <= 0f || width <= 0f || height <= 0f) {
             return;
         }
-        float strength = (active ? 1f : IDLE_ALPHA) * alpha;
-        float pulse = (float) Math.sin(elapsedSeconds * PULSE_SPEED) * 0.5f + 0.5f;
+        float strength = intensity.strength() * alpha;
+        float pulse = Fade.pulse(elapsedSeconds * PULSE_SPEED);
         float centreY = bottom + height / 2f;
-        float mouthSize = height * MOUTH_SIZE_SHARE * (0.92f + 0.08f * pulse);
+        float mouthSize = height * MOUTH_SIZE_SHARE * mouthScale(intensity, pulse);
         float spin = elapsedSeconds * MOUTH_SPIN_DEGREES;
         SpriteDraw.drawAdditiveAtCenter(SPRITES, CORONA_TEXTURE, left, centreY, mouthSize, mouthSize, VIOLET, MOUTH_ALPHA * strength, spin);
         SpriteDraw.drawAdditiveAtCenter(SPRITES, CORONA_TEXTURE, left + width, centreY, mouthSize, mouthSize, CYAN, MOUTH_ALPHA * strength, -spin);
         try (GlScope glow = GlScope.flat().additive()) {
-            outerGlow(left, bottom, width, height, GLOW_REACH, GLOW_ALPHA * (0.75f + 0.25f * pulse) * strength);
+            outerGlow(left, bottom, width, height, GLOW_REACH, GLOW_ALPHA * glowScale(intensity, pulse) * strength);
         }
+    }
+
+    static float glowScale(Intensity intensity, float pulse) {
+        return 1f - intensity.pulseDepth() + intensity.pulseDepth() * pulse;
+    }
+
+    static float mouthScale(Intensity intensity, float pulse) {
+        float swing = MOUTH_PULSE_SHARE * intensity.pulseDepth();
+        return 1f - swing + swing * pulse;
     }
 
     private static void outerGlow(float left, float bottom, float width, float height, float reach, float alpha) {

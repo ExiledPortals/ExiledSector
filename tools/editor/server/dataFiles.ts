@@ -96,6 +96,10 @@ export function resolveDataResource(paths: ProjectPaths, name: string): DataReso
       return { filePath: path.join(skillTreeDir, 'skill_types.json'), check: (text) => checkJsonArrayField(text, 'skillTypes') };
     case 'tree':
       return { filePath: path.join(skillTreeDir, 'ship_skill_tree.json'), check: (text) => checkJsonArrayField(text, 'nodes') };
+    case 'atlas-types':
+      return { filePath: path.join(skillTreeDir, 'atlas_tree_types.json'), check: (text) => checkJsonArrayField(text, 'skillTypes') };
+    case 'atlas-tree':
+      return { filePath: path.join(skillTreeDir, 'atlas_tree.json'), check: (text) => checkJsonArrayField(text, 'nodes') };
     case 'node-radii':
       return { filePath: path.join(configDir, 'node_radii.json'), check: checkJsonObject };
     case 'subroutines':
@@ -122,6 +126,8 @@ export function resolveDataResource(paths: ProjectPaths, name: string): DataReso
       return { filePath: path.join(configDir, 'wormhole_anchors.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
     case 'doctrine-archives':
       return { filePath: path.join(configDir, 'doctrine_archives.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
+    case 'phased-planet-traits':
+      return { filePath: path.join(configDir, 'phased_planet_traits.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
     case 'star-chart-modifiers':
       return { filePath: path.join(configDir, 'star_chart_modifiers.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
     case 'star-chart-implicits':

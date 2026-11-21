@@ -10,8 +10,8 @@ import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec.DropData;
 import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.anomaly.LiveAnomalyRuns;
 import exiledsector.charts.anomaly.VanillaDefenders;
-import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.FakeChartContentEngine;
 import exiledsector.charts.run.ChartRun;
@@ -24,6 +24,7 @@ import org.lwjgl.util.vector.Vector2f;
 
 import java.util.List;
 
+import static exiledsector.charts.anomaly.LiveAnomalyRuns.RUN_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -36,7 +37,6 @@ import static org.mockito.Mockito.when;
 
 class HypershuntGuardsTest {
 
-    private static final String RUN_ID = "run1";
     private static final long SEED = 42L;
 
     private MockSector mockSector;
@@ -67,8 +67,7 @@ class HypershuntGuardsTest {
     }
 
     private static ChartRun run(int tier) {
-        ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        run.recordContent(new ChartContent(tier, "pirates", null, 3, 2, List.of(CoronalHypershunt.ANOMALY_ID)));
+        ChartRun run = LiveAnomalyRuns.run(tier, CoronalHypershunt.ANOMALY_ID);
         ChartRuns.store(run);
         return run;
     }

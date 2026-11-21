@@ -10,18 +10,22 @@ import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.ChartSites;
 import exiledsector.charts.content.ChartSpot;
+import exiledsector.charts.effect.ChartModifier;
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.run.ChartRun;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.ArgumentCaptor;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -77,6 +81,36 @@ class RelayNetworkTest {
             verify(relay).setCircularOrbitPointingDown(eq(star), anyFloat(), anyFloat(), anyFloat());
         }
         assertEquals(List.of(RelayKind.values()).stream().sorted().toList(), added.stream().map(RelayKind::of).sorted().toList());
+    }
+
+    @Test
+    void extraRelayPlacesAFourthRelayOfARandomKindAndNeverMore() {
+        ChartGenContext extraRelays = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartModifier.CHART_RELAY_EXTRA_RELAYS, 3f)));
+        AnomalyContentSite site = new AnomalyContentSite(system, "run1", 4, "pirates", extraRelays, List.of(), List.of(), null, spot -> true,
+                salt -> new Random(3L));
+
+        RelayNetwork.INSTANCE.generate(site);
+
+        assertEquals(RelayRules.MAX_RELAYS, added.size());
+        List<RelaySlot> slots = added.stream().map(RelaySlot::of).toList();
+        assertEquals(1, slots.stream().filter(RelaySlot::extra).count());
+        RelaySlot extra = slots.stream().filter(RelaySlot::extra).findFirst().orElseThrow();
+        assertEquals(RelayNetwork.relayId("run1", extra), RelayNetwork.relayId("run1", RelaySlot.parse(extra.key())));
+        ChartRun run = new ChartRun("run1", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
+        site.commitStates(run);
+        assertEquals(slots.stream().sorted(Comparator.comparing(RelaySlot::key)).toList(),
+                RelayStates.slots(run).stream().sorted(Comparator.comparing(RelaySlot::key)).toList());
+    }
+
+    @Test
+    void aRelayWithoutAStoredSlotReadsAsItsKindsFirstSlot() {
+        SectorEntityToken relay = RelayFixtures.relay(RelayKind.NAV_BUOY, new Vector2f());
+
+        assertEquals(RelaySlot.of(RelayKind.NAV_BUOY), RelaySlot.of(relay));
+        relay.getMemoryWithoutUpdate().set(RelayNetwork.SLOT_MEMORY_KEY, RelaySlot.extraOf(RelayKind.NAV_BUOY).key());
+        assertEquals(RelaySlot.extraOf(RelayKind.NAV_BUOY), RelaySlot.of(relay));
+        assertEquals("nav_buoy", RelaySlot.of(RelayKind.NAV_BUOY).key());
+        assertNull(RelaySlot.parse("lost_extra"));
     }
 
     @Test

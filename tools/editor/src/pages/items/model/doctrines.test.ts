@@ -1,10 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { buildVocabulary } from '../../../api/vocabulary.ts';
+import { splitList } from '../../../shared/csv.ts';
+import { markRowsSaved } from '../../../shared/rowIds.ts';
 import {
   doctrineTypeFacts,
   joinEntries,
-  listEntries,
-  markDoctrinesSaved,
   newDoctrineArchive,
   parseDoctrineArchivesCsv,
   replacementCandidates,
@@ -15,19 +14,16 @@ import {
 } from './doctrines.ts';
 import { isUsed, modifierUsage, referenceIssues, renameModifierReferences } from './modifierUsage.ts';
 import { modifierById, validateModifiers, type ItemModifier } from './modifiers.ts';
+import { testVocabulary } from '../../../test/testVocabulary.ts';
 
-const vocabulary = buildVocabulary({
+const vocabulary = testVocabulary({
   effects: [{ name: 'ARMOR_PERCENT', statMode: 'PERCENT', lowerIsBetter: false }],
-  tags: { theme: [], volume: ['core'], requirement: [] },
-  tiers: [],
-  unlockConditionTypes: [],
-  blueprintCategories: [],
+  tags: { volume: ['core'] },
   itemTypes: ['subroutine', 'hull_item', 'star_chart', 'wormhole_anchor'],
   itemKinds: [{ id: 'bridge', type: 'hull_item' }],
   modifierScopes: ['subroutine', 'unique_subroutine', 'doctrine', 'hull_item', 'star_chart', 'wormhole_anchor'],
   doctrineBehaviours: ['REWRITE', 'AUGMENT'],
   radiusSizes: ['small', 'medium', 'large'],
-  itemUnlocks: [],
 });
 
 const TYPES = JSON.stringify({
@@ -47,9 +43,9 @@ function modifier(id: string, itemTypes: string[], slot = 'prefix'): ItemModifie
 const MODIFIERS = [modifier('ARMOR_PERCENT_DOCTRINE', ['doctrine']), modifier('ARMOR_PERCENT_PLATE', ['hull_item'])];
 const DOCTRINES = ['doc_transform', 'doc_augment', 'doc_missing'];
 const CSV = [
-  'id,behaviour,radius,faction,notables,keystones,small_nodes,modifiers,min_lines,max_lines',
-  'doc_transform,REWRITE,large,tritachyon,notable_a; notable_b,keystone_a,small_a,,1,1',
-  'doc_augment,AUGMENT,medium,,,,,@ARMOR_PERCENT_DOCTRINE:2,1,2',
+  'id,behaviour,radius,faction,notables,keystones,small_nodes,modifiers,min_lines,max_lines,infestation,drop_factions,drop_chance,guaranteed_drop',
+  'doc_transform,REWRITE,large,tritachyon,notable_a; notable_b,keystone_a,small_a,,1,1,shroud,dweller,0.15,true',
+  'doc_augment,AUGMENT,medium,,,,,@ARMOR_PERCENT_DOCTRINE:2,1,2,,,,',
   '',
 ].join('\r\n');
 
@@ -62,9 +58,13 @@ describe('doctrine archives', () => {
     const model = parseDoctrineArchivesCsv(CSV);
 
     expect(model.archives.map((archive) => archive.id)).toEqual(['doc_transform', 'doc_augment']);
-    expect(listEntries(model.archives[0].notables)).toEqual(['notable_a', 'notable_b']);
+    expect(splitList(model.archives[0].notables)).toEqual(['notable_a', 'notable_b']);
     expect(model.archives[0].smallNodes).toBe('small_a');
     expect(model.archives[1].modifiers).toBe('@ARMOR_PERCENT_DOCTRINE:2');
+    expect(model.archives[0].infestation).toBe('shroud');
+    expect(model.archives[0].dropFactions).toBe('dweller');
+    expect(model.archives[0].dropChance).toBe('0.15');
+    expect(model.archives[0].guaranteedDrop).toBe('true');
     expect(serializeDoctrineArchivesCsv(model)).toBe(CSV);
     expect(joinEntries(['a', 'b'])).toBe('a; b');
   });
@@ -93,7 +93,7 @@ describe('doctrine archives', () => {
     expect(issues).toContain('doc_transform: radius must be one of small, medium, large');
     expect(issues).toContain('doc_transform: keystone_a is listed as a NOTABLE replacement, but it is a KEYSTONE node');
     expect(issues).toContain('doc_transform: missing is not a skill type');
-    expect(issues).toContain("doc_transform: optional_notable is optional or has an item cost, so it can't be a replacement");
+    expect(issues).toContain("doc_transform: optional_notable is optional, so it can't be a replacement");
     expect(issues).toContain('doc_transform: a transforming doctrine lists no modifiers');
     expect(issues).toContain('doc_augment: an augmenting doctrine lists no replacement nodes');
     expect(issues).toContain('doc_augment: ARMOR_PERCENT_PLATE does not list doctrine in its item types');
@@ -102,6 +102,22 @@ describe('doctrine archives', () => {
     expect(issues).toContain('doc_augment: min lines must be 1 or more and max lines at least min lines');
     expect(issues).toContain('not_a_doctrine: id must be a DOCTRINE subroutine in subroutines.csv');
     expect(issues).toContain('not_a_doctrine: behaviour must be one of REWRITE, AUGMENT');
+  });
+
+  it('reports bad infestations and fleet drops', () => {
+    const facts = doctrineTypeFacts(TYPES);
+    const broken = archives();
+    broken[0].infestation = 'plague';
+    broken[0].dropChance = 'often';
+    broken[0].guaranteedDrop = 'always';
+    broken[1].dropChance = '0.1';
+
+    const issues = validateDoctrineArchives(broken, vocabulary, DOCTRINES, facts, MODIFIERS);
+
+    expect(issues).toContain('doc_transform: infestation must be blank or one of threat, shroud');
+    expect(issues).toContain('doc_transform: drop chance must be a number of 0 or more');
+    expect(issues).toContain('doc_transform: guaranteed drop must be true, false or blank');
+    expect(issues).toContain('doc_augment: a fleet drop needs at least one drop faction');
   });
 
   it('offers only plain replacements of the right tier', () => {
@@ -119,7 +135,7 @@ describe('doctrine archives', () => {
     expect(added.behaviour).toBe('REWRITE');
     expect(added.radius).toBe('medium');
     current.push(added);
-    markDoctrinesSaved({ archives: current }, { archives: current.map((archive) => ({ ...archive })) });
+    markRowsSaved(current, current.map((archive) => ({ ...archive })));
     expect(current[2].loadedId).toBe('doc_missing');
   });
 

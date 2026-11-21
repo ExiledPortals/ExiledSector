@@ -10,6 +10,7 @@ import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.content.ChartAnomalyFleets;
+import exiledsector.charts.content.FleetStrength;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.run.ChartRun;
@@ -24,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static exiledsector.charts.anomaly.LiveAnomalyRuns.RUN_ID;
+import static exiledsector.charts.anomaly.LiveAnomalyRuns.run;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -33,8 +36,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class PreCollapseFacilityTest {
-
-    private static final String RUN_ID = "run1";
 
     private MockSector mockSector;
     private StarSystemAPI system;
@@ -70,10 +71,6 @@ class PreCollapseFacilityTest {
     private AnomalyContentSite site(long seed) {
         return new AnomalyContentSite(system, RUN_ID, 4, "pirates", ChartGenContext.none(), List.of(), new Vector2f(), spot -> true,
                 salt -> new Random(seed ^ salt));
-    }
-
-    private static ChartRun run() {
-        return new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
     }
 
     @Test
@@ -157,20 +154,20 @@ class PreCollapseFacilityTest {
 
     @Test
     void theGuardsNeverFallBelowAoTDsFleetButGrowPastItWithTier() {
-        ChartAnomalyFleets.Spec small = new ChartAnomalyFleets.Spec("remnant", "patrolLarge", 75f, 0f, 0f, 0.6f, 1, 2, 1);
+        ChartAnomalyFleets.Spec small = new ChartAnomalyFleets.Spec("remnant", "patrolLarge", new FleetStrength(75f, 0.6f, 1, 2, 1), 0f, 0f);
         ChartAnomalyFleets.Spec floored = small.atLeast(160f);
-        assertEquals(160f, floored.combatPoints());
-        assertEquals(small.quality(), floored.quality());
-        assertEquals(small.officerCountBonus(), floored.officerCountBonus());
+        assertEquals(160f, floored.strength().combatPoints());
+        assertEquals(small.strength().quality(), floored.strength().quality());
+        assertEquals(small.strength().officerCountBonus(), floored.strength().officerCountBonus());
 
-        ChartAnomalyFleets.Spec large = new ChartAnomalyFleets.Spec("remnant", "patrolLarge", 450f, 0f, 0f, 0.9f, 3, 4, 2);
+        ChartAnomalyFleets.Spec large = new ChartAnomalyFleets.Spec("remnant", "patrolLarge", new FleetStrength(450f, 0.9f, 3, 4, 2), 0f, 0f);
         assertSame(large, large.atLeast(180f));
     }
 
     @Test
     void databankRollsGrowWithTier() {
         assertEquals(FacilityRules.DATABANK_ROLLS, FacilityRules.databankRolls(ChartTiers.LOWEST_TIER));
-        assertTrue(FacilityRules.databankRolls(ChartTiers.HIGHEST_TIER) > FacilityRules.databankRolls(ChartTiers.LOWEST_TIER));
+        assertTrue(FacilityRules.databankRolls(ChartTiers.HIGHEST_DROP_TIER) > FacilityRules.databankRolls(ChartTiers.LOWEST_TIER));
         assertEquals(VaultsOfKnowledgeCompat.DATABANK_DROP_GROUP, FacilityLoot.databankDrops(5).get(0).group);
         assertEquals(FacilityRules.databankRolls(5), FacilityLoot.databankDrops(5).get(0).chances);
     }

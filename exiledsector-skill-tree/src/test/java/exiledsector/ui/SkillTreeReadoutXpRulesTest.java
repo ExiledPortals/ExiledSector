@@ -36,7 +36,13 @@ class SkillTreeReadoutXpRulesTest {
     }
 
     @Test
-    void atDefaultsTheReadoutQuotesVanillasFullDifficultyBonus() {
+    void atDefaultsTheReadoutLeavesOutTheDifficultyBonus() {
+        assertEquals(WITHOUT_DIFFICULTY, SkillTreeChrome.xpRulesText());
+    }
+
+    @Test
+    void atFullStrengthTheReadoutQuotesVanillasFullDifficultyBonus() {
+        configure(1f, 6f);
         String rules = SkillTreeChrome.xpRulesText();
 
         assertTrue(rules.contains("Harder battles give up to 500% more XP"), rules);

@@ -39,6 +39,7 @@ final class ChartWormholeVisual {
     static final float MIN_SCALE = 0.25f;
     static final float OPEN_TRIGGER_RANGE = 600f;
     static final float SECONDS_BEFORE_CLOSING = 5f;
+    static final float FLEET_CHECK_SECONDS = 0.25f;
     private static final float ADVANCE_EXTRA_RANGE = 1000f;
     private static final float SIZE_SHARE = 1.55f;
     private static final float CORONA_SIZE_SHARE = 2.3f * 0.9f;
@@ -62,6 +63,7 @@ final class ChartWormholeVisual {
     private final Drift backdropDrift = new Drift(0.1f);
     private final FaderUtil openFader;
     private float secondsSinceOpened = 1000f;
+    private float secondsSinceFleetCheck = FLEET_CHECK_SECONDS;
 
     private ChartWormholeVisual(SpriteAPI bandTexture, SpriteAPI ring, SpriteAPI secondRing, SpriteAPI corona, SpriteAPI mask,
             SpriteAPI glow, SpriteAPI backdrop, float radius, boolean startOpen) {
@@ -108,7 +110,7 @@ final class ChartWormholeVisual {
 
     static boolean startsOpen(SectorEntityToken wormhole, boolean newlyCreated) {
         LocationAPI location = wormhole.getContainingLocation();
-        return newlyCreated || location == null || location.isHyperspace();
+        return newlyCreated || location == null || location.isHyperspace() || wormhole.hasTag(ChartIds.HELD_OPEN_WORMHOLE_TAG);
     }
 
     static String backdropFor(SectorAPI sector, SectorEntityToken wormhole) {
@@ -139,6 +141,7 @@ final class ChartWormholeVisual {
         if (openFader.isFadedIn()) {
             secondsSinceOpened += amount;
         }
+        secondsSinceFleetCheck += amount;
         ViewportAPI viewport = Global.getSector().getViewport();
         float radius = wormhole.getRadius();
         if (!isNearViewport(wormhole, viewport, radius * 1.75f + ADVANCE_EXTRA_RANGE)) {
@@ -172,23 +175,46 @@ final class ChartWormholeVisual {
         backdropDrift.advance(days * 0.25f * 3f);
     }
 
-    private void updateOpenState(SectorEntityToken wormhole) {
+    void updateOpenState(SectorEntityToken wormhole) {
         LocationAPI location = wormhole.getContainingLocation();
         if (location == null || location.isHyperspace()) {
             return;
         }
-        boolean approached = false;
-        for (CampaignFleetAPI fleet : location.getFleets()) {
-            if (fleet.getInteractionTarget() == wormhole && Misc.getDistance(fleet.getLocation(), wormhole.getLocation()) < OPEN_TRIGGER_RANGE) {
-                approached = true;
-                break;
-            }
+        if (wormhole.hasTag(ChartIds.HELD_OPEN_WORMHOLE_TAG)) {
+            open(wormhole);
+            return;
         }
-        if (approached) {
+        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
+        if (playerFleet != null && playerFleet.getContainingLocation() == location && isApproaching(playerFleet, wormhole)) {
+            open(wormhole);
+            return;
+        }
+        if (secondsSinceFleetCheck < FLEET_CHECK_SECONDS) {
+            return;
+        }
+        secondsSinceFleetCheck = 0f;
+        if (anyFleetApproaching(location, wormhole)) {
             open(wormhole);
         } else if (secondsSinceOpened > SECONDS_BEFORE_CLOSING) {
             close(wormhole);
         }
+    }
+
+    private static boolean anyFleetApproaching(LocationAPI location, SectorEntityToken wormhole) {
+        for (CampaignFleetAPI fleet : location.getFleets()) {
+            if (isApproaching(fleet, wormhole)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isApproaching(CampaignFleetAPI fleet, SectorEntityToken wormhole) {
+        return fleet.getInteractionTarget() == wormhole && Misc.getDistance(fleet.getLocation(), wormhole.getLocation()) < OPEN_TRIGGER_RANGE;
+    }
+
+    boolean isOpenOrOpening() {
+        return openFader.isFadingIn() || openFader.isFadedIn();
     }
 
     private void open(SectorEntityToken wormhole) {

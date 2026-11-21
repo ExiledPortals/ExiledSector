@@ -9,6 +9,7 @@ import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.DeploymentRepairTally;
 import exiledsector.skills.skilleffect.ShipCombatListener;
+import exiledsector.skills.skilleffect.TickTimer;
 
 import java.util.List;
 
@@ -31,7 +32,7 @@ final class UnhitArmorRegenListener extends ShipCombatListener implements Advanc
             new RegenSource(LOW_CAP_REGEN_PERCENT_KEY, LOW_DEPLOYMENT_CAP_PERCENT, new DeploymentRepairTally()));
     private float[][] lastCellArmor;
     private float[][] cellSecondsUnhit;
-    private float secondsSinceTick;
+    private final TickTimer tickTimer = new TickTimer(TICK_SECONDS);
 
     UnhitArmorRegenListener(ShipAPI ownerShip) {
         super(ownerShip);
@@ -39,12 +40,10 @@ final class UnhitArmorRegenListener extends ShipCombatListener implements Advanc
 
     @Override
     public void advance(float amount) {
-        secondsSinceTick += amount;
-        if (secondsSinceTick < TICK_SECONDS) {
+        if (!tickTimer.advance(amount)) {
             return;
         }
-        float elapsed = secondsSinceTick;
-        secondsSinceTick = 0f;
+        float elapsed = tickTimer.elapsed();
         ArmorGridAPI grid = ownerShip.getArmorGrid();
         CombatEngineAPI engine = Global.getCombatEngine();
         if (grid == null || engine == null || !ownerIsAliveNotHulk()) {

@@ -43,8 +43,8 @@ class StormRulesTest {
 
     @Test
     void theChartLinesTuneTheStorm() {
-        assertEquals(1.5f, StormRules.lootQuantityMult(ChartGenContext.none()), 0.001f);
-        assertEquals(2f, StormRules.lootQuantityMult(withEffect(ChartModifier.CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT, 50f)), 0.001f);
+        assertEquals(50f, StormRules.lootQuantityPercent(ChartGenContext.none()), 0.001f);
+        assertEquals(100f, StormRules.lootQuantityPercent(withEffect(ChartModifier.CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT, 50f)), 0.001f);
         ChartGenContext faster = withEffect(ChartModifier.CHART_STORM_STRIKE_FREQUENCY_PERCENT, 100f);
         assertEquals(StormRules.STRIKE_SECONDS / 2f, StormRules.strikeSeconds(faster.anomalyMult(StormFront.STRIKE_KEY)), 0.001f);
         ChartGenContext wider = withEffect(ChartModifier.CHART_STORM_FRONT_SIZE_PERCENT, 50f);

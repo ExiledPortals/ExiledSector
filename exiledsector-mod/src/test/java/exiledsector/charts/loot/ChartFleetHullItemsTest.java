@@ -1,5 +1,6 @@
 package exiledsector.charts.loot;
 
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
@@ -15,11 +16,10 @@ import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
-import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
-import exiledsector.items.ItemDrops;
-import exiledsector.items.StarChartCipher;
-import exiledsector.items.StarChartFixtures;
+import exiledsector.items.crafting.material.StarChartCipher;
+import exiledsector.items.starchart.StarChartFixtures;
+import exiledsector.loot.Loot;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -29,8 +29,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -65,123 +63,51 @@ class ChartFleetHullItemsTest {
     }
 
     @Test
-    void chartFleetsLeaveHullItemsToBattleDropsWhileTheBossStillCarriesThem() throws Exception {
+    void chartFleetsAndTheBossLeaveHullItemsToBattleDrops() throws Exception {
         when(sector.getPlayerStats().getLevel()).thenReturn(15);
         ItemDefinitions.register(new JSONArray()
                 .put(new JSONObject().put("id", "bridge_basic").put("section", "bridge").put("rarity", "10").put("prefixes", "HULL_PERCENT:4:6"))
                 .put(new JSONObject().put("id", "hull_relic").put("section", "bridge").put("rarity", "10").put("unique", "true")
                         .put("prefixes", "HULL_PERCENT:4:6")));
-        ItemDrops.register(new JSONArray()
-                .put(new JSONObject().put("site", ChartIds.BOSS_LOOT_SITE).put("chances", "1;1;1").put("uniqueChance", "1")));
         try {
             ChartRun run = storeLiveRun(6);
 
-            ItemDrops.SiteLoot guardLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 80f), run,
+            Loot guardLoot = rollAlone(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 80f), run,
                     ChartGenContext.none(), 80f, new Random(1L));
-            ItemDrops.SiteLoot bossLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
+            Loot bossLoot = rollAlone(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
                     ChartGenContext.none(), 200f, new Random(1L));
 
-            assertTrue(guardLoot.upgrades().isEmpty());
+            assertTrue(guardLoot.schematics().isEmpty());
             assertTrue(guardLoot.items().stream().noneMatch(item -> ItemDefinitions.get(item.definitionId()) != null), guardLoot.toString());
             assertTrue(guardLoot.materials().isEmpty(), "materials drop per deployment point from the battle, not from the fleet roll");
-            assertFalse(bossLoot.upgrades().isEmpty());
-            assertTrue(bossLoot.items().stream().anyMatch(item -> ItemDefinitions.get(item.definitionId()) != null), bossLoot.toString());
+            assertTrue(bossLoot.schematics().isEmpty());
+            assertTrue(bossLoot.items().stream().noneMatch(item -> ItemDefinitions.get(item.definitionId()) != null), bossLoot.toString());
         } finally {
-            ItemDrops.clear();
             ItemDefinitions.clear();
         }
     }
 
     @Test
-    void theBossDropsAtLeastOneHullItemOncePerRun() throws Exception {
+    void theBossGuaranteesNeitherAHullItemNorAUniqueEvenAtAFullyWokenRelayNetwork() throws Exception {
         when(sector.getPlayerStats().getLevel()).thenReturn(15);
         ItemDefinitions.register(new JSONArray()
-                .put(new JSONObject().put("id", "bridge_basic").put("section", "bridge").put("rarity", "10").put("prefixes", "HULL_PERCENT:4:6")));
-        ItemDrops.register(new JSONArray()
-                .put(new JSONObject().put("site", ChartIds.BOSS_LOOT_SITE).put("chances", "0").put("uniqueChance", "0")));
-        try {
-            ChartRun run = storeLiveRun(6);
-
-            ItemDrops.SiteLoot firstBattle = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
-                    ChartGenContext.none(), 100f, new Random(1L));
-            ItemDrops.SiteLoot secondBattle = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
-                    ChartGenContext.none(), 100f, new Random(1L));
-
-            assertEquals(List.of("bridge_basic"), firstBattle.items().stream().map(ItemData::definitionId).toList());
-            assertTrue(secondBattle.items().isEmpty(), secondBattle.toString());
-        } finally {
-            ItemDrops.clear();
-            ItemDefinitions.clear();
-        }
-    }
-
-    @Test
-    void theLastRelayStageBossDropsOneUniqueWhateverItsSourceOnceEveryRelayIsAwake() throws Exception {
-        when(sector.getPlayerStats().getLevel()).thenReturn(15);
-        ItemDefinitions.register(new JSONArray()
+                .put(new JSONObject().put("id", "bridge_basic").put("section", "bridge").put("rarity", "10").put("prefixes", "HULL_PERCENT:4:6"))
                 .put(new JSONObject().put("id", "site_relic").put("section", "bridge").put("rarity", "10").put("unique", "true")
                         .put("source", "site:somewhere_else").put("prefixes", "HULL_PERCENT:4:6")));
-        ItemDrops.register(new JSONArray()
-                .put(new JSONObject().put("site", ChartIds.BOSS_LOOT_SITE).put("chances", "0").put("uniqueChance", "0")));
         try {
             ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
             run.recordContent(new ChartContent(6, "hegemony", BOSS_ID, 4, 6, List.of("relay_network")));
             run.recordArrival();
             ChartRuns.store(run);
-            ChartGenContext lastStage = ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of("relay_network"), false)
-                    .withExtraEffects(List.of(), true));
+            for (RelayKind kind : List.of(RelayKind.NAV_BUOY, RelayKind.COMM_RELAY, RelayKind.SENSOR_ARRAY)) {
+                AnomalyState.of(run, RelayNetwork.ANOMALY_ID).put(kind.key(), RelayStates.WOKEN);
+            }
+            ChartGenContext lastStage = ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of("relay_network")));
 
-            ItemDrops.SiteLoot guardLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 80f), run, lastStage, 80f,
-                    new Random(1L));
-            ItemDrops.SiteLoot plainBossLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
-                    ChartGenContext.none(), 200f, new Random(1L));
-            ItemDrops.SiteLoot relaysAsleep = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, lastStage, 100f,
-                    new Random(1L));
-            AnomalyState.of(run, RelayNetwork.ANOMALY_ID).put(RelayKind.NAV_BUOY.key(), RelayStates.WOKEN);
-            AnomalyState.of(run, RelayNetwork.ANOMALY_ID).put(RelayKind.COMM_RELAY.key(), RelayStates.WOKEN);
-            ItemDrops.SiteLoot oneRelayAsleep = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, lastStage, 100f,
-                    new Random(1L));
-            AnomalyState.of(run, RelayNetwork.ANOMALY_ID).put(RelayKind.SENSOR_ARRAY.key(), RelayStates.WOKEN);
-            ItemDrops.SiteLoot firstBattle = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, lastStage, 100f,
-                    new Random(1L));
-            ItemDrops.SiteLoot secondBattle = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, lastStage, 100f,
-                    new Random(1L));
+            Loot bossLoot = rollAlone(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, lastStage, 100f, new Random(1L));
 
-            assertTrue(guardLoot.items().stream().noneMatch(item -> "site_relic".equals(item.definitionId())));
-            assertTrue(plainBossLoot.items().stream().noneMatch(item -> "site_relic".equals(item.definitionId())));
-            assertTrue(relaysAsleep.items().stream().noneMatch(item -> "site_relic".equals(item.definitionId())));
-            assertTrue(oneRelayAsleep.items().stream().noneMatch(item -> "site_relic".equals(item.definitionId())));
-            assertEquals(1, firstBattle.items().stream().filter(item -> "site_relic".equals(item.definitionId())).count());
-            assertTrue(secondBattle.items().stream().noneMatch(item -> "site_relic".equals(item.definitionId())));
-            assertTrue(run.isBossUniqueGranted());
+            assertTrue(bossLoot.items().stream().noneMatch(item -> ItemDefinitions.get(item.definitionId()) != null), bossLoot.toString());
         } finally {
-            ItemDrops.clear();
-            ItemDefinitions.clear();
-        }
-    }
-
-    @Test
-    void aRunWithoutARelayNetworkNeverHoldsBackItsGuaranteedUnique() throws Exception {
-        when(sector.getPlayerStats().getLevel()).thenReturn(15);
-        ItemDefinitions.register(new JSONArray()
-                .put(new JSONObject().put("id", "site_relic").put("section", "bridge").put("rarity", "10").put("unique", "true")
-                        .put("source", "site:somewhere_else").put("prefixes", "HULL_PERCENT:4:6")));
-        ItemDrops.register(new JSONArray()
-                .put(new JSONObject().put("site", ChartIds.BOSS_LOOT_SITE).put("chances", "0").put("uniqueChance", "0")));
-        try {
-            ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-            run.recordContent(new ChartContent(6, "hegemony", BOSS_ID, 4, 6, List.of()));
-            run.recordArrival();
-            ChartRuns.store(run);
-            ChartGenContext guaranteed = ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of(), false)
-                    .withExtraEffects(List.of(), true));
-
-            ItemDrops.SiteLoot bossLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, guaranteed, 100f,
-                    new Random(1L));
-
-            assertEquals(1, bossLoot.items().stream().filter(item -> "site_relic".equals(item.definitionId())).count());
-        } finally {
-            ItemDrops.clear();
             ItemDefinitions.clear();
         }
     }
@@ -192,5 +118,11 @@ class ChartFleetHullItemsTest {
         run.recordArrival();
         ChartRuns.store(run);
         return run;
+    }
+
+    private static Loot rollAlone(SectorAPI sector, CampaignFleetAPI fleet, ChartRun run, ChartGenContext context,
+                                                float defeatedDeploymentPoints, Random random) {
+        return ChartFleetLoot.roll(sector, fleet, run, new ChartLootContext(context, run.tier()), defeatedDeploymentPoints,
+                ChartFleetLoot.Battle.of(defeatedDeploymentPoints), random);
     }
 }

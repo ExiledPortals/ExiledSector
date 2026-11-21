@@ -1,3 +1,4 @@
 exiledsector.GameStaticsExtension
 exiledsector.i18n.EnglishCatalogueExtension
 exiledsector.domain.DomainsExtension
+exiledsector.skills.tags.ThemeTagsExtension

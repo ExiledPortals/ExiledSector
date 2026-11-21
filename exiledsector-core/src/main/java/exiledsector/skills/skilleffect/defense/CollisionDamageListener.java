@@ -11,9 +11,10 @@ import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
 import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.ShipCombatListener;
+import exiledsector.skills.skilleffect.SkillEffectSupport;
 import org.lwjgl.util.vector.Vector2f;
 
-final class CollisionDamageListener extends ShipCombatListener implements DamageDealtModifier, DamageTakenModifier {
+public final class CollisionDamageListener extends ShipCombatListener implements DamageDealtModifier, DamageTakenModifier {
 
     static final String COLLISION_DAMAGE_PERCENT_KEY = "exiledSector_ramProwCollisionDamagePercent";
     private static final String MOD_ID_PREFIX = "exiledSector_ramProwCollisionDamage_";
@@ -23,7 +24,7 @@ final class CollisionDamageListener extends ShipCombatListener implements Damage
         super(ownerShip, MOD_ID_PREFIX);
     }
 
-    static boolean isCollisionDamage(Object param, DamageAPI damage) {
+    public static boolean isCollisionDamage(Object param, DamageAPI damage) {
         DamageType type = damage.getType();
         return param == null && damage.getStats() == null && !damage.isDps() && damage.getFluxComponent() <= 0f
                 && (type == DamageType.KINETIC || type == DamageType.ENERGY);
@@ -34,25 +35,17 @@ final class CollisionDamageListener extends ShipCombatListener implements Damage
         return CombatQueries.withinRadius(first.getLocation(), second.getLocation(), contactRadius);
     }
 
-    static float dealtMult(float percent) {
-        return 1f + percent / 100f;
-    }
-
-    static float takenMult(float percent) {
-        return Math.max(0f, 1f - percent / 100f);
-    }
-
     @Override
     public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
-        if (!(target instanceof ShipAPI targetShip) || !isCollisionDamage(param, damage) || !CombatQueries.isHostile(ownerShip, targetShip)
-                || !isInContact(ownerShip, targetShip)) {
+        ShipAPI targetShip = CombatQueries.hostileShip(ownerShip, target);
+        if (targetShip == null || !isCollisionDamage(param, damage) || !isInContact(ownerShip, targetShip)) {
             return null;
         }
         float percent = magnitude(COLLISION_DAMAGE_PERCENT_KEY);
         if (percent <= 0f) {
             return null;
         }
-        damage.getModifier().modifyMult(modId, dealtMult(percent));
+        damage.getModifier().modifyMult(modId, SkillEffectSupport.multFrom(percent));
         return modId;
     }
 
@@ -62,23 +55,23 @@ final class CollisionDamageListener extends ShipCombatListener implements Damage
             return null;
         }
         float percent = magnitude(COLLISION_DAMAGE_PERCENT_KEY);
-        if (percent <= 0f || !touchesAnything()) {
+        if (percent <= 0f || !touchesAnything(ownerShip)) {
             return null;
         }
-        damage.getModifier().modifyMult(modId, takenMult(percent));
+        damage.getModifier().modifyMult(modId, SkillEffectSupport.reductionMult(percent));
         return modId;
     }
 
-    private boolean touchesAnything() {
+    public static boolean touchesAnything(ShipAPI ship) {
         CombatEngineAPI engine = Global.getCombatEngine();
-        Vector2f location = ownerShip.getLocation();
-        float queryRadius = ownerShip.getCollisionRadius() * CONTACT_RADIUS_MARGIN;
-        return CombatQueries.anyNear(engine.getShipGrid(), location, queryRadius, this::isCollider)
-                || CombatQueries.anyNear(engine.getAsteroidGrid(), location, queryRadius, this::isCollider);
+        Vector2f location = ship.getLocation();
+        float queryRadius = ship.getCollisionRadius() * CONTACT_RADIUS_MARGIN;
+        return CombatQueries.anyNear(engine.getShipGrid(), location, queryRadius, candidate -> isCollider(ship, candidate))
+                || CombatQueries.anyNear(engine.getAsteroidGrid(), location, queryRadius, candidate -> isCollider(ship, candidate));
     }
 
-    private boolean isCollider(Object candidate) {
-        return candidate instanceof CombatEntityAPI entity && entity != ownerShip && entity.getCollisionClass() != CollisionClass.NONE
-                && isInContact(ownerShip, entity);
+    private static boolean isCollider(ShipAPI ship, Object candidate) {
+        return candidate instanceof CombatEntityAPI entity && entity != ship && entity.getCollisionClass() != CollisionClass.NONE
+                && isInContact(ship, entity);
     }
 }

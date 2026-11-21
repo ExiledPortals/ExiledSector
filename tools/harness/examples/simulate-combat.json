@@ -1,0 +1,20 @@
+{
+  "steps": [
+    {"step": "wait", "seconds": 3},
+    {"step": "ignoreErrorsSoFar"},
+    {"step": "simulate", "ship": "flagship"},
+    {"step": "wait", "frames": 30},
+    {"step": "screenshot", "name": "simulator_start"},
+    {"step": "recordStats", "ship": "player", "name": "flagship_stats"},
+    {"step": "spawn", "variant": "lasher_CS", "count": 2},
+    {"step": "autopilot"},
+    {"step": "speed", "mult": 2},
+    {"step": "screenshot", "name": "simulator_spawned"},
+    {"step": "recordDamage", "name": "fight", "seconds": 40, "untilNoEnemies": true},
+    {"step": "screenshot", "name": "simulator_end"},
+    {"step": "endSimulation"},
+    {"step": "wait", "frames": 30},
+    {"step": "screenshot", "name": "after_simulation"},
+    {"step": "expectNoErrors"}
+  ]
+}

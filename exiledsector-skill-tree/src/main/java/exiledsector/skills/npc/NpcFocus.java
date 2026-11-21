@@ -2,13 +2,16 @@ package exiledsector.skills.npc;
 
 import exiledsector.ModCsv;
 import exiledsector.data.CsvRows;
-import exiledsector.skills.tags.SkillTags;
+import exiledsector.skills.tags.ThemeTagScope;
+import exiledsector.skills.tags.ThemeTags;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -44,12 +47,19 @@ public final class NpcFocus {
         BY_SHIP_SYSTEM.set(Map.of());
     }
 
-    public static Map<String, Float> of(String factionId, String... shipSystemIds) {
-        Map<String, Float> focus = new HashMap<>(lookup(BY_FACTION.get(), factionId));
+    public static List<Map<String, Float>> of(String factionId, String... shipSystemIds) {
+        List<Map<String, Float>> focusSources = new ArrayList<>();
+        addSource(focusSources, lookup(BY_FACTION.get(), factionId));
         for (String shipSystemId : shipSystemIds) {
-            lookup(BY_SHIP_SYSTEM.get(), shipSystemId).forEach((tag, weight) -> focus.merge(tag, weight, (first, second) -> first * second));
+            addSource(focusSources, lookup(BY_SHIP_SYSTEM.get(), shipSystemId));
         }
-        return Map.copyOf(focus);
+        return List.copyOf(focusSources);
+    }
+
+    private static void addSource(List<Map<String, Float>> focusSources, Map<String, Float> multipliersByTag) {
+        if (!multipliersByTag.isEmpty()) {
+            focusSources.add(multipliersByTag);
+        }
     }
 
     private static Map<String, Float> lookup(Map<String, Map<String, Float>> focusById, String id) {
@@ -73,9 +83,9 @@ public final class NpcFocus {
             String[] parts = entry.split(":");
             String tag = parts[0].trim();
             Float weight = parts.length == 2 ? weight(parts[1].trim()) : null;
-            if (!SkillTags.THEME.contains(tag) || weight == null || weight <= 0f) {
+            if (!ThemeTags.allows(tag, ThemeTagScope.SHIP) || weight == null || weight <= 0f) {
                 LOG.warn("Ignoring focus '" + entry.trim() + "' for " + id + " in " + path
-                        + ": expected theme:weight with a theme tag from " + SkillTags.THEME + " and a positive weight");
+                        + ": expected theme:weight with a ship theme tag from " + ThemeTags.PATH + " and a positive weight");
                 continue;
             }
             weightsByTag.put(tag, weight);

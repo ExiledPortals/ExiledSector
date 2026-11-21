@@ -1,6 +1,7 @@
 package exiledsector.skills.npc;
 
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
+import exiledsector.data.WeightedPick;
 import exiledsector.skills.AffinitySteps;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.SkillTypeEffect;
@@ -33,7 +34,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Predicate;
-import java.util.function.ToDoubleFunction;
 
 public final class NpcSkillTreeBuilder {
 
@@ -111,27 +111,6 @@ public final class NpcSkillTreeBuilder {
         };
     }
 
-    static <T> T weightedPick(List<T> items, ToDoubleFunction<T> weight, Random random) {
-        double totalWeight = 0;
-        for (T item : items) {
-            totalWeight += Math.max(0, weight.applyAsDouble(item));
-        }
-        if (items.isEmpty()) {
-            return null;
-        }
-        if (totalWeight <= 0) {
-            return items.get(random.nextInt(items.size()));
-        }
-        double roll = random.nextDouble() * totalWeight;
-        for (T item : items) {
-            roll -= Math.max(0, weight.applyAsDouble(item));
-            if (roll < 0) {
-                return item;
-            }
-        }
-        return items.get(items.size() - 1);
-    }
-
     private record State(AllocationCheck gate, boolean shieldInvested) {
     }
 
@@ -205,7 +184,7 @@ public final class NpcSkillTreeBuilder {
             this.freeNodeCount = targetNodeCount;
             this.maxNodes = Math.min(freedOp.maxNodeCount(), MAX_NODE_COUNT);
             this.random = random;
-            this.relevance = NpcRelevance.of(profile, hullMods.permanent(), request.focus());
+            this.relevance = NpcRelevance.of(profile, hullMods.permanent(), request.focusSources());
             this.installedHullModIds = new TreeSet<>(hullMods.installed());
             this.nodeBudget = Math.min(targetNodeCount, maxNodes);
             Predicate<SkillType> lockedTypes = request.lockedTypes();
@@ -353,7 +332,7 @@ public final class NpcSkillTreeBuilder {
                     candidates.add(nodeId);
                 }
             }
-            String goalNodeId = weightedPick(candidates, id -> nodeRelevance(search, id) * tierWeight(id), random);
+            String goalNodeId = WeightedPick.pickOrUniform(candidates, id -> nodeRelevance(search, id) * tierWeight(id), random);
             if (goalNodeId != null && !allocatePath(search, goalNodeId, NpcBuildStep.FACTION_GOAL, NpcBuildStep.PATH_TO_GOAL)) {
                 rejectedNodeIds.add(goalNodeId);
             }
@@ -407,7 +386,7 @@ public final class NpcSkillTreeBuilder {
             }
             int coveredCost = 0;
             while (coveredCost < remaining() && !goalPool.isEmpty()) {
-                String goalNodeId = weightedPick(goalPool, id -> nodeRelevance(search, id) * tierWeight(id), random);
+                String goalNodeId = WeightedPick.pickOrUniform(goalPool, id -> nodeRelevance(search, id) * tierWeight(id), random);
                 goalPool.remove(goalNodeId);
                 chosenGoals.add(goalNodeId);
                 coveredCost += search.cost(goalNodeId);
@@ -431,7 +410,7 @@ public final class NpcSkillTreeBuilder {
                     candidates.add(nodeId);
                 }
             }
-            String pickedNodeId = weightedPick(candidates, id -> nodeRelevance(search, id), random);
+            String pickedNodeId = WeightedPick.pickOrUniform(candidates, id -> nodeRelevance(search, id), random);
             if (pickedNodeId == null) {
                 return false;
             }
@@ -479,7 +458,7 @@ public final class NpcSkillTreeBuilder {
             }
             ShipProfile fittedProfile = new ShipProfile(profile.hullSize(), shieldType, Math.max(0, fighterBays), profile.weaponKinds(),
                     profile.flagship(), profile.baseArmor(), profile.phaseHull(), profile.limitedSystemCharges(), profile.onlyBuiltInWings(),
-                    profile.station(), profile.automated(), profile.scriptedHull());
+                    profile.station(), profile.automated(), profile.scriptedHull(), profile.concordShift());
             boolean shieldInvested = false;
             for (AllocatedNode node : allocatedNodes) {
                 List<String> tags = node.effectiveType().getTags();
@@ -561,7 +540,7 @@ public final class NpcSkillTreeBuilder {
             }
             SkillType rootAffinityOption = rootAffinityOption(options);
             SkillType pickedOption = rootAffinityOption != null ? rootAffinityOption
-                    : weightedPick(options, optionType -> relevance.of(optionType.getTags()), random);
+                    : WeightedPick.pickOrUniform(options, optionType -> relevance.of(optionType.getTags()), random);
             if (pickedOption != null) {
                 searchOptions.put(node.getId(), pickedOption);
                 chosenOptions.put(node.getId(), pickedOption);

@@ -10,6 +10,7 @@ import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.MutableStat.StatMod;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.mission.FleetSide;
+import exiledsector.compat.FirstFailureLog;
 import org.apache.log4j.Logger;
 
 import java.util.List;
@@ -20,8 +21,7 @@ public class ChartBattlePlugin extends BaseEveryFrameCombatPlugin {
     static final float REFRESH_SECONDS = 1f;
     static final int PLAYER_OWNER = 0;
     static final int ENEMY_OWNER = 1;
-    private static final Logger LOG = Logger.getLogger(ChartBattlePlugin.class);
-    private static boolean failureReported;
+    private static final FirstFailureLog FAILURES = FirstFailureLog.errors(Logger.getLogger(ChartBattlePlugin.class));
 
     private CombatEngineAPI engine;
     private boolean active;
@@ -43,11 +43,11 @@ public class ChartBattlePlugin extends BaseEveryFrameCombatPlugin {
         appliedPlayerCap = -1;
         appliedEnemyCap = -1;
         commandPointRateApplied = false;
-        active = engine != null && engine.isInCampaign() && !engine.isSimulation() && !engine.isInCampaignSim() && hasBattleConditions();
+        active = ChartCombatPlugins.isCampaignBattle(engine) && hasBattleConditions();
     }
 
     static boolean hasBattleConditions() {
-        if (ChartPlayerModifiers.battleSizeBonus() != 0) {
+        if (ChartPlayerModifiers.battleRules().battleSizeBonus() != 0) {
             return true;
         }
         for (ChartFleetStat stat : ChartPlayerModifiers.active().keySet()) {
@@ -73,15 +73,12 @@ public class ChartBattlePlugin extends BaseEveryFrameCombatPlugin {
             refresh();
         } catch (RuntimeException | LinkageError e) {
             active = false;
-            if (!failureReported) {
-                failureReported = true;
-                LOG.error("[ExiledSector] Applying the Star Chart battle drawbacks failed; they are off for this battle", e);
-            }
+            FAILURES.report("[ExiledSector] Applying the Star Chart battle drawbacks failed; they are off for this battle", e);
         }
     }
 
     void refresh() {
-        refreshBattleCaps(ChartPlayerModifiers.battleSizeBonus(), ChartPlayerModifiers.mult(ChartFleetStat.ENEMY_DEPLOYMENT_COST));
+        refreshBattleCaps(ChartPlayerModifiers.battleRules().battleSizeBonus(),ChartPlayerModifiers.mult(ChartFleetStat.ENEMY_DEPLOYMENT_COST));
         if (!commandPointRateApplied) {
             commandPointRateApplied = applyCommandPointRate(ChartPlayerModifiers.mult(ChartFleetStat.COMMAND_POINT_RATE));
         }

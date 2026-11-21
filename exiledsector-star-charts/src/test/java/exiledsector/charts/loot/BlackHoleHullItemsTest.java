@@ -4,10 +4,13 @@ import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.charts.ChartIds;
-import exiledsector.items.ItemChances;
-import exiledsector.items.ItemKind;
+import exiledsector.items.drop.ItemChances;
+import exiledsector.loot.DropType;
 import exiledsector.loot.LootMultipliers;
+import exiledsector.skills.skilleffect.logistics.BlackHoleSalvage;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.util.List;
 import java.util.Map;
@@ -16,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -42,19 +46,25 @@ class BlackHoleHullItemsTest {
     }
 
     @Test
-    void theBonusAddsTheSameExtraShareToEveryHullItemPartAndLeavesTheRestAlone() {
-        ItemChances chances = new ItemChances(1.5f, Map.of(ItemKind.BRIDGE, 0.2f, ItemKind.SUBROUTINE, 0.3f), 1.1f);
+    void theBonusAddsAtTheHullItemNodeSoEverySectionGetsItAndTheRestDoesNot() {
+        ItemChances chances = new ItemChances(Map.of(DropType.ITEM, 50f, DropType.BRIDGE, 20f), Map.of(DropType.ITEM, 10f), 1f);
+        LootMultipliers multipliers = new LootMultipliers(chances, 1f);
+        StarSystemAPI blackHoleChart = system(true, star(true));
 
-        ItemChances boosted = BlackHoleHullItems.withExtraHullItemShare(chances, 0.1f);
+        try (MockedStatic<BlackHoleSalvage> salvage = Mockito.mockStatic(BlackHoleSalvage.class)) {
+            salvage.when(() -> BlackHoleSalvage.hullItemPercent(any())).thenReturn(10f);
+            ItemChances boosted = BlackHoleHullItems.withBonus(multipliers, blackHoleChart).chances();
 
-        assertEquals(1.5f, boosted.general());
-        assertEquals(1.1f, boosted.rarity());
-        assertEquals(0.3f, boosted.targeted(ItemKind.BRIDGE), 0.0001f);
-        assertEquals(0.3f, boosted.targeted(ItemKind.SUBROUTINE), 0.0001f);
-        for (ItemKind kind : ItemKind.sectionItemTypes()) {
-            assertTrue(boosted.targeted(kind) >= 0.1f - 0.0001f, kind.id());
+            assertEquals(1.6f, boosted.quantity(DropType.HULL_ITEM), 0.0001f);
+            assertEquals(1.8f, boosted.quantity(DropType.BRIDGE), 0.0001f);
+            assertEquals(1.6f, boosted.quantity(DropType.FLIGHT_DECK), 0.0001f);
+            assertEquals(1.5f, boosted.quantity(DropType.SUBROUTINE), 0.0001f);
+            assertEquals(1.5f, boosted.quantity(DropType.STAR_CHART), 0.0001f);
+            assertEquals(1.1f, boosted.rarity(DropType.BRIDGE), 0.0001f);
+
+            salvage.when(() -> BlackHoleSalvage.hullItemPercent(any())).thenReturn(0f);
+            assertSame(multipliers, BlackHoleHullItems.withBonus(multipliers, blackHoleChart));
         }
-        assertSame(chances, BlackHoleHullItems.withExtraHullItemShare(chances, 0f));
     }
 
     @Test

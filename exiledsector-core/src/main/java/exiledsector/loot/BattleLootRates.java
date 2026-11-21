@@ -17,23 +17,20 @@ import java.util.concurrent.atomic.AtomicReference;
 public final class BattleLootRates {
 
     public static final String DATA_PATH = ExiledSector.configPath("battle_loot.csv");
+    public static final String CRAFTING_ITEM_RATE = "crafting_item";
+    public static final String FEEDSTOCK_RATE = "feedstock";
     public static final float DIFFICULTY_CAP = 3f;
     static final String DROP_COLUMN = "drop";
     static final float DEPLOYMENT_POINTS_PER_RATE_STEP = 100f;
     private static final Logger LOG = Logger.getLogger(BattleLootRates.class);
     private static final AtomicReference<Map<String, Rate>> RATES = new AtomicReference<>(Map.of());
 
-    public record Rate(String drop, float per100DeploymentPoints, LootCurve curve, float regularShare, float difficultyScaling) {
+    public record Rate(String drop, float per100DeploymentPoints, LootCurve curve, float difficultyScaling) {
 
         public Rate {
             per100DeploymentPoints = Math.max(0f, per100DeploymentPoints);
             curve = curve == null ? LootCurve.LINEAR : curve;
-            regularShare = Math.max(0f, regularShare);
             difficultyScaling = Math.max(0f, difficultyScaling);
-        }
-
-        public Rate(String drop, float per100DeploymentPoints, LootCurve curve, float regularShare) {
-            this(drop, per100DeploymentPoints, curve, regularShare, 1f);
         }
 
         public float difficulty(float difficultyMultiplier) {
@@ -43,6 +40,24 @@ public final class BattleLootRates {
         public float expected(float lootDeploymentPoints, float battleDeploymentPoints) {
             return per100DeploymentPoints * Math.max(0f, lootDeploymentPoints) / DEPLOYMENT_POINTS_PER_RATE_STEP
                     * curve.factor(battleDeploymentPoints);
+        }
+
+        public float expectedAtDifficulty(float lootDeploymentPoints, float battleDeploymentPoints, float difficultyMultiplier) {
+            return expected(lootDeploymentPoints, battleDeploymentPoints) * difficulty(difficultyMultiplier);
+        }
+
+        public float expectedFrom(FleetLoss loss, float battleDeploymentPoints, float levelScaledShare) {
+            return expectedAtDifficulty(loss.deploymentPoints(), battleDeploymentPoints, loss.averageDifficulty())
+                    * loss.rules().itemShare(levelScaledShare);
+        }
+
+        public float expectedFromAll(List<FleetLoss> losses, float levelScaledShare, FleetLoss.Factor factor) {
+            float battleDeploymentPoints = FleetLoss.totalDeploymentPoints(losses);
+            float expected = 0f;
+            for (FleetLoss loss : losses) {
+                expected += expectedFrom(loss, battleDeploymentPoints, levelScaledShare) * factor.of(loss);
+            }
+            return expected;
         }
     }
 
@@ -56,22 +71,16 @@ public final class BattleLootRates {
     public static void register(JSONArray rows) throws JSONException {
         Map<String, Rate> loaded = new LinkedHashMap<>();
         CsvRows csv = new CsvRows(DATA_PATH);
-        if (rows != null) {
-            ModCsv.forEach(rows, (index, row) -> {
-                String drop = ModCsv.text(row, DROP_COLUMN);
-                if (drop.isEmpty()) {
-                    return;
-                }
-                String curveText = ModCsv.text(row, "curve").toLowerCase(Locale.ROOT);
-                LootCurve curve = curveText.isEmpty() ? LootCurve.LINEAR : LootCurve.byIdOrNull(curveText);
-                if (curve == null) {
-                    csv.skipRow(drop, "unknown curve " + curveText + " (linear or diminishing)");
-                    return;
-                }
-                loaded.put(drop, new Rate(drop, csv.number(row, "per_100_dp", 0f, drop), curve, csv.number(row, "regular_share", 0f, drop),
-                        csv.number(row, "difficulty_scaling", 1f, drop)));
-            });
-        }
+        CsvRows.forEachIdRow(rows, DROP_COLUMN, (drop, row) -> {
+            String curveText = ModCsv.text(row, "curve").toLowerCase(Locale.ROOT);
+            LootCurve curve = curveText.isEmpty() ? LootCurve.LINEAR : LootCurve.byIdOrNull(curveText);
+            if (curve == null) {
+                csv.skipRow(drop, "unknown curve " + curveText + " (linear or diminishing)");
+                return;
+            }
+            loaded.put(drop, new Rate(drop, csv.number(row, "per_100_dp", 0f, drop), curve,
+                    csv.number(row, "difficulty_scaling", 1f, drop)));
+        });
         csv.report(LOG);
         RATES.set(Collections.unmodifiableMap(loaded));
     }
@@ -82,10 +91,6 @@ public final class BattleLootRates {
 
     public static Rate rate(String drop) {
         return RATES.get().get(drop);
-    }
-
-    public static List<Rate> all() {
-        return List.copyOf(RATES.get().values());
     }
 
     public static float difficulty(float difficultyMultiplier) {

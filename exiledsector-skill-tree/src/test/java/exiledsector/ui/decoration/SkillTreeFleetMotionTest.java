@@ -6,6 +6,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.skills.decoration.RingBelt;
 import exiledsector.skills.decoration.Star;
 import exiledsector.skills.layout.Rotation;
+import exiledsector.skills.tags.SkillTags;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -27,12 +28,12 @@ class SkillTreeFleetMotionTest {
 
     @Test
     void theCoreVolumeSpansFromAroundTheCoreStarToTheOutermostCoreRingBelt() {
-        List<Star> stars = List.of(new Star("faction_star", 0f, -13000f, 200f, "star_red", null, List.of("tritachyon")),
-                new Star("central_star", 0f, 0f, 150f, "star_yellow", null, List.of("core")));
+        List<Star> stars = List.of(new Star("faction_star", 0f, -13000f, 200f, "star_red", null, SkillTags.treeTags(List.of("tritachyon"))),
+                new Star("central_star", 0f, 0f, 150f, "star_yellow", null, SkillTags.treeTags(List.of("core"))));
         List<RingBelt> ringBelts = List.of(
-                new RingBelt("middle", 0f, 0f, new RingBelt.Shape(2850f, 3200f, "a.png", new Rotation(0f, 0.6f)), List.of("core")),
-                new RingBelt("outer", 0f, 0f, new RingBelt.Shape(3600f, 4050f, "a.png", new Rotation(0f, -0.8f)), List.of("core")),
-                new RingBelt("faction", 0f, -13000f, new RingBelt.Shape(100f, 900f, "a.png", new Rotation(0f, 0f)), List.of("tritachyon")));
+                new RingBelt("middle", 0f, 0f, new RingBelt.Shape(2850f, 3200f, "a.png", new Rotation(0f, 0.6f)), SkillTags.treeTags(List.of("core"))),
+                new RingBelt("outer", 0f, 0f, new RingBelt.Shape(3600f, 4050f, "a.png", new Rotation(0f, -0.8f)), SkillTags.treeTags(List.of("core"))),
+                new RingBelt("faction", 0f, -13000f, new RingBelt.Shape(100f, 900f, "a.png", new Rotation(0f, 0f)), SkillTags.treeTags(List.of("tritachyon"))));
 
         assertEquals(CORE, TreeRoamVolumes.core(stars, ringBelts));
     }

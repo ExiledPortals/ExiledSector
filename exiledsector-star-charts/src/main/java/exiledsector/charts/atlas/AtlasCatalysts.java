@@ -4,7 +4,7 @@ import exiledsector.ModCsv;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.data.CsvRows;
-import exiledsector.items.WeightedPick;
+import exiledsector.data.WeightedPick;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,8 +41,7 @@ public final class AtlasCatalysts {
 
     public enum Effect {
         ANOMALY,
-        STAR,
-        REDEPLOY;
+        STAR;
 
         public String key() {
             return EnumKeys.key(this);
@@ -82,10 +81,10 @@ public final class AtlasCatalysts {
             String anomalyId = ModCsv.text(row, "anomaly");
             String icon = ModCsv.text(row, "icon");
             Effect effect = Effect.byKey(ModCsv.text(row, "effect"));
-            if (effect != null && effect != Effect.REDEPLOY && needsMissingMod(anomalyId)) {
+            if (effect != null && needsMissingMod(anomalyId)) {
                 return;
             }
-            String skipReason = effect == null ? "effect '" + ModCsv.text(row, "effect") + "' is not anomaly, star or redeploy"
+            String skipReason = effect == null ? "effect '" + ModCsv.text(row, "effect") + "' is not anomaly or star"
                     : skipReason(effect, anomalyId, icon);
             Family family = Family.byKey(ModCsv.text(row, "family"));
             if (family == null) {
@@ -101,7 +100,7 @@ public final class AtlasCatalysts {
                 csv.problem(id, "weight", weight + " (a star catalyst never drops)");
                 weight = 0f;
             }
-            loaded.put(id, new Catalyst(id, effect == Effect.REDEPLOY ? "" : anomalyId, family, weight, minTier, effect, icon));
+            loaded.put(id, new Catalyst(id, anomalyId, family, weight, minTier, effect, icon));
         });
         csv.report(LOG);
         catalysts = Collections.unmodifiableMap(loaded);
@@ -115,9 +114,6 @@ public final class AtlasCatalysts {
     }
 
     private static String skipReason(Effect effect, String anomalyId, String icon) {
-        if (effect == Effect.REDEPLOY) {
-            return icon.isEmpty() ? "a redeploy catalyst needs an icon" : null;
-        }
         ChartAnomalies.Definition definition = ChartAnomalies.definition(anomalyId);
         if (definition == null || ChartAnomalies.byId(anomalyId) == null) {
             return "anomaly '" + anomalyId + "' is unknown";

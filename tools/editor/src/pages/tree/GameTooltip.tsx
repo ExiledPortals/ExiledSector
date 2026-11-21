@@ -1,28 +1,35 @@
 import { Portal } from '@mantine/core';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { fetchDescription, stringsRevision } from '../../api/describe.ts';
+import { useTooltipCodeStatus, type DescribedTypes, type DescribedTypesCache, type TypeTooltip } from '../../api/tooltipCode.ts';
 import { TooltipBody, TooltipNote } from '../../shared/TooltipBody.tsx';
 import { TOOLTIP_PANEL_CLASS } from '../../shared/tooltipMarkup.ts';
-import { mergeDescriptions, type Described, type LabelledDescription, type TooltipContent } from '../../shared/tooltipContent.ts';
+import type { TooltipContent } from '../../shared/tooltipContent.ts';
 import { skillTypesFileObject } from './model/serialization.ts';
-import { HULL_SIZE_OPTIONS, nodeById } from './model/types.ts';
-import { useTreeStore } from './state/treeStore.ts';
+import { nodeById } from './model/types.ts';
+import type { TreeEditor } from './state/treeEditor.ts';
 import classes from './GameTooltip.module.css';
 
 const SHOW_DELAY_MS = 250;
 const RETRY_DELAY_MS = 2000;
+const PREFETCH_DELAY_MS = 600;
 
 type TooltipState = { kind: 'note'; message: string } | { kind: 'content'; content: TooltipContent };
 
-function hashText(text: string): number {
-  let hash = 5381;
-  for (let index = 0; index < text.length; index++) {
-    hash = (hash * 33 + (text.codePointAt(index) ?? 0)) % 2147483647;
-  }
-  return hash;
+export interface GameTooltipSource<Entry> {
+  editor: TreeEditor;
+  describedTypes: DescribedTypesCache<Entry>;
+  tooltip: (described: DescribedTypes<Entry>, typeId: string) => TypeTooltip;
 }
 
-function hoveredTypeId(target: EventTarget | null): string | null {
+function currentTypesJson(editor: TreeEditor): string {
+  return JSON.stringify(skillTypesFileObject(editor.store.getState().document.types));
+}
+
+function tooltipState(tooltip: TypeTooltip): TooltipState {
+  return 'content' in tooltip ? { kind: 'content', content: tooltip.content } : { kind: 'note', message: tooltip.note };
+}
+
+function hoveredTypeId(editor: TreeEditor, target: EventTarget | null): string | null {
   const element = target instanceof Element ? target.closest<HTMLElement | SVGElement>('[data-node-id], [data-type-id]') : null;
   if (!element) {
     return null;
@@ -30,17 +37,17 @@ function hoveredTypeId(target: EventTarget | null): string | null {
   if (element.dataset.typeId) {
     return element.dataset.typeId;
   }
-  return nodeById(useTreeStore.getState().document, element.dataset.nodeId ?? '')?.type ?? null;
+  return nodeById(editor.store.getState().document, element.dataset.nodeId ?? '')?.type ?? null;
 }
 
-export function GameTooltip({ hullSize }: { hullSize: string }) {
+export function GameTooltip<Entry>({ source }: { source: GameTooltipSource<Entry> }) {
   const [shown, setShown] = useState<TooltipState | null>(null);
   const [expanded, setExpanded] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
   const hover = useRef({ typeId: null as string | null, timer: 0, x: 0, y: 0, serial: 0 });
-  const cache = useRef(new Map<string, Described>());
-  const hullSizeRef = useRef(hullSize);
-  hullSizeRef.current = hullSize;
+  const sourceRef = useRef(source);
+  sourceRef.current = source;
+  const { editor, describedTypes } = source;
 
   const position = () => {
     const box = boxRef.current;
@@ -68,7 +75,32 @@ export function GameTooltip({ hullSize }: { hullSize: string }) {
   useLayoutEffect(position, [shown, expanded]);
 
   useEffect(() => {
+    let prefetchTimer = 0;
+    const prefetch = () => {
+      window.clearTimeout(prefetchTimer);
+      prefetchTimer = window.setTimeout(() => void describedTypes.describe(currentTypesJson(editor)), PREFETCH_DELAY_MS);
+    };
+    prefetch();
+    const unsubscribeTypes = editor.store.subscribe((state, previous) => {
+      if (state.document.types !== previous.document.types) {
+        prefetch();
+      }
+    });
+    const unsubscribeCode = useTooltipCodeStatus.subscribe((state, previous) => {
+      if (state.status?.codeRevision !== previous.status?.codeRevision) {
+        prefetch();
+      }
+    });
+    return () => {
+      window.clearTimeout(prefetchTimer);
+      unsubscribeTypes();
+      unsubscribeCode();
+    };
+  }, [editor, describedTypes]);
+
+  useEffect(() => {
     const state = hover.current;
+    const tooltipFor = (described: DescribedTypes<Entry>, typeId: string) => tooltipState(sourceRef.current.tooltip(described, typeId));
 
     const request = async () => {
       const typeId = state.typeId;
@@ -77,27 +109,27 @@ export function GameTooltip({ hullSize }: { hullSize: string }) {
       }
       state.serial++;
       const serial = state.serial;
-      const typesJson = JSON.stringify(skillTypesFileObject(useTreeStore.getState().document.types));
-      const typesKey = `${typesJson.length}|${hashText(typesJson)}|${stringsRevision()}`;
-      const sizes = hullSizeRef.current ? HULL_SIZE_OPTIONS.filter((option) => option.value === hullSizeRef.current) : HULL_SIZE_OPTIONS;
-      const entries: LabelledDescription[] = [];
-      for (const size of sizes) {
-        const cacheKey = `${typeId}|${size.value}|${typesKey}`;
-        const described = cache.current.get(cacheKey) ?? (await fetchDescription({ typesJson, typeId, hullSize: size.value }));
-        if (serial !== state.serial || state.typeId !== typeId) {
-          return;
-        }
-        if (described.pending || described.error) {
-          setShown({ kind: 'note', message: described.message || described.error || 'Preparing in-game descriptions...' });
-          if (described.pending) {
-            state.timer = window.setTimeout(() => void request(), RETRY_DELAY_MS);
-          }
-          return;
-        }
-        cache.current.set(cacheKey, described);
-        entries.push({ label: size.label, described });
+      const typesJson = currentTypesJson(editor);
+      const settled = describedTypes.current(typesJson);
+      if (settled?.kind === 'ready') {
+        setShown(tooltipFor(settled, typeId));
+        return;
       }
-      setShown({ kind: 'content', content: mergeDescriptions(entries) });
+      const previous = describedTypes.lastDescribed();
+      if (previous?.kind === 'ready' && previous.byTypeId.has(typeId)) {
+        setShown(tooltipFor(previous, typeId));
+      }
+      const described = await describedTypes.describe(typesJson);
+      if (serial !== state.serial || state.typeId !== typeId) {
+        return;
+      }
+      if (described.kind === 'note' && previous?.kind === 'ready' && previous.byTypeId.has(typeId)) {
+        return;
+      }
+      setShown(tooltipFor(described, typeId));
+      if (described.kind === 'note' && described.pending) {
+        state.timer = window.setTimeout(() => void request(), RETRY_DELAY_MS);
+      }
     };
 
     const hide = () => {
@@ -110,7 +142,7 @@ export function GameTooltip({ hullSize }: { hullSize: string }) {
     const onMouseOver = (event: MouseEvent) => {
       state.x = event.clientX;
       state.y = event.clientY;
-      const typeId = hoveredTypeId(event.target);
+      const typeId = hoveredTypeId(editor, event.target);
       if (typeId === state.typeId) {
         return;
       }
@@ -148,7 +180,7 @@ export function GameTooltip({ hullSize }: { hullSize: string }) {
       document.removeEventListener('wheel', hide);
       document.removeEventListener('keydown', onKeyDown);
     };
-  }, []);
+  }, [editor, describedTypes]);
 
   if (!shown) {
     return null;

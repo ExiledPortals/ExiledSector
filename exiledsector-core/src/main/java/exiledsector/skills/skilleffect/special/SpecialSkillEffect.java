@@ -49,6 +49,8 @@ public enum SpecialSkillEffect implements BackedSkillEffect {
     HEARTLESS_ARMOR_MULT_PER_STACK(listener(HeartlessStacks.ARMOR_PERCENT_PER_STACK_KEY, HeartlessStacks.class, HeartlessStacks::new)),
     HEARTLESS_MOBILITY_PENALTY_PERCENT_PER_STACK(listener(HeartlessStacks.MOBILITY_PENALTY_PERCENT_PER_STACK_KEY,
             HeartlessStacks.class, HeartlessStacks::new)),
+    HEARTLESS_FLUX_DISSIPATION_PERCENT_PER_STACK(listener(HeartlessStacks.FLUX_DISSIPATION_PERCENT_PER_STACK_KEY,
+            HeartlessStacks.class, HeartlessStacks::new)),
     HEARTLESS_RADIATION_EMP_FLAT(listener(HeartlessStacks.RADIATION_EMP_KEY, HeartlessStacks.class, HeartlessStacks::new)),
     HEARTLESS_CREW_DEATH_CHANCE_PERCENT_PER_STACK(listener(LiveMunitionsListener.CREW_DEATH_CHANCE_PERCENT_PER_STACK_KEY,
             LiveMunitionsListener.class, LiveMunitionsListener::new)),

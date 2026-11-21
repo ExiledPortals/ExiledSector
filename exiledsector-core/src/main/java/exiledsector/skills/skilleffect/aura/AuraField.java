@@ -6,7 +6,9 @@ import com.fs.starfarer.api.combat.BaseEveryFrameCombatPlugin;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
+import exiledsector.persistence.CombatData;
 import exiledsector.skills.skilleffect.CombatQueries;
+import exiledsector.skills.skilleffect.TickTimer;
 
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
@@ -35,10 +37,10 @@ abstract class AuraField<S extends AuraField.Source> extends BaseEveryFrameComba
     }
 
     final List<S> sources = new ArrayList<>();
-    private float secondsSinceUpdate;
+    private final TickTimer updateTimer;
 
     AuraField(boolean updatesOnFirstFrame) {
-        secondsSinceUpdate = updatesOnFirstFrame ? UPDATE_INTERVAL_SECONDS : 0f;
+        updateTimer = updatesOnFirstFrame ? TickTimer.dueOnFirstAdvance(UPDATE_INTERVAL_SECONDS) : new TickTimer(UPDATE_INTERVAL_SECONDS);
     }
 
     public static <S extends Source, F extends AuraField<S>> void register(S source, String customDataKey, Class<F> fieldType, Supplier<F> fieldFactory) {
@@ -55,14 +57,11 @@ abstract class AuraField<S extends AuraField.Source> extends BaseEveryFrameComba
         if (engine == null) {
             return;
         }
-        Object stored = engine.getCustomData().get(customDataKey);
-        F field = fieldType.isInstance(stored) ? fieldType.cast(stored) : null;
-        if (field == null) {
-            field = fieldFactory.get();
-            engine.getCustomData().put(customDataKey, field);
-            engine.addPlugin(field);
-            onCreated.accept(engine, field);
-        }
+        F field = CombatData.getOrCreatePlugin(engine, customDataKey, fieldType, () -> {
+            F created = fieldFactory.get();
+            onCreated.accept(engine, created);
+            return created;
+        });
         field.sources.add(source);
     }
 
@@ -73,14 +72,11 @@ abstract class AuraField<S extends AuraField.Source> extends BaseEveryFrameComba
             return;
         }
         everyFrame(engine);
-        secondsSinceUpdate += amount;
-        if (secondsSinceUpdate < UPDATE_INTERVAL_SECONDS) {
+        if (!updateTimer.advance(amount)) {
             return;
         }
-        float elapsedSeconds = secondsSinceUpdate;
-        secondsSinceUpdate = 0f;
         sources.removeIf(source -> !engine.isEntityInPlay(source.source()) || !CombatQueries.isAliveNotHulk(source.source()));
-        update(elapsedSeconds);
+        update(updateTimer.elapsed());
     }
 
     static <S extends Source> Map<ShipAPI, Float> strongestPerShip(List<S> sources, ShipsNear shipsNear, float range,

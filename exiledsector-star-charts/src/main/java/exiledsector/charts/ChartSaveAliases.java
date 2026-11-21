@@ -4,11 +4,13 @@ import com.thoughtworks.xstream.XStream;
 import exiledsector.charts.anomaly.breach.BreachCorePlugin;
 import exiledsector.charts.anomaly.breach.BreachSupplyBuff;
 import exiledsector.charts.anomaly.breach.BreachTerrainPlugin;
+import exiledsector.charts.anomaly.breach.EventHorizonTerrainPlugin;
 import exiledsector.charts.anomaly.convoy.ConvoyIntel;
 import exiledsector.charts.anomaly.convoy.ConvoyScript;
 import exiledsector.charts.anomaly.convoy.ConvoyState;
 import exiledsector.charts.anomaly.convoy.ConvoyStep;
 import exiledsector.charts.anomaly.debris.AnomalousDebrisTerrainPlugin;
+import exiledsector.charts.anomaly.holdouts.HoldoutRestraint;
 import exiledsector.charts.anomaly.relay.RelayLogIntel;
 import exiledsector.charts.anomaly.listeningpost.ListeningPostPlugin;
 import exiledsector.charts.anomaly.listeningpost.PicketStation;
@@ -18,6 +20,7 @@ import exiledsector.charts.anomaly.landmark.NexusFleetManager;
 import exiledsector.charts.anomaly.landmark.StationLaunches;
 import exiledsector.charts.anomaly.abyssstorm.AbyssalStormTerrainPlugin;
 import exiledsector.charts.anomaly.abyssstorm.StormCycle;
+import exiledsector.charts.anomaly.stellarflares.FlareTempo;
 import exiledsector.charts.anomaly.stormfront.StormFrontTerrainPlugin;
 import exiledsector.charts.layout.ChartCoronaTerrainPlugin;
 import exiledsector.charts.layout.ChartPulsarBeamTerrainPlugin;
@@ -26,11 +29,13 @@ import exiledsector.charts.layout.abyss.AbyssalFogTerrainPlugin;
 import exiledsector.charts.layout.abyss.ChartPhotospherePlugin;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.objective.ChartObjectiveIntel;
+import exiledsector.charts.phasing.PhaseDisplacementGate;
+import exiledsector.charts.phasing.PhaseDisplacementIntel;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunState;
 import exiledsector.charts.wormhole.ChartWormholePlugin;
 import exiledsector.charts.wormhole.WormholeGateway;
-import exiledsector.items.StarChart;
+import exiledsector.items.starchart.StarChart;
 import exiledsector.ui.atlas.AtlasAbility;
 
 import java.util.Map;
@@ -47,6 +52,7 @@ public final class ChartSaveAliases {
             Map.entry("exiledSector.BreachTerrainPlugin", BreachTerrainPlugin.class),
             Map.entry("exiledSector.BreachCorePlugin", BreachCorePlugin.class),
             Map.entry("exiledSector.BreachSupplyBuff", BreachSupplyBuff.class),
+            Map.entry("exiledSector.EventHorizonTerrainPlugin", EventHorizonTerrainPlugin.class),
             Map.entry("exiledSector.AtlasState", AtlasState.class),
             Map.entry("exiledSector.ConvoyScript", ConvoyScript.class),
             Map.entry("exiledSector.ConvoyState", ConvoyState.class),
@@ -66,20 +72,19 @@ public final class ChartSaveAliases {
             Map.entry("exiledSector.ChartPulsarBeamTerrainPlugin", ChartPulsarBeamTerrainPlugin.class),
             Map.entry("exiledSector.ListeningPostPlugin", ListeningPostPlugin.class),
             Map.entry("exiledSector.PostScript", PostScript.class),
+            Map.entry("exiledSector.HoldoutRestraint", HoldoutRestraint.class),
             Map.entry("exiledSector.PicketStation", PicketStation.class),
             Map.entry("exiledSector.MothershipFleetManager", MothershipFleetManager.class),
             Map.entry("exiledSector.NexusFleetManager", NexusFleetManager.class),
-            Map.entry("exiledSector.StationLaunches", StationLaunches.class));
-
-    static final Map<String, Class<?>> MOVED = Map.of(
-            "exiledsector.charts.anomaly.ChartCoronaTerrainPlugin", ChartCoronaTerrainPlugin.class,
-            "exiledsector.charts.anomaly.ChartPulsarBeamTerrainPlugin", ChartPulsarBeamTerrainPlugin.class);
+            Map.entry("exiledSector.StationLaunches", StationLaunches.class),
+            Map.entry("exiledSector.PhaseDisplacementGate", PhaseDisplacementGate.class),
+            Map.entry("exiledSector.PhaseDisplacementIntel", PhaseDisplacementIntel.class),
+            Map.entry("exiledSector.FlareTempo", FlareTempo.class));
 
     private ChartSaveAliases() {
     }
 
     public static void register(XStream xstream) {
-        MOVED.forEach(xstream::alias);
         ALIASES.forEach(xstream::alias);
         xstream.aliasField("quality", StarChart.class, "quantity");
     }

@@ -21,6 +21,10 @@ public final class AtlasNames {
         return name("anomaly", anomalyId);
     }
 
+    public static String region(String regionId) {
+        return AtlasRegion.NORMAL.equals(regionId) ? Translation.text("chart.atlas.normalSpace") : name("region", regionId);
+    }
+
     static String tidy(String id) {
         String[] words = id.replace('-', '_').split("_");
         StringBuilder tidied = new StringBuilder();

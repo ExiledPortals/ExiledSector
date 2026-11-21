@@ -5,7 +5,7 @@ import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.PlayerFleet;
 import exiledsector.i18n.Translation;
-import exiledsector.items.ShipSchematic;
+import exiledsector.items.schematic.ShipSchematic;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.skilleffect.render.SpriteCache;
@@ -124,10 +124,14 @@ abstract class SchematicButton {
                 choose(released);
             }
             pressedChoice = SchematicDialog.Choice.NONE;
-        } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
-            choose(SchematicDialog.Choice.CANCEL);
         } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_RETURN) {
             choose(SchematicDialog.Choice.CONFIRM);
+        }
+    }
+
+    final void escape() {
+        if (dialog.isOpen()) {
+            choose(SchematicDialog.Choice.CANCEL);
         }
     }
 

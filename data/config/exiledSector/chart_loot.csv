@@ -40,24 +40,13 @@ fleet_weapons1,weapon,fleet,weapons1,random,2,1,,"Every fleet the chart spawns, 
 fleet_basic,resource,fleet,basic,value,3000,1,,
 fleet_blueprints_low,blueprint,fleet,blueprints_low,random,0.6,4,,
 fleet_ai_cores1,ai_core,fleet,ai_cores1,random,0.6,6,,
-boss_basic,resource,boss,basic,value,15000,1,,"The boss's spoils on top of its fleet rows, per 100 fleet points"
-boss_ai_cores3,ai_core,boss,ai_cores3,random,4.6,1,,
-boss_high_weapons2,weapon,boss,high_weapons2,random,15.4,1,,
-boss_any_hullmod_high,blueprint,boss,any_hullmod_high,random,6,1,,
-boss_blueprints_low,blueprint,boss,blueprints_low,random,9.2,1,,
-boss_package_bp,blueprint,boss,package_bp,random,2.4,1,,
-convoy_supply,resource,convoy,supply,value,2000,1,,"A supply convoy's whole cargo, per step of 3% of its freighters' fleet points (the cargo line scales the steps); freighters drop their share as cargo pods and the rest reaches the cache"
+convoy_supply,resource,convoy,supply,value,2000,1,,"A supply convoy's whole cargo, per step of 3% of its freighters' fleet points; freighters drop their share as cargo pods and the rest reaches the cache"
 convoy_freighter_cargo,resource,convoy,freighter_cargo,value,3000,1,,
 convoy_goods,resource,convoy,goods,value,1500,1,,
 convoy_weapons1,weapon,convoy,weapons1,random,3,1,,
 convoy_weapons2,weapon,convoy,weapons2,random,1,6,,
 convoy_blueprints_low,blueprint,convoy,blueprints_low,random,1,4,,
 convoy_ai_cores1,ai_core,convoy,ai_cores1,random,0.5,8,,
-excavation_basic,resource,excavation,basic,value,2000,1,,"One excavation site's stores, per step (1 at tier 1, 0.25 more per tier, scaled by the site quantity line); the site's leaning raises one drop type; an open shaft's fleet drops it on defeat and a collapsed shaft's raid drops a share by raid effectiveness"
-excavation_weapons1,weapon,excavation,weapons1,random,2,1,,
-excavation_weapons2,weapon,excavation,weapons2,random,1,6,,
-excavation_blueprints_low,blueprint,excavation,blueprints_low,random,1,3,,
-excavation_ai_cores1,ai_core,excavation,ai_cores1,random,0.5,5,,
 listening_post_basic,resource,listening_post,basic,value,1500,1,,"A depot vault's stores, per step (1.5 at tier 1, 0.35 more per tier, scaled by the vault quantity line); Star Charts, blueprints and subroutines get +100%; a raised alarm scuttles the vault down to a share"
 listening_post_blueprints_low,blueprint,listening_post,blueprints_low,random,1,1,,
 listening_post_weapon_bp,blueprint,listening_post,weapon_bp,random,0.5,4,,

@@ -69,6 +69,12 @@ final class SchematicButtons {
         }
     }
 
+    void escape() {
+        for (SchematicButton button : buttons) {
+            button.escape();
+        }
+    }
+
     void renderDialogs(PositionAPI canvasPosition, float mouseX, float mouseY, float alphaMult) {
         for (SchematicButton button : buttons) {
             button.renderDialog(canvasPosition, mouseX, mouseY, alphaMult);

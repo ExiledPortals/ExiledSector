@@ -43,7 +43,20 @@ public enum MovementSkillEffect implements BackedSkillEffect {
         }
     },
     TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT(listener(FlagshipPaceListener.FLAGSHIP_SPEED_SHARE_PERCENT_KEY, FlagshipPaceListener.class,
-            FlagshipPaceListener::new)),
+            FlagshipPaceListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("cap", FlagshipPaceListener.speedBonusCapByHullSize()).styled();
+        }
+
+        @Override
+        public StyledText description(float magnitude, ShipAPI.HullSize hullSize) {
+            if (!FlagshipPaceListener.capCovers(hullSize)) {
+                return description(magnitude);
+            }
+            return EffectText.msg(this).arg("value", magnitude).arg("cap", FlagshipPaceListener.speedBonusCap(hullSize)).styled();
+        }
+    },
     ACCELERATION_FLAT(statEffect(FLAT, liveStat(MutableShipStatsAPI::getAcceleration), "stat.acceleration", false)),
     ACCELERATION_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getAcceleration), "stat.acceleration", false)),
     DECELERATION_FLAT(statEffect(FLAT, liveStat(MutableShipStatsAPI::getDeceleration), "stat.deceleration", false)),

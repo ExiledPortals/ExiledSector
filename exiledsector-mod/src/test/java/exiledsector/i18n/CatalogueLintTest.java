@@ -32,6 +32,7 @@ class CatalogueLintTest {
     private static final Path REPORT_DIRECTORY = Path.of("target/i18n");
     private static final Set<String> REPORTED_LOCALES = Set.of(LocaleChain.SIMPLIFIED_CHINESE);
     private static final String HULL_MODS_FILE = "data/hullmods/hull_mods.csv";
+    private static final String ATLAS_TREE_TYPES_FILE = "data/skilltrees/atlas_tree_types.json";
     private static final List<String> ITEM_DEFINITION_FILES = List.of("data/config/exiledSector/subroutines.csv", "data/config/exiledSector/hull_items.csv",
             "data/config/exiledSector/star_charts.csv", "data/config/exiledSector/wormhole_anchors.csv");
     private static final List<String> ITEM_MODIFIERS_FILES = List.of("data/config/exiledSector/item_modifiers.csv",
@@ -68,6 +69,16 @@ class CatalogueLintTest {
             JSONObject integrated = type.optJSONObject("integrated");
             if (integrated != null) {
                 putEffectText(sources, "skillType." + id + ".integrated.effectText.", integrated.optJSONArray("effectText"));
+            }
+        }
+        JSONArray atlasTypes = ProjectFiles.readJson(root.resolve(ATLAS_TREE_TYPES_FILE)).getJSONArray("skillTypes");
+        for (int i = 0; i < atlasTypes.length(); i++) {
+            JSONObject type = atlasTypes.getJSONObject(i);
+            String id = type.getString("id");
+            sources.put("atlasTree.type." + id + ".name", type.getString("name"));
+            String flavour = type.optString("flavour", "");
+            if (!flavour.isEmpty()) {
+                sources.put("atlasTree.type." + id + ".flavour", flavour);
             }
         }
         for (String definitionFile : ITEM_DEFINITION_FILES) {

@@ -1,16 +1,23 @@
 package exiledsector.tools;
 
 import exiledsector.ProjectFiles;
+import exiledsector.charts.tree.AtlasTreeData;
+import exiledsector.charts.tree.AtlasTreeType;
 import exiledsector.i18n.HeadlessGameText;
 import exiledsector.i18n.LocaleChain;
 import exiledsector.i18n.RealCatalogue;
+import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.npc.RealSkillData;
+import exiledsector.ui.atlas.AtlasTreeNodeText;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -126,6 +133,43 @@ class EditorDescriberTest {
         String keys = response.getJSONArray("keys").toString();
         assertTrue(keys.contains("\"stat.fluxCapacity\""), keys);
         assertEquals("flux capacity", Translation.text("stat.fluxCapacity"));
+    }
+
+    @Test
+    void everyTypeIsDescribedForEachRequestedHullSizeInOneResponse() throws Exception {
+        JSONObject request = new JSONObject().put("types", savedTypes).put("hullSizes", new JSONArray().put("FRIGATE").put("CAPITAL_SHIP"));
+        JSONObject descriptions = new JSONObject(new EditorDescriber().respond(request.toString())).getJSONObject("descriptions");
+
+        assertTrue(descriptions.length() >= savedTypes.getJSONArray("skillTypes").length(), descriptions.length() + " described");
+        JSONObject fluxCapacity = descriptions.getJSONObject("flux_capacity");
+        assertEquals("Flux Capacity", fluxCapacity.getJSONObject("FRIGATE").getString("title"));
+        assertTrue(fluxCapacity.getJSONObject("CAPITAL_SHIP").getJSONArray("effects").getString(0).contains("<good>"), fluxCapacity.toString());
+        assertEquals(2, fluxCapacity.length());
+    }
+
+    @Test
+    void everyAtlasTypeIsDescribedWithTheInGameAtlasTooltipLines() throws Exception {
+        JSONObject atlasTypes = ProjectFiles.readJson(ProjectFiles.projectRoot().resolve("data/skilltrees/atlas_tree_types.json"));
+        JSONObject descriptions = new JSONObject(new EditorDescriber().respond(new JSONObject().put("atlasTypes", atlasTypes).toString()))
+                .getJSONObject("descriptions");
+
+        assertEquals(atlasTypes.getJSONArray("skillTypes").length(), descriptions.length());
+        for (AtlasTreeType type : AtlasTreeData.parseTypes(atlasTypes).values()) {
+            JSONObject described = descriptions.getJSONObject(type.id());
+            assertEquals(type.displayName(), described.getString("title"));
+            assertEquals(AtlasTreeNodeText.tooltipBody(type).stream().map(StyledText::toMarkup).toList(),
+                    strings(described.getJSONArray("effects")), type.id());
+        }
+        String rootLines = descriptions.getJSONObject("atlas_root").getJSONArray("effects").toString();
+        assertTrue(rootLines.contains("Atlas Skill Point"), rootLines);
+    }
+
+    private static List<String> strings(JSONArray array) throws Exception {
+        List<String> values = new ArrayList<>();
+        for (int index = 0; index < array.length(); index++) {
+            values.add(array.getString(index));
+        }
+        return values;
     }
 
     @Test

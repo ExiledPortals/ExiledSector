@@ -1,14 +1,16 @@
 package exiledsector.items;
 
+import exiledsector.items.hull.HullItem;
+import exiledsector.items.modifier.ItemModifiers;
+import exiledsector.items.modifier.ItemRoller;
+import exiledsector.items.modifier.PoolEntry;
+import exiledsector.items.subroutine.SubroutineDefinitions;
+import exiledsector.items.subroutine.SubroutineKind;
 import exiledsector.modifiers.ModifierSlot;
-import exiledsector.skills.npc.RealSkillData;
-import org.json.CDL;
 import org.json.JSONArray;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 
@@ -131,8 +133,8 @@ class ItemDefinitionsTest {
     void aHullItemsKindFollowsItsDefinition() throws Exception {
         ItemDefinitions.register(new JSONArray().put(row("bridge_item", "bridge", "HULL_MULT:4:6")));
 
-        assertEquals(ItemKind.BRIDGE, Item.withEffects("a", "bridge_item", 1L, List.of()).kind());
-        assertNull(Item.withEffects("b", "not_loaded", 1L, List.of()).kind());
+        assertEquals(ItemKind.BRIDGE, TestItems.withLines("a", "bridge_item", 1L, List.of()).kind());
+        assertNull(TestItems.withLines("b", "not_loaded", 1L, List.of()).kind());
     }
 
     @Test
@@ -164,7 +166,7 @@ class ItemDefinitionsTest {
         }
         for (ItemDefinition definition : ItemDefinitions.all()) {
             String icon = definition.icon();
-            assertFalse(icon.startsWith("graphics/unused/") || icon.startsWith("graphics/description/"),
+            assertFalse(icon.startsWith("art/unused/") || icon.startsWith("art/description/"),
                     definition.id() + " uses " + icon + ", which build-common.ps1 leaves out of deploys and releases");
         }
     }

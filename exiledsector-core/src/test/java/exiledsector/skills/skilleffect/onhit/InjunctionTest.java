@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
+import exiledsector.skills.skilleffect.CombatTestShips;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -26,12 +27,7 @@ class InjunctionTest {
     private static final Injunction.Slowdown RECHARGE_ONLY = new Injunction.Slowdown(5f, 0f);
 
     private static ShipAPI ship(int owner) {
-        ShipAPI ship = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS);
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(ship.getOwner()).thenReturn(owner);
-        when(ship.isAlive()).thenReturn(true);
-        return ship;
+        return CombatTestShips.ship(mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS)).owner(owner).alive().build();
     }
 
     @Test

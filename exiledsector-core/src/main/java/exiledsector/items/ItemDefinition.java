@@ -1,6 +1,12 @@
 package exiledsector.items;
 
 import exiledsector.Seeds;
+import exiledsector.items.drop.UniqueSource;
+import exiledsector.items.modifier.ItemModifiers;
+import exiledsector.items.modifier.ModifierScope;
+import exiledsector.items.modifier.ModifierSources;
+import exiledsector.items.modifier.PoolEntry;
+import exiledsector.items.modifier.RolledModifier;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
@@ -60,6 +66,10 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
     public ItemDefinition(String id, ItemKind kind, String name, String icon, float rarity, boolean unique, String description,
                           List<PoolEntry> prefixes, List<PoolEntry> suffixes, String unlock) {
         this(id, kind, name, icon, rarity, unique, description, prefixes, suffixes, unlock, null, null, List.of(), NO_SOCKET_LIMIT);
+    }
+
+    public boolean isHullItem() {
+        return type == ItemType.HULL_ITEM;
     }
 
     public boolean keepsOneModifier() {
@@ -198,7 +208,7 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
         return null;
     }
 
-    PoolEntry poolEntryFor(String modifierId, ModifierSlot slot) {
+    public PoolEntry poolEntryFor(String modifierId, ModifierSlot slot) {
         PoolEntry listedEntry = poolEntryFor(modifierId);
         return listedEntry != null ? listedEntry : singleEntryFor(modifierId, slot);
     }
@@ -221,7 +231,7 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
                 if (resolved == null) {
                     resolved = new ArrayList<>(modifiers);
                 }
-                resolved.set(index, new RolledModifier(currentId, modifier.slot(), modifier.lines(), modifier.immutable()));
+                resolved.set(index, modifier.withModifierId(currentId));
             }
         }
         return resolved == null ? modifiers : resolved;
@@ -266,7 +276,8 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
     }
 
     private String currentId(RolledModifier modifier) {
-        if (poolEntryFor(modifier.modifierId()) != null || modifier.lines().size() != 1 || ModifierSources.isReserved(modifier.modifierId())) {
+        if (modifier.warped() || poolEntryFor(modifier.modifierId()) != null || modifier.lines().size() != 1
+                || ModifierSources.isReserved(modifier.modifierId())) {
             return modifier.modifierId();
         }
         PoolEntry entry = singleEntryFor(modifier.lines().get(0).effectName(), modifier.slot());
@@ -343,7 +354,7 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
         }
     }
 
-    static String currentEffectName(String listedName, ModifierEffects effects) {
+    public static String currentEffectName(String listedName, ModifierEffects effects) {
         String currentName = effects.currentName(listedName);
         if (currentName == null) {
             LOG.warn("Skipping pool entry " + listedName + ": it is not a skill effect");

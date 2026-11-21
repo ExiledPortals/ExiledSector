@@ -9,42 +9,27 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.listeners.ShipRecoveryListener;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.util.Misc;
 import exiledsector.ExiledSector;
 import exiledsector.PlayerFleet;
 import exiledsector.compat.SecretsOfTheFrontierCompat;
-import exiledsector.i18n.I18n;
-import exiledsector.i18n.Translation;
-import exiledsector.items.Item;
-import exiledsector.items.ItemDisassembly;
-import exiledsector.items.MaterialItems;
-import exiledsector.items.ItemDrops;
-import exiledsector.items.ItemData;
-import exiledsector.items.ItemRarity;
-import exiledsector.items.ShipSchematic;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.BattleLoot;
-import exiledsector.loot.BattleMaterials;
 import exiledsector.loot.EncounterSalvage;
+import exiledsector.loot.FleetDifficulties;
 import exiledsector.loot.LootSources;
+import exiledsector.skills.skilleffect.logistics.ForgeSupplies;
 import exiledsector.skills.skilleffect.logistics.SalvagedArmaments;
-import exiledsector.ui.CampaignMessages;
-import exiledsector.ui.cargo.MaterialDropAnnouncer;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class ItemLootListener extends BaseCampaignEventListener implements ShipRecoveryListener {
 
     private static final class Pending {
         private final BattleLoot battleLoot;
-        private final BattleMaterials materials = new BattleMaterials();
+        private float defeatedDeploymentPoints;
 
         Pending(BattleLoot battleLoot) {
             this.battleLoot = battleLoot;
@@ -80,15 +65,15 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         if (!engagement.playerWon()) {
             return;
         }
-        float difficultyMultiplier = LootSources.difficultyMultiplier(engagement.difficulty());
+        float difficultyMultiplier = FleetDifficulties.difficultyMultiplier(engagement.difficulty());
         float defeatedDp = engagement.enemyDeploymentPointsDefeated();
+        pendingLoot.defeatedDeploymentPoints += defeatedDp;
         record(pendingLoot, new BattleEngagement(engagementResult.getBattle(), difficultyMultiplier, defeatedDp, engagement.enemyLosses()));
     }
 
     private static void record(Pending pendingLoot, BattleEngagement battleEngagement) {
         LootSources.all().forEach(source -> source.recordEngagement(pendingLoot.battleLoot, battleEngagement));
-        battleEngagement.lostEnemiesBySourceFleet().forEach((sourceFleet, members) -> pendingLoot.materials.record(
-                BattleEngagement.deploymentPoints(members), battleEngagement.difficultyMultiplier(), LootSources.fleetLootRules(sourceFleet)));
+        pendingLoot.battleLoot.losses().record(battleEngagement, LootSources::fleetLootRules);
     }
 
     public static void addUnfoughtBattleLoot(CargoAPI loot, CampaignFleetAPI fleet, Random random) {
@@ -97,9 +82,10 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         }
         Pending pendingLoot = new Pending(new BattleLoot(random, new Random(random.nextLong())));
         pendingLoot.battleLoot.setPlayerWon(true);
+        pendingLoot.battleLoot.markUnfought();
         pendingLoot.battleLoot.setEncounterSalvage(EncounterSalvage.NO_WRECKS);
         record(pendingLoot, BattleEngagement.unfought(fleet, fleet.getFleetData().getMembersListCopy()));
-        addEncounterLoot(pendingLoot, loot, random);
+        addEncounterLoot(pendingLoot, loot);
     }
 
     @Override
@@ -116,18 +102,14 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         Pending pendingLoot = encounterPlugin == null ? null : pendingByBattle.remove(encounterPlugin.getBattle());
         if (pendingLoot != null && loot != null) {
             pendingLoot.battleLoot.setEncounterSalvage(EncounterSalvage.of(encounterPlugin));
-            addEncounterLoot(pendingLoot, loot, lootRandom);
+            addEncounterLoot(pendingLoot, loot);
+            ForgeSupplies.addExtra(PlayerFleet.orNull(), loot, pendingLoot.defeatedDeploymentPoints, lootRandom);
         }
         pendingByBattle.keySet().removeIf(BattleAPI::isDone);
     }
 
-    private static void addEncounterLoot(Pending pendingLoot, CargoAPI loot, Random random) {
+    private static void addEncounterLoot(Pending pendingLoot, CargoAPI loot) {
         LootSources.all().forEach(source -> source.addEncounterLoot(pendingLoot.battleLoot, loot));
-        int wholeFeedstock = ItemDrops.wholeFeedstock(pendingLoot.materials.feedstock(), random);
-        if (wholeFeedstock > 0) {
-            MaterialItems.add(loot, ItemDisassembly.FEEDSTOCK_ITEM_ID, wholeFeedstock);
-        }
-        pendingLoot.materials.rollMaterials(random).forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
     }
 
     @Override
@@ -138,85 +120,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
             return;
         }
         LootSources.all().forEach(source -> source.deliverBattleLoot(pendingLoot.battleLoot, playerFleet.getCargo()));
-        Map<String, Integer> materials = pendingLoot.materials.rollMaterials(lootRandom);
-        materials.forEach((itemId, quantity) -> MaterialItems.add(playerFleet.getCargo(), itemId, quantity));
-        MaterialDropAnnouncer.announce(materials);
-        int wholeFeedstock = ItemDrops.wholeFeedstock(pendingLoot.materials.feedstock(), lootRandom);
-        if (wholeFeedstock > 0) {
-            MaterialItems.add(playerFleet.getCargo(), ItemDisassembly.FEEDSTOCK_ITEM_ID, wholeFeedstock);
-            String feedstockName = MaterialItems.displayName(ItemDisassembly.FEEDSTOCK_ITEM_ID);
-            if (CampaignMessages.available()) {
-                String salvageMessage = I18n.forGameText(() -> Translation.msg("socketable.salvaged").arg("name",
-                        Translation.msg("socketable.techMining.material").arg("count", wholeFeedstock).arg("name", feedstockName).text()).text());
-                CampaignMessages.plain(salvageMessage, Misc.getPositiveHighlightColor());
-            }
-        }
-    }
-
-    public static void addSiteLoot(CargoAPI loot, ItemDrops.SiteLoot siteLoot) {
-        addItems(loot, siteLoot.items(), siteLoot.upgrades());
-        siteLoot.materials().forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
-    }
-
-    public static void addItems(CargoAPI cargo, List<ItemData> items, List<ShipSchematic> upgrades) {
-        LootSources.shapeDrops(items).forEach(item -> cargo.addSpecial(item.toSpecialItem(), 1f));
-        upgrades.forEach(upgrade -> cargo.addSpecial(upgrade.toSpecialItem(), 1f));
-    }
-
-    public static void deliverSiteLoot(CargoAPI cargo, ItemDrops.SiteLoot siteLoot) {
-        deliverSiteLoot(cargo, new ItemDrops.SiteLoot(LootSources.shapeDrops(siteLoot.items()), siteLoot.upgrades(), siteLoot.materials()),
-                ItemLootListener::announceSalvaged, MaterialDropAnnouncer::announce);
-    }
-
-    public static void deliverSiteLoot(CargoAPI cargo, ItemDrops.SiteLoot siteLoot, Consumer<Supplier<String>> announceFind,
-                                       Consumer<Map<String, Integer>> announceMaterials) {
-        deliverItems(cargo, siteLoot.items(), announceFind);
-        for (ShipSchematic upgrade : siteLoot.upgrades()) {
-            cargo.addSpecial(upgrade.toSpecialItem(), 1f);
-            announceFind.accept(upgrade::displayName);
-        }
-        siteLoot.materials().forEach((itemId, quantity) -> MaterialItems.add(cargo, itemId, quantity));
-        announceMaterials.accept(siteLoot.materials());
-    }
-
-    public static void deliverItems(CargoAPI cargo, List<ItemData> items) {
-        deliverItems(cargo, LootSources.shapeDrops(items), ItemLootListener::announceSalvaged);
-    }
-
-    private static void deliverItems(CargoAPI cargo, List<ItemData> items, Consumer<Supplier<String>> announceFind) {
-        for (ItemData item : items) {
-            cargo.addSpecial(item.toSpecialItem(), 1f);
-            Item previewItem = item.preview();
-            if (previewItem != null) {
-                announceFind.accept(previewItem::name);
-            }
-        }
-    }
-
-    public static void announceBattleItems(List<ItemData> items) {
-        Map<ItemRarity, List<Item>> previewsByRarity = new EnumMap<>(ItemRarity.class);
-        for (ItemData item : items) {
-            Item previewItem = item.preview();
-            if (previewItem != null) {
-                previewsByRarity.computeIfAbsent(previewItem.rarity(), rarity -> new ArrayList<>()).add(previewItem);
-            }
-        }
-        previewsByRarity.forEach((rarity, previews) -> {
-            if (rarity == ItemRarity.UNIQUE || previews.size() == 1) {
-                previews.forEach(previewItem -> announceSalvaged(previewItem::name));
-            } else if (CampaignMessages.available()) {
-                String messageKey = rarity == ItemRarity.COMMON ? "socketable.salvagedCommon" : "socketable.salvagedRare";
-                String salvageMessage = I18n.forGameText(() -> Translation.msg(messageKey).arg("count", previews.size()).text());
-                CampaignMessages.plain(salvageMessage, Misc.getPositiveHighlightColor());
-            }
-        });
-    }
-
-    public static void announceSalvaged(Supplier<String> itemName) {
-        if (CampaignMessages.available()) {
-            String salvageMessage = I18n.forGameText(() -> Translation.msg("socketable.salvaged").arg("name", itemName.get()).text());
-            CampaignMessages.plain(salvageMessage, Misc.getPositiveHighlightColor());
-        }
+        ForgeSupplies.addExtra(playerFleet, playerFleet.getCargo(), pendingLoot.defeatedDeploymentPoints, lootRandom);
     }
 
     @Override

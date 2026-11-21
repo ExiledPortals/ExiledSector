@@ -1,12 +1,13 @@
 import type { Vocabulary } from '../../../api/vocabulary.ts';
-import { csvCell, csvTableFromRows, parseCsvTable, serializeCsvTable, trimmedCsvCells, type CsvTable } from '../../../shared/csv.ts';
+import { csvTableFromColumns, LIST_SEPARATOR, parseCsvTable, readCsvRow, serializeCsvTable, splitList, type CsvColumn, type CsvTable } from '../../../shared/csv.ts';
 import { isNumberText } from '../../../shared/decimalText.ts';
+import { uniqueSuffixedId } from '../../../shared/rowIds.ts';
+import { themeTagIssues } from '../../../shared/themeTags.ts';
 import { WORMHOLE_ANCHOR_TYPE } from './anchors.ts';
 import { DOCTRINE_TYPE } from './doctrines.ts';
-import { familyEffectNames, isFamilyEffect, MODIFIER_FILE_NAMES, type ItemFamily } from './itemFamily.ts';
+import { familyEffectNames, familyTagScope, isFamilyEffect, MODIFIER_FILE_NAMES, type ItemFamily } from './itemFamily.ts';
 
-export const MODIFIER_COLUMNS = ['id', 'affix', 'scopes', 'lines', 'name'] as const;
-export const EXCLUSIVE_GROUPS_COLUMN = 'exclusive_groups';
+export const TAGLESS = 'none';
 export const MODIFIER_SLOTS = ['implicit', 'prefix', 'suffix'] as const;
 export type ModifierSlot = (typeof MODIFIER_SLOTS)[number];
 export const MODIFIER_SLOT_LABELS: Record<ModifierSlot, string> = { implicit: 'Implicit', prefix: 'Prefix', suffix: 'Suffix' };
@@ -53,6 +54,7 @@ export interface ItemModifier {
   lines: ModifierLine[];
   name: string;
   exclusiveGroups?: string[];
+  tags?: string[];
   loadedId?: string;
 }
 
@@ -124,11 +126,7 @@ export function parseModifierLine(text: string): ModifierLine {
 }
 
 export function parseModifierLines(text: string): ModifierLine[] {
-  return String(text ?? '')
-    .split(';')
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .map(parseModifierLine);
+  return splitList(text).map(parseModifierLine);
 }
 
 function lineValuesText(line: ModifierLine): string {
@@ -142,44 +140,27 @@ export function formatModifierLines(lines: ModifierLine[]): string {
   return lines.map((line) => `${line.effect}:${lineValuesText(line)}${line.extraField === undefined ? '' : `:${line.extraField}`}`).join('; ');
 }
 
-export function parseItemTypes(text: string): string[] {
-  return String(text ?? '')
-    .split(';')
-    .map((itemType) => itemType.trim())
-    .filter(Boolean);
-}
+const MODIFIER_COLUMNS: readonly CsvColumn<ItemModifier>[] = [
+  { column: 'id', field: 'id' },
+  { column: 'affix', field: 'slot' },
+  { column: 'scopes', field: 'itemTypes', read: splitList, write: (modifier) => modifier.itemTypes.join(LIST_SEPARATOR) },
+  { column: 'lines', field: 'lines', read: parseModifierLines, write: (modifier) => formatModifierLines(modifier.lines) },
+  { column: 'name', field: 'name' },
+  { column: 'exclusive_groups', field: 'exclusiveGroups', read: splitList, write: (modifier) => (modifier.exclusiveGroups ?? []).join(LIST_SEPARATOR), optional: true },
+  { column: 'tags', field: 'tags', read: splitList, write: (modifier) => (modifier.tags ?? []).join(LIST_SEPARATOR), optional: true },
+];
 
 export function parseModifiersCsv(text: string): ModifiersModel {
   const table = parseCsvTable(text);
   const modifiers = table.rows.map((cells): ItemModifier => {
-    const columns = trimmedCsvCells(table, cells, MODIFIER_COLUMNS);
-    return {
-      cells,
-      id: columns.id,
-      slot: columns.affix,
-      itemTypes: parseItemTypes(columns.scopes),
-      lines: parseModifierLines(columns.lines),
-      name: columns.name,
-      exclusiveGroups: parseItemTypes(csvCell(table, cells, EXCLUSIVE_GROUPS_COLUMN)),
-      loadedId: columns.id,
-    };
+    const modifier = { cells, ...readCsvRow(table, cells, MODIFIER_COLUMNS) } as ItemModifier;
+    return { ...modifier, loadedId: modifier.id };
   });
   return { table, modifiers };
 }
 
 export function serializeModifiersCsv(model: ModifiersModel): string {
-  const writesGroups =
-    model.table.header.includes(EXCLUSIVE_GROUPS_COLUMN) || model.modifiers.some((modifier) => (modifier.exclusiveGroups ?? []).length > 0);
-  return serializeCsvTable(
-    csvTableFromRows(model.table, model.modifiers, (modifier) => ({
-      id: modifier.id,
-      affix: modifier.slot,
-      scopes: modifier.itemTypes.join(';'),
-      lines: formatModifierLines(modifier.lines),
-      name: modifier.name,
-      ...(writesGroups ? { exclusive_groups: (modifier.exclusiveGroups ?? []).join(';') } : {}),
-    })),
-  );
+  return serializeCsvTable(csvTableFromColumns(model.table, model.modifiers, MODIFIER_COLUMNS));
 }
 
 export function modifierById(modifiers: ItemModifier[]): Map<string, ItemModifier> {
@@ -212,12 +193,7 @@ export function suggestedModifierId(lines: ModifierLine[], qualifier = ''): stri
 }
 
 export function uniqueModifierId(modifiers: ItemModifier[], base: string, takenIds: ReadonlySet<string> = new Set()): string {
-  let id = base;
-  let suffix = 2;
-  while (takenIds.has(id) || modifiers.some((modifier) => modifier.id === id)) {
-    id = `${base}_${suffix++}`;
-  }
-  return id;
+  return uniqueSuffixedId(base, (id) => takenIds.has(id) || modifiers.some((modifier) => modifier.id === id));
 }
 
 export function shipItemTypes(vocabulary: Vocabulary): string[] {
@@ -420,6 +396,19 @@ export function validateModifiers(
         issues.push(`${label}: exclusive group "${group}" must be letters, digits and underscores`);
       }
     }
+    const tags = modifier.tags ?? [];
+    if (tags.length > 1 && tags.includes(TAGLESS)) {
+      issues.push(`${label}: ${TAGLESS} marks a modifier with no tags, so it cannot sit beside other tags`);
+    }
+    for (const tag of tags) {
+      if (!MODIFIER_ID_PATTERN.test(tag)) {
+        issues.push(`${label}: tag "${tag}" must be letters, digits and underscores`);
+      }
+    }
+    if (!tags.includes(TAGLESS)) {
+      const wellFormedTags = tags.filter((tag) => MODIFIER_ID_PATTERN.test(tag));
+      issues.push(...themeTagIssues(vocabulary, familyTagScope(family), wellFormedTags).map((issue) => `${label}: ${issue}`));
+    }
     const modifierUsage = usage.get(modifier.id);
     if (modifierUsage && modifierUsage.nonUniqueItems.length > 0 && !modifier.name.trim()) {
       issues.push(`${label}: ${modifierUsage.nonUniqueItems.join(', ')} can roll it, so it needs a name for their common names`);
@@ -510,13 +499,3 @@ export function setHullValue(values: RolledValues, hullIndex: number, value: str
   }
 }
 
-export function markModifiersSaved(model: ModifiersModel, saved: ModifiersModel): void {
-  for (const modifier of model.modifiers) {
-    const savedModifier = saved.modifiers.find((candidate) =>
-      modifier.loadedId ? candidate.loadedId === modifier.loadedId : !candidate.loadedId && candidate.id === modifier.id,
-    );
-    if (savedModifier) {
-      modifier.loadedId = savedModifier.id;
-    }
-  }
-}

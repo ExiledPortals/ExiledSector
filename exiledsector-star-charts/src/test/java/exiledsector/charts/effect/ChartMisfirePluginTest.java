@@ -52,7 +52,7 @@ class ChartMisfirePluginTest {
     void aHardpointFiresWhereItPointsOnceTheFirstMinuteIsOver() {
         WeaponAPI hardpoint = weapon(WeaponType.BALLISTIC, true, 10f);
         armShip(playerShip, hardpoint);
-        ChartPlayerModifiers.setWeaponMisfireRate(MISFIRES_PER_SECOND);
+        makeErratic();
         ChartMisfirePlugin plugin = initialised();
 
         when(engine.getTotalElapsedTime(false)).thenReturn(ChartMisfirePlugin.GRACE_SECONDS - 1f);
@@ -75,7 +75,7 @@ class ChartMisfirePluginTest {
         when(turret.getSpec()).thenReturn(spec);
         when(turret.getCurrAngle()).thenReturn(SHIP_FACING);
         armShip(playerShip, turret);
-        ChartPlayerModifiers.setWeaponMisfireRate(MISFIRES_PER_SECOND);
+        makeErratic();
         ChartMisfirePlugin plugin = initialised();
         when(engine.getTotalElapsedTime(false)).thenReturn((float) ChartMisfirePlugin.GRACE_SECONDS);
 
@@ -94,14 +94,10 @@ class ChartMisfirePluginTest {
     }
 
     @Test
-    void nothingMisfiresOutsideAnErraticChartOrInSimulations() {
+    void nothingMisfiresOutsideAnErraticChart() {
         WeaponAPI hardpoint = weapon(WeaponType.BALLISTIC, true, 10f);
         armShip(playerShip, hardpoint);
         when(engine.getTotalElapsedTime(false)).thenReturn(ChartMisfirePlugin.GRACE_SECONDS * 2f);
-        initialised().advance(FRAME, List.of());
-
-        ChartPlayerModifiers.setWeaponMisfireRate(MISFIRES_PER_SECOND);
-        when(engine.isSimulation()).thenReturn(true);
         initialised().advance(FRAME, List.of());
 
         verify(hardpoint, never()).setForceFireOneFrame(anyBoolean());
@@ -137,7 +133,7 @@ class ChartMisfirePluginTest {
         when(hardpoint.isFiring()).thenReturn(true);
         when(hardpoint.getCooldownRemaining()).thenReturn(2f);
         armShip(playerShip, hardpoint);
-        ChartPlayerModifiers.setWeaponMisfireRate(MISFIRES_PER_SECOND);
+        makeErratic();
         ChartMisfirePlugin plugin = initialised();
         when(engine.getTotalElapsedTime(false)).thenReturn((float) ChartMisfirePlugin.GRACE_SECONDS);
 
@@ -165,6 +161,10 @@ class ChartMisfirePluginTest {
         assertEquals(20f, ChartMisfirePlugin.shortestTurn(350f, 10f), 0.001f);
         assertEquals(-20f, ChartMisfirePlugin.shortestTurn(10f, 350f), 0.001f);
         assertEquals(-90f, ChartMisfirePlugin.shortestTurn(90f, 0f), 0.001f);
+    }
+
+    private static void makeErratic() {
+        ChartPlayerModifiers.setBattleRules(new ChartBattleRules(0, false, false, 0f, MISFIRES_PER_SECOND, 0f));
     }
 
     private ChartMisfirePlugin initialised() {

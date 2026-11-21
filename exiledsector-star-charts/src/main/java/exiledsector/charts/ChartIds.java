@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import exiledsector.loot.FleetFactions;
 
 public final class ChartIds {
 
@@ -13,6 +14,7 @@ public final class ChartIds {
     public static final String ENTITY_TAG = PREFIX + "entity";
     public static final String OUTER_WORMHOLE_TAG = PREFIX + "outer";
     public static final String INNER_WORMHOLE_TAG = PREFIX + "inner";
+    public static final String HELD_OPEN_WORMHOLE_TAG = "exiledSector_wormhole_held_open";
     public static final String RUN_TAG_PREFIX = PREFIX + "run_";
     public static final String WORMHOLE_TYPE = PREFIX + "wormhole";
     public static final String MEMORY_PREFIX = "$" + PREFIX;
@@ -23,6 +25,8 @@ public final class ChartIds {
     public static final String SEED_MEMORY_KEY = "$exiledSector_chartSeed";
     public static final String STRENGTH_BONUS_MEMORY_KEY = "$exiledSector_chartStrengthBonus";
     public static final String BOSS_MEMORY_KEY = "$exiledSector_chartBoss";
+    public static final String TWIN_BOSS_FLAGSHIP_MEMORY_KEY = "$exiledSector_chartTwinBossFlagship";
+    public static final String TWIN_BOSS_CHARTS_GIVEN_MEMORY_KEY = "$exiledSector_chartTwinBossChartsGiven";
     public static final String ENEMY_EFFECTS_MEMORY_KEY = "$exiledSector_chartEnemyEffects";
     public static final String START_DP_MEMORY_KEY = "$exiledSector_chartStartDp";
     public static final String START_FP_MEMORY_KEY = "$exiledSector_chartStartFp";
@@ -30,12 +34,10 @@ public final class ChartIds {
     public static final String LOOT_SPENT_MEMORY_KEY = "$exiledSector_chartLootSpent";
     public static final String LOOT_DP_PAID_MEMORY_KEY = "$exiledSector_chartLootDpPaid";
     public static final String DEFENDED_SITE_MEMORY_KEY = "$exiledSector_chartDefendedSite";
-    public static final String ANOMALY_MEMORY_KEY = "$exiledSector_chartAnomaly";
     public static final String DEFENDER_LOOT_ADDED_MEMORY_KEY = "$exiledSector_chartDefenderLootAdded";
     public static final String VANILLA_DEFENDER_FLEET_MEMORY_KEY = "$defenderFleet";
     public static final String SKIRMISH_SIDE_MEMORY_KEY = "$exiledSector_chartSkirmishSide";
-    public static final String SKIRMISH_COMMANDER_MEMORY_KEY = "$exiledSector_chartSkirmishCommander";
-    public static final String BOSS_LOOT_SITE = PREFIX + "boss";
+    public static final String REAL_FACTION_MEMORY_KEY = FleetFactions.REAL_FACTION_MEMORY_KEY;
     public static final String CONTENT_TAG = PREFIX + "content";
     public static final String SENSOR_MOD_ID = PREFIX + "sensor_range";
     public static final String ENEMY_SENSOR_MOD_ID = PREFIX + "enemy_sensor_range";
@@ -84,6 +86,15 @@ public final class ChartIds {
 
     public static boolean belongsToRun(SectorEntityToken entity, String runId) {
         return runId != null && entity.hasTag(runTag(runId));
+    }
+
+    public static void tagForRun(SectorEntityToken entity, String runId) {
+        entity.addTag(ENTITY_TAG);
+        entity.addTag(runTag(runId));
+    }
+
+    public static boolean isChartSystem(LocationAPI location) {
+        return location instanceof StarSystemAPI system && system.hasTag(SYSTEM_TAG);
     }
 
     public static String locationIdOf(LocationAPI location) {

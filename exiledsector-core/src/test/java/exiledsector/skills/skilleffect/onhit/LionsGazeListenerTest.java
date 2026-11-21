@@ -1,6 +1,5 @@
 package exiledsector.skills.skilleffect.onhit;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.BeamAPI;
 import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
@@ -8,14 +7,15 @@ import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.FluxTrackerAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
-import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.skills.skilleffect.CombatEngineExtension;
+import exiledsector.skills.skilleffect.CombatTestShips;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.lwjgl.util.vector.Vector2f;
 import org.magiclib.plugins.MagicFakeBeamPlugin;
 import org.magiclib.util.MagicFakeBeam;
@@ -44,19 +44,18 @@ import static org.mockito.Mockito.when;
 class LionsGazeListenerTest {
 
     private final List<ShipAPI> ships = new ArrayList<>();
-    private MockedStatic<Global> globalMock;
+    @RegisterExtension
+    final CombatEngineExtension combat = new CombatEngineExtension();
     private MockedStatic<MagicFakeBeam> fakeBeamMock;
     private MockedStatic<MagicFakeBeamPlugin> fakeBeamPluginMock;
     private CombatEngineAPI engine;
 
     @BeforeEach
     void setUp() {
-        engine = mock(CombatEngineAPI.class);
+        engine = combat.engine();
         CollisionGridAPI shipGrid = mock(CollisionGridAPI.class);
         when(engine.getShipGrid()).thenReturn(shipGrid);
         when(shipGrid.getCheckIterator(any(), anyFloat(), anyFloat())).thenAnswer(invocation -> new ArrayList<Object>(ships).iterator());
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getCombatEngine).thenReturn(engine);
         fakeBeamMock = Mockito.mockStatic(MagicFakeBeam.class);
         fakeBeamPluginMock = Mockito.mockStatic(MagicFakeBeamPlugin.class);
     }
@@ -65,18 +64,10 @@ class LionsGazeListenerTest {
     void tearDown() {
         fakeBeamPluginMock.close();
         fakeBeamMock.close();
-        globalMock.close();
     }
 
     private static ShipAPI shipAt(float x, int owner) {
-        ShipAPI ship = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(stats.getDynamic()).thenReturn(mock(DynamicStatsAPI.class));
-        when(ship.getLocation()).thenReturn(new Vector2f(x, 0f));
-        when(ship.getOwner()).thenReturn(owner);
-        when(ship.isAlive()).thenReturn(true);
-        return ship;
+        return CombatTestShips.ship().at(new Vector2f(x, 0f)).owner(owner).alive().build();
     }
 
     private static BeamAPI beamFrom(WeaponAPI weapon) {

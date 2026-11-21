@@ -1,16 +1,15 @@
 package exiledsector.charts.anomaly.convoy;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.CampaignTerrainAPI;
 import com.fs.starfarer.api.campaign.CampaignTerrainPlugin;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.impl.campaign.terrain.AsteroidBeltTerrainPlugin;
 import com.fs.starfarer.api.impl.campaign.terrain.AsteroidFieldTerrainPlugin;
 import com.fs.starfarer.api.impl.campaign.terrain.NebulaTerrainPlugin;
+import exiledsector.charts.anomaly.AnomalyTerrains;
 import exiledsector.charts.anomaly.SlowsFleets;
 
-import java.util.ArrayList;
 import java.util.List;
 
 final class ConvoyTerrain {
@@ -26,22 +25,7 @@ final class ConvoyTerrain {
     }
 
     static List<CampaignTerrainPlugin> slowingTerrain(LocationAPI location) {
-        List<CampaignTerrainPlugin> slowing = new ArrayList<>();
-        for (CampaignTerrainAPI terrain : location.getTerrainCopy()) {
-            if (slowsConvoys(terrain.getPlugin())) {
-                slowing.add(terrain.getPlugin());
-            }
-        }
-        return slowing;
-    }
-
-    static boolean inside(CampaignFleetAPI fleet, List<CampaignTerrainPlugin> slowing) {
-        for (CampaignTerrainPlugin terrain : slowing) {
-            if (terrain.containsEntity(fleet)) {
-                return true;
-            }
-        }
-        return false;
+        return AnomalyTerrains.in(location, ConvoyTerrain::slowsConvoys);
     }
 
     static void apply(CampaignFleetAPI fleet, float burnMult) {

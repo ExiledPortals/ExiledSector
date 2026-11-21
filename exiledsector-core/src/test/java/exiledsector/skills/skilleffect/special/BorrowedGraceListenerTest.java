@@ -3,6 +3,7 @@ package exiledsector.skills.skilleffect.special;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
+import exiledsector.skills.skilleffect.CombatTestShips;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -18,14 +19,7 @@ class BorrowedGraceListenerTest {
     private static final String GRACE_MOD_ID = "exiledSector_seraphsGrace_grace";
 
     private static ShipAPI ship(String id, int owner, Map<String, Float> magnitudes) {
-        ShipAPI ship = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS);
-        when(ship.getId()).thenReturn(id);
-        when(ship.getOwner()).thenReturn(owner);
-        when(ship.getMutableStats()).thenReturn(stats);
-        magnitudes.forEach((key, value) -> when(stats.getDynamic().getValue(key, 0f)).thenReturn(value));
-        when(ship.isAlive()).thenReturn(true);
-        return ship;
+        return CombatTestShips.ship(mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS)).id(id).owner(owner).dynamic(magnitudes).alive().build();
     }
 
     private static ApplyDamageResultAPI hit(float armor, float hull) {

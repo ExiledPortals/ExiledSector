@@ -1,0 +1,171 @@
+package exiledsector.charts.officer;
+
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.SettingsAPI;
+import com.fs.starfarer.api.campaign.FactionAPI;
+import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.characters.PersonAPI;
+import com.fs.starfarer.api.characters.PersonalityAPI;
+import com.fs.starfarer.api.util.WeightedRandomPicker;
+import exiledsector.charts.atlas.AtlasCell;
+import exiledsector.charts.atlas.AtlasGenerator;
+import exiledsector.charts.atlas.AtlasLine;
+import exiledsector.charts.atlas.AtlasNames;
+import exiledsector.charts.atlas.AtlasTerritoryPlacer;
+import exiledsector.charts.officer.reward.OfficerRewardText;
+import exiledsector.charts.officer.scar.HullFacts;
+import exiledsector.charts.officer.scar.ScarDModOrigins;
+import exiledsector.charts.officer.scar.ScarText;
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.TreeMap;
+
+public final class OfficerText {
+
+    static final String HISTORY_KEY_PREFIX = "chart.officer.history.";
+    private static final Map<String, String> FULL_NAMES = new HashMap<>();
+    private static final Map<String, String> PORTRAITS = new HashMap<>();
+
+    private OfficerText() {
+    }
+
+    static PersonAPI namedPerson(FactionAPI faction, AtlasOfficer officer) {
+        return faction.createRandomPerson(new Random(officer.nameSeed()));
+    }
+
+    public static FactionAPI faction(AtlasOfficer officer) {
+        SectorAPI sector = Global.getSector();
+        return sector == null ? null : sector.getFaction(officer.factionId());
+    }
+
+    public static String fullName(AtlasOfficer officer) {
+        FactionAPI faction = faction(officer);
+        if (faction == null) {
+            return "";
+        }
+        return FULL_NAMES.computeIfAbsent(officer.factionId() + "|" + officer.nameSeed(), key -> namedPerson(faction, officer).getNameString());
+    }
+
+    public static String portraitPath(AtlasOfficer officer) {
+        return officer.hasPortrait() ? officer.portraitPath() : seededPortraitPath(officer);
+    }
+
+    public static String seededPortraitPath(AtlasOfficer officer) {
+        FactionAPI faction = faction(officer);
+        if (faction == null) {
+            return null;
+        }
+        return PORTRAITS.computeIfAbsent(officer.factionId() + "|" + officer.nameSeed() + "|" + officer.portraitSeed(),
+                key -> seededPortraitPath(faction, namedPerson(faction, officer), officer));
+    }
+
+    static String portraitPath(FactionAPI faction, PersonAPI named, AtlasOfficer officer) {
+        return officer.hasPortrait() ? officer.portraitPath() : seededPortraitPath(faction, named, officer);
+    }
+
+    private static String seededPortraitPath(FactionAPI faction, PersonAPI named, AtlasOfficer officer) {
+        return faction.createRandomPerson(named.getGender(), new Random(officer.portraitSeed())).getPortraitSprite();
+    }
+
+    public static List<String> portraitOptions(String factionId, AtlasOfficer officer) {
+        SectorAPI sector = Global.getSector();
+        FactionAPI ownFaction = faction(officer);
+        FactionAPI portraitFaction = sector == null ? null : sector.getFaction(factionId);
+        if (ownFaction == null || portraitFaction == null) {
+            return List.of();
+        }
+        WeightedRandomPicker<String> portraits = portraitFaction.getPortraits(namedPerson(ownFaction, officer).getGender());
+        return portraits == null ? List.of() : List.copyOf(portraits.getItems());
+    }
+
+    public static String traitName(AtlasOfficer officer) {
+        SettingsAPI settings = Global.getSettings();
+        PersonalityAPI personality = settings == null ? null : settings.getPersonaltySpec(officer.traitId());
+        return personality == null ? officer.traitId() : personality.getDisplayName();
+    }
+
+    public static String title(AtlasOfficer officer) {
+        return title(OfficerRanks.rank(officer.rankId()).displayName(), ScarText.epithet(fullName(officer), new TreeMap<>(officer.scars())));
+    }
+
+    public static List<AtlasLine> detailLines(AtlasOfficer officer) {
+        List<AtlasLine> lines = new ArrayList<>();
+        AtlasLine carriedLine = OfficerRewardText.carriedLine(officer.carried());
+        if (carriedLine != null) {
+            lines.add(carriedLine);
+        }
+        for (StyledText scarLine : scarLines(officer, OfficerFleets.flagshipHull(officer))) {
+            lines.add(new AtlasLine(scarLine.toMarkup(), AtlasLine.Tone.STYLED));
+        }
+        return lines;
+    }
+
+    public static List<StyledText> scarLines(AtlasOfficer officer, HullFacts hull) {
+        return ScarText.tooltipLines(new TreeMap<>(officer.scars()), ScarDModOrigins.byScar(new TreeMap<>(officer.scars()), officer.dmodIds(),
+                officer.dmodScars()), hull);
+    }
+
+    static String title(String rankName, String fullName) {
+        return Translation.msg("chart.officer.title").arg("rank", rankName).arg("name", fullName).text().trim();
+    }
+
+    public static HistoryEntry latestEntry(AtlasOfficer officer) {
+        return officer.history().isEmpty() ? null : HistoryEntry.parse(officer.history().get(officer.history().size() - 1));
+    }
+
+    public static String historyLine(AtlasGenerator generator, HistoryEntry entry) {
+        if (entry == null || !Translation.has(HISTORY_KEY_PREFIX + entry.event())) {
+            return "";
+        }
+        return Translation.msg(HISTORY_KEY_PREFIX + entry.event()).arg("region", regionOf(generator, entry.latest()))
+                .arg("from", regionOf(generator, entry.earliest())).text();
+    }
+
+    public static AtlasCell fledFrom(AtlasOfficer officer) {
+        HistoryEntry latest = latestEntry(officer);
+        return officer.hasFled() && latest != null && AtlasTerritoryPlacer.FLED_HISTORY.equals(latest.event()) ? latest.latest() : null;
+    }
+
+    public static boolean fledFrom(AtlasOfficer officer, AtlasCell cell) {
+        for (String entry : officer.history()) {
+            HistoryEntry parsed = HistoryEntry.parse(entry);
+            if (parsed != null && AtlasTerritoryPlacer.FLED_HISTORY.equals(parsed.event()) && parsed.latest().equals(cell)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static String fledLine(AtlasGenerator generator, AtlasOfficer officer) {
+        if (officer.isActive()) {
+            return Translation.msg("chart.officer.tooltip.fledTo").arg("title", title(officer))
+                    .arg("region", regionOf(generator, officer.commandCentre())).text();
+        }
+        return Translation.msg("chart.officer.tooltip.fledFrontier").arg("title", title(officer)).text();
+    }
+
+    public static String regionOf(AtlasGenerator generator, AtlasCell cell) {
+        return AtlasNames.region(generator.node(cell).regionId());
+    }
+
+    public record HistoryEntry(String event, AtlasCell earliest, AtlasCell latest) {
+
+        public static HistoryEntry parse(String entry) {
+            String[] parts = entry == null ? new String[0] : entry.split(AtlasTerritoryPlacer.HISTORY_SEPARATOR, -1);
+            if (parts.length < 2 || parts[0].isEmpty()) {
+                return null;
+            }
+            try {
+                return new HistoryEntry(parts[0], AtlasCell.unpack(Long.parseLong(parts[1])), AtlasCell.unpack(Long.parseLong(parts[parts.length - 1])));
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }
+    }
+}

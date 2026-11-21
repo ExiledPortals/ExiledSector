@@ -2,15 +2,14 @@ package exiledsector.ui.atlas;
 
 import exiledsector.i18n.StyledText;
 import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.anomaly.StellarFlares;
 import exiledsector.charts.anomaly.relay.RelayStages;
 import exiledsector.charts.anomaly.relay.RelayNetwork;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
-import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasAnomalyRecord;
 import exiledsector.charts.atlas.AtlasCell;
-import exiledsector.charts.atlas.AtlasEntry;
 import exiledsector.charts.atlas.AtlasLine;
 import exiledsector.charts.content.ChartFactions;
 import exiledsector.charts.atlas.AtlasData;
@@ -22,7 +21,10 @@ import exiledsector.charts.atlas.AtlasRules;
 import exiledsector.charts.atlas.AtlasSpecial;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.atlas.AtlasUnlocks;
-import exiledsector.ui.socket.BenchModeSupport;
+import exiledsector.charts.atlas.TestBorders;
+import exiledsector.charts.atlas.TestBorders.Border;
+import exiledsector.charts.officer.OfficerText;
+import exiledsector.charts.officer.turn.Intent;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
@@ -53,8 +55,7 @@ class AtlasNodeTextTest {
         AtlasGenerator generator = generator(state);
         AtlasCell bastion = AtlasDevTools.nearestOpenSite(generator, state, "bastion");
 
-        assertEquals(List.of(new AtlasLine("Out of reach. Complete a system joined to it by a lane first.", AtlasLine.Tone.HINT)),
-                AtlasNodeText.stateLines(generator, state, bastion, false));
+        assertEquals(List.of(), AtlasNodeText.stateLines(generator, state, bastion, false));
 
         AtlasDevTools.reach(generator, state, bastion);
 
@@ -68,29 +69,23 @@ class AtlasNodeTextTest {
     }
 
     @Test
-    void aSkirmishSystemNamesBothSidesAndOffersEachSideToJoin() {
+    void aSkirmishSystemNamesBothOfficersAndOffersNoSideToJoin() {
         ChartTables.useAnomalies(List.of(FactionSkirmish.INSTANCE),
                 List.of(new ChartAnomalies.Definition(FactionSkirmish.ANOMALY_ID, 1f, 1, 15, "", "", true, Set.of(), false)));
         try {
-            AtlasState state = new AtlasState(SEED);
-            List<AtlasRegion> regions = List.of(new AtlasRegion(AtlasRegion.NORMAL, 1f, 0, "", "", Map.of(), Map.of(), Map.of()));
-            AtlasGenerator generator = new AtlasGenerator(SEED, new AtlasRules(regions, Map.of("compact", 1f), Map.of("hegemony", 1f, "tritachyon", 1f),
-                    AtlasAnomalyChance.NEVER, AtlasAnomalyChance.NEVER, List.of(), List.of()), AtlasUnlocks.NONE, state);
-            AtlasCell cell = AtlasCell.ORIGIN.around(20).stream()
-                    .filter(candidate -> AtlasAnomalies.insert(generator, state, candidate, FactionSkirmish.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD, null)
-                            .check().allows())
-                    .findFirst().orElseThrow();
-            String defender = ChartFactions.displayName(FactionSkirmish.defender(generator, state, cell));
-            String attacker = ChartFactions.displayName(FactionSkirmish.attacker(generator, state, cell));
+            AtlasState state = new AtlasState(TestBorders.SEED);
+            AtlasGenerator generator = TestBorders.generator(state);
+            Border border = TestBorders.border(generator, state, "tritachyon", "hegemony");
+            AtlasCell cell = border.contested();
+            state.setDeclaredIntents(List.of(Intent.push(border.attacker().recordId(), cell, border.defender().recordId()).encode()));
+            assertTrue(AtlasAnomalies.insert(generator, state, cell, FactionSkirmish.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD, null).check().allows());
+            String attackerFaction = ChartFactions.displayName(border.attacker().factionId());
+            String defenderFaction = ChartFactions.displayName(border.defender().factionId());
 
-            assertTrue(AtlasNodeText.markers(generator, state, cell, generator.node(cell))
-                    .contains(new AtlasLine(attacker + " attacks " + defender, AtlasLine.Tone.PLAIN)));
-            assertTrue(AtlasNodeText.confirmLines(generator, state, cell).contains("Completing the system ends the fight permanently."));
-            List<BenchModeSupport.OpenChoice> choices = AtlasNodeText.entryChoices(generator, state, cell);
-            assertEquals(List.of("Side with " + defender, "Side with " + attacker, "Stay out"),
-                    choices.stream().map(BenchModeSupport.OpenChoice::label).toList());
-            assertEquals(List.of(new AtlasEntry(cell, SkirmishSide.DEFENDER), new AtlasEntry(cell, SkirmishSide.ATTACKER),
-                    new AtlasEntry(cell, SkirmishSide.NEITHER)), choices.stream().map(BenchModeSupport.OpenChoice::target).toList());
+            assertTrue(AtlasNodeText.markers(generator, state, cell, generator.node(cell)).contains(new AtlasLine(OfficerText.title(border.attacker()) + " of "
+                    + attackerFaction + " attacks " + OfficerText.title(border.defender()) + " of " + defenderFaction, AtlasLine.Tone.PLAIN)));
+            assertTrue(AtlasNodeText.confirmLines(generator, state, cell, itemId -> 0).contains("Completing the system ends the fight permanently."));
+            assertEquals(List.of(), AtlasNodeText.entryChoices(generator, state, cell));
             assertEquals(List.of(), AtlasNodeText.entryChoices(generator, state, AtlasCell.ORIGIN));
         } finally {
             ChartTables.resetAnomalies();
@@ -98,7 +93,20 @@ class AtlasNodeTextTest {
     }
 
     @Test
-    void aRelayStageSystemShowsItsStageItsLinesAndTheLastStagesUnique() throws Exception {
+    void anAnomalysRewardLineFollowsItsDescription() throws Exception {
+        ChartTables.loadAnomalies();
+        try {
+            String flares = AtlasNodeText.anomalyBody(StellarFlares.ANOMALY_ID).plain();
+
+            assertTrue(flares.startsWith("The system's stars throw flares constantly."), flares);
+            assertTrue(flares.endsWith("\nHull items found in the system have 1 lucky modifier\n(Lucky modifiers are rolled twice, keeping the best)"), flares);
+        } finally {
+            ChartTables.resetAnomalies();
+        }
+    }
+
+    @Test
+    void aRelayStageSystemShowsItsStageAndItsLines() throws Exception {
         ChartTables.loadAnomalies();
         AtlasData.registerNodeEffects(new JSONArray().put(new JSONObject().put("id", RelayStages.STAGE_EFFECTS_ID)
                 .put("effects", "CHART_FLEET_SIZE_PERCENT:20; CHART_QUANTITY_PERCENT:25")));
@@ -112,13 +120,13 @@ class AtlasNodeTextTest {
             List<AtlasLine> markers = AtlasNodeText.markers(generator, state, cell, generator.node(cell));
 
             assertTrue(markers.contains(new AtlasLine("Stage 3 of 3", AtlasLine.Tone.PLAIN)), markers.toString());
-            assertTrue(markers.contains(new AtlasLine("With all three relays awake, the Star Chart Boss drops a unique hull item or subroutine",
-                    AtlasLine.Tone.GOOD)), markers.toString());
+            assertTrue(markers.stream().noneMatch(line -> line.plain().contains("unique")), markers.toString());
             List<String> styledLines = markers.stream().filter(line -> line.tone() == AtlasLine.Tone.STYLED).map(AtlasLine::plain).toList();
             assertEquals(List.of("40% increased enemy fleet size",
-                    "50% increased quantity of items found in the system, and 50% increased completion reward"), styledLines);
-            assertTrue(AtlasNodeText.confirmLines(generator, state, cell).stream().noneMatch(line -> line.contains("<")));
+                    "50% increased quantity of items found in the system"), styledLines);
+            assertTrue(AtlasNodeText.confirmLines(generator, state, cell, itemId -> 0).stream().noneMatch(line -> line.contains("<")));
             assertTrue(AtlasNodeText.anomalyBody(generator, state, cell, RelayNetwork.ANOMALY_ID).plain().contains("Stage 3 of 3"));
+            assertEquals(List.of(), AtlasNodeText.card(generator, state, cell, true).notes());
             assertEquals(StyledText.parse("<bad>40%</bad> x"), new AtlasLine("<bad>40%</bad> x", AtlasLine.Tone.STYLED).styled());
         } finally {
             AtlasData.registerNodeEffects(new JSONArray());

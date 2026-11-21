@@ -5,7 +5,7 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.RealCatalogue;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
-import exiledsector.items.DoctrineOverrides;
+import exiledsector.items.subroutine.doctrine.DoctrineOverrides;
 import exiledsector.skills.LogisticsNodes;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;

@@ -8,6 +8,7 @@ import com.fs.starfarer.api.combat.MissileAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import exiledsector.ModSounds;
+import exiledsector.persistence.CombatData;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
@@ -62,10 +63,8 @@ public final class Motes {
         return mote;
     }
 
-    @SuppressWarnings("unchecked") // one map type is stored under our key in the engine's untyped custom data
     private static List<MissileAPI> liveMotesOf(CombatEngineAPI engine, ShipAPI source) {
-        Map<ShipAPI, List<MissileAPI>> bySource = (Map<ShipAPI, List<MissileAPI>>) engine.getCustomData()
-                .computeIfAbsent(CUSTOM_DATA_KEY, ignored -> new IdentityHashMap<ShipAPI, List<MissileAPI>>());
+        Map<ShipAPI, List<MissileAPI>> bySource = CombatData.getOrCreate(engine, CUSTOM_DATA_KEY, Map.class, IdentityHashMap::new);
         return bySource.computeIfAbsent(source, ignored -> new ArrayList<>());
     }
 }

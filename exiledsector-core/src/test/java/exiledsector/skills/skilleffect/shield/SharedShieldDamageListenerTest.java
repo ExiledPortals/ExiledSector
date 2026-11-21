@@ -1,27 +1,24 @@
 package exiledsector.skills.skilleffect.shield;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.FluxTrackerAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.combat.listeners.DamageListener;
 import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
-import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledsector.skills.skilleffect.CombatEngineExtension;
 import exiledsector.skills.skilleffect.CombatQueries;
+import exiledsector.skills.skilleffect.CombatTestShips;
 import exiledsector.skills.skilleffect.SkillEffect;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.AdditionalMatchers;
 import org.mockito.ArgumentCaptor;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +45,8 @@ class SharedShieldDamageListenerTest {
 
     private final List<ShipAPI> ships = new ArrayList<>();
 
-    private MockedStatic<Global> globalMock;
+    @RegisterExtension
+    final CombatEngineExtension combat = new CombatEngineExtension();
 
     private CombatEngineAPI engine;
 
@@ -56,30 +54,16 @@ class SharedShieldDamageListenerTest {
 
     @BeforeEach
     void setUp() {
-        engine = mock(CombatEngineAPI.class);
+        engine = combat.engine();
         when(engine.getShips()).thenReturn(ships);
         shipGrid = mock(CollisionGridAPI.class);
         when(engine.getShipGrid()).thenReturn(shipGrid);
         when(shipGrid.getCheckIterator(any(), anyFloat(), anyFloat())).thenAnswer(invocation -> new ArrayList<Object>(ships).iterator());
         when(engine.getTotalElapsedTime(false)).thenReturn(5f);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getCombatEngine).thenReturn(engine);
-    }
-
-    @AfterEach
-    void tearDown() {
-        globalMock.close();
     }
 
     private static ShipAPI ship(String statKey, float statValue) {
-        ShipAPI ship = mock(ShipAPI.class);
-        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
-        when(ship.getMutableStats()).thenReturn(stats);
-        when(stats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getValue(statKey, 0f)).thenReturn(statValue);
-        when(ship.isAlive()).thenReturn(true);
-        when(ship.getLocation()).thenReturn(new Vector2f(0f, 0f));
+        ShipAPI ship = CombatTestShips.ship().dynamic(statKey, statValue).alive().at(new Vector2f(0f, 0f)).build();
         when(ship.getFluxTracker()).thenReturn(mock(FluxTrackerAPI.class));
         return ship;
     }

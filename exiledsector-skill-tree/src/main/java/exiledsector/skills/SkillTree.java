@@ -172,7 +172,7 @@ public class SkillTree {
     }
 
     public static String curveKey(String aId, String bId) {
-        return aId.compareTo(bId) <= 0 ? aId + "|" + bId : bId + "|" + aId;
+        return ConnectorCurve.key(aId, bId);
     }
 
     public static boolean isConnectorVisible(String aId, String bId) {

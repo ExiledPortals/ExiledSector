@@ -77,7 +77,7 @@ class ChartColonyItemsTest {
 
         assertTrue(firstTier > 1);
         assertEquals(0f, ChartTiers.colonyItemChance(firstTier - 1));
-        assertTrue(ChartTiers.colonyItemChance(ChartTiers.HIGHEST_TIER) > ChartTiers.colonyItemChance(firstTier));
+        assertTrue(ChartTiers.colonyItemChance(ChartTiers.HIGHEST_DROP_TIER) > ChartTiers.colonyItemChance(firstTier));
         String chartModifiers = Files.readString(exiledsector.ProjectFiles.projectRoot().resolve("data/config/exiledSector/star_chart_modifiers.csv"),
                 StandardCharsets.UTF_8);
         int listed = 0;

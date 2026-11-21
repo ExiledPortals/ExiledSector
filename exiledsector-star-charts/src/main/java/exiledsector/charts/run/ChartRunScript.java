@@ -17,17 +17,17 @@ import exiledsector.charts.objective.ChartObjectives;
 import exiledsector.charts.run.cleanup.ChartLoadSweep;
 import exiledsector.charts.run.cleanup.ChartRunCloser;
 import exiledsector.compat.DiyPlanetsCompat;
+import exiledsector.compat.FirstFailureLog;
 import org.apache.log4j.Logger;
 
 public class ChartRunScript implements EveryFrameScript {
 
     static final float OBJECTIVE_CHECK_SECONDS = 1f;
-    private static final Logger LOG = Logger.getLogger(ChartRunScript.class);
 
+    private final FirstFailureLog failures = FirstFailureLog.errors(Logger.getLogger(ChartRunScript.class));
     private String cachedRunId;
     private StarSystemAPI cachedSystem;
     private boolean closeArmed;
-    private boolean failureReported;
     private float secondsSinceObjectiveCheck;
     private boolean effectsApplied;
     private transient ChartGenContext appliedContext;
@@ -64,10 +64,7 @@ public class ChartRunScript implements EveryFrameScript {
             watch(sector, run);
             checkObjective(sector, run, systemFor(sector, run), amount);
         } catch (RuntimeException | LinkageError e) {
-            if (!failureReported) {
-                failureReported = true;
-                LOG.error("[ExiledSector] The Star Chart watchdog failed; the run will be checked again next frame", e);
-            }
+            failures.report("[ExiledSector] The Star Chart watchdog failed; the run will be checked again next frame", e);
         }
     }
 

@@ -12,8 +12,7 @@ import exiledsector.skills.DiminishingReturns;
 import exiledsector.skills.skilleffect.onhit.MaxRefractionCountConfig;
 import exiledsector.compat.SalvageSiteCompat;
 import exiledsector.domain.ExiledSectorDomain;
-import exiledsector.items.CraftingMaterials;
-import exiledsector.items.ItemDrops;
+import exiledsector.items.crafting.material.CraftingMaterials;
 import exiledsector.ui.cargo.ItemAnimationSetting;
 import exiledsector.ui.refit.RefitButtonConfig;
 import lunalib.lunaSettings.LunaSettings.SettingsCreator;
@@ -39,9 +38,9 @@ public final class ExiledSectorSettings {
 
     public static void registerLanguage() {
         I18n.forGameText(() -> {
-            SettingsCreator.addHeader(MOD_ID, "exiledSector_header", Translation.text("settings.interface.header"), MAIN_TAB);
-            SettingsCreator.addRadio(MOD_ID, LanguageSetting.fieldId(), Translation.text("settings.language.name"),
-                    Translation.text("settings.language.tooltip"), LanguageSetting.AUTO, String.join(",", LanguageSetting.OPTIONS), MAIN_TAB);
+            SettingsPage mainPage = new SettingsPage(MAIN_TAB);
+            mainPage.header("exiledSector_header", "settings.interface.header");
+            mainPage.radioSetting(LanguageSetting.fieldId(), "settings.language", LanguageSetting.AUTO, LanguageSetting.OPTIONS);
         });
         SettingsCreator.refresh(MOD_ID);
     }
@@ -66,64 +65,41 @@ public final class ExiledSectorSettings {
     }
 
     private static void registerInterface() {
-        SettingsCreator.addBoolean(MOD_ID, RefitButtonConfig.FIELD_ID,
-                Translation.text("settings.refit.buttonUnderHullMods.name"), Translation.text("settings.refit.buttonUnderHullMods.tooltip"),
-                RefitButtonConfig.DEFAULT, MAIN_TAB);
-        SettingsCreator.addKeybind(MOD_ID, RefitButtonConfig.BENCH_KEYBIND_FIELD_ID,
-                Translation.text("settings.refit.craftingBenchKey.name"), Translation.text("settings.refit.craftingBenchKey.tooltip"),
-                RefitButtonConfig.DEFAULT_BENCH_KEY, MAIN_TAB);
-        SettingsCreator.addKeybind(MOD_ID, RefitButtonConfig.SKILL_TREE_KEYBIND_FIELD_ID,
-                Translation.text("settings.refit.skillTreeKey.name"), Translation.text("settings.refit.skillTreeKey.tooltip"),
-                RefitButtonConfig.DEFAULT_SKILL_TREE_KEY, MAIN_TAB);
-        SettingsCreator.addKeybind(MOD_ID, RefitButtonConfig.HULL_ITEMS_KEYBIND_FIELD_ID,
-                Translation.text("settings.refit.hullItemsKey.name"), Translation.text("settings.refit.hullItemsKey.tooltip"),
-                RefitButtonConfig.DEFAULT_HULL_ITEMS_KEY, MAIN_TAB);
-        SettingsCreator.addBoolean(MOD_ID, ModSounds.ENABLED_FIELD_ID,
-                Translation.text("settings.sounds.enabled.name"), Translation.text("settings.sounds.enabled.tooltip"),
-                ModSounds.DEFAULT_ENABLED, MAIN_TAB);
-        SettingsCreator.addBoolean(MOD_ID, TooltipTextSize.LARGE_FIELD_ID,
-                Translation.text("settings.largeTooltipText.name"), Translation.text("settings.largeTooltipText.tooltip"),
-                TooltipTextSize.DEFAULT_LARGE, MAIN_TAB);
-        SettingsCreator.addRadio(MOD_ID, ItemAnimationSetting.FIELD_ID, Translation.text("settings.hullItems.itemAnimations.name"),
-                Translation.text("settings.hullItems.itemAnimations.tooltip"), ItemAnimationSetting.FULL,
-                String.join(",", ItemAnimationSetting.OPTIONS), MAIN_TAB);
+        SettingsPage mainPage = new SettingsPage(MAIN_TAB);
+        mainPage.booleanSetting(RefitButtonConfig.FIELD_ID, "settings.refit.buttonUnderHullMods", RefitButtonConfig.DEFAULT);
+        mainPage.keybindSetting(RefitButtonConfig.BENCH_KEYBIND_FIELD_ID, "settings.refit.craftingBenchKey", RefitButtonConfig.DEFAULT_BENCH_KEY);
+        mainPage.keybindSetting(RefitButtonConfig.SKILL_TREE_KEYBIND_FIELD_ID, "settings.refit.skillTreeKey",
+                RefitButtonConfig.DEFAULT_SKILL_TREE_KEY);
+        mainPage.keybindSetting(RefitButtonConfig.HULL_ITEMS_KEYBIND_FIELD_ID, "settings.refit.hullItemsKey",
+                RefitButtonConfig.DEFAULT_HULL_ITEMS_KEY);
+        mainPage.booleanSetting(ModSounds.ENABLED_FIELD_ID, "settings.sounds.enabled", ModSounds.DEFAULT_ENABLED);
+        mainPage.booleanSetting(TooltipTextSize.LARGE_FIELD_ID, "settings.largeTooltipText", TooltipTextSize.DEFAULT_LARGE);
+        mainPage.radioSetting(ItemAnimationSetting.FIELD_ID, "settings.hullItems.itemAnimations", ItemAnimationSetting.FULL,
+                ItemAnimationSetting.OPTIONS);
     }
 
     private static void registerItems() {
-        String itemsTab = itemsTab();
-        SettingsCreator.addHeader(MOD_ID, "exiledSector_socketStorageHeader", Translation.text("settings.hullItems.header"), itemsTab);
-        SettingsCreator.addBoolean(MOD_ID, SalvageSiteCompat.DROPS_FIELD_ID,
-                Translation.text("settings.hullItems.otherModDrops.name"), Translation.text("settings.hullItems.otherModDrops.tooltip"),
-                SalvageSiteCompat.DEFAULT_DROPS, itemsTab);
+        SettingsPage itemsPage = new SettingsPage(itemsTab());
+        itemsPage.header("exiledSector_socketStorageHeader", "settings.hullItems.header");
+        itemsPage.booleanSetting(SalvageSiteCompat.DROPS_FIELD_ID, "settings.hullItems.otherModDrops", SalvageSiteCompat.DEFAULT_DROPS);
 
-        SettingsCreator.addHeader(MOD_ID, "exiledSector_craftingHeader", Translation.text("settings.crafting.header"), itemsTab);
-        SettingsCreator.addInt(MOD_ID, ItemDrops.BATTLE_FEEDSTOCK_FIELD_ID,
-                Translation.text("settings.hullItems.battleFeedstock.name"), Translation.text("settings.hullItems.battleFeedstock.tooltip"),
-                ItemDrops.DEFAULT_BATTLE_FEEDSTOCK_PER_100_DP, 0, ItemDrops.MAX_BATTLE_PARTS_PER_100_DP, itemsTab);
-        SettingsCreator.addBoolean(MOD_ID, CraftingMaterials.STORE_FIELD_ID,
-                Translation.text("settings.hullItems.storeMaterials.name"), Translation.text("settings.hullItems.storeMaterials.tooltip"),
-                CraftingMaterials.DEFAULT_STORE, itemsTab);
+        itemsPage.header("exiledSector_craftingHeader", "settings.crafting.header");
+        itemsPage.booleanSetting(CraftingMaterials.STORE_FIELD_ID, "settings.hullItems.storeMaterials", CraftingMaterials.DEFAULT_STORE);
     }
 
     private static void registerCombat() {
-        String combatTab = combatTab();
-        SettingsCreator.addHeader(MOD_ID, "exiledSector_combatEffectsHeader", Translation.text("settings.combatEffects.header"), combatTab);
-        SettingsCreator.addBoolean(MOD_ID, CombatGlow.enabledFieldId(),
-                Translation.text("settings.combatEffects.graphicsLib.name"), Translation.text("settings.combatEffects.graphicsLib.tooltip"),
-                CombatGlow.DEFAULT_ENABLED, combatTab);
-        SettingsCreator.addInt(MOD_ID, MaxRefractionCountConfig.fieldId(),
-                Translation.text("settings.energyChain.maxChainCount.name"), Translation.text("settings.energyChain.maxChainCount.tooltip"),
-                MaxRefractionCountConfig.DEFAULT, 1, 20, combatTab);
+        SettingsPage combatPage = new SettingsPage(combatTab());
+        combatPage.header("exiledSector_combatEffectsHeader", "settings.combatEffects.header");
+        combatPage.booleanSetting(CombatGlow.enabledFieldId(), "settings.combatEffects.graphicsLib", CombatGlow.DEFAULT_ENABLED);
+        combatPage.intSetting(MaxRefractionCountConfig.fieldId(), "settings.energyChain.maxChainCount", MaxRefractionCountConfig.DEFAULT, 1, 20);
 
-        SettingsCreator.addHeader(MOD_ID, "exiledSector_diminishingHeader", Translation.text("settings.diminishing.header"), combatTab);
-        SettingsCreator.addText(MOD_ID, "exiledSector_diminishingAbout", Translation.text("settings.diminishing.about"), combatTab);
-        SettingsCreator.addInt(MOD_ID, DiminishingReturns.efficiencyFieldId(),
-                Translation.text("settings.diminishing.efficiency.name"), Translation.text("settings.diminishing.efficiency.tooltip"),
-                DiminishingReturns.DEFAULT_EFFICIENCY_PERCENT, 0, 100, combatTab);
+        combatPage.header("exiledSector_diminishingHeader", "settings.diminishing.header");
+        combatPage.text("exiledSector_diminishingAbout", "settings.diminishing.about");
+        combatPage.intSetting(DiminishingReturns.efficiencyFieldId(), "settings.diminishing.efficiency",
+                DiminishingReturns.DEFAULT_EFFICIENCY_PERCENT, 0, 100);
         for (DiminishedStat stat : DiminishedStat.values()) {
-            SettingsCreator.addInt(MOD_ID, stat.thresholdFieldId(),
-                    Translation.text("settings.diminishing.threshold." + stat.name()), "",
-                    stat.defaultThresholdPercent(), 0, DiminishingReturns.MAX_THRESHOLD_PERCENT, combatTab);
+            combatPage.intSetting(stat.thresholdFieldId(), SettingsPage.Label.untipped("settings.diminishing.threshold." + stat.name()),
+                    stat.defaultThresholdPercent(), 0, DiminishingReturns.MAX_THRESHOLD_PERCENT);
         }
     }
 }
