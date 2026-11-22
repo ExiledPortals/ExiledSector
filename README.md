@@ -14,7 +14,8 @@ Exiled Sector adds three things: a skill tree for every ship, hull upgrades (bas
 
 Each of them can be disabled in LunaLib settings if they're not to your taste.
 
-### The skill tree
+<details>
+<summary><h3>The skill tree</h3></summary>
 
 Every ship in your fleet gets its own skill tree: over 400 nodes of questionable engineering decisions. 
 
@@ -60,7 +61,10 @@ If you're running Random Assortment of Things, Nightcross Armory, Navarchy of Ta
 
 </details>
 
-### Hull upgrades
+</details>
+
+<details>
+<summary><h3>Hull upgrades</h3></summary>
 
 Nobody has designed a new hull since the Collapse, and the Domain's blueprints are locked behind DRM older than your grandmother's grandmother. So your crew copies the good ideas they find on other people's ships and welds them onto yours.
 
@@ -80,25 +84,11 @@ Hull items come in common, rare and unique, and roll prefixes and suffixes the w
 <details>
 <summary>Hull items</summary>
 
-<img src="art/description/hull_items.gif" alt="Browsing hull items">
-
-</details>
-
-<details>
-<summary>Installing hull items</summary>
-
-<img src="art/description/hull_item_install.gif" alt="Installing hull items">
+<img src="art/description/hull_items.gif" alt="Browsing and installing hull items">
 
 </details>
 
 Bad rolls? Take the item to the crafting bench and use nanoswarms on it to add, remove, reroll, reshape or freeze its modifiers. You can find nanoswarms or grow them from Nanite Feedstock. You can also corrupt an item and see what happens. Results may vary. Results will vary.
-
-<details>
-<summary>The crafting bench</summary>
-
-<img src="art/description/crafting_open.gif" alt="Opening the crafting bench">
-
-</details>
 
 <details>
 <summary>Nanoswarm types</summary>
@@ -121,11 +111,14 @@ Loot drops where you'd expect: research stations, orbital labs, derelicts and th
 <details>
 <summary>LOOOOOOT</summary>
 
-<img src="art/description/loot.gif" alt="Looting a research station">
+<img src="art/description/loot.gif" alt="Looting an equipment cache">
 
 </details>
 
-### Star charts
+</details>
+
+<details>
+<summary><h3>Star charts</h3></summary>
 
 Star Charts take you to systems outside the sector, cut off from hyperspace and full of fleets that weren't expecting visitors. There are 15 tiers and each one is worse than the last.
 
@@ -161,6 +154,44 @@ Charts roll modifiers too, and the same nanoswarms work on them. The modifiers m
 </details>
 
 Open the wormhole, fly in, kill whoever lives there and take everything that isn't bolted down. The chart is complete once the boss's flagship or station is destroyed. When the run ends the system is deleted, along with anything you forgot to pick up. No it will not bloat your save (I hope).
+
+</details>
+
+<details>
+<summary><h3>The Atlas Skill Tree</h3></summary>
+
+Every chart you complete gives you an Atlas skill point. Spend it on the Atlas Skill Tree to enhance and combine anomalies, greatly increasing their difficulty and reward.
+
+<details>
+<summary>The Atlas Tree</summary>
+
+<img src="art/description/atlas_tree.gif" alt="The Atlas Tree">
+
+</details>
+
+</details>
+
+<details>
+<summary><h3>Officers</h3></summary>
+
+The cat's out of the bag on wormholes. Every faction has worked out how to open one by now, but not even Galatia's brightest have figured out how to get them to point anywhere other than the Outer Reaches, just past the edge of the sector. 
+
+Naturally, they all send officers out there to loot, colonise and climb over each other for power and influence.
+
+Each officer holds a territory and has a rough estimate of power relative to their peers. Every turn they push on each other's borders, challenge each other for rank, and attempt to line their vaults with the treasures of the Outer Reaches.
+
+Beat an officer and they drop everything they carry, lose a rank and lose their territory. They also learn from it. Each defeat leaves a scar matching how your fleet beat them: kite them and they come back faster, bury them in missiles and they come back with better point defence, hit them from behind and they learn to watch their back.
+
+<details>
+<summary>Atlas Officers</summary>
+
+<img src="art/description/officers.gif" alt="Atlas Officers">
+
+<img src="art/description/officer_board_legend.png" alt="The Officers board legend">
+
+</details>
+
+</details>
 
 ## Requirements
 
