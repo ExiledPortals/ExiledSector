@@ -6,7 +6,6 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
-import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
@@ -69,7 +68,7 @@ public class PhaseDisplacementIntel extends BaseIntelPlugin {
     }
 
     private MarketAPI gateMarket() {
-        return Global.getSector() == null || Global.getSector().getEconomy() == null ? null : Global.getSector().getEconomy().getMarket(gateMarketId);
+        return PhaseDisplacementGate.marketById(gateMarketId);
     }
 
     @Override
@@ -116,16 +115,14 @@ public class PhaseDisplacementIntel extends BaseIntelPlugin {
             return null;
         }
         MarketAPI market = gateMarket();
-        PhasedPlanetRecord job = PhaseGateState.job(market);
-        if (job == null) {
+        if (PhaseGateState.job(market) == null) {
             return null;
         }
-        Industry industry = market.getIndustry(PhaseDisplacementGate.INDUSTRY_ID);
-        PhasePull.Pause pause = industry instanceof PhaseDisplacementGate gate ? PhasePull.pauseFor(gate) : PhasePull.Pause.NOT_FUNCTIONAL;
+        PhasePull.Pause pause = PhasePull.pauseFor(market);
         if (pause != null) {
             return Translation.gameText(PhasePull.pauseKey(pause));
         }
-        int daysLeft = (int) Math.ceil(Math.max(0f, PhasePull.PULL_DAYS - PhaseGateState.jobDays(market)));
+        int daysLeft = PhasePull.daysLeft(market);
         return I18n.forGameText(() -> Translation.msg("chart.phasing.intel.daysLeft").arg("days", daysLeft).text());
     }
 
@@ -147,6 +144,10 @@ public class PhaseDisplacementIntel extends BaseIntelPlugin {
             return Global.getSector().getEntityById(arrivedPlanetId);
         }
         MarketAPI market = gateMarket();
+        SectorEntityToken phaseGate = PhasePull.gateOf(Global.getSector(), market);
+        if (phaseGate != null) {
+            return phaseGate;
+        }
         return market == null ? null : market.getPrimaryEntity();
     }
 

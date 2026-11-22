@@ -14,7 +14,6 @@ public final class ChartIds {
     public static final String ENTITY_TAG = PREFIX + "entity";
     public static final String OUTER_WORMHOLE_TAG = PREFIX + "outer";
     public static final String INNER_WORMHOLE_TAG = PREFIX + "inner";
-    public static final String HELD_OPEN_WORMHOLE_TAG = "exiledSector_wormhole_held_open";
     public static final String RUN_TAG_PREFIX = PREFIX + "run_";
     public static final String WORMHOLE_TYPE = PREFIX + "wormhole";
     public static final String MEMORY_PREFIX = "$" + PREFIX;

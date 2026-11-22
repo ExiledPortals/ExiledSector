@@ -18,6 +18,17 @@
 		"illustrations":{
 			"exiledSector_depot_assault":"graphics/exiledSector/campaign/illustrations/depot_assault.jpg",
 		},
+		"exiledSector_phase_gate":{
+			"frame":"graphics/stations/gate.png",
+			"arc_fringe":"graphics/fx/beamfringe.png",
+			"arc_core":"graphics/fx/beamcore.png",
+			"starfield":"graphics/exiledSector/campaign/entities/phase_gate_starfield.png",
+			"ring":"graphics/exiledSector/campaign/entities/phase_gate_ring.png",
+			"rays":"graphics/exiledSector/campaign/entities/phase_gate_rays.png",
+			"concentric":"graphics/exiledSector/campaign/entities/phase_gate_concentric.png",
+			"whirl1":"graphics/exiledSector/campaign/entities/phase_gate_whirl1.png",
+			"whirl2":"graphics/exiledSector/campaign/entities/phase_gate_whirl2.png",
+		},
 		"ui_icons_tech_tree":{
 			"exiledSector_wormhole_gateway":"graphics/exiledSector/colony/tech/wormhole_gateway.png",
 			"exiledSector_wormhole_gateway_advanced":"graphics/exiledSector/colony/tech/wormhole_gateway_advanced.png",

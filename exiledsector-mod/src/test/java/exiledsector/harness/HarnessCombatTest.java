@@ -156,7 +156,7 @@ class HarnessCombatTest {
             StepContext context = HarnessStepsTest.context(new HarnessLog(), 0, 0f);
 
             for (HarnessStep step : List.of(new AddShipStep("eagle_Assault", 1), new SaveGameStep(),
-                    new AddCargoStep("fuel", 10), new FoundColonyStep(4, List.of(), Map.of(), true), new OpenChartStep(OpenChartStep.Options.parse(new JSONObject(), 1L)), new LockPhasePlanetStep(), new DefeatChartBossStep(),
+                    new AddCargoStep("fuel", 10), new FoundColonyStep(4, List.of(), Map.of(), true), new OpenChartStep(OpenChartStep.Options.parse(new JSONObject(), 1L)), new LockPhasePlanetStep(null), new DefeatChartBossStep(),
                     new LeaveChartStep(), new PassDaysStep(10f, 50), new ExpectPhasePullStep("pull"), new ExpectPhasedPlanetStep())) {
                 StepOutcome outcome = step.advance(context);
                 assertTrue(outcome.finished() && !outcome.passed(), step.name() + ": " + outcome.detail());

@@ -41,7 +41,7 @@ final class ExpectPhasePullStep implements HarnessStep {
             return StepOutcome.failed("the gate on " + market.getName() + " has no pull job" + (lock == null ? " and no lock" : "; it still holds the lock on " + lock.name()));
         }
         PhasePull.Pause pause = PhasePull.pauseFor((PhaseDisplacementGate) market.getIndustry(PhaseDisplacementGate.INDUSTRY_ID));
-        SectorEntityToken wormhole = sector.getEntityById(PhasePull.wormholeId(market));
+        SectorEntityToken phaseGate = PhasePull.gateOf(sector, market);
         float days = PhaseGateState.jobDays(market);
         JSONObject data = new JSONObject();
         data.put("planet", job.name());
@@ -49,10 +49,10 @@ final class ExpectPhasePullStep implements HarnessStep {
         data.put("pullDays", PhasePull.PULL_DAYS);
         data.put("pause", pause == null ? JSONObject.NULL : pause.name());
         data.put("orbit", PhaseGateState.jobOrbit(market));
-        data.put("wormholeRadius", wormhole == null ? JSONObject.NULL : wormhole.getRadius());
+        data.put("phaseGate", phaseGate != null);
         context.results().addData(dataName, data);
-        String progress = job.name() + " is " + Math.round(days) + " of " + Math.round(PhasePull.PULL_DAYS) + " days in, wormhole radius "
-                + (wormhole == null ? "none" : String.valueOf(Math.round(wormhole.getRadius())));
+        String progress = job.name() + " is " + Math.round(days) + " of " + Math.round(PhasePull.PULL_DAYS) + " days in, "
+                + (phaseGate == null ? "no phase gate" : "phase gate in orbit");
         return pause == null ? StepOutcome.passed(progress) : StepOutcome.failed(progress + ", paused for " + pause);
     }
 }

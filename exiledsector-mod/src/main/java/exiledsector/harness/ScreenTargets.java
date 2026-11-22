@@ -56,7 +56,7 @@ final class ScreenTargets {
     static final String BATTLE_MARK_PREFIX = "battleMark:";
     static final String DESCRIPTION = CENTRE + ", " + SKILL_TREE_BUTTON + ", " + HULL_ITEMS_BUTTON + ", " + NODE_PREFIX + "<node id or type>, "
             + ITEM_PREFIX + "<item definition id>, " + BUTTON_PREFIX + "<button text or custom data>, " + SECTION_PREFIX + "<section id>, "
-            + SCHEMATIC_PREFIX + "<refit schematic tier>, " + PANEL_PREFIX + "<plugin class>[#n], " + ATLAS_SYSTEM_PREFIX + "<n>, " + ATLAS_TERRITORY_PREFIX + "<n>, " + OFFICER_PREFIX + "<n>, " + BATTLE_MARK_PREFIX + "<n>, " + ATLAS_NODE_PREFIX + "<n> or a screen point \"x,y\"";
+            + SCHEMATIC_PREFIX + "<refit schematic tier>, " + PANEL_PREFIX + "<plugin class>[#n], " + ATLAS_SYSTEM_PREFIX + "<n>, " + ATLAS_TERRITORY_PREFIX + "<n>, " + OFFICER_PREFIX + "<n>, " + BATTLE_MARK_PREFIX + "<n>, " + ATLAS_NODE_PREFIX + "<n>, " + CampaignTargets.DESCRIPTION + " or a screen point \"x,y\"";
     static final float HIDDEN_BEYOND = -5000f;
     static final Pattern PANEL = Pattern.compile("([A-Za-z0-9_$]+)(?:#([1-9]\\d*))?");
     static final Pattern ORDINAL = Pattern.compile("[1-9]\\d*");
@@ -68,6 +68,9 @@ final class ScreenTargets {
     }
 
     static boolean isKnown(String target) {
+        if (CampaignTargets.isKnown(target)) {
+            return true;
+        }
         if (target.startsWith(SCHEMATIC_PREFIX)) {
             return schematicTier(target) != null;
         }
@@ -93,6 +96,9 @@ final class ScreenTargets {
         }
         if (HULL_ITEMS_BUTTON.equals(target)) {
             return refitButtonCentre(HullItemsRefitButton.COLUMN_BUTTON.id());
+        }
+        if (CampaignTargets.isKnown(target)) {
+            return Global.getSector() == null || Global.getSector().getPlayerFleet() == null ? null : CampaignTargets.screenPoint(target);
         }
         Matcher point = POINT.matcher(target);
         if (point.matches()) {

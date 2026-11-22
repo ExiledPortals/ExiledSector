@@ -31,6 +31,7 @@ import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.objective.ChartObjectiveIntel;
 import exiledsector.charts.phasing.PhaseDisplacementGate;
 import exiledsector.charts.phasing.PhaseDisplacementIntel;
+import exiledsector.charts.phasing.PhaseGateEntityPlugin;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunState;
 import exiledsector.charts.wormhole.ChartWormholePlugin;
@@ -79,6 +80,7 @@ public final class ChartSaveAliases {
             Map.entry("exiledSector.StationLaunches", StationLaunches.class),
             Map.entry("exiledSector.PhaseDisplacementGate", PhaseDisplacementGate.class),
             Map.entry("exiledSector.PhaseDisplacementIntel", PhaseDisplacementIntel.class),
+            Map.entry("exiledSector.PhaseGateEntityPlugin", PhaseGateEntityPlugin.class),
             Map.entry("exiledSector.FlareTempo", FlareTempo.class));
 
     private ChartSaveAliases() {
