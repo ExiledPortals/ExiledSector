@@ -212,7 +212,7 @@ class NodeAllocatorTest {
         ShipTrees.chooseStartingRoot(data(), root);
         ShipTrees.allocate(data(), frontShield, 0);
 
-        assertEquals("Already have Front Shield allocated.", blockReason(allocatorStartingAt(root), omniShieldType));
+        assertEquals("This ship already has Front Shield allocated.", blockReason(allocatorStartingAt(root), omniShieldType));
     }
 
     @Test
@@ -223,7 +223,7 @@ class NodeAllocatorTest {
         ShipTrees.chooseStartingRoot(data(), root);
         ShipTrees.allocate(data(), lister, 0);
 
-        assertEquals("Already have Lister allocated.", blockReason(allocatorStartingAt(root), listed));
+        assertEquals("This ship already has Lister allocated.", blockReason(allocatorStartingAt(root), listed));
     }
 
     @Test
