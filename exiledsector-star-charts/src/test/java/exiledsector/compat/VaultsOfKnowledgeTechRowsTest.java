@@ -70,7 +70,7 @@ class VaultsOfKnowledgeTechRowsTest {
         JSONObject phaseGate = techs.get(VaultsOfKnowledgeCompat.PHASE_GATE_RESEARCH_ID);
         assertEquals(VaultsOfKnowledgeCompat.GATEWAY_NEXUS_RESEARCH_ID, phaseGate.getString("reqToResearchFirst"));
         assertEquals(5, phaseGate.getInt("tier"));
-        assertEquals(2, phaseGate.getInt("columnNumber"));
+        assertEquals(1, phaseGate.getInt("columnNumber"));
         assertEquals(9, phaseGate.getInt("rowNumber"));
         assertEquals(PhaseDisplacementGate.INDUSTRY_ID + ":industry", phaseGate.getString("rewards"));
     }
