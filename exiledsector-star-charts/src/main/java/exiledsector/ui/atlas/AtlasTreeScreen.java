@@ -44,6 +44,7 @@ import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.Rects;
 import exiledsector.ui.util.TextLabel;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -526,6 +527,17 @@ public final class AtlasTreeScreen extends BaseCustomUIPanelPlugin implements Ca
     private AtlasTreeNode nodeAt(float screenX, float screenY) {
         String nodeId = treeView.nodeAt(viewport(), screenX, screenY);
         return nodeId == null ? null : data.node(nodeId);
+    }
+
+    public List<Vector2f> allocatableNodeScreenCentres() {
+        if (allocation == null || panelPosition == null) {
+            return List.of();
+        }
+        TreeViewport view = viewport();
+        return treeView.nodeIds().stream()
+                .filter(nodeStates::allocatable)
+                .map(nodeId -> new Vector2f(view.screenX(treeView.x(nodeId)), view.screenY(treeView.y(nodeId))))
+                .toList();
     }
 
     private TreeViewport viewport() {

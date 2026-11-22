@@ -1,33 +1,10 @@
 package exiledsector.harness;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.ui.ButtonAPI;
-import com.fs.starfarer.api.ui.CustomPanelAPI;
-import com.fs.starfarer.api.ui.PositionAPI;
-import exiledsector.skills.SkillNode;
-import exiledsector.skills.SkillTree;
-import exiledsector.ui.ShownScreens;
-import exiledsector.ui.SkillTreeCanvasPlugin;
-import exiledsector.ui.SkillTreeRefitButton;
-import exiledsector.ui.refit.UiReflection;
-import exiledsector.ui.socket.ItemCell;
 import org.lwjgl.util.vector.Vector2f;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 final class MoveMouseStep implements HarnessStep {
 
-    static final String CENTRE = "centre";
-    static final String SKILL_TREE_BUTTON = "skillTreeButton";
-    static final String NODE_PREFIX = "node:";
-    static final String ITEM_PREFIX = "item:";
     static final float ARRIVAL_TOLERANCE = 3f;
-    static final float HIDDEN_BEYOND = -5000f;
-    static final Pattern POINT = Pattern.compile("(\\d+(?:\\.\\d+)?),\\s*(\\d+(?:\\.\\d+)?)");
 
     private final String target;
     private final float seconds;
@@ -35,9 +12,8 @@ final class MoveMouseStep implements HarnessStep {
     private float startSeconds;
 
     MoveMouseStep(String target, float seconds) {
-        if (!CENTRE.equals(target) && !SKILL_TREE_BUTTON.equals(target) && !target.startsWith(NODE_PREFIX) && !target.startsWith(ITEM_PREFIX) && !POINT.matcher(target).matches()) {
-            throw new IllegalArgumentException("moveMouse goes to " + CENTRE + ", " + SKILL_TREE_BUTTON + ", " + NODE_PREFIX
-                    + "<node id or type>, " + ITEM_PREFIX + "<item definition id> or a screen point \"x,y\", not \"" + target + "\"");
+        if (!ScreenTargets.isKnown(target)) {
+            throw new IllegalArgumentException("moveMouse goes to " + ScreenTargets.DESCRIPTION + ", not \"" + target + "\"");
         }
         if (seconds < 0f) {
             throw new IllegalArgumentException("moveMouse needs a duration of at least 0 seconds, not " + seconds);
@@ -57,7 +33,7 @@ final class MoveMouseStep implements HarnessStep {
             String failure = HarnessMouse.calibrate();
             return failure == null ? new StepOutcome(false, false, "calibrating the cursor") : StepOutcome.failed(failure);
         }
-        Vector2f goal = goal();
+        Vector2f goal = ScreenTargets.locate(target);
         if (goal == null) {
             return new StepOutcome(false, false, target + " never appeared on screen");
         }
@@ -73,77 +49,6 @@ final class MoveMouseStep implements HarnessStep {
             return StepOutcome.passed("the cursor reached " + target + " at " + Math.round(goal.x) + ", " + Math.round(goal.y));
         }
         return new StepOutcome(false, false, "the cursor never settled on " + target + "; it is at " + Math.round(now.x) + ", " + Math.round(now.y));
-    }
-
-    private Vector2f goal() throws Throwable {
-        if (CENTRE.equals(target)) {
-            return new Vector2f(Global.getSettings().getScreenWidth() / 2f, Global.getSettings().getScreenHeight() / 2f);
-        }
-        if (SKILL_TREE_BUTTON.equals(target)) {
-            return skillTreeButtonCentre();
-        }
-        Matcher point = POINT.matcher(target);
-        if (point.matches()) {
-            return new Vector2f(Float.parseFloat(point.group(1)), Float.parseFloat(point.group(2)));
-        }
-        if (target.startsWith(ITEM_PREFIX)) {
-            return itemCellCentre(target.substring(ITEM_PREFIX.length()));
-        }
-        return nodeCentre(target.substring(NODE_PREFIX.length()));
-    }
-
-    private static Vector2f itemCellCentre(String definitionId) throws Throwable {
-        if (Global.getSector().getCampaignUI().getCurrentCoreTab() == null) {
-            return null;
-        }
-        Object found = UiTree.find(UiReflection.coreUI(Global.getSector().getCampaignUI()),
-                component -> component instanceof CustomPanelAPI panel && panel.getPlugin() instanceof ItemCell cell
-                        && cell.cellPosition() != null && definitionId.equals(cell.item().definitionId()));
-        if (!(found instanceof CustomPanelAPI panel)) {
-            return null;
-        }
-        PositionAPI position = ((ItemCell) panel.getPlugin()).cellPosition();
-        Vector2f centre = new Vector2f(position.getCenterX(), position.getCenterY());
-        return onScreen(centre) ? centre : null;
-    }
-
-    private static Vector2f skillTreeButtonCentre() throws Throwable {
-        if (Global.getSector().getCampaignUI().getCurrentCoreTab() == null) {
-            return null;
-        }
-        Object button = UiTree.find(UiReflection.coreUI(Global.getSector().getCampaignUI()),
-                component -> component instanceof ButtonAPI candidate && SkillTreeRefitButton.COLUMN_BUTTON.id().equals(candidate.getCustomData()));
-        if (!(button instanceof ButtonAPI skillTreeButton)) {
-            return null;
-        }
-        PositionAPI position = skillTreeButton.getPosition();
-        return position.getX() < HIDDEN_BEYOND ? null : new Vector2f(position.getCenterX(), position.getCenterY());
-    }
-
-    private static Vector2f nodeCentre(String nodeIdOrType) {
-        ShownScreens.Shown shown = ShownScreens.top();
-        if (shown == null || !(shown.screen() instanceof SkillTreeCanvasPlugin canvas) || canvas.treeSession().isStartingRootMoving()) {
-            return null;
-        }
-        SkillNode byId = SkillTree.get(nodeIdOrType);
-        if (byId != null) {
-            return canvas.nodeScreenCentre(byId);
-        }
-        List<SkillNode> matches = new ArrayList<>();
-        for (SkillNode node : SkillTree.getAllNodes().values()) {
-            Vector2f centre = node.getType().getId().equals(nodeIdOrType) ? canvas.nodeScreenCentre(node) : null;
-            if (centre != null && onScreen(centre)) {
-                matches.add(node);
-            }
-        }
-        return matches.stream()
-                .min(Comparator.comparing((SkillNode node) -> !canvas.treeSession().isAllocated(node)).thenComparing(SkillNode::getId))
-                .map(canvas::nodeScreenCentre)
-                .orElse(null);
-    }
-
-    private static boolean onScreen(Vector2f point) {
-        return point.x >= 0f && point.y >= 0f && point.x <= Global.getSettings().getScreenWidth() && point.y <= Global.getSettings().getScreenHeight();
     }
 
     @Override

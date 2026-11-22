@@ -1,0 +1,28 @@
+{
+  "save": "showcase_fixture",
+  "quitWhenDone": true,
+  "steps": [
+    {"step": "wait", "seconds": 3},
+    {"step": "ignoreErrorsSoFar"},
+    {"step": "readyFleet"},
+    {"step": "addCargo", "commodity": "heavy_machinery", "amount": 200},
+    {"step": "console", "command": "ExiledSectorShowcaseLoot spawn"},
+    {"step": "showcase", "paused": true},
+    {"step": "visitNearest", "type": "equipment_cache"},
+    {"step": "wait", "seconds": 1},
+    {"step": "moveMouse", "to": "button:1. Explore"},
+    {"step": "click"},
+    {"step": "wait", "seconds": 1.5},
+    {"step": "moveMouse", "to": "button:1. Begin salvage operations"},
+    {"step": "wait", "seconds": 1},
+    {"step": "startClip", "name": "loot"},
+    {"step": "wait", "seconds": 0.3},
+    {"step": "click"},
+    {"step": "wait", "seconds": 0.3},
+    {"step": "moveMouse", "to": "1700,600", "seconds": 0.4},
+    {"step": "wait", "seconds": 11.5},
+    {"step": "endClip"},
+    {"step": "wait", "seconds": 1},
+    {"step": "expectNoErrors"}
+  ]
+}

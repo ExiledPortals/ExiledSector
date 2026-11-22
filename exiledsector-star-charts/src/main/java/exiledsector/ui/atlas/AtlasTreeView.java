@@ -27,6 +27,7 @@ import exiledsector.ui.node.SkillTreeNodeGeometry;
 
 import java.awt.Color;
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.IntToDoubleFunction;
 
 final class AtlasTreeView {
@@ -245,6 +246,10 @@ final class AtlasTreeView {
     float y(String nodeId) {
         Body body = bodies.body(nodeId);
         return body == null ? 0f : body.y();
+    }
+
+    List<String> nodeIds() {
+        return bodies.bodies().stream().filter(body -> body.art().kind() != AtlasBodyArt.Kind.STAR).map(Body::nodeId).toList();
     }
 
     String nodeAt(TreeViewport viewport, float screenX, float screenY) {

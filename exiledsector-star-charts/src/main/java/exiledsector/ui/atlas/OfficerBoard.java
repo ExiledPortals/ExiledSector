@@ -22,6 +22,7 @@ import exiledsector.ui.util.BorderedPanel;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.SpriteDraw;
 import exiledsector.ui.util.TextLabel;
+import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -354,6 +355,24 @@ final class OfficerBoard {
             }
         }
         return null;
+    }
+
+    List<Vector2f> activeFaceCentres() {
+        List<Vector2f> centres = new ArrayList<>();
+        if (!open || geometry == null) {
+            return centres;
+        }
+        for (OfficerBoardShuffle.Mover mover : shuffle.movers()) {
+            Face face = faces.get(mover.recordId());
+            if (!mover.departs() && face != null && face.identified() && !face.dimmed()) {
+                centres.add(new Vector2f(centreX(mover), centreY(mover)));
+            }
+        }
+        return centres;
+    }
+
+    List<Vector2f> battleMarkCentres() {
+        return !open || geometry == null ? List.of() : battleMarks.stream().map(mark -> new Vector2f(mark.centreX(), mark.centreY())).toList();
     }
 
     AtlasCell clickedBattleCell(float x, float y) {
