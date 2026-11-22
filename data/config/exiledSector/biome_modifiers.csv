@@ -84,5 +84,7 @@ CREW_LOSS_PERCENT_PER_SHROUDED_UMBRAL_DEEP,umbral_deep,crew_quarters,"Inured: cr
 HULL_LOSS_LUNGE_SPEED_PERCENT_UMBRAL_DEEP,umbral_deep,engine_room,"Convulsive: recoiling from every wound"
 VENT_RATE_PERCENT_PER_SHROUDED_UMBRAL_DEEP,umbral_deep,reactor,"of Exhalation: the shroud breathes out the heat"
 HULL_HIT_REPAIR_DISRUPTION_CHANCE_PERCENT_UMBRAL_DEEP,umbral_deep,weapon_mount,"Inimical: wounds that refuse to mend"
+HARD_FLUX_DISSIPATION_PERCENT_UMBRAL_DEEP,umbral_deep,shield_generator,"of the Gaze: shields that drink the heat they hold"
 PHASE_EXIT_LENS_STRIKES_FLAT_UMBRAL_DEEP,umbral_deep,phase_coil,"of Glare: the lens opens on the way out"
+STRIKECRAFT_DEATH_SHROUD_BURST_DAMAGE_FLAT_UMBRAL_DEEP,umbral_deep,flight_deck,"Churning: wings that come apart into the dark"
 HULL_DAMAGE_ALLY_REPAIR_PERCENT_UMBRAL_DEEP,umbral_deep,armor_plating,"Hungering: feeding the fleet on what it breaks"

@@ -3574,6 +3574,12 @@ effect|STRIKECRAFT_DEATH_BURST_DAMAGE_FLAT|12.5	0	Strikecraft launched from this
 effect|STRIKECRAFT_DEATH_BURST_DAMAGE_FLAT|100.0	0	Strikecraft launched from this ship burst when destroyed, dealing <good>100</good> fragmentation damage to enemy ships and strikecraft within <hl>150</hl> su.
 effect|STRIKECRAFT_DEATH_BURST_DAMAGE_FLAT|-10.0	0	Strikecraft launched from this ship burst when destroyed, dealing <good>-10</good> fragmentation damage to enemy ships and strikecraft within <hl>150</hl> su.
 effect|STRIKECRAFT_DEATH_BURST_DAMAGE_FLAT|-12.5	0	Strikecraft launched from this ship burst when destroyed, dealing <good>-12.5</good> fragmentation damage to enemy ships and strikecraft within <hl>150</hl> su.
+effect|STRIKECRAFT_DEATH_SHROUD_BURST_DAMAGE_FLAT|1.0	0	Strikecraft launched from this ship collapse into a shroud when destroyed, dealing <good>1</good> energy damage to enemy ships and strikecraft within <hl>150</hl> su.
+effect|STRIKECRAFT_DEATH_SHROUD_BURST_DAMAGE_FLAT|10.0	0	Strikecraft launched from this ship collapse into a shroud when destroyed, dealing <good>10</good> energy damage to enemy ships and strikecraft within <hl>150</hl> su.
+effect|STRIKECRAFT_DEATH_SHROUD_BURST_DAMAGE_FLAT|12.5	0	Strikecraft launched from this ship collapse into a shroud when destroyed, dealing <good>12.5</good> energy damage to enemy ships and strikecraft within <hl>150</hl> su.
+effect|STRIKECRAFT_DEATH_SHROUD_BURST_DAMAGE_FLAT|100.0	0	Strikecraft launched from this ship collapse into a shroud when destroyed, dealing <good>100</good> energy damage to enemy ships and strikecraft within <hl>150</hl> su.
+effect|STRIKECRAFT_DEATH_SHROUD_BURST_DAMAGE_FLAT|-10.0	0	Strikecraft launched from this ship collapse into a shroud when destroyed, dealing <good>-10</good> energy damage to enemy ships and strikecraft within <hl>150</hl> su.
+effect|STRIKECRAFT_DEATH_SHROUD_BURST_DAMAGE_FLAT|-12.5	0	Strikecraft launched from this ship collapse into a shroud when destroyed, dealing <good>-12.5</good> energy damage to enemy ships and strikecraft within <hl>150</hl> su.
 effect|STRIKECRAFT_EMP_DAMAGE_PERCENT|1.0	0	Strikecraft launched from this ship deal extra EMP damage equal to <good>1%</good> of each hit's damage.
 effect|STRIKECRAFT_EMP_DAMAGE_PERCENT|10.0	0	Strikecraft launched from this ship deal extra EMP damage equal to <good>10%</good> of each hit's damage.
 effect|STRIKECRAFT_EMP_DAMAGE_PERCENT|12.5	0	Strikecraft launched from this ship deal extra EMP damage equal to <good>12.5%</good> of each hit's damage.

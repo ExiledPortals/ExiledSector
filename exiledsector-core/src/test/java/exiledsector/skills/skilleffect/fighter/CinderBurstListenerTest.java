@@ -80,8 +80,8 @@ class CinderBurstListenerTest {
         ShipAPI fighter = ship(0, 0f, 10f);
         Vector2f burstPoint = new Vector2f();
 
-        assertTrue(CinderBurstListener.caughtInBurst(fighter, ship(1, 200f, 60f), burstPoint));
-        assertFalse(CinderBurstListener.caughtInBurst(fighter, ship(1, 200f, 40f), burstPoint));
-        assertFalse(CinderBurstListener.caughtInBurst(fighter, fighter, burstPoint));
+        assertTrue(StrikecraftDeathBurst.caughtInBurst(fighter, ship(1, 200f, 60f), burstPoint, CinderBurstListener.BURST_RADIUS));
+        assertFalse(StrikecraftDeathBurst.caughtInBurst(fighter, ship(1, 200f, 40f), burstPoint, CinderBurstListener.BURST_RADIUS));
+        assertFalse(StrikecraftDeathBurst.caughtInBurst(fighter, fighter, burstPoint, CinderBurstListener.BURST_RADIUS));
     }
 }

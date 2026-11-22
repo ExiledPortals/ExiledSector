@@ -602,6 +602,7 @@
     {"name": "STRIKECRAFT_DAMAGE_TO_DAMAGED_SHIPS_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "STRIKECRAFT_DAMAGE_TO_DRONES_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "STRIKECRAFT_DEATH_BURST_DAMAGE_FLAT", "statMode": null, "lowerIsBetter": false},
+    {"name": "STRIKECRAFT_DEATH_SHROUD_BURST_DAMAGE_FLAT", "statMode": null, "lowerIsBetter": false},
     {"name": "STRIKECRAFT_EMP_DAMAGE_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "STRIKECRAFT_GAIN_AFFINITY_BONUSES", "statMode": null, "lowerIsBetter": false},
     {"name": "STRIKECRAFT_OP_DEPLOYMENT_COST_FLAT", "statMode": null, "lowerIsBetter": true},
