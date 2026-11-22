@@ -78,6 +78,14 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
     BREAK_PROBABILITY_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getBreakProb), "stat.breakApartChance", true)),
     ARMOR_PERCENT(statEffect(PERCENT, bonus(MutableShipStatsAPI::getArmorBonus), "stat.armor", false)),
     ARMOR_MULT(statEffect(MULT, bonus(MutableShipStatsAPI::getArmorBonus), "stat.armor", false)),
+    MIN_ARMOR_FRACTION_MULT(statEffect(MULT, liveStat(MutableShipStatsAPI::getMinArmorFraction), "stat.minimumArmor", false)),
+    HULLFOAM_HULL_REGEN_PERCENT(listener(HullfoamListener.REGEN_PERCENT_KEY, HullfoamListener.class, HullfoamListener::new)),
+    HULLFOAM_POOL_PERCENT(listener(HullfoamListener.POOL_PERCENT_KEY, HullfoamListener.class, HullfoamListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("floor", 100f - HullfoamListener.EMPTY_POOL_HULL_LEVEL_PERCENT).styled();
+        }
+    },
     ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD(new PerDModMultEffect(liveStat(MutableShipStatsAPI::getArmorDamageTakenMult),
             "stat.armorDamageTakenPerDMod", true)),
     HULL_DAMAGE_TAKEN_MULT_PER_DMOD(new PerDModMultEffect(liveStat(MutableShipStatsAPI::getHullDamageTakenMult),

@@ -143,7 +143,7 @@ class CompatChecksTest {
         assertEquals(List.of("Second-in-Command", "Random Assortment of Things volumes", "GraphicsLib", "Exotica Technologies",
                 "Secrets of the Frontier"), names.subList(0, 5));
         assertEquals(List.of("Lost Sector", "MagicLib", "Nightcross Armory volumes", "Navarchy of Tania volume", "Nexerelin",
-                "Symbiotic Void Creatures", "Ashes of the Domain: Vaults of Knowledge", "Terrain FX", "Hydrofoil", "Unknown Skies", "Ruthless Sector", "DIY Planets"),
+                "Symbiotic Void Creatures", "More HullMods", "Ashes of the Domain: Vaults of Knowledge", "Terrain FX", "Hydrofoil", "Unknown Skies", "Ruthless Sector", "DIY Planets"),
                 names.subList(5 + salvageSites, names.size()));
         assertTrue(names.contains("Random Assortment of Things salvage sites"));
     }

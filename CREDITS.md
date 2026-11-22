@@ -36,6 +36,12 @@ Files: everything prefixed `aotd_` under `graphics/exiledSector`: the Pre-Collap
 
 The Phase Displacement Gate structure icon `graphics/exiledSector/colony/industries/aotd_phase_displacement_gate.png` is the Bifrost megastructure artwork by Jeremy Cohen from Ashes of the Domain: Vaults of Knowledge, used with permission (approved 2026-11-14).
 
+## More HullMods
+
+By PureTilt. Its hull mod designs and icons are used with permission from PureTilt (granted 2026-11-22), with a note on each node that it comes from More HullMods.
+
+Files: everything prefixed `mhm_` under `graphics/exiledSector`, which covers the circular copies of its hull mod icons in `graphics/exiledSector/tree/more_hullmods`. The More HullMods nodes are modelled on its hull mods, but their code is Exiled Sector's own and is covered by the GPL.
+
 ## Path of Exile
 
 The loot alert sounds are from Path of Exile and are copyright Grinding Gear Games.

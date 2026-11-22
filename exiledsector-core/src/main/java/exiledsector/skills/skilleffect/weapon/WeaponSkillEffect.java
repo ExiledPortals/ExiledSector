@@ -29,8 +29,11 @@ import static exiledsector.skills.skilleffect.Backings.flag;
 import static exiledsector.skills.skilleffect.Backings.listener;
 import static exiledsector.skills.skilleffect.Backings.statEffect;
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
+import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
 import static exiledsector.skills.skilleffect.StatTarget.dynamicMod;
+import static exiledsector.skills.skilleffect.StatTarget.liveBonus;
+import static exiledsector.skills.skilleffect.StatTarget.liveStat;
 import static exiledsector.skills.skilleffect.StatTarget.stat;
 import static exiledsector.skills.skilleffect.weapon.TargetDamageBonusEffect.damageType;
 import static exiledsector.skills.skilleffect.weapon.TargetDamageBonusEffect.targetDamage;
@@ -142,6 +145,32 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
     },
     DAMAGE_TO_PRISTINE_SHIP_PERCENT(targetDamage(PristineShipDamageListener.DAMAGE_PERCENT_KEY, PristineShipDamageListener.class,
             PristineShipDamageListener::new, "stat.damageToPristineShips")),
+    HIT_STRENGTH_PERCENT(statEffect(PERCENT, liveBonus(MutableShipStatsAPI::getHitStrengthBonus), "stat.hitStrength", false)),
+    DAMAGE_TO_SHIELDS_MULT(statEffect(MULT, liveStat(MutableShipStatsAPI::getDamageToTargetShieldsMult), "stat.damageToShields", false)),
+    PROJECTILE_SPEED_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getProjectileSpeedMult), "stat.projectileSpeed", false)),
+    HARDLIGHT_FOCUS_BEAM_DAMAGE_MULT(listener(HardlightFocusListener.DAMAGE_PERCENT_PER_RANGE_KEY, HardlightFocusListener.class,
+            HardlightFocusListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude)
+                    .arg("medium", oneDecimal(magnitude * HardlightFocusListener.MEDIUM_DAMAGE_SHARE))
+                    .arg("large", oneDecimal(magnitude * HardlightFocusListener.LARGE_DAMAGE_SHARE))
+                    .arg("smallCap", Math.round(HardlightFocusListener.SMALL_RANGE_CAP))
+                    .arg("mediumCap", Math.round(HardlightFocusListener.MEDIUM_RANGE_CAP))
+                    .arg("largeCap", Math.round(HardlightFocusListener.LARGE_RANGE_CAP))
+                    .arg("step", Math.round(HardlightFocusListener.RANGE_STEP)).styled();
+        }
+    },
+    MISSILE_PREFABRICATED_AMMO_SECONDS_FLAT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
+            MissilePrefabrication.stock(ship, magnitude);
+        }
+    },
     WEAPON_MALFUNCTION_PERCENT(statEffect(PERCENT, new StatTarget.PercentagePoints(MutableShipStatsAPI::getWeaponMalfunctionChance),
             "stat.weaponMalfunctionChance", true)),
     PD_IGNORES_DECOY_FLARES(flag(Stats.PD_IGNORES_FLARES)),
@@ -261,6 +290,10 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
 
     private static void applyBallisticSensorRange(MutableShipStatsAPI stats, String modId, float magnitude) {
         applySensorRange(stats, modId, magnitude, WeaponScope.BALLISTIC);
+    }
+
+    private static float oneDecimal(float value) {
+        return Math.round(value * 10f) / 10f;
     }
 
     private static void applySensorRange(MutableShipStatsAPI stats, String modId, float magnitude, WeaponScope scope) {

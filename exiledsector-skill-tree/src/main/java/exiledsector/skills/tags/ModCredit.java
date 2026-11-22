@@ -18,13 +18,22 @@ public enum ModCredit {
     LOST_SECTOR(VolumeToggles.LOST_SECTOR_VOLUMES, "node.modCredit.lostSector"),
     RANDOM_ASSORTMENT(VolumeToggles.RANDOM_ASSORTMENT_VOLUMES, "node.modCredit.randomAssortment"),
     NIGHTCROSS(VolumeToggles.NIGHTCROSS_VOLUMES, "node.modCredit.nightcross"),
-    TANIA(VolumeToggles.TANIA_VOLUMES, "node.modCredit.tania");
+    TANIA(VolumeToggles.TANIA_VOLUMES, "node.modCredit.tania"),
+    MORE_HULLMODS("mhmods_", "node.modCredit.moreHullmods");
 
     private final Set<String> volumes;
+    private final String hullModIdPrefix;
     private final String lineKey;
 
     ModCredit(Set<String> volumes, String lineKey) {
         this.volumes = volumes;
+        this.hullModIdPrefix = null;
+        this.lineKey = lineKey;
+    }
+
+    ModCredit(String hullModIdPrefix, String lineKey) {
+        this.volumes = Set.of();
+        this.hullModIdPrefix = hullModIdPrefix;
         this.lineKey = lineKey;
     }
 
@@ -36,7 +45,8 @@ public enum ModCredit {
         Map<String, ModCredit> credits = new HashMap<>();
         Set<String> uncredited = new HashSet<>();
         for (SkillNode node : nodes) {
-            ModCredit credit = forVolume(node.getVolume());
+            ModCredit hullModCredit = forHullMods(node.getType());
+            ModCredit credit = hullModCredit != null ? hullModCredit : forVolume(node.getVolume());
             for (String typeId : typeIds(node.getType())) {
                 if (uncredited.contains(typeId)) {
                     continue;
@@ -60,6 +70,20 @@ public enum ModCredit {
         for (ModCredit credit : values()) {
             if (credit.volumes.contains(volume)) {
                 return credit;
+            }
+        }
+        return null;
+    }
+
+    static ModCredit forHullMods(SkillType type) {
+        if (type == null) {
+            return null;
+        }
+        for (String hullModId : type.getOwnHullModIds()) {
+            for (ModCredit credit : values()) {
+                if (credit.hullModIdPrefix != null && hullModId.regionMatches(true, 0, credit.hullModIdPrefix, 0, credit.hullModIdPrefix.length())) {
+                    return credit;
+                }
             }
         }
         return null;

@@ -119,6 +119,62 @@ public enum FluxSkillEffect implements BackedSkillEffect {
             VolatileFluxListener.class, VolatileFluxListener::new)),
     VOLATILE_FLUX_RATE_OF_FIRE_PERCENT(listener(VolatileFluxListener.RATE_OF_FIRE_KEY,
             VolatileFluxListener.class, VolatileFluxListener::new)),
+    FLUX_LEVEL_WEAPON_DAMAGE_MULT(listener(FluxOverdriveListener.DAMAGE_PERCENT_KEY, FluxOverdriveListener.class,
+            FluxOverdriveListener::new)),
+    FLUX_LEVEL_WEAPON_FLUX_COST_MULT(listener(FluxOverdriveListener.FLUX_COST_PERCENT_KEY, FluxOverdriveListener.class,
+            FluxOverdriveListener::new)) {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
+        public boolean invertsDescriptionColours() {
+            return false;
+        }
+    },
+    FLUX_GENERATOR_FLUX_LEVEL_PERCENT(listener(FluxGeneratorListener.FLUX_LEVEL_PERCENT_KEY, FluxGeneratorListener.class,
+            FluxGeneratorListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("multiple", Math.round(FluxGeneratorListener.DISSIPATION_MULTIPLE)).styled();
+        }
+    },
+    FLUX_BOOSTER_VENT_RATE_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            ShipVariantAPI variant = stats.getVariant();
+            float share = variant != null && variant.hasHullMod(RESISTANT_FLUX_CONDUITS) ? RESISTANT_CONDUITS_VENT_SHARE : 1f;
+            stats.getVentRateMult().modifyPercent(modId, magnitude * share);
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("reduced", magnitude * RESISTANT_CONDUITS_VENT_SHARE).styled();
+        }
+    },
+    FLUX_BOOSTER_MANEUVERABILITY_PERCENT(listener(FluxBoosterListener.MANEUVERABILITY_PERCENT_KEY, FluxBoosterListener.class,
+            FluxBoosterListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("acceleration", magnitude * FluxBoosterListener.ACCELERATION_SHARE).styled();
+        }
+    },
+    FLUX_BOOSTER_SECONDS_FLAT(listener(FluxBoosterListener.SECONDS_KEY, FluxBoosterListener.class, FluxBoosterListener::new)),
+    EMERGENCY_VENTING_OVERLOAD_SECONDS_FLAT(listener(EmergencyVentingListener.OVERLOAD_SECONDS_KEY, EmergencyVentingListener.class,
+            EmergencyVentingListener::new)) {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
+        public boolean invertsDescriptionColours() {
+            return false;
+        }
+    },
+    EMERGENCY_VENT_RATE_PERCENT(listener(EmergencyVentingListener.VENT_RATE_PERCENT_KEY, EmergencyVentingListener.class,
+            EmergencyVentingListener::new)),
     AUGMENTED_FLUX_SCALED_PENALTY_REDUCTION_PERCENT(listener(VolatileFluxListener.AUGMENTED_PENALTY_REDUCTION_KEY,
             VolatileFluxListener.class, VolatileFluxListener::new)) {
         @Override
@@ -127,6 +183,8 @@ public enum FluxSkillEffect implements BackedSkillEffect {
         }
     };
 
+    static final String RESISTANT_FLUX_CONDUITS = "fluxbreakers";
+    static final float RESISTANT_CONDUITS_VENT_SHARE = 0.5f;
     private static final String CAPACITOR_MOD_SUFFIX = "_capacitors";
     private static final String VENT_MOD_SUFFIX = "_vents";
     private static final String FLUX_PER_CAPACITOR_SETTING = "fluxPerCapacitor";

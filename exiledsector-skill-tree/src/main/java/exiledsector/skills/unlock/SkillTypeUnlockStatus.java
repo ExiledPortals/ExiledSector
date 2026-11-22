@@ -1,6 +1,7 @@
 package exiledsector.skills.unlock;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.CharacterDataAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import exiledsector.skills.ShipSkillData;
@@ -59,9 +60,15 @@ public final class SkillTypeUnlockStatus {
     private static boolean isBlueprintKnown(UnlockCondition condition) {
         String hullModId = condition.getKey();
         if (hullModId == null) return false;
+        if (isFromAMissingMod(hullModId)) return true;
 
         CharacterDataAPI playerCharacter = Global.getSector().getCharacterData();
         return playerCharacter != null && playerCharacter.knowsHullMod(hullModId);
+    }
+
+    private static boolean isFromAMissingMod(String hullModId) {
+        SettingsAPI settings = Global.getSettings();
+        return settings != null && settings.getHullModSpec(hullModId) == null;
     }
 
     private static boolean hasCharacterStat(UnlockCondition condition) {

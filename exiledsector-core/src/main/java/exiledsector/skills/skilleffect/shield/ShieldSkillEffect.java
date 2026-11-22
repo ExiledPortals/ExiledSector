@@ -19,6 +19,7 @@ import exiledsector.skills.skilleffect.TopSpeedShare;
 import java.util.List;
 import java.util.Set;
 
+import static exiledsector.skills.skilleffect.Backings.flag;
 import static exiledsector.skills.skilleffect.Backings.listener;
 import static exiledsector.skills.skilleffect.Backings.statEffect;
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
@@ -111,6 +112,35 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
     SHIELD_ARC_MULT(statEffect(MULT, bonus(MutableShipStatsAPI::getShieldArcBonus), StatNames.SHIELD_ARC, false)),
     SHIELD_ABSORPTION_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getShieldAbsorptionMult), StatNames.DAMAGE_TAKEN_BY_SHIELDS, true)),
     SHIELD_DAMAGE_TAKEN_MULT(statEffect(MULT, liveStat(MutableShipStatsAPI::getShieldDamageTakenMult), StatNames.DAMAGE_TAKEN_BY_SHIELDS, true)),
+    UNSTABLE_SHIELD_DAMAGE_TAKEN_MULT(listener(UnstableShieldsListener.DAMAGE_TAKEN_PERCENT_KEY, UnstableShieldsListener.class,
+            UnstableShieldsListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            UnstableShieldsListener.Timings timings = UnstableShieldsListener.UNSTEADY;
+            return EffectText.msg(this).arg("value", Math.abs(magnitude))
+                    .arg("max", magnitude + UnstableShieldsListener.INSTABILITY_SWING_PERCENT)
+                    .arg("hold", timings.holdSeconds()).arg("destabilise", timings.destabiliseSeconds())
+                    .arg("delay", timings.recoveryDelaySeconds()).arg("recover", timings.recoverySeconds()).styled();
+        }
+
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
+        public boolean invertsDescriptionColours() {
+            return false;
+        }
+    },
+    UNSTABLE_SHIELD_STEADY(flag(UnstableShieldsListener.STEADY_FLAG_KEY)) {
+        @Override
+        public StyledText description(float magnitude) {
+            UnstableShieldsListener.Timings timings = UnstableShieldsListener.STEADY;
+            return EffectText.msg(this).arg("hold", timings.holdSeconds()).arg("destabilise", timings.destabiliseSeconds())
+                    .arg("delay", timings.recoveryDelaySeconds()).arg("recover", timings.recoverySeconds()).styled();
+        }
+    },
     SHIELD_DAMAGE_TAKEN_AT_SPEED_PERCENT(new ConditionalStatEffect(PERCENT, liveStat(MutableShipStatsAPI::getShieldDamageTakenMult),
             StatNames.DAMAGE_TAKEN_BY_SHIELDS, ShieldSkillEffect::isMovingFast)) {
         @Override

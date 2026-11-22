@@ -17,6 +17,7 @@ import exiledsector.compat.CompatTarget;
 import exiledsector.compat.LostSectorCompat;
 import exiledsector.compat.LostSectorUnlocks;
 import exiledsector.compat.MagicLibCompat;
+import exiledsector.compat.MoreHullModsCompat;
 import exiledsector.compat.NexerelinCompat;
 import exiledsector.compat.NightcrossCompat;
 import exiledsector.compat.NightcrossUnlocks;
@@ -358,7 +359,7 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
     @Override
     public List<CompatTarget> compatTargets() {
         return List.of(LostSectorCompat.TARGET, MagicLibCompat.TARGET, NightcrossCompat.TARGET, TaniaCompat.TARGET,
-                NexerelinCompat.TARGET, SymbioticVoidCreaturesCompat.TARGET);
+                NexerelinCompat.TARGET, SymbioticVoidCreaturesCompat.TARGET, MoreHullModsCompat.TARGET);
     }
 
     private static Set<String> phantomHullModIds() {

@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SkillTypesDataConsistencyTest {
 
+    private static final String KNOWN_HULL_MODS_PATH = "exiledsector-core/src/test/resources/i18n/hullmod_names.csv";
     private static final Set<String> STRUCTURAL_TYPE_IDS = Set.of("wormhole", "wormhole_exit", "exoship", "subroutine_socket");
 
     private static Map<String, JSONObject> loadTypes() throws Exception {
@@ -219,6 +220,25 @@ class SkillTypesDataConsistencyTest {
             }
         });
         assertTrue(violations.isEmpty(), String.join("\n", violations));
+    }
+
+    @Test
+    void everyHullModBlueprintNamesAKnownHullMod() throws Exception {
+        Set<String> knownHullMods = new HashSet<>();
+        Files.readAllLines(ProjectFiles.projectRoot().resolve(KNOWN_HULL_MODS_PATH), StandardCharsets.UTF_8).stream().skip(1)
+                .map(line -> line.split(",", 2)[0].trim()).forEach(knownHullMods::add);
+        List<String> unknown = new ArrayList<>();
+        for (JSONObject type : loadTypes().values()) {
+            JSONArray unlocks = type.optJSONArray("unlockConditions");
+            for (int i = 0; unlocks != null && i < unlocks.length(); i++) {
+                JSONObject unlock = unlocks.getJSONObject(i);
+                if ("blueprint".equals(unlock.optString("type")) && "hullmod".equals(unlock.optString("category"))
+                        && !knownHullMods.contains(unlock.getString("id"))) {
+                    unknown.add(type.getString("id") + " -> " + unlock.getString("id"));
+                }
+            }
+        }
+        assertTrue(unknown.isEmpty(), "A blueprint for a hull mod that never loads unlocks its node; add real ids to " + KNOWN_HULL_MODS_PATH + ": " + unknown);
     }
 
     @Test

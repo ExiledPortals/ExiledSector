@@ -8754,6 +8754,1098 @@
 				"rate_of_fire",
 				"req_strikecraft_bays"
 			]
+		},
+		{
+			"id": "anti_armor_ammunition",
+			"name": "Anti Armor Ammunition",
+			"icon": "graphics/exiledSector/tree/more_hullmods/mhm_anti_armor_ammunition.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "HIT_STRENGTH_PERCENT",
+					"magnitude": 25
+				},
+				{
+					"effect": "DAMAGE_TO_SHIELDS_MULT",
+					"magnitude": -5
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "HIT_STRENGTH_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "DAMAGE_TO_SHIELDS_MULT",
+						"magnitude": -5
+					}
+				]
+			},
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "mhmods_antiarmorgammunition"
+				}
+			],
+			"phantomHullMods": [
+				"mhmods_antiarmorgammunition"
+			],
+			"flavour": "The crew loads the magazines with hardened penetrator rounds that bite deep into armor. Against shields they splash a little thinner.",
+			"flavourAutomated": "The ship's core logs which rounds broke through enemy plating and loads only those. Weaker shield hits it records as an acceptable loss.",
+			"tags": [
+				"damage"
+			]
+		},
+		{
+			"id": "particle_accelerator",
+			"name": "Particle Accelerator",
+			"icon": "graphics/exiledSector/tree/more_hullmods/mhm_particle_accelerator.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "PROJECTILE_SPEED_PERCENT",
+					"magnitude": 30
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "PROJECTILE_SPEED_PERCENT",
+						"magnitude": 50
+					}
+				]
+			},
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "mhmods_particleaccelerator"
+				}
+			],
+			"phantomHullMods": [
+				"mhmods_particleaccelerator"
+			],
+			"flavour": "The crew wraps the barrels and emitters in salvaged accelerator rings, so every shot leaves faster than its specs allow.",
+			"flavourAutomated": "The ship's core retunes its own barrel coils between volleys and records the travel time each shot loses.",
+			"tags": [
+				"weapon"
+			]
+		},
+		{
+			"id": "split_chamber",
+			"name": "Split Chamber",
+			"icon": "graphics/exiledSector/tree/more_hullmods/mhm_split_chamber.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "BALLISTIC_WEAPON_RATE_OF_FIRE_MULT",
+					"magnitude": 100
+				},
+				{
+					"effect": "ENERGY_WEAPON_RATE_OF_FIRE_MULT",
+					"magnitude": 100
+				},
+				{
+					"effect": "BALLISTIC_WEAPON_AMMO_MULT",
+					"magnitude": 100
+				},
+				{
+					"effect": "ENERGY_WEAPON_AMMO_MULT",
+					"magnitude": 100
+				},
+				{
+					"effect": "BALLISTIC_WEAPON_AMMO_REGEN_MULT",
+					"magnitude": 100
+				},
+				{
+					"effect": "ENERGY_WEAPON_AMMO_REGEN_MULT",
+					"magnitude": 100
+				},
+				{
+					"effect": "BALLISTIC_WEAPON_FLUX_COST_MULT",
+					"magnitude": -50
+				},
+				{
+					"effect": "ENERGY_WEAPON_FLUX_COST_MULT",
+					"magnitude": -50
+				},
+				{
+					"effect": "BALLISTIC_WEAPON_DAMAGE_MULT",
+					"magnitude": -40
+				},
+				{
+					"effect": "ENERGY_WEAPON_DAMAGE_MULT",
+					"magnitude": -40
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BALLISTIC_WEAPON_RATE_OF_FIRE_MULT",
+						"magnitude": 150
+					},
+					{
+						"effect": "ENERGY_WEAPON_RATE_OF_FIRE_MULT",
+						"magnitude": 150
+					},
+					{
+						"effect": "BALLISTIC_WEAPON_AMMO_MULT",
+						"magnitude": 150
+					},
+					{
+						"effect": "ENERGY_WEAPON_AMMO_MULT",
+						"magnitude": 150
+					},
+					{
+						"effect": "BALLISTIC_WEAPON_AMMO_REGEN_MULT",
+						"magnitude": 150
+					},
+					{
+						"effect": "ENERGY_WEAPON_AMMO_REGEN_MULT",
+						"magnitude": 150
+					},
+					{
+						"effect": "BALLISTIC_WEAPON_FLUX_COST_MULT",
+						"magnitude": -60
+					},
+					{
+						"effect": "ENERGY_WEAPON_FLUX_COST_MULT",
+						"magnitude": -60
+					},
+					{
+						"effect": "BALLISTIC_WEAPON_DAMAGE_MULT",
+						"magnitude": -50
+					},
+					{
+						"effect": "ENERGY_WEAPON_DAMAGE_MULT",
+						"magnitude": -50
+					}
+				]
+			},
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "mhmods_splitChamber"
+				}
+			],
+			"phantomHullMods": [
+				"mhmods_splitChamber"
+			],
+			"flavour": "The crew splits every firing chamber in two, so the guns fire far more often with less behind each shot. The gunners say it sounds like rain on a hull.",
+			"flavourAutomated": "The ship's core divides its firing chambers and cycles them in turn. It records that each shot lands softer and that there are many more of them.",
+			"tags": [
+				"ballistic",
+				"energy",
+				"rate_of_fire"
+			]
+		},
+		{
+			"id": "weapon_inhibitor",
+			"name": "Weapon Inhibitor",
+			"icon": "graphics/exiledSector/tree/more_hullmods/mhm_weapon_inhibitor.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "BALLISTIC_WEAPON_FLUX_COST_MULT",
+					"magnitude": -20
+				},
+				{
+					"effect": "BALLISTIC_WEAPON_DAMAGE_MULT",
+					"magnitude": -10
+				},
+				{
+					"effect": "BALLISTIC_WEAPON_RATE_OF_FIRE_MULT",
+					"magnitude": -10
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BALLISTIC_WEAPON_FLUX_COST_MULT",
+						"magnitude": -30
+					},
+					{
+						"effect": "BALLISTIC_WEAPON_DAMAGE_MULT",
+						"magnitude": -10
+					},
+					{
+						"effect": "BALLISTIC_WEAPON_RATE_OF_FIRE_MULT",
+						"magnitude": -10
+					}
+				]
+			},
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "mhmods_weaponinhibitor"
+				}
+			],
+			"phantomHullMods": [
+				"mhmods_weaponinhibitor"
+			],
+			"flavour": "The crew fits inhibitors to the ballistic mounts that throttle each shot's charge, giving up some punch and pace for a cooler flux grid.",
+			"flavourAutomated": "The ship's core throttles its own ballistic mounts and logs the flux each weaker shot saves.",
+			"tags": [
+				"ballistic",
+				"flux"
+			]
+		},
+		{
+			"id": "stiff_mounts",
+			"name": "Stiff Mounts",
+			"icon": "graphics/exiledSector/tree/more_hullmods/mhm_stiff_mounts.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "WEAPON_RECOIL_MULT",
+					"magnitude": -35
+				},
+				{
+					"effect": "WEAPON_TURN_RATE_MULT",
+					"magnitude": -10
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "WEAPON_RECOIL_MULT",
+						"magnitude": -50
+					},
+					{
+						"effect": "WEAPON_TURN_RATE_MULT",
+						"magnitude": -10
+					}
+				]
+			},
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "mhmods_stiffMounts"
+				}
+			],
+			"phantomHullMods": [
+				"mhmods_stiffMounts"
+			],
+			"flavour": "The crew welds extra bracing onto every mount until the guns barely kick. They also turn slower, which the gunners mention often.",
+			"flavourAutomated": "The ship's core braces its mounts rigidly and measures the tighter groupings. It notes the slower traverse and keeps the bracing.",
+			"tags": [
+				"weapon"
+			]
+		},
+		{
+			"id": "reloader",
+			"name": "Reloader",
+			"icon": "graphics/exiledSector/tree/more_hullmods/mhm_reloader.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "BALLISTIC_WEAPON_AMMO_REGEN_PERCENT",
+					"magnitude": 25
+				},
+				{
+					"effect": "ENERGY_WEAPON_AMMO_REGEN_PERCENT",
+					"magnitude": 25
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BALLISTIC_WEAPON_AMMO_REGEN_PERCENT",
+						"magnitude": 100
+					},
+					{
+						"effect": "ENERGY_WEAPON_AMMO_REGEN_PERCENT",
+						"magnitude": 100
+					},
+					{
+						"effect": "BALLISTIC_WEAPON_AMMO_MULT",
+						"magnitude": -50
+					},
+					{
+						"effect": "ENERGY_WEAPON_AMMO_MULT",
+						"magnitude": -50
+					}
+				]
+			},
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "mhmods_reloader"
+				}
+			],
+			"phantomHullMods": [
+				"mhmods_reloader"
+			],
+			"flavour": "The crew runs faster feed lines from the ammo stores to the guns, so magazines refill sooner between bursts.",
+			"flavourAutomated": "The ship's core reroutes its own feed lines and times every refill to the cycle of its guns.",
+			"tags": [
+				"ammo"
+			]
+		},
+		{
+			"id": "flux_overdrive",
+			"name": "Flux Overdrive",
+			"icon": "graphics/exiledSector/tree/more_hullmods/mhm_flux_overdrive.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "FLUX_LEVEL_WEAPON_DAMAGE_MULT",
+					"magnitude": 30
+				},
+				{
+					"effect": "FLUX_LEVEL_WEAPON_FLUX_COST_MULT",
+					"magnitude": 30
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FLUX_LEVEL_WEAPON_DAMAGE_MULT",
+						"magnitude": 45
+					},
+					{
+						"effect": "FLUX_LEVEL_WEAPON_FLUX_COST_MULT",
+						"magnitude": 30
+					}
+				]
+			},
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "mhmods_fluxoverdrive"
+				}
+			],
+			"phantomHullMods": [
+				"mhmods_fluxoverdrive"
+			],
+			"flavour": "The crew bypasses the regulators on the weapon capacitors. The hotter the flux grid runs, the harder the guns hit and the more each shot costs.",
+			"flavourAutomated": "The ship's core strips the regulators from its weapon capacitors and records how its guns hit harder as its grid heats.",
+			"tags": [
+				"ballistic",
+				"energy",
+				"damage",
+				"flux_level"
+			]
+		},
+		{
+			"id": "voltage_regulation_system",
+			"name": "Voltage Regulation System",
+			"icon": "graphics/exiledSector/tree/more_hullmods/mhm_voltage_regulation_system.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "BEAM_WEAPON_FLUX_COST_MULT",
+					"magnitude": -20
+				},
+				{
+					"effect": "BEAM_WEAPON_RANGE_MULT",
+					"magnitude": -10
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BEAM_WEAPON_FLUX_COST_MULT",
+						"magnitude": -30
+					},
+					{
+						"effect": "BEAM_WEAPON_RANGE_MULT",
+						"magnitude": -10
+					}
+				]
+			},
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "mhmods_voltageregulationsystem"
+				}
+			],
+			"phantomHullMods": [
+				"mhmods_voltageregulationsystem"
+			],
+			"flavour": "The crew installs voltage regulators on the beam emitters. The beams run cooler but lose some of their reach.",
+			"flavourAutomated": "The ship's core regulates the voltage of its beam emitters and logs the flux saved against the reach lost.",
+			"tags": [
+				"beam",
+				"flux"
+			]
+		},
+		{
+			"id": "hardlight_focus",
+			"name": "Hardlight Focus",
+			"icon": "graphics/exiledSector/tree/more_hullmods/mhm_hardlight_focus.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "HARDLIGHT_FOCUS_BEAM_DAMAGE_MULT",
+					"magnitude": 15
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "HARDLIGHT_FOCUS_BEAM_DAMAGE_MULT",
+						"magnitude": 22.5
+					}
+				]
+			},
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "mhmods_hardlightFocus"
+				}
+			],
+			"phantomHullMods": [
+				"mhmods_hardlightFocus"
+			],
+			"flavour": "The crew shortens every beam's focus and pours the spare energy into a tighter, hotter lance. The longest beams gain the most from it.",
+			"flavourAutomated": "The ship's core shortens the focus of its beams and measures the heat they gain at close range.",
+			"tags": [
+				"beam",
+				"damage",
+				"req_beam"
+			]
+		},
+		{
+			"id": "torpedo_spec",
+			"name": "Torpedo Spec",
+			"icon": "graphics/exiledSector/tree/more_hullmods/mhm_torpedo_spec.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "MISSILE_WEAPON_PROJECTILE_SPEED_PERCENT",
+					"magnitude": 30
+				},
+				{
+					"effect": "MISSILE_WEAPON_FLIGHT_ACCELERATION_PERCENT",
+					"magnitude": 30
+				},
+				{
+					"effect": "MISSILE_WEAPON_HEALTH_PERCENT",
+					"magnitude": 15
+				},
+				{
+					"effect": "MISSILE_WEAPON_FLIGHT_TURN_RATE_PERCENT",
+					"magnitude": -25
+				},
+				{
+					"effect": "MISSILE_WEAPON_FLIGHT_TURN_ACCELERATION_PERCENT",
+					"magnitude": -25
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "MISSILE_WEAPON_PROJECTILE_SPEED_PERCENT",
+						"magnitude": 45
+					},
+					{
+						"effect": "MISSILE_WEAPON_FLIGHT_ACCELERATION_PERCENT",
+						"magnitude": 45
+					},
+					{
+						"effect": "MISSILE_WEAPON_HEALTH_PERCENT",
+						"magnitude": 25
+					},
+					{
+						"effect": "MISSILE_WEAPON_FLIGHT_TURN_RATE_PERCENT",
+						"magnitude": -25
+					},
+					{
+						"effect": "MISSILE_WEAPON_FLIGHT_TURN_ACCELERATION_PERCENT",
+						"magnitude": -25
+					}
+				]
+			},
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "mhmods_torpedospec"
+				}
+			],
+			"phantomHullMods": [
+				"mhmods_torpedospec"
+			],
+			"flavour": "The crew packs the missiles with bigger motors and heavier casings. They fly fast and take more to shoot down, but they turn like bricks.",
+			"flavourAutomated": "The ship's core refits its missiles for speed and toughness and records the turning they give up.",
+			"tags": [
+				"missile",
+				"req_missile"
+			]
+		},
+		{
+			"id": "missile_prefabricator",
+			"name": "Missile Prefabricator",
+			"icon": "graphics/exiledSector/tree/more_hullmods/mhm_missile_prefabricator.png",
+			"tier": "NOTABLE",
+			"hullSizeEffects": [
+				{
+					"effect": "MISSILE_PREFABRICATED_AMMO_SECONDS_FLAT",
+					"frigate": 155,
+					"destroyer": 255,
+					"cruiser": 330,
+					"capitalShip": 510
+				}
+			],
+			"integrated": {
+				"hullSizeEffects": [
+					{
+						"effect": "MISSILE_PREFABRICATED_AMMO_SECONDS_FLAT",
+						"frigate": 233,
+						"destroyer": 383,
+						"cruiser": 495,
+						"capitalShip": 765
+					}
+				]
+			},
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "MHMods_prefabricator"
+				}
+			],
+			"phantomHullMods": [
+				"MHMods_prefabricator"
+			],
+			"flavour": "The crew fills every spare corridor with prefabricated missiles before deployment and tears out the reload machinery to make room for more.",
+			"flavourAutomated": "The ship's core prefabricates missiles before each battle and stacks them wherever its hull has space. It records no plan to reload.",
+			"tags": [
+				"missile",
+				"ammo",
+				"req_missile"
+			]
+		},
+		{
+			"id": "flux_generator",
+			"name": "Flux Generator",
+			"icon": "graphics/exiledSector/tree/more_hullmods/mhm_flux_generator.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "FLUX_GENERATOR_FLUX_LEVEL_PERCENT",
+					"magnitude": 50
+				},
+				{
+					"effect": "ZERO_FLUX_ALWAYS_ON",
+					"magnitude": 0
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FLUX_GENERATOR_FLUX_LEVEL_PERCENT",
+						"magnitude": 75
+					},
+					{
+						"effect": "ZERO_FLUX_ALWAYS_ON",
+						"magnitude": 0
+					}
+				]
+			},
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "mhmods_fluxgenerator"
+				}
+			],
+			"phantomHullMods": [
+				"mhmods_fluxgenerator"
+			],
+			"flavour": "The crew wires a small generator straight into the flux grid to keep the capacitors charged, and tells the engines to ignore it.",
+			"flavourAutomated": "The ship's core feeds a generator into its own grid and logs that its engines run as if the grid were empty.",
+			"tags": [
+				"flux",
+				"mobility"
+			]
+		},
+		{
+			"id": "flux_booster",
+			"name": "Flux Booster",
+			"icon": "graphics/exiledSector/tree/more_hullmods/mhm_flux_booster.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "FLUX_BOOSTER_VENT_RATE_PERCENT",
+					"magnitude": 25
+				},
+				{
+					"effect": "FLUX_BOOSTER_SECONDS_FLAT",
+					"magnitude": 3
+				}
+			],
+			"hullSizeEffects": [
+				{
+					"effect": "FLUX_BOOSTER_MANEUVERABILITY_PERCENT",
+					"frigate": 50,
+					"destroyer": 75,
+					"cruiser": 100,
+					"capitalShip": 125
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FLUX_BOOSTER_VENT_RATE_PERCENT",
+						"magnitude": 25
+					},
+					{
+						"effect": "FLUX_BOOSTER_SECONDS_FLAT",
+						"magnitude": 4
+					}
+				],
+				"hullSizeEffects": [
+					{
+						"effect": "FLUX_BOOSTER_MANEUVERABILITY_PERCENT",
+						"frigate": 50,
+						"destroyer": 75,
+						"cruiser": 100,
+						"capitalShip": 125
+					}
+				]
+			},
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "mhmods_fluxbooster"
+				}
+			],
+			"phantomHullMods": [
+				"mhmods_fluxbooster"
+			],
+			"flavour": "The crew routes the vents through the thrusters, so every vent kicks the ship forward. The fuller the grid when venting starts, the harder the kick.",
+			"flavourAutomated": "The ship's core vents its flux through its own thrusters and records the push each vent gives.",
+			"tags": [
+				"flux",
+				"mobility"
+			]
+		},
+		{
+			"id": "emergency_venting_system",
+			"name": "Emergency Venting System",
+			"icon": "graphics/exiledSector/tree/more_hullmods/mhm_emergency_venting_system.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "EMERGENCY_VENTING_OVERLOAD_SECONDS_FLAT",
+					"magnitude": 2
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "EMERGENCY_VENTING_OVERLOAD_SECONDS_FLAT",
+						"magnitude": 2
+					},
+					{
+						"effect": "EMERGENCY_VENT_RATE_PERCENT",
+						"magnitude": 40
+					}
+				]
+			},
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "mhmods_emergencyventingsystem"
+				}
+			],
+			"phantomHullMods": [
+				"mhmods_emergencyventingsystem"
+			],
+			"flavour": "The crew wires an emergency trigger into the overload breakers that cuts long overloads short and throws the vents open the moment the grid recovers.",
+			"flavourAutomated": "The ship's core cuts its own overloads short and vents as soon as they end. It records no reason to wait.",
+			"tags": [
+				"flux"
+			]
+		},
+		{
+			"id": "hyper_engine_upgrade",
+			"name": "Hyper Engine Upgrade",
+			"icon": "graphics/exiledSector/tree/more_hullmods/mhm_hyper_engine_upgrade.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "HYPER_ENGINE_ZERO_FLUX_SPEED_FLAT",
+					"magnitude": 20
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "HYPER_ENGINE_ZERO_FLUX_SPEED_FLAT",
+						"magnitude": 20
+					},
+					{
+						"effect": "ZERO_FLUX_ALWAYS_ON",
+						"magnitude": 0
+					}
+				]
+			},
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "mhmods_hyperengineupgrade"
+				}
+			],
+			"phantomHullMods": [
+				"mhmods_hyperengineupgrade"
+			],
+			"flavour": "The crew retunes the engines to burn far hotter while the flux grid is quiet. Slow hulls gain the most from it.",
+			"flavourAutomated": "The ship's core overdrives its engines whenever its grid is quiet and logs the most speed gained on slow hulls.",
+			"tags": [
+				"mobility"
+			]
+		},
+		{
+			"id": "unstable_shields",
+			"name": "Unstable Shields",
+			"icon": "graphics/exiledSector/tree/more_hullmods/mhm_unstable_shields.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "UNSTABLE_SHIELD_DAMAGE_TAKEN_MULT",
+					"magnitude": -30
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "UNSTABLE_SHIELD_DAMAGE_TAKEN_MULT",
+						"magnitude": -40
+					},
+					{
+						"effect": "UNSTABLE_SHIELD_STEADY",
+						"magnitude": 0
+					}
+				]
+			},
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "mhmods_unstableshields"
+				}
+			],
+			"phantomHullMods": [
+				"mhmods_unstableshields"
+			],
+			"flavour": "The crew overcharges the shield emitters for a stronger field. Held up too long, the field starts to buckle.",
+			"flavourAutomated": "The ship's core overcharges its shield emitters and logs how long the field holds before it destabilises.",
+			"tags": [
+				"shield",
+				"req_shields"
+			]
+		},
+		{
+			"id": "integrated_armor",
+			"name": "Integrated Armor",
+			"icon": "graphics/exiledSector/tree/more_hullmods/mhm_integrated_armor.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "MIN_ARMOR_FRACTION_MULT",
+					"magnitude": 400
+				},
+				{
+					"effect": "ARMOR_MULT",
+					"magnitude": -10
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "MIN_ARMOR_FRACTION_MULT",
+						"magnitude": 650
+					},
+					{
+						"effect": "ARMOR_MULT",
+						"magnitude": -10
+					}
+				]
+			},
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "mhmods_integratedarmor"
+				}
+			],
+			"phantomHullMods": [
+				"mhmods_integratedarmor"
+			],
+			"flavour": "The crew welds the armor plates into one continuous shell. It is thinner overall, but no hit finds a bare seam.",
+			"flavourAutomated": "The ship's core fuses its plating into one continuous shell and records that it is thinner but has no weak seams.",
+			"tags": [
+				"armour"
+			]
+		},
+		{
+			"id": "hullfoam_dispenser",
+			"name": "Hullfoam Dispenser",
+			"icon": "graphics/exiledSector/tree/more_hullmods/mhm_hullfoam_dispenser.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "HULLFOAM_POOL_PERCENT",
+					"magnitude": 100
+				}
+			],
+			"hullSizeEffects": [
+				{
+					"effect": "HULLFOAM_HULL_REGEN_PERCENT",
+					"frigate": 1,
+					"destroyer": 0.8,
+					"cruiser": 0.6,
+					"capitalShip": 0.4
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "HULLFOAM_POOL_PERCENT",
+						"magnitude": 150
+					}
+				],
+				"hullSizeEffects": [
+					{
+						"effect": "HULLFOAM_HULL_REGEN_PERCENT",
+						"frigate": 1,
+						"destroyer": 0.8,
+						"cruiser": 0.6,
+						"capitalShip": 0.4
+					}
+				]
+			},
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "mhmods_hullfoam"
+				}
+			],
+			"phantomHullMods": [
+				"mhmods_hullfoam"
+			],
+			"flavour": "The crew fills the inner hull with tanks of quick-setting foam that seal breaches during battle, until the tanks run dry.",
+			"flavourAutomated": "The ship's core seals its own breaches with quick-setting foam and rations the tanks as they empty.",
+			"tags": [
+				"hull",
+				"repair"
+			]
+		},
+		{
+			"id": "bombardment_package",
+			"name": "Bombardment Package",
+			"icon": "graphics/exiledSector/tree/more_hullmods/mhm_bombardment_package.png",
+			"tier": "NOTABLE",
+			"hullSizeEffects": [
+				{
+					"effect": "GROUND_SUPPORT_FLAT",
+					"frigate": 25,
+					"destroyer": 50,
+					"cruiser": 100,
+					"capitalShip": 150
+				},
+				{
+					"effect": "FLEET_BOMBARD_COST_REDUCTION_FLAT",
+					"frigate": 25,
+					"destroyer": 50,
+					"cruiser": 100,
+					"capitalShip": 150
+				}
+			],
+			"integrated": {
+				"hullSizeEffects": [
+					{
+						"effect": "GROUND_SUPPORT_FLAT",
+						"frigate": 38,
+						"destroyer": 75,
+						"cruiser": 150,
+						"capitalShip": 225
+					},
+					{
+						"effect": "FLEET_BOMBARD_COST_REDUCTION_FLAT",
+						"frigate": 38,
+						"destroyer": 75,
+						"cruiser": 150,
+						"capitalShip": 225
+					}
+				]
+			},
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "mhmods_bombardmentpackage"
+				}
+			],
+			"phantomHullMods": [
+				"mhmods_bombardmentpackage"
+			],
+			"flavour": "The crew bolts bombardment racks and drop pods to the hull, ready to back a landing from orbit or flatten a target outright.",
+			"flavourAutomated": "The ship's core mounts bombardment racks and computes firing solutions for targets on a planet's surface.",
+			"tags": [
+				"crew",
+				"campaign_only",
+				"logistics_cap"
+			]
+		},
+		{
+			"id": "exploration_refit",
+			"name": "Exploration Refit",
+			"icon": "graphics/exiledSector/tree/more_hullmods/mhm_exploration_refit.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "FUEL_USE_MULT",
+					"magnitude": -25
+				},
+				{
+					"effect": "SUPPLIES_PER_MONTH_MULT",
+					"magnitude": -25
+				},
+				{
+					"effect": "SENSOR_STRENGTH_PERCENT",
+					"magnitude": 50
+				},
+				{
+					"effect": "MAX_COMBAT_READINESS_PERCENT",
+					"magnitude": -30
+				},
+				{
+					"effect": "CR_RECOVERY_RATE_PERCENT",
+					"magnitude": -25
+				},
+				{
+					"effect": "CARGO_CAPACITY_MULT",
+					"magnitude": -15
+				},
+				{
+					"effect": "FUEL_CAPACITY_MULT",
+					"magnitude": -15
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FUEL_USE_MULT",
+						"magnitude": -25
+					},
+					{
+						"effect": "SUPPLIES_PER_MONTH_MULT",
+						"magnitude": -25
+					},
+					{
+						"effect": "SENSOR_STRENGTH_PERCENT",
+						"magnitude": 50
+					},
+					{
+						"effect": "MAX_COMBAT_READINESS_PERCENT",
+						"magnitude": -30
+					},
+					{
+						"effect": "CR_RECOVERY_RATE_PERCENT",
+						"magnitude": -25
+					},
+					{
+						"effect": "CARGO_CAPACITY_MULT",
+						"magnitude": -15
+					},
+					{
+						"effect": "FUEL_CAPACITY_MULT",
+						"magnitude": -15
+					},
+					{
+						"effect": "CORONA_RESISTANCE_MULT",
+						"magnitude": -50
+					}
+				]
+			},
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "mhmods_explorationrefit"
+				}
+			],
+			"phantomHullMods": [
+				"mhmods_explorationrefit"
+			],
+			"flavour": "The crew strips the ship down for long voyages: leaner systems, sharper sensors and less room for anything else. It never quite fights at its best again.",
+			"flavourAutomated": "The ship's core strips its hull down for long voyages and lets its combat systems idle.",
+			"tags": [
+				"sensors",
+				"fuel",
+				"supplies",
+				"logistics_cap"
+			]
+		},
+		{
+			"id": "fuel_additive",
+			"name": "Fuel Additive",
+			"icon": "graphics/exiledSector/tree/more_hullmods/mhm_fuel_additive.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "BURN_LEVEL_FLAT",
+					"magnitude": 1
+				},
+				{
+					"effect": "FUEL_USE_MULT",
+					"magnitude": -25
+				},
+				{
+					"effect": "SUPPLIES_PER_MONTH_MULT",
+					"magnitude": 15
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BURN_LEVEL_FLAT",
+						"magnitude": 2
+					},
+					{
+						"effect": "FUEL_USE_MULT",
+						"magnitude": -25
+					},
+					{
+						"effect": "SUPPLIES_PER_MONTH_MULT",
+						"magnitude": 15
+					}
+				]
+			},
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "mhmods_FuelAdditive"
+				}
+			],
+			"phantomHullMods": [
+				"mhmods_FuelAdditive"
+			],
+			"flavour": "The crew blends an additive into the fuel that burns hotter and cleaner. The engines like it more than the maintenance teams do.",
+			"flavourAutomated": "The ship's core blends an additive into its own fuel and logs the extra wear on its engines.",
+			"tags": [
+				"fuel",
+				"campaign_only",
+				"logistics_cap"
+			]
 		}
 	]
 }

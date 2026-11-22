@@ -27,6 +27,12 @@ public enum MovementSkillEffect implements BackedSkillEffect {
     TOP_SPEED_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getMaxSpeed), StatNames.TOP_SPEED, false)),
     TOP_SPEED_FLAT(statEffect(FLAT, liveStat(MutableShipStatsAPI::getMaxSpeed), StatNames.TOP_SPEED, false)),
     TOP_SPEED_MULT(statEffect(MULT, liveStat(MutableShipStatsAPI::getMaxSpeed), StatNames.TOP_SPEED, false)),
+    HYPER_ENGINE_ZERO_FLUX_SPEED_FLAT(listener(HyperEngineListener.SPEED_FLAT_KEY, HyperEngineListener.class, HyperEngineListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("threshold", HyperEngineListener.FLUX_LEVEL_PERCENT).styled();
+        }
+    },
     TOP_SPEED_WHILE_SWARM_FULL_PERCENT(new ConditionalStatEffect(PERCENT, stat(MutableShipStatsAPI::getMaxSpeed), StatNames.TOP_SPEED,
             ship -> FragmentSwarms.isFullTo(FragmentSwarms.swarmOf(ship), SwarmHunt.FULL_PERCENT / 100f))) {
         @Override

@@ -3,6 +3,7 @@ A_S-F_MaliceCoils,Novel Coil Geometry
 A_S-F_PhantasmagoriaHullmod,Probability Space Hypervessel
 A_S-F_integratedRangefinders,Integrated Rangefinders
 Cheat_Maya7s,Pristine Condition
+MHMods_prefabricator,Missile Prefabricator
 adaptive_coils,Adaptive Phase Coils
 adaptiveshields,Shield Conversion - Omni
 additional_berthing,Additional Berthing
@@ -84,6 +85,26 @@ kol_refit,Knight Refit
 kol_shields,Primitive Shields
 logi_oracle,Oracle Sensor Suite
 magazines,Expanded Magazines
+mhmods_FuelAdditive,Fuel Additive
+mhmods_antiarmorgammunition,Anti Armor Ammunition
+mhmods_bombardmentpackage,Bombardment Package
+mhmods_emergencyventingsystem,Emergency Venting System
+mhmods_explorationrefit,Exploration Refit
+mhmods_fluxbooster,Flux Booster
+mhmods_fluxgenerator,Flux Generator
+mhmods_fluxoverdrive,Flux Overdrive
+mhmods_hardlightFocus,Hardlight Focus
+mhmods_hullfoam,Hullfoam Dispenser
+mhmods_hyperengineupgrade,Hyper Engine Upgrade
+mhmods_integratedarmor,Integrated Armor
+mhmods_particleaccelerator,Particle Accelerator
+mhmods_reloader,Reloader
+mhmods_splitChamber,Split Chamber
+mhmods_stiffMounts,Stiff Mounts
+mhmods_torpedospec,Torpedo Spec
+mhmods_unstableshields,Unstable Shields
+mhmods_voltageregulationsystem,Voltage Regulation System
+mhmods_weaponinhibitor,Weapon Inhibitor
 militarized_subsystems,Militarized Subsystems
 missile_autoloader,Missile Autoloader
 missleracks,Expanded Missile Racks

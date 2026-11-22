@@ -980,7 +980,10 @@
 				"affinity_16",
 				"affinity_14",
 				"affinity_35",
-				"affinity_86"
+				"affinity_86",
+				"weapon_turn_rate_5",
+				"ammo_capacity_4",
+				"affinity_187"
 			],
 			"x": 0,
 			"y": 4500,
@@ -1563,7 +1566,10 @@
 				"affinity_6",
 				"affinity_4",
 				"hightech_wormhole_2",
-				"sensor_strength_1"
+				"sensor_strength_1",
+				"top_speed_13",
+				"shield_flux_damage_reduction_5",
+				"affinity_189"
 			],
 			"x": 0,
 			"y": -4500,
@@ -1579,7 +1585,9 @@
 			"connectedTo": [
 				"affinity_2",
 				"affinity_7",
-				"flux_capacity_1"
+				"flux_capacity_1",
+				"shield_flux_damage_reduction_6",
+				"armor_19"
 			],
 			"x": 1391,
 			"y": -4280,
@@ -1595,7 +1603,9 @@
 			"connectedTo": [
 				"affinity_6",
 				"affinity_26",
-				"affinity_8"
+				"affinity_8",
+				"armor_20",
+				"more_hull_12"
 			],
 			"x": 2645,
 			"y": -3641,
@@ -1612,7 +1622,9 @@
 				"affinity_10",
 				"affinity_28",
 				"affinity_8",
-				"energy_damage_resistance_4"
+				"energy_damage_resistance_4",
+				"crew_capacity_11",
+				"fuel_7"
 			],
 			"x": 4280,
 			"y": -1391,
@@ -1628,7 +1640,10 @@
 			"connectedTo": [
 				"affinity_9",
 				"affinity_11",
-				"missile_autoloader_1"
+				"missile_autoloader_1",
+				"ballistic_or_energy_weapon_damage_1",
+				"fuel_8",
+				"affinity_186"
 			],
 			"x": 4500,
 			"y": 0,
@@ -1646,7 +1661,9 @@
 				"affinity_12",
 				"affinity_30",
 				"lowtech_wormhole_1",
-				"unstable_injector_1"
+				"unstable_injector_1",
+				"ballistic_or_energy_weapon_damage_2",
+				"ballistic_projectile_speed_8"
 			],
 			"x": 4280,
 			"y": 1391,
@@ -1664,7 +1681,9 @@
 				"affinity_13",
 				"affinity_31",
 				"lowtech_wormhole_1",
-				"fuel_2"
+				"fuel_2",
+				"ballistic_projectile_speed_9",
+				"energy_weapon_fire_rate_9"
 			],
 			"x": 3641,
 			"y": 2645,
@@ -1679,7 +1698,9 @@
 			"type": "affinity",
 			"connectedTo": [
 				"affinity_12",
-				"affinity_14"
+				"affinity_14",
+				"energy_weapon_fire_rate_10",
+				"weapon_flux_cost_3"
 			],
 			"x": 2645,
 			"y": 3641,
@@ -1696,7 +1717,9 @@
 				"affinity_13",
 				"affinity_15",
 				"affinity_96",
-				"operations_center_1"
+				"operations_center_1",
+				"weapon_flux_cost_4",
+				"weapon_turn_rate_4"
 			],
 			"x": 1391,
 			"y": 4280,
@@ -1712,7 +1735,9 @@
 			"connectedTo": [
 				"affinity_17",
 				"affinity_15",
-				"engine_durability_and_sensor_profile_2"
+				"engine_durability_and_sensor_profile_2",
+				"ammo_capacity_5",
+				"ballistic_and_energy_weapon_range_8"
 			],
 			"x": -1391,
 			"y": 4280,
@@ -1728,7 +1753,9 @@
 			"connectedTo": [
 				"affinity_16",
 				"affinity_18",
-				"safety_overrides_1"
+				"safety_overrides_1",
+				"ballistic_and_energy_weapon_range_9",
+				"beam_weapon_damage_9"
 			],
 			"x": -2645,
 			"y": 3641,
@@ -1746,7 +1773,9 @@
 				"affinity_17",
 				"affinity_38",
 				"midline_wormhole_1",
-				"missile_weapon_damage_3"
+				"missile_weapon_damage_3",
+				"beam_weapon_damage_10",
+				"beam_weapon_damage_11"
 			],
 			"x": -3641,
 			"y": 2645,
@@ -1764,7 +1793,9 @@
 				"affinity_18",
 				"affinity_39",
 				"armor_2",
-				"midline_wormhole_1"
+				"midline_wormhole_1",
+				"beam_weapon_damage_12",
+				"missile_top_speed_3"
 			],
 			"x": -4278,
 			"y": 1396,
@@ -1780,7 +1811,10 @@
 			"connectedTo": [
 				"affinity_21",
 				"affinity_19",
-				"shield_upkeep_reduction_2"
+				"shield_upkeep_reduction_2",
+				"missile_top_speed_4",
+				"missile_weapon_damage_11",
+				"affinity_188"
 			],
 			"x": -4500,
 			"y": 0,
@@ -1796,7 +1830,9 @@
 			"connectedTo": [
 				"affinity_20",
 				"affinity_41",
-				"affinity_22"
+				"affinity_22",
+				"missile_weapon_damage_12",
+				"flux_dissipation_3"
 			],
 			"x": -4280,
 			"y": -1391,
@@ -1813,7 +1849,9 @@
 				"affinity_24",
 				"affinity_43",
 				"affinity_22",
-				"reduced_monthly_supplies_1"
+				"reduced_monthly_supplies_1",
+				"increased_vent_rate_3",
+				"vent_rate_and_emp_damage_2"
 			],
 			"x": -2645,
 			"y": -3641,
@@ -1829,7 +1867,9 @@
 			"connectedTo": [
 				"affinity_23",
 				"affinity_2",
-				"phase_anchor_1"
+				"phase_anchor_1",
+				"vent_rate_and_emp_damage_3",
+				"top_speed_12"
 			],
 			"x": -1391,
 			"y": -4280,
@@ -5241,7 +5281,9 @@
 				"affinity_9",
 				"affinity_7",
 				"point_defense_damage_to_missiles_and_fighters_4",
-				"affinity_82"
+				"affinity_82",
+				"more_hull_13",
+				"crew_capacity_10"
 			],
 			"x": 3662,
 			"y": -2616,
@@ -5257,7 +5299,9 @@
 			"connectedTo": [
 				"affinity_23",
 				"affinity_21",
-				"affinity_77"
+				"affinity_77",
+				"flux_dissipation_4",
+				"increased_vent_rate_2"
 			],
 			"x": -3641,
 			"y": -2645,
@@ -10069,6 +10113,1191 @@
 				"domain_drones",
 				"gate_mothership_defeated"
 			]
+		},
+		{
+			"id": "ballistic_or_energy_weapon_damage_1",
+			"type": "ballistic_or_energy_weapon_damage",
+			"connectedTo": [
+				"affinity_10",
+				"anti_armor_ammunition_1"
+			],
+			"x": 4935,
+			"y": 388,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "anti_armor_ammunition_1",
+			"type": "anti_armor_ammunition",
+			"connectedTo": [
+				"ballistic_or_energy_weapon_damage_1",
+				"ballistic_or_energy_weapon_damage_2"
+			],
+			"x": 5383,
+			"y": 853,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "ballistic_or_energy_weapon_damage_2",
+			"type": "ballistic_or_energy_weapon_damage",
+			"connectedTo": [
+				"anti_armor_ammunition_1",
+				"affinity_11"
+			],
+			"x": 4813,
+			"y": 1156,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "ballistic_projectile_speed_8",
+			"type": "ballistic_projectile_speed",
+			"connectedTo": [
+				"affinity_11",
+				"particle_accelerator_1"
+			],
+			"x": 4573,
+			"y": 1895,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "particle_accelerator_1",
+			"type": "particle_accelerator",
+			"connectedTo": [
+				"ballistic_projectile_speed_8",
+				"ballistic_projectile_speed_9"
+			],
+			"x": 4856,
+			"y": 2474,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "ballistic_projectile_speed_9",
+			"type": "ballistic_projectile_speed",
+			"connectedTo": [
+				"particle_accelerator_1",
+				"affinity_12"
+			],
+			"x": 4221,
+			"y": 2586,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "energy_weapon_fire_rate_9",
+			"type": "energy_weapon_fire_rate",
+			"connectedTo": [
+				"affinity_12",
+				"split_chamber_1"
+			],
+			"x": 3764,
+			"y": 3215,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "split_chamber_1",
+			"type": "split_chamber",
+			"connectedTo": [
+				"energy_weapon_fire_rate_9",
+				"energy_weapon_fire_rate_10",
+				"affinity_168"
+			],
+			"x": 3854,
+			"y": 3854,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "energy_weapon_fire_rate_10",
+			"type": "energy_weapon_fire_rate",
+			"connectedTo": [
+				"split_chamber_1",
+				"affinity_13"
+			],
+			"x": 3215,
+			"y": 3764,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "weapon_flux_cost_3",
+			"type": "weapon_flux_cost",
+			"connectedTo": [
+				"affinity_13",
+				"weapon_inhibitor_1"
+			],
+			"x": 2586,
+			"y": 4221,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "weapon_inhibitor_1",
+			"type": "weapon_inhibitor",
+			"connectedTo": [
+				"weapon_flux_cost_3",
+				"weapon_flux_cost_4"
+			],
+			"x": 2474,
+			"y": 4856,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "weapon_flux_cost_4",
+			"type": "weapon_flux_cost",
+			"connectedTo": [
+				"weapon_inhibitor_1",
+				"affinity_14"
+			],
+			"x": 1895,
+			"y": 4573,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "weapon_turn_rate_4",
+			"type": "weapon_turn_rate",
+			"connectedTo": [
+				"affinity_14",
+				"stiff_mounts_1"
+			],
+			"x": 1156,
+			"y": 4813,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "stiff_mounts_1",
+			"type": "stiff_mounts",
+			"connectedTo": [
+				"weapon_turn_rate_4",
+				"weapon_turn_rate_5"
+			],
+			"x": 853,
+			"y": 5383,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "weapon_turn_rate_5",
+			"type": "weapon_turn_rate",
+			"connectedTo": [
+				"stiff_mounts_1",
+				"affinity_15"
+			],
+			"x": 388,
+			"y": 4935,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "ammo_capacity_4",
+			"type": "ammo_capacity",
+			"connectedTo": [
+				"affinity_15",
+				"reloader_1"
+			],
+			"x": -388,
+			"y": 4935,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "reloader_1",
+			"type": "reloader",
+			"connectedTo": [
+				"ammo_capacity_4",
+				"ammo_capacity_5"
+			],
+			"x": -853,
+			"y": 5383,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "ammo_capacity_5",
+			"type": "ammo_capacity",
+			"connectedTo": [
+				"reloader_1",
+				"affinity_16"
+			],
+			"x": -1156,
+			"y": 4813,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "ballistic_and_energy_weapon_range_8",
+			"type": "ballistic_and_energy_weapon_range",
+			"connectedTo": [
+				"affinity_16",
+				"flux_overdrive_1"
+			],
+			"x": -1895,
+			"y": 4573,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "flux_overdrive_1",
+			"type": "flux_overdrive",
+			"connectedTo": [
+				"ballistic_and_energy_weapon_range_8",
+				"ballistic_and_energy_weapon_range_9"
+			],
+			"x": -2474,
+			"y": 4856,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "ballistic_and_energy_weapon_range_9",
+			"type": "ballistic_and_energy_weapon_range",
+			"connectedTo": [
+				"flux_overdrive_1",
+				"affinity_17"
+			],
+			"x": -2586,
+			"y": 4221,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "beam_weapon_damage_9",
+			"type": "beam_weapon_damage",
+			"connectedTo": [
+				"affinity_17",
+				"voltage_regulation_system_1"
+			],
+			"x": -3215,
+			"y": 3764,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "voltage_regulation_system_1",
+			"type": "voltage_regulation_system",
+			"connectedTo": [
+				"beam_weapon_damage_9",
+				"beam_weapon_damage_10",
+				"affinity_173"
+			],
+			"x": -3854,
+			"y": 3854,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "beam_weapon_damage_10",
+			"type": "beam_weapon_damage",
+			"connectedTo": [
+				"voltage_regulation_system_1",
+				"affinity_18"
+			],
+			"x": -3764,
+			"y": 3215,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "beam_weapon_damage_11",
+			"type": "beam_weapon_damage",
+			"connectedTo": [
+				"affinity_18",
+				"hardlight_focus_1"
+			],
+			"x": -4221,
+			"y": 2586,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "hardlight_focus_1",
+			"type": "hardlight_focus",
+			"connectedTo": [
+				"beam_weapon_damage_11",
+				"beam_weapon_damage_12"
+			],
+			"x": -4854,
+			"y": 2477,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "beam_weapon_damage_12",
+			"type": "beam_weapon_damage",
+			"connectedTo": [
+				"hardlight_focus_1",
+				"affinity_19"
+			],
+			"x": -4571,
+			"y": 1900,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "missile_top_speed_3",
+			"type": "missile_top_speed",
+			"connectedTo": [
+				"affinity_19",
+				"torpedo_spec_1"
+			],
+			"x": -4812,
+			"y": 1162,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "torpedo_spec_1",
+			"type": "torpedo_spec",
+			"connectedTo": [
+				"missile_top_speed_3",
+				"missile_top_speed_4"
+			],
+			"x": -5382,
+			"y": 856,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "missile_top_speed_4",
+			"type": "missile_top_speed",
+			"connectedTo": [
+				"torpedo_spec_1",
+				"affinity_20"
+			],
+			"x": -4935,
+			"y": 388,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "missile_weapon_damage_11",
+			"type": "missile_weapon_damage",
+			"connectedTo": [
+				"affinity_20",
+				"missile_prefabricator_1"
+			],
+			"x": -4935,
+			"y": -388,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "missile_prefabricator_1",
+			"type": "missile_prefabricator",
+			"connectedTo": [
+				"missile_weapon_damage_11",
+				"missile_weapon_damage_12"
+			],
+			"x": -5383,
+			"y": -853,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "missile_weapon_damage_12",
+			"type": "missile_weapon_damage",
+			"connectedTo": [
+				"missile_prefabricator_1",
+				"affinity_21"
+			],
+			"x": -4813,
+			"y": -1156,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "flux_dissipation_3",
+			"type": "flux_dissipation",
+			"connectedTo": [
+				"affinity_21",
+				"flux_generator_1"
+			],
+			"x": -4573,
+			"y": -1895,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "flux_generator_1",
+			"type": "flux_generator",
+			"connectedTo": [
+				"flux_dissipation_3",
+				"flux_dissipation_4"
+			],
+			"x": -4856,
+			"y": -2474,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "flux_dissipation_4",
+			"type": "flux_dissipation",
+			"connectedTo": [
+				"flux_generator_1",
+				"affinity_22"
+			],
+			"x": -4221,
+			"y": -2586,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "increased_vent_rate_2",
+			"type": "increased_vent_rate",
+			"connectedTo": [
+				"affinity_22",
+				"flux_booster_1"
+			],
+			"x": -3764,
+			"y": -3215,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "flux_booster_1",
+			"type": "flux_booster",
+			"connectedTo": [
+				"increased_vent_rate_2",
+				"increased_vent_rate_3",
+				"affinity_178"
+			],
+			"x": -3854,
+			"y": -3854,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "increased_vent_rate_3",
+			"type": "increased_vent_rate",
+			"connectedTo": [
+				"flux_booster_1",
+				"affinity_23"
+			],
+			"x": -3215,
+			"y": -3764,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "vent_rate_and_emp_damage_2",
+			"type": "vent_rate_and_emp_damage",
+			"connectedTo": [
+				"affinity_23",
+				"emergency_venting_system_1"
+			],
+			"x": -2586,
+			"y": -4221,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "emergency_venting_system_1",
+			"type": "emergency_venting_system",
+			"connectedTo": [
+				"vent_rate_and_emp_damage_2",
+				"vent_rate_and_emp_damage_3"
+			],
+			"x": -2474,
+			"y": -4856,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "vent_rate_and_emp_damage_3",
+			"type": "vent_rate_and_emp_damage",
+			"connectedTo": [
+				"emergency_venting_system_1",
+				"affinity_24"
+			],
+			"x": -1895,
+			"y": -4573,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "top_speed_12",
+			"type": "top_speed",
+			"connectedTo": [
+				"affinity_24",
+				"hyper_engine_upgrade_1"
+			],
+			"x": -1156,
+			"y": -4813,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "hyper_engine_upgrade_1",
+			"type": "hyper_engine_upgrade",
+			"connectedTo": [
+				"top_speed_12",
+				"top_speed_13"
+			],
+			"x": -853,
+			"y": -5383,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "top_speed_13",
+			"type": "top_speed",
+			"connectedTo": [
+				"hyper_engine_upgrade_1",
+				"affinity_2"
+			],
+			"x": -388,
+			"y": -4935,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "shield_flux_damage_reduction_5",
+			"type": "shield_flux_damage_reduction",
+			"connectedTo": [
+				"affinity_2",
+				"unstable_shields_1"
+			],
+			"x": 388,
+			"y": -4935,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "unstable_shields_1",
+			"type": "unstable_shields",
+			"connectedTo": [
+				"shield_flux_damage_reduction_5",
+				"shield_flux_damage_reduction_6"
+			],
+			"x": 853,
+			"y": -5383,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "shield_flux_damage_reduction_6",
+			"type": "shield_flux_damage_reduction",
+			"connectedTo": [
+				"unstable_shields_1",
+				"affinity_6"
+			],
+			"x": 1156,
+			"y": -4813,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "armor_19",
+			"type": "armor",
+			"connectedTo": [
+				"affinity_6",
+				"integrated_armor_1"
+			],
+			"x": 1895,
+			"y": -4573,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "integrated_armor_1",
+			"type": "integrated_armor",
+			"connectedTo": [
+				"armor_19",
+				"armor_20"
+			],
+			"x": 2474,
+			"y": -4856,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "armor_20",
+			"type": "armor",
+			"connectedTo": [
+				"integrated_armor_1",
+				"affinity_7"
+			],
+			"x": 2586,
+			"y": -4221,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "more_hull_12",
+			"type": "more_hull",
+			"connectedTo": [
+				"affinity_7",
+				"hullfoam_dispenser_1"
+			],
+			"x": 3215,
+			"y": -3764,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "hullfoam_dispenser_1",
+			"type": "hullfoam_dispenser",
+			"connectedTo": [
+				"more_hull_12",
+				"more_hull_13",
+				"affinity_183"
+			],
+			"x": 3869,
+			"y": -3838,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "more_hull_13",
+			"type": "more_hull",
+			"connectedTo": [
+				"hullfoam_dispenser_1",
+				"affinity_8"
+			],
+			"x": 3790,
+			"y": -3184,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "crew_capacity_10",
+			"type": "crew_capacity",
+			"connectedTo": [
+				"affinity_8",
+				"bombardment_package_1"
+			],
+			"x": 4241,
+			"y": -2552,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "bombardment_package_1",
+			"type": "bombardment_package",
+			"connectedTo": [
+				"crew_capacity_10",
+				"crew_capacity_11"
+			],
+			"x": 4866,
+			"y": -2455,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "crew_capacity_11",
+			"type": "crew_capacity",
+			"connectedTo": [
+				"bombardment_package_1",
+				"affinity_9"
+			],
+			"x": 4573,
+			"y": -1895,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "fuel_7",
+			"type": "fuel",
+			"connectedTo": [
+				"affinity_9",
+				"fuel_additive_1"
+			],
+			"x": 4813,
+			"y": -1156,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "fuel_additive_1",
+			"type": "fuel_additive",
+			"connectedTo": [
+				"fuel_7",
+				"fuel_8"
+			],
+			"x": 5383,
+			"y": -853,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "fuel_8",
+			"type": "fuel",
+			"connectedTo": [
+				"fuel_additive_1",
+				"affinity_10"
+			],
+			"x": 4935,
+			"y": -388,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "affinity_166",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_167",
+				"affinity_185",
+				"affinity_186"
+			],
+			"x": 7000,
+			"y": 0,
+			"orbitAnchorId": "ice_ring",
+			"orbitAngle": 0,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "affinity_167",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_166",
+				"affinity_168"
+			],
+			"x": 6657,
+			"y": 2163,
+			"orbitAnchorId": "ice_ring",
+			"orbitAngle": 18,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "affinity_168",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_167",
+				"affinity_169",
+				"split_chamber_1"
+			],
+			"x": 5663,
+			"y": 4114,
+			"orbitAnchorId": "ice_ring",
+			"orbitAngle": 36,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "affinity_169",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_168",
+				"affinity_170"
+			],
+			"x": 4114,
+			"y": 5663,
+			"orbitAnchorId": "ice_ring",
+			"orbitAngle": 54,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "affinity_170",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_169",
+				"affinity_171"
+			],
+			"x": 2163,
+			"y": 6657,
+			"orbitAnchorId": "ice_ring",
+			"orbitAngle": 72,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "affinity_171",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_170",
+				"affinity_172",
+				"affinity_187"
+			],
+			"x": 0,
+			"y": 7000,
+			"orbitAnchorId": "ice_ring",
+			"orbitAngle": 90,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "affinity_172",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_171",
+				"affinity_173"
+			],
+			"x": -2163,
+			"y": 6657,
+			"orbitAnchorId": "ice_ring",
+			"orbitAngle": 108,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "affinity_173",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_172",
+				"affinity_174",
+				"voltage_regulation_system_1"
+			],
+			"x": -4114,
+			"y": 5663,
+			"orbitAnchorId": "ice_ring",
+			"orbitAngle": 126,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "affinity_174",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_173",
+				"affinity_175"
+			],
+			"x": -5663,
+			"y": 4114,
+			"orbitAnchorId": "ice_ring",
+			"orbitAngle": 144,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "affinity_175",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_174",
+				"affinity_176"
+			],
+			"x": -6657,
+			"y": 2163,
+			"orbitAnchorId": "ice_ring",
+			"orbitAngle": 162,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "affinity_176",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_175",
+				"affinity_177",
+				"affinity_188"
+			],
+			"x": -7000,
+			"y": 0,
+			"orbitAnchorId": "ice_ring",
+			"orbitAngle": 180,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "affinity_177",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_176",
+				"affinity_178"
+			],
+			"x": -6657,
+			"y": -2163,
+			"orbitAnchorId": "ice_ring",
+			"orbitAngle": 198,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "affinity_178",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_177",
+				"affinity_179",
+				"flux_booster_1"
+			],
+			"x": -5663,
+			"y": -4114,
+			"orbitAnchorId": "ice_ring",
+			"orbitAngle": 216,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "affinity_179",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_178",
+				"affinity_180"
+			],
+			"x": -4114,
+			"y": -5663,
+			"orbitAnchorId": "ice_ring",
+			"orbitAngle": 234,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "affinity_180",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_179",
+				"affinity_181"
+			],
+			"x": -2163,
+			"y": -6657,
+			"orbitAnchorId": "ice_ring",
+			"orbitAngle": 252,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "affinity_181",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_180",
+				"affinity_182",
+				"affinity_189"
+			],
+			"x": 0,
+			"y": -7000,
+			"orbitAnchorId": "ice_ring",
+			"orbitAngle": 270,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "affinity_182",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_181",
+				"affinity_183"
+			],
+			"x": 2163,
+			"y": -6657,
+			"orbitAnchorId": "ice_ring",
+			"orbitAngle": 288,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "affinity_183",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_182",
+				"affinity_184",
+				"hullfoam_dispenser_1"
+			],
+			"x": 4114,
+			"y": -5663,
+			"orbitAnchorId": "ice_ring",
+			"orbitAngle": 306,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "affinity_184",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_183",
+				"affinity_185",
+				"sensor_strength_6"
+			],
+			"x": 5663,
+			"y": -4114,
+			"orbitAnchorId": "ice_ring",
+			"orbitAngle": 324,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "affinity_185",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_184",
+				"affinity_166",
+				"sensor_strength_7"
+			],
+			"x": 6657,
+			"y": -2163,
+			"orbitAnchorId": "ice_ring",
+			"orbitAngle": 342,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "affinity_186",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_10",
+				"affinity_166"
+			],
+			"x": 5650,
+			"y": 0,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "affinity_187",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_15",
+				"affinity_171"
+			],
+			"x": 0,
+			"y": 5650,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "affinity_188",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_20",
+				"affinity_176"
+			],
+			"x": -5650,
+			"y": 0,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "affinity_189",
+			"type": "affinity",
+			"connectedTo": [
+				"affinity_2",
+				"affinity_181"
+			],
+			"x": 0,
+			"y": -5650,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "sensor_strength_6",
+			"type": "sensor_strength",
+			"connectedTo": [
+				"affinity_184",
+				"exploration_refit_1"
+			],
+			"x": 5585,
+			"y": -3422,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "exploration_refit_1",
+			"type": "exploration_refit",
+			"connectedTo": [
+				"sensor_strength_6",
+				"sensor_strength_7"
+			],
+			"x": 5480,
+			"y": -2792,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "sensor_strength_7",
+			"type": "sensor_strength",
+			"connectedTo": [
+				"exploration_refit_1",
+				"affinity_185"
+			],
+			"x": 6051,
+			"y": -2507,
+			"tags": [
+				"core"
+			]
 		}
 	],
 	"connectorCurves": [
@@ -12927,6 +14156,126 @@
 			"b": "mothership_uplink_1",
 			"controlX": 38822,
 			"controlY": 4736
+		},
+		{
+			"a": "affinity_166",
+			"b": "affinity_167",
+			"controlX": 6914,
+			"controlY": 1095
+		},
+		{
+			"a": "affinity_167",
+			"b": "affinity_168",
+			"controlX": 6237,
+			"controlY": 3178
+		},
+		{
+			"a": "affinity_168",
+			"b": "affinity_169",
+			"controlX": 4950,
+			"controlY": 4950
+		},
+		{
+			"a": "affinity_169",
+			"b": "affinity_170",
+			"controlX": 3178,
+			"controlY": 6237
+		},
+		{
+			"a": "affinity_170",
+			"b": "affinity_171",
+			"controlX": 1095,
+			"controlY": 6914
+		},
+		{
+			"a": "affinity_171",
+			"b": "affinity_172",
+			"controlX": -1095,
+			"controlY": 6914
+		},
+		{
+			"a": "affinity_172",
+			"b": "affinity_173",
+			"controlX": -3178,
+			"controlY": 6237
+		},
+		{
+			"a": "affinity_173",
+			"b": "affinity_174",
+			"controlX": -4950,
+			"controlY": 4950
+		},
+		{
+			"a": "affinity_174",
+			"b": "affinity_175",
+			"controlX": -6237,
+			"controlY": 3178
+		},
+		{
+			"a": "affinity_175",
+			"b": "affinity_176",
+			"controlX": -6914,
+			"controlY": 1095
+		},
+		{
+			"a": "affinity_176",
+			"b": "affinity_177",
+			"controlX": -6914,
+			"controlY": -1095
+		},
+		{
+			"a": "affinity_177",
+			"b": "affinity_178",
+			"controlX": -6237,
+			"controlY": -3178
+		},
+		{
+			"a": "affinity_178",
+			"b": "affinity_179",
+			"controlX": -4950,
+			"controlY": -4950
+		},
+		{
+			"a": "affinity_179",
+			"b": "affinity_180",
+			"controlX": -3178,
+			"controlY": -6237
+		},
+		{
+			"a": "affinity_180",
+			"b": "affinity_181",
+			"controlX": -1095,
+			"controlY": -6914
+		},
+		{
+			"a": "affinity_181",
+			"b": "affinity_182",
+			"controlX": 1095,
+			"controlY": -6914
+		},
+		{
+			"a": "affinity_182",
+			"b": "affinity_183",
+			"controlX": 3178,
+			"controlY": -6237
+		},
+		{
+			"a": "affinity_183",
+			"b": "affinity_184",
+			"controlX": 4950,
+			"controlY": -4950
+		},
+		{
+			"a": "affinity_184",
+			"b": "affinity_185",
+			"controlX": 6237,
+			"controlY": -3178
+		},
+		{
+			"a": "affinity_185",
+			"b": "affinity_166",
+			"controlX": 6914,
+			"controlY": -1095
 		}
 	],
 	"hiddenConnectors": [
@@ -13639,6 +14988,12 @@
 			"x": 38898,
 			"y": 7237,
 			"radius": 599
+		},
+		{
+			"id": "ice_ring",
+			"x": 0,
+			"y": 0,
+			"radius": 7000
 		}
 	],
 	"decorations": [
@@ -14692,6 +16047,19 @@
 			"rotationSpeed": 0.3,
 			"tags": [
 				"domain_drones"
+			]
+		},
+		{
+			"kind": "ringBelt",
+			"id": "ice_ring_belt",
+			"x": 0,
+			"y": 0,
+			"innerRadius": 6850,
+			"outerRadius": 7150,
+			"ringArtPath": "graphics/exiledSector/scenery/rings/ring_band_ice.png",
+			"rotationSpeed": 0.5,
+			"tags": [
+				"core"
 			]
 		},
 		{

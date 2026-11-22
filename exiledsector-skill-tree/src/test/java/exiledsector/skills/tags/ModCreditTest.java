@@ -83,6 +83,27 @@ class ModCreditTest {
         assertNull(ModCredit.forVolume(null));
     }
 
+    @Test
+    void aTypeInstallingAModsHullModCreditsThatModWhereverItSits() {
+        SkillType prefabricator = new SkillType.Builder("missile_prefabricator", "P", "a.png", SkillTier.NOTABLE)
+                .phantomHullModIds(List.of("MHMods_prefabricator")).build();
+        SkillType hullfoam = new SkillType.Builder("hullfoam_dispenser", "H", "a.png", SkillTier.NOTABLE)
+                .phantomHullModIds(List.of("mhmods_hullfoam")).build();
+
+        Map<String, ModCredit> credits = ModCredit.byType(List.of(node("a", prefabricator, "core"), node("b", hullfoam, null),
+                node("c", hullfoam, "tania")));
+
+        assertEquals(ModCredit.MORE_HULLMODS, credits.get("missile_prefabricator"));
+        assertEquals(ModCredit.MORE_HULLMODS, credits.get("hullfoam_dispenser"));
+    }
+
+    @Test
+    void vanillaHullModsCreditNoMod() {
+        SkillType hardened = new SkillType.Builder("hardened_shields", "H", "a.png", SkillTier.NOTABLE).vanillaHullModId("hardenedshieldemitter").build();
+
+        assertNull(ModCredit.forHullMods(hardened));
+    }
+
     private static SkillType type(String id) {
         return type(id, SkillTier.NOTABLE);
     }

@@ -221,6 +221,12 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
             return FLAT.describeStat(magnitude, YOUR_FLEET, "stat.raidStrength");
         }
     },
+    FLEET_BOMBARD_COST_REDUCTION_FLAT(statEffect(FLAT, dynamicMod(Stats.FLEET_BOMBARD_COST_REDUCTION), "stat.bombardmentFuelCost", true)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return FLAT.describeStat(-magnitude, YOUR_FLEET, "stat.bombardmentFuelCost");
+        }
+    },
     GROUND_SUPPORT_PER_MAX_CREW_PERCENT(new DerivedStatEffect(LogisticsSkillEffect::applyCrewGroundSupport, null, false)),
     CORONA_RESISTANCE_MULT(statEffect(MULT, dynamicStat(Stats.CORONA_EFFECT_MULT),
             "stat.coronaAndStormCrLoss", true)),

@@ -10,7 +10,7 @@ export const DOCTRINE_TYPE_ICON_FOLDER = 'graphics/exiledSector/tree/doctrine/';
 export const ITEM_ICON_FOLDER = 'graphics/exiledSector/items/';
 export const ATLAS_TREE_DATA_PREFIX = 'data/skilltrees/atlas_tree';
 
-const MOD_PREFIX_PATTERN = /^(rat|na|nskr|tania|aotd)_/;
+const MOD_PREFIX_PATTERN = /^(rat|na|nskr|tania|aotd|mhm)_/;
 
 export interface ImageDestination {
   folder: string;

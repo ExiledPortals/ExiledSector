@@ -150,6 +150,7 @@
     "node.modCredit.randomAssortment": "<muted>Based on Random Assortment of Things by Lukas04 and SnazzyPantsMcGee</muted>",
     "node.modCredit.nightcross": "<muted>Based on Nightcross Armory by YukiM</muted>",
     "node.modCredit.tania": "<muted>Based on Navarchy of Tania by I Spectros I</muted>",
+    "node.modCredit.moreHullmods": "<muted>Based on More HullMods by PureTilt</muted>",
     "node.hullSizes.one": "Restricted to <hl>hull size</hl>: {hullSizes}.",
     "node.hullSizes.other": "Restricted to <hl>hull sizes</hl>: {hullSizes}.",
     "node.integration.integrated": "<builtIn>Integrated</builtIn>",

@@ -9,6 +9,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.StatBonus;
+import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
 import exiledsector.MockSector;
 import exiledsector.compat.NightcrossCompat;
@@ -108,6 +109,18 @@ class SkillTypeUnlockStatusTest {
         when(playerCharacter.knowsHullMod("escort_package")).thenReturn(true);
 
         assertFalse(SkillTypeUnlockStatus.isLocked(type, new ShipSkillData()));
+    }
+
+    @Test
+    void aBlueprintFromAModThatIsNotInstalledNeverLocks() {
+        SettingsAPI settings = mock(SettingsAPI.class);
+        when(settings.getHullModSpec("escort_package")).thenReturn(mock(HullModSpecAPI.class));
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
+        SkillType missingMod = typeWithConditions(UnlockCondition.blueprint(BlueprintCategory.HULLMOD, "mhmods_hullfoam"));
+        SkillType loadedMod = typeWithConditions(UnlockCondition.blueprint(BlueprintCategory.HULLMOD, "escort_package"));
+
+        assertFalse(SkillTypeUnlockStatus.isLocked(missingMod, new ShipSkillData()));
+        assertTrue(SkillTypeUnlockStatus.isLocked(loadedMod, new ShipSkillData()));
     }
 
     private void stubCharacterStat(String statId, float flatBonus) {
