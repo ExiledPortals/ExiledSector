@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -14,6 +15,8 @@ import java.util.Map;
 import java.util.Set;
 
 import static exiledsector.ProjectFiles.csvRows;
+import static exiledsector.ProjectFiles.gameFile;
+import static exiledsector.ProjectFiles.readJson;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -79,6 +82,19 @@ class VaultsOfKnowledgeTechRowsTest {
             JSONObject row = techRows.getJSONObject(index);
             int tier = row.getInt("tier");
             assertTrue(tier >= VOK_LOWEST_TIER && tier <= VOK_HIGHEST_TIER, row.getString("id") + " has tier " + tier);
+        }
+    }
+
+    @Test
+    void everyResearchRowHasAShippedTechTreeIcon() throws Exception {
+        JSONObject techIcons = readJson(gameFile("data/config/settings.json"))
+                .getJSONObject("graphics").getJSONObject("ui_icons_tech_tree");
+        JSONArray techRows = csvRows("data/campaign/aotd_tech_options.csv");
+        for (int index = 0; index < techRows.length(); index++) {
+            JSONObject row = techRows.getJSONObject(index);
+            String iconId = row.getString("iconId");
+            assertTrue(techIcons.has(iconId), row.getString("id") + " has no ui_icons_tech_tree entry " + iconId);
+            assertTrue(Files.isRegularFile(gameFile(techIcons.getString(iconId))), iconId + " points at a missing file");
         }
     }
 
