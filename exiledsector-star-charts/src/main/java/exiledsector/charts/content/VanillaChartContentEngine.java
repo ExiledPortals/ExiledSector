@@ -115,7 +115,7 @@ final class VanillaChartContentEngine implements ChartContentEngine {
 
     @Override
     public SectorEntityToken addDerelict(StarSystemAPI system, String factionId, String derelictType, boolean recoverable, Random random) {
-        DerelictShipData shipData = DerelictShipEntityPlugin.createRandom(ChartThreatFleets.wreckFaction(factionId, random), DerelictType.valueOf(derelictType), random,
+        DerelictShipData shipData = DerelictShipEntityPlugin.createRandom(ChartAbyssalFleets.wreckFaction(factionId, random), DerelictType.valueOf(derelictType), random,
                 DerelictShipEntityPlugin.getDefaultSModProb());
         if (shipData == null || shipData.ship == null) {
             return null;
@@ -160,7 +160,7 @@ final class VanillaChartContentEngine implements ChartContentEngine {
         int officerLevelBonus = params.officerLevelBonus;
         params.officerLevelBonus = 0;
         try {
-            return ChartThreatFleets.builds(params.factionId) ? ChartThreatFleets.create(params)
+            return ChartAbyssalFleets.builds(params.factionId) ? ChartAbyssalFleets.create(params)
                     : ChartFleetUpscaler.build(params, startingDoctrine(params), FleetFactoryV3::createFleet);
         } finally {
             params.officerLevelBonus = officerLevelBonus;

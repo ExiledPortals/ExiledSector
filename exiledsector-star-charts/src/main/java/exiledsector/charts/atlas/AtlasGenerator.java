@@ -1,6 +1,6 @@
 package exiledsector.charts.atlas;
 
-import exiledsector.charts.content.ChartThreatFleets;
+import exiledsector.charts.content.ChartAbyssalFleets;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,7 +14,6 @@ public final class AtlasGenerator {
     public static final float DISPLAY_JITTER_SHARE = AtlasPositions.DISPLAY_JITTER_SHARE;
     static final float LONGEST_LANE = (float) (3.0 * Math.sqrt(2.0));
     static final int LANE_WINDOW = 5;
-    static final Set<String> THREAT_ONLY = Set.of(ChartThreatFleets.FACTION_ID);
     private static final int CACHE_LIMIT_CELLS = 65536;
     private static final long VOID_SALT = 0x564f4944L;
     private static final long LAYOUT_SALT = 0x4c41594fL;
@@ -231,7 +230,8 @@ public final class AtlasGenerator {
     }
 
     static boolean keepsOut(AtlasRegion region, AtlasSpecial infestation) {
-        return region.factionWeights().keySet().equals(THREAT_ONLY) && !THREAT_ONLY.contains(infestation.factionId());
+        Set<String> holders = region.factionWeights().keySet();
+        return holders.size() == 1 && ChartAbyssalFleets.FACTION_IDS.containsAll(holders) && !holders.contains(infestation.factionId());
     }
 
     private List<AtlasCell> relativeNeighbours(AtlasCell cell) {
