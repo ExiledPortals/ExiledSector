@@ -33,7 +33,7 @@
 			"exiledSector_wormhole_gateway":"graphics/exiledSector/colony/tech/wormhole_gateway.png",
 			"exiledSector_wormhole_gateway_advanced":"graphics/exiledSector/colony/tech/wormhole_gateway_advanced.png",
 			"exiledSector_wormhole_gateway_perfected":"graphics/exiledSector/colony/tech/wormhole_gateway_perfected.png",
-			"exiledSector_phase_displacement_gate":"graphics/exiledSector/items/gateway/displacement_theorem.png",
+			"exiledSector_phase_displacement_gate":"graphics/exiledSector/colony/tech/wormhole_gateway_perfected.png",
 		},
 	},
 }
