@@ -4430,6 +4430,135 @@
 			]
 		},
 		{
+			"id": "greater_low_tech_affinity",
+			"name": "Greater Low Tech Affinity",
+			"icon": "graphics/exiledSector/tree/roots/root_low_tech.png",
+			"effects": [
+				{
+					"effect": "LOW_TECH_AFFINITY_FLAT",
+					"magnitude": 10
+				}
+			],
+			"flavour": "Luddic shipwrights keep old hulls flying with handwork no manual covers, and some of it rubs off on whoever helps them.",
+			"tags": [
+				"low_tech"
+			]
+		},
+		{
+			"id": "greater_midline_affinity",
+			"name": "Greater Midline Affinity",
+			"icon": "graphics/exiledSector/tree/roots/root_midline.png",
+			"effects": [
+				{
+					"effect": "MIDLINE_AFFINITY_FLAT",
+					"magnitude": 10
+				}
+			],
+			"flavour": "Freelance mechanics swap midline parts from hull to hull until every fitting sits where its makers meant it to.",
+			"tags": [
+				"midline"
+			]
+		},
+		{
+			"id": "low_tech_mastery",
+			"name": "Low Tech Mastery",
+			"icon": "graphics/exiledSector/tree/roots/root_low_tech.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "LOW_TECH_AFFINITY_FLAT",
+					"magnitude": 20
+				},
+				{
+					"effect": "LOW_TECH_AFFINITY_PERCENT",
+					"magnitude": 8
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "LOW_TECH_AFFINITY_FLAT",
+						"magnitude": 30
+					},
+					{
+						"effect": "LOW_TECH_AFFINITY_PERCENT",
+						"magnitude": 12
+					}
+				]
+			},
+			"flavour": "Domain-era hulls reward crews who learn them rivet by rivet. Hegemony yard hands pass the tricks down along with the tools.",
+			"flavourAutomated": "The core has logged every weld and rivet on the old hull, and stopped flagging the ones that hold.",
+			"tags": [
+				"low_tech"
+			]
+		},
+		{
+			"id": "midline_mastery",
+			"name": "Midline Mastery",
+			"icon": "graphics/exiledSector/tree/roots/root_midline.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "MIDLINE_AFFINITY_FLAT",
+					"magnitude": 20
+				},
+				{
+					"effect": "MIDLINE_AFFINITY_PERCENT",
+					"magnitude": 8
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "MIDLINE_AFFINITY_FLAT",
+						"magnitude": 30
+					},
+					{
+						"effect": "MIDLINE_AFFINITY_PERCENT",
+						"magnitude": 12
+					}
+				]
+			},
+			"flavour": "Midline hulls were built for any crew to patch. The best crews learn from League yard manuals and freelancers' notebooks alike.",
+			"flavourAutomated": "The core has catalogued every standard part the hull will take, and which of them it takes best.",
+			"tags": [
+				"midline"
+			]
+		},
+		{
+			"id": "high_tech_mastery",
+			"name": "High Tech Mastery",
+			"icon": "graphics/exiledSector/tree/roots/root_high_tech.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "HIGH_TECH_AFFINITY_FLAT",
+					"magnitude": 20
+				},
+				{
+					"effect": "HIGH_TECH_AFFINITY_PERCENT",
+					"magnitude": 8
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "HIGH_TECH_AFFINITY_FLAT",
+						"magnitude": 30
+					},
+					{
+						"effect": "HIGH_TECH_AFFINITY_PERCENT",
+						"magnitude": 12
+					}
+				]
+			},
+			"flavour": "Tri-Tachyon trains its technicians on simulators for years. A crew that spends as long aboard a real high tech hull learns what the simulators leave out.",
+			"flavourAutomated": "The core has mapped the flux lattice down to its last junction and routes around the weak ones before they fail.",
+			"tags": [
+				"high_tech"
+			]
+		},
+		{
 			"id": "flux_distributor",
 			"name": "Flux Distributor",
 			"icon": "graphics/exiledSector/tree/base/flux_distributor.png",

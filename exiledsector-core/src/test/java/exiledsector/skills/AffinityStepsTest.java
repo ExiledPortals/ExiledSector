@@ -151,6 +151,19 @@ class AffinityStepsTest {
     }
 
     @Test
+    void increasedHighTechAndMidlineAffinityEachScaleOnlyTheirOwnSummedAffinity() {
+        EffectContribution mastery = EffectContribution.scaledPermanent("mastery", "mastery_", List.of(
+                new SkillTypeEffect(SpecialSkillEffect.HIGH_TECH_AFFINITY_PERCENT, 8f),
+                new SkillTypeEffect(SpecialSkillEffect.MIDLINE_AFFINITY_PERCENT, 50f)));
+
+        Map<SkillEffect, Float> totals = AffinitySteps.totals(List.of(mastery, node(HIGH_TECH, 20f), node(HIGH_TECH, 5f),
+                node(MIDLINE, 10f), node(LOW_TECH, 10f)));
+        assertEquals(27f, totals.get(HIGH_TECH), 1e-4f);
+        assertEquals(15f, totals.get(MIDLINE), 1e-4f);
+        assertEquals(10f, totals.get(LOW_TECH), 1e-4f);
+    }
+
+    @Test
     void anExchangeEmptiesTheOtherTwoAffinitiesIntoItsOwnAtItsShareAfterLowestAsHighest() {
         EffectContribution exchange = EffectContribution.scaledPermanent("exchange", "exchange_", List.of(
                 new SkillTypeEffect(SpecialSkillEffect.AFFINITY_EXCHANGE_TO_HIGH_TECH_PERCENT, 50f)));

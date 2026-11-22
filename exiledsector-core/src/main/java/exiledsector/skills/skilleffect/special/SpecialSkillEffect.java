@@ -79,6 +79,8 @@ public enum SpecialSkillEffect implements BackedSkillEffect {
     HIGH_TECH_AFFINITY_FLAT(new AffinityTally()),
     MIDLINE_AFFINITY_FLAT(new AffinityTally()),
     LOW_TECH_AFFINITY_PERCENT(new AffinityTally()),
+    HIGH_TECH_AFFINITY_PERCENT(new AffinityTally()),
+    MIDLINE_AFFINITY_PERCENT(new AffinityTally()),
     BALLISTIC_WEAPON_DAMAGE_PERCENT_PER_LOW_TECH_AFFINITY(new AffinityScaling(AffinityScaling.Filter.LOW_TECH, AffinityScaling.SMALL_STEP,
             ScopedWeaponEffect.find(WeaponStatFamily.DAMAGE, WeaponScope.BALLISTIC, StatMode.PERCENT))),
     ENERGY_WEAPON_DAMAGE_PERCENT_PER_HIGH_TECH_AFFINITY(new AffinityScaling(AffinityScaling.Filter.HIGH_TECH, AffinityScaling.SMALL_STEP,

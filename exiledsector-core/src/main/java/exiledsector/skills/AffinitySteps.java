@@ -102,17 +102,18 @@ public final class AffinitySteps {
     public static Map<SkillEffect, Float> totals(List<EffectContribution> contributions) {
         Map<SkillEffect, Float> totals = new LinkedHashMap<>();
         float toHighest = 0f;
-        float lowTechIncreasePercent = 0f;
+        Map<SkillEffect, Float> increasePercents = new LinkedHashMap<>();
         boolean lowestAsHighest = false;
         Map<SkillEffect, Float> exchangePercents = new LinkedHashMap<>();
         for (EffectContribution contribution : contributions) {
             if (contribution.permanent()) {
                 for (SkillTypeEffect effect : contribution.effects()) {
                     SkillEffect exchangeTarget = exchangeTarget(effect.effect());
+                    SkillEffect increased = increasedAffinity(effect.effect());
                     if (isAffinity(effect.effect())) {
                         totals.merge(effect.effect(), effect.magnitude(), Float::sum);
-                    } else if (effect.effect() == SpecialSkillEffect.LOW_TECH_AFFINITY_PERCENT) {
-                        lowTechIncreasePercent += effect.magnitude();
+                    } else if (increased != null) {
+                        increasePercents.merge(increased, effect.magnitude(), Float::sum);
                     } else if (effect.effect() == SpecialSkillEffect.HIGHEST_AFFINITY_FLAT_PER_S_MOD) {
                         toHighest += effect.magnitude();
                     } else if (effect.effect() == SpecialSkillEffect.LOWEST_AFFINITY_AS_HIGHEST) {
@@ -123,9 +124,7 @@ public final class AffinitySteps {
                 }
             }
         }
-        if (lowTechIncreasePercent != 0f) {
-            increase(totals, SpecialSkillEffect.LOW_TECH_AFFINITY_FLAT, lowTechIncreasePercent);
-        }
+        increasePercents.forEach((affinity, percent) -> increase(totals, affinity, percent));
         if (toHighest != 0f) {
             totals.merge(highest(totals), toHighest, Float::sum);
         }
@@ -134,6 +133,19 @@ public final class AffinitySteps {
         }
         exchangePercents.forEach((target, percent) -> exchange(totals, target, percent));
         return totals;
+    }
+
+    static SkillEffect increasedAffinity(SkillEffect effect) {
+        if (effect == SpecialSkillEffect.LOW_TECH_AFFINITY_PERCENT) {
+            return SpecialSkillEffect.LOW_TECH_AFFINITY_FLAT;
+        }
+        if (effect == SpecialSkillEffect.HIGH_TECH_AFFINITY_PERCENT) {
+            return SpecialSkillEffect.HIGH_TECH_AFFINITY_FLAT;
+        }
+        if (effect == SpecialSkillEffect.MIDLINE_AFFINITY_PERCENT) {
+            return SpecialSkillEffect.MIDLINE_AFFINITY_FLAT;
+        }
+        return null;
     }
 
     static SkillEffect exchangeTarget(SkillEffect effect) {

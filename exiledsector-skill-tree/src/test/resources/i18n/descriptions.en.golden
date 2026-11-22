@@ -1810,6 +1810,12 @@ effect|HIGH_TECH_AFFINITY_FLAT|12.5	0	<good>+12.5</good> to High Tech Affinity.
 effect|HIGH_TECH_AFFINITY_FLAT|100.0	0	<good>+100</good> to High Tech Affinity.
 effect|HIGH_TECH_AFFINITY_FLAT|-10.0	0	<bad>-10</bad> to High Tech Affinity.
 effect|HIGH_TECH_AFFINITY_FLAT|-12.5	0	<bad>-12.5</bad> to High Tech Affinity.
+effect|HIGH_TECH_AFFINITY_PERCENT|1.0	0	<good>1%</good> increased High Tech Affinity.
+effect|HIGH_TECH_AFFINITY_PERCENT|10.0	0	<good>10%</good> increased High Tech Affinity.
+effect|HIGH_TECH_AFFINITY_PERCENT|12.5	0	<good>12.5%</good> increased High Tech Affinity.
+effect|HIGH_TECH_AFFINITY_PERCENT|100.0	0	<good>100%</good> increased High Tech Affinity.
+effect|HIGH_TECH_AFFINITY_PERCENT|-10.0	0	<bad>10%</bad> reduced High Tech Affinity.
+effect|HIGH_TECH_AFFINITY_PERCENT|-12.5	0	<bad>12.5%</bad> reduced High Tech Affinity.
 effect|HIT_STRENGTH_PERCENT|1.0	0	<good>1%</good> increased hit strength against armor.
 effect|HIT_STRENGTH_PERCENT|10.0	0	<good>10%</good> increased hit strength against armor.
 effect|HIT_STRENGTH_PERCENT|12.5	0	<good>12.5%</good> increased hit strength against armor.
@@ -2074,6 +2080,12 @@ effect|MIDLINE_AFFINITY_FLAT|12.5	0	<good>+12.5</good> to Midline Affinity.
 effect|MIDLINE_AFFINITY_FLAT|100.0	0	<good>+100</good> to Midline Affinity.
 effect|MIDLINE_AFFINITY_FLAT|-10.0	0	<bad>-10</bad> to Midline Affinity.
 effect|MIDLINE_AFFINITY_FLAT|-12.5	0	<bad>-12.5</bad> to Midline Affinity.
+effect|MIDLINE_AFFINITY_PERCENT|1.0	0	<good>1%</good> increased Midline Affinity.
+effect|MIDLINE_AFFINITY_PERCENT|10.0	0	<good>10%</good> increased Midline Affinity.
+effect|MIDLINE_AFFINITY_PERCENT|12.5	0	<good>12.5%</good> increased Midline Affinity.
+effect|MIDLINE_AFFINITY_PERCENT|100.0	0	<good>100%</good> increased Midline Affinity.
+effect|MIDLINE_AFFINITY_PERCENT|-10.0	0	<bad>10%</bad> reduced Midline Affinity.
+effect|MIDLINE_AFFINITY_PERCENT|-12.5	0	<bad>12.5%</bad> reduced Midline Affinity.
 effect|MIN_ARMOR_FRACTION_MULT|1.0	0	<good>1%</good> more minimum effective armor.
 effect|MIN_ARMOR_FRACTION_MULT|10.0	0	<good>10%</good> more minimum effective armor.
 effect|MIN_ARMOR_FRACTION_MULT|12.5	0	<good>12.5%</good> more minimum effective armor.
@@ -9628,6 +9640,18 @@ type|greater_high_tech_affinity|FRIGATE|0	0	<good>+10</good> to High Tech Affini
 type|greater_high_tech_affinity|DESTROYER|0	0	<good>+10</good> to High Tech Affinity.
 type|greater_high_tech_affinity|CRUISER|0	0	<good>+10</good> to High Tech Affinity.
 type|greater_high_tech_affinity|CAPITAL_SHIP|0	0	<good>+10</good> to High Tech Affinity.
+flavour|greater_low_tech_affinity	0	Luddic shipwrights keep old hulls flying with handwork no manual covers, and some of it rubs off on whoever helps them.
+type|greater_low_tech_affinity|null|0	0	<good>+10</good> to Low Tech Affinity.
+type|greater_low_tech_affinity|FRIGATE|0	0	<good>+10</good> to Low Tech Affinity.
+type|greater_low_tech_affinity|DESTROYER|0	0	<good>+10</good> to Low Tech Affinity.
+type|greater_low_tech_affinity|CRUISER|0	0	<good>+10</good> to Low Tech Affinity.
+type|greater_low_tech_affinity|CAPITAL_SHIP|0	0	<good>+10</good> to Low Tech Affinity.
+flavour|greater_midline_affinity	0	Freelance mechanics swap midline parts from hull to hull until every fitting sits where its makers meant it to.
+type|greater_midline_affinity|null|0	0	<good>+10</good> to Midline Affinity.
+type|greater_midline_affinity|FRIGATE|0	0	<good>+10</good> to Midline Affinity.
+type|greater_midline_affinity|DESTROYER|0	0	<good>+10</good> to Midline Affinity.
+type|greater_midline_affinity|CRUISER|0	0	<good>+10</good> to Midline Affinity.
+type|greater_midline_affinity|CAPITAL_SHIP|0	0	<good>+10</good> to Midline Affinity.
 flavour|ground_support	0	Raids flown alongside pirate crews teach the crew to turn spare berths and cargo lifts into a drop platform for the marines, and to keep a few guns pointed at the ground while they work.
 flavourAutomated|ground_support	0	The ship's core logs every pirate raid it flies beside, down to where the guns point while the marines are on the ground. The refit crew turns its cargo lifts into a drop platform, and the core keeps the guns where the logs say.
 type|ground_support|null|0	0	Your fleet gains effective planetary raid strength equal to <good>25%</good> of this ship's maximum crew capacity, up to the total number of marines in the fleet.
@@ -10149,6 +10173,63 @@ type|high_tech_affinity|FRIGATE|0	0	<good>+5</good> to High Tech Affinity.
 type|high_tech_affinity|DESTROYER|0	0	<good>+5</good> to High Tech Affinity.
 type|high_tech_affinity|CRUISER|0	0	<good>+5</good> to High Tech Affinity.
 type|high_tech_affinity|CAPITAL_SHIP|0	0	<good>+5</good> to High Tech Affinity.
+flavour|high_tech_mastery	0	Tri-Tachyon trains its technicians on simulators for years. A crew that spends as long aboard a real high tech hull learns what the simulators leave out.
+flavourAutomated|high_tech_mastery	0	The core has mapped the flux lattice down to its last junction and routes around the weak ones before they fail.
+type|high_tech_mastery|null|0	0	<good>+20</good> to High Tech Affinity.
+type|high_tech_mastery|null|1	0	<good>8%</good> increased High Tech Affinity.
+type|high_tech_mastery|FRIGATE|0	0	<good>+20</good> to High Tech Affinity.
+type|high_tech_mastery|FRIGATE|1	0	<good>8%</good> increased High Tech Affinity.
+type|high_tech_mastery|DESTROYER|0	0	<good>+20</good> to High Tech Affinity.
+type|high_tech_mastery|DESTROYER|1	0	<good>8%</good> increased High Tech Affinity.
+type|high_tech_mastery|CRUISER|0	0	<good>+20</good> to High Tech Affinity.
+type|high_tech_mastery|CRUISER|1	0	<good>8%</good> increased High Tech Affinity.
+type|high_tech_mastery|CAPITAL_SHIP|0	0	<good>+20</good> to High Tech Affinity.
+type|high_tech_mastery|CAPITAL_SHIP|1	0	<good>8%</good> increased High Tech Affinity.
+integrable|high_tech_mastery|null|0	0	<good>+20</good> to High Tech Affinity.
+integrable|high_tech_mastery|null|1	0	<good>8%</good> increased High Tech Affinity.
+integrable|high_tech_mastery|null|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|high_tech_mastery|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|high_tech_mastery|null|4	0	Instead grants <builtIn>+30</builtIn> to High Tech Affinity.
+integrable|high_tech_mastery|null|5	0	Instead grants <builtIn>12%</builtIn> increased High Tech Affinity.
+integrable|high_tech_mastery|FRIGATE|0	0	<good>+20</good> to High Tech Affinity.
+integrable|high_tech_mastery|FRIGATE|1	0	<good>8%</good> increased High Tech Affinity.
+integrable|high_tech_mastery|FRIGATE|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|high_tech_mastery|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|high_tech_mastery|FRIGATE|4	0	Instead grants <builtIn>+30</builtIn> to High Tech Affinity.
+integrable|high_tech_mastery|FRIGATE|5	0	Instead grants <builtIn>12%</builtIn> increased High Tech Affinity.
+integrable|high_tech_mastery|DESTROYER|0	0	<good>+20</good> to High Tech Affinity.
+integrable|high_tech_mastery|DESTROYER|1	0	<good>8%</good> increased High Tech Affinity.
+integrable|high_tech_mastery|DESTROYER|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|high_tech_mastery|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|high_tech_mastery|DESTROYER|4	0	Instead grants <builtIn>+30</builtIn> to High Tech Affinity.
+integrable|high_tech_mastery|DESTROYER|5	0	Instead grants <builtIn>12%</builtIn> increased High Tech Affinity.
+integrable|high_tech_mastery|CRUISER|0	0	<good>+20</good> to High Tech Affinity.
+integrable|high_tech_mastery|CRUISER|1	0	<good>8%</good> increased High Tech Affinity.
+integrable|high_tech_mastery|CRUISER|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|high_tech_mastery|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|high_tech_mastery|CRUISER|4	0	Instead grants <builtIn>+30</builtIn> to High Tech Affinity.
+integrable|high_tech_mastery|CRUISER|5	0	Instead grants <builtIn>12%</builtIn> increased High Tech Affinity.
+integrable|high_tech_mastery|CAPITAL_SHIP|0	0	<good>+20</good> to High Tech Affinity.
+integrable|high_tech_mastery|CAPITAL_SHIP|1	0	<good>8%</good> increased High Tech Affinity.
+integrable|high_tech_mastery|CAPITAL_SHIP|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|high_tech_mastery|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|high_tech_mastery|CAPITAL_SHIP|4	0	Instead grants <builtIn>+30</builtIn> to High Tech Affinity.
+integrable|high_tech_mastery|CAPITAL_SHIP|5	0	Instead grants <builtIn>12%</builtIn> increased High Tech Affinity.
+integrated|high_tech_mastery|null|0	0	<builtIn>Integrated</builtIn>
+integrated|high_tech_mastery|null|1	0	<builtIn>+30</builtIn> to High Tech Affinity.
+integrated|high_tech_mastery|null|2	0	<builtIn>12%</builtIn> increased High Tech Affinity.
+integrated|high_tech_mastery|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|high_tech_mastery|FRIGATE|1	0	<builtIn>+30</builtIn> to High Tech Affinity.
+integrated|high_tech_mastery|FRIGATE|2	0	<builtIn>12%</builtIn> increased High Tech Affinity.
+integrated|high_tech_mastery|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|high_tech_mastery|DESTROYER|1	0	<builtIn>+30</builtIn> to High Tech Affinity.
+integrated|high_tech_mastery|DESTROYER|2	0	<builtIn>12%</builtIn> increased High Tech Affinity.
+integrated|high_tech_mastery|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|high_tech_mastery|CRUISER|1	0	<builtIn>+30</builtIn> to High Tech Affinity.
+integrated|high_tech_mastery|CRUISER|2	0	<builtIn>12%</builtIn> increased High Tech Affinity.
+integrated|high_tech_mastery|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|high_tech_mastery|CAPITAL_SHIP|1	0	<builtIn>+30</builtIn> to High Tech Affinity.
+integrated|high_tech_mastery|CAPITAL_SHIP|2	0	<builtIn>12%</builtIn> increased High Tech Affinity.
 flavour|hold_the_line	0	Hegemony line drill holds that a battle line which keeps station cannot be broken, only worn down. The crew posts damage-control teams behind the forward armor and learns to stop the ship when the shooting starts. Navy instructors call this courage. Navy accountants call it cheaper than engines.
 flavourAutomated|hold_the_line	0	Hegemony line drill holds that a battle line which keeps station cannot be broken, only worn down. The ship's core studies recordings of Navy lines under fire, and the refit crew braces the forward armor for a ship that stops when the shooting starts. Navy instructors call this courage. Navy accountants call it cheaper than engines.
 type|hold_the_line|null|0	0	<good>15%</good> reduced armor damage taken while moving slower than <hl>25%</hl> of top speed.
@@ -11563,6 +11644,63 @@ type|low_tech_affinity|FRIGATE|0	0	<good>+5</good> to Low Tech Affinity.
 type|low_tech_affinity|DESTROYER|0	0	<good>+5</good> to Low Tech Affinity.
 type|low_tech_affinity|CRUISER|0	0	<good>+5</good> to Low Tech Affinity.
 type|low_tech_affinity|CAPITAL_SHIP|0	0	<good>+5</good> to Low Tech Affinity.
+flavour|low_tech_mastery	0	Domain-era hulls reward crews who learn them rivet by rivet. Hegemony yard hands pass the tricks down along with the tools.
+flavourAutomated|low_tech_mastery	0	The core has logged every weld and rivet on the old hull, and stopped flagging the ones that hold.
+type|low_tech_mastery|null|0	0	<good>+20</good> to Low Tech Affinity.
+type|low_tech_mastery|null|1	0	<good>8%</good> increased Low Tech Affinity.
+type|low_tech_mastery|FRIGATE|0	0	<good>+20</good> to Low Tech Affinity.
+type|low_tech_mastery|FRIGATE|1	0	<good>8%</good> increased Low Tech Affinity.
+type|low_tech_mastery|DESTROYER|0	0	<good>+20</good> to Low Tech Affinity.
+type|low_tech_mastery|DESTROYER|1	0	<good>8%</good> increased Low Tech Affinity.
+type|low_tech_mastery|CRUISER|0	0	<good>+20</good> to Low Tech Affinity.
+type|low_tech_mastery|CRUISER|1	0	<good>8%</good> increased Low Tech Affinity.
+type|low_tech_mastery|CAPITAL_SHIP|0	0	<good>+20</good> to Low Tech Affinity.
+type|low_tech_mastery|CAPITAL_SHIP|1	0	<good>8%</good> increased Low Tech Affinity.
+integrable|low_tech_mastery|null|0	0	<good>+20</good> to Low Tech Affinity.
+integrable|low_tech_mastery|null|1	0	<good>8%</good> increased Low Tech Affinity.
+integrable|low_tech_mastery|null|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|low_tech_mastery|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|low_tech_mastery|null|4	0	Instead grants <builtIn>+30</builtIn> to Low Tech Affinity.
+integrable|low_tech_mastery|null|5	0	Instead grants <builtIn>12%</builtIn> increased Low Tech Affinity.
+integrable|low_tech_mastery|FRIGATE|0	0	<good>+20</good> to Low Tech Affinity.
+integrable|low_tech_mastery|FRIGATE|1	0	<good>8%</good> increased Low Tech Affinity.
+integrable|low_tech_mastery|FRIGATE|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|low_tech_mastery|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|low_tech_mastery|FRIGATE|4	0	Instead grants <builtIn>+30</builtIn> to Low Tech Affinity.
+integrable|low_tech_mastery|FRIGATE|5	0	Instead grants <builtIn>12%</builtIn> increased Low Tech Affinity.
+integrable|low_tech_mastery|DESTROYER|0	0	<good>+20</good> to Low Tech Affinity.
+integrable|low_tech_mastery|DESTROYER|1	0	<good>8%</good> increased Low Tech Affinity.
+integrable|low_tech_mastery|DESTROYER|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|low_tech_mastery|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|low_tech_mastery|DESTROYER|4	0	Instead grants <builtIn>+30</builtIn> to Low Tech Affinity.
+integrable|low_tech_mastery|DESTROYER|5	0	Instead grants <builtIn>12%</builtIn> increased Low Tech Affinity.
+integrable|low_tech_mastery|CRUISER|0	0	<good>+20</good> to Low Tech Affinity.
+integrable|low_tech_mastery|CRUISER|1	0	<good>8%</good> increased Low Tech Affinity.
+integrable|low_tech_mastery|CRUISER|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|low_tech_mastery|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|low_tech_mastery|CRUISER|4	0	Instead grants <builtIn>+30</builtIn> to Low Tech Affinity.
+integrable|low_tech_mastery|CRUISER|5	0	Instead grants <builtIn>12%</builtIn> increased Low Tech Affinity.
+integrable|low_tech_mastery|CAPITAL_SHIP|0	0	<good>+20</good> to Low Tech Affinity.
+integrable|low_tech_mastery|CAPITAL_SHIP|1	0	<good>8%</good> increased Low Tech Affinity.
+integrable|low_tech_mastery|CAPITAL_SHIP|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|low_tech_mastery|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|low_tech_mastery|CAPITAL_SHIP|4	0	Instead grants <builtIn>+30</builtIn> to Low Tech Affinity.
+integrable|low_tech_mastery|CAPITAL_SHIP|5	0	Instead grants <builtIn>12%</builtIn> increased Low Tech Affinity.
+integrated|low_tech_mastery|null|0	0	<builtIn>Integrated</builtIn>
+integrated|low_tech_mastery|null|1	0	<builtIn>+30</builtIn> to Low Tech Affinity.
+integrated|low_tech_mastery|null|2	0	<builtIn>12%</builtIn> increased Low Tech Affinity.
+integrated|low_tech_mastery|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|low_tech_mastery|FRIGATE|1	0	<builtIn>+30</builtIn> to Low Tech Affinity.
+integrated|low_tech_mastery|FRIGATE|2	0	<builtIn>12%</builtIn> increased Low Tech Affinity.
+integrated|low_tech_mastery|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|low_tech_mastery|DESTROYER|1	0	<builtIn>+30</builtIn> to Low Tech Affinity.
+integrated|low_tech_mastery|DESTROYER|2	0	<builtIn>12%</builtIn> increased Low Tech Affinity.
+integrated|low_tech_mastery|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|low_tech_mastery|CRUISER|1	0	<builtIn>+30</builtIn> to Low Tech Affinity.
+integrated|low_tech_mastery|CRUISER|2	0	<builtIn>12%</builtIn> increased Low Tech Affinity.
+integrated|low_tech_mastery|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|low_tech_mastery|CAPITAL_SHIP|1	0	<builtIn>+30</builtIn> to Low Tech Affinity.
+integrated|low_tech_mastery|CAPITAL_SHIP|2	0	<builtIn>12%</builtIn> increased Low Tech Affinity.
 type|ludds_light|null|0	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to <good>2000%</good> of its maximum fuel capacity to nearby ships, tapering off with distance.
 type|ludds_light|FRIGATE|0	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to <good>2000%</good> of its maximum fuel capacity to nearby ships, tapering off with distance.
 type|ludds_light|DESTROYER|0	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to <good>2000%</good> of its maximum fuel capacity to nearby ships, tapering off with distance.
@@ -11812,6 +11950,63 @@ type|midline_affinity|FRIGATE|0	0	<good>+5</good> to Midline Affinity.
 type|midline_affinity|DESTROYER|0	0	<good>+5</good> to Midline Affinity.
 type|midline_affinity|CRUISER|0	0	<good>+5</good> to Midline Affinity.
 type|midline_affinity|CAPITAL_SHIP|0	0	<good>+5</good> to Midline Affinity.
+flavour|midline_mastery	0	Midline hulls were built for any crew to patch. The best crews learn from League yard manuals and freelancers' notebooks alike.
+flavourAutomated|midline_mastery	0	The core has catalogued every standard part the hull will take, and which of them it takes best.
+type|midline_mastery|null|0	0	<good>+20</good> to Midline Affinity.
+type|midline_mastery|null|1	0	<good>8%</good> increased Midline Affinity.
+type|midline_mastery|FRIGATE|0	0	<good>+20</good> to Midline Affinity.
+type|midline_mastery|FRIGATE|1	0	<good>8%</good> increased Midline Affinity.
+type|midline_mastery|DESTROYER|0	0	<good>+20</good> to Midline Affinity.
+type|midline_mastery|DESTROYER|1	0	<good>8%</good> increased Midline Affinity.
+type|midline_mastery|CRUISER|0	0	<good>+20</good> to Midline Affinity.
+type|midline_mastery|CRUISER|1	0	<good>8%</good> increased Midline Affinity.
+type|midline_mastery|CAPITAL_SHIP|0	0	<good>+20</good> to Midline Affinity.
+type|midline_mastery|CAPITAL_SHIP|1	0	<good>8%</good> increased Midline Affinity.
+integrable|midline_mastery|null|0	0	<good>+20</good> to Midline Affinity.
+integrable|midline_mastery|null|1	0	<good>8%</good> increased Midline Affinity.
+integrable|midline_mastery|null|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|midline_mastery|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|midline_mastery|null|4	0	Instead grants <builtIn>+30</builtIn> to Midline Affinity.
+integrable|midline_mastery|null|5	0	Instead grants <builtIn>12%</builtIn> increased Midline Affinity.
+integrable|midline_mastery|FRIGATE|0	0	<good>+20</good> to Midline Affinity.
+integrable|midline_mastery|FRIGATE|1	0	<good>8%</good> increased Midline Affinity.
+integrable|midline_mastery|FRIGATE|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|midline_mastery|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|midline_mastery|FRIGATE|4	0	Instead grants <builtIn>+30</builtIn> to Midline Affinity.
+integrable|midline_mastery|FRIGATE|5	0	Instead grants <builtIn>12%</builtIn> increased Midline Affinity.
+integrable|midline_mastery|DESTROYER|0	0	<good>+20</good> to Midline Affinity.
+integrable|midline_mastery|DESTROYER|1	0	<good>8%</good> increased Midline Affinity.
+integrable|midline_mastery|DESTROYER|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|midline_mastery|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|midline_mastery|DESTROYER|4	0	Instead grants <builtIn>+30</builtIn> to Midline Affinity.
+integrable|midline_mastery|DESTROYER|5	0	Instead grants <builtIn>12%</builtIn> increased Midline Affinity.
+integrable|midline_mastery|CRUISER|0	0	<good>+20</good> to Midline Affinity.
+integrable|midline_mastery|CRUISER|1	0	<good>8%</good> increased Midline Affinity.
+integrable|midline_mastery|CRUISER|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|midline_mastery|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|midline_mastery|CRUISER|4	0	Instead grants <builtIn>+30</builtIn> to Midline Affinity.
+integrable|midline_mastery|CRUISER|5	0	Instead grants <builtIn>12%</builtIn> increased Midline Affinity.
+integrable|midline_mastery|CAPITAL_SHIP|0	0	<good>+20</good> to Midline Affinity.
+integrable|midline_mastery|CAPITAL_SHIP|1	0	<good>8%</good> increased Midline Affinity.
+integrable|midline_mastery|CAPITAL_SHIP|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|midline_mastery|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|midline_mastery|CAPITAL_SHIP|4	0	Instead grants <builtIn>+30</builtIn> to Midline Affinity.
+integrable|midline_mastery|CAPITAL_SHIP|5	0	Instead grants <builtIn>12%</builtIn> increased Midline Affinity.
+integrated|midline_mastery|null|0	0	<builtIn>Integrated</builtIn>
+integrated|midline_mastery|null|1	0	<builtIn>+30</builtIn> to Midline Affinity.
+integrated|midline_mastery|null|2	0	<builtIn>12%</builtIn> increased Midline Affinity.
+integrated|midline_mastery|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|midline_mastery|FRIGATE|1	0	<builtIn>+30</builtIn> to Midline Affinity.
+integrated|midline_mastery|FRIGATE|2	0	<builtIn>12%</builtIn> increased Midline Affinity.
+integrated|midline_mastery|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|midline_mastery|DESTROYER|1	0	<builtIn>+30</builtIn> to Midline Affinity.
+integrated|midline_mastery|DESTROYER|2	0	<builtIn>12%</builtIn> increased Midline Affinity.
+integrated|midline_mastery|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|midline_mastery|CRUISER|1	0	<builtIn>+30</builtIn> to Midline Affinity.
+integrated|midline_mastery|CRUISER|2	0	<builtIn>12%</builtIn> increased Midline Affinity.
+integrated|midline_mastery|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|midline_mastery|CAPITAL_SHIP|1	0	<builtIn>+30</builtIn> to Midline Affinity.
+integrated|midline_mastery|CAPITAL_SHIP|2	0	<builtIn>12%</builtIn> increased Midline Affinity.
 type|militarized_subsystems|null|0	0	Removes the penalties of a civilian-grade hull.
 type|militarized_subsystems|null|1	0	<good>+1</good> to max burn level.
 type|militarized_subsystems|null|2	1	<good>100%</good> increased minimum crew required.

@@ -30,6 +30,7 @@ final class AffinityTooltipLines {
             SpecialSkillEffect.LOWEST_AFFINITY_AS_HIGHEST, SpecialSkillEffect.AFFINITY_EXCHANGE_TO_LOW_TECH_PERCENT,
             SpecialSkillEffect.AFFINITY_EXCHANGE_TO_HIGH_TECH_PERCENT, SpecialSkillEffect.AFFINITY_EXCHANGE_TO_MIDLINE_PERCENT,
             FighterSkillEffect.STRIKECRAFT_GAIN_AFFINITY_BONUSES, SpecialSkillEffect.LOW_TECH_AFFINITY_PERCENT,
+            SpecialSkillEffect.HIGH_TECH_AFFINITY_PERCENT, SpecialSkillEffect.MIDLINE_AFFINITY_PERCENT,
             SpecialSkillEffect.AFFINITY_EQUALITY_TOLERANCE_FLAT);
     private static final StyledText LINE_BREAK = StyledText.of("\n");
 
