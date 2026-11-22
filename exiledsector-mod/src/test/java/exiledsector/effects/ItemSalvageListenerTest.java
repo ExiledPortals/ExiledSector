@@ -40,6 +40,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import lunalib.lunaSettings.LunaSettings;
+import org.mockito.InOrder;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -276,6 +277,23 @@ class ItemSalvageListenerTest {
         } finally {
             WormholeAnchorDefinitions.clear();
         }
+    }
+
+    @Test
+    void aShowcaseSiteRemovesItsVanillaLootBeforeAddingOurs() {
+        SectorEntityToken plainStation = site("station_research", null);
+        SectorEntityToken showcaseStation = site("station_research", null);
+        ItemSalvageListener.markShowcase(showcaseStation);
+        CargoAPI plainLoot = mock(CargoAPI.class);
+        CargoAPI showcaseLoot = mock(CargoAPI.class);
+
+        listener.reportAboutToShowLootToPlayer(plainLoot, dialogFor(plainStation));
+        listener.reportAboutToShowLootToPlayer(showcaseLoot, dialogFor(showcaseStation));
+
+        verify(plainLoot, never()).clear();
+        InOrder order = Mockito.inOrder(showcaseLoot);
+        order.verify(showcaseLoot).clear();
+        order.verify(showcaseLoot, Mockito.atLeastOnce()).addSpecial(any(), anyFloat());
     }
 
     @Test

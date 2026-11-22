@@ -13,7 +13,7 @@ import java.util.Locale;
 public class ShowcaseLootCommand extends PlayerFleetCommand {
 
     static final String SPAWN_ARGUMENT = "spawn";
-    static final String SPAWNED_SITE_TYPE = "station_research";
+    static final String SPAWNED_SITE_TYPE = "equipment_cache";
     static final float SPAWN_DISTANCE = 300f;
 
     @Override
@@ -29,12 +29,12 @@ public class ShowcaseLootCommand extends PlayerFleetCommand {
         }
         SectorEntityToken site = argument.equals(SPAWN_ARGUMENT) ? spawnSite(playerFleet, location) : nearestSite(playerFleet, location);
         if (site == null) {
-            Console.showMessage("No unlooted salvage site with Exiled Sector drops is in this location. Use \"spawn\" to add a research station.");
+            Console.showMessage("No unlooted salvage site with Exiled Sector drops is in this location. Use \"spawn\" to add an equipment cache.");
             return CommandResult.ERROR;
         }
         ItemSalvageListener.markShowcase(site);
         Console.showMessage(site.getName() + " (" + Math.round(Misc.getDistance(playerFleet, site))
-                + " su away) will also drop three Doctrine Archives, three wormhole anchors and every crafting material when salvaged.");
+                + " su away) will drop only Exiled Sector loot when salvaged: its own item drops plus three Doctrine Archives, three wormhole anchors and every crafting material.");
         return CommandResult.SUCCESS;
     }
 

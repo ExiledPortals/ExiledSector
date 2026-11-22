@@ -44,14 +44,18 @@ public class ItemSalvageListener implements ShowLootListener {
             return;
         }
         entityMemory.set(ROLLED_KEY, true);
+        boolean showcase = entityMemory.getBoolean(SHOWCASE_KEY);
+        if (showcase) {
+            entityMemory.unset(SHOWCASE_KEY);
+            loot.clear();
+        }
         Random random = new Random(Misc.getSalvageSeed(salvageEntity) ^ SEED_SALT);
         LootMultipliers multipliers = LootSources.lootMultipliersFor(salvageEntity);
         Loot siteLoot = LootSources.rollSite(Global.getSector(), siteId, random, multipliers);
         LootDelivery.toLootScreen(loot, siteLoot, DropOrigin.site(salvageEntity));
         MaterialDropAnnouncer.announceOnLootScreen(siteLoot.materials());
         LootSources.all().forEach(source -> source.addSalvageLoot(Global.getSector(), salvageEntity, loot));
-        if (entityMemory.getBoolean(SHOWCASE_KEY)) {
-            entityMemory.unset(SHOWCASE_KEY);
+        if (showcase) {
             addShowcaseLoot(loot, salvageEntity, new Random(Misc.getSalvageSeed(salvageEntity) ^ SHOWCASE_SEED_SALT));
         }
     }
