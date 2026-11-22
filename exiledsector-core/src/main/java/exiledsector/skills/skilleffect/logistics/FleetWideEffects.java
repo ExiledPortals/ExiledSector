@@ -14,6 +14,7 @@ import exiledsector.ExiledSector;
 import exiledsector.PlayerFleet;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.skilleffect.shipsystem.FragmentSwarms;
+import exiledsector.skills.skilleffect.special.ShroudedCount;
 
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.SkillEffectSupport;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public final class FleetWideEffects {
 
@@ -52,6 +54,9 @@ public final class FleetWideEffects {
     private static final String HALF_FUELED_FUEL_USE_MEMBER_MOD = "halfFueledFuelUse";
     static final String SWARM_SENSOR_STRENGTH_KEY = "exiledSector_swarmSensorStrengthPercent";
     private static final String SWARM_SENSOR_STRENGTH_FLEET_MOD = "swarmSensorStrength";
+    static final String SHROUDED_SENSOR_PROFILE_KEY = "exiledSector_shroudedSensorProfilePercent";
+    static final float MAX_SHROUDED_SENSOR_PROFILE_REDUCTION = 30f;
+    private static final String SHROUDED_SENSOR_PROFILE_FLEET_MOD = "shroudedSensorProfile";
     static final String TERRAIN_MOVEMENT_PENALTY_KEY = "exiledSector_terrainMovementPenaltyContribution";
     static final float MAX_TERRAIN_MOVEMENT_PENALTY_REDUCTION_PERCENT = 50f;
     private static final String TERRAIN_MOVEMENT_PENALTY_FLEET_MOD = "terrainMovementPenalty";
@@ -86,6 +91,7 @@ public final class FleetWideEffects {
         applyTransponderOffBurnLevel(fleet, members);
         setCoronaResistance(members, coronaResistancePercent(members));
         setSwarmSensorStrength(fleet, swarmSensorStrengthPercent(members));
+        setShroudedSensorProfile(fleet, shroudedSensorProfilePercent(members, FleetWideEffects::isShrouded));
         setTerrainMovementPenalty(fleet, terrainMovementPenaltyPercent(members));
         applySupplyUsePerHullType(fleet, members);
         applyFuelUsePerHullType(fleet, members);
@@ -99,6 +105,7 @@ public final class FleetWideEffects {
         setTransponderOffBurnLevel(fleet, 0f);
         setCoronaResistance(members, 0f);
         setSwarmSensorStrength(fleet, 0f);
+        setShroudedSensorProfile(fleet, 0f);
         setTerrainMovementPenalty(fleet, 0f);
         if (fleet.isPlayerFleet()) {
             setSupplyUsePerHullType(members, 0f);
@@ -396,6 +403,40 @@ public final class FleetWideEffects {
             }
         }
         return swarms == 0 ? 0f : FleetContributions.largestPositive(members, SWARM_SENSOR_STRENGTH_KEY) * swarms;
+    }
+
+    private static void setShroudedSensorProfile(CampaignFleetAPI fleet, float percent) {
+        StatBonus detectedRangeMod = fleet.getStats() == null ? null : fleet.getStats().getDetectedRangeMod();
+        if (detectedRangeMod == null) {
+            return;
+        }
+        if (percent < 0f) {
+            detectedRangeMod.modifyPercent(ExiledSector.key(SHROUDED_SENSOR_PROFILE_FLEET_MOD), percent,
+                    Translation.gameText("fleet.shroudedSensorProfile"));
+        } else {
+            detectedRangeMod.unmodifyPercent(ExiledSector.key(SHROUDED_SENSOR_PROFILE_FLEET_MOD));
+        }
+    }
+
+    static float shroudedSensorProfilePercent(List<FleetMemberAPI> members, Predicate<FleetMemberAPI> shrouded) {
+        float percentPerShip = Math.min(0f, FleetContributions.largestMagnitude(members, SHROUDED_SENSOR_PROFILE_KEY));
+        if (percentPerShip == 0f) {
+            return 0f;
+        }
+        int shroudedShips = 0;
+        for (FleetMemberAPI member : members) {
+            if (!member.isMothballed() && shrouded.test(member)) {
+                shroudedShips++;
+            }
+        }
+        if (shroudedShips == 0) {
+            return 0f;
+        }
+        return Math.max(-MAX_SHROUDED_SENSOR_PROFILE_REDUCTION, percentPerShip * shroudedShips);
+    }
+
+    private static boolean isShrouded(FleetMemberAPI member) {
+        return ShroudedCount.of(member, member.getVariant()) > 0;
     }
 
     public static void applyTerrainMovementPenalty(CampaignFleetAPI fleet) {

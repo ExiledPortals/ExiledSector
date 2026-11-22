@@ -176,6 +176,13 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", magnitude).arg("damage", HullDamageRegrowthListener.HULL_DAMAGE_PER_STEP).styled();
         }
     },
+    HULL_HIT_REPAIR_DISRUPTION_CHANCE_PERCENT(listener(HullHitRepairDisruptionListener.CHANCE_PERCENT_KEY,
+            HullHitRepairDisruptionListener.class, HullHitRepairDisruptionListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("seconds", HullHitRepairDisruptionListener.DISRUPTION_SECONDS).styled();
+        }
+    },
     STARDUST_MOTE_DAMAGE_FLAT(listener(StardustMoteListener.MOTE_DAMAGE_KEY, StardustMoteListener.class, StardustMoteListener::new)) {
         @Override
         public StyledText description(float magnitude) {

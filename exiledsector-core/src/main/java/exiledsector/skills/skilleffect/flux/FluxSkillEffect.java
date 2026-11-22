@@ -13,6 +13,7 @@ import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
 import exiledsector.skills.skilleffect.StatTarget;
 import exiledsector.skills.skilleffect.PerDModMultEffect;
+import exiledsector.skills.skilleffect.special.PerShroudedPercentEffect;
 
 import static exiledsector.skills.skilleffect.Backings.listener;
 import static exiledsector.skills.skilleffect.Backings.statEffect;
@@ -41,6 +42,7 @@ public enum FluxSkillEffect implements BackedSkillEffect {
     },
     FLUX_DISSIPATION_MULT_PER_DMOD(new PerDModMultEffect(liveStat(MutableShipStatsAPI::getFluxDissipation), "stat.fluxDissipationPerDMod", false)),
     VENT_RATE_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getVentRateMult), "stat.ventingSpeed", false)),
+    VENT_RATE_PERCENT_PER_SHROUDED(new PerShroudedPercentEffect(stat(MutableShipStatsAPI::getVentRateMult), "stat.ventingSpeedPerShrouded", false)),
     VENT_RATE_MULT(statEffect(MULT, stat(MutableShipStatsAPI::getVentRateMult), "stat.ventingSpeed", false)),
     OVERLOAD_DURATION_PERCENT(statEffect(PERCENT, bonus(MutableShipStatsAPI::getOverloadTimeMod), "stat.overloadDuration", true)),
     ZERO_FLUX_SPEED_FLAT(statEffect(FLAT, liveStat(MutableShipStatsAPI::getZeroFluxSpeedBoost), "stat.zeroFluxSpeedBoost", false)),

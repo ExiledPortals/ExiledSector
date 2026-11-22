@@ -482,6 +482,7 @@
     "chart.biomeModifier.header.collapsed_reach": "<muted>Collapsed</muted>",
     "chart.biomeModifier.header.abyssal_rift": "<muted>Abyssal</muted>",
     "chart.biomeModifier.header.threat_expanse": "<muted>Threat</muted>",
+    "chart.biomeModifier.header.umbral_deep": "<muted>Umbral</muted>",
     "chart.codex.biomeModifiers": "Biome Modifiers",
     "chart.codex.engramModifiers": "Engram Modifiers",
     "chart.atlas.layout.compact": "Compact system",

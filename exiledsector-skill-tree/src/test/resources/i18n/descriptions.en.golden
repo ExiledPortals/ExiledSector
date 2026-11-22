@@ -718,6 +718,12 @@ effect|CREW_LOSS_PERCENT|12.5	1	<good>12.5%</good> increased crew casualties.
 effect|CREW_LOSS_PERCENT|100.0	1	<good>100%</good> increased crew casualties.
 effect|CREW_LOSS_PERCENT|-10.0	1	<bad>10%</bad> reduced crew casualties.
 effect|CREW_LOSS_PERCENT|-12.5	1	<bad>12.5%</bad> reduced crew casualties.
+effect|CREW_LOSS_PERCENT_PER_SHROUDED|1.0	1	<good>1%</good> increased crew casualties for each Shrouded hullmod or node.
+effect|CREW_LOSS_PERCENT_PER_SHROUDED|10.0	1	<good>10%</good> increased crew casualties for each Shrouded hullmod or node.
+effect|CREW_LOSS_PERCENT_PER_SHROUDED|12.5	1	<good>12.5%</good> increased crew casualties for each Shrouded hullmod or node.
+effect|CREW_LOSS_PERCENT_PER_SHROUDED|100.0	1	<good>100%</good> increased crew casualties for each Shrouded hullmod or node.
+effect|CREW_LOSS_PERCENT_PER_SHROUDED|-10.0	1	<bad>10%</bad> reduced crew casualties for each Shrouded hullmod or node.
+effect|CREW_LOSS_PERCENT_PER_SHROUDED|-12.5	1	<bad>12.5%</bad> reduced crew casualties for each Shrouded hullmod or node.
 effect|CREW_SALARY_MULT|1.0	1	<good>1%</good> more monthly crew salaries.
 effect|CREW_SALARY_MULT|10.0	1	<good>10%</good> more monthly crew salaries.
 effect|CREW_SALARY_MULT|12.5	1	<good>12.5%</good> more monthly crew salaries.
@@ -1744,6 +1750,12 @@ effect|HOLD_FIRE_SHIELD_DAMAGE_REDUCTION_PERCENT|12.5	0	Up to <good>12.5%</good>
 effect|HOLD_FIRE_SHIELD_DAMAGE_REDUCTION_PERCENT|100.0	0	Up to <good>100%</good> reduced damage taken by shields, building up over <hl>3</hl> seconds while no weapons fire and fading over <hl>3</hl> seconds while any do.
 effect|HOLD_FIRE_SHIELD_DAMAGE_REDUCTION_PERCENT|-10.0	0	Up to <good>-10%</good> reduced damage taken by shields, building up over <hl>3</hl> seconds while no weapons fire and fading over <hl>3</hl> seconds while any do.
 effect|HOLD_FIRE_SHIELD_DAMAGE_REDUCTION_PERCENT|-12.5	0	Up to <good>-12.5%</good> reduced damage taken by shields, building up over <hl>3</hl> seconds while no weapons fire and fading over <hl>3</hl> seconds while any do.
+effect|HULL_DAMAGE_ALLY_REPAIR_PERCENT|1.0	0	Hull damage this ship deals to enemy ships repairs hull equal to <good>1%</good> of that damage on the most damaged allied ship within <hl>2000</hl> su, this ship included.
+effect|HULL_DAMAGE_ALLY_REPAIR_PERCENT|10.0	0	Hull damage this ship deals to enemy ships repairs hull equal to <good>10%</good> of that damage on the most damaged allied ship within <hl>2000</hl> su, this ship included.
+effect|HULL_DAMAGE_ALLY_REPAIR_PERCENT|12.5	0	Hull damage this ship deals to enemy ships repairs hull equal to <good>12.5%</good> of that damage on the most damaged allied ship within <hl>2000</hl> su, this ship included.
+effect|HULL_DAMAGE_ALLY_REPAIR_PERCENT|100.0	0	Hull damage this ship deals to enemy ships repairs hull equal to <good>100%</good> of that damage on the most damaged allied ship within <hl>2000</hl> su, this ship included.
+effect|HULL_DAMAGE_ALLY_REPAIR_PERCENT|-10.0	0	Hull damage this ship deals to enemy ships repairs hull equal to <good>-10%</good> of that damage on the most damaged allied ship within <hl>2000</hl> su, this ship included.
+effect|HULL_DAMAGE_ALLY_REPAIR_PERCENT|-12.5	0	Hull damage this ship deals to enemy ships repairs hull equal to <good>-12.5%</good> of that damage on the most damaged allied ship within <hl>2000</hl> su, this ship included.
 effect|HULL_DAMAGE_FRAGMENT_REGROWTH_FLAT|1.0	0	Every <hl>300</hl> hull damage this ship deals to enemy ships regrows <good>1</good> of its fragment swarm's fragments, up to the swarm's full size.
 effect|HULL_DAMAGE_FRAGMENT_REGROWTH_FLAT|10.0	0	Every <hl>300</hl> hull damage this ship deals to enemy ships regrows <good>10</good> of its fragment swarm's fragments, up to the swarm's full size.
 effect|HULL_DAMAGE_FRAGMENT_REGROWTH_FLAT|12.5	0	Every <hl>300</hl> hull damage this ship deals to enemy ships regrows <good>12.5</good> of its fragment swarm's fragments, up to the swarm's full size.
@@ -1786,12 +1798,24 @@ effect|HULL_FLAT|12.5	0	<good>+12.5</good> to hull points.
 effect|HULL_FLAT|100.0	0	<good>+100</good> to hull points.
 effect|HULL_FLAT|-10.0	0	<bad>-10</bad> to hull points.
 effect|HULL_FLAT|-12.5	0	<bad>-12.5</bad> to hull points.
+effect|HULL_HIT_REPAIR_DISRUPTION_CHANCE_PERCENT|1.0	0	<good>1%</good> chance for this ship's weapon hits on enemy hull to double the target's weapon and engine repair time for <hl>5</hl> seconds.
+effect|HULL_HIT_REPAIR_DISRUPTION_CHANCE_PERCENT|10.0	0	<good>10%</good> chance for this ship's weapon hits on enemy hull to double the target's weapon and engine repair time for <hl>5</hl> seconds.
+effect|HULL_HIT_REPAIR_DISRUPTION_CHANCE_PERCENT|12.5	0	<good>12.5%</good> chance for this ship's weapon hits on enemy hull to double the target's weapon and engine repair time for <hl>5</hl> seconds.
+effect|HULL_HIT_REPAIR_DISRUPTION_CHANCE_PERCENT|100.0	0	<good>100%</good> chance for this ship's weapon hits on enemy hull to double the target's weapon and engine repair time for <hl>5</hl> seconds.
+effect|HULL_HIT_REPAIR_DISRUPTION_CHANCE_PERCENT|-10.0	0	<good>-10%</good> chance for this ship's weapon hits on enemy hull to double the target's weapon and engine repair time for <hl>5</hl> seconds.
+effect|HULL_HIT_REPAIR_DISRUPTION_CHANCE_PERCENT|-12.5	0	<good>-12.5%</good> chance for this ship's weapon hits on enemy hull to double the target's weapon and engine repair time for <hl>5</hl> seconds.
 effect|HULL_ITEM_QUANTITY_PERCENT|1.0	0	Your fleet has <good>1%</good> increased quantity of hull items found.
 effect|HULL_ITEM_QUANTITY_PERCENT|10.0	0	Your fleet has <good>10%</good> increased quantity of hull items found.
 effect|HULL_ITEM_QUANTITY_PERCENT|12.5	0	Your fleet has <good>12.5%</good> increased quantity of hull items found.
 effect|HULL_ITEM_QUANTITY_PERCENT|100.0	0	Your fleet has <good>100%</good> increased quantity of hull items found.
 effect|HULL_ITEM_QUANTITY_PERCENT|-10.0	0	Your fleet has <bad>10%</bad> reduced quantity of hull items found.
 effect|HULL_ITEM_QUANTITY_PERCENT|-12.5	0	Your fleet has <bad>12.5%</bad> reduced quantity of hull items found.
+effect|HULL_LOSS_LUNGE_SPEED_PERCENT|1.0	0	<good>1%</good> increased top speed and maneuverability for <hl>4</hl> seconds after this ship loses <hl>10%</hl> of its maximum hull, at most once every <hl>10</hl> seconds.
+effect|HULL_LOSS_LUNGE_SPEED_PERCENT|10.0	0	<good>10%</good> increased top speed and maneuverability for <hl>4</hl> seconds after this ship loses <hl>10%</hl> of its maximum hull, at most once every <hl>10</hl> seconds.
+effect|HULL_LOSS_LUNGE_SPEED_PERCENT|12.5	0	<good>12.5%</good> increased top speed and maneuverability for <hl>4</hl> seconds after this ship loses <hl>10%</hl> of its maximum hull, at most once every <hl>10</hl> seconds.
+effect|HULL_LOSS_LUNGE_SPEED_PERCENT|100.0	0	<good>100%</good> increased top speed and maneuverability for <hl>4</hl> seconds after this ship loses <hl>10%</hl> of its maximum hull, at most once every <hl>10</hl> seconds.
+effect|HULL_LOSS_LUNGE_SPEED_PERCENT|-10.0	0	<good>-10%</good> increased top speed and maneuverability for <hl>4</hl> seconds after this ship loses <hl>10%</hl> of its maximum hull, at most once every <hl>10</hl> seconds.
+effect|HULL_LOSS_LUNGE_SPEED_PERCENT|-12.5	0	<good>-12.5%</good> increased top speed and maneuverability for <hl>4</hl> seconds after this ship loses <hl>10%</hl> of its maximum hull, at most once every <hl>10</hl> seconds.
 effect|HULL_MULT|1.0	0	<good>1%</good> more hull points.
 effect|HULL_MULT|10.0	0	<good>10%</good> more hull points.
 effect|HULL_MULT|12.5	0	<good>12.5%</good> more hull points.
@@ -2590,6 +2614,12 @@ effect|PHASE_EXIT_EMP_ARCS_FLAT|12.5	0	When this ship leaves phase, it discharge
 effect|PHASE_EXIT_EMP_ARCS_FLAT|100.0	0	When this ship leaves phase, it discharges <good>100</good> EMP arcs at the nearest enemy ships within <hl>600</hl> su, each dealing <hl>100/150/200/300</hl> energy and EMP damage.
 effect|PHASE_EXIT_EMP_ARCS_FLAT|-10.0	0	When this ship leaves phase, it discharges <good>-10</good> EMP arcs at the nearest enemy ships within <hl>600</hl> su, each dealing <hl>100/150/200/300</hl> energy and EMP damage.
 effect|PHASE_EXIT_EMP_ARCS_FLAT|-12.5	0	When this ship leaves phase, it discharges <good>-12.5</good> EMP arcs at the nearest enemy ships within <hl>600</hl> su, each dealing <hl>100/150/200/300</hl> energy and EMP damage.
+effect|PHASE_EXIT_LENS_STRIKES_FLAT|1.0	0	When this ship leaves phase, it strikes <good>1</good> time at a random enemy ship or missile within <hl>400</hl> su, dealing <hl>75</hl> energy damage in an area.
+effect|PHASE_EXIT_LENS_STRIKES_FLAT|10.0	0	When this ship leaves phase, it strikes <good>10</good> times at random enemy ships and missiles within <hl>400</hl> su, each strike dealing <hl>75</hl> energy damage in an area.
+effect|PHASE_EXIT_LENS_STRIKES_FLAT|12.5	0	When this ship leaves phase, it strikes <good>12.5</good> times at random enemy ships and missiles within <hl>400</hl> su, each strike dealing <hl>75</hl> energy damage in an area.
+effect|PHASE_EXIT_LENS_STRIKES_FLAT|100.0	0	When this ship leaves phase, it strikes <good>100</good> times at random enemy ships and missiles within <hl>400</hl> su, each strike dealing <hl>75</hl> energy damage in an area.
+effect|PHASE_EXIT_LENS_STRIKES_FLAT|-10.0	0	When this ship leaves phase, it strikes <good>-10</good> times at random enemy ships and missiles within <hl>400</hl> su, each strike dealing <hl>75</hl> energy damage in an area.
+effect|PHASE_EXIT_LENS_STRIKES_FLAT|-12.5	0	When this ship leaves phase, it strikes <good>-12.5</good> times at random enemy ships and missiles within <hl>400</hl> su, each strike dealing <hl>75</hl> energy damage in an area.
 effect|PHASE_EXIT_WEAPON_DAMAGE_DURATION_PERCENT|1.0	0	The weapon damage bonus on leaving phase has <good>1%</good> increased duration.
 effect|PHASE_EXIT_WEAPON_DAMAGE_DURATION_PERCENT|10.0	0	The weapon damage bonus on leaving phase has <good>10%</good> increased duration.
 effect|PHASE_EXIT_WEAPON_DAMAGE_DURATION_PERCENT|12.5	0	The weapon damage bonus on leaving phase has <good>12.5%</good> increased duration.
@@ -3100,6 +3130,12 @@ effect|SENSOR_PROFILE_PERCENT|12.5	1	<good>12.5%</good> increased sensor profile
 effect|SENSOR_PROFILE_PERCENT|100.0	1	<good>100%</good> increased sensor profile.
 effect|SENSOR_PROFILE_PERCENT|-10.0	1	<bad>10%</bad> reduced sensor profile.
 effect|SENSOR_PROFILE_PERCENT|-12.5	1	<bad>12.5%</bad> reduced sensor profile.
+effect|SENSOR_PROFILE_PERCENT_PER_SHROUDED_SHIP|1.0	1	Your fleet has <bad>1%</bad> reduced sensor profile for each ship in it with a Shrouded hullmod or node, up to a maximum of <hl>30%</hl>.
+effect|SENSOR_PROFILE_PERCENT_PER_SHROUDED_SHIP|10.0	1	Your fleet has <bad>10%</bad> reduced sensor profile for each ship in it with a Shrouded hullmod or node, up to a maximum of <hl>30%</hl>.
+effect|SENSOR_PROFILE_PERCENT_PER_SHROUDED_SHIP|12.5	1	Your fleet has <bad>12.5%</bad> reduced sensor profile for each ship in it with a Shrouded hullmod or node, up to a maximum of <hl>30%</hl>.
+effect|SENSOR_PROFILE_PERCENT_PER_SHROUDED_SHIP|100.0	1	Your fleet has <bad>100%</bad> reduced sensor profile for each ship in it with a Shrouded hullmod or node, up to a maximum of <hl>30%</hl>.
+effect|SENSOR_PROFILE_PERCENT_PER_SHROUDED_SHIP|-10.0	1	Your fleet has <bad>10%</bad> reduced sensor profile for each ship in it with a Shrouded hullmod or node, up to a maximum of <hl>30%</hl>.
+effect|SENSOR_PROFILE_PERCENT_PER_SHROUDED_SHIP|-12.5	1	Your fleet has <bad>12.5%</bad> reduced sensor profile for each ship in it with a Shrouded hullmod or node, up to a maximum of <hl>30%</hl>.
 effect|SENSOR_STRENGTH_ALWAYS_COUNTS|1.0	0	This ship's sensor strength always contributes to fleet-wide sensor strength.
 effect|SENSOR_STRENGTH_ALWAYS_COUNTS|10.0	0	This ship's sensor strength always contributes to fleet-wide sensor strength.
 effect|SENSOR_STRENGTH_ALWAYS_COUNTS|12.5	0	This ship's sensor strength always contributes to fleet-wide sensor strength.
@@ -3742,6 +3778,12 @@ effect|VENT_RATE_PERCENT|12.5	0	<good>12.5%</good> increased venting speed.
 effect|VENT_RATE_PERCENT|100.0	0	<good>100%</good> increased venting speed.
 effect|VENT_RATE_PERCENT|-10.0	0	<bad>10%</bad> reduced venting speed.
 effect|VENT_RATE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced venting speed.
+effect|VENT_RATE_PERCENT_PER_SHROUDED|1.0	0	<good>1%</good> increased venting speed for each Shrouded hullmod or node.
+effect|VENT_RATE_PERCENT_PER_SHROUDED|10.0	0	<good>10%</good> increased venting speed for each Shrouded hullmod or node.
+effect|VENT_RATE_PERCENT_PER_SHROUDED|12.5	0	<good>12.5%</good> increased venting speed for each Shrouded hullmod or node.
+effect|VENT_RATE_PERCENT_PER_SHROUDED|100.0	0	<good>100%</good> increased venting speed for each Shrouded hullmod or node.
+effect|VENT_RATE_PERCENT_PER_SHROUDED|-10.0	0	<bad>10%</bad> reduced venting speed for each Shrouded hullmod or node.
+effect|VENT_RATE_PERCENT_PER_SHROUDED|-12.5	0	<bad>12.5%</bad> reduced venting speed for each Shrouded hullmod or node.
 effect|VOLATILE_FLUX_RATE_OF_FIRE_PERCENT|1.0	0	Weapon rate of fire changes with flux, from <good>1%</good> increased at no flux to <bad>1%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
 effect|VOLATILE_FLUX_RATE_OF_FIRE_PERCENT|10.0	0	Weapon rate of fire changes with flux, from <good>10%</good> increased at no flux to <bad>10%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
 effect|VOLATILE_FLUX_RATE_OF_FIRE_PERCENT|12.5	0	Weapon rate of fire changes with flux, from <good>12.5%</good> increased at no flux to <bad>12.5%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
