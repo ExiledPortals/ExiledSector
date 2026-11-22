@@ -13,15 +13,24 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 
 final class LockPhasePlanetStep implements HarnessStep {
 
     static final String LOCK_DATA = "phaseLock";
+    static final long TYPE_CHANGE_SEED = 1L;
+
+    private final String wantedType;
+
+    LockPhasePlanetStep(String wantedType) {
+        this.wantedType = wantedType == null || wantedType.isBlank() ? null : wantedType;
+    }
 
     @Override
     public String name() {
-        return "lockPhasePlanet";
+        return wantedType == null ? "lockPhasePlanet" : "lockPhasePlanet " + wantedType;
     }
 
     @Override
@@ -40,10 +49,15 @@ final class LockPhasePlanetStep implements HarnessStep {
         }
         StarSystemAPI system = sector.getStarSystem(run.systemId());
         List<String> skipped = new ArrayList<>();
-        for (PlanetAPI planet : system.getPlanets()) {
+        List<PlanetAPI> planets = new ArrayList<>(system.getPlanets());
+        planets.sort(Comparator.comparing(planet -> !isWantedType(planet)));
+        for (PlanetAPI planet : planets) {
             if (!PhaseLock.isEligible(planet)) {
                 skipped.add(planet.getName());
                 continue;
+            }
+            if (wantedType != null && !isWantedType(planet)) {
+                planet.changeType(wantedType, new Random(TYPE_CHANGE_SEED));
             }
             Misc.setFullySurveyed(planet.getMarket(), null, false);
             PhasedPlanetRecord lock = PhaseLock.lock(sector, planet);
@@ -55,6 +69,10 @@ final class LockPhasePlanetStep implements HarnessStep {
             skipped.add(planet.getName() + " (offer " + PhaseLock.offerFor(sector, planet) + ")");
         }
         return StepOutcome.failed("no planet in " + system.getName() + " could be locked; passed over " + skipped);
+    }
+
+    private boolean isWantedType(PlanetAPI planet) {
+        return wantedType != null && wantedType.equals(planet.getTypeId());
     }
 
     static JSONObject lockData(PhasedPlanetRecord lock) throws JSONException {

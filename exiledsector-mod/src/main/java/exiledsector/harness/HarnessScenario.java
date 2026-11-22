@@ -16,7 +16,7 @@ record HarnessScenario(List<HarnessStep> steps, boolean quitWhenDone, NewGameSet
 
     static final String KNOWN_STEPS = "wait, mark, startClip, endClip, showcase, openAtlas, openAtlasTree, openSkillTree, openRefit, closeScreen, zoom, focusAtlasSystem, screenshot, expectScreen, "
             + "expectNoErrors, ignoreErrorsSoFar, expectLog, simulate, spawn, autopilot, speed, recordStats, recordDamage, endSimulation, "
-            + "moveMouse, click, scroll, dumpUi, growAtlas, aimAtlas, officerTurns, dressOfficers, addShip, levelShip, buildTree, clearFleets, readyFleet, saveGame, addItem, addSpecial, addSchematic, addCargo, foundColony, visitColony, visitNearest, moveFleet, transponder, destroyFleet, surveyPlanets, closeDialog, campaignZoom, console, openChart, lockPhasePlanet, defeatChartBoss, leaveChart, passDays, expectPhasePull, "
+            + "moveMouse, click, scroll, dumpUi, growAtlas, aimAtlas, officerTurns, dressOfficers, addShip, levelShip, buildTree, clearFleets, readyFleet, saveGame, addItem, addSpecial, addSchematic, addCargo, foundColony, visitColony, visitNearest, moveFleet, transponder, destroyFleet, surveyPlanets, closeDialog, campaignZoom, console, openChart, lockPhasePlanet, defeatChartBoss, leaveChart, passDays, expectPhasePull, advancePhasePull, "
             + "expectPhasedPlanet";
     static final int DEFAULT_COLONY_SIZE = 4;
     static final long DEFAULT_CHART_SEED = 1L;
@@ -112,11 +112,12 @@ record HarnessScenario(List<HarnessStep> steps, boolean quitWhenDone, NewGameSet
             case "foundColony" -> new FoundColonyStep(step.optInt("size", DEFAULT_COLONY_SIZE), strings(step.optJSONArray("industries")),
                     amounts(step.optJSONObject("supply")), step.optBoolean("nearHypershunt", false));
             case "openChart" -> new OpenChartStep(OpenChartStep.Options.parse(step, defaultSeed));
-            case "lockPhasePlanet" -> new LockPhasePlanetStep();
+            case "lockPhasePlanet" -> new LockPhasePlanetStep(step.optString("type", null));
             case "defeatChartBoss" -> new DefeatChartBossStep();
             case "leaveChart" -> new LeaveChartStep();
             case "passDays" -> new PassDaysStep((float) step.getDouble("days"), step.optInt("speed", PassDaysStep.DEFAULT_SPEED));
             case "expectPhasePull" -> new ExpectPhasePullStep(step.optString("name", "phasePull"));
+            case "advancePhasePull" -> new AdvancePhasePullStep((float) step.optDouble("days", 0));
             case "expectPhasedPlanet" -> new ExpectPhasedPlanetStep();
             default -> throw new IllegalArgumentException("unknown step \"" + stepType + "\"; known steps: " + KNOWN_STEPS);
         };

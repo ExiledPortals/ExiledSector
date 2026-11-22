@@ -42,7 +42,8 @@ public class PhaseGateEntityPlugin extends BaseCustomEntityPlugin {
     static final float ARC_SOUND_SHARE = 0.25f;
     static final int JITTER_COPIES = 6;
     static final float JITTER_RANGE_SHARE = 0.12f;
-    static final float JITTER_ALPHA = 0.3f;
+    static final float JITTER_ALPHA = 0.45f;
+    static final float PHASE_IN_GLOW_DROP = 0.75f;
     static final float RENDER_PAD = 500f;
     static final float SPIN_DEGREES_PER_SECOND = 60f;
     static final int WARP_CELLS = 6;
@@ -252,7 +253,7 @@ public class PhaseGateEntityPlugin extends BaseCustomEntityPlugin {
         Vector2f location = entity.getLocation();
         ArrivalLevels levels = arrivalLevels(arrivalSeconds);
         float gateAlpha = alpha * levels.settle();
-        float glow = gateAlpha * glowAlpha(progressShare);
+        float glow = gateAlpha * glowAlpha(progressShare) * (1f - PHASE_IN_GLOW_DROP * levels.phaseIn());
         if (layer == CampaignEngineLayers.BELOW_STATIONS) {
             renderGhost(location, alpha);
             renderStarfield(sprites.starfield(), location.x, location.y, glow * STARFIELD_ALPHA * (1f - levels.phaseIn()));
