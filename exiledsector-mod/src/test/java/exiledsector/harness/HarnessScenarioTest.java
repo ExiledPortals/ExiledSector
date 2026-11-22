@@ -100,13 +100,14 @@ class HarnessScenarioTest {
                   {"step": "levelShip", "ship": "0", "level": 15},
                   {"step": "buildTree", "root": "root_midline", "goals": ["expanded_deck_crew", "armor"]},
                   {"step": "readyFleet"},
+                  {"step": "readyFleet", "clearCargo": true},
                   {"step": "clearFleets"},
                   {"step": "clearFleets", "radius": 2000}
                 ]}""");
 
         List<String> names = scenario.steps().stream().map(HarnessStep::name).toList();
         assertEquals(List.of("addShip 1 astral_Elite as ISS Aldebaran Rising (flagship)", "levelShip 0 to 15", "buildTree from root_midline toward 2 goals",
-                "readyFleet", "clearFleets", "clearFleets within 2000"), names);
+                "readyFleet", "readyFleet with cleared cargo", "clearFleets", "clearFleets within 2000"), names);
         AddShipStep.Fitting fitting = new AddShipStep.Fitting(true, Map.of("WS 001", "harpoon"), List.of("dagger_wing"), List.of("eccm"), 44, 0);
         assertEquals(new AddShipStep.Loadout("ISS Aldebaran Rising", fitting, true, true), AddShipStep.Loadout.parse(new JSONObject("""
                 {"name": "ISS Aldebaran Rising", "strip": true, "weapons": {"WS 001": "harpoon"}, "wings": ["dagger_wing"], "hullMods": ["eccm"],
@@ -157,7 +158,7 @@ class HarnessScenarioTest {
         List<String> names = scenario.steps().stream().map(HarnessStep::name).toList();
         assertEquals(List.of("addItem armor_plate", "addItem star_chart x3 with 4 modifiers", "addSpecial exiledSector_reforge_cipher x1",
                 "addSpecial exiledSector_augmentation_nanoswarm x5", "growAtlas by 40 systems at tier 1, identifying every officer", "growAtlas by 0 systems at tier 3",
-                "visitColony", "visitNearest equipment_cache", "console ExiledSectorShowcaseLoot spawn", "console ExiledSectorShowcaseLoot", "aimAtlas at the frontier",
+                "visitColony", "visitNearest entity:equipment_cache", "console ExiledSectorShowcaseLoot spawn", "console ExiledSectorShowcaseLoot", "aimAtlas at the frontier",
                 "officerTurns 3, the last moving at least 3 officers, ending with a declared skirmish", "officerTurns 1", "dressOfficers with 3-5 scars and 4 rewards", "dumpUi"), names);
     }
 
@@ -179,6 +180,38 @@ class HarnessScenarioTest {
                 () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"dressOfficers\", \"scars\": [5, 3], \"rewards\": 3}]}"));
         assertThrows(IllegalArgumentException.class,
                 () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"dressOfficers\", \"scars\": [3], \"rewards\": 3}]}"));
+    }
+
+    @Test
+    void campaignMovementStepsParseTheirTargets() throws JSONException {
+        HarnessScenario scenario = HarnessScenario.parse("""
+                {"steps": [
+                  {"step": "moveFleet", "to": "picketGap:outside", "teleport": true},
+                  {"step": "moveFleet", "to": "entity:exiledSector_chart_listening_post", "slow": true, "seconds": 4, "arrive": false},
+                  {"step": "transponder", "on": false},
+                  {"step": "destroyFleet", "target": "fleet:Supply Convoy"},
+                  {"step": "surveyPlanets"},
+                  {"step": "closeDialog"},
+                  {"step": "campaignZoom"},
+                  {"step": "campaignZoom", "to": 1.5},
+                  {"step": "visitNearest", "target": "boltHole"},
+                  {"step": "moveMouse", "to": "fleet:Supply Convoy"}
+                ]}""");
+
+        List<String> names = scenario.steps().stream().map(HarnessStep::name).toList();
+        assertEquals(List.of("moveFleet to picketGap:outside", "moveFleet flying to entity:exiledSector_chart_listening_post for 4.0 s", "transponder off",
+                "destroyFleet fleet:Supply Convoy", "surveyPlanets", "closeDialog", "campaignZoom to the farthest", "campaignZoom to 1.5", "visitNearest boltHole", "moveMouse to fleet:Supply Convoy over 0.0 s"), names);
+    }
+
+    @Test
+    void campaignMovementStepsRejectUnknownTargets() {
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"moveFleet\", \"to\": \"somewhere\"}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"moveFleet\", \"to\": \"fleet: \"}]}"));
+        assertThrows(IllegalArgumentException.class,
+                () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"moveFleet\", \"to\": \"boltHole\", \"distance\": -1}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"destroyFleet\", \"target\": \"entity:cargo_pods\"}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"visitNearest\", \"target\": \"nowhere\"}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"campaignZoom\", \"to\": -1}]}"));
     }
 
     @Test

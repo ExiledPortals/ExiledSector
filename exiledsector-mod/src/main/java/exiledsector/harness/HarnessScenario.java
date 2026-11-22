@@ -16,7 +16,7 @@ record HarnessScenario(List<HarnessStep> steps, boolean quitWhenDone, NewGameSet
 
     static final String KNOWN_STEPS = "wait, mark, startClip, endClip, showcase, openAtlas, openAtlasTree, openSkillTree, openRefit, closeScreen, zoom, focusAtlasSystem, screenshot, expectScreen, "
             + "expectNoErrors, ignoreErrorsSoFar, expectLog, simulate, spawn, autopilot, speed, recordStats, recordDamage, endSimulation, "
-            + "moveMouse, click, scroll, dumpUi, growAtlas, aimAtlas, officerTurns, dressOfficers, addShip, levelShip, buildTree, clearFleets, readyFleet, saveGame, addItem, addSpecial, addSchematic, addCargo, foundColony, visitColony, visitNearest, console, openChart, lockPhasePlanet, defeatChartBoss, leaveChart, passDays, expectPhasePull, "
+            + "moveMouse, click, scroll, dumpUi, growAtlas, aimAtlas, officerTurns, dressOfficers, addShip, levelShip, buildTree, clearFleets, readyFleet, saveGame, addItem, addSpecial, addSchematic, addCargo, foundColony, visitColony, visitNearest, moveFleet, transponder, destroyFleet, surveyPlanets, closeDialog, campaignZoom, console, openChart, lockPhasePlanet, defeatChartBoss, leaveChart, passDays, expectPhasePull, "
             + "expectPhasedPlanet";
     static final int DEFAULT_COLONY_SIZE = 4;
     static final long DEFAULT_CHART_SEED = 1L;
@@ -86,7 +86,7 @@ record HarnessScenario(List<HarnessStep> steps, boolean quitWhenDone, NewGameSet
             case "levelShip" -> new LevelShipStep(step.optString("ship", OpenSkillTreeStep.FLAGSHIP), step.getInt("level"));
             case "buildTree" -> new BuildTreeStep(step.getString("root"), strings(step.getJSONArray("goals")), step.optInt("nodes", 0));
             case "clearFleets" -> new ClearFleetsStep((float) step.optDouble("radius", 0d));
-            case "readyFleet" -> new ReadyFleetStep((float) step.optDouble("suppliesShare", READY_SUPPLIES_SHARE));
+            case "readyFleet" -> new ReadyFleetStep((float) step.optDouble("suppliesShare", READY_SUPPLIES_SHARE), step.optBoolean("clearCargo", false));
             case "saveGame" -> new SaveGameStep();
             case "addItem" -> new AddItemStep(step.getString("item"), step.optInt("count", 1), step.optLong("seed", AddItemStep.ROLL_SEED),
                     step.optInt("modifiers", AddItemStep.RANDOM_MODIFIERS));
@@ -95,7 +95,15 @@ record HarnessScenario(List<HarnessStep> steps, boolean quitWhenDone, NewGameSet
             case "dumpUi" -> new DumpUiStep();
             case "visitColony" -> new VisitColonyStep();
             case "aimAtlas" -> new AimAtlasStep();
-            case "visitNearest" -> new VisitNearestStep(step.getString("type"));
+            case "visitNearest" -> step.has("target") ? new VisitNearestStep(step.getString("target")) : VisitNearestStep.ofType(step.getString("type"));
+            case "moveFleet" -> new MoveFleetStep(step.getString("to"), step.optBoolean("teleport", false),
+                    (float) step.optDouble("distance", MoveFleetStep.DEFAULT_ARRIVAL_DISTANCE), step.optBoolean("slow", false),
+                    (float) step.optDouble("seconds", MoveFleetStep.DEFAULT_FLIGHT_SECONDS), step.optBoolean("arrive", true));
+            case "transponder" -> new TransponderStep(step.optBoolean("on", true));
+            case "destroyFleet" -> new DestroyFleetStep(step.getString("target"));
+            case "surveyPlanets" -> new SurveyPlanetsStep();
+            case "closeDialog" -> new CloseDialogStep();
+            case "campaignZoom" -> new CampaignZoomStep((float) step.optDouble("to", CampaignZoomStep.FARTHEST));
             case "console" -> new ConsoleStep(step.getString("command"));
             case "officerTurns" -> new OfficerTurnsStep(step.optInt("turns", OfficerTurnsStep.DEFAULT_TURNS), step.optInt("moves", 0), step.optBoolean("skirmish", false));
             case "dressOfficers" -> new DressOfficersStep(range(step, "scars"), range(step, "rewards"), step.optLong("seed", DressOfficersStep.DRESS_SEED));
