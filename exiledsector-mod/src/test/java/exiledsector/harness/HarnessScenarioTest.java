@@ -194,13 +194,14 @@ class HarnessScenarioTest {
                   {"step": "closeDialog"},
                   {"step": "campaignZoom"},
                   {"step": "campaignZoom", "to": 1.5},
+                  {"step": "openCoreTab", "tab": "outposts"},
                   {"step": "visitNearest", "target": "boltHole"},
                   {"step": "moveMouse", "to": "fleet:Supply Convoy"}
                 ]}""");
 
         List<String> names = scenario.steps().stream().map(HarnessStep::name).toList();
         assertEquals(List.of("moveFleet to picketGap:outside", "moveFleet flying to entity:exiledSector_chart_listening_post for 4.0 s", "transponder off",
-                "destroyFleet fleet:Supply Convoy", "surveyPlanets", "closeDialog", "campaignZoom to the farthest", "campaignZoom to 1.5", "visitNearest boltHole", "moveMouse to fleet:Supply Convoy over 0.0 s"), names);
+                "destroyFleet fleet:Supply Convoy", "surveyPlanets", "closeDialog", "campaignZoom to the farthest", "campaignZoom to 1.5", "openCoreTab outposts", "visitNearest boltHole", "moveMouse to fleet:Supply Convoy over 0.0 s"), names);
     }
 
     @Test
@@ -212,6 +213,7 @@ class HarnessScenarioTest {
         assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"destroyFleet\", \"target\": \"entity:cargo_pods\"}]}"));
         assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"visitNearest\", \"target\": \"nowhere\"}]}"));
         assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"campaignZoom\", \"to\": -1}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"openCoreTab\", \"tab\": \"command\"}]}"));
     }
 
     @Test
@@ -236,6 +238,8 @@ class HarnessScenarioTest {
                   {"step": "moveMouse", "to": "officer:2"},
                   {"step": "moveMouse", "to": "battleMark:1"},
                   {"step": "moveMouse", "to": "atlasNode:12"},
+                  {"step": "drag", "to": "300,500", "seconds": 1.5},
+                  {"step": "drag", "to": "centre", "button": "right"},
                   {"step": "scroll", "notches": 12, "seconds": 3},
                   {"step": "scroll", "direction": "in"}
                 ]}""");
@@ -245,7 +249,7 @@ class HarnessScenarioTest {
                 "moveMouse to 1250, 420.5 over 1.0 s", "click", "ctrl-click", "click right",
                 "moveMouse to item:wormhole_anchor_hegemony over 0.0 s", "moveMouse to hullItemsButton over 0.0 s",
                 "moveMouse to section:armor_plating over 0.0 s", "moveMouse to schematic:standard over 0.0 s", "moveMouse to button:Apply over 0.0 s",
-                "moveMouse to panel:IconTileCell#2 over 0.0 s", "moveMouse to atlasSystem:1 over 0.0 s", "moveMouse to atlasTerritory:3 over 0.0 s", "moveMouse to officer:2 over 0.0 s", "moveMouse to battleMark:1 over 0.0 s", "moveMouse to atlasNode:12 over 0.0 s", "scroll out 12 notches over 3.0 s", "scroll in 1 notches over 0.0 s"), names);
+                "moveMouse to panel:IconTileCell#2 over 0.0 s", "moveMouse to atlasSystem:1 over 0.0 s", "moveMouse to atlasTerritory:3 over 0.0 s", "moveMouse to officer:2 over 0.0 s", "moveMouse to battleMark:1 over 0.0 s", "moveMouse to atlasNode:12 over 0.0 s", "drag to 300,500 over 1.5 s", "right-drag to centre over 0.0 s","scroll out 12 notches over 3.0 s", "scroll in 1 notches over 0.0 s"), names);
     }
 
     @Test
