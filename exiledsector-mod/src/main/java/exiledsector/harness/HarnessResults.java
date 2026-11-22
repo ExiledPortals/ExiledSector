@@ -22,6 +22,9 @@ final class HarnessResults {
     record Screenshot(String name, int width, int height, int parts, String source) {
     }
 
+    record Clip(String name, long startMillis, long endMillis) {
+    }
+
     private final String saveDir;
     private final HarnessLog log;
     private final List<StepResult> steps = new ArrayList<>();
@@ -29,6 +32,9 @@ final class HarnessResults {
     private final Map<String, JSONObject> data = new LinkedHashMap<>();
     private final List<String> skippedCases = new ArrayList<>();
     private final List<String> notRunCases = new ArrayList<>();
+    private final List<Clip> clips = new ArrayList<>();
+    private String openClipName;
+    private long openClipStartMillis;
     private String currentCase;
     private String abortedAfterCase;
     private String runFailure;
@@ -69,6 +75,24 @@ final class HarnessResults {
         write();
     }
 
+    String startClip(String clipName, long startMillis) {
+        String interrupted = endClip(startMillis);
+        openClipName = clipName;
+        openClipStartMillis = startMillis;
+        return interrupted;
+    }
+
+    String endClip(long endMillis) {
+        if (openClipName == null) {
+            return null;
+        }
+        String ended = openClipName;
+        clips.add(new Clip(ended, openClipStartMillis, endMillis));
+        openClipName = null;
+        write();
+        return ended;
+    }
+
     void add(Screenshot screenshot) {
         screenshots.add(screenshot);
     }
@@ -83,12 +107,14 @@ final class HarnessResults {
     }
 
     void failRun(String failure) {
+        endClip(System.currentTimeMillis());
         runFailure = failure;
         finished = true;
         write();
     }
 
     void finish() {
+        endClip(System.currentTimeMillis());
         finished = true;
         write();
     }
@@ -150,6 +176,11 @@ final class HarnessResults {
                     .put("parts", screenshot.parts()).put("source", screenshot.source()));
         }
         json.put("screenshots", screenshotArray);
+        JSONArray clipArray = new JSONArray();
+        for (Clip clip : clips) {
+            clipArray.put(new JSONObject().put("name", clip.name()).put("startMillis", clip.startMillis()).put("endMillis", clip.endMillis()));
+        }
+        json.put("clips", clipArray);
         JSONObject dataJson = new JSONObject();
         for (Map.Entry<String, JSONObject> entry : data.entrySet()) {
             dataJson.put(entry.getKey(), entry.getValue());

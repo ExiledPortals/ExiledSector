@@ -1,0 +1,18 @@
+{
+  "save": "showcase_fixture",
+  "quitWhenDone": true,
+  "steps": [
+    {"step": "wait", "seconds": 4},
+    {"step": "showcase"},
+    {"step": "wait", "seconds": 1},
+    {"step": "startClip", "name": "atlas"},
+    {"step": "openAtlas"},
+    {"step": "wait", "seconds": 4},
+    {"step": "closeScreen"},
+    {"step": "startClip", "name": "atlas_tree"},
+    {"step": "openAtlasTree"},
+    {"step": "wait", "seconds": 4},
+    {"step": "endClip"},
+    {"step": "closeScreen"}
+  ]
+}

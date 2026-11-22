@@ -9,7 +9,7 @@ import java.awt.Color;
 import java.util.List;
 import java.util.function.Consumer;
 
-final class IconTileCell extends BaseCustomUIPanelPlugin {
+public final class IconTileCell extends BaseCustomUIPanelPlugin {
 
     private static final Color BLOCKED_COLOR = new Color(110, 110, 110);
     private static final float BORDER_WIDTH = 1.5f;
@@ -39,6 +39,14 @@ final class IconTileCell extends BaseCustomUIPanelPlugin {
         this.idleFrame = new TileChrome.Frame(shownAccent, GLOW_WIDTH, GLOW_ALPHA, BORDER_WIDTH, IDLE_BORDER_ALPHA);
         this.blocked = blocked;
         this.tileInput = TileInput.forHooks(hooks, blocked);
+    }
+
+    public String iconPath() {
+        return iconPath;
+    }
+
+    public PositionAPI cellPosition() {
+        return cellPosition;
     }
 
     @Override

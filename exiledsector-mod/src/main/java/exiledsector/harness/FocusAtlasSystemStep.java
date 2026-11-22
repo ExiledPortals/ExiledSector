@@ -64,11 +64,12 @@ final class FocusAtlasSystemStep implements HarnessStep {
         AtlasGenerator generator = AtlasRuntime.generator(sector);
         AtlasState state = AtlasState.get(sector);
         List<AtlasCell> candidates = new ArrayList<>(AtlasCell.ORIGIN.around(CANDIDATE_RADIUS).stream()
-                .filter(candidate -> !candidate.equals(AtlasCell.ORIGIN) && !generator.isVoid(candidate) && generator.specialAt(candidate) == null)
+                .filter(candidate -> !candidate.equals(AtlasCell.ORIGIN) && !generator.isVoid(candidate) && generator.specialAt(candidate) == null
+                        && !state.isCompleted(candidate))
                 .toList());
         candidates.sort(Comparator.comparingDouble(AtlasCell::centreDistance).thenComparingInt(AtlasCell::gridX).thenComparingInt(AtlasCell::gridY));
         if (systemIndex < 0 || systemIndex >= candidates.size()) {
-            return StepOutcome.failed("system index " + systemIndex + " is outside the " + candidates.size() + " systems near the origin");
+            return StepOutcome.failed("system index " + systemIndex + " is outside the " + candidates.size() + " unfinished systems near the origin");
         }
         cell = candidates.get(systemIndex);
         if (AtlasDevTools.reach(generator, state, cell) == null) {

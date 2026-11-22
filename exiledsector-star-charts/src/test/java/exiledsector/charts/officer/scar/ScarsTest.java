@@ -54,12 +54,13 @@ class ScarsTest {
     }
 
     @Test
-    void grantingScarsStoresThemAndInstallsTheTreeHullModOnTheFlagshipOnly() {
+    void grantingScarsStoresThemAndInstallsTheTreeHullModOnEveryShip() {
         Scars.grant(fleet, "flagship-id", Map.of("rammed", 1));
         assertEquals(Map.of("rammed", 1), Scars.scarsOf(fleet));
         assertEquals("flagship-id", Scars.flagshipIdOf(fleet));
         verify(flagshipVariant).addMod(SkillTreeHullMod.ID);
-        verify(escortVariant, never()).addMod(SkillTreeHullMod.ID);
+        verify(escortVariant).addMod(SkillTreeHullMod.ID);
+        assertEquals(Map.of("rammed", 1), ScarEffectSource.scarsOf(memberOf(escort)));
     }
 
     @Test
@@ -124,7 +125,7 @@ class ScarsTest {
     }
 
     @Test
-    void runScarsJoinTheOfficersScarsOnTheirFlagshipWithoutEnteringTheirRecordOrLevel() {
+    void runScarsJoinTheOfficersScarsOnTheirFleetWithoutEnteringTheirRecordOrLevel() {
         Scars.grant(fleet, "flagship-id", Map.of("rammed", 1));
         int officerLevels = OfficerFleets.flagshipExtraLevels(memory, flagship);
 
@@ -132,24 +133,24 @@ class ScarsTest {
 
         assertEquals("flagship-id", Scars.flagshipIdOf(fleet));
         assertEquals(Map.of("rammed", 1), Scars.scarsOf(fleet));
-        assertEquals(Map.of("rammed", 2, "kited", 2), ScarMemory.scarsOn(memory, "flagship-id"));
+        assertEquals(Map.of("rammed", 2, "kited", 2), ScarMemory.fleetScars(memory));
         assertEquals(officerLevels, OfficerFleets.flagshipExtraLevels(memory, flagship));
         assertEquals(Map.of("rammed", 2, "kited", 2), ScarEffectSource.scarsOf(memberOf(flagship)));
-        assertEquals(Map.of(), ScarEffectSource.scarsOf(memberOf(escort)));
+        assertEquals(Map.of("rammed", 2, "kited", 2), ScarEffectSource.scarsOf(memberOf(escort)));
     }
 
     @Test
-    void runScarsOnAFleetWithoutAScarredFlagshipLandOnTheGivenOneAndRefreshItsStats() {
+    void runScarsOnAFleetWithoutAScarredFlagshipReachEveryShipAndRefreshTheirStats() {
         Scars.grantRunScars(fleet, "flagship-id", Map.of("kited", 1));
 
         assertNull(Scars.flagshipIdOf(fleet));
         assertEquals("flagship-id", ScarMemory.runFlagshipId(memory));
         assertEquals(Map.of(), Scars.scarsOf(fleet));
         assertEquals(Map.of("kited", 1), ScarEffectSource.scarsOf(memberOf(flagship)));
-        assertEquals(Map.of(), ScarEffectSource.scarsOf(memberOf(escort)));
+        assertEquals(Map.of("kited", 1), ScarEffectSource.scarsOf(memberOf(escort)));
         assertEquals(0, OfficerFleets.flagshipExtraLevels(memory, flagship));
         verify(flagshipVariant).addMod(SkillTreeHullMod.ID);
-        verify(escortVariant, never()).addMod(SkillTreeHullMod.ID);
+        verify(escortVariant).addMod(SkillTreeHullMod.ID);
         verify(fleet.getFleetData()).setSyncNeeded();
         verify(fleet.getFleetData()).syncIfNeeded();
     }

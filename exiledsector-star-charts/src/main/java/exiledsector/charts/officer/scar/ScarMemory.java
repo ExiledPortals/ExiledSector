@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public final class ScarMemory {
 
@@ -19,6 +20,9 @@ public final class ScarMemory {
 
     private static String lastEncoded;
     private static Map<String, Integer> lastDecoded = Map.of();
+    private static String lastFleetOfficerEncoded;
+    private static String lastFleetRunEncoded;
+    private static Map<String, Integer> lastFleetScars = Map.of();
 
     private ScarMemory() {
     }
@@ -66,12 +70,18 @@ public final class ScarMemory {
         return decode(encoded(memory, RUN_SCARS_KEY));
     }
 
-    public static Map<String, Integer> scarsOn(MemoryAPI memory, String memberId) {
-        if (memberId == null) {
-            return Map.of();
+    public static synchronized Map<String, Integer> fleetScars(MemoryAPI memory) {
+        String officerEncoded = encodedScars(memory);
+        String runEncoded = encoded(memory, RUN_SCARS_KEY);
+        if (!Objects.equals(officerEncoded, lastFleetOfficerEncoded) || !Objects.equals(runEncoded, lastFleetRunEncoded)) {
+            lastFleetScars = merged(parse(officerEncoded), parse(runEncoded));
+            lastFleetOfficerEncoded = officerEncoded;
+            lastFleetRunEncoded = runEncoded;
         }
-        Map<String, Integer> officerScars = memberId.equals(flagshipId(memory)) ? scars(memory) : Map.of();
-        Map<String, Integer> runScars = memberId.equals(runFlagshipId(memory)) ? runScars(memory) : Map.of();
+        return lastFleetScars;
+    }
+
+    private static Map<String, Integer> merged(Map<String, Integer> officerScars, Map<String, Integer> runScars) {
         if (runScars.isEmpty() || officerScars.isEmpty()) {
             return runScars.isEmpty() ? officerScars : runScars;
         }
@@ -105,6 +115,9 @@ public final class ScarMemory {
     }
 
     private static Map<String, Integer> parse(String encoded) {
+        if (encoded == null || encoded.isEmpty()) {
+            return Map.of();
+        }
         Map<String, Integer> scars = new LinkedHashMap<>();
         for (String entry : encoded.split(ENTRY_SEPARATOR)) {
             int separator = entry.lastIndexOf(STACK_SEPARATOR);

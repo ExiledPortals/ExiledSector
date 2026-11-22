@@ -63,6 +63,7 @@ import exiledsector.ui.socket.CraftingBenchPanel;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.TextLabel;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -294,6 +295,15 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         }
         camera.centreOn(map.displayX(cell), map.displayY(cell));
         enterFocus(cell);
+        return true;
+    }
+
+    public boolean centreOn(AtlasCell cell) {
+        if (map == null || focusedCell != null) {
+            return false;
+        }
+        camera.centreOn(map.displayX(cell), map.displayY(cell));
+        AtlasCameraMemory.remember(Global.getSector(), camera.centreTreeX(), camera.centreTreeY());
         return true;
     }
 
@@ -623,6 +633,22 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     public void positionChanged(PositionAPI position) {
         panelPosition = position;
         frame.place(position);
+    }
+
+    public Vector2f cellScreenCentre(AtlasCell cell) {
+        if (map == null || panelPosition == null) {
+            return null;
+        }
+        TreeViewport view = viewport();
+        return new Vector2f(map.screenX(view, cell), map.screenY(view, cell));
+    }
+
+    public List<Vector2f> officerFaceScreenCentres() {
+        return officerBoard == null ? List.of() : officerBoard.activeFaceCentres();
+    }
+
+    public List<Vector2f> battleMarkScreenCentres() {
+        return officerBoard == null ? List.of() : officerBoard.battleMarkCentres();
     }
 
     private TreeViewport viewport() {

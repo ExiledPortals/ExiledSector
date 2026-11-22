@@ -158,9 +158,9 @@ loses their territory and waits for a new command centre, and a Lieutenant dies 
 you take a commission, that faction's officers hand their territories to other factions' officers.
 
 Each officer carries items, and beating one drops everything they carry. They start again with one new item, and
-gather more by scavenging and by taking the items of rivals they beat in challenges. Each defeat also gives their flagship a scar matching how your fleet fought it, plus a d-mod, up
-to five. Scars make the flagship stronger and raise its level, and the scar it has most of names the officer's
-epithet. An officer who loses a challenge to another gains a scar from the winner's faction.
+gather more by scavenging and by taking the items of rivals they beat in challenges. Each defeat also gives them a scar matching how your fleet fought them, plus a d-mod on their flagship, up
+to five. Scars make every ship in their fleet stronger and raise their flagship's level, and the scar they have most of names the officer's
+epithet. An officer who loses a challenge to another gains a random scar.
 
 ## Chart anomalies
 
@@ -169,7 +169,7 @@ epithet. An officer who loses a challenge to another gains a scar from the winne
 A Relay Network places a Domain-era nav buoy, comm relay and sensor array. Each one syncs when you do what it listens
 for: hold station slowly beside the nav buoy, keep your transponder on near the comm relay, or fire an Active Sensor
 Burst near the sensor array. Restoring its power in its dialog, for supplies and heavy machinery, then wakes it. A woken
-nav buoy or sensor array gives you vanilla's objective bonus, and each woken relay offers three choices of an item for the boss to drop and a scar for its flagship.
+nav buoy or sensor array gives you vanilla's objective bonus, and each woken relay offers three choices of an item for the boss to drop and a scar for its fleet.
 
 If all three relays wake, the network moves to a nearby system further from the Gateway when the run ends, stronger at
 each stage, for up to three stages.

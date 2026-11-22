@@ -1,7 +1,6 @@
 package exiledsector.charts.officer.scar;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.VariantSource;
@@ -42,14 +41,11 @@ public final class Scars {
         if (fleet == null || fleet.getFleetData() == null) {
             return;
         }
-        MemoryAPI memory = fleet.getMemoryWithoutUpdate();
-        if (ScarMemory.flagshipId(memory) == null && ScarMemory.runFlagshipId(memory) == null) {
+        if (ScarMemory.fleetScars(fleet.getMemoryWithoutUpdate()).isEmpty()) {
             return;
         }
         for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
-            if (!ScarMemory.scarsOn(memory, member.getId()).isEmpty()) {
-                installHullMod(member);
-            }
+            installHullMod(member);
         }
     }
 
@@ -101,8 +97,8 @@ public final class Scars {
         return evidence == null ? ScarTable.FALLBACK_SCAR_ID : ScarScoring.pick(evidence, ScarTable.rows(), currentScars, hull);
     }
 
-    public static String pickAfterChallengeLoss(String winnerFactionId, Map<String, Integer> currentScars, HullFacts hull) {
-        return ScarChallengePick.pick(winnerFactionId, currentScars, hull);
+    public static String pickAfterChallengeLoss(Map<String, Integer> currentScars, HullFacts hull, Random random) {
+        return ScarChallengePick.pick(currentScars, hull, random);
     }
 
     public static String dModFor(String scarId, List<String> currentDMods, HullFacts hull, Random random) {

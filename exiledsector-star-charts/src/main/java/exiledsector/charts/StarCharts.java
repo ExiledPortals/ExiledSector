@@ -21,7 +21,6 @@ import exiledsector.charts.loot.ChartDropRules;
 import exiledsector.charts.loot.ChartLoot;
 import exiledsector.charts.officer.OfficerRanks;
 import exiledsector.charts.officer.reward.OfficerRewardTable;
-import exiledsector.charts.officer.scar.ScarChallengePick;
 import exiledsector.charts.officer.scar.ScarTable;
 import exiledsector.charts.officer.turn.ChallengeLossScars;
 import exiledsector.charts.anomaly.skirmish.SkirmishRecords;
@@ -106,7 +105,6 @@ public final class StarCharts {
         SkirmishRecords.register();
         AtlasTreeData.load();
         ScarTable.load();
-        ScarChallengePick.load();
         PhasedPlanetTraits.load();
     }
 }

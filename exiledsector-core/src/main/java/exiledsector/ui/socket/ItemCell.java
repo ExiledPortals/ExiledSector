@@ -91,6 +91,14 @@ public final class ItemCell extends BaseCustomUIPanelPlugin {
                 cellListener::rightClicked), true);
     }
 
+    public Item item() {
+        return item;
+    }
+
+    public PositionAPI cellPosition() {
+        return cellPosition;
+    }
+
     @Override
     public void positionChanged(PositionAPI cellPosition) {
         this.cellPosition = cellPosition;

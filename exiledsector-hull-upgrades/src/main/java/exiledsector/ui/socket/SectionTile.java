@@ -12,7 +12,7 @@ import exiledsector.ui.util.GLDraw;
 import java.awt.Color;
 import java.util.List;
 
-final class SectionTile extends BaseCustomUIPanelPlugin {
+public final class SectionTile extends BaseCustomUIPanelPlugin {
 
     private static final Color BACKGROUND = new Color(0, 0, 0, 200);
     private static final float BORDER_WIDTH = 1.5f;
@@ -34,6 +34,14 @@ final class SectionTile extends BaseCustomUIPanelPlugin {
         this.state = state;
         this.itemIconPath = itemIconPath;
         this.tileInput = TileInput.forHooks(hooks, !isClickable());
+    }
+
+    public ShipSection section() {
+        return section;
+    }
+
+    public PositionAPI tilePosition() {
+        return tilePosition;
     }
 
     @Override

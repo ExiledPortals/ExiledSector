@@ -1,9 +1,11 @@
 package exiledsector.harness;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -87,6 +89,160 @@ class HarnessScenarioTest {
 
         assertEquals(new NewGameSetup(List.of("nex_NGCDevStart"), "Tester"), scenario.newGame());
         assertEquals(List.of("addShip 2 eagle_Assault", "saveGame"), scenario.steps().stream().map(HarnessStep::name).toList());
+    }
+
+    @Test
+    void fleetSetupStepsParseTheirLoadoutsAndDefaults() throws JSONException {
+        HarnessScenario scenario = HarnessScenario.parse("""
+                {"steps": [
+                  {"step": "addShip", "variant": "astral_Elite", "name": "ISS Aldebaran Rising", "weapons": {"WS 001": "harpoon"},
+                   "wings": ["dagger_wing"], "hullMods": ["eccm"], "flagship": true, "replaceFleet": true},
+                  {"step": "levelShip", "ship": "0", "level": 15},
+                  {"step": "buildTree", "root": "root_midline", "goals": ["expanded_deck_crew", "armor"]},
+                  {"step": "readyFleet"},
+                  {"step": "clearFleets"},
+                  {"step": "clearFleets", "radius": 2000}
+                ]}""");
+
+        List<String> names = scenario.steps().stream().map(HarnessStep::name).toList();
+        assertEquals(List.of("addShip 1 astral_Elite as ISS Aldebaran Rising (flagship)", "levelShip 0 to 15", "buildTree from root_midline toward 2 goals",
+                "readyFleet", "clearFleets", "clearFleets within 2000"), names);
+        AddShipStep.Fitting fitting = new AddShipStep.Fitting(true, Map.of("WS 001", "harpoon"), List.of("dagger_wing"), List.of("eccm"), 44, 0);
+        assertEquals(new AddShipStep.Loadout("ISS Aldebaran Rising", fitting, true, true), AddShipStep.Loadout.parse(new JSONObject("""
+                {"name": "ISS Aldebaran Rising", "strip": true, "weapons": {"WS 001": "harpoon"}, "wings": ["dagger_wing"], "hullMods": ["eccm"],
+                 "vents": 44, "capacitors": 0, "flagship": true, "replaceFleet": true}""")));
+        assertEquals(AddShipStep.Loadout.STOCK, AddShipStep.Loadout.parse(new JSONObject("{}")));
+        assertFalse(AddShipStep.Fitting.STOCK.customisesVariant());
+        assertTrue(AddShipStep.Fitting.parse(new JSONObject("{\"strip\": true}")).customisesVariant());
+        assertTrue(AddShipStep.Fitting.parse(new JSONObject("{\"vents\": 0}")).customisesVariant());
+    }
+
+    @Test
+    void fleetSetupStepsRejectImpossibleSettings() {
+        assertThrows(IllegalArgumentException.class,
+                () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"addShip\", \"variant\": \"x\", \"count\": 2, \"flagship\": true}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"levelShip\", \"level\": 0}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"buildTree\", \"root\": \"r\", \"goals\": []}]}"));
+        assertThrows(IllegalArgumentException.class,
+                () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"buildTree\", \"root\": \"r\", \"goals\": [\"g\"], \"nodes\": -1}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"addItem\", \"item\": \" \"}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"addSchematic\", \"tier\": \"golden\"}]}"));
+        assertThrows(IllegalArgumentException.class,
+                () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"addSchematic\", \"tier\": \"standard\", \"count\": 0}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"readyFleet\", \"suppliesShare\": 2}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"clearFleets\", \"radius\": -1}]}"));
+    }
+
+    @Test
+    void showcaseSetupStepsParseTheirOptionsAndDefaults() throws JSONException {
+        HarnessScenario scenario = HarnessScenario.parse("""
+                {"steps": [
+                  {"step": "addItem", "item": "armor_plate"},
+                  {"step": "addItem", "item": "star_chart", "count": 3, "seed": 7, "modifiers": 4},
+                  {"step": "addSpecial", "item": "exiledSector_reforge_cipher"},
+                  {"step": "addSpecial", "item": "exiledSector_augmentation_nanoswarm", "count": 5},
+                  {"step": "growAtlas", "systems": 40, "identifyOfficers": true},
+                  {"step": "growAtlas", "tier": 3},
+                  {"step": "visitColony"},
+                  {"step": "visitNearest", "type": "equipment_cache"},
+                  {"step": "console", "command": "  ExiledSectorShowcaseLoot   spawn "},
+                  {"step": "console", "command": "ExiledSectorShowcaseLoot"},
+                  {"step": "aimAtlas"},
+                  {"step": "officerTurns", "turns": 3, "moves": 3, "skirmish": true},
+                  {"step": "officerTurns"},
+                  {"step": "dressOfficers", "scars": [3, 5], "rewards": 4},
+                  {"step": "dumpUi"}
+                ]}""");
+
+        List<String> names = scenario.steps().stream().map(HarnessStep::name).toList();
+        assertEquals(List.of("addItem armor_plate", "addItem star_chart x3 with 4 modifiers", "addSpecial exiledSector_reforge_cipher x1",
+                "addSpecial exiledSector_augmentation_nanoswarm x5", "growAtlas by 40 systems at tier 1, identifying every officer", "growAtlas by 0 systems at tier 3",
+                "visitColony", "visitNearest equipment_cache", "console ExiledSectorShowcaseLoot spawn", "console ExiledSectorShowcaseLoot", "aimAtlas at the frontier",
+                "officerTurns 3, the last moving at least 3 officers, ending with a declared skirmish", "officerTurns 1", "dressOfficers with 3-5 scars and 4 rewards", "dumpUi"), names);
+    }
+
+    @Test
+    void showcaseSetupStepsRejectImpossibleSettings() {
+        assertThrows(IllegalArgumentException.class,
+                () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"addItem\", \"item\": \"star_chart\", \"modifiers\": -2}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"addItem\", \"item\": \"star_chart\", \"count\": 0}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"addSpecial\", \"item\": \" \"}]}"));
+        assertThrows(IllegalArgumentException.class,
+                () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"addSpecial\", \"item\": \"exiledSector_reforge_cipher\", \"count\": 0}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"growAtlas\", \"systems\": -1}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"visitNearest\", \"type\": \" \"}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"console\", \"command\": \" \"}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"growAtlas\", \"tier\": 0}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"officerTurns\", \"turns\": 0}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"officerTurns\", \"moves\": -1}]}"));
+        assertThrows(IllegalArgumentException.class,
+                () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"dressOfficers\", \"scars\": [5, 3], \"rewards\": 3}]}"));
+        assertThrows(IllegalArgumentException.class,
+                () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"dressOfficers\", \"scars\": [3], \"rewards\": 3}]}"));
+    }
+
+    @Test
+    void mouseStepsParseTheirTargetsAndDefaults() throws JSONException {
+        HarnessScenario scenario = HarnessScenario.parse("""
+                {"steps": [
+                  {"step": "openRefit", "ship": "ISS Tereshkova III"},
+                  {"step": "moveMouse", "to": "skillTreeButton", "seconds": 0.8},
+                  {"step": "moveMouse", "to": "node:root_high_tech"},
+                  {"step": "moveMouse", "to": "1250, 420.5", "seconds": 1},
+                  {"step": "click"},
+                  {"step": "click", "ctrl": true},
+                  {"step": "click", "button": "right"},
+                  {"step": "moveMouse", "to": "item:wormhole_anchor_hegemony"},
+                  {"step": "moveMouse", "to": "hullItemsButton"},
+                  {"step": "moveMouse", "to": "section:armor_plating"},
+                  {"step": "moveMouse", "to": "schematic:standard"},
+                  {"step": "moveMouse", "to": "button:Apply"},
+                  {"step": "moveMouse", "to": "panel:IconTileCell#2"},
+                  {"step": "moveMouse", "to": "atlasSystem:1"},
+                  {"step": "moveMouse", "to": "atlasTerritory:3"},
+                  {"step": "moveMouse", "to": "officer:2"},
+                  {"step": "moveMouse", "to": "battleMark:1"},
+                  {"step": "moveMouse", "to": "atlasNode:12"},
+                  {"step": "scroll", "notches": 12, "seconds": 3},
+                  {"step": "scroll", "direction": "in"}
+                ]}""");
+
+        List<String> names = scenario.steps().stream().map(HarnessStep::name).toList();
+        assertEquals(List.of("openRefit ISS Tereshkova III", "moveMouse to skillTreeButton over 0.8 s", "moveMouse to node:root_high_tech over 0.0 s",
+                "moveMouse to 1250, 420.5 over 1.0 s", "click", "ctrl-click", "click right",
+                "moveMouse to item:wormhole_anchor_hegemony over 0.0 s", "moveMouse to hullItemsButton over 0.0 s",
+                "moveMouse to section:armor_plating over 0.0 s", "moveMouse to schematic:standard over 0.0 s", "moveMouse to button:Apply over 0.0 s",
+                "moveMouse to panel:IconTileCell#2 over 0.0 s", "moveMouse to atlasSystem:1 over 0.0 s", "moveMouse to atlasTerritory:3 over 0.0 s", "moveMouse to officer:2 over 0.0 s", "moveMouse to battleMark:1 over 0.0 s", "moveMouse to atlasNode:12 over 0.0 s", "scroll out 12 notches over 3.0 s", "scroll in 1 notches over 0.0 s"), names);
+    }
+
+    @Test
+    void mouseStepsRejectUnknownTargetsAndDirections() {
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"moveMouse\", \"to\": \"somewhere\"}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"moveMouse\", \"to\": \"12,ab\"}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"moveMouse\", \"to\": \"schematic:golden\"}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"moveMouse\", \"to\": \"button:\"}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"moveMouse\", \"to\": \"panel:IconTileCell#0\"}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"moveMouse\", \"to\": \"atlasSystem:0\"}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"moveMouse\", \"to\": \"atlasTerritory:x\"}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"moveMouse\", \"to\": \"officer:0\"}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"moveMouse\", \"to\": \"battleMark:\"}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"moveMouse\", \"to\": \"atlasNode:first\"}]}"));
+        assertThrows(IllegalArgumentException.class,
+                () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"moveMouse\", \"to\": \"centre\", \"seconds\": -1}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"scroll\", \"direction\": \"up\"}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"scroll\", \"notches\": 0}]}"));
+        assertThrows(IllegalArgumentException.class, () -> HarnessScenario.parse("{\"steps\": [{\"step\": \"click\", \"button\": \"middle\"}]}"));
+    }
+
+    @Test
+    void theMouseCalibrationMapsRobotPointsOntoWindowPixels() {
+        HarnessMouse.Calibration calibration = HarnessMouse.Calibration.between(1000, 600, 300f, 200f, 1200, 800, 600f, 500f);
+
+        assertEquals(1.5f, calibration.scaleX());
+        assertEquals(1000, calibration.robotX(300f));
+        assertEquals(1100, calibration.robotX(450f));
+        assertEquals(700, calibration.robotY(350f));
+        assertNull(HarnessMouse.Calibration.between(1000, 600, 300f, 200f, 1200, 800, 300f, 500f));
     }
 
     @Test
