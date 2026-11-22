@@ -16,7 +16,7 @@ record HarnessScenario(List<HarnessStep> steps, boolean quitWhenDone, NewGameSet
 
     static final String KNOWN_STEPS = "wait, mark, startClip, endClip, showcase, openAtlas, openAtlasTree, openSkillTree, openRefit, closeScreen, zoom, focusAtlasSystem, screenshot, expectScreen, "
             + "expectNoErrors, ignoreErrorsSoFar, expectLog, simulate, spawn, autopilot, speed, recordStats, recordDamage, endSimulation, "
-            + "moveMouse, click, scroll, dumpUi, growAtlas, aimAtlas, officerTurns, dressOfficers, addShip, levelShip, buildTree, clearFleets, readyFleet, saveGame, addItem, addSpecial, addSchematic, addCargo, foundColony, visitColony, visitNearest, moveFleet, transponder, destroyFleet, surveyPlanets, closeDialog, campaignZoom, console, openChart, lockPhasePlanet, defeatChartBoss, leaveChart, passDays, expectPhasePull, advancePhasePull, "
+            + "moveMouse, drag, click, scroll, dumpUi, growAtlas, aimAtlas, officerTurns, dressOfficers, addShip, levelShip, buildTree, clearFleets, readyFleet, saveGame, addItem, addSpecial, addSchematic, addCargo, foundColony, visitColony, visitNearest, moveFleet, transponder, destroyFleet, surveyPlanets, closeDialog, campaignZoom, openCoreTab, console, openChart, lockPhasePlanet, defeatChartBoss, leaveChart, passDays, expectPhasePull, advancePhasePull, "
             + "expectPhasedPlanet";
     static final int DEFAULT_COLONY_SIZE = 4;
     static final long DEFAULT_CHART_SEED = 1L;
@@ -59,7 +59,8 @@ record HarnessScenario(List<HarnessStep> steps, boolean quitWhenDone, NewGameSet
             case "openSkillTree" -> new OpenSkillTreeStep(step.optString("ship", OpenSkillTreeStep.FLAGSHIP));
             case "openRefit" -> new OpenSkillTreeStep(step.optString("ship", OpenSkillTreeStep.FLAGSHIP), false);
             case "moveMouse" -> new MoveMouseStep(step.getString("to"), (float) step.optDouble("seconds", 0d));
-            case "click" -> new ClickStep(step.optString("button", ClickStep.LEFT), step.optBoolean("ctrl", false));
+            case "drag" -> new DragStep(step.getString("to"), (float) step.optDouble("seconds", 0d), step.optString("button", ClickStep.LEFT));
+            case "click" ->new ClickStep(step.optString("button", ClickStep.LEFT), step.optBoolean("ctrl", false));
             case "scroll" -> new ScrollStep(ScrollStep.scrollsOut(step.optString("direction", "out")), step.optInt("notches", 1), (float) step.optDouble("seconds", 0d));
             case "closeScreen" -> new CloseScreenStep();
             case "zoom" -> new ZoomStep((float) step.getDouble("to"));
@@ -104,6 +105,7 @@ record HarnessScenario(List<HarnessStep> steps, boolean quitWhenDone, NewGameSet
             case "surveyPlanets" -> new SurveyPlanetsStep();
             case "closeDialog" -> new CloseDialogStep();
             case "campaignZoom" -> new CampaignZoomStep((float) step.optDouble("to", CampaignZoomStep.FARTHEST));
+            case "openCoreTab" -> new OpenCoreTabStep(step.getString("tab"));
             case "console" -> new ConsoleStep(step.getString("command"));
             case "officerTurns" -> new OfficerTurnsStep(step.optInt("turns", OfficerTurnsStep.DEFAULT_TURNS), step.optInt("moves", 0), step.optBoolean("skirmish", false));
             case "dressOfficers" -> new DressOfficersStep(range(step, "scars"), range(step, "rewards"), step.optLong("seed", DressOfficersStep.DRESS_SEED));
