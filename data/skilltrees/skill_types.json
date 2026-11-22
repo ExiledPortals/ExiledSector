@@ -99,6 +99,21 @@
 			]
 		},
 		{
+			"id": "non_beam_energy_projectile_speed",
+			"name": "Non-Beam Energy Projectile Speed",
+			"icon": "graphics/exiledSector/tree/base/non_beam_energy_projectile_speed.png",
+			"effects": [
+				{
+					"effect": "NON_BEAM_ENERGY_WEAPON_PROJECTILE_SPEED_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"non_beam_energy",
+				"req_non_beam_energy"
+			]
+		},
+		{
 			"id": "missile_top_speed",
 			"name": "Missile Top Speed",
 			"icon": "graphics/exiledSector/tree/hegemony/missile_top_speed.png",
@@ -5179,6 +5194,19 @@
 			]
 		},
 		{
+			"id": "fuel_or_cargo_capacity",
+			"name": "Fuel or Cargo Capacity",
+			"icon": "graphics/exiledSector/tree/base/fuel.png",
+			"options": [
+				"fuel",
+				"cargo_capacity"
+			],
+			"tags": [
+				"fuel",
+				"cargo"
+			]
+		},
+		{
 			"id": "fuel",
 			"name": "Fuel",
 			"icon": "graphics/exiledSector/tree/base/fuel.png",
@@ -5265,6 +5293,19 @@
 				"ballistic",
 				"energy",
 				"damage"
+			]
+		},
+		{
+			"id": "ballistic_or_non_beam_energy_projectile_speed",
+			"name": "Ballistic or Non-Beam Energy Projectile Speed",
+			"icon": "graphics/exiledSector/tree/base/ballistic_projectile_speed.png",
+			"options": [
+				"ballistic_projectile_speed",
+				"non_beam_energy_projectile_speed"
+			],
+			"tags": [
+				"ballistic",
+				"energy"
 			]
 		},
 		{
@@ -7902,9 +7943,9 @@
 			]
 		},
 		{
-			"id": "tania_weapon_fire_rate",
+			"id": "weapon_fire_rate",
 			"name": "Weapon Fire Rate",
-			"icon": "graphics/exiledSector/tree/tania/tania_weapon_fire_rate.png",
+			"icon": "graphics/exiledSector/tree/base/weapon_fire_rate.png",
 			"effects": [
 				{
 					"effect": "WEAPON_RATE_OF_FIRE_PERCENT",

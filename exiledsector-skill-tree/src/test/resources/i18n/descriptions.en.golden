@@ -12390,6 +12390,11 @@ integrated|neural_interface|CRUISER|2	0	Transferring to either linked ship reset
 integrated|neural_interface|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|neural_interface|CAPITAL_SHIP|1	0	Neural transfers from this ship are <builtIn>always instant</builtIn>, regardless of the deployment point total.
 integrated|neural_interface|CAPITAL_SHIP|2	0	Transferring to either linked ship resets its ship system cooldown and adds a charge.
+type|non_beam_energy_projectile_speed|null|0	0	<good>10%</good> increased non-beam energy weapon projectile speed.
+type|non_beam_energy_projectile_speed|FRIGATE|0	0	<good>10%</good> increased non-beam energy weapon projectile speed.
+type|non_beam_energy_projectile_speed|DESTROYER|0	0	<good>10%</good> increased non-beam energy weapon projectile speed.
+type|non_beam_energy_projectile_speed|CRUISER|0	0	<good>10%</good> increased non-beam energy weapon projectile speed.
+type|non_beam_energy_projectile_speed|CAPITAL_SHIP|0	0	<good>10%</good> increased non-beam energy weapon projectile speed.
 type|non_beam_energy_weapon_damage|null|0	0	<good>3%</good> increased non-beam energy weapon damage.
 type|non_beam_energy_weapon_damage|FRIGATE|0	0	<good>3%</good> increased non-beam energy weapon damage.
 type|non_beam_energy_weapon_damage|DESTROYER|0	0	<good>3%</good> increased non-beam energy weapon damage.
@@ -15951,11 +15956,6 @@ integrated|tania_thermo_accelerator|CRUISER|0	0	<builtIn>Integrated</builtIn>
 integrated|tania_thermo_accelerator|CRUISER|1	0	Turret weapons have <builtIn>60%</builtIn> reduced flux cost. Hardpoint weapons can't fire.
 integrated|tania_thermo_accelerator|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|tania_thermo_accelerator|CAPITAL_SHIP|1	0	Turret weapons have <builtIn>60%</builtIn> reduced flux cost. Hardpoint weapons can't fire.
-type|tania_weapon_fire_rate|null|0	0	<good>3%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
-type|tania_weapon_fire_rate|FRIGATE|0	0	<good>3%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
-type|tania_weapon_fire_rate|DESTROYER|0	0	<good>3%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
-type|tania_weapon_fire_rate|CRUISER|0	0	<good>3%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
-type|tania_weapon_fire_rate|CAPITAL_SHIP|0	0	<good>3%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
 flavour|temporal_exhaust	0	"The plume showed up on our scopes before the drive lit. I have checked the clocks. Please stop asking me to check the clocks."\n- Sensor officer's log, Tri-Tachyon picket, name withheld
 type|temporal_exhaust|null|0	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over <hl>4</hl> seconds, and leaves a trail of rift explosions behind its engines, each dealing <hl>100</hl> energy damage, at most once every <hl>30</hl> seconds.
 type|temporal_exhaust|FRIGATE|0	0	When this ship activates its ship system, it gains <good>20%</good> increased time flow, tapering off over <hl>4</hl> seconds, and leaves a trail of rift explosions behind its engines, each dealing <hl>100</hl> energy damage, at most once every <hl>30</hl> seconds.
@@ -16402,6 +16402,11 @@ type|weapon_durability|FRIGATE|0	0	<good>5%</good> increased weapon durability.
 type|weapon_durability|DESTROYER|0	0	<good>5%</good> increased weapon durability.
 type|weapon_durability|CRUISER|0	0	<good>5%</good> increased weapon durability.
 type|weapon_durability|CAPITAL_SHIP|0	0	<good>5%</good> increased weapon durability.
+type|weapon_fire_rate|null|0	0	<good>3%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
+type|weapon_fire_rate|FRIGATE|0	0	<good>3%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
+type|weapon_fire_rate|DESTROYER|0	0	<good>3%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
+type|weapon_fire_rate|CRUISER|0	0	<good>3%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
+type|weapon_fire_rate|CAPITAL_SHIP|0	0	<good>3%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
 flavour|weapon_flux_cost	0	Pirate refits run every weapon mount with its capacitor safeties bypassed. The safeties go in a crate, in case of inspection.
 type|weapon_flux_cost|null|0	1	<bad>3%</bad> reduced weapon flux cost.
 type|weapon_flux_cost|FRIGATE|0	1	<bad>3%</bad> reduced weapon flux cost.
