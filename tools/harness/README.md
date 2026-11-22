@@ -95,8 +95,8 @@ A scenario with a `"newGame"` object starts a new game instead of loading a save
 | `defeatChartBoss` | | the run's boss fleet was destroyed outside battle and the run's objective counts as complete |
 | `leaveChart` | | the player fleet jumped back out of the run and the run closed |
 | `passDays` | `days`, `speed` (50) | that many campaign days passed, with the engine stepped `speed` times a frame in 0.1 s steps, like fast-forward, and the player fleet left alone by other fleets |
-| `expectPhasePull` | `name` (`phasePull`) | the gate has a pull job that isn't paused; its days, pause and wormhole radius go under `data.<name>` |
-| `expectPhasedPlanet` | | the pull finished, its wormhole is gone, and the locked planet orbits in the gate's system with its type, kept conditions and traits; details go under `data.phasedPlanet` |
+| `expectPhasePull` | `name` (`phasePull`) | the gate has a pull job that isn't paused; its days, pause and whether its phase gate is in orbit go under `data.<name>` |
+| `expectPhasedPlanet` | | the pull finished, its phase gate is gone, and the locked planet orbits in the gate's system with its type, kept conditions and traits; details go under `data.phasedPlanet` |
 
 `examples/phase-pull.json` drags a Star Chart planet into a new colony's system: it founds the colony with a Phase Displacement Gate, locks a planet in a run, clears the run, and passes the 120-day pull.
 

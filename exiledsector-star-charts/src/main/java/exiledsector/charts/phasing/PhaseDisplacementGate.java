@@ -33,6 +33,11 @@ public class PhaseDisplacementGate extends BaseIndustry {
         return null;
     }
 
+    public static MarketAPI marketById(String marketId) {
+        SectorAPI sector = Global.getSector();
+        return sector == null || sector.getEconomy() == null ? null : sector.getEconomy().getMarket(marketId);
+    }
+
     static boolean isPlayers(MarketAPI candidate) {
         return candidate.isPlayerOwned() || Factions.PLAYER.equals(candidate.getFactionId());
     }
@@ -116,16 +121,9 @@ public class PhaseDisplacementGate extends BaseIndustry {
     protected void addPostDescriptionSection(TooltipMakerAPI tooltip, IndustryTooltipMode mode) {
         VanillaText.plainPara(tooltip, I18n.forGameText(() -> Translation.msg("chart.phasing.tooltip.power")
                 .arg("range", HypershuntPower.rangeLightYears()).text()), TOOLTIP_PAD, Misc.getTextColor());
-        PhasedPlanetRecord job = market == null || mode == IndustryTooltipMode.ADD_INDUSTRY ? null : PhaseGateState.job(market);
-        if (job == null) {
-            return;
+        String status = market == null || mode == IndustryTooltipMode.ADD_INDUSTRY ? null : PhasePull.statusLine(market);
+        if (status != null) {
+            VanillaText.plainPara(tooltip, status, TOOLTIP_PAD, Misc.getHighlightColor());
         }
-        PhasePull.Pause pause = PhasePull.pauseFor(this);
-        int daysLeft = (int) Math.ceil(Math.max(0f, PhasePull.PULL_DAYS - PhaseGateState.jobDays(market)));
-        String status = pause == null
-                ? I18n.forGameText(() -> Translation.msg("chart.phasing.tooltip.pulling").arg("planet", job.name()).arg("days", daysLeft).text())
-                : I18n.forGameText(() -> Translation.msg("chart.phasing.tooltip.paused").arg("planet", job.name())
-                .arg("reason", Translation.gameText(PhasePull.pauseKey(pause))).text());
-        VanillaText.plainPara(tooltip, status, TOOLTIP_PAD, Misc.getHighlightColor());
     }
 }

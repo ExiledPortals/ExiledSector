@@ -43,8 +43,8 @@ final class ExpectPhasedPlanetStep implements HarnessStep {
         if (PhaseGateState.hasJob(market)) {
             return StepOutcome.failed("the pull is still running, " + Math.round(PhaseGateState.jobDays(market)) + " days in");
         }
-        if (sector.getEntityById(PhasePull.wormholeId(market)) != null) {
-            return StepOutcome.failed("the pull finished but its wormhole is still in " + system.getName());
+        if (PhasePull.gateOf(sector, market) != null) {
+            return StepOutcome.failed("the pull finished but its phase gate is still in " + system.getName());
         }
         JSONObject lock = context.results().data(LockPhasePlanetStep.LOCK_DATA);
         String expectedName = lock == null ? null : lock.getString("name");

@@ -19,6 +19,8 @@ import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.relay.RelayDialog;
 import exiledsector.charts.anomaly.relay.RelayKind;
 import exiledsector.charts.anomaly.relay.RelayNetwork;
+import exiledsector.charts.phasing.PhaseGateDialog;
+import exiledsector.charts.phasing.PhasePull;
 import exiledsector.charts.wormhole.ChartWormholeDialog;
 import org.junit.jupiter.api.Test;
 
@@ -71,6 +73,19 @@ class ChartCampaignPluginTest {
             PluginPick<InteractionDialogPlugin> pick = new ChartCampaignPlugin().pickInteractionDialogPlugin(relay);
 
             assertInstanceOf(RelayDialog.class, pick.plugin);
+            assertEquals(CampaignPlugin.PickPriority.MOD_SPECIFIC, pick.priority);
+        }
+    }
+
+    @Test
+    void picksThePhaseGateDialogForAPhaseGate() {
+        try (MockSector ignored = new MockSector()) {
+            SectorEntityToken phaseGate = mock(SectorEntityToken.class);
+            when(phaseGate.getCustomEntityType()).thenReturn(PhasePull.GATE_TYPE);
+
+            PluginPick<InteractionDialogPlugin> pick = new ChartCampaignPlugin().pickInteractionDialogPlugin(phaseGate);
+
+            assertInstanceOf(PhaseGateDialog.class, pick.plugin);
             assertEquals(CampaignPlugin.PickPriority.MOD_SPECIFIC, pick.priority);
         }
     }
