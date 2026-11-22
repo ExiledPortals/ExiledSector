@@ -9,6 +9,7 @@ import exiledsector.skills.loader.WormholePairValidator;
 import exiledsector.skills.radius.NodeRadii;
 import exiledsector.skills.radius.NodeRadiusCache;
 import exiledsector.skills.radius.RadiusSize;
+import exiledsector.skills.tags.ModCredit;
 import org.apache.log4j.Logger;
 
 import java.util.Collections;
@@ -33,6 +34,7 @@ public class SkillTree {
     private static SkillTreeTopology topology;
     private static NodeRadiusCache radiusCache;
     private static Decorations decorations = Decorations.NONE;
+    private static Map<String, ModCredit> modCredits = Map.of();
 
     private SkillTree() {
     }
@@ -48,6 +50,7 @@ public class SkillTree {
         for (SkillNode node : declaredTree.nodes) {
             DECLARED_NODES.put(node.getId(), node);
         }
+        modCredits = ModCredit.byType(DECLARED_NODES.values());
         loadedCompletely = declaredTree.declaredNodeCount > 0 && DECLARED_NODES.size() == declaredTree.declaredNodeCount
                 && TYPES.size() == loadedTypes.declaredTypeCount();
         for (String issue : WormholePairValidator.findIssues(DECLARED_NODES.values())) {
@@ -102,6 +105,7 @@ public class SkillTree {
         NODES.clear();
         DECLARED_NODES.clear();
         declaredTree = null;
+        modCredits = Map.of();
         topology = null;
         radiusCache = null;
     }
@@ -150,6 +154,10 @@ public class SkillTree {
 
     public static Map<String, SkillNode> getAllNodes() {
         return NODES_VIEW;
+    }
+
+    public static ModCredit modCredit(String typeId) {
+        return modCredits.get(typeId);
     }
 
     public static SkillType getType(String typeId) {

@@ -28,9 +28,11 @@ import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
+import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.TypeAffinity;
+import exiledsector.skills.tags.ModCredit;
 import exiledsector.skills.tags.ThemeTagLine;
 import exiledsector.items.subroutine.doctrine.DoctrineOverrides;
 import exiledsector.items.subroutine.doctrine.DoctrineRewrite;
@@ -186,8 +188,8 @@ final class SkillTreeNodeTooltipRenderer {
                 label -> label.setWrapped(type.getDisplayName(), tooltipText.nodeMaxTextWidth(), TOOLTIP_MAX_TEXT_HEIGHT));
         TextLabel body = body(typeTooltipBodies, type.getId(), List.of(type.getId(), expanded, refusalReason == null ? "" : refusalReason,
                         costLine == null ? "" : costLine),
-                () -> withCostLine(withThemeTagLine(withModuleShareLine(SkillNode.describeMechanics(type, fleetMember.getHullSpec().getHullSize(),
-                        false, this::listsConflictingHullMod), type), type), costLine),
+                () -> withCostLine(withModCreditLine(withThemeTagLine(withModuleShareLine(SkillNode.describeMechanics(type,
+                        fleetMember.getHullSpec().getHullSize(), false, this::listsConflictingHullMod), type), type), type), costLine),
                 List::of, expanded, refusalReason);
 
         panelStyle.drawTitleBodyTooltip(title, flavourFor(type), body, List.of(), tablesFor(type, allocation.statsRevision()), null,
@@ -384,6 +386,16 @@ final class SkillTreeNodeTooltipRenderer {
         return new NodeDescription(description.effects(), details);
     }
 
+    private static NodeDescription withModCreditLine(NodeDescription description, SkillType type) {
+        ModCredit credit = SkillTree.modCredit(type.getId());
+        if (credit == null) {
+            return description;
+        }
+        List<DescriptionLine> details = new ArrayList<>(description.details());
+        details.add(new DescriptionLine(credit.line(), false));
+        return new NodeDescription(description.effects(), details);
+    }
+
     private IntegrationLines.State integrationState(ShipSkillData skillData, SkillNode node) {
         return IntegrationLines.State.of(skillData, node, !planning.getAsBoolean(), templateMark.apply(node));
     }
@@ -455,7 +467,7 @@ final class SkillTreeNodeTooltipRenderer {
         if (allocatedSocket) {
             effects.add(plainLine("ui.node.socket.installHint"));
         }
-        return withThemeTagLine(new NodeDescription(effects, details), effectiveType);
+        return withModCreditLine(withThemeTagLine(new NodeDescription(effects, details), effectiveType), effectiveType);
     }
 
     private boolean listsConflictingHullMod(String hullModId) {
