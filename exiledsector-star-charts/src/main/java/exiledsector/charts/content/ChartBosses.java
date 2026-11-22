@@ -152,7 +152,7 @@ public final class ChartBosses {
                 own.add(station);
             }
         }
-        return own.isEmpty() && !ChartThreatFleets.builds(factionId) ? shared : own;
+        return own.isEmpty() && !ChartAbyssalFleets.builds(factionId) ? shared : own;
     }
 
     static String pickStation(String factionId, int tier, Random random) {

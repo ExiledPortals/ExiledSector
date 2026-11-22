@@ -5,7 +5,17 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public record AllocatedNode(SkillNode node, SkillType effectiveType) {
+public record AllocatedNode(SkillNode node, SkillType effectiveType) implements PlacedNode {
+
+    @Override
+    public String nodeId() {
+        return node.getId();
+    }
+
+    @Override
+    public String skillTypeId() {
+        return effectiveType.getId();
+    }
 
     public static List<AllocatedNode> of(ShipSkillData data) {
         List<AllocatedNode> allocated = new ArrayList<>();

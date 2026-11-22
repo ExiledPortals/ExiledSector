@@ -12,6 +12,7 @@ import exiledsector.skills.skilleffect.EffectText;
 import exiledsector.skills.skilleffect.PerDModMultEffect;
 import exiledsector.skills.skilleffect.PerDModPercentEffect;
 import exiledsector.skills.skilleffect.StatMode;
+import exiledsector.skills.skilleffect.special.PerShroudedPercentEffect;
 
 import static exiledsector.skills.skilleffect.Backings.flag;
 import static exiledsector.skills.skilleffect.Backings.statEffect;
@@ -81,6 +82,14 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
         @Override
         public StyledText description(float magnitude) {
             return EffectText.templated(this, magnitude);
+        }
+    },
+    SENSOR_PROFILE_PERCENT_PER_SHROUDED_SHIP(statEffect(FLAT, dynamicMod(FleetWideEffects.SHROUDED_SENSOR_PROFILE_KEY),
+            "stat.fleetSensorProfilePerShroudedShip", true)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", Math.abs(magnitude))
+                    .arg("max", FleetWideEffects.MAX_SHROUDED_SENSOR_PROFILE_REDUCTION).styled();
         }
     },
     TERRAIN_MOVEMENT_PENALTY_PERCENT(statEffect(FLAT, dynamicMod(FleetWideEffects.TERRAIN_MOVEMENT_PENALTY_KEY), "stat.terrainMovementPenalty", true)) {
@@ -193,6 +202,7 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
     },
     CREW_LOSS_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getCrewLossMult), "stat.crewCasualties", true)),
     CREW_LOSS_MULT(statEffect(MULT, stat(MutableShipStatsAPI::getCrewLossMult), "stat.crewCasualties", true)),
+    CREW_LOSS_PERCENT_PER_SHROUDED(new PerShroudedPercentEffect(stat(MutableShipStatsAPI::getCrewLossMult), "stat.crewCasualtiesPerShrouded", true)),
     PEAK_TIME_CREW_LOSS_FLAT(statEffect(FLAT, scaled(dynamicMod("so_crew_loss_mod"), 0.01f), "stat.crewCasualties", true)) {
         @Override
         public StyledText description(float magnitude) {

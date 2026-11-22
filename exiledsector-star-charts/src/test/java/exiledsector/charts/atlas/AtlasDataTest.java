@@ -62,6 +62,11 @@ class AtlasDataTest {
         assertEquals(Set.of("threat"), AtlasData.rules().region("threat_expanse").factionWeights().keySet());
         assertTrue(AtlasData.ambience("threat_expanse").abyss());
         assertFalse(normalFactions.contains("threat"));
+        assertEquals(Set.of("dweller"), AtlasData.rules().region("umbral_deep").factionWeights().keySet());
+        assertEquals("$encounteredDweller", AtlasData.rules().region("umbral_deep").unlock());
+        assertTrue(AtlasData.ambience("umbral_deep").abyss());
+        assertEquals(Map.of(StarSystemType.DEEP_SPACE, 1f), AtlasData.recipeFor("umbral_deep", "abyssal_void").shape().systemTypeWeights());
+        assertFalse(normalFactions.contains("dweller"));
         assertEquals(Map.of(StarSystemType.DEEP_SPACE, 1f), AtlasData.recipeFor("threat_expanse", "abyssal_void").shape().systemTypeWeights());
         assertEquals(0f, AtlasData.rules().layoutWeights().get("abyssal_void"));
         assertEquals(0f, AtlasData.rules().layoutWeights().get("abyssal_depths"));

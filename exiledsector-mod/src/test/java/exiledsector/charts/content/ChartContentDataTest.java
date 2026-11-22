@@ -196,6 +196,7 @@ class ChartContentDataTest {
                 "persean", "luddic_church", "tritachyon", "derelict");
         Set<String> listed = new java.util.HashSet<>(vanilla);
         listed.add("threat");
+        listed.add("dweller");
 
         assertEquals(listed, ChartFactions.all().stream().map(ChartFaction::factionId).collect(Collectors.toSet()));
         assertEquals(vanilla, ChartFactions.available(ChartFactions.all(), vanilla::contains).stream().map(ChartFaction::factionId)

@@ -947,8 +947,12 @@ class AtlasGeneratorTest {
         AtlasSpecial threat = new AtlasSpecial("threat_infestation", AtlasSpecial.Kind.INFESTATION, AtlasSpecial.Placement.CHUNK, 1f, 0f, 2.5f, 1, 1f, "", "",
                 "threat");
 
+        AtlasRegion umbralDeep = new AtlasRegion("umbral_deep", 1f, 0, "", "", Map.of(), Map.of("dweller", 1f), Map.of());
+
         assertTrue(AtlasGenerator.keepsOut(threatSpace, remnant));
         assertFalse(AtlasGenerator.keepsOut(threatSpace, threat));
         assertFalse(AtlasGenerator.keepsOut(graveyard, remnant));
+        assertTrue(AtlasGenerator.keepsOut(umbralDeep, remnant));
+        assertTrue(AtlasGenerator.keepsOut(umbralDeep, threat));
     }
 }

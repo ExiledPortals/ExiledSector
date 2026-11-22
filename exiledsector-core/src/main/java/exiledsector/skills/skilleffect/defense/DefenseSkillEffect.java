@@ -252,6 +252,13 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", magnitude).arg("cap", SwarmOverflowRepairListener.DEPLOYMENT_CAP_PERCENT).styled();
         }
     },
+    HULL_DAMAGE_ALLY_REPAIR_PERCENT(listener(HullDamageAllyRepairListener.REPAIR_PERCENT_KEY, HullDamageAllyRepairListener.class,
+            HullDamageAllyRepairListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("range", HullDamageAllyRepairListener.RANGE).styled();
+        }
+    },
     ARMOR_DAMAGE_EMP_ARCS_FLAT(listener(ArmorArcListener.ARC_COUNT_KEY, ArmorArcListener.class, ArmorArcListener::new)) {
         @Override
         public StyledText description(float magnitude) {

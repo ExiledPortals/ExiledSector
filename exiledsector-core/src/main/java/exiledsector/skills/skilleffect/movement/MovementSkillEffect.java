@@ -48,6 +48,13 @@ public enum MovementSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", magnitude).arg("seconds", ArcStrikeSpeedListener.BURST_SECONDS).styled();
         }
     },
+    HULL_LOSS_LUNGE_SPEED_PERCENT(listener(HullLossLungeListener.SPEED_PERCENT_KEY, HullLossLungeListener.class, HullLossLungeListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("seconds", HullLossLungeListener.BURST_SECONDS)
+                    .arg("loss", HullLossLungeListener.HULL_LOSS_PERCENT).arg("cooldown", HullLossLungeListener.COOLDOWN_SECONDS).styled();
+        }
+    },
     TOP_SPEED_SHARE_OF_FLAGSHIP_PERCENT(listener(FlagshipPaceListener.FLAGSHIP_SPEED_SHARE_PERCENT_KEY, FlagshipPaceListener.class,
             FlagshipPaceListener::new)) {
         @Override

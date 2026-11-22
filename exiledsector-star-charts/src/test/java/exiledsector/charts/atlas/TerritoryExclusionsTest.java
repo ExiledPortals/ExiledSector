@@ -29,7 +29,7 @@ class TerritoryExclusionsTest {
     void theShippedListKeepsFactionsWithoutTerritoryOffTheBoard() throws Exception {
         Set<String> shipped = TerritoryExclusions.factionIds(ChartTables.csvRows(TerritoryExclusions.PATH));
 
-        assertEquals(Set.of("remnant", "derelict", "threat", "rat_abyssals"), shipped);
+        assertEquals(Set.of("remnant", "derelict", "threat", "dweller", "rat_abyssals"), shipped);
         TerritoryExclusions.useForTests(shipped);
         assertTrue(TerritoryExclusions.excludes("remnant"));
         assertTrue(TerritoryExclusions.excludes(null));

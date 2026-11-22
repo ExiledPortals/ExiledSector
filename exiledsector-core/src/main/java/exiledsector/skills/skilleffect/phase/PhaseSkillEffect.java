@@ -91,6 +91,14 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
                     .arg("range", ArcDischarge.RANGE)).styled();
         }
     },
+    PHASE_EXIT_LENS_STRIKES_FLAT(listener(PhaseExitLensStrikeListener.STRIKE_COUNT_KEY, PhaseExitLensStrikeListener.class,
+            PhaseExitLensStrikeListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).count(Math.round(magnitude)).arg("value", magnitude).arg("range", LensStrike.RANGE)
+                    .arg("damage", LensStrike.DAMAGE).styled();
+        }
+    },
     PHASE_EXIT_WEAPON_DAMAGE_PERCENT(listener(PhaseExitDamageListener.DAMAGE_PERCENT_KEY, PhaseExitDamageListener.class,
             PhaseExitDamageListener::new)) {
         @Override
