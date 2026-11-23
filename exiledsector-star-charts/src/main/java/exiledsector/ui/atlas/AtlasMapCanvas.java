@@ -29,6 +29,7 @@ import exiledsector.ui.node.NodeBeams;
 import exiledsector.ui.node.NodeMetrics;
 import exiledsector.ui.node.NodeRingArt;
 import exiledsector.ui.node.WormholeArt;
+import exiledsector.ui.slipstream.SlipstreamSky;
 import exiledsector.ui.util.SpriteDraw;
 
 import java.awt.Color;
@@ -38,6 +39,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import static exiledsector.ui.node.NodeBeams.DULL_ALPHA;
@@ -126,6 +128,7 @@ final class AtlasMapCanvas {
     private final Map<AtlasCell, Float> collapsing = new HashMap<>();
     private final NodeBeams beams;
     private final AtlasScenery scenery;
+    private final SlipstreamSky slipstreams = new SlipstreamSky(AtlasSlipstreamRoutes.on(this), SlipstreamSky.Pace.OCCASIONAL, new Random());
     private final ChartSystemSketch gatewaySketch;
     private final Map<Color, NodeRingArt.NotableLook[]> notableLooks = new HashMap<>();
     private Color lookAccent;
@@ -288,6 +291,10 @@ final class AtlasMapCanvas {
         return shown.contains(cell);
     }
 
+    Set<AtlasCell> nodeCells() {
+        return nodes.keySet();
+    }
+
     AtlasNode nodeAt(AtlasCell cell) {
         return nodes.get(cell);
     }
@@ -314,6 +321,7 @@ final class AtlasMapCanvas {
 
     void advance(float amount) {
         scenery.advance(amount);
+        slipstreams.advance(amount);
         ringArt.advance(amount);
         preview.advance(amount);
         collapsing.replaceAll((cell, openness) -> Math.max(0f, openness - amount / COLLAPSE_SECONDS));
@@ -468,6 +476,7 @@ final class AtlasMapCanvas {
     void render(TreeViewport view, Color accent, float alphaMult, AtlasCell hiddenPreview) {
         float sceneryAlpha = search.backgroundAlpha() * alphaMult;
         scenery.renderBackdrop(view, sceneryAlpha);
+        slipstreams.render(view, sceneryAlpha);
         drawLanes(view, accent, alphaMult);
         drawNodes(view, accent, alphaMult, hiddenPreview);
         drawAnomalies(view, alphaMult);

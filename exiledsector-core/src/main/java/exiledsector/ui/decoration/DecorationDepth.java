@@ -6,6 +6,7 @@ public enum DecorationDepth {
     STAR_ATMOSPHERE(false),
     STAR_AURORA(false),
     BELTS(false),
+    SLIPSTREAMS(false),
     CREATURES(false),
     FOREGROUND_IMAGES(false),
     UNITS(false),
