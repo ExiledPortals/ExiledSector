@@ -132,7 +132,7 @@ public final class HullPatternPanel extends HoloPanel {
 
     @Override
     protected float headerToolsWidth() {
-        return FEEDSTOCK_ROOM;
+        return FEEDSTOCK_ROOM + GAP;
     }
 
     @Override

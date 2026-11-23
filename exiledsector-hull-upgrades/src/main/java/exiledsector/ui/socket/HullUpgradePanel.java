@@ -117,9 +117,16 @@ public final class HullUpgradePanel extends HoloPanel {
     }
 
     @Override
+    protected float headerToolsWidth() {
+        return FEEDSTOCK_ROOM + GAP;
+    }
+
+    @Override
     protected void rebuildHeader() {
         closeConfirm();
-        headerElement = finishHeader(startHeader("framework.panel.title", "ui.socketStorage.close", Control.CLOSE), headerElement);
+        TooltipMakerAPI element = startHeader("framework.panel.title", "ui.socketStorage.close", Control.CLOSE);
+        addFeedstockCount(element, CLOSE_BUTTON_WIDTH + GAP);
+        headerElement = finishHeader(element, headerElement);
         refreshOpacity();
     }
 
