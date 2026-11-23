@@ -38,11 +38,10 @@ final class AtlasAbyssShade {
         TreeViewport view = lens.view();
         float tile = TILE_CELLS * AtlasMapCanvas.CELL_PIXELS;
         float zoom = view.zoom();
-        float margin = lens.reachWorld();
-        int firstX = (int) Math.floor(((view.left() - view.centerX()) / zoom - margin) / tile);
-        int lastX = (int) Math.ceil(((view.right() - view.centerX()) / zoom + margin) / tile);
-        int firstY = (int) Math.floor(((view.centerY() - view.top()) / zoom - margin) / tile);
-        int lastY = (int) Math.ceil(((view.centerY() - view.bottom()) / zoom + margin) / tile);
+        int firstX = (int) Math.floor(((view.left() - view.centerX()) / zoom) / tile);
+        int lastX = (int) Math.ceil(((view.right() - view.centerX()) / zoom) / tile);
+        int firstY = (int) Math.floor(((view.centerY() - view.top()) / zoom) / tile);
+        int lastY = (int) Math.ceil(((view.centerY() - view.bottom()) / zoom) / tile);
         int stride = Math.max(1, (int) Math.ceil(Math.max(lastX - firstX, lastY - firstY) / (float) MOST_TILES_ACROSS));
         firstX = Math.floorDiv(firstX, stride) * stride;
         firstY = Math.floorDiv(firstY, stride) * stride;

@@ -96,6 +96,36 @@ class BeamStrokeTest {
     }
 
     @Test
+    void curvesPassThroughTheirApexAndTrimByLengthAlongTheCurve() {
+        BeamStroke.CurvePath curve = new BeamStroke.CurvePath();
+        curve.set(0f, 0f, 50f, 40f, 100f, 0f, 0f, 0f);
+        float halfway = curve.length() / 2f;
+        float[] apex = new float[4];
+        curve.at(halfway, apex);
+
+        assertEquals(50f, apex[0], 0.5f);
+        assertEquals(20f, apex[1], 0.5f);
+        assertEquals(0f, apex[2], 0.02f);
+        assertEquals(1f, apex[3], 0.02f);
+        assertTrue(curve.length() > 100f);
+
+        BeamStroke.CurvePath trimmed = new BeamStroke.CurvePath();
+        trimmed.set(0f, 0f, 50f, 40f, 100f, 0f, 10f, 20f);
+        float[] start = new float[4];
+        float[] end = new float[4];
+        trimmed.at(0f, start);
+        trimmed.at(trimmed.length(), end);
+        curve.at(10f, apex);
+
+        assertEquals(curve.length() - 30f, trimmed.length(), 0.01f);
+        assertEquals(apex[0], start[0], 0.01f);
+        assertEquals(apex[1], start[1], 0.01f);
+        curve.at(curve.length() - 20f, apex);
+        assertEquals(apex[0], end[0], 0.01f);
+        assertEquals(apex[1], end[1], 0.01f);
+    }
+
+    @Test
     void helixStrandsWindAroundTheLineAtAnEvenWidth() {
         BeamStroke.LinePath line = new BeamStroke.LinePath();
         line.set(0f, 0f, 100f, 0f);

@@ -9,6 +9,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AtlasDepthTest {
 
+    @Test
+    void lanesRiseOverNearerGroundSinkIntoFartherGroundAndStayStraightOnAnEvenSlope() {
+        float length = 2f * AtlasMapCanvas.CELL_PIXELS;
+        assertTrue(AtlasDepth.laneLift(0f, 0.1f, 0f, length) > 0f);
+        assertTrue(AtlasDepth.laneLift(0f, -0.1f, 0f, length) < 0f);
+        assertEquals(0f, AtlasDepth.laneLift(-0.6f, 0f, 0.6f, length), 1e-3f);
+        assertEquals(length * AtlasDepth.MOST_LANE_BOW, AtlasDepth.laneLift(-1f, 1f, -1f, length), 1e-2f);
+    }
+
     private static final float CELL = AtlasMapCanvas.CELL_PIXELS;
     private static final float CLOSEST_SYSTEMS_CELLS = 0.65f;
 

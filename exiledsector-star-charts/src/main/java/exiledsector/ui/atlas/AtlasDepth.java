@@ -12,9 +12,10 @@ final class AtlasDepth implements DepthLens.Field {
     static final float SPREAD = 1.6f;
     static final float STRENGTH_ZOOMED_OUT = 0.2f;
     static final float STRENGTH_ZOOMED_IN = 0.4f;
-    static final float PARALLAX_REACH_CELLS = 0.3f;
     static final float FAR_FADE = 0.3f;
     static final float NEAREST_SYSTEM_SIZE = 2f;
+    static final float LANE_LIFT_CELLS = 3f;
+    static final float MOST_LANE_BOW = 0.3f;
     private static final long BROAD_SALT = 0x4445505448L;
     private static final long DETAIL_SALT = 0x44455441494cL;
     private static final float DETAIL_SHIFT = 17.3f;
@@ -36,11 +37,7 @@ final class AtlasDepth implements DepthLens.Field {
     }
 
     DepthLens lens(TreeViewport view) {
-        return new DepthLens(view, this, strength(view.zoom()), parallaxReach());
-    }
-
-    static float parallaxReach() {
-        return PARALLAX_REACH_CELLS * AtlasMapCanvas.CELL_PIXELS;
+        return new DepthLens(view, this, strength(view.zoom()));
     }
 
     static float strength(float zoom) {
@@ -52,6 +49,12 @@ final class AtlasDepth implements DepthLens.Field {
 
     static float systemSize(float depth) {
         return (float) Math.pow(NEAREST_SYSTEM_SIZE, Math.max(-1f, Math.min(1f, depth)));
+    }
+
+    static float laneLift(float fromDepth, float middleDepth, float toDepth, float laneLength) {
+        float lift = (middleDepth - (fromDepth + toDepth) / 2f) * LANE_LIFT_CELLS * AtlasMapCanvas.CELL_PIXELS;
+        float most = laneLength * MOST_LANE_BOW;
+        return Math.max(-most, Math.min(most, lift));
     }
 
     static float fade(float depth) {

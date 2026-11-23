@@ -145,6 +145,18 @@ public final class NodeBeams {
         return true;
     }
 
+    public boolean curvedConnector(float fromX, float fromY, float fromRadius, float controlX, float controlY, float toX, float toY, float toRadius,
+                                   BeamStroke.Look look, float startAlpha, float endAlpha, float fromWidthScale, float toWidthScale) {
+        float dx = toX - fromX;
+        float dy = toY - fromY;
+        if (dx * dx + dy * dy <= (fromRadius + toRadius) * (fromRadius + toRadius)) {
+            return false;
+        }
+        stroke.addTaperedCurve(fromX, fromY, controlX, controlY, toX, toY, fromRadius, toRadius, LANE_STYLE, look, startAlpha, endAlpha,
+                ringArt.elapsedSeconds(), fromWidthScale, toWidthScale);
+        return true;
+    }
+
     public void lane(float fromX, float fromY, float toX, float toY, float distanceOffset, BeamStroke.Look look, float startAlpha, float endAlpha,
                      float widthScale) {
         stroke.addLine(fromX, fromY, toX, toY, distanceOffset, LANE_STYLE, look, startAlpha, endAlpha, ringArt.elapsedSeconds(), widthScale);

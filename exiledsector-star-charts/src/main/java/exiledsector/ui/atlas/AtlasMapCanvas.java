@@ -138,6 +138,7 @@ final class AtlasMapCanvas {
     private final Map<AtlasCell, Float> nodeDepths = new HashMap<>();
     private final List<AtlasCell> drawOrder;
     private final float[] placed = new float[3];
+    private final float[] laneBend = new float[3];
     private TreeViewport lensView;
     private DepthLens lens;
     private Color lookAccent;
@@ -547,10 +548,14 @@ final class AtlasMapCanvas {
             float y1 = screenY(view, trace.from());
             float x2 = screenX(view, trace.to());
             float y2 = screenY(view, trace.to());
-            if (view.overlaps(Math.min(x1, x2), Math.min(y1, y2), Math.max(x1, x2), Math.max(y1, y2))) {
+            placeLaneBend(view, trace.from(), trace.to());
+            float bendX = laneBend[DepthLens.X];
+            float bendY = laneBend[DepthLens.Y];
+            if (view.overlaps(Math.min(Math.min(x1, x2), bendX), Math.min(Math.min(y1, y2), bendY), Math.max(Math.max(x1, x2), bendX),
+                    Math.max(Math.max(y1, y2), bendY))) {
                 float fromWidthScale = beamWidthScale(view, trace.from());
                 float toWidthScale = beamWidthScale(view, trace.to());
-                beams.connector(x1, y1, laneEndReach(view, trace.from(), true, fromWidthScale), x2, y2,
+                beams.curvedConnector(x1, y1, laneEndReach(view, trace.from(), true, fromWidthScale), bendX, bendY, x2, y2,
                         laneEndReach(view, trace.to(), visible.contains(trace.to()), toWidthScale), traceLook,
                         traceAlpha * AtlasDepth.fade(depthOf(trace.from())), traceAlpha * AtlasDepth.fade(depthOf(trace.to())),
                         fromWidthScale * TRACE_WIDTH_SHARE, toWidthScale * TRACE_WIDTH_SHARE);
@@ -574,7 +579,11 @@ final class AtlasMapCanvas {
         float y1 = screenY(view, from);
         float x2 = screenX(view, to);
         float y2 = screenY(view, to);
-        if (!view.overlaps(Math.min(x1, x2), Math.min(y1, y2), Math.max(x1, x2), Math.max(y1, y2))) {
+        placeLaneBend(view, from, to);
+        float bendX = laneBend[DepthLens.X];
+        float bendY = laneBend[DepthLens.Y];
+        if (!view.overlaps(Math.min(Math.min(x1, x2), bendX), Math.min(Math.min(y1, y2), bendY), Math.max(Math.max(x1, x2), bendX),
+                Math.max(Math.max(y1, y2), bendY))) {
             return;
         }
         float fromWidthScale = beamWidthScale(view, from);
@@ -584,14 +593,32 @@ final class AtlasMapCanvas {
         float fromFade = AtlasDepth.fade(depthOf(from));
         float toFade = AtlasDepth.fade(depthOf(to));
         if (state.isCompleted(from) && state.isCompleted(to)) {
-            beams.connector(x1, y1, fromRadius, x2, y2, toRadius, beams.lit(accent), alphaMult * fromFade, alphaMult * toFade, fromWidthScale,
-                    toWidthScale);
+            beams.curvedConnector(x1, y1, fromRadius, bendX, bendY, x2, y2, toRadius, beams.lit(accent), alphaMult * fromFade, alphaMult * toFade,
+                    fromWidthScale, toWidthScale);
         } else if (bothVisible) {
             float dullAlpha = DULL_ALPHA * alphaMult;
-            beams.connector(x1, y1, fromRadius, x2, y2, toRadius, DULL_LOOK, dullAlpha * fromFade, dullAlpha * toFade, fromWidthScale, toWidthScale);
+            beams.curvedConnector(x1, y1, fromRadius, bendX, bendY, x2, y2, toRadius, DULL_LOOK, dullAlpha * fromFade, dullAlpha * toFade,
+                    fromWidthScale, toWidthScale);
         } else {
-            beams.connector(x1, y1, fromRadius, x2, y2, toRadius, DULL_LOOK, FOG_LANE_ALPHA * alphaMult * fromFade, 0f, fromWidthScale, toWidthScale);
+            beams.curvedConnector(x1, y1, fromRadius, bendX, bendY, x2, y2, toRadius, DULL_LOOK, FOG_LANE_ALPHA * alphaMult * fromFade, 0f,
+                    fromWidthScale, toWidthScale);
         }
+    }
+
+    float laneLift(AtlasCell from, AtlasCell to) {
+        float fromX = displayX(from);
+        float fromY = displayY(from);
+        float toX = displayX(to);
+        float toY = displayY(to);
+        float middleDepth = scenery.depth().depth((fromX + toX) / 2f, (fromY + toY) / 2f);
+        float length = (float) Math.sqrt((toX - fromX) * (toX - fromX) + (toY - fromY) * (toY - fromY));
+        return AtlasDepth.laneLift(depthOf(from), middleDepth, depthOf(to), length);
+    }
+
+    private void placeLaneBend(TreeViewport view, AtlasCell from, AtlasCell to) {
+        float middleX = (displayX(from) + displayX(to)) / 2f;
+        float middleY = (displayY(from) + displayY(to)) / 2f;
+        lens(view).place(middleX, middleY + 2f * laneLift(from, to), 0f, laneBend);
     }
 
     private void drawNodes(TreeViewport view, Color accent, float mapAlpha, AtlasCell hiddenPreview) {

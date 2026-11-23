@@ -61,6 +61,8 @@ public final class BeamStroke {
     static final float TILE_EPSILON = 0.001f;
     static final float HELIX_PIECES_PER_WAVE = 6f;
     static final float TAPER_PIECES = 8f;
+    static final float CURVE_PIECES = 16f;
+    static final int CURVE_SAMPLES = 32;
     private static final int FLOATS_PER_VERTEX = 8;
 
     private interface Path {
@@ -81,6 +83,7 @@ public final class BeamStroke {
     private final RingPath ringPath = new RingPath();
     private final HelixPath helixPath = new HelixPath();
     private final TaperedPath taperedPath = new TaperedPath();
+    private final CurvePath curvePath = new CurvePath();
     private final Map<String, QuadBuffer> pending = new LinkedHashMap<>();
 
     public void addLine(float fromX, float fromY, float toX, float toY, float distanceOffset, Style style, Look look, float startAlpha, float endAlpha,
@@ -105,6 +108,18 @@ public final class BeamStroke {
         }
         taperedPath.set(linePath, startWidthScale / meanWidthScale, endWidthScale / meanWidthScale);
         stroke(taperedPath, style, look, startAlpha, endAlpha, elapsedSeconds, meanWidthScale, linePath.length() / TAPER_PIECES, distanceOffset);
+    }
+
+    public void addTaperedCurve(float fromX, float fromY, float controlX, float controlY, float toX, float toY, float startTrim, float endTrim,
+                                Style style, Look look, float startAlpha, float endAlpha, float elapsedSeconds, float startWidthScale,
+                                float endWidthScale) {
+        float meanWidthScale = (startWidthScale + endWidthScale) / 2f;
+        curvePath.set(fromX, fromY, controlX, controlY, toX, toY, startTrim, endTrim);
+        if (meanWidthScale <= 0f || !drawable(curvePath.length()) || (startAlpha <= 0f && endAlpha <= 0f)) {
+            return;
+        }
+        taperedPath.set(curvePath, startWidthScale / meanWidthScale, endWidthScale / meanWidthScale);
+        stroke(taperedPath, style, look, startAlpha, endAlpha, elapsedSeconds, meanWidthScale, curvePath.length() / CURVE_PIECES, 0f);
     }
 
     public void addHelix(float fromX, float fromY, float toX, float toY, float distanceOffset, Helix helix, Style style, Look look,
@@ -302,6 +317,85 @@ public final class BeamStroke {
             out[1] = fromY + dirY * distance;
             out[2] = -dirY;
             out[3] = dirX;
+        }
+    }
+
+    static final class CurvePath implements Path {
+        private final float[] cumulative = new float[CURVE_SAMPLES + 1];
+        private float fromX;
+        private float fromY;
+        private float controlX;
+        private float controlY;
+        private float toX;
+        private float toY;
+        private float startTrim;
+        private float length;
+
+        void set(float x1, float y1, float cx, float cy, float x2, float y2, float trimAtStart, float trimAtEnd) {
+            fromX = x1;
+            fromY = y1;
+            controlX = cx;
+            controlY = cy;
+            toX = x2;
+            toY = y2;
+            float previousX = x1;
+            float previousY = y1;
+            for (int sample = 1; sample <= CURVE_SAMPLES; sample++) {
+                float t = sample / (float) CURVE_SAMPLES;
+                float x = curve(fromX, controlX, toX, t);
+                float y = curve(fromY, controlY, toY, t);
+                cumulative[sample] = cumulative[sample - 1] + (float) Math.sqrt((x - previousX) * (x - previousX) + (y - previousY) * (y - previousY));
+                previousX = x;
+                previousY = y;
+            }
+            startTrim = Math.max(0f, trimAtStart);
+            length = Math.max(0f, cumulative[CURVE_SAMPLES] - startTrim - Math.max(0f, trimAtEnd));
+        }
+
+        @Override
+        public float length() {
+            return length;
+        }
+
+        @Override
+        public void at(float distance, float[] out) {
+            float t = parameterAt(startTrim + distance);
+            out[0] = curve(fromX, controlX, toX, t);
+            out[1] = curve(fromY, controlY, toY, t);
+            float tangentX = slope(fromX, controlX, toX, t);
+            float tangentY = slope(fromY, controlY, toY, t);
+            float tangentLength = (float) Math.sqrt(tangentX * tangentX + tangentY * tangentY);
+            if (tangentLength <= 0f) {
+                tangentX = toX - fromX;
+                tangentY = toY - fromY;
+                tangentLength = Math.max(1e-6f, (float) Math.sqrt(tangentX * tangentX + tangentY * tangentY));
+            }
+            out[2] = -tangentY / tangentLength;
+            out[3] = tangentX / tangentLength;
+        }
+
+        private float parameterAt(float arcLength) {
+            if (arcLength <= 0f) {
+                return 0f;
+            }
+            int sample = Arrays.binarySearch(cumulative, arcLength);
+            if (sample >= 0) {
+                return sample / (float) CURVE_SAMPLES;
+            }
+            int after = Math.min(CURVE_SAMPLES, -sample - 1);
+            int before = after - 1;
+            float span = cumulative[after] - cumulative[before];
+            float fraction = span > 0f ? Math.min(1f, (arcLength - cumulative[before]) / span) : 0f;
+            return (before + fraction) / CURVE_SAMPLES;
+        }
+
+        private static float curve(float from, float control, float to, float t) {
+            float u = 1f - t;
+            return u * u * from + 2f * u * t * control + t * t * to;
+        }
+
+        private static float slope(float from, float control, float to, float t) {
+            return 2f * (1f - t) * (control - from) + 2f * t * (to - control);
         }
     }
 

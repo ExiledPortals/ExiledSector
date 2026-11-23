@@ -19,29 +19,28 @@ public final class DepthLens {
     private final TreeViewport view;
     private final Field field;
     private final float strength;
-    private final float reachWorld;
     private final float sampleShare;
-    private final float eyeX;
-    private final float eyeY;
-    private final boolean bounded;
+    private final float cameraX;
+    private final float cameraY;
 
-    public DepthLens(TreeViewport view, Field field, float strength, float reachWorld) {
-        this(view, field, strength, reachWorld, 1f);
+    public DepthLens(TreeViewport view, Field field, float strength) {
+        this(view, field, strength, 1f);
     }
 
-    private DepthLens(TreeViewport view, Field field, float strength, float reachWorld, float sampleShare) {
+    private DepthLens(TreeViewport view, Field field, float strength, float sampleShare) {
         this.view = view;
         this.field = field;
         this.strength = strength;
-        this.reachWorld = reachWorld;
         this.sampleShare = sampleShare;
-        this.eyeX = (view.left() + view.right()) / 2f;
-        this.eyeY = (view.bottom() + view.top()) / 2f;
-        this.bounded = Float.isFinite(eyeX) && Float.isFinite(eyeY);
+        float eyeX = (view.left() + view.right()) / 2f;
+        float eyeY = (view.bottom() + view.top()) / 2f;
+        boolean bounded = Float.isFinite(eyeX) && Float.isFinite(eyeY) && view.zoom() > 0f;
+        cameraX = bounded ? (eyeX - view.centerX()) / view.zoom() : 0f;
+        cameraY = bounded ? (view.centerY() - eyeY) / view.zoom() : 0f;
     }
 
     public static DepthLens flat(TreeViewport view) {
-        return new DepthLens(view, LEVEL, 0f, 0f);
+        return new DepthLens(view, LEVEL, 0f);
     }
 
     public TreeViewport view() {
@@ -50,10 +49,6 @@ public final class DepthLens {
 
     public float zoom() {
         return view.zoom();
-    }
-
-    public float reachWorld() {
-        return reachWorld;
     }
 
     public float depthAt(float worldX, float worldY) {
@@ -66,33 +61,26 @@ public final class DepthLens {
     }
 
     public void place(float worldX, float worldY, float[] out) {
-        place(worldX, worldY, depthAt(worldX, worldY), reachWorld, out);
+        place(worldX, worldY, depthAt(worldX, worldY), out);
     }
 
     public void place(float worldX, float worldY, float depth, float[] out) {
-        place(worldX, worldY, depth, reachWorld, out);
+        out[X] = view.screenX(worldX);
+        out[Y] = view.screenY(worldY);
+        out[SCALE] = scale(depth);
     }
 
-    public void place(float worldX, float worldY, float depth, float parallaxReachWorld, float[] out) {
-        float flatX = view.screenX(worldX);
-        float flatY = view.screenY(worldY);
-        float scale = scale(depth);
-        out[SCALE] = scale;
-        out[X] = flatX;
-        out[Y] = flatY;
-        if (!bounded) {
-            return;
-        }
-        float offsetX = flatX - eyeX;
-        float offsetY = flatY - eyeY;
-        float pull = ImageParallax.driftFraction((float) Math.hypot(offsetX, offsetY), scale, parallaxReachWorld * view.zoom());
-        out[X] = flatX - offsetX * pull;
-        out[Y] = flatY - offsetY * pull;
+    public float cameraX() {
+        return cameraX;
+    }
+
+    public float cameraY() {
+        return cameraY;
     }
 
     public DepthLens rescaled(float worldShare) {
         TreeViewport scaled = new TreeViewport(view.centerX(), view.centerY(), view.zoom() * worldShare, view.left(), view.bottom(), view.right(),
                 view.top());
-        return new DepthLens(scaled, field, strength, reachWorld / worldShare, sampleShare * worldShare);
+        return new DepthLens(scaled, field, strength, sampleShare * worldShare);
     }
 }

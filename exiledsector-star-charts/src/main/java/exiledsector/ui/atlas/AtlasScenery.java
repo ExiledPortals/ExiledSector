@@ -13,6 +13,7 @@ import exiledsector.charts.content.ChartFactions;
 import exiledsector.ui.decoration.DepthLens;
 import exiledsector.ui.decoration.FactionStarColours;
 import exiledsector.ui.decoration.HyperspaceClouds;
+import exiledsector.ui.decoration.LayerDrift;
 
 import java.awt.Color;
 import java.util.HashSet;
@@ -29,12 +30,14 @@ final class AtlasScenery {
     static final float FAR_CLOUD_TILE = AtlasMapCanvas.CELL_PIXELS / 2f;
     static final float FAR_CLOUD_ALPHA = 0.22f;
     static final float FAR_CLOUD_DEPTH = -1.2f;
-    static final float FAR_CLOUD_REACH_CELLS = 0.6f;
+    static final float FAR_CLOUD_SPEED = 0.8f;
     static final float NEAR_CLOUD_TILE = AtlasMapCanvas.CELL_PIXELS / 2f;
     static final float NEAR_CLOUD_ALPHA = 0.1f;
     static final float NEAR_CLOUD_DEPTH = 1.1f;
-    static final float NEAR_CLOUD_REACH_CELLS = 1f;
+    static final float NEAR_CLOUD_SPEED = 1.25f;
     static final float NEAR_CLOUD_COVER = 0.3f;
+    static final float CLOUD_DRIFT_CELLS = 0.5f;
+    static final float CLOUD_SETTLE_SECONDS = 2f;
     private static final long FAR_CLOUD_SALT = 0x4641524eL;
     private static final long NEAR_CLOUD_SALT = 0x4e454152L;
     static final float KNOWN_SAMPLE_REACH = 0.5f;
@@ -66,13 +69,17 @@ final class AtlasScenery {
         this.decorationLookup = decorationLookup;
         depth = new AtlasDepth(seed);
         farClouds = new HyperspaceClouds(FAR_CLOUD_TILE, seed ^ FAR_CLOUD_SALT, FAR_CLOUD_ALPHA, FAR_CLOUD_DEPTH,
-                FAR_CLOUD_REACH_CELLS * AtlasMapCanvas.CELL_PIXELS);
-        clouds = new HyperspaceClouds(CLOUD_TILE, seed, CLOUD_ALPHA, 0f, AtlasDepth.parallaxReach());
+                cloudDrift(FAR_CLOUD_SPEED));
+        clouds = new HyperspaceClouds(CLOUD_TILE, seed, CLOUD_ALPHA);
         nearClouds = new HyperspaceClouds(NEAR_CLOUD_TILE, seed ^ NEAR_CLOUD_SALT, NEAR_CLOUD_ALPHA, NEAR_CLOUD_DEPTH,
-                NEAR_CLOUD_REACH_CELLS * AtlasMapCanvas.CELL_PIXELS);
+                cloudDrift(NEAR_CLOUD_SPEED));
         borders = new AtlasTerritoryBorders(seed, territoryId -> factionColour(TerritoryFactions.factionOfTerritory(territoryId)),
                 territoryId -> ChartFactions.displayName(TerritoryFactions.factionOfTerritory(territoryId)));
         biomes = new AtlasTerritoryBorders(seed, AtlasData::regionTint, AtlasNodeText::regionName);
+    }
+
+    static LayerDrift cloudDrift(float layerSpeed) {
+        return new LayerDrift(layerSpeed, CLOUD_DRIFT_CELLS * AtlasMapCanvas.CELL_PIXELS, CLOUD_SETTLE_SECONDS);
     }
 
     AtlasDepth depth() {

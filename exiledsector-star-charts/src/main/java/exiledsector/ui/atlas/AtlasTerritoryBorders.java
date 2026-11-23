@@ -151,11 +151,10 @@ final class AtlasTerritoryBorders {
             return;
         }
         TreeViewport view = lens.view();
-        float margin = lens.reachWorld();
         List<Integer> onScreenIndexes = new ArrayList<>();
         for (int index = 0; index < regions.size(); index++) {
             Region region = regions.get(index);
-            if (visible(view, region.minX(), region.minY(), region.maxX(), region.maxY(), margin)) {
+            if (visible(view, region.minX(), region.minY(), region.maxX(), region.maxY())) {
                 onScreenIndexes.add(index);
             }
         }
@@ -165,7 +164,7 @@ final class AtlasTerritoryBorders {
         try (GlScope scope = GlScope.flat()) {
             for (int index : onScreenIndexes) {
                 for (Loop loop : regions.get(index).loops()) {
-                    if (visible(view, loop.minX(), loop.minY(), loop.maxX(), loop.maxY(), margin)) {
+                    if (visible(view, loop.minX(), loop.minY(), loop.maxX(), loop.maxY())) {
                         project(lens, loop, true);
                         drawBand(loop.outline().length, tints.get(index), BAND_ALPHA * alpha);
                     }
@@ -178,7 +177,7 @@ final class AtlasTerritoryBorders {
                 Color outline = outlines.get(index);
                 GL11.glColor4f(outline.getRed() / 255f, outline.getGreen() / 255f, outline.getBlue() / 255f, OUTLINE_ALPHA * alpha);
                 for (Loop loop : region.loops()) {
-                    if (visible(view, loop.minX(), loop.minY(), loop.maxX(), loop.maxY(), margin)) {
+                    if (visible(view, loop.minX(), loop.minY(), loop.maxX(), loop.maxY())) {
                         project(lens, loop, false);
                         GL11.glBegin(GL11.GL_LINE_LOOP);
                         for (int point = 0; point < loop.outline().length; point += 2) {
@@ -267,8 +266,8 @@ final class AtlasTerritoryBorders {
         return colour == null ? Color.WHITE : colour;
     }
 
-    private static boolean visible(TreeViewport view, float minX, float minY, float maxX, float maxY, float margin) {
-        return view.overlaps(view.screenX(minX - margin), view.screenY(maxY + margin), view.screenX(maxX + margin), view.screenY(minY - margin));
+    private static boolean visible(TreeViewport view, float minX, float minY, float maxX, float maxY) {
+        return view.overlaps(view.screenX(minX), view.screenY(maxY), view.screenX(maxX), view.screenY(minY));
     }
 
     static Color towardWhite(Color colour, float share) {

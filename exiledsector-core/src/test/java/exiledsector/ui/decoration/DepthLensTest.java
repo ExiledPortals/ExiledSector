@@ -10,12 +10,15 @@ class DepthLensTest {
 
     private static final float ZOOM = 0.5f;
     private static final TreeViewport VIEW = new TreeViewport(640f, 360f, ZOOM, 0f, 0f, 1280f, 720f);
-    private static final float REACH = 400f;
 
     private static float[] place(DepthLens lens, float worldX, float worldY, float depth) {
         float[] out = new float[3];
         lens.place(worldX, worldY, depth, out);
         return out;
+    }
+
+    private static TreeViewport lookingAt(float cameraX, float cameraY) {
+        return new TreeViewport(640f - cameraX * ZOOM, 360f + cameraY * ZOOM, ZOOM, 0f, 0f, 1280f, 720f);
     }
 
     @Test
@@ -27,39 +30,35 @@ class DepthLensTest {
     }
 
     @Test
-    void thePointUnderTheEyeGrowsButNeverMoves() {
-        DepthLens lens = new DepthLens(VIEW, (x, y) -> 0f, 0.4f, REACH);
-        float[] placed = place(lens, 0f, 0f, 1f);
-        assertEquals(640f, placed[DepthLens.X], 1e-4f);
-        assertEquals(360f, placed[DepthLens.Y], 1e-4f);
-        assertEquals(1f / 0.6f, placed[DepthLens.SCALE], 1e-4f);
+    void nearAndFarPointsStayWhereTheViewportPutsThemWhereverTheCameraLooks() {
+        for (float cameraX : new float[] {-3000f, 0f, 2500f}) {
+            TreeViewport view = lookingAt(cameraX, 700f);
+            DepthLens lens = new DepthLens(view, (x, y) -> 0f, 0.4f);
+            for (float depth : new float[] {-1f, 0f, 1f}) {
+                float[] placed = place(lens, 600f, -400f, depth);
+                assertEquals(view.screenX(600f), placed[DepthLens.X], 1e-3f);
+                assertEquals(view.screenY(-400f), placed[DepthLens.Y], 1e-3f);
+            }
+        }
     }
 
     @Test
-    void nearPointsSpreadAwayFromTheEyeAndFarPointsGatherTowardIt() {
-        DepthLens lens = new DepthLens(VIEW, (x, y) -> 0f, 0.4f, REACH);
-        float flatX = VIEW.screenX(600f);
-        assertTrue(place(lens, 600f, 0f, 1f)[DepthLens.X] > flatX);
-        assertTrue(place(lens, 600f, 0f, -1f)[DepthLens.X] < flatX);
-    }
-
-    @Test
-    void theParallaxNeverPassesItsReach() {
-        DepthLens lens = new DepthLens(VIEW, (x, y) -> 0f, 0.4f, REACH);
-        float[] placed = place(lens, 100000f, 0f, 1f);
-        assertTrue(placed[DepthLens.X] - VIEW.screenX(100000f) <= REACH * ZOOM + 1e-2f);
+    void nearPointsGrowAndFarPointsShrink() {
+        DepthLens lens = new DepthLens(VIEW, (x, y) -> 0f, 0.4f);
+        assertEquals(1f / 0.6f, place(lens, 0f, 0f, 1f)[DepthLens.SCALE], 1e-4f);
+        assertTrue(place(lens, 0f, 0f, -1f)[DepthLens.SCALE] < 1f);
     }
 
     @Test
     void theScaleStopsShortOfTheCamera() {
-        DepthLens lens = new DepthLens(VIEW, (x, y) -> 0f, 0.4f, REACH);
+        DepthLens lens = new DepthLens(VIEW, (x, y) -> 0f, 0.4f);
         assertEquals(1f / (1f - DepthLens.MOST_LIFT), lens.scale(10f), 1e-4f);
         assertEquals(1f / (1f + DepthLens.MOST_SINK), lens.scale(-10f), 1e-4f);
     }
 
     @Test
     void theFieldGivesEachPointItsDepth() {
-        DepthLens lens = new DepthLens(VIEW, (x, y) -> x > 0f ? 1f : -1f, 0.4f, REACH);
+        DepthLens lens = new DepthLens(VIEW, (x, y) -> x > 0f ? 1f : -1f, 0.4f);
         assertEquals(lens.scale(1f), place(lens, 50f, 0f, lens.depthAt(50f, 0f))[DepthLens.SCALE], 1e-4f);
         float[] fromField = new float[3];
         lens.place(-50f, 0f, fromField);
@@ -67,8 +66,15 @@ class DepthLensTest {
     }
 
     @Test
+    void theLensKnowsWhereTheCameraLooks() {
+        DepthLens lens = new DepthLens(lookingAt(-2000f, 900f), (x, y) -> 0f, 0.4f);
+        assertEquals(-2000f, lens.cameraX(), 1e-2f);
+        assertEquals(900f, lens.cameraY(), 1e-2f);
+    }
+
+    @Test
     void aRescaledLensDrawsTheSameSpotFromSmallerWorldUnits() {
-        DepthLens lens = new DepthLens(VIEW, (x, y) -> x / 1000f, 0.4f, REACH);
+        DepthLens lens = new DepthLens(VIEW, (x, y) -> x / 1000f, 0.4f);
         DepthLens halved = lens.rescaled(2f);
         float[] full = new float[3];
         float[] half = new float[3];
