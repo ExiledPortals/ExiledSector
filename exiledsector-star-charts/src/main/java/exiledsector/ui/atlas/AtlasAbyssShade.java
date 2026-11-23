@@ -2,6 +2,7 @@ package exiledsector.ui.atlas;
 
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.ui.TreeViewport;
+import exiledsector.ui.decoration.DepthLens;
 import exiledsector.ui.util.GlScope;
 import org.lwjgl.opengl.GL11;
 
@@ -18,30 +19,38 @@ final class AtlasAbyssShade {
     static final int CACHE_LIMIT = 1 << 16;
 
     private final Map<Long, Float> shades = new HashMap<>();
+    private final Map<Long, Float> depths = new HashMap<>();
+    private final float[] placed = new float[3];
     private Predicate<AtlasCell> abyssal = cell -> false;
     private boolean anyAbyss;
 
     void attach(Predicate<AtlasCell> abyssalCell, Collection<AtlasCell> knownCells) {
         abyssal = abyssalCell;
         shades.clear();
+        depths.clear();
         anyAbyss = knownCells.stream().anyMatch(abyssalCell);
     }
 
-    void render(TreeViewport view, float alphaMult) {
+    void render(DepthLens lens, float alphaMult) {
         if (!anyAbyss || alphaMult <= 0f) {
             return;
         }
+        TreeViewport view = lens.view();
         float tile = TILE_CELLS * AtlasMapCanvas.CELL_PIXELS;
         float zoom = view.zoom();
-        int firstX = (int) Math.floor((view.left() - view.centerX()) / zoom / tile);
-        int lastX = (int) Math.ceil((view.right() - view.centerX()) / zoom / tile);
-        int firstY = (int) Math.floor((view.centerY() - view.top()) / zoom / tile);
-        int lastY = (int) Math.ceil((view.centerY() - view.bottom()) / zoom / tile);
+        float margin = lens.reachWorld();
+        int firstX = (int) Math.floor(((view.left() - view.centerX()) / zoom - margin) / tile);
+        int lastX = (int) Math.ceil(((view.right() - view.centerX()) / zoom + margin) / tile);
+        int firstY = (int) Math.floor(((view.centerY() - view.top()) / zoom - margin) / tile);
+        int lastY = (int) Math.ceil(((view.centerY() - view.bottom()) / zoom + margin) / tile);
         int stride = Math.max(1, (int) Math.ceil(Math.max(lastX - firstX, lastY - firstY) / (float) MOST_TILES_ACROSS));
         firstX = Math.floorDiv(firstX, stride) * stride;
         firstY = Math.floorDiv(firstY, stride) * stride;
         if (shades.size() > CACHE_LIMIT) {
             shades.clear();
+        }
+        if (depths.size() > CACHE_LIMIT) {
+            depths.clear();
         }
         boolean began = false;
         try (GlScope scope = GlScope.flat()) {
@@ -58,10 +67,10 @@ final class AtlasAbyssShade {
                         GL11.glBegin(GL11.GL_QUADS);
                         began = true;
                     }
-                    vertex(view, gridX, gridY, tile, bottomLeft * alphaMult);
-                    vertex(view, gridX + stride, gridY, tile, bottomRight * alphaMult);
-                    vertex(view, gridX + stride, gridY + stride, tile, topRight * alphaMult);
-                    vertex(view, gridX, gridY + stride, tile, topLeft * alphaMult);
+                    vertex(lens, gridX, gridY, tile, bottomLeft * alphaMult);
+                    vertex(lens, gridX + stride, gridY, tile, bottomRight * alphaMult);
+                    vertex(lens, gridX + stride, gridY + stride, tile, topRight * alphaMult);
+                    vertex(lens, gridX, gridY + stride, tile, topLeft * alphaMult);
                 }
             }
             if (began) {
@@ -87,8 +96,17 @@ final class AtlasAbyssShade {
         return dark / 9f;
     }
 
-    private static void vertex(TreeViewport view, int gridX, int gridY, float tile, float alpha) {
+    private void vertex(DepthLens lens, int gridX, int gridY, float tile, float alpha) {
+        float worldX = gridX * tile;
+        float worldY = gridY * tile;
+        long key = ((long) gridX << 32) ^ (gridY & 0xffffffffL);
+        Float depth = depths.get(key);
+        if (depth == null) {
+            depth = lens.depthAt(worldX, worldY);
+            depths.put(key, depth);
+        }
+        lens.place(worldX, worldY, depth, placed);
         GL11.glColor4f(0f, 0f, 0f, alpha);
-        GL11.glVertex2f(view.screenX(gridX * tile), view.screenY(gridY * tile));
+        GL11.glVertex2f(placed[DepthLens.X], placed[DepthLens.Y]);
     }
 }

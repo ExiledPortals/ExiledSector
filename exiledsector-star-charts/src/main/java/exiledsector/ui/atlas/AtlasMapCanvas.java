@@ -24,16 +24,19 @@ import exiledsector.charts.officer.OfficerSightings;
 import exiledsector.charts.officer.OfficerText;
 import exiledsector.ui.SmoothZoom;
 import exiledsector.ui.TreeViewport;
+import exiledsector.ui.decoration.DepthLens;
 import exiledsector.ui.node.BeamStroke;
 import exiledsector.ui.node.NodeBeams;
 import exiledsector.ui.node.NodeMetrics;
 import exiledsector.ui.node.NodeRingArt;
 import exiledsector.ui.node.WormholeArt;
+import exiledsector.ui.slipstream.SlipstreamProjection;
 import exiledsector.ui.slipstream.SlipstreamSky;
 import exiledsector.ui.util.SpriteDraw;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -131,6 +134,11 @@ final class AtlasMapCanvas {
     private final SlipstreamSky slipstreams = new SlipstreamSky(AtlasSlipstreamRoutes.on(this), SlipstreamSky.Pace.OCCASIONAL, new Random());
     private final ChartSystemSketch gatewaySketch;
     private final Map<Color, NodeRingArt.NotableLook[]> notableLooks = new HashMap<>();
+    private final Map<AtlasCell, Float> nodeDepths = new HashMap<>();
+    private final List<AtlasCell> drawOrder;
+    private final float[] placed = new float[3];
+    private TreeViewport lensView;
+    private DepthLens lens;
     private Color lookAccent;
     private AtlasSearch search = new AtlasSearch();
     private AtlasCell catalystCell;
@@ -192,6 +200,7 @@ final class AtlasMapCanvas {
             sketches.put(AtlasCell.ORIGIN, AtlasSystemPreview.Prepared.of(nodeKey(AtlasCell.ORIGIN), gatewaySketch));
         }
         addChains();
+        drawOrder = nodes.keySet().stream().sorted(Comparator.comparingDouble(this::depthOf)).toList();
         scenery.attach(this);
     }
 
@@ -365,35 +374,66 @@ final class AtlasMapCanvas {
         return (grid + (mapped - grid) * DISPLAY_JITTER_SHARE) * CELL_PIXELS;
     }
 
+    DepthLens lens(TreeViewport view) {
+        if (!view.equals(lensView)) {
+            lensView = view;
+            lens = scenery.depth().lens(view);
+        }
+        return lens;
+    }
+
+    float depthOf(AtlasCell cell) {
+        Float depth = nodeDepths.get(cell);
+        if (depth == null) {
+            depth = scenery.depth().depth(displayX(cell), displayY(cell));
+            nodeDepths.put(cell, depth);
+        }
+        return depth;
+    }
+
+    float depthScale(TreeViewport view, AtlasCell cell) {
+        return lens(view).scale(depthOf(cell));
+    }
+
     float screenX(TreeViewport view, AtlasCell cell) {
-        return view.screenX(displayX(cell));
+        place(view, cell);
+        return placed[DepthLens.X];
     }
 
     float screenY(TreeViewport view, AtlasCell cell) {
-        return view.screenY(displayY(cell));
+        place(view, cell);
+        return placed[DepthLens.Y];
+    }
+
+    private void place(TreeViewport view, AtlasCell cell) {
+        lens(view).place(displayX(cell), displayY(cell), depthOf(cell), placed);
     }
 
     static float footprint(TreeViewport view) {
         return NodeMetrics.NODE_SIZE * NODE_SCALE * view.zoom();
     }
 
-    static float beamWidthScale(TreeViewport view) {
-        return NodeBeams.widthScale(view.zoom() * NODE_SCALE);
+    float footprint(TreeViewport view, AtlasCell cell) {
+        return footprint(view) * depthScale(view, cell);
+    }
+
+    float beamWidthScale(TreeViewport view, AtlasCell cell) {
+        return NodeBeams.widthScale(view.zoom() * NODE_SCALE * depthScale(view, cell));
     }
 
     AtlasCell cellAt(TreeViewport view, float x, float y) {
-        float hitRadius = footprint(view) * HIT_SHARE;
         AtlasCell nearest = null;
-        float nearestDistance = hitRadius * hitRadius;
+        float nearestShare = 1f;
         for (AtlasCell cell : shown) {
             if (generator.isVoid(cell)) {
                 continue;
             }
+            float hitRadius = footprint(view, cell) * HIT_SHARE;
             float dx = screenX(view, cell) - x;
             float dy = screenY(view, cell) - y;
-            float distance = dx * dx + dy * dy;
-            if (distance < nearestDistance) {
-                nearestDistance = distance;
+            float share = (dx * dx + dy * dy) / (hitRadius * hitRadius);
+            if (share < nearestShare) {
+                nearestShare = share;
                 nearest = cell;
             }
         }
@@ -405,8 +445,8 @@ final class AtlasMapCanvas {
     }
 
     AnomalyIcon anomalyAt(TreeViewport view, float x, float y) {
-        float footprint = footprint(view);
         for (AnomalyIcon icon : anomalyIcons) {
+            float footprint = footprint(view, icon.cell());
             float scale = nodeScale(icon.cell());
             float radius = anomalyIconRadius(footprint, scale);
             float dx = anomalyX(view, icon, footprint, scale) - x;
@@ -466,7 +506,7 @@ final class AtlasMapCanvas {
     }
 
     private float previewRadius(TreeViewport view, AtlasCell cell) {
-        return NodeMetrics.donutRadius(footprint(view)) * nodeScale(cell) * PREVIEW_FILL;
+        return NodeMetrics.donutRadius(footprint(view, cell)) * nodeScale(cell) * PREVIEW_FILL;
     }
 
     private float previewAlpha(AtlasCell cell) {
@@ -475,12 +515,13 @@ final class AtlasMapCanvas {
 
     void render(TreeViewport view, Color accent, float alphaMult, AtlasCell hiddenPreview) {
         float sceneryAlpha = search.backgroundAlpha() * alphaMult;
-        scenery.renderBackdrop(view, sceneryAlpha);
-        slipstreams.render(view, sceneryAlpha);
+        DepthLens depthLens = lens(view);
+        scenery.renderBackdrop(depthLens, sceneryAlpha);
+        slipstreams.render(SlipstreamProjection.of(view, depthLens::place), sceneryAlpha);
         drawLanes(view, accent, alphaMult);
         drawNodes(view, accent, alphaMult, hiddenPreview);
         drawAnomalies(view, alphaMult);
-        scenery.renderAbove(view, sceneryAlpha);
+        scenery.renderAbove(depthLens, sceneryAlpha);
     }
 
     static Color regionColour(String regionId, Color fallback) {
@@ -489,22 +530,16 @@ final class AtlasMapCanvas {
     }
 
     private void drawLanes(TreeViewport view, Color accent, float alphaMult) {
-        float widthScale = beamWidthScale(view);
-        float innerRadius = NodeMetrics.donutRadius(footprint(view));
-        float fogRadius = laneReach(NodeMetrics.donutRadius(footprint(view) * FOG_SIZE_SHARE), widthScale);
         for (AtlasCell cell : visible) {
             for (AtlasCell neighbour : generator.lanes(cell)) {
                 boolean bothVisible = visible.contains(neighbour);
                 if (bothVisible && neighbour.pack() < cell.pack()) {
                     continue;
                 }
-                addLane(view, cell, neighbour, laneReach(innerRadius * nodeScale(cell), widthScale),
-                        bothVisible ? laneReach(innerRadius * nodeScale(neighbour), widthScale) : fogRadius, bothVisible, accent,
-                        search.laneAlpha(cell, neighbour) * alphaMult);
+                addLane(view, cell, neighbour, bothVisible, accent, search.laneAlpha(cell, neighbour) * alphaMult);
             }
         }
         BeamStroke.Look traceLook = beams.lit(TRACE_COLOUR);
-        float traceWidthScale = widthScale * TRACE_WIDTH_SHARE;
         for (Trace trace : traces) {
             float traceAlpha = TRACE_ALPHA * search.laneAlpha(trace.from(), trace.to()) * alphaMult;
             float x1 = screenX(view, trace.from());
@@ -512,20 +547,28 @@ final class AtlasMapCanvas {
             float x2 = screenX(view, trace.to());
             float y2 = screenY(view, trace.to());
             if (view.overlaps(Math.min(x1, x2), Math.min(y1, y2), Math.max(x1, x2), Math.max(y1, y2))) {
-                float toRadius = visible.contains(trace.to()) ? laneReach(innerRadius * nodeScale(trace.to()), widthScale) : fogRadius;
-                beams.connector(x1, y1, laneReach(innerRadius * nodeScale(trace.from()), widthScale), x2, y2, toRadius, traceLook, traceAlpha,
-                        traceAlpha, traceWidthScale);
+                float fromWidthScale = beamWidthScale(view, trace.from());
+                float toWidthScale = beamWidthScale(view, trace.to());
+                beams.connector(x1, y1, laneEndReach(view, trace.from(), true, fromWidthScale), x2, y2,
+                        laneEndReach(view, trace.to(), visible.contains(trace.to()), toWidthScale), traceLook,
+                        traceAlpha * AtlasDepth.fade(depthOf(trace.from())), traceAlpha * AtlasDepth.fade(depthOf(trace.to())),
+                        fromWidthScale * TRACE_WIDTH_SHARE, toWidthScale * TRACE_WIDTH_SHARE);
             }
         }
         beams.flush();
+    }
+
+    private float laneEndReach(TreeViewport view, AtlasCell cell, boolean shownEnd, float widthScale) {
+        float footprint = footprint(view, cell);
+        float ringRadius = shownEnd ? NodeMetrics.donutRadius(footprint) * nodeScale(cell) : NodeMetrics.donutRadius(footprint * FOG_SIZE_SHARE);
+        return laneReach(ringRadius, widthScale);
     }
 
     private static float laneReach(float ringRadius, float widthScale) {
         return NodeBeams.laneReach(NodeBeams.ringOuterEdge(ringRadius, widthScale), widthScale);
     }
 
-    private void addLane(TreeViewport view, AtlasCell from, AtlasCell to, float fromRadius, float toRadius, boolean bothVisible, Color accent,
-                         float alphaMult) {
+    private void addLane(TreeViewport view, AtlasCell from, AtlasCell to, boolean bothVisible, Color accent, float alphaMult) {
         float x1 = screenX(view, from);
         float y1 = screenY(view, from);
         float x2 = screenX(view, to);
@@ -533,32 +576,37 @@ final class AtlasMapCanvas {
         if (!view.overlaps(Math.min(x1, x2), Math.min(y1, y2), Math.max(x1, x2), Math.max(y1, y2))) {
             return;
         }
-        float widthScale = beamWidthScale(view);
+        float fromWidthScale = beamWidthScale(view, from);
+        float toWidthScale = beamWidthScale(view, to);
+        float fromRadius = laneEndReach(view, from, true, fromWidthScale);
+        float toRadius = laneEndReach(view, to, bothVisible, toWidthScale);
+        float fromFade = AtlasDepth.fade(depthOf(from));
+        float toFade = AtlasDepth.fade(depthOf(to));
         if (state.isCompleted(from) && state.isCompleted(to)) {
-            beams.connector(x1, y1, fromRadius, x2, y2, toRadius, beams.lit(accent), alphaMult, alphaMult, widthScale);
+            beams.connector(x1, y1, fromRadius, x2, y2, toRadius, beams.lit(accent), alphaMult * fromFade, alphaMult * toFade, fromWidthScale,
+                    toWidthScale);
         } else if (bothVisible) {
             float dullAlpha = DULL_ALPHA * alphaMult;
-            beams.connector(x1, y1, fromRadius, x2, y2, toRadius, DULL_LOOK, dullAlpha, dullAlpha, widthScale);
+            beams.connector(x1, y1, fromRadius, x2, y2, toRadius, DULL_LOOK, dullAlpha * fromFade, dullAlpha * toFade, fromWidthScale, toWidthScale);
         } else {
-            beams.connector(x1, y1, fromRadius, x2, y2, toRadius, DULL_LOOK, FOG_LANE_ALPHA * alphaMult, 0f, widthScale);
+            beams.connector(x1, y1, fromRadius, x2, y2, toRadius, DULL_LOOK, FOG_LANE_ALPHA * alphaMult * fromFade, 0f, fromWidthScale, toWidthScale);
         }
     }
 
     private void drawNodes(TreeViewport view, Color accent, float mapAlpha, AtlasCell hiddenPreview) {
-        float footprint = footprint(view);
-        float widthScale = beamWidthScale(view);
-        for (Map.Entry<AtlasCell, AtlasNode> entry : nodes.entrySet()) {
-            AtlasCell cell = entry.getKey();
-            AtlasNode node = entry.getValue();
+        for (AtlasCell cell : drawOrder) {
+            AtlasNode node = nodes.get(cell);
             if (node.isVoid()) {
                 continue;
             }
+            float footprint = footprint(view, cell);
+            float widthScale = beamWidthScale(view, cell);
             float x = screenX(view, cell);
             float y = screenY(view, cell);
             if (!view.isVisible(x, y, NodeRingArt.portalReach(NodeMetrics.donutRadius(footprint)))) {
                 continue;
             }
-            float alphaMult = search.alpha(cell) * mapAlpha;
+            float alphaMult = search.alpha(cell) * mapAlpha * AtlasDepth.fade(depthOf(cell));
             if (!shown.contains(cell)) {
                 beams.ring(x, y, NodeMetrics.donutRadius(footprint * FOG_SIZE_SHARE), null, DULL_LOOK, FOG_RING_ALPHA * alphaMult, widthScale);
                 continue;
@@ -589,9 +637,9 @@ final class AtlasMapCanvas {
     }
 
     private void drawAnomalies(TreeViewport view, float alphaMult) {
-        float footprint = footprint(view);
-        float ringWidthScale = beamWidthScale(view) * ANOMALY_RING_WIDTH_SHARE;
         for (AnomalyIcon icon : anomalyIcons) {
+            float footprint = footprint(view, icon.cell());
+            float ringWidthScale = beamWidthScale(view, icon.cell()) * ANOMALY_RING_WIDTH_SHARE;
             float openness = openness(icon.cell());
             float scale = nodeScale(icon.cell());
             float radius = anomalyIconRadius(footprint, scale);
@@ -600,7 +648,7 @@ final class AtlasMapCanvas {
             if (openness <= 0f || !view.isVisible(x, y, radius * PING_CULL_SHARE)) {
                 continue;
             }
-            float alpha = openness * search.alpha(icon.cell()) * alphaMult;
+            float alpha = openness * search.alpha(icon.cell()) * alphaMult * AtlasDepth.fade(depthOf(icon.cell()));
             drawIconFace(icon, x, y, radius, alpha);
             beams.ring(x, y, NodeBeams.huggingRingRadius(radius, ringWidthScale), null, beams.lit(icon.ringColour() == null ? Misc.getNegativeHighlightColor() : icon.ringColour()), alpha, ringWidthScale);
             if (icon.chain() != null) {

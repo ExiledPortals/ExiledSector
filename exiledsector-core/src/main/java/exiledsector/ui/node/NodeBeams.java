@@ -127,6 +127,11 @@ public final class NodeBeams {
 
     public boolean connector(float fromX, float fromY, float fromRadius, float toX, float toY, float toRadius, BeamStroke.Look look, float startAlpha,
                              float endAlpha, float widthScale) {
+        return connector(fromX, fromY, fromRadius, toX, toY, toRadius, look, startAlpha, endAlpha, widthScale, widthScale);
+    }
+
+    public boolean connector(float fromX, float fromY, float fromRadius, float toX, float toY, float toRadius, BeamStroke.Look look, float startAlpha,
+                             float endAlpha, float fromWidthScale, float toWidthScale) {
         float dx = toX - fromX;
         float dy = toY - fromY;
         float length = (float) Math.sqrt(dx * dx + dy * dy);
@@ -135,8 +140,8 @@ public final class NodeBeams {
         }
         float dirX = dx / length;
         float dirY = dy / length;
-        lane(fromX + dirX * fromRadius, fromY + dirY * fromRadius, toX - dirX * toRadius, toY - dirY * toRadius, 0f, look, startAlpha, endAlpha,
-                widthScale);
+        stroke.addTaperedLine(fromX + dirX * fromRadius, fromY + dirY * fromRadius, toX - dirX * toRadius, toY - dirY * toRadius, 0f, LANE_STYLE, look,
+                startAlpha, endAlpha, ringArt.elapsedSeconds(), fromWidthScale, toWidthScale);
         return true;
     }
 

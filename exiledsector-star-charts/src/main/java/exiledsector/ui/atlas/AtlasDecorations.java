@@ -8,6 +8,7 @@ import exiledsector.charts.atlas.AtlasAmbience;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasDecoration;
 import exiledsector.ui.TreeViewport;
+import exiledsector.ui.decoration.DepthLens;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.HoloShapes;
 import org.lwjgl.opengl.GL11;
@@ -31,10 +32,11 @@ final class AtlasDecorations {
     static final float PING_SECONDS = 1f;
     static final float PING_REACH = 4f;
     static final float PING_LINE_WIDTH = 2f;
+    static final float PIECE_DEPTH_SPREAD = 0.25f;
     private static final long PLACEMENT_SALT = 0x4445434fL;
 
     record Piece(AtlasDecoration decoration, String sprite, int frame, float x, float y, float size, float startAngle, float spinRate,
-                 float driftPhase, float driftRadius) {
+                 float driftPhase, float driftRadius, float depth) {
     }
 
     private final SpriteCache spriteCache = new SpriteCache(AtlasDecorations.class);
@@ -50,6 +52,7 @@ final class AtlasDecorations {
     private AtlasMapCanvas canvas;
     private Set<Long> known = Set.of();
     private float elapsedSeconds;
+    private final float[] placedPiece = new float[3];
 
     void attach(AtlasMapCanvas canvas, Set<Long> known) {
         this.canvas = canvas;
@@ -61,10 +64,11 @@ final class AtlasDecorations {
         elapsedSeconds += amount;
     }
 
-    void render(TreeViewport view, float alphaMult) {
+    void render(DepthLens lens, float alphaMult) {
         if (canvas == null || alphaMult <= 0f) {
             return;
         }
+        TreeViewport view = lens.view();
         float zoom = view.zoom();
         int firstX = (int) Math.floor((view.left() - view.centerX()) / zoom / AtlasMapCanvas.CELL_PIXELS) - 1;
         int lastX = (int) Math.ceil((view.right() - view.centerX()) / zoom / AtlasMapCanvas.CELL_PIXELS) + 1;
@@ -93,9 +97,9 @@ final class AtlasDecorations {
                 }
             }
         }
-        bySprite.forEach((path, list) -> drawAll(view, path, list, false, alphaMult));
-        byGlow.forEach((path, list) -> drawAll(view, path, list, true, alphaMult));
-        drawPings(view, alphaMult);
+        bySprite.forEach((path, list) -> drawAll(lens, path, list, false, alphaMult));
+        byGlow.forEach((path, list) -> drawAll(lens, path, list, true, alphaMult));
+        drawPings(lens, alphaMult);
     }
 
     List<Piece> piecesIn(AtlasCell cell) {
@@ -118,18 +122,19 @@ final class AtlasDecorations {
             if (decoration == null || spot == null) {
                 continue;
             }
-            scatter(decoration, spot, random, placed);
+            float spotDepth = canvas.scenery().depth().depth(spot[0], spot[1]);
+            scatter(decoration, spot, spotDepth, random, placed);
             for (String scatterId : decoration.scatter()) {
                 AtlasDecoration around = canvas.scenery().decoration(scatterId);
                 if (around != null) {
-                    scatter(around, spot, random, placed);
+                    scatter(around, spot, spotDepth, random, placed);
                 }
             }
         }
         return List.copyOf(placed);
     }
 
-    private static void scatter(AtlasDecoration decoration, float[] spot, Random random, List<Piece> placed) {
+    private static void scatter(AtlasDecoration decoration, float[] spot, float spotDepth, Random random, List<Piece> placed) {
         String sprite = decoration.sprites().get(random.nextInt(decoration.sprites().size()));
         for (int index = 0; index < decoration.count(); index++) {
             double angle = random.nextDouble() * Math.PI * 2.0;
@@ -138,7 +143,8 @@ final class AtlasDecorations {
             float spin = decoration.spin() * (random.nextFloat() * 2f - 1f);
             placed.add(new Piece(decoration, sprite, random.nextInt(decoration.columns() * decoration.rows()),
                     spot[0] + (float) Math.cos(angle) * distance, spot[1] + (float) Math.sin(angle) * distance, size, random.nextFloat() * 360f,
-                    spin, random.nextFloat() * (float) (Math.PI * 2.0), decoration.drift() * AtlasMapCanvas.CELL_PIXELS));
+                    spin, random.nextFloat() * (float) (Math.PI * 2.0), decoration.drift() * AtlasMapCanvas.CELL_PIXELS,
+                    spotDepth + PIECE_DEPTH_SPREAD * (random.nextFloat() * 2f - 1f)));
         }
     }
 
@@ -168,7 +174,8 @@ final class AtlasDecorations {
         return true;
     }
 
-    private void drawAll(TreeViewport view, String path, List<Piece> list, boolean glow, float alphaMult) {
+    private void drawAll(DepthLens lens, String path, List<Piece> list, boolean glow, float alphaMult) {
+        TreeViewport view = lens.view();
         if (list.isEmpty()) {
             return;
         }
@@ -187,13 +194,15 @@ final class AtlasDecorations {
                 if (longest <= 0f) {
                     continue;
                 }
-                float halfWidth = piece.size() * frameWidth / longest / 2f * zoom;
-                float halfHeight = piece.size() * frameHeight / longest / 2f * zoom;
+                lens.place(driftedX(piece), driftedY(piece), piece.depth(), placedPiece);
+                float pieceZoom = zoom * placedPiece[DepthLens.SCALE];
+                float halfWidth = piece.size() * frameWidth / longest / 2f * pieceZoom;
+                float halfHeight = piece.size() * frameHeight / longest / 2f * pieceZoom;
                 if (Math.max(halfWidth, halfHeight) * 2f < MIN_PIECE_PIXELS) {
                     continue;
                 }
-                float x = view.screenX(driftedX(piece));
-                float y = view.screenY(driftedY(piece));
+                float x = placedPiece[DepthLens.X];
+                float y = placedPiece[DepthLens.Y];
                 float reach = (halfWidth + halfHeight);
                 if (!view.isVisible(x, y, reach)) {
                     continue;
@@ -207,7 +216,8 @@ final class AtlasDecorations {
                 float red = colour == null ? 1f : colour.getRed() / 255f;
                 float green = colour == null ? 1f : colour.getGreen() / 255f;
                 float blue = colour == null ? 1f : colour.getBlue() / 255f;
-                GL11.glColor4f(red, green, blue, decoration.alpha() * alphaMult * (glow ? pulseLevel(decoration.pulse(), beat(piece), elapsedSeconds) : 1f));
+                GL11.glColor4f(red, green, blue, decoration.alpha() * alphaMult * AtlasDepth.fade(piece.depth())
+                        * (glow ? pulseLevel(decoration.pulse(), beat(piece), elapsedSeconds) : 1f));
                 float angle = (float) Math.toRadians(piece.startAngle() + piece.spinRate() * elapsedSeconds);
                 float cos = (float) Math.cos(angle);
                 float sin = (float) Math.sin(angle);
@@ -226,18 +236,20 @@ final class AtlasDecorations {
         }
     }
 
-    private void drawPings(TreeViewport view, float alphaMult) {
+    private void drawPings(DepthLens lens, float alphaMult) {
         if (pinging.isEmpty()) {
             return;
         }
+        TreeViewport view = lens.view();
         float zoom = view.zoom();
         try (GlScope scope = GlScope.save(GlScope.DRAW_ATTRIBS).untextured().blend(GL11.GL_SRC_ALPHA, GL11.GL_ONE)) {
             for (Piece piece : pinging) {
                 AtlasDecoration decoration = piece.decoration();
                 float progress = pingProgress(decoration.ping(), beat(piece), elapsedSeconds);
-                float radius = progress * piece.size() * PING_REACH * zoom;
-                float x = view.screenX(driftedX(piece));
-                float y = view.screenY(driftedY(piece));
+                lens.place(driftedX(piece), driftedY(piece), piece.depth(), placedPiece);
+                float radius = progress * piece.size() * PING_REACH * zoom * placedPiece[DepthLens.SCALE];
+                float x = placedPiece[DepthLens.X];
+                float y = placedPiece[DepthLens.Y];
                 if (progress < 0f || radius < MIN_PIECE_PIXELS || !view.isVisible(x, y, radius)) {
                     continue;
                 }

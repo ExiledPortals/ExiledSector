@@ -3,7 +3,7 @@ package exiledsector.ui.atlas;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasNode;
 import exiledsector.charts.atlas.AtlasOpening;
-import exiledsector.ui.TreeViewport;
+import exiledsector.ui.decoration.DepthLens;
 import exiledsector.ui.decoration.LaneFleetTraffic;
 import exiledsector.ui.node.NodeMetrics;
 import exiledsector.ui.node.NodeRingArt;
@@ -28,9 +28,8 @@ final class AtlasFleetTraffic {
         traffic.advance(amount);
     }
 
-    void render(TreeViewport view, float alphaMult) {
-        traffic.render(new TreeViewport(view.centerX(), view.centerY(), view.zoom() * FLEET_SCALE, view.left(), view.bottom(), view.right(), view.top()),
-                alphaMult);
+    void render(DepthLens lens, float alphaMult) {
+        traffic.render(lens.rescaled(FLEET_SCALE), alphaMult);
     }
 
     static List<LaneFleetTraffic.Port> ports(AtlasMapCanvas canvas) {

@@ -125,7 +125,7 @@ final class FleetBattle {
             Float due = nextShotSeconds.get(shooter);
             if (due != null && fightElapsed >= due) {
                 RoamingShip target = targets.ships().get(random.nextInt(targets.ships().size()));
-                effects.shot(shooters.shipX(shooter), shooters.shipY(shooter), targets.shipX(target), targets.shipY(target), shooters.factionColor());
+                effects.shot(BattleEffects.ShipSpot.of(shooters, shooter), BattleEffects.ShipSpot.of(targets, target), shooters.factionColor());
                 nextShotSeconds.put(shooter, fightElapsed + MIN_SHOT_SECONDS + random.nextFloat() * (MAX_SHOT_SECONDS - MIN_SHOT_SECONDS));
             }
         }
@@ -136,7 +136,7 @@ final class FleetBattle {
             RoamingShip ship = fleet.ships().get(index);
             Float due = deathSeconds.get(ship);
             if (due != null && fightElapsed >= due) {
-                effects.explosion(fleet.shipX(ship), fleet.shipY(ship), ship.longestSide());
+                effects.explosion(BattleEffects.ShipSpot.of(fleet, ship), ship.longestSide());
                 fleet.destroy(ship);
             }
         }

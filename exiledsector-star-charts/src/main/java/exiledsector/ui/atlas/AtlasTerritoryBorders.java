@@ -6,6 +6,7 @@ import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasNoise;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.UiFonts;
+import exiledsector.ui.decoration.DepthLens;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.TextFont;
 import exiledsector.ui.util.TextLabel;
@@ -19,6 +20,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -81,6 +83,9 @@ final class AtlasTerritoryBorders {
     private record Edge(int fromX, int fromY, int toX, int toY) {
     }
 
+    private record LoopDepths(float[] outline, float[] inner) {
+    }
+
     private final long seed;
     private final Function<String, Color> colours;
     private final Function<String, String> names;
@@ -88,6 +93,10 @@ final class AtlasTerritoryBorders {
     private List<Region> regions = List.of();
     private List<Color> tints = List.of();
     private List<Color> outlines = List.of();
+    private final Map<Loop, LoopDepths> loopDepths = new IdentityHashMap<>();
+    private final float[] placed = new float[3];
+    private float[] outlineScreen = new float[0];
+    private float[] innerScreen = new float[0];
     private boolean shown;
     private float level;
 
@@ -108,6 +117,7 @@ final class AtlasTerritoryBorders {
             }
         }
         labels.clear();
+        loopDepths.clear();
         regions = build(seed, known, groupAt, hasSystem, joinedCorners);
         tints = regions.stream().map(this::colour).toList();
         outlines = tints.stream().map(tint -> towardWhite(tint, OUTLINE_WHITENESS)).toList();
@@ -135,15 +145,17 @@ final class AtlasTerritoryBorders {
         level = Fade.step(level, shown, amount / FADE_SECONDS);
     }
 
-    void render(TreeViewport view, float alphaMult) {
+    void render(DepthLens lens, float alphaMult) {
         float alpha = Fade.smooth(level) * alphaMult;
         if (alpha <= 0f || regions.isEmpty()) {
             return;
         }
+        TreeViewport view = lens.view();
+        float margin = lens.reachWorld();
         List<Integer> onScreenIndexes = new ArrayList<>();
         for (int index = 0; index < regions.size(); index++) {
             Region region = regions.get(index);
-            if (visible(view, region.minX(), region.minY(), region.maxX(), region.maxY())) {
+            if (visible(view, region.minX(), region.minY(), region.maxX(), region.maxY(), margin)) {
                 onScreenIndexes.add(index);
             }
         }
@@ -153,8 +165,9 @@ final class AtlasTerritoryBorders {
         try (GlScope scope = GlScope.flat()) {
             for (int index : onScreenIndexes) {
                 for (Loop loop : regions.get(index).loops()) {
-                    if (visible(view, loop.minX(), loop.minY(), loop.maxX(), loop.maxY())) {
-                        drawBand(view, loop, tints.get(index), BAND_ALPHA * alpha);
+                    if (visible(view, loop.minX(), loop.minY(), loop.maxX(), loop.maxY(), margin)) {
+                        project(lens, loop, true);
+                        drawBand(loop.outline().length, tints.get(index), BAND_ALPHA * alpha);
                     }
                 }
             }
@@ -165,10 +178,11 @@ final class AtlasTerritoryBorders {
                 Color outline = outlines.get(index);
                 GL11.glColor4f(outline.getRed() / 255f, outline.getGreen() / 255f, outline.getBlue() / 255f, OUTLINE_ALPHA * alpha);
                 for (Loop loop : region.loops()) {
-                    if (visible(view, loop.minX(), loop.minY(), loop.maxX(), loop.maxY())) {
+                    if (visible(view, loop.minX(), loop.minY(), loop.maxX(), loop.maxY(), margin)) {
+                        project(lens, loop, false);
                         GL11.glBegin(GL11.GL_LINE_LOOP);
                         for (int point = 0; point < loop.outline().length; point += 2) {
-                            GL11.glVertex2f(view.screenX(loop.outline()[point]), view.screenY(loop.outline()[point + 1]));
+                            GL11.glVertex2f(outlineScreen[point], outlineScreen[point + 1]);
                         }
                         GL11.glEnd();
                     }
@@ -176,28 +190,59 @@ final class AtlasTerritoryBorders {
             }
         }
         for (int index : onScreenIndexes) {
-            drawLabel(view, index, alpha);
+            drawLabel(lens, index, alpha);
         }
     }
 
-    private static void drawBand(TreeViewport view, Loop loop, Color tint, float alpha) {
+    private void project(DepthLens lens, Loop loop, boolean withInner) {
+        float[] outline = loop.outline();
+        float[] inner = loop.inner();
+        LoopDepths depths = loopDepths.computeIfAbsent(loop, key -> new LoopDepths(depthsOf(lens, outline), depthsOf(lens, inner)));
+        if (outlineScreen.length < outline.length) {
+            outlineScreen = new float[outline.length];
+        }
+        if (innerScreen.length < inner.length) {
+            innerScreen = new float[inner.length];
+        }
+        projectPoints(lens, outline, depths.outline(), outlineScreen);
+        if (withInner) {
+            projectPoints(lens, inner, depths.inner(), innerScreen);
+        }
+    }
+
+    private static float[] depthsOf(DepthLens lens, float[] points) {
+        float[] depths = new float[points.length / 2];
+        for (int point = 0; point < depths.length; point++) {
+            depths[point] = lens.depthAt(points[point * 2], points[point * 2 + 1]);
+        }
+        return depths;
+    }
+
+    private void projectPoints(DepthLens lens, float[] points, float[] depths, float[] screen) {
+        for (int point = 0; point < depths.length; point++) {
+            lens.place(points[point * 2], points[point * 2 + 1], depths[point], placed);
+            screen[point * 2] = placed[DepthLens.X];
+            screen[point * 2 + 1] = placed[DepthLens.Y];
+        }
+    }
+
+    private void drawBand(int length, Color tint, float alpha) {
         float red = tint.getRed() / 255f;
         float green = tint.getGreen() / 255f;
         float blue = tint.getBlue() / 255f;
-        float[] outline = loop.outline();
-        float[] inner = loop.inner();
         GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-        for (int index = 0; index <= outline.length; index += 2) {
-            int at = index % outline.length;
+        for (int index = 0; index <= length; index += 2) {
+            int at = index % length;
             GL11.glColor4f(red, green, blue, alpha);
-            GL11.glVertex2f(view.screenX(outline[at]), view.screenY(outline[at + 1]));
+            GL11.glVertex2f(outlineScreen[at], outlineScreen[at + 1]);
             GL11.glColor4f(red, green, blue, 0f);
-            GL11.glVertex2f(view.screenX(inner[at]), view.screenY(inner[at + 1]));
+            GL11.glVertex2f(innerScreen[at], innerScreen[at + 1]);
         }
         GL11.glEnd();
     }
 
-    private void drawLabel(TreeViewport view, int index, float alpha) {
+    private void drawLabel(DepthLens lens, int index, float alpha) {
+        TreeViewport view = lens.view();
         Region region = regions.get(index);
         if (region.cells() < MIN_LABEL_CELLS) {
             return;
@@ -213,7 +258,8 @@ final class AtlasTerritoryBorders {
         if (label.width() * LABEL_ROOM_SHARE > roomWidth) {
             return;
         }
-        label.setAlpha(LABEL_ALPHA * alpha).draw(view.screenX(region.labelX()), view.screenY(region.labelY()));
+        lens.place(region.labelX(), region.labelY(), placed);
+        label.setAlpha(LABEL_ALPHA * alpha).draw(placed[DepthLens.X], placed[DepthLens.Y]);
     }
 
     private Color colour(Region region) {
@@ -221,8 +267,8 @@ final class AtlasTerritoryBorders {
         return colour == null ? Color.WHITE : colour;
     }
 
-    private static boolean visible(TreeViewport view, float minX, float minY, float maxX, float maxY) {
-        return view.overlaps(view.screenX(minX), view.screenY(maxY), view.screenX(maxX), view.screenY(minY));
+    private static boolean visible(TreeViewport view, float minX, float minY, float maxX, float maxY, float margin) {
+        return view.overlaps(view.screenX(minX - margin), view.screenY(maxY + margin), view.screenX(maxX + margin), view.screenY(minY - margin));
     }
 
     static Color towardWhite(Color colour, float share) {

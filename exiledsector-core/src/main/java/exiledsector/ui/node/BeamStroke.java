@@ -60,6 +60,7 @@ public final class BeamStroke {
     static final float MIN_PIECE = 0.5f;
     static final float TILE_EPSILON = 0.001f;
     static final float HELIX_PIECES_PER_WAVE = 6f;
+    static final float TAPER_PIECES = 8f;
     private static final int FLOATS_PER_VERTEX = 8;
 
     private interface Path {
@@ -79,6 +80,7 @@ public final class BeamStroke {
     private final LinePath linePath = new LinePath();
     private final RingPath ringPath = new RingPath();
     private final HelixPath helixPath = new HelixPath();
+    private final TaperedPath taperedPath = new TaperedPath();
     private final Map<String, QuadBuffer> pending = new LinkedHashMap<>();
 
     public void addLine(float fromX, float fromY, float toX, float toY, float distanceOffset, Style style, Look look, float startAlpha, float endAlpha,
@@ -88,6 +90,21 @@ public final class BeamStroke {
             return;
         }
         stroke(linePath, style, look, startAlpha, endAlpha, elapsedSeconds, widthScale, 0f, distanceOffset);
+    }
+
+    public void addTaperedLine(float fromX, float fromY, float toX, float toY, float distanceOffset, Style style, Look look, float startAlpha,
+                               float endAlpha, float elapsedSeconds, float startWidthScale, float endWidthScale) {
+        float meanWidthScale = (startWidthScale + endWidthScale) / 2f;
+        if (Float.compare(startWidthScale, endWidthScale) == 0 || meanWidthScale <= 0f) {
+            addLine(fromX, fromY, toX, toY, distanceOffset, style, look, startAlpha, endAlpha, elapsedSeconds, startWidthScale);
+            return;
+        }
+        linePath.set(fromX, fromY, toX, toY);
+        if (!drawable(linePath.length()) || (startAlpha <= 0f && endAlpha <= 0f)) {
+            return;
+        }
+        taperedPath.set(linePath, startWidthScale / meanWidthScale, endWidthScale / meanWidthScale);
+        stroke(taperedPath, style, look, startAlpha, endAlpha, elapsedSeconds, meanWidthScale, linePath.length() / TAPER_PIECES, distanceOffset);
     }
 
     public void addHelix(float fromX, float fromY, float toX, float toY, float distanceOffset, Helix helix, Style style, Look look,
@@ -285,6 +302,32 @@ public final class BeamStroke {
             out[1] = fromY + dirY * distance;
             out[2] = -dirY;
             out[3] = dirX;
+        }
+    }
+
+    static final class TaperedPath implements Path {
+        private Path base;
+        private float startShare;
+        private float endShare;
+
+        void set(Path basePath, float startWidthShare, float endWidthShare) {
+            base = basePath;
+            startShare = startWidthShare;
+            endShare = endWidthShare;
+        }
+
+        @Override
+        public float length() {
+            return base.length();
+        }
+
+        @Override
+        public void at(float distance, float[] out) {
+            base.at(distance, out);
+            float length = base.length();
+            float share = lerp(startShare, endShare, length > 0f ? distance / length : 0f);
+            out[2] *= share;
+            out[3] *= share;
         }
     }
 

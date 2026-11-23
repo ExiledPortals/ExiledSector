@@ -10,7 +10,7 @@ import exiledsector.charts.atlas.AtlasNode;
 import exiledsector.charts.atlas.AtlasRegion;
 import exiledsector.charts.atlas.TerritoryFactions;
 import exiledsector.charts.content.ChartFactions;
-import exiledsector.ui.TreeViewport;
+import exiledsector.ui.decoration.DepthLens;
 import exiledsector.ui.decoration.FactionStarColours;
 import exiledsector.ui.decoration.HyperspaceClouds;
 
@@ -26,13 +26,27 @@ final class AtlasScenery {
 
     static final float CLOUD_TILE = AtlasMapCanvas.CELL_PIXELS / 4f;
     static final float CLOUD_ALPHA = 0.35f;
+    static final float FAR_CLOUD_TILE = AtlasMapCanvas.CELL_PIXELS / 2f;
+    static final float FAR_CLOUD_ALPHA = 0.22f;
+    static final float FAR_CLOUD_DEPTH = -1.2f;
+    static final float FAR_CLOUD_REACH_CELLS = 0.6f;
+    static final float NEAR_CLOUD_TILE = AtlasMapCanvas.CELL_PIXELS / 2f;
+    static final float NEAR_CLOUD_ALPHA = 0.1f;
+    static final float NEAR_CLOUD_DEPTH = 1.1f;
+    static final float NEAR_CLOUD_REACH_CELLS = 1f;
+    static final float NEAR_CLOUD_COVER = 0.3f;
+    private static final long FAR_CLOUD_SALT = 0x4641524eL;
+    private static final long NEAR_CLOUD_SALT = 0x4e454152L;
     static final float KNOWN_SAMPLE_REACH = 0.5f;
     static final int VOID_JOIN_SIDES = 2;
     private static final int[][] SIDES = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 
     private final Function<String, AtlasAmbience> ambiences;
     private final Function<String, AtlasDecoration> decorationLookup;
+    private final AtlasDepth depth;
+    private final HyperspaceClouds farClouds;
     private final HyperspaceClouds clouds;
+    private final HyperspaceClouds nearClouds;
     private final AtlasAbyssShade abyssShade = new AtlasAbyssShade();
     private final AtlasDecorations decorations = new AtlasDecorations();
     private final AtlasFleetTraffic fleets = new AtlasFleetTraffic();
@@ -50,10 +64,19 @@ final class AtlasScenery {
     AtlasScenery(long seed, Function<String, AtlasAmbience> ambiences, Function<String, AtlasDecoration> decorationLookup) {
         this.ambiences = ambiences;
         this.decorationLookup = decorationLookup;
-        clouds = new HyperspaceClouds(CLOUD_TILE, seed, CLOUD_ALPHA);
+        depth = new AtlasDepth(seed);
+        farClouds = new HyperspaceClouds(FAR_CLOUD_TILE, seed ^ FAR_CLOUD_SALT, FAR_CLOUD_ALPHA, FAR_CLOUD_DEPTH,
+                FAR_CLOUD_REACH_CELLS * AtlasMapCanvas.CELL_PIXELS);
+        clouds = new HyperspaceClouds(CLOUD_TILE, seed, CLOUD_ALPHA, 0f, AtlasDepth.parallaxReach());
+        nearClouds = new HyperspaceClouds(NEAR_CLOUD_TILE, seed ^ NEAR_CLOUD_SALT, NEAR_CLOUD_ALPHA, NEAR_CLOUD_DEPTH,
+                NEAR_CLOUD_REACH_CELLS * AtlasMapCanvas.CELL_PIXELS);
         borders = new AtlasTerritoryBorders(seed, territoryId -> factionColour(TerritoryFactions.factionOfTerritory(territoryId)),
                 territoryId -> ChartFactions.displayName(TerritoryFactions.factionOfTerritory(territoryId)));
         biomes = new AtlasTerritoryBorders(seed, AtlasData::regionTint, AtlasNodeText::regionName);
+    }
+
+    AtlasDepth depth() {
+        return depth;
     }
 
     AtlasDecorations decorations() {
@@ -81,7 +104,10 @@ final class AtlasScenery {
             }
         }
         abyssShade.attach(cell -> isKnown(cell) && ambience(cell).abyss(), known.stream().map(AtlasCell::unpack).toList());
-        clouds.setCover(new Cover());
+        Cover cover = new Cover();
+        farClouds.setCover(new CalmCover(cover, 1f));
+        clouds.setCover(cover);
+        nearClouds.setCover(new CalmCover(cover, NEAR_CLOUD_COVER));
         decorations.attach(canvas, known);
         fleets.attach(canvas);
         List<AtlasCell> knownSystems = known.stream().map(AtlasCell::unpack).filter(this::hasSystem).toList();
@@ -100,24 +126,28 @@ final class AtlasScenery {
     }
 
     void advance(float amount) {
+        farClouds.advance(amount);
         clouds.advance(amount);
+        nearClouds.advance(amount);
         decorations.advance(amount);
         fleets.advance(amount);
         borders.advance(amount);
         biomes.advance(amount);
     }
 
-    void renderBackdrop(TreeViewport view, float alphaMult) {
-        abyssShade.render(view, alphaMult);
-        clouds.render(view, alphaMult);
-        decorations.render(view, alphaMult);
-        borders.render(view, alphaMult);
-        biomes.render(view, alphaMult);
+    void renderBackdrop(DepthLens lens, float alphaMult) {
+        farClouds.render(lens, alphaMult);
+        abyssShade.render(lens, alphaMult);
+        clouds.render(lens, alphaMult);
+        decorations.render(lens, alphaMult);
+        borders.render(lens, alphaMult);
+        biomes.render(lens, alphaMult);
     }
 
-    void renderAbove(TreeViewport view, float alphaMult) {
-        fleets.render(view, alphaMult);
-        clouds.renderFlashOver(view, alphaMult);
+    void renderAbove(DepthLens lens, float alphaMult) {
+        fleets.render(lens, alphaMult);
+        nearClouds.render(lens, alphaMult);
+        clouds.renderFlashOver(lens, alphaMult);
     }
 
     Set<Long> territoryCells() {
@@ -184,6 +214,29 @@ final class AtlasScenery {
 
     static AtlasCell cellAt(float worldX, float worldY) {
         return new AtlasCell(Math.round(worldX / AtlasMapCanvas.CELL_PIXELS), Math.round(worldY / AtlasMapCanvas.CELL_PIXELS));
+    }
+
+    private record CalmCover(HyperspaceClouds.Cover base, float coverShare) implements HyperspaceClouds.Cover {
+
+        @Override
+        public float cover(float worldX, float worldY) {
+            return base.cover(worldX, worldY) * coverShare;
+        }
+
+        @Override
+        public float storms(float worldX, float worldY) {
+            return 0f;
+        }
+
+        @Override
+        public Color colour(float worldX, float worldY) {
+            return base.colour(worldX, worldY);
+        }
+
+        @Override
+        public float alpha(float worldX, float worldY) {
+            return base.alpha(worldX, worldY);
+        }
     }
 
     private final class Cover implements HyperspaceClouds.Cover {

@@ -90,7 +90,7 @@ class AtlasMapCanvasTest {
             assertEquals("graphics/exiledSector/anomalies/spatial_breach.png", icon.iconPath());
             assertNull(icon.chain());
 
-            float orbit = AtlasMapCanvas.footprint(view) * AtlasMapCanvas.ANOMALY_ORBIT_SHARE;
+            float orbit = canvas.footprint(view, bastion) * AtlasMapCanvas.ANOMALY_ORBIT_SHARE;
             float iconX = canvas.screenX(view, bastion) + (float) Math.cos(AtlasMapCanvas.ANOMALY_FIRST_ANGLE) * orbit;
             float iconY = canvas.screenY(view, bastion) + (float) Math.sin(AtlasMapCanvas.ANOMALY_FIRST_ANGLE) * orbit;
             assertEquals(icon, canvas.anomalyAt(view, iconX, iconY));

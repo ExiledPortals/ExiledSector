@@ -5,7 +5,6 @@ import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.RepLevel;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import exiledsector.compat.NexerelinCompat;
-import exiledsector.ui.TreeViewport;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -95,8 +94,8 @@ public final class LaneFleetTraffic {
         traffic.advance(amount);
     }
 
-    public void render(TreeViewport viewport, float alphaMult) {
-        traffic.render(viewport, alphaMult);
+    public void render(DepthLens lens, float alphaMult) {
+        traffic.render(lens, alphaMult);
     }
 
     int fleetCount() {

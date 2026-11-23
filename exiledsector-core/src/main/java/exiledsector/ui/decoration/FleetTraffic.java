@@ -35,6 +35,7 @@ final class FleetTraffic {
     private final List<FactionFleet> fleets = new ArrayList<>();
     private final List<FleetBattle> battles = new ArrayList<>();
     private final List<Respawn> respawns = new ArrayList<>();
+    private final float[] placedFleet = new float[3];
 
     FleetTraffic(Random random, float minRespawnSeconds, float maxRespawnSeconds, Consumer<String> respawnIn) {
         this.random = random;
@@ -117,9 +118,14 @@ final class FleetTraffic {
     }
 
     void render(TreeViewport viewport, float alphaMult) {
+        render(DepthLens.flat(viewport), alphaMult);
+    }
+
+    void render(DepthLens lens, float alphaMult) {
         if ((fleets.isEmpty() && effects.isEmpty()) || alphaMult <= 0f) {
             return;
         }
+        TreeViewport viewport = lens.view();
         float zoom = viewport.zoom();
         int shipCount = 0;
         for (FactionFleet fleet : fleets) {
@@ -129,14 +135,20 @@ final class FleetTraffic {
         for (FactionFleet fleet : fleets) {
             FleetFlight flight = fleet.flight();
             float fleetAlpha = alphaMult * fleet.spawnLevel();
-            if (fleetAlpha <= 0f
-                    || !viewport.isVisible(viewport.screenX(flight.positionX()), viewport.screenY(flight.positionY()), fleet.cullRadius() * zoom)) {
+            if (fleetAlpha <= 0f) {
                 continue;
             }
+            lens.place(flight.positionX(), flight.positionY(), placedFleet);
+            float fleetScale = placedFleet[DepthLens.SCALE];
+            if (!viewport.isVisible(placedFleet[DepthLens.X], placedFleet[DepthLens.Y], fleet.cullRadius() * zoom * fleetScale)) {
+                continue;
+            }
+            float flatFleetX = viewport.screenX(flight.positionX());
+            float flatFleetY = viewport.screenY(flight.positionY());
             for (RoamingShip ship : fleet.ships()) {
-                float screenScale = ship.drift().motion().scaleMult() * zoom;
-                float screenX = viewport.screenX(fleet.shipX(ship));
-                float screenY = viewport.screenY(fleet.shipY(ship));
+                float screenScale = ship.drift().motion().scaleMult() * zoom * fleetScale;
+                float screenX = placedFleet[DepthLens.X] + (viewport.screenX(fleet.shipX(ship)) - flatFleetX) * fleetScale;
+                float screenY = placedFleet[DepthLens.Y] + (viewport.screenY(fleet.shipY(ship)) - flatFleetY) * fleetScale;
                 if (drawnShips.add(ship, screenX, screenY, screenScale, flight.engineLevel(), fleetAlpha)) {
                     ship.drawHull(spriteCache, screenX, screenY, screenScale, fleetAlpha);
                 }
@@ -144,7 +156,7 @@ final class FleetTraffic {
         }
         drawnShips.renderFlames(zoom);
         if (!drawnShips.isEmpty() || !effects.isEmpty()) {
-            drawnShips.renderGlows(quads -> effects.render(quads, viewport, alphaMult));
+            drawnShips.renderGlows(quads -> effects.render(quads, lens, alphaMult));
         }
     }
 }

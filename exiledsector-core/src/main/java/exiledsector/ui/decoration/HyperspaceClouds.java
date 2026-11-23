@@ -69,10 +69,11 @@ public final class HyperspaceClouds {
         private final float[] wobble = new float[4 * 6];
         private final Color colour;
         private final float alpha;
+        private final float depth;
         private final float[] screen = new float[8];
 
         private Tile(int tileX, int tileY, boolean present, boolean stormProne, float centreX, float centreY, float angle, int sheetCell,
-                     Color colour, float alpha) {
+                     Color colour, float alpha, float depth) {
             this.tileX = tileX;
             this.tileY = tileY;
             this.present = present;
@@ -85,6 +86,7 @@ public final class HyperspaceClouds {
             this.texY = (sheetCell / SHEET_CELLS) / (float) SHEET_CELLS;
             this.colour = colour;
             this.alpha = alpha;
+            this.depth = depth;
         }
     }
 
@@ -92,6 +94,9 @@ public final class HyperspaceClouds {
     private final float renderSize;
     private final long seed;
     private final float cloudAlpha;
+    private final float depthOffset;
+    private final float parallaxReachWorld;
+    private final float[] placedCentre = new float[3];
     private final SpriteCache spriteCache = new SpriteCache(HyperspaceClouds.class);
     private final Map<Long, Tile> tiles = new LinkedHashMap<>(256, 0.75f, true) {
         @Override
@@ -112,10 +117,16 @@ public final class HyperspaceClouds {
     private String flashTexture;
 
     public HyperspaceClouds(float tileSize, long seed, float cloudAlpha) {
+        this(tileSize, seed, cloudAlpha, 0f, 0f);
+    }
+
+    public HyperspaceClouds(float tileSize, long seed, float cloudAlpha, float depthOffset, float parallaxReachWorld) {
         this.tileSize = tileSize;
         this.renderSize = tileSize * RENDER_SIZE_MULT;
         this.seed = seed;
         this.cloudAlpha = cloudAlpha;
+        this.depthOffset = depthOffset;
+        this.parallaxReachWorld = parallaxReachWorld;
     }
 
     public void setCover(Cover cover) {
@@ -156,10 +167,15 @@ public final class HyperspaceClouds {
     }
 
     public void render(TreeViewport view, float alphaMult) {
+        render(DepthLens.flat(view), alphaMult);
+    }
+
+    public void render(DepthLens lens, float alphaMult) {
         if (cover == null || alphaMult <= 0f) {
             return;
         }
-        collect(view);
+        TreeViewport view = lens.view();
+        collect(lens);
         if (drawn.isEmpty()) {
             return;
         }
@@ -177,9 +193,13 @@ public final class HyperspaceClouds {
     }
 
     public void renderFlashOver(TreeViewport view, float alphaMult) {
+        renderFlashOver(DepthLens.flat(view), alphaMult);
+    }
+
+    public void renderFlashOver(DepthLens lens, float alphaMult) {
         SpriteAPI flash = texture(FLASH_KEY, false);
         if (flash != null && !drawn.isEmpty() && alphaMult > 0f) {
-            drawFlashes(view, flash, alphaMult * FLASH_OVER_ALPHA);
+            drawFlashes(lens.view(), flash, alphaMult * FLASH_OVER_ALPHA);
         }
     }
 
@@ -199,11 +219,12 @@ public final class HyperspaceClouds {
         return cells[wrap(tileX)][wrap(tileY)] == 1;
     }
 
-    private void collect(TreeViewport view) {
+    private void collect(DepthLens lens) {
+        TreeViewport view = lens.view();
         drawn.clear();
         stormCandidates.clear();
         float zoom = view.zoom();
-        float margin = renderSize * FLASH_SIZE_MULT;
+        float margin = renderSize * FLASH_SIZE_MULT * lens.scale(depthOffset + 1f) + parallaxReachWorld;
         float minX = (view.left() - view.centerX()) / zoom - margin;
         float maxX = (view.right() - view.centerX()) / zoom + margin;
         float minY = (view.centerY() - view.top()) / zoom - margin;
@@ -217,7 +238,7 @@ public final class HyperspaceClouds {
         int lastY = (int) Math.floor(maxY / tileSize);
         for (int tileX = firstX; tileX <= lastX; tileX++) {
             for (int tileY = firstY; tileY <= lastY; tileY++) {
-                Tile tile = tile(tileX, tileY);
+                Tile tile = tile(lens, tileX, tileY);
                 if (!tile.present || tile.alpha <= 0f) {
                     continue;
                 }
@@ -225,28 +246,28 @@ public final class HyperspaceClouds {
                 if (tile.stormProne) {
                     stormCandidates.add(tile);
                 }
-                placeCorners(view, tile);
+                placeCorners(lens, tile);
             }
         }
     }
 
-    private Tile tile(int tileX, int tileY) {
+    private Tile tile(DepthLens lens, int tileX, int tileY) {
         long key = key(tileX, tileY);
         Tile tile = tiles.get(key);
         if (tile == null) {
-            tile = buildTile(tileX, tileY);
+            tile = buildTile(lens, tileX, tileY);
             tiles.put(key, tile);
         }
         return tile;
     }
 
-    private Tile buildTile(int tileX, int tileY) {
+    private Tile buildTile(DepthLens lens, int tileX, int tileY) {
         float baseX = (tileX + 0.5f) * tileSize;
         float baseY = (tileY + 0.5f) * tileSize;
         float coverage = cover.cover(baseX, baseY);
         boolean present = present(seed, tileX, tileY, coverage);
         if (!present) {
-            return new Tile(tileX, tileY, false, false, baseX, baseY, 0f, 0, Color.WHITE, 0f);
+            return new Tile(tileX, tileY, false, false, baseX, baseY, 0f, 0, Color.WHITE, 0f, 0f);
         }
         Random shape = new Random(hash(seed, SHAPE_SALT, tileX, tileY));
         float offRange = renderSize * OFFSET_SHARE;
@@ -258,7 +279,7 @@ public final class HyperspaceClouds {
         boolean stormProne = storms > 0f && unit(hash(seed, STORM_SALT, tileX, tileY)) < storms;
         Color colour = cover.colour(baseX, baseY);
         Tile tile = new Tile(tileX, tileY, true, stormProne, centreX, centreY, angle, sheetCell, colour == null ? Color.WHITE : colour,
-                Math.max(0f, Math.min(1f, cover.alpha(baseX, baseY))));
+                Math.max(0f, Math.min(1f, cover.alpha(baseX, baseY))), lens.depthAt(centreX, centreY) + depthOffset);
         for (int corner = 0; corner < 4; corner++) {
             float spin = (shape.nextFloat() * 3f + 1f) * (float) Math.toRadians(360.0);
             float rate = (30f + 70f * shape.nextFloat()) * (float) Math.toRadians(1.0) * WOBBLE_SPEED;
@@ -273,7 +294,12 @@ public final class HyperspaceClouds {
         return tile;
     }
 
-    private void placeCorners(TreeViewport view, Tile tile) {
+    private void placeCorners(DepthLens lens, Tile tile) {
+        TreeViewport view = lens.view();
+        lens.place(tile.centreX, tile.centreY, tile.depth, parallaxReachWorld, placedCentre);
+        float centreScale = placedCentre[DepthLens.SCALE];
+        float flatCentreX = view.screenX(tile.centreX);
+        float flatCentreY = view.screenY(tile.centreY);
         float half = renderSize / 2f;
         float maxRadius = renderSize * WOBBLE_SHARE;
         for (int corner = 0; corner < 4; corner++) {
@@ -284,8 +310,8 @@ public final class HyperspaceClouds {
             float radius = maxRadius * triangle(tile.wobble[at + 5] + elapsedSeconds / tile.wobble[at + 4]);
             float worldX = tile.centreX + localX * tile.cos - localY * tile.sin + (float) Math.sin(theta) * radius;
             float worldY = tile.centreY + localX * tile.sin + localY * tile.cos + (float) Math.cos(theta) * radius;
-            tile.screen[corner * 2] = view.screenX(worldX);
-            tile.screen[corner * 2 + 1] = view.screenY(worldY);
+            tile.screen[corner * 2] = placedCentre[DepthLens.X] + (view.screenX(worldX) - flatCentreX) * centreScale;
+            tile.screen[corner * 2 + 1] = placedCentre[DepthLens.Y] + (view.screenY(worldY) - flatCentreY) * centreScale;
         }
     }
 

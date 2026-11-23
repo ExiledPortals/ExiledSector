@@ -951,7 +951,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         AtlasCell cell = spotlight.cell();
         if (cell != null) {
             TreeViewport view = viewport();
-            spotlight.render(map.screenX(view, cell), map.screenY(view, cell), AtlasMapCanvas.footprint(view), panelStyle.getAccentColor(), alpha);
+            spotlight.render(map.screenX(view, cell), map.screenY(view, cell), map.footprint(view, cell), panelStyle.getAccentColor(), alpha);
         }
     }
 

@@ -24,23 +24,26 @@ final class BattleEffects {
 
     private enum Kind { SHOT, IMPACT, EXPLOSION }
 
+    record ShipSpot(float shipX, float shipY, float fleetX, float fleetY) {
+
+        static ShipSpot of(FactionFleet fleet, RoamingShip ship) {
+            return new ShipSpot(fleet.shipX(ship), fleet.shipY(ship), fleet.flight().positionX(), fleet.flight().positionY());
+        }
+    }
+
     private static final class Effect {
         private final Kind kind;
-        private final float fromX;
-        private final float fromY;
-        private final float toX;
-        private final float toY;
+        private final ShipSpot from;
+        private final ShipSpot to;
         private final float size;
         private final float lifeSeconds;
         private final Color color;
         private float ageSeconds;
 
-        private Effect(Kind kind, float fromX, float fromY, float toX, float toY, float size, float lifeSeconds, Color color) {
+        private Effect(Kind kind, ShipSpot from, ShipSpot to, float size, float lifeSeconds, Color color) {
             this.kind = kind;
-            this.fromX = fromX;
-            this.fromY = fromY;
-            this.toX = toX;
-            this.toY = toY;
+            this.from = from;
+            this.to = to;
             this.size = size;
             this.lifeSeconds = lifeSeconds;
             this.color = color;
@@ -53,13 +56,14 @@ final class BattleEffects {
 
     private final List<Effect> effects = new ArrayList<>();
     private final List<Effect> spawned = new ArrayList<>();
+    private final float[] placed = new float[3];
 
-    void shot(float fromX, float fromY, float toX, float toY, Color color) {
-        effects.add(new Effect(Kind.SHOT, fromX, fromY, toX, toY, SHOT_SIZE, SHOT_SECONDS, color));
+    void shot(ShipSpot from, ShipSpot to, Color color) {
+        effects.add(new Effect(Kind.SHOT, from, to, SHOT_SIZE, SHOT_SECONDS, color));
     }
 
-    void explosion(float atX, float atY, float shipLength) {
-        effects.add(new Effect(Kind.EXPLOSION, atX, atY, atX, atY, shipLength * EXPLOSION_SIZE_MULT, EXPLOSION_SECONDS, EXPLOSION_COLOR));
+    void explosion(ShipSpot at, float shipLength) {
+        effects.add(new Effect(Kind.EXPLOSION, at, at, shipLength * EXPLOSION_SIZE_MULT, EXPLOSION_SECONDS, EXPLOSION_COLOR));
     }
 
     boolean isEmpty() {
@@ -78,7 +82,7 @@ final class BattleEffects {
             if (effect.ageSeconds >= effect.lifeSeconds) {
                 iterator.remove();
                 if (effect.kind == Kind.SHOT) {
-                    spawned.add(new Effect(Kind.IMPACT, effect.toX, effect.toY, effect.toX, effect.toY, IMPACT_SIZE, IMPACT_SECONDS, IMPACT_COLOR));
+                    spawned.add(new Effect(Kind.IMPACT, effect.to, effect.to, IMPACT_SIZE, IMPACT_SECONDS, IMPACT_COLOR));
                 }
             }
         }
@@ -86,21 +90,28 @@ final class BattleEffects {
         spawned.clear();
     }
 
-    void render(TexturedQuadBatch glows, TreeViewport viewport, float alphaMult) {
+    void render(TexturedQuadBatch glows, DepthLens lens, float alphaMult) {
+        TreeViewport viewport = lens.view();
         float zoom = viewport.zoom();
         for (Effect effect : effects) {
             float progress = effect.progress();
-            float worldX = effect.fromX + (effect.toX - effect.fromX) * progress;
-            float worldY = effect.fromY + (effect.toY - effect.fromY) * progress;
-            float screenX = viewport.screenX(worldX);
-            float screenY = viewport.screenY(worldY);
-            float screenSize = Math.max(MIN_SCREEN_SIZE, effect.size * zoom);
+            ShipSpot from = effect.from;
+            ShipSpot to = effect.to;
+            float worldX = lerp(from.shipX(), to.shipX(), progress);
+            float worldY = lerp(from.shipY(), to.shipY(), progress);
+            float fleetX = lerp(from.fleetX(), to.fleetX(), progress);
+            float fleetY = lerp(from.fleetY(), to.fleetY(), progress);
+            lens.place(fleetX, fleetY, placed);
+            float scale = placed[DepthLens.SCALE];
+            float screenX = placed[DepthLens.X] + (viewport.screenX(worldX) - viewport.screenX(fleetX)) * scale;
+            float screenY = placed[DepthLens.Y] + (viewport.screenY(worldY) - viewport.screenY(fleetY)) * scale;
+            float screenSize = Math.max(MIN_SCREEN_SIZE, effect.size * zoom * scale);
             if (!viewport.isVisible(screenX, screenY, screenSize * SHOT_STREAK_MULT)) {
                 continue;
             }
             switch (effect.kind) {
                 case SHOT -> {
-                    float angleDeg = (float) Math.toDegrees(Math.atan2(-(effect.toY - effect.fromY), effect.toX - effect.fromX));
+                    float angleDeg = (float) Math.toDegrees(Math.atan2(-(to.shipY() - from.shipY()), to.shipX() - from.shipX()));
                     glows.quadAtCenter(screenX, screenY, screenSize * SHOT_STREAK_MULT, screenSize, angleDeg, effect.color, alphaMult);
                     glows.quadAtCenter(screenX, screenY, screenSize, screenSize, 0f, Color.WHITE, alphaMult * 0.6f);
                 }
@@ -114,5 +125,9 @@ final class BattleEffects {
                 }
             }
         }
+    }
+
+    private static float lerp(float from, float to, float share) {
+        return from + (to - from) * share;
     }
 }
