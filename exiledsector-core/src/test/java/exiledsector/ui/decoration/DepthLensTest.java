@@ -30,16 +30,45 @@ class DepthLensTest {
     }
 
     @Test
-    void nearAndFarPointsStayWhereTheViewportPutsThemWhereverTheCameraLooks() {
+    void whatTheCameraLooksAtStaysOnItsMapSpotAtEveryDepth() {
         for (float cameraX : new float[] {-3000f, 0f, 2500f}) {
             TreeViewport view = lookingAt(cameraX, 700f);
             DepthLens lens = new DepthLens(view, (x, y) -> 0f, 0.4f);
             for (float depth : new float[] {-1f, 0f, 1f}) {
-                float[] placed = place(lens, 600f, -400f, depth);
-                assertEquals(view.screenX(600f), placed[DepthLens.X], 1e-3f);
-                assertEquals(view.screenY(-400f), placed[DepthLens.Y], 1e-3f);
+                float[] placed = place(lens, cameraX, 700f, depth);
+                assertEquals(view.screenX(cameraX), placed[DepthLens.X], 1e-3f);
+                assertEquals(view.screenY(700f), placed[DepthLens.Y], 1e-3f);
             }
         }
+    }
+
+    @Test
+    void nearPointsSlideFasterThanTheMapAndFarPointsSlowerAsTheCameraPans() {
+        float[] slides = new float[3];
+        float[] depths = {-1f, 0f, 1f};
+        for (int index = 0; index < depths.length; index++) {
+            float before = place(new DepthLens(lookingAt(0f, 0f), (x, y) -> 0f, 0.4f), 300f, 0f, depths[index])[DepthLens.X];
+            float after = place(new DepthLens(lookingAt(200f, 0f), (x, y) -> 0f, 0.4f), 300f, 0f, depths[index])[DepthLens.X];
+            slides[index] = before - after;
+        }
+        assertEquals(200f * ZOOM, slides[1], 1e-3f);
+        assertTrue(slides[2] > slides[1] && slides[1] > slides[0]);
+        DepthLens lens = new DepthLens(VIEW, (x, y) -> 0f, 0.4f);
+        assertEquals(200f * ZOOM * lens.speed(1f), slides[2], 1e-3f);
+        assertEquals(200f * ZOOM * lens.speed(-1f), slides[0], 1e-3f);
+    }
+
+    @Test
+    void theWorldWindowReachesFarEnoughForTheFarthestGroundToFillTheScreen() {
+        DepthLens lens = new DepthLens(lookingAt(-2000f, 900f), (x, y) -> 0f, 0.4f);
+        float[] corner = new float[3];
+        lens.place(lens.worldMinX(DepthLens.FARTHEST), lens.worldMinY(DepthLens.FARTHEST), DepthLens.FARTHEST, corner);
+        assertEquals(0f, corner[DepthLens.X], 1e-2f);
+        assertEquals(720f, corner[DepthLens.Y], 1e-2f);
+        lens.place(lens.worldMaxX(DepthLens.FARTHEST), lens.worldMaxY(DepthLens.FARTHEST), DepthLens.FARTHEST, corner);
+        assertEquals(1280f, corner[DepthLens.X], 1e-2f);
+        assertEquals(0f, corner[DepthLens.Y], 1e-2f);
+        assertTrue(lens.worldMaxX(DepthLens.FARTHEST) - lens.worldMinX(DepthLens.FARTHEST) > 1280f / ZOOM);
     }
 
     @Test
@@ -63,13 +92,6 @@ class DepthLensTest {
         float[] fromField = new float[3];
         lens.place(-50f, 0f, fromField);
         assertEquals(lens.scale(-1f), fromField[DepthLens.SCALE], 1e-4f);
-    }
-
-    @Test
-    void theLensKnowsWhereTheCameraLooks() {
-        DepthLens lens = new DepthLens(lookingAt(-2000f, 900f), (x, y) -> 0f, 0.4f);
-        assertEquals(-2000f, lens.cameraX(), 1e-2f);
-        assertEquals(900f, lens.cameraY(), 1e-2f);
     }
 
     @Test

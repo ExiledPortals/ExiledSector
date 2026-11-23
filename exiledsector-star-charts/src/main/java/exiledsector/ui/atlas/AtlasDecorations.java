@@ -68,12 +68,10 @@ final class AtlasDecorations {
         if (canvas == null || alphaMult <= 0f) {
             return;
         }
-        TreeViewport view = lens.view();
-        float zoom = view.zoom();
-        int firstX = (int) Math.floor((view.left() - view.centerX()) / zoom / AtlasMapCanvas.CELL_PIXELS) - 1;
-        int lastX = (int) Math.ceil((view.right() - view.centerX()) / zoom / AtlasMapCanvas.CELL_PIXELS) + 1;
-        int firstY = (int) Math.floor((view.centerY() - view.top()) / zoom / AtlasMapCanvas.CELL_PIXELS) - 1;
-        int lastY = (int) Math.ceil((view.centerY() - view.bottom()) / zoom / AtlasMapCanvas.CELL_PIXELS) + 1;
+        int firstX = (int) Math.floor(lens.worldMinX(DepthLens.FARTHEST) / AtlasMapCanvas.CELL_PIXELS) - 1;
+        int lastX = (int) Math.ceil(lens.worldMaxX(DepthLens.FARTHEST) / AtlasMapCanvas.CELL_PIXELS) + 1;
+        int firstY = (int) Math.floor(lens.worldMinY(DepthLens.FARTHEST) / AtlasMapCanvas.CELL_PIXELS) - 1;
+        int lastY = (int) Math.ceil(lens.worldMaxY(DepthLens.FARTHEST) / AtlasMapCanvas.CELL_PIXELS) + 1;
         if (lastX - firstX > AtlasMapCanvas.MAX_SCENERY_CELLS || lastY - firstY > AtlasMapCanvas.MAX_SCENERY_CELLS) {
             return;
         }

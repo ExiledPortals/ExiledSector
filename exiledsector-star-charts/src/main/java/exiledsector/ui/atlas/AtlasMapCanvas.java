@@ -618,7 +618,9 @@ final class AtlasMapCanvas {
     private void placeLaneBend(TreeViewport view, AtlasCell from, AtlasCell to) {
         float middleX = (displayX(from) + displayX(to)) / 2f;
         float middleY = (displayY(from) + displayY(to)) / 2f;
-        lens(view).place(middleX, middleY + 2f * laneLift(from, to), 0f, laneBend);
+        float middleDepth = scenery.depth().depth(middleX, middleY);
+        float bendDepth = 2f * middleDepth - (depthOf(from) + depthOf(to)) / 2f;
+        lens(view).place(middleX, middleY + 2f * laneLift(from, to), bendDepth, laneBend);
     }
 
     private void drawNodes(TreeViewport view, Color accent, float mapAlpha, AtlasCell hiddenPreview) {

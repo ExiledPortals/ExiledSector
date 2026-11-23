@@ -95,7 +95,6 @@ public final class HyperspaceClouds {
     private final long seed;
     private final float cloudAlpha;
     private final float depthOffset;
-    private final LayerDrift drift;
     private final float[] placedCentre = new float[3];
     private final SpriteCache spriteCache = new SpriteCache(HyperspaceClouds.class);
     private final Map<Long, Tile> tiles = new LinkedHashMap<>(256, 0.75f, true) {
@@ -117,16 +116,15 @@ public final class HyperspaceClouds {
     private String flashTexture;
 
     public HyperspaceClouds(float tileSize, long seed, float cloudAlpha) {
-        this(tileSize, seed, cloudAlpha, 0f, new LayerDrift(1f, 0f, 1f));
+        this(tileSize, seed, cloudAlpha, 0f);
     }
 
-    public HyperspaceClouds(float tileSize, long seed, float cloudAlpha, float depthOffset, LayerDrift drift) {
+    public HyperspaceClouds(float tileSize, long seed, float cloudAlpha, float depthOffset) {
         this.tileSize = tileSize;
         this.renderSize = tileSize * RENDER_SIZE_MULT;
         this.seed = seed;
         this.cloudAlpha = cloudAlpha;
         this.depthOffset = depthOffset;
-        this.drift = drift;
     }
 
     public void setCover(Cover cover) {
@@ -138,7 +136,6 @@ public final class HyperspaceClouds {
 
     public void advance(float amount) {
         elapsedSeconds += amount;
-        drift.advance(amount);
         float days = amount / SECONDS_PER_DAY;
         automaton.advance(days);
         int[][] cells = automaton.getCells();
@@ -221,18 +218,14 @@ public final class HyperspaceClouds {
     }
 
     private void collect(DepthLens lens) {
-        TreeViewport view = lens.view();
         drawn.clear();
         stormCandidates.clear();
-        float zoom = view.zoom();
         float margin = renderSize * FLASH_SIZE_MULT * lens.scale(depthOffset + 1f);
-        drift.follow(lens.cameraX(), lens.cameraY());
-        float shiftX = drift.shiftX();
-        float shiftY = drift.shiftY();
-        float minX = (view.left() - view.centerX()) / zoom - margin - shiftX;
-        float maxX = (view.right() - view.centerX()) / zoom + margin - shiftX;
-        float minY = (view.centerY() - view.top()) / zoom - margin - shiftY;
-        float maxY = (view.centerY() - view.bottom()) / zoom + margin - shiftY;
+        float deepest = depthOffset - 1f;
+        float minX = lens.worldMinX(deepest) - margin;
+        float maxX = lens.worldMaxX(deepest) + margin;
+        float minY = lens.worldMinY(deepest) - margin;
+        float maxY = lens.worldMaxY(deepest) + margin;
         if (Float.isInfinite(minX) || Float.isInfinite(maxX) || Float.isInfinite(minY) || Float.isInfinite(maxY)) {
             return;
         }
@@ -300,7 +293,7 @@ public final class HyperspaceClouds {
 
     private void placeCorners(DepthLens lens, Tile tile) {
         TreeViewport view = lens.view();
-        lens.place(tile.centreX + drift.shiftX(), tile.centreY + drift.shiftY(), tile.depth, placedCentre);
+        lens.place(tile.centreX, tile.centreY, tile.depth, placedCentre);
         float centreScale = placedCentre[DepthLens.SCALE];
         float flatCentreX = view.screenX(tile.centreX);
         float flatCentreY = view.screenY(tile.centreY);

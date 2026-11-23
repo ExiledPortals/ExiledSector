@@ -1,7 +1,6 @@
 package exiledsector.ui.atlas;
 
 import exiledsector.charts.atlas.AtlasCell;
-import exiledsector.ui.TreeViewport;
 import exiledsector.ui.decoration.DepthLens;
 import exiledsector.ui.util.GlScope;
 import org.lwjgl.opengl.GL11;
@@ -35,13 +34,11 @@ final class AtlasAbyssShade {
         if (!anyAbyss || alphaMult <= 0f) {
             return;
         }
-        TreeViewport view = lens.view();
         float tile = TILE_CELLS * AtlasMapCanvas.CELL_PIXELS;
-        float zoom = view.zoom();
-        int firstX = (int) Math.floor(((view.left() - view.centerX()) / zoom) / tile);
-        int lastX = (int) Math.ceil(((view.right() - view.centerX()) / zoom) / tile);
-        int firstY = (int) Math.floor(((view.centerY() - view.top()) / zoom) / tile);
-        int lastY = (int) Math.ceil(((view.centerY() - view.bottom()) / zoom) / tile);
+        int firstX = (int) Math.floor(lens.worldMinX(DepthLens.FARTHEST) / tile);
+        int lastX = (int) Math.ceil(lens.worldMaxX(DepthLens.FARTHEST) / tile);
+        int firstY = (int) Math.floor(lens.worldMinY(DepthLens.FARTHEST) / tile);
+        int lastY = (int) Math.ceil(lens.worldMaxY(DepthLens.FARTHEST) / tile);
         int stride = Math.max(1, (int) Math.ceil(Math.max(lastX - firstX, lastY - firstY) / (float) MOST_TILES_ACROSS));
         firstX = Math.floorDiv(firstX, stride) * stride;
         firstY = Math.floorDiv(firstY, stride) * stride;
