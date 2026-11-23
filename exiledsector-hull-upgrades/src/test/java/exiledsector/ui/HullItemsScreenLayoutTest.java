@@ -5,6 +5,8 @@ import exiledsector.ui.refit.RefitScreenLayout;
 import exiledsector.ui.socket.ItemStoragePanel;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -105,6 +107,56 @@ class HullItemsScreenLayoutTest {
         RefitScreenLayout zoomedIn = new RefitScreenLayout(334f, 114f, 1252f, 852f, 545f, 115f, 1037f, 850f, 1.5f);
 
         assertEquals(1.5f, HullItemsLayout.settledShipZoom(zoomedIn, new SectionLayout.ShipExtent(30f, 50f)), 0.001f);
+    }
+
+    @Test
+    void endSocketsThatWouldSitBesideTheColumnMoveOverTheShipAxisClearOfTheColumnAndItsConnectors() {
+        SectionLayout.ShipExtent cruiser = new SectionLayout.ShipExtent(100f, 150f);
+        HullItemsLayout screenLayout = HullItemsLayout.of(WIDE_FRAME, cruiser);
+        float shipX = screenLayout.settledShipX();
+        float shipY = WIDE_FRAME.shipCentreY();
+        List<SectionLayout.Placement> placements = List.of(
+                new SectionLayout.Placement(SectionLayout.Side.ABOVE, 0, 1),
+                new SectionLayout.Placement(SectionLayout.Side.LEFT, 0, 3),
+                new SectionLayout.Placement(SectionLayout.Side.LEFT, 1, 3),
+                new SectionLayout.Placement(SectionLayout.Side.LEFT, 2, 3),
+                new SectionLayout.Placement(SectionLayout.Side.BELOW, 0, 1));
+
+        List<SectionsDisplay.SectionCentre> centres = SectionsDisplay.centres(placements, shipX, shipY, cruiser, screenLayout.sectionBounds());
+
+        float radius = SectionLayout.SECTION_RADIUS;
+        for (int end : new int[]{0, 4}) {
+            SectionsDisplay.SectionCentre endCentre = centres.get(end);
+            SectionsDisplay.SectionCentre beside = centres.get(end == 0 ? 1 : 3);
+            assertEquals(shipX, endCentre.x(), 0.001f);
+            float outwards = end == 0 ? endCentre.y() - beside.y() : beside.y() - endCentre.y();
+            assertTrue(outwards >= 0f, "never sits inside the outermost column socket: " + outwards);
+            float elbowX = SectionLayout.elbowX(placements.get(1), beside.x());
+            float anchorY = shipY + (end == 0 ? 0.3f : -0.3f) * cruiser.halfLength();
+            assertTrue(distanceToSegment(endCentre.x(), endCentre.y(), elbowX, beside.y(), shipX, anchorY) > radius,
+                    "the column connector passes clear of end socket " + end);
+        }
+    }
+
+    @Test
+    void endSocketsWithRoomBeyondTheColumnKeepTheirShiftedSpot() {
+        SectionLayout.ShipExtent longHull = new SectionLayout.ShipExtent(50f, 400f);
+        SectionsDisplay.SectionBounds roomyBounds = new SectionsDisplay.SectionBounds(-10000f, 10000f, -10000f, 10000f);
+        SectionLayout.Placement above = new SectionLayout.Placement(SectionLayout.Side.ABOVE, 0, 1);
+        List<SectionLayout.Placement> placements = List.of(above, new SectionLayout.Placement(SectionLayout.Side.LEFT, 0, 1));
+
+        List<SectionsDisplay.SectionCentre> centres = SectionsDisplay.centres(placements, 500f, 0f, longHull, roomyBounds);
+
+        assertEquals(SectionLayout.sectionX(above, 500f, longHull), centres.get(0).x(), 0.001f);
+        assertEquals(SectionLayout.sectionY(above, 0f, longHull), centres.get(0).y(), 0.001f);
+    }
+
+    private static float distanceToSegment(float pointX, float pointY, float startX, float startY, float endX, float endY) {
+        float segmentX = endX - startX;
+        float segmentY = endY - startY;
+        float share = ((pointX - startX) * segmentX + (pointY - startY) * segmentY) / (segmentX * segmentX + segmentY * segmentY);
+        share = Math.max(0f, Math.min(1f, share));
+        return (float) Math.hypot(pointX - startX - segmentX * share, pointY - startY - segmentY * share);
     }
 
     @Test

@@ -50,6 +50,9 @@ final class SectionsDisplay {
         }
     }
 
+    record SectionCentre(float x, float y) {
+    }
+
     record PatternLook(Set<ShipSection> litSections, Function<ShipSection, StyledText> hint) {
     }
 
@@ -61,6 +64,7 @@ final class SectionsDisplay {
     private static final TextFont LABEL_FONT = UiFonts.TITLE;
     private static final float LABEL_FONT_SIZE = LABEL_FONT.size();
     static final float VERTICAL_REACH = SectionLayout.SECTION_RADIUS + LABEL_GAP + LABEL_FONT_SIZE * 2f;
+    static final float SOCKET_CLEAR_HEIGHT = VERTICAL_REACH * 2f;
     private static final float OTHER_SECTION_DIM = 0.3f;
 
     private final CustomPanelAPI hostPanel;
@@ -327,11 +331,12 @@ final class SectionsDisplay {
             unlockedSections.forEach(unlocked -> sectionPoints.add(sectionAnchors.forSection(unlocked.section())));
             placements = SectionLayout.place(sectionPoints);
         }
+        List<SectionCentre> centres = centres(placements, ship.screenX(), ship.screenY(), extent, bounds);
         for (int i = 0; i < unlockedSections.size(); i++) {
             ShipSections.UnlockedSection unlocked = unlockedSections.get(i);
             SectionLayout.Placement placement = placements.get(i);
-            float sectionX = bounds.clampX(SectionLayout.sectionX(placement, ship.screenX(), extent));
-            float sectionY = bounds.clampY(SectionLayout.sectionY(placement, ship.screenY(), extent));
+            float sectionX = centres.get(i).x();
+            float sectionY = centres.get(i).y();
             sectionCentreX[i] = sectionX;
             sectionCentreY[i] = sectionY;
             HullPoint anchor = sectionAnchors.forSection(unlocked.section());
@@ -355,6 +360,33 @@ final class SectionsDisplay {
             drawCentred(typeLabels[i], sectionCentreX[i], sectionCentreY[i] + radius + LABEL_GAP + LABEL_FONT_SIZE, sectionAlpha);
             drawCentred(stateLabels[i], sectionCentreX[i], sectionCentreY[i] - radius - LABEL_GAP, sectionAlpha);
         }
+    }
+
+    static List<SectionCentre> centres(List<SectionLayout.Placement> placements, float shipX, float shipY, SectionLayout.ShipExtent extent,
+                                       SectionBounds bounds) {
+        float columnTop = Float.NEGATIVE_INFINITY;
+        float columnBottom = Float.POSITIVE_INFINITY;
+        for (SectionLayout.Placement placement : placements) {
+            if (placement.side() == SectionLayout.Side.LEFT) {
+                float columnY = bounds.clampY(SectionLayout.sectionY(placement, shipY, extent));
+                columnTop = Math.max(columnTop, columnY);
+                columnBottom = Math.min(columnBottom, columnY);
+            }
+        }
+        List<SectionCentre> centres = new ArrayList<>(placements.size());
+        for (SectionLayout.Placement placement : placements) {
+            float centreX = bounds.clampX(SectionLayout.sectionX(placement, shipX, extent));
+            float centreY = bounds.clampY(SectionLayout.sectionY(placement, shipY, extent));
+            if (placement.side() == SectionLayout.Side.ABOVE && centreY - columnTop < SOCKET_CLEAR_HEIGHT) {
+                centreY = Math.max(centreY, columnTop);
+                centreX = bounds.clampX(shipX);
+            } else if (placement.side() == SectionLayout.Side.BELOW && columnBottom - centreY < SOCKET_CLEAR_HEIGHT) {
+                centreY = Math.min(centreY, columnBottom);
+                centreX = bounds.clampX(shipX);
+            }
+            centres.add(new SectionCentre(centreX, centreY));
+        }
+        return centres;
     }
 
     private boolean isSelected(ShipSection section, Item placing, ShipSection targetedSection) {
