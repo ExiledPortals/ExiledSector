@@ -1,6 +1,6 @@
 package exiledsector.charts.effect;
 
-import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.data.EnumKeys;
 import exiledsector.charts.generation.ChartGenContext;
@@ -433,11 +433,11 @@ public enum ChartModifier implements ModifierEffect {
         return new ChartGenContext.AppliedEffect(forDropType(anomalyDrop.dropType()), value);
     }
 
-    public boolean canRoll(SectorAPI sector) {
+    public boolean canRoll() {
         if (grantedNodeId != null && !GrantedNodes.exists(grantedNodeId)) {
             return false;
         }
-        return dropType == null || dropType.canDrop(sector);
+        return dropType == null || dropType.canDrop(Global.getSector());
     }
 
     public String key() {

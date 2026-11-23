@@ -459,11 +459,11 @@ class AtlasGeneratorTest {
     @Test
     void systemsWithAClearLineBetweenThemAreAlwaysJoinedByLanes() {
         AtlasGenerator generator = generator(rules(CLOUDED));
-        Map<Long, Long> parents = new HashMap<>();
+        Map<AtlasCell, AtlasCell> parents = new HashMap<>();
         for (AtlasCell cell : AtlasCell.ORIGIN.around(SCAN_RADIUS)) {
             for (AtlasCell lane : generator.lanes(cell)) {
                 if (inside(lane, SCAN_RADIUS)) {
-                    parents.put(root(parents, cell.pack()), root(parents, lane.pack()));
+                    parents.put(root(parents, cell), root(parents, lane));
                 }
             }
         }
@@ -482,7 +482,7 @@ class AtlasGeneratorTest {
                     continue;
                 }
                 checked++;
-                assertEquals(root(parents, cell.pack()), root(parents, other.pack()), cell + " and " + other + " see each other but are not joined");
+                assertEquals(root(parents, cell), root(parents, other), cell + " and " + other + " see each other but are not joined");
             }
         }
 
@@ -597,10 +597,14 @@ class AtlasGeneratorTest {
         assertEquals(List.of(from), AtlasTerrain.latticePath(from, from));
     }
 
-    private static long root(Map<Long, Long> parents, long packed) {
-        long current = packed;
-        Long parent = parents.get(current);
-        while (parent != null && parent != current) {
+    private static AtlasCell root(Map<AtlasCell, AtlasCell> parents, AtlasCell cell) {
+        AtlasCell current = cell;
+        AtlasCell parent = parents.get(current);
+        while (parent != null && !parent.equals(current)) {
+            AtlasCell grandparent = parents.get(parent);
+            if (grandparent != null) {
+                parents.put(current, grandparent);
+            }
             current = parent;
             parent = parents.get(current);
         }

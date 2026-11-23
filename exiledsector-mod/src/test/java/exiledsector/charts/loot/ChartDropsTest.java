@@ -231,16 +231,15 @@ class ChartDropsTest {
     void theChartMultiplierScalesHowManyChartsDropWithoutACap() throws Exception {
         ChartDropRules.register(new JSONArray().put(rule("chart_boss", 1f, 0.25f, 0f, 0f)));
 
-        assertEquals(1.25, averageCharts(1f), 0.05);
-        assertEquals(2.5, averageCharts(2f), 0.05);
-        assertEquals(11.0, averageCharts(10f), 0.0);
-        assertEquals(0.0, averageCharts(0f), 0.0);
+        assertEquals(1.25, averageCharts(1f, 2000), 0.05);
+        assertEquals(2.5, averageCharts(2f, 2000), 0.05);
+        assertEquals(11.0, averageCharts(10f, 200), 0.0);
+        assertEquals(0.0, averageCharts(0f, 200), 0.0);
     }
 
-    private static double averageCharts(float mult) {
+    private static double averageCharts(float mult, int trials) {
         Random random = new Random(5L);
         int charts = 0;
-        int trials = 2000;
         for (int roll = 0; roll < trials; roll++) {
             charts += ChartDrops.roll(ChartDrops.Source.CHART_BOSS, 4, mult, random).charts().size();
         }

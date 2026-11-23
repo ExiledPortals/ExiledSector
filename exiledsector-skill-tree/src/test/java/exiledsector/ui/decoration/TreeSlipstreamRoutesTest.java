@@ -15,19 +15,24 @@ import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class TreeSlipstreamRoutesTest {
 
     private static final float ASPECT = 16f / 9f;
     private static final float[] VIEW_HEIGHTS = {4000f, 10000f, 25000f, 60000f};
     private static final float STREAM_REACH_WIDTHS = 0.78f;
+    private static final float BUCKET_SIZE = 2000f;
 
-    private static final List<Vector2f> BLOCKERS = new ArrayList<>();
-    private static final List<Float> BLOCKER_RADII = new ArrayList<>();
+    private static final List<float[]> VOLUMES = new ArrayList<>();
+    private static final Map<Long, List<float[]>> SMALL_BLOCKERS = new HashMap<>();
+    private static float largestSmallRadius;
 
     @BeforeAll
     static void loadRealTree() throws Exception {
@@ -35,7 +40,7 @@ class TreeSlipstreamRoutesTest {
         for (String volume : SkillTags.VOLUME) {
             RoamVolume roamVolume = TreeRoamVolumes.volume(volume, SkillTree.getDecorations().stars(), SkillTree.getAllNodes().values());
             if (roamVolume != null) {
-                block(roamVolume.centerX(), roamVolume.centerY(), roamVolume.outerRadius());
+                VOLUMES.add(new float[] {roamVolume.centerX(), roamVolume.centerY(), roamVolume.outerRadius()});
             }
         }
         for (SkillNode node : SkillTree.getAllNodes().values()) {
@@ -59,6 +64,8 @@ class TreeSlipstreamRoutesTest {
     @AfterAll
     static void clear() {
         RealSkillData.clear();
+        VOLUMES.clear();
+        SMALL_BLOCKERS.clear();
     }
 
     @Test
@@ -87,38 +94,43 @@ class TreeSlipstreamRoutesTest {
 
     private static void assertClear(SlipstreamRoute route) {
         float reach = route.width() * STREAM_REACH_WIDTHS;
-        float minX = Float.MAX_VALUE;
-        float minY = Float.MAX_VALUE;
-        float maxX = -Float.MAX_VALUE;
-        float maxY = -Float.MAX_VALUE;
-        for (Vector2f point : route.points()) {
-            minX = Math.min(minX, point.x);
-            minY = Math.min(minY, point.y);
-            maxX = Math.max(maxX, point.x);
-            maxY = Math.max(maxY, point.y);
-        }
-        List<Integer> nearby = new ArrayList<>();
-        for (int i = 0; i < BLOCKERS.size(); i++) {
-            Vector2f blocker = BLOCKERS.get(i);
-            float clear = BLOCKER_RADII.get(i) + reach;
-            if (blocker.x + clear >= minX && blocker.x - clear <= maxX && blocker.y + clear >= minY && blocker.y - clear <= maxY) {
-                nearby.add(i);
-            }
-        }
+        int bucketReach = (int) Math.ceil((largestSmallRadius + reach) / BUCKET_SIZE);
         for (float distance = 0f; distance <= route.length(); distance += route.width() / 6f) {
             Vector2f point = route.pointAt(distance);
-            for (int i : nearby) {
-                Vector2f blocker = BLOCKERS.get(i);
-                float dx = point.x - blocker.x;
-                float dy = point.y - blocker.y;
-                float clear = BLOCKER_RADII.get(i) + reach;
-                assertTrue(dx * dx + dy * dy > clear * clear, "the stream touched a blocker at " + blocker);
+            for (float[] volume : VOLUMES) {
+                assertApart(point, volume, reach);
+            }
+            int bucketX = bucket(point.x);
+            int bucketY = bucket(point.y);
+            for (int x = bucketX - bucketReach; x <= bucketX + bucketReach; x++) {
+                for (int y = bucketY - bucketReach; y <= bucketY + bucketReach; y++) {
+                    for (float[] blocker : SMALL_BLOCKERS.getOrDefault(key(x, y), List.of())) {
+                        assertApart(point, blocker, reach);
+                    }
+                }
             }
         }
     }
 
+    private static void assertApart(Vector2f point, float[] blocker, float reach) {
+        float dx = point.x - blocker[0];
+        float dy = point.y - blocker[1];
+        float clear = blocker[2] + reach;
+        if (dx * dx + dy * dy <= clear * clear) {
+            fail("the stream touched a blocker at (" + blocker[0] + ", " + blocker[1] + ")");
+        }
+    }
+
     private static void block(float x, float y, float radius) {
-        BLOCKERS.add(new Vector2f(x, y));
-        BLOCKER_RADII.add(radius);
+        largestSmallRadius = Math.max(largestSmallRadius, radius);
+        SMALL_BLOCKERS.computeIfAbsent(key(bucket(x), bucket(y)), unused -> new ArrayList<>()).add(new float[] {x, y, radius});
+    }
+
+    private static int bucket(float coordinate) {
+        return (int) Math.floor(coordinate / BUCKET_SIZE);
+    }
+
+    private static long key(int x, int y) {
+        return ((long) x << 32) ^ (y & 0xffffffffL);
     }
 }

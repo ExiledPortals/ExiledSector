@@ -1,6 +1,5 @@
 package exiledsector.charts.effect;
 
-import com.fs.starfarer.api.Global;
 import exiledsector.charts.content.ChartFactions;
 import exiledsector.charts.loot.ChartLootTotals;
 import exiledsector.items.ItemEffects;
@@ -30,6 +29,6 @@ public final class ChartEffects implements ModifierEffects {
     @Override
     public boolean canRoll(String effectName) {
         ChartModifier effect = ChartModifier.byNameOrNull(effectName);
-        return effect == null || effect.canRoll(Global.getSector());
+        return effect == null || effect.canRoll();
     }
 }
