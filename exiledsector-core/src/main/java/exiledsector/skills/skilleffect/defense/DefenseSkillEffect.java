@@ -231,6 +231,33 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
             return Set.of(NANOFORGE_HULL_REGEN_PERCENT);
         }
     },
+    FIELD_REPAIR_HULL_REGEN_PERCENT(listener(FieldRepairNanitesListener.REGEN_PERCENT_KEY, FieldRepairNanitesListener.class,
+            FieldRepairNanitesListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return description(magnitude, DescribeContext.NONE);
+        }
+
+        @Override
+        public StyledText description(float magnitude, DescribeContext context) {
+            return EffectText.msg(this).arg("value", magnitude).arg("cap", FieldRepairNanitesListener.MAX_HULL_PER_SECOND)
+                    .arg("floor", FieldRepairNanitesListener.MIN_CR_PERCENT).arg("cost", FieldRepairNanitesListener.CR_LOST_PERCENT)
+                    .arg("step", FieldRepairNanitesListener.hullPercentPerCrLost(context.magnitudeOf(FIELD_REPAIR_HULL_PER_CR_FLAT)))
+                    .styled();
+        }
+    },
+    FIELD_REPAIR_HULL_PER_CR_FLAT(listener(FieldRepairNanitesListener.HULL_PER_CR_BONUS_KEY, FieldRepairNanitesListener.class,
+            FieldRepairNanitesListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.signed(this, magnitude).arg("cost", FieldRepairNanitesListener.CR_LOST_PERCENT).styled();
+        }
+
+        @Override
+        public Set<SkillEffect> refines() {
+            return Set.of(FIELD_REPAIR_HULL_REGEN_PERCENT);
+        }
+    },
     UNHIT_ARMOR_REGEN_PERCENT(listener(UnhitArmorRegenListener.REGEN_PERCENT_KEY, UnhitArmorRegenListener.class,
             UnhitArmorRegenListener::new)) {
         @Override

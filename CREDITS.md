@@ -42,6 +42,12 @@ By PureTilt. Its hull mod designs and icons are used with permission from PureTi
 
 Files: everything prefixed `mhm_` under `graphics/exiledSector`, which covers the circular copies of its hull mod icons in `graphics/exiledSector/tree/more_hullmods`. The More HullMods nodes are modelled on its hull mods, but their code is Exiled Sector's own and is covered by the GPL.
 
+## Emergent Threats
+
+By vicegrip. Emergent Threats is licensed under [Creative Commons Attribution-NonCommercial-ShareAlike 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/), and so are the Emergent Threats files here and our changes to them. Its hull mod designs and icons are used with permission from vicegrip (granted 2026-11-23), with a note on each node that it comes from Emergent Threats.
+
+Files: everything prefixed `vice_` under `graphics/exiledSector`, which covers the circular copies of its hull mod icons in `graphics/exiledSector/tree/emergent_threats`. The Emergent Threats nodes are modelled on its hull mods, but their code is Exiled Sector's own and is covered by the GPL.
+
 ## Path of Exile
 
 The loot alert sounds are from Path of Exile and are copyright Grinding Gear Games.

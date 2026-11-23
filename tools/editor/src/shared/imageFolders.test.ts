@@ -12,7 +12,7 @@ describe('image folders', () => {
   });
 
   it('only treats the known mod prefixes as mod prefixes', () => {
-    expect(['rat_a.png', 'na_a.png', 'nskr_a.png', 'tania_a.png', 'aotd_a.png', 'mhm_a.png', 'art/x/rat_b.png'].map(modPrefixOf)).toEqual(['rat_', 'na_', 'nskr_', 'tania_', 'aotd_', 'mhm_', 'rat_']);
+    expect(['rat_a.png', 'na_a.png', 'nskr_a.png', 'tania_a.png', 'aotd_a.png', 'mhm_a.png', 'vice_a.png', 'art/x/rat_b.png'].map(modPrefixOf)).toEqual(['rat_', 'na_', 'nskr_', 'tania_', 'aotd_', 'mhm_', 'vice_', 'rat_']);
     expect(['ratchet.png', 'exiledSector_a.png', 'nav_a.png'].map(modPrefixOf)).toEqual(['', '', '']);
   });
 

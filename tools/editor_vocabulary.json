@@ -208,6 +208,8 @@
     {"name": "EXPLODE_ON_DEATH", "statMode": null, "lowerIsBetter": false},
     {"name": "EXPLODE_ON_DEATH_AREA_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "FEEDSTOCK_QUANTITY_PERCENT", "statMode": null, "lowerIsBetter": false},
+    {"name": "FIELD_REPAIR_HULL_PER_CR_FLAT", "statMode": null, "lowerIsBetter": false},
+    {"name": "FIELD_REPAIR_HULL_REGEN_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "FIGHTER_ARMOR_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},
     {"name": "FIGHTER_BAYS_FLAT", "statMode": null, "lowerIsBetter": false},
     {"name": "FIGHTER_CREW_LOSS_MULT", "statMode": "MULT", "lowerIsBetter": true},

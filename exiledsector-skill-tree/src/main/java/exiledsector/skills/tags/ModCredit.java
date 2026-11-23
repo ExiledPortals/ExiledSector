@@ -19,7 +19,8 @@ public enum ModCredit {
     RANDOM_ASSORTMENT(VolumeToggles.RANDOM_ASSORTMENT_VOLUMES, "node.modCredit.randomAssortment"),
     NIGHTCROSS(VolumeToggles.NIGHTCROSS_VOLUMES, "node.modCredit.nightcross"),
     TANIA(VolumeToggles.TANIA_VOLUMES, "node.modCredit.tania"),
-    MORE_HULLMODS("mhmods_", "node.modCredit.moreHullmods");
+    MORE_HULLMODS("mhmods_", "node.modCredit.moreHullmods"),
+    EMERGENT_THREATS("vice_", "node.modCredit.emergentThreats");
 
     private final Set<String> volumes;
     private final String hullModIdPrefix;

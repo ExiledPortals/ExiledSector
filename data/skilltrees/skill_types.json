@@ -10016,6 +10016,274 @@
 				"campaign_only",
 				"logistics_cap"
 			]
+		},
+		{
+			"id": "field_repair_nanites",
+			"name": "Field Repair Nanites",
+			"icon": "graphics/exiledSector/tree/emergent_threats/vice_field_repair_nanites.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "FIELD_REPAIR_HULL_REGEN_PERCENT",
+					"magnitude": 1
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FIELD_REPAIR_HULL_REGEN_PERCENT",
+						"magnitude": 1
+					},
+					{
+						"effect": "FIELD_REPAIR_HULL_PER_CR_FLAT",
+						"magnitude": 2
+					}
+				]
+			},
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "vice_field_repair_nanites"
+				}
+			],
+			"phantomHullMods": [
+				"vice_field_repair_nanites"
+			],
+			"flavour": "Repair nanites of this grade were made for drydock work, where nobody counts what they eat. The crew turns them loose on the hull mid-battle and lets them strip the nearest systems for feedstock. The engineering logs file this under routine maintenance.",
+			"flavourAutomated": "Repair nanites of this grade were made for drydock work, where nobody counts what they eat. The ship's core releases them on its own hull mid-battle and records which systems they strip for feedstock. It files the losses under routine maintenance.",
+			"tags": [
+				"hull",
+				"repair",
+				"combat_readiness"
+			]
+		},
+		{
+			"id": "modular_bolt_coherer",
+			"name": "Modular Bolt Coherer",
+			"icon": "graphics/exiledSector/tree/emergent_threats/vice_modular_bolt_coherer.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "NON_BEAM_ENERGY_WEAPON_RANGE_FLAT",
+					"magnitude": 100
+				},
+				{
+					"effect": "CREW_LOSS_PERCENT",
+					"magnitude": 25
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "NON_BEAM_ENERGY_WEAPON_RANGE_FLAT",
+						"magnitude": 100
+					},
+					{
+						"effect": "CREW_LOSS_PERCENT",
+						"magnitude": 25
+					},
+					{
+						"effect": "ENERGY_WEAPON_FLUX_COST_MULT",
+						"magnitude": -5
+					}
+				]
+			},
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "vice_modular_bolt_coherer"
+				}
+			],
+			"phantomHullMods": [
+				"vice_modular_bolt_coherer"
+			],
+			"flavour": "A modular coherer clamps onto energy mounts the original design was never meant to fit and tightens each bolt before it leaves the emitter. The crew copies the fittings from a Sindrian refit manual of uncertain provenance. The chapter on shielding the gun crews appears to have been removed.",
+			"flavourAutomated": "A modular coherer clamps onto energy mounts the original design was never meant to fit and tightens each bolt before it leaves the emitter. The refit crew follows a Sindrian refit manual the ship's core recovered from a wreck. The chapter on shielding the gun crews appears to have been removed.",
+			"tags": [
+				"non_beam_energy",
+				"range",
+				"crew",
+				"req_non_beam_energy"
+			]
+		},
+		{
+			"id": "attuned_emitter_diodes",
+			"name": "Attuned Emitter Diodes",
+			"icon": "graphics/exiledSector/tree/emergent_threats/vice_attuned_emitter_diodes.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "BEAM_WEAPON_HARD_FLUX_PERCENT",
+					"magnitude": 100
+				},
+				{
+					"effect": "BEAM_WEAPON_RANGE_FLAT",
+					"magnitude": -100
+				},
+				{
+					"effect": "BEAM_WEAPON_DAMAGE_PERCENT",
+					"magnitude": -20
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "BEAM_WEAPON_HARD_FLUX_PERCENT",
+						"magnitude": 100
+					},
+					{
+						"effect": "BEAM_WEAPON_RANGE_FLAT",
+						"magnitude": -100
+					},
+					{
+						"effect": "BEAM_WEAPON_DAMAGE_PERCENT",
+						"magnitude": -15
+					}
+				]
+			},
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "vice_attuned_emitter_diodes"
+				}
+			],
+			"phantomHullMods": [
+				"vice_attuned_emitter_diodes"
+			],
+			"flavour": "Attuned diodes are tuned to the pulse of a bolt coherer, and fed through one they make a beam strike shields like a slug. The emitters run shorter and cooler for it. A Diktat gunnery manual calls this a fair trade, in a footnote.",
+			"tags": [
+				"beam",
+				"shield",
+				"req_beam"
+			]
+		},
+		{
+			"id": "modular_fleet_override",
+			"name": "Modular Fleet Override",
+			"icon": "graphics/exiledSector/tree/emergent_threats/vice_modular_fleet_override.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "FIGHTER_WEAPON_DAMAGE_PERCENT",
+					"magnitude": 10
+				},
+				{
+					"effect": "FIGHTER_CREW_LOSS_MULT",
+					"magnitude": 50
+				}
+			],
+			"integrated": {
+				"effects": [
+					{
+						"effect": "FIGHTER_WEAPON_DAMAGE_PERCENT",
+						"magnitude": 10
+					},
+					{
+						"effect": "FIGHTER_CREW_LOSS_MULT",
+						"magnitude": 50
+					},
+					{
+						"effect": "FIGHTER_REFIT_TIME_PERCENT",
+						"magnitude": -15
+					}
+				]
+			},
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "vice_modular_fleet_override"
+				}
+			],
+			"phantomHullMods": [
+				"vice_modular_fleet_override"
+			],
+			"flavour": "An override package strips the safety limits from a strike craft's fire control and leaves the pilots to manage the rest. The crew learns the codes from Diktat carrier wings, who learned them through attrition. Recovery shuttle crews have started asking which wings carry it.",
+			"flavourAutomated": "An override package strips the safety limits from a strike craft's fire control and leaves the pilots to manage the rest. The ship's core lifts the codes from captured Diktat carrier logs and pushes them to every wing it launches. It keeps no record of what the pilots think of this.",
+			"tags": [
+				"strikecraft",
+				"damage",
+				"req_strikecraft_bays"
+			]
+		},
+		{
+			"id": "unified_targeting_core",
+			"name": "Unified Targeting Core",
+			"icon": "graphics/exiledSector/tree/emergent_threats/vice_unified_targeting_core.png",
+			"tier": "NOTABLE",
+			"hullSizeEffects": [
+				{
+					"effect": "BALLISTIC_WEAPON_RANGE_PERCENT",
+					"frigate": 0,
+					"destroyer": 0,
+					"cruiser": 30,
+					"capitalShip": 40
+				},
+				{
+					"effect": "ENERGY_WEAPON_RANGE_PERCENT",
+					"frigate": 0,
+					"destroyer": 0,
+					"cruiser": 30,
+					"capitalShip": 40
+				},
+				{
+					"effect": "FIGHTER_WEAPON_RANGE_PERCENT",
+					"frigate": 0,
+					"destroyer": 0,
+					"cruiser": 30,
+					"capitalShip": 40
+				}
+			],
+			"integrated": {
+				"hullSizeEffects": [
+					{
+						"effect": "BALLISTIC_WEAPON_RANGE_PERCENT",
+						"frigate": 0,
+						"destroyer": 0,
+						"cruiser": 35,
+						"capitalShip": 45
+					},
+					{
+						"effect": "ENERGY_WEAPON_RANGE_PERCENT",
+						"frigate": 0,
+						"destroyer": 0,
+						"cruiser": 35,
+						"capitalShip": 45
+					},
+					{
+						"effect": "FIGHTER_WEAPON_RANGE_PERCENT",
+						"frigate": 0,
+						"destroyer": 0,
+						"cruiser": 35,
+						"capitalShip": 45
+					}
+				]
+			},
+			"requiredHullSizes": [
+				"CRUISER",
+				"CAPITAL_SHIP"
+			],
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "vice_unified_targeting_core"
+				}
+			],
+			"phantomHullMods": [
+				"vice_unified_targeting_core"
+			],
+			"flavour": "A unified core runs every gun on the ship from one fire-control solution and hands the same picture to its strike craft. The processing stacks fill a compartment that used to be crew quarters. Nobody has asked for it back.",
+			"flavourAutomated": "A unified core runs every gun on the ship from one fire-control solution and hands the same picture to its strike craft. The refit crew fits the processing stacks into a compartment that used to be crew quarters. The ship's core has no use for it.",
+			"tags": [
+				"range",
+				"ballistic",
+				"energy",
+				"strikecraft"
+			]
 		}
 	]
 }

@@ -1685,7 +1685,8 @@
 			"connectedTo": [
 				"affinity_12",
 				"affinity_14",
-				"affinity_170"
+				"affinity_170",
+				"non_beam_energy_weapon_damage_9"
 			],
 			"x": 2645,
 			"y": 3641,
@@ -1737,7 +1738,8 @@
 				"affinity_16",
 				"affinity_18",
 				"safety_overrides_1",
-				"affinity_176"
+				"affinity_176",
+				"strikecraft_weapon_damage_10"
 			],
 			"x": -2645,
 			"y": 3641,
@@ -10435,7 +10437,8 @@
 			"type": "affinity",
 			"connectedTo": [
 				"affinity_187",
-				"affinity_189"
+				"affinity_189",
+				"ballistic_and_energy_weapon_range_8"
 			],
 			"x": 1247,
 			"y": -5869,
@@ -10450,7 +10453,8 @@
 			"type": "affinity",
 			"connectedTo": [
 				"affinity_188",
-				"affinity_190"
+				"affinity_190",
+				"combat_readiness_8"
 			],
 			"x": 2440,
 			"y": -5481,
@@ -11610,6 +11614,195 @@
 			"y": -681,
 			"orbitAnchorId": "stiff_mounts_anchor",
 			"orbitAngle": 126.4,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "ballistic_and_energy_weapon_range_8",
+			"type": "ballistic_and_energy_weapon_range",
+			"connectedTo": [
+				"ballistic_and_energy_weapon_range_9",
+				"affinity_188"
+			],
+			"x": 978,
+			"y": -5420,
+			"orbitAnchorId": "unified_targeting_core_anchor",
+			"orbitAngle": 300.9,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "ballistic_and_energy_weapon_range_9",
+			"type": "ballistic_and_energy_weapon_range",
+			"connectedTo": [
+				"ballistic_and_energy_weapon_range_8",
+				"unified_targeting_core_1"
+			],
+			"x": 717,
+			"y": -5355,
+			"orbitAnchorId": "unified_targeting_core_anchor",
+			"orbitAngle": 210.9,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "unified_targeting_core_1",
+			"type": "unified_targeting_core",
+			"connectedTo": [
+				"ballistic_and_energy_weapon_range_9"
+			],
+			"x": 782,
+			"y": -5094,
+			"orbitAnchorId": "unified_targeting_core_anchor",
+			"orbitAngle": 120.9,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "combat_readiness_8",
+			"type": "combat_readiness",
+			"connectedTo": [
+				"combat_readiness_9",
+				"affinity_189"
+			],
+			"x": 2487,
+			"y": -4895,
+			"orbitAnchorId": "field_repair_nanites_anchor",
+			"orbitAngle": 265.4,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "combat_readiness_9",
+			"type": "combat_readiness",
+			"connectedTo": [
+				"combat_readiness_8",
+				"field_repair_nanites_1"
+			],
+			"x": 2691,
+			"y": -4721,
+			"orbitAnchorId": "field_repair_nanites_anchor",
+			"orbitAngle": 355.4,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "field_repair_nanites_1",
+			"type": "field_repair_nanites",
+			"connectedTo": [
+				"combat_readiness_9"
+			],
+			"x": 2517,
+			"y": -4517,
+			"orbitAnchorId": "field_repair_nanites_anchor",
+			"orbitAngle": 85.4,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "strikecraft_weapon_damage_10",
+			"type": "strikecraft_weapon_damage",
+			"connectedTo": [
+				"strikecraft_weapon_damage_11",
+				"affinity_17"
+			],
+			"x": -3279,
+			"y": 3750,
+			"orbitAnchorId": "modular_fleet_override_anchor",
+			"orbitAngle": 350.3,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "strikecraft_weapon_damage_11",
+			"type": "strikecraft_weapon_damage",
+			"connectedTo": [
+				"strikecraft_weapon_damage_10",
+				"modular_fleet_override_1"
+			],
+			"x": -3434,
+			"y": 3969,
+			"orbitAnchorId": "modular_fleet_override_anchor",
+			"orbitAngle": 80.3,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "modular_fleet_override_1",
+			"type": "modular_fleet_override",
+			"connectedTo": [
+				"strikecraft_weapon_damage_11"
+			],
+			"x": -3653,
+			"y": 3814,
+			"orbitAnchorId": "modular_fleet_override_anchor",
+			"orbitAngle": 170.3,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "non_beam_energy_weapon_damage_9",
+			"type": "non_beam_energy_weapon_damage",
+			"connectedTo": [
+				"non_beam_energy_weapon_damage_10",
+				"affinity_13"
+			],
+			"x": 2718,
+			"y": 4122,
+			"orbitAnchorId": "modular_bolt_coherer_anchor",
+			"orbitAngle": 261.4,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "non_beam_energy_weapon_damage_10",
+			"type": "non_beam_energy_weapon_damage",
+			"connectedTo": [
+				"non_beam_energy_weapon_damage_9",
+				"modular_bolt_coherer_1"
+			],
+			"x": 2558,
+			"y": 4338,
+			"orbitAnchorId": "modular_bolt_coherer_anchor",
+			"orbitAngle": 171.4,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "modular_bolt_coherer_1",
+			"type": "modular_bolt_coherer",
+			"connectedTo": [
+				"non_beam_energy_weapon_damage_10",
+				"attuned_emitter_diodes_1"
+			],
+			"x": 2774,
+			"y": 4498,
+			"orbitAnchorId": "modular_bolt_coherer_anchor",
+			"orbitAngle": 81.4,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "attuned_emitter_diodes_1",
+			"type": "attuned_emitter_diodes",
+			"connectedTo": [
+				"modular_bolt_coherer_1"
+			],
+			"x": 2942,
+			"y": 4770,
 			"tags": [
 				"core"
 			]
@@ -15828,6 +16021,30 @@
 			"id": "stiff_mounts_anchor",
 			"x": 5349,
 			"y": -834,
+			"radius": 190
+		},
+		{
+			"id": "unified_targeting_core_anchor",
+			"x": 880,
+			"y": -5257,
+			"radius": 190
+		},
+		{
+			"id": "field_repair_nanites_anchor",
+			"x": 2502,
+			"y": -4706,
+			"radius": 190
+		},
+		{
+			"id": "modular_fleet_override_anchor",
+			"x": -3466,
+			"y": 3782,
+			"radius": 190
+		},
+		{
+			"id": "modular_bolt_coherer_anchor",
+			"x": 2746,
+			"y": 4310,
 			"radius": 190
 		}
 	],

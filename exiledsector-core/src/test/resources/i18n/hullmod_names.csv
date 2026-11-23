@@ -30,6 +30,7 @@ cataphract,Cataphract LSM
 cataphract2,Cataphract S-II
 chasemode7s,Prototype Core
 cheat_tempestas7s,Pristine Condition
+coherer,Energy Bolt Coherer
 converted_fighterbay,Converted Fighter Bay
 converted_hangar,Converted Hangar
 csp_cetanframe,Cetan Frame
@@ -189,10 +190,18 @@ tw_trinity_retrofit,Trinity Worlds Retrofit
 uaf_special_edge_capacitor_retrofit,Edge Capacitors Retrofit
 ugh_antiterminalbreakers,Anti-Terminal Reactive Breakers
 unstable_injector,Unstable Injector
+vice_adaptive_emitter_diodes,Adaptive Emitter Diodes
 vice_adaptive_entropy_arrester,Adaptive Entropy Arrester
+vice_adaptive_pulse_resonator,Adaptive Pulse Resonator
 vice_aquilon_microforge,Aquilon Nanoforge
+vice_attuned_emitter_diodes,Attuned Emitter Diodes
+vice_field_repair_nanites,Field Repair Nanites
+vice_fleet_override,Fleet Override
 vice_intrepid_hull,Advanced ECM Suite
+vice_laser_collimator,Laser Collimator
 vice_missile_microforge,Missile Nanoforge
+vice_modular_bolt_coherer,Modular Bolt Coherer
+vice_modular_fleet_override,Modular Fleet Override
 vice_onslaught_hull,Supreme Modifications
 vice_unified_targeting_core,Unified Targeting Core
 zea_dawn_builtin,Dawntide

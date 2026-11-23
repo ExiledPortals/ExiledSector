@@ -98,6 +98,14 @@ class ModCreditTest {
     }
 
     @Test
+    void emergentThreatsHullModsCreditEmergentThreats() {
+        SkillType nanites = new SkillType.Builder("field_repair_nanites", "F", "a.png", SkillTier.NOTABLE)
+                .phantomHullModIds(List.of("vice_field_repair_nanites")).build();
+
+        assertEquals(ModCredit.EMERGENT_THREATS, ModCredit.forHullMods(nanites));
+    }
+
+    @Test
     void vanillaHullModsCreditNoMod() {
         SkillType hardened = new SkillType.Builder("hardened_shields", "H", "a.png", SkillTier.NOTABLE).vanillaHullModId("hardenedshieldemitter").build();
 

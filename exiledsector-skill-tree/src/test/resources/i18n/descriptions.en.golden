@@ -1228,6 +1228,18 @@ effect|FEEDSTOCK_QUANTITY_PERCENT|12.5	0	Your fleet has <good>12.5%</good> incre
 effect|FEEDSTOCK_QUANTITY_PERCENT|100.0	0	Your fleet has <good>100%</good> increased quantity of feedstock found.
 effect|FEEDSTOCK_QUANTITY_PERCENT|-10.0	0	Your fleet has <bad>10%</bad> reduced quantity of feedstock found.
 effect|FEEDSTOCK_QUANTITY_PERCENT|-12.5	0	Your fleet has <bad>12.5%</bad> reduced quantity of feedstock found.
+effect|FIELD_REPAIR_HULL_PER_CR_FLAT|1.0	0	<good>+1%</good> to maximum hull repaired by field repairs for every <hl>1%</hl> combat readiness lost.
+effect|FIELD_REPAIR_HULL_PER_CR_FLAT|10.0	0	<good>+10%</good> to maximum hull repaired by field repairs for every <hl>1%</hl> combat readiness lost.
+effect|FIELD_REPAIR_HULL_PER_CR_FLAT|12.5	0	<good>+12.5%</good> to maximum hull repaired by field repairs for every <hl>1%</hl> combat readiness lost.
+effect|FIELD_REPAIR_HULL_PER_CR_FLAT|100.0	0	<good>+100%</good> to maximum hull repaired by field repairs for every <hl>1%</hl> combat readiness lost.
+effect|FIELD_REPAIR_HULL_PER_CR_FLAT|-10.0	0	<bad>-10%</bad> to maximum hull repaired by field repairs for every <hl>1%</hl> combat readiness lost.
+effect|FIELD_REPAIR_HULL_PER_CR_FLAT|-12.5	0	<bad>-12.5%</bad> to maximum hull repaired by field repairs for every <hl>1%</hl> combat readiness lost.
+effect|FIELD_REPAIR_HULL_REGEN_PERCENT|1.0	0	Repairs <good>1%</good> of maximum hull per second in combat, up to a maximum of <hl>100</hl> hull points per second, while combat readiness is above <hl>15%</hl>. Loses <hl>1%</hl> combat readiness for every <hl>3%</hl> of maximum hull repaired.
+effect|FIELD_REPAIR_HULL_REGEN_PERCENT|10.0	0	Repairs <good>10%</good> of maximum hull per second in combat, up to a maximum of <hl>100</hl> hull points per second, while combat readiness is above <hl>15%</hl>. Loses <hl>1%</hl> combat readiness for every <hl>3%</hl> of maximum hull repaired.
+effect|FIELD_REPAIR_HULL_REGEN_PERCENT|12.5	0	Repairs <good>12.5%</good> of maximum hull per second in combat, up to a maximum of <hl>100</hl> hull points per second, while combat readiness is above <hl>15%</hl>. Loses <hl>1%</hl> combat readiness for every <hl>3%</hl> of maximum hull repaired.
+effect|FIELD_REPAIR_HULL_REGEN_PERCENT|100.0	0	Repairs <good>100%</good> of maximum hull per second in combat, up to a maximum of <hl>100</hl> hull points per second, while combat readiness is above <hl>15%</hl>. Loses <hl>1%</hl> combat readiness for every <hl>3%</hl> of maximum hull repaired.
+effect|FIELD_REPAIR_HULL_REGEN_PERCENT|-10.0	0	Repairs <good>-10%</good> of maximum hull per second in combat, up to a maximum of <hl>100</hl> hull points per second, while combat readiness is above <hl>15%</hl>. Loses <hl>1%</hl> combat readiness for every <hl>3%</hl> of maximum hull repaired.
+effect|FIELD_REPAIR_HULL_REGEN_PERCENT|-12.5	0	Repairs <good>-12.5%</good> of maximum hull per second in combat, up to a maximum of <hl>100</hl> hull points per second, while combat readiness is above <hl>15%</hl>. Loses <hl>1%</hl> combat readiness for every <hl>3%</hl> of maximum hull repaired.
 effect|FIGHTER_ARMOR_PERCENT|1.0	0	Strikecraft launched from this ship have <good>1%</good> increased armor.
 effect|FIGHTER_ARMOR_PERCENT|10.0	0	Strikecraft launched from this ship have <good>10%</good> increased armor.
 effect|FIGHTER_ARMOR_PERCENT|12.5	0	Strikecraft launched from this ship have <good>12.5%</good> increased armor.
@@ -4398,19 +4410,19 @@ integrated|additional_berthing|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|additional_berthing|CAPITAL_SHIP|1	0	<builtIn>+250</builtIn> to crew capacity.
 type|advanced_optics|null|0	0	<good>+200</good> to beam weapon range.
 type|advanced_optics|null|1	0	<bad>30%</bad> less beam weapon turn rate.
-type-detail|advanced_optics|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>High Scatter Amplifier</hullmod>\n• <hullmod>Advanced Optics</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>High Scatter Amplifier</node>
+type-detail|advanced_optics|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>High Scatter Amplifier</hullmod>\n• <hullmod>Attuned Emitter Diodes</hullmod>\n• <hullmod>Advanced Optics</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>High Scatter Amplifier</node>\n• <node>Attuned Emitter Diodes</node>
 type|advanced_optics|FRIGATE|0	0	<good>+200</good> to beam weapon range.
 type|advanced_optics|FRIGATE|1	0	<bad>30%</bad> less beam weapon turn rate.
-type-detail|advanced_optics|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>High Scatter Amplifier</hullmod>\n• <hullmod>Advanced Optics</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>High Scatter Amplifier</node>
+type-detail|advanced_optics|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>High Scatter Amplifier</hullmod>\n• <hullmod>Attuned Emitter Diodes</hullmod>\n• <hullmod>Advanced Optics</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>High Scatter Amplifier</node>\n• <node>Attuned Emitter Diodes</node>
 type|advanced_optics|DESTROYER|0	0	<good>+200</good> to beam weapon range.
 type|advanced_optics|DESTROYER|1	0	<bad>30%</bad> less beam weapon turn rate.
-type-detail|advanced_optics|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>High Scatter Amplifier</hullmod>\n• <hullmod>Advanced Optics</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>High Scatter Amplifier</node>
+type-detail|advanced_optics|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>High Scatter Amplifier</hullmod>\n• <hullmod>Attuned Emitter Diodes</hullmod>\n• <hullmod>Advanced Optics</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>High Scatter Amplifier</node>\n• <node>Attuned Emitter Diodes</node>
 type|advanced_optics|CRUISER|0	0	<good>+200</good> to beam weapon range.
 type|advanced_optics|CRUISER|1	0	<bad>30%</bad> less beam weapon turn rate.
-type-detail|advanced_optics|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>High Scatter Amplifier</hullmod>\n• <hullmod>Advanced Optics</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>High Scatter Amplifier</node>
+type-detail|advanced_optics|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>High Scatter Amplifier</hullmod>\n• <hullmod>Attuned Emitter Diodes</hullmod>\n• <hullmod>Advanced Optics</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>High Scatter Amplifier</node>\n• <node>Attuned Emitter Diodes</node>
 type|advanced_optics|CAPITAL_SHIP|0	0	<good>+200</good> to beam weapon range.
 type|advanced_optics|CAPITAL_SHIP|1	0	<bad>30%</bad> less beam weapon turn rate.
-type-detail|advanced_optics|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>High Scatter Amplifier</hullmod>\n• <hullmod>Advanced Optics</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>High Scatter Amplifier</node>
+type-detail|advanced_optics|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>High Scatter Amplifier</hullmod>\n• <hullmod>Attuned Emitter Diodes</hullmod>\n• <hullmod>Advanced Optics</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>High Scatter Amplifier</node>\n• <node>Attuned Emitter Diodes</node>
 integrable|advanced_optics|null|0	0	<good>+200</good> to beam weapon range.
 integrable|advanced_optics|null|1	0	<bad>30%</bad> less beam weapon turn rate.
 integrable|advanced_optics|null|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
@@ -4779,6 +4791,77 @@ integrated|at_any_cost|CRUISER|2	0	When this ship isn't flown by you, it flies s
 integrated|at_any_cost|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|at_any_cost|CAPITAL_SHIP|1	0	Touching the hull of <builtIn>an enemy cruiser or capital ship</builtIn>, however slightly, is instantly fatal to this ship.
 integrated|at_any_cost|CAPITAL_SHIP|2	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
+flavour|attuned_emitter_diodes	0	Attuned diodes are tuned to the pulse of a bolt coherer, and fed through one they make a beam strike shields like a slug. The emitters run shorter and cooler for it. A Diktat gunnery manual calls this a fair trade, in a footnote.
+type|attuned_emitter_diodes|null|0	0	<good>100%</good> of beam weapon damage to shields is dealt as hard flux.
+type|attuned_emitter_diodes|null|1	0	<bad>-100</bad> to beam weapon range.
+type|attuned_emitter_diodes|null|2	0	<bad>20%</bad> reduced beam weapon damage.
+type-detail|attuned_emitter_diodes|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Optics</hullmod>\n• <hullmod>High Scatter Amplifier</hullmod>\n• <hullmod>Adaptive Emitter Diodes</hullmod>\n• <hullmod>Laser Collimator</hullmod>\n• <hullmod>Attuned Emitter Diodes</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Advanced Optics</node>\n• <node>High Scatter Amplifier</node>
+type|attuned_emitter_diodes|FRIGATE|0	0	<good>100%</good> of beam weapon damage to shields is dealt as hard flux.
+type|attuned_emitter_diodes|FRIGATE|1	0	<bad>-100</bad> to beam weapon range.
+type|attuned_emitter_diodes|FRIGATE|2	0	<bad>20%</bad> reduced beam weapon damage.
+type-detail|attuned_emitter_diodes|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Optics</hullmod>\n• <hullmod>High Scatter Amplifier</hullmod>\n• <hullmod>Adaptive Emitter Diodes</hullmod>\n• <hullmod>Laser Collimator</hullmod>\n• <hullmod>Attuned Emitter Diodes</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Advanced Optics</node>\n• <node>High Scatter Amplifier</node>
+type|attuned_emitter_diodes|DESTROYER|0	0	<good>100%</good> of beam weapon damage to shields is dealt as hard flux.
+type|attuned_emitter_diodes|DESTROYER|1	0	<bad>-100</bad> to beam weapon range.
+type|attuned_emitter_diodes|DESTROYER|2	0	<bad>20%</bad> reduced beam weapon damage.
+type-detail|attuned_emitter_diodes|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Optics</hullmod>\n• <hullmod>High Scatter Amplifier</hullmod>\n• <hullmod>Adaptive Emitter Diodes</hullmod>\n• <hullmod>Laser Collimator</hullmod>\n• <hullmod>Attuned Emitter Diodes</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Advanced Optics</node>\n• <node>High Scatter Amplifier</node>
+type|attuned_emitter_diodes|CRUISER|0	0	<good>100%</good> of beam weapon damage to shields is dealt as hard flux.
+type|attuned_emitter_diodes|CRUISER|1	0	<bad>-100</bad> to beam weapon range.
+type|attuned_emitter_diodes|CRUISER|2	0	<bad>20%</bad> reduced beam weapon damage.
+type-detail|attuned_emitter_diodes|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Optics</hullmod>\n• <hullmod>High Scatter Amplifier</hullmod>\n• <hullmod>Adaptive Emitter Diodes</hullmod>\n• <hullmod>Laser Collimator</hullmod>\n• <hullmod>Attuned Emitter Diodes</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Advanced Optics</node>\n• <node>High Scatter Amplifier</node>
+type|attuned_emitter_diodes|CAPITAL_SHIP|0	0	<good>100%</good> of beam weapon damage to shields is dealt as hard flux.
+type|attuned_emitter_diodes|CAPITAL_SHIP|1	0	<bad>-100</bad> to beam weapon range.
+type|attuned_emitter_diodes|CAPITAL_SHIP|2	0	<bad>20%</bad> reduced beam weapon damage.
+type-detail|attuned_emitter_diodes|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Optics</hullmod>\n• <hullmod>High Scatter Amplifier</hullmod>\n• <hullmod>Adaptive Emitter Diodes</hullmod>\n• <hullmod>Laser Collimator</hullmod>\n• <hullmod>Attuned Emitter Diodes</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Advanced Optics</node>\n• <node>High Scatter Amplifier</node>
+integrable|attuned_emitter_diodes|null|0	0	<good>100%</good> of beam weapon damage to shields is dealt as hard flux.
+integrable|attuned_emitter_diodes|null|1	0	<bad>-100</bad> to beam weapon range.
+integrable|attuned_emitter_diodes|null|2	0	<bad>20%</bad> reduced beam weapon damage.
+integrable|attuned_emitter_diodes|null|3	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|attuned_emitter_diodes|null|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|attuned_emitter_diodes|null|5	0	Instead grants <bad>15%</bad> reduced beam weapon damage.
+integrable|attuned_emitter_diodes|FRIGATE|0	0	<good>100%</good> of beam weapon damage to shields is dealt as hard flux.
+integrable|attuned_emitter_diodes|FRIGATE|1	0	<bad>-100</bad> to beam weapon range.
+integrable|attuned_emitter_diodes|FRIGATE|2	0	<bad>20%</bad> reduced beam weapon damage.
+integrable|attuned_emitter_diodes|FRIGATE|3	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|attuned_emitter_diodes|FRIGATE|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|attuned_emitter_diodes|FRIGATE|5	0	Instead grants <bad>15%</bad> reduced beam weapon damage.
+integrable|attuned_emitter_diodes|DESTROYER|0	0	<good>100%</good> of beam weapon damage to shields is dealt as hard flux.
+integrable|attuned_emitter_diodes|DESTROYER|1	0	<bad>-100</bad> to beam weapon range.
+integrable|attuned_emitter_diodes|DESTROYER|2	0	<bad>20%</bad> reduced beam weapon damage.
+integrable|attuned_emitter_diodes|DESTROYER|3	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|attuned_emitter_diodes|DESTROYER|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|attuned_emitter_diodes|DESTROYER|5	0	Instead grants <bad>15%</bad> reduced beam weapon damage.
+integrable|attuned_emitter_diodes|CRUISER|0	0	<good>100%</good> of beam weapon damage to shields is dealt as hard flux.
+integrable|attuned_emitter_diodes|CRUISER|1	0	<bad>-100</bad> to beam weapon range.
+integrable|attuned_emitter_diodes|CRUISER|2	0	<bad>20%</bad> reduced beam weapon damage.
+integrable|attuned_emitter_diodes|CRUISER|3	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|attuned_emitter_diodes|CRUISER|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|attuned_emitter_diodes|CRUISER|5	0	Instead grants <bad>15%</bad> reduced beam weapon damage.
+integrable|attuned_emitter_diodes|CAPITAL_SHIP|0	0	<good>100%</good> of beam weapon damage to shields is dealt as hard flux.
+integrable|attuned_emitter_diodes|CAPITAL_SHIP|1	0	<bad>-100</bad> to beam weapon range.
+integrable|attuned_emitter_diodes|CAPITAL_SHIP|2	0	<bad>20%</bad> reduced beam weapon damage.
+integrable|attuned_emitter_diodes|CAPITAL_SHIP|3	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|attuned_emitter_diodes|CAPITAL_SHIP|4	0	<muted>When integrated, for 2 story points:</muted>
+integrable|attuned_emitter_diodes|CAPITAL_SHIP|5	0	Instead grants <bad>15%</bad> reduced beam weapon damage.
+integrated|attuned_emitter_diodes|null|0	0	<builtIn>Integrated</builtIn>
+integrated|attuned_emitter_diodes|null|1	0	<good>100%</good> of beam weapon damage to shields is dealt as hard flux.
+integrated|attuned_emitter_diodes|null|2	0	<bad>-100</bad> to beam weapon range.
+integrated|attuned_emitter_diodes|null|3	0	<bad>15%</bad> reduced beam weapon damage.
+integrated|attuned_emitter_diodes|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|attuned_emitter_diodes|FRIGATE|1	0	<good>100%</good> of beam weapon damage to shields is dealt as hard flux.
+integrated|attuned_emitter_diodes|FRIGATE|2	0	<bad>-100</bad> to beam weapon range.
+integrated|attuned_emitter_diodes|FRIGATE|3	0	<bad>15%</bad> reduced beam weapon damage.
+integrated|attuned_emitter_diodes|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|attuned_emitter_diodes|DESTROYER|1	0	<good>100%</good> of beam weapon damage to shields is dealt as hard flux.
+integrated|attuned_emitter_diodes|DESTROYER|2	0	<bad>-100</bad> to beam weapon range.
+integrated|attuned_emitter_diodes|DESTROYER|3	0	<bad>15%</bad> reduced beam weapon damage.
+integrated|attuned_emitter_diodes|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|attuned_emitter_diodes|CRUISER|1	0	<good>100%</good> of beam weapon damage to shields is dealt as hard flux.
+integrated|attuned_emitter_diodes|CRUISER|2	0	<bad>-100</bad> to beam weapon range.
+integrated|attuned_emitter_diodes|CRUISER|3	0	<bad>15%</bad> reduced beam weapon damage.
+integrated|attuned_emitter_diodes|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|attuned_emitter_diodes|CAPITAL_SHIP|1	0	<good>100%</good> of beam weapon damage to shields is dealt as hard flux.
+integrated|attuned_emitter_diodes|CAPITAL_SHIP|2	0	<bad>-100</bad> to beam weapon range.
+integrated|attuned_emitter_diodes|CAPITAL_SHIP|3	0	<bad>15%</bad> reduced beam weapon damage.
 type|augmented_drive_field|null|0	0	<good>+1</good> to max burn level.
 type-detail|augmented_drive_field|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Stardust Engine Enhancements</hullmod>\n• <hullmod>Augmented Drive Field</hullmod>
 type|augmented_drive_field|FRIGATE|0	0	<good>+1</good> to max burn level.
@@ -6196,17 +6279,17 @@ type|damage_to_slower_ships|DESTROYER|0	0	<good>4%</good> increased damage to sh
 type|damage_to_slower_ships|CRUISER|0	0	<good>4%</good> increased damage to ships with a lower top speed than this one.
 type|damage_to_slower_ships|CAPITAL_SHIP|0	0	<good>4%</good> increased damage to ships with a lower top speed than this one.
 type-detail|dedicated_targeting_core|null|0	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
-type-detail|dedicated_targeting_core|null|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Integrated Targeting Unit</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Carrier Gunships</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Dedicated Targeting Core</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Integrated Targeting Unit</node>
+type-detail|dedicated_targeting_core|null|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Integrated Targeting Unit</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Carrier Gunships</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Dedicated Targeting Core</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Integrated Targeting Unit</node>\n• <node>Unified Targeting Core</node>
 type-detail|dedicated_targeting_core|FRIGATE|0	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
-type-detail|dedicated_targeting_core|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Integrated Targeting Unit</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Carrier Gunships</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Dedicated Targeting Core</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Integrated Targeting Unit</node>
+type-detail|dedicated_targeting_core|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Integrated Targeting Unit</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Carrier Gunships</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Dedicated Targeting Core</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Integrated Targeting Unit</node>\n• <node>Unified Targeting Core</node>
 type-detail|dedicated_targeting_core|DESTROYER|0	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
-type-detail|dedicated_targeting_core|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Integrated Targeting Unit</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Carrier Gunships</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Dedicated Targeting Core</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Integrated Targeting Unit</node>
+type-detail|dedicated_targeting_core|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Integrated Targeting Unit</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Carrier Gunships</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Dedicated Targeting Core</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Integrated Targeting Unit</node>\n• <node>Unified Targeting Core</node>
 type|dedicated_targeting_core|CRUISER|0	0	<good>35%</good> increased ballistic and energy weapon range.
 type-detail|dedicated_targeting_core|CRUISER|0	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
-type-detail|dedicated_targeting_core|CRUISER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Integrated Targeting Unit</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Carrier Gunships</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Dedicated Targeting Core</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Integrated Targeting Unit</node>
+type-detail|dedicated_targeting_core|CRUISER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Integrated Targeting Unit</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Carrier Gunships</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Dedicated Targeting Core</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Integrated Targeting Unit</node>\n• <node>Unified Targeting Core</node>
 type|dedicated_targeting_core|CAPITAL_SHIP|0	0	<good>55%</good> increased ballistic and energy weapon range.
 type-detail|dedicated_targeting_core|CAPITAL_SHIP|0	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
-type-detail|dedicated_targeting_core|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Integrated Targeting Unit</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Carrier Gunships</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Dedicated Targeting Core</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Integrated Targeting Unit</node>
+type-detail|dedicated_targeting_core|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Integrated Targeting Unit</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Carrier Gunships</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Dedicated Targeting Core</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Integrated Targeting Unit</node>\n• <node>Unified Targeting Core</node>
 integrable|dedicated_targeting_core|null|0	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|dedicated_targeting_core|null|1	0	<muted>When integrated, for 2 story points:</muted>
 integrable|dedicated_targeting_core|FRIGATE|0	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
@@ -8835,6 +8918,48 @@ integrated|feed_the_forges|CRUISER|0	0	<builtIn>Integrated</builtIn>
 integrated|feed_the_forges|CRUISER|1	0	After each battle your fleet wins, it salvages supplies equal to <builtIn>15%</builtIn> of the deployment points of the enemy ships it defeated.
 integrated|feed_the_forges|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|feed_the_forges|CAPITAL_SHIP|1	0	After each battle your fleet wins, it salvages supplies equal to <builtIn>15%</builtIn> of the deployment points of the enemy ships it defeated.
+flavour|field_repair_nanites	0	Repair nanites of this grade were made for drydock work, where nobody counts what they eat. The crew turns them loose on the hull mid-battle and lets them strip the nearest systems for feedstock. The engineering logs file this under routine maintenance.
+flavourAutomated|field_repair_nanites	0	Repair nanites of this grade were made for drydock work, where nobody counts what they eat. The ship's core releases them on its own hull mid-battle and records which systems they strip for feedstock. It files the losses under routine maintenance.
+type|field_repair_nanites|null|0	0	Repairs <good>1%</good> of maximum hull per second in combat, up to a maximum of <hl>100</hl> hull points per second, while combat readiness is above <hl>15%</hl>. Loses <hl>1%</hl> combat readiness for every <hl>3%</hl> of maximum hull repaired.
+type-detail|field_repair_nanites|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Adaptive Entropy Arrester</hullmod>\n• <hullmod>Immanence Engine</hullmod>\n• <hullmod>Field Repair Nanites</hullmod>
+type|field_repair_nanites|FRIGATE|0	0	Repairs <good>1%</good> of maximum hull per second in combat, up to a maximum of <hl>100</hl> hull points per second, while combat readiness is above <hl>15%</hl>. Loses <hl>1%</hl> combat readiness for every <hl>3%</hl> of maximum hull repaired.
+type-detail|field_repair_nanites|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Adaptive Entropy Arrester</hullmod>\n• <hullmod>Immanence Engine</hullmod>\n• <hullmod>Field Repair Nanites</hullmod>
+type|field_repair_nanites|DESTROYER|0	0	Repairs <good>1%</good> of maximum hull per second in combat, up to a maximum of <hl>100</hl> hull points per second, while combat readiness is above <hl>15%</hl>. Loses <hl>1%</hl> combat readiness for every <hl>3%</hl> of maximum hull repaired.
+type-detail|field_repair_nanites|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Adaptive Entropy Arrester</hullmod>\n• <hullmod>Immanence Engine</hullmod>\n• <hullmod>Field Repair Nanites</hullmod>
+type|field_repair_nanites|CRUISER|0	0	Repairs <good>1%</good> of maximum hull per second in combat, up to a maximum of <hl>100</hl> hull points per second, while combat readiness is above <hl>15%</hl>. Loses <hl>1%</hl> combat readiness for every <hl>3%</hl> of maximum hull repaired.
+type-detail|field_repair_nanites|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Adaptive Entropy Arrester</hullmod>\n• <hullmod>Immanence Engine</hullmod>\n• <hullmod>Field Repair Nanites</hullmod>
+type|field_repair_nanites|CAPITAL_SHIP|0	0	Repairs <good>1%</good> of maximum hull per second in combat, up to a maximum of <hl>100</hl> hull points per second, while combat readiness is above <hl>15%</hl>. Loses <hl>1%</hl> combat readiness for every <hl>3%</hl> of maximum hull repaired.
+type-detail|field_repair_nanites|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Adaptive Entropy Arrester</hullmod>\n• <hullmod>Immanence Engine</hullmod>\n• <hullmod>Field Repair Nanites</hullmod>
+integrable|field_repair_nanites|null|0	0	Repairs <good>1%</good> of maximum hull per second in combat, up to a maximum of <hl>100</hl> hull points per second, while combat readiness is above <hl>15%</hl>. Loses <hl>1%</hl> combat readiness for every <hl>3%</hl> of maximum hull repaired.
+integrable|field_repair_nanites|null|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|field_repair_nanites|null|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|field_repair_nanites|null|3	0	Instead grants: Repairs <good>1%</good> of maximum hull per second in combat, up to a maximum of <hl>100</hl> hull points per second, while combat readiness is above <hl>15%</hl>. Loses <hl>1%</hl> combat readiness for every <builtIn>5%</builtIn> of maximum hull repaired.
+integrable|field_repair_nanites|FRIGATE|0	0	Repairs <good>1%</good> of maximum hull per second in combat, up to a maximum of <hl>100</hl> hull points per second, while combat readiness is above <hl>15%</hl>. Loses <hl>1%</hl> combat readiness for every <hl>3%</hl> of maximum hull repaired.
+integrable|field_repair_nanites|FRIGATE|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|field_repair_nanites|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|field_repair_nanites|FRIGATE|3	0	Instead grants: Repairs <good>1%</good> of maximum hull per second in combat, up to a maximum of <hl>100</hl> hull points per second, while combat readiness is above <hl>15%</hl>. Loses <hl>1%</hl> combat readiness for every <builtIn>5%</builtIn> of maximum hull repaired.
+integrable|field_repair_nanites|DESTROYER|0	0	Repairs <good>1%</good> of maximum hull per second in combat, up to a maximum of <hl>100</hl> hull points per second, while combat readiness is above <hl>15%</hl>. Loses <hl>1%</hl> combat readiness for every <hl>3%</hl> of maximum hull repaired.
+integrable|field_repair_nanites|DESTROYER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|field_repair_nanites|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|field_repair_nanites|DESTROYER|3	0	Instead grants: Repairs <good>1%</good> of maximum hull per second in combat, up to a maximum of <hl>100</hl> hull points per second, while combat readiness is above <hl>15%</hl>. Loses <hl>1%</hl> combat readiness for every <builtIn>5%</builtIn> of maximum hull repaired.
+integrable|field_repair_nanites|CRUISER|0	0	Repairs <good>1%</good> of maximum hull per second in combat, up to a maximum of <hl>100</hl> hull points per second, while combat readiness is above <hl>15%</hl>. Loses <hl>1%</hl> combat readiness for every <hl>3%</hl> of maximum hull repaired.
+integrable|field_repair_nanites|CRUISER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|field_repair_nanites|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|field_repair_nanites|CRUISER|3	0	Instead grants: Repairs <good>1%</good> of maximum hull per second in combat, up to a maximum of <hl>100</hl> hull points per second, while combat readiness is above <hl>15%</hl>. Loses <hl>1%</hl> combat readiness for every <builtIn>5%</builtIn> of maximum hull repaired.
+integrable|field_repair_nanites|CAPITAL_SHIP|0	0	Repairs <good>1%</good> of maximum hull per second in combat, up to a maximum of <hl>100</hl> hull points per second, while combat readiness is above <hl>15%</hl>. Loses <hl>1%</hl> combat readiness for every <hl>3%</hl> of maximum hull repaired.
+integrable|field_repair_nanites|CAPITAL_SHIP|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|field_repair_nanites|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
+integrable|field_repair_nanites|CAPITAL_SHIP|3	0	Instead grants: Repairs <good>1%</good> of maximum hull per second in combat, up to a maximum of <hl>100</hl> hull points per second, while combat readiness is above <hl>15%</hl>. Loses <hl>1%</hl> combat readiness for every <builtIn>5%</builtIn> of maximum hull repaired.
+integrated|field_repair_nanites|null|0	0	<builtIn>Integrated</builtIn>
+integrated|field_repair_nanites|null|1	0	Repairs <good>1%</good> of maximum hull per second in combat, up to a maximum of <hl>100</hl> hull points per second, while combat readiness is above <hl>15%</hl>. Loses <hl>1%</hl> combat readiness for every <builtIn>5%</builtIn> of maximum hull repaired.
+integrated|field_repair_nanites|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|field_repair_nanites|FRIGATE|1	0	Repairs <good>1%</good> of maximum hull per second in combat, up to a maximum of <hl>100</hl> hull points per second, while combat readiness is above <hl>15%</hl>. Loses <hl>1%</hl> combat readiness for every <builtIn>5%</builtIn> of maximum hull repaired.
+integrated|field_repair_nanites|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|field_repair_nanites|DESTROYER|1	0	Repairs <good>1%</good> of maximum hull per second in combat, up to a maximum of <hl>100</hl> hull points per second, while combat readiness is above <hl>15%</hl>. Loses <hl>1%</hl> combat readiness for every <builtIn>5%</builtIn> of maximum hull repaired.
+integrated|field_repair_nanites|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|field_repair_nanites|CRUISER|1	0	Repairs <good>1%</good> of maximum hull per second in combat, up to a maximum of <hl>100</hl> hull points per second, while combat readiness is above <hl>15%</hl>. Loses <hl>1%</hl> combat readiness for every <builtIn>5%</builtIn> of maximum hull repaired.
+integrated|field_repair_nanites|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|field_repair_nanites|CAPITAL_SHIP|1	0	Repairs <good>1%</good> of maximum hull per second in combat, up to a maximum of <hl>100</hl> hull points per second, while combat readiness is above <hl>15%</hl>. Loses <hl>1%</hl> combat readiness for every <builtIn>5%</builtIn> of maximum hull repaired.
 flavour|flak_screen_doctrine	0	Hegemony point defense crews pack their flak loads for a wide burst, on the theory that a missile is rarely alone. The crew learns the trick escorting a Dominator through a missile strike. Its captain bills them for the ammunition.
 flavourAutomated|flak_screen_doctrine	0	Hegemony point defense crews pack their flak loads for a wide burst, on the theory that a missile is rarely alone. The ship's core records the pattern while escorting a Dominator through a missile strike, and the refit crew repacks the magazines to match.
 type|flak_screen_doctrine|null|0	0	Enemy missiles destroyed by this ship burst for <good>100</good> fragmentation damage to other enemy missiles and fighters within <hl>100</hl> su.
@@ -10026,23 +10151,23 @@ integrated|high_resolution_sensors|CAPITAL_SHIP|3	0	<builtIn>+2500</builtIn> to 
 type|high_scatter_amplifier|null|0	0	<good>50%</good> of beam weapon damage to shields is dealt as hard flux.
 type|high_scatter_amplifier|null|1	0	<bad>25%</bad> less beam weapon range.
 type|high_scatter_amplifier|null|2	0	<good>10%</good> increased beam weapon damage.
-type-detail|high_scatter_amplifier|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Optics</hullmod>\n• <hullmod>High Scatter Amplifier</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Advanced Optics</node>
+type-detail|high_scatter_amplifier|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Optics</hullmod>\n• <hullmod>Attuned Emitter Diodes</hullmod>\n• <hullmod>High Scatter Amplifier</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Advanced Optics</node>\n• <node>Attuned Emitter Diodes</node>
 type|high_scatter_amplifier|FRIGATE|0	0	<good>50%</good> of beam weapon damage to shields is dealt as hard flux.
 type|high_scatter_amplifier|FRIGATE|1	0	<bad>25%</bad> less beam weapon range.
 type|high_scatter_amplifier|FRIGATE|2	0	<good>10%</good> increased beam weapon damage.
-type-detail|high_scatter_amplifier|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Optics</hullmod>\n• <hullmod>High Scatter Amplifier</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Advanced Optics</node>
+type-detail|high_scatter_amplifier|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Optics</hullmod>\n• <hullmod>Attuned Emitter Diodes</hullmod>\n• <hullmod>High Scatter Amplifier</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Advanced Optics</node>\n• <node>Attuned Emitter Diodes</node>
 type|high_scatter_amplifier|DESTROYER|0	0	<good>50%</good> of beam weapon damage to shields is dealt as hard flux.
 type|high_scatter_amplifier|DESTROYER|1	0	<bad>25%</bad> less beam weapon range.
 type|high_scatter_amplifier|DESTROYER|2	0	<good>10%</good> increased beam weapon damage.
-type-detail|high_scatter_amplifier|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Optics</hullmod>\n• <hullmod>High Scatter Amplifier</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Advanced Optics</node>
+type-detail|high_scatter_amplifier|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Optics</hullmod>\n• <hullmod>Attuned Emitter Diodes</hullmod>\n• <hullmod>High Scatter Amplifier</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Advanced Optics</node>\n• <node>Attuned Emitter Diodes</node>
 type|high_scatter_amplifier|CRUISER|0	0	<good>50%</good> of beam weapon damage to shields is dealt as hard flux.
 type|high_scatter_amplifier|CRUISER|1	0	<bad>25%</bad> less beam weapon range.
 type|high_scatter_amplifier|CRUISER|2	0	<good>10%</good> increased beam weapon damage.
-type-detail|high_scatter_amplifier|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Optics</hullmod>\n• <hullmod>High Scatter Amplifier</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Advanced Optics</node>
+type-detail|high_scatter_amplifier|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Optics</hullmod>\n• <hullmod>Attuned Emitter Diodes</hullmod>\n• <hullmod>High Scatter Amplifier</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Advanced Optics</node>\n• <node>Attuned Emitter Diodes</node>
 type|high_scatter_amplifier|CAPITAL_SHIP|0	0	<good>50%</good> of beam weapon damage to shields is dealt as hard flux.
 type|high_scatter_amplifier|CAPITAL_SHIP|1	0	<bad>25%</bad> less beam weapon range.
 type|high_scatter_amplifier|CAPITAL_SHIP|2	0	<good>10%</good> increased beam weapon damage.
-type-detail|high_scatter_amplifier|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Optics</hullmod>\n• <hullmod>High Scatter Amplifier</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Advanced Optics</node>
+type-detail|high_scatter_amplifier|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Optics</hullmod>\n• <hullmod>Attuned Emitter Diodes</hullmod>\n• <hullmod>High Scatter Amplifier</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Advanced Optics</node>\n• <node>Attuned Emitter Diodes</node>
 integrable|high_scatter_amplifier|null|0	0	<good>50%</good> of beam weapon damage to shields is dealt as hard flux.
 integrable|high_scatter_amplifier|null|1	0	<bad>25%</bad> less beam weapon range.
 integrable|high_scatter_amplifier|null|2	0	<good>10%</good> increased beam weapon damage.
@@ -10827,15 +10952,15 @@ integrated|integrated_point_defense_ai|CAPITAL_SHIP|1	0	Point-defense weapons ca
 integrated|integrated_point_defense_ai|CAPITAL_SHIP|2	0	Point-defense weapons get the best possible target leading, regardless of combat readiness.
 integrated|integrated_point_defense_ai|CAPITAL_SHIP|3	0	<good>50%</good> increased damage to missiles.
 integrated|integrated_point_defense_ai|CAPITAL_SHIP|4	0	<builtIn>All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles and are affected by point-defense stat modifiers.</builtIn>
-type-detail|integrated_targeting_unit|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Dedicated Targeting Core</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Thermal Calibration</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Integrated Targeting Unit</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Dedicated Targeting Core</node>
+type-detail|integrated_targeting_unit|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Dedicated Targeting Core</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Thermal Calibration</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Integrated Targeting Unit</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Dedicated Targeting Core</node>\n• <node>Unified Targeting Core</node>
 type|integrated_targeting_unit|FRIGATE|0	0	<good>10%</good> increased ballistic and energy weapon range.
-type-detail|integrated_targeting_unit|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Dedicated Targeting Core</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Thermal Calibration</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Integrated Targeting Unit</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Dedicated Targeting Core</node>
+type-detail|integrated_targeting_unit|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Dedicated Targeting Core</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Thermal Calibration</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Integrated Targeting Unit</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Dedicated Targeting Core</node>\n• <node>Unified Targeting Core</node>
 type|integrated_targeting_unit|DESTROYER|0	0	<good>20%</good> increased ballistic and energy weapon range.
-type-detail|integrated_targeting_unit|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Dedicated Targeting Core</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Thermal Calibration</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Integrated Targeting Unit</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Dedicated Targeting Core</node>
+type-detail|integrated_targeting_unit|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Dedicated Targeting Core</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Thermal Calibration</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Integrated Targeting Unit</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Dedicated Targeting Core</node>\n• <node>Unified Targeting Core</node>
 type|integrated_targeting_unit|CRUISER|0	0	<good>35%</good> increased ballistic and energy weapon range.
-type-detail|integrated_targeting_unit|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Dedicated Targeting Core</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Thermal Calibration</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Integrated Targeting Unit</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Dedicated Targeting Core</node>
+type-detail|integrated_targeting_unit|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Dedicated Targeting Core</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Thermal Calibration</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Integrated Targeting Unit</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Dedicated Targeting Core</node>\n• <node>Unified Targeting Core</node>
 type|integrated_targeting_unit|CAPITAL_SHIP|0	0	<good>55%</good> increased ballistic and energy weapon range.
-type-detail|integrated_targeting_unit|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Dedicated Targeting Core</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Thermal Calibration</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Integrated Targeting Unit</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Dedicated Targeting Core</node>
+type-detail|integrated_targeting_unit|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Dedicated Targeting Core</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Thermal Calibration</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Integrated Targeting Unit</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Dedicated Targeting Core</node>\n• <node>Unified Targeting Core</node>
 integrable|integrated_targeting_unit|null|0	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|integrated_targeting_unit|null|1	0	<muted>When integrated, for 2 story points:</muted>
 integrable|integrated_targeting_unit|FRIGATE|0	0	<good>10%</good> increased ballistic and energy weapon range.
@@ -12065,6 +12190,130 @@ type|missile_weapon_damage|FRIGATE|0	0	<good>3%</good> increased missile weapon 
 type|missile_weapon_damage|DESTROYER|0	0	<good>3%</good> increased missile weapon damage.
 type|missile_weapon_damage|CRUISER|0	0	<good>3%</good> increased missile weapon damage.
 type|missile_weapon_damage|CAPITAL_SHIP|0	0	<good>3%</good> increased missile weapon damage.
+flavour|modular_bolt_coherer	0	A modular coherer clamps onto energy mounts the original design was never meant to fit and tightens each bolt before it leaves the emitter. The crew copies the fittings from a Sindrian refit manual of uncertain provenance. The chapter on shielding the gun crews appears to have been removed.
+flavourAutomated|modular_bolt_coherer	0	A modular coherer clamps onto energy mounts the original design was never meant to fit and tightens each bolt before it leaves the emitter. The refit crew follows a Sindrian refit manual the ship's core recovered from a wreck. The chapter on shielding the gun crews appears to have been removed.
+type|modular_bolt_coherer|null|0	0	<good>+100</good> to non-beam energy weapon range.
+type|modular_bolt_coherer|null|1	1	<good>25%</good> increased crew casualties.
+type-detail|modular_bolt_coherer|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Energy Bolt Coherer</hullmod>\n• <hullmod>Adaptive Pulse Resonator</hullmod>\n• <hullmod>Modular Bolt Coherer</hullmod>
+type|modular_bolt_coherer|FRIGATE|0	0	<good>+100</good> to non-beam energy weapon range.
+type|modular_bolt_coherer|FRIGATE|1	1	<good>25%</good> increased crew casualties.
+type-detail|modular_bolt_coherer|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Energy Bolt Coherer</hullmod>\n• <hullmod>Adaptive Pulse Resonator</hullmod>\n• <hullmod>Modular Bolt Coherer</hullmod>
+type|modular_bolt_coherer|DESTROYER|0	0	<good>+100</good> to non-beam energy weapon range.
+type|modular_bolt_coherer|DESTROYER|1	1	<good>25%</good> increased crew casualties.
+type-detail|modular_bolt_coherer|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Energy Bolt Coherer</hullmod>\n• <hullmod>Adaptive Pulse Resonator</hullmod>\n• <hullmod>Modular Bolt Coherer</hullmod>
+type|modular_bolt_coherer|CRUISER|0	0	<good>+100</good> to non-beam energy weapon range.
+type|modular_bolt_coherer|CRUISER|1	1	<good>25%</good> increased crew casualties.
+type-detail|modular_bolt_coherer|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Energy Bolt Coherer</hullmod>\n• <hullmod>Adaptive Pulse Resonator</hullmod>\n• <hullmod>Modular Bolt Coherer</hullmod>
+type|modular_bolt_coherer|CAPITAL_SHIP|0	0	<good>+100</good> to non-beam energy weapon range.
+type|modular_bolt_coherer|CAPITAL_SHIP|1	1	<good>25%</good> increased crew casualties.
+type-detail|modular_bolt_coherer|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Energy Bolt Coherer</hullmod>\n• <hullmod>Adaptive Pulse Resonator</hullmod>\n• <hullmod>Modular Bolt Coherer</hullmod>
+integrable|modular_bolt_coherer|null|0	0	<good>+100</good> to non-beam energy weapon range.
+integrable|modular_bolt_coherer|null|1	1	<good>25%</good> increased crew casualties.
+integrable|modular_bolt_coherer|null|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|modular_bolt_coherer|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|modular_bolt_coherer|null|4	0	In addition, grants <builtIn>5%</builtIn> less energy weapon flux cost.
+integrable|modular_bolt_coherer|FRIGATE|0	0	<good>+100</good> to non-beam energy weapon range.
+integrable|modular_bolt_coherer|FRIGATE|1	1	<good>25%</good> increased crew casualties.
+integrable|modular_bolt_coherer|FRIGATE|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|modular_bolt_coherer|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|modular_bolt_coherer|FRIGATE|4	0	In addition, grants <builtIn>5%</builtIn> less energy weapon flux cost.
+integrable|modular_bolt_coherer|DESTROYER|0	0	<good>+100</good> to non-beam energy weapon range.
+integrable|modular_bolt_coherer|DESTROYER|1	1	<good>25%</good> increased crew casualties.
+integrable|modular_bolt_coherer|DESTROYER|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|modular_bolt_coherer|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|modular_bolt_coherer|DESTROYER|4	0	In addition, grants <builtIn>5%</builtIn> less energy weapon flux cost.
+integrable|modular_bolt_coherer|CRUISER|0	0	<good>+100</good> to non-beam energy weapon range.
+integrable|modular_bolt_coherer|CRUISER|1	1	<good>25%</good> increased crew casualties.
+integrable|modular_bolt_coherer|CRUISER|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|modular_bolt_coherer|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|modular_bolt_coherer|CRUISER|4	0	In addition, grants <builtIn>5%</builtIn> less energy weapon flux cost.
+integrable|modular_bolt_coherer|CAPITAL_SHIP|0	0	<good>+100</good> to non-beam energy weapon range.
+integrable|modular_bolt_coherer|CAPITAL_SHIP|1	1	<good>25%</good> increased crew casualties.
+integrable|modular_bolt_coherer|CAPITAL_SHIP|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|modular_bolt_coherer|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|modular_bolt_coherer|CAPITAL_SHIP|4	0	In addition, grants <builtIn>5%</builtIn> less energy weapon flux cost.
+integrated|modular_bolt_coherer|null|0	0	<builtIn>Integrated</builtIn>
+integrated|modular_bolt_coherer|null|1	0	<good>+100</good> to non-beam energy weapon range.
+integrated|modular_bolt_coherer|null|2	1	<good>25%</good> increased crew casualties.
+integrated|modular_bolt_coherer|null|3	0	<builtIn>5%</builtIn> less energy weapon flux cost.
+integrated|modular_bolt_coherer|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|modular_bolt_coherer|FRIGATE|1	0	<good>+100</good> to non-beam energy weapon range.
+integrated|modular_bolt_coherer|FRIGATE|2	1	<good>25%</good> increased crew casualties.
+integrated|modular_bolt_coherer|FRIGATE|3	0	<builtIn>5%</builtIn> less energy weapon flux cost.
+integrated|modular_bolt_coherer|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|modular_bolt_coherer|DESTROYER|1	0	<good>+100</good> to non-beam energy weapon range.
+integrated|modular_bolt_coherer|DESTROYER|2	1	<good>25%</good> increased crew casualties.
+integrated|modular_bolt_coherer|DESTROYER|3	0	<builtIn>5%</builtIn> less energy weapon flux cost.
+integrated|modular_bolt_coherer|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|modular_bolt_coherer|CRUISER|1	0	<good>+100</good> to non-beam energy weapon range.
+integrated|modular_bolt_coherer|CRUISER|2	1	<good>25%</good> increased crew casualties.
+integrated|modular_bolt_coherer|CRUISER|3	0	<builtIn>5%</builtIn> less energy weapon flux cost.
+integrated|modular_bolt_coherer|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|modular_bolt_coherer|CAPITAL_SHIP|1	0	<good>+100</good> to non-beam energy weapon range.
+integrated|modular_bolt_coherer|CAPITAL_SHIP|2	1	<good>25%</good> increased crew casualties.
+integrated|modular_bolt_coherer|CAPITAL_SHIP|3	0	<builtIn>5%</builtIn> less energy weapon flux cost.
+flavour|modular_fleet_override	0	An override package strips the safety limits from a strike craft's fire control and leaves the pilots to manage the rest. The crew learns the codes from Diktat carrier wings, who learned them through attrition. Recovery shuttle crews have started asking which wings carry it.
+flavourAutomated|modular_fleet_override	0	An override package strips the safety limits from a strike craft's fire control and leaves the pilots to manage the rest. The ship's core lifts the codes from captured Diktat carrier logs and pushes them to every wing it launches. It keeps no record of what the pilots think of this.
+type|modular_fleet_override|null|0	0	Strikecraft launched from this ship have <good>10%</good> increased weapon damage.
+type|modular_fleet_override|null|1	1	Strikecraft launched from this ship have <good>50%</good> more pilot casualties.
+type-detail|modular_fleet_override|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Fleet Override</hullmod>\n• <hullmod>Modular Fleet Override</hullmod>
+type|modular_fleet_override|FRIGATE|0	0	Strikecraft launched from this ship have <good>10%</good> increased weapon damage.
+type|modular_fleet_override|FRIGATE|1	1	Strikecraft launched from this ship have <good>50%</good> more pilot casualties.
+type-detail|modular_fleet_override|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Fleet Override</hullmod>\n• <hullmod>Modular Fleet Override</hullmod>
+type|modular_fleet_override|DESTROYER|0	0	Strikecraft launched from this ship have <good>10%</good> increased weapon damage.
+type|modular_fleet_override|DESTROYER|1	1	Strikecraft launched from this ship have <good>50%</good> more pilot casualties.
+type-detail|modular_fleet_override|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Fleet Override</hullmod>\n• <hullmod>Modular Fleet Override</hullmod>
+type|modular_fleet_override|CRUISER|0	0	Strikecraft launched from this ship have <good>10%</good> increased weapon damage.
+type|modular_fleet_override|CRUISER|1	1	Strikecraft launched from this ship have <good>50%</good> more pilot casualties.
+type-detail|modular_fleet_override|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Fleet Override</hullmod>\n• <hullmod>Modular Fleet Override</hullmod>
+type|modular_fleet_override|CAPITAL_SHIP|0	0	Strikecraft launched from this ship have <good>10%</good> increased weapon damage.
+type|modular_fleet_override|CAPITAL_SHIP|1	1	Strikecraft launched from this ship have <good>50%</good> more pilot casualties.
+type-detail|modular_fleet_override|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Fleet Override</hullmod>\n• <hullmod>Modular Fleet Override</hullmod>
+integrable|modular_fleet_override|null|0	0	Strikecraft launched from this ship have <good>10%</good> increased weapon damage.
+integrable|modular_fleet_override|null|1	1	Strikecraft launched from this ship have <good>50%</good> more pilot casualties.
+integrable|modular_fleet_override|null|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|modular_fleet_override|null|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|modular_fleet_override|null|4	0	In addition, grants <builtIn>15%</builtIn> reduced strikecraft refit time.
+integrable|modular_fleet_override|FRIGATE|0	0	Strikecraft launched from this ship have <good>10%</good> increased weapon damage.
+integrable|modular_fleet_override|FRIGATE|1	1	Strikecraft launched from this ship have <good>50%</good> more pilot casualties.
+integrable|modular_fleet_override|FRIGATE|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|modular_fleet_override|FRIGATE|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|modular_fleet_override|FRIGATE|4	0	In addition, grants <builtIn>15%</builtIn> reduced strikecraft refit time.
+integrable|modular_fleet_override|DESTROYER|0	0	Strikecraft launched from this ship have <good>10%</good> increased weapon damage.
+integrable|modular_fleet_override|DESTROYER|1	1	Strikecraft launched from this ship have <good>50%</good> more pilot casualties.
+integrable|modular_fleet_override|DESTROYER|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|modular_fleet_override|DESTROYER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|modular_fleet_override|DESTROYER|4	0	In addition, grants <builtIn>15%</builtIn> reduced strikecraft refit time.
+integrable|modular_fleet_override|CRUISER|0	0	Strikecraft launched from this ship have <good>10%</good> increased weapon damage.
+integrable|modular_fleet_override|CRUISER|1	1	Strikecraft launched from this ship have <good>50%</good> more pilot casualties.
+integrable|modular_fleet_override|CRUISER|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|modular_fleet_override|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|modular_fleet_override|CRUISER|4	0	In addition, grants <builtIn>15%</builtIn> reduced strikecraft refit time.
+integrable|modular_fleet_override|CAPITAL_SHIP|0	0	Strikecraft launched from this ship have <good>10%</good> increased weapon damage.
+integrable|modular_fleet_override|CAPITAL_SHIP|1	1	Strikecraft launched from this ship have <good>50%</good> more pilot casualties.
+integrable|modular_fleet_override|CAPITAL_SHIP|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|modular_fleet_override|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|modular_fleet_override|CAPITAL_SHIP|4	0	In addition, grants <builtIn>15%</builtIn> reduced strikecraft refit time.
+integrated|modular_fleet_override|null|0	0	<builtIn>Integrated</builtIn>
+integrated|modular_fleet_override|null|1	0	Strikecraft launched from this ship have <good>10%</good> increased weapon damage.
+integrated|modular_fleet_override|null|2	1	Strikecraft launched from this ship have <good>50%</good> more pilot casualties.
+integrated|modular_fleet_override|null|3	0	<builtIn>15%</builtIn> reduced strikecraft refit time.
+integrated|modular_fleet_override|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|modular_fleet_override|FRIGATE|1	0	Strikecraft launched from this ship have <good>10%</good> increased weapon damage.
+integrated|modular_fleet_override|FRIGATE|2	1	Strikecraft launched from this ship have <good>50%</good> more pilot casualties.
+integrated|modular_fleet_override|FRIGATE|3	0	<builtIn>15%</builtIn> reduced strikecraft refit time.
+integrated|modular_fleet_override|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|modular_fleet_override|DESTROYER|1	0	Strikecraft launched from this ship have <good>10%</good> increased weapon damage.
+integrated|modular_fleet_override|DESTROYER|2	1	Strikecraft launched from this ship have <good>50%</good> more pilot casualties.
+integrated|modular_fleet_override|DESTROYER|3	0	<builtIn>15%</builtIn> reduced strikecraft refit time.
+integrated|modular_fleet_override|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|modular_fleet_override|CRUISER|1	0	Strikecraft launched from this ship have <good>10%</good> increased weapon damage.
+integrated|modular_fleet_override|CRUISER|2	1	Strikecraft launched from this ship have <good>50%</good> more pilot casualties.
+integrated|modular_fleet_override|CRUISER|3	0	<builtIn>15%</builtIn> reduced strikecraft refit time.
+integrated|modular_fleet_override|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|modular_fleet_override|CAPITAL_SHIP|1	0	Strikecraft launched from this ship have <good>10%</good> increased weapon damage.
+integrated|modular_fleet_override|CAPITAL_SHIP|2	1	Strikecraft launched from this ship have <good>50%</good> more pilot casualties.
+integrated|modular_fleet_override|CAPITAL_SHIP|3	0	<builtIn>15%</builtIn> reduced strikecraft refit time.
 type|more_hull|null|0	0	<good>5%</good> more hull points.
 type|more_hull|FRIGATE|0	0	<good>5%</good> more hull points.
 type|more_hull|DESTROYER|0	0	<good>5%</good> more hull points.
@@ -15945,6 +16194,49 @@ integrated|tripad_backdoor|CRUISER|0	0	<builtIn>Integrated</builtIn>
 integrated|tripad_backdoor|CRUISER|1	0	<builtIn>200%</builtIn> more combat objective capture rate.
 integrated|tripad_backdoor|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|tripad_backdoor|CAPITAL_SHIP|1	0	<builtIn>200%</builtIn> more combat objective capture rate.
+flavour|unified_targeting_core	0	A unified core runs every gun on the ship from one fire-control solution and hands the same picture to its strike craft. The processing stacks fill a compartment that used to be crew quarters. Nobody has asked for it back.
+flavourAutomated|unified_targeting_core	0	A unified core runs every gun on the ship from one fire-control solution and hands the same picture to its strike craft. The refit crew fits the processing stacks into a compartment that used to be crew quarters. The ship's core has no use for it.
+type-detail|unified_targeting_core|null|0	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
+type-detail|unified_targeting_core|null|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Dedicated Targeting Core</hullmod>\n• <hullmod>Integrated Targeting Unit</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Dedicated Targeting Core</node>\n• <node>Integrated Targeting Unit</node>
+type-detail|unified_targeting_core|FRIGATE|0	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
+type-detail|unified_targeting_core|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Dedicated Targeting Core</hullmod>\n• <hullmod>Integrated Targeting Unit</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Dedicated Targeting Core</node>\n• <node>Integrated Targeting Unit</node>
+type-detail|unified_targeting_core|DESTROYER|0	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
+type-detail|unified_targeting_core|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Dedicated Targeting Core</hullmod>\n• <hullmod>Integrated Targeting Unit</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Dedicated Targeting Core</node>\n• <node>Integrated Targeting Unit</node>
+type|unified_targeting_core|CRUISER|0	0	<good>30%</good> increased ballistic and energy weapon range.
+type|unified_targeting_core|CRUISER|1	0	Strikecraft launched from this ship have <good>30%</good> increased weapon range.
+type-detail|unified_targeting_core|CRUISER|0	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
+type-detail|unified_targeting_core|CRUISER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Dedicated Targeting Core</hullmod>\n• <hullmod>Integrated Targeting Unit</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Dedicated Targeting Core</node>\n• <node>Integrated Targeting Unit</node>
+type|unified_targeting_core|CAPITAL_SHIP|0	0	<good>40%</good> increased ballistic and energy weapon range.
+type|unified_targeting_core|CAPITAL_SHIP|1	0	Strikecraft launched from this ship have <good>40%</good> increased weapon range.
+type-detail|unified_targeting_core|CAPITAL_SHIP|0	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
+type-detail|unified_targeting_core|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Dedicated Targeting Core</hullmod>\n• <hullmod>Integrated Targeting Unit</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Dedicated Targeting Core</node>\n• <node>Integrated Targeting Unit</node>
+integrable|unified_targeting_core|null|0	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|unified_targeting_core|null|1	0	<muted>When integrated, for 2 story points:</muted>
+integrable|unified_targeting_core|FRIGATE|0	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|unified_targeting_core|FRIGATE|1	0	<muted>When integrated, for 2 story points:</muted>
+integrable|unified_targeting_core|DESTROYER|0	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|unified_targeting_core|DESTROYER|1	0	<muted>When integrated, for 2 story points:</muted>
+integrable|unified_targeting_core|CRUISER|0	0	<good>30%</good> increased ballistic and energy weapon range.
+integrable|unified_targeting_core|CRUISER|1	0	Strikecraft launched from this ship have <good>30%</good> increased weapon range.
+integrable|unified_targeting_core|CRUISER|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|unified_targeting_core|CRUISER|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|unified_targeting_core|CRUISER|4	0	Instead grants <builtIn>35%</builtIn> increased ballistic and energy weapon range.
+integrable|unified_targeting_core|CRUISER|5	0	Instead grants: Strikecraft launched from this ship have <builtIn>35%</builtIn> increased weapon range.
+integrable|unified_targeting_core|CAPITAL_SHIP|0	0	<good>40%</good> increased ballistic and energy weapon range.
+integrable|unified_targeting_core|CAPITAL_SHIP|1	0	Strikecraft launched from this ship have <good>40%</good> increased weapon range.
+integrable|unified_targeting_core|CAPITAL_SHIP|2	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
+integrable|unified_targeting_core|CAPITAL_SHIP|3	0	<muted>When integrated, for 2 story points:</muted>
+integrable|unified_targeting_core|CAPITAL_SHIP|4	0	Instead grants <builtIn>45%</builtIn> increased ballistic and energy weapon range.
+integrable|unified_targeting_core|CAPITAL_SHIP|5	0	Instead grants: Strikecraft launched from this ship have <builtIn>45%</builtIn> increased weapon range.
+integrated|unified_targeting_core|null|0	0	<builtIn>Integrated</builtIn>
+integrated|unified_targeting_core|FRIGATE|0	0	<builtIn>Integrated</builtIn>
+integrated|unified_targeting_core|DESTROYER|0	0	<builtIn>Integrated</builtIn>
+integrated|unified_targeting_core|CRUISER|0	0	<builtIn>Integrated</builtIn>
+integrated|unified_targeting_core|CRUISER|1	0	<builtIn>35%</builtIn> increased ballistic and energy weapon range.
+integrated|unified_targeting_core|CRUISER|2	0	Strikecraft launched from this ship have <builtIn>35%</builtIn> increased weapon range.
+integrated|unified_targeting_core|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
+integrated|unified_targeting_core|CAPITAL_SHIP|1	0	<builtIn>45%</builtIn> increased ballistic and energy weapon range.
+integrated|unified_targeting_core|CAPITAL_SHIP|2	0	Strikecraft launched from this ship have <builtIn>45%</builtIn> increased weapon range.
 type|unstable_injector|null|0	0	<bad>15%</bad> less ballistic and energy weapon range.
 type|unstable_injector|null|1	1	<good>25%</good> increased strikecraft refit time.
 type-detail|unstable_injector|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Trinity Worlds Retrofit</hullmod>\n• <hullmod>Constellate Design - White Jade</hullmod>\n• <hullmod>Infernalis Drives</hullmod>\n• <hullmod>Unstable Injector</hullmod>

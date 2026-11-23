@@ -24,10 +24,14 @@ asm_munitions_regulator,magazines,Emergent Threats
 orr_damper_field,frontshield,Emergent Threats
 vice_adaptive_entropy_arrester,autorepair,Emergent Threats
 vice_aquilon_microforge,missleracks; missile_autoloader,Emergent Threats
+vice_attuned_emitter_diodes,advancedoptics; high_scatter_amp; vice_adaptive_emitter_diodes; vice_laser_collimator,Emergent Threats
+vice_field_repair_nanites,vice_adaptive_entropy_arrester; ix_entropy_arrester,Emergent Threats
 vice_intrepid_hull,ecm,Emergent Threats
 vice_missile_microforge,missleracks; missile_autoloader,Emergent Threats
+vice_modular_bolt_coherer,coherer; vice_adaptive_pulse_resonator,Emergent Threats
+vice_modular_fleet_override,vice_fleet_override,Emergent Threats
 vice_onslaught_hull,hbi,Emergent Threats
-vice_unified_targeting_core,dedicated_targeting_core; targetingunit,Emergent Threats
+vice_unified_targeting_core,dedicated_targeting_core; targetingunit; advancedcore; distributed_fire_control; tw_optimized_targeting_core,Emergent Threats
 ix_aquilon_microforge,missleracks; missile_autoloader,Emergent Threats: IX Revival
 ix_carrier_gunships,dedicated_targeting_core,Emergent Threats: IX Revival
 ix_cramped_missile_bays,missleracks,Emergent Threats: IX Revival
