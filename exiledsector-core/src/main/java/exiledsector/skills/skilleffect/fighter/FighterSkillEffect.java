@@ -225,6 +225,18 @@ public enum FighterSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this, "warning").styled();
         }
     },
+    FIGHTER_BAYS_MULT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getNumFighterBays().modifyMult(modId, Math.max(0f, SkillEffectSupport.multFrom(magnitude)));
+            stats.getNumFighterBays().modifyFlat(modId, magnitude == 0f ? 0f : builtInWingCount(stats));
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.signed(this, magnitude).styled();
+        }
+    },
     CONVERTED_HANGAR_FIGHTER_BAYS_FLAT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -387,6 +399,13 @@ public enum FighterSkillEffect implements BackedSkillEffect {
         }
     },
     HARDLIGHT_MARKING_MAX_DAMAGE_PERCENT(HardlightMarking.backing(HardlightMarking.MAX_PERCENT_KEY));
+
+    private static int builtInWingCount(MutableShipStatsAPI stats) {
+        if (stats.getVariant() == null || stats.getVariant().getHullSpec() == null || stats.getVariant().getHullSpec().getBuiltInWings() == null) {
+            return 0;
+        }
+        return stats.getVariant().getHullSpec().getBuiltInWings().size();
+    }
 
     private static float convertedHangarBonusBays(MutableShipStatsAPI stats) {
         return stats.getDynamic().getMod(Stats.CONVERTED_HANGAR_MOD).computeEffective(0f);

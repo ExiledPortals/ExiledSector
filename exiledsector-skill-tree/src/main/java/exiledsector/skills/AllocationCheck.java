@@ -14,7 +14,7 @@ public final class AllocationCheck {
 
     public enum Refusal {
         ALREADY_ALLOCATED, NOT_ALLOCATED, NOT_CONNECTED, NODE_CAP, OUT_OF_OP, INELIGIBLE, STARTING_ROOT, STRANDS_NODES, SAME_OPTION,
-        HELD_BY_SUBROUTINE, LOGISTICS_UNDOCKED
+        HELD_BY_SUBROUTINE, LOGISTICS_UNDOCKED, STATION_SUBSYSTEM
     }
 
     public record Verdict(Refusal refusal, NodeEligibility.Block block) {
@@ -230,6 +230,9 @@ public final class AllocationCheck {
         if (data.isAllocated(node.getId())) {
             return Verdict.refused(Refusal.ALREADY_ALLOCATED);
         }
+        if (ResearchStationNodes.isStationNode(node)) {
+            return Verdict.refused(Refusal.STATION_SUBSYSTEM);
+        }
         if (!isConnected(node)) {
             return Verdict.refused(Refusal.NOT_CONNECTED);
         }
@@ -266,6 +269,9 @@ public final class AllocationCheck {
         }
         if (node.getId().equals(rootId)) {
             return Verdict.refused(Refusal.STARTING_ROOT);
+        }
+        if (ResearchStationNodes.isStationNode(node)) {
+            return Verdict.refused(Refusal.STATION_SUBSYSTEM);
         }
         if (grantOnlyNodeIds().contains(node.getId())) {
             return Verdict.refused(Refusal.HELD_BY_SUBROUTINE);

@@ -62,11 +62,17 @@ public final class ShipTrees {
         return true;
     }
 
+    public static boolean canUnchooseStartingRoot(ShipSkillData data) {
+        return data.startingRootId != null && data.allocatedNodeIds.contains(data.startingRootId)
+                && ResearchStationNodes.holdsOnlyFreeStationNodesBeside(data, data.startingRootId);
+    }
+
     public static boolean unchooseStartingRoot(ShipSkillData data) {
         data.revision++;
-        if (!data.canUnchooseStartingRoot()) {
+        if (!canUnchooseStartingRoot(data)) {
             return false;
         }
+        ResearchStationNodes.releaseStation(data);
         ItemCostLedger.ensure(data);
         data.allocatedNodeIds.remove(data.startingRootId);
         data.release(data.startingRootId);
@@ -123,7 +129,7 @@ public final class ShipTrees {
         }
         List<String> ungranted = new ArrayList<>();
         for (String nodeId : data.subroutineGrantedNodeIds) {
-            if (data.allocatedNodeIds.contains(nodeId) && !granted.contains(nodeId)) {
+            if (data.allocatedNodeIds.contains(nodeId) && !granted.contains(nodeId) && !ResearchStationNodes.isStationNodeId(nodeId)) {
                 ungranted.add(nodeId);
             }
         }
@@ -366,7 +372,7 @@ public final class ShipTrees {
             SkillNode node = tree.get(nodeId);
             if (node != null && candidate.test(nodeId) && !nodeId.equals(startingRoot) && !data.pairGrantedNodeIds().contains(nodeId)
                     && ShipTreeLinks.anchorPartner(data, nodeId) == null && !ShipTreeLinks.isGrantHeld(data, nodeId)
-                    && !ShipTreeLinks.grantedNodesBySocket(data).containsKey(nodeId)
+                    && !ShipTreeLinks.grantedNodesBySocket(data).containsKey(nodeId) && !ResearchStationNodes.isStationNodeId(nodeId)
                     && canDeallocate(data, node, topology, startingRoot)) {
                 return node;
             }

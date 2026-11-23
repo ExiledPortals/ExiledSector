@@ -33,6 +33,7 @@ import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.TypeAffinity;
 import exiledsector.skills.tags.ModCredit;
+import exiledsector.skills.tags.ShipProfile;
 import exiledsector.skills.tags.ThemeTagLine;
 import exiledsector.items.subroutine.doctrine.DoctrineOverrides;
 import exiledsector.items.subroutine.doctrine.DoctrineRewrite;
@@ -144,12 +145,13 @@ final class SkillTreeNodeTooltipRenderer {
         LogisticsStatus logistics = hidden || socketed != null ? null : LogisticsStatus.of(effectiveType, skillData.isAllocated(node.getId()),
                 allocation.gate());
         IntegrationLines.State integration = integrationState(skillData, node);
+        ResearchStationLines station = hidden ? ResearchStationLines.NONE : ResearchStationLines.of(node, skillData, automated());
         boolean previewsIntegration = !hidden && !showChoiceHint && socketed == null;
         List<Object> signature = List.of(effectiveType.getId(), hidden, showChoiceHint, expanded, allocatedSocket,
                 socketed == null ? "" : socketed.id(), refusalReason == null ? "" : refusalReason, shipState, shipStateRevision,
                 rewrite == null ? "" : rewrite, tooltipWarning == null ? "" : tooltipWarning,
                 socketGrantStatuses, grantingItem == null ? "" : grantingItem.id(), costLine == null ? "" : costLine, logistics == null ? "" : logistics,
-                integration);
+                integration, station);
 
         TextLabel title = tooltipTitles.computeIfAbsent(node.getId(), id -> titleLabel()).refresh(signature, label -> {
             if (socketed != null) {
@@ -159,8 +161,9 @@ final class SkillTreeNodeTooltipRenderer {
             }
         });
         TextLabel body = body(tooltipBodies, node.getId(), signature,
-                () -> withLeadingLines(withCostLine(withGrantLine(withDoctrineLines(describe(node, skillData, effectiveType, hidden, showChoiceHint,
-                        socketed, socketGrantStatuses, expanded), rewrite), grantingItem), costLine), logistics == null ? List.of() : logistics.lines()),
+                () -> withTrailingLines(withLeadingLines(withLeadingLines(withCostLine(withGrantLine(withDoctrineLines(describe(node, skillData,
+                        effectiveType, hidden, showChoiceHint, socketed, socketGrantStatuses, expanded), rewrite), grantingItem), costLine),
+                        logistics == null ? List.of() : logistics.lines()), station.leadingLines()), station.trailingLines()),
                 () -> previewsIntegration ? IntegrationLines.preview(effectiveType, fleetMember.getHullSpec().getHullSize(), integration) : List.of(),
                 expanded, tooltipWarning != null ? tooltipWarning : refusalReason);
         TextLabel affinitySection = showsAffinity(effectiveType, hidden, showChoiceHint, socketed)
@@ -346,6 +349,19 @@ final class SkillTreeNodeTooltipRenderer {
         return block != null && block.kind() == NodeEligibility.Kind.ITEM_COST ? null : refusalReason;
     }
 
+    private static NodeDescription withTrailingLines(NodeDescription description, List<DescriptionLine> trailingLines) {
+        if (trailingLines.isEmpty()) {
+            return description;
+        }
+        List<DescriptionLine> effects = new ArrayList<>(description.effects());
+        effects.addAll(trailingLines);
+        return new NodeDescription(effects, description.details());
+    }
+
+    private boolean automated() {
+        return ShipProfile.automated(fleetMember.getVariant());
+    }
+
     private static NodeDescription withLeadingLines(NodeDescription description, List<StyledText> leadingLines) {
         if (leadingLines.isEmpty()) {
             return description;
@@ -397,7 +413,8 @@ final class SkillTreeNodeTooltipRenderer {
     }
 
     private IntegrationLines.State integrationState(ShipSkillData skillData, SkillNode node) {
-        return IntegrationLines.State.of(skillData, node, !planning.getAsBoolean(), templateMark.apply(node));
+        boolean offersIntegration = !planning.getAsBoolean() && ResearchStationLines.of(node, skillData, automated()).offersIntegration();
+        return IntegrationLines.State.of(skillData, node, offersIntegration, templateMark.apply(node));
     }
 
     private StyledText moduleShareLine(SkillType type, boolean integrated) {

@@ -31,6 +31,11 @@ public final class ModSettings {
         return value != null ? value : defaultValue;
     }
 
+    public static String otherModStringOr(String modId, String fieldId, String defaultValue) {
+        String value = LunaSettings.getString(modId, fieldId);
+        return value != null ? value : defaultValue;
+    }
+
     public static boolean otherModBooleanOr(String modId, String fieldId, boolean defaultValue) {
         Boolean value = LunaSettings.getBoolean(modId, fieldId);
         return value != null ? value : defaultValue;

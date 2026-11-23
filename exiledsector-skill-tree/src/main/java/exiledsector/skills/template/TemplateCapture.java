@@ -1,5 +1,6 @@
 package exiledsector.skills.template;
 
+import exiledsector.skills.ResearchStationNodes;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.ShipTrees;
@@ -29,6 +30,7 @@ public final class TemplateCapture {
         Set<String> grantOnlyNodeIds = ShipTrees.grantOnlyNodeIds(shipData, SkillTree.topology(), startingRootId);
         List<String> pathNodeIds = new ArrayList<>(orderedNodeIds);
         pathNodeIds.removeAll(grantOnlyNodeIds);
+        pathNodeIds.removeIf(ResearchStationNodes::isStationNodeId);
         return pathNodeIds;
     }
 

@@ -21,6 +21,7 @@ import exiledsector.skills.ItemCostLedger;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.NodeIntegration;
 import exiledsector.skills.ReleasedNodes;
+import exiledsector.skills.ResearchStationNodes;
 import exiledsector.skills.RespecPlan;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSkillData;
@@ -34,6 +35,7 @@ import exiledsector.skills.SkillType;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.ShipOpBudget;
 import exiledsector.skills.progression.SkillNodeOpCost;
+import exiledsector.skills.tags.ShipProfile;
 import exiledsector.skills.unlock.NodeGates;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.items.subroutine.doctrine.DoctrineOverrides;
@@ -313,7 +315,50 @@ final class NodeAllocator {
     }
 
     boolean integrate(SkillNode node) {
+        if (ResearchStationNodes.isStation(node)) {
+            return changed(integrateStation(node));
+        }
         return changed(NodeIntegration.integrate(data(), node, fleetMember.getShipName()));
+    }
+
+    boolean isAutomated() {
+        return ShipProfile.automated(shipVariant);
+    }
+
+    private boolean integrateStation(SkillNode station) {
+        ShipSkillData skillData = data();
+        if (isAutomated() || skillData.isIntegrated(station.getId())) {
+            return false;
+        }
+        boolean grantedHere = !skillData.isAllocated(station.getId());
+        if (grantedHere) {
+            ShipTrees.allocateGranted(skillData, station);
+        }
+        if (NodeIntegration.integrate(skillData, station, fleetMember.getShipName())) {
+            return true;
+        }
+        if (grantedHere) {
+            ShipTrees.deallocate(skillData, station);
+        }
+        return false;
+    }
+
+    boolean selectSubsystem(SkillNode subsystem, Snapshot snapshot) {
+        ShipSkillData skillData = snapshot.skillData();
+        if (!ResearchStationNodes.isSubsystem(subsystem) || skillData.isAllocated(subsystem.getId())
+                || !ResearchStationNodes.isActive(skillData, isAutomated()) || !snapshot.gate().grant(subsystem).allowed()) {
+            return false;
+        }
+        ResearchStationNodes.select(skillData, subsystem);
+        return changed(true);
+    }
+
+    boolean releaseSubsystem() {
+        return changed(ResearchStationNodes.release(data()));
+    }
+
+    boolean syncResearchStation() {
+        return changed(ResearchStationNodes.sync(data(), isAutomated()));
     }
 
     void applyIntegrationReset() {
@@ -408,7 +453,7 @@ final class NodeAllocator {
     }
 
     boolean canUnchooseStartingRoot(SkillNode node) {
-        return isStartingRoot(node) && data().canUnchooseStartingRoot();
+        return isStartingRoot(node) && ShipTrees.canUnchooseStartingRoot(data());
     }
 
     boolean unchooseStartingRoot(SkillNode node) {

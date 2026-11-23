@@ -15,6 +15,14 @@ import static exiledsector.skills.skilleffect.Backings.listener;
 
 public enum AuraSkillEffect implements BackedSkillEffect {
 
+    ENTROPY_PROJECTOR_ARCS_FLAT(listener(EntropyProjectorListener.ARC_COUNT_KEY, EntropyProjectorListener.class, EntropyProjectorListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).count(Math.round(magnitude)).arg("value", magnitude)
+                    .arg("seconds", EntropyProjectorListener.CHARGE_SECONDS).arg("range", EntropyProjectorListener.RANGE)
+                    .arg("energy", EntropyProjectorListener.ENERGY_DAMAGE).arg("emp", EntropyProjectorListener.EMP_DAMAGE).styled();
+        }
+    },
     ESCORT_MANEUVER_BONUS_PERCENT(listener(EscortListener.MANEUVER_BONUS_KEY, EscortListener.class, EscortListener::new)) {
         @Override
         public StyledText description(float magnitude) {

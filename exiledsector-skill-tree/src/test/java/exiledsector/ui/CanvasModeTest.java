@@ -14,16 +14,17 @@ class CanvasModeTest {
 
     @Test
     void rootChoiceOutranksEveryOtherMode() {
-        assertEquals(CanvasMode.ROOT_CHOICE, CanvasMode.resolve(true, true, true, true, true));
+        assertEquals(CanvasMode.ROOT_CHOICE, CanvasMode.resolve(true, true, true, true, true, true));
     }
 
     @Test
     void modesResolveInPriorityOrder() {
-        assertEquals(CanvasMode.MODAL, CanvasMode.resolve(false, true, true, true, true));
-        assertEquals(CanvasMode.CRAFTING_BENCH, CanvasMode.resolve(false, false, true, true, true));
-        assertEquals(CanvasMode.HYPERSPACE, CanvasMode.resolve(false, false, false, true, true));
-        assertEquals(CanvasMode.EXOSHIP_VIEW, CanvasMode.resolve(false, false, false, false, true));
-        assertEquals(CanvasMode.TREE, CanvasMode.resolve(false, false, false, false, false));
+        assertEquals(CanvasMode.MODAL, CanvasMode.resolve(false, true, true, true, true, true));
+        assertEquals(CanvasMode.CRAFTING_BENCH, CanvasMode.resolve(false, false, true, true, true, true));
+        assertEquals(CanvasMode.HYPERSPACE, CanvasMode.resolve(false, false, false, true, true, true));
+        assertEquals(CanvasMode.EXOSHIP_VIEW, CanvasMode.resolve(false, false, false, false, true, true));
+        assertEquals(CanvasMode.RESEARCH_STATION_VIEW, CanvasMode.resolve(false, false, false, false, false, true));
+        assertEquals(CanvasMode.TREE, CanvasMode.resolve(false, false, false, false, false, false));
     }
 
     @Test
@@ -96,7 +97,8 @@ class CanvasModeTest {
 
     @Test
     void theFleetShipListOpensWheneverTheTreeIsReachable() {
-        assertEquals(EnumSet.of(CanvasMode.TREE, CanvasMode.ROOT_CHOICE, CanvasMode.EXOSHIP_VIEW), matching(CanvasMode::switchesShips));
+        assertEquals(EnumSet.of(CanvasMode.TREE, CanvasMode.ROOT_CHOICE, CanvasMode.EXOSHIP_VIEW,
+                CanvasMode.RESEARCH_STATION_VIEW), matching(CanvasMode::switchesShips));
     }
 
     @Test
@@ -113,6 +115,14 @@ class CanvasModeTest {
         assertFalse(CanvasMode.EXOSHIP_VIEW.shows(CanvasMode.Chrome.SEARCH));
         assertTrue(CanvasMode.EXOSHIP_VIEW.shows(CanvasMode.Chrome.STORAGE_BUTTON));
         assertTrue(CanvasMode.EXOSHIP_VIEW.hoversTree());
+    }
+
+    @Test
+    void viewingTheResearchStationEnablesTheSameChromeAsTheExoship() {
+        assertEquals(enabledIn(CanvasMode.EXOSHIP_VIEW), enabledIn(CanvasMode.RESEARCH_STATION_VIEW));
+        assertTrue(CanvasMode.RESEARCH_STATION_VIEW.hoversTree());
+        assertTrue(CanvasMode.RESEARCH_STATION_VIEW.followsAView());
+        assertFalse(CanvasMode.TREE.followsAView());
     }
 
     private static Set<CanvasMode.Chrome> enabledIn(CanvasMode mode) {

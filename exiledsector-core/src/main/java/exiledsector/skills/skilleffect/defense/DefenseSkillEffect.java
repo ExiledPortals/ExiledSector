@@ -18,6 +18,7 @@ import exiledsector.skills.skilleffect.ConditionalTemplatedStat;
 import exiledsector.skills.skilleffect.DescribeContext;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
+import exiledsector.skills.skilleffect.GatedStatEffect;
 import exiledsector.skills.skilleffect.PerDModMultEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.SkillEffectSupport;
@@ -195,6 +196,7 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
     FRAGMENTATION_ARMOR_HULL_DAMAGE_TAKEN_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getFragmentationDamageTakenMult),
             "stat.fragmentationArmorHullDamageTaken", true)),
     DAMAGE_TAKEN_PERCENT(statEffect(PERCENT, StatTarget.DAMAGE_TAKEN, "stat.damageTaken", true)),
+    DAMAGE_TAKEN_WITHOUT_PHASE_CLOAK_MULT(GatedStatEffect.withoutPhaseCloak(MULT, StatTarget.DAMAGE_TAKEN, true)),
     HULL_DAMAGE_TAKEN_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getHullDamageTakenMult), "stat.hullDamageTaken", true)),
     WEAPON_DAMAGE_TAKEN_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getWeaponDamageTakenMult), "stat.damageTakenByWeapons", true)),
     MISSILE_EJECTION_CHANCE_PERCENT(listener(MissileEjectionListener.CHANCE_PERCENT_KEY, MissileEjectionListener.class,

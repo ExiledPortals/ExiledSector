@@ -22,6 +22,7 @@ import exiledsector.skills.npc.NpcHullMods;
 import exiledsector.skills.npc.NpcLevelCaps;
 import exiledsector.skills.npc.NpcLevelLimit;
 import exiledsector.skills.npc.NpcShipSelector;
+import exiledsector.skills.npc.NpcStationSubsystem;
 import exiledsector.skills.npc.NpcSkillTreeBuilder;
 import exiledsector.skills.npc.NpcTreeSize;
 import exiledsector.skills.npc.NpcTreeBuild;
@@ -132,6 +133,7 @@ public final class NpcFleetLeveller {
                 member.getHullSpec().getShipDefenseId()), fleetContext.grantedNodeIds()), random);
         NpcIntegratedNodes.mark(treeBuild.shipData(),
                 NpcIntegratedNodes.count(member, fleetContext.averageSModsBeforeInflation(), random), random);
+        NpcStationSubsystem.grant(treeBuild.shipData(), member, fleetContext.fleetMemory(), random);
         return NpcTreeTag.encode(treeBuild.shipData());
     }
 
@@ -189,6 +191,7 @@ public final class NpcFleetLeveller {
         if (!ownedVariant.hasHullMod(SkillTreeHullMod.ID)) {
             ownedVariant.addMod(SkillTreeHullMod.ID);
         }
+        ShipTreeSync.syncVariant(member, ownedVariant);
         member.setStatUpdateNeeded(true);
     }
 

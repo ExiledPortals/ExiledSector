@@ -17,6 +17,7 @@ import exiledsector.items.custody.SocketCustody;
 import exiledsector.items.subroutine.SubroutineRadius;
 import exiledsector.items.subroutine.doctrine.DoctrineLayer;
 import exiledsector.skills.ExoshipNodes;
+import exiledsector.skills.ResearchStationNodes;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
@@ -57,6 +58,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin implements Zo
     private final AbyssDarknessRenderer abyssDarkness = AbyssDarknessRenderer.forActiveTree();
     private final TreeDecorations decorations;
     private final ExoshipView exoshipView = new ExoshipView();
+    private final ResearchStationView stationView = new ResearchStationView();
     private final SkillTreeFleetRenderer fleetRenderer;
     private final NodeRadiusRingRenderer radiusRingRenderer = new NodeRadiusRingRenderer();
     private final InfestationEffects infestationEffects = new InfestationEffects();
@@ -196,7 +198,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin implements Zo
     private CanvasMode mode() {
         return CanvasMode.resolve(treeSession.isStartingRootInputLocked(), templateUi.isModalOpen() || schematicButtons.isDialogBlocking(),
                 socketPlacement.isCraftingBenchOpen(),
-                hyperspaceMode.isActive(), exoshipView.isActive());
+                hyperspaceMode.isActive(), exoshipView.isActive(), stationView.isActive());
     }
 
     @Override
@@ -217,6 +219,10 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin implements Zo
         exoshipView.advance(amount, exoshipView.isAvailable() && treeSession.isAllocated(exoshipView.exoshipNode()));
         if (exoshipView.isActive()) {
             camera.follow(exoshipView.focusX(), exoshipView.focusY(), amount);
+        }
+        stationView.advance(amount, treeSession.selectedStationSubsystem());
+        if (stationView.isActive()) {
+            camera.follow(stationView.focusX(), stationView.focusY(), amount);
         }
         boolean followingStartingRoot = treeSession.isStartingRootMoving();
         camera.beginStartingRootFollow(treeSession);
@@ -253,7 +259,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin implements Zo
             return false;
         }
         return switch (mode) {
-            case TREE, EXOSHIP_VIEW -> true;
+            case TREE, EXOSHIP_VIEW, RESEARCH_STATION_VIEW -> true;
             case HYPERSPACE -> hyperspaceMode.isOnMap();
             case ROOT_CHOICE, MODAL, CRAFTING_BENCH -> false;
         };
@@ -304,7 +310,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin implements Zo
                 case CRAFTING_BENCH -> handleCraftingBenchEvent(event, mode);
                 case HYPERSPACE -> hyperspaceMode.handleEvent(event, canvasPosition,
                         event.isLMBDownEvent() && chrome.contains(canvasPosition, mode, event.getX(), event.getY()));
-                case EXOSHIP_VIEW, TREE -> handleTreeEvent(event, mode);
+                case EXOSHIP_VIEW, RESEARCH_STATION_VIEW, TREE -> handleTreeEvent(event, mode);
             }
         }
     }
@@ -319,7 +325,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin implements Zo
             return false;
         }
         return switch (mode) {
-            case TREE, EXOSHIP_VIEW, HYPERSPACE, ROOT_CHOICE -> true;
+            case TREE, EXOSHIP_VIEW, RESEARCH_STATION_VIEW, HYPERSPACE, ROOT_CHOICE -> true;
             case MODAL, CRAFTING_BENCH -> false;
         };
     }
@@ -355,7 +361,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin implements Zo
         if (statPanel.collapse()) {
             return true;
         }
-        return (mode == CanvasMode.TREE || mode == CanvasMode.EXOSHIP_VIEW) && searchBar.escape();
+        return (mode == CanvasMode.TREE || mode.followsAView()) && searchBar.escape();
     }
 
     private void escapeModal() {
@@ -456,6 +462,19 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin implements Zo
         }
         camera.stopFollowing();
         exoshipView.leave();
+        stationView.leave();
+    }
+
+    private void boardResearchStation() {
+        if (!stationView.isAvailable()) {
+            return;
+        }
+        stopFollowing();
+        drag.release();
+        treeSession.closeChoicePicker();
+        stationView.enter();
+        camera.startFollowing(stationView.fitZoom(canvasPosition));
+        searchBar.unfocus();
     }
 
     private void handleTreeEvent(InputEventAPI event, CanvasMode mode) {
@@ -515,7 +534,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin implements Zo
     }
 
     private Object treeTargetAt(float x, float y) {
-        if (exoshipView.shipContains(viewport(), x, y)) {
+        if (!stationView.isActive() && exoshipView.shipContains(viewport(), x, y)) {
             return exoshipView;
         }
         return nodeDrawer.findNodeAt(layers(), x, y);
@@ -559,6 +578,14 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin implements Zo
     }
 
     private void commitNodeClick(SkillNode node, boolean ctrlDown, boolean shiftDown) {
+        if (ResearchStationNodes.isStation(node)) {
+            boardResearchStation();
+            return;
+        }
+        if (ResearchStationNodes.isSubsystem(node)) {
+            treeSession.clickStationSubsystem(node);
+            return;
+        }
         if (socketPlacement.placeInto(node)) {
             return;
         }
@@ -595,7 +622,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin implements Zo
 
     private void jumpToNextSearchMatch() {
         SkillNode match = treeSession.nextSearchMatch();
-        if (match != null) {
+        if (ResearchStationNodes.isStationNode(match)) {
+            boardResearchStation();
+        } else if (match != null) {
             stopFollowing();
             camera.panTo(match.getOffsetX(), match.getOffsetY());
         }
@@ -642,8 +671,10 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin implements Zo
         boolean shipHovered = pointerOverTree && mode.hoversTree() && exoshipView.shipContains(viewport, mouseX, mouseY);
         boolean treeHovered = pointerOverTree && mode.hoversTree() && !shipHovered;
         exoshipView.setHovered(shipHovered);
-        TreeLayers layers = exoshipView.layers(viewport, alphaMult * treeAlpha);
+        TreeLayers layers = exoshipView.layers(viewport, alphaMult * treeAlpha).withStation(stationView.layer());
+        stationView.setHovered(treeHovered && layers.station().isStation(nodeDrawer.hoveredNode()));
         if (treeAlpha > 0f) {
+            stationView.render(viewport, alphaMult * treeAlpha * exoshipFade);
             refreshRadiusRing(layers, treeHovered);
             radiusRingRenderer.renderSocketed(layers);
             radiusRingRenderer.render(layers);
@@ -728,6 +759,6 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin implements Zo
     }
 
     private TreeLayers layers() {
-        return exoshipView.layers(viewport(), 1f);
+        return exoshipView.layers(viewport(), 1f).withStation(stationView.layer());
     }
 }

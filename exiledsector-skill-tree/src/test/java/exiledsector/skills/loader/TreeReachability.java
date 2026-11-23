@@ -2,6 +2,7 @@ package exiledsector.skills.loader;
 
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
+import exiledsector.skills.tags.SkillTags;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -31,7 +32,7 @@ final class TreeReachability {
         Deque<String> queue = new ArrayDeque<>();
         for (SkillNode node : nodes) {
             SkillTier tier = node.getType().getTier();
-            if ((tier == SkillTier.ROOT || tier == SkillTier.WORMHOLE_EXIT) && reached.add(node.getId())) {
+            if ((tier == SkillTier.ROOT || tier == SkillTier.WORMHOLE_EXIT || isStationNode(node)) && reached.add(node.getId())) {
                 queue.add(node.getId());
             }
         }
@@ -44,5 +45,10 @@ final class TreeReachability {
             }
         }
         return reached;
+    }
+
+    private static boolean isStationNode(SkillNode node) {
+        List<String> tags = node.getType().getTags();
+        return tags.contains(SkillTags.AI_SUBSYSTEM_INTEGRATION) || tags.contains(SkillTags.STATION_SUBSYSTEM);
     }
 }

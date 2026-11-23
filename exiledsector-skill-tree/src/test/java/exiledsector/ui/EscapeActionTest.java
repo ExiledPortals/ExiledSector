@@ -29,6 +29,7 @@ class EscapeActionTest {
         assertEquals(EscapeAction.CLOSE_CHOICE_PICKER, EscapeAction.resolve(CanvasMode.EXOSHIP_VIEW, false, true, false));
         assertEquals(EscapeAction.STOP_FOLLOWING, EscapeAction.resolve(CanvasMode.EXOSHIP_VIEW, false, false, false));
         assertEquals(EscapeAction.STOP_FOLLOWING, EscapeAction.resolve(CanvasMode.EXOSHIP_VIEW, false, false, true));
+        assertEquals(EscapeAction.STOP_FOLLOWING, EscapeAction.resolve(CanvasMode.RESEARCH_STATION_VIEW, false, false, false));
     }
 
     @Test

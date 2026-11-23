@@ -9,6 +9,7 @@ import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.DerivedStatEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
+import exiledsector.skills.skilleffect.GatedStatEffect;
 import exiledsector.skills.skilleffect.PerDModMultEffect;
 import exiledsector.skills.skilleffect.PerDModPercentEffect;
 import exiledsector.skills.skilleffect.StatMode;
@@ -55,6 +56,7 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
     TOW_SLOWEST_SHIP_BURN_LEVEL_FLAT(anyFleetContribution(TowLines.TOW_BURN_LEVEL_KEY)),
     SENSOR_PROFILE_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getSensorProfile), "stat.sensorProfile", true)),
     SENSOR_PROFILE_MULT(statEffect(MULT, stat(MutableShipStatsAPI::getSensorProfile), "stat.sensorProfile", true)),
+    SENSOR_PROFILE_WITHOUT_PHASE_CLOAK_MULT(GatedStatEffect.withoutPhaseCloak(MULT, stat(MutableShipStatsAPI::getSensorProfile), true)),
     PHASE_HULL_SENSOR_PROFILE_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {

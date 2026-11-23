@@ -2,6 +2,7 @@ package exiledsector.ui.node;
 
 import exiledsector.skills.AllocationPath;
 import exiledsector.skills.IntegratedNodes;
+import exiledsector.skills.ResearchStationNodes;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.ShipTrees;
@@ -177,7 +178,7 @@ final class TemplatePlanner {
             return !planData.isIntegrated(node.getId());
         }
         refreshNodeIds();
-        return !grantOnlyNodeIds.contains(node.getId()) && IntegratedNodes.canIntegrate(planData, node);
+        return !grantOnlyNodeIds.contains(node.getId()) && !ResearchStationNodes.isStationNode(node) && IntegratedNodes.canIntegrate(planData, node);
     }
 
     boolean toggleIntegrationMark(SkillNode node) {

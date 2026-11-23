@@ -39,7 +39,8 @@ public final class IntegrationLines {
 
         public static State of(ShipSkillData data, SkillNode node, boolean integrationAvailable, TemplateMark templateMark) {
             boolean integrated = data.isIntegrated(node.getId());
-            return new State(integrated, IntegratedNodes.nextCost(data), integrationAvailable && !data.isNpcBuild() && data.isAllocated(node.getId()),
+            return new State(integrated, IntegratedNodes.nextCost(data), integrationAvailable && !data.isNpcBuild()
+                    && (data.isAllocated(node.getId()) || ResearchStationNodes.isStation(node)),
                     templateMark);
         }
     }
@@ -129,7 +130,7 @@ public final class IntegrationLines {
             }
         }
         comparison.droppedLines().forEach(dropped -> lines.add(removedLine(dropped)));
-        return lines;
+        return lines.size() == 1 ? List.of() : lines;
     }
 
     static NodeDescription integrated(SkillType type, HullSize hullSize) {

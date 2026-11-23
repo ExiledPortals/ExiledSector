@@ -9,19 +9,27 @@ final class ClickStep implements HarnessStep {
 
     private final boolean rightButton;
     private final boolean holdingControl;
+    private final float holdSeconds;
+    private float pressedAtSeconds = -1f;
 
     ClickStep(String button, boolean holdingControl) {
+        this(button, holdingControl, 0f);
+    }
+
+    ClickStep(String button, boolean holdingControl, float holdSeconds) {
         if (!LEFT.equals(button) && !RIGHT.equals(button)) {
             throw new IllegalArgumentException("click presses the " + LEFT + " or " + RIGHT + " button, not \"" + button + "\"");
         }
         this.rightButton = RIGHT.equals(button);
         this.holdingControl = holdingControl;
+        this.holdSeconds = Math.max(0f, holdSeconds);
     }
 
     @Override
     public String name() {
         String click = holdingControl ? "ctrl-click" : "click";
-        return rightButton ? click + " " + RIGHT : click;
+        String pressed = rightButton ? click + " " + RIGHT : click;
+        return holdSeconds > 0f ? pressed + " held " + holdSeconds + " s" : pressed;
     }
 
     @Override
@@ -34,8 +42,9 @@ final class ClickStep implements HarnessStep {
         }
         if (frame == pressFrame) {
             HarnessMouse.press(buttonMask());
+            pressedAtSeconds = context.seconds();
         }
-        if (frame < releaseFrame) {
+        if (frame < releaseFrame || context.seconds() - pressedAtSeconds < holdSeconds) {
             return StepOutcome.RUNNING;
         }
         HarnessMouse.release(buttonMask());

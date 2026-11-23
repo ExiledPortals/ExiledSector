@@ -38,10 +38,24 @@ public final class ArcDischarge {
             return false;
         }
         for (ShipAPI target : arcTargets(nearestEnemies, arcCount)) {
-            engine.spawnEmpArc(sourceShip, new Vector2f(sourceShip.getLocation()), sourceShip, target, DamageType.ENERGY, arcDamage, arcDamage,
-                    ARC_MAX_RANGE, ModSounds.orSilent(ARC_SOUND), ARC_THICKNESS, ARC_FRINGE, ARC_CORE);
+            spawnArc(engine, sourceShip, target, arcDamage, arcDamage);
         }
         return true;
+    }
+
+    public static void dischargeAt(ShipAPI sourceShip, ShipAPI target, int arcCount, float energyDamage, float empDamage) {
+        CombatEngineAPI engine = Global.getCombatEngine();
+        if (engine == null || target == null) {
+            return;
+        }
+        for (int arc = 0; arc < arcCount; arc++) {
+            spawnArc(engine, sourceShip, target, energyDamage, empDamage);
+        }
+    }
+
+    private static void spawnArc(CombatEngineAPI engine, ShipAPI sourceShip, ShipAPI target, float energyDamage, float empDamage) {
+        engine.spawnEmpArc(sourceShip, new Vector2f(sourceShip.getLocation()), sourceShip, target, DamageType.ENERGY, energyDamage, empDamage,
+                ARC_MAX_RANGE, ModSounds.orSilent(ARC_SOUND), ARC_THICKNESS, ARC_FRINGE, ARC_CORE);
     }
 
     static List<ShipAPI> arcTargets(List<ShipAPI> nearestEnemies, int arcCount) {

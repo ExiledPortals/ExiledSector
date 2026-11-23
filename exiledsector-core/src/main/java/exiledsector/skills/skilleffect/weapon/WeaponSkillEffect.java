@@ -16,6 +16,7 @@ import exiledsector.skills.skilleffect.DerivedStatEffect;
 import exiledsector.skills.skilleffect.DescribeContext;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
+import exiledsector.skills.skilleffect.GatedStatEffect;
 import exiledsector.skills.skilleffect.PerDModMultEffect;
 import exiledsector.skills.skilleffect.PerDModPercentEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
@@ -76,6 +77,9 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
     DAMAGE_TO_DESTROYER_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getDamageToDestroyers), "stat.damageToDestroyers", false)),
     DAMAGE_TO_CRUISER_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getDamageToCruisers), "stat.damageToCruisers", false)),
     DAMAGE_TO_CAPITAL_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getDamageToCapital), "stat.damageToCapitalShips", false)),
+    DAMAGE_TO_DESTROYER_WITHOUT_CAPTAIN_PERCENT(GatedStatEffect.withoutCaptain(PERCENT, stat(MutableShipStatsAPI::getDamageToDestroyers), false)),
+    DAMAGE_TO_CRUISER_WITHOUT_CAPTAIN_PERCENT(GatedStatEffect.withoutCaptain(PERCENT, stat(MutableShipStatsAPI::getDamageToCruisers), false)),
+    DAMAGE_TO_CAPITAL_WITHOUT_CAPTAIN_PERCENT(GatedStatEffect.withoutCaptain(PERCENT, stat(MutableShipStatsAPI::getDamageToCapital), false)),
     DAMAGE_TO_AUTOMATED_SHIP_PERCENT(targetDamage(AutomatedShipDamageListener.DAMAGE_PERCENT_KEY, AutomatedShipDamageListener.class,
             AutomatedShipDamageListener::new, "stat.damageToAutomatedShips")),
     DAMAGE_TO_HELPLESS_SHIP_PERCENT(targetDamage(HelplessShipDamageListener.DAMAGE_PERCENT_KEY, HelplessShipDamageListener.class,
@@ -198,6 +202,8 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
     BALLISTIC_SLOTS_ENERGY(new SlotConversionBacking(WeaponType.BALLISTIC, null, WeaponType.ENERGY)),
     MISSILE_SLOTS_ENERGY(new SlotConversionBacking(WeaponType.MISSILE, null, WeaponType.ENERGY)),
     SMALL_SLOTS_UNIVERSAL(new SlotConversionBacking(null, WeaponSize.SMALL, WeaponType.UNIVERSAL)),
+    ARCHAIC_WEAPON_RANGE_PERCENT(listener(ArchaicWeaponRangeListener.RANGE_PERCENT_KEY, ArchaicWeaponRangeListener.class,
+            ship -> new ArchaicWeaponRangeListener())),
     MEDIUM_ENERGY_SLOT_WEAPON_RANGE_FLAT(listener(EnergySlotRangeListener.MEDIUM_SLOT_RANGE_FLAT_KEY,
             EnergySlotRangeListener.class, ship -> new EnergySlotRangeListener())),
     ENERGY_SLOT_WEAPON_RANGE_FLAT(listener(EnergySlotRangeListener.ANY_SLOT_RANGE_FLAT_KEY,

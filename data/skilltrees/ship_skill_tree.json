@@ -11806,6 +11806,166 @@
 			"tags": [
 				"core"
 			]
+		},
+		{
+			"id": "ai_subsystem_integration_1",
+			"type": "ai_subsystem_integration",
+			"connectedTo": [],
+			"x": 0,
+			"y": 950,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "adaptive_drive_field_1",
+			"type": "adaptive_drive_field",
+			"connectedTo": [],
+			"x": 0,
+			"y": 690,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "adaptive_emitter_diodes_1",
+			"type": "adaptive_emitter_diodes",
+			"connectedTo": [],
+			"x": 106,
+			"y": 712,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "adaptive_flight_command_1",
+			"type": "adaptive_flight_command",
+			"connectedTo": [],
+			"x": 193,
+			"y": 776,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "adaptive_neural_net_1",
+			"type": "adaptive_neural_net",
+			"connectedTo": [],
+			"x": 247,
+			"y": 870,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "secondary_phase_coils_1",
+			"type": "secondary_phase_coils",
+			"connectedTo": [],
+			"x": 259,
+			"y": 977,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "adaptive_pulse_resonator_1",
+			"type": "adaptive_pulse_resonator",
+			"connectedTo": [],
+			"x": 225,
+			"y": 1080,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "adaptive_reactor_chamber_1",
+			"type": "adaptive_reactor_chamber",
+			"connectedTo": [],
+			"x": 153,
+			"y": 1160,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "adaptive_tactical_core_1",
+			"type": "adaptive_tactical_core",
+			"connectedTo": [],
+			"x": 54,
+			"y": 1204,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "adaptive_temporal_shell_1",
+			"type": "adaptive_temporal_shell",
+			"connectedTo": [],
+			"x": -54,
+			"y": 1204,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "adaptive_thruster_control_1",
+			"type": "adaptive_thruster_control",
+			"connectedTo": [],
+			"x": -153,
+			"y": 1160,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "adaptive_trajectory_analyzer_1",
+			"type": "adaptive_trajectory_analyzer",
+			"connectedTo": [],
+			"x": -225,
+			"y": 1080,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "adaptive_entropy_arrester_1",
+			"type": "adaptive_entropy_arrester",
+			"connectedTo": [],
+			"x": -259,
+			"y": 977,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "abyssal_entropy_projector_1",
+			"type": "abyssal_entropy_projector",
+			"connectedTo": [],
+			"x": -247,
+			"y": 870,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "adaptive_flux_dissipator_1",
+			"type": "adaptive_flux_dissipator",
+			"connectedTo": [],
+			"x": -193,
+			"y": 776,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "adaptive_metastatic_growth_1",
+			"type": "adaptive_metastatic_growth",
+			"connectedTo": [],
+			"x": -106,
+			"y": 712,
+			"tags": [
+				"core"
+			]
 		}
 	],
 	"connectorCurves": [

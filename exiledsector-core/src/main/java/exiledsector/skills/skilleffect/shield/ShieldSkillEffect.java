@@ -12,6 +12,7 @@ import exiledsector.skills.skilleffect.ConditionalStatEffect;
 import exiledsector.skills.skilleffect.DescribeContext;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
+import exiledsector.skills.skilleffect.GatedStatEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.StatTarget;
 import exiledsector.skills.skilleffect.TopSpeedShare;
@@ -112,6 +113,7 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
     SHIELD_ARC_MULT(statEffect(MULT, bonus(MutableShipStatsAPI::getShieldArcBonus), StatNames.SHIELD_ARC, false)),
     SHIELD_ABSORPTION_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getShieldAbsorptionMult), StatNames.DAMAGE_TAKEN_BY_SHIELDS, true)),
     SHIELD_DAMAGE_TAKEN_MULT(statEffect(MULT, liveStat(MutableShipStatsAPI::getShieldDamageTakenMult), StatNames.DAMAGE_TAKEN_BY_SHIELDS, true)),
+    SHIELD_DAMAGE_TAKEN_WITHOUT_CAPTAIN_MULT(GatedStatEffect.withoutCaptain(MULT, liveStat(MutableShipStatsAPI::getShieldDamageTakenMult), true)),
     UNSTABLE_SHIELD_DAMAGE_TAKEN_MULT(listener(UnstableShieldsListener.DAMAGE_TAKEN_PERCENT_KEY, UnstableShieldsListener.class,
             UnstableShieldsListener::new)) {
         @Override

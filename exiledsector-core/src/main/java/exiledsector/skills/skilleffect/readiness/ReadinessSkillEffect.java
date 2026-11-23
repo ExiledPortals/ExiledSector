@@ -5,6 +5,8 @@ import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
+import exiledsector.skills.skilleffect.EffectText;
+import exiledsector.skills.skilleffect.ShipCaptain;
 import exiledsector.skills.skilleffect.StatMode;
 
 import static exiledsector.skills.skilleffect.Backings.statEffect;
@@ -24,6 +26,20 @@ public enum ReadinessSkillEffect implements BackedSkillEffect {
         @Override
         public StyledText description(float magnitude) {
             return StatMode.PERCENT.describeStat(magnitude, "stat.maximumCombatReadiness");
+        }
+    },
+    MAX_COMBAT_READINESS_PER_AI_CORE_TIER_FLAT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            float bonus = magnitude * AiCoreTier.of(ShipCaptain.of(stats)) / 100f;
+            stats.getMaxCombatReadiness().modifyFlat(modId, bonus, Translation.gameText("modifier.shipSkillTree"));
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            float perTier = Math.abs(magnitude);
+            return EffectText.signed(this, magnitude).arg("gamma", perTier).arg("beta", perTier * 2f).arg("alpha", perTier * 3f)
+                    .arg("omega", perTier * 4f).styled();
         }
     },
     CR_RECOVERY_RATE_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getBaseCRRecoveryRatePercentPerDay),

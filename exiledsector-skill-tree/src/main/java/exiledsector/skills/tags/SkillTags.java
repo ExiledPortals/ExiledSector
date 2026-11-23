@@ -33,7 +33,9 @@ public final class SkillTags {
             "gate_ancient_prototype_found", "gate_frozen_heart_visited", "gate_remnant_fought", "gate_omega_found",
             "gate_blood_trail_defeated", "gate_frost_fire_defeated", "gate_last_strive_completed", "gate_mothership_defeated");
 
-    public static final List<String> RULE = List.of("logistics_cap");
+    public static final String AI_SUBSYSTEM_INTEGRATION = "ai_subsystem_integration";
+    public static final String STATION_SUBSYSTEM = "station_subsystem";
+    public static final List<String> RULE = List.of("logistics_cap", AI_SUBSYSTEM_INTEGRATION, STATION_SUBSYSTEM);
 
     private SkillTags() {
     }

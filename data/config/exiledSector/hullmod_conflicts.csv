@@ -22,7 +22,11 @@ csp_cetanframe,safetyoverrides,Caymon's Ship pack
 asm_amorphous_alloy,armoredweapons; frontshield; heavyarmor,Emergent Threats
 asm_munitions_regulator,magazines,Emergent Threats
 orr_damper_field,frontshield,Emergent Threats
+vice_adaptive_drive_field,augmentedengines,Emergent Threats
+vice_adaptive_emitter_diodes,advancedoptics; high_scatter_amp; vice_laser_collimator,Emergent Threats
 vice_adaptive_entropy_arrester,autorepair,Emergent Threats
+vice_adaptive_pulse_resonator,coherer,Emergent Threats
+vice_adaptive_thruster_control,auxiliarythrusters; unstable_injector,Emergent Threats
 vice_aquilon_microforge,missleracks; missile_autoloader,Emergent Threats
 vice_attuned_emitter_diodes,advancedoptics; high_scatter_amp; vice_adaptive_emitter_diodes; vice_laser_collimator,Emergent Threats
 vice_field_repair_nanites,vice_adaptive_entropy_arrester; ix_entropy_arrester,Emergent Threats

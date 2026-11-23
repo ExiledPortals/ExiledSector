@@ -5,6 +5,7 @@ import exiledsector.items.drop.NpcItems;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.NodeEntry;
 import exiledsector.skills.NodeReplacements;
+import exiledsector.skills.ResearchStationNodes;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.ShipTrees;
@@ -30,6 +31,7 @@ public final class NpcTreeTag {
     static final String SOCKETS_MARKER = "sockets:";
     static final String GRANTED_MARKER = "granted:";
     static final String INTEGRATED_MARKER = "integrated:";
+    static final String STATION_MARKER = "station:";
     private static final int MIN_FIELDS = 3;
     private static final int MAX_FIELDS = 8;
     private static final String[] NO_FIELDS = new String[0];
@@ -40,7 +42,7 @@ public final class NpcTreeTag {
     public static String encode(ShipSkillData shipData) {
         List<String> nodeEntries = new ArrayList<>();
         for (String nodeId : shipData.getAllocatedNodeIds()) {
-            if (shipData.isFleetGranted(nodeId)) {
+            if (shipData.isFleetGranted(nodeId) || ResearchStationNodes.isStationNodeId(nodeId)) {
                 continue;
             }
             nodeEntries.add(new NodeEntry(nodeId, shipData.getChoiceSelection(nodeId)).format());
@@ -59,7 +61,12 @@ public final class NpcTreeTag {
         if (!grantedNodeIds.isEmpty()) {
             tag += FIELD_SEPARATOR + GRANTED_MARKER + String.join(NODE_SEPARATOR, grantedNodeIds);
         }
-        Set<String> integratedNodeIds = shipData.getIntegratedNodeIds();
+        SkillNode stationSubsystem = ResearchStationNodes.selectedSubsystem(shipData);
+        if (stationSubsystem != null) {
+            tag += FIELD_SEPARATOR + STATION_MARKER + stationSubsystem.getId();
+        }
+        List<String> integratedNodeIds = new ArrayList<>(shipData.getIntegratedNodeIds());
+        integratedNodeIds.removeIf(ResearchStationNodes::isStationNodeId);
         return integratedNodeIds.isEmpty() ? tag : tag + FIELD_SEPARATOR + INTEGRATED_MARKER + String.join(NODE_SEPARATOR, integratedNodeIds);
     }
 
@@ -109,6 +116,7 @@ public final class NpcTreeTag {
         }
         Map<String, String> anchorsBySocketId = new LinkedHashMap<>();
         List<String> integratedNodeIds = new ArrayList<>();
+        String stationSubsystemId = null;
         for (int fieldIndex = MIN_FIELDS; fieldIndex < tagFields.length; fieldIndex++) {
             if (tagFields[fieldIndex].startsWith(INTEGRATED_MARKER)) {
                 for (String integratedEntry : tagFields[fieldIndex].substring(INTEGRATED_MARKER.length()).split(NODE_SEPARATOR)) {
@@ -116,6 +124,8 @@ public final class NpcTreeTag {
                 }
             } else if (tagFields[fieldIndex].startsWith(GRANTED_MARKER)) {
                 restoreGrants(shipData, tagFields[fieldIndex].substring(GRANTED_MARKER.length()));
+            } else if (tagFields[fieldIndex].startsWith(STATION_MARKER)) {
+                stationSubsystemId = NodeReplacements.current(tagFields[fieldIndex].substring(STATION_MARKER.length()));
             } else if (tagFields[fieldIndex].startsWith(SOCKETS_MARKER)) {
                 readAnchors(anchorsBySocketId, tagFields[fieldIndex].substring(SOCKETS_MARKER.length()));
             }
@@ -128,6 +138,9 @@ public final class NpcTreeTag {
         }
         ShipTrees.releaseUnreachable(shipData, SkillTree.topology(), rootNode.getId());
         NpcIntegratedNodes.restore(shipData, integratedNodeIds);
+        if (stationSubsystemId != null) {
+            NpcStationSubsystem.restore(shipData, stationSubsystemId);
+        }
         return shipData;
     }
 

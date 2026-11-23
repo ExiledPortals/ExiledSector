@@ -13,6 +13,7 @@ import exiledsector.skills.AnchorRoute;
 import exiledsector.skills.IntegratedNodes;
 import exiledsector.skills.IntegrationLines;
 import exiledsector.skills.NodeIntegration;
+import exiledsector.skills.ResearchStationNodes;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.ShipTrees;
@@ -108,6 +109,7 @@ public final class TreeAllocationSession {
         NodeGrantLinks.refresh();
         allocator.openAnchorWormholes();
         allocator.grantSocketedNodes();
+        allocator.syncResearchStation();
     }
 
     static SkillTreeSounds.NodeSize allocationSound(SkillTier tier) {
@@ -387,6 +389,30 @@ public final class TreeAllocationSession {
         } else if (allocator.allocate(node, null, allocation)) {
             afterAllocationChange(allocatedBefore, node);
         }
+    }
+
+    public boolean clickStationSubsystem(SkillNode subsystem) {
+        if (planner.isActive() || isBusy() || !ResearchStationNodes.isSubsystem(subsystem)) {
+            SkillTreeSounds.refused();
+            return false;
+        }
+        Set<String> allocatedBefore = allocatedNodeIds();
+        boolean changed = allocator.data().isAllocated(subsystem.getId()) ? allocator.releaseSubsystem()
+                : allocator.selectSubsystem(subsystem, snapshot());
+        if (!changed) {
+            SkillTreeSounds.refused();
+            return false;
+        }
+        afterAllocationChange(allocatedBefore, subsystem);
+        return true;
+    }
+
+    public SkillNode selectedStationSubsystem() {
+        return ResearchStationNodes.selectedSubsystem(viewSnapshot().skillData());
+    }
+
+    public boolean isResearchStationActive() {
+        return ResearchStationNodes.isActive(allocator.data(), allocator.isAutomated());
     }
 
     private void removeOrSwitchOption(SkillNode node, NodeAllocator.Snapshot allocation) {
@@ -915,7 +941,8 @@ public final class TreeAllocationSession {
     }
 
     private boolean canIntegrate(SkillNode node) {
-        return !planner.isActive() && !isBusy() && IntegratedNodes.canIntegrate(allocator.data(), node);
+        return !planner.isActive() && !isBusy() && IntegratedNodes.canIntegrate(allocator.data(), node)
+                && !(ResearchStationNodes.isStation(node) && allocator.isAutomated());
     }
 
     private void advanceIntegrationHold(float amount) {
@@ -1028,6 +1055,7 @@ public final class TreeAllocationSession {
     private void settleAllocation() {
         allocator.openAnchorWormholes();
         allocator.grantSocketedNodes();
+        allocator.syncResearchStation();
         allocationSnapshot = null;
     }
 

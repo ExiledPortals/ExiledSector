@@ -11,6 +11,7 @@ import exiledsector.skills.skilleffect.weapon.WeaponSlotConversion;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.InstalledHullMods;
+import exiledsector.skills.ResearchStationNodes;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillDataResolver;
@@ -18,6 +19,7 @@ import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.npc.NpcLevelCaps;
 import exiledsector.skills.npc.NpcTreeTag;
+import exiledsector.skills.tags.ShipProfile;
 import exiledsector.skills.tags.SkillTags;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.ShipLevelSystem;
@@ -100,6 +102,7 @@ public final class ShipTreeSync {
         boolean changed = installTree(member);
         ShipVariantAPI variantBeingEdited = editedVariant != null ? editedVariant : member.getVariant();
         changed |= raiseToLevelFloor(member, currentLevelFloor(), variantBeingEdited);
+        changed |= syncResearchStation(member, variantBeingEdited);
         if (variantBeingEdited != member.getVariant()) {
             changed |= installTree(variantBeingEdited);
         }
@@ -142,6 +145,12 @@ public final class ShipTreeSync {
             HullModConflictResolver.removeConflicts(allocatedNodes, variant);
         }
         return phantomsChanged || reserveChanged;
+    }
+
+    static boolean syncResearchStation(FleetMemberAPI member, ShipVariantAPI variant) {
+        if (variant == null || !SkillTreeSetting.enabled() || SkillDataResolver.isNpcTree(variant)) return false;
+        ShipSkillData shipData = ShipSkillDataManager.find(member.getId());
+        return ResearchStationNodes.sync(shipData, ShipProfile.automated(variant));
     }
 
     static void raiseToLevelFloor(CampaignFleetAPI fleet) {

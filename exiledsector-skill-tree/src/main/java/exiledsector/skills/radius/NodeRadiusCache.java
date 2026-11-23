@@ -1,6 +1,7 @@
 package exiledsector.skills.radius;
 
 import exiledsector.skills.ExoshipNodes;
+import exiledsector.skills.ResearchStationNodes;
 import exiledsector.skills.SkillNode;
 
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ public final class NodeRadiusCache {
     }
 
     public static boolean isExcluded(SkillNode node) {
-        return ExoshipNodes.isCarried(node) || ExoshipNodes.isExoship(node);
+        return ExoshipNodes.isCarried(node) || ExoshipNodes.isExoship(node) || ResearchStationNodes.isStationNode(node);
     }
 
     public boolean isBuiltWith(Map<RadiusSize, Float> distancesBySize) {

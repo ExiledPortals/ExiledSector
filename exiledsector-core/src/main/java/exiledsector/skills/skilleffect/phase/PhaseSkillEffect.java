@@ -14,6 +14,7 @@ import exiledsector.skills.skilleffect.ConditionalStatEffect;
 import exiledsector.skills.skilleffect.DescribeContext;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
+import exiledsector.skills.skilleffect.GatedStatEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.SkillEffectSupport;
 import exiledsector.skills.skilleffect.weapon.WeaponScope;
@@ -38,6 +39,7 @@ public enum PhaseSkillEffect implements BackedSkillEffect {
             "stat.phaseCloakActivationCost", true)),
     PHASE_CLOAK_UPKEEP_COST_MULT(statEffect(MULT, bonus(MutableShipStatsAPI::getPhaseCloakUpkeepCostBonus),
             "stat.phaseCloakUpkeepCost", true)),
+    PHASE_CLOAK_UPKEEP_WITHOUT_CAPTAIN_MULT(GatedStatEffect.withoutCaptain(MULT, bonus(MutableShipStatsAPI::getPhaseCloakUpkeepCostBonus), true)),
     NO_PHASE_UPKEEP_NEAR_WRECK_RANGE(listener(WreckShelterListener.RANGE_KEY, WreckShelterListener.class, WreckShelterListener::new)),
     NO_PHASE_UPKEEP_NEAR_WRECK_CAPPED_RANGE(listener(WreckShelterListener.CAPPED_RANGE_KEY, WreckShelterListener.class,
             WreckShelterListener::new)) {

@@ -15,7 +15,7 @@ public final class RespecPlan {
     }
 
     public static List<SkillNode> of(ShipSkillData data, SkillTreeTopology topology, String startingRootId, SkillNode selected) {
-        if (selected == null || !data.isAllocated(selected.getId())) {
+        if (selected == null || !data.isAllocated(selected.getId()) || ResearchStationNodes.isStationNode(selected)) {
             return List.of();
         }
         Set<String> removed = new LinkedHashSet<>();

@@ -12,8 +12,8 @@ public final class IntegratedNodes {
     }
 
     public static boolean canIntegrate(ShipSkillData data, SkillNode node) {
-        return data != null && node != null && data.isAllocated(node.getId()) && !data.isIntegrated(node.getId())
-                && node.resolveEffectiveType(data).isIntegrable();
+        return data != null && node != null && (data.isAllocated(node.getId()) || ResearchStationNodes.isStation(node))
+                && !data.isIntegrated(node.getId()) && node.resolveEffectiveType(data).isIntegrable();
     }
 
     public static boolean isIntegrated(ShipSkillData data, String nodeId, SkillType effectiveType) {

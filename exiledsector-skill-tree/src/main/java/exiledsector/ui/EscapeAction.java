@@ -7,14 +7,14 @@ enum EscapeAction {
         return switch (mode) {
             case MODAL, HYPERSPACE, ROOT_CHOICE -> NONE;
             case CRAFTING_BENCH -> SOCKET_PLACEMENT;
-            case TREE, EXOSHIP_VIEW -> {
+            case TREE, EXOSHIP_VIEW, RESEARCH_STATION_VIEW -> {
                 if (socketEngaged) {
                     yield SOCKET_PLACEMENT;
                 }
                 if (choicePickerOpen) {
                     yield CLOSE_CHOICE_PICKER;
                 }
-                if (mode == CanvasMode.EXOSHIP_VIEW) {
+                if (mode.followsAView()) {
                     yield STOP_FOLLOWING;
                 }
                 yield planning ? EXIT_TEMPLATE_MODE : NONE;

@@ -60,7 +60,7 @@ record HarnessScenario(List<HarnessStep> steps, boolean quitWhenDone, NewGameSet
             case "openRefit" -> new OpenSkillTreeStep(step.optString("ship", OpenSkillTreeStep.FLAGSHIP), false);
             case "moveMouse" -> new MoveMouseStep(step.getString("to"), (float) step.optDouble("seconds", 0d));
             case "drag" -> new DragStep(step.getString("to"), (float) step.optDouble("seconds", 0d), step.optString("button", ClickStep.LEFT));
-            case "click" ->new ClickStep(step.optString("button", ClickStep.LEFT), step.optBoolean("ctrl", false));
+            case "click" -> new ClickStep(step.optString("button", ClickStep.LEFT), step.optBoolean("ctrl", false), (float) step.optDouble("seconds", 0d));
             case "scroll" -> new ScrollStep(ScrollStep.scrollsOut(step.optString("direction", "out")), step.optInt("notches", 1), (float) step.optDouble("seconds", 0d));
             case "closeScreen" -> new CloseScreenStep();
             case "zoom" -> new ZoomStep((float) step.getDouble("to"));

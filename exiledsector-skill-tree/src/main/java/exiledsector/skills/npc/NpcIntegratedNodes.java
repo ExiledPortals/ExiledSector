@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.fleets.DefaultFleetInflater;
 import exiledsector.skills.AllocatedNode;
+import exiledsector.skills.ResearchStationNodes;
 import exiledsector.skills.ShipSkillData;
 
 import java.util.ArrayList;
@@ -54,7 +55,8 @@ public final class NpcIntegratedNodes {
     static List<String> integrableNodeIds(ShipSkillData shipData) {
         List<String> nodeIds = new ArrayList<>();
         for (AllocatedNode allocated : AllocatedNode.of(shipData)) {
-            if (allocated.effectiveType() != null && allocated.effectiveType().isIntegrable() && !shipData.isFleetGranted(allocated.node().getId())) {
+            if (allocated.effectiveType() != null && allocated.effectiveType().isIntegrable() && !shipData.isFleetGranted(allocated.node().getId())
+                    && !ResearchStationNodes.isStationNode(allocated.node())) {
                 nodeIds.add(allocated.node().getId());
             }
         }

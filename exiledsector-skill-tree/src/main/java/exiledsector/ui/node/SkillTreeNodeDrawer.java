@@ -79,6 +79,7 @@ public final class SkillTreeNodeDrawer {
     private final TreeFeedback feedback = new DrawerFeedback();
     private final TextLabel startingRootPrompt = new TextLabel(UiFonts.TITLE,
             SkillTreePanelStyle.TOOLTIP_TITLE_COLOR, LazyFont.TextAnchor.BOTTOM_CENTER).set(Translation.text("ui.node.startingRootPrompt"));
+    private SkillNode hoveredNode;
 
     private SkillTreeNodeDrawer(TreeAllocationSession session, FleetMemberAPI member, SkillTreePanelStyle panelStyle, NodeSearch nodeSearch) {
         this.session = session;
@@ -295,11 +296,17 @@ public final class SkillTreeNodeDrawer {
     }
 
     public void endHover() {
+        hoveredNode = null;
         tooltipRenderer.endHover();
+    }
+
+    public SkillNode hoveredNode() {
+        return hoveredNode;
     }
 
     public void renderHoverTooltip(TreeLayers layers, float mouseX, float mouseY, float alphaMult) {
         SkillNode openChoicePickerNode = session.choicePickerNode();
+        hoveredNode = null;
         if (openChoicePickerNode != null) {
             SkillType hoveredOption = choicePickerRenderer.findOptionAt(openChoicePickerNode, layers.viewportFor(openChoicePickerNode), mouseX, mouseY);
             if (hoveredOption != null) {
@@ -311,7 +318,7 @@ public final class SkillTreeNodeDrawer {
             return;
         }
 
-        SkillNode hoveredNode = findNodeAt(layers, mouseX, mouseY);
+        hoveredNode = findNodeAt(layers, mouseX, mouseY);
         if (hoveredNode != null) {
             String tooltipWarning = session.releaseWarning(hoveredNode);
             if (tooltipWarning == null && hoveredNode.getType().getTier() == SkillTier.SOCKET) {
@@ -338,13 +345,17 @@ public final class SkillTreeNodeDrawer {
             return null;
         }
         boolean choosing = rootChoice.phase() == StartingRootChoice.Phase.CHOOSING;
+        SkillNode stationUnder = null;
         for (SkillNode node : SkillTree.getAllNodes().values()) {
             if ((!choosing || node.getType().getTier() == SkillTier.ROOT) && !session.isConcealed(node)
                     && isUnder(layers, rootChoice, node, screenX, screenY)) {
-                return node;
+                if (!layers.station().isStation(node)) {
+                    return node;
+                }
+                stationUnder = node;
             }
         }
-        return null;
+        return stationUnder;
     }
 
     private String hoveredGrantSocketId(TreeLayers layers, StartingRootChoice rootChoice, float screenX, float screenY) {
@@ -374,8 +385,14 @@ public final class SkillTreeNodeDrawer {
         TreeViewport viewport = layers.viewportFor(node);
         float nodeX = viewport.screenX(rootChoice.offsetX(node));
         float nodeY = viewport.screenY(rootChoice.offsetY(node));
-        float halfSize = ExoshipNodes.isExoship(node) ? layers.exoshipRadius() * viewport.zoom() * EXOSHIP_HIT_SHARE
-                : NODE_SIZE * viewport.zoom() * node.getType().getTier().getSizeMultiplier() / 2f;
+        float halfSize;
+        if (ExoshipNodes.isExoship(node)) {
+            halfSize = layers.exoshipRadius() * viewport.zoom() * EXOSHIP_HIT_SHARE;
+        } else if (layers.station().isStation(node)) {
+            halfSize = layers.station().stationHitHalfSize(viewport.zoom());
+        } else {
+            halfSize = NODE_SIZE * viewport.zoom() * node.getType().getTier().getSizeMultiplier() / 2f;
+        }
         return Math.abs(screenX - nodeX) <= halfSize && Math.abs(screenY - nodeY) <= halfSize;
     }
 

@@ -33,6 +33,8 @@ public enum FluxSkillEffect implements BackedSkillEffect {
     FLUX_DISSIPATION_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getFluxDissipation), StatNames.FLUX_DISSIPATION, false)),
     FLUX_DISSIPATION_FLAT(statEffect(FLAT, liveStat(MutableShipStatsAPI::getFluxDissipation), StatNames.FLUX_DISSIPATION, false)),
     FLUX_DISSIPATION_MULT(statEffect(MULT, liveStat(MutableShipStatsAPI::getFluxDissipation), StatNames.FLUX_DISSIPATION, false)),
+    HARD_FLUX_DISSIPATION_MULT(statEffect(MULT, liveStat(MutableShipStatsAPI::getHardFluxDissipationFraction),
+            "stat.hardFluxDissipationWhileShieldsUp", false)),
     HARD_FLUX_DISSIPATION_PERCENT(statEffect(PERCENT, new StatTarget.PercentagePoints(MutableShipStatsAPI::getHardFluxDissipationFraction),
             "stat.hardFluxDissipationWhileShieldsUp", false)) {
         @Override
