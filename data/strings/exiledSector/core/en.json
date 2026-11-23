@@ -603,6 +603,7 @@
     "effect.ARMOR_DAMAGE_EMP_ARCS_FLAT.other": "Every <hl>{damage}</hl> damage this ship's armor absorbs discharges <good>{value}</good> EMP arcs at the nearest enemy ships within <hl>{range}</hl> su, each dealing <hl>{frigate}/{destroyer}/{cruiser}/{capital}</hl> energy and EMP damage.",
     "effect.ENTROPY_PROJECTOR_ARCS_FLAT.one": "Every <hl>{seconds}</hl> seconds, strikes the nearest enemy ship within <hl>{range}</hl> su with <good>{value}</good> arc dealing <hl>{energy}</hl> energy and <hl>{emp}</hl> EMP damage, unless this ship is phased.",
     "effect.ENTROPY_PROJECTOR_ARCS_FLAT.other": "Every <hl>{seconds}</hl> seconds, strikes the nearest enemy ship within <hl>{range}</hl> su with <good>{value}</good> arcs, each dealing <hl>{energy}</hl> energy and <hl>{emp}</hl> EMP damage, unless this ship is phased.",
+    "effect.ENTROPY_PROJECTOR_CHAIN_CHANCE_PERCENT": "Each arc has a <good>{value}%</good> chance to also strike the enemy ship nearest its target within <hl>{range}</hl> su.",
     "effect.SHIELD_DAMAGE_TAKEN_WITHOUT_CAPTAIN_MULT.more": "<good>{value}%</good> more damage taken by shields while this ship has no captain.",
     "effect.SHIELD_DAMAGE_TAKEN_WITHOUT_CAPTAIN_MULT.less": "<bad>{value}%</bad> less damage taken by shields while this ship has no captain.",
     "effect.PHASE_CLOAK_UPKEEP_WITHOUT_CAPTAIN_MULT.more": "<good>{value}%</good> more phase cloak flux upkeep while this ship has no captain.",

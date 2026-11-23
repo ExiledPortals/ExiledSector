@@ -194,6 +194,7 @@ vice_adaptive_drive_field,Adaptive Drive Field
 vice_adaptive_emitter_diodes,Adaptive Emitter Diodes
 vice_adaptive_entropy_arrester,Adaptive Entropy Arrester
 vice_adaptive_entropy_projector_abyssal,Abyssal Entropy Projector
+vice_adaptive_entropy_projector,Adaptive Entropy Projector
 vice_adaptive_flight_command,Adaptive Flight Command
 vice_adaptive_flux_dissipator,Adaptive Flux Dissipator
 vice_adaptive_metastatic_growth,Adaptive Metastatic Growth

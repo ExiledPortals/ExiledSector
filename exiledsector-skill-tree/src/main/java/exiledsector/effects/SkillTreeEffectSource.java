@@ -14,6 +14,7 @@ import exiledsector.items.subroutine.SubroutineOrigin;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.AllocatedSkillEffects;
 import exiledsector.skills.EffectContribution;
+import exiledsector.skills.HullForms;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillType;
@@ -44,7 +45,7 @@ public final class SkillTreeEffectSource implements ShipEffectSource {
     public record NodeEffects(AllocatedNode node, List<SkillTypeEffect> effects) {
     }
 
-    private record CacheKey(DoctrineLayer doctrineLayer, boolean treeOpen) {
+    private record CacheKey(DoctrineLayer doctrineLayer, boolean treeOpen, Set<String> formHullModIds) {
     }
 
     private SkillTreeEffectSource() {
@@ -57,7 +58,8 @@ public final class SkillTreeEffectSource implements ShipEffectSource {
 
     @Override
     public Object cacheKey(ShipEffectContext context) {
-        return new CacheKey(DoctrineOverrides.layer(context.shipData()), MasterSchematic.treeOpen(context.shipData()));
+        Set<String> formHullModIds = HullForms.bindHull(context.shipData(), context.variant());
+        return new CacheKey(DoctrineOverrides.layer(context.shipData()), MasterSchematic.treeOpen(context.shipData()), formHullModIds);
     }
 
     @Override

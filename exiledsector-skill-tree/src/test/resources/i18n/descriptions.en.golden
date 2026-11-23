@@ -1216,6 +1216,12 @@ effect|ENTROPY_PROJECTOR_ARCS_FLAT|12.5	0	Every <hl>10</hl> seconds, strikes the
 effect|ENTROPY_PROJECTOR_ARCS_FLAT|100.0	0	Every <hl>10</hl> seconds, strikes the nearest enemy ship within <hl>1000</hl> su with <good>100</good> arcs, each dealing <hl>300</hl> energy and <hl>400</hl> EMP damage, unless this ship is phased.
 effect|ENTROPY_PROJECTOR_ARCS_FLAT|-10.0	0	Every <hl>10</hl> seconds, strikes the nearest enemy ship within <hl>1000</hl> su with <good>-10</good> arcs, each dealing <hl>300</hl> energy and <hl>400</hl> EMP damage, unless this ship is phased.
 effect|ENTROPY_PROJECTOR_ARCS_FLAT|-12.5	0	Every <hl>10</hl> seconds, strikes the nearest enemy ship within <hl>1000</hl> su with <good>-12.5</good> arcs, each dealing <hl>300</hl> energy and <hl>400</hl> EMP damage, unless this ship is phased.
+effect|ENTROPY_PROJECTOR_CHAIN_CHANCE_PERCENT|1.0	0	Each arc has a <good>1%</good> chance to also strike the enemy ship nearest its target within <hl>1000</hl> su.
+effect|ENTROPY_PROJECTOR_CHAIN_CHANCE_PERCENT|10.0	0	Each arc has a <good>10%</good> chance to also strike the enemy ship nearest its target within <hl>1000</hl> su.
+effect|ENTROPY_PROJECTOR_CHAIN_CHANCE_PERCENT|12.5	0	Each arc has a <good>12.5%</good> chance to also strike the enemy ship nearest its target within <hl>1000</hl> su.
+effect|ENTROPY_PROJECTOR_CHAIN_CHANCE_PERCENT|100.0	0	Each arc has a <good>100%</good> chance to also strike the enemy ship nearest its target within <hl>1000</hl> su.
+effect|ENTROPY_PROJECTOR_CHAIN_CHANCE_PERCENT|-10.0	0	Each arc has a <good>-10%</good> chance to also strike the enemy ship nearest its target within <hl>1000</hl> su.
+effect|ENTROPY_PROJECTOR_CHAIN_CHANCE_PERCENT|-12.5	0	Each arc has a <good>-12.5%</good> chance to also strike the enemy ship nearest its target within <hl>1000</hl> su.
 effect|ESCORT_MANEUVER_BONUS_PERCENT|1.0	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>1%</good> increased maneuverability, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 effect|ESCORT_MANEUVER_BONUS_PERCENT|10.0	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>10%</good> increased maneuverability, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
 effect|ESCORT_MANEUVER_BONUS_PERCENT|12.5	0	While within <hl>700</hl> su of a larger friendly ship, up to <good>12.5%</good> increased maneuverability, fading out over a further <hl>500</hl> su. Doubled for a destroyer escorting a capital ship.
@@ -4270,16 +4276,19 @@ effect|ZERO_FLUX_TURN_RATE_MULT|12.5	0	<good>12.5%</good> more zero-flux turn ra
 effect|ZERO_FLUX_TURN_RATE_MULT|100.0	0	<good>100%</good> more zero-flux turn rate bonus.
 effect|ZERO_FLUX_TURN_RATE_MULT|-10.0	0	<bad>10%</bad> less zero-flux turn rate bonus.
 effect|ZERO_FLUX_TURN_RATE_MULT|-12.5	0	<bad>12.5%</bad> less zero-flux turn rate bonus.
-flavour|abyssal_entropy_projector	0	This projector came out of the abyss still charged by a storm that should not exist. Whenever it fills, it lashes the nearest enemy ship. The crew keeps its access hatch welded shut.
-flavourAutomated|abyssal_entropy_projector	0	This projector came out of the abyss still charged by a storm that should not exist. Whenever it fills, it lashes the nearest enemy ship. The ship's core keeps it walled off from its own systems.
+flavour|abyssal_entropy_projector	0	This unusual adaptive subsystem appears to directly harness the destructive power of transdimensional storms.
 type-detail|abyssal_entropy_projector|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Entropy Projector</hullmod>
 type|abyssal_entropy_projector|FRIGATE|0	0	Every <hl>10</hl> seconds, strikes the nearest enemy ship within <hl>1000</hl> su with <good>2</good> arcs, each dealing <hl>300</hl> energy and <hl>400</hl> EMP damage, unless this ship is phased.
+type|abyssal_entropy_projector|FRIGATE|1	0	Each arc has a <good>20%</good> chance to also strike the enemy ship nearest its target within <hl>1000</hl> su.
 type-detail|abyssal_entropy_projector|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Entropy Projector</hullmod>
 type|abyssal_entropy_projector|DESTROYER|0	0	Every <hl>10</hl> seconds, strikes the nearest enemy ship within <hl>1000</hl> su with <good>2</good> arcs, each dealing <hl>300</hl> energy and <hl>400</hl> EMP damage, unless this ship is phased.
+type|abyssal_entropy_projector|DESTROYER|1	0	Each arc has a <good>20%</good> chance to also strike the enemy ship nearest its target within <hl>1000</hl> su.
 type-detail|abyssal_entropy_projector|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Entropy Projector</hullmod>
 type|abyssal_entropy_projector|CRUISER|0	0	Every <hl>10</hl> seconds, strikes the nearest enemy ship within <hl>1000</hl> su with <good>3</good> arcs, each dealing <hl>300</hl> energy and <hl>400</hl> EMP damage, unless this ship is phased.
+type|abyssal_entropy_projector|CRUISER|1	0	Each arc has a <good>20%</good> chance to also strike the enemy ship nearest its target within <hl>1000</hl> su.
 type-detail|abyssal_entropy_projector|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Entropy Projector</hullmod>
 type|abyssal_entropy_projector|CAPITAL_SHIP|0	0	Every <hl>10</hl> seconds, strikes the nearest enemy ship within <hl>1000</hl> su with <good>4</good> arcs, each dealing <hl>300</hl> energy and <hl>400</hl> EMP damage, unless this ship is phased.
+type|abyssal_entropy_projector|CAPITAL_SHIP|1	0	Each arc has a <good>20%</good> chance to also strike the enemy ship nearest its target within <hl>1000</hl> su.
 type-detail|abyssal_entropy_projector|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Entropy Projector</hullmod>
 type|accelerated_shields|null|0	0	<good>50%</good> increased shield turn rate.
 type|accelerated_shields|null|1	0	<good>50%</good> increased shield raise rate.
@@ -4357,8 +4366,7 @@ type|acceleration|FRIGATE|0	0	<good>10%</good> increased acceleration.
 type|acceleration|DESTROYER|0	0	<good>10%</good> increased acceleration.
 type|acceleration|CRUISER|0	0	<good>10%</good> increased acceleration.
 type|acceleration|CAPITAL_SHIP|0	0	<good>10%</good> increased acceleration.
-flavour|adaptive_drive_field	0	The station's archive holds a drive field that recalibrates itself against the ship's mass. The crew can only adjust it in dock, so the navigator plans every voyage around the next berth.
-flavourAutomated|adaptive_drive_field	0	The station's archive holds a drive field that recalibrates itself against the ship's mass. The ship's core recalibrates it at every berth and logs the drift between voyages.
+flavour|adaptive_drive_field	0	This AI-designed adaptive subsystem recalibrates the ship's drive field, a process so complex that it is normally only attempted in dock.
 type|adaptive_drive_field|null|0	0	<good>+1</good> to max burn level.
 type-detail|adaptive_drive_field|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Augmented Drive Field</hullmod>\n• <hullmod>Adaptive Drive Field</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Augmented Drive Field</node>
 type|adaptive_drive_field|FRIGATE|0	0	<good>+1</good> to max burn level.
@@ -4369,8 +4377,7 @@ type|adaptive_drive_field|CRUISER|0	0	<good>+1</good> to max burn level.
 type-detail|adaptive_drive_field|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Augmented Drive Field</hullmod>\n• <hullmod>Adaptive Drive Field</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Augmented Drive Field</node>
 type|adaptive_drive_field|CAPITAL_SHIP|0	0	<good>+1</good> to max burn level.
 type-detail|adaptive_drive_field|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Augmented Drive Field</hullmod>\n• <hullmod>Adaptive Drive Field</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Augmented Drive Field</node>
-flavour|adaptive_emitter_diodes	0	Adaptive diodes retune every beam emitter mid-fight until the beams interfere in the ship's favour. The beams fall short and lose some bite, but they push on shields like a slug. The gunners have stopped asking how it decides.
-flavourAutomated|adaptive_emitter_diodes	0	Adaptive diodes retune every beam emitter mid-fight until the beams interfere in the ship's favour. The ship's core watches each retune and keeps the ones that worked.
+flavour|adaptive_emitter_diodes	0	This AI-designed adaptive subsystem constantly adjusts the frequency and output of beam weapons to maximise constructive interference.
 type|adaptive_emitter_diodes|null|0	0	<bad>-100</bad> to beam weapon range.
 type|adaptive_emitter_diodes|null|1	0	<bad>15%</bad> reduced beam weapon damage.
 type|adaptive_emitter_diodes|null|2	0	<good>100%</good> of beam weapon damage to shields is dealt as hard flux.
@@ -4391,8 +4398,7 @@ type|adaptive_emitter_diodes|CAPITAL_SHIP|0	0	<bad>-100</bad> to beam weapon ran
 type|adaptive_emitter_diodes|CAPITAL_SHIP|1	0	<bad>15%</bad> reduced beam weapon damage.
 type|adaptive_emitter_diodes|CAPITAL_SHIP|2	0	<good>100%</good> of beam weapon damage to shields is dealt as hard flux.
 type-detail|adaptive_emitter_diodes|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Optics</hullmod>\n• <hullmod>High Scatter Amplifier</hullmod>\n• <hullmod>Laser Collimator</hullmod>\n• <hullmod>Attuned Emitter Diodes</hullmod>\n• <hullmod>Adaptive Emitter Diodes</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Advanced Optics</node>\n• <node>High Scatter Amplifier</node>\n• <node>Attuned Emitter Diodes</node>
-flavour|adaptive_entropy_arrester	0	An entropy arrester anchors the hull to an earlier state of itself and lets it drift back over time. Damage undoes itself, slowly, and dock repairs go quicker. The crew does not like to watch a bulkhead mend.
-flavourAutomated|adaptive_entropy_arrester	0	An entropy arrester anchors the hull to an earlier state of itself and lets it drift back over time. The ship's core watches its bulkheads mend and records the rate.
+flavour|adaptive_entropy_arrester	0	This AI-designed adaptive subsystem subtly anchors the quantum state of the ship's hull, causing it to gradually revert to that state over time. The reversion causes assembly errors and spot failures to accumulate as more damage is repaired.
 type|adaptive_entropy_arrester|null|0	0	Repairs <good>1%</good> of maximum hull per second in combat, up to a maximum of <hl>100</hl> hull points per second, while combat readiness is above <hl>15%</hl>. Loses <hl>1%</hl> combat readiness for every <hl>4%</hl> of maximum hull repaired.
 type|adaptive_entropy_arrester|null|1	0	<good>50%</good> less weapon and engine repair time.
 type-detail|adaptive_entropy_arrester|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Automated Repair Unit</hullmod>\n• <hullmod>Field Repair Nanites</hullmod>\n• <hullmod>Adaptive Entropy Arrester</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Automated Repair Unit</node>\n• <node>Field Repair Nanites</node>
@@ -4408,8 +4414,17 @@ type-detail|adaptive_entropy_arrester|CRUISER|0	0	Mutually exclusive with <hullm
 type|adaptive_entropy_arrester|CAPITAL_SHIP|0	0	Repairs <good>1%</good> of maximum hull per second in combat, up to a maximum of <hl>100</hl> hull points per second, while combat readiness is above <hl>15%</hl>. Loses <hl>1%</hl> combat readiness for every <hl>4%</hl> of maximum hull repaired.
 type|adaptive_entropy_arrester|CAPITAL_SHIP|1	0	<good>50%</good> less weapon and engine repair time.
 type-detail|adaptive_entropy_arrester|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Automated Repair Unit</hullmod>\n• <hullmod>Field Repair Nanites</hullmod>\n• <hullmod>Adaptive Entropy Arrester</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Automated Repair Unit</node>\n• <node>Field Repair Nanites</node>
-flavour|adaptive_flight_command	0	The station's flight command hub can only track a few squadrons, but it tracks them closely. The deck crew seals the spare bays, and the pilots who remain launch faster than ever. Nobody volunteers to explain this to the others.
-flavourAutomated|adaptive_flight_command	0	The station's flight command hub can only track a few squadrons, but it tracks them closely. The ship's core seals the spare bays and records the faster launches.
+flavour|adaptive_entropy_projector	0	This unusual adaptive subsystem appears to directly harness the destructive power of transdimensional storms. Its late Expansion Epoch system architecture is compatible with modern Tri-Tachyon automation protocols, although the more exotic effects of the subsystem do not appear to be operational.
+type-detail|adaptive_entropy_projector|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Adaptive Entropy Projector</hullmod>
+type|adaptive_entropy_projector|FRIGATE|0	0	Every <hl>10</hl> seconds, strikes the nearest enemy ship within <hl>1000</hl> su with <good>2</good> arcs, each dealing <hl>300</hl> energy and <hl>400</hl> EMP damage, unless this ship is phased.
+type-detail|adaptive_entropy_projector|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Adaptive Entropy Projector</hullmod>
+type|adaptive_entropy_projector|DESTROYER|0	0	Every <hl>10</hl> seconds, strikes the nearest enemy ship within <hl>1000</hl> su with <good>2</good> arcs, each dealing <hl>300</hl> energy and <hl>400</hl> EMP damage, unless this ship is phased.
+type-detail|adaptive_entropy_projector|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Adaptive Entropy Projector</hullmod>
+type|adaptive_entropy_projector|CRUISER|0	0	Every <hl>10</hl> seconds, strikes the nearest enemy ship within <hl>1000</hl> su with <good>3</good> arcs, each dealing <hl>300</hl> energy and <hl>400</hl> EMP damage, unless this ship is phased.
+type-detail|adaptive_entropy_projector|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Adaptive Entropy Projector</hullmod>
+type|adaptive_entropy_projector|CAPITAL_SHIP|0	0	Every <hl>10</hl> seconds, strikes the nearest enemy ship within <hl>1000</hl> su with <good>4</good> arcs, each dealing <hl>300</hl> energy and <hl>400</hl> EMP damage, unless this ship is phased.
+type-detail|adaptive_entropy_projector|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Adaptive Entropy Projector</hullmod>
+flavour|adaptive_flight_command	0	This AI-designed adaptive subsystem converts a carrier's standard flight command relay into a high-throughput network hub, suited to optimising a smaller number of elite units.
 type|adaptive_flight_command|null|0	1	<bad>50%</bad> less strikecraft refit time.
 type|adaptive_flight_command|null|1	0	Strikecraft launched from this ship have <good>25%</good> increased top speed.
 type|adaptive_flight_command|null|2	0	<bad>50%</bad> less strikecraft bays, not counting bays with built-in wings.
@@ -4430,8 +4445,7 @@ type|adaptive_flight_command|CAPITAL_SHIP|0	1	<bad>50%</bad> less strikecraft re
 type|adaptive_flight_command|CAPITAL_SHIP|1	0	Strikecraft launched from this ship have <good>25%</good> increased top speed.
 type|adaptive_flight_command|CAPITAL_SHIP|2	0	<bad>50%</bad> less strikecraft bays, not counting bays with built-in wings.
 type-detail|adaptive_flight_command|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Adaptive Flight Command</hullmod>
-flavour|adaptive_flux_dissipator	0	The station's dissipator reworks the shield emitters to bleed off hard flux while the shields are up. It was designed for automated hulls and fits crewed ships with surprising ease. The engineers suspect it was meant to.
-flavourAutomated|adaptive_flux_dissipator	0	The station's dissipator reworks the shield emitters to bleed off hard flux while the shields are up. It was designed for hulls like this one. The ship's core notes the fit and does not comment.
+flavour|adaptive_flux_dissipator	0	This AI-designed adaptive subsystem modifies the ship's shield emitters. Despite being compatible with the automation protocols used by Remnant fleets, this design bears the hallmarks of a different yet equally frightening machine intellect.
 type|adaptive_flux_dissipator|null|0	0	<good>10%</good> more hard flux dissipation while shields are active.
 type-detail|adaptive_flux_dissipator|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Adaptive Flux Dissipator</hullmod>
 type|adaptive_flux_dissipator|FRIGATE|0	0	<good>10%</good> more hard flux dissipation while shields are active.
@@ -4442,8 +4456,7 @@ type|adaptive_flux_dissipator|CRUISER|0	0	<good>10%</good> more hard flux dissip
 type-detail|adaptive_flux_dissipator|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Adaptive Flux Dissipator</hullmod>
 type|adaptive_flux_dissipator|CAPITAL_SHIP|0	0	<good>10%</good> more hard flux dissipation while shields are active.
 type-detail|adaptive_flux_dissipator|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Adaptive Flux Dissipator</hullmod>
-flavour|adaptive_metastatic_growth	0	Nanite colonies from the station grow like tumours under the hull and spread into the missile racks. The hull thickens and the missiles hit harder. The crew tries not to lean on the walls.
-flavourAutomated|adaptive_metastatic_growth	0	Nanite colonies from the station grow like tumours under the hull and spread into the missile racks. The hull thickens and the missiles hit harder. The ship's core monitors the growth and does not stop it.
+flavour|adaptive_metastatic_growth	0	This bizarre adaptive subsystem causes tumour-like nodes of nanite colonies to grow beneath the hull and spread to onboard missile systems. The modifications to missiles appear to be a flawed attempt to create new nanite infection vectors, although they degrade too quickly away from the primary colony to compromise other ships.
 type|adaptive_metastatic_growth|null|0	0	<good>20%</good> increased hull points.
 type|adaptive_metastatic_growth|null|1	0	<good>20%</good> increased missile hitpoints.
 type|adaptive_metastatic_growth|null|2	0	<good>10%</good> increased missile weapon damage.
@@ -4515,8 +4528,7 @@ integrated|adaptive_munitions|CRUISER|2	0	<bad>40%</bad> less fragmentation dama
 integrated|adaptive_munitions|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|adaptive_munitions|CAPITAL_SHIP|1	0	<builtIn>1.5%</builtIn> chance for each weapon hit to deal kinetic damage to shields or high explosive damage to armor instead, for every <hl>5</hl> High Tech Affinity.
 integrated|adaptive_munitions|CAPITAL_SHIP|2	0	<bad>40%</bad> less fragmentation damage.
-flavour|adaptive_neural_net	0	The station's neural net strips the latency out of the ship's computers, and the faster the mind in command, the more it strips. Crews under an AI core notice the difference. Crews under a human captain mostly notice the new hum.
-flavourAutomated|adaptive_neural_net	0	The station's neural net strips the latency out of the ship's computers, and the faster the mind in command, the more it strips. The ship's core times its own reactions before and after, and keeps the results.
+flavour|adaptive_neural_net	0	This AI-designed adaptive subsystem reduces the latency of onboard computer systems, improving ship performance in step with the processing power of a commanding AI core.
 type|adaptive_neural_net|null|0	0	<good>4%</good> increased maximum combat readiness.
 type|adaptive_neural_net|null|1	0	<good>+2/4/6/8%</good> to maximum combat readiness with a gamma/beta/alpha/omega core as captain.
 type-detail|adaptive_neural_net|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Adaptive Neural Net</hullmod>
@@ -4574,8 +4586,7 @@ integrated|adaptive_phase_coils|CRUISER|0	0	<builtIn>Integrated</builtIn>
 integrated|adaptive_phase_coils|CRUISER|1	0	<builtIn>60%</builtIn> increased hard flux level at which phased speed reaches its minimum.
 integrated|adaptive_phase_coils|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|adaptive_phase_coils|CAPITAL_SHIP|1	0	<builtIn>60%</builtIn> increased hard flux level at which phased speed reaches its minimum.
-flavour|adaptive_pulse_resonator	0	A resonator from the station's archive stretches the reach of every pulse weapon aboard, on mounts no bolt coherer was ever fitted to. The gunnery officer has stopped asking where the extra range comes from.
-flavourAutomated|adaptive_pulse_resonator	0	A resonator from the station's archive stretches the reach of every pulse weapon aboard, on mounts no bolt coherer was ever fitted to. The ship's core measures the extra range and files the explanation as unnecessary.
+flavour|adaptive_pulse_resonator	0	This AI-designed adaptive subsystem works on energy pulse weapons. Its effect is not as strong as a built-in Energy Bolt Coherer.
 type|adaptive_pulse_resonator|null|0	0	<good>+100</good> to non-beam energy weapon range.
 type-detail|adaptive_pulse_resonator|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Energy Bolt Coherer</hullmod>\n• <hullmod>Modular Bolt Coherer</hullmod>\n• <hullmod>Adaptive Pulse Resonator</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Modular Bolt Coherer</node>
 type|adaptive_pulse_resonator|FRIGATE|0	0	<good>+100</good> to non-beam energy weapon range.
@@ -4586,8 +4597,7 @@ type|adaptive_pulse_resonator|CRUISER|0	0	<good>+100</good> to non-beam energy w
 type-detail|adaptive_pulse_resonator|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Energy Bolt Coherer</hullmod>\n• <hullmod>Modular Bolt Coherer</hullmod>\n• <hullmod>Adaptive Pulse Resonator</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Modular Bolt Coherer</node>
 type|adaptive_pulse_resonator|CAPITAL_SHIP|0	0	<good>+100</good> to non-beam energy weapon range.
 type-detail|adaptive_pulse_resonator|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Energy Bolt Coherer</hullmod>\n• <hullmod>Modular Bolt Coherer</hullmod>\n• <hullmod>Adaptive Pulse Resonator</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Modular Bolt Coherer</node>
-flavour|adaptive_reactor_chamber	0	The station's reactor chamber squeezes more out of the ship's power grid. The engineers rebuilt it from a schematic with half the labels missing. It runs, and nobody wants to open it again.
-flavourAutomated|adaptive_reactor_chamber	0	The station's reactor chamber squeezes more out of the ship's power grid. The ship's core follows the schematic exactly, including the parts without labels.
+flavour|adaptive_reactor_chamber	0	This AI-designed adaptive subsystem increases the output of the ship's power grid.
 type|adaptive_reactor_chamber|null|0	0	<good>10%</good> more flux capacity.
 type|adaptive_reactor_chamber|null|1	0	<good>10%</good> more flux dissipation.
 type-detail|adaptive_reactor_chamber|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Adaptive Reactor Chamber</hullmod>
@@ -4603,8 +4613,7 @@ type-detail|adaptive_reactor_chamber|CRUISER|0	0	Mutually exclusive with <hullmo
 type|adaptive_reactor_chamber|CAPITAL_SHIP|0	0	<good>10%</good> more flux capacity.
 type|adaptive_reactor_chamber|CAPITAL_SHIP|1	0	<good>10%</good> more flux dissipation.
 type-detail|adaptive_reactor_chamber|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Adaptive Reactor Chamber</hullmod>
-flavour|adaptive_tactical_core	0	When nobody aboard holds command, a tactical core from the station takes the fight. It goes for the biggest hulls and works the shields without hesitation. It steps aside for any captain who comes aboard, and the crew is never sure it likes that.
-flavourAutomated|adaptive_tactical_core	0	When no other mind commands the ship, a tactical core from the station takes the fight. It goes for the biggest hulls and works the shields without hesitation. It yields to any captain installed and logs the handover.
+flavour|adaptive_tactical_core	0	This AI-designed adaptive subsystem self-organises into a dedicated delta-level machine intelligence specialised in ship-to-ship combat. Hardware limitations prevent it from operating in tandem with a commanding officer or general-purpose AI.
 type|adaptive_tactical_core|null|0	1	<bad>15%</bad> less damage taken by shields while this ship has no captain.
 type|adaptive_tactical_core|null|1	1	<bad>25%</bad> less phase cloak flux upkeep while this ship has no captain.
 type|adaptive_tactical_core|null|2	0	<good>10%</good> increased damage to destroyers while this ship has no captain.
@@ -4635,8 +4644,7 @@ type|adaptive_tactical_core|CAPITAL_SHIP|2	0	<good>10%</good> increased damage t
 type|adaptive_tactical_core|CAPITAL_SHIP|3	0	<good>15%</good> increased damage to cruisers while this ship has no captain.
 type|adaptive_tactical_core|CAPITAL_SHIP|4	0	<good>20%</good> increased damage to capital ships and stations while this ship has no captain.
 type-detail|adaptive_tactical_core|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Adaptive Tactical Core</hullmod>
-flavour|adaptive_temporal_shell	0	The station's temporal shell turns the shields into a weak time accelerator. The ship moves and fires faster, and the shields buckle sooner. The medical officer has asked not to be told how much faster the crew is ageing.
-flavourAutomated|adaptive_temporal_shell	0	The station's temporal shell turns the shields into a weak time accelerator. The ship moves and fires faster, and the shields buckle sooner. The ship's core notes that its own clock runs fast and corrects its logs.
+flavour|adaptive_temporal_shell	0	This AI-designed adaptive subsystem turns the ship's shields into a weak temporal shell that accelerates the flow of time on board.
 type|adaptive_temporal_shell|null|0	0	<good>10%</good> more time flow.
 type|adaptive_temporal_shell|null|1	1	<good>25%</good> more damage taken by shields.
 type-detail|adaptive_temporal_shell|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Adaptive Temporal Shell</hullmod>
@@ -4652,8 +4660,7 @@ type-detail|adaptive_temporal_shell|CRUISER|0	0	Mutually exclusive with <hullmod
 type|adaptive_temporal_shell|CAPITAL_SHIP|0	0	<good>10%</good> more time flow.
 type|adaptive_temporal_shell|CAPITAL_SHIP|1	1	<good>25%</good> more damage taken by shields.
 type-detail|adaptive_temporal_shell|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Adaptive Temporal Shell</hullmod>
-flavour|adaptive_thruster_control	0	The station's thruster controller pushes every nozzle harder, and the bigger the hull, the more it finds to push. The engine techs keep the old settings on file, just in case.
-flavourAutomated|adaptive_thruster_control	0	The station's thruster controller pushes every nozzle harder, and the bigger the hull, the more it finds to push. The ship's core records how much it finds on each hull.
+flavour|adaptive_thruster_control	0	This AI-designed adaptive subsystem improves engine performance, with greater benefits for larger hulls.
 type-detail|adaptive_thruster_control|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Auxiliary Thrusters</hullmod>\n• <hullmod>Unstable Injector</hullmod>\n• <hullmod>Adaptive Thruster Control</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Auxiliary Thrusters</node>\n• <node>Unstable Injector</node>
 type|adaptive_thruster_control|FRIGATE|0	0	<good>15%</good> more top speed.
 type|adaptive_thruster_control|FRIGATE|1	0	<good>15%</good> more maneuverability.
@@ -4667,8 +4674,7 @@ type-detail|adaptive_thruster_control|CRUISER|0	0	Mutually exclusive with <hullm
 type|adaptive_thruster_control|CAPITAL_SHIP|0	0	<good>30%</good> more top speed.
 type|adaptive_thruster_control|CAPITAL_SHIP|1	0	<good>30%</good> more maneuverability.
 type-detail|adaptive_thruster_control|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Auxiliary Thrusters</hullmod>\n• <hullmod>Unstable Injector</hullmod>\n• <hullmod>Adaptive Thruster Control</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Auxiliary Thrusters</node>\n• <node>Unstable Injector</node>
-flavour|adaptive_trajectory_analyzer	0	The station's trajectory analyzer was built for archaic composite guns that modern fire control cannot steer. It helps ordinary ballistics a little too. The old guns finally hit what they are pointed at.
-flavourAutomated|adaptive_trajectory_analyzer	0	The station's trajectory analyzer was built for archaic composite guns that modern fire control cannot steer. It helps ordinary ballistics a little too. The ship's core logs every archaic mount it finds.
+flavour|adaptive_trajectory_analyzer	0	This AI-designed adaptive subsystem is built for archaic composite weapons that are not usually compatible with modern targeting systems, although more conventional ballistic weapons also stand to benefit. Given the high-tech arsenal of the AI Remnant, the existence of such a subsystem is highly unusual.
 type|adaptive_trajectory_analyzer|null|0	0	<good>10%</good> increased ballistic weapon range.
 type|adaptive_trajectory_analyzer|null|1	0	<good>50%</good> increased archaic weapon range.
 type-detail|adaptive_trajectory_analyzer|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Adaptive Trajectory Analyzer</hullmod>
@@ -4846,8 +4852,7 @@ integrated|advanced_turret_gyros|CAPITAL_SHIP|3	0	<builtIn>25%</builtIn> increas
 integrated|advanced_turret_gyros|CAPITAL_SHIP|4	0	<builtIn>15%</builtIn> increased damage to frigates.
 integrated|advanced_turret_gyros|CAPITAL_SHIP|5	0	<builtIn>10%</builtIn> increased damage to destroyers.
 integrated|advanced_turret_gyros|CAPITAL_SHIP|6	0	<builtIn>5%</builtIn> increased damage to cruisers.
-flavour|ai_subsystem_integration	0	A derelict research station still circles the star, running experiments nobody ordered. The crew wires one of its delta cores into the ship's routines, and the ship stops needing most of them at their posts. The quartermaster still counts rations for everyone.
-flavourAutomated|ai_subsystem_integration	0	A derelict research station still circles the star, running experiments nobody ordered. The ship's core compares its own architecture with the station's designs. It adopts the station's standards without comment.
+flavour|ai_subsystem_integration	0	Automates operations under the command of an integrated delta-level AI core. For already automated ships, this overhauls the internal systems to standards adopted by the AI Remnant.
 type|ai_subsystem_integration|null|0	1	<bad>100%</bad> less minimum crew required.
 type|ai_subsystem_integration|null|1	1	Strikecraft launched from this ship have <bad>100%</bad> less pilot casualties.
 type-detail|ai_subsystem_integration|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>AI Subsystem Integration</hullmod>
@@ -5154,7 +5159,7 @@ integrated|at_any_cost|CRUISER|2	0	When this ship isn't flown by you, it flies s
 integrated|at_any_cost|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|at_any_cost|CAPITAL_SHIP|1	0	Touching the hull of <builtIn>an enemy cruiser or capital ship</builtIn>, however slightly, is instantly fatal to this ship.
 integrated|at_any_cost|CAPITAL_SHIP|2	0	When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.
-flavour|attuned_emitter_diodes	0	Attuned diodes are tuned to the pulse of a bolt coherer, and fed through one they make a beam strike shields like a slug. The emitters run shorter and cooler for it. A Diktat gunnery manual calls this a fair trade, in a footnote.
+flavour|attuned_emitter_diodes	0	Developed by the Sindrian Diktat with secret assistance from Tri-Tachyon, these specialised emitters interface with the Energy Bolt Coherer to also improve the constructive interference of beam weapons, at the cost of range and power output. While the system performs as intended, no other major polity has been brave enough, or callous enough, to install the Coherer on crewed warships.
 type|attuned_emitter_diodes|null|0	0	<good>100%</good> of beam weapon damage to shields is dealt as hard flux.
 type|attuned_emitter_diodes|null|1	0	<bad>-100</bad> to beam weapon range.
 type|attuned_emitter_diodes|null|2	0	<bad>20%</bad> reduced beam weapon damage.
@@ -9274,8 +9279,7 @@ integrated|feed_the_forges|CRUISER|0	0	<builtIn>Integrated</builtIn>
 integrated|feed_the_forges|CRUISER|1	0	After each battle your fleet wins, it salvages supplies equal to <builtIn>15%</builtIn> of the deployment points of the enemy ships it defeated.
 integrated|feed_the_forges|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|feed_the_forges|CAPITAL_SHIP|1	0	After each battle your fleet wins, it salvages supplies equal to <builtIn>15%</builtIn> of the deployment points of the enemy ships it defeated.
-flavour|field_repair_nanites	0	Repair nanites of this grade were made for drydock work, where nobody counts what they eat. The crew turns them loose on the hull mid-battle and lets them strip the nearest systems for feedstock. The engineering logs file this under routine maintenance.
-flavourAutomated|field_repair_nanites	0	Repair nanites of this grade were made for drydock work, where nobody counts what they eat. The ship's core releases them on its own hull mid-battle and records which systems they strip for feedstock. It files the losses under routine maintenance.
+flavour|field_repair_nanites	0	Embeds pre-programmed nanite clusters throughout the ship that activate in response to hull damage. Despite its obvious utility, this technology is rarely used by anyone aside from the most desperate pirate or freebooter captains. The damaged areas of the ship are rebuilt haphazardly, creating growing incompatibilities with surviving systems.
 type|field_repair_nanites|null|0	0	Repairs <good>1%</good> of maximum hull per second in combat, up to a maximum of <hl>100</hl> hull points per second, while combat readiness is above <hl>15%</hl>. Loses <hl>1%</hl> combat readiness for every <hl>3%</hl> of maximum hull repaired.
 type-detail|field_repair_nanites|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Adaptive Entropy Arrester</hullmod>\n• <hullmod>Immanence Engine</hullmod>\n• <hullmod>Field Repair Nanites</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Adaptive Entropy Arrester</node>
 type|field_repair_nanites|FRIGATE|0	0	Repairs <good>1%</good> of maximum hull per second in combat, up to a maximum of <hl>100</hl> hull points per second, while combat readiness is above <hl>15%</hl>. Loses <hl>1%</hl> combat readiness for every <hl>3%</hl> of maximum hull repaired.
@@ -12536,8 +12540,7 @@ type|missile_weapon_damage|FRIGATE|0	0	<good>3%</good> increased missile weapon 
 type|missile_weapon_damage|DESTROYER|0	0	<good>3%</good> increased missile weapon damage.
 type|missile_weapon_damage|CRUISER|0	0	<good>3%</good> increased missile weapon damage.
 type|missile_weapon_damage|CAPITAL_SHIP|0	0	<good>3%</good> increased missile weapon damage.
-flavour|modular_bolt_coherer	0	A modular coherer clamps onto energy mounts the original design was never meant to fit and tightens each bolt before it leaves the emitter. The crew copies the fittings from a Sindrian refit manual of uncertain provenance. The chapter on shielding the gun crews appears to have been removed.
-flavourAutomated|modular_bolt_coherer	0	A modular coherer clamps onto energy mounts the original design was never meant to fit and tightens each bolt before it leaves the emitter. The refit crew follows a Sindrian refit manual the ship's core recovered from a wreck. The chapter on shielding the gun crews appears to have been removed.
+flavour|modular_bolt_coherer	0	A modular version of the built-in Energy Bolt Coherer for energy pulse weapons. Spot failures in its radiation containment system under combat conditions endanger the crew.
 type|modular_bolt_coherer|null|0	0	<good>+100</good> to non-beam energy weapon range.
 type|modular_bolt_coherer|null|1	1	<good>25%</good> increased crew casualties.
 type-detail|modular_bolt_coherer|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Energy Bolt Coherer</hullmod>\n• <hullmod>Adaptive Pulse Resonator</hullmod>\n• <hullmod>Modular Bolt Coherer</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Adaptive Pulse Resonator</node>
@@ -12598,8 +12601,7 @@ integrated|modular_bolt_coherer|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|modular_bolt_coherer|CAPITAL_SHIP|1	0	<good>+100</good> to non-beam energy weapon range.
 integrated|modular_bolt_coherer|CAPITAL_SHIP|2	1	<good>25%</good> increased crew casualties.
 integrated|modular_bolt_coherer|CAPITAL_SHIP|3	0	<builtIn>5%</builtIn> less energy weapon flux cost.
-flavour|modular_fleet_override	0	An override package strips the safety limits from a strike craft's fire control and leaves the pilots to manage the rest. The crew learns the codes from Diktat carrier wings, who learned them through attrition. Recovery shuttle crews have started asking which wings carry it.
-flavourAutomated|modular_fleet_override	0	An override package strips the safety limits from a strike craft's fire control and leaves the pilots to manage the rest. The ship's core lifts the codes from captured Diktat carrier logs and pushes them to every wing it launches. It keeps no record of what the pilots think of this.
+flavour|modular_fleet_override	0	A modular version of the built-in Fleet Override, which takes much of the autonomy away from the pilots.
 type|modular_fleet_override|null|0	0	Strikecraft launched from this ship have <good>10%</good> increased weapon damage.
 type|modular_fleet_override|null|1	1	Strikecraft launched from this ship have <good>50%</good> more pilot casualties.
 type-detail|modular_fleet_override|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Fleet Override</hullmod>\n• <hullmod>Modular Fleet Override</hullmod>
@@ -14853,8 +14855,7 @@ integrated|secondary_fabricator|CRUISER|0	0	<builtIn>Integrated</builtIn>
 integrated|secondary_fabricator|CRUISER|1	0	<builtIn>50%</builtIn> increased fragment replacement rate.
 integrated|secondary_fabricator|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|secondary_fabricator|CAPITAL_SHIP|1	0	<builtIn>50%</builtIn> increased fragment replacement rate.
-flavour|secondary_phase_coils	0	Secondary phase coils from the station's archive sit attenuated inside the hull. On a phase ship they keep the cloak fast under heavier flux; on any other hull they blur the ship's signature and soften incoming fire. The engineers still argue about which use was intended.
-flavourAutomated|secondary_phase_coils	0	Secondary phase coils from the station's archive sit attenuated inside the hull. On a phase ship they keep the cloak fast under heavier flux; on any other hull they blur the ship's signature and soften incoming fire. The ship's core tests both uses and records no preference.
+flavour|secondary_phase_coils	0	This AI-designed adaptive subsystem activates a series of attenuated secondary phase coils. On ships without a phase cloak, weapon impact energy is bled into phase space.
 type|secondary_phase_coils|null|0	0	<good>50%</good> increased hard flux level at which phased speed reaches its minimum.
 type|secondary_phase_coils|null|1	1	<bad>50%</bad> less sensor profile if this ship has no phase cloak.
 type|secondary_phase_coils|null|2	1	<bad>10%</bad> less damage taken if this ship has no phase cloak.
@@ -16554,8 +16555,7 @@ integrated|tripad_backdoor|CRUISER|0	0	<builtIn>Integrated</builtIn>
 integrated|tripad_backdoor|CRUISER|1	0	<builtIn>200%</builtIn> more combat objective capture rate.
 integrated|tripad_backdoor|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|tripad_backdoor|CAPITAL_SHIP|1	0	<builtIn>200%</builtIn> more combat objective capture rate.
-flavour|unified_targeting_core	0	A unified core runs every gun on the ship from one fire-control solution and hands the same picture to its strike craft. The processing stacks fill a compartment that used to be crew quarters. Nobody has asked for it back.
-flavourAutomated|unified_targeting_core	0	A unified core runs every gun on the ship from one fire-control solution and hands the same picture to its strike craft. The refit crew fits the processing stacks into a compartment that used to be crew quarters. The ship's core has no use for it.
+flavour|unified_targeting_core	0	A specialised targeting core that serves the weapons of both a carrier and its fighters.
 type-detail|unified_targeting_core|null|0	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
 type-detail|unified_targeting_core|null|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Dedicated Targeting Core</hullmod>\n• <hullmod>Integrated Targeting Unit</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Optimized Targeting Core</hullmod>\n• <hullmod>Unified Targeting Core</hullmod>\n\nMutually exclusive with <node>nodes</node>:\n• <node>Dedicated Targeting Core</node>\n• <node>Integrated Targeting Unit</node>
 type-detail|unified_targeting_core|FRIGATE|0	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.

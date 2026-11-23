@@ -23,6 +23,13 @@ public enum AuraSkillEffect implements BackedSkillEffect {
                     .arg("energy", EntropyProjectorListener.ENERGY_DAMAGE).arg("emp", EntropyProjectorListener.EMP_DAMAGE).styled();
         }
     },
+    ENTROPY_PROJECTOR_CHAIN_CHANCE_PERCENT(listener(EntropyProjectorListener.CHAIN_CHANCE_KEY, EntropyProjectorListener.class,
+            EntropyProjectorListener::new)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("range", EntropyProjectorListener.RANGE).styled();
+        }
+    },
     ESCORT_MANEUVER_BONUS_PERCENT(listener(EscortListener.MANEUVER_BONUS_KEY, EscortListener.class, EscortListener::new)) {
         @Override
         public StyledText description(float magnitude) {

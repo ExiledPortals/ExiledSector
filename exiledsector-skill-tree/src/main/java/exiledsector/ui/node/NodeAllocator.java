@@ -16,6 +16,7 @@ import exiledsector.effects.ShipTreeSync;
 import exiledsector.i18n.Translation;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocationCheck;
+import exiledsector.skills.HullForms;
 import exiledsector.skills.HullModNames;
 import exiledsector.skills.ItemCostLedger;
 import exiledsector.skills.NodeEligibility;
@@ -358,7 +359,9 @@ final class NodeAllocator {
     }
 
     boolean syncResearchStation() {
-        return changed(ResearchStationNodes.sync(data(), isAutomated()));
+        ShipSkillData skillData = data();
+        HullForms.bindHull(skillData, shipVariant);
+        return changed(ResearchStationNodes.sync(skillData, isAutomated()));
     }
 
     void applyIntegrationReset() {

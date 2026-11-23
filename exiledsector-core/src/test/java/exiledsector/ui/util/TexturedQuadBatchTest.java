@@ -108,6 +108,37 @@ class TexturedQuadBatchTest {
     }
 
     @Test
+    void aBandDrawsOnlyThatSliceOfTheSpriteWhereItSitsInTheWholeQuad() {
+        try (TexturedQuadBatch quads = new TexturedQuadBatch().beginNormal(texture)) {
+            quads.bandAtCenter(0.5f, 1f, 0f, 0f, 2f, 4f, 0f, Color.WHITE, 1f);
+        }
+
+        assertEquals("tex 0.0 0.125", calls.get(7));
+        assertEquals("vertex -1.0 0.0", rounded(calls.get(8)));
+        assertEquals("tex 0.0 0.25", calls.get(9));
+        assertEquals("vertex -1.0 2.0", rounded(calls.get(10)));
+    }
+
+    @Test
+    void aRotatedBandStaysOnTheTurnedSprite() {
+        try (TexturedQuadBatch quads = new TexturedQuadBatch().beginNormal(texture)) {
+            quads.bandAtCenter(0.5f, 1f, 0f, 0f, 2f, 4f, 90f, Color.WHITE, 1f);
+        }
+
+        assertEquals("vertex 0.0 -1.0", rounded(calls.get(8)));
+        assertEquals("vertex -2.0 -1.0", rounded(calls.get(10)));
+    }
+
+    @Test
+    void anEmptyBandDrawsNothing() {
+        try (TexturedQuadBatch quads = new TexturedQuadBatch().beginNormal(texture)) {
+            quads.bandAtCenter(0.6f, 0.4f, 0f, 0f, 2f, 4f, 0f, Color.WHITE, 1f);
+        }
+
+        assertEquals(0, calls.stream().filter(call -> call.startsWith("vertex")).count());
+    }
+
+    @Test
     void aMeshVertexMapsSpriteFractionsOntoTheTexture() {
         try (TexturedQuadBatch quads = new TexturedQuadBatch().beginNormal(texture)) {
             quads.color(Color.WHITE, 0.5f);

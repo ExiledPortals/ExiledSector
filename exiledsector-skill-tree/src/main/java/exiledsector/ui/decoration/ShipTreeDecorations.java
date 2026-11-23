@@ -15,9 +15,10 @@ public final class ShipTreeDecorations {
     private ShipTreeDecorations() {
     }
 
-    public static TreeDecorations forActiveTree(Predicate<SkillNode> nodeHidden, Predicate<SkillNode> nodeConcealed) {
+    public static TreeDecorations forActiveTree(Predicate<SkillNode> nodeHidden, Predicate<SkillNode> nodeConcealed,
+                                                ResearchStationOrbit stationOrbit) {
         Set<String> concealedVolumes = HyperspaceAnchor.lockedVolumes(SkillTree.getAllNodes().values(), SkillNode::getVolume, nodeConcealed);
-        return TreeDecorations.of(SkillTree.getDecorations().outsideVolumes(concealedVolumes), List.of(FactionFleetRenderer.forActiveTree(nodeHidden),
+        return TreeDecorations.of(SkillTree.getDecorations().outsideVolumes(concealedVolumes), List.of(FactionFleetRenderer.forActiveTree(nodeHidden, stationOrbit),
                 new SlipstreamDecoration(new SlipstreamSky(TreeSlipstreamRoutes.forActiveTree(), SlipstreamSky.Pace.RARE, new Random()))));
     }
 }

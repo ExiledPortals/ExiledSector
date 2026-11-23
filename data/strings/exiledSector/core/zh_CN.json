@@ -1079,6 +1079,7 @@
     "effect.ARMOR_DAMAGE_EMP_ARCS_FLAT.other": "本舰装甲每吸收<hl>{damage}</hl>点伤害，向<hl>{range}</hl> su内最近的敌舰释放<good>{value}</good>道EMP电弧，每道造成<hl>{frigate}/{destroyer}/{cruiser}/{capital}</hl>点能量伤害和等量EMP伤害。",
     "effect.ENTROPY_PROJECTOR_ARCS_FLAT.one": "每<hl>{seconds}</hl>秒，若本舰未处于相位状态，以<good>{value}</good>道电弧打击<hl>{range}</hl> su内最近的敌舰，造成<hl>{energy}</hl>点能量伤害和<hl>{emp}</hl>点EMP伤害。",
     "effect.ENTROPY_PROJECTOR_ARCS_FLAT.other": "每<hl>{seconds}</hl>秒，若本舰未处于相位状态，以<good>{value}</good>道电弧打击<hl>{range}</hl> su内最近的敌舰，每道造成<hl>{energy}</hl>点能量伤害和<hl>{emp}</hl>点EMP伤害。",
+    "effect.ENTROPY_PROJECTOR_CHAIN_CHANCE_PERCENT": "每道电弧有<good>{value}%</good>的几率同时打击其目标<hl>{range}</hl> su内最近的另一艘敌舰。",
     "effect.SHIELD_DAMAGE_TAKEN_WITHOUT_CAPTAIN_MULT.more": "本舰没有舰长时，护盾受到的伤害提高<good>{value}%</good>（乘算）。",
     "effect.SHIELD_DAMAGE_TAKEN_WITHOUT_CAPTAIN_MULT.less": "本舰没有舰长时，护盾受到的伤害降低<bad>{value}%</bad>（乘算）。",
     "effect.PHASE_CLOAK_UPKEEP_WITHOUT_CAPTAIN_MULT.more": "本舰没有舰长时，相位斗篷幅能维持消耗提高<good>{value}%</good>（乘算）。",

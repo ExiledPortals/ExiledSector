@@ -90,6 +90,22 @@ public final class TexturedQuadBatch implements AutoCloseable {
         quad(centerX, centerY, quadWidth, quadHeight, angleDeg, tint, alphaMult, textureLeft, textureBottom, textureRight, textureTop);
     }
 
+    public void bandAtCenter(float bottomFraction, float topFraction, float centerX, float centerY, float quadWidth, float quadHeight,
+                             float angleDeg, Color tint, float alphaMult) {
+        float bottom = Math.max(0f, Math.min(1f, bottomFraction));
+        float top = Math.max(bottom, Math.min(1f, topFraction));
+        if (top <= bottom) {
+            return;
+        }
+        float localOffsetY = ((bottom + top) / 2f - 0.5f) * quadHeight;
+        double angle = Math.toRadians(angleDeg);
+        float bandCenterX = centerX - localOffsetY * (float) Math.sin(angle);
+        float bandCenterY = centerY + localOffsetY * (float) Math.cos(angle);
+        float textureHeight = textureTop - textureBottom;
+        quad(bandCenterX, bandCenterY, quadWidth, (top - bottom) * quadHeight, angleDeg, tint, alphaMult,
+                textureLeft, textureBottom + textureHeight * bottom, textureRight, textureBottom + textureHeight * top);
+    }
+
     public void cellAtCenter(int columns, int rows, int cell, float centerX, float centerY, float quadWidth, float quadHeight, float angleDeg,
                              Color tint, float alphaMult) {
         int safeColumns = Math.max(1, columns);

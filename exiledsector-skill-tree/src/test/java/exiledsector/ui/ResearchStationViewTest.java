@@ -3,6 +3,7 @@ package exiledsector.ui;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
+import exiledsector.ui.decoration.ResearchStationOrbit;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -128,5 +129,51 @@ class ResearchStationViewTest {
         assertEquals(ResearchStationLayer.MIN_HIT_PIXELS, layer.stationHitHalfSize(0.001f), TOLERANCE);
         assertTrue(layer.isStation(STATION));
         assertFalse(layer.isStation(EAST));
+    }
+    @Test
+    void aStationAlreadyIntegratedWhenTheTreeOpensIsAwakeWithoutAFlash() {
+        ResearchStationView view = view();
+        view.setIntegration(true, 0f);
+        view.advance(0.1f, null);
+
+        assertEquals(1f, view.wakeLevel());
+        assertEquals(0f, view.flashLevel());
+    }
+
+    @Test
+    void integratingFlashesTheStationAndWakesItUp() {
+        ResearchStationView view = view();
+        view.setIntegration(false, 0.9f);
+        view.advance(0.1f, null);
+        view.setIntegration(true, 0f);
+        view.advance(ResearchStationView.WAKE_SECONDS / 2f, null);
+
+        assertTrue(view.flashLevel() > 0f);
+        assertEquals(0.5f, view.wakeLevel(), TOLERANCE);
+
+        view.advance(ResearchStationView.FLASH_SECONDS, null);
+
+        assertEquals(1f, view.wakeLevel());
+        assertEquals(0f, view.flashLevel());
+    }
+
+    @Test
+    void theHoldFillsTheStationFromItsHubOutToBothEndsOfItsSpine() {
+        assertEquals(ResearchStationView.HUB_FRACTION, ResearchStationView.holdFillBottom(0f), TOLERANCE);
+        assertEquals(ResearchStationView.HUB_FRACTION, ResearchStationView.holdFillTop(0f), TOLERANCE);
+        assertEquals(ResearchStationView.SPINE_BOTTOM_FRACTION, ResearchStationView.holdFillBottom(1f), TOLERANCE);
+        assertEquals(ResearchStationView.SPINE_TOP_FRACTION, ResearchStationView.holdFillTop(1f), TOLERANCE);
+    }
+
+    @Test
+    void theStationKeepsOrbitingWhileTheViewAdvances() {
+        ResearchStationView view = view();
+        view.advance(0f, null);
+        float startX = view.focusX();
+        float startY = view.focusY();
+        view.advance(ResearchStationOrbit.ORBIT_SECONDS / 4f, null);
+
+        assertEquals(STATION_Y, (float) Math.hypot(view.focusX(), view.focusY()), TOLERANCE);
+        assertEquals(STATION_Y * (float) Math.sqrt(2), (float) Math.hypot(view.focusX() - startX, view.focusY() - startY), 0.1f);
     }
 }

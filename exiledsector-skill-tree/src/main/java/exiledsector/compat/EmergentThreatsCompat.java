@@ -13,7 +13,7 @@ public final class EmergentThreatsCompat {
             "vice_adaptive_pulse_resonator", "vice_adaptive_reactor_chamber", "vice_adaptive_tactical_core",
             "vice_adaptive_temporal_shell", "vice_adaptive_thruster_control", "vice_adaptive_trajectory_analyzer",
             "vice_adaptive_entropy_arrester", "vice_adaptive_entropy_projector_abyssal", "vice_adaptive_flux_dissipator",
-            "vice_adaptive_metastatic_growth");
+            "vice_adaptive_metastatic_growth", "vice_adaptive_entropy_projector");
     public static final CompatTarget TARGET = new CompatTarget("Emergent Threats", List.of(MOD_ID), TESTED_VERSIONS,
             () -> CompatTarget.missingHullMods(HULL_MOD_IDS));
 

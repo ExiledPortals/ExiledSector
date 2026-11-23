@@ -140,7 +140,7 @@ public final class SkillTreeNodeDrawer {
 
         for (SkillNode node : SkillTree.topology().nonRoots()) {
             float nodeAlpha = shownLayers.alphaFor(node);
-            if (nodeAlpha > 0f && !ExoshipNodes.isExoship(node)) {
+            if (nodeAlpha > 0f && !ExoshipNodes.isExoship(node) && !shownLayers.station().isStation(node)) {
                 renderNode(node, shownLayers.viewportFor(node), nodeAlpha, allocation);
             }
         }

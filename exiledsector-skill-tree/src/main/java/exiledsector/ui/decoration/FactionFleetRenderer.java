@@ -26,15 +26,19 @@ public final class FactionFleetRenderer implements DecorationRenderer {
     static final float ENCOUNTER_CHANCE = 0.15f;
     static final float MIN_RESPAWN_SECONDS = 30f;
     static final float MAX_RESPAWN_SECONDS = 60f;
+    static final float STATION_INNER_RADIUS = 180f;
+    static final float STATION_OUTER_RADIUS = 420f;
 
     private final LaneFleetTraffic.Factions factions = LaneFleetTraffic.sectorFactions();
     private final FleetTraffic traffic = new FleetTraffic(new Random(), MIN_RESPAWN_SECONDS, MAX_RESPAWN_SECONDS, this::spawn);
     private final Map<String, RoamVolume> roamVolumesByVolume = new LinkedHashMap<>();
+    private ResearchStationOrbit stationOrbit;
+    private RoamVolume stationVolume;
 
     private FactionFleetRenderer() {
     }
 
-    public static FactionFleetRenderer forActiveTree(Predicate<SkillNode> nodeHidden) {
+    public static FactionFleetRenderer forActiveTree(Predicate<SkillNode> nodeHidden, ResearchStationOrbit stationOrbit) {
         FactionFleetRenderer renderer = new FactionFleetRenderer();
         if (Global.getSector() == null) {
             return renderer;
@@ -47,6 +51,7 @@ public final class FactionFleetRenderer implements DecorationRenderer {
                 renderer.roamVolumesByVolume.put(volume, roamVolume);
             }
         }
+        renderer.addStationHome(stationOrbit, nodeHidden);
         Random random = renderer.traffic.random();
         for (String volume : renderer.roamVolumesByVolume.keySet()) {
             int fleetCount = MIN_FLEETS_PER_VOLUME + random.nextInt(MAX_FLEETS_PER_VOLUME - MIN_FLEETS_PER_VOLUME + 1);
@@ -58,6 +63,16 @@ public final class FactionFleetRenderer implements DecorationRenderer {
             }
         }
         return renderer;
+    }
+
+    private void addStationHome(ResearchStationOrbit orbit, Predicate<SkillNode> nodeHidden) {
+        SkillNode stationNode = orbit == null ? null : orbit.stationNode();
+        if (stationNode == null || nodeHidden.test(stationNode) || !TreeFleetFactions.stationHasFleets()) {
+            return;
+        }
+        stationOrbit = orbit;
+        stationVolume = new RoamVolume(orbit.x(), orbit.y(), STATION_INNER_RADIUS, STATION_OUTER_RADIUS);
+        roamVolumesByVolume.put(TreeFleetFactions.STATION_HOME, stationVolume);
     }
 
     static RoamVolume nextVolume(RoamVolume current, RoamVolume home, List<RoamVolume> alliedVolumes, Random random) {
@@ -107,6 +122,9 @@ public final class FactionFleetRenderer implements DecorationRenderer {
 
     @Override
     public void advance(float amount) {
+        if (stationVolume != null) {
+            stationVolume.moveTo(stationOrbit.x(), stationOrbit.y());
+        }
         traffic.advance(amount);
     }
 

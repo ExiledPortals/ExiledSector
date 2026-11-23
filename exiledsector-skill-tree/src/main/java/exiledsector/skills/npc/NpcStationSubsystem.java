@@ -12,12 +12,14 @@ import exiledsector.ModSettings;
 import exiledsector.compat.CompatTarget;
 import exiledsector.compat.EmergentThreatsCompat;
 import exiledsector.skills.AllocatedNode;
+import exiledsector.skills.HullForms;
 import exiledsector.skills.InstalledHullMods;
 import exiledsector.skills.ResearchStationNodes;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
+import exiledsector.skills.SkillType;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -119,8 +121,10 @@ public final class NpcStationSubsystem {
             return null;
         }
         for (SkillNode subsystem : ResearchStationNodes.subsystems()) {
-            if (subsystem.getType().getPhantomHullModIds().contains(hullModId)) {
-                return subsystem;
+            for (SkillType form : HullForms.withForms(subsystem.getType())) {
+                if (form.getPhantomHullModIds().contains(hullModId)) {
+                    return subsystem;
+                }
             }
         }
         return null;

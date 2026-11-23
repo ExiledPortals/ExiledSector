@@ -53,6 +53,15 @@ public final class ArcDischarge {
         }
     }
 
+    public static void chainFrom(ShipAPI sourceShip, ShipAPI struckShip, ShipAPI nextTarget, float energyDamage, float empDamage) {
+        CombatEngineAPI engine = Global.getCombatEngine();
+        if (engine == null || struckShip == null || nextTarget == null) {
+            return;
+        }
+        engine.spawnEmpArc(sourceShip, new Vector2f(struckShip.getLocation()), struckShip, nextTarget, DamageType.ENERGY, energyDamage, empDamage,
+                ARC_MAX_RANGE, ModSounds.orSilent(ARC_SOUND), ARC_THICKNESS, ARC_FRINGE, ARC_CORE);
+    }
+
     private static void spawnArc(CombatEngineAPI engine, ShipAPI sourceShip, ShipAPI target, float energyDamage, float empDamage) {
         engine.spawnEmpArc(sourceShip, new Vector2f(sourceShip.getLocation()), sourceShip, target, DamageType.ENERGY, energyDamage, empDamage,
                 ARC_MAX_RANGE, ModSounds.orSilent(ARC_SOUND), ARC_THICKNESS, ARC_FRINGE, ARC_CORE);

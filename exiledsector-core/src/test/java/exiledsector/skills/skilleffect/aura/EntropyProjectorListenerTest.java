@@ -13,6 +13,7 @@ import org.lwjgl.util.vector.Vector2f;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -38,7 +39,12 @@ class EntropyProjectorListenerTest {
     }
 
     private static ShipAPI projector(float arcs) {
+        return projector(arcs, 0f);
+    }
+
+    private static ShipAPI projector(float arcs, float chainChance) {
         ShipAPI ship = mock(ShipAPI.class, RETURNS_DEEP_STUBS);
+        when(ship.getMutableStats().getDynamic().getValue(EntropyProjectorListener.CHAIN_CHANCE_KEY, 0f)).thenReturn(chainChance);
         when(ship.getOwner()).thenReturn(0);
         when(ship.getLocation()).thenReturn(new Vector2f());
         when(ship.isAlive()).thenReturn(true);
@@ -98,6 +104,40 @@ class EntropyProjectorListenerTest {
         when(ship.isPhased()).thenReturn(false);
         listener.advance(EntropyProjectorListener.TARGET_SEARCH_SECONDS);
         verifyArcs(ship, close, 2);
+    }
+
+    private void verifyChains(ShipAPI source, ShipAPI struck, ShipAPI next, int chains) {
+        verify(engine, times(chains)).spawnEmpArc(eq(source), any(Vector2f.class), eq(struck), eq(next), eq(DamageType.ENERGY),
+                eq(EntropyProjectorListener.ENERGY_DAMAGE), eq(EntropyProjectorListener.EMP_DAMAGE), anyFloat(), any(), anyFloat(),
+                any(Color.class), any(Color.class));
+    }
+
+    @Test
+    void aCertainChainCarriesEveryArcOnToTheEnemyNearestItsTarget() {
+        ShipAPI ship = projector(2f, 100f);
+        ShipAPI struck = enemyAt(400f);
+        ShipAPI nextToStruck = enemyAt(900f);
+        ShipAPI behindProjector = enemyAt(-700f);
+        EntropyProjectorListener listener = new EntropyProjectorListener(ship, new Random(1L));
+
+        listener.advance(EntropyProjectorListener.CHARGE_SECONDS);
+
+        verifyArcs(ship, struck, 2);
+        verifyChains(ship, struck, nextToStruck, 2);
+        verifyChains(ship, struck, behindProjector, 0);
+    }
+
+    @Test
+    void withoutChainChanceNoArcJumpsOn() {
+        ShipAPI ship = projector(2f, 0f);
+        ShipAPI struck = enemyAt(400f);
+        ShipAPI nextToStruck = enemyAt(900f);
+        EntropyProjectorListener listener = new EntropyProjectorListener(ship, new Random(1L));
+
+        listener.advance(EntropyProjectorListener.CHARGE_SECONDS);
+
+        verifyArcs(ship, struck, 2);
+        verifyChains(ship, struck, nextToStruck, 0);
     }
 
     @Test

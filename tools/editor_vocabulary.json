@@ -206,6 +206,7 @@
     {"name": "ENGINE_DURABILITY_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},
     {"name": "ENGINE_ROOM_ITEM_EFFECT_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "ENTROPY_PROJECTOR_ARCS_FLAT", "statMode": null, "lowerIsBetter": false},
+    {"name": "ENTROPY_PROJECTOR_CHAIN_CHANCE_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "ESCORT_MANEUVER_BONUS_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "ESCORT_SHIELD_AND_ARMOR_DAMAGE_TAKEN_PERCENT", "statMode": null, "lowerIsBetter": true},
     {"name": "ESCORT_SPEED_BONUS_PERCENT", "statMode": null, "lowerIsBetter": false},

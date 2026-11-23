@@ -11938,8 +11938,8 @@
 			]
 		},
 		{
-			"id": "abyssal_entropy_projector_1",
-			"type": "abyssal_entropy_projector",
+			"id": "adaptive_entropy_projector_1",
+			"type": "adaptive_entropy_projector",
 			"connectedTo": [],
 			"x": -247,
 			"y": 870,

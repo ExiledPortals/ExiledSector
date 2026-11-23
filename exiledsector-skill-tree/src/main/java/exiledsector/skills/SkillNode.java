@@ -202,7 +202,7 @@ public class SkillNode extends TreeNode {
     }
 
     public SkillType resolveBaseType(ShipSkillData data) {
-        if (!type.isChoice()) return type;
+        if (!type.isChoice()) return HullForms.formOf(type, data);
         SkillType chosen = NodeEligibility.validOption(type, data.getChoiceSelection(getId()));
         return chosen != null ? chosen : type;
     }

@@ -17,6 +17,7 @@ import java.util.stream.Stream;
 public final class TreeFleetFactions {
 
     static final String DATA_PATH = "data/config/exiledSector/tree_fleet_factions.csv";
+    static final String STATION_HOME = SkillTags.AI_SUBSYSTEM_INTEGRATION;
     private static final String FACTION_COLUMN = "faction";
     private static final String VOLUME_COLUMN = "volume";
     private static final Logger LOG = Logger.getLogger(TreeFleetFactions.class);
@@ -33,13 +34,21 @@ public final class TreeFleetFactions {
         Map<String, String> loaded = new HashMap<>();
         CsvRows.forEachIdRow(rows, FACTION_COLUMN, (faction, row) -> {
             String volume = ModCsv.text(row, VOLUME_COLUMN);
-            if (!SkillTags.isVolume(volume) || SkillTags.CORE_VOLUME.equals(volume)) {
+            if (!isHome(volume)) {
                 LOG.warn("Ignoring faction " + faction + " in " + DATA_PATH + ": '" + volume + "' is not a faction volume");
                 return;
             }
             loaded.put(faction, volume);
         });
         VOLUME_BY_FACTION.set(Map.copyOf(loaded));
+    }
+
+    private static boolean isHome(String volume) {
+        return STATION_HOME.equals(volume) || SkillTags.isVolume(volume) && !SkillTags.CORE_VOLUME.equals(volume);
+    }
+
+    static boolean stationHasFleets() {
+        return VOLUME_BY_FACTION.get().containsValue(STATION_HOME);
     }
 
     static List<String> volumes() {

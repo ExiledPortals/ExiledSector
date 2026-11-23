@@ -10050,8 +10050,7 @@
 			"phantomHullMods": [
 				"vice_field_repair_nanites"
 			],
-			"flavour": "Repair nanites of this grade were made for drydock work, where nobody counts what they eat. The crew turns them loose on the hull mid-battle and lets them strip the nearest systems for feedstock. The engineering logs file this under routine maintenance.",
-			"flavourAutomated": "Repair nanites of this grade were made for drydock work, where nobody counts what they eat. The ship's core releases them on its own hull mid-battle and records which systems they strip for feedstock. It files the losses under routine maintenance.",
+			"flavour": "Embeds pre-programmed nanite clusters throughout the ship that activate in response to hull damage. Despite its obvious utility, this technology is rarely used by anyone aside from the most desperate pirate or freebooter captains. The damaged areas of the ship are rebuilt haphazardly, creating growing incompatibilities with surviving systems.",
 			"tags": [
 				"hull",
 				"repair",
@@ -10099,8 +10098,7 @@
 			"phantomHullMods": [
 				"vice_modular_bolt_coherer"
 			],
-			"flavour": "A modular coherer clamps onto energy mounts the original design was never meant to fit and tightens each bolt before it leaves the emitter. The crew copies the fittings from a Sindrian refit manual of uncertain provenance. The chapter on shielding the gun crews appears to have been removed.",
-			"flavourAutomated": "A modular coherer clamps onto energy mounts the original design was never meant to fit and tightens each bolt before it leaves the emitter. The refit crew follows a Sindrian refit manual the ship's core recovered from a wreck. The chapter on shielding the gun crews appears to have been removed.",
+			"flavour": "A modular version of the built-in Energy Bolt Coherer for energy pulse weapons. Spot failures in its radiation containment system under combat conditions endanger the crew.",
 			"tags": [
 				"non_beam_energy",
 				"range",
@@ -10153,7 +10151,7 @@
 			"phantomHullMods": [
 				"vice_attuned_emitter_diodes"
 			],
-			"flavour": "Attuned diodes are tuned to the pulse of a bolt coherer, and fed through one they make a beam strike shields like a slug. The emitters run shorter and cooler for it. A Diktat gunnery manual calls this a fair trade, in a footnote.",
+			"flavour": "Developed by the Sindrian Diktat with secret assistance from Tri-Tachyon, these specialised emitters interface with the Energy Bolt Coherer to also improve the constructive interference of beam weapons, at the cost of range and power output. While the system performs as intended, no other major polity has been brave enough, or callous enough, to install the Coherer on crewed warships.",
 			"tags": [
 				"beam",
 				"shield",
@@ -10201,8 +10199,7 @@
 			"phantomHullMods": [
 				"vice_modular_fleet_override"
 			],
-			"flavour": "An override package strips the safety limits from a strike craft's fire control and leaves the pilots to manage the rest. The crew learns the codes from Diktat carrier wings, who learned them through attrition. Recovery shuttle crews have started asking which wings carry it.",
-			"flavourAutomated": "An override package strips the safety limits from a strike craft's fire control and leaves the pilots to manage the rest. The ship's core lifts the codes from captured Diktat carrier logs and pushes them to every wing it launches. It keeps no record of what the pilots think of this.",
+			"flavour": "A modular version of the built-in Fleet Override, which takes much of the autonomy away from the pilots.",
 			"tags": [
 				"strikecraft",
 				"damage",
@@ -10276,8 +10273,7 @@
 			"phantomHullMods": [
 				"vice_unified_targeting_core"
 			],
-			"flavour": "A unified core runs every gun on the ship from one fire-control solution and hands the same picture to its strike craft. The processing stacks fill a compartment that used to be crew quarters. Nobody has asked for it back.",
-			"flavourAutomated": "A unified core runs every gun on the ship from one fire-control solution and hands the same picture to its strike craft. The refit crew fits the processing stacks into a compartment that used to be crew quarters. The ship's core has no use for it.",
+			"flavour": "A specialised targeting core that serves the weapons of both a carrier and its fighters.",
 			"tags": [
 				"range",
 				"ballistic",
@@ -10315,8 +10311,7 @@
 			"phantomHullMods": [
 				"vice_ai_subsystem_integration"
 			],
-			"flavour": "A derelict research station still circles the star, running experiments nobody ordered. The crew wires one of its delta cores into the ship's routines, and the ship stops needing most of them at their posts. The quartermaster still counts rations for everyone.",
-			"flavourAutomated": "A derelict research station still circles the star, running experiments nobody ordered. The ship's core compares its own architecture with the station's designs. It adopts the station's standards without comment.",
+			"flavour": "Automates operations under the command of an integrated delta-level AI core. For already automated ships, this overhauls the internal systems to standards adopted by the AI Remnant.",
 			"tags": [
 				"crew",
 				"strikecraft",
@@ -10344,8 +10339,7 @@
 			"phantomHullMods": [
 				"vice_adaptive_drive_field"
 			],
-			"flavour": "The station's archive holds a drive field that recalibrates itself against the ship's mass. The crew can only adjust it in dock, so the navigator plans every voyage around the next berth.",
-			"flavourAutomated": "The station's archive holds a drive field that recalibrates itself against the ship's mass. The ship's core recalibrates it at every berth and logs the drift between voyages.",
+			"flavour": "This AI-designed adaptive subsystem recalibrates the ship's drive field, a process so complex that it is normally only attempted in dock.",
 			"tags": [
 				"mobility",
 				"fuel",
@@ -10381,8 +10375,7 @@
 			"phantomHullMods": [
 				"vice_adaptive_emitter_diodes"
 			],
-			"flavour": "Adaptive diodes retune every beam emitter mid-fight until the beams interfere in the ship's favour. The beams fall short and lose some bite, but they push on shields like a slug. The gunners have stopped asking how it decides.",
-			"flavourAutomated": "Adaptive diodes retune every beam emitter mid-fight until the beams interfere in the ship's favour. The ship's core watches each retune and keeps the ones that worked.",
+			"flavour": "This AI-designed adaptive subsystem constantly adjusts the frequency and output of beam weapons to maximise constructive interference.",
 			"tags": [
 				"beam",
 				"shield",
@@ -10419,8 +10412,7 @@
 			"phantomHullMods": [
 				"vice_adaptive_flight_command"
 			],
-			"flavour": "The station's flight command hub can only track a few squadrons, but it tracks them closely. The deck crew seals the spare bays, and the pilots who remain launch faster than ever. Nobody volunteers to explain this to the others.",
-			"flavourAutomated": "The station's flight command hub can only track a few squadrons, but it tracks them closely. The ship's core seals the spare bays and records the faster launches.",
+			"flavour": "This AI-designed adaptive subsystem converts a carrier's standard flight command relay into a high-throughput network hub, suited to optimising a smaller number of elite units.",
 			"tags": [
 				"strikecraft",
 				"req_strikecraft_bays",
@@ -10452,8 +10444,7 @@
 			"phantomHullMods": [
 				"vice_adaptive_neural_net"
 			],
-			"flavour": "The station's neural net strips the latency out of the ship's computers, and the faster the mind in command, the more it strips. Crews under an AI core notice the difference. Crews under a human captain mostly notice the new hum.",
-			"flavourAutomated": "The station's neural net strips the latency out of the ship's computers, and the faster the mind in command, the more it strips. The ship's core times its own reactions before and after, and keeps the results.",
+			"flavour": "This AI-designed adaptive subsystem reduces the latency of onboard computer systems, improving ship performance in step with the processing power of a commanding AI core.",
 			"tags": [
 				"combat_readiness",
 				"station_subsystem"
@@ -10488,8 +10479,7 @@
 			"phantomHullMods": [
 				"vice_adaptive_phase_coils"
 			],
-			"flavour": "Secondary phase coils from the station's archive sit attenuated inside the hull. On a phase ship they keep the cloak fast under heavier flux; on any other hull they blur the ship's signature and soften incoming fire. The engineers still argue about which use was intended.",
-			"flavourAutomated": "Secondary phase coils from the station's archive sit attenuated inside the hull. On a phase ship they keep the cloak fast under heavier flux; on any other hull they blur the ship's signature and soften incoming fire. The ship's core tests both uses and records no preference.",
+			"flavour": "This AI-designed adaptive subsystem activates a series of attenuated secondary phase coils. On ships without a phase cloak, weapon impact energy is bled into phase space.",
 			"tags": [
 				"phase",
 				"sensors",
@@ -10518,8 +10508,7 @@
 			"phantomHullMods": [
 				"vice_adaptive_pulse_resonator"
 			],
-			"flavour": "A resonator from the station's archive stretches the reach of every pulse weapon aboard, on mounts no bolt coherer was ever fitted to. The gunnery officer has stopped asking where the extra range comes from.",
-			"flavourAutomated": "A resonator from the station's archive stretches the reach of every pulse weapon aboard, on mounts no bolt coherer was ever fitted to. The ship's core measures the extra range and files the explanation as unnecessary.",
+			"flavour": "This AI-designed adaptive subsystem works on energy pulse weapons. Its effect is not as strong as a built-in Energy Bolt Coherer.",
 			"tags": [
 				"non_beam_energy",
 				"range",
@@ -10552,8 +10541,7 @@
 			"phantomHullMods": [
 				"vice_adaptive_reactor_chamber"
 			],
-			"flavour": "The station's reactor chamber squeezes more out of the ship's power grid. The engineers rebuilt it from a schematic with half the labels missing. It runs, and nobody wants to open it again.",
-			"flavourAutomated": "The station's reactor chamber squeezes more out of the ship's power grid. The ship's core follows the schematic exactly, including the parts without labels.",
+			"flavour": "This AI-designed adaptive subsystem increases the output of the ship's power grid.",
 			"tags": [
 				"flux",
 				"station_subsystem"
@@ -10596,8 +10584,7 @@
 			"phantomHullMods": [
 				"vice_adaptive_tactical_core"
 			],
-			"flavour": "When nobody aboard holds command, a tactical core from the station takes the fight. It goes for the biggest hulls and works the shields without hesitation. It steps aside for any captain who comes aboard, and the crew is never sure it likes that.",
-			"flavourAutomated": "When no other mind commands the ship, a tactical core from the station takes the fight. It goes for the biggest hulls and works the shields without hesitation. It yields to any captain installed and logs the handover.",
+			"flavour": "This AI-designed adaptive subsystem self-organises into a dedicated delta-level machine intelligence specialised in ship-to-ship combat. Hardware limitations prevent it from operating in tandem with a commanding officer or general-purpose AI.",
 			"tags": [
 				"damage",
 				"damage_taken",
@@ -10629,8 +10616,7 @@
 			"phantomHullMods": [
 				"vice_adaptive_temporal_shell"
 			],
-			"flavour": "The station's temporal shell turns the shields into a weak time accelerator. The ship moves and fires faster, and the shields buckle sooner. The medical officer has asked not to be told how much faster the crew is ageing.",
-			"flavourAutomated": "The station's temporal shell turns the shields into a weak time accelerator. The ship moves and fires faster, and the shields buckle sooner. The ship's core notes that its own clock runs fast and corrects its logs.",
+			"flavour": "This AI-designed adaptive subsystem turns the ship's shields into a weak temporal shell that accelerates the flow of time on board.",
 			"tags": [
 				"shield",
 				"damage_taken",
@@ -10669,8 +10655,7 @@
 			"phantomHullMods": [
 				"vice_adaptive_thruster_control"
 			],
-			"flavour": "The station's thruster controller pushes every nozzle harder, and the bigger the hull, the more it finds to push. The engine techs keep the old settings on file, just in case.",
-			"flavourAutomated": "The station's thruster controller pushes every nozzle harder, and the bigger the hull, the more it finds to push. The ship's core records how much it finds on each hull.",
+			"flavour": "This AI-designed adaptive subsystem improves engine performance, with greater benefits for larger hulls.",
 			"tags": [
 				"mobility",
 				"station_subsystem"
@@ -10701,8 +10686,7 @@
 			"phantomHullMods": [
 				"vice_adaptive_trajectory_analyzer"
 			],
-			"flavour": "The station's trajectory analyzer was built for archaic composite guns that modern fire control cannot steer. It helps ordinary ballistics a little too. The old guns finally hit what they are pointed at.",
-			"flavourAutomated": "The station's trajectory analyzer was built for archaic composite guns that modern fire control cannot steer. It helps ordinary ballistics a little too. The ship's core logs every archaic mount it finds.",
+			"flavour": "This AI-designed adaptive subsystem is built for archaic composite weapons that are not usually compatible with modern targeting systems, although more conventional ballistic weapons also stand to benefit. Given the high-tech arsenal of the AI Remnant, the existence of such a subsystem is highly unusual.",
 			"tags": [
 				"ballistic",
 				"range",
@@ -10738,8 +10722,7 @@
 			"phantomHullMods": [
 				"vice_adaptive_entropy_arrester"
 			],
-			"flavour": "An entropy arrester anchors the hull to an earlier state of itself and lets it drift back over time. Damage undoes itself, slowly, and dock repairs go quicker. The crew does not like to watch a bulkhead mend.",
-			"flavourAutomated": "An entropy arrester anchors the hull to an earlier state of itself and lets it drift back over time. The ship's core watches its bulkheads mend and records the rate.",
+			"flavour": "This AI-designed adaptive subsystem subtly anchors the quantum state of the ship's hull, causing it to gradually revert to that state over time. The reversion causes assembly errors and spot failures to accumulate as more damage is repaired.",
 			"tags": [
 				"hull",
 				"repair",
@@ -10747,9 +10730,9 @@
 			]
 		},
 		{
-			"id": "abyssal_entropy_projector",
-			"name": "Abyssal Entropy Projector",
-			"icon": "graphics/exiledSector/tree/emergent_threats/vice_adaptive_entropy_projector_abyssal.png",
+			"id": "adaptive_entropy_projector",
+			"name": "Adaptive Entropy Projector",
+			"icon": "graphics/exiledSector/tree/emergent_threats/vice_adaptive_entropy_projector.png",
 			"tier": "NOTABLE",
 			"hullSizeEffects": [
 				{
@@ -10768,10 +10751,47 @@
 				}
 			],
 			"phantomHullMods": [
+				"vice_adaptive_entropy_projector"
+			],
+			"flavour": "This unusual adaptive subsystem appears to directly harness the destructive power of transdimensional storms. Its late Expansion Epoch system architecture is compatible with modern Tri-Tachyon automation protocols, although the more exotic effects of the subsystem do not appear to be operational.",
+			"tags": [
+				"emp",
+				"nearby_ships",
+				"station_subsystem"
+			]
+		},
+		{
+			"id": "abyssal_entropy_projector",
+			"name": "Abyssal Entropy Projector",
+			"icon": "graphics/exiledSector/tree/emergent_threats/vice_adaptive_entropy_projector_abyssal.png",
+			"tier": "NOTABLE",
+			"hullSizeEffects": [
+				{
+					"effect": "ENTROPY_PROJECTOR_ARCS_FLAT",
+					"frigate": 2,
+					"destroyer": 2,
+					"cruiser": 3,
+					"capitalShip": 4
+				},
+				{
+					"effect": "ENTROPY_PROJECTOR_CHAIN_CHANCE_PERCENT",
+					"frigate": 20,
+					"destroyer": 20,
+					"cruiser": 20,
+					"capitalShip": 20
+				}
+			],
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "vice_adaptive_entropy_projector_abyssal"
+				}
+			],
+			"phantomHullMods": [
 				"vice_adaptive_entropy_projector_abyssal"
 			],
-			"flavour": "This projector came out of the abyss still charged by a storm that should not exist. Whenever it fills, it lashes the nearest enemy ship. The crew keeps its access hatch welded shut.",
-			"flavourAutomated": "This projector came out of the abyss still charged by a storm that should not exist. Whenever it fills, it lashes the nearest enemy ship. The ship's core keeps it walled off from its own systems.",
+			"flavour": "This unusual adaptive subsystem appears to directly harness the destructive power of transdimensional storms.",
 			"tags": [
 				"emp",
 				"nearby_ships",
@@ -10799,8 +10819,7 @@
 			"phantomHullMods": [
 				"vice_adaptive_flux_dissipator"
 			],
-			"flavour": "The station's dissipator reworks the shield emitters to bleed off hard flux while the shields are up. It was designed for automated hulls and fits crewed ships with surprising ease. The engineers suspect it was meant to.",
-			"flavourAutomated": "The station's dissipator reworks the shield emitters to bleed off hard flux while the shields are up. It was designed for hulls like this one. The ship's core notes the fit and does not comment.",
+			"flavour": "This AI-designed adaptive subsystem modifies the ship's shield emitters. Despite being compatible with the automation protocols used by Remnant fleets, this design bears the hallmarks of a different yet equally frightening machine intellect.",
 			"tags": [
 				"flux",
 				"shield",
@@ -10837,8 +10856,7 @@
 			"phantomHullMods": [
 				"vice_adaptive_metastatic_growth"
 			],
-			"flavour": "Nanite colonies from the station grow like tumours under the hull and spread into the missile racks. The hull thickens and the missiles hit harder. The crew tries not to lean on the walls.",
-			"flavourAutomated": "Nanite colonies from the station grow like tumours under the hull and spread into the missile racks. The hull thickens and the missiles hit harder. The ship's core monitors the growth and does not stop it.",
+			"flavour": "This bizarre adaptive subsystem causes tumour-like nodes of nanite colonies to grow beneath the hull and spread to onboard missile systems. The modifications to missiles appear to be a flawed attempt to create new nanite infection vectors, although they degrade too quickly away from the primary colony to compromise other ships.",
 			"tags": [
 				"hull",
 				"missile",

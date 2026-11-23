@@ -24,6 +24,7 @@ import exiledsector.skills.SkillType;
 import exiledsector.skills.radius.RadiusSize;
 import exiledsector.ui.decoration.AbyssDarknessRenderer;
 import exiledsector.ui.decoration.DecorationScene;
+import exiledsector.ui.decoration.ResearchStationOrbit;
 import exiledsector.ui.decoration.ShipTreeDecorations;
 import exiledsector.ui.decoration.SkillTreeFleetRenderer;
 import exiledsector.ui.decoration.StarfieldRenderer;
@@ -47,6 +48,7 @@ import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Consumer;
 
 public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin implements ZoomableScreen {
@@ -58,7 +60,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin implements Zo
     private final AbyssDarknessRenderer abyssDarkness = AbyssDarknessRenderer.forActiveTree();
     private final TreeDecorations decorations;
     private final ExoshipView exoshipView = new ExoshipView();
-    private final ResearchStationView stationView = new ResearchStationView();
+    private final ResearchStationOrbit stationOrbit = ResearchStationOrbit.atRandomPoint(new Random());
+    private final ResearchStationView stationView = new ResearchStationView(stationOrbit);
     private final SkillTreeFleetRenderer fleetRenderer;
     private final NodeRadiusRingRenderer radiusRingRenderer = new NodeRadiusRingRenderer();
     private final InfestationEffects infestationEffects = new InfestationEffects();
@@ -109,7 +112,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin implements Zo
                 () -> new TreeAllocationSession(member, variant, refitButton, shipNodeSearch));
         this.treeSession = session;
         this.decorations = ScreenPerformance.phase("decorations",
-                () -> ShipTreeDecorations.forActiveTree(session::isLocked, session::isConcealed));
+                () -> ShipTreeDecorations.forActiveTree(session::isLocked, session::isConcealed, stationOrbit));
         this.nodeDrawer = ScreenPerformance.phase("node drawer", () -> SkillTreeNodeDrawer.attachedTo(session, member, panelStyle, shipNodeSearch));
         this.templateUi = ScreenPerformance.phase("templates", () -> new SkillTreeTemplateController(member, session, panelStyle));
         SkillTreeStatPanel shipStatPanel = ScreenPerformance.phase("stat panel", () -> new SkillTreeStatPanel(member, variant, panelStyle));
@@ -219,6 +222,10 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin implements Zo
         exoshipView.advance(amount, exoshipView.isAvailable() && treeSession.isAllocated(exoshipView.exoshipNode()));
         if (exoshipView.isActive()) {
             camera.follow(exoshipView.focusX(), exoshipView.focusY(), amount);
+        }
+        if (stationView.isAvailable()) {
+            SkillNode stationNode = stationView.stationNode();
+            stationView.setIntegration(treeSession.isAllocated(stationNode), treeSession.integrationHoldProgress(stationNode));
         }
         stationView.advance(amount, treeSession.selectedStationSubsystem());
         if (stationView.isActive()) {

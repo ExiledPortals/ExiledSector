@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TreeFleetFactionsTest {
@@ -61,5 +62,22 @@ class TreeFleetFactionsTest {
         assertEquals(List.of("enigma"), TreeFleetFactions.factionsIn("enigma"));
         assertEquals(List.of(), TreeFleetFactions.factionsIn("exotech"));
         assertTrue(TreeFleetFactions.volumes().containsAll(List.of("enigma", "kesteven", "abyss", "nightcross", "stargazer", "tania")));
+    }
+
+    @Test
+    void theResearchStationIsAHomeForFleetsWithoutBeingAVolume() throws Exception {
+        TreeFleetFactions.register(new JSONArray("[{\"faction\": \"diamond_nexus\", \"volume\": \"ai_subsystem_integration\"}]"));
+
+        assertTrue(TreeFleetFactions.stationHasFleets());
+        assertEquals(List.of("diamond_nexus"), TreeFleetFactions.factionsIn(TreeFleetFactions.STATION_HOME));
+        assertFalse(TreeFleetFactions.volumes().contains(TreeFleetFactions.STATION_HOME));
+    }
+
+    @Test
+    void theShippedCsvSendsEmergentThreatsFleetsToTheStation() throws Exception {
+        String csv = Files.readString(ProjectFiles.projectRoot().resolve(TreeFleetFactions.DATA_PATH));
+        TreeFleetFactions.register(CDL.toJSONArray(csv.replace("\r\n", "\n")));
+
+        assertTrue(TreeFleetFactions.factionsIn(TreeFleetFactions.STATION_HOME).containsAll(List.of("diamond_nexus", "vantage_group", "asm_relic")));
     }
 }
