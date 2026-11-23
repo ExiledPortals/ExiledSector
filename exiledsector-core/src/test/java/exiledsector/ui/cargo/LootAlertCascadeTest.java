@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -25,6 +26,7 @@ class LootAlertCascadeTest {
 
     private final Map<String, LootAlert> alertsById = Map.of(RARE_ID, LootAlert.STANDARD, UNIQUE_ID, LootAlert.VALUABLE);
     private final Function<CargoStackAPI, LootAlert> classifier = stack -> alertsById.get(stack.getSpecialDataIfSpecial().getId());
+    private final Predicate<SpecialItemData> perInstance = special -> false;
     private final List<String> played = new ArrayList<>();
 
     private static CargoStackAPI stack(String itemId, String data) {
@@ -39,7 +41,7 @@ class LootAlertCascadeTest {
 
     @Test
     void slowRevealPlaysEachAlertAsItsStackAppears() {
-        LootAlertCascade cascade = LootAlertCascade.of(List.of(commodity(), stack(RARE_ID, "a"), stack(UNIQUE_ID, "b")), classifier, 0);
+        LootAlertCascade cascade = LootAlertCascade.of(List.of(commodity(), stack(RARE_ID, "a"), stack(UNIQUE_ID, "b")), classifier, perInstance, 0);
         List<CargoStackAPI> shown = new ArrayList<>();
 
         cascade.advance(shown, 100 * MS, played::add);
@@ -59,7 +61,7 @@ class LootAlertCascadeTest {
 
     @Test
     void skippedRevealCascadesAlertsTwoHundredMillisecondsApart() {
-        LootAlertCascade cascade = LootAlertCascade.of(List.of(stack(RARE_ID, "a"), stack(UNIQUE_ID, "b"), stack(RARE_ID, "c")), classifier, 0);
+        LootAlertCascade cascade = LootAlertCascade.of(List.of(stack(RARE_ID, "a"), stack(UNIQUE_ID, "b"), stack(RARE_ID, "c")), classifier, perInstance, 0);
         List<CargoStackAPI> shown = List.of(stack(RARE_ID, "a"), stack(UNIQUE_ID, "b"), stack(RARE_ID, "c"));
 
         cascade.advance(shown, 1000 * MS, played::add);
@@ -80,7 +82,7 @@ class LootAlertCascadeTest {
     void everyInstanceInAStackPlaysItsOwnAlert() {
         CargoStackAPI threeTuning = stack(UNIQUE_ID, "a");
         when(threeTuning.getSize()).thenReturn(3f);
-        LootAlertCascade cascade = LootAlertCascade.of(List.of(threeTuning), classifier, 0);
+        LootAlertCascade cascade = LootAlertCascade.of(List.of(threeTuning), classifier, perInstance, 0);
         List<CargoStackAPI> shown = List.of(stack(UNIQUE_ID, "a"));
 
         for (long step = 0; step < 5; step++) {
@@ -91,8 +93,22 @@ class LootAlertCascadeTest {
     }
 
     @Test
+    void bulkStacksPlayOneAlertForTheWholeStack() {
+        CargoStackAPI fortyFeedstock = stack(RARE_ID, null);
+        when(fortyFeedstock.getSize()).thenReturn(40f);
+        LootAlertCascade cascade = LootAlertCascade.of(List.of(fortyFeedstock), classifier, special -> true, 0);
+        List<CargoStackAPI> shown = List.of(stack(RARE_ID, null));
+
+        for (long step = 0; step < 5; step++) {
+            cascade.advance(shown, 1000 * MS + step * LootAlertCascade.SPACING_NANOS, played::add);
+        }
+
+        assertEquals(List.of(LootAlert.STANDARD.soundId()), played);
+    }
+
+    @Test
     void stacksAddedAfterTheLootWasShownStaySilent() {
-        LootAlertCascade cascade = LootAlertCascade.of(List.of(stack(RARE_ID, "a")), classifier, 0);
+        LootAlertCascade cascade = LootAlertCascade.of(List.of(stack(RARE_ID, "a")), classifier, perInstance, 0);
 
         cascade.advance(List.of(stack(RARE_ID, "other"), stack(UNIQUE_ID, "b")), 2500 * MS, played::add);
 
@@ -103,7 +119,7 @@ class LootAlertCascadeTest {
 
     @Test
     void longCommodityRevealsKeepTheWatcherWaitingForLaterSpecials() {
-        LootAlertCascade cascade = LootAlertCascade.of(List.of(stack(UNIQUE_ID, "b")), classifier, 0);
+        LootAlertCascade cascade = LootAlertCascade.of(List.of(stack(UNIQUE_ID, "b")), classifier, perInstance, 0);
         List<CargoStackAPI> shown = new ArrayList<>();
         long nowNanos = 0;
 
@@ -121,7 +137,7 @@ class LootAlertCascadeTest {
 
     @Test
     void lootWithoutAlertsHasNothingToWatch() {
-        LootAlertCascade cascade = LootAlertCascade.of(List.of(commodity(), stack(PLAIN_ID, "a")), classifier, 0);
+        LootAlertCascade cascade = LootAlertCascade.of(List.of(commodity(), stack(PLAIN_ID, "a")), classifier, perInstance, 0);
 
         assertFalse(cascade.hasAlerts());
     }

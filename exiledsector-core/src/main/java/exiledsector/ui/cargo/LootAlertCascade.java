@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 final class LootAlertCascade {
 
@@ -35,13 +36,15 @@ final class LootAlertCascade {
         this.lastProgressNanos = startNanos;
     }
 
-    static LootAlertCascade of(List<CargoStackAPI> lootStacks, Function<CargoStackAPI, LootAlert> classifier, long startNanos) {
+    static LootAlertCascade of(List<CargoStackAPI> lootStacks, Function<CargoStackAPI, LootAlert> classifier, Predicate<SpecialItemData> oncePerStack,
+                               long startNanos) {
         List<PendingDrop> pendingDrops = new ArrayList<>();
         for (CargoStackAPI stack : lootStacks) {
             SpecialItemData special = stack.getSpecialDataIfSpecial();
             LootAlert alert = special == null ? null : classifier.apply(stack);
             if (alert != null) {
-                pendingDrops.add(new PendingDrop(special, alert, Math.max(1, Math.round(stack.getSize()))));
+                int alertCount = oncePerStack.test(special) ? 1 : Math.max(1, Math.round(stack.getSize()));
+                pendingDrops.add(new PendingDrop(special, alert, alertCount));
             }
         }
         return new LootAlertCascade(pendingDrops, startNanos);

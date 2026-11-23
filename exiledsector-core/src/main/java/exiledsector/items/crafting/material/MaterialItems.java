@@ -21,6 +21,7 @@ public final class MaterialItems {
     private static final SpriteCache SPRITES = new SpriteCache(MaterialItems.class);
     private static final Color FEEDSTOCK_COLOR = new Color(200, 170, 130);
     private static final DomainContributions<DomainMaterial> DOMAIN_MATERIALS = DomainContributions.fromEveryDomain(ExiledSectorDomain::materialItems);
+    private static final DomainContributions<String> DOMAIN_FEEDSTOCKS = DomainContributions.fromEveryDomain(ExiledSectorDomain::craftingBenchFeedstockIds);
 
     private MaterialItems() {
     }
@@ -42,6 +43,10 @@ public final class MaterialItems {
 
     public static boolean isMaterial(String itemId) {
         return itemId != null && ids().contains(itemId);
+    }
+
+    public static boolean isFeedstock(String itemId) {
+        return ItemDisassembly.FEEDSTOCK_ITEM_ID.equals(itemId) || DOMAIN_FEEDSTOCKS.all().contains(itemId);
     }
 
     public static MaterialTier tier(String itemId) {

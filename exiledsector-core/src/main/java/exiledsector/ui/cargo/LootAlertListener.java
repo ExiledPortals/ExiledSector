@@ -27,7 +27,7 @@ public final class LootAlertListener implements ShowLootListener, SubmarketUpdat
         if (loot == null || sector == null) {
             return;
         }
-        LootAlertCascade cascade = LootAlertCascade.of(loot.getStacksCopy(), LootAlert::of, System.nanoTime());
+        LootAlertCascade cascade = LootAlertCascade.of(loot.getStacksCopy(), LootAlert::of, LootAlert::oncePerStack, System.nanoTime());
         if (cascade.hasAlerts()) {
             activeWatcher = new Watcher(loot, cascade);
             sector.addTransientScript(activeWatcher);

@@ -57,6 +57,10 @@ public enum LootAlert {
         return preview == null ? null : of(preview.rarity());
     }
 
+    static boolean oncePerStack(SpecialItemData special) {
+        return MaterialItems.isFeedstock(special.getId());
+    }
+
     static LootAlert of(ItemRarity rarity) {
         return switch (rarity) {
             case RARE -> STANDARD;

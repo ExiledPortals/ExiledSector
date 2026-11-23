@@ -2,6 +2,7 @@ package exiledsector.items.crafting.material;
 
 import exiledsector.charts.StarChartSettings;
 import exiledsector.items.ItemUnlock;
+import exiledsector.items.crafting.ItemDisassembly;
 import exiledsector.items.starchart.StarChartFixtures;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -65,6 +66,13 @@ class MaterialItemPluginTest {
         for (InfusedFeedstock feedstock : InfusedFeedstock.values()) {
             assertTrue(MaterialItems.isMaterial(feedstock.itemId()), feedstock.name());
             assertEquals(feedstock.color(), MaterialItems.color(feedstock.itemId()), feedstock.name());
+            assertTrue(MaterialItems.isFeedstock(feedstock.itemId()), feedstock.name());
         }
+    }
+
+    @Test
+    void nanoswarmsAreNotFeedstock() {
+        assertTrue(MaterialItems.isFeedstock(ItemDisassembly.FEEDSTOCK_ITEM_ID));
+        assertFalse(MaterialItems.isFeedstock(Nanoswarm.TUNING.itemId()));
     }
 }
