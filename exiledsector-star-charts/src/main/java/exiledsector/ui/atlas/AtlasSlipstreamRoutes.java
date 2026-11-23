@@ -12,6 +12,7 @@ final class AtlasSlipstreamRoutes {
     static final float WIDTH_VIEW_SHARE = 0.12f;
     static final float MIN_WIDTH = 200f;
     static final float MAX_WIDTH = 400f;
+    static final float VIEW_CROSSING_SECONDS = 21f;
     static final float FOOTPRINT = NodeMetrics.NODE_SIZE * AtlasMapCanvas.NODE_SCALE;
     static final float SYSTEM_RADIUS = FOOTPRINT * (AtlasMapCanvas.ANOMALY_ORBIT_SHARE + AtlasMapCanvas.ANOMALY_ICON_SHARE);
 
@@ -31,7 +32,7 @@ final class AtlasSlipstreamRoutes {
         for (AtlasCell cell : canvas.nodeCells()) {
             AtlasNode node = canvas.nodeAt(cell);
             if (node != null && !node.isVoid()) {
-                grid.blockCircle(canvas.displayX(cell), canvas.displayY(cell), radius);
+                grid.blockCircle(canvas.displayX(cell), canvas.displayY(cell), radius * canvas.systemSize(cell));
             }
         }
     }

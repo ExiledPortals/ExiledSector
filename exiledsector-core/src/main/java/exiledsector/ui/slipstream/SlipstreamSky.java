@@ -6,9 +6,14 @@ import java.util.Random;
 
 public final class SlipstreamSky {
 
-    public record Pace(float minFirstSeconds, float maxFirstSeconds, float minRestSeconds, float maxRestSeconds) {
-        public static final Pace RARE = new Pace(30f, 90f, 120f, 300f);
-        public static final Pace OCCASIONAL = new Pace(15f, 45f, 60f, 150f);
+    public record Pace(float minFirstSeconds, float maxFirstSeconds, float minRestSeconds, float maxRestSeconds, float viewCrossingSeconds) {
+        public static final float BRISK_VIEW_CROSSING_SECONDS = 7f;
+        public static final Pace RARE = new Pace(30f, 90f, 120f, 300f, BRISK_VIEW_CROSSING_SECONDS);
+        public static final Pace OCCASIONAL = new Pace(15f, 45f, 60f, 150f, BRISK_VIEW_CROSSING_SECONDS);
+
+        public Pace crossingViewIn(float seconds) {
+            return new Pace(minFirstSeconds, maxFirstSeconds, minRestSeconds, maxRestSeconds, seconds);
+        }
     }
 
     static final float MIN_RETRY_SECONDS = 8f;
@@ -47,7 +52,7 @@ public final class SlipstreamSky {
             untilNext = between(MIN_RETRY_SECONDS, MAX_RETRY_SECONDS);
             return;
         }
-        event = new SlipstreamEvent(route, random);
+        event = new SlipstreamEvent(route, Math.max(lastView.width(), lastView.height()) / pace.viewCrossingSeconds(), random);
     }
 
     public void render(TreeViewport viewport, float alphaMult) {

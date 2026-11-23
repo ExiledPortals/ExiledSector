@@ -4,7 +4,6 @@ import java.util.Random;
 
 final class SlipstreamEvent {
 
-    static final float CROSSING_SECONDS = 9f;
     static final float LINGER_SECONDS = 30f;
     static final float LINGER_JITTER_SECONDS = 3f;
 
@@ -16,12 +15,12 @@ final class SlipstreamEvent {
     private final float dissolveAfter;
     private float elapsed;
 
-    SlipstreamEvent(SlipstreamRoute route, Random random) {
+    SlipstreamEvent(SlipstreamRoute route, float speed, Random random) {
         this.random = random;
+        this.speed = speed;
         stream = new Slipstream(route, random);
         ghosts = new SensorGhostPack(route, random);
-        speed = route.length() / CROSSING_SECONDS;
-        dissolveAfter = LINGER_SECONDS + (random.nextFloat() * 2f - 1f) * LINGER_JITTER_SECONDS;
+        dissolveAfter = route.length() / speed + LINGER_SECONDS + (random.nextFloat() * 2f - 1f) * LINGER_JITTER_SECONDS;
     }
 
     Slipstream stream() {

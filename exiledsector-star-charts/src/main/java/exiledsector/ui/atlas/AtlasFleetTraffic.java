@@ -46,8 +46,9 @@ final class AtlasFleetTraffic {
                     neighbours.add(neighbour.pack());
                 }
             }
-            ports.add(new LaneFleetTraffic.Port(cell.pack(), canvas.displayX(cell), canvas.displayY(cell), reach * ROAM_INNER_SHARE,
-                    reach * ROAM_OUTER_SHARE, AtlasOpening.territoryOwnerOf(canvas.generator(), canvas.state(), cell), neighbours));
+            float systemReach = reach * canvas.systemSize(cell);
+            ports.add(new LaneFleetTraffic.Port(cell.pack(), canvas.displayX(cell), canvas.displayY(cell), systemReach * ROAM_INNER_SHARE,
+                    systemReach * ROAM_OUTER_SHARE, AtlasOpening.territoryOwnerOf(canvas.generator(), canvas.state(), cell), neighbours));
         }
         return ports;
     }

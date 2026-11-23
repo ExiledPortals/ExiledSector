@@ -12,14 +12,20 @@ import java.util.Random;
 public final class CorridorSearch {
 
     static final int ATTEMPTS = 8;
-    static final int BORDER_PROBES = 12;
-    static final float OPPOSITE_SIDE_CHANCE = 0.7f;
+    static final int THROUGH_PROBES = 12;
+    static final float THROUGH_REACH_SHARE = 0.25f;
+    static final float MAX_TILT_DEGREES = 35f;
+    static final float END_SHIFT_SHARE = 0.3f;
+    static final int BORDER_SEARCH_CELLS = 12;
     static final float MAX_DETOUR = 1.8f;
-    static final float MIN_SHARE_IN_VIEW = 0.3f;
+    static final float MIN_VIEW_CROSSING_SHARE = 0.5f;
     static final int CROWDING_CELLS = 4;
     static final float CROWDING_COST = 1.5f;
-    static final int SMOOTHING_PASSES = 3;
-    static final float VIEW_SAMPLE_SPACING_WIDTHS = 0.5f;
+    static final float SPACING_WIDTHS = 0.5f;
+    static final int RELAX_ROUNDS = 4;
+    static final int RELAX_PASSES = 25;
+    static final float RELAX_SHARE = 0.5f;
+    static final float MIN_RELAX_SHARE = 0.05f;
     private static final float DIAGONAL = (float) Math.sqrt(2.0);
     private static final int[][] STEPS = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 
@@ -29,20 +35,28 @@ public final class CorridorSearch {
     public static SlipstreamRoute route(CorridorGrid grid, ViewWindow view, float width, Random random) {
         int[] cellsToBlocked = grid.cellsToBlocked();
         for (int attempt = 0; attempt < ATTEMPTS; attempt++) {
-            int entrySide = random.nextInt(4);
-            int exitSide = random.nextFloat() < OPPOSITE_SIDE_CHANCE ? entrySide ^ 1 : (entrySide < 2 ? 2 : 0) + random.nextInt(2);
-            int entry = freeBorderCell(grid, entrySide, random);
-            int exit = freeBorderCell(grid, exitSide, random);
-            if (entry < 0 || exit < 0) {
+            Vector2f through = freeThroughPoint(grid, view, random);
+            if (through == null) {
                 continue;
             }
-            List<Vector2f> cells = shortestPath(grid, cellsToBlocked, entry, exit);
-            if (cells == null) {
+            double heading = heading(view, random);
+            int entry = borderCellNear(grid, endPoint(grid, through, heading + Math.PI, random));
+            int exit = borderCellNear(grid, endPoint(grid, through, heading, random));
+            int middle = grid.cellAt(through.x, through.y);
+            if (entry < 0 || exit < 0 || middle < 0) {
                 continue;
             }
-            List<Vector2f> smoothed = smoothed(grid, pulled(grid, cells));
-            if (isAcceptable(smoothed, view, width)) {
-                return new SlipstreamRoute(smoothed, width);
+            List<Vector2f> approach = shortestPath(grid, cellsToBlocked, entry, middle);
+            List<Vector2f> departure = approach == null ? null : shortestPath(grid, cellsToBlocked, middle, exit);
+            if (departure == null) {
+                continue;
+            }
+            List<Vector2f> legs = new ArrayList<>(pulled(grid, approach));
+            List<Vector2f> secondLeg = pulled(grid, departure);
+            legs.addAll(secondLeg.subList(1, secondLeg.size()));
+            List<Vector2f> relaxed = relaxed(grid, legs, width * SPACING_WIDTHS);
+            if (isAcceptable(relaxed, view, width)) {
+                return new SlipstreamRoute(relaxed, width);
             }
         }
         return null;
@@ -54,7 +68,7 @@ public final class CorridorSearch {
         float straight = Vector2f.sub(last, first, null).length();
         float length = 0f;
         float lengthInView = 0f;
-        float sampleSpacing = Math.max(1f, width * VIEW_SAMPLE_SPACING_WIDTHS);
+        float sampleSpacing = Math.max(1f, width * SPACING_WIDTHS);
         for (int i = 1; i < points.size(); i++) {
             Vector2f from = points.get(i - 1);
             Vector2f to = points.get(i);
@@ -68,35 +82,72 @@ public final class CorridorSearch {
                 }
             }
         }
-        return straight > 0f && length <= straight * MAX_DETOUR && lengthInView >= length * MIN_SHARE_IN_VIEW;
+        float longSide = Math.max(view.width(), view.height());
+        return straight > 0f && length <= straight * MAX_DETOUR && lengthInView >= longSide * MIN_VIEW_CROSSING_SHARE;
     }
 
-    private static int freeBorderCell(CorridorGrid grid, int side, Random random) {
-        int span = side < 2 ? grid.rows() : grid.columns();
-        for (int probe = 0; probe < BORDER_PROBES; probe++) {
-            int along = span / 6 + random.nextInt(Math.max(1, span * 2 / 3));
-            int column;
-            int row;
-            switch (side) {
-                case 0 -> {
-                    column = 0;
-                    row = along;
-                }
-                case 1 -> {
-                    column = grid.columns() - 1;
-                    row = along;
-                }
-                case 2 -> {
-                    column = along;
-                    row = 0;
-                }
-                default -> {
-                    column = along;
-                    row = grid.rows() - 1;
-                }
+    private static Vector2f freeThroughPoint(CorridorGrid grid, ViewWindow view, Random random) {
+        float centerX = (view.minX() + view.maxX()) / 2f;
+        float centerY = (view.minY() + view.maxY()) / 2f;
+        for (int probe = 0; probe < THROUGH_PROBES; probe++) {
+            float x = centerX + (random.nextFloat() * 2f - 1f) * THROUGH_REACH_SHARE * view.width();
+            float y = centerY + (random.nextFloat() * 2f - 1f) * THROUGH_REACH_SHARE * view.height();
+            if (grid.isFree(x, y)) {
+                return new Vector2f(x, y);
             }
-            if (column < grid.columns() && row < grid.rows() && !grid.isBlocked(column, row)) {
-                return row * grid.columns() + column;
+        }
+        return null;
+    }
+
+    private static double heading(ViewWindow view, Random random) {
+        double along = view.width() >= view.height() ? 0.0 : Math.PI / 2.0;
+        if (random.nextBoolean()) {
+            along += Math.PI;
+        }
+        return along + Math.toRadians(MAX_TILT_DEGREES * (random.nextFloat() * 2f - 1f));
+    }
+
+    private static Vector2f endPoint(CorridorGrid grid, Vector2f through, double heading, Random random) {
+        ViewWindow area = grid.area();
+        float directionX = (float) Math.cos(heading);
+        float directionY = (float) Math.sin(heading);
+        float reach = Float.MAX_VALUE;
+        if (directionX > 0f) {
+            reach = Math.min(reach, (area.maxX() - through.x) / directionX);
+        } else if (directionX < 0f) {
+            reach = Math.min(reach, (area.minX() - through.x) / directionX);
+        }
+        if (directionY > 0f) {
+            reach = Math.min(reach, (area.maxY() - through.y) / directionY);
+        } else if (directionY < 0f) {
+            reach = Math.min(reach, (area.minY() - through.y) / directionY);
+        }
+        float shift = (random.nextFloat() * 2f - 1f) * END_SHIFT_SHARE * Math.min(area.width(), area.height());
+        return new Vector2f(through.x + directionX * reach - directionY * shift, through.y + directionY * reach + directionX * shift);
+    }
+
+    private static int borderCellNear(CorridorGrid grid, Vector2f point) {
+        ViewWindow area = grid.area();
+        int column = Math.max(0, Math.min(grid.columns() - 1, (int) Math.floor((point.x - area.minX()) / grid.cellSize())));
+        int row = Math.max(0, Math.min(grid.rows() - 1, (int) Math.floor((point.y - area.minY()) / grid.cellSize())));
+        int toLeft = column;
+        int toRight = grid.columns() - 1 - column;
+        int toBottom = row;
+        int toTop = grid.rows() - 1 - row;
+        boolean onSide = Math.min(toLeft, toRight) <= Math.min(toBottom, toTop);
+        if (onSide) {
+            column = toLeft <= toRight ? 0 : grid.columns() - 1;
+        } else {
+            row = toBottom <= toTop ? 0 : grid.rows() - 1;
+        }
+        for (int offset = 0; offset <= BORDER_SEARCH_CELLS; offset++) {
+            for (int sign = -1; sign <= 1; sign += 2) {
+                int probeColumn = onSide ? column : column + sign * offset;
+                int probeRow = onSide ? row + sign * offset : row;
+                if (probeColumn >= 0 && probeColumn < grid.columns() && probeRow >= 0 && probeRow < grid.rows()
+                        && !grid.isBlocked(probeColumn, probeRow)) {
+                    return probeRow * grid.columns() + probeColumn;
+                }
             }
         }
         return -1;
@@ -181,42 +232,57 @@ public final class CorridorSearch {
             pulled.add(path.get(farthest));
             anchor = farthest;
         }
-        if (pulled.size() == 2) {
-            Vector2f first = pulled.get(0);
-            Vector2f last = pulled.get(1);
-            pulled.add(1, new Vector2f((first.x + last.x) / 2f, (first.y + last.y) / 2f));
-        }
         return pulled;
     }
 
-    static List<Vector2f> smoothed(CorridorGrid grid, List<Vector2f> path) {
-        List<Vector2f> current = path;
-        for (int pass = 0; pass < SMOOTHING_PASSES; pass++) {
-            List<Vector2f> next = new ArrayList<>(current.size() * 2);
-            next.add(current.get(0));
-            for (int i = 0; i < current.size() - 1; i++) {
-                Vector2f from = current.get(i);
-                Vector2f to = current.get(i + 1);
-                next.add(new Vector2f(from.x * 0.75f + to.x * 0.25f, from.y * 0.75f + to.y * 0.25f));
-                next.add(new Vector2f(from.x * 0.25f + to.x * 0.75f, from.y * 0.25f + to.y * 0.75f));
+    static List<Vector2f> relaxed(CorridorGrid grid, List<Vector2f> path, float spacing) {
+        List<Vector2f> points = resampled(path, spacing);
+        for (int round = 0; round < RELAX_ROUNDS; round++) {
+            for (int pass = 0; pass < RELAX_PASSES; pass++) {
+                for (int i = 1; i < points.size() - 1; i++) {
+                    Vector2f previous = points.get(i - 1);
+                    Vector2f point = points.get(i);
+                    Vector2f next = points.get(i + 1);
+                    float pullX = (previous.x + next.x) / 2f - point.x;
+                    float pullY = (previous.y + next.y) / 2f - point.y;
+                    for (float share = RELAX_SHARE; share >= MIN_RELAX_SHARE; share /= 2f) {
+                        float x = point.x + pullX * share;
+                        float y = point.y + pullY * share;
+                        if (grid.isClearLine(previous.x, previous.y, x, y) && grid.isClearLine(x, y, next.x, next.y)) {
+                            point.set(x, y);
+                            break;
+                        }
+                    }
+                }
             }
-            next.add(current.get(current.size() - 1));
-            if (!isFreePath(grid, next)) {
-                return current;
-            }
-            current = next;
+            points = resampled(points, spacing);
         }
-        return current;
+        return points;
     }
 
-    private static boolean isFreePath(CorridorGrid grid, List<Vector2f> path) {
-        for (int i = 0; i < path.size() - 1; i++) {
-            Vector2f from = path.get(i);
-            Vector2f to = path.get(i + 1);
-            if (!grid.isFreeLine(from.x, from.y, to.x, to.y)) {
-                return false;
+    static List<Vector2f> resampled(List<Vector2f> path, float spacing) {
+        List<Vector2f> points = new ArrayList<>();
+        points.add(new Vector2f(path.get(0)));
+        float untilNext = spacing;
+        for (int i = 1; i < path.size(); i++) {
+            Vector2f from = path.get(i - 1);
+            Vector2f to = path.get(i);
+            float segmentLength = Vector2f.sub(to, from, null).length();
+            float along = untilNext;
+            while (along <= segmentLength) {
+                float t = along / segmentLength;
+                points.add(new Vector2f(from.x + (to.x - from.x) * t, from.y + (to.y - from.y) * t));
+                along += spacing;
             }
+            untilNext = along - segmentLength;
         }
-        return true;
+        Vector2f last = path.get(path.size() - 1);
+        if (Vector2f.sub(last, points.get(points.size() - 1), null).lengthSquared() > 0f) {
+            points.add(new Vector2f(last));
+        }
+        if (points.size() < 2) {
+            points.add(new Vector2f(last));
+        }
+        return points;
     }
 }

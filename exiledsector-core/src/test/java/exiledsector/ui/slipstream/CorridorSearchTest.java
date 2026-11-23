@@ -63,6 +63,41 @@ class CorridorSearchTest {
     }
 
     @Test
+    void routesComeFromFarOffScreenAndLeaveFarOffScreen() {
+        float farOff = Math.max(VIEW.width(), VIEW.height()) * 0.4f;
+        ViewWindow nearView = VIEW.expanded(farOff);
+        for (int seed = 0; seed < 10; seed++) {
+            SlipstreamRoute route = CorridorSearch.route(CorridorGrid.covering(VIEW, WIDTH), VIEW, WIDTH, new Random(seed));
+            assertNotNull(route);
+            Vector2f start = route.points().get(0);
+            Vector2f end = route.points().get(route.points().size() - 1);
+            assertFalse(nearView.contains(start.x, start.y), "started at " + start);
+            assertFalse(nearView.contains(end.x, end.y), "ended at " + end);
+        }
+    }
+
+    @Test
+    void routesTurnInGentleCurves() {
+        float maxTurnDegrees = 20f;
+        for (int seed = 0; seed < 20; seed++) {
+            CorridorGrid grid = CorridorGrid.covering(VIEW, WIDTH);
+            grid.blockCircle(0f, 0f, OBSTACLE_RADIUS);
+            grid.blockCircle(-3000f, 1800f, OBSTACLE_RADIUS);
+            grid.blockCircle(3000f, -1800f, OBSTACLE_RADIUS);
+            SlipstreamRoute route = CorridorSearch.route(grid, VIEW, WIDTH, new Random(seed));
+            if (route == null) {
+                continue;
+            }
+            for (float distance = WIDTH; distance < route.length() - WIDTH; distance += WIDTH / 2f) {
+                Vector2f before = route.headingAt(distance - WIDTH / 2f);
+                Vector2f after = route.headingAt(distance);
+                double turn = Math.toDegrees(Math.acos(Math.max(-1f, Math.min(1f, Vector2f.dot(before, after)))));
+                assertTrue(turn < maxTurnDegrees, "turned " + turn + " degrees at " + distance + " with seed " + seed);
+            }
+        }
+    }
+
+    @Test
     void aFullyBlockedViewHasNoRoute() {
         CorridorGrid grid = CorridorGrid.covering(VIEW, WIDTH);
         grid.blockCircle(0f, 0f, 20000f);
@@ -75,7 +110,7 @@ class CorridorSearchTest {
         float gapCenterY = 1000f;
         float gapHalfHeight = 900f;
         List<Vector2f> wall = new ArrayList<>();
-        for (float y = -6000f; y <= 6000f; y += 200f) {
+        for (float y = -14000f; y <= 14000f; y += 200f) {
             if (Math.abs(y - gapCenterY) > gapHalfHeight) {
                 wall.add(new Vector2f(0f, y));
             }

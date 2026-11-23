@@ -14,6 +14,7 @@ final class AtlasDepth implements DepthLens.Field {
     static final float STRENGTH_ZOOMED_IN = 0.4f;
     static final float PARALLAX_REACH_CELLS = 0.3f;
     static final float FAR_FADE = 0.3f;
+    static final float NEAREST_SYSTEM_SIZE = 2f;
     private static final long BROAD_SALT = 0x4445505448L;
     private static final long DETAIL_SALT = 0x44455441494cL;
     private static final float DETAIL_SHIFT = 17.3f;
@@ -47,6 +48,10 @@ final class AtlasDepth implements DepthLens.Field {
         float level = (float) (Math.log(Math.max(zoom, 1e-6f) / AtlasMapCanvas.MIN_ZOOM) / span);
         level = Math.max(0f, Math.min(1f, level));
         return STRENGTH_ZOOMED_OUT + (STRENGTH_ZOOMED_IN - STRENGTH_ZOOMED_OUT) * level;
+    }
+
+    static float systemSize(float depth) {
+        return (float) Math.pow(NEAREST_SYSTEM_SIZE, Math.max(-1f, Math.min(1f, depth)));
     }
 
     static float fade(float depth) {

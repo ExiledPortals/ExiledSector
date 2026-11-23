@@ -230,7 +230,8 @@ class AtlasSceneryTest {
 
         assertEquals(systems, ports.size());
         for (LaneFleetTraffic.Port port : ports) {
-            assertTrue(port.innerRadius() > NodeMetrics.donutRadius(NodeMetrics.NODE_SIZE * AtlasMapCanvas.NODE_SCALE));
+            float systemSize = canvas.systemSize(AtlasCell.unpack(port.id()));
+            assertTrue(port.innerRadius() > NodeMetrics.donutRadius(NodeMetrics.NODE_SIZE * AtlasMapCanvas.NODE_SCALE) * systemSize);
             assertTrue(port.outerRadius() > port.innerRadius());
             for (long neighbour : port.neighbours()) {
                 assertTrue(canvas.visibleCells().contains(AtlasCell.unpack(neighbour)));

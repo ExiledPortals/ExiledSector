@@ -131,7 +131,8 @@ final class AtlasMapCanvas {
     private final Map<AtlasCell, Float> collapsing = new HashMap<>();
     private final NodeBeams beams;
     private final AtlasScenery scenery;
-    private final SlipstreamSky slipstreams = new SlipstreamSky(AtlasSlipstreamRoutes.on(this), SlipstreamSky.Pace.OCCASIONAL, new Random());
+    private final SlipstreamSky slipstreams = new SlipstreamSky(AtlasSlipstreamRoutes.on(this),
+            SlipstreamSky.Pace.OCCASIONAL.crossingViewIn(AtlasSlipstreamRoutes.VIEW_CROSSING_SECONDS), new Random());
     private final ChartSystemSketch gatewaySketch;
     private final Map<Color, NodeRingArt.NotableLook[]> notableLooks = new HashMap<>();
     private final Map<AtlasCell, Float> nodeDepths = new HashMap<>();
@@ -391,8 +392,8 @@ final class AtlasMapCanvas {
         return depth;
     }
 
-    float depthScale(TreeViewport view, AtlasCell cell) {
-        return lens(view).scale(depthOf(cell));
+    float systemSize(AtlasCell cell) {
+        return AtlasDepth.systemSize(depthOf(cell));
     }
 
     float screenX(TreeViewport view, AtlasCell cell) {
@@ -414,11 +415,11 @@ final class AtlasMapCanvas {
     }
 
     float footprint(TreeViewport view, AtlasCell cell) {
-        return footprint(view) * depthScale(view, cell);
+        return footprint(view) * systemSize(cell);
     }
 
     float beamWidthScale(TreeViewport view, AtlasCell cell) {
-        return NodeBeams.widthScale(view.zoom() * NODE_SCALE * depthScale(view, cell));
+        return NodeBeams.widthScale(view.zoom() * NODE_SCALE * systemSize(cell));
     }
 
     AtlasCell cellAt(TreeViewport view, float x, float y) {

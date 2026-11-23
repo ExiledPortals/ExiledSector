@@ -9,7 +9,8 @@ import java.util.Random;
 final class StreamParticles {
 
     static final float AREA_PER_PARTICLE_WIDTHS_SQUARED = 0.05f;
-    static final int MAX_PARTICLES = 500;
+    static final int MAX_PARTICLES = 1200;
+    static final float DRAW_MARGIN_WIDTHS = 2f;
     static final float MIN_SPEED_WIDTHS = 0.65f;
     static final float MAX_SPEED_WIDTHS = 1.1f;
     static final float MIN_LIFE_SECONDS = 2f;
@@ -55,6 +56,8 @@ final class StreamParticles {
 
     void draw(LineBatch lines, Slipstream stream, SlipstreamProjection projection, float alphaMult) {
         SlipstreamRoute route = stream.route();
+        ViewWindow view = ViewWindow.of(projection.view());
+        ViewWindow drawn = view == null ? null : view.expanded(stream.baseWidth() * DRAW_MARGIN_WIDTHS);
         for (int i = 0; i < count; i++) {
             float streamAlpha = stream.alphaAt(distance[i]);
             if (streamAlpha <= 0f) {
@@ -67,6 +70,9 @@ final class StreamParticles {
             }
             float halfWidth = stream.widthAt(distance[i]) / 2f;
             route.offsetPoint(distance[i], lateral[i] * halfWidth, head);
+            if (drawn != null && !drawn.contains(head.x, head.y)) {
+                continue;
+            }
             route.offsetPoint(Math.max(0f, distance[i] - speed[i] * TRAIL_SECONDS), lateral[i] * halfWidth, tail);
             projection.place(head.x, head.y, placed);
             float headX = placed[SlipstreamProjection.X];

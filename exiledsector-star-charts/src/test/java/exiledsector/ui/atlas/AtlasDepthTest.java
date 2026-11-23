@@ -48,6 +48,15 @@ class AtlasDepthTest {
     }
 
     @Test
+    void nearestSystemsAreTwiceTheSizeAndFarthestHalf() {
+        assertEquals(2f, AtlasDepth.systemSize(1f), 1e-5f);
+        assertEquals(1f, AtlasDepth.systemSize(0f), 1e-5f);
+        assertEquals(0.5f, AtlasDepth.systemSize(-1f), 1e-5f);
+        assertEquals(2f, AtlasDepth.systemSize(3f), 1e-5f);
+        assertTrue(AtlasDepth.systemSize(0.5f) > AtlasDepth.systemSize(0.4f));
+    }
+
+    @Test
     void neighbouringSystemsNeverCrowdTogetherWhereverTheCameraLooks() {
         AtlasDepth depth = new AtlasDepth(42L);
         float step = CLOSEST_SYSTEMS_CELLS * CELL;

@@ -5,11 +5,13 @@ import java.util.Arrays;
 
 public final class CorridorGrid {
 
-    static final float AREA_MARGIN_WIDTHS = 2f;
+    static final float AREA_MARGIN_VIEW_SHARE = 0.5f;
     static final int MAX_CELLS_PER_SIDE = 120;
     static final float CELLS_PER_CLEARANCE = 2f;
     static final float LINE_SAMPLES_PER_CELL = 3f;
     static final float CURVE_SAMPLES_PER_CELL = 2f;
+    static final int CIRCLE_CAPACITY = 64;
+    static final int CELL_CIRCLE_CAPACITY = 4;
 
     private final ViewWindow area;
     private final float clearance;
@@ -17,6 +19,12 @@ public final class CorridorGrid {
     private final int columns;
     private final int rows;
     private final boolean[] blocked;
+    private final int[][] cellCircles;
+    private final int[] cellCircleCounts;
+    private float[] circleX = new float[CIRCLE_CAPACITY];
+    private float[] circleY = new float[CIRCLE_CAPACITY];
+    private float[] circleReach = new float[CIRCLE_CAPACITY];
+    private int circleCount;
 
     CorridorGrid(ViewWindow area, float clearance) {
         this.area = area;
@@ -25,10 +33,12 @@ public final class CorridorGrid {
         columns = Math.max(1, (int) Math.ceil(area.width() / cellSize));
         rows = Math.max(1, (int) Math.ceil(area.height() / cellSize));
         blocked = new boolean[columns * rows];
+        cellCircles = new int[columns * rows][];
+        cellCircleCounts = new int[columns * rows];
     }
 
     public static CorridorGrid covering(ViewWindow view, float streamWidth) {
-        return new CorridorGrid(view.expanded(streamWidth * AREA_MARGIN_WIDTHS), streamWidth * Slipstream.CLEARANCE_WIDTHS);
+        return new CorridorGrid(view.expanded(Math.max(view.width(), view.height()) * AREA_MARGIN_VIEW_SHARE), streamWidth * Slipstream.CLEARANCE_WIDTHS);
     }
 
     public boolean reaches(float minX, float minY, float maxX, float maxY) {
@@ -44,6 +54,8 @@ public final class CorridorGrid {
         int lastColumn = Math.min(columns - 1, columnOf(x + reach));
         int firstRow = Math.max(0, rowOf(y - reach));
         int lastRow = Math.min(rows - 1, rowOf(y + reach));
+        int circle = circleCount;
+        boolean touched = false;
         for (int row = firstRow; row <= lastRow; row++) {
             float cellBottom = area.minY() + row * cellSize;
             float nearestY = Math.max(cellBottom, Math.min(y, cellBottom + cellSize));
@@ -54,9 +66,38 @@ public final class CorridorGrid {
                 float dy = nearestY - y;
                 if (dx * dx + dy * dy <= reach * reach) {
                     blocked[row * columns + column] = true;
+                    addToCell(row * columns + column, circle);
+                    touched = true;
                 }
             }
         }
+        if (touched) {
+            addCircle(x, y, reach);
+        }
+    }
+
+    private void addCircle(float x, float y, float reach) {
+        if (circleCount == circleX.length) {
+            circleX = Arrays.copyOf(circleX, circleCount * 2);
+            circleY = Arrays.copyOf(circleY, circleCount * 2);
+            circleReach = Arrays.copyOf(circleReach, circleCount * 2);
+        }
+        circleX[circleCount] = x;
+        circleY[circleCount] = y;
+        circleReach[circleCount] = reach;
+        circleCount++;
+    }
+
+    private void addToCell(int cell, int circle) {
+        int[] circles = cellCircles[cell];
+        if (circles == null) {
+            circles = new int[CELL_CIRCLE_CAPACITY];
+            cellCircles[cell] = circles;
+        } else if (cellCircleCounts[cell] == circles.length) {
+            circles = Arrays.copyOf(circles, circles.length * 2);
+            cellCircles[cell] = circles;
+        }
+        circles[cellCircleCounts[cell]++] = circle;
     }
 
     public void blockLine(float fromX, float fromY, float toX, float toY, float radius) {
@@ -96,6 +137,35 @@ public final class CorridorGrid {
         return true;
     }
 
+    boolean isClear(float x, float y) {
+        int cell = cellAt(x, y);
+        if (cell < 0) {
+            return false;
+        }
+        int[] circles = cellCircles[cell];
+        for (int i = 0; i < cellCircleCounts[cell]; i++) {
+            int circle = circles[i];
+            float dx = x - circleX[circle];
+            float dy = y - circleY[circle];
+            if (dx * dx + dy * dy < circleReach[circle] * circleReach[circle]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    boolean isClearLine(float fromX, float fromY, float toX, float toY) {
+        float length = (float) Math.hypot(toX - fromX, toY - fromY);
+        int steps = Math.max(1, (int) Math.ceil(length * LINE_SAMPLES_PER_CELL / cellSize));
+        for (int step = 0; step <= steps; step++) {
+            float t = step / (float) steps;
+            if (!isClear(fromX + (toX - fromX) * t, fromY + (toY - fromY) * t)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     int[] cellsToBlocked() {
         int[] distance = new int[blocked.length];
         Arrays.fill(distance, Integer.MAX_VALUE);
@@ -126,6 +196,16 @@ public final class CorridorGrid {
             }
         }
         return distance;
+    }
+
+    int cellAt(float x, float y) {
+        int column = columnOf(x);
+        int row = rowOf(y);
+        return column >= 0 && column < columns && row >= 0 && row < rows ? row * columns + column : -1;
+    }
+
+    ViewWindow area() {
+        return area;
     }
 
     boolean isBlocked(int column, int row) {

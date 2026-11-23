@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SlipstreamSkyTest {
 
-    private static final SlipstreamSky.Pace PACE = new SlipstreamSky.Pace(5f, 5f, 50f, 50f);
+    private static final SlipstreamSky.Pace PACE = new SlipstreamSky.Pace(5f, 5f, 50f, 50f, 1f);
     private static final TreeViewport VIEWPORT = new TreeViewport(500f, 400f, 0.5f, 0f, 0f, 1000f, 800f);
     private static final SlipstreamRoute ROUTE = new SlipstreamRoute(List.of(new Vector2f(-3000f, 0f), new Vector2f(3000f, 0f)), 200f);
 
@@ -42,10 +42,25 @@ class SlipstreamSkyTest {
         advance(sky, 0.2f);
         assertTrue(sky.isActive());
 
-        advance(sky, 40f);
-        assertFalse(sky.isActive());
         advance(sky, 45f);
         assertFalse(sky.isActive());
+        advance(sky, 35f);
+        assertFalse(sky.isActive());
+    }
+
+    @Test
+    void aSlowerPaceLaysTheStreamMoreSlowly() {
+        SlipstreamSky brisk = new SlipstreamSky((view, random) -> ROUTE, PACE, new Random(1));
+        SlipstreamSky slow = new SlipstreamSky((view, random) -> ROUTE, PACE.crossingViewIn(3f), new Random(1));
+        brisk.render(VIEWPORT, 0f);
+        slow.render(VIEWPORT, 0f);
+
+        advance(brisk, 6f);
+        advance(slow, 6f);
+
+        float briskLaid = brisk.event().stream().laidLength();
+        float slowLaid = slow.event().stream().laidLength();
+        assertTrue(briskLaid > slowLaid * 2.5f, "brisk " + briskLaid + " slow " + slowLaid);
     }
 
     @Test

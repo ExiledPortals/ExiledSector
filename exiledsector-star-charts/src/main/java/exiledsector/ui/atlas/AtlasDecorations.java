@@ -167,7 +167,8 @@ final class AtlasDecorations {
             }
             float dx = canvas.displayX(near) - x;
             float dy = canvas.displayY(near) - y;
-            if (dx * dx + dy * dy < clearance * clearance) {
+            float nearClearance = clearance * Math.max(1f, canvas.systemSize(near));
+            if (dx * dx + dy * dy < nearClearance * nearClearance) {
                 return false;
             }
         }
