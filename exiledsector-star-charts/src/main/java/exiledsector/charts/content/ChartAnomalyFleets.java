@@ -106,6 +106,7 @@ public final class ChartAnomalyFleets {
 
     public static void prepare(CampaignFleetAPI fleet, String runId, int tier, long fleetSeed, boolean lootable, ChartGenContext context) {
         ChartContentGenerator.prepareFleet(fleet, runId, tier, FleetRole.PATROL, 0, fleetSeed);
+        ChartFleetMarks.markAnomalyFleet(fleet);
         if (!lootable) {
             fleet.getMemoryWithoutUpdate().unset(ChartIds.START_DP_MEMORY_KEY);
             ChartEnemyShipEffects.grant(fleet, context);
@@ -118,6 +119,7 @@ public final class ChartAnomalyFleets {
         CampaignFleetAPI fleet = create(ChartContentGenerator.fleetParams(factionId, planned, random));
         if (fleet != null) {
             ChartContentGenerator.prepareFleet(fleet, runId, tier, planned.role(), planned.strengthBonus(), fleetSeed);
+            ChartFleetMarks.markAnomalyFleet(fleet);
         }
         return fleet;
     }

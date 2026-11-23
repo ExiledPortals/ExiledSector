@@ -4,10 +4,9 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetAssignment;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.campaign.ai.CampaignFleetAIAPI;
-import com.fs.starfarer.api.campaign.ai.FleetAssignmentDataAPI;
 import exiledsector.charts.anomaly.debris.DormantFleets;
-import exiledsector.charts.content.ChartContentGenerator;
+import exiledsector.charts.content.ChartFleetMarks;
+import exiledsector.charts.content.ChartFleetOrders;
 import exiledsector.i18n.Translation;
 
 final class BreachCharge {
@@ -22,46 +21,28 @@ final class BreachCharge {
     }
 
     static void rally(LocationAPI location, SectorEntityToken breach, boolean wakesAnomalousFleets) {
+        String chargingText = null;
         for (CampaignFleetAPI fleet : location.getFleets()) {
             if (wakesAnomalousFleets && DormantFleets.isDormant(fleet)) {
                 DormantFleets.wake(fleet);
             }
-            if (canCharge(fleet) && !isCharging(fleet.getAI(), breach)) {
-                fleet.addAssignmentAtStart(ASSIGNMENT, breach, ChartContentGenerator.ASSIGNMENT_DAYS,
-                        Translation.gameText("chart.anomaly.spatial_breach.fleet.charging"), null);
+            if (canCharge(fleet)) {
+                if (chargingText == null) {
+                    chargingText = Translation.gameText("chart.anomaly.spatial_breach.fleet.charging");
+                }
+                ChartFleetOrders.putFirst(fleet, ASSIGNMENT, breach, chargingText);
             }
         }
     }
 
     static void release(LocationAPI location, SectorEntityToken breach) {
         for (CampaignFleetAPI fleet : location.getFleets()) {
-            CampaignFleetAIAPI ai = fleet == null ? null : fleet.getAI();
-            if (ai == null) {
-                continue;
-            }
-            for (FleetAssignmentDataAPI assignment : ai.getAssignmentsCopy()) {
-                if (isCharge(assignment, breach)) {
-                    ai.removeAssignment(assignment);
-                }
-            }
+            ChartFleetOrders.withdraw(fleet, ASSIGNMENT, breach);
         }
     }
 
     static boolean canCharge(CampaignFleetAPI fleet) {
-        return fleet != null && !fleet.isPlayerFleet() && fleet.getAI() != null && !fleet.isStationMode() && !fleet.isDespawning()
-                && !DormantFleets.isDormant(fleet) && !BreachIncursion.isGuard(fleet);
-    }
-
-    private static boolean isCharging(CampaignFleetAIAPI ai, SectorEntityToken breach) {
-        for (FleetAssignmentDataAPI assignment : ai.getAssignmentsCopy()) {
-            if (isCharge(assignment, breach)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static boolean isCharge(FleetAssignmentDataAPI assignment, SectorEntityToken breach) {
-        return assignment != null && assignment.getAssignment() == ASSIGNMENT && assignment.getTarget() == breach;
+        return ChartFleetOrders.canTakeOrders(fleet) && !DormantFleets.isDormant(fleet) && !BreachIncursion.isGuard(fleet)
+                && !ChartFleetMarks.isAvenger(fleet);
     }
 }

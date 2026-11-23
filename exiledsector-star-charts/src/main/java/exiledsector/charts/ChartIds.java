@@ -36,6 +36,8 @@ public final class ChartIds {
     public static final String DEFENDER_LOOT_ADDED_MEMORY_KEY = "$exiledSector_chartDefenderLootAdded";
     public static final String VANILLA_DEFENDER_FLEET_MEMORY_KEY = "$defenderFleet";
     public static final String SKIRMISH_SIDE_MEMORY_KEY = "$exiledSector_chartSkirmishSide";
+    public static final String ANOMALY_FLEET_MEMORY_KEY = "$exiledSector_chartAnomalyFleet";
+    public static final String AVENGER_MEMORY_KEY = "$exiledSector_chartAvenger";
     public static final String REAL_FACTION_MEMORY_KEY = FleetFactions.REAL_FACTION_MEMORY_KEY;
     public static final String CONTENT_TAG = PREFIX + "content";
     public static final String SENSOR_MOD_ID = PREFIX + "sensor_range";

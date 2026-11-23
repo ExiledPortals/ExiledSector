@@ -34,6 +34,27 @@ public final class ChartFleetMarks {
         memory.set(ChartIds.STRENGTH_BONUS_MEMORY_KEY, strengthBonus(memory) + addedBonus);
     }
 
+    public static void markAnomalyFleet(CampaignFleetAPI fleet) {
+        fleet.getMemoryWithoutUpdate().set(ChartIds.ANOMALY_FLEET_MEMORY_KEY, true);
+    }
+
+    public static boolean isAnomalyFleet(CampaignFleetAPI fleet) {
+        return hasMark(fleet, ChartIds.ANOMALY_FLEET_MEMORY_KEY);
+    }
+
+    public static void markAvenger(CampaignFleetAPI fleet) {
+        fleet.getMemoryWithoutUpdate().set(ChartIds.AVENGER_MEMORY_KEY, true);
+    }
+
+    public static boolean isAvenger(CampaignFleetAPI fleet) {
+        return hasMark(fleet, ChartIds.AVENGER_MEMORY_KEY);
+    }
+
+    private static boolean hasMark(CampaignFleetAPI fleet, String key) {
+        MemoryAPI memory = fleet == null ? null : fleet.getMemoryWithoutUpdate();
+        return memory != null && memory.getBoolean(key);
+    }
+
     public static void markTwinBoss(CampaignFleetAPI twin, String flagshipId) {
         if (flagshipId != null) {
             twin.getMemoryWithoutUpdate().set(ChartIds.TWIN_BOSS_FLAGSHIP_MEMORY_KEY, flagshipId);

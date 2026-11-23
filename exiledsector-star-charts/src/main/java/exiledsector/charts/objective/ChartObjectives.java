@@ -63,12 +63,12 @@ public final class ChartObjectives {
         }
         if (SkirmishObjective.tracks(run)) {
             boolean inPlayerBattle = param instanceof BattleAPI battle && battle.isPlayerInvolved();
-            return deliverOutsideBattle(sector, afterSkirmishFall(sector, run, SkirmishObjective.fleetGone(sector, run, fleet, inPlayerBattle)));
+            return deliverOutsideBattle(sector, afterSkirmishFall(sector, run, SkirmishObjective.fleetGone(sector, run, fleet, inPlayerBattle), fleet));
         }
         if (!isBossFleet(run, fleet)) {
             return false;
         }
-        completedOutsideBattle(sector, run);
+        completedOutsideBattle(sector, run, fleet);
         return true;
     }
 
@@ -82,14 +82,16 @@ public final class ChartObjectives {
             return false;
         }
         if (SkirmishObjective.tracks(run)) {
-            return deliverOutsideBattle(sector, afterSkirmishFall(sector, run, SkirmishObjective.reconcile(sector, run, system)));
+            return deliverOutsideBattle(sector, afterSkirmishFall(sector, run, SkirmishObjective.reconcile(sector, run, system), null));
         }
         boolean bossStanding = false;
+        CampaignFleetAPI bossFleet = null;
         for (CampaignFleetAPI fleet : system.getFleets()) {
             if (fleet.isDespawning() || fleet.isEmpty()) {
                 continue;
             }
             if (isBossFleet(run, fleet)) {
+                bossFleet = fleet;
                 run.recordBossFlagship(flagshipIdOf(fleet));
                 bossStanding = holdsMember(fleet, run.bossFlagshipId());
             }
@@ -97,7 +99,7 @@ public final class ChartObjectives {
         if (bossStanding) {
             return false;
         }
-        completedOutsideBattle(sector, run);
+        completedOutsideBattle(sector, run, bossFleet);
         return true;
     }
 
@@ -141,14 +143,14 @@ public final class ChartObjectives {
     private static Loot objectiveBossFell(SectorAPI sector, CampaignFleetAPI sourceFleet, List<FleetMemberAPI> lostMembers) {
         ChartRun run = trackedRun();
         if (run != null && SkirmishObjective.tracks(run)) {
-            SkirmishProgress progress = afterSkirmishFall(sector, run, SkirmishObjective.fellInBattle(sector, run, sourceFleet, lostMembers));
+            SkirmishProgress progress = afterSkirmishFall(sector, run, SkirmishObjective.fellInBattle(sector, run, sourceFleet, lostMembers), sourceFleet);
             return progress.loot();
         }
         if (run == null || sourceFleet == null || run.bossFlagshipId() == null || !isBossFleet(run, sourceFleet)
                 || lostMembers.stream().noneMatch(member -> run.bossFlagshipId().equals(member.getId()))) {
             return Loot.NONE;
         }
-        return completed(sector, run);
+        return completed(sector, run, sourceFleet);
     }
 
     static Loot twinBossFell(CampaignFleetAPI sourceFleet, List<FleetMemberAPI> lostMembers) {
@@ -185,13 +187,13 @@ public final class ChartObjectives {
         boolean anyFell = false;
         for (Map.Entry<CampaignFleetAPI, List<FleetMemberAPI>> lost : lostBySourceFleet.entrySet()) {
             SkirmishProgress progress = SkirmishObjective.fellInBattle(sector, run, lost.getKey(), lost.getValue());
-            anyFell |= deliverOutsideBattle(sector, afterSkirmishFall(sector, run, progress));
+            anyFell |= deliverOutsideBattle(sector, afterSkirmishFall(sector, run, progress, lost.getKey()));
         }
         return anyFell;
     }
 
-    private static void completedOutsideBattle(SectorAPI sector, ChartRun run) {
-        deliverToPlayerCargo(sector, completed(sector, run));
+    private static void completedOutsideBattle(SectorAPI sector, ChartRun run, CampaignFleetAPI fallenFleet) {
+        deliverToPlayerCargo(sector, completed(sector, run, fallenFleet));
     }
 
     private static boolean deliverOutsideBattle(SectorAPI sector, SkirmishProgress progress) {
@@ -207,17 +209,18 @@ public final class ChartObjectives {
         }
     }
 
-    private static SkirmishProgress afterSkirmishFall(SectorAPI sector, ChartRun run, SkirmishProgress progress) {
+    private static SkirmishProgress afterSkirmishFall(SectorAPI sector, ChartRun run, SkirmishProgress progress, CampaignFleetAPI fallenFleet) {
         if (!progress.bothFallen() || !run.markObjectiveComplete()) {
             return progress;
         }
         Loot anomalyLoot = anomalyBossLoot(sector, run);
         AtlasProgress.completed(sector, run, progress.beatenOfficerId());
         updateIntel(sector, run);
+        BossVengeance.begin(sector, run, fallenFleet);
         return new SkirmishProgress(true, progress.loot().plus(anomalyLoot).plus(guaranteedBossCharts(run)), true, progress.beatenOfficerId());
     }
 
-    private static Loot completed(SectorAPI sector, ChartRun run) {
+    private static Loot completed(SectorAPI sector, ChartRun run, CampaignFleetAPI fallenFleet) {
         if (!run.markObjectiveComplete()) {
             return Loot.NONE;
         }
@@ -225,6 +228,7 @@ public final class ChartObjectives {
         Loot anomalyLoot = anomalyBossLoot(sector, run);
         AtlasProgress.completed(sector, run);
         updateIntel(sector, run);
+        BossVengeance.begin(sector, run, fallenFleet);
         return officerLoot.plus(anomalyLoot).plus(guaranteedBossCharts(run));
     }
 

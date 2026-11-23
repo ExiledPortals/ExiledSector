@@ -42,6 +42,8 @@
     "chart.objective.boss.name": "Destroy the boss",
     "chart.objective.boss.fleet.description": "A boss fleet holds this system. Destroy it.",
     "chart.objective.boss.station.description": "A boss station holds this system, with a fleet guarding it. Destroy the station.",
+    "chart.objective.vengeance.muster": "rallying to avenge the boss",
+    "chart.objective.vengeance.strike": "out for revenge",
     "chart.intel.title": "Star Chart: {objective}",
     "chart.intel.tier": "A tier {tier} chart, held by {faction}.",
     "chart.intel.complete": "Objective complete.",

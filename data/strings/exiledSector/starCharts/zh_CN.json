@@ -40,6 +40,8 @@
     "chart.objective.boss.name": "消灭首领",
     "chart.objective.boss.fleet.description": "一支首领舰队控制着这片星域。消灭它。",
     "chart.objective.boss.station.description": "一座首领空间站控制着这片星域，并有舰队守卫。摧毁空间站。",
+    "chart.objective.vengeance.muster": "集结为首领复仇",
+    "chart.objective.vengeance.strike": "前来复仇",
     "chart.intel.title": "星图：{objective}",
     "chart.intel.tier": "一张{tier}级星图，由{faction}控制。",
     "chart.intel.complete": "目标已完成。",

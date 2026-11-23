@@ -29,6 +29,7 @@ import exiledsector.charts.layout.abyss.AbyssalFogTerrainPlugin;
 import exiledsector.charts.layout.abyss.ChartPhotospherePlugin;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.objective.ChartObjectiveIntel;
+import exiledsector.charts.objective.VengeanceScript;
 import exiledsector.charts.phasing.PhaseDisplacementGate;
 import exiledsector.charts.phasing.PhaseDisplacementIntel;
 import exiledsector.charts.phasing.PhaseGateEntityPlugin;
@@ -48,6 +49,7 @@ public final class ChartSaveAliases {
             Map.entry("exiledSector.ChartRunState", ChartRunState.class),
             Map.entry("exiledSector.ChartWormholePlugin", ChartWormholePlugin.class),
             Map.entry("exiledSector.ChartObjectiveIntel", ChartObjectiveIntel.class),
+            Map.entry("exiledSector.VengeanceScript", VengeanceScript.class),
             Map.entry("exiledSector.WormholeGateway", WormholeGateway.class),
             Map.entry("exiledSector.AtlasAbility", AtlasAbility.class),
             Map.entry("exiledSector.BreachTerrainPlugin", BreachTerrainPlugin.class),

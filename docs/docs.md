@@ -124,7 +124,8 @@ ability that opens wormholes anywhere outside a chart, with every tier open.
 
 Killing a system's boss, its flagship or station, is the only way to complete it, and each completed system gives an
 Atlas Skill Point, up to 100. A run that ends without killing the boss uses up the system's anomalies, except star
-anomalies, so the next run there is an ordinary system.
+anomalies, so the next run there is an ordinary system. Once the boss falls, the system's other fleets, apart from
+those an anomaly brought, gather where it died and then hunt you down together, attacking you on sight along the way.
 
 The Atlas Tree has three Atlases, each with its own nodes, and switching between them is free. A chart keeps the Atlas
 you had selected when you opened it: the systems it reveals roll their anomalies with that Atlas, and the lanes of

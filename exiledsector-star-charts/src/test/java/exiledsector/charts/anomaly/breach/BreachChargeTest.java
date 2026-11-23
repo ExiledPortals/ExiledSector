@@ -8,6 +8,7 @@ import com.fs.starfarer.api.campaign.ai.CampaignFleetAIAPI;
 import com.fs.starfarer.api.campaign.ai.FleetAssignmentDataAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.StatBonus;
+import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.debris.DormantFleets;
 import exiledsector.charts.content.ChartContentGenerator;
 import org.junit.jupiter.api.BeforeEach;
@@ -130,6 +131,19 @@ class BreachChargeTest {
         verify(dormant, never()).addAssignment(eq(FleetAssignment.PATROL_SYSTEM), any(), anyFloat());
         assertFalse(BreachCharge.canCharge(guard));
         verify(guard, never()).addAssignmentAtStart(any(), any(), anyFloat(), anyString(), any());
+    }
+
+    @Test
+    void fleetsAvengingTheBossIgnoreTheBreach() {
+        CampaignFleetAPI avenger = fleet(List.of());
+        MemoryAPI memory = mock(MemoryAPI.class);
+        when(memory.getBoolean(ChartIds.AVENGER_MEMORY_KEY)).thenReturn(true);
+        when(avenger.getMemoryWithoutUpdate()).thenReturn(memory);
+
+        BreachCharge.rally(system, breach);
+
+        assertFalse(BreachCharge.canCharge(avenger));
+        verify(avenger, never()).addAssignmentAtStart(any(), any(), anyFloat(), anyString(), any());
     }
 
     @Test

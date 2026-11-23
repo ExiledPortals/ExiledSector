@@ -215,6 +215,7 @@ public final class DormantFleets {
         MemoryAPI memory = fleet.getMemoryWithoutUpdate();
         memory.unset(MemFlags.FLEET_INTERACTION_DIALOG_CONFIG_OVERRIDE_GEN);
         ChartContentGenerator.markRunFleet(fleet, runId, tier, seed);
+        ChartFleetMarks.markAnomalyFleet(fleet);
         memory.set(BUILD_SEED_KEY, Long.toString(seed, SEED_RADIX));
         memory.set(DORMANT_KEY, true);
         memory.set(MemFlags.MEMORY_KEY_NO_REP_IMPACT, true);
