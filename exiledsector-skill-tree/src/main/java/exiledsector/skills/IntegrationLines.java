@@ -151,7 +151,8 @@ public final class IntegrationLines {
         List<int[]> newValueRanges = new ArrayList<>();
         Matcher integratedValues = NUMBER.matcher(integratedLine.plain());
         for (int valueIndex = 0; integratedValues.find(); valueIndex++) {
-            if (valueIndex >= normalValues.size() || !normalValues.get(valueIndex).equals(integratedValues.group())) {
+            boolean newValue = valueIndex >= normalValues.size() || !normalValues.get(valueIndex).equals(integratedValues.group());
+            if (newValue && !showsAsDownside(integratedLine, integratedValues.start(), integratedValues.end())) {
                 newValueRanges.add(new int[]{integratedValues.start(), integratedValues.end()});
             }
         }
@@ -197,9 +198,22 @@ public final class IntegrationLines {
             return new DescriptionLine(text.withUnstyledAs(Style.BUILT_IN), false);
         }
         List<StyledText.Span> spans = text.spans().stream()
-                .map(span -> marked.contains(span.style()) ? new StyledText.Span(span.start(), span.end(), Style.BUILT_IN) : span)
+                .map(span -> marked.contains(span.style()) ? storyPointSpan(line, span) : span)
                 .toList();
         return new DescriptionLine(new StyledText(text.plain(), spans), false);
+    }
+
+    private static StyledText.Span storyPointSpan(DescriptionLine line, StyledText.Span span) {
+        Style style = isDownside(line, span.style()) ? Style.BAD : Style.BUILT_IN;
+        return new StyledText.Span(span.start(), span.end(), style);
+    }
+
+    private static boolean showsAsDownside(DescriptionLine line, int start, int end) {
+        return line.text().spans().stream().anyMatch(span -> overlaps(span.start(), span.end(), start, end) && isDownside(line, span.style()));
+    }
+
+    private static boolean isDownside(DescriptionLine line, Style style) {
+        return style == (line.lowerIsBetter() ? Style.GOOD : Style.BAD);
     }
 
     private static boolean hasSpanIn(StyledText text, Set<Style> styles) {

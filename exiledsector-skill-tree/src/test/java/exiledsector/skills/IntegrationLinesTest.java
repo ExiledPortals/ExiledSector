@@ -226,6 +226,41 @@ class IntegrationLinesTest {
     }
 
     @Test
+    void aDownsideTheIntegratedBlockAddsStaysRed() {
+        SkillType overcharged = new SkillType.Builder("overcharged", "Overcharged", "a.png", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)))
+                .integratedEffects(new IntegratedEffects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 20f),
+                        new SkillTypeEffect(FluxSkillEffect.FLUX_CAPACITY_MULT, -50f)), List.of()))
+                .build();
+        String downside = FluxSkillEffect.FLUX_CAPACITY_MULT.description(-50f).plain();
+
+        DescriptionLine integratedLine = IntegrationLines.integrated(overcharged, HullSize.CRUISER).effects().stream()
+                .filter(line -> line.plain().equals(downside)).findFirst().orElseThrow();
+        DescriptionLine previewLine = IntegrationLines.preview(overcharged, HullSize.CRUISER, NOT_INTEGRATED).stream()
+                .filter(line -> line.plain().endsWith(downside)).findFirst().orElseThrow();
+
+        for (DescriptionLine line : List.of(integratedLine, previewLine)) {
+            assertEquals(List.of(), storyPointGreenParts(line.text()), line.text().toMarkup());
+            assertTrue(line.text().spans().stream().anyMatch(span -> span.style() == Style.BAD), line.text().toMarkup());
+        }
+    }
+
+    @Test
+    void aDownsideTheIntegratedBlockRaisesStaysRed() {
+        SkillType overcharged = new SkillType.Builder("overcharged", "Overcharged", "a.png", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(FluxSkillEffect.FLUX_CAPACITY_MULT, -10f)))
+                .integratedEffects(new IntegratedEffects(List.of(new SkillTypeEffect(FluxSkillEffect.FLUX_CAPACITY_MULT, -50f)), List.of()))
+                .build();
+        String downside = FluxSkillEffect.FLUX_CAPACITY_MULT.description(-50f).plain();
+
+        DescriptionLine integratedLine = IntegrationLines.integrated(overcharged, HullSize.CRUISER).effects().stream()
+                .filter(line -> line.plain().equals(downside)).findFirst().orElseThrow();
+
+        assertEquals(List.of(), storyPointGreenParts(integratedLine.text()), integratedLine.text().toMarkup());
+        assertTrue(integratedLine.text().spans().stream().anyMatch(span -> span.style() == Style.BAD), integratedLine.text().toMarkup());
+    }
+
+    @Test
     void aChangedPercentageIsMarkedTogetherWithItsPercentSign() {
         SkillType capped = new SkillType.Builder("capped", "Capped", "a.png", SkillTier.NOTABLE)
                 .effectText(List.of("Repairs hull, up to a maximum of 20% per deployment."))

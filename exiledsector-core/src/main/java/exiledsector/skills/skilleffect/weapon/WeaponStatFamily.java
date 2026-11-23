@@ -53,9 +53,9 @@ public enum WeaponStatFamily {
                     liveStat(MutableShipStatsAPI::getMissileRoFMult),
                     liveStat(MutableShipStatsAPI::getEnergyRoFMult))) {
         @Override
-        public StyledText description(WeaponScope scope, StatMode mode, float magnitude) {
-            StyledText text = super.description(scope, mode, magnitude);
-            boolean reachesBeams = scope == ALL || scope == WeaponScope.ENERGY;
+        public StyledText description(List<WeaponScope> scopes, StatMode mode, float magnitude) {
+            StyledText text = super.description(scopes, mode, magnitude);
+            boolean reachesBeams = scopes.contains(ALL) || scopes.contains(WeaponScope.ENERGY);
             return reachesBeams ? withNote(text, "weapon.note.burstBeam") : text;
         }
     },
@@ -105,8 +105,8 @@ public enum WeaponStatFamily {
     GUIDANCE(false, EnumSet.of(FLAT),
             Targets.missileOnly(stat(MutableShipStatsAPI::getMissileGuidance))) {
         @Override
-        public StyledText description(WeaponScope scope, StatMode mode, float magnitude) {
-            return mode == FLAT ? Translation.styled("weapon.guidanceImproved") : super.description(scope, mode, magnitude);
+        public StyledText description(List<WeaponScope> scopes, StatMode mode, float magnitude) {
+            return mode == FLAT ? Translation.styled("weapon.guidanceImproved") : super.description(scopes, mode, magnitude);
         }
     },
     ECCM_CHANCE(false, EnumSet.of(PERCENT),
@@ -139,10 +139,19 @@ public enum WeaponStatFamily {
         return target != null && modes.contains(mode) && target.supports(mode);
     }
 
-    public StyledText description(WeaponScope scope, StatMode mode, float magnitude) {
-        String stat = qualifiedByScope ? scope.qualify(statKey) : Translation.text(statKey);
+    public final StyledText description(WeaponScope scope, StatMode mode, float magnitude) {
+        return description(List.of(scope), mode, magnitude);
+    }
+
+    public StyledText description(List<WeaponScope> scopes, StatMode mode, float magnitude) {
+        String stat = qualifiedByScope ? WeaponScope.qualify(scopes, statKey) : Translation.text(statKey);
         StyledText text = mode.description(magnitude, stat);
-        return targets.get(scope) instanceof StatTarget.PerWeaponAmmo ? withNote(text, "weapon.note.perWeapon") : text;
+        boolean perWeapon = scopes.stream().anyMatch(scope -> targets.get(scope) instanceof StatTarget.PerWeaponAmmo);
+        return perWeapon ? withNote(text, "weapon.note.perWeapon") : text;
+    }
+
+    boolean qualifiedByScope() {
+        return qualifiedByScope;
     }
 
     private static StyledText withNote(StyledText text, String noteKey) {

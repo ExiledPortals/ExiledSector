@@ -2,6 +2,7 @@
   "effects": [
     {"name": "ACCELERATION_FLAT", "statMode": "FLAT", "lowerIsBetter": false},
     {"name": "ACCELERATION_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},
+    {"name": "ACTIVE_VENTING_DISABLED", "statMode": null, "lowerIsBetter": false},
     {"name": "ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "ADAPTIVE_DAMAGE_TYPE_CHANCE_PERCENT_PER_HIGH_TECH_AFFINITY", "statMode": null, "lowerIsBetter": false},
     {"name": "AFFINITY_EQUALITY_TOLERANCE_FLAT", "statMode": null, "lowerIsBetter": false},

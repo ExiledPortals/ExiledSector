@@ -810,16 +810,16 @@
 					"magnitude": 100
 				},
 				{
+					"effect": "WEAPON_RANGE_THRESHOLD_FLAT",
+					"magnitude": 450
+				},
+				{
 					"effect": "PEAK_CR_DURATION_MULT",
 					"magnitude": -67
 				},
 				{
-					"effect": "VENT_RATE_MULT",
-					"magnitude": -100
-				},
-				{
-					"effect": "WEAPON_RANGE_THRESHOLD_FLAT",
-					"magnitude": 450
+					"effect": "ACTIVE_VENTING_DISABLED",
+					"magnitude": 0
 				},
 				{
 					"effect": "WEAPON_RANGE_FALLOFF_MULT",

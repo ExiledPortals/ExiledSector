@@ -36,10 +36,32 @@ public enum WeaponScope {
     }
 
     public String qualify(String statKey) {
-        if (this == ALL) {
+        return qualify(List.of(this), statKey);
+    }
+
+    public static String qualify(List<WeaponScope> scopes, String statKey) {
+        if (scopes.size() == 1 && scopes.get(0) == ALL) {
             return Translation.text(statKey);
         }
-        return Translation.msg("weapon.qualified").arg("scope", Translation.text("weapon.scope." + name())).arg("stat", Translation.text(statKey)).text();
+        return Translation.msg("weapon.qualified").arg("scope", scopeNames(scopes)).arg("stat", Translation.text(statKey)).text();
+    }
+
+    private static String scopeNames(List<WeaponScope> scopes) {
+        List<String> names = scopes.stream().map(scope -> Translation.text("weapon.scope." + scope.name())).toList();
+        if (names.size() == 1) {
+            return names.get(0);
+        }
+        String rest = String.join(Translation.text("format.list.sep"), names.subList(0, names.size() - 1));
+        return Translation.msg("weapon.scopes.joined").arg("rest", rest).arg("last", names.get(names.size() - 1)).text();
+    }
+
+    boolean isAncestorOf(WeaponScope other) {
+        for (WeaponScope scope = other.parentScope; scope != null; scope = scope.parentScope) {
+            if (scope == this) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean matches(WeaponAPI weapon) {

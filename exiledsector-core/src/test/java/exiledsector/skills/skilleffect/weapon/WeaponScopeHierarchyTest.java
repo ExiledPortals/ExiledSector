@@ -358,6 +358,49 @@ class WeaponScopeHierarchyTest {
     }
 
     @Test
+    void tooltipJoinsUnrelatedScopesWithTheSameValueIntoOneLine() {
+        List<SkillTypeEffect> effects = List.of(entry("ENERGY_WEAPON_RATE_OF_FIRE_MULT", 100f), entry("HULL_PERCENT", 5f),
+                entry("BALLISTIC_WEAPON_RATE_OF_FIRE_MULT", 100f));
+
+        List<SkillTypeEffect> collapsed = WeaponEffectTooltipAggregator.collapse(effects);
+
+        assertEquals(List.of("BALLISTIC_WEAPON_RATE_OF_FIRE_MULT+ENERGY_WEAPON_RATE_OF_FIRE_MULT=100.0", "HULL_PERCENT=5.0"), names(collapsed));
+        String line = collapsed.get(0).effect().description(100f).plain();
+        assertTrue(line.contains("ballistic and energy weapon rate of fire."), line);
+        assertTrue(line.contains("Burst beams"), line);
+    }
+
+    @Test
+    void tooltipJoinsThreeScopesAsAList() {
+        List<SkillTypeEffect> effects = List.of(entry("BALLISTIC_WEAPON_RANGE_PERCENT", 10f), entry("MISSILE_WEAPON_RANGE_PERCENT", 10f),
+                entry("BEAM_WEAPON_RANGE_PERCENT", 10f));
+
+        String line = WeaponEffectTooltipAggregator.collapse(effects).get(0).effect().description(10f).plain();
+
+        assertEquals("10% increased ballistic, missile and beam weapon range.", line);
+    }
+
+    @Test
+    void tooltipKeepsDifferentModesAndUnqualifiedFamiliesApart() {
+        List<SkillTypeEffect> effects = List.of(entry("BALLISTIC_WEAPON_DAMAGE_PERCENT", 10f), entry("ENERGY_WEAPON_DAMAGE_MULT", 10f),
+                entry("MISSILE_WEAPON_FLIGHT_ACCELERATION_PERCENT", 10f), entry("MISSILE_WEAPON_FLIGHT_TURN_RATE_PERCENT", 10f));
+
+        assertEquals(names(effects), names(WeaponEffectTooltipAggregator.collapse(effects)));
+    }
+
+    @Test
+    void aJoinedEffectAppliesEveryPart() {
+        MutableShipStatsAPI stats = realWeaponStats();
+        List<SkillTypeEffect> collapsed = WeaponEffectTooltipAggregator.collapse(List.of(entry("BALLISTIC_WEAPON_DAMAGE_PERCENT", 10f),
+                entry("MISSILE_WEAPON_DAMAGE_PERCENT", 10f)));
+
+        collapsed.get(0).effect().apply(stats, "test", 10f);
+
+        assertEquals(1.1f, stats.getBallisticWeaponDamageMult().getModifiedValue(), EPSILON);
+        assertEquals(1.1f, stats.getMissileWeaponDamageMult().getModifiedValue(), EPSILON);
+    }
+
+    @Test
     void everyEffectInTheRealSkillTypesFileResolves() throws IOException {
         String json = Files.readString(Path.of("data/skilltrees/skill_types.json"), StandardCharsets.UTF_8);
         Matcher matcher = Pattern.compile("\"effect\"\\s*:\\s*\"([A-Z0-9_]+)\"").matcher(json);

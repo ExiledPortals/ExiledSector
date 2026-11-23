@@ -107,10 +107,13 @@ public class SkillNode extends TreeNode {
 
     private static List<SkillTypeEffect> describedEffects(SkillType type, HullSize hullSize, boolean integrated) {
         boolean showIntegrated = integrated && type.isIntegrable();
+        List<SkillTypeEffect> baseEffects = showIntegrated ? type.getIntegratedEffects().effects() : type.getEffects();
         if (hullSize == null) {
-            return showIntegrated ? type.getIntegratedEffects().effects() : type.getEffects();
+            return baseEffects;
         }
-        return type.effectsFor(hullSize, showIntegrated);
+        List<SkillTypeEffect> hullSizedEffects = new ArrayList<>();
+        HullSizeSkillEffect.addNonZero(hullSizedEffects, type.hullSizeEffects(showIntegrated), hullSize);
+        return EffectLineOrder.withHullSizedUpsidesFirst(baseEffects, hullSizedEffects);
     }
 
     private static void addLine(List<DescriptionLine> lines, StyledText text, boolean lowerIsBetter) {

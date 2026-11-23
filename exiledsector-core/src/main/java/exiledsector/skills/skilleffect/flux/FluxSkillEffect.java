@@ -44,6 +44,12 @@ public enum FluxSkillEffect implements BackedSkillEffect {
     VENT_RATE_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getVentRateMult), "stat.ventingSpeed", false)),
     VENT_RATE_PERCENT_PER_SHROUDED(new PerShroudedPercentEffect(stat(MutableShipStatsAPI::getVentRateMult), "stat.ventingSpeedPerShrouded", false)),
     VENT_RATE_MULT(statEffect(MULT, stat(MutableShipStatsAPI::getVentRateMult), "stat.ventingSpeed", false)),
+    ACTIVE_VENTING_DISABLED {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getVentRateMult().modifyMult(modId, 0f);
+        }
+    },
     OVERLOAD_DURATION_PERCENT(statEffect(PERCENT, bonus(MutableShipStatsAPI::getOverloadTimeMod), "stat.overloadDuration", true)),
     ZERO_FLUX_SPEED_FLAT(statEffect(FLAT, liveStat(MutableShipStatsAPI::getZeroFluxSpeedBoost), "stat.zeroFluxSpeedBoost", false)),
     ZERO_FLUX_TURN_RATE_MULT(statEffect(MULT, dynamicStat(Stats.ZERO_FLUX_BOOST_TURN_RATE_BONUS_MULT), "stat.zeroFluxTurnRateBonus", false)),

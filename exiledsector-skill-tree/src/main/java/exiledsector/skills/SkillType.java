@@ -471,6 +471,10 @@ public class SkillType {
         return integratedEffects;
     }
 
+    List<HullSizeSkillEffect> hullSizeEffects(boolean integrated) {
+        return integrated && integratedEffects != null ? integratedEffects.hullSizeEffects() : hullSizeEffects;
+    }
+
     public List<SkillTypeEffect> effectsFor(HullSize hullSize, boolean integrated) {
         return integrated && integratedEffects != null ? integratedEffects.effectsFor(hullSize) : effectsFor(hullSize);
     }
