@@ -48,6 +48,17 @@ public final class SlipstreamRoute {
         return new Vector2f(from.x + (to.x - from.x) * along, from.y + (to.y - from.y) * along);
     }
 
+    public float firstDistanceInside(ViewWindow area) {
+        float step = Math.max(1f, width / 2f);
+        for (float distance = 0f; distance < length(); distance += step) {
+            Vector2f point = pointAt(distance);
+            if (area.contains(point.x, point.y)) {
+                return distance;
+            }
+        }
+        return 0f;
+    }
+
     public Vector2f headingAt(float distance) {
         int index = segmentIndexAt(distance);
         Vector2f heading = Vector2f.sub(points.get(index + 1), points.get(index), null);

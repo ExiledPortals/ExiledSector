@@ -58,9 +58,27 @@ class SlipstreamSkyTest {
         advance(brisk, 6f);
         advance(slow, 6f);
 
-        float briskLaid = brisk.event().stream().laidLength();
-        float slowLaid = slow.event().stream().laidLength();
+        float start = leadInStart();
+        float briskLaid = brisk.event().stream().laidLength() - start;
+        float slowLaid = slow.event().stream().laidLength() - start;
         assertTrue(briskLaid > slowLaid * 2.5f, "brisk " + briskLaid + " slow " + slowLaid);
+    }
+
+    @Test
+    void theStreamIsLaidAtOnceUpToJustBeforeTheViewSoItsFarEndNeverHoldsUpTheGhosts() {
+        SlipstreamSky sky = new SlipstreamSky((view, random) -> ROUTE, PACE, new Random(1));
+        sky.render(VIEWPORT, 0f);
+
+        advance(sky, 5.05f);
+
+        float start = leadInStart();
+        assertTrue(start > 0f);
+        assertTrue(sky.event().stream().laidLength() >= start - ROUTE.width(), "laid " + sky.event().stream().laidLength());
+        assertFalse(ViewWindow.of(VIEWPORT).contains(ROUTE.pointAt(start).x, ROUTE.pointAt(start).y));
+    }
+
+    private static float leadInStart() {
+        return ROUTE.firstDistanceInside(ViewWindow.of(VIEWPORT).expanded(ROUTE.width() * SlipstreamSky.LEAD_IN_WIDTHS));
     }
 
     @Test

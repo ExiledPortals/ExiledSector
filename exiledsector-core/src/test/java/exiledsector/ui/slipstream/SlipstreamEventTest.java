@@ -20,7 +20,7 @@ class SlipstreamEventTest {
 
     @Test
     void theStreamIsLaidBehindTheGhostsAndCoversTheRouteOnceTheyCross() {
-        SlipstreamEvent event = new SlipstreamEvent(ROUTE, SPEED, new Random(4));
+        SlipstreamEvent event = new SlipstreamEvent(ROUTE, SPEED, 0f, new Random(4));
         advance(event, CROSSING_SECONDS / 2f);
         float halfway = event.stream().laidLength();
         assertTrue(halfway > ROUTE.length() * 0.4f && halfway < ROUTE.length() * 0.6f, "laid " + halfway);
@@ -32,7 +32,7 @@ class SlipstreamEventTest {
 
     @Test
     void theStreamLingersAboutThirtySecondsAfterItIsLaidThenDisappears() {
-        SlipstreamEvent event = new SlipstreamEvent(ROUTE, SPEED, new Random(9));
+        SlipstreamEvent event = new SlipstreamEvent(ROUTE, SPEED, 0f, new Random(9));
         float lingerFloor = CROSSING_SECONDS + SlipstreamEvent.LINGER_SECONDS - SlipstreamEvent.LINGER_JITTER_SECONDS;
         advance(event, lingerFloor - 0.1f);
         assertFalse(event.stream().isDissolving());
@@ -51,12 +51,25 @@ class SlipstreamEventTest {
 
     @Test
     void theEndsOfTheStreamAreAlwaysInvisible() {
-        SlipstreamEvent event = new SlipstreamEvent(ROUTE, SPEED, new Random(2));
+        SlipstreamEvent event = new SlipstreamEvent(ROUTE, SPEED, 0f, new Random(2));
         advance(event, CROSSING_SECONDS * 2f);
         Slipstream stream = event.stream();
 
         assertEquals(0f, stream.alphaOf(0));
         assertEquals(0f, stream.alphaOf(stream.segments().size() - 1));
+    }
+
+    @Test
+    void aStreamStartingPartwayIsLaidUpToThereAtOnceAndLingersAsLongAfterItIsLaid() {
+        float startDistance = ROUTE.length() / 2f;
+        SlipstreamEvent event = new SlipstreamEvent(ROUTE, SPEED, startDistance, new Random(6));
+        event.advance(STEP);
+        assertTrue(event.stream().laidLength() >= startDistance - ROUTE.width(), "laid " + event.stream().laidLength());
+
+        float lingerFloor = CROSSING_SECONDS / 2f + SlipstreamEvent.LINGER_SECONDS - SlipstreamEvent.LINGER_JITTER_SECONDS;
+        advance(event, lingerFloor - 0.1f);
+        assertEquals(ROUTE.length(), event.stream().laidLength(), 0.01f);
+        assertFalse(event.stream().isDissolving());
     }
 
     @Test

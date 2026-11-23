@@ -5,8 +5,8 @@ import java.util.Arrays;
 
 public final class CorridorGrid {
 
-    static final float AREA_MARGIN_VIEW_SHARE = 0.5f;
-    static final int MAX_CELLS_PER_SIDE = 120;
+    static final float AREA_MARGIN_VIEW_SHARE = 3f;
+    static final int MAX_CELLS_PER_SIDE = 256;
     static final float CELLS_PER_CLEARANCE = 2f;
     static final float LINE_SAMPLES_PER_CELL = 3f;
     static final float CURVE_SAMPLES_PER_CELL = 2f;

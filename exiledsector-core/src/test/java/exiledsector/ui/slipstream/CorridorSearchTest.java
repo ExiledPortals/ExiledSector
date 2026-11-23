@@ -64,7 +64,7 @@ class CorridorSearchTest {
 
     @Test
     void routesComeFromFarOffScreenAndLeaveFarOffScreen() {
-        float farOff = Math.max(VIEW.width(), VIEW.height()) * 0.4f;
+        float farOff = Math.max(VIEW.width(), VIEW.height()) * 2.5f;
         ViewWindow nearView = VIEW.expanded(farOff);
         for (int seed = 0; seed < 10; seed++) {
             SlipstreamRoute route = CorridorSearch.route(CorridorGrid.covering(VIEW, WIDTH), VIEW, WIDTH, new Random(seed));
@@ -110,7 +110,7 @@ class CorridorSearchTest {
         float gapCenterY = 1000f;
         float gapHalfHeight = 900f;
         List<Vector2f> wall = new ArrayList<>();
-        for (float y = -14000f; y <= 14000f; y += 200f) {
+        for (float y = -40000f; y <= 40000f; y += 200f) {
             if (Math.abs(y - gapCenterY) > gapHalfHeight) {
                 wall.add(new Vector2f(0f, y));
             }

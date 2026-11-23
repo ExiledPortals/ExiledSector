@@ -35,6 +35,12 @@ class SlipstreamRouteTest {
     }
 
     @Test
+    void theFirstDistanceInsideAnAreaIsWhereTheRouteEntersIt() {
+        assertEquals(60f, ELBOW.firstDistanceInside(new ViewWindow(55f, -5f, 200f, 5f)), 10f);
+        assertEquals(0f, ELBOW.firstDistanceInside(new ViewWindow(500f, 500f, 600f, 600f)));
+    }
+
+    @Test
     void aRouteNeedsTwoPoints() {
         List<Vector2f> single = List.of(new Vector2f());
         assertThrows(IllegalArgumentException.class, () -> new SlipstreamRoute(single, 10f));

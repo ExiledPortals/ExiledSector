@@ -9,7 +9,7 @@ import java.util.Random;
 final class StreamParticles {
 
     static final float AREA_PER_PARTICLE_WIDTHS_SQUARED = 0.05f;
-    static final int MAX_PARTICLES = 1200;
+    static final int MAX_PARTICLES = 3000;
     static final float DRAW_MARGIN_WIDTHS = 2f;
     static final float MIN_SPEED_WIDTHS = 0.65f;
     static final float MAX_SPEED_WIDTHS = 1.1f;

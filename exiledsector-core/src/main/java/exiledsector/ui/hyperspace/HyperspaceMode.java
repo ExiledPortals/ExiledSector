@@ -9,6 +9,9 @@ import exiledsector.ui.CanvasCamera;
 import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.SmoothZoom;
 import exiledsector.ui.TreeViewport;
+import exiledsector.ui.slipstream.CorridorGrid;
+import exiledsector.ui.slipstream.CorridorRoutes;
+import exiledsector.ui.slipstream.SlipstreamSky;
 
 import java.util.HashSet;
 import java.util.List;
@@ -29,6 +32,9 @@ public final class HyperspaceMode {
     private static final float MARGIN = 60f;
     private static final float RETURN_ZOOM = 0.35f;
     private static final float STAR_SCALE = 1.5f;
+    static final float SLIPSTREAM_WIDTH_VIEW_SHARE = 0.03f;
+    static final float MIN_SLIPSTREAM_WIDTH = 1f;
+    static final SlipstreamSky.Pace SLIPSTREAM_PACE = new SlipstreamSky.Pace(1f, 4f, 20f, 40f, 14f);
 
     private final CanvasCamera camera;
     private final Supplier<MapContent> mapContent;
@@ -37,6 +43,8 @@ public final class HyperspaceMode {
     private final HyperspaceTransition hyperspaceTransition = new HyperspaceTransition();
     private final HyperspaceLabels anchorLabels;
     private final HyperspaceGhostFlights ghostFlights = new HyperspaceGhostFlights(new Random());
+    private final SlipstreamSky slipstreams = new SlipstreamSky(
+            new CorridorRoutes(SLIPSTREAM_WIDTH_VIEW_SHARE, MIN_SLIPSTREAM_WIDTH, Float.MAX_VALUE, this::blockAnchors), SLIPSTREAM_PACE, new Random());
     private List<HyperspaceAnchor> anchors = List.of();
     private Set<String> anchorIds = Set.of();
     private Set<String> hiddenStarIds = Set.of();
@@ -91,6 +99,15 @@ public final class HyperspaceMode {
         if (hyperspaceTransition.isActive()) {
             ghostFlights.advance(amount);
         }
+        if (hyperspaceTransition.isOnMap()) {
+            slipstreams.advance(amount);
+        }
+    }
+
+    private void blockAnchors(CorridorGrid grid) {
+        for (HyperspaceAnchor anchor : anchors) {
+            grid.blockCircle(anchor.x(), anchor.y(), anchor.displayRadius(mapStarRadius, 1f) * HyperspaceCamera.ANCHOR_REACH);
+        }
     }
 
     static boolean isLocked(Set<String> lockedVolumes, String volume) {
@@ -113,6 +130,7 @@ public final class HyperspaceMode {
         }
         anchorIds = ids;
         ghostFlights.setRoutes(HyperspaceRoute.between(anchors, content.wormholePairs()));
+        slipstreams.clear();
         camera.stopMoving();
         mapStarRadius = HyperspaceAnchor.mapStarRadius(anchors, STAR_SCALE);
         HyperspaceCamera fittedCamera = framing(canvasPosition);
@@ -169,6 +187,7 @@ public final class HyperspaceMode {
     public void render(TreeViewport viewport, float alphaMult, boolean hoverable, float mouseX, float mouseY) {
         HyperspaceAnchor hovered = hyperspaceTransition.isOnMap() && hoverable
                 ? anchorLabels.anchorAt(viewport, anchors, mapStarRadius, hyperspaceTransition.mapAmount(), mouseX, mouseY) : null;
+        slipstreams.render(viewport, alphaMult * hyperspaceTransition.labelAlpha());
         ghostFlights.draw(viewport, alphaMult * hyperspaceTransition.labelAlpha());
         anchorLabels.render(viewport, anchors, mapStarRadius, hyperspaceTransition.mapAmount(), hovered, alphaMult * hyperspaceTransition.labelAlpha());
     }

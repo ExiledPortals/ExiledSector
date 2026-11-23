@@ -18,6 +18,7 @@ public final class SlipstreamSky {
 
     static final float MIN_RETRY_SECONDS = 8f;
     static final float MAX_RETRY_SECONDS = 15f;
+    static final float LEAD_IN_WIDTHS = 6f;
 
     private final SlipstreamRoutes routes;
     private final Pace pace;
@@ -52,7 +53,8 @@ public final class SlipstreamSky {
             untilNext = between(MIN_RETRY_SECONDS, MAX_RETRY_SECONDS);
             return;
         }
-        event = new SlipstreamEvent(route, Math.max(lastView.width(), lastView.height()) / pace.viewCrossingSeconds(), random);
+        float startDistance = route.firstDistanceInside(lastView.expanded(route.width() * LEAD_IN_WIDTHS));
+        event = new SlipstreamEvent(route, Math.max(lastView.width(), lastView.height()) / pace.viewCrossingSeconds(), startDistance, random);
     }
 
     public void render(TreeViewport viewport, float alphaMult) {
