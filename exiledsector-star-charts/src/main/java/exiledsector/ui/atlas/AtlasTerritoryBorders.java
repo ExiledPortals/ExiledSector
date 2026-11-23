@@ -31,11 +31,6 @@ import java.util.function.Predicate;
 final class AtlasTerritoryBorders {
 
     static final float INSET_CELLS = 0.02f;
-    static final float BAND_CELLS = 0.3f;
-    static final float BAND_RADIUS_SHARE = 0.8f;
-    static final float BAND_SLOPE = 0.6f;
-    static final float UNFOLD_SHRINK = 0.6f;
-    static final int MAX_UNFOLD_PASSES = 30;
     static final int CHAIKIN_PASSES = 3;
     static final float ROUGH_CELLS = 0.22f;
     static final float ROUGH_SPACING_CELLS = 1.1f;
@@ -45,7 +40,6 @@ final class AtlasTerritoryBorders {
     private static final long ROUGH_Y_SALT = 0x524f554759L;
     private static final long ROUGH_OCTAVE_SALT = 0x4f4354L;
     static final int MIN_LABEL_CELLS = 6;
-    static final float BAND_ALPHA = 0.22f;
     static final float OUTLINE_ALPHA = 0.8f;
     static final float OUTLINE_WIDTH = 2f;
     static final float OUTLINE_WHITENESS = 0.3f;
@@ -56,24 +50,23 @@ final class AtlasTerritoryBorders {
     private static final int[][] SIDES = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
     private static final int[][] DIAGONALS = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 
-    record Loop(float[] outline, float[] inner, float minX, float minY, float maxX, float maxY) {
+    record Loop(float[] outline, float minX, float minY, float maxX, float maxY) {
 
         @Override
         public boolean equals(Object other) {
-            return other instanceof Loop loop && Arrays.equals(outline, loop.outline) && Arrays.equals(inner, loop.inner)
+            return other instanceof Loop loop && Arrays.equals(outline, loop.outline)
                     && Float.compare(minX, loop.minX) == 0 && Float.compare(minY, loop.minY) == 0
                     && Float.compare(maxX, loop.maxX) == 0 && Float.compare(maxY, loop.maxY) == 0;
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(Arrays.hashCode(outline), Arrays.hashCode(inner), minX, minY, maxX, maxY);
+            return Objects.hash(Arrays.hashCode(outline), minX, minY, maxX, maxY);
         }
 
         @Override
         public String toString() {
-            return "Loop[outline=" + Arrays.toString(outline) + ", inner=" + Arrays.toString(inner) + ", minX=" + minX + ", minY=" + minY
-                    + ", maxX=" + maxX + ", maxY=" + maxY + "]";
+            return "Loop[outline=" + Arrays.toString(outline) + ", minX=" + minX + ", minY=" + minY + ", maxX=" + maxX + ", maxY=" + maxY + "]";
         }
     }
 
@@ -83,9 +76,6 @@ final class AtlasTerritoryBorders {
     private record Edge(int fromX, int fromY, int toX, int toY) {
     }
 
-    private record LoopDepths(float[] outline, float[] inner) {
-    }
-
     private final long seed;
     private final Function<String, Color> colours;
     private final Function<String, String> names;
@@ -93,10 +83,10 @@ final class AtlasTerritoryBorders {
     private List<Region> regions = List.of();
     private List<Color> tints = List.of();
     private List<Color> outlines = List.of();
-    private final Map<Loop, LoopDepths> loopDepths = new IdentityHashMap<>();
+    private final Map<Loop, float[]> outlineDepths = new IdentityHashMap<>();
+    private List<AtlasRegionBubble> bubbles = List.of();
     private final float[] placed = new float[3];
     private float[] outlineScreen = new float[0];
-    private float[] innerScreen = new float[0];
     private boolean shown;
     private float level;
 
@@ -117,9 +107,19 @@ final class AtlasTerritoryBorders {
             }
         }
         labels.clear();
-        loopDepths.clear();
+        outlineDepths.clear();
+        for (AtlasRegionBubble bubble : bubbles) {
+            bubble.release();
+        }
         regions = build(seed, known, groupAt, hasSystem, joinedCorners);
         tints = regions.stream().map(this::colour).toList();
+        List<AtlasRegionBubble> built = new ArrayList<>();
+        for (int index = 0; index < regions.size(); index++) {
+            Region region = regions.get(index);
+            built.add(new AtlasRegionBubble(region.loops().stream().map(Loop::outline).toList(), region.minX(), region.minY(), region.maxX(),
+                    region.maxY(), tints.get(index)));
+        }
+        bubbles = List.copyOf(built);
         outlines = tints.stream().map(tint -> towardWhite(tint, OUTLINE_WHITENESS)).toList();
         for (int index = 0; index < regions.size(); index++) {
             labels.add(null);
@@ -150,40 +150,30 @@ final class AtlasTerritoryBorders {
         if (alpha <= 0f || regions.isEmpty()) {
             return;
         }
-        TreeViewport view = lens.view();
         List<Integer> onScreenIndexes = new ArrayList<>();
         for (int index = 0; index < regions.size(); index++) {
             Region region = regions.get(index);
-            if (visible(view, region.minX(), region.minY(), region.maxX(), region.maxY())) {
+            if (visible(lens, region.minX(), region.minY(), region.maxX(), region.maxY())) {
                 onScreenIndexes.add(index);
             }
         }
         if (onScreenIndexes.isEmpty()) {
             return;
         }
-        try (GlScope scope = GlScope.flat()) {
+        try (GlScope scope = GlScope.textured(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)) {
             for (int index : onScreenIndexes) {
-                for (Loop loop : regions.get(index).loops()) {
-                    if (visible(view, loop.minX(), loop.minY(), loop.maxX(), loop.maxY())) {
-                        project(lens, loop, true);
-                        drawBand(loop.outline().length, tints.get(index), BAND_ALPHA * alpha);
-                    }
-                }
+                bubbles.get(index).draw(lens, alpha);
             }
+        }
+        try (GlScope scope = GlScope.flat()) {
             GL11.glEnable(GL11.GL_LINE_SMOOTH);
             GL11.glLineWidth(OUTLINE_WIDTH);
             for (int index : onScreenIndexes) {
-                Region region = regions.get(index);
                 Color outline = outlines.get(index);
-                GL11.glColor4f(outline.getRed() / 255f, outline.getGreen() / 255f, outline.getBlue() / 255f, OUTLINE_ALPHA * alpha);
-                for (Loop loop : region.loops()) {
-                    if (visible(view, loop.minX(), loop.minY(), loop.maxX(), loop.maxY())) {
-                        project(lens, loop, false);
-                        GL11.glBegin(GL11.GL_LINE_LOOP);
-                        for (int point = 0; point < loop.outline().length; point += 2) {
-                            GL11.glVertex2f(outlineScreen[point], outlineScreen[point + 1]);
-                        }
-                        GL11.glEnd();
+                for (Loop loop : regions.get(index).loops()) {
+                    if (visible(lens, loop.minX(), loop.minY(), loop.maxX(), loop.maxY())) {
+                        projectOutline(lens, loop);
+                        drawLoop(outlineScreen, loop.outline().length, outline, OUTLINE_ALPHA * alpha);
                     }
                 }
             }
@@ -193,49 +183,30 @@ final class AtlasTerritoryBorders {
         }
     }
 
-    private void project(DepthLens lens, Loop loop, boolean withInner) {
+    private void projectOutline(DepthLens lens, Loop loop) {
         float[] outline = loop.outline();
-        float[] inner = loop.inner();
-        LoopDepths depths = loopDepths.computeIfAbsent(loop, key -> new LoopDepths(depthsOf(lens, outline), depthsOf(lens, inner)));
+        float[] depths = outlineDepths.computeIfAbsent(loop, key -> {
+            float[] sampled = new float[outline.length / 2];
+            for (int point = 0; point < sampled.length; point++) {
+                sampled[point] = lens.depthAt(outline[point * 2], outline[point * 2 + 1]);
+            }
+            return sampled;
+        });
         if (outlineScreen.length < outline.length) {
             outlineScreen = new float[outline.length];
         }
-        if (innerScreen.length < inner.length) {
-            innerScreen = new float[inner.length];
-        }
-        projectPoints(lens, outline, depths.outline(), outlineScreen);
-        if (withInner) {
-            projectPoints(lens, inner, depths.inner(), innerScreen);
-        }
-    }
-
-    private static float[] depthsOf(DepthLens lens, float[] points) {
-        float[] depths = new float[points.length / 2];
         for (int point = 0; point < depths.length; point++) {
-            depths[point] = lens.depthAt(points[point * 2], points[point * 2 + 1]);
-        }
-        return depths;
-    }
-
-    private void projectPoints(DepthLens lens, float[] points, float[] depths, float[] screen) {
-        for (int point = 0; point < depths.length; point++) {
-            lens.place(points[point * 2], points[point * 2 + 1], depths[point], placed);
-            screen[point * 2] = placed[DepthLens.X];
-            screen[point * 2 + 1] = placed[DepthLens.Y];
+            lens.place(outline[point * 2], outline[point * 2 + 1], depths[point], placed);
+            outlineScreen[point * 2] = placed[DepthLens.X];
+            outlineScreen[point * 2 + 1] = placed[DepthLens.Y];
         }
     }
 
-    private void drawBand(int length, Color tint, float alpha) {
-        float red = tint.getRed() / 255f;
-        float green = tint.getGreen() / 255f;
-        float blue = tint.getBlue() / 255f;
-        GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-        for (int index = 0; index <= length; index += 2) {
-            int at = index % length;
-            GL11.glColor4f(red, green, blue, alpha);
-            GL11.glVertex2f(outlineScreen[at], outlineScreen[at + 1]);
-            GL11.glColor4f(red, green, blue, 0f);
-            GL11.glVertex2f(innerScreen[at], innerScreen[at + 1]);
+    private static void drawLoop(float[] screen, int length, Color colour, float alpha) {
+        GL11.glColor4f(colour.getRed() / 255f, colour.getGreen() / 255f, colour.getBlue() / 255f, alpha);
+        GL11.glBegin(GL11.GL_LINE_LOOP);
+        for (int point = 0; point < length; point += 2) {
+            GL11.glVertex2f(screen[point], screen[point + 1]);
         }
         GL11.glEnd();
     }
@@ -266,8 +237,10 @@ final class AtlasTerritoryBorders {
         return colour == null ? Color.WHITE : colour;
     }
 
-    private static boolean visible(TreeViewport view, float minX, float minY, float maxX, float maxY) {
-        return view.overlaps(view.screenX(minX), view.screenY(maxY), view.screenX(maxX), view.screenY(minY));
+    private static boolean visible(DepthLens lens, float minX, float minY, float maxX, float maxY) {
+        float deepest = DepthLens.FARTHEST;
+        return minX <= lens.worldMaxX(deepest) && maxX >= lens.worldMinX(deepest) && minY <= lens.worldMaxY(deepest)
+                && maxY >= lens.worldMinY(deepest);
     }
 
     static Color towardWhite(Color colour, float share) {
@@ -459,7 +432,6 @@ final class AtlasTerritoryBorders {
 
     private static Loop loop(List<float[]> points) {
         int count = points.size();
-        float[] normals = new float[count * 2];
         float[] outline = new float[count * 2];
         float minX = Float.MAX_VALUE;
         float minY = Float.MAX_VALUE;
@@ -472,10 +444,10 @@ final class AtlasTerritoryBorders {
             float normalX = -(here[1] - previous[1]) / length(here, previous) - (next[1] - here[1]) / length(next, here);
             float normalY = (here[0] - previous[0]) / length(here, previous) + (next[0] - here[0]) / length(next, here);
             float normalLength = (float) Math.hypot(normalX, normalY);
-            normals[index * 2] = normalLength <= 0f ? 0f : normalX / normalLength;
-            normals[index * 2 + 1] = normalLength <= 0f ? 0f : normalY / normalLength;
-            float x = (here[0] + normals[index * 2] * INSET_CELLS) * AtlasMapCanvas.CELL_PIXELS;
-            float y = (here[1] + normals[index * 2 + 1] * INSET_CELLS) * AtlasMapCanvas.CELL_PIXELS;
+            float insetX = normalLength <= 0f ? 0f : normalX / normalLength * INSET_CELLS;
+            float insetY = normalLength <= 0f ? 0f : normalY / normalLength * INSET_CELLS;
+            float x = (here[0] + insetX) * AtlasMapCanvas.CELL_PIXELS;
+            float y = (here[1] + insetY) * AtlasMapCanvas.CELL_PIXELS;
             outline[index * 2] = x;
             outline[index * 2 + 1] = y;
             minX = Math.min(minX, x);
@@ -483,75 +455,7 @@ final class AtlasTerritoryBorders {
             maxX = Math.max(maxX, x);
             maxY = Math.max(maxY, y);
         }
-        float[] depths = bandDepths(points, outline);
-        float[] inner = new float[count * 2];
-        for (int attempt = 0; ; attempt++) {
-            for (int index = 0; index < count; index++) {
-                float depth = depths[index] * AtlasMapCanvas.CELL_PIXELS;
-                inner[index * 2] = outline[index * 2] + normals[index * 2] * depth;
-                inner[index * 2 + 1] = outline[index * 2 + 1] + normals[index * 2 + 1] * depth;
-            }
-            if (!unfold(outline, inner, depths) || attempt >= MAX_UNFOLD_PASSES) {
-                break;
-            }
-        }
-        return new Loop(outline, inner, minX, minY, maxX, maxY);
-    }
-
-    private static float[] bandDepths(List<float[]> points, float[] outline) {
-        int count = points.size();
-        float[] depths = new float[count];
-        for (int index = 0; index < count; index++) {
-            float[] previous = points.get((index + count - 1) % count);
-            float[] here = points.get(index);
-            float[] next = points.get((index + 1) % count);
-            float turn = (here[0] - previous[0]) * (next[1] - here[1]) - (here[1] - previous[1]) * (next[0] - here[0]);
-            float radius = turn <= 0f ? Float.MAX_VALUE : length(here, previous) * length(next, here) * length(next, previous) / (2f * turn);
-            depths[index] = Math.min(BAND_CELLS, BAND_RADIUS_SHARE * radius);
-        }
-        for (int lap = 0; lap < 2; lap++) {
-            for (int step = 1; step <= count; step++) {
-                int forward = step % count;
-                int forwardPrevious = step - 1;
-                depths[forward] = Math.min(depths[forward], depths[forwardPrevious] + BAND_SLOPE * segmentCells(outline, forwardPrevious, forward));
-                int backward = count - step;
-                int backwardPrevious = (backward + 1) % count;
-                depths[backward] = Math.min(depths[backward], depths[backwardPrevious] + BAND_SLOPE * segmentCells(outline, backward, backwardPrevious));
-            }
-        }
-        return depths;
-    }
-
-    private static boolean unfold(float[] outline, float[] inner, float[] depths) {
-        int count = depths.length;
-        boolean folded = false;
-        for (int index = 0; index < count; index++) {
-            int next = (index + 1) % count;
-            if (folds(outline, inner, index, next)) {
-                depths[index] *= UNFOLD_SHRINK;
-                depths[next] *= UNFOLD_SHRINK;
-                folded = true;
-            }
-        }
-        return folded;
-    }
-
-    private static boolean folds(float[] outline, float[] inner, int index, int next) {
-        float[] quadX = {outline[index * 2], outline[next * 2], inner[next * 2], inner[index * 2]};
-        float[] quadY = {outline[index * 2 + 1], outline[next * 2 + 1], inner[next * 2 + 1], inner[index * 2 + 1]};
-        for (int corner = 0; corner < quadX.length; corner++) {
-            int b = (corner + 1) % quadX.length;
-            int c = (corner + 2) % quadX.length;
-            double turn = (quadX[b] - quadX[corner]) * (double) (quadY[c] - quadY[b]) - (quadY[b] - quadY[corner]) * (double) (quadX[c] - quadX[b]);
-            if (turn < 0.0) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static float segmentCells(float[] outline, int from, int to) {
-        return (float) Math.hypot(outline[to * 2] - outline[from * 2], outline[to * 2 + 1] - outline[from * 2 + 1]) / AtlasMapCanvas.CELL_PIXELS;
+        return new Loop(outline, minX, minY, maxX, maxY);
     }
 
     private static AtlasCell deepest(Set<Long> patch) {
