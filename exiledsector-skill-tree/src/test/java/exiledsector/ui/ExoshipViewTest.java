@@ -24,6 +24,8 @@ class ExoshipViewTest {
     private static final SkillType SMALL = new SkillType.Builder("small", "Small", "a.png", SkillTier.SMALL).build();
     private static final SkillType NOTABLE = new SkillType.Builder("notable", "Notable", "a.png", SkillTier.NOTABLE).build();
     private static final SkillType EXOSHIP = new SkillType.Builder(ExoshipNodes.EXOSHIP_TYPE_ID, "Exoship", "", SkillTier.WORMHOLE).build();
+    private static final SkillType SUBSYSTEM = new SkillType.Builder("subsystem", "Subsystem", "a.png", SkillTier.NOTABLE)
+            .tags(List.of(SkillTags.STATION_SUBSYSTEM)).build();
 
     private static final SkillNode EXOSHIP_NODE = node("exoship", EXOSHIP, -8000f, -15000f, SkillTags.EXOTECH_VOLUME);
     private static final SkillNode CARRIED_NODE = node("carried", SMALL, -7000f, -15000f, SkillTags.EXOTECH_VOLUME);
@@ -33,8 +35,9 @@ class ExoshipViewTest {
     private static final SkillNode ABYSS_NOTABLE = node("abyss_notable", NOTABLE, -45000f, 27000f, SkillTags.ABYSS_VOLUME);
     private static final SkillNode BLACK_HOLE_NOTABLE = node("black_hole_notable", NOTABLE, 10164f, -8105f, SkillTags.REDACTED_VOLUME);
     private static final SkillNode CORE_SMALL = node("core_small", SMALL, 100f, 100f, SkillTags.CORE_VOLUME);
+    private static final SkillNode SUBSYSTEM_NOTABLE = node("subsystem_notable", SUBSYSTEM, 4000f, 4000f, SkillTags.CORE_VOLUME);
     private static final List<SkillNode> NODES = List.of(EXOSHIP_NODE, CARRIED_NODE, CARRIED_NOTABLE, CORE_NOTABLE, FAR_NOTABLE,
-            ABYSS_NOTABLE, BLACK_HOLE_NOTABLE, CORE_SMALL);
+            ABYSS_NOTABLE, BLACK_HOLE_NOTABLE, CORE_SMALL, SUBSYSTEM_NOTABLE);
 
     private static SkillNode node(String id, SkillType type, float treeX, float treeY, String volume) {
         return new SkillNode(id, type, List.of(), treeX, treeY, SkillNodeDecoration.NONE, List.of(volume));
@@ -45,7 +48,7 @@ class ExoshipViewTest {
     }
 
     @Test
-    void theExoshipOrbitsOnlyNotablesOutsideItsOwnBranchesAbyssalHyperspaceAndTheBlackHole() {
+    void theExoshipOrbitsOnlyNotablesOutsideItsOwnBranchesAbyssalHyperspaceTheBlackHoleAndTheStationSubsystems() {
         List<ExoshipVoyage.Anchor> anchors = ExoshipView.orbitAnchors(NODES);
 
         assertEquals(List.of(new ExoshipVoyage.Anchor(0f, 0f, true), new ExoshipVoyage.Anchor(9000f, 0f, false)), anchors);

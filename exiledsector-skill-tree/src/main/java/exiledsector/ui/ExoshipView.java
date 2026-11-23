@@ -4,6 +4,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.skills.skilleffect.render.Fade;
 import exiledsector.skills.ExoshipNodes;
+import exiledsector.skills.ResearchStationNodes;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -54,7 +55,7 @@ final class ExoshipView {
         List<ExoshipVoyage.Anchor> anchors = new ArrayList<>();
         for (SkillNode node : nodes) {
             String volume = node.getVolume();
-            if (node.getType().getTier() == SkillTier.NOTABLE && !ExoshipNodes.isCarried(node)
+            if (node.getType().getTier() == SkillTier.NOTABLE && !ExoshipNodes.isCarried(node) && !ResearchStationNodes.isSubsystem(node)
                     && !(volume != null && SkillTags.NO_EXOSHIP_ANCHOR_VOLUMES.contains(volume))) {
                 anchors.add(new ExoshipVoyage.Anchor(node.getX(), node.getY(), SkillTags.CORE_VOLUME.equals(volume)));
             }
