@@ -274,7 +274,7 @@ final class AtlasSystemArt {
         }
         for (Piece piece : layout.pieces()) {
             if (piece.kind() == Kind.NEBULA_PUFF) {
-                aroundStar(piece, frame, NEBULA_ORBIT_DEGREES_PER_SECOND);
+                aroundCentre(piece, frame, NEBULA_ORBIT_DEGREES_PER_SECOND);
                 float size = piece.size() * frame.radius * 2f * pieceScale;
                 drawCell(sheet, piece.variant(), pieceX, pieceY, size, piece.angle() + frame.elapsedSeconds * piece.speed(), Color.WHITE,
                         NEBULA_ALPHA * frame.alpha, false);
@@ -316,7 +316,7 @@ final class AtlasSystemArt {
             }
             case CONVOY -> {
                 for (int ship = 0; ship < CONVOY_SHIPS; ship++) {
-                    aroundStar(convoyShipAngle(piece, frame, ship), piece.orbit() * frame.reach, frame);
+                    aroundCentre(convoyShipAngle(piece, frame, ship), piece.orbit() * frame.reach, frame);
                     queue(order, frame, index, ship, piecePlaneY);
                 }
             }
@@ -327,7 +327,7 @@ final class AtlasSystemArt {
                 }
             }
             case RELAY -> {
-                aroundStar(piece, frame, piece.speed());
+                aroundCentre(piece, frame, piece.speed());
                 if (relayCount < relayPlaneX.length) {
                     relayPlaneX[relayCount] = piecePlaneX;
                     relayPlaneY[relayCount] = piecePlaneY;
@@ -337,7 +337,7 @@ final class AtlasSystemArt {
                 queue(order, frame, index, RELAY_SPRITE_PART, piecePlaneY);
             }
             default -> {
-                aroundStar(piece, frame, piece.speed());
+                aroundCentre(piece, frame, piece.speed());
                 queue(order, frame, index, 0, piecePlaneY);
             }
         }
@@ -405,13 +405,13 @@ final class AtlasSystemArt {
         return piece.planet() >= 0 && piece.planet() < frame.planetX.length;
     }
 
-    private void aroundStar(Piece piece, Frame frame, float degreesPerSecond) {
-        aroundStar(orbitAngle(piece, frame, degreesPerSecond), piece.orbit() * frame.reach, frame);
+    private void aroundCentre(Piece piece, Frame frame, float degreesPerSecond) {
+        aroundCentre(orbitAngle(piece, frame, degreesPerSecond), piece.orbit() * frame.reach, frame);
     }
 
-    private void aroundStar(float angleDegrees, float distance, Frame frame) {
+    private void aroundCentre(float angleDegrees, float distance, Frame frame) {
         double angle = Math.toRadians(angleDegrees);
-        onPlane(frame.starPlaneX + (float) Math.cos(angle) * distance, frame.starPlaneY + (float) Math.sin(angle) * distance, frame);
+        onPlane((float) Math.cos(angle) * distance, (float) Math.sin(angle) * distance, frame);
     }
 
     private void onPlane(float planeX, float planeY, Frame frame) {
@@ -455,7 +455,7 @@ final class AtlasSystemArt {
     private void drawWreck(Piece piece, Frame frame) {
         SpriteAPI sheet = spriteCache.sprite(DEBRIS_SHEET);
         if (sheet != null) {
-            aroundStar(piece, frame, piece.speed());
+            aroundCentre(piece, frame, piece.speed());
             drawCell(sheet, piece.variant(), pieceX, pieceY, piece.size() * frame.radius * pieceScale, frame.elapsedSeconds * 20f + piece.angle(),
                     WRECK_TINT, frame.alpha, false);
         }
@@ -524,7 +524,7 @@ final class AtlasSystemArt {
         if (halo == null || breachRing == null) {
             return;
         }
-        aroundStar(piece, frame, piece.speed());
+        aroundCentre(piece, frame, piece.speed());
         breachCentre.set(pieceX, pieceY);
         float haloDiameter = 2f * piece.size() * frame.radius * pieceScale;
         BreachCorePlugin.drawCore(halo, breachRing, breachCentre, haloDiameter / BreachCorePlugin.HALO_SIZE, frame.alpha, frame.elapsedSeconds);
@@ -532,7 +532,7 @@ final class AtlasSystemArt {
 
     private void drawOrbitingSprite(Piece piece, Frame frame, String path, float aspect, Color glow) {
         float orbitAngle = orbitAngle(piece, frame, piece.speed());
-        aroundStar(orbitAngle, piece.orbit() * frame.reach, frame);
+        aroundCentre(orbitAngle, piece.orbit() * frame.reach, frame);
         float size = piece.size() * frame.radius * pieceScale;
         if (glow != null) {
             float pulse = (float) Math.sin(frame.elapsedSeconds * 2f) * 0.25f + 0.75f;
@@ -543,7 +543,7 @@ final class AtlasSystemArt {
 
     private void drawBattle(Piece piece, Frame frame) {
         float orbitAngle = orbitAngle(piece, frame, piece.speed());
-        aroundStar(orbitAngle, piece.orbit() * frame.reach, frame);
+        aroundCentre(orbitAngle, piece.orbit() * frame.reach, frame);
         float size = piece.size() * frame.radius;
         double axis = Math.toRadians(orbitAngle + 90f);
         float axisX = (float) Math.cos(axis);
@@ -586,7 +586,7 @@ final class AtlasSystemArt {
 
     private void drawRelayPart(Piece piece, Frame frame, int part) {
         if (part == RELAY_SPRITE_PART) {
-            aroundStar(piece, frame, piece.speed());
+            aroundCentre(piece, frame, piece.speed());
             drawSprite(RELAY_SPRITES.get(piece.variant()), pieceX, pieceY, piece.size() * frame.radius * pieceScale, RELAY_ASPECTS.get(piece.variant()),
                     piece.angle() + frame.elapsedSeconds * 15f, Color.WHITE, frame.alpha);
         } else {
@@ -630,7 +630,7 @@ final class AtlasSystemArt {
 
     private void drawConvoyShip(Piece piece, Frame frame, int ship) {
         float shipAngle = convoyShipAngle(piece, frame, ship);
-        aroundStar(shipAngle, piece.orbit() * frame.reach, frame);
+        aroundCentre(shipAngle, piece.orbit() * frame.reach, frame);
         drawSprite(CONVOY_SPRITE, pieceX, pieceY, piece.size() * frame.radius * pieceScale, CONVOY_ASPECT, orbitHeading(shipAngle, frame), Color.WHITE,
                 frame.alpha);
     }
@@ -641,7 +641,7 @@ final class AtlasSystemArt {
         if (sheet == null) {
             return;
         }
-        aroundStar(piece, frame, piece.speed());
+        aroundCentre(piece, frame, piece.speed());
         float size = piece.size() * frame.radius;
         float centreX = piecePlaneX;
         float centreY = piecePlaneY;
@@ -700,7 +700,7 @@ final class AtlasSystemArt {
         float size = piece.size() * frame.radius * 2f;
         float across = puff / (float) (STORM_PUFFS - 1) * 2f - 1f;
         float wobble = (float) Math.sin(puff * 1.7f + frame.elapsedSeconds * 0.5f) * size * 0.15f;
-        aroundStar(travelAngle(piece, frame, piece.speed()) + across * STORM_ARC_DEGREES / 2f, piece.orbit() * frame.reach + wobble, frame);
+        aroundCentre(travelAngle(piece, frame, piece.speed()) + across * STORM_ARC_DEGREES / 2f, piece.orbit() * frame.reach + wobble, frame);
         return across;
     }
 
