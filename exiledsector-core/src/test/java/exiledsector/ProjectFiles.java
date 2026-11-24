@@ -63,13 +63,17 @@ public final class ProjectFiles {
         return projectRoot().resolve(gamePath);
     }
 
-    public static List<Path> mainSourceRoots() throws IOException {
+    public static List<Path> moduleRoots() throws IOException {
         Matcher module = MODULE.matcher(Files.readString(projectRoot().resolve("pom.xml"), StandardCharsets.UTF_8));
         List<Path> roots = new ArrayList<>();
         while (module.find()) {
-            roots.add(projectRoot().resolve(module.group(1)).resolve(MAIN_SOURCES));
+            roots.add(projectRoot().resolve(module.group(1)));
         }
         return roots;
+    }
+
+    public static List<Path> mainSourceRoots() throws IOException {
+        return moduleRoots().stream().map(module -> module.resolve(MAIN_SOURCES)).toList();
     }
 
     public static Map<String, Path> mainSources() throws IOException {

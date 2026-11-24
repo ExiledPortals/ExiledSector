@@ -1,11 +1,15 @@
 $ErrorActionPreference = "Stop"
 
-$starsectorCore = "E:\Dev\Starsector-0.98.5a-RC9\starsector-core"
-$devMods        = "E:\Dev\Starsector\mods"
-$sourceMods     = "C:\Games\Starsector\mods"
-$libs           = Join-Path $PSScriptRoot "libs"
+$starsectorCore       = "E:\Dev\Starsector-0.98.5a-RC9\starsector-core"
+$oldestStarsectorCore = "E:\Dev\Starsector\starsector-core"
+$oldestGameVersion    = "0.98a-RC8"
+$devMods              = "E:\Dev\Starsector\mods"
+$sourceMods           = "C:\Games\Starsector\mods"
+$libs                 = Join-Path $PSScriptRoot "libs"
+$oldestGameLibs       = Join-Path $libs $oldestGameVersion
 
 New-Item -ItemType Directory -Force -Path $libs | Out-Null
+New-Item -ItemType Directory -Force -Path $oldestGameLibs | Out-Null
 
 $coreJars = @(
     "starfarer.api.jar",
@@ -19,13 +23,20 @@ $coreJars = @(
     "log4j-1.2.9.jar"
 )
 
-foreach ($jar in $coreJars) {
-    $coreJar = Join-Path $starsectorCore $jar
-    if (-not (Test-Path -LiteralPath $coreJar)) {
-        throw "Missing $coreJar. Install Starsector at $starsectorCore (or change `$starsectorCore in setup-libs.ps1) and run it again."
+function Copy-GameJars {
+    param([string]$GameCore, [string]$Destination, [string]$SettingName)
+
+    foreach ($jar in $coreJars) {
+        $coreJar = Join-Path $GameCore $jar
+        if (-not (Test-Path -LiteralPath $coreJar)) {
+            throw "Missing $coreJar. Install Starsector at $GameCore (or change `$$SettingName in setup-libs.ps1) and run it again."
+        }
+        Copy-Item -Path $coreJar -Destination $Destination -Force
     }
-    Copy-Item -Path $coreJar -Destination $libs -Force
 }
+
+Copy-GameJars -GameCore $starsectorCore -Destination $libs -SettingName "starsectorCore"
+Copy-GameJars -GameCore $oldestStarsectorCore -Destination $oldestGameLibs -SettingName "oldestStarsectorCore"
 
 $libJars = @{
     "LazyLib"          = @("LazyLib.jar", "LazyLib-Kotlin.jar", "internal\Kotlin-Runtime.jar")
