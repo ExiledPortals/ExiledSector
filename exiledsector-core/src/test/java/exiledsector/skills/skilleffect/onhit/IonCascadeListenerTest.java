@@ -1,7 +1,6 @@
 package exiledsector.skills.skilleffect.onhit;
 
 import com.fs.starfarer.api.combat.ArmorGridAPI;
-import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
@@ -10,35 +9,26 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipEngineControllerAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import exiledsector.skills.skilleffect.CombatEngineExtension;
-import exiledsector.skills.skilleffect.EmpOnlyHits;
-import org.junit.jupiter.api.BeforeEach;
+import exiledsector.skills.skilleffect.HitMix;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyFloat;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class IonCascadeListenerTest {
 
-    @RegisterExtension
-    final CombatEngineExtension combat = new CombatEngineExtension();
-    private CombatEngineAPI engine;
+    private static final float TOLERANCE = 1e-4f;
 
-    @BeforeEach
-    void setUp() {
-        engine = combat.engine();
-    }
+    @RegisterExtension
+    final CombatEngineExtension combat = CombatEngineExtension.withListenerManager();
 
     private static MutableStat stat(float value) {
         MutableStat stat = mock(MutableStat.class);
@@ -75,11 +65,15 @@ class IonCascadeListenerTest {
     }
 
     private static ShipAPI target(List<WeaponAPI> weapons, List<ShipEngineControllerAPI.ShipEngineAPI> engines) {
+        return target(1f, weapons, engines);
+    }
+
+    private static ShipAPI target(float empTaken, List<WeaponAPI> weapons, List<ShipEngineControllerAPI.ShipEngineAPI> engines) {
         ShipAPI target = mock(ShipAPI.class);
         when(target.getOwner()).thenReturn(1);
         when(target.isAlive()).thenReturn(true);
         when(target.getLocation()).thenReturn(new Vector2f());
-        MutableShipStatsAPI targetStats = stats(1f, 1f);
+        MutableShipStatsAPI targetStats = stats(empTaken, 1f);
         when(target.getMutableStats()).thenReturn(targetStats);
         ArmorGridAPI grid = mock(ArmorGridAPI.class);
         when(grid.getCellAtLocation(Mockito.any())).thenAnswer(call -> {
@@ -94,17 +88,30 @@ class IonCascadeListenerTest {
         return target;
     }
 
+    private static ShipAPI disabledWeaponUnderTheHit(float empTaken) {
+        return target(empTaken, List.of(weaponAt(new Vector2f(0f, 0f), true)), List.of());
+    }
+
     private static ShipAPI owner(float sharePercent) {
+        return owner(sharePercent, 1f);
+    }
+
+    private static ShipAPI owner(float sharePercent, float damageToWeaponsMult) {
         ShipAPI owner = mock(ShipAPI.class, Mockito.RETURNS_DEEP_STUBS);
         when(owner.getOwner()).thenReturn(0);
         when(owner.getMutableStats().getDynamic().getValue(IonCascadeListener.HIGH_EXPLOSIVE_SHARE_PERCENT_KEY, 0f)).thenReturn(sharePercent);
+        when(owner.getMutableStats().getDamageToTargetWeaponsMult().getModifiedValue()).thenReturn(damageToWeaponsMult);
+        when(owner.getMutableStats().getDamageToTargetEnginesMult().getModifiedValue()).thenReturn(1f);
         return owner;
     }
 
-    private static DamageAPI empHit(float emp) {
-        DamageAPI damage = mock(DamageAPI.class);
-        when(damage.computeFluxDealt(anyFloat())).thenReturn(emp);
-        return damage;
+    private static HitMix.EmpOnlyResult empOnlyHit(ShipAPI owner, ShipAPI target, boolean shieldHit, HitMix.Resolver... otherResolvers) {
+        List<HitMix.Resolver> resolvers = new ArrayList<>();
+        resolvers.add(new IonCascadeListener(owner));
+        resolvers.addAll(List.of(otherResolvers));
+        when(owner.hasListenerOfClass(HitMix.Resolver.class)).thenReturn(true);
+        when(owner.getListeners(HitMix.Resolver.class)).thenReturn(resolvers);
+        return HitMix.resolveEmpOnly(owner, null, target, new Vector2f(0.2f, 0.1f), shieldHit, 200f);
     }
 
     @Test
@@ -125,7 +132,7 @@ class IonCascadeListenerTest {
 
         float convertible = IonCascadeListener.empOnClosestDisabledPart(target, new Vector2f(), 100f, null);
 
-        assertEquals(100f * IonCascadeListener.INNER_CELL_EMP_SHARE, convertible, 1e-4f);
+        assertEquals(100f * IonCascadeListener.INNER_CELL_EMP_SHARE, convertible, TOLERANCE);
     }
 
     @Test
@@ -134,7 +141,7 @@ class IonCascadeListenerTest {
 
         float convertible = IonCascadeListener.empOnClosestDisabledPart(target, new Vector2f(), 100f, null);
 
-        assertEquals(100f * IonCascadeListener.OUTER_CELL_EMP_SHARE, convertible, 1e-4f);
+        assertEquals(100f * IonCascadeListener.OUTER_CELL_EMP_SHARE, convertible, TOLERANCE);
     }
 
     @Test
@@ -145,48 +152,77 @@ class IonCascadeListenerTest {
     }
 
     @Test
-    void theHighExplosiveDamageLandsAtTheHitOnTheNextFrameScaledByTheShare() {
-        ShipAPI target = target(List.of(weaponAt(new Vector2f(0f, 0f), true)), List.of());
+    void theShareOfEmpOnTheClosestDisabledPartIsConvertedToHighExplosiveDamageInTheSameHit() {
+        ShipAPI target = disabledWeaponUnderTheHit(1f);
         ShipAPI owner = owner(50f);
         IonCascadeListener listener = new IonCascadeListener(owner);
-        Vector2f hitPoint = new Vector2f(0.2f, 0.1f);
+        DamageAPI damage = IonSpillListenerTest.hit(DamageType.KINETIC, 100f, 200f);
 
-        listener.modifyDamageDealt(null, target, empHit(200f), hitPoint, false);
-        verifyNoDamageDealt();
+        HitMix.Hit hit = HitMix.resolve(owner, listener, null, target, damage, new Vector2f(0.2f, 0.1f), false);
 
-        listener.advance(0.016f);
-        verify(engine).applyDamage(eq(target), eq(hitPoint), eq(200f * IonCascadeListener.INNER_CELL_EMP_SHARE * 0.5f),
-                eq(DamageType.HIGH_EXPLOSIVE), eq(0f), eq(true), eq(false), eq(owner));
+        float moved = 200f * IonCascadeListener.INNER_CELL_EMP_SHARE * 0.5f;
+        assertEquals(100f + moved, damage.getBaseDamage(), TOLERANCE);
+        assertEquals(200f - moved, damage.getFluxComponent(), TOLERANCE);
+        assertEquals(moved / (100f + moved), hit.shares().share(DamageType.HIGH_EXPLOSIVE), TOLERANCE);
     }
 
     @Test
-    void anEmpOnlyHullHitCascadesItsEmpIncludingTheBonus() {
-        ShipAPI target = target(List.of(weaponAt(new Vector2f(0f, 0f), true)), List.of());
-        ShipAPI owner = owner(50f);
-        when(owner.getMutableStats().getDamageToTargetWeaponsMult().getModifiedValue()).thenReturn(1f);
-        IonCascadeListener listener = new IonCascadeListener(owner);
+    void theShareIsTheEmpReachingThePartOverTheHitsEmpTimesTheSharePercent() {
+        HitMix.EmpOnlyResult hit = empOnlyHit(owner(50f), disabledWeaponUnderTheHit(0.5f), false);
 
-        listener.onEmpOnlyHit(new EmpOnlyHits.EmpOnlyHit(target, new Vector2f(), 100f, 200f, false));
-        listener.onEmpOnlyHit(new EmpOnlyHits.EmpOnlyHit(target, new Vector2f(), 100f, 200f, true));
-        listener.advance(0.016f);
-
-        verify(engine).applyDamage(eq(target), any(), eq(200f * IonCascadeListener.INNER_CELL_EMP_SHARE * 0.5f),
-                eq(DamageType.HIGH_EXPLOSIVE), eq(0f), eq(true), eq(false), eq(owner));
+        float reachingThePart = 200f * 0.5f * IonCascadeListener.INNER_CELL_EMP_SHARE;
+        float moved = 200f * (reachingThePart / 200f) * 0.5f;
+        assertEquals(moved, hit.movedDamage().get(DamageType.HIGH_EXPLOSIVE), TOLERANCE);
+        assertEquals(200f - moved, hit.emp(), TOLERANCE);
     }
 
-    private void verifyNoDamageDealt() {
-        verify(engine, never()).applyDamage(any(), any(), anyFloat(), any(), anyFloat(), anyBoolean(), anyBoolean(), any());
+    @Test
+    void theDealersDamageToWeaponsRaisesTheShare() {
+        HitMix.EmpOnlyResult hit = empOnlyHit(owner(50f, 1.6f), disabledWeaponUnderTheHit(1f), false);
+
+        float moved = 200f * 1.6f * IonCascadeListener.INNER_CELL_EMP_SHARE * 0.5f;
+        assertEquals(moved, hit.movedDamage().get(DamageType.HIGH_EXPLOSIVE), TOLERANCE);
+        assertEquals(200f - moved, hit.emp(), TOLERANCE);
+    }
+
+    @Test
+    void theShareNeverMovesMoreThanAllTheEmp() {
+        HitMix.EmpOnlyResult hit = empOnlyHit(owner(300f, 2.5f), disabledWeaponUnderTheHit(1f), false);
+
+        assertEquals(200f, hit.movedDamage().get(DamageType.HIGH_EXPLOSIVE), TOLERANCE);
+        assertEquals(0f, hit.emp(), TOLERANCE);
+    }
+
+    @Test
+    void theEmpIsMovedBeforeTheEmpBonusSoOnlyTheLeftoverEmpGetsIt() {
+        HitMix.EmpOnlyResult hit = empOnlyHit(owner(50f), disabledWeaponUnderTheHit(1f), false, resolved -> resolved.increaseEmp(100f));
+
+        float moved = 200f * IonCascadeListener.INNER_CELL_EMP_SHARE * 0.5f;
+        assertEquals(moved, hit.movedDamage().get(DamageType.HIGH_EXPLOSIVE), TOLERANCE);
+        assertEquals(2f, hit.empMult(), TOLERANCE);
+        assertEquals((200f - moved) * 2f, hit.emp(), TOLERANCE);
+    }
+
+    @Test
+    void anEmpOnlyShieldHitCascadesNothing() {
+        HitMix.EmpOnlyResult hit = empOnlyHit(owner(50f), disabledWeaponUnderTheHit(1f), true);
+
+        assertTrue(hit.movedDamage().isEmpty());
+        assertEquals(200f, hit.emp(), TOLERANCE);
     }
 
     @Test
     void shieldHitsAndHitsWithoutEmpDoNothing() {
-        ShipAPI target = target(List.of(weaponAt(new Vector2f(0f, 0f), true)), List.of());
+        ShipAPI target = disabledWeaponUnderTheHit(1f);
         IonCascadeListener listener = new IonCascadeListener(owner(100f));
+        DamageAPI shieldHit = IonSpillListenerTest.hit(DamageType.KINETIC, 100f, 200f);
+        DamageAPI noEmp = IonSpillListenerTest.hit(DamageType.KINETIC, 100f, 0f);
 
-        listener.modifyDamageDealt(null, target, empHit(200f), new Vector2f(), true);
-        listener.modifyDamageDealt(null, target, empHit(0f), new Vector2f(), false);
-        listener.advance(0.016f);
+        listener.modifyDamageDealt(null, target, shieldHit, new Vector2f(), true);
+        listener.modifyDamageDealt(null, target, noEmp, new Vector2f(), false);
 
-        verifyNoDamageDealt();
+        assertEquals(100f, shieldHit.getBaseDamage(), TOLERANCE);
+        assertEquals(200f, shieldHit.getFluxComponent(), TOLERANCE);
+        assertEquals(100f, noEmp.getBaseDamage(), TOLERANCE);
     }
 }

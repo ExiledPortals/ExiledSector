@@ -3,18 +3,25 @@ package exiledsector.charts.effect;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
-import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
+import com.fs.starfarer.api.combat.ShipAPI;
+import exiledsector.skills.skilleffect.HitMix;
+import exiledsector.skills.skilleffect.HitSideEffectListener;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.EnumMap;
 import java.util.Map;
 
-final class ChartEnemyDamageListener implements DamageDealtModifier {
+final class ChartEnemyDamageListener extends HitSideEffectListener implements HitMix.Resolver {
 
     private final Map<DamageType, Float> multsByType;
 
-    private ChartEnemyDamageListener(Map<DamageType, Float> multsByType) {
+    private ChartEnemyDamageListener(Map<DamageType, Float> multsByType, ShipAPI ownerShip) {
+        super(ownerShip);
         this.multsByType = multsByType;
+    }
+
+    ChartEnemyDamageListener forShip(ShipAPI ship) {
+        return new ChartEnemyDamageListener(multsByType, ship);
     }
 
     static ChartEnemyDamageListener of(Map<ChartFleetStat, Float> enemyStatMults) {
@@ -26,7 +33,7 @@ final class ChartEnemyDamageListener implements DamageDealtModifier {
                 multsByType.put(type, mult);
             }
         }
-        return multsByType.isEmpty() ? null : new ChartEnemyDamageListener(multsByType);
+        return multsByType.isEmpty() ? null : new ChartEnemyDamageListener(multsByType, null);
     }
 
     static ChartFleetStat statFor(DamageType type) {
@@ -43,12 +50,14 @@ final class ChartEnemyDamageListener implements DamageDealtModifier {
     }
 
     @Override
-    public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
-        Float mult = damage == null || damage.getType() == null ? null : multsByType.get(damage.getType());
-        if (mult == null) {
-            return null;
+    protected void onHit(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
+        HitMix.resolve(ownerShip, this, param, target, damage, point, shieldHit);
+    }
+
+    @Override
+    public void resolve(HitMix.Hit hit) {
+        for (Map.Entry<DamageType, Float> mult : multsByType.entrySet()) {
+            hit.more(mult.getKey(), mult.getValue());
         }
-        damage.getModifier().modifyMult(ChartPlayerModifiers.MOD_ID, mult);
-        return ChartPlayerModifiers.MOD_ID;
     }
 }

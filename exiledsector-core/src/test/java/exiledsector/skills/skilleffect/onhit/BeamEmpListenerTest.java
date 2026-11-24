@@ -3,12 +3,14 @@ package exiledsector.skills.skilleffect.onhit;
 import com.fs.starfarer.api.combat.BeamAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
+import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.combat.listeners.CombatListenerManagerAPI;
 import com.fs.starfarer.api.combat.listeners.DamageListener;
 import exiledsector.skills.skilleffect.CombatEngineExtension;
+import exiledsector.skills.skilleffect.HitDamageRestorer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -21,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -49,22 +52,24 @@ class BeamEmpListenerTest {
 
     private static DamageAPI beamDamage(float baseDamage, float emp) {
         DamageAPI damage = mock(DamageAPI.class);
+        when(damage.getType()).thenReturn(DamageType.ENERGY);
         when(damage.getBaseDamage()).thenReturn(baseDamage);
         when(damage.getFluxComponent()).thenReturn(emp);
         return damage;
     }
 
     @Test
-    void beamHitsOnArmorAndHullAddEmpForThatHitOnly() {
+    void beamHitsOnArmorAndHullAddEmpFromTheirBaseDamageForThatHitOnly() {
         ShipAPI target = ship(1, 0f);
         DamageAPI damage = beamDamage(200f, 10f);
 
         assertNull(new BeamEmpListener(ship(0, 8f)).modifyDamageDealt(mock(BeamAPI.class), target, damage, new Vector2f(), false));
 
         verify(damage).setFluxComponent(26f);
-        ArgumentCaptor<Object> restorer = ArgumentCaptor.forClass(Object.class);
-        verify(listeners).addListener(restorer.capture());
-        ((DamageListener) restorer.getValue()).reportDamageApplied(null, target, mock(ApplyDamageResultAPI.class));
+        ArgumentCaptor<Object> added = ArgumentCaptor.forClass(Object.class);
+        verify(listeners, atLeastOnce()).addListener(added.capture());
+        List<Object> restorers = added.getAllValues().stream().filter(HitDamageRestorer.class::isInstance).toList();
+        ((DamageListener) restorers.get(restorers.size() - 1)).reportDamageApplied(null, target, mock(ApplyDamageResultAPI.class));
         verify(damage).setFluxComponent(10f);
     }
 

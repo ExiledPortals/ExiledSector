@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.function.ToDoubleFunction;
 
 record DamageConversion(String flagKey, WeaponType mountType, WeaponSize mountSize, Mounting mounting, boolean beamsOnly,
-                        DamageType fromType, DamageType toType) {
+                        DamageType fromType, DamageType toType, float share) {
 
     static final String KEY_PREFIX = "exiledSector_damageConversion_";
 

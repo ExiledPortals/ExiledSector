@@ -5,12 +5,14 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PrivateFieldTest {
 
     static final class Holder {
         private long stamp = 3L;
+        private Holder next;
     }
 
     @Test
@@ -31,6 +33,18 @@ class PrivateFieldTest {
         assertTrue(stamp.write(holder, 9L));
         assertFalse(stamp.write(new Object(), 1L));
         assertEquals(9L, holder.stamp);
+    }
+
+    @Test
+    void aFieldWhoseTypeIsNamedByClassNameCanBeRead() {
+        PrivateField<Object> next = PrivateField.namedOfType(Holder.class.getName(), "next", Holder.class.getName(), "unreachable");
+        PrivateField<Object> missingType = PrivateField.namedOfType(Holder.class.getName(), "next", "exiledsector.compat.NoSuchClass", "unreachable");
+        Holder holder = new Holder();
+        holder.next = new Holder();
+
+        assertSame(holder.next, next.read(holder));
+        assertFalse(missingType.reachable());
+        assertNull(missingType.read(holder));
     }
 
     @Test

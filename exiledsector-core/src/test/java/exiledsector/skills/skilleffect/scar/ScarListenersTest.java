@@ -19,6 +19,9 @@ import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.CombatListenerManagerAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
+import com.fs.starfarer.api.loading.WeaponSlotAPI;
+import exiledsector.skills.skilleffect.EngineArcs;
+import exiledsector.skills.skilleffect.HitMix;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -88,6 +91,7 @@ class ScarListenersTest {
         DamageAPI damage = mock(DamageAPI.class);
         when(damage.getModifier()).thenReturn(mock(MutableStat.class));
         when(damage.getType()).thenReturn(type);
+        when(damage.getBaseDamage()).thenReturn(100f);
         return damage;
     }
 
@@ -234,5 +238,36 @@ class ScarListenersTest {
         listener.modifyDamageDealt(shot("heavymauler"), ship("enemy", 0), kinetic, new Vector2f(), false);
 
         verify(kinetic, never()).setType(any());
+    }
+
+    @Test
+    void theHighExplosiveConversionSharesTheWholeHitWithAPartialConversion() {
+        ShipAPI owner = owner(HighExplosiveConversionListener.CHANCE_PERCENT_KEY, 100f);
+        HitMix.Resolver partialConversion = hit -> hit.convert(DamageType.ENERGY, DamageType.KINETIC, 0.4f);
+        when(owner.hasListenerOfClass(HitMix.Resolver.class)).thenReturn(true);
+        when(owner.getListeners(HitMix.Resolver.class)).thenReturn(List.of(partialConversion));
+        HighExplosiveConversionListener listener = new HighExplosiveConversionListener(owner, new Random(1));
+
+        HitMix.Hit hit = HitMix.resolve(owner, listener, shot("pulselaser"), ship("enemy", 0), damage(DamageType.ENERGY), new Vector2f(), false);
+
+        assertEquals(1f / 1.4f, hit.shares().share(DamageType.HIGH_EXPLOSIVE), 1e-4f);
+        assertEquals(0.4f / 1.4f, hit.shares().share(DamageType.KINETIC), 1e-4f);
+        assertEquals(0f, hit.shares().share(DamageType.ENERGY), 1e-4f);
+    }
+
+    @Test
+    void arcsFromTheOwnersScriptedWeaponsConvertButArcsFromNowhereDoNot() {
+        ShipAPI owner = owner(HighExplosiveConversionListener.CHANCE_PERCENT_KEY, 100f);
+        WeaponAPI shockRepeater = EngineArcs.scriptedWeapon(mock(WeaponSlotAPI.class), new Vector2f(20f, 0f), new Vector2f(10f, 0f));
+        when(owner.getAllWeapons()).thenReturn(List.of(shockRepeater));
+        HighExplosiveConversionListener listener = new HighExplosiveConversionListener(owner, new Random(1));
+        DamageAPI weaponArc = damage(DamageType.ENERGY);
+        DamageAPI strayArc = damage(DamageType.ENERGY);
+
+        listener.modifyDamageDealt(EngineArcs.startingAt(owner, new Vector2f(30f, 0f)), ship("enemy", 0), weaponArc, new Vector2f(), false);
+        listener.modifyDamageDealt(EngineArcs.startingAt(owner, new Vector2f(-200f, 0f)), ship("enemy", 0), strayArc, new Vector2f(), false);
+
+        verify(weaponArc).setType(DamageType.HIGH_EXPLOSIVE);
+        verify(strayArc, never()).setType(any());
     }
 }

@@ -1,153 +1,131 @@
 package exiledsector.skills.skilleffect.weapon;
 
 import com.fs.starfarer.api.combat.CombatEngineAPI;
-import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
+import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.CombatListenerManagerAPI;
 import exiledsector.skills.skilleffect.CombatEngineExtension;
-import exiledsector.skills.skilleffect.EmpOnlyHits;
-import exiledsector.skills.skilleffect.HitDamageRestorer;
+import exiledsector.skills.skilleffect.DamageTypeMultsExtension;
+import exiledsector.skills.skilleffect.HitMix;
+import exiledsector.skills.skilleffect.MixedHitBlender;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.lwjgl.util.vector.Vector2f;
-import org.mockito.AdditionalMatchers;
-import org.mockito.Mockito;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyFloat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class EmpDamageListenerTest {
 
     @RegisterExtension
     final CombatEngineExtension combat = new CombatEngineExtension();
-    private CombatEngineAPI engine;
+
+    @RegisterExtension
+    final DamageTypeMultsExtension typeMults = new DamageTypeMultsExtension();
+
+    private final List<Object> engineListeners = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
-        engine = combat.engine();
+        CombatEngineAPI engine = combat.engine();
         CombatListenerManagerAPI listeners = mock(CombatListenerManagerAPI.class);
         when(engine.getListenerManager()).thenReturn(listeners);
-        when(listeners.getListeners(HitDamageRestorer.class)).thenReturn(List.of());
+        when(engine.getCustomData()).thenReturn(new HashMap<>());
+        doAnswer(call -> engineListeners.add(call.getArgument(0))).when(listeners).addListener(any());
+        when(listeners.getListeners(any())).thenAnswer(call -> {
+            Class<?> listenerType = call.getArgument(0);
+            return engineListeners.stream().filter(listenerType::isInstance).toList();
+        });
     }
 
-    private static EmpDamageListener listener(float morePercent) {
-        return listener(0f, morePercent);
-    }
-
-    private static EmpDamageListener listener(float increasedPercent, float morePercent) {
+    private static ShipAPI owner(float increasedPercent, float morePercent) {
         ShipAPI owner = mock(ShipAPI.class, RETURNS_DEEP_STUBS);
         when(owner.getMutableStats().getDynamic().getValue(EmpDamageListener.EMP_INCREASED_PERCENT_KEY, 0f)).thenReturn(increasedPercent);
         when(owner.getMutableStats().getDynamic().getValue(EmpDamageListener.EMP_MORE_PERCENT_KEY, 0f)).thenReturn(morePercent);
-        return new EmpDamageListener(owner);
+        return owner;
     }
 
-    private static ShipAPI liveTarget() {
-        ShipAPI target = mock(ShipAPI.class);
-        when(target.isAlive()).thenReturn(true);
-        when(target.getLocation()).thenReturn(new Vector2f());
-        return target;
+    private static HitMix.EmpOnlyResult empOnlyHit(ShipAPI owner, HitMix.Resolver... resolvers) {
+        when(owner.hasListenerOfClass(HitMix.Resolver.class)).thenReturn(true);
+        when(owner.getListeners(HitMix.Resolver.class)).thenReturn(List.of(resolvers));
+        return HitMix.resolveEmpOnly(owner, null, mock(ShipAPI.class), new Vector2f(), false, 200f);
     }
 
-    private void verifyNoDamageDealt() {
-        verify(engine, never()).applyDamage(any(), any(), anyFloat(), any(), anyFloat(), anyBoolean(), anyBoolean(), any());
+    private static float empMultOf(float increasedPercent, float morePercent) {
+        ShipAPI owner = owner(increasedPercent, morePercent);
+        return empOnlyHit(owner, new EmpDamageListener(owner)).empMult();
+    }
+
+    private static DamageAPI damage(float baseDamage, float emp, float damageIncreasedPercent) {
+        DamageAPI damage = mock(DamageAPI.class);
+        float[] empHolder = {emp};
+        MutableStat modifier = new MutableStat(1f);
+        modifier.modifyPercent("test", damageIncreasedPercent);
+        when(damage.getType()).thenReturn(DamageType.KINETIC);
+        when(damage.getBaseDamage()).thenReturn(baseDamage);
+        when(damage.getModifier()).thenReturn(modifier);
+        when(damage.getFluxComponent()).thenAnswer(call -> empHolder[0]);
+        doAnswer(call -> empHolder[0] = call.getArgument(0)).when(damage).setFluxComponent(anyFloat());
+        return damage;
+    }
+
+    private MixedHitBlender blender() {
+        return engineListeners.stream().filter(MixedHitBlender.class::isInstance).map(MixedHitBlender.class::cast).findFirst().orElseThrow();
     }
 
     @Test
-    void empOnAShipHitIsScaledByItsOwnMultiplier() {
-        DamageAPI damage = mock(DamageAPI.class);
-        when(damage.getFluxComponent()).thenReturn(200f);
+    void empOnAShipHitIsScaledByItsMoreMultiplierAndNothingIsMoved() {
+        ShipAPI owner = owner(0f, 15f);
 
-        listener(15f).modifyDamageDealt(null, mock(ShipAPI.class), damage, new Vector2f(), false);
+        HitMix.EmpOnlyResult hit = empOnlyHit(owner, new EmpDamageListener(owner));
 
-        verify(damage).setFluxComponent(AdditionalMatchers.eq(230f, 0.01f));
+        assertEquals(1.15f, hit.empMult(), 0.0001f);
+        assertEquals(230f, hit.emp(), 0.01f);
+        assertTrue(hit.movedDamage().isEmpty());
     }
 
     @Test
     void increasedEmpIsAppliedBeforeTheMoreMultiplier() {
-        DamageAPI damage = mock(DamageAPI.class);
-        when(damage.getFluxComponent()).thenReturn(200f);
-
-        listener(10f, 20f).modifyDamageDealt(null, mock(ShipAPI.class), damage, new Vector2f(), false);
-
-        verify(damage).setFluxComponent(AdditionalMatchers.eq(264f, 0.01f));
+        assertEquals(1.32f, empMultOf(10f, 20f), 0.0001f);
     }
 
     @Test
-    void hitsWithoutEmpAndHitsOnOtherTargetsAreLeftAlone() {
-        DamageAPI noEmp = mock(DamageAPI.class);
-        DamageAPI onMissile = mock(DamageAPI.class);
-        when(onMissile.getFluxComponent()).thenReturn(200f);
-        EmpDamageListener listener = listener(15f);
+    void otherIncreasesOnTheHitAddUpWithItsOwnBeforeTheMoreMultiplier() {
+        ShipAPI owner = owner(10f, 20f);
 
-        listener.modifyDamageDealt(null, mock(ShipAPI.class), noEmp, new Vector2f(), false);
-        listener.modifyDamageDealt(null, mock(CombatEntityAPI.class), onMissile, new Vector2f(), false);
+        HitMix.EmpOnlyResult hit = empOnlyHit(owner, new EmpDamageListener(owner), resolved -> resolved.increaseEmp(20f));
 
-        verify(noEmp, never()).setFluxComponent(anyFloat());
-        verify(onMissile, never()).setFluxComponent(anyFloat());
+        assertEquals(1.3f * 1.2f, hit.empMult(), 0.0001f);
     }
 
     @Test
-    void anEmpOnlyHullHitGetsItsBonusEmpAsAZeroDamageHitOnTheNextFrame() {
-        ShipAPI target = liveTarget();
-        Vector2f landing = new Vector2f(30f, 40f);
-        EmpDamageListener listener = listener(20f);
-
-        listener.onEmpOnlyHit(new EmpOnlyHits.EmpOnlyHit(target, landing, 200f, 240f, false));
-        verifyNoDamageDealt();
-        listener.advance(0.016f);
-
-        verify(engine).applyDamage(eq(target), eq(landing), eq(0f), eq(DamageType.ENERGY), AdditionalMatchers.eq(40f, 0.01f),
-                eq(true), eq(false), any());
+    void theEmpScaleNeverGoesBelowZero() {
+        assertEquals(0f, empMultOf(0f, -150f), 0.0001f);
+        assertEquals(0f, empMultOf(-150f, 10f), 0.0001f);
     }
 
     @Test
-    void theBonusEmpLandsWhereTheHitStruckAfterTheTargetMovesAndTurns() {
-        ShipAPI target = liveTarget();
-        EmpDamageListener listener = listener(20f);
+    void theIncreasedEmpOfADamagingShipHitJoinsTheHitsDamageBonuses() {
+        EmpDamageListener listener = new EmpDamageListener(owner(30f, 0f));
+        ShipAPI target = mock(ShipAPI.class, RETURNS_DEEP_STUBS);
+        DamageAPI damage = damage(100f, 200f, 50f);
 
-        listener.onEmpOnlyHit(new EmpOnlyHits.EmpOnlyHit(target, new Vector2f(10f, 0f), 200f, 240f, false));
-        when(target.getLocation()).thenReturn(new Vector2f(100f, 100f));
-        when(target.getFacing()).thenReturn(90f);
-        listener.advance(0.016f);
+        listener.modifyDamageDealt(null, target, damage, new Vector2f(), false);
+        blender().modifyDamageTaken(null, target, damage, new Vector2f(), false);
 
-        verify(engine).applyDamage(eq(target), Mockito.argThat(point -> Math.abs(point.x - 100f) < 0.01f && Math.abs(point.y - 110f) < 0.01f),
-                eq(0f), eq(DamageType.ENERGY), anyFloat(), eq(true), eq(false), any());
-    }
-
-    @Test
-    void shieldHitsHitsWithoutABonusAndPhasedOrDestroyedTargetsGetNoBonusEmp() {
-        EmpDamageListener listener = listener(20f);
-        ShipAPI phased = liveTarget();
-        ShipAPI destroyed = liveTarget();
-
-        listener.onEmpOnlyHit(new EmpOnlyHits.EmpOnlyHit(liveTarget(), new Vector2f(), 200f, 240f, true));
-        listener.onEmpOnlyHit(new EmpOnlyHits.EmpOnlyHit(liveTarget(), new Vector2f(), 200f, 200f, false));
-        listener.onEmpOnlyHit(new EmpOnlyHits.EmpOnlyHit(phased, new Vector2f(), 200f, 240f, false));
-        listener.onEmpOnlyHit(new EmpOnlyHits.EmpOnlyHit(destroyed, new Vector2f(), 200f, 240f, false));
-        when(phased.isPhased()).thenReturn(true);
-        when(destroyed.isAlive()).thenReturn(false);
-        listener.advance(0.016f);
-
-        verifyNoDamageDealt();
-    }
-
-    @Test
-    void theMultiplierNeverGoesBelowZero() {
-        assertEquals(1.1f, EmpDamageListener.empMult(0f, 10f), 0.0001f);
-        assertEquals(0f, EmpDamageListener.empMult(0f, -150f));
-        assertEquals(0f, EmpDamageListener.empMult(-150f, 10f));
+        assertEquals(200f * (1.5f + 0.3f) / 1.5f, damage.getFluxComponent(), 0.01f);
     }
 }

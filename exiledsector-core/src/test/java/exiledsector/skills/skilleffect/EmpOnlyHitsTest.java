@@ -3,6 +3,7 @@ package exiledsector.skills.skilleffect;
 import com.fs.starfarer.api.combat.BeamAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
+import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.EmpArcEntityAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.lwjgl.util.vector.Vector2f;
+import org.mockito.AdditionalMatchers;
 import org.mockito.ArgumentCaptor;
 import org.objenesis.ObjenesisStd;
 
@@ -25,7 +27,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyFloat;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -40,14 +45,28 @@ class EmpOnlyHitsTest {
     private CombatEngineAPI engine;
     private EmpOnlyHits router;
     private ShipAPI dealer;
-    private final List<EmpOnlyHits.EmpOnlyHit> seen = new ArrayList<>();
+    private final List<HitMix.Resolver> resolvers = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
         engine = combat.engine();
         router = new EmpOnlyHits();
-        dealer = mock(ShipAPI.class);
-        router.addHandler(dealer, seen::add);
+        dealer = dealerWith(resolvers);
+        router.addDealer(dealer);
+    }
+
+    private static ShipAPI dealerWith(List<HitMix.Resolver> dealerResolvers) {
+        ShipAPI ship = mock(ShipAPI.class, RETURNS_DEEP_STUBS);
+        when(ship.hasListenerOfClass(HitMix.Resolver.class)).thenReturn(true);
+        when(ship.getListeners(HitMix.Resolver.class)).thenAnswer(call -> dealerResolvers);
+        return ship;
+    }
+
+    private void withEmpBonus(float increasedPercent, float moreMult) {
+        resolvers.add(hit -> {
+            hit.increaseEmp(increasedPercent);
+            hit.moreEmp(moreMult);
+        });
     }
 
     private DamageDealtModifier dealersModifierPass() {
@@ -60,6 +79,11 @@ class EmpOnlyHitsTest {
         ShipAPI target = mock(ShipAPI.class, RETURNS_DEEP_STUBS);
         when(target.getParamAboutToApplyDamage()).thenReturn(param);
         when(target.getMutableStats().getEmpDamageTakenMult().getModifiedValue()).thenReturn(empTakenMult);
+        when(target.isAlive()).thenReturn(true);
+        when(target.isHulk()).thenReturn(false);
+        when(target.isPhased()).thenReturn(false);
+        when(target.getLocation()).thenReturn(new Vector2f());
+        when(target.getFacing()).thenReturn(0f);
         return target;
     }
 
@@ -84,92 +108,231 @@ class EmpOnlyHitsTest {
         return projectile;
     }
 
+    private static Vector2f at(float x, float y) {
+        return argThat(point -> point != null && Math.abs(point.x - x) < 0.01f && Math.abs(point.y - y) < 0.01f);
+    }
+
+    private void verifyLateEmp(ShipAPI target, float emp) {
+        verify(engine).applyDamage(eq(target), any(), eq(0f), eq(DamageType.ENERGY), AdditionalMatchers.eq(emp, 0.01f), eq(true), eq(false),
+                eq(dealer));
+    }
+
+    private void verifyNoLateEmp() {
+        verify(engine, never()).applyDamage(any(), any(), anyFloat(), any(), anyFloat(), anyBoolean(), anyBoolean(), any());
+    }
+
     @Test
-    void anEmpOnlyHullHitReachesTheDealersHandlersWithItsEmpBeforeResistancesAndAfterTheBonus() {
+    void anEmpOnlyHullHitGetsItsExtraEmpAsAZeroDamageHitOnTheNextFrame() {
+        ShipAPI target = target(arcLandingAt(new Vector2f(30f, 40f)), 0.5f);
+        withEmpBonus(10f, 1.2f);
+
+        router.reportDamageApplied(dealer, target, empApplied(100f));
+        verifyNoLateEmp();
+        router.applyLateEmpHits(engine);
+
+        verify(engine).applyDamage(eq(target), at(30f, 40f), eq(0f), eq(DamageType.ENERGY), AdditionalMatchers.eq(64f, 0.01f), eq(true),
+                eq(false), eq(dealer));
+    }
+
+    @Test
+    void theDealersResolversSeeAHullHitWithItsEmpBeforeResistances() {
         Vector2f landing = new Vector2f(30f, 40f);
-        ShipAPI target = target(arcLandingAt(landing), 0.5f);
-        router.addEmpBonus(dealer, () -> 1.2f);
+        EmpArcEntityAPI arc = arcLandingAt(landing);
+        ShipAPI target = target(arc, 0.5f);
+        List<HitMix.Hit> seen = new ArrayList<>();
+        resolvers.add(seen::add);
 
         router.reportDamageApplied(dealer, target, empApplied(100f));
 
         assertEquals(1, seen.size());
-        EmpOnlyHits.EmpOnlyHit hit = seen.get(0);
+        HitMix.Hit hit = seen.get(0);
+        assertSame(arc, hit.param());
         assertSame(target, hit.target());
         assertEquals(landing, hit.point());
-        assertEquals(200f, hit.baseEmp(), 0.01f);
-        assertEquals(240f, hit.emp(), 0.01f);
         assertFalse(hit.shieldHit());
+        assertEquals(200f, hit.originalEmp(), 0.01f);
     }
 
     @Test
-    void anEmpOnlyShieldHitTakesItsEmpFromTheProjectile() {
+    void aHullHitTakesItsEmpFromTheProjectileWhenItCarriesSome() {
+        ShipAPI target = target(projectileWithEmp(150f), 0.5f);
+        withEmpBonus(20f, 1f);
+
+        router.reportDamageApplied(dealer, target, empApplied(75f));
+        router.applyLateEmpHits(engine);
+
+        verifyLateEmp(target, 30f);
+    }
+
+    @Test
+    void hullHitsWithoutAnEmpScaleAboveOneGetNoLateEmp() {
+        List<HitMix.Resolver> shrinking = List.<HitMix.Resolver>of(hit -> hit.increaseEmp(-50f));
+        ShipAPI shrinkingDealer = dealerWith(shrinking);
+        router.addDealer(shrinkingDealer);
+
+        router.reportDamageApplied(dealer, target(arcLandingAt(new Vector2f()), 1f), empApplied(100f));
+        router.reportDamageApplied(shrinkingDealer, target(arcLandingAt(new Vector2f()), 1f), empApplied(100f));
+        router.applyLateEmpHits(engine);
+
+        verifyNoLateEmp();
+    }
+
+    @Test
+    void aHullHitWhoseEmpWouldBeMovedGetsNoMovedDamageAndItsWholeExtraEmpLate() {
+        ShipAPI target = target(arcLandingAt(new Vector2f()), 1f);
+        resolvers.add(hit -> hit.convertEmp(DamageType.HIGH_EXPLOSIVE, 0.5f));
+        withEmpBonus(50f, 1f);
+
+        router.reportDamageApplied(dealer, target, empApplied(200f));
+        router.applyLateEmpHits(engine);
+
+        verifyLateEmp(target, 100f);
+        verify(engine, never()).applyDamage(any(), any(), anyFloat(), eq(DamageType.HIGH_EXPLOSIVE), anyFloat(), anyBoolean(), anyBoolean(), any());
+    }
+
+    @Test
+    void aMovingResolverAloneGivesAHullHitNoLateHit() {
+        resolvers.add(hit -> hit.convertEmp(DamageType.HIGH_EXPLOSIVE, 0.5f));
+
+        router.reportDamageApplied(dealer, target(arcLandingAt(new Vector2f()), 1f), empApplied(200f));
+        router.applyLateEmpHits(engine);
+
+        verifyNoLateEmp();
+    }
+
+    @Test
+    void anEmpOnlyShieldHitGetsNoLateEmpAndResolvesNothing() {
         ShipAPI target = target(projectileWithEmp(150f), 1f);
+        List<HitMix.Hit> seen = new ArrayList<>();
+        resolvers.add(seen::add);
+        withEmpBonus(50f, 1f);
 
         router.reportDamageApplied(dealer, target, empApplied(0f));
+        router.applyLateEmpHits(engine);
 
-        assertEquals(1, seen.size());
-        assertTrue(seen.get(0).shieldHit());
-        assertEquals(150f, seen.get(0).emp(), 0.01f);
+        assertTrue(seen.isEmpty());
+        verifyNoLateEmp();
     }
 
     @Test
-    void aHitTheModifierPassSawIsNotAnEmpOnlyHit() {
+    void theLateEmpLandsWhereTheHitStruckAfterTheTargetMovesAndTurns() {
+        ShipAPI target = target(arcLandingAt(new Vector2f(10f, 0f)), 1f);
+        withEmpBonus(20f, 1f);
+
+        router.reportDamageApplied(dealer, target, empApplied(200f));
+        when(target.getLocation()).thenReturn(new Vector2f(100f, 100f));
+        when(target.getFacing()).thenReturn(90f);
+        router.applyLateEmpHits(engine);
+
+        verify(engine).applyDamage(eq(target), at(100f, 110f), eq(0f), eq(DamageType.ENERGY), anyFloat(), eq(true), eq(false), eq(dealer));
+    }
+
+    @Test
+    void targetsPhasedOrDestroyedByTheNextFrameGetNoLateEmp() {
+        ShipAPI phased = target(arcLandingAt(new Vector2f()), 1f);
+        ShipAPI destroyed = target(arcLandingAt(new Vector2f()), 1f);
+        withEmpBonus(20f, 1f);
+
+        router.reportDamageApplied(dealer, phased, empApplied(200f));
+        router.reportDamageApplied(dealer, destroyed, empApplied(200f));
+        when(phased.isPhased()).thenReturn(true);
+        when(destroyed.isAlive()).thenReturn(false);
+        router.applyLateEmpHits(engine);
+
+        verifyNoLateEmp();
+    }
+
+    @Test
+    void aLateEmpHitLandsOnlyOnce() {
+        ShipAPI target = target(arcLandingAt(new Vector2f()), 1f);
+        withEmpBonus(20f, 1f);
+
+        router.reportDamageApplied(dealer, target, empApplied(200f));
+        router.applyLateEmpHits(engine);
+        router.applyLateEmpHits(engine);
+
+        verify(engine, times(1)).applyDamage(any(), any(), anyFloat(), any(), anyFloat(), anyBoolean(), anyBoolean(), any());
+    }
+
+    @Test
+    void aHitTheModifierPassSawGetsNoLateEmp() {
         EmpArcEntityAPI arc = arcLandingAt(new Vector2f());
         ShipAPI target = target(arc, 1f);
+        withEmpBonus(20f, 1f);
 
         dealersModifierPass().modifyDamageDealt(arc, target, mock(DamageAPI.class), new Vector2f(), false);
         router.reportDamageApplied(dealer, target, empApplied(100f));
+        router.applyLateEmpHits(engine);
 
-        assertTrue(seen.isEmpty());
+        verifyNoLateEmp();
     }
 
     @Test
     void aModifierPassFromAnEarlierFrameDoesNotHideALaterHit() {
         EmpArcEntityAPI arc = arcLandingAt(new Vector2f());
         ShipAPI target = target(arc, 1f);
+        withEmpBonus(20f, 1f);
 
         dealersModifierPass().modifyDamageDealt(arc, target, mock(DamageAPI.class), new Vector2f(), false);
         when(engine.getTotalElapsedTime(false)).thenReturn(1f);
         router.reportDamageApplied(dealer, target, empApplied(100f));
+        router.applyLateEmpHits(engine);
 
-        assertEquals(1, seen.size());
-    }
-
-    @Test
-    void onlyDealersWithAHandlerRecordTheirModifiedHits() {
-        ShipAPI unhandledShip = mock(ShipAPI.class);
-        router.addHandler(dealer, seen::add);
-
-        verify(dealer, times(1)).addListener(any());
-        verify(unhandledShip, never()).addListener(any());
-        assertFalse(DamageDealtModifier.class.isAssignableFrom(EmpOnlyHits.class));
-
-        ShipAPI target = target(arcLandingAt(new Vector2f()), 1f);
-        router.reportDamageApplied(unhandledShip, target, empApplied(100f));
-
-        verify(target, never()).getParamAboutToApplyDamage();
-        assertTrue(seen.isEmpty());
+        verifyLateEmp(target, 20f);
     }
 
     @Test
     void aModifierPassOnAnotherTargetDoesNotHideAHit() {
         EmpArcEntityAPI arc = arcLandingAt(new Vector2f());
         ShipAPI target = target(arc, 1f);
+        withEmpBonus(20f, 1f);
 
         dealersModifierPass().modifyDamageDealt(arc, mock(ShipAPI.class), mock(DamageAPI.class), new Vector2f(), false);
         router.reportDamageApplied(dealer, target, empApplied(100f));
+        router.applyLateEmpHits(engine);
 
-        assertEquals(1, seen.size());
+        verifyLateEmp(target, 20f);
     }
 
     @Test
-    void hitsWithoutAKnownPointOrEmpOrFromOtherShipsReachNoHandler() {
+    void aDealerIsRecordedOnceAndOnlyRegisteredDealersAreRead() {
+        ShipAPI unregistered = dealerWith(resolvers);
+        withEmpBonus(20f, 1f);
+        router.addDealer(dealer);
+
+        verify(dealer, times(1)).addListener(any());
+        verify(unregistered, never()).addListener(any());
+        assertTrue(router.landsArcsOf(dealer));
+        assertFalse(router.landsArcsOf(unregistered));
+        assertFalse(DamageDealtModifier.class.isAssignableFrom(EmpOnlyHits.class));
+
+        ShipAPI target = target(arcLandingAt(new Vector2f()), 1f);
+        router.reportDamageApplied(unregistered, target, empApplied(100f));
+
+        verify(target, never()).getParamAboutToApplyDamage();
+    }
+
+    @Test
+    void registeringOutsideCombatAddsNoRecorder() {
+        ShipAPI ship = dealerWith(resolvers);
+
+        EmpOnlyHits.register(ship);
+
+        verify(ship, never()).addListener(any());
+    }
+
+    @Test
+    void hitsWithoutAKnownPointOrEmpOrFromOtherShipsGetNoLateEmp() {
+        withEmpBonus(20f, 1f);
+
         router.reportDamageApplied(dealer, target(null, 1f), empApplied(100f));
         router.reportDamageApplied(dealer, target(arcLandingAt(new Vector2f()), 1f), empApplied(0f));
+        router.reportDamageApplied(dealer, target(arcLandingAt(new Vector2f()), 0f), empApplied(100f));
         router.reportDamageApplied(mock(ShipAPI.class), target(arcLandingAt(new Vector2f()), 1f), empApplied(100f));
         router.reportDamageApplied(null, target(arcLandingAt(new Vector2f()), 1f), empApplied(100f));
+        router.applyLateEmpHits(engine);
 
-        assertTrue(seen.isEmpty());
+        verifyNoLateEmp();
     }
 
     @Test
@@ -195,15 +358,6 @@ class EmpOnlyHitsTest {
         assertTrue(EmpOnlyHits.ARC_EMP.read(engineArcSubclass) instanceof Float);
         assertFalse(EmpOnlyHits.isEngineArc(mock(EmpArcEntityAPI.class)));
         assertEquals(0f, EmpOnlyHits.arcEmp(mock(EmpArcEntityAPI.class)));
-    }
-
-    @Test
-    void aHullHitFromAnArcWhoseEmpCannotBeReadFallsBackToTheEmpItApplied() {
-        ShipAPI target = target(arcLandingAt(new Vector2f()), 0.5f);
-
-        router.reportDamageApplied(dealer, target, empApplied(100f));
-
-        assertEquals(200f, seen.get(0).baseEmp(), 0.01f);
     }
 
     @Test

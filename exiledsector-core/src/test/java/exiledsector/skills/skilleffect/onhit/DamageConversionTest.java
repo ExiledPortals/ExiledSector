@@ -18,11 +18,11 @@ import static org.mockito.Mockito.when;
 class DamageConversionTest {
 
     private static final DamageConversion HARDPOINT_KINETIC_TO_HE = new DamageConversion("a", WeaponType.BALLISTIC, null,
-            DamageConversion.Mounting.HARDPOINT, false, DamageType.KINETIC, DamageType.HIGH_EXPLOSIVE);
+            DamageConversion.Mounting.HARDPOINT, false, DamageType.KINETIC, DamageType.HIGH_EXPLOSIVE, 1f);
     private static final DamageConversion TURRET_BEAM_TO_HE = new DamageConversion("b", WeaponType.ENERGY, null,
-            DamageConversion.Mounting.TURRET, true, DamageType.ENERGY, DamageType.HIGH_EXPLOSIVE);
+            DamageConversion.Mounting.TURRET, true, DamageType.ENERGY, DamageType.HIGH_EXPLOSIVE, 1f);
     private static final DamageConversion SMALL_ENERGY_TO_EMP = new DamageConversion("c", WeaponType.ENERGY, WeaponSize.SMALL,
-            DamageConversion.Mounting.ANY, false, null, null);
+            DamageConversion.Mounting.ANY, false, null, null, 1f);
     private static final List<DamageConversion> CONVERSIONS = List.of(HARDPOINT_KINETIC_TO_HE, TURRET_BEAM_TO_HE, SMALL_ENERGY_TO_EMP);
 
     private static WeaponSlotAPI mount(WeaponType type, WeaponSize size, boolean hardpoint) {

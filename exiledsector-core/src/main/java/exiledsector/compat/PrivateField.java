@@ -11,8 +11,9 @@ public final class PrivateField<O> {
 
     private final String ownerClassName;
     private final String fieldName;
-    private final Class<?> fieldType;
+    private final String fieldTypeName;
     private final String unreachableWarning;
+    private Class<?> fieldType;
     private Class<?> ownerType;
     private MethodHandles.Lookup ownerLookup;
     private MethodHandle getter;
@@ -25,14 +26,23 @@ public final class PrivateField<O> {
     }
 
     private PrivateField(String ownerClassName, String fieldName, Class<?> fieldType, String unreachableWarning) {
+        this(ownerClassName, fieldName, fieldType.getName(), unreachableWarning);
+        this.fieldType = fieldType;
+    }
+
+    private PrivateField(String ownerClassName, String fieldName, String fieldTypeName, String unreachableWarning) {
         this.ownerClassName = ownerClassName;
         this.fieldName = fieldName;
-        this.fieldType = fieldType;
+        this.fieldTypeName = fieldTypeName;
         this.unreachableWarning = unreachableWarning;
     }
 
     public static PrivateField<Object> named(String ownerClassName, String fieldName, Class<?> fieldType, String unreachableWarning) {
         return new PrivateField<>(ownerClassName, fieldName, fieldType, unreachableWarning);
+    }
+
+    public static PrivateField<Object> namedOfType(String ownerClassName, String fieldName, String fieldTypeName, String unreachableWarning) {
+        return new PrivateField<>(ownerClassName, fieldName, fieldTypeName, unreachableWarning);
     }
 
     public boolean reachable() {
@@ -92,6 +102,9 @@ public final class PrivateField<O> {
             try {
                 if (ownerType == null) {
                     ownerType = Class.forName(ownerClassName, false, PrivateField.class.getClassLoader());
+                }
+                if (fieldType == null) {
+                    fieldType = Class.forName(fieldTypeName, false, PrivateField.class.getClassLoader());
                 }
                 ownerLookup = MethodHandles.privateLookupIn(ownerType, MethodHandles.lookup());
             } catch (ReflectiveOperationException | RuntimeException | LinkageError e) {

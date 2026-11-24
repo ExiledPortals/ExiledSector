@@ -219,7 +219,7 @@ public final class ChartEnemyShipEffects implements ShipEffectSource {
 
     private static void addDamageListener(ShipAPI ship, Granted granted) {
         if (granted.damageListener() != null && !ship.hasListenerOfClass(ChartEnemyDamageListener.class)) {
-            ship.addListener(granted.damageListener());
+            ship.addListener(granted.damageListener().forShip(ship));
         }
     }
 }

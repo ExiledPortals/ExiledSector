@@ -5,24 +5,24 @@ import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import exiledsector.skills.skilleffect.CombatQueries;
 import exiledsector.skills.skilleffect.EmpOnlyHits;
+import exiledsector.skills.skilleffect.HitMix;
 import exiledsector.skills.skilleffect.HitSideEffectListener;
 import org.lwjgl.util.vector.Vector2f;
 
-abstract class EmpConversionListener extends HitSideEffectListener implements AdvanceableListener, EmpOnlyHits.Handler {
+abstract class EmpConversionListener extends HitSideEffectListener implements HitMix.Resolver {
 
     private final String sharePercentKey;
     private final boolean convertsShieldHits;
-    private final DeferredHits pendingHits;
+    private final DamageType convertedDamageType;
 
     EmpConversionListener(ShipAPI ownerShip, String sharePercentKey, boolean convertsShieldHits, DamageType convertedDamageType) {
         super(ownerShip);
         this.sharePercentKey = sharePercentKey;
         this.convertsShieldHits = convertsShieldHits;
-        this.pendingHits = convertsShieldHits ? DeferredHits.onShields(convertedDamageType) : DeferredHits.pastShields(convertedDamageType);
-        EmpOnlyHits.register(ownerShip, this);
+        this.convertedDamageType = convertedDamageType;
+        EmpOnlyHits.register(ownerShip);
     }
 
     abstract float convertibleEmp(ShipAPI targetShip, Vector2f point, float emp, MutableShipStatsAPI attackerStats);
@@ -30,34 +30,26 @@ abstract class EmpConversionListener extends HitSideEffectListener implements Ad
     @Override
     protected final void onHit(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
         if (shieldHit == convertsShieldHits) {
-            convertLater(target, point, damage.computeFluxDealt(damage.getDpsDuration()), damage.getStats());
+            HitMix.resolve(ownerShip, this, param, target, damage, point, shieldHit);
         }
     }
 
     @Override
-    public final void onEmpOnlyHit(EmpOnlyHits.EmpOnlyHit hit) {
+    public final void resolve(HitMix.Hit hit) {
         if (hit.shieldHit() == convertsShieldHits) {
-            convertLater(hit.target(), hit.point(), hit.emp(), ownerShip.getMutableStats());
+            hit.convertEmp(convertedDamageType, convertibleShare(hit.target(), hit.point(), hit.originalEmp()));
         }
     }
 
-    private void convertLater(CombatEntityAPI target, Vector2f point, float emp, MutableShipStatsAPI attackerStats) {
+    private float convertibleShare(CombatEntityAPI target, Vector2f point, float emp) {
         ShipAPI targetShip = CombatQueries.hostileLiveShip(ownerShip, target);
         if (point == null || targetShip == null || emp <= 0f) {
-            return;
+            return 0f;
         }
         float sharePercent = magnitude(sharePercentKey);
         if (sharePercent <= 0f) {
-            return;
+            return 0f;
         }
-        float convertedEmp = convertibleEmp(targetShip, point, emp, attackerStats);
-        if (convertedEmp > 0f) {
-            pendingHits.add(targetShip, point, convertedEmp * sharePercent / 100f);
-        }
-    }
-
-    @Override
-    public final void advance(float amount) {
-        pendingHits.applyAll(ownerShip);
+        return Math.min(1f, convertibleEmp(targetShip, point, emp, ownerShip.getMutableStats()) / emp * sharePercent / 100f);
     }
 }

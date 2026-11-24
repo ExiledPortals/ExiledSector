@@ -5,11 +5,11 @@ import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import exiledsector.skills.skilleffect.CombatQueries;
-import exiledsector.skills.skilleffect.HitDamageRestorer;
+import exiledsector.skills.skilleffect.HitMix;
 import exiledsector.skills.skilleffect.HitSideEffectListener;
 import org.lwjgl.util.vector.Vector2f;
 
-final class BeamEmpListener extends HitSideEffectListener {
+final class BeamEmpListener extends HitSideEffectListener implements HitMix.Resolver {
 
     static final String EMP_PERCENT_KEY = "exiledSector_beamDamageEmpPercent";
 
@@ -19,12 +19,13 @@ final class BeamEmpListener extends HitSideEffectListener {
 
     @Override
     protected void onHit(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
-        if (shieldHit || !(param instanceof BeamAPI) || CombatQueries.hostileShip(ownerShip, target) == null) {
-            return;
-        }
-        float percent = magnitude(EMP_PERCENT_KEY);
-        if (percent > 0f) {
-            HitDamageRestorer.addEmpForThisHit(damage, damage.getBaseDamage() * percent / 100f, target);
+        HitMix.resolve(ownerShip, this, param, target, damage, point, shieldHit);
+    }
+
+    @Override
+    public void resolve(HitMix.Hit hit) {
+        if (!hit.shieldHit() && hit.param() instanceof BeamAPI && CombatQueries.hostileShip(ownerShip, hit.target()) != null) {
+            hit.gainEmp(magnitude(EMP_PERCENT_KEY) / 100f);
         }
     }
 }

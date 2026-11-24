@@ -1,15 +1,20 @@
 package exiledsector.charts.effect;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import com.fs.starfarer.api.combat.CombatEngineAPI;
+import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
+import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.combat.listeners.CombatListenerManagerAPI;
 import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
@@ -26,11 +31,15 @@ import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.skills.EffectContribution;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.skilleffect.HitMix;
+import exiledsector.skills.skilleffect.MixedHitBlender;
 import exiledsector.skills.skilleffect.SkillEffect;
 import org.junit.jupiter.api.Test;
+import org.mockito.AdditionalMatchers;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -202,9 +211,8 @@ class ChartEnemyShipEffectsTest {
 
         verify(variant).addMod(SkillTreeHullMod.ID);
         assertEquals(1.5f, captureRate.getModifiedValue(), TOLERANCE);
-        ChartEnemyDamageListener listener = ChartEnemyShipEffects.grantedTo(member).damageListener();
-        verify(ship).addListener(listener);
-        verify(fighter).addListener(listener);
+        verify(ship).addListener(any(ChartEnemyDamageListener.class));
+        verify(fighter).addListener(any(ChartEnemyDamageListener.class));
     }
 
     @Test
@@ -225,7 +233,7 @@ class ChartEnemyShipEffectsTest {
         ChartEnemyShipEffects.INSTANCE.afterModuleCreation(parentContext, module);
 
         assertEquals(1.5f, captureRate.getModifiedValue(), TOLERANCE);
-        verify(module).addListener(ChartEnemyShipEffects.grantedTo(member).damageListener());
+        verify(module).addListener(any(ChartEnemyDamageListener.class));
     }
 
     @Test
@@ -255,21 +263,97 @@ class ChartEnemyShipEffectsTest {
     @Test
     void theEnemyDamageListenerRaisesOnlyItsDamageType() {
         ChartEnemyDamageListener listener = ChartEnemyDamageListener.of(Map.of(ChartFleetStat.ENEMY_KINETIC_DAMAGE_DEALT, 1.2f));
-        DamageAPI kinetic = damageOf(DamageType.KINETIC);
-        DamageAPI energy = damageOf(DamageType.ENERGY);
+        List<Object> registered = new ArrayList<>();
+        CombatEngineAPI engine = combatEngine(registered);
+        try (MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
+            global.when(Global::getCombatEngine).thenReturn(engine);
+            CombatEntityAPI missile = mock(CombatEntityAPI.class);
+            DamageAPI kinetic = damageOf(DamageType.KINETIC);
+            DamageAPI energy = damageOf(DamageType.ENERGY);
 
-        assertEquals(ChartPlayerModifiers.MOD_ID, listener.modifyDamageDealt(null, null, kinetic, null, false));
-        assertNull(listener.modifyDamageDealt(null, null, energy, null, true));
+            assertNull(listener.modifyDamageDealt(null, missile, kinetic, null, false));
+            assertNull(listener.modifyDamageDealt(null, missile, energy, null, true));
+            String modId = blenderIn(registered).modifyDamageTaken(null, missile, kinetic, null, false);
 
-        assertEquals(1.2f, kinetic.getModifier().getMultStatMod(ChartPlayerModifiers.MOD_ID).getValue(), TOLERANCE);
-        assertNull(energy.getModifier().getMultStatMod(ChartPlayerModifiers.MOD_ID));
+            assertNotNull(modId);
+            assertEquals(1.2f, kinetic.getModifier().getMultStatMod(modId).getValue(), TOLERANCE);
+            assertNull(blenderIn(registered).modifyDamageTaken(null, missile, energy, null, true));
+            assertTrue(energy.getModifier().getMultMods().isEmpty());
+        }
         assertNull(ChartEnemyDamageListener.of(Map.of(ChartFleetStat.ENEMY_OBJECTIVE_CAPTURE_RATE, 1.5f)));
+    }
+
+    @Test
+    void onAShipTheEnemyDamageListenerScalesTheHitsBaseDamage() {
+        ChartEnemyDamageListener listener = ChartEnemyDamageListener.of(Map.of(ChartFleetStat.ENEMY_KINETIC_DAMAGE_DEALT, 1.2f));
+        List<Object> registered = new ArrayList<>();
+        CombatEngineAPI engine = combatEngine(registered);
+        try (MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
+            global.when(Global::getCombatEngine).thenReturn(engine);
+            ShipAPI target = mock(ShipAPI.class);
+            when(target.getMutableStats()).thenReturn(mock(MutableShipStatsAPI.class));
+            DamageAPI kinetic = damageOf(DamageType.KINETIC);
+
+            listener.modifyDamageDealt(null, target, kinetic, null, false);
+
+            assertNull(blenderIn(registered).modifyDamageTaken(null, target, kinetic, null, false));
+            verify(kinetic).setDamage(AdditionalMatchers.eq(120f, 1e-3f));
+            assertTrue(kinetic.getModifier().getMultMods().isEmpty());
+        }
+    }
+
+    @Test
+    void aPartlyConvertedHitTakesEachTypesMultByItsShare() {
+        ChartEnemyDamageListener listener = ChartEnemyDamageListener.of(Map.of(ChartFleetStat.ENEMY_KINETIC_DAMAGE_DEALT, 1.2f,
+                ChartFleetStat.ENEMY_HIGH_EXPLOSIVE_DAMAGE_DEALT, 1.5f));
+        ShipAPI attacker = mock(ShipAPI.class);
+        HitMix.Resolver converter = hit -> hit.convert(DamageType.KINETIC, DamageType.HIGH_EXPLOSIVE, 0.4f);
+        when(attacker.hasListenerOfClass(HitMix.Resolver.class)).thenReturn(true);
+        when(attacker.getListeners(HitMix.Resolver.class)).thenReturn(List.of(converter));
+        DamagingProjectileAPI projectile = mock(DamagingProjectileAPI.class);
+        when(projectile.getSource()).thenReturn(attacker);
+        List<Object> registered = new ArrayList<>();
+        CombatEngineAPI engine = combatEngine(registered);
+        try (MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
+            global.when(Global::getCombatEngine).thenReturn(engine);
+            CombatEntityAPI missile = mock(CombatEntityAPI.class);
+            DamageAPI kinetic = damageOf(DamageType.KINETIC);
+
+            listener.forShip(attacker).modifyDamageDealt(projectile, missile, kinetic, null, false);
+            String modId = blenderIn(registered).modifyDamageTaken(projectile, missile, kinetic, null, false);
+
+            assertEquals(1.32f, kinetic.getModifier().getMultStatMod(modId).getValue(), TOLERANCE);
+
+            DamageAPI arcDamage = damageOf(DamageType.KINETIC);
+            listener.forShip(attacker).modifyDamageDealt(null, missile, arcDamage, null, false);
+            String arcModId = blenderIn(registered).modifyDamageTaken(null, missile, arcDamage, null, false);
+
+            assertEquals(1.32f, arcDamage.getModifier().getMultStatMod(arcModId).getValue(), TOLERANCE);
+        }
+    }
+
+    private static CombatEngineAPI combatEngine(List<Object> registered) {
+        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+        CombatListenerManagerAPI listeners = mock(CombatListenerManagerAPI.class);
+        when(engine.getCustomData()).thenReturn(new HashMap<>());
+        when(engine.getListenerManager()).thenReturn(listeners);
+        doAnswer(call -> registered.add(call.getArgument(0))).when(listeners).addListener(any());
+        when(listeners.getListeners(any())).thenAnswer(call -> {
+            Class<?> listenerType = call.getArgument(0);
+            return registered.stream().filter(listenerType::isInstance).toList();
+        });
+        return engine;
+    }
+
+    private static MixedHitBlender blenderIn(List<Object> registered) {
+        return registered.stream().filter(MixedHitBlender.class::isInstance).map(MixedHitBlender.class::cast).findFirst().orElseThrow();
     }
 
     private static DamageAPI damageOf(DamageType type) {
         DamageAPI damage = mock(DamageAPI.class);
         MutableStat modifier = new MutableStat(1f);
         when(damage.getType()).thenReturn(type);
+        when(damage.getBaseDamage()).thenReturn(100f);
         when(damage.getModifier()).thenReturn(modifier);
         return damage;
     }

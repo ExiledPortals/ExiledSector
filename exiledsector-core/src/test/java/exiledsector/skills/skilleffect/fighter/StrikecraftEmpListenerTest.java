@@ -2,6 +2,7 @@ package exiledsector.skills.skilleffect.fighter;
 
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
+import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.combat.listeners.CombatListenerManagerAPI;
@@ -37,7 +38,10 @@ class StrikecraftEmpListenerTest {
         CombatEngineAPI engine = combat.engine();
         CombatListenerManagerAPI listenerManager = mock(CombatListenerManagerAPI.class);
         when(engine.getListenerManager()).thenReturn(listenerManager);
-        when(listenerManager.getListeners(any())).thenAnswer(call -> new ArrayList<>(engineListeners));
+        when(listenerManager.getListeners(any())).thenAnswer(call -> {
+            Class<?> listenerType = call.getArgument(0);
+            return engineListeners.stream().filter(listenerType::isInstance).toList();
+        });
         doAnswer(call -> engineListeners.add(call.getArgument(0))).when(listenerManager).addListener(any());
     }
 
@@ -53,34 +57,37 @@ class StrikecraftEmpListenerTest {
         return carrier;
     }
 
-    private static DamageAPI damage(float amount, float emp) {
+    private static DamageAPI damage(float baseDamage, float modifiedDamage, float emp) {
         DamageAPI damage = mock(DamageAPI.class);
         float[] empComponent = {emp};
-        when(damage.getDamage()).thenReturn(amount);
-        when(damage.getBaseDamage()).thenReturn(amount);
+        when(damage.getType()).thenReturn(DamageType.KINETIC);
+        when(damage.getDamage()).thenReturn(modifiedDamage);
+        when(damage.getBaseDamage()).thenReturn(baseDamage);
         when(damage.getFluxComponent()).thenAnswer(call -> empComponent[0]);
         doAnswer(call -> empComponent[0] = call.getArgument(0)).when(damage).setFluxComponent(anyFloat());
         return damage;
     }
 
     @Test
-    void hullHitsOnEnemiesCarryExtraEmpForThatHitOnly() {
+    void hullHitsOnEnemiesCarryExtraEmpFromTheirBaseDamageForThatHitOnly() {
         ShipAPI enemy = ship(1);
-        DamageAPI damage = damage(200f, 30f);
+        DamageAPI damage = damage(200f, 400f, 30f);
         StrikecraftEmpListener listener = new StrikecraftEmpListener(ship(0), carrier(10f));
 
         assertNull(listener.modifyDamageDealt(null, enemy, damage, new Vector2f(), false));
         assertEquals(50f, damage.getFluxComponent(), 0.001f);
 
         for (Object engineListener : engineListeners) {
-            ((HitDamageRestorer) engineListener).reportDamageApplied(null, enemy, mock(ApplyDamageResultAPI.class));
+            if (engineListener instanceof HitDamageRestorer restorer) {
+                restorer.reportDamageApplied(null, enemy, mock(ApplyDamageResultAPI.class));
+            }
         }
         assertEquals(30f, damage.getFluxComponent(), 0.001f);
     }
 
     @Test
     void shieldHitsAndFriendlyTargetsGetNoExtraEmp() {
-        DamageAPI damage = damage(200f, 0f);
+        DamageAPI damage = damage(200f, 200f, 0f);
         StrikecraftEmpListener listener = new StrikecraftEmpListener(ship(0), carrier(10f));
 
         listener.modifyDamageDealt(null, ship(1), damage, new Vector2f(), true);

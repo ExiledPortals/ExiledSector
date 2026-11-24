@@ -3,6 +3,7 @@ package exiledsector.charts.officer.scar;
 import com.fs.starfarer.api.combat.BeamAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
+import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.FighterWingAPI;
 import com.fs.starfarer.api.combat.MissileAPI;
@@ -14,6 +15,8 @@ import com.fs.starfarer.api.loading.WingRole;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.charts.officer.scar.ScarEvidence.FiredAs;
 import exiledsector.skills.skilleffect.CombatQueries;
+import exiledsector.skills.skilleffect.HitMix;
+import exiledsector.skills.skilleffect.TypeShares;
 import exiledsector.skills.skilleffect.defense.CollisionDamageListener;
 import exiledsector.skills.skilleffect.scar.MineHits;
 import org.lwjgl.util.vector.Vector2f;
@@ -52,6 +55,13 @@ final class ScarDamageTally implements DamageTakenModifier, DamageDealtModifier 
             return null;
         }
         evidence.addFired(amount, categories(param, attacker, flagship, damage, amount, point));
+        TypeShares shares = HitMix.recorded(damage, target);
+        for (DamageType type : shares.types()) {
+            FiredAs firedType = damageType(type);
+            if (firedType != null) {
+                evidence.addFired(firedType, amount * shares.share(type));
+            }
+        }
         evidence.addFired(FiredAs.EMP, damage.computeFluxDealt(damage.getDpsDuration()));
         tracker.recordHit(CombatQueries.owningShip(attacker));
         return null;
@@ -59,10 +69,6 @@ final class ScarDamageTally implements DamageTakenModifier, DamageDealtModifier 
 
     private Set<FiredAs> categories(Object param, ShipAPI attacker, ShipAPI flagship, DamageAPI damage, float amount, Vector2f point) {
         Set<FiredAs> categories = EnumSet.noneOf(FiredAs.class);
-        FiredAs damageType = damageType(damage);
-        if (damageType != null) {
-            categories.add(damageType);
-        }
         FiredAs delivery = delivery(param, attacker);
         if (delivery != null) {
             categories.add(delivery);
@@ -103,11 +109,11 @@ final class ScarDamageTally implements DamageTakenModifier, DamageDealtModifier 
         }
     }
 
-    static FiredAs damageType(DamageAPI damage) {
-        if (damage.getType() == null) {
+    static FiredAs damageType(DamageType type) {
+        if (type == null) {
             return null;
         }
-        return switch (damage.getType()) {
+        return switch (type) {
             case KINETIC -> FiredAs.KINETIC;
             case HIGH_EXPLOSIVE -> FiredAs.HIGH_EXPLOSIVE;
             case ENERGY -> FiredAs.ENERGY;

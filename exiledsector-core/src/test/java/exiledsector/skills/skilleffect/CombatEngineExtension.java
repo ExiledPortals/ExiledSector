@@ -59,6 +59,11 @@ public class CombatEngineExtension implements BeforeEachCallback, AfterEachCallb
         when(engine.getShipGrid()).thenReturn(shipGrid);
     }
 
+    public void allObjectGridOver(List<?> gridObjects) {
+        CollisionGridAPI allObjectGrid = gridOver(gridObjects);
+        when(engine.getAllObjectGrid()).thenReturn(allObjectGrid);
+    }
+
     public void asteroidGridOver(List<?> gridAsteroids) {
         CollisionGridAPI asteroidGrid = gridOver(gridAsteroids);
         when(engine.getAsteroidGrid()).thenReturn(asteroidGrid);

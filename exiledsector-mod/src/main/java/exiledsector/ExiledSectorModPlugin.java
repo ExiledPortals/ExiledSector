@@ -13,6 +13,7 @@ import exiledsector.i18n.Languages;
 import exiledsector.i18n.SpecLocalisation;
 import exiledsector.items.drop.SalvageSiteDrops;
 import exiledsector.skills.skilleffect.CsvIdList;
+import exiledsector.skills.skilleffect.DamageTypeMults;
 import exiledsector.skills.skilleffect.EffectAliases;
 import exiledsector.skills.skilleffect.logistics.FleetCrewLedger;
 import exiledsector.skills.skilleffect.logistics.FleetWideEffects;
@@ -152,6 +153,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
     public void onGameLoad(boolean newGame) {
         SectorAPI sector = Global.getSector();
         ResolvedTree.clearCache();
+        DamageTypeMults.restoreDefaults();
         FleetCrewLedger.discardPending();
         List<CargoAPI> savedCargoes = SavedCargo.cargoes(sector);
         DOMAINS.forEach(domain -> domain.onGameLoad(newGame, savedCargoes));

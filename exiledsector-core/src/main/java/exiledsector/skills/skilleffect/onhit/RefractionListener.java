@@ -48,7 +48,7 @@ final class RefractionListener extends ShipCombatListener implements DamageDealt
         }
         RefractionLink link = RefractionLink.of(projectile, ownerShip);
         if (link.dealtMult() < 1f) {
-            HitDamageRestorer.reduceForThisHit(damage, link.dealtMult(), hitShip);
+            HitDamageRestorer.scaleDamageForThisHit(damage, link.dealtMult(), hitShip);
         }
         if (CombatQueries.isHostile(ownerShip, hitShip)) {
             tryChain(projectile.getWeapon(), hitShip, point, link, magnitude(shieldHit ? CHANCE_KEY : HULL_CHANCE_KEY));

@@ -6,25 +6,23 @@ import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
+import exiledsector.skills.skilleffect.ArcWeapons;
 import exiledsector.skills.skilleffect.Chance;
-import exiledsector.skills.skilleffect.CombatQueries;
-import exiledsector.skills.skilleffect.HitDamageRestorer;
+import exiledsector.skills.skilleffect.HitMix;
 import exiledsector.skills.skilleffect.HitSideEffectListener;
+import exiledsector.skills.skilleffect.TypeShares;
 import org.lwjgl.util.vector.Vector2f;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
-import java.util.WeakHashMap;
 
-final class DamageConversionListener extends HitSideEffectListener {
+final class DamageConversionListener extends HitSideEffectListener implements HitMix.Resolver {
 
     static final String ADAPTIVE_CHANCE_PERCENT_KEY = "exiledSector_adaptiveDamageTypeChancePercent";
 
     private final List<DamageConversion> conversions = OnHitSkillEffect.damageConversions();
-    private final Set<DamageAPI> convertedBeamDamage = Collections.newSetFromMap(new WeakHashMap<>());
     private final Random random;
+    private final ArcWeapons arcWeapons;
 
     DamageConversionListener(ShipAPI ownerShip) {
         this(ownerShip, new Random());
@@ -33,41 +31,37 @@ final class DamageConversionListener extends HitSideEffectListener {
     DamageConversionListener(ShipAPI ownerShip, Random random) {
         super(ownerShip);
         this.random = random;
+        this.arcWeapons = new ArcWeapons(ownerShip);
     }
 
     @Override
     protected void onHit(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
-        WeaponAPI weapon = CombatQueries.weaponBehind(param);
+        HitMix.resolve(ownerShip, this, param, target, damage, point, shieldHit);
+    }
+
+    @Override
+    public void resolve(HitMix.Hit hit) {
+        WeaponAPI weapon = arcWeapons.weaponBehind(hit.param(), hit.target());
         if (weapon == null) {
             return;
         }
-        boolean beam = param instanceof BeamAPI;
-        DamageType sourceType = beam ? weapon.getDamageType() : damage.getType();
+        DamageType sourceType = hit.param() instanceof BeamAPI ? weapon.getDamageType() : hit.originalType();
         DamageConversion conversion = DamageConversion.first(weapon, WeaponDroneFactory.mountOf(weapon), sourceType, conversions, this::magnitude);
         if (conversion != null && conversion.toEmp()) {
-            if (target instanceof ShipAPI) {
-                HitDamageRestorer.moveToEmpForThisHit(damage, 1f, target);
+            if (hit.target() instanceof ShipAPI) {
+                hit.convertToEmp(conversion.fromType(), conversion.share());
             }
-            return;
+        } else if (conversion != null) {
+            hit.convert(conversion.fromType(), conversion.toType(), conversion.share());
         }
-        if (conversion == null) {
-            if (beam && convertedBeamDamage.remove(damage)) {
-                damage.setType(sourceType);
-            }
-        } else {
-            damage.setType(conversion.toType());
-            if (beam) {
-                convertedBeamDamage.add(damage);
-            }
-        }
-        adaptDamageType(target, damage, shieldHit);
+        adaptDamageType(hit);
     }
 
-    private void adaptDamageType(CombatEntityAPI target, DamageAPI damage, boolean shieldHit) {
-        DamageType adapted = shieldHit ? DamageType.KINETIC : DamageType.HIGH_EXPLOSIVE;
+    private void adaptDamageType(HitMix.Hit hit) {
+        DamageType adapted = hit.shieldHit() ? DamageType.KINETIC : DamageType.HIGH_EXPLOSIVE;
         float chancePercent = magnitude(ADAPTIVE_CHANCE_PERCENT_KEY);
-        if (target instanceof ShipAPI && damage.getType() != adapted && Chance.roll(random, chancePercent)) {
-            HitDamageRestorer.retypeForThisHit(damage, adapted, target);
+        if (hit.target() instanceof ShipAPI && !hit.originalShares().equals(TypeShares.single(adapted)) && Chance.roll(random, chancePercent)) {
+            hit.convert(null, adapted, 1f);
         }
     }
 }

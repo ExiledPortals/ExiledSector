@@ -928,12 +928,12 @@ effect|DEPLOYMENT_POINTS_PERCENT_PER_DMOD|12.5	1	<good>12.5%</good> increased de
 effect|DEPLOYMENT_POINTS_PERCENT_PER_DMOD|100.0	1	<good>100%</good> increased deployment points for each d-mod, up to a maximum of <hl>5</hl> d-mods.
 effect|DEPLOYMENT_POINTS_PERCENT_PER_DMOD|-10.0	1	<bad>10%</bad> reduced deployment points for each d-mod, up to a maximum of <hl>5</hl> d-mods.
 effect|DEPLOYMENT_POINTS_PERCENT_PER_DMOD|-12.5	1	<bad>12.5%</bad> reduced deployment points for each d-mod, up to a maximum of <hl>5</hl> d-mods.
-effect|DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT|1.0	0	<good>1%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is dealt as high explosive damage instead.
-effect|DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT|10.0	0	<good>10%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is dealt as high explosive damage instead.
-effect|DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT|12.5	0	<good>12.5%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is dealt as high explosive damage instead.
-effect|DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT|100.0	0	<good>100%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is dealt as high explosive damage instead.
-effect|DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT|-10.0	0	<good>-10%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is dealt as high explosive damage instead.
-effect|DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT|-12.5	0	<good>-12.5%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is dealt as high explosive damage instead.
+effect|DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT|1.0	0	<good>1%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is converted to high explosive damage.
+effect|DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT|10.0	0	<good>10%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is converted to high explosive damage.
+effect|DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT|12.5	0	<good>12.5%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is converted to high explosive damage.
+effect|DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT|100.0	0	<good>100%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is converted to high explosive damage.
+effect|DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT|-10.0	0	<good>-10%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is converted to high explosive damage.
+effect|DISABLED_PART_EMP_TO_HIGH_EXPLOSIVE_PERCENT|-12.5	0	<good>-12.5%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is converted to high explosive damage.
 effect|DISINTEGRATION_ARMOR_DAMAGE_PERCENT|1.0	0	Energy weapon hits on armor strip an additional <good>1%</good> of the hit's damage from the armor around the impact over <hl>5</hl> seconds.
 effect|DISINTEGRATION_ARMOR_DAMAGE_PERCENT|10.0	0	Energy weapon hits on armor strip an additional <good>10%</good> of the hit's damage from the armor around the impact over <hl>5</hl> seconds.
 effect|DISINTEGRATION_ARMOR_DAMAGE_PERCENT|12.5	0	Energy weapon hits on armor strip an additional <good>12.5%</good> of the hit's damage from the armor around the impact over <hl>5</hl> seconds.
@@ -3496,12 +3496,12 @@ effect|SHIELD_DEFLECT_CHANCE_PERCENT|12.5	0	<good>12.5%</good> chance for non-mi
 effect|SHIELD_DEFLECT_CHANCE_PERCENT|100.0	0	<good>100%</good> chance for non-missile projectiles hitting shields to be deflected for no flux.
 effect|SHIELD_DEFLECT_CHANCE_PERCENT|-10.0	0	<good>-10%</good> chance for non-missile projectiles hitting shields to be deflected for no flux.
 effect|SHIELD_DEFLECT_CHANCE_PERCENT|-12.5	0	<good>-12.5%</good> chance for non-missile projectiles hitting shields to be deflected for no flux.
-effect|SHIELD_EMP_TO_ENERGY_PERCENT|1.0	0	<good>1%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
-effect|SHIELD_EMP_TO_ENERGY_PERCENT|10.0	0	<good>10%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
-effect|SHIELD_EMP_TO_ENERGY_PERCENT|12.5	0	<good>12.5%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
-effect|SHIELD_EMP_TO_ENERGY_PERCENT|100.0	0	<good>100%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
-effect|SHIELD_EMP_TO_ENERGY_PERCENT|-10.0	0	<good>-10%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
-effect|SHIELD_EMP_TO_ENERGY_PERCENT|-12.5	0	<good>-12.5%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
+effect|SHIELD_EMP_TO_ENERGY_PERCENT|1.0	0	<good>1%</good> of EMP damage this ship deals to shields is converted to energy damage.
+effect|SHIELD_EMP_TO_ENERGY_PERCENT|10.0	0	<good>10%</good> of EMP damage this ship deals to shields is converted to energy damage.
+effect|SHIELD_EMP_TO_ENERGY_PERCENT|12.5	0	<good>12.5%</good> of EMP damage this ship deals to shields is converted to energy damage.
+effect|SHIELD_EMP_TO_ENERGY_PERCENT|100.0	0	<good>100%</good> of EMP damage this ship deals to shields is converted to energy damage.
+effect|SHIELD_EMP_TO_ENERGY_PERCENT|-10.0	0	<good>-10%</good> of EMP damage this ship deals to shields is converted to energy damage.
+effect|SHIELD_EMP_TO_ENERGY_PERCENT|-12.5	0	<good>-12.5%</good> of EMP damage this ship deals to shields is converted to energy damage.
 effect|SHIELD_PIERCE_CHANCE_MULT|1.0	1	<good>1%</good> more chance for shields to be pierced by EMP arcs.
 effect|SHIELD_PIERCE_CHANCE_MULT|10.0	1	<good>10%</good> more chance for shields to be pierced by EMP arcs.
 effect|SHIELD_PIERCE_CHANCE_MULT|12.5	1	<good>12.5%</good> more chance for shields to be pierced by EMP arcs.
@@ -11382,87 +11382,87 @@ integrated|ion_bolter_rounds|CRUISER|1	0	Energy shots that hit an enemy shield c
 integrated|ion_bolter_rounds|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
 integrated|ion_bolter_rounds|CAPITAL_SHIP|1	0	Energy shots that hit an enemy shield can arc through to its hull, dealing <hl>25%</hl> of the shot's damage plus <hl>50%</hl> as EMP. The chance is <builtIn>20%</builtIn> when the target is at full hard flux and falls with its hard flux.
 flavour|ion_cascade	0	Once a target's systems are dead, Tri-Tachyon ion firmware moves on to the hull.
-type|ion_cascade|null|0	0	<good>30%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is dealt as high explosive damage instead.
-type|ion_cascade|FRIGATE|0	0	<good>30%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is dealt as high explosive damage instead.
-type|ion_cascade|DESTROYER|0	0	<good>30%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is dealt as high explosive damage instead.
-type|ion_cascade|CRUISER|0	0	<good>30%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is dealt as high explosive damage instead.
-type|ion_cascade|CAPITAL_SHIP|0	0	<good>30%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is dealt as high explosive damage instead.
-integrable|ion_cascade|null|0	0	<good>30%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is dealt as high explosive damage instead.
+type|ion_cascade|null|0	0	<good>30%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is converted to high explosive damage.
+type|ion_cascade|FRIGATE|0	0	<good>30%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is converted to high explosive damage.
+type|ion_cascade|DESTROYER|0	0	<good>30%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is converted to high explosive damage.
+type|ion_cascade|CRUISER|0	0	<good>30%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is converted to high explosive damage.
+type|ion_cascade|CAPITAL_SHIP|0	0	<good>30%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is converted to high explosive damage.
+integrable|ion_cascade|null|0	0	<good>30%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is converted to high explosive damage.
 integrable|ion_cascade|null|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|ion_cascade|null|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|ion_cascade|null|3	0	Instead grants <builtIn>40%</builtIn> of EMP damage this ship deals to the nearest disabled weapon or engine is dealt as high explosive damage instead.
+integrable|ion_cascade|null|3	0	Instead grants <builtIn>40%</builtIn> of EMP damage this ship deals to the nearest disabled weapon or engine is converted to high explosive damage.
 integrable|ion_cascade|null|4	0	In addition, grants <builtIn>15%</builtIn> increased EMP damage.
-integrable|ion_cascade|FRIGATE|0	0	<good>30%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is dealt as high explosive damage instead.
+integrable|ion_cascade|FRIGATE|0	0	<good>30%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is converted to high explosive damage.
 integrable|ion_cascade|FRIGATE|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|ion_cascade|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|ion_cascade|FRIGATE|3	0	Instead grants <builtIn>40%</builtIn> of EMP damage this ship deals to the nearest disabled weapon or engine is dealt as high explosive damage instead.
+integrable|ion_cascade|FRIGATE|3	0	Instead grants <builtIn>40%</builtIn> of EMP damage this ship deals to the nearest disabled weapon or engine is converted to high explosive damage.
 integrable|ion_cascade|FRIGATE|4	0	In addition, grants <builtIn>15%</builtIn> increased EMP damage.
-integrable|ion_cascade|DESTROYER|0	0	<good>30%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is dealt as high explosive damage instead.
+integrable|ion_cascade|DESTROYER|0	0	<good>30%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is converted to high explosive damage.
 integrable|ion_cascade|DESTROYER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|ion_cascade|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|ion_cascade|DESTROYER|3	0	Instead grants <builtIn>40%</builtIn> of EMP damage this ship deals to the nearest disabled weapon or engine is dealt as high explosive damage instead.
+integrable|ion_cascade|DESTROYER|3	0	Instead grants <builtIn>40%</builtIn> of EMP damage this ship deals to the nearest disabled weapon or engine is converted to high explosive damage.
 integrable|ion_cascade|DESTROYER|4	0	In addition, grants <builtIn>15%</builtIn> increased EMP damage.
-integrable|ion_cascade|CRUISER|0	0	<good>30%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is dealt as high explosive damage instead.
+integrable|ion_cascade|CRUISER|0	0	<good>30%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is converted to high explosive damage.
 integrable|ion_cascade|CRUISER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|ion_cascade|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|ion_cascade|CRUISER|3	0	Instead grants <builtIn>40%</builtIn> of EMP damage this ship deals to the nearest disabled weapon or engine is dealt as high explosive damage instead.
+integrable|ion_cascade|CRUISER|3	0	Instead grants <builtIn>40%</builtIn> of EMP damage this ship deals to the nearest disabled weapon or engine is converted to high explosive damage.
 integrable|ion_cascade|CRUISER|4	0	In addition, grants <builtIn>15%</builtIn> increased EMP damage.
-integrable|ion_cascade|CAPITAL_SHIP|0	0	<good>30%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is dealt as high explosive damage instead.
+integrable|ion_cascade|CAPITAL_SHIP|0	0	<good>30%</good> of EMP damage this ship deals to the nearest disabled weapon or engine is converted to high explosive damage.
 integrable|ion_cascade|CAPITAL_SHIP|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|ion_cascade|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|ion_cascade|CAPITAL_SHIP|3	0	Instead grants <builtIn>40%</builtIn> of EMP damage this ship deals to the nearest disabled weapon or engine is dealt as high explosive damage instead.
+integrable|ion_cascade|CAPITAL_SHIP|3	0	Instead grants <builtIn>40%</builtIn> of EMP damage this ship deals to the nearest disabled weapon or engine is converted to high explosive damage.
 integrable|ion_cascade|CAPITAL_SHIP|4	0	In addition, grants <builtIn>15%</builtIn> increased EMP damage.
 integrated|ion_cascade|null|0	0	<builtIn>Integrated</builtIn>
-integrated|ion_cascade|null|1	0	<builtIn>40%</builtIn> of EMP damage this ship deals to the nearest disabled weapon or engine is dealt as high explosive damage instead.
+integrated|ion_cascade|null|1	0	<builtIn>40%</builtIn> of EMP damage this ship deals to the nearest disabled weapon or engine is converted to high explosive damage.
 integrated|ion_cascade|null|2	0	<builtIn>15%</builtIn> increased EMP damage.
 integrated|ion_cascade|FRIGATE|0	0	<builtIn>Integrated</builtIn>
-integrated|ion_cascade|FRIGATE|1	0	<builtIn>40%</builtIn> of EMP damage this ship deals to the nearest disabled weapon or engine is dealt as high explosive damage instead.
+integrated|ion_cascade|FRIGATE|1	0	<builtIn>40%</builtIn> of EMP damage this ship deals to the nearest disabled weapon or engine is converted to high explosive damage.
 integrated|ion_cascade|FRIGATE|2	0	<builtIn>15%</builtIn> increased EMP damage.
 integrated|ion_cascade|DESTROYER|0	0	<builtIn>Integrated</builtIn>
-integrated|ion_cascade|DESTROYER|1	0	<builtIn>40%</builtIn> of EMP damage this ship deals to the nearest disabled weapon or engine is dealt as high explosive damage instead.
+integrated|ion_cascade|DESTROYER|1	0	<builtIn>40%</builtIn> of EMP damage this ship deals to the nearest disabled weapon or engine is converted to high explosive damage.
 integrated|ion_cascade|DESTROYER|2	0	<builtIn>15%</builtIn> increased EMP damage.
 integrated|ion_cascade|CRUISER|0	0	<builtIn>Integrated</builtIn>
-integrated|ion_cascade|CRUISER|1	0	<builtIn>40%</builtIn> of EMP damage this ship deals to the nearest disabled weapon or engine is dealt as high explosive damage instead.
+integrated|ion_cascade|CRUISER|1	0	<builtIn>40%</builtIn> of EMP damage this ship deals to the nearest disabled weapon or engine is converted to high explosive damage.
 integrated|ion_cascade|CRUISER|2	0	<builtIn>15%</builtIn> increased EMP damage.
 integrated|ion_cascade|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
-integrated|ion_cascade|CAPITAL_SHIP|1	0	<builtIn>40%</builtIn> of EMP damage this ship deals to the nearest disabled weapon or engine is dealt as high explosive damage instead.
+integrated|ion_cascade|CAPITAL_SHIP|1	0	<builtIn>40%</builtIn> of EMP damage this ship deals to the nearest disabled weapon or engine is converted to high explosive damage.
 integrated|ion_cascade|CAPITAL_SHIP|2	0	<builtIn>15%</builtIn> increased EMP damage.
 flavour|ion_spill	0	Remnant ion bolts leave some of their charge in the shield projector as heat.
-type|ion_spill|null|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
-type|ion_spill|FRIGATE|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
-type|ion_spill|DESTROYER|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
-type|ion_spill|CRUISER|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
-type|ion_spill|CAPITAL_SHIP|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
-integrable|ion_spill|null|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
+type|ion_spill|null|0	0	<good>25%</good> of EMP damage this ship deals to shields is converted to energy damage.
+type|ion_spill|FRIGATE|0	0	<good>25%</good> of EMP damage this ship deals to shields is converted to energy damage.
+type|ion_spill|DESTROYER|0	0	<good>25%</good> of EMP damage this ship deals to shields is converted to energy damage.
+type|ion_spill|CRUISER|0	0	<good>25%</good> of EMP damage this ship deals to shields is converted to energy damage.
+type|ion_spill|CAPITAL_SHIP|0	0	<good>25%</good> of EMP damage this ship deals to shields is converted to energy damage.
+integrable|ion_spill|null|0	0	<good>25%</good> of EMP damage this ship deals to shields is converted to energy damage.
 integrable|ion_spill|null|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|ion_spill|null|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|ion_spill|null|3	0	Instead grants <builtIn>35%</builtIn> of EMP damage this ship deals to shields is dealt as energy damage instead.
-integrable|ion_spill|FRIGATE|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
+integrable|ion_spill|null|3	0	Instead grants <builtIn>35%</builtIn> of EMP damage this ship deals to shields is converted to energy damage.
+integrable|ion_spill|FRIGATE|0	0	<good>25%</good> of EMP damage this ship deals to shields is converted to energy damage.
 integrable|ion_spill|FRIGATE|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|ion_spill|FRIGATE|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|ion_spill|FRIGATE|3	0	Instead grants <builtIn>35%</builtIn> of EMP damage this ship deals to shields is dealt as energy damage instead.
-integrable|ion_spill|DESTROYER|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
+integrable|ion_spill|FRIGATE|3	0	Instead grants <builtIn>35%</builtIn> of EMP damage this ship deals to shields is converted to energy damage.
+integrable|ion_spill|DESTROYER|0	0	<good>25%</good> of EMP damage this ship deals to shields is converted to energy damage.
 integrable|ion_spill|DESTROYER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|ion_spill|DESTROYER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|ion_spill|DESTROYER|3	0	Instead grants <builtIn>35%</builtIn> of EMP damage this ship deals to shields is dealt as energy damage instead.
-integrable|ion_spill|CRUISER|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
+integrable|ion_spill|DESTROYER|3	0	Instead grants <builtIn>35%</builtIn> of EMP damage this ship deals to shields is converted to energy damage.
+integrable|ion_spill|CRUISER|0	0	<good>25%</good> of EMP damage this ship deals to shields is converted to energy damage.
 integrable|ion_spill|CRUISER|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|ion_spill|CRUISER|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|ion_spill|CRUISER|3	0	Instead grants <builtIn>35%</builtIn> of EMP damage this ship deals to shields is dealt as energy damage instead.
-integrable|ion_spill|CAPITAL_SHIP|0	0	<good>25%</good> of EMP damage this ship deals to shields is dealt as energy damage instead.
+integrable|ion_spill|CRUISER|3	0	Instead grants <builtIn>35%</builtIn> of EMP damage this ship deals to shields is converted to energy damage.
+integrable|ion_spill|CAPITAL_SHIP|0	0	<good>25%</good> of EMP damage this ship deals to shields is converted to energy damage.
 integrable|ion_spill|CAPITAL_SHIP|1	0	Click and hold to <builtIn>integrate</builtIn> for 2 story points.
 integrable|ion_spill|CAPITAL_SHIP|2	0	<muted>When integrated, for 2 story points:</muted>
-integrable|ion_spill|CAPITAL_SHIP|3	0	Instead grants <builtIn>35%</builtIn> of EMP damage this ship deals to shields is dealt as energy damage instead.
+integrable|ion_spill|CAPITAL_SHIP|3	0	Instead grants <builtIn>35%</builtIn> of EMP damage this ship deals to shields is converted to energy damage.
 integrated|ion_spill|null|0	0	<builtIn>Integrated</builtIn>
-integrated|ion_spill|null|1	0	<builtIn>35%</builtIn> of EMP damage this ship deals to shields is dealt as energy damage instead.
+integrated|ion_spill|null|1	0	<builtIn>35%</builtIn> of EMP damage this ship deals to shields is converted to energy damage.
 integrated|ion_spill|FRIGATE|0	0	<builtIn>Integrated</builtIn>
-integrated|ion_spill|FRIGATE|1	0	<builtIn>35%</builtIn> of EMP damage this ship deals to shields is dealt as energy damage instead.
+integrated|ion_spill|FRIGATE|1	0	<builtIn>35%</builtIn> of EMP damage this ship deals to shields is converted to energy damage.
 integrated|ion_spill|DESTROYER|0	0	<builtIn>Integrated</builtIn>
-integrated|ion_spill|DESTROYER|1	0	<builtIn>35%</builtIn> of EMP damage this ship deals to shields is dealt as energy damage instead.
+integrated|ion_spill|DESTROYER|1	0	<builtIn>35%</builtIn> of EMP damage this ship deals to shields is converted to energy damage.
 integrated|ion_spill|CRUISER|0	0	<builtIn>Integrated</builtIn>
-integrated|ion_spill|CRUISER|1	0	<builtIn>35%</builtIn> of EMP damage this ship deals to shields is dealt as energy damage instead.
+integrated|ion_spill|CRUISER|1	0	<builtIn>35%</builtIn> of EMP damage this ship deals to shields is converted to energy damage.
 integrated|ion_spill|CAPITAL_SHIP|0	0	<builtIn>Integrated</builtIn>
-integrated|ion_spill|CAPITAL_SHIP|1	0	<builtIn>35%</builtIn> of EMP damage this ship deals to shields is dealt as energy damage instead.
+integrated|ion_spill|CAPITAL_SHIP|1	0	<builtIn>35%</builtIn> of EMP damage this ship deals to shields is converted to energy damage.
 flavour|joint_strike_package	0	No League detachment will launch second, so joint fleets launch every wing at once.
 type|joint_strike_package|null|0	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within <hl>500</hl> su, up to a maximum of <hl>20%</hl>.
 type|joint_strike_package|FRIGATE|0	0	Strikecraft launched from this ship have <good>4%</good> increased weapon damage for every allied strikecraft within <hl>500</hl> su, up to a maximum of <hl>20%</hl>.

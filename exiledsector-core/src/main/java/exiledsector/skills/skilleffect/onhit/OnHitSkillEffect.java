@@ -234,11 +234,11 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
     },
     ENERGY_HIT_INJUNCTION_VENT_PERCENT(listener(InjunctionListener.VENT_SLOWDOWN_PERCENT_KEY, InjunctionListener.class, InjunctionListener::new)),
     BALLISTIC_HARDPOINT_KINETIC_TO_HIGH_EXPLOSIVE(new DamageConversion(DamageConversion.KEY_PREFIX + "ballisticHardpointKineticToHighExplosive",
-            WeaponType.BALLISTIC, null, DamageConversion.Mounting.HARDPOINT, false, DamageType.KINETIC, DamageType.HIGH_EXPLOSIVE)),
+            WeaponType.BALLISTIC, null, DamageConversion.Mounting.HARDPOINT, false, DamageType.KINETIC, DamageType.HIGH_EXPLOSIVE, 1f)),
     BEAM_ENERGY_TO_HIGH_EXPLOSIVE(new DamageConversion(DamageConversion.KEY_PREFIX + "beamEnergyToHighExplosive",
-            null, null, DamageConversion.Mounting.ANY, true, DamageType.ENERGY, DamageType.HIGH_EXPLOSIVE)),
+            null, null, DamageConversion.Mounting.ANY, true, DamageType.ENERGY, DamageType.HIGH_EXPLOSIVE, 1f)),
     SMALL_ENERGY_MOUNT_DAMAGE_TO_EMP(new DamageConversion(DamageConversion.KEY_PREFIX + "smallEnergyMountDamageToEmp",
-            WeaponType.ENERGY, WeaponSize.SMALL, DamageConversion.Mounting.ANY, false, null, null));
+            WeaponType.ENERGY, WeaponSize.SMALL, DamageConversion.Mounting.ANY, false, null, null, 1f));
 
     private static List<DamageConversion> damageConversions;
 
