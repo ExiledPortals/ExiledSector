@@ -38,28 +38,28 @@
         <dependency>
             <groupId>starsector</groupId>
             <artifactId>starfarer-api</artifactId>
-            <version>0.98a-RC8</version>
+            <version>0.98.5a-RC9</version>
             <scope>system</scope>
             <systemPath>${libs.dir}/starfarer.api.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>starsector</groupId>
             <artifactId>starfarer-obf</artifactId>
-            <version>0.98a-RC8</version>
+            <version>0.98.5a-RC9</version>
             <scope>system</scope>
             <systemPath>${libs.dir}/starfarer_obf.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>starsector</groupId>
             <artifactId>fs-common-obf</artifactId>
-            <version>0.98a-RC8</version>
+            <version>0.98.5a-RC9</version>
             <scope>system</scope>
             <systemPath>${libs.dir}/fs.common_obf.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>starsector</groupId>
             <artifactId>fs-sound-obf</artifactId>
-            <version>0.98a-RC8</version>
+            <version>0.98.5a-RC9</version>
             <scope>system</scope>
             <systemPath>${libs.dir}/fs.sound_obf.jar</systemPath>
         </dependency>

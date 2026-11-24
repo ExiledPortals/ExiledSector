@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
 
-$starsectorCore = "E:\Dev\Starsector\starsector-core"
+$starsectorCore = "E:\Dev\Starsector-0.98.5a-RC9\starsector-core"
 $devMods        = "E:\Dev\Starsector\mods"
 $sourceMods     = "C:\Games\Starsector\mods"
 $libs           = Join-Path $PSScriptRoot "libs"

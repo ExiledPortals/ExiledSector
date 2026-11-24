@@ -40,7 +40,7 @@ class ConvertedHangarPenaltyTest {
         stats = mock(MutableShipStatsAPI.class, Answers.RETURNS_DEEP_STUBS);
         FighterWingSpecAPI wing = mock(FighterWingSpecAPI.class);
         when(settings.getFighterWingSpec("wing")).thenReturn(wing);
-        when(wing.getOpCost(stats)).thenReturn(12f);
+        when(wing.getOpCost(stats)).thenReturn(18f);
         when(stats.getVariant().getFittedWings()).thenReturn(List.of("wing"));
         when(stats.getNumFighterBays().getBaseValue()).thenReturn(0f);
 
@@ -71,7 +71,7 @@ class ConvertedHangarPenaltyTest {
     }
 
     @Test
-    void deploymentCostRisesByOnePointForEveryFiveStrikecraftOrdnancePointsLikeVanilla() {
+    void deploymentCostRisesByOnePointForEverySixStrikecraftOrdnancePointsLikeVanilla() {
         FighterSkillEffect.CONVERTED_HANGAR_DEPLOYMENT_COST_FLAT.apply(stats, "node", 1f);
 
         verify(deploymentPointsMod).modifyFlat("node", 3f);
