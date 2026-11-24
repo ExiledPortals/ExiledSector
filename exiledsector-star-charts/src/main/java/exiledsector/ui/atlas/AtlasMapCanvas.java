@@ -520,6 +520,7 @@ final class AtlasMapCanvas {
         DepthLens depthLens = lens(view);
         scenery.renderBackdrop(depthLens, sceneryAlpha);
         slipstreams.render(SlipstreamProjection.of(view, depthLens::place), sceneryAlpha);
+        scenery.renderOverlays(depthLens, sceneryAlpha);
         drawLanes(view, accent, alphaMult);
         drawNodes(view, accent, alphaMult, hiddenPreview);
         drawAnomalies(view, alphaMult);

@@ -136,6 +136,9 @@ final class AtlasScenery {
         abyssShade.render(lens, alphaMult);
         clouds.render(lens, alphaMult);
         decorations.render(lens, alphaMult);
+    }
+
+    void renderOverlays(DepthLens lens, float alphaMult) {
         borders.render(lens, alphaMult);
         biomes.render(lens, alphaMult);
     }

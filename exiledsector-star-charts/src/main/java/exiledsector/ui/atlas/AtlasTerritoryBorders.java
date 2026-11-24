@@ -329,10 +329,61 @@ final class AtlasTerritoryBorders {
                         corners.add(corner);
                     }
                 });
+                patch.addAll(enclosedGaps(patch, groupOf.keySet(), corners));
                 built.add(region(seed, groupId, patch, corners));
             }
         }
         return List.copyOf(built);
+    }
+
+    static Set<Long> enclosedGaps(Set<Long> patch, Set<Long> grouped, Set<Long> joinedCorners) {
+        int minX = Integer.MAX_VALUE;
+        int minY = Integer.MAX_VALUE;
+        int maxX = Integer.MIN_VALUE;
+        int maxY = Integer.MIN_VALUE;
+        for (long packed : patch) {
+            AtlasCell cell = AtlasCell.unpack(packed);
+            minX = Math.min(minX, cell.gridX());
+            minY = Math.min(minY, cell.gridY());
+            maxX = Math.max(maxX, cell.gridX());
+            maxY = Math.max(maxY, cell.gridY());
+        }
+        Set<Long> gaps = new HashSet<>();
+        Set<Long> seen = new HashSet<>();
+        for (int x = minX + 1; x < maxX; x++) {
+            for (int y = minY + 1; y < maxY; y++) {
+                long start = new AtlasCell(x, y).pack();
+                if (patch.contains(start) || !seen.add(start)) {
+                    continue;
+                }
+                List<Long> component = new ArrayList<>();
+                boolean open = false;
+                ArrayDeque<AtlasCell> queue = new ArrayDeque<>(List.of(AtlasCell.unpack(start)));
+                while (!queue.isEmpty()) {
+                    AtlasCell cell = queue.poll();
+                    component.add(cell.pack());
+                    open |= grouped.contains(cell.pack());
+                    if (cell.gridX() <= minX || cell.gridX() >= maxX || cell.gridY() <= minY || cell.gridY() >= maxY) {
+                        open = true;
+                        continue;
+                    }
+                    for (int dx = -1; dx <= 1; dx++) {
+                        for (int dy = -1; dy <= 1; dy++) {
+                            AtlasCell next = new AtlasCell(cell.gridX() + dx, cell.gridY() + dy);
+                            boolean diagonal = dx != 0 && dy != 0;
+                            if ((dx != 0 || dy != 0) && !patch.contains(next.pack()) && !(diagonal && joinedCorners.contains(cornerBetween(cell, next)))
+                                    && seen.add(next.pack())) {
+                                queue.add(next);
+                            }
+                        }
+                    }
+                }
+                if (!open) {
+                    gaps.addAll(component);
+                }
+            }
+        }
+        return gaps;
     }
 
     private static Region region(long seed, String groupId, Set<Long> patch, Set<Long> joinedCorners) {

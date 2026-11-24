@@ -24,6 +24,9 @@ class AtlasTerritoryBordersTest {
         if (x >= 20 && x <= 22 && y >= -1 && y <= 1) {
             return x == 21 && y == 0 ? null : "ring";
         }
+        if (x >= 14 && x <= 16 && y >= -1 && y <= 1) {
+            return x == 15 && y == 0 ? "core" : "moat";
+        }
         if ((x == 10 && y == 10) || (x == 11 && y == 11)) {
             return "diagonal";
         }
@@ -31,6 +34,10 @@ class AtlasTerritoryBordersTest {
             return "west";
         }
         return y > 3 ? "north" : null;
+    }
+
+    private static String drawnAt(AtlasCell cell) {
+        return cell.gridX() == 21 && cell.gridY() == 0 ? "ring" : regionAt(cell);
     }
 
     private static Set<Long> known() {
@@ -67,10 +74,11 @@ class AtlasTerritoryBordersTest {
         for (long seed = 0; seed < SEEDS; seed++) {
             List<AtlasTerritoryBorders.Region> built = AtlasTerritoryBorders.build(seed, known, regions, cell -> true);
 
-            assertEquals(List.of("diagonal", "diagonal", "north", "ring", "west"), built.stream().map(AtlasTerritoryBorders.Region::groupId).sorted().toList());
+            assertEquals(List.of("core", "diagonal", "diagonal", "moat", "north", "ring", "west"),
+                    built.stream().map(AtlasTerritoryBorders.Region::groupId).sorted().toList());
             for (long packed : known) {
                 AtlasCell cell = AtlasCell.unpack(packed);
-                String regionId = regionAt(cell);
+                String regionId = drawnAt(cell);
                 for (float[] offset : new float[][] {{0f, 0f}, {DISPLAY_REACH, DISPLAY_REACH}, {-DISPLAY_REACH, DISPLAY_REACH},
                         {DISPLAY_REACH, -DISPLAY_REACH}, {-DISPLAY_REACH, -DISPLAY_REACH}}) {
                     float x = (cell.gridX() + offset[0]) * AtlasMapCanvas.CELL_PIXELS;
@@ -110,13 +118,17 @@ class AtlasTerritoryBordersTest {
     }
 
     @Test
-    void ringsKeepTheirHoleAndLabelsSitInsideTheirPatch() {
+    void emptyHolesFillWhileOtherRegionsStayCutOutAndLabelsSitInsideTheirPatch() {
         List<AtlasTerritoryBorders.Region> built = AtlasTerritoryBorders.build(SEED, known(), AtlasTerritoryBordersTest::regionAt, cell -> true);
         AtlasTerritoryBorders.Region ring = built.stream().filter(region -> region.groupId().equals("ring")).findFirst().orElseThrow();
+        AtlasTerritoryBorders.Region moat = built.stream().filter(region -> region.groupId().equals("moat")).findFirst().orElseThrow();
 
-        assertEquals(2, ring.loops().size());
-        assertEquals(8, ring.cells());
-        assertFalse(inside(ring, 21 * AtlasMapCanvas.CELL_PIXELS, 0f));
+        assertEquals(1, ring.loops().size());
+        assertEquals(9, ring.cells());
+        assertTrue(inside(ring, 21 * AtlasMapCanvas.CELL_PIXELS, 0f));
+        assertEquals(2, moat.loops().size());
+        assertEquals(8, moat.cells());
+        assertFalse(inside(moat, 15 * AtlasMapCanvas.CELL_PIXELS, 0f));
         for (AtlasTerritoryBorders.Region region : built) {
             assertTrue(inside(region, region.labelX(), region.labelY()), region.groupId());
             for (AtlasTerritoryBorders.Loop loop : region.loops()) {
