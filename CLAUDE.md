@@ -1,6 +1,6 @@
 # Exiled Sector
 
-Starsector mod (Java 17, Maven) that gives every ship its own skill tree. Mod id `exiledSector`, plugin `exiledsector.ExiledSectorModPlugin`, targets game `0.98.5a` and compiles against the `0.98.5a-RC9` API (`setup-libs.ps1` copies it from `E:\Dev\Starsector-0.98.5a-RC9`). Depends on LazyLib, MagicLib, LunaLib.
+Starsector mod (Java 17, Maven) that gives every ship its own skill tree. Mod id `exiledSector`, plugin `exiledsector.ExiledSectorModPlugin`, targets game `0.98.5a` and compiles against the `0.98.5a-RC9` API (`setup-libs.ps1` copies it from `E:\Dev\Starsector-0.98.5a-RC9`), but must keep running on `0.98a-RC8`: `OldestGameCompatibilityTest` fails when compiled code uses a game class or member that `libs/0.98a-RC8` lacks, or misses an abstract method that version requires. Depends on LazyLib, MagicLib, LunaLib.
 
 ## Build and deploy (Windows, PowerShell)
 - Build and test from the repo root: `mvn -q clean package` (also rewrites the jar list in `mod_info.json`). Without `mvn` on PATH, use IntelliJ's bundled Maven with `JAVA_HOME=C:\Program Files\Java\jdk-17`, as `build-common.ps1` does. `jars/` and `libs/` are generated and gitignored; don't edit them.
