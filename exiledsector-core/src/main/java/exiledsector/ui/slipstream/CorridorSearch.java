@@ -19,6 +19,8 @@ public final class CorridorSearch {
     static final int BORDER_SEARCH_CELLS = 12;
     static final float MAX_DETOUR = 1.8f;
     static final float MIN_VIEW_CROSSING_SHARE = 0.5f;
+    static final float MAX_COURSE_DEGREES = 90f;
+    static final float MAX_TURN_DEGREES = 30f;
     static final int CROWDING_CELLS = 4;
     static final float CROWDING_COST = 1.5f;
     static final float SPACING_WIDTHS = 0.5f;
@@ -83,7 +85,27 @@ public final class CorridorSearch {
             }
         }
         float longSide = Math.max(view.width(), view.height());
-        return straight > 0f && length <= straight * MAX_DETOUR && lengthInView >= longSide * MIN_VIEW_CROSSING_SHARE;
+        return straight > 0f && length <= straight * MAX_DETOUR && lengthInView >= longSide * MIN_VIEW_CROSSING_SHARE && keepsCourse(points, first, last);
+    }
+
+    private static boolean keepsCourse(List<Vector2f> points, Vector2f first, Vector2f last) {
+        Vector2f course = Vector2f.sub(last, first, null);
+        course.normalise();
+        double minCourseCos = Math.cos(Math.toRadians(MAX_COURSE_DEGREES));
+        double minTurnCos = Math.cos(Math.toRadians(MAX_TURN_DEGREES));
+        Vector2f previousHeading = null;
+        for (int i = 1; i < points.size(); i++) {
+            Vector2f heading = Vector2f.sub(points.get(i), points.get(i - 1), null);
+            if (heading.lengthSquared() <= 0f) {
+                continue;
+            }
+            heading.normalise();
+            if (Vector2f.dot(heading, course) < minCourseCos || previousHeading != null && Vector2f.dot(heading, previousHeading) < minTurnCos) {
+                return false;
+            }
+            previousHeading = heading;
+        }
+        return true;
     }
 
     private static Vector2f freeThroughPoint(CorridorGrid grid, ViewWindow view, Random random) {

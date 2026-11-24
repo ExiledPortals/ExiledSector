@@ -98,6 +98,18 @@ class CorridorSearchTest {
     }
 
     @Test
+    void routesThatDoubleBackAreRejected() {
+        List<Vector2f> gentle = List.of(new Vector2f(-20000f, 0f), new Vector2f(0f, 500f), new Vector2f(20000f, 0f));
+        List<Vector2f> hairpin = List.of(new Vector2f(-20000f, 0f), new Vector2f(3000f, 0f), new Vector2f(1000f, 800f), new Vector2f(20000f, 800f));
+        List<Vector2f> sidePocket = List.of(new Vector2f(-20000f, 0f), new Vector2f(0f, 0f), new Vector2f(0f, 2000f), new Vector2f(100f, 0f),
+                new Vector2f(20000f, 0f));
+
+        assertTrue(CorridorSearch.isAcceptable(gentle, VIEW, WIDTH));
+        assertFalse(CorridorSearch.isAcceptable(hairpin, VIEW, WIDTH));
+        assertFalse(CorridorSearch.isAcceptable(sidePocket, VIEW, WIDTH));
+    }
+
+    @Test
     void aFullyBlockedViewHasNoRoute() {
         CorridorGrid grid = CorridorGrid.covering(VIEW, WIDTH);
         grid.blockCircle(0f, 0f, 20000f);
