@@ -4,7 +4,7 @@ A Domain nanoforge the lockdown missed is still running on a derelict station in
 
 Status: built 2026-10-29 (package `exiledsector.charts.anomaly.forge`, programs in core `ItemForging`). Proposed 2026-10-28. See `docs/plans/anomalies/overview.md` for the shared framework.
 
-Overhauled 2026-11-18: the programs, costs and guards below are out of date. Every forge now offers Graft (Biome Infusion instead in a system whose region has biome modifiers), Excise and Perfect at fixed Nanite Feedstock costs, Biome Infusion costs each infused feedstock, Anchor Reroll and Retemper are gone, and the escort is sized from the boss size. See `docs/plans/atlas_tree_nodes.md` for the current design.
+Overhauled 2026-11-18: the programs, costs and guards below are out of date. Every forge now offers Graft (Biome Infusion instead in a system whose region has biome modifiers), Excise and Perfect at fixed Nanite Feedstock costs, Biome Infusion costs each infused feedstock, Anchor Reroll and Retemper are gone, and the escort is sized from the boss size. See `../atlas_tree_nodes.md` for the current design.
 
 ## Lore
 

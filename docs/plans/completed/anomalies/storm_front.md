@@ -14,7 +14,7 @@ The storm adds no fleets. Chart fleets, bosses, convoys and anomaly fleets can a
 
 A battle is in the storm when the player fleet is inside the terrain as the engagement starts. The flag is recorded then, the way `ShaftEncounters.battleContextCreated` records the cavern battle, and a combat plugin of ours reads it.
 
-In the battle, an arc strikes every few seconds (placeholder 6), hitting a random ship on the field weighted by hull size, from either side. Strikes are EMP arcs (`CombatEngineAPI.spawnEmpArc`) that shields can block and phased ships can't be hit by, so raising shields and phasing are how you weather them. A brief flash and drifting cloud overlay are drawn by a `CombatLayeredRenderingPlugin` of ours, GL11 only, with no `glGet` calls while drawing (Fast Rendering rules). Combat nebula tiles are never used, per the Foiler mods rules in `docs/plans/atlas.md`.
+In the battle, an arc strikes every few seconds (placeholder 6), hitting a random ship on the field weighted by hull size, from either side. Strikes are EMP arcs (`CombatEngineAPI.spawnEmpArc`) that shields can block and phased ships can't be hit by, so raising shields and phasing are how you weather them. A brief flash and drifting cloud overlay are drawn by a `CombatLayeredRenderingPlugin` of ours, GL11 only, with no `glGet` calls while drawing (Fast Rendering rules). Combat nebula tiles are never used, per the Foiler mods rules in `../atlas.md`.
 
 ## Rewards
 

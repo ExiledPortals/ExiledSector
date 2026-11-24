@@ -82,7 +82,7 @@ None of these has a crew stat, so this is lore, not exploits.
 
 Tachyon Lens Technicians staying open matters most: Remnant hulls are high-tech energy ships. Weapon Mount keeps 12 uniques on automated hulls. Flight Deck keeps only Deck Armorers' Guild and the generic, so it gets an automated-only unique.
 
-Descriptions stay flavour with no numbers and follow `docs/tooltip_wording.md`.
+Descriptions stay flavour with no numbers and follow `../../tooltip_wording.md`.
 
 ## Max CR on automated ships
 
@@ -90,7 +90,7 @@ Vanilla's Automated Ships skill gives automated ships up to +100% max CR and shr
 
 ## Automated-only uniques
 
-Working names and directions; numbers go in `docs/analysis/balance.csv` later. Sources are Remnant, Omega or derelict drones. Each needs art through the item art process.
+Working names and directions; numbers go in `../../analysis/balance.csv` later. Sources are Remnant, Omega or derelict drones. Each needs art through the item art process.
 
 | Section | Concept | Effects |
 |---|---|---|
@@ -109,7 +109,7 @@ A machine counterpart to Crew Quarters (an automated-only section for after-batt
 4. Done. Reword the "everywhere" descriptions and Lion's Guard Blueprint Vault, plus Fire Control Suite's gunnery officer. The zh_CN texts are drafts.
 5. Done. Rename Bridge Officer and Deck Crew: names, descriptions, codename words, socket nouns and section descriptions. Art option sheets for both icons. Command Suite's codename words swap Admiral, Commodore, Captain, Orders and Mandate for Plot, Signal, Beacon, Console and Relay; Launch Assembly's words had no people in them and are unchanged. The icons, picked by the user, are `command_suite.png` and `launch_assembly.png` (a crop of vanilla's `hound_hangar.jpg`).
 6. Done except the Reactor concept. Automated-only uniques: concepts, effects, art, `item_modifiers.csv` rows. Built as Remnant Battle Relay (`unique_remnant_battle_relay`), Derelict Nanite Lattice (`unique_derelict_nanite_lattice`) and Drone Fabricator Bay (`unique_drone_fabricator_bay`), working names with placeholder magnitudes. Their icons, picked by the user, are `exiledSector_remnant_battle_relay.png` (blues recoloured purple), `exiledSector_derelict_nanite_lattice.png` and `exiledSector_drone_fabricator_bay.png`. The Reactor unique needs a new after-combat restore effect and isn't built.
-7. Done. `docs/docs.md`: a short section on crewed and automated hull items ("Crewed and automated ships").
+7. Done. `../../docs.md`: a short section on crewed and automated hull items ("Crewed and automated ships").
 
 Tests: section restriction and item restriction for a crewed and an automated profile, an already-socketed crewed item on an automated ship going inactive, and the editor round-trip for the new column. Done: `HullUpgradeTest`, `ShipSectionsTest`, `NodeRequirementsTest`, `ShipProfileTest` and the "hull item crew" block in the editor's `models.test.ts`.
 

@@ -35,7 +35,7 @@ Tuning lines are chart effects carried by an atlas source, per `overview.md`:
 
 1. Neutral ownership: whether a mine spawned with a null source can be given owner 100 (neutral) and still arm and hit both sides, or whether it needs a source ship and per-side mines instead.
 2. Keeping mines alive: whether resetting flight time on `minelayer2` keeps it armed and fuse-ready, or whether a longer-lived custom projectile in `data/weapons/proj/` (copying `minelayer2`) is cleaner.
-3. Foiler mods: no combat nebula tiles, terrain on `BaseTerrain`, textures preloaded (`../atlas.md`).
+3. Foiler mods: no combat nebula tiles, terrain on `BaseTerrain`, textures preloaded (`../completed/atlas.md`).
 
 ## Build order
 

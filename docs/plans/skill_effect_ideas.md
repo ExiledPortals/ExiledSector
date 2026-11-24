@@ -8,10 +8,6 @@ Each idea notes the skill effect part it would most likely go in (`exiledsector/
 
 A node that pulls nearby enemy ships toward this ship, scaled by ship mass: heavier ships pull harder, or lighter targets are pulled further. Part: `aura`.
 
-## Ship mass increases and reductions
-
-Effects that raise or lower ship mass. More mass means it shoves other ships harder in collisions and gets knocked around less. Less mass means it's knocked around more but accelerates faster. Part: `movement`.
-
 ## Bombers turn into Terminator drones
 
 A bomber that has fired its last missile behaves like a Terminator drone instead of flying home to rearm. Part: `fighter`.

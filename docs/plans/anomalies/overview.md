@@ -22,7 +22,7 @@ An anomaly is anything a star chart system holds beyond its ordinary layout, fle
 | Fire Ship Hangar (needs Secrets of the Frontier) | `fire_ship_hangar.md` | none, adds a capturable objective launching Dram fire ships to the fights the chart already has |
 | Abyssal Shipyard, Research Complex and Storm (built, Abyssal Rift only) | `../completed/anomalies/abyssal_rift.md` | one each for the Shipyard and the Research Complex, their guards; none for the Storm |
 
-Black Hole, Neutron Star, Dense Nebula, Magnetic Storm and Stellar Flares are built and described in `../atlas.md` (Regions, layouts and anomalies). An anomaly can roll on its own `atlas_anomaly_chances.csv` row instead of the shared anomaly chance. The Remnant Nexus and Domain-era Mothership never roll: a `biomes` column places each in exactly one system of every pocket of its biome (`../completed/anomalies/biome_stations.md`), and they are the one exception to "no anomaly spawns waves", kept to two or three fleets at a time.
+Black Hole, Neutron Star, Dense Nebula, Magnetic Storm and Stellar Flares are built and described in `../completed/atlas.md` (Regions, layouts and anomalies). An anomaly can roll on its own `atlas_anomaly_chances.csv` row instead of the shared anomaly chance. The Remnant Nexus and Domain-era Mothership never roll: a `biomes` column places each in exactly one system of every pocket of its biome (`../completed/anomalies/biome_stations.md`), and they are the one exception to "no anomaly spawns waves", kept to two or three fleets at a time.
 
 ## Fights
 
@@ -44,15 +44,15 @@ Atlas hooks have defaults: `atlasWeight` leans the node roll from the node's tra
 
 `excludes` lists anomalies that must never share a system with this one, for pairs that would interact badly. It works in both directions, and two star anomalies always exclude each other. Wherever two conflicting anomalies meet, the one already there wins: the node's own roll before inserted ones, and within one roll the lowest hash.
 
-Every anomaly follows the Foiler mods compatibility rules in `../atlas.md`: no combat nebula tiles, custom terrain on `BaseTerrain`, textures preloaded.
+Every anomaly follows the Foiler mods compatibility rules in `../completed/atlas.md`: no combat nebula tiles, custom terrain on `BaseTerrain`, textures preloaded.
 
 A run's anomalies are its atlas system's (rolled by the cell or inserted) plus the ones its chart rolls as it opens (decided 2026-11-10, `OpeningAnomalies`). Each anomaly with an `opening_chance` (0.08 for every common anomaly; none for star anomalies, the Coronal Hypershunt or the anomalies placed per biome) rolls it once per opening, from the chart's seed, within the system's cap, conflicts, biome weights and `insertVerdict`. A rolled anomaly joins only that run, never the atlas, and the player sees it only once inside; a rolled Faction Skirmish has the player stay out. Atlas Tree nodes are to raise these chances (`../completed/atlas_skill_tree.md`). The old `CHART_<ANOMALY>_CHANCE` lines in the unbuilt plans stay dropped. An anomaly's own tuning lines are chart effects, carried by an atlas source (an anomaly's `effects` column, an atlas node's effects or the Atlas Tree), and follow `docs/tooltip_wording.md`.
 
-Players can insert anomalies into atlas systems (`../atlas.md`, Anomalies) with Atlas Catalysts (`../completed/anomalies/atlas_catalysts.md`).
+Players can insert anomalies into atlas systems (`../completed/atlas.md`, Anomalies) with Atlas Catalysts (`../completed/anomalies/atlas_catalysts.md`).
 
 ## Build order
 
-The atlas comes first. These steps sit inside `../atlas.md`'s build order (its steps 2, 3c, 12 and 16).
+The atlas comes first. These steps sit inside `../completed/atlas.md`'s build order (its steps 2, 3c, 12 and 16).
 
-1. [x] Anomaly framework: `ChartAnomaly`, `chart_anomalies.csv`, the per-node roll, run requests, tooltip line, run state and cleanup, with one test anomaly that places nothing (`ChartAnomaliesTest.PlacesNothing`), plus inserted anomalies (`../atlas.md` step 17). The icon column feeds the atlas marker icons (`AtlasMapCanvas`); the unused intel column was removed.
+1. [x] Anomaly framework: `ChartAnomaly`, `chart_anomalies.csv`, the per-node roll, run requests, tooltip line, run state and cleanup, with one test anomaly that places nothing (`ChartAnomaliesTest.PlacesNothing`), plus inserted anomalies (`../completed/atlas.md` step 17). The icon column feeds the atlas marker icons (`AtlasMapCanvas`); the unused intel column was removed.
 2. [~] Anomalies one at a time, each to its own plan's build order. Built: Faction Skirmish, Relay Network, Supply Convoy, Anomalous Debris, Excavation Sites, Storm Front, Derelict Forge, Listening Post, the Remnant Nexus and Domain-era Mothership, and the Coronal Hypershunt.

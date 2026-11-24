@@ -13,8 +13,8 @@ Deep in the Outer Reaches, a wormhole folds back on itself. Fleets that pass thr
 Not decided. The candidates:
 
 1. Its own special site kind in `atlas_specials.csv` (`mirror`), far out (placeholder `min_steps` 20), needing a tier 15 chart, one attempt each. Repeatable across a save, since new ones keep appearing as the atlas grows.
-2. The pinnacle encounter at the Gateway that the three Bastion key fragments open (`atlas.md`, Special sites), which still needs its own plan.
-3. A unique system, one of the rule-bending systems in `atlas.md`.
+2. The pinnacle encounter at the Gateway that the three Bastion key fragments open (`completed/atlas.md`, Special sites), which still needs its own plan.
+3. A unique system, one of the rule-bending systems in `completed/atlas.md`.
 
 Leaning: option 1, so the encounter tests whatever fleet you have now rather than once.
 
