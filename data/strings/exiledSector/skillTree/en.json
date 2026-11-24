@@ -178,7 +178,6 @@
     "node.researchStation.automated": "Free on automated hulls, and doesn't count toward integrations.",
     "node.researchStation.subsystemInactive": "<bad>Requires AI Subsystem Integration to be integrated.</bad>",
     "node.researchStation.selectHint": "Click to choose this subsystem for free. Only one can be chosen at a time.",
-    "node.researchStation.releaseHint": "Click to release this subsystem.",
     "node.exclusive.hullmods.one": "Mutually exclusive with <hullmod>hullmod</hullmod>:",
     "node.exclusive.hullmods.other": "Mutually exclusive with <hullmod>hullmods</hullmod>:",
     "node.exclusive.nodes.one": "Mutually exclusive with <node>node</node>:",

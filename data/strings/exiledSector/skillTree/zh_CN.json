@@ -223,7 +223,6 @@
     "node.researchStation.automated": "自动化船体免费获得，且不计入整合次数。",
     "node.researchStation.subsystemInactive": "<bad>需要先整合“AI子系统整合”。</bad>",
     "node.researchStation.selectHint": "点击免费选择此子系统。同一时间只能选择一个。",
-    "node.researchStation.releaseHint": "点击释放此子系统。",
     "node.exclusive.hullmods.other": "与以下<hullmod>船插</hullmod>互斥：",
     "node.exclusive.nodes.other": "与以下<node>节点</node>互斥：",
     "node.exclusive.item": "• {name}",

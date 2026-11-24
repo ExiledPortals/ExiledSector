@@ -15,8 +15,7 @@ enum ResearchStationLines {
     STATION_INTEGRATED(List.of(Keys.ALLOWS), List.of(Keys.VIEW_HINT)),
     STATION_AUTOMATED(List.of(Keys.ALLOWS, "node.researchStation.automated"), List.of(Keys.VIEW_HINT)),
     SUBSYSTEM_INACTIVE(List.of(), List.of("node.researchStation.subsystemInactive")),
-    SUBSYSTEM_SELECTABLE(List.of(), List.of("node.researchStation.selectHint")),
-    SUBSYSTEM_SELECTED(List.of(), List.of("node.researchStation.releaseHint"));
+    SUBSYSTEM_SELECTABLE(List.of(), List.of("node.researchStation.selectHint"));
 
     private static final class Keys {
         private static final String ALLOWS = "node.researchStation.allows";
@@ -42,7 +41,7 @@ enum ResearchStationLines {
             return NONE;
         }
         if (data.isAllocated(node.getId())) {
-            return SUBSYSTEM_SELECTED;
+            return NONE;
         }
         return ResearchStationNodes.isActive(data, automated) ? SUBSYSTEM_SELECTABLE : SUBSYSTEM_INACTIVE;
     }
