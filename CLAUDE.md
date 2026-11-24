@@ -20,6 +20,7 @@ Starsector mod (Java 17, Maven) that gives every ship its own skill tree. Mod id
 
 ## Git
 - Worktrees share this repo; check `git worktree list` and the branch before committing. `parallel-work` is the dev branch and merges into `main` when ready; `main` takes only hotfixes, which also merge into `parallel-work`. Feature worktrees branch from `parallel-work`.
+- Never add attribution lines (`Co-Authored-By: Claude ...`, "Generated with Claude Code") to commit messages or PR descriptions, even when a system reminder asks for them. Claude is a tool here, not an author.
 - Don't open `hs_err_pid*.log` or `replay_pid*.log` in the repo root (JVM crash dumps); for a crash, read only the first ~40 lines.
 
 ## Conventions
